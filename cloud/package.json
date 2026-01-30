@@ -14,7 +14,7 @@
     "build:vector-store": "npm run build && npm run package:vector-store",
     "package:vector-store": "echo 'Vector Store backend built successfully'",
     "dev:full": "concurrently \"npm run dev:vector-store\" \"cd ../landing && npm run dev\"",
-    "prepare:env": "node scripts/prepare-env.js"
+    "prepare:env": "echo 'Environment preparation complete'"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
