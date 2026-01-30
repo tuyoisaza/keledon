@@ -28,7 +28,7 @@ export class AppController {
 
   @Get('health')
   getHealth() {
-    return { status: 'healthy', timestamp: new Date().toISOString() };
+    return this.appService.getHealth();
   }
 
   @Get('api')

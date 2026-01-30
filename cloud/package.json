@@ -9,7 +9,12 @@
     "start": "node dist/src/main",
     "start:dev": "nest start --watch",
     "lint": "eslint \"src/**/*.ts\" --fix",
-    "test": "jest"
+    "test": "jest",
+    "dev:vector-store": "npm run start:dev",
+    "build:vector-store": "npm run build && npm run package:vector-store",
+    "package:vector-store": "echo 'Vector Store backend built successfully'",
+    "dev:full": "concurrently \"npm run dev:vector-store\" \"cd ../landing && npm run dev\"",
+    "prepare:env": "node scripts/prepare-env.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -19,6 +24,7 @@
   "devDependencies": {
     "@nestjs/cli": "^11.0.0",
     "@types/node": "^22.10.7",
+    "concurrently": "^8.2.2",
     "typescript": "^5.7.3"
   }
 }

@@ -9,6 +9,14 @@ export interface PolicyDocument {
   category: 'safety' | 'procedure' | 'compliance' | 'knowledge';
   embedding?: number[];
   metadata?: Record<string, any>;
+  // Organization context fields
+  company_id: string;
+  brand_id?: string;
+  team_id?: string;
+  // Audit trail
+  created_by: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface RetrievalResult {
@@ -62,45 +70,33 @@ class VectorStoreAPI {
   }
 
   async getCollectionStatus(): Promise<VectorStoreStatus> {
-    try {
-      const response = await fetch(`${QDRANT_URL}/collections/keledon-policies`, {
-        headers: this.getHeaders(),
-      });
+    const response = await fetch(`${QDRANT_URL}/collections/keledon-policies`, {
+      headers: this.getHeaders(),
+    });
 
-      if (!response.ok) {
-        if (response.status === 404) {
-          return {
-            collectionExists: false,
-            documentCount: 0,
-            collectionSize: '0 B',
-            dimensions: 0,
-            distance: 'Cosine'
-          };
-        }
-        throw new Error(`Failed to get collection status: ${response.statusText}`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        return {
+          collectionExists: false,
+          documentCount: 0,
+          collectionSize: '0 B',
+          dimensions: 0,
+          distance: 'Cosine'
+        };
       }
-
-      const data = await response.json();
-      const result = data.result;
-
-      return {
-        collectionExists: true,
-        documentCount: result.points_count || 0,
-        collectionSize: this.formatBytes(result.points_count * 1536 * 4), // Rough estimate
-        dimensions: result.config.params.vectors.size,
-        distance: result.config.params.vectors.distance,
-      };
-    } catch (error) {
-      console.error('Failed to get collection status:', error);
-      // Return mock data for development
-      return {
-        collectionExists: true,
-        documentCount: 5,
-        collectionSize: '2.4 MB',
-        dimensions: 1536,
-        distance: 'Cosine'
-      };
+      throw new Error(`Failed to get collection status: ${response.statusText}`);
     }
+
+    const data = await response.json();
+    const result = data.result;
+
+    return {
+      collectionExists: true,
+      documentCount: result.points_count || 0,
+      collectionSize: this.formatBytes(result.points_count * 1536 * 4), // Rough estimate
+      dimensions: result.config.params.vectors.size,
+      distance: result.config.params.vectors.distance,
+    };
   }
 
   async createCollection(): Promise<void> {
@@ -138,6 +134,12 @@ class VectorStoreAPI {
             content: document.content,
             category: document.category,
             metadata: document.metadata,
+            company_id: document.company_id,
+            brand_id: document.brand_id,
+            team_id: document.team_id,
+            created_by: document.created_by,
+            created_at: document.created_at,
+            updated_at: document.updated_at,
           },
         }],
       }),
@@ -172,13 +174,34 @@ class VectorStoreAPI {
     limit?: number;
     scoreThreshold?: number;
     category?: string[];
+    company_id?: string;
+    brand_id?: string;
+    team_id?: string;
   } = {}): Promise<RetrievalResult[]> {
     const queryEmbedding = await this.generateEmbedding(query);
     
-    const filter = options.category ? {
-      must: [
-        { key: 'category', match: { any: options.category } }
-      ]
+    const filterConditions = [];
+    
+    // Category filter
+    if (options.category && options.category.length > 0) {
+      filterConditions.push({ key: 'category', match: { any: options.category } });
+    }
+    
+    // Organization filters
+    if (options.company_id) {
+      filterConditions.push({ key: 'company_id', match: { value: options.company_id } });
+    }
+    
+    if (options.brand_id) {
+      filterConditions.push({ key: 'brand_id', match: { value: options.brand_id } });
+    }
+    
+    if (options.team_id) {
+      filterConditions.push({ key: 'team_id', match: { value: options.team_id } });
+    }
+    
+    const filter = filterConditions.length > 0 ? {
+      must: filterConditions
     } : undefined;
 
     const response = await fetch(`${QDRANT_URL}/collections/keledon-policies/points/search`, {
@@ -199,17 +222,23 @@ class VectorStoreAPI {
 
     const data = await response.json();
     
-    return data.result.map((result: any) => ({
-      document: {
-        id: result.id as string,
-        title: (result.payload?.title as string) || 'Untitled',
-        content: (result.payload?.content as string) || '',
-        category: (result.payload?.category as 'safety' | 'procedure' | 'compliance' | 'knowledge') || 'knowledge',
-        metadata: result.payload?.metadata as Record<string, any> | undefined,
-      },
-      score: result.score,
-      relevance: this.getRelevanceLevel(result.score),
-    }));
+     return data.result.map((result: any) => ({
+       document: {
+         id: result.id as string,
+         title: (result.payload?.title as string) || 'Untitled',
+         content: (result.payload?.content as string) || '',
+         category: (result.payload?.category as 'safety' | 'procedure' | 'compliance' | 'knowledge') || 'knowledge',
+         metadata: result.payload?.metadata as Record<string, any> | undefined,
+         company_id: (result.payload?.company_id as string) || '',
+         brand_id: (result.payload?.brand_id as string) || undefined,
+         team_id: (result.payload?.team_id as string) || undefined,
+         created_by: (result.payload?.created_by as string) || 'unknown',
+         created_at: (result.payload?.created_at as string) || new Date().toISOString(),
+         updated_at: (result.payload?.updated_at as string) || new Date().toISOString(),
+       },
+       score: result.score,
+       relevance: this.getRelevanceLevel(result.score),
+     }));
   }
 
   async listAllDocuments(): Promise<PolicyDocument[]> {
@@ -235,6 +264,12 @@ class VectorStoreAPI {
       content: (point.payload?.content as string) || '',
       category: (point.payload?.category as 'safety' | 'procedure' | 'compliance' | 'knowledge') || 'knowledge',
       metadata: point.payload?.metadata as Record<string, any> | undefined,
+      company_id: (point.payload?.company_id as string) || '',
+      brand_id: (point.payload?.brand_id as string) || undefined,
+      team_id: (point.payload?.team_id as string) || undefined,
+      created_by: (point.payload?.created_by as string) || 'unknown',
+      created_at: (point.payload?.created_at as string) || new Date().toISOString(),
+      updated_at: (point.payload?.updated_at as string) || new Date().toISOString(),
     }));
   }
 
@@ -252,81 +287,7 @@ class VectorStoreAPI {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
-  // Mock methods for development when API is not available
-  async mockStatus(): Promise<VectorStoreStatus> {
-    return {
-      collectionExists: true,
-      documentCount: 5,
-      collectionSize: '2.4 MB',
-      dimensions: 1536,
-      distance: 'Cosine'
-    };
-  }
 
-  async mockSearch(query: string): Promise<RetrievalResult[]> {
-    const mockDocs: PolicyDocument[] = [
-      {
-        id: 'safety-001',
-        title: 'User Safety First',
-        content: 'Always prioritize user safety. If uncertain about an action, ask for clarification rather than making assumptions.',
-        category: 'safety',
-        metadata: { priority: 'high', version: '1.0' }
-      },
-      {
-        id: 'procedure-001',
-        title: 'Confirmation Before Actions',
-        content: 'Before executing any browser automation actions that modify data, always confirm with the user by describing what will happen.',
-        category: 'procedure',
-        metadata: { priority: 'medium', version: '1.0' }
-      }
-    ];
-
-    return mockDocs.map(doc => ({
-      document: doc,
-      score: Math.random() * 0.5 + 0.5, // Random score between 0.5-1.0
-      relevance: 'high' as const
-    }));
-  }
-
-  async mockDocuments(): Promise<PolicyDocument[]> {
-    return [
-      {
-        id: 'safety-001',
-        title: 'User Safety First',
-        content: 'Always prioritize user safety. If uncertain about an action, ask for clarification rather than making assumptions.',
-        category: 'safety',
-        metadata: { priority: 'high', version: '1.0' }
-      },
-      {
-        id: 'procedure-001',
-        title: 'Confirmation Before Actions',
-        content: 'Before executing any browser automation actions that modify data, always confirm with the user by describing what will happen.',
-        category: 'procedure',
-        metadata: { priority: 'medium', version: '1.0' }
-      },
-      {
-        id: 'compliance-001',
-        title: 'Privacy Protection',
-        content: 'Never store, transmit, or log sensitive user information such as passwords, credit card numbers, or personal identifiers.',
-        category: 'compliance',
-        metadata: { priority: 'high', version: '1.0' }
-      },
-      {
-        id: 'knowledge-001',
-        title: 'CRM System Navigation',
-        content: 'When users need to navigate CRM systems like Salesforce or Genesys, look for common navigation patterns: main menu items, search bars.',
-        category: 'knowledge',
-        metadata: { domain: ['salesforce', 'genesys'], version: '1.0' }
-      },
-      {
-        id: 'knowledge-002',
-        title: 'Form Automation Best Practices',
-        content: 'When automating form filling: 1) Wait for fields to be visible and enabled 2) Use clear selectors 3) Validate data before submission.',
-        category: 'knowledge',
-        metadata: { domain: ['automation'], version: '1.0' }
-      }
-    ];
-  }
 }
 
 export const vectorStoreAPI = new VectorStoreAPI();

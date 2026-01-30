@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Database, Plus, Search, FileText, Trash2, RefreshCw, Eye, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { Database, Plus, Search, FileText, Trash2, RefreshCw, Eye, AlertCircle, CheckCircle, Clock, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { vectorStoreAPI, type PolicyDocument, type RetrievalResult, type VectorStoreStatus } from '@/lib/vector-store';
+import VectorStoreConfig from './VectorStoreConfig';
 
 export default function VectorStoreTab() {
   const [status, setStatus] = useState<VectorStoreStatus | null>(null);
@@ -13,13 +14,16 @@ export default function VectorStoreTab() {
   const [editingDocument, setEditingDocument] = useState<PolicyDocument | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [showConfig, setShowConfig] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
     title: '',
     content: '',
     category: 'knowledge' as const,
-    metadata: ''
+    metadata: '',
+    brand_id: '',
+    team_id: ''
   });
 
   useEffect(() => {
@@ -33,10 +37,8 @@ export default function VectorStoreTab() {
       setStatus(status);
     } catch (error) {
       console.error('Failed to fetch vector store status:', error);
-      setError('Failed to fetch vector store status');
-      // Fallback to mock data
-      const mockStatus = await vectorStoreAPI.mockStatus();
-      setStatus(mockStatus);
+      setError('Failed to fetch vector store status. Please check your configuration.');
+      setStatus(null);
     }
   };
 
@@ -47,10 +49,8 @@ export default function VectorStoreTab() {
       setDocuments(docs);
     } catch (error) {
       console.error('Failed to fetch documents:', error);
-      setError('Failed to fetch documents');
-      // Fallback to mock data
-      const mockDocs = await vectorStoreAPI.mockDocuments();
-      setDocuments(mockDocs);
+      setError('Failed to fetch documents. Please check your vector store configuration.');
+      setDocuments([]);
     } finally {
       setLoading(false);
     }
@@ -65,10 +65,8 @@ export default function VectorStoreTab() {
       setSearchResults(results);
     } catch (error) {
       console.error('Failed to search:', error);
-      setError('Failed to perform search');
-      // Fallback to mock search
-      const mockResults = await vectorStoreAPI.mockSearch(searchQuery);
-      setSearchResults(mockResults);
+      setError('Failed to perform search. Please check your vector store configuration.');
+      setSearchResults([]);
     } finally {
       setSearchLoading(false);
     }
@@ -77,12 +75,23 @@ export default function VectorStoreTab() {
   const handleSaveDocument = async () => {
     try {
       const metadata = formData.metadata ? JSON.parse(formData.metadata) : {};
+      const now = new Date().toISOString();
+      const userId = 'current-user'; // TODO: Get actual user ID from auth context
+      
       const newDocument: PolicyDocument = {
         id: editingDocument?.id || `doc-${Date.now()}`,
         title: formData.title,
         content: formData.content,
         category: formData.category,
-        metadata
+        metadata,
+        // Organization context - auto-populated
+        company_id: 'default-company', // TODO: Get from user context
+        brand_id: formData.brand_id || undefined,
+        team_id: formData.team_id || undefined,
+        // Audit trail
+        created_by: userId,
+        created_at: editingDocument?.created_at || now,
+        updated_at: now
       };
 
       if (editingDocument) {
@@ -97,11 +106,11 @@ export default function VectorStoreTab() {
 
       setShowAddForm(false);
       setEditingDocument(null);
-      setFormData({ title: '', content: '', category: 'knowledge', metadata: '' });
+      setFormData({ title: '', content: '', category: 'knowledge', metadata: '', brand_id: '', team_id: '' });
       fetchStatus(); // Refresh status
     } catch (error) {
       console.error('Failed to save document:', error);
-      setError('Failed to save document');
+      setError('Failed to save document. Please check your vector store configuration.');
     }
   };
 
@@ -137,6 +146,13 @@ export default function VectorStoreTab() {
     }
   };
 
+  if (showConfig) {
+    return <VectorStoreConfig onConfigChange={() => {
+      // Refresh status when config changes
+      fetchStatus();
+    }} />;
+  }
+
   if (showAddForm) {
     return (
       <div className="space-y-6">
@@ -148,7 +164,7 @@ export default function VectorStoreTab() {
             onClick={() => {
               setShowAddForm(false);
               setEditingDocument(null);
-              setFormData({ title: '', content: '', category: 'knowledge', metadata: '' });
+              setFormData({ title: '', content: '', category: 'knowledge', metadata: '', brand_id: '', team_id: '' });
             }}
             className="text-muted-foreground hover:text-foreground"
           >
@@ -192,6 +208,30 @@ export default function VectorStoreTab() {
             />
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Brand ID (Optional)</label>
+              <input
+                type="text"
+                value={formData.brand_id}
+                onChange={(e) => setFormData(prev => ({ ...prev, brand_id: e.target.value }))}
+                className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none"
+                placeholder="brand-001"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Team ID (Optional)</label>
+              <input
+                type="text"
+                value={formData.team_id}
+                onChange={(e) => setFormData(prev => ({ ...prev, team_id: e.target.value }))}
+                className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none"
+                placeholder="team-001"
+              />
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm font-medium mb-2">Metadata (JSON)</label>
             <textarea
@@ -216,6 +256,21 @@ export default function VectorStoreTab() {
 
   return (
     <div className="space-y-6">
+      {/* Header with Configuration */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Database className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-semibold">Vector Store Management</h2>
+        </div>
+        <button
+          onClick={() => setShowConfig(true)}
+          className="px-3 py-1.5 text-sm border border-border rounded-lg hover:bg-muted transition-colors flex items-center gap-2"
+        >
+          <Settings className="w-3 h-3" />
+          Configuration
+        </button>
+      </div>
+
       {/* Status Cards */}
       {status && (
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -361,6 +416,9 @@ export default function VectorStoreTab() {
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <span>ID: {doc.id}</span>
+                      <span>• Created: {new Date(doc.created_at).toLocaleDateString()}</span>
+                      {doc.brand_id && <span>• Brand: {doc.brand_id}</span>}
+                      {doc.team_id && <span>• Team: {doc.team_id}</span>}
                       {doc.metadata && Object.keys(doc.metadata).length > 0 && (
                         <span>• Metadata: {JSON.stringify(doc.metadata)}</span>
                       )}
@@ -368,16 +426,18 @@ export default function VectorStoreTab() {
                   </div>
                   <div className="flex gap-1">
                     <button
-                      onClick={() => {
-                        setEditingDocument(doc);
-                        setFormData({
-                          title: doc.title,
-                          content: doc.content,
-                          category: doc.category,
-                          metadata: JSON.stringify(doc.metadata || {}, null, 2)
-                        });
-                        setShowAddForm(true);
-                      }}
+                       onClick={() => {
+                         setEditingDocument(doc);
+                         setFormData({
+                           title: doc.title,
+                           content: doc.content,
+                           category: doc.category,
+                           metadata: JSON.stringify(doc.metadata || {}, null, 2),
+                           brand_id: doc.brand_id || '',
+                           team_id: doc.team_id || ''
+                         });
+                         setShowAddForm(true);
+                       }}
                       className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded"
                     >
                       <Eye className="w-3 h-3" />
