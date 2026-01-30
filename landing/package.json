@@ -7,7 +7,17 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev:vector-store": "npm run setup:qdrant && npm run dev",
+    "build:vector-store": "npm run build && npm run package:vector-store",
+    "setup:qdrant": "node scripts/setup-qdrant.js",
+    "start:qdrant": "node scripts/setup-qdrant.js start",
+    "stop:qdrant": "node scripts/setup-qdrant.js stop",
+    "status:qdrant": "node scripts/setup-qdrant.js status",
+    "health:qdrant": "node scripts/setup-qdrant.js health",
+    "package:vector-store": "echo 'Vector Store frontend built successfully'",
+    "typecheck": "tsc --noEmit",
+    "dev:full": "concurrently \"npm run start:qdrant\" \"npm run dev\""
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.90.1",
@@ -30,6 +40,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "autoprefixer": "^10.4.23",
+    "concurrently": "^8.2.2",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
