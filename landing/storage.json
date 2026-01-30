@@ -1,0 +1,48 @@
+# 🏗 Google Cloud Storage + CDN para Frontend (Gratuito)
+
+# frontend/storage.json
+{
+  "version": "1",
+  "rule": [
+    {
+      "action": {
+          "type": "SetCacheControl",
+          "parameters": {
+              "cacheControl": [
+                  "public, max-age=31536000, immutable"
+              ]
+          }
+      },
+      "condition": {
+          "resourceType": {
+              "matches": [
+                  {
+                      "name": "**.{js,css,webp,jpg,jpeg,png,svg,woff2}"
+                  }
+              ]
+          }
+      },
+      "description": "Cache static assets"
+    },
+    {
+      "action": {
+          "type": "SetCacheControl",
+          "parameters": {
+              "cacheControl": [
+                  "public, max-age=0, must-revalidate"
+              ]
+          }
+      },
+      "condition": {
+          "resourceType": {
+              "matches": [
+                  {
+                      "name": "index.html"
+                  }
+              ]
+          }
+      },
+      "description": "No cache for index.html"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme {
+  /* Base colors - dark navy theme */
+  --color-border: hsl(220 20% 18%);
+  --color-input: hsl(220 20% 15%);
+  --color-ring: hsl(173 80% 40%);
+  --color-background: hsl(222 47% 6%);
+  --color-foreground: hsl(210 40% 98%);
+
+  /* Primary - Cyan/Teal accent */
+  --color-primary: hsl(173 80% 40%);
+  --color-primary-foreground: hsl(222 47% 6%);
+
+  /* Secondary */
+  --color-secondary: hsl(220 20% 12%);
+  --color-secondary-foreground: hsl(210 40% 98%);
+
+  /* Muted */
+  --color-muted: hsl(220 20% 12%);
+  --color-muted-foreground: hsl(215 20% 55%);
+
+  /* Accent */
+  --color-accent: hsl(173 80% 40%);
+  --color-accent-foreground: hsl(222 47% 6%);
+
+  /* Destructive */
+  --color-destructive: hsl(0 72% 51%);
+  --color-destructive-foreground: hsl(210 40% 98%);
+
+  /* Status colors */
+  --color-success: hsl(142 76% 36%);
+  --color-warning: hsl(38 92% 50%);
+  --color-info: hsl(199 89% 48%);
+
+  /* Cards and surfaces */
+  --color-card: hsl(220 20% 10%);
+  --color-card-foreground: hsl(210 40% 98%);
+  --color-popover: hsl(220 20% 10%);
+  --color-popover-foreground: hsl(210 40% 98%);
+
+  /* Sidebar */
+  --color-sidebar: hsl(222 47% 8%);
+  --color-sidebar-foreground: hsl(215 20% 65%);
+  --color-sidebar-active: hsl(173 80% 40%);
+
+  /* Radii */
+  --radius-lg: 0.75rem;
+  --radius-md: 0.5rem;
+  --radius-sm: 0.25rem;
+}
+
+@layer base {
+
+  *,
+  ::after,
+  ::before {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(173 80% 40%), hsl(173 80% 60%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass {
+    background: hsla(220 20% 10% / 0.8);
+    backdrop-filter: blur(12px);
+  }
+}

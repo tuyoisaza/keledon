@@ -1,0 +1,203 @@
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import {
+    Play, // Import Play
+    LayoutDashboard,
+    Radio,
+    Workflow,
+    BookOpen,
+    BarChart3,
+    Settings,
+    ChevronLeft,
+    ChevronRight,
+    LogOut,
+    Shield,
+    Activity,
+    GraduationCap
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/AuthContext';
+
+interface NavItem {
+    icon: React.ElementType;
+    label: string;
+    href: string;
+    minRole: 'user' | 'agent' | 'admin' | 'coordinator' | 'superadmin';
+}
+
+const navItems: NavItem[] = [
+    { icon: Play, label: 'Launch Agent', href: '/launch-agent', minRole: 'user' },
+    { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard', minRole: 'user' },
+    { icon: Radio, label: 'Sessions', href: '/sessions', minRole: 'user' },
+    { icon: Workflow, label: 'Flows', href: '/flows', minRole: 'coordinator' },
+    { icon: BookOpen, label: 'Knowledge', href: '/knowledge', minRole: 'user' },
+    { icon: BarChart3, label: 'Metrics', href: '/admin', minRole: 'coordinator' },
+    { icon: Activity, label: 'Work Stats', href: '/work-stats', minRole: 'user' },
+    { icon: GraduationCap, label: 'Knowledge Stats', href: '/knowledge-stats', minRole: 'user' },
+    { icon: Settings, label: 'Management', href: '/management', minRole: 'admin' },
+];
+
+export function Sidebar() {
+    const [collapsed, setCollapsed] = useState(false);
+    const location = useLocation();
+    const { user, logout, hasRole, isImpersonating, stopImpersonation, showSimulationFeatures, setUserRole } = useAuth();
+
+    const filteredItems = navItems.filter(item => {
+        const isSuperAdmin = user?.role === 'superadmin';
+
+        // Hide standard Flows and Knowledge for Super Admin
+        if (isSuperAdmin && (item.label === 'Flows' || item.label === 'Knowledge')) {
+            return false;
+        }
+
+        return hasRole(item.minRole);
+    });
+
+    return (
+        <aside
+            className={cn(
+                'h-screen flex flex-col bg-sidebar border-r border-border transition-all duration-300',
+                collapsed ? 'w-16' : 'w-56',
+                isImpersonating && 'border-primary/50'
+            )}
+        >
+            {/* Logo */}
+            <div className="h-16 flex items-center justify-between px-4 border-b border-border">
+                {!collapsed && (
+                    <Link to="/dashboard" className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                            <span className="text-primary-foreground font-bold text-sm">K</span>
+                        </div>
+                        <span className="font-bold text-lg text-foreground">Keledon</span>
+                    </Link>
+                )}
+                {collapsed && (
+                    <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center mx-auto">
+                        <span className="text-primary-foreground font-bold text-sm">K</span>
+                    </div>
+                )}
+                <button
+                    onClick={() => setCollapsed(!collapsed)}
+                    className={cn(
+                        'p-1 rounded hover:bg-muted text-muted-foreground',
+                        collapsed && 'mx-auto mt-2'
+                    )}
+                >
+                    {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                </button>
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex-1 py-4 px-2 space-y-1">
+                {filteredItems.map((item) => {
+                    const isActive = location.pathname === item.href;
+                    return (
+                        <Link
+                            key={item.label}
+                            to={item.href}
+                            className={cn(
+                                'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors',
+                                isActive
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'text-sidebar-foreground hover:bg-muted hover:text-foreground'
+                            )}
+                        >
+                            <item.icon className="w-5 h-5 flex-shrink-0" />
+                            {!collapsed && <span className="text-sm font-medium">{item.label}</span>}
+                        </Link>
+                    );
+                })}
+            </nav>
+
+            {/* Impseronation Banner */}
+            {isImpersonating && !collapsed && (
+                <div className="px-4 py-2 bg-primary/10 mx-2 rounded mb-2 border border-primary/20">
+                    <p className="text-xs text-primary font-medium flex items-center gap-2">
+                        <Activity className="w-3 h-3" />
+                        Simulating User
+                    </p>
+                </div>
+            )}
+
+            {/* Super Admin / Admin Role Switcher */}
+            {showSimulationFeatures && !collapsed && (
+                <div className="px-4 pb-2">
+                    <div className="flex bg-muted/50 rounded-lg p-1 gap-1">
+                        <button
+                            onClick={() => setUserRole('superadmin')}
+                            className={cn(
+                                "flex-1 text-[10px] font-bold py-1 rounded transition-colors text-center",
+                                user?.role === 'superadmin' ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-background text-muted-foreground"
+                            )}
+                            title="Switch to Super Admin View"
+                        >
+                            SA
+                        </button>
+                        <button
+                            onClick={() => setUserRole('admin')}
+                            className={cn(
+                                "flex-1 text-[10px] font-bold py-1 rounded transition-colors text-center",
+                                user?.role === 'admin' ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-background text-muted-foreground"
+                            )}
+                            title="Switch to Admin View"
+                        >
+                            AD
+                        </button>
+                        <button
+                            onClick={() => setUserRole('user')}
+                            className={cn(
+                                "flex-1 text-[10px] font-bold py-1 rounded transition-colors text-center",
+                                user?.role === 'user' ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-background text-muted-foreground"
+                            )}
+                            title="Switch to User View"
+                        >
+                            US
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* User section */}
+            <div className="p-4 border-t border-border">
+                <div className={cn('flex items-center', collapsed ? 'justify-center' : 'gap-3')}>
+                    <div className={cn(
+                        "w-9 h-9 rounded-full flex items-center justify-center text-foreground font-medium text-sm",
+                        isImpersonating ? "bg-primary/20 ring-2 ring-primary" : "bg-muted"
+                    )}>
+                        {user?.name.charAt(0).toUpperCase()}
+                    </div>
+                    {!collapsed && (
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground truncate">{user?.name}</p>
+                            <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                <Shield className="w-3 h-3" />
+                                {user?.role}
+                            </p>
+                        </div>
+                    )}
+                    {!collapsed && (
+                        <>
+                            {isImpersonating ? (
+                                <button
+                                    onClick={stopImpersonation}
+                                    className="p-1.5 rounded hover:bg-destructive/10 text-destructive hover:text-destructive transition-colors"
+                                    title="Exit Simulation"
+                                >
+                                    <LogOut className="w-4 h-4" />
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={logout}
+                                    className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
+                                    title="Logout"
+                                >
+                                    <LogOut className="w-4 h-4" />
+                                </button>
+                            )}
+                        </>
+                    )}
+                </div>
+            </div>
+        </aside>
+    );
+}
