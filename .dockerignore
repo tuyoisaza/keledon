@@ -1,0 +1,89 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!README.md
+DEPLOYMENT*.md
+ARCHITECTURE.md
+CONTRACTS.md
+FEATURES.md
+FLOWS.md
+AUTHENTICATION_GUIDE.md
+PROJECT_STRUCTURE.md
+STAGE_1_DEVELOPMENT_LIST.md
+
+# Node modules (will be installed in container)
+node_modules
+**/node_modules
+
+# Build outputs (will be built in container)
+dist
+**/dist
+build
+**/build
+
+# Environment files
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs
+**/logs
+
+# Tests
+coverage
+**/coverage
+.nyc_output
+
+# Temporary files
+tmp
+temp
+*.tmp
+
+# Old deployment scripts (keeping only deploy.sh)
+scripts/deploy-*.sh
+scripts/deploy-*.ps1
+scripts/deploy-*.bat
+scripts/deploy-*.js
+
+# Agent (not needed in container)
+agent/
+keledon-extension/
+
+# Launcher (dev only)
+launcher/
+
+# Briefs (documentation)
+Briefs*/
+
+# Investigation/sandbox
+investigate/
+
+# Cloud specific (not needed, we copy what we need)
+cloud/.dockerignore
+cloud/Dockerfile*
+cloud/app.yaml*
+cloud/.gcloudignore
+
+# Landing specific (not needed, we copy what we need)
+landing/.dockerignore
+landing/Dockerfile
+landing/nginx.conf

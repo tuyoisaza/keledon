@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://keledon.com/contracts/v1/audio/text_input.schema.json",
+  "title": "Text Input",
+  "description": "STT output from speech-to-text processing",
+  "type": "object",
+  "required": ["text", "confidence", "provider", "timestamp"],
+  "properties": {
+    "text": {
+      "type": "string",
+      "description": "Transcribed text from speech"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Overall confidence score from STT provider"
+    },
+    "provider": {
+      "type": "string",
+      "enum": ["deepgram", "whisper", "local", "azure", "google"],
+      "description": "STT provider name"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when transcription was generated"
+    },
+    "alternatives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Alternative transcription text"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Confidence for this alternative"
+          }
+        }
+      },
+      "description": "Alternative transcription options"
+    },
+    "words": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "word": {
+            "type": "string",
+            "description": "Individual word"
+          },
+          "start": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Start time in seconds"
+          },
+          "end": {
+            "type": "number",
+            "minimum": 0,
+            "description": "End time in seconds"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Word-level confidence"
+          }
+        }
+      },
+      "description": "Word-level timing and confidence"
+    },
+    "language": {
+      "type": "string",
+      "description": "Detected language code (e.g., 'en', 'es')"
+    },
+    "duration_ms": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Audio duration in milliseconds"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Provider-specific metadata",
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "Model used for transcription"
+        },
+        "audio_format": {
+          "type": "string",
+          "description": "Input audio format"
+        },
+        "sample_rate": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Audio sample rate"
+        },
+        "channels": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2,
+          "description": "Number of audio channels"
+        }
+      }
+    }
+  }
+}

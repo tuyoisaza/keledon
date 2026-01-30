@@ -1,0 +1,36 @@
+{
+  "name": "agent",
+  "version": "1.0.0",
+  "description": "Keledon Browser Agent (Manifest V3)",
+  "scripts": {
+    "build": "echo 'Agent is raw JS, build passed.'",
+    "dev": "echo 'Agent dev server not required (extension loaded directly)'",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.7.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "jsdom",
+    "roots": [
+      "<rootDir>/test"
+    ],
+    "testMatch": [
+      "**/*.test.ts"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/**/*.d.ts"
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+# Keep only minimal files
+src/main-simple.ts
+src/app.module-simple.ts  
+src/app.controller-simple.ts
+dist/
+
+# Exclude everything else
+node_modules
+.git
+.env
+test/
+*.test.ts
+*.spec.ts
+.vscode/
+README.md
+Dockerfile
+*.dockerfile
+.dockerignore

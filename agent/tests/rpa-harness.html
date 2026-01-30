@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keledón RPA Test Harness</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .section { margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; }
+        .hidden { display: none; }
+        .success { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>RPA Test Harness</h1>
+
+    <div class="section">
+        <h3>1. Input Filling</h3>
+        <input type="text" id="test-input" placeholder="Type here...">
+        <p id="input-result"></p>
+    </div>
+
+    <div class="section">
+        <h3>2. Button Click & Wait</h3>
+        <button id="test-btn">Click Me (Wait 2s)</button>
+        <div id="delayed-content" class="hidden">
+            <span id="success-msg" class="success">APPEARED!</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>3. Select Dropdown</h3>
+        <select id="test-select">
+            <option value="">Select...</option>
+            <option value="opt1">Option 1</option>
+            <option value="opt2">Option 2</option>
+        </select>
+    </div>
+
+    <script>
+        // Input Listener
+        const input = document.getElementById('test-input');
+        input.addEventListener('change', (e) => {
+            document.getElementById('input-result').innerText = `Value: ${e.target.value}`;
+        });
+
+        // Button Listener
+        const btn = document.getElementById('test-btn');
+        btn.addEventListener('click', () => {
+            btn.disabled = true;
+            btn.innerText = 'Waiting...';
+            setTimeout(() => {
+                document.getElementById('delayed-content').classList.remove('hidden');
+                btn.innerText = 'Done';
+                btn.disabled = false;
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

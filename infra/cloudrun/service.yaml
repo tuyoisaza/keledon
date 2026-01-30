@@ -1,0 +1,46 @@
+# KELEDON Cloud Run Service Configuration
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: keledon
+  annotations:
+    run.googleapis.com/launch-stage: "BETA"
+    run.googleapis.com/ingress: "all"
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "10"
+        autoscaling.knative.dev/minScale: "0"
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      containers:
+        - image: gcr.io/YOUR_PROJECT/keledon-single-container:latest
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          env:
+            - name: SINGLE_CONTAINER
+              value: "true"
+            - name: NODE_ENV
+              value: "production"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3

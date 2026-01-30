@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://keledon.ai/contracts/providers/puppeteer.config.schema.json",
+  "title": "Puppeteer RPA Provider Configuration",
+  "description": "Configuration schema for Puppeteer browser automation provider",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "provider": {
+      "type": "string",
+      "enum": ["puppeteer"],
+      "description": "Provider identifier"
+    },
+    "headless": {
+      "type": "boolean",
+      "default": true,
+      "description": "Run browser in headless mode"
+    },
+    "browserPath": {
+      "type": "string",
+      "description": "Path to Chrome/Chromium executable"
+    },
+    "timeout": {
+      "type": "integer",
+      "minimum": 1000,
+      "maximum": 300000,
+      "default": 30000,
+      "description": "Default timeout for operations in milliseconds"
+    },
+    "userAgent": {
+      "type": "string",
+      "description": "Custom user agent string"
+    },
+    "viewport": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 320,
+          "maximum": 4096,
+          "default": 1366,
+          "description": "Browser viewport width"
+        },
+        "height": {
+          "type": "integer", 
+          "minimum": 240,
+          "maximum": 2160,
+          "default": 768,
+          "description": "Browser viewport height"
+        }
+      },
+      "required": ["width", "height"]
+    },
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional browser launch arguments"
+    },
+    "defaultTimeout": {
+      "type": "integer",
+      "minimum": 1000,
+      "maximum": 300000,
+      "default": 30000,
+      "description": "Default wait timeout in milliseconds"
+    },
+    "slowMo": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000,
+      "default": 0,
+      "description": "Slow down operations by specified milliseconds"
+    }
+  },
+  "required": ["provider"],
+  "examples": [
+    {
+      "provider": "puppeteer",
+      "headless": true,
+      "timeout": 30000,
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      }
+    },
+    {
+      "provider": "puppeteer", 
+      "headless": false,
+      "browserPath": "/usr/bin/google-chrome",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      "args": ["--disable-web-security", "--disable-features=VizDisplayCompositor"]
+    }
+  ]
+}

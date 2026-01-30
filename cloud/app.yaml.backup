@@ -1,0 +1,74 @@
+# KELEDON Backend - Google App Engine Configuration (WORKING)
+
+runtime: nodejs20
+
+env_variables:
+  NODE_ENV: production
+  PORT: 8080
+  SUPABASE_URL: https://isoyzcvjoevyphnaznkl.supabase.co
+  SUPABASE_ANON_KEY: sb_publishable_9sKVxamNyK4CdXM-yH69qg_fEHRvHRa
+  SUPABASE_SERVICE_KEY: sb_secret_yqq_tgfKS_2BgKviwVn1lw_W_RbzJVV
+  DEFAULT_STT_PROVIDER: mock
+  DEFAULT_TTS_PROVIDER: mock
+
+# Simple manual scaling - App Engine compatible
+manual_scaling:
+  instances: 1
+
+# Basic configuration
+resources:
+  cpu: 1
+  memory_gb: 0.5
+  disk_size_gb: 5
+
+# Network configuration
+network:
+  forwarded_ports:
+    - 80
+    instance_tag: keledon-backend
+
+# Main handlers
+handlers:
+  - url: /.*
+    script: auto
+    secure: always
+    timeout: 60s
+    resources:
+      cpu: 1
+      memory_gb: 0.5
+      timeout: 60s
+
+  - url: /health
+    script: auto
+    secure: always
+    timeout: 30s
+    resources:
+      cpu: 0.5
+      memory_gb: 0.256
+
+  - url: /api/.*
+    script: auto
+    secure: always
+    timeout: 300s
+    resources:
+      cpu: 1
+      memory_gb: 1
+      timeout: 300s
+
+# Skip files to speed up deployment
+skip_files:
+  - node_modules
+  - dist
+  - .env
+  - Dockerfile
+  - gcloudignore
+  - docker-compose.*
+
+# Health check endpoint
+probes:
+  health_check:
+    path: /health
+    check_interval_sec: 30
+    timeout_sec: 10
+    failure_threshold: 2
+    success_threshold: 2

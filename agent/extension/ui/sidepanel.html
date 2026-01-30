@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KELEDON Agent</title>
+    <style>
+        :root {
+            --bg: #0f131a;
+            --panel: #151c27;
+            --panel-soft: #1b2432;
+            --border: #2a374b;
+            --text: #e6eef9;
+            --muted: #94a3b8;
+            --accent: #3bd3c6;
+            --accent-strong: #1fb5aa;
+            --danger: #f25c6c;
+            --success: #38d39f;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 400px;
+            margin: 0;
+            font-family: "Space Grotesk", "DM Sans", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .app {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .status-pill {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--muted);
+            color: var(--text);
+        }
+
+        .status-pill.listening {
+            background: var(--accent);
+            color: white;
+        }
+
+        .section {
+            background: var(--panel);
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-start {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-stop {
+            background: var(--danger);
+            color: white;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .info {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .transcript {
+            background: var(--bg);
+            border-radius: 6px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            min-height: 200px;
+            font-family: monospace;
+            font-size: 13px;
+            resize: vertical;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            line-height: 1.4;
+        }
+
+        .transcript:empty::before {
+            content: "No transcript yet. Click Start Listening to begin.";
+            color: var(--muted);
+        }
+
+        .version {
+            font-size: 10px;
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="header">
+            <div class="brand">
+                <div class="logo">K</div>
+                <span class="version" id="version">v1.1.6</span>
+            </div>
+            <div class="status-pill" id="status">Ready</div>
+        </div>
+
+        <div class="section">
+            <div class="controls">
+                <button id="btn-start" class="btn-start">
+                    🎤 Start Listening
+                </button>
+                <button id="btn-stop" class="btn-stop" disabled>
+                    ⏹️ Stop Listening
+                </button>
+            </div>
+            
+            <div class="info">
+                <div>Tab: <span id="tab-title">-</span></div>
+                <div>Session: <span id="session-id">None</span></div>
+            </div>
+
+            <textarea id="transcript" class="transcript" placeholder="Transcript will appear here..." readonly></textarea>
+        </div>
+    </div>
+
+    <script src="sidepanel.js"></script>
+</body>
+</html>

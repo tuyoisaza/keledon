@@ -1,0 +1,10 @@
+{
+    "name": "keledon-launcher",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Local launcher for Keledon services",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    }
+}
