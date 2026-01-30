@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://keledon.com/contracts/v1/brain/command.schema.json",
+  "title": "Brain Command",
+  "description": "Canonical command schema for Cloud→Agent communication",
+  "type": "object",
+  "required": ["command_id", "session_id", "timestamp", "type", "payload"],
+  "properties": {
+    "command_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this command"
+    },
+    "session_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Identifier for the current conversation session"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when command was generated"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["say", "ui_steps", "mode", "stop"],
+      "description": "Type of command being sent"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Command payload, structure depends on type",
+      "oneOf": [
+        {
+          "title": "Say Payload",
+          "description": "Payload for say commands (TTS)",
+          "type": "object",
+          "required": ["text"],
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "Text to be spoken"
+            },
+            "interruptible": {
+              "type": "boolean",
+              "default": true,
+              "description": "Whether this speech can be interrupted by user input"
+            },
+            "provider": {
+              "type": "string",
+              "description": "TTS provider to use (e.g., 'elevenlabs', 'local')"
+            },
+            "voice": {
+              "type": "string",
+              "description": "Voice ID or name to use"
+            },
+            "metadata": {
+              "type": "object",
+              "description": "Additional provider-specific metadata"
+            }
+          }
+        },
+        {
+          "title": "UI Steps Payload",
+          "description": "Payload for ui_steps commands (RPA execution)",
+          "type": "object",
+          "required": ["flow_id", "steps"],
+          "properties": {
+            "flow_id": {
+              "type": "string",
+              "description": "Identifier for the flow to execute"
+            },
+            "steps": {
+              "type": "array",
+              "items": {
+                "$ref": "../rpa/step.schema.json"
+              },
+              "description": "Array of steps to execute"
+            },
+            "context": {
+              "type": "object",
+              "description": "Context data available to all steps"
+            },
+            "timeout_ms": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Overall timeout for flow execution"
+            }
+          }
+        },
+        {
+          "title": "Mode Payload",
+          "description": "Payload for mode commands (system behavior)",
+          "type": "object",
+          "required": ["mode"],
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": ["normal", "safe", "silent"],
+              "description": "Operating mode for the agent"
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Confidence threshold for actions"
+            },
+            "reason": {
+              "type": "string",
+              "description": "Reason for mode change"
+            }
+          }
+        },
+        {
+          "title": "Stop Payload",
+          "description": "Payload for stop commands (halt execution)",
+          "type": "object",
+          "properties": {
+            "reason": {
+              "type": "string",
+              "description": "Reason for stopping"
+            },
+            "graceful": {
+              "type": "boolean",
+              "default": true,
+              "description": "Whether to stop gracefully or immediately"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

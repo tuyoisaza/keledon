@@ -1,0 +1,78 @@
+# Readme To Know How It Works
+
+This document is the operational overview for future contributors. It explains what the project is, its major parts, and how the system is expected to behave end-to-end.
+
+## Purpose
+
+Keledon is a deterministic automation platform for contact-center work. It listens to live conversations, decides what to do in the cloud, and executes those decisions locally in the browser using recorded, versioned flows.
+
+## Core Principle
+
+**The Cloud decides, the Agent executes.**
+
+- The cloud owns all intelligence, policy, orchestration, and audit.
+- The browser agent never improvises; it only executes deterministic flows.
+- Contracts are law: any payload change must be versioned in `CONTRACTS.md`.
+
+## Repository Map
+
+- `cloud/`: NestJS backend. STT/TTS/LLM orchestration, session management, and policy logic.
+- `agent/`: Chrome/Edge MV3 extension that captures audio and runs deterministic DOM flows.
+- `keledon-extension/`: RPA recording extension for building flow definitions.
+- `landing/`: Frontend app for admin, settings, and UI workflows.
+- `shared/`: Shared utilities/types used across services.
+- `ARCHITECTURE.md`: System architecture rules and invariants.
+- `CONTRACTS.md`: Cloud <-> Agent WebSocket contract definitions.
+- `FLOWS.md`: Product flow diagrams and expected states.
+- `Briefs V1/`: Product brief and SOP documents (source of truth for principles).
+
+## System Components
+
+### Cloud (The Brain)
+
+- Manages listening sessions and the real-time conversation loop.
+- Performs STT and TTS, manages the state machine, and selects flow IDs.
+- Uses RAG only for policy/knowledge; never for UI execution logic.
+- Produces auditable logs for each call and decision.
+
+### Browser Agent (The Hands)
+
+- Chrome extension that captures tab audio and streams it to the cloud.
+- Executes deterministic flows sent by the cloud.
+- Performs strict validation: if a step fails, it stops and reports failure.
+- Never decides what to do; it only runs the received flow steps.
+
+### Flow Recorder (RPA Recording Extension)
+
+- Captures real user interactions on target web apps.
+- Produces versioned flows (immutable once verified).
+- Updates require a new version, never overwriting previous flow behavior.
+
+### Landing App
+
+- Admin interface for settings, knowledge, and operational controls.
+- Houses authentication, role controls, and admin tooling.
+
+## How It Works (End-to-End)
+
+1. User opens the browser agent and selects a tab to capture.
+2. The agent creates a listening session in the cloud.
+3. The agent streams audio chunks over WebSocket.
+4. The cloud performs STT, runs the state machine, and selects a flow.
+5. The cloud emits `EXECUTE_FLOW` with the flow ID and parameters.
+6. The agent executes the flow deterministically and reports `FLOW_RESULT`.
+7. The cloud logs the outcome and continues the conversation.
+
+## Contracts and Invariants
+
+- All WebSocket events and payloads are defined in `CONTRACTS.md`.
+- No heuristic automation in the agent; flows are deterministic and versioned.
+- If a flow step cannot validate, the agent must fail explicitly.
+- The cloud is the only source of decision-making and policy enforcement.
+
+## Development Notes
+
+- Default cloud port is `3001` (see `cloud/README.md`).
+- The browser agent currently targets `http://localhost:3001` as its backend.
+- Start cloud and agent separately during development (see `README.md`).
+- For architecture rules and SOP details, read `ARCHITECTURE.md` and Brief v1.

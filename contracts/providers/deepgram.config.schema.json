@@ -1,0 +1,73 @@
+{
+  "$id": "https://keledon.com/providers/deepgram.config.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Deepgram Provider Configuration",
+  "description": "Configuration schema for Deepgram STT provider",
+  "type": "object",
+  "properties": {
+    "apiKey": {
+      "type": "string",
+      "description": "Deepgram API key",
+      "minLength": 1
+    },
+    "model": {
+      "type": "string",
+      "description": "Deepgram model to use",
+      "enum": ["nova-2", "nova", "enhanced", "base"],
+      "default": "nova-2"
+    },
+    "language": {
+      "type": "string",
+      "description": "Language code (e.g., 'en', 'es', 'fr')",
+      "default": "en"
+    },
+    "smartFormat": {
+      "type": "boolean",
+      "description": "Enable smart formatting (numbers, dates, etc.)",
+      "default": true
+    },
+    "punctuate": {
+      "type": "boolean",
+      "description": "Enable punctuation",
+      "default": true
+    },
+    "profanityFilter": {
+      "type": "boolean",
+      "description": "Enable profanity filter",
+      "default": false
+    },
+    "redact": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["pci", "ssn", "email", "phone", "numbers", "credit_card"]
+      },
+      "description": "PII redaction options"
+    },
+    "endpoint": {
+      "type": "string",
+      "description": "Custom API endpoint",
+      "format": "uri"
+    },
+    "encoding": {
+      "type": "string",
+      "description": "Audio encoding",
+      "enum": ["linear16", "mulaw", "opus", "flac"],
+      "default": "linear16"
+    },
+    "sampleRate": {
+      "type": "number",
+      "description": "Audio sample rate in Hz",
+      "enum": [8000, 16000, 22050, 44100, 48000],
+      "default": 16000
+    },
+    "channels": {
+      "type": "number",
+      "description": "Number of audio channels",
+      "enum": [1, 2],
+      "default": 1
+    }
+  },
+  "required": ["apiKey"],
+  "additionalProperties": false
+}

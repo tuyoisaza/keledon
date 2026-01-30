@@ -1,0 +1,220 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://keledon.com/contracts/v1/ws/realtime.schema.json",
+  "title": "WebSocket Realtime Message",
+  "description": "WebSocket message envelope for realtime communication",
+  "type": "object",
+  "required": ["message_id", "timestamp", "direction", "message_type"],
+  "properties": {
+    "message_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this WebSocket message"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when message was sent"
+    },
+    "direction": {
+      "type": "string",
+      "enum": ["agent_to_cloud", "cloud_to_agent"],
+      "description": "Message direction"
+    },
+    "message_type": {
+      "type": "string",
+      "enum": ["brain_event", "brain_command", "audio_chunk", "heartbeat", "error", "ack"],
+      "description": "Type of WebSocket message"
+    },
+    "session_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Session identifier (optional for connection-level messages)"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Message payload, structure depends on message_type",
+      "oneOf": [
+        {
+          "title": "Brain Event Payload",
+          "description": "Payload for brain_event messages",
+          "type": "object",
+          "allOf": [
+            { "$ref": "../brain/event.schema.json" }
+          ]
+        },
+        {
+          "title": "Brain Command Payload",
+          "description": "Payload for brain_command messages",
+          "type": "object",
+          "allOf": [
+            { "$ref": "../brain/command.schema.json" }
+          ]
+        },
+        {
+          "title": "Audio Chunk Payload",
+          "description": "Payload for audio_chunk messages",
+          "type": "object",
+          "required": ["chunk_id", "sequence_number", "audio_data", "format"],
+          "properties": {
+            "chunk_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Unique identifier for this audio chunk"
+            },
+            "sequence_number": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Sequence number for ordering chunks"
+            },
+            "audio_data": {
+              "type": "string",
+              "format": "data-url",
+              "description": "Base64 encoded audio data"
+            },
+            "format": {
+              "type": "object",
+              "required": ["encoding", "sample_rate", "channels"],
+              "properties": {
+                "encoding": {
+                  "type": "string",
+                  "enum": ["pcm", "mulaw", "alaw", "opus"],
+                  "description": "Audio encoding format"
+                },
+                "sample_rate": {
+                  "type": "integer",
+                  "enum": [8000, 16000, 22050, 44100, 48000],
+                  "description": "Sample rate in Hz"
+                },
+                "channels": {
+                  "type": "integer",
+                  "enum": [1, 2],
+                  "description": "Number of audio channels"
+                },
+                "bit_depth": {
+                  "type": "integer",
+                  "enum": [16, 24, 32],
+                  "description": "Bit depth"
+                }
+              }
+            },
+            "is_final": {
+              "type": "boolean",
+              "description": "Whether this is the final chunk in the stream"
+            },
+            "duration_ms": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Duration of this chunk in milliseconds"
+            }
+          }
+        },
+        {
+          "title": "Heartbeat Payload",
+          "description": "Payload for heartbeat messages",
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["alive", "busy", "error"],
+              "description": "Connection status"
+            },
+            "uptime_ms": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Connection uptime in milliseconds"
+            }
+          }
+        },
+        {
+          "title": "Error Payload",
+          "description": "Payload for error messages",
+          "type": "object",
+          "required": ["code", "message"],
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": [
+                "connection_failed",
+                "authentication_failed",
+                "validation_failed",
+                "rate_limited",
+                "internal_error",
+                "timeout",
+                "protocol_error"
+              ],
+              "description": "Error code"
+            },
+            "message": {
+              "type": "string",
+              "description": "Error message"
+            },
+            "details": {
+              "type": "object",
+              "description": "Additional error details"
+            },
+            "retry_after_ms": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Suggested retry delay in milliseconds"
+            }
+          }
+        },
+        {
+          "title": "Acknowledgment Payload",
+          "description": "Payload for acknowledgment messages",
+          "type": "object",
+          "required": ["ack_message_id", "status"],
+          "properties": {
+            "ack_message_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID of the message being acknowledged"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["received", "processed", "failed"],
+              "description": "Processing status"
+            },
+            "error": {
+              "type": "object",
+              "description": "Error details (if status is failed)",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "Error code"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Error message"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Message metadata",
+      "properties": {
+        "correlation_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Correlation ID for tracking request-response pairs"
+        },
+        "retry_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of times this message has been retried"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "normal", "high", "critical"],
+          "default": "normal",
+          "description": "Message priority"
+        }
+      }
+    }
+  }
+}
