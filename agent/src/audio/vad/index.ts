@@ -1,0 +1,1 @@
+export { VoiceDetector, type VoiceDetectorOptions, type VoiceDetectorEvents } from './voice-detector';

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        :root {
+            --bg: #0f131a;
+            --panel: #151c27;
+            --panel-soft: #1b2432;
+            --border: #2a374b;
+            --text: #e6eef9;
+            --muted: #94a3b8;
+            --accent: #3bd3c6;
+            --accent-strong: #1fb5aa;
+            --danger: #f25c6c;
+            --success: #38d39f;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 400px;
+            margin: 0;
+            font-family: "Space Grotesk", "DM Sans", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .app {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #39d0c5, #5cb8ff);
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            color: #0b1118;
+        }
+
+        h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .status-pill {
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--panel-soft);
+            border: 1px solid var(--border);
+        }
+
+        .status-pill.listening {
+            background: rgba(56, 211, 159, 0.15);
+            color: var(--success);
+            border-color: rgba(56, 211, 159, 0.4);
+        }
+
+        .status-pill.error {
+            background: rgba(242, 92, 108, 0.15);
+            color: var(--danger);
+            border-color: rgba(242, 92, 108, 0.4);
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px;
+        }
+
+        #listening-to {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        #listening-to span {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        #transcript {
+            height: 150px;
+            overflow-y: auto;
+            background: var(--panel-soft);
+            border: 1px solid var(--border);
+            padding: 10px;
+            font-size: 12px;
+            border-radius: 12px;
+            white-space: pre-wrap;
+        }
+
+        #controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        button {
+            padding: 10px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            border: 1px solid transparent;
+            font-size: 12px;
+        }
+
+        #btn-start {
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            color: #0b1118;
+            border: none;
+        }
+
+        #btn-stop {
+            background: rgba(242, 92, 108, 0.18);
+            color: var(--danger);
+            border: 1px solid rgba(242, 92, 108, 0.35);
+        }
+
+        #btn-popout {
+            background: rgba(148, 163, 184, 0.12);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        #logs {
+            width: 100%;
+            height: 150px;
+            font-size: 11px;
+            background: #0b1118;
+            color: #8de4ff;
+            border: 1px solid #1f2a3a;
+            resize: vertical;
+            box-sizing: border-box;
+            border-radius: 12px;
+            padding: 8px;
+        }
+
+        #btn-copy-logs {
+            margin-top: 8px;
+            background: rgba(148, 163, 184, 0.12);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .partial {
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        .final {
+            color: var(--text);
+            font-weight: 600;
+            border-bottom: 1px dashed rgba(148, 163, 184, 0.3);
+            padding-bottom: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <div class="header">
+            <div class="brand">
+                <div class="logo">K</div>
+                <div>
+                    <h3>Keledon Agent</h3>
+                    <div class="subtitle">Launch extension <span id="version">v...</span></div>
+                </div>
+            </div>
+            <div id="status" class="status-pill">Ready</div>
+        </div>
+
+        <div id="listening-to" class="panel">
+            <div>Listening to <span id="tab-title">-</span></div>
+            <button id="btn-refresh-tab" type="button" style="margin-top: 8px;">Refresh Target Tab</button>
+        </div>
+        <div id="tab-tracking" class="panel">
+            <div>Audio Tab: <span id="audio-tab">-</span></div>
+            <div>RPA Tab: <span id="rpa-tab">-</span></div>
+        </div>
+
+        <div class="panel">
+            <label>Live Transcript</label>
+            <div id="transcript"></div>
+        </div>
+
+        <div id="controls">
+            <button id="btn-start">Start Listening</button>
+            <button id="btn-stop" disabled>Stop</button>
+            <button id="btn-popout">Pop Out</button>
+        </div>
+
+        <div id="permission-hint" class="panel" style="display:none;">
+            <label>Capture Permission</label>
+            <div>Click the extension icon on the call tab to allow audio capture.</div>
+        </div>
+
+        <div class="panel">
+            <label>Debug Logs</label>
+            <textarea id="logs" readonly></textarea>
+            <button id="btn-copy-logs">Copy Logs</button>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

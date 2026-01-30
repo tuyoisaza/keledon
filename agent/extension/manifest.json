@@ -1,0 +1,41 @@
+{
+    "manifest_version": 3,
+    "name": "Keledon Agent",
+    "version": "1.1.6",
+    "description": "Minimal agent for streaming tab audio to Keledon Listening Sessions.",
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "scripting",
+        "offscreen",
+        "tabCapture",
+        "storage",
+        "sidePanel"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+"background": {
+        "service_worker": "background/main.js",
+        "type": "module"
+    },
+    "action": {
+        "default_title": "Keledon Agent"
+    },
+"side_panel": {
+        "default_path": "ui/sidepanel.html"
+    },
+"web_accessible_resources": [
+        {
+            "resources": [
+                "ui/offscreen.html",
+                "core/pcm-processor.js",
+                "ui/socket.io.min.js",
+                "ui/socket.io.esm.min.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
+}
