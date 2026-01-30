@@ -206,3 +206,147 @@ chrome.runtime.onMessage.addListener((msg) => {
         }
     }
 });
+
+// Knowledge Search Functionality
+const btnSearchKnowledge = document.getElementById('btn-search-knowledge');
+const knowledgeQuery = document.getElementById('knowledge-query');
+const knowledgeResults = document.getElementById('knowledge-results');
+const knowledgeFeedback = document.getElementById('knowledge-feedback');
+const btnFeedbackHelpful = document.getElementById('btn-feedback-helpful');
+const btnFeedbackNotHelpful = document.getElementById('btn-feedback-not-helpful');
+const feedbackDetails = document.getElementById('feedback-details');
+const btnSubmitFeedback = document.getElementById('btn-submit-feedback');
+
+let lastKnowledgeQuery = '';
+let lastKnowledgeResults = [];
+let feedbackGiven = false;
+
+if (btnSearchKnowledge && knowledgeQuery && knowledgeResults) {
+    btnSearchKnowledge.onclick = async () => {
+        const query = knowledgeQuery.value.trim();
+        if (!query) {
+            knowledgeResults.innerHTML = '<div style="color: var(--muted); font-size: 11px; text-align: center; padding: 20px;">Please enter a search query</div>';
+            return;
+        }
+
+        // Show loading state
+        knowledgeResults.innerHTML = '<div style="color: var(--accent); font-size: 11px; text-align: center; padding: 20px;">🔍 Searching knowledge base...</div>';
+
+        try {
+            const response = await fetch('http://localhost:3001/rag/retrieve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    query: query,
+                    sessionId: currentSessionId || 'sidepanel-session',
+                    companyId: 'default-company'
+                })
+            });
+
+            const result = await response.json();
+            
+            if (result.success && result.data && result.data.length > 0) {
+                lastKnowledgeQuery = query;
+                lastKnowledgeResults = result.data;
+                feedbackGiven = false;
+                
+                knowledgeResults.innerHTML = result.data.map((doc) => `
+                    <div style="background: var(--panel-soft); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
+                        <div style="font-size: 11px; line-height: 1.4; margin-bottom: 8px; color: var(--text);">
+                            ${doc.content}
+                        </div>
+                        <div style="font-size: 10px; color: var(--muted); display: flex; justify-content: space-between;">
+                            <span>Source: ${doc.source}</span>
+                            <span style="color: var(--success); font-weight: 600;">${Math.round(doc.relevance * 100)}% relevant</span>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Send results to background for logging/learning
+                chrome.runtime.sendMessage({
+                    type: 'KNOWLEDGE_SEARCH_RESULT',
+                    query: query,
+                    results: result.data,
+                    sessionId: currentSessionId
+                });
+
+                // Show feedback section
+                if (result.data.length > 0) {
+                    knowledgeFeedback.style.display = 'block';
+                }
+            } else {
+                knowledgeResults.innerHTML = '<div style="color: var(--muted); font-size: 11px; text-align: center; padding: 20px;">No relevant knowledge found</div>';
+                knowledgeFeedback.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Knowledge search error:', error);
+            knowledgeResults.innerHTML = '<div style="color: var(--danger); font-size: 11px; text-align: center; padding: 20px;">❌ Failed to search knowledge base</div>';
+            knowledgeFeedback.style.display = 'none';
+            log(`Knowledge search failed: ${error.message}`);
+        }
+    };
+
+    // Feedback handlers
+    btnFeedbackHelpful.onclick = () => {
+        if (!lastKnowledgeQuery || feedbackGiven) return;
+        
+        feedbackDetails.style.display = 'block';
+        btnSubmitFeedback.style.display = 'block';
+        btnFeedbackHelpful.style.background = 'var(--accent-strong)';
+        btnFeedbackHelpful.disabled = true;
+        btnFeedbackNotHelpful.disabled = true;
+    };
+
+    btnFeedbackNotHelpful.onclick = () => {
+        if (!lastKnowledgeQuery || feedbackGiven) return;
+        
+        feedbackDetails.style.display = 'block';
+        btnSubmitFeedback.style.display = 'block';
+        btnFeedbackNotHelpful.style.background = '#d32f2f';
+        btnFeedbackNotHelpful.disabled = true;
+        btnFeedbackHelpful.disabled = true;
+    };
+
+    btnSubmitFeedback.onclick = async () => {
+        if (!lastKnowledgeQuery || feedbackGiven) return;
+        
+        const feedbackType = btnFeedbackHelpful.disabled ? 'helpful' : 'not-helpful';
+        const feedbackText = feedbackDetails.value.trim();
+        
+        try {
+            await fetch('http://localhost:3001/rag/evaluate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId: currentSessionId || 'sidepanel-session',
+                    originalQuery: lastKnowledgeQuery,
+                    response: `User feedback: ${feedbackType}${feedbackText ? ' - ' + feedbackText : ''}`,
+                    usedContext: lastKnowledgeResults.map(doc => doc.id)
+                })
+            });
+
+            // Show success and hide feedback section
+            knowledgeFeedback.style.display = 'none';
+            feedbackDetails.value = '';
+            
+            // Reset buttons
+            btnFeedbackHelpful.style.background = 'var(--success)';
+            btnFeedbackHelpful.disabled = false;
+            btnFeedbackNotHelpful.style.background = 'var(--danger)';
+            btnFeedbackNotHelpful.disabled = false;
+            
+            feedbackGiven = true;
+            log(`Knowledge feedback submitted: ${feedbackType}`);
+        } catch (error) {
+            console.error('Feedback submission error:', error);
+            log(`Feedback submission failed: ${error.message}`);
+        }
+    };
+
+    // Allow Enter key to trigger search
+    knowledgeQuery.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            btnSearchKnowledge.click();
+        }
+    });
+}

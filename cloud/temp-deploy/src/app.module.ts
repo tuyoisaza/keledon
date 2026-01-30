@@ -19,11 +19,11 @@ import { CoreModule } from './core/core.module';
 import { TechStatusModule } from './tech-status/tech-status.module';
 import { SupabaseModule } from './supabase';
 import { ListeningSessionModule } from './listening-sessions/listening-session.module';
-
 import { KnowledgeModule } from './knowledge/knowledge.module';
+import { RAGModule } from './rag/rag.module';
 
 @Module({
-  imports: [SharedModule, CoreModule, TechStatusModule, SupabaseModule, ListeningSessionModule, KnowledgeModule],
+  imports: [SharedModule, CoreModule, TechStatusModule, SupabaseModule, ListeningSessionModule, KnowledgeModule, RAGModule],
   controllers: [AppController, AdminController, HealthController, WorkflowController, ProvidersController, ProviderCatalogController],
   providers: [
     AppService,

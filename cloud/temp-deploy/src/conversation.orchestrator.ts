@@ -9,6 +9,7 @@ import { ExecutionOrchestrator } from './core/execution/execution.orchestrator';
 import { KeledonAction, AutonomyContext } from './core/interfaces/action.interface';
 import { ContextService } from './core/context/context.service';
 import { OrchestratorState } from './core/orchestrator.types';
+import { RAGService } from './rag/rag.controller';
 
 interface Message {
     role: 'user' | 'assistant' | 'system';
@@ -29,6 +30,7 @@ export class ConversationOrchestrator {
         private readonly ttsFactory: TtsFactory,
         private readonly executionOrchestrator: ExecutionOrchestrator,
         private readonly contextService: ContextService,
+        private readonly ragService: RAGService,
     ) { }
 
     private transitionTo(client: Socket, newState: OrchestratorState, details?: string) {
@@ -125,13 +127,34 @@ export class ConversationOrchestrator {
         const history = this.conversationHistory.get(socketId) || [];
         history.push({ role: 'user', content: text });
 
-        // Use custom system prompt if set, otherwise default to ORCHESTRATOR_SYSTEM_PROMPT
-        const systemPrompt = this.systemPrompts.get(socketId) || ORCHESTRATOR_SYSTEM_PROMPT;
+        // Retrieve relevant knowledge using RAG
+        const context = await this.contextService.getContext(socketId);
+        let ragContext: any[] = [];
+        let enhancedSystemPrompt = this.systemPrompts.get(socketId) || ORCHESTRATOR_SYSTEM_PROMPT;
 
-        // Note: We don't prepend system prompt here if we pass it as option to generateResponse,
-        // but current logic prepends it to history. Let's rely on provider's new logic or manual prepending.
-        // The provider logic I wrote expects options.systemPrompt OR checks first message.
-        // Let's pass it cleanly via options.
+        try {
+            ragContext = await this.ragService.retrieveRelevantKnowledge(text, {
+                sessionId: socketId,
+                companyId: context.accountId,
+                brandId: context.brandId,
+                teamId: context.teamId,
+                limit: 5,
+                threshold: 0.7
+            });
+
+            if (ragContext.length > 0) {
+                // Simple prompt augmentation - add context to system prompt
+                const contextText = ragContext.map(doc => `Context: ${doc.content}`).join('\n\n');
+                enhancedSystemPrompt = `${ORCHESTRATOR_SYSTEM_PROMPT}\n\nRelevant Context:\n${contextText}`;
+                console.log(`[RAG] Retrieved ${ragContext.length} relevant documents for: "${text}"`);
+            }
+        } catch (error) {
+            console.warn(`[RAG] Error retrieving knowledge: ${error.message}`);
+            // Continue without RAG if it fails
+        }
+
+        // Use custom system prompt if set, otherwise default to enhanced prompt
+        const systemPrompt = enhancedSystemPrompt;
 
         console.log(`Orchestrator: Querying LLM with ${history.length} turns in JSON mode...`);
         const llmStream$ = llmProvider.generateResponse(history, {

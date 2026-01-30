@@ -261,6 +261,29 @@
         </div>
 
         <div class="panel">
+            <label>🧠 Knowledge Base</label>
+            <div class="knowledge-section">
+                <input type="text" id="knowledge-query" placeholder="Search knowledge base..." style="width: 100%; margin-bottom: 8px; background: var(--panel-soft); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 8px; font-size: 12px;">
+                <button id="btn-search-knowledge" style="width: 100%; background: var(--panel-soft); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 8px; font-size: 12px; cursor: pointer;">🔍 Search Knowledge</button>
+                
+                <div id="knowledge-results" style="margin-top: 12px; max-height: 200px; overflow-y: auto;">
+                    <div style="color: var(--muted); font-size: 11px; text-align: center; padding: 20px;">Search knowledge base to see relevant information</div>
+                </div>
+                
+                <!-- Feedback Section -->
+                <div id="knowledge-feedback" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: none;">
+                    <label style="font-size: 11px; color: var(--muted); margin-bottom: 6px; display: block;">Was this helpful?</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+                        <button id="btn-feedback-helpful" style="background: var(--success); color: var(--bg); border: none; border-radius: 6px; padding: 6px; font-size: 11px; cursor: pointer;">👍 Helpful</button>
+                        <button id="btn-feedback-not-helpful" style="background: var(--danger); color: white; border: none; border-radius: 6px; padding: 6px; font-size: 11px; cursor: pointer;">👎 Not Helpful</button>
+                    </div>
+                    <textarea id="feedback-details" placeholder="Additional feedback (optional)..." style="width: 100%; min-height: 60px; background: var(--panel-soft); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 6px; font-size: 11px; resize: vertical; display: none;"></textarea>
+                    <button id="btn-submit-feedback" style="width: 100%; background: var(--accent); color: var(--bg); border: none; border-radius: 6px; padding: 8px; font-size: 11px; cursor: pointer; display: none; margin-top: 6px;">Submit Feedback</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
             <label>Debug Logs</label>
             <textarea id="logs" readonly></textarea>
             <button id="btn-copy-logs">Copy Logs</button>

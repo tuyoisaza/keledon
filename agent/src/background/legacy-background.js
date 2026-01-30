@@ -584,6 +584,21 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.type === 'LOG') {
         log('[Offscreen] ' + msg.message);
     }
+
+    // Knowledge Search Results
+    if (msg.type === 'KNOWLEDGE_SEARCH_RESULT') {
+        log(`Knowledge search completed: "${msg.query}" - ${msg.results?.length || 0} results found`);
+        
+        // Send knowledge results to backend for learning/analysis
+        if (socket && socket.connected) {
+            socket.emit('KNOWLEDGE_SEARCH', {
+                sessionId: msg.sessionId || currentSessionId,
+                query: msg.query,
+                results: msg.results,
+                timestamp: Date.now()
+            });
+        }
+    }
 });
 
 async function startListeningSession(options = {}) {

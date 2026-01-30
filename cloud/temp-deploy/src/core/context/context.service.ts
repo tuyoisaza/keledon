@@ -51,4 +51,14 @@ export class ContextService {
             features: []
         };
     }
+
+    async getContext(socketId: string): Promise<any> {
+        return {
+            socketId,
+            sessionId: socketId,
+            companyId: null,
+            brandId: null,
+            teamId: null
+        };
+    }
 }
