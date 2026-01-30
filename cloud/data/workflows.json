@@ -1,0 +1,98 @@
+[
+  {
+    "id": "wf-check-order",
+    "name": "Check Order Status",
+    "description": "Look up order status in Salesforce and report back to customer",
+    "trigger": {
+      "type": "intent",
+      "value": "check_order_status",
+      "confidence": 0.7
+    },
+    "interfaceId": "iface-salesforce",
+    "steps": [
+      {
+        "id": "step-2",
+        "type": "navigate",
+        "name": "Go to Orders",
+        "url": "{{interface.baseUrl}}/orders"
+      },
+      {
+        "id": "step-3",
+        "type": "type",
+        "name": "Search Order",
+        "selector": "#search-input",
+        "value": "{{call.orderNumber}}"
+      },
+      {
+        "id": "step-4",
+        "type": "click",
+        "name": "Click Search",
+        "selector": "#search-button"
+      },
+      {
+        "id": "step-5",
+        "type": "wait",
+        "name": "Wait for Results",
+        "waitMs": 2000
+      },
+      {
+        "id": "step-6",
+        "type": "read",
+        "name": "Read Status",
+        "selector": ".order-status",
+        "variable": "orderStatus"
+      },
+      {
+        "id": "step-7",
+        "type": "speak",
+        "name": "Report Status",
+        "speakTemplate": "Tu pedido está en estado: {{orderStatus}}."
+      }
+    ],
+    "variables": {},
+    "isEnabled": true,
+    "createdAt": "2026-01-16T00:00:00Z",
+    "updatedAt": "2026-01-16T16:43:56.746Z"
+  },
+  {
+    "id": "wf-transfer-call",
+    "name": "Transfer to Human Agent",
+    "description": "Transfer the call to a human agent when requested",
+    "trigger": {
+      "type": "intent",
+      "value": "transfer_to_human",
+      "confidence": 0.8
+    },
+    "interfaceId": "iface-genesys",
+    "steps": [
+      {
+        "id": "step-1",
+        "type": "speak",
+        "name": "Acknowledge Transfer",
+        "speakTemplate": "Entiendo, te voy a transferir con un agente humano. Un momento por favor."
+      },
+      {
+        "id": "step-2",
+        "type": "navigate",
+        "name": "Open Genesys",
+        "url": "{{interface.baseUrl}}/transfer"
+      },
+      {
+        "id": "step-3",
+        "type": "click",
+        "name": "Click Transfer Button",
+        "selector": "#transfer-btn"
+      },
+      {
+        "id": "step-4",
+        "type": "speak",
+        "name": "Confirm",
+        "speakTemplate": "Listo, te estoy transfiriendo. Gracias por tu paciencia."
+      }
+    ],
+    "variables": {},
+    "isEnabled": true,
+    "createdAt": "2026-01-16T00:00:00Z",
+    "updatedAt": "2026-01-16T00:00:00Z"
+  }
+]

@@ -1,0 +1,29 @@
+[
+    {
+        "id": "iface-salesforce",
+        "name": "Salesforce Production",
+        "baseUrl": "https://api.salesforce.com",
+        "icon": "🔵",
+        "status": "connected",
+        "createdAt": "2026-01-16T00:00:00Z",
+        "updatedAt": "2026-01-16T00:00:00Z"
+    },
+    {
+        "id": "iface-genesys",
+        "name": "Genesys Cloud",
+        "baseUrl": "https://api.genesys.cloud",
+        "icon": "🟢",
+        "status": "connected",
+        "createdAt": "2026-01-16T00:00:00Z",
+        "updatedAt": "2026-01-16T00:00:00Z"
+    },
+    {
+        "id": "iface-avaya",
+        "name": "Avaya OneCloud",
+        "baseUrl": "https://api.avaya.com",
+        "icon": "🔴",
+        "status": "disconnected",
+        "createdAt": "2026-01-16T00:00:00Z",
+        "updatedAt": "2026-01-16T00:00:00Z"
+    }
+]
