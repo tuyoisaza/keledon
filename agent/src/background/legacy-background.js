@@ -93,9 +93,9 @@ async function executeFlow(flowId, params = {}, stepsOverride = null, flowRunId 
 let pendingTabInfo = null;
 let isRecording = false;
 
-// Backend URL - Update this for production deployment
-const BACKEND_URL = 'http://localhost:3001'; // Development
-// For production: const BACKEND_URL = 'https://your-domain.com';
+// Load configuration
+const config = require('../config/config.js');
+const BACKEND_URL = config.BACKEND_URL;
 
 let interfaceUrlPatterns = [];
 const AUTO_AUDIO_HOSTS = ['meet.google.com'];

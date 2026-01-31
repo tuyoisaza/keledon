@@ -12,6 +12,13 @@ const permissionHint = document.getElementById('permission-hint');
 let isListening = false;
 let debugMode = false;
 
+// Load configuration
+const CONFIG = window.AGENT_CONFIG || window.KELEDON_CONFIG || {
+    BACKEND_URL: 'http://localhost:3001',
+    RAG_RETRIEVE_ENDPOINT: '/rag/retrieve',
+    RAG_EVALUATE_ENDPOINT: '/rag/evaluate'
+};
+
 // Logger function
 function log(msg) {
     const importantPattern = /(FAILED|Error|Permission required|Start SUCCESS|Session ID|FINAL:|Partial)/i;
@@ -233,7 +240,7 @@ if (btnSearchKnowledge && knowledgeQuery && knowledgeResults) {
         knowledgeResults.innerHTML = '<div style="color: var(--accent); font-size: 11px; text-align: center; padding: 20px;">🔍 Searching knowledge base...</div>';
 
         try {
-            const response = await fetch('http://localhost:3001/rag/retrieve', {
+            const response = await fetch(`${CONFIG.BACKEND_URL}${CONFIG.RAG_RETRIEVE_ENDPOINT}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -314,7 +321,7 @@ if (btnSearchKnowledge && knowledgeQuery && knowledgeResults) {
         const feedbackText = feedbackDetails.value.trim();
         
         try {
-            await fetch('http://localhost:3001/rag/evaluate', {
+            await fetch(`${CONFIG.BACKEND_URL}${CONFIG.RAG_EVALUATE_ENDPOINT}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

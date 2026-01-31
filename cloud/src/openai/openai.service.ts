@@ -43,9 +43,9 @@ export class OpenAIService {
         throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as any;
       return {
-        content: data.choices[0]?.message?.content || '',
+        content: data.choices?.[0]?.message?.content || '',
         usage: data.usage
       };
 
@@ -76,8 +76,8 @@ export class OpenAIService {
         throw new Error(`OpenAI embeddings error: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json();
-      return data.data[0].embedding;
+      const data = await response.json() as any;
+      return data.data?.[0]?.embedding;
 
     } catch (error) {
       console.error('[OpenAI] Error generating embedding:', error.message);
@@ -112,8 +112,8 @@ export class OpenAIService {
         throw new Error(`OpenAI structured response error: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json();
-      return JSON.parse(data.choices[0]?.message?.content || '{}');
+      const data = await response.json() as any;
+      return JSON.parse(data.choices?.[0]?.message?.content || '{}');
 
     } catch (error) {
       console.error('[OpenAI] Error generating structured response:', error.message);
@@ -136,9 +136,9 @@ export class OpenAIService {
         throw new Error(`OpenAI models error: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as any;
       return {
-        models: data.data.map((model: any) => model.id),
+        models: data.data?.map((model: any) => model.id) || [],
       };
 
     } catch (error) {

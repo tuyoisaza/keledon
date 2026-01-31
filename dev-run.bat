@@ -13,27 +13,6 @@ if not exist "cloud" (
     exit /b 1
 )
 
-if not exist "landing" (
-    echo "❌ Error: landing directory not found"
-    pause
-    exit /b 1
-)
-
-:: Install dependencies if needed
-echo "📦 Checking dependencies..."
-if not exist "cloud\node_modules" (
-    echo "Installing cloud dependencies..."
-    cd cloud
-    npm install
-    cd ..
-)
-
-if not exist "landing\node_modules" (
-    echo "Installing landing dependencies..."
-    cd landing
-    npm install
-    cd ..
-)
 
 :: Start services in separate windows
 echo "🌐 Starting backend (NestJS)..."

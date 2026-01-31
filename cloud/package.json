@@ -6,7 +6,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "start": "node dist/src/main",
+    "start": "node dist/main",
     "start:dev": "nest start --watch",
     "lint": "eslint \"src/**/*.ts\" --fix",
     "test": "jest",
@@ -18,8 +18,18 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
-    "@nestjs/platform-express": "^11.0.1"
+    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/platform-socket.io": "^11.1.12",
+    "@nestjs/typeorm": "^11.0.0",
+    "@nestjs/websockets": "^11.1.12",
+    "@supabase/supabase-js": "^2.93.3",
+    "@types/os-utils": "^0.0.4",
+    "pg": "^8.18.0",
+    "playwright": "^1.58.1",
+    "socket.io": "^4.8.3",
+    "typeorm": "^0.3.28"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.0",

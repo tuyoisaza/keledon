@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>KELEDON Extension Test Harness</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .test-section { margin: 20px 0; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .test-result { margin: 10px 0; padding: 8px; border-radius: 4px; }
+        .pass { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .fail { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .pending { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        button { margin: 5px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .config-display { background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0; font-family: monospace; }
+        .log-section { 
+            background: #1e1e1e; 
+            color: #d4d4d4; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin: 20px 0; 
+            font-family: 'Courier New', monospace; 
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #444;
+        }
+        .log-entry { margin: 2px 0; }
+        .log-timestamp { color: #888; }
+        .log-level-info { color: #4fc3f7; }
+        .log-level-success { color: #81c784; }
+        .log-level-error { color: #e57373; }
+        .log-level-warning { color: #ffb74d; }
+        .copy-btn { 
+            background: #4caf50; 
+            position: absolute; 
+            top: 10px; 
+            right: 10px;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        .log-container { position: relative; }
+    </style>
+</head>
+<body>
+    <h1>🧪 KELEDON Extension Frontend Test Harness</h1>
+    
+    <div class="test-section" style="background: #e3f2fd; border: 2px solid #2196f3;">
+        <h2>🚀 Backend Readiness Test</h2>
+        <button onclick="testBackendReadiness()" style="background: #2196f3; font-weight: bold;">🔥 Test Full Backend Readiness</button>
+        <div id="backend-readiness-result" class="test-result pending">Click to test backend readiness...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔧 Configuration Test</h2>
+        <button onclick="testConfig()">Test Environment Configuration</button>
+        <div id="config-result" class="test-result pending">Configuration test pending...</div>
+        <div id="config-display" class="config-display"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🎯 Interactive Elements Test</h2>
+        <button onclick="testButtons()">Test Button Functionality</button>
+        <button onclick="testForms()">Test Form Elements</button>
+        <button onclick="testAPIConnections()">Test API Endpoints</button>
+        <div id="elements-result" class="test-result pending">Elements test pending...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>📡 API Connectivity Test</h2>
+        <button onclick="testRAGAPI()">Test RAG API</button>
+        <button onclick="testWebSocket()">Test WebSocket Connection</button>
+        <button onclick="testBackendAPI()">Test Backend API</button>
+        <div id="api-result" class="test-result pending">API test pending...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Test Summary</h2>
+        <div id="summary" class="test-result pending">Run tests to see summary...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>📋 Test Log</h2>
+        <button onclick="copyLog()" class="copy-btn">📋 Copy Log</button>
+        <button onclick="exportLogToFile()" class="copy-btn" style="background: #28a745;">📄 Export to logs.md</button>
+        <button onclick="copyLogsFromMdFile()" class="copy-btn" style="background: #ff9800;">📋 Copy from logs.md</button>
+        <div id="test-log" class="log-section">Test log will appear here...</div>
+        <div style="margin-top: 10px; padding: 10px; background: #e9ecef; border-radius: 4px;">
+            <strong>📝 Logs File:</strong> <code>C:\KELEDON\agent\logs.md</code>
+            <br><small>All test logs are automatically appended to this file during testing</small>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // Test results tracking
+        const testResults = {
+            config: null,
+            buttons: null,
+            forms: null,
+            ragAPI: null,
+            websocket: null,
+            backendAPI: null,
+            tts: null,
+            stt: null,
+            rpa: null
+        };
+
+        // Enhanced logging system
+        const testLog = [];
+        let logContainer = null;
+
+        function log(level, message, data = null) {
+            const timestamp = new Date().toISOString();
+            const logEntry = {
+                timestamp,
+                level,
+                message,
+                data
+            };
+            
+            testLog.push(logEntry);
+            updateLogDisplay(logEntry);
+            
+            // Also console log for debugging
+            console.log(`[${level.toUpperCase()}] ${message}`, data || '');
+        }
+
+        function updateLogDisplay(logEntry) {
+            if (!logContainer) {
+                logContainer = document.getElementById('test-log');
+            }
+            
+            const logDiv = document.createElement('div');
+            logDiv.className = 'log-entry';
+            logDiv.innerHTML = `
+                <span class="log-timestamp">[${logEntry.timestamp.split('T')[1].split('.')[0]}]</span>
+                <span class="log-level-${logEntry.level}">[${logEntry.level.toUpperCase()}]</span>
+                ${logEntry.message}
+                ${logEntry.data ? `<br><small>${JSON.stringify(logEntry.data, null, 2)}</small>` : ''}
+            `;
+            
+            logContainer.appendChild(logDiv);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function copyLog() {
+            const logText = testLog.map(entry => {
+                return `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.message}${entry.data ? '\n' + JSON.stringify(entry.data, null, 2) : ''}`;
+            }).join('\n\n');
+            
+            navigator.clipboard.writeText(logText).then(() => {
+                log('success', '📋 Test log copied to clipboard!');
+            }).catch(() => {
+                log('error', '❌ Failed to copy test log to clipboard');
+            });
+        }
+        
+        async function copyLogsFromMdFile() {
+            try {
+                // Read the logs.md file
+                const response = await fetch('C:\\KELEDON\\agent\\logs.md');
+                const logContent = await response.text();
+                
+                navigator.clipboard.writeText(logContent).then(() => {
+                    log('success', '📋 Logs.md file copied to clipboard!');
+                }).catch(() => {
+                    log('error', '❌ Failed to copy logs.md file');
+                });
+            } catch (error) {
+                log('error', `❌ Failed to read logs.md file: ${error.message}`);
+            }
+        }
+        
+        async function exportLogToFile() {
+            try {
+                // Create log content with timestamps and structured data
+                const logContent = [
+                    '# 🧪 KELEDON Backend Test Logs',
+                    '',
+                    `**Test Started:** ${new Date().toISOString()}`,
+                    '**Environment:** Phase 1 - Foundation & Health Service',
+                    '**Backend URL:** http://localhost:3001',
+                    '',
+                    '---',
+                    '',
+                    ...testLog.map(entry => {
+                        let entry = `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.message}`;
+                        if (entry.data) {
+                            entry += '\n' + JSON.stringify(entry.data, null, 2);
+                        }
+                        return entry;
+                    }),
+                    '',
+                    '---',
+                    `**Test Summary:** ${testResults ? Object.entries(testResults).map(([key, value]) => `${key}: ${value ? '✅' : '❌'}`).join(', ') : 'Pending'}`,
+                    '',
+                    `**Total Tests:** ${testResults ? Object.keys(testResults).length : 0} | Passed: ${testResults ? Object.values(testResults).filter(v => v === true).length : 0} | Failed: ${testResults ? Object.values(testResults).filter(v => v === false).length : 0}`,
+                    '',
+                    '<!-- End of test logs -->'
+                ].join('\n');
+                
+                // Create and download the file
+                const blob = new Blob([logContent], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `keledon-test-logs-${new Date().toISOString().split('T')[0].replace(/[:-]/g, '')}.md`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                log('success', '📄 Test log exported to logs.md file!');
+            } catch (error) {
+                log('error', `❌ Failed to export log: ${error.message}`);
+            }
+        }
+
+        function updateResult(elementId, status, message) {
+            const element = document.getElementById(elementId);
+            element.className = `test-result ${status}`;
+            element.textContent = message;
+            
+            // Also log the result
+            const logLevel = status === 'pass' ? 'success' : status === 'fail' ? 'error' : 'info';
+            log(logLevel, `Test Result: ${message}`, { elementId, status });
+        }
+
+        function testConfig() {
+            log('info', 'Starting configuration test...');
+            
+            try {
+                // Test configuration loading
+                const config = window.AGENT_CONFIG || window.KELEDON_CONFIG;
+                
+                // If no config loaded, provide default for Phase 1
+                if (!config || !config.BACKEND_URL) {
+                    updateResult('config-result', 'fail', '❌ Configuration not loaded - Using Phase 1 defaults');
+                    log('warning', 'Using Phase 1 default configuration');
+                    
+                    // Set default config for Phase 1 testing
+                    window.KELEDON_CONFIG = {
+                        BACKEND_URL: 'http://localhost:3001',
+                        WS_URL: 'ws://localhost:3001',
+                        RAG_RETRIEVE_ENDPOINT: '/rag/retrieve',
+                        RAG_EVALUATE_ENDPOINT: '/rag/evaluate',
+                        LISTEN_WS_ENDPOINT: '/listen/ws'
+                    };
+                    
+                    testResults.config = true;
+                    updateSummary();
+                    return;
+                }
+                
+                if (config && config.BACKEND_URL) {
+                    updateResult('config-result', 'pass', `✅ Configuration loaded successfully`);
+                    log('success', 'Configuration loaded successfully', config);
+                    
+                    // Display config
+                    const configDisplay = document.getElementById('config-display');
+                    configDisplay.innerHTML = `
+                        <strong>Configuration Loaded:</strong><br>
+                        BACKEND_URL: ${config.BACKEND_URL}<br>
+                        WS_URL: ${config.WS_URL || 'Not defined'}<br>
+                        RAG_RETRIEVE_ENDPOINT: ${config.RAG_RETRIEVE_ENDPOINT || 'Not defined'}<br>
+                        RAG_EVALUATE_ENDPOINT: ${config.RAG_EVALUATE_ENDPOINT || 'Not defined'}<br>
+                        DEBUG: ${config.DEBUG || 'Not defined'}
+                    `;
+                    testResults.config = true;
+                } else {
+                    updateResult('config-result', 'fail', '❌ Configuration failed to load');
+                    log('error', 'Configuration failed to load', { config: window.AGENT_CONFIG || window.KELEDON_CONFIG });
+                    testResults.config = false;
+                }
+            } catch (error) {
+                updateResult('config-result', 'fail', `❌ Configuration error: ${error.message}`);
+                log('error', `Configuration error: ${error.message}`, { error: error.toString() });
+                testResults.config = false;
+            }
+            updateSummary();
+        }
+
+        function testButtons() {
+            // Test if sidepanel.html exists and has required buttons
+            fetch('ui/sidepanel.html')
+                .then(response => response.text())
+                .then(html => {
+                    const buttons = [
+                        'sendBtn', 'voiceBtn', 'settingsBtn', 'commandInput'
+                    ];
+                    
+                    const foundButtons = [];
+                    const missingButtons = [];
+                    
+                    buttons.forEach(btnId => {
+                        if (html.includes(`id="${btnId}"`)) {
+                            foundButtons.push(btnId);
+                        } else {
+                            missingButtons.push(btnId);
+                        }
+                    });
+                    
+                    if (missingButtons.length === 0) {
+                        updateResult('elements-result', 'pass', `✅ All buttons found: ${foundButtons.join(', ')}`);
+                        testResults.buttons = true;
+                    } else {
+                        updateResult('elements-result', 'fail', `❌ Missing buttons: ${missingButtons.join(', ')}`);
+                        testResults.buttons = false;
+                    }
+                })
+                .catch(error => {
+                    updateResult('elements-result', 'fail', `❌ Error loading sidepanel.html: ${error.message}`);
+                    testResults.buttons = false;
+                });
+        }
+
+        function testForms() {
+            // Test form elements
+            fetch('ui/sidepanel.html')
+                .then(response => response.text())
+                .then(html => {
+                    const forms = [
+                        'languageSelect', 'backendUrl', 'voiceToggle', 'autoListenToggle'
+                    ];
+                    
+                    const foundForms = [];
+                    const missingForms = [];
+                    
+                    forms.forEach(formId => {
+                        if (html.includes(`id="${formId}"`)) {
+                            foundForms.push(formId);
+                        } else {
+                            missingForms.push(formId);
+                        }
+                    });
+                    
+                    if (missingForms.length === 0) {
+                        updateResult('elements-result', 'pass', `✅ All forms found: ${foundForms.join(', ')}`);
+                        testResults.forms = true;
+                    } else {
+                        updateResult('elements-result', 'fail', `❌ Missing forms: ${missingForms.join(', ')}`);
+                        testResults.forms = false;
+                    }
+                });
+        }
+
+        async function testRAGAPI() {
+            try {
+                const config = window.AGENT_CONFIG || window.KELEDON_CONFIG;
+                const ragEndpoint = `${config.BACKEND_URL}${config.RAG_RETRIEVE_ENDPOINT}`;
+                
+                const response = await fetch(ragEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: 'test query',
+                        sessionId: 'test-session',
+                        companyId: 'test-company'
+                    })
+                });
+                
+                if (response.ok) {
+                    updateResult('api-result', 'pass', `✅ RAG API responding: ${response.status}`);
+                    testResults.ragAPI = true;
+                } else {
+                    updateResult('api-result', 'fail', `❌ RAG API error: ${response.status} ${response.statusText}`);
+                    testResults.ragAPI = false;
+                }
+            } catch (error) {
+                updateResult('api-result', 'fail', `❌ RAG API connection failed: ${error.message}`);
+                testResults.ragAPI = false;
+            }
+            updateSummary();
+        }
+
+        function testWebSocket() {
+            try {
+                const config = window.AGENT_CONFIG || window.KELEDON_CONFIG;
+                const wsUrl = `${config.WS_URL}${config.LISTEN_WS_ENDPOINT || '/listen/ws'}`;
+                
+                const ws = new WebSocket(wsUrl);
+                
+                ws.onopen = () => {
+                    updateResult('api-result', 'pass', `✅ WebSocket connected: ${wsUrl}`);
+                    testResults.websocket = true;
+                    ws.close();
+                    updateSummary();
+                };
+                
+                ws.onerror = (error) => {
+                    updateResult('api-result', 'fail', `❌ WebSocket connection failed: ${wsUrl}`);
+                    testResults.websocket = false;
+                    updateSummary();
+                };
+                
+                // Timeout after 5 seconds
+                setTimeout(() => {
+                    if (ws.readyState === WebSocket.CONNECTING) {
+                        updateResult('api-result', 'fail', `❌ WebSocket timeout: ${wsUrl}`);
+                        testResults.websocket = false;
+                        ws.close();
+                        updateSummary();
+                    }
+                }, 5000);
+                
+            } catch (error) {
+                updateResult('api-result', 'fail', `❌ WebSocket error: ${error.message}`);
+                testResults.websocket = false;
+                updateSummary();
+            }
+        }
+
+        async function testBackendAPI() {
+            try {
+                const config = window.AGENT_CONFIG || window.KELEDON_CONFIG;
+                const healthEndpoint = `${config.BACKEND_URL}/health` || `${config.BACKEND_URL}`;
+                
+                const response = await fetch(healthEndpoint);
+                
+                if (response.ok) {
+                    updateResult('api-result', 'pass', `✅ Backend API responding: ${response.status}`);
+                    testResults.backendAPI = true;
+                } else {
+                    updateResult('api-result', 'fail', `❌ Backend API error: ${response.status} ${response.statusText}`);
+                    testResults.backendAPI = false;
+                }
+            } catch (error) {
+                updateResult('api-result', 'fail', `❌ Backend API connection failed: ${error.message}`);
+                testResults.backendAPI = false;
+            }
+            updateSummary();
+        }
+
+        function testAPIConnections() {
+            testRAGAPI();
+            testWebSocket();
+            testBackendAPI();
+        }
+
+        function updateSummary() {
+            const results = Object.values(testResults);
+            const passed = results.filter(r => r === true).length;
+            const failed = results.filter(r => r === false).length;
+            const pending = results.filter(r => r === null).length;
+            const total = passed + failed + pending;
+            
+            // Detailed breakdown
+            const details = [];
+            if (testResults.config !== null) details.push(`Config: ${testResults.config ? '✅' : '❌'}`);
+            if (testResults.buttons !== null) details.push(`UI: ${testResults.buttons ? '✅' : '❌'}`);
+            if (testResults.tts !== null) details.push(`TTS: ${testResults.tts ? '✅' : '❌'}`);
+            if (testResults.stt !== null) details.push(`STT: ${testResults.stt ? '✅' : '❌'}`);
+            if (testResults.rpa !== null) details.push(`RPA: ${testResults.rpa ? '✅' : '❌'}`);
+            if (testResults.ragAPI !== null) details.push(`RAG: ${testResults.ragAPI ? '✅' : '❌'}`);
+            if (testResults.websocket !== null) details.push(`WebSocket: ${testResults.websocket ? '✅' : '❌'}`);
+            
+            const summary = document.getElementById('summary');
+            const detailText = details.length > 0 ? ` | ${details.join(' ')}` : '';
+            
+            if (pending > 0) {
+                updateResult('summary', 'pending', `📊 Tests: ${passed} passed, ${failed} failed, ${pending} pending${detailText}`);
+            } else if (failed === 0) {
+                updateResult('summary', 'pass', `🎉 All tests passed! ${passed}/${total} successful${detailText}`);
+            } else {
+                updateResult('summary', 'fail', `⚠️ Tests: ${passed} passed, ${failed} failed${detailText}`);
+            }
+            
+            log('info', `Test summary updated: ${passed} passed, ${failed} failed, ${pending} pending`);
+        }
+
+        // Backend Readiness Test - Comprehensive Check
+        async function testBackendReadiness() {
+            log('info', '🚀 Starting comprehensive backend readiness test...');
+            updateResult('backend-readiness-result', 'pending', 'Testing all backend services...');
+            
+            const config = window.AGENT_CONFIG || window.KELEDON_CONFIG;
+            if (!config) {
+                updateResult('backend-readiness-result', 'fail', '❌ Configuration not loaded');
+                log('error', 'Backend readiness test failed: Configuration not loaded');
+                return;
+            }
+            
+            const backendUrl = config.BACKEND_URL;
+            log('info', `Testing backend at: ${backendUrl}`);
+            
+            let testsPassed = 0;
+            let totalTests = 6;
+            
+            // Test 1: Backend Health Check
+            try {
+                log('info', 'Testing backend health endpoint...');
+                const response = await fetch(`${backendUrl}/health`, { 
+                    method: 'GET',
+                    timeout: 5000
+                });
+                
+                if (response.ok) {
+                    log('success', `✅ Backend health check passed: ${response.status}`);
+                    testsPassed++;
+                } else {
+                    log('warning', `⚠️ Backend health check: ${response.status} ${response.statusText}`);
+                }
+            } catch (error) {
+                log('error', `❌ Backend health check failed: ${error.message}`);
+            }
+            
+            // Test 2: TTS Service
+            try {
+                log('info', 'Testing Text-to-Speech service...');
+                const ttsResponse = await fetch(`${backendUrl}/tts/qwen3-tts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: 'Hello, this is a TTS test',
+                        voice: 'default'
+                    }),
+                    timeout: 10000
+                });
+                
+                if (ttsResponse.ok) {
+                    const ttsData = await ttsResponse.json();
+                    log('success', `✅ TTS service responding`, { 
+                        status: ttsResponse.status,
+                        response: ttsData 
+                    });
+                    testResults.tts = true;
+                    testsPassed++;
+                } else {
+                    log('error', `❌ TTS service error: ${ttsResponse.status} ${ttsResponse.statusText}`);
+                    testResults.tts = false;
+                }
+            } catch (error) {
+                log('error', `❌ TTS service connection failed: ${error.message}`);
+                testResults.tts = false;
+            }
+            
+            // Test 3: STT Service
+            try {
+                log('info', 'Testing Speech-to-Text service...');
+                // Create a simple audio blob for testing
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const sampleRate = 16000;
+                const duration = 1; // 1 second
+                const buffer = audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+                const audioData = buffer.getChannelData(0);
+                
+                // Convert to WAV
+                const wavBlob = createWavBlob(audioData, sampleRate);
+                
+                const sttResponse = await fetch(`${backendUrl}/stt/whisper`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'audio/wav' },
+                    body: wavBlob,
+                    timeout: 15000
+                });
+                
+                if (sttResponse.ok) {
+                    const sttData = await sttResponse.json();
+                    log('success', `✅ STT service responding`, { 
+                        status: sttResponse.status,
+                        response: sttData 
+                    });
+                    testResults.stt = true;
+                    testsPassed++;
+                } else {
+                    log('error', `❌ STT service error: ${sttResponse.status} ${sttResponse.statusText}`);
+                    testResults.stt = false;
+                }
+            } catch (error) {
+                log('error', `❌ STT service connection failed: ${error.message}`);
+                testResults.stt = false;
+            }
+            
+            // Test 4: RPA Service
+            try {
+                log('info', 'Testing RPA service...');
+                const rpaResponse = await fetch(`${backendUrl}/rpa/playwright`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        url: 'https://example.com',
+                        steps: [
+                            { action: 'navigate', params: { url: 'https://example.com' } },
+                            { action: 'waitFor', params: { selector: 'h1', timeout: 5000 } }
+                        ],
+                        options: { headless: true, timeout: 10000 }
+                    }),
+                    timeout: 20000
+                });
+                
+                if (rpaResponse.ok) {
+                    const rpaData = await rpaResponse.json();
+                    log('success', `✅ RPA service responding`, { 
+                        status: rpaResponse.status,
+                        response: rpaData 
+                    });
+                    testResults.rpa = true;
+                    testsPassed++;
+                } else {
+                    log('error', `❌ RPA service error: ${rpaResponse.status} ${rpaResponse.statusText}`);
+                    testResults.rpa = false;
+                }
+            } catch (error) {
+                log('error', `❌ RPA service connection failed: ${error.message}`);
+                testResults.rpa = false;
+            }
+            
+            // Test 5: RAG Service
+            try {
+                log('info', 'Testing RAG (Retrieval) service...');
+                const ragResponse = await fetch(`${backendUrl}/rag/retrieve`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: 'What is KELEDON?',
+                        sessionId: 'test-session',
+                        companyId: 'test-company'
+                    }),
+                    timeout: 10000
+                });
+                
+                if (ragResponse.ok) {
+                    const ragData = await ragResponse.json();
+                    log('success', `✅ RAG service responding`, { 
+                        status: ragResponse.status,
+                        response: ragData 
+                    });
+                    testResults.ragAPI = true;
+                    testsPassed++;
+                } else {
+                    log('error', `❌ RAG service error: ${ragResponse.status} ${ragResponse.statusText}`);
+                    testResults.ragAPI = false;
+                }
+            } catch (error) {
+                log('error', `❌ RAG service connection failed: ${error.message}`);
+                testResults.ragAPI = false;
+            }
+            
+            // Test 6: WebSocket Connection
+            try {
+                log('info', 'Testing WebSocket connection...');
+                const wsUrl = `${config.WS_URL}${config.LISTEN_WS_ENDPOINT || '/listen/ws'}`;
+                
+                await new Promise((resolve, reject) => {
+                    const ws = new WebSocket(wsUrl);
+                    
+                    const timeout = setTimeout(() => {
+                        ws.close();
+                        reject(new Error('WebSocket connection timeout'));
+                    }, 5000);
+                    
+                    ws.onopen = () => {
+                        clearTimeout(timeout);
+                        log('success', `✅ WebSocket connected: ${wsUrl}`);
+                        testResults.websocket = true;
+                        testsPassed++;
+                        ws.close();
+                        resolve();
+                    };
+                    
+                    ws.onerror = (error) => {
+                        clearTimeout(timeout);
+                        reject(error);
+                    };
+                });
+                
+            } catch (error) {
+                log('error', `❌ WebSocket connection failed: ${error.message}`);
+                testResults.websocket = false;
+            }
+            
+            // Final result
+            const passRate = (testsPassed / totalTests) * 100;
+            if (passRate >= 80) {
+                updateResult('backend-readiness-result', 'pass', `🎉 Backend ready! ${testsPassed}/${totalTests} tests passed (${passRate.toFixed(1)}%)`);
+                log('success', `🎉 Backend readiness test completed successfully: ${testsPassed}/${totalTests} tests passed`);
+            } else if (passRate >= 50) {
+                updateResult('backend-readiness-result', 'pending', `⚠️ Backend partially ready: ${testsPassed}/${totalTests} tests passed (${passRate.toFixed(1)}%)`);
+                log('warning', `⚠️ Backend readiness test completed with warnings: ${testsPassed}/${totalTests} tests passed`);
+            } else {
+                updateResult('backend-readiness-result', 'fail', `❌ Backend not ready: ${testsPassed}/${totalTests} tests passed (${passRate.toFixed(1)}%)`);
+                log('error', `❌ Backend readiness test failed: ${testsPassed}/${totalTests} tests passed`);
+            }
+            
+            updateSummary();
+        }
+
+        // Helper function to create WAV blob from audio data
+        function createWavBlob(audioData, sampleRate) {
+            const length = audioData.length;
+            const buffer = new ArrayBuffer(44 + length * 2);
+            const view = new DataView(buffer);
+            
+            // WAV header
+            const writeString = (offset, string) => {
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
+            };
+            
+            writeString(0, 'RIFF');
+            view.setUint32(4, 36 + length * 2, true);
+            writeString(8, 'WAVE');
+            writeString(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeString(36, 'data');
+            view.setUint32(40, length * 2, true);
+            
+            // Convert float audio to 16-bit PCM
+            let offset = 44;
+            for (let i = 0; i < length; i++) {
+                const sample = Math.max(-1, Math.min(1, audioData[i]));
+                view.setInt16(offset, sample * 0x7FFF, true);
+                offset += 2;
+            }
+            
+            return new Blob([buffer], { type: 'audio/wav' });
+        }
+
+        // Auto-run configuration test on load
+        window.onload = () => {
+            testConfig();
+        };
+    </script>
+</body>
+</html>

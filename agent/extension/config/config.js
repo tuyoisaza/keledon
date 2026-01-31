@@ -1,31 +1,70 @@
 /**
- * Agent Configuration
+ * Environment Configuration Loader for KELEDON Agent
  * 
- * For production deployment, update BACKEND_URL to your deployed backend URL.
- * This can be set via environment variable during build, or manually updated here.
- * 
- * The backend URL should be:
- * - For HTTPS: https://your-domain.com or https://your-service.run.app
- * - For WebSocket: wss://your-domain.com or wss://your-service.run.app
+ * Loads configuration from environment variables with fallbacks to defaults
+ * Supports both Node.js (background scripts) and browser contexts
  */
 
-// Get backend URL from environment or use default
-// In production, this should be set to your deployed backend URL
-const BACKEND_URL = (() => {
-    // Check if we're in a build environment with env var
-    if (typeof process !== 'undefined' && process.env && process.env.BACKEND_URL) {
-        return process.env.BACKEND_URL;
+// Default configuration values
+const DEFAULT_CONFIG = {
+    BACKEND_URL: 'http://localhost:3001',
+    WS_URL: 'ws://localhost:3001',
+    RAG_RETRIEVE_ENDPOINT: '/rag/retrieve',
+    RAG_EVALUATE_ENDPOINT: '/rag/evaluate',
+    LISTENING_SESSIONS_ENDPOINT: '/listening-sessions',
+    INTERFACES_ENDPOINT: '/api/interfaces',
+    LISTEN_WS_ENDPOINT: '/listen/ws',
+    DEBUG: false,
+    LOG_LEVEL: 'info'
+};
+
+// Load environment-specific configuration
+function loadConfig() {
+    const config = { ...DEFAULT_CONFIG };
+    
+    // Try to load from process environment (Node.js context)
+    if (typeof process !== 'undefined' && process.env) {
+        Object.keys(DEFAULT_CONFIG).forEach(key => {
+            if (process.env[key]) {
+                // Convert string environment values to appropriate types
+                if (key === 'DEBUG') {
+                    config[key] = process.env[key] === 'true';
+                } else {
+                    config[key] = process.env[key];
+                }
+            }
+        });
     }
     
-    // Default to localhost for development
-    // UPDATE THIS for production deployment
-    return 'http://localhost:3001';
-})();
+    // Try to load from window.ENV (browser context - set by build process)
+    if (typeof window !== 'undefined' && window.ENV) {
+        Object.keys(DEFAULT_CONFIG).forEach(key => {
+            if (window.ENV[key] !== undefined) {
+                if (key === 'DEBUG') {
+                    config[key] = window.ENV[key] === 'true';
+                } else {
+                    config[key] = window.ENV[key];
+                }
+            }
+        });
+    }
+    
+    return config;
+}
 
-// Export for use in background.js
+// Load the configuration
+const CONFIG = loadConfig();
+
+// Export for different contexts
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { BACKEND_URL };
-} else {
-    // For browser/extension context
-    window.AGENT_CONFIG = { BACKEND_URL };
+    // Node.js/Background script context
+    module.exports = CONFIG;
+} else if (typeof window !== 'undefined') {
+    // Browser/Extension context
+    window.AGENT_CONFIG = CONFIG;
+}
+
+// Export as ES6 module for modern builds
+if (typeof window !== 'undefined') {
+    window.KELEDON_CONFIG = CONFIG;
 }

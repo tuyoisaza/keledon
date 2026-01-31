@@ -1,13 +1,16 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthGuard } from './guards/auth.guard';
+import { ConfigModule } from '../config/config.module';
+import { SupabaseModule } from './supabase/supabase.module';
+import { AuthModule } from './auth/auth.module';
+import { LocalServicesModule } from './local-services/local-services.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService, AuthGuard],
-  exports: [AuthGuard],
+  imports: [
+    ConfigModule,
+    SupabaseModule,
+    AuthModule,
+    LocalServicesModule,
+    // We'll add RAG, RPA, and WebSocket modules here as we implement them
+  ],
 })
 export class AppModule {}

@@ -40,7 +40,7 @@ const getWebSocketUrl = () => {
     }
     
     // Fallback to localhost for development
-    return 'ws://localhost:3001';
+    return import.meta.env.VITE_WS_URL || 'ws://localhost:3001';
 };
 
 export const WEBSOCKET_URL = getWebSocketUrl();

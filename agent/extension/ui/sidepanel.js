@@ -27,7 +27,7 @@ class SidePanelState {
             contextAware: false,
             saveHistory: true,
             analytics: false,
-            backendUrl: 'http://localhost:3001'
+            backendUrl: (window.AGENT_CONFIG?.BACKEND_URL || window.KELEDON_CONFIG?.BACKEND_URL || 'http://localhost:3001')
         };
         
         try {
@@ -961,6 +961,15 @@ let state, audioManager, rpaManager, tabManager, commandManager, uiManager;
 document.addEventListener('DOMContentLoaded', async () => {
     // Initialize state
     state = new SidePanelState();
+    
+    // Set default backend URL from config if available
+    const backendUrlInput = document.getElementById('backendUrl');
+    if (backendUrlInput && !backendUrlInput.value) {
+        const defaultUrl = backendUrlInput.getAttribute('data-default');
+        if (defaultUrl) {
+            backendUrlInput.value = defaultUrl;
+        }
+    }
     
     // Initialize managers
     audioManager = new AudioManager(state);

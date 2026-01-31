@@ -15,7 +15,7 @@ class ApiClient {
         // Check environment variable
         const envUrl = import.meta.env.VITE_API_URL;
         if (!envUrl || envUrl === '/') {
-            return 'http://localhost:3001';
+            return import.meta.env.VITE_API_URL || 'http://localhost:3001';
         }
         return envUrl;
     }
