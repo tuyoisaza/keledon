@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TtsProvider } from './capabilities/tts/interfaces/tts-provider.interface';
 import { ElevenLabsProvider } from './providers/elevenlabs.provider';
-import { MockTtsProvider } from './providers/mock-tts.provider';
 import { CoquiTtsProvider } from './providers/coqui-tts.provider';
 import { Qwen3TtsProvider } from './providers/qwen3-tts.provider';
 import { Socket } from 'socket.io';
@@ -14,11 +13,14 @@ export class TtsFactory {
         const socketId = client.id;
         let provider: TtsProvider;
 
-        const providerId = config.ttsProvider || config.provider || process.env.DEFAULT_TTS_PROVIDER || 'mock';
+        const providerId = config.ttsProvider || config.provider || process.env.DEFAULT_TTS_PROVIDER;
 
         if (providerId === 'elevenlabs') {
             const apiKey = config.apiKeys?.elevenlabs || process.env.ELEVENLABS_API_KEY;
-            provider = apiKey ? new ElevenLabsProvider(apiKey) : new MockTtsProvider();
+            if (!apiKey) {
+                throw new Error(`TTS Factory: ElevenLabs API key is required for ${socketId}. Mock providers have been removed.`);
+            }
+            provider = new ElevenLabsProvider(apiKey);
         } else if (providerId === 'coqui-xtts-v2') {
             provider = new CoquiTtsProvider({
                 apiUrl: config.coquiUrl || process.env.COQUI_TTS_URL,
@@ -36,7 +38,7 @@ export class TtsFactory {
                 voiceDescription: config.voice_description || config.voiceDescription || process.env.QWEN3_TTS_VOICE_DESCRIPTION,
             });
         } else {
-            provider = new MockTtsProvider();
+            throw new Error(`TTS Factory: Unsupported provider '${providerId}' for ${socketId}. Mock providers have been removed.`);
         }
 
         this.providers.set(socketId, provider);

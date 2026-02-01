@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { SttProvider } from './capabilities/stt/interfaces/stt-provider.interface';
-import { MockSttProvider } from './providers/mock.provider';
 import { DeepgramProvider } from './providers/deepgram.provider';
 import { WhisperXProvider } from './providers/whisperx.provider';
 import { LocalSttProvider } from './providers/local-stt.provider';
@@ -21,7 +20,7 @@ export class SttFactory {
         // Cleanup existing
         this.cleanup(socketId);
 
-        const providerId = config.sttProvider || config.provider || process.env.DEFAULT_STT_PROVIDER || 'mock';
+        const providerId = config.sttProvider || config.provider || process.env.DEFAULT_STT_PROVIDER;
         console.log(`Configuring STT for ${socketId}:`, providerId);
 
         let provider: SttProvider;
@@ -55,7 +54,7 @@ export class SttFactory {
             this.subscriptions.set(socketId, sub);
             provider = localProvider;
         } else {
-            provider = new MockSttProvider();
+            throw new Error(`STT Factory: Unsupported provider '${providerId}' for ${socketId}. Mock providers have been removed.`);
         }
 
         this.providers.set(socketId, provider);
