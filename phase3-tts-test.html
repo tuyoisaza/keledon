@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 3 Enhanced TTS Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #4a5568;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f7fafc;
+        }
+        .test-section h2 {
+            color: #2d3748;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4299e1;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+        }
+        button {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+        .error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+        .loading {
+            background: #feebc8;
+            color: #744210;
+            border: 1px solid #f6ad55;
+        }
+        .voice-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .voice-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .voice-card h4 {
+            margin: 0 0 10px 0;
+            color: #2d3748;
+        }
+        .voice-details {
+            font-size: 12px;
+            color: #718096;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Phase 3 Enhanced TTS Test Suite</h1>
+        
+        <!-- Basic Enhanced TTS Test -->
+        <div class="test-section">
+            <h2>🔊 Enhanced TTS Generation</h2>
+            <div class="form-group">
+                <label for="tts-text">Text to Speech:</label>
+                <textarea id="tts-text" rows="3" placeholder="Enter text for speech synthesis...">Hello! This is a test of the enhanced TTS system with emotion and voice controls.</textarea>
+            </div>
+            
+            <div class="two-column">
+                <div class="form-group">
+                    <label for="voice-id">Voice Profile:</label>
+                    <select id="voice-id">
+                        <option value="">Default Voice</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="emotion">Emotion:</label>
+                    <select id="emotion">
+                        <option value="neutral">Neutral</option>
+                        <option value="happy">Happy</option>
+                        <option value="sad">Sad</option>
+                        <option value="angry">Angry</option>
+                        <option value="excited">Excited</option>
+                        <option value="calm">Calm</option>
+                        <option value="confident">Confident</option>
+                        <option value="gentle">Gentle</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="two-column">
+                <div class="form-group">
+                    <label for="speed">Speed (0.5 - 2.0):</label>
+                    <input type="number" id="speed" min="0.5" max="2.0" step="0.1" value="1.0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="pitch">Pitch (-12 to +12):</label>
+                    <input type="number" id="pitch" min="-12" max="12" step="1" value="0">
+                </div>
+            </div>
+            
+            <div class="two-column">
+                <div class="form-group">
+                    <label for="quality">Quality:</label>
+                    <select id="quality">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                        <option value="ultra">Ultra</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="format">Audio Format:</label>
+                    <select id="format">
+                        <option value="mp3">MP3</option>
+                        <option value="wav">WAV</option>
+                        <option value="ogg">OGG</option>
+                        <option value="webm">WebM</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button onclick="testEnhancedTTS()">Generate Enhanced Speech</button>
+            <button onclick="testSSML()">Test SSML</button>
+            <button onclick="testBatchTTS()">Test Batch TTS</button>
+            <div id="tts-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- Voice Profile Management -->
+        <div class="test-section">
+            <h2>👥 Voice Profile Management</h2>
+            <button onclick="loadVoices()">Load All Voices</button>
+            <button onclick="showCreateVoiceForm()">Create New Voice</button>
+            <button onclick="testVoiceCloning()">Test Voice Cloning</button>
+            <button onclick="testVoiceMixing()">Test Voice Mixing</button>
+            
+            <div id="voice-list" class="voice-list"></div>
+            <div id="voice-management-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- Cache and Performance -->
+        <div class="test-section">
+            <h2>⚡ Cache & Performance</h2>
+            <button onclick="getCacheStats()">Get Cache Stats</button>
+            <button onclick="clearCache()">Clear Cache</button>
+            <div id="cache-result" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001/api/tts';
+        
+        // Load voices on page load
+        window.onload = function() {
+            loadVoices();
+        };
+        
+        async function loadVoices() {
+            try {
+                showResult('voice-management-result', 'Loading voices...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/voices`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const voiceSelect = document.getElementById('voice-id');
+                    const voiceList = document.getElementById('voice-list');
+                    
+                    // Clear existing options
+                    voiceSelect.innerHTML = '<option value="">Default Voice</option>';
+                    voiceList.innerHTML = '';
+                    
+                    // Add voices to select and list
+                    result.data.voices.forEach(voice => {
+                        const option = document.createElement('option');
+                        option.value = voice.id;
+                        option.textContent = `${voice.name} (${voice.gender})`;
+                        voiceSelect.appendChild(option);
+                        
+                        const voiceCard = document.createElement('div');
+                        voiceCard.className = 'voice-card';
+                        voiceCard.innerHTML = `
+                            <h4>${voice.name}</h4>
+                            <div class="voice-details">
+                                <strong>ID:</strong> ${voice.id}<br>
+                                <strong>Gender:</strong> ${voice.gender}<br>
+                                <strong>Age:</strong> ${voice.age}<br>
+                                <strong>Accent:</strong> ${voice.accent}<br>
+                                <strong>Custom:</strong> ${voice.isCustom ? 'Yes' : 'No'}<br>
+                                <strong>Pitch:</strong> ${voice.characteristics.pitch}<br>
+                                <strong>Speed:</strong> ${voice.characteristics.speed}<br>
+                                <strong>Volume:</strong> ${voice.characteristics.volume}
+                            </div>
+                        `;
+                        voiceList.appendChild(voiceCard);
+                    });
+                    
+                    showResult('voice-management-result', 
+                        `Loaded ${result.data.voices.length} voice profiles (${result.data.custom} custom, ${result.data.builtin} builtin)`, 
+                        'success');
+                } else {
+                    showResult('voice-management-result', `Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('voice-management-result', `Error loading voices: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testEnhancedTTS() {
+            const options = {
+                text: document.getElementById('tts-text').value,
+                voiceId: document.getElementById('voice-id').value || undefined,
+                emotion: document.getElementById('emotion').value,
+                speed: parseFloat(document.getElementById('speed').value),
+                pitch: parseInt(document.getElementById('pitch').value),
+                quality: document.getElementById('quality').value,
+                format: document.getElementById('format').value
+            };
+            
+            try {
+                showResult('tts-result', 'Generating enhanced speech...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/enhanced-generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(options)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const metadata = result.data.metadata;
+                    const output = `
+✅ Enhanced TTS Generation Successful!
+
+📊 Results:
+• Duration: ${result.data.duration}ms
+• Format: ${result.data.format}
+• Quality: ${result.data.quality}
+• Voice: ${result.data.voice.name} (${result.data.voice.gender})
+• Emotion: ${result.data.emotion || 'Neutral'}
+
+⚡ Performance:
+• Processing Time: ${metadata.processingTime}ms
+• Characters: ${metadata.characters}
+• Words: ${metadata.words}
+• Cache Hit: ${metadata.cacheHit ? 'Yes' : 'No'}
+• Provider: ${metadata.provider}
+
+🎵 Audio Data (first 100 chars):
+${result.data.audioData.substring(0, 100)}...
+
+🗣️ Word Timings:
+${result.data.wordTimings.map(timing => 
+    `• "${timing.word}": ${timing.startTime}ms - ${timing.endTime}ms (${Math.round(timing.confidence * 100)}% confidence)`
+).join('\n')}
+                    `;
+                    showResult('tts-result', output, 'success');
+                } else {
+                    showResult('tts-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('tts-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testSSML() {
+            const ssmlContent = `
+<speak>
+    <voice name="female">
+        <prosody rate="0.9" pitch="+2st">
+            Hello <emphasis level="strong">world</emphasis>!
+        </prosody>
+        <break time="500ms"/>
+        <prosody rate="1.1" emotion="happy">
+            This is a <emphasis level="moderate">test</emphasis> of SSML support.
+        </prosody>
+    </voice>
+</speak>`;
+            
+            try {
+                showResult('tts-result', 'Processing SSML...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/ssml`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ssml: ssmlContent,
+                        quality: 'high',
+                        format: 'mp3'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const output = `
+✅ SSML Processing Successful!
+
+📝 Input SSML:
+${ssmlContent}
+
+📊 Results:
+• Duration: ${result.data.duration}ms
+• Format: ${result.data.format}
+• Quality: ${result.data.quality}
+• Processing Time: ${result.data.metadata.processingTime}ms
+• Provider: ${result.data.metadata.provider}
+
+🎵 Audio Data (first 100 chars):
+${result.data.audioData.substring(0, 100)}...
+                    `;
+                    showResult('tts-result', output, 'success');
+                } else {
+                    showResult('tts-result', `❌ SSML Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('tts-result', `❌ SSML Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testBatchTTS() {
+            const batchRequest = {
+                items: [
+                    {
+                        text: "First test sentence with happy emotion",
+                        emotion: "happy",
+                        speed: 1.2,
+                        quality: "medium"
+                    },
+                    {
+                        text: "Second test sentence with calm emotion",
+                        emotion: "calm",
+                        speed: 0.9,
+                        quality: "high"
+                    },
+                    {
+                        text: "Third test sentence with excited emotion",
+                        emotion: "excited",
+                        speed: 1.5,
+                        quality: "ultra"
+                    }
+                ],
+                priority: "normal"
+            };
+            
+            try {
+                showResult('tts-result', 'Processing batch TTS...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/batch`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(batchRequest)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    const output = `
+✅ Batch TTS Processing Successful!
+
+📊 Batch Results:
+• Request ID: ${data.requestId}
+• Status: ${data.status}
+• Successful: ${data.results.length}
+• Failed: ${data.errors.length}
+• Total Processing Time: ${data.totalProcessingTime}ms
+
+🎵 Individual Results:
+${data.results.map((item, index) => `
+Item ${index + 1}:
+• Duration: ${item.duration}ms
+• Format: ${item.format}
+• Voice: ${item.voice.name}
+• Emotion: ${item.emotion || 'Neutral'}
+• Processing Time: ${item.metadata.processingTime}ms
+`).join('\n')}
+
+❌ Errors (if any):
+${data.errors.length > 0 ? data.errors.map(err => 
+    `• Item ${err.index}: ${err.error}`
+).join('\n') : 'None'}
+                    `;
+                    showResult('tts-result', output, 'success');
+                } else {
+                    showResult('tts-result', `❌ Batch Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('tts-result', `❌ Batch Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testVoiceCloning() {
+            const cloneRequest = {
+                name: "Test Cloned Voice",
+                samples: [
+                    {
+                        text: "This is a sample for voice cloning",
+                        audioData: btoa("sample audio data 1"),
+                        format: "mp3"
+                    },
+                    {
+                        text: "Another sample for analysis",
+                        audioData: btoa("sample audio data 2"),
+                        format: "mp3"
+                    }
+                ]
+            };
+            
+            try {
+                showResult('voice-management-result', 'Testing voice cloning...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/voices/clone`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cloneRequest)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const voice = result.data;
+                    const output = `
+✅ Voice Cloning Successful!
+
+👥 New Voice Profile:
+• Name: ${voice.name}
+• ID: ${voice.id}
+• Gender: ${voice.gender}
+• Age: ${voice.age}
+• Accent: ${voice.accent}
+
+🎵 Voice Characteristics:
+• Pitch: ${voice.characteristics.pitch}
+• Speed: ${voice.characteristics.speed}
+• Volume: ${voice.characteristics.volume}
+• Warmth: ${voice.characteristics.warmth}
+• Clarity: ${voice.characteristics.clarity}
+• Breathiness: ${voice.characteristics.breathiness}
+
+📝 Description: ${voice.description}
+🔧 Custom: ${voice.isCustom ? 'Yes' : 'No'}
+📅 Created: ${voice.createdAt}
+                    `;
+                    showResult('voice-management-result', output, 'success');
+                    // Reload voices to show the new one
+                    setTimeout(loadVoices, 1000);
+                } else {
+                    showResult('voice-management-result', `❌ Cloning Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('voice-management-result', `❌ Cloning Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testVoiceMixing() {
+            // Get first two voices for mixing
+            const voicesResponse = await fetch(`${API_BASE}/voices`);
+            const voicesResult = await voicesResponse.json();
+            
+            if (!voicesResult.success || voicesResult.data.voices.length < 2) {
+                showResult('voice-management-result', '❌ Need at least 2 voices for mixing', 'error');
+                return;
+            }
+            
+            const voices = voicesResult.data.voices;
+            const mixRequest = {
+                voiceId1: voices[0].id,
+                voiceId2: voices[1].id,
+                mixRatio: 0.6,
+                name: "Test Mixed Voice"
+            };
+            
+            try {
+                showResult('voice-management-result', 'Testing voice mixing...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/voices/mix`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(mixRequest)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const voice = result.data;
+                    const output = `
+✅ Voice Mixing Successful!
+
+👥 Mixed Voice Profile:
+• Name: ${voice.name}
+• ID: ${voice.id}
+• Gender: ${voice.gender}
+• Age: ${voice.age}
+• Accent: ${voice.accent}
+
+🎵 Mixed Characteristics (60% ${voices[0].name} + 40% ${voices[1].name}):
+• Pitch: ${voice.characteristics.pitch}
+• Speed: ${voice.characteristics.speed}
+• Volume: ${voice.characteristics.volume}
+• Warmth: ${voice.characteristics.warmth}
+• Clarity: ${voice.characteristics.clarity}
+• Breathiness: ${voice.characteristics.breathiness}
+
+📝 Description: ${voice.description}
+🔧 Custom: ${voice.isCustom ? 'Yes' : 'No'}
+📅 Created: ${voice.createdAt}
+                    `;
+                    showResult('voice-management-result', output, 'success');
+                    // Reload voices to show the new one
+                    setTimeout(loadVoices, 1000);
+                } else {
+                    showResult('voice-management-result', `❌ Mixing Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('voice-management-result', `❌ Mixing Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function getCacheStats() {
+            try {
+                showResult('cache-result', 'Getting cache statistics...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/cache/stats`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const stats = result.data;
+                    const output = `
+📊 Cache Statistics:
+• Cache Size: ${stats.size} entries
+• Hit Rate: ${Math.round(stats.hitRate * 100)}%
+
+💡 Cache is working ${stats.hitRate > 0.5 ? 'efficiently' : 'suboptimally'}
+                    `;
+                    showResult('cache-result', output, 'success');
+                } else {
+                    showResult('cache-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('cache-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function clearCache() {
+            try {
+                showResult('cache-result', 'Clearing cache...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/cache`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('cache-result', '✅ Cache cleared successfully!', 'success');
+                } else {
+                    showResult('cache-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('cache-result', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function showResult(elementId, message, type) {
+            const resultElement = document.getElementById(elementId);
+            resultElement.textContent = message;
+            resultElement.className = `result ${type}`;
+            resultElement.style.display = 'block';
+        }
+        
+        function showCreateVoiceForm() {
+            const name = prompt("Enter voice name:");
+            if (!name) return;
+            
+            const gender = prompt("Enter gender (male/female/child):");
+            if (!gender) return;
+            
+            const description = prompt("Enter description (optional):");
+            
+            const createRequest = {
+                name: name,
+                gender: gender.toLowerCase(),
+                characteristics: {
+                    pitch: 0,
+                    speed: 1.0,
+                    volume: 80,
+                    warmth: 70,
+                    clarity: 80,
+                    breathiness: 20
+                },
+                description: description || `Custom ${gender} voice: ${name}`
+            };
+            
+            fetch(`${API_BASE}/voices`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(createRequest)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showResult('voice-management-result', 
+                        `✅ Voice "${result.data.name}" created successfully!`, 'success');
+                    setTimeout(loadVoices, 1000);
+                } else {
+                    showResult('voice-management-result', `❌ Error: ${result.message}`, 'error');
+                }
+            })
+            .catch(error => {
+                showResult('voice-management-result', `❌ Error: ${error.message}`, 'error');
+            });
+        }
+    </script>
+</body>
+</html>

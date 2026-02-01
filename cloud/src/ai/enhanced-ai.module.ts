@@ -1,33 +1,48 @@
 import { Module } from '@nestjs/common';
-import { AgentCoordinationController } from './agent-orchestrator.controller';
-import { ConversationOrchestratorService } from '../orchestration/conversation-orchestrator.service';
-import { MultimodalProcessorService } from '../multimodal/multimodal-processor.service';
-import { IntelligentRPAService } from '../automation/intelligent-rpa.service';
-import { AgentCoordinationService } from './coordination/agent-orchestrator.service';
-import { ConfigModule } from '../../config/config.module';
+import { ConfigModule } from '../config/config.module';
+import { RAGService } from './rag/rag.service';
+import { FlowExecutionEngine } from './flow/flow-execution-engine.service';
+import { EnhancedRPAService } from './rpa/enhanced-rpa.service';
+import { SidePanelService } from './side-panel/side-panel.service';
+import { EnhancedConversationOrchestratorService } from './orchestration/enhanced-conversation-orchestrator.service';
+import { OrchestrationController } from './orchestration/orchestration.controller';
+import { GenesysIntegrationService } from './integration/genesys-integration.service';
 
+/**
+ * 🧠 Enhanced AI Module
+ * Complete Conversations Orchestrator with RAG, Flow, RPA, and Side Panel integration
+ */
 @Module({
   imports: [
     ConfigModule,
-    AgentCoordinationController,
-    ConversationOrchestratorService,
-    MultimodalProcessorService,
-    IntelligentRPAService,
-    AgentCoordinationService
+    // Core AI Services
+    // RAG and Vector Database
+    // Flow Execution Engine
+    // Enhanced RPA Service
+    // Side Panel WebSocket
+    // Enhanced Conversation Orchestrator
+    // External Integrations
   ],
-  controllers: [AgentCoordinationController],
+  controllers: [
+    OrchestrationController,
+  ],
   providers: [
-    AgentCoordinationService,
-    ConversationOrchestratorService,
-    MultimodalProcessorService,
-    IntelligentRPAService,
-    AgentCoordinationService
+    // Core AI Services
+    RAGService,
+    FlowExecutionEngine,
+    EnhancedRPAService,
+    SidePanelService,
+    EnhancedConversationOrchestratorService,
+    GenesysIntegrationService,
   ],
   exports: [
-    AgentCoordinationService,
-    ConversationOrchestratorService,
-    MultimodalProcessorService,
-    IntelligentRPAService
-  ]
+    // Core AI Services
+    RAGService,
+    FlowExecutionEngine,
+    EnhancedRPAService,
+    SidePanelService,
+    EnhancedConversationOrchestratorService,
+    GenesysIntegrationService,
+  ],
 })
 export class EnhancedAIModule {}

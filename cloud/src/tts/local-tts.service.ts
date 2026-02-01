@@ -17,9 +17,8 @@ export class LocalTTSService {
         success: true,
         audioData: mockAudioData,
         duration: this.calculateDuration(text),
-        provider: 'local-mock',
-        voice
-      };
+        
+        };
     } catch (error) {
       console.error('[Local TTS] Error generating speech:', error);
       throw error;

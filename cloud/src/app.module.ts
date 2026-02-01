@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '../config/config.module';
-import { SupabaseModule } from './supabase/supabase.module';
-import { AuthModule } from './auth/auth.module';
-import { LocalServicesModule } from './local-services/local-services.module';
+import { ConfigModule } from './config/config.module';
+import { EnhancedTTSModule } from './tts/enhanced-tts.module';
 
 @Module({
   imports: [
     ConfigModule,
-    SupabaseModule,
-    AuthModule,
-    LocalServicesModule,
+    EnhancedTTSModule,
+    // Temporarily exclude auth/supabase modules to focus on TTS
+    // SupabaseModule,
+    // AuthModule,
+    // LocalServicesModule,
     // We'll add RAG, RPA, and WebSocket modules here as we implement them
   ],
 })

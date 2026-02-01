@@ -9,7 +9,7 @@ export class TTSController {
   @Post('qwen3-tts')
   async generateSpeech(@Body() body: { text: string; voice?: string }) {
     try {
-      console.log('[TTS Controller] Generate speech request:', { text, hasVoice: !!body.voice });
+      console.log('[TTS Controller] Generate speech request:', { text: body.text, hasVoice: !!body.voice });
       
       const result = await this.localTTSService.generateText(body.text, body.voice);
       
@@ -18,8 +18,7 @@ export class TTSController {
         message: 'TTS generated successfully',
         audioData: result.audioData,
         duration: result.duration,
-        provider: result.provider,
-        voice: result.voice
+        
       };
     } catch (error) {
       console.error('[TTS Controller] Error generating speech:', error);
@@ -34,7 +33,7 @@ export class TTSController {
   @Post('elevenlabs')
   async generateElevenLabsSpeech(@Body() body: { text: string; voice_id?: string }) {
     try {
-      console.log('[TTS Controller] ElevenLabs request:', { text, voiceId: body.voice_id });
+      console.log('[TTS Controller] ElevenLabs request:', { text: body.text, voiceId: body.voice_id });
       
       // For now, use local TTS as fallback
       const result = await this.localTTSService.generateText(body.text, body.voice_id);

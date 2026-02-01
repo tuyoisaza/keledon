@@ -8,10 +8,9 @@ export class STTController {
   @Post('whisper')
   async transcribeAudio(@Body() audio: { audio: string }) {
     try {
-      console.log('[STT Controller] Transcription request: audio size:', audio.length);
+console.log('[STT Controller] Transcription request: audio size:', audio.audio?.length || 0);
       
-      // Convert base64 audio to ArrayBuffer
-      const audioBuffer = this.base64ToArrayBuffer(audio);
+      const audioBuffer = this.base64ToArrayBuffer(audio.audio);
       
       const result = await this.localSTTService.transcribeAudio(audioBuffer);
       
@@ -21,7 +20,7 @@ export class STTController {
         transcript: result.transcript,
         confidence: result.confidence,
         duration: result.duration,
-        provider: result.provider
+        
       };
     } catch (error) {
       console.error('[STT Controller] Error transcribing audio:', error);
@@ -36,10 +35,9 @@ export class STTController {
   @Post('deepgram')
   async transcribeAudioWithDeepgram(@Body() audio: { audio: string }) {
     try {
-      console.log('[STT Controller] Deepgram request: audio size:', audio.length);
+console.log('[STT Controller] Deepgram request: audio size:', audio.audio?.length || 0);
       
-      // For now, use local STT as fallback
-      const audioBuffer = this.base64ToArrayBuffer(audio);
+      const audioBuffer = this.base64ToArrayBuffer(audio.audio);
       
       const result = await this.localSTTService.transcribeAudio(audioBuffer);
       

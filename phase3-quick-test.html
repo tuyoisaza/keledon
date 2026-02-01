@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 3 Quick TTS Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Phase 3 Quick TTS Test</h1>
+        
+        <div class="form-group">
+            <label for="text">Text to Speech:</label>
+            <textarea id="text" rows="3">Hello! This is a test of the enhanced TTS system.</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="voice">Voice:</label>
+            <select id="voice">
+                <option value="">Default</option>
+                <option value="default-female">Sarah (Female)</option>
+                <option value="default-male">James (Male)</option>
+                <option value="child-voice">Lily (Child)</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="emotion">Emotion:</label>
+            <select id="emotion">
+                <option value="neutral">Neutral</option>
+                <option value="happy">Happy</option>
+                <option value="excited">Excited</option>
+                <option value="calm">Calm</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="quality">Quality:</label>
+            <select id="quality">
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="ultra">Ultra</option>
+            </select>
+        </div>
+        
+        <button onclick="testBasicTTS()">Test Basic TTS</button>
+        <button onclick="testEnhancedTTS()">Test Enhanced TTS</button>
+        <button onclick="testVoices()">Get Voices</button>
+        <button onclick="clearResults()">Clear Results</button>
+        
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001/api/tts';
+        
+        function showResult(message, type) {
+            const resultElement = document.getElementById('result');
+            resultElement.textContent = message;
+            resultElement.className = `result ${type}`;
+            resultElement.style.display = 'block';
+        }
+        
+        function clearResults() {
+            document.getElementById('result').style.display = 'none';
+        }
+        
+        async function testBasicTTS() {
+            const text = document.getElementById('text').value;
+            const voice = document.getElementById('voice').value;
+            
+            if (!text.trim()) {
+                showResult('Please enter some text', 'error');
+                return;
+            }
+            
+            try {
+                showResult('Testing basic TTS...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/qwen3-tts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, voice })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const output = `
+✅ Basic TTS Success!
+• Duration: ${result.duration}ms
+• Message: ${result.message}
+• Audio Data: ${result.audioData?.substring(0, 100)}...
+                    `;
+                    showResult(output, 'success');
+                } else {
+                    showResult(`❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testEnhancedTTS() {
+            const options = {
+                text: document.getElementById('text').value,
+                voiceId: document.getElementById('voice').value || undefined,
+                emotion: document.getElementById('emotion').value,
+                quality: document.getElementById('quality').value,
+                speed: 1.0,
+                pitch: 0,
+                volume: 80
+            };
+            
+            if (!options.text.trim()) {
+                showResult('Please enter some text', 'error');
+                return;
+            }
+            
+            try {
+                showResult('Testing enhanced TTS...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/enhanced-generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(options)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    const metadata = data.metadata;
+                    const output = `
+✅ Enhanced TTS Success!
+📊 Results:
+• Duration: ${data.duration}ms
+• Format: ${data.format}
+• Quality: ${data.quality}
+• Voice: ${data.voice?.name} (${data.voice?.gender})
+• Emotion: ${data.emotion || 'Neutral'}
+
+⚡ Performance:
+• Processing Time: ${metadata.processingTime}ms
+• Characters: ${metadata.characters}
+• Words: ${metadata.words}
+• Cache Hit: ${metadata.cacheHit ? 'Yes' : 'No'}
+• Provider: ${metadata.provider}
+
+🎵 Audio Data: ${data.audioData?.substring(0, 100)}...
+                    `;
+                    showResult(output, 'success');
+                } else {
+                    showResult(`❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testVoices() {
+            try {
+                showResult('Loading voices...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/voices`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const voices = result.data.voices;
+                    let output = `📋 Available Voices (${voices.length} total):\n\n`;
+                    
+                    voices.forEach(voice => {
+                        output += `• ${voice.name} (${voice.gender})\n`;
+                        output += `  ID: ${voice.id}\n`;
+                        output += `  Age: ${voice.age}\n`;
+                        output += `  Accent: ${voice.accent}\n`;
+                        output += `  Custom: ${voice.isCustom ? 'Yes' : 'No'}\n`;
+                        output += `  Pitch: ${voice.characteristics?.pitch || 0}\n`;
+                        output += `  Speed: ${voice.characteristics?.speed || 1.0}\n`;
+                        output += `  Volume: ${voice.characteristics?.volume || 80}\n\n`;
+                    });
+                    
+                    output += `Summary:\n• Total: ${result.data.total}\n• Custom: ${result.data.custom}\n• Built-in: ${result.data.builtin}`;
+                    
+                    showResult(output, 'success');
+                } else {
+                    showResult(`❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

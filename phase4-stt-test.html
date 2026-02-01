@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 4 Enhanced STT Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #4a5568;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f7fafc;
+        }
+        .test-section h2 {
+            color: #2d3748;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4299e1;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4299e1;
+        }
+        button {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 12px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+        @media (max-width: 768px) {
+            .two-column, .three-column {
+                grid-template-columns: 1fr;
+            }
+        }
+        .streaming-status {
+            padding: 15px;
+            background: #e6fffa;
+            border: 1px solid #81e6d9;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .speaker-segment {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f0fff4;
+            border-left: 4px solid #9ae6b4;
+            border-radius: 3px;
+        }
+        .emotion-indicator {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .emotion-happy { background: #d4edda; color: #155724; }
+        .emotion-sad { background: #ddd6fe; color: #5a67d8; }
+        .emotion-angry { background: #fed7d7; color: #742a2a; }
+        .emotion-neutral { background: #e2e8f0; color: #4a5568; }
+        .emotion-excited { background: #fef5e7; color: #d69e2e; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Phase 4 Enhanced STT Test Suite</h1>
+        
+        <!-- Basic Enhanced STT Test -->
+        <div class="test-section">
+            <h2>🎙️ Enhanced Speech Recognition</h2>
+            <div class="form-group">
+                <label for="audio-data">Audio Data (Base64):</label>
+                <textarea id="audio-data" rows="3" placeholder="Enter base64 encoded audio data...">SGVsbG8sIGEgc2FtcGxlIG9mIGF1ZGlvZGF0YQ==</textarea>
+            </div>
+            
+            <div class="three-column">
+                <div class="form-group">
+                    <label for="language">Language:</label>
+                    <select id="language">
+                        <option value="en-US">English (US)</option>
+                        <option value="es-ES">Spanish (Spain)</option>
+                        <option value="fr-FR">French (France)</option>
+                        <option value="de-DE">German</option>
+                        <option value="zh-CN">Chinese (Simplified)</option>
+                        <option value="ja-JP">Japanese</option>
+                        <option value="auto">Auto Detect</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="quality">Quality:</label>
+                    <select id="quality">
+                        <option value="fast">Fast</option>
+                        <option value="balanced" selected>Balanced</option>
+                        <option value="accurate">Accurate</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="format">Audio Format:</label>
+                    <select id="format">
+                        <option value="wav">WAV</option>
+                        <option value="mp3">MP3</option>
+                        <option value="ogg">OGG</option>
+                        <option value="webm">WebM</option>
+                        <option value="flac">FLAC</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="two-column">
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="enable-diarization" checked> Enable Speaker Diarization
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="enable-emotion" checked> Enable Emotion Detection
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="noise-reduction" checked> Enable Noise Reduction
+                </label>
+            </div>
+            
+            <button onclick="testEnhancedSTT()">Enhanced Transcription</button>
+            <button onclick="testBatchSTT()">Batch Processing</button>
+            <button onclick="testLanguageDetection()">Language Detection</button>
+            <button onclick="testEmotionDetection()">Emotion Detection</button>
+            <div id="stt-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- Speaker Diarization Test -->
+        <div class="test-section">
+            <h2>👥 Speaker Diarization</h2>
+            <button onclick="testSpeakerDiarization()">Test Speaker Identification</button>
+            <button onclick="testSpeakerProfiles()">Test Speaker Profiles</button>
+            <button onclick="createSpeakerProfile()">Create Speaker Profile</button>
+            <div id="diarization-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- Streaming Transcription Test -->
+        <div class="test-section">
+            <h2>🌊 Real-Time Streaming</h2>
+            <div class="two-column">
+                <div class="form-group">
+                    <label for="stream-sample-rate">Sample Rate:</label>
+                    <select id="stream-sample-rate">
+                        <option value="8000">8000 Hz</option>
+                        <option value="16000" selected>16000 Hz</option>
+                        <option value="44100">44100 Hz</option>
+                        <option value="48000">48000 Hz</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="stream-format">Format:</label>
+                    <select id="stream-format">
+                        <option value="wav" selected>WAV</option>
+                        <option value="mp3">MP3</option>
+                        <option value="ogg">OGG</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="two-column">
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="enable-partial-results" checked> Enable Partial Results
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="chunk-size">Chunk Size (ms):</label>
+                    <input type="number" id="chunk-size" value="100" min="50" max="500">
+                </div>
+            </div>
+            
+            <button onclick="startStreamingSession()">Start Streaming Session</button>
+            <button onclick="sendAudioChunk()">Send Audio Chunk</button>
+            <button onclick="endStreamingSession()">End Session</button>
+            <button onclick="getStreamingStatus()">Get Session Status</button>
+            
+            <div id="streaming-status" class="streaming-status" style="display: none;"></div>
+            <div id="streaming-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- Audio Quality Assessment -->
+        <div class="test-section">
+            <h2>🔍 Audio Quality Assessment</h2>
+            <button onclick="testAudioQuality()">Assess Audio Quality</button>
+            <div id="quality-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- Cache and Performance -->
+        <div class="test-section">
+            <h2>⚡ Cache & Performance</h2>
+            <button onclick="testAccurateMode()">Test Accurate Mode</button>
+            <button onclick="getSTTCacheStats()">Get STT Cache Stats</button>
+            <button onclick="clearSTTCache()">Clear STT Cache</button>
+            <button onclick="getSupportedLanguages()">Get Supported Languages</button>
+            <div id="cache-result" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001/api/stt';
+        let currentStreamSessionId = null;
+        
+        function showResult(elementId, message, type) {
+            const resultElement = document.getElementById(elementId);
+            resultElement.textContent = message;
+            resultElement.className = `result ${type}`;
+            resultElement.style.display = 'block';
+        }
+        
+        function clearResults() {
+            ['stt-result', 'diarization-result', 'streaming-result', 'quality-result', 'cache-result'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+            document.getElementById('streaming-status').style.display = 'none';
+        }
+        
+        async function testEnhancedSTT() {
+            clearResults();
+            
+            const options = {
+                audio: document.getElementById('audio-data').value,
+                language: document.getElementById('language').value === 'auto' ? undefined : document.getElementById('language').value,
+                quality: document.getElementById('quality').value,
+                format: document.getElementById('format').value,
+                enableDiarization: document.getElementById('enable-diarization').checked,
+                enableEmotion: document.getElementById('enable-emotion').checked,
+                enableLanguageDetection: document.getElementById('language').value === 'auto',
+                noiseReduction: document.getElementById('noise-reduction').checked
+            };
+            
+            try {
+                showResult('stt-result', 'Processing enhanced transcription...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/enhanced-transcribe`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(options)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    let output = `✅ Enhanced Transcription Success!
+
+📝 Transcript: ${data.transcript}
+
+📊 Results:
+• Duration: ${data.duration}ms
+• Language: ${data.language}
+• Quality: ${data.quality}
+• Confidence: ${Math.round(data.confidence * 100)}%
+
+⚡ Performance:
+• Processing Time: ${data.metadata.processingTime}ms
+• Characters: ${data.metadata.characters}
+• Words: ${data.metadata.words}
+• Detected Language: ${data.metadata.detectedLanguage || 'Specified'}
+• Noise Level: ${Math.round(data.metadata.noiseLevel)}%
+• Volume Level: ${Math.round(data.metadata.volumeLevel)}%
+`;
+                    
+                    if (data.speakerSegments && data.speakerSegments.length > 0) {
+                        output += `\n👥 Speaker Segments:\n${data.speakerSegments.map(segment => 
+                            `• ${segment.speakerLabel}: "${segment.text}" (${Math.round(segment.confidence * 100)}% confidence)`
+                        ).join('\n')}`;
+                    }
+                    
+                    if (data.emotion) {
+                        output += `\n😊 Emotion Detection:
+• Primary: ${data.emotion.primary} (${Math.round(data.emotion.confidence * 100)}%)
+• Overall: Positive=${Math.round(data.emotion.overall.positive * 100)}%, Negative=${Math.round(data.emotion.overall.negative * 100)}%, Energetic=${Math.round(data.emotion.overall.energetic * 100)}%`;
+                    }
+                    
+                    if (data.audioQuality) {
+                        output += `\n🔍 Audio Quality:
+• Overall Score: ${data.audioQuality.overallScore}/100
+• Clarity: ${data.audioQuality.clarity}/100
+• Speech-to-Noise Ratio: ${data.audioQuality.speechToNoiseRatio} dB
+• Issues: ${data.audioQuality.qualityIssues.length}`;
+                    }
+                    
+                    showResult('stt-result', output, 'success');
+                } else {
+                    showResult('stt-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('stt-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testBatchSTT() {
+            clearResults();
+            
+            const batchRequest = {
+                items: [
+                    {
+                        audio: document.getElementById('audio-data').value,
+                        language: 'en-US',
+                        quality: 'balanced',
+                        enableEmotion: true
+                    },
+                    {
+                        audio: document.getElementById('audio-data').value,
+                        language: 'es-ES',
+                        quality: 'fast',
+                        enableDiarization: true
+                    },
+                    {
+                        audio: document.getElementById('audio-data').value,
+                        language: 'fr-FR',
+                        quality: 'accurate',
+                        enableEmotion: true,
+                        enableDiarization: true
+                    }
+                ],
+                priority: 'normal',
+                enableParallel: true
+            };
+            
+            try {
+                showResult('stt-result', 'Processing batch transcription...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/batch`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(batchRequest)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    const output = `✅ Batch Processing Completed!
+
+📊 Batch Results:
+• Request ID: ${data.requestId}
+• Status: ${data.status}
+• Success Count: ${data.successCount}
+• Error Count: ${data.errorCount}
+• Total Processing Time: ${data.totalProcessingTime}ms
+• Parallel Processing: ${data.parallelProcessing ? 'Yes' : 'No'}
+
+📝 Individual Results:
+${data.results.map((item, index) => `
+Result ${index + 1}:
+• Transcript: ${item.transcript}
+• Language: ${item.language}
+• Confidence: ${Math.round(item.confidence * 100)}%
+• Duration: ${item.duration}ms
+• Words: ${item.metadata.words}
+`).join('')}`;
+                    
+                    if (data.errors && data.errors.length > 0) {
+                        output += `\n❌ Errors:\n${data.errors.map(err => 
+                            `• Item ${err.index}: ${err.error}`
+                        ).join('\n')}`;
+                    }
+                    
+                    showResult('stt-result', output, 'success');
+                } else {
+                    showResult('stt-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('stt-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testLanguageDetection() {
+            clearResults();
+            
+            try {
+                showResult('stt-result', 'Detecting language...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/language-detect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ audio: document.getElementById('audio-data').value })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    const output = `✅ Language Detection Completed!
+
+🌍 Detected Language: ${data.detectedLanguage}
+• Confidence: ${Math.round(data.confidence * 100)}%
+• Alternatives: ${data.alternatives.length}
+`;
+                    
+                    showResult('stt-result', output, 'success');
+                } else {
+                    showResult('stt-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('stt-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testEmotionDetection() {
+            clearResults();
+            
+            try {
+                showResult('stt-result', 'Detecting emotion...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/emotion-detect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        audio: document.getElementById('audio-data').value,
+                        language: 'en-US',
+                        enableEmotion: true
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    const output = `✅ Emotion Detection Completed!
+
+😊 Emotion Analysis:
+• Primary Emotion: ${data.emotion.primary}
+• Primary Confidence: ${Math.round(data.emotion.confidence * 100)}%
+• Secondary Emotion: ${data.emotion.secondary || 'None'}
+• Secondary Confidence: ${data.emotion.secondaryConfidence ? Math.round(data.emotion.secondaryConfidence * 100) + '%' : 'N/A'}
+
+📊 Overall Emotional Profile:
+• Positive: ${Math.round(data.emotion.overall.positive * 100)}%
+• Negative: ${Math.round(data.emotion.overall.negative * 100)}%
+• Neutral: ${Math.round(data.emotion.overall.neutral * 100)}%
+• Energetic: ${Math.round(data.emotion.overall.energetic * 100)}%
+• Calm: ${Math.round(data.emotion.overall.calm * 100)}%
+
+📝 Transcript: ${data.transcript}
+• Confidence: ${Math.round(data.confidence * 100)}%
+`;
+                    
+                    showResult('stt-result', output, 'success');
+                } else {
+                    showResult('stt-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('stt-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testSpeakerDiarization() {
+            clearResults();
+            
+            try {
+                showResult('diarization-result', 'Performing speaker diarization...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/diarize`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        audio: document.getElementById('audio-data').value,
+                        language: 'en-US',
+                        maxSpeakers: 3,
+                        enableEmotionDetection: true
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    const output = `✅ Speaker Diarization Completed!
+
+👥 Speakers Identified: ${data.speakerCount}
+
+📝 Speaker Details:
+${data.speakers.map(speaker => `
+• ${speaker.label}: ${speaker.duration}ms, ${speaker.wordCount} words
+  Gender: ${speaker.gender}, Age: ${speaker.age}
+  Emotion: ${speaker.emotion || 'Unknown'}
+  Confidence: ${Math.round(speaker.confidence * 100)}%
+`).join('')}
+
+🗂 Speaker Segments:
+${data.segments.map(segment => `
+• ${segment.speakerLabel}: "${segment.text}"
+  Time: ${segment.startTime}ms - ${segment.endTime}ms
+  Duration: ${segment.duration}ms
+  Words: ${segment.wordCount}
+  Confidence: ${Math.round(segment.confidence * 100)}%
+  Emotion: ${segment.emotion || 'Unknown'}
+`).join('')}
+
+📝 Full Transcript: ${data.transcript}
+🎯 Dominant Language: ${data.dominantLanguage}
+⏱️ Processing Time: ${data.processingTime}ms`;
+                    
+                    showResult('diarization-result', output, 'success');
+                } else {
+                    showResult('diarization-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('diarization-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function createSpeakerProfile() {
+            const name = prompt("Enter speaker name:");
+            if (!name) return;
+            
+            try {
+                showResult('diarization-result', 'Creating speaker profile...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/speaker-profile/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        language: 'en-US',
+                        description: `Speaker profile for ${name}`,
+                        audioSamples: [
+                            {
+                                text: "This is a sample of my voice for speech recognition",
+                                audioData: document.getElementById('audio-data').value,
+                                format: "wav"
+                            }
+                        ]
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const profile = result.data;
+                    const output = `✅ Speaker Profile Created!
+
+👤 Profile Details:
+• Name: ${profile.name}
+• ID: ${profile.id}
+• Language: ${profile.language}
+• Accent: ${profile.accent}
+• Audio Samples: ${profile.audioSamples.length}
+• Created: ${profile.createdAt}
+
+🎵 Voice Characteristics:
+• Pitch: ${profile.characteristics.pitch}
+• Speed: ${profile.characteristics.speed} wpm
+• Volume: ${profile.characteristics.volume}
+• Warmth: ${profile.characteristics.warmth}
+• Clarity: ${profile.characteristics.clarity}
+• Breathiness: ${profile.characteristics.breathiness}`;
+                    
+                    showResult('diarization-result', output, 'success');
+                } else {
+                    showResult('diarization-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('diarization-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function startStreamingSession() {
+            clearResults();
+            
+            const options = {
+                sampleRate: parseInt(document.getElementById('stream-sample-rate').value),
+                channels: 1,
+                format: document.getElementById('stream-format').value,
+                language: 'en-US',
+                quality: 'balanced',
+                chunkSize: parseInt(document.getElementById('chunk-size').value),
+                enablePartialResults: document.getElementById('enable-partial-results').checked,
+                enableEmotion: true,
+                enableDiarization: true
+            };
+            
+            try {
+                showResult('streaming-result', 'Creating streaming session...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/stream/session`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(options)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentStreamSessionId = result.data.sessionId;
+                    const output = `✅ Streaming Session Created!
+
+🌊 Session Details:
+• Session ID: ${result.data.sessionId}
+• Sample Rate: ${options.sampleRate} Hz
+• Format: ${options.format}
+• Chunk Size: ${options.chunkSize}ms
+• Partial Results: ${options.enablePartialResults ? 'Enabled' : 'Disabled'}
+
+Ready to receive audio chunks...`;
+                    
+                    showResult('streaming-result', output, 'success');
+                    document.getElementById('streaming-status').innerHTML = `
+                        <strong>🌊 Session Active:</strong> ${result.data.sessionId}<br>
+                        <strong>Status:</strong> Ready for audio chunks<br>
+                        <strong>Duration:</strong> 0s
+                    `;
+                    document.getElementById('streaming-status').style.display = 'block';
+                } else {
+                    showResult('streaming-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('streaming-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function sendAudioChunk() {
+            if (!currentStreamSessionId) {
+                showResult('streaming-result', '❌ No active streaming session. Please start a session first.', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/stream/session/${currentStreamSessionId}/chunk`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        audioChunk: document.getElementById('audio-data').value
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    let output = `🌊 Chunk Processed:
+
+📝 Transcript: ${data.transcript}
+• Is Final: ${data.isFinal ? 'Yes' : 'No (Partial)'}
+• Partial: ${data.partial ? 'Yes' : 'No'}
+• Confidence: ${Math.round(data.confidence * 100)}%
+• Processing Time: ${data.processingTime}ms
+• Audio Duration: ${Math.round(data.audioDuration)}s`;
+                    
+                    if (data.speakerSegments && data.speakerSegments.length > 0) {
+                        output += `\n👥 Speaker: ${data.speakerSegments[0].speakerLabel} (${Math.round(data.speakerSegments[0].confidence * 100)}%)`;
+                    }
+                    
+                    if (data.emotion) {
+                        output += `\n😊 Emotion: ${data.emotion.primary} (${Math.round(data.emotion.confidence * 100)}%)`;
+                    }
+                    
+                    showResult('streaming-result', output, 'success');
+                    
+                    // Update status
+                    document.getElementById('streaming-status').innerHTML = `
+                        <strong>🌊 Session Active:</strong> ${currentStreamSessionId}<br>
+                        <strong>Status:</strong> Processing audio<br>
+                        <strong>Duration:</strong> ${Math.round(data.audioDuration)}s<br>
+                        <strong>Current Transcript:</strong> "${data.transcript}"
+                    `;
+                } else {
+                    showResult('streaming-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('streaming-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function endStreamingSession() {
+            if (!currentStreamSessionId) {
+                showResult('streaming-result', '❌ No active streaming session. Please start a session first.', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/stream/session/${currentStreamSessionId}/end`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    const output = `✅ Streaming Session Ended!
+
+🌊 Final Results:
+• Session ID: ${data.sessionId}
+• Is Final: ${data.isFinal ? 'Yes' : 'No'}
+• Total Processing Time: ${data.processingTime}ms
+• Total Audio Duration: ${Math.round(data.audioDuration)}s
+
+📝 Final Transcript: "${data.transcript}"
+• Overall Confidence: ${Math.round(data.confidence * 100)}%`;
+                    
+                    if (data.speakerSegments && data.speakerSegments.length > 0) {
+                        output += `\n👥 Speakers: ${data.speakerSegments.map(s => s.speakerLabel).join(', ')}`;
+                    }
+                    
+                    if (data.emotion) {
+                        output += `\n😊 Overall Emotion: ${data.emotion.primary}`;
+                    }
+                    
+                    showResult('streaming-result', output, 'success');
+                    currentStreamSessionId = null;
+                    document.getElementById('streaming-status').style.display = 'none';
+                } else {
+                    showResult('streaming-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('streaming-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function getStreamingStatus() {
+            if (!currentStreamSessionId) {
+                showResult('streaming-result', '❌ No active streaming session. Please start a session first.', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/stream/session/${currentStreamSessionId}/status`);
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const info = result.data.info;
+                    const output = `🌊 Session Status:
+
+• Session ID: ${info.sessionId}
+• Active: ${info.active ? 'Yes' : 'No'}
+• Duration: ${Math.round(info.duration / 1000)}s
+• Current Transcript: "${info.currentTranscript}"
+• Confidence: ${Math.round(info.confidence * 100)}%
+• Speaker Segments: ${info.speakerSegments}
+• Language: ${info.language || 'Unknown'}
+• Total Audio Length: ${info.totalAudioLength}`;
+                    
+                    showResult('streaming-result', output, 'success');
+                } else {
+                    showResult('streaming-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('streaming-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testAudioQuality() {
+            clearResults();
+            
+            try {
+                showResult('quality-result', 'Assessing audio quality...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/quality-assess`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        audio: document.getElementById('audio-data').value
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    let output = `✅ Audio Quality Assessment Complete!
+
+📊 Quality Scores:
+• Overall Score: ${data.overallScore}/100
+• Clarity: ${data.clarity}/100
+• Noise Level: ${data.noiseLevel}%
+• Volume Level: ${data.volumeLevel}%
+• Speech-to-Noise Ratio: ${data.speechToNoiseRatio} dB
+
+🔍 Issues Found: ${data.qualityIssues.length}
+
+📝 Recommendations:
+${data.recommendations.map(rec => `• ${rec}`).join('\n')}`;
+                    
+                    if (data.qualityIssues.length > 0) {
+                        output += `\n\n⚠️ Quality Issues:\n${data.qualityIssues.map(issue => 
+                            `• ${issue.type}: ${issue.description} (${issue.severity})`
+                        ).join('\n')}`;
+                    }
+                    
+                    showResult('quality-result', output, 'success');
+                } else {
+                    showResult('quality-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('quality-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testAccurateMode() {
+            clearResults();
+            
+            try {
+                showResult('cache-result', 'Running accurate mode transcription...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/accurate-mode`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        audio: document.getElementById('audio-data').value,
+                        language: 'en-US',
+                        quality: 'accurate',
+                        enableEmotion: true,
+                        enableDiarization: true
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    const output = `✅ Accurate Mode Transcription Complete!
+
+📝 Transcript: ${data.transcript}
+• Language: ${data.language}
+• Quality: ${data.quality} (Accurate Mode)
+• Confidence: ${Math.round(data.confidence * 100)}%
+• Duration: ${data.duration}ms
+
+⚡ Performance:
+• Processing Time: ${data.metadata.processingTime}ms
+• Characters: ${data.metadata.characters}
+• Words: ${data.metadata.words}
+• Speaker Count: ${data.metadata.speakerCount || 0}
+
+👥 Speaker Segments: ${data.speakerSegments?.length || 0}
+😊 Emotion Detected: ${data.emotion ? data.emotion.primary : 'None'}`;
+                    
+                    showResult('cache-result', output, 'success');
+                } else {
+                    showResult('cache-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('cache-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function getSTTCacheStats() {
+            clearResults();
+            
+            try {
+                showResult('cache-result', 'Getting STT cache stats...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/cache/stats`);
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const stats = result.data;
+                    const output = `📊 STT Cache Statistics:
+• Cache Size: ${stats.size} entries
+• Hit Rate: ${Math.round(stats.hitRate * 100)}%
+
+💡 Cache is working ${stats.hitRate > 0.5 ? 'efficiently' : 'suboptimally'}`;
+                    
+                    showResult('cache-result', output, 'success');
+                } else {
+                    showResult('cache-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('cache-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function clearSTTCache() {
+            clearResults();
+            
+            try {
+                const response = await fetch(`${API_BASE}/cache`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('cache-result', '✅ STT Cache cleared successfully!', 'success');
+                } else {
+                    showResult('cache-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('cache-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function getSupportedLanguages() {
+            clearResults();
+            
+            try {
+                showResult('cache-result', 'Getting supported languages...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/supported-languages`);
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const languages = result.data.languages;
+                    const output = `🌍 Supported Languages (${languages.length} total):
+
+${languages.map(lang => `• ${lang}`).join('\n')}
+
+📊 Language Support: Advanced multilingual speech recognition with automatic detection.`;
+                    
+                    showResult('cache-result', output, 'success');
+                } else {
+                    showResult('cache-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('cache-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testSpeakerProfiles() {
+            clearResults();
+            
+            try {
+                showResult('diarization-result', 'Getting speaker profiles...', 'loading');
+                
+                const response = await fetch(`${API_BASE}/speaker-profile/list`);
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const profiles = result.data.profiles;
+                    const output = `👥 Speaker Profiles (${result.data.total} total):
+
+${profiles.map(profile => `
+• ${profile.name} (${profile.id})
+  Language: ${profile.language}
+  Accent: ${profile.accent}
+  Audio Samples: ${profile.audioSamples.length}
+  Custom: ${profile.isCustom ? 'Yes' : 'No'}
+  Created: ${profile.createdAt}
+  Voice: ${profile.characteristics.pitch} pitch, ${profile.characteristics.speed}wpm
+`).join('')}
+
+📊 Summary: ${result.data.custom} custom, ${result.data.builtin} builtin profiles`;
+                    
+                    showResult('diarization-result', output, 'success');
+                } else {
+                    showResult('diarization-result', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('diarization-result', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '../config/config.service';
 
 @Injectable()
 export class ConfigService {
@@ -79,7 +78,7 @@ export class ConfigService {
   }
 
   getVectorStoreConfig() {
-    return this.config.vectorStore;
+    return this.config.services?.vectorStore || { url: 'http://localhost:3020', collection: 'keledo' };
   }
 
   // For backward compatibility

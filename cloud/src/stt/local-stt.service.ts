@@ -17,7 +17,7 @@ export class LocalSTTService {
         transcript: mockTranscript,
         confidence: 0.95,
         duration: this.calculateDuration(audioBuffer),
-        provider: 'local-mock'
+        
       };
     } catch (error) {
       console.error('[Local STT] Error transcribing audio:', error);
