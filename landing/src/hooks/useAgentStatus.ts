@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
+import { useSocket } from '../context/SocketContext';
 
 interface AgentStatus {
   id: string;
@@ -25,7 +26,10 @@ interface SystemHealth {
   ai: 'ready' | 'busy' | 'error' | 'processing';
 }
 
-export function useAgentStatus(socket: Socket | null) {
+export function useAgentStatus(socket?: Socket | null) {
+  const { socket: contextSocket } = useSocket();
+  const actualSocket = socket || contextSocket;
+  
   const [agents, setAgents] = useState<AgentStatus[]>([]);
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [systemHealth, setSystemHealth] = useState<SystemHealth>({
@@ -38,7 +42,7 @@ export function useAgentStatus(socket: Socket | null) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!socket) {
+    if (!actualSocket) {
       console.warn('useAgentStatus: No socket connection available');
       setLoading(false);
       return;
@@ -47,8 +51,8 @@ export function useAgentStatus(socket: Socket | null) {
     setLoading(true);
 
     // Request initial data
-    socket.emit('dashboard:get-agent-status');
-    socket.emit('dashboard:get-system-health');
+    actualSocket.emit('dashboard:get-agent-status');
+    actualSocket.emit('dashboard:get-system-health');
 
     // Listen for agent status updates
     const handleAgentStatusUpdate = (data: AgentStatus[]) => {
@@ -89,21 +93,21 @@ export function useAgentStatus(socket: Socket | null) {
     };
 
     // Register event listeners
-    socket.on('dashboard:agent-status-update', handleAgentStatusUpdate);
-    socket.on('dashboard:system-health-update', handleSystemHealthUpdate);
-    socket.on('dashboard:agent-status', handleAgentStatus);
-    socket.on('dashboard:agent-audio-level', handleAudioLevel);
-    socket.on('dashboard:agent-performance-metrics', handlePerformanceMetrics);
+    actualSocket.on('dashboard:agent-status-update', handleAgentStatusUpdate);
+    actualSocket.on('dashboard:system-health-update', handleSystemHealthUpdate);
+    actualSocket.on('dashboard:agent-status', handleAgentStatus);
+    actualSocket.on('dashboard:agent-audio-level', handleAudioLevel);
+    actualSocket.on('dashboard:agent-performance-metrics', handlePerformanceMetrics);
 
     // Cleanup on unmount
     return () => {
-      socket.off('dashboard:agent-status-update', handleAgentStatusUpdate);
-      socket.off('dashboard:system-health-update', handleSystemHealthUpdate);
-      socket.off('dashboard:agent-status', handleAgentStatus);
-      socket.off('dashboard:agent-audio-level', handleAudioLevel);
-      socket.off('dashboard:agent-performance-metrics', handlePerformanceMetrics);
+      actualSocket.off('dashboard:agent-status-update', handleAgentStatusUpdate);
+      actualSocket.off('dashboard:system-health-update', handleSystemHealthUpdate);
+      actualSocket.off('dashboard:agent-status', handleAgentStatus);
+      actualSocket.off('dashboard:agent-audio-level', handleAudioLevel);
+      actualSocket.off('dashboard:agent-performance-metrics', handlePerformanceMetrics);
     };
-  }, [socket]);
+  }, [actualSocket]);
 
   // Agent control functions
   const selectAgent = (agentId: string) => {
@@ -123,18 +127,18 @@ export function useAgentStatus(socket: Socket | null) {
     clearSelection,
     // Control functions for backend communication
     startAgent: (agentId: string) => {
-      if (socket) {
-        socket.emit('dashboard:agent-start', { agentId });
+      if (actualSocket) {
+        actualSocket.emit('dashboard:agent-start', { agentId });
       }
     },
     stopAgent: (agentId: string) => {
-      if (socket) {
-        socket.emit('dashboard:agent-stop', { agentId });
+      if (actualSocket) {
+        actualSocket.emit('dashboard:agent-stop', { agentId });
       }
     },
     restartAgent: (agentId: string) => {
-      if (socket) {
-        socket.emit('dashboard:agent-restart', { agentId });
+      if (actualSocket) {
+        actualSocket.emit('dashboard:agent-restart', { agentId });
       }
     }
   };
