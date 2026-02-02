@@ -1,242 +1,108 @@
 # KELEDON
 
-A comprehensive full-stack platform combining browser automation, AI-powered workflows, and real-time communication capabilities.
+KELEDON is an autonomous inbound agent system designed to operate in real production environments.
 
-## 🚀 Overview
+It is **not a demo platform**, not a chatbot, and not a dashboard-first product.
 
-KELEDON is a multi-component system consisting of:
-
-- **Browser Agent** - Chrome extension for browser automation and RPA
-- **Cloud Backend** - NestJS-based API server with WebSocket support
-- **Landing Page** - React-based frontend with modern UI
-- **Smart Contracts** - Blockchain integration components
-- **Deployment Infrastructure** - Docker-based containerization
-
-## 📁 Project Structure
-
-```
-KELEDON/
-├── agent/                  # Chrome extension (Manifest V3)
-│   ├── extension/         # Extension source code
-│   └── tests/            # Agent tests
-├── cloud/                # NestJS backend API
-│   ├── src/             # Backend source
-│   └── data/            # Configuration files
-├── landing/              # React frontend
-│   ├── src/             # Frontend source
-│   └── public/          # Static assets
-├── contracts/           # Smart contracts & schemas
-├── infra/               # Infrastructure configuration
-├── scripts/             # Deployment and utility scripts
-└── docs/               # Documentation
-```
-
-## 🛠️ Tech Stack
-
-### Frontend (Landing)
-- **React 19** with TypeScript
-- **Vite** for build tooling
-- **Tailwind CSS** for styling
-- **Framer Motion** for animations
-- **Socket.IO Client** for real-time communication
-
-### Backend (Cloud)
-- **NestJS** with TypeScript
-- **Express** framework
-- **WebSocket** support via Socket.IO
-- **Docker** containerization
-
-### Browser Extension (Agent)
-- **Manifest V3** Chrome extension
-- **JavaScript ES Modules**
-- **WebSocket client** for backend communication
-- **Chrome APIs** for browser automation
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js (v18+)
-- npm or yarn
-- Docker (for deployment)
-- Google Cloud CLI (for cloud deployment)
-
-### Local Development
-
-1. **Clone and install dependencies:**
-```bash
-git clone <repository-url>
-cd KELEDON
-npm install
-cd agent && npm install
-cd ../cloud && npm install
-cd ../landing && npm install
-```
-
-2. **Start development servers:**
-```bash
-# Backend
-cd cloud && npm run start:dev
-
-# Frontend
-cd landing && npm run dev
-
-# Chrome Extension (Load directly in Chrome)
-# Navigate to chrome://extensions/ and load the agent/extension folder
-```
-
-### Chrome Extension Setup
-
-1. Open Chrome and navigate to `chrome://extensions/`
-2. Enable "Developer mode" (toggle top right)
-3. Click "Load unpacked"
-4. Select the `agent/extension/` folder
-5. Extension should load without errors
-
-## 🐳 Deployment
-
-### Single Container Deployment
-
-The project supports single-container deployment with Docker:
-
-```bash
-# Build and deploy to Google Cloud Run
-./deploy-single-container.sh
-```
-
-### Manual Docker Build
-
-```bash
-docker build -t keledon:latest .
-docker run -p 8080:8080 keledon:latest
-```
-
-## 📚 API Documentation
-
-### Core Endpoints
-
-- **Health Check:** `GET /health`
-- **WebSocket:** `/socket.io/`
-- **Audio Streaming:** `/listen/`
-- **API Routes:** `/api/*`
-
-### WebSocket Events
-
-Real-time communication between extension and backend:
-
-- **Connection:** Establishes persistent connection
-- **Audio streaming:** Real-time audio data transmission
-- **Command execution:** RPA workflow triggers
-- **Status updates:** Live feedback and progress
-
-## 🔧 Configuration
-
-### Environment Variables
-
-Key configuration options:
-- `SINGLE_CONTAINER`: Single container mode (production)
-- `NODE_ENV`: Environment (development/production)
-- Backend port: 3001 (internal), 8080 (external)
-
-### Chrome Extension Permissions
-
-The extension requires:
-- `storage` - Local data storage
-- `activeTab` - Current tab access
-- `scripting` - Content script injection
-- `background` - Service worker
-- `sidePanel` - UI panel access
-
-## 🧪 Testing
-
-### Run Tests
-```bash
-# Agent tests
-cd agent && npm test
-
-# Backend tests
-cd cloud && npm test
-```
-
-### Coverage Reports
-```bash
-cd agent && npm run test:coverage
-```
-
-## 📝 Development Scripts
-
-Utility scripts for development and deployment:
-- `deploy-simple.bat` - Simple deployment
-- `deploy.ps1` - PowerShell deployment
-- `dev-run.bat` - Development environment
-- `test-deployment.sh` - Deployment testing
-
-## 🔍 Architecture
-
-The system uses a modern microservices architecture:
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Chrome Ext    │    │   React UI      │    │   Mobile App    │
-│   (Agent)       │    │   (Landing)     │    │   (Future)      │
-└─────────┬───────┘    └─────────┬───────┘    └─────────┬───────┘
-          │                      │                      │
-          └──────────────────────┼──────────────────────┘
-                                 │
-                    ┌─────────────┴─────────────┐
-                    │      NestJS Backend       │
-                    │      (Cloud)              │
-                    └─────────────┬─────────────┘
-                                  │
-                    ┌─────────────┴─────────────┐
-                    │    Database & Storage    │
-                    │    (Redis, PostgreSQL)   │
-                    └───────────────────────────┘
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the terms specified in the [LICENSE](LICENSE) file.
-
-## 🔗 Links
-
-- **Chrome Extension Documentation:** See `CHROME_EXTENSION_FINAL.md`
-- **Deployment Guide:** See `DEPLOYMENT.md`
-- **API Contracts:** See `contracts/` directory
-- **Infrastructure:** See `infra/` directory
-
-## 🆘 Troubleshooting
-
-### Common Issues
-
-1. **Extension won't load:**
-   - Check `CHROME_EXTENSION_FINAL.md` for troubleshooting steps
-   - Verify manifest.json syntax
-   - Ensure all files are in correct locations
-
-2. **Backend connection issues:**
-   - Check WebSocket configuration
-   - Verify port accessibility
-   - Check firewall settings
-
-3. **Deployment failures:**
-   - Review `DEPLOYMENT.md`
-   - Check Docker build logs
-   - Verify Google Cloud configuration
-
-### Getting Help
-
-- Check the `docs/` directory for detailed documentation
-- Review existing issues and pull requests
-- Create new issues with detailed error reports
+KELEDON exists only if a real agent can:
+- detect inbound calls
+- reason in the cloud
+- execute deterministic actions in the browser
+- persist and replay everything it does
 
 ---
 
-**KELEDON** - Empowering intelligent browser automation and AI-driven workflows. 🚀
+## Canonical Authority
+
+This repository is governed by **canonical specifications**.
+
+All architectural decisions, contracts, execution rules, and development governance live in:
+
+```
+docs/specs/
+```
+
+### Authoritative Documents
+
+- `docs/specs/keledon_v1_canonical_technical_spec.md`  
+  → **Technical source of truth**  
+  Defines what “KELEDON works” means at runtime.
+
+- `docs/specs/keledon_canonical_autonomous_development_prompt.md`  
+  → **Governance constitution**  
+  Defines how humans and AIs must plan, coordinate, and execute work.
+
+If a change conflicts with these documents, **the change is invalid**.
+
+---
+
+## Non-Negotiable Principle
+
+**Cloud decides. Agent executes.**
+
+- No LLM touches the UI directly.
+- UI actions are deterministic and auditable.
+- Audio and UI execution live locally.
+- Decisions, orchestration, and policies live in the Cloud.
+
+Any violation of this principle must be rejected.
+
+---
+
+## Anti-Demo Policy
+
+KELEDON does not accept demo-by-default behavior.
+
+The following are **forbidden in production**:
+- fake session IDs
+- hardcoded AI responses
+- random or generated data
+- silent fallbacks that pretend the system is working
+
+Mocks are allowed **only** when explicitly gated behind:
+
+```
+DEMO_MODE=true
+```
+
+If the Cloud is disconnected, the UI must show failure.
+
+---
+
+## Development Rules
+
+- No feature work may begin before canonical documents are committed.
+- All work must start as GitHub Issues.
+- All changes must be reviewed against the canonical specs.
+- Dashboards, analytics, and UI polish are secondary to the agent runtime loop.
+
+If the agent loop is not real, the product does not exist.
+
+---
+
+## Repository Structure
+
+The repository is intentionally structured to enforce separation of concerns:
+
+```
+agent/          # Browser agent (execution)
+cloud/          # Cloud brain (decision & orchestration)
+contracts/      # Canonical schemas (interfaces)
+docs/specs/     # Canonical authority
+docs/pm/        # Planning and status
+docs/decisions/ # Explicit product decisions
+```
+
+---
+
+## Final Note
+
+This repository is designed to be worked on by **autonomous AI agents** and humans.
+
+The repository state — not chat history — is the source of truth.
+
+If something is unclear, open a decision issue.  
+If something violates the canon, reject it.
+
+**KELEDON must be real before it is pretty.**
+
