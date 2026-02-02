@@ -54,7 +54,7 @@ If a change violates this principle, it must be rejected.
 ## ANTI‑DEMO RULES (ABSOLUTE)
 
 - No fake session IDs (`Date.now()`, hardcoded strings).
-- No hardcoded AI responses or “help text” fallbacks.
+- No hardcoded AI responses or "help text" fallbacks.
 - No random data in production.
 - No silent fallbacks.
 
@@ -206,4 +206,3 @@ If a task improves visuals, dashboards, analytics, or UX **before** the agent lo
 ---
 
 ### END OF PROMPT
-
