@@ -548,6 +548,26 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         stopListeningSession().then(res => sendResponse(res));
         return true;
     }
+    if (msg.type === 'CHECK_CONNECTION') {
+        // Real connection status check (anti-demo rule: show failure if cloud unavailable)
+        const connected = socket && socket.connected;
+        
+        if (!connected) {
+            sendResponse({ 
+                connected: false,
+                error: 'Cloud backend unavailable',
+                status: 'disconnected'
+            });
+        } else {
+            sendResponse({ 
+                connected: true,
+                status: 'connected',
+                sessionId: currentSessionId
+            });
+        }
+        return true;
+    }
+
     if (msg.type === 'GET_STATUS') {
         sendResponse({
             isListening,
@@ -653,22 +673,37 @@ async function startListeningSession(options = {}) {
         log(`Session Created! ID: ${sessionId}`);
 
         // 3. Connect WebSocket
-        log('Connecting Socket.io...');
+        log('Connecting Socket.io to canonical agent gateway...');
 
-        socket = io(`${BACKEND_URL}/listen`, {
-            path: '/listen/ws',
+        socket = io(`${BACKEND_URL}`, {
+            path: '',
             query: { session: sessionId, language, debug },
-            transports: ['websocket']
+            transports: ['websocket', 'polling']
         });
 
         await new Promise((resolve, reject) => {
         socket.on('connect', () => {
             log('Socket connected successfully!');
             sendClientConfig();
+            
+            // Notify side panel of real connection status
+            chrome.runtime.sendMessage({
+                type: 'CONNECTION_STATUS',
+                status: 'connected'
+            }).catch(() => {});
+            
             resolve();
         });
             socket.on('connect_error', (err) => {
                 log('Socket connection error: ' + err.message);
+                
+                // Notify side panel of connection failure (anti-demo rule: show failure)
+                chrome.runtime.sendMessage({
+                    type: 'CONNECTION_STATUS',
+                    status: 'failed',
+                    error: err.message || 'Cloud backend unavailable'
+                }).catch(() => {});
+                
                 reject(err);
             });
             setTimeout(() => reject(new Error('Socket timeout')), 5000);
@@ -707,6 +742,80 @@ async function startListeningSession(options = {}) {
             log('Socket received session.ended. Reason: ' + (data?.reason || 'unknown'));
             stopListeningSession();
         });
+
+        // --- CANONICAL MESSAGE LISTENERS ---
+        
+        // Listen for canonical messages from cloud
+        socket.on('message', (message) => {
+            log('RX canonical message: ' + message.message_type);
+            
+            switch (message.message_type) {
+                case 'brain_command':
+                    handleBrainCommand(message.payload);
+                    break;
+                case 'heartbeat':
+                    handleHeartbeat(message.payload);
+                    break;
+                case 'ack':
+                    handleAcknowledgment(message.payload);
+                    break;
+                case 'error':
+                    handleCloudError(message.payload);
+                    break;
+                default:
+                    log('Unknown canonical message type: ' + message.message_type);
+            }
+        });
+
+        // Canonical command handlers
+        function handleBrainCommand(payload) {
+            log('RX brain command: ' + payload.type);
+            
+            switch (payload.type) {
+                case 'say':
+                    handlePlayAudio({ text: payload.payload.text, interruptible: payload.payload.interruptible });
+                    break;
+                case 'ui_steps':
+                    // Execute RPA steps (will be implemented in next phase)
+                    log('UI steps command received (not implemented yet)');
+                    break;
+                case 'mode':
+                    log('Mode change: ' + payload.payload.mode);
+                    break;
+                case 'stop':
+                    stopListeningSession();
+                    break;
+            }
+        }
+
+        function handleHeartbeat(payload) {
+            log('Heartbeat from cloud: ' + payload.status);
+            // Respond with heartbeat
+            socket.emit('message', {
+                message_id: crypto.randomUUID(),
+                timestamp: new Date().toISOString(),
+                direction: 'agent_to_cloud',
+                message_type: 'heartbeat',
+                payload: {
+                    status: 'alive',
+                    uptime_ms: Date.now()
+                }
+            });
+        }
+
+        function handleAcknowledgment(payload) {
+            log('Acknowledgment from cloud: ' + payload.status + ' for ' + payload.ack_message_id);
+        }
+
+        function handleCloudError(payload) {
+            log('Error from cloud: ' + payload.code + ' - ' + payload.message);
+            // Show failure in side panel (anti-demo rule)
+            chrome.runtime.sendMessage({
+                type: 'CONNECTION_STATUS',
+                status: 'failed',
+                error: payload.message
+            }).catch(() => {});
+        }
 
         // 4. Start Capture (Offscreen)
         log('Ensuring offscreen document...');
