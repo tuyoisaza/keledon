@@ -1008,16 +1008,24 @@ async function handleBackgroundMessage(message, sender, sendResponse) {
                 // Real connection status from WebSocket client
                 if (message.status === 'connected') {
                     uiManager.updateConnectionStatus('connected', 'Connected to Cloud');
+                    if (message.sessionId) {
+                        // Show real session info (anti-demo: no fake sessions)
+                        const sessionPreview = `Session ${message.sessionId.substring(0, 8)}...`;
+                        uiManager.updateSessionInfo(sessionPreview);
+                    }
                 } else if (message.status === 'connecting') {
-                    uiManager.updateConnectionStatus('connecting', 'Connecting...');
+                    uiManager.updateConnectionStatus('connecting', 'Creating session...');
                 } else if (message.status === 'error') {
                     uiManager.updateConnectionStatus('error', `Error: ${message.error || 'Connection failed'}`);
+                    uiManager.updateSessionInfo('Session failed');
                 } else if (message.status === 'failed') {
                     // Show failure when cloud unavailable (anti-demo rule)
                     uiManager.updateConnectionStatus('error', `Failed: ${message.error || 'Cloud unavailable'}`);
                     uiManager.showError(`Cloud connection failed: ${message.error || 'Cloud backend unavailable'}`);
+                    uiManager.updateSessionInfo('No session');
                 } else if (message.status === 'disconnected') {
                     uiManager.updateConnectionStatus('disconnected', message.reason || 'Disconnected');
+                    uiManager.updateSessionInfo('Session ended');
                 }
                 break;
                 

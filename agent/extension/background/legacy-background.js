@@ -634,52 +634,66 @@ async function startListeningSession(options = {}) {
             tabLabel: audioTabInfo?.tabLabel || null
         }).catch(() => { });
 
-        // 2. Create Session on Backend
-        log(`Creating session at ${BACKEND_URL}/listening-sessions...`);
-        log(`Session payload: ${JSON.stringify({ source: 'agent4', tabUrl: streamData.tabUrl, tabTitle: streamData.tabTitle })}`);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-        let response;
-        try {
-            response = await fetch(`${BACKEND_URL}/listening-sessions`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    source: 'agent4',
-                    tabUrl: streamData.tabUrl,
-                    tabTitle: streamData.tabTitle
-                }),
-                signal: controller.signal
-            });
-        } catch (error) {
-            clearTimeout(timeoutId);
-            if (error?.name === 'AbortError') {
-                throw new Error('Backend timeout after 10s');
-            }
-            throw error;
-        }
-        clearTimeout(timeoutId);
-
-        log(`Session create response: ${response.status}`);
-
-        if (!response.ok) {
-            const txt = await response.text();
-            throw new Error(`Backend Error (${response.status}): ${txt}`);
-        }
-
-        const sessionData = await response.json();
-        const { sessionId } = sessionData;
-
-        log(`Session Created! ID: ${sessionId}`);
-
-        // 3. Connect WebSocket
-        log('Connecting Socket.io to canonical agent gateway...');
-
+        // 2. Create real session via canonical WebSocket
+        const agentId = crypto.randomUUID(); // Generate agent ID for this session
+        log(`Requesting real session creation for agent ${agentId}...`);
+        
+        // Connect socket first
         socket = io(`${BACKEND_URL}`, {
             path: '',
-            query: { session: sessionId, language, debug },
+            query: { agentId, language, debug },
             transports: ['websocket', 'polling']
         });
+
+        // Wait for connection, then request session creation
+        await new Promise((resolve, reject) => {
+            let sessionCreated = false;
+            
+            socket.on('connect', () => {
+                log('Socket connected, requesting session creation...');
+                
+                // Request canonical session creation
+                socket.emit('session.create', {
+                    agent_id: agentId,
+                    tab_url: streamData.tabUrl,
+                    tab_title: streamData.tabTitle
+                });
+            });
+
+            socket.on('message', (message) => {
+                if (message.message_type === 'brain_command' && message.payload.type === 'mode') {
+                    // Session created successfully
+                    const sessionId = message.session_id;
+                    currentSessionId = sessionId;
+                    sessionCreated = true;
+                    
+                    log(`Real session created! ID: ${sessionId}`);
+                    
+                    // Notify side panel
+                    chrome.runtime.sendMessage({
+                        type: 'CONNECTION_STATUS',
+                        status: 'connected',
+                        message: `Session ${sessionId.substring(0, 8)}... active`
+                    }).catch(() => {});
+                    
+                    resolve();
+                }
+            });
+
+            socket.on('connect_error', (err) => {
+                log('Session creation failed: ' + err.message);
+                reject(new Error(`Session creation failed: ${err.message}`));
+            });
+
+            setTimeout(() => {
+                if (!sessionCreated) {
+                    reject(new Error('Session creation timeout after 10s'));
+                }
+            }, 10000);
+        });
+
+        // 3. Socket already connected in step 2
+        log('Socket already connected via session creation...');
 
         await new Promise((resolve, reject) => {
         socket.on('connect', () => {
