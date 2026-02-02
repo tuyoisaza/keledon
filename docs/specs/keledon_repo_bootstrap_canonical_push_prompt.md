@@ -60,13 +60,13 @@ Create and commit the following files **exactly**:
 ### 1. `docs/specs/keledon_v1_canonical_technical_spec.md`
 
 - Paste the **full content** of:
-  **“KELEDON V1 — Canonical Technical Spec (Production)”**
+  **"KELEDON V1 — Canonical Technical Spec (Production)"**
 - This file is the **technical source of truth**.
 
 ### 2. `docs/specs/keledon_canonical_autonomous_development_prompt.md`
 
 - Paste the **full content** of:
-  \*\*“KELEDON — Canonical Autonomous Development Prompt
+  \*\*"KELEDON — Canonical Autonomous Development Prompt
 - This file is the **governance constitution** for all agents.
 
 ### 3. `README.md`
@@ -181,4 +181,3 @@ At this point, the system is ready for **real development**.
 ---
 
 ### END OF PROMPT
-
