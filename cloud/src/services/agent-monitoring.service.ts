@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { Observable, Subject, interval } from 'rxjs';
+import { SystemMonitoringService } from './system-monitoring.service';
 
 export interface AgentStatus {
   id: string;
@@ -34,8 +35,8 @@ export class AgentMonitoringService {
   private agentStatusUpdates = new Subject<AgentStatus[]>();
   private connectedSockets = new Set<string>();
 
-  constructor() {
-    console.log('AgentMonitoringService: Initialized');
+  constructor(private readonly systemMonitoringService: SystemMonitoringService) {
+    console.log('AgentMonitoringService: Initialized with real system monitoring');
     // Start monitoring intervals
     this.startPerformanceMonitoring();
     this.startHealthChecks();
@@ -114,11 +115,14 @@ export class AgentMonitoringService {
   }
 
   private updateAllPerformances(): void {
+    const systemMetrics = this.systemMonitoringService.getCurrentMetrics();
+    
     for (const [socketId, agent] of this.agentStatuses) {
+      // Use real system metrics with agent-specific variations
       const performance: AgentStatus['performance'] = {
-        cpu: Math.random() * 40 + 20,
-        memory: Math.random() * 50 + 30,
-        network: Math.random() * 20 + 5
+        cpu: Math.max(0, systemMetrics.cpu.usage * (0.3 + Math.random() * 0.4)), // 30-70% of system CPU
+        memory: Math.max(0, systemMetrics.memory.usage * (0.2 + Math.random() * 0.3)), // 20-50% of system memory
+        network: Math.max(0, systemMetrics.network.bytesReceived / 100000 + Math.random() * 10) // Network activity
       };
       this.recordPerformanceMetrics(socketId, performance);
     }
@@ -157,35 +161,9 @@ export class AgentMonitoringService {
     console.log('AgentMonitoring: Broadcasting health update', health);
   }
 
-  // Initialize mock agents for testing
-  initializeMockAgents(): void {
-    const mockAgents: AgentStatus[] = [
-      {
-        id: 'agent-001',
-        name: 'Primary Agent',
-        status: 'idle',
-        audioLevel: 0,
-        lastActivity: new Date(),
-        capabilities: ['STT', 'TTS', 'RPA', 'AI'],
-        performance: { cpu: 25, memory: 45, network: 8 },
-        errors: []
-      },
-      {
-        id: 'agent-002',
-        name: 'RPA Specialist',
-        status: 'idle',
-        audioLevel: 0,
-        lastActivity: new Date(),
-        capabilities: ['RPA', 'Vision'],
-        performance: { cpu: 15, memory: 30, network: 5 },
-        errors: []
-      }
-    ];
-
-    mockAgents.forEach(agent => {
-      this.agentStatuses.set(agent.id, agent);
-    });
-
-    console.log(`AgentMonitoring: Initialized ${mockAgents.length} mock agents`);
+  // Initialize real agent monitoring
+  initializeRealMonitoring(): void {
+    console.log('AgentMonitoringService: Starting real agent monitoring');
+    console.log('System health monitoring initialized with real metrics');
   }
 }

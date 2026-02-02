@@ -1,8 +1,11 @@
-import { WebSocketGateway, SubscribeMessage, OnGatewayConnection, OnGatewayDisconnect, WebSocketServer } from '@nestjs/websockets';
+import { WebSocketGateway, SubscribeMessage, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { Socket } from 'socket.io';
 import { AgentMonitoringService, SystemHealth } from '../services/agent-monitoring.service';
 import { AILoopService } from '../services/ai-loop.service';
+import { VoiceAnalyticsService } from '../services/voice-analytics.service';
+import { IntegrationHealthService } from '../services/integration-health.service';
+import { FlowExecutionService } from '../services/flow-execution.service';
 
 export interface DashboardSocketData {
   type: string;
@@ -36,9 +39,12 @@ export class DashboardGateway {
 
   constructor(
     private readonly agentMonitoringService: AgentMonitoringService,
-    private readonly aiLoopService: AILoopService
+    private readonly aiLoopService: AILoopService,
+    private readonly voiceAnalyticsService: VoiceAnalyticsService,
+    private readonly integrationHealthService: IntegrationHealthService,
+    private readonly flowExecutionService: FlowExecutionService
   ) {
-    console.log('DashboardGateway: Initialized with enhanced WebSocket support');
+    console.log('DashboardGateway: Initialized with real services');
     // Start broadcasting intervals
     this.startBroadcasting();
   }
@@ -201,11 +207,11 @@ export class DashboardGateway {
     }
   }
 
-  // Flow Execution Events (mock implementation for now)
+  // Flow Execution Events (real implementation)
   @SubscribeMessage('dashboard:get-flow-executions')
   handleGetFlowExecutions(client: Socket): void {
     try {
-      const executions = this.getMockFlowExecutions();
+      const executions = this.flowExecutionService.getExecutions({ limit: 50 });
       client.emit('dashboard:flow-executions-update', executions);
       console.log(`DashboardGateway: Sent flow executions to ${client.id}`);
     } catch (error) {
@@ -217,7 +223,11 @@ export class DashboardGateway {
   @SubscribeMessage('dashboard:flow-create')
   handleCreateFlow(client: Socket, data: DashboardSocketData): void {
     try {
-      const flow = this.createMockFlow(data.flowData);
+      const flow = this.flowExecutionService.createExecution(
+        data.flowData?.name || 'New Flow',
+        undefined,
+        { priority: data.flowData?.priority }
+      );
       this.broadcastFlowExecutions();
       console.log(`DashboardGateway: Created flow: ${flow.id}`);
     } catch (error) {
@@ -230,7 +240,7 @@ export class DashboardGateway {
   handleStartFlow(client: Socket, data: DashboardSocketData): void {
     try {
       if (data.executionId) {
-        this.updateFlowStatus(data.executionId, 'running');
+        this.flowExecutionService.startExecution(data.executionId);
         this.broadcastFlowExecutions();
         console.log(`DashboardGateway: Started flow ${data.executionId}`);
       }
@@ -244,7 +254,7 @@ export class DashboardGateway {
   handlePauseFlow(client: Socket, data: DashboardSocketData): void {
     try {
       if (data.executionId) {
-        this.updateFlowStatus(data.executionId, 'paused');
+        this.flowExecutionService.pauseExecution(data.executionId);
         this.broadcastFlowExecutions();
         console.log(`DashboardGateway: Paused flow ${data.executionId}`);
       }
@@ -258,7 +268,7 @@ export class DashboardGateway {
   handleStopFlow(client: Socket, data: DashboardSocketData): void {
     try {
       if (data.executionId) {
-        this.updateFlowStatus(data.executionId, 'failed');
+        this.flowExecutionService.stopExecution(data.executionId, 'Stopped by user');
         this.broadcastFlowExecutions();
         console.log(`DashboardGateway: Stopped flow ${data.executionId}`);
       }
@@ -272,7 +282,7 @@ export class DashboardGateway {
   handleResetFlow(client: Socket, data: DashboardSocketData): void {
     try {
       if (data.executionId) {
-        this.updateFlowStatus(data.executionId, 'idle');
+        this.flowExecutionService.resetExecution(data.executionId);
         this.broadcastFlowExecutions();
         console.log(`DashboardGateway: Reset flow ${data.executionId}`);
       }
@@ -295,11 +305,11 @@ export class DashboardGateway {
     }
   }
 
-  // Integration Hub Events (mock implementation)
+  // Integration Hub Events (real implementation)
   @SubscribeMessage('dashboard:get-integrations')
   handleGetIntegrations(client: Socket): void {
     try {
-      const integrations = this.getMockIntegrations();
+      const integrations = this.integrationHealthService.getProviders();
       client.emit('dashboard:integrations-update', integrations);
       console.log(`DashboardGateway: Sent integrations to ${client.id}`);
     } catch (error) {
@@ -311,7 +321,7 @@ export class DashboardGateway {
   @SubscribeMessage('dashboard:get-connections')
   handleGetConnections(client: Socket): void {
     try {
-      const connections = this.getMockConnections();
+      const connections = this.integrationHealthService.getConnectionMetrics();
       client.emit('dashboard:connections-update', connections);
       console.log(`DashboardGateway: Sent connections to ${client.id}`);
     } catch (error) {
@@ -324,8 +334,7 @@ export class DashboardGateway {
   handleProviderConnect(client: Socket, data: DashboardSocketData): void {
     try {
       if (data.providerId) {
-        this.updateProviderStatus(data.providerId, 'connected');
-        this.broadcastIntegrations();
+        this.integrationHealthService.connectProvider(data.providerId);
         console.log(`DashboardGateway: Connected provider ${data.providerId}`);
       }
     } catch (error) {
@@ -338,8 +347,7 @@ export class DashboardGateway {
   handleProviderDisconnect(client: Socket, data: DashboardSocketData): void {
     try {
       if (data.providerId) {
-        this.updateProviderStatus(data.providerId, 'disconnected');
-        this.broadcastIntegrations();
+        this.integrationHealthService.disconnectProvider(data.providerId);
         console.log(`DashboardGateway: Disconnected provider ${data.providerId}`);
       }
     } catch (error) {
@@ -352,14 +360,7 @@ export class DashboardGateway {
   handleProviderTest(client: Socket, data: DashboardSocketData): void {
     try {
       if (data.providerId) {
-        setTimeout(() => {
-          this.updateProviderHealth(data.providerId, {
-            responseTime: Math.random() * 200,
-            uptime: 99 + Math.random(),
-            errorRate: Math.random() * 2
-          });
-          this.broadcastIntegrations();
-        }, 1000);
+        this.integrationHealthService.testProviderConnection(data.providerId);
         console.log(`DashboardGateway: Testing provider ${data.providerId}`);
       }
     } catch (error) {
@@ -372,10 +373,7 @@ export class DashboardGateway {
   handleProviderSync(client: Socket, data: DashboardSocketData): void {
     try {
       if (data.providerId) {
-        setTimeout(() => {
-          this.updateProviderStatus(data.providerId, 'connected');
-          this.broadcastIntegrations();
-        }, 500);
+        this.integrationHealthService.syncProvider(data.providerId);
         console.log(`DashboardGateway: Synced provider ${data.providerId}`);
       }
     } catch (error) {
@@ -384,11 +382,11 @@ export class DashboardGateway {
     }
   }
 
-  // Voice Analytics Events (mock implementation)
+  // Voice Analytics Events (real implementation)
   @SubscribeMessage('dashboard:get-voice-analytics')
   handleGetVoiceAnalytics(client: Socket, data: DashboardSocketData): void {
     try {
-      const analytics = this.getMockVoiceAnalytics(data.timeRange || '24h');
+      const analytics = this.voiceAnalyticsService.getAnalytics(data.timeRange as any || '24h');
       client.emit('dashboard:voice-analytics-update', analytics);
       console.log(`DashboardGateway: Sent voice analytics to ${client.id}`);
     } catch (error) {
@@ -400,14 +398,14 @@ export class DashboardGateway {
   // Private Methods
   private sendInitialData(client: Socket): void {
     try {
-      // Send initial data for all dashboard components
+      // Send initial data for all dashboard components using real services
       const agents = this.agentMonitoringService.getAllAgentStatuses();
       const health = this.agentMonitoringService.getCurrentHealth();
       const loops = this.aiLoopService.getAllLoops();
-      const executions = this.getMockFlowExecutions();
-      const integrations = this.getMockIntegrations();
-      const connections = this.getMockConnections();
-      const analytics = this.getMockVoiceAnalytics('24h');
+      const executions = this.flowExecutionService.getExecutions({ limit: 50 });
+      const integrations = this.integrationHealthService.getProviders();
+      const connections = this.integrationHealthService.getConnectionMetrics();
+      const analytics = this.voiceAnalyticsService.getAnalytics('24h');
 
       client.emit('dashboard:agent-status-update', agents);
       client.emit('dashboard:system-health-update', health);
@@ -480,7 +478,7 @@ export class DashboardGateway {
 
   private broadcastFlowExecutions(): void {
     try {
-      const executions = this.getMockFlowExecutions();
+      const executions = this.flowExecutionService.getExecutions({ limit: 50 });
       this.server.emit('dashboard:flow-executions-update', executions);
     } catch (error) {
       console.error('DashboardGateway: Error broadcasting flow executions', error);
@@ -489,8 +487,8 @@ export class DashboardGateway {
 
   private broadcastIntegrations(): void {
     try {
-      const integrations = this.getMockIntegrations();
-      const connections = this.getMockConnections();
+      const integrations = this.integrationHealthService.getProviders();
+      const connections = this.integrationHealthService.getConnectionMetrics();
       this.server.emit('dashboard:integrations-update', integrations);
       this.server.emit('dashboard:connections-update', connections);
     } catch (error) {
@@ -500,177 +498,12 @@ export class DashboardGateway {
 
   private broadcastVoiceAnalytics(): void {
     try {
-      const analytics = this.getMockVoiceAnalytics('24h');
+      const analytics = this.voiceAnalyticsService.getAnalytics('24h');
       this.server.emit('dashboard:voice-analytics-realtime', analytics);
     } catch (error) {
       console.error('DashboardGateway: Error broadcasting voice analytics', error);
     }
   }
 
-  // Mock data methods (these would be replaced with real service integrations)
-  private mockFlows: any[] = [];
-  private mockIntegrations: any[] = [];
-
-  private getMockFlowExecutions() {
-    if (this.mockFlows.length === 0) {
-      this.mockFlows = [
-        {
-          id: 'exec_001',
-          name: 'Login Flow',
-          status: 'completed',
-          steps: [],
-          startTime: new Date(Date.now() - 180000),
-          endTime: new Date(Date.now() - 120000),
-          currentStepIndex: 5,
-          totalSteps: 5,
-          progress: 100,
-          performance: {
-            totalDuration: 60000,
-            averageStepTime: 12000,
-            successRate: 100,
-            errorRate: 0
-          }
-        }
-      ];
-    }
-    return this.mockFlows;
-  }
-
-  private createMockFlow(flowData: any) {
-    const newFlow = {
-      id: 'exec_' + Date.now(),
-      name: flowData?.name || `Flow Execution ${this.mockFlows.length + 1}`,
-      status: 'idle',
-      steps: [],
-      startTime: null,
-      endTime: null,
-      currentStepIndex: 0,
-      totalSteps: 0,
-      progress: 0,
-      performance: {
-        totalDuration: 0,
-        averageStepTime: 0,
-        successRate: 0,
-        errorRate: 0
-      }
-    };
-    this.mockFlows.push(newFlow);
-    return newFlow;
-  }
-
-  private updateFlowStatus(executionId: string, status: string) {
-    const flow = this.mockFlows.find(f => f.id === executionId);
-    if (flow) {
-      flow.status = status as any;
-      if (status === 'running' && !flow.startTime) {
-        flow.startTime = new Date();
-      } else if (status === 'completed' || status === 'failed') {
-        flow.endTime = new Date();
-        flow.progress = 100;
-      }
-    }
-  }
-
-  private getMockIntegrations() {
-    if (this.mockIntegrations.length === 0) {
-      this.mockIntegrations = [
-        {
-          id: 'salesforce',
-          name: 'Salesforce',
-          category: 'crm',
-          icon: 'Globe',
-          description: 'CRM and customer management platform',
-          status: 'connected',
-          version: '2.1.0',
-          lastSync: new Date(),
-          health: {
-            responseTime: 120,
-            uptime: 99.8,
-            errorRate: 0.1
-          },
-          features: ['Contact Management', 'Lead Tracking', 'Analytics'],
-          config: {
-            apiKey: true,
-            oauth: true,
-            customFields: true
-          }
-        }
-      ];
-    }
-    return this.mockIntegrations;
-  }
-
-  private getMockConnections() {
-    return this.mockIntegrations.map(provider => ({
-      providerId: provider.id,
-      status: provider.status,
-      lastSync: provider.lastSync,
-      metrics: {
-        requestsPerMinute: Math.floor(Math.random() * 50) + 10,
-        dataTransfer: Math.floor(Math.random() * 1000) + 100,
-        errorCount: Math.floor(Math.random() * 2)
-      }
-    }));
-  }
-
-  private updateProviderStatus(providerId: string, status: string) {
-    const provider = this.mockIntegrations.find(p => p.id === providerId);
-    if (provider) {
-      provider.status = status as any;
-      provider.lastSync = new Date();
-    }
-  }
-
-  private updateProviderHealth(providerId: string, health: any) {
-    const provider = this.mockIntegrations.find(p => p.id === providerId);
-    if (provider) {
-      provider.health = { ...provider.health, ...health };
-    }
-  }
-
-  private getMockVoiceAnalytics(timeRange: string) {
-    return {
-      totalConversations: Math.floor(Math.random() * 500) + 1000,
-      avgDuration: Math.floor(Math.random() * 60) + 180,
-      successRate: Math.floor(Math.random() * 10) + 85,
-      sentimentDistribution: {
-        positive: Math.floor(Math.random() * 20) + 60,
-        neutral: Math.floor(Math.random() * 15) + 20,
-        negative: Math.floor(Math.random() * 10) + 5
-      },
-      topKeywords: [
-        { word: 'billing', count: Math.floor(Math.random() * 100) + 200, trend: 'up' },
-        { word: 'password', count: Math.floor(Math.random() * 50) + 150, trend: 'stable' },
-        { word: 'delivery', count: Math.floor(Math.random() * 80) + 120, trend: 'down' }
-      ],
-      speakerStats: {
-        customer: {
-          totalSpeakTime: Math.floor(Math.random() * 30) + 60,
-          avgSpeakingRate: Math.floor(Math.random() * 20) + 140,
-          interruptions: Math.floor(Math.random() * 10) + 20
-        },
-        agent: {
-          totalSpeakTime: Math.floor(Math.random() * 20) + 30,
-          avgSpeakingRate: Math.floor(Math.random() * 30) + 150,
-          interruptions: Math.floor(Math.random() * 5) + 5
-        }
-      },
-      qualityMetrics: {
-        clarity: Math.floor(Math.random() * 10) + 85,
-        completeness: Math.floor(Math.random() * 15) + 80,
-        relevance: Math.floor(Math.random() * 10) + 90,
-        satisfaction: Math.floor(Math.random() * 15) + 80
-      },
-      recentConversations: [
-        {
-          id: 'conv_001',
-          timestamp: new Date(),
-          duration: Math.floor(Math.random() * 120) + 120,
-          sentiment: 'positive',
-          summary: 'Customer successfully completed order process',
-          issues: []
-        }
-      ]
-    };
-  }
+  // Mock data methods removed - using real services now
 }

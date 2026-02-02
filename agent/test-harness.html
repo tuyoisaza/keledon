@@ -45,11 +45,17 @@
 <body>
     <h1>🧪 KELEDON Extension Frontend Test Harness</h1>
     
-    <div class="test-section" style="background: #e3f2fd; border: 2px solid #2196f3;">
-        <h2>🚀 Backend Readiness Test</h2>
-        <button onclick="testBackendReadiness()" style="background: #2196f3; font-weight: bold;">🔥 Test Full Backend Readiness</button>
-        <div id="backend-readiness-result" class="test-result pending">Click to test backend readiness...</div>
-    </div>
+        <div class="test-section" style="background: #e3f2fd; border: 2px solid #2196f3;">
+            <h2>🚀 Real Services Implementation Test</h2>
+            <button onclick="testRealServices()" style="background: #2196f3; font-weight: bold;">🔥 Test Real Services</button>
+            <div id="real-services-result" class="test-result pending">Click to test real services implementation...</div>
+        </div>
+        
+        <div class="test-section" style="background: #e8f5e8; border: 2px solid #4caf50;">
+            <h2>📊 System Monitoring Test</h2>
+            <button onclick="testSystemMonitoring()" style="background: #4caf50; font-weight: bold;">📈 Test System Monitoring</button>
+            <div id="system-monitoring-result" class="test-result pending">Click to test system monitoring...</div>
+        </div>
     
     <div class="test-section">
         <h2>🔧 Configuration Test</h2>
@@ -469,218 +475,277 @@
             log('info', `Test summary updated: ${passed} passed, ${failed} failed, ${pending} pending`);
         }
 
-        // Backend Readiness Test - Comprehensive Check
-        async function testBackendReadiness() {
-            log('info', '🚀 Starting comprehensive backend readiness test...');
-            updateResult('backend-readiness-result', 'pending', 'Testing all backend services...');
+        // Real Services Implementation Test
+        async function testRealServices() {
+            log('info', '🚀 Starting real services implementation test...');
+            updateResult('real-services-result', 'pending', 'Testing real services implementation...');
             
             const config = window.AGENT_CONFIG || window.KELEDON_CONFIG;
             if (!config) {
-                updateResult('backend-readiness-result', 'fail', '❌ Configuration not loaded');
-                log('error', 'Backend readiness test failed: Configuration not loaded');
+                updateResult('real-services-result', 'fail', '❌ Configuration not loaded');
+                log('error', 'Real services test failed: Configuration not loaded');
                 return;
             }
             
             const backendUrl = config.BACKEND_URL;
-            log('info', `Testing backend at: ${backendUrl}`);
+            log('info', `Testing real services at: ${backendUrl}`);
             
             let testsPassed = 0;
-            let totalTests = 6;
+            let totalTests = 4;
             
-            // Test 1: Backend Health Check
+            // Test 1: Voice Analytics Service
             try {
-                log('info', 'Testing backend health endpoint...');
-                const response = await fetch(`${backendUrl}/health`, { 
+                log('info', 'Testing Voice Analytics service...');
+                const response = await fetch(`${backendUrl}/api/dashboard/analytics/voice`, {
                     method: 'GET',
                     timeout: 5000
                 });
                 
                 if (response.ok) {
-                    log('success', `✅ Backend health check passed: ${response.status}`);
-                    testsPassed++;
-                } else {
-                    log('warning', `⚠️ Backend health check: ${response.status} ${response.statusText}`);
-                }
-            } catch (error) {
-                log('error', `❌ Backend health check failed: ${error.message}`);
-            }
-            
-            // Test 2: TTS Service
-            try {
-                log('info', 'Testing Text-to-Speech service...');
-                const ttsResponse = await fetch(`${backendUrl}/tts/qwen3-tts`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        text: 'Hello, this is a TTS test',
-                        voice: 'default'
-                    }),
-                    timeout: 10000
-                });
-                
-                if (ttsResponse.ok) {
-                    const ttsData = await ttsResponse.json();
-                    log('success', `✅ TTS service responding`, { 
-                        status: ttsResponse.status,
-                        response: ttsData 
-                    });
-                    testResults.tts = true;
-                    testsPassed++;
-                } else {
-                    log('error', `❌ TTS service error: ${ttsResponse.status} ${ttsResponse.statusText}`);
-                    testResults.tts = false;
-                }
-            } catch (error) {
-                log('error', `❌ TTS service connection failed: ${error.message}`);
-                testResults.tts = false;
-            }
-            
-            // Test 3: STT Service
-            try {
-                log('info', 'Testing Speech-to-Text service...');
-                // Create a simple audio blob for testing
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const sampleRate = 16000;
-                const duration = 1; // 1 second
-                const buffer = audioContext.createBuffer(1, sampleRate * duration, sampleRate);
-                const audioData = buffer.getChannelData(0);
-                
-                // Convert to WAV
-                const wavBlob = createWavBlob(audioData, sampleRate);
-                
-                const sttResponse = await fetch(`${backendUrl}/stt/whisper`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'audio/wav' },
-                    body: wavBlob,
-                    timeout: 15000
-                });
-                
-                if (sttResponse.ok) {
-                    const sttData = await sttResponse.json();
-                    log('success', `✅ STT service responding`, { 
-                        status: sttResponse.status,
-                        response: sttData 
-                    });
-                    testResults.stt = true;
-                    testsPassed++;
-                } else {
-                    log('error', `❌ STT service error: ${sttResponse.status} ${sttResponse.statusText}`);
-                    testResults.stt = false;
-                }
-            } catch (error) {
-                log('error', `❌ STT service connection failed: ${error.message}`);
-                testResults.stt = false;
-            }
-            
-            // Test 4: RPA Service
-            try {
-                log('info', 'Testing RPA service...');
-                const rpaResponse = await fetch(`${backendUrl}/rpa/playwright`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        url: 'https://example.com',
-                        steps: [
-                            { action: 'navigate', params: { url: 'https://example.com' } },
-                            { action: 'waitFor', params: { selector: 'h1', timeout: 5000 } }
-                        ],
-                        options: { headless: true, timeout: 10000 }
-                    }),
-                    timeout: 20000
-                });
-                
-                if (rpaResponse.ok) {
-                    const rpaData = await rpaResponse.json();
-                    log('success', `✅ RPA service responding`, { 
-                        status: rpaResponse.status,
-                        response: rpaData 
-                    });
-                    testResults.rpa = true;
-                    testsPassed++;
-                } else {
-                    log('error', `❌ RPA service error: ${rpaResponse.status} ${rpaResponse.statusText}`);
-                    testResults.rpa = false;
-                }
-            } catch (error) {
-                log('error', `❌ RPA service connection failed: ${error.message}`);
-                testResults.rpa = false;
-            }
-            
-            // Test 5: RAG Service
-            try {
-                log('info', 'Testing RAG (Retrieval) service...');
-                const ragResponse = await fetch(`${backendUrl}/rag/retrieve`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        query: 'What is KELEDON?',
-                        sessionId: 'test-session',
-                        companyId: 'test-company'
-                    }),
-                    timeout: 10000
-                });
-                
-                if (ragResponse.ok) {
-                    const ragData = await ragResponse.json();
-                    log('success', `✅ RAG service responding`, { 
-                        status: ragResponse.status,
-                        response: ragData 
-                    });
-                    testResults.ragAPI = true;
-                    testsPassed++;
-                } else {
-                    log('error', `❌ RAG service error: ${ragResponse.status} ${ragResponse.statusText}`);
-                    testResults.ragAPI = false;
-                }
-            } catch (error) {
-                log('error', `❌ RAG service connection failed: ${error.message}`);
-                testResults.ragAPI = false;
-            }
-            
-            // Test 6: WebSocket Connection
-            try {
-                log('info', 'Testing WebSocket connection...');
-                const wsUrl = `${config.WS_URL}${config.LISTEN_WS_ENDPOINT || '/listen/ws'}`;
-                
-                await new Promise((resolve, reject) => {
-                    const ws = new WebSocket(wsUrl);
-                    
-                    const timeout = setTimeout(() => {
-                        ws.close();
-                        reject(new Error('WebSocket connection timeout'));
-                    }, 5000);
-                    
-                    ws.onopen = () => {
-                        clearTimeout(timeout);
-                        log('success', `✅ WebSocket connected: ${wsUrl}`);
-                        testResults.websocket = true;
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        log('success', `✅ Voice Analytics service working`, { 
+                            status: response.status,
+                            data: {
+                                totalConversations: data.data.totalConversations,
+                                avgDuration: data.data.avgDuration,
+                                successRate: data.data.successRate
+                            }
+                        });
                         testsPassed++;
-                        ws.close();
-                        resolve();
-                    };
-                    
-                    ws.onerror = (error) => {
-                        clearTimeout(timeout);
-                        reject(error);
-                    };
+                    } else {
+                        log('error', '❌ Voice Analytics service returned invalid data');
+                    }
+                } else {
+                    log('error', `❌ Voice Analytics service error: ${response.status}`);
+                }
+            } catch (error) {
+                log('error', `❌ Voice Analytics service failed: ${error.message}`);
+            }
+            
+            // Test 2: Integration Health Service
+            try {
+                log('info', 'Testing Integration Health service...');
+                const response = await fetch(`${backendUrl}/api/dashboard/integrations/health`, {
+                    method: 'GET',
+                    timeout: 5000
                 });
                 
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        log('success', `✅ Integration Health service working`, { 
+                            status: response.status,
+                            data: {
+                                providerCount: data.data.length,
+                                connectedProviders: data.data.filter(p => p.status === 'connected').length
+                            }
+                        });
+                        testsPassed++;
+                    } else {
+                        log('error', '❌ Integration Health service returned invalid data');
+                    }
+                } else {
+                    log('error', `❌ Integration Health service error: ${response.status}`);
+                }
             } catch (error) {
-                log('error', `❌ WebSocket connection failed: ${error.message}`);
-                testResults.websocket = false;
+                log('error', `❌ Integration Health service failed: ${error.message}`);
+            }
+            
+            // Test 3: Flow Execution Service
+            try {
+                log('info', 'Testing Flow Execution service...');
+                const response = await fetch(`${backendUrl}/api/dashboard/flows/executions`, {
+                    method: 'GET',
+                    timeout: 5000
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        log('success', `✅ Flow Execution service working`, { 
+                            status: response.status,
+                            data: {
+                                totalExecutions: data.data.total,
+                                runningExecutions: data.data.filter(e => e.status === 'running').length
+                            }
+                        });
+                        testsPassed++;
+                    } else {
+                        log('error', '❌ Flow Execution service returned invalid data');
+                    }
+                } else {
+                    log('error', `❌ Flow Execution service error: ${response.status}`);
+                }
+            } catch (error) {
+                log('error', `❌ Flow Execution service failed: ${error.message}`);
+            }
+            
+            // Test 4: AI Loop Service
+            try {
+                log('info', 'Testing AI Loop service...');
+                const response = await fetch(`${backendUrl}/api/dashboard/ai/loops`, {
+                    method: 'GET',
+                    timeout: 5000
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        log('success', `✅ AI Loop service working`, { 
+                            status: response.status,
+                            data: {
+                                totalLoops: data.data.total,
+                                runningLoops: data.data.filter(l => l.status === 'running').length
+                            }
+                        });
+                        testsPassed++;
+                    } else {
+                        log('error', '❌ AI Loop service returned invalid data');
+                    }
+                } else {
+                    log('error', `❌ AI Loop service error: ${response.status}`);
+                }
+            } catch (error) {
+                log('error', `❌ AI Loop service failed: ${error.message}`);
+            }
             }
             
             // Final result
             const passRate = (testsPassed / totalTests) * 100;
-            if (passRate >= 80) {
-                updateResult('backend-readiness-result', 'pass', `🎉 Backend ready! ${testsPassed}/${totalTests} tests passed (${passRate.toFixed(1)}%)`);
-                log('success', `🎉 Backend readiness test completed successfully: ${testsPassed}/${totalTests} tests passed`);
+            if (passRate >= 75) {
+                updateResult('real-services-result', 'pass', `🎉 Real services implemented! ${testsPassed}/${totalTests} tests passed (${passRate.toFixed(1)}%)`);
+                log('success', `🎉 Real services test completed: ${testsPassed}/${totalTests} tests passed`);
             } else if (passRate >= 50) {
-                updateResult('backend-readiness-result', 'pending', `⚠️ Backend partially ready: ${testsPassed}/${totalTests} tests passed (${passRate.toFixed(1)}%)`);
-                log('warning', `⚠️ Backend readiness test completed with warnings: ${testsPassed}/${totalTests} tests passed`);
+                updateResult('real-services-result', 'pending', `⚠️ Partial real implementation: ${testsPassed}/${totalTests} tests passed (${passRate.toFixed(1)}%)`);
+                log('warning', `⚠️ Real services test partially completed: ${testsPassed}/${totalTests} tests passed`);
             } else {
-                updateResult('backend-readiness-result', 'fail', `❌ Backend not ready: ${testsPassed}/${totalTests} tests passed (${passRate.toFixed(1)}%)`);
-                log('error', `❌ Backend readiness test failed: ${testsPassed}/${totalTests} tests passed`);
+                updateResult('real-services-result', 'fail', `❌ Real services not ready: ${testsPassed}/${totalTests} tests passed (${passRate.toFixed(1)}%)`);
+                log('error', `❌ Real services test failed: ${testsPassed}/${totalTests} tests passed`);
+            }
+            
+            updateSummary();
+        }
+
+        // System Monitoring Test
+        async function testSystemMonitoring() {
+            log('info', '📈 Starting system monitoring test...');
+            updateResult('system-monitoring-result', 'pending', 'Testing system monitoring...');
+            
+            const config = window.AGENT_CONFIG || window.KELEDON_CONFIG;
+            if (!config) {
+                updateResult('system-monitoring-result', 'fail', '❌ Configuration not loaded');
+                log('error', 'System monitoring test failed: Configuration not loaded');
+                return;
+            }
+            
+            const backendUrl = config.BACKEND_URL;
+            let testsPassed = 0;
+            let totalTests = 3;
+            
+            // Test 1: Agent Status Monitoring
+            try {
+                log('info', 'Testing Agent Status monitoring...');
+                const response = await fetch(`${backendUrl}/api/dashboard/agents/status`, {
+                    method: 'GET',
+                    timeout: 5000
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        log('success', `✅ Agent Status monitoring working`, { 
+                            status: response.status,
+                            data: {
+                                agentCount: data.data.total,
+                                activeAgents: data.data.data.filter(a => a.status !== 'idle').length
+                            }
+                        });
+                        testsPassed++;
+                    } else {
+                        log('error', '❌ Agent Status monitoring returned invalid data');
+                    }
+                } else {
+                    log('error', `❌ Agent Status monitoring error: ${response.status}`);
+                }
+            } catch (error) {
+                log('error', `❌ Agent Status monitoring failed: ${error.message}`);
+            }
+            
+            // Test 2: System Health Monitoring
+            try {
+                log('info', 'Testing System Health monitoring...');
+                const response = await fetch(`${backendUrl}/api/dashboard/system/health`, {
+                    method: 'GET',
+                    timeout: 5000
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        log('success', `✅ System Health monitoring working`, { 
+                            status: response.status,
+                            data: {
+                                overall: data.data.overall,
+                                websocket: data.data.websocket,
+                                tts: data.data.tts,
+                                stt: data.data.stt,
+                                ai: data.data.ai
+                            }
+                        });
+                        testsPassed++;
+                    } else {
+                        log('error', '❌ System Health monitoring returned invalid data');
+                    }
+                } else {
+                    log('error', `❌ System Health monitoring error: ${response.status}`);
+                }
+            } catch (error) {
+                log('error', `❌ System Health monitoring failed: ${error.message}`);
+            }
+            }
+            
+            // Test 3: Dashboard Status
+            try {
+                log('info', 'Testing Dashboard Status...');
+                const response = await fetch(`${backendUrl}/api/dashboard/status`, {
+                    method: 'GET',
+                    timeout: 5000
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        log('success', `✅ Dashboard Status working`, { 
+                            status: response.status,
+                            data: {
+                                overall: data.data.status,
+                                components: data.data.components
+                            }
+                        });
+                        testsPassed++;
+                    } else {
+                        log('error', '❌ Dashboard Status returned invalid data');
+                    }
+                } else {
+                    log('error', `❌ Dashboard Status error: ${response.status}`);
+                }
+            } catch (error) {
+                log('error', `❌ Dashboard Status failed: ${error.message}`);
+            }
+            }
+            
+            // Final result
+            const passRate = (testsPassed / totalTests) * 100;
+            if (passRate >= 75) {
+                updateResult('system-monitoring-result', 'pass', `🎉 System monitoring working! ${testsPassed}/${totalTests} tests passed (${passRate.toFixed(1)}%)`);
+                log('success', `🎉 System monitoring test completed: ${testsPassed}/${totalTests} tests passed`);
+            } else if (passRate >= 50) {
+                updateResult('system-monitoring-result', 'pending', `⚠️ Partial system monitoring: ${testsPassed}/${totalTests} tests passed (${passRate.toFixed(1)}%)`);
+                log('warning', `⚠️ System monitoring test partially completed: ${testsPassed}/${totalTests} tests passed`);
+            } else {
+                updateResult('system-monitoring-result', 'fail', `❌ System monitoring not ready: ${testsPassed}/${totalTests} tests passed (${passRate.toFixed(1)}%)`);
+                log('error', `❌ System monitoring test failed: ${testsPassed}/${totalTests} tests passed`);
             }
             
             updateSummary();

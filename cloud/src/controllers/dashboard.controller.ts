@@ -1,6 +1,9 @@
 import { Controller, Get, Post, Query, Body, HttpException, HttpStatus, Param } from '@nestjs/common';
 import { AgentMonitoringService, AgentStatus, SystemHealth } from '../services/agent-monitoring.service';
 import { AILoopService } from '../services/ai-loop.service';
+import { VoiceAnalyticsService } from '../services/voice-analytics.service';
+import { IntegrationHealthService } from '../services/integration-health.service';
+import { FlowExecutionService } from '../services/flow-execution.service';
 
 export interface AgentStatusFilters {
   status?: string;
@@ -17,9 +20,12 @@ export interface TimeRange {
 export class DashboardController {
   constructor(
     private readonly agentMonitoringService: AgentMonitoringService,
-    private readonly aiLoopService: AILoopService
+    private readonly aiLoopService: AILoopService,
+    private readonly voiceAnalyticsService: VoiceAnalyticsService,
+    private readonly integrationHealthService: IntegrationHealthService,
+    private readonly flowExecutionService: FlowExecutionService
   ) {
-    console.log('DashboardController: Initialized');
+    console.log('DashboardController: Initialized with real services');
   }
 
   @Get('agents/status')
@@ -140,43 +146,7 @@ export class DashboardController {
   @Get('analytics/voice')
   async getVoiceAnalytics(@Query() timeRange: TimeRange) {
     try {
-      // Mock voice analytics data - would integrate with real STT/TTS services
-      const analytics = {
-        totalConversations: 1247,
-        avgDuration: 245, // seconds
-        successRate: 87.3,
-        sentimentDistribution: {
-          positive: 68.5,
-          neutral: 24.2,
-          negative: 7.3
-        },
-        topKeywords: [
-          { word: 'billing', count: 234, trend: 'up' },
-          { word: 'password', count: 189, trend: 'stable' },
-          { word: 'delivery', count: 156, trend: 'down' },
-          { word: 'refund', count: 142, trend: 'up' },
-          { word: 'appointment', count: 128, trend: 'stable' },
-          { word: 'account', count: 115, trend: 'up' }
-        ],
-        speakerStats: {
-          customer: {
-            totalSpeakTime: 65.3,
-            avgSpeakingRate: 145,
-            interruptions: 23
-          },
-          agent: {
-            totalSpeakTime: 34.7,
-            avgSpeakingRate: 160,
-            interruptions: 8
-          }
-        },
-        qualityMetrics: {
-          clarity: 92.1,
-          completeness: 88.7,
-          relevance: 94.3,
-          satisfaction: 87.6
-        }
-      };
+      const analytics = this.voiceAnalyticsService.getAnalytics(timeRange.period as any || '24h');
 
       return {
         success: true,
@@ -193,54 +163,21 @@ export class DashboardController {
   @Get('integrations/health')
   async getIntegrationHealth() {
     try {
-      // Mock integration health data - would integrate with real provider health checks
-      const integrations = [
-        {
-          id: 'salesforce',
-          name: 'Salesforce',
-          category: 'crm',
-          status: 'connected',
-          responseTimeMs: 120,
-          uptime: 99.8,
-          errorRate: 0.1,
-          lastSync: new Date().toISOString()
-        },
-        {
-          id: 'genesys',
-          name: 'Genesys Cloud',
-          category: 'helpdesk',
-          status: 'connected',
-          responseTimeMs: 85,
-          uptime: 99.9,
-          errorRate: 0.05,
-          lastSync: new Date(Date.now() - 300000).toISOString() // 5 minutes ago
-        },
-        {
-          id: 'zendesk',
-          name: 'Zendesk',
-          category: 'helpdesk',
-          status: 'error',
-          responseTimeMs: 450,
-          uptime: 97.2,
-          errorRate: 2.8,
-          lastSync: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
-          error: 'API timeout exceeded'
-        },
-        {
-          id: 'slack',
-          name: 'Slack',
-          category: 'communication',
-          status: 'connected',
-          responseTimeMs: 45,
-          uptime: 99.99,
-          errorRate: 0.01,
-          lastSync: new Date(Date.now() - 60000).toISOString() // 1 minute ago
-        }
-      ];
+      const integrations = this.integrationHealthService.getProviders();
 
       return {
         success: true,
-        data: integrations,
+        data: integrations.map(provider => ({
+          id: provider.id,
+          name: provider.name,
+          category: provider.category,
+          status: provider.status,
+          responseTimeMs: provider.health?.responseTime || 0,
+          uptime: provider.health?.uptime || 0,
+          errorRate: provider.health?.errorRate || 0,
+          lastSync: provider.lastSync?.toISOString() || new Date().toISOString(),
+          error: provider.status === 'error' ? 'Connection failed' : undefined
+        })),
         timestamp: new Date().toISOString()
       };
     } catch (error) {
@@ -252,69 +189,24 @@ export class DashboardController {
   @Get('flows/executions')
   async getFlowExecutions(@Query() timeRange: TimeRange) {
     try {
-      // Mock flow execution data - would integrate with real flow execution service
-      const executions = [
-        {
-          id: 'exec_001',
-          name: 'Login Flow',
-          status: 'completed',
-          startTime: new Date(Date.now() - 180000).toISOString(),
-          endTime: new Date(Date.now() - 120000).toISOString(),
-          duration: 60000, // ms
-          currentStepIndex: 5,
-          totalSteps: 5,
-          progress: 100,
-          performance: {
-            avgStepTime: 12000,
-            successRate: 100,
-            totalDuration: 60000
-          },
-          result: {
-            action: 'User logged in successfully',
-            fields_filled: ['email', 'password'],
-            success: true
-          }
-        },
-        {
-          id: 'exec_002',
-          name: 'Order Processing Flow',
-          status: 'running',
-          startTime: new Date(Date.now() - 60000).toISOString(),
-          endTime: null,
-          duration: null,
-          currentStepIndex: 3,
-          totalSteps: 5,
-          progress: 60,
-          performance: {
-            avgStepTime: 15000,
-            successRate: 80,
-            totalDuration: 45000
-          },
-          result: null
-        },
-        {
-          id: 'exec_003',
-          name: 'Data Export Flow',
-          status: 'failed',
-          startTime: new Date(Date.now() - 900000).toISOString(),
-          endTime: new Date(Date.now() - 750000).toISOString(),
-          duration: 150000, // ms
-          currentStepIndex: 2,
-          totalSteps: 5,
-          progress: 40,
-          performance: {
-            avgStepTime: 75000,
-            successRate: 40,
-            totalDuration: 150000
-          },
-          result: null,
-          error: 'Step timeout: Element not found'
-        }
-      ];
+      const executions = this.flowExecutionService.getExecutions({ limit: 100 });
 
       return {
         success: true,
-        data: executions,
+        data: executions.map(exec => ({
+          id: exec.id,
+          name: exec.name,
+          status: exec.status,
+          startTime: exec.startTime?.toISOString(),
+          endTime: exec.endTime?.toISOString(),
+          duration: exec.duration,
+          currentStepIndex: exec.currentStepIndex,
+          totalSteps: exec.totalSteps,
+          progress: exec.progress,
+          performance: exec.performance,
+          result: exec.result,
+          error: exec.error
+        })),
         total: executions.length,
         timeRange: timeRange
       };

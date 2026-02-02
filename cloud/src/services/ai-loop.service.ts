@@ -186,6 +186,22 @@ export class AILoopService {
     }
   }
 
+  pauseLoop(loopId: string): void {
+    const loop = this.loops.get(loopId);
+    if (loop && loop.status === 'running') {
+      loop.status = 'paused';
+      this.broadcastLoopUpdate(loop);
+      console.log(`AILoopService: Paused loop ${loopId}`);
+    }
+  }
+
+  deleteLoop(loopId: string): void {
+    const deleted = this.loops.delete(loopId);
+    if (deleted) {
+      console.log(`AILoopService: Deleted loop ${loopId}`);
+    }
+  }
+
   initializeDemoLoops(): void {
     const demoLoop = this.createLoop('Demo AI Loop');
     console.log(`AILoopService: Initialized demo loop ${demoLoop.id}`);

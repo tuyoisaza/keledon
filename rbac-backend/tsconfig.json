@@ -10,7 +10,7 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2022",
-    "lib": ["ES2022", "DOM"],
+    "lib": ["ES2022"],
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
