@@ -4,6 +4,7 @@
 import { SessionManager } from '../core/session-manager.js';
 import { WebSocketClient } from '../core/websocket-client.js';
 import { STTManager } from '../core/stt-manager.js';
+import { TTSManager } from '../core/tts-manager.js';
 
 class BackgroundService {
     constructor() {
@@ -11,11 +12,13 @@ class BackgroundService {
         this.sessionManager = new SessionManager();
         this.webSocketClient = new WebSocketClient(this.sessionManager);
         this.sttManager = new STTManager(this.sessionManager, this.webSocketClient);
+        this.ttsManager = new TTSManager(this.sessionManager, this.webSocketClient);
         
         // State tracking
         this.connectionState = 'disconnected';
         this.isListening = false;
         this.isSTTActive = false;
+        this.isTTSActive = false;
         this.currentSessionId = null;
         this.currentTabTitle = null;
         
@@ -23,6 +26,7 @@ class BackgroundService {
         this.componentStatus = {
             websocket: 'disconnected',
             stt: 'ready',
+            tts: 'ready',
             session: null
         };
     }
@@ -53,6 +57,15 @@ class BackgroundService {
             console.warn('STT Manager initialization failed:', error.message);
             this.componentStatus.stt = 'error';
         }
+
+        try {
+            // Initialize TTS manager (requires API key)
+            await this.ttsManager.initialize();
+            console.log('TTS Manager initialized');
+        } catch (error) {
+            console.warn('TTS Manager initialization failed:', error.message);
+            this.componentStatus.tts = 'error';
+        }
     }
 
     setupEventHandlers() {
@@ -65,6 +78,11 @@ class BackgroundService {
         this.webSocketClient.on('connection:closed', () => {
             this.componentStatus.websocket = 'disconnected';
             console.log('WebSocket disconnected');
+        });
+
+        // Handle TTS events from WebSocket
+        this.webSocketClient.on('tts:speak', (payload) => {
+            this.handleTTSCommand(payload);
         });
 
         // Handle STT events
@@ -86,7 +104,57 @@ class BackgroundService {
 
         this.sttManager.on('stt:error', (error) => {
             this.componentStatus.stt = 'error';
-            console.error('STT error:', error.message);
+            this.stats.errors++;
+            this.emit('stt:error', error);
+        });
+
+        // Handle TTS events
+        this.ttsManager.on('tts:utterance_started', (data) => {
+            this.componentStatus.tts = 'speaking';
+            this.isTTSActive = true;
+            console.log('TTS speech started:', data.text.substring(0, 50));
+        });
+
+        this.ttsManager.on('tts:utterance_completed', (data) => {
+            this.componentStatus.tts = 'ready';
+            this.isTTSActive = false;
+            console.log('TTS speech completed');
+        });
+
+        this.ttsManager.on('tts:speech_stopped', (data) => {
+            this.componentStatus.tts = 'ready';
+            this.isTTSActive = false;
+            console.log('TTS speech stopped:', data.reason);
+        });
+
+        this.ttsManager.on('tts:error', (error) => {
+            this.componentStatus.tts = 'error';
+            console.error('TTS error:', error.message);
+        });
+    }
+
+        // Handle TTS events
+        this.ttsManager.on('tts:utterance_started', (data) => {
+            this.componentStatus.tts = 'speaking';
+            this.isTTSActive = true;
+            console.log('TTS speech started:', data.text.substring(0, 50));
+        });
+
+        this.ttsManager.on('tts:utterance_completed', (data) => {
+            this.componentStatus.tts = 'ready';
+            this.isTTSActive = false;
+            console.log('TTS speech completed');
+        });
+
+        this.ttsManager.on('tts:speech_stopped', (data) => {
+            this.componentStatus.tts = 'ready';
+            this.isTTSActive = false;
+            console.log('TTS speech stopped:', data.reason);
+        });
+
+        this.ttsManager.on('tts:error', (error) => {
+            this.componentStatus.tts = 'error';
+            console.error('TTS error:', error.message);
         });
     }
 
@@ -132,6 +200,11 @@ class BackgroundService {
                     components: this.componentStatus,
                     session: this.sessionManager.getCurrentSession()
                 });
+                break;
+                
+            case 'TTS_SPEAK':
+                this.handleTTSCommand(message.payload).then(result => sendResponse(result))
+                                  .catch(error => sendResponse({ error: error.message }));
                 break;
                 
             default:
