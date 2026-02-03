@@ -64,21 +64,19 @@ export class RPAStepExecutor {
    * Load page-specific RPA adapters
    */
   async loadAdapters() {
-    try {
-      // Load Salesforce adapter
-      const { SalesforceAdapter } = await import('./adapters/salesforce.js');
-      this.adapters.set('salesforce', new SalesforceAdapter());
-      
-      // Load generic web adapter
-      const { WebAdapter } = await import('./adapters/web.js');
-      this.adapters.set('web', new WebAdapter());
-      
-      console.log(`RPA: Loaded ${this.adapters.size} adapters`);
-      
-    } catch (error) {
-      console.error('Failed to load RPA adapters:', error);
-      throw error;
-    }
+     try {
+       // Import UI automation service for real DOM operations
+       const { UIAutomationService } = await import('../services/ui-automation.service');
+       
+       // Initialize UI automation service
+       await uiAutomationService.initialize();
+       
+       console.log(`RPA: Initialized UI automation service`);
+     } catch (error) {
+       console.error('Failed to initialize RPA adapters:', error);
+       throw error;
+     }
+   }
   }
 
   /**

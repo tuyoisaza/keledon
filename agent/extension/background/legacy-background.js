@@ -731,8 +731,23 @@ async function startListeningSession(options = {}) {
             executeFlow(flowId, data.params, data.steps || null, data.flow_run_id || null);
         });
 
-        socket.on('PLAY_AUDIO', (data) => {
+            socket.on('PLAY_AUDIO', (data) => {
             handlePlayAudio(data);
+        });
+        
+        // Handle RPA results from UI automation
+        socket.on('rpa:ui_result', (data) => {
+            if (data.success) {
+                console.log('✅ RPA execution completed successfully');
+                // Notify side panel of successful completion
+                chrome.runtime.sendMessage({
+                    type: 'AUTOMATION_RESULT',
+                    success: true,
+                    result: data.result
+                }).catch(() => {});
+            } else {
+                console.error('❌ RPA execution failed:', data.error);
+            }
         });
 
         socket.on('audio-playback-end', () => {
@@ -813,6 +828,20 @@ async function startListeningSession(options = {}) {
         });
 
         // Canonical command handlers
+        // Import UI automation service (dynamic import)
+        const handleUIAutomationCommand = async (payload, sessionId) => {
+            try {
+                const uiAutomationService = await import('../services/ui-automation.service');
+                await uiAutomationService.executeUISteps(sessionId, payload.steps || []);
+                
+                console.log('UI automation completed:', payload.steps?.length || 0, 'steps');
+                return true;
+            } catch (error) {
+                console.error('UI automation failed:', error);
+                return false;
+            }
+        };
+
         function handleBrainCommand(payload) {
             log('RX brain command: ' + payload.type);
             
@@ -821,8 +850,7 @@ async function startListeningSession(options = {}) {
                     handlePlayAudio({ text: payload.payload.text, interruptible: payload.payload.interruptible });
                     break;
                 case 'ui_steps':
-                    // Execute RPA steps (will be implemented in next phase)
-                    log('UI steps command received (not implemented yet)');
+                    handleUIAutomationCommand(payload, payload.session_id);
                     break;
                 case 'mode':
                     log('Mode change: ' + payload.payload.mode);
