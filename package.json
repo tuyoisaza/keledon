@@ -1,34 +1,14 @@
 {
   "name": "keledon",
   "version": "1.0.0",
-  "description": "KELEDON Vector Store Management System",
+  "description": "KELEDON Autonomous Agent System",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "install": "npm run install:deps && npm run setup",
-    "install:deps": "cd landing && npm ci --no-scripts && cd ../cloud && npm install",
-    "setup": "cd cloud && node scripts/prepare-env.js",
-    "dev": "concurrently \"npm run dev:qdrant\" \"npm run dev:frontend\" \"npm run dev:backend\" --names \"qdrant,frontend,backend\"",
-    "dev:qdrant": "cd landing && node scripts/setup-qdrant.js start",
-    "dev:frontend": "cd landing && npm run dev",
-    "dev:backend": "cd cloud && npm run start:dev",
-    "build": "npm run build:frontend && npm run build:backend",
-    "build:frontend": "cd landing && npm run build",
-    "build:backend": "cd cloud && npm run build",
-    "test": "npm run test:frontend && npm run test:backend",
-    "test:frontend": "cd landing && npm test",
-    "test:backend": "cd cloud && npm test",
-    "lint": "npm run lint:frontend && npm run lint:backend",
-    "lint:frontend": "cd landing && npm run lint",
-    "lint:backend": "cd cloud && npm run lint",
-    "clean": "npm run clean:frontend && npm run clean:backend",
-    "clean:frontend": "cd landing && rm -rf dist node_modules/.cache",
-    "clean:backend": "cd cloud && rm -rf dist",
-    "qdrant": "cd landing && node scripts/setup-qdrant.js",
-    "start": "npm run dev",
-    "dev:vector-store": "npm run setup && npm run dev",
-    "build:vector-store": "npm run build && npm run package:vector-store",
-    "package:vector-store": "echo 'Vector Store package built successfully'"
+    "dev": "echo 'No development runtime configured'",
+    "build": "echo 'No build configured'",
+    "test": "echo 'No tests configured'",
+    "start": "npm run dev"
   },
   "dependencies": {
     "ajv": "^8.17.1",
@@ -41,10 +21,7 @@
   "devDependencies": {
     "concurrently": "^8.2.2"
   },
-  "workspaces": [
-    "landing",
-    "cloud"
-  ],
+
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
@@ -55,11 +32,7 @@
   },
   "author": "KELEDON Team",
   "keywords": [
-    "vector-store",
-    "qdrant",
-    "ai",
-    "knowledge-management",
-    "react",
-    "nestjs"
+    "autonomous-agents",
+    "runtime-system"
   ]
 }
