@@ -1,0 +1,106 @@
+# KELEDON — Readiness Gate (V1, Reduced)
+
+## Status
+**IMMUTABLE LAW — READY vs NOT READY (V1)**
+
+This document defines the **only rule** for deciding whether a KELEDON version is worth testing.
+
+There is no roadmap, no partial credit, and no debate.
+
+---
+
+## 1. Purpose
+
+The Readiness Gate exists to answer one question only:
+
+> **Can a human pull `main`, run the system, and observe real behavior?**
+
+If the answer is not clearly YES, the system is **NOT READY**.
+
+---
+
+## 2. What READY Means
+
+A version is **READY** if and only if **all** of the following are true:
+
+1. `main` builds without manual fixes
+2. `main` starts without crashes
+3. At least one real input can be provided
+4. At least one real output is produced
+5. The behavior is observable by a human
+
+Logs count. UI counts. Side effects count.
+Claims do not.
+
+---
+
+## 3. What NOT READY Means
+
+A version is **NOT READY** if **any** of the following are true:
+
+- build fails
+- startup fails
+- behavior is simulated
+- output is mocked
+- nothing observable happens
+
+NOT READY is a valid outcome.
+Silence is not.
+
+---
+
+## 4. Who Decides
+
+Only the **PR Master / Release Engineer** may declare readiness.
+
+Execution agents MUST NOT declare readiness.
+Humans MUST NOT override the declaration.
+
+---
+
+## 5. How the Gate Is Applied
+
+After each integration cycle, the PR Master MUST declare exactly one:
+
+```
+VERDICT: READY
+```
+
+or
+
+```
+VERDICT: NOT READY
+```
+
+No explanation is required.
+
+---
+
+## 6. Human Action After Verdict
+
+If READY:
+- human pulls `main`
+- human runs the system
+- human tests behavior
+
+If NOT READY:
+- no testing
+- next integration cycle continues
+
+---
+
+## 7. Authority Rule
+
+This document overrides:
+
+- optimism
+- effort
+- sunk cost
+- progress reports
+
+Delete code or continue work until READY is reached.
+
+---
+
+**End of Readiness Gate (V1)**
+
