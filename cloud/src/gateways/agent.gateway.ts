@@ -28,7 +28,8 @@ export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly sessionService: SessionService,
     private readonly decisionEngine: DecisionEngineService,
-    private readonly ttsService: TTSService
+    private readonly ttsService: TTSService,
+    private readonly uiAutomationService: UIAutomationService
   ) {
     
     // TTS event listeners for real-time updates
