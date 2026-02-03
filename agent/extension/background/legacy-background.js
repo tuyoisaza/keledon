@@ -830,6 +830,16 @@ async function startListeningSession(options = {}) {
                 case 'stop':
                     stopListeningSession();
                     break;
+                default:
+                    log('Unknown brain command type: ' + payload.type);
+                    break;
+            }
+                case 'mode':
+                    log('Mode change: ' + payload.payload.mode);
+                    break;
+                case 'stop':
+                    stopListeningSession();
+                    break;
             }
         }
 

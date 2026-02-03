@@ -27,8 +27,24 @@ export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(
     private readonly sessionService: SessionService,
-    private readonly decisionEngine: DecisionEngineService
-  ) {}
+    private readonly decisionEngine: DecisionEngineService,
+    private readonly ttsService: TTSService
+  ) {
+    
+    // TTS event listeners for real-time updates
+    this.ttsService.on('playback:started', () => {
+      this.broadcastToSidePanel('tts_status', 'speaking');
+    });
+    
+    this.ttsService.on('playback:completed', () => {
+      this.broadcastToSidePanel('tts_status', 'ready');
+    });
+    
+    this.ttsService.on('error', (error) => {
+      this.broadcastToSidePanel('tts_status', 'error');
+      console.error('TTS Error:', error);
+    });
+  }
 
   handleConnection(client: Socket) {
     console.log(`[AgentGateway] Agent connected: ${client.id}`);
@@ -57,6 +73,22 @@ export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
         event.payload.provider || 'deepgram',
         event.payload.metadata || {}
       );
+
+      // Handle 'say' commands with TTS
+      if (decision.type === 'say' && decision.say) {
+        await this.ttsService.speak(decision.say.text, {
+          voice: decision.say.voice,
+          interruptible: decision.say.interruptible,
+          language: decision.say.language,
+          speed: decision.say.speed,
+          pitch: decision.say.pitch,
+          volume: decision.say.volume
+        });
+        
+        console.log(`[AgentGateway] TTS: "${decision.say.text}" (voice: ${decision.say.voice || 'default'})`);
+      } else {
+        console.log(`[AgentGateway] Unsupported command type: ${decision.type}`);
+      }
 
       // Generate canonical brain command from decision
       const command = await this.decisionEngine.generateCommand(decision, event.session_id);
