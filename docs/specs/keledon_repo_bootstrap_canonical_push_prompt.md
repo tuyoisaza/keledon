@@ -1,183 +1,165 @@
-# 🧱 KELEDON — Repository Bootstrap & Canonical Push Prompt
+# KELEDON — Repository Bootstrap & Git Law (V1)
 
-## OBJECTIVE (NON‑NEGOTIABLE)
+## Status
+**IMMUTABLE LAW — REPOSITORY & GIT GOVERNANCE (V1)**
 
-Create the **initial KELEDON repository** with:
+This document defines the **only legal way** to interact with the KELEDON repository.
 
-1. A clean, intentional folder structure
-2. The canonical documents committed as the source of truth
-3. GitHub‑native coordination artifacts (Issues, PR flow, docs)
-4. A first push that represents **governance**, not implementation
-
-No demo code, no scaffolding features, no mock implementations.
+If code exists without following these rules, it is considered **illegitimate**, regardless of quality.
 
 ---
 
-## AUTHORITY & ORDER
+## 1. Canonical Repository
 
-This bootstrap step has **higher priority than coding**.
-
-No agent may implement runtime features until:
-
-- The repository exists
-- The canonical documents are committed
-- The folder structure is in place
-
----
-
-## REPOSITORY STRUCTURE (MANDATORY)
-
-Create the repository with **exactly** this top‑level structure:
+KELEDON has exactly **one canonical repository**:
 
 ```
-keledon/
-├── agent/                 # Browser agent (extension runtime)
-├── cloud/                 # Cloud brain (backend)
-├── contracts/             # Canonical schemas (source of truth)
-├── docs/
-│   ├── spec/              # Canonical specs (authoritative)
-│   ├── pm/                # Planning & status reports
-│   └── decisions/         # Explicit product decisions (A/B)
-├── infra/                 # Deployment & IaC (empty for now)
-├── tools/                 # Dev scripts (empty for now)
-├── .github/
-│   ├── ISSUE_TEMPLATE/
-│   │   ├── task.md
-│   │   └── decision.md
-│   └── pull_request_template.md
-├── README.md
-└── .gitignore
+https://github.com/tuyoisaza/keledon
 ```
 
-Do **not** add implementation files yet.
+All work, history, and truth live here.
+
+Forks, mirrors, or side repos are **non-authoritative**.
 
 ---
 
-## CANONICAL DOCUMENTS TO COMMIT (REQUIRED)
+## 2. Canonical Branch
 
-Create and commit the following files **exactly**:
+The canonical branch is:
 
-### 1. `docs/specs/keledon_v1_canonical_technical_spec.md`
+```
+main
+```
 
-- Paste the **full content** of:
-  **"KELEDON V1 — Canonical Technical Spec (Production)"**
-- This file is the **technical source of truth**.
+Rules:
 
-### 2. `docs/specs/keledon_canonical_autonomous_development_prompt.md`
+- `main` represents the last known good state
+- `main` is **read-only** for agents
+- Direct commits to `main` are **forbidden**
 
-- Paste the **full content** of:
-  \*\*"KELEDON — Canonical Autonomous Development Prompt
-- This file is the **governance constitution** for all agents.
+Any direct push to `main` invalidates the work.
 
-### 3. `README.md`
+---
 
-The README must:
+## 3. Forbidden Branches
 
-- State that KELEDON is an autonomous agent system
-- Declare that `docs/spec/` is authoritative
-- Explicitly forbid demo‑only implementations
+The following are explicitly forbidden:
 
-Minimal README example:
+- `master`
+- legacy branches resurrected from history
 
-```md
-# KELEDON
+Any work based on these branches is **void**.
 
-KELEDON is an autonomous inbound agent system.
+---
 
-## Source of Truth
-All architecture, contracts, and development rules live in `docs/spec/`.
+## 4. Feature Branch Rule
 
-No feature work is valid unless it complies with the canonical specs.
+All work must occur on a **feature branch** created from `main`.
+
+Naming convention:
+
+```
+agent/<short-description>
+```
+
+Example:
+
+```
+agent/verify-runtime-ingress
 ```
 
 ---
 
-## GITHUB GOVERNANCE FILES
+## 5. Planning Gate (Hard Stop)
 
-### Issue Template — Task (`.github/ISSUE_TEMPLATE/task.md`)
+No agent may:
 
-```md
-## Objective
+- create a branch
+- modify files
+- write code
+- commit changes
 
-## Canonical Spec Reference
+until **planning is explicitly completed** and recorded in the Issue.
 
-## Scope (IN)
-
-## Out of Scope (OUT)
-
-## Acceptance Criteria
-
-## Assigned Agent
-```
-
-### Issue Template — Decision (`.github/ISSUE_TEMPLATE/decision.md`)
-
-```md
-## Decision Needed
-
-## Options (A / B)
-
-## Impact
-
-## Blocking Areas
-```
-
-### Pull Request Template (`.github/pull_request_template.md`)
-
-```md
-## What This PR Does
-
-## Canonical Spec Compliance
-
-## Runtime Path Affected
-
-## Acceptance Criteria Met
-
-## Out of Scope Confirmation
-```
+Violating this gate invalidates the work.
 
 ---
 
-## INITIAL COMMIT & PUSH
+## 6. Commit Rules
 
-Steps to execute:
+Every commit must:
 
-1. Initialize git repository
-2. Create folder structure
-3. Create all canonical documents
-4. Commit with message:
+- occur on a feature branch
+- reference the Issue number
+- include the Agent-ID
+
+Example:
 
 ```
-chore: bootstrap KELEDON repo with canonical specs and governance
+fix(cloud): remove duplicate backend (Issue #12) — Agent-Backend-A7F3
 ```
 
-5. Push to GitHub main branch
-
-No additional commits are allowed before this one.
+Commits without traceability are invalid.
 
 ---
 
-## POST‑BOOTSTRAP RULE
+## 7. Push Requirement
 
-After this push:
+Work is not considered real until:
 
-- All future work must start as GitHub Issues
-- All PRs are reviewed against the canonical specs
-- No agent may bypass the documents in `docs/spec/`
+- the feature branch is pushed to the remote repository
 
----
-
-## SUCCESS CRITERIA
-
-This task is complete only when:
-
-- The repo exists on GitHub
-- The structure matches exactly
-- Canonical specs are committed and readable
-- README clearly declares authority hierarchy
-
-At this point, the system is ready for **real development**.
+Local-only work **does not exist**.
 
 ---
 
-### END OF PROMPT
+## 8. Pull Request Requirement
+
+Every unit of work requires a Pull Request:
+
+- targeting `main`
+- linked to the Issue
+- describing what changed and why
+
+No PR = no completion.
+
+---
+
+## 9. Definition of Completion
+
+An Issue is considered **complete** only when:
+
+- code is committed
+- branch is pushed
+- PR is open and reviewable
+
+Statements like "done", "implemented", or "finished" without a PR are invalid.
+
+---
+
+## 10. Human Authority
+
+Humans retain the right to:
+
+- close PRs
+- reject work
+- override agent decisions
+
+Agents may not argue governance.
+
+---
+
+## 11. Change Policy
+
+This document may only be changed by:
+
+- explicit governance decision
+- separate governance Issue
+- human approval
+
+Agents are forbidden from modifying it.
+
+---
+
+**End of Repository Bootstrap & Git Law (V1)**
+
