@@ -751,6 +751,37 @@ async function startListeningSession(options = {}) {
         socket.on('asr.final', (data) => {
             log('Final Transcript: ' + data.text);
             chrome.runtime.sendMessage({ type: 'TRANSCRIPT_FINAL', text: data.text }).catch(() => { });
+            
+            // Emit canonical text_input event for real session
+            if (currentSessionId && socket) {
+                const textInputEvent = {
+                    message_id: crypto.randomUUID(),
+                    timestamp: new Date().toISOString(),
+                    direction: 'agent_to_cloud',
+                    message_type: 'brain_event',
+                    session_id: currentSessionId,
+                    payload: {
+                        event_id: crypto.randomUUID(),
+                        session_id: currentSessionId,
+                        timestamp: new Date().toISOString(),
+                        type: 'text_input',
+                        payload: {
+                            text: data.text,
+                            confidence: data.confidence || 0.8,
+                            provider: 'deepgram',
+                            metadata: {
+                                deepgram: {
+                                    request_id: data.request_id,
+                                    duration: data.duration
+                                }
+                            }
+                        }
+                    }
+                };
+                
+                socket.emit('message', textInputEvent);
+                log(`Canonical text_input event emitted: "${data.text}" (confidence: ${data.confidence || 0.8})`);
+            }
         });
         socket.on('session.ended', (data) => {
             log('Socket received session.ended. Reason: ' + (data?.reason || 'unknown'));

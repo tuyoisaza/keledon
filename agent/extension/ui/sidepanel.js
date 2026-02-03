@@ -1034,9 +1034,27 @@ async function handleBackgroundMessage(message, sender, sendResponse) {
                 uiManager.updateSessionInfo(message.sessionInfo || 'No active session');
                 break;
                 
-            case 'TRANSCRIPT_UPDATE':
+            case 'TRANSCRIPT_FINAL':
                 if (message.transcript) {
                     uiManager.addMessage(`Transcript: ${message.transcript}`, 'assistant');
+                    
+                    // Update STT status to ready (transcription complete)
+                    const sttStatus = document.getElementById('sttStatus');
+                    if (sttStatus) {
+                        sttStatus.className = 'status-dot ready';
+                        sttStatus.textContent = 'STT Ready';
+                    }
+                }
+                break;
+                
+            case 'TRANSCRIPT_PARTIAL':
+                if (message.transcript) {
+                    // Update STT status to processing (transcribing)
+                    const sttStatus = document.getElementById('sttStatus');
+                    if (sttStatus) {
+                        sttStatus.className = 'status-dot processing';
+                        sttStatus.textContent = 'STT Processing';
+                    }
                 }
                 break;
                 
