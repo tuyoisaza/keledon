@@ -182,6 +182,21 @@ export class WebSocketClient {
   }
 
   /**
+   * Initialize TTS Manager for real speech synthesis
+   */
+  initializeTTSManager() {
+    if (this.ttsManager) return;
+
+    // Import and initialize TTS Manager
+    import('./tts/tts-manager.js').then(({ TTSManager }) => {
+      this.ttsManager = new TTSManager(this);
+      console.log('WebSocketClient: TTS Manager initialized for real speech synthesis');
+    }).catch(error => {
+      console.error('WebSocketClient: Failed to initialize TTS Manager', error);
+    });
+  }
+
+  /**
    * Handle heartbeat message
    */
   handleHeartbeat(payload) {
