@@ -1078,17 +1078,69 @@ async function handleBackgroundMessage(message, sender, sendResponse) {
 async function checkBackendConnection() {
     try {
         const response = await chrome.runtime.sendMessage({
-            type: 'CHECK_CONNECTION'
+            type: 'GET_STATUS'
         });
         
-        if (response.connected) {
-            uiManager.updateConnectionStatus('connected', 'Connected to backend');
+        if (response.status === 'ready' && response.components?.websocket === 'connected') {
+            uiManager.updateConnectionStatus('connected', 'Connected to Cloud');
         } else {
-            uiManager.updateConnectionStatus('disconnected', 'Backend unavailable');
+            uiManager.updateConnectionStatus('disconnected', 'Cloud unavailable');
         }
+
+        // Update component status display
+        updateComponentStatus(response.components || {});
+        updateSessionStatus(response.session || {});
+        
     } catch (error) {
         uiManager.updateConnectionStatus('disconnected', 'Connection failed');
     }
+}
+
+function updateComponentStatus(components) {
+    // Update WebSocket status
+    const wsStatus = document.getElementById('websocketStatus');
+    if (wsStatus) {
+        wsStatus.className = `status-dot ${components.websocket || 'disconnected'}`;
+        wsStatus.textContent = components.websocket === 'connected' ? 'WS Connected' : 'WS Disconnected';
+    }
+
+    // Update STT status
+    const sttStatus = document.getElementById('sttStatus');
+    if (sttStatus && components.stt) {
+        const statusMap = {
+            'ready': { class: 'ready', text: 'STT Ready' },
+            'listening': { class: 'processing', text: 'STT Listening' },
+            'processing': { class: 'processing', text: 'STT Processing' },
+            'error': { class: 'error', text: 'STT Error' },
+            'degraded': { class: 'degraded', text: 'STT Degraded' }
+        };
+        
+        const status = statusMap[components.stt] || statusMap.ready;
+        sttStatus.className = `status-dot ${status.class}`;
+        sttStatus.textContent = status.text;
+    }
+
+    // Update session status
+    updateSessionStatus(components.session);
+}
+
+function updateSessionStatus(session) {
+    const sessionInfo = document.getElementById('sessionInfo');
+    if (sessionInfo && session) {
+        // Show real session info (anti-demo compliance)
+        if (session.id && validateUUID(session.id)) {
+            const sessionPreview = `Session ${session.id.substring(0, 8)}...`;
+            sessionInfo.textContent = sessionPreview;
+        } else {
+            sessionInfo.textContent = 'No valid session';
+        }
+    }
+}
+
+function validateUUID(sessionId) {
+    // Validate real UUID format (anti-demo: no fake sessions)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(sessionId);
 }
 
 // Export for debugging
