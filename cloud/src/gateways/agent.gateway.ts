@@ -23,7 +23,10 @@ export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly sessionService: SessionService) {}
+  constructor(
+    private readonly sessionService: SessionService,
+    private readonly decisionEngine: DecisionEngineService
+  ) {}
 
   handleConnection(client: Socket) {
     console.log(`[AgentGateway] Agent connected: ${client.id}`);
@@ -33,16 +36,59 @@ export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`[AgentGateway] Agent disconnected: ${client.id}`);
   }
 
-  @SubscribeMessage('agent.event')
-  async handleAgentEvent(client: Socket, event: AgentEvent): Promise<void> {
+  @SubscribeMessage('brain_event')
+  async handleBrainEvent(client: Socket, event: AgentEvent): Promise<void> {
     try {
-      // Validate session exists (canon rule: if no session_id, it doesn't exist)
+      // Validate session exists (canon rule: if no session_id, it does not exist)
       const session = await this.sessionService.getSession(event.session_id);
       if (!session) {
         console.error(`[AgentGateway] Invalid session ${event.session_id} from agent ${client.id}`);
         client.emit('error', { message: 'Invalid session_id' });
         return;
       }
+
+      // Process event with decision engine (Cloud decides)
+      const decision = await this.decisionEngine.processTextInput(
+        event.session_id,
+        event.payload.text,
+        event.payload.confidence || 0.8,
+        event.payload.provider || 'deepgram',
+        event.payload.metadata || {}
+      );
+
+      // Generate canonical brain command from decision
+      const command = await this.decisionEngine.generateCommand(decision, event.session_id);
+
+      // Send command back to agent
+      this.sendCommand(event.session_id, command);
+
+      // Persist the original event (canon: all events must be persisted)
+      const persistedEvent = await this.sessionService.persistEvent(event.session_id, event);
+      
+      console.log(`[AgentGateway] Event processed: ${persistedEvent.id} -> Command: ${command.type}`);
+
+    } catch (error) {
+      console.error(`[AgentGateway] Error processing event:`, error);
+      
+      // Send error command (anti-demo rule: show failure)
+      const errorCommand = {
+        command_id: crypto.randomUUID(),
+        session_id: event.session_id,
+        timestamp: new Date().toISOString(),
+        type: 'error',
+        confidence: 0,
+        mode: 'error',
+        flow_id: null,
+        flow_run_id: null,
+        say: {
+          text: `Decision processing failed: ${error.message}`,
+          interruptible: true
+        }
+      };
+
+      this.sendCommand(event.session_id, errorCommand);
+    }
+  }
 
       // Persist event (canon: all events must be persisted)
       const persistedEvent = await this.sessionService.persistEvent(event.session_id, event);
