@@ -19,6 +19,8 @@ import { DecisionEngineService } from '../services/decision-engine.service';
   },
   transports: ['websocket', 'polling'],
 })
+import { DecisionEngineService } from '../services/decision-engine.service';
+
 export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
@@ -95,15 +97,20 @@ export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
       
       console.log(`[AgentGateway] Event persisted: ${persistedEvent.id} (${event.event_type})`);
 
-      // TODO: Process event and return command to agent
-      // This will be implemented in next phase per execution order
+        // Process event and return command to agent
+        const command = await this.processBrainEvent(sessionId, event);
 
-      // For now, acknowledge receipt
-      client.emit('event.acknowledged', { 
-        event_id: persistedEvent.id,
-        session_id: event.session_id,
-        timestamp: new Date().toISOString()
-      });
+        // Send acknowledgment
+        client.emit('message', { 
+          message_id: crypto.randomUUID(),
+          timestamp: new Date().toISOString(),
+          direction: 'cloud_to_agent',
+          message_type: 'ack',
+          payload: {
+            ack_message_id: persistedEvent.id,
+            status: 'received'
+          }
+        });
 
     } catch (error) {
       console.error(`[AgentGateway] Error processing event:`, error);
