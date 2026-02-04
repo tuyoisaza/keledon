@@ -9,6 +9,8 @@ import { Server, Socket } from 'socket.io';
 import { SessionService } from '../services/session.service';
 import { AgentEvent, CloudCommand } from '../contracts/events';
 import { DecisionEngineService } from '../services/decision-engine.service';
+import { TTSService } from '../services/tts.service';
+import { UIAutomationService } from '../services/ui-automation.service';
 
 @WebSocketGateway({
   cors: { 
@@ -19,8 +21,8 @@ import { DecisionEngineService } from '../services/decision-engine.service';
   },
   transports: ['websocket', 'polling'],
 })
-import { DecisionEngineService } from '../services/decision-engine.service';
 
+@Injectable()
 export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
