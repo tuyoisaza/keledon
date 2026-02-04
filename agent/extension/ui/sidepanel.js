@@ -27,7 +27,7 @@ class SidePanelState {
             contextAware: false,
             saveHistory: true,
             analytics: false,
-            backendUrl: (window.AGENT_CONFIG?.BACKEND_URL || window.KELEDON_CONFIG?.BACKEND_URL || 'http://localhost:3001')
+            backendUrl: (window.AGENT_CONFIG?.BACKEND_URL || window.KELEDON_CONFIG?.BACKEND_URL || null)
         };
         
         try {

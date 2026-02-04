@@ -5,17 +5,17 @@
  * Supports both Node.js (background scripts) and browser contexts
  */
 
-// Default configuration values
+// Default configuration values (anti-demo: no hardcoded localhost)
 const DEFAULT_CONFIG = {
-    BACKEND_URL: 'http://localhost:3001',
-    WS_URL: 'ws://localhost:3001',
+    BACKEND_URL: process.env.BACKEND_URL || window.ENV?.BACKEND_URL || null,
+    WS_URL: process.env.WS_URL || window.ENV?.WS_URL || null,
     RAG_RETRIEVE_ENDPOINT: '/rag/retrieve',
     RAG_EVALUATE_ENDPOINT: '/rag/evaluate',
     LISTENING_SESSIONS_ENDPOINT: '/listening-sessions',
     INTERFACES_ENDPOINT: '/api/interfaces',
     LISTEN_WS_ENDPOINT: '/listen/ws',
-    DEBUG: false,
-    LOG_LEVEL: 'info'
+    DEBUG: process.env.DEBUG || window.ENV?.DEBUG || false,
+    LOG_LEVEL: process.env.LOG_LEVEL || window.ENV?.LOG_LEVEL || 'info'
 };
 
 // Load environment-specific configuration

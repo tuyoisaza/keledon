@@ -16,10 +16,17 @@ export class AgentConnection {
       throw new Error('Already connected');
     }
 
-    // Connect to canonical cloud backend
-    const wsUrl = process.env.NODE_ENV === 'production' 
-      ? 'wss://keledon.tuyoisaza.com' 
-      : 'ws://localhost:3001';
+    // Connect to canonical cloud backend (anti-demo: no hardcoded URLs)
+    const config = typeof window !== 'undefined' && window.AGENT_CONFIG ? 
+      window.AGENT_CONFIG : 
+      (typeof window !== 'undefined' && window.KELEDON_CONFIG ? window.KELEDON_CONFIG : {});
+    
+    const wsUrl = config?.WS_URL || config?.BACKEND_URL?.replace('http://', 'ws://') || 
+      process.env.WS_URL || 'ws://localhost:3001';
+    
+    if (!wsUrl || wsUrl.includes('localhost')) {
+      console.warn('[AgentConnection] WARNING: Using localhost URL. Configure real backend URL in environment variables or config.');
+    }
 
     return new Promise((resolve, reject) => {
       this.ws = new WebSocket(wsUrl);
