@@ -548,6 +548,26 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         stopListeningSession().then(res => sendResponse(res));
         return true;
     }
+    if (msg.type === 'CHECK_CONNECTION') {
+        // Real connection status check (anti-demo rule: show failure if cloud unavailable)
+        const connected = socket && socket.connected;
+        
+        if (!connected) {
+            sendResponse({ 
+                connected: false,
+                error: 'Cloud backend unavailable',
+                status: 'disconnected'
+            });
+        } else {
+            sendResponse({ 
+                connected: true,
+                status: 'connected',
+                sessionId: currentSessionId
+            });
+        }
+        return true;
+    }
+
     if (msg.type === 'GET_STATUS') {
         sendResponse({
             isListening,
@@ -614,61 +634,90 @@ async function startListeningSession(options = {}) {
             tabLabel: audioTabInfo?.tabLabel || null
         }).catch(() => { });
 
-        // 2. Create Session on Backend
-        log(`Creating session at ${BACKEND_URL}/listening-sessions...`);
-        log(`Session payload: ${JSON.stringify({ source: 'agent4', tabUrl: streamData.tabUrl, tabTitle: streamData.tabTitle })}`);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-        let response;
-        try {
-            response = await fetch(`${BACKEND_URL}/listening-sessions`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    source: 'agent4',
-                    tabUrl: streamData.tabUrl,
-                    tabTitle: streamData.tabTitle
-                }),
-                signal: controller.signal
-            });
-        } catch (error) {
-            clearTimeout(timeoutId);
-            if (error?.name === 'AbortError') {
-                throw new Error('Backend timeout after 10s');
-            }
-            throw error;
-        }
-        clearTimeout(timeoutId);
-
-        log(`Session create response: ${response.status}`);
-
-        if (!response.ok) {
-            const txt = await response.text();
-            throw new Error(`Backend Error (${response.status}): ${txt}`);
-        }
-
-        const sessionData = await response.json();
-        const { sessionId } = sessionData;
-
-        log(`Session Created! ID: ${sessionId}`);
-
-        // 3. Connect WebSocket
-        log('Connecting Socket.io...');
-
-        socket = io(`${BACKEND_URL}/listen`, {
-            path: '/listen/ws',
-            query: { session: sessionId, language, debug },
-            transports: ['websocket']
+        // 2. Create real session via canonical WebSocket
+        const agentId = crypto.randomUUID(); // Generate agent ID for this session
+        log(`Requesting real session creation for agent ${agentId}...`);
+        
+        // Connect socket first
+        socket = io(`${BACKEND_URL}`, {
+            path: '',
+            query: { agentId, language, debug },
+            transports: ['websocket', 'polling']
         });
+
+        // Wait for connection, then request session creation
+        await new Promise((resolve, reject) => {
+            let sessionCreated = false;
+            
+            socket.on('connect', () => {
+                log('Socket connected, requesting session creation...');
+                
+                // Request canonical session creation
+                socket.emit('session.create', {
+                    agent_id: agentId,
+                    tab_url: streamData.tabUrl,
+                    tab_title: streamData.tabTitle
+                });
+            });
+
+            socket.on('message', (message) => {
+                if (message.message_type === 'brain_command' && message.payload.type === 'mode') {
+                    // Session created successfully
+                    const sessionId = message.session_id;
+                    currentSessionId = sessionId;
+                    sessionCreated = true;
+                    
+                    log(`Real session created! ID: ${sessionId}`);
+                    
+                    // Notify side panel
+                    chrome.runtime.sendMessage({
+                        type: 'CONNECTION_STATUS',
+                        status: 'connected',
+                        message: `Session ${sessionId.substring(0, 8)}... active`
+                    }).catch(() => {});
+                    
+                    resolve();
+                }
+            });
+
+            socket.on('connect_error', (err) => {
+                log('Session creation failed: ' + err.message);
+                reject(new Error(`Session creation failed: ${err.message}`));
+            });
+
+            setTimeout(() => {
+                if (!sessionCreated) {
+                    reject(new Error('Session creation timeout after 10s'));
+                }
+            }, 10000);
+        });
+
+        // 3. Socket already connected in step 2
+        log('Socket already connected via session creation...');
 
         await new Promise((resolve, reject) => {
         socket.on('connect', () => {
             log('Socket connected successfully!');
             sendClientConfig();
+            
+            // Notify side panel of real connection status
+            chrome.runtime.sendMessage({
+                type: 'CONNECTION_STATUS',
+                status: 'connected'
+            }).catch(() => {});
+            
             resolve();
         });
             socket.on('connect_error', (err) => {
                 log('Socket connection error: ' + err.message);
+                
+                // Notify side panel of connection failure (anti-demo rule: show failure)
+                chrome.runtime.sendMessage({
+                    type: 'CONNECTION_STATUS',
+                    status: 'failed',
+                    error: err.message || 'Cloud backend unavailable'
+                }).catch(() => {});
+                
                 reject(err);
             });
             setTimeout(() => reject(new Error('Socket timeout')), 5000);
@@ -702,11 +751,116 @@ async function startListeningSession(options = {}) {
         socket.on('asr.final', (data) => {
             log('Final Transcript: ' + data.text);
             chrome.runtime.sendMessage({ type: 'TRANSCRIPT_FINAL', text: data.text }).catch(() => { });
+            
+            // Emit canonical text_input event for real session
+            if (currentSessionId && socket) {
+                const textInputEvent = {
+                    message_id: crypto.randomUUID(),
+                    timestamp: new Date().toISOString(),
+                    direction: 'agent_to_cloud',
+                    message_type: 'brain_event',
+                    session_id: currentSessionId,
+                    payload: {
+                        event_id: crypto.randomUUID(),
+                        session_id: currentSessionId,
+                        timestamp: new Date().toISOString(),
+                        type: 'text_input',
+                        payload: {
+                            text: data.text,
+                            confidence: data.confidence || 0.8,
+                            provider: 'deepgram',
+                            metadata: {
+                                deepgram: {
+                                    request_id: data.request_id,
+                                    duration: data.duration
+                                }
+                            }
+                        }
+                    }
+                };
+                
+                socket.emit('message', textInputEvent);
+                log(`Canonical text_input event emitted: "${data.text}" (confidence: ${data.confidence || 0.8})`);
+            }
         });
         socket.on('session.ended', (data) => {
             log('Socket received session.ended. Reason: ' + (data?.reason || 'unknown'));
             stopListeningSession();
         });
+
+        // --- CANONICAL MESSAGE LISTENERS ---
+        
+        // Listen for canonical messages from cloud
+        socket.on('message', (message) => {
+            log('RX canonical message: ' + message.message_type);
+            
+            switch (message.message_type) {
+                case 'brain_command':
+                    handleBrainCommand(message.payload);
+                    break;
+                case 'heartbeat':
+                    handleHeartbeat(message.payload);
+                    break;
+                case 'ack':
+                    handleAcknowledgment(message.payload);
+                    break;
+                case 'error':
+                    handleCloudError(message.payload);
+                    break;
+                default:
+                    log('Unknown canonical message type: ' + message.message_type);
+            }
+        });
+
+        // Canonical command handlers
+        function handleBrainCommand(payload) {
+            log('RX brain command: ' + payload.type);
+            
+            switch (payload.type) {
+                case 'say':
+                    handlePlayAudio({ text: payload.payload.text, interruptible: payload.payload.interruptible });
+                    break;
+                case 'ui_steps':
+                    // Execute RPA steps (will be implemented in next phase)
+                    log('UI steps command received (not implemented yet)');
+                    break;
+                case 'mode':
+                    log('Mode change: ' + payload.payload.mode);
+                    break;
+                case 'stop':
+                    stopListeningSession();
+                    break;
+            }
+        }
+
+        function handleHeartbeat(payload) {
+            log('Heartbeat from cloud: ' + payload.status);
+            // Respond with heartbeat
+            socket.emit('message', {
+                message_id: crypto.randomUUID(),
+                timestamp: new Date().toISOString(),
+                direction: 'agent_to_cloud',
+                message_type: 'heartbeat',
+                payload: {
+                    status: 'alive',
+                    uptime_ms: Date.now()
+                }
+            });
+        }
+
+        function handleAcknowledgment(payload) {
+            log('Acknowledgment from cloud: ' + payload.status + ' for ' + payload.ack_message_id);
+        }
+
+        function handleCloudError(payload) {
+            log('Error from cloud: ' + payload.code + ' - ' + payload.message);
+            // Show failure in side panel (anti-demo rule)
+            chrome.runtime.sendMessage({
+                type: 'CONNECTION_STATUS',
+                status: 'failed',
+                error: payload.message
+            }).catch(() => {});
+        }
 
         // 4. Start Capture (Offscreen)
         log('Ensuring offscreen document...');

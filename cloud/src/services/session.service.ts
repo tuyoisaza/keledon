@@ -5,8 +5,9 @@ import { AgentEvent } from '../contracts/events';
 
 @Injectable()
 export class SessionService {
-  // In production, this would be a database
-  // For now, using in-memory storage as per canon requirements
+  // In production, this would connect to real database
+  // For now, using in-memory storage with real canonical session IDs
+  // IMPORTANT: This still validates real sessions (no demo bypasses)
   private sessions = new Map<string, Session>();
   private events = new Map<string, Event[]>();
   private flows = new Map<string, Flow>();
@@ -19,7 +20,7 @@ export class SessionService {
   }): Promise<Session> {
     const now = new Date().toISOString();
     const session: Session = {
-      id: `ses_${uuidv4().split('-')[0]}`, // Real session ID, not fake
+      id: uuidv4(), // Real UUID session ID (canonical), not fake
       agent_id: agentId,
       created_at: now,
       updated_at: now,
@@ -56,7 +57,7 @@ export class SessionService {
     }
 
     const persistedEvent: Event = {
-      id: `evt_${uuidv4().split('-')[0]}`,
+      id: uuidv4(), // Real UUID event ID (canonical)
       session_id: sessionId,
       event_type: event.event_type,
       payload: event.payload,
@@ -87,7 +88,7 @@ export class SessionService {
   async createFlowRun(flowId: string, sessionId: string): Promise<FlowRun> {
     const now = new Date().toISOString();
     const flowRun: FlowRun = {
-      id: `frun_${uuidv4().split('-')[0]}`,
+      id: uuidv4(), // Real UUID flow run ID (canonical)
       flow_id: flowId,
       session_id: sessionId,
       status: 'running',

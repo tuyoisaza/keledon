@@ -1004,14 +1004,57 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function handleBackgroundMessage(message, sender, sendResponse) {
     try {
         switch (message.type) {
+            case 'CONNECTION_STATUS':
+                // Real connection status from WebSocket client
+                if (message.status === 'connected') {
+                    uiManager.updateConnectionStatus('connected', 'Connected to Cloud');
+                    if (message.sessionId) {
+                        // Show real session info (anti-demo: no fake sessions)
+                        const sessionPreview = `Session ${message.sessionId.substring(0, 8)}...`;
+                        uiManager.updateSessionInfo(sessionPreview);
+                    }
+                } else if (message.status === 'connecting') {
+                    uiManager.updateConnectionStatus('connecting', 'Creating session...');
+                } else if (message.status === 'error') {
+                    uiManager.updateConnectionStatus('error', `Error: ${message.error || 'Connection failed'}`);
+                    uiManager.updateSessionInfo('Session failed');
+                } else if (message.status === 'failed') {
+                    // Show failure when cloud unavailable (anti-demo rule)
+                    uiManager.updateConnectionStatus('error', `Failed: ${message.error || 'Cloud unavailable'}`);
+                    uiManager.showError(`Cloud connection failed: ${message.error || 'Cloud backend unavailable'}`);
+                    uiManager.updateSessionInfo('No session');
+                } else if (message.status === 'disconnected') {
+                    uiManager.updateConnectionStatus('disconnected', message.reason || 'Disconnected');
+                    uiManager.updateSessionInfo('Session ended');
+                }
+                break;
+                
             case 'STATUS_UPDATE':
                 uiManager.updateConnectionStatus(message.status, message.message);
                 uiManager.updateSessionInfo(message.sessionInfo || 'No active session');
                 break;
                 
-            case 'TRANSCRIPT_UPDATE':
+            case 'TRANSCRIPT_FINAL':
                 if (message.transcript) {
                     uiManager.addMessage(`Transcript: ${message.transcript}`, 'assistant');
+                    
+                    // Update STT status to ready (transcription complete)
+                    const sttStatus = document.getElementById('sttStatus');
+                    if (sttStatus) {
+                        sttStatus.className = 'status-dot ready';
+                        sttStatus.textContent = 'STT Ready';
+                    }
+                }
+                break;
+                
+            case 'TRANSCRIPT_PARTIAL':
+                if (message.transcript) {
+                    // Update STT status to processing (transcribing)
+                    const sttStatus = document.getElementById('sttStatus');
+                    if (sttStatus) {
+                        sttStatus.className = 'status-dot processing';
+                        sttStatus.textContent = 'STT Processing';
+                    }
                 }
                 break;
                 

@@ -7,8 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { SessionService } from '../services/session.service';
-import { AgentEvent } from '../contracts/events';
-import { CloudCommand } from '../contracts/events';
+import { AgentEvent, CloudCommand } from '../contracts/events';
 
 @WebSocketGateway({
   cors: { 
