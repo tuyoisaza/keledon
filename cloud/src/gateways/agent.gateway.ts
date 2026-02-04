@@ -8,6 +8,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { SessionService } from '../services/session.service';
 import { AgentEvent, CloudCommand } from '../contracts/events';
+import { DecisionEngineService } from '../services/decision-engine.service';
 
 @WebSocketGateway({
   cors: { 

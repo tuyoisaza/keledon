@@ -178,6 +178,8 @@ export class WebSocketClient {
       case 'stop':
         this.emit('session:stop', payload.payload);
         break;
+      default:
+        console.warn('Unknown brain command type:', payload.type);
     }
   }
 

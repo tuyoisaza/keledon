@@ -1120,6 +1120,21 @@ function updateComponentStatus(components) {
         sttStatus.textContent = status.text;
     }
 
+    // Update TTS status
+    const ttsStatus = document.getElementById('ttsStatus');
+    if (ttsStatus && components.tts) {
+        const statusMap = {
+            'ready': { class: 'ready', text: 'TTS Ready' },
+            'speaking': { class: 'speaking', text: 'TTS Speaking' },
+            'error': { class: 'error', text: 'TTS Error' },
+            'degraded': { class: 'degraded', text: 'TTS Degraded' }
+        };
+        
+        const status = statusMap[components.tts] || statusMap.ready;
+        ttsStatus.className = `status-dot ${status.class}`;
+        ttsStatus.textContent = status.text;
+    }
+
     // Update session status
     updateSessionStatus(components.session);
 }

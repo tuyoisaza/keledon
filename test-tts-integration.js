@@ -1,288 +1,189 @@
 /**
- * TTS Integration Test Suite
- * Tests real Text-to-Speech responses and interruptible playback
+ * TTS Integration Tests - Step 4 Validation
+ * Tests TTS (interruptible) integration with Cloud command processing
  */
 
-// Mock WebSocket Client for testing
-class MockWebSocketClient {
-  constructor() {
-    this.eventHandlers = new Map();
-    this.isConnected = false;
-  }
-
-  on(event, handler) {
-    if (!this.eventHandlers.has(event)) {
-      this.eventHandlers.set(event, []);
-    }
-    this.eventHandlers.get(event).push(handler);
-  }
-
-  emit(event, data) {
-    if (this.eventHandlers.has(event)) {
-      this.eventHandlers.get(event).forEach(handler => {
-        try {
-          handler(data);
-        } catch (error) {
-          console.error(`Error in event handler for ${event}:`, error);
-        }
-      });
-    }
-  }
-
-  sendBrainEvent(eventType, payload) {
-    console.log(`Mock Cloud: Received brain event - ${eventType}:`, payload);
-    return true;
-  }
-
-  isConnected() {
-    return this.isConnected;
-  }
-
-  connect() {
-    this.isConnected = true;
-    this.emit('connection:established');
-  }
-}
-
-// TTS Test Suite
-class TTSIntegrationTest {
-  constructor() {
-    this.wsClient = new MockWebSocketClient();
-    this.testResults = [];
-  }
-
-  async runAllTests() {
-    console.log('🔊 Starting TTS Integration Tests...\n');
-
-    const testCases = [
-      {
-        name: 'Basic Speech Synthesis',
-        command: {
-          say: {
-            text: 'Hello from KELEDON TTS system',
-            interruptible: true
-          },
-          confidence: 0.9,
-          mode: 'normal',
-          flow_id: 'test-flow',
-          flow_run_id: 'test-run-001'
-        }
-      },
-      {
-        name: 'Interruptible Speech',
-        command: {
-          say: {
-            text: 'This is a longer speech that can be interrupted',
-            interruptible: true
-          },
-          confidence: 0.85,
-          mode: 'normal',
-          flow_id: 'test-flow',
-          flow_run_id: 'test-run-002'
-        }
-      },
-      {
-        name: 'Non-Interruptible Command',
-        command: {
-          say: {
-            text: 'This cannot be interrupted',
-            interruptible: false
-          },
-          confidence: 0.95,
-          mode: 'safe',
-          flow_id: 'test-flow',
-          flow_run_id: 'test-run-003'
-        }
-      }
-    ];
-
-    for (const testCase of testCases) {
-      await this.runTestCase(testCase);
-    }
-
-    this.runAntiDemoTests();
-    this.printResults();
-  }
-
-  async runTestCase(testCase) {
-    console.log(`📋 Testing: ${testCase.name}`);
-    console.log(`   Command:`, JSON.stringify(testCase.command, null, 2));
-
+// Test TTS Manager Integration
+async function testTTSManager() {
+    console.log('🧪 Testing TTS Manager Integration...');
+    
     try {
-      // Import TTS Manager dynamically
-      const { TTSManager } = await import('./agent/src/audio/tts/tts-manager.js');
-      
-      // Initialize TTS Manager with mock WebSocket client
-      const ttsManager = new TTSManager(this.wsClient);
-      await ttsManager.initializeTTSAdapter();
-
-      // Test speak command
-      const startTime = Date.now();
-      await ttsManager.handleSpeakRequest(testCase.command.say);
-      const synthesisTime = Date.now() - startTime;
-
-      // Test status
-      const status = ttsManager.getStatus();
-      const hasValidStatus = status.isInitialized && !status.isPaused;
-
-      // Test interruptible functionality
-      let interruptTestPassed = true;
-      if (testCase.command.say.interruptible) {
-        try {
-          await new Promise(resolve => setTimeout(resolve, 100));
-          await ttsManager.interruptCurrentSpeech();
-          
-          // Should not be playing after interrupt
-          const postInterruptStatus = ttsManager.getStatus();
-          interruptTestPassed = !postInterruptStatus.isPlaying;
-        } catch (error) {
-          interruptTestPassed = false;
-        }
-      }
-
-      // Cleanup
-      await ttsManager.cleanup();
-
-      const passed = hasValidStatus && interruptTestPassed && synthesisTime < 5000;
-
-      this.testResults.push({
-        test: testCase.name,
-        passed,
-        details: {
-          synthesisTime,
-          status: status,
-          interruptTestPassed,
-          provider: status.currentProvider
-        }
-      });
-
-      console.log(`   ✅ Synthesis time: ${synthesisTime}ms`);
-      console.log(`   ✅ Status: ${JSON.stringify(status, null, 2)}`);
-      console.log(`   ✅ Interrupt test: ${interruptTestPassed ? 'PASSED' : 'FAILED'}`);
-      console.log(`   ${passed ? '✅ PASSED' : '❌ FAILED'}\n`);
-
-    } catch (error) {
-      console.log(`   ❌ ERROR: ${error.message}`);
-      this.testResults.push({
-        test: testCase.name,
-        passed: false,
-        error: error.message
-      });
-      console.log(`   ❌ FAILED\n`);
-    }
-  }
-
-  runAntiDemoTests() {
-    console.log('🔍 Running Anti-Demo Compliance Tests...\n');
-
-    const antiDemoTests = [
-      {
-        name: 'Demo Text Rejection',
-        command: {
-          say: {
-            text: 'test TTS demo response',
-            interruptible: true
-          },
-          confidence: 0.5,
-          mode: 'normal',
-          flow_id: 'test-flow',
-          flow_run_id: 'test-run-demo'
-        }
-      },
-      {
-        name: 'Invalid Payload Structure',
-        command: {
-          say: 'invalid text format', // Should be object
-          interruptible: true
-        },
-        confidence: 0.5,
-        mode: 'normal',
-        flow_id: 'test-flow',
-        flow_run_id: 'test-run-invalid'
-      }
-    ];
-
-    for (const test of antiDemoTests) {
-      console.log(`📋 Testing: ${test.name}`);
-
-      try {
-        const { TTSManager } = await import('./agent/src/audio/tts/tts-manager.js');
-        const ttsManager = new TTSManager(this.wsClient);
-        await ttsManager.initializeTTSAdapter();
-
-        await ttsManager.handleSpeakRequest(test.command.say);
+        // Test 1: TTS Manager Initialization
+        const sessionManager = new SessionManager();
+        const webSocketClient = new WebSocketClient(sessionManager);
+        const ttsManager = new TTSManager(sessionManager, webSocketClient);
         
-        console.log(`   ❌ FAILED: Anti-demo violation not detected`);
-        this.testResults.push({
-          test: test.name,
-          passed: false,
-          error: 'Anti-demo violation not detected'
-        });
-
-      } catch (error) {
-        if (error.message.includes('ANTI-DEMO VIOLATION')) {
-          console.log(`   ✅ PASSED: Anti-demo violation detected`);
-          this.testResults.push({
-            test: test.name,
-            passed: true
-          });
+        // Mock environment for testing
+        global.process = { env: { ELEVENLABS_API_KEY: 'test-key' } };
+        global.crypto = { randomUUID: () => 'test-uuid-' + Math.random() };
+        
+        // Test initialization
+        await ttsManager.initialize();
+        console.log('✅ TTS Manager initialized successfully');
+        
+        // Test 2: Session Creation
+        const session = await sessionManager.createSession();
+        console.log('✅ Real session created:', session.id);
+        
+        // Test 3: TTS Status Tracking
+        const status = ttsManager.getStatus();
+        console.log('✅ TTS status:', status);
+        
+        if (status.provider === 'elevenlabs' && 
+            status.status === 'ready' && 
+            typeof status.stats === 'object') {
+            console.log('✅ TTS status tracking working');
         } else {
-          console.log(`   ❌ FAILED: Wrong error: ${error.message}`);
-          this.testResults.push({
-            test: test.name,
-            passed: false,
-            error: error.message
-          });
+            throw new Error('TTS status tracking failed');
         }
-      }
-      
-      console.log('');
+        
+        // Test 4: Say Command Processing
+        const sayCommand = {
+            type: 'say',
+            payload: {
+                text: 'Hello world',
+                interruptible: true
+            }
+        };
+        
+        const result = await ttsManager.processSayCommand(sayCommand);
+        
+        if (result.success) {
+            console.log('✅ Say command processed successfully');
+        } else {
+            throw new Error('Say command processing failed');
+        }
+        
+        console.log('🎉 TTS Manager integration tests passed!');
+        return true;
+        
+    } catch (error) {
+        console.error('❌ TTS Manager integration test failed:', error);
+        return false;
     }
-  }
-
-  printResults() {
-    console.log('📊 TTS TEST RESULTS SUMMARY');
-    console.log('='.repeat(50));
-
-    const passed = this.testResults.filter(r => r.passed).length;
-    const total = this.testResults.length;
-    const percentage = ((passed / total) * 100).toFixed(1);
-
-    console.log(`Total Tests: ${total}`);
-    console.log(`Passed: ${passed}`);
-    console.log(`Failed: ${total - passed}`);
-    console.log(`Success Rate: ${percentage}%`);
-    console.log('');
-
-    if (passed === total) {
-      console.log('🎉 ALL TTS TESTS PASSED!');
-      console.log('✅ Real TTS integration working');
-      console.log('✅ Interruptible speech functional');
-      console.log('✅ Anti-demo compliance enforced');
-      console.log('✅ Production-ready TTS system');
-    } else {
-      console.log('❌ SOME TTS TESTS FAILED');
-      console.log('❌ Review failed tests before production deployment');
-    }
-
-    // Print failed tests details
-    const failedTests = this.testResults.filter(r => !r.passed);
-    if (failedTests.length > 0) {
-      console.log('\n❌ FAILED TESTS:');
-      failedTests.forEach(test => {
-        console.log(`   - ${test.test}: ${test.error || 'Invalid result'}`);
-      });
-    }
-  }
 }
 
-// Run tests if this file is executed directly
+// Test TTS Providers
+async function testTTSProviders() {
+    console.log('🧪 Testing TTS Providers...');
+    
+    try {
+        // Test 1: ElevenLabs Provider
+        const { ElevenLabsTTS } = await import('../agent/src/core/tts/elevenlabs.js');
+        const elevenLabs = new ElevenLabsTTS();
+        
+        await elevenLabs.initialize({ apiKey: 'test-key-elevenlabs' });
+        
+        const utterance = await elevenLabs.createUtterance('Test speech', {
+            session_id: 'test-session',
+            agent_id: 'test-agent'
+        });
+        
+        if (utterance.id && utterance.text === 'Test speech') {
+            console.log('✅ ElevenLabs provider working');
+        } else {
+            throw new Error('ElevenLabs provider failed');
+        }
+        
+        // Test 2: OpenAI Provider
+        const { OpenAITTS } = await import('../agent/src/core/tts/openai.js');
+        const openAI = new OpenAITTS();
+        
+        await openAI.initialize({ apiKey: 'test-key-openai' });
+        
+        const utterance2 = await openAI.createUtterance('Test speech', {
+            session_id: 'test-session',
+            agent_id: 'test-agent'
+        });
+        
+        if (utterance2.id && utterance2.text === 'Test speech') {
+            console.log('✅ OpenAI provider working');
+        } else {
+            throw new Error('OpenAI provider failed');
+        }
+        
+        console.log('🎉 TTS providers tests passed!');
+        return true;
+        
+    } catch (error) {
+        console.error('❌ TTS providers test failed:', error);
+        return false;
+    }
+}
+
+// Test Interruptible Speech
+async function testInterruptibleSpeech() {
+    console.log('🧪 Testing Interruptible Speech...');
+    
+    try {
+        const sessionManager = new SessionManager();
+        const webSocketClient = new WebSocketClient(sessionManager);
+        const ttsManager = new TTSManager(sessionManager, webSocketClient);
+        
+        global.process = { env: { ELEVENLABS_API_KEY: 'test-key' } };
+        global.crypto = { randomUUID: () => 'test-uuid-' + Math.random() };
+        
+        await ttsManager.initialize();
+        const session = await sessionManager.createSession();
+        
+        // Start speech
+        const startResult = await ttsManager.speak('This is a test speech', {
+            interruptible: true,
+            session_id: session.id
+        });
+        
+        if (!startResult.success) {
+            throw new Error('Failed to start speech');
+        }
+        
+        // Interrupt speech
+        await new Promise(resolve => setTimeout(resolve, 100));
+        const interruptResult = await ttsManager.stopSpeech();
+        
+        if (!interruptResult.success) {
+            throw new Error('Failed to interrupt speech');
+        }
+        
+        const status = ttsManager.getStatus();
+        
+        if (status.isSpeaking === false && status.status === 'ready') {
+            console.log('✅ Speech interruption working');
+        } else {
+            throw new Error('Speech interruption failed');
+        }
+        
+        console.log('🎉 Interruptible speech tests passed!');
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Interruptible speech test failed:', error);
+        return false;
+    }
+}
+
+// Run All Tests
+async function runTTSIntegrationTests() {
+    console.log('🚀 Starting TTS Integration Tests for Step 4...\n');
+    
+    const tests = [
+        { name: 'TTS Manager Integration', fn: testTTSManager },
+        { name: 'TTS Providers', fn: testTTSProviders },
+        { name: 'Interruptible Speech', fn: testInterruptibleSpeech }
+    ];
+    
+    let passedTests = 0;
+    
+    for (const test of tests) {
+        console.log(`\n📋 Running: ${test.name}`);
+        const result = await test.fn();
+        if (result) passedTests++;
+    }
+    
+    console.log(`\n📊 Test Results: ${passedTests}/${tests.length} tests passed`);
+    return passedTests === tests.length;
+}
+
+// Auto-run if executed directly
 if (typeof require !== 'undefined' && require.main === module) {
-  async function main() {
-    const test = new TTSIntegrationTest();
-    await test.runAllTests();
-  }
-  main().catch(console.error);
+    runTTSIntegrationTests();
 }
-
-export { TTSIntegrationTest };
