@@ -9,6 +9,14 @@ export interface PolicyDocument {
   category: 'safety' | 'procedure' | 'compliance' | 'knowledge';
   embedding?: number[];
   metadata?: Record<string, any>;
+  // Organization context fields
+  company_id: string;
+  brand_id?: string;
+  team_id?: string;
+  // Audit trail
+  created_by: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface RetrievalResult {
@@ -21,6 +29,9 @@ export interface RetrievalOptions {
   limit?: number;
   scoreThreshold?: number;
   category?: string[];
+  company_id?: string;
+  brand_id?: string;
+  team_id?: string;
 }
 
 @Injectable()
@@ -59,13 +70,11 @@ export class VectorStoreService implements OnModuleInit {
         console.log(`Created collection: ${this.collectionName}`);
       }
 
-      // Seed with mock policies if empty
       const info = await this.client.getCollection(this.collectionName);
-      if (info.points_count === 0) {
-        await this.seedMockPolicies();
-      }
+      console.log(`Vector store initialized: ${info.points_count} documents in collection`);
     } catch (error) {
       console.error('Failed to initialize vector store:', error);
+      throw error;
     }
   }
 
@@ -83,6 +92,12 @@ export class VectorStoreService implements OnModuleInit {
           content: document.content,
           category: document.category,
           metadata: document.metadata,
+          company_id: document.company_id,
+          brand_id: document.brand_id,
+          team_id: document.team_id,
+          created_by: document.created_by,
+          created_at: document.created_at,
+          updated_at: document.updated_at,
         },
       }],
     });
@@ -91,15 +106,35 @@ export class VectorStoreService implements OnModuleInit {
   async search(query: string, options: RetrievalOptions = {}): Promise<RetrievalResult[]> {
     const queryEmbedding = await this.generateEmbedding(query);
     
+    const filterConditions = [];
+    
+    // Category filter
+    if (options.category && options.category.length > 0) {
+      filterConditions.push({ key: 'category', match: { any: options.category } });
+    }
+    
+    // Organization filters
+    if (options.company_id) {
+      filterConditions.push({ key: 'company_id', match: { value: options.company_id } });
+    }
+    
+    if (options.brand_id) {
+      filterConditions.push({ key: 'brand_id', match: { value: options.brand_id } });
+    }
+    
+    if (options.team_id) {
+      filterConditions.push({ key: 'team_id', match: { value: options.team_id } });
+    }
+    
+    const filter = filterConditions.length > 0 ? {
+      must: filterConditions
+    } : undefined;
+    
     const searchResult = await this.client.search(this.collectionName, {
       vector: queryEmbedding,
       limit: options.limit || 5,
       score_threshold: options.scoreThreshold || 0.5,
-      filter: options.category ? {
-        must: [
-          { key: 'category', match: { any: options.category } }
-        ]
-      } : undefined,
+      filter: filter,
     });
 
     return searchResult.map(result => ({
@@ -109,6 +144,12 @@ export class VectorStoreService implements OnModuleInit {
         content: (result.payload?.content as string) || '',
         category: (result.payload?.category as 'safety' | 'procedure' | 'compliance' | 'knowledge') || 'knowledge',
         metadata: result.payload?.metadata as Record<string, any> | undefined,
+        company_id: (result.payload?.company_id as string) || '',
+        brand_id: (result.payload?.brand_id as string) || undefined,
+        team_id: (result.payload?.team_id as string) || undefined,
+        created_by: (result.payload?.created_by as string) || 'unknown',
+        created_at: (result.payload?.created_at as string) || new Date().toISOString(),
+        updated_at: (result.payload?.updated_at as string) || new Date().toISOString(),
       },
       score: result.score,
       relevance: this.getRelevanceLevel(result.score),
@@ -127,51 +168,5 @@ export class VectorStoreService implements OnModuleInit {
     if (score >= 0.8) return 'high';
     if (score >= 0.6) return 'medium';
     return 'low';
-  }
-
-  private async seedMockPolicies(): Promise<void> {
-    const mockPolicies: PolicyDocument[] = [
-      {
-        id: 'safety-001',
-        title: 'User Safety First',
-        content: 'Always prioritize user safety. If uncertain about an action, ask for clarification rather than making assumptions. Never execute actions that could harm user data or system integrity.',
-        category: 'safety',
-        metadata: { priority: 'high', version: '1.0' }
-      },
-      {
-        id: 'procedure-001', 
-        title: 'Confirmation Before Actions',
-        content: 'Before executing any browser automation actions that modify data (form submissions, deletions, etc.), always confirm with the user by describing what will happen.',
-        category: 'procedure',
-        metadata: { priority: 'medium', version: '1.0' }
-      },
-      {
-        id: 'compliance-001',
-        title: 'Privacy Protection',
-        content: 'Never store, transmit, or log sensitive user information such as passwords, credit card numbers, or personal identifiers. Always sanitize logs to remove private data.',
-        category: 'compliance', 
-        metadata: { priority: 'high', version: '1.0' }
-      },
-      {
-        id: 'knowledge-001',
-        title: 'CRM System Navigation',
-        content: 'When users need to navigate CRM systems like Salesforce or Genesys, look for common navigation patterns: main menu items, search bars, and tab-based interfaces. Use stable selectors when possible.',
-        category: 'knowledge',
-        metadata: { domain: ['salesforce', 'genesys'], version: '1.0' }
-      },
-      {
-        id: 'knowledge-002',
-        title: 'Form Automation Best Practices',
-        content: 'When automating form filling: 1) Wait for fields to be visible and enabled 2) Use clear selectors 3) Validate data before submission 4) Handle potential errors gracefully',
-        category: 'knowledge',
-        metadata: { domain: ['automation'], version: '1.0' }
-      }
-    ];
-
-    console.log('Seeding mock policies...');
-    for (const policy of mockPolicies) {
-      await this.addDocument(policy);
-    }
-    console.log(`Seeded ${mockPolicies.length} mock policies`);
   }
 }
