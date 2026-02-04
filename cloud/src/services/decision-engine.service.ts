@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { SessionService } from '../session.service';
+import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
+import { SessionService } from './session.service';
+import { AgentGateway } from '../gateways/agent.gateway';
 import { AgentEvent, CloudCommand } from '../contracts/events';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface DecisionContext {
   sessionId: string;
@@ -19,9 +21,77 @@ export interface DecisionResult {
   processingTime: number;
 }
 
+// Command interfaces per canonical contract
+interface SayCommand {
+  command_id: string;
+  session_id: string;
+  timestamp: string;
+  type: 'say';
+  payload: {
+    text: string;
+    interruptible?: boolean;
+    provider?: string;
+    voice?: string;
+    metadata?: Record<string, any>;
+  };
+}
+
+interface UIStepsCommand {
+  command_id: string;
+  session_id: string;
+  timestamp: string;
+  type: 'ui_steps';
+  payload: {
+    flow_id: string;
+    steps: Array<{
+      step_id: string;
+      action: string;
+      selector: string;
+      value?: any;
+      post_condition?: {
+        type: string;
+        selector: string;
+        expected: any;
+      };
+    }>;
+    context?: Record<string, any>;
+    timeout_ms?: number;
+  };
+}
+
+interface ModeCommand {
+  command_id: string;
+  session_id: string;
+  timestamp: string;
+  type: 'mode';
+  payload: {
+    mode: 'normal' | 'safe' | 'silent';
+    confidence?: number;
+    reason?: string;
+  };
+}
+
+interface StopCommand {
+  command_id: string;
+  session_id: string;
+  timestamp: string;
+  type: 'stop';
+  payload: {
+    reason?: string;
+    graceful?: boolean;
+  };
+}
+
 @Injectable()
 export class DecisionEngineService {
-  constructor(private sessionService: SessionService) {}
+  private readonly logger = new Logger(DecisionEngineService.name);
+
+  constructor(
+    @Inject(forwardRef(() => SessionService))
+    private sessionService: SessionService,
+    @Inject(forwardRef(() => AgentGateway))
+    private agentGateway: AgentGateway
+  ) {}
 
   /**
    * Process text_input event and generate canonical brain command
@@ -46,7 +116,7 @@ export class DecisionEngineService {
       
       // Generate canonical brain command
       const command = await this.generateCommand(decision, sessionId);
-      
+
       // Persist the decision
       await this.persistDecision(sessionId, text, command, decision);
 
@@ -67,17 +137,17 @@ export class DecisionEngineService {
       
       // Return error command (anti-demo rule: show failure)
       const errorCommand: CloudCommand = {
-        command_id: crypto.randomUUID(),
+        command_id: uuidv4(),
         session_id: sessionId,
         timestamp: new Date().toISOString(),
         type: 'error',
-        payload: {
-          type: 'mode',
-          payload: {
-            mode: 'error',
-            confidence: 0,
-            reason: `Decision processing failed: ${error.message}`
-          }
+        confidence: 0,
+        mode: 'error',
+        flow_id: null,
+        flow_run_id: null,
+        say: {
+          text: `Decision processing failed: ${error.message}`,
+          interruptible: true
         }
       };
 
@@ -92,18 +162,105 @@ export class DecisionEngineService {
   }
 
   /**
+   * Generate canonical brain command from decision
+   */
+  async generateCommand(decision: any, sessionId: string): Promise<CloudCommand> {
+    const commandId = uuidv4();
+    const timestamp = new Date().toISOString();
+
+    switch (decision.type) {
+      case 'say':
+        return {
+          command_id: commandId,
+          session_id: sessionId,
+          timestamp,
+          type: 'say',
+          confidence: decision.confidence || 0.8,
+          mode: decision.mode || 'normal',
+          flow_id: null,
+          flow_run_id: null,
+          say: {
+            text: decision.text,
+            interruptible: decision.interruptible || true,
+            voice: decision.voice,
+            language: decision.language,
+            speed: decision.speed,
+            pitch: decision.pitch,
+            volume: decision.volume
+          }
+        };
+
+      case 'ui_steps':
+        return {
+          command_id: commandId,
+          session_id: sessionId,
+          timestamp,
+          type: 'ui_steps',
+          confidence: decision.confidence || 0.8,
+          mode: decision.mode || 'normal',
+          flow_id: decision.flow_id,
+          flow_run_id: decision.flow_run_id || null,
+          ui_steps: decision.steps
+        };
+
+      case 'mode':
+        return {
+          command_id: commandId,
+          session_id: sessionId,
+          timestamp,
+          type: 'mode',
+          confidence: decision.confidence || 0.8,
+          mode: decision.mode,
+          flow_id: null,
+          flow_run_id: null
+        };
+
+      case 'stop':
+        return {
+          command_id: commandId,
+          session_id: sessionId,
+          timestamp,
+          type: 'stop',
+          confidence: decision.confidence || 1.0,
+          mode: decision.mode || 'normal',
+          flow_id: null,
+          flow_run_id: null
+        };
+
+      default:
+        // Default to say command for unknown types
+        return {
+          command_id: commandId,
+          session_id: sessionId,
+          timestamp,
+          type: 'say',
+          confidence: 0.5,
+          mode: 'normal',
+          flow_id: null,
+          flow_run_id: null,
+          say: {
+            text: `I understand you said: ${decision.text || 'something'}`,
+            interruptible: true
+          }
+        };
+    }
+  }
+
+  /**
    * Build decision context from session history and current input
    */
-  private async buildDecisionContext(sessionId: string, currentText: string, sessionEvents: AgentEvent[], metadata: Record<string, any>): Promise<DecisionContext> {
-    const previousTextInputs = sessionEvents
-      .filter(event => event.event_type === 'text_input')
-      .slice(-5); // Last 5 text inputs for context
+  private async buildDecisionContext(sessionId: string, text: string, events: any[], metadata: Record<string, any>): Promise<DecisionContext> {
+    // Get session to extract agent ID
+    const session = await this.sessionService.getSession(sessionId);
+    if (!session) {
+      throw new Error(`Session ${sessionId} not found`);
+    }
 
     return {
       sessionId,
-      agentId: metadata.agent_id || 'unknown',
-      previousEvents: previousTextInputs,
-      currentTranscript: currentText,
+      agentId: session.agent_id,
+      previousEvents: events,
+      currentTranscript: text,
       confidence: metadata.confidence || 0.8,
       metadata
     };
@@ -111,273 +268,120 @@ export class DecisionEngineService {
 
   /**
    * Core decision making logic
-   * This implements "Cloud decides" principle with real reasoning
    */
   private async makeDecision(context: DecisionContext): Promise<any> {
-    const text = context.currentTranscript.toLowerCase().trim();
-    
-    // Intent recognition with confidence scoring
-    const intentAnalysis = this.analyzeIntent(text);
-    
-    // Context-aware decision making
-    const contextAnalysis = this.analyzeContext(context);
-    
-    // Generate decision with reasoning
-    const decision = {
-      intent: intentAnalysis.intent,
-      confidence: intentAnalysis.confidence,
-      reasoning: this.generateReasoning(text, intentAnalysis, contextAnalysis),
-      context: {
-        ...contextAnalysis,
-        userIntent: intentAnalysis.intent,
-        keywords: intentAnalysis.keywords
-      },
-      actions: this.determineActions(intentAnalysis.intent, context)
-    };
+    const { currentTranscript, confidence, previousEvents } = context;
 
-    console.log(`[DecisionEngine] Decision: ${decision.intent} (confidence: ${decision.confidence})`);
-    return decision;
-  }
+    // Simple decision logic for now - can be enhanced with AI
+    const text = currentTranscript.toLowerCase().trim();
 
-  /**
-   * Analyze user intent from text input
-   */
-  private analyzeIntent(text: string): { intent: string; confidence: number; keywords: string[] } {
-    const normalizedText = text.toLowerCase();
-    
-    // Define intent patterns with confidence scoring
-    const intentPatterns = [
-      {
-        intent: 'greeting',
-        keywords: ['hello', 'hi', 'hey', 'good morning', 'good afternoon'],
-        patterns: [/^(hello|hi|hey)/i, /^(good\s+(morning|afternoon))/i],
-        confidence: 0.9
-      },
-      {
-        intent: 'help_request',
-        keywords: ['help', 'what can you do', 'assist', 'support'],
-        patterns: [/(help|what\s+can\s+you\s+do|assist|support)/i],
-        confidence: 0.8
-      },
-      {
-        intent: 'task_execution',
-        keywords: ['create', 'make', 'do', 'execute', 'start', 'open', 'close', 'search'],
-        patterns: [/(create|make|do|execute|start|open|close|search)/i],
-        confidence: 0.7
-      },
-      {
-        intent: 'information_query',
-        keywords: ['what', 'where', 'when', 'how', 'who', 'why'],
-        patterns: [/(what|where|when|how|who|why)/i],
-        confidence: 0.6
-      },
-      {
-        intent: 'conversation',
-        keywords: ['thanks', 'ok', 'sure', 'yes', 'no', 'maybe'],
-        patterns: [/(thanks|ok|sure|yes|no|maybe)/i],
-        confidence: 0.5
-      }
-    ];
-
-    // Match patterns and calculate confidence
-    let bestMatch = { intent: 'conversation', confidence: 0.3, keywords: [] };
-    
-    for (const pattern of intentPatterns) {
-      for (const patternRegex of pattern.patterns) {
-        if (patternRegex.test(normalizedText)) {
-          if (pattern.confidence > bestMatch.confidence) {
-            bestMatch = {
-              intent: pattern.intent,
-              confidence: pattern.confidence,
-              keywords: pattern.keywords.filter(keyword => normalizedText.includes(keyword))
-            };
-          }
-        }
-      }
+    // Check for explicit commands
+    if (text.includes('stop') || text.includes('cancel') || text.includes('never mind')) {
+      return {
+        type: 'stop',
+        confidence: 0.9,
+        mode: 'normal',
+        reasoning: 'User requested to stop'
+      };
     }
 
-    return bestMatch;
-  }
+    if (text.includes('safe mode') || text.includes('be careful')) {
+      return {
+        type: 'mode',
+        mode: 'safe',
+        confidence: 0.9,
+        reasoning: 'User requested safe mode'
+      };
+    }
 
-  /**
-   * Analyze session context for decision making
-   */
-  private analyzeContext(context: DecisionContext): any {
-    // Analyze previous events for patterns
-    const recentIntents = context.previousEvents
-      .filter(event => event.event_type === 'text_input')
-      .slice(-3)
-      .map(event => event.payload.intent || 'unknown');
+    if (text.includes('silent') || text.includes('quiet')) {
+      return {
+        type: 'mode',
+        mode: 'silent',
+        confidence: 0.9,
+        reasoning: 'User requested silent mode'
+      };
+    }
 
-    // Time-based context analysis
-    const currentTime = new Date();
-    const hourOfDay = currentTime.getHours();
-    const isBusinessHours = hourOfDay >= 9 && hourOfDay <= 17;
-    
+    // Check for UI automation patterns
+    if (text.includes('click') || text.includes('type') || text.includes('select') || text.includes('fill')) {
+      return {
+        type: 'ui_steps',
+        confidence: 0.7,
+        mode: 'normal',
+        reasoning: 'User requested UI automation',
+        steps: this.parseUISteps(text)
+      };
+    }
+
+    // Default to saying something back
     return {
-      recentIntents,
-      hourOfDay,
-      isBusinessHours,
-      sessionDuration: context.previousEvents.length > 0 ? 
-        Date.now() - new Date(context.previousEvents[0].ts).getTime() : 0
-    };
-  }
-
-  /**
-   * Generate human-readable reasoning
-   */
-  private generateReasoning(text: string, intentAnalysis: any, contextAnalysis: any): string {
-    return `Intent detected: "${intentAnalysis.intent}" (confidence: ${(intentAnalysis.confidence * 100).toFixed(1)}%). ` +
-           `Context: ${contextAnalysis.recentIntents.length > 0 ? 'Previous intents: ' + contextAnalysis.recentIntents.join(', ') : 'No previous context'}. ` +
-           `Actions determined: ${contextAnalysis.actions ? contextAnalysis.actions.join(', ') : 'Wait for input'}.`;
-  }
-
-  /**
-   * Determine appropriate actions based on intent
-   */
-  private determineActions(intent: string, context: any): string[] {
-    const actions = [];
-
-    switch (intent) {
-      case 'greeting':
-        actions.push('respond_greeting');
-        break;
-      case 'help_request':
-        actions.push('provide_assistance');
-        break;
-      case 'task_execution':
-        actions.push('execute_task');
-        break;
-      case 'information_query':
-        actions.push('provide_information');
-        break;
-      case 'conversation':
-        actions.push('acknowledge');
-        break;
-      default:
-        actions.push('clarify_request');
-        break;
-    }
-
-    return actions;
-  }
-
-  /**
-   * Generate canonical brain command from decision
-   */
-  private async generateCommand(decision: any, sessionId: string): Promise<CloudCommand> {
-    const commandId = crypto.randomUUID();
-    const timestamp = new Date().toISOString();
-
-    let payload: any;
-    let confidence = decision.confidence || 0.5;
-
-    // Generate command payload based on intent
-    switch (decision.intent) {
-      case 'greeting':
-        payload = {
-          type: 'say',
-          payload: {
-            text: 'Hello! I\'m here to help you.',
-            interruptible: true
-          }
-        };
-        confidence = 0.95;
-        break;
-
-      case 'help_request':
-        payload = {
-          type: 'say',
-          payload: {
-            text: 'I can help you with various tasks. What do you need assistance with?',
-            interruptible: true
-          }
-        };
-        confidence = 0.9;
-        break;
-
-      case 'task_execution':
-        payload = {
-          type: 'ui_steps',
-          payload: {
-            flow_id: 'user_task_flow',
-            steps: ['execute_user_request']
-          }
-        };
-        confidence = 0.8;
-        break;
-
-      case 'information_query':
-        payload = {
-          type: 'say',
-          payload: {
-            text: 'I understand you\'re looking for information. Let me help you with that.',
-            interruptible: true
-          }
-        };
-        confidence = 0.75;
-        break;
-
-      case 'conversation':
-        payload = {
-          type: 'say',
-          payload: {
-            text: 'I understand. How can I assist you further?',
-            interruptible: true
-          }
-        };
-        confidence = 0.85;
-        break;
-
-      default:
-        payload = {
-          type: 'say',
-          payload: {
-            text: 'I\'m not sure how to help with that. Could you please clarify?',
-            interruptible: true
-          }
-        };
-        confidence = 0.4;
-        break;
-    }
-
-    const command: CloudCommand = {
-      command_id: commandId,
-      session_id: sessionId,
-      timestamp,
-      type: payload.type,
-      confidence,
+      type: 'say',
+      text: `I heard: ${currentTranscript}`,
+      confidence: confidence,
       mode: 'normal',
-      flow_id: payload.flow_id || null,
-      flow_run_id: payload.flow_run_id || null,
-      say: payload.say || null,
-      ui_steps: payload.ui_steps || null
+      reasoning: 'Default response to user input'
     };
-
-    return command;
   }
 
   /**
-   * Persist decision for traceability
+   * Parse UI automation steps from text
+   */
+  private parseUISteps(text: string): any[] {
+    // Simple parsing logic - can be enhanced with NLP
+    const steps: any[] = [];
+    
+    if (text.includes('click')) {
+      const match = text.match(/click\s+(?:on\s+)?(.+?)(?:\s+(?:and|then)\s+|$)/i);
+      if (match) {
+        steps.push({
+          step_id: uuidv4(),
+          action: 'click',
+          selector: match[1].trim(),
+          description: `Click on ${match[1]}`
+        });
+      }
+    }
+
+    if (text.includes('type') || text.includes('fill')) {
+      const match = text.match(/(?:type|fill)\s+(.+?)\s+(?:into|in)\s+(.+?)(?:\s+(?:and|then)\s+|$)/i);
+      if (match) {
+        steps.push({
+          step_id: uuidv4(),
+          action: 'type',
+          selector: match[2].trim(),
+          value: match[1].trim().replace(/['"]/g, ''),
+          description: `Type "${match[1]}" into ${match[2]}`
+        });
+      }
+    }
+
+    return steps;
+  }
+
+  /**
+   * Persist decision for audit trail
    */
   private async persistDecision(sessionId: string, text: string, command: CloudCommand, decision: any): Promise<void> {
-    try {
-      // Store the original text_input event
-      await this.sessionService.persistEvent(sessionId, {
-        event_type: 'text_input',
-        payload: {
-          text,
-          confidence: decision.confidence,
-          provider: 'deepgram',
-          metadata: decision.context.metadata || {}
-        },
-        ts: new Date().toISOString(),
-        agent_id: decision.context.agentId
-      });
+    // Create a synthetic event to persist the decision
+    const decisionEvent: AgentEvent = {
+      event_id: uuidv4(),
+      session_id: sessionId,
+      event_type: 'decision',
+      agent_id: decision.context?.agentId || 'unknown',
+      ts: new Date().toISOString(),
+      payload: {
+        input_text: text,
+        decision: decision,
+        command: command,
+        processed_at: new Date().toISOString()
+      }
+    };
 
-      console.log(`[DecisionEngine] Decision persisted for session ${sessionId}`);
+    try {
+      await this.sessionService.persistEvent(sessionId, decisionEvent);
     } catch (error) {
-      console.error('[DecisionEngine] Failed to persist decision:', error);
+      this.logger.error(`Failed to persist decision: ${error.message}`);
     }
   }
 }

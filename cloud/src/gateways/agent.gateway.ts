@@ -56,6 +56,7 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   constructor(
     @Inject(forwardRef(() => SessionService))
     private readonly sessionService: SessionService,
+    @Inject(forwardRef(() => DecisionEngineService))
     private readonly decisionEngine: DecisionEngineService,
     private readonly ttsService: TTSService,
     private readonly uiAutomationService: UIAutomationService
@@ -126,22 +127,32 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         );
 
         // Handle 'say' commands with TTS
-        if (decision.type === 'say' && decision.say && this.ttsService) {
-          await this.ttsService.speak(decision.say.text, {
-            voice: decision.say.voice,
-            interruptible: decision.say.interruptible,
-            language: decision.say.language,
-            speed: decision.say.speed,
-            pitch: decision.say.pitch,
-            volume: decision.say.volume
+        if (decision.command.type === 'say' && decision.command.say && this.ttsService) {
+          await this.ttsService.speak(decision.command.say.text, {
+            voice: decision.command.say.voice,
+            interruptible: decision.command.say.interruptible,
+            language: decision.command.say.language,
+            speed: decision.command.say.speed,
+            pitch: decision.command.say.pitch,
+            volume: decision.command.say.volume
           });
           
-          console.log(`[AgentGateway] TTS: "${decision.say.text}" (voice: ${decision.say.voice || 'default'})`);
+          console.log(`[AgentGateway] TTS: "${decision.command.say.text}" (voice: ${decision.command.say.voice || 'default'})`);
         }
 
-        // Generate canonical brain command from decision
-        const command = await this.decisionEngine.generateCommand(decision, event.session_id);
-        this.sendCommand(event.session_id, command);
+        // Handle UI steps
+        if (decision.command.type === 'ui_steps' && this.uiAutomationService) {
+          for (const step of decision.command.ui_steps || []) {
+            try {
+              await this.uiAutomationService.executeStep(event.session_id, step);
+            } catch (stepError) {
+              console.error(`[AgentGateway] UI step failed:`, stepError);
+            }
+          }
+        }
+
+        // Send command back to agent
+        this.sendCommand(event.session_id, decision.command);
       }
 
       // Persist the original event (canon: all events must be persisted)

@@ -13,6 +13,8 @@ import { OpenAIModule } from './modules/openai.module';
 import { TTSModule } from './modules/tts.module';
 import { HealthModule } from './modules/health/health.module';
 import { DashboardModule } from './modules/dashboard.module';
+import { AgentGateway } from './gateways/agent.gateway';
+import { DecisionEngineService } from './services/decision-engine.service';
 
 @Module({
   imports: [
@@ -30,6 +32,10 @@ import { DashboardModule } from './modules/dashboard.module';
     TTSModule,
     HealthModule,
     DashboardModule
+  ],
+  providers: [
+    AgentGateway,
+    DecisionEngineService,
   ],
 })
 export class AppModule {}
