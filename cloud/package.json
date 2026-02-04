@@ -27,10 +27,12 @@
     "@supabase/supabase-js": "^2.93.3",
     "@types/jest": "^30.0.0",
     "@types/os-utils": "^0.0.4",
+    "@types/uuid": "^9.0.0",
     "pg": "^8.18.0",
     "playwright": "^1.58.1",
     "socket.io": "^4.8.3",
-    "typeorm": "^0.3.28"
+    "typeorm": "^0.3.28",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.0",

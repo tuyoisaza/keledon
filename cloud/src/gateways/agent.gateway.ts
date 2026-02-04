@@ -7,18 +7,39 @@ import {
   OnGatewayInit,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger } from '@nestjs/common';
+import { Logger, Inject, forwardRef } from '@nestjs/common';
 import { SessionService } from '../services/session.service';
 import { AgentEvent, CloudCommand } from '../contracts/events';
 import { DecisionEngineService } from '../services/decision-engine.service';
 import { TTSService } from '../services/tts.service';
 import { UIAutomationService } from '../services/ui-automation.service';
+import { v4 as uuidv4 } from 'uuid';
+
+// Import from canonical contracts
+import { BrainEvent } from '../../../contracts/v1/brain/event.schema.json';
+import { BrainCommand } from '../../../contracts/v1/brain/command.schema.json';
+
+export interface AgentSocketData {
+  event_id: string;
+  session_id: string;
+  timestamp: string;
+  type: 'text_input' | 'ui_result' | 'system';
+  payload: any;
+}
+
+export interface CommandSocketData {
+  command_id: string;
+  session_id: string;
+  timestamp: string;
+  type: 'say' | 'ui_steps' | 'mode' | 'stop';
+  payload: any;
+}
 
 @WebSocketGateway({
   cors: { 
     origin: process.env.NODE_ENV === 'production' 
       ? process.env.CORS_ORIGINS?.split(',') || ['chrome-extension://*']
-      : ['http://localhost:5173', 'http://localhost:3000'], // Development origins
+      : ['http://localhost:5173', 'http://localhost:3000'],
     credentials: true 
   },
   transports: ['websocket', 'polling'],
@@ -33,32 +54,35 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   private readonly connectedAgents = new Map<string, Socket>();
 
   constructor(
+    @Inject(forwardRef(() => SessionService))
     private readonly sessionService: SessionService,
     private readonly decisionEngine: DecisionEngineService,
     private readonly ttsService: TTSService,
     private readonly uiAutomationService: UIAutomationService
   ) {
     // TTS event listeners for real-time updates
-    this.ttsService.on('playback:started', () => {
-      this.broadcastToSidePanel('tts_status', 'speaking');
-    });
-    
-    this.ttsService.on('playback:completed', () => {
-      this.broadcastToSidePanel('tts_status', 'ready');
-    });
-    
-    this.ttsService.on('error', (error) => {
-      this.broadcastToSidePanel('tts_status', 'error');
-      console.error('TTS Error:', error);
-    });
+    if (this.ttsService) {
+      this.ttsService.on('playback:started', () => {
+        this.broadcastToSidePanel('tts_status', 'speaking');
+      });
+      
+      this.ttsService.on('playback:completed', () => {
+        this.broadcastToSidePanel('tts_status', 'ready');
+      });
+      
+      this.ttsService.on('error', (error) => {
+        this.broadcastToSidePanel('tts_status', 'error');
+        console.error('TTS Error:', error);
+      });
+    }
   }
 
   afterInit(server: Server): void {
     this.logger.log('AgentGateway: WebSocket server initialized');
   }
 
-  handleConnection(client: Socket) {
-    this.logger.log(`[AgentGateway] Agent connected: ${client.id}`);
+  handleConnection(client: Socket): void {
+    this.logger.log(`Agent connected: ${client.id}`);
     this.connectedAgents.set(client.id, client);
     
     // Send initial connection acknowledgment
@@ -69,9 +93,15 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     });
   }
 
-  handleDisconnect(client: Socket) {
-    this.logger.log(`[AgentGateway] Agent disconnected: ${client.id}`);
+  handleDisconnect(client: Socket): void {
+    this.logger.log(`Agent disconnected: ${client.id}`);
     this.connectedAgents.delete(client.id);
+    
+    // Broadcast agent disconnection to dashboard if needed
+    this.server.of('/dashboard').emit('agent:disconnected', {
+      agent_id: client.id,
+      timestamp: new Date().toISOString()
+    });
   }
 
   @SubscribeMessage('brain_event')
@@ -86,47 +116,45 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       }
 
       // Process event with decision engine (Cloud decides)
-      const decision = await this.decisionEngine.processTextInput(
-        event.session_id,
-        event.payload.text,
-        event.payload.confidence || 0.8,
-        event.payload.provider || 'deepgram',
-        event.payload.metadata || {}
-      );
+      if (this.decisionEngine) {
+        const decision = await this.decisionEngine.processTextInput(
+          event.session_id,
+          event.payload.text,
+          event.payload.confidence || 0.8,
+          event.payload.provider || 'deepgram',
+          event.payload.metadata || {}
+        );
 
-      // Handle 'say' commands with TTS
-      if (decision.type === 'say' && decision.say) {
-        await this.ttsService.speak(decision.say.text, {
-          voice: decision.say.voice,
-          interruptible: decision.say.interruptible,
-          language: decision.say.language,
-          speed: decision.say.speed,
-          pitch: decision.say.pitch,
-          volume: decision.say.volume
-        });
-        
-        console.log(`[AgentGateway] TTS: "${decision.say.text}" (voice: ${decision.say.voice || 'default'})`);
-      } else {
-        console.log(`[AgentGateway] Unsupported command type: ${decision.type}`);
+        // Handle 'say' commands with TTS
+        if (decision.type === 'say' && decision.say && this.ttsService) {
+          await this.ttsService.speak(decision.say.text, {
+            voice: decision.say.voice,
+            interruptible: decision.say.interruptible,
+            language: decision.say.language,
+            speed: decision.say.speed,
+            pitch: decision.say.pitch,
+            volume: decision.say.volume
+          });
+          
+          console.log(`[AgentGateway] TTS: "${decision.say.text}" (voice: ${decision.say.voice || 'default'})`);
+        }
+
+        // Generate canonical brain command from decision
+        const command = await this.decisionEngine.generateCommand(decision, event.session_id);
+        this.sendCommand(event.session_id, command);
       }
-
-      // Generate canonical brain command from decision
-      const command = await this.decisionEngine.generateCommand(decision, event.session_id);
-
-      // Send command back to agent
-      this.sendCommand(event.session_id, command);
 
       // Persist the original event (canon: all events must be persisted)
       const persistedEvent = await this.sessionService.persistEvent(event.session_id, event);
       
-      console.log(`[AgentGateway] Event processed: ${persistedEvent.id} -> Command: ${command.type}`);
+      console.log(`[AgentGateway] Event processed: ${persistedEvent.id}`);
 
     } catch (error) {
       console.error(`[AgentGateway] Error processing event:`, error);
       
       // Send error command (anti-demo rule: show failure)
       const errorCommand = {
-        command_id: crypto.randomUUID(),
+        command_id: uuidv4(),
         session_id: event.session_id,
         timestamp: new Date().toISOString(),
         type: 'error',
@@ -151,7 +179,7 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     tab_title?: string;
   }): Promise<void> {
     try {
-      const session = await this.sessionService.createSession(data.agent_id, {
+      const session = await this.sessionService.create(data.agent_id, {
         tab_url: data.tab_url,
         tab_title: data.tab_title
       });
@@ -171,18 +199,60 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     }
   }
 
+  // Handle Agent → Cloud events (per canonical contract)
+  @SubscribeMessage('event')
+  handleEvent(client: Socket, data: AgentSocketData): void {
+    try {
+      this.logger.log(`Received event from agent ${client.id}: ${data.type}`);
+      
+      // Validate event structure against canonical contract
+      if (!this.validateEvent(data)) {
+        this.logger.error(`Invalid event structure from agent ${client.id}`, data);
+        client.emit('error', { message: 'Invalid event structure' });
+        return;
+      }
+
+      // Process event based on type
+      switch (data.type) {
+        case 'text_input':
+          this.handleTextInput(client, data);
+          break;
+        case 'ui_result':
+          this.handleUIResult(client, data);
+          break;
+        case 'system':
+          this.handleSystemEvent(client, data);
+          break;
+        default:
+          this.logger.warn(`Unknown event type: ${data.type}`);
+      }
+      
+    } catch (error) {
+      this.logger.error(`Error processing event from agent ${client.id}`, error);
+      client.emit('error', { message: 'Failed to process event' });
+    }
+  }
+
   // Method to send commands to agent (Cloud → Agent)
   sendCommand(sessionId: string, command: CloudCommand): void {
     this.server.emit(`command.${sessionId}`, command);
-    console.log(`[AgentGateway] Command sent to session ${sessionId}: ${command.say.text}`);
+    if (command.say) {
+      console.log(`[AgentGateway] Command sent to session ${sessionId}: ${command.say.text}`);
+    }
   }
 
   // Send Cloud → Agent commands (per canonical contract)
-  sendCommandToAgent(agentId: string, command: any): void {
+  sendCommandToAgent(agentId: string, command: CommandSocketData): void {
     try {
       const agent = this.connectedAgents.get(agentId);
       if (!agent) {
         this.logger.warn(`Agent ${agentId} not connected`);
+        return;
+      }
+
+      // Validate command structure against canonical contract
+      if (!this.validateCommand(command)) {
+        this.logger.error(`Invalid command structure for agent ${agentId}`, command);
         return;
       }
 
@@ -192,6 +262,78 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     } catch (error) {
       this.logger.error(`Error sending command to agent ${agentId}`, error);
     }
+  }
+
+  // Handle text input events (STT output)
+  private handleTextInput(client: Socket, event: AgentSocketData): void {
+    this.logger.log(`Processing text input: ${event.payload.text}`);
+    
+    // TODO: Integrate with AI decision engine
+    // For now, send back a simple acknowledgment command
+    const command: CommandSocketData = {
+      command_id: this.generateUUID(),
+      session_id: event.session_id,
+      timestamp: new Date().toISOString(),
+      type: 'say',
+      payload: {
+        text: `Received: ${event.payload.text}`,
+        interruptible: true
+      }
+    };
+    
+    this.sendCommandToAgent(client.id, command);
+  }
+
+  // Handle UI result events (RPA execution results)
+  private handleUIResult(client: Socket, event: AgentSocketData): void {
+    this.logger.log(`Processing UI result: ${event.payload.status}`);
+    
+    // TODO: Store result, continue flow execution
+  }
+
+  // Handle system events (lifecycle, errors)
+  private handleSystemEvent(client: Socket, event: AgentSocketData): void {
+    this.logger.log(`Processing system event: ${event.payload.event}`);
+    
+    // TODO: Handle system events like call_started, call_ended
+    switch (event.payload.event) {
+      case 'call_started':
+        this.logger.log(`Call started for agent ${client.id}`);
+        break;
+      case 'call_ended':
+        this.logger.log(`Call ended for agent ${client.id}`);
+        break;
+      case 'error':
+        this.logger.error(`Agent error: ${event.payload.data}`);
+        break;
+    }
+  }
+
+  // Validate event against canonical contract
+  private validateEvent(event: AgentSocketData): boolean {
+    return !!(
+      event.event_id &&
+      event.session_id &&
+      event.timestamp &&
+      ['text_input', 'ui_result', 'system'].includes(event.type) &&
+      event.payload
+    );
+  }
+
+  // Validate command against canonical contract
+  private validateCommand(command: CommandSocketData): boolean {
+    return !!(
+      command.command_id &&
+      command.session_id &&
+      command.timestamp &&
+      ['say', 'ui_steps', 'mode', 'stop'].includes(command.type) &&
+      command.payload
+    );
+  }
+
+  // Generate UUID for events/commands
+  private generateUUID(): string {
+    return uuidv4();
   }
 
   // Broadcast to sidepanel
