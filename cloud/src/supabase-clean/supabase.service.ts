@@ -1,23 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
-import { ConfigService } from '../config/config.service';
 
 @Injectable()
 export class SupabaseService {
   private readonly client: SupabaseClient;
-  private readonly config: ConfigService;
+  private readonly supabaseUrl: string;
+  private readonly supabaseKey: string;
+  private readonly supabaseAdminSecret: string;
 
-  constructor(config: ConfigService) {
-    this.config = config;
+  constructor() {
+    // Use real environment variables (anti-demo rule: no fake fallbacks)
+    this.supabaseUrl = process.env.SUPABASE_URL;
+    this.supabaseKey = process.env.SUPABASE_ANON_KEY;
+    this.supabaseAdminSecret = process.env.SUPABASE_ADMIN_SECRET;
     
-    const supabaseUrl = config.getSupabaseConfig().url;
-    const supabaseKey = config.getSupabaseConfig().key;
-    
-    if (!supabaseUrl || !supabaseKey) {
-      console.warn('[Supabase] Missing configuration, using local development settings');
+    if (!this.supabaseUrl || !this.supabaseKey) {
+      console.error('[Supabase] CRITICAL: Missing SUPABASE_URL or SUPABASE_ANON_KEY environment variables');
+      throw new Error('Supabase configuration is incomplete. Check environment variables.');
     }
     
-    this.client = createClient(supabaseUrl || 'http://localhost:54321', supabaseKey || 'your-development-key');
+    console.log('[Supabase] Initializing with real URL:', this.supabaseUrl);
+    this.client = createClient(this.supabaseUrl, this.supabaseKey, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true
+      }
+    });
+    
+    console.log('[Supabase] Real client initialized (not mocked)');
   }
 
   async signUp(email: string, password: string, name?: string) {
