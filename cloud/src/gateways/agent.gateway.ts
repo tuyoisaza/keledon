@@ -19,14 +19,33 @@ import { DecisionEngineService } from '../services/decision-engine.service';
   },
   transports: ['websocket', 'polling'],
 })
+import { DecisionEngineService } from '../services/decision-engine.service';
+
 export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
   constructor(
     private readonly sessionService: SessionService,
-    private readonly decisionEngine: DecisionEngineService
-  ) {}
+    private readonly decisionEngine: DecisionEngineService,
+    private readonly ttsService: TTSService,
+    private readonly uiAutomationService: UIAutomationService
+  ) {
+    
+    // TTS event listeners for real-time updates
+    this.ttsService.on('playback:started', () => {
+      this.broadcastToSidePanel('tts_status', 'speaking');
+    });
+    
+    this.ttsService.on('playback:completed', () => {
+      this.broadcastToSidePanel('tts_status', 'ready');
+    });
+    
+    this.ttsService.on('error', (error) => {
+      this.broadcastToSidePanel('tts_status', 'error');
+      console.error('TTS Error:', error);
+    });
+  }
 
   handleConnection(client: Socket) {
     console.log(`[AgentGateway] Agent connected: ${client.id}`);
@@ -55,6 +74,22 @@ export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
         event.payload.provider || 'deepgram',
         event.payload.metadata || {}
       );
+
+      // Handle 'say' commands with TTS
+      if (decision.type === 'say' && decision.say) {
+        await this.ttsService.speak(decision.say.text, {
+          voice: decision.say.voice,
+          interruptible: decision.say.interruptible,
+          language: decision.say.language,
+          speed: decision.say.speed,
+          pitch: decision.say.pitch,
+          volume: decision.say.volume
+        });
+        
+        console.log(`[AgentGateway] TTS: "${decision.say.text}" (voice: ${decision.say.voice || 'default'})`);
+      } else {
+        console.log(`[AgentGateway] Unsupported command type: ${decision.type}`);
+      }
 
       // Generate canonical brain command from decision
       const command = await this.decisionEngine.generateCommand(decision, event.session_id);
@@ -95,15 +130,20 @@ export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
       
       console.log(`[AgentGateway] Event persisted: ${persistedEvent.id} (${event.event_type})`);
 
-      // TODO: Process event and return command to agent
-      // This will be implemented in next phase per execution order
+        // Process event and return command to agent
+        const command = await this.processBrainEvent(sessionId, event);
 
-      // For now, acknowledge receipt
-      client.emit('event.acknowledged', { 
-        event_id: persistedEvent.id,
-        session_id: event.session_id,
-        timestamp: new Date().toISOString()
-      });
+        // Send acknowledgment
+        client.emit('message', { 
+          message_id: crypto.randomUUID(),
+          timestamp: new Date().toISOString(),
+          direction: 'cloud_to_agent',
+          message_type: 'ack',
+          payload: {
+            ack_message_id: persistedEvent.id,
+            status: 'received'
+          }
+        });
 
     } catch (error) {
       console.error(`[AgentGateway] Error processing event:`, error);
