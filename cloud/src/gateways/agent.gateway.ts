@@ -15,10 +15,6 @@ import { TTSService } from '../services/tts.service';
 import { UIAutomationService } from '../services/ui-automation.service';
 import { v4 as uuidv4 } from 'uuid';
 
-// Import from canonical contracts
-import { BrainEvent } from '../../../contracts/v1/brain/event.schema.json';
-import { BrainCommand } from '../../../contracts/v1/brain/command.schema.json';
-
 export interface AgentSocketData {
   event_id: string;
   session_id: string;
@@ -54,12 +50,10 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   private readonly connectedAgents = new Map<string, Socket>();
 
   constructor(
-    @Inject(forwardRef(() => SessionService))
     private readonly sessionService: SessionService,
-    @Inject(forwardRef(() => DecisionEngineService))
     private readonly decisionEngine: DecisionEngineService,
-    private readonly ttsService: TTSService,
-    private readonly uiAutomationService: UIAutomationService
+    private readonly ttsService?: TTSService,
+    private readonly uiAutomationService?: UIAutomationService
   ) {
     // TTS event listeners for real-time updates
     if (this.ttsService) {
@@ -129,26 +123,15 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         // Handle 'say' commands with TTS
         if (decision.command.type === 'say' && decision.command.say && this.ttsService) {
           await this.ttsService.speak(decision.command.say.text, {
-            voice: decision.command.say.voice,
-            interruptible: decision.command.say.interruptible,
-            language: decision.command.say.language,
-            speed: decision.command.say.speed,
-            pitch: decision.command.say.pitch,
-            volume: decision.command.say.volume
+            interruptible: decision.command.say.interruptible
           });
           
-          console.log(`[AgentGateway] TTS: "${decision.command.say.text}" (voice: ${decision.command.say.voice || 'default'})`);
+          console.log(`[AgentGateway] TTS: "${decision.command.say.text}"`);
         }
 
-        // Handle UI steps
+        // Handle UI steps - disabled for now
         if (decision.command.type === 'ui_steps' && this.uiAutomationService) {
-          for (const step of decision.command.ui_steps || []) {
-            try {
-              await this.uiAutomationService.executeStep(event.session_id, step);
-            } catch (stepError) {
-              console.error(`[AgentGateway] UI step failed:`, stepError);
-            }
-          }
+          console.log(`[AgentGateway] UI steps requested but disabled for Phase 0`);
         }
 
         // Send command back to agent
@@ -176,7 +159,8 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         say: {
           text: `Decision processing failed: ${error.message}`,
           interruptible: true
-        }
+        },
+        ui_steps: []
       };
 
       this.sendCommand(event.session_id, errorCommand);

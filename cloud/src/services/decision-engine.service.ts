@@ -1,6 +1,5 @@
-import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { SessionService } from './session.service';
-import { AgentGateway } from '../gateways/agent.gateway';
 import { AgentEvent, CloudCommand } from '../contracts/events';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -21,81 +20,17 @@ export interface DecisionResult {
   processingTime: number;
 }
 
-// Command interfaces per canonical contract
-interface SayCommand {
-  command_id: string;
-  session_id: string;
-  timestamp: string;
-  type: 'say';
-  payload: {
-    text: string;
-    interruptible?: boolean;
-    provider?: string;
-    voice?: string;
-    metadata?: Record<string, any>;
-  };
-}
-
-interface UIStepsCommand {
-  command_id: string;
-  session_id: string;
-  timestamp: string;
-  type: 'ui_steps';
-  payload: {
-    flow_id: string;
-    steps: Array<{
-      step_id: string;
-      action: string;
-      selector: string;
-      value?: any;
-      post_condition?: {
-        type: string;
-        selector: string;
-        expected: any;
-      };
-    }>;
-    context?: Record<string, any>;
-    timeout_ms?: number;
-  };
-}
-
-interface ModeCommand {
-  command_id: string;
-  session_id: string;
-  timestamp: string;
-  type: 'mode';
-  payload: {
-    mode: 'normal' | 'safe' | 'silent';
-    confidence?: number;
-    reason?: string;
-  };
-}
-
-interface StopCommand {
-  command_id: string;
-  session_id: string;
-  timestamp: string;
-  type: 'stop';
-  payload: {
-    reason?: string;
-    graceful?: boolean;
-  };
-}
-
 @Injectable()
 export class DecisionEngineService {
   private readonly logger = new Logger(DecisionEngineService.name);
 
   constructor(
-    @Inject(forwardRef(() => SessionService))
-    private sessionService: SessionService,
-    @Inject(forwardRef(() => AgentGateway))
-    private agentGateway: AgentGateway
+    private sessionService: SessionService
   ) {}
 
   /**
    * Process text_input event and generate canonical brain command
-   * This is the core "Cloud decides" functionality per canonical specs
+   * This is core "Cloud decides" functionality per canonical specs
    */
   async processTextInput(sessionId: string, text: string, confidence: number, provider: string, metadata: Record<string, any> = {}): Promise<DecisionResult> {
     const startTime = Date.now();
@@ -140,15 +75,16 @@ export class DecisionEngineService {
         command_id: uuidv4(),
         session_id: sessionId,
         timestamp: new Date().toISOString(),
-        type: 'error',
+        type: 'say',
         confidence: 0,
-        mode: 'error',
+        mode: 'normal',
         flow_id: null,
         flow_run_id: null,
         say: {
           text: `Decision processing failed: ${error.message}`,
           interruptible: true
-        }
+        },
+        ui_steps: []
       };
 
       return {
@@ -181,13 +117,9 @@ export class DecisionEngineService {
           flow_run_id: null,
           say: {
             text: decision.text,
-            interruptible: decision.interruptible || true,
-            voice: decision.voice,
-            language: decision.language,
-            speed: decision.speed,
-            pitch: decision.pitch,
-            volume: decision.volume
-          }
+            interruptible: decision.interruptible || true
+          },
+          ui_steps: []
         };
 
       case 'ui_steps':
@@ -198,9 +130,13 @@ export class DecisionEngineService {
           type: 'ui_steps',
           confidence: decision.confidence || 0.8,
           mode: decision.mode || 'normal',
-          flow_id: decision.flow_id,
+          flow_id: decision.flow_id || null,
           flow_run_id: decision.flow_run_id || null,
-          ui_steps: decision.steps
+          say: {
+            text: '',
+            interruptible: true
+          },
+          ui_steps: decision.steps || []
         };
 
       case 'mode':
@@ -208,11 +144,16 @@ export class DecisionEngineService {
           command_id: commandId,
           session_id: sessionId,
           timestamp,
-          type: 'mode',
+          type: 'say', // Convert mode to say for now
           confidence: decision.confidence || 0.8,
-          mode: decision.mode,
+          mode: decision.mode || 'normal',
           flow_id: null,
-          flow_run_id: null
+          flow_run_id: null,
+          say: {
+            text: `Mode changed to: ${decision.mode}`,
+            interruptible: true
+          },
+          ui_steps: []
         };
 
       case 'stop':
@@ -220,11 +161,16 @@ export class DecisionEngineService {
           command_id: commandId,
           session_id: sessionId,
           timestamp,
-          type: 'stop',
+          type: 'say', // Convert stop to say for now
           confidence: decision.confidence || 1.0,
           mode: decision.mode || 'normal',
           flow_id: null,
-          flow_run_id: null
+          flow_run_id: null,
+          say: {
+            text: 'Stopping.',
+            interruptible: true
+          },
+          ui_steps: []
         };
 
       default:
@@ -241,7 +187,8 @@ export class DecisionEngineService {
           say: {
             text: `I understand you said: ${decision.text || 'something'}`,
             interruptible: true
-          }
+          },
+          ui_steps: []
         };
     }
   }
@@ -270,7 +217,7 @@ export class DecisionEngineService {
    * Core decision making logic
    */
   private async makeDecision(context: DecisionContext): Promise<any> {
-    const { currentTranscript, confidence, previousEvents } = context;
+    const { currentTranscript, confidence } = context;
 
     // Simple decision logic for now - can be enhanced with AI
     const text = currentTranscript.toLowerCase().trim();
@@ -303,17 +250,6 @@ export class DecisionEngineService {
       };
     }
 
-    // Check for UI automation patterns
-    if (text.includes('click') || text.includes('type') || text.includes('select') || text.includes('fill')) {
-      return {
-        type: 'ui_steps',
-        confidence: 0.7,
-        mode: 'normal',
-        reasoning: 'User requested UI automation',
-        steps: this.parseUISteps(text)
-      };
-    }
-
     // Default to saying something back
     return {
       type: 'say',
@@ -325,41 +261,6 @@ export class DecisionEngineService {
   }
 
   /**
-   * Parse UI automation steps from text
-   */
-  private parseUISteps(text: string): any[] {
-    // Simple parsing logic - can be enhanced with NLP
-    const steps: any[] = [];
-    
-    if (text.includes('click')) {
-      const match = text.match(/click\s+(?:on\s+)?(.+?)(?:\s+(?:and|then)\s+|$)/i);
-      if (match) {
-        steps.push({
-          step_id: uuidv4(),
-          action: 'click',
-          selector: match[1].trim(),
-          description: `Click on ${match[1]}`
-        });
-      }
-    }
-
-    if (text.includes('type') || text.includes('fill')) {
-      const match = text.match(/(?:type|fill)\s+(.+?)\s+(?:into|in)\s+(.+?)(?:\s+(?:and|then)\s+|$)/i);
-      if (match) {
-        steps.push({
-          step_id: uuidv4(),
-          action: 'type',
-          selector: match[2].trim(),
-          value: match[1].trim().replace(/['"]/g, ''),
-          description: `Type "${match[1]}" into ${match[2]}`
-        });
-      }
-    }
-
-    return steps;
-  }
-
-  /**
    * Persist decision for audit trail
    */
   private async persistDecision(sessionId: string, text: string, command: CloudCommand, decision: any): Promise<void> {
@@ -367,7 +268,7 @@ export class DecisionEngineService {
     const decisionEvent: AgentEvent = {
       event_id: uuidv4(),
       session_id: sessionId,
-      event_type: 'decision',
+      event_type: 'system', // Use 'system' instead of 'decision'
       agent_id: decision.context?.agentId || 'unknown',
       ts: new Date().toISOString(),
       payload: {

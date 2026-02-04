@@ -11,10 +11,10 @@ async function bootstrap() {
     credentials: true,
   });
   
-  const port = process.env.PORT || 9999;
+  const port = process.env.PORT || 3001;
   await app.listen(port);
   
-  console.log(`KELEDON backend running on port ${port}`);
+  console.log(`KELEDON backend running on http://localhost:${port}`);
   console.log(`CORS enabled for: http://localhost:5173`);
 }
 
