@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Play, Globe, Headphones, AlertCircle, Building2, Layers, UserCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { getTeamInterfaces, getTeamDetails, type ManagedInterface } from '@/lib/supabase';
+import { getTeamInterfaces, getTeamDetails, getCompanies, getBrands, getTeams, type ManagedInterface } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 
 export default function LaunchAgentPage() {
@@ -16,19 +16,10 @@ export default function LaunchAgentPage() {
     const [selectedBrand, setSelectedBrand] = useState<string>('');
     const [selectedTeam, setSelectedTeam] = useState<string>('');
 
-    // Mock data (to be replaced by real API calls later)
-    const mockCompanies = [
-        { id: 'comp-1', name: 'Acme Corp' },
-        { id: 'comp-2', name: 'Keldon Retail' },
-    ];
-    const mockBrands = [
-        { id: 'brand-1', company_id: 'comp-1', name: 'Tech Division' },
-        { id: 'brand-2', company_id: 'comp-2', name: 'Retail Solutions' },
-    ];
-    const mockTeams = [
-        { id: 'team-1', brand_id: 'brand-1', name: 'Support Team A' },
-        { id: 'team-2', brand_id: 'brand-2', name: 'Sales Ops' },
-    ];
+    // Real data will be loaded from Supabase
+    const [companies, setCompanies] = useState<any[]>([]);
+    const [brands, setBrands] = useState<any[]>([]);
+    const [teams, setTeams] = useState<any[]>([]);
 
     useEffect(() => {
         async function loadData() {
@@ -37,47 +28,38 @@ export default function LaunchAgentPage() {
             try {
                 let data: ManagedInterface[] = [];
                 let teamData: any = null;
-
-                // Only query DB if it looks like a valid UUID to avoid Postgres 400 errors
+                
+                // Load real organization data
                 const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.team_id || '');
-
+                
                 if (user.team_id && isUuid) {
-                    // Parallel fetch
+                    // Real data from Supabase
                     const [ifaces, tDetails] = await Promise.all([
                         getTeamInterfaces(user.team_id).catch(_ => []),
-                        getTeamDetails(user.team_id).catch(_ => null)
+                        getTeamDetails(user.team_id).catch(_ => null),
+                        getCompanies().catch(_ => []),
+                        getBrands().catch(_ => []),
+                        getTeams().catch(_ => [])
                     ]);
+                    
                     data = ifaces;
                     teamData = tDetails;
+                    
+                    // Set organization data for selectors
+                    setCompanies(ifaces[0]?.companies || []);
+                    setBrands(ifaces[1]?.brands || []);
+                    setTeams(ifaces[2]?.teams || []);
                 }
-
-                // fallback for demo user
-                if ((data.length === 0 || !teamData) && (user.email.includes('demo') || isActuallySuperAdmin)) {
-                    if (data.length === 0) {
-                        data = [
-                            { id: '1', name: 'Genesys Cloud', base_url: '', status: 'connected', icon: 'headphones' },
-                            { id: '2', name: 'Salesforce', base_url: '', status: 'connected', icon: 'globe' }
-                        ];
-                    }
-                    // Mock team info if missing
-                    if (!teamData) {
-                        teamData = {
-                            name: 'Demo Team',
-                            brands: {
-                                name: 'Keldon Retail',
-                                companies: {
-                                    name: 'Acme Corp'
-                                }
-                            }
-                        };
-                    }
+                
+                // Show interfaces if available
+                if (data.length === 0 && !teamData) {
+                    console.warn('No interfaces found for team:', user.team_id);
                 }
-
+                
                 setInterfaces(data);
                 setTeamInfo(teamData);
                 // Default: Select all connected ones
                 setSelectedIds(new Set(data.filter(i => i.status === 'connected').map(i => i.id)));
-
             } catch (error) {
                 console.error('Failed to load launch data:', error);
             } finally {
@@ -137,7 +119,7 @@ export default function LaunchAgentPage() {
                                 className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none"
                             >
                                 <option value="">Select company</option>
-                                {mockCompanies.map(comp => (
+                                {companies.map(comp => (
                                     <option key={comp.id} value={comp.id}>{comp.name}</option>
                                 ))}
                             </select>
@@ -156,7 +138,7 @@ export default function LaunchAgentPage() {
                                 className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <option value="">Select brand</option>
-                                {mockBrands
+                                {brands
                                     .filter(b => b.company_id === selectedCompany)
                                     .map(brand => (
                                         <option key={brand.id} value={brand.id}>{brand.name}</option>
@@ -174,7 +156,7 @@ export default function LaunchAgentPage() {
                                 className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <option value="">Select team</option>
-                                {mockTeams
+                                {teams
                                     .filter(t => t.brand_id === selectedBrand)
                                     .map(team => (
                                         <option key={team.id} value={team.id}>{team.name}</option>

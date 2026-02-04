@@ -203,10 +203,9 @@ const { data } = supabase?.auth.onAuthStateChange(async (_event, session) => {
         }
     }, []);
 
-    const loginDemo = useCallback((role: UserRole) => {
-        const demoUser = mockUsers[role];
-        setUser(demoUser);
-        sessionStorage.setItem('keledon_user', JSON.stringify(demoUser));
+    const loginDemo = useCallback(async (role: UserRole) => {
+        // Anti-demo: No mock login - require real authentication
+        throw new Error('Demo login not supported. Please use real authentication with valid credentials.');
     }, []);
 
     const loginDev = useCallback(async (email: string) => {
