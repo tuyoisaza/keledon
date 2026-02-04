@@ -1,20 +1,93 @@
-// Background Service - Minimal ES Module for Chrome Extension
-// Simplified to avoid legacy background import issues
+// Background Service - Chrome Extension with STT Integration
+// Integrates Session Management, WebSocket Client, and STT Manager
+
+import { SessionManager } from '../core/session-manager.js';
+import { WebSocketClient } from '../core/websocket-client.js';
+import { STTManager } from '../core/stt-manager.js';
 
 class BackgroundService {
     constructor() {
-        this.socket = null;
+        // Core components
+        this.sessionManager = new SessionManager();
+        this.webSocketClient = new WebSocketClient(this.sessionManager);
+        this.sttManager = new STTManager(this.sessionManager, this.webSocketClient);
+        
+        // State tracking
         this.connectionState = 'disconnected';
-        this.messageHandlers = new Map();
         this.isListening = false;
+        this.isSTTActive = false;
         this.currentSessionId = null;
         this.currentTabTitle = null;
+        
+        // Component states for Side Panel
+        this.componentStatus = {
+            websocket: 'disconnected',
+            stt: 'ready',
+            session: null
+        };
     }
 
-    start() {
-        console.log('BackgroundService started - minimal implementation');
-        this.setupMessageHandlers();
-        console.log('BackgroundService ready');
+    async start() {
+        console.log('BackgroundService started - with STT integration');
+        
+        try {
+            // Initialize components
+            await this.initializeComponents();
+            
+            // Setup message handlers
+            this.setupMessageHandlers();
+            this.setupEventHandlers();
+            
+            console.log('BackgroundService ready with STT integration');
+        } catch (error) {
+            console.error('Failed to start BackgroundService:', error);
+        }
+    }
+
+    async initializeComponents() {
+        try {
+            // Initialize STT manager (requires API key)
+            await this.sttManager.initialize();
+            console.log('STT Manager initialized');
+        } catch (error) {
+            console.warn('STT Manager initialization failed:', error.message);
+            this.componentStatus.stt = 'error';
+        }
+    }
+
+    setupEventHandlers() {
+        // Handle WebSocket events
+        this.webSocketClient.on('connection:established', () => {
+            this.componentStatus.websocket = 'connected';
+            console.log('WebSocket connected');
+        });
+
+        this.webSocketClient.on('connection:closed', () => {
+            this.componentStatus.websocket = 'disconnected';
+            console.log('WebSocket disconnected');
+        });
+
+        // Handle STT events
+        this.sttManager.on('stt:listening', () => {
+            this.componentStatus.stt = 'listening';
+            this.isSTTActive = true;
+            console.log('STT listening started');
+        });
+
+        this.sttManager.on('stt:stopped', () => {
+            this.componentStatus.stt = 'ready';
+            this.isSTTActive = false;
+            console.log('STT listening stopped');
+        });
+
+        this.sttManager.on('stt:text_input_sent', (data) => {
+            console.log('text_input event sent:', data.text);
+        });
+
+        this.sttManager.on('stt:error', (error) => {
+            this.componentStatus.stt = 'error';
+            console.error('STT error:', error.message);
+        });
     }
 
     setupMessageHandlers() {
@@ -31,22 +104,34 @@ class BackgroundService {
         
         switch (message.type) {
             case 'GET_STATUS':
-                sendResponse({ 
-                    status: 'ready',
-                    listening: this.isListening,
-                    sessionId: this.currentSessionId,
-                    tabTitle: this.currentTabTitle
-                });
+                sendResponse(this.getStatus());
                 break;
                 
             case 'START_LISTENING':
-                this.startListening();
-                sendResponse({ success: true, sessionId: this.currentSessionId });
+                this.startListening().then(result => sendResponse(result))
+                              .catch(error => sendResponse({ error: error.message }));
                 break;
                 
             case 'STOP_LISTENING':
-                this.stopListening();
-                sendResponse({ success: true });
+                this.stopListening().then(result => sendResponse(result))
+                             .catch(error => sendResponse({ error: error.message }));
+                break;
+
+            case 'CONNECT_WEBSOCKET':
+                this.connectWebSocket(message.url).then(result => sendResponse(result))
+                                         .catch(error => sendResponse({ error: error.message }));
+                break;
+
+            case 'DISCONNECT_WEBSOCKET':
+                this.disconnectWebSocket().then(result => sendResponse(result))
+                                            .catch(error => sendResponse({ error: error.message }));
+                break;
+
+            case 'GET_COMPONENT_STATUS':
+                sendResponse({ 
+                    components: this.componentStatus,
+                    session: this.sessionManager.getCurrentSession()
+                });
                 break;
                 
             default:
@@ -55,20 +140,91 @@ class BackgroundService {
         }
     }
 
-    startListening() {
-        this.isListening = true;
-        this.currentSessionId = 'session_' + Date.now();
-        this.currentTabTitle = 'KELEDON Session';
-        
-        console.log('Started listening session:', this.currentSessionId);
+    async startListening() {
+        try {
+            if (this.isListening) {
+                return { success: false, error: 'Already listening' };
+            }
+
+            // Create real session (anti-demo compliance)
+            const session = await this.sessionManager.createSession();
+            this.currentSessionId = session.id;
+            this.currentTabTitle = `KELEDON Session ${session.id.slice(0, 8)}`;
+            
+            // Start STT processing
+            await this.sttManager.start();
+            
+            this.isListening = true;
+            
+            console.log('Started real listening session:', this.currentSessionId);
+            return { 
+                success: true, 
+                sessionId: this.currentSessionId,
+                sttStatus: this.sttManager.getStatus()
+            };
+            
+        } catch (error) {
+            console.error('Failed to start listening:', error);
+            return { success: false, error: error.message };
+        }
     }
 
-    stopListening() {
-        this.isListening = false;
-        this.currentSessionId = null;
-        this.currentTabTitle = null;
-        
-        console.log('Stopped listening session');
+    async stopListening() {
+        try {
+            if (!this.isListening) {
+                return { success: false, error: 'Not currently listening' };
+            }
+
+            // Stop STT processing
+            await this.sttManager.stop();
+            
+            // Close session
+            if (this.currentSessionId) {
+                await this.sessionManager.closeSession(this.currentSessionId);
+            }
+            
+            this.isListening = false;
+            this.currentSessionId = null;
+            this.currentTabTitle = null;
+            
+            console.log('Stopped listening session');
+            return { success: true };
+            
+        } catch (error) {
+            console.error('Failed to stop listening:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    async connectWebSocket(url) {
+        try {
+            await this.webSocketClient.connect(url);
+            return { success: true, state: this.webSocketClient.getConnectionState() };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    }
+
+    async disconnectWebSocket() {
+        try {
+            this.webSocketClient.disconnect();
+            return { success: true };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    }
+
+    getStatus() {
+        return {
+            status: this.componentStatus.websocket === 'connected' ? 'ready' : 'disconnected',
+            listening: this.isListening,
+            sessionId: this.currentSessionId,
+            tabTitle: this.currentTabTitle,
+            sttActive: this.isSTTActive,
+            components: this.componentStatus,
+            session: this.sessionManager.getCurrentSession(),
+            sttStats: this.sttManager.getStatus()
+        };
     }
 }
 
