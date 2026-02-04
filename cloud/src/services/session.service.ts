@@ -1,162 +1,89 @@
 import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { AgentEvent } from '../contracts/events';
+import { DatabaseService, DatabaseSession, DatabaseEvent } from './database.service';
 
-// Simple interfaces for in-memory storage
-interface Session {
-  id: string;
-  agent_id: string;
-  created_at: string;
-  updated_at: string;
-  status: string;
-  tab_url?: string;
-  tab_title?: string;
-  metadata?: Record<string, any>;
-}
-
-interface Event {
-  id: string;
-  session_id: string;
-  event_type: string;
-  payload: any;
-  ts: string;
-  agent_id: string;
-  created_at: string;
-}
-
+// Phase 2: Database-backed session service
 @Injectable()
 export class SessionService {
   private readonly logger = new Logger(SessionService.name);
-  
-  // In-memory storage for bootability
-  private sessions = new Map<string, Session>();
-  private events = new Map<string, Event[]>();
 
-  constructor() {}
+  constructor(private databaseService: DatabaseService) {}
 
   /**
-   * Create a new session with real UUID
+   * Create a new session in Supabase (Phase 2: persistent)
    */
   async create(agentId: string, metadata?: {
     tab_url?: string;
     tab_title?: string;
     name?: string;
-  }): Promise<Session> {
+  }): Promise<DatabaseSession> {
     this.logger.log(`Creating session for agent: ${agentId}`);
 
-    const sessionId = uuidv4();
-    const now = new Date().toISOString();
-    
-    const session: Session = {
-      id: sessionId,
-      agent_id: agentId,
-      status: 'active',
-      tab_url: metadata?.tab_url,
-      tab_title: metadata?.tab_title,
-      created_at: now,
-      updated_at: now,
-      metadata: metadata || {}
-    };
-
-    // Store in memory
-    this.sessions.set(sessionId, session);
-    this.events.set(sessionId, []);
-    
-    this.logger.log(`Session created in memory: ${sessionId}`);
-    return session;
+    return await this.databaseService.createSession(agentId, metadata);
   }
 
   /**
-   * Get session by ID
+   * Get session by ID from database
    */
-  async getSession(sessionId: string): Promise<Session | null> {
-    return this.sessions.get(sessionId) || null;
+  async getSession(sessionId: string): Promise<DatabaseSession | null> {
+    return await this.databaseService.getSession(sessionId);
   }
 
   /**
-   * Update session status
+   * Update session status in database
    */
-  async updateSessionStatus(sessionId: string, status: Session['status']): Promise<void> {
-    const session = this.sessions.get(sessionId);
+  async updateSessionStatus(sessionId: string, status: string): Promise<void> {
+    await this.databaseService.updateSessionStatus(sessionId, status);
+  }
+
+  /**
+   * Persist an event to database (Phase 2: persistent storage)
+   */
+  async persistEvent(sessionId: string, event: AgentEvent): Promise<DatabaseEvent> {
+    // Validate session exists in database
+    const session = await this.databaseService.getSession(sessionId);
     if (!session) {
-      throw new NotFoundException(`Session ${sessionId} not found`);
-    }
-
-    const now = new Date().toISOString();
-    session.status = status;
-    session.updated_at = now;
-
-    this.sessions.set(sessionId, session);
-  }
-
-  /**
-   * Persist an event to memory
-   */
-  async persistEvent(sessionId: string, event: AgentEvent): Promise<Event> {
-    if (!this.sessions.has(sessionId)) {
       throw new BadRequestException(`Session ${sessionId} does not exist - cannot persist event`);
     }
 
-    const persistedEvent: Event = {
-      id: uuidv4(),
-      session_id: sessionId,
+    const persistedEvent = await this.databaseService.persistEvent(sessionId, {
       event_type: event.event_type,
       payload: event.payload,
       ts: event.ts,
-      agent_id: event.agent_id,
-      created_at: new Date().toISOString()
-    };
-
-    const sessionEvents = this.events.get(sessionId) || [];
-    sessionEvents.push(persistedEvent);
-    this.events.set(sessionId, sessionEvents);
+      agent_id: event.agent_id
+    });
     
-    // Update session timestamp
-    await this.updateSessionTimestamp(sessionId);
-    
-    this.logger.log(`Event persisted to memory: ${persistedEvent.id}`);
+    this.logger.log(`Event persisted to database: ${persistedEvent.id}`);
     return persistedEvent;
   }
 
   /**
-   * Get all events for a session
+   * Get all events for a session from database
    */
-  async getSessionEvents(sessionId: string): Promise<Event[]> {
-    return this.events.get(sessionId) || [];
+  async getSessionEvents(sessionId: string): Promise<DatabaseEvent[]> {
+    return await this.databaseService.getSessionEvents(sessionId);
   }
 
   /**
-   * Update session timestamp
+   * Validate session exists in database
    */
-  private async updateSessionTimestamp(sessionId: string): Promise<void> {
-    const now = new Date().toISOString();
-    
-    const session = this.sessions.get(sessionId);
-    if (session) {
-      session.updated_at = now;
-      this.sessions.set(sessionId, session);
-    }
+  async validateSession(sessionId: string): Promise<boolean> {
+    const session = await this.databaseService.getSession(sessionId);
+    return session !== null;
   }
 
   /**
-   * Validate session exists
+   * Get all sessions from database
    */
-  validateSession(sessionId: string): boolean {
-    return this.sessions.has(sessionId);
+  async findAll(): Promise<DatabaseSession[]> {
+    return await this.databaseService.findAllSessions();
   }
 
   /**
-   * Get all sessions
-   */
-  async findAll(): Promise<Session[]> {
-    return Array.from(this.sessions.values());
-  }
-
-  /**
-   * Delete session
+   * Delete session from database
    */
   async remove(sessionId: string): Promise<void> {
-    this.sessions.delete(sessionId);
-    this.events.delete(sessionId);
+    await this.databaseService.removeSession(sessionId);
   }
 }

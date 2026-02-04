@@ -5,14 +5,17 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "dev": "concurrently \"npm run dev:cloud\" \"npm run dev:landing\"",
+    "dev": "npm run validate:environment && npm run validate:qdrant && npm run validate:supabase && concurrently \"npm run dev:cloud\" \"npm run dev:landing\"",
     "dev:cloud": "cd cloud && npm install && npm run start:dev",
     "dev:landing": "cd landing && npm install && npm run dev",
     "build": "npm run build:cloud && npm run build:landing",
     "build:cloud": "cd cloud && npm run build",
     "build:landing": "cd landing && npm run build",
     "test": "echo 'Tests not configured for root'",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "validate:environment": "node scripts/validate-environment.js",
+    "validate:qdrant": "node scripts/validate-qdrant.js",
+    "validate:supabase": "node scripts/validate-supabase.js"
   },
   "dependencies": {
     "ajv": "^8.17.1",

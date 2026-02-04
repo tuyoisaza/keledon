@@ -1,21 +1,44 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { EnvironmentService } from './services/environment.service';
+
+const logger = new Logger('Bootstrap');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // Enable CORS for local development
+  // Get environment service for validation and logging
+  const environmentService = app.get(EnvironmentService);
+  
+  // Validate current phase and log environment info
+  environmentService.validateCurrentPhase();
+  environmentService.logEnvironmentInfo();
+  
+  // Enable CORS using environment-specific origins
+  const corsOrigins = process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000'];
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: corsOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
   });
   
-  const port = process.env.PORT || 3001;
+  // Global validation pipe
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true,
+    whitelist: true,
+    forbidNonWhitelisted: true,
+  }));
+  
+  const port = process.env.CLOUD_PORT || 3001;
   await app.listen(port);
   
-  console.log(`KELEDON backend running on http://localhost:${port}`);
-  console.log(`CORS enabled for: http://localhost:5173`);
+  logger.log(`🚀 KELEDON backend running on http://localhost:${port}`);
+  logger.log(`🌐 CORS enabled for: ${corsOrigins.join(', ')}`);
+  
+  // Log final phase status
+  const phase = environmentService.getPhase();
+  logger.log(`✅ Bootstrap complete: ${phase}`);
 }
 
 if (require.main === module) {
