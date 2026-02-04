@@ -142,29 +142,37 @@ export class OpenAITTS {
       speed: utterance.speed || 1.0
     };
 
-    // Mock API response with base64 audio data
-    // In production, this would return real audio from OpenAI
-    const mockAudioData = this.generateMockAudio(utterance.text);
-    const audioUrl = `data:audio/mpeg;base64,${mockAudioData}`;
-    
-    console.log('OpenAI TTS: Audio synthesized (mock for development)');
-    
-    return audioUrl;
-  }
+    console.log(`OpenAI TTS: Synthesizing "${utterance.text.substring(0, 50)}..." with voice ${utterance.voice}`);
 
-  /**
-   * Generate mock audio data (for development)
-   */
-  generateMockAudio(text) {
-    // Create a simple audio pattern based on text
-    // This is a mock implementation - real implementation would use OpenAI API
-    const seed = text.length + text.charCodeAt(0);
-    const pattern = new Array(2048).fill(0).map((_, i) => 
-      Math.sin((i + seed * 2) * 0.008) * 127 + 128
-    );
-    
-    // Simple base64 encoding (mock)
-    return btoa(String.fromCharCode(...pattern));
+    try {
+      const response = await fetch('https://api.openai.com/v1/audio/speech', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(request)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+      }
+
+      // Convert audio blob to base64 data URL
+      const audioBlob = await response.blob();
+      const audioBuffer = await audioBlob.arrayBuffer();
+      const audioBase64 = btoa(String.fromCharCode(...new Uint8Array(audioBuffer)));
+      const audioUrl = `data:audio/mpeg;base64,${audioBase64}`;
+      
+      console.log('OpenAI TTS: Audio synthesized successfully');
+      
+      return audioUrl;
+
+    } catch (error) {
+      console.error('OpenAI TTS: API call failed:', error);
+      throw new Error(`Failed to synthesize speech with OpenAI: ${error.message}`);
+    }
   }
 
   /**
@@ -206,18 +214,18 @@ export class OpenAITTS {
            apiKey.length >= 48;
   }
 
-  /**
-   * Get available voices
+/**
+   * Get available voices from OpenAI
    */
   async getVoices() {
-    // Mock voice list - in production would query OpenAI API
+    // OpenAI has fixed voice list - no API call needed
     return [
-      { id: 'alloy', name: 'Alloy', language: 'en-US', gender: 'neutral' },
-      { id: 'echo', name: 'Echo', language: 'en-US', gender: 'neutral' },
-      { id: 'fable', name: 'Fable', language: 'en-US', gender: 'neutral' },
-      { id: 'onyx', name: 'Onyx', language: 'en-US', gender: 'male' },
-      { id: 'nova', name: 'Nova', language: 'en-US', gender: 'female' },
-      { id: 'shimmer', name: 'Shimmer', language: 'en-US', gender: 'female' }
+      { id: 'alloy', name: 'Alloy', language: 'en-US' },
+      { id: 'echo', name: 'Echo', language: 'en-US' },
+      { id: 'fable', name: 'Fable', language: 'en-US' },
+      { id: 'onyx', name: 'Onyx', language: 'en-US' },
+      { id: 'nova', name: 'Nova', language: 'en-US' },
+      { id: 'shimmer', name: 'Shimmer', language: 'en-US' }
     ];
   }
 

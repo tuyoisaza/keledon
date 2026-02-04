@@ -134,12 +134,13 @@ export class ElevenLabsTTS {
   }
 
   /**
-   * Simulate ElevenLabs API call (would be real HTTP request)
+   * Synthesize speech using real ElevenLabs API
    */
   async synthesizeAudio(utterance) {
-    // Simulate ElevenLabs API call
-    // In production, this would be: POST https://api.elevenlabs.io/v1/text-to-speech
-    
+    if (!this.apiKey) {
+      throw new Error('ElevenLabs API key not initialized');
+    }
+
     const request = {
       text: utterance.text,
       voice_id: utterance.voiceId,
@@ -148,29 +149,38 @@ export class ElevenLabsTTS {
       output_format: 'mp3_44100_128'
     };
 
-    // Mock API response with base64 audio data
-    // In production, this would return real audio from ElevenLabs
-    const mockAudioData = this.generateMockAudio(utterance.text);
-    const audioUrl = `data:audio/mpeg;base64,${mockAudioData}`;
-    
-    console.log('ElevenLabs TTS: Audio synthesized (mock for development)');
-    
-    return audioUrl;
-  }
+    console.log(`ElevenLabs TTS: Synthesizing "${utterance.text.substring(0, 50)}..." with voice ${utterance.voiceId}`);
 
-  /**
-   * Generate mock audio data (for development)
-   */
-  generateMockAudio(text) {
-    // Create a simple audio pattern based on text
-    // This is a mock implementation - real implementation would use ElevenLabs API
-    const seed = text.length + text.charCodeAt(0);
-    const pattern = new Array(1024).fill(0).map((_, i) => 
-      Math.sin((i + seed) * 0.01) * 127 + 128
-    );
-    
-    // Simple base64 encoding (mock)
-    return btoa(String.fromCharCode(...pattern));
+    try {
+      const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech', {
+        method: 'POST',
+        headers: {
+          'Accept': 'audio/mpeg',
+          'Content-Type': 'application/json',
+          'xi-api-key': this.apiKey
+        },
+        body: JSON.stringify(request)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`ElevenLabs API error: ${response.status} - ${errorText}`);
+      }
+
+      // Convert audio blob to base64 data URL
+      const audioBlob = await response.blob();
+      const audioBuffer = await audioBlob.arrayBuffer();
+      const audioBase64 = btoa(String.fromCharCode(...new Uint8Array(audioBuffer)));
+      const audioUrl = `data:audio/mpeg;base64,${audioBase64}`;
+      
+      console.log('ElevenLabs TTS: Audio synthesized successfully');
+      
+      return audioUrl;
+
+    } catch (error) {
+      console.error('ElevenLabs TTS: API call failed:', error);
+      throw new Error(`Failed to synthesize speech with ElevenLabs: ${error.message}`);
+    }
   }
 
   /**
@@ -213,16 +223,41 @@ export class ElevenLabsTTS {
   }
 
   /**
-   * Get available voices
+   * Get available voices from ElevenLabs API
    */
   async getVoices() {
-    // Mock voice list - in production would query ElevenLabs API
-    return [
-      { id: 'default', name: 'Default Voice', language: 'en-US' },
-      { id: 'rachel', name: 'Rachel', language: 'en-US' },
-      { id: 'adam', name: 'Adam', language: 'en-US' },
-      { id: 'bella', name: 'Bella', language: 'en-US' }
-    ];
+    if (!this.apiKey) {
+      throw new Error('ElevenLabs API key not initialized');
+    }
+
+    try {
+      const response = await fetch('https://api.elevenlabs.io/v1/voices', {
+        headers: {
+          'xi-api-key': this.apiKey
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch voices: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      return data.voices.map(voice => ({
+        id: voice.voice_id,
+        name: voice.name,
+        language: voice.language || 'en-US',
+        gender: voice.gender,
+        description: voice.description
+      }));
+
+    } catch (error) {
+      console.error('Failed to fetch ElevenLabs voices:', error);
+      // Return fallback voices if API fails
+      return [
+        { id: 'default', name: 'Default Voice', language: 'en-US' }
+      ];
+    }
   }
 
   /**
