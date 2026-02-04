@@ -38,6 +38,9 @@ class BackgroundService {
             // Initialize components
             await this.initializeComponents();
             
+            // Setup dependencies
+            this.sessionManager.setWebSocketClient(this.webSocketClient);
+            
             // Setup message handlers
             this.setupMessageHandlers();
             this.setupEventHandlers();

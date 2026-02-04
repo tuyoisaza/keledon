@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SessionService } from '../session.service';
+import { SessionService } from './session.service';
 import { AgentEvent, CloudCommand } from '../contracts/events';
 
 export interface DecisionContext {

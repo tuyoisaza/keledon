@@ -9,15 +9,25 @@ export interface AgentEvent {
 }
 
 export interface CloudCommand {
+  command_id: string;
+  session_id: string;
+  timestamp: string;
+  type: 'say' | 'ui_steps' | 'mode' | 'stop' | 'error';
+  confidence: number;
+  mode: 'normal' | 'safe' | 'error';
+  flow_id: string | null;
+  flow_run_id: string | null;
   say: {
     text: string;
     interruptible: boolean;
-  };
-  ui_steps: string[];
-  confidence: number;
-  mode: 'normal' | 'safe';
-  flow_id: string;
-  flow_run_id: string;
+    voice?: string;
+    language?: string;
+    speed?: number;
+    pitch?: number;
+    volume?: number;
+  } | null;
+  ui_steps: string[] | null;
+  payload?: any;
 }
 
 export interface UIStep {

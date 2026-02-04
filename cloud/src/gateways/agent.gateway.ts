@@ -9,6 +9,8 @@ import { Server, Socket } from 'socket.io';
 import { SessionService } from '../services/session.service';
 import { AgentEvent, CloudCommand } from '../contracts/events';
 import { DecisionEngineService } from '../services/decision-engine.service';
+import { TTSService } from '../services/tts.service';
+import { UIAutomationService } from '../services/ui-automation.service';
 
 @WebSocketGateway({
   cors: { 
@@ -19,7 +21,6 @@ import { DecisionEngineService } from '../services/decision-engine.service';
   },
   transports: ['websocket', 'polling'],
 })
-import { DecisionEngineService } from '../services/decision-engine.service';
 
 export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
@@ -122,32 +123,6 @@ export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
       };
 
       this.sendCommand(event.session_id, errorCommand);
-    }
-  }
-
-      // Persist event (canon: all events must be persisted)
-      const persistedEvent = await this.sessionService.persistEvent(event.session_id, event);
-      
-      console.log(`[AgentGateway] Event persisted: ${persistedEvent.id} (${event.event_type})`);
-
-        // Process event and return command to agent
-        const command = await this.processBrainEvent(sessionId, event);
-
-        // Send acknowledgment
-        client.emit('message', { 
-          message_id: crypto.randomUUID(),
-          timestamp: new Date().toISOString(),
-          direction: 'cloud_to_agent',
-          message_type: 'ack',
-          payload: {
-            ack_message_id: persistedEvent.id,
-            status: 'received'
-          }
-        });
-
-    } catch (error) {
-      console.error(`[AgentGateway] Error processing event:`, error);
-      client.emit('error', { message: 'Failed to process event' });
     }
   }
 

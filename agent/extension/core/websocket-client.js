@@ -1,7 +1,10 @@
 /**
- * WebSocket Client - Core Agent Runtime Component
- * Handles communication with cloud backend
+ * Socket.IO Client - Core Agent Runtime Component
+ * Handles communication with cloud backend via Socket.IO
  */
+
+// Import Socket.IO client (assuming it's loaded via manifest)
+import { io } from '../ui/socket.io.esm.min.js';
 
 export class WebSocketClient {
   constructor(sessionManager) {
@@ -13,35 +16,39 @@ export class WebSocketClient {
     this.reconnectDelay = 1000; // Start with 1 second
     this.messageQueue = [];
     this.eventHandlers = new Map();
+    this.lastConnectedUrl = null;
   }
 
   /**
-   * Connect to cloud backend
-   * @param {string} url - WebSocket server URL
+   * Connect to cloud backend via Socket.IO
+   * @param {string} url - Socket.IO server URL
    * @param {Object} options - Connection options
    */
   async connect(url, options = {}) {
-    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+    if (this.socket && this.socket.connected) {
       console.log('Already connected');
       return;
     }
 
     try {
-      this.socket = new WebSocket(url);
+      this.lastConnectedUrl = url;
       this.connectionState = 'connecting';
       
-      this.socket.onopen = () => this.handleOpen();
-      this.socket.onmessage = (event) => this.handleMessage(event);
-      this.socket.onclose = (event) => this.handleClose(event);
-      this.socket.onerror = (error) => this.handleError(error);
-
-      // Set connection timeout
-      const connectionTimeout = setTimeout(() => {
-        if (this.connectionState === 'connecting') {
-          this.socket.close();
-          this.emit('connection:timeout');
-        }
-      }, 10000);
+      // Initialize Socket.IO client with proper options
+      this.socket = io(url, {
+        transports: ['websocket', 'polling'],
+        timeout: 10000,
+        reconnection: true,
+        reconnectionAttempts: this.maxReconnectAttempts,
+        reconnectionDelay: this.reconnectDelay,
+        ...options
+      });
+      
+      // Setup Socket.IO event handlers
+      this.socket.on('connect', () => this.handleOpen());
+      this.socket.on('disconnect', (reason) => this.handleClose({ wasClean: false, reason }));
+      this.socket.on('connect_error', (error) => this.handleError(error));
+      this.socket.on('message', (message) => this.handleMessage({ data: JSON.stringify(message) }));
 
       this.emit('connection:attempting', { url, options });
 
@@ -59,22 +66,22 @@ export class WebSocketClient {
     
     if (this.socket) {
       this.connectionState = 'disconnecting';
-      this.socket.close();
+      this.socket.disconnect();
     }
   }
 
   /**
-   * Send message to cloud
+   * Send message to cloud via Socket.IO
    * @param {Object} message - Message to send
    */
   send(message) {
-    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+    if (!this.socket || !this.socket.connected) {
       this.messageQueue.push(message);
       return false;
     }
 
     try {
-      this.socket.send(JSON.stringify(message));
+      this.socket.emit('message', message);
       return true;
     } catch (error) {
       console.error('Failed to send message:', error);
@@ -84,7 +91,7 @@ export class WebSocketClient {
   }
 
   /**
-   * Send brain event to cloud
+   * Send brain event to cloud via Socket.IO
    * @param {string} type - Event type (text_input, ui_result, system)
    * @param {Object} payload - Event payload
    */
@@ -96,22 +103,31 @@ export class WebSocketClient {
     }
 
     const brainEvent = {
-      message_id: crypto.randomUUID(),
-      timestamp: new Date().toISOString(),
-      direction: 'agent_to_cloud',
-      message_type: 'brain_event',
       session_id: session.id,
+      event_type: type, // text_input, ui_result, system
       payload: {
-        type,
-        ...payload
-      }
+        ...payload,
+        confidence: payload.confidence || 0.8,
+        provider: payload.provider || 'deepgram',
+        metadata: payload.metadata || {}
+      },
+      ts: new Date().toISOString(),
+      agent_id: payload.agent_id || 'chrome-extension'
     };
 
-    return this.send(brainEvent);
+    // Send as 'brain_event' to match AgentGateway @SubscribeMessage
+    if (this.socket && this.socket.connected) {
+      this.socket.emit('brain_event', brainEvent);
+      return true;
+    } else {
+      console.warn('Socket not connected, queuing brain event');
+      this.messageQueue.push({ type: 'brain_event', data: brainEvent });
+      return false;
+    }
   }
 
   /**
-   * Handle WebSocket open
+   * Handle Socket.IO connection established
    */
   handleOpen() {
     this.connectionState = 'connected';
@@ -201,52 +217,32 @@ export class WebSocketClient {
   }
 
   /**
-   * Handle WebSocket close
+   * Handle Socket.IO disconnection
    */
   handleClose(event) {
     this.connectionState = 'disconnected';
     this.emit('connection:closed', { 
-      code: event.code, 
-      reason: event.reason,
-      wasClean: event.wasClean 
+      code: 1000, 
+      reason: event.reason || 'Unknown',
+      wasClean: event.wasClean || false 
     });
 
-    // Attempt reconnection if not intentional
-    if (!event.wasClean && this.reconnectAttempts < this.maxReconnectAttempts) {
-      this.attemptReconnect();
+    // Socket.IO handles reconnection automatically, but we can emit events
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+      this.emit('reconnection:attempting', { 
+        attempt: this.reconnectAttempts + 1, 
+        delay: this.reconnectDelay 
+      });
     }
   }
 
   /**
-   * Handle WebSocket error
+   * Handle Socket.IO error
    */
   handleError(error) {
     this.connectionState = 'error';
-    console.error('WebSocket error:', error);
+    console.error('Socket.IO error:', error);
     this.emit('connection:error', error);
-  }
-
-  /**
-   * Attempt to reconnect
-   */
-  async attemptReconnect() {
-    this.reconnectAttempts++;
-    const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1); // Exponential backoff
-    
-    console.log(`Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${delay}ms`);
-    
-    this.emit('reconnection:attempting', { 
-      attempt: this.reconnectAttempts, 
-      delay 
-    });
-
-    setTimeout(() => {
-      // Get URL from current socket or default
-      const url = this.socket?.url || this.lastConnectedUrl;
-      if (url) {
-        this.connect(url);
-      }
-    }, delay);
   }
 
   /**
@@ -301,7 +297,7 @@ export class WebSocketClient {
   isConnected() {
     return this.connectionState === 'connected' && 
            this.socket && 
-           this.socket.readyState === WebSocket.OPEN;
+           this.socket.connected;
   }
 
   /**
