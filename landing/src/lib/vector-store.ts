@@ -1,6 +1,6 @@
-const QDRANT_URL = import.meta.env.VITE_QDRANT_URL || 'https://keledon.tuyoisaza.com/qdrant';
-const QDRANT_API_KEY = import.meta.env.VITE_QDRANT_API_KEY || '';
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY || '';
+const QDRANT_URL = import.meta.env.VITE_QDRANT_URL;
+const QDRANT_API_KEY = import.meta.env.VITE_QDRANT_API_KEY;
+const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 
 export interface PolicyDocument {
   id: string;
@@ -34,7 +34,18 @@ export interface VectorStoreStatus {
 }
 
 class VectorStoreAPI {
+  private validateConfiguration() {
+    if (!QDRANT_URL) {
+      throw new Error('VITE_QDRANT_URL not configured');
+    }
+    if (!OPENAI_API_KEY) {
+      throw new Error('VITE_OPENAI_API_KEY not configured');
+    }
+  }
+
   private getHeaders() {
+    this.validateConfiguration();
+    
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
@@ -45,9 +56,7 @@ class VectorStoreAPI {
   }
 
   async generateEmbedding(text: string): Promise<number[]> {
-    if (!OPENAI_API_KEY) {
-      throw new Error('OpenAI API key not configured');
-    }
+    this.validateConfiguration();
 
     const response = await fetch('https://api.openai.com/v1/embeddings', {
       method: 'POST',
@@ -70,6 +79,8 @@ class VectorStoreAPI {
   }
 
   async getCollectionStatus(): Promise<VectorStoreStatus> {
+    this.validateConfiguration();
+    
     const response = await fetch(`${QDRANT_URL}/collections/keledon-policies`, {
       headers: this.getHeaders(),
     });
