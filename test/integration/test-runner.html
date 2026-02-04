@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KELEDON Integration Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .test-controls {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status.running { background: #f39c12; color: white; }
+        .status.passed { background: #27ae60; color: white; }
+        .status.failed { background: #e74c3c; color: white; }
+
+        .test-results {
+            margin-top: 20px;
+        }
+
+        .test-item {
+            border-left: 4px solid #bdc3c7;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #fafafa;
+        }
+
+        .test-item.passed { border-left-color: #27ae60; }
+        .test-item.failed { border-left-color: #e74c3c; }
+
+        .test-name {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .test-details {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #555;
+            background: white;
+            padding: 10px;
+            border-radius: 3px;
+            margin-top: 5px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #3498db;
+            transition: width 0.3s ease;
+        }
+
+        .log {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .summary {
+            background: #d5f4e6;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .summary h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 KELEDON Integration Test Suite</h1>
+        
+        <div class="test-controls">
+            <h3>Test Controls</h3>
+            <button id="runFullSuite" onclick="runFullTestSuite()">Run Full Integration Test</button>
+            <button id="runQuickTest" onclick="runQuickTest()">Quick Test</button>
+            <button id="clearResults" onclick="clearResults()">Clear Results</button>
+            <button id="exportResults" onclick="exportResults()">Export Results</button>
+            <div style="margin-top: 10px;">
+                <label>
+                    <input type="checkbox" id="simulateAudio" checked> Simulate Audio (for testing)
+                </label>
+                <label style="margin-left: 20px;">
+                    <input type="checkbox" id="skipPermissions" checked> Skip Permission Test
+                </label>
+            </div>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+
+        <div class="test-results" id="testResults">
+            <h3>Test Results</h3>
+            <p>Click "Run Full Integration Test" to begin testing...</p>
+        </div>
+
+        <div class="summary" id="summary" style="display: none;">
+            <h3>Test Summary</h3>
+            <div id="summaryContent"></div>
+        </div>
+
+        <div class="log" id="log">
+            <strong>Test Log:</strong><br>
+            <div id="logContent"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { IntegrationTestSuite } from './integration-test-suite.js';
+
+        let testSuite = null;
+        let isTestRunning = false;
+
+        // Initialize test suite
+        async function initializeTestSuite() {
+            try {
+                testSuite = new IntegrationTestSuite({
+                    test_websocket_url: 'ws://localhost:3001/agent',
+                    simulate_audio: document.getElementById('simulateAudio').checked,
+                    skip_permissions_test: document.getElementById('skipPermissions').checked
+                });
+
+                // Setup event listeners
+                testSuite.on('suite_started', (data) => {
+                    log('🚀 Test suite started');
+                    updateProgress(0);
+                });
+
+                testSuite.on('test_started', (data) => {
+                    log(`📋 Running test: ${data.test}`);
+                });
+
+                testSuite.on('test_passed', (data) => {
+                    log(`✅ Test passed: ${data.test}`);
+                });
+
+                testSuite.on('test_failed', (data) => {
+                    log(`❌ Test failed: ${data.test} - ${data.error}`);
+                });
+
+                testSuite.on('suite_completed', (results) => {
+                    displayResults(results);
+                    updateProgress(100);
+                    log('🏁 Test suite completed');
+                });
+
+                testSuite.on('suite_error', (error) => {
+                    log(`💥 Test suite error: ${error.error}`);
+                    updateProgress(100);
+                });
+
+                log('🔧 Test suite initialized');
+
+            } catch (error) {
+                log(`💥 Failed to initialize test suite: ${error.message}`);
+            }
+        }
+
+        // Run full test suite
+        async function runFullTestSuite() {
+            if (isTestRunning) {
+                log('⚠️ Test already running');
+                return;
+            }
+
+            if (!testSuite) {
+                await initializeTestSuite();
+            }
+
+            isTestRunning = true;
+            updateButtons(true);
+            clearResultsDisplay();
+
+            try {
+                await testSuite.runFullSuite();
+            } catch (error) {
+                log(`💥 Test execution error: ${error.message}`);
+            } finally {
+                isTestRunning = false;
+                updateButtons(false);
+            }
+        }
+
+        // Run quick test
+        async function runQuickTest() {
+            if (isTestRunning) {
+                log('⚠️ Test already running');
+                return;
+            }
+
+            if (!testSuite) {
+                await initializeTestSuite();
+            }
+
+            isTestRunning = true;
+            updateButtons(true);
+            clearResultsDisplay();
+
+            try {
+                // Run just the core tests
+                log('🚀 Running quick integration test');
+                
+                const results = {
+                    started_at: new Date().toISOString(),
+                    tests: {},
+                    overall_status: 'running',
+                    summary: {}
+                };
+
+                results.tests.service_initialization = await testSuite.testServiceInitialization();
+                updateProgress(25);
+                
+                results.tests.websocket_connection = await testSuite.testWebSocketConnection();
+                updateProgress(50);
+                
+                results.tests.command_processing = await testSuite.testCommandProcessing();
+                updateProgress(75);
+                
+                results.tests.end_to_end_flow = await testSuite.testEndToEndFlow();
+                updateProgress(100);
+                
+                results.summary = testSuite.calculateTestSummary(results.tests);
+                results.overall_status = results.summary.all_passed ? 'passed' : 'failed';
+                results.completed_at = new Date().toISOString();
+
+                displayResults(results);
+                log('🏁 Quick test completed');
+
+            } catch (error) {
+                log(`💥 Quick test error: ${error.message}`);
+            } finally {
+                isTestRunning = false;
+                updateButtons(false);
+            }
+        }
+
+        // Display test results
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('testResults');
+            const tests = Object.keys(results.tests);
+            
+            let html = '<h3>Test Results</h3>';
+            
+            tests.forEach(testName => {
+                const test = results.tests[testName];
+                const statusClass = test.status === 'passed' ? 'passed' : 'failed';
+                const statusLabel = test.status.toUpperCase();
+                
+                html += `
+                    <div class="test-item ${statusClass}">
+                        <div class="test-name">
+                            ${testName} 
+                            <span class="status ${statusClass}">${statusLabel}</span>
+                        </div>
+                        <div class="test-details">
+                            ${formatTestDetails(test)}
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html;
+
+            // Show summary
+            const summaryDiv = document.getElementById('summary');
+            const summaryContent = document.getElementById('summaryContent');
+            
+            if (results.summary) {
+                summaryContent.innerHTML = `
+                    <p><strong>Total Tests:</strong> ${results.summary.total_tests}</p>
+                    <p><strong>Passed:</strong> ${results.summary.passed_tests}</p>
+                    <p><strong>Failed:</strong> ${results.summary.failed_tests}</p>
+                    <p><strong>Pass Rate:</strong> ${results.summary.pass_rate}%</p>
+                    <p><strong>Overall Status:</strong> <span class="status ${results.overall_status}">${results.overall_status.toUpperCase()}</span></p>
+                `;
+                summaryDiv.style.display = 'block';
+            }
+        }
+
+        // Format test details for display
+        function formatTestDetails(test) {
+            if (typeof test.details === 'object') {
+                return JSON.stringify(test.details, null, 2);
+            } else {
+                return test.details || 'No details available';
+            }
+        }
+
+        // Update progress bar
+        function updateProgress(percentage) {
+            document.getElementById('progressBar').style.width = percentage + '%';
+        }
+
+        // Update button states
+        function updateButtons(running) {
+            document.getElementById('runFullSuite').disabled = running;
+            document.getElementById('runQuickTest').disabled = running;
+            document.getElementById('simulateAudio').disabled = running;
+            document.getElementById('skipPermissions').disabled = running;
+        }
+
+        // Clear results display
+        function clearResultsDisplay() {
+            document.getElementById('testResults').innerHTML = '<h3>Test Results</h3><p>Running tests...</p>';
+            document.getElementById('summary').style.display = 'none';
+            updateProgress(0);
+        }
+
+        // Clear all results
+        function clearResults() {
+            if (testSuite) {
+                testSuite.clearResults();
+            }
+            clearResultsDisplay();
+            document.getElementById('logContent').innerHTML = '';
+            log('🗑️ Results cleared');
+        }
+
+        // Export results
+        function exportResults() {
+            if (!testSuite) {
+                log('⚠️ No test results to export');
+                return;
+            }
+
+            const report = testSuite.generateReport();
+            if (report) {
+                const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `keledon-integration-test-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                log('📄 Results exported');
+            }
+        }
+
+        // Log function
+        function log(message) {
+            const logContent = document.getElementById('logContent');
+            const timestamp = new Date().toLocaleTimeString();
+            logContent.innerHTML = `[${timestamp}] ${message}<br>` + logContent.innerHTML;
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeTestSuite);
+    </script>
+</body>
+</html>
