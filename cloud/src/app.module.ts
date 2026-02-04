@@ -1,16 +1,6 @@
 import { Module } from '@nestjs/common';
 import { RBACModule } from './rbac/rbac.module';
 import { SessionModule } from './modules/session.module';
-
-@Module({
-  imports: [
-    RBACModule,
-    SessionModule,
-  ],
-})
-import { Module } from '@nestjs/common';
-import { RBACModule } from './rbac/rbac.module';
-import { SessionModule } from './modules/session.module';
 import { DatabasePersistenceModule } from './modules/database-persistence.module';
 import { RealTimeAlertingModule } from './modules/real-time-alerting.module';
 import { SystemMonitoringModule } from './modules/system-monitoring.module';
@@ -37,16 +27,9 @@ import { DashboardModule } from './modules/dashboard.module';
     LocalServicesModule,
     RagModule,
     OpenAIModule,
-    OpenAIModule,
     TTSModule,
     HealthModule,
     DashboardModule
-  ],
-  controllers: [AgentGateway, ...],
-  providers: [
-    SessionService,
-    DecisionEngineService,
-    TTSService
   ],
 })
 export class AppModule {}

@@ -1,7 +1,9 @@
 /**
  * WebSocket Client - Core Agent Runtime Component
- * Handles communication with cloud backend
+ * Handles communication with cloud backend using Socket.IO
  */
+
+import { io } from '../ui/socket.io.min.js';
 
 export class WebSocketClient {
   constructor(sessionManager) {
@@ -21,24 +23,35 @@ export class WebSocketClient {
    * @param {Object} options - Connection options
    */
   async connect(url, options = {}) {
-    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+    if (this.socket && this.socket.connected) {
       console.log('Already connected');
       return;
     }
 
     try {
-      this.socket = new WebSocket(url);
       this.connectionState = 'connecting';
       
-      this.socket.onopen = () => this.handleOpen();
-      this.socket.onmessage = (event) => this.handleMessage(event);
-      this.socket.onclose = (event) => this.handleClose(event);
-      this.socket.onerror = (error) => this.handleError(error);
+      // Connect to agent namespace
+      this.socket = io(`${url}/agent`, {
+        cors: {
+          origin: ['chrome-extension://*', 'moz-extension://*'],
+          methods: ['GET', 'POST'],
+          credentials: true
+        },
+        ...options
+      });
+      
+      this.socket.on('connect', () => this.handleOpen());
+      this.socket.on('event', (data) => this.handleCommand(data));
+      this.socket.on('command', (data) => this.handleCommand(data));
+      this.socket.on('connected', (data) => this.handleConnected(data));
+      this.socket.on('error', (error) => this.handleError(error));
+      this.socket.on('disconnect', (reason) => this.handleDisconnect(reason));
 
       // Set connection timeout
       const connectionTimeout = setTimeout(() => {
         if (this.connectionState === 'connecting') {
-          this.socket.close();
+          this.socket.disconnect();
           this.emit('connection:timeout');
         }
       }, 10000);
@@ -59,7 +72,7 @@ export class WebSocketClient {
     
     if (this.socket) {
       this.connectionState = 'disconnecting';
-      this.socket.close();
+      this.socket.disconnect();
     }
   }
 
@@ -68,13 +81,13 @@ export class WebSocketClient {
    * @param {Object} message - Message to send
    */
   send(message) {
-    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+    if (!this.socket || !this.socket.connected) {
       this.messageQueue.push(message);
       return false;
     }
 
     try {
-      this.socket.send(JSON.stringify(message));
+      this.socket.emit('event', message);
       return true;
     } catch (error) {
       console.error('Failed to send message:', error);
@@ -84,7 +97,7 @@ export class WebSocketClient {
   }
 
   /**
-   * Send brain event to cloud
+   * Send brain event to cloud (per canonical contract)
    * @param {string} type - Event type (text_input, ui_result, system)
    * @param {Object} payload - Event payload
    */
@@ -96,22 +109,18 @@ export class WebSocketClient {
     }
 
     const brainEvent = {
-      message_id: crypto.randomUUID(),
-      timestamp: new Date().toISOString(),
-      direction: 'agent_to_cloud',
-      message_type: 'brain_event',
+      event_id: crypto.randomUUID(),
       session_id: session.id,
-      payload: {
-        type,
-        ...payload
-      }
+      timestamp: new Date().toISOString(),
+      type: type,
+      payload: payload
     };
 
     return this.send(brainEvent);
   }
 
   /**
-   * Handle WebSocket open
+   * Handle Socket.IO connection open
    */
   handleOpen() {
     this.connectionState = 'connected';
@@ -128,55 +137,30 @@ export class WebSocketClient {
   }
 
   /**
-   * Handle incoming WebSocket message
+   * Handle connection acknowledgment from cloud
    */
-  handleMessage(event) {
-    try {
-      const message = JSON.parse(event.data);
-      
-      switch (message.message_type) {
-        case 'brain_command':
-          this.handleBrainCommand(message.payload);
-          break;
-        case 'heartbeat':
-          this.handleHeartbeat(message.payload);
-          break;
-        case 'error':
-          this.handleError(message.payload);
-          break;
-        case 'ack':
-          this.handleAcknowledgment(message.payload);
-          break;
-        default:
-          console.warn('Unknown message type:', message.message_type);
-      }
-      
-      this.emit('message:received', message);
-      
-    } catch (error) {
-      console.error('Failed to parse message:', error);
-      this.emit('message:error', error);
-    }
+  handleConnected(data) {
+    this.emit('connected:acknowledged', data);
   }
 
   /**
-   * Handle brain command from cloud
+   * Handle command from cloud (per canonical contract)
    */
-  handleBrainCommand(payload) {
-    this.emit('command:received', payload);
+  handleCommand(command) {
+    this.emit('command:received', command);
     
-    switch (payload.type) {
+    switch (command.type) {
       case 'say':
-        this.emit('tts:speak', payload.payload);
+        this.emit('tts:speak', command.payload);
         break;
       case 'ui_steps':
-        this.emit('rpa:execute', payload.payload);
+        this.emit('rpa:execute', command.payload);
         break;
       case 'mode':
-        this.emit('mode:change', payload.payload);
+        this.emit('mode:change', command.payload);
         break;
       case 'stop':
-        this.emit('session:stop', payload.payload);
+        this.emit('session:stop', command.payload);
         break;
     }
   }
@@ -201,28 +185,24 @@ export class WebSocketClient {
   }
 
   /**
-   * Handle WebSocket close
+   * Handle Socket.IO disconnect
    */
-  handleClose(event) {
+  handleDisconnect(reason) {
     this.connectionState = 'disconnected';
-    this.emit('connection:closed', { 
-      code: event.code, 
-      reason: event.reason,
-      wasClean: event.wasClean 
-    });
+    this.emit('connection:closed', { reason });
 
     // Attempt reconnection if not intentional
-    if (!event.wasClean && this.reconnectAttempts < this.maxReconnectAttempts) {
+    if (reason !== 'io client disconnect' && this.reconnectAttempts < this.maxReconnectAttempts) {
       this.attemptReconnect();
     }
   }
 
   /**
-   * Handle WebSocket error
+   * Handle Socket.IO error
    */
   handleError(error) {
     this.connectionState = 'error';
-    console.error('WebSocket error:', error);
+    console.error('Socket.IO error:', error);
     this.emit('connection:error', error);
   }
 
@@ -242,18 +222,11 @@ export class WebSocketClient {
 
     setTimeout(() => {
       // Get URL from current socket or default
-      const url = this.socket?.url || this.lastConnectedUrl;
+      const url = this.socket?.io?.uri || this.lastConnectedUrl;
       if (url) {
         this.connect(url);
       }
     }, delay);
-  }
-
-  /**
-   * Handle acknowledgment message
-   */
-  handleAcknowledgment(payload) {
-    this.emit('acknowledgment:received', payload);
   }
 
   /**
@@ -301,7 +274,7 @@ export class WebSocketClient {
   isConnected() {
     return this.connectionState === 'connected' && 
            this.socket && 
-           this.socket.readyState === WebSocket.OPEN;
+           this.socket.connected;
   }
 
   /**

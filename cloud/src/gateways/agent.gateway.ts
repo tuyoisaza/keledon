@@ -4,11 +4,15 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  OnGatewayInit,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { Logger } from '@nestjs/common';
 import { SessionService } from '../services/session.service';
 import { AgentEvent, CloudCommand } from '../contracts/events';
 import { DecisionEngineService } from '../services/decision-engine.service';
+import { TTSService } from '../services/tts.service';
+import { UIAutomationService } from '../services/ui-automation.service';
 
 @WebSocketGateway({
   cors: { 
@@ -18,12 +22,15 @@ import { DecisionEngineService } from '../services/decision-engine.service';
     credentials: true 
   },
   transports: ['websocket', 'polling'],
+  namespace: '/agent'
 })
-import { DecisionEngineService } from '../services/decision-engine.service';
 
-export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
+
+  private readonly logger = new Logger(AgentGateway.name);
+  private readonly connectedAgents = new Map<string, Socket>();
 
   constructor(
     private readonly sessionService: SessionService,
@@ -31,7 +38,6 @@ export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly ttsService: TTSService,
     private readonly uiAutomationService: UIAutomationService
   ) {
-    
     // TTS event listeners for real-time updates
     this.ttsService.on('playback:started', () => {
       this.broadcastToSidePanel('tts_status', 'speaking');
@@ -47,12 +53,25 @@ export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
   }
 
+  afterInit(server: Server): void {
+    this.logger.log('AgentGateway: WebSocket server initialized');
+  }
+
   handleConnection(client: Socket) {
-    console.log(`[AgentGateway] Agent connected: ${client.id}`);
+    this.logger.log(`[AgentGateway] Agent connected: ${client.id}`);
+    this.connectedAgents.set(client.id, client);
+    
+    // Send initial connection acknowledgment
+    client.emit('connected', {
+      agent_id: client.id,
+      timestamp: new Date().toISOString(),
+      status: 'connected'
+    });
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`[AgentGateway] Agent disconnected: ${client.id}`);
+    this.logger.log(`[AgentGateway] Agent disconnected: ${client.id}`);
+    this.connectedAgents.delete(client.id);
   }
 
   @SubscribeMessage('brain_event')
@@ -125,32 +144,6 @@ export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-      // Persist event (canon: all events must be persisted)
-      const persistedEvent = await this.sessionService.persistEvent(event.session_id, event);
-      
-      console.log(`[AgentGateway] Event persisted: ${persistedEvent.id} (${event.event_type})`);
-
-        // Process event and return command to agent
-        const command = await this.processBrainEvent(sessionId, event);
-
-        // Send acknowledgment
-        client.emit('message', { 
-          message_id: crypto.randomUUID(),
-          timestamp: new Date().toISOString(),
-          direction: 'cloud_to_agent',
-          message_type: 'ack',
-          payload: {
-            ack_message_id: persistedEvent.id,
-            status: 'received'
-          }
-        });
-
-    } catch (error) {
-      console.error(`[AgentGateway] Error processing event:`, error);
-      client.emit('error', { message: 'Failed to process event' });
-    }
-  }
-
   @SubscribeMessage('session.create')
   async handleSessionCreate(client: Socket, data: {
     agent_id: string;
@@ -182,5 +175,37 @@ export class AgentGateway implements OnGatewayConnection, OnGatewayDisconnect {
   sendCommand(sessionId: string, command: CloudCommand): void {
     this.server.emit(`command.${sessionId}`, command);
     console.log(`[AgentGateway] Command sent to session ${sessionId}: ${command.say.text}`);
+  }
+
+  // Send Cloud → Agent commands (per canonical contract)
+  sendCommandToAgent(agentId: string, command: any): void {
+    try {
+      const agent = this.connectedAgents.get(agentId);
+      if (!agent) {
+        this.logger.warn(`Agent ${agentId} not connected`);
+        return;
+      }
+
+      agent.emit('command', command);
+      this.logger.log(`Sent command to agent ${agentId}: ${command.type}`);
+      
+    } catch (error) {
+      this.logger.error(`Error sending command to agent ${agentId}`, error);
+    }
+  }
+
+  // Broadcast to sidepanel
+  private broadcastToSidePanel(event: string, data: any): void {
+    this.server.of('/sidepanel').emit(event, data);
+  }
+
+  // Get connected agents count
+  getConnectedAgentsCount(): number {
+    return this.connectedAgents.size;
+  }
+
+  // Get list of connected agent IDs
+  getConnectedAgentIds(): string[] {
+    return Array.from(this.connectedAgents.keys());
   }
 }
