@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Session } from '../entities/session.entity';
 import { Event } from '../entities/event.entity';
-import { CreateSessionDto, UpdateSessionDto } from '../dto';
+// import { CreateSessionDto, UpdateSessionDto } from '../dto';
 import { v4 as uuidv4 } from 'uuid';
 import { AgentEvent } from '../contracts/events';
 
@@ -36,10 +36,6 @@ export class SessionService {
       agent_id: agentId,
       name: metadata?.name || `Session ${Date.now()}`,
       status: 'active',
-      tab_url: metadata?.tab_url,
-      tab_title: metadata?.tab_title,
-      created_at: now,
-      updated_at: now,
       metadata: metadata || {}
     });
 
@@ -79,7 +75,7 @@ export class SessionService {
       throw new NotFoundException(`Session ${sessionId} not found`);
     }
 
-    const now = new Date().toISOString();
+    const now = new Date();
     session.status = status;
     session.updated_at = now;
 
@@ -101,15 +97,14 @@ export class SessionService {
       throw new BadRequestException(`Session ${sessionId} does not exist - cannot persist event`);
     }
 
-    const persistedEvent: Event = {
+    const persistedEvent = this.eventRepository.create({
       id: uuidv4(),
       session_id: sessionId,
-      event_type: event.event_type,
+      type: event.event_type,
       payload: event.payload,
-      ts: event.ts,
-      agent_id: event.agent_id,
-      created_at: new Date().toISOString()
-    };
+      timestamp: new Date(event.ts),
+      agent_id: event.agent_id
+    });
 
 // DATABASE-READY: Persist to database only
     try {
@@ -147,8 +142,8 @@ export class SessionService {
    * Update session timestamp (DATABASE-READY: Supabase only)
    */
   private async updateSessionTimestamp(sessionId: string): Promise<void> {
-    const now = new Date().toISOString();
-     
+const now = new Date();
+      
     try {
       await this.sessionRepository.update(sessionId, { updated_at: now });
     } catch (error) {

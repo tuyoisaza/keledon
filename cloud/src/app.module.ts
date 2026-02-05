@@ -6,6 +6,9 @@ import { Event } from './entities/event.entity';
 import { User } from './entities/user.entity';
 import { SessionService } from './services/session.service';
 import { DatabaseHealthService } from './services/database-health.service';
+import { HealthModule } from './health/health.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -29,8 +32,11 @@ import { DatabaseHealthService } from './services/database-health.service';
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([Session, Event, User]),
+    HealthModule,
   ],
+  controllers: [AppController],
   providers: [
+    AppService,
     SessionService,
     DatabaseHealthService,
   ],

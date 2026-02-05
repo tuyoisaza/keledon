@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class AppService {
   getHello(): string {
-    return 'KELEDON Backend is running!';
+    return 'KELEDON Phase 2 DATABASE-READY Backend is running!';
   }
 
   getHealth(): object {

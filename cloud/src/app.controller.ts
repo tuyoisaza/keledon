@@ -1,42 +1,14 @@
-import { Controller, Get, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { AppService } from './app.service';
-import { AuthService } from './auth/auth.service';
-
-interface LoginDto {
-  email: string;
-  password: string;
-}
-
-interface AuthResponse {
-  success: boolean;
-  message?: string;
-  user?: {
-    id: string;
-    email: string;
-    name: string;
-  };
-  token?: string;
-}
+import { Controller, Get } from '@nestjs/common';
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    private readonly authService: AuthService
-  ) {}
-
   @Get()
   getHello(): string {
-    return this.appService.getHello();
+    return 'KELEDON Phase 2 DATABASE-READY Backend is running!';
   }
-
-
 
   @Get('api')
   getApi() {
-    return { message: 'KELEDON API is running' };
+    return { message: 'KELEDON API is running - DATABASE-READY' };
   }
-
-  // Authentication routes are now handled by AuthModule
-// This controller only handles basic app endpoints
 }

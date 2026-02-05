@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": [
+    "src/main.ts",
+    "src/app.module.ts",
+    "src/app.controller.ts",
+    "src/app.service.ts",
+    "src/entities/**/*",
+    "src/services/session.service.ts",
+    "src/services/database-health.service.ts",
+    "src/health/**/*",
+    "src/dto/**/*"
+  ]
+}
