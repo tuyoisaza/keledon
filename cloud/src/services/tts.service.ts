@@ -109,15 +109,15 @@ export class TTSService {
   }
 
   // Event emitter methods
-  on(event: string, listener: (...args: any[]) => void {
+  on(event: string, listener: (...args: any[]) => void): void {
     this.eventEmitter.on(event, listener);
   }
 
-  off(event: string, listener: (...args: any[]) => void {
+  off(event: string, listener: (...args: any[]) => void): void {
     this.eventEmitter.off(event, listener);
   }
 
-  once(event: string, listener: (...args: any[]) => void {
+  once(event: string, listener: (...args: any[]) => void): void {
     this.eventEmitter.once(event, listener);
   }
 
