@@ -7,6 +7,8 @@ import { Server as SocketIOServer } from 'socket.io';
 import { Server as HTTPServer } from 'http';
 import { randomUUID } from 'crypto';
 import { validationService } from '../../../contracts/service';
+import { SessionService } from '../services/session.service';
+import { AgentEvent } from '../contracts/events';
 
 interface RealtimeMessage {
   message_id: string;
@@ -30,10 +32,14 @@ interface AgentSession {
 
 export class CloudServer {
   private io: SocketIOServer;
-  private sessions = new Map<string, AgentSession>();
-  private agentSockets = new Map<string, string>(); // agent_id -> session_id
+  private readonly sessionService: SessionService;
+  
+  // DATABASE-READY: Only track active socket connections, not session data
+  private activeSockets = new Map<string, string>(); // socket_id -> session_id
+  private socketAgents = new Map<string, string>(); // socket_id -> agent_id
 
-  constructor(httpServer: HTTPServer) {
+  constructor(httpServer: HTTPServer, sessionService: SessionService) {
+    this.sessionService = sessionService;
     this.io = new SocketIOServer(httpServer, {
       cors: {
         origin: "*",
@@ -42,7 +48,7 @@ export class CloudServer {
     });
 
     this.setupHandlers();
-    console.log('[Cloud] WebSocket server initialized');
+    console.log('[Cloud] DATABASE-READY: WebSocket server initialized with Supabase integration');
   }
 
   /**
@@ -113,37 +119,48 @@ export class CloudServer {
   private handleBrainEvent(socket: any, message: RealtimeMessage): void {
     const { payload } = message;
 
-    // Handle session creation
+// Handle session creation
     if (payload?.type === 'session_created' && payload?.session_id && payload?.agent_id) {
-      const session: AgentSession = {
-        session_id: payload.session_id,
-        agent_id: payload.agent_id,
-        socket_id: socket.id,
-        created_at: payload.timestamp,
-        last_heartbeat: new Date().toISOString(),
-        status: 'connected',
-        message_count: 1
-      };
-
-      this.sessions.set(payload.session_id, session);
-      this.agentSockets.set(payload.agent_id, payload.session_id);
-
-      console.log(`[Cloud] Session created: ${payload.session_id} for agent: ${payload.agent_id}`);
-      
-      // Send session confirmation
-      this.sendToAgent(payload.agent_id, {
-        message_type: 'brain_event',
-        payload: {
-          type: 'session_confirmed',
-          session_id: payload.session_id,
-          agent_id: payload.agent_id,
-          timestamp: new Date().toISOString()
+      // DATABASE-READY: Verify session exists in Supabase and track socket connection
+      this.sessionService.getSession(payload.session_id).then(session => {
+        if (!session) {
+          console.error(`[Cloud] DATABASE-READY: Session ${payload.session_id} not found in Supabase`);
+          this.sendError(socket, 'session_not_found', 'Session not found in database');
+          return;
         }
+
+        // DATABASE-READY: Track active socket connection
+        this.activeSockets.set(socket.id, payload.session_id);
+        this.socketAgents.set(socket.id, payload.agent_id);
+
+        // Update session status to connected
+        this.sessionService.updateSessionStatus(payload.session_id, 'active').then(() => {
+          console.log(`[Cloud] DATABASE-READY: Session ${payload.session_id} verified and marked as active in Supabase`);
+           
+          // Send session confirmation
+          this.sendToAgent(payload.agent_id, {
+            message_type: 'brain_event',
+            payload: {
+              type: 'session_confirmed',
+              session_id: payload.session_id,
+              agent_id: payload.agent_id,
+              timestamp: new Date().toISOString()
+            }
+          });
+        }).catch(error => {
+          console.error(`[Cloud] DATABASE-READY: Failed to update session status: ${error.message}`);
+          this.sendError(socket, 'database_error', 'DATABASE-READY: Failed to update session status');
+        });
+      }).catch(error => {
+        console.error(`[Cloud] DATABASE-READY: Failed to verify session in Supabase: ${error.message}`);
+        this.sendError(socket, 'database_error', 'DATABASE-READY: Supabase connection required');
       });
     } else {
       // Handle other brain events
       console.log(`[Cloud] Brain event:`, payload.type);
-      this.processBrainEvent(message);
+      this.processBrainEvent(message, payload.agent_id).catch(error => {
+        console.error(`[Cloud] DATABASE-READY: Failed to process brain event: ${error.message}`);
+      });
     }
   }
 
@@ -175,13 +192,17 @@ export class CloudServer {
   }
 
   /**
-   * Handle heartbeat from agent
+   * Handle heartbeat from agent (DATABASE-READY: Use async session lookup)
    */
-  private handleHeartbeat(socket: any, message: RealtimeMessage): void {
-    const session = this.getSessionBySocket(socket.id);
+  private async handleHeartbeat(socket: any, message: RealtimeMessage): Promise<void> {
+    const session = await this.getSessionBySocket(socket.id);
     if (session) {
-      session.last_heartbeat = new Date().toISOString();
-      session.message_count++;
+      // Update session heartbeat in Supabase
+      try {
+        await this.sessionService.updateSessionStatus(session.session_id, session.status);
+      } catch (error) {
+        console.error(`[Cloud] DATABASE-READY: Failed to update session heartbeat: ${error.message}`);
+      }
       
       // Echo heartbeat back
       this.sendToAgent(session.agent_id, {
@@ -196,10 +217,25 @@ export class CloudServer {
   }
 
   /**
-   * Process brain event logic
+   * Process brain event logic (DATABASE-READY: Persist events to Supabase)
    */
-  private processBrainEvent(message: RealtimeMessage): void {
+  private async processBrainEvent(message: RealtimeMessage, agentId?: string): Promise<void> {
     const { payload } = message;
+    
+    if (message.session_id) {
+      try {
+        // DATABASE-READY: Persist event to Supabase
+        await this.sessionService.persistEvent(message.session_id, {
+          event_type: 'text_input', // Use valid event_type
+          payload: payload,
+          ts: message.timestamp,
+          agent_id: agentId || 'unknown'
+        });
+        console.log(`[Cloud] DATABASE-READY: Brain event persisted to Supabase: ${payload?.type}`);
+      } catch (error) {
+        console.error(`[Cloud] DATABASE-READY: Failed to persist event: ${error.message}`);
+      }
+    }
     
     // Example processing logic
     switch (payload?.type) {
@@ -217,36 +253,63 @@ export class CloudServer {
   }
 
   /**
-   * Get session by socket ID
+   * Get session by socket ID (DATABASE-READY: Query from Supabase)
    */
-  private getSessionBySocket(socketId: string): AgentSession | undefined {
-    for (const session of this.sessions.values()) {
-      if (session.socket_id === socketId) {
-        return session;
-      }
+  private async getSessionBySocket(socketId: string): Promise<any> {
+    const sessionId = this.activeSockets.get(socketId);
+    const agentId = this.socketAgents.get(socketId);
+    
+    if (!sessionId || !agentId) {
+      return undefined;
     }
+
+    try {
+      const session = await this.sessionService.getSession(sessionId);
+      if (session) {
+        return {
+          session_id: sessionId,
+          agent_id: agentId,
+          socket_id: socketId,
+          created_at: session.created_at,
+          last_heartbeat: new Date().toISOString(),
+          status: session.status,
+          message_count: 0 // This would need to be tracked separately or calculated
+        };
+      }
+    } catch (error) {
+      console.error(`[Cloud] DATABASE-READY: Failed to get session from Supabase: ${error.message}`);
+    }
+    
     return undefined;
   }
 
   /**
-   * Send message to specific agent
+   * Send message to specific agent (DATABASE-READY: Use socket tracking)
    */
   private sendToAgent(agentId: string, message: Omit<RealtimeMessage, 'message_id' | 'timestamp' | 'direction'>): void {
-    const sessionId = this.agentSockets.get(agentId);
+    // DATABASE-READY: Find socket by agent ID from tracking maps
+    let socketId: string | undefined;
+    for (const [sid, aid] of this.socketAgents.entries()) {
+      if (aid === agentId) {
+        socketId = sid;
+        break;
+      }
+    }
+
+    if (!socketId) {
+      console.error(`[Cloud] DATABASE-READY: No active socket found for agent: ${agentId}`);
+      return;
+    }
+
+    const sessionId = this.activeSockets.get(socketId);
     if (!sessionId) {
-      console.error(`[Cloud] No session found for agent: ${agentId}`);
+      console.error(`[Cloud] DATABASE-READY: No session found for socket: ${socketId}`);
       return;
     }
 
-    const session = this.sessions.get(sessionId);
-    if (!session) {
-      console.error(`[Cloud] Session not found: ${sessionId}`);
-      return;
-    }
-
-    const socket = this.io.sockets.sockets.get(session.socket_id);
+    const socket = this.io.sockets.sockets.get(socketId);
     if (!socket) {
-      console.error(`[Cloud] Socket not found for session: ${sessionId}`);
+      console.error(`[Cloud] DATABASE-READY: Socket not found: ${socketId}`);
       return;
     }
 
@@ -262,7 +325,7 @@ export class CloudServer {
       ...message
     };
 
-    console.log(`[Cloud] Sending to agent ${agentId}:`, message.message_type);
+    console.log(`[Cloud] DATABASE-READY: Sending to agent ${agentId}:`, message.message_type);
     socket.emit('message', realtimeMessage);
   }
 
@@ -304,44 +367,69 @@ export class CloudServer {
     socket.emit('message', ackMessage);
   }
 
-  /**
-   * Handle socket disconnection
+/**
+   * Handle socket disconnection (DATABASE-READY: Update Supabase session status)
    */
-  private handleDisconnect(socketId: string): void {
-    const session = this.getSessionBySocket(socketId);
-    if (session) {
-      session.status = 'disconnected';
-      console.log(`[Cloud] Session ${session.session_id} disconnected`);
-      
-      // Clean up after delay (allow potential reconnection)
+  private async handleDisconnect(socketId: string): Promise<void> {
+    const sessionId = this.activeSockets.get(socketId);
+    const agentId = this.socketAgents.get(socketId);
+    
+    if (sessionId && agentId) {
+      try {
+        // Update session status in Supabase
+        await this.sessionService.updateSessionStatus(sessionId, 'disconnected');
+        console.log(`[Cloud] DATABASE-READY: Session ${sessionId} marked as disconnected in Supabase`);
+      } catch (error) {
+        console.error(`[Cloud] DATABASE-READY: Failed to update session status: ${error.message}`);
+      }
+       
+      // Clean up socket tracking after delay (allow potential reconnection)
       setTimeout(() => {
-        if (session.status === 'disconnected') {
-          this.sessions.delete(session.session_id);
-          this.agentSockets.delete(session.agent_id);
-          console.log(`[Cloud] Cleaned up session: ${session.session_id}`);
-        }
+        this.activeSockets.delete(socketId);
+        this.socketAgents.delete(socketId);
+        console.log(`[Cloud] DATABASE-READY: Cleaned up socket tracking: ${socketId}`);
       }, 30000);
     }
   }
 
   /**
-   * Get all active sessions
+   * Get all active sessions (DATABASE-READY: Query from Supabase)
    */
-  getActiveSessions(): AgentSession[] {
-    return Array.from(this.sessions.values()).filter(s => s.status === 'connected');
+  async getActiveSessions(): Promise<any[]> {
+    try {
+      const sessions = await this.sessionService.findAll();
+      return sessions.filter(s => s.status === 'active');
+    } catch (error) {
+      console.error(`[Cloud] DATABASE-READY: Failed to get active sessions: ${error.message}`);
+      return [];
+    }
   }
 
   /**
-   * Get session statistics
+   * Get session statistics (DATABASE-READY: Query from Supabase)
    */
-  getStats(): any {
-    const sessions = Array.from(this.sessions.values());
-    return {
-      total_sessions: sessions.length,
-      active_sessions: sessions.filter(s => s.status === 'connected').length,
-      total_messages: sessions.reduce((sum, s) => sum + s.message_count, 0),
-      agents_connected: this.agentSockets.size
-    };
+  async getStats(): Promise<any> {
+    try {
+      const sessions = await this.sessionService.findAll();
+      const activeSessions = sessions.filter(s => s.status === 'active');
+      return {
+        total_sessions: sessions.length,
+        active_sessions: activeSessions.length,
+        total_messages: 0, // Would need to be calculated from events table
+        agents_connected: this.socketAgents.size,
+        database_ready: true
+      };
+    } catch (error) {
+      console.error(`[Cloud] DATABASE-READY: Failed to get session stats: ${error.message}`);
+      return {
+        total_sessions: 0,
+        active_sessions: 0,
+        total_messages: 0,
+        agents_connected: 0,
+        database_ready: false,
+        error: 'DATABASE-READY: Supabase connection required'
+      };
+    }
   }
 
   /**

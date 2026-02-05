@@ -1,7 +1,8 @@
 import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Session, Event } from '../entities';
+import { Session } from '../entities/session.entity';
+import { Event } from '../entities/event.entity';
 import { CreateSessionDto, UpdateSessionDto } from '../dto';
 import { v4 as uuidv4 } from 'uuid';
 import { AgentEvent } from '../contracts/events';
@@ -9,10 +10,6 @@ import { AgentEvent } from '../contracts/events';
 @Injectable()
 export class SessionService {
   private readonly logger = new Logger(SessionService.name);
-  
-  // Fallback in-memory storage for compatibility
-  private sessions = new Map<string, Session>();
-  private events = new Map<string, Event[]>();
 
   constructor(
     @InjectRepository(Session)
@@ -46,46 +43,31 @@ export class SessionService {
       metadata: metadata || {}
     });
 
-    // Try database first, fallback to memory
+    // DATABASE-READY: No fallback to in-memory storage
     try {
       const savedSession = await this.sessionRepository.save(session);
-      this.sessions.set(savedSession.id, savedSession);
-      this.events.set(savedSession.id, []);
       this.logger.log(`Session created in DB: ${savedSession.id}`);
       return savedSession;
     } catch (error) {
-      // Fallback to in-memory
-      this.sessions.set(sessionId, session);
-      this.events.set(sessionId, []);
-      this.logger.warn(`Session created in memory (DB failed): ${sessionId}`);
-      return session;
+      this.logger.error(`DATABASE-READY: Failed to create session in DB: ${error.message}`);
+      throw new Error(`DATABASE-READY: Session creation failed - Supabase connection required`);
     }
   }
 
   /**
-   * Get session by ID (checks both DB and memory)
+   * Get session by ID (DATABASE-READY: Supabase only)
    */
   async getSession(sessionId: string): Promise<Session | null> {
-    // Check memory first for performance
-    if (this.sessions.has(sessionId)) {
-      return this.sessions.get(sessionId) || null;
-    }
-
-    // Check database
     try {
       const session = await this.sessionRepository.findOne({
         where: { id: sessionId }
       });
       
-      if (session) {
-        this.sessions.set(sessionId, session);
-        return session;
-      }
+      return session || null;
     } catch (error) {
-      this.logger.error(`Failed to get session from DB: ${error.message}`);
+      this.logger.error(`DATABASE-READY: Failed to get session from DB: ${error.message}`);
+      throw new Error(`DATABASE-READY: Session retrieval failed - Supabase connection required`);
     }
-
-    return null;
   }
 
   /**
@@ -101,22 +83,21 @@ export class SessionService {
     session.status = status;
     session.updated_at = now;
 
-    // Update database if possible
+    // DATABASE-READY: Update database only
     try {
       await this.sessionRepository.update(sessionId, { status, updated_at: now });
     } catch (error) {
-      this.logger.warn(`Failed to update session in DB, using memory: ${error.message}`);
+      this.logger.error(`DATABASE-READY: Failed to update session in DB: ${error.message}`);
+      throw new Error(`DATABASE-READY: Session update failed - Supabase connection required`);
     }
-
-    // Always update memory
-    this.sessions.set(sessionId, session);
   }
 
   /**
    * Persist an event to both DB and memory
    */
   async persistEvent(sessionId: string, event: AgentEvent): Promise<Event> {
-    if (!this.sessions.has(sessionId)) {
+    const session = await this.getSession(sessionId);
+    if (!session) {
       throw new BadRequestException(`Session ${sessionId} does not exist - cannot persist event`);
     }
 
@@ -130,107 +111,90 @@ export class SessionService {
       created_at: new Date().toISOString()
     };
 
-    // Try database first
+// DATABASE-READY: Persist to database only
     try {
       const savedEvent = await this.eventRepository.save(persistedEvent);
-      
-      // Update memory cache
-      const sessionEvents = this.events.get(sessionId) || [];
-      sessionEvents.push(savedEvent);
-      this.events.set(sessionId, sessionEvents);
-      
+       
       // Update session timestamp
       await this.updateSessionTimestamp(sessionId);
-      
+       
       this.logger.log(`Event persisted to DB: ${savedEvent.id}`);
       return savedEvent;
     } catch (error) {
-      // Fallback to memory only
-      const sessionEvents = this.events.get(sessionId) || [];
-      sessionEvents.push(persistedEvent);
-      this.events.set(sessionId, sessionEvents);
-      
-      await this.updateSessionTimestamp(sessionId);
-      
-      this.logger.warn(`Event persisted to memory only (DB failed): ${persistedEvent.id}`);
-      return persistedEvent;
+      this.logger.error(`DATABASE-READY: Failed to persist event to DB: ${error.message}`);
+      throw new Error(`DATABASE-READY: Event persistence failed - Supabase connection required`);
     }
   }
 
-  /**
-   * Get all events for a session
+/**
+   * Get all events for a session (DATABASE-READY: Supabase only)
    */
   async getSessionEvents(sessionId: string): Promise<Event[]> {
-    // Try database first
     try {
       const dbEvents = await this.eventRepository.find({
         where: { session_id: sessionId },
         order: { created_at: 'ASC' }
       });
-      
-      if (dbEvents.length > 0) {
-        this.events.set(sessionId, dbEvents);
-        return dbEvents;
-      }
+       
+      return dbEvents;
     } catch (error) {
-      this.logger.warn(`Failed to get events from DB, using memory: ${error.message}`);
+      this.logger.error(`DATABASE-READY: Failed to get events from DB: ${error.message}`);
+      throw new Error(`DATABASE-READY: Event retrieval failed - Supabase connection required`);
     }
-
-    // Fallback to memory
-    return this.events.get(sessionId) || [];
   }
 
-  /**
-   * Update session timestamp
+/**
+   * Update session timestamp (DATABASE-READY: Supabase only)
    */
   private async updateSessionTimestamp(sessionId: string): Promise<void> {
     const now = new Date().toISOString();
-    
+     
     try {
       await this.sessionRepository.update(sessionId, { updated_at: now });
     } catch (error) {
-      this.logger.warn(`Failed to update session timestamp in DB: ${error.message}`);
-    }
-
-    const session = this.sessions.get(sessionId);
-    if (session) {
-      session.updated_at = now;
-      this.sessions.set(sessionId, session);
+      this.logger.error(`DATABASE-READY: Failed to update session timestamp in DB: ${error.message}`);
+      throw new Error(`DATABASE-READY: Session timestamp update failed - Supabase connection required`);
     }
   }
 
   /**
-   * Validate session exists
+   * Validate session exists (DATABASE-READY: Supabase only)
    */
-  validateSession(sessionId: string): boolean {
-    return this.sessions.has(sessionId);
+  async validateSession(sessionId: string): Promise<boolean> {
+    try {
+      const session = await this.sessionRepository.findOne({
+        where: { id: sessionId }
+      });
+      return !!session;
+    } catch (error) {
+      this.logger.error(`DATABASE-READY: Failed to validate session in DB: ${error.message}`);
+      return false;
+    }
   }
 
   /**
-   * Get all sessions
+   * Get all sessions (DATABASE-READY: Supabase only)
    */
   async findAll(): Promise<Session[]> {
     try {
       const dbSessions = await this.sessionRepository.find();
       return dbSessions;
     } catch (error) {
-      this.logger.warn(`Failed to get sessions from DB, using memory: ${error.message}`);
-      return Array.from(this.sessions.values());
+      this.logger.error(`DATABASE-READY: Failed to get sessions from DB: ${error.message}`);
+      throw new Error(`DATABASE-READY: Session listing failed - Supabase connection required`);
     }
   }
 
   /**
-   * Delete session
+   * Delete session (DATABASE-READY: Supabase only)
    */
   async remove(sessionId: string): Promise<void> {
     try {
       await this.sessionRepository.delete(sessionId);
       await this.eventRepository.delete({ session_id: sessionId });
     } catch (error) {
-      this.logger.warn(`Failed to delete from DB, using memory only: ${error.message}`);
+      this.logger.error(`DATABASE-READY: Failed to delete from DB: ${error.message}`);
+      throw new Error(`DATABASE-READY: Session deletion failed - Supabase connection required`);
     }
-
-    this.sessions.delete(sessionId);
-    this.events.delete(sessionId);
   }
 }
