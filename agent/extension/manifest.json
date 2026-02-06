@@ -10,7 +10,8 @@
         "offscreen",
         "tabCapture",
         "storage",
-        "sidePanel"
+        "sidePanel",
+        "microphone"
     ],
     "host_permissions": [
         "<all_urls>"
@@ -19,6 +20,13 @@
         "service_worker": "background/main.js",
         "type": "module"
     },
+"content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["content_scripts/webrtc-audio-injector.js"],
+            "run_at": "document_idle"
+        }
+    ],
     "action": {
         "default_title": "Keledon Agent"
     },

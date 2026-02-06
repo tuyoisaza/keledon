@@ -728,6 +728,112 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         }
         return true; // Async response
     }
+
+    // WebRTC Audio Injection Message
+    if (msg.type === 'WEBRTC_INJECT_AUDIO') {
+        log('WebRTC audio injection requested from side panel');
+        
+        try {
+            // Get active tab that might have WebRTC context
+            const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+            if (tabs.length === 0) {
+                sendResponse({ success: false, error: 'No active tab found' });
+                return true;
+            }
+            
+            const activeTab = tabs[0];
+            log(`Attempting WebRTC audio injection for tab: ${activeTab.url}`);
+            
+            // Inject audio into content script
+            const injectionResult = await chrome.tabs.sendMessage(activeTab.id, {
+                type: 'WEBRTC_INJECT_AUDIO',
+                audioData: msg.audioData,
+                text: msg.text,
+                timestamp: msg.timestamp
+            });
+            
+            if (injectionResult && injectionResult.success) {
+                log('WebRTC audio injection successful');
+                sendResponse({ 
+                    success: true, 
+                    message: 'Audio injected into WebRTC call',
+                    tabId: activeTab.id
+                });
+            } else {
+                log('WebRTC audio injection failed:', injectionResult?.error);
+                sendResponse({ 
+                    success: false, 
+                    error: injectionResult?.error || 'Injection failed' 
+                });
+            }
+            
+        } catch (error) {
+            log('WebRTC audio injection error:', error);
+            sendResponse({ success: false, error: error.message });
+        }
+        
+        return true; // Async response
+    }
+
+    // WebRTC Status Check
+    if (msg.type === 'WEBRTC_CHECK_STATUS') {
+        log('WebRTC status check requested');
+        
+        try {
+            const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+            if (tabs.length === 0) {
+                sendResponse({ success: false, error: 'No active tab' });
+                return true;
+            }
+            
+            const activeTab = tabs[0];
+            const status = await chrome.tabs.sendMessage(activeTab.id, {
+                type: 'WEBRTC_GET_STATUS'
+            });
+            
+            sendResponse({ success: true, status: status });
+            
+        } catch (error) {
+            sendResponse({ success: false, error: error.message });
+        }
+        
+        return true; // Async response
+    }
+});
+
+// Handle WebRTC messages from content scripts
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    if (msg.type === 'WEBRTC_DETECTED') {
+        log(`WebRTC detected in tab ${sender.tab.id}: ${msg.platform} at ${msg.url}`);
+        
+        // Update side panel with WebRTC detection
+        chrome.runtime.sendMessage({
+            type: 'WEBRTC_DETECTED_NOTIFICATION',
+            platform: msg.platform,
+            tabId: sender.tab.id,
+            url: msg.url,
+            timestamp: msg.timestamp
+        }).catch(() => {});
+        
+        sendResponse({ success: true });
+        return true;
+    }
+    
+    if (msg.type === 'WEBRTC_AUDIO_ACTIVE') {
+        log(`Active WebRTC audio element in tab ${sender.tab.id}: ${msg.elementId} (${msg.trackCount} tracks)`);
+        
+        // Update side panel with active audio
+        chrome.runtime.sendMessage({
+            type: 'WEBRTC_AUDIO_ACTIVE_NOTIFICATION',
+            tabId: sender.tab.id,
+            elementId: msg.elementId,
+            trackCount: msg.trackCount,
+            timestamp: msg.timestamp
+        }).catch(() => {});
+        
+        sendResponse({ success: true });
+        return true;
+    }
 });
 
 async function startListeningSession(options = {}) {

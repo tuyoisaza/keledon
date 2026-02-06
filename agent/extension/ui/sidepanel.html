@@ -496,8 +496,30 @@
         }
 
         .status-dot.speaking {
-            background: var(--info);
-            animation: pulse 1s infinite;
+            background: var(--accent);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* WebRTC specific styles */
+        .webrtc-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: var(--success);
+            color: var(--bg);
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .webrtc-injection-active {
+            animation: pulse-green 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { background: var(--success); }
+            50% { background: var(--accent-strong); }
         }
 
         /* Error Messages */
@@ -606,6 +628,7 @@
                         <div class="suggestion-chip">Translate text</div>
                         <div class="suggestion-chip">Find images</div>
                         <div class="suggestion-chip" id="voiceRoundtripBtn" style="background: var(--success); color: white;">🎤 Voice Roundtrip</div>
+                        <div class="suggestion-chip" id="webrtcTestBtn" style="background: var(--accent); color: white;">🎥 Test WebRTC</div>
                         <div class="suggestion-chip" id="testConnectionBtn" style="background: var(--info); color: white;">🔄 Test Connection</div>
                     </div>
                 </div>
@@ -731,6 +754,10 @@
                 <div class="component-indicator">
                     <div class="status-dot" id="ttsStatus" title="Text-to-Speech"></div>
                     <span>TTS</span>
+                </div>
+                <div class="component-indicator">
+                    <div class="status-dot" id="webrtcStatus" title="WebRTC Audio Injection"></div>
+                    <span>WebRTC</span>
                 </div>
             </div>
             <div>

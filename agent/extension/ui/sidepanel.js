@@ -96,6 +96,9 @@ class AudioManager {
         this.mediaRecorder = null;
         this.audioChunks = [];
         this.lastConfidence = 0;
+        this.webrtcDetected = false;
+        this.webrtcPlatform = null;
+        this.audioInjectionEnabled = false;
         this.initializeAdapters();
     }
 
@@ -268,6 +271,134 @@ class AudioManager {
                 ttsStatus.className = 'status-dot speaking';
                 ttsStatus.textContent = 'TTS Speaking';
             }
+
+            // Add message to conversation
+            uiManager.addMessage(`🔊 Speaking: ${text}`, 'assistant');
+            
+            // Check if WebRTC is detected and inject audio if possible
+            if (this.webrtcDetected && this.audioInjectionEnabled) {
+                console.log(`[VOICE ROUNDTRIP] Injecting audio into WebRTC context: ${this.webrtcPlatform}`);
+                await this.injectAudioIntoWebRTC(text);
+            } else {
+                // Fallback to local TTS
+                console.log(`[VOICE ROUNDTRIP] Using local TTS playback`);
+                await this.speak(text);
+            }
+            
+            console.log(`[VOICE ROUNDTRIP] Audio playback completed`);
+            
+        } catch (error) {
+            console.error(`[VOICE ROUNDTRIP] TTS failed:`, error);
+            throw error;
+        } finally {
+            // Reset TTS status
+            const ttsStatus = document.getElementById('ttsStatus');
+            if (ttsStatus) {
+                ttsStatus.className = 'status-dot ready';
+                ttsStatus.textContent = 'TTS Ready';
+            }
+        }
+    }
+
+    async injectAudioIntoWebRTC(text) {
+        try {
+            console.log(`[WEBRTC AUDIO INJECTION] Injecting: "${text}"`);
+            
+            // Generate TTS audio data for injection
+            const audioData = await this.generateTTSForInjection(text);
+            
+            // Send to background script for WebRTC injection
+            const injectionResult = await chrome.runtime.sendMessage({
+                type: 'WEBRTC_INJECT_AUDIO',
+                text: text,
+                audioData: audioData,
+                timestamp: Date.now()
+            });
+            
+            if (injectionResult && injectionResult.success) {
+                console.log(`[WEBRTC AUDIO INJECTION] Success: ${injectionResult.message}`);
+                uiManager.addMessage(`🎤 Injected into WebRTC call`, 'assistant');
+            } else {
+                console.warn(`[WEBRTC AUDIO INJECTION] Failed: ${injectionResult?.error}`);
+                // Fallback to local TTS
+                await this.speak(text);
+            }
+            
+        } catch (error) {
+            console.error(`[WEBRTC AUDIO INJECTION] Error:`, error);
+            // Fallback to local TTS
+            await this.speak(text);
+        }
+    }
+
+    async generateTTSForInjection(text) {
+        // Use browser's TTS to generate audio data for injection
+        return new Promise((resolve, reject) => {
+            // Create offscreen audio context for TTS generation
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Use SpeechSynthesis to generate audio
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+            
+            // For WebRTC injection, we'll use a simple approach for now
+            // In production, this would use the TTS service directly
+            utterance.onend = () => {
+                // Create a placeholder audio buffer for injection
+                // In real implementation, this would be actual TTS audio data
+                const audioData = {
+                    text: text,
+                    duration: text.length * 100, // Rough estimate
+                    sampleRate: 16000,
+                    format: 'pcm16'
+                };
+                
+                resolve(audioData);
+            };
+            
+            utterance.onerror = (error) => {
+                reject(new Error(`TTS generation failed: ${error.error}`));
+            };
+            
+            // Start TTS generation (won't play through speakers in this context)
+            window.speechSynthesis.speak(utterance);
+        });
+    }
+
+    checkWebRTCStatus() {
+        chrome.runtime.sendMessage({
+            type: 'WEBRTC_CHECK_STATUS'
+        }, (response) => {
+            if (response && response.success) {
+                this.webrtcDetected = response.status.webrtcDetected;
+                this.webrtcPlatform = response.status.platform;
+                this.audioInjectionEnabled = response.status.isActive && response.status.hasActiveElement;
+                
+                console.log(`[WEBRTC STATUS] Detected: ${this.webrtcDetected}, Platform: ${this.webrtcPlatform}, Injection Ready: ${this.audioInjectionEnabled}`);
+                
+                // Update UI
+                this.updateWebRTCStatus();
+            }
+        });
+    }
+
+    updateWebRTCStatus() {
+        const webrtcStatus = document.getElementById('webrtcStatus');
+        if (webrtcStatus) {
+            if (this.webrtcDetected && this.audioInjectionEnabled) {
+                webrtcStatus.className = 'status-dot ready';
+                webrtcStatus.textContent = `WebRTC (${this.webrtcPlatform})`;
+            } else if (this.webrtcDetected) {
+                webrtcStatus.className = 'status-dot degraded';
+                webrtcStatus.textContent = `WebRTC (${this.webrtcPlatform})`;
+            } else {
+                webrtcStatus.className = 'status-dot disconnected';
+                webrtcStatus.textContent = 'No WebRTC';
+            }
+        }
+    }
 
             // Add message to conversation
             uiManager.addMessage(`🔊 Speaking: ${text}`, 'assistant');
@@ -789,6 +920,7 @@ class UIManager {
         const sendBtn = document.getElementById('sendBtn');
         const voiceBtn = document.getElementById('voiceBtn');
         const voiceRoundtripBtn = document.getElementById('voiceRoundtripBtn');
+        const webrtcTestBtn = document.getElementById('webrtcTestBtn');
         const testConnectionBtn = document.getElementById('testConnectionBtn');
 
         if (commandInput) {
@@ -809,6 +941,10 @@ class UIManager {
 
         if (voiceRoundtripBtn) {
             voiceRoundtripBtn.addEventListener('click', () => this.handleVoiceRoundtrip());
+        }
+
+        if (webrtcTestBtn) {
+            webrtcTestBtn.addEventListener('click', () => this.handleWebRTCTest());
         }
 
         if (testConnectionBtn) {
@@ -967,6 +1103,43 @@ class UIManager {
             if (btn) {
                 btn.textContent = '🎤 Voice Roundtrip';
                 btn.style.background = 'var(--success)';
+            }
+        }
+    }
+
+    async handleWebRTCTest() {
+        const btn = document.getElementById('webrtcTestBtn');
+        if (btn) {
+            btn.textContent = '🎥 Testing...';
+            btn.style.background = 'var(--warning)';
+        }
+
+        try {
+            console.log(`[WEBRTC TEST] Starting WebRTC test...`);
+            this.addMessage('🎥 Testing WebRTC audio injection...', 'assistant');
+
+            // Check WebRTC status
+            await audioManager.checkWebRTCStatus();
+            
+            if (audioManager.webrtcDetected && audioManager.audioInjectionEnabled) {
+                // Test audio injection
+                const testMessage = "Hello, this is a test of WebRTC audio injection. Can you hear me?";
+                await audioManager.injectAudioIntoWebRTC(testMessage);
+                
+                this.addMessage('🎥 WebRTC test message sent', 'assistant');
+                this.showSuccess('WebRTC audio injection test completed');
+            } else {
+                this.addMessage('❌ WebRTC not ready for audio injection', 'assistant');
+                this.showError('WebRTC audio injection not available');
+            }
+            
+        } catch (error) {
+            console.error(`[WEBRTC TEST] Error:`, error);
+            this.addMessage(`❌ WebRTC test failed: ${error.message}`, 'assistant');
+        } finally {
+            if (btn) {
+                btn.textContent = '🎥 Test WebRTC';
+                btn.style.background = 'var(--accent)';
             }
         }
     }
@@ -1157,6 +1330,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Set up periodic connection check
     setInterval(checkBackendConnection, 5000); // Check every 5 seconds
+    
+    // Set up periodic WebRTC status check
+    setInterval(() => {
+        if (audioManager) {
+            audioManager.checkWebRTCStatus();
+        }
+    }, 3000); // Check every 3 seconds
 
     // Update version
     const manifest = chrome.runtime.getManifest();
@@ -1272,6 +1452,25 @@ async function handleBackgroundMessage(message, sender, sendResponse) {
                         btn.style.background = 'var(--success)';
                     }
                 }
+                break;
+                
+            case 'WEBRTC_DETECTED_NOTIFICATION':
+                console.log(`[WEBRTC] Detected: ${message.platform} in tab ${message.tabId}`);
+                audioManager.webrtcDetected = true;
+                audioManager.webrtcPlatform = message.platform;
+                audioManager.updateWebRTCStatus();
+                
+                uiManager.addMessage(`🎥 WebRTC detected: ${message.platform}`, 'assistant');
+                uiManager.showInfo(`WebRTC audio injection available`);
+                break;
+                
+            case 'WEBRTC_AUDIO_ACTIVE_NOTIFICATION':
+                console.log(`[WEBRTC] Audio active in tab ${message.tabId}`);
+                audioManager.audioInjectionEnabled = true;
+                audioManager.updateWebRTCStatus();
+                
+                uiManager.addMessage(`🔊 WebRTC audio injection ready`, 'assistant');
+                uiManager.showSuccess(`Agent can speak in the meeting`);
                 break;
                 
             default:
