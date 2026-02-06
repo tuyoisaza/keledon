@@ -673,6 +673,61 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         }
         return true; // Async response
     }
+
+    // Voice Roundtrip Message
+    if (msg.type === 'VOICE_ROUNDTRIP') {
+        log('Voice roundtrip requested from side panel');
+        
+        if (socket && socket.connected) {
+            // Send voice transcript to cloud for roundtrip processing
+            const voiceMessage = {
+                type: 'voice_roundtrip',
+                sessionId: currentSessionId || msg.sessionId,
+                timestamp: msg.timestamp,
+                payload: {
+                    transcript: msg.transcript,
+                    confidence: msg.confidence,
+                    source: 'sidepanel_voice'
+                }
+            };
+            
+            socket.emit('voice_roundtrip', voiceMessage);
+            log(`Voice transcript sent to cloud: "${msg.transcript}"`);
+            
+            // Listen for cloud response
+            const responseHandler = (data) => {
+                log('Voice roundtrip response received from cloud:', data);
+                chrome.runtime.sendMessage({
+                    type: 'VOICE_ROUNDTRIP_RESPONSE',
+                    success: true,
+                    data: data,
+                    transcript: msg.transcript,
+                    roundtripTime: Date.now() - msg.timestamp
+                }).catch(() => {});
+                
+                // Remove listener after response
+                socket.off('voice_roundtrip_response', responseHandler);
+            };
+            
+            socket.on('voice_roundtrip_response', responseHandler);
+            
+            // Timeout after 15 seconds for voice processing
+            setTimeout(() => {
+                socket.off('voice_roundtrip_response', responseHandler);
+                chrome.runtime.sendMessage({
+                    type: 'VOICE_ROUNDTRIP_RESPONSE',
+                    success: false,
+                    error: 'Cloud voice processing timeout'
+                }).catch(() => {});
+            }, 15000);
+            
+            sendResponse({ success: true, message: 'Voice roundtrip started' });
+        } else {
+            log('Voice roundtrip failed: No socket connection');
+            sendResponse({ success: false, error: 'Not connected to cloud' });
+        }
+        return true; // Async response
+    }
 });
 
 async function startListeningSession(options = {}) {

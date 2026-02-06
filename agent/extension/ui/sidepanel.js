@@ -95,6 +95,7 @@ class AudioManager {
         this.ttsAdapter = null;
         this.mediaRecorder = null;
         this.audioChunks = [];
+        this.lastConfidence = 0;
         this.initializeAdapters();
     }
 
@@ -183,15 +184,109 @@ class AudioManager {
     async onSTTResult(transcript, confidence) {
         console.log(`STT Result: "${transcript}" (confidence: ${confidence})`);
         
+        // Store confidence for voice roundtrip
+        this.lastConfidence = confidence;
+        
         // Set transcript in input field
         const input = document.getElementById('commandInput');
         if (input) {
             input.value = transcript;
         }
 
+        // Voice roundtrip: Send transcript to cloud and get TTS response
+        await this.performVoiceRoundtrip(transcript, confidence);
+
         // Auto-send if confidence is high
         if (confidence > 0.8) {
             await commandManager.executeCommand(transcript);
+        }
+    }
+
+    async performVoiceRoundtrip(transcript, confidence) {
+        console.log(`[VOICE ROUNDTRIP] Starting: transcript="${transcript}" confidence=${confidence}`);
+        
+        try {
+            // Step 1: Send transcript to cloud via WebSocket
+            const cloudResponse = await this.sendVoiceToCloud(transcript);
+            console.log(`[VOICE ROUNDTRIP] Cloud response:`, cloudResponse);
+            
+            // Step 2: Convert cloud response to speech and play
+            if (cloudResponse && (cloudResponse.response || cloudResponse.text)) {
+                const responseText = cloudResponse.response || cloudResponse.text;
+                await this.speakCloudResponse(responseText);
+                console.log(`[VOICE ROUNDTRIP] TTS playback completed`);
+            } else {
+                console.warn(`[VOICE ROUNDTRIP] No valid response from cloud`);
+                await this.speakCloudResponse("I'm sorry, I didn't understand that.");
+            }
+            
+        } catch (error) {
+            console.error(`[VOICE ROUNDTRIP] Error:`, error);
+            await this.speakCloudResponse("There was an error processing your request.");
+        } finally {
+            // Always stop listening after roundtrip
+            this.stopListening();
+        }
+    }
+
+    async sendVoiceToCloud(transcript) {
+        return new Promise((resolve, reject) => {
+            const timestamp = Date.now();
+            console.log(`[VOICE ROUNDTRIP] Sending to cloud: ${transcript}`);
+            
+            // Send voice transcript to background script for cloud processing
+            chrome.runtime.sendMessage({
+                type: 'VOICE_ROUNDTRIP',
+                transcript: transcript,
+                confidence: this.lastConfidence || 0.9,
+                timestamp: timestamp,
+                sessionId: this.state.sessionId
+            }, (response) => {
+                if (response && response.success) {
+                    console.log(`[VOICE ROUNDTRIP] Cloud response received:`, response);
+                    resolve(response.data);
+                } else {
+                    console.error(`[VOICE ROUNDTRIP] Cloud response failed:`, response?.error);
+                    reject(new Error(response?.error || 'Cloud communication failed'));
+                }
+            });
+            
+            // Timeout for cloud response
+            setTimeout(() => {
+                reject(new Error('Cloud response timeout (5000ms)'));
+            }, 5000);
+        });
+    }
+
+    async speakCloudResponse(text) {
+        console.log(`[VOICE ROUNDTRIP] Speaking: "${text}"`);
+        
+        try {
+            // Update TTS status to speaking
+            const ttsStatus = document.getElementById('ttsStatus');
+            if (ttsStatus) {
+                ttsStatus.className = 'status-dot speaking';
+                ttsStatus.textContent = 'TTS Speaking';
+            }
+
+            // Add message to conversation
+            uiManager.addMessage(`🔊 Speaking: ${text}`, 'assistant');
+            
+            // Use existing TTS functionality to speak the response
+            await this.speak(text);
+            
+            console.log(`[VOICE ROUNDTRIP] Audio playback completed successfully`);
+            
+        } catch (error) {
+            console.error(`[VOICE ROUNDTRIP] TTS failed:`, error);
+            throw error;
+        } finally {
+            // Reset TTS status
+            const ttsStatus = document.getElementById('ttsStatus');
+            if (ttsStatus) {
+                ttsStatus.className = 'status-dot ready';
+                ttsStatus.textContent = 'TTS Ready';
+            }
         }
     }
 
@@ -693,6 +788,7 @@ class UIManager {
         const commandInput = document.getElementById('commandInput');
         const sendBtn = document.getElementById('sendBtn');
         const voiceBtn = document.getElementById('voiceBtn');
+        const voiceRoundtripBtn = document.getElementById('voiceRoundtripBtn');
         const testConnectionBtn = document.getElementById('testConnectionBtn');
 
         if (commandInput) {
@@ -709,6 +805,10 @@ class UIManager {
 
         if (voiceBtn) {
             voiceBtn.addEventListener('click', () => this.toggleVoiceInput());
+        }
+
+        if (voiceRoundtripBtn) {
+            voiceRoundtripBtn.addEventListener('click', () => this.handleVoiceRoundtrip());
         }
 
         if (testConnectionBtn) {
@@ -841,6 +941,33 @@ class UIManager {
             audioManager.stopListening();
         } else {
             await audioManager.startListening();
+        }
+    }
+
+    async handleVoiceRoundtrip() {
+        const btn = document.getElementById('voiceRoundtripBtn');
+        if (btn) {
+            btn.textContent = '🎙️ Listening...';
+            btn.style.background = 'var(--warning)';
+        }
+
+        try {
+            console.log(`[VOICE ROUNDTRIP] Starting voice roundtrip...`);
+            this.addMessage('🎤 Voice roundtrip started. Speak now...', 'assistant');
+
+            // Start listening for voice input
+            await audioManager.startListening();
+            
+            // Voice roundtrip will be handled automatically in AudioManager.onSTTResult
+            
+        } catch (error) {
+            console.error(`[VOICE ROUNDTRIP] Error:`, error);
+            this.addMessage(`❌ Voice roundtrip failed: ${error.message}`, 'assistant');
+            
+            if (btn) {
+                btn.textContent = '🎤 Voice Roundtrip';
+                btn.style.background = 'var(--success)';
+            }
         }
     }
 
@@ -1115,6 +1242,35 @@ async function handleBackgroundMessage(message, sender, sendResponse) {
                 } else {
                     uiManager.addMessage(`❌ Cloud test failed: ${message.error}`, 'assistant');
                     uiManager.showError(`Cloud test failed: ${message.error}`);
+                }
+                break;
+                
+            case 'VOICE_ROUNDTRIP_RESPONSE':
+                if (message.success) {
+                    const roundtripTime = message.roundtripTime || 0;
+                    const transcript = message.transcript || '';
+                    console.log(`[VOICE ROUNDTRIP] Response:`, message.data);
+                    
+                    uiManager.addMessage(`🎤 Voice: "${transcript}"`, 'user');
+                    uiManager.addMessage(`🔊 Cloud: ${message.data?.response || message.data?.text || 'No response'}`, 'assistant');
+                    uiManager.showSuccess(`Voice roundtrip complete in ${roundtripTime}ms`);
+                    
+                    // Reset voice roundtrip button
+                    const btn = document.getElementById('voiceRoundtripBtn');
+                    if (btn) {
+                        btn.textContent = '🎤 Voice Roundtrip';
+                        btn.style.background = 'var(--success)';
+                    }
+                } else {
+                    uiManager.addMessage(`❌ Voice roundtrip failed: ${message.error}`, 'assistant');
+                    uiManager.showError(`Voice roundtrip failed: ${message.error}`);
+                    
+                    // Reset voice roundtrip button
+                    const btn = document.getElementById('voiceRoundtripBtn');
+                    if (btn) {
+                        btn.textContent = '🎤 Voice Roundtrip';
+                        btn.style.background = 'var(--success)';
+                    }
                 }
                 break;
                 
