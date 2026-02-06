@@ -256,6 +256,20 @@ function sendClientConfig() {
     });
 }
 
+// --- CONNECTION STATUS BROADCASTING ---
+function broadcastConnectionStatus(status, message) {
+    chrome.runtime.sendMessage({
+        type: 'CONNECTION_STATUS',
+        status: status,
+        message: message,
+        socketConnected: socket && socket.connected,
+        sessionId: currentSessionId,
+        timestamp: Date.now()
+    }).catch(() => {
+        // Side panel might not be open, that's okay
+    });
+}
+
 // --- LOGGING ---
 function log(message) {
     const importantPattern = /(ERROR|FAILED|Session Created|Socket connected|Listening|Permission required|Session stopped|Start SUCCESS|Stop requested|Audio format detected)/i;
@@ -556,7 +570,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             audioTab: audioTabInfo,
             rpaTab: rpaTabInfo,
             capturePermissionRequired: audioTabNeedsActivation,
-            debugMode: debugEnabled
+            debugMode: debugEnabled,
+            socketConnected: socket && socket.connected,
+            components: {
+                websocket: socket && socket.connected ? 'connected' : 'disconnected',
+                stt: isListening ? 'ready' : 'disconnected',
+                tts: 'disconnected'
+            }
         });
     }
 
@@ -598,6 +618,60 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
                 timestamp: Date.now()
             });
         }
+    }
+
+    // Test Connection Message
+    if (msg.type === 'TEST_CONNECTION') {
+        log('Test connection requested from side panel');
+        
+        if (socket && socket.connected) {
+            // Send test message to cloud
+            const testMessage = {
+                type: 'test_connection',
+                sessionId: currentSessionId,
+                timestamp: msg.timestamp,
+                payload: {
+                    message: 'Connection test from side panel',
+                    source: 'sidepanel',
+                    agentVersion: chrome.runtime.getManifest().version
+                }
+            };
+            
+            socket.emit('test_connection', testMessage);
+            log('Test message sent to cloud');
+            
+            // Listen for response
+            const responseHandler = (data) => {
+                log('Test response received from cloud:', data);
+                chrome.runtime.sendMessage({
+                    type: 'TEST_CONNECTION_RESPONSE',
+                    success: true,
+                    response: data,
+                    roundtripTime: Date.now() - msg.timestamp
+                }).catch(() => {});
+                
+                // Remove listener after response
+                socket.off('test_connection_response', responseHandler);
+            };
+            
+            socket.on('test_connection_response', responseHandler);
+            
+            // Timeout after 10 seconds
+            setTimeout(() => {
+                socket.off('test_connection_response', responseHandler);
+                chrome.runtime.sendMessage({
+                    type: 'TEST_CONNECTION_RESPONSE',
+                    success: false,
+                    error: 'Cloud response timeout'
+                }).catch(() => {});
+            }, 10000);
+            
+            sendResponse({ success: true, message: 'Test message sent' });
+        } else {
+            log('Test connection failed: No socket connection');
+            sendResponse({ success: false, error: 'Not connected to cloud' });
+        }
+        return true; // Async response
     }
 });
 
@@ -680,13 +754,19 @@ async function startListeningSession(options = {}) {
         socket.on('connect', () => {
             log('Socket connected successfully!');
             sendClientConfig();
+            broadcastConnectionStatus('connected', 'Socket connected');
             resolve();
         });
-            socket.on('connect_error', (err) => {
-                log('Socket connection error: ' + err.message);
-                reject(err);
-            });
-            setTimeout(() => reject(new Error('Socket timeout')), 5000);
+        socket.on('connect_error', (err) => {
+            log('Socket connection error: ' + err.message);
+            broadcastConnectionStatus('error', 'Socket error: ' + err.message);
+            reject(err);
+        });
+        socket.on('disconnect', (reason) => {
+            log('Socket disconnected: ' + reason);
+            broadcastConnectionStatus('disconnected', 'Socket disconnected: ' + reason);
+        });
+        setTimeout(() => reject(new Error('Socket timeout')), 5000);
         });
 
         // --- V1 CONTRACT LISTENERS ---
@@ -775,6 +855,7 @@ async function stopListeningSession() {
     // Disconnect Socket
     if (socket) {
         log('Disconnecting socket...');
+        broadcastConnectionStatus('disconnected', 'Session stopped');
         socket.emit('session.stop');
         socket.disconnect();
         socket = null;

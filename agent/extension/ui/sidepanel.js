@@ -693,6 +693,7 @@ class UIManager {
         const commandInput = document.getElementById('commandInput');
         const sendBtn = document.getElementById('sendBtn');
         const voiceBtn = document.getElementById('voiceBtn');
+        const testConnectionBtn = document.getElementById('testConnectionBtn');
 
         if (commandInput) {
             commandInput.addEventListener('keypress', (e) => {
@@ -708,6 +709,10 @@ class UIManager {
 
         if (voiceBtn) {
             voiceBtn.addEventListener('click', () => this.toggleVoiceInput());
+        }
+
+        if (testConnectionBtn) {
+            testConnectionBtn.addEventListener('click', () => this.handleTestConnection());
         }
 
         // Settings
@@ -797,6 +802,38 @@ class UIManager {
         input.value = '';
 
         await commandManager.executeCommand(command);
+    }
+
+    async handleTestConnection() {
+        const testBtn = document.getElementById('testConnectionBtn');
+        if (testBtn) {
+            testBtn.textContent = '⏳ Testing...';
+            testBtn.style.background = 'var(--warning)';
+        }
+
+        try {
+            // Send test message to background script
+            const response = await chrome.runtime.sendMessage({
+                type: 'TEST_CONNECTION',
+                timestamp: Date.now()
+            });
+
+            if (response && response.success) {
+                this.addMessage('✅ Test message sent successfully', 'assistant');
+                this.showSuccess('Connection test: Message sent to cloud');
+            } else {
+                this.addMessage('❌ Test message failed', 'assistant');
+                this.showError(`Connection test failed: ${response?.error || 'Unknown error'}`);
+            }
+        } catch (error) {
+            this.addMessage('❌ Connection test failed', 'assistant');
+            this.showError(`Connection test error: ${error.message}`);
+        } finally {
+            if (testBtn) {
+                testBtn.textContent = '🔄 Test Connection';
+                testBtn.style.background = 'var(--info)';
+            }
+        }
     }
 
     async toggleVoiceInput() {
@@ -990,6 +1027,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Check connection status
     checkBackendConnection();
+    
+    // Set up periodic connection check
+    setInterval(checkBackendConnection, 5000); // Check every 5 seconds
 
     // Update version
     const manifest = chrome.runtime.getManifest();
@@ -1064,6 +1104,20 @@ async function handleBackgroundMessage(message, sender, sendResponse) {
                 }
                 break;
                 
+            case 'TEST_CONNECTION_RESPONSE':
+                if (message.success) {
+                    const roundtripTime = message.roundtripTime || 0;
+                    uiManager.addMessage(`✅ Cloud response received (${roundtripTime}ms)`, 'assistant');
+                    uiManager.showSuccess(`Roundtrip complete in ${roundtripTime}ms`);
+                    
+                    // Update connection status to reflect successful roundtrip
+                    uiManager.updateConnectionStatus('connected', 'Cloud responsive');
+                } else {
+                    uiManager.addMessage(`❌ Cloud test failed: ${message.error}`, 'assistant');
+                    uiManager.showError(`Cloud test failed: ${message.error}`);
+                }
+                break;
+                
             default:
                 console.log('Unknown message type:', message.type);
         }
@@ -1081,18 +1135,25 @@ async function checkBackendConnection() {
             type: 'GET_STATUS'
         });
         
-        if (response.status === 'ready' && response.components?.websocket === 'connected') {
+        // Truthful connection check: only show connected if socket is actually connected
+        if (response && response.socketConnected === true) {
             uiManager.updateConnectionStatus('connected', 'Connected to Cloud');
+        } else if (response && response.isListening === true) {
+            uiManager.updateConnectionStatus('connecting', 'Session active...');
         } else {
-            uiManager.updateConnectionStatus('disconnected', 'Cloud unavailable');
+            uiManager.updateConnectionStatus('disconnected', 'Not connected');
         }
 
-        // Update component status display
-        updateComponentStatus(response.components || {});
-        updateSessionStatus(response.session || {});
+        // Update component status display based on real state
+        updateComponentStatus({
+            websocket: (response && response.socketConnected === true) ? 'connected' : 'disconnected',
+            stt: response && response.isListening ? 'ready' : 'disconnected',
+            tts: 'disconnected',
+            session: response
+        });
         
     } catch (error) {
-        uiManager.updateConnectionStatus('disconnected', 'Connection failed');
+        uiManager.updateConnectionStatus('error', 'Connection check failed');
     }
 }
 
