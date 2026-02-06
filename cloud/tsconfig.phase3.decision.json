@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/phase3/minimal-decision-engine",
+    "rootDir": "./src",
+    "baseUrl": "./src"
+  },
+  "include": [
+    "src/phase3/decision-engine/minimal-decision-engine.service.ts",
+    "src/phase3/decision-engine/interfaces/minimal-decision.interfaces.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts"
+  ]
+}
