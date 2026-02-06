@@ -1,0 +1,25 @@
+# Phase 3 Work Lock
+
+## Prompt ID
+KELEDON-P3-CAPABILITY-001
+
+## Branch Name
+phase3/decision-engine-minimal
+
+## Agent ID
+opencode/big-pickle
+
+## Timestamp
+2026-02-05
+
+## Scope Description
+Implementation of a Minimal Decision Engine as Phase 3 capability. The Decision Engine accepts structured input (text or event) and produces deterministic decision objects. This is an isolated implementation under cloud/src/phase3/decision-engine/ with no modifications to Phase 0-2 files.
+
+## Status
+IN_PROGRESS
+
+## Lock Type
+PHASE3_CAPABILITY
+
+## Floor Safety
+YES - No Phase 0-2 files will be modified
