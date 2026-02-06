@@ -210,6 +210,26 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     }
   }
 
+  // Handle test connection messages from side panel
+  @SubscribeMessage('test_connection')
+  handleTestConnection(client: Socket, data: any): void {
+    this.logger.log(`Test connection received from agent ${client.id}:`, data);
+    
+    // Echo back the test message to prove roundtrip
+    client.emit('test_connection_response', {
+      type: 'test_connection_response',
+      sessionId: data.sessionId,
+      timestamp: new Date().toISOString(),
+      payload: {
+        message: 'Cloud response: Connection test successful',
+        originalTimestamp: data.timestamp,
+        roundtripTime: Date.now() - data.timestamp,
+        cloudServer: process.env.HOSTNAME || 'localhost',
+        agentVersion: data.payload?.agentVersion || 'unknown'
+      }
+    });
+  }
+
   // Handle Agent → Cloud events (per canonical contract)
   @SubscribeMessage('event')
   handleEvent(client: Socket, data: AgentSocketData): void {
