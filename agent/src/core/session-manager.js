@@ -3,7 +3,7 @@
  * Creates and manages real sessions with UUIDs (anti-demo compliance)
  * Integrates with canonical event contracts
  */
-import { TabContext } from './tab-context';
+import { TabContext } from './tab-context.js';
 
 export class SessionManager {
   constructor() {
@@ -95,23 +95,6 @@ export class SessionManager {
     });
     
     return session;
-  }
-
-  /**
-   * Start the session (begin listening)
-   */
-  async startSession() {
-    if (!this.currentSession) {
-      throw new Error('No session initialized. Call initializeSession first.');
-    }
-
-    this.currentSession.state = 'active';
-    this.currentSession.startTime = new Date();
-    
-    this.emit('session:started', { 
-      sessionId: this.currentSession.id,
-      startTime: this.currentSession.startTime 
-    });
   }
 
   /**
@@ -354,10 +337,6 @@ export class SessionManager {
 
     this.sessions.clear();
     this.activeSessionId = null;
-    this.eventHandlers.clear();
-  }
-}
-    this.currentSession = null;
     this.eventHandlers.clear();
   }
 }

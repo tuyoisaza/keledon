@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KELEDON Extension Test</title>
+</head>
+<body>
+    <h1>KELEDON Extension Test</h1>
+    <p>This page tests the extension functionality.</p>
+    
+    <h2>Test Steps:</h2>
+    <ol>
+        <li>Load extension in chrome://extensions</li>
+        <li>Check for manifest errors</li>
+        <li>Verify service worker is running</li>
+        <li>Open side panel</li>
+        <li>Test PING/PONG messaging</li>
+    </ol>
+    
+    <h2>Test Results:</h2>
+    <div id="results"></div>
+    
+    <script>
+        // Test basic extension availability
+        if (typeof chrome !== 'undefined' && chrome.runtime) {
+            document.getElementById('results').innerHTML = 
+                '<p style="color: green;">✅ Chrome APIs available</p>';
+        } else {
+            document.getElementById('results').innerHTML = 
+                '<p style="color: red;">❌ Chrome APIs not available</p>';
+        }
+    </script>
+</body>
+</html>

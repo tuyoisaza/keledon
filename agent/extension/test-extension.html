@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KELEDON Extension Test</title>
+</head>
+<body>
+    <h1>KELEDON Extension Test</h1>
+    <p>This page tests the Chrome extension functionality.</p>
+    
+    <div id="results">
+        <h2>Test Results:</h2>
+        <div id="test-output"></div>
+    </div>
+
+    <script>
+        const output = document.getElementById('test-output');
+        
+        function log(message) {
+            console.log(message);
+            output.innerHTML += '<p>' + message + '</p>';
+        }
+
+        // Test if extension is available
+        if (typeof chrome !== 'undefined' && chrome.runtime) {
+            log('✅ Chrome extension API available');
+            
+            // Test message sending
+            chrome.runtime.sendMessage({ type: 'GET_STATUS' }, (response) => {
+                if (chrome.runtime.lastError) {
+                    log('❌ Error communicating with background: ' + chrome.runtime.lastError.message);
+                } else {
+                    log('✅ Background service responded');
+                    log('Response: ' + JSON.stringify(response));
+                }
+            });
+        } else {
+            log('❌ Chrome extension API not available (load this page through the extension)');
+        }
+    </script>
+</body>
+</html>

@@ -619,23 +619,19 @@
                 <div class="command-section">
                     <div class="input-group">
                         <input type="text" class="command-input" id="commandInput" placeholder="Enter command or question...">
-                        <button class="input-btn voice-btn" id="voiceBtn" title="Voice Input">🎤</button>
+                        <button class="input-btn voice-btn" id="voiceBtn" title="Real Speech-to-Text">🎤</button>
                         <button class="input-btn" id="sendBtn" title="Send">➤</button>
                     </div>
                     <div class="suggestions" id="suggestions">
-                        <div class="suggestion-chip">Summarize page</div>
-                        <div class="suggestion-chip">Extract links</div>
-                        <div class="suggestion-chip">Translate text</div>
-                        <div class="suggestion-chip">Find images</div>
-                        <div class="suggestion-chip" id="voiceRoundtripBtn" style="background: var(--success); color: white;">🎤 Voice Roundtrip</div>
-                        <div class="suggestion-chip" id="webrtcTestBtn" style="background: var(--accent); color: white;">🎥 Test WebRTC</div>
-                        <div class="suggestion-chip" id="testConnectionBtn" style="background: var(--info); color: white;">🔄 Test Connection</div>
+                        <div class="suggestion-chip" id="testConnectionBtn" style="background: var(--info); color: white;">Test Connection</div>
+                        <div class="suggestion-chip" id="checkStatusBtn" style="background: var(--muted); color: white;">Check Status</div>
+                        <div class="suggestion-chip" id="testTTSDryRun" style="background: var(--accent); color: white;">🔊 Test TTS</div>
                     </div>
                 </div>
                 <div class="content-area">
                     <div class="conversation" id="conversation">
                         <div class="message assistant">
-                            <div>👋 Hello! I'm KELEDON, your AI assistant. How can I help you today?</div>
+                            <div>🔧 KELEDON Phase O/N-1: Basic functionality test</div>
                             <div class="message-time">Just now</div>
                         </div>
                     </div>
@@ -725,6 +721,16 @@
                                 <div class="toggle-slider"></div>
                             </div>
                             <label>Share usage analytics</label>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <label class="settings-label">Agent Control</label>
+                        <div class="settings-toggle">
+                            <div class="toggle-switch active" id="agentActiveToggle">
+                                <div class="toggle-slider"></div>
+                            </div>
+                            <label>Agent Active (Master Control)</label>
                         </div>
                     </div>
 

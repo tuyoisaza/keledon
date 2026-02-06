@@ -1,1585 +1,641 @@
-/**
- * KELEDON Enhanced Side Panel
- * Integrates RPA, TTS/STT, Tab Management, and AI Assistant
- */
-
-// Core State Management
-class SidePanelState {
-    constructor() {
-        this.currentTab = 'chat';
-        this.isListening = false;
-        this.isRecording = false;
-        this.sessionId = null;
-        this.activeTabId = null;
-        this.connectionStatus = 'disconnected';
-        this.settings = this.loadSettings();
-        this.commandHistory = [];
-        this.conversation = [];
-        this.availableTabs = [];
-    }
-
-    loadSettings() {
-        const defaults = {
-            language: 'en',
-            voiceEnabled: false,
-            autoListen: true,
-            smartSuggestions: true,
-            contextAware: false,
-            saveHistory: true,
-            analytics: false,
-            backendUrl: (window.AGENT_CONFIG?.BACKEND_URL || window.KELEDON_CONFIG?.BACKEND_URL || 'http://localhost:3001')
-        };
-        
-        try {
-            const saved = localStorage.getItem('keledon_settings');
-            return saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
-        } catch (error) {
-            console.error('Failed to load settings:', error);
-            return defaults;
-        }
-    }
-
-    saveSettings() {
-        try {
-            localStorage.setItem('keledon_settings', JSON.stringify(this.settings));
-        } catch (error) {
-            console.error('Failed to save settings:', error);
-        }
-    }
-
-    addToHistory(command, response) {
-        if (!this.settings.saveHistory) return;
-        
-        const historyItem = {
-            id: Date.now().toString(),
-            command,
-            response,
-            timestamp: new Date().toISOString(),
-            tabId: this.activeTabId
-        };
-        
-        this.commandHistory.unshift(historyItem);
-        
-        // Keep only last 100 items
-        if (this.commandHistory.length > 100) {
-            this.commandHistory = this.commandHistory.slice(0, 100);
-        }
-        
-        this.saveHistory();
-    }
-
-    saveHistory() {
-        try {
-            localStorage.setItem('keledon_history', JSON.stringify(this.commandHistory));
-        } catch (error) {
-            console.error('Failed to save history:', error);
-        }
-    }
-
-    loadHistory() {
-        try {
-            const saved = localStorage.getItem('keledon_history');
-            return saved ? JSON.parse(saved) : [];
-        } catch (error) {
-            console.error('Failed to load history:', error);
-            return [];
-        }
-    }
-}
-
-// Audio Integration (STT/TTS)
-class AudioManager {
-    constructor(state) {
-        this.state = state;
-        this.sttAdapter = null;
-        this.ttsAdapter = null;
-        this.mediaRecorder = null;
-        this.audioChunks = [];
-        this.lastConfidence = 0;
-        this.webrtcDetected = false;
-        this.webrtcPlatform = null;
-        this.audioInjectionEnabled = false;
-        this.initializeAdapters();
-    }
-
-    async initializeAdapters() {
-        try {
-            // Initialize STT (Speech-to-Text)
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                this.sttAdapter = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-                this.sttAdapter.continuous = false;
-                this.sttAdapter.interimResults = false;
-                this.sttAdapter.lang = this.getLanguageCode();
-                this.setupSTTEvents();
-            }
-
-            // Initialize TTS (Text-to-Speech)
-            if ('speechSynthesis' in window) {
-                this.ttsAdapter = window.speechSynthesis;
-            }
-
-            console.log('Audio adapters initialized');
-        } catch (error) {
-            console.error('Failed to initialize audio adapters:', error);
-        }
-    }
-
-    getLanguageCode() {
-        const langMap = {
-            'en': 'en-US',
-            'es': 'es-ES',
-            'fr': 'fr-FR',
-            'de': 'de-DE',
-            'zh': 'zh-CN'
-        };
-        return langMap[this.state.settings.language] || 'en-US';
-    }
-
-    setupSTTEvents() {
-        if (!this.sttAdapter) return;
-
-        this.sttAdapter.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            const confidence = event.results[0][0].confidence;
-            
-            if (event.results[0].isFinal) {
-                this.onSTTResult(transcript, confidence);
-            }
-        };
-
-        this.sttAdapter.onerror = (event) => {
-            console.error('STT error:', event.error);
-            this.stopListening();
-            uiManager.showError('Speech recognition failed: ' + event.error);
-        };
-
-        this.sttAdapter.onend = () => {
-            this.state.isListening = false;
-            uiManager.updateVoiceButton(false);
-        };
-    }
-
-    async startListening() {
-        if (!this.sttAdapter) {
-            uiManager.showError('Speech recognition not supported');
-            return;
-        }
-
-        try {
-            this.state.isListening = true;
-            this.sttAdapter.lang = this.getLanguageCode();
-            this.sttAdapter.start();
-            uiManager.updateVoiceButton(true);
-            uiManager.showSuccess('Listening... Speak now');
-        } catch (error) {
-            console.error('Failed to start listening:', error);
-            this.state.isListening = false;
-            uiManager.showError('Failed to start speech recognition');
-        }
-    }
-
-    stopListening() {
-        if (this.sttAdapter && this.state.isListening) {
-            this.sttAdapter.stop();
-        }
-    }
-
-    async onSTTResult(transcript, confidence) {
-        console.log(`STT Result: "${transcript}" (confidence: ${confidence})`);
-        
-        // Store confidence for voice roundtrip
-        this.lastConfidence = confidence;
-        
-        // Set transcript in input field
-        const input = document.getElementById('commandInput');
-        if (input) {
-            input.value = transcript;
-        }
-
-        // Voice roundtrip: Send transcript to cloud and get TTS response
-        await this.performVoiceRoundtrip(transcript, confidence);
-
-        // Auto-send if confidence is high
-        if (confidence > 0.8) {
-            await commandManager.executeCommand(transcript);
-        }
-    }
-
-    async performVoiceRoundtrip(transcript, confidence) {
-        console.log(`[VOICE ROUNDTRIP] Starting: transcript="${transcript}" confidence=${confidence}`);
-        
-        try {
-            // Step 1: Send transcript to cloud via WebSocket
-            const cloudResponse = await this.sendVoiceToCloud(transcript);
-            console.log(`[VOICE ROUNDTRIP] Cloud response:`, cloudResponse);
-            
-            // Step 2: Convert cloud response to speech and play
-            if (cloudResponse && (cloudResponse.response || cloudResponse.text)) {
-                const responseText = cloudResponse.response || cloudResponse.text;
-                await this.speakCloudResponse(responseText);
-                console.log(`[VOICE ROUNDTRIP] TTS playback completed`);
-            } else {
-                console.warn(`[VOICE ROUNDTRIP] No valid response from cloud`);
-                await this.speakCloudResponse("I'm sorry, I didn't understand that.");
-            }
-            
-        } catch (error) {
-            console.error(`[VOICE ROUNDTRIP] Error:`, error);
-            await this.speakCloudResponse("There was an error processing your request.");
-        } finally {
-            // Always stop listening after roundtrip
-            this.stopListening();
-        }
-    }
-
-    async sendVoiceToCloud(transcript) {
-        return new Promise((resolve, reject) => {
-            const timestamp = Date.now();
-            console.log(`[VOICE ROUNDTRIP] Sending to cloud: ${transcript}`);
-            
-            // Send voice transcript to background script for cloud processing
-            chrome.runtime.sendMessage({
-                type: 'VOICE_ROUNDTRIP',
-                transcript: transcript,
-                confidence: this.lastConfidence || 0.9,
-                timestamp: timestamp,
-                sessionId: this.state.sessionId
-            }, (response) => {
-                if (response && response.success) {
-                    console.log(`[VOICE ROUNDTRIP] Cloud response received:`, response);
-                    resolve(response.data);
-                } else {
-                    console.error(`[VOICE ROUNDTRIP] Cloud response failed:`, response?.error);
-                    reject(new Error(response?.error || 'Cloud communication failed'));
-                }
-            });
-            
-            // Timeout for cloud response
-            setTimeout(() => {
-                reject(new Error('Cloud response timeout (5000ms)'));
-            }, 5000);
-        });
-    }
-
-    async speakCloudResponse(text) {
-        console.log(`[VOICE ROUNDTRIP] Speaking: "${text}"`);
-        
-        try {
-            // Update TTS status to speaking
-            const ttsStatus = document.getElementById('ttsStatus');
-            if (ttsStatus) {
-                ttsStatus.className = 'status-dot speaking';
-                ttsStatus.textContent = 'TTS Speaking';
-            }
-
-            // Add message to conversation
-            uiManager.addMessage(`🔊 Speaking: ${text}`, 'assistant');
-            
-            // Check if WebRTC is detected and inject audio if possible
-            if (this.webrtcDetected && this.audioInjectionEnabled) {
-                console.log(`[VOICE ROUNDTRIP] Injecting audio into WebRTC context: ${this.webrtcPlatform}`);
-                await this.injectAudioIntoWebRTC(text);
-            } else {
-                // Fallback to local TTS
-                console.log(`[VOICE ROUNDTRIP] Using local TTS playback`);
-                await this.speak(text);
-            }
-            
-            console.log(`[VOICE ROUNDTRIP] Audio playback completed`);
-            
-        } catch (error) {
-            console.error(`[VOICE ROUNDTRIP] TTS failed:`, error);
-            throw error;
-        } finally {
-            // Reset TTS status
-            const ttsStatus = document.getElementById('ttsStatus');
-            if (ttsStatus) {
-                ttsStatus.className = 'status-dot ready';
-                ttsStatus.textContent = 'TTS Ready';
-            }
-        }
-    }
-
-    async injectAudioIntoWebRTC(text) {
-        try {
-            console.log(`[WEBRTC AUDIO INJECTION] Injecting: "${text}"`);
-            
-            // Generate TTS audio data for injection
-            const audioData = await this.generateTTSForInjection(text);
-            
-            // Send to background script for WebRTC injection
-            const injectionResult = await chrome.runtime.sendMessage({
-                type: 'WEBRTC_INJECT_AUDIO',
-                text: text,
-                audioData: audioData,
-                timestamp: Date.now()
-            });
-            
-            if (injectionResult && injectionResult.success) {
-                console.log(`[WEBRTC AUDIO INJECTION] Success: ${injectionResult.message}`);
-                uiManager.addMessage(`🎤 Injected into WebRTC call`, 'assistant');
-            } else {
-                console.warn(`[WEBRTC AUDIO INJECTION] Failed: ${injectionResult?.error}`);
-                // Fallback to local TTS
-                await this.speak(text);
-            }
-            
-        } catch (error) {
-            console.error(`[WEBRTC AUDIO INJECTION] Error:`, error);
-            // Fallback to local TTS
-            await this.speak(text);
-        }
-    }
-
-    async generateTTSForInjection(text) {
-        // Use browser's TTS to generate audio data for injection
-        return new Promise((resolve, reject) => {
-            // Create offscreen audio context for TTS generation
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            
-            // Use SpeechSynthesis to generate audio
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.rate = 1.0;
-            utterance.pitch = 1.0;
-            utterance.volume = 1.0;
-            
-            // For WebRTC injection, we'll use a simple approach for now
-            // In production, this would use the TTS service directly
-            utterance.onend = () => {
-                // Create a placeholder audio buffer for injection
-                // In real implementation, this would be actual TTS audio data
-                const audioData = {
-                    text: text,
-                    duration: text.length * 100, // Rough estimate
-                    sampleRate: 16000,
-                    format: 'pcm16'
-                };
-                
-                resolve(audioData);
-            };
-            
-            utterance.onerror = (error) => {
-                reject(new Error(`TTS generation failed: ${error.error}`));
-            };
-            
-            // Start TTS generation (won't play through speakers in this context)
-            window.speechSynthesis.speak(utterance);
-        });
-    }
-
-    checkWebRTCStatus() {
-        chrome.runtime.sendMessage({
-            type: 'WEBRTC_CHECK_STATUS'
-        }, (response) => {
-            if (response && response.success) {
-                this.webrtcDetected = response.status.webrtcDetected;
-                this.webrtcPlatform = response.status.platform;
-                this.audioInjectionEnabled = response.status.isActive && response.status.hasActiveElement;
-                
-                console.log(`[WEBRTC STATUS] Detected: ${this.webrtcDetected}, Platform: ${this.webrtcPlatform}, Injection Ready: ${this.audioInjectionEnabled}`);
-                
-                // Update UI
-                this.updateWebRTCStatus();
-            }
-        });
-    }
-
-    updateWebRTCStatus() {
-        const webrtcStatus = document.getElementById('webrtcStatus');
-        if (webrtcStatus) {
-            if (this.webrtcDetected && this.audioInjectionEnabled) {
-                webrtcStatus.className = 'status-dot ready';
-                webrtcStatus.textContent = `WebRTC (${this.webrtcPlatform})`;
-            } else if (this.webrtcDetected) {
-                webrtcStatus.className = 'status-dot degraded';
-                webrtcStatus.textContent = `WebRTC (${this.webrtcPlatform})`;
-            } else {
-                webrtcStatus.className = 'status-dot disconnected';
-                webrtcStatus.textContent = 'No WebRTC';
-            }
-        }
-    }
-
-            // Add message to conversation
-            uiManager.addMessage(`🔊 Speaking: ${text}`, 'assistant');
-            
-            // Use existing TTS functionality to speak the response
-            await this.speak(text);
-            
-            console.log(`[VOICE ROUNDTRIP] Audio playback completed successfully`);
-            
-        } catch (error) {
-            console.error(`[VOICE ROUNDTRIP] TTS failed:`, error);
-            throw error;
-        } finally {
-            // Reset TTS status
-            const ttsStatus = document.getElementById('ttsStatus');
-            if (ttsStatus) {
-                ttsStatus.className = 'status-dot ready';
-                ttsStatus.textContent = 'TTS Ready';
-            }
-        }
-    }
-
-    async speak(text) {
-        if (!this.ttsAdapter) return;
-
-        try {
-            // Cancel any ongoing speech
-            this.ttsAdapter.cancel();
-
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = this.getLanguageCode();
-            utterance.rate = 1.0;
-            utterance.pitch = 1.0;
-            utterance.volume = 1.0;
-
-            return new Promise((resolve, reject) => {
-                utterance.onend = resolve;
-                utterance.onerror = reject;
-                this.ttsAdapter.speak(utterance);
-            });
-        } catch (error) {
-            console.error('TTS failed:', error);
-        }
-    }
-}
-
-// RPA Integration
-class RPAManager {
-    constructor(state) {
-        this.state = state;
-        this.activeWorkflow = null;
-        this.stepResults = [];
-    }
-
-    async executeStep(step) {
-        try {
-            // Send step to background script for execution
-            const response = await chrome.runtime.sendMessage({
-                type: 'EXECUTE_RPA_STEP',
-                step: step,
-                tabId: this.state.activeTabId,
-                sessionId: this.state.sessionId
-            });
-
-            if (response.success) {
-                this.stepResults.push(response.result);
-                return response.result;
-            } else {
-                throw new Error(response.error || 'RPA step failed');
-            }
-        } catch (error) {
-            console.error('RPA step execution failed:', error);
-            throw error;
-        }
-    }
-
-    async executeWorkflow(workflow) {
-        try {
-            this.activeWorkflow = workflow;
-            this.stepResults = [];
-
-            for (const step of workflow.steps) {
-                const result = await this.executeStep(step);
-                
-                // Update UI with progress
-                uiManager.addMessage(`Executing: ${step.description}`, 'assistant');
-                
-                // Handle step failure
-                if (result.status === 'failure') {
-                    throw new Error(`Step failed: ${result.evidence}`);
-                }
-            }
-
-            return {
-                success: true,
-                results: this.stepResults,
-                workflowId: workflow.id
-            };
-        } catch (error) {
-            console.error('Workflow execution failed:', error);
-            throw error;
-        } finally {
-            this.activeWorkflow = null;
-        }
-    }
-
-    async clickElement(selector) {
-        const step = {
-            step_id: `click_${Date.now()}`,
-            action: 'click',
-            selector: selector,
-            timeout_ms: 5000
-        };
-        return await this.executeStep(step);
-    }
-
-    async fillField(selector, value) {
-        const step = {
-            step_id: `fill_${Date.now()}`,
-            action: 'fill_field',
-            selector: selector,
-            value: value,
-            timeout_ms: 5000
-        };
-        return await this.executeStep(step);
-    }
-
-    async navigate(url) {
-        const step = {
-            step_id: `navigate_${Date.now()}`,
-            action: 'navigate',
-            value: url,
-            timeout_ms: 10000
-        };
-        return await this.executeStep(step);
-    }
-
-    async extractText(selector) {
-        const step = {
-            step_id: `extract_${Date.now()}`,
-            action: 'extract_text',
-            selector: selector,
-            timeout_ms: 5000
-        };
-        return await this.executeStep(step);
-    }
-}
-
-// Tab Management Integration
-class TabManager {
-    constructor(state) {
-        this.state = state;
-        this.tabRegistry = new Map();
-    }
-
-    async discoverTabs() {
-        try {
-            const tabs = await chrome.tabs.query({});
-            this.tabRegistry.clear();
-            
-            tabs.forEach(tab => {
-                if (tab.id && tab.url && !tab.url.startsWith('chrome://')) {
-                    this.tabRegistry.set(tab.id.toString(), {
-                        id: tab.id.toString(),
-                        title: tab.title || 'Untitled',
-                        url: tab.url,
-                        favicon: tab.favIconUrl || this.getDefaultFavicon(tab.url),
-                        active: tab.active,
-                        windowId: tab.windowId
-                    });
-                }
-            });
-
-            // Get current active tab
-            const activeTab = tabs.find(tab => tab.active);
-            if (activeTab) {
-                this.state.activeTabId = activeTab.id.toString();
-            }
-
-            return Array.from(this.tabRegistry.values());
-        } catch (error) {
-            console.error('Failed to discover tabs:', error);
-            return [];
-        }
-    }
-
-    getDefaultFavicon(url) {
-        try {
-            const domain = new URL(url).hostname;
-            return `https://www.google.com/s2/favicons?domain=${domain}&sz=16`;
-        } catch (error) {
-            return 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><rect fill="%23667" width="16" height="16"/></svg>';
-        }
-    }
-
-    async switchToTab(tabId) {
-        try {
-            await chrome.tabs.update(parseInt(tabId), { active: true });
-            this.state.activeTabId = tabId;
-            return true;
-        } catch (error) {
-            console.error('Failed to switch tab:', error);
-            return false;
-        }
-    }
-
-    getActiveTab() {
-        return this.tabRegistry.get(this.state.activeTabId);
-    }
-
-    getAllTabs() {
-        return Array.from(this.tabRegistry.values());
-    }
-}
-
-// Command Processing
-class CommandManager {
-    constructor(state, audioManager, rpaManager, tabManager) {
-        this.state = state;
-        this.audioManager = audioManager;
-        this.rpaManager = rpaManager;
-        this.tabManager = tabManager;
-        this.smartSuggestions = [
-            'Summarize this page',
-            'Extract all links',
-            'Find contact information',
-            'Translate to English',
-            'Click the login button',
-            'Fill the search form',
-            'Take a screenshot',
-            'Scroll to bottom'
-        ];
-    }
-
-    async executeCommand(command) {
-        try {
-            uiManager.addMessage(command, 'user');
-            
-            // Process command
-            const response = await this.processCommand(command);
-            
-            // Add to history
-            this.state.addToHistory(command, response);
-            
-            // Display response
-            uiManager.addMessage(response.text, 'assistant');
-            
-            // Speak response if enabled
-            if (this.state.settings.voiceEnabled) {
-                await this.audioManager.speak(response.text);
-            }
-            
-        } catch (error) {
-            console.error('Command execution failed:', error);
-            uiManager.showError('Command failed: ' + error.message);
-        }
-    }
-
-    async processCommand(command) {
-        const lowerCommand = command.toLowerCase();
-        
-        // Page analysis commands
-        if (lowerCommand.includes('summarize') || lowerCommand.includes('summary')) {
-            return await this.summarizePage();
-        }
-        
-        if (lowerCommand.includes('extract') && lowerCommand.includes('link')) {
-            return await this.extractLinks();
-        }
-        
-        if (lowerCommand.includes('translate')) {
-            return await this.translatePage();
-        }
-        
-        // RPA commands
-        if (lowerCommand.includes('click')) {
-            return await this.handleClickCommand(command);
-        }
-        
-        if (lowerCommand.includes('fill') || lowerCommand.includes('type')) {
-            return await this.handleFillCommand(command);
-        }
-        
-        if (lowerCommand.includes('scroll')) {
-            return await this.handleScrollCommand(command);
-        }
-        
-        if (lowerCommand.includes('screenshot')) {
-            return await this.takeScreenshot();
-        }
-        
-        // Tab management
-        if (lowerCommand.includes('switch tab') || lowerCommand.includes('go to tab')) {
-            return await this.handleTabSwitch(command);
-        }
-        
-        // Default AI response
-        return await this.getAIResponse(command);
-    }
-
-    async summarizePage() {
-        try {
-            const response = await chrome.runtime.sendMessage({
-                type: 'SUMMARIZE_PAGE',
-                tabId: this.state.activeTabId
-            });
-            
-            return {
-                text: response.summary || 'Page summary not available',
-                type: 'summary'
-            };
-        } catch (error) {
-            return { text: 'Failed to summarize page: ' + error.message, type: 'error' };
-        }
-    }
-
-    async extractLinks() {
-        try {
-            const response = await chrome.runtime.sendMessage({
-                type: 'EXTRACT_LINKS',
-                tabId: this.state.activeTabId
-            });
-            
-            const links = response.links || [];
-            if (links.length === 0) {
-                return { text: 'No links found on this page', type: 'info' };
-            }
-            
-            const linkText = links.slice(0, 10).map((link, i) => 
-                `${i + 1}. ${link.text || link.url} - ${link.url}`
-            ).join('\n');
-            
-            return {
-                text: `Found ${links.length} links:\n\n${linkText}${links.length > 10 ? '\n\n... and more' : ''}`,
-                type: 'links'
-            };
-        } catch (error) {
-            return { text: 'Failed to extract links: ' + error.message, type: 'error' };
-        }
-    }
-
-    async handleClickCommand(command) {
-        // Simple element detection
-        const selectors = [
-            'button', 'input[type="button"]', 'input[type="submit"]', 
-            '[role="button"]', '.btn', '#submit'
-        ];
-        
-        for (const selector of selectors) {
-            try {
-                const result = await this.rpaManager.clickElement(selector);
-                return { text: `Clicked element: ${selector}`, type: 'action' };
-            } catch (error) {
-                // Try next selector
-            }
-        }
-        
-        return { text: 'Could not find clickable element', type: 'error' };
-    }
-
-    async handleFillCommand(command) {
-        // Extract field type and value from command
-        const fieldMatch = command.match(/fill\s+(.+?)\s+with\s+(.+)/i);
-        if (!fieldMatch) {
-            return { text: 'Please specify: fill [field] with [value]', type: 'info' };
-        }
-        
-        const [, fieldType, value] = fieldMatch;
-        const selector = this.getFieldSelector(fieldType);
-        
-        try {
-            await this.rpaManager.fillField(selector, value);
-            return { text: `Filled ${fieldType} with: ${value}`, type: 'action' };
-        } catch (error) {
-            return { text: `Failed to fill ${fieldType}: ${error.message}`, type: 'error' };
-        }
-    }
-
-    getFieldSelector(fieldType) {
-        const selectorMap = {
-            'email': 'input[type="email"]',
-            'password': 'input[type="password"]',
-            'search': 'input[type="search"], [name*="search"]',
-            'name': 'input[name*="name"], [name*="user"]',
-            'username': 'input[name*="user"], [name*="login"]'
-        };
-        
-        return selectorMap[fieldType.toLowerCase()] || 'input[type="text"]';
-    }
-
-    async handleScrollCommand(command) {
-        try {
-            if (command.includes('bottom')) {
-                await chrome.runtime.sendMessage({
-                    type: 'SCROLL_TO',
-                    tabId: this.state.activeTabId,
-                    position: 'bottom'
-                });
-                return { text: 'Scrolled to bottom of page', type: 'action' };
-            } else if (command.includes('top')) {
-                await chrome.runtime.sendMessage({
-                    type: 'SCROLL_TO',
-                    tabId: this.state.activeTabId,
-                    position: 'top'
-                });
-                return { text: 'Scrolled to top of page', type: 'action' };
-            } else {
-                return { text: 'Please specify: scroll to top or bottom', type: 'info' };
-            }
-        } catch (error) {
-            return { text: 'Failed to scroll: ' + error.message, type: 'error' };
-        }
-    }
-
-    async takeScreenshot() {
-        try {
-            const response = await chrome.runtime.sendMessage({
-                type: 'TAKE_SCREENSHOT',
-                tabId: this.state.activeTabId
-            });
-            
-            return { text: 'Screenshot captured successfully', type: 'action' };
-        } catch (error) {
-            return { text: 'Failed to take screenshot: ' + error.message, type: 'error' };
-        }
-    }
-
-    async handleTabSwitch(command) {
-        const tabs = await this.tabManager.discoverTabs();
-        
-        // Simple tab number detection
-        const tabMatch = command.match(/tab\s+(\d+)/i);
-        if (tabMatch) {
-            const tabIndex = parseInt(tabMatch[1]) - 1;
-            if (tabIndex >= 0 && tabIndex < tabs.length) {
-                const tab = tabs[tabIndex];
-                await this.tabManager.switchToTab(tab.id);
-                return { text: `Switched to: ${tab.title}`, type: 'action' };
-            }
-        }
-        
-        return { text: 'Please specify a valid tab number', type: 'info' };
-    }
-
-    async getAIResponse(command) {
-        try {
-            const response = await chrome.runtime.sendMessage({
-                type: 'AI_QUERY',
-                command: command,
-                tabId: this.state.activeTabId,
-                context: this.getPageContext()
-            });
-            
-            return {
-                text: response.response || 'I can help you with that! Try asking me to summarize the page, extract links, or perform actions.',
-                type: 'ai'
-            };
-        } catch (error) {
-            return { 
-                text: "I'm here to help! You can ask me to:\n• Summarize the current page\n• Extract links or information\n• Click buttons or fill forms\n• Take screenshots\n• Switch between tabs", 
-                type: 'help' 
-            };
-        }
-    }
-
-    getPageContext() {
-        const activeTab = this.tabManager.getActiveTab();
-        return {
-            url: activeTab?.url || '',
-            title: activeTab?.title || '',
-            timestamp: new Date().toISOString()
-        };
-    }
-
-    updateSuggestions() {
-        if (!this.state.settings.smartSuggestions) return;
-        
-        const suggestionsContainer = document.getElementById('suggestions');
-        if (!suggestionsContainer) return;
-        
-        // Clear existing suggestions
-        suggestionsContainer.innerHTML = '';
-        
-        // Add contextual suggestions
-        this.smartSuggestions.slice(0, 4).forEach(suggestion => {
-            const chip = document.createElement('div');
-            chip.className = 'suggestion-chip';
-            chip.textContent = suggestion;
-            chip.onclick = () => {
-                const input = document.getElementById('commandInput');
-                if (input) {
-                    input.value = suggestion;
-                    input.focus();
-                }
-            };
-            suggestionsContainer.appendChild(chip);
-        });
-    }
-}
-
-// UI Management
-class UIManager {
-    constructor(state) {
-        this.state = state;
-        this.initializeEventListeners();
-        this.loadHistory();
-    }
-
-    initializeEventListeners() {
-        // Tab navigation
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                this.switchTab(e.target.dataset.tab);
-            });
-        });
-
-        // Command input
-        const commandInput = document.getElementById('commandInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const voiceBtn = document.getElementById('voiceBtn');
-        const voiceRoundtripBtn = document.getElementById('voiceRoundtripBtn');
-        const webrtcTestBtn = document.getElementById('webrtcTestBtn');
-        const testConnectionBtn = document.getElementById('testConnectionBtn');
-
-        if (commandInput) {
-            commandInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.handleCommandSubmit();
-                }
-            });
-        }
-
-        if (sendBtn) {
-            sendBtn.addEventListener('click', () => this.handleCommandSubmit());
-        }
-
-        if (voiceBtn) {
-            voiceBtn.addEventListener('click', () => this.toggleVoiceInput());
-        }
-
-        if (voiceRoundtripBtn) {
-            voiceRoundtripBtn.addEventListener('click', () => this.handleVoiceRoundtrip());
-        }
-
-        if (webrtcTestBtn) {
-            webrtcTestBtn.addEventListener('click', () => this.handleWebRTCTest());
-        }
-
-        if (testConnectionBtn) {
-            testConnectionBtn.addEventListener('click', () => this.handleTestConnection());
-        }
-
-        // Settings
-        this.initializeSettings();
-    }
-
-    initializeSettings() {
-        // Language select
-        const languageSelect = document.getElementById('languageSelect');
-        if (languageSelect) {
-            languageSelect.value = this.state.settings.language;
-            languageSelect.addEventListener('change', (e) => {
-                this.state.settings.language = e.target.value;
-                this.state.saveSettings();
-            });
-        }
-
-        // Toggle switches
-        const toggles = [
-            'voiceToggle', 'autoListenToggle', 'smartSuggestionsToggle',
-            'contextAwareToggle', 'saveHistoryToggle', 'analyticsToggle'
-        ];
-
-        toggles.forEach(toggleId => {
-            const toggle = document.getElementById(toggleId);
-            if (toggle) {
-                const settingKey = this.getSettingKey(toggleId);
-                toggle.classList.toggle('active', this.state.settings[settingKey]);
-                
-                toggle.addEventListener('click', () => {
-                    toggle.classList.toggle('active');
-                    this.state.settings[settingKey] = toggle.classList.contains('active');
-                    this.state.saveSettings();
-                });
-            }
-        });
-
-        // Backend URL
-        const backendUrl = document.getElementById('backendUrl');
-        if (backendUrl) {
-            backendUrl.value = this.state.settings.backendUrl;
-            backendUrl.addEventListener('change', (e) => {
-                this.state.settings.backendUrl = e.target.value;
-                this.state.saveSettings();
-            });
-        }
-    }
-
-    getSettingKey(toggleId) {
-        const keyMap = {
-            'voiceToggle': 'voiceEnabled',
-            'autoListenToggle': 'autoListen',
-            'smartSuggestionsToggle': 'smartSuggestions',
-            'contextAwareToggle': 'contextAware',
-            'saveHistoryToggle': 'saveHistory',
-            'analyticsToggle': 'analytics'
-        };
-        return keyMap[toggleId] || toggleId;
-    }
-
-    switchTab(tabName) {
-        // Update tab buttons
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.tab === tabName);
-        });
-
-        // Update tab content
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.toggle('active', content.id === `${tabName}-tab`);
-        });
-
-        this.state.currentTab = tabName;
-
-        // Load tab-specific content
-        if (tabName === 'tabs') {
-            this.loadTabs();
-        } else if (tabName === 'history') {
-            this.loadHistory();
-        }
-    }
-
-    async handleCommandSubmit() {
-        const input = document.getElementById('commandInput');
-        if (!input || !input.value.trim()) return;
-
-        const command = input.value.trim();
-        input.value = '';
-
-        await commandManager.executeCommand(command);
-    }
-
-    async handleTestConnection() {
-        const testBtn = document.getElementById('testConnectionBtn');
-        if (testBtn) {
-            testBtn.textContent = '⏳ Testing...';
-            testBtn.style.background = 'var(--warning)';
-        }
-
-        try {
-            // Send test message to background script
-            const response = await chrome.runtime.sendMessage({
-                type: 'TEST_CONNECTION',
-                timestamp: Date.now()
-            });
-
-            if (response && response.success) {
-                this.addMessage('✅ Test message sent successfully', 'assistant');
-                this.showSuccess('Connection test: Message sent to cloud');
-            } else {
-                this.addMessage('❌ Test message failed', 'assistant');
-                this.showError(`Connection test failed: ${response?.error || 'Unknown error'}`);
-            }
-        } catch (error) {
-            this.addMessage('❌ Connection test failed', 'assistant');
-            this.showError(`Connection test error: ${error.message}`);
-        } finally {
-            if (testBtn) {
-                testBtn.textContent = '🔄 Test Connection';
-                testBtn.style.background = 'var(--info)';
-            }
-        }
-    }
-
-    async toggleVoiceInput() {
-        if (this.state.isListening) {
-            audioManager.stopListening();
-        } else {
-            await audioManager.startListening();
-        }
-    }
-
-    async handleVoiceRoundtrip() {
-        const btn = document.getElementById('voiceRoundtripBtn');
-        if (btn) {
-            btn.textContent = '🎙️ Listening...';
-            btn.style.background = 'var(--warning)';
-        }
-
-        try {
-            console.log(`[VOICE ROUNDTRIP] Starting voice roundtrip...`);
-            this.addMessage('🎤 Voice roundtrip started. Speak now...', 'assistant');
-
-            // Start listening for voice input
-            await audioManager.startListening();
-            
-            // Voice roundtrip will be handled automatically in AudioManager.onSTTResult
-            
-        } catch (error) {
-            console.error(`[VOICE ROUNDTRIP] Error:`, error);
-            this.addMessage(`❌ Voice roundtrip failed: ${error.message}`, 'assistant');
-            
-            if (btn) {
-                btn.textContent = '🎤 Voice Roundtrip';
-                btn.style.background = 'var(--success)';
-            }
-        }
-    }
-
-    async handleWebRTCTest() {
-        const btn = document.getElementById('webrtcTestBtn');
-        if (btn) {
-            btn.textContent = '🎥 Testing...';
-            btn.style.background = 'var(--warning)';
-        }
-
-        try {
-            console.log(`[WEBRTC TEST] Starting WebRTC test...`);
-            this.addMessage('🎥 Testing WebRTC audio injection...', 'assistant');
-
-            // Check WebRTC status
-            await audioManager.checkWebRTCStatus();
-            
-            if (audioManager.webrtcDetected && audioManager.audioInjectionEnabled) {
-                // Test audio injection
-                const testMessage = "Hello, this is a test of WebRTC audio injection. Can you hear me?";
-                await audioManager.injectAudioIntoWebRTC(testMessage);
-                
-                this.addMessage('🎥 WebRTC test message sent', 'assistant');
-                this.showSuccess('WebRTC audio injection test completed');
-            } else {
-                this.addMessage('❌ WebRTC not ready for audio injection', 'assistant');
-                this.showError('WebRTC audio injection not available');
-            }
-            
-        } catch (error) {
-            console.error(`[WEBRTC TEST] Error:`, error);
-            this.addMessage(`❌ WebRTC test failed: ${error.message}`, 'assistant');
-        } finally {
-            if (btn) {
-                btn.textContent = '🎥 Test WebRTC';
-                btn.style.background = 'var(--accent)';
-            }
-        }
-    }
-
-    updateVoiceButton(isRecording) {
-        const voiceBtn = document.getElementById('voiceBtn');
-        if (!voiceBtn) return;
-
-        voiceBtn.classList.toggle('recording', isRecording);
-        voiceBtn.innerHTML = isRecording ? '⏹️' : '🎤';
-    }
-
-    addMessage(text, type = 'assistant') {
-        const conversation = document.getElementById('conversation');
-        if (!conversation) return;
-
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${type}`;
-        
-        const textDiv = document.createElement('div');
-        textDiv.textContent = text;
-        
-        const timeDiv = document.createElement('div');
-        timeDiv.className = 'message-time';
-        timeDiv.textContent = new Date().toLocaleTimeString();
-        
-        messageDiv.appendChild(textDiv);
-        messageDiv.appendChild(timeDiv);
-        conversation.appendChild(messageDiv);
-
-        // Scroll to bottom
-        conversation.scrollTop = conversation.scrollHeight;
-    }
-
-    async loadTabs() {
-        const tabList = document.getElementById('tabList');
-        if (!tabList) return;
-
-        tabList.innerHTML = '<div class="loading"><div class="spinner"></div>Loading tabs...</div>';
-
-        try {
-            const tabs = await tabManager.discoverTabs();
-            this.renderTabs(tabs);
-        } catch (error) {
-            tabList.innerHTML = '<div class="error-message">Failed to load tabs</div>';
-        }
-    }
-
-    renderTabs(tabs) {
-        const tabList = document.getElementById('tabList');
-        if (!tabList) return;
-
-        if (tabs.length === 0) {
-            tabList.innerHTML = '<div class="error-message">No tabs available</div>';
-            return;
-        }
-
-        tabList.innerHTML = '';
-        
-        tabs.forEach(tab => {
-            const tabItem = document.createElement('div');
-            tabItem.className = 'tab-item';
-            tabItem.classList.toggle('active', tab.id === this.state.activeTabId);
-            
-            tabItem.innerHTML = `
-                <img class="tab-favicon" src="${tab.favicon}" alt="">
-                <div class="tab-info">
-                    <div class="tab-title">${tab.title}</div>
-                    <div class="tab-url">${tab.url}</div>
-                </div>
-            `;
-
-            tabItem.addEventListener('click', async () => {
-                await tabManager.switchToTab(tab.id);
-                this.loadTabs(); // Refresh to update active state
-            });
-
-            tabList.appendChild(tabItem);
-        });
-    }
-
-    loadHistory() {
-        const historyList = document.getElementById('historyList');
-        if (!historyList) return;
-
-        const history = this.state.loadHistory();
-        
-        if (history.length === 0) {
-            historyList.innerHTML = '<div class="error-message">No command history</div>';
-            return;
-        }
-
-        historyList.innerHTML = '';
-        
-        history.forEach(item => {
-            const historyItem = document.createElement('div');
-            historyItem.className = 'history-item';
-            
-            const time = new Date(item.timestamp).toLocaleString();
-            
-            historyItem.innerHTML = `
-                <div class="history-command">${item.command}</div>
-                <div class="history-time">${time}</div>
-            `;
-
-            historyItem.addEventListener('click', () => {
-                const input = document.getElementById('commandInput');
-                if (input) {
-                    input.value = item.command;
-                    input.focus();
-                }
-            });
-
-            historyList.appendChild(historyItem);
-        });
-    }
-
-    updateConnectionStatus(status, message = '') {
-        const connectionDot = document.getElementById('connectionDot');
-        const connectionStatus = document.getElementById('connectionStatus');
-        
-        if (connectionDot) {
-            connectionDot.className = `status-dot ${status}`;
-        }
-        
-        if (connectionStatus) {
-            connectionStatus.textContent = message || status.charAt(0).toUpperCase() + status.slice(1);
-        }
-        
-        this.state.connectionStatus = status;
-    }
-
-    updateSessionInfo(info) {
-        const sessionInfo = document.getElementById('sessionInfo');
-        if (sessionInfo) {
-            sessionInfo.textContent = info;
-        }
-    }
-
-    showError(message) {
-        this.addMessage(`❌ Error: ${message}`, 'assistant');
-    }
-
-    showSuccess(message) {
-        this.addMessage(`✅ ${message}`, 'assistant');
-    }
-
-    showInfo(message) {
-        this.addMessage(`ℹ️ ${message}`, 'assistant');
-    }
-}
-
-// Initialize Application
-let state, audioManager, rpaManager, tabManager, commandManager, uiManager;
-
-document.addEventListener('DOMContentLoaded', async () => {
-    // Initialize state
-    state = new SidePanelState();
-    
-    // Set default backend URL from config if available
-    const backendUrlInput = document.getElementById('backendUrl');
-    if (backendUrlInput && !backendUrlInput.value) {
-        const defaultUrl = backendUrlInput.getAttribute('data-default');
-        if (defaultUrl) {
-            backendUrlInput.value = defaultUrl;
-        }
-    }
-    
-    // Initialize managers
-    audioManager = new AudioManager(state);
-    rpaManager = new RPAManager(state);
-    tabManager = new TabManager(state);
-    commandManager = new CommandManager(state, audioManager, rpaManager, tabManager);
-    uiManager = new UIManager(state);
-
-    // Load initial data
-    await tabManager.discoverTabs();
-    commandManager.updateSuggestions();
-
-    // Setup background script communication
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        handleBackgroundMessage(message, sender, sendResponse);
-        return true; // Keep message channel open
+// ==============================
+// KELEDON Side Panel (STABLE CORE)
+// ==============================
+
+// Phase O/N-2/3: Real STT/TTS implementation
+let sttRecognition = null;
+let isSTTListening = false;
+let ttsSpeech = null;
+let isTTSSpeaking = false;
+let agentActive = true; // Master toggle for agent control
+
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('[KELEDON] Side panel loaded - Phase O/N-1');
+
+  const sendBtn = document.getElementById('sendBtn');
+  const voiceBtn = document.getElementById('voiceBtn');
+  const commandInput = document.getElementById('commandInput');
+
+  // Phase O/N-3: Initialize TTS first
+  initializeTTS();
+  
+  // Phase O/N-2: Initialize STT
+  initializeSTT();
+  
+  // Phase O/N-1: Test basic connectivity
+  testBasicConnectivity();
+
+  // ---- PHASE O/N-2: VOICE BUTTON (REAL STT) ----
+  if (voiceBtn) {
+    voiceBtn.addEventListener('click', () => {
+      if (isSTTListening) {
+        stopSTTListening();
+      } else {
+        startSTTListening();
+      }
     });
+    
+    // Enable voice button since we now have real STT
+    voiceBtn.disabled = false;
+    voiceBtn.title = 'Real Speech-to-Text';
+  }
 
-    // Check connection status
-    checkBackendConnection();
-    
-    // Set up periodic connection check
-    setInterval(checkBackendConnection, 5000); // Check every 5 seconds
-    
-    // Set up periodic WebRTC status check
-    setInterval(() => {
-        if (audioManager) {
-            audioManager.checkWebRTCStatus();
+  // ---- TTS TEST BUTTON ----
+  const testTTSDryRun = document.getElementById('testTTSDryRun');
+  if (testTTSDryRun) {
+    testTTSDryRun.addEventListener('click', () => {
+      const testText = "KELEDON TTS test - this is real text-to-speech output";
+      speakText(testText);
+    });
+  }
+
+  // ---- CONNECTION TEST BUTTON ----
+  const testConnectionBtn = document.getElementById('testConnectionBtn');
+  if (testConnectionBtn) {
+    testConnectionBtn.addEventListener('click', () => {
+      addMessage('🔄 Testing service worker connection…', 'assistant');
+      chrome.runtime.sendMessage({ type: 'PING' }, (response) => {
+        if (response && response.type === 'PONG') {
+          addMessage('✅ Service worker connection OK', 'assistant');
+        } else {
+          addMessage('❌ Service worker not responding', 'assistant');
         }
-    }, 3000); // Check every 3 seconds
+      });
+    });
+  }
 
-    // Update version
-    const manifest = chrome.runtime.getManifest();
-    const versionElement = document.getElementById('version');
-    if (versionElement) {
-        versionElement.textContent = `v${manifest.version}`;
+  // ---- STATUS CHECK BUTTON ----
+  const checkStatusBtn = document.getElementById('checkStatusBtn');
+  if (checkStatusBtn) {
+    checkStatusBtn.addEventListener('click', () => {
+      chrome.runtime.sendMessage({ type: 'GET_STATUS' }, (response) => {
+        if (response) {
+          const statusText = `Agent: ${response.agentActive ? 'Active' : 'Inactive'}, STT: ${response.sttEnabled ? 'Enabled' : 'Disabled'}, TTS: ${response.ttsEnabled ? 'Enabled' : 'Disabled'}`;
+          addMessage(statusText, 'assistant');
+        } else {
+          addMessage('❌ Failed to get status', 'assistant');
+        }
+      });
+    });
+  }
+
+  // ---- AGENT ACTIVE TOGGLE ----
+  const agentActiveToggle = document.getElementById('agentActiveToggle');
+  if (agentActiveToggle) {
+    agentActiveToggle.addEventListener('click', () => {
+      // Update UI immediately
+      agentActiveToggle.classList.toggle('active');
+      
+      // Send toggle request to service worker
+      chrome.runtime.sendMessage({ type: 'TOGGLE_AGENT' }, (response) => {
+        if (response && response.agentActive !== undefined) {
+          agentActive = response.agentActive;
+          console.log('[KELEDON] Agent active state:', agentActive);
+          
+          // Sync UI with actual state
+          if (agentActive) {
+            agentActiveToggle.classList.add('active');
+          } else {
+            agentActiveToggle.classList.remove('active');
+            
+            // Stop STT if agent becomes inactive
+            if (isSTTListening) {
+              stopSTTListening();
+              addMessage('🔇 Agent deactivated - STT stopped', 'assistant');
+            }
+          }
+        }
+      });
+    });
+  }
+
+  // ---- SEND COMMAND ----
+  if (sendBtn && commandInput) {
+    sendBtn.addEventListener('click', async () => {
+      const text = commandInput.value.trim();
+      if (!text) return;
+
+      addMessage(text, 'user');
+      commandInput.value = '';
+
+      // Phase O/N-1: Simple message test (can be upgraded later)
+      chrome.runtime.sendMessage({
+        type: 'TEST_MESSAGE',
+        text: text
+      }, async (response) => {
+        if (response) {
+          const responseText = `✅ Message received by service worker`;
+          addMessage(responseText, 'assistant');
+          
+          // Phase O/N-3: Speak the response using TTS
+          if (agentActive) {
+            await speakText(responseText);
+          }
+        } else {
+          const errorText = `❌ No response from service worker`;
+          addMessage(errorText, 'assistant');
+          
+          // Phase O/N-3: Speak errors too
+          if (agentActive) {
+            await speakText(errorText);
+          }
+        }
+      });
+    });
+  }
+
+  // ---- PHASE O/N-1: STATUS UPDATES ----
+  // Request status updates periodically
+  setInterval(() => {
+    chrome.runtime.sendMessage({ type: 'GET_STATUS' }, (response) => {
+      if (response) {
+        updateStatusUI(response);
+      } else {
+        console.error('[KELEDON] No status response from service worker');
+      }
+    });
+  }, 3000);
+
+  // Initial status request
+  chrome.runtime.sendMessage({ type: 'GET_STATUS' }, (response) => {
+    if (response) {
+      updateStatusUI(response);
+    } else {
+      console.error('[KELEDON] Initial status request failed');
     }
-
-    console.log('KELEDON Side Panel initialized');
+  });
 });
 
-async function handleBackgroundMessage(message, sender, sendResponse) {
+// ==============================
+// Phase O/N-3: Real TTS Implementation
+// ==============================
+
+function initializeTTS() {
+  console.log('[KELEDON] Initializing TTS...');
+  
+  // Check if speechSynthesis is available
+  if (!('speechSynthesis' in window)) {
+    console.error('[KELEDON] TTS not supported in this browser');
+    addMessage('❌ TTS not supported in this browser', 'assistant');
+    updateTTSStatus('unsupported');
+    return;
+  }
+  
+  // Test TTS by getting voices
+  const loadVoices = () => {
+    const voices = speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      console.log('[KELEDON] TTS voices available:', voices.length);
+      addMessage(`✅ TTS initialized (${voices.length} voices available)`, 'assistant');
+      updateTTSStatus('ready');
+    } else {
+      console.warn('[KELEDON] No TTS voices available');
+      addMessage('⚠️ No TTS voices available', 'assistant');
+      updateTTSStatus('error');
+    }
+  };
+  
+  // Chrome loads voices asynchronously
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+  
+  // Initial voice load
+  loadVoices();
+  
+  console.log('[KELEDON] TTS initialization started');
+}
+
+function speakText(text) {
+  if (!agentActive) {
+    addMessage('❌ Agent is inactive - TTS disabled', 'assistant');
+    return Promise.resolve(false);
+  }
+  
+  if (!('speechSynthesis' in window)) {
+    addMessage('❌ TTS not available', 'assistant');
+    return Promise.resolve(false);
+  }
+  
+  // Cancel any ongoing speech
+  speechSynthesis.cancel();
+  
+  // Create utterance
+  const utterance = new SpeechSynthesisUtterance(text);
+  
+  // Configure utterance
+  const voices = speechSynthesis.getVoices();
+  if (voices.length > 0) {
+    // Prefer English voices
+    const englishVoice = voices.find(voice => 
+      voice.lang.startsWith('en') && voice.localService
+    ) || voices.find(voice => voice.lang.startsWith('en')) || voices[0];
+    utterance.voice = englishVoice;
+  }
+  
+  utterance.rate = 1.0;
+  utterance.pitch = 1.0;
+  utterance.volume = 1.0;
+  
+  // Setup event handlers
+  utterance.onstart = () => {
+    console.log('[KELEDON] TTS started speaking:', text);
+    isTTSSpeaking = true;
+    updateTTSStatus('speaking');
+    addMessage(`🔊 Speaking: "${text}"`, 'assistant');
+  };
+  
+  utterance.onend = () => {
+    console.log('[KELEDON] TTS finished speaking');
+    isTTSSpeaking = false;
+    updateTTSStatus('ready');
+  };
+  
+  utterance.onerror = (event) => {
+    console.error('[KELEDON] TTS error:', event.error);
+    isTTSSpeaking = false;
+    updateTTSStatus('error');
+    
+    let errorMessage = '❌ TTS error';
+    switch (event.error) {
+      case 'network':
+        errorMessage = '❌ TTS network error';
+        break;
+      case 'synthesis-unavailable':
+        errorMessage = '❌ TTS synthesis unavailable';
+        break;
+      case 'language-unavailable':
+        errorMessage = '❌ TTS language unavailable';
+        break;
+      default:
+        errorMessage = `❌ TTS error: ${event.error}`;
+    }
+    
+    addMessage(errorMessage, 'assistant');
+  };
+  
+  // Start speaking
+  try {
+    speechSynthesis.speak(utterance);
+    console.log('[KELEDON] TTS speak requested for:', text);
+    return Promise.resolve(true);
+  } catch (error) {
+    console.error('[KELEDON] Failed to start TTS:', error);
+    addMessage('❌ Failed to start TTS', 'assistant');
+    return Promise.resolve(false);
+  }
+}
+
+function stopTTS() {
+  if (!isTTSSpeaking) {
+    return;
+  }
+  
+  try {
+    speechSynthesis.cancel();
+    console.log('[KELEDON] TTS stop requested');
+    isTTSSpeaking = false;
+    updateTTSStatus('ready');
+  } catch (error) {
+    console.warn('[KELEDON] TTS stop error:', error);
+  }
+}
+
+function updateTTSStatus(status) {
+  const ttsStatus = document.getElementById('ttsStatus');
+  if (!ttsStatus) return;
+  
+  // Remove all status classes
+  ttsStatus.className = 'status-dot';
+  
+  // Apply appropriate status
+  switch (status) {
+    case 'speaking':
+      ttsStatus.className = 'status-dot speaking';
+      break;
+    case 'ready':
+      ttsStatus.className = 'status-dot ready';
+      break;
+    case 'error':
+      ttsStatus.className = 'status-dot error';
+      break;
+    case 'unsupported':
+      ttsStatus.className = 'status-dot error';
+      break;
+    default:
+      ttsStatus.className = 'status-dot';
+  }
+  
+  console.log('[KELEDON] TTS status updated to:', status);
+}
+
+// ==============================
+// Phase O/N-2: Real STT Implementation
+// ==============================
+
+function initializeSTT() {
+  console.log('[KELEDON] Initializing STT...');
+  
+  // Check if Web Speech API is supported
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    console.error('[KELEDON] STT not supported in this browser');
+    addMessage('❌ STT not supported in this browser', 'assistant');
+    
+    // Update UI to show STT unavailable
+    updateSTTStatus('unsupported');
+    return;
+  }
+  
+  // Create SpeechRecognition instance
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  sttRecognition = new SpeechRecognition();
+  
+  // Configure STT
+  sttRecognition.continuous = false;
+  sttRecognition.interimResults = true;
+  sttRecognition.lang = 'en-US';
+  sttRecognition.maxAlternatives = 1;
+  
+  // Setup event handlers
+  sttRecognition.onstart = () => {
+    console.log('[KELEDON] STT listening started');
+    isSTTListening = true;
+    updateSTTStatus('listening');
+    addMessage('🎤 Listening...', 'assistant');
+    
+    if (voiceBtn) {
+      voiceBtn.classList.add('recording');
+      voiceBtn.textContent = '⏹️';
+    }
+  };
+  
+  sttRecognition.onresult = (event) => {
+    console.log('[KELEDON] STT result:', event);
+    
+    let finalTranscript = '';
+    let interimTranscript = '';
+    
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const result = event.results[i];
+      if (result.isFinal) {
+        finalTranscript += result[0].transcript;
+      } else {
+        interimTranscript += result[0].transcript;
+      }
+    }
+    
+    if (finalTranscript) {
+      console.log('[KELEDON] Final transcript:', finalTranscript);
+      addMessage(`🎤 "${finalTranscript}"`, 'user');
+      
+      // Update command input with transcript
+      if (commandInput) {
+        commandInput.value = finalTranscript;
+      }
+      
+      // Stop listening after final result
+      stopSTTListening();
+    } else if (interimTranscript) {
+      console.log('[KELEDON] Interim transcript:', interimTranscript);
+      // Could show interim results in UI if desired
+    }
+  };
+  
+  sttRecognition.onerror = (event) => {
+    console.error('[KELEDON] STT error:', event.error);
+    
+    let errorMessage = '❌ STT error';
+    switch (event.error) {
+      case 'no-speech':
+        errorMessage = '❌ No speech detected';
+        break;
+      case 'audio-capture':
+        errorMessage = '❌ Microphone not available';
+        break;
+      case 'not-allowed':
+        errorMessage = '❌ Microphone permission denied';
+        break;
+      case 'network':
+        errorMessage = '❌ Network error';
+        break;
+      default:
+        errorMessage = `❌ STT error: ${event.error}`;
+    }
+    
+    addMessage(errorMessage, 'assistant');
+    stopSTTListening();
+  };
+  
+  sttRecognition.onend = () => {
+    console.log('[KELEDON] STT listening ended');
+    stopSTTListening();
+  };
+  
+  console.log('[KELEDON] STT initialized successfully');
+  addMessage('✅ STT initialized', 'assistant');
+  updateSTTStatus('ready');
+}
+
+function startSTTListening() {
+  if (!agentActive) {
+    addMessage('❌ Agent is inactive - STT disabled', 'assistant');
+    return;
+  }
+  
+  if (!sttRecognition) {
+    addMessage('❌ STT not initialized', 'assistant');
+    return;
+  }
+  
+  if (isSTTListening) {
+    console.log('[KELEDON] STT already listening');
+    return;
+  }
+  
+  try {
+    sttRecognition.start();
+    console.log('[KELEDON] STT start requested');
+  } catch (error) {
+    console.error('[KELEDON] Failed to start STT:', error);
+    addMessage('❌ Failed to start STT', 'assistant');
+  }
+}
+
+function stopSTTListening() {
+  if (!isSTTListening) {
+    return;
+  }
+  
+  isSTTListening = false;
+  updateSTTStatus('ready');
+  
+  if (voiceBtn) {
+    voiceBtn.classList.remove('recording');
+    voiceBtn.textContent = '🎤';
+  }
+  
+  // Stop recognition if it's running
+  if (sttRecognition) {
     try {
-        switch (message.type) {
-            case 'CONNECTION_STATUS':
-                // Real connection status from WebSocket client
-                if (message.status === 'connected') {
-                    uiManager.updateConnectionStatus('connected', 'Connected to Cloud');
-                    if (message.sessionId) {
-                        // Show real session info (anti-demo: no fake sessions)
-                        const sessionPreview = `Session ${message.sessionId.substring(0, 8)}...`;
-                        uiManager.updateSessionInfo(sessionPreview);
-                    }
-                } else if (message.status === 'connecting') {
-                    uiManager.updateConnectionStatus('connecting', 'Creating session...');
-                } else if (message.status === 'error') {
-                    uiManager.updateConnectionStatus('error', `Error: ${message.error || 'Connection failed'}`);
-                    uiManager.updateSessionInfo('Session failed');
-                } else if (message.status === 'failed') {
-                    // Show failure when cloud unavailable (anti-demo rule)
-                    uiManager.updateConnectionStatus('error', `Failed: ${message.error || 'Cloud unavailable'}`);
-                    uiManager.showError(`Cloud connection failed: ${message.error || 'Cloud backend unavailable'}`);
-                    uiManager.updateSessionInfo('No session');
-                } else if (message.status === 'disconnected') {
-                    uiManager.updateConnectionStatus('disconnected', message.reason || 'Disconnected');
-                    uiManager.updateSessionInfo('Session ended');
-                }
-                break;
-                
-            case 'STATUS_UPDATE':
-                uiManager.updateConnectionStatus(message.status, message.message);
-                uiManager.updateSessionInfo(message.sessionInfo || 'No active session');
-                break;
-                
-            case 'TRANSCRIPT_FINAL':
-                if (message.transcript) {
-                    uiManager.addMessage(`Transcript: ${message.transcript}`, 'assistant');
-                    
-                    // Update STT status to ready (transcription complete)
-                    const sttStatus = document.getElementById('sttStatus');
-                    if (sttStatus) {
-                        sttStatus.className = 'status-dot ready';
-                        sttStatus.textContent = 'STT Ready';
-                    }
-                }
-                break;
-                
-            case 'TRANSCRIPT_PARTIAL':
-                if (message.transcript) {
-                    // Update STT status to processing (transcribing)
-                    const sttStatus = document.getElementById('sttStatus');
-                    if (sttStatus) {
-                        sttStatus.className = 'status-dot processing';
-                        sttStatus.textContent = 'STT Processing';
-                    }
-                }
-                break;
-                
-            case 'RPA_RESULT':
-                if (message.result) {
-                    uiManager.addMessage(`RPA: ${message.result.evidence}`, 'assistant');
-                }
-                break;
-                
-            case 'TEST_CONNECTION_RESPONSE':
-                if (message.success) {
-                    const roundtripTime = message.roundtripTime || 0;
-                    uiManager.addMessage(`✅ Cloud response received (${roundtripTime}ms)`, 'assistant');
-                    uiManager.showSuccess(`Roundtrip complete in ${roundtripTime}ms`);
-                    
-                    // Update connection status to reflect successful roundtrip
-                    uiManager.updateConnectionStatus('connected', 'Cloud responsive');
-                } else {
-                    uiManager.addMessage(`❌ Cloud test failed: ${message.error}`, 'assistant');
-                    uiManager.showError(`Cloud test failed: ${message.error}`);
-                }
-                break;
-                
-            case 'VOICE_ROUNDTRIP_RESPONSE':
-                if (message.success) {
-                    const roundtripTime = message.roundtripTime || 0;
-                    const transcript = message.transcript || '';
-                    console.log(`[VOICE ROUNDTRIP] Response:`, message.data);
-                    
-                    uiManager.addMessage(`🎤 Voice: "${transcript}"`, 'user');
-                    uiManager.addMessage(`🔊 Cloud: ${message.data?.response || message.data?.text || 'No response'}`, 'assistant');
-                    uiManager.showSuccess(`Voice roundtrip complete in ${roundtripTime}ms`);
-                    
-                    // Reset voice roundtrip button
-                    const btn = document.getElementById('voiceRoundtripBtn');
-                    if (btn) {
-                        btn.textContent = '🎤 Voice Roundtrip';
-                        btn.style.background = 'var(--success)';
-                    }
-                } else {
-                    uiManager.addMessage(`❌ Voice roundtrip failed: ${message.error}`, 'assistant');
-                    uiManager.showError(`Voice roundtrip failed: ${message.error}`);
-                    
-                    // Reset voice roundtrip button
-                    const btn = document.getElementById('voiceRoundtripBtn');
-                    if (btn) {
-                        btn.textContent = '🎤 Voice Roundtrip';
-                        btn.style.background = 'var(--success)';
-                    }
-                }
-                break;
-                
-            case 'WEBRTC_DETECTED_NOTIFICATION':
-                console.log(`[WEBRTC] Detected: ${message.platform} in tab ${message.tabId}`);
-                audioManager.webrtcDetected = true;
-                audioManager.webrtcPlatform = message.platform;
-                audioManager.updateWebRTCStatus();
-                
-                uiManager.addMessage(`🎥 WebRTC detected: ${message.platform}`, 'assistant');
-                uiManager.showInfo(`WebRTC audio injection available`);
-                break;
-                
-            case 'WEBRTC_AUDIO_ACTIVE_NOTIFICATION':
-                console.log(`[WEBRTC] Audio active in tab ${message.tabId}`);
-                audioManager.audioInjectionEnabled = true;
-                audioManager.updateWebRTCStatus();
-                
-                uiManager.addMessage(`🔊 WebRTC audio injection ready`, 'assistant');
-                uiManager.showSuccess(`Agent can speak in the meeting`);
-                break;
-                
-            default:
-                console.log('Unknown message type:', message.type);
-        }
-        
-        sendResponse({ success: true });
+      sttRecognition.stop();
+      console.log('[KELEDON] STT stop requested');
     } catch (error) {
-        console.error('Error handling background message:', error);
-        sendResponse({ success: false, error: error.message });
+      console.warn('[KELEDON] STT stop error:', error);
     }
+  }
 }
 
-async function checkBackendConnection() {
-    try {
-        const response = await chrome.runtime.sendMessage({
-            type: 'GET_STATUS'
-        });
-        
-        // Truthful connection check: only show connected if socket is actually connected
-        if (response && response.socketConnected === true) {
-            uiManager.updateConnectionStatus('connected', 'Connected to Cloud');
-        } else if (response && response.isListening === true) {
-            uiManager.updateConnectionStatus('connecting', 'Session active...');
-        } else {
-            uiManager.updateConnectionStatus('disconnected', 'Not connected');
-        }
-
-        // Update component status display based on real state
-        updateComponentStatus({
-            websocket: (response && response.socketConnected === true) ? 'connected' : 'disconnected',
-            stt: response && response.isListening ? 'ready' : 'disconnected',
-            tts: 'disconnected',
-            session: response
-        });
-        
-    } catch (error) {
-        uiManager.updateConnectionStatus('error', 'Connection check failed');
-    }
+function updateSTTStatus(status) {
+  const sttStatus = document.getElementById('sttStatus');
+  if (!sttStatus) return;
+  
+  // Remove all status classes
+  sttStatus.className = 'status-dot';
+  
+  // Apply appropriate status
+  switch (status) {
+    case 'listening':
+      sttStatus.className = 'status-dot listening';
+      break;
+    case 'ready':
+      sttStatus.className = 'status-dot ready';
+      break;
+    case 'error':
+      sttStatus.className = 'status-dot error';
+      break;
+    case 'unsupported':
+      sttStatus.className = 'status-dot error';
+      break;
+    default:
+      sttStatus.className = 'status-dot';
+  }
+  
+  console.log('[KELEDON] STT status updated to:', status);
 }
 
-function updateComponentStatus(components) {
-    // Update WebSocket status
-    const wsStatus = document.getElementById('websocketStatus');
-    if (wsStatus) {
-        wsStatus.className = `status-dot ${components.websocket || 'disconnected'}`;
-        wsStatus.textContent = components.websocket === 'connected' ? 'WS Connected' : 'WS Disconnected';
-    }
+// ==============================
+// Phase O/N-1 Functions
+// ==============================
 
-    // Update STT status
-    const sttStatus = document.getElementById('sttStatus');
-    if (sttStatus && components.stt) {
-        const statusMap = {
-            'ready': { class: 'ready', text: 'STT Ready' },
-            'listening': { class: 'processing', text: 'STT Listening' },
-            'processing': { class: 'processing', text: 'STT Processing' },
-            'error': { class: 'error', text: 'STT Error' },
-            'degraded': { class: 'degraded', text: 'STT Degraded' }
-        };
-        
-        const status = statusMap[components.stt] || statusMap.ready;
-        sttStatus.className = `status-dot ${status.class}`;
-        sttStatus.textContent = status.text;
+function testBasicConnectivity() {
+  console.log('[KELEDON] Testing basic connectivity...');
+  
+  chrome.runtime.sendMessage({ type: 'PING' }, (response) => {
+    if (response && response.type === 'PONG') {
+      console.log('[KELEDON] ✅ Service worker connectivity OK');
+      addMessage('✅ Extension loaded successfully', 'assistant');
+    } else {
+      console.error('[KELEDON] ❌ Service worker not responding');
+      addMessage('❌ Extension failed to load', 'assistant');
     }
-
-    // Update TTS status
-    const ttsStatus = document.getElementById('ttsStatus');
-    if (ttsStatus && components.tts) {
-        const statusMap = {
-            'ready': { class: 'ready', text: 'TTS Ready' },
-            'speaking': { class: 'speaking', text: 'TTS Speaking' },
-            'error': { class: 'error', text: 'TTS Error' },
-            'degraded': { class: 'degraded', text: 'TTS Degraded' }
-        };
-        
-        const status = statusMap[components.tts] || statusMap.ready;
-        ttsStatus.className = `status-dot ${status.class}`;
-        ttsStatus.textContent = status.text;
-    }
-
-    // Update session status
-    updateSessionStatus(components.session);
+  });
 }
 
-function updateSessionStatus(session) {
-    const sessionInfo = document.getElementById('sessionInfo');
-    if (sessionInfo && session) {
-        // Show real session info (anti-demo compliance)
-        if (session.id && validateUUID(session.id)) {
-            const sessionPreview = `Session ${session.id.substring(0, 8)}...`;
-            sessionInfo.textContent = sessionPreview;
-        } else {
-            sessionInfo.textContent = 'No valid session';
-        }
+// ==============================
+// Helpers
+// ==============================
+
+function addMessage(text, role) {
+  const conversation = document.getElementById('conversation');
+  if (!conversation) return;
+
+  const msg = document.createElement('div');
+  msg.className = `message ${role}`;
+
+  const body = document.createElement('div');
+  body.textContent = text;
+
+  const time = document.createElement('div');
+  time.className = 'message-time';
+  time.textContent = new Date().toLocaleTimeString();
+
+  msg.appendChild(body);
+  msg.appendChild(time);
+  conversation.appendChild(msg);
+  conversation.scrollTop = conversation.scrollHeight;
+}
+
+function updateStatusUI(status) {
+  console.log('[KELEDON] Status update:', status);
+  
+  // Update connection status (Phase O/N-2: Service worker only)
+  const connectionDot = document.getElementById('connectionDot');
+  const connectionStatus = document.getElementById('connectionStatus');
+  const statusIndicator = document.getElementById('statusIndicator');
+  
+  // We're always "connected" to service worker if we get a response
+  if (connectionDot && connectionStatus) {
+    connectionDot.className = 'status-dot connected';
+    connectionStatus.textContent = 'Service Worker OK';
+    if (statusIndicator) {
+      statusIndicator.className = 'status-indicator active';
     }
-}
+  }
 
-function validateUUID(sessionId) {
-    // Validate real UUID format (anti-demo: no fake sessions)
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(sessionId);
-}
+  // Update session info with agent status
+  const sessionInfo = document.getElementById('sessionInfo');
+  if (sessionInfo) {
+    if (status.agentActive !== undefined) {
+      agentActive = status.agentActive; // Sync local state
+      sessionInfo.textContent = status.agentActive ? 'Agent Active' : 'Agent Inactive';
+    } else {
+      sessionInfo.textContent = 'Status unknown';
+    }
+  }
 
-// Export for debugging
-window.KELEDON = {
-    state,
-    audioManager,
-    rpaManager,
-    tabManager,
-    commandManager,
-    uiManager
-};
+// Update component status
+  const websocketStatus = document.getElementById('websocketStatus');
+  const sttStatus = document.getElementById('sttStatus');
+  const ttsStatus = document.getElementById('ttsStatus');
+  
+  if (websocketStatus) {
+    websocketStatus.className = 'status-dot'; // No WebSocket yet
+  }
+  
+  // STT/TTS status: If agent inactive, force to disabled state
+  if (sttStatus) {
+    if (!status.sttEnabled) {
+      sttStatus.className = 'status-dot'; // Disabled by master toggle
+    }
+    // If enabled, actual status is managed by updateSTTStatus()
+  }
+  
+  if (ttsStatus) {
+    if (!status.ttsEnabled) {
+      ttsStatus.className = 'status-dot'; // Disabled by master toggle
+    }
+    // If enabled, actual status is managed by updateTTSStatus()
+  }
+  
+  
+  // Update voice button based on agent state
+  const voiceBtnUpdate = document.getElementById('voiceBtn');
+  if (voiceBtnUpdate) {
+    voiceBtnUpdate.disabled = !agentActive;
+    voiceBtnUpdate.title = agentActive ? 'Real Speech-to-Text' : 'Agent inactive';
+  }
+  
+  // Update TTS test button
+  const testTTSDryRunUpdate = document.getElementById('testTTSDryRun');
+  if (testTTSDryRunUpdate) {
+    testTTSDryRunUpdate.disabled = !agentActive;
+    testTTSDryRunUpdate.style.opacity = agentActive ? '1' : '0.5';
+  }
+  
+  // STT status is managed by updateSTTStatus() based on real STT state
+  // TTS status is managed by updateTTSStatus() based on real TTS state
+  // But also respect the master toggle
+  if (ttsStatus) {
+    if (!status.ttsEnabled) {
+      ttsStatus.className = 'status-dot'; // Disabled by master toggle
+    }
+    // If enabled, actual status is managed by updateTTSStatus()
+  }
+  
+  // Update voice button based on agent state
+  const voiceBtnFinal = document.getElementById('voiceBtn');
+  if (voiceBtnFinal) {
+    voiceBtnFinal.disabled = !agentActive;
+    voiceBtnFinal.title = agentActive ? 'Real Speech-to-Text' : 'Agent inactive';
+  }
+}

@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "description": "Keledon Browser Agent (Manifest V3)",
   "scripts": {
-    "build": "echo 'Agent is raw JS, build passed.'",
-    "dev": "echo 'Agent dev server not required (extension loaded directly)'",
+    "build": "node scripts/build-extension.js",
+    "build:clean": "npm run clean && npm run build",
+    "clean": "node scripts/clean-build.js",
+    "dev": "npm run build && echo 'Load extension from dist/ folder in Chrome'",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "validate": "node scripts/validate-extension.js"
   },
   "dependencies": {
     "socket.io-client": "^4.7.0"
