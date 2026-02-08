@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://keledon.com/contracts/v1/agent/exec.schema.json",
+  "title": "Agent Execution Evidence Event",
+  "description": "Real extension runtime execution evidence for cloud trace correlation",
+  "type": "object",
+  "required": [
+    "event",
+    "session_id",
+    "decision_id",
+    "trace_id",
+    "command_type",
+    "tab_id",
+    "execution_result",
+    "execution_status",
+    "execution_timestamp",
+    "outcome",
+    "started_at",
+    "completed_at",
+    "latency_ms",
+    "evidence"
+  ],
+  "properties": {
+    "event": {
+      "type": "string",
+      "enum": [
+        "agent.exec.start",
+        "agent.exec.end",
+        "agent.exec.error"
+      ]
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "decision_id": {
+      "type": "string"
+    },
+    "trace_id": {
+      "type": "string"
+    },
+    "command_id": {
+      "type": "string"
+    },
+    "command_type": {
+      "type": "string"
+    },
+    "tab_id": {
+      "type": "string"
+    },
+    "execution_result": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failure",
+        "blocked"
+      ]
+    },
+    "execution_status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failure",
+        "blocked"
+      ]
+    },
+    "execution_timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failure",
+        "blocked"
+      ]
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "latency_ms": {
+      "type": "number",
+      "minimum": 0
+    },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "source"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "browser-extension"
+          ]
+        },
+        "action": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "error_code": {
+          "type": "string"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "traceparent": {
+          "type": "string"
+        },
+        "tracestate": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

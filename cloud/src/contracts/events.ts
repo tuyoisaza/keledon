@@ -43,3 +43,46 @@ export interface UIStep {
     expected: string;
   };
 }
+
+export interface ExecutionEvidence {
+  event: 'agent.exec.start' | 'agent.exec.end' | 'agent.exec.error';
+  session_id: string;
+  decision_id: string;
+  trace_id: string;
+  command_id?: string;
+  command_type: string;
+  tab_id: string;
+  execution_result: 'success' | 'failure' | 'blocked';
+  execution_status?: 'success' | 'failure' | 'blocked';
+  execution_timestamp?: string;
+  outcome: 'success' | 'failure' | 'blocked';
+  started_at: string;
+  completed_at: string;
+  latency_ms: number;
+  evidence: {
+    source: 'browser-extension';
+    action?: string;
+    detail?: string;
+    error_code?: string;
+  };
+  metadata?: {
+    traceparent?: string;
+    tracestate?: string;
+  };
+}
+
+export interface AgentExecResultAck {
+  event: 'agent.exec.start' | 'agent.exec.end' | 'agent.exec.error';
+  session_id: string;
+  decision_id: string;
+  trace_id: string;
+  command_id?: string;
+  command_type: string;
+  tab_id: string;
+  execution_status: 'success' | 'failure' | 'blocked';
+  execution_timestamp: string;
+  metadata?: {
+    traceparent?: string;
+    tracestate?: string;
+  };
+}

@@ -26,3 +26,24 @@ export const POLICY_CHECK_ATTRS = {
   APPLIED: 'policy.applied',
   PLAYBOOK_ID: 'policy.playbook_id',
 } as const;
+
+export type AgentExecEventType = 'agent.exec.start' | 'agent.exec.end' | 'agent.exec.error';
+
+export interface AgentExecutionEvidence {
+  event: AgentExecEventType;
+  decision_id: string;
+  trace_id: string;
+  command_type: string;
+  tab_id: string;
+  execution_result: 'success' | 'failure' | 'blocked';
+}
+
+export const AGENT_EXEC_ATTRS = {
+  EVENT: 'agent.exec.event',
+  DECISION_ID: 'decision.id',
+  TRACE_ID: 'trace_id',
+  COMMAND_TYPE: 'command_type',
+  TAB_ID: 'tab_id',
+  EXECUTION_RESULT: 'execution_result',
+  EXECUTION_STATUS: 'execution_status',
+} as const;
