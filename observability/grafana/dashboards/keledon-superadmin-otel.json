@@ -1,0 +1,412 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": false,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "jaeger",
+        "uid": "keledon-jaeger"
+      },
+      "description": "System Health panel. Spans: keledon.decide, keledon.command.emit, keledon.agent.exec. Required attrs: decision.id, trace_id, execution_status. RED if any required span missing in window or execution_status success ratio falls below expected threshold.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "keledon-jaeger"
+          },
+          "limit": 20,
+          "operation": "keledon.agent.exec",
+          "queryType": "search",
+          "service": "keledon-cloud",
+          "tags": "{\"execution_status\":\"success\"}",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "keledon-jaeger"
+          },
+          "limit": 20,
+          "operation": "keledon.decide",
+          "queryType": "search",
+          "service": "keledon-cloud",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "keledon-jaeger"
+          },
+          "limit": 20,
+          "operation": "keledon.command.emit",
+          "queryType": "search",
+          "service": "keledon-cloud",
+          "refId": "C"
+        }
+      ],
+      "title": "System Health",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "jaeger",
+        "uid": "keledon-jaeger"
+      },
+      "description": "Decision Integrity panel. Spans: keledon.policy.check, keledon.decide, keledon.command.emit. Required attrs: policy.decision_id, policy.ids, decision.id. RED if decision has no policy evidence or command emitted without matching decision.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "keledon-jaeger"
+          },
+          "limit": 20,
+          "operation": "keledon.policy.check",
+          "queryType": "search",
+          "service": "keledon-cloud",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "keledon-jaeger"
+          },
+          "limit": 20,
+          "operation": "keledon.decide",
+          "queryType": "search",
+          "service": "keledon-cloud",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "keledon-jaeger"
+          },
+          "limit": 20,
+          "operation": "keledon.command.emit",
+          "queryType": "search",
+          "service": "keledon-cloud",
+          "refId": "C"
+        }
+      ],
+      "title": "Decision Integrity",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "jaeger",
+        "uid": "keledon-jaeger"
+      },
+      "description": "Vector Grounding Coverage panel. Spans: keledon.vector.retrieve, keledon.decide. Required attrs: vector.doc_ids, decision.vector_doc_ids, decision.id. RED if vector retrieval missing or doc IDs empty.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "keledon-jaeger"
+          },
+          "limit": 20,
+          "operation": "keledon.vector.retrieve",
+          "queryType": "search",
+          "service": "keledon-cloud",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "keledon-jaeger"
+          },
+          "limit": 20,
+          "operation": "keledon.decide",
+          "queryType": "search",
+          "service": "keledon-cloud",
+          "refId": "B"
+        }
+      ],
+      "title": "Vector Grounding Coverage",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "jaeger",
+        "uid": "keledon-jaeger"
+      },
+      "description": "Agent Execution Outcomes panel. Spans: keledon.command.emit, keledon.agent.exec. Required attrs: decision.id, command_type, execution_status, tab_id. RED if emitted command lacks execution evidence or repeated failure/blocked execution_status.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "keledon-jaeger"
+          },
+          "limit": 20,
+          "operation": "keledon.command.emit",
+          "queryType": "search",
+          "service": "keledon-cloud",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "keledon-jaeger"
+          },
+          "limit": 20,
+          "operation": "keledon.agent.exec",
+          "queryType": "search",
+          "service": "keledon-cloud",
+          "refId": "B"
+        }
+      ],
+      "title": "Agent Execution Outcomes",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "jaeger",
+        "uid": "keledon-jaeger"
+      },
+      "description": "Canonical Law Violations panel. Spans: keledon.vector.retrieve, keledon.decide, keledon.command.emit, keledon.agent.exec. Required attrs: decision.id, trace_id, execution_status, vector.doc_ids. RED if any decision lacks vector evidence, any command lacks execution evidence, or trace correlation breaks.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 5,
+      "options": {
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "keledon-jaeger"
+          },
+          "limit": 20,
+          "operation": "keledon.vector.retrieve",
+          "queryType": "search",
+          "service": "keledon-cloud",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "keledon-jaeger"
+          },
+          "limit": 20,
+          "operation": "keledon.decide",
+          "queryType": "search",
+          "service": "keledon-cloud",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "keledon-jaeger"
+          },
+          "limit": 20,
+          "operation": "keledon.command.emit",
+          "queryType": "search",
+          "service": "keledon-cloud",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "keledon-jaeger"
+          },
+          "limit": 20,
+          "operation": "keledon.agent.exec",
+          "queryType": "search",
+          "service": "keledon-cloud",
+          "refId": "D"
+        }
+      ],
+      "title": "Canonical Law Violations",
+      "type": "table"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": [
+    "keledon",
+    "otel",
+    "superadmin",
+    "read-only"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "KELEDON Superadmin OTel Dashboard",
+  "uid": "keledon-superadmin-otel",
+  "version": 1,
+  "weekStart": ""
+}

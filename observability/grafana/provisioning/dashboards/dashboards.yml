@@ -1,0 +1,12 @@
+apiVersion: 1
+
+providers:
+  - name: KELEDON Superadmin OTel
+    orgId: 1
+    folder: KELEDON
+    type: file
+    disableDeletion: true
+    updateIntervalSeconds: 30
+    allowUiUpdates: false
+    options:
+      path: /var/lib/grafana/dashboards
