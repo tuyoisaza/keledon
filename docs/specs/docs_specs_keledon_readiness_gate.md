@@ -105,6 +105,10 @@ If NOT READY:
 - no testing
 - next integration cycle continues
 
+Superadmin observability deployment rule:
+- Any Superadmin OpenTelemetry dashboard deployment is BLOCKED unless `npm run proof:c12:local` is PASS on the target branch.
+- Observability dashboards are downstream of proof evidence and must never be treated as proof substitutes.
+
 ---
 
 ## 7. Authority Rule

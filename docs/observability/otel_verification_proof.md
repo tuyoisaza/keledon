@@ -120,3 +120,4 @@ It prevents:
 - backend URL/port mismatch between proof runtime and extension runtime
 - claims of extension participation without correlated `keledon.agent.exec` evidence
 - regressions where decision spans exist but real extension execution evidence is absent
+- observability-first scheduling that attempts dashboard rollout before real-runtime proof evidence exists
