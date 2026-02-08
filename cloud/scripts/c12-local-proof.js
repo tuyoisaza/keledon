@@ -428,6 +428,7 @@ async function main() {
     console.log(`[C12-PROOF] trace_id=${extensionEvidence.trace_id}`);
     console.log(`[C12-PROOF] qdrant_collection=${QDRANT_COLLECTION}`);
     console.log('[C12-PROOF] qdrant_doc_ids=doc-1,doc-2,doc-3');
+    console.log('[C12-PROOF] validated_ops=keledon.vector.retrieve,keledon.policy.check,keledon.decide,keledon.command.emit,keledon.agent.exec');
     console.log(`[C12-PROOF] jaeger_query=${results['keledon.command.emit'].url}`);
     console.log(
       `[C12-PROOF] extension_execution_log=event:agent.exec.end command_type:${extensionEvidence.command_type} tab_id:${extensionEvidence.tab_id} execution_status:${extensionEvidence.execution_status}`,
