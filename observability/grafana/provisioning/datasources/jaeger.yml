@@ -5,7 +5,7 @@ datasources:
     uid: keledon-jaeger
     type: jaeger
     access: proxy
-    url: http://host.docker.internal:16686
+    url: http://keledon-jaeger:16686
     isDefault: true
     editable: false
     jsonData:
