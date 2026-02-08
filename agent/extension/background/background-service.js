@@ -24,7 +24,8 @@ class BackgroundService {
     this.agentActive = true; // Master toggle for agent control
     this.socket = null;
     this.cloudUrl = 'http://localhost:3001';
-    this.cloudUrlStorageKey = 'keledon.cloud_url';
+    this.cloudUrlStorageKey = 'KELEDON_BACKEND_URL';
+    this.legacyCloudUrlStorageKey = 'keledon.cloud_url';
     this.commandChannelName = null;
     this.currentCommand = null;
     
@@ -86,8 +87,13 @@ class BackgroundService {
 
   async loadCloudRuntimeConfig() {
     try {
-      const stored = await chrome.storage.local.get([this.cloudUrlStorageKey]);
-      const storedUrl = this.normalizeCloudUrl(stored?.[this.cloudUrlStorageKey]);
+      const stored = await chrome.storage.local.get([
+        this.cloudUrlStorageKey,
+        this.legacyCloudUrlStorageKey,
+      ]);
+      const storedUrl =
+        this.normalizeCloudUrl(stored?.[this.cloudUrlStorageKey]) ||
+        this.normalizeCloudUrl(stored?.[this.legacyCloudUrlStorageKey]);
       if (storedUrl) {
         this.cloudUrl = storedUrl;
       }
@@ -109,7 +115,10 @@ class BackgroundService {
     }
 
     this.cloudUrl = normalized;
-    await chrome.storage.local.set({ [this.cloudUrlStorageKey]: this.cloudUrl });
+    await chrome.storage.local.set({
+      [this.cloudUrlStorageKey]: this.cloudUrl,
+      [this.legacyCloudUrlStorageKey]: this.cloudUrl,
+    });
     console.log(`[C11-EXT] Cloud runtime URL updated from ${source}: ${this.cloudUrl}`);
 
     if (this.socket) {
