@@ -1,6 +1,7 @@
 // Canonical Event Contracts - Source of Truth
 
 export interface AgentEvent {
+  event_id?: string;
   session_id: string;
   event_type: 'text_input' | 'ui_result' | 'system';
   payload: Record<string, any>;
@@ -9,15 +10,26 @@ export interface AgentEvent {
 }
 
 export interface CloudCommand {
-  say: {
+  command_id?: string;
+  session_id?: string;
+  timestamp?: string;
+  type?: 'say' | 'ui_steps' | 'mode' | 'stop' | 'error';
+  say?: {
     text: string;
     interruptible: boolean;
+    voice?: string;
+    language?: string;
+    speed?: number;
+    pitch?: number;
+    volume?: number;
+    metadata?: Record<string, any>;
   };
-  ui_steps: string[];
+  ui_steps?: any[];
   confidence: number;
-  mode: 'normal' | 'safe';
-  flow_id: string;
-  flow_run_id: string;
+  mode: 'normal' | 'safe' | 'silent' | 'error';
+  flow_id: string | null;
+  flow_run_id: string | null;
+  metadata?: Record<string, any>;
 }
 
 export interface UIStep {

@@ -11,14 +11,17 @@ import { Logger, Inject, forwardRef } from '@nestjs/common';
 import { SessionService } from '../services/session.service';
 import { AgentEvent, CloudCommand } from '../contracts/events';
 import { DecisionEngineService } from '../services/decision-engine.service';
-import { TTSService } from '../services/tts.service';
-import { UIAutomationService } from '../services/ui-automation.service';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  context,
+  propagation,
+  ROOT_CONTEXT,
+  SpanStatusCode,
+  trace,
+} from '@opentelemetry/api';
+import { KELEDON_TRACE_SPANS } from '../telemetry/trace-model';
 
 // Import from canonical contracts
-import { BrainEvent } from '../../../contracts/v1/brain/event.schema.json';
-import { BrainCommand } from '../../../contracts/v1/brain/command.schema.json';
-
 export interface AgentSocketData {
   event_id: string;
   session_id: string;
@@ -52,31 +55,14 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   private readonly logger = new Logger(AgentGateway.name);
   private readonly connectedAgents = new Map<string, Socket>();
+  private readonly tracer = trace.getTracer('keledon-cloud-agent-gateway');
 
   constructor(
     @Inject(forwardRef(() => SessionService))
     private readonly sessionService: SessionService,
     @Inject(forwardRef(() => DecisionEngineService))
     private readonly decisionEngine: DecisionEngineService,
-    private readonly ttsService: TTSService,
-    private readonly uiAutomationService: UIAutomationService
-  ) {
-    // TTS event listeners for real-time updates
-    if (this.ttsService) {
-      this.ttsService.on('playback:started', () => {
-        this.broadcastToSidePanel('tts_status', 'speaking');
-      });
-      
-      this.ttsService.on('playback:completed', () => {
-        this.broadcastToSidePanel('tts_status', 'ready');
-      });
-      
-      this.ttsService.on('error', (error) => {
-        this.broadcastToSidePanel('tts_status', 'error');
-        console.error('TTS Error:', error);
-      });
-    }
-  }
+  ) {}
 
   afterInit(server: Server): void {
     this.logger.log('AgentGateway: WebSocket server initialized');
@@ -99,88 +85,80 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.connectedAgents.delete(client.id);
     
     // Broadcast agent disconnection to dashboard if needed
-    this.server.of('/dashboard').emit('agent:disconnected', {
-      agent_id: client.id,
-      timestamp: new Date().toISOString()
-    });
+    if (this.server && typeof (this.server as any).of === 'function') {
+      this.server.of('/dashboard').emit('agent:disconnected', {
+        agent_id: client.id,
+        timestamp: new Date().toISOString()
+      });
+    }
   }
 
   @SubscribeMessage('brain_event')
   async handleBrainEvent(client: Socket, event: AgentEvent): Promise<void> {
-    try {
-      // Validate session exists (canon rule: if no session_id, it does not exist)
-      const session = await this.sessionService.getSession(event.session_id);
-      if (!session) {
-        console.error(`[AgentGateway] Invalid session ${event.session_id} from agent ${client.id}`);
-        client.emit('error', { message: 'Invalid session_id' });
-        return;
-      }
+    const extractedContext = this.extractContextFromMetadata(event?.payload?.metadata);
 
-      // Process event with decision engine (Cloud decides)
-      if (this.decisionEngine) {
-        const decision = await this.decisionEngine.processTextInput(
-          event.session_id,
-          event.payload.text,
-          event.payload.confidence || 0.8,
-          event.payload.provider || 'deepgram',
-          event.payload.metadata || {}
-        );
+    await context.with(extractedContext, async () => {
+      await this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.LISTEN, async (span) => {
+        span.setAttribute('session_id', event?.session_id || 'unknown');
 
-        // Handle 'say' commands with TTS
-        if (decision.command.type === 'say' && decision.command.say && this.ttsService) {
-          await this.ttsService.speak(decision.command.say.text, {
-            voice: decision.command.say.voice,
-            interruptible: decision.command.say.interruptible,
-            language: decision.command.say.language,
-            speed: decision.command.say.speed,
-            pitch: decision.command.say.pitch,
-            volume: decision.command.say.volume
-          });
-          
-          console.log(`[AgentGateway] TTS: "${decision.command.say.text}" (voice: ${decision.command.say.voice || 'default'})`);
-        }
-
-        // Handle UI steps
-        if (decision.command.type === 'ui_steps' && this.uiAutomationService) {
-          for (const step of decision.command.ui_steps || []) {
-            try {
-              await this.uiAutomationService.executeStep(event.session_id, step);
-            } catch (stepError) {
-              console.error(`[AgentGateway] UI step failed:`, stepError);
-            }
+        try {
+          // Validate session exists (canon rule: if no session_id, it does not exist)
+          const session = await this.sessionService.getSession(event.session_id);
+          if (!session) {
+            console.error(`[AgentGateway] Invalid session ${event.session_id} from agent ${client.id}`);
+            client.emit('error', { message: 'Invalid session_id' });
+            return;
           }
+
+          // Process event with decision engine (Cloud decides)
+          if (this.decisionEngine) {
+            const decision = await this.decisionEngine.processTextInput(
+              event.session_id,
+              event.payload.text,
+              event.payload.confidence || 0.8,
+              event.payload.provider || 'deepgram',
+              event.payload.metadata || {},
+            );
+            const command = decision.command as any;
+
+            // Send command back to agent
+            this.sendCommand(event.session_id, command);
+          }
+
+          // Persist the original event (canon: all events must be persisted)
+          const persistedEvent = await this.sessionService.persistEvent(event.session_id, event);
+
+          console.log(`[AgentGateway] Event processed: ${persistedEvent.id}`);
+        } catch (error) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: error instanceof Error ? error.message : String(error),
+          });
+
+          console.error(`[AgentGateway] Error processing event:`, error);
+
+          // Send error command (anti-demo rule: show failure)
+          const errorCommand: any = {
+            command_id: uuidv4(),
+            session_id: event.session_id,
+            timestamp: new Date().toISOString(),
+            type: 'error',
+            confidence: 0,
+            mode: 'error',
+            flow_id: null,
+            flow_run_id: null,
+            say: {
+              text: `Decision processing failed: ${error.message}`,
+              interruptible: true,
+            },
+          };
+
+          this.sendCommand(event.session_id, errorCommand);
+        } finally {
+          span.end();
         }
-
-        // Send command back to agent
-        this.sendCommand(event.session_id, decision.command);
-      }
-
-      // Persist the original event (canon: all events must be persisted)
-      const persistedEvent = await this.sessionService.persistEvent(event.session_id, event);
-      
-      console.log(`[AgentGateway] Event processed: ${persistedEvent.id}`);
-
-    } catch (error) {
-      console.error(`[AgentGateway] Error processing event:`, error);
-      
-      // Send error command (anti-demo rule: show failure)
-      const errorCommand = {
-        command_id: uuidv4(),
-        session_id: event.session_id,
-        timestamp: new Date().toISOString(),
-        type: 'error',
-        confidence: 0,
-        mode: 'error',
-        flow_id: null,
-        flow_run_id: null,
-        say: {
-          text: `Decision processing failed: ${error.message}`,
-          interruptible: true
-        }
-      };
-
-      this.sendCommand(event.session_id, errorCommand);
-    }
+      });
+    });
   }
 
   @SubscribeMessage('session.create')
@@ -265,11 +243,25 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   // Method to send commands to agent (Cloud → Agent)
-  sendCommand(sessionId: string, command: CloudCommand): void {
-    this.server.emit(`command.${sessionId}`, command);
-    if (command.say) {
-      console.log(`[AgentGateway] Command sent to session ${sessionId}: ${command.say.text}`);
-    }
+  sendCommand(sessionId: string, command: any): void {
+    this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.COMMAND_EMIT, (span) => {
+      span.setAttribute('command_type', String((command as any)?.type || 'unknown'));
+      span.setAttribute('session_id', sessionId);
+      const decisionId = (command as any)?.metadata?.decision_id;
+      if (decisionId) {
+        span.setAttribute('decision.id', String(decisionId));
+      }
+
+      const traceId = span.spanContext().traceId;
+      this.injectTraceMetadata(command as Record<string, any>, traceId, decisionId);
+
+      this.server.emit(`command.${sessionId}`, command);
+      if ((command as any).say) {
+        console.log(`[AgentGateway] Command sent to session ${sessionId}: ${(command as any).say.text}`);
+      }
+
+      span.end();
+    });
   }
 
   // Send Cloud → Agent commands (per canonical contract)
@@ -287,8 +279,28 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         return;
       }
 
-      agent.emit('command', command);
-      this.logger.log(`Sent command to agent ${agentId}: ${command.type}`);
+      this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.COMMAND_EMIT, (span) => {
+        span.setAttribute('command_type', command.type);
+        span.setAttribute('session_id', command.session_id);
+        const decisionId = command.payload?.metadata?.decision_id;
+        if (decisionId) {
+          span.setAttribute('decision.id', String(decisionId));
+        }
+
+        const traceId = span.spanContext().traceId;
+        command.payload = {
+          ...command.payload,
+          metadata: {
+            ...command.payload?.metadata,
+            trace_id: traceId,
+            ...(decisionId ? { decision_id: decisionId } : {}),
+          },
+        };
+
+        agent.emit('command', command);
+        this.logger.log(`Sent command to agent ${agentId}: ${command.type}`);
+        span.end();
+      });
       
     } catch (error) {
       this.logger.error(`Error sending command to agent ${agentId}`, error);
@@ -370,6 +382,38 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   // Broadcast to sidepanel
   private broadcastToSidePanel(event: string, data: any): void {
     this.server.of('/sidepanel').emit(event, data);
+  }
+
+  private extractContextFromMetadata(metadata: Record<string, any> | undefined) {
+    const traceparent = metadata?.traceparent;
+    const tracestate = metadata?.tracestate;
+
+    if (!traceparent) {
+      return ROOT_CONTEXT;
+    }
+
+    const carrier: Record<string, string> = { traceparent };
+    if (tracestate) {
+      carrier.tracestate = tracestate;
+    }
+
+    return propagation.extract(ROOT_CONTEXT, carrier);
+  }
+
+  private injectTraceMetadata(command: Record<string, any>, traceId: string, decisionId?: string): void {
+    command.metadata = {
+      ...(command.metadata || {}),
+      trace_id: traceId,
+      ...(decisionId ? { decision_id: decisionId } : {}),
+    };
+
+    if (command.say && typeof command.say === 'object') {
+      command.say.metadata = {
+        ...(command.say.metadata || {}),
+        trace_id: traceId,
+        ...(decisionId ? { decision_id: decisionId } : {}),
+      };
+    }
   }
 
   // Get connected agents count
