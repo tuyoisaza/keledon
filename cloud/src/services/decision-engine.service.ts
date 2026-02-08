@@ -1,8 +1,17 @@
-import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, Logger, Inject, forwardRef, Optional } from '@nestjs/common';
 import { SessionService } from './session.service';
 import { AgentGateway } from '../gateways/agent.gateway';
 import { AgentEvent, CloudCommand } from '../contracts/events';
 import { v4 as uuidv4 } from 'uuid';
+import { SpanStatusCode, trace } from '@opentelemetry/api';
+import { RAGService, RetrievalResult } from '../rag/rag.service';
+import { KELEDON_TRACE_SPANS } from '../telemetry/trace-model';
+import {
+  CanonicalDecisionType,
+  DECISION_EVIDENCE_ATTRS,
+  DecisionEvidence,
+  POLICY_CHECK_ATTRS,
+} from '../telemetry/decision-evidence';
 
 export interface DecisionContext {
   sessionId: string;
@@ -19,6 +28,7 @@ export interface DecisionResult {
   reasoning: string;
   context: Record<string, any>;
   processingTime: number;
+  decisionEvidence?: DecisionEvidence;
 }
 
 // Command interfaces per canonical contract
@@ -85,12 +95,15 @@ interface StopCommand {
 @Injectable()
 export class DecisionEngineService {
   private readonly logger = new Logger(DecisionEngineService.name);
+  private readonly tracer = trace.getTracer('keledon-cloud-decision-engine');
 
   constructor(
     @Inject(forwardRef(() => SessionService))
     private sessionService: SessionService,
     @Inject(forwardRef(() => AgentGateway))
-    private agentGateway: AgentGateway
+    private agentGateway: AgentGateway,
+    @Optional()
+    private readonly ragService?: RAGService,
   ) {}
 
   /**
@@ -99,6 +112,7 @@ export class DecisionEngineService {
    */
   async processTextInput(sessionId: string, text: string, confidence: number, provider: string, metadata: Record<string, any> = {}): Promise<DecisionResult> {
     const startTime = Date.now();
+    const decisionId = uuidv4();
     
     try {
       // Validate session exists (canonical rule: if no session_id, it does not exist)
@@ -111,14 +125,65 @@ export class DecisionEngineService {
       const sessionEvents = await this.sessionService.getSessionEvents(sessionId);
       const context = await this.buildDecisionContext(sessionId, text, sessionEvents, metadata);
 
-      // Core decision logic (Cloud decides)
-      const decision = await this.makeDecision(context);
+      // Core decision logic (Cloud decides), including mandatory evidence checks.
+      const decisionOutcome = await this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.DECIDE, async (span) => {
+        const model = metadata.model || provider || process.env.KELEDON_DECISION_MODEL || 'rule-engine';
+        span.setAttribute(DECISION_EVIDENCE_ATTRS.DECISION_ID, decisionId);
+        span.setAttribute('model', String(model));
+
+        if (typeof metadata.token_count === 'number') {
+          span.setAttribute('token_count', metadata.token_count);
+        }
+
+        try {
+          const vectorContext = await this.retrieveVectorContext(sessionId, text, metadata);
+          const decision = await this.makeDecision(context);
+          const decisionType = this.mapDecisionType(decision?.type);
+          const policy = await this.enforcePolicy(decisionId, decision, decisionType, vectorContext);
+
+          const evidence: DecisionEvidence = {
+            decision_id: decisionId,
+            policy_ids: policy.policyIds,
+            playbook_id: policy.playbookId,
+            vector_collections: this.collectVectorCollections(vectorContext),
+            vector_doc_ids: vectorContext.map((item) => item.document.id),
+            confidence_score: Number(decision?.confidence ?? context.confidence ?? 0),
+            decision_type: decisionType,
+          };
+
+          this.attachDecisionEvidence(span, evidence);
+          span.setAttribute('decision.command_type', String(decision?.type || 'unknown'));
+
+          return {
+            decision,
+            vectorContext,
+            evidence,
+          };
+        } catch (decisionError) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: decisionError instanceof Error ? decisionError.message : String(decisionError),
+          });
+          throw decisionError;
+        } finally {
+          span.end();
+        }
+      });
       
+      context.metadata.vector_context = decisionOutcome.vectorContext;
+      context.metadata.decision_evidence = decisionOutcome.evidence;
+
       // Generate canonical brain command
-      const command = await this.generateCommand(decision, sessionId);
+      const command = await this.generateCommand(decisionOutcome.decision, sessionId, decisionOutcome.evidence);
 
       // Persist the decision
-      await this.persistDecision(sessionId, text, command, decision);
+      await this.persistDecision(sessionId, text, command, {
+        ...decisionOutcome.decision,
+        context: {
+          ...(decisionOutcome.decision?.context || {}),
+          decision_evidence: decisionOutcome.evidence,
+        },
+      });
 
       const processingTime = Date.now() - startTime;
       
@@ -127,9 +192,13 @@ export class DecisionEngineService {
       return {
         command,
         confidence: command.confidence,
-        reasoning: decision.reasoning,
-        context: decision.context,
-        processingTime
+        reasoning: 'Decision completed with structured evidence',
+        context: {
+          ...(decisionOutcome.decision?.context || {}),
+          decision_evidence: decisionOutcome.evidence,
+        },
+        processingTime,
+        decisionEvidence: decisionOutcome.evidence,
       };
 
     } catch (error) {
@@ -155,18 +224,207 @@ export class DecisionEngineService {
         command: errorCommand,
         confidence: 0,
         reasoning: `Error: ${error.message}`,
-        context: { error: error.message },
+        context: { error: error.message, decision_id: decisionId },
         processingTime: Date.now() - startTime
       };
     }
   }
 
+  private mapDecisionType(commandType: string | undefined): CanonicalDecisionType {
+    if (commandType === 'say') {
+      return 'RESPOND';
+    }
+
+    if (commandType === 'ui_steps' || commandType === 'mode' || commandType === 'stop') {
+      return 'ACT';
+    }
+
+    if (commandType === 'ask') {
+      return 'ASK';
+    }
+
+    return 'WAIT';
+  }
+
+  private attachDecisionEvidence(span: any, evidence: DecisionEvidence): void {
+    span.setAttribute(DECISION_EVIDENCE_ATTRS.DECISION_ID, evidence.decision_id);
+    span.setAttribute(DECISION_EVIDENCE_ATTRS.POLICY_IDS, evidence.policy_ids);
+    span.setAttribute(DECISION_EVIDENCE_ATTRS.PLAYBOOK_ID, evidence.playbook_id);
+    span.setAttribute(DECISION_EVIDENCE_ATTRS.VECTOR_COLLECTIONS, evidence.vector_collections);
+    span.setAttribute(DECISION_EVIDENCE_ATTRS.VECTOR_DOC_IDS, evidence.vector_doc_ids);
+    span.setAttribute(DECISION_EVIDENCE_ATTRS.CONFIDENCE_SCORE, evidence.confidence_score);
+    span.setAttribute(DECISION_EVIDENCE_ATTRS.DECISION_TYPE, evidence.decision_type);
+  }
+
+  private collectVectorCollections(vectorContext: RetrievalResult[]): string[] {
+    const collections = new Set<string>();
+
+    for (const result of vectorContext) {
+      if (result.document.metadata?.source) {
+        collections.add(String(result.document.metadata.source));
+      }
+    }
+
+    if (collections.size === 0) {
+      collections.add(process.env.QDRANT_COLLECTION || 'keledon');
+    }
+
+    return Array.from(collections);
+  }
+
+  private resolvePlaybookId(commandType: string, decisionType: CanonicalDecisionType): string {
+    if (commandType === 'ui_steps') {
+      return 'playbook.browser.automation.v1';
+    }
+
+    if (commandType === 'say') {
+      return 'playbook.respond.grounded.v1';
+    }
+
+    if (commandType === 'mode' || commandType === 'stop') {
+      return 'playbook.safety.control.v1';
+    }
+
+    if (decisionType === 'ASK') {
+      return 'playbook.clarification.v1';
+    }
+
+    return 'playbook.wait.for_signal.v1';
+  }
+
+  private async enforcePolicy(
+    decisionId: string,
+    decision: any,
+    decisionType: CanonicalDecisionType,
+    vectorContext: RetrievalResult[],
+  ): Promise<{ policyIds: string[]; playbookId: string }> {
+    return this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.POLICY_CHECK, async (span) => {
+      span.setAttribute(POLICY_CHECK_ATTRS.DECISION_ID, decisionId);
+
+      try {
+        if (!vectorContext.length) {
+          throw new Error('No vector documents retrieved - policy enforcement failed');
+        }
+
+        const commandType = String(decision?.type || '').toLowerCase();
+        const policyIds: string[] = ['POLICY_VECTOR_GROUNDED_DECISION'];
+
+        if (['say', 'ui_steps', 'mode', 'stop'].includes(commandType)) {
+          policyIds.push('POLICY_COMMAND_TYPE_ALLOWED');
+        }
+
+        if (decisionType === 'ACT') {
+          policyIds.push('POLICY_ACTION_ALLOWED_BY_CLOUD');
+        }
+
+        if (decisionType === 'RESPOND') {
+          policyIds.push('POLICY_RESPONSE_REQUIRES_GROUNDING');
+        }
+
+        if (decisionType === 'ASK') {
+          policyIds.push('POLICY_CLARIFICATION_ALLOWED');
+        }
+
+        if (decisionType === 'WAIT') {
+          policyIds.push('POLICY_WAIT_FOR_NEXT_EVENT');
+        }
+
+        if (!policyIds.length) {
+          throw new Error('No applicable policy for decision');
+        }
+
+        const playbookId = this.resolvePlaybookId(commandType, decisionType);
+
+        span.setAttribute(POLICY_CHECK_ATTRS.POLICY_IDS, policyIds);
+        span.setAttribute(POLICY_CHECK_ATTRS.PLAYBOOK_ID, playbookId);
+        span.setAttribute(POLICY_CHECK_ATTRS.APPLIED, true);
+
+        return {
+          policyIds,
+          playbookId,
+        };
+      } catch (error) {
+        span.setAttribute(POLICY_CHECK_ATTRS.APPLIED, false);
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error instanceof Error ? error.message : String(error),
+        });
+        throw error;
+      } finally {
+        span.end();
+      }
+    });
+  }
+
+  private async retrieveVectorContext(
+    sessionId: string,
+    text: string,
+    metadata: Record<string, any>,
+  ): Promise<RetrievalResult[]> {
+    return this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.VECTOR_RETRIEVE, async (span) => {
+      const startedAt = Date.now();
+      const topK = Number(metadata.topK || 3);
+      const collection = process.env.QDRANT_COLLECTION || 'keledon';
+
+      span.setAttribute('vector.collection', collection);
+      span.setAttribute('topK', topK);
+
+      if (!this.ragService) {
+        const errorMessage = 'RAGService unavailable - vector retrieval is mandatory for decisions';
+        span.setStatus({ code: SpanStatusCode.ERROR, message: errorMessage });
+        throw new Error(errorMessage);
+      }
+
+      try {
+        const results = await this.ragService.retrieveKnowledge(text, {
+          sessionId,
+          companyId: metadata.companyId || 'keledon-default',
+          maxResults: topK,
+          minScore: typeof metadata.minScore === 'number' ? metadata.minScore : undefined,
+        });
+
+        const latencyMs = Date.now() - startedAt;
+        const docIds = results.map((result) => result.document.id);
+        span.setAttribute('latency_ms', latencyMs);
+        span.setAttribute('vector.results', results.length);
+        span.setAttribute('vector.doc_ids', docIds);
+
+        if (!results.length) {
+          const errorMessage = 'Vector retrieval returned zero documents';
+          span.setStatus({ code: SpanStatusCode.ERROR, message: errorMessage });
+          throw new Error(errorMessage);
+        }
+
+        return results;
+      } catch (error) {
+        const latencyMs = Date.now() - startedAt;
+        span.setAttribute('latency_ms', latencyMs);
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: error instanceof Error ? error.message : String(error),
+        });
+        throw error;
+      } finally {
+        span.end();
+      }
+    });
+  }
+
   /**
    * Generate canonical brain command from decision
    */
-  async generateCommand(decision: any, sessionId: string): Promise<CloudCommand> {
+  async generateCommand(decision: any, sessionId: string, evidence?: DecisionEvidence): Promise<CloudCommand> {
     const commandId = uuidv4();
     const timestamp = new Date().toISOString();
+
+    const commandMetadata = evidence
+      ? {
+          decision_id: evidence.decision_id,
+          decision_type: evidence.decision_type,
+          playbook_id: evidence.playbook_id,
+          policy_ids: evidence.policy_ids,
+        }
+      : undefined;
 
     switch (decision.type) {
       case 'say':
@@ -179,6 +437,7 @@ export class DecisionEngineService {
           mode: decision.mode || 'normal',
           flow_id: null,
           flow_run_id: null,
+          metadata: commandMetadata,
           say: {
             text: decision.text,
             interruptible: decision.interruptible || true,
@@ -186,7 +445,8 @@ export class DecisionEngineService {
             language: decision.language,
             speed: decision.speed,
             pitch: decision.pitch,
-            volume: decision.volume
+            volume: decision.volume,
+            metadata: commandMetadata,
           }
         };
 
@@ -200,6 +460,7 @@ export class DecisionEngineService {
           mode: decision.mode || 'normal',
           flow_id: decision.flow_id,
           flow_run_id: decision.flow_run_id || null,
+          metadata: commandMetadata,
           ui_steps: decision.steps
         };
 
@@ -212,7 +473,8 @@ export class DecisionEngineService {
           confidence: decision.confidence || 0.8,
           mode: decision.mode,
           flow_id: null,
-          flow_run_id: null
+          flow_run_id: null,
+          metadata: commandMetadata,
         };
 
       case 'stop':
@@ -224,7 +486,8 @@ export class DecisionEngineService {
           confidence: decision.confidence || 1.0,
           mode: decision.mode || 'normal',
           flow_id: null,
-          flow_run_id: null
+          flow_run_id: null,
+          metadata: commandMetadata,
         };
 
       default:
@@ -238,9 +501,11 @@ export class DecisionEngineService {
           mode: 'normal',
           flow_id: null,
           flow_run_id: null,
+          metadata: commandMetadata,
           say: {
             text: `I understand you said: ${decision.text || 'something'}`,
-            interruptible: true
+            interruptible: true,
+            metadata: commandMetadata,
           }
         };
     }
@@ -367,7 +632,7 @@ export class DecisionEngineService {
     const decisionEvent: AgentEvent = {
       event_id: uuidv4(),
       session_id: sessionId,
-      event_type: 'decision',
+      event_type: 'system',
       agent_id: decision.context?.agentId || 'unknown',
       ts: new Date().toISOString(),
       payload: {
