@@ -1,8 +1,25 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { trace } from '@opentelemetry/api';
+import { startTelemetry } from './telemetry/otel';
 
 async function bootstrap() {
+  // Span attachment map (cloud-side):
+  // - HTTP ingress: auto HTTP instrumentation + x-trace-id response header
+  // - WebSocket ingress/command flow: AgentGateway
+  // - Decisioning: DecisionEngineService
+  // - Vector retrieval: RAGService
+  await startTelemetry();
+
   const app = await NestFactory.create(AppModule);
+
+  app.use((req, res, next) => {
+    const activeSpan = trace.getActiveSpan();
+    if (activeSpan) {
+      res.setHeader('x-trace-id', activeSpan.spanContext().traceId);
+    }
+    next();
+  });
   
   // Enable CORS for local development
   app.enableCors({
