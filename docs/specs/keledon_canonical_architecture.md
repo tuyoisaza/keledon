@@ -7,15 +7,29 @@ This document defines the **only allowed structural shape** of KELEDON V1.
 
 If code contradicts this architecture, the code is wrong — not the document.
 
+Authoritative cross-reference set:
+- `docs/specs/keledon_v_1_canonical_technical_spec.md`
+- `docs/specs/keledon_canonical_contracts.md`
+- `docs/specs/docs_specs_keledon_execution_law.md`
+- `docs/specs/docs_specs_keledon_readiness_gate.md`
+- `docs/specs/docs_specs_keledon_v_1_minimal_spec.md`
+
+Interpretation guard:
+- KELEDON has exactly one real agent: the Cloud Conversation Orchestrator (Brain).
+- The browser runtime is an execution surface only, never a reasoning agent.
+- The vector store is required cloud infrastructure for reasoning context.
+
 ---
 
 ## 1. Architectural Prime Directive
 
-**There is exactly ONE Cloud Brain and ONE Agent Runtime.**
+**There is exactly ONE real agent: the Cloud Conversation Orchestrator (Brain).**
+
+There is exactly one browser runtime execution surface in V1.
 
 No replicas.
 No alternates.
-No parallel implementations.
+No parallel decision implementations.
 
 Any additional backend, runtime, or decision engine is **invalid** for V1.
 
@@ -23,10 +37,11 @@ Any additional backend, runtime, or decision engine is **invalid** for V1.
 
 ## 2. High-Level System Shape
 
-KELEDON V1 consists of exactly two runtime environments:
+KELEDON V1 consists of exactly three runtime domains:
 
-1. **Cloud Brain** (server-side)
-2. **Agent Runtime** (browser-side)
+1. **Cloud Brain** (server-side, sole agent)
+2. **Browser Runtime** (browser-side executor)
+3. **Vector Store** (cloud-side required memory and policy substrate)
 
 They communicate exclusively through **explicit contracts**.
 
@@ -43,10 +58,11 @@ The Cloud Brain is the **only component allowed to decide anything**.
 It owns:
 
 - Conversational state
+- Vector retrieval and grounding
 - Intent selection
 - Flow orchestration
 - Policy enforcement
-- Knowledge retrieval (if any)
+- Knowledge retrieval
 - Auditing and traceability
 
 ### 3.2 Non-Responsibilities
@@ -79,7 +95,7 @@ Whether implemented as REST or WebSocket, it is **logically singular**.
 
 ### 4.1 Role
 
-The Agent Runtime is a **blind executor**.
+The browser runtime is a **blind executor**.
 
 It executes instructions from the Cloud without interpretation.
 
@@ -92,13 +108,14 @@ It owns:
 
 ### 4.2 Non-Responsibilities
 
-The Agent Runtime **MUST NOT**:
+The browser runtime **MUST NOT**:
 
 - Decide intents
 - Choose flows
 - Infer meaning
 - Alter Cloud instructions
 - Store long-term memory
+- Query vector stores for reasoning
 
 Any local decision logic beyond execution is **forbidden**.
 
@@ -106,10 +123,11 @@ Any local decision logic beyond execution is **forbidden**.
 
 ## 5. Separation of Concerns (Enforced)
 
-| Concern | Cloud | Agent |
+| Concern | Cloud | Browser Runtime |
 |------|-------|-------|
 | Intent selection | ✅ | ❌ |
 | Flow control | ✅ | ❌ |
+| Vector retrieval and policy grounding | ✅ | ❌ |
 | Audio capture/playback | ❌ | ✅ |
 | UI execution | ❌ | ✅ |
 | Policy enforcement | ✅ | ❌ |
@@ -125,9 +143,11 @@ The following are **explicitly forbidden** in V1:
 
 - Multiple backends acting as decision engines
 - Agent-side intent detection
+- Browser-side policy/flow inference
 - UI logic in the Cloud
 - Simulated execution paths
 - Feature flags that silently bypass execution
+- Treating vector store as optional
 
 If any of these exist, they must be removed or disabled.
 
@@ -144,6 +164,12 @@ Architecture is defined by **what runs**, not by:
 
 If code is not executed at runtime, it is architecturally irrelevant.
 
+### 7.1 Canonical Real-Runtime Proof
+
+`npm run proof:c12:local` is the **KELEDON CANONICAL REAL-RUNTIME PROOF** for extension participation.
+
+It must demonstrate the cloud decision chain (`keledon.vector.retrieve`, `keledon.policy.check`, `keledon.decide`, `keledon.command.emit`) plus real extension execution evidence (`keledon.agent.exec`) with correlated `decision_id` and `trace_id`.
+
 ---
 
 ## 8. Authority & Enforcement
@@ -154,6 +180,8 @@ This document overrides:
 - Architectural diagrams
 - Historical implementations
 - Test scaffolding
+
+When boundary interpretation is ambiguous, `docs/specs/keledon_v_1_canonical_technical_spec.md` and `docs/specs/keledon_canonical_contracts.md` must be applied together.
 
 When in doubt, **delete code** to restore compliance.
 
@@ -172,4 +200,3 @@ Agents are forbidden from modifying this document.
 ---
 
 **End of Canonical Architecture (V1)**
-

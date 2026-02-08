@@ -5,6 +5,18 @@
 
 This document defines the **only rule** for deciding whether a KELEDON version is worth testing.
 
+Authoritative cross-reference set:
+- `docs/specs/keledon_canonical_architecture.md`
+- `docs/specs/keledon_v_1_canonical_technical_spec.md`
+- `docs/specs/keledon_canonical_contracts.md`
+- `docs/specs/docs_specs_keledon_execution_law.md`
+- `docs/specs/docs_specs_keledon_v_1_minimal_spec.md`
+
+Interpretation guard:
+- The only real agent is the Cloud Conversation Orchestrator.
+- Browser runtime is execution-only and must not decide.
+- Vector-grounded cloud reasoning is required in any READY claim.
+
 There is no roadmap, no partial credit, and no debate.
 
 ---
@@ -28,6 +40,7 @@ A version is **READY** if and only if **all** of the following are true:
 3. At least one real input can be provided
 4. At least one real output is produced
 5. The behavior is observable by a human
+6. Decisioning is cloud-side and vector-grounded
 
 Logs count. UI counts. Side effects count.
 Claims do not.
@@ -43,6 +56,11 @@ A version is **NOT READY** if **any** of the following are true:
 - behavior is simulated
 - output is mocked
 - nothing observable happens
+- browser decides intent/flow/policy
+- vector store is bypassed or treated as optional
+- C09 proof passes but C10 real extension runtime proof fails
+- no `keledon.agent.exec` execution evidence is present for cloud-issued command execution
+- any change affects agent execution, decision flow, vector retrieval, or command emission and `npm run proof:c12:local` does not pass
 
 NOT READY is a valid outcome.
 Silence is not.
@@ -103,4 +121,3 @@ Delete code or continue work until READY is reached.
 ---
 
 **End of Readiness Gate (V1)**
-
