@@ -854,7 +854,7 @@ class PipelineManager {
 
   configureBackend() {
     chrome.runtime.sendMessage({ type: 'C10_GET_RUNTIME_STATUS' }, async (statusResponse) => {
-      const currentUrl = statusResponse?.cloud_url || 'http://localhost:3001';
+      const currentUrl = statusResponse?.cloud_url || 'https://cloud.keledon.invalid';
       const url = prompt('Enter cloud runtime URL:', currentUrl);
       if (!url) {
         return;
@@ -1055,7 +1055,7 @@ class PipelineManager {
     
     // Import the BackendConnectivityChecker from the main sidepanel
     // Since we're in a separate file, we'll create a simplified version
-    this.backendUrl = 'http://localhost:3001';
+    this.backendUrl = 'https://cloud.keledon.invalid';
     this.backendConnected = false;
     this.serviceWorkerConnected = false;
     

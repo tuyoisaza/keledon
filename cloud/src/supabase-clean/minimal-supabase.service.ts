@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createClient, SupabaseClient, AuthError } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { getRuntimeTier, isManagedProductionTier } from '../config/runtime-tier';
 
 @Injectable()
 export class MinimalSupabaseService {
@@ -8,11 +9,25 @@ export class MinimalSupabaseService {
   private supabaseUrl: string;
 
   constructor(config: ConfigService) {
-    this.supabaseUrl = config.get('SUPABASE_URL') || 'https://isoyzcvjoevyphnaznkl.supabase.co';
-    const supabaseKey = config.get('SUPABASE_ANON_KEY') || 'sb_publishable_9sKVxamNyK4CdXM-yH69qg_fEHRvHRa';
-    
-    if (!supabaseKey || supabaseKey.includes('REDACTED')) {
+    const runtimeTier = getRuntimeTier();
+    this.supabaseUrl =
+      config.get('KELEDON_SUPABASE_URL') ||
+      config.get('SUPABASE_URL') ||
+      (runtimeTier === 'DEV_LOCAL' ? 'http://localhost:54321' : '');
+    const supabaseKey =
+      config.get('KELEDON_SUPABASE_ANON_KEY') ||
+      config.get('SUPABASE_ANON_KEY') ||
+      (runtimeTier === 'DEV_LOCAL' ? 'your-development-key' : '');
+
+    if (!supabaseKey || supabaseKey.includes('REDACTED') || supabaseKey === 'your-development-key') {
       throw new Error('SUPABASE_ANON_KEY must be configured with real Supabase API key');
+    }
+
+    if (isManagedProductionTier(runtimeTier)) {
+      const parsed = new URL(this.supabaseUrl);
+      if (['localhost', '127.0.0.1', '::1'].includes(parsed.hostname.toLowerCase())) {
+        throw new Error('PRODUCTION_MANAGED cannot use localhost Supabase URL');
+      }
     }
 
     this.supabase = createClient(this.supabaseUrl, supabaseKey, {

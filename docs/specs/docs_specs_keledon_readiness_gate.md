@@ -41,6 +41,8 @@ A version is **READY** if and only if **all** of the following are true:
 4. At least one real output is produced
 5. The behavior is observable by a human
 6. Decisioning is cloud-side and vector-grounded
+7. Production configuration is managed-service-compatible (Supabase, Qdrant, OTel exporter, Cloud base URL)
+8. Production configuration has no localhost/loopback dependency
 
 Logs count. UI counts. Side effects count.
 Claims do not.
@@ -61,6 +63,8 @@ A version is **NOT READY** if **any** of the following are true:
 - C09 proof passes but C10 real extension runtime proof fails
 - no `keledon.agent.exec` execution evidence is present for cloud-issued command execution
 - any change affects agent execution, decision flow, vector retrieval, or command emission and `npm run proof:c12:local` does not pass
+- production tier silently falls back from managed services to local Docker infrastructure
+- production tier accepts localhost/loopback service endpoints
 
 NOT READY is a valid outcome.
 Silence is not.
@@ -91,6 +95,15 @@ VERDICT: NOT READY
 ```
 
 No explanation is required.
+
+### 5.1 Local vs Managed (Configuration Diagram)
+
+```
+DEV_LOCAL / CI_PROOF -> local Docker dependencies for development, CI, proof only
+PRODUCTION_MANAGED   -> managed Supabase, managed Qdrant, managed OTel exporter, managed Cloud base URL
+```
+
+This is a configuration distinction only; architecture and execution boundaries do not change.
 
 ---
 

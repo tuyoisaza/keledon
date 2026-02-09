@@ -13,7 +13,7 @@ export class MainTextInputService extends EventEmitter {
     this.sessionManager = sessionManager;
     this.config = {
       // Cloud connection config
-      cloud_url: 'ws://localhost:3001',
+      cloud_url: 'wss://cloud.keledon.invalid',
       
       // Audio capture config
       auto_start: false,

@@ -7,8 +7,8 @@
 
 // Default configuration values
 const DEFAULT_CONFIG = {
-    BACKEND_URL: 'http://localhost:3001',
-    WS_URL: 'ws://localhost:3001',
+    BACKEND_URL: 'https://cloud.keledon.invalid',
+    WS_URL: 'wss://cloud.keledon.invalid',
     RAG_RETRIEVE_ENDPOINT: '/rag/retrieve',
     RAG_EVALUATE_ENDPOINT: '/rag/evaluate',
     LISTENING_SESSIONS_ENDPOINT: '/listening-sessions',
@@ -24,6 +24,10 @@ function loadConfig() {
     
     // Try to load from process environment (Node.js context)
     if (typeof process !== 'undefined' && process.env) {
+        if (process.env.KELEDON_CLOUD_BASE_URL) {
+            config.BACKEND_URL = process.env.KELEDON_CLOUD_BASE_URL;
+        }
+
         Object.keys(DEFAULT_CONFIG).forEach(key => {
             if (process.env[key]) {
                 // Convert string environment values to appropriate types
@@ -38,6 +42,10 @@ function loadConfig() {
     
     // Try to load from window.ENV (browser context - set by build process)
     if (typeof window !== 'undefined' && window.ENV) {
+        if (window.ENV.KELEDON_CLOUD_BASE_URL !== undefined) {
+            config.BACKEND_URL = window.ENV.KELEDON_CLOUD_BASE_URL;
+        }
+
         Object.keys(DEFAULT_CONFIG).forEach(key => {
             if (window.ENV[key] !== undefined) {
                 if (key === 'DEBUG') {

@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { trace } from '@opentelemetry/api';
 import { startTelemetry } from './telemetry/otel';
+import { assertManagedRuntimeDependencies, getRuntimeTier } from './config/runtime-tier';
 
 async function bootstrap() {
   // Span attachment map (cloud-side):
@@ -9,6 +10,9 @@ async function bootstrap() {
   // - WebSocket ingress/command flow: AgentGateway
   // - Decisioning: DecisionEngineService
   // - Vector retrieval: RAGService
+  const runtimeTier = getRuntimeTier();
+  await assertManagedRuntimeDependencies();
+
   await startTelemetry();
 
   const app = await NestFactory.create(AppModule);
@@ -34,6 +38,7 @@ async function bootstrap() {
     await app.listen(port);
     
     console.log(`🚀 KELEDON Cloud Backend running on port ${port}`);
+    console.log(`🌐 Runtime tier: ${runtimeTier}`);
     console.log(`🌐 CORS enabled for: http://localhost:5173`);
     console.log(`💾 DATABASE-READY: All sessions, agents, and events are persisted to Supabase`);
     console.log(`⚡ DATABASE-READY: No in-memory fallbacks - Cloud fails fast without Supabase`);
