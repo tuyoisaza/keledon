@@ -18,17 +18,49 @@ const DEFAULT_CONFIG = {
     LOG_LEVEL: 'info'
 };
 
+function resolveRuntimeTier(envProvider = {}) {
+    const rawTier = String(envProvider.KELEDON_ENV_TIER || '').trim().toUpperCase();
+    if (rawTier === 'DEV_LOCAL' || rawTier === 'CI_PROOF' || rawTier === 'PRODUCTION_MANAGED') {
+        return rawTier;
+    }
+    return envProvider.NODE_ENV === 'production' ? 'PRODUCTION_MANAGED' : 'DEV_LOCAL';
+}
+
+function isLoopbackUrl(urlValue) {
+    try {
+        const parsed = new URL(urlValue);
+        const host = parsed.hostname.toLowerCase();
+        return host === 'localhost' || host === '127.0.0.1' || host === '::1';
+    } catch {
+        return false;
+    }
+}
+
+function toWsUrl(httpUrl) {
+    return String(httpUrl)
+        .replace(/^https:\/\//i, 'wss://')
+        .replace(/^http:\/\//i, 'ws://');
+}
+
 // Load environment-specific configuration
 function loadConfig() {
     const config = { ...DEFAULT_CONFIG };
+    const processEnv = (typeof process !== 'undefined' && process.env) ? process.env : {};
+    const windowEnv = (typeof window !== 'undefined' && window.ENV) ? window.ENV : {};
+    const runtimeTier = resolveRuntimeTier({ ...processEnv, ...windowEnv });
+    const isManagedTier = runtimeTier === 'PRODUCTION_MANAGED';
     
     // Try to load from process environment (Node.js context)
     if (typeof process !== 'undefined' && process.env) {
         if (process.env.KELEDON_CLOUD_BASE_URL) {
             config.BACKEND_URL = process.env.KELEDON_CLOUD_BASE_URL;
+            config.WS_URL = toWsUrl(process.env.KELEDON_CLOUD_BASE_URL);
         }
 
         Object.keys(DEFAULT_CONFIG).forEach(key => {
+            if (isManagedTier && (key === 'BACKEND_URL' || key === 'WS_URL')) {
+                return;
+            }
             if (process.env[key]) {
                 // Convert string environment values to appropriate types
                 if (key === 'DEBUG') {
@@ -44,9 +76,13 @@ function loadConfig() {
     if (typeof window !== 'undefined' && window.ENV) {
         if (window.ENV.KELEDON_CLOUD_BASE_URL !== undefined) {
             config.BACKEND_URL = window.ENV.KELEDON_CLOUD_BASE_URL;
+            config.WS_URL = toWsUrl(window.ENV.KELEDON_CLOUD_BASE_URL);
         }
 
         Object.keys(DEFAULT_CONFIG).forEach(key => {
+            if (isManagedTier && (key === 'BACKEND_URL' || key === 'WS_URL')) {
+                return;
+            }
             if (window.ENV[key] !== undefined) {
                 if (key === 'DEBUG') {
                     config[key] = window.ENV[key] === 'true';
@@ -55,6 +91,10 @@ function loadConfig() {
                 }
             }
         });
+    }
+
+    if (isManagedTier && isLoopbackUrl(config.BACKEND_URL)) {
+        throw new Error('PRODUCTION_MANAGED cannot use localhost backend URL in extension runtime.');
     }
     
     return config;

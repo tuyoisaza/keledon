@@ -23,7 +23,8 @@ class BackgroundService {
     this.currentSessionId = null;
     this.agentActive = true; // Master toggle for agent control
     this.socket = null;
-    this.cloudUrl = 'http://localhost:3001';
+    this.runtimeTier = this.resolveRuntimeTier();
+    this.cloudUrl = 'https://cloud.keledon.invalid';
     this.cloudUrlStorageKey = 'KELEDON_BACKEND_URL';
     this.legacyCloudUrlStorageKey = 'keledon.cloud_url';
     this.commandChannelName = null;
@@ -39,6 +40,31 @@ class BackgroundService {
     
     // KELEDON-EXT-WEBRTC-MESSAGING-ACK-010: Port connections from content scripts
     this.contentPorts = new Map();
+  }
+
+  resolveRuntimeTier() {
+    const rawTier =
+      (typeof process !== 'undefined' && process?.env?.KELEDON_ENV_TIER) ||
+      (typeof process !== 'undefined' && process?.env?.NODE_ENV === 'production'
+        ? 'PRODUCTION_MANAGED'
+        : 'DEV_LOCAL');
+
+    const tier = String(rawTier || 'DEV_LOCAL').trim().toUpperCase();
+    if (tier === 'PRODUCTION_MANAGED' || tier === 'CI_PROOF' || tier === 'DEV_LOCAL') {
+      return tier;
+    }
+
+    return 'DEV_LOCAL';
+  }
+
+  isLoopbackOrigin(urlValue) {
+    try {
+      const parsed = new URL(urlValue);
+      const host = parsed.hostname.toLowerCase();
+      return host === 'localhost' || host === '127.0.0.1' || host === '::1';
+    } catch {
+      return false;
+    }
   }
 
   async start() {
@@ -79,13 +105,29 @@ class BackgroundService {
         return null;
       }
 
-      return parsed.origin;
+      const origin = parsed.origin;
+      if (this.runtimeTier === 'PRODUCTION_MANAGED' && this.isLoopbackOrigin(origin)) {
+        return null;
+      }
+
+      return origin;
     } catch (error) {
       return null;
     }
   }
 
   async loadCloudRuntimeConfig() {
+    const canonicalCloudBase =
+      (typeof process !== 'undefined' && process?.env?.KELEDON_CLOUD_BASE_URL) || '';
+
+    if (canonicalCloudBase) {
+      const normalizedCanonical = this.normalizeCloudUrl(canonicalCloudBase);
+      if (!normalizedCanonical) {
+        throw new Error('[C22.3] KELEDON_CLOUD_BASE_URL is invalid for current runtime tier.');
+      }
+      this.cloudUrl = normalizedCanonical;
+    }
+
     try {
       const stored = await chrome.storage.local.get([
         this.cloudUrlStorageKey,
@@ -94,13 +136,18 @@ class BackgroundService {
       const storedUrl =
         this.normalizeCloudUrl(stored?.[this.cloudUrlStorageKey]) ||
         this.normalizeCloudUrl(stored?.[this.legacyCloudUrlStorageKey]);
-      if (storedUrl) {
+      if (storedUrl && this.runtimeTier !== 'PRODUCTION_MANAGED') {
         this.cloudUrl = storedUrl;
       }
     } catch (error) {
       console.warn('[C11-EXT] Failed to load cloud URL from storage, using default');
     }
 
+    if (this.runtimeTier === 'PRODUCTION_MANAGED' && this.isLoopbackOrigin(this.cloudUrl)) {
+      throw new Error('[C22.3] PRODUCTION_MANAGED cannot use localhost cloud URL.');
+    }
+
+    console.log(`[C11-EXT] Runtime tier: ${this.runtimeTier}`);
     console.log(`[C11-EXT] Cloud runtime URL: ${this.cloudUrl}`);
   }
 
@@ -487,6 +534,20 @@ class BackgroundService {
   }
 
   async handleMessage(message, sendResponse) {
+    const normalizedType = String(message?.type || '').toUpperCase();
+    if (
+      normalizedType.includes('AUTH') ||
+      normalizedType.includes('ROLE') ||
+      normalizedType.includes('TOKEN')
+    ) {
+      console.error('[C22.5] Extension auth logic attempt blocked. Cloud is sole auth verifier.');
+      sendResponse({
+        success: false,
+        error: 'Auth and role verification are cloud-only responsibilities.',
+      });
+      return;
+    }
+
     switch (message.type) {
       case 'GET_STATUS':
         sendResponse({
