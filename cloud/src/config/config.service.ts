@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { getRuntimeTier, isManagedProductionTier, resolveServiceEndpoints } from './runtime-tier';
 
 @Injectable()
 export class ConfigService {
+  private readonly runtimeTier = getRuntimeTier();
+  private readonly endpoints = resolveServiceEndpoints(this.runtimeTier);
+  private readonly supabaseAnonKey = this.resolveSupabaseAnonKey();
+
   private readonly config = {
-    backendUrl: process.env.BACKEND_URL || 'http://localhost:3001',
-    wsUrl: process.env.WS_URL || 'ws://localhost:3001',
-    supabaseUrl: process.env.SUPABASE_URL || 'http://localhost:54321',
-    supabaseKey: process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY || 'your-development-key',
+    backendUrl: this.endpoints.cloudBaseUrl,
+    wsUrl: process.env.WS_URL || this.endpoints.cloudBaseUrl.replace(/^http/i, 'ws'),
+    supabaseUrl: this.endpoints.supabaseUrl,
+    supabaseKey: this.supabaseAnonKey,
     supabaseAdminSecret: process.env.SUPABASE_ADMIN_SECRET,
-    environment: process.env.NODE_ENV || 'development',
+    environment: this.runtimeTier,
     port: parseInt(process.env.PORT || '3001', 10),
     database: {
       host: process.env.DB_HOST || 'localhost',
@@ -34,7 +39,7 @@ export class ConfigService {
       },
       vectorStore: {
         provider: process.env.VECTOR_STORE_PROVIDER || 'supabase',
-        qdrantUrl: process.env.QDRANT_URL || 'http://localhost:6333',
+        qdrantUrl: this.endpoints.qdrantUrl,
         qdrantApiKey: process.env.QDRANT_API_KEY,
         embeddingsModel: process.env.EMBEDDINGS_MODEL || 'text-embedding-3-small'
       }
@@ -43,6 +48,22 @@ export class ConfigService {
 
   constructor() {
     console.log('[Config] Configuration loaded:', this.config);
+  }
+
+  private resolveSupabaseAnonKey(): string {
+    const canonical = (process.env.KELEDON_SUPABASE_ANON_KEY || '').trim();
+    const legacy = (process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY || '').trim();
+    const key = canonical || legacy;
+
+    if (isManagedProductionTier(this.runtimeTier) && !canonical) {
+      throw new Error('[Config] KELEDON_SUPABASE_ANON_KEY is required in PRODUCTION_MANAGED.');
+    }
+
+    if (isManagedProductionTier(this.runtimeTier) && !key) {
+      throw new Error('[Config] Supabase anon key is required in PRODUCTION_MANAGED.');
+    }
+
+    return key || 'your-development-key';
   }
 
   getBackendUrl(): string {
@@ -78,7 +99,7 @@ export class ConfigService {
   }
 
   getVectorStoreConfig() {
-    return this.config.services?.vectorStore || { url: 'http://localhost:3020', collection: 'keledo' };
+    return this.config.services?.vectorStore || { url: this.endpoints.qdrantUrl, collection: 'keledo' };
   }
 
   // For backward compatibility
@@ -87,6 +108,6 @@ export class ConfigService {
   }
 
   isProduction(): boolean {
-    return this.config.environment === 'production';
+    return isManagedProductionTier(this.runtimeTier);
   }
 }

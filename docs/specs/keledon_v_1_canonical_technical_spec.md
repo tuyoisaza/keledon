@@ -5,15 +5,27 @@
 
 Any code, agent behavior, or architectural choice that contradicts this document is **invalid**, regardless of intent or documentation elsewhere.
 
+Authoritative cross-reference set:
+- `docs/specs/keledon_canonical_architecture.md`
+- `docs/specs/keledon_canonical_contracts.md`
+- `docs/specs/docs_specs_keledon_execution_law.md`
+- `docs/specs/docs_specs_keledon_readiness_gate.md`
+- `docs/specs/docs_specs_keledon_v_1_minimal_spec.md`
+
+Interpretation guard:
+- The Cloud Conversation Orchestrator (Brain) is the only real agent.
+- The browser extension/runtime is a blind execution and I/O surface, not an agent.
+- Vector store usage is required for cloud reasoning and policy-grounded flow selection.
+
 ---
 
 ## 1. Purpose of KELEDON (V1)
 
-KELEDON V1 is an **autonomous inbound voice agent** that operates inside a web browser environment.
+KELEDON V1 is an **autonomous inbound voice agent system** whose only real agent is cloud-hosted.
 
 Its sole purpose in V1 is to:
 
-- Answer inbound WebRTC calls in-browser
+- Answer inbound WebRTC calls via browser execution surface
 - Conduct a real-time voice conversation
 - Execute **deterministic UI actions** on supported web platforms
 - Leave **complete, auditable traces** of everything it does
@@ -30,10 +42,11 @@ This principle overrides all others.
 
 Implications:
 
-- All decisions, intent selection, and flow control happen in the Cloud
-- The Agent (browser runtime) executes instructions blindly
-- The Agent never decides what to do next
+- All decisions, intent selection, and flow control happen in the Cloud Brain
+- The browser runtime executes instructions blindly
+- The browser runtime never decides what to do next
 - The Cloud never manipulates UI or audio directly
+- Cloud reasoning must be grounded via required vector retrieval
 
 Any violation is a **hard architectural failure**.
 
@@ -44,6 +57,7 @@ Any violation is a **hard architectural failure**.
 KELEDON V1 **IS**:
 
 - A web-first system (browser extension + cloud backend)
+- A single-agent architecture (cloud) with browser-side deterministic execution
 - Deterministic in its UI behavior
 - Observable and auditable at runtime
 - Governed by explicit contracts
@@ -104,12 +118,22 @@ KELEDON V1 is considered **DONE** only if:
 
 - A real inbound WebRTC call can be answered
 - Audio is captured and converted to text
-- The Cloud makes a decision based on that text
-- The Agent executes UI actions based on Cloud commands
+- The Cloud makes a decision based on that text and vector-grounded context
+- The browser runtime executes UI actions based on Cloud commands
 - Audio responses are spoken back to the caller
 - All steps are logged and reviewable
 
+Canonical runtime loop:
+
+`LISTEN -> TRANSCRIBE -> THINK (Cloud + Vector) -> DECIDE -> ACT (RPA) -> RESPOND -> SPEAK -> LOOP`
+
 If any step is simulated, mocked, or skipped, V1 is **NOT DONE**.
+
+### 7.1 Canonical Real-Runtime Proof Requirement
+
+`npm run proof:c12:local` is the **KELEDON CANONICAL REAL-RUNTIME PROOF**.
+
+Any change touching agent execution, decision flow, vector retrieval, or command emission must preserve a passing C12 proof with correlated `decision_id` and `trace_id` across decision and execution spans.
 
 ---
 
@@ -124,6 +148,8 @@ This document has higher authority than:
 - Agent opinions
 
 If there is a conflict, **this document wins**.
+
+When component boundaries are interpreted, apply this document together with `docs/specs/keledon_canonical_architecture.md` and `docs/specs/keledon_canonical_contracts.md`.
 
 ---
 
@@ -140,4 +166,3 @@ Agents are forbidden from modifying it during normal work.
 ---
 
 **End of Canonical Technical Specification (V1)**
-

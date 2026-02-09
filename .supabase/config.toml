@@ -1,0 +1,17 @@
+project_id = "KELEDON"
+
+[api]
+enabled = true
+port = 54321
+
+[db]
+port = 55432
+shadow_port = 55430
+major_version = 17
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true

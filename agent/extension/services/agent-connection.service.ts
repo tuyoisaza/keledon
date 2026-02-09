@@ -17,9 +17,10 @@ export class AgentConnection {
     }
 
     // Connect to canonical cloud backend
-    const wsUrl = process.env.NODE_ENV === 'production' 
-      ? 'wss://keledon.tuyoisaza.com' 
-      : 'ws://localhost:3001';
+    const configuredCloudBase = process.env.KELEDON_CLOUD_BASE_URL || 'https://cloud.keledon.invalid';
+    const wsUrl = configuredCloudBase
+      .replace(/^https:\/\//i, 'wss://')
+      .replace(/^http:\/\//i, 'ws://');
 
     return new Promise((resolve, reject) => {
       this.ws = new WebSocket(wsUrl);

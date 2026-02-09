@@ -7,8 +7,8 @@
     // Phase 1 Configuration for Backend Testing
     const KELEDON_CONFIG = {
         // Backend URLs
-        BACKEND_URL: 'http://localhost:3001',
-        WS_URL: 'ws://localhost:3001',
+        BACKEND_URL: 'https://cloud.keledon.invalid',
+        WS_URL: 'wss://cloud.keledon.invalid',
         
         // RAG Endpoints
         RAG_RETRIEVE_ENDPOINT: '/rag/retrieve',

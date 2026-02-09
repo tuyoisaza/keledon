@@ -7,14 +7,14 @@ import {
   SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
   SEMRESATTRS_SERVICE_NAME,
 } from '@opentelemetry/semantic-conventions';
+import { getRuntimeTier, resolveServiceEndpoints } from '../config/runtime-tier';
 
 const serviceName = 'keledon-cloud';
-const deploymentEnvironment = process.env.NODE_ENV || 'development';
+const deploymentEnvironment = getRuntimeTier();
+const resolvedEndpoints = resolveServiceEndpoints();
 
-// Local-dev backend selection: Jaeger all-in-one with OTLP/HTTP receiver.
-// Default endpoint targets Jaeger OTLP ingest at localhost:4318.
 const traceExporter = new OTLPTraceExporter({
-  url: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || 'http://localhost:4318/v1/traces',
+  url: resolvedEndpoints.otelExporterUrl,
 });
 
 const sdk = new NodeSDK({
@@ -46,7 +46,7 @@ export async function startTelemetry(): Promise<void> {
   try {
     await sdk.start();
     console.log(
-      `[OTEL] Tracing started for ${serviceName} -> ${process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || 'http://localhost:4318/v1/traces'} (Jaeger OTLP)`,
+      `[OTEL] Tracing started for ${serviceName} -> ${resolvedEndpoints.otelExporterUrl}`,
     );
   } catch (error) {
     telemetryStarted = false;

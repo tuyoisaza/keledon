@@ -1,0 +1,42 @@
+services:
+  keledon-jaeger:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+
+  keledon-grafana:
+    image: grafana/grafana:11.2.2
+    depends_on:
+      - keledon-jaeger
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_AUTH_BASIC_ENABLED: "false"
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_USERS_VIEWERS_CAN_EDIT: "false"
+      GF_SECURITY_ALLOW_EMBEDDING: "false"
+      GF_INSTALL_PLUGINS: ""
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+
+  keledon-observability-proxy:
+    image: node:20-alpine
+    depends_on:
+      - keledon-grafana
+      - keledon-jaeger
+    env_file:
+      - ./observability/.env.local.supabase
+    environment:
+      OBS_PROXY_PORT: "3014"
+      OBS_GRAFANA_URL: "http://keledon-grafana:3000"
+      OBS_JAEGER_URL: "http://keledon-jaeger:16686"
+      OBS_REQUIRED_ROLE: ROLE_SUPERADMIN_OBSERVER
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["node", "/app/server.js"]
+    ports:
+      - "3014:3014"
+    volumes:
+      - ./observability/rbac-proxy:/app:ro

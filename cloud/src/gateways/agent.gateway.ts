@@ -9,7 +9,12 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger, Inject, forwardRef } from '@nestjs/common';
 import { SessionService } from '../services/session.service';
-import { AgentEvent, CloudCommand } from '../contracts/events';
+import {
+  AgentEvent,
+  AgentExecResultAck,
+  CloudCommand,
+  ExecutionEvidence,
+} from '../contracts/events';
 import { DecisionEngineService } from '../services/decision-engine.service';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -19,7 +24,11 @@ import {
   SpanStatusCode,
   trace,
 } from '@opentelemetry/api';
-import { KELEDON_TRACE_SPANS } from '../telemetry/trace-model';
+import { KELEDON_AGENT_EVENTS, KELEDON_TRACE_SPANS } from '../telemetry/trace-model';
+import { AGENT_EXEC_ATTRS } from '../telemetry/decision-evidence';
+import { resolveCorsOrigins } from '../config/runtime-tier';
+
+const gatewayCorsOrigins = resolveCorsOrigins();
 
 // Import from canonical contracts
 export interface AgentSocketData {
@@ -40,9 +49,7 @@ export interface CommandSocketData {
 
 @WebSocketGateway({
   cors: { 
-    origin: process.env.NODE_ENV === 'production' 
-      ? process.env.CORS_ORIGINS?.split(',') || ['chrome-extension://*']
-      : ['http://localhost:5173', 'http://localhost:3000'],
+    origin: gatewayCorsOrigins,
     credentials: true 
   },
   transports: ['websocket', 'polling'],
@@ -188,6 +195,139 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     }
   }
 
+  @SubscribeMessage(KELEDON_AGENT_EVENTS.EXECUTION_RESULT_ACK)
+  async handleAgentExecResultAck(client: Socket, ack: AgentExecResultAck): Promise<void> {
+    const normalizedEvidence = this.normalizeAgentExecAck(ack);
+    await this.processExecutionEvidence(client, normalizedEvidence);
+  }
+
+  @SubscribeMessage(KELEDON_AGENT_EVENTS.EXECUTION_EVIDENCE)
+  async handleExecutionEvidence(client: Socket, evidence: ExecutionEvidence): Promise<void> {
+    await this.processExecutionEvidence(client, evidence);
+  }
+
+  private async processExecutionEvidence(client: Socket, evidence: ExecutionEvidence): Promise<void> {
+    const requiredFields = [
+      'event',
+      'session_id',
+      'decision_id',
+      'trace_id',
+      'command_type',
+      'tab_id',
+      'execution_result',
+    ] as const;
+
+    for (const field of requiredFields) {
+      if (!evidence?.[field]) {
+        throw new Error(`execution.evidence missing required field: ${field}`);
+      }
+    }
+
+    if (String(evidence.decision_id).trim().toLowerCase() === 'unknown') {
+      throw new Error('execution.evidence malformed: decision_id must be real and non-placeholder');
+    }
+
+    if (String(evidence.trace_id).trim().toLowerCase() === 'unknown') {
+      throw new Error('execution.evidence malformed: trace_id must be real and non-placeholder');
+    }
+
+    const executionStatus = evidence.execution_status || evidence.execution_result;
+    if (!executionStatus) {
+      throw new Error('execution.evidence missing required field: execution_status');
+    }
+
+    const extractedContext = this.extractContextFromMetadata(evidence?.metadata);
+
+    await context.with(extractedContext, async () => {
+      await this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.AGENT_EXEC, async (span) => {
+        try {
+          span.setAttribute('session_id', String(evidence?.session_id || 'unknown'));
+          span.setAttribute(AGENT_EXEC_ATTRS.EVENT, String(evidence?.event || 'unknown'));
+          span.setAttribute(AGENT_EXEC_ATTRS.DECISION_ID, String(evidence?.decision_id || 'unknown'));
+          span.setAttribute(AGENT_EXEC_ATTRS.TRACE_ID, String(evidence?.trace_id || 'unknown'));
+          span.setAttribute('command_id', String(evidence?.command_id || 'unknown'));
+          span.setAttribute(AGENT_EXEC_ATTRS.COMMAND_TYPE, String(evidence?.command_type || 'unknown'));
+          span.setAttribute(AGENT_EXEC_ATTRS.TAB_ID, String(evidence?.tab_id || 'unknown'));
+          span.setAttribute(AGENT_EXEC_ATTRS.EXECUTION_RESULT, String(evidence?.execution_result || 'unknown'));
+          span.setAttribute(AGENT_EXEC_ATTRS.EXECUTION_STATUS, String(executionStatus));
+          span.setAttribute('outcome', String(evidence?.outcome || 'unknown'));
+          span.setAttribute('latency_ms', Number(evidence?.latency_ms || 0));
+
+          if (executionStatus !== 'success') {
+            span.setStatus({
+              code: SpanStatusCode.ERROR,
+              message: `Extension execution reported ${executionStatus}`,
+            });
+          }
+
+          this.logger.log(
+            `[C10] execution.evidence ${evidence.event} decision_id=${evidence.decision_id} trace_id=${evidence.trace_id} command_type=${evidence.command_type} tab_id=${evidence.tab_id} result=${evidence.execution_result}`,
+          );
+
+          await this.sessionService.persistEvent(evidence.session_id, {
+            session_id: evidence.session_id,
+            event_type: 'ui_result',
+            agent_id: client.id,
+            ts: evidence.completed_at,
+            payload: {
+              kind: 'execution_evidence',
+              decision_id: evidence.decision_id,
+              trace_id: evidence.trace_id,
+              command_id: evidence.command_id,
+              event: evidence.event,
+              command_type: evidence.command_type,
+              tab_id: evidence.tab_id,
+              execution_result: evidence.execution_result,
+              execution_status: executionStatus,
+              execution_timestamp: evidence.execution_timestamp,
+              outcome: evidence.outcome,
+              started_at: evidence.started_at,
+              completed_at: evidence.completed_at,
+              latency_ms: evidence.latency_ms,
+              evidence: evidence.evidence,
+            },
+          } as AgentEvent);
+        } catch (error) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: error instanceof Error ? error.message : String(error),
+          });
+          throw error;
+        } finally {
+          span.end();
+        }
+      });
+    });
+  }
+
+  private normalizeAgentExecAck(ack: AgentExecResultAck): ExecutionEvidence {
+    const executionStatus = ack.execution_status;
+    const executionTimestamp = ack.execution_timestamp;
+
+    return {
+      event: ack.event,
+      session_id: ack.session_id,
+      decision_id: ack.decision_id,
+      trace_id: ack.trace_id,
+      command_id: ack.command_id,
+      command_type: ack.command_type,
+      tab_id: ack.tab_id,
+      execution_result: executionStatus,
+      execution_status: executionStatus,
+      execution_timestamp: executionTimestamp,
+      outcome: executionStatus,
+      started_at: executionTimestamp,
+      completed_at: executionTimestamp,
+      latency_ms: 0,
+      evidence: {
+        source: 'browser-extension',
+        action: ack.command_type,
+        detail: 'agent_exec_result_ack',
+      },
+      metadata: ack.metadata,
+    };
+  }
+
   // Handle test connection messages from side panel
   @SubscribeMessage('test_connection')
   handleTestConnection(client: Socket, data: any): void {
@@ -253,7 +393,16 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       }
 
       const traceId = span.spanContext().traceId;
-      this.injectTraceMetadata(command as Record<string, any>, traceId, decisionId);
+      const propagationCarrier: Record<string, string> = {};
+      const spanContext = trace.setSpan(context.active(), span);
+      propagation.inject(spanContext, propagationCarrier);
+      this.injectTraceMetadata(
+        command as Record<string, any>,
+        traceId,
+        decisionId,
+        propagationCarrier.traceparent,
+        propagationCarrier.tracestate,
+      );
 
       this.server.emit(`command.${sessionId}`, command);
       if ((command as any).say) {
@@ -288,12 +437,17 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         }
 
         const traceId = span.spanContext().traceId;
+        const propagationCarrier: Record<string, string> = {};
+        const spanContext = trace.setSpan(context.active(), span);
+        propagation.inject(spanContext, propagationCarrier);
         command.payload = {
           ...command.payload,
           metadata: {
             ...command.payload?.metadata,
             trace_id: traceId,
             ...(decisionId ? { decision_id: decisionId } : {}),
+            ...(propagationCarrier.traceparent ? { traceparent: propagationCarrier.traceparent } : {}),
+            ...(propagationCarrier.tracestate ? { tracestate: propagationCarrier.tracestate } : {}),
           },
         };
 
@@ -400,11 +554,19 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     return propagation.extract(ROOT_CONTEXT, carrier);
   }
 
-  private injectTraceMetadata(command: Record<string, any>, traceId: string, decisionId?: string): void {
+  private injectTraceMetadata(
+    command: Record<string, any>,
+    traceId: string,
+    decisionId?: string,
+    traceparent?: string,
+    tracestate?: string,
+  ): void {
     command.metadata = {
       ...(command.metadata || {}),
       trace_id: traceId,
       ...(decisionId ? { decision_id: decisionId } : {}),
+      ...(traceparent ? { traceparent } : {}),
+      ...(tracestate ? { tracestate } : {}),
     };
 
     if (command.say && typeof command.say === 'object') {
@@ -412,6 +574,8 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         ...(command.say.metadata || {}),
         trace_id: traceId,
         ...(decisionId ? { decision_id: decisionId } : {}),
+        ...(traceparent ? { traceparent } : {}),
+        ...(tracestate ? { tracestate } : {}),
       };
     }
   }

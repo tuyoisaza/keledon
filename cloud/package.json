@@ -5,7 +5,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "node scripts/c13-regression-sentinel.js && nest build",
     "start": "node dist/main",
     "start:dev": "node canonical-dev-server.js",
     "lint": "eslint \"src/**/*.ts\" --fix",
@@ -15,7 +15,13 @@
     "build:vector-store": "npm run build && npm run package:vector-store",
     "package:vector-store": "echo 'Vector Store backend built successfully'",
     "dev:full": "concurrently \"npm run dev:vector-store\" \"cd ../landing && npm run dev\"",
-    "prepare:env": "echo 'Environment preparation complete'"
+    "prepare:env": "echo 'Environment preparation complete'",
+    "proof:c07:local": "node scripts/c07-local-proof.js --dev-only-bootstrap",
+    "proof:c09:local": "node scripts/c09-local-proof.js --dev-only-bootstrap",
+    "proof:c10:local": "node scripts/c10-local-proof.js --dev-only-bootstrap",
+    "proof:c12:local": "node scripts/c12-local-proof.js --dev-only-bootstrap",
+    "proof:c12:ci": "node scripts/c13-ci-guardrail.js --dev-only-bootstrap",
+    "guard:regression": "node scripts/c13-regression-sentinel.js"
   },
   "dependencies": {
     "@nestjs/config": "^4.0.2",
@@ -36,7 +42,9 @@
     "@types/uuid": "^9.0.0",
     "pg": "^8.18.0",
     "playwright": "^1.58.1",
+    "puppeteer": "^24.25.0",
     "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
     "typeorm": "^0.3.28",
     "uuid": "^9.0.0"
   },

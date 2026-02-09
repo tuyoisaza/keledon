@@ -14,10 +14,10 @@ export class SupabaseService {
     const supabaseKey = config.getSupabaseConfig().key;
     
     if (!supabaseUrl || !supabaseKey) {
-      console.warn('[Supabase] Missing configuration, using local development settings');
+      throw new Error('[Supabase] Missing configuration. Silent local fallback is forbidden.');
     }
     
-    this.client = createClient(supabaseUrl || 'http://localhost:54321', supabaseKey || 'your-development-key');
+    this.client = createClient(supabaseUrl, supabaseKey);
   }
 
   async signUp(email: string, password: string, name?: string) {
