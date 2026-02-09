@@ -63,6 +63,10 @@ If vector retrieval is bypassed → **SYSTEM IS NOT READY**.
 
 ## RUNTIME LOOP (AUTHORITATIVE)
 
+Canonical loop string:
+
+`LISTEN -> TRANSCRIBE -> THINK (Cloud + Vector) -> DECIDE -> ACT (RPA) -> RESPOND -> SPEAK -> LOOP`
+
 1. Listen (WebRTC audio captured in browser)
 2. Transcribe (STT in browser → text)
 3. Think (Cloud agent reasons using vector store)
@@ -98,10 +102,12 @@ If ANY instruction, prompt, or task:
 ## REQUIRED PRE-READ (FOR AI & AGENTS)
 
 This file MUST be read together with:
+- docs/specs/KELEDON_CONTEXT_CANONICAL.md
 - docs/specs/keledon_canonical_architecture.md
 - docs/specs/keledon_v_1_canonical_technical_spec.md
 - docs/specs/keledon_canonical_contracts.md
 - docs/specs/docs_specs_keledon_execution_law.md
+- docs/specs/docs_specs_keledon_readiness_gate.md
 
 ---
 
