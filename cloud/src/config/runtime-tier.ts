@@ -41,6 +41,8 @@ const ENDPOINT_SPECS: EndpointSpec[] = [
   },
 ];
 
+const LOCAL_CORS_ORIGINS = ['http://localhost:5173', 'http://localhost:3000'];
+
 export function getRuntimeTier(): RuntimeTier {
   const rawTier = (process.env.KELEDON_ENV_TIER || '').trim().toUpperCase();
 
@@ -67,6 +69,13 @@ function hasLoopbackHost(urlValue: string): boolean {
   } catch {
     return false;
   }
+}
+
+function parseOrigins(raw: string): string[] {
+  return raw
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean);
 }
 
 function requireCanonicalEndpoint(spec: EndpointSpec, tier: RuntimeTier): string {
@@ -111,6 +120,34 @@ export function resolveServiceEndpoints(tier: RuntimeTier = getRuntimeTier()): R
   });
 
   return Object.fromEntries(entries) as Record<EndpointKey, string>;
+}
+
+export function resolveCorsOrigins(tier: RuntimeTier = getRuntimeTier()): string[] {
+  const configured = (process.env.KELEDON_CLOUD_CORS_ORIGINS || process.env.CORS_ORIGINS || '').trim();
+
+  if (!configured) {
+    if (tier === 'DEV_LOCAL' || tier === 'CI_PROOF') {
+      return LOCAL_CORS_ORIGINS;
+    }
+    throw new Error('[Config] KELEDON_CLOUD_CORS_ORIGINS is required in PRODUCTION_MANAGED.');
+  }
+
+  const origins = parseOrigins(configured);
+  if (!origins.length) {
+    throw new Error('[Config] KELEDON_CLOUD_CORS_ORIGINS must include at least one origin.');
+  }
+
+  if (isManagedProductionTier(tier)) {
+    for (const origin of origins) {
+      if (hasLoopbackHost(origin)) {
+        throw new Error(
+          `[Config] PRODUCTION_MANAGED cannot allow localhost/loopback CORS origin (${origin}).`,
+        );
+      }
+    }
+  }
+
+  return origins;
 }
 
 async function assertReachable(label: string, url: string, init?: RequestInit): Promise<void> {

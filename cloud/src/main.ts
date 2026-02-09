@@ -2,7 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { trace } from '@opentelemetry/api';
 import { startTelemetry } from './telemetry/otel';
-import { assertManagedRuntimeDependencies, getRuntimeTier } from './config/runtime-tier';
+import {
+  assertManagedRuntimeDependencies,
+  getRuntimeTier,
+  isManagedProductionTier,
+  resolveCorsOrigins,
+} from './config/runtime-tier';
 
 async function bootstrap() {
   // Span attachment map (cloud-side):
@@ -11,6 +16,17 @@ async function bootstrap() {
   // - Decisioning: DecisionEngineService
   // - Vector retrieval: RAGService
   const runtimeTier = getRuntimeTier();
+  const isCloudRun = Boolean(process.env.K_SERVICE);
+  if (isCloudRun && !isManagedProductionTier(runtimeTier)) {
+    throw new Error(
+      `[Bootstrap] Cloud Run runtime (${process.env.K_SERVICE}) must use PRODUCTION_MANAGED tier. Current tier: ${runtimeTier}.`,
+    );
+  }
+
+  if (isManagedProductionTier(runtimeTier) && !process.env.PORT) {
+    throw new Error('[Bootstrap] PRODUCTION_MANAGED requires PORT (Cloud Run contract).');
+  }
+
   await assertManagedRuntimeDependencies();
 
   await startTelemetry();
@@ -25,9 +41,9 @@ async function bootstrap() {
     next();
   });
   
-  // Enable CORS for local development
+  const corsOrigins = resolveCorsOrigins(runtimeTier);
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: corsOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
   });
@@ -39,7 +55,9 @@ async function bootstrap() {
     
     console.log(`🚀 KELEDON Cloud Backend running on port ${port}`);
     console.log(`🌐 Runtime tier: ${runtimeTier}`);
-    console.log(`🌐 CORS enabled for: http://localhost:5173`);
+    console.log(`🌐 Cloud Run service: ${process.env.K_SERVICE || 'not-detected'}`);
+    console.log(`🌐 CORS enabled for: ${corsOrigins.join(', ')}`);
+    console.log('⚙️ Cloud Run compatibility: stateless process; no local persistence assumptions');
     console.log(`💾 DATABASE-READY: All sessions, agents, and events are persisted to Supabase`);
     console.log(`⚡ DATABASE-READY: No in-memory fallbacks - Cloud fails fast without Supabase`);
     console.log(`✅ PHASE 2 DATABASE-READY: Complete`);

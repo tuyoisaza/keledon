@@ -26,6 +26,9 @@ import {
 } from '@opentelemetry/api';
 import { KELEDON_AGENT_EVENTS, KELEDON_TRACE_SPANS } from '../telemetry/trace-model';
 import { AGENT_EXEC_ATTRS } from '../telemetry/decision-evidence';
+import { resolveCorsOrigins } from '../config/runtime-tier';
+
+const gatewayCorsOrigins = resolveCorsOrigins();
 
 // Import from canonical contracts
 export interface AgentSocketData {
@@ -46,9 +49,7 @@ export interface CommandSocketData {
 
 @WebSocketGateway({
   cors: { 
-    origin: process.env.NODE_ENV === 'production' 
-      ? process.env.CORS_ORIGINS?.split(',') || ['chrome-extension://*']
-      : ['http://localhost:5173', 'http://localhost:3000'],
+    origin: gatewayCorsOrigins,
     credentials: true 
   },
   transports: ['websocket', 'polling'],
