@@ -27,12 +27,14 @@ services:
       - keledon-grafana
       - keledon-jaeger
     env_file:
-      - ./cloud/.env
+      - ./observability/.env.local.supabase
     environment:
       OBS_PROXY_PORT: "3014"
       OBS_GRAFANA_URL: "http://keledon-grafana:3000"
       OBS_JAEGER_URL: "http://keledon-jaeger:16686"
       OBS_REQUIRED_ROLE: ROLE_SUPERADMIN_OBSERVER
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     command: ["node", "/app/server.js"]
     ports:
       - "3014:3014"
