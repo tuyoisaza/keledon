@@ -114,3 +114,12 @@ dist
 
 # Brain
 .gemini/
+
+# Repository hygiene junk
+nul
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.tmp
