@@ -136,7 +136,7 @@ export class DecisionEngineService {
         }
 
         try {
-          const vectorContext = await this.retrieveVectorContext(sessionId, text, metadata);
+          const vectorContext = await this.retrieveVectorContext(sessionId, text, metadata, decisionId);
           const decision = await this.makeDecision(context);
           const decisionType = this.mapDecisionType(decision?.type);
           const policy = await this.enforcePolicy(decisionId, decision, decisionType, vectorContext);
@@ -299,6 +299,7 @@ export class DecisionEngineService {
     vectorContext: RetrievalResult[],
   ): Promise<{ policyIds: string[]; playbookId: string }> {
     return this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.POLICY_CHECK, async (span) => {
+      span.setAttribute(DECISION_EVIDENCE_ATTRS.DECISION_ID, decisionId);
       span.setAttribute(POLICY_CHECK_ATTRS.DECISION_ID, decisionId);
 
       try {
@@ -360,6 +361,7 @@ export class DecisionEngineService {
     sessionId: string,
     text: string,
     metadata: Record<string, any>,
+    decisionId: string,
   ): Promise<RetrievalResult[]> {
     return this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.VECTOR_RETRIEVE, async (span) => {
       const startedAt = Date.now();
@@ -368,6 +370,7 @@ export class DecisionEngineService {
 
       span.setAttribute('vector.collection', collection);
       span.setAttribute('topK', topK);
+      span.setAttribute(DECISION_EVIDENCE_ATTRS.DECISION_ID, decisionId);
 
       if (!this.ragService) {
         const errorMessage = 'RAGService unavailable - vector retrieval is mandatory for decisions';
@@ -379,6 +382,7 @@ export class DecisionEngineService {
         const results = await this.ragService.retrieveKnowledge(text, {
           sessionId,
           companyId: metadata.companyId || 'keledon-default',
+          decisionId,
           maxResults: topK,
           minScore: typeof metadata.minScore === 'number' ? metadata.minScore : undefined,
         });

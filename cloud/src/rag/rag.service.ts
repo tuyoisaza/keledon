@@ -8,6 +8,7 @@ import { KELEDON_TRACE_SPANS } from '../telemetry/trace-model';
 export interface RAGContextOptions {
   sessionId: string;
   companyId: string;
+  decisionId?: string;
   brandId?: string;
   teamId?: string;
   categories?: string[];
@@ -69,6 +70,9 @@ export class RAGService {
 
       span.setAttribute('vector.collection', collection);
       span.setAttribute('topK', topK);
+      if (options.decisionId) {
+        span.setAttribute('decision.id', options.decisionId);
+      }
 
       try {
         console.log(`[RAG] Retrieving knowledge for query: "${query}" (Phase 1 Mock)`);
