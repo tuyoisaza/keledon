@@ -7,7 +7,7 @@ const { launchAndTriggerExtension } = require('./c12-extension-proof-runner');
 
 const DEV_ONLY_FLAG = '--dev-only-bootstrap';
 const BASE_PORT = Number(process.env.KELEDON_PROOF_PORT || 3001);
-const QDRANT_COLLECTION = process.env.QDRANT_COLLECTION || 'keledon_c09_proof';
+const QDRANT_COLLECTION = process.env.QDRANT_COLLECTION || 'keledon_c12_proof';
 const QDRANT_URL = process.env.QDRANT_URL || 'http://localhost:6333';
 const IS_WINDOWS = process.platform === 'win32';
 const EXTENSION_WAIT_MS = Number(process.env.C12_EXTENSION_WAIT_MS || 180000);
@@ -165,11 +165,11 @@ function bootstrapLocalPostgres() {
 function seedQdrant() {
   console.log('[C12-PROOF] Seeding deterministic Qdrant docs...');
   if (IS_WINDOWS) {
-    runOrFail('cmd.exe', ['/c', 'node', 'scripts/c09-seed-qdrant.js'], { cwd: process.cwd() });
+    runOrFail('cmd.exe', ['/c', 'node', 'scripts/c12-seed-qdrant.js'], { cwd: process.cwd() });
     return;
   }
 
-  runOrFail('node', ['scripts/c09-seed-qdrant.js'], { cwd: process.cwd() });
+  runOrFail('node', ['scripts/c12-seed-qdrant.js'], { cwd: process.cwd() });
 }
 
 async function waitForCloudReady(child) {

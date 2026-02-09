@@ -5,7 +5,7 @@ const net = require('net');
 
 const DEV_ONLY_FLAG = '--dev-only-bootstrap';
 const BASE_PORT = Number(process.env.KELEDON_PROOF_PORT || 3001);
-const QDRANT_COLLECTION = process.env.QDRANT_COLLECTION || 'keledon_c09_proof';
+const QDRANT_COLLECTION = process.env.QDRANT_COLLECTION || 'keledon_c12_proof';
 const QDRANT_URL = process.env.QDRANT_URL || 'http://localhost:6333';
 const IS_WINDOWS = process.platform === 'win32';
 const EXTENSION_WAIT_MS = Number(process.env.C10_EXTENSION_WAIT_MS || 240000);
@@ -162,7 +162,7 @@ function bootstrapLocalPostgres() {
 
 function seedQdrant() {
   console.log('[C10-PROOF] Seeding deterministic Qdrant docs...');
-  const cmd = ['scripts/c09-seed-qdrant.js'];
+  const cmd = ['scripts/c12-seed-qdrant.js'];
   if (IS_WINDOWS) {
     runOrFail('cmd.exe', ['/c', 'node', ...cmd], { cwd: process.cwd() });
     return;
