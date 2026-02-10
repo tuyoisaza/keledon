@@ -97,7 +97,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start period: 40s
 
 volumes:
   qdrant_data:
