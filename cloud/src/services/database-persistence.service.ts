@@ -1,4 +1,5 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { Subject, Observable, interval } from 'rxjs';
 
 export interface DatabaseConfig {
@@ -347,7 +348,7 @@ export class DatabasePersistenceService implements OnModuleInit, OnModuleDestroy
   }
 
   private generateId(): string {
-    return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return randomUUID();
   }
 
   private getNestedValue(obj: any, path: string): any {

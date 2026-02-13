@@ -84,7 +84,7 @@ export class FlowIntegrationManager {
       console.log('FlowIntegrationManager: Starting end-to-end flow');
       
       this.currentFlowId = flowData.flowId || 'keledon-v1-flow';
-      this.currentRunId = `run_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      this.currentRunId = flowData.runId || crypto.randomUUID();
       this.flowActive = true;
       this.flowStartTime = new Date();
       this.currentStep = 'audio_capture';
@@ -378,18 +378,23 @@ export class FlowIntegrationManager {
   }
 
   /**
-   * Get session ID (placeholder - should come from session manager)
+   * Get session ID (cloud-authoritative - must be set by startFlow)
    */
   getSessionId() {
-    // This should come from the session manager
-    return 'session_' + Date.now();
+    if (!this.sessionId) {
+      throw new Error('FlowIntegrationManager: sessionId not set. Start flow with { sessionId }.');
+    }
+    return this.sessionId;
   }
 
   /**
-   * Get agent ID (placeholder - should come from config)
+   * Get agent ID (cloud-authoritative - must be set by startFlow)
    */
   getAgentId() {
-    return 'agent-' + Math.random().toString(36).substr(2, 9);
+    if (!this.agentId) {
+      throw new Error('FlowIntegrationManager: agentId not set. Start flow with { agentId }.');
+    }
+    return this.agentId;
   }
 
   /**

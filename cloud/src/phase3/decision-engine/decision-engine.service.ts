@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { Decision, DecisionRule, DecisionContext, RoutingTable } from './interfaces/decision.interfaces';
 
 @Injectable()
@@ -106,6 +107,6 @@ export class DecisionEngineService {
   }
 
   private generateId(): string {
-    return `decision_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return randomUUID();
   }
 }

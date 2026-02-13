@@ -12,7 +12,6 @@ import {
     ChevronRight,
     LogOut,
     Shield,
-    Activity,
     GraduationCap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -40,7 +39,7 @@ const navItems: NavItem[] = [
 export function Sidebar() {
     const [collapsed, setCollapsed] = useState(false);
     const location = useLocation();
-    const { user, logout, hasRole, isImpersonating, stopImpersonation, showSimulationFeatures, setUserRole } = useAuth();
+    const { user, logout, hasRole } = useAuth();
 
     const filteredItems = navItems.filter(item => {
         const isSuperAdmin = user?.role === 'superadmin';
@@ -57,8 +56,7 @@ export function Sidebar() {
         <aside
             className={cn(
                 'h-screen flex flex-col bg-sidebar border-r border-border transition-all duration-300',
-                collapsed ? 'w-16' : 'w-56',
-                isImpersonating && 'border-primary/50'
+                collapsed ? 'w-16' : 'w-56'
             )}
         >
             {/* Logo */}
@@ -109,60 +107,12 @@ export function Sidebar() {
                 })}
             </nav>
 
-            {/* Impseronation Banner */}
-            {isImpersonating && !collapsed && (
-                <div className="px-4 py-2 bg-primary/10 mx-2 rounded mb-2 border border-primary/20">
-                    <p className="text-xs text-primary font-medium flex items-center gap-2">
-                        <Activity className="w-3 h-3" />
-                        Simulating User
-                    </p>
-                </div>
-            )}
-
-            {/* Super Admin / Admin Role Switcher */}
-            {showSimulationFeatures && !collapsed && (
-                <div className="px-4 pb-2">
-                    <div className="flex bg-muted/50 rounded-lg p-1 gap-1">
-                        <button
-                            onClick={() => setUserRole('superadmin')}
-                            className={cn(
-                                "flex-1 text-[10px] font-bold py-1 rounded transition-colors text-center",
-                                user?.role === 'superadmin' ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-background text-muted-foreground"
-                            )}
-                            title="Switch to Super Admin View"
-                        >
-                            SA
-                        </button>
-                        <button
-                            onClick={() => setUserRole('admin')}
-                            className={cn(
-                                "flex-1 text-[10px] font-bold py-1 rounded transition-colors text-center",
-                                user?.role === 'admin' ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-background text-muted-foreground"
-                            )}
-                            title="Switch to Admin View"
-                        >
-                            AD
-                        </button>
-                        <button
-                            onClick={() => setUserRole('user')}
-                            className={cn(
-                                "flex-1 text-[10px] font-bold py-1 rounded transition-colors text-center",
-                                user?.role === 'user' ? "bg-primary text-primary-foreground shadow-sm" : "hover:bg-background text-muted-foreground"
-                            )}
-                            title="Switch to User View"
-                        >
-                            US
-                        </button>
-                    </div>
-                </div>
-            )}
-
             {/* User section */}
             <div className="p-4 border-t border-border">
                 <div className={cn('flex items-center', collapsed ? 'justify-center' : 'gap-3')}>
                     <div className={cn(
                         "w-9 h-9 rounded-full flex items-center justify-center text-foreground font-medium text-sm",
-                        isImpersonating ? "bg-primary/20 ring-2 ring-primary" : "bg-muted"
+                        "bg-muted"
                     )}>
                         {user?.name.charAt(0).toUpperCase()}
                     </div>
@@ -176,25 +126,13 @@ export function Sidebar() {
                         </div>
                     )}
                     {!collapsed && (
-                        <>
-                            {isImpersonating ? (
-                                <button
-                                    onClick={stopImpersonation}
-                                    className="p-1.5 rounded hover:bg-destructive/10 text-destructive hover:text-destructive transition-colors"
-                                    title="Exit Simulation"
-                                >
-                                    <LogOut className="w-4 h-4" />
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={logout}
-                                    className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
-                                    title="Logout"
-                                >
-                                    <LogOut className="w-4 h-4" />
-                                </button>
-                            )}
-                        </>
+                        <button
+                            onClick={logout}
+                            className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
+                            title="Logout"
+                        >
+                            <LogOut className="w-4 h-4" />
+                        </button>
                     )}
                 </div>
             </div>
