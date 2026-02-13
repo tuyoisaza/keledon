@@ -3,6 +3,8 @@
  * Manages routing configuration for conversation flow
  */
 
+import { randomUUID } from 'crypto';
+
 export interface RoutingRule {
   id: string;
   pattern: string;
@@ -55,7 +57,7 @@ export class RoutingConfigManager {
    * Add routing rule
    */
   addRule(rule: Omit<RoutingRule, 'id'> & { id?: string }): RoutingRule {
-    const id = rule.id || `rule-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const id = rule.id || `rule-${Date.now()}-${randomUUID()}`;
     
     const newRule: RoutingRule = {
       id,

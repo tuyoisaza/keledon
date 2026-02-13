@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import {
   Agent,
   AgentHealth,
@@ -79,7 +80,7 @@ export class AgentOrchestrationService {
         if (health) {
           agent.health = { ...agent.health, ...health, lastCheck: new Date() };
         } else {
-          const responseTime = Math.random() * 1000;
+          const responseTime = 0;
           const errorRate = agent.health.errorRate;
 
           agent.health = {
@@ -89,9 +90,9 @@ export class AgentOrchestrationService {
             errorRate,
             uptime: Date.now() - new Date().getTime(),
             resources: {
-              cpu: Math.random(),
-              memory: Math.random(),
-              network: Math.random()
+              cpu: 0,
+              memory: 0,
+              network: 0
             }
           };
         }
@@ -257,7 +258,7 @@ export class AgentOrchestrationService {
 
     setTimeout(() => {
       this.completeTask(task.id);
-    }, Math.random() * 5000 + 1000);
+    }, 1000);
 
     return true;
   }

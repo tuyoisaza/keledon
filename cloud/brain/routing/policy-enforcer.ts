@@ -6,6 +6,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { randomUUID } from 'crypto';
 
 export interface PolicyRule {
   id: string;
@@ -422,7 +423,7 @@ export class PolicyEnforcer {
    * Add custom policy rule
    */
   addPolicy(rule: Omit<PolicyRule, 'id'> & { id?: string }): PolicyRule {
-    const id = rule.id || `policy-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const id = rule.id || `policy-${Date.now()}-${randomUUID()}`;
     
     const newRule: PolicyRule = {
       id,

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import {
   LogEntry,
   Metric,
@@ -366,31 +367,31 @@ export class ObservabilityService {
       const systemMetrics: SystemMetrics = {
         timestamp: new Date(),
         cpu: {
-          usage: Math.random() * 100,
-          load: [Math.random() * 2, Math.random() * 2, Math.random() * 2],
+          usage: 0,
+          load: [0, 0, 0],
           cores: 4
         },
         memory: {
           total: 16384,
-          used: 8192 + Math.random() * 4096,
-          free: 8192 - Math.random() * 4096,
-          usage: 50 + Math.random() * 25
+          used: 0,
+          free: 16384,
+          usage: 0
         },
         disk: {
           total: 500000,
-          used: 250000 + Math.random() * 100000,
-          free: 250000 - Math.random() * 100000,
-          usage: 50 + Math.random() * 20
+          used: 0,
+          free: 500000,
+          usage: 0
         },
         network: {
-          bytesIn: Math.random() * 1000000,
-          bytesOut: Math.random() * 1000000,
-          connections: Math.floor(Math.random() * 1000)
+          bytesIn: 0,
+          bytesOut: 0,
+          connections: 0
         },
         processes: {
-          total: Math.floor(Math.random() * 200) + 100,
-          running: Math.floor(Math.random() * 20) + 5,
-          sleeping: Math.floor(Math.random() * 180) + 80
+          total: 0,
+          running: 0,
+          sleeping: 0
         }
       };
 
@@ -498,6 +499,6 @@ export class ObservabilityService {
   }
 
   private generateId(): string {
-    return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `${Date.now()}_${randomUUID()}`;
   }
 }

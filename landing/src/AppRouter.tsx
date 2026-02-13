@@ -5,7 +5,6 @@ import { AppLayout } from '@/components/layout/AppLayout';
 // Pages
 import LandingPage from '@/pages/LandingPage';
 import LaunchAgentPage from '@/pages/LaunchAgentPage';
-import LoginPage from '@/pages/LoginPage';
 import DashboardPage from '@/pages/DashboardPage';
 import KnowledgePage from '@/pages/KnowledgePage';
 import AdminPage from '@/pages/AdminPage';
@@ -49,7 +48,7 @@ export function AppRouter() {
             <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<LoginPage />} />
+                <Route path="/login" element={<Navigate to="/" replace />} />
 
                 {/* Protected routes with layout */}
                 <Route

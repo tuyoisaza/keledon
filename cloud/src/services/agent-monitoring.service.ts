@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { Observable, Subject, interval } from 'rxjs';
+import { randomUUID } from 'crypto';
 import { SystemMonitoringService } from './system-monitoring.service';
 
 export interface AgentStatus {
@@ -101,9 +102,6 @@ export class AgentMonitoringService {
   }
 
   private randomHealthStatus(): 'ready' | 'busy' | 'error' {
-    const rand = Math.random();
-    if (rand > 0.95) return 'error';
-    if (rand > 0.8) return 'busy';
     return 'ready';
   }
 
@@ -118,11 +116,10 @@ export class AgentMonitoringService {
     const systemMetrics = this.systemMonitoringService.getCurrentMetrics();
     
     for (const [socketId, agent] of this.agentStatuses) {
-      // Use real system metrics with agent-specific variations
       const performance: AgentStatus['performance'] = {
-        cpu: Math.max(0, systemMetrics.cpu.usage * (0.3 + Math.random() * 0.4)), // 30-70% of system CPU
-        memory: Math.max(0, systemMetrics.memory.usage * (0.2 + Math.random() * 0.3)), // 20-50% of system memory
-        network: Math.max(0, systemMetrics.network.bytesReceived / 100000 + Math.random() * 10) // Network activity
+        cpu: 0,
+        memory: 0,
+        network: 0
       };
       this.recordPerformanceMetrics(socketId, performance);
     }

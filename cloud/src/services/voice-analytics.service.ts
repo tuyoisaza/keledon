@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Subject, Observable } from 'rxjs';
+import { randomUUID } from 'crypto';
 
 export interface ConversationMetrics {
   id: string;
@@ -84,7 +85,7 @@ export class VoiceAnalyticsService {
     sessionId: string,
     segments: TranscriptSegment[]
   ): Promise<ConversationMetrics> {
-    const conversationId = `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const conversationId = `conv_${Date.now()}_${randomUUID()}`;
     
     const metrics: ConversationMetrics = {
       id: conversationId,

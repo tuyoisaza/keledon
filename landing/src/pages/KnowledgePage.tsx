@@ -144,8 +144,8 @@ export default function KnowledgePage() {
                                     key={i}
                                     className="w-1 bg-primary/50 rounded-full transition-all duration-75"
                                     style={{
-                                        height: `${Math.random() * 100}%`,
-                                        opacity: 0.3 + Math.random() * 0.7,
+                                        height: `${20 + (i % 5) * 15}%`,
+                                        opacity: 0.5 + (i % 3) * 0.2,
                                     }}
                                 />
                             ))}
