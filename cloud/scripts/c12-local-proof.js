@@ -3,6 +3,7 @@
 const { spawn, spawnSync } = require('child_process');
 const net = require('net');
 const path = require('path');
+const fs = require('fs');
 const { launchAndTriggerExtension } = require('./c12-extension-proof-runner');
 
 const DEV_ONLY_FLAG = '--dev-only-bootstrap';
@@ -13,6 +14,31 @@ const IS_WINDOWS = process.platform === 'win32';
 const EXTENSION_WAIT_MS = Number(process.env.C12_EXTENSION_WAIT_MS || 180000);
 
 let proofPort = BASE_PORT;
+
+// Load environment from .env.cloud.local
+function loadCloudEnv() {
+  const envPath = path.join(process.cwd(), '.env.cloud.local');
+  if (!fs.existsSync(envPath)) {
+    fail('.env.cloud.local not found. Please create it with Supabase Cloud credentials.');
+  }
+  
+  const envContent = fs.readFileSync(envPath, 'utf8');
+  const envVars = {};
+  
+  envContent.split('\n').forEach(line => {
+    line = line.trim();
+    if (line && !line.startsWith('#')) {
+      const eqIdx = line.indexOf('=');
+      if (eqIdx > 0) {
+        const key = line.substring(0, eqIdx).trim();
+        const value = line.substring(eqIdx + 1).trim();
+        envVars[key] = value;
+      }
+    }
+  });
+  
+  return envVars;
+}
 
 function fail(message) {
   console.error(`\n[C12-PROOF][FAIL] ${message}`);
@@ -132,34 +158,13 @@ function assertContainers() {
       .filter(Boolean),
   );
 
-  const required = ['keledon-jaeger', 'keledon-postgres', 'keledon-qdrant-dev'];
+  // C38: Only require jaeger and qdrant - Supabase Cloud handles DB
+  const required = ['keledon-jaeger', 'keledon-qdrant-dev'];
   for (const name of required) {
     if (!running.has(name)) {
       fail(`Required container '${name}' is not running.`);
     }
   }
-}
-
-function bootstrapLocalPostgres() {
-  const sql = [
-    'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";',
-    "CREATE TABLE IF NOT EXISTS sessions (id uuid PRIMARY KEY DEFAULT uuid_generate_v4(), name varchar(255), status varchar(20) NOT NULL DEFAULT 'active', agent_id varchar(50), metadata jsonb, started_at timestamp, ended_at timestamp, last_activity_at timestamp, event_count integer NOT NULL DEFAULT 0, created_at timestamp NOT NULL DEFAULT now(), updated_at timestamp NOT NULL DEFAULT now(), user_id uuid);",
-    'CREATE TABLE IF NOT EXISTS events (id uuid PRIMARY KEY DEFAULT uuid_generate_v4(), type varchar(20) NOT NULL, payload jsonb NOT NULL, agent_id varchar(50), timestamp timestamp NOT NULL, processing_status varchar(20), processed_at timestamp, processing_result jsonb, created_at timestamp NOT NULL DEFAULT now(), session_id uuid NOT NULL);',
-  ].join(' ');
-
-  runOrFail('docker', [
-    'exec',
-    'keledon-postgres',
-    'psql',
-    '-U',
-    'postgres',
-    '-d',
-    'postgres',
-    '-v',
-    'ON_ERROR_STOP=1',
-    '-c',
-    sql,
-  ]);
 }
 
 function seedQdrant() {
@@ -350,8 +355,11 @@ async function main() {
   await resolveProofPort();
   assertContainers();
 
-  console.log('[C12-PROOF] DEV-ONLY bootstrap: ensuring local DB tables exist...');
-  bootstrapLocalPostgres();
+  // C38: Load Supabase Cloud environment
+  console.log('[C12-PROOF] Loading Supabase Cloud configuration...');
+  const cloudEnv = loadCloudEnv();
+  
+  console.log('[C12-PROOF] Using Supabase Cloud for database (no local Postgres)');
   seedQdrant();
 
   console.log('[C12-PROOF] Building cloud service...');
@@ -360,10 +368,12 @@ async function main() {
   console.log('[C12-PROOF] Building agent extension...');
   runNpmOrFail(['run', 'build'], { cwd: `${process.cwd()}\\..\\agent` });
 
+  // C38: Pass Supabase Cloud env vars to cloud process
   const cloudProcess = spawnCloudProcess({
     cwd: process.cwd(),
     env: {
       ...process.env,
+      ...cloudEnv,
       NODE_ENV: 'development',
       PORT: String(proofPort),
       QDRANT_URL,
