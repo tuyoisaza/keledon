@@ -73,15 +73,15 @@ export function SettingsTab() {
   const [loading] = useState(false);
   const [catalogError] = useState<string | null>(null);
 
-  // Stub handlers (safe for build)
+  // MVP = REAL: stub handlers replaced with fail-fast (no simulated save)
   const onSaveProviderCatalog = async () =>
-    toast.success('Provider catalog saved (stub)');
+    toast.error('Provider catalog save not implemented (real Supabase backend required)');
 
   const onSaveTenantConfig = async () =>
-    toast.success('Tenant config saved (stub)');
+    toast.error('Tenant config save not implemented (real Supabase backend required)');
 
   const onSaveVoiceProfiles = async () =>
-    toast.success('Voice profiles saved (stub)');
+    toast.error('Voice profiles save not implemented (real Supabase backend required)');
 
   return (
     <div className="p-6 max-w-6xl mx-auto">

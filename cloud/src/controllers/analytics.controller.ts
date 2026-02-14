@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Query, Body, HttpException, HttpStatus, Param } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { VoiceAnalyticsService } from '../services/voice-analytics.service';
 import { IntegrationHealthService } from '../services/integration-health.service';
 import { FlowExecutionService } from '../services/flow-execution.service';
@@ -742,9 +743,8 @@ export class AnalyticsController {
     const intervals = this.getIntervalsForPeriod(period);
     
     for (let i = 0; i < intervals; i++) {
-      // Generate somewhat realistic trend data
-      const variation = Math.random() * 20 - 10;
-      data.push(Math.max(0, value + variation));
+      // Deterministic variation (no randomness)
+      data.push(value);
     }
     
     return data;
@@ -808,6 +808,6 @@ export class AnalyticsController {
   }
 
   private generateId(): string {
-    return Math.random().toString(36).substr(2, 9);
+    return randomUUID();
   }
 }

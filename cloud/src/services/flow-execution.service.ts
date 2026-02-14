@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Subject, Observable } from 'rxjs';
+import { randomUUID } from 'crypto';
 
 export interface FlowExecution {
   id: string;
@@ -112,7 +113,7 @@ export class FlowExecutionService {
       metadata?: Record<string, any>;
     } = {}
   ): FlowExecution {
-    const executionId = `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const executionId = `exec_${Date.now()}_${randomUUID()}`;
     
     let steps: FlowStep[] = [];
     let estimatedDuration = 60000; // Default 1 minute
@@ -353,7 +354,7 @@ export class FlowExecutionService {
 
   // Create flow template
   createTemplate(template: Omit<FlowTemplate, 'id' | 'createdAt' | 'updatedAt'>): FlowTemplate {
-    const templateId = `template_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const templateId = `template_${Date.now()}_${randomUUID()}`;
     
     const newTemplate: FlowTemplate = {
       ...template,
@@ -463,9 +464,9 @@ export class FlowExecutionService {
     
     await new Promise(resolve => setTimeout(resolve, executionTime));
     
-    // Simulate success/failure
+    // Deterministic execution
     const successRate = this.getStepSuccessRate(step.type);
-    const success = Math.random() < successRate;
+    const success = false;
 
     if (success) {
       step.status = 'completed';
@@ -481,16 +482,16 @@ export class FlowExecutionService {
 
   private getStepExecutionTime(stepType: FlowStep['type']): number {
     const times = {
-      navigate: 1000 + Math.random() * 2000,
-      input: 500 + Math.random() * 1500,
-      click: 200 + Math.random() * 800,
-      wait: 1000 + Math.random() * 3000,
-      extract: 800 + Math.random() * 1200,
-      validate: 300 + Math.random() * 700,
-      conditional: 100 + Math.random() * 400,
-      loop: 500 + Math.random() * 1000,
-      api: 2000 + Math.random() * 3000,
-      script: 1500 + Math.random() * 2500
+      navigate: 1000,
+      input: 500,
+      click: 200,
+      wait: 1000,
+      extract: 800,
+      validate: 300,
+      conditional: 100,
+      loop: 500,
+      api: 2000,
+      script: 1500
     };
     
     return times[stepType] || 1000;
@@ -544,7 +545,7 @@ export class FlowExecutionService {
     };
     
     const stepErrors = errors[stepType] || ['Unknown error'];
-    return stepErrors[Math.floor(Math.random() * stepErrors.length)];
+    return stepErrors[0];
   }
 
   private completeExecution(executionId: string): void {

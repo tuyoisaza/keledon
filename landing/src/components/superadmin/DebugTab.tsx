@@ -80,31 +80,7 @@ export const DebugTab: React.FC<DebugTabProps> = ({
                         />
                     </div>
 
-                    {/* Test Actions */}
-                    <div className="p-4 rounded-xl border border-border bg-card">
-                        <h4 className="font-semibold text-foreground mb-3">🔧 Test Actions</h4>
-                        <div className="flex gap-2">
-                            <button
-                                onClick={() => addDebugLog('Test log entry created')}
-                                className="px-3 py-2 rounded-lg bg-muted hover:bg-muted/80 text-sm text-foreground"
-                            >
-                                Add Test Log
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setModelStatus('loading');
-                                    addDebugLog('Simulating model load...');
-                                    setTimeout(() => {
-                                        setModelStatus('ready');
-                                        addDebugLog('Model loaded (simulated)');
-                                    }, 2000);
-                                }}
-                                className="px-3 py-2 rounded-lg bg-muted hover:bg-muted/80 text-sm text-foreground"
-                            >
-                                Simulate Model Load
-                            </button>
-                        </div>
-                    </div>
+                    {/* Test Actions - removed: no simulation in MVP */}
                 </div>
             )}
         </div>

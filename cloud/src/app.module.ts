@@ -43,13 +43,23 @@ import { getRuntimeTier, isManagedProductionTier } from './config/runtime-tier';
           );
         }
         
+        // Detect if connecting to Supabase Cloud (not localhost)
+        const isSupabaseCloud = dbHost.includes('supabase') || dbHost.includes('aws-');
+        
         if (isLocalDev) {
           console.log('🚀 LOCAL DEV MODE: KELEDON Cloud Backend');
-          console.log('⚠️  SUPABASE NOT CONNECTED: Fail-fast mode enabled');
+          if (isSupabaseCloud) {
+            console.log('✅ SUPABASE CLOUD: Using remote Postgres');
+          } else {
+            console.log('⚠️  SUPABASE NOT CONNECTED: Fail-fast mode enabled');
+          }
           console.log('❌ NO IN-MEMORY FALLBACKS: Database required for production');
         }
         
         // KELEDON ARCHITECTURE: Fail fast without Supabase
+        // Enable SSL for Supabase Cloud connections
+        const useSSL = isSupabaseCloud || isManagedTier;
+        
         return {
           type: 'postgres',
           host: dbHost,
@@ -60,7 +70,7 @@ import { getRuntimeTier, isManagedProductionTier } from './config/runtime-tier';
           entities: [Session, Event, User],
           synchronize: false,
           logging: isLocalDev,
-          ssl: isManagedTier ? { rejectUnauthorized: false } : false,
+          ssl: useSSL ? { rejectUnauthorized: false } : false,
           // KELEDON FAIL-FAST: Disable retry logging in local dev
           keepConnectionAlive: !isLocalDev,
         };

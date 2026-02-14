@@ -1,5 +1,6 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Subject, Observable, interval } from 'rxjs';
+import { randomUUID } from 'crypto';
 import { SystemMonitoringService } from './system-monitoring.service';
 import { IntegrationHealthService } from './integration-health.service';
 import { FlowExecutionService } from './flow-execution.service';
@@ -812,14 +813,14 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   }
 
   private generateAlertId(): string {
-    return `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `alert_${Date.now()}_${randomUUID()}`;
   }
 
   private generateChannelId(): string {
-    return `channel_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `channel_${Date.now()}_${randomUUID()}`;
   }
 
   private generateRuleId(): string {
-    return `rule_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `rule_${Date.now()}_${randomUUID()}`;
   }
 }

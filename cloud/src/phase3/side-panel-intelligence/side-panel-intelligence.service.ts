@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import {
   SidePanelComponent,
   PanelLayout,
@@ -455,6 +456,6 @@ export class SidePanelIntelligenceService {
   }
 
   private generateId(): string {
-    return `panel_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `panel_${Date.now()}_${randomUUID()}`;
   }
 }

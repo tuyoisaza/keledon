@@ -3,8 +3,10 @@ import { Database, Plus, Search, FileText, Trash2, RefreshCw, Eye, AlertCircle, 
 import { cn } from '@/lib/utils';
 import { vectorStoreAPI, type PolicyDocument, type RetrievalResult, type VectorStoreStatus } from '@/lib/vector-store';
 import VectorStoreConfig from './VectorStoreConfig';
+import { useAuth } from '@/context/AuthContext';
 
 export default function VectorStoreTab() {
+  const { user } = useAuth();
   const [status, setStatus] = useState<VectorStoreStatus | null>(null);
   const [documents, setDocuments] = useState<PolicyDocument[]>([]);
   const [searchResults, setSearchResults] = useState<RetrievalResult[]>([]);
@@ -73,10 +75,14 @@ export default function VectorStoreTab() {
   };
 
   const handleSaveDocument = async () => {
+    if (!user?.company_id) {
+      setError('Missing company context. Please sign in with a user that has company_id.');
+      return;
+    }
+
     try {
       const metadata = formData.metadata ? JSON.parse(formData.metadata) : {};
       const now = new Date().toISOString();
-      const userId = 'current-user'; // TODO: Get actual user ID from auth context
       
       const newDocument: PolicyDocument = {
         id: editingDocument?.id || `doc-${Date.now()}`,
@@ -84,12 +90,12 @@ export default function VectorStoreTab() {
         content: formData.content,
         category: formData.category,
         metadata,
-        // Organization context - auto-populated
-        company_id: 'default-company', // TODO: Get from user context
+        // Organization context - from real auth
+        company_id: user.company_id,
         brand_id: formData.brand_id || undefined,
         team_id: formData.team_id || undefined,
         // Audit trail
-        created_by: userId,
+        created_by: user.id,
         created_at: editingDocument?.created_at || now,
         updated_at: now
       };

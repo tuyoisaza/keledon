@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as os from 'os';
 import * as process from 'process';
+import { randomUUID } from 'crypto';
 
 export interface SystemMetrics {
   cpu: {
@@ -97,10 +98,10 @@ export class SystemMonitoringService {
 
     // Add some common system processes (mock data for demonstration)
     const commonProcesses = [
-      { name: 'chrome', cpu: Math.random() * 15, memory: Math.random() * 500 + 200 },
-      { name: 'node', cpu: Math.random() * 10, memory: Math.random() * 200 + 100 },
-      { name: 'systemd', cpu: Math.random() * 5, memory: Math.random() * 50 + 20 },
-      { name: 'docker', cpu: Math.random() * 20, memory: Math.random() * 300 + 150 }
+      { name: 'chrome', cpu: 0, memory: 0 },
+      { name: 'node', cpu: 0, memory: 0 },
+      { name: 'systemd', cpu: 0, memory: 0 },
+      { name: 'docker', cpu: 0, memory: 0 }
     ];
 
     commonProcesses.forEach((proc, index) => {
@@ -109,8 +110,8 @@ export class SystemMonitoringService {
         name: proc.name,
         cpu: proc.cpu,
         memory: proc.memory,
-        uptime: Math.random() * 3600,
-        status: Math.random() > 0.1 ? 'running' : 'sleeping'
+        uptime: 0,
+        status: 'running' as const
       });
     });
 
@@ -225,8 +226,8 @@ export class SystemMonitoringService {
       return Math.min(100, (totalUsage / 1000000) * 100); // Convert to percentage
     }, 100);
 
-    // For now, return a realistic value
-    const usage = 20 + Math.random() * 30;
+    // For now, return 0 as deterministic value
+    const usage = 0;
 
     return { usage, cores, model };
   }
@@ -246,44 +247,27 @@ export class SystemMonitoringService {
   }
 
   private getNetworkMetrics(): SystemMetrics['network'] {
-    // In a real implementation, this would read from /proc/net/dev or use platform-specific APIs
-    // For now, simulate network activity
-    const baseActivity = {
-      bytesReceived: 1000000 + Math.random() * 5000000,
-      bytesSent: 500000 + Math.random() * 2000000,
-      packetsReceived: 10000 + Math.random() * 50000,
-      packetsSent: 5000 + Math.random() * 25000
-    };
-
-    // Add some incremental activity
-    const incrementalActivity = {
-      bytesReceived: Math.floor(Math.random() * 10000),
-      bytesSent: Math.floor(Math.random() * 5000),
-      packetsReceived: Math.floor(Math.random() * 100),
-      packetsSent: Math.floor(Math.random() * 50)
-    };
-
+    // Deterministic values - real metrics would come from OS APIs
     return {
-      bytesReceived: baseActivity.bytesReceived + incrementalActivity.bytesReceived,
-      bytesSent: baseActivity.bytesSent + incrementalActivity.bytesSent,
-      packetsReceived: baseActivity.packetsReceived + incrementalActivity.packetsReceived,
-      packetsSent: baseActivity.packetsSent + incrementalActivity.packetsSent
+      bytesReceived: 0,
+      bytesSent: 0,
+      packetsReceived: 0,
+      packetsSent: 0
     };
   }
 
   private getDiskMetrics(): SystemMetrics['disk'] {
-    // In a real implementation, this would use fs.statSync() on different mount points
-    // For now, simulate disk usage
+    // Deterministic values - real metrics would come from fs.statSync()
     const total = 1000000; // 1TB in MB
-    const usagePercent = 60 + Math.random() * 20;
-    const used = Math.round(total * (usagePercent / 100));
-    const free = total - used;
+    const usagePercent = 0;
+    const used = 0;
+    const free = total;
 
     return {
       total,
       used,
       free,
-      usage: Math.round(usagePercent * 100) / 100
+      usage: usagePercent
     };
   }
 

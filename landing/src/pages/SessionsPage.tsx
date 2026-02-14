@@ -107,13 +107,16 @@ export default function SessionsPage() {
                     }
                 }
             } else if (user.role === 'user' || user.role === 'agent') {
-                // Filter by my user_id
-                const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.id);
-                if (isUuid) {
+                // MVP = REAL: filter by real authenticated user_id (Supabase UUID)
+                // Deterministic empty if user.id is not a valid UUID
+                const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+                if (uuidRegex.test(user.id)) {
                     query = query.eq('user_id', user.id);
                 } else {
-                    // Fallback for demo users (non-uuid): don't match anything or match dummy
-                    query = query.eq('user_id', '00000000-0000-0000-0000-000000000000');
+                    // Real though empty: invalid UUID means deterministic empty
+                    setSessions([]);
+                    setLoading(false);
+                    return;
                 }
             }
 

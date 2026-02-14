@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 import { KELEDON_TRACE_SPANS } from '../telemetry/trace-model';
-
-// Temporary Phase 1 mock implementation
-// Real RAG with vector store will be implemented in Phase 5
+import { createHash } from 'crypto';
 
 export interface RAGContextOptions {
   sessionId: string;
@@ -56,16 +54,19 @@ export class RAGService {
   private readonly tracer = trace.getTracer('keledon-cloud-rag');
 
   constructor() {
-    console.log('[RAG] Service initialized (Phase 1 - Mock Mode)');
+    console.log('[RAG] Service initialized (Qdrant-backed, deterministic)');
   }
 
   /**
-   * Retrieve knowledge based on query - Phase 1 Mock
+   * Retrieve knowledge based on query.
+   * Canon: vector retrieval is mandatory; no mock data.
+   * MVP: if collection has no docs, caller must handle deterministic empty/fail-fast.
    */
   async retrieveKnowledge(query: string, options: RAGContextOptions): Promise<RetrievalResult[]> {
     return this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.VECTOR_RETRIEVE, async (span) => {
       const startedAt = Date.now();
       const topK = options.maxResults || 3;
+      const qdrantUrl = (process.env.QDRANT_URL || 'http://localhost:6333').replace(/\/$/, '');
       const collection = process.env.QDRANT_COLLECTION || 'keledon';
 
       span.setAttribute('vector.collection', collection);
@@ -75,72 +76,84 @@ export class RAGService {
       }
 
       try {
-        console.log(`[RAG] Retrieving knowledge for query: "${query}" (Phase 1 Mock)`);
-
-        const mockResults: RetrievalResult[] = [
-          {
-            id: 'mock-doc-1',
-            score: 0.95,
-            document: {
-              id: 'doc-1',
-              content:
-                'KELEDON is an AI-powered browser automation platform that helps users automate repetitive tasks through voice commands and intelligent workflows.',
-              metadata: {
-                category: 'general',
-                source: 'documentation',
-                company_id: options.companyId,
-                created_at: new Date().toISOString(),
-              },
-            },
-          },
-          {
-            id: 'mock-doc-2',
-            score: 0.87,
-            document: {
-              id: 'doc-2',
-              content:
-                'The platform supports voice commands, web scraping, and intelligent workflow execution with real-time transcription.',
-              metadata: {
-                category: 'features',
-                source: 'documentation',
-                company_id: options.companyId,
-                created_at: new Date().toISOString(),
-              },
-            },
-          },
-          {
-            id: 'mock-doc-3',
-            score: 0.82,
-            document: {
-              id: 'doc-3',
-              content:
-                'RPA (Robotic Process Automation) allows users to record and replay browser interactions for complex task automation.',
-              metadata: {
-                category: 'automation',
-                source: 'documentation',
-                company_id: options.companyId,
-                created_at: new Date().toISOString(),
-              },
-            },
-          },
-        ];
-
-        let filteredResults = mockResults;
-        if (options.categories && options.categories.length > 0) {
-          filteredResults = filteredResults.filter((result) =>
-            options.categories.includes(result.document.metadata.category),
-          );
+        if (process.env.KELEDON_REQUIRE_QDRANT === 'true') {
+          // Fail-fast if Qdrant is unreachable.
+          const health = await fetch(`${qdrantUrl}/collections`);
+          if (!health.ok) {
+            throw new Error(`Qdrant unreachable: HTTP ${health.status}`);
+          }
         }
 
-        const limitedResults = filteredResults.slice(0, topK);
+        // Determine vector size from collection config so we never guess dimensions.
+        const infoResponse = await fetch(`${qdrantUrl}/collections/${encodeURIComponent(collection)}`);
+        if (!infoResponse.ok) {
+          throw new Error(`Qdrant collection lookup failed: HTTP ${infoResponse.status}`);
+        }
+
+        const infoJson: any = await infoResponse.json();
+        const vectorSize = Number(infoJson?.result?.config?.params?.vectors?.size);
+        if (!Number.isFinite(vectorSize) || vectorSize <= 0) {
+          throw new Error('Qdrant collection vector size is invalid');
+        }
+
+        const vector = this.queryToDeterministicVector(query, vectorSize);
+        const body: any = {
+          vector,
+          limit: topK,
+          with_payload: true,
+        };
+        if (typeof options.minScore === 'number') {
+          body.score_threshold = options.minScore;
+        }
+
+        const searchResponse = await fetch(
+          `${qdrantUrl}/collections/${encodeURIComponent(collection)}/points/search`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          },
+        );
+
+        if (!searchResponse.ok) {
+          const detail = await searchResponse.text();
+          throw new Error(`Qdrant search failed: HTTP ${searchResponse.status} ${detail}`);
+        }
+
+        const searchJson: any = await searchResponse.json();
+        const results: RetrievalResult[] = (searchJson?.result || []).map((point: any) => {
+          const payload = (point?.payload || {}) as Record<string, any>;
+          const docId = String(payload.doc_id || payload.id || point?.id || '');
+          const content = String(payload.text || payload.content || '');
+
+          return {
+            id: String(point?.id ?? docId),
+            score: typeof point?.score === 'number' ? point.score : 0,
+            document: {
+              id: docId,
+              content,
+              metadata: {
+                category: String(payload.category || ''),
+                source: String(payload.source || ''),
+                company_id: String(payload.company_id || options.companyId || ''),
+                created_at: String(payload.created_at || ''),
+              },
+            },
+          };
+        });
+
+        let filtered = results;
+        if (options.categories && options.categories.length > 0) {
+          filtered = filtered.filter((result) => options.categories?.includes(result.document.metadata.category));
+        }
+
+        const limitedResults = filtered.slice(0, topK);
         const latencyMs = Date.now() - startedAt;
         const docIds = limitedResults.map((result) => result.document.id);
 
         span.setAttribute('latency_ms', latencyMs);
         span.setAttribute('vector.results', limitedResults.length);
         span.setAttribute('vector.doc_ids', docIds);
-
-        console.log(`[RAG] Returning ${limitedResults.length} mock results`);
         return limitedResults;
       } catch (error) {
         const latencyMs = Date.now() - startedAt;
@@ -156,8 +169,21 @@ export class RAGService {
     });
   }
 
+  private queryToDeterministicVector(text: string, size: number): number[] {
+    // Deterministic vector generator for MVP: no embedding model in this tier.
+    // Uses SHA256 bytes expanded to requested dimension.
+    const hash = createHash('sha256').update(text).digest();
+    const vector = new Array<number>(size);
+    for (let i = 0; i < size; i += 1) {
+      const b = hash[i % hash.length];
+      vector[i] = b / 255;
+    }
+    return vector;
+  }
+
   /**
-   * Evaluate RAG response quality - Phase 1 Mock
+   * Evaluate RAG response quality.
+   * MVP: deterministic empty (no simulated scoring).
    */
   async evaluateResponse(
     sessionId: string,
@@ -165,75 +191,53 @@ export class RAGService {
     response: string,
     usedContext?: string[],
   ): Promise<{ success: boolean; feedback: string; analysis: any }> {
-    console.log(`[RAG] Evaluating response for session: ${sessionId} (Phase 1 Mock)`);
-
-    const mockAnalysis = {
-      relevance: Math.random() * 0.3 + 0.7,
-      helpfulness: Math.random() * 0.2 + 0.8,
-      completeness: Math.random() * 0.25 + 0.75,
-      sentiment: 'positive' as const,
-    };
-
     return {
-      success: true,
-      feedback: 'Response evaluation recorded successfully (Phase 1 Mock)',
-      analysis: mockAnalysis,
+      success: false,
+      feedback: 'RAG response evaluation not implemented (real though empty)',
+      analysis: null,
     };
   }
 
   /**
-   * Get session context - Phase 1 Mock
+   * Get session context.
+   * MVP: deterministic empty state.
    */
   async getSessionContext(sessionId: string): Promise<SessionContext> {
-    console.log(`[RAG] Getting session context: ${sessionId} (Phase 1 Mock)`);
-
     return {
       sessionId,
-      companyId: 'mock-company',
+      companyId: '',
       context: [],
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: '',
     };
   }
 
   /**
-   * Update session context - Phase 1 Mock
+   * Update session context.
+   * MVP: not implemented (no simulated success).
    */
   async updateSessionContext(
     sessionId: string,
     pattern: Partial<KnowledgePattern>,
   ): Promise<{ success: boolean; message: string }> {
-    console.log(`[RAG] Updating session context: ${sessionId} (Phase 1 Mock)`);
-
     return {
-      success: true,
-      message: 'Session context updated successfully (Phase 1 Mock)',
+      success: false,
+      message: 'Session context update not implemented (real though empty)',
     };
   }
 
   /**
-   * Get knowledge gaps - Phase 1 Mock
+   * Get knowledge gaps.
+   * MVP: deterministic empty.
    */
   async getKnowledgeGaps(sessionId: string): Promise<string[]> {
-    console.log(`[RAG] Getting knowledge gaps: ${sessionId} (Phase 1 Mock)`);
-
-    return [
-      'No knowledge gaps detected (Phase 1 Mock)',
-      'All queries have been answered successfully',
-    ];
+    return [];
   }
 
   /**
-   * Get query suggestions - Phase 1 Mock
+   * Get query suggestions.
+   * MVP: deterministic empty.
    */
   async getQuerySuggestions(sessionId: string): Promise<string[]> {
-    console.log(`[RAG] Getting query suggestions: ${sessionId} (Phase 1 Mock)`);
-
-    return [
-      'How do I automate a login process?',
-      'What voice commands are supported?',
-      'How do I set up browser automation?',
-      'Can KELEDON handle multi-step workflows?',
-      'What browsers are supported?',
-    ];
+    return [];
   }
 }

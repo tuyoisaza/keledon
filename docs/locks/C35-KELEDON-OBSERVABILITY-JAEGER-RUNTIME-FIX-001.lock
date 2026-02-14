@@ -1,0 +1,7 @@
+C35-KELEDON-OBSERVABILITY-JAEGER-RUNTIME-FIX-001
+
+Status: LOCKED
+Branch: phase0/jaeger-runtime-proof-fix
+TimestampUTC: 2026-02-13T04:14:24Z
+Owner: OpenCode
+Scope: Jaeger runtime proof fix for C12 on Windows

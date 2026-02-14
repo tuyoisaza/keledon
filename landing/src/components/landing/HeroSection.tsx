@@ -80,8 +80,8 @@ export const HeroSection = () => {
                                         key={i}
                                         className="w-1 bg-gradient-to-t from-primary to-purple-400 rounded-full"
                                         style={{
-                                            height: `${20 + Math.random() * 80}%`,
-                                            opacity: 0.5 + Math.random() * 0.5,
+                                            height: `${20 + (i % 5) * 15}%`,
+                                            opacity: 0.5 + (i % 3) * 0.2,
                                         }}
                                     />
                                 ))}

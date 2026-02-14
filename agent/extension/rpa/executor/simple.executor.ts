@@ -9,6 +9,10 @@ import { RPAStep, RPAResult } from '../../../contracts/v1';
 import { StepExecutor } from './StepExecutor';
 import { ExecutionMode } from '../types';
 
+function generateBatchId(): string {
+  return `batch_${Date.now()}_${crypto.randomUUID()}`;
+}
+
 export interface BatchExecutionOptions {
   mode: ExecutionMode;
   stop_on_first_error: boolean;
@@ -316,7 +320,7 @@ export class SimpleRpaExecutor {
   }
 
   private generateBatchId(): string {
-    return `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return generateBatchId();
   }
 }
 

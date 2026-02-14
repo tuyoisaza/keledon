@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Subject, Observable, interval } from 'rxjs';
+import { randomUUID } from 'crypto';
 
 export interface IntegrationProvider {
   id: string;
@@ -193,8 +194,8 @@ export class IntegrationHealthService {
     }
 
     try {
-      // Simulate sync process
-      await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1500));
+      // Deterministic sync
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       provider.lastSync = new Date();
       this.broadcastUpdate();
@@ -225,7 +226,7 @@ export class IntegrationHealthService {
       lastSync: provider.lastSync || new Date(),
       metrics: {
         requestsPerMinute: this.calculateRequestsPerMinute(provider),
-        dataTransfer: Math.floor(Math.random() * 1000) + 100, // Would be real metrics
+        dataTransfer: 0,
         errorCount: provider.health?.consecutiveFailures || 0,
         avgResponseTime: provider.health?.responseTime || 0
       }
@@ -335,45 +336,38 @@ export class IntegrationHealthService {
   }
 
   private async testCrmConnection(provider: IntegrationProvider): Promise<boolean> {
-    // Simulate CRM API health check
-    await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 800));
-    return Math.random() > 0.1; // 90% success rate
+    await new Promise(resolve => setTimeout(resolve, 200));
+    return false;
   }
 
   private async testHelpdeskConnection(provider: IntegrationProvider): Promise<boolean> {
-    // Simulate helpdesk API health check
-    await new Promise(resolve => setTimeout(resolve, 150 + Math.random() * 600));
-    return Math.random() > 0.05; // 95% success rate
+    await new Promise(resolve => setTimeout(resolve, 150));
+    return false;
   }
 
   private async testCommunicationConnection(provider: IntegrationProvider): Promise<boolean> {
-    // Simulate communication API health check
-    await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 400));
-    return Math.random() > 0.02; // 98% success rate
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return false;
   }
 
   private async testPaymentConnection(provider: IntegrationProvider): Promise<boolean> {
-    // Simulate payment API health check
-    await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 1000));
-    return Math.random() > 0.01; // 99% success rate
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return false;
   }
 
   private async testStorageConnection(provider: IntegrationProvider): Promise<boolean> {
-    // Simulate storage API health check
-    await new Promise(resolve => setTimeout(resolve, 250 + Math.random() * 750));
-    return Math.random() > 0.03; // 97% success rate
+    await new Promise(resolve => setTimeout(resolve, 250));
+    return false;
   }
 
   private async testAnalyticsConnection(provider: IntegrationProvider): Promise<boolean> {
-    // Simulate analytics API health check
-    await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 800));
-    return Math.random() > 0.08; // 92% success rate
+    await new Promise(resolve => setTimeout(resolve, 200));
+    return false;
   }
 
   private async testGenericConnection(provider: IntegrationProvider): Promise<boolean> {
-    // Generic connection test
-    await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1500));
-    return Math.random() > 0.15; // 85% success rate
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return false;
   }
 
   private updateHealthMetrics(providerId: string, success: boolean, responseTime: number): void {
@@ -406,13 +400,8 @@ export class IntegrationHealthService {
   }
 
   private calculateRequestsPerMinute(provider: IntegrationProvider): number {
-    // Calculate based on recent activity
     if (!provider.health) return 0;
-    
-    const timeSinceLastCheck = (Date.now() - provider.health.lastCheck.getTime()) / 1000;
-    if (timeSinceLastCheck > 60) return 0;
-    
-    return Math.floor(Math.random() * 50) + 10; // Would be real calculation
+    return 0;
   }
 
   private scheduleHealthCheck(providerId: string): void {

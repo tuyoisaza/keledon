@@ -12,6 +12,10 @@ import {
   MessageRouting 
 } from './types';
 
+function generateId(prefix: string): string {
+  return `${prefix}_${Date.now()}_${crypto.randomUUID()}`;
+}
+
 export class SelectorMessenger {
   private connections: Map<string, TabConnection> = new Map();
   private messageHandlers: Map<string, Function[]> = new Map();
@@ -418,14 +422,14 @@ export class SelectorMessenger {
    * Generate unique connection ID
    */
   private generateConnectionId(): string {
-    return `conn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return generateId('conn');
   }
 
   /**
    * Generate unique message ID
    */
   private generateMessageId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return generateId('msg');
   }
 
   /**
