@@ -24,7 +24,7 @@ class BackgroundService {
     this.agentActive = true; // Master toggle for agent control
     this.socket = null;
     this.runtimeTier = this.resolveRuntimeTier();
-    this.cloudUrl = 'https://cloud.keledon.invalid';
+    this.cloudUrl = null; // Will be loaded from config
     this.cloudUrlStorageKey = 'KELEDON_BACKEND_URL';
     this.legacyCloudUrlStorageKey = 'keledon.cloud_url';
     this.commandChannelName = null;

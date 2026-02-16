@@ -10,7 +10,7 @@
     "offscreen",
     "storage",
     "sidePanel",
-    "microphone"
+    "tabCapture"
   ],
   "host_permissions": [
     "<all_urls>"
