@@ -189,6 +189,12 @@ start_dev_services() {
     # Start development services
     docker-compose -f docker-compose.dev.v2.yml up -d
     
+    # Start observability stack
+    if [ -f "docker-compose.observability.yml" ]; then
+        log_info "Starting observability stack..."
+        docker-compose -f docker-compose.observability.yml up -d
+    fi
+    
     log_success "Development services started"
 }
 

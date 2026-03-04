@@ -102,6 +102,15 @@ goto :eof
 :dev
 call :print_status "INFO" "Starting KELEDON development environment..."
 
+:: Start Docker services (core + observability)
+call :print_status "INFO" "Starting Docker services (core)..."
+docker compose -f docker-compose.dev.v2.yml up -d qdrant redis
+
+if exist "docker-compose.observability.yml" (
+    call :print_status "INFO" "Starting observability stack..."
+    docker compose -f docker-compose.observability.yml up -d
+)
+
 :: Check if Qdrant is running
 if exist "landing\scripts\setup-qdrant.js" (
     cd landing

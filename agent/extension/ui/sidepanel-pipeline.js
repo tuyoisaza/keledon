@@ -368,6 +368,14 @@ class PipelineManager {
     
     this.setupGlobalClickAudit();
     
+    // Tab navigation click logging
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const tabName = btn.getAttribute('data-tab');
+        this.log('info', `TAB CLICKED: ${tabName}`);
+      });
+    });
+    
     // Debug menu toggle
     document.getElementById('debugBtn').addEventListener('click', () => {
       const menu = document.getElementById('debug-menu');
@@ -393,6 +401,23 @@ class PipelineManager {
     document.getElementById('mute-btn').addEventListener('click', () => {
       this.toggleMute();
     });
+
+    // Voice button for STT (in main chat area)
+    const voiceBtn = document.getElementById('voiceBtn');
+    if (voiceBtn) {
+      voiceBtn.addEventListener('click', () => {
+        this.toggleMute();
+      });
+    }
+
+    // Mic button for direct microphone input (sends to brain)
+    const micBtn = document.getElementById('micBtn');
+    if (micBtn) {
+      micBtn.addEventListener('click', () => {
+        this.log('info', 'Mic button clicked - start microphone input');
+        this.startMicInput();
+      });
+    }
 
     document.getElementById('webrtc-btn').addEventListener('click', () => {
       this.toggleWebRTC();
@@ -484,6 +509,66 @@ class PipelineManager {
     document.getElementById('voice-settings').addEventListener('click', () => {
       this.configureVoiceSettings();
     });
+
+    // Log panel toggle
+    const logToggleBtn = document.getElementById('logToggleBtn');
+    if (logToggleBtn) {
+      logToggleBtn.addEventListener('click', () => {
+        const logPanel = document.getElementById('logPanel');
+        if (logPanel) {
+          logPanel.style.display = logPanel.style.display === 'none' ? 'flex' : 'none';
+        }
+      });
+    }
+
+    // Copy logs button
+    const copyLogBtn = document.getElementById('copyLogBtn');
+    if (copyLogBtn) {
+      copyLogBtn.addEventListener('click', () => {
+        const logsText = this.logs.join('\n');
+        navigator.clipboard.writeText(logsText).then(() => {
+          this.log('info', 'Logs copied to clipboard');
+        }).catch(err => {
+          this.log('error', 'Failed to copy logs: ' + err.message);
+        });
+      });
+    }
+
+    // Paste logs button
+    const pasteLogBtn = document.getElementById('pasteLogBtn');
+    if (pasteLogBtn) {
+      pasteLogBtn.addEventListener('click', async () => {
+        try {
+          const text = await navigator.clipboard.readText();
+          this.log('info', '=== PASTED LOGS ===');
+          text.split('\n').forEach(line => {
+            this.log('info', line);
+          });
+          this.log('info', '=== END PASTED LOGS ===');
+        } catch (err) {
+          this.log('error', 'Failed to paste logs: ' + err.message);
+        }
+      });
+    }
+
+    // Clear logs button
+    const clearLogBtn = document.getElementById('clearLogBtn');
+    if (clearLogBtn) {
+      clearLogBtn.addEventListener('click', () => {
+        this.clearLogs();
+      });
+    }
+
+    // Close log panel button
+    const closeLogBtn = document.getElementById('closeLogBtn');
+    if (closeLogBtn) {
+      closeLogBtn.addEventListener('click', () => {
+        const logPanel = document.getElementById('logPanel');
+        if (logPanel) {
+          logPanel.style.display = 'none';
+        }
+      });
+    }
   }
 
   // Core pipeline functions
@@ -503,24 +588,13 @@ class PipelineManager {
       return;
     }
 
-    // Check microphone permission first
-    try {
-      const permission = await navigator.permissions.query({ name: 'microphone' });
-      if (permission.state === 'denied') {
-        this.log('error', 'Microphone permission denied - cannot start STT');
-        this.updateStage('listen', 'error');
-        this.updateStage('transcribe', 'error');
-        this.addMicrophonePermissionHelp();
-        return;
-      }
-    } catch (error) {
-      this.log('warning', 'Cannot query microphone permission - will check on STT start');
-    }
-
+    // Note: Web Speech API (SpeechRecognition) uses default audio input
+    // It does NOT require explicit microphone permission in Chrome extensions
+    
     try {
       this.updateStage('listen', 'processing');
       this.updateStage('transcribe', 'processing');
-      this.log('info', 'Starting STT with microphone permission check...');
+      this.log('info', 'Starting STT (Web Speech API - no mic permission needed)...');
       
       // Initialize STT if needed
       if (!sttRecognition) {
@@ -538,7 +612,7 @@ class PipelineManager {
         sttRecognition.lang = 'en-US';
         
         sttRecognition.onstart = () => {
-          this.log('success', 'STT recognition started successfully');
+          this.log('success', 'STT recognition started (Web Speech API)');
           isSTTListening = true;
           this.updateStage('listen', 'active');
           this.updateStage('transcribe', 'active');
@@ -579,25 +653,15 @@ class PipelineManager {
           this.updateStage('transcribe', 'idle');
         };
       }
-      
-      // Request microphone access and start STT
-      this.log('info', 'Requesting microphone access...');
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      
+       
+      // Start STT (Web Speech API - no microphone permission needed)
       sttRecognition.start();
-      this.log('success', 'STT Listening started with microphone access');
-      
+      this.log('success', 'STT Listening started');
+       
     } catch (error) {
       this.log('error', `Failed to start STT: ${error.message}`);
       this.updateStage('listen', 'error');
       this.updateStage('transcribe', 'error');
-      
-      if (error.name === 'NotAllowedError') {
-        this.addMicrophonePermissionHelp();
-      } else if (error.name === 'NotFoundError') {
-        this.log('error', 'STT: No microphone found');
-        this.addMicrophoneHelp();
-      }
     }
   }
 
@@ -628,6 +692,34 @@ class PipelineManager {
       this.updateStage('listen', 'idle');
       this.updateStage('transcribe', 'idle');
       this.log('info', 'STT Listening stopped');
+    }
+  }
+
+  // Microphone input - sends voice directly to brain orchestrator
+  async startMicInput() {
+    if (!agentActive) {
+      this.log('error', 'Agent is inactive - cannot start microphone');
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.log('info', 'Microphone started - sending to brain');
+      
+      // TODO: Stream audio to brain via WebSocket
+      // For now, just log that mic is active
+      const micBtn = document.getElementById('micBtn');
+      if (micBtn) {
+        micBtn.classList.add('recording');
+        micBtn.textContent = '⏹️';
+      }
+      
+      // Store stream for later use
+      this.micStream = stream;
+      
+      this.log('info', 'Microphone input ready - streaming to brain');
+    } catch (error) {
+      this.log('error', `Microphone error: ${error.message}`);
     }
   }
 

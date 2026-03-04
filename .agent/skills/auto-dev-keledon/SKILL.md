@@ -1,119 +1,68 @@
 ---
 name: auto-dev-keledon
-description: Implements and stabilizes the KELEDON platform according to predefined architecture, contracts, and operational principles. Use for autonomous development tasks where determinism, auditability, and strict separation of concerns are required.
+description: Implements and stabilizes the KELEDON platform according to canonical architecture, contracts, and operational principles. Strict adherence to V1 specs and the Autonomous Development Prompt is required.
 ---
 
-# AUTO-DEV-KELEDON Skill
+# AUTO-DEV-KELEDON Skill (Canonical V1)
 
-This skill extends the agent with KELEDON-specific autonomous development behavior. It is intentionally conservative and architecture-driven. The agent must follow these instructions whenever working on KELEDON codebases.
+This skill governs the autonomous development behavior for the KELEDON project. It enforces strict adherence to the **Canonical Specifications** stored in `docs/specs/`.
 
-## When to use this skill
+## 🚨 AUTHORITY ALERT
 
-Use this skill when:
+**YOU ARE BOUND BY THE IMMUTABLE LAWS IN `docs/specs/`.**
 
-*   Working on the KELEDON platform (Cloud, Browser Agent, Admin UI).
-*   Implementing features derived from existing KELEDON architecture or journeys.
-*   Resuming development based on KELEDON artifacts and logs.
-*   Stabilizing, refactoring, or verifying KELEDON components.
+Do not follow legacy documentation, READMEs, or comments if they contradict the files in `docs/specs/`.
 
-Do not use this skill for generic SaaS or exploratory product development.
+## 1. Mandatory Context Loading
 
-## Core invariants (non-negotiable)
+Before performing ANY work, you **MUST** read and internalize the following Canonical Specifications:
 
-The agent must enforce all of the following at all times:
+1.  **Behavior & Workflow**: `docs/specs/keledon_canonical_autonomous_development_prompt.md`
+    *   *Defines HOW you work (Scan → Claim → Plan → Execute...)*
+2.  **Scope & Meaning**: `docs/specs/keledon_context_canonical.md`
+    *   *Defines WHAT Keledon is (Cloud agent, Browser executor).*
+3.  **Technical Specs**: `docs/specs/keledon_v_1_canonical_technical_spec.md`
+    *   *Defines the system boundaries and definition of done.*
+4.  **Architecture**: `docs/specs/keledon_canonical_architecture.md`
+    *   *Defines the storage and execution layers.*
+5.  **Contracts**: `docs/specs/keledon_canonical_contracts.md`
+    *   *Defines the JSON payloads for all communication.*
 
-1.  **Cloud decides, Agent executes**
-    *   Decision logic, orchestration, RAG, and state machines live in Cloud.
-    *   Browser/Desktop agents execute deterministic flows only.
+## 2. Core Invariants (The Law)
 
-2.  **No AI in execution layers**
-    *   No LLMs, heuristics, computer vision, or auto-healing in agents.
+1.  **Cloud Decides, Agent Executes.**
+    *   The Browser Runtime is BLIND. It never decides.
+    *   The Cloud Brain is the ONLY agent.
+2.  **Vector Store is Mandatory.**
+    *   Reasoning without vector retrieval is a Scope Violation.
+3.  **Canonical Runtime Loop.**
+    *   `LISTEN -> TRANSCRIBE -> THINK (Cloud + Vector) -> DECIDE -> ACT (RPA) -> RESPOND -> SPEAK -> LOOP`
 
-3.  **Contracts are first-class**
-    *   Cloud ↔ Agent contracts are explicit and versioned.
-    *   Never change a contract silently.
+## 3. Autonomous Execution Workflow
 
-4.  **Determinism over cleverness**
-    *   Broken behavior must be fixed explicitly or re-recorded.
-    *   Probabilistic execution paths are forbidden.
+You must follow the loop defined in `docs/specs/keledon_canonical_autonomous_development_prompt.md`:
 
-## Required artifacts
+1.  **Scan**: Listen for or find unclaimed Issues/Tasks.
+2.  **Claim**: Acknowledge the task and post `CLAIM — <Agent-ID>` (if working in an issue tracker) or state intent clearly.
+3.  **Plan**: Analyze files and post/state `MILESTONE — <Agent-ID> State: PLANNING_COMPLETE`.
+4.  **Execute**: Work on a feature branch or strictly scoped changeset.
+    *   *Requirement*: All runtime changes must be verifiable.
+    *   *Canon*: `npm run proof:c12:local` is the standard for proof.
+5.  **Commit & Push**: Save work.
+6.  **PR**: Create Pull Request (if applicable).
+7.  **Report**: Post `COMPLETION` evidence.
 
-Before proceeding, verify the presence and consistency of these files:
+## 4. Forbidden Actions
 
-*   `ARCHITECTURE.md`
-*   `CONTRACTS.md`
-*   `FLOWS.md`
-*   `STAGE_1_DEVELOPMENT_LIST.md`
-*   `PRODUCTION_GRADE_EXECUTION_LOG.md`
-*   `FEATURES.md`
+*   Inventing features not explicitly requested.
+*   Modifying `docs/specs/` files (unless instructed by governance).
+*   Creating "Agents" in the browser/frontend.
+*   Bypassing the `proof:c12:local` requirement for architectural changes.
 
-Execution logs are append-only. Never overwrite.
+## 5. Verification
 
-If required artifacts are missing or contradictory, stop and request clarification.
+*   **Proof**: The system is only correct if `npm run proof:c12:local` passes with correlated decision and execution traces.
+*   **Contracts**: All JSON payloads must match `keledon_canonical_contracts.md` exactly.
 
-## How to work (step-by-step)
-
-### 1. Initialization
-
-*   Read architectural and journey documents.
-*   Detect the existing stack and tooling.
-*   Confirm no forbidden patterns exist (AI in agent, heuristic DOM logic).
-
-### 2. Task selection
-
-*   Select the next task from `STAGE_1_DEVELOPMENT_LIST.md`.
-*   Ensure the task derives from architecture, contracts, or journeys.
-*   If the task implies inventing behavior, mark it as BLOCKED.
-
-### 3. Planning
-
-*   Respect file size limits (≤ 600 lines).
-*   Keep modules isolated.
-*   Identify affected contracts and verify versioning.
-*   Define explicit success criteria (build, tests, logs).
-
-### 4. Execution
-
-*   Implement exactly what is specified.
-*   Do not refactor unrelated code.
-*   Guard new behavior with feature flags (OFF by default).
-*   Append a detailed entry to `PRODUCTION_GRADE_EXECUTION_LOG.md`.
-
-### 5. Verification
-
-*   Build and typecheck must pass.
-*   Contract schemas must remain valid or be versioned.
-*   Add or update tests at Cloud ↔ Agent boundaries.
-*   If regressions occur, isolate or roll back. Do not patch blindly.
-
-## UI rules
-
-Every UI element must be in exactly one state:
-
-*   **Functional** — implemented and wired.
-*   **Explicit stub** — disabled, labeled, and linked to a task.
-*   **Removed** — not present in production UI.
-
-No UI element may silently imply functionality.
-
-## RAG & knowledge constraints
-
-*   Qdrant is used only for decision support (intent, policy, context).
-*   Flows, selectors, and execution logic must never live in RAG.
-*   Agent code must never query RAG.
-
-## Stop conditions
-
-Stop and request human input when:
-
-*   Architectural documents conflict or are missing.
-*   A task requires inventing product behavior.
-*   A contract must change without a versioning plan.
-*   Deterministic execution cannot be guaranteed.
-
-## Guiding principle
-
-This skill is intentionally conservative.
-
-**AUTO-DEV-KELEDON does not invent. It implements.**
+---
+**STATUS**: UPDATED TO V1 CANONICAL
