@@ -1,6 +1,6 @@
 export type RuntimeTier = 'DEV_LOCAL' | 'CI_PROOF' | 'PRODUCTION_MANAGED';
 
-type EndpointKey = 'cloudBaseUrl' | 'supabaseUrl' | 'qdrantUrl' | 'otelExporterUrl';
+type EndpointKey = 'cloudBaseUrl' | 'qdrantUrl' | 'otelExporterUrl';
 
 interface EndpointSpec {
   key: EndpointKey;
@@ -17,13 +17,6 @@ const ENDPOINT_SPECS: EndpointSpec[] = [
     canonicalEnv: 'KELEDON_CLOUD_BASE_URL',
     legacyEnv: ['BACKEND_URL'],
     devLocalDefault: 'http://localhost:3001',
-  },
-  {
-    key: 'supabaseUrl',
-    service: 'Supabase',
-    canonicalEnv: 'KELEDON_SUPABASE_URL',
-    legacyEnv: ['SUPABASE_URL'],
-    devLocalDefault: 'http://localhost:54321',
   },
   {
     key: 'qdrantUrl',
@@ -174,9 +167,12 @@ export async function assertManagedRuntimeDependencies(): Promise<void> {
     return;
   }
 
-  const endpoints = resolveServiceEndpoints(tier);
+  const databaseUrl = (process.env.DATABASE_URL || '').trim();
+  if (!databaseUrl) {
+    throw new Error('[Config] DATABASE_URL is required in PRODUCTION_MANAGED.');
+  }
 
-  await assertReachable('Managed Supabase', endpoints.supabaseUrl);
+  const endpoints = resolveServiceEndpoints(tier);
   await assertReachable('Managed Qdrant', `${endpoints.qdrantUrl.replace(/\/$/, '')}/collections`);
   await assertReachable('OTel exporter', endpoints.otelExporterUrl, {
     method: 'POST',

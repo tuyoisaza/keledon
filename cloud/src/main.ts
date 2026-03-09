@@ -49,17 +49,22 @@ async function bootstrap() {
   });
   
   const port = process.env.PORT || 9999;
-  
+  const host = process.env.HOST || '0.0.0.0';
+
+  if (isManagedProductionTier(runtimeTier) && !process.env.DATABASE_URL) {
+    throw new Error('[Bootstrap] DATABASE_URL is required in PRODUCTION_MANAGED (Railway + Prisma contract).');
+  }
+
   try {
-    await app.listen(port);
-    
-    console.log(`🚀 KELEDON Cloud Backend running on port ${port}`);
+    await app.listen(port, host);
+
+    console.log(`🚀 KELEDON Cloud Backend running on ${host}:${port}`);
     console.log(`🌐 Runtime tier: ${runtimeTier}`);
     console.log(`🌐 Cloud Run service: ${process.env.K_SERVICE || 'not-detected'}`);
     console.log(`🌐 CORS enabled for: ${corsOrigins.join(', ')}`);
-    console.log('⚙️ Cloud Run compatibility: stateless process; no local persistence assumptions');
-    console.log(`💾 DATABASE-READY: All sessions, agents, and events are persisted to Supabase`);
-    console.log(`⚡ DATABASE-READY: No in-memory fallbacks - Cloud fails fast without Supabase`);
+    console.log('⚙️ Managed runtime compatibility: stateless process; no local persistence assumptions');
+    console.log(`💾 DATABASE-READY: Persistence via PostgreSQL (DATABASE_URL / Prisma canonical contract)`);
+    console.log(`⚡ DATABASE-READY: No in-memory fallbacks - Cloud fails fast without database`);
     console.log(`✅ PHASE 2 DATABASE-READY: Complete`);
   } catch (error) {
     console.error('❌ DATABASE-READY: Failed to start server:', error);
