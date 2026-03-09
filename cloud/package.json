@@ -24,6 +24,8 @@
     "guard:regression": "node scripts/c13-regression-sentinel.js"
   },
   "dependencies": {
+    "@deepgram/sdk": "^4.11.3",
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.1.12",
@@ -40,6 +42,8 @@
     "@types/jest": "^30.0.0",
     "@types/os-utils": "^0.0.4",
     "@types/uuid": "^9.0.0",
+    "elevenlabs": "^1.59.0",
+    "openai": "^6.22.0",
     "pg": "^8.18.0",
     "playwright": "^1.58.1",
     "puppeteer": "^24.25.0",

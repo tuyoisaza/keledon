@@ -13,6 +13,7 @@ import { RAGModule } from './rag/rag.module';
 import { AgentGateway } from './gateways/agent.gateway';
 import { DecisionEngineService } from './services/decision-engine.service';
 import { getRuntimeTier, isManagedProductionTier } from './config/runtime-tier';
+import { ListeningSessionModule } from './listening-sessions/listening-session.module';
 
 @Module({
   // Runtime entry-point map for trace attachment:
@@ -80,6 +81,7 @@ import { getRuntimeTier, isManagedProductionTier } from './config/runtime-tier';
     TypeOrmModule.forFeature([Session, Event, User]),
     HealthModule,
     RAGModule,
+    ListeningSessionModule,
   ],
   controllers: [AppController],
   providers: [

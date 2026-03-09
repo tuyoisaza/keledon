@@ -16,11 +16,14 @@ export class AgentConnection {
       throw new Error('Already connected');
     }
 
-    // Connect to canonical cloud backend
-    const configuredCloudBase = process.env.KELEDON_CLOUD_BASE_URL || 'https://cloud.keledon.invalid';
+    // Connect to canonical cloud backend - use config or default to localhost
+    const configuredCloudBase = (typeof window !== 'undefined' && window.AGENT_CONFIG?.BACKEND_URL) 
+      || process.env.KELEDON_CLOUD_BASE_URL 
+      || 'http://localhost:3001';
     const wsUrl = configuredCloudBase
       .replace(/^https:\/\//i, 'wss://')
-      .replace(/^http:\/\//i, 'ws://');
+      .replace(/^http:\/\//i, 'ws://')
+      .replace(':3001', ':3011'); // WebSocket port
 
     return new Promise((resolve, reject) => {
       this.ws = new WebSocket(wsUrl);

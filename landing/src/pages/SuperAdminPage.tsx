@@ -23,7 +23,7 @@ import { debugLogger } from '@/lib/debug-logger';
 // Modular Components
 import { EntityTable } from '@/components/superadmin/EntityTable';
 import { EntityForm } from '@/components/superadmin/EntityForm';
-import { SettingsTab } from '@/components/superadmin/SettingsTab';
+import { SettingsTab } from '@/components/superadmin/SettingsTab-ORIG';
 import FlowsPage from '@/pages/FlowsPage';
 import { DebugTab } from '@/components/superadmin/DebugTab';
 import { DeleteConfirmationModal } from '@/components/superadmin/DeleteConfirmationModal';

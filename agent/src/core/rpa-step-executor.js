@@ -66,10 +66,15 @@ export class RPAStepExecutor {
   async loadAdapters() {
      try {
        // Import UI automation service for real DOM operations
-       const { UIAutomationService } = await import('../services/ui-automation.service');
+       const { uiAutomationService } = await import('../services/ui-automation.service');
        
        // Initialize UI automation service
        await uiAutomationService.initialize();
+       
+       // Store as 'web' adapter for default DOM operations
+       this.adapters.set('web', {
+         executeStep: (step, context) => uiAutomationService.executeStep(step, context)
+       });
        
        console.log(`RPA: Initialized UI automation service`);
      } catch (error) {
@@ -77,7 +82,7 @@ export class RPAStepExecutor {
        throw error;
      }
    }
-  }
+ }
 
   /**
    * Process ui_steps from Cloud command

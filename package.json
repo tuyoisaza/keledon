@@ -8,7 +8,8 @@
     "dev": "echo 'No development runtime configured'",
     "build": "echo 'No build configured'",
     "test": "echo 'No tests configured'",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "proof:c12:local": "echo 'Run: npm run test:c12 (placeholder)'"
   },
   "dependencies": {
     "ajv": "^8.17.1",

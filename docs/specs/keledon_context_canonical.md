@@ -39,6 +39,15 @@ The browser is a **blind executor + I/O surface only**.
 
 ---
 
+## DATA LAYER CANON (MANDATORY)
+
+- KELEDON canonical data access layer is **Prisma**.
+- Production database posture is **managed Postgres via Prisma**.
+- Supabase-specific dependency is **not canonical** for V1 unless explicitly re-approved by governance.
+- Any readiness, runbook, or deployment document must use Prisma-aligned language.
+
+---
+
 ## VECTOR STORE (MANDATORY)
 
 The vector store is **NOT optional**.

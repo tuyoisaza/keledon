@@ -75,9 +75,15 @@ start_services() {
         compose_file="docker-compose.dev.v2.yml"
     fi
     
-    # Start services
-    log_info "Starting services with $compose_file"
+    # Start core services
+    log_info "Starting core services with $compose_file"
     docker-compose -f "$compose_file" up -d
+    
+    # Start observability stack (Jaeger, OTEL Collector, Grafana, Proxy)
+    if [ -f "docker-compose.observability.yml" ]; then
+        log_info "Starting observability stack..."
+        docker-compose -f docker-compose.observability.yml up -d
+    fi
     
     # Wait for services to be ready
     wait_for_services "$compose_file"

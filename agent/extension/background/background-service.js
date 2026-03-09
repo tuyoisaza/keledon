@@ -24,11 +24,20 @@ class BackgroundService {
     this.agentActive = true; // Master toggle for agent control
     this.socket = null;
     this.runtimeTier = this.resolveRuntimeTier();
-    this.cloudUrl = 'https://cloud.keledon.invalid';
+    this.cloudUrl = null; // Will be loaded from config
+    
+    // Branding information (C57)
+    this.branding = {
+      company: '—',
+      brand: '—',
+      team: '—'
+    };
+    
     this.cloudUrlStorageKey = 'KELEDON_BACKEND_URL';
     this.legacyCloudUrlStorageKey = 'keledon.cloud_url';
     this.commandChannelName = null;
     this.currentCommand = null;
+    this.commandHistory = []; // Track commands for history tab
     
     // KELEDON-EXT-WEBRTC-STT-ENTRY-008: WebRTC state
     this.webRTCState = {
@@ -40,6 +49,41 @@ class BackgroundService {
     
     // KELEDON-EXT-WEBRTC-MESSAGING-ACK-010: Port connections from content scripts
     this.contentPorts = new Map();
+    
+    // Provider configuration from Supabase (via localStorage)
+    this.providerConfig = {
+      sttProvider: 'webspeech-stt',
+      ttsProvider: 'webspeech-tts',
+      rpaProvider: 'native-dom'
+    };
+    
+    // Load provider config from localStorage
+    this.loadProviderConfig();
+  }
+
+  async loadProviderConfig() {
+    try {
+      const keys = ['keldon-stt-provider', 'keldon-tts-provider', 'keldon-rpa-provider'];
+      const result = await chrome.storage.local.get(keys);
+      
+      if (result['keldon-stt-provider']) {
+        this.providerConfig.sttProvider = result['keldon-stt-provider'];
+      }
+      if (result['keldon-tts-provider']) {
+        this.providerConfig.ttsProvider = result['keldon-tts-provider'];
+      }
+      if (result['keldon-rpa-provider']) {
+        this.providerConfig.rpaProvider = result['keldon-rpa-provider'];
+      }
+      
+      console.log('[C10-EXT] Provider config loaded:', this.providerConfig);
+    } catch (error) {
+      console.warn('[C10-EXT] Failed to load provider config:', error);
+    }
+  }
+
+  getProviderConfig() {
+    return this.providerConfig;
   }
 
   resolveRuntimeTier() {
@@ -168,13 +212,8 @@ class BackgroundService {
     });
     console.log(`[C11-EXT] Cloud runtime URL updated from ${source}: ${this.cloudUrl}`);
 
-    if (this.socket) {
-      this.disconnectCloudRuntime();
-      this.connectCloudRuntime();
-      return { cloudUrl: this.cloudUrl, reconnected: true };
-    }
-
-    return { cloudUrl: this.cloudUrl, reconnected: false };
+    this.connectCloudRuntime();
+    return { cloudUrl: this.cloudUrl, reconnected: true };
   }
 
   disconnectCloudRuntime() {
@@ -195,49 +234,71 @@ class BackgroundService {
   }
 
   connectCloudRuntime() {
+    if (!this.cloudUrl) {
+      console.warn('[C10-EXT] Cloud URL not configured - cannot connect. Set via sidepanel or chrome.storage.');
+      this.componentStatus.websocket = 'disconnected';
+      return;
+    }
+
     if (this.socket && this.socket.connected) {
       return;
     }
 
-    this.socket = io(`${this.cloudUrl}/agent`, {
-      transports: ['websocket'],
-      reconnection: true,
-      reconnectionAttempts: 10,
-      reconnectionDelay: 1000,
-    });
+    const connectionUrl = `${this.cloudUrl}/agent`;
+    console.log(`[C10-EXT] Attempting to connect to: ${connectionUrl}`);
 
-    this.socket.on('connect', async () => {
-      this.componentStatus.websocket = 'connected';
-      console.log('[C10-EXT] Connected to cloud runtime');
-      await this.ensureSession();
-    });
+    try {
+      this.socket = io(connectionUrl, {
+        transports: ['websocket', 'polling'],
+        reconnection: true,
+        reconnectionAttempts: 10,
+        reconnectionDelay: 1000,
+      });
 
-    this.socket.on('disconnect', (reason) => {
-      this.componentStatus.websocket = 'disconnected';
-      console.warn('[C10-EXT] Disconnected from cloud runtime:', reason);
-    });
+      this.socket.on('connect', async () => {
+        this.componentStatus.websocket = 'connected';
+        console.log('[C10-EXT] Connected to cloud runtime');
+        await this.ensureSession();
+      });
 
-    this.socket.on('connect_error', (error) => {
-      this.componentStatus.websocket = 'error';
-      console.error('[C10-EXT] Cloud runtime connection error:', error.message);
-    });
+      this.socket.on('disconnect', (reason) => {
+        this.componentStatus.websocket = 'disconnected';
+        console.warn('[C10-EXT] Disconnected from cloud runtime:', reason);
+      });
 
-    this.socket.on('session.created', (payload) => {
-      this.currentSessionId = payload?.session_id || null;
-      if (this.currentSessionId) {
-        if (this.commandChannelName) {
-          this.socket.off(this.commandChannelName);
+      this.socket.on('connect_error', (error) => {
+        this.componentStatus.websocket = 'error';
+        console.error('[C10-EXT] Cloud runtime connection error:', error.message);
+      });
+
+      this.socket.on('session.created', (payload) => {
+        this.currentSessionId = payload?.session_id || null;
+        
+        // Update branding from session payload (C57)
+        if (payload) {
+          this.branding.company = payload.company_name || '—';
+          this.branding.brand = payload.brand_name || '—';
+          this.branding.team = payload.team_name || '—';
         }
 
-        this.commandChannelName = `command.${this.currentSessionId}`;
-        this.socket.on(this.commandChannelName, (command) => {
-          this.handleCloudCommand(command).catch((error) => {
-            console.error('[C10-EXT] Failed to process command:', error);
+        if (this.currentSessionId) {
+          if (this.commandChannelName) {
+            this.socket.off(this.commandChannelName);
+          }
+
+          this.commandChannelName = `command.${this.currentSessionId}`;
+          this.socket.on(this.commandChannelName, (command) => {
+            this.handleCloudCommand(command).catch((error) => {
+              console.error('[C10-EXT] Failed to process command:', error);
+            });
           });
-        });
-      }
-      console.log('[C10-EXT] Session ready:', this.currentSessionId);
-    });
+        }
+        console.log('[C10-EXT] Session ready:', this.currentSessionId);
+      });
+    } catch (error) {
+      console.error('[C10-EXT] Failed to create socket connection:', error);
+      this.componentStatus.websocket = 'error';
+    }
   }
 
   async ensureSession() {
@@ -301,6 +362,20 @@ class BackgroundService {
     console.log(
       `[C10-EXT] command received type=${command?.type} decision_id=${metadata.decision_id} trace_id=${metadata.trace_id}`,
     );
+
+    // Add to command history
+    this.commandHistory.push({
+      timestamp: startedAt,
+      type: command?.type || 'unknown',
+      content: command?.ui_steps ? JSON.stringify(command.ui_steps) : (command?.text || 'No content'),
+      decision_id: metadata.decision_id,
+      trace_id: metadata.trace_id
+    });
+    
+    // Keep only last 50 commands
+    if (this.commandHistory.length > 50) {
+      this.commandHistory = this.commandHistory.slice(-50);
+    }
 
     await this.emitExecutionEvidence(command, {
       event: 'agent.exec.start',
@@ -559,13 +634,25 @@ class BackgroundService {
           ttsEnabled: this.agentActive, // Controlled by master toggle
           webRTCDetected: this.webRTCState.detected, // KELEDON-EXT-WEBRTC-STT-ENTRY-008
           webRTCListening: this.webRTCState.listening, // KELEDON-EXT-WEBRTC-STT-ENTRY-008
-          webRTCReady: this.webRTCState.ready // KELEDON-EXT-WEBRTC-MESSAGING-ACK-010: Only true after ACK
+          webRTCReady: this.webRTCState.ready, // KELEDON-EXT-WEBRTC-MESSAGING-ACK-010: Only true after ACK
+          branding: this.branding // C57 branding reflection
         });
         break;
 
       case 'PING':
         // Phase O/N-1: Basic connectivity test
         sendResponse({ type: 'PONG', timestamp: Date.now() });
+        break;
+
+      case 'GET_HISTORY':
+        // Return command history
+        const history = this.commandHistory || [];
+        sendResponse({ history: history.slice(-50) }); // Last 50 commands
+        break;
+
+      case 'GET_PROVIDER_CONFIG':
+        // Return provider config from Supabase/localStorage
+        sendResponse({ providerConfig: this.getProviderConfig() });
         break;
 
       case 'TOGGLE_AGENT':

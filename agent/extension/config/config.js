@@ -7,8 +7,8 @@
 
 // Default configuration values
 const DEFAULT_CONFIG = {
-    BACKEND_URL: 'https://cloud.keledon.invalid',
-    WS_URL: 'wss://cloud.keledon.invalid',
+    BACKEND_URL: 'http://localhost:3001',
+    WS_URL: 'ws://localhost:3011',
     RAG_RETRIEVE_ENDPOINT: '/rag/retrieve',
     RAG_EVALUATE_ENDPOINT: '/rag/evaluate',
     LISTENING_SESSIONS_ENDPOINT: '/listening-sessions',

@@ -41,7 +41,7 @@ A version is **READY** if and only if **all** of the following are true:
 4. At least one real output is produced
 5. The behavior is observable by a human
 6. Decisioning is cloud-side and vector-grounded
-7. Production configuration is managed-service-compatible (Supabase, Qdrant, OTel exporter, Cloud base URL)
+7. Production configuration is managed-service-compatible (Prisma + managed Postgres, Qdrant, OTel exporter, Cloud base URL)
 8. Production configuration has no localhost/loopback dependency
 
 Logs count. UI counts. Side effects count.
@@ -100,7 +100,7 @@ No explanation is required.
 
 ```
 DEV_LOCAL / CI_PROOF -> local Docker dependencies for development, CI, proof only
-PRODUCTION_MANAGED   -> managed Supabase, managed Qdrant, managed OTel exporter, managed Cloud base URL
+PRODUCTION_MANAGED   -> Prisma + managed Postgres, managed Qdrant, managed OTel exporter, managed Cloud base URL
 ```
 
 This is a configuration distinction only; architecture and execution boundaries do not change.

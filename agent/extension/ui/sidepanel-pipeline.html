@@ -218,6 +218,15 @@
             animation: pulse 1s infinite;
         }
 
+        .mic-btn {
+            background: var(--accent);
+        }
+
+        .mic-btn.recording {
+            background: var(--danger);
+            animation: pulse 1s infinite;
+        }
+
         /* Suggestions */
         .suggestions {
             display: flex;
@@ -426,6 +435,87 @@
             text-overflow: ellipsis;
         }
 
+        /* Log Panel */
+        .log-panel {
+            position: fixed;
+            bottom: 40px;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .log-panel.visible {
+            display: flex;
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .log-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .log-btn {
+            padding: 4px 8px;
+            background: var(--panel-soft);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .log-btn:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .log-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 11px;
+        }
+
+        .log-entry {
+            padding: 2px 4px;
+            margin-bottom: 2px;
+            border-radius: 2px;
+        }
+
+        .log-entry.info {
+            color: var(--text);
+        }
+
+        .log-entry.success {
+            color: var(--success);
+            background: rgba(56, 211, 159, 0.1);
+        }
+
+        .log-entry.error {
+            color: var(--danger);
+            background: rgba(242, 92, 108, 0.1);
+        }
+
+        .log-entry.warning {
+            color: var(--warning);
+        }
+
         /* Status Bar */
         .status-bar {
             padding: 12px 16px;
@@ -595,32 +685,34 @@
                 <div class="logo">K</div>
                 <div>
                     <div style="font-weight: 600;">KELEDON</div>
-                    <div class="version" id="version">v1.1.6</div>
+                    <div class="version" id="version">v2.17</div>
                 </div>
             </div>
             <div class="header-controls">
                 <div class="status-indicator" id="statusIndicator"></div>
+                <button class="input-btn" id="logToggleBtn" title="Toggle Logs">📋</button>
                 <button class="input-btn" id="settingsBtn" title="Settings">⚙️</button>
             </div>
         </div>
 
         <!-- Tab Navigation -->
-        <div class="tab-nav">
-            <button class="tab-btn active" data-tab="chat">💬 Chat</button>
-            <button class="tab-btn" data-tab="tabs">📑 Tabs</button>
-            <button class="tab-btn" data-tab="history">📜 History</button>
-            <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
+        <div class="tab-nav" role="tablist" aria-label="Main navigation">
+            <button class="tab-btn active" data-tab="chat" role="tab" aria-selected="true" aria-controls="chat-tab">💬 Chat</button>
+            <button class="tab-btn" data-tab="tabs" role="tab" aria-selected="false" aria-controls="tabs-tab">📑 Tabs</button>
+            <button class="tab-btn" data-tab="history" role="tab" aria-selected="false" aria-controls="history-tab">📜 History</button>
+            <button class="tab-btn" data-tab="settings" role="tab" aria-selected="false" aria-controls="settings-tab">⚙️ Settings</button>
         </div>
 
         <!-- Main Content -->
-        <div class="main-content">
+        <div class="main-content" role="main">
             <!-- Chat Tab -->
-            <div class="tab-content active" id="chat-tab">
+            <div class="tab-content active" id="chat-tab" role="tabpanel" aria-labelledby="chat-tab-btn">
                 <div class="command-section">
                     <div class="input-group">
-                        <input type="text" class="command-input" id="commandInput" placeholder="Enter command or question...">
-                        <button class="input-btn voice-btn" id="voiceBtn" title="Real Speech-to-Text">🎤</button>
-                        <button class="input-btn" id="sendBtn" title="Send">➤</button>
+                        <input type="text" class="command-input" id="commandInput" placeholder="Enter command or question..." aria-label="Command input">
+                        <button class="input-btn voice-btn" id="voiceBtn" title="Transcribe WebRTC Audio" aria-label="Transcribe WebRTC Audio" role="button">📝</button>
+                        <button class="input-btn mic-btn" id="micBtn" title="Microphone - Send to Brain" aria-label="Microphone input" role="button">🎤</button>
+                        <button class="input-btn" id="sendBtn" title="Send" aria-label="Send message" role="button">➤</button>
                     </div>
                     <div class="suggestions" id="suggestions">
                         <div class="suggestion-chip" id="testConnectionBtn" style="background: var(--info); color: white;">Test Connection</div>
@@ -742,13 +834,27 @@
             </div>
         </div>
 
+        <!-- Log Panel -->
+        <div class="log-panel" id="logPanel" style="display: none;">
+            <div class="log-header">
+                <span>Logs</span>
+                <div class="log-actions">
+                    <button class="log-btn" id="copyLogBtn" title="Copy Logs">📋 Copy</button>
+                    <button class="log-btn" id="pasteLogBtn" title="Paste Logs">📝 Paste</button>
+                    <button class="log-btn" id="clearLogBtn" title="Clear Logs">🗑️ Clear</button>
+                    <button class="log-btn" id="closeLogBtn" title="Close Logs">✕</button>
+                </div>
+            </div>
+            <div class="log-content" id="logs-content"></div>
+        </div>
+
         <!-- Status Bar -->
-        <div class="status-bar">
+        <div class="status-bar" role="status" aria-live="polite" aria-label="Connection status">
             <div class="connection-status">
-                <div class="status-dot" id="connectionDot"></div>
+                <div class="status-dot" id="connectionDot" aria-hidden="true"></div>
                 <span id="connectionStatus">Disconnected</span>
             </div>
-            <div class="component-status">
+            <div class="component-status" aria-label="Component status indicators">
                 <div class="component-indicator">
                     <div class="status-dot" id="websocketStatus" title="WebSocket Connection"></div>
                     <span>WS</span>

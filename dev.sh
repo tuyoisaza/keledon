@@ -83,6 +83,13 @@ setup_vector_store() {
 dev() {
     print_status $BLUE "Starting KELEDON development environment..."
     
+    # Start Docker services (core + observability)
+    docker-compose -f docker-compose.dev.v2.yml up -d qdrant redis
+    if [ -f "docker-compose.observability.yml" ]; then
+        print_status $BLUE "Starting observability stack..."
+        docker-compose -f docker-compose.observability.yml up -d
+    fi
+    
     # Check if Qdrant is running
     if [ -f "landing/scripts/setup-qdrant.js" ]; then
         cd landing

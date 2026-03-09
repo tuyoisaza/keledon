@@ -11,9 +11,19 @@ export class MainTextInputService extends EventEmitter {
     super();
     this.websocketClient = websocketClient;
     this.sessionManager = sessionManager;
+    // Get cloud URL from config or default
+    const getCloudUrl = () => {
+      if (typeof window !== 'undefined' && window.AGENT_CONFIG?.WS_URL) {
+        return window.AGENT_CONFIG.WS_URL;
+      }
+      if (typeof process !== 'undefined' && process.env?.KELEDON_CLOUD_BASE_URL) {
+        return process.env.KELEDON_CLOUD_BASE_URL.replace(/^https?:\/\//i, 'wss://').replace(':3001', ':3011');
+      }
+      return 'ws://localhost:3011';
+    };
     this.config = {
       // Cloud connection config
-      cloud_url: 'wss://cloud.keledon.invalid',
+      cloud_url: getCloudUrl(),
       
       // Audio capture config
       auto_start: false,

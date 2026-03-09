@@ -4,11 +4,32 @@
 (function() {
     'use strict';
     
+    // Get environment - check for development vs production
+    const isDevelopment = window.location.hostname === 'localhost' || 
+                         window.location.hostname === '127.0.0.1' ||
+                         !window.location.hostname.includes('keledon');
+    
+    const getBackendUrl = () => {
+        if (isDevelopment) {
+            return 'http://localhost:3001';
+        }
+        // Production: use current origin
+        return window.location.origin.replace('http:', 'https:');
+    };
+    
+    const getWsUrl = () => {
+        if (isDevelopment) {
+            return 'ws://localhost:3011';
+        }
+        // Production: use wss with current origin
+        return window.location.origin.replace('http:', 'ws:').replace('https:', 'wss:');
+    };
+    
     // Phase 1 Configuration for Backend Testing
     const KELEDON_CONFIG = {
-        // Backend URLs
-        BACKEND_URL: 'https://cloud.keledon.invalid',
-        WS_URL: 'wss://cloud.keledon.invalid',
+        // Backend URLs - dynamically resolved
+        BACKEND_URL: getBackendUrl(),
+        WS_URL: getWsUrl(),
         
         // RAG Endpoints
         RAG_RETRIEVE_ENDPOINT: '/rag/retrieve',
