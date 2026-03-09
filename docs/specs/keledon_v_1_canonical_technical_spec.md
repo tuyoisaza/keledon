@@ -16,6 +16,7 @@ Interpretation guard:
 - The Cloud Conversation Orchestrator (Brain) is the only real agent.
 - The browser extension/runtime is a blind execution and I/O surface, not an agent.
 - Vector store usage is required for cloud reasoning and policy-grounded flow selection.
+- Canonical data layer is Prisma with managed Postgres in production posture.
 
 ---
 
