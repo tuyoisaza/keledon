@@ -21,7 +21,10 @@
     "proof:c10:local": "node scripts/c10-local-proof.js --dev-only-bootstrap",
     "proof:c12:local": "node scripts/c12-local-proof.js --dev-only-bootstrap",
     "proof:c12:ci": "node scripts/c13-ci-guardrail.js --dev-only-bootstrap",
-    "guard:regression": "node scripts/c13-regression-sentinel.js"
+    "guard:regression": "node scripts/c13-regression-sentinel.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy"
   },
   "dependencies": {
     "@deepgram/sdk": "^4.11.3",
@@ -50,7 +53,9 @@
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",
     "typeorm": "^0.3.28",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "@prisma/client": "^6.16.2",
+    "prisma": "^6.16.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.0",

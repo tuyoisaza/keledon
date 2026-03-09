@@ -14,13 +14,9 @@ import { AgentGateway } from './gateways/agent.gateway';
 import { DecisionEngineService } from './services/decision-engine.service';
 import { getRuntimeTier, isManagedProductionTier } from './config/runtime-tier';
 import { ListeningSessionModule } from './listening-sessions/listening-session.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  // Runtime entry-point map for trace attachment:
-  // - HTTP entry: Nest app bootstrap in main.ts
-  // - WebSocket entry: AgentGateway events (brain_event / event)
-  // - Decision engine: DecisionEngineService.processTextInput
-  // - Vector retrieval: RAGService.retrieveKnowledge
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
@@ -32,6 +28,23 @@ import { ListeningSessionModule } from './listening-sessions/listening-session.m
         const isLocalDev = runtimeTier === 'DEV_LOCAL';
         const isManagedTier = isManagedProductionTier(runtimeTier);
 
+        const databaseUrl = (configService.get<string>('DATABASE_URL') || '').trim();
+        if (databaseUrl) {
+          if (isLocalDev) {
+            console.log('💾 DATABASE_URL mode enabled (Prisma/Railway canonical path).');
+          }
+
+          return {
+            type: 'postgres' as const,
+            url: databaseUrl,
+            entities: [Session, Event, User],
+            synchronize: false,
+            logging: isLocalDev,
+            ssl: isManagedTier ? { rejectUnauthorized: false } : false,
+            keepConnectionAlive: !isLocalDev,
+          };
+        }
+
         const dbHost = configService.get('SUPABASE_HOST') || (isLocalDev ? 'localhost' : undefined);
         const dbPort = configService.get('SUPABASE_PORT') || (isLocalDev ? 54322 : undefined);
         const dbUser = configService.get('SUPABASE_USER') || (isLocalDev ? 'postgres' : undefined);
@@ -40,29 +53,14 @@ import { ListeningSessionModule } from './listening-sessions/listening-session.m
 
         if (!dbHost || !dbPort || !dbUser || !dbPassword || !dbName) {
           throw new Error(
-            `[Config] Managed database connection env is incomplete for tier ${runtimeTier}.`,
+            `[Config] Missing DB configuration. Prefer DATABASE_URL (canonical). Legacy SUPABASE_* env is incomplete for tier ${runtimeTier}.`,
           );
         }
-        
-        // Detect if connecting to Supabase Cloud (not localhost)
-        const isSupabaseCloud = dbHost.includes('supabase') || dbHost.includes('aws-');
-        
-        if (isLocalDev) {
-          console.log('🚀 LOCAL DEV MODE: KELEDON Cloud Backend');
-          if (isSupabaseCloud) {
-            console.log('✅ SUPABASE CLOUD: Using remote Postgres');
-          } else {
-            console.log('⚠️  SUPABASE NOT CONNECTED: Fail-fast mode enabled');
-          }
-          console.log('❌ NO IN-MEMORY FALLBACKS: Database required for production');
-        }
-        
-        // KELEDON ARCHITECTURE: Fail fast without Supabase
-        // Enable SSL for Supabase Cloud connections
-        const useSSL = isSupabaseCloud || isManagedTier;
-        
+
+        const useSSL = isManagedTier;
+
         return {
-          type: 'postgres',
+          type: 'postgres' as const,
           host: dbHost,
           port: Number(dbPort),
           username: dbUser,
@@ -72,13 +70,13 @@ import { ListeningSessionModule } from './listening-sessions/listening-session.m
           synchronize: false,
           logging: isLocalDev,
           ssl: useSSL ? { rejectUnauthorized: false } : false,
-          // KELEDON FAIL-FAST: Disable retry logging in local dev
           keepConnectionAlive: !isLocalDev,
         };
       },
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([Session, Event, User]),
+    PrismaModule,
     HealthModule,
     RAGModule,
     ListeningSessionModule,
@@ -95,6 +93,6 @@ import { ListeningSessionModule } from './listening-sessions/listening-session.m
 })
 export class AppModule {
   constructor() {
-    console.log('🚀 DATABASE-READY: KELEDON Phase 2 - Supabase Only Mode');
+    console.log('🚀 DATABASE-READY: KELEDON Phase 2 - Prisma/managed Postgres canonical mode');
   }
 }
