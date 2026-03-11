@@ -37,10 +37,13 @@ echo KELEDON Development Environment Ready!
 echo =============================================
 echo.
 echo Services:
-echo   - Database:       Supabase Cloud (AWS) - NOT local
+echo   - Database:       Railway PostgreSQL (Prisma)
 echo   - Vector Store:   http://localhost:6333 (Qdrant Docker)
+echo   - Cache:          http://localhost:6379 (Redis Docker)
 echo   - Backend API:    http://localhost:3001
 echo   - Frontend:       http://localhost:5173
+echo   - Jaeger UI:      http://localhost:16686
+echo   - OTEL Collector: http://localhost:4318
 echo.
 echo Extension built to: agent\dist\
 echo.

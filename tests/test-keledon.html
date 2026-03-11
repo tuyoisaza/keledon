@@ -246,6 +246,8 @@
             // STT (Speech-to-Text)
             { id: 'listening', name: 'Listening Sessions', endpoint: 'http://localhost:3001/listening-sessions', type: 'http', method: 'POST', body: { source: 'test' }, component: 'stt', folder: 'cloud/src/listening-sessions' },
             { id: 'ws-listen', name: 'WebSocket /listen/ws', endpoint: 'ws://localhost:3001/listen/ws', type: 'ws', component: 'stt', folder: 'cloud/src/listening-sessions' },
+            { id: 'vosk-server', name: 'VOSK STT Server', endpoint: 'http://localhost:9090/health', type: 'http', method: 'GET', component: 'stt', folder: 'cloud/vosk-server' },
+            { id: 'vosk-ws', name: 'VOSK WebSocket', endpoint: 'ws://localhost:9091', type: 'ws', component: 'stt', folder: 'cloud/vosk-server' },
             
             // TTS (Text-to-Speech) - via Extension
             { id: 'tts', name: 'TTS Provider', endpoint: 'browser-speech-api', type: 'ext', component: 'tts', folder: 'agent/extension/ui' },
@@ -307,6 +309,8 @@
                 'listening': 'Listening Sessions (STT) | Green: Ready | Red: Failed',
                 'ws-listen': 'WebSocket /listen/ws | Green: Connected | Red: Failed',
                 'ws-agent': 'WebSocket /agent | Green: Connected | Red: Failed',
+                'vosk-server': 'VOSK STT Server | Green: Running | Red: Not available',
+                'vosk-ws': 'VOSK WebSocket | Green: Connected | Red: Failed',
                 'tts': 'TTS Provider | Green: Ready | Red: Not available',
                 'stt-deepgram': 'STT Deepgram Adapter | Green: Loaded | Red: Failed',
                 'ui-automation': 'UI Automation Service | Green: Loaded | Red: Failed',

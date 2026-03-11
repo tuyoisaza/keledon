@@ -59,6 +59,44 @@ class BackgroundService {
     
     // Load provider config from localStorage
     this.loadProviderConfig();
+    this.loadTeamConfigFromCloud();
+  }
+
+  async loadTeamConfigFromCloud() {
+    try {
+      const teamId = await this.getCurrentTeamId();
+      if (!teamId) {
+        console.log('[C10-EXT] No team ID found, using local config');
+        return;
+      }
+      
+      const response = await fetch(`http://localhost:3001/api/teams/${teamId}/config`);
+      if (response.ok) {
+        const config = await response.json();
+        
+        this.providerConfig = {
+          sttProvider: config.sttProvider || 'vosk',
+          ttsProvider: config.ttsProvider || 'elevenlabs',
+          rpaProvider: 'native-dom'
+        };
+        
+        if (config.voskServerUrl) {
+          await chrome.storage.local.set({ 'keldon-vosk-server-url': config.voskServerUrl });
+        }
+        
+        console.log('[C10-EXT] Team config loaded from cloud:', this.providerConfig);
+      }
+    } catch (error) {
+      console.warn('[C10-EXT] Failed to load team config from cloud:', error);
+    }
+  }
+
+  async getCurrentTeamId() {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(['keldon-team-id'], (result) => {
+        resolve(result['keldon-team-id'] || null);
+      });
+    });
   }
 
   async loadProviderConfig() {

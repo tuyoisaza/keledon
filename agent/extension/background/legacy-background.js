@@ -829,15 +829,51 @@ async function startListeningSession(options = {}) {
 
         // Canonical command handlers
         // Import UI automation service (dynamic import)
+        let uiAutomationInstance = null;
+        
         const handleUIAutomationCommand = async (payload, sessionId) => {
             try {
-                const uiAutomationService = await import('../services/ui-automation.service');
-                await uiAutomationService.executeUISteps(sessionId, payload.steps || []);
+                if (!uiAutomationInstance) {
+                    const { uiAutomationService } = await import('../services/ui-automation.service');
+                    uiAutomationInstance = uiAutomationService;
+                    await uiAutomationInstance.initialize();
+                }
                 
-                console.log('UI automation completed:', payload.steps?.length || 0, 'steps');
+                const steps = payload.steps || [];
+                const results = [];
+                
+                for (const step of steps) {
+                    const result = await uiAutomationInstance.executeStep(step, {
+                        session_id: sessionId,
+                        executionId: payload.command_id
+                    });
+                    results.push(result);
+                }
+                
+                // Send ui_result event back to Cloud
+                if (currentWs && currentWs.readyState === WebSocket.OPEN) {
+                    currentWs.send(JSON.stringify({
+                        type: 'ui_result',
+                        session_id: sessionId,
+                        command_id: payload.command_id,
+                        results: results
+                    }));
+                }
+                
+                console.log('UI automation completed:', steps.length, 'steps');
                 return true;
             } catch (error) {
                 console.error('UI automation failed:', error);
+                
+                // Send error back to Cloud
+                if (currentWs && currentWs.readyState === WebSocket.OPEN) {
+                    currentWs.send(JSON.stringify({
+                        type: 'ui_result',
+                        session_id: sessionId,
+                        command_id: payload.command_id,
+                        error: error.message
+                    }));
+                }
                 return false;
             }
         };
