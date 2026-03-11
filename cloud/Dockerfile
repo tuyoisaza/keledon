@@ -3,6 +3,9 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
+# Copy root-level contracts folder (needed for C13 sentinel)
+COPY contracts/ ./contracts/
+
 # Copy package files from cloud
 COPY cloud/package*.json ./cloud/
 WORKDIR /app/cloud
