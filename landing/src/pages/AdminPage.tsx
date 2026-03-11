@@ -1,7 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Users, TrendingUp, Clock, Star, Filter, Download, RefreshCw, Loader2 } from 'lucide-react';
+import { Users, TrendingUp, Clock, Star, Filter, Download, RefreshCw, Loader2, Settings, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getUsers, getCompanies, type User, type Company } from '@/lib/supabase';
+
+// Team Settings Types
+interface TeamConfig {
+    teamId: string;
+    teamName: string;
+    sttProvider: string;
+    ttsProvider: string;
+    voskServerUrl?: string;
+    voskModel?: string;
+}
 
 // Extended User with display data
 interface UserWithStats extends User {
@@ -16,6 +26,12 @@ export default function AdminPage() {
     const [loading, setLoading] = useState(true);
     const [selectedCompany, setSelectedCompany] = useState<string>('all');
     const [refreshing, setRefreshing] = useState(false);
+    
+    // Team Settings State
+    const [activeTab, setActiveTab] = useState<'users' | 'settings'>('users');
+    const [teamConfig, setTeamConfig] = useState<TeamConfig | null>(null);
+    const [savingConfig, setSavingConfig] = useState(false);
+    const [configMessage, setConfigMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
 
     // Fetch users and companies
     const fetchData = async () => {
@@ -43,6 +59,57 @@ export default function AdminPage() {
         await fetchData();
         setRefreshing(false);
     };
+    
+    // Fetch team config
+    const fetchTeamConfig = async (teamId: string) => {
+        try {
+            const response = await fetch(`http://localhost:3001/api/teams/${teamId}/config`);
+            if (response.ok) {
+                const data = await response.json();
+                setTeamConfig(data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch team config:', error);
+        }
+    };
+    
+    // Save team config
+    const saveTeamConfig = async () => {
+        if (!teamConfig) return;
+        
+        setSavingConfig(true);
+        setConfigMessage(null);
+        
+        try {
+            const response = await fetch(`http://localhost:3001/api/teams/${teamConfig.teamId}/config`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sttProvider: teamConfig.sttProvider,
+                    ttsProvider: teamConfig.ttsProvider,
+                    voskServerUrl: teamConfig.voskServerUrl,
+                    voskModel: teamConfig.voskModel,
+                })
+            });
+            
+            if (response.ok) {
+                setConfigMessage({ type: 'success', text: 'Settings saved successfully!' });
+            } else {
+                setConfigMessage({ type: 'error', text: 'Failed to save settings' });
+            }
+        } catch (error) {
+            setConfigMessage({ type: 'error', text: 'Error saving settings' });
+        } finally {
+            setSavingConfig(false);
+        }
+    };
+    
+    // Initialize team config when companies change
+    useEffect(() => {
+        if (companies.length > 0 && !teamConfig) {
+            fetchTeamConfig(companies[0].id);
+        }
+    }, [companies]);
 
     // Filter users by company
     const filteredUsers = selectedCompany === 'all'
@@ -104,7 +171,129 @@ export default function AdminPage() {
                     </button>
                 </div>
             </div>
+            
+            {/* Tabs */}
+            <div className="flex items-center gap-4 mb-6">
+                <button
+                    onClick={() => setActiveTab('users')}
+                    className={cn(
+                        "px-4 py-2 rounded-lg font-medium transition-colors",
+                        activeTab === 'users' 
+                            ? "bg-primary text-primary-foreground" 
+                            : "bg-muted text-muted-foreground hover:bg-muted/80"
+                    )}
+                >
+                    <Users className="w-4 h-4 inline-block mr-2" />
+                    Users
+                </button>
+                <button
+                    onClick={() => setActiveTab('settings')}
+                    className={cn(
+                        "px-4 py-2 rounded-lg font-medium transition-colors",
+                        activeTab === 'settings' 
+                            ? "bg-primary text-primary-foreground" 
+                            : "bg-muted text-muted-foreground hover:bg-muted/80"
+                    )}
+                >
+                    <Settings className="w-4 h-4 inline-block mr-2" />
+                    Team Settings
+                </button>
+            </div>
 
+            {/* Team Settings Tab */}
+            {activeTab === 'settings' && (
+                <div className="mb-6 p-6 rounded-xl bg-card border border-border">
+                    <h3 className="font-semibold text-lg text-foreground mb-4">STT/TTS Provider Configuration</h3>
+                    
+                    {teamConfig ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* STT Provider */}
+                            <div>
+                                <label className="block text-sm font-medium text-foreground mb-2">
+                                    Speech-to-Text (STT) Provider
+                                </label>
+                                <select
+                                    value={teamConfig.sttProvider}
+                                    onChange={(e) => setTeamConfig({...teamConfig, sttProvider: e.target.value})}
+                                    className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                >
+                                    <option value="vosk">VOSK (Local - Recommended)</option>
+                                    <option value="deepgram">Deepgram (Cloud)</option>
+                                    <option value="webspeech">Web Speech API (Browser)</option>
+                                </select>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    VOSK runs locally for free. Deepgram is cloud-based.
+                                </p>
+                            </div>
+                            
+                            {/* TTS Provider */}
+                            <div>
+                                <label className="block text-sm font-medium text-foreground mb-2">
+                                    Text-to-Speech (TTS) Provider
+                                </label>
+                                <select
+                                    value={teamConfig.ttsProvider}
+                                    onChange={(e) => setTeamConfig({...teamConfig, ttsProvider: e.target.value})}
+                                    className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                >
+                                    <option value="elevenlabs">ElevenLabs (Recommended)</option>
+                                    <option value="webspeech">Web Speech API (Browser)</option>
+                                </select>
+                            </div>
+                            
+                            {/* VOSK Server URL */}
+                            {teamConfig.sttProvider === 'vosk' && (
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        VOSK Server URL
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={teamConfig.voskServerUrl || ''}
+                                        onChange={(e) => setTeamConfig({...teamConfig, voskServerUrl: e.target.value})}
+                                        placeholder="wss://your-vosk-server.railway.app"
+                                        className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        Enter the URL of your VOSK server (e.g., wss://keledon-vosk.railway.app)
+                                    </p>
+                                </div>
+                            )}
+                            
+                            {/* Save Button */}
+                            <div className="md:col-span-2 flex items-center gap-4">
+                                <button
+                                    onClick={saveTeamConfig}
+                                    disabled={savingConfig}
+                                    className="flex items-center gap-2 px-6 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+                                >
+                                    {savingConfig ? (
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                        <Save className="w-4 h-4" />
+                                    )}
+                                    Save Settings
+                                </button>
+                                
+                                {configMessage && (
+                                    <span className={cn(
+                                        "text-sm",
+                                        configMessage.type === 'success' ? "text-green-500" : "text-red-500"
+                                    )}>
+                                        {configMessage.text}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-muted-foreground">Loading team configuration...</p>
+                    )}
+                </div>
+            )}
+
+            {/* Users Tab Content */}
+            {activeTab === 'users' && (
+                <>
             {/* Company Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {companyStats.slice(0, 3).map((company) => (
@@ -239,6 +428,8 @@ export default function AdminPage() {
                     </table>
                 )}
             </div>
+                </>
+            )}
         </div>
     );
 }

@@ -483,9 +483,41 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   // Handle UI result events (RPA execution results)
   private handleUIResult(client: Socket, event: AgentSocketData): void {
-    this.logger.log(`Processing UI result: ${event.payload.status}`);
+    this.logger.log(`Processing UI result: ${JSON.stringify(event.payload)}`);
     
-    // TODO: Store result, continue flow execution
+    // Store the UI result in database
+    this.storeUIResult(event).catch(err => {
+      this.logger.error('Failed to store UI result:', err);
+    });
+    
+    // Emit to any listeners that might be waiting for this result
+    client.emit('ui_result_stored', {
+      session_id: event.session_id,
+      command_id: event.command_id,
+      status: 'stored'
+    });
+  }
+  
+  private async storeUIResult(event: AgentSocketData): Promise<void> {
+    try {
+      if (this.sessionService) {
+        await this.sessionService.persistEvent(event.session_id, {
+          session_id: event.session_id,
+          event_type: 'ui_result',
+          payload: {
+            command_id: event.command_id,
+            results: event.payload?.results || [],
+            error: event.payload?.error
+          },
+          ts: event.timestamp || new Date().toISOString(),
+          agent_id: event.agent_id || 'unknown'
+        });
+        this.logger.log(`UI result stored for session ${event.session_id}`);
+      }
+    } catch (error) {
+      this.logger.error('Error storing UI result:', error);
+      throw error;
+    }
   }
 
   // Handle system events (lifecycle, errors)

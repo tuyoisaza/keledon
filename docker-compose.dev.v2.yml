@@ -75,7 +75,8 @@ services:
     volumes:
       - redis_data:/data
 
-  # PostgreSQL with pgvector for development
+  # PostgreSQL with pgvector for LOCAL DEVELOPMENT ONLY
+  # Production uses Railway PostgreSQL via Prisma
   postgres:
     image: pgvector/pgvector:pg16
     container_name: keledon-postgres-dev

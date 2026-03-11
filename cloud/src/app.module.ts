@@ -15,6 +15,7 @@ import { DecisionEngineService } from './services/decision-engine.service';
 import { getRuntimeTier, isManagedProductionTier } from './config/runtime-tier';
 import { ListeningSessionModule } from './listening-sessions/listening-session.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { TeamController } from './controllers/team.controller';
 
 @Module({
   imports: [
@@ -81,13 +82,14 @@ import { PrismaModule } from './prisma/prisma.module';
     RAGModule,
     ListeningSessionModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, TeamController],
   providers: [
     AppService,
     SessionService,
     DatabaseHealthService,
     AgentGateway,
     DecisionEngineService,
+    TeamController,
   ],
   exports: [SessionService, DatabaseHealthService],
 })

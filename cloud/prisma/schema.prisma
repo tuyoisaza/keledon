@@ -7,15 +7,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Team - represents a company/team using KELEDON
+model Team {
+  id          String   @id @default(uuid())
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Provider configuration per team
+  sttProvider String   @default("vosk")   // vosk, deepgram, webspeech
+  ttsProvider String   @default("elevenlabs") // elevenlabs, webspeech
+  
+  // VOSK configuration
+  voskServerUrl String?
+  voskModel     String?
+  
+  // Deepgram configuration
+  deepgramApiKey String?
+  
+  // ElevenLabs configuration
+  elevenlabsApiKey String?
+  
+  // Relations
+  users    User[]
+  sessions Session[]
+
+  @@map("teams")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      String?  // admin, team_lead, agent
+  teamId    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  team     Team?    @relation(fields: [teamId], references: [id])
+  sessions Session[]
+
+  @@map("users")
+}
+
 model Session {
   id        String   @id @default(uuid())
   userId    String?
+  teamId    String?
   status    String?
   metadata  Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  events Event[]
+  user     User?    @relation(fields: [userId], references: [id])
+  team     Team?    @relation(fields: [teamId], references: [id])
+  events   Event[]
 
   @@map("sessions")
 }
@@ -31,15 +77,4 @@ model Event {
 
   @@index([sessionId])
   @@map("events")
-}
-
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  role      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("users")
 }

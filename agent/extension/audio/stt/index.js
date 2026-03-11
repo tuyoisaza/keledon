@@ -6,11 +6,13 @@
 import { STTAdapter } from './adapter.js';
 import { DeepgramSTT } from './deepgram.js';
 import { LocalSTT } from './local.js';
+import { VOSKSTT } from './vosk.js';
 
 export class STTFactory {
   static adapters = new Map([
     ['deepgram', DeepgramSTT],
-    ['local', LocalSTT]
+    ['local', LocalSTT],
+    ['vosk', VOSKSTT]
   ]);
 
   static async create(provider, config = {}) {
@@ -97,11 +99,14 @@ export class STTFactory {
       // Connection test is most important
       if (result.connectionTest) score += 100;
       
-      // Prefer cloud providers for accuracy
-      if (result.provider === 'deepgram') score += 50;
+      // VOSK - highest priority (local, free, accurate)
+      if (result.provider === 'vosk') score += 80;
       
-      // Prefer local for privacy/no latency
+      // Web Speech API - local fallback
       if (result.provider === 'local') score += 30;
+       
+      // Deepgram - cloud fallback
+      if (result.provider === 'deepgram') score += 20;
 
       if (score > bestScore) {
         bestScore = score;
@@ -134,6 +139,13 @@ export class STTFactory {
           errors.push('Language must be a string');
         }
         break;
+        
+      case 'vosk':
+        // VOSK requires server URL
+        if (!config.serverUrl) {
+          errors.push('VOSK server URL is required');
+        }
+        break;
     }
 
     return {
@@ -159,6 +171,11 @@ export class STTFactory {
         continuous: true,
         interimResults: true,
         maxAlternatives: 3
+      },
+      vosk: {
+        language: 'en-US',
+        sampleRate: 16000,
+        serverUrl: process.env.VOSK_SERVER_URL || 'ws://localhost:9091'
       }
     };
 
