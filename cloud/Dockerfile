@@ -7,9 +7,10 @@ WORKDIR /app
 COPY contracts/ ./contracts/
 
 # Copy package files from cloud
-COPY cloud/package*.json ./cloud/
+COPY cloud/package.json ./cloud/
+COPY cloud/package-lock.json ./cloud/
 WORKDIR /app/cloud
-RUN npm install
+RUN npm ci
 
 # Copy source and generate prisma
 COPY cloud/ ./
@@ -26,8 +27,8 @@ WORKDIR /app/cloud
 COPY --from=builder /app/cloud/node_modules ./node_modules
 COPY --from=builder /app/cloud/dist ./dist
 COPY --from=builder /app/cloud/package.json ./package.json
+COPY --from=builder /app/cloud/package-lock.json ./package-lock.json
 COPY --from=builder /app/cloud/prisma ./prisma
-COPY --from=builder /app/cloud/test-server.js ./
 
 EXPOSE 3000
-CMD ["node", "test-server.js"]
+CMD ["node", "dist/main"]
