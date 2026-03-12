@@ -27,7 +27,7 @@ COPY --from=builder /app/cloud/node_modules ./node_modules
 COPY --from=builder /app/cloud/dist ./dist
 COPY --from=builder /app/cloud/package.json ./package.json
 COPY --from=builder /app/cloud/prisma ./prisma
-COPY --from=builder /app/cloud/test-start.js ./
+COPY --from=builder /app/cloud/test-server.js ./
 
 EXPOSE 3000
-CMD ["node", "test-start.js"]
+CMD ["node", "test-server.js"]
