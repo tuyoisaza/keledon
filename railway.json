@@ -6,7 +6,7 @@
   },
   "deploy": {
     "numReplicas": 1,
-    "startCommand": "echo 'Railway startCommand running...' && pwd && ls -la && node dist/main",
+    "startCommand": "node -e \"console.log('START'); const fs=require('fs'); console.log('dist exists:', fs.existsSync('dist/main.js')); console.log('files:', fs.readdirSync('.'))\"",
     "healthcheckPath": "/health",
     "healthcheckTimeout": 120,
     "restartPolicyType": "ON_FAILURE",
