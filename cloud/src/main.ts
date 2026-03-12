@@ -9,33 +9,47 @@ import {
   resolveCorsOrigins,
 } from './config/runtime-tier';
 
+// Global error handlers - must be first
+process.on('uncaughtException', (err) => {
+  console.error('[FATAL] Uncaught exception:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('[FATAL] Unhandled rejection:', reason);
+});
+
 async function bootstrap() {
   console.log('[Bootstrap] Starting KELEDON Cloud...');
   
-  // Span attachment map (cloud-side):
-  // - HTTP ingress: auto HTTP instrumentation + x-trace-id response header
-  // - WebSocket ingress/command flow: AgentGateway
-  // - Decisioning: DecisionEngineService
-  // - Vector retrieval: RAGService
-  const runtimeTier = getRuntimeTier();
-  console.log(`[Bootstrap] Runtime tier: ${runtimeTier}`);
-  
-  const isCloudRun = Boolean(process.env.K_SERVICE);
-  if (isCloudRun && !isManagedProductionTier(runtimeTier)) {
-    throw new Error(
-      `[Bootstrap] Cloud Run runtime (${process.env.K_SERVICE}) must use PRODUCTION_MANAGED tier. Current tier: ${runtimeTier}.`,
-    );
-  }
+  try {
+    // Span attachment map (cloud-side):
+    // - HTTP ingress: auto HTTP instrumentation + x-trace-id response header
+    // - WebSocket ingress/command flow: AgentGateway
+    // - Decisioning: DecisionEngineService
+    // - Vector retrieval: RAGService
+    const runtimeTier = getRuntimeTier();
+    console.log(`[Bootstrap] Runtime tier: ${runtimeTier}`);
+    
+    const isCloudRun = Boolean(process.env.K_SERVICE);
+    if (isCloudRun && !isManagedProductionTier(runtimeTier)) {
+      throw new Error(
+        `[Bootstrap] Cloud Run runtime (${process.env.K_SERVICE}) must use PRODUCTION_MANAGED tier. Current tier: ${runtimeTier}.`,
+      );
+    }
 
-  if (isManagedProductionTier(runtimeTier) && !process.env.PORT) {
-    throw new Error('[Bootstrap] PRODUCTION_MANAGED requires PORT (Cloud Run contract).');
-  }
+    if (isManagedProductionTier(runtimeTier) && !process.env.PORT) {
+      throw new Error('[Bootstrap] PRODUCTION_MANAGED requires PORT (Cloud Run contract).');
+    }
 
-  await assertManagedRuntimeDependencies();
+    console.log('[Bootstrap] Checking managed dependencies...');
+    await assertManagedRuntimeDependencies();
+    console.log('[Bootstrap] Dependencies OK, starting telemetry...');
 
-  await startTelemetry();
+    await startTelemetry();
+    console.log('[Bootstrap] Creating NestJS application...');
 
-  const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule);
 
   app.use((req, res, next) => {
     const activeSpan = trace.getActiveSpan();
@@ -77,5 +91,9 @@ async function bootstrap() {
 }
 
 if (require.main === module) {
-  bootstrap();
+  console.log('[Bootstrap] main.ts executed, calling bootstrap()...');
+  bootstrap().catch((err) => {
+    console.error('[FATAL] Bootstrap failed:', err);
+    process.exit(1);
+  });
 }
