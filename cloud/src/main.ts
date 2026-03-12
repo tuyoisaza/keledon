@@ -51,29 +51,28 @@ async function bootstrap() {
 
     const app = await NestFactory.create(AppModule);
 
-  app.use((req, res, next) => {
-    const activeSpan = trace.getActiveSpan();
-    if (activeSpan) {
-      res.setHeader('x-trace-id', activeSpan.spanContext().traceId);
+    app.use((req, res, next) => {
+      const activeSpan = trace.getActiveSpan();
+      if (activeSpan) {
+        res.setHeader('x-trace-id', activeSpan.spanContext().traceId);
+      }
+      next();
+    });
+    
+    const corsOrigins = resolveCorsOrigins(runtimeTier);
+    app.enableCors({
+      origin: corsOrigins,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      credentials: true,
+    });
+    
+    const port = process.env.PORT || 9999;
+    const host = process.env.HOST || '0.0.0.0';
+
+    if (isManagedProductionTier(runtimeTier) && !process.env.DATABASE_URL) {
+      throw new Error('[Bootstrap] DATABASE_URL is required in PRODUCTION_MANAGED (Railway + Prisma contract).');
     }
-    next();
-  });
-  
-  const corsOrigins = resolveCorsOrigins(runtimeTier);
-  app.enableCors({
-    origin: corsOrigins,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: true,
-  });
-  
-  const port = process.env.PORT || 9999;
-  const host = process.env.HOST || '0.0.0.0';
 
-  if (isManagedProductionTier(runtimeTier) && !process.env.DATABASE_URL) {
-    throw new Error('[Bootstrap] DATABASE_URL is required in PRODUCTION_MANAGED (Railway + Prisma contract).');
-  }
-
-  try {
     await app.listen(port, host);
 
     console.log(`🚀 KELEDON Cloud Backend running on ${host}:${port}`);
