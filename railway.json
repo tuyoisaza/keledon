@@ -5,7 +5,7 @@
     "dockerfilePath": "cloud/Dockerfile"
   },
   "deploy": {
-    "startCommand": "cd cloud && npm run prisma:migrate:deploy && npm run start",
+    "startCommand": "npm run prisma:migrate:deploy && npm run start",
     "healthcheckPath": "/health",
     "healthcheckTimeout": 120,
     "restartPolicyType": "ON_FAILURE",
