@@ -10,12 +10,16 @@ import {
 } from './config/runtime-tier';
 
 async function bootstrap() {
+  console.log('[Bootstrap] Starting KELEDON Cloud...');
+  
   // Span attachment map (cloud-side):
   // - HTTP ingress: auto HTTP instrumentation + x-trace-id response header
   // - WebSocket ingress/command flow: AgentGateway
   // - Decisioning: DecisionEngineService
   // - Vector retrieval: RAGService
   const runtimeTier = getRuntimeTier();
+  console.log(`[Bootstrap] Runtime tier: ${runtimeTier}`);
+  
   const isCloudRun = Boolean(process.env.K_SERVICE);
   if (isCloudRun && !isManagedProductionTier(runtimeTier)) {
     throw new Error(

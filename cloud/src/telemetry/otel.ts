@@ -50,8 +50,7 @@ export async function startTelemetry(): Promise<void> {
     );
   } catch (error) {
     telemetryStarted = false;
-    console.error('[OTEL] Failed to start telemetry SDK:', error);
-    throw error;
+    console.warn('[OTEL] Failed to start telemetry SDK (non-fatal):', error);
   }
 }
 
