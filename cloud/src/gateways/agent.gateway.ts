@@ -37,6 +37,8 @@ export interface AgentSocketData {
   timestamp: string;
   type: 'text_input' | 'ui_result' | 'system';
   payload: any;
+  command_id?: string;
+  agent_id?: string;
 }
 
 export interface CommandSocketData {
