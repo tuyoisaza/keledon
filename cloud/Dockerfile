@@ -26,6 +26,7 @@ WORKDIR /app/cloud
 COPY --from=builder /app/cloud/node_modules ./node_modules
 COPY --from=builder /app/cloud/dist ./dist
 COPY --from=builder /app/cloud/package.json ./package.json
+COPY --from=builder /app/cloud/prisma ./prisma
 
 EXPOSE 3000
 CMD ["node", "dist/main"]
