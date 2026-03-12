@@ -46,6 +46,24 @@ import { TeamController } from './controllers/team.controller';
           };
         }
 
+        // Allow running without DB in DEV_LOCAL for testing
+        if (isLocalDev) {
+          console.log('⚠️ Running without database (DEV_LOCAL mode)');
+          return {
+            type: 'postgres' as const,
+            host: 'localhost',
+            port: 5432,
+            username: 'postgres',
+            password: 'postgres',
+            database: 'postgres',
+            entities: [Session, Event, User],
+            synchronize: false,
+            logging: false,
+            ssl: false,
+            keepConnectionAlive: false,
+          };
+        }
+
         const dbHost = configService.get('SUPABASE_HOST') || (isLocalDev ? 'localhost' : undefined);
         const dbPort = configService.get('SUPABASE_PORT') || (isLocalDev ? 54322 : undefined);
         const dbUser = configService.get('SUPABASE_USER') || (isLocalDev ? 'postgres' : undefined);
