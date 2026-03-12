@@ -29,6 +29,9 @@ COPY --from=builder /app/cloud/dist ./dist
 COPY --from=builder /app/cloud/package.json ./package.json
 COPY --from=builder /app/cloud/package-lock.json ./package-lock.json
 COPY --from=builder /app/cloud/prisma ./prisma
+COPY --from=builder /app/cloud/start.sh ./start.sh
+
+RUN chmod +x start.sh
 
 EXPOSE 3000
-CMD ["node", "dist/main"]
+CMD ["./start.sh"]
