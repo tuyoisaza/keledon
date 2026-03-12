@@ -43,6 +43,7 @@ import { TeamController } from './controllers/team.controller';
             logging: isLocalDev,
             ssl: isManagedTier ? { rejectUnauthorized: false } : false,
             keepConnectionAlive: !isLocalDev,
+            connectTimeoutMS: 5000,
           };
         }
 
@@ -51,7 +52,7 @@ import { TeamController } from './controllers/team.controller';
           console.log('⚠️ Running without database (DEV_LOCAL mode)');
           return {
             type: 'postgres' as const,
-            host: 'localhost',
+            host: '127.0.0.1',
             port: 5432,
             username: 'postgres',
             password: 'postgres',
@@ -61,6 +62,7 @@ import { TeamController } from './controllers/team.controller';
             logging: false,
             ssl: false,
             keepConnectionAlive: false,
+            connectTimeoutMS: 3000,
           };
         }
 
