@@ -11,6 +11,7 @@ fi
 
 # Initialize SQLite database if not exists
 echo "[CONTAINER] Initializing database..."
+mkdir -p /app/data
 npx prisma db push --skip-generate
 
 echo "[CONTAINER] Starting node..."

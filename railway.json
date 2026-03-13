@@ -14,7 +14,7 @@
     "environment": [
       {
         "key": "NODE_ENV",
-        "value": "development"
+        "value": "production"
       },
       {
         "key": "PORT",
@@ -22,7 +22,7 @@
       },
       {
         "key": "DATABASE_URL",
-        "value": "file:./keledon.db"
+        "value": "file:/app/data/keledon.db"
       }
     ]
   }
