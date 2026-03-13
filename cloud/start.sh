@@ -8,5 +8,10 @@ if [ -f "dist/main.js" ]; then
 else
   echo "[CONTAINER] ERROR: dist/main.js not found!"
 fi
+
+# Initialize SQLite database if not exists
+echo "[CONTAINER] Initializing database..."
+npx prisma db push --skip-generate
+
 echo "[CONTAINER] Starting node..."
-exec node --experimental-global-crypto node dist/main
+exec node dist/main
