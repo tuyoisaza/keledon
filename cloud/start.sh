@@ -9,4 +9,4 @@ else
   echo "[CONTAINER] ERROR: dist/main.js not found!"
 fi
 echo "[CONTAINER] Starting node..."
-exec node dist/main
+exec node --experimental-global-crypto node dist/main

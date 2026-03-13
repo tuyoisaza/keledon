@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:18-alpine AS builder
+FROM node:20-bookworm AS builder
 
 WORKDIR /app
 
@@ -20,16 +20,19 @@ RUN npx prisma generate
 RUN npm run build
 
 # Stage 2: Runtime
-FROM node:18-alpine
+FROM node:20-bookworm
 
 WORKDIR /app/cloud
 
-COPY --from=builder /app/cloud/node_modules ./node_modules
-COPY --from=builder /app/cloud/dist ./dist
-COPY --from=builder /app/cloud/package.json ./package.json
-COPY --from=builder /app/cloud/package-lock.json ./package-lock.json
+# Copy only necessary files - NOT node_modules from builder
+COPY --from=builder /app/cloud/package.json ./
+COPY --from=builder /app/cloud/package-lock.json ./
 COPY --from=builder /app/cloud/prisma ./prisma
-COPY --from=builder /app/cloud/start.sh ./start.sh
+COPY --from=builder /app/cloud/dist ./dist
+COPY --from=builder /app/cloud/start.sh ./
+
+# Install fresh node_modules and regenerate Prisma for this platform
+RUN npm ci && npx prisma generate
 
 RUN chmod +x start.sh
 
