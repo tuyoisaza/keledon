@@ -35,6 +35,19 @@ import { TeamController } from './controllers/team.controller';
             console.log('💾 DATABASE_URL mode enabled (Prisma/Railway canonical path).');
           }
 
+          // Detect SQLite (file: path)
+          if (databaseUrl.startsWith('file:')) {
+            const dbPath = databaseUrl.replace('file:', '');
+            console.log('💾 Using SQLite database at:', dbPath);
+            return {
+              type: 'better-sqlite3' as const,
+              database: dbPath,
+              entities: [Session, Event, User],
+              synchronize: true,
+              logging: isLocalDev,
+            };
+          }
+
           return {
             type: 'postgres' as const,
             url: databaseUrl,
