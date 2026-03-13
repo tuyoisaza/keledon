@@ -16,8 +16,8 @@ export class Session {
   name: string;
 
   @Column({ 
-    type: 'enum', 
-    enum: ['active', 'paused', 'ended', 'error'],
+    type: 'varchar', 
+    length: 20,
     default: 'active',
     comment: 'Current session status'
   })
@@ -32,7 +32,7 @@ export class Session {
   agent_id: string;
 
   @Column({ 
-    type: 'jsonb',
+    type: 'text',
     nullable: true,
     comment: 'Session metadata and configuration'
   })

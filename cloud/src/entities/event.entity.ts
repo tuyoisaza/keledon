@@ -7,14 +7,14 @@ export class Event {
   id: string;
 
   @Column({ 
-    type: 'enum', 
-    enum: ['text_input', 'ui_result', 'system'],
+    type: 'varchar', 
+    length: 20,
     comment: 'Event type per canonical contract'
   })
   type: 'text_input' | 'ui_result' | 'system';
 
   @Column({ 
-    type: 'jsonb',
+    type: 'text',
     comment: 'Event payload per canonical contract'
   })
   payload: Record<string, any>;
@@ -35,7 +35,7 @@ export class Event {
 
   @Column({ 
     type: 'varchar', 
-    length: 50,
+    length: 20,
     nullable: true,
     comment: 'Processing status of this event'
   })
@@ -49,7 +49,7 @@ export class Event {
   processed_at: Date;
 
   @Column({ 
-    type: 'jsonb',
+    type: 'text',
     nullable: true,
     comment: 'Processing result or error details'
   })

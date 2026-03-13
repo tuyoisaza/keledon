@@ -23,15 +23,15 @@ export class User {
   name: string;
 
   @Column({ 
-    type: 'enum', 
-    enum: ['active', 'inactive', 'suspended'],
+    type: 'varchar', 
+    length: 20,
     default: 'active',
     comment: 'User account status'
   })
   status: 'active' | 'inactive' | 'suspended';
 
   @Column({ 
-    type: 'jsonb',
+    type: 'text',
     nullable: true,
     comment: 'User preferences and settings'
   })
