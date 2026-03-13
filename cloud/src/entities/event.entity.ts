@@ -29,9 +29,10 @@ export class Event {
 
   @Column({ 
     type: 'datetime',
+    name: 'timestamp',
     comment: 'When event occurred (per canonical contract)'
   })
-  datetime: Date;
+  timestamp: Date;
 
   @Column({ 
     type: 'varchar', 
