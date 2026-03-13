@@ -39,23 +39,23 @@ export class Session {
   metadata: Record<string, any>;
 
   @Column({ 
-    type: 'timestamp',
+    type: 'datetime',
     nullable: true,
     comment: 'When session started'
   })
   started_at: Date;
 
   @Column({ 
-    type: 'timestamp',
+    type: 'datetime',
     nullable: true,
     comment: 'When session ended'
   })
   ended_at: Date;
 
   @Column({ 
-    type: 'timestamp',
+    type: 'datetime',
     nullable: true,
-    comment: 'Last activity timestamp'
+    comment: 'Last activity datetime'
   })
   last_activity_at: Date;
 
@@ -67,13 +67,13 @@ export class Session {
   event_count: number;
 
   @CreateDateColumn({ 
-    type: 'timestamp',
+    type: 'datetime',
     comment: 'When session was created'
   })
   created_at: Date;
 
   @UpdateDateColumn({ 
-    type: 'timestamp',
+    type: 'datetime',
     comment: 'When session was last updated'
   })
   updated_at: Date;

@@ -28,10 +28,10 @@ export class Event {
   agent_id: string;
 
   @Column({ 
-    type: 'timestamp',
+    type: 'datetime',
     comment: 'When event occurred (per canonical contract)'
   })
-  timestamp: Date;
+  datetime: Date;
 
   @Column({ 
     type: 'varchar', 
@@ -42,7 +42,7 @@ export class Event {
   processing_status: 'pending' | 'processed' | 'error' | 'ignored';
 
   @Column({ 
-    type: 'timestamp',
+    type: 'datetime',
     nullable: true,
     comment: 'When event was processed'
   })
@@ -56,7 +56,7 @@ export class Event {
   processing_result: Record<string, any>;
 
   @CreateDateColumn({ 
-    type: 'timestamp',
+    type: 'datetime',
     comment: 'When event was created in database'
   })
   created_at: Date;

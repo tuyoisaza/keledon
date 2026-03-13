@@ -38,13 +38,13 @@ export class User {
   preferences: Record<string, any>;
 
   @CreateDateColumn({ 
-    type: 'timestamp',
+    type: 'datetime',
     comment: 'When user was created'
   })
   created_at: Date;
 
   @UpdateDateColumn({ 
-    type: 'timestamp',
+    type: 'datetime',
     comment: 'When user was last updated'
   })
   updated_at: Date;
