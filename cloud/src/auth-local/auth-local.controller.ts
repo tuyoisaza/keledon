@@ -32,9 +32,21 @@ export class LocalAuthController {
     private readonly configService: ConfigService
   ) {}
 
+  @Get('debug')
+  debug(@Res() res: any) {
+    return res.json({
+      googleClientId: this.configService.get('GOOGLE_CLIENT_ID') ? 'set' : 'not set',
+      googleClientSecret: this.configService.get('GOOGLE_CLIENT_SECRET') ? 'set' : 'not set',
+      googleRedirectUri: this.configService.get('GOOGLE_REDIRECT_URI'),
+      nodeEnv: this.configService.get('NODE_ENV'),
+      allEnv: Object.keys(process.env).filter(k => !k.includes('SECRET') && !k.includes('PASSWORD')).sort(),
+    });
+  }
+
   @Get('google')
   googleLogin(@Res() res: any) {
     const clientId = this.configService.get('GOOGLE_CLIENT_ID');
+    console.log('GOOGLE_CLIENT_ID:', clientId);
     const redirectUri = this.configService.get('GOOGLE_REDIRECT_URI') || 'https://keledon.tuyoisaza.com/api/auth/google/callback';
     
     if (!clientId) {
