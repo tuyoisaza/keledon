@@ -1,3 +1,4 @@
+# v0.0.2
 # Stage 1: build frontend (React + Vite)
 FROM node:20-bookworm AS frontend-builder
 
