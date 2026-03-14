@@ -50,6 +50,26 @@
       {
         "key": "KELEDON_REQUIRE_QDRANT",
         "value": "true"
+      },
+      {
+        "key": "KELEDON_SUPABASE_URL",
+        "value": "https://isoyzcvjoevyphnaznkl.supabase.co"
+      },
+      {
+        "key": "SUPABASE_URL",
+        "value": "https://isoyzcvjoevyphnaznkl.supabase.co"
+      },
+      {
+        "key": "KELEDON_SUPABASE_ANON_KEY",
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlzb3l6Y3Zqb2V2eXBobmF6bmtsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjg2NDAxMiwiZXhwIjoyMDUyNDQwMDEyfQ.L3c5Y8R592kv0lrF6YLk9Vp_o5rS_SwpjmLN_MWHK_A"
+      },
+      {
+        "key": "SUPABASE_ANON_KEY",
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlzb3l6Y3Zqb2V2eXBobmF6bmtsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjg2NDAxMiwiZXhwIjoyMDUyNDQwMDEyfQ.L3c5Y8R592kv0lrF6YLk9Vp_o5rS_SwpjmLN_MWHK_A"
+      },
+      {
+        "key": "SUPABASE_ADMIN_SECRET",
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlzb3l6Y3Zqb2V2eXBobmF6bmtsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjg2NDAxMiwiZXhwIjoyMDUyNDQwMDEyfQ.L3c5Y8R592kv0lrF6YLk9Vp_o5rS_SwpjmLN_MWHK_A"
       }
     ]
   }
