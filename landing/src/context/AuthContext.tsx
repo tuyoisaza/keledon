@@ -155,18 +155,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loginWithGoogle = useCallback(async () => {
-    if (!supabase) {
-      // MVP fallback: allow demo login
-      if (import.meta.env.VITE_MVP_DEMO === 'true') {
-        setUser({
-          id: 'demo-user',
-          name: 'Demo User',
-          email: email || 'demo@keledon.ai',
-          role: 'admin',
-        });
-        return;
-      }
-      setError('Supabase is not configured');
+    // MVP fallback: allow demo login if no Supabase configured
+    if (!supabase || !import.meta.env.VITE_SUPABASE_URL) {
+      setUser({
+        id: 'demo-user-' + Date.now(),
+        name: 'Demo User',
+        email: 'demo@keledon.ai',
+        role: 'admin',
+      });
       return;
     }
 
@@ -185,18 +181,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithEmail = useCallback(async (email: string, password: string) => {
-    if (!supabase) {
-      // MVP fallback: allow demo login
-      if (import.meta.env.VITE_MVP_DEMO === 'true' || email.includes('@')) {
-        setUser({
-          id: 'demo-' + Date.now(),
-          name: email.split('@')[0],
-          email,
-          role: 'admin',
-        });
-        return;
-      }
-      throw new Error('Supabase is not configured');
+    // MVP fallback: allow demo login if no Supabase configured
+    if (!supabase || !import.meta.env.VITE_SUPABASE_URL) {
+      setUser({
+        id: 'demo-' + Date.now(),
+        name: email.split('@')[0],
+        email,
+        role: 'admin',
+      });
+      return;
     }
 
     setIsLoading(true);

@@ -8,9 +8,8 @@ RUN npm ci
 
 COPY landing/ ./
 RUN rm -rf node_modules/.cache
-ARG VITE_MVP_DEMO=true
 ENV VITE_MVP_DEMO=true
-RUN VITE_API_URL=/ VITE_MVP_DEMO=true npm run build
+RUN VITE_API_URL=/ npm run build
 
 # Stage 2: build backend (NestJS)
 FROM node:20-bookworm AS backend-builder
