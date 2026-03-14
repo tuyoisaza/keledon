@@ -2,12 +2,12 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "DOCKERFILE",
-    "dockerfilePath": "cloud/Dockerfile"
+    "dockerfilePath": "Dockerfile"
   },
   "deploy": {
     "numReplicas": 1,
     "healthcheckPath": "/health",
-    "healthcheckTimeout": 120,
+    "healthcheckTimeout": 180,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10,
     "environment": [
@@ -17,11 +17,39 @@
       },
       {
         "key": "PORT",
-        "value": "3000"
+        "value": "8080"
+      },
+      {
+        "key": "BACKEND_PORT",
+        "value": "3001"
+      },
+      {
+        "key": "KELEDON_ENV_TIER",
+        "value": "CI_PROOF"
+      },
+      {
+        "key": "KELEDON_ALLOW_ALL_CORS",
+        "value": "true"
       },
       {
         "key": "DATABASE_URL",
         "value": "file:/app/data/keledon.db"
+      },
+      {
+        "key": "KELEDON_QDRANT_URL",
+        "value": "http://127.0.0.1:6333"
+      },
+      {
+        "key": "QDRANT_URL",
+        "value": "http://127.0.0.1:6333"
+      },
+      {
+        "key": "QDRANT_COLLECTION",
+        "value": "keledon"
+      },
+      {
+        "key": "KELEDON_REQUIRE_QDRANT",
+        "value": "true"
       }
     ]
   }

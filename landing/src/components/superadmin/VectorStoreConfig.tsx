@@ -18,7 +18,7 @@ interface VectorStoreConfig {
 export default function VectorStoreConfig({ onConfigChange }: VectorStoreConfigProps) {
   const [config, setConfig] = useState<VectorStoreConfig>({
     environment: 'local',
-    qdrantUrl: 'http://localhost:6333',
+    qdrantUrl: '/qdrant',
     qdrantApiKey: '',
     openaiApiKey: '',
     backupLocalPath: './vs-backups',
@@ -97,7 +97,7 @@ export default function VectorStoreConfig({ onConfigChange }: VectorStoreConfigP
       environment,
       // Auto-fill defaults based on environment
       ...(environment === 'local' ? {
-        qdrantUrl: 'http://localhost:6333',
+        qdrantUrl: '/qdrant',
         qdrantApiKey: '',
       } : {
         qdrantUrl: import.meta.env.VITE_QDRANT_URL || 'https://keledon.tuyoisaza.com/qdrant',
@@ -180,7 +180,7 @@ export default function VectorStoreConfig({ onConfigChange }: VectorStoreConfigP
                   config.environment === 'production' ? 'border-muted cursor-not-allowed' : 'border-border'
                 )}
                 disabled={config.environment === 'production'}
-                placeholder="http://localhost:6333"
+                placeholder="/qdrant"
               />
               <button
                 onClick={() => testConnection('qdrant')}

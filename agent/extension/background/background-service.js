@@ -69,8 +69,9 @@ class BackgroundService {
         console.log('[C10-EXT] No team ID found, using local config');
         return;
       }
+      const baseUrl = this.cloudUrl || 'https://keledon.tuyoisaza.com';
       
-      const response = await fetch(`http://localhost:3001/api/teams/${teamId}/config`);
+      const response = await fetch(`${baseUrl}/api/teams/${teamId}/config`);
       if (response.ok) {
         const config = await response.json();
         
@@ -199,6 +200,10 @@ class BackgroundService {
   }
 
   async loadCloudRuntimeConfig() {
+    const defaultCloudUrl = this.runtimeTier === 'DEV_LOCAL'
+      ? 'http://localhost:3001'
+      : 'https://keledon.tuyoisaza.com';
+
     const canonicalCloudBase =
       (typeof process !== 'undefined' && process?.env?.KELEDON_CLOUD_BASE_URL) || '';
 
@@ -223,6 +228,10 @@ class BackgroundService {
       }
     } catch (error) {
       console.warn('[C11-EXT] Failed to load cloud URL from storage, using default');
+    }
+
+    if (!this.cloudUrl) {
+      this.cloudUrl = this.normalizeCloudUrl(defaultCloudUrl);
     }
 
     if (this.runtimeTier === 'PRODUCTION_MANAGED' && this.isLoopbackOrigin(this.cloudUrl)) {

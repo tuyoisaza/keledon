@@ -60,8 +60,9 @@ async function bootstrap() {
     });
     
     const corsOrigins = resolveCorsOrigins(runtimeTier);
+    const allowAllCors = process.env.KELEDON_ALLOW_ALL_CORS === 'true';
     app.enableCors({
-      origin: corsOrigins,
+      origin: allowAllCors ? true : corsOrigins,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       credentials: true,
     });
@@ -78,7 +79,7 @@ async function bootstrap() {
     console.log(`🚀 KELEDON Cloud Backend running on ${host}:${port}`);
     console.log(`🌐 Runtime tier: ${runtimeTier}`);
     console.log(`🌐 Cloud Run service: ${process.env.K_SERVICE || 'not-detected'}`);
-    console.log(`🌐 CORS enabled for: ${corsOrigins.join(', ')}`);
+    console.log(`🌐 CORS enabled for: ${allowAllCors ? 'ALL ORIGINS (MVP)' : corsOrigins.join(', ')}`);
     console.log('⚙️ Managed runtime compatibility: stateless process; no local persistence assumptions');
     console.log(`💾 DATABASE-READY: Persistence via PostgreSQL (DATABASE_URL / Prisma canonical contract)`);
     console.log(`⚡ DATABASE-READY: No in-memory fallbacks - Cloud fails fast without database`);

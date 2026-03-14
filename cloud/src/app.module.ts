@@ -16,6 +16,8 @@ import { getRuntimeTier, isManagedProductionTier } from './config/runtime-tier';
 import { ListeningSessionModule } from './listening-sessions/listening-session.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { TeamController } from './controllers/team.controller';
+import { MvpDataController } from './controllers/mvp-data.controller';
+import { MvpStoreService } from './mvp/mvp-store.service';
 
 @Module({
   imports: [
@@ -115,7 +117,7 @@ import { TeamController } from './controllers/team.controller';
     RAGModule,
     ListeningSessionModule,
   ],
-  controllers: [AppController, TeamController],
+  controllers: [AppController, TeamController, MvpDataController],
   providers: [
     AppService,
     SessionService,
@@ -123,6 +125,7 @@ import { TeamController } from './controllers/team.controller';
     AgentGateway,
     DecisionEngineService,
     TeamController,
+    MvpStoreService,
   ],
   exports: [SessionService, DatabaseHealthService],
 })

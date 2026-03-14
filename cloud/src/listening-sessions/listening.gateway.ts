@@ -12,12 +12,16 @@ import * as path from 'path';
 
 // Note: Namespace '/listen' might need client adjustment if using the same port.
 // For simplicity with existing setup, we'll try to use a namespace.
+const listeningCorsOrigin = process.env.KELEDON_ALLOW_ALL_CORS === 'true'
+    ? true
+    : (process.env.NODE_ENV === 'production'
+        ? process.env.CORS_ORIGINS?.split(',') || ['chrome-extension://*']
+        : '*');
+
 @WebSocketGateway({
     namespace: 'listen',
     cors: { 
-        origin: process.env.NODE_ENV === 'production' 
-            ? process.env.CORS_ORIGINS?.split(',') || ['chrome-extension://*']
-            : '*', // Allow all origins in development
+        origin: listeningCorsOrigin,
         credentials: true 
     },
     path: '/listen/ws', // Exact path requested

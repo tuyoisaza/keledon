@@ -28,7 +28,9 @@ import { KELEDON_AGENT_EVENTS, KELEDON_TRACE_SPANS } from '../telemetry/trace-mo
 import { AGENT_EXEC_ATTRS } from '../telemetry/decision-evidence';
 import { resolveCorsOrigins } from '../config/runtime-tier';
 
-const gatewayCorsOrigins = resolveCorsOrigins();
+const gatewayCorsOrigins = process.env.KELEDON_ALLOW_ALL_CORS === 'true'
+  ? true
+  : resolveCorsOrigins();
 
 // Import from canonical contracts
 export interface AgentSocketData {

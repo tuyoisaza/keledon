@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { WEBSOCKET_URL } from '@/lib/config';
 
 interface SocketContextType {
   socket: Socket | null;
@@ -27,14 +28,9 @@ export function SocketProvider({ children }: SocketProviderProps) {
   const [connecting, setConnecting] = useState(false);
 
   useEffect(() => {
-    // Initialize socket connection
-    const socketUrl = process.env.NODE_ENV === 'production' 
-      ? window.location.origin 
-      : 'http://localhost:3001';
-
     setConnecting(true);
     
-    const newSocket = io(socketUrl, {
+    const newSocket = io(WEBSOCKET_URL, {
       transports: ['websocket', 'polling'],
       timeout: 20000,
       forceNew: true

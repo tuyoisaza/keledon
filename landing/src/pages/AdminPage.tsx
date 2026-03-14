@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Users, TrendingUp, Clock, Star, Filter, Download, RefreshCw, Loader2, Settings, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getUsers, getCompanies, type User, type Company } from '@/lib/supabase';
+import { API_URL } from '@/lib/config';
 
 // Team Settings Types
 interface TeamConfig {
@@ -21,6 +22,7 @@ interface UserWithStats extends User {
 }
 
 export default function AdminPage() {
+    const cloudUrl = API_URL;
     const [users, setUsers] = useState<UserWithStats[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [loading, setLoading] = useState(true);
@@ -63,7 +65,7 @@ export default function AdminPage() {
     // Fetch team config
     const fetchTeamConfig = async (teamId: string) => {
         try {
-            const response = await fetch(`http://localhost:3001/api/teams/${teamId}/config`);
+            const response = await fetch(`${cloudUrl}/api/teams/${teamId}/config`);
             if (response.ok) {
                 const data = await response.json();
                 setTeamConfig(data);
@@ -81,7 +83,7 @@ export default function AdminPage() {
         setConfigMessage(null);
         
         try {
-            const response = await fetch(`http://localhost:3001/api/teams/${teamConfig.teamId}/config`, {
+            const response = await fetch(`${cloudUrl}/api/teams/${teamConfig.teamId}/config`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
