@@ -8,8 +8,6 @@ RUN npm ci
 
 COPY landing/ ./
 RUN rm -rf node_modules/.cache
-ENV VITE_SUPABASE_URL=https://isoyzcvjoevyphnaznkl.supabase.co
-ENV VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlzb3l6Y3Zqb2V2eXBobmF6bmtsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjg2NDAxMiwiZXhwIjoyMDUyNDQwMDEyfQ.L3c5Y8R592kv0lrF6YLk9Vp_o5rS_SwpjmLN_MWHK_A
 RUN VITE_API_URL=/ npm run build
 
 # Stage 2: build backend (NestJS)

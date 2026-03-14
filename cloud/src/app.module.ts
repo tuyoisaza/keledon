@@ -18,6 +18,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { TeamController } from './controllers/team.controller';
 import { MvpDataController } from './controllers/mvp-data.controller';
 import { MvpStoreService } from './mvp/mvp-store.service';
+import { AuthLocalModule } from './auth-local/auth-local.module';
 
 @Module({
   imports: [
@@ -116,6 +117,7 @@ import { MvpStoreService } from './mvp/mvp-store.service';
     HealthModule,
     RAGModule,
     ListeningSessionModule,
+    AuthLocalModule,
   ],
   controllers: [AppController, TeamController, MvpDataController],
   providers: [

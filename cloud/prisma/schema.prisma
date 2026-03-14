@@ -41,6 +41,7 @@ model User {
   name      String?
   role      String?  // admin, team_lead, agent
   teamId    String?
+  passwordHash String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
