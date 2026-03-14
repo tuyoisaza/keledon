@@ -50,6 +50,14 @@
       {
         "key": "KELEDON_REQUIRE_QDRANT",
         "value": "true"
+      },
+      {
+        "key": "GOOGLE_CLIENT_ID",
+        "value": "1062969561553-jolqgm2t6hfdg3i4an5n7slc0e0nr5dp.apps.googleusercontent.com"
+      },
+      {
+        "key": "GOOGLE_CLIENT_SECRET",
+        "value": "1062969561553-jolqgm2t6hfdg3i4an5n7slc0e0nr5dp.apps.googleusercontent.com"
       }
     ]
   }

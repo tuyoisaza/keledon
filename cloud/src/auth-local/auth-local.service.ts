@@ -67,4 +67,21 @@ export class LocalAuthService {
     };
     return Buffer.from(JSON.stringify(payload)).toString('base64');
   }
+
+  async findOrCreateGoogleUser(googleUser: any) {
+    let user = await this.prisma.user.findUnique({ where: { email: googleUser.email } });
+    
+    if (!user) {
+      user = await this.prisma.user.create({
+        data: {
+          email: googleUser.email,
+          name: googleUser.name || googleUser.email.split('@')[0],
+          role: 'admin',
+          passwordHash: 'google-oauth',
+        },
+      });
+    }
+    
+    return user;
+  }
 }
