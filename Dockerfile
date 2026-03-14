@@ -7,6 +7,7 @@ COPY landing/package*.json ./
 RUN npm ci
 
 COPY landing/ ./
+RUN rm -rf node_modules/.cache
 RUN VITE_API_URL=/ npm run build
 
 # Stage 2: build backend (NestJS)
