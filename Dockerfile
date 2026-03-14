@@ -24,7 +24,7 @@ RUN npm ci
 
 COPY cloud/ ./
 RUN npm install --omit=dev
-RUN npx prisma generate
+RUN npx prisma@5.22.0 generate
 RUN rm -f tsconfig.floor.tsbuildinfo && npm run build
 
 # Stage 3: copy Qdrant binary
