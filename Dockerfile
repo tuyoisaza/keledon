@@ -23,6 +23,7 @@ WORKDIR /app/cloud
 RUN npm ci
 
 COPY cloud/ ./
+RUN npm install --omit=dev
 RUN npx prisma generate
 RUN rm -f tsconfig.floor.tsbuildinfo && npm run build
 
