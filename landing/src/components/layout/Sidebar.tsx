@@ -12,7 +12,8 @@ import {
     ChevronRight,
     LogOut,
     Shield,
-    GraduationCap
+    GraduationCap,
+    Activity
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
