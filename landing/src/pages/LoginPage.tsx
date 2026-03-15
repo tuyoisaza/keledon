@@ -1,13 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Bot, Mail, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 
+const APP_VERSION = '0.0.1';
+const BUILD_TIME = '2026-03-15T18:30:00Z';
+
 export default function LoginPage() {
   const navigate = useNavigate();
   const { signInWithEmail, loginWithGoogle, email, setEmail, password, setPassword, error, isLoading } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
+  const [currentTime, setCurrentTime] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,6 +140,11 @@ export default function LoginPage() {
               {isSignUp ? 'Sign in' : 'Sign up'}
             </button>
           </p>
+        </div>
+
+        <div className="mt-8 text-center text-xs text-muted-foreground">
+          <p>v{APP_VERSION} | Built: {BUILD_TIME}</p>
+          <p>Client Time: {currentTime}</p>
         </div>
       </div>
     </div>
