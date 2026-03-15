@@ -54,6 +54,7 @@ curl -fsS -X PUT "http://127.0.0.1:6333/collections/$QDRANT_COLLECTION/points?wa
 
 echo "[BOOT] Running Prisma schema sync"
 cd /app/backend
+rm -f /app/data/keledon.db
 npx prisma db push
 
 echo "[BOOT] Starting backend on 127.0.0.1:$BACKEND_PORT"
