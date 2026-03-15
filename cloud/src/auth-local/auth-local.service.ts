@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -69,19 +70,43 @@ export class LocalAuthService {
   }
 
   async findOrCreateGoogleUser(googleUser: any) {
-    let user = await this.prisma.user.findUnique({ where: { email: googleUser.email } });
-    
-    if (!user) {
-      user = await this.prisma.user.create({
-        data: {
-          email: googleUser.email,
-          name: googleUser.name || googleUser.email.split('@')[0],
-          role: 'admin',
-          passwordHash: 'google-oauth',
-        },
-      });
+    try {
+      let user = await this.prisma.user.findUnique({ where: { email: googleUser.email } });
+      
+      if (!user) {
+        user = await this.prisma.user.create({
+          data: {
+            email: googleUser.email,
+            name: googleUser.name || googleUser.email.split('@')[0],
+            role: 'admin',
+            passwordHash: 'google-oauth',
+          },
+        });
+      }
+      
+      return user;
+    } catch (error) {
+      console.error('findOrCreateGoogleUser error:', error);
+      if (error.message?.includes('role')) {
+        const { Prisma } = await import('@prisma/client');
+        const prisma = new PrismaClient();
+        try {
+          await prisma.$executeRaw`ALTER TABLE users ADD COLUMN role TEXT`;
+        } catch {}
+        let user = await prisma.user.findUnique({ where: { email: googleUser.email } });
+        if (!user) {
+          user = await prisma.user.create({
+            data: {
+              email: googleUser.email,
+              name: googleUser.name || googleUser.email.split('@')[0],
+              role: 'admin',
+              passwordHash: 'google-oauth',
+            },
+          });
+        }
+        return user;
+      }
+      throw error;
     }
-    
-    return user;
   }
 }
