@@ -83,6 +83,11 @@ export class LocalAuthController {
       });
 
       const tokens = await tokenRes.json();
+      
+      if (tokens.error) {
+        console.error('Google token error:', tokens.error, tokens.error_description);
+        return res.status(500).json({ message: 'Google token exchange failed', error: tokens.error_description });
+      }
 
       const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
         headers: { Authorization: `Bearer ${tokens.access_token}` },
@@ -96,7 +101,7 @@ export class LocalAuthController {
       return res.redirect(`/login?token=${token}&email=${encodeURIComponent(user.email)}&name=${encodeURIComponent(user.name || '')}`);
     } catch (error) {
       console.error('Google OAuth error:', error);
-      return res.status(500).json({ message: 'Google login failed' });
+      return res.status(500).json({ message: 'Google login failed', error: error.message });
     }
   }
 
