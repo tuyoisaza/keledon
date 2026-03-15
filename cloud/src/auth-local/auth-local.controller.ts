@@ -1,5 +1,6 @@
 import { Controller, Post, Body, Get, Headers, UnauthorizedException, Res, Query, Req } from '@nestjs/common';
 import { LocalAuthService } from './auth-local.service';
+import { GoogleOAuthService } from './google-oauth.service';
 import { ConfigService } from '@nestjs/config';
 
 interface LoginDto {
@@ -29,6 +30,7 @@ interface AuthResponse {
 export class LocalAuthController {
   constructor(
     private readonly authService: LocalAuthService,
+    private readonly googleOAuthService: GoogleOAuthService,
     private readonly configService: ConfigService
   ) {}
 
@@ -46,56 +48,32 @@ export class LocalAuthController {
   @Get('google')
   googleLogin(@Res() res: any) {
     const clientId = this.configService.get('GOOGLE_CLIENT_ID');
-    console.log('GOOGLE_CLIENT_ID:', clientId);
-    const redirectUri = this.configService.get('GOOGLE_REDIRECT_URI') || 'https://keledon.tuyoisaza.com/api/auth/google/callback';
     
     if (!clientId) {
       return res.status(500).json({ message: 'Google OAuth not configured' });
     }
 
-    const scope = 'openid email profile';
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}&access_type=offline&prompt=consent`;
-    
+    const authUrl = this.googleOAuthService.getAuthUrl();
     return res.redirect(authUrl);
   }
 
   @Get('google/callback')
   async googleCallback(@Query('code') code: string, @Res() res: any) {
-    const clientId = this.configService.get('GOOGLE_CLIENT_ID');
-    const clientSecret = this.configService.get('GOOGLE_CLIENT_SECRET');
-    const redirectUri = this.configService.get('GOOGLE_REDIRECT_URI') || 'https://keledon.tuyoisaza.com/api/auth/google/callback';
-
-    if (!clientId || !clientSecret) {
-      return res.status(500).json({ message: 'Google OAuth not configured' });
+    if (!code) {
+      return res.status(400).json({ message: 'No authorization code provided' });
     }
 
     try {
-      const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          code,
-          client_id: clientId,
-          client_secret: clientSecret,
-          redirect_uri: redirectUri,
-          grant_type: 'authorization_code',
-        }),
-      });
-
-      const tokens = await tokenRes.json();
+      const googleUser = await this.googleOAuthService.verifyCode(code);
       
-      if (tokens.error) {
-        console.error('Google token error:', tokens.error, tokens.error_description);
-        return res.status(500).json({ message: 'Google token exchange failed', error: tokens.error_description });
-      }
+      console.log('Google user verified:', googleUser.email);
 
-      const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-        headers: { Authorization: `Bearer ${tokens.access_token}` },
+      const user = await this.authService.findOrCreateGoogleUser({
+        id: googleUser.id,
+        email: googleUser.email,
+        name: googleUser.name,
       });
-
-      const googleUser = await userRes.json();
-
-      let user = await this.authService.findOrCreateGoogleUser(googleUser);
+      
       const token = this.authService.generateToken(user.id);
 
       return res.redirect(`/login?token=${token}&email=${encodeURIComponent(user.email)}&name=${encodeURIComponent(user.name || '')}`);
