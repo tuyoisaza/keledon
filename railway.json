@@ -58,6 +58,10 @@
       {
         "key": "GOOGLE_CLIENT_SECRET",
         "value": "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"
+      },
+      {
+        "key": "GOOGLE_REDIRECT_URI",
+        "value": "https://keledon.tuyoisaza.com/api/auth/google/callback"
       }
     ]
   }
