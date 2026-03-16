@@ -17,7 +17,7 @@ import {
     type Company, type Brand, type Team,
     type ProviderCatalogEntry, type ProviderType,
     type TenantProviderConfig, type TenantVoiceProfile
-} from '@/lib/supabase';
+} from '@/lib/crud-api';
 import { useAuth } from '@/context/AuthContext';
 import { debugLogger } from '@/lib/debug-logger';
 
