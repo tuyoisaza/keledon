@@ -36,6 +36,7 @@ const navItems: NavItem[] = [
     { icon: GraduationCap, label: 'Knowledge Stats', href: '/knowledge-stats', minRole: 'user' },
     { icon: Settings, label: 'Providers', href: '/management/providers', minRole: 'admin' },
     { icon: Activity, label: 'Status', href: '/management/status', minRole: 'admin' },
+    { icon: Building2, label: 'Companies', href: '/management/companies', minRole: 'admin' },
 ];
 
 const managementItems: NavItem[] = [];

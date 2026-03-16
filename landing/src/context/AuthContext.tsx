@@ -20,6 +20,7 @@ interface AuthContextType {
   signInWithEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   hasRole: (minRole: UserRole) => boolean;
+  isActuallySuperAdmin: boolean;
   email: string;
   setEmail: (email: string) => void;
   password: string;
@@ -104,6 +105,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     window.location.href = '/';
   };
 
+  const isActuallySuperAdmin = user?.role === 'superadmin';
+
   const hasRole = (minRole: UserRole) => {
     const currentRole = user?.role || 'guest';
     return roleHierarchy.indexOf(currentRole) >= roleHierarchy.indexOf(minRole);
@@ -119,6 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signInWithEmail,
         logout,
         hasRole,
+        isActuallySuperAdmin,
         email,
         setEmail,
         password,
