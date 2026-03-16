@@ -232,7 +232,7 @@ export default function SuperAdminPage() {
         }
         // Handle /management/providers route
         const path = window.location.pathname;
-        if (path.includes('/providers')) return 'settings';
+        if (path.includes('/providers')) return 'settings'; // providers tab is 'settings' in the code
         if (path.includes('/status')) return 'status';
         if (path.includes('/debug')) return 'debug';
         if (path.includes('/vector-store')) return 'vector-store';
@@ -249,10 +249,28 @@ export default function SuperAdminPage() {
 
     const [activeTab, setActiveTab] = useState<EntityType>(getInitialTab);
 
+    // Map tab IDs to URL paths
+    const getTabPath = (tabId: EntityType): string => {
+        const pathMap: Record<EntityType, string> = {
+            'settings': 'providers',
+            'vector-store': 'vector-store',
+            'debug': 'debug',
+            'status': 'status',
+            'flows': 'flows',
+            'voice-profiles': 'voice-profiles',
+            'companies': 'companies',
+            'brands': 'brands',
+            'teams': 'teams',
+            'users': 'users',
+            'agents': 'agents',
+        };
+        return pathMap[tabId] || tabId;
+    };
+
     // Sync tab changes to URL
     const handleTabChange = (tabId: EntityType) => {
         setActiveTab(tabId);
-        navigate(`/management/${tabId}`, { replace: true });
+        navigate(`/management/${getTabPath(tabId)}`, { replace: true });
     };
 
     const [data, setData] = useState<DisplayEntity[]>([]);
