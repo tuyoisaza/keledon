@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Building2, Tag, Users as UsersIcon, UserCircle, Plus, Search, Bug, Settings, User, LayoutGrid, Mic, Layers, Activity, Database } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -212,6 +213,8 @@ const availableCountries = [
 
 export default function SuperAdminPage() {
     const { impersonateUser, isActuallySuperAdmin, user: authUser } = useAuth(); // Changed
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
 
     // Filter tabs based on role
     const filteredTabs = tabs.filter(tab => {
@@ -221,10 +224,36 @@ export default function SuperAdminPage() {
         return true;
     });
 
-    const [activeTab, setActiveTab] = useState<EntityType>(() => {
+    // Get tab from URL or default
+    const getInitialTab = (): EntityType => {
+        const tabParam = searchParams.get('tab');
+        if (tabParam && tabs.some(t => t.id === tabParam)) {
+            return tabParam as EntityType;
+        }
+        // Handle /management/providers route
+        const path = window.location.pathname;
+        if (path.includes('/providers')) return 'settings';
+        if (path.includes('/status')) return 'status';
+        if (path.includes('/debug')) return 'debug';
+        if (path.includes('/vector-store')) return 'vector-store';
+        if (path.includes('/voice-profiles')) return 'voice-profiles';
+        if (path.includes('/flows')) return 'flows';
+        if (path.includes('/companies')) return 'companies';
+        if (path.includes('/brands')) return 'brands';
+        if (path.includes('/teams')) return 'teams';
+        if (path.includes('/users')) return 'users';
+        if (path.includes('/agents')) return 'agents';
         if (!isActuallySuperAdmin) return 'settings';
         return 'companies';
-    });
+    };
+
+    const [activeTab, setActiveTab] = useState<EntityType>(getInitialTab);
+
+    // Sync tab changes to URL
+    const handleTabChange = (tabId: EntityType) => {
+        setActiveTab(tabId);
+        navigate(`/management/${tabId}`, { replace: true });
+    };
 
     const [data, setData] = useState<DisplayEntity[]>([]);
     const [loading, setLoading] = useState(true);
@@ -969,7 +998,7 @@ export default function SuperAdminPage() {
                 {filteredTabs.map((tab) => (
                     <button
                         key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
+                        onClick={() => handleTabChange(tab.id)}
                         className={cn(
                             'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                             activeTab === tab.id

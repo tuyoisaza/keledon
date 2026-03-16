@@ -123,6 +123,116 @@ export function AppRouter() {
                     }
                 />
                 <Route
+                    path="/management/companies"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <SuperAdminPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/brands"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <SuperAdminPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/teams"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <SuperAdminPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/users"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <SuperAdminPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/agents"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <SuperAdminPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/flows"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <SuperAdminPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/voice-profiles"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <SuperAdminPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/providers"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <SuperAdminPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/vector-store"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <SuperAdminPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/debug"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <SuperAdminPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/status"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <SuperAdminPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
                     path="/sessions"
                     element={
                         <ProtectedRoute minRole="user">
