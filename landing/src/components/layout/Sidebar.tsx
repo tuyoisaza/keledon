@@ -13,7 +13,8 @@ import {
     LogOut,
     Shield,
     GraduationCap,
-    Activity
+    Activity,
+    Building2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
