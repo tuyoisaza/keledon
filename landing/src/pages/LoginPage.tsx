@@ -1,17 +1,35 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Bot, Mail, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 
-const APP_VERSION = '0.0.1';
-const BUILD_TIME = '2026-03-15T18:30:00Z';
+const APP_VERSION = '0.0.2';
+const BUILD_TIME = '2026-03-15T22:15:00Z';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { signInWithEmail, loginWithGoogle, email, setEmail, password, setPassword, error, isLoading } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
+
+  useEffect(() => {
+    setCurrentTime(new Date().toISOString());
+  }, []);
+
+  useEffect(() => {
+    const token = searchParams.get('token');
+    const userEmail = searchParams.get('email');
+    const userName = searchParams.get('name');
+    
+    if (token) {
+      sessionStorage.setItem('auth_token', token);
+      sessionStorage.setItem('user_email', userEmail || '');
+      sessionStorage.setItem('user_name', userName || '');
+      navigate('/dashboard');
+    }
+  }, [searchParams, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
