@@ -68,11 +68,14 @@ export function Sidebar() {
             {/* Logo */}
             <div className="h-16 flex items-center justify-between px-4 border-b border-border">
                 {!collapsed && (
-                    <Link to="/dashboard" className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                            <span className="text-primary-foreground font-bold text-sm">K</span>
+                    <Link to="/dashboard" className="flex flex-col items-start">
+                        <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                                <span className="text-primary-foreground font-bold text-sm">K</span>
+                            </div>
+                            <span className="font-bold text-lg text-foreground">Keledon</span>
                         </div>
-                        <span className="font-bold text-lg text-foreground">Keledon</span>
+                        <span className="text-[10px] text-muted-foreground ml-10">v0.0.4</span>
                     </Link>
                 )}
                 {collapsed && (
