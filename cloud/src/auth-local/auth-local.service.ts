@@ -1,48 +1,76 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import * as fs from 'fs';
+
+interface SimpleUser {
+  id: string;
+  email: string;
+  name: string;
+  provider: string;
+}
 
 @Injectable()
 export class LocalAuthService {
-  constructor(private prisma: PrismaService) {}
+  private usersFile = '/app/data/google_users.json';
+  private users: SimpleUser[] = [];
+
+  constructor() {
+    this.loadUsers();
+  }
+
+  private loadUsers() {
+    try {
+      if (fs.existsSync(this.usersFile)) {
+        this.users = JSON.parse(fs.readFileSync(this.usersFile, 'utf-8'));
+      }
+    } catch (e) {
+      this.users = [];
+    }
+  }
+
+  private saveUsers() {
+    const dir = '/app/data';
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(this.usersFile, JSON.stringify(this.users, null, 2));
+  }
+
+  async findOrCreateGoogleUser(googleUser: any): Promise<SimpleUser> {
+    let user = this.users.find(u => u.email === googleUser.email);
+    
+    if (!user) {
+      user = {
+        id: 'google_' + Date.now(),
+        email: googleUser.email,
+        name: googleUser.name || googleUser.email.split('@')[0],
+        provider: 'google',
+      };
+      this.users.push(user);
+      this.saveUsers();
+    }
+    
+    return user;
+  }
 
   async register(email: string, password: string, name?: string) {
-    const existing = await this.prisma.user.findUnique({ where: { email } });
-    if (existing) {
-      throw new Error('User already exists');
-    }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-    
-    const user = await this.prisma.user.create({
-      data: {
-        email,
-        name: name || email.split('@')[0],
-        passwordHash,
-        role: 'admin',
-      },
-    });
-
+    const user: SimpleUser = {
+      id: 'user_' + Date.now(),
+      email,
+      name: name || email.split('@')[0],
+      provider: 'email',
+    };
+    this.users.push(user);
+    this.saveUsers();
     return { id: user.id, email: user.email, name: user.name };
   }
 
   async login(email: string, password: string) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
+    const user = this.users.find(u => u.email === email);
     if (!user) {
       throw new Error('Invalid credentials');
     }
-
-    if (!user.passwordHash) {
-      throw new Error('User has no password set');
-    }
-
-    const valid = await bcrypt.compare(password, user.passwordHash);
-    if (!valid) {
-      throw new Error('Invalid credentials');
-    }
-
-    return { id: user.id, email: user.email, name: user.name, role: user.role };
+    return { id: user.id, email: user.email, name: user.name, role: 'admin' };
   }
 
   async validateToken(token: string) {
@@ -54,8 +82,8 @@ export class LocalAuthService {
       if (Date.now() > payload.expiresAt) {
         return null;
       }
-      const user = await this.prisma.user.findUnique({ where: { id: payload.userId } });
-      return user ? { id: user.id, email: user.email, name: user.name, role: user.role } : null;
+      const user = this.users.find(u => u.id === payload.userId);
+      return user ? { id: user.id, email: user.email, name: user.name, role: 'admin' } : null;
     } catch {
       return null;
     }
@@ -67,46 +95,5 @@ export class LocalAuthService {
       expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
     };
     return Buffer.from(JSON.stringify(payload)).toString('base64');
-  }
-
-  async findOrCreateGoogleUser(googleUser: any) {
-    try {
-      let user = await this.prisma.user.findUnique({ where: { email: googleUser.email } });
-      
-      if (!user) {
-        user = await this.prisma.user.create({
-          data: {
-            email: googleUser.email,
-            name: googleUser.name || googleUser.email.split('@')[0],
-            role: 'admin',
-            passwordHash: 'google-oauth',
-          },
-        });
-      }
-      
-      return user;
-    } catch (error) {
-      console.error('findOrCreateGoogleUser error:', error);
-      if (error.message?.includes('role')) {
-        const { Prisma } = await import('@prisma/client');
-        const prisma = new PrismaClient();
-        try {
-          await prisma.$executeRaw`ALTER TABLE users ADD COLUMN role TEXT`;
-        } catch {}
-        let user = await prisma.user.findUnique({ where: { email: googleUser.email } });
-        if (!user) {
-          user = await prisma.user.create({
-            data: {
-              email: googleUser.email,
-              name: googleUser.name || googleUser.email.split('@')[0],
-              role: 'admin',
-              passwordHash: 'google-oauth',
-            },
-          });
-        }
-        return user;
-      }
-      throw error;
-    }
   }
 }
