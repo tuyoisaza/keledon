@@ -34,8 +34,11 @@ const navItems: NavItem[] = [
     { icon: BarChart3, label: 'Metrics', href: '/admin', minRole: 'coordinator' },
     { icon: Activity, label: 'Work Stats', href: '/work-stats', minRole: 'user' },
     { icon: GraduationCap, label: 'Knowledge Stats', href: '/knowledge-stats', minRole: 'user' },
-    { icon: Settings, label: 'Management', href: '/management', minRole: 'admin' },
+    { icon: Settings, label: 'Providers', href: '/management/providers', minRole: 'admin' },
+    { icon: Activity, label: 'Status', href: '/management/status', minRole: 'admin' },
 ];
+
+const managementItems: NavItem[] = [];
 
 export function Sidebar() {
     const [collapsed, setCollapsed] = useState(false);

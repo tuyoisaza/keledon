@@ -7,6 +7,8 @@ interface SimpleUser {
   email: string;
   name: string;
   provider: string;
+  company_id?: string;
+  role?: string;
 }
 
 @Injectable()
@@ -45,6 +47,8 @@ export class LocalAuthService {
         email: googleUser.email,
         name: googleUser.name || googleUser.email.split('@')[0],
         provider: 'google',
+        company_id: 'default-company',
+        role: 'superadmin',
       };
       this.users.push(user);
       this.saveUsers();
@@ -83,7 +87,13 @@ export class LocalAuthService {
         return null;
       }
       const user = this.users.find(u => u.id === payload.userId);
-      return user ? { id: user.id, email: user.email, name: user.name, role: 'admin' } : null;
+      return user ? { 
+        id: user.id, 
+        email: user.email, 
+        name: user.name, 
+        role: user.role || 'admin',
+        company_id: user.company_id,
+      } : null;
     } catch {
       return null;
     }

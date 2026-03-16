@@ -22,6 +22,7 @@ interface AuthResponse {
     email: string;
     name: string;
     role?: string;
+    company_id?: string;
   };
   token?: string;
 }
@@ -139,6 +140,7 @@ export class LocalAuthController {
           email: user.email,
           name: user.name,
           role: user.role,
+          company_id: user.company_id,
         },
       };
     } catch (error) {
