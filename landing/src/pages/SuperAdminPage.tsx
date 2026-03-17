@@ -722,7 +722,7 @@ export default function SuperAdminPage() {
                     case 'companies':
                         await updateCompany(id, values as any);
                         if (editingEntity.countries) {
-                            const existing = editingEntity.countries.map((c: any) => c.country_code);
+                            const existing = editingEntity.countries.map((c: any) => typeof c === 'string' ? c : c.country_code);
                             const toAdd = selectedCountries.filter(c => !existing.includes(c));
                             const toRemove = existing.filter((c: string) => !selectedCountries.includes(c));
 
