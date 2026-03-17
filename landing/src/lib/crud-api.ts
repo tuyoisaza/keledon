@@ -58,12 +58,16 @@ export async function deleteBrand(id: string) {
 }
 
 // Teams
-export async function getTeams(companyId?: string) {
+export async function getTeams(companyId?: string, brandId?: string) {
     const teams = await fetchApi('/teams');
+    let filtered = teams;
     if (companyId) {
-        return teams.filter((t: any) => t.company_id === companyId);
+        filtered = filtered.filter((t: any) => t.company_id === companyId);
     }
-    return teams;
+    if (brandId) {
+        filtered = filtered.filter((t: any) => t.brand_id === brandId);
+    }
+    return filtered;
 }
 
 export async function createTeam(data: any) {
