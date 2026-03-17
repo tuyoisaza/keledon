@@ -108,8 +108,13 @@ export class CrudService {
     this.saveData();
   }
 
-  // Brands
-  getBrands() { return this.data.brands; }
+  // Brands - with company join
+  getBrands() { 
+    return this.data.brands.map(brand => ({
+      ...brand,
+      company: this.data.companies.find(c => c.id === brand.company_id)
+    }));
+  }
 
   createBrand(data: Partial<Brand>) {
     const brand: Brand = {
@@ -139,8 +144,14 @@ export class CrudService {
     this.saveData();
   }
 
-  // Teams
-  getTeams() { return this.data.teams; }
+  // Teams - with company and brand join
+  getTeams() { 
+    return this.data.teams.map(team => ({
+      ...team,
+      company: this.data.companies.find(c => c.id === team.company_id),
+      brand: this.data.brands.find(b => b.id === team.brand_id)
+    }));
+  }
 
   createTeam(data: Partial<Team>) {
     const team: Team = {
@@ -171,8 +182,14 @@ export class CrudService {
     this.saveData();
   }
 
-  // Users
-  getUsers() { return this.data.users; }
+  // Users - with company and team join
+  getUsers() { 
+    return this.data.users.map(user => ({
+      ...user,
+      company: this.data.companies.find(c => c.id === user.company_id),
+      team: this.data.teams.find(t => t.id === user.team_id)
+    }));
+  }
 
   createUser(data: Partial<User>) {
     const user: User = {

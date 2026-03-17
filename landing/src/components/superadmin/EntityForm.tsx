@@ -194,10 +194,11 @@ export const EntityForm: React.FC<EntityFormProps> = ({
                                 >
                                     <option value="">Select Country...</option>
                                     {companies.find(c => c.id === selectedCompanyId)?.countries?.map((c: any) => {
-                                        const fullCountry = availableCountries.find(ac => ac.code === c.country_code);
+                                        const countryCode = typeof c === 'string' ? c : c.country_code;
+                                        const fullCountry = availableCountries.find(ac => ac.code === countryCode);
                                         return (
-                                            <option key={c.country_code} value={c.country_code}>
-                                                {fullCountry ? fullCountry.name : c.country_code}
+                                            <option key={countryCode} value={countryCode}>
+                                                {fullCountry ? fullCountry.name : countryCode}
                                             </option>
                                         );
                                     })}

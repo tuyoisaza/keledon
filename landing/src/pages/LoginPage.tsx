@@ -4,8 +4,8 @@ import { Bot, Mail, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 
-const APP_VERSION = '0.0.12';
-const BUILD_TIME = '2026-03-16T23:30:00Z';
+const APP_VERSION = '0.0.13';
+const BUILD_TIME = '2026-03-17T00:30:00Z';
 
 export default function LoginPage() {
   const navigate = useNavigate();

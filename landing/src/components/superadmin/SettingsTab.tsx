@@ -26,6 +26,17 @@ interface TenantConfig {
 
 const defaultProviderCatalog: ProviderConfig[] = [
   {
+    id: 'vosk',
+    type: 'stt',
+    name: 'VOSK (Local)',
+    status: 'production',
+    is_enabled: true,
+    metadata: {
+      endpoint: process.env.VITE_VOSK_URL || 'wss://keledon.tuyoisaza.com/listen/ws',
+      model: 'vosk-model'
+    }
+  },
+  {
     id: 'whisper',
     type: 'stt',
     name: 'Whisper (OpenAI)',

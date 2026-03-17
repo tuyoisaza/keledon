@@ -802,10 +802,11 @@ export default function SuperAdminPage() {
                         <div className="flex flex-wrap gap-1">
                             {row.countries && row.countries.length > 0 ? (
                                 row.countries.map((c: any) => {
-                                    const country = availableCountries.find(ac => ac.code === c.country_code);
+                                    const countryCode = typeof c === 'string' ? c : c.country_code;
+                                    const country = availableCountries.find(ac => ac.code === countryCode);
                                     return (
-                                        <span key={c.country_code} className="px-2 py-0.5 rounded text-[10px] font-medium bg-secondary text-secondary-foreground border border-border">
-                                            {country ? country.name : c.country_code}
+                                        <span key={countryCode} className="px-2 py-0.5 rounded text-[10px] font-medium bg-secondary text-secondary-foreground border border-border">
+                                            {country ? country.name : countryCode}
                                         </span>
                                     );
                                 })
@@ -818,7 +819,7 @@ export default function SuperAdminPage() {
             ];
             case 'brands': return [
                 { key: 'name', label: 'NAME' },
-                { key: 'companies', label: 'COMPANY', render: (row) => row.companies?.name || row.company_id },
+                { key: 'company', label: 'COMPANY', render: (row) => row.company?.name || row.company_id },
                 {
                     key: 'color', label: 'COLOR', render: (row) => (
                         <div className="flex items-center gap-2">
@@ -830,14 +831,15 @@ export default function SuperAdminPage() {
             ];
             case 'teams': return [
                 { key: 'name', label: 'NAME' },
-                { key: 'brands', label: 'BRAND', render: (row) => row.brands?.name || row.brand_id },
-                { key: 'member_count', label: 'MEMBERS' }
+                { key: 'brand', label: 'BRAND', render: (row) => row.brand?.name || row.company?.name || row.brand_id || '—' },
+                { key: 'company', label: 'COMPANY', render: (row) => row.company?.name || row.company_id || '—' },
+                { key: 'country', label: 'COUNTRY', render: (row) => row.country || '—' }
             ];
             case 'users': return [
                 { key: 'name', label: 'NAME' },
                 { key: 'email', label: 'EMAIL' },
-                { key: 'companies', label: 'COMPANY', render: (row: any) => row.companies?.name || row.company_id || '—' },
-                { key: 'teams', label: 'TEAM', render: (row: any) => row.teams?.name || '—' },
+                { key: 'company', label: 'COMPANY', render: (row: any) => row.company?.name || row.company_id || '—' },
+                { key: 'team', label: 'TEAM', render: (row: any) => row.team?.name || '—' },
                 {
                     key: 'role', label: 'ROLE', render: (row: any) => (
                         <span className={cn(
@@ -1031,7 +1033,7 @@ export default function SuperAdminPage() {
             </div>
 
             {/* Actions Bar and Data Table - Only show for entity tabs */}
-            {activeTab !== 'debug' && activeTab !== 'settings' && activeTab !== 'flows' && activeTab !== 'voice-profiles' && activeTab !== 'vector-store' && (
+            {activeTab !== 'debug' && activeTab !== 'settings' && activeTab !== 'flows' && activeTab !== 'voice-profiles' && activeTab !== 'vector-store' && activeTab !== 'status' && (
                 <>
                     {/* Actions Bar */}
                     <div className="flex items-center justify-between">
@@ -1070,10 +1072,10 @@ export default function SuperAdminPage() {
                         onEdit={(row) => {
                             setEditingEntity(row);
                             if (activeTab === 'companies' && row.countries) {
-                                setSelectedCountries(row.countries.map((c: any) => c.country_code));
+                                setSelectedCountries(row.countries.map((c: any) => typeof c === 'string' ? c : c.country_code));
                             }
                             if (activeTab === 'teams') {
-                                const cid = row.brands?.company_id || '';
+                                const cid = row.brand?.company_id || row.company_id || '';
                                 setSelectedCompanyId(cid);
                                 setSelectedCountryCode(row.country || '');
                             }
