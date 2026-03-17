@@ -738,7 +738,13 @@ export default function SuperAdminPage() {
                         }
                         break;
                     case 'brands': await updateBrand(id, values as any); break;
-                    case 'teams': await updateTeam(id, values as any); break;
+                    case 'teams': 
+                        const teamValues = { ...values as any };
+                        if (!teamValues.company_id && (values as any).company_id_hidden) {
+                            teamValues.company_id = (values as any).company_id_hidden;
+                        }
+                        await updateTeam(id, teamValues); 
+                        break;
                     case 'users': await updateUser(id, values as any); break;
                     case 'agents': await updateAgent(id, values as any); break;
                 }
@@ -751,7 +757,13 @@ export default function SuperAdminPage() {
                         }
                         break;
                     case 'brands': await createBrand(values as any); break;
-                    case 'teams': await createTeam(values as any); break;
+                    case 'teams': 
+                        const newTeamValues = { ...values as any };
+                        if (!newTeamValues.company_id && (values as any).company_id_hidden) {
+                            newTeamValues.company_id = (values as any).company_id_hidden;
+                        }
+                        await createTeam(newTeamValues); 
+                        break;
                     case 'users': await createUser(values as any); break;
                     case 'agents': await createAgent(values as any); break;
                 }

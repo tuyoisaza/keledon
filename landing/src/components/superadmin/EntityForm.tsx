@@ -163,23 +163,26 @@ export const EntityForm: React.FC<EntityFormProps> = ({
                     ) : activeTab === 'teams' ? (
                         <>
                             {isSuperAdmin && (
-                                <div>
-                                    <label className="block text-sm text-muted-foreground mb-1">Company</label>
-                                    <select
-                                        value={selectedCompanyId}
-                                        onChange={(e) => {
-                                            setSelectedCompanyId(e.target.value);
-                                            setSelectedCountryCode('');
-                                        }}
-                                        required
-                                        className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                                    >
-                                        <option value="">Select Company...</option>
-                                        {companies.map(c => (
-                                            <option key={c.id} value={c.id}>{c.name}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                                <>
+                                    <div>
+                                        <label className="block text-sm text-muted-foreground mb-1">Company</label>
+                                        <select
+                                            value={selectedCompanyId}
+                                            onChange={(e) => {
+                                                setSelectedCompanyId(e.target.value);
+                                                setSelectedCountryCode('');
+                                            }}
+                                            required
+                                            className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                        >
+                                            <option value="">Select Company...</option>
+                                            {companies.map(c => (
+                                                <option key={c.id} value={c.id}>{c.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <input type="hidden" name="company_id" value={selectedCompanyId} />
+                                </>
                             )}
                             {!isSuperAdmin && (
                                 <input type="hidden" name="company_id_hidden" value={selectedCompanyId} />
