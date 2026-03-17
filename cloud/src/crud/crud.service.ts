@@ -31,6 +31,7 @@ interface User {
   email: string;
   name: string;
   company_id?: string;
+  brand_id?: string;
   team_id?: string;
   role?: string;
   created_at: string;
@@ -182,13 +183,18 @@ export class CrudService {
     this.saveData();
   }
 
-  // Users - with company and team join
+  // Users - with company, brand and team join
   getUsers() { 
-    return this.data.users.map(user => ({
-      ...user,
-      company: this.data.companies.find(c => c.id === user.company_id),
-      team: this.data.teams.find(t => t.id === user.team_id)
-    }));
+    return this.data.users.map(user => {
+      const team = this.data.teams.find(t => t.id === user.team_id);
+      const brand = team ? this.data.brands.find(b => b.id === team.brand_id) : null;
+      return {
+        ...user,
+        company: this.data.companies.find(c => c.id === user.company_id),
+        brand: brand,
+        team: team
+      };
+    });
   }
 
   createUser(data: Partial<User>) {
@@ -197,6 +203,7 @@ export class CrudService {
       email: data.email || '',
       name: data.name || '',
       company_id: data.company_id,
+      brand_id: data.brand_id,
       team_id: data.team_id,
       role: data.role || 'user',
       created_at: new Date().toISOString(),

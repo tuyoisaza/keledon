@@ -858,6 +858,7 @@ export default function SuperAdminPage() {
                 { key: 'name', label: 'NAME' },
                 { key: 'email', label: 'EMAIL' },
                 { key: 'company', label: 'COMPANY', render: (row: any) => row.company?.name || row.company_id || '—' },
+                { key: 'brand', label: 'BRAND', render: (row: any) => row.brand?.name || '—' },
                 { key: 'team', label: 'TEAM', render: (row: any) => row.team?.name || '—' },
                 {
                     key: 'role', label: 'ROLE', render: (row: any) => (
@@ -958,9 +959,13 @@ export default function SuperAdminPage() {
                     { name: 'name', label: 'Full Name', type: 'text', required: true },
                     { name: 'email', label: 'Email', type: 'email', required: true },
                     { name: 'company_id', label: 'Company', type: 'select', options: companies.map(c => ({ value: c.id, label: c.name })), required: true },
+                    { name: 'brand_id', label: 'Brand', type: 'select', options: brands.map(b => ({ value: b.id, label: b.name })) },
+                    { name: 'team_id', label: 'Team', type: 'select', options: teams.map(t => ({ value: t.id, label: t.name })) },
                     {
                         name: 'role', label: 'Role', type: 'select', options: [
                             { value: 'user', label: 'User' },
+                            { value: 'agent', label: 'Agent' },
+                            { value: 'coordinator', label: 'Coordinator' },
                             { value: 'admin', label: 'Admin' },
                             { value: 'superadmin', label: 'Super Admin' }
                         ], required: true

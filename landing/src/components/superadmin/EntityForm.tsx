@@ -277,6 +277,22 @@ export const EntityForm: React.FC<EntityFormProps> = ({
                             {!isSuperAdmin && (
                                 <input type="hidden" name="company_id" value={selectedCompanyId} />
                             )}
+                            {isSuperAdmin && (
+                                <div>
+                                    <label className="block text-sm text-muted-foreground mb-1">Brand</label>
+                                    <select
+                                        name="brand_id"
+                                        defaultValue={editingEntity?.brand_id || ''}
+                                        className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                        disabled={!selectedCompanyId}
+                                    >
+                                        <option value="">Select Brand...</option>
+                                        {brands.filter(b => b.company_id === selectedCompanyId).map(b => (
+                                            <option key={b.id} value={b.id}>{b.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
                             <div>
                                 <label className="block text-sm text-muted-foreground mb-1">Team</label>
                                 <select
