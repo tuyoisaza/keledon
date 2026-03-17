@@ -74,6 +74,10 @@ export class CrudService {
   // Companies
   getCompanies() { return this.data.companies; }
   
+  getCompany(id: string) { 
+    return this.data.companies.find(c => c.id === id) || null;
+  }
+  
   createCompany(data: Partial<Company>) {
     const company: Company = {
       id: 'company_' + Date.now(),

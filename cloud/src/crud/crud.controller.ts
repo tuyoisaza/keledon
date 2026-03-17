@@ -11,6 +11,11 @@ export class CrudController {
     return this.crud.getCompanies();
   }
 
+  @Get('companies/:id')
+  getCompany(@Param('id') id: string): any {
+    return this.crud.getCompany(id);
+  }
+
   @Post('companies')
   createCompany(@Body() data: any): any {
     return this.crud.createCompany(data);
@@ -23,7 +28,8 @@ export class CrudController {
 
   @Delete('companies/:id')
   deleteCompany(@Param('id') id: string): any {
-    return this.crud.deleteCompany(id);
+    this.crud.deleteCompany(id);
+    return { success: true };
   }
 
   // Brands
@@ -44,7 +50,8 @@ export class CrudController {
 
   @Delete('brands/:id')
   deleteBrand(@Param('id') id: string): any {
-    return this.crud.deleteBrand(id);
+    this.crud.deleteBrand(id);
+    return { success: true };
   }
 
   // Teams
@@ -65,7 +72,8 @@ export class CrudController {
 
   @Delete('teams/:id')
   deleteTeam(@Param('id') id: string): any {
-    return this.crud.deleteTeam(id);
+    this.crud.deleteTeam(id);
+    return { success: true };
   }
 
   // Users
@@ -86,6 +94,7 @@ export class CrudController {
 
   @Delete('users/:id')
   deleteUser(@Param('id') id: string): any {
-    return this.crud.deleteUser(id);
+    this.crud.deleteUser(id);
+    return { success: true };
   }
 }
