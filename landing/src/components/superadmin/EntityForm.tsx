@@ -1,11 +1,12 @@
 import React from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Loader2 } from 'lucide-react';
 import { type Company, type Brand, type Team } from '@/lib/supabase';
 
 interface EntityFormProps {
     activeTab: string;
     editingEntity: any | null;
     handleSave: (e: React.FormEvent<HTMLFormElement>) => void;
+    saving?: boolean;
     onClose: () => void;
     selectedCountries: string[];
     setSelectedCountries: React.Dispatch<React.SetStateAction<string[]>>;
@@ -25,6 +26,7 @@ export const EntityForm: React.FC<EntityFormProps> = ({
     activeTab,
     editingEntity,
     handleSave,
+    saving = false,
     onClose,
     selectedCountries,
     setSelectedCountries,
@@ -353,15 +355,18 @@ export const EntityForm: React.FC<EntityFormProps> = ({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors"
+                            disabled={saving}
+                            className="px-4 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors disabled:opacity-50"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium shadow-lg shadow-primary/20"
+                            disabled={saving}
+                            className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
-                            Save
+                            {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+                            {saving ? 'Saving...' : 'Save'}
                         </button>
                     </div>
                 </form>

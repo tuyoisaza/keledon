@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Building2, Tag, Users as UsersIcon, UserCircle, Plus, Search, Bug, Settings, User, LayoutGrid, Mic, Layers, Activity, Database } from 'lucide-react';
+import { Building2, Tag, Users as UsersIcon, UserCircle, Plus, Search, Bug, Settings, User, LayoutGrid, Mic, Layers, Activity, Database, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
     getCompanies, createCompany, updateCompany, deleteCompany,
@@ -275,6 +275,8 @@ export default function SuperAdminPage() {
 
     const [data, setData] = useState<DisplayEntity[]>([]);
     const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const [showForm, setShowForm] = useState(false);
     const [editingEntity, setEditingEntity] = useState<DisplayEntity | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -715,6 +717,7 @@ export default function SuperAdminPage() {
         const formData = new FormData(e.currentTarget);
         const values = Object.fromEntries(formData.entries());
 
+        setSaving(true);
         try {
             if (editingEntity) {
                 const id = editingEntity.id;
@@ -760,6 +763,8 @@ export default function SuperAdminPage() {
         } catch (error: any) {
             console.error('Failed to save:', error);
             alert('Failed to save entity: ' + (error.message || error));
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -771,6 +776,7 @@ export default function SuperAdminPage() {
 
     const confirmDelete = async () => {
         if (!deleteTargetId) return;
+        setDeleting(true);
         try {
             switch (activeTab) {
                 case 'companies': await deleteCompany(deleteTargetId); break;
@@ -787,6 +793,7 @@ export default function SuperAdminPage() {
             setDeleteModalOpen(false);
             setDeleteTargetId(null);
             setDeleteTargetName('');
+            setDeleting(false);
         }
     };
 
@@ -1055,7 +1062,8 @@ export default function SuperAdminPage() {
                                 setSelectedCountryCode('');
                                 setShowForm(true);
                             }}
-                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+                            disabled={saving}
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
                         >
                             <Plus className="w-4 h-4" />
                             Add {activeTab.slice(0, -1)}
@@ -1169,6 +1177,7 @@ export default function SuperAdminPage() {
                     activeTab={activeTab}
                     editingEntity={editingEntity}
                     handleSave={handleSave}
+                    saving={saving}
                     onClose={() => {
                         setShowForm(false);
                         setSelectedCountries([]);
@@ -1194,6 +1203,7 @@ export default function SuperAdminPage() {
             <DeleteConfirmationModal
                 isOpen={deleteModalOpen}
                 targetName={deleteTargetName}
+                loading={deleting}
                 onCancel={() => setDeleteModalOpen(false)}
                 onConfirm={confirmDelete}
             />
