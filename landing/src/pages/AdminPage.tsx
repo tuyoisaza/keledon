@@ -245,21 +245,47 @@ export default function AdminPage() {
                             
                             {/* VOSK Server URL */}
                             {teamConfig.sttProvider === 'vosk' && (
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-foreground mb-2">
-                                        VOSK Server URL
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={teamConfig.voskServerUrl || ''}
-                                        onChange={(e) => setTeamConfig({...teamConfig, voskServerUrl: e.target.value})}
-                                        placeholder="wss://your-vosk-server.railway.app"
-                                        className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                                    />
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                        Enter the URL of your VOSK server (e.g., wss://keledon-vosk.railway.app)
-                                    </p>
-                                </div>
+                                <>
+                                    <div>
+                                        <label className="block text-sm font-medium text-foreground mb-2">
+                                            VOSK Server URL
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={teamConfig.voskServerUrl || ''}
+                                            onChange={(e) => setTeamConfig({...teamConfig, voskServerUrl: e.target.value})}
+                                            placeholder="wss://your-vosk-server.railway.app"
+                                            className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                        />
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            Enter the URL of your VOSK server (e.g., wss://keledon-vosk.railway.app)
+                                        </p>
+                                    </div>
+                                    
+                                    <div>
+                                        <label className="block text-sm font-medium text-foreground mb-2">
+                                            VOSK Model
+                                        </label>
+                                        <select
+                                            value={teamConfig.voskModel || 'vosk-model-en-us'}
+                                            onChange={(e) => setTeamConfig({...teamConfig, voskModel: e.target.value})}
+                                            className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                        >
+                                            <option value="vosk-model-en-us">English (US) - Recommended</option>
+                                            <option value="vosk-model-en-us-0.22">English (US) v0.22</option>
+                                            <option value="vosk-model-en-gb">English (GB)</option>
+                                            <option value="vosk-model-de">German</option>
+                                            <option value="vosk-model-fr">French</option>
+                                            <option value="vosk-model-es">Spanish</option>
+                                            <option value="vosk-model-cn">Chinese</option>
+                                            <option value="vosk-model-ru">Russian</option>
+                                            <option value="vosk-model-small-en-us">English (US) - Small</option>
+                                        </select>
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            Select the VOSK model for speech recognition
+                                        </p>
+                                    </div>
+                                </>
                             )}
                             
                             {/* Save Button */}
