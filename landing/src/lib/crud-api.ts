@@ -14,7 +14,8 @@ async function fetchApi(endpoint: string, method = 'GET', body?: any) {
         body: body ? JSON.stringify(body) : undefined,
     });
     if (!response.ok) {
-        throw new Error(`API Error: ${response.statusText}`);
+        const text = await response.text();
+        throw new Error(`API Error ${response.status}: ${text || response.statusText}`);
     }
     return response.json();
 }

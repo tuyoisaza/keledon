@@ -1,6 +1,28 @@
-const QDRANT_URL = import.meta.env.VITE_QDRANT_URL;
-const QDRANT_API_KEY = import.meta.env.VITE_QDRANT_API_KEY;
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+const getConfig = () => {
+  const env = {
+    qdrantUrl: import.meta.env.VITE_getConfig().qdrantUrl,
+    qdrantApiKey: import.meta.env.VITE_QDRANT_API_KEY,
+    openaiApiKey: import.meta.env.VITE_OPENAI_API_KEY,
+  };
+  
+  try {
+    const saved = localStorage.getItem('vector-store-config');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        qdrantUrl: env.qdrantUrl || parsed.qdrantUrl || '/qdrant',
+        qdrantApiKey: env.qdrantApiKey || parsed.qdrantApiKey || '',
+        openaiApiKey: env.openaiApiKey || parsed.openaiApiKey || '',
+      };
+    }
+  } catch (e) {}
+  
+  return {
+    qdrantUrl: env.qdrantUrl || '/qdrant',
+    qdrantApiKey: env.qdrantApiKey || '',
+    openaiApiKey: env.openaiApiKey || '',
+  };
+};
 
 export interface PolicyDocument {
   id: string;
@@ -35,34 +57,47 @@ export interface VectorStoreStatus {
 
 class VectorStoreAPI {
   private validateConfiguration() {
-    if (!QDRANT_URL) {
-      throw new Error('VITE_QDRANT_URL not configured');
+    const config = getConfig();
+    if (!config.qdrantUrl) {
+      throw new Error('getConfig().qdrantUrl not configured. Please configure in Vector Store Settings.');
     }
-    if (!OPENAI_API_KEY) {
-      throw new Error('VITE_OPENAI_API_KEY not configured');
+    if (!config.openaiApiKey) {
+      throw new Error('OPENAI_API_KEY not configured. Please configure in Vector Store Settings.');
     }
   }
 
   private getHeaders() {
     this.validateConfiguration();
+    const config = getConfig();
     
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
-    if (QDRANT_API_KEY) {
-      headers['api-key'] = QDRANT_API_KEY;
+    if (config.qdrantApiKey) {
+      headers['api-key'] = config.qdrantApiKey;
     }
     return headers;
+  }
+
+  private getOpenAIHeaders() {
+    this.validateConfiguration();
+    const config = getConfig();
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${config.openaiApiKey}`,
+    };
   }
 
   async generateEmbedding(text: string): Promise<number[]> {
     this.validateConfiguration();
 
+    const config = getConfig();
+
     const response = await fetch('https://api.openai.com/v1/embeddings', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${config.openaiApiKey}`,
       },
       body: JSON.stringify({
         model: 'text-embedding-3-small',
@@ -81,7 +116,7 @@ class VectorStoreAPI {
   async getCollectionStatus(): Promise<VectorStoreStatus> {
     this.validateConfiguration();
     
-    const response = await fetch(`${QDRANT_URL}/collections/keledon-policies`, {
+    const response = await fetch(`${getConfig().qdrantUrl}/collections/keledon-policies`, {
       headers: this.getHeaders(),
     });
 
@@ -111,7 +146,7 @@ class VectorStoreAPI {
   }
 
   async createCollection(): Promise<void> {
-    const response = await fetch(`${QDRANT_URL}/collections/keledon-policies`, {
+    const response = await fetch(`${getConfig().qdrantUrl}/collections/keledon-policies`, {
       method: 'PUT',
       headers: this.getHeaders(),
       body: JSON.stringify({
@@ -133,7 +168,7 @@ class VectorStoreAPI {
       embedding = await this.generateEmbedding(document.content);
     }
 
-    const response = await fetch(`${QDRANT_URL}/collections/keledon-policies/points`, {
+    const response = await fetch(`${getConfig().qdrantUrl}/collections/keledon-policies/points`, {
       method: 'PUT',
       headers: this.getHeaders(),
       body: JSON.stringify({
@@ -168,7 +203,7 @@ class VectorStoreAPI {
   }
 
   async deleteDocument(id: string): Promise<void> {
-    const response = await fetch(`${QDRANT_URL}/collections/keledon-policies/points/delete`, {
+    const response = await fetch(`${getConfig().qdrantUrl}/collections/keledon-policies/points/delete`, {
       method: 'POST',
       headers: this.getHeaders(),
       body: JSON.stringify({
@@ -215,7 +250,7 @@ class VectorStoreAPI {
       must: filterConditions
     } : undefined;
 
-    const response = await fetch(`${QDRANT_URL}/collections/keledon-policies/points/search`, {
+    const response = await fetch(`${getConfig().qdrantUrl}/collections/keledon-policies/points/search`, {
       method: 'POST',
       headers: this.getHeaders(),
       body: JSON.stringify({
@@ -253,7 +288,7 @@ class VectorStoreAPI {
   }
 
   async listAllDocuments(): Promise<PolicyDocument[]> {
-    const response = await fetch(`${QDRANT_URL}/collections/keledon-policies/points/scroll`, {
+    const response = await fetch(`${getConfig().qdrantUrl}/collections/keledon-policies/points/scroll`, {
       method: 'POST',
       headers: this.getHeaders(),
       body: JSON.stringify({

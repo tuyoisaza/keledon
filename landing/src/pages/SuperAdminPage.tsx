@@ -757,9 +757,9 @@ export default function SuperAdminPage() {
             setEditingEntity(null);
             setSelectedCountries([]);
             refreshData();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to save:', error);
-            alert('Failed to save entity');
+            alert('Failed to save entity: ' + (error.message || error));
         }
     };
 
