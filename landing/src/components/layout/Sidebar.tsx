@@ -16,7 +16,8 @@ import {
     Activity,
     Building2,
     Tag,
-    Users as UsersIcon
+    Users as UsersIcon,
+    User
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
@@ -37,6 +38,7 @@ const navItems: NavItem[] = [
     { icon: BarChart3, label: 'Metrics', href: '/admin', minRole: 'coordinator' },
     { icon: Activity, label: 'Work Stats', href: '/work-stats', minRole: 'user' },
     { icon: GraduationCap, label: 'Knowledge Stats', href: '/knowledge-stats', minRole: 'user' },
+    { icon: User, label: 'Profile', href: '/profile', minRole: 'user' },
     { icon: Settings, label: 'Management', href: '/management', minRole: 'admin' },
 ];
 
@@ -75,7 +77,7 @@ export function Sidebar() {
                             </div>
                             <span className="font-bold text-lg text-foreground">Keledon</span>
                         </div>
-                        <span className="text-[10px] text-muted-foreground ml-10">v0.0.18</span>
+                        <span className="text-[10px] text-muted-foreground ml-10">v0.0.19</span>
                     </Link>
                 )}
                 {collapsed && (

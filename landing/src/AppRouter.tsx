@@ -15,6 +15,7 @@ import SessionsPage from '@/pages/SessionsPage';
 import SessionDetailPage from '@/pages/SessionDetailPage';
 import WorkStatsPage from '@/pages/WorkStatsPage';
 import KnowledgeStatsPage from '@/pages/KnowledgeStatsPage';
+import ProfilePage from '@/pages/ProfilePage';
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -68,6 +69,16 @@ export function AppRouter() {
                         <ProtectedRoute minRole="user">
                             <AppLayout>
                                 <DashboardPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/profile"
+                    element={
+                        <ProtectedRoute minRole="user">
+                            <AppLayout>
+                                <ProfilePage />
                             </AppLayout>
                         </ProtectedRoute>
                     }

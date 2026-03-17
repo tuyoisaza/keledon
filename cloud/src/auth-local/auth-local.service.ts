@@ -8,7 +8,9 @@ interface SimpleUser {
   name: string;
   provider: string;
   company_id?: string;
+  team_id?: string;
   role?: string;
+  last_session?: string;
 }
 
 @Injectable()
@@ -51,8 +53,9 @@ export class LocalAuthService {
         role: 'superadmin',
       };
       this.users.push(user);
-      this.saveUsers();
     }
+    user.last_session = new Date().toISOString();
+    this.saveUsers();
     
     return user;
   }
@@ -74,6 +77,8 @@ export class LocalAuthService {
     if (!user) {
       throw new Error('Invalid credentials');
     }
+    user.last_session = new Date().toISOString();
+    this.saveUsers();
     return { id: user.id, email: user.email, name: user.name, role: 'admin' };
   }
 
@@ -93,6 +98,8 @@ export class LocalAuthService {
         name: user.name, 
         role: user.role || 'admin',
         company_id: user.company_id,
+        team_id: user.team_id,
+        last_session: user.last_session,
       } : null;
     } catch {
       return null;
@@ -105,5 +112,17 @@ export class LocalAuthService {
       expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
     };
     return Buffer.from(JSON.stringify(payload)).toString('base64');
+  }
+
+  async getCrudData() {
+    try {
+      const dataFile = '/app/data/crud.json';
+      if (fs.existsSync(dataFile)) {
+        return JSON.parse(fs.readFileSync(dataFile, 'utf-8'));
+      }
+    } catch (e) {
+      console.error('Failed to load CRUD data:', e);
+    }
+    return { companies: [], brands: [], teams: [] };
   }
 }

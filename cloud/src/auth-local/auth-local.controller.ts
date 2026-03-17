@@ -133,15 +133,33 @@ export class LocalAuthController {
       if (!user) {
         throw new UnauthorizedException('Invalid token');
       }
+
+      const crudData = await this.authService.getCrudData();
+      const companies = crudData.companies || [];
+      const brands = crudData.brands || [];
+      const teams = crudData.teams || [];
+
+      const company = companies.find(c => c.id === user.company_id);
+      const team = teams.find(t => t.id === user.team_id);
+      const brand = team?.brand_id ? brands.find(b => b.id === team.brand_id) : null;
+
+      const fullUser = {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        company_id: user.company_id,
+        team_id: user.team_id,
+        company_name: company?.name || null,
+        brand_name: brand?.name || null,
+        team_name: team?.name || null,
+        created_at: company?.created_at || null,
+        last_session: user.last_session || null,
+      };
+
       return {
         success: true,
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          company_id: user.company_id,
-        },
+        user: fullUser,
       };
     } catch (error) {
       return {
