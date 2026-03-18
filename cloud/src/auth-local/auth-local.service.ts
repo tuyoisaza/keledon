@@ -79,13 +79,18 @@ export class LocalAuthService {
     }
     user.last_session = new Date().toISOString();
     this.saveUsers();
+    
+    // Also check crud.json for additional user data (company, team assignments)
+    const crudData = await this.getCrudData();
+    const crudUser = crudData.users?.find((u: any) => u.email === email);
+    
     return { 
       id: user.id, 
       email: user.email, 
       name: user.name, 
-      role: user.role || 'admin',
-      company_id: user.company_id,
-      team_id: user.team_id,
+      role: crudUser?.role || user.role || 'admin',
+      company_id: crudUser?.company_id || user.company_id,
+      team_id: crudUser?.team_id || user.team_id,
     };
   }
 
@@ -99,15 +104,22 @@ export class LocalAuthService {
         return null;
       }
       const user = this.users.find(u => u.id === payload.userId);
-      return user ? { 
+      if (!user) return null;
+      
+      // Also check crud.json for additional user data
+      const crudData = await this.getCrudData();
+      const crudUser = crudData.users?.find((u: any) => u.email === user.email);
+      
+      return { 
         id: user.id, 
         email: user.email, 
         name: user.name, 
-        role: user.role || 'admin',
-        company_id: user.company_id,
-        team_id: user.team_id,
+        role: crudUser?.role || user.role || 'admin',
+        company_id: crudUser?.company_id || user.company_id,
+        team_id: crudUser?.team_id || user.team_id,
+        brand_id: crudUser?.brand_id,
         last_session: user.last_session,
-      } : null;
+      };
     } catch {
       return null;
     }
