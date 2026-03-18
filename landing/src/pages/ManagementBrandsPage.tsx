@@ -3,7 +3,7 @@ import { Tag, Plus, RefreshCw, Loader2, Pencil, Trash2, Search } from 'lucide-re
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { getBrands, getCompanies, createBrand, updateBrand, deleteBrand, type Brand, type Company } from '@/lib/crud-api';
-import EntityForm from '@/components/superadmin/EntityForm';
+import { EntityForm } from '@/components/superadmin/EntityForm';
 
 export default function ManagementBrandsPage() {
     const [brands, setBrands] = useState<Brand[]>([]);

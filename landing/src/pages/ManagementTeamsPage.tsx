@@ -3,7 +3,7 @@ import { Users, Plus, RefreshCw, Loader2, Pencil, Trash2, Search } from 'lucide-
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { getTeams, getCompanies, getBrands, createTeam, updateTeam, deleteTeam, type Team, type Company, type Brand } from '@/lib/crud-api';
-import EntityForm from '@/components/superadmin/EntityForm';
+import { EntityForm } from '@/components/superadmin/EntityForm';
 
 const availableCountries = [
     { code: 'US', name: 'United States' },

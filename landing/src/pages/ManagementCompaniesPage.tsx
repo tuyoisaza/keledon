@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { getCompanies, createCompany, updateCompany, deleteCompany, type Company } from '@/lib/crud-api';
 import { useAuth } from '@/context/AuthContext';
-import EntityForm from '@/components/superadmin/EntityForm';
+import { EntityForm } from '@/components/superadmin/EntityForm';
 
 const availableCountries = [
     { code: 'US', name: 'United States' },

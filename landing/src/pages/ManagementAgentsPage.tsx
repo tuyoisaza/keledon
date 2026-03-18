@@ -3,7 +3,7 @@ import { UserCircle, Plus, RefreshCw, Loader2, Pencil, Trash2, Search } from 'lu
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { getUsers, getTeams, createUser, updateUser, deleteUser, type User as UserType, type Team } from '@/lib/crud-api';
-import EntityForm from '@/components/superadmin/EntityForm';
+import { EntityForm } from '@/components/superadmin/EntityForm';
 
 export default function ManagementAgentsPage() {
     const [agents, setAgents] = useState<any[]>([]);
