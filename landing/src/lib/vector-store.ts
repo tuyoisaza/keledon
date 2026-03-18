@@ -1,6 +1,6 @@
 const getConfig = () => {
   const env = {
-    qdrantUrl: import.meta.env.VITE_getConfig().qdrantUrl,
+    qdrantUrl: import.meta.env.VITE_QDRANT_URL,
     qdrantApiKey: import.meta.env.VITE_QDRANT_API_KEY,
     openaiApiKey: import.meta.env.VITE_OPENAI_API_KEY,
   };
@@ -10,7 +10,7 @@ const getConfig = () => {
     if (saved) {
       const parsed = JSON.parse(saved);
       return {
-        qdrantUrl: env.qdrantUrl || parsed.qdrantUrl || '/qdrant',
+        qdrantUrl: env.qdrantUrl || parsed.qdrantUrl || 'https://keledon.tuyoisaza.com/qdrant',
         qdrantApiKey: env.qdrantApiKey || parsed.qdrantApiKey || '',
         openaiApiKey: env.openaiApiKey || parsed.openaiApiKey || '',
       };
@@ -18,7 +18,7 @@ const getConfig = () => {
   } catch (e) {}
   
   return {
-    qdrantUrl: env.qdrantUrl || '/qdrant',
+    qdrantUrl: env.qdrantUrl || 'https://keledon.tuyoisaza.com/qdrant',
     qdrantApiKey: env.qdrantApiKey || '',
     openaiApiKey: env.openaiApiKey || '',
   };
