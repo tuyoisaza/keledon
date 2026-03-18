@@ -13,6 +13,14 @@ import AdminUsersPage from '@/pages/AdminUsersPage';
 import AdminSettingsPage from '@/pages/AdminSettingsPage';
 import SuperAdminPage from '@/pages/SuperAdminPage';
 import ManagementCompaniesPage from '@/pages/ManagementCompaniesPage';
+import ManagementBrandsPage from '@/pages/ManagementBrandsPage';
+import ManagementTeamsPage from '@/pages/ManagementTeamsPage';
+import ManagementUsersPage from '@/pages/ManagementUsersPage';
+import ManagementAgentsPage from '@/pages/ManagementAgentsPage';
+import ManagementVoiceProfilesPage from '@/pages/ManagementVoiceProfilesPage';
+import ManagementProvidersPage from '@/pages/ManagementProvidersPage';
+import ManagementDebugPage from '@/pages/ManagementDebugPage';
+import ManagementStatusPage from '@/pages/ManagementStatusPage';
 import FlowsPage from '@/pages/FlowsPage';
 import SessionsPage from '@/pages/SessionsPage';
 import SessionsLivePage from '@/pages/SessionsLivePage';
@@ -176,7 +184,7 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <SuperAdminPage />
+                                <ManagementBrandsPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -186,7 +194,7 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <SuperAdminPage />
+                                <ManagementTeamsPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -196,7 +204,7 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <SuperAdminPage />
+                                <ManagementUsersPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -206,7 +214,7 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <SuperAdminPage />
+                                <ManagementAgentsPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -226,7 +234,7 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <SuperAdminPage />
+                                <ManagementVoiceProfilesPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -236,7 +244,7 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <SuperAdminPage />
+                                <ManagementProvidersPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -286,7 +294,7 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <SuperAdminPage />
+                                <ManagementDebugPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -296,7 +304,7 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <SuperAdminPage />
+                                <ManagementStatusPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }
