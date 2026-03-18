@@ -108,10 +108,28 @@ export class LocalAuthController {
     try {
       const user = await this.authService.login(dto.email, dto.password);
       const token = this.authService.generateToken(user.id);
+      
+      const crudData = await this.authService.getCrudData();
+      const companies = crudData.companies || [];
+      const brands = crudData.brands || [];
+      const teams = crudData.teams || [];
+      
+      const company = companies.find(c => c.id === user.company_id);
+      const team = teams.find(t => t.id === user.team_id);
+      const brand = team?.brand_id ? brands.find(b => b.id === team.brand_id) : null;
+      
+      const fullUser = {
+        ...user,
+        company_name: company?.name || null,
+        brand_name: brand?.name || null,
+        team_name: team?.name || null,
+        created_at: company?.created_at || null,
+      };
+      
       return {
         success: true,
         message: 'Login successful',
-        user,
+        user: fullUser,
         token,
       };
     } catch (error) {

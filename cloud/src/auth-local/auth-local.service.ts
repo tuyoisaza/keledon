@@ -79,7 +79,14 @@ export class LocalAuthService {
     }
     user.last_session = new Date().toISOString();
     this.saveUsers();
-    return { id: user.id, email: user.email, name: user.name, role: 'admin' };
+    return { 
+      id: user.id, 
+      email: user.email, 
+      name: user.name, 
+      role: user.role || 'admin',
+      company_id: user.company_id,
+      team_id: user.team_id,
+    };
   }
 
   async validateToken(token: string) {

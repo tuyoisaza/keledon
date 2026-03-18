@@ -35,6 +35,7 @@ interface User {
   team_id?: string;
   role?: string;
   created_at: string;
+  last_session?: string;
 }
 
 interface DataStore {
@@ -188,11 +189,15 @@ export class CrudService {
     return this.data.users.map(user => {
       const team = this.data.teams.find(t => t.id === user.team_id);
       const brand = team ? this.data.brands.find(b => b.id === team.brand_id) : null;
+      const lastSession = user.last_session ? new Date(user.last_session).getTime() : 0;
+      const now = Date.now();
+      const isOnline = (now - lastSession) < 15 * 60 * 1000; // Online if last session within 15 minutes
       return {
         ...user,
         company: this.data.companies.find(c => c.id === user.company_id),
         brand: brand,
-        team: team
+        team: team,
+        is_online: isOnline
       };
     });
   }
