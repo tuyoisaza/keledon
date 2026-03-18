@@ -9,9 +9,14 @@ import LaunchAgentPage from '@/pages/LaunchAgentPage';
 import DashboardPage from '@/pages/DashboardPage';
 import KnowledgePage from '@/pages/KnowledgePage';
 import AdminPage from '@/pages/AdminPage';
+import AdminUsersPage from '@/pages/AdminUsersPage';
+import AdminSettingsPage from '@/pages/AdminSettingsPage';
 import SuperAdminPage from '@/pages/SuperAdminPage';
+import ManagementCompaniesPage from '@/pages/ManagementCompaniesPage';
 import FlowsPage from '@/pages/FlowsPage';
 import SessionsPage from '@/pages/SessionsPage';
+import SessionsLivePage from '@/pages/SessionsLivePage';
+import SessionsHistoryPage from '@/pages/SessionsHistoryPage';
 import SessionDetailPage from '@/pages/SessionDetailPage';
 import WorkStatsPage from '@/pages/WorkStatsPage';
 import KnowledgeStatsPage from '@/pages/KnowledgeStatsPage';
@@ -107,6 +112,26 @@ export function AppRouter() {
                     }
                 />
                 <Route
+                    path="/admin/users"
+                    element={
+                        <ProtectedRoute minRole="coordinator">
+                            <AppLayout>
+                                <AdminUsersPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/settings"
+                    element={
+                        <ProtectedRoute minRole="coordinator">
+                            <AppLayout>
+                                <AdminSettingsPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
                     path="/flows"
                     element={
                         <ProtectedRoute minRole="coordinator">
@@ -141,7 +166,7 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <SuperAdminPage />
+                                <ManagementCompaniesPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -282,6 +307,26 @@ export function AppRouter() {
                         <ProtectedRoute minRole="user">
                             <AppLayout>
                                 <SessionsPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/sessions/live"
+                    element={
+                        <ProtectedRoute minRole="user">
+                            <AppLayout>
+                                <SessionsLivePage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/sessions/history"
+                    element={
+                        <ProtectedRoute minRole="user">
+                            <AppLayout>
+                                <SessionsHistoryPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }

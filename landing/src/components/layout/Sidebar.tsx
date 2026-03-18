@@ -32,14 +32,14 @@ interface NavItem {
 const navItems: NavItem[] = [
     { icon: Play, label: 'Launch Agent', href: '/launch-agent', minRole: 'user' },
     { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard', minRole: 'user' },
-    { icon: Radio, label: 'Sessions', href: '/sessions', minRole: 'user' },
+    { icon: Radio, label: 'Sessions', href: '/sessions/history', minRole: 'user' },
     { icon: Workflow, label: 'Flows', href: '/flows', minRole: 'coordinator' },
     { icon: BookOpen, label: 'Knowledge', href: '/knowledge', minRole: 'user' },
-    { icon: BarChart3, label: 'Metrics', href: '/admin', minRole: 'coordinator' },
+    { icon: BarChart3, label: 'Metrics', href: '/admin/users', minRole: 'coordinator' },
     { icon: Activity, label: 'Work Stats', href: '/work-stats', minRole: 'user' },
     { icon: GraduationCap, label: 'Knowledge Stats', href: '/knowledge-stats', minRole: 'user' },
     { icon: User, label: 'Profile', href: '/profile', minRole: 'user' },
-    { icon: Settings, label: 'Management', href: '/management', minRole: 'admin' },
+    { icon: Settings, label: 'Management', href: '/management/companies', minRole: 'admin' },
 ];
 
 const managementItems: NavItem[] = [];
@@ -77,7 +77,7 @@ export function Sidebar() {
                             </div>
                             <span className="font-bold text-lg text-foreground">Keledon</span>
                         </div>
-                        <span className="text-[10px] text-muted-foreground ml-10">v0.0.24</span>
+                        <span className="text-[10px] text-muted-foreground ml-10">v0.0.25</span>
                     </Link>
                 )}
                 {collapsed && (
