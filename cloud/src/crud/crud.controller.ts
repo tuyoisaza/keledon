@@ -97,4 +97,31 @@ export class CrudController {
     this.crud.deleteUser(id);
     return { success: true };
   }
+
+  // Categories
+  @Get('categories')
+  getCategories(): any {
+    return this.crud.getCategories();
+  }
+
+  @Get('categories/:id')
+  getCategory(@Param('id') id: string): any {
+    return this.crud.getCategory(id);
+  }
+
+  @Post('categories')
+  createCategory(@Body() data: any): any {
+    return this.crud.createCategory(data);
+  }
+
+  @Put('categories/:id')
+  updateCategory(@Param('id') id: string, @Body() data: any): any {
+    return this.crud.updateCategory(id, data);
+  }
+
+  @Delete('categories/:id')
+  deleteCategory(@Param('id') id: string): any {
+    this.crud.deleteCategory(id);
+    return { success: true };
+  }
 }

@@ -77,7 +77,7 @@ export function Sidebar() {
                             </div>
                             <span className="font-bold text-lg text-foreground">Keledon</span>
                         </div>
-                        <span className="text-[10px] text-muted-foreground ml-10">v0.0.23</span>
+                        <span className="text-[10px] text-muted-foreground ml-10">v0.0.24</span>
                     </Link>
                 )}
                 {collapsed && (

@@ -16,6 +16,9 @@ import SessionDetailPage from '@/pages/SessionDetailPage';
 import WorkStatsPage from '@/pages/WorkStatsPage';
 import KnowledgeStatsPage from '@/pages/KnowledgeStatsPage';
 import ProfilePage from '@/pages/ProfilePage';
+import VectorStoreDocumentsPage from '@/pages/VectorStoreDocumentsPage';
+import VectorStoreAddDocumentPage from '@/pages/VectorStoreAddDocumentPage';
+import VectorStoreCategoriesPage from '@/pages/VectorStoreCategoriesPage';
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -218,7 +221,37 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <SuperAdminPage />
+                                <VectorStoreDocumentsPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/vector-store/add-document"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <VectorStoreAddDocumentPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/vector-store/edit-document/:id"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <VectorStoreAddDocumentPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/vector-store/categories"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <VectorStoreCategoriesPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }

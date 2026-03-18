@@ -38,11 +38,21 @@ interface User {
   last_session?: string;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  color: string;
+  description?: string;
+  company_id: string;
+  created_at: string;
+}
+
 interface DataStore {
   companies: Company[];
   brands: Brand[];
   teams: Team[];
   users: User[];
+  categories: Category[];
 }
 
 @Injectable()
@@ -57,12 +67,16 @@ export class CrudService {
   private loadData(): DataStore {
     try {
       if (fs.existsSync(this.dataFile)) {
-        return JSON.parse(fs.readFileSync(this.dataFile, 'utf-8'));
+        const data = JSON.parse(fs.readFileSync(this.dataFile, 'utf-8'));
+        if (!data.categories) {
+          data.categories = [];
+        }
+        return data;
       }
     } catch (e) {
       console.error('Failed to load data:', e);
     }
-    return { companies: [], brands: [], teams: [], users: [] };
+    return { companies: [], brands: [], teams: [], users: [], categories: [] };
   }
 
   private saveData() {
@@ -230,6 +244,48 @@ export class CrudService {
 
   deleteUser(id: string) {
     this.data.users = this.data.users.filter(u => u.id !== id);
+    this.saveData();
+  }
+
+  // Categories
+  getCategories(companyId?: string) {
+    let categories = this.data.categories;
+    if (companyId) {
+      categories = categories.filter(c => c.company_id === companyId);
+    }
+    return categories;
+  }
+
+  getCategory(id: string) {
+    return this.data.categories.find(c => c.id === id) || null;
+  }
+
+  createCategory(data: Partial<Category>) {
+    const category: Category = {
+      id: 'cat_' + Date.now(),
+      name: data.name || '',
+      color: data.color || '#6366f1',
+      description: data.description,
+      company_id: data.company_id || '',
+      created_at: new Date().toISOString(),
+    };
+    this.data.categories.push(category);
+    this.saveData();
+    return category;
+  }
+
+  updateCategory(id: string, data: Partial<Category>) {
+    const idx = this.data.categories.findIndex(c => c.id === id);
+    if (idx >= 0) {
+      this.data.categories[idx] = { ...this.data.categories[idx], ...data };
+      this.saveData();
+      return this.data.categories[idx];
+    }
+    return null;
+  }
+
+  deleteCategory(id: string) {
+    this.data.categories = this.data.categories.filter(c => c.id !== id);
     this.saveData();
   }
 }

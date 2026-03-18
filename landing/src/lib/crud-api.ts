@@ -121,6 +121,27 @@ export async function deleteAgent(id: string) {
     return deleteUser(id);
 }
 
+// Categories
+export async function getCategories(companyId?: string) {
+    const categories = await fetchApi('/categories');
+    if (companyId) {
+        return categories.filter((c: any) => c.company_id === companyId);
+    }
+    return categories;
+}
+
+export async function createCategory(data: any) {
+    return fetchApi('/categories', 'POST', data);
+}
+
+export async function updateCategory(id: string, data: any) {
+    return fetchApi(`/categories/${id}`, 'PUT', data);
+}
+
+export async function deleteCategory(id: string) {
+    return fetchApi(`/categories/${id}`, 'DELETE');
+}
+
 // Placeholder exports for other functions that might be needed
 export async function addCompanyCountry(companyId: string, countryCode: string) {
     const company = await fetchApi(`/companies/${companyId}`);
@@ -156,6 +177,7 @@ export async function deleteTenantVoiceProfile(id: string) { return true; }
 export type Company = { id: string; name: string; industry?: string; countries?: string[] };
 export type Brand = { id: string; name: string; company_id: string; color?: string };
 export type Team = { id: string; name: string; company_id: string; brand_id?: string; country?: string };
+export type Category = { id: string; name: string; color: string; description?: string; company_id: string };
 export type ProviderCatalogEntry = any;
 export type TenantProviderConfig = any;
 export type TenantVoiceProfile = any;

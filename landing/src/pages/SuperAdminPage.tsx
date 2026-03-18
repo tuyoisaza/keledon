@@ -29,15 +29,8 @@ import FlowsPage from '@/pages/FlowsPage';
 import { DebugTab } from '@/components/superadmin/DebugTab';
 import { DeleteConfirmationModal } from '@/components/superadmin/DeleteConfirmationModal';
 import ManagementPage from '@/pages/ManagementPage';
-import VectorStoreTab from '@/components/superadmin/VectorStoreTab';
 
-type EntityType = 'companies' | 'brands' | 'teams' | 'users' | 'agents' | 'settings' | 'voice-profiles' | 'flows' | 'debug' | 'status' | 'vector-store';
-
-// Unified type for display
-interface DisplayEntity {
-    id: string;
-    [key: string]: any;
-}
+type EntityType = 'companies' | 'brands' | 'teams' | 'users' | 'agents' | 'settings' | 'voice-profiles' | 'flows' | 'debug' | 'status';
 
 const tabs: { id: EntityType; label: string; icon: React.ElementType }[] = [
     { id: 'companies', label: 'Companies', icon: Building2 },
@@ -48,7 +41,6 @@ const tabs: { id: EntityType; label: string; icon: React.ElementType }[] = [
     { id: 'flows', label: 'Flows', icon: LayoutGrid },
     { id: 'voice-profiles', label: 'Voice Profiles', icon: Mic },
     { id: 'settings', label: 'Providers', icon: Settings },
-    { id: 'vector-store', label: 'Vector Store', icon: Database },
     { id: 'debug', label: 'Debug', icon: Bug },
     { id: 'status', label: 'Status', icon: Activity },
 ];
@@ -1136,11 +1128,6 @@ export default function SuperAdminPage() {
                     onCreateVoiceProfile={handleCreateVoiceProfile}
                     onDeleteVoiceProfile={handleDeleteVoiceProfile}
                 />
-            )}
-
-            {/* Vector Store Tab */}
-            {activeTab === 'vector-store' && (
-                <VectorStoreTab />
             )}
 
             {/* Settings Tab Content */}
