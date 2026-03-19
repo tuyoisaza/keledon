@@ -13,10 +13,10 @@ export class OpenAIService {
   private readonly baseURL = 'https://api.openai.com/v1';
 
   constructor() {
-    this.apiKey = process.env.VITE_OPENAI_API_KEY || '';
+    this.apiKey = process.env.OPENAI_API_KEY || '';
     
     if (!this.apiKey) {
-      console.warn('[OpenAI] No API key configured. Please set VITE_OPENAI_API_KEY environment variable.');
+      console.warn('[OpenAI] No API key configured. Please set OPENAI_API_KEY environment variable.');
     }
   }
 

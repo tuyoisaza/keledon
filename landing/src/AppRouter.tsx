@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth, type UserRole } from '@/context/AuthContext';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { ManagementLayout } from '@/components/management/ManagementLayout';
 
 // Pages
 import LandingPage from '@/pages/LandingPage';
@@ -174,7 +175,9 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <ManagementCompaniesPage />
+                                <ManagementLayout>
+                                    <ManagementCompaniesPage />
+                                </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -184,7 +187,9 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <ManagementBrandsPage />
+                                <ManagementLayout>
+                                    <ManagementBrandsPage />
+                                </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -194,7 +199,9 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <ManagementTeamsPage />
+                                <ManagementLayout>
+                                    <ManagementTeamsPage />
+                                </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -204,7 +211,9 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <ManagementUsersPage />
+                                <ManagementLayout>
+                                    <ManagementUsersPage />
+                                </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -214,7 +223,9 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <ManagementAgentsPage />
+                                <ManagementLayout>
+                                    <ManagementAgentsPage />
+                                </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -224,7 +235,9 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <SuperAdminPage />
+                                <ManagementLayout>
+                                    <FlowsPage />
+                                </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -234,7 +247,9 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <ManagementVoiceProfilesPage />
+                                <ManagementLayout>
+                                    <ManagementVoiceProfilesPage />
+                                </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -244,7 +259,9 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <ManagementProvidersPage />
+                                <ManagementLayout>
+                                    <ManagementProvidersPage />
+                                </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -254,7 +271,9 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <VectorStoreDocumentsPage />
+                                <ManagementLayout>
+                                    <VectorStoreDocumentsPage />
+                                </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -264,7 +283,9 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <VectorStoreAddDocumentPage />
+                                <ManagementLayout>
+                                    <VectorStoreAddDocumentPage />
+                                </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -274,7 +295,9 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <VectorStoreAddDocumentPage />
+                                <ManagementLayout>
+                                    <VectorStoreAddDocumentPage />
+                                </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -284,7 +307,9 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <VectorStoreCategoriesPage />
+                                <ManagementLayout>
+                                    <VectorStoreCategoriesPage />
+                                </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -294,7 +319,9 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <ManagementDebugPage />
+                                <ManagementLayout>
+                                    <ManagementDebugPage />
+                                </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>
                     }
@@ -304,7 +331,9 @@ export function AppRouter() {
                     element={
                         <ProtectedRoute minRole="admin">
                             <AppLayout>
-                                <ManagementStatusPage />
+                                <ManagementLayout>
+                                    <ManagementStatusPage />
+                                </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>
                     }
