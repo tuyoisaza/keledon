@@ -32,15 +32,11 @@ import { CrudController } from './crud/crud.controller';
       useFactory: async (configService: ConfigService) => {
         const runtimeTier = getRuntimeTier();
         const isLocalDev = runtimeTier === 'DEV_LOCAL';
-        const isManagedTier = isManagedProductionTier(runtimeTier);
 
         const databaseUrl = (configService.get<string>('DATABASE_URL') || '').trim();
+        
         if (databaseUrl) {
-          if (isLocalDev) {
-            console.log('💾 DATABASE_URL mode enabled (Prisma/Railway canonical path).');
-          }
-
-          // Detect SQLite (file: path)
+          // SQLite mode (Railway canonical path)
           if (databaseUrl.startsWith('file:')) {
             const dbPath = databaseUrl.replace('file:', '');
             console.log('💾 Using SQLite database at:', dbPath);
@@ -53,63 +49,27 @@ import { CrudController } from './crud/crud.controller';
             };
           }
 
-          return {
-            type: 'postgres' as const,
-            url: databaseUrl,
-            entities: [Session, Event, User],
-            synchronize: false,
-            logging: isLocalDev,
-            ssl: isManagedTier ? { rejectUnauthorized: false } : false,
-            keepConnectionAlive: !isLocalDev,
-            connectTimeoutMS: 5000,
-          };
+          // Local file SQLite
+          if (!databaseUrl.includes('://')) {
+            console.log('💾 Using local SQLite database:', databaseUrl);
+            return {
+              type: 'better-sqlite3' as const,
+              database: databaseUrl,
+              entities: [Session, Event, User],
+              synchronize: true,
+              logging: isLocalDev,
+            };
+          }
         }
 
-        // Allow running without DB in DEV_LOCAL for testing
-        if (isLocalDev) {
-          console.log('⚠️ Running without database (DEV_LOCAL mode)');
-          return {
-            type: 'postgres' as const,
-            host: '127.0.0.1',
-            port: 5432,
-            username: 'postgres',
-            password: 'postgres',
-            database: 'postgres',
-            entities: [Session, Event, User],
-            synchronize: false,
-            logging: false,
-            ssl: false,
-            keepConnectionAlive: false,
-            connectTimeoutMS: 3000,
-          };
-        }
-
-        const dbHost = configService.get('SUPABASE_HOST') || (isLocalDev ? 'localhost' : undefined);
-        const dbPort = configService.get('SUPABASE_PORT') || (isLocalDev ? 54322 : undefined);
-        const dbUser = configService.get('SUPABASE_USER') || (isLocalDev ? 'postgres' : undefined);
-        const dbPassword = configService.get('SUPABASE_PASSWORD') || (isLocalDev ? 'postgres' : undefined);
-        const dbName = configService.get('SUPABASE_DB') || (isLocalDev ? 'postgres' : undefined);
-
-        if (!dbHost || !dbPort || !dbUser || !dbPassword || !dbName) {
-          throw new Error(
-            `[Config] Missing DB configuration. Prefer DATABASE_URL (canonical). Legacy SUPABASE_* env is incomplete for tier ${runtimeTier}.`,
-          );
-        }
-
-        const useSSL = isManagedTier;
-
+        // Default fallback: in-memory SQLite for testing
+        console.log('💾 Using in-memory SQLite database');
         return {
-          type: 'postgres' as const,
-          host: dbHost,
-          port: Number(dbPort),
-          username: dbUser,
-          password: dbPassword,
-          database: dbName,
+          type: 'better-sqlite3' as const,
+          database: ':memory:',
           entities: [Session, Event, User],
-          synchronize: false,
+          synchronize: true,
           logging: isLocalDev,
-          ssl: useSSL ? { rejectUnauthorized: false } : false,
-          keepConnectionAlive: !isLocalDev,
         };
       },
       inject: [ConfigService],
@@ -136,6 +96,6 @@ import { CrudController } from './crud/crud.controller';
 })
 export class AppModule {
   constructor() {
-    console.log('🚀 DATABASE-READY: KELEDON Phase 2 - Prisma/managed Postgres canonical mode');
+    console.log('🚀 DATABASE-READY: KELEDON - SQLite mode');
   }
 }

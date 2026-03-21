@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto';
 import { Subject, Observable, interval } from 'rxjs';
 
 export interface DatabaseConfig {
-  type: 'memory' | 'file' | 'sqlite' | 'postgresql' | 'mongodb';
+  type: 'memory' | 'file' | 'sqlite';
   connectionString?: string;
   backupEnabled: boolean;
   backupInterval: number; // minutes

@@ -20,7 +20,9 @@ export class ConfigService {
       port: parseInt(process.env.DB_PORT || '5432', 10),
       user: process.env.DB_USER || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres',
-      database: process.env.DB_NAME || 'keledon'
+      database: process.env.DB_NAME || 'keledon',
+      type: 'sqlite' as const,
+      url: process.env.DATABASE_URL || 'file:./data/keledon.db'
     },
     services: {
       tts: {
