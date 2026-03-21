@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Tag, Plus, RefreshCw, Loader2, Pencil, Trash2, Search } from 'lucide-react';
+import { Tag, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { getBrands, getCompanies, createBrand, updateBrand, deleteBrand, type Brand, type Company } from '@/lib/crud-api';
-import { EntityForm } from '@/components/superadmin/EntityForm';
 
 export default function ManagementBrandsPage() {
     const [brands, setBrands] = useState<Brand[]>([]);
@@ -12,7 +11,13 @@ export default function ManagementBrandsPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [showForm, setShowForm] = useState(false);
     const [editingBrand, setEditingBrand] = useState<Brand | null>(null);
-    const [formLoading, setFormLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
+
+    const [formData, setFormData] = useState({
+        name: '',
+        company_id: '',
+        color: '#6366f1'
+    });
 
     useEffect(() => {
         fetchData();
@@ -35,37 +40,44 @@ export default function ManagementBrandsPage() {
         }
     };
 
-    const handleCreate = async (data: any) => {
-        setFormLoading(true);
+    const resetForm = () => {
+        setFormData({ name: '', company_id: '', color: '#6366f1' });
+    };
+
+    const openCreateForm = () => {
+        resetForm();
+        setEditingBrand(null);
+        setShowForm(true);
+    };
+
+    const openEditForm = (brand: Brand) => {
+        setFormData({
+            name: brand.name || '',
+            company_id: brand.company_id || '',
+            color: brand.color || '#6366f1'
+        });
+        setEditingBrand(brand);
+        setShowForm(true);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSaving(true);
         try {
-            await createBrand({
-                ...data,
-                created_at: new Date().toISOString()
-            });
-            toast.success('Brand created successfully');
+            if (editingBrand) {
+                await updateBrand(editingBrand.id, formData);
+                toast.success('Brand updated successfully');
+            } else {
+                await createBrand({ ...formData, created_at: new Date().toISOString() });
+                toast.success('Brand created successfully');
+            }
             setShowForm(false);
             fetchData();
         } catch (error) {
-            console.error('Failed to create brand:', error);
-            toast.error('Failed to create brand');
+            console.error('Failed to save brand:', error);
+            toast.error('Failed to save brand');
         } finally {
-            setFormLoading(false);
-        }
-    };
-
-    const handleUpdate = async (data: any) => {
-        if (!editingBrand) return;
-        setFormLoading(true);
-        try {
-            await updateBrand(editingBrand.id, data);
-            toast.success('Brand updated successfully');
-            setEditingBrand(null);
-            fetchData();
-        } catch (error) {
-            console.error('Failed to update brand:', error);
-            toast.error('Failed to update brand');
-        } finally {
-            setFormLoading(false);
+            setSaving(false);
         }
     };
 
@@ -101,7 +113,7 @@ export default function ManagementBrandsPage() {
                     </div>
                 </div>
                 <button
-                    onClick={() => setShowForm(true)}
+                    onClick={openCreateForm}
                     className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                 >
                     <Plus className="w-4 h-4" />
@@ -125,16 +137,6 @@ export default function ManagementBrandsPage() {
                 </button>
             </div>
 
-            {showForm && (
-                <EntityForm
-                    activeTab="brands"
-                    onSubmit={handleCreate}
-                    onClose={() => setShowForm(false)}
-                    isSuperAdmin={true}
-                    saving={formLoading}
-                />
-            )}
-
             <div className="rounded-xl border border-border bg-card overflow-hidden">
                 {loading ? (
                     <div className="flex items-center justify-center py-12">
@@ -144,7 +146,7 @@ export default function ManagementBrandsPage() {
                     <div className="text-center py-12 text-muted-foreground">
                         <Tag className="w-12 h-12 mx-auto mb-4 opacity-50" />
                         <p>No brands found</p>
-                        <button onClick={() => setShowForm(true)} className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
+                        <button onClick={openCreateForm} className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
                             Add First Brand
                         </button>
                     </div>
@@ -171,7 +173,7 @@ export default function ManagementBrandsPage() {
                                     </td>
                                     <td className="px-4 py-3">
                                         <div className="flex gap-2">
-                                            <button onClick={() => setEditingBrand(brand)} className="p-1.5 hover:bg-muted rounded transition-colors" title="Edit">
+                                            <button onClick={() => openEditForm(brand)} className="p-1.5 hover:bg-muted rounded transition-colors" title="Edit">
                                                 <Pencil className="w-4 h-4" />
                                             </button>
                                             <button onClick={() => handleDelete(brand.id)} className="p-1.5 hover:bg-destructive/10 text-destructive rounded transition-colors" title="Delete">
@@ -186,15 +188,63 @@ export default function ManagementBrandsPage() {
                 )}
             </div>
 
-            {editingBrand && (
-                <EntityForm
-                    activeTab="brands"
-                    editingEntity={editingBrand}
-                    onSubmit={handleUpdate}
-                    onClose={() => setEditingBrand(null)}
-                    isSuperAdmin={true}
-                    saving={formLoading}
-                />
+            {showForm && (
+                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+                    <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold">
+                                {editingBrand ? 'Edit' : 'Add'} Brand
+                            </h3>
+                            <button onClick={() => setShowForm(false)} className="p-1 hover:bg-muted rounded">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Brand Name</label>
+                                <input
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    required
+                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Company</label>
+                                <select
+                                    value={formData.company_id}
+                                    onChange={(e) => setFormData({ ...formData, company_id: e.target.value })}
+                                    required
+                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                >
+                                    <option value="">Select Company...</option>
+                                    {companies.map(c => (
+                                        <option key={c.id} value={c.id}>{c.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Color</label>
+                                <input
+                                    type="color"
+                                    value={formData.color}
+                                    onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                                    className="w-full h-10 p-1 rounded bg-muted border border-border cursor-pointer"
+                                />
+                            </div>
+                            <div className="flex justify-end gap-3 mt-6">
+                                <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors">
+                                    Cancel
+                                </button>
+                                <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium disabled:opacity-50 flex items-center gap-2">
+                                    {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+                                    {saving ? 'Saving...' : 'Save'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             )}
         </div>
     );

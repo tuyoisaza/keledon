@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Building2, Plus, RefreshCw, Loader2, Pencil, Trash2, Search } from 'lucide-react';
+import { Building2, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { getCompanies, createCompany, updateCompany, deleteCompany, type Company } from '@/lib/crud-api';
-import { useAuth } from '@/context/AuthContext';
-import { EntityForm } from '@/components/superadmin/EntityForm';
 
 const availableCountries = [
     { code: 'US', name: 'United States' },
@@ -21,13 +19,18 @@ const availableCountries = [
 ];
 
 export default function ManagementCompaniesPage() {
-    const { user } = useAuth();
     const [companies, setCompanies] = useState<Company[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [showForm, setShowForm] = useState(false);
     const [editingCompany, setEditingCompany] = useState<Company | null>(null);
-    const [formLoading, setFormLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
+
+    const [formData, setFormData] = useState({
+        name: '',
+        industry: ''
+    });
 
     useEffect(() => {
         fetchCompanies();
@@ -46,37 +49,46 @@ export default function ManagementCompaniesPage() {
         }
     };
 
-    const handleCreate = async (data: any) => {
-        setFormLoading(true);
+    const resetForm = () => {
+        setFormData({ name: '', industry: '' });
+        setSelectedCountries([]);
+    };
+
+    const openCreateForm = () => {
+        resetForm();
+        setEditingCompany(null);
+        setShowForm(true);
+    };
+
+    const openEditForm = (company: Company) => {
+        setFormData({
+            name: company.name || '',
+            industry: company.industry || ''
+        });
+        setSelectedCountries(company.countries || []);
+        setEditingCompany(company);
+        setShowForm(true);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSaving(true);
         try {
-            await createCompany({
-                ...data,
-                created_at: new Date().toISOString()
-            });
-            toast.success('Company created successfully');
+            const data = { ...formData, countries: selectedCountries };
+            if (editingCompany) {
+                await updateCompany(editingCompany.id, data);
+                toast.success('Company updated successfully');
+            } else {
+                await createCompany({ ...data, created_at: new Date().toISOString() });
+                toast.success('Company created successfully');
+            }
             setShowForm(false);
             fetchCompanies();
         } catch (error) {
-            console.error('Failed to create company:', error);
-            toast.error('Failed to create company');
+            console.error('Failed to save company:', error);
+            toast.error('Failed to save company');
         } finally {
-            setFormLoading(false);
-        }
-    };
-
-    const handleUpdate = async (data: any) => {
-        if (!editingCompany) return;
-        setFormLoading(true);
-        try {
-            await updateCompany(editingCompany.id, data);
-            toast.success('Company updated successfully');
-            setEditingCompany(null);
-            fetchCompanies();
-        } catch (error) {
-            console.error('Failed to update company:', error);
-            toast.error('Failed to update company');
-        } finally {
-            setFormLoading(false);
+            setSaving(false);
         }
     };
 
@@ -107,7 +119,7 @@ export default function ManagementCompaniesPage() {
                     </div>
                 </div>
                 <button
-                    onClick={() => setShowForm(true)}
+                    onClick={openCreateForm}
                     className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                 >
                     <Plus className="w-4 h-4" />
@@ -126,24 +138,10 @@ export default function ManagementCompaniesPage() {
                         className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none"
                     />
                 </div>
-                <button
-                    onClick={fetchCompanies}
-                    className="p-2 hover:bg-muted rounded-lg transition-colors"
-                    title="Refresh"
-                >
+                <button onClick={fetchCompanies} className="p-2 hover:bg-muted rounded-lg transition-colors" title="Refresh">
                     <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
                 </button>
             </div>
-
-            {showForm && (
-                <EntityForm
-                    activeTab="companies"
-                    onSubmit={handleCreate}
-                    onClose={() => setShowForm(false)}
-                    isSuperAdmin={true}
-                    saving={formLoading}
-                />
-            )}
 
             <div className="rounded-xl border border-border bg-card overflow-hidden">
                 {loading ? (
@@ -154,10 +152,7 @@ export default function ManagementCompaniesPage() {
                     <div className="text-center py-12 text-muted-foreground">
                         <Building2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
                         <p>No companies found</p>
-                        <button
-                            onClick={() => setShowForm(true)}
-                            className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                        >
+                        <button onClick={openCreateForm} className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
                             Add First Company
                         </button>
                     </div>
@@ -196,18 +191,10 @@ export default function ManagementCompaniesPage() {
                                     </td>
                                     <td className="px-4 py-3">
                                         <div className="flex gap-2">
-                                            <button
-                                                onClick={() => setEditingCompany(company)}
-                                                className="p-1.5 hover:bg-muted rounded transition-colors"
-                                                title="Edit"
-                                            >
+                                            <button onClick={() => openEditForm(company)} className="p-1.5 hover:bg-muted rounded transition-colors" title="Edit">
                                                 <Pencil className="w-4 h-4" />
                                             </button>
-                                            <button
-                                                onClick={() => handleDelete(company.id)}
-                                                className="p-1.5 hover:bg-destructive/10 text-destructive rounded transition-colors"
-                                                title="Delete"
-                                            >
+                                            <button onClick={() => handleDelete(company.id)} className="p-1.5 hover:bg-destructive/10 text-destructive rounded transition-colors" title="Delete">
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
                                         </div>
@@ -219,15 +206,92 @@ export default function ManagementCompaniesPage() {
                 )}
             </div>
 
-            {editingCompany && (
-                <EntityForm
-                    activeTab="companies"
-                    editingEntity={editingCompany}
-                    onSubmit={(data) => handleUpdate(data)}
-                    onClose={() => setEditingCompany(null)}
-                    isSuperAdmin={true}
-                    saving={formLoading}
-                />
+            {showForm && (
+                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+                    <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold">
+                                {editingCompany ? 'Edit' : 'Add'} Company
+                            </h3>
+                            <button onClick={() => setShowForm(false)} className="p-1 hover:bg-muted rounded">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Company Name</label>
+                                <input
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    required
+                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Industry</label>
+                                <input
+                                    type="text"
+                                    value={formData.industry}
+                                    onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
+                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Operating Countries</label>
+                                <div className="mb-2 min-h-[60px] p-3 bg-muted rounded-lg border border-border">
+                                    {selectedCountries.length > 0 ? (
+                                        <div className="space-y-2">
+                                            {selectedCountries.map(code => {
+                                                const country = availableCountries.find(c => c.code === code);
+                                                return (
+                                                    <div key={code} className="flex items-center justify-between p-2 rounded bg-background border border-border">
+                                                        <span className="text-sm">{country?.name || code}</span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setSelectedCountries(prev => prev.filter(c => c !== code))}
+                                                            className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                                        >
+                                                            <X className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground italic text-center py-4">No countries added</p>
+                                    )}
+                                </div>
+                                <select
+                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (val && !selectedCountries.includes(val)) {
+                                            setSelectedCountries(prev => [...prev, val]);
+                                        }
+                                        e.target.value = '';
+                                    }}
+                                >
+                                    <option value="">+ Add Country</option>
+                                    {availableCountries.map(c => (
+                                        <option key={c.code} value={c.code} disabled={selectedCountries.includes(c.code)}>
+                                            {c.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex justify-end gap-3 mt-6">
+                                <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors">
+                                    Cancel
+                                </button>
+                                <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium disabled:opacity-50 flex items-center gap-2">
+                                    {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+                                    {saving ? 'Saving...' : 'Save'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             )}
         </div>
     );

@@ -1,19 +1,27 @@
 import { useState, useEffect } from 'react';
-import { UserCircle, Plus, RefreshCw, Loader2, Pencil, Trash2, Search } from 'lucide-react';
+import { UserCircle, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { getUsers, getTeams, createUser, updateUser, deleteUser, type User as UserType, type Team } from '@/lib/crud-api';
-import { EntityForm } from '@/components/superadmin/EntityForm';
+import { getUsers, getTeams, getCompanies, createUser, updateUser, deleteUser, type User as UserType, type Team, type Company } from '@/lib/crud-api';
 
 export default function ManagementAgentsPage() {
     const [agents, setAgents] = useState<any[]>([]);
     const [users, setUsers] = useState<UserType[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
+    const [companies, setCompanies] = useState<Company[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [showForm, setShowForm] = useState(false);
     const [editingAgent, setEditingAgent] = useState<UserType | null>(null);
-    const [formLoading, setFormLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
+
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        role: 'agent',
+        company_id: '',
+        team_id: ''
+    });
 
     useEffect(() => {
         fetchData();
@@ -22,12 +30,14 @@ export default function ManagementAgentsPage() {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const [usersData, teamsData] = await Promise.all([
+            const [usersData, teamsData, companiesData] = await Promise.all([
                 getUsers(),
-                getTeams()
+                getTeams(),
+                getCompanies()
             ]);
             setUsers(usersData);
             setTeams(teamsData);
+            setCompanies(companiesData);
             setAgents(usersData.filter(u => u.role === 'agent' || u.role === 'coordinator' || u.role === 'supervisor'));
         } catch (error) {
             console.error('Failed to fetch agents:', error);
@@ -37,34 +47,46 @@ export default function ManagementAgentsPage() {
         }
     };
 
-    const handleCreate = async (data: any) => {
-        setFormLoading(true);
+    const resetForm = () => {
+        setFormData({ name: '', email: '', role: 'agent', company_id: '', team_id: '' });
+    };
+
+    const openCreateForm = () => {
+        resetForm();
+        setEditingAgent(null);
+        setShowForm(true);
+    };
+
+    const openEditForm = (agent: any) => {
+        setFormData({
+            name: agent.name || '',
+            email: agent.email || '',
+            role: agent.role || 'agent',
+            company_id: agent.company_id || '',
+            team_id: agent.team_id || ''
+        });
+        setEditingAgent(agent);
+        setShowForm(true);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSaving(true);
         try {
-            await createUser({ ...data, role: 'agent' });
-            toast.success('Agent created successfully');
+            if (editingAgent) {
+                await updateUser(editingAgent.id, formData);
+                toast.success('Agent updated successfully');
+            } else {
+                await createUser(formData);
+                toast.success('Agent created successfully');
+            }
             setShowForm(false);
             fetchData();
         } catch (error) {
-            console.error('Failed to create agent:', error);
-            toast.error('Failed to create agent');
+            console.error('Failed to save agent:', error);
+            toast.error('Failed to save agent');
         } finally {
-            setFormLoading(false);
-        }
-    };
-
-    const handleUpdate = async (data: any) => {
-        if (!editingAgent) return;
-        setFormLoading(true);
-        try {
-            await updateUser(editingAgent.id, data);
-            toast.success('Agent updated successfully');
-            setEditingAgent(null);
-            fetchData();
-        } catch (error) {
-            console.error('Failed to update agent:', error);
-            toast.error('Failed to update agent');
-        } finally {
-            setFormLoading(false);
+            setSaving(false);
         }
     };
 
@@ -90,10 +112,9 @@ export default function ManagementAgentsPage() {
         return teams.find(t => t.id === teamId)?.name || '—';
     };
 
-    const getAssignedUserName = (userId?: string) => {
-        if (!userId) return 'Unassigned';
-        const user = users.find(u => u.id === userId);
-        return user?.name || '—';
+    const getCompanyName = (companyId?: string) => {
+        if (!companyId) return '—';
+        return companies.find(c => c.id === companyId)?.name || '—';
     };
 
     return (
@@ -106,10 +127,7 @@ export default function ManagementAgentsPage() {
                         <p className="text-muted-foreground">Manage AI agents and their assignments</p>
                     </div>
                 </div>
-                <button
-                    onClick={() => setShowForm(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                >
+                <button onClick={openCreateForm} className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
                     <Plus className="w-4 h-4" />
                     Add Agent
                 </button>
@@ -131,16 +149,6 @@ export default function ManagementAgentsPage() {
                 </button>
             </div>
 
-            {showForm && (
-                <EntityForm
-                    activeTab="agents"
-                    onSubmit={handleCreate}
-                    onClose={() => setShowForm(false)}
-                    isSuperAdmin={true}
-                    saving={formLoading}
-                />
-            )}
-
             <div className="rounded-xl border border-border bg-card overflow-hidden">
                 {loading ? (
                     <div className="flex items-center justify-center py-12">
@@ -150,7 +158,7 @@ export default function ManagementAgentsPage() {
                     <div className="text-center py-12 text-muted-foreground">
                         <UserCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
                         <p>No agents found</p>
-                        <button onClick={() => setShowForm(true)} className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
+                        <button onClick={openCreateForm} className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
                             Add First Agent
                         </button>
                     </div>
@@ -160,10 +168,9 @@ export default function ManagementAgentsPage() {
                             <tr className="border-b border-border text-left text-sm text-muted-foreground">
                                 <th className="px-4 py-3 font-medium">NAME</th>
                                 <th className="px-4 py-3 font-medium">EMAIL</th>
+                                <th className="px-4 py-3 font-medium">COMPANY</th>
                                 <th className="px-4 py-3 font-medium">TEAM</th>
-                                <th className="px-4 py-3 font-medium">ASSIGNED USER</th>
                                 <th className="px-4 py-3 font-medium">ROLE</th>
-                                <th className="px-4 py-3 font-medium">AUTONOMY</th>
                                 <th className="px-4 py-3 font-medium">ACTIONS</th>
                             </tr>
                         </thead>
@@ -172,8 +179,8 @@ export default function ManagementAgentsPage() {
                                 <tr key={agent.id} className="border-b border-border hover:bg-muted/50">
                                     <td className="px-4 py-3 font-medium">{agent.name}</td>
                                     <td className="px-4 py-3 text-muted-foreground">{agent.email}</td>
+                                    <td className="px-4 py-3 text-muted-foreground">{getCompanyName(agent.company_id)}</td>
                                     <td className="px-4 py-3 text-muted-foreground">{getTeamName(agent.team_id)}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{getAssignedUserName(agent.user_id)}</td>
                                     <td className="px-4 py-3">
                                         <span className={cn('px-2 py-1 rounded text-xs font-medium', 
                                             agent.role === 'supervisor' ? 'bg-purple-500/20 text-purple-400' :
@@ -183,12 +190,9 @@ export default function ManagementAgentsPage() {
                                             {agent.role}
                                         </span>
                                     </td>
-                                    <td className="px-4 py-3 text-muted-foreground">
-                                        {agent.autonomy_level ? `${agent.autonomy_level}/5` : '—'}
-                                    </td>
                                     <td className="px-4 py-3">
                                         <div className="flex gap-2">
-                                            <button onClick={() => setEditingAgent(agent)} className="p-1.5 hover:bg-muted rounded transition-colors" title="Edit">
+                                            <button onClick={() => openEditForm(agent)} className="p-1.5 hover:bg-muted rounded transition-colors" title="Edit">
                                                 <Pencil className="w-4 h-4" />
                                             </button>
                                             <button onClick={() => handleDelete(agent.id)} className="p-1.5 hover:bg-destructive/10 text-destructive rounded transition-colors" title="Delete">
@@ -203,15 +207,56 @@ export default function ManagementAgentsPage() {
                 )}
             </div>
 
-            {editingAgent && (
-                <EntityForm
-                    activeTab="agents"
-                    editingEntity={editingAgent}
-                    onSubmit={handleUpdate}
-                    onClose={() => setEditingAgent(null)}
-                    isSuperAdmin={true}
-                    saving={formLoading}
-                />
+            {showForm && (
+                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+                    <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold">{editingAgent ? 'Edit' : 'Add'} Agent</h3>
+                            <button onClick={() => setShowForm(false)} className="p-1 hover:bg-muted rounded">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Name</label>
+                                <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Email</label>
+                                <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Company</label>
+                                <select value={formData.company_id} onChange={(e) => setFormData({ ...formData, company_id: e.target.value, team_id: '' })} required className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50">
+                                    <option value="">Select Company...</option>
+                                    {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Team</label>
+                                <select value={formData.team_id} onChange={(e) => setFormData({ ...formData, team_id: e.target.value })} disabled={!formData.company_id} className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50">
+                                    <option value="">Select Team...</option>
+                                    {teams.filter(t => t.company_id === formData.company_id).map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Role</label>
+                                <select value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50">
+                                    <option value="agent">Agent</option>
+                                    <option value="coordinator">Coordinator</option>
+                                    <option value="supervisor">Supervisor</option>
+                                </select>
+                            </div>
+                            <div className="flex justify-end gap-3 mt-6">
+                                <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors">Cancel</button>
+                                <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium disabled:opacity-50 flex items-center gap-2">
+                                    {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+                                    {saving ? 'Saving...' : 'Save'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             )}
         </div>
     );
