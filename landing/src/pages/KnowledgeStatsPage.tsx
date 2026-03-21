@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Brain, Target, AlertTriangle, TrendingUp, Zap, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/lib/supabase';
+import { getSessions } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 
 interface IntentStat {
@@ -17,73 +17,46 @@ export default function KnowledgeStatsPage() {
     const [loading, setLoading] = useState(true);
     const [dateRange, setDateRange] = useState<'today' | 'week' | 'month'>('week');
 
-    // Aggregate Stats
     const [totalSessions, setTotalSessions] = useState(0);
     const [avgConfidence, setAvgConfidence] = useState(0);
     const [containmentRate, setContainmentRate] = useState(0);
     const [fallbackRate, setFallbackRate] = useState(0);
-
-    // Intent Breakdown
     const [intentStats, setIntentStats] = useState<IntentStat[]>([]);
-
-    // Low confidence sessions (gaps)
     const [gaps, setGaps] = useState<any[]>([]);
 
     useEffect(() => {
         let isMounted = true;
 
         async function fetchStats() {
-            if (!supabase || !user) return;
+            if (!user) return;
             setLoading(true);
 
             try {
-                // Calculate date range
-                const now = new Date();
-                let startDate = new Date();
-                if (dateRange === 'today') {
-                    startDate.setHours(0, 0, 0, 0);
-                } else if (dateRange === 'week') {
-                    startDate.setDate(now.getDate() - 7);
-                } else {
-                    startDate.setMonth(now.getMonth() - 1);
-                }
-
-                // Build query with RBAC
-                let query = supabase
-                    .from('sessions')
-                    .select(`
-                        *,
-                        users!left (
-                            id,
-                            name,
-                            company_id
-                        )
-                    `)
-                    .gte('created_at', startDate.toISOString())
-                    .order('created_at', { ascending: false });
-
-                // RBAC filtering
+                let companyId: string | undefined;
+                
                 if (user.role === 'admin' || user.role === 'coordinator') {
-                    if (user.company_id) {
-                        query = query.eq('users.company_id', user.company_id);
-                    }
+                    companyId = user.company_id;
                 } else if (user.role === 'user' || user.role === 'agent') {
-                    query = query.eq('user_id', user.id);
+                    companyId = undefined;
                 }
 
-                const { data, error } = await query;
-                if (error) throw error;
+                const sessions = await getSessions(companyId, 100);
+
                 if (!isMounted) return;
 
-                const sessions = data || [];
                 setTotalSessions(sessions.length);
 
-                // Calculate AI performance metrics
-                const confidenceSum = sessions.reduce((sum, s) => sum + (s.confidence || 0), 0);
+                const confidenceSum = sessions.reduce((sum, s) => {
+                    const metadata = s.metadata ? JSON.parse(s.metadata) : {};
+                    return sum + (metadata.confidence || 0);
+                }, 0);
                 const avgConf = sessions.length > 0 ? Math.round((confidenceSum / sessions.length) * 100) : 0;
 
                 const completed = sessions.filter(s => s.status === 'completed').length;
-                const noIntent = sessions.filter(s => !s.intent || s.intent === 'unknown').length;
+                const noIntent = sessions.filter(s => {
+                    const metadata = s.metadata ? JSON.parse(s.metadata) : {};
+                    return !metadata.intent || metadata.intent === 'unknown';
+                }).length;
 
                 const contRate = sessions.length > 0 ? Math.round((completed / sessions.length) * 100) : 0;
                 const fallRate = sessions.length > 0 ? Math.round((noIntent / sessions.length) * 100) : 0;
@@ -92,10 +65,10 @@ export default function KnowledgeStatsPage() {
                 setContainmentRate(contRate);
                 setFallbackRate(fallRate);
 
-                // Intent breakdown
                 const intentMap: Record<string, IntentStat> = {};
                 sessions.forEach(s => {
-                    const intent = s.intent || 'unknown';
+                    const metadata = s.metadata ? JSON.parse(s.metadata) : {};
+                    const intent = metadata.intent || 'unknown';
                     if (!intentMap[intent]) {
                         intentMap[intent] = {
                             intent,
@@ -106,7 +79,7 @@ export default function KnowledgeStatsPage() {
                         };
                     }
                     intentMap[intent].count++;
-                    intentMap[intent].avgConfidence += (s.confidence || 0);
+                    intentMap[intent].avgConfidence += (metadata.confidence || 0);
                     if (s.status === 'completed') intentMap[intent].resolved++;
                     if (s.status === 'escalated') intentMap[intent].escalated++;
                 });
@@ -120,7 +93,10 @@ export default function KnowledgeStatsPage() {
                 setIntentStats(Object.values(intentMap).sort((a, b) => b.count - a.count));
 
                 const gapSessions = sessions
-                    .filter(s => (s.confidence || 0) < 0.6 || s.status === 'escalated')
+                    .filter(s => {
+                        const metadata = s.metadata ? JSON.parse(s.metadata) : {};
+                        return (metadata.confidence || 0) < 0.6 || s.status === 'escalated';
+                    })
                     .slice(0, 10);
                 setGaps(gapSessions);
 
@@ -137,14 +113,12 @@ export default function KnowledgeStatsPage() {
 
     return (
         <div className="space-y-8">
-            {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-foreground">Knowledge Stats</h1>
                     <p className="text-muted-foreground mt-1">AI performance and knowledge base analytics</p>
                 </div>
 
-                {/* Date Range Selector */}
                 <div className="flex p-1 bg-muted rounded-lg">
                     {(['today', 'week', 'month'] as const).map(range => (
                         <button
@@ -163,7 +137,6 @@ export default function KnowledgeStatsPage() {
                 </div>
             </div>
 
-            {/* KPI Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="p-6 rounded-xl bg-card border border-border">
                     <div className="p-3 rounded-lg bg-blue-500/10 text-blue-500 w-fit">
@@ -198,7 +171,6 @@ export default function KnowledgeStatsPage() {
                 </div>
             </div>
 
-            {/* Intent Breakdown */}
             {intentStats.length > 0 && (
                 <div className="space-y-4">
                     <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
@@ -243,7 +215,6 @@ export default function KnowledgeStatsPage() {
                 </div>
             )}
 
-            {/* Knowledge Gaps */}
             {gaps.length > 0 && (
                 <div className="space-y-4">
                     <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
@@ -261,34 +232,37 @@ export default function KnowledgeStatsPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {gaps.map((session, i) => (
-                                    <tr key={i} className="border-b border-border hover:bg-muted/50">
-                                        <td className="px-5 py-3 font-mono text-sm text-muted-foreground">
-                                            {session.id.slice(0, 8)}
-                                        </td>
-                                        <td className="px-5 py-3 text-sm">{session.intent || 'unknown'}</td>
-                                        <td className="px-5 py-3 text-center">
-                                            <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/10 text-red-500">
-                                                {Math.round((session.confidence || 0) * 100)}%
-                                            </span>
-                                        </td>
-                                        <td className="px-5 py-3 text-center">
-                                            <span className={cn(
-                                                "px-2 py-0.5 rounded-full text-xs capitalize",
-                                                session.status === 'escalated'
-                                                    ? "bg-yellow-500/10 text-yellow-500"
-                                                    : "bg-muted text-muted-foreground"
-                                            )}>
-                                                {session.status}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
+                                {gaps.map((session, i) => {
+                                    const metadata = session.metadata ? JSON.parse(session.metadata) : {};
+                                    return (
+                                        <tr key={i} className="border-b border-border hover:bg-muted/50">
+                                            <td className="px-5 py-3 font-mono text-sm text-muted-foreground">
+                                                {session.id.slice(0, 8)}
+                                            </td>
+                                            <td className="px-5 py-3 text-sm">{metadata.intent || 'unknown'}</td>
+                                            <td className="px-5 py-3 text-center">
+                                                <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/10 text-red-500">
+                                                    {Math.round((metadata.confidence || 0) * 100)}%
+                                                </span>
+                                            </td>
+                                            <td className="px-5 py-3 text-center">
+                                                <span className={cn(
+                                                    "px-2 py-0.5 rounded-full text-xs capitalize",
+                                                    session.status === 'escalated'
+                                                        ? "bg-yellow-500/10 text-yellow-500"
+                                                        : "bg-muted text-muted-foreground"
+                                                )}>
+                                                    {session.status}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                        💡 These sessions may indicate areas where the knowledge base needs improvement.
+                        These sessions may indicate areas where the knowledge base needs improvement.
                     </p>
                 </div>
             )}

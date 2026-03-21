@@ -65,7 +65,7 @@ export default function ManagementCompaniesPage() {
             name: company.name || '',
             industry: company.industry || ''
         });
-        setSelectedCountries(company.countries || []);
+        setSelectedCountries(company.countries?.map(c => c.countryCode) || []);
         setEditingCompany(company);
         setShowForm(true);
     };
@@ -174,9 +174,9 @@ export default function ManagementCompaniesPage() {
                                     <td className="px-4 py-3 text-muted-foreground">{company.industry || '—'}</td>
                                     <td className="px-4 py-3">
                                         <div className="flex flex-wrap gap-1">
-                                            {company.countries?.slice(0, 3).map((c: string) => (
-                                                <span key={c} className="px-2 py-0.5 bg-muted text-xs rounded">
-                                                    {availableCountries.find(ac => ac.code === c)?.name || c}
+                                            {company.countries?.slice(0, 3).map((c) => (
+                                                <span key={c.countryCode} className="px-2 py-0.5 bg-muted text-xs rounded">
+                                                    {availableCountries.find(ac => ac.code === c.countryCode)?.name || c.countryCode}
                                                 </span>
                                             ))}
                                             {(company.countries?.length || 0) > 3 && (
@@ -187,7 +187,7 @@ export default function ManagementCompaniesPage() {
                                         </div>
                                     </td>
                                     <td className="px-4 py-3 text-muted-foreground">
-                                        {new Date(company.created_at).toLocaleDateString()}
+                                        {company.createdAt ? new Date(company.createdAt).toLocaleDateString() : '—'}
                                     </td>
                                     <td className="px-4 py-3">
                                         <div className="flex gap-2">

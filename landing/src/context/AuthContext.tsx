@@ -8,13 +8,13 @@ export interface User {
   email: string;
   role: UserRole;
   avatar?: string;
-  company_id?: string;
-  team_id?: string;
-  company_name?: string;
-  brand_name?: string;
-  team_name?: string;
-  created_at?: string;
-  last_session?: string;
+  companyId?: string;
+  teamId?: string;
+  companyName?: string;
+  brandName?: string;
+  teamName?: string;
+  createdAt?: string;
+  lastSession?: string;
 }
 
 interface AuthContextType {

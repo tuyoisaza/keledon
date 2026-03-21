@@ -1,64 +1,59 @@
 import { useEffect, useState } from 'react';
 import { Play, Globe, Headphones, AlertCircle, Building2, Layers, UserCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { getTeamInterfaces, getTeamDetails, getCompanies, getBrands, getTeams, type ManagedInterface } from '@/lib/supabase';
+import { getTeamInterfaces, getTeamDetails, getCompanies, getBrands, getTeams, type ManagedInterface, type Company, type Brand, type Team } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 
 export default function LaunchAgentPage() {
-    const { user, isActuallySuperAdmin } = useAuth();
+    const { user } = useAuth();
     const [interfaces, setInterfaces] = useState<ManagedInterface[]>([]);
     const [teamInfo, setTeamInfo] = useState<any>(null);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [isLoading, setIsLoading] = useState(true);
 
-    // Organization selection state
     const [selectedCompany, setSelectedCompany] = useState<string>('');
     const [selectedBrand, setSelectedBrand] = useState<string>('');
     const [selectedTeam, setSelectedTeam] = useState<string>('');
 
-    // Real data will be loaded from Supabase
-    const [companies, setCompanies] = useState<any[]>([]);
-    const [brands, setBrands] = useState<any[]>([]);
-    const [teams, setTeams] = useState<any[]>([]);
+    const [companies, setCompanies] = useState<Company[]>([]);
+    const [brands, setBrands] = useState<Brand[]>([]);
+    const [teams, setTeams] = useState<Team[]>([]);
 
     useEffect(() => {
         async function loadData() {
             if (!user) return;
             setIsLoading(true);
             try {
+                const [companiesData, brandsData, teamsData] = await Promise.all([
+                    getCompanies().catch(() => []),
+                    getBrands().catch(() => []),
+                    getTeams().catch(() => [])
+                ]);
+
+                setCompanies(companiesData);
+                setBrands(brandsData);
+                setTeams(teamsData);
+
                 let data: ManagedInterface[] = [];
                 let teamData: any = null;
-                
-                // Load real organization data
-                const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.team_id || '');
-                
-                if (user.team_id && isUuid) {
-                    // Real data from Supabase
+
+                const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.teamId || '');
+
+                if (user.teamId && isUuid) {
                     const [ifaces, tDetails] = await Promise.all([
-                        getTeamInterfaces(user.team_id).catch(_ => []),
-                        getTeamDetails(user.team_id).catch(_ => null),
-                        getCompanies().catch(_ => []),
-                        getBrands().catch(_ => []),
-                        getTeams().catch(_ => [])
+                        getTeamInterfaces(user.teamId).catch(() => []),
+                        getTeamDetails(user.teamId).catch(() => null)
                     ]);
-                    
                     data = ifaces;
                     teamData = tDetails;
-                    
-                    // Set organization data for selectors
-                    setCompanies(ifaces[0]?.companies || []);
-                    setBrands(ifaces[1]?.brands || []);
-                    setTeams(ifaces[2]?.teams || []);
                 }
-                
-                // Show interfaces if available
+
                 if (data.length === 0 && !teamData) {
-                    console.warn('No interfaces found for team:', user.team_id);
+                    console.warn('No interfaces found for team:', user.teamId);
                 }
-                
+
                 setInterfaces(data);
                 setTeamInfo(teamData);
-                // Default: Select all connected ones
                 setSelectedIds(new Set(data.filter(i => i.status === 'connected').map(i => i.id)));
             } catch (error) {
                 console.error('Failed to load launch data:', error);
@@ -68,7 +63,7 @@ export default function LaunchAgentPage() {
         }
 
         loadData();
-    }, [user, isActuallySuperAdmin]);
+    }, [user]);
 
     const toggleSelection = (id: string) => {
         const newSet = new Set(selectedIds);
@@ -83,7 +78,6 @@ export default function LaunchAgentPage() {
     const handleLaunch = () => {
         const selected = interfaces.filter(i => selectedIds.has(i.id));
         console.log("Launching with interfaces:", selected);
-        // TODO: Trigger actual session launch
         alert(`Launching Agent with: ${selected.map(i => i.name).join(', ')}`);
     };
 
@@ -95,7 +89,6 @@ export default function LaunchAgentPage() {
     return (
         <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] space-y-8 max-w-4xl mx-auto px-4">
 
-            {/* Organization Selector */}
             {!isLoading && (
                 <div className="space-y-4 mb-6">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -103,16 +96,13 @@ export default function LaunchAgentPage() {
                         <span className="font-semibold text-foreground">{user?.name || 'User'}</span>
                     </div>
 
-                    {/* Company, Brand, Team Row */}
                     <div className="grid grid-cols-3 gap-4">
-                        {/* Company Selector */}
                         <div>
                             <label className="block text-sm font-medium text-foreground mb-2">Company</label>
                             <select
                                 value={selectedCompany || ''}
                                 onChange={(e) => {
                                     setSelectedCompany(e.target.value);
-                                    // Reset brand/team when company changes
                                     setSelectedBrand('');
                                     setSelectedTeam('');
                                 }}
@@ -125,7 +115,6 @@ export default function LaunchAgentPage() {
                             </select>
                         </div>
 
-                        {/* Brand Selector */}
                         <div>
                             <label className="block text-sm font-medium text-foreground mb-2">Brand</label>
                             <select
@@ -139,14 +128,13 @@ export default function LaunchAgentPage() {
                             >
                                 <option value="">Select brand</option>
                                 {brands
-                                    .filter(b => b.company_id === selectedCompany)
+                                    .filter(b => b.companyId === selectedCompany)
                                     .map(brand => (
                                         <option key={brand.id} value={brand.id}>{brand.name}</option>
                                     ))}
                             </select>
                         </div>
 
-                        {/* Team Selector */}
                         <div>
                             <label className="block text-sm font-medium text-foreground mb-2">Team</label>
                             <select
@@ -157,7 +145,7 @@ export default function LaunchAgentPage() {
                             >
                                 <option value="">Select team</option>
                                 {teams
-                                    .filter(t => t.brand_id === selectedBrand)
+                                    .filter(t => t.brandId === selectedBrand)
                                     .map(team => (
                                         <option key={team.id} value={team.id}>{team.name}</option>
                                     ))}

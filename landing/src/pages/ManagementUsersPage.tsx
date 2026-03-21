@@ -19,9 +19,9 @@ export default function ManagementUsersPage() {
         name: '',
         email: '',
         role: 'user',
-        company_id: '',
-        brand_id: '',
-        team_id: ''
+        companyId: '',
+        brandId: '',
+        teamId: ''
     });
 
     useEffect(() => {
@@ -50,7 +50,7 @@ export default function ManagementUsersPage() {
     };
 
     const resetForm = () => {
-        setFormData({ name: '', email: '', role: 'user', company_id: '', brand_id: '', team_id: '' });
+        setFormData({ name: '', email: '', role: 'user', companyId: '', brandId: '', teamId: '' });
     };
 
     const openCreateForm = () => {
@@ -64,9 +64,9 @@ export default function ManagementUsersPage() {
             name: user.name || '',
             email: user.email || '',
             role: user.role || 'user',
-            company_id: user.company_id || '',
-            brand_id: user.brand_id || '',
-            team_id: user.team_id || ''
+            companyId: user.companyId || '',
+            brandId: user.brandId || '',
+            teamId: user.teamId || ''
         });
         setEditingUser(user);
         setShowForm(true);
@@ -198,9 +198,9 @@ export default function ManagementUsersPage() {
                                 <tr key={user.id} className="border-b border-border hover:bg-muted/50">
                                     <td className="px-4 py-3 font-medium">{user.name}</td>
                                     <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{getCompanyName(user.company_id)}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{getBrandName(user.brand_id)}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{getTeamName(user.team_id)}</td>
+                                    <td className="px-4 py-3 text-muted-foreground">{getCompanyName(user.companyId)}</td>
+                                    <td className="px-4 py-3 text-muted-foreground">{getBrandName(user.brandId)}</td>
+                                    <td className="px-4 py-3 text-muted-foreground">{getTeamName(user.teamId)}</td>
                                     <td className="px-4 py-3">
                                         <span className={cn('px-2 py-1 rounded text-xs font-medium', getRoleBadgeStyle(user.role))}>
                                             {user.role || 'user'}
@@ -243,23 +243,23 @@ export default function ManagementUsersPage() {
                             </div>
                             <div>
                                 <label className="block text-sm text-muted-foreground mb-1">Company</label>
-                                <select value={formData.company_id} onChange={(e) => setFormData({ ...formData, company_id: e.target.value, brand_id: '', team_id: '' })} required className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50">
+                                <select value={formData.companyId} onChange={(e) => setFormData({ ...formData, companyId: e.target.value, brandId: '', teamId: '' })} required className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50">
                                     <option value="">Select Company...</option>
                                     {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                 </select>
                             </div>
                             <div>
                                 <label className="block text-sm text-muted-foreground mb-1">Brand</label>
-                                <select value={formData.brand_id} onChange={(e) => setFormData({ ...formData, brand_id: e.target.value, team_id: '' })} disabled={!formData.company_id} className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50">
+                                <select value={formData.brandId} onChange={(e) => setFormData({ ...formData, brandId: e.target.value, teamId: '' })} disabled={!formData.companyId} className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50">
                                     <option value="">Select Brand...</option>
-                                    {brands.filter(b => b.company_id === formData.company_id).map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                                    {brands.filter(b => b.companyId === formData.companyId).map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                                 </select>
                             </div>
                             <div>
                                 <label className="block text-sm text-muted-foreground mb-1">Team</label>
-                                <select value={formData.team_id} onChange={(e) => setFormData({ ...formData, team_id: e.target.value })} disabled={!formData.company_id} className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50">
+                                <select value={formData.teamId} onChange={(e) => setFormData({ ...formData, teamId: e.target.value })} disabled={!formData.companyId} className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50">
                                     <option value="">Select Team...</option>
-                                    {teams.filter(t => t.company_id === formData.company_id).map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                                    {teams.filter(t => t.brandId === formData.brandId).map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                                 </select>
                             </div>
                             <div>

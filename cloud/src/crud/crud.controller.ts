@@ -1,127 +1,313 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { CrudService } from './crud.service';
 
 @Controller('api/crud')
 export class CrudController {
   constructor(private readonly crud: CrudService) {}
 
-  // Companies
+  // ========== COMPANIES ==========
+
   @Get('companies')
-  getCompanies(): any {
+  getCompanies() {
     return this.crud.getCompanies();
   }
 
   @Get('companies/:id')
-  getCompany(@Param('id') id: string): any {
+  getCompany(@Param('id') id: string) {
     return this.crud.getCompany(id);
   }
 
   @Post('companies')
-  createCompany(@Body() data: any): any {
+  createCompany(@Body() data: any) {
     return this.crud.createCompany(data);
   }
 
   @Put('companies/:id')
-  updateCompany(@Param('id') id: string, @Body() data: any): any {
+  updateCompany(@Param('id') id: string, @Body() data: any) {
     return this.crud.updateCompany(id, data);
   }
 
   @Delete('companies/:id')
-  deleteCompany(@Param('id') id: string): any {
-    this.crud.deleteCompany(id);
+  async deleteCompany(@Param('id') id: string) {
+    await this.crud.deleteCompany(id);
     return { success: true };
   }
 
-  // Brands
+  @Post('companies/:id/countries')
+  addCompanyCountry(@Param('id') id: string, @Body() data: { countryCode: string }) {
+    return this.crud.addCompanyCountry(id, data.countryCode);
+  }
+
+  @Delete('companies/:id/countries/:code')
+  removeCompanyCountry(@Param('id') id: string, @Param('code') code: string) {
+    return this.crud.removeCompanyCountry(id, code);
+  }
+
+  // ========== BRANDS ==========
+
   @Get('brands')
-  getBrands(): any {
-    return this.crud.getBrands();
+  getBrands(@Query('companyId') companyId?: string) {
+    return this.crud.getBrands(companyId);
   }
 
   @Post('brands')
-  createBrand(@Body() data: any): any {
+  createBrand(@Body() data: any) {
     return this.crud.createBrand(data);
   }
 
   @Put('brands/:id')
-  updateBrand(@Param('id') id: string, @Body() data: any): any {
+  updateBrand(@Param('id') id: string, @Body() data: any) {
     return this.crud.updateBrand(id, data);
   }
 
   @Delete('brands/:id')
-  deleteBrand(@Param('id') id: string): any {
-    this.crud.deleteBrand(id);
+  async deleteBrand(@Param('id') id: string) {
+    await this.crud.deleteBrand(id);
     return { success: true };
   }
 
-  // Teams
+  // ========== TEAMS ==========
+
   @Get('teams')
-  getTeams(): any {
-    return this.crud.getTeams();
+  getTeams(@Query('companyId') companyId?: string) {
+    return this.crud.getTeams(companyId);
+  }
+
+  @Get('teams/:id')
+  getTeam(@Param('id') id: string) {
+    return this.crud.getTeams(id);
   }
 
   @Post('teams')
-  createTeam(@Body() data: any): any {
+  createTeam(@Body() data: any) {
     return this.crud.createTeam(data);
   }
 
   @Put('teams/:id')
-  updateTeam(@Param('id') id: string, @Body() data: any): any {
+  updateTeam(@Param('id') id: string, @Body() data: any) {
     return this.crud.updateTeam(id, data);
   }
 
   @Delete('teams/:id')
-  deleteTeam(@Param('id') id: string): any {
-    this.crud.deleteTeam(id);
+  async deleteTeam(@Param('id') id: string) {
+    await this.crud.deleteTeam(id);
     return { success: true };
   }
 
-  // Users
+  @Get('teams/:id/interfaces')
+  getTeamInterfaces(@Param('id') id: string) {
+    return this.crud.getTeamInterfaces(id);
+  }
+
+  @Put('teams/:id/interfaces')
+  setTeamInterfaces(@Param('id') id: string, @Body() data: { interfaceIds: string[] }) {
+    return this.crud.setTeamInterfaces(id, data.interfaceIds);
+  }
+
+  // ========== USERS ==========
+
   @Get('users')
-  getUsers(): any {
-    return this.crud.getUsers();
+  getUsers(@Query('companyId') companyId?: string) {
+    return this.crud.getUsers(companyId);
   }
 
   @Post('users')
-  createUser(@Body() data: any): any {
+  createUser(@Body() data: any) {
     return this.crud.createUser(data);
   }
 
   @Put('users/:id')
-  updateUser(@Param('id') id: string, @Body() data: any): any {
+  updateUser(@Param('id') id: string, @Body() data: any) {
     return this.crud.updateUser(id, data);
   }
 
   @Delete('users/:id')
-  deleteUser(@Param('id') id: string): any {
-    this.crud.deleteUser(id);
+  async deleteUser(@Param('id') id: string) {
+    await this.crud.deleteUser(id);
     return { success: true };
   }
 
-  // Categories
-  @Get('categories')
-  getCategories(): any {
-    return this.crud.getCategories();
+  // ========== AGENTS ==========
+
+  @Get('agents')
+  getAgents(@Query('companyId') companyId?: string) {
+    return this.crud.getAgents(companyId);
   }
 
-  @Get('categories/:id')
-  getCategory(@Param('id') id: string): any {
-    return this.crud.getCategory(id);
+  @Post('agents')
+  createAgent(@Body() data: any) {
+    return this.crud.createAgent(data);
   }
 
-  @Post('categories')
-  createCategory(@Body() data: any): any {
-    return this.crud.createCategory(data);
+  @Put('agents/:id')
+  updateAgent(@Param('id') id: string, @Body() data: any) {
+    return this.crud.updateAgent(id, data);
   }
 
-  @Put('categories/:id')
-  updateCategory(@Param('id') id: string, @Body() data: any): any {
-    return this.crud.updateCategory(id, data);
-  }
-
-  @Delete('categories/:id')
-  deleteCategory(@Param('id') id: string): any {
-    this.crud.deleteCategory(id);
+  @Delete('agents/:id')
+  async deleteAgent(@Param('id') id: string) {
+    await this.crud.deleteAgent(id);
     return { success: true };
+  }
+
+  // ========== MANAGED INTERFACES ==========
+
+  @Get('interfaces')
+  getManagedInterfaces() {
+    return this.crud.getManagedInterfaces();
+  }
+
+  @Post('interfaces')
+  createManagedInterface(@Body() data: any) {
+    return this.crud.createManagedInterface(data);
+  }
+
+  @Put('interfaces/:id')
+  updateManagedInterface(@Param('id') id: string, @Body() data: any) {
+    return this.crud.updateManagedInterface(id, data);
+  }
+
+  @Delete('interfaces/:id')
+  async deleteManagedInterface(@Param('id') id: string) {
+    await this.crud.deleteManagedInterface(id);
+    return { success: true };
+  }
+
+  // ========== WORKFLOWS ==========
+
+  @Get('workflows')
+  getWorkflows() {
+    return this.crud.getWorkflows();
+  }
+
+  @Post('workflows')
+  createWorkflow(@Body() data: any) {
+    return this.crud.createWorkflow(data);
+  }
+
+  @Put('workflows/:id')
+  updateWorkflow(@Param('id') id: string, @Body() data: any) {
+    return this.crud.updateWorkflow(id, data);
+  }
+
+  @Delete('workflows/:id')
+  async deleteWorkflow(@Param('id') id: string) {
+    await this.crud.deleteWorkflow(id);
+    return { success: true };
+  }
+
+  // ========== PROVIDER CATALOG ==========
+
+  @Get('provider-catalog')
+  getProviderCatalog() {
+    return this.crud.getProviderCatalog();
+  }
+
+  @Put('provider-catalog')
+  upsertProviderCatalog(@Body() data: any[]) {
+    return this.crud.upsertProviderCatalog(data);
+  }
+
+  // ========== TENANT PROVIDER CONFIG ==========
+
+  @Get('tenant-provider-config')
+  getTenantProviderConfig(@Query('companyId') companyId: string) {
+    return this.crud.getTenantProviderConfig(companyId);
+  }
+
+  @Put('tenant-provider-config')
+  upsertTenantProviderConfig(@Body() data: any[]) {
+    return this.crud.upsertTenantProviderConfig(data);
+  }
+
+  // ========== TENANT VOICE PROFILES ==========
+
+  @Get('voice-profiles')
+  getTenantVoiceProfiles(@Query('companyId') companyId: string) {
+    return this.crud.getTenantVoiceProfiles(companyId);
+  }
+
+  @Post('voice-profiles')
+  createTenantVoiceProfile(@Body() data: any) {
+    return this.crud.createTenantVoiceProfile(data);
+  }
+
+  @Put('voice-profiles/:id')
+  updateTenantVoiceProfile(@Param('id') id: string, @Body() data: any) {
+    return this.crud.updateTenantVoiceProfile(id, data);
+  }
+
+  @Delete('voice-profiles/:id')
+  async deleteTenantVoiceProfile(@Param('id') id: string) {
+    await this.crud.deleteTenantVoiceProfile(id);
+    return { success: true };
+  }
+
+  // ========== SESSIONS ==========
+
+  @Get('sessions')
+  getSessions(@Query('companyId') companyId?: string, @Query('limit') limit?: number) {
+    return this.crud.getSessions(companyId, limit ? parseInt(String(limit)) : undefined);
+  }
+
+  @Get('sessions/:id')
+  getSession(@Param('id') id: string) {
+    return this.crud.getSession(id);
+  }
+
+  @Post('sessions')
+  createSession(@Body() data: any) {
+    return this.crud.createSession(data);
+  }
+
+  @Put('sessions/:id')
+  updateSession(@Param('id') id: string, @Body() data: any) {
+    return this.crud.updateSession(id, data);
+  }
+
+  // ========== KNOWLEDGE ==========
+
+  @Get('knowledge')
+  getKnowledgeBases(@Query('companyId') companyId: string) {
+    return this.crud.getKnowledgeBases(companyId);
+  }
+
+  @Post('knowledge')
+  createKnowledgeBase(@Body() data: any) {
+    return this.crud.createKnowledgeBase(data);
+  }
+
+  @Delete('knowledge/:id')
+  async deleteKnowledgeBase(@Param('id') id: string) {
+    await this.crud.deleteKnowledgeBase(id);
+    return { success: true };
+  }
+
+  @Get('knowledge/:id/documents')
+  getKnowledgeDocuments(@Param('id') id: string) {
+    return this.crud.getKnowledgeDocuments(id);
+  }
+
+  @Post('knowledge/:id/documents')
+  createKnowledgeDocument(@Param('id') id: string, @Body() data: any) {
+    return this.crud.createKnowledgeDocument({ ...data, knowledgeBaseId: id });
+  }
+
+  @Delete('knowledge/documents/:docId')
+  async deleteKnowledgeDocument(@Param('docId') id: string) {
+    await this.crud.deleteKnowledgeDocument(id);
+    return { success: true };
+  }
+
+  // ========== AUDIT LOGS ==========
+
+  @Get('audit-logs')
+  getAuditLogs(@Query('companyId') companyId?: string, @Query('limit') limit?: number) {
+    return this.crud.getAuditLogs(companyId, limit ? parseInt(String(limit)) : undefined);
+  }
+
+  @Post('audit-logs')
+  createAuditLog(@Body() data: any) {
+    return this.crud.createAuditLog(data);
   }
 }

@@ -1,6 +1,6 @@
 /**
  * CRUD API Client for KELEDON
- * Uses the cloud backend API instead of Supabase
+ * Uses the cloud backend API (Prisma) - returns camelCase properties
  */
 
 import { API_URL } from './config';
@@ -20,165 +20,290 @@ async function fetchApi(endpoint: string, method = 'GET', body?: any) {
     return response.json();
 }
 
+// Type definitions (matching Prisma schema - camelCase)
+export interface Company {
+    id: string;
+    name: string;
+    industry?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    countries?: CompanyCountry[];
+}
+
+export interface CompanyCountry {
+    id?: string;
+    companyId: string;
+    countryCode: string;
+}
+
+export interface Brand {
+    id: string;
+    companyId: string;
+    name: string;
+    color?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    company?: { id: string; name: string };
+}
+
+export interface Team {
+    id: string;
+    brandId?: string;
+    name: string;
+    country?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    brand?: { id: string; name: string; companyId: string };
+    company?: { id: string; name: string };
+}
+
+export interface User {
+    id: string;
+    companyId?: string;
+    teamId?: string;
+    email: string;
+    name?: string;
+    role: string;
+    isOnline?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+    company?: { id: string; name: string };
+    team?: { id: string; name: string };
+}
+
+export interface Agent {
+    id: string;
+    teamId: string;
+    userId?: string;
+    name: string;
+    email?: string;
+    role?: string;
+    isActive?: boolean;
+    callsHandled?: number;
+    fcrRate?: number;
+    avgHandleTime?: number;
+    autonomyLevel?: number;
+    createdAt?: string;
+    updatedAt?: string;
+    team?: { id: string; name: string; brand?: { id: string; name: string; companyId: string } };
+    user?: { id: string; name: string; email: string };
+}
+
+export interface ManagedInterface {
+    id: string;
+    name: string;
+    baseUrl: string;
+    category?: string;
+    status: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface Workflow {
+    id: string;
+    name: string;
+    description?: string;
+    isEnabled: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface ProviderCatalogEntry {
+    id: string;
+    type: string;
+    name: string;
+    status?: string;
+    isEnabled: boolean;
+}
+
+export interface TenantProviderConfig {
+    id: string;
+    companyId: string;
+    providerId: string;
+    providerType: string;
+    isEnabled: boolean;
+    isDefault: boolean;
+}
+
+export interface TenantVoiceProfile {
+    id: string;
+    companyId: string;
+    providerId: string;
+    name: string;
+    language?: string;
+    isEnabled: boolean;
+    isDefault: boolean;
+}
+
+export interface Session {
+    id: string;
+    userId?: string;
+    teamId?: string;
+    status?: string;
+    metadata?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    user?: { id: string; name: string };
+    team?: { id: string; name: string };
+}
+
 // Companies
-export async function getCompanies() {
+export async function getCompanies(): Promise<Company[]> {
     return fetchApi('/companies');
 }
 
-export async function createCompany(data: any) {
+export async function createCompany(data: { name: string; industry?: string }): Promise<Company> {
     return fetchApi('/companies', 'POST', data);
 }
 
-export async function updateCompany(id: string, data: any) {
+export async function updateCompany(id: string, data: { name?: string; industry?: string }): Promise<Company> {
     return fetchApi(`/companies/${id}`, 'PUT', data);
 }
 
-export async function deleteCompany(id: string) {
+export async function deleteCompany(id: string): Promise<void> {
     return fetchApi(`/companies/${id}`, 'DELETE');
 }
 
 // Brands
-export async function getBrands(companyId?: string) {
-    const brands = await fetchApi('/brands');
+export async function getBrands(companyId?: string): Promise<Brand[]> {
+    const brands: Brand[] = await fetchApi('/brands');
     if (companyId) {
-        return brands.filter((b: any) => b.company_id === companyId);
+        return brands.filter(b => b.companyId === companyId);
     }
     return brands;
 }
 
-export async function createBrand(data: any) {
+export async function createBrand(data: { name: string; companyId: string; color?: string }): Promise<Brand> {
     return fetchApi('/brands', 'POST', data);
 }
 
-export async function updateBrand(id: string, data: any) {
+export async function updateBrand(id: string, data: { name?: string; color?: string }): Promise<Brand> {
     return fetchApi(`/brands/${id}`, 'PUT', data);
 }
 
-export async function deleteBrand(id: string) {
+export async function deleteBrand(id: string): Promise<void> {
     return fetchApi(`/brands/${id}`, 'DELETE');
 }
 
 // Teams
-export async function getTeams(companyId?: string, brandId?: string) {
-    const teams = await fetchApi('/teams');
-    let filtered = teams;
+export async function getTeams(companyId?: string): Promise<Team[]> {
+    const teams: Team[] = await fetchApi('/teams');
     if (companyId) {
-        filtered = filtered.filter((t: any) => t.company_id === companyId);
+        return teams.filter(t => t.brand?.companyId === companyId);
     }
-    if (brandId) {
-        filtered = filtered.filter((t: any) => t.brand_id === brandId);
-    }
-    return filtered;
+    return teams;
 }
 
-export async function createTeam(data: any) {
+export async function createTeam(data: { name: string; brandId?: string; country?: string }): Promise<Team> {
     return fetchApi('/teams', 'POST', data);
 }
 
-export async function updateTeam(id: string, data: any) {
+export async function updateTeam(id: string, data: { name?: string; country?: string }): Promise<Team> {
     return fetchApi(`/teams/${id}`, 'PUT', data);
 }
 
-export async function deleteTeam(id: string) {
+export async function deleteTeam(id: string): Promise<void> {
     return fetchApi(`/teams/${id}`, 'DELETE');
 }
 
 // Users
-export async function getUsers(companyId?: string) {
-    const users = await fetchApi('/users');
+export async function getUsers(companyId?: string): Promise<User[]> {
+    const users: User[] = await fetchApi('/users');
     if (companyId) {
-        return users.filter((u: any) => u.company_id === companyId);
+        return users.filter(u => u.companyId === companyId);
     }
     return users;
 }
 
-export async function createUser(data: any) {
+export async function createUser(data: { email: string; name?: string; companyId?: string; teamId?: string; role?: string }): Promise<User> {
     return fetchApi('/users', 'POST', data);
 }
 
-export async function updateUser(id: string, data: any) {
+export async function updateUser(id: string, data: { email?: string; name?: string; companyId?: string; teamId?: string; role?: string }): Promise<User> {
     return fetchApi(`/users/${id}`, 'PUT', data);
 }
 
-export async function deleteUser(id: string) {
+export async function deleteUser(id: string): Promise<void> {
     return fetchApi(`/users/${id}`, 'DELETE');
 }
 
-// Agents (placeholder - not implemented in backend yet)
-export async function getAgents(companyId?: string) {
-    return getUsers(companyId); // Reuse users for now
-}
-
-export async function createAgent(data: any) {
-    return createUser({ ...data, role: 'agent' });
-}
-
-export async function updateAgent(id: string, data: any) {
-    return updateUser(id, data);
-}
-
-export async function deleteAgent(id: string) {
-    return deleteUser(id);
-}
-
-// Categories
-export async function getCategories(companyId?: string) {
-    const categories = await fetchApi('/categories');
+// Agents
+export async function getAgents(companyId?: string): Promise<Agent[]> {
+    const agents: Agent[] = await fetchApi('/agents');
     if (companyId) {
-        return categories.filter((c: any) => c.company_id === companyId);
+        return agents.filter(a => a.team?.brand?.companyId === companyId);
     }
-    return categories;
+    return agents;
 }
 
-export async function createCategory(data: any) {
-    return fetchApi('/categories', 'POST', data);
+export async function createAgent(data: { name: string; teamId: string; userId?: string; email?: string; role?: string }): Promise<Agent> {
+    return fetchApi('/agents', 'POST', data);
 }
 
-export async function updateCategory(id: string, data: any) {
-    return fetchApi(`/categories/${id}`, 'PUT', data);
+export async function updateAgent(id: string, data: Partial<Agent>): Promise<Agent> {
+    return fetchApi(`/agents/${id}`, 'PUT', data);
 }
 
-export async function deleteCategory(id: string) {
-    return fetchApi(`/categories/${id}`, 'DELETE');
+export async function deleteAgent(id: string): Promise<void> {
+    return fetchApi(`/agents/${id}`, 'DELETE');
 }
 
-// Placeholder exports for other functions that might be needed
-export async function addCompanyCountry(companyId: string, countryCode: string) {
-    const company = await fetchApi(`/companies/${companyId}`);
-    const countries = company.countries || [];
-    if (!countries.includes(countryCode)) {
-        countries.push(countryCode);
-        await updateCompany(companyId, { countries });
-    }
+// Managed Interfaces
+export async function getManagedInterfaces(): Promise<ManagedInterface[]> {
+    return fetchApi('/interfaces');
 }
 
-export async function removeCompanyCountry(companyId: string, countryCode: string) {
-    const company = await fetchApi(`/companies/${companyId}`);
-    const countries = (company.countries || []).filter((c: string) => c !== countryCode);
-    await updateCompany(companyId, { countries });
+export async function getTeamInterfaces(teamId: string): Promise<ManagedInterface[]> {
+    return fetchApi(`/teams/${teamId}/interfaces`);
 }
 
-export async function getTeamDetails(teamId: string) {
-    const teams = await fetchApi('/teams');
-    return teams.find((t: any) => t.id === teamId);
+// Sessions
+export async function getSessions(companyId?: string, limit = 100): Promise<Session[]> {
+    let endpoint = `/sessions?limit=${limit}`;
+    if (companyId) endpoint += `&companyId=${companyId}`;
+    return fetchApi(endpoint);
 }
 
-// Provider-related (placeholder - would need backend implementation)
-export async function getProviderCatalog() { return []; }
-export async function upsertProviderCatalog(data: any) { return data; }
-export async function getTenantProviderConfig(companyId: string) { return []; }
-export async function upsertTenantProviderConfig(data: any) { return data; }
-export async function getTenantVoiceProfiles(companyId: string) { return []; }
-export async function createTenantVoiceProfile(data: any) { return data; }
-export async function updateTenantVoiceProfile(id: string, data: any) { return data; }
-export async function deleteTenantVoiceProfile(id: string) { return true; }
+export async function getSession(id: string): Promise<Session> {
+    return fetchApi(`/sessions/${id}`);
+}
 
-// Type exports
-export type Company = { id: string; name: string; industry?: string; countries?: string[] };
-export type Brand = { id: string; name: string; company_id: string; color?: string };
-export type Team = { id: string; name: string; company_id: string; brand_id?: string; country?: string };
-export type Category = { id: string; name: string; color: string; description?: string; company_id: string };
-export type ProviderCatalogEntry = any;
-export type TenantProviderConfig = any;
-export type TenantVoiceProfile = any;
-export type ProviderType = 'stt' | 'tts' | 'rpa';
+// Provider Catalog
+export async function getProviderCatalog(): Promise<ProviderCatalogEntry[]> {
+    return fetchApi('/provider-catalog');
+}
+
+export async function upsertProviderCatalog(data: ProviderCatalogEntry[]): Promise<ProviderCatalogEntry[]> {
+    return fetchApi('/provider-catalog', 'PUT', data);
+}
+
+// Tenant Provider Config
+export async function getTenantProviderConfig(companyId: string): Promise<TenantProviderConfig[]> {
+    return fetchApi(`/tenant-provider-config?companyId=${companyId}`);
+}
+
+export async function upsertTenantProviderConfig(data: Omit<TenantProviderConfig, 'id'>[]): Promise<TenantProviderConfig[]> {
+    return fetchApi('/tenant-provider-config', 'PUT', data);
+}
+
+// Tenant Voice Profiles
+export async function getTenantVoiceProfiles(companyId: string): Promise<TenantVoiceProfile[]> {
+    return fetchApi(`/voice-profiles?companyId=${companyId}`);
+}
+
+export async function createTenantVoiceProfile(data: Omit<TenantVoiceProfile, 'id'>): Promise<TenantVoiceProfile> {
+    return fetchApi('/voice-profiles', 'POST', data);
+}
+
+export async function updateTenantVoiceProfile(id: string, data: Partial<TenantVoiceProfile>): Promise<TenantVoiceProfile> {
+    return fetchApi(`/voice-profiles/${id}`, 'PUT', data);
+}
+
+export async function deleteTenantVoiceProfile(id: string): Promise<void> {
+    return fetchApi(`/voice-profiles/${id}`, 'DELETE');
+}
+
+// Team Details
+export async function getTeamDetails(teamId: string): Promise<Team> {
+    return fetchApi(`/teams/${teamId}`);
+}

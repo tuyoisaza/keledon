@@ -3,16 +3,61 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// Team - represents a company/team using KELEDON
+// ========== CORE ENTITIES ==========
+
+model Company {
+  id        String   @id @default(uuid())
+  name      String
+  industry  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  countries CompanyCountry[]
+  brands    Brand[]
+  users     User[]
+  tenantProviderConfigs TenantProviderConfig[]
+  tenantVoiceProfiles   TenantVoiceProfile[]
+
+  @@map("companies")
+}
+
+model CompanyCountry {
+  id           String   @id @default(uuid())
+  companyId    String
+  countryCode  String   // ISO 3166-1 alpha-2 code
+  createdAt    DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, countryCode])
+  @@map("company_countries")
+}
+
+model Brand {
+  id        String   @id @default(uuid())
+  companyId String
+  name      String
+  color     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  teams   Team[]
+
+  @@map("brands")
+}
+
 model Team {
-  id          String   @id @default(uuid())
-  name        String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  brandId   String?
+  name      String
+  country   String?  // ISO country code
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Provider configuration per team
   sttProvider String   @default("vosk")   // vosk, deepgram, webspeech
@@ -27,55 +72,317 @@ model Team {
   
   // ElevenLabs configuration
   elevenlabsApiKey String?
-  
-  // Relations
+
+  brand    Brand?    @relation(fields: [brandId], references: [id], onDelete: Cascade)
   users    User[]
+  agents   Agent[]
   sessions Session[]
+  teamInterfaces TeamInterface[]
 
   @@map("teams")
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  role      String?  // admin, team_lead, agent
-  teamId    String?
-  passwordHash String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(uuid())
+  companyId     String?
+  teamId        String?
+  email         String   @unique
+  name          String?
+  role          String   @default("user") // user, admin, superadmin
+  isOnline      Boolean  @default(false)
+  lastLogin     DateTime?
+  passwordHash  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  team     Team?    @relation(fields: [teamId], references: [id])
+  company  Company?  @relation(fields: [companyId], references: [id])
+  team     Team?     @relation(fields: [teamId], references: [id])
   sessions Session[]
+  agents   Agent[]
 
   @@map("users")
 }
+
+model Agent {
+  id             String   @id @default(uuid())
+  teamId          String
+  userId          String?
+  name            String
+  email           String?
+  role            String?
+  isActive        Boolean  @default(true)
+  callsHandled    Int      @default(0)
+  fcrRate         Float?
+  avgHandleTime   Float?
+  autonomyLevel   Int      @default(5)
+  policies        String?  // JSON string
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  team  Team  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user  User? @relation(fields: [userId], references: [id])
+
+  @@map("agents")
+}
+
+// ========== MANAGED INTERFACES ==========
+
+model ManagedInterface {
+  id            String   @id @default(uuid())
+  name          String
+  baseUrl       String
+  category      String?   // 'talk' | 'case'
+  providerKey   String?
+  capabilities  String?   // JSON string
+  icon          String?
+  status        String    @default("disconnected") // connected, disconnected, error
+  credentials   String?   // JSON string
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  teamInterfaces TeamInterface[]
+
+  @@map("managed_interfaces")
+}
+
+model TeamInterface {
+  id         String   @id @default(uuid())
+  teamId     String
+  interfaceId String
+  createdAt  DateTime @default(now())
+
+  team     Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  managedInterface ManagedInterface @relation(fields: [interfaceId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, interfaceId])
+  @@map("team_interfaces")
+}
+
+// ========== WORKFLOWS ==========
+
+model Workflow {
+  id           String   @id @default(uuid())
+  interfaceId  String?
+  name         String
+  description  String?
+  trigger      String   // JSON: { type, value, confidence? }
+  steps        String   // JSON array
+  variables    String   // JSON object
+  isEnabled    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  flowRuns FlowRun[]
+
+  @@map("workflows")
+}
+
+model FlowDefinition {
+  id          String   @id @default(uuid())
+  workflowId  String
+  name        String
+  definition  String   // JSON
+  version     Int      @default(1)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  versions FlowDefinitionVersion[]
+
+  @@map("flow_definitions")
+}
+
+model FlowDefinitionVersion {
+  id              String   @id @default(uuid())
+  flowDefinitionId String
+  version         Int
+  definition      String   // JSON
+  changelog       String?
+  createdAt       DateTime @default(now())
+
+  flowDefinition FlowDefinition @relation(fields: [flowDefinitionId], references: [id], onDelete: Cascade)
+
+  @@unique([flowDefinitionId, version])
+  @@map("flow_definition_versions")
+}
+
+model TenantFlowPermission {
+  id           String   @id @default(uuid())
+  tenantId     String
+  workflowId   String
+  canExecute   Boolean  @default(true)
+  canEdit      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([tenantId, workflowId])
+  @@map("tenant_flow_permissions")
+}
+
+model IntentFlowMapping {
+  id         String   @id @default(uuid())
+  intent     String
+  workflowId String
+  confidence Int      @default(80)
+  createdAt  DateTime @default(now())
+
+  @@map("intent_flow_mappings")
+}
+
+model FlowRun {
+  id           String   @id @default(uuid())
+  workflowId   String
+  status       String   @default("pending") // pending, running, completed, failed
+  result       String?  // JSON
+  error        String?
+  startedAt    DateTime @default(now())
+  completedAt  DateTime?
+
+  workflow Workflow @relation(fields: [workflowId], references: [id])
+
+  @@map("flow_runs")
+}
+
+model FlowRunEvidence {
+  id        String   @id @default(uuid())
+  runId     String
+  type      String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@map("flow_run_evidence")
+}
+
+// ========== PROVIDERS ==========
+
+model ProviderCatalog {
+  id          String   @id @default(uuid())
+  type        String   // 'stt' | 'tts' | 'rpa'
+  name        String
+  description String?
+  status      String   @default("production") // experimental, production, deprecated
+  isEnabled   Boolean  @default(true)
+  metadata    String?  // JSON
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenantProviderConfigs TenantProviderConfig[]
+  tenantVoiceProfiles   TenantVoiceProfile[]
+
+  @@map("provider_catalog")
+}
+
+model TenantProviderConfig {
+  id           String   @id @default(uuid())
+  companyId    String
+  providerId   String
+  providerType String   // 'stt' | 'tts' | 'rpa'
+  isEnabled    Boolean  @default(true)
+  isDefault    Boolean  @default(false)
+  limits       String?  // JSON
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  company        Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  providerCatalog ProviderCatalog @relation(fields: [providerId], references: [id])
+
+  @@unique([companyId, providerId])
+  @@map("tenant_provider_config")
+}
+
+model TenantVoiceProfile {
+  id           String   @id @default(uuid())
+  companyId    String
+  providerId   String
+  name         String
+  language     String   @default("en")
+  isEnabled    Boolean  @default(true)
+  isDefault    Boolean  @default(false)
+  config       String?  // JSON
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  company        Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  providerCatalog ProviderCatalog @relation(fields: [providerId], references: [id])
+
+  @@map("tenant_voice_profiles")
+}
+
+// ========== SESSIONS (Existing) ==========
 
 model Session {
   id        String   @id @default(uuid())
   userId    String?
   teamId    String?
   status    String?
-  metadata  String?
+  metadata  String?  // JSON
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user     User?    @relation(fields: [userId], references: [id])
-  team     Team?    @relation(fields: [teamId], references: [id])
-  events   Event[]
+  user   User?    @relation(fields: [userId], references: [id])
+  team   Team?    @relation(fields: [teamId], references: [id])
+  events Event[]
 
   @@map("sessions")
 }
 
 model Event {
-  id         String   @id @default(uuid())
-  sessionId  String
-  type       String
-  payload    String?
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  sessionId String
+  type      String
+  payload   String?  // JSON
+  createdAt DateTime @default(now())
 
   session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   @@index([sessionId])
   @@map("events")
+}
+
+// ========== KNOWLEDGE / RAG ==========
+
+model KnowledgeBase {
+  id          String   @id @default(uuid())
+  companyId   String
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  documents KnowledgeDocument[]
+
+  @@map("knowledge_bases")
+}
+
+model KnowledgeDocument {
+  id           String   @id @default(uuid())
+  knowledgeBaseId String
+  title        String
+  content      String
+  metadata     String?  // JSON
+  vectorIds    String?  // Comma-separated vector IDs
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  knowledgeBase KnowledgeBase @relation(fields: [knowledgeBaseId], references: [id], onDelete: Cascade)
+
+  @@map("knowledge_documents")
+}
+
+// ========== AUDIT LOG ==========
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  changes   String?  // JSON
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@map("audit_logs")
 }

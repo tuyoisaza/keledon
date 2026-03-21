@@ -1,24 +1,24 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+// API Client for KELEDON Backend
+// Replaces Supabase client with backend API calls
 
-// Initialize Supabase client for frontend use
-// Uses the anon/public key which has Row Level Security applied
+const API_BASE = '/api/crud';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('⚠️ Supabase credentials not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env');
-}
-
-export const supabase: SupabaseClient | null = supabaseUrl && supabaseAnonKey
-    ? createClient(supabaseUrl, supabaseAnonKey, {
-        auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            storage: window.sessionStorage,
+async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+        headers: {
+            'Content-Type': 'application/json',
+            ...options?.headers,
         },
-    })
-    : null;
+        ...options,
+    });
+
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Request failed' }));
+        throw new Error(error.message || `HTTP ${response.status}`);
+    }
+
+    return response.json();
+}
 
 // ========== TYPE DEFINITIONS ==========
 
@@ -26,102 +26,101 @@ export interface Company {
     id: string;
     name: string;
     industry?: string;
-    // agent_count deprecated in favor of specific team assignments
-    created_at?: string;
-    updated_at?: string;
-    countries?: { country_code: string }[];
+    createdAt?: string;
+    updatedAt?: string;
+    countries?: CompanyCountry[];
+    companies?: { name: string };
 }
 
 export interface CompanyCountry {
-    company_id: string;
-    country_code: string;
-    created_at?: string;
+    id?: string;
+    companyId: string;
+    countryCode: string;
+    createdAt?: string;
 }
 
 export interface Brand {
     id: string;
-    company_id: string;
+    companyId: string;
     name: string;
     color?: string;
-    created_at?: string;
-    updated_at?: string;
-    companies?: { name: string };
+    createdAt?: string;
+    updatedAt?: string;
+    companies?: { id: string; name: string };
+    brand?: { name: string; companyId: string };
 }
 
 export interface Team {
     id: string;
-    brand_id: string;
+    brandId?: string;
     name: string;
-    country?: string; // ISO country code
+    country?: string;
     member_count?: number;
-    created_at?: string;
-    updated_at?: string;
-    brands?: { name: string };
+    createdAt?: string;
+    updatedAt?: string;
+    brands?: { name: string; companyId: string };
+    company?: { id: string; name: string };
 }
 
 export interface Agent {
     id: string;
-    team_id: string;
-    user_id?: string;
+    teamId: string;
+    userId?: string;
     name: string;
     email?: string;
     role?: string;
-    is_active?: boolean;
-    calls_handled?: number;
-    fcr_rate?: number;
-    avg_handle_time?: number;
-    autonomy_level?: number;
-    policies?: any;
-    created_at?: string;
-    updated_at?: string;
-    teams?: { name: string };
+    isActive?: boolean;
+    callsHandled?: number;
+    fcrRate?: number;
+    avgHandleTime?: number;
+    autonomyLevel?: number;
+    policies?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    teams?: { name: string; brand?: { name: string; companyId: string } };
     users?: { name: string; email: string };
 }
 
 export interface User {
     id: string;
-    company_id?: string;
-    team_id?: string;
+    companyId?: string;
+    teamId?: string;
     email: string;
-    name: string;
-    role: 'user' | 'admin' | 'superadmin';
-    is_online?: boolean;
-    last_login?: string;
-    created_at?: string;
-    updated_at?: string;
-    companies?: { name: string };
-    teams?: { name: string };
+    name?: string;
+    role: string;
+    isOnline?: boolean;
+    lastLogin?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    companies?: { id: string; name: string };
+    teams?: { id: string; name: string };
 }
 
 export interface ManagedInterface {
     id: string;
     name: string;
-    base_url: string;
+    baseUrl: string;
     category?: 'talk' | 'case';
-    provider_key?: string;
-    capabilities?: Record<string, any>;
+    providerKey?: string;
+    capabilities?: string;
     icon?: string;
     status: 'connected' | 'disconnected' | 'error';
-    credentials?: object;
-    created_at?: string;
-    updated_at?: string;
+    credentials?: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface Workflow {
     id: string;
-    interface_id?: string;
+    interfaceId?: string;
     name: string;
     description?: string;
-    trigger: {
-        type: string;
-        value: string;
-        confidence?: number;
-    };
-    steps: object[];
-    variables: Record<string, string>;
-    is_enabled: boolean;
-    created_at?: string;
-    updated_at?: string;
+    trigger: string;
+    steps: string;
+    variables: string;
+    isEnabled: boolean;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export type ProviderType = 'stt' | 'tts' | 'rpa';
@@ -133,523 +132,356 @@ export interface ProviderCatalogEntry {
     name: string;
     description?: string;
     status?: ProviderStatus;
-    is_enabled: boolean;
-    metadata?: any;
-    created_at?: string;
-    updated_at?: string;
+    isEnabled: boolean;
+    metadata?: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface TenantProviderConfig {
     id: string;
-    company_id: string;
-    provider_id: string;
-    provider_type: ProviderType;
-    is_enabled: boolean;
-    is_default: boolean;
-    limits?: any;
-    provider_catalog?: ProviderCatalogEntry;
-    created_at?: string;
-    updated_at?: string;
+    companyId: string;
+    providerId: string;
+    providerType: ProviderType;
+    isEnabled: boolean;
+    isDefault: boolean;
+    limits?: string;
+    providerCatalog?: ProviderCatalogEntry;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface TenantVoiceProfile {
     id: string;
-    company_id: string;
-    provider_id: string;
+    companyId: string;
+    providerId: string;
     name: string;
     language?: string;
-    is_enabled: boolean;
-    is_default: boolean;
-    config?: any;
-    provider_catalog?: ProviderCatalogEntry;
-    created_at?: string;
-    updated_at?: string;
+    isEnabled: boolean;
+    isDefault: boolean;
+    config?: string;
+    providerCatalog?: ProviderCatalogEntry;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
-// ========== HELPER FUNCTIONS ==========
+export interface Session {
+    id: string;
+    userId?: string;
+    teamId?: string;
+    status?: string;
+    metadata?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    user?: { id: string; name: string };
+    team?: { id: string; name: string };
+    events?: Event[];
+}
 
-function ensureClient(): SupabaseClient {
-    if (!supabase) {
-        throw new Error('Supabase client not initialized');
-    }
-    return supabase;
+export interface Event {
+    id: string;
+    sessionId: string;
+    type: string;
+    payload?: string;
+    createdAt?: string;
+}
+
+export interface TeamInterface {
+    teamId: string;
+    interfaceId: string;
+    managedInterface?: ManagedInterface;
 }
 
 // ========== COMPANIES ==========
 
 export async function getCompanies(): Promise<Company[]> {
-    const { data, error } = await ensureClient()
-        .from('companies')
-        .select('*, countries:company_countries(country_code)')
-        .order('name');
-
-    if (error) throw error;
-    return data || [];
+    return apiFetch<Company[]>('/companies');
 }
 
-export async function addCompanyCountry(companyId: string, countryCode: string): Promise<void> {
-    const { error } = await ensureClient()
-        .from('company_countries')
-        .insert([{ company_id: companyId, country_code: countryCode }]);
-
-    if (error) throw error;
+export async function addCompanyCountry(companyId: string, countryCode: string): Promise<CompanyCountry> {
+    return apiFetch<CompanyCountry>(`/companies/${companyId}/countries`, {
+        method: 'POST',
+        body: JSON.stringify({ countryCode }),
+    });
 }
 
 export async function removeCompanyCountry(companyId: string, countryCode: string): Promise<void> {
-    const { error } = await ensureClient()
-        .from('company_countries')
-        .delete()
-        .match({ company_id: companyId, country_code: countryCode });
-
-    if (error) throw error;
+    return apiFetch<void>(`/companies/${companyId}/countries/${countryCode}`, {
+        method: 'DELETE',
+    });
 }
 
-export async function createCompany(company: Omit<Company, 'id' | 'created_at' | 'updated_at'>): Promise<Company> {
-    const { data, error } = await ensureClient()
-        .from('companies')
-        .insert(company)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
+export async function createCompany(company: { name: string; industry?: string; countries?: string[] }): Promise<Company> {
+    return apiFetch<Company>('/companies', {
+        method: 'POST',
+        body: JSON.stringify(company),
+    });
 }
 
 export async function updateCompany(id: string, updates: Partial<Company>): Promise<Company> {
-    const { data, error } = await ensureClient()
-        .from('companies')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
+    return apiFetch<Company>(`/companies/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+    });
 }
 
 export async function deleteCompany(id: string): Promise<void> {
-    const { error } = await ensureClient()
-        .from('companies')
-        .delete()
-        .eq('id', id);
-
-    if (error) throw error;
+    return apiFetch<void>(`/companies/${id}`, {
+        method: 'DELETE',
+    });
 }
 
 // ========== BRANDS ==========
 
 export async function getBrands(companyId?: string): Promise<Brand[]> {
-    let query = ensureClient()
-        .from('brands')
-        .select('*, companies(name)');
-
-    if (companyId) {
-        query = query.eq('company_id', companyId);
-    }
-
-    const { data, error } = await query.order('name');
-    if (error) throw error;
-    return data || [];
+    const query = companyId ? `?companyId=${companyId}` : '';
+    return apiFetch<Brand[]>(`/brands${query}`);
 }
 
-export async function createBrand(brand: Omit<Brand, 'id' | 'created_at' | 'updated_at' | 'companies'>): Promise<Brand> {
-    const { data, error } = await ensureClient()
-        .from('brands')
-        .insert(brand)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
+export async function createBrand(brand: { name: string; companyId: string; color?: string }): Promise<Brand> {
+    return apiFetch<Brand>('/brands', {
+        method: 'POST',
+        body: JSON.stringify(brand),
+    });
 }
 
 export async function updateBrand(id: string, updates: Partial<Brand>): Promise<Brand> {
-    const { data, error } = await ensureClient()
-        .from('brands')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
+    return apiFetch<Brand>(`/brands/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+    });
 }
 
 export async function deleteBrand(id: string): Promise<void> {
-    const { error } = await ensureClient()
-        .from('brands')
-        .delete()
-        .eq('id', id);
-
-    if (error) throw error;
+    return apiFetch<void>(`/brands/${id}`, {
+        method: 'DELETE',
+    });
 }
 
 // ========== TEAMS ==========
 
 export async function getTeams(companyId?: string): Promise<Team[]> {
-    let query = ensureClient()
-        .from('teams')
-        .select('*, brands(name, company_id)');
-
-    const { data, error } = await query.order('name');
-    if (error) throw error;
-
-    let results = data || [];
-    if (companyId) {
-        // Filter by company_id related through brand
-        results = results.filter((t: any) => t.brands?.company_id === companyId);
-    }
-
-    return results;
+    const query = companyId ? `?companyId=${companyId}` : '';
+    return apiFetch<Team[]>(`/teams${query}`);
 }
 
-export async function createTeam(team: Omit<Team, 'id' | 'created_at' | 'updated_at' | 'brands'>): Promise<Team> {
-    const { data, error } = await ensureClient()
-        .from('teams')
-        .insert(team)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
+export async function createTeam(team: { name: string; brandId?: string; country?: string }): Promise<Team> {
+    return apiFetch<Team>('/teams', {
+        method: 'POST',
+        body: JSON.stringify(team),
+    });
 }
 
 export async function updateTeam(id: string, updates: Partial<Team>): Promise<Team> {
-    const { data, error } = await ensureClient()
-        .from('teams')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
+    return apiFetch<Team>(`/teams/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+    });
 }
 
 export async function deleteTeam(id: string): Promise<void> {
-    const { error } = await ensureClient()
-        .from('teams')
-        .delete()
-        .eq('id', id);
-
-    if (error) throw error;
+    return apiFetch<void>(`/teams/${id}`, {
+        method: 'DELETE',
+    });
 }
 
 // ========== AGENTS ==========
 
 export async function getAgents(companyId?: string): Promise<Agent[]> {
-    let query = ensureClient()
-        .from('agents')
-        .select('*, teams(name, brands(company_id)), users(name, email)');
-
-    const { data, error } = await query.order('name');
-    if (error) throw error;
-
-    let results = data || [];
-    if (companyId) {
-        // Filter by company_id related through team -> brand
-        results = results.filter((a: any) => a.teams?.brands?.company_id === companyId);
-    }
-
-    return results;
+    const query = companyId ? `?companyId=${companyId}` : '';
+    return apiFetch<Agent[]>(`/agents${query}`);
 }
 
-export async function createAgent(agent: Omit<Agent, 'id' | 'created_at' | 'updated_at' | 'teams'>): Promise<Agent> {
-    const { data, error } = await ensureClient()
-        .from('agents')
-        .insert(agent)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
+export async function createAgent(agent: { 
+    name: string; 
+    teamId: string; 
+    userId?: string;
+    email?: string;
+    role?: string;
+    autonomyLevel?: number;
+}): Promise<Agent> {
+    return apiFetch<Agent>('/agents', {
+        method: 'POST',
+        body: JSON.stringify(agent),
+    });
 }
 
 export async function updateAgent(id: string, updates: Partial<Agent>): Promise<Agent> {
-    const { data, error } = await ensureClient()
-        .from('agents')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
+    return apiFetch<Agent>(`/agents/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+    });
 }
 
 export async function deleteAgent(id: string): Promise<void> {
-    const { error } = await ensureClient()
-        .from('agents')
-        .delete()
-        .eq('id', id);
-
-    if (error) throw error;
+    return apiFetch<void>(`/agents/${id}`, {
+        method: 'DELETE',
+    });
 }
 
 // ========== USERS ==========
 
 export async function getUsers(companyId?: string): Promise<User[]> {
-    let query = ensureClient()
-        .from('users')
-        .select('*, companies(name), teams(name)');
-
-    if (companyId) {
-        query = query.eq('company_id', companyId);
-    }
-
-    const { data, error } = await query.order('name');
-    if (error) throw error;
-    return data || [];
+    const query = companyId ? `?companyId=${companyId}` : '';
+    return apiFetch<User[]>(`/users${query}`);
 }
 
-export async function createUser(user: Omit<User, 'id' | 'created_at' | 'updated_at' | 'companies' | 'teams'>): Promise<User> {
-    const { data, error } = await ensureClient()
-        .from('users')
-        .insert(user)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
+export async function createUser(user: { 
+    email: string; 
+    name?: string; 
+    companyId?: string; 
+    teamId?: string;
+    role?: string;
+}): Promise<User> {
+    return apiFetch<User>('/users', {
+        method: 'POST',
+        body: JSON.stringify(user),
+    });
 }
 
 export async function updateUser(id: string, updates: Partial<User>): Promise<User> {
-    const { data, error } = await ensureClient()
-        .from('users')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
+    return apiFetch<User>(`/users/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+    });
 }
 
 export async function deleteUser(id: string): Promise<void> {
-    const { error } = await ensureClient()
-        .from('users')
-        .delete()
-        .eq('id', id);
-
-    if (error) throw error;
+    return apiFetch<void>(`/users/${id}`, {
+        method: 'DELETE',
+    });
 }
 
 // ========== MANAGED INTERFACES ==========
 
 export async function getManagedInterfaces(): Promise<ManagedInterface[]> {
-    const { data, error } = await ensureClient()
-        .from('managed_interfaces')
-        .select('*')
-        .order('name');
-
-    if (error) throw error;
-    return data || [];
+    return apiFetch<ManagedInterface[]>('/interfaces');
 }
 
-export async function createManagedInterface(iface: Omit<ManagedInterface, 'id' | 'created_at' | 'updated_at'>): Promise<ManagedInterface> {
-    const { data, error } = await ensureClient()
-        .from('managed_interfaces')
-        .insert(iface)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
+export async function createManagedInterface(iface: Omit<ManagedInterface, 'id' | 'createdAt' | 'updatedAt'>): Promise<ManagedInterface> {
+    return apiFetch<ManagedInterface>('/interfaces', {
+        method: 'POST',
+        body: JSON.stringify(iface),
+    });
 }
 
 export async function updateManagedInterface(id: string, updates: Partial<ManagedInterface>): Promise<ManagedInterface> {
-    const { data, error } = await ensureClient()
-        .from('managed_interfaces')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
+    return apiFetch<ManagedInterface>(`/interfaces/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+    });
 }
 
 export async function deleteManagedInterface(id: string): Promise<void> {
-    const { error } = await ensureClient()
-        .from('managed_interfaces')
-        .delete()
-        .eq('id', id);
+    return apiFetch<void>(`/interfaces/${id}`, {
+        method: 'DELETE',
+    });
+}
 
-    if (error) throw error;
+export async function getTeamInterfaces(teamId: string): Promise<ManagedInterface[]> {
+    return apiFetch<ManagedInterface[]>(`/teams/${teamId}/interfaces`);
+}
+
+export async function setTeamInterfaces(teamId: string, interfaceIds: string[]): Promise<void> {
+    return apiFetch<void>(`/teams/${teamId}/interfaces`, {
+        method: 'PUT',
+        body: JSON.stringify({ interfaceIds }),
+    });
+}
+
+export async function getTeamDetails(teamId: string): Promise<Team> {
+    return apiFetch<Team>(`/teams/${teamId}`);
 }
 
 // ========== WORKFLOWS ==========
 
 export async function getWorkflows(): Promise<Workflow[]> {
-    const { data, error } = await ensureClient()
-        .from('workflows')
-        .select('*')
-        .order('name');
-
-    if (error) throw error;
-    return data || [];
+    return apiFetch<Workflow[]>('/workflows');
 }
 
-export async function createWorkflow(workflow: Omit<Workflow, 'id' | 'created_at' | 'updated_at'>): Promise<Workflow> {
-    const { data, error } = await ensureClient()
-        .from('workflows')
-        .insert(workflow)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
+export async function createWorkflow(workflow: Omit<Workflow, 'id' | 'createdAt' | 'updatedAt'>): Promise<Workflow> {
+    return apiFetch<Workflow>('/workflows', {
+        method: 'POST',
+        body: JSON.stringify(workflow),
+    });
 }
 
 export async function updateWorkflow(id: string, updates: Partial<Workflow>): Promise<Workflow> {
-    const { data, error } = await ensureClient()
-        .from('workflows')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
+    return apiFetch<Workflow>(`/workflows/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+    });
 }
 
 export async function deleteWorkflow(id: string): Promise<void> {
-    const { error } = await ensureClient()
-        .from('workflows')
-        .delete()
-        .eq('id', id);
-
-    if (error) throw error;
+    return apiFetch<void>(`/workflows/${id}`, {
+        method: 'DELETE',
+    });
 }
 
 // ========== PROVIDER CATALOG ==========
 
 export async function getProviderCatalog(): Promise<ProviderCatalogEntry[]> {
-    const { data, error } = await ensureClient()
-        .from('provider_catalog')
-        .select('*')
-        .order('type')
-        .order('name');
-
-    if (error) throw error;
-    return data || [];
+    return apiFetch<ProviderCatalogEntry[]>('/provider-catalog');
 }
 
 export async function upsertProviderCatalog(entries: ProviderCatalogEntry[]): Promise<ProviderCatalogEntry[]> {
-    const { data, error } = await ensureClient()
-        .from('provider_catalog')
-        .upsert(entries, { onConflict: 'id' })
-        .select();
-
-    if (error) throw error;
-    return data || [];
+    return apiFetch<ProviderCatalogEntry[]>('/provider-catalog', {
+        method: 'PUT',
+        body: JSON.stringify(entries),
+    });
 }
 
 // ========== TENANT PROVIDER CONFIG ==========
 
 export async function getTenantProviderConfig(companyId: string): Promise<TenantProviderConfig[]> {
-    const { data, error } = await ensureClient()
-        .from('tenant_provider_config')
-        .select('*, provider_catalog(*)')
-        .eq('company_id', companyId);
-
-    if (error) throw error;
-    return data || [];
+    return apiFetch<TenantProviderConfig[]>(`/tenant-provider-config?companyId=${companyId}`);
 }
 
-export async function upsertTenantProviderConfig(entries: Omit<TenantProviderConfig, 'provider_catalog'>[]): Promise<TenantProviderConfig[]> {
-    const { data, error } = await ensureClient()
-        .from('tenant_provider_config')
-        .upsert(entries, { onConflict: 'company_id,provider_id' })
-        .select('*, provider_catalog(*)');
-
-    if (error) throw error;
-    return data || [];
+export async function upsertTenantProviderConfig(entries: Omit<TenantProviderConfig, 'providerCatalog'>[]): Promise<TenantProviderConfig[]> {
+    return apiFetch<TenantProviderConfig[]>('/tenant-provider-config', {
+        method: 'PUT',
+        body: JSON.stringify(entries),
+    });
 }
 
 // ========== TENANT VOICE PROFILES ==========
 
 export async function getTenantVoiceProfiles(companyId: string): Promise<TenantVoiceProfile[]> {
-    const { data, error } = await ensureClient()
-        .from('tenant_voice_profiles')
-        .select('*, provider_catalog(*)')
-        .eq('company_id', companyId)
-        .order('name');
-
-    if (error) throw error;
-    return data || [];
+    return apiFetch<TenantVoiceProfile[]>(`/voice-profiles?companyId=${companyId}`);
 }
 
-export async function createTenantVoiceProfile(profile: Omit<TenantVoiceProfile, 'id' | 'provider_catalog' | 'created_at' | 'updated_at'>): Promise<TenantVoiceProfile> {
-    const { data, error } = await ensureClient()
-        .from('tenant_voice_profiles')
-        .insert(profile)
-        .select('*, provider_catalog(*)')
-        .single();
-
-    if (error) throw error;
-    return data;
+export async function createTenantVoiceProfile(profile: Omit<TenantVoiceProfile, 'id' | 'providerCatalog' | 'createdAt' | 'updatedAt'>): Promise<TenantVoiceProfile> {
+    return apiFetch<TenantVoiceProfile>('/voice-profiles', {
+        method: 'POST',
+        body: JSON.stringify(profile),
+    });
 }
 
 export async function updateTenantVoiceProfile(id: string, updates: Partial<TenantVoiceProfile>): Promise<TenantVoiceProfile> {
-    const { data, error } = await ensureClient()
-        .from('tenant_voice_profiles')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select('*, provider_catalog(*)')
-        .single();
-
-    if (error) throw error;
-    return data;
+    return apiFetch<TenantVoiceProfile>(`/voice-profiles/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+    });
 }
 
 export async function deleteTenantVoiceProfile(id: string): Promise<void> {
-    const { error } = await ensureClient()
-        .from('tenant_voice_profiles')
-        .delete()
-        .eq('id', id);
-
-    if (error) throw error;
+    return apiFetch<void>(`/voice-profiles/${id}`, {
+        method: 'DELETE',
+    });
 }
 
-// ========== TEAM INTERFACES ==========
+// ========== SESSIONS (for stats pages) ==========
 
-export interface TeamInterface {
-    team_id: string;
-    interface_id: string;
-    managed_interfaces?: ManagedInterface;
+export async function getSessions(companyId?: string, limit = 100): Promise<Session[]> {
+    let query = `?limit=${limit}`;
+    if (companyId) query += `&companyId=${companyId}`;
+    return apiFetch<Session[]>(`/sessions${query}`);
 }
 
-export async function getTeamInterfaces(teamId: string): Promise<ManagedInterface[]> {
-    const { data, error } = await ensureClient()
-        .from('team_interfaces')
-        .select(`
-            interface_id,
-            managed_interfaces (*)
-        `)
-        .eq('team_id', teamId);
-
-    if (error) throw error;
-
-    // Map to flatten the structure and return only the interface details
-    return data.map((item: any) => item.managed_interfaces as ManagedInterface).filter(Boolean);
+export async function getSession(id: string): Promise<Session> {
+    return apiFetch<Session>(`/sessions/${id}`);
 }
 
-export async function getTeamDetails(teamId: string) {
-    const { data, error } = await ensureClient()
-        .from('teams')
-        .select(`
-            *,
-            brands (
-                name,
-                companies (
-                    name
-                )
-            )
-        `)
-        .eq('id', teamId)
-        .single();
-
-    if (error) throw error;
-    return data;
-}
+// Legacy export for backwards compatibility with existing code
+export const supabase = null;
