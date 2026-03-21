@@ -238,6 +238,177 @@ document.addEventListener('DOMContentLoaded', () => {
   const versionLabel = document.getElementById('versionLabel');
   if (versionLabel) versionLabel.textContent = `v${manifest.version}`;
 
+  // ==============================
+  // Auth Status Functions
+  // ==============================
+  let currentAuthStatus = {
+    isAuthenticated: false,
+    userAuth: null
+  };
+
+  async function updateAuthStatus() {
+    const authStatusText = document.getElementById('authStatusText');
+    const authUserInfo = document.getElementById('authUserInfo');
+    const connectBtn = document.getElementById('connectToKeledonBtn');
+    
+    if (!authStatusText) return;
+
+    try {
+      const response = await chrome.runtime.sendMessage({ type: 'GET_AUTH_STATUS' });
+      
+      if (response && response.isAuthenticated) {
+        currentAuthStatus.isAuthenticated = true;
+        currentAuthStatus.userAuth = response.userAuth;
+        
+        authStatusText.innerHTML = '<span style="color: var(--success);">✓ Connected to Keledon</span>';
+        authUserInfo.innerHTML = `
+          <div style="margin-bottom: 4px;"><strong>${response.userAuth?.name || 'Unknown'}</strong></div>
+          <div style="color: var(--muted);">${response.userAuth?.email || ''}</div>
+          <div style="color: var(--muted); margin-top: 4px;">Role: ${response.userAuth?.role || 'user'}</div>
+        `;
+        if (connectBtn) {
+          connectBtn.textContent = 'Reconnect';
+          connectBtn.style.background = 'var(--muted)';
+        }
+        
+        // Update branding in header
+        updateBrandingFromAuth(response.userAuth);
+        
+        // Hide auth overlay in chat
+        hideAuthOverlay();
+        
+      } else {
+        currentAuthStatus.isAuthenticated = false;
+        currentAuthStatus.userAuth = null;
+        
+        authStatusText.innerHTML = '<span style="color: var(--warning);">⚠ Not connected</span>';
+        authUserInfo.innerHTML = 'Please login to Keledon first';
+        if (connectBtn) {
+          connectBtn.textContent = 'Connect to Keledon';
+          connectBtn.style.background = 'var(--accent)';
+        }
+        
+        // Show auth overlay in chat
+        showAuthOverlay();
+      }
+    } catch (error) {
+      console.error('[KELEDON] Failed to get auth status:', error);
+      if (authStatusText) {
+        authStatusText.innerHTML = '<span style="color: var(--danger);">✕ Error checking status</span>';
+      }
+    }
+  }
+
+  function updateBrandingFromAuth(userAuth) {
+    if (!userAuth) return;
+    
+    const companyName = document.getElementById('companyName');
+    const brandName = document.getElementById('brandName');
+    const teamName = document.getElementById('teamName');
+    
+    if (companyName) companyName.textContent = userAuth.companyName || userAuth.companyId?.substring(0, 8) || '—';
+    if (brandName) brandName.textContent = userAuth.brandName || '—';
+    if (teamName) teamName.textContent = userAuth.teamName || userAuth.teamId?.substring(0, 8) || '—';
+  }
+
+  function showAuthOverlay() {
+    const conversation = document.getElementById('conversation');
+    if (!conversation) return;
+    
+    // Check if overlay already exists
+    if (document.getElementById('authOverlay')) return;
+    
+    const overlay = document.createElement('div');
+    overlay.id = 'authOverlay';
+    overlay.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 19, 26, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 20px;
+      text-align: center;
+    `;
+    overlay.innerHTML = `
+      <div style="margin-bottom: 16px;">
+        <div style="font-size: 32px; margin-bottom: 8px;">🔐</div>
+        <div style="font-size: 14px; font-weight: 600; color: var(--text);">Please login to Keledon</div>
+        <div style="font-size: 12px; color: var(--muted); margin-top: 8px;">
+          Connect to your Keledon account to use the agent
+        </div>
+      </div>
+      <button id="authOverlayConnectBtn" class="input-btn" style="background: var(--accent); padding: 10px 20px;">
+        Connect to Keledon
+      </button>
+    `;
+    
+    conversation.style.position = 'relative';
+    conversation.appendChild(overlay);
+    
+    // Add click handler
+    const connectBtnInOverlay = document.getElementById('authOverlayConnectBtn');
+    if (connectBtnInOverlay) {
+      connectBtnInOverlay.addEventListener('click', handleConnectToKeledon);
+    }
+  }
+
+  function hideAuthOverlay() {
+    const overlay = document.getElementById('authOverlay');
+    if (overlay) {
+      overlay.remove();
+    }
+  }
+
+  async function handleConnectToKeledon() {
+    const connectBtn = document.getElementById('connectToKeledonBtn');
+    
+    try {
+      if (connectBtn) {
+        connectBtn.textContent = 'Connecting...';
+        connectBtn.disabled = true;
+      }
+      
+      // Request auth sync from landing page
+      const response = await chrome.runtime.sendMessage({ type: 'CONNECT_TO_KEELEDON' });
+      
+      if (response.success) {
+        addMessage(response.message || 'Connection initiated', 'assistant');
+        
+        // If it opened a new tab, notify user
+        if (response.message && response.message.includes('login')) {
+          addMessage('Please login in the new tab, then click "Reconnect"', 'assistant');
+        }
+      } else {
+        addMessage('Connection failed: ' + (response.error || 'Unknown error'), 'assistant');
+      }
+    } catch (error) {
+      console.error('[KELEDON] Connect error:', error);
+      addMessage('Connection error: ' + error.message, 'assistant');
+    } finally {
+      if (connectBtn) {
+        connectBtn.textContent = 'Reconnect';
+        connectBtn.disabled = false;
+      }
+      // Refresh auth status after connection attempt
+      setTimeout(updateAuthStatus, 1000);
+    }
+  }
+
+  // Add Connect to Keledon button handler
+  const connectBtn = document.getElementById('connectToKeledonBtn');
+  if (connectBtn) {
+    connectBtn.addEventListener('click', handleConnectToKeledon);
+  }
+
+  // Initial auth status check
+  updateAuthStatus();
+
   const sendBtn = document.getElementById('sendBtn');
   const voiceBtn = document.getElementById('voiceBtn');
   const commandInput = document.getElementById('commandInput');

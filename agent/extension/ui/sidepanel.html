@@ -498,7 +498,7 @@
                 <div class="brand-info">
                     <div class="brand-name">KELEDON</div>
                     <div class="brand-stack">
-                        <span id="versionLabel">v—</span>
+                        <span id="versionLabel">v2.24</span>
                         <span style="margin: 0 4px; opacity: 0.5">|</span>
                         <span>Co: <span id="companyName">—</span></span>
                         <span style="margin: 0 4px; opacity: 0.5">|</span>
@@ -561,8 +561,18 @@
             <div class="tab-content" id="settings-tab">
                 <div class="settings-scroll">
                     <div class="settings-group">
+                        <label class="settings-label">Authentication</label>
+                        <div id="authStatus" style="margin-bottom: 12px; padding: 12px; background: var(--panel-soft); border-radius: 6px; border: 1px solid var(--border);">
+                            <div id="authStatusText" style="color: var(--muted); font-size: 12px;">Checking auth status...</div>
+                            <div id="authUserInfo" style="margin-top: 8px; font-size: 11px; color: var(--text);"></div>
+                        </div>
+                        <button id="connectToKeledonBtn" class="input-btn" style="width: 100%; margin-bottom: 16px; background: var(--accent);">
+                            Connect to Keledon
+                        </button>
+                    </div>
+                    <div class="settings-group">
                         <label class="settings-label">Backend URL</label>
-                        <input type="text" class="settings-input" id="backendUrl" value="http://localhost:3001">
+                        <input type="text" class="settings-input" id="backendUrl" value="https://keledon.tuyoisaza.com">
                     </div>
                     <div class="settings-group">
                         <label class="settings-label">Agent Control</label>

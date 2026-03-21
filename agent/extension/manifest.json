@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Keledon Agent",
-  "version": "2.23",
+  "version": "2.24",
   "description": "Agent that connects users to KELEDON via side panel, voice, WebRTC, and RPA.",
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; connect-src *; media-src * blob:; style-src 'self' 'unsafe-inline';"
@@ -31,6 +31,15 @@
         "content_scripts/webrtc-audio-injector.js"
       ],
       "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://keledon.tuyoisaza.com/*"
+      ],
+      "js": [
+        "content_scripts/auth-bridge.js"
+      ],
+      "run_at": "document_start"
     }
   ],
   "action": {
