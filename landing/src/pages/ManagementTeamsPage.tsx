@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Users, Plus, RefreshCw, Loader2, Pencil, Trash2, Search } from 'lucide-react';
+import { Users, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { getTeams, getCompanies, getBrands, createTeam, updateTeam, deleteTeam, type Team, type Company, type Brand } from '@/lib/crud-api';
-import { EntityForm } from '@/components/superadmin/EntityForm';
 
 const availableCountries = [
     { code: 'US', name: 'United States' },
@@ -23,7 +22,14 @@ export default function ManagementTeamsPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [showForm, setShowForm] = useState(false);
     const [editingTeam, setEditingTeam] = useState<Team | null>(null);
-    const [formLoading, setFormLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
+
+    const [formData, setFormData] = useState({
+        name: '',
+        company_id: '',
+        brand_id: '',
+        country: ''
+    });
 
     useEffect(() => {
         fetchData();
@@ -48,37 +54,45 @@ export default function ManagementTeamsPage() {
         }
     };
 
-    const handleCreate = async (data: any) => {
-        setFormLoading(true);
+    const resetForm = () => {
+        setFormData({ name: '', company_id: '', brand_id: '', country: '' });
+    };
+
+    const openCreateForm = () => {
+        resetForm();
+        setEditingTeam(null);
+        setShowForm(true);
+    };
+
+    const openEditForm = (team: Team) => {
+        setFormData({
+            name: team.name || '',
+            company_id: team.company_id || '',
+            brand_id: team.brand_id || '',
+            country: team.country || ''
+        });
+        setEditingTeam(team);
+        setShowForm(true);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSaving(true);
         try {
-            await createTeam({
-                ...data,
-                created_at: new Date().toISOString()
-            });
-            toast.success('Team created successfully');
+            if (editingTeam) {
+                await updateTeam(editingTeam.id, formData);
+                toast.success('Team updated successfully');
+            } else {
+                await createTeam({ ...formData, created_at: new Date().toISOString() });
+                toast.success('Team created successfully');
+            }
             setShowForm(false);
             fetchData();
         } catch (error) {
-            console.error('Failed to create team:', error);
-            toast.error('Failed to create team');
+            console.error('Failed to save team:', error);
+            toast.error('Failed to save team');
         } finally {
-            setFormLoading(false);
-        }
-    };
-
-    const handleUpdate = async (data: any) => {
-        if (!editingTeam) return;
-        setFormLoading(true);
-        try {
-            await updateTeam(editingTeam.id, data);
-            toast.success('Team updated successfully');
-            setEditingTeam(null);
-            fetchData();
-        } catch (error) {
-            console.error('Failed to update team:', error);
-            toast.error('Failed to update team');
-        } finally {
-            setFormLoading(false);
+            setSaving(false);
         }
     };
 
@@ -112,6 +126,9 @@ export default function ManagementTeamsPage() {
         return availableCountries.find(c => c.code === code)?.name || code;
     };
 
+    const selectedCompany = companies.find(c => c.id === formData.company_id);
+    const companyCountries = selectedCompany?.countries || [];
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -123,7 +140,7 @@ export default function ManagementTeamsPage() {
                     </div>
                 </div>
                 <button
-                    onClick={() => setShowForm(true)}
+                    onClick={openCreateForm}
                     className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                 >
                     <Plus className="w-4 h-4" />
@@ -147,16 +164,6 @@ export default function ManagementTeamsPage() {
                 </button>
             </div>
 
-            {showForm && (
-                <EntityForm
-                    activeTab="teams"
-                    onSubmit={handleCreate}
-                    onClose={() => setShowForm(false)}
-                    isSuperAdmin={true}
-                    saving={formLoading}
-                />
-            )}
-
             <div className="rounded-xl border border-border bg-card overflow-hidden">
                 {loading ? (
                     <div className="flex items-center justify-center py-12">
@@ -166,7 +173,7 @@ export default function ManagementTeamsPage() {
                     <div className="text-center py-12 text-muted-foreground">
                         <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
                         <p>No teams found</p>
-                        <button onClick={() => setShowForm(true)} className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
+                        <button onClick={openCreateForm} className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
                             Add First Team
                         </button>
                     </div>
@@ -190,7 +197,7 @@ export default function ManagementTeamsPage() {
                                     <td className="px-4 py-3 text-muted-foreground">{getCountryName(team.country)}</td>
                                     <td className="px-4 py-3">
                                         <div className="flex gap-2">
-                                            <button onClick={() => setEditingTeam(team)} className="p-1.5 hover:bg-muted rounded transition-colors" title="Edit">
+                                            <button onClick={() => openEditForm(team)} className="p-1.5 hover:bg-muted rounded transition-colors" title="Edit">
                                                 <Pencil className="w-4 h-4" />
                                             </button>
                                             <button onClick={() => handleDelete(team.id)} className="p-1.5 hover:bg-destructive/10 text-destructive rounded transition-colors" title="Delete">
@@ -205,15 +212,94 @@ export default function ManagementTeamsPage() {
                 )}
             </div>
 
-            {editingTeam && (
-                <EntityForm
-                    activeTab="teams"
-                    editingEntity={editingTeam}
-                    onSubmit={handleUpdate}
-                    onClose={() => setEditingTeam(null)}
-                    isSuperAdmin={true}
-                    saving={formLoading}
-                />
+            {showForm && (
+                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+                    <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold">
+                                {editingTeam ? 'Edit' : 'Add'} Team
+                            </h3>
+                            <button onClick={() => setShowForm(false)} className="p-1 hover:bg-muted rounded">
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Company</label>
+                                <select
+                                    value={formData.company_id}
+                                    onChange={(e) => setFormData({ ...formData, company_id: e.target.value, brand_id: '', country: '' })}
+                                    required
+                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                >
+                                    <option value="">Select Company...</option>
+                                    {companies.map(c => (
+                                        <option key={c.id} value={c.id}>{c.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Country</label>
+                                <select
+                                    value={formData.country}
+                                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                                    required
+                                    disabled={!formData.company_id}
+                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+                                >
+                                    <option value="">Select Country...</option>
+                                    {companyCountries.map((c: any) => {
+                                        const code = typeof c === 'string' ? c : c.country_code;
+                                        const country = availableCountries.find(ac => ac.code === code);
+                                        return <option key={code} value={code}>{country?.name || code}</option>;
+                                    })}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Brand</label>
+                                <select
+                                    value={formData.brand_id}
+                                    onChange={(e) => setFormData({ ...formData, brand_id: e.target.value })}
+                                    required
+                                    disabled={!formData.company_id}
+                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+                                >
+                                    <option value="">Select Brand...</option>
+                                    {brands.filter(b => b.company_id === formData.company_id).map(b => (
+                                        <option key={b.id} value={b.id}>{b.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Team Name</label>
+                                <input
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    required
+                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                />
+                            </div>
+                            <div className="flex justify-end gap-3 mt-6">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowForm(false)}
+                                    className="px-4 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={saving}
+                                    className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium disabled:opacity-50 flex items-center gap-2"
+                                >
+                                    {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+                                    {saving ? 'Saving...' : 'Save'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             )}
         </div>
     );
