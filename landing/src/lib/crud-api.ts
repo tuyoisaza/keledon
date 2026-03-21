@@ -135,6 +135,14 @@ export interface TenantVoiceProfile {
     isDefault: boolean;
 }
 
+export interface Category {
+    id: string;
+    name: string;
+    color: string;
+    description?: string;
+    companyId: string;
+}
+
 export interface Session {
     id: string;
     userId?: string;
@@ -306,4 +314,25 @@ export async function deleteTenantVoiceProfile(id: string): Promise<void> {
 // Team Details
 export async function getTeamDetails(teamId: string): Promise<Team> {
     return fetchApi(`/teams/${teamId}`);
+}
+
+// Categories
+export async function getCategories(companyId?: string): Promise<Category[]> {
+    const categories: Category[] = await fetchApi('/categories');
+    if (companyId) {
+        return categories.filter(c => c.companyId === companyId);
+    }
+    return categories;
+}
+
+export async function createCategory(data: { name: string; color: string; description?: string; companyId: string }): Promise<Category> {
+    return fetchApi('/categories', 'POST', data);
+}
+
+export async function updateCategory(id: string, data: { name?: string; color?: string; description?: string }): Promise<Category> {
+    return fetchApi(`/categories/${id}`, 'PUT', data);
+}
+
+export async function deleteCategory(id: string): Promise<void> {
+    return fetchApi(`/categories/${id}`, 'DELETE');
 }
