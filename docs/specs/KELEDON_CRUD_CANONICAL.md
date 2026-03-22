@@ -345,7 +345,47 @@ const [formData, setFormData] = useState({
 
 ---
 
-## 10. File Reference
+## 10. Version Alignment
+
+### 10.1 Single Source of Truth
+
+Version is defined ONCE in `docs/specs/KELEDON_CRUD_CANONICAL.md`:
+```
+*Version: 0.0.41*
+```
+
+### 10.2 Version Display Locations
+
+The following 3 files MUST have the SAME version number:
+
+| File | Constant | Line |
+|------|----------|------|
+| `landing/src/pages/LoginPage.tsx` | `APP_VERSION` | 7 |
+| `landing/src/components/layout/Sidebar.tsx` | Hardcoded | 86 |
+| `landing/src/lib/debug-report.ts` | `version` | 90 |
+
+### 10.3 Version Bump Checklist
+
+When incrementing version, update ALL THREE:
+
+```bash
+# LoginPage.tsx
+const APP_VERSION = '0.0.42';
+const BUILD_TIME = 'YYYY-MM-DDTHH:00:00Z';
+
+# Sidebar.tsx (line ~86)
+<span className="text-[10px] text-muted-foreground">v0.0.42</span>
+
+# debug-report.ts (line ~90)
+const version = 'v0.0.42';
+
+# KELEDON_CRUD_CANONICAL.md (at bottom)
+*Version: 0.0.42*
+```
+
+---
+
+## 11. File Reference
 
 | Purpose | File Path |
 |---------|-----------|
