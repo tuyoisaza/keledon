@@ -41,12 +41,28 @@ export class CrudService {
     });
   }
 
-  async updateCompany(id: string, data: { name?: string; industry?: string }) {
-    return this.prisma.company.update({
+  async updateCompany(id: string, data: { name?: string; industry?: string; countries?: string[] }) {
+    const { countries, ...companyData } = data;
+    
+    // Delete existing countries and create new ones if provided
+    if (countries !== undefined) {
+      await this.prisma.companyCountry.deleteMany({ where: { companyId: id } });
+    }
+
+    const result = await this.prisma.company.update({
       where: { id },
-      data,
+      data: {
+        ...companyData,
+        ...(countries !== undefined ? {
+          countries: {
+            create: countries.map(code => ({ countryCode: code }))
+          }
+        } : {})
+      },
       include: { countries: true }
     });
+
+    return result;
   }
 
   async deleteCompany(id: string) {
