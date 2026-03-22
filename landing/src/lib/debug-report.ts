@@ -87,7 +87,7 @@ export const debugCapture = new DebugCapture();
 
 export function getDebugInfo(): string {
     const timestamp = new Date().toISOString();
-    const version = 'v0.0.37';
+    const version = 'v0.0.40';
 
     const lines: string[] = [
         '═══════════════════════════════════════════════════════════════',
@@ -133,7 +133,6 @@ export function getDebugInfo(): string {
 
     const envVars = [
         'VITE_API_URL',
-        'VITE_SUPABASE_URL',
         'VITE_WEBSOCKET_URL',
         'VITE_LAUNCHER_URL',
     ];
