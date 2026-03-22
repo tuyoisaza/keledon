@@ -1,195 +1,148 @@
 import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Session } from '../entities/session.entity';
-import { Event } from '../entities/event.entity';
-// import { CreateSessionDto, UpdateSessionDto } from '../dto';
-import { v4 as uuidv4 } from 'uuid';
+import { PrismaService } from '../prisma/prisma.service';
 import { AgentEvent } from '../contracts/events';
 
 @Injectable()
 export class SessionService {
   private readonly logger = new Logger(SessionService.name);
 
-  constructor(
-    @InjectRepository(Session)
-    private readonly sessionRepository: Repository<Session>,
-    @InjectRepository(Event)
-    private readonly eventRepository: Repository<Event>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * Create a new session with real UUID
-   */
   async create(agentId: string, metadata?: {
     tab_url?: string;
     tab_title?: string;
     name?: string;
-  }): Promise<Session> {
+  }): Promise<any> {
     this.logger.log(`Creating session for agent: ${agentId}`);
 
-    const sessionId = uuidv4();
-    const now = new Date().toISOString();
-    
-    const session = this.sessionRepository.create({
-      id: sessionId,
-      agent_id: agentId,
-      name: metadata?.name || `Session ${Date.now()}`,
-      status: 'active',
-      metadata: metadata || {}
-    });
-
-    // DATABASE-READY: No fallback to in-memory storage
     try {
-      const savedSession = await this.sessionRepository.save(session);
-      this.logger.log(`Session created in DB: ${savedSession.id}`);
-      return savedSession;
-    } catch (error) {
-      this.logger.error(`DATABASE-READY: Failed to create session in DB: ${error.message}`);
-      throw new Error(`DATABASE-READY: Session creation failed - Supabase connection required`);
-    }
-  }
-
-  /**
-   * Get session by ID (DATABASE-READY: Supabase only)
-   */
-  async getSession(sessionId: string): Promise<Session | null> {
-    try {
-      const session = await this.sessionRepository.findOne({
-        where: { id: sessionId }
+      const session = await this.prisma.session.create({
+        data: {
+          id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          status: 'active',
+          metadata: JSON.stringify(metadata || {}),
+        }
       });
       
-      return session || null;
+      this.logger.log(`Session created in DB: ${session.id}`);
+      return session;
     } catch (error) {
-      this.logger.error(`DATABASE-READY: Failed to get session from DB: ${error.message}`);
-      throw new Error(`DATABASE-READY: Session retrieval failed - Supabase connection required`);
+      this.logger.error(`Failed to create session in DB: ${error.message}`);
+      throw new Error(`Session creation failed: ${error.message}`);
     }
   }
 
-  /**
-   * Update session status
-   */
-  async updateSessionStatus(sessionId: string, status: Session['status']): Promise<void> {
+  async getSession(sessionId: string): Promise<any | null> {
+    try {
+      const session = await this.prisma.session.findUnique({
+        where: { id: sessionId }
+      });
+      return session;
+    } catch (error) {
+      this.logger.error(`Failed to get session from DB: ${error.message}`);
+      throw new Error(`Session retrieval failed: ${error.message}`);
+    }
+  }
+
+  async updateSessionStatus(sessionId: string, status: string): Promise<void> {
     const session = await this.getSession(sessionId);
     if (!session) {
       throw new NotFoundException(`Session ${sessionId} not found`);
     }
 
-    const now = new Date();
-    session.status = status;
-    session.updated_at = now;
-
-    // DATABASE-READY: Update database only
     try {
-      await this.sessionRepository.update(sessionId, { status, updated_at: now });
+      await this.prisma.session.update({
+        where: { id: sessionId },
+        data: { status }
+      });
     } catch (error) {
-      this.logger.error(`DATABASE-READY: Failed to update session in DB: ${error.message}`);
-      throw new Error(`DATABASE-READY: Session update failed - Supabase connection required`);
+      this.logger.error(`Failed to update session in DB: ${error.message}`);
+      throw new Error(`Session update failed: ${error.message}`);
     }
   }
 
-  /**
-   * Persist an event to both DB and memory
-   */
-  async persistEvent(sessionId: string, event: AgentEvent): Promise<Event> {
+  async persistEvent(sessionId: string, event: AgentEvent): Promise<any> {
     const session = await this.getSession(sessionId);
     if (!session) {
       throw new BadRequestException(`Session ${sessionId} does not exist - cannot persist event`);
     }
 
-    const persistedEvent = this.eventRepository.create({
-      id: uuidv4(),
-      session_id: sessionId,
-      type: event.event_type,
-      payload: event.payload,
-      timestamp: new Date(event.ts),
-      agent_id: event.agent_id
-    });
-
-// DATABASE-READY: Persist to database only
     try {
-      const savedEvent = await this.eventRepository.save(persistedEvent);
-       
-      // Update session timestamp
+      const persistedEvent = await this.prisma.event.create({
+        data: {
+          id: `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          sessionId: sessionId,
+          type: event.event_type,
+          payload: JSON.stringify(event.payload || {}),
+        }
+      });
+
       await this.updateSessionTimestamp(sessionId);
-       
-      this.logger.log(`Event persisted to DB: ${savedEvent.id}`);
-      return savedEvent;
+      this.logger.log(`Event persisted to DB: ${persistedEvent.id}`);
+      return persistedEvent;
     } catch (error) {
-      this.logger.error(`DATABASE-READY: Failed to persist event to DB: ${error.message}`);
-      throw new Error(`DATABASE-READY: Event persistence failed - Supabase connection required`);
+      this.logger.error(`Failed to persist event to DB: ${error.message}`);
+      throw new Error(`Event persistence failed: ${error.message}`);
     }
   }
 
-/**
-   * Get all events for a session (DATABASE-READY: Supabase only)
-   */
-  async getSessionEvents(sessionId: string): Promise<Event[]> {
+  async getSessionEvents(sessionId: string): Promise<any[]> {
     try {
-      const dbEvents = await this.eventRepository.find({
-        where: { session_id: sessionId },
-        order: { created_at: 'ASC' }
+      const dbEvents = await this.prisma.event.findMany({
+        where: { sessionId: sessionId },
+        orderBy: { createdAt: 'asc' }
       });
-       
       return dbEvents;
     } catch (error) {
-      this.logger.error(`DATABASE-READY: Failed to get events from DB: ${error.message}`);
-      throw new Error(`DATABASE-READY: Event retrieval failed - Supabase connection required`);
+      this.logger.error(`Failed to get events from DB: ${error.message}`);
+      throw new Error(`Event retrieval failed: ${error.message}`);
     }
   }
 
-/**
-   * Update session timestamp (DATABASE-READY: Supabase only)
-   */
   private async updateSessionTimestamp(sessionId: string): Promise<void> {
-const now = new Date();
-      
     try {
-      await this.sessionRepository.update(sessionId, { updated_at: now });
+      await this.prisma.session.update({
+        where: { id: sessionId },
+        data: { updatedAt: new Date() }
+      });
     } catch (error) {
-      this.logger.error(`DATABASE-READY: Failed to update session timestamp in DB: ${error.message}`);
-      throw new Error(`DATABASE-READY: Session timestamp update failed - Supabase connection required`);
+      this.logger.error(`Failed to update session timestamp in DB: ${error.message}`);
     }
   }
 
-  /**
-   * Validate session exists (DATABASE-READY: Supabase only)
-   */
   async validateSession(sessionId: string): Promise<boolean> {
     try {
-      const session = await this.sessionRepository.findOne({
+      const session = await this.prisma.session.findUnique({
         where: { id: sessionId }
       });
       return !!session;
     } catch (error) {
-      this.logger.error(`DATABASE-READY: Failed to validate session in DB: ${error.message}`);
+      this.logger.error(`Failed to validate session in DB: ${error.message}`);
       return false;
     }
   }
 
-  /**
-   * Get all sessions (DATABASE-READY: Supabase only)
-   */
-  async findAll(): Promise<Session[]> {
+  async findAll(): Promise<any[]> {
     try {
-      const dbSessions = await this.sessionRepository.find();
+      const dbSessions = await this.prisma.session.findMany();
       return dbSessions;
     } catch (error) {
-      this.logger.error(`DATABASE-READY: Failed to get sessions from DB: ${error.message}`);
-      throw new Error(`DATABASE-READY: Session listing failed - Supabase connection required`);
+      this.logger.error(`Failed to get sessions from DB: ${error.message}`);
+      throw new Error(`Session listing failed: ${error.message}`);
     }
   }
 
-  /**
-   * Delete session (DATABASE-READY: Supabase only)
-   */
   async remove(sessionId: string): Promise<void> {
     try {
-      await this.sessionRepository.delete(sessionId);
-      await this.eventRepository.delete({ session_id: sessionId });
+      await this.prisma.event.deleteMany({
+        where: { sessionId: sessionId }
+      });
+      await this.prisma.session.delete({
+        where: { id: sessionId }
+      });
     } catch (error) {
-      this.logger.error(`DATABASE-READY: Failed to delete from DB: ${error.message}`);
-      throw new Error(`DATABASE-READY: Session deletion failed - Supabase connection required`);
+      this.logger.error(`Failed to delete from DB: ${error.message}`);
+      throw new Error(`Session deletion failed: ${error.message}`);
     }
   }
 }

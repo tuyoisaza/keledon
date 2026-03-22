@@ -54,11 +54,11 @@
                     email: data.user.email,
                     name: data.user.name,
                     role: data.user.role,
-                    teamId: data.user.teamId,
-                    companyId: data.user.companyId,
-                    teamName: data.user.teamName,
-                    companyName: data.user.companyName,
-                    brandName: data.user.brandName
+                    teamId: data.user.team_id,
+                    companyId: data.user.company_id,
+                    teamName: data.user.team_name,
+                    companyName: data.user.company_name,
+                    brandName: data.user.brand_name
                 };
             }
 

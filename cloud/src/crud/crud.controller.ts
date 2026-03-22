@@ -310,4 +310,24 @@ export class CrudController {
   createAuditLog(@Body() data: any) {
     return this.crud.createAuditLog(data);
   }
+
+  // ========== SEED ==========
+
+  @Post('seed')
+  async seedFromCrudJson() {
+    try {
+      const result = await this.crud.seedFromCrudJson();
+      return {
+        success: true,
+        message: 'Seed completed',
+        ...result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Seed failed',
+        error: error.message
+      };
+    }
+  }
 }

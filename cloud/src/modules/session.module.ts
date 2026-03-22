@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Session, Event, User } from '../entities';
 import { SessionService } from '../services/session.service';
 import { AgentGateway } from '../gateways/agent.gateway';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Session, Event, User])],
+  imports: [PrismaModule],
   providers: [SessionService, AgentGateway],
   exports: [SessionService],
 })
