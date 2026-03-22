@@ -5,67 +5,51 @@ import { getRuntimeTier, isManagedProductionTier, resolveServiceEndpoints } from
 export class ConfigService {
   private readonly runtimeTier = getRuntimeTier();
   private readonly endpoints = resolveServiceEndpoints(this.runtimeTier);
-  private readonly supabaseAnonKey = this.resolveSupabaseAnonKey();
 
   private readonly config = {
     backendUrl: this.endpoints.cloudBaseUrl,
     wsUrl: process.env.WS_URL || this.endpoints.cloudBaseUrl.replace(/^http/i, 'ws'),
-    supabaseUrl: this.endpoints.supabaseUrl,
-    supabaseKey: this.supabaseAnonKey,
-    supabaseAdminSecret: process.env.SUPABASE_ADMIN_SECRET,
     environment: this.runtimeTier,
     port: parseInt(process.env.PORT || '3001', 10),
     database: {
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432', 10),
-      user: process.env.DB_USER || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
-      database: process.env.DB_NAME || 'keledon',
-      type: 'sqlite' as const,
-      url: process.env.DATABASE_URL || 'file:./data/keledon.db'
+      url: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres',
     },
     services: {
       tts: {
-        provider: process.env.TTS_PROVIDER || 'mock',
+        provider: process.env.TTS_PROVIDER || 'elevenlabs',
         elevenLabsKey: process.env.ELEVENLABS_API_KEY,
-        qwenModel: process.env.QWEN_MODEL || 'qwen-tts'
       },
       stt: {
-        provider: process.env.STT_PROVIDER || 'mock',
-        deepgramKey: process.env.DEEPGRAM_API_KEY,
-        whisperModel: process.env.WHISPER_MODEL || 'whisper-1'
+        provider: process.env.STT_PROVIDER || 'vosk',
+        voskPort: parseInt(process.env.VOSK_PORT || '9090', 10),
+        voskWsPort: parseInt(process.env.VOSK_WS_PORT || '9091', 10),
+        voskModelPath: process.env.VOSK_MODEL_PATH || './models',
+        voskSampleRate: parseInt(process.env.VOSK_SAMPLE_RATE || '16000', 10),
       },
       rpa: {
         provider: process.env.RPA_PROVIDER || 'playwright',
-        headless: process.env.RPA_HEADLESS === 'true'
+        headless: process.env.RPA_HEADLESS === 'true',
       },
       vectorStore: {
-        provider: process.env.VECTOR_STORE_PROVIDER || 'supabase',
-        qdrantUrl: this.endpoints.qdrantUrl,
+        provider: process.env.VECTOR_STORE_PROVIDER || 'qdrant',
+        qdrantUrl: process.env.QDRANT_URL || this.endpoints.qdrantUrl,
         qdrantApiKey: process.env.QDRANT_API_KEY,
-        embeddingsModel: process.env.EMBEDDINGS_MODEL || 'text-embedding-3-small'
-      }
-    }
+        qdrantCollection: process.env.QDRANT_COLLECTION || 'keledon',
+        embeddingsModel: process.env.EMBEDDINGS_MODEL || 'text-embedding-3-small',
+      },
+    },
+    featureFlags: {
+      vectorStore: process.env.ENABLE_VECTOR_STORE !== 'false',
+      realTts: process.env.ENABLE_REAL_TTS !== 'false',
+      realStt: process.env.ENABLE_REAL_STT !== 'false',
+      rpa: process.env.ENABLE_RPA !== 'false',
+      realAuth: process.env.ENABLE_REAL_AUTH !== 'false',
+      otel: process.env.ENABLE_OTEL !== 'false',
+    },
   };
 
   constructor() {
-    console.log('[Config] Configuration loaded:', this.config);
-  }
-
-  private resolveSupabaseAnonKey(): string {
-    const canonical = (process.env.KELEDON_SUPABASE_ANON_KEY || '').trim();
-    const legacy = (process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY || '').trim();
-    const key = canonical || legacy;
-
-    if (isManagedProductionTier(this.runtimeTier) && !canonical) {
-      throw new Error('[Config] KELEDON_SUPABASE_ANON_KEY is required in PRODUCTION_MANAGED.');
-    }
-
-    if (isManagedProductionTier(this.runtimeTier) && !key) {
-      throw new Error('[Config] Supabase anon key is required in PRODUCTION_MANAGED.');
-    }
-
-    return key || 'your-development-key';
+    console.log('[Config] Configuration loaded for tier:', this.runtimeTier);
   }
 
   getBackendUrl(): string {
@@ -74,14 +58,6 @@ export class ConfigService {
 
   getWsUrl(): string {
     return this.config.wsUrl;
-  }
-
-  getSupabaseConfig() {
-    return {
-      url: this.config.supabaseUrl,
-      key: this.config.supabaseKey,
-      adminSecret: this.config.supabaseAdminSecret
-    };
   }
 
   getEnvironment(): string {
@@ -100,16 +76,35 @@ export class ConfigService {
     return this.config.services;
   }
 
-  getVectorStoreConfig() {
-    return this.config.services?.vectorStore || { url: this.endpoints.qdrantUrl, collection: 'keledo' };
+  getSttConfig() {
+    return this.config.services.stt;
   }
 
-  // For backward compatibility
+  getTtsConfig() {
+    return this.config.services.tts;
+  }
+
+  getRpaConfig() {
+    return this.config.services.rpa;
+  }
+
+  getVectorStoreConfig() {
+    return this.config.services.vectorStore;
+  }
+
+  getFeatureFlags() {
+    return this.config.featureFlags;
+  }
+
   isDevelopment(): boolean {
-    return this.config.environment === 'development';
+    return this.config.environment === 'DEV_LOCAL';
   }
 
   isProduction(): boolean {
     return isManagedProductionTier(this.runtimeTier);
+  }
+
+  isFeatureEnabled(feature: keyof typeof this.config.featureFlags): boolean {
+    return this.config.featureFlags[feature];
   }
 }

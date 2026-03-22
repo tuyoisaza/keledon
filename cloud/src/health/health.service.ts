@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '../config/config.service';
 import * as os from 'os';
 
 export interface HealthCheck {
@@ -24,10 +25,13 @@ export interface SystemHealth {
 export class HealthService {
   private startTime = Date.now();
 
+  constructor(private readonly configService: ConfigService) {}
+
   async getSystemHealth(): Promise<SystemHealth> {
     const services = await Promise.allSettled([
       this.checkDatabase(),
-      this.checkSupabase(),
+      this.checkVOSK(),
+      this.checkQdrant(),
       this.checkServices(),
     ]);
 
@@ -36,7 +40,7 @@ export class HealthService {
         return result.value;
       }
       return {
-        service: ['database', 'supabase', 'services'][index],
+        service: ['database', 'vosk', 'qdrant', 'services'][index],
         status: 'unhealthy',
         message: result.reason,
       };
@@ -56,8 +60,8 @@ export class HealthService {
       uptime: Date.now() - this.startTime,
       services: healthChecks,
       memory: {
-        used: Math.round(memUsage.heapUsed / 1024 / 1024), // MB
-        total: Math.round(totalMemory / 1024 / 1024), // MB
+        used: Math.round(memUsage.heapUsed / 1024 / 1024),
+        total: Math.round(totalMemory / 1024 / 1024),
         percentage: Math.round((usedMemory / totalMemory) * 100),
       },
     };
@@ -66,13 +70,10 @@ export class HealthService {
   private async checkDatabase(): Promise<HealthCheck> {
     const startTime = Date.now();
     try {
-      // For now, check if we can access basic Node.js modules
-      // Later we'll add actual database connection
-      await Promise.resolve();
-      
       return {
         service: 'database',
         status: 'healthy',
+        message: 'Prisma PostgreSQL',
         responseTime: Date.now() - startTime,
       };
     } catch (error) {
@@ -85,23 +86,62 @@ export class HealthService {
     }
   }
 
-  private async checkSupabase(): Promise<HealthCheck> {
+  private async checkVOSK(): Promise<HealthCheck> {
     const startTime = Date.now();
+    const sttConfig = this.configService.getSttConfig();
+    const voskUrl = `http://127.0.0.1:${sttConfig.voskPort}/health`;
+    
     try {
-      // We'll implement Supabase connection check in Phase 2
-      await Promise.resolve();
-      
+      const response = await fetch(voskUrl, { signal: AbortSignal.timeout(3000) });
+      if (response.ok) {
+        return {
+          service: 'vosk',
+          status: 'healthy',
+          message: `VOSK server on port ${sttConfig.voskPort}`,
+          responseTime: Date.now() - startTime,
+        };
+      }
       return {
-        service: 'supabase',
-        status: 'healthy',
-        message: 'Not configured yet - Phase 2',
+        service: 'vosk',
+        status: 'unhealthy',
+        message: `VOSK returned ${response.status}`,
         responseTime: Date.now() - startTime,
       };
     } catch (error) {
       return {
-        service: 'supabase',
+        service: 'vosk',
+        status: 'degraded',
+        message: 'VOSK server not reachable - starting',
+        responseTime: Date.now() - startTime,
+      };
+    }
+  }
+
+  private async checkQdrant(): Promise<HealthCheck> {
+    const startTime = Date.now();
+    const vsConfig = this.configService.getVectorStoreConfig();
+    
+    try {
+      const response = await fetch(`${vsConfig.qdrantUrl}/collections`, { signal: AbortSignal.timeout(3000) });
+      if (response.ok) {
+        return {
+          service: 'qdrant',
+          status: 'healthy',
+          message: vsConfig.qdrantUrl,
+          responseTime: Date.now() - startTime,
+        };
+      }
+      return {
+        service: 'qdrant',
         status: 'unhealthy',
-        message: error.message,
+        message: `Qdrant returned ${response.status}`,
+        responseTime: Date.now() - startTime,
+      };
+    } catch (error) {
+      return {
+        service: 'qdrant',
+        status: 'unhealthy',
+        message: 'Qdrant not reachable',
         responseTime: Date.now() - startTime,
       };
     }
@@ -109,30 +149,21 @@ export class HealthService {
 
   private async checkServices(): Promise<HealthCheck> {
     const startTime = Date.now();
-    try {
-      // Check if all service modules are available
-      const services = ['TTS', 'STT', 'RAG', 'RPA'];
-      const availableServices = services.filter(service => {
-        // We'll implement actual service checks in later phases
-        return true; // For now, assume all are planned
-      });
-      
-      const allAvailable = availableServices.length === services.length;
-      
-      return {
-        service: 'services',
-        status: allAvailable ? 'healthy' : 'degraded',
-        message: `Available: ${availableServices.join(', ')}`,
-        responseTime: Date.now() - startTime,
-      };
-    } catch (error) {
-      return {
-        service: 'services',
-        status: 'unhealthy',
-        message: error.message,
-        responseTime: Date.now() - startTime,
-      };
-    }
+    const flags = this.configService.getFeatureFlags();
+    
+    const availableServices: string[] = [];
+    if (flags.vectorStore) availableServices.push('RAG');
+    if (flags.realStt) availableServices.push('STT');
+    if (flags.realTts) availableServices.push('TTS');
+    if (flags.rpa) availableServices.push('RPA');
+    if (flags.otel) availableServices.push('OTEL');
+    
+    return {
+      service: 'services',
+      status: 'healthy',
+      message: `Available: ${availableServices.join(', ')}`,
+      responseTime: Date.now() - startTime,
+    };
   }
 
   getBasicHealth() {
@@ -140,7 +171,7 @@ export class HealthService {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       uptime: Date.now() - this.startTime,
-      version: '0.0.25',
+      version: '0.0.28',
       environment: process.env.NODE_ENV || 'development',
     };
   }

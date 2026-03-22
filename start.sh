@@ -1,12 +1,12 @@
 #!/bin/sh
 set -eu
 
-echo "[BOOT] Starting KELEDON single-container runtime"
+echo "[BOOT] Starting KELEDON single-container runtime v0.0.28"
 
 export SINGLE_CONTAINER=true
 export NODE_ENV=${NODE_ENV:-production}
 export BACKEND_PORT=${BACKEND_PORT:-3001}
-export DATABASE_URL=${DATABASE_URL:-file:/app/data/keledon.db}
+export DATABASE_URL=${DATABASE_URL}
 export KELEDON_ENV_TIER=${KELEDON_ENV_TIER:-CI_PROOF}
 export KELEDON_ALLOW_ALL_CORS=${KELEDON_ALLOW_ALL_CORS:-true}
 export KELEDON_CLOUD_BASE_URL=${KELEDON_CLOUD_BASE_URL:-http://127.0.0.1:$BACKEND_PORT}
@@ -16,6 +16,12 @@ export QDRANT_URL=${QDRANT_URL:-$KELEDON_QDRANT_URL}
 export QDRANT_COLLECTION=${QDRANT_COLLECTION:-keledon}
 export KELEDON_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=${KELEDON_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:-http://127.0.0.1:4318/v1/traces}
 export CORS_ORIGINS=${CORS_ORIGINS:-*}
+
+# VOSK Configuration
+export VOSK_PORT=${VOSK_PORT:-9090}
+export VOSK_WS_PORT=${VOSK_WS_PORT:-9091}
+export VOSK_MODEL_PATH=${VOSK_MODEL_PATH:-/app/models}
+export VOSK_SAMPLE_RATE=${VOSK_SAMPLE_RATE:-16000}
 
 mkdir -p /app/data /app/data/qdrant
 
@@ -41,41 +47,50 @@ if [ "$QDRANT_READY" != "true" ]; then
   cat /tmp/qdrant.log || true
   exit 1
 fi
+echo "[BOOT] Qdrant ready"
+
+echo "[BOOT] Starting VOSK server on 127.0.0.1:$VOSK_PORT (HTTP) and $VOSK_WS_PORT (WS)"
+cd /app/vosk-server
+node server.js >/tmp/vosk.log 2>&1 &
+VOSK_PID=$!
+
+VOSK_READY=false
+for i in $(seq 1 30); do
+  if curl -fsS http://127.0.0.1:$VOSK_PORT/health >/dev/null 2>&1; then
+    VOSK_READY=true
+    break
+  fi
+  sleep 1
+done
+
+if [ "$VOSK_READY" != "true" ]; then
+  echo "[BOOT] VOSK server may still be loading models..."
+else
+  echo "[BOOT] VOSK server ready"
+fi
 
 echo "[BOOT] Running Prisma schema sync"
 cd /app/backend
-ls -la /app/data/ || true
 
-if [ "${KELEDON_RESET_DB:-false}" = "true" ]; then
-  echo "[BOOT] KELEDON_RESET_DB=true - Resetting database and Qdrant..."
-  rm -f /app/data/keledon.db /app/data/keledon.db-journal /app/data/keledon.db-wal /app/data/keledon.db-shm
-  rm -rf /app/data/qdrant
+if [ -n "$DATABASE_URL" ]; then
+  npx prisma db push
+  echo "[BOOT] Database sync complete"
+else
+  echo "[BOOT] WARNING: DATABASE_URL not set, skipping Prisma sync"
 fi
 
-if [ ! -f /app/data/keledon.db ]; then
-  echo "[BOOT] No existing database found"
-fi
 
-npx prisma db push
-echo "[BOOT] Database sync complete"
 
-if [ "${KELEDON_RESET_DB:-false}" = "true" ] || [ ! -f /app/data/qdrant/config.json ]; then
-  if [ ! -f /app/data/qdrant/config.json ]; then
-    echo "[BOOT] Initializing Qdrant storage..."
-  else
-    echo "[BOOT] Reinitializing Qdrant storage..."
-  fi
-  rm -rf /app/data/qdrant
-  
+if [ ! -f /app/data/qdrant/config.json ] || [ "${KELEDON_RESET_DB:-false}" = "true" ]; then
   echo "[BOOT] Ensuring Qdrant collection '$QDRANT_COLLECTION' exists"
   curl -fsS -X PUT "http://127.0.0.1:6333/collections/$QDRANT_COLLECTION" \
     -H "Content-Type: application/json" \
-    -d '{"vectors":{"size":32,"distance":"Cosine"}}' >/dev/null || true
-
-  echo "[BOOT] Seeding Qdrant collection '$QDRANT_COLLECTION'"
-  curl -fsS -X PUT "http://127.0.0.1:6333/collections/$QDRANT_COLLECTION/points?wait=true" \
-    -H "Content-Type: application/json" \
-    -d '{"points":[{"id":1,"vector":[0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.10,0.11,0.12,0.13,0.14,0.15,0.16,0.17,0.18,0.19,0.20,0.21,0.22,0.23,0.24,0.25,0.26,0.27,0.28,0.29,0.30,0.31,0.32],"payload":{"doc_id":"seed-doc-1","text":"KELEDON runtime knowledge seed for deterministic vector retrieval.","category":"runtime","source":"keledon","company_id":"keledon-default","created_at":"2026-01-01T00:00:00.000Z"}}]}' >/dev/null
+    -d '{"vectors":{"size":768,"distance":"Cosine"}}' >/dev/null || true
+  
+  echo "[BOOT] Seeding Qdrant via TypeScript script"
+  cd /app/backend
+  npx ts-node scripts/seed-qdrant.ts || echo "[BOOT] Seed script not available, skipping"
+  cd /app
 fi
 
 echo "[BOOT] Starting backend on 127.0.0.1:$BACKEND_PORT"
@@ -97,5 +112,11 @@ if [ "$BACKEND_READY" != "true" ]; then
   exit 1
 fi
 
-echo "[BOOT] Backend and Qdrant are healthy. Starting nginx on 8080"
+echo "[BOOT] All services ready. Starting nginx on 8080"
+echo "[BOOT] Summary:"
+echo "  - Qdrant:   127.0.0.1:6333"
+echo "  - VOSK:     127.0.0.1:$VOSK_PORT (HTTP), $VOSK_WS_PORT (WS)"
+echo "  - Backend:   127.0.0.1:$BACKEND_PORT"
+echo "  - Nginx:     0.0.0.0:8080"
+
 exec nginx -g "daemon off;"

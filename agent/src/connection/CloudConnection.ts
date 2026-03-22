@@ -5,21 +5,6 @@
 
 import { io, Socket } from 'socket.io-client';
 import { randomUUID } from 'crypto';
-import { validationService } from '../../contracts/service';
-
-interface RealtimeMessage {
-  message_id: string;
-  timestamp: string;
-  direction: 'agent_to_cloud' | 'cloud_to_agent';
-  message_type: 'brain_event' | 'brain_command' | 'heartbeat' | 'error' | 'ack';
-  session_id?: string;
-  payload: any;
-  metadata?: {
-    correlation_id?: string;
-    retry_count?: number;
-    priority?: 'low' | 'normal' | 'high' | 'critical';
-  };
-}
 
 interface SessionInfo {
   session_id: string;
@@ -27,6 +12,28 @@ interface SessionInfo {
   created_at: string;
   status: 'connecting' | 'connected' | 'disconnected' | 'error';
   last_heartbeat: string;
+}
+
+interface AgentEvent {
+  event_id: string;
+  session_id: string;
+  event_type: string;
+  agent_id: string;
+  ts: string;
+  payload: any;
+}
+
+interface CloudCommand {
+  command_id: string;
+  session_id: string;
+  timestamp: string;
+  type: 'say' | 'ui_steps' | 'mode' | 'stop' | 'error';
+  confidence: number;
+  mode: string;
+  flow_id: string | null;
+  flow_run_id: string | null;
+  say?: { text: string; interruptible?: boolean };
+  ui_steps?: any[];
 }
 
 export class CloudConnection {
@@ -39,22 +46,23 @@ export class CloudConnection {
   constructor(
     private cloudUrl: string,
     private agentId: string,
-    private onMessage?: (message: RealtimeMessage) => void
+    private onCommand?: (command: CloudCommand) => void
   ) {}
 
   /**
    * Connect to cloud and create real session
    */
   async connect(): Promise<void> {
-    console.log(`[Agent:${this.agentId}] Connecting to cloud at ${this.cloudUrl}`);
+    const namespace = '/agent';
+    const url = `${this.cloudUrl}${namespace}`;
+    console.log(`[Agent:${this.agentId}] Connecting to cloud at ${url}`);
     
     return new Promise((resolve, reject) => {
-      this.socket = io(this.cloudUrl, {
+      this.socket = io(url, {
         transports: ['websocket'],
         timeout: 10000,
       });
 
-      // Create session immediately on connection
       this.socket.on('connect', () => {
         console.log(`[Agent:${this.agentId}] Socket connected, creating session...`);
         this.createSession();
@@ -67,8 +75,24 @@ export class CloudConnection {
         this.stopHeartbeat();
       });
 
-      this.socket.on('message', (data: unknown) => {
-        this.handleMessage(data);
+      this.socket.on('command', (command: CloudCommand) => {
+        console.log(`[Agent:${this.agentId}] Received command:`, command.type);
+        if (this.onCommand) {
+          this.onCommand(command);
+        }
+      });
+
+      this.socket.on('connected', (data: any) => {
+        console.log(`[Agent:${this.agentId}] Server acknowledged connection:`, data);
+      });
+
+      this.socket.on('session.created', (data: any) => {
+        console.log(`[Agent:${this.agentId}] Session created:`, data.session_id);
+        this.session!.session_id = data.session_id;
+      });
+
+      this.socket.on('error', (data: any) => {
+        console.error(`[Agent:${this.agentId}] Server error:`, data.message);
       });
 
       this.socket.on('connect_error', (error) => {
@@ -77,7 +101,6 @@ export class CloudConnection {
         reject(error);
       });
 
-      // Start connection timeout
       setTimeout(() => {
         if (!this.socket?.connected) {
           reject(new Error('Connection timeout'));
@@ -87,7 +110,7 @@ export class CloudConnection {
   }
 
   /**
-   * Create and initialize session
+   * Create and initialize session via AgentGateway
    */
   private createSession(): void {
     const sessionId = randomUUID();
@@ -100,129 +123,59 @@ export class CloudConnection {
       last_heartbeat: new Date().toISOString()
     };
 
-    console.log(`[Agent:${this.agentId}] Session created: ${sessionId}`);
+    console.log(`[Agent:${this.agentId}] Creating session: ${sessionId}`);
     
-    // Send session creation event
-    this.sendMessage({
-      message_type: 'brain_event',
-      payload: {
-        type: 'session_created',
-        session_id: sessionId,
-        agent_id: this.agentId,
-        timestamp: new Date().toISOString()
-      }
+    this.socket!.emit('session.create', {
+      agent_id: this.agentId,
+      tab_url: '',
+      tab_title: ''
     });
-
-    // Start heartbeat
-    this.startHeartbeat();
   }
 
   /**
-   * Send message to cloud
+   * Send text input event (from STT) to cloud brain
    */
-  sendMessage(message: Omit<RealtimeMessage, 'message_id' | 'timestamp' | 'direction'>): void {
-    if (!this.socket?.connected) {
-      console.error(`[Agent:${this.agentId}] Cannot send message - not connected`);
+  sendTextInput(text: string, confidence: number = 0.8, metadata: any = {}): void {
+    if (!this.socket?.connected || !this.session) {
+      console.error(`[Agent:${this.agentId}] Cannot send text - not connected`);
       return;
     }
 
-    const realtimeMessage: RealtimeMessage = {
-      message_id: randomUUID(),
-      timestamp: new Date().toISOString(),
-      direction: 'agent_to_cloud',
-      session_id: this.session?.session_id,
-      metadata: {
-        retry_count: 0,
-        priority: 'normal'
-      },
-      ...message
+    const event: AgentEvent = {
+      event_id: randomUUID(),
+      session_id: this.session.session_id,
+      event_type: 'text_input',
+      agent_id: this.agentId,
+      ts: new Date().toISOString(),
+      payload: {
+        text,
+        confidence,
+        provider: 'vosk',
+        metadata
+      }
     };
 
-    // Validate message
-    const validation = validationService.validateRealtimeMessage(realtimeMessage);
-    if (!validation.valid) {
-      console.error(`[Agent:${this.agentId}] Invalid message:`, validation.errors);
+    console.log(`[Agent:${this.agentId}] Sending text_input: "${text.substring(0, 50)}..."`);
+    this.socket.emit('brain_event', event);
+  }
+
+  /**
+   * Send UI execution result back to cloud
+   */
+  sendUIResult(results: any[]): void {
+    if (!this.socket?.connected || !this.session) {
+      console.error(`[Agent:${this.agentId}] Cannot send UI result - not connected`);
       return;
     }
 
-    console.log(`[Agent:${this.agentId}] Sending message:`, realtimeMessage.message_type);
-    this.socket.emit('message', realtimeMessage);
-  }
-
-  /**
-   * Handle incoming message from cloud
-   */
-  private handleMessage(data: unknown): void {
-    const validation = validationService.validateRealtimeMessage(data);
-    if (!validation.valid) {
-      console.error(`[Agent:${this.agentId}] Invalid message received:`, validation.errors);
-      return;
-    }
-
-    const message = validation.data as RealtimeMessage;
-    console.log(`[Agent:${this.agentId}] Received message:`, message.message_type);
-
-    // Update session heartbeat
-    if (this.session) {
-      this.session.last_heartbeat = new Date().toISOString();
-    }
-
-    // Handle specific message types
-    switch (message.message_type) {
-      case 'heartbeat':
-        // Echo heartbeat back
-        this.sendMessage({
-          message_type: 'heartbeat',
-          payload: {
-            status: 'alive',
-            uptime_ms: Date.now() - (this.session ? new Date(this.session.created_at).getTime() : 0)
-          }
-        });
-        break;
-      
-      case 'ack':
-        console.log(`[Agent:${this.agentId}] Received ACK for message: ${message.payload?.ack_message_id}`);
-        break;
-
-      case 'brain_command':
-        console.log(`[Agent:${this.agentId}] Received brain command:`, message.payload);
-        break;
-
-      default:
-        console.log(`[Agent:${this.agentId}] Unhandled message type: ${message.message_type}`);
-    }
-
-    // Forward to message handler if provided
-    if (this.onMessage) {
-      this.onMessage(message);
-    }
-  }
-
-  /**
-   * Start heartbeat interval
-   */
-  private startHeartbeat(): void {
-    this.stopHeartbeat();
-    
-    this.heartbeatInterval = setInterval(() => {
-      this.sendMessage({
-        message_type: 'heartbeat',
-        payload: {
-          status: 'alive',
-          uptime_ms: this.session ? Date.now() - new Date(this.session.created_at).getTime() : 0
-        }
-      });
-    }, 30000); // 30 seconds
-  }
-
-  /**
-   * Stop heartbeat interval
-   */
-  private stopHeartbeat(): void {
-    if (this.heartbeatInterval) {
-      clearInterval(this.heartbeatInterval);
-      this.heartbeatInterval = null;
-    }
+    this.socket.emit('ui_result', {
+      event_id: randomUUID(),
+      session_id: this.session.session_id,
+      event_type: 'ui_result',
+      agent_id: this.agentId,
+      ts: new Date().toISOString(),
+      payload: { results }
+    });
   }
 
   /**
@@ -264,34 +217,6 @@ export class CloudConnection {
     
     this.updateSessionStatus('disconnected');
     this.session = null;
-  }
-
-  /**
-   * Send brain event (e.g., user input)
-   */
-  sendBrainEvent(eventType: string, data: any): void {
-    this.sendMessage({
-      message_type: 'brain_event',
-      payload: {
-        type: eventType,
-        data,
-        timestamp: new Date().toISOString()
-      }
-    });
-  }
-
-  /**
-   * Send test brain command
-   */
-  sendTestCommand(command: string, parameters: any = {}): void {
-    this.sendMessage({
-      message_type: 'brain_command',
-      payload: {
-        command,
-        parameters,
-        timestamp: new Date().toISOString()
-      }
-    });
   }
 }
 

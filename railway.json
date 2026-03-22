@@ -25,7 +25,7 @@
       },
       {
         "key": "KELEDON_ENV_TIER",
-        "value": "CI_PROOF"
+        "value": "PRODUCTION_MANAGED"
       },
       {
         "key": "KELEDON_ALLOW_ALL_CORS",
@@ -33,7 +33,7 @@
       },
       {
         "key": "DATABASE_URL",
-        "value": "file:/app/data/keledon.db"
+        "value": "${DATABASE_URL}"
       },
       {
         "key": "KELEDON_QDRANT_URL",
@@ -52,12 +52,48 @@
         "value": "true"
       },
       {
+        "key": "VOSK_PORT",
+        "value": "9090"
+      },
+      {
+        "key": "VOSK_WS_PORT",
+        "value": "9091"
+      },
+      {
+        "key": "VOSK_MODEL_PATH",
+        "value": "/app/models"
+      },
+      {
+        "key": "VOSK_SAMPLE_RATE",
+        "value": "16000"
+      },
+      {
+        "key": "ENABLE_REAL_STT",
+        "value": "true"
+      },
+      {
+        "key": "ENABLE_REAL_TTS",
+        "value": "true"
+      },
+      {
+        "key": "ENABLE_RPA",
+        "value": "true"
+      },
+      {
+        "key": "ENABLE_VECTOR_STORE",
+        "value": "true"
+      },
+      {
+        "key": "ENABLE_OTEL",
+        "value": "true"
+      },
+      {
         "key": "GOOGLE_CLIENT_ID",
-        "value": "1062969561553-jolqgm2t6hfdg3i4an5n7slc0e0nr5dp.apps.googleusercontent.com"
+        "value": "${GOOGLE_CLIENT_ID}"
       },
       {
         "key": "GOOGLE_CLIENT_SECRET",
-        "value": "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"
+        "value": "${GOOGLE_CLIENT_SECRET}"
       },
       {
         "key": "GOOGLE_REDIRECT_URI",

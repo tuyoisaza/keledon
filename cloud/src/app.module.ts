@@ -16,6 +16,7 @@ import { MvpStoreService } from './mvp/mvp-store.service';
 import { AuthLocalModule } from './auth-local/auth-local.module';
 import { CrudModule } from './crud/crud.module';
 import { CrudController } from './crud/crud.controller';
+import { TTSModule } from './tts/tts.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CrudController } from './crud/crud.controller';
     ListeningSessionModule,
     AuthLocalModule,
     CrudModule,
+    TTSModule,
   ],
   controllers: [AppController, TeamController, MvpDataController, CrudController],
   providers: [
@@ -39,10 +41,10 @@ import { CrudController } from './crud/crud.controller';
     TeamController,
     MvpStoreService,
   ],
-  exports: [SessionService, DatabaseHealthService],
+  exports: [SessionService, DatabaseHealthService, TTSModule],
 })
 export class AppModule {
   constructor() {
-    console.log('🚀 KELEDON - Prisma-only database mode');
+    console.log('🚀 KELEDON - Prisma + PostgreSQL + VOSK');
   }
 }

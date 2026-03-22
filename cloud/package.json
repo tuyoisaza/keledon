@@ -5,7 +5,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "node scripts/c13-regression-sentinel.js && nest build",
+    "build": "node scripts/c13-regression-sentinel.js && npx tsc -p tsconfig.mvp.json",
     "start": "node dist/main",
     "start:dev": "node canonical-dev-server.js",
     "lint": "eslint \"src/**/*.ts\" --fix",
@@ -24,7 +24,8 @@
     "guard:regression": "node scripts/c13-regression-sentinel.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev",
-    "prisma:migrate:deploy": "prisma migrate deploy"
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "seed:qdrant": "npx ts-node scripts/seed-qdrant.ts"
   },
   "dependencies": {
     "@deepgram/sdk": "^4.11.3",
@@ -34,29 +35,24 @@
     "@nestjs/platform-express": "^11.1.12",
     "@nestjs/platform-socket.io": "^11.1.12",
     "@nestjs/testing": "^11.1.12",
-    "@nestjs/typeorm": "^11.0.0",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/auto-instrumentations-node": "^0.69.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.211.0",
     "@opentelemetry/resources": "^2.5.0",
     "@opentelemetry/sdk-node": "^0.211.0",
     "@opentelemetry/semantic-conventions": "^1.39.0",
-    "@supabase/supabase-js": "^2.93.3",
     "@types/bcrypt": "^5.0.2",
     "@types/jest": "^30.0.0",
     "@types/os-utils": "^0.0.4",
     "@types/uuid": "^9.0.0",
     "bcrypt": "^5.1.1",
-    "better-sqlite3": "^12.6.2",
     "elevenlabs": "^1.59.0",
     "google-auth-library": "^9.15.1",
     "openai": "^6.22.0",
     "pg": "^8.18.0",
     "playwright": "^1.58.1",
-    "puppeteer": "^24.25.0",
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",
-    "typeorm": "^0.3.28",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
