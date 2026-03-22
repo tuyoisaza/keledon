@@ -79,7 +79,7 @@ export default function ManagementCompaniesPage() {
                 await updateCompany(editingCompany.id, data);
                 toast.success('Company updated successfully');
             } else {
-                await createCompany({ ...data, created_at: new Date().toISOString() });
+                await createCompany(data);
                 toast.success('Company created successfully');
             }
             setShowForm(false);

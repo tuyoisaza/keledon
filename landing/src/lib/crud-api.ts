@@ -164,7 +164,7 @@ export async function createCompany(data: { name: string; industry?: string }): 
     return fetchApi('/companies', 'POST', data);
 }
 
-export async function updateCompany(id: string, data: { name?: string; industry?: string }): Promise<Company> {
+export async function updateCompany(id: string, data: { name?: string; industry?: string; countries?: string[] }): Promise<Company> {
     return fetchApi(`/companies/${id}`, 'PUT', data);
 }
 

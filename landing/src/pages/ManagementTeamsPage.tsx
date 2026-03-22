@@ -26,8 +26,7 @@ export default function ManagementTeamsPage() {
 
     const [formData, setFormData] = useState({
         name: '',
-        company_id: '',
-        brand_id: '',
+        brandId: '',
         country: ''
     });
 
@@ -55,7 +54,7 @@ export default function ManagementTeamsPage() {
     };
 
     const resetForm = () => {
-        setFormData({ name: '', company_id: '', brand_id: '', country: '' });
+        setFormData({ name: '', brandId: '', country: '' });
     };
 
     const openCreateForm = () => {
@@ -67,8 +66,7 @@ export default function ManagementTeamsPage() {
     const openEditForm = (team: Team) => {
         setFormData({
             name: team.name || '',
-            company_id: team.company_id || '',
-            brand_id: team.brand_id || '',
+            brandId: team.brandId || '',
             country: team.country || ''
         });
         setEditingTeam(team);
@@ -83,7 +81,7 @@ export default function ManagementTeamsPage() {
                 await updateTeam(editingTeam.id, formData);
                 toast.success('Team updated successfully');
             } else {
-                await createTeam({ ...formData, created_at: new Date().toISOString() });
+                await createTeam(formData);
                 toast.success('Team created successfully');
             }
             setShowForm(false);
@@ -112,8 +110,8 @@ export default function ManagementTeamsPage() {
         t.name?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const getCompanyName = (companyId: string) => {
-        return companies.find(c => c.id === companyId)?.name || companyId;
+    const getCompanyName = (team: Team) => {
+        return team.brand?.company?.name || '—';
     };
 
     const getBrandName = (brandId?: string) => {
@@ -126,7 +124,8 @@ export default function ManagementTeamsPage() {
         return availableCountries.find(c => c.code === code)?.name || code;
     };
 
-    const selectedCompany = companies.find(c => c.id === formData.company_id);
+    const selectedBrand = brands.find(b => b.id === formData.brandId);
+    const selectedCompany = selectedBrand ? companies.find(c => c.id === selectedBrand.companyId) : null;
     const companyCountries = selectedCompany?.countries || [];
 
     return (
@@ -192,8 +191,8 @@ export default function ManagementTeamsPage() {
                             {filteredTeams.map((team) => (
                                 <tr key={team.id} className="border-b border-border hover:bg-muted/50">
                                     <td className="px-4 py-3 font-medium">{team.name}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{getCompanyName(team.company_id)}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{getBrandName(team.brand_id)}</td>
+                                    <td className="px-4 py-3 text-muted-foreground">{getCompanyName(team)}</td>
+                                    <td className="px-4 py-3 text-muted-foreground">{getBrandName(team.brandId)}</td>
                                     <td className="px-4 py-3 text-muted-foreground">{getCountryName(team.country)}</td>
                                     <td className="px-4 py-3">
                                         <div className="flex gap-2">
@@ -225,16 +224,16 @@ export default function ManagementTeamsPage() {
                         </div>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm text-muted-foreground mb-1">Company</label>
+                                <label className="block text-sm text-muted-foreground mb-1">Brand</label>
                                 <select
-                                    value={formData.company_id}
-                                    onChange={(e) => setFormData({ ...formData, company_id: e.target.value, brand_id: '', country: '' })}
+                                    value={formData.brandId}
+                                    onChange={(e) => setFormData({ ...formData, brandId: e.target.value, country: '' })}
                                     required
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                                 >
-                                    <option value="">Select Company...</option>
-                                    {companies.map(c => (
-                                        <option key={c.id} value={c.id}>{c.name}</option>
+                                    <option value="">Select Brand...</option>
+                                    {brands.map(b => (
+                                        <option key={b.id} value={b.id}>{b.name} ({b.company?.name})</option>
                                     ))}
                                 </select>
                             </div>
@@ -244,30 +243,15 @@ export default function ManagementTeamsPage() {
                                     value={formData.country}
                                     onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                                     required
-                                    disabled={!formData.company_id}
+                                    disabled={!formData.brandId}
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
                                 >
                                     <option value="">Select Country...</option>
                                     {companyCountries.map((c: any) => {
-                                        const code = typeof c === 'string' ? c : c.country_code;
+                                        const code = typeof c === 'string' ? c : c.countryCode;
                                         const country = availableCountries.find(ac => ac.code === code);
                                         return <option key={code} value={code}>{country?.name || code}</option>;
                                     })}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-sm text-muted-foreground mb-1">Brand</label>
-                                <select
-                                    value={formData.brand_id}
-                                    onChange={(e) => setFormData({ ...formData, brand_id: e.target.value })}
-                                    required
-                                    disabled={!formData.company_id}
-                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
-                                >
-                                    <option value="">Select Brand...</option>
-                                    {brands.filter(b => b.company_id === formData.company_id).map(b => (
-                                        <option key={b.id} value={b.id}>{b.name}</option>
-                                    ))}
                                 </select>
                             </div>
                             <div>

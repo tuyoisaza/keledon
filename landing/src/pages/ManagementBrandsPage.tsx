@@ -15,7 +15,7 @@ export default function ManagementBrandsPage() {
 
     const [formData, setFormData] = useState({
         name: '',
-        company_id: '',
+        companyId: '',
         color: '#6366f1'
     });
 
@@ -41,7 +41,7 @@ export default function ManagementBrandsPage() {
     };
 
     const resetForm = () => {
-        setFormData({ name: '', company_id: '', color: '#6366f1' });
+        setFormData({ name: '', companyId: '', color: '#6366f1' });
     };
 
     const openCreateForm = () => {
@@ -53,7 +53,7 @@ export default function ManagementBrandsPage() {
     const openEditForm = (brand: Brand) => {
         setFormData({
             name: brand.name || '',
-            company_id: brand.company_id || '',
+            companyId: brand.companyId || '',
             color: brand.color || '#6366f1'
         });
         setEditingBrand(brand);
@@ -68,7 +68,7 @@ export default function ManagementBrandsPage() {
                 await updateBrand(editingBrand.id, formData);
                 toast.success('Brand updated successfully');
             } else {
-                await createBrand({ ...formData, created_at: new Date().toISOString() });
+                await createBrand(formData);
                 toast.success('Brand created successfully');
             }
             setShowForm(false);
@@ -164,7 +164,7 @@ export default function ManagementBrandsPage() {
                             {filteredBrands.map((brand) => (
                                 <tr key={brand.id} className="border-b border-border hover:bg-muted/50">
                                     <td className="px-4 py-3 font-medium">{brand.name}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{getCompanyName(brand.company_id)}</td>
+                                    <td className="px-4 py-3 text-muted-foreground">{getCompanyName(brand.companyId)}</td>
                                     <td className="px-4 py-3">
                                         <div className="flex items-center gap-2">
                                             <div className="w-6 h-6 rounded" style={{ backgroundColor: brand.color || '#6366f1' }} />
@@ -213,8 +213,8 @@ export default function ManagementBrandsPage() {
                             <div>
                                 <label className="block text-sm text-muted-foreground mb-1">Company</label>
                                 <select
-                                    value={formData.company_id}
-                                    onChange={(e) => setFormData({ ...formData, company_id: e.target.value })}
+                                    value={formData.companyId}
+                                    onChange={(e) => setFormData({ ...formData, companyId: e.target.value })}
                                     required
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                                 >
