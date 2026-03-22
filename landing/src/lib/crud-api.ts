@@ -60,6 +60,7 @@ export interface Team {
 export interface User {
     id: string;
     companyId?: string;
+    brandId?: string;
     teamId?: string;
     email: string;
     name?: string;
@@ -68,6 +69,7 @@ export interface User {
     createdAt?: string;
     updatedAt?: string;
     company?: { id: string; name: string };
+    brand?: { id: string; name: string; companyId: string };
     team?: { id: string; name: string };
 }
 
@@ -223,12 +225,14 @@ export async function getUsers(companyId?: string): Promise<User[]> {
     return users;
 }
 
-export async function createUser(data: { email: string; name?: string; companyId?: string; teamId?: string; role?: string }): Promise<User> {
-    return fetchApi('/users', 'POST', data);
+export async function createUser(data: { email: string; name?: string; companyId?: string; brandId?: string; teamId?: string; role?: string }): Promise<User> {
+    const { brandId, ...rest } = data;
+    return fetchApi('/users', 'POST', rest);
 }
 
-export async function updateUser(id: string, data: { email?: string; name?: string; companyId?: string; teamId?: string; role?: string }): Promise<User> {
-    return fetchApi(`/users/${id}`, 'PUT', data);
+export async function updateUser(id: string, data: { email?: string; name?: string; companyId?: string; brandId?: string; teamId?: string; role?: string }): Promise<User> {
+    const { brandId, ...rest } = data;
+    return fetchApi(`/users/${id}`, 'PUT', rest);
 }
 
 export async function deleteUser(id: string): Promise<void> {

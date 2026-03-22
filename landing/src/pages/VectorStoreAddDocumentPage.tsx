@@ -104,11 +104,11 @@ export default function VectorStoreAddDocumentPage() {
   }, [isEditing, id, navigate]);
 
   // Filter brands and teams based on selected company
-  const filteredBrands = brands.filter(b => !formData.company_id || b.company_id === formData.company_id);
+  const filteredBrands = brands.filter(b => !formData.company_id || b.companyId === formData.company_id);
   const filteredTeams = teams.filter(t => {
     if (!formData.company_id) return true;
-    if (formData.brand_id) return t.brand_id === formData.brand_id && t.company_id === formData.company_id;
-    return t.company_id === formData.company_id;
+    if (formData.brand_id) return t.brandId === formData.brand_id && t.company?.id === formData.company_id;
+    return t.company?.id === formData.company_id;
   });
 
   const handleSave = async () => {

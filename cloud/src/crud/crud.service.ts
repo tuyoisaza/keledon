@@ -126,10 +126,15 @@ export class CrudService {
       orderBy: { name: 'asc' }
     });
 
+    const teamsWithCompany = teams.map(t => ({
+      ...t,
+      company: t.brand?.company ? { id: t.brand.company.id, name: t.brand.company.name } : undefined
+    }));
+
     if (companyId) {
-      return teams.filter(t => t.brand?.company?.id === companyId);
+      return teamsWithCompany.filter(t => t.brand?.company?.id === companyId);
     }
-    return teams;
+    return teamsWithCompany;
   }
 
   async createTeam(data: { name: string; brandId: string; country?: string }) {
@@ -165,15 +170,23 @@ export class CrudService {
     const users = await this.prisma.user.findMany({
       include: {
         company: { select: { id: true, name: true } },
-        team: { select: { id: true, name: true } }
+        team: { 
+          select: { id: true, name: true, brandId: true },
+          include: { brand: { select: { id: true, name: true, companyId: true } } }
+        }
       },
       orderBy: { name: 'asc' }
     });
 
+    const usersWithBrandId = users.map(u => ({
+      ...u,
+      brandId: u.team?.brandId || undefined
+    }));
+
     if (companyId) {
-      return users.filter(u => u.companyId === companyId);
+      return usersWithBrandId.filter(u => u.companyId === companyId);
     }
-    return users;
+    return usersWithBrandId;
   }
 
   async createUser(data: { 

@@ -19,8 +19,8 @@ export default function ManagementAgentsPage() {
         name: '',
         email: '',
         role: 'agent',
-        company_id: '',
-        team_id: ''
+        companyId: '',
+        teamId: ''
     });
 
     useEffect(() => {
@@ -48,7 +48,7 @@ export default function ManagementAgentsPage() {
     };
 
     const resetForm = () => {
-        setFormData({ name: '', email: '', role: 'agent', company_id: '', team_id: '' });
+        setFormData({ name: '', email: '', role: 'agent', companyId: '', teamId: '' });
     };
 
     const openCreateForm = () => {
@@ -62,8 +62,8 @@ export default function ManagementAgentsPage() {
             name: agent.name || '',
             email: agent.email || '',
             role: agent.role || 'agent',
-            company_id: agent.company_id || '',
-            team_id: agent.team_id || ''
+            companyId: agent.companyId || '',
+            teamId: agent.teamId || ''
         });
         setEditingAgent(agent);
         setShowForm(true);
@@ -179,8 +179,8 @@ export default function ManagementAgentsPage() {
                                 <tr key={agent.id} className="border-b border-border hover:bg-muted/50">
                                     <td className="px-4 py-3 font-medium">{agent.name}</td>
                                     <td className="px-4 py-3 text-muted-foreground">{agent.email}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{getCompanyName(agent.company_id)}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{getTeamName(agent.team_id)}</td>
+                                    <td className="px-4 py-3 text-muted-foreground">{getCompanyName(agent.companyId)}</td>
+                                    <td className="px-4 py-3 text-muted-foreground">{getTeamName(agent.teamId)}</td>
                                     <td className="px-4 py-3">
                                         <span className={cn('px-2 py-1 rounded text-xs font-medium', 
                                             agent.role === 'supervisor' ? 'bg-purple-500/20 text-purple-400' :
@@ -227,16 +227,16 @@ export default function ManagementAgentsPage() {
                             </div>
                             <div>
                                 <label className="block text-sm text-muted-foreground mb-1">Company</label>
-                                <select value={formData.company_id} onChange={(e) => setFormData({ ...formData, company_id: e.target.value, team_id: '' })} required className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50">
+                                <select value={formData.companyId} onChange={(e) => setFormData({ ...formData, companyId: e.target.value, teamId: '' })} required className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50">
                                     <option value="">Select Company...</option>
                                     {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                 </select>
                             </div>
                             <div>
                                 <label className="block text-sm text-muted-foreground mb-1">Team</label>
-                                <select value={formData.team_id} onChange={(e) => setFormData({ ...formData, team_id: e.target.value })} disabled={!formData.company_id} className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50">
+                                <select value={formData.teamId} onChange={(e) => setFormData({ ...formData, teamId: e.target.value })} disabled={!formData.companyId} className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50">
                                     <option value="">Select Team...</option>
-                                    {teams.filter(t => t.company_id === formData.company_id).map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                                    {teams.filter(t => t.company?.id === formData.companyId).map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                                 </select>
                             </div>
                             <div>

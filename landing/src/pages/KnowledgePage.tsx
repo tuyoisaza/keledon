@@ -50,7 +50,7 @@ export default function KnowledgePage() {
 
     useEffect(() => {
         if (addForm.company_id) {
-            const companyBrands = brands.filter(b => b.company_id === addForm.company_id);
+            const companyBrands = brands.filter(b => b.companyId === addForm.company_id);
             if (companyBrands.length === 0) {
                 getBrands(addForm.company_id).then(setBrands);
             }
@@ -59,7 +59,7 @@ export default function KnowledgePage() {
 
     useEffect(() => {
         if (addForm.brand_id) {
-            const brandTeams = teams.filter(t => t.brand_id === addForm.brand_id);
+            const brandTeams = teams.filter(t => t.brandId === addForm.brand_id);
             if (brandTeams.length === 0) {
                 getTeams(addForm.company_id, addForm.brand_id).then(setTeams);
             }
