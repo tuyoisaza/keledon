@@ -44,13 +44,29 @@ fi
 
 echo "[BOOT] Running Prisma schema sync"
 cd /app/backend
+ls -la /app/data/ || true
+
 if [ "${KELEDON_RESET_DB:-false}" = "true" ]; then
-  echo "[BOOT] KELEDON_RESET_DB=true - Removing old database files..."
+  echo "[BOOT] KELEDON_RESET_DB=true - Resetting database and Qdrant..."
   rm -f /app/data/keledon.db /app/data/keledon.db-journal /app/data/keledon.db-wal /app/data/keledon.db-shm
   rm -rf /app/data/qdrant
 fi
 
-if [ "${KELEDON_RESET_DB:-false}" = "true" ]; then
+if [ ! -f /app/data/keledon.db ]; then
+  echo "[BOOT] No existing database found"
+fi
+
+npx prisma db push
+echo "[BOOT] Database sync complete"
+
+if [ "${KELEDON_RESET_DB:-false}" = "true" ] || [ ! -f /app/data/qdrant/config.json ]; then
+  if [ ! -f /app/data/qdrant/config.json ]; then
+    echo "[BOOT] Initializing Qdrant storage..."
+  else
+    echo "[BOOT] Reinitializing Qdrant storage..."
+  fi
+  rm -rf /app/data/qdrant
+  
   echo "[BOOT] Ensuring Qdrant collection '$QDRANT_COLLECTION' exists"
   curl -fsS -X PUT "http://127.0.0.1:6333/collections/$QDRANT_COLLECTION" \
     -H "Content-Type: application/json" \
@@ -61,10 +77,6 @@ if [ "${KELEDON_RESET_DB:-false}" = "true" ]; then
     -H "Content-Type: application/json" \
     -d '{"points":[{"id":1,"vector":[0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.10,0.11,0.12,0.13,0.14,0.15,0.16,0.17,0.18,0.19,0.20,0.21,0.22,0.23,0.24,0.25,0.26,0.27,0.28,0.29,0.30,0.31,0.32],"payload":{"doc_id":"seed-doc-1","text":"KELEDON runtime knowledge seed for deterministic vector retrieval.","category":"runtime","source":"keledon","company_id":"keledon-default","created_at":"2026-01-01T00:00:00.000Z"}}]}' >/dev/null
 fi
-
-ls -la /app/data/ || true
-npx prisma db push
-echo "[BOOT] Database sync complete"
 
 echo "[BOOT] Starting backend on 127.0.0.1:$BACKEND_PORT"
 PORT="$BACKEND_PORT" node dist/main.js >/tmp/backend.log 2>&1 &
