@@ -63,6 +63,7 @@ COPY --from=backend-builder /app/cloud/dist ./backend/dist
 COPY --from=backend-builder /app/cloud/node_modules ./backend/node_modules
 COPY --from=backend-builder /app/cloud/package*.json ./backend/
 COPY --from=backend-builder /app/cloud/prisma ./backend/prisma
+COPY --from=backend-builder /app/cloud/scripts ./backend/scripts
 
 # Copy VOSK server and models
 COPY --from=vosk-builder /app/vosk-server ./vosk-server
