@@ -31,7 +31,7 @@ FROM node:20-bookworm AS vosk-builder
 
 WORKDIR /app/vosk-server
 COPY cloud/vosk-server/package*.json ./
-RUN npm ci
+RUN npm install --ignore-scripts
 COPY cloud/vosk-server/ ./
 
 # Stage 4: copy Qdrant binary
