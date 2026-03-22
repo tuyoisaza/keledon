@@ -99,6 +99,7 @@ if [ ! -f /app/data/qdrant/config.json ] || [ "${KELEDON_RESET_DB:-false}" = "tr
 fi
 
 echo "[BOOT] Starting backend on 127.0.0.1:$BACKEND_PORT"
+cd /app/backend
 PORT="$BACKEND_PORT" node dist/main.js >/tmp/backend.log 2>&1 &
 BACKEND_PID=$!
 

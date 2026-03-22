@@ -170,7 +170,7 @@ async function verifySeed(): Promise<void> {
     throw new Error(`Verification failed: ${response.status}`);
   }
 
-  const result = await response.json();
+  const result = await response.json() as { result?: { length?: number } };
   console.log(`[Seed] Verified: ${result.result?.length || 0} results returned for "hello"`);
 }
 
