@@ -4,13 +4,48 @@ import * as fs from 'fs';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
+  private cleanupInterval: NodeJS.Timeout | null = null;
+
   async onModuleInit() {
     try {
       await this.$connect();
       console.log('[Prisma] Connected to database');
+      await this.cleanupOrphanedSessions(); // Clean existing orphaned sessions
       await this.autoSeedIfEmpty();
+      this.startPeriodicCleanup(); // Start scheduled cleanup
     } catch (error) {
       console.warn('[Prisma] Failed to connect (non-fatal):', error.message);
+    }
+  }
+
+  private async cleanupOrphanedSessions(): Promise<void> {
+    try {
+      const staleThreshold = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
+      const result = await this.session.updateMany({
+        where: {
+          status: 'active',
+          updatedAt: { lt: staleThreshold }
+        },
+        data: { status: 'ended' }
+      });
+      if (result.count > 0) {
+        console.log(`[Prisma] Cleaned up ${result.count} orphaned sessions`);
+      }
+    } catch (error) {
+      console.error('[Prisma] Failed to cleanup orphaned sessions:', error.message);
+    }
+  }
+
+  private startPeriodicCleanup(): void {
+    // Run cleanup every hour
+    this.cleanupInterval = setInterval(async () => {
+      await this.cleanupOrphanedSessions();
+    }, 60 * 60 * 1000);
+  }
+
+  onModuleDestroy() {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
     }
   }
 

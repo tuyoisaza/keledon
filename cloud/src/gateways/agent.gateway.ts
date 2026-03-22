@@ -66,6 +66,7 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   private readonly logger = new Logger(AgentGateway.name);
   private readonly connectedAgents = new Map<string, Socket>();
+  private readonly agentSessions = new Map<string, string>(); // clientId -> sessionId
   private readonly tracer = trace.getTracer('keledon-cloud-agent-gateway');
 
   constructor(
@@ -95,12 +96,28 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.logger.log(`Agent disconnected: ${client.id}`);
     this.connectedAgents.delete(client.id);
     
+    // End the session if one was created for this agent
+    const sessionId = this.agentSessions.get(client.id);
+    if (sessionId) {
+      this.agentSessions.delete(client.id);
+      this.endSession(sessionId);
+    }
+    
     // Broadcast agent disconnection to dashboard if needed
     if (this.server && typeof (this.server as any).of === 'function') {
       this.server.of('/dashboard').emit('agent:disconnected', {
         agent_id: client.id,
         timestamp: new Date().toISOString()
       });
+    }
+  }
+
+  private async endSession(sessionId: string): Promise<void> {
+    try {
+      await this.sessionService.updateSessionStatus(sessionId, 'ended');
+      this.logger.log(`Session ended: ${sessionId}`);
+    } catch (error) {
+      this.logger.error(`Failed to end session ${sessionId}: ${error.message}`);
     }
   }
 
@@ -179,16 +196,25 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     tab_title?: string;
   }): Promise<void> {
     try {
+      // End any existing session for this client before creating a new one
+      const existingSessionId = this.agentSessions.get(client.id);
+      if (existingSessionId) {
+        await this.endSession(existingSessionId);
+      }
+
       const session = await this.sessionService.create(data.agent_id, {
         tab_url: data.tab_url,
         tab_title: data.tab_title
       });
 
+      // Track this session for the client
+      this.agentSessions.set(client.id, session.id);
+
       console.log(`[AgentGateway] Session created: ${session.id} for agent ${data.agent_id}`);
 
       client.emit('session.created', {
         session_id: session.id,
-        agent_id: session.agent_id,
+        agent_id: data.agent_id,
         status: session.status,
         created_at: session.created_at
       });

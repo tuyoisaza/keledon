@@ -385,13 +385,55 @@ const version = 'v0.0.42';
 
 ---
 
-## 11. File Reference
+## 11. Session Management
+
+### 11.1 Session Lifecycle
+
+Sessions must follow this lifecycle:
+
+```
+created → active → ended
+              ↓
+           paused (optional)
+```
+
+### 11.2 Session End Rules
+
+**MANDATORY**: Sessions MUST be marked as `ended` when:
+- Agent disconnects from WebSocket
+- Session is explicitly terminated
+- Session is stale (>24 hours with no activity)
+
+### 11.3 Session Cleanup
+
+| Trigger | Action |
+|---------|--------|
+| Agent disconnect | End session immediately |
+| Startup (PrismaService) | Clean orphaned sessions (>24h active) |
+| Periodic (hourly) | Clean orphaned sessions (>24h active) |
+
+### 11.4 Anti-Seed Rules
+
+**FORBIDDEN** in production data:
+- No demo, mock, or sample sessions
+- No hardcoded fake data in API responses
+- No random number generators for real metrics
+- No "test" prefixes in production data
+
+All session data must come from actual agent interactions.
+
+---
+
+## 12. File Reference
 
 | Purpose | File Path |
 |---------|-----------|
 | Backend CRUD Service | `cloud/src/crud/crud.service.ts` |
 | Backend CRUD Controller | `cloud/src/crud/crud.controller.ts` |
 | Prisma Schema | `cloud/prisma/schema.prisma` |
+| Prisma Service | `cloud/src/prisma/prisma.service.ts` |
+| Session Service | `cloud/src/services/session.service.ts` |
+| Agent Gateway | `cloud/src/gateways/agent.gateway.ts` |
 | Frontend API Client | `landing/src/lib/crud-api.ts` |
 | Auth Context | `landing/src/context/AuthContext.tsx` |
 | Auth Controller | `cloud/src/auth-local/auth-local.controller.ts` |
@@ -399,4 +441,4 @@ const version = 'v0.0.42';
 ---
 
 *Last Updated: 2026-03-22*
-*Version: 0.0.41*
+*Version: 0.0.42*
