@@ -25,6 +25,11 @@ export VOSK_SAMPLE_RATE=${VOSK_SAMPLE_RATE:-16000}
 
 mkdir -p /app/data /app/data/qdrant
 
+if [ "${KELEDON_RESET_QDRANT:-false}" = "true" ]; then
+  echo "[BOOT] Resetting Qdrant data..."
+  rm -rf /app/data/qdrant/*
+fi
+
 echo "[BOOT] Starting embedded Qdrant on 127.0.0.1:6333"
 QDRANT__SERVICE__HTTP_PORT=6333 \
 QDRANT__SERVICE__GRPC_PORT=6334 \
