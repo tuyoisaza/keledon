@@ -151,11 +151,11 @@ export function getDebugInfo(): string {
     lines.push('───────────────────────────────────────────────────────────────');
 
     if (logs.length === 0) {
-        lines.push('No logs captured. Console logging started.');
+        lines.push('No logs captured');
     } else {
         logs.forEach(log => {
             const icon = log.level === 'error' ? '❌' : log.level === 'warn' ? '⚠️' : log.level === 'info' ? 'ℹ️' : '📝';
-            lines.push(`[${log.timestamp}] ${icon} ${log.args.join(' ')}`);
+            lines.push(`[${log.timestamp.split('T')[1].split('.')[0]}] ${icon} ${log.args.join(' ')}`);
         });
     }
 
