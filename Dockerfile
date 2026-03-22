@@ -29,9 +29,11 @@ RUN rm -f tsconfig.floor.tsbuildinfo && npm run build
 # Stage 3: build VOSK server
 FROM node:20-bookworm AS vosk-builder
 
+RUN apt-get update && apt-get install -y build-essential python3 make g++
+
 WORKDIR /app/vosk-server
 COPY cloud/vosk-server/package*.json ./
-RUN npm install --ignore-scripts
+RUN npm install
 COPY cloud/vosk-server/ ./
 
 # Stage 4: copy Qdrant binary
