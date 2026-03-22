@@ -1,17 +1,15 @@
 {
-  "name": "keledon-vosk-server",
+  "name": "keledon-stt-server",
   "version": "1.0.0",
-  "description": "KELEDON VOSK STT Server - Local speech recognition",
+  "description": "KELEDON STT Server - Mock mode for MVP",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"
   },
   "dependencies": {
-    "vosk": "^0.3.39",
     "ws": "^8.14.2",
     "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "uuid": "^9.0.0"
+    "cors": "^2.8.5"
   }
 }
