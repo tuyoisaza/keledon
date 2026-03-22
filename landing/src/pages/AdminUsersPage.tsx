@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Users, TrendingUp, Clock, Star, Filter, Download, RefreshCw, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getUsers, getCompanies, type User, type Company } from '@/lib/supabase';
+import { getUsers, getCompanies, type User, type Company } from '@/lib/crud-api';
 
 interface UserWithStats extends User {
     callsHandled?: number;
@@ -190,7 +190,7 @@ export default function AdminUsersPage() {
                                             </div>
                                         </td>
                                         <td className="px-4 py-4 text-muted-foreground">
-                                            {user.companies?.name || '—'}
+                                            {user.company?.name || '—'}
                                         </td>
                                         <td className="px-4 py-4">
                                             <span className={cn('px-2 py-1 rounded text-xs font-medium', roleStyles[user.role] || roleStyles.user)}>

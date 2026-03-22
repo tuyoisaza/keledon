@@ -57,8 +57,8 @@ export default function VectorStoreAddDocumentPage() {
         setCategories(categoriesData.length > 0 ? categoriesData : defaultCategories);
 
         // Set default company from user if available
-        if (user?.company_id) {
-          setFormData(prev => ({ ...prev, company_id: user.company_id || '' }));
+        if (user?.companyId) {
+          setFormData(prev => ({ ...prev, company_id: user.companyId || '' }));
         } else if (companiesData.length > 0) {
           setFormData(prev => ({ ...prev, company_id: companiesData[0].id }));
         }
@@ -68,7 +68,7 @@ export default function VectorStoreAddDocumentPage() {
       }
     };
     fetchData();
-  }, [user?.company_id]);
+  }, [user?.companyId]);
 
   // If editing, fetch existing document
   useEffect(() => {
@@ -134,7 +134,7 @@ export default function VectorStoreAddDocumentPage() {
         content: formData.content,
         category: formData.category,
         metadata,
-        company_id: formData.company_id || user?.company_id || '',
+        company_id: formData.company_id || user?.companyId || '',
         brand_id: formData.brand_id || undefined,
         team_id: formData.team_id || undefined,
         created_by: user?.id || 'user',

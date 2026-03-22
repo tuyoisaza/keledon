@@ -119,11 +119,16 @@ export class LocalAuthController {
       const brand = team?.brand_id ? brands.find(b => b.id === team.brand_id) : null;
       
       const fullUser = {
-        ...user,
-        company_name: company?.name || null,
-        brand_name: brand?.name || null,
-        team_name: team?.name || null,
-        created_at: company?.created_at || null,
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        companyId: user.company_id,
+        teamId: user.team_id,
+        companyName: company?.name || null,
+        brandName: brand?.name || null,
+        teamName: team?.name || null,
+        createdAt: company?.created_at || null,
       };
       
       return {
@@ -166,13 +171,13 @@ export class LocalAuthController {
         email: user.email,
         name: user.name,
         role: user.role,
-        company_id: user.company_id,
-        team_id: user.team_id,
-        company_name: company?.name || null,
-        brand_name: brand?.name || null,
-        team_name: team?.name || null,
-        created_at: company?.created_at || null,
-        last_session: user.last_session || null,
+        companyId: user.company_id,
+        teamId: user.team_id,
+        companyName: company?.name || null,
+        brandName: brand?.name || null,
+        teamName: team?.name || null,
+        createdAt: company?.created_at || null,
+        lastSession: user.last_session || null,
       };
 
       return {

@@ -15,6 +15,13 @@ export interface User {
   teamName?: string;
   createdAt?: string;
   lastSession?: string;
+  company_id?: string;
+  team_id?: string;
+  company_name?: string;
+  brand_name?: string;
+  team_name?: string;
+  created_at?: string;
+  last_session?: string;
 }
 
 interface AuthContextType {

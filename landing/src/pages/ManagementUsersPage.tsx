@@ -266,6 +266,9 @@ export default function ManagementUsersPage() {
                                 <label className="block text-sm text-muted-foreground mb-1">Role</label>
                                 <select value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50">
                                     <option value="user">User</option>
+                                    <option value="agent">Agent</option>
+                                    <option value="coordinator">Coordinator</option>
+                                    <option value="supervisor">Supervisor</option>
                                     <option value="admin">Admin</option>
                                     <option value="superadmin">Super Admin</option>
                                 </select>

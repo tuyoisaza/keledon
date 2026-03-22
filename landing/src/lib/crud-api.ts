@@ -48,29 +48,31 @@ export interface Brand {
 
 export interface Team {
     id: string;
-    brandId?: string;
     name: string;
+    brandId?: string;
     country?: string;
+    sttProvider?: string;
+    ttsProvider?: string;
     createdAt?: string;
     updatedAt?: string;
-    brand?: { id: string; name: string; companyId: string };
+    brand?: { id: string; name: string; color?: string; companyId?: string };
     company?: { id: string; name: string };
 }
 
 export interface User {
     id: string;
-    companyId?: string;
-    brandId?: string;
-    teamId?: string;
     email: string;
     name?: string;
     role: string;
+    companyId?: string;
+    teamId?: string;
+    brandId?: string;
     isOnline?: boolean;
+    lastLogin?: string;
     createdAt?: string;
     updatedAt?: string;
     company?: { id: string; name: string };
-    brand?: { id: string; name: string; companyId: string };
-    team?: { id: string; name: string };
+    team?: { id: string; name: string; brandId?: string; brand?: { id: string; name: string } };
 }
 
 export interface Agent {

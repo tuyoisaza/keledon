@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Phone, Clock, TrendingUp, Users, Target, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getSessions } from '@/lib/supabase';
+import { getSessions } from '@/lib/crud-api';
 import { useAuth } from '@/context/AuthContext';
 
 interface AgentStats {
@@ -35,7 +35,7 @@ export default function WorkStatsPage() {
                 let companyId: string | undefined;
                 
                 if (user.role === 'admin' || user.role === 'coordinator') {
-                    companyId = user.company_id;
+                    companyId = user.companyId;
                 } else if (user.role === 'user' || user.role === 'agent') {
                     companyId = undefined;
                 }

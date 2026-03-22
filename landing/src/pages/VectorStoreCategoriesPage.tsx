@@ -64,7 +64,7 @@ export default function VectorStoreCategoriesPage() {
         name: formData.name,
         color: formData.color,
         description: formData.description,
-        company_id: user?.company_id || '',
+        companyId: user?.companyId || '',
       });
       toast.success('Category added');
       setShowAddForm(false);

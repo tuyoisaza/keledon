@@ -117,47 +117,89 @@ export class CrudService {
 
   async getTeams(companyId?: string) {
     const teams = await this.prisma.team.findMany({
-      include: {
+      select: {
+        id: true,
+        name: true,
+        brandId: true,
+        country: true,
+        sttProvider: true,
+        ttsProvider: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: { select: { users: true, agents: true } },
         brand: {
-          include: { company: { select: { id: true, name: true } } }
-        },
-        _count: { select: { users: true, agents: true } }
+          select: {
+            id: true,
+            name: true,
+            color: true,
+            company: { select: { id: true, name: true } }
+          }
+        }
       },
       orderBy: { name: 'asc' }
     });
 
-    const teamsWithCompany = teams.map(t => ({
+    return teams.map(t => ({
       ...t,
       company: t.brand?.company ? { id: t.brand.company.id, name: t.brand.company.name } : undefined
     }));
-
-    if (companyId) {
-      return teamsWithCompany.filter(t => t.brand?.company?.id === companyId);
-    }
-    return teamsWithCompany;
   }
 
   async createTeam(data: { name: string; brandId: string; country?: string }) {
-    return this.prisma.team.create({
+    const team = await this.prisma.team.create({
       data,
-      include: {
+      select: {
+        id: true,
+        name: true,
+        brandId: true,
+        country: true,
+        sttProvider: true,
+        ttsProvider: true,
+        createdAt: true,
+        updatedAt: true,
         brand: {
-          include: { company: { select: { id: true, name: true } } }
+          select: {
+            id: true,
+            name: true,
+            color: true,
+            company: { select: { id: true, name: true } }
+          }
         }
       }
     });
+    return {
+      ...team,
+      company: team.brand?.company ? { id: team.brand.company.id, name: team.brand.company.name } : undefined
+    };
   }
 
   async updateTeam(id: string, data: { name?: string; country?: string }) {
-    return this.prisma.team.update({
+    const team = await this.prisma.team.update({
       where: { id },
       data,
-      include: {
+      select: {
+        id: true,
+        name: true,
+        brandId: true,
+        country: true,
+        sttProvider: true,
+        ttsProvider: true,
+        createdAt: true,
+        updatedAt: true,
         brand: {
-          include: { company: { select: { id: true, name: true } } }
+          select: {
+            id: true,
+            name: true,
+            color: true,
+            company: { select: { id: true, name: true } }
+          }
         }
       }
     });
+    return {
+      ...team,
+      company: team.brand?.company ? { id: team.brand.company.id, name: team.brand.company.name } : undefined
+    };
   }
 
   async deleteTeam(id: string) {
@@ -168,25 +210,35 @@ export class CrudService {
 
   async getUsers(companyId?: string) {
     const users = await this.prisma.user.findMany({
-      include: {
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        companyId: true,
+        teamId: true,
+        isOnline: true,
+        lastLogin: true,
+        createdAt: true,
+        updatedAt: true,
         company: { select: { id: true, name: true } },
-        team: { 
-          select: { id: true, name: true, brandId: true },
-          include: { brand: { select: { id: true, name: true, companyId: true } } }
+        team: {
+          select: { 
+            id: true, 
+            name: true, 
+            brandId: true,
+            brand: { select: { id: true, name: true } }
+          }
         }
       },
+      where: companyId ? { companyId } : undefined,
       orderBy: { name: 'asc' }
     });
 
-    const usersWithBrandId = users.map(u => ({
+    return users.map(u => ({
       ...u,
       brandId: u.team?.brandId || undefined
     }));
-
-    if (companyId) {
-      return usersWithBrandId.filter(u => u.companyId === companyId);
-    }
-    return usersWithBrandId;
   }
 
   async createUser(data: { 
@@ -199,9 +251,19 @@ export class CrudService {
   }) {
     return this.prisma.user.create({
       data,
-      include: {
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        companyId: true,
+        teamId: true,
+        isOnline: true,
+        lastLogin: true,
+        createdAt: true,
+        updatedAt: true,
         company: { select: { id: true, name: true } },
-        team: { select: { id: true, name: true } }
+        team: { select: { id: true, name: true, brandId: true } }
       }
     });
   }
@@ -216,9 +278,19 @@ export class CrudService {
     return this.prisma.user.update({
       where: { id },
       data,
-      include: {
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        companyId: true,
+        teamId: true,
+        isOnline: true,
+        lastLogin: true,
+        createdAt: true,
+        updatedAt: true,
         company: { select: { id: true, name: true } },
-        team: { select: { id: true, name: true } }
+        team: { select: { id: true, name: true, brandId: true } }
       }
     });
   }
@@ -230,10 +302,27 @@ export class CrudService {
   // ========== AGENTS ==========
 
   async getAgents(companyId?: string) {
-    const agents = await this.prisma.agent.findMany({
-      include: {
+    return this.prisma.agent.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        isActive: true,
+        callsHandled: true,
+        fcrRate: true,
+        avgHandleTime: true,
+        autonomyLevel: true,
+        policies: true,
+        createdAt: true,
+        updatedAt: true,
+        teamId: true,
+        userId: true,
         team: {
-          include: { 
+          select: {
+            id: true,
+            name: true,
+            brandId: true,
             brand: { select: { id: true, name: true, companyId: true } }
           }
         },
@@ -241,11 +330,6 @@ export class CrudService {
       },
       orderBy: { name: 'asc' }
     });
-
-    if (companyId) {
-      return agents.filter(a => a.team?.brand?.companyId === companyId);
-    }
-    return agents;
   }
 
   async createAgent(data: { 
@@ -258,9 +342,28 @@ export class CrudService {
   }) {
     return this.prisma.agent.create({
       data,
-      include: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        isActive: true,
+        callsHandled: true,
+        fcrRate: true,
+        avgHandleTime: true,
+        autonomyLevel: true,
+        policies: true,
+        createdAt: true,
+        updatedAt: true,
+        teamId: true,
+        userId: true,
         team: {
-          include: { brand: { select: { id: true, name: true } } }
+          select: {
+            id: true,
+            name: true,
+            brandId: true,
+            brand: { select: { id: true, name: true } }
+          }
         },
         user: { select: { id: true, name: true, email: true } }
       }
@@ -283,9 +386,28 @@ export class CrudService {
     return this.prisma.agent.update({
       where: { id },
       data,
-      include: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        isActive: true,
+        callsHandled: true,
+        fcrRate: true,
+        avgHandleTime: true,
+        autonomyLevel: true,
+        policies: true,
+        createdAt: true,
+        updatedAt: true,
+        teamId: true,
+        userId: true,
         team: {
-          include: { brand: { select: { id: true, name: true } } }
+          select: {
+            id: true,
+            name: true,
+            brandId: true,
+            brand: { select: { id: true, name: true } }
+          }
         },
         user: { select: { id: true, name: true, email: true } }
       }

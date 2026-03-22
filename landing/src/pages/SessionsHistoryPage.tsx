@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getCompanies, getUsers, getSessions } from '@/lib/supabase';
+import { getCompanies, getUsers, getSessions } from '@/lib/crud-api';
 import { Filter, RefreshCw, History } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
@@ -45,7 +45,7 @@ export default function SessionsHistoryPage() {
             if (user.role === 'superadmin') {
                 companyId = undefined;
             } else if (user.role === 'admin' || user.role === 'coordinator') {
-                companyId = user.company_id;
+                companyId = user.companyId;
             } else if (user.role === 'user' || user.role === 'agent') {
                 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
                 if (!uuidRegex.test(user.id)) {

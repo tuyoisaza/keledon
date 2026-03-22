@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Phone, CheckCircle, AlertTriangle, Clock, Building2, LayoutGrid } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getSessions } from '@/lib/supabase';
+import { getSessions } from '@/lib/crud-api';
 import { useAuth } from '@/context/AuthContext';
 
 const statusStyles: Record<string, string> = {
@@ -38,7 +38,7 @@ export default function DashboardPage() {
             if (user.role === 'superadmin') {
                 companyId = undefined;
             } else if (user.role === 'admin' || user.role === 'coordinator') {
-                companyId = user.company_id;
+                companyId = user.companyId;
             } else if (user.role === 'user' || user.role === 'agent') {
                 companyId = undefined;
             }

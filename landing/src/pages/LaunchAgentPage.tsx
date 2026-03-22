@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Play, Globe, Headphones, AlertCircle, Building2, Layers, UserCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { getTeamInterfaces, getTeamDetails, getCompanies, getBrands, getTeams, type ManagedInterface, type Company, type Brand, type Team } from '@/lib/supabase';
+import { getTeamInterfaces, getTeamDetails, getCompanies, getBrands, getTeams, type ManagedInterface, type Company, type Brand, type Team } from '@/lib/crud-api';
 import { cn } from '@/lib/utils';
 
 export default function LaunchAgentPage() {

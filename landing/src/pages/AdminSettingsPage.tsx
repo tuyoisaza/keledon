@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Settings, Save, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getCompanies, type Company } from '@/lib/supabase';
+import { getCompanies, type Company } from '@/lib/crud-api';
 import { API_URL } from '@/lib/config';
 
 interface TeamConfig {

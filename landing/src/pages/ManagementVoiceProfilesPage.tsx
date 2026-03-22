@@ -26,8 +26,8 @@ export default function ManagementVoiceProfilesPage() {
     const fetchVoiceProfiles = async () => {
         try {
             setLoading(true);
-            if (user?.company_id) {
-                const response = await fetch(`/api/tenant/voice-profiles?company_id=${user.company_id}`);
+            if (user?.companyId) {
+                const response = await fetch(`/api/tenant/voice-profiles?companyId=${user.companyId}`);
                 if (response.ok) {
                     const data = await response.json();
                     setVoiceProfiles(data || []);
@@ -52,7 +52,7 @@ export default function ManagementVoiceProfilesPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...formData,
-                    company_id: user?.company_id
+                    companyId: user?.companyId
                 })
             });
             if (response.ok) {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Trash2, Loader2 } from 'lucide-react';
-import { type Company, type Brand, type Team } from '@/lib/supabase';
+import { type Company, type Brand, type Team } from '@/lib/crud-api';
 
 interface EntityFormProps {
     activeTab: string;
