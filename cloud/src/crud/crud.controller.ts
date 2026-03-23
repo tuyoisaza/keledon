@@ -265,6 +265,16 @@ export class CrudController {
     return this.crud.updateSession(id, data);
   }
 
+  @Get('sessions/orphaned/count')
+  getOrphanedSessionCount() {
+    return this.crud.getOrphanedSessionCount();
+  }
+
+  @Delete('sessions/orphaned')
+  deleteOrphanedSessions() {
+    return this.crud.deleteOrphanedSessions();
+  }
+
   // ========== KNOWLEDGE ==========
 
   @Get('knowledge')

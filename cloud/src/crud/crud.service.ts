@@ -643,6 +643,30 @@ export class CrudService {
     return this.prisma.session.update({ where: { id }, data });
   }
 
+  async deleteOrphanedSessions(): Promise<{ deleted: number }> {
+    const result = await this.prisma.session.deleteMany({
+      where: {
+        OR: [
+          { userId: null },
+          { teamId: null },
+        ],
+      },
+    });
+    return { deleted: result.count };
+  }
+
+  async getOrphanedSessionCount(): Promise<number> {
+    const count = await this.prisma.session.count({
+      where: {
+        OR: [
+          { userId: null },
+          { teamId: null },
+        ],
+      },
+    });
+    return count;
+  }
+
   // ========== KNOWLEDGE ==========
 
   async getKnowledgeBases(companyId: string) {

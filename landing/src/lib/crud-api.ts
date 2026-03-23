@@ -282,6 +282,14 @@ export async function getSession(id: string): Promise<Session> {
     return fetchApi(`/sessions/${id}`);
 }
 
+export async function getOrphanedSessionCount(): Promise<number> {
+    return fetchApi('/sessions/orphaned/count');
+}
+
+export async function deleteOrphanedSessions(): Promise<{ deleted: number }> {
+    return fetchApi('/sessions/orphaned', 'DELETE');
+}
+
 // Provider Catalog
 export async function getProviderCatalog(): Promise<ProviderCatalogEntry[]> {
     return fetchApi('/provider-catalog');

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Phone, CheckCircle, AlertTriangle, Clock, Building2, LayoutGrid } from 'lucide-react';
+import { Phone, CheckCircle, AlertTriangle, Clock, Building2, LayoutGrid, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getSessions } from '@/lib/crud-api';
+import { getSessions, getOrphanedSessionCount, deleteOrphanedSessions } from '@/lib/crud-api';
 import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
 
 const statusStyles: Record<string, string> = {
     active: 'bg-green-500/10 text-green-500 border-green-500/20',
@@ -14,6 +15,8 @@ export default function DashboardPage() {
     const { user } = useAuth();
     const [sessions, setSessions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [orphanedCount, setOrphanedCount] = useState(0);
+    const [cleaning, setCleaning] = useState(false);
     const [stats, setStats] = useState([
         { label: 'Active Now', value: 0, icon: Phone, color: 'text-green-500' },
         { label: 'Completed Today', value: 0, icon: CheckCircle, color: 'text-blue-500' },
@@ -24,10 +27,37 @@ export default function DashboardPage() {
     useEffect(() => {
         if (user) {
             fetchData();
+            checkOrphanedSessions();
             const interval = setInterval(fetchData, 10000);
             return () => clearInterval(interval);
         }
     }, [user]);
+
+    async function checkOrphanedSessions() {
+        try {
+            const count = await getOrphanedSessionCount();
+            setOrphanedCount(count);
+        } catch (e) {
+            console.error('Failed to check orphaned sessions:', e);
+        }
+    }
+
+    async function handleCleanOrphanedSessions() {
+        if (orphanedCount === 0) return;
+        if (!confirm(`Delete ${orphanedCount} orphaned session(s)?`)) return;
+        
+        setCleaning(true);
+        try {
+            const result = await deleteOrphanedSessions();
+            toast.success(`Deleted ${result.deleted} orphaned session(s)`);
+            setOrphanedCount(0);
+            fetchData();
+        } catch (e) {
+            toast.error('Failed to delete orphaned sessions');
+        } finally {
+            setCleaning(false);
+        }
+    }
 
     async function fetchData() {
         try {
@@ -219,12 +249,24 @@ export default function DashboardPage() {
                     <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                         Recent Live Activity
                     </h2>
-                    <button
-                        onClick={() => window.location.href = '/sessions'}
-                        className="text-sm text-primary hover:underline font-medium"
-                    >
-                        View All History &rarr;
-                    </button>
+                    <div className="flex items-center gap-3">
+                        {orphanedCount > 0 && (
+                            <button
+                                onClick={handleCleanOrphanedSessions}
+                                disabled={cleaning}
+                                className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-red-500/10 text-red-500 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors disabled:opacity-50"
+                            >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                {cleaning ? 'Cleaning...' : `Clean ${orphanedCount} Orphaned`}
+                            </button>
+                        )}
+                        <button
+                            onClick={() => window.location.href = '/sessions'}
+                            className="text-sm text-primary hover:underline font-medium"
+                        >
+                            View All History &rarr;
+                        </button>
+                    </div>
                 </div>
 
                 <div className="rounded-xl border border-border bg-card overflow-hidden">
