@@ -8,6 +8,8 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse
 import threading
 
+print("[VOSK] Python VOSK server starting...", flush=True)
+
 VOSK_PORT = int(os.getenv('VOSK_PORT', '9090'))
 VOSK_WS_PORT = int(os.getenv('VOSK_WS_PORT', '9091'))
 MODEL_PATH = os.getenv('VOSK_MODEL_PATH', '/app/models/vosk-model-small-en-us-0.15')
@@ -25,20 +27,22 @@ try:
     from vosk import Model, KaldiRecognizer, SetLogLevel
     SetLogLevel(0)
     
+    print(f"[VOSK] VOSK package imported successfully", flush=True)
+    
     if not os.path.exists(MODEL_PATH):
-        logger.warning(f"Model not found at {MODEL_PATH}, using demo mode")
+        print(f"[VOSK] Model not found at {MODEL_PATH}, using demo mode", flush=True)
         vosk_ready = False
     else:
-        logger.info(f"Loading VOSK model from {MODEL_PATH}...")
+        print(f"[VOSK] Loading VOSK model from {MODEL_PATH}...", flush=True)
         model = Model(MODEL_PATH)
         recognizer = KaldiRecognizer(model, SAMPLE_RATE)
         vosk_ready = True
-        logger.info("VOSK model loaded successfully")
-except ImportError:
-    logger.warning("VOSK Python package not installed, running in demo mode")
+        print("[VOSK] VOSK model loaded successfully", flush=True)
+except ImportError as e:
+    print(f"[VOSK] VOSK Python package not installed: {e}", flush=True)
     vosk_ready = False
 except Exception as e:
-    logger.error(f"Failed to load VOSK: {e}")
+    print(f"[VOSK] Failed to load VOSK: {e}", flush=True)
     vosk_ready = False
 
 
