@@ -30,6 +30,7 @@ import SessionDetailPage from '@/pages/SessionDetailPage';
 import WorkStatsPage from '@/pages/WorkStatsPage';
 import KnowledgeStatsPage from '@/pages/KnowledgeStatsPage';
 import ProfilePage from '@/pages/ProfilePage';
+import SubagentsPage from '@/pages/SubagentsPage';
 import VectorStoreDocumentsPage from '@/pages/VectorStoreDocumentsPage';
 import VectorStoreAddDocumentPage from '@/pages/VectorStoreAddDocumentPage';
 import VectorStoreCategoriesPage from '@/pages/VectorStoreCategoriesPage';
@@ -146,6 +147,16 @@ export function AppRouter() {
                         <ProtectedRoute minRole="coordinator">
                             <AppLayout>
                                 <FlowsPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/subagents"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <SubagentsPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }

@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-echo "[BOOT] Starting KELEDON single-container runtime v0.0.58"
+echo "[BOOT] Starting KELEDON single-container runtime v0.0.59"
 
 export SINGLE_CONTAINER=true
 export NODE_ENV=${NODE_ENV:-production}

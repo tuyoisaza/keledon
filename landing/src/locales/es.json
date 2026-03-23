@@ -60,6 +60,30 @@
     "triggerKeywords": "Palabras Clave",
     "category": "Categoría"
   },
+  "subagents": {
+    "title": "SubAgentes",
+    "agents": "Agentes",
+    "session": "Sesión",
+    "initialize": "Inicializar",
+    "cleanup": "Limpiar",
+    "execute": "Ejecutar",
+    "status": {
+      "idle": "Inactivo",
+      "active": "Activo",
+      "waiting": "Esperando",
+      "error": "Error"
+    },
+    "role": {
+      "listener": "Escuchador",
+      "processor": "Procesador",
+      "tool-operator": "Operador de Herramientas",
+      "flow-executor": "Ejecutor de Flujos"
+    },
+    "noAgents": "No hay agentes inicializados",
+    "currentTask": "Tarea Actual",
+    "lastActivity": "Última Actividad",
+    "parallelExecution": "Ejecución Paralela"
+  },
   "admin": {
     "title": "Administración",
     "users": "Usuarios",

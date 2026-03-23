@@ -350,3 +350,94 @@ export async function updateCategory(id: string, data: { name?: string; color?: 
 export async function deleteCategory(id: string): Promise<void> {
     return fetchApi(`/categories/${id}`, 'DELETE');
 }
+
+// ========== SUBAGENTS ==========
+
+const SUBAGENTS_API = `${API_URL}/api/subagents`;
+
+export interface SubAgentStatus {
+    id: string;
+    role: string;
+    status: 'idle' | 'active' | 'waiting' | 'error';
+    currentTask?: SubAgentTask;
+    lastActivity?: string;
+}
+
+export interface SubAgentTask {
+    id: string;
+    type: 'flow' | 'read' | 'write' | 'wait';
+    flowId?: string;
+    stepIds?: string[];
+    parameters?: Record<string, any>;
+    priority?: number;
+}
+
+export interface FlowExecutionResult {
+    success: boolean;
+    flowId: string;
+    extractedData: Record<string, any>;
+    executionLog: Array<{
+        stepId: string;
+        stepType: string;
+        status: 'success' | 'failed' | 'skipped';
+        duration: number;
+        result?: any;
+        error?: string;
+    }>;
+    totalDuration: number;
+}
+
+export interface InitializeSessionResponse {
+    success: boolean;
+    agents: SubAgentStatus[];
+}
+
+export async function initializeSessionAgents(sessionId: string): Promise<InitializeSessionResponse> {
+    const response = await fetch(`${SUBAGENTS_API}/session/${sessionId}/init`, { method: 'POST' });
+    if (!response.ok) throw new Error(`Failed to initialize agents: ${response.statusText}`);
+    return response.json();
+}
+
+export async function cleanupSessionAgents(sessionId: string): Promise<{ success: boolean }> {
+    const response = await fetch(`${SUBAGENTS_API}/session/${sessionId}/cleanup`, { method: 'DELETE' });
+    if (!response.ok) throw new Error(`Failed to cleanup agents: ${response.statusText}`);
+    return response.json();
+}
+
+export async function getSessionAgents(sessionId: string): Promise<SubAgentStatus[]> {
+    const response = await fetch(`${SUBAGENTS_API}/session/${sessionId}`);
+    if (!response.ok) throw new Error(`Failed to get agents: ${response.statusText}`);
+    return response.json();
+}
+
+export async function getAllAgentStatuses(): Promise<SubAgentStatus[]> {
+    const response = await fetch(`${SUBAGENTS_API}/status`);
+    if (!response.ok) throw new Error(`Failed to get agent statuses: ${response.statusText}`);
+    return response.json();
+}
+
+export async function executeFlow(flowId: string, sessionId: string, parameters?: Record<string, any>): Promise<FlowExecutionResult> {
+    const response = await fetch(`${SUBAGENTS_API}/execute/flow`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ flowId, sessionId, parameters: parameters || {} }),
+    });
+    if (!response.ok) throw new Error(`Failed to execute flow: ${response.statusText}`);
+    return response.json();
+}
+
+export async function executeParallelFlows(flowIds: string[], sessionId: string, parameters?: Record<string, any>): Promise<FlowExecutionResult[]> {
+    const response = await fetch(`${SUBAGENTS_API}/execute/parallel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ flowIds, sessionId, parameters: parameters || {} }),
+    });
+    if (!response.ok) throw new Error(`Failed to execute parallel flows: ${response.statusText}`);
+    return response.json();
+}
+
+export async function getFlowRunStatus(runId: string): Promise<any> {
+    const response = await fetch(`${SUBAGENTS_API}/flow-runs/${runId}`);
+    if (!response.ok) throw new Error(`Failed to get flow run status: ${response.statusText}`);
+    return response.json();
+}

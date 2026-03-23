@@ -19,7 +19,8 @@ import {
     Users as UsersIcon,
     User,
     Copy,
-    Check
+    Check,
+    Bot
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
@@ -38,6 +39,7 @@ const navItems: NavItem[] = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard', minRole: 'user' },
     { icon: Radio, label: 'Sessions', href: '/sessions/history', minRole: 'user' },
     { icon: Workflow, label: 'Flows', href: '/flows', minRole: 'coordinator' },
+    { icon: Bot, label: 'SubAgents', href: '/subagents', minRole: 'admin' },
     { icon: BookOpen, label: 'Knowledge', href: '/knowledge', minRole: 'user' },
     { icon: BarChart3, label: 'Metrics', href: '/admin/users', minRole: 'coordinator' },
     { icon: Activity, label: 'Work Stats', href: '/work-stats', minRole: 'user' },
@@ -83,7 +85,7 @@ export function Sidebar() {
                             <span className="font-bold text-lg text-foreground">Keledon</span>
                         </Link>
                         <div className="flex items-center gap-2 ml-10 mt-0.5">
-                            <span className="text-[10px] text-muted-foreground">v0.0.58</span>
+                            <span className="text-[10px] text-muted-foreground">v0.0.59</span>
                             <button
                                 onClick={async () => {
                                     const success = await copyDebugReport();

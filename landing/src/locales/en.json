@@ -60,6 +60,30 @@
     "triggerKeywords": "Trigger Keywords",
     "category": "Category"
   },
+  "subagents": {
+    "title": "SubAgents",
+    "agents": "Agents",
+    "session": "Session",
+    "initialize": "Initialize",
+    "cleanup": "Cleanup",
+    "execute": "Execute",
+    "status": {
+      "idle": "Idle",
+      "active": "Active",
+      "waiting": "Waiting",
+      "error": "Error"
+    },
+    "role": {
+      "listener": "Listener",
+      "processor": "Processor",
+      "tool-operator": "Tool Operator",
+      "flow-executor": "Flow Executor"
+    },
+    "noAgents": "No agents initialized",
+    "currentTask": "Current Task",
+    "lastActivity": "Last Activity",
+    "parallelExecution": "Parallel Execution"
+  },
   "admin": {
     "title": "Administration",
     "users": "Users",
