@@ -140,7 +140,9 @@ export class FlowService {
       include: { steps: { orderBy: { order: 'asc' } } },
     });
 
-    await this.indexFlow(flow);
+    this.indexFlow(flow).catch(err => {
+      console.error('[FlowService] Failed to index flow in Qdrant:', err.message);
+    });
     return flow;
   }
 
@@ -226,7 +228,9 @@ export class FlowService {
       include: { steps: { orderBy: { order: 'asc' } } },
     });
 
-    await this.indexFlow(flow);
+    this.indexFlow(flow).catch(err => {
+      console.error('[FlowService] Failed to index flow in Qdrant:', err.message);
+    });
     return flow;
   }
 

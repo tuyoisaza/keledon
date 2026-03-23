@@ -171,7 +171,7 @@ export class HealthService {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       uptime: Date.now() - this.startTime,
-      version: '0.0.55',
+      version: '0.0.56',
       environment: process.env.NODE_ENV || 'development',
     };
   }
