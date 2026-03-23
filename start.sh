@@ -64,6 +64,9 @@ echo "[BOOT] Checking pip packages..."
 pip3 list 2>&1 || echo "[BOOT] pip3 list failed"
 echo "[BOOT] Starting VOSK with python3..."
 python3 -c "print('Python test OK'); import vosk; print('VOSK import OK'); import websockets; print('WebSockets import OK')" 2>&1 || echo "[BOOT] Import failed"
+echo "[BOOT] Running server.py synchronously for 5 seconds to test..."
+timeout 5 python3 server.py 2>&1 || echo "[BOOT] Server.py timed out or errored"
+echo "[BOOT] Starting server.py in background..."
 python3 server.py >/tmp/vosk.log 2>&1 &
 VOSK_PID=$!
 
