@@ -236,7 +236,7 @@ export default function ManagementAgentsPage() {
                                 <label className="block text-sm text-muted-foreground mb-1">Team</label>
                                 <select value={formData.teamId} onChange={(e) => setFormData({ ...formData, teamId: e.target.value })} disabled={!formData.companyId} className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50">
                                     <option value="">Select Team...</option>
-                                    {teams.filter(t => t.company?.id === formData.companyId).map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                                    {teams.filter(t => t.brand?.companyId === formData.companyId).map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                                 </select>
                             </div>
                             <div>
