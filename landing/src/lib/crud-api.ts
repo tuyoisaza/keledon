@@ -351,6 +351,58 @@ export async function deleteCategory(id: string): Promise<void> {
     return fetchApi(`/categories/${id}`, 'DELETE');
 }
 
+// ========== FLOWS ==========
+
+export interface Flow {
+    id: string;
+    name: string;
+    description?: string;
+    triggerKeywords?: string;
+    category?: string;
+    tool?: string;
+    teamId?: string;
+    isActive?: boolean;
+    version?: number;
+    createdBy?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    steps?: FlowStep[];
+}
+
+export interface FlowStep {
+    id: string;
+    flowId: string;
+    order: number;
+    type: string;
+    selector?: string;
+    selectorType?: string;
+    value?: string;
+    extract?: string;
+    waitFor?: string;
+    condition?: string;
+    timeout?: number;
+    optional?: boolean;
+    nextStepId?: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export async function getFlows(): Promise<Flow[]> {
+    return fetchApi('/flows', 'GET');
+}
+
+export async function getFlow(id: string): Promise<Flow> {
+    return fetchApi(`/flows/${id}`, 'GET');
+}
+
+export async function createFlow(data: { name: string; description?: string; triggerKeywords?: string[]; category?: string }): Promise<Flow> {
+    return fetchApi('/flows', 'POST', data);
+}
+
+export async function deleteFlow(id: string): Promise<void> {
+    return fetchApi(`/flows/${id}`, 'DELETE');
+}
+
 // ========== SUBAGENTS ==========
 
 const SUBAGENTS_API = `${API_URL}/api/subagents`;
