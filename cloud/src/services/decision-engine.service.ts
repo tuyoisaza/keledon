@@ -12,6 +12,8 @@ import {
   DecisionEvidence,
   POLICY_CHECK_ATTRS,
 } from '../telemetry/decision-evidence';
+import { FlowService } from '../flows/flow.service';
+import { SubAgentService } from '../subagents/subagent.service';
 
 export interface DecisionContext {
   sessionId: string;
@@ -104,6 +106,10 @@ export class DecisionEngineService {
     private agentGateway: AgentGateway,
     @Optional()
     private readonly ragService?: RAGService,
+    @Optional()
+    private readonly flowService?: FlowService,
+    @Optional()
+    private readonly subAgentService?: SubAgentService,
   ) {}
 
   /**
@@ -652,5 +658,142 @@ export class DecisionEngineService {
     } catch (error) {
       this.logger.error(`Failed to persist decision: ${error.message}`);
     }
+  }
+
+  /**
+   * Search for flows matching the given query
+   * Used by the brain to find appropriate flows based on conversation context
+   */
+  async searchFlows(query: string, teamId?: string): Promise<any[]> {
+    if (!this.flowService) {
+      this.logger.warn('FlowService not available');
+      return [];
+    }
+    return this.flowService.searchFlows(query, teamId, 5);
+  }
+
+  /**
+   * Find flows triggered by specific keywords
+   */
+  async findFlowsByTrigger(keyword: string, teamId?: string): Promise<any[]> {
+    if (!this.flowService) {
+      this.logger.warn('FlowService not available');
+      return [];
+    }
+    return this.flowService.findByTrigger(keyword, teamId);
+  }
+
+  /**
+   * Execute a flow and return results
+   * Called when brain decides a flow should run
+   */
+  async executeFlow(flowId: string, parameters: Record<string, any>, sessionId: string): Promise<{
+    success: boolean;
+    extractedData: Record<string, any>;
+    executionLog: any[];
+    totalDuration: number;
+  }> {
+    if (!this.subAgentService) {
+      throw new Error('SubAgentService not available');
+    }
+
+    this.logger.log(`[DecisionEngine] Executing flow ${flowId} for session ${sessionId}`);
+    return this.subAgentService.executeFlow(flowId, parameters, sessionId);
+  }
+
+  /**
+   * Analyze conversation context and suggest flows
+   * Called during decision making to incorporate flow knowledge
+   */
+  async suggestFlowsForContext(transcript: string, context: DecisionContext): Promise<{
+    flows: any[];
+    reasoning: string;
+  }> {
+    const suggestions: any[] = [];
+    let reasoning = '';
+
+    const triggerKeywords = this.extractTriggerKeywords(transcript);
+
+    for (const keyword of triggerKeywords) {
+      const matchedFlows = await this.findFlowsByTrigger(keyword, context.metadata?.teamId);
+      for (const flow of matchedFlows) {
+        if (!suggestions.find(s => s.id === flow.id)) {
+          suggestions.push({
+            ...flow.payload,
+            matchKeyword: keyword,
+            score: flow.score || 0.5,
+          });
+        }
+      }
+    }
+
+    if (suggestions.length > 0) {
+      reasoning = `Found ${suggestions.length} flow(s) matching context triggers: ${triggerKeywords.join(', ')}`;
+    } else {
+      reasoning = 'No flows found matching current context';
+    }
+
+    return { flows: suggestions, reasoning };
+  }
+
+  /**
+   * Extract potential trigger keywords from transcript
+   */
+  private extractTriggerKeywords(transcript: string): string[] {
+    const keywords: string[] = [];
+    const lowerTranscript = transcript.toLowerCase();
+
+    const patterns = [
+      /\b(check|find|look up|lookup|search)\b.*\b(case|order|ticket|account)\b/gi,
+      /\b(create|new|open)\b.*\b(case|order|ticket)\b/gi,
+      /\b(update|modify|change)\b.*\b(case|order|account)\b/gi,
+      /\b(save|submit|close)\b.*\b(case|order)\b/gi,
+      /\b(login|sign in)\b.*\b(salesforce|genesys|hubspot)\b/gi,
+    ];
+
+    for (const pattern of patterns) {
+      if (pattern.test(lowerTranscript)) {
+        const match = transcript.match(pattern);
+        if (match) {
+          keywords.push(...match);
+        }
+      }
+    }
+
+    return [...new Set(keywords)];
+  }
+
+  /**
+   * Generate a flow execution command
+   */
+  async generateFlowCommand(flow: any, parameters: Record<string, any>, sessionId: string): Promise<CloudCommand> {
+    const commandId = uuidv4();
+    
+    const flowRun = this.subAgentService 
+      ? await this.subAgentService.executeFlow(flow.id, parameters, sessionId)
+      : null;
+
+    const command: CloudCommand = {
+      command_id: commandId,
+      session_id: sessionId,
+      timestamp: new Date().toISOString(),
+      type: 'ui_steps',
+      confidence: flow.score || 0.7,
+      mode: 'normal',
+      flow_id: flow.id,
+      flow_run_id: flowRun?.flowId,
+      ui_steps: flow.steps?.map((step: any) => ({
+        step_id: step.id,
+        action: step.type,
+        selector: step.selector,
+        value: step.value,
+      })) || [],
+      say: {
+        text: flow.description || 'Executing workflow',
+        interruptible: true
+      }
+    };
+
+    return command;
   }
 }

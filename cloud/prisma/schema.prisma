@@ -78,6 +78,7 @@ model Team {
   agents   Agent[]
   sessions Session[]
   teamInterfaces TeamInterface[]
+  flows    Flow[]
 
   @@map("teams")
 }
@@ -232,6 +233,7 @@ model IntentFlowMapping {
 model FlowRun {
   id           String   @id @default(uuid())
   workflowId   String
+  sessionId    String?
   status       String   @default("pending") // pending, running, completed, failed
   result       String?  // JSON
   error        String?
@@ -239,6 +241,9 @@ model FlowRun {
   completedAt  DateTime?
 
   workflow Workflow @relation(fields: [workflowId], references: [id])
+  session  Session? @relation(fields: [sessionId], references: [id])
+
+  subAgentRuns SubAgentRun[]
 
   @@map("flow_runs")
 }
@@ -251,6 +256,90 @@ model FlowRunEvidence {
   createdAt DateTime @default(now())
 
   @@map("flow_run_evidence")
+}
+
+// ========== FLOWS (Enhanced) ==========
+
+model Flow {
+  id               String   @id @default(uuid())
+  name             String
+  description      String?
+  triggerKeywords  String   // JSON array of keywords
+  category         String   @default("general") // crm, support, sales, etc.
+  tool             String   @default("browser") // browser, genesys, salesforce, etc.
+  teamId           String?
+  isActive         Boolean  @default(true)
+  version          Int      @default(1)
+  createdBy        String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  team      Team?     @relation(fields: [teamId], references: [id])
+  steps     FlowStep[]
+
+  @@map("flows")
+}
+
+model FlowStep {
+  id           String   @id @default(uuid())
+  flowId       String
+  order        Int
+  type         String   // navigate, click, input, read, wait, submit, decision, speak
+  selector     String?  // CSS selector or XPath
+  selectorType String   @default("css") // css, xpath, text, aria
+  value        String?  // For input steps
+  extract      String?  // Variable name to extract
+  waitFor      String?  // Selector to wait for
+  condition    String?  // For decision steps
+  timeout      Int      @default(10000) // ms
+  optional     Boolean  @default(false)
+  nextStepId   String?  // For branching
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  flow Flow @relation(fields: [flowId], references: [id], onDelete: Cascade)
+
+  @@index([flowId])
+  @@map("flow_steps")
+}
+
+// ========== SUBAGENTS ==========
+
+model SubAgent {
+  id          String   @id @default(uuid())
+  name        String
+  role        String   // listener, processor, tool-operator, flow-executor
+  status      String   @default("idle") // idle, active, waiting, error
+  sessionId   String?
+  currentTask String?  // JSON: current operation
+  maxParallel Int      @default(1)
+  isEnabled   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  session Session?     @relation(fields: [sessionId], references: [id])
+  runs    SubAgentRun[]
+
+  @@map("sub_agents")
+}
+
+model SubAgentRun {
+  id           String   @id @default(uuid())
+  subAgentId   String
+  flowRunId    String?
+  flowId       String?
+  flowStepIds  String?  // JSON array of step IDs being executed
+  status       String   @default("pending") // pending, running, completed, failed
+  result       String?  // JSON: extracted data, execution log
+  startedAt    DateTime @default(now())
+  completedAt  DateTime?
+
+  subAgent SubAgent @relation(fields: [subAgentId], references: [id])
+  flowRun  FlowRun? @relation(fields: [flowRunId], references: [id])
+
+  @@index([subAgentId])
+  @@index([flowRunId])
+  @@map("sub_agent_runs")
 }
 
 // ========== PROVIDERS ==========
@@ -319,9 +408,11 @@ model Session {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User?    @relation(fields: [userId], references: [id])
-  team   Team?    @relation(fields: [teamId], references: [id])
-  events Event[]
+  user      User?      @relation(fields: [userId], references: [id])
+  team      Team?      @relation(fields: [teamId], references: [id])
+  events    Event[]
+  flowRuns  FlowRun[]
+  subAgents SubAgent[]
 
   @@map("sessions")
 }

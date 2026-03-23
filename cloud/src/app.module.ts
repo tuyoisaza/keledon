@@ -19,6 +19,10 @@ import { CrudController } from './crud/crud.controller';
 import { TTSModule } from './tts/tts.module';
 import { VectorStoreModule } from './vector-store/vector-store.module';
 import { VectorStoreController } from './vector-store/vector-store.controller';
+import { FlowModule } from './flows/flow.module';
+import { FlowController } from './flows/flow.controller';
+import { SubAgentModule } from './subagents/subagent.module';
+import { SubAgentController } from './subagents/subagent.controller';
 
 @Module({
   imports: [
@@ -33,8 +37,18 @@ import { VectorStoreController } from './vector-store/vector-store.controller';
     CrudModule,
     TTSModule,
     VectorStoreModule,
+    FlowModule,
+    SubAgentModule,
   ],
-  controllers: [AppController, TeamController, MvpDataController, CrudController, VectorStoreController],
+  controllers: [
+    AppController,
+    TeamController,
+    MvpDataController,
+    CrudController,
+    VectorStoreController,
+    FlowController,
+    SubAgentController,
+  ],
   providers: [
     AppService,
     SessionService,
@@ -44,7 +58,7 @@ import { VectorStoreController } from './vector-store/vector-store.controller';
     TeamController,
     MvpStoreService,
   ],
-  exports: [SessionService, DatabaseHealthService, TTSModule, VectorStoreModule],
+  exports: [SessionService, DatabaseHealthService, TTSModule, VectorStoreModule, FlowModule, SubAgentModule],
 })
 export class AppModule {
   constructor() {
