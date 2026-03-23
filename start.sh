@@ -72,8 +72,13 @@ fi
 echo "[BOOT] Running Prisma schema sync"
 cd /app/backend
 
+if [ "${KELEDON_RESET_DB:-false}" = "true" ]; then
+  echo "[BOOT] Resetting database..."
+  rm -f /app/data/keledon.db
+fi
+
 if [ -n "$DATABASE_URL" ]; then
-  npx prisma db push
+  npx prisma db push --accept-data-loss
   echo "[BOOT] Database sync complete"
 else
   echo "[BOOT] WARNING: DATABASE_URL not set, skipping Prisma sync"
