@@ -480,3 +480,35 @@ model AuditLog {
   @@index([entity, entityId])
   @@map("audit_logs")
 }
+
+// ========== FEATURE FLAGS ==========
+
+model FeatureFlag {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  enabled   Boolean   @default(false)
+  scope     String    @default("global") // global, tenant, user
+  scopeId   String?   // tenant_id or user_id depending on scope
+  metadata  String?   // JSON for additional config
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  expiresAt DateTime?
+
+  @@index([scope, scopeId])
+  @@map("feature_flags")
+}
+
+// ========== DEBUG MODE ==========
+
+model DebugMode {
+  id          String    @id @default(uuid())
+  isActive    Boolean   @default(false)
+  activatedBy String?   // user_id who activated
+  activatedAt DateTime?
+  expiresAt   DateTime?
+  autoExpire  Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("debug_mode")
+}

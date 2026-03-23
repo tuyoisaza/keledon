@@ -4,7 +4,7 @@ import { Bot, Mail, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 
-const APP_VERSION = '0.0.57';
+const APP_VERSION = '0.0.58';
 const BUILD_TIME = '2026-03-22T18:30:00Z';
 
 export default function LoginPage() {

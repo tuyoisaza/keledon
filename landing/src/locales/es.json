@@ -1,0 +1,158 @@
+{
+  "app": {
+    "name": "KELEDON",
+    "tagline": "Automatización de Call Center"
+  },
+  "nav": {
+    "dashboard": "Panel Principal",
+    "sessions": "Sesiones",
+    "knowledge": "Conocimiento",
+    "flows": "Flujos",
+    "admin": "Administración",
+    "settings": "Configuración",
+    "profile": "Perfil",
+    "logout": "Cerrar Sesión"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "loginWithGoogle": "Continuar con Google",
+    "logout": "Cerrar Sesión",
+    "welcome": "Bienvenido",
+    "welcomeBack": "Bienvenido de nuevo"
+  },
+  "dashboard": {
+    "title": "Panel Principal",
+    "liveActivity": "Actividad en Vivo",
+    "recentSessions": "Sesiones Recientes",
+    "systemStatus": "Estado del Sistema",
+    "activeCalls": "Llamadas Activas",
+    "avgHandleTime": "Tiempo Promedio",
+    "fcrRate": "Tasa FCR",
+    "noActiveSessions": "Sin sesiones activas",
+    "noRecentSessions": "Sin sesiones recientes"
+  },
+  "sessions": {
+    "title": "Sesiones",
+    "live": "En Vivo",
+    "history": "Historial",
+    "status": {
+      "active": "Activa",
+      "ended": "Finalizada",
+      "orphaned": "Huérfana"
+    },
+    "noSessions": "No hay sesiones",
+    "noHistory": "Sin historial de sesiones"
+  },
+  "knowledge": {
+    "title": "Base de Conocimiento",
+    "documents": "Documentos",
+    "categories": "Categorías",
+    "stats": "Estadísticas",
+    "addDocument": "Agregar Documento",
+    "noDocuments": "No hay documentos",
+    "noCategories": "Sin categorías"
+  },
+  "flows": {
+    "title": "Flujos",
+    "newFlow": "Nuevo Flujo",
+    "noFlows": "No hay flujos",
+    "steps": "Pasos",
+    "triggerKeywords": "Palabras Clave",
+    "category": "Categoría"
+  },
+  "admin": {
+    "title": "Administración",
+    "users": "Usuarios",
+    "teams": "Equipos",
+    "roles": "Roles",
+    "settings": "Configuración",
+    "audit": "Auditoría",
+    "featureFlags": "Feature Flags",
+    "debug": "Depuración",
+    "systemStatus": "Estado del Sistema"
+  },
+  "users": {
+    "title": "Usuarios",
+    "addUser": "Agregar Usuario",
+    "editUser": "Editar Usuario",
+    "deleteUser": "Eliminar Usuario",
+    "name": "Nombre",
+    "email": "Correo Electrónico",
+    "role": "Rol",
+    "status": "Estado",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "noUsers": "No hay usuarios"
+  },
+  "roles": {
+    "superadmin": "Super Administrador",
+    "admin": "Administrador",
+    "team_leader": "Líder de Equipo",
+    "member": "Miembro"
+  },
+  "audit": {
+    "title": "Registro de Auditoría",
+    "action": "Acción",
+    "user": "Usuario",
+    "entity": "Entidad",
+    "timestamp": "Fecha/Hora",
+    "noLogs": "Sin registros de auditoría"
+  },
+  "featureFlags": {
+    "title": "Feature Flags",
+    "name": "Nombre",
+    "enabled": "Habilitado",
+    "scope": "Alcance",
+    "expiresAt": "Expira",
+    "global": "Global",
+    "tenant": "Empresa",
+    "user": "Usuario",
+    "addFlag": "Agregar Flag",
+    "noFlags": "Sin feature flags"
+  },
+  "debug": {
+    "title": "Modo Depuración",
+    "activate": "Activar",
+    "deactivate": "Desactivar",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "expiresIn": "Expira en",
+    "autoExpire": "Auto-expirar en 4 horas"
+  },
+  "status": {
+    "healthy": "Saludable",
+    "degraded": "Degradado",
+    "down": "Caído",
+    "unknown": "Desconocido"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "search": "Buscar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "confirm": "Confirmar",
+    "yes": "Sí",
+    "no": "No",
+    "close": "Cerrar",
+    "refresh": "Actualizar",
+    "copy": "Copiar",
+    "copied": "¡Copiado!"
+  },
+  "errors": {
+    "generic": "Ocurrió un error",
+    "notFound": "No encontrado",
+    "unauthorized": "No autorizado",
+    "forbidden": "Acceso denegado",
+    "networkError": "Error de red",
+    "serverError": "Error del servidor"
+  },
+  "version": {
+    "version": "Versión",
+    "build": "Build"
+  }
+}

@@ -1,4 +1,4 @@
-# KELEDON v0.0.57
+# KELEDON v0.0.58
 # Monodocker container for Railway deployment
 
 # Stage 1: build frontend (React + Vite)

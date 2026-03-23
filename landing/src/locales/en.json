@@ -1,0 +1,158 @@
+{
+  "app": {
+    "name": "KELEDON",
+    "tagline": "Call Center Automation"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "sessions": "Sessions",
+    "knowledge": "Knowledge",
+    "flows": "Flows",
+    "admin": "Admin",
+    "settings": "Settings",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "loginWithGoogle": "Continue with Google",
+    "logout": "Logout",
+    "welcome": "Welcome",
+    "welcomeBack": "Welcome back"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "liveActivity": "Live Activity",
+    "recentSessions": "Recent Sessions",
+    "systemStatus": "System Status",
+    "activeCalls": "Active Calls",
+    "avgHandleTime": "Avg Handle Time",
+    "fcrRate": "FCR Rate",
+    "noActiveSessions": "No active sessions",
+    "noRecentSessions": "No recent sessions"
+  },
+  "sessions": {
+    "title": "Sessions",
+    "live": "Live",
+    "history": "History",
+    "status": {
+      "active": "Active",
+      "ended": "Ended",
+      "orphaned": "Orphaned"
+    },
+    "noSessions": "No sessions",
+    "noHistory": "No session history"
+  },
+  "knowledge": {
+    "title": "Knowledge Base",
+    "documents": "Documents",
+    "categories": "Categories",
+    "stats": "Statistics",
+    "addDocument": "Add Document",
+    "noDocuments": "No documents",
+    "noCategories": "No categories"
+  },
+  "flows": {
+    "title": "Flows",
+    "newFlow": "New Flow",
+    "noFlows": "No flows",
+    "steps": "Steps",
+    "triggerKeywords": "Trigger Keywords",
+    "category": "Category"
+  },
+  "admin": {
+    "title": "Administration",
+    "users": "Users",
+    "teams": "Teams",
+    "roles": "Roles",
+    "settings": "Settings",
+    "audit": "Audit",
+    "featureFlags": "Feature Flags",
+    "debug": "Debug",
+    "systemStatus": "System Status"
+  },
+  "users": {
+    "title": "Users",
+    "addUser": "Add User",
+    "editUser": "Edit User",
+    "deleteUser": "Delete User",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "noUsers": "No users"
+  },
+  "roles": {
+    "superadmin": "Super Admin",
+    "admin": "Admin",
+    "team_leader": "Team Leader",
+    "member": "Member"
+  },
+  "audit": {
+    "title": "Audit Log",
+    "action": "Action",
+    "user": "User",
+    "entity": "Entity",
+    "timestamp": "Timestamp",
+    "noLogs": "No audit logs"
+  },
+  "featureFlags": {
+    "title": "Feature Flags",
+    "name": "Name",
+    "enabled": "Enabled",
+    "scope": "Scope",
+    "expiresAt": "Expires",
+    "global": "Global",
+    "tenant": "Tenant",
+    "user": "User",
+    "addFlag": "Add Flag",
+    "noFlags": "No feature flags"
+  },
+  "debug": {
+    "title": "Debug Mode",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "active": "Active",
+    "inactive": "Inactive",
+    "expiresIn": "Expires in",
+    "autoExpire": "Auto-expire in 4 hours"
+  },
+  "status": {
+    "healthy": "Healthy",
+    "degraded": "Degraded",
+    "down": "Down",
+    "unknown": "Unknown"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "close": "Close",
+    "refresh": "Refresh",
+    "copy": "Copy",
+    "copied": "Copied!"
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "notFound": "Not found",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "networkError": "Network error",
+    "serverError": "Server error"
+  },
+  "version": {
+    "version": "Version",
+    "build": "Build"
+  }
+}
