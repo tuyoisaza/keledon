@@ -186,7 +186,7 @@ export class SubAgentService {
 
     const flowRun = await this.prisma.flowRun.create({
       data: {
-        workflowId: flowId,
+        flowId,
         sessionId,
         status: 'running',
       },

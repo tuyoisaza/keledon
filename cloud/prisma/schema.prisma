@@ -232,7 +232,8 @@ model IntentFlowMapping {
 
 model FlowRun {
   id           String   @id @default(uuid())
-  workflowId   String
+  workflowId   String?
+  flowId       String?
   sessionId    String?
   status       String   @default("pending") // pending, running, completed, failed
   result       String?  // JSON
@@ -240,7 +241,8 @@ model FlowRun {
   startedAt    DateTime @default(now())
   completedAt  DateTime?
 
-  workflow Workflow @relation(fields: [workflowId], references: [id])
+  workflow Workflow? @relation(fields: [workflowId], references: [id])
+  flow     Flow?     @relation(fields: [flowId], references: [id])
   session  Session? @relation(fields: [sessionId], references: [id])
 
   subAgentRuns SubAgentRun[]
@@ -276,6 +278,7 @@ model Flow {
 
   team      Team?     @relation(fields: [teamId], references: [id])
   steps     FlowStep[]
+  runs      FlowRun[]
 
   @@map("flows")
 }
