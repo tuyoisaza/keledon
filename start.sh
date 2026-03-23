@@ -92,9 +92,9 @@ if [ ! -f /app/data/qdrant/config.json ] || [ "${KELEDON_RESET_DB:-false}" = "tr
     -H "Content-Type: application/json" \
     -d '{"vectors":{"size":768,"distance":"Cosine"}}' >/dev/null || true
   
-  echo "[BOOT] Seeding Qdrant via TypeScript script"
+  echo "[BOOT] Seeding Qdrant via JavaScript script"
   cd /app/backend
-  npx ts-node scripts/seed-qdrant.ts || echo "[BOOT] Seed script not available, skipping"
+  node scripts/seed-qdrant.js || echo "[BOOT] Seed script not available, skipping"
   cd /app
 fi
 
