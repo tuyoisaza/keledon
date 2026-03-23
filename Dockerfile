@@ -31,14 +31,9 @@ FROM python:3.11-slim AS vosk-builder
 
 WORKDIR /app/vosk-server
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ffmpeg \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN pip install --no-cache-dir vosk websockets
-
 COPY cloud/vosk-server/server.py ./
+
+RUN echo "Vosk-builder complete"
 
 # Stage 4: copy Qdrant binary
 FROM qdrant/qdrant:latest AS qdrant-binary
