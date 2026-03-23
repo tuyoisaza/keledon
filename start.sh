@@ -56,7 +56,12 @@ echo "[BOOT] Qdrant ready"
 
 echo "[BOOT] Starting VOSK server on 127.0.0.1:$VOSK_PORT (HTTP) and $VOSK_WS_PORT (WS)"
 cd /app/vosk-server
-python server.py >/tmp/vosk.log 2>&1 &
+echo "[BOOT] Checking Python installation..."
+which python3 || echo "[BOOT] python3 not found"
+which python || echo "[BOOT] python not found"
+ls -la server.py || echo "[BOOT] server.py not found"
+echo "[BOOT] Starting VOSK with python3..."
+python3 server.py >/tmp/vosk.log 2>&1 &
 VOSK_PID=$!
 
 VOSK_READY=false
