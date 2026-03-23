@@ -63,6 +63,7 @@ ls -la server.py || echo "[BOOT] server.py not found"
 echo "[BOOT] Checking pip packages..."
 pip3 list 2>&1 || echo "[BOOT] pip3 list failed"
 echo "[BOOT] Starting VOSK with python3..."
+python3 -c "print('Python test OK'); import vosk; print('VOSK import OK')" 2>&1 || echo "[BOOT] VOSK import failed"
 python3 server.py >/tmp/vosk.log 2>&1 &
 VOSK_PID=$!
 
