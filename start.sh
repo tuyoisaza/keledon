@@ -20,7 +20,7 @@ export CORS_ORIGINS=${CORS_ORIGINS:-*}
 # VOSK Configuration
 export VOSK_PORT=${VOSK_PORT:-9090}
 export VOSK_WS_PORT=${VOSK_WS_PORT:-9091}
-export VOSK_MODEL_PATH=${VOSK_MODEL_PATH:-/app/models}
+export VOSK_MODEL_PATH=${VOSK_MODEL_PATH:-/app/models/vosk-model-small-en-us-0.15}
 export VOSK_SAMPLE_RATE=${VOSK_SAMPLE_RATE:-16000}
 
 mkdir -p /app/data /app/data/qdrant

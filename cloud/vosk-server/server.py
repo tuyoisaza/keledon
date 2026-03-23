@@ -124,7 +124,7 @@ async def websocket_handler(websocket, path):
 async def start_websocket_server():
     import websockets
     print(f"[VOSK] Starting WebSocket server on port {VOSK_WS_PORT}...", flush=True)
-    async with websockets.server.serve(websocket_handler, '127.0.0.1', VOSK_WS_PORT):
+    async with websockets.serve(websocket_handler, '127.0.0.1', VOSK_WS_PORT):
         print(f"[VOSK] WebSocket server running on port {VOSK_WS_PORT}", flush=True)
         await asyncio.Future()
 
