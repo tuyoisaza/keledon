@@ -18,6 +18,7 @@ import { CrudModule } from './crud/crud.module';
 import { CrudController } from './crud/crud.controller';
 import { TTSModule } from './tts/tts.module';
 import { VectorStoreModule } from './vector-store/vector-store.module';
+import { VectorStoreController } from './vector-store/vector-store.controller';
 
 @Module({
   imports: [
@@ -33,7 +34,7 @@ import { VectorStoreModule } from './vector-store/vector-store.module';
     TTSModule,
     VectorStoreModule,
   ],
-  controllers: [AppController, TeamController, MvpDataController, CrudController],
+  controllers: [AppController, TeamController, MvpDataController, CrudController, VectorStoreController],
   providers: [
     AppService,
     SessionService,
