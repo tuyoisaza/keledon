@@ -56,7 +56,7 @@ echo "[BOOT] Qdrant ready"
 
 echo "[BOOT] Starting VOSK server on 127.0.0.1:$VOSK_PORT (HTTP) and $VOSK_WS_PORT (WS)"
 cd /app/vosk-server
-node server.js >/tmp/vosk.log 2>&1 &
+python server.py >/tmp/vosk.log 2>&1 &
 VOSK_PID=$!
 
 VOSK_READY=false
