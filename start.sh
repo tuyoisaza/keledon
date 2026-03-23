@@ -25,11 +25,6 @@ export VOSK_SAMPLE_RATE=${VOSK_SAMPLE_RATE:-16000}
 
 mkdir -p /app/data /app/data/qdrant
 
-if [ "${KELEDON_RESET_QDRANT:-false}" = "true" ]; then
-  echo "[BOOT] Resetting Qdrant data..."
-  rm -rf /app/data/qdrant/*
-fi
-
 echo "[BOOT] Starting embedded Qdrant on 127.0.0.1:6333"
 QDRANT__SERVICE__HTTP_PORT=6333 \
 QDRANT__SERVICE__GRPC_PORT=6334 \
@@ -56,17 +51,6 @@ echo "[BOOT] Qdrant ready"
 
 echo "[BOOT] Starting VOSK server on 127.0.0.1:$VOSK_PORT (HTTP) and $VOSK_WS_PORT (WS)"
 cd /app/vosk-server
-echo "[BOOT] Checking Python installation..."
-which python3 || echo "[BOOT] python3 not found"
-which python || echo "[BOOT] python not found"
-ls -la server.py || echo "[BOOT] server.py not found"
-echo "[BOOT] Checking pip packages..."
-pip3 list 2>&1 || echo "[BOOT] pip3 list failed"
-echo "[BOOT] Starting VOSK with python3..."
-python3 -c "print('Python test OK'); import vosk; print('VOSK import OK'); import websockets; print('WebSockets import OK')" 2>&1 || echo "[BOOT] Import failed"
-echo "[BOOT] Running server.py synchronously for 5 seconds to test..."
-timeout 5 python3 server.py 2>&1 || echo "[BOOT] Server.py timed out or errored"
-echo "[BOOT] Starting server.py in background..."
 python3 server.py >/tmp/vosk.log 2>&1 &
 VOSK_PID=$!
 
