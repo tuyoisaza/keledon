@@ -60,6 +60,8 @@ echo "[BOOT] Checking Python installation..."
 which python3 || echo "[BOOT] python3 not found"
 which python || echo "[BOOT] python not found"
 ls -la server.py || echo "[BOOT] server.py not found"
+echo "[BOOT] Checking pip packages..."
+pip3 list 2>&1 || echo "[BOOT] pip3 list failed"
 echo "[BOOT] Starting VOSK with python3..."
 python3 server.py >/tmp/vosk.log 2>&1 &
 VOSK_PID=$!
