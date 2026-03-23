@@ -17,6 +17,7 @@ import { AuthLocalModule } from './auth-local/auth-local.module';
 import { CrudModule } from './crud/crud.module';
 import { CrudController } from './crud/crud.controller';
 import { TTSModule } from './tts/tts.module';
+import { VectorStoreModule } from './vector-store/vector-store.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { TTSModule } from './tts/tts.module';
     AuthLocalModule,
     CrudModule,
     TTSModule,
+    VectorStoreModule,
   ],
   controllers: [AppController, TeamController, MvpDataController, CrudController],
   providers: [
@@ -41,7 +43,7 @@ import { TTSModule } from './tts/tts.module';
     TeamController,
     MvpStoreService,
   ],
-  exports: [SessionService, DatabaseHealthService, TTSModule],
+  exports: [SessionService, DatabaseHealthService, TTSModule, VectorStoreModule],
 })
 export class AppModule {
   constructor() {

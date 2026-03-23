@@ -4,7 +4,6 @@ import { Database, Plus, Search, FileText, Trash2, RefreshCw, Eye, AlertCircle, 
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { vectorStoreAPI, type PolicyDocument, type RetrievalResult, type VectorStoreStatus } from '@/lib/vector-store';
-import { getCategories, type Category } from '@/lib/crud-api';
 import { useAuth } from '@/context/AuthContext';
 
 const defaultCategories = [
@@ -13,6 +12,8 @@ const defaultCategories = [
   { id: 'compliance', name: 'Compliance', color: '#a855f7', description: 'Compliance and regulations' },
   { id: 'knowledge', name: 'Knowledge', color: '#22c55e', description: 'General knowledge base' },
 ];
+
+type Category = typeof defaultCategories[number];
 
 export default function VectorStoreDocumentsPage() {
   const navigate = useNavigate();
@@ -29,13 +30,14 @@ export default function VectorStoreDocumentsPage() {
   useEffect(() => {
     fetchStatus();
     fetchDocuments();
-    fetchCategories();
+    setCategories(defaultCategories);
   }, []);
 
   const fetchStatus = async () => {
     try {
       const status = await vectorStoreAPI.getCollectionStatus();
       setStatus(status);
+      setError(null);
     } catch (error) {
       console.error('Failed to fetch vector store status:', error);
       setError('Failed to fetch vector store status. Please check your configuration.');
@@ -48,22 +50,13 @@ export default function VectorStoreDocumentsPage() {
       setLoading(true);
       const docs = await vectorStoreAPI.listAllDocuments();
       setDocuments(docs);
+      setError(null);
     } catch (error) {
       console.error('Failed to fetch documents:', error);
       setError('Failed to fetch documents. Please check your vector store configuration.');
       setDocuments([]);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const cats = await getCategories();
-      setCategories(cats.length > 0 ? cats : defaultCategories);
-    } catch (error) {
-      console.error('Failed to fetch categories:', error);
-      setCategories(defaultCategories);
     }
   };
 

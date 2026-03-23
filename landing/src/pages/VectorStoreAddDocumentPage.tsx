@@ -4,7 +4,7 @@ import { ArrowLeft, Save, Loader2, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { vectorStoreAPI, type PolicyDocument } from '@/lib/vector-store';
-import { getCompanies, getBrands, getTeams, getCategories, type Company, type Brand, type Team, type Category } from '@/lib/crud-api';
+import { getCompanies, getBrands, getTeams, type Company, type Brand, type Team } from '@/lib/crud-api';
 import { useAuth } from '@/context/AuthContext';
 
 const defaultCategories = [
@@ -13,6 +13,8 @@ const defaultCategories = [
   { id: 'compliance', name: 'Compliance', color: '#a855f7', description: 'Compliance and regulations' },
   { id: 'knowledge', name: 'Knowledge', color: '#22c55e', description: 'General knowledge base' },
 ];
+
+type Category = typeof defaultCategories[number];
 
 export default function VectorStoreAddDocumentPage() {
   const navigate = useNavigate();
@@ -45,16 +47,15 @@ export default function VectorStoreAddDocumentPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [companiesData, brandsData, teamsData, categoriesData] = await Promise.all([
+        const [companiesData, brandsData, teamsData] = await Promise.all([
           getCompanies(),
           getBrands(),
           getTeams(),
-          getCategories()
         ]);
         setCompanies(companiesData);
         setBrands(brandsData);
         setTeams(teamsData);
-        setCategories(categoriesData.length > 0 ? categoriesData : defaultCategories);
+        setCategories(defaultCategories);
 
         // Set default company from user if available
         if (user?.companyId) {
