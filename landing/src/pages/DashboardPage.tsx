@@ -232,6 +232,7 @@ export default function DashboardPage() {
                         <thead>
                             <tr className="border-b border-border text-left text-sm text-muted-foreground">
                                 <th className="px-4 py-3 font-medium">USER</th>
+                                <th className="px-4 py-3 font-medium">TEAM</th>
                                 <th className="px-4 py-3 font-medium">SESSION</th>
                                 <th className="px-4 py-3 font-medium">STATUS</th>
                                 <th className="px-4 py-3 font-medium">DURATION</th>
@@ -240,15 +241,18 @@ export default function DashboardPage() {
                         </thead>
                         <tbody>
                             {loading ? (
-                                <tr><td colSpan={5} className="text-center py-8 text-muted-foreground">Loading...</td></tr>
+                                <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">Loading...</td></tr>
                             ) : sessions.length === 0 ? (
-                                <tr><td colSpan={5} className="text-center py-8 text-muted-foreground">No sessions today</td></tr>
+                                <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">No sessions today</td></tr>
                             ) : sessions.slice(0, 5).map((session) => {
                                 const metadata = session.metadata ? JSON.parse(session.metadata) : {};
                                 return (
                                     <tr key={session.id} className="border-b border-border hover:bg-muted/50 transition-colors">
                                         <td className="px-4 py-3 text-sm font-medium">
                                             {session.user?.name || 'Anonymous'}
+                                        </td>
+                                        <td className="px-4 py-3 text-sm text-muted-foreground">
+                                            {session.team?.name || '—'}
                                         </td>
                                         <td className="px-4 py-3 font-mono text-sm text-muted-foreground">
                                             {session.id.slice(0, 8)}

@@ -12,6 +12,8 @@ export class SessionService {
     tab_url?: string;
     tab_title?: string;
     name?: string;
+    userId?: string;
+    teamId?: string;
   }): Promise<any> {
     this.logger.log(`Creating session for agent: ${agentId}`);
 
@@ -20,6 +22,8 @@ export class SessionService {
         data: {
           id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           status: 'active',
+          userId: metadata?.userId || null,
+          teamId: metadata?.teamId || null,
           metadata: JSON.stringify(metadata || {}),
         }
       });
