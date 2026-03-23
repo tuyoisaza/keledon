@@ -1,10 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from '@/context/I18nContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
     initializeSessionAgents,
     cleanupSessionAgents,
@@ -129,13 +124,18 @@ export default function SubagentsPage() {
     };
 
     const getStatusBadge = (status: string) => {
+        const colors = {
+            idle: 'bg-gray-100 text-gray-700',
+            active: 'bg-green-100 text-green-700',
+            waiting: 'bg-yellow-100 text-yellow-700',
+            error: 'bg-red-100 text-red-700',
+        };
         const statusKey = `subagents.status.${status}` as const;
-        const variant = status === 'active' ? 'default' : status === 'error' ? 'destructive' : 'secondary';
         return (
-            <Badge variant={variant as any} className="gap-1">
+            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${colors[status as keyof typeof colors] || colors.idle}`}>
                 {getStatusIcon(status)}
                 {t(statusKey)}
-            </Badge>
+            </span>
         );
     };
 
@@ -147,54 +147,69 @@ export default function SubagentsPage() {
     return (
         <div className="container mx-auto py-6 space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold">{t('subagents.title')}</h1>
+                <div className="flex items-center gap-3">
+                    <Bot className="w-6 h-6 text-primary" />
+                    <div>
+                        <h1 className="text-2xl font-bold">{t('subagents.title')}</h1>
+                        <p className="text-muted-foreground">Manage agent sessions and flow execution</p>
+                    </div>
+                </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{t('subagents.session')}</CardTitle>
-                        <CardDescription>Manage agent session</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
+                <div className="bg-card border border-border rounded-lg p-6">
+                    <h3 className="text-lg font-semibold mb-4">{t('subagents.session')}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">Manage agent session</p>
+                    <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="sessionId">{t('subagents.session')} ID</Label>
-                            <Input
-                                id="sessionId"
+                            <label className="text-sm font-medium">{t('subagents.session')} ID</label>
+                            <input
+                                type="text"
                                 value={sessionId}
                                 onChange={(e) => setSessionId(e.target.value)}
                                 placeholder="Enter session ID"
+                                className="w-full h-10 px-3 border border-border rounded-md bg-background"
                             />
                         </div>
                         <div className="flex gap-2">
-                            <Button onClick={handleInitialize} disabled={loading || !sessionId.trim()}>
+                            <button
+                                onClick={handleInitialize}
+                                disabled={loading || !sessionId.trim()}
+                                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
                                 {loading ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                 ) : (
                                     <Bot className="h-4 w-4" />
                                 )}
                                 {t('subagents.initialize')}
-                            </Button>
-                            <Button variant="outline" onClick={handleRefresh} disabled={loading || !sessionId.trim()}>
+                            </button>
+                            <button
+                                onClick={handleRefresh}
+                                disabled={loading || !sessionId.trim()}
+                                className="flex items-center gap-2 px-3 py-2 border border-border rounded-lg hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
                                 <RefreshCw className="h-4 w-4" />
-                            </Button>
-                            <Button variant="destructive" onClick={handleCleanup} disabled={loading || !sessionId.trim()}>
+                            </button>
+                            <button
+                                onClick={handleCleanup}
+                                disabled={loading || !sessionId.trim()}
+                                className="flex items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
                                 <Trash2 className="h-4 w-4" />
-                            </Button>
+                            </button>
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{t('subagents.execute')}</CardTitle>
-                        <CardDescription>Execute a flow</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
+                <div className="bg-card border border-border rounded-lg p-6">
+                    <h3 className="text-lg font-semibold mb-4">{t('subagents.execute')}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">Execute a flow</p>
+                    <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label>{t('flows.title')}</Label>
+                            <label className="text-sm font-medium">{t('flows.title')}</label>
                             <select
-                                className="w-full h-10 px-3 border rounded-md bg-background"
+                                className="w-full h-10 px-3 border border-border rounded-md bg-background"
                                 value={selectedFlowId}
                                 onChange={(e) => setSelectedFlowId(e.target.value)}
                             >
@@ -209,10 +224,10 @@ export default function SubagentsPage() {
                                 )}
                             </select>
                         </div>
-                        <Button
-                            className="w-full"
+                        <button
                             onClick={handleExecuteFlow}
                             disabled={executing || !selectedFlowId || !sessionId.trim()}
+                            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                             {executing ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -220,93 +235,83 @@ export default function SubagentsPage() {
                                 <Play className="h-4 w-4" />
                             )}
                             {t('subagents.execute')}
-                        </Button>
-                    </CardContent>
-                </Card>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {error && (
-                <Card className="border-red-500">
-                    <CardContent className="pt-4">
-                        <p className="text-red-500">{error}</p>
-                    </CardContent>
-                </Card>
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <p className="text-red-600">{error}</p>
+                </div>
             )}
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t('subagents.agents')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {agents.length === 0 ? (
-                        <p className="text-muted-foreground">{t('subagents.noAgents')}</p>
-                    ) : (
-                        <div className="space-y-4">
-                            {agents.map((agent) => (
-                                <div
-                                    key={agent.id}
-                                    className="flex items-center justify-between p-4 border rounded-lg"
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <Bot className="h-8 w-8" />
-                                        <div>
-                                            <p className="font-medium">{agent.id}</p>
-                                            <p className="text-sm text-muted-foreground">
-                                                {getRoleName(agent.role)}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        {agent.lastActivity && (
-                                            <p className="text-sm text-muted-foreground">
-                                                {t('subagents.lastActivity')}: {new Date(agent.lastActivity).toLocaleTimeString()}
-                                            </p>
-                                        )}
-                                        {getStatusBadge(agent.status)}
+            <div className="bg-card border border-border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-4">{t('subagents.agents')}</h3>
+                {agents.length === 0 ? (
+                    <p className="text-muted-foreground">{t('subagents.noAgents')}</p>
+                ) : (
+                    <div className="space-y-4">
+                        {agents.map((agent) => (
+                            <div
+                                key={agent.id}
+                                className="flex items-center justify-between p-4 border border-border rounded-lg"
+                            >
+                                <div className="flex items-center gap-4">
+                                    <Bot className="h-8 w-8 text-primary" />
+                                    <div>
+                                        <p className="font-medium">{agent.id}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            {getRoleName(agent.role)}
+                                        </p>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+                                <div className="flex items-center gap-4">
+                                    {agent.lastActivity && (
+                                        <p className="text-sm text-muted-foreground">
+                                            {t('subagents.lastActivity')}: {new Date(agent.lastActivity).toLocaleTimeString()}
+                                        </p>
+                                    )}
+                                    {getStatusBadge(agent.status)}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
 
             {result && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{t('subagents.execute')} Result</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex items-center gap-2">
-                            {result.success ? (
-                                <CheckCircle className="h-5 w-5 text-green-500" />
-                            ) : (
-                                <XCircle className="h-5 w-5 text-red-500" />
-                            )}
-                            <span className={result.success ? 'text-green-500' : 'text-red-500'}>
-                                {result.success ? 'Success' : 'Failed'}
-                            </span>
-                            <span className="text-muted-foreground">
-                                ({result.totalDuration}ms)
-                            </span>
-                        </div>
-                        <div className="space-y-2">
-                            <h4 className="font-medium">{t('flows.steps')}:</h4>
-                            {result.executionLog.map((log, index) => (
-                                <div
-                                    key={index}
-                                    className="flex items-center justify-between p-2 border rounded"
-                                >
-                                    <span>{log.stepType}</span>
-                                    <Badge variant={log.status === 'success' ? 'default' : 'destructive'}>
-                                        {log.status}
-                                    </Badge>
-                                    <span className="text-sm text-muted-foreground">{log.duration}ms</span>
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
+                <div className="bg-card border border-border rounded-lg p-6">
+                    <h3 className="text-lg font-semibold mb-4">{t('subagents.execute')} Result</h3>
+                    <div className="flex items-center gap-2 mb-4">
+                        {result.success ? (
+                            <CheckCircle className="h-5 w-5 text-green-500" />
+                        ) : (
+                            <XCircle className="h-5 w-5 text-red-500" />
+                        )}
+                        <span className={result.success ? 'text-green-500 font-medium' : 'text-red-500 font-medium'}>
+                            {result.success ? 'Success' : 'Failed'}
+                        </span>
+                        <span className="text-muted-foreground">
+                            ({result.totalDuration}ms)
+                        </span>
+                    </div>
+                    <div className="space-y-2">
+                        <h4 className="font-medium">{t('flows.steps')}:</h4>
+                        {result.executionLog.map((log, index) => (
+                            <div
+                                key={index}
+                                className="flex items-center justify-between p-2 border border-border rounded"
+                            >
+                                <span>{log.stepType}</span>
+                                <span className={`px-2 py-1 rounded text-xs font-medium ${log.status === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                    {log.status}
+                                </span>
+                                <span className="text-sm text-muted-foreground">{log.duration}ms</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             )}
         </div>
     );
