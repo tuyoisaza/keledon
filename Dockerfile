@@ -26,15 +26,19 @@ RUN npm install --omit=dev
 RUN npx prisma@5.22.0 generate
 RUN rm -f tsconfig.floor.tsbuildinfo && npm run build
 
-# Stage 3: build VOSK server
-FROM node:20-bookworm AS vosk-builder
-
-RUN apt-get update && apt-get install -y build-essential python3 make g++
+# Stage 3: build VOSK server (Python-based)
+FROM python:3.11-slim AS vosk-builder
 
 WORKDIR /app/vosk-server
-COPY cloud/vosk-server/package*.json ./
-RUN npm install
-COPY cloud/vosk-server/ ./
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir vosk websockets
+
+COPY cloud/vosk-server/server.py ./
 
 # Stage 4: copy Qdrant binary
 FROM qdrant/qdrant:latest AS qdrant-binary

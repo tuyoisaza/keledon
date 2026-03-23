@@ -1,15 +1,10 @@
 {
-  "name": "keledon-stt-server",
+  "name": "keledon-vosk-server",
   "version": "1.0.0",
-  "description": "KELEDON STT Server - Mock mode for MVP",
-  "main": "server.js",
+  "description": "KELEDON VOSK STT Server - Real speech recognition",
+  "main": "server.py",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
-  },
-  "dependencies": {
-    "ws": "^8.14.2",
-    "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "start": "python server.py",
+    "dev": "python server.py"
   }
 }

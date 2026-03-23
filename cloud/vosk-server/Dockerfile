@@ -1,32 +1,21 @@
-FROM node:18-alpine
-
-# Install build dependencies for VOSK
-RUN apk add --no-cache \
-    python3 \
-    make \
-    g++ \
-    libc-dev \
-    wget \
-    unzip
+FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Node dependencies
-RUN npm install --production
+RUN pip install --no-cache-dir vosk websockets
 
-# Copy VOSK models
-COPY ../models ./models
+COPY server.py ./
 
-# Set environment
-ENV PORT=9090
+ENV VOSK_PORT=9090
+ENV VOSK_WS_PORT=9091
 ENV VOSK_MODEL_PATH=/app/models/vosk-model-small-en-us-0.15
 ENV VOSK_SAMPLE_RATE=16000
 
-# Expose ports
 EXPOSE 9090 9091
 
-# Start server
-CMD ["node", "server.js"]
+CMD ["python", "server.py"]
