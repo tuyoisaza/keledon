@@ -247,9 +247,9 @@ export default function SubagentsPage() {
             )}
 
             <div className="bg-card border border-border rounded-lg p-6">
-                <h3 className="text-lg font-semibold mb-4">{t('subagents.agents')}</h3>
+                <h3 className="text-lg font-semibold mb-4">{t('subagents.subagents')}</h3>
                 {agents.length === 0 ? (
-                    <p className="text-muted-foreground">{t('subagents.noAgents')}</p>
+                    <p className="text-muted-foreground">{t('subagents.noSubagents')}</p>
                 ) : (
                     <div className="space-y-4">
                         {agents.map((agent) => (

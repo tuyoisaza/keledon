@@ -55,7 +55,7 @@ export const EntityTable: React.FC<EntityTableProps> = ({
                                     ))}
                                     <td className="px-4 py-4">
                                         <div className="flex items-center justify-end gap-2">
-                                            {(activeTab === 'users' || activeTab === 'agents') && isSuperAdmin && (
+                                            {activeTab === 'users' && isSuperAdmin && (
                                                 <button
                                                     onClick={() => {
                                                         const userToImpersonate = {

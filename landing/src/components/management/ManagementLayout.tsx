@@ -8,7 +8,6 @@ const managementTabs = [
     { id: 'teams', label: 'Teams', href: '/management/teams', icon: UsersIcon },
     { id: 'users', label: 'Users', href: '/management/users', icon: UserCircle },
     { id: 'keledons', label: 'KELEDONS', href: '/management/keledons', icon: Bot },
-    { id: 'agents', label: 'Agents (Legacy)', href: '/management/agents', icon: UserCircle },
     { id: 'flows', label: 'Flows', href: '/management/flows', icon: LayoutGrid },
     { id: 'voice-profiles', label: 'Voice Profiles', href: '/management/voice-profiles', icon: Mic },
     { id: 'providers', label: 'Providers', href: '/management/providers', icon: Settings },

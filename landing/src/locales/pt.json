@@ -82,7 +82,7 @@
   },
   "subagents": {
     "title": "SubAgentes",
-    "agents": "Agentes",
+    "subagents": "SubAgentes",
     "session": "Sessão",
     "initialize": "Inicializar",
     "cleanup": "Limpar",
@@ -99,7 +99,7 @@
       "tool-operator": "Operador de Ferramentas",
       "flow-executor": "Executor de Fluxos"
     },
-    "noAgents": "Sem agentes inicializados",
+    "noSubagents": "Sem SubAgentes inicializados",
     "currentTask": "Tarefa Atual",
     "lastActivity": "Última Atividade",
     "parallelExecution": "Execução Paralela"
