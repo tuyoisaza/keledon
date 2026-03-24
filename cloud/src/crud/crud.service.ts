@@ -299,10 +299,10 @@ export class CrudService {
     return this.prisma.user.delete({ where: { id } });
   }
 
-  // ========== AGENTS ==========
+  // ========== KELEDONS ==========
 
-  async getAgents(companyId?: string) {
-    return this.prisma.agent.findMany({
+  async getKeledons(companyId?: string) {
+    return this.prisma.keledon.findMany({
       select: {
         id: true,
         name: true,
@@ -314,14 +314,18 @@ export class CrudService {
         avgHandleTime: true,
         autonomyLevel: true,
         policies: true,
+        uiInterfaces: true,
         createdAt: true,
         updatedAt: true,
         teamId: true,
+        brandId: true,
+        countryCode: true,
         userId: true,
         team: {
           select: {
             id: true,
             name: true,
+            country: true,
             brandId: true,
             brand: { select: { id: true, name: true, companyId: true } }
           }
@@ -332,16 +336,22 @@ export class CrudService {
     });
   }
 
-  async createAgent(data: { 
+  async createKeledon(data: { 
     name: string; 
     teamId: string; 
+    brandId?: string;
+    countryCode?: string;
     userId?: string;
     email?: string;
     role?: string;
     autonomyLevel?: number;
+    uiInterfaces?: string[];
   }) {
-    return this.prisma.agent.create({
-      data,
+    return this.prisma.keledon.create({
+      data: {
+        ...data,
+        uiInterfaces: data.uiInterfaces ? JSON.stringify(data.uiInterfaces) : undefined,
+      },
       select: {
         id: true,
         name: true,
@@ -353,14 +363,18 @@ export class CrudService {
         avgHandleTime: true,
         autonomyLevel: true,
         policies: true,
+        uiInterfaces: true,
         createdAt: true,
         updatedAt: true,
         teamId: true,
+        brandId: true,
+        countryCode: true,
         userId: true,
         team: {
           select: {
             id: true,
             name: true,
+            country: true,
             brandId: true,
             brand: { select: { id: true, name: true } }
           }
@@ -370,9 +384,11 @@ export class CrudService {
     });
   }
 
-  async updateAgent(id: string, data: { 
+  async updateKeledon(id: string, data: { 
     name?: string; 
     teamId?: string; 
+    brandId?: string;
+    countryCode?: string;
     userId?: string;
     email?: string;
     role?: string;
@@ -382,10 +398,14 @@ export class CrudService {
     avgHandleTime?: number;
     autonomyLevel?: number;
     policies?: string;
+    uiInterfaces?: string[];
   }) {
-    return this.prisma.agent.update({
+    return this.prisma.keledon.update({
       where: { id },
-      data,
+      data: {
+        ...data,
+        uiInterfaces: data.uiInterfaces ? JSON.stringify(data.uiInterfaces) : undefined,
+      },
       select: {
         id: true,
         name: true,
@@ -397,14 +417,18 @@ export class CrudService {
         avgHandleTime: true,
         autonomyLevel: true,
         policies: true,
+        uiInterfaces: true,
         createdAt: true,
         updatedAt: true,
         teamId: true,
+        brandId: true,
+        countryCode: true,
         userId: true,
         team: {
           select: {
             id: true,
             name: true,
+            country: true,
             brandId: true,
             brand: { select: { id: true, name: true } }
           }
@@ -414,8 +438,8 @@ export class CrudService {
     });
   }
 
-  async deleteAgent(id: string) {
-    return this.prisma.agent.delete({ where: { id } });
+  async deleteKeledon(id: string) {
+    return this.prisma.keledon.delete({ where: { id } });
   }
 
   // ========== MANAGED INTERFACES ==========

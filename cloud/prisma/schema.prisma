@@ -99,14 +99,16 @@ model User {
   company  Company?  @relation(fields: [companyId], references: [id])
   team     Team?     @relation(fields: [teamId], references: [id])
   sessions Session[]
-  agents   Agent[]
+  keledons Keledon[]
 
   @@map("users")
 }
 
-model Agent {
+model Keledon {
   id             String   @id @default(uuid())
   teamId          String
+  brandId         String?
+  countryCode     String?
   userId          String?
   name            String
   email           String?
@@ -117,6 +119,7 @@ model Agent {
   avgHandleTime   Float?
   autonomyLevel   Int      @default(5)
   policies        String?  // JSON string
+  uiInterfaces    String?  // JSON array of interface IDs
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

@@ -127,26 +127,26 @@ export class CrudController {
     return { success: true };
   }
 
-  // ========== AGENTS ==========
+  // ========== KELEDONS ==========
 
-  @Get('agents')
-  getAgents(@Query('companyId') companyId?: string) {
-    return this.crud.getAgents(companyId);
+  @Get('keledons')
+  getKeledons(@Query('companyId') companyId?: string) {
+    return this.crud.getKeledons(companyId);
   }
 
-  @Post('agents')
-  createAgent(@Body() data: any) {
-    return this.crud.createAgent(data);
+  @Post('keledons')
+  createKeledon(@Body() data: any) {
+    return this.crud.createKeledon(data);
   }
 
-  @Put('agents/:id')
-  updateAgent(@Param('id') id: string, @Body() data: any) {
-    return this.crud.updateAgent(id, data);
+  @Put('keledons/:id')
+  updateKeledon(@Param('id') id: string, @Body() data: any) {
+    return this.crud.updateKeledon(id, data);
   }
 
-  @Delete('agents/:id')
-  async deleteAgent(@Param('id') id: string) {
-    await this.crud.deleteAgent(id);
+  @Delete('keledons/:id')
+  async deleteKeledon(@Param('id') id: string) {
+    await this.crud.deleteKeledon(id);
     return { success: true };
   }
 

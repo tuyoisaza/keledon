@@ -18,6 +18,7 @@ import ManagementBrandsPage from '@/pages/ManagementBrandsPage';
 import ManagementTeamsPage from '@/pages/ManagementTeamsPage';
 import ManagementUsersPage from '@/pages/ManagementUsersPage';
 import ManagementAgentsPage from '@/pages/ManagementAgentsPage';
+import ManagementKeledonsPage from '@/pages/ManagementKeledonsPage';
 import ManagementVoiceProfilesPage from '@/pages/ManagementVoiceProfilesPage';
 import ManagementProvidersPage from '@/pages/ManagementProvidersPage';
 import ManagementDebugPage from '@/pages/ManagementDebugPage';
@@ -224,6 +225,18 @@ export function AppRouter() {
                             <AppLayout>
                                 <ManagementLayout>
                                     <ManagementUsersPage />
+                                </ManagementLayout>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/keledons"
+                    element={
+                        <ProtectedRoute minRole="admin">
+                            <AppLayout>
+                                <ManagementLayout>
+                                    <ManagementKeledonsPage />
                                 </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>

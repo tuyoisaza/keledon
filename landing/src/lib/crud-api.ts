@@ -75,9 +75,11 @@ export interface User {
     team?: { id: string; name: string; brandId?: string; brand?: { id: string; name: string } };
 }
 
-export interface Agent {
+export interface Keledon {
     id: string;
     teamId: string;
+    brandId?: string;
+    countryCode?: string;
     userId?: string;
     name: string;
     email?: string;
@@ -87,9 +89,11 @@ export interface Agent {
     fcrRate?: number;
     avgHandleTime?: number;
     autonomyLevel?: number;
+    policies?: string;
+    uiInterfaces?: string;
     createdAt?: string;
     updatedAt?: string;
-    team?: { id: string; name: string; brand?: { id: string; name: string; companyId: string } };
+    team?: { id: string; name: string; country?: string; brandId?: string; brand?: { id: string; name: string; companyId: string } };
     user?: { id: string; name: string; email: string };
 }
 
@@ -241,25 +245,25 @@ export async function deleteUser(id: string): Promise<void> {
     return fetchApi(`/users/${id}`, 'DELETE');
 }
 
-// Agents
-export async function getAgents(companyId?: string): Promise<Agent[]> {
-    const agents: Agent[] = await fetchApi('/agents');
+// KELEDONS
+export async function getKeledons(companyId?: string): Promise<Keledon[]> {
+    const keledons: Keledon[] = await fetchApi('/keledons');
     if (companyId) {
-        return agents.filter(a => a.team?.brand?.companyId === companyId);
+        return keledons.filter(k => k.team?.brand?.companyId === companyId);
     }
-    return agents;
+    return keledons;
 }
 
-export async function createAgent(data: { name: string; teamId: string; userId?: string; email?: string; role?: string }): Promise<Agent> {
-    return fetchApi('/agents', 'POST', data);
+export async function createKeledon(data: { name: string; teamId: string; brandId?: string; countryCode?: string; userId?: string; email?: string; role?: string; autonomyLevel?: number; uiInterfaces?: string[] }): Promise<Keledon> {
+    return fetchApi('/keledons', 'POST', data);
 }
 
-export async function updateAgent(id: string, data: Partial<Agent>): Promise<Agent> {
-    return fetchApi(`/agents/${id}`, 'PUT', data);
+export async function updateKeledon(id: string, data: Partial<Keledon>): Promise<Keledon> {
+    return fetchApi(`/keledons/${id}`, 'PUT', data);
 }
 
-export async function deleteAgent(id: string): Promise<void> {
-    return fetchApi(`/agents/${id}`, 'DELETE');
+export async function deleteKeledon(id: string): Promise<void> {
+    return fetchApi(`/keledons/${id}`, 'DELETE');
 }
 
 // Managed Interfaces

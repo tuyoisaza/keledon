@@ -60,6 +60,26 @@
     "triggerKeywords": "Trigger Keywords",
     "category": "Category"
   },
+  "keledons": {
+    "title": "KELEDONS",
+    "addKeledon": "Add KELEDON",
+    "editKeledon": "Edit KELEDON",
+    "deleteKeledon": "Delete KELEDON",
+    "name": "Name",
+    "email": "Email",
+    "team": "Team",
+    "brand": "Brand",
+    "company": "Company",
+    "country": "Country",
+    "autonomyLevel": "Autonomy Level",
+    "autonomyDescription": "1 = Asks for approval, 10 = Fully autonomous",
+    "uiInterfaces": "UI Interfaces",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "noKeledons": "No KELEDONS"
+  },
   "subagents": {
     "title": "SubAgents",
     "agents": "Agents",

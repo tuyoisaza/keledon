@@ -60,6 +60,26 @@
     "triggerKeywords": "Palavras-chave",
     "category": "Categoria"
   },
+  "keledons": {
+    "title": "KELEDONS",
+    "addKeledon": "Adicionar KELEDON",
+    "editKeledon": "Editar KELEDON",
+    "deleteKeledon": "Excluir KELEDON",
+    "name": "Nome",
+    "email": "E-mail",
+    "team": "Equipe",
+    "brand": "Marca",
+    "company": "Empresa",
+    "country": "País",
+    "autonomyLevel": "Nível de Autonomia",
+    "autonomyDescription": "1 = Pede aprovação, 10 = Totalmente autônomo",
+    "uiInterfaces": "Interfaces UI",
+    "status": {
+      "active": "Ativo",
+      "inactive": "Inativo"
+    },
+    "noKeledons": "Sem KELEDONS"
+  },
   "subagents": {
     "title": "SubAgentes",
     "agents": "Agentes",

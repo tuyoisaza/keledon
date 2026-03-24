@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Building2, Tag, Users as UsersIcon, UserCircle, Mic, Settings, Bug, Activity, Database, LayoutGrid } from 'lucide-react';
+import { Building2, Tag, Users as UsersIcon, UserCircle, Mic, Settings, Bug, Activity, Database, LayoutGrid, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const managementTabs = [
@@ -7,7 +7,8 @@ const managementTabs = [
     { id: 'brands', label: 'Brands', href: '/management/brands', icon: Tag },
     { id: 'teams', label: 'Teams', href: '/management/teams', icon: UsersIcon },
     { id: 'users', label: 'Users', href: '/management/users', icon: UserCircle },
-    { id: 'agents', label: 'Agents', href: '/management/agents', icon: UserCircle },
+    { id: 'keledons', label: 'KELEDONS', href: '/management/keledons', icon: Bot },
+    { id: 'agents', label: 'Agents (Legacy)', href: '/management/agents', icon: UserCircle },
     { id: 'flows', label: 'Flows', href: '/management/flows', icon: LayoutGrid },
     { id: 'voice-profiles', label: 'Voice Profiles', href: '/management/voice-profiles', icon: Mic },
     { id: 'providers', label: 'Providers', href: '/management/providers', icon: Settings },

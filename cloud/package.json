@@ -43,7 +43,6 @@
     "@opentelemetry/semantic-conventions": "^1.39.0",
     "@qdrant/qdrant-js": "^1.17.0",
     "@types/bcrypt": "^5.0.2",
-    "@types/jest": "^30.0.0",
     "@types/os-utils": "^0.0.4",
     "@types/uuid": "^9.0.0",
     "bcrypt": "^5.1.1",
@@ -62,8 +61,10 @@
     "@nestjs/swagger": "^11.2.5",
     "@nestjs/websockets": "^11.1.12",
     "@prisma/client": "^5.22.0",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.19.7",
     "concurrently": "^8.2.2",
+    "jest": "^30.3.0",
     "prisma": "^5.22.0",
     "typescript": "^5.9.3"
   }
