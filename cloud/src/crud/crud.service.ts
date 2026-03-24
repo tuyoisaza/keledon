@@ -117,21 +117,11 @@ export class CrudService {
 
   async getTeams(companyId?: string) {
     const teams = await this.prisma.team.findMany({
-      select: {
-        id: true,
-        name: true,
-        brandId: true,
-        country: true,
-        sttProvider: true,
-        ttsProvider: true,
-        createdAt: true,
-        updatedAt: true,
-        _count: { select: { users: true, agents: true } },
+      include: {
+        users: { select: { id: true } },
+        keledons: { select: { id: true } },
         brand: {
-          select: {
-            id: true,
-            name: true,
-            color: true,
+          include: {
             company: { select: { id: true, name: true } }
           }
         }
@@ -140,7 +130,15 @@ export class CrudService {
     });
 
     return teams.map(t => ({
-      ...t,
+      id: t.id,
+      name: t.name,
+      brandId: t.brandId,
+      country: t.country,
+      sttProvider: t.sttProvider,
+      ttsProvider: t.ttsProvider,
+      createdAt: t.createdAt,
+      updatedAt: t.updatedAt,
+      _count: { users: t.users.length, keledons: t.keledons.length },
       company: t.brand?.company ? { id: t.brand.company.id, name: t.brand.company.name } : undefined
     }));
   }

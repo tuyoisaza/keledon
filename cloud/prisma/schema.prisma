@@ -75,7 +75,7 @@ model Team {
 
   brand    Brand?    @relation(fields: [brandId], references: [id], onDelete: Cascade)
   users    User[]
-  agents   Agent[]
+  keledons Keledon[]
   sessions Session[]
   teamInterfaces TeamInterface[]
   flows    Flow[]
