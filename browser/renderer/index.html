@@ -229,7 +229,7 @@
       <div class="card-header">Execution</div>
       <div class="card-content">
         <input type="text" id="goalInput" placeholder="Enter goal..." style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
-        <button id="executeBtn" class="call-btn" style="width:100%;">Execute</button>
+        <button id="executeBtn" class="call-btn" style="width:100%;" disabled>Execute</button>
       </div>
     </div>
     <div class="card">
@@ -262,10 +262,27 @@
     const holdBtn = document.getElementById('holdBtn');
     const hangupBtn = document.getElementById('hangupBtn');
     const debugToggle = document.getElementById('debugToggle');
+    const cloudUrlInput = document.getElementById('cloudUrl');
+    const pairingCodeInput = document.getElementById('pairingCode');
+    const connectBtn = document.getElementById('connectBtn');
+    const goalInput = document.getElementById('goalInput');
+    const executeBtn = document.getElementById('executeBtn');
+    const activityLog = document.getElementById('activityLog');
 
     let isMuted = false;
     let isOnHold = false;
     let debugEnabled = false;
+
+    function log(message, type = 'info') {
+      const entry = document.createElement('div');
+      entry.style.marginBottom = '8px';
+      entry.style.padding = '8px';
+      entry.style.background = '#16213e';
+      entry.style.borderRadius = '4px';
+      entry.innerHTML = `<span style="color:#666;font-size:11px;">${new Date().toLocaleTimeString()}</span> <span style="color:${type === 'error' ? '#f87171' : type === 'success' ? '#4ade80' : '#ccc'}">${message}</span>`;
+      activityLog.appendChild(entry);
+      activityLog.scrollTop = activityLog.scrollHeight;
+    }
 
     async function loadDeviceInfo() {
       try {
@@ -276,8 +293,40 @@
       }
     }
 
+    connectBtn.addEventListener('click', async () => {
+      const cloudUrl = cloudUrlInput.value.trim();
+      const pairingCode = pairingCodeInput.value.trim();
+      if (!cloudUrl || !pairingCode) {
+        log('Cloud URL and pairing code are required', 'error');
+        return;
+      }
+      try {
+        const result = await window.keledon.runtime.connect({ cloudUrl, token: pairingCode });
+        sessionIdEl.textContent = result.sessionId;
+        executeBtn.disabled = false;
+        log('Connected successfully! Session ID: ' + result.sessionId, 'success');
+      } catch (e) {
+        log('Connection failed: ' + e.message, 'error');
+      }
+    });
+
+    executeBtn.addEventListener('click', async () => {
+      const goal = goalInput.value.trim();
+      if (!goal) {
+        log('Goal is required', 'error');
+        return;
+      }
+      try {
+        const result = await window.keledon.executor.executeGoal(goal, {});
+        log('Execution result: ' + JSON.stringify(result), 'info');
+      } catch (e) {
+        log('Execution failed: ' + e.message, 'error');
+      }
+    });
+
     window.keledon.runtime.onConnect(({ sessionId }) => {
       sessionIdEl.textContent = sessionId || '-';
+      log('Session connected: ' + sessionId, 'success');
       callStatusEl.textContent = 'In Call';
       callStatusEl.className = 'status-badge in-call';
       muteBtn.disabled = false;
