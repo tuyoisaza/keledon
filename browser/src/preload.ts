@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('keledon', {
     disconnect: () => ipcRenderer.invoke('runtime:disconnect'),
     onStatusChange: (callback: (status: unknown) => void) => {
       ipcRenderer.on('runtime:statusChanged', (_event, status) => callback(status));
+      return () => ipcRenderer.removeAllListeners('runtime:statusChanged');
     }
   },
   executor: {
@@ -20,6 +21,7 @@ contextBridge.exposeInMainWorld('keledon', {
       ipcRenderer.invoke('executor:executeSteps', steps),
     onProgress: (callback: (progress: unknown) => void) => {
       ipcRenderer.on('executor:progress', (_event, progress) => callback(progress));
+      return () => ipcRenderer.removeAllListeners('executor:progress');
     }
   },
   evidence: {
@@ -34,14 +36,17 @@ contextBridge.exposeInMainWorld('keledon', {
     hangup: () => ipcRenderer.invoke('media:hangup'),
     onTranscript: (callback: (data: TranscriptData) => void) => {
       ipcRenderer.on('media:transcript', (_event, data) => callback(data));
+      return () => ipcRenderer.removeAllListeners('media:transcript');
     },
     onCallStatus: (callback: (data: CallStatusData) => void) => {
       ipcRenderer.on('media:callStatus', (_event, data) => callback(data));
+      return () => ipcRenderer.removeAllListeners('media:callStatus');
     }
   },
   brain: {
     onCommand: (callback: (data: CommandData) => void) => {
       ipcRenderer.on('brain:command', (_event, data) => callback(data));
+      return () => ipcRenderer.removeAllListeners('brain:command');
     },
     setDebugMode: (enabled: boolean) => ipcRenderer.invoke('brain:setDebugMode', enabled)
   }
@@ -61,7 +66,7 @@ interface CallStatusData {
 
 interface CommandData {
   type: string;
-  payload: any;
+  payload: unknown;
   flow_id?: string;
   timestamp: string;
 }
@@ -87,12 +92,12 @@ declare global {
         }>;
         connect: (config: { cloudUrl: string; token: string }) => Promise<{ success: boolean }>;
         disconnect: () => Promise<{ success: boolean }>;
-        onStatusChange: (callback: (status: unknown) => void) => void;
+        onStatusChange: (callback: (status: unknown) => void) => () => void;
       };
       executor: {
         executeGoal: (goal: string, context: Record<string, unknown>) => Promise<unknown>;
         executeSteps: (steps: unknown[]) => Promise<unknown>;
-        onProgress: (callback: (progress: unknown) => void) => void;
+        onProgress: (callback: (progress: unknown) => void) => () => void;
       };
       evidence: {
         getLogs: () => Promise<unknown>;
@@ -104,11 +109,11 @@ declare global {
         hold: () => Promise<{ success: boolean }>;
         resume: () => Promise<{ success: boolean }>;
         hangup: () => Promise<{ success: boolean }>;
-        onTranscript: (callback: (data: TranscriptData) => void) => void;
-        onCallStatus: (callback: (data: CallStatusData) => void) => void;
+        onTranscript: (callback: (data: TranscriptData) => void) => () => void;
+        onCallStatus: (callback: (data: CallStatusData) => void) => () => void;
       };
       brain: {
-        onCommand: (callback: (data: CommandData) => void) => void;
+        onCommand: (callback: (data: CommandData) => void) => () => void;
         setDebugMode: (enabled: boolean) => Promise<{ success: boolean }>;
       };
     };
