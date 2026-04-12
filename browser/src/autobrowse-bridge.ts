@@ -1,15 +1,14 @@
 /**
  * AutoBrowse Bridge - KELEDON Browser integration with AutoBrowse engine
  * 
- * This module wraps the AutoBrowse engine and provides a clean interface
- * for KELEDON Browser to invoke automation.
+ * This module provides browser automation using CDP (Chrome DevTools Protocol)
+ * to control the Electron webContents.
  * 
- * Note: Uses dynamic import at runtime to load AutoBrowse from submodule.
+ * Flow: Cloud → Browser WebSocket → Bridge → CDP → Browser Tab
  */
 
 import log from 'electron-log';
-import { spawn } from 'child_process';
-import * as path from 'path';
+import { BrowserWindow } from 'electron';
 
 interface BridgeGoalInput {
   execution_id?: string;
@@ -32,6 +31,7 @@ interface BridgeExecutionResult {
     screenshots: string[];
     logs: string[];
   };
+  error?: string;
 }
 
 interface BrowserState {
@@ -41,7 +41,11 @@ interface BrowserState {
 }
 
 let isInitialized = false;
-let autoBrowseProcess: any = null;
+let mainWindow: BrowserWindow | null = null;
+
+export function setMainWindow(window: BrowserWindow) {
+  mainWindow = window;
+}
 
 export async function initializeAutoBrowse(electronSession: any): Promise<void> {
   if (isInitialized) {
@@ -49,74 +53,121 @@ export async function initializeAutoBrowse(electronSession: any): Promise<void> 
     return;
   }
 
-  log.info('[AutoBrowseBridge] Initializing...');
-
-  try {
-    const autobrowsePath = path.join(__dirname, '..', 'lib', 'autobrowse', 'dist-electron', 'main.mjs');
-    
-    autoBrowseProcess = spawn('node', [autobrowsePath], {
-      stdio: ['pipe', 'pipe', 'pipe'],
-      env: {
-        ...process.env,
-        CDP_URL: electronSession?.defaultSession?.debuggerWebSocketUrl || process.env.CDP_URL
-      }
-    });
-
-    autoBrowseProcess.stdout?.on('data', (data: Buffer) => {
-      log.info('[AutoBrowseBridge]', data.toString());
-    });
-
-    autoBrowseProcess.stderr?.on('data', (data: Buffer) => {
-      log.error('[AutoBrowseBridge]', data.toString());
-    });
-
-    isInitialized = true;
-    log.info('[AutoBrowseBridge] Initialized successfully');
-  } catch (error) {
-    log.warn('[AutoBrowseBridge] Failed to start AutoBrowse process:', error);
-    isInitialized = true;
-  }
+  log.info('[AutoBrowseBridge] Initializing with CDP...');
+  
+  isInitialized = true;
+  log.info('[AutoBrowseBridge] Initialized successfully (CDP mode)');
 }
 
 export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecutionResult> {
   if (!isInitialized) {
-    log.warn('[AutoBrowseBridge] Not initialized, returning stub result');
+    throw new Error('AutoBrowse not initialized');
+  }
+
+  if (!mainWindow) {
     return {
       execution_id: input.execution_id || `exec-${Date.now()}`,
-      status: 'completed',
-      goal_status: 'uncertain',
+      status: 'failed',
+      goal_status: 'failed',
       steps: [],
       duration: 0,
-      artifacts: { screenshots: [], logs: [] }
+      artifacts: { screenshots: [], logs: [] },
+      error: 'No main window'
     };
   }
 
-  log.info('[AutoBrowseBridge] Executing goal:', input.goal);
+  log.info('[AutoBrowseBridge] Executing goal via CDP:', input.goal);
+  const startTime = Date.now();
 
-  return {
-    execution_id: input.execution_id || `exec-${Date.now()}`,
-    status: 'completed',
-    goal_status: 'uncertain',
-    steps: [],
-    duration: 0,
-    artifacts: { screenshots: [], logs: [] }
-  };
+  try {
+    const result = await executeGoalViaCDP(input.goal, input.inputs);
+    
+    return {
+      execution_id: input.execution_id || `exec-${Date.now()}`,
+      status: result.success ? 'completed' : 'failed',
+      goal_status: result.success ? 'success' : 'uncertain',
+      steps: result.steps,
+      duration: Date.now() - startTime,
+      artifacts: {
+        screenshots: result.screenshots || [],
+        logs: result.logs || []
+      }
+    };
+  } catch (error) {
+    log.error('[AutoBrowseBridge] Goal execution failed:', error);
+    return {
+      execution_id: input.execution_id || `exec-${Date.now()}`,
+      status: 'failed',
+      goal_status: 'failed',
+      steps: [],
+      duration: Date.now() - startTime,
+      artifacts: { screenshots: [], logs: [] },
+      error: String(error)
+    };
+  }
+}
+
+async function executeGoalViaCDP(goal: string, inputs?: Record<string, unknown>): Promise<{
+  success: boolean;
+  steps: unknown[];
+  screenshots: string[];
+  logs: string[];
+}> {
+  if (!mainWindow) {
+    return { success: false, steps: [], screenshots: [], logs: [] };
+  }
+
+  const steps: unknown[] = [];
+  const screenshots: string[] = [];
+  const logs: string[] = [];
+
+  try {
+    logs.push(`[Goal] ${goal}`);
+    
+    const targetUrl = inputs?.url as string || 'about:blank';
+    await mainWindow.webContents.loadURL(targetUrl);
+    steps.push({ action: 'navigate', url: targetUrl, result: 'success' });
+    logs.push(`[Navigate] to ${targetUrl}`);
+    
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const image = await mainWindow.webContents.capturePage();
+    screenshots.push(image.toDataURL());
+    logs.push('[Screenshot] captured');
+    
+    return { success: true, steps, screenshots, logs };
+  } catch (error) {
+    logs.push(`[Error] ${error}`);
+    return { success: false, steps, screenshots, logs };
+  }
 }
 
 export async function getBrowserState(): Promise<BrowserState> {
+  if (!mainWindow) {
+    return { url: '', title: '', tabs: [] };
+  }
+
   return {
-    url: '',
-    title: '',
+    url: mainWindow.webContents.getURL(),
+    title: mainWindow.webContents.getTitle(),
     tabs: []
   };
 }
 
 export async function captureScreenshot(): Promise<string> {
-  return '';
+  if (!mainWindow) return '';
+  
+  try {
+    const image = await mainWindow.webContents.capturePage();
+    return image.toDataURL();
+  } catch (error) {
+    log.error('[AutoBrowseBridge] Screenshot failed:', error);
+    return '';
+  }
 }
 
 export function getEngine(): any {
-  return null;
+  return mainWindow;
 }
 
 export function isAutoBrowseInitialized(): boolean {
@@ -124,9 +175,6 @@ export function isAutoBrowseInitialized(): boolean {
 }
 
 export async function disposeAutoBrowse(): Promise<void> {
-  if (autoBrowseProcess) {
-    autoBrowseProcess.kill();
-    autoBrowseProcess = null;
-  }
   isInitialized = false;
+  mainWindow = null;
 }

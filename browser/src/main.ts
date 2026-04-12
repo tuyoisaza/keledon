@@ -104,6 +104,11 @@ const createWindow = (): void => {
     }
   });
 
+  (async () => {
+    const bridge = await getAutoBrowseBridge();
+    bridge.setMainWindow(mainWindow);
+  })();
+
   mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
 
   mainWindow.webContents.on('did-finish-load', () => {
@@ -147,6 +152,54 @@ const connectWebSockets = (cloudUrl: string, token: string): void => {
     mainWindow?.webContents.send('media:callStatus', data);
   });
   
+  deviceSocket.on('goal_execute', async (data) => {
+    log.info('[Main] Received goal from cloud:', data.goal);
+    
+    const bridge = await getAutoBrowseBridge();
+    if (!bridge.isAutoBrowseInitialized()) {
+      deviceSocket?.emit('goal:result', {
+        execution_id: data.execution_id,
+        status: 'failed',
+        goal_status: 'failed',
+        error: 'AutoBrowse not initialized'
+      });
+      return;
+    }
+
+    try {
+      const result = await bridge.executeGoal({
+        execution_id: data.execution_id,
+        goal: data.goal,
+        inputs: data.inputs,
+        constraints: data.constraints
+      });
+
+      deviceSocket?.emit('goal:result', {
+        execution_id: data.execution_id,
+        status: result.status,
+        goal_status: result.goal_status,
+        steps: result.steps,
+        duration: result.duration,
+        artifacts: result.artifacts
+      });
+
+      mainWindow?.webContents.send('brain:command', {
+        type: 'goal_result',
+        payload: result,
+        execution_id: data.execution_id,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      log.error('[Main] Goal execution failed:', error);
+      deviceSocket?.emit('goal:result', {
+        execution_id: data.execution_id,
+        status: 'failed',
+        goal_status: 'failed',
+        error: String(error)
+      });
+    }
+  });
+
   agentSocket = io(`${cloudUrl}/agent`, {
     auth: { token },
     transports: ['websocket']
