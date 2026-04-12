@@ -1,0 +1,3 @@
+[submodule "browser/lib/autobrowse"]
+	path = browser/lib/autobrowse
+	url = https://github.com/tuyoisaza/autobrowse.git
