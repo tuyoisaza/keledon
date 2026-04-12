@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+  <title>KELEDON Browser</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: #16213e;
+      padding: 12px 24px;
+      border-bottom: 1px solid #0f3460;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 { font-size: 16px; color: #e94560; }
+    header .menu-dots { display: flex; gap: 6px; }
+    header .menu-dots span { width: 4px; height: 4px; background: #888; border-radius: 50%; }
+    .status { font-size: 12px; color: #888; }
+    .status.connected { color: #4ade80; }
+
+    .device-info {
+      background: #16213e;
+      padding: 10px 24px;
+      border-bottom: 1px solid #0f3460;
+      display: flex;
+      gap: 32px;
+      font-size: 13px;
+    }
+    .device-info span { color: #888; }
+    .device-info strong { color: #eee; }
+
+    .call-controls {
+      background: #1a1a2e;
+      padding: 12px 24px;
+      border-bottom: 1px solid #0f3460;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .call-btn {
+      background: #16213e;
+      color: #eee;
+      border: 1px solid #0f3460;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .call-btn:hover { background: #1f2b4a; }
+    .call-btn.active { background: #e94560; border-color: #e94560; }
+    .call-btn.hangup { background: #dc2626; border-color: #dc2626; }
+    .call-btn.hangup:hover { background: #b91c1c; }
+    .call-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .call-btn.muted { border-color: #f59e0b; color: #f59e0b; }
+    .call-btn.on-hold { border-color: #f59e0b; color: #f59e0b; }
+
+    .status-badge {
+      margin-left: auto;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status-badge.idle { background: #374151; color: #9ca3af; }
+    .status-badge.in-call { background: #166534; color: #4ade80; }
+    .status-badge.on-hold { background: #78350f; color: #fbbf24; }
+
+    main {
+      flex: 1;
+      display: flex;
+      gap: 1px;
+      background: #0f3460;
+      overflow: hidden;
+    }
+    .panel {
+      flex: 1;
+      background: #1a1a2e;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 12px 16px;
+      background: #16213e;
+      border-bottom: 1px solid #0f3460;
+      font-size: 13px;
+      font-weight: 500;
+      color: #e94560;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      font-size: 12px;
+    }
+
+    .transcript-entry {
+      margin-bottom: 8px;
+      padding: 8px;
+      background: #16213e;
+      border-radius: 4px;
+    }
+    .transcript-entry .time { color: #666; font-size: 11px; }
+    .transcript-entry .speaker { font-weight: 500; }
+    .transcript-entry.agent .speaker { color: #4ade80; }
+    .transcript-entry.customer .speaker { color: #60a5fa; }
+    .transcript-entry .text { margin-top: 4px; color: #ccc; }
+    .transcript-entry .confidence { font-size: 10px; color: #666; margin-top: 2px; }
+
+    .command-entry {
+      margin-bottom: 8px;
+      padding: 8px;
+      background: #16213e;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    .command-entry .time { color: #666; font-size: 11px; }
+    .command-entry .type { 
+      display: inline-block;
+      background: #e94560;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      margin-left: 8px;
+    }
+    .command-entry .payload { color: #aaa; margin-top: 4px; font-size: 11px; }
+    .command-entry .flow-id { color: #666; font-size: 10px; margin-top: 2px; }
+
+    .debug-toggle {
+      background: none;
+      border: 1px solid #0f3460;
+      color: #888;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    .debug-toggle:hover { background: #16213e; }
+    .debug-toggle.active { border-color: #e94560; color: #e94560; }
+
+    .debug-info {
+      display: none;
+      margin-top: 8px;
+      padding: 8px;
+      background: #0f3460;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #888;
+      font-family: monospace;
+    }
+    .debug-info.show { display: block; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>KELEDON Browser</h1>
+    <div class="menu-dots">
+      <span></span><span></span><span></span>
+    </div>
+  </header>
+
+  <div class="device-info">
+    <div><span>Device:</span> <strong id="deviceId">Loading...</strong></div>
+    <div><span>Session:</span> <strong id="sessionId">-</strong></div>
+  </div>
+
+  <div class="call-controls">
+    <button id="muteBtn" class="call-btn" disabled>🔇 Mute</button>
+    <button id="holdBtn" class="call-btn" disabled>⏸ Hold</button>
+    <button id="hangupBtn" class="call-btn hangup" disabled>📞 Hang Up</button>
+    <span id="callStatus" class="status-badge idle">Idle</span>
+  </div>
+
+  <main>
+    <div class="panel">
+      <div class="panel-header">Transcript</div>
+      <div id="transcript" class="panel-content"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        Brain Status
+        <button id="debugToggle" class="debug-toggle">Debug: OFF</button>
+      </div>
+      <div id="brainStatus" class="panel-content"></div>
+    </div>
+  </main>
+
+  <script>
+    const deviceIdEl = document.getElementById('deviceId');
+    const sessionIdEl = document.getElementById('sessionId');
+    const transcriptEl = document.getElementById('transcript');
+    const brainStatusEl = document.getElementById('brainStatus');
+    const callStatusEl = document.getElementById('callStatus');
+    const muteBtn = document.getElementById('muteBtn');
+    const holdBtn = document.getElementById('holdBtn');
+    const hangupBtn = document.getElementById('hangupBtn');
+    const debugToggle = document.getElementById('debugToggle');
+
+    let isMuted = false;
+    let isOnHold = false;
+    let debugEnabled = false;
+
+    async function loadDeviceInfo() {
+      try {
+        const info = await window.keledon.device.getInfo();
+        deviceIdEl.textContent = info.deviceId;
+      } catch (e) {
+        deviceIdEl.textContent = 'Error';
+      }
+    }
+
+    window.keledon.runtime.onConnect(({ sessionId }) => {
+      sessionIdEl.textContent = sessionId || '-';
+      callStatusEl.textContent = 'In Call';
+      callStatusEl.className = 'status-badge in-call';
+      muteBtn.disabled = false;
+      holdBtn.disabled = false;
+      hangupBtn.disabled = false;
+    });
+
+    window.keledon.call.onTranscript((entry) => {
+      const div = document.createElement('div');
+      div.className = `transcript-entry ${entry.speaker}`;
+      const time = entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
+      div.innerHTML = `
+        <span class="time">${time}</span>
+        <span class="speaker">${entry.speaker === 'agent' ? 'Agent' : 'Customer'}:</span>
+        <div class="text">${entry.text}</div>
+        ${entry.confidence ? `<div class="confidence">Confidence: ${(entry.confidence * 100).toFixed(0)}%</div>` : ''}
+      `;
+      transcriptEl.appendChild(div);
+      transcriptEl.scrollTop = transcriptEl.scrollHeight;
+    });
+
+    window.keledon.call.onStatusChange((status) => {
+      callStatusEl.textContent = status === 'hold' ? 'On Hold' : status === 'muted' ? 'Muted' : 'In Call';
+      callStatusEl.className = `status-badge ${status === 'hold' ? 'on-hold' : status === 'muted' ? 'on-hold' : 'in-call'}`;
+      
+      if (status === 'hold') {
+        holdBtn.classList.add('on-hold');
+        holdBtn.textContent = '▶ Resume';
+      } else {
+        holdBtn.classList.remove('on-hold');
+        holdBtn.textContent = '⏸ Hold';
+      }
+
+      if (status === 'muted') {
+        muteBtn.classList.add('muted');
+        muteBtn.textContent = '🔊 Unmute';
+      } else {
+        muteBtn.classList.remove('muted');
+        muteBtn.textContent = '🔇 Mute';
+      }
+    });
+
+    window.keledon.brain.onCommand((cmd) => {
+      const div = document.createElement('div');
+      div.className = 'command-entry';
+      const time = cmd.timestamp ? new Date(cmd.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
+      div.innerHTML = `
+        <span class="time">${time}</span>
+        <span class="type">${cmd.type}</span>
+        <div class="payload">${JSON.stringify(cmd.payload || cmd.data || {})}</div>
+        ${cmd.flow_id ? `<div class="flow-id">flow_id: ${cmd.flow_id}</div>` : ''}
+      `;
+      brainStatusEl.appendChild(div);
+      brainStatusEl.scrollTop = brainStatusEl.scrollHeight;
+    });
+
+    muteBtn.addEventListener('click', async () => {
+      isMuted = !isMuted;
+      try {
+        await window.keledon.call.setMuted(isMuted);
+      } catch (e) {
+        console.error('Failed to toggle mute:', e);
+      }
+    });
+
+    holdBtn.addEventListener('click', async () => {
+      isOnHold = !isOnHold;
+      try {
+        await window.keledon.call.setOnHold(isOnHold);
+      } catch (e) {
+        console.error('Failed to toggle hold:', e);
+      }
+    });
+
+    hangupBtn.addEventListener('click', async () => {
+      try {
+        await window.keledon.call.hangup();
+        sessionIdEl.textContent = '-';
+        callStatusEl.textContent = 'Idle';
+        callStatusEl.className = 'status-badge idle';
+        muteBtn.disabled = true;
+        holdBtn.disabled = true;
+        hangupBtn.disabled = true;
+        muteBtn.classList.remove('muted');
+        muteBtn.textContent = '🔇 Mute';
+        holdBtn.classList.remove('on-hold');
+        holdBtn.textContent = '⏸ Hold';
+      } catch (e) {
+        console.error('Failed to hangup:', e);
+      }
+    });
+
+    debugToggle.addEventListener('click', () => {
+      debugEnabled = !debugEnabled;
+      debugToggle.textContent = debugEnabled ? 'Debug: ON' : 'Debug: OFF';
+      debugToggle.classList.toggle('active', debugEnabled);
+    });
+
+    loadDeviceInfo();
+  </script>
+</body>
+</html>
