@@ -101,6 +101,14 @@ const connectWebSockets = (cloudUrl: string, token: string): void => {
     log.info('Device WebSocket connected');
   });
   
+  deviceSocket.on('disconnect', (reason) => {
+    log.warn('Device WebSocket disconnected:', reason);
+  });
+  
+  deviceSocket.on('error', (error) => {
+    log.error('Device WebSocket error:', error);
+  });
+  
   deviceSocket.on('transcript', (data) => {
     mainWindow?.webContents.send('media:transcript', data);
   });
@@ -116,6 +124,20 @@ const connectWebSockets = (cloudUrl: string, token: string): void => {
   
   agentSocket.on('connect', () => {
     log.info('Agent WebSocket connected');
+  });
+  
+  agentSocket.on('disconnect', (reason) => {
+    log.warn('Agent WebSocket disconnected:', reason);
+  });
+  
+  agentSocket.on('error', (error) => {
+    log.error('Agent WebSocket error:', error);
+  });
+  
+  agentSocket.onAny((event, ...args) => {
+    if (event.startsWith('command')) {
+      mainWindow?.webContents.send('brain:command', { event, data: args });
+    }
   });
 };
 
@@ -155,8 +177,27 @@ app.on('ready', async () => {
 });
 
 app.on('window-all-closed', () => {
+  if (deviceSocket) {
+    deviceSocket.disconnect();
+    deviceSocket = null;
+  }
+  if (agentSocket) {
+    agentSocket.disconnect();
+    agentSocket = null;
+  }
   if (process.platform !== 'darwin') {
     app.quit();
+  }
+});
+
+app.on('will-quit', () => {
+  if (deviceSocket) {
+    deviceSocket.disconnect();
+    deviceSocket = null;
+  }
+  if (agentSocket) {
+    agentSocket.disconnect();
+    agentSocket = null;
   }
 });
 
