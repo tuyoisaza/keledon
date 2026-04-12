@@ -1,0 +1,21 @@
+{
+  "name": "autobrowse-service",
+  "version": "0.0.1",
+  "description": "AutoBrowse - Adaptive browser execution service for KELEDON",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "fastify": "^4.26.0",
+    "@playwright/test": "^1.41.0",
+    "playwright": "^1.41.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.0",
+    "@types/node": "^20.11.0"
+  }
+}

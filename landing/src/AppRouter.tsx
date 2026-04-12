@@ -34,6 +34,7 @@ import SubagentsPage from '@/pages/SubagentsPage';
 import VectorStoreDocumentsPage from '@/pages/VectorStoreDocumentsPage';
 import VectorStoreAddDocumentPage from '@/pages/VectorStoreAddDocumentPage';
 import VectorStoreCategoriesPage from '@/pages/VectorStoreCategoriesPage';
+import DevicesPage from '@/pages/DevicesPage';
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -97,6 +98,16 @@ export function AppRouter() {
                         <ProtectedRoute minRole="user">
                             <AppLayout>
                                 <ProfilePage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/devices"
+                    element={
+                        <ProtectedRoute minRole="user">
+                            <AppLayout>
+                                <DevicesPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }

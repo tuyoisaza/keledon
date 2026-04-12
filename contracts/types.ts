@@ -65,6 +65,8 @@ export interface UIStepsPayload {
   steps: RPAStep[];
   context?: Record<string, any>;
   timeout_ms?: number;
+  execution_strategy?: 'deterministic' | 'adaptive';
+  goal?: string;
 }
 
 export interface ModePayload {

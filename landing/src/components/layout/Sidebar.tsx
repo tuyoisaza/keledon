@@ -20,7 +20,8 @@ import {
     User,
     Copy,
     Check,
-    Bot
+    Bot,
+    Monitor
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
@@ -44,6 +45,7 @@ const navItems: NavItem[] = [
     { icon: BarChart3, label: 'Metrics', href: '/admin/users', minRole: 'coordinator' },
     { icon: Activity, label: 'Work Stats', href: '/work-stats', minRole: 'user' },
     { icon: GraduationCap, label: 'Knowledge Stats', href: '/knowledge-stats', minRole: 'user' },
+    { icon: Monitor, label: 'Devices', href: '/devices', minRole: 'user' },
     { icon: User, label: 'Profile', href: '/profile', minRole: 'user' },
     { icon: Settings, label: 'Management', href: '/management/companies', minRole: 'admin' },
 ];

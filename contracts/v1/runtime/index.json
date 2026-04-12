@@ -1,0 +1,5 @@
+{
+  "runtime/command.schema.json": "Cloud → Runtime commands",
+  "runtime/adaptive_goal.payload.json": "Adaptive goal execution payload",
+  "device/pairing.schema.json": "Device registration and pairing"
+}

@@ -170,7 +170,11 @@ export class WebSocketClient {
         this.emit('tts:speak', payload.payload);
         break;
       case 'ui_steps':
-        this.emit('rpa:execute', payload.payload);
+        if (payload.payload.execution_strategy === 'adaptive') {
+          this.emit('autobrowse:execute', payload.payload);
+        } else {
+          this.emit('rpa:execute', payload.payload);
+        }
         break;
       case 'mode':
         this.emit('mode:change', payload.payload);

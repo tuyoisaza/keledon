@@ -84,6 +84,16 @@
               "type": "number",
               "minimum": 0,
               "description": "Overall timeout for flow execution"
+            },
+            "execution_strategy": {
+              "type": "string",
+              "enum": ["deterministic", "adaptive"],
+              "default": "deterministic",
+              "description": "Execution strategy: deterministic (RPA steps) or adaptive (AutoBrowse)"
+            },
+            "goal": {
+              "type": "string",
+              "description": "Goal description for adaptive execution strategy"
             }
           }
         },

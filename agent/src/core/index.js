@@ -22,6 +22,34 @@ export function createCoreRuntime(config = {}) {
     // RPA handler will be connected here
   });
 
+  eventRouter.register('autobrowse:execute', async (data) => {
+    console.log('AutoBrowse Execute command:', data);
+    const { AutoBrowseBridge } = await import('./autobrowse-bridge.js');
+    const bridge = new AutoBrowseBridge();
+    
+    if (!bridge.isEnabled()) {
+      console.log('AutoBrowse disabled, falling back to RPA');
+      eventRouter.route('rpa:execute', data);
+      return { fallback: 'rpa', reason: 'autobrowse_disabled' };
+    }
+    
+    try {
+      const result = await bridge.executeGoal({
+        goal: data.goal || data.steps?.[0]?.description || 'Execute UI steps',
+        context: data.context,
+        flowId: data.flow_id,
+        sessionId: data.session_id,
+        targetUrl: data.context?.targetUrl
+      });
+      console.log('AutoBrowse result:', result);
+      return result;
+    } catch (error) {
+      console.error('AutoBrowse execution failed, falling back to RPA:', error);
+      eventRouter.route('rpa:execute', data);
+      return { fallback: 'rpa', reason: 'autobrowse_error', error: String(error) };
+    }
+  });
+
   eventRouter.register('rpa:execute-step', (data) => {
     console.log('RPA Execute Step:', data);
     // RPA step handler will be connected here

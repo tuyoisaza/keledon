@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://keledon.com/contracts/v1/runtime/command.schema.json",
+  "title": "Runtime Command",
+  "description": "Command schema for Cloud → Runtime communication",
+  "type": "object",
+  "required": ["command_id", "session_id", "timestamp", "type", "payload"],
+  "properties": {
+    "command_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this command"
+    },
+    "session_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Session identifier"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["say", "ui_steps", "adaptive_goal", "mode", "stop"]
+    },
+    "payload": {
+      "type": "object"
+    }
+  }
+}

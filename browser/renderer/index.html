@@ -167,6 +167,33 @@
       font-family: monospace;
     }
     .debug-info.show { display: block; }
+
+    .cards {
+      display: flex;
+      gap: 12px;
+      padding: 12px 24px;
+      background: #1a1a2e;
+      border-bottom: 1px solid #0f3460;
+      flex-wrap: wrap;
+    }
+    .card {
+      flex: 1;
+      min-width: 200px;
+      background: #16213e;
+      border: 1px solid #0f3460;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 8px 12px;
+      background: #0f3460;
+      font-size: 12px;
+      font-weight: 500;
+      color: #e94560;
+    }
+    .card-content {
+      padding: 12px;
+    }
   </style>
 </head>
 <body>
@@ -187,6 +214,28 @@
     <button id="holdBtn" class="call-btn" disabled>⏸ Hold</button>
     <button id="hangupBtn" class="call-btn hangup" disabled>📞 Hang Up</button>
     <span id="callStatus" class="status-badge idle">Idle</span>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-header">Cloud Connection</div>
+      <div class="card-content">
+        <input type="text" id="cloudUrl" placeholder="Cloud URL" style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
+        <input type="text" id="pairingCode" placeholder="Pairing Code" style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
+        <button id="connectBtn" class="call-btn" style="width:100%;">Connect</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">Execution</div>
+      <div class="card-content">
+        <input type="text" id="goalInput" placeholder="Enter goal..." style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
+        <button id="executeBtn" class="call-btn" style="width:100%;">Execute</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">Activity Log</div>
+      <div id="activityLog" class="card-content" style="max-height:150px;overflow-y:auto;"></div>
+    </div>
   </div>
 
   <main>
@@ -236,7 +285,7 @@
       hangupBtn.disabled = false;
     });
 
-    window.keledon.call.onTranscript((entry) => {
+    window.keledon.media.onTranscript((entry) => {
       const div = document.createElement('div');
       div.className = `transcript-entry ${entry.speaker}`;
       const time = entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
@@ -250,7 +299,7 @@
       transcriptEl.scrollTop = transcriptEl.scrollHeight;
     });
 
-    window.keledon.call.onStatusChange((status) => {
+    window.keledon.media.onCallStatus((status) => {
       callStatusEl.textContent = status === 'hold' ? 'On Hold' : status === 'muted' ? 'Muted' : 'In Call';
       callStatusEl.className = `status-badge ${status === 'hold' ? 'on-hold' : status === 'muted' ? 'on-hold' : 'in-call'}`;
       
@@ -288,7 +337,7 @@
     muteBtn.addEventListener('click', async () => {
       isMuted = !isMuted;
       try {
-        await window.keledon.call.setMuted(isMuted);
+        await (isMuted ? window.keledon.media.mute() : window.keledon.media.unmute());
       } catch (e) {
         console.error('Failed to toggle mute:', e);
       }
@@ -297,7 +346,7 @@
     holdBtn.addEventListener('click', async () => {
       isOnHold = !isOnHold;
       try {
-        await window.keledon.call.setOnHold(isOnHold);
+        await (isOnHold ? window.keledon.media.hold() : window.keledon.media.resume());
       } catch (e) {
         console.error('Failed to toggle hold:', e);
       }
@@ -305,7 +354,7 @@
 
     hangupBtn.addEventListener('click', async () => {
       try {
-        await window.keledon.call.hangup();
+        await window.keledon.media.hangup();
         sessionIdEl.textContent = '-';
         callStatusEl.textContent = 'Idle';
         callStatusEl.className = 'status-badge idle';
@@ -325,6 +374,7 @@
       debugEnabled = !debugEnabled;
       debugToggle.textContent = debugEnabled ? 'Debug: ON' : 'Debug: OFF';
       debugToggle.classList.toggle('active', debugEnabled);
+      window.keledon.brain.setDebugMode(debugEnabled);
     });
 
     loadDeviceInfo();

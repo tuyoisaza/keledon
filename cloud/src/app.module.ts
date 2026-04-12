@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RAGModule } from './rag/rag.module';
 import { AgentGateway } from './gateways/agent.gateway';
+import { DeviceGateway } from './gateways/device.gateway';
 import { DecisionEngineService } from './services/decision-engine.service';
 import { ListeningSessionModule } from './listening-sessions/listening-session.module';
 import { PrismaModule } from './prisma/prisma.module';
@@ -23,6 +24,8 @@ import { FlowModule } from './flows/flow.module';
 import { FlowController } from './flows/flow.controller';
 import { SubAgentModule } from './subagents/subagent.module';
 import { SubAgentController } from './subagents/subagent.controller';
+import { DeviceModule } from './devices/device.module';
+import { DeviceController } from './devices/device.controller';
 
 @Module({
   imports: [
@@ -39,6 +42,7 @@ import { SubAgentController } from './subagents/subagent.controller';
     VectorStoreModule,
     FlowModule,
     SubAgentModule,
+    DeviceModule,
   ],
   controllers: [
     AppController,
@@ -48,12 +52,14 @@ import { SubAgentController } from './subagents/subagent.controller';
     VectorStoreController,
     FlowController,
     SubAgentController,
+    DeviceController,
   ],
   providers: [
     AppService,
     SessionService,
     DatabaseHealthService,
     AgentGateway,
+    DeviceGateway,
     DecisionEngineService,
     TeamController,
     MvpStoreService,

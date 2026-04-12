@@ -26,6 +26,8 @@ export class TeamController {
           ttsProvider: true,
           voskServerUrl: true,
           voskModel: true,
+          deepgramApiKey: true,
+          elevenlabsApiKey: true,
         }
       });
 
@@ -38,8 +40,17 @@ export class TeamController {
         teamName: team.name,
         sttProvider: team.sttProvider || 'vosk',
         ttsProvider: team.ttsProvider || 'elevenlabs',
-        voskServerUrl: team.voskServerUrl,
-        voskModel: team.voskModel,
+        vendorAdapter: 'web',
+        voskConfig: {
+          serverUrl: team.voskServerUrl || 'ws://localhost:9091',
+          model: team.voskModel || 'vosk-model-small',
+          sampleRate: 16000
+        },
+        elevenlabsConfig: {
+          apiKey: team.elevenlabsApiKey || '',
+          voiceId: 'rachel'
+        },
+        vendorConfig: {}
       };
     } catch (error) {
       console.error('[TeamController] Error getting config:', error);

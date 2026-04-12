@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://keledon.com/contracts/v1/runtime/adaptive_goal.payload.json",
+  "title": "Adaptive Goal Payload",
+  "description": "Payload for adaptive goal execution (AutoBrowse)",
+  "type": "object",
+  "required": ["goal"],
+  "properties": {
+    "goal": {
+      "type": "string",
+      "description": "High-level goal description for adaptive execution"
+    },
+    "context": {
+      "type": "object",
+      "description": "Context data available to executor",
+      "additionalProperties": true
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "max_steps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of steps to execute"
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 300000,
+          "description": "Execution timeout in milliseconds"
+        },
+        "apps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["salesforce", "genesys", "web", "custom"]
+          },
+          "description": "Target applications for execution"
+        }
+      }
+    }
+  }
+}
