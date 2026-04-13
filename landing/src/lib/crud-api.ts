@@ -205,7 +205,7 @@ export async function deleteBrand(id: string): Promise<void> {
 export async function getTeams(companyId?: string): Promise<Team[]> {
     const teams: Team[] = await fetchApi('/teams');
     if (companyId) {
-        return teams.filter(t => t.brand?.companyId === companyId);
+        return teams.filter(t => t.brand?.company?.id === companyId);
     }
     return teams;
 }

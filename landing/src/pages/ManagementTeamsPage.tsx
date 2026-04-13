@@ -122,7 +122,12 @@ export default function ManagementTeamsPage() {
     );
 
     const getCompanyName = (team: Team) => {
-        return team.brand?.company?.name || '—';
+        if (team.brand?.company?.name) return team.brand.company.name;
+        if (team.brand?.companyId) {
+            const company = companies.find(c => c.id === team.brand?.companyId);
+            return company?.name || '—';
+        }
+        return '—';
     };
 
     const getBrandName = (brandId?: string) => {
