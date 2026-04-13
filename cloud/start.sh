@@ -14,7 +14,7 @@ echo "[CONTAINER] Running Prisma migrations..."
 npx prisma db push
 
 echo "[CONTAINER] Seeding data..."
-npx ts-node scripts/seed-main-data.ts || echo "[CONTAINER] Seed completed or skipped"
+node scripts/seed-main-data.js || echo "[CONTAINER] Seed completed or skipped"
 
 echo "[CONTAINER] Starting node..."
 exec node dist/main
