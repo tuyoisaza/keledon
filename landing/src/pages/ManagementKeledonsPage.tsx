@@ -21,6 +21,7 @@ export default function ManagementKeledonsPage() {
         email: '',
         teamId: '',
         brandId: '',
+        companyId: '',
         countryCode: '',
         userId: '',
         role: 'agent',
@@ -56,7 +57,7 @@ export default function ManagementKeledonsPage() {
     };
 
     const resetForm = () => {
-        setFormData({ name: '', email: '', teamId: '', brandId: '', countryCode: '', userId: '', role: 'agent', autonomyLevel: 5, uiInterfaces: [] });
+        setFormData({ name: '', email: '', teamId: '', brandId: '', companyId: '', countryCode: '', userId: '', role: 'agent', autonomyLevel: 5, uiInterfaces: [] });
     };
 
     const openCreateForm = () => {
@@ -66,11 +67,13 @@ export default function ManagementKeledonsPage() {
     };
 
     const openEditForm = (keledon: Keledon) => {
+        const brand = brands.find(b => b.id === keledon.brandId);
         setFormData({
             name: keledon.name || '',
             email: keledon.email || '',
             teamId: keledon.teamId || '',
             brandId: keledon.brandId || '',
+            companyId: brand?.companyId || '',
             countryCode: keledon.countryCode || '',
             userId: keledon.userId || '',
             role: keledon.role || 'agent',

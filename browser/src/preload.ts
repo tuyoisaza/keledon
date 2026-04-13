@@ -6,9 +6,11 @@ contextBridge.exposeInMainWorld('keledon', {
   },
   runtime: {
     getStatus: () => ipcRenderer.invoke('runtime:getStatus'),
-    connect: (config: { cloudUrl: string; token: string }) => 
+    connect: (config: { cloudUrl: string; token: string; keledonId?: string }) => 
       ipcRenderer.invoke('runtime:connect', config),
     disconnect: () => ipcRenderer.invoke('runtime:disconnect'),
+    startSession: (sessionId: string, teamId?: string) => 
+      ipcRenderer.invoke('runtime:startSession', sessionId, teamId),
     onStatusChange: (callback: (status: unknown) => void) => {
       ipcRenderer.on('runtime:statusChanged', (_event, status) => callback(status));
       return () => ipcRenderer.removeAllListeners('runtime:statusChanged');
@@ -92,6 +94,7 @@ declare global {
         }>;
         connect: (config: { cloudUrl: string; token: string }) => Promise<{ success: boolean }>;
         disconnect: () => Promise<{ success: boolean }>;
+        startSession: (sessionId: string, teamId?: string) => Promise<{ success: boolean; sessionId?: string; error?: string }>;
         onStatusChange: (callback: (status: unknown) => void) => () => void;
       };
       executor: {

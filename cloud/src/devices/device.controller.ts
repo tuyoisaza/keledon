@@ -13,13 +13,16 @@ export class DeviceController {
       pairing_code: string;
       platform: string;
       name: string;
+      keledon_id?: string;
     },
-    @Headers('x-organization-id') organizationId?: string
+    @Headers('x-organization-id') organizationId?: string,
+    @Headers('x-user-id') userId?: string
   ) {
     try {
       const result = await this.deviceService.pairDevice({
         ...body,
-        organizationId
+        organizationId,
+        userId
       });
       return result;
     } catch (error) {
@@ -47,11 +50,12 @@ export class DeviceController {
 
   @Post('pairing-code')
   async createPairingCode(
-    @Body() body: { userId: string; organizationId?: string }
+    @Body() body: { userId: string; organizationId?: string; keledon_id?: string }
   ) {
     const code = await this.deviceService.generatePairingCode(
       body.userId,
-      body.organizationId
+      body.organizationId,
+      body.keledon_id
     );
     return { pairing_code: code };
   }

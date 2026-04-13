@@ -178,21 +178,33 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { execution_id: string; goal: string; inputs?: Record<string, unknown>; constraints?: Record<string, unknown> }
   ) {
+    // Allow goal execution with or without active session
     const sessionId = client.data.sessionId;
-    if (!sessionId) {
-      return { error: 'No active session' };
-    }
 
     this.logger.log(`Goal execution request from ${client.data.deviceId}:`, data.goal);
 
-    this.server.to(`session:${sessionId}`).emit('goal_execute', {
-      device_id: client.data.deviceId,
-      execution_id: data.execution_id,
-      goal: data.goal,
-      inputs: data.inputs,
-      constraints: data.constraints,
-      timestamp: new Date().toISOString()
-    });
+    // Emit directly to the device (same client) for session-less execution
+    if (client) {
+      client.emit('goal_execute', {
+        device_id: client.data.deviceId,
+        execution_id: data.execution_id,
+        goal: data.goal,
+        inputs: data.inputs,
+        constraints: data.constraints,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    if (sessionId) {
+      this.server.to(`session:${sessionId}`).emit('goal_execute', {
+        device_id: client.data.deviceId,
+        execution_id: data.execution_id,
+        goal: data.goal,
+        inputs: data.inputs,
+        constraints: data.constraints,
+        timestamp: new Date().toISOString()
+      });
+    }
 
     return { received: true };
   }
@@ -203,17 +215,16 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { execution_id: string; status: string; goal_status: string; steps?: unknown[]; duration?: number; artifacts?: Record<string, unknown> }
   ) {
     const sessionId = client.data.sessionId;
-    if (!sessionId) {
-      return { error: 'No active session' };
-    }
 
     this.logger.log(`Goal result from ${client.data.deviceId}:`, data.goal_status);
 
-    this.server.to(`session:${sessionId}`).emit('goal_result', {
-      device_id: client.data.deviceId,
-      ...data,
-      timestamp: new Date().toISOString()
-    });
+    if (sessionId) {
+      this.server.to(`session:${sessionId}`).emit('goal_result', {
+        device_id: client.data.deviceId,
+        ...data,
+        timestamp: new Date().toISOString()
+      });
+    }
 
     return { received: true };
   }

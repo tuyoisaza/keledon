@@ -13,6 +13,7 @@ export class DeviceService {
     name: string;
     organizationId?: string;
     userId?: string;
+    keledonId?: string;
   }) {
     const code = data.pairing_code.toUpperCase();
     
@@ -37,6 +38,7 @@ export class DeviceService {
       data: {
         userId: data.userId,
         organizationId: data.organizationId,
+        keledonId: data.keledonId,
         status: 'paired',
         pairingCode: null,
         pairingCodeExpiresAt: null,
@@ -51,7 +53,8 @@ export class DeviceService {
       device_id: paired.id,
       auth_token: authToken,
       cloud_url: process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
-      organization_id: paired.organizationId
+      organization_id: paired.organizationId,
+      keledon_id: paired.keledonId
     };
   }
 
@@ -87,7 +90,7 @@ export class DeviceService {
     return { device_id: device.id, already_registered: false };
   }
 
-  async generatePairingCode(userId: string, organizationId?: string): Promise<string> {
+  async generatePairingCode(userId: string, organizationId?: string, keledonId?: string): Promise<string> {
     const code = this.generatePairingCodeString();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
@@ -95,6 +98,7 @@ export class DeviceService {
       data: {
         userId,
         organizationId,
+        keledonId,
         name: 'New Device',
         machineId: `pending-${Date.now()}`,
         platform: 'pending',

@@ -207,6 +207,7 @@
   <div class="device-info">
     <div><span>Device:</span> <strong id="deviceId">Loading...</strong></div>
     <div><span>Session:</span> <strong id="sessionId">-</strong></div>
+    <div><span>Keledon:</span> <strong id="keledonStatus">Not logged in</strong></div>
   </div>
 
   <div class="call-controls">
@@ -217,12 +218,17 @@
   </div>
 
   <div class="cards">
-    <div class="card">
-      <div class="card-header">Cloud Connection</div>
-      <div class="card-content">
-        <input type="text" id="cloudUrl" placeholder="Cloud URL" style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
-        <input type="text" id="pairingCode" placeholder="Pairing Code" style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
-        <button id="connectBtn" class="call-btn" style="width:100%;">Connect</button>
+      <div class="card">
+        <div class="card-header">Cloud Connection</div>
+        <div class="card-content">
+          <input type="text" id="cloudUrl" value="https://keledon.tuyoisaza.com" placeholder="Cloud URL" style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
+          <input type="text" id="pairingCode" placeholder="Pairing Code" style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
+          <button id="connectBtn" class="call-btn" style="width:100%;margin-bottom:12px;">Connect</button>
+          <hr style="border-color:#0f3460;margin:8px 0;">
+          <input type="text" id="keledonId" value="keledon-001" placeholder="Keledon ID" style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
+          <input type="text" id="sessionIdInput" value="session-1776085046797" placeholder="Session ID" style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
+          <button id="startSessionBtn" class="call-btn" style="width:100%;" disabled>Start Session</button>
+        </div>
       </div>
     </div>
     <div class="card">
@@ -265,13 +271,20 @@
     const cloudUrlInput = document.getElementById('cloudUrl');
     const pairingCodeInput = document.getElementById('pairingCode');
     const connectBtn = document.getElementById('connectBtn');
+    const keledonIdInput = document.getElementById('keledonId');
+    const sessionIdInput = document.getElementById('sessionIdInput');
+    const startSessionBtn = document.getElementById('startSessionBtn');
     const goalInput = document.getElementById('goalInput');
     const executeBtn = document.getElementById('executeBtn');
     const activityLog = document.getElementById('activityLog');
 
+    const keledonStatusEl = document.getElementById('keledonStatus');
+
     let isMuted = false;
     let isOnHold = false;
     let debugEnabled = false;
+    let isConnected = false;
+    let currentKeledonId = null;
 
     function log(message, type = 'info') {
       const entry = document.createElement('div');
@@ -296,17 +309,56 @@
     connectBtn.addEventListener('click', async () => {
       const cloudUrl = cloudUrlInput.value.trim();
       const pairingCode = pairingCodeInput.value.trim();
+      const keledonId = keledonIdInput.value.trim();
       if (!cloudUrl || !pairingCode) {
         log('Cloud URL and pairing code are required', 'error');
         return;
       }
       try {
-        const result = await window.keledon.runtime.connect({ cloudUrl, token: pairingCode });
-        sessionIdEl.textContent = result.sessionId;
-        executeBtn.disabled = false;
-        log('Connected successfully! Session ID: ' + result.sessionId, 'success');
+        const result = await window.keledon.runtime.connect({ 
+          cloudUrl, 
+          token: pairingCode,
+          keledonId: keledonId || null
+        });
+        if (result.success) {
+          isConnected = true;
+          currentKeledonId = keledonId || null;
+          sessionIdEl.textContent = 'Connected';
+          keledonStatusEl.textContent = keledonId || 'Not linked';
+          keledonStatusEl.style.color = keledonId ? '#4ade80' : '#f59e0b';
+          startSessionBtn.disabled = false;
+          executeBtn.disabled = false;
+          log('Connected successfully!' + (keledonId ? ' Keledon: ' + keledonId : ''), 'success');
+        } else {
+          log('Connection failed: ' + result.error, 'error');
+        }
       } catch (e) {
         log('Connection failed: ' + e.message, 'error');
+      }
+    });
+
+    startSessionBtn.addEventListener('click', async () => {
+      const sessionId = sessionIdInput.value.trim();
+      const keledonId = keledonIdInput.value.trim();
+      if (!sessionId) {
+        log('Session ID is required', 'error');
+        return;
+      }
+      try {
+        const result = await window.keledon.runtime.startSession(sessionId);
+        if (result.success) {
+          sessionIdEl.textContent = sessionId;
+          log('Session started: ' + sessionId + ' (Keledon: ' + keledonId + ')', 'success');
+          callStatusEl.textContent = 'In Call';
+          callStatusEl.className = 'status-badge in-call';
+          muteBtn.disabled = false;
+          holdBtn.disabled = false;
+          hangupBtn.disabled = false;
+        } else {
+          log('Failed to start session: ' + result.error, 'error');
+        }
+      } catch (e) {
+        log('Failed to start session: ' + e.message, 'error');
       }
     });
 

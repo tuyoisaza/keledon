@@ -72,10 +72,15 @@ let mainWindow: BrowserWindow | null = null;
 let runtimeStatus = {
   status: 'idle' as 'idle' | 'connecting' | 'connected' | 'disconnected',
   deviceId: process.env.KELEDON_DEVICE_ID || `device-${Date.now()}`,
-  cloudUrl: '',
+  cloudUrl: process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
   sessionId: null as string | null,
   authToken: null as string | null
 };
+
+const AUTO_CONNECT = process.env.AUTO_CONNECT === 'true';
+const AUTO_PAIRING_CODE = process.env.PAIRING_CODE || '';
+const AUTO_SESSION_ID = process.env.SESSION_ID || '';
+const KELECTRON_KELEDON_ID = process.env.KELECTRON_KELEDON_ID || '';
 
 const getCDPURL = (): string => {
   const window = mainWindow;
@@ -117,6 +122,47 @@ const createWindow = (): void => {
       window.keledon = window.keledon || {};
       window.keledon.internal = { cdpUrl: 'http://localhost:9222' };
     `).catch(() => {});
+
+    // Auto-connect if configured
+    if (AUTO_CONNECT && AUTO_PAIRING_CODE) {
+      log.info('Auto-connecting to cloud...');
+      (async () => {
+        try {
+          const response = await fetch(`${runtimeStatus.cloudUrl}/api/devices/pair`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              device_id: runtimeStatus.deviceId,
+              machine_id: runtimeStatus.deviceId,
+              pairing_code: AUTO_PAIRING_CODE,
+              platform: process.platform,
+              name: 'KELEDON Desktop Agent',
+              keledon_id: process.env.KELECTRON_KELEDON_ID || null
+            })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            runtimeStatus.status = 'connected';
+            runtimeStatus.authToken = data.auth_token;
+            runtimeStatus.sessionId = data.keledon_id || null;
+            log.info('Auto-connect successful, keledon_id:', data.keledon_id);
+
+            connectWebSockets(runtimeStatus.cloudUrl, data.auth_token);
+
+            // Auto-join session if configured
+            if (AUTO_SESSION_ID) {
+              runtimeStatus.sessionId = AUTO_SESSION_ID;
+              log.info('Auto-join session:', AUTO_SESSION_ID);
+            }
+          } else {
+            log.error('Auto-connect failed:', response.status);
+          }
+        } catch (error) {
+          log.error('Auto-connect error:', error);
+        }
+      })();
+    }
   });
 
   mainWindow.on('closed', () => {
@@ -134,6 +180,15 @@ const connectWebSockets = (cloudUrl: string, token: string): void => {
   
   deviceSocket.on('connect', () => {
     log.info('Device WebSocket connected');
+    
+    // Join a session if we have one
+    if (runtimeStatus.sessionId) {
+      deviceSocket?.emit('session:start', {
+        session_id: runtimeStatus.sessionId,
+        team_id: 'default-team'
+      });
+      log.info('Joined session:', runtimeStatus.sessionId);
+    }
   });
   
   deviceSocket.on('disconnect', (reason) => {
@@ -299,7 +354,7 @@ ipcMain.handle('runtime:getStatus', async () => {
   };
 });
 
-ipcMain.handle('runtime:connect', async (_event, config: { cloudUrl: string; token: string }) => {
+ipcMain.handle('runtime:connect', async (_event, config: { cloudUrl: string; token: string; keledonId?: string }) => {
   log.info('Connecting to cloud:', config.cloudUrl);
   
   runtimeStatus.status = 'connecting';
@@ -311,7 +366,11 @@ ipcMain.handle('runtime:connect', async (_event, config: { cloudUrl: string; tok
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         device_id: runtimeStatus.deviceId,
-        pairing_code: config.token
+        machine_id: runtimeStatus.deviceId,
+        pairing_code: config.token,
+        platform: process.platform,
+        name: 'KELEDON Desktop Agent',
+        keledon_id: config.keledonId || null
       })
     });
     
@@ -319,7 +378,7 @@ ipcMain.handle('runtime:connect', async (_event, config: { cloudUrl: string; tok
       const data = await response.json();
       runtimeStatus.status = 'connected';
       runtimeStatus.authToken = data.auth_token;
-      log.info('Connected to cloud successfully');
+      log.info('Connected to cloud, keledon_id:', data.keledon_id);
       
       connectWebSockets(config.cloudUrl, data.auth_token);
       
@@ -349,8 +408,26 @@ ipcMain.handle('runtime:connect', async (_event, config: { cloudUrl: string; tok
 
 ipcMain.handle('runtime:disconnect', async () => {
   runtimeStatus.status = 'disconnected';
+  if (runtimeStatus.sessionId && deviceSocket) {
+    deviceSocket.emit('session:end');
+  }
   runtimeStatus.sessionId = null;
   return { success: true };
+});
+
+ipcMain.handle('runtime:startSession', async (_event, sessionId: string, teamId?: string) => {
+  runtimeStatus.sessionId = sessionId;
+  
+  if (deviceSocket?.connected) {
+    deviceSocket.emit('session:start', {
+      session_id: sessionId,
+      team_id: teamId || 'default-team'
+    });
+    log.info('Session started:', sessionId);
+    return { success: true, sessionId };
+  }
+  
+  return { success: false, error: 'Not connected to cloud' };
 });
 
 ipcMain.handle('executor:executeGoal', async (_event, goal: any, context?: Record<string, unknown>) => {

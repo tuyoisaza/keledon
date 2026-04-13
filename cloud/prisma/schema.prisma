@@ -109,6 +109,7 @@ model Device {
   id              String   @id @default(uuid())
   userId          String?
   organizationId  String?
+  keledonId       String?  // Links to Keledon agent
   name            String
   machineId       String   @unique
   platform        String   // win32, darwin, linux
