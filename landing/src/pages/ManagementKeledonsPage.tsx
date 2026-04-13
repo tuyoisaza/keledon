@@ -156,7 +156,7 @@ export default function ManagementKeledonsPage() {
             const brand = brands.find(b => b.id === team?.brandId);
             return brand?.companyId;
         }
-        return '';
+        return formData.companyId || '';
     })();
 
     const getCountryOptions = () => {
