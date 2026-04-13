@@ -30,6 +30,8 @@ COPY --from=builder /app/cloud/package-lock.json ./
 COPY --from=builder /app/cloud/prisma ./prisma
 COPY --from=builder /app/cloud/dist ./dist
 COPY --from=builder /app/cloud/start.sh ./
+COPY --from=builder /app/cloud/scripts ./scripts
+COPY --from=builder /app/cloud/tsconfig.json ./
 
 # Install fresh node_modules and regenerate Prisma for this platform
 RUN npm ci && npx prisma generate

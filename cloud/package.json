@@ -16,6 +16,8 @@
     "package:vector-store": "echo 'Vector Store backend built successfully'",
     "dev:full": "concurrently \"npm run dev:vector-store\" \"cd ../landing && npm run dev\"",
     "prepare:env": "echo 'Environment preparation complete'",
+    "seed": "npx ts-node scripts/seed-main-data.ts",
+    "db:push": "npx prisma db push",
     "proof:c07:local": "node scripts/c07-local-proof.js --dev-only-bootstrap",
     "proof:c09:local": "node scripts/c09-local-proof.js --dev-only-bootstrap",
     "proof:c10:local": "node scripts/c10-local-proof.js --dev-only-bootstrap",
