@@ -80,18 +80,26 @@ export default function ManagementTeamsPage() {
         e.preventDefault();
         setSaving(true);
         try {
+            const submitData = {
+                name: formData.name,
+                brandId: formData.brandId || undefined,
+                country: formData.country || undefined
+            };
+            console.log('Submitting team data:', submitData);
             if (editingTeam) {
-                await updateTeam(editingTeam.id, formData);
+                const result = await updateTeam(editingTeam.id, submitData);
+                console.log('Update result:', result);
                 toast.success('Team updated successfully');
             } else {
-                await createTeam(formData);
+                const result = await createTeam(submitData);
+                console.log('Create result:', result);
                 toast.success('Team created successfully');
             }
             setShowForm(false);
             fetchData();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to save team:', error);
-            toast.error('Failed to save team');
+            toast.error('Failed to save team: ' + (error?.message || error));
         } finally {
             setSaving(false);
         }

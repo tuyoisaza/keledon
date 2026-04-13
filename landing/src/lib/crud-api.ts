@@ -210,11 +210,11 @@ export async function getTeams(companyId?: string): Promise<Team[]> {
     return teams;
 }
 
-export async function createTeam(data: { name: string; brandId?: string; country?: string }): Promise<Team> {
+export async function createTeam(data: { name: string; companyId?: string; brandId?: string; country?: string }): Promise<Team> {
     return fetchApi('/teams', 'POST', data);
 }
 
-export async function updateTeam(id: string, data: { name?: string; country?: string }): Promise<Team> {
+export async function updateTeam(id: string, data: { name?: string; companyId?: string; brandId?: string; country?: string }): Promise<Team> {
     return fetchApi(`/teams/${id}`, 'PUT', data);
 }
 
