@@ -37,20 +37,12 @@
       "value": "${DATABASE_URL}"
     },
     {
-      "key": "KELEDON_QDRANT_URL",
-      "value": "http://127.0.0.1:6333"
+      "key": "KELEDON_REQUIRE_QDRANT",
+      "value": "false"
     },
     {
       "key": "QDRANT_URL",
       "value": "http://127.0.0.1:6333"
-    },
-    {
-      "key": "QDRANT_COLLECTION",
-      "value": "keledon"
-    },
-    {
-      "key": "KELEDON_REQUIRE_QDRANT",
-      "value": "true"
     },
     {
       "key": "VOSK_PORT",
@@ -70,11 +62,11 @@
     },
     {
       "key": "ENABLE_REAL_STT",
-      "value": "true"
+      "value": "false"
     },
     {
       "key": "ENABLE_REAL_TTS",
-      "value": "true"
+      "value": "false"
     },
     {
       "key": "ENABLE_RPA",
@@ -82,11 +74,11 @@
     },
     {
       "key": "ENABLE_VECTOR_STORE",
-      "value": "true"
+      "value": "false"
     },
     {
       "key": "ENABLE_OTEL",
-      "value": "true"
+      "value": "false"
     },
     {
       "key": "GOOGLE_CLIENT_ID",
