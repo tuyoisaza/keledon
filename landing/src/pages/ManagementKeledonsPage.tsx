@@ -88,18 +88,40 @@ export default function ManagementKeledonsPage() {
         e.preventDefault();
         setSaving(true);
         try {
+            // Build submit data
+            const submitData: any = {
+                name: formData.name,
+                email: formData.email,
+                role: formData.role,
+                autonomyLevel: parseInt(formData.autonomyLevel as any) || 5,
+                countryCode: formData.countryCode || undefined,
+                uiInterfaces: formData.uiInterfaces?.length > 0 ? JSON.stringify(formData.uiInterfaces) : undefined
+            };
+            
+            // Add teamId if selected
+            if (formData.teamId) {
+                submitData.teamId = formData.teamId;
+            }
+            
+            // Add brand if selected
+            if (formData.brandId) {
+                submitData.brandId = formData.brandId;
+            }
+            
+            console.log('Submitting keledon:', submitData);
+            
             if (editingKeledon) {
-                await updateKeledon(editingKeledon.id, formData);
+                await updateKeledon(editingKeledon.id, submitData);
                 toast.success('KELEDON updated successfully');
             } else {
-                await createKeledon(formData);
+                await createKeledon(submitData);
                 toast.success('KELEDON created successfully');
             }
             setShowForm(false);
             fetchData();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to save keledon:', error);
-            toast.error('Failed to save KELEDON');
+            toast.error('Failed to save KELEDON: ' + (error?.message || error));
         } finally {
             setSaving(false);
         }
