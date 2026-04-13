@@ -12,94 +12,93 @@
     "restartPolicyMaxRetries": 10
   },
   "environment": [
-      {
-        "key": "NODE_ENV",
-        "value": "production"
-      },
-      {
-        "key": "PORT",
-        "value": "8080"
-      },
-      {
-        "key": "BACKEND_PORT",
-        "value": "3001"
-      },
-      {
-        "key": "KELEDON_ENV_TIER",
-        "value": "PRODUCTION_MANAGED"
-      },
-      {
-        "key": "KELEDON_ALLOW_ALL_CORS",
-        "value": "true"
-      },
-      {
-        "key": "DATABASE_URL",
-        "value": "${DATABASE_URL}"
-      },
-      {
-        "key": "KELEDON_QDRANT_URL",
-        "value": "http://127.0.0.1:6333"
-      },
-      {
-        "key": "QDRANT_URL",
-        "value": "http://127.0.0.1:6333"
-      },
-      {
-        "key": "QDRANT_COLLECTION",
-        "value": "keledon"
-      },
-      {
-        "key": "KELEDON_REQUIRE_QDRANT",
-        "value": "true"
-      },
-      {
-        "key": "VOSK_PORT",
-        "value": "9090"
-      },
-      {
-        "key": "VOSK_WS_PORT",
-        "value": "9091"
-      },
-      {
-        "key": "VOSK_MODEL_PATH",
-        "value": "/app/models"
-      },
-      {
-        "key": "VOSK_SAMPLE_RATE",
-        "value": "16000"
-      },
-      {
-        "key": "ENABLE_REAL_STT",
-        "value": "true"
-      },
-      {
-        "key": "ENABLE_REAL_TTS",
-        "value": "true"
-      },
-      {
-        "key": "ENABLE_RPA",
-        "value": "true"
-      },
-      {
-        "key": "ENABLE_VECTOR_STORE",
-        "value": "true"
-      },
-      {
-        "key": "ENABLE_OTEL",
-        "value": "true"
-      },
-      {
-        "key": "GOOGLE_CLIENT_ID",
-        "value": "${GOOGLE_CLIENT_ID}"
-      },
-      {
-        "key": "GOOGLE_CLIENT_SECRET",
-        "value": "${GOOGLE_CLIENT_SECRET}"
-      },
-      {
-        "key": "GOOGLE_REDIRECT_URI",
-        "value": "https://keledon.tuyoisaza.com/api/auth/google/callback"
-      }
-    ]
-  }
+    {
+      "key": "NODE_ENV",
+      "value": "production"
+    },
+    {
+      "key": "PORT",
+      "value": "8080"
+    },
+    {
+      "key": "BACKEND_PORT",
+      "value": "3001"
+    },
+    {
+      "key": "KELEDON_ENV_TIER",
+      "value": "PRODUCTION_MANAGED"
+    },
+    {
+      "key": "KELEDON_ALLOW_ALL_CORS",
+      "value": "true"
+    },
+    {
+      "key": "DATABASE_URL",
+      "value": "${DATABASE_URL}"
+    },
+    {
+      "key": "KELEDON_QDRANT_URL",
+      "value": "http://127.0.0.1:6333"
+    },
+    {
+      "key": "QDRANT_URL",
+      "value": "http://127.0.0.1:6333"
+    },
+    {
+      "key": "QDRANT_COLLECTION",
+      "value": "keledon"
+    },
+    {
+      "key": "KELEDON_REQUIRE_QDRANT",
+      "value": "true"
+    },
+    {
+      "key": "VOSK_PORT",
+      "value": "9090"
+    },
+    {
+      "key": "VOSK_WS_PORT",
+      "value": "9091"
+    },
+    {
+      "key": "VOSK_MODEL_PATH",
+      "value": "/app/models"
+    },
+    {
+      "key": "VOSK_SAMPLE_RATE",
+      "value": "16000"
+    },
+    {
+      "key": "ENABLE_REAL_STT",
+      "value": "true"
+    },
+    {
+      "key": "ENABLE_REAL_TTS",
+      "value": "true"
+    },
+    {
+      "key": "ENABLE_RPA",
+      "value": "true"
+    },
+    {
+      "key": "ENABLE_VECTOR_STORE",
+      "value": "true"
+    },
+    {
+      "key": "ENABLE_OTEL",
+      "value": "true"
+    },
+    {
+      "key": "GOOGLE_CLIENT_ID",
+      "value": "${GOOGLE_CLIENT_ID}"
+    },
+    {
+      "key": "GOOGLE_CLIENT_SECRET",
+      "value": "${GOOGLE_CLIENT_SECRET}"
+    },
+    {
+      "key": "GOOGLE_REDIRECT_URI",
+      "value": "https://keledon.tuyoisaza.com/api/auth/google/callback"
+    }
+  ]
 }
