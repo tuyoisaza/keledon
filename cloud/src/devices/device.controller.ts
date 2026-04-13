@@ -50,7 +50,7 @@ export class DeviceController {
 
   @Post('pairing-code')
   async createPairingCode(
-    @Body() body: { userId: string; organizationId?: string; keledon_id?: string }
+    @Body() body: { userId?: string; organizationId?: string; keledon_id?: string }
   ) {
     const code = await this.deviceService.generatePairingCode(
       body.userId,

@@ -90,13 +90,22 @@ export class DeviceService {
     return { device_id: device.id, already_registered: false };
   }
 
-  async generatePairingCode(userId: string, organizationId?: string, keledonId?: string): Promise<string> {
+  async generatePairingCode(userId?: string, organizationId?: string, keledonId?: string): Promise<string> {
     const code = this.generatePairingCodeString();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
+    // Only set userId if provided and user exists
+    let resolvedUserId: string | null = null;
+    if (userId) {
+      const userExists = await this.prisma.user.findUnique({ where: { id: userId } });
+      if (userExists) {
+        resolvedUserId = userId;
+      }
+    }
+
     const device = await this.prisma.device.create({
       data: {
-        userId,
+        userId: resolvedUserId,
         organizationId,
         keledonId,
         name: 'New Device',
