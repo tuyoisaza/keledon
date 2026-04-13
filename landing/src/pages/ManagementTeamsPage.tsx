@@ -122,7 +122,11 @@ export default function ManagementTeamsPage() {
     );
 
     const getCompanyName = (team: Team) => {
+        // First try direct company field from API
+        if (team.company?.name) return team.company.name;
+        // Fall back to brand.company
         if (team.brand?.company?.name) return team.brand.company.name;
+        // Fall back to brand.companyId lookup
         if (team.brand?.companyId) {
             const company = companies.find(c => c.id === team.brand?.companyId);
             return company?.name || '—';

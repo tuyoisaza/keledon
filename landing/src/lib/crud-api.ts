@@ -57,6 +57,7 @@ export interface Team {
     updatedAt?: string;
     brand?: { id: string; name: string; color?: string; companyId?: string };
     company?: { id: string; name: string };
+    _count?: { users: number; keledons: number };
 }
 
 export interface User {
