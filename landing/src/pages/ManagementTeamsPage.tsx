@@ -26,6 +26,7 @@ export default function ManagementTeamsPage() {
 
     const [formData, setFormData] = useState({
         name: '',
+        companyId: '',
         brandId: '',
         country: ''
     });
@@ -54,7 +55,7 @@ export default function ManagementTeamsPage() {
     };
 
     const resetForm = () => {
-        setFormData({ name: '', brandId: '', country: '' });
+        setFormData({ name: '', companyId: '', brandId: '', country: '' });
     };
 
     const openCreateForm = () => {
@@ -64,8 +65,10 @@ export default function ManagementTeamsPage() {
     };
 
     const openEditForm = (team: Team) => {
+        const brand = brands.find(b => b.id === team.brandId);
         setFormData({
             name: team.name || '',
+            companyId: brand?.companyId || '',
             brandId: team.brandId || '',
             country: team.country || ''
         });
@@ -124,8 +127,7 @@ export default function ManagementTeamsPage() {
         return availableCountries.find(c => c.code === code)?.name || code;
     };
 
-    const selectedBrand = brands.find(b => b.id === formData.brandId);
-    const selectedCompany = selectedBrand ? companies.find(c => c.id === selectedBrand.companyId) : null;
+    const selectedCompany = companies.find(c => c.id === formData.companyId);
     const companyCountries = selectedCompany?.countries?.length > 0 
         ? selectedCompany.countries 
         : availableCountries;
@@ -226,16 +228,30 @@ export default function ManagementTeamsPage() {
                         </div>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
+                                <label className="block text-sm text-muted-foreground mb-1">Company</label>
+                                <select
+                                    value={formData.companyId}
+                                    onChange={(e) => setFormData({ ...formData, companyId: e.target.value, brandId: '', country: '' })}
+                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                >
+                                    <option value="">Select Company...</option>
+                                    {companies.map(c => (
+                                        <option key={c.id} value={c.id}>{c.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
                                 <label className="block text-sm text-muted-foreground mb-1">Brand</label>
                                 <select
                                     value={formData.brandId}
                                     onChange={(e) => setFormData({ ...formData, brandId: e.target.value, country: '' })}
                                     required
-                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                    disabled={!formData.companyId}
+                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
                                 >
                                     <option value="">Select Brand...</option>
-                                    {brands.map(b => (
-                                        <option key={b.id} value={b.id}>{b.name} ({b.company?.name})</option>
+                                    {brands.filter(b => b.companyId === formData.companyId).map(b => (
+                                        <option key={b.id} value={b.id}>{b.name}</option>
                                     ))}
                                 </select>
                             </div>
