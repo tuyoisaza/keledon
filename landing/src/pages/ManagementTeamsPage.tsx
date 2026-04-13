@@ -126,7 +126,9 @@ export default function ManagementTeamsPage() {
 
     const selectedBrand = brands.find(b => b.id === formData.brandId);
     const selectedCompany = selectedBrand ? companies.find(c => c.id === selectedBrand.companyId) : null;
-    const companyCountries = selectedCompany?.countries || [];
+    const companyCountries = selectedCompany?.countries?.length > 0 
+        ? selectedCompany.countries 
+        : availableCountries;
 
     return (
         <div className="space-y-6">
@@ -243,8 +245,7 @@ export default function ManagementTeamsPage() {
                                     value={formData.country}
                                     onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                                     required
-                                    disabled={!formData.brandId}
-                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                                 >
                                     <option value="">Select Country...</option>
                                     {companyCountries.map((c: any) => {
