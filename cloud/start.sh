@@ -9,10 +9,5 @@ else
   echo "[CONTAINER] ERROR: dist/main.js not found!"
 fi
 
-# Initialize SQLite database if not exists
-echo "[CONTAINER] Initializing database..."
-mkdir -p /app/data
-npx prisma db push --skip-generate
-
 echo "[CONTAINER] Starting node..."
 exec node dist/main

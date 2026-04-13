@@ -9,18 +9,7 @@
     "healthcheckPath": "/health",
     "healthcheckTimeout": 180,
     "restartPolicyType": "ON_FAILURE",
-    "restartPolicyMaxRetries": 10,
-    "volumeMounts": [
-      {
-        "volume": "keledon-data",
-        "mountPath": "/app/data"
-      }
-    ]
-  },
-  "volumes": {
-    "keledon-data": {
-      "description": "Persistent data volume for SQLite database"
-    }
+    "restartPolicyMaxRetries": 10
   },
   "environment": [
       {
@@ -45,7 +34,7 @@
       },
       {
         "key": "DATABASE_URL",
-        "value": "file:/app/data/keledon.db"
+        "value": "${DATABASE_URL}"
       },
       {
         "key": "KELEDON_QDRANT_URL",
