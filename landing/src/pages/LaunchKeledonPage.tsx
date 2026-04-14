@@ -53,7 +53,7 @@ export default function LaunchKeledonPage() {
             
             // Open deep link
             if (data.deep_link) {
-                window.open(data.deep_link, '_blank');
+                window.location.href = data.deep_link;
                 toast.success(`Launching ${data.keledon_name || keledonId}...`);
             }
         } catch (error: any) {
