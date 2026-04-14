@@ -107,6 +107,19 @@ export default function LaunchKeledonPage() {
                         Download App
                     </a>
                     <button 
+                        onClick={() => {
+                            // Try to trigger protocol registration by opening deep link
+                            window.location.href = 'keledon://register';
+                            setTimeout(() => {
+                                toast.info('If browser opened, protocol is registered. Restart app if not.');
+                            }, 1000);
+                        }}
+                        className="px-3 py-2 text-sm bg-muted hover:bg-muted/80 rounded-lg transition-colors"
+                        title="Test protocol registration"
+                    >
+                        Test Protocol
+                    </button>
+                    <button 
                         onClick={loadKeledons}
                         className="p-2 hover:bg-muted rounded-lg transition-colors"
                         title="Refresh"
