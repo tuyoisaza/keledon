@@ -29,27 +29,32 @@ export default function LaunchKeledonPage() {
     };
 
     const handleLaunch = async (keledonId: string) => {
-        if (!user) return;
+        if (!user) {
+            toast.error('Please log in to launch');
+            return;
+        }
         
         setLaunching(keledonId);
         try {
+            console.log('Launching keledon:', keledonId, 'with userId:', user.id);
+            
             const response = await fetch(`/api/crud/keledons/${keledonId}/launch`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: user.id })
             });
             
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message || 'Failed to launch');
-            }
-            
             const data = await response.json();
+            console.log('Launch response:', response.status, data);
+            
+            if (!response.ok) {
+                throw new Error(data.message || `Failed to launch (${response.status})`);
+            }
             
             // Open deep link
             if (data.deep_link) {
                 window.open(data.deep_link, '_blank');
-                toast.success(`Launching ${keledon.name}...`);
+                toast.success(`Launching ${data.keledon_name || keledonId}...`);
             }
         } catch (error: any) {
             console.error('Failed to launch keledon:', error);
