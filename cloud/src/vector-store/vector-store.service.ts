@@ -29,8 +29,8 @@ export class VectorStoreService {
       const result = collection as any;
       return {
         collectionExists: true,
-        documentCount: result.points_count || 0,
-        collectionSize: `${(result.points_count || 0) * 768 * 4} B`,
+        documentCount: result.points_count || result.points || 0,
+        collectionSize: `${(result.points_count || result.points || 0) * 768 * 4} B`,
         dimensions: result.config?.params?.vectors?.size || this.vectorSize,
         distance: result.config?.params?.vectors?.distance || 'Cosine',
       };
@@ -134,16 +134,20 @@ export class VectorStoreService {
   }
 
   async listDocuments() {
-    const results = await this.qdrant.scroll(this.collectionName, {
-      limit: 1000,
-      with_payload: true,
-    });
+    try {
+      const results = await this.qdrant.scroll(this.collectionName, {
+        limit: 1000,
+        with_payload: true,
+      });
 
-    return {
-      documents: results.points.map((p: any) => ({
-        id: p.id,
-        ...p.payload,
-      })),
-    };
+      return {
+        documents: (results.points || []).map((p: any) => ({
+          id: p.id,
+          ...p.payload,
+        })),
+      };
+    } catch (error) {
+      return { documents: [] };
+    }
   }
 }

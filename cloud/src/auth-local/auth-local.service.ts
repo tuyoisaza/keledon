@@ -45,7 +45,7 @@ export class LocalAuthService {
     
     if (!user) {
       user = {
-        id: 'google_' + Date.now(),
+        id: 'google_' + googleUser.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '_'),
         email: googleUser.email,
         name: googleUser.name || googleUser.email.split('@')[0],
         provider: 'google',
@@ -53,6 +53,9 @@ export class LocalAuthService {
         role: 'superadmin',
       };
       this.users.push(user);
+    } else {
+      // Return the existing user with correct ID
+      user.id = user.id || 'google_' + googleUser.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '_');
     }
     user.last_session = new Date().toISOString();
     this.saveUsers();
