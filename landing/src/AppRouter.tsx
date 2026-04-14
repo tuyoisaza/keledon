@@ -162,7 +162,7 @@ export function AppRouter() {
                         </ProtectedRoute>
                     }
                 />
-                <Route
+                {/* <Route
                     path="/subagents"
                     element={
                         <ProtectedRoute minRole="admin">
@@ -171,7 +171,7 @@ export function AppRouter() {
                             </AppLayout>
                         </ProtectedRoute>
                     }
-                />
+                /> */}
                 <Route
                     path="/superadmin"
                     element={

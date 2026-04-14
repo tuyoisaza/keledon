@@ -41,7 +41,7 @@ const navItems: NavItem[] = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard', minRole: 'user' },
     { icon: Radio, label: 'Sessions', href: '/sessions/history', minRole: 'user' },
     { icon: Workflow, label: 'Flows', href: '/flows', minRole: 'coordinator' },
-    { icon: Bot, label: 'SubAgents', href: '/subagents', minRole: 'admin' },
+    // { icon: Bot, label: 'SubAgents', href: '/subagents', minRole: 'admin' },
     { icon: BookOpen, label: 'Knowledge', href: '/knowledge', minRole: 'user' },
     { icon: BarChart3, label: 'Metrics', href: '/admin/users', minRole: 'coordinator' },
     { icon: Activity, label: 'Work Stats', href: '/work-stats', minRole: 'user' },
