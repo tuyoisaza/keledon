@@ -11,12 +11,10 @@ module.exports = {
       name: '@electron-forge/maker-squirrel',
       config: {
         name: 'keledon_browser',
-        setupExe: 'KELEDON-Browser-Setup.exe'
+        setupExe: 'keledon-browser-v0.0.66-setup.exe',
+        authors: 'Keledon Team',
+        description: 'Keledon Desktop Browser'
       }
-    },
-    {
-      name: '@electron-forge/maker-zip',
-      platforms: ['darwin', 'linux', 'win32']
     }
   ],
   plugins: [
