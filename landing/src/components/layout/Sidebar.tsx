@@ -38,7 +38,6 @@ interface NavItem {
 
 const navItems: NavItem[] = [
     { icon: Play, label: 'Launch Keledon', href: '/launch-keledon', minRole: 'user' },
-    { icon: Play, label: 'Launch Agent', href: '/launch-agent', minRole: 'user' },
     { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard', minRole: 'user' },
     { icon: Radio, label: 'Sessions', href: '/sessions/history', minRole: 'user' },
     { icon: Workflow, label: 'Flows', href: '/flows', minRole: 'coordinator' },

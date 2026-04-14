@@ -115,6 +115,10 @@ dist
 # Brain
 .gemini/
 
+# Large binaries
+landing/public/keledon-browser/
+browser/out/
+
 # Repository hygiene junk
 nul
 *.swp

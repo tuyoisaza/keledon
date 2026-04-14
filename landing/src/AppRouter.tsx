@@ -6,7 +6,6 @@ import { ManagementLayout } from '@/components/management/ManagementLayout';
 // Pages
 import LandingPage from '@/pages/LandingPage';
 import LoginPage from '@/pages/LoginPage';
-import LaunchAgentPage from '@/pages/LaunchAgentPage';
 import LaunchKeledonPage from '@/pages/LaunchKeledonPage';
 import DashboardPage from '@/pages/DashboardPage';
 import KnowledgePage from '@/pages/KnowledgePage';
@@ -79,16 +78,6 @@ export function AppRouter() {
                         <ProtectedRoute minRole="user">
                             <AppLayout>
                                 <LaunchKeledonPage />
-                            </AppLayout>
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/launch-agent"
-                    element={
-                        <ProtectedRoute minRole="user">
-                            <AppLayout>
-                                <LaunchAgentPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }

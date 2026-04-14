@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check } from 'lucide-react';
+import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check, Download } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getKeledons, type Keledon } from '@/lib/crud-api';
 import { toast } from 'sonner';
@@ -97,13 +97,23 @@ export default function LaunchKeledonPage() {
                         </p>
                     </div>
                 </div>
-                <button 
-                    onClick={loadKeledons}
-                    className="p-2 hover:bg-muted rounded-lg transition-colors"
-                    title="Refresh"
-                >
-                    <RefreshCw className="w-5 h-5" />
-                </button>
+                <div className="flex items-center gap-2">
+                    <a 
+                        href="/keledon-browser/keledon-browser.exe"
+                        download="KELEDON-Browser-Setup.exe"
+                        className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                    >
+                        <Download className="w-4 h-4" />
+                        Download App
+                    </a>
+                    <button 
+                        onClick={loadKeledons}
+                        className="p-2 hover:bg-muted rounded-lg transition-colors"
+                        title="Refresh"
+                    >
+                        <RefreshCw className="w-5 h-5" />
+                    </button>
+                </div>
             </div>
 
             {keledons.length === 0 ? (

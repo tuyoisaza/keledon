@@ -17,7 +17,7 @@ export default function LandingPage() {
         if (!isLoading && isAuthenticated && user) {
             switch (user.role) {
                 case 'user':
-                    navigate('/launch-agent');
+                    navigate('/launch-keledon');
                     break;
                 case 'agent':
                 case 'coordinator':
