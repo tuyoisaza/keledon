@@ -13,15 +13,16 @@ import {
     LogOut,
     Shield,
     GraduationCap,
+    Monitor,
+    Bot,
+    User,
     Activity,
     Building2,
+    LucideIcon,
     Tag,
     Users as UsersIcon,
-    User,
     Copy,
-    Check,
-    Bot,
-    Monitor
+    Check
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
@@ -36,6 +37,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
+    { icon: Play, label: 'Launch Keledon', href: '/launch-keledon', minRole: 'user' },
     { icon: Play, label: 'Launch Agent', href: '/launch-agent', minRole: 'user' },
     { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard', minRole: 'user' },
     { icon: Radio, label: 'Sessions', href: '/sessions/history', minRole: 'user' },

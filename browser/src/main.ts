@@ -1,9 +1,120 @@
-import { app, BrowserWindow, ipcMain, session } from 'electron';
+import { app, BrowserWindow, ipcMain, session, protocol } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as crypto from 'crypto';
 import log from 'electron-log';
 import { io, Socket } from 'socket.io-client';
+import { autoUpdater } from 'electron-updater';
 
+// Register keledon:// protocol
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient('keledon', process.execPath, [path.resolve(process.argv[1])]);
+  }
+} else {
+  app.setAsDefaultProtocolClient('keledon');
+}
+
+// Handle deep link on Windows/Linux
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (_event, commandLine) => {
+    const url = commandLine.find(arg => arg.startsWith('keledon://'));
+    if (url) {
+      handleDeepLink(url);
+    }
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
+}
+
+function handleDeepLink(url: string) {
+  log.info('[DeepLink] Received:', url);
+  try {
+    const parsed = new URL(url);
+    const keledonId = parsed.searchParams.get('keledonId');
+    const code = parsed.searchParams.get('code');
+    const userId = parsed.searchParams.get('userId');
+    const timestamp = parsed.searchParams.get('timestamp');
+    const signature = parsed.searchParams.get('signature');
+
+    if (!keledonId || !code || !userId || !timestamp || !signature) {
+      log.error('[DeepLink] Missing required params');
+      return;
+    }
+
+    // Validate timestamp (max 60 seconds old)
+    const linkTime = parseInt(timestamp);
+    const now = Date.now();
+    if (now - linkTime > 60000) {
+      log.error('[DeepLink] Link expired');
+      return;
+    }
+
+    // Validate signature
+    const payload = `${keledonId}:${userId}:${timestamp}`;
+    const expectedSignature = crypto.createHmac('sha256', process.env.KELEDON_LAUNCH_SECRET || 'keledon-default-secret')
+      .update(payload)
+      .digest('hex')
+      .substring(0, 16);
+
+    if (signature !== expectedSignature) {
+      log.error('[DeepLink] Invalid signature');
+      return;
+    }
+
+    log.info('[DeepLink] Valid launch request for keledon:', keledonId);
+
+    // Auto-connect with the pairing code
+    runtimeStatus.pendingKeledonId = keledonId;
+    runtimeStatus.pendingPairingCode = code;
+    
+    // Trigger auto-connect
+    if (mainWindow) {
+      mainWindow.webContents.send('keledon:launch', { keledonId, code });
+    }
+
+    // Also trigger immediate auto-connect
+    (async () => {
+      try {
+        const response = await fetch(`${runtimeStatus.cloudUrl}/api/devices/pair`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            device_id: runtimeStatus.deviceId,
+            machine_id: runtimeStatus.deviceId,
+            pairing_code: code,
+            platform: process.platform,
+            name: 'KELEDON Desktop Agent',
+            keledon_id: keledonId
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          runtimeStatus.status = 'connected';
+          runtimeStatus.authToken = data.auth_token;
+          runtimeStatus.sessionId = data.keledon_id || null;
+          log.info('[DeepLink] Auto-connect successful, keledon_id:', data.keledon_id);
+
+          connectWebSockets(runtimeStatus.cloudUrl, data.auth_token);
+        } else {
+          log.error('[DeepLink] Auto-connect failed:', response.status);
+        }
+      } catch (error) {
+        log.error('[DeepLink] Auto-connect error:', error);
+      }
+    })();
+  } catch (error) {
+    log.error('[DeepLink] Error parsing URL:', error);
+  }
+}
+
+// Extend runtimeStatus for pending launch
 let autobrowseBridge: typeof import('./autobrowse-bridge.js') | null = null;
 
 async function getAutoBrowseBridge() {
@@ -74,7 +185,9 @@ let runtimeStatus = {
   deviceId: process.env.KELEDON_DEVICE_ID || `device-${Date.now()}`,
   cloudUrl: process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
   sessionId: null as string | null,
-  authToken: null as string | null
+  authToken: null as string | null,
+  pendingKeledonId: null as string | null,
+  pendingPairingCode: null as string | null
 };
 
 const AUTO_CONNECT = process.env.AUTO_CONNECT === 'true';
@@ -292,6 +405,12 @@ app.on('ready', async () => {
   createWindow();
   
   await initializeAutoBrowse();
+  
+  // Initialize auto-updater
+  autoUpdater.logger = log;
+  autoUpdater.checkForUpdatesAndNotify().catch(err => {
+    log.warn('[AutoUpdater] Check for updates failed:', err);
+  });
   
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

@@ -150,6 +150,19 @@ export class CrudController {
     return { success: true };
   }
 
+  @Post('keledons/:id/pairing-code')
+  async regeneratePairingCode(@Param('id') keledonId: string) {
+    return this.crud.regenerateKeledonPairingCode(keledonId);
+  }
+
+  @Post('keledons/:id/launch')
+  async launchKeledon(
+    @Param('id') keledonId: string,
+    @Body() body: { userId: string }
+  ) {
+    return this.crud.generateKeledonLaunchLink(keledonId, body.userId);
+  }
+
   // ========== MANAGED INTERFACES ==========
 
   @Get('interfaces')

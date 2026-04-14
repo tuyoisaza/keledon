@@ -345,7 +345,8 @@ export class CrudService {
     autonomyLevel?: number;
     uiInterfaces?: string[];
   }) {
-    return this.prisma.keledon.create({
+    // Create Keledon first
+    const keledon = await this.prisma.keledon.create({
       data: {
         ...data,
         uiInterfaces: data.uiInterfaces ? JSON.stringify(data.uiInterfaces) : undefined,
@@ -380,6 +381,30 @@ export class CrudService {
         user: { select: { id: true, name: true, email: true } }
       }
     });
+
+    // Auto-create device with pairing code for this Keledon
+    const code = this.generatePairingCodeString();
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+    const device = await this.prisma.device.create({
+      data: {
+        keledonId: keledon.id,
+        name: `Keledon: ${keledon.name}`,
+        machineId: `keledon-${keledon.id}`,
+        platform: 'keledon',
+        status: 'pending',
+        pairingCode: code,
+        pairingCodeExpiresAt: expiresAt
+      }
+    });
+
+    // Return keledon with pairing code info
+    return {
+      ...keledon,
+      pairingCode: code,
+      pairingCodeExpiresAt: expiresAt,
+      deviceId: device.id
+    };
   }
 
   async updateKeledon(id: string, data: { 
@@ -438,6 +463,105 @@ export class CrudService {
 
   async deleteKeledon(id: string) {
     return this.prisma.keledon.delete({ where: { id } });
+  }
+
+  async regenerateKeledonPairingCode(keledonId: string) {
+    const keledon = await this.prisma.keledon.findUnique({ where: { id: keledonId } });
+    if (!keledon) {
+      throw new Error('Keledon not found');
+    }
+
+    // Check if device exists for this keledon
+    const existingDevice = await this.prisma.device.findFirst({
+      where: { keledonId }
+    });
+
+    const code = this.generatePairingCodeString();
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+    if (existingDevice) {
+      // Update existing device with new code
+      await this.prisma.device.update({
+        where: { id: existingDevice.id },
+        data: {
+          pairingCode: code,
+          pairingCodeExpiresAt: expiresAt,
+          status: 'pending'
+        }
+      });
+    } else {
+      // Create new device
+      await this.prisma.device.create({
+        data: {
+          keledonId,
+          name: `Keledon: ${keledon.name}`,
+          machineId: `keledon-${keledonId}`,
+          platform: 'keledon',
+          status: 'pending',
+          pairingCode: code,
+          pairingCodeExpiresAt: expiresAt
+        }
+      });
+    }
+
+    return { pairing_code: code, expires_at: expiresAt };
+  }
+
+  async generateKeledonLaunchLink(keledonId: string, userId: string) {
+    const keledon = await this.prisma.keledon.findUnique({ where: { id: keledonId } });
+    if (!keledon) {
+      throw new Error('Keledon not found');
+    }
+
+    // Get device for this keledon
+    const device = await this.prisma.device.findFirst({
+      where: { keledonId }
+    });
+
+    if (!device) {
+      throw new Error('Keledon has no paired device');
+    }
+
+    if (!device.pairingCode) {
+      throw new Error('Keledon has no pairing code');
+    }
+
+    // Verify user has access to this keledon
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Check authorization (user must be superadmin, admin, or own the keledon)
+    const isAuthorized = 
+      user.role === 'superadmin' ||
+      user.role === 'admin' ||
+      keledon.userId === userId;
+
+    if (!isAuthorized) {
+      throw new Error('User not authorized to launch this Keledon');
+    }
+
+    // Generate signed launch link
+    const timestamp = Date.now();
+    const payload = `${keledonId}:${userId}:${timestamp}`;
+    const signature = this.signPayload(payload);
+
+    const deepLink = `keledon://launch?keledonId=${keledonId}&code=${device.pairingCode}&userId=${userId}&timestamp=${timestamp}&signature=${signature}`;
+
+    return {
+      keledon_id: keledonId,
+      keledon_name: keledon.name,
+      deep_link: deepLink,
+      expires_at: new Date(timestamp + 60000), // 60 seconds
+      device_status: device.status
+    };
+  }
+
+  private signPayload(payload: string): string {
+    const crypto = require('crypto');
+    const secret = process.env.KELDEON_LAUNCH_SECRET || 'keledon-default-secret';
+    return crypto.createHmac('sha256', secret).update(payload).digest('hex').substring(0, 16);
   }
 
   // ========== MANAGED INTERFACES ==========
@@ -869,5 +993,19 @@ export class CrudService {
       teams: teamsCreated,
       users: usersCreated
     };
+  }
+
+  // Helper to generate pairing code (same as device.service)
+  private generatePairingCodeString(): string {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 4; i++) {
+      code += chars[Math.floor(Math.random() * chars.length)];
+    }
+    code += '-';
+    for (let i = 0; i < 4; i++) {
+      code += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return code;
   }
 }

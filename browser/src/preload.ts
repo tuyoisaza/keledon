@@ -51,6 +51,12 @@ contextBridge.exposeInMainWorld('keledon', {
       return () => ipcRenderer.removeAllListeners('brain:command');
     },
     setDebugMode: (enabled: boolean) => ipcRenderer.invoke('brain:setDebugMode', enabled)
+  },
+  launcher: {
+    onLaunch: (callback: (data: { keledonId: string; code: string }) => void) => {
+      ipcRenderer.on('keledon:launch', (_event, data) => callback(data));
+      return () => ipcRenderer.removeAllListeners('keledon:launch');
+    }
   }
 });
 
@@ -118,6 +124,9 @@ declare global {
       brain: {
         onCommand: (callback: (data: CommandData) => void) => () => void;
         setDebugMode: (enabled: boolean) => Promise<{ success: boolean }>;
+      };
+      launcher: {
+        onLaunch: (callback: (data: { keledonId: string; code: string }) => void) => () => void;
       };
     };
   }

@@ -7,6 +7,7 @@ import { ManagementLayout } from '@/components/management/ManagementLayout';
 import LandingPage from '@/pages/LandingPage';
 import LoginPage from '@/pages/LoginPage';
 import LaunchAgentPage from '@/pages/LaunchAgentPage';
+import LaunchKeledonPage from '@/pages/LaunchKeledonPage';
 import DashboardPage from '@/pages/DashboardPage';
 import KnowledgePage from '@/pages/KnowledgePage';
 import AdminPage from '@/pages/AdminPage';
@@ -72,6 +73,16 @@ export function AppRouter() {
                 <Route path="/login" element={<LoginPage />} />
 
                 {/* Protected routes with layout */}
+                <Route
+                    path="/launch-keledon"
+                    element={
+                        <ProtectedRoute minRole="user">
+                            <AppLayout>
+                                <LaunchKeledonPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
                 <Route
                     path="/launch-agent"
                     element={
