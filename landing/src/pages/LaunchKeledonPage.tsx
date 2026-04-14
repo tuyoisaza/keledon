@@ -99,7 +99,7 @@ export default function LaunchKeledonPage() {
                 </div>
                 <div className="flex items-center gap-2">
                     <a 
-                        href="/keledon-browser/keledon-browser.exe"
+                        href="https://github.com/tuyoisaza/keledon/releases/download/v0.0.1/keledon-browser.exe"
                         download="KELEDON-Browser-Setup.exe"
                         className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                     >
