@@ -22,7 +22,8 @@ import {
     Tag,
     Users as UsersIcon,
     Copy,
-    Check
+    Check,
+    Trash2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
@@ -88,7 +89,7 @@ export function Sidebar() {
                             <span className="font-bold text-lg text-foreground">Keledon</span>
                         </Link>
                         <div className="flex items-center gap-2 ml-10 mt-0.5">
-                            <span className="text-[10px] text-muted-foreground">v0.0.80</span>
+                            <span className="text-[10px] text-muted-foreground">v0.0.83</span>
                             <button
                                 onClick={async () => {
                                     const success = await copyDebugReport();
@@ -108,6 +109,18 @@ export function Sidebar() {
                                 ) : (
                                     <Copy className="w-3 h-3" />
                                 )}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    sessionStorage.clear();
+                                    localStorage.clear();
+                                    toast.info('Cache cleared, redirecting...');
+                                    window.location.href = '/login';
+                                }}
+                                className="p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                                title="Flush cache and logout"
+                            >
+                                <Trash2 className="w-3 h-3" />
                             </button>
                         </div>
                     </div>
@@ -130,6 +143,18 @@ export function Sidebar() {
                             title="Copy debug report"
                         >
                             <Copy className="w-3 h-3" />
+                        </button>
+                        <button
+                            onClick={() => {
+                                sessionStorage.clear();
+                                localStorage.clear();
+                                toast.info('Cache cleared');
+                                window.location.href = '/login';
+                            }}
+                            className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                            title="Flush cache and logout"
+                        >
+                            <Trash2 className="w-3 h-3" />
                         </button>
                     </div>
                 )}
