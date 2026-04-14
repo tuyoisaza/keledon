@@ -508,54 +508,59 @@ export class CrudService {
   }
 
   async generateKeledonLaunchLink(keledonId: string, userId: string) {
-    const keledon = await this.prisma.keledon.findUnique({ where: { id: keledonId } });
-    if (!keledon) {
-      throw new Error('Keledon not found');
+    try {
+      const keledon = await this.prisma.keledon.findUnique({ where: { id: keledonId } });
+      if (!keledon) {
+        throw new Error('Keledon not found');
+      }
+
+      // Get device for this keledon
+      const device = await this.prisma.device.findFirst({
+        where: { keledonId }
+      });
+
+      if (!device) {
+        throw new Error('Keledon has no paired device');
+      }
+
+      if (!device.pairingCode) {
+        throw new Error('Keledon has no pairing code');
+      }
+
+      // Verify user has access to this keledon
+      const user = await this.prisma.user.findUnique({ where: { id: userId } });
+      if (!user) {
+        throw new Error('User not found: ' + userId);
+      }
+
+      // Check authorization (user must be superadmin, admin, or own the keledon)
+      const isAuthorized = 
+        user.role === 'superadmin' ||
+        user.role === 'admin' ||
+        keledon.userId === userId;
+
+      if (!isAuthorized) {
+        throw new Error('User not authorized to launch this Keledon');
+      }
+
+      // Generate signed launch link
+      const timestamp = Date.now();
+      const payload = `${keledonId}:${userId}:${timestamp}`;
+      const signature = this.signPayload(payload);
+
+      const deepLink = `keledon://launch?keledonId=${keledonId}&code=${device.pairingCode}&userId=${userId}&timestamp=${timestamp}&signature=${signature}`;
+
+      return {
+        keledon_id: keledonId,
+        keledon_name: keledon.name,
+        deep_link: deepLink,
+        expires_at: new Date(timestamp + 60000), // 60 seconds
+        device_status: device.status
+      };
+    } catch (error) {
+      console.error('generateKeledonLaunchLink error:', error);
+      throw error;
     }
-
-    // Get device for this keledon
-    const device = await this.prisma.device.findFirst({
-      where: { keledonId }
-    });
-
-    if (!device) {
-      throw new Error('Keledon has no paired device');
-    }
-
-    if (!device.pairingCode) {
-      throw new Error('Keledon has no pairing code');
-    }
-
-    // Verify user has access to this keledon
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    // Check authorization (user must be superadmin, admin, or own the keledon)
-    const isAuthorized = 
-      user.role === 'superadmin' ||
-      user.role === 'admin' ||
-      keledon.userId === userId;
-
-    if (!isAuthorized) {
-      throw new Error('User not authorized to launch this Keledon');
-    }
-
-    // Generate signed launch link
-    const timestamp = Date.now();
-    const payload = `${keledonId}:${userId}:${timestamp}`;
-    const signature = this.signPayload(payload);
-
-    const deepLink = `keledon://launch?keledonId=${keledonId}&code=${device.pairingCode}&userId=${userId}&timestamp=${timestamp}&signature=${signature}`;
-
-    return {
-      keledon_id: keledonId,
-      keledon_name: keledon.name,
-      deep_link: deepLink,
-      expires_at: new Date(timestamp + 60000), // 60 seconds
-      device_status: device.status
-    };
   }
 
   private signPayload(payload: string): string {
