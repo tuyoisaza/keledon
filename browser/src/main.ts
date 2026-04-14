@@ -6,14 +6,29 @@ import log from 'electron-log';
 import { io, Socket } from 'socket.io-client';
 import { autoUpdater } from 'electron-updater';
 
-// Register keledon:// protocol
-if (process.defaultApp) {
-  if (process.argv.length >= 2) {
-    app.setAsDefaultProtocolClient('keledon', process.execPath, [path.resolve(process.argv[1])]);
+// Register keledon:// protocol - try multiple times
+const registerProtocol = () => {
+  try {
+    if (process.defaultApp) {
+      if (process.argv.length >= 2) {
+        app.setAsDefaultProtocolClient('keledon', process.execPath, [path.resolve(process.argv[1])]);
+      }
+    } else {
+      app.setAsDefaultProtocolClient('keledon');
+    }
+    log.info('[DeepLink] Protocol registered');
+  } catch (error) {
+    log.error('[DeepLink] Failed to register protocol:', error);
   }
-} else {
-  app.setAsDefaultProtocolClient('keledon');
-}
+};
+
+// Try to register protocol
+registerProtocol();
+
+// Also register when app is ready
+app.whenReady().then(() => {
+  registerProtocol();
+});
 
 // Handle deep link on Windows/Linux
 const gotTheLock = app.requestSingleInstanceLock();
@@ -405,6 +420,13 @@ app.on('ready', async () => {
   createWindow();
   
   await initializeAutoBrowse();
+  
+  // Check for deep link in argv on startup
+  const deepLinkArg = process.argv.find(arg => arg.startsWith('keledon://'));
+  if (deepLinkArg) {
+    log.info('[DeepLink] Found in argv:', deepLinkArg);
+    handleDeepLink(deepLinkArg);
+  }
   
   // Initialize auto-updater
   autoUpdater.logger = log;
