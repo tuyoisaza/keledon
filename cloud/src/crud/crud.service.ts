@@ -508,11 +508,14 @@ export class CrudService {
   }
 
   async generateKeledonLaunchLink(keledonId: string, userId: string) {
+    console.log('[Launch] Starting for keledonId:', keledonId, 'userId:', userId);
     try {
       const keledon = await this.prisma.keledon.findUnique({ where: { id: keledonId } });
       if (!keledon) {
+        console.log('[Launch] Keledon not found');
         throw new Error('Keledon not found');
       }
+      console.log('[Launch] Keledon found:', keledon.name);
 
       // Get device for this keledon
       const device = await this.prisma.device.findFirst({
@@ -520,8 +523,10 @@ export class CrudService {
       });
 
       if (!device) {
+        console.log('[Launch] No device found for keledon');
         throw new Error('Keledon has no paired device');
       }
+      console.log('[Launch] Device found, pairingCode:', device.pairingCode);
 
       if (!device.pairingCode) {
         throw new Error('Keledon has no pairing code');
@@ -532,14 +537,16 @@ export class CrudService {
       let isAuthorized = false;
       
       if (!user && userId.startsWith('google_')) {
-        // Google users - allow any google_ user to launch
+        console.log('[Launch] Google user, allowing');
         isAuthorized = true;
       } else if (user) {
-        // Check authorization (user must be superadmin, admin, or own the keledon)
+        console.log('[Launch] Prisma user found, role:', user.role);
         isAuthorized = 
           user.role === 'superadmin' ||
           user.role === 'admin' ||
           keledon.userId === userId;
+      } else {
+        console.log('[Launch] User not found in Prisma');
       }
 
       if (!isAuthorized) {
@@ -553,15 +560,16 @@ export class CrudService {
 
       const deepLink = `keledon://launch?keledonId=${keledonId}&code=${device.pairingCode}&userId=${userId}&timestamp=${timestamp}&signature=${signature}`;
 
+      console.log('[Launch] Success, deepLink:', deepLink.substring(0, 50) + '...');
       return {
         keledon_id: keledonId,
         keledon_name: keledon.name,
         deep_link: deepLink,
-        expires_at: new Date(timestamp + 60000), // 60 seconds
+        expires_at: new Date(timestamp + 60000),
         device_status: device.status
       };
     } catch (error) {
-      console.error('generateKeledonLaunchLink error:', error);
+      console.error('[Launch] Error:', error.message);
       throw error;
     }
   }
