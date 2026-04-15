@@ -89,4 +89,32 @@ export class DeviceController {
   async revokeDevice(@Param('id') deviceId: string) {
     return this.deviceService.revokeDevice(deviceId);
   }
+
+  @Get('test-browser')
+  async testBrowser() {
+    const pairingCode = this.generateTestPairingCode();
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+    await this.deviceService.createTestDevice(pairingCode, expiresAt);
+
+    return {
+      test_url: `keledon://launch?keledonId=test-keledon&code=${pairingCode}&userId=test-user&timestamp=${Date.now()}&signature=testsig&cloudUrl=https%3A%2F%2Fkeledon.tuyoisaza.com`,
+      pairing_code: pairingCode,
+      expires_at: expiresAt.toISOString(),
+      instructions: '1. Click test link or open keledon:// URL\n2. Browser app opens\n3. Device pairs with cloud\n4. Auto-login to vendor portal'
+    };
+  }
+
+  private generateTestPairingCode(): string {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 4; i++) {
+      code += chars[Math.floor(Math.random() * chars.length)];
+    }
+    code += '-';
+    for (let i = 0; i < 4; i++) {
+      code += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return code;
+  }
 }

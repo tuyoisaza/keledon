@@ -241,6 +241,20 @@ export class DeviceService {
     });
   }
 
+  async createTestDevice(pairingCode: string, expiresAt: Date) {
+    return this.prisma.device.create({
+      data: {
+        keledonId: 'test-keledon',
+        name: 'Test Browser',
+        machineId: `test-${Date.now()}`,
+        platform: 'keledon',
+        status: 'pending',
+        pairingCode,
+        pairingCodeExpiresAt: expiresAt
+      }
+    });
+  }
+
   private generateAuthToken(): string {
     return `keledon_${Date.now()}_${Math.random().toString(36).slice(2, 16)}`;
   }
