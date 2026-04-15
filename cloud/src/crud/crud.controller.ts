@@ -1,15 +1,44 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { CrudService } from './crud.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('api/crud')
 export class CrudController {
-  constructor(private readonly crud: CrudService) {}
+  constructor(private readonly crud: CrudService, private readonly prisma: PrismaService) {}
 
   // ========== HEALTH ==========
 
   @Get('health')
   getHealth() {
     return this.crud.getHealth();
+  }
+
+  // ========== MIGRATE ==========
+
+  @Post('migrate')
+  async migrate() {
+    try {
+      await this.prisma.$executeRaw`
+        CREATE TABLE IF NOT EXISTS "vendors" (
+          "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          "teamId" UUID NOT NULL REFERENCES "teams"("id") ON DELETE CASCADE,
+          "name" VARCHAR(255) NOT NULL,
+          "type" VARCHAR(50) NOT NULL DEFAULT 'other',
+          "baseUrl" TEXT,
+          "username" TEXT,
+          "password" TEXT,
+          "apiKey" TEXT,
+          "config" JSONB,
+          "isActive" BOOLEAN DEFAULT true,
+          "createdAt" TIMESTAMP DEFAULT now(),
+          "updatedAt" TIMESTAMP DEFAULT now()
+        )
+      `;
+      await this.prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "vendors_teamId_idx" ON "vendors"("teamId")`;
+      return { status: 'ok', message: 'Vendors table created' };
+    } catch (error) {
+      return { status: 'error', message: error.message };
+    }
   }
 
   // ========== COMPANIES ==========
