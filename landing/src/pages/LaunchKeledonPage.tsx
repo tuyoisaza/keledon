@@ -53,8 +53,22 @@ export default function LaunchKeledonPage() {
             
             // Open deep link
             if (data.deep_link) {
-                window.location.href = data.deep_link;
-                toast.success(`Launching ${data.keledon_name || keledonId}...`);
+                const deepLink = data.deep_link;
+                const currentUrl = window.location.href;
+                
+                // Try to open deep link
+                window.location.href = deepLink;
+                
+                // Check if protocol handler exists (page didn't change = no handler)
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                if (window.location.href === currentUrl) {
+                    // Protocol not registered - prompt download
+                    toast.error('Browser not detected. Downloading...');
+                    window.open('https://github.com/tuyoisaza/keledon/releases', '_blank');
+                } else {
+                    toast.success(`Launching ${data.keledon_name || keledonId}...`);
+                }
             }
         } catch (error: any) {
             console.error('Failed to launch keledon:', error);
@@ -99,8 +113,7 @@ export default function LaunchKeledonPage() {
                 </div>
                 <div className="flex items-center gap-2">
                     <a 
-                        href="https://github.com/tuyoisaza/keledon/releases"
-                        download="KELEDON-Browser-Setup.exe"
+                        href="https://github.com/tuyoisaza/keledon/releases/latest/download/keledon-browser-latest-setup.exe"
                         className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                     >
                         <Download className="w-4 h-4" />

@@ -65,6 +65,8 @@ function handleDeepLink(url: string) {
         mainWindow.webContents.send('keledon:launch', { 
           keledonId: 'test',
           code: timestamp,
+          cloudUrl: 'https://keledon.tuyoisaza.com',
+          action: 'test',
           instructions 
         });
       }
@@ -77,6 +79,7 @@ function handleDeepLink(url: string) {
     const userId = parsed.searchParams.get('userId');
     const timestamp = parsed.searchParams.get('timestamp');
     const signature = parsed.searchParams.get('signature');
+    const cloudUrl = parsed.searchParams.get('cloudUrl') || 'https://keledon.tuyoisaza.com';
 
     if (!keledonId || !code || !userId || !timestamp || !signature) {
       log.error('[DeepLink] Missing required params');
@@ -104,14 +107,21 @@ function handleDeepLink(url: string) {
     }
 
     log.info('[DeepLink] Valid launch request for keledon:', keledonId);
+    log.info('[DeepLink] Cloud URL:', cloudUrl);
+    log.info('[DeepLink] Pairing code:', code);
 
     // Auto-connect with the pairing code
     runtimeStatus.pendingKeledonId = keledonId;
     runtimeStatus.pendingPairingCode = code;
     
-    // Trigger auto-connect
+    // Trigger auto-connect with all data
     if (mainWindow) {
-      mainWindow.webContents.send('keledon:launch', { keledonId, code });
+      mainWindow.webContents.send('keledon:launch', { 
+        keledonId, 
+        code,
+        cloudUrl,
+        action: 'auto-connect'
+      });
     }
 
     // Also trigger immediate auto-connect

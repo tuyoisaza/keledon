@@ -106,7 +106,7 @@ declare global {
         disconnect: () => Promise<{ success: boolean }>;
         startSession: (sessionId: string, teamId?: string) => Promise<{ success: boolean; sessionId?: string; error?: string }>;
         onStatusChange: (callback: (status: unknown) => void) => () => void;
-        onConnect: (callback: (data: { keledonId: string; code: string }) => void) => () => void;
+        onConnect: (callback: (data: { keledonId: string; code: string; cloudUrl?: string; action?: string }) => void) => () => void;
       };
       executor: {
         executeGoal: (goal: string, context: Record<string, unknown>) => Promise<unknown>;
@@ -131,7 +131,7 @@ declare global {
         setDebugMode: (enabled: boolean) => Promise<{ success: boolean }>;
       };
       launcher: {
-        onLaunch: (callback: (data: { keledonId: string; code: string }) => void) => () => void;
+        onLaunch: (callback: (data: { keledonId: string; code: string; cloudUrl?: string; action?: string }) => void) => () => void;
       };
     };
   }

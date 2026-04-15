@@ -6,100 +6,218 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
   <title>KELEDON Browser</title>
   <style>
+    :root {
+      --bg: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #21262d;
+      --border: #30363d;
+      --primary: #00d4aa;
+      --primary-dim: #00a88a;
+      --text: #e6edf3;
+      --text-dim: #8b949e;
+      --success: #238636;
+      --warning: #9e6a03;
+      --danger: #da3633;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #1a1a2e;
-      color: #eee;
+      background: var(--bg);
+      color: var(--text);
       height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
+    
+    /* Header */
     header {
-      background: #16213e;
-      padding: 12px 24px;
-      border-bottom: 1px solid #0f3460;
+      background: var(--bg-secondary);
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    header h1 { font-size: 16px; color: #e94560; }
-    header .menu-dots { display: flex; gap: 6px; }
-    header .menu-dots span { width: 4px; height: 4px; background: #888; border-radius: 50%; }
-    .status { font-size: 12px; color: #888; }
-    .status.connected { color: #4ade80; }
-
-    .device-info {
-      background: #16213e;
-      padding: 10px 24px;
-      border-bottom: 1px solid #0f3460;
-      display: flex;
-      gap: 32px;
-      font-size: 13px;
-    }
-    .device-info span { color: #888; }
-    .device-info strong { color: #eee; }
-
-    .call-controls {
-      background: #1a1a2e;
-      padding: 12px 24px;
-      border-bottom: 1px solid #0f3460;
+    header .logo {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
-    .call-btn {
-      background: #16213e;
-      color: #eee;
-      border: 1px solid #0f3460;
+    header .logo-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: var(--bg);
+      font-size: 14px;
+    }
+    header h1 { 
+      font-size: 15px; 
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    header .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+    header .btn-icon {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.15s;
+    }
+    header .btn-icon:hover {
+      background: var(--border);
+      color: var(--text);
+    }
+    header .btn-icon.primary {
+      background: var(--primary);
+      color: var(--bg);
+      border-color: var(--primary);
+    }
+    header .btn-icon.primary:hover {
+      background: var(--primary-dim);
+    }
+
+    /* Status Bar */
+    .status-bar {
+      background: var(--bg-secondary);
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 13px;
+    }
+    .status-bar .status-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-bar .status-label {
+      color: var(--text-dim);
+    }
+    .status-bar .status-value {
+      color: var(--text);
+      font-weight: 500;
+    }
+    .status-bar .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status-bar .connection-status.disconnected {
+      background: var(--bg-tertiary);
+      color: var(--text-dim);
+    }
+    .status-bar .connection-status.connecting {
+      background: var(--warning);
+      background: rgba(158, 106, 3, 0.2);
+      color: #d29922;
+    }
+    .status-bar .connection-status.connected {
+      background: var(--success);
+      background: rgba(35, 134, 54, 0.2);
+      color: #3fb950;
+    }
+    .status-bar .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      background: var(--bg);
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+    }
+    .quick-actions .btn-action {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text);
       padding: 8px 16px;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s;
       display: flex;
       align-items: center;
       gap: 6px;
     }
-    .call-btn:hover { background: #1f2b4a; }
-    .call-btn.active { background: #e94560; border-color: #e94560; }
-    .call-btn.hangup { background: #dc2626; border-color: #dc2626; }
-    .call-btn.hangup:hover { background: #b91c1c; }
-    .call-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .call-btn.muted { border-color: #f59e0b; color: #f59e0b; }
-    .call-btn.on-hold { border-color: #f59e0b; color: #f59e0b; }
-
-    .status-badge {
-      margin-left: auto;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 500;
+    .quick-actions .btn-action:hover:not(:disabled) {
+      background: var(--bg-tertiary);
+      border-color: var(--text-dim);
     }
-    .status-badge.idle { background: #374151; color: #9ca3af; }
-    .status-badge.in-call { background: #166534; color: #4ade80; }
-    .status-badge.on-hold { background: #78350f; color: #fbbf24; }
+    .quick-actions .btn-action:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .quick-actions .btn-action.record {
+      background: var(--danger);
+      border-color: var(--danger);
+    }
+    .quick-actions .btn-action.record:hover:not(:disabled) {
+      background: #b93a37;
+      border-color: #b93a37;
+    }
+    .quick-actions .btn-action.end {
+      background: var(--bg-tertiary);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+    .quick-actions .btn-action.end:hover:not(:disabled) {
+      background: var(--danger);
+      color: white;
+    }
+    .quick-actions .btn-action.active {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
 
-    main {
+    /* Panels Row */
+    .panels-row {
       flex: 1;
       display: flex;
       gap: 1px;
-      background: #0f3460;
+      background: var(--border);
       overflow: hidden;
     }
     .panel {
       flex: 1;
-      background: #1a1a2e;
+      background: var(--bg);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
     .panel-header {
-      padding: 12px 16px;
-      background: #16213e;
-      border-bottom: 1px solid #0f3460;
-      font-size: 13px;
-      font-weight: 500;
-      color: #e94560;
+      padding: 10px 16px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-dim);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -108,295 +226,468 @@
       flex: 1;
       overflow-y: auto;
       padding: 12px;
+    }
+
+    /* Activity Log Entry */
+    .activity-entry {
+      padding: 10px 12px;
+      background: var(--bg-secondary);
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      border-left: 3px solid var(--border);
+    }
+    .activity-entry.info { border-left-color: var(--text-dim); }
+    .activity-entry.success { border-left-color: var(--success); }
+    .activity-entry.error { border-left-color: var(--danger); }
+    .activity-entry .time { 
+      color: var(--text-dim); 
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+    .activity-entry .msg { color: var(--text); }
+
+    /* Transcript Entry */
+    .transcript-entry {
+      padding: 10px 12px;
+      background: var(--bg-secondary);
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+    .transcript-entry .meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .transcript-entry .speaker {
+      font-weight: 600;
       font-size: 12px;
     }
-
-    .transcript-entry {
-      margin-bottom: 8px;
-      padding: 8px;
-      background: #16213e;
-      border-radius: 4px;
+    .transcript-entry.agent .speaker { color: var(--primary); }
+    .transcript-entry.customer .speaker { color: #58a6ff; }
+    .transcript-entry .time { color: var(--text-dim); font-size: 11px; }
+    .transcript-entry .text { color: var(--text); font-size: 13px; line-height: 1.5; }
+    .transcript-entry .confidence { 
+      font-size: 10px; 
+      color: var(--text-dim); 
+      margin-top: 4px; 
     }
-    .transcript-entry .time { color: #666; font-size: 11px; }
-    .transcript-entry .speaker { font-weight: 500; }
-    .transcript-entry.agent .speaker { color: #4ade80; }
-    .transcript-entry.customer .speaker { color: #60a5fa; }
-    .transcript-entry .text { margin-top: 4px; color: #ccc; }
-    .transcript-entry .confidence { font-size: 10px; color: #666; margin-top: 2px; }
 
+    /* Command Entry */
     .command-entry {
+      padding: 10px 12px;
+      background: var(--bg-secondary);
+      border-radius: 6px;
       margin-bottom: 8px;
-      padding: 8px;
-      background: #16213e;
-      border-radius: 4px;
-      font-family: monospace;
+      font-size: 12px;
+      border-left: 3px solid var(--primary);
     }
-    .command-entry .time { color: #666; font-size: 11px; }
+    .command-entry .meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .command-entry .time { color: var(--text-dim); font-size: 11px; }
     .command-entry .type { 
-      display: inline-block;
-      background: #e94560;
-      color: white;
-      padding: 2px 6px;
-      border-radius: 3px;
+      background: var(--primary);
+      color: var(--bg);
+      padding: 2px 8px;
+      border-radius: 4px;
       font-size: 10px;
-      margin-left: 8px;
+      font-weight: 600;
     }
-    .command-entry .payload { color: #aaa; margin-top: 4px; font-size: 11px; }
-    .command-entry .flow-id { color: #666; font-size: 10px; margin-top: 2px; }
+    .command-entry .payload { 
+      color: var(--text-dim); 
+      font-family: monospace;
+      font-size: 11px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .command-entry .flow-id { 
+      color: var(--text-dim); 
+      font-size: 10px; 
+      margin-top: 4px; 
+    }
 
+    /* Bottom Panels */
+    .bottom-row {
+      display: flex;
+      gap: 1px;
+      background: var(--border);
+      border-top: 1px solid var(--border);
+      height: 160px;
+    }
+    .bottom-panel {
+      flex: 1;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+    }
+    .bottom-panel-header {
+      padding: 8px 12px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-dim);
+    }
+    .bottom-panel-content {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+    }
+
+    /* Input styling */
+    .input-group {
+      margin-bottom: 10px;
+    }
+    .input-group label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+    }
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .input-group input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .btn-connect {
+      width: 100%;
+      padding: 10px;
+      background: var(--primary);
+      border: none;
+      border-radius: 6px;
+      color: var(--bg);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-connect:hover:not(:disabled) {
+      background: var(--primary-dim);
+    }
+    .btn-connect:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Execute panel */
+    .execute-input {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .execute-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .btn-execute {
+      width: 100%;
+      padding: 10px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--primary);
+      border-radius: 6px;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-execute:hover:not(:disabled) {
+      background: var(--primary);
+      color: var(--bg);
+    }
+    .btn-execute:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Debug toggle */
     .debug-toggle {
       background: none;
-      border: 1px solid #0f3460;
-      color: #888;
-      padding: 4px 10px;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 4px 8px;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 11px;
+      font-size: 10px;
     }
-    .debug-toggle:hover { background: #16213e; }
-    .debug-toggle.active { border-color: #e94560; color: #e94560; }
-
-    .debug-info {
-      display: none;
-      margin-top: 8px;
-      padding: 8px;
-      background: #0f3460;
-      border-radius: 4px;
-      font-size: 11px;
-      color: #888;
-      font-family: monospace;
-    }
-    .debug-info.show { display: block; }
-
-    .cards {
-      display: flex;
-      gap: 12px;
-      padding: 12px 24px;
-      background: #1a1a2e;
-      border-bottom: 1px solid #0f3460;
-      flex-wrap: wrap;
-    }
-    .card {
-      flex: 1;
-      min-width: 200px;
-      background: #16213e;
-      border: 1px solid #0f3460;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    .card-header {
-      padding: 8px 12px;
-      background: #0f3460;
-      font-size: 12px;
-      font-weight: 500;
-      color: #e94560;
-    }
-    .card-content {
-      padding: 12px;
+    .debug-toggle:hover { background: var(--bg-tertiary); }
+    .debug-toggle.active { 
+      border-color: var(--primary); 
+      color: var(--primary); 
     }
   </style>
 </head>
 <body>
+  <!-- Header -->
   <header>
-    <div style="display:flex;align-items:center;gap:12px;">
+    <div class="logo">
+      <div class="logo-icon">K</div>
       <h1>KELEDON Browser</h1>
-      <button id="versionBtn" style="background:#16213e;border:1px solid #e94560;color:#e94560;padding:2px 8px;border-radius:3px;font-size:11px;cursor:pointer;">v0.0.86</button>
-      <button id="copyLogsBtn" style="background:#16213e;border:1px solid #0f3460;color:#888;padding:2px 8px;border-radius:3px;font-size:11px;cursor:pointer;">Copy Logs</button>
+      <button id="versionBtn" class="btn-icon">v?.?.?</button>
     </div>
-    <div class="menu-dots">
-      <span></span><span></span><span></span>
+    <div class="header-actions">
+      <button id="copyLogsBtn" class="btn-icon">Copy Logs</button>
     </div>
   </header>
 
-  <div class="device-info">
-    <div><span>Device:</span> <strong id="deviceId">Loading...</strong></div>
-    <div><span>Session:</span> <strong id="sessionId">-</strong></div>
-    <div><span>Keledon:</span> <strong id="keledonStatus">Not logged in</strong></div>
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-item">
+      <span class="status-label">Device:</span>
+      <span class="status-value" id="deviceId">Loading...</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">Session:</span>
+      <span class="status-value" id="sessionId">-</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">Keledon:</span>
+      <span class="status-value" id="keledonStatus">Not linked</span>
+    </div>
+    <div class="connection-status disconnected" id="connectionStatus">
+      <span class="status-dot"></span>
+      <span>Disconnected</span>
+    </div>
   </div>
 
-  <div class="call-controls">
-    <button id="muteBtn" class="call-btn" disabled>🔇 Mute</button>
-    <button id="holdBtn" class="call-btn" disabled>⏸ Hold</button>
-    <button id="hangupBtn" class="call-btn hangup" disabled>📞 Hang Up</button>
-    <span id="callStatus" class="status-badge idle">Idle</span>
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <button id="muteBtn" class="btn-action" disabled>🔇 Mute</button>
+    <button id="holdBtn" class="btn-action" disabled>⏸ Hold</button>
+    <button id="hangupBtn" class="btn-action end" disabled>📞 End</button>
+    <button id="callStatusBadge" class="btn-action" disabled>Idle</button>
   </div>
 
-  <div class="cards">
-      <div class="card">
-        <div class="card-header">Cloud Connection</div>
-        <div class="card-content">
-          <input type="text" id="cloudUrl" value="https://keledon.tuyoisaza.com" placeholder="Cloud URL" style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
-          <input type="text" id="pairingCode" placeholder="Pairing Code" style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
-          <button id="connectBtn" class="call-btn" style="width:100%;margin-bottom:12px;">Connect</button>
-          <hr style="border-color:#0f3460;margin:8px 0;">
-          <input type="text" id="keledonId" value="keledon-001" placeholder="Keledon ID" style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
-          <input type="text" id="sessionIdInput" value="session-1776085046797" placeholder="Session ID" style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
-          <button id="startSessionBtn" class="call-btn" style="width:100%;" disabled>Start Session</button>
-        </div>
+  <!-- Main Panels -->
+  <div class="panels-row">
+    <!-- Activity Panel -->
+    <div class="panel" style="flex: 0.6;">
+      <div class="panel-header">
+        Activity
+        <button id="clearLog" class="debug-toggle">Clear</button>
       </div>
+      <div id="activityLog" class="panel-content"></div>
     </div>
-    <div class="card">
-      <div class="card-header">Execution</div>
-      <div class="card-content">
-        <input type="text" id="goalInput" placeholder="Enter goal..." style="width:100%;margin-bottom:8px;padding:6px;background:#16213e;border:1px solid #0f3460;color:#eee;border-radius:4px;">
-        <button id="executeBtn" class="call-btn" style="width:100%;" disabled>Execute</button>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-header">Activity Log</div>
-      <div id="activityLog" class="card-content" style="max-height:150px;overflow-y:auto;"></div>
-    </div>
-  </div>
-
-  <main>
+    
+    <!-- Transcript Panel -->
     <div class="panel">
       <div class="panel-header">Transcript</div>
       <div id="transcript" class="panel-content"></div>
     </div>
+    
+    <!-- Brain Status Panel -->
     <div class="panel">
       <div class="panel-header">
-        Brain Status
-        <button id="debugToggle" class="debug-toggle">Debug: OFF</button>
+        Brain
+        <button id="debugToggle" class="debug-toggle">Debug</button>
       </div>
       <div id="brainStatus" class="panel-content"></div>
     </div>
-  </main>
+  </div>
+
+  <!-- Bottom Panels -->
+  <div class="bottom-row">
+    <!-- Connect Panel -->
+    <div class="bottom-panel" style="flex: 0.6;">
+      <div class="bottom-panel-header">Connect</div>
+      <div class="bottom-panel-content">
+        <div class="input-group">
+          <label>Cloud URL</label>
+          <input type="text" id="cloudUrl" value="https://keledon.tuyoisaza.com" placeholder="https://...">
+        </div>
+        <div class="input-group">
+          <label>Pairing Code</label>
+          <input type="text" id="pairingCode" placeholder="XXXX-XXXX">
+        </div>
+        <div class="input-group">
+          <label>Keledon ID</label>
+          <input type="text" id="keledonId" placeholder="keledon-xxx">
+        </div>
+        <button id="connectBtn" class="btn-connect">Connect</button>
+      </div>
+    </div>
+
+    <!-- Execute Panel -->
+    <div class="bottom-panel">
+      <div class="bottom-panel-header">Execute</div>
+      <div class="bottom-panel-content">
+        <input type="text" id="goalInput" class="execute-input" placeholder="Enter goal...">
+        <button id="executeBtn" class="btn-execute" disabled>▶ Execute</button>
+      </div>
+    </div>
+  </div>
 
   <script>
+    // Elements
     const deviceIdEl = document.getElementById('deviceId');
     const sessionIdEl = document.getElementById('sessionId');
+    const keledonStatusEl = document.getElementById('keledonStatus');
+    const connectionStatusEl = document.getElementById('connectionStatus');
     const transcriptEl = document.getElementById('transcript');
     const brainStatusEl = document.getElementById('brainStatus');
-    const callStatusEl = document.getElementById('callStatus');
+    const activityLogEl = document.getElementById('activityLog');
     const muteBtn = document.getElementById('muteBtn');
     const holdBtn = document.getElementById('holdBtn');
     const hangupBtn = document.getElementById('hangupBtn');
+    const callStatusBadge = document.getElementById('callStatusBadge');
     const debugToggle = document.getElementById('debugToggle');
+    const clearLogBtn = document.getElementById('clearLog');
     const cloudUrlInput = document.getElementById('cloudUrl');
     const pairingCodeInput = document.getElementById('pairingCode');
-    const connectBtn = document.getElementById('connectBtn');
     const keledonIdInput = document.getElementById('keledonId');
-    const sessionIdInput = document.getElementById('sessionIdInput');
-    const startSessionBtn = document.getElementById('startSessionBtn');
+    const connectBtn = document.getElementById('connectBtn');
     const goalInput = document.getElementById('goalInput');
     const executeBtn = document.getElementById('executeBtn');
-    const activityLog = document.getElementById('activityLog');
-
-    const keledonStatusEl = document.getElementById('keledonStatus');
+    const versionBtn = document.getElementById('versionBtn');
+    const copyLogsBtn = document.getElementById('copyLogsBtn');
 
     let isMuted = false;
     let isOnHold = false;
     let debugEnabled = false;
     let isConnected = false;
-    let currentKeledonId = null;
 
+    // Logging
     function log(message, type = 'info') {
       const entry = document.createElement('div');
-      entry.style.marginBottom = '8px';
-      entry.style.padding = '8px';
-      entry.style.background = '#16213e';
-      entry.style.borderRadius = '4px';
-      entry.innerHTML = `<span style="color:#666;font-size:11px;">${new Date().toLocaleTimeString()}</span> <span style="color:${type === 'error' ? '#f87171' : type === 'success' ? '#4ade80' : '#ccc'}">${message}</span>`;
-      activityLog.appendChild(entry);
-      activityLog.scrollTop = activityLog.scrollHeight;
+      entry.className = `activity-entry ${type}`;
+      entry.innerHTML = `
+        <div class="time">${new Date().toLocaleTimeString()}</div>
+        <div class="msg">${message}</div>
+      `;
+      activityLogEl.appendChild(entry);
+      activityLogEl.scrollTop = activityLogEl.scrollHeight;
+      console.log(`[${type.toUpperCase()}] ${message}`);
     }
 
+    // Connection status
+    function setConnectionStatus(status) {
+      connectionStatusEl.className = `connection-status ${status}`;
+      const labels = { disconnected: 'Disconnected', connecting: 'Connecting...', connected: 'Connected' };
+      connectionStatusEl.querySelector('span:last-child').textContent = labels[status] || status;
+    }
+
+    // Load device info
     async function loadDeviceInfo() {
       try {
         const info = await window.keledon.device.getInfo();
         deviceIdEl.textContent = info.deviceId;
+        versionBtn.textContent = 'v' + info.version;
+        log('Device initialized: ' + info.deviceId, 'info');
       } catch (e) {
         deviceIdEl.textContent = 'Error';
+        log('Device info error: ' + e.message, 'error');
       }
     }
 
+    // Auto-connect handler
+    window.keledon.launcher.onLaunch((data) => {
+      log('Launch data received', 'info');
+      keledonStatusEl.textContent = 'Pending: ' + data.keledonId;
+      
+      if (data.action === 'auto-connect' && data.keledonId && data.code) {
+        cloudUrlInput.value = data.cloudUrl || 'https://keledon.tuyoisaza.com';
+        pairingCodeInput.value = data.code;
+        keledonIdInput.value = data.keledonId;
+        setConnectionStatus('connecting');
+        log('Auto-connecting to ' + data.keledonId + '...', 'info');
+        setTimeout(() => connectBtn.click(), 300);
+      } else if (data.action === 'test') {
+        log('Test mode: ' + (data.instructions || 'No instructions'), 'info');
+      }
+    });
+
+    // Connect
     connectBtn.addEventListener('click', async () => {
       const cloudUrl = cloudUrlInput.value.trim();
       const pairingCode = pairingCodeInput.value.trim();
       const keledonId = keledonIdInput.value.trim();
       if (!cloudUrl || !pairingCode) {
-        log('Cloud URL and pairing code are required', 'error');
+        log('Cloud URL and pairing code required', 'error');
         return;
       }
+      setConnectionStatus('connecting');
+      log('Connecting to ' + cloudUrl + '...', 'info');
       try {
         const result = await window.keledon.runtime.connect({ 
-          cloudUrl, 
-          token: pairingCode,
-          keledonId: keledonId || null
+          cloudUrl, token: pairingCode, keledonId: keledonId || null
         });
         if (result.success) {
           isConnected = true;
-          currentKeledonId = keledonId || null;
-          sessionIdEl.textContent = 'Connected';
-          keledonStatusEl.textContent = keledonId || 'Not linked';
-          keledonStatusEl.style.color = keledonId ? '#4ade80' : '#f59e0b';
-          startSessionBtn.disabled = false;
+          setConnectionStatus('connected');
+          keledonStatusEl.textContent = keledonId || 'Linked';
           executeBtn.disabled = false;
-          log('Connected successfully!' + (keledonId ? ' Keledon: ' + keledonId : ''), 'success');
+          log('Connected to ' + (keledonId || 'cloud'), 'success');
         } else {
+          setConnectionStatus('disconnected');
           log('Connection failed: ' + result.error, 'error');
         }
       } catch (e) {
-        log('Connection failed: ' + e.message, 'error');
+        setConnectionStatus('disconnected');
+        log('Connection error: ' + e.message, 'error');
       }
     });
 
-    startSessionBtn.addEventListener('click', async () => {
-      const sessionId = sessionIdInput.value.trim();
-      const keledonId = keledonIdInput.value.trim();
-      if (!sessionId) {
-        log('Session ID is required', 'error');
-        return;
-      }
-      try {
-        const result = await window.keledon.runtime.startSession(sessionId);
-        if (result.success) {
-          sessionIdEl.textContent = sessionId;
-          log('Session started: ' + sessionId + ' (Keledon: ' + keledonId + ')', 'success');
-          callStatusEl.textContent = 'In Call';
-          callStatusEl.className = 'status-badge in-call';
-          muteBtn.disabled = false;
-          holdBtn.disabled = false;
-          hangupBtn.disabled = false;
-        } else {
-          log('Failed to start session: ' + result.error, 'error');
-        }
-      } catch (e) {
-        log('Failed to start session: ' + e.message, 'error');
-      }
-    });
-
+    // Execute
     executeBtn.addEventListener('click', async () => {
       const goal = goalInput.value.trim();
       if (!goal) {
-        log('Goal is required', 'error');
+        log('Goal required', 'error');
         return;
       }
       try {
         const result = await window.keledon.executor.executeGoal(goal, {});
-        log('Execution result: ' + JSON.stringify(result), 'info');
+        log('Executed: ' + goal.substring(0, 50), 'success');
+        goalInput.value = '';
       } catch (e) {
-        log('Execution failed: ' + e.message, 'error');
+        log('Execution error: ' + e.message, 'error');
       }
     });
 
+    // Runtime events
     window.keledon.runtime.onConnect(({ sessionId }) => {
       sessionIdEl.textContent = sessionId || '-';
-      log('Session connected: ' + sessionId, 'success');
-      callStatusEl.textContent = 'In Call';
-      callStatusEl.className = 'status-badge in-call';
+      callStatusBadge.textContent = 'Active';
+      callStatusBadge.classList.add('active');
       muteBtn.disabled = false;
       holdBtn.disabled = false;
       hangupBtn.disabled = false;
+      log('Session started: ' + sessionId, 'success');
     });
 
+    // Transcript
     window.keledon.media.onTranscript((entry) => {
       const div = document.createElement('div');
       div.className = `transcript-entry ${entry.speaker}`;
-      const time = entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
       div.innerHTML = `
-        <span class="time">${time}</span>
-        <span class="speaker">${entry.speaker === 'agent' ? 'Agent' : 'Customer'}:</span>
+        <div class="meta">
+          <span class="speaker">${entry.speaker === 'agent' ? 'Agent' : 'Customer'}</span>
+          <span class="time">${entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString()}</span>
+        </div>
         <div class="text">${entry.text}</div>
         ${entry.confidence ? `<div class="confidence">Confidence: ${(entry.confidence * 100).toFixed(0)}%</div>` : ''}
       `;
@@ -404,34 +695,25 @@
       transcriptEl.scrollTop = transcriptEl.scrollHeight;
     });
 
+    // Call status
     window.keledon.media.onCallStatus((status) => {
-      callStatusEl.textContent = status === 'hold' ? 'On Hold' : status === 'muted' ? 'Muted' : 'In Call';
-      callStatusEl.className = `status-badge ${status === 'hold' ? 'on-hold' : status === 'muted' ? 'on-hold' : 'in-call'}`;
-      
-      if (status === 'hold') {
-        holdBtn.classList.add('on-hold');
-        holdBtn.textContent = '▶ Resume';
-      } else {
-        holdBtn.classList.remove('on-hold');
-        holdBtn.textContent = '⏸ Hold';
-      }
-
-      if (status === 'muted') {
-        muteBtn.classList.add('muted');
-        muteBtn.textContent = '🔊 Unmute';
-      } else {
-        muteBtn.classList.remove('muted');
-        muteBtn.textContent = '🔇 Mute';
-      }
+      const labels = { idle: 'Idle', 'in-call': 'Active', hold: 'On Hold', muted: 'Muted' };
+      callStatusBadge.textContent = labels[status] || status;
+      if (status === 'hold') holdBtn.classList.add('active');
+      else holdBtn.classList.remove('active');
+      if (status === 'muted') muteBtn.classList.add('active');
+      else muteBtn.classList.remove('active');
     });
 
+    // Brain commands
     window.keledon.brain.onCommand((cmd) => {
       const div = document.createElement('div');
       div.className = 'command-entry';
-      const time = cmd.timestamp ? new Date(cmd.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
       div.innerHTML = `
-        <span class="time">${time}</span>
-        <span class="type">${cmd.type}</span>
+        <div class="meta">
+          <span class="time">${cmd.timestamp ? new Date(cmd.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString()}</span>
+          <span class="type">${cmd.type}</span>
+        </div>
         <div class="payload">${JSON.stringify(cmd.payload || cmd.data || {})}</div>
         ${cmd.flow_id ? `<div class="flow-id">flow_id: ${cmd.flow_id}</div>` : ''}
       `;
@@ -439,64 +721,77 @@
       brainStatusEl.scrollTop = brainStatusEl.scrollHeight;
     });
 
+    // Mute
     muteBtn.addEventListener('click', async () => {
       isMuted = !isMuted;
       try {
         await (isMuted ? window.keledon.media.mute() : window.keledon.media.unmute());
+        muteBtn.classList.toggle('active', isMuted);
+        muteBtn.textContent = isMuted ? '🔊 Unmute' : '🔇 Mute';
       } catch (e) {
-        console.error('Failed to toggle mute:', e);
+        log('Mute error: ' + e.message, 'error');
       }
     });
 
+    // Hold
     holdBtn.addEventListener('click', async () => {
       isOnHold = !isOnHold;
       try {
         await (isOnHold ? window.keledon.media.hold() : window.keledon.media.resume());
+        holdBtn.classList.toggle('active', isOnHold);
+        holdBtn.textContent = isOnHold ? '▶ Resume' : '⏸ Hold';
       } catch (e) {
-        console.error('Failed to toggle hold:', e);
+        log('Hold error: ' + e.message, 'error');
       }
     });
 
+    // Hangup
     hangupBtn.addEventListener('click', async () => {
       try {
         await window.keledon.media.hangup();
         sessionIdEl.textContent = '-';
-        callStatusEl.textContent = 'Idle';
-        callStatusEl.className = 'status-badge idle';
+        callStatusBadge.textContent = 'Idle';
+        callStatusBadge.classList.remove('active');
         muteBtn.disabled = true;
         holdBtn.disabled = true;
         hangupBtn.disabled = true;
-        muteBtn.classList.remove('muted');
+        muteBtn.classList.remove('active');
+        holdBtn.classList.remove('active');
         muteBtn.textContent = '🔇 Mute';
-        holdBtn.classList.remove('on-hold');
         holdBtn.textContent = '⏸ Hold';
+        log('Call ended', 'info');
       } catch (e) {
-        console.error('Failed to hangup:', e);
+        log('Hangup error: ' + e.message, 'error');
       }
     });
 
+    // Debug toggle
     debugToggle.addEventListener('click', () => {
       debugEnabled = !debugEnabled;
-      debugToggle.textContent = debugEnabled ? 'Debug: ON' : 'Debug: OFF';
       debugToggle.classList.toggle('active', debugEnabled);
+      debugToggle.textContent = debugEnabled ? 'Debug: ON' : 'Debug';
       window.keledon.brain.setDebugMode(debugEnabled);
     });
 
-    // Version and copy logs
-    const versionBtn = document.getElementById('versionBtn');
-    const copyLogsBtn = document.getElementById('copyLogsBtn');
-    
+    // Clear log
+    clearLogBtn.addEventListener('click', () => {
+      activityLogEl.innerHTML = '';
+      log('Log cleared', 'info');
+    });
+
+    // Version button
     versionBtn.addEventListener('click', async () => {
       const info = await window.keledon.device.getInfo();
       navigator.clipboard.writeText('Keledon Browser v' + info.version);
       versionBtn.textContent = 'Copied!';
       setTimeout(() => versionBtn.textContent = 'v' + info.version, 1000);
     });
-    
+
+    // Copy logs
     copyLogsBtn.addEventListener('click', async () => {
       try {
         const logs = await window.keledon.evidence.getLogs();
-        navigator.clipboard.writeText(logs.logs || 'No logs available');
+        navigator.clipboard.writeText(logs.logs || 'No logs');
         copyLogsBtn.textContent = 'Copied!';
         setTimeout(() => copyLogsBtn.textContent = 'Copy Logs', 1000);
       } catch (e) {
@@ -505,6 +800,7 @@
       }
     });
 
+    // Initialize
     loadDeviceInfo();
   </script>
 </body>

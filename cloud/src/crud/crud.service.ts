@@ -44,7 +44,7 @@ export class CrudService {
         KELEDON_LAUNCH_SECRET: process.env.KELEDON_LAUNCH_SECRET ? 'set' : 'not set'
       },
       versions: {
-        cloud: process.env.npm_package_version || '0.0.89'
+        cloud: process.env.npm_package_version || '0.0.92'
       }
     };
   }
@@ -602,7 +602,8 @@ export class CrudService {
       const payload = `${keledonId}:${userId}:${timestamp}`;
       const signature = this.signPayload(payload);
 
-      const deepLink = `keledon://launch?keledonId=${keledonId}&code=${device.pairingCode}&userId=${userId}&timestamp=${timestamp}&signature=${signature}`;
+      const cloudUrl = process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com';
+      const deepLink = `keledon://launch?keledonId=${keledonId}&code=${device.pairingCode}&userId=${userId}&timestamp=${timestamp}&signature=${signature}&cloudUrl=${encodeURIComponent(cloudUrl)}`;
 
       console.log('[Launch] Success, deepLink:', deepLink.substring(0, 50) + '...');
       return {
