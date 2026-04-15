@@ -14,6 +14,10 @@ contextBridge.exposeInMainWorld('keledon', {
     onStatusChange: (callback: (status: unknown) => void) => {
       ipcRenderer.on('runtime:statusChanged', (_event, status) => callback(status));
       return () => ipcRenderer.removeAllListeners('runtime:statusChanged');
+    },
+    onConnect: (callback: (data: { keledonId: string; code: string }) => void) => {
+      ipcRenderer.on('keledon:launch', (_event, data) => callback(data));
+      return () => ipcRenderer.removeAllListeners('keledon:launch');
     }
   },
   executor: {
@@ -102,6 +106,7 @@ declare global {
         disconnect: () => Promise<{ success: boolean }>;
         startSession: (sessionId: string, teamId?: string) => Promise<{ success: boolean; sessionId?: string; error?: string }>;
         onStatusChange: (callback: (status: unknown) => void) => () => void;
+        onConnect: (callback: (data: { keledonId: string; code: string }) => void) => () => void;
       };
       executor: {
         executeGoal: (goal: string, context: Record<string, unknown>) => Promise<unknown>;

@@ -236,6 +236,10 @@ const createWindow = (): void => {
       webSecurity: false
     }
   });
+  
+  // Enable zoom and scaling
+  mainWindow.webContents.setVisualZoomLevelLimits(1, 4);
+  mainWindow.webContents.setZoomLevel(0);
 
   (async () => {
     const bridge = await getAutoBrowseBridge();
@@ -248,8 +252,17 @@ const createWindow = (): void => {
     log.info('Main window loaded');
     mainWindow?.webContents.executeJavaScript(`
       window.keledon = window.keledon || {};
-      window.keledon.internal = { cdpUrl: 'http://localhost:9222' };
+      window.keledon.internal = { 
+        cdpUrl: 'http://localhost:9222',
+        version: '${app.getVersion()}'
+      };
+      window.keledon.copyLogs = function() {
+        navigator.clipboard.writeText('Keledon Browser v' + window.keledon.internal.version);
+      };
     `).catch(() => {});
+
+    // Show version in console
+    console.log('Keledon Browser v' + app.getVersion() + ' ready');
 
     // Auto-connect if configured
     if (AUTO_CONNECT && AUTO_PAIRING_CODE) {

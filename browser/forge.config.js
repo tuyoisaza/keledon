@@ -11,7 +11,7 @@ module.exports = {
       name: '@electron-forge/maker-squirrel',
       config: {
         name: 'keledon_browser',
-        setupExe: 'keledon-browser-v0.0.80-setup.exe',
+        setupExe: 'keledon-browser-v0.0.87-setup.exe',
         authors: 'Keledon Team',
         description: 'Keledon Desktop Browser'
       }

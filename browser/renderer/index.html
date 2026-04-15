@@ -198,7 +198,11 @@
 </head>
 <body>
   <header>
-    <h1>KELEDON Browser</h1>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <h1>KELEDON Browser</h1>
+      <button id="versionBtn" style="background:#16213e;border:1px solid #e94560;color:#e94560;padding:2px 8px;border-radius:3px;font-size:11px;cursor:pointer;">v0.0.86</button>
+      <button id="copyLogsBtn" style="background:#16213e;border:1px solid #0f3460;color:#888;padding:2px 8px;border-radius:3px;font-size:11px;cursor:pointer;">Copy Logs</button>
+    </div>
     <div class="menu-dots">
       <span></span><span></span><span></span>
     </div>
@@ -476,6 +480,29 @@
       debugToggle.textContent = debugEnabled ? 'Debug: ON' : 'Debug: OFF';
       debugToggle.classList.toggle('active', debugEnabled);
       window.keledon.brain.setDebugMode(debugEnabled);
+    });
+
+    // Version and copy logs
+    const versionBtn = document.getElementById('versionBtn');
+    const copyLogsBtn = document.getElementById('copyLogsBtn');
+    
+    versionBtn.addEventListener('click', async () => {
+      const info = await window.keledon.device.getInfo();
+      navigator.clipboard.writeText('Keledon Browser v' + info.version);
+      versionBtn.textContent = 'Copied!';
+      setTimeout(() => versionBtn.textContent = 'v' + info.version, 1000);
+    });
+    
+    copyLogsBtn.addEventListener('click', async () => {
+      try {
+        const logs = await window.keledon.evidence.getLogs();
+        navigator.clipboard.writeText(logs.logs || 'No logs available');
+        copyLogsBtn.textContent = 'Copied!';
+        setTimeout(() => copyLogsBtn.textContent = 'Copy Logs', 1000);
+      } catch (e) {
+        copyLogsBtn.textContent = 'Error';
+        setTimeout(() => copyLogsBtn.textContent = 'Copy Logs', 1000);
+      }
     });
 
     loadDeviceInfo();
