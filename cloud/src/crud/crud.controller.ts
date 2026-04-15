@@ -360,4 +360,47 @@ export class CrudController {
       };
     }
   }
+
+  // ========== VENDORS ==========
+
+  @Get('vendors/:teamId')
+  getVendors(@Param('teamId') teamId: string) {
+    return this.crud.getVendors(teamId);
+  }
+
+  @Post('vendors')
+  createVendor(@Body() data: {
+    teamId: string;
+    name: string;
+    type: string;
+    baseUrl?: string;
+    username?: string;
+    password?: string;
+    apiKey?: string;
+    config?: Record<string, unknown>;
+  }) {
+    return this.crud.createVendor(data);
+  }
+
+  @Put('vendors/:id')
+  updateVendor(
+    @Param('id') id: string,
+    @Body() data: {
+      name?: string;
+      type?: string;
+      baseUrl?: string;
+      username?: string;
+      password?: string;
+      apiKey?: string;
+      config?: Record<string, unknown>;
+      isActive?: boolean;
+    }
+  ) {
+    return this.crud.updateVendor(id, data);
+  }
+
+  @Delete('vendors/:id')
+  deleteVendor(@Param('id') id: string) {
+    return this.crud.deleteVendor(id);
+  }
 }

@@ -539,3 +539,25 @@ model DebugMode {
 
   @@map("debug_mode")
 }
+
+// ========== VENDORS ==========
+
+model Vendor {
+  id          String   @id @default(uuid())
+  teamId      String
+  name        String   // e.g., "Salesforce", "Genesys", "HubSpot"
+  type        String   // "crm", "telephony", "helpdesk", "other"
+  baseUrl     String?  // e.g., "https://login.salesforce.com"
+  username    String?  // encrypted
+  password    String?  // encrypted
+  apiKey      String?  // encrypted
+  config      Json?    // additional config (encrypted JSON)
+  isActive   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+  @@map("vendors")
+}

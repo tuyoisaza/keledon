@@ -498,3 +498,43 @@ export async function getFlowRunStatus(runId: string): Promise<any> {
     if (!response.ok) throw new Error(`Failed to get flow run status: ${response.statusText}`);
     return response.json();
 }
+
+// Vendors
+export interface Vendor {
+    id: string;
+    teamId: string;
+    name: string;
+    type: string;
+    baseUrl?: string;
+    username?: string;
+    hasPassword?: boolean;
+    hasApiKey?: boolean;
+    isActive: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export async function getVendors(teamId: string): Promise<Vendor[]> {
+    return fetchApi(`/vendors/${teamId}`);
+}
+
+export async function createVendor(data: {
+    teamId: string;
+    name: string;
+    type: string;
+    baseUrl?: string;
+    username?: string;
+    password?: string;
+    apiKey?: string;
+    config?: Record<string, unknown>;
+}): Promise<Vendor> {
+    return fetchApi('/vendors', 'POST', data);
+}
+
+export async function updateVendor(id: string, data: Partial<Vendor>): Promise<Vendor> {
+    return fetchApi(`/vendors/${id}`, 'PUT', data);
+}
+
+export async function deleteVendor(id: string): Promise<void> {
+    return fetchApi(`/vendors/${id}`, 'DELETE');
+}
