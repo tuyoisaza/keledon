@@ -79,6 +79,7 @@ model Team {
   sessions Session[]
   teamInterfaces TeamInterface[]
   flows    Flow[]
+  vendors Vendor[]
 
   @@map("teams")
 }
