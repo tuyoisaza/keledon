@@ -5,6 +5,13 @@ import { CrudService } from './crud.service';
 export class CrudController {
   constructor(private readonly crud: CrudService) {}
 
+  // ========== HEALTH ==========
+
+  @Get('health')
+  getHealth() {
+    return this.crud.getHealth();
+  }
+
   // ========== COMPANIES ==========
 
   @Get('companies')

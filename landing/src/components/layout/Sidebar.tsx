@@ -23,7 +23,8 @@ import {
     Users as UsersIcon,
     Copy,
     Check,
-    Trash2
+    Trash2,
+    FlaskConical
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
@@ -38,6 +39,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
+    { icon: FlaskConical, label: 'Test Browser', href: '/test-browser', minRole: 'user' },
     { icon: Play, label: 'Launch Keledon', href: '/launch-keledon', minRole: 'user' },
     { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard', minRole: 'user' },
     { icon: Radio, label: 'Sessions', href: '/sessions/history', minRole: 'user' },
@@ -89,7 +91,7 @@ export function Sidebar() {
                             <span className="font-bold text-lg text-foreground">Keledon</span>
                         </Link>
                         <div className="flex items-center gap-2 ml-10 mt-0.5">
-                            <span className="text-[10px] text-muted-foreground">v0.0.89</span>
+                            <span className="text-[10px] text-muted-foreground">v0.0.90</span>
                             <button
                                 onClick={async () => {
                                     const success = await copyDebugReport();

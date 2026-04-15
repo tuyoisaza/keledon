@@ -51,6 +51,27 @@ function handleDeepLink(url: string) {
   log.info('[DeepLink] Received:', url);
   try {
     const parsed = new URL(url);
+    const action = parsed.hostname;
+    
+    // Handle test deep links
+    if (action === 'test') {
+      const instructions = parsed.searchParams.get('instructions') || 'No instructions provided';
+      const timestamp = parsed.searchParams.get('timestamp') || Date.now().toString();
+      log.info('[DeepLink] TEST mode received at', timestamp);
+      log.info('[DeepLink] Instructions:', instructions);
+      
+      // Send to renderer
+      if (mainWindow) {
+        mainWindow.webContents.send('keledon:launch', { 
+          keledonId: 'test',
+          code: timestamp,
+          instructions 
+        });
+      }
+      return;
+    }
+    
+    // Handle launch deep links
     const keledonId = parsed.searchParams.get('keledonId');
     const code = parsed.searchParams.get('code');
     const userId = parsed.searchParams.get('userId');
