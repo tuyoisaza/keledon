@@ -7,6 +7,7 @@ import { ManagementLayout } from '@/components/management/ManagementLayout';
 import LandingPage from '@/pages/LandingPage';
 import LoginPage from '@/pages/LoginPage';
 import LaunchKeledonPage from '@/pages/LaunchKeledonPage';
+import TestBrowserPage from '@/pages/TestBrowserPage';
 import DashboardPage from '@/pages/DashboardPage';
 import KnowledgePage from '@/pages/KnowledgePage';
 import AdminPage from '@/pages/AdminPage';
@@ -70,6 +71,12 @@ export function AppRouter() {
                 {/* Public routes */}
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<LoginPage />} />
+
+                {/* Public test routes */}
+                <Route
+                    path="/test-browser"
+                    element={<TestBrowserPage />}
+                />
 
                 {/* Protected routes with layout */}
                 <Route

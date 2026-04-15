@@ -1,6 +1,6 @@
 {
   "name": "keledon-desktop-agent",
-  "version": "0.0.87",
+  "version": "0.0.90",
   "description": "KELEDON Desktop Agent - Electron runtime with AutoBrowse",
   "main": "dist/main.js",
   "scripts": {

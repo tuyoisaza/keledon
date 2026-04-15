@@ -1,9 +1,53 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
+const errorBuffer: string[] = [];
+const MAX_ERRORS = 50;
+
+function captureError(msg: string) {
+  const entry = `${new Date().toISOString()} | ${msg}`;
+  errorBuffer.push(entry);
+  if (errorBuffer.length > MAX_ERRORS) {
+    errorBuffer.shift();
+  }
+}
+
+const originalConsoleError = console.error;
+console.error = (...args: any[]) {
+  const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+  captureError(msg);
+  originalConsoleError.apply(console, args);
+};
+
 @Injectable()
 export class CrudService {
   constructor(private readonly prisma: PrismaService) {}
+
+  // ========== HEALTH ==========
+
+  async getHealth() {
+    const memUsage = process.memoryUsage();
+    return {
+      status: 'ok',
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+      errors: errorBuffer.slice(-50),
+      memory: {
+        heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024) + 'MB',
+        heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024) + 'MB',
+        rss: Math.round(memUsage.rss / 1024 / 1024) + 'MB',
+        external: Math.round(memUsage.external / 1024 / 1024) + 'MB'
+      },
+      env: {
+        NODE_ENV: process.env.NODE_ENV || 'development',
+        CLOUD_URL: process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
+        KELEDON_LAUNCH_SECRET: process.env.KELEDON_LAUNCH_SECRET ? 'set' : 'not set'
+      },
+      versions: {
+        cloud: process.env.npm_package_version || '0.0.89'
+      }
+    };
+  }
 
   // ========== COMPANIES ==========
 
