@@ -19,6 +19,15 @@ export class LocalAuthService {
   private users: SimpleUser[] = [];
 
   constructor() {
+    // Reset users file if it has old Date.now() IDs
+    if (fs.existsSync(this.usersFile)) {
+      const oldUsers = JSON.parse(fs.readFileSync(this.usersFile, 'utf-8'));
+      const hasBadIds = oldUsers.some((u: any) => u.id.match(/^google_\d+$/));
+      if (hasBadIds) {
+        console.log('[Auth] Clearing users with old ID format');
+        fs.unlinkSync(this.usersFile);
+      }
+    }
     this.loadUsers();
   }
 
@@ -41,11 +50,12 @@ export class LocalAuthService {
   }
 
   async findOrCreateGoogleUser(googleUser: any): Promise<SimpleUser> {
+    const newId = 'google_' + googleUser.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '_');
     let user = this.users.find(u => u.email === googleUser.email);
     
     if (!user) {
       user = {
-        id: 'google_' + googleUser.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '_'),
+        id: newId,
         email: googleUser.email,
         name: googleUser.name || googleUser.email.split('@')[0],
         provider: 'google',
@@ -54,8 +64,8 @@ export class LocalAuthService {
       };
       this.users.push(user);
     } else {
-      // Return the existing user with correct ID
-      user.id = user.id || 'google_' + googleUser.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '_');
+      // Force update to email-based ID format
+      user.id = newId;
     }
     user.last_session = new Date().toISOString();
     this.saveUsers();

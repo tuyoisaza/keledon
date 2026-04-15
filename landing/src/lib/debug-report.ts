@@ -87,7 +87,7 @@ export const debugCapture = new DebugCapture();
 
 export function getDebugInfo(): string {
     const timestamp = new Date().toISOString();
-    const version = 'v0.0.83';
+    const version = 'v0.0.84';
 
     const lines: string[] = [
         '═══════════════════════════════════════════════════════════════',
