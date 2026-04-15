@@ -527,17 +527,20 @@ export class CrudService {
         throw new Error('Keledon has no pairing code');
       }
 
-      // Verify user has access to this keledon
-      const user = await this.prisma.user.findUnique({ where: { id: userId } });
-      if (!user) {
-        throw new Error('User not found: ' + userId);
+      // Verify user has access - check Prisma first, then fallback for Google users
+      let user = await this.prisma.user.findUnique({ where: { id: userId } });
+      let isAuthorized = false;
+      
+      if (!user && userId.startsWith('google_')) {
+        // Google users - allow any google_ user to launch
+        isAuthorized = true;
+      } else if (user) {
+        // Check authorization (user must be superadmin, admin, or own the keledon)
+        isAuthorized = 
+          user.role === 'superadmin' ||
+          user.role === 'admin' ||
+          keledon.userId === userId;
       }
-
-      // Check authorization (user must be superadmin, admin, or own the keledon)
-      const isAuthorized = 
-        user.role === 'superadmin' ||
-        user.role === 'admin' ||
-        keledon.userId === userId;
 
       if (!isAuthorized) {
         throw new Error('User not authorized to launch this Keledon');
@@ -565,7 +568,7 @@ export class CrudService {
 
   private signPayload(payload: string): string {
     const crypto = require('crypto');
-    const secret = process.env.KELDEON_LAUNCH_SECRET || 'keledon-default-secret';
+    const secret = process.env.KELEDON_LAUNCH_SECRET || process.env.KELDEON_LAUNCH_SECRET || 'keledon-default-secret';
     return crypto.createHmac('sha256', secret).update(payload).digest('hex').substring(0, 16);
   }
 

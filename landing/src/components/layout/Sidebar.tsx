@@ -89,7 +89,7 @@ export function Sidebar() {
                             <span className="font-bold text-lg text-foreground">Keledon</span>
                         </Link>
                         <div className="flex items-center gap-2 ml-10 mt-0.5">
-                            <span className="text-[10px] text-muted-foreground">v0.0.84</span>
+                            <span className="text-[10px] text-muted-foreground">v0.0.85</span>
                             <button
                                 onClick={async () => {
                                     const success = await copyDebugReport();
