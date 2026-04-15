@@ -2,6 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
 import * as os from 'os';
 
+const errorBuffer: string[] = [];
+const MAX_ERRORS = 100;
+
+function captureError(msg: string) {
+  const entry = `${new Date().toISOString()} | ${msg}`;
+  errorBuffer.push(entry);
+  if (errorBuffer.length > MAX_ERRORS) {
+    errorBuffer.shift();
+  }
+}
+
+const originalConsoleError = console.error;
+console.error = (...args: any[]): void => {
+  const msg = args.map((a: any) => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+  captureError(msg);
+  originalConsoleError.apply(console, args);
+};
+
 export interface HealthCheck {
   service: string;
   status: 'healthy' | 'unhealthy' | 'degraded';
@@ -167,12 +185,27 @@ export class HealthService {
   }
 
   getBasicHealth() {
+    const memUsage = process.memoryUsage();
     return {
-      status: 'healthy',
+      status: 'ok',
       timestamp: new Date().toISOString(),
       uptime: Date.now() - this.startTime,
-      version: '0.0.60',
-      environment: process.env.NODE_ENV || 'development',
+      versions: {
+        cloud: process.env.npm_package_version || '0.0.94'
+      },
+      environment: {
+        NODE_ENV: process.env.NODE_ENV || 'development',
+        CLOUD_URL: process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
+        KELEDON_LAUNCH_SECRET: process.env.KELEDON_LAUNCH_SECRET ? 'set' : 'not set',
+        RAILWAY_SERVICE_NAME: process.env.RAILWAY_SERVICE_NAME || 'local',
+      },
+      memory: {
+        heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024) + 'MB',
+        heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024) + 'MB',
+        rss: Math.round(memUsage.rss / 1024 / 1024) + 'MB',
+        external: Math.round(memUsage.external / 1024 / 1024) + 'MB'
+      },
+      logs: errorBuffer.slice(-MAX_ERRORS)
     };
   }
 }
