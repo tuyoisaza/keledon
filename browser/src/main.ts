@@ -145,9 +145,18 @@ function handleDeepLink(url: string) {
           runtimeStatus.status = 'connected';
           runtimeStatus.authToken = data.auth_token;
           runtimeStatus.sessionId = data.keledon_id || null;
+          runtimeStatus.keledonId = data.keledon_id || null;
+          runtimeStatus.teamId = data.team?.id || null;
+          runtimeStatus.teamName = data.team?.name || null;
+          runtimeStatus.vendors = data.vendors || [];
           log.info('[DeepLink] Auto-connect successful, keledon_id:', data.keledon_id);
+          log.info('[DeepLink] Team:', data.team?.name, 'Vendors:', data.vendors?.length);
 
           connectWebSockets(runtimeStatus.cloudUrl, data.auth_token);
+
+          if (data.vendors?.length > 0) {
+            autoLoginToVendor(data.vendors[0]);
+          }
         } else {
           log.error('[DeepLink] Auto-connect failed:', response.status);
         }
@@ -192,6 +201,87 @@ let deviceSocket: Socket | null = null;
 let agentSocket: Socket | null = null;
 let debugMode = false;
 
+const vendorLoginState = {
+  isLoggingIn: false,
+  vendorId: null as string | null
+};
+
+function decrypt(text: string): string {
+  try {
+    const crypto = require('crypto');
+    const ENCRYPTION_KEY = process.env.KELEDON_VENDOR_KEY || 'keledon-vendor-secret-key-32!';
+    const [ivHex, encrypted] = text.split(':');
+    const iv = Buffer.from(ivHex, 'hex');
+    const key = crypto.scryptSync(ENCRYPTION_KEY, 'salt', 32);
+    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  } catch {
+    return text;
+  }
+}
+
+async function autoLoginToVendor(vendor: any) {
+  if (vendorLoginState.isLoggingIn || !vendor.baseUrl) {
+    log.warn('[Vendor] Skipping login - already logging in or no baseUrl');
+    return;
+  }
+
+  vendorLoginState.isLoggingIn = true;
+  vendorLoginState.vendorId = vendor.id;
+
+  try {
+    const username = vendor.username ? decrypt(vendor.username) : null;
+    const password = vendor.password ? decrypt(vendor.password) : null;
+    const apiKey = vendor.apiKey ? decrypt(vendor.apiKey) : null;
+
+    log.info('[Vendor] Auto-login to:', vendor.name, vendor.baseUrl);
+
+    const bridge = await getAutoBrowseBridge();
+    if (!bridge.isAutoBrowseInitialized()) {
+      log.error('[Vendor] AutoBrowse not initialized, cannot login');
+      return;
+    }
+
+    try {
+      mainWindow?.webContents.loadURL(vendor.baseUrl);
+    } catch (e) {
+      log.warn('[Vendor] loadURL failed, using goal instead');
+    }
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    let loginGoal = '';
+    if (username && password) {
+      loginGoal = `Login to ${vendor.name} with username "${username}" and password "${password}"`;
+    } else if (apiKey) {
+      loginGoal = `Login to ${vendor.name} using API key`;
+    }
+
+    if (loginGoal) {
+      log.info('[Vendor] Executing login goal:', loginGoal);
+      const result = await bridge.executeGoal({
+        execution_id: `vendor-login-${Date.now()}`,
+        goal: loginGoal,
+        inputs: { username, password, apiKey },
+        constraints: { max_steps: 20, timeout_ms: 60000 }
+      });
+
+      log.info('[Vendor] Login result:', result.goal_status);
+      mainWindow?.webContents.send('vendor:login', {
+        vendorId: vendor.id,
+        vendorName: vendor.name,
+        status: result.goal_status,
+        timestamp: new Date().toISOString()
+      });
+    }
+  } catch (error) {
+    log.error('[Vendor] Auto-login error:', error);
+  } finally {
+    vendorLoginState.isLoggingIn = false;
+  }
+}
+
 async function initializeAutoBrowseEngine(): Promise<void> {
   const bridge = await getAutoBrowseBridge();
   if (bridge.isAutoBrowseInitialized()) {
@@ -233,7 +323,11 @@ let runtimeStatus = {
   sessionId: null as string | null,
   authToken: null as string | null,
   pendingKeledonId: null as string | null,
-  pendingPairingCode: null as string | null
+  pendingPairingCode: null as string | null,
+  teamId: null as string | null,
+  teamName: null as string | null,
+  vendors: [] as any[],
+  keledonId: null as string | null
 };
 
 const AUTO_CONNECT = process.env.AUTO_CONNECT === 'true';
@@ -318,11 +412,18 @@ const createWindow = (): void => {
             runtimeStatus.status = 'connected';
             runtimeStatus.authToken = data.auth_token;
             runtimeStatus.sessionId = data.keledon_id || null;
+            runtimeStatus.keledonId = data.keledon_id || null;
+            runtimeStatus.teamId = data.team?.id || null;
+            runtimeStatus.teamName = data.team?.name || null;
+            runtimeStatus.vendors = data.vendors || [];
             log.info('Auto-connect successful, keledon_id:', data.keledon_id);
 
             connectWebSockets(runtimeStatus.cloudUrl, data.auth_token);
 
-            // Auto-join session if configured
+            if (data.vendors?.length > 0) {
+              autoLoginToVendor(data.vendors[0]);
+            }
+
             if (AUTO_SESSION_ID) {
               runtimeStatus.sessionId = AUTO_SESSION_ID;
               log.info('Auto-join session:', AUTO_SESSION_ID);
@@ -563,9 +664,18 @@ ipcMain.handle('runtime:connect', async (_event, config: { cloudUrl: string; tok
       const data = await response.json();
       runtimeStatus.status = 'connected';
       runtimeStatus.authToken = data.auth_token;
+      runtimeStatus.sessionId = data.keledon_id || null;
+      runtimeStatus.keledonId = data.keledon_id || null;
+      runtimeStatus.teamId = data.team?.id || null;
+      runtimeStatus.teamName = data.team?.name || null;
+      runtimeStatus.vendors = data.vendors || [];
       log.info('Connected to cloud, keledon_id:', data.keledon_id);
-      
+
       connectWebSockets(config.cloudUrl, data.auth_token);
+
+      if (data.vendors?.length > 0) {
+        autoLoginToVendor(data.vendors[0]);
+      }
       
       try {
         await mediaLayer.initialize({
