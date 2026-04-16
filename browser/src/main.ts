@@ -149,8 +149,9 @@ function handleDeepLink(url: string) {
           runtimeStatus.teamId = data.team?.id || null;
           runtimeStatus.teamName = data.team?.name || null;
           runtimeStatus.vendors = data.vendors || [];
+          runtimeStatus.escalationTriggers = data.team?.escalationTriggers || [];
           log.info('[DeepLink] Auto-connect successful, keledon_id:', data.keledon_id);
-          log.info('[DeepLink] Team:', data.team?.name, 'Vendors:', data.vendors?.length);
+          log.info('[DeepLink] Team:', data.team?.name, 'Vendors:', data.vendors?.length, 'EscalationTriggers:', runtimeStatus.escalationTriggers.length);
 
           connectWebSockets(runtimeStatus.cloudUrl, data.auth_token);
 
@@ -348,6 +349,39 @@ const AUTO_PAIRING_CODE = process.env.PAIRING_CODE || '';
 const AUTO_SESSION_ID = process.env.SESSION_ID || '';
 const KELECTRON_KELEDON_ID = process.env.KELECTRON_KELEDON_ID || '';
 
+// ========== ESCALATION FUNCTIONS ==========
+function showEscalation(type: 'trigger' | 'failure', data: {
+  triggerWord?: string;
+  message: string;
+  step?: string;
+  retryCount?: number;
+}) {
+  log.warn('[Escalation]', type, data);
+  
+  if (mainWindow) {
+    mainWindow.webContents.send('escalation:show', { type, data });
+  }
+  
+  // If via WebSocket, emit to brain
+  if (deviceSocket && deviceSocket.connected) {
+    deviceSocket.emit('escalation:alert', {
+      type,
+      ...data,
+      timestamp: new Date().toISOString()
+    });
+  }
+}
+
+function checkEscalationTriggers(text: string): boolean {
+  const lowerText = text.toLowerCase();
+  for (const trigger of runtimeStatus.escalationTriggers) {
+    if (lowerText.includes(trigger.toLowerCase())) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // ========== TAB MANAGEMENT ==========
 const TAB_HEIGHT = 40;
 
@@ -527,6 +561,7 @@ const createWindow = (): void => {
             runtimeStatus.teamId = data.team?.id || null;
             runtimeStatus.teamName = data.team?.name || null;
             runtimeStatus.vendors = data.vendors || [];
+            runtimeStatus.escalationTriggers = data.team?.escalationTriggers || [];
             log.info('Auto-connect successful, keledon_id:', data.keledon_id);
 
             connectWebSockets(runtimeStatus.cloudUrl, data.auth_token);
@@ -786,6 +821,7 @@ ipcMain.handle('runtime:connect', async (_event, config: { cloudUrl: string; tok
       runtimeStatus.teamId = data.team?.id || null;
       runtimeStatus.teamName = data.team?.name || null;
       runtimeStatus.vendors = data.vendors || [];
+      runtimeStatus.escalationTriggers = data.team?.escalationTriggers || [];
       log.info('Connected to cloud, keledon_id:', data.keledon_id);
 
       connectWebSockets(config.cloudUrl, data.auth_token);
@@ -1086,3 +1122,32 @@ ipcMain.handle('executor:getCDPUrl', async () => {
 });
 
 log.info('KELEDON Desktop Agent main process initialized');
+
+// ========== ESCALATION IPC HANDLERS ==========
+ipcMain.on('escalation:action', (_event, action: string, data?: any) => {
+  log.info('[Escalation] User action:', action, data);
+  
+  // Send to brain via WebSocket if connected
+  if (deviceSocket && deviceSocket.connected) {
+    deviceSocket.emit('escalation:response', {
+      action,
+      data,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  // Notify renderer
+  mainWindow?.webContents.send('escalation:handled', { action, data });
+});
+
+// ========== EXECUTOR URL HANDLER ==========
+ipcMain.handle('executor:getUrl', async () => {
+  const tab = tabs.find(t => t.id === activeTabId);
+  if (tab) {
+    return tab.url;
+  }
+  if (mainWindow) {
+    return mainWindow.webContents.getURL();
+  }
+  return '';
+});

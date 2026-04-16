@@ -25,6 +25,8 @@ contextBridge.exposeInMainWorld('keledon', {
       ipcRenderer.invoke('executor:executeGoal', goal, context),
     executeSteps: (steps: unknown[]) =>
       ipcRenderer.invoke('executor:executeSteps', steps),
+    getCDPUrl: () => ipcRenderer.invoke('executor:getCDPUrl'),
+    getCurrentUrl: () => ipcRenderer.invoke('executor:getUrl'),
     onProgress: (callback: (progress: unknown) => void) => {
       ipcRenderer.on('executor:progress', (_event, progress) => callback(progress));
       return () => ipcRenderer.removeAllListeners('executor:progress');
@@ -57,9 +59,30 @@ contextBridge.exposeInMainWorld('keledon', {
     setDebugMode: (enabled: boolean) => ipcRenderer.invoke('brain:setDebugMode', enabled)
   },
   launcher: {
-    onLaunch: (callback: (data: { keledonId: string; code: string }) => void) => {
+    onLaunch: (callback: (data: { keledonId: string; code: string; cloudUrl?: string; action?: string }) => void) => {
       ipcRenderer.on('keledon:launch', (_event, data) => callback(data));
       return () => ipcRenderer.removeAllListeners('keledon:launch');
+    }
+  },
+  tabs: {
+    create: (name: string, url: string) => ipcRenderer.invoke('tabs:create', name, url),
+    list: () => ipcRenderer.invoke('tabs:list'),
+    switch: (tabId: string) => ipcRenderer.invoke('tabs:switch', tabId),
+    close: (tabId: string) => ipcRenderer.invoke('tabs:close', tabId),
+    getActive: () => ipcRenderer.invoke('tabs:getActive'),
+    onUpdate: (callback: (tabs: TabData[]) => void) => {
+      ipcRenderer.on('tabs:updated', (_event, tabs) => callback(tabs));
+      return () => ipcRenderer.removeAllListeners('tabs:updated');
+    }
+  },
+  escalation: {
+    onShow: (callback: (data: { type: string; data: EscalationData }) => void) => {
+      ipcRenderer.on('escalation:show', (_event, data) => callback(data));
+      return () => ipcRenderer.removeAllListeners('escalation:show');
+    },
+    onAction: (callback: (action: 'continue' | 'fix' | 'abort', data?: any) => void) => {
+      ipcRenderer.on('escalation:action', (_event, data) => callback(data.action, data.data));
+      return () => ipcRenderer.removeAllListeners('escalation:action');
     }
   }
 });
@@ -81,6 +104,20 @@ interface CommandData {
   payload: unknown;
   flow_id?: string;
   timestamp: string;
+}
+
+interface TabData {
+  id: string;
+  name: string;
+  url: string;
+  active: boolean;
+}
+
+interface EscalationData {
+  triggerWord?: string;
+  message: string;
+  step?: string;
+  retryCount?: number;
 }
 
 declare global {
@@ -111,6 +148,8 @@ declare global {
       executor: {
         executeGoal: (goal: string, context: Record<string, unknown>) => Promise<unknown>;
         executeSteps: (steps: unknown[]) => Promise<unknown>;
+        getCDPUrl: () => Promise<string>;
+        getCurrentUrl: () => Promise<string>;
         onProgress: (callback: (progress: unknown) => void) => () => void;
       };
       evidence: {
@@ -132,6 +171,18 @@ declare global {
       };
       launcher: {
         onLaunch: (callback: (data: { keledonId: string; code: string; cloudUrl?: string; action?: string }) => void) => () => void;
+      };
+      tabs: {
+        create: (name: string, url: string) => Promise<{ id: string; name: string; url: string }>;
+        list: () => Promise<{ id: string; name: string; url: string; active: boolean }[]>;
+        switch: (tabId: string) => Promise<{ success: boolean }>;
+        close: (tabId: string) => Promise<{ success: boolean }>;
+        getActive: () => Promise<string>;
+        onUpdate: (callback: (tabs: { id: string; name: string; url: string; active: boolean }[]) => void) => () => void;
+      };
+      escalation: {
+        onShow: (callback: (data: { type: 'trigger' | 'failure'; data: EscalationData }) => void) => () => void;
+        onAction: (callback: (action: 'continue' | 'fix' | 'abort', data?: any) => void) => () => void;
       };
     };
   }
