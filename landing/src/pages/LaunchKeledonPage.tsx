@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check, Download } from 'lucide-react';
+import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check, Download, Building2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { getKeledons, type Keledon } from '@/lib/crud-api';
+import { getKeledons, getVendors, type Keledon, type Vendor } from '@/lib/crud-api';
 import { toast } from 'sonner';
 
 export default function LaunchKeledonPage() {
     const { user } = useAuth();
     const [keledons, setKeledons] = useState<Keledon[]>([]);
+    const [vendorsMap, setVendorsMap] = useState<Record<string, Vendor[]>>({});
     const [loading, setLoading] = useState(true);
     const [launching, setLaunching] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -20,6 +21,21 @@ export default function LaunchKeledonPage() {
         try {
             const data = await getKeledons();
             setKeledons(data);
+            
+            const vendorsByTeam: Record<string, Vendor[]> = {};
+            for (const keledon of data) {
+                if (keledon.teamId && !vendorsMap[keledon.teamId]) {
+                    try {
+                        const vendors = await getVendors(keledon.teamId);
+                        vendorsByTeam[keledon.teamId] = vendors;
+                    } catch (e) {
+                        console.error('Failed to load vendors for team:', keledon.teamId);
+                    }
+                }
+            }
+            if (Object.keys(vendorsByTeam).length > 0) {
+                setVendorsMap(prev => ({ ...prev, ...vendorsByTeam }));
+            }
         } catch (error) {
             console.error('Failed to load keledons:', error);
             toast.error('Failed to load Keledons');
@@ -177,6 +193,23 @@ export default function LaunchKeledonPage() {
                             </div>
 
                             <div className="space-y-2 mb-4">
+                                <div className="text-sm flex items-center gap-2">
+                                    <Building2 className="w-4 h-4 text-muted-foreground" />
+                                    <span className="text-muted-foreground">Company:</span>
+                                    <span className="font-medium">{keledon.team?.brand?.company?.name || 'N/A'}</span>
+                                </div>
+                                <div className="text-sm">
+                                    <span className="text-muted-foreground">Team:</span>{' '}
+                                    <span className="font-medium">{keledon.team?.name || 'No team'}</span>
+                                </div>
+                                {vendorsMap[keledon.teamId]?.length > 0 && (
+                                    <div className="text-sm">
+                                        <span className="text-muted-foreground">Vendors:</span>{' '}
+                                        <span className="font-medium">
+                                            {vendorsMap[keledon.teamId].map(v => v.name).join(', ')}
+                                        </span>
+                                    </div>
+                                )}
                                 <div className="text-sm">
                                     <span className="text-muted-foreground">Autonomy:</span>{' '}
                                     <span className="font-medium">{keledon.autonomyLevel}/5</span>
