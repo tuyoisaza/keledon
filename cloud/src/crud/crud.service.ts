@@ -573,7 +573,14 @@ export class CrudService {
       console.log('[Launch] Device found, pairingCode:', device.pairingCode);
 
       if (!device.pairingCode) {
-        throw new Error('Keledon has no pairing code');
+        console.log('[Launch] No pairing code, generating on-demand...');
+        device.pairingCode = this.generatePairingCodeString();
+        device.pairingCodeExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        await this.prisma.device.update({
+          where: { id: device.id },
+          data: { pairingCode: device.pairingCode, pairingCodeExpiresAt: device.pairingCodeExpiresAt }
+        });
+        console.log('[Launch] New pairing code generated:', device.pairingCode);
       }
 
       // Verify user has access - check Prisma first, then fallback for Google users
