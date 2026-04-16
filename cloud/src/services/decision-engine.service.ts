@@ -14,6 +14,7 @@ import {
 } from '../telemetry/decision-evidence';
 import { FlowService } from '../flows/flow.service';
 import { SubAgentService } from '../subagents/subagent.service';
+import { LLMService } from '../llm/llm.service';
 
 export interface DecisionContext {
   sessionId: string;
@@ -110,6 +111,8 @@ export class DecisionEngineService {
     private readonly flowService?: FlowService,
     @Optional()
     private readonly subAgentService?: SubAgentService,
+    @Optional()
+    private readonly llmService?: LLMService,
   ) {}
 
   /**
@@ -545,11 +548,40 @@ export class DecisionEngineService {
    * Core decision making logic
    */
   private async makeDecision(context: DecisionContext): Promise<any> {
-    const { currentTranscript, confidence, previousEvents } = context;
-
-    // Simple decision logic for now - can be enhanced with AI
+    const { currentTranscript, confidence, previousEvents, metadata, sessionId } = context;
     const text = currentTranscript.toLowerCase().trim();
 
+    // Get vector context from RAG for grounding
+    let vectorContext: RetrievalResult[] = [];
+    try {
+      if (this.ragService) {
+        vectorContext = await this.ragService.retrieveKnowledge(currentTranscript, {
+          sessionId,
+          companyId: metadata?.companyId || '',
+          maxResults: 3
+        });
+      }
+    } catch (e) {
+      this.logger.warn('Vector context retrieval failed:', e);
+    }
+
+    // If LLM is enabled, use it for decision making
+    if (this.llmService?.isEnabled()) {
+      try {
+        const llmResponse = await this.llmService.generate({
+          prompt: currentTranscript,
+          context: vectorContext.map(v => v.document.content),
+          maxTokens: 300,
+          temperature: 0.7
+        });
+        
+        return this.mapLLMResponseToCommand(llmResponse.text, confidence, text);
+      } catch (error) {
+        this.logger.error('LLM decision failed, falling back to rule-based:', error);
+      }
+    }
+
+    // Fallback to rule-based decisions
     // Check for explicit commands
     if (text.includes('stop') || text.includes('cancel') || text.includes('never mind')) {
       return {
@@ -597,6 +629,29 @@ export class DecisionEngineService {
       mode: 'normal',
       reasoning: 'Default response to user input'
     };
+  }
+
+  /**
+   * Map LLM response to command
+   */
+  private mapLLMResponseToCommand(responseText: string, confidence: number, text: string): any {
+    const lower = text;
+    
+    if (lower.includes('stop') || lower.includes('cancel')) {
+      return { type: 'stop', text: responseText, confidence: 0.9, mode: 'normal' };
+    }
+    
+    if (lower.includes('click') || lower.includes('type') || lower.includes('select')) {
+      return { 
+        type: 'ui_steps', 
+        text: responseText, 
+        confidence: 0.7, 
+        mode: 'normal',
+        steps: this.parseUISteps(lower)
+      };
+    }
+    
+    return { type: 'say', text: responseText, confidence, mode: 'normal' };
   }
 
   /**

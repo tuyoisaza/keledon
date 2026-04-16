@@ -26,6 +26,9 @@ import { SubAgentModule } from './subagents/subagent.module';
 import { SubAgentController } from './subagents/subagent.controller';
 import { DeviceModule } from './devices/device.module';
 import { DeviceController } from './devices/device.controller';
+import { LLMModule } from './llm/llm.module';
+import { EscalationService } from './services/escalation.service';
+import { EscalationController } from './controllers/escalation.controller';
 
 @Module({
   imports: [
@@ -43,6 +46,7 @@ import { DeviceController } from './devices/device.controller';
     FlowModule,
     SubAgentModule,
     DeviceModule,
+    LLMModule,
   ],
   controllers: [
     AppController,
@@ -53,6 +57,7 @@ import { DeviceController } from './devices/device.controller';
     FlowController,
     SubAgentController,
     DeviceController,
+    EscalationController,
   ],
   providers: [
     AppService,
@@ -61,6 +66,7 @@ import { DeviceController } from './devices/device.controller';
     AgentGateway,
     DeviceGateway,
     DecisionEngineService,
+    EscalationService,
     TeamController,
     MvpStoreService,
   ],

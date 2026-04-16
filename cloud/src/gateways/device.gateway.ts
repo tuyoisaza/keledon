@@ -12,6 +12,7 @@ import { Logger, Inject, Optional } from '@nestjs/common';
 import { DeviceService } from '../devices/device.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { DecisionEngineService, DecisionContext, DecisionResult } from '../services/decision-engine.service';
+import { EscalationService } from '../services/escalation.service';
 
 const deviceCorsOrigins = process.env.KELEDON_ALLOW_ALL_CORS === 'true'
   ? true
@@ -31,6 +32,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private deviceService: DeviceService,
     private prisma: PrismaService,
     @Optional() private decisionEngine?: DecisionEngineService,
+    @Optional() private escalationService?: EscalationService,
   ) {}
 
   @WebSocketServer()
@@ -297,7 +299,35 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { trigger: string; transcript: string; timestamp: string }
   ) {
     this.logger.warn(`Escalation trigger from ${client.data.deviceId}:`, data.trigger);
-    // TODO: Store in database, notify human
+    
+    if (this.escalationService) {
+      try {
+        const escalation = await this.escalationService.create({
+          sessionId: client.data.sessionId || null,
+          deviceId: client.data.deviceId,
+          trigger: data.trigger,
+          triggerType: 'keyword',
+          transcript: data.transcript,
+          metadata: { timestamp: data.timestamp }
+        });
+        
+        this.logger.log(`Escalation logged: ${escalation.id}`);
+        
+        // Emit to session room for real-time notification
+        if (client.data.sessionId) {
+          this.server.to(`session:${client.data.sessionId}`).emit('escalation_triggered', {
+            escalation_id: escalation.id,
+            trigger: data.trigger,
+            timestamp: data.timestamp
+          });
+        }
+        
+        return { received: true, escalation_id: escalation.id };
+      } catch (error) {
+        this.logger.error(`Failed to log escalation:`, error);
+      }
+    }
+    
     return { received: true };
   }
 
@@ -307,7 +337,24 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { reason: string; timestamp: string }
   ) {
     this.logger.warn(`Escalation abort from ${client.data.deviceId}:`, data.reason);
-    // TODO: Store in database, notify human, end session
+    
+    if (this.escalationService) {
+      try {
+        // Find the active escalation for this session
+        if (client.data.sessionId) {
+          const escalations = await this.escalationService.getBySessionId(client.data.sessionId);
+          const activeEscalation = escalations.find(e => e.status === 'triggered');
+          
+          if (activeEscalation) {
+            await this.escalationService.abort(activeEscalation.id, data.reason);
+            this.logger.log(`Escalation aborted: ${activeEscalation.id}`);
+          }
+        }
+      } catch (error) {
+        this.logger.error(`Failed to abort escalation:`, error);
+      }
+    }
+    
     return { received: true };
   }
 }

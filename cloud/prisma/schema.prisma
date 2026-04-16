@@ -529,6 +529,30 @@ model FeatureFlag {
   @@map("feature_flags")
 }
 
+// ========== ESCALATION LOGS ==========
+
+model EscalationLog {
+  id            String   @id @default(uuid())
+  sessionId     String?
+  teamId        String?
+  deviceId      String?
+  trigger       String
+  triggerType   String   @default("keyword") // keyword, manual, system
+  transcript    String?
+  status        String   @default("triggered") // triggered, acknowledged, resolved, aborted
+  metadata      String?  // JSON
+  acknowledgedBy String?
+  acknowledgedAt DateTime?
+  resolvedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([sessionId])
+  @@index([teamId])
+  @@index([status])
+  @@map("escalation_logs")
+}
+
 // ========== DEBUG MODE ==========
 
 model DebugMode {
