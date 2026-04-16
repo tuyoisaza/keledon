@@ -180,19 +180,31 @@ async function getAutoBrowseBridge() {
   return autobrowseBridge;
 }
 
-const mediaLayer = {
-  initialize: async (_?: any) => {},
-  getCallStatus: () => ({}),
-  startCall: async (_?: any) => {},
-  stopCall: async () => {},
-  speak: async (_?: any, __?: any) => {},
-  stopSpeaking: async () => {},
-  mute: () => {},
-  unmute: () => {},
-  hold: async () => {},
-  resume: async () => {},
-  on: (_: any, __: any) => {},
-  emit: (_: any, __?: any) => {}
+import { mediaLayer } from './media/media-layer.js';
+import { transcriptMonitor } from './media/transcript-monitor.js';
+
+const mediaLayerWrapper = {
+  initialize: async () => mediaLayer.initialize(),
+  getCallStatus: () => mediaLayer.getCallStatus(),
+  startCall: async (sessionId?: string) => {
+    await mediaLayer.startCall(sessionId);
+    transcriptMonitor.setMediaLayer(mediaLayer);
+    transcriptMonitor.startMonitoring();
+    return { success: true };
+  },
+  stopCall: async () => {
+    await mediaLayer.stopCall();
+    transcriptMonitor.stopMonitoring();
+    return { success: true };
+  },
+  speak: async (text: string, interruptible?: boolean) => mediaLayer.speak(text, interruptible),
+  stopSpeaking: async () => mediaLayer.stopSpeaking(),
+  mute: () => mediaLayer.mute(),
+  unmute: () => mediaLayer.unmute(),
+  hold: async () => mediaLayer.hold(),
+  resume: async () => mediaLayer.resume(),
+  on: (event: string, callback: any) => mediaLayer.on(event, callback),
+  emit: (event: string, data?: any) => mediaLayer.emit(event, data)
 };
 
 let autoBrowseExecutor: any = null;
@@ -349,12 +361,34 @@ const AUTO_PAIRING_CODE = process.env.PAIRING_CODE || '';
 const AUTO_SESSION_ID = process.env.SESSION_ID || '';
 const KELECTRON_KELEDON_ID = process.env.KELECTRON_KELEDON_ID || '';
 
+// Initialize transcript monitor with empty triggers initially
+transcriptMonitor.setTriggers(runtimeStatus.escalationTriggers);
+
+// Listen for escalation events from transcript monitor
+transcriptMonitor.on('escalation', (match) => {
+  showEscalation('trigger', {
+    triggerWord: match.trigger,
+    message: `Detected escalation keyword: "${match.trigger}"`,
+    transcript: match.transcript
+  });
+  
+  // Send to cloud
+  if (deviceSocket && deviceSocket.connected) {
+    deviceSocket.emit('escalation:trigger', {
+      trigger: match.trigger,
+      transcript: match.transcript,
+      timestamp: match.timestamp
+    });
+  }
+});
+
 // ========== ESCALATION FUNCTIONS ==========
 function showEscalation(type: 'trigger' | 'failure', data: {
   triggerWord?: string;
   message: string;
   step?: string;
   retryCount?: number;
+  transcript?: string;
 }) {
   log.warn('[Escalation]', type, data);
   
@@ -562,6 +596,7 @@ const createWindow = (): void => {
             runtimeStatus.teamName = data.team?.name || null;
             runtimeStatus.vendors = data.vendors || [];
             runtimeStatus.escalationTriggers = data.team?.escalationTriggers || [];
+            transcriptMonitor.setTriggers(runtimeStatus.escalationTriggers);
             log.info('Auto-connect successful, keledon_id:', data.keledon_id);
 
             connectWebSockets(runtimeStatus.cloudUrl, data.auth_token);
@@ -622,6 +657,17 @@ const connectWebSockets = (cloudUrl: string, token: string): void => {
   
   deviceSocket.on('error', (error) => {
     log.error('Device WebSocket error:', error);
+  });
+
+  // Forward local transcripts to cloud
+  mediaLayer.on('transcript', (text: string, isFinal: boolean) => {
+    if (deviceSocket && deviceSocket.connected) {
+      deviceSocket.emit('voice:transcript', {
+        text,
+        isFinal,
+        timestamp: new Date().toISOString()
+      });
+    }
   });
   
   deviceSocket.on('transcript', (data) => {
@@ -822,6 +868,7 @@ ipcMain.handle('runtime:connect', async (_event, config: { cloudUrl: string; tok
       runtimeStatus.teamName = data.team?.name || null;
       runtimeStatus.vendors = data.vendors || [];
       runtimeStatus.escalationTriggers = data.team?.escalationTriggers || [];
+      transcriptMonitor.setTriggers(runtimeStatus.escalationTriggers);
       log.info('Connected to cloud, keledon_id:', data.keledon_id);
 
       connectWebSockets(config.cloudUrl, data.auth_token);
@@ -831,14 +878,7 @@ ipcMain.handle('runtime:connect', async (_event, config: { cloudUrl: string; tok
       }
       
       try {
-        await mediaLayer.initialize({
-          deviceConfig: {
-            deviceId: runtimeStatus.deviceId,
-            organizationId: data.organization_id,
-            cloudUrl: config.cloudUrl,
-            authToken: data.auth_token
-          }
-        });
+        await mediaLayerWrapper.initialize();
       } catch (e) {
         console.warn('[Main] mediaLayer.initialize skipped:', e);
       }
@@ -983,7 +1023,7 @@ ipcMain.handle('evidence:getScreenshots', async () => {
 // Media Layer IPC handlers
 ipcMain.handle('media:startCall', async (_event, sessionId: string) => {
   try {
-    await mediaLayer.startCall(sessionId);
+    await mediaLayerWrapper.startCall(sessionId);
     runtimeStatus.sessionId = sessionId;
     return { success: true, sessionId };
   } catch (error) {
@@ -993,7 +1033,7 @@ ipcMain.handle('media:startCall', async (_event, sessionId: string) => {
 
 ipcMain.handle('media:stopCall', async () => {
   try {
-    await mediaLayer.stopCall();
+    await mediaLayerWrapper.stopCall();
     runtimeStatus.sessionId = null;
     return { success: true };
   } catch (error) {
@@ -1001,9 +1041,9 @@ ipcMain.handle('media:stopCall', async () => {
   }
 });
 
-ipcMain.handle('media:speak', async (_event, text: string, options?: { voice?: string; speed?: number }) => {
+ipcMain.handle('media:speak', async (_event, text: string, interruptible: boolean = true) => {
   try {
-    await mediaLayer.speak(text, options);
+    await mediaLayerWrapper.speak(text, interruptible);
     return { success: true };
   } catch (error) {
     return { success: false, error: String(error) };
@@ -1012,7 +1052,7 @@ ipcMain.handle('media:speak', async (_event, text: string, options?: { voice?: s
 
 ipcMain.handle('media:stopSpeaking', async () => {
   try {
-    await mediaLayer.stopSpeaking();
+    await mediaLayerWrapper.stopSpeaking();
     return { success: true };
   } catch (error) {
     return { success: false, error: String(error) };
@@ -1020,22 +1060,22 @@ ipcMain.handle('media:stopSpeaking', async () => {
 });
 
 ipcMain.handle('media:getStatus', async () => {
-  return mediaLayer.getCallStatus();
+  return mediaLayerWrapper.getCallStatus();
 });
 
 ipcMain.handle('media:mute', async () => {
-  mediaLayer.mute();
+  mediaLayerWrapper.mute();
   return { success: true };
 });
 
 ipcMain.handle('media:unmute', async () => {
-  mediaLayer.unmute();
+  mediaLayerWrapper.unmute();
   return { success: true };
 });
 
 ipcMain.handle('media:hold', async () => {
   try {
-    await mediaLayer.hold();
+    await mediaLayerWrapper.hold();
     return { success: true };
   } catch (error) {
     return { success: false, error: String(error) };
@@ -1044,11 +1084,27 @@ ipcMain.handle('media:hold', async () => {
 
 ipcMain.handle('media:resume', async () => {
   try {
-    await mediaLayer.resume();
+    await mediaLayerWrapper.resume();
     return { success: true };
   } catch (error) {
     return { success: false, error: String(error) };
   }
+});
+
+// Set up media layer event forwarding
+mediaLayer.on('transcript', (text: string, isFinal: boolean) => {
+  mainWindow?.webContents.send('media:transcript', {
+    text,
+    isFinal,
+    timestamp: new Date().toISOString()
+  });
+});
+
+mediaLayer.on('call-status', (status: 'idle' | 'in-call' | 'on-hold') => {
+  mainWindow?.webContents.send('media:callStatus', {
+    status,
+    ...mediaLayerWrapper.getCallStatus()
+  });
 });
 
 ipcMain.handle('brain:setDebugMode', async (_event, enabled: boolean) => {
@@ -1084,6 +1140,31 @@ mediaLayer.on('call:ended', (data) => {
 
 mediaLayer.on('media:error', (data) => {
   mainWindow?.webContents.send('media:error', data);
+});
+
+// Escalation action handler
+ipcMain.handle('escalation:action', async (_event, action: 'continue' | 'fix' | 'abort', data?: any) => {
+  log.info('[Escalation] Action:', action);
+  
+  if (action === 'continue') {
+    log.info('[Escalation] Continuing session');
+    return { success: true, action: 'continue' };
+  } else if (action === 'fix') {
+    log.info('[Escalation] Fix requested');
+    return { success: true, action: 'fix' };
+  } else if (action === 'abort') {
+    log.info('[Escalation] Aborting session');
+    await mediaLayerWrapper.stopCall();
+    if (deviceSocket && deviceSocket.connected) {
+      deviceSocket.emit('escalation:abort', {
+        reason: data?.reason || 'manual_abort',
+        timestamp: new Date().toISOString()
+      });
+    }
+    return { success: true, action: 'abort' };
+  }
+  
+  return { success: false };
 });
 
 // ========== TAB IPC HANDLERS ==========

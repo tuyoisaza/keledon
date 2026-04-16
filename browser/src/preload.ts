@@ -37,11 +37,15 @@ contextBridge.exposeInMainWorld('keledon', {
     getScreenshots: () => ipcRenderer.invoke('evidence:getScreenshots')
   },
   media: {
+    startCall: (sessionId?: string) => ipcRenderer.invoke('media:startCall', sessionId),
+    stopCall: () => ipcRenderer.invoke('media:stopCall'),
+    speak: (text: string, interruptible?: boolean) => ipcRenderer.invoke('media:speak', text, interruptible),
+    stopSpeaking: () => ipcRenderer.invoke('media:stopSpeaking'),
     mute: () => ipcRenderer.invoke('media:mute'),
     unmute: () => ipcRenderer.invoke('media:unmute'),
     hold: () => ipcRenderer.invoke('media:hold'),
     resume: () => ipcRenderer.invoke('media:resume'),
-    hangup: () => ipcRenderer.invoke('media:hangup'),
+    getStatus: () => ipcRenderer.invoke('media:getStatus'),
     onTranscript: (callback: (data: TranscriptData) => void) => {
       ipcRenderer.on('media:transcript', (_event, data) => callback(data));
       return () => ipcRenderer.removeAllListeners('media:transcript');
@@ -83,6 +87,9 @@ contextBridge.exposeInMainWorld('keledon', {
     onAction: (callback: (action: 'continue' | 'fix' | 'abort', data?: any) => void) => {
       ipcRenderer.on('escalation:action', (_event, data) => callback(data.action, data.data));
       return () => ipcRenderer.removeAllListeners('escalation:action');
+    },
+    action: (action: 'continue' | 'fix' | 'abort', data?: any) => {
+      ipcRenderer.invoke('escalation:action', action, data);
     }
   }
 });

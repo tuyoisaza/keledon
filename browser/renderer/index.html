@@ -614,9 +614,10 @@
 
   <!-- Quick Actions -->
   <div class="quick-actions">
+    <button id="startCallBtn" class="btn-action primary" disabled>📞 Start Call</button>
     <button id="muteBtn" class="btn-action" disabled>🔇 Mute</button>
     <button id="holdBtn" class="btn-action" disabled>⏸ Hold</button>
-    <button id="hangupBtn" class="btn-action end" disabled>📞 End</button>
+    <button id="hangupBtn" class="btn-action end" disabled>📵 End</button>
     <button id="callStatusBadge" class="btn-action" disabled>Idle</button>
   </div>
 
@@ -701,6 +702,7 @@
     const muteBtn = document.getElementById('muteBtn');
     const holdBtn = document.getElementById('holdBtn');
     const hangupBtn = document.getElementById('hangupBtn');
+    const startCallBtn = document.getElementById('startCallBtn');
     const callStatusBadge = document.getElementById('callStatusBadge');
     const debugToggle = document.getElementById('debugToggle');
     const clearLogBtn = document.getElementById('clearLog');
@@ -818,48 +820,78 @@
     // Runtime events
     window.keledon.runtime.onConnect(({ sessionId }) => {
       sessionIdEl.textContent = sessionId || '-';
-      callStatusBadge.textContent = 'Active';
-      callStatusBadge.classList.add('active');
-      muteBtn.disabled = false;
-      holdBtn.disabled = false;
-      hangupBtn.disabled = false;
-      log('Session started: ' + sessionId, 'success');
+      startCallBtn.disabled = false;
+      callStatusBadge.textContent = 'Ready';
+      callStatusBadge.classList.remove('active');
+      log('Connected to cloud, ready for calls', 'success');
+    });
+
+    // Start Call
+    startCallBtn.addEventListener('click', async () => {
+      if (startCallBtn.classList.contains('active')) {
+        // End call
+        try {
+          await window.keledon.media.stopCall();
+          startCallBtn.classList.remove('active');
+          startCallBtn.textContent = '📞 Start Call';
+          callStatusBadge.textContent = 'Idle';
+          muteBtn.disabled = true;
+          holdBtn.disabled = true;
+          hangupBtn.disabled = true;
+          log('Call ended', 'info');
+        } catch (e) {
+          log('End call error: ' + e.message, 'error');
+        }
+      } else {
+        // Start call
+        try {
+          await window.keledon.media.startCall();
+          startCallBtn.classList.add('active');
+          startCallBtn.textContent = '📵 End Call';
+          callStatusBadge.textContent = 'Active';
+          muteBtn.disabled = false;
+          holdBtn.disabled = false;
+          hangupBtn.disabled = false;
+          log('Call started', 'success');
+        } catch (e) {
+          log('Start call error: ' + e.message, 'error');
+        }
+      }
     });
 
     // Transcript
     window.keledon.media.onTranscript((entry) => {
       const div = document.createElement('div');
-      div.className = `transcript-entry ${entry.speaker}`;
+      div.className = `transcript-entry ${entry.speaker || 'customer'}`;
       div.innerHTML = `
         <div class="meta">
           <span class="speaker">${entry.speaker === 'agent' ? 'Agent' : 'Customer'}</span>
           <span class="time">${entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString()}</span>
         </div>
         <div class="text">${entry.text}</div>
-        ${entry.confidence ? `<div class="confidence">Confidence: ${(entry.confidence * 100).toFixed(0)}%</div>` : ''}
       `;
       transcriptEl.appendChild(div);
       transcriptEl.scrollTop = transcriptEl.scrollHeight;
     });
 
-    // Call status
-    window.keledon.media.onCallStatus((status) => {
-      const labels = { idle: 'Idle', 'in-call': 'Active', hold: 'On Hold', muted: 'Muted' };
-      callStatusBadge.textContent = labels[status] || status;
-      if (status === 'hold') holdBtn.classList.add('active');
-      else holdBtn.classList.remove('active');
-      if (status === 'muted') muteBtn.classList.add('active');
-      else muteBtn.classList.remove('active');
-    });
-
-    // Brain commands
+    // Brain commands - handle TTS from cloud
     window.keledon.brain.onCommand((cmd) => {
+      // Handle say command from cloud (TTS)
+      if (cmd.type === 'say' || (cmd.data && cmd.data.say)) {
+        const text = cmd.data.say?.text || cmd.data.text;
+        if (text) {
+          window.keledon.media.speak(text, cmd.data.say?.interruptible ?? true).catch(e => {
+            log('TTS error: ' + e.message, 'error');
+          });
+        }
+      }
+
       const div = document.createElement('div');
       div.className = 'command-entry';
       div.innerHTML = `
         <div class="meta">
           <span class="time">${cmd.timestamp ? new Date(cmd.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString()}</span>
-          <span class="type">${cmd.type}</span>
+          <span class="type">${cmd.type || 'command'}</span>
         </div>
         <div class="payload">${JSON.stringify(cmd.payload || cmd.data || {})}</div>
         ${cmd.flow_id ? `<div class="flow-id">flow_id: ${cmd.flow_id}</div>` : ''}

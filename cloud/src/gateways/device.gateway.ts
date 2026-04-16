@@ -8,9 +8,10 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger } from '@nestjs/common';
+import { Logger, Inject, Optional } from '@nestjs/common';
 import { DeviceService } from '../devices/device.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { DecisionEngineService, DecisionContext, DecisionResult } from '../services/decision-engine.service';
 
 const deviceCorsOrigins = process.env.KELEDON_ALLOW_ALL_CORS === 'true'
   ? true
@@ -29,6 +30,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private deviceService: DeviceService,
     private prisma: PrismaService,
+    @Optional() private decisionEngine?: DecisionEngineService,
   ) {}
 
   @WebSocketServer()
@@ -89,6 +91,47 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.data.sessionId = null;
     
     return { success: true };
+  }
+
+  @SubscribeMessage('voice:transcript')
+  async handleVoiceTranscript(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { text: string; isFinal: boolean; timestamp: string }
+  ) {
+    this.logger.log(`Voice transcript from ${client.data.deviceId}: ${data.text.substring(0, 50)}...`);
+    
+    const sessionId = client.data.sessionId || 'default';
+    
+    if (this.decisionEngine && data.isFinal) {
+      try {
+        const result: DecisionResult = await this.decisionEngine.processTextInput(
+          sessionId,
+          data.text,
+          0.8,
+          'webspeech',
+          { source: 'voice', timestamp: data.timestamp }
+        );
+        
+        if (result.command.say?.text) {
+          client.emit('brain:command', {
+            type: 'say',
+            data: {
+              say: {
+                text: result.command.say.text,
+                interruptible: result.command.say.interruptible ?? true
+              },
+              confidence: result.confidence,
+              decision_id: result.decisionEvidence?.decision_id
+            },
+            timestamp: new Date().toISOString()
+          });
+        }
+      } catch (error) {
+        this.logger.error('Decision engine error:', error);
+      }
+    }
+    
+    return { received: true };
   }
 
   @SubscribeMessage('transcript')
@@ -245,6 +288,26 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
       });
     }
     
+    return { received: true };
+  }
+
+  @SubscribeMessage('escalation:trigger')
+  async handleEscalationTrigger(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { trigger: string; transcript: string; timestamp: string }
+  ) {
+    this.logger.warn(`Escalation trigger from ${client.data.deviceId}:`, data.trigger);
+    // TODO: Store in database, notify human
+    return { received: true };
+  }
+
+  @SubscribeMessage('escalation:abort')
+  async handleEscalationAbort(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { reason: string; timestamp: string }
+  ) {
+    this.logger.warn(`Escalation abort from ${client.data.deviceId}:`, data.reason);
+    // TODO: Store in database, notify human, end session
     return { received: true };
   }
 }
