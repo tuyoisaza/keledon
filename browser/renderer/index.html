@@ -656,6 +656,15 @@
       </div>
       <div id="brainStatus" class="panel-content"></div>
     </div>
+    
+    <!-- Event Log Panel -->
+    <div class="panel">
+      <div class="panel-header">
+        Event Log
+        <button id="clearEventLog" class="debug-toggle">Clear</button>
+      </div>
+      <div id="eventLog" class="panel-content" style="font-size: 11px;"></div>
+    </div>
   </div>
 
   <!-- Bottom Panels -->
@@ -956,6 +965,45 @@
     clearLogBtn.addEventListener('click', () => {
       activityLogEl.innerHTML = '';
       log('Log cleared', 'info');
+    });
+
+    // Event Log Panel
+    const eventLogEl = document.getElementById('eventLog');
+    const clearEventLogBtn = document.getElementById('clearEventLog');
+    let eventLogInterval = null;
+
+    async function loadEventLogs() {
+      try {
+        const result = await window.keledon.evidence.getEventLogs({ limit: 100 });
+        if (result.logs && result.logs.length > 0) {
+          eventLogEl.innerHTML = result.logs.map(log => {
+            const levelColors = { debug: '#8b949e', info: '#58a6ff', warn: '#d29922', error: '#f85149', critical: '#ff7b72' };
+            return `<div style="color: ${levelColors[log.level] || '#8b949e'}; border-bottom: 1px solid #21262d; padding: 2px 0;">
+              <span style="color: #6e7681;">${new Date(log.timestamp).toLocaleTimeString()}</span>
+              <span style="background: #30363d; padding: 1px 4px; border-radius: 3px; margin-left: 4px; font-size: 10px;">${log.category}</span>
+              <span>${log.event}</span>
+            </div>`;
+          }).join('');
+          eventLogEl.scrollTop = eventLogEl.scrollHeight;
+        }
+      } catch (e) {
+        console.error('Failed to load event logs:', e);
+      }
+    }
+
+    // Load event logs on start and every 2 seconds
+    loadEventLogs();
+    eventLogInterval = setInterval(loadEventLogs, 2000);
+
+    // Clear event logs
+    clearEventLogBtn.addEventListener('click', async () => {
+      try {
+        await window.keledon.evidence.clearEventLogs();
+        eventLogEl.innerHTML = '';
+        log('Event logs cleared', 'info');
+      } catch (e) {
+        log('Failed to clear event logs: ' + e.message, 'error');
+      }
     });
 
     // Version button

@@ -182,27 +182,50 @@ async function getAutoBrowseBridge() {
 
 import { mediaLayer } from './media/media-layer.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
+import { eventLogger } from './media/event-logger.js';
 
 const mediaLayerWrapper = {
-  initialize: async () => mediaLayer.initialize(),
+  initialize: async () => {
+    eventLogger.info('media', 'initialize', {});
+    return mediaLayer.initialize();
+  },
   getCallStatus: () => mediaLayer.getCallStatus(),
   startCall: async (sessionId?: string) => {
+    eventLogger.info('media', 'call_start', { sessionId });
     await mediaLayer.startCall(sessionId);
     transcriptMonitor.setMediaLayer(mediaLayer);
     transcriptMonitor.startMonitoring();
+    eventLogger.info('media', 'call_started', { sessionId });
     return { success: true };
   },
   stopCall: async () => {
+    eventLogger.info('media', 'call_stop', {});
     await mediaLayer.stopCall();
     transcriptMonitor.stopMonitoring();
+    eventLogger.info('media', 'call_stopped', {});
     return { success: true };
   },
-  speak: async (text: string, interruptible?: boolean) => mediaLayer.speak(text, interruptible),
+  speak: async (text: string, interruptible?: boolean) => {
+    eventLogger.debug('media', 'tts_speak', { textLength: text.length, interruptible });
+    return mediaLayer.speak(text, interruptible);
+  },
   stopSpeaking: async () => mediaLayer.stopSpeaking(),
-  mute: () => mediaLayer.mute(),
-  unmute: () => mediaLayer.unmute(),
-  hold: async () => mediaLayer.hold(),
-  resume: async () => mediaLayer.resume(),
+  mute: () => {
+    eventLogger.info('media', 'mute', {});
+    mediaLayer.mute();
+  },
+  unmute: () => {
+    eventLogger.info('media', 'unmute', {});
+    mediaLayer.unmute();
+  },
+  hold: async () => {
+    eventLogger.info('media', 'hold', {});
+    return mediaLayer.hold();
+  },
+  resume: async () => {
+    eventLogger.info('media', 'resume', {});
+    return mediaLayer.resume();
+  },
   on: (event: string, callback: any) => mediaLayer.on(event, callback),
   emit: (event: string, data?: any) => mediaLayer.emit(event, data)
 };
@@ -366,6 +389,8 @@ transcriptMonitor.setTriggers(runtimeStatus.escalationTriggers);
 
 // Listen for escalation events from transcript monitor
 transcriptMonitor.on('escalation', (match) => {
+  eventLogger.warn('escalation', 'keyword_detected', { trigger: match.trigger, transcript: match.transcript });
+  
   showEscalation('trigger', {
     triggerWord: match.trigger,
     message: `Detected escalation keyword: "${match.trigger}"`,
@@ -379,6 +404,7 @@ transcriptMonitor.on('escalation', (match) => {
       transcript: match.transcript,
       timestamp: match.timestamp
     });
+    eventLogger.info('escalation', 'escalation_sent_to_cloud', { trigger: match.trigger });
   }
 });
 
@@ -391,6 +417,7 @@ function showEscalation(type: 'trigger' | 'failure', data: {
   transcript?: string;
 }) {
   log.warn('[Escalation]', type, data);
+  eventLogger.warn('escalation', `escalation_${type}`, { type, ...data });
   
   if (mainWindow) {
     mainWindow.webContents.send('escalation:show', { type, data });
@@ -421,6 +448,7 @@ const TAB_HEIGHT = 40;
 
 function createTab(name: string, url: string): Tab {
   const id = `tab-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  eventLogger.info('tabs', 'tab_create', { id, name, url });
   
   if (!mainWindow) {
     return { id, name, url, view: null };
@@ -438,6 +466,7 @@ function createTab(name: string, url: string): Tab {
   
   const tab: Tab = { id, name, url, view };
   tabs.push(tab);
+  eventLogger.info('tabs', 'tab_created', { id, name, url });
   
   if (activeTabId === 'home' || !tabs.find(t => t.id === activeTabId)) {
     activeTabId = id;
@@ -840,6 +869,7 @@ ipcMain.handle('runtime:getStatus', async () => {
 
 ipcMain.handle('runtime:connect', async (_event, config: { cloudUrl: string; token: string; keledonId?: string }) => {
   log.info('Connecting to cloud:', config.cloudUrl);
+  eventLogger.info('runtime', 'connect_start', { cloudUrl: config.cloudUrl, keledonId: config.keledonId });
   
   runtimeStatus.status = 'connecting';
   runtimeStatus.cloudUrl = config.cloudUrl;
@@ -865,6 +895,7 @@ ipcMain.handle('runtime:connect', async (_event, config: { cloudUrl: string; tok
       runtimeStatus.sessionId = data.keledon_id || null;
       runtimeStatus.keledonId = data.keledon_id || null;
       runtimeStatus.teamId = data.team?.id || null;
+      eventLogger.info('runtime', 'connect_success', { keledonId: data.keledon_id, teamId: data.team?.id });
       runtimeStatus.teamName = data.team?.name || null;
       runtimeStatus.vendors = data.vendors || [];
       runtimeStatus.escalationTriggers = data.team?.escalationTriggers || [];
@@ -1016,6 +1047,21 @@ ipcMain.handle('evidence:getLogs', async () => {
   return { logs: '' };
 });
 
+ipcMain.handle('evidence:getEventLogs', async (_event, filter?: { level?: string; category?: string; limit?: number }) => {
+  const logs = eventLogger.getLogs(filter as any);
+  const stats = eventLogger.getStats();
+  return { logs, stats };
+});
+
+ipcMain.handle('evidence:clearEventLogs', async () => {
+  eventLogger.clear();
+  return { success: true };
+});
+
+ipcMain.handle('evidence:getLogCategories', async () => {
+  return { categories: eventLogger.getCategories() };
+});
+
 ipcMain.handle('evidence:getScreenshots', async () => {
   return { screenshots: [] };
 });
@@ -1093,6 +1139,7 @@ ipcMain.handle('media:resume', async () => {
 
 // Set up media layer event forwarding
 mediaLayer.on('transcript', (text: string, isFinal: boolean) => {
+  eventLogger.debug('media', isFinal ? 'transcript_final' : 'transcript_interim', { textLength: text.length, isFinal });
   mainWindow?.webContents.send('media:transcript', {
     text,
     isFinal,
@@ -1101,10 +1148,15 @@ mediaLayer.on('transcript', (text: string, isFinal: boolean) => {
 });
 
 mediaLayer.on('call-status', (status: 'idle' | 'in-call' | 'on-hold') => {
+  eventLogger.info('media', 'call_status_change', { status });
   mainWindow?.webContents.send('media:callStatus', {
     status,
     ...mediaLayerWrapper.getCallStatus()
   });
+});
+
+mediaLayer.on('error', (error: Error) => {
+  eventLogger.error('media', 'media_error', { message: error.message, stack: error.stack });
 });
 
 ipcMain.handle('brain:setDebugMode', async (_event, enabled: boolean) => {

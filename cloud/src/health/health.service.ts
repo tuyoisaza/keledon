@@ -186,18 +186,49 @@ export class HealthService {
 
   getBasicHealth() {
     const memUsage = process.memoryUsage();
+    const flags = this.configService.getFeatureFlags();
+    const sttConfig = this.configService.getSttConfig();
+    const vsConfig = this.configService.getVectorStoreConfig();
+    const ttsConfig = this.configService.getTtsConfig();
+    
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),
       uptime: Date.now() - this.startTime,
       versions: {
-        cloud: process.env.npm_package_version || '0.0.94'
+        cloud: process.env.npm_package_version || '0.1.0',
+        protocol: 'V3'
       },
       environment: {
         NODE_ENV: process.env.NODE_ENV || 'development',
         CLOUD_URL: process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
         KELEDON_LAUNCH_SECRET: process.env.KELEDON_LAUNCH_SECRET ? 'set' : 'not set',
         RAILWAY_SERVICE_NAME: process.env.RAILWAY_SERVICE_NAME || 'local',
+      },
+      services: {
+        rag: { enabled: flags.vectorStore, status: flags.vectorStore ? 'active' : 'disabled' },
+        stt: { 
+          provider: sttConfig.provider, 
+          status: flags.realStt ? 'active' : 'web-speech',
+          voskPort: sttConfig.voskPort 
+        },
+        tts: { 
+          provider: ttsConfig?.provider || 'web-speech', 
+          status: flags.realTts ? 'active' : 'web-speech' 
+        },
+        rpa: { enabled: flags.rpa, status: flags.rpa ? 'active' : 'disabled' },
+        otel: { enabled: flags.otel, status: flags.otel ? 'active' : 'disabled' }
+      },
+      vectorStore: {
+        provider: 'qdrant',
+        url: vsConfig?.qdrantUrl || 'http://localhost:6333',
+        enabled: flags.vectorStore
+      },
+      capabilities: {
+        voice: flags.realStt || true,
+        escalation: true,
+        tabs: true,
+        vendorAutoLogin: true
       },
       memory: {
         heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024) + 'MB',

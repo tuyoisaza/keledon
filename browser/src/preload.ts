@@ -34,7 +34,15 @@ contextBridge.exposeInMainWorld('keledon', {
   },
   evidence: {
     getLogs: () => ipcRenderer.invoke('evidence:getLogs'),
-    getScreenshots: () => ipcRenderer.invoke('evidence:getScreenshots')
+    getScreenshots: () => ipcRenderer.invoke('evidence:getScreenshots'),
+    getEventLogs: (filter?: { level?: string; category?: string; limit?: number }) => 
+      ipcRenderer.invoke('evidence:getEventLogs', filter),
+    clearEventLogs: () => ipcRenderer.invoke('evidence:clearEventLogs'),
+    getLogCategories: () => ipcRenderer.invoke('evidence:getLogCategories'),
+    onEventLog: (callback: (entry: any) => void) => {
+      ipcRenderer.on('event:log', (_event, entry) => callback(entry));
+      return () => ipcRenderer.removeAllListeners('event:log');
+    }
   },
   media: {
     startCall: (sessionId?: string) => ipcRenderer.invoke('media:startCall', sessionId),
