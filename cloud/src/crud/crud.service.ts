@@ -180,6 +180,7 @@ export class CrudService {
       country: t.country,
       sttProvider: t.sttProvider,
       ttsProvider: t.ttsProvider,
+      escalationTriggers: t.escalationTriggers,
       createdAt: t.createdAt,
       updatedAt: t.updatedAt,
       _count: { users: t.users.length, keledons: t.keledons.length },
@@ -215,7 +216,7 @@ export class CrudService {
     };
   }
 
-  async updateTeam(id: string, data: { name?: string; country?: string }) {
+  async updateTeam(id: string, data: { name?: string; country?: string; escalationTriggers?: string[] }) {
     const team = await this.prisma.team.update({
       where: { id },
       data,
@@ -226,6 +227,7 @@ export class CrudService {
         country: true,
         sttProvider: true,
         ttsProvider: true,
+        escalationTriggers: true,
         createdAt: true,
         updatedAt: true,
         brand: {

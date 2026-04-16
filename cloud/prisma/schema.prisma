@@ -73,6 +73,9 @@ model Team {
   // ElevenLabs configuration
   elevenlabsApiKey String?
 
+  // Escalation triggers - keywords that trigger human escalation
+  escalationTriggers String[] @default(["sue", "lawsuit", "court", "lawyer", "attorney", "complain", "manager", "supervisor", "media", "news", "journalist", "social media"])
+  
   brand    Brand?    @relation(fields: [brandId], references: [id], onDelete: Cascade)
   users    User[]
   keledons Keledon[]

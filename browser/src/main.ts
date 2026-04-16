@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, session, protocol } from 'electron';
+import { app, BrowserWindow, BrowserView, ipcMain, session, protocol } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
@@ -238,18 +238,17 @@ async function autoLoginToVendor(vendor: any) {
 
     log.info('[Vendor] Auto-login to:', vendor.name, vendor.baseUrl);
 
+    // Create NEW TAB for vendor instead of replacing main window
+    createTab(vendor.name, vendor.baseUrl);
+
     const bridge = await getAutoBrowseBridge();
     if (!bridge.isAutoBrowseInitialized()) {
       log.error('[Vendor] AutoBrowse not initialized, cannot login');
       return;
     }
 
-    try {
-      mainWindow?.webContents.loadURL(vendor.baseUrl);
-    } catch (e) {
-      log.warn('[Vendor] loadURL failed, using goal instead');
-    }
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Wait for tab to load
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
     let loginGoal = '';
     if (username && password) {
@@ -316,6 +315,19 @@ log.transports.console.level = 'debug';
 log.info('KELEDON Desktop Agent starting...');
 
 let mainWindow: BrowserWindow | null = null;
+let mainWebContents: Electron.WebContents | null = null;
+
+// Tab management
+interface Tab {
+  id: string;
+  name: string;
+  url: string;
+  view: Electron.BrowserView | null;
+}
+let tabs: Tab[] = [];
+let activeTabId: string = 'home';
+const HOME_URL = 'file://' + path.join(__dirname, '../renderer/index.html');
+
 let runtimeStatus = {
   status: 'idle' as 'idle' | 'connecting' | 'connected' | 'disconnected',
   deviceId: process.env.KELEDON_DEVICE_ID || `device-${Date.now()}`,
@@ -327,7 +339,8 @@ let runtimeStatus = {
   teamId: null as string | null,
   teamName: null as string | null,
   vendors: [] as any[],
-  keledonId: null as string | null
+  keledonId: null as string | null,
+  escalationTriggers: [] as string[]
 };
 
 const AUTO_CONNECT = process.env.AUTO_CONNECT === 'true';
@@ -335,14 +348,112 @@ const AUTO_PAIRING_CODE = process.env.PAIRING_CODE || '';
 const AUTO_SESSION_ID = process.env.SESSION_ID || '';
 const KELECTRON_KELEDON_ID = process.env.KELECTRON_KELEDON_ID || '';
 
-const getCDPURL = (): string => {
-  const window = mainWindow;
-  if (!window) return '';
+// ========== TAB MANAGEMENT ==========
+const TAB_HEIGHT = 40;
+
+function createTab(name: string, url: string): Tab {
+  const id = `tab-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   
-  const webContents = window.webContents;
-  if (!webContents) return '';
+  if (!mainWindow) {
+    return { id, name, url, view: null };
+  }
+
+  const view = new BrowserView({
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false
+    }
+  });
+
+  view.webContents.loadURL(url);
   
-  return webContents.getURL();
+  const tab: Tab = { id, name, url, view };
+  tabs.push(tab);
+  
+  if (activeTabId === 'home' || !tabs.find(t => t.id === activeTabId)) {
+    activeTabId = id;
+    showTab(id);
+  }
+
+  log.info('[Tabs] Created tab:', name, id);
+  broadcastTabs();
+
+  return tab;
+}
+
+function showTab(tabId: string) {
+  if (!mainWindow) return;
+
+  const tab = tabs.find(t => t.id === tabId);
+  if (!tab || !tab.view) return;
+
+  mainWindow.setBrowserView(tab.view);
+  const bounds = mainWindow.getBounds();
+  tab.view.setBounds({
+    x: 0,
+    y: TAB_HEIGHT,
+    width: bounds.width,
+    height: bounds.height - TAB_HEIGHT
+  });
+
+  activeTabId = tabId;
+  log.info('[Tabs] Switched to:', tab.name);
+  broadcastTabs();
+}
+
+function closeTab(tabId: string) {
+  const tab = tabs.find(t => t.id === tabId);
+  if (!tab) return;
+  
+  if (tab.view && mainWindow) {
+    try {
+      mainWindow.removeBrowserView(tab.view);
+    } catch (e) {}
+  }
+  
+  tabs = tabs.filter(t => t.id !== tabId);
+  
+  if (activeTabId === tabId) {
+    const nextTab = tabs[0] || { id: 'home', name: 'Home', url: HOME_URL, view: null };
+    activeTabId = nextTab.id;
+    showTab(nextTab.id);
+  }
+  
+  log.info('[Tabs] Closed tab:', tabId);
+  broadcastTabs();
+}
+
+function getTabs() {
+  return tabs.map(t => ({ id: t.id, name: t.name, url: t.url, active: t.id === activeTabId }));
+}
+
+function broadcastTabs() {
+  if (mainWindow) {
+    mainWindow.webContents.send('tabs:updated', getTabs());
+  }
+}
+
+function resizeTabs() {
+  if (!mainWindow) return;
+  const bounds = mainWindow.getBounds();
+  for (const tab of tabs) {
+    if (tab.view) {
+      tab.view.setBounds({
+        x: 0,
+        y: TAB_HEIGHT,
+        width: bounds.width,
+        height: bounds.height - TAB_HEIGHT
+      });
+    }
+  }
+}
+
+// ========== CDP SETUP ==========
+const getCurrentUrl = (): string => {
+  const win = mainWindow;
+  if (!win) return '';
+  return win.webContents.getURL() || '';
 };
 
 const createWindow = (): void => {
@@ -438,11 +549,17 @@ const createWindow = (): void => {
     }
   });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
+mainWindow.on('closed', () => {
+  mainWindow = null;
+  mainWebContents = null;
+});
 
-  log.info('Main window created');
+// Window resize handler for tabs
+mainWindow.on('resize', () => {
+  resizeTabs();
+});
+
+log.info('Main window created');
 };
 
 const connectWebSockets = (cloudUrl: string, token: string): void => {
@@ -931,6 +1048,41 @@ mediaLayer.on('call:ended', (data) => {
 
 mediaLayer.on('media:error', (data) => {
   mainWindow?.webContents.send('media:error', data);
+});
+
+// ========== TAB IPC HANDLERS ==========
+ipcMain.handle('tabs:create', async (_event, name: string, url: string) => {
+  const tab = createTab(name, url);
+  return { id: tab.id, name: tab.name, url: tab.url };
+});
+
+ipcMain.handle('tabs:list', async () => {
+  return getTabs();
+});
+
+ipcMain.handle('tabs:switch', async (_event, tabId: string) => {
+  showTab(tabId);
+  return { success: true };
+});
+
+ipcMain.handle('tabs:close', async (_event, tabId: string) => {
+  closeTab(tabId);
+  return { success: true };
+});
+
+ipcMain.handle('tabs:getActive', async () => {
+  return activeTabId;
+});
+
+// ========== CDP IPC HANDLER ==========
+ipcMain.handle('executor:getCDPUrl', async () => {
+  if (!mainWindow) return '';
+  const wc = mainWindow.webContents;
+  if (!wc) return '';
+  
+  // Enable debugger for CDP - access via session module
+  const debugUrl = (session as any).defaultSession?.debuggerWebSocketUrl;
+  return debugUrl || '';
 });
 
 log.info('KELEDON Desktop Agent main process initialized');

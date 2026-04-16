@@ -102,6 +102,7 @@ export class DeviceService {
           country: keledon.team.country,
           sttProvider: keledon.team.sttProvider,
           ttsProvider: keledon.team.ttsProvider,
+          escalationTriggers: keledon.team.escalationTriggers || [],
           company: keledon.team.brand?.company ? {
             id: keledon.team.brand.company.id,
             name: keledon.team.brand.company.name
