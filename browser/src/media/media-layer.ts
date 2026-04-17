@@ -79,8 +79,15 @@ export class MediaLayer extends EventEmitter {
 
   constructor() {
     super();
+    // Defer browser API initialization to initialize() method
+    // since window/speechSynthesis are only available in renderer process
+  }
+
+  async initialize(): Promise<void> {
+    console.log('[MediaLayer] Initializing...');
     this.initializeSpeechRecognition();
     this.initializeSpeechSynthesis();
+    console.log('[MediaLayer] Initialized');
   }
 
   private initializeSpeechRecognition(): void {
@@ -117,10 +124,6 @@ export class MediaLayer extends EventEmitter {
 
   private initializeSpeechSynthesis(): void {
     this.synthesis = speechSynthesis;
-  }
-
-  async initialize(): Promise<void> {
-    console.log('[MediaLayer] Initialized');
   }
 
   async startCall(sessionId?: string): Promise<void> {
