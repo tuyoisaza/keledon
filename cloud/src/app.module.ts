@@ -29,6 +29,7 @@ import { DeviceController } from './devices/device.controller';
 import { LLMModule } from './llm/llm.module';
 import { EscalationService } from './services/escalation.service';
 import { EscalationController } from './controllers/escalation.controller';
+import { VoiceModule } from './voice/voice.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { EscalationController } from './controllers/escalation.controller';
     SubAgentModule,
     DeviceModule,
     LLMModule,
+    VoiceModule,
   ],
   controllers: [
     AppController,
