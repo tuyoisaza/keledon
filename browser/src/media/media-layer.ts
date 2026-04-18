@@ -79,14 +79,21 @@ export class MediaLayer extends EventEmitter {
 
   constructor() {
     super();
-    // Defer browser API initialization to initialize() method
-    // since window/speechSynthesis are only available in renderer process
+    // Browser APIs (window, speechSynthesis) are only available in renderer process
+    // Will initialize them in initialize() method when called from renderer
   }
 
   async initialize(): Promise<void> {
     console.log('[MediaLayer] Initializing...');
-    this.initializeSpeechRecognition();
-    this.initializeSpeechSynthesis();
+    
+    // Only initialize browser APIs if in renderer context
+    if (typeof window !== 'undefined') {
+      this.initializeSpeechRecognition();
+      this.initializeSpeechSynthesis();
+    } else {
+      console.warn('[MediaLayer] Not in browser context, skipping browser API init');
+    }
+    
     console.log('[MediaLayer] Initialized');
   }
 
