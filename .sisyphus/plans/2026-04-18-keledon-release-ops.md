@@ -18,8 +18,20 @@
 - IN: Branch hygiene, release workflow, Windows signing plan, testing framework plan, documentation governance.
 - OUT: Full implementation of CI/CD pipelines (Phase 2) and production-grade code signing pipelines (Phase 3).
 
-## Phase 1: Branch Hygiene & Governance
+-## Phase 1: Branch Hygiene & Governance
 - Deliverable: Branch Hygiene policy document and a one-time archive+delete run.
+- QA Scenarios:
+  - Scenario: Validate archive policy execution
+    - What to verify: branches listed by activity, archive path created, subset archived, no active work lost
+    - Tools: git, shell script
+    - Steps:
+      1. List branches with last activity and age
+      2. Run archive/delete on selected branches
+      3. Verify archive directory exists and that active branches remain untouched
+    - Acceptance Criteria:
+      - Archive policy is applied to a subset without affecting active work
+      - A patch or script is generated to reproduce the policy
+
 - Actions:
   1. List branches with last activity and age.
   2. Archive old, unused branches to archive/BRANCHNAME or delete as approved.
@@ -28,8 +40,18 @@
   - Archive policy created and applied to a subset of branches; no loss of active work.
   - A patch is created with the policy and a script to enact it.
 
-## Phase 2: Release Automation & Versioning
+-## Phase 2: Release Automation & Versioning
 - Deliverable: A plan and minimal GitHub Actions skeleton for publishing vX.Y.Z releases with assets ZIP and NSIS EXE, plus landing update hooks.
+- QA Scenarios:
+  - Scenario: Dry-run release and verify artifacts
+    - What to verify: version bump policy applied, assets ZIP and NSIS EXE created, landing patch updated
+    - Tools: shell scripts, GitHub Actions runner, NSIS builder
+    - Steps:
+      1. Trigger a dry-run release workflow
+      2. Check that assets contain ZIP and NSIS EXE for version X.Y.Z
+      3. Verify landing page update URLs open in new tab
+    - Acceptance Criteria:
+      - Release skeleton runs without errors; assets present; landing patch references updated URLs
 - Actions:
   1. Define version bump policy and ensure assets are published to both versioned tag and latest release.
   2. Create a landing patch that points to the latest version and a versioned URL, both opening in new tabs.
@@ -38,8 +60,18 @@
   - Versioned release contains ZIP and EXE assets.
   - Landing page links updated to new URLs and opened in new tab.
 
-## Phase 3: Windows Signing Plan
+-## Phase 3: Windows Signing Plan
 - Deliverable: Signing policy document and gating rules for CI.
+- QA Scenarios:
+  - Scenario: Validate signing gating in CI
+    - What to verify: policy document exists, CI gating triggers on build, unsigned binaries are blocked
+    - Tools: CI environment, NSIS build, signing script
+    - Steps:
+      1. Ensure signing policy doc is present and referenced by CI
+      2. Run a test build without signing to confirm gating blocks it
+      3. Run a signed build and verify successful release artifact generation
+    - Acceptance Criteria:
+      - Gating prevents unsigned binaries from proceeding to release
 - Actions:
   1. Decide Azure Trusted Signing vs EV cert.
   2. Draft the signing workflow and updates to the NSIS build pipeline.
@@ -56,8 +88,17 @@
   - At least one end-to-end test scenario is defined and assigned.
   - A runbook exists for production readiness checks.
 
-## Phase 5: Documentation Spine
+-## Phase 5: Documentation Spine
 - Deliverable: A consolidated docs plan, alignment to KELEDON_V3, and a runbook for releases.
+- QA Scenarios:
+  - Scenario: Validate docs alignment
+    - What to verify: KELEDON_V3 alignment; cross-links between cloud, browser, and landing docs
+    - Tools: Documentation repo browser, grep-like search
+    - Steps:
+      1. Open docs plan and verify sections present
+      2. Check cross-link references point to correct docs versions
+    - Acceptance Criteria:
+      - At least 1-2 new docs created and cross-referenced
 - Actions:
   1. Update docs/specs with a Release & Governance appendix.
   2. Create cross-linking index between cloud, browser, and landing docs.
@@ -73,4 +114,9 @@
 - Owner: Prometheus (Planner) with collaboration from Cloud, Browser, and Landing subteams.
 - Target: complete Phase 1 milestones within 2 weeks; Phase 2+ on a rolling cadence.
 
-Plan saved to: .sisyphus/plans/2026-04-18-keledon-release-ops.md
+ Plan saved to: .sisyphus/plans/2026-04-18-keledon-release-ops.md
+
+## Blocking Issues from Momus Review
+- QA Scenarios missing for Phase 1, Phase 2, Phase 3 and Phase 5. Add explicit steps, tools, and expected outcomes per task.
+- Ensure all tasks have explicit acceptance criteria tied to verifiable commands or outputs.
+- Phase 1–3 QA coverage to be aligned with Phase 4 runbooks.

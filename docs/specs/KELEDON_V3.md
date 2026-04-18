@@ -377,4 +377,25 @@ Changes require:
 
 ---
 
+## Appendix: Release & Governance
+
+### Version Policy
+See: `docs/RELEASE_VERSION_POLICY.md`
+
+### Branch Hygiene
+See: `docs/BRANCH_HYGIENE_POLICY.md`
+
+### Code Signing
+See: `docs/WINDOWS_SIGNING_POLICY.md`
+
+### E2E Testing
+See: `docs/E2E_TEST_SCENARIOS.md`
+
+### Governance Documents
+- Branch policy: `docs/BRANCH_HYGIENE_POLICY.md`
+- Release workflow: `docs/governance/release-workflow.md`
+- Feature backlog: `docs/governance/feature-backlog.md`
+
+---
+
 **End of KELEDON V3 Canonical Specification**

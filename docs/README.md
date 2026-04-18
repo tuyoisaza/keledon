@@ -79,6 +79,27 @@ docs/
 - **Git**: Version control for documentation changes
 - **Codex CLI**: AI-assisted documentation generation
 
+## Cross-Linking Index
+
+### Cloud → Browser → Landing Links
+| From | To | Document |
+|------|-----|----------|
+| Cloud API | Browser Extension | `docs/observability/c12_extension_runtime_proof.md` |
+| Cloud API | Landing | `docs/governance/release-workflow.md` |
+| Browser Extension | Cloud Backend | `docs/observability/c11_extension_exec_wiring.md` |
+| Landing | Browser Download | `docs/RELEASE_VERSION_POLICY.md` |
+| KELEDON_V3 | All | `docs/specs/KELEDON_V3.md` (Appendix) |
+
+### Release & Governance Documents
+| Document | Purpose |
+|----------|---------|
+| `docs/RELEASE_VERSION_POLICY.md` | Semver, tags, changelog |
+| `docs/BRANCH_HYGIENE_POLICY.md` | Branch lifecycle management |
+| `docs/WINDOWS_SIGNING_POLICY.md` | Azure Trusted Signing policy |
+| `docs/E2E_TEST_SCENARIOS.md` | End-to-end test scenarios |
+| `docs/governance/release-workflow.md` | Release process flow |
+| `docs/governance/feature-backlog.md` | Feature backlog tracking |
+
 ## Next Steps
 - [ ] Complete diagram library for all major components
 - [ ] Create comprehensive runbooks for deployment and troubleshooting
