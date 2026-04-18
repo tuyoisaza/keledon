@@ -1240,19 +1240,6 @@ ipcMain.handle('executor:getScreenshot', async () => {
   }
 });
 
-ipcMain.handle('executor:getUrl', async () => {
-  const bridge = await getAutoBrowseBridge();
-  if (!bridge.isAutoBrowseInitialized()) {
-    return { error: 'AutoBrowse not initialized' };
-  }
-  try {
-    const state = await bridge.getBrowserState();
-    return { url: state.url };
-  } catch (error) {
-    return { error: String(error) };
-  }
-});
-
 ipcMain.handle('evidence:getLogs', async () => {
   const parts: string[] = [];
   // Read startup log
