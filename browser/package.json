@@ -1,6 +1,6 @@
 {
   "name": "keledon-desktop-agent",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "KELEDON Desktop Agent - Electron runtime with AutoBrowse",
   "author": "Keledon Team <team@keledon.com>",
   "main": "dist/main.js",
@@ -60,7 +60,8 @@
       "deleteAppDataOnUninstall": false,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "KELEDON Browser"
+      "shortcutName": "KELEDON Browser",
+      "include": "nsis/cleanup.nsh"
     }
   }
 }
