@@ -1,5 +1,5 @@
 ; KELEDON Browser NSIS Cleanup Script
-; Removes desktop icons, start menu entries, and registry entries on uninstall
+; Removes desktop icons, start menu entries, protocol handler, and registry entries on uninstall
 
 !macro CUSTOM_UNINSTALL
 
@@ -12,6 +12,9 @@
   
   ; Remove Start Menu folder
   RMDir "$SMPROGRAMS\KELEDON Browser"
+
+  ; Unregister keledon:// protocol handler
+  DeleteRegKey HKCU "Software\Classes\keledon"
 
   ; Delete AppData (optional - uncomment if you want to remove user data)
   ; RMDir /r "$APPDATA\keledon"

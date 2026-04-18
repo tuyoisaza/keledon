@@ -1,10 +1,138 @@
-import { app, BrowserWindow, BrowserView, ipcMain, session, protocol } from 'electron';
+import { app, BrowserWindow, BrowserView, ipcMain, session, protocol, screen } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as crypto from 'crypto';
 import log from 'electron-log';
 import { io, Socket } from 'socket.io-client';
 import { autoUpdater } from 'electron-updater';
+
+// === DIAGNOSTIC LOGGING SYSTEM ===
+// Writes to {install_dir}/logs/ so logs are always findable
+// even when the browser shows a black screen or no window
+
+const getInstallPath = (): string => {
+  if (app.isPackaged) {
+    return path.dirname(process.execPath);
+  }
+  return process.cwd();
+};
+
+const INSTALL_DIR = getInstallPath();
+const LOGS_DIR = path.join(INSTALL_DIR, 'logs');
+const STARTUP_LOG = path.join(LOGS_DIR, 'startup.log');
+const MAIN_LOG = path.join(LOGS_DIR, 'keledon-browser.log');
+const MAX_LOG_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_LOG_FILES = 5;
+
+// Ensure logs directory exists
+try {
+  if (!fs.existsSync(LOGS_DIR)) {
+    fs.mkdirSync(LOGS_DIR, { recursive: true });
+  }
+} catch (e) {
+  // Last resort — try AppData
+  // But install_dir/logs/ is the canonical location per v3_KELEDON_BROWSER.md
+}
+
+// Log rotation: rename old logs when size exceeds MAX_LOG_SIZE
+const rotateLog = (logPath: string): void => {
+  try {
+    if (!fs.existsSync(logPath)) return;
+    const stats = fs.statSync(logPath);
+    if (stats.size < MAX_LOG_SIZE) return;
+
+    // Shift existing rotated files: .4 -> delete, .3 -> .4, .2 -> .3, .1 -> .2
+    for (let i = MAX_LOG_FILES - 1; i >= 1; i--) {
+      const older = `${logPath}.${i}`;
+      const newer = i === 1 ? logPath : `${logPath}.${i - 1}`;
+      if (fs.existsSync(newer)) {
+        if (i === MAX_LOG_FILES - 1 && fs.existsSync(older)) {
+          fs.unlinkSync(older);
+        }
+        fs.renameSync(newer, `${logPath}.${i}`);
+      }
+    }
+  } catch (e) {
+    // Rotation failed — continue writing to current file
+  }
+};
+
+// Early log — writes to startup.log before Electron is ready
+const earlyLog = (msg: string): void => {
+  const timestamp = new Date().toISOString();
+  const logLine = `[${timestamp}] ${msg}\n`;
+  try {
+    rotateLog(STARTUP_LOG);
+    fs.appendFileSync(STARTUP_LOG, logLine);
+  } catch (e) {
+    // Cannot write to install dir — try fallback
+    try {
+      fs.appendFileSync(path.join(os.tmpdir(), 'keledon-startup.log'), logLine);
+    } catch (_) { /* truly cannot log */ }
+  }
+  console.log(logLine.trimEnd());
+};
+
+// Write crash log with full system state
+const writeCrashLog = (error: Error | string): void => {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const crashFile = path.join(LOGS_DIR, `crash-${timestamp}.log`);
+  const errorStr = error instanceof Error
+    ? `${error.message}\n\nStack:\n${error.stack || 'No stack'}`
+    : String(error);
+
+  const crashContent = [
+    `KELEDON Browser Crash Report`,
+    `Time: ${new Date().toISOString()}`,
+    `Version: ${app.getVersion?.() || 'unknown'}`,
+    `Electron: ${process.versions.electron || 'unknown'}`,
+    `Chrome: ${process.versions.chrome || 'unknown'}`,
+    `Node: ${process.versions.node || 'unknown'}`,
+    `OS: ${os.platform()} ${os.release()} ${os.arch()}`,
+    `Memory: ${Math.round(os.freemem() / 1024 / 1024)}MB free / ${Math.round(os.totalmem() / 1024 / 1024)}MB total`,
+    `Uptime: ${Math.round(process.uptime())}s`,
+    `Args: ${JSON.stringify(process.argv)}`,
+    ``,
+    `Error:`,
+    errorStr,
+  ].join('\n');
+
+  try {
+    fs.writeFileSync(crashFile, crashContent);
+    earlyLog(`[CRASH] Crash log written to ${crashFile}`);
+  } catch (e) {
+    earlyLog(`[CRASH] Failed to write crash log: ${e}`);
+  }
+};
+
+// Catch all unhandled errors — write crash log
+process.on('uncaughtException', (error) => {
+  earlyLog(`[FATAL] Uncaught Exception: ${error.message}`);
+  earlyLog(error.stack || 'No stack');
+  writeCrashLog(error);
+  app.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+  earlyLog(`[FATAL] Unhandled Rejection: ${reason}`);
+  writeCrashLog(reason instanceof Error ? reason : new Error(String(reason)));
+});
+
+// === STARTUP LOGGING ===
+earlyLog('========================================');
+earlyLog('[START] KELEDON Browser starting...');
+earlyLog(`[INFO] App packaged: ${app.isPackaged}`);
+earlyLog(`[INFO] Exec path: ${process.execPath}`);
+earlyLog(`[INFO] Install path: ${INSTALL_DIR}`);
+earlyLog(`[INFO] Logs directory: ${LOGS_DIR}`);
+earlyLog(`[INFO] Args: ${JSON.stringify(process.argv)}`);
+earlyLog(`[INFO] Electron: ${process.versions.electron}`);
+earlyLog(`[INFO] Chrome: ${process.versions.chrome}`);
+earlyLog(`[INFO] Node: ${process.versions.node}`);
+earlyLog(`[INFO] OS: ${os.platform()} ${os.release()} ${os.arch()}`);
+earlyLog(`[INFO] Memory: ${Math.round(os.freemem() / 1024 / 1024)}MB free / ${Math.round(os.totalmem() / 1024 / 1024)}MB total`);
+earlyLog(`[INFO] CPU: ${os.cpus()[0]?.model || 'unknown'} (${os.cpus().length} cores)`);
 
 // Register keledon:// protocol - try multiple times
 const registerProtocol = () => {
@@ -522,7 +650,15 @@ function closeTab(tabId: string) {
 }
 
 function getTabs() {
-  return tabs.map(t => ({ id: t.id, name: t.name, url: t.url, active: t.id === activeTabId }));
+  return tabs.map(t => ({
+    id: t.id,
+    name: t.name,
+    url: t.view ? t.view.webContents.getURL() : t.url,
+    active: t.id === activeTabId,
+    loading: t.view ? t.view.webContents.isLoading() : false,
+    canGoBack: t.view ? t.view.webContents.canGoBack() : false,
+    canGoForward: t.view ? t.view.webContents.canGoForward() : false
+  }));
 }
 
 function broadcastTabs() {
@@ -554,13 +690,18 @@ const getCurrentUrl = (): string => {
 };
 
 const createWindow = (): void => {
+  // Log screen info for black-screen diagnosis
+  const displays = screen.getAllDisplays();
+  earlyLog(`[WINDOW] Creating main window...`);
+  earlyLog(`[WINDOW] Displays: ${displays.length} — Primary: ${displays[0]?.size.width}x${displays[0]?.size.height} scale=${displays[0]?.scaleFactor}`);
+
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     minWidth: 800,
     minHeight: 600,
-    title: 'KELEDON Desktop Agent',
-    backgroundColor: '#1a1a2e',
+    title: 'KELEDON Browser',
+    backgroundColor: '#0d1117',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -569,6 +710,8 @@ const createWindow = (): void => {
       webSecurity: false
     }
   });
+
+  earlyLog(`[WINDOW] BrowserWindow created: ${mainWindow.getBounds().width}x${mainWindow.getBounds().height}`);
   
   // Enable zoom and scaling
   mainWindow.webContents.setVisualZoomLevelLimits(1, 4);
@@ -579,20 +722,32 @@ const createWindow = (): void => {
     bridge.setMainWindow(mainWindow);
   })();
 
-  mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+  // Configure electron-log to write to install_dir/logs/
+  log.transports.file.resolvePathFn = () => MAIN_LOG;
 
+  const rendererPath = path.join(__dirname, '../renderer/index.html');
+  earlyLog(`[WINDOW] Loading renderer: ${rendererPath}`);
+  earlyLog(`[WINDOW] Renderer exists: ${fs.existsSync(rendererPath)}`);
+  mainWindow.loadFile(rendererPath);
+
+  // === DIAGNOSTIC: Track renderer load success/failure ===
   mainWindow.webContents.on('did-finish-load', () => {
+    earlyLog('[WINDOW] did-finish-load — renderer loaded successfully');
     log.info('Main window loaded');
+    
+    // Inject runtime info including log path for Copy Logs
+    const logPathEscaped = STARTUP_LOG.replace(/\\/g, '\\\\');
     mainWindow?.webContents.executeJavaScript(`
       window.keledon = window.keledon || {};
       window.keledon.internal = { 
         cdpUrl: 'http://localhost:9222',
-        version: '${app.getVersion()}'
+        version: '${app.getVersion()}',
+        logPath: '${logPathEscaped}',
+        installDir: '${INSTALL_DIR.replace(/\\/g, '\\\\')}'
       };
-      window.keledon.copyLogs = function() {
-        navigator.clipboard.writeText('Keledon Browser v' + window.keledon.internal.version);
-      };
-    `).catch(() => {});
+    `).catch((err) => {
+      earlyLog(`[WINDOW] Failed to inject runtime info: ${err}`);
+    });
 
     // Show version in console
     console.log('Keledon Browser v' + app.getVersion() + ' ready');
@@ -648,6 +803,24 @@ const createWindow = (): void => {
     }
   });
 
+  // === DIAGNOSTIC: Catch renderer load failures (black screen cause) ===
+  mainWindow.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
+    earlyLog(`[WINDOW] did-fail-load — errorCode=${errorCode} desc="${errorDescription}" url="${validatedURL}"`);
+    writeCrashLog(new Error(`Renderer failed to load: ${errorCode} ${errorDescription} (${validatedURL})`));
+  });
+
+  // === DIAGNOSTIC: Catch renderer crashes ===
+  mainWindow.webContents.on('render-process-gone', (_event, details) => {
+    earlyLog(`[WINDOW] render-process-gone — reason=${details.reason} exitCode=${details.exitCode}`);
+    writeCrashLog(new Error(`Renderer process gone: reason=${details.reason} exitCode=${details.exitCode}`));
+  });
+
+  // === DIAGNOSTIC: GPU process crash (common cause of black screen) ===
+  app.on('gpu-process-crashed' as any, (_event: any, killed: boolean) => {
+    earlyLog(`[GPU] GPU process crashed! killed=${killed}`);
+    writeCrashLog(new Error(`GPU process crashed (killed=${killed})`));
+  });
+
 mainWindow.on('closed', () => {
   mainWindow = null;
   mainWebContents = null;
@@ -658,6 +831,47 @@ mainWindow.on('resize', () => {
   resizeTabs();
 });
 
+// === CHROME-LIKE KEYBOARD SHORTCUTS ===
+mainWindow.webContents.on('before-input-event', (_event, input) => {
+  if (input.type !== 'keyDown') return;
+  const ctrl = input.control || input.meta;
+
+  // Ctrl+T — New tab
+  if (ctrl && input.key === 't') {
+    mainWindow?.webContents.send('shortcut:newTab');
+  }
+  // Ctrl+W — Close active tab
+  if (ctrl && input.key === 'w') {
+    if (activeTabId !== 'home') {
+      closeTab(activeTabId);
+    }
+  }
+  // Ctrl+Tab — Next tab
+  if (ctrl && input.key === 'Tab') {
+    const idx = tabs.findIndex(t => t.id === activeTabId);
+    if (idx >= 0 && tabs.length > 0) {
+      const nextIdx = (idx + 1) % tabs.length;
+      showTab(tabs[nextIdx].id);
+    }
+  }
+  // F5 — Refresh active tab
+  if (input.key === 'F5') {
+    const tab = tabs.find(t => t.id === activeTabId);
+    if (tab?.view) {
+      tab.view.webContents.reload();
+    }
+  }
+  // Ctrl+L — Focus URL bar (send to renderer)
+  if (ctrl && input.key === 'l') {
+    mainWindow?.webContents.send('shortcut:focusUrlBar');
+  }
+  // Ctrl+F — Find in page (active tab)
+  if (ctrl && input.key === 'f') {
+    mainWindow?.webContents.send('shortcut:findInPage');
+  }
+});
+
+earlyLog('[WINDOW] Main window created and configured');
 log.info('Main window created');
 };
 
@@ -1040,11 +1254,45 @@ ipcMain.handle('executor:getUrl', async () => {
 });
 
 ipcMain.handle('evidence:getLogs', async () => {
-  const logPath = log.transports.file.getFile()?.path;
-  if (logPath && fs.existsSync(logPath)) {
-    return { logs: fs.readFileSync(logPath, 'utf-8') };
+  const parts: string[] = [];
+  // Read startup log
+  if (fs.existsSync(STARTUP_LOG)) {
+    parts.push('=== STARTUP LOG ===\n');
+    parts.push(fs.readFileSync(STARTUP_LOG, 'utf-8'));
   }
-  return { logs: '' };
+  // Read main runtime log
+  if (fs.existsSync(MAIN_LOG)) {
+    parts.push('\n=== RUNTIME LOG ===\n');
+    parts.push(fs.readFileSync(MAIN_LOG, 'utf-8'));
+  }
+  return { logs: parts.join('') || 'No logs found', logPath: LOGS_DIR };
+});
+
+ipcMain.handle('evidence:copyAllLogs', async () => {
+  const parts: string[] = [
+    `KELEDON Browser Log Dump`,
+    `Time: ${new Date().toISOString()}`,
+    `Version: ${app.getVersion()}`,
+    `Install: ${INSTALL_DIR}`,
+    `\n`
+  ];
+  if (fs.existsSync(STARTUP_LOG)) {
+    parts.push('=== STARTUP LOG ===\n');
+    parts.push(fs.readFileSync(STARTUP_LOG, 'utf-8'));
+  }
+  if (fs.existsSync(MAIN_LOG)) {
+    parts.push('\n=== RUNTIME LOG ===\n');
+    parts.push(fs.readFileSync(MAIN_LOG, 'utf-8'));
+  }
+  // Include crash logs
+  try {
+    const crashFiles = fs.readdirSync(LOGS_DIR).filter(f => f.startsWith('crash-'));
+    for (const cf of crashFiles.slice(-3)) {
+      parts.push(`\n=== ${cf} ===\n`);
+      parts.push(fs.readFileSync(path.join(LOGS_DIR, cf), 'utf-8'));
+    }
+  } catch (_) {}
+  return { logs: parts.join('') };
 });
 
 ipcMain.handle('evidence:getEventLogs', async (_event, filter?: { level?: string; category?: string; limit?: number }) => {
@@ -1276,11 +1524,47 @@ ipcMain.on('escalation:action', (_event, action: string, data?: any) => {
 // ========== EXECUTOR URL HANDLER ==========
 ipcMain.handle('executor:getUrl', async () => {
   const tab = tabs.find(t => t.id === activeTabId);
-  if (tab) {
-    return tab.url;
+  if (tab?.view) {
+    return tab.view.webContents.getURL();
   }
   if (mainWindow) {
     return mainWindow.webContents.getURL();
   }
   return '';
+});
+
+// ========== TAB NAVIGATION HANDLERS (Chrome-like) ==========
+ipcMain.handle('tabs:goBack', async () => {
+  const tab = tabs.find(t => t.id === activeTabId);
+  if (tab?.view && tab.view.webContents.canGoBack()) {
+    tab.view.webContents.goBack();
+    return { success: true };
+  }
+  return { success: false };
+});
+
+ipcMain.handle('tabs:goForward', async () => {
+  const tab = tabs.find(t => t.id === activeTabId);
+  if (tab?.view && tab.view.webContents.canGoForward()) {
+    tab.view.webContents.goForward();
+    return { success: true };
+  }
+  return { success: false };
+});
+
+ipcMain.handle('tabs:reload', async () => {
+  const tab = tabs.find(t => t.id === activeTabId);
+  if (tab?.view) {
+    tab.view.webContents.reload();
+    return { success: true };
+  }
+  return { success: false };
+});
+
+ipcMain.handle('tabs:getUrl', async () => {
+  const tab = tabs.find(t => t.id === activeTabId);
+  if (tab?.view) {
+    return { url: tab.view.webContents.getURL(), title: tab.view.webContents.getTitle() };
+  }
+  return { url: '', title: '' };
 });

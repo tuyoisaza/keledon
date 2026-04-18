@@ -1,6 +1,6 @@
 {
   "name": "keledon-desktop-agent",
-  "version": "0.1.10",
+  "version": "0.1.12",
   "description": "KELEDON Desktop Agent - Electron runtime with AutoBrowse",
   "author": "Keledon Team <team@keledon.com>",
   "main": "dist/main.js",
@@ -11,7 +11,8 @@
     "package": "npm run build && electron-forge make",
     "make": "electron-forge make",
     "dist": "npm run build && electron-builder --win nsis",
-    "dist:dir": "npm run build && electron-builder --win --dir"
+    "dist:dir": "npm run build && electron-builder --win --dir",
+    "dist:zip": "npm run build && electron-builder --win zip"
   },
   "dependencies": {
     "electron-log": "^5.1.0",
@@ -42,6 +43,7 @@
     },
     "files": [
       "dist/**/*",
+      "renderer/**/*",
       "package.json"
     ],
     "win": {
@@ -50,8 +52,7 @@
           "target": "nsis",
           "arch": ["x64"]
         }
-      ],
-      "artifactName": "${productName}-${version}-Setup.${ext}"
+      ]
     },
     "nsis": {
       "oneClick": false,
@@ -61,7 +62,14 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "KELEDON Browser",
-      "include": "nsis/cleanup.nsh"
-    }
+      "include": "nsis/installer.nsh",
+      "uninstallDisplayName": "KELEDON Browser"
+    },
+    "protocols": [
+      {
+        "name": "KELEDON Protocol",
+        "schemes": ["keledon"]
+      }
+    ]
   }
 }
