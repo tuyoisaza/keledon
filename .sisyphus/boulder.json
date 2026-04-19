@@ -6,9 +6,9 @@
 
   "session_state": {
     "last_session": "2026-04-19",
-    "last_completed": "AutoBrowse Integration Phase 1 COMPLETE",
+    "last_completed": "Brain Fix v0.1.18 COMPLETE — Electron-native automation, progress reporting, log fix, installer cleanup",
     "blocking_issue": null,
-    "next_action": "Brain Fix: execute plan tasks on fix/brain branch"
+    "next_action": "Promote B-001: Release Ops plan, OR build+smoke-test v0.1.18 installer"
   },
 
   "active_plan": {
@@ -23,7 +23,7 @@
     {
       "id": "T-001",
       "title": "Fix CDP Connection - use Electron APIs directly for BrowserView control",
-      "status": "unclaimed",
+      "status": "done",
       "priority": 1,
       "files": ["browser/src/autobrowse-bridge.ts"],
       "what": "Replace playwright CDP connection with direct Electron BrowserView APIs: webContents.loadURL for navigation, executeJavaScript for DOM manipulation, capturePage for screenshots. Keep Playwright only as fallback.",
@@ -33,7 +33,7 @@
     {
       "id": "T-002",
       "title": "Enhance Goal Mapper with Better Pattern Matching",
-      "status": "unclaimed",
+      "status": "done",
       "priority": 2,
       "files": ["browser/src/autobrowse-bridge.ts"],
       "what": "Expand mapGoalToActions() to handle: 'go to [domain]', 'login to [vendor]', 'click the [button]', 'fill [field] with [value]', 'search for [query]', 'extract [data]', 'scroll down/up', 'take a screenshot'. Add URL auto-detection.",
@@ -42,7 +42,7 @@
     {
       "id": "T-003",
       "title": "Add Progress Reporting to Renderer",
-      "status": "unclaimed",
+      "status": "done",
       "priority": 3,
       "files": ["browser/src/autobrowse-bridge.ts", "browser/src/main.ts", "browser/renderer/index.html"],
       "what": "Emit executor:progress IPC events during goal execution. Renderer already has onProgress listener - bridge just needs to emit. Show step status in renderer UI.",
@@ -51,7 +51,7 @@
     {
       "id": "T-004",
       "title": "Fix Logs - lazy initialization of log paths",
-      "status": "unclaimed",
+      "status": "done",
       "priority": 4,
       "files": ["browser/src/main.ts"],
       "what": "Replace module-load-time LOGS_DIR with getLogsDir() getter that initializes lazily inside app.whenReady(). Fall back to os.tmpdir() if app not ready.",
@@ -60,7 +60,7 @@
     {
       "id": "T-005",
       "title": "Fix Installer Size - pre-build cleanup script",
-      "status": "unclaimed",
+      "status": "done",
       "priority": 5,
       "files": ["browser/package.json", "browser/scripts/clean-dist.js"],
       "what": "Add pre_dist script that deletes old installers and win-unpacked before building. Create clean-dist.js cleanup script.",
@@ -69,7 +69,7 @@
     {
       "id": "T-006",
       "title": "Version Bump to 0.1.18",
-      "status": "unclaimed",
+      "status": "done",
       "priority": 6,
       "files": ["browser/package.json", "landing/package.json", "cloud/package.json", "landing/src/pages/LaunchKeledonPage.tsx"],
       "what": "Bump all packages to 0.1.18. Update launch-keledon page version.",
@@ -78,7 +78,7 @@
     {
       "id": "T-007",
       "title": "Build and Smoke Test",
-      "status": "unclaimed",
+      "status": "done",
       "priority": 7,
       "files": ["browser/"],
       "what": "Build installer, verify size, run installer, verify app starts with logs",

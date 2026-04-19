@@ -1106,15 +1106,30 @@
     });
 
     // ==================== EXECUTE ====================
+    // Live step progress from bridge
+    window.keledon.executor.onProgress((progress) => {
+      const p = progress;
+      const icon = p.status === 'done' ? '✓' : p.status === 'failed' ? '✗' : '▶';
+      const level = p.status === 'failed' ? 'error' : p.status === 'done' ? 'success' : 'info';
+      log(`${icon} [${p.step}/${p.total}] ${p.action}`, level);
+    });
+
     executeBtn.addEventListener('click', async () => {
       const goal = goalInput.value.trim();
       if (!goal) { log('Goal required', 'error'); return; }
+      executeBtn.disabled = true;
+      executeBtn.textContent = '⏳ Running...';
+      log(`▶ Goal: ${goal.substring(0, 80)}`, 'info');
       try {
         const result = await window.keledon.executor.executeGoal(goal, {});
-        log('Executed: ' + goal.substring(0, 50), 'success');
+        const r = result;
+        log(`Goal ${r.goal_status}: ${r.steps?.length || 0} steps in ${r.duration}ms`, r.goal_status === 'success' ? 'success' : 'error');
         goalInput.value = '';
       } catch (e) {
-        log('Execution error: ' + e.message, 'error');
+        log('Execution error: ' + (e.message || e), 'error');
+      } finally {
+        executeBtn.disabled = false;
+        executeBtn.textContent = '\u25B6 Execute';
       }
     });
 

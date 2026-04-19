@@ -1,15 +1,19 @@
 /**
- * AutoBrowse Bridge - KELEDON Browser integration with AutoBrowse engine
- * v0.1.16 - Real Playwright+CDP integration
+ * AutoBrowse Bridge - KELEDON Browser integration
+ * v0.1.18 - Electron-native automation (no CDP dependency)
  *
- * Connects to Electron's Chromium via CDP and uses Playwright
- * to automate the active BrowserView tab.
+ * Uses Electron webContents APIs directly for BrowserView automation:
+ *   - webContents.loadURL()          → navigation
+ *   - webContents.executeJavaScript() → click / fill / extract / scroll
+ *   - webContents.capturePage()       → screenshots
  *
- * Flow: Renderer → IPC → executeGoal() → CDP → Playwright → BrowserView
+ * CDP/Playwright kept as optional fallback for advanced multi-page scenarios.
+ *
+ * Flow: Renderer → IPC → executeGoal() → webContents → BrowserView DOM
  */
 
 import log from 'electron-log';
-import { BrowserWindow, BrowserView } from 'electron';
+import { BrowserWindow, BrowserView, WebContents, ipcMain } from 'electron';
 import { chromium, Browser, BrowserContext, Page } from 'playwright-core';
 
 interface BridgeGoalInput {
@@ -66,6 +70,7 @@ let cdpBrowser: Browser | null = null;
 let cdpContext: BrowserContext | null = null;
 let electronTabs: { id: string; name: string; url: string; view: BrowserView | null }[] = [];
 let activeTabId: string = 'home';
+let progressEmitter: ((step: number, total: number, action: string, status: 'running' | 'done' | 'failed') => void) | null = null;
 const CDP_PORT = parseInt(process.env.KELEDON_CDP_PORT || '9222', 10);
 
 // ==================== Tab Management ====================
@@ -79,7 +84,22 @@ export function setTabs(tabList: typeof electronTabs, activeId: string) {
   activeTabId = activeId;
 }
 
-// ==================== CDP Connection ====================
+export function setProgressEmitter(emitter: typeof progressEmitter) {
+  progressEmitter = emitter;
+}
+
+// ==================== Active Tab Helper ====================
+
+function getActiveWebContents(): WebContents | null {
+  const activeTab = electronTabs.find(t => t.id === activeTabId);
+  if (activeTab?.view) {
+    return activeTab.view.webContents;
+  }
+  // Fallback: mainWindow webContents (home/settings tabs)
+  return mainWindow?.webContents || null;
+}
+
+// ==================== CDP Connection (optional fallback) ====================
 
 async function connectCDP(): Promise<{ browser: Browser; page: Page } | null> {
   const cdpUrl = `http://localhost:${CDP_PORT}`;
@@ -96,7 +116,6 @@ async function connectCDP(): Promise<{ browser: Browser; page: Page } | null> {
     const pages = cdpContext?.pages() || [];
     log.info(`[AutoBrowse] Found ${pages.length} CDP pages`);
 
-    // Find the page matching the active BrowserView
     const activeTab = electronTabs.find(t => t.id === activeTabId);
     if (activeTab?.view) {
       const activeUrl = activeTab.view.webContents.getURL();
@@ -104,40 +123,30 @@ async function connectCDP(): Promise<{ browser: Browser; page: Page } | null> {
         try {
           const pageUrl = page.url();
           if (pageUrl && pageUrl !== 'about:blank' && activeUrl) {
-            try {
-              const activeHost = new URL(activeUrl).hostname;
-              const pageHost = new URL(pageUrl).hostname;
-              if (activeHost && pageHost && activeHost === pageHost) {
-                log.info(`[AutoBrowse] Matched active tab page: ${pageUrl}`);
-                return { browser: cdpBrowser, page };
-              }
-            } catch { /* URL parse error, skip */ }
+            const activeHost = new URL(activeUrl).hostname;
+            const pageHost = new URL(pageUrl).hostname;
+            if (activeHost && pageHost && activeHost === pageHost) {
+              log.info(`[AutoBrowse] Matched active tab page via CDP: ${pageUrl}`);
+              return { browser: cdpBrowser, page };
+            }
           }
-        } catch { /* page.url() failed, skip */ }
+        } catch { /* skip */ }
       }
     }
 
-    // Fallback: use last non-blank page
     for (let i = pages.length - 1; i >= 0; i--) {
       try {
         const pageUrl = pages[i].url();
         if (pageUrl && pageUrl !== 'about:blank' && pageUrl !== '') {
-          log.info(`[AutoBrowse] Using fallback page: ${pageUrl}`);
           return { browser: cdpBrowser, page: pages[i] };
         }
       } catch { /* skip */ }
     }
 
-    // Last resort: first page
-    if (pages.length > 0) {
-      log.info(`[AutoBrowse] Using first page: ${pages[0].url()}`);
-      return { browser: cdpBrowser, page: pages[0] };
-    }
-
-    log.warn('[AutoBrowse] No pages available via CDP');
+    if (pages.length > 0) return { browser: cdpBrowser, page: pages[0] };
     return null;
   } catch (error) {
-    log.error('[AutoBrowse] CDP connection failed:', error);
+    log.warn('[AutoBrowse] CDP connection failed (non-fatal, using Electron APIs):', String(error).split('\n')[0]);
     cdpBrowser = null;
     cdpContext = null;
     return null;
@@ -148,108 +157,170 @@ async function connectCDP(): Promise<{ browser: Browser; page: Page } | null> {
 
 function mapGoalToActions(goal: string, inputs?: Record<string, unknown>): GoalAction[] {
   const actions: GoalAction[] = [];
-  const goalLower = goal.toLowerCase();
+  const goalLower = goal.toLowerCase().trim();
 
-  // If inputs contain a URL, navigate first
-  const url = (inputs?.url as string) || (inputs?.targetUrl as string);
-  if (url) {
-    actions.push({ type: 'navigate', url, description: `Navigate to ${url}` });
+  // Input URL takes priority for navigation
+  const inputUrl = (inputs?.url as string) || (inputs?.targetUrl as string);
+  if (inputUrl) {
+    actions.push({ type: 'navigate', url: inputUrl, description: `Navigate to ${inputUrl}` });
   }
 
-  // Navigate goals
-  if (goalLower.includes('navigate to') || goalLower.includes('go to') || goalLower.includes('open')) {
-    const urlMatch = goal.match(/(?:navigate to|go to|open)\s+(https?:\/\/[^\s]+|[^\s]+\.[^\s]+)/i);
-    if (urlMatch && !url) {
+  // ---- Navigate patterns ----
+  if (!inputUrl && (
+    goalLower.startsWith('go to ') ||
+    goalLower.startsWith('navigate to ') ||
+    goalLower.startsWith('open ') ||
+    goalLower.startsWith('visit ')
+  )) {
+    const urlMatch = goal.match(/(?:go to|navigate to|open|visit)\s+(https?:\/\/[^\s]+|[a-zA-Z0-9][-a-zA-Z0-9.]*\.[a-zA-Z]{2,}[^\s]*)/i);
+    if (urlMatch) {
       let targetUrl = urlMatch[1];
       if (!targetUrl.startsWith('http')) targetUrl = 'https://' + targetUrl;
       actions.push({ type: 'navigate', url: targetUrl, description: `Navigate to ${targetUrl}` });
     }
   }
 
-  // Login goals
+  // ---- URL direct input ----
+  if (actions.length === 0 && !inputUrl && (
+    goalLower.match(/^https?:\/\//) ||
+    goalLower.match(/^[a-zA-Z0-9][-a-zA-Z0-9.]*\.[a-zA-Z]{2,}/)
+  )) {
+    const targetUrl = goalLower.startsWith('http') ? goal : 'https://' + goal;
+    actions.push({ type: 'navigate', url: targetUrl, description: `Navigate to ${targetUrl}` });
+  }
+
+  // ---- Login patterns ----
   if (goalLower.includes('login') || goalLower.includes('sign in') || goalLower.includes('log in')) {
     const username = (inputs?.username as string) || (inputs?.email as string) || '';
     const password = (inputs?.password as string) || '';
 
     if (username) {
-      actions.push({ type: 'fill', selector: 'input[type="email"], input[name*="user"], input[name*="email"], input[id*="user"], input[id*="email"], input[autocomplete="username"]', value: username, description: `Fill username: ${username}` });
-      actions.push({ type: 'press_key', selector: 'input[type="email"], input[name*="user"], input[name*="email"]', value: 'Tab', description: 'Move to password field' });
+      actions.push({
+        type: 'fill',
+        selector: 'input[type="email"], input[name*="user"], input[name*="email"], input[id*="user"], input[id*="email"], input[autocomplete="username"], input[placeholder*="email" i], input[placeholder*="user" i]',
+        value: username,
+        description: `Fill username: ${username}`
+      });
+      actions.push({ type: 'press_key', value: 'Tab', description: 'Tab to password field' });
     }
     if (password) {
-      actions.push({ type: 'fill', selector: 'input[type="password"], input[name*="pass"], input[id*="pass"]', value: password, description: 'Fill password' });
+      actions.push({
+        type: 'fill',
+        selector: 'input[type="password"], input[name*="pass"], input[id*="pass"]',
+        value: password,
+        description: 'Fill password'
+      });
     }
-    actions.push({ type: 'click', selector: 'button[type="submit"], input[type="submit"], button:has-text("sign in"), button:has-text("log in"), button:has-text("login")', description: 'Click submit/login button' });
-    actions.push({ type: 'wait', description: 'Wait for page to load after login' });
+    actions.push({
+      type: 'click',
+      selector: 'button[type="submit"], input[type="submit"], button:has-text("sign in"), button:has-text("log in"), button:has-text("login"), [data-id*="login" i]',
+      description: 'Click login button'
+    });
+    actions.push({ type: 'wait', description: 'Wait for post-login navigation' });
   }
 
-  // Click goals
-  if (goalLower.includes('click') || goalLower.includes('press button')) {
-    const clickMatch = goal.match(/(?:click|press)\s+(?:on\s+)?["']?([^"']+)["']?/i);
+  // ---- Click patterns ----
+  if (goalLower.includes('click') || goalLower.includes('press ') || goalLower.includes('tap ')) {
+    const clickMatch = goal.match(/(?:click|press|tap)\s+(?:on\s+|the\s+)?["']?([^"'\n]+?)["']?(?:\s+button)?$/i);
     if (clickMatch) {
-      actions.push({ type: 'click', selector: `text="${clickMatch[1]}"`, description: `Click "${clickMatch[1]}"` });
+      const target = clickMatch[1].trim();
+      actions.push({
+        type: 'click',
+        selector: `text="${target}", [aria-label="${target}"], [title="${target}"], button:has-text("${target}")`,
+        description: `Click "${target}"`
+      });
     }
   }
 
-  // Fill / type goals
-  if (goalLower.includes('fill') || goalLower.includes('type') || goalLower.includes('enter')) {
-    const fillMatch = goal.match(/(?:fill|type|enter)\s+["']?([^"']+)["']?\s+(?:in|into|on)\s+["']?([^"']+)["']?/i);
+  // ---- Fill / type patterns ----
+  if ((goalLower.includes('fill') || goalLower.includes('type') || goalLower.includes('enter ')) && goalLower.includes(' in ')) {
+    const fillMatch = goal.match(/(?:fill|type|enter)\s+["']?([^"'\n]+?)["']?\s+(?:in|into|on)\s+(?:the\s+)?["']?([^"'\n]+?)["']?$/i);
     if (fillMatch) {
-      actions.push({ type: 'fill', selector: fillMatch[2], value: fillMatch[1], description: `Fill "${fillMatch[1]}" into ${fillMatch[2]}` });
+      actions.push({
+        type: 'fill',
+        selector: fillMatch[2].trim(),
+        value: fillMatch[1].trim(),
+        description: `Fill "${fillMatch[1]}" into ${fillMatch[2]}`
+      });
     }
   }
 
-  // Search goals
-  if (goalLower.includes('search') || goalLower.includes('find')) {
-    const searchMatch = goal.match(/(?:search|find)\s+(?:for\s+)?["']?([^"']+)["']?/i);
+  // ---- Search patterns ----
+  if ((goalLower.startsWith('search') || goalLower.startsWith('find ') || goalLower.startsWith('look for '))) {
+    const searchMatch = goal.match(/(?:search(?:\s+for)?|find|look for)\s+["']?([^"'\n]+?)["']?$/i);
     if (searchMatch) {
-      const query = searchMatch[1];
-      if (!url && !goalLower.includes('navigate to')) {
+      const query = searchMatch[1].trim();
+      if (actions.length === 0) {
         actions.push({ type: 'navigate', url: 'https://www.google.com', description: 'Navigate to Google' });
       }
-      actions.push({ type: 'fill', selector: 'input[name="q"], input[type="search"], textarea[name="q"]', value: query, description: `Type search: "${query}"` });
-      actions.push({ type: 'press_key', selector: 'input[name="q"], input[type="search"]', value: 'Enter', description: 'Press Enter to search' });
+      actions.push({
+        type: 'fill',
+        selector: 'input[name="q"], input[type="search"], textarea[name="q"]',
+        value: query,
+        description: `Type search: "${query}"`
+      });
+      actions.push({ type: 'press_key', value: 'Enter', description: 'Submit search' });
       actions.push({ type: 'wait', description: 'Wait for search results' });
     }
   }
 
-  // Extract / scrape goals
-  if (goalLower.includes('extract') || goalLower.includes('scrape') || goalLower.includes('get text')) {
+  // ---- Scroll patterns ----
+  if (goalLower.includes('scroll down') || goalLower.includes('scroll up')) {
+    const direction = goalLower.includes('scroll up') ? 'up' : 'down';
+    actions.push({ type: 'scroll', value: direction, description: `Scroll ${direction}` });
+  }
+
+  // ---- Screenshot ----
+  if (goalLower.includes('screenshot') || goalLower.includes('take a picture') || goalLower.includes('capture')) {
+    actions.push({ type: 'screenshot', description: 'Capture screenshot' });
+  }
+
+  // ---- Extract ----
+  if (goalLower.includes('extract') || goalLower.includes('scrape') || goalLower.includes('get text') || goalLower.includes('read page')) {
     actions.push({ type: 'wait', description: 'Wait for page to be ready' });
     actions.push({ type: 'extract', description: 'Extract page content' });
   }
 
-  // If no actions were mapped, try as a URL or search
+  // ---- Fallback: unrecognized → Google search ----
   if (actions.length === 0) {
-    if (goal.match(/^https?:\/\//i) || goal.match(/\.[a-z]{2,}$/i)) {
-      const targetUrl = goal.startsWith('http') ? goal : 'https://' + goal;
-      actions.push({ type: 'navigate', url: targetUrl, description: `Navigate to ${targetUrl}` });
-    } else {
-      actions.push({ type: 'navigate', url: `https://www.google.com/search?q=${encodeURIComponent(goal)}`, description: `Search for: "${goal}"` });
-    }
+    actions.push({
+      type: 'navigate',
+      url: `https://www.google.com/search?q=${encodeURIComponent(goal)}`,
+      description: `Search Google for: "${goal}"`
+    });
   }
 
-  // Always screenshot at end
-  actions.push({ type: 'screenshot', description: 'Capture final state' });
+  // Always end with screenshot
+  if (!actions.some(a => a.type === 'screenshot')) {
+    actions.push({ type: 'screenshot', description: 'Capture final state' });
+  }
 
   return actions;
 }
 
-// ==================== Action Execution ====================
+// ==================== Electron-native Action Execution ====================
 
-async function executeAction(page: Page, action: GoalAction): Promise<StepResult> {
+async function executeActionElectron(wc: WebContents, action: GoalAction): Promise<StepResult> {
   const startTime = Date.now();
   const id = `step-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 
   try {
     switch (action.type) {
       case 'navigate': {
-        if (!action.url) throw new Error('No URL provided for navigate');
+        if (!action.url) throw new Error('No URL for navigate');
         const activeTab = electronTabs.find(t => t.id === activeTabId);
         if (activeTab?.view) {
-          activeTab.view.webContents.loadURL(action.url);
-          await page.waitForLoadState('domcontentloaded', { timeout: 15000 }).catch(() => {});
+          await new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(() => resolve(), 15000);
+            activeTab.view!.webContents.once('did-finish-load', () => { clearTimeout(timeout); resolve(); });
+            activeTab.view!.webContents.once('did-fail-load', (_e, code, desc) => {
+              if (code !== -3) { clearTimeout(timeout); reject(new Error(`Load failed: ${desc}`)); }
+              else { clearTimeout(timeout); resolve(); } // -3 = aborted, usually a redirect, treat as ok
+            });
+            activeTab.view!.webContents.loadURL(action.url!).catch(reject);
+          });
         } else {
-          await page.goto(action.url, { waitUntil: 'domcontentloaded', timeout: 15000 });
+          await wc.loadURL(action.url).catch(() => {});
         }
         return { id, type: 'navigate', description: action.description, success: true, duration: Date.now() - startTime };
       }
@@ -257,89 +328,150 @@ async function executeAction(page: Page, action: GoalAction): Promise<StepResult
       case 'click': {
         if (!action.selector) throw new Error('No selector for click');
         const selectors = action.selector.split(',').map(s => s.trim());
+        let clicked = false;
         for (const sel of selectors) {
           try {
-            const locator = page.locator(sel).first();
-            await locator.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
-            await locator.click({ timeout: 5000 });
-            return { id, type: 'click', description: action.description, success: true, duration: Date.now() - startTime };
-          } catch { continue; }
+            // Try CSS selector click
+            const result: boolean = await wc.executeJavaScript(`
+              (function() {
+                const el = document.querySelector(${JSON.stringify(sel)});
+                if (el) { el.click(); return true; }
+                return false;
+              })()
+            `);
+            if (result) { clicked = true; break; }
+          } catch { /* try next */ }
         }
-        throw new Error(`Could not click any selector: ${action.selector}`);
+        if (!clicked) throw new Error(`No element matched: ${action.selector}`);
+        return { id, type: 'click', description: action.description, success: true, duration: Date.now() - startTime };
       }
 
       case 'fill': {
         if (!action.selector) throw new Error('No selector for fill');
         const selectors = action.selector.split(',').map(s => s.trim());
+        let filled = false;
         for (const sel of selectors) {
           try {
-            const locator = page.locator(sel).first();
-            await locator.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
-            await locator.fill(action.value || '');
-            return { id, type: 'fill', description: action.description, success: true, duration: Date.now() - startTime };
-          } catch { continue; }
+            const result: boolean = await wc.executeJavaScript(`
+              (function() {
+                const el = document.querySelector(${JSON.stringify(sel)});
+                if (el) {
+                  el.focus();
+                  const nativeInputValue = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value') ||
+                    Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value');
+                  if (nativeInputValue && nativeInputValue.set) {
+                    nativeInputValue.set.call(el, ${JSON.stringify(action.value || '')});
+                  } else {
+                    el.value = ${JSON.stringify(action.value || '')};
+                  }
+                  el.dispatchEvent(new Event('input', { bubbles: true }));
+                  el.dispatchEvent(new Event('change', { bubbles: true }));
+                  return true;
+                }
+                return false;
+              })()
+            `);
+            if (result) { filled = true; break; }
+          } catch { /* try next */ }
         }
-        throw new Error(`Could not fill any selector: ${action.selector}`);
+        if (!filled) throw new Error(`No element matched: ${action.selector}`);
+        return { id, type: 'fill', description: action.description, success: true, duration: Date.now() - startTime };
       }
 
       case 'press_key': {
-        if (!action.selector) {
-          await page.keyboard.press(action.value || 'Enter');
-          return { id, type: 'press_key', description: action.description, success: true, duration: Date.now() - startTime };
-        }
-        const selectors = action.selector.split(',').map(s => s.trim());
-        for (const sel of selectors) {
-          try {
-            await page.locator(sel).first().press(action.value || 'Enter', { timeout: 3000 });
-            return { id, type: 'press_key', description: action.description, success: true, duration: Date.now() - startTime };
-          } catch { continue; }
-        }
-        await page.keyboard.press(action.value || 'Enter');
+        const key = action.value || 'Enter';
+        await wc.executeJavaScript(`
+          (function() {
+            const el = document.activeElement || document.body;
+            const keyMap = {
+              'Enter': { key: 'Enter', code: 'Enter', keyCode: 13 },
+              'Tab': { key: 'Tab', code: 'Tab', keyCode: 9 },
+              'Escape': { key: 'Escape', code: 'Escape', keyCode: 27 },
+              'ArrowDown': { key: 'ArrowDown', code: 'ArrowDown', keyCode: 40 },
+              'ArrowUp': { key: 'ArrowUp', code: 'ArrowUp', keyCode: 38 },
+              'Space': { key: ' ', code: 'Space', keyCode: 32 }
+            };
+            const kInfo = keyMap[${JSON.stringify(key)}] || { key: ${JSON.stringify(key)}, code: ${JSON.stringify(key)}, keyCode: 0 };
+            el.dispatchEvent(new KeyboardEvent('keydown', { ...kInfo, bubbles: true }));
+            el.dispatchEvent(new KeyboardEvent('keypress', { ...kInfo, bubbles: true }));
+            el.dispatchEvent(new KeyboardEvent('keyup', { ...kInfo, bubbles: true }));
+            if (kInfo.key === 'Enter') {
+              const form = el.closest('form');
+              if (form) form.submit();
+            }
+            if (kInfo.key === 'Tab') {
+              const focusable = Array.from(document.querySelectorAll('input,button,select,textarea,a,[tabindex]:not([tabindex="-1"])'));
+              const idx = focusable.indexOf(el);
+              if (idx >= 0 && idx < focusable.length - 1) focusable[idx + 1].focus();
+            }
+          })()
+        `);
         return { id, type: 'press_key', description: action.description, success: true, duration: Date.now() - startTime };
       }
 
       case 'select': {
         if (!action.selector) throw new Error('No selector for select');
-        await page.selectOption(action.selector, action.value || '');
+        await wc.executeJavaScript(`
+          (function() {
+            const el = document.querySelector(${JSON.stringify(action.selector)});
+            if (el) { el.value = ${JSON.stringify(action.value || '')}; el.dispatchEvent(new Event('change', { bubbles: true })); }
+          })()
+        `);
         return { id, type: 'select', description: action.description, success: true, duration: Date.now() - startTime };
       }
 
       case 'hover': {
         if (!action.selector) throw new Error('No selector for hover');
-        await page.hover(action.selector);
+        await wc.executeJavaScript(`
+          (function() {
+            const el = document.querySelector(${JSON.stringify(action.selector)});
+            if (el) { el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true })); el.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true })); }
+          })()
+        `);
         return { id, type: 'hover', description: action.description, success: true, duration: Date.now() - startTime };
       }
 
+      case 'scroll': {
+        const direction = action.value === 'up' ? -500 : 500;
+        await wc.executeJavaScript(`window.scrollBy(0, ${direction})`);
+        return { id, type: 'scroll', description: action.description, success: true, duration: Date.now() - startTime };
+      }
+
       case 'wait': {
-        await page.waitForTimeout(2000);
+        await new Promise(resolve => setTimeout(resolve, 1500));
         return { id, type: 'wait', description: action.description, success: true, duration: Date.now() - startTime };
       }
 
       case 'screenshot': {
-        const screenshot = await page.screenshot({ type: 'png' });
-        const screenshotBase64 = screenshot.toString('base64');
-        return { id, type: 'screenshot', description: action.description, success: true, duration: Date.now() - startTime, extractedValue: `data:image/png;base64,${screenshotBase64}` };
+        const activeTab = electronTabs.find(t => t.id === activeTabId);
+        const wcForCapture = activeTab?.view?.webContents || mainWindow?.webContents || wc;
+        const image = await wcForCapture.capturePage();
+        const screenshotBase64 = `data:image/png;base64,${image.toPNG().toString('base64')}`;
+        return { id, type: 'screenshot', description: action.description, success: true, duration: Date.now() - startTime, extractedValue: screenshotBase64 };
       }
 
       case 'extract': {
         let value = '';
         if (action.selector) {
-          const selectors = action.selector.split(',').map(s => s.trim());
-          for (const sel of selectors) {
-            try {
-              value = await page.locator(sel).first().textContent({ timeout: 3000 }) || '';
-              if (value) break;
-            } catch { continue; }
-          }
+          try {
+            value = await wc.executeJavaScript(`
+              (function() {
+                const el = document.querySelector(${JSON.stringify(action.selector)});
+                return el ? (el.textContent || el.innerText || '').trim() : '';
+              })()
+            `) || '';
+          } catch { /* fall through to body text */ }
         }
         if (!value) {
-          value = await page.evaluate(() => document.body?.innerText?.substring(0, 5000) || '');
+          value = await wc.executeJavaScript(`
+            (document.body?.innerText || document.body?.textContent || '').trim().substring(0, 5000)
+          `) || '';
         }
         return { id, type: 'extract', description: action.description, success: true, duration: Date.now() - startTime, extractedValue: value };
       }
 
       default:
-        throw new Error(`Unknown action type: ${action.type}`);
+        throw new Error(`Unknown action type: ${(action as any).type}`);
     }
   } catch (error) {
     return { id, type: action.type, description: action.description, success: false, duration: Date.now() - startTime, error: String(error) };
@@ -348,29 +480,18 @@ async function executeAction(page: Page, action: GoalAction): Promise<StepResult
 
 // ==================== Public API ====================
 
-export async function initializeAutoBrowse(electronSession: any): Promise<void> {
+export async function initializeAutoBrowse(_electronSession?: any): Promise<void> {
   if (isInitialized) {
     log.info('[AutoBrowse] Already initialized');
     return;
   }
 
-  log.info('[AutoBrowse] Initializing with CDP...');
-  log.info(`[AutoBrowse] CDP port: ${CDP_PORT}`);
+  log.info('[AutoBrowse] Initializing (Electron-native mode)...');
+  log.info(`[AutoBrowse] CDP port for fallback: ${CDP_PORT}`);
 
-  try {
-    const connection = await connectCDP();
-    if (!connection) {
-      log.warn('[AutoBrowse] CDP connection failed on init, will retry on first goal execution');
-    }
-
-    isInitialized = true;
-    log.info('[AutoBrowse] Initialized successfully (CDP mode)');
-  } catch (error) {
-    log.error('[AutoBrowse] Initialization failed:', error);
-    // Mark as initialized anyway - we retry CDP on each goal
-    isInitialized = true;
-    log.info('[AutoBrowse] Marked as initialized (CDP will retry on goal execution)');
-  }
+  // Electron-native mode doesn't need CDP to initialize
+  isInitialized = true;
+  log.info('[AutoBrowse] Initialized (Electron-native mode, CDP optional)');
 }
 
 export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecutionResult> {
@@ -390,98 +511,88 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
     logs.push(`[Inputs] ${JSON.stringify(Object.keys(input.inputs))}`);
   }
 
-  try {
-    // Connect or reconnect to CDP
-    const connection = await connectCDP();
-    if (!connection) {
-      return {
-        execution_id: executionId,
-        status: 'failed',
-        goal_status: 'failed',
-        steps: [],
-        duration: Date.now() - startTime,
-        artifacts: { screenshots: [], logs: ['CDP connection failed'] },
-        error: 'Could not connect to browser via CDP. Is the debug port enabled?'
-      };
-    }
-
-    const { page } = connection;
-
-    // Navigate the active BrowserView if a URL was specified
-    const activeTab = electronTabs.find(t => t.id === activeTabId);
-    if (activeTab?.view && input.inputs?.url) {
-      const url = input.inputs.url as string;
-      log.info(`[AutoBrowse] Navigating BrowserView to ${url}`);
-      activeTab.view.webContents.loadURL(url);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
-
-    // Map goal to actions
-    const actions = mapGoalToActions(input.goal, input.inputs);
-    log.info(`[AutoBrowse] Mapped goal to ${actions.length} actions`);
-
-    const maxSteps = input.constraints?.max_steps || 50;
-    const timeout = input.constraints?.timeout_ms || 120000;
-
-    // Execute each action
-    for (let i = 0; i < Math.min(actions.length, maxSteps); i++) {
-      if (Date.now() - startTime > timeout) {
-        logs.push(`[Timeout] Exceeded ${timeout}ms timeout`);
-        break;
-      }
-
-      const action = actions[i];
-      logs.push(`[Step ${i + 1}] ${action.type}: ${action.description}`);
-
-      const result = await executeAction(page, action);
-      steps.push(result);
-
-      if (result.extractedValue && result.type === 'screenshot') {
-        screenshots.push(result.extractedValue);
-      }
-
-      if (!result.success) {
-        logs.push(`[Step ${i + 1}] Failed: ${result.error}`);
-      }
-
-      // Brief pause between actions for page stability
-      await new Promise(resolve => setTimeout(resolve, 300));
-    }
-
-    const successCount = steps.filter(s => s.success).length;
-    const failCount = steps.filter(s => !s.success).length;
-
-    let goalStatus: 'success' | 'failed' | 'uncertain';
-    if (failCount === 0) {
-      goalStatus = 'success';
-    } else if (successCount === 0) {
-      goalStatus = 'failed';
-    } else {
-      goalStatus = 'uncertain';
-    }
-
-    logs.push(`[Result] ${goalStatus}: ${successCount} succeeded, ${failCount} failed`);
-
-    return {
-      execution_id: executionId,
-      status: goalStatus === 'failed' ? 'failed' : 'completed',
-      goal_status: goalStatus,
-      steps,
-      duration: Date.now() - startTime,
-      artifacts: { screenshots, logs },
-    };
-  } catch (error) {
-    log.error('[AutoBrowse] Goal execution failed:', error);
+  // Get primary webContents (active BrowserView or mainWindow)
+  const wc = getActiveWebContents();
+  if (!wc) {
     return {
       execution_id: executionId,
       status: 'failed',
       goal_status: 'failed',
-      steps,
+      steps: [],
       duration: Date.now() - startTime,
-      artifacts: { screenshots, logs },
-      error: String(error)
+      artifacts: { screenshots: [], logs: ['No active window/tab to automate'] },
+      error: 'No active BrowserView or window available'
     };
   }
+
+  // Map goal to actions
+  const actions = mapGoalToActions(input.goal, input.inputs);
+  log.info(`[AutoBrowse] Mapped goal to ${actions.length} actions`);
+  logs.push(`[Mapped] ${actions.length} actions`);
+
+  const maxSteps = input.constraints?.max_steps || 50;
+  const timeout = input.constraints?.timeout_ms || 120000;
+
+  // Execute each action using Electron APIs
+  for (let i = 0; i < Math.min(actions.length, maxSteps); i++) {
+    if (Date.now() - startTime > timeout) {
+      logs.push(`[Timeout] Exceeded ${timeout}ms`);
+      break;
+    }
+
+    const action = actions[i];
+    logs.push(`[Step ${i + 1}/${actions.length}] ${action.type}: ${action.description}`);
+
+    // Emit progress to renderer
+    if (progressEmitter) {
+      progressEmitter(i + 1, actions.length, action.description, 'running');
+    }
+
+    const result = await executeActionElectron(wc, action);
+    steps.push(result);
+
+    if (result.type === 'screenshot' && result.extractedValue) {
+      screenshots.push(result.extractedValue);
+    }
+
+    if (!result.success) {
+      logs.push(`[Step ${i + 1}] Failed: ${result.error}`);
+    }
+
+    // Emit progress done/failed
+    if (progressEmitter) {
+      progressEmitter(i + 1, actions.length, action.description, result.success ? 'done' : 'failed');
+    }
+
+    // Brief pause between actions
+    if (i < actions.length - 1) {
+      await new Promise(resolve => setTimeout(resolve, 250));
+    }
+  }
+
+  const successCount = steps.filter(s => s.success).length;
+  const failCount = steps.filter(s => !s.success).length;
+
+  let goalStatus: 'success' | 'failed' | 'uncertain';
+  if (failCount === 0) {
+    goalStatus = 'success';
+  } else if (successCount === 0) {
+    goalStatus = 'failed';
+  } else {
+    goalStatus = 'uncertain';
+  }
+
+  logs.push(`[Result] ${goalStatus}: ${successCount} succeeded, ${failCount} failed`);
+  log.info(`[AutoBrowse] Goal result: ${goalStatus}`);
+
+  return {
+    execution_id: executionId,
+    status: goalStatus === 'failed' ? 'failed' : 'completed',
+    goal_status: goalStatus,
+    steps,
+    duration: Date.now() - startTime,
+    artifacts: { screenshots, logs },
+  };
 }
 
 export async function getBrowserState(): Promise<BrowserState> {
@@ -506,27 +617,15 @@ export async function getBrowserState(): Promise<BrowserState> {
 
 export async function captureScreenshot(): Promise<string> {
   try {
-    const connection = await connectCDP();
-    if (!connection) {
-      // Fallback to Electron screenshot
-      if (mainWindow) {
-        const image = await mainWindow.webContents.capturePage();
-        return image.toDataURL();
-      }
-      return '';
+    const activeTab = electronTabs.find(t => t.id === activeTabId);
+    const wc = activeTab?.view?.webContents || mainWindow?.webContents;
+    if (wc) {
+      const image = await wc.capturePage();
+      return `data:image/png;base64,${image.toPNG().toString('base64')}`;
     }
-
-    const screenshot = await connection.page.screenshot({ type: 'png' });
-    return `data:image/png;base64,${screenshot.toString('base64')}`;
+    return '';
   } catch (error) {
     log.error('[AutoBrowse] Screenshot failed:', error);
-    // Fallback to Electron screenshot
-    if (mainWindow) {
-      try {
-        const image = await mainWindow.webContents.capturePage();
-        return image.toDataURL();
-      } catch { return ''; }
-    }
     return '';
   }
 }
@@ -542,16 +641,16 @@ export function isAutoBrowseInitialized(): boolean {
 export async function disposeAutoBrowse(): Promise<void> {
   try {
     if (cdpBrowser) {
-      // For CDP-connected browsers, close() disconnects without shutting down the browser
       await cdpBrowser.close();
     }
   } catch (error) {
-    log.error('[AutoBrowse] Error disposing CDP browser:', error);
+    log.error('[AutoBrowse] Error disposing:', error);
   }
 
   cdpBrowser = null;
   cdpContext = null;
   isInitialized = false;
   mainWindow = null;
+  progressEmitter = null;
   log.info('[AutoBrowse] Disposed');
 }

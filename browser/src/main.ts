@@ -19,22 +19,27 @@ const getInstallPath = (): string => {
 };
 
 const INSTALL_DIR = getInstallPath();
-// Use userData for logs (always writable, unlike Program Files)
-const LOGS_DIR = path.join(app.getPath('userData'), 'logs');
-const STARTUP_LOG = path.join(LOGS_DIR, 'startup.log');
-const MAIN_LOG = path.join(LOGS_DIR, 'keledon-browser.log');
 const MAX_LOG_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_LOG_FILES = 5;
 
-// Ensure logs directory exists
-try {
-  if (!fs.existsSync(LOGS_DIR)) {
-    fs.mkdirSync(LOGS_DIR, { recursive: true });
+// Lazy log directory — safe to call before app.isReady()
+function getLogsDir(): string {
+  try {
+    const dir = path.join(app.getPath('userData'), 'logs');
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    return dir;
+  } catch {
+    // App not ready or path unavailable — fall back to tmpdir for early logs
+    const fallback = path.join(os.tmpdir(), 'keledon-logs');
+    if (!fs.existsSync(fallback)) fs.mkdirSync(fallback, { recursive: true });
+    return fallback;
   }
-} catch (e) {
-  // Last resort — try AppData
-  // But install_dir/logs/ is the canonical location per v3_KELEDON_BROWSER.md
 }
+
+// Top-level constants reference the lazy getter
+const LOGS_DIR = getLogsDir();
+const STARTUP_LOG = path.join(LOGS_DIR, 'startup.log');
+const MAIN_LOG = path.join(LOGS_DIR, 'keledon-browser.log');
 
 // Log rotation: rename old logs when size exceeds MAX_LOG_SIZE
 const rotateLog = (logPath: string): void => {
@@ -471,6 +476,14 @@ async function initializeAutoBrowseEngine(): Promise<void> {
     };
 
     await bridge.initializeAutoBrowse(electronSessionData as any);
+
+    // Wire progress emitter so bridge can send step updates to renderer
+    if (typeof bridge.setProgressEmitter === 'function') {
+      bridge.setProgressEmitter((step: number, total: number, action: string, status: 'running' | 'done' | 'failed') => {
+        mainWindow?.webContents.send('executor:progress', { step, total, action, status });
+      });
+    }
+
     log.info('[Main] AutoBrowse engine initialized successfully');
   } catch (error) {
     log.error('[Main] Failed to initialize AutoBrowse:', error);
