@@ -39,6 +39,7 @@ contextBridge.exposeInMainWorld('keledon', {
       ipcRenderer.invoke('evidence:getEventLogs', filter),
     clearEventLogs: () => ipcRenderer.invoke('evidence:clearEventLogs'),
     getLogCategories: () => ipcRenderer.invoke('evidence:getLogCategories'),
+    copyAllLogs: () => ipcRenderer.invoke('evidence:copyAllLogs'),
     onEventLog: (callback: (entry: any) => void) => {
       ipcRenderer.on('event:log', (_event, entry) => callback(entry));
       return () => ipcRenderer.removeAllListeners('event:log');
@@ -82,6 +83,11 @@ contextBridge.exposeInMainWorld('keledon', {
     switch: (tabId: string) => ipcRenderer.invoke('tabs:switch', tabId),
     close: (tabId: string) => ipcRenderer.invoke('tabs:close', tabId),
     getActive: () => ipcRenderer.invoke('tabs:getActive'),
+    goBack: () => ipcRenderer.invoke('tabs:goBack'),
+    goForward: () => ipcRenderer.invoke('tabs:goForward'),
+    reload: () => ipcRenderer.invoke('tabs:reload'),
+    getUrl: () => ipcRenderer.invoke('tabs:getUrl'),
+    navigate: (url: string) => ipcRenderer.invoke('tabs:navigate', url),
     onUpdate: (callback: (tabs: TabData[]) => void) => {
       ipcRenderer.on('tabs:updated', (_event, tabs) => callback(tabs));
       return () => ipcRenderer.removeAllListeners('tabs:updated');
@@ -93,11 +99,25 @@ contextBridge.exposeInMainWorld('keledon', {
       return () => ipcRenderer.removeAllListeners('escalation:show');
     },
     onAction: (callback: (action: 'continue' | 'fix' | 'abort', data?: any) => void) => {
-      ipcRenderer.on('escalation:action', (_event, data) => callback(data.action, data.data));
-      return () => ipcRenderer.removeAllListeners('escalation:action');
+      ipcRenderer.on('escalation:handled', (_event, data) => callback(data.action, data.data));
+      return () => ipcRenderer.removeAllListeners('escalation:handled');
     },
     action: (action: 'continue' | 'fix' | 'abort', data?: any) => {
-      ipcRenderer.invoke('escalation:action', action, data);
+      ipcRenderer.send('escalation:action', action, data);
+    }
+  },
+  shortcuts: {
+    onNewTab: (callback: () => void) => {
+      ipcRenderer.on('shortcut:newTab', () => callback());
+      return () => ipcRenderer.removeAllListeners('shortcut:newTab');
+    },
+    onFocusUrlBar: (callback: () => void) => {
+      ipcRenderer.on('shortcut:focusUrlBar', () => callback());
+      return () => ipcRenderer.removeAllListeners('shortcut:focusUrlBar');
+    },
+    onFindInPage: (callback: () => void) => {
+      ipcRenderer.on('shortcut:findInPage', () => callback());
+      return () => ipcRenderer.removeAllListeners('shortcut:findInPage');
     }
   }
 });
@@ -193,11 +213,17 @@ declare global {
         switch: (tabId: string) => Promise<{ success: boolean }>;
         close: (tabId: string) => Promise<{ success: boolean }>;
         getActive: () => Promise<string>;
+        goBack: () => Promise<{ success: boolean }>;
+        goForward: () => Promise<{ success: boolean }>;
+        reload: () => Promise<{ success: boolean }>;
+        getUrl: () => Promise<string>;
+        navigate: (url: string) => Promise<{ success: boolean }>;
         onUpdate: (callback: (tabs: { id: string; name: string; url: string; active: boolean }[]) => void) => () => void;
       };
       escalation: {
         onShow: (callback: (data: { type: 'trigger' | 'failure'; data: EscalationData }) => void) => () => void;
         onAction: (callback: (action: 'continue' | 'fix' | 'abort', data?: any) => void) => () => void;
+        action: (action: 'continue' | 'fix' | 'abort', data?: any) => void;
       };
     };
   }
