@@ -1,6 +1,6 @@
 {
   "name": "keledon-desktop-agent",
-  "version": "0.1.14",
+  "version": "0.1.18",
   "description": "KELEDON Desktop Agent - Electron runtime with AutoBrowse",
   "author": "Keledon Team <team@keledon.com>",
   "main": "dist/main.js",
@@ -10,6 +10,7 @@
     "start": "electron .",
     "package": "npm run build && electron-forge make",
     "make": "electron-forge make",
+    "pre_dist": "node scripts/clean-dist.js",
     "dist": "npm run build && electron-builder --win nsis",
     "dist:dir": "npm run build && electron-builder --win --dir",
     "dist:zip": "npm run build && electron-builder --win zip"

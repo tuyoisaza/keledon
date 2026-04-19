@@ -1,276 +1,561 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https: wss: ws:;">
   <title>KELEDON Browser</title>
   <style>
+    /* Chrome-like theme */
     :root {
-      --bg: #0d1117;
-      --bg-secondary: #161b22;
-      --bg-tertiary: #21262d;
-      --border: #30363d;
-      --primary: #00d4aa;
-      --primary-dim: #00a88a;
-      --text: #e6edf3;
-      --text-dim: #8b949e;
-      --success: #238636;
-      --warning: #9e6a03;
-      --danger: #da3633;
+      --tab-bar-bg: #dee1e6;
+      --tab-active-bg: #ffffff;
+      --tab-inactive-bg: #c4c7cb;
+      --tab-hover-bg: #d3d6db;
+      --toolbar-bg: #ffffff;
+      --url-bar-bg: #f1f3f4;
+      --url-bar-focus-bg: #ffffff;
+      --text-primary: #202124;
+      --text-secondary: #5f6368;
+      --accent: #1a73e8;
+      --accent-hover: #1765cc;
+      --border: #dadce0;
+      --danger: #d93025;
+      --success: #1e8e3e;
+      --warning: #f9ab00;
+      --keledon: #00d4aa;
+      --keledon-dim: #00a88a;
+      --new-tab-bg: #ffffff;
+      --new-tab-shortcut-bg: #f1f3f4;
+      --panel-bg: #ffffff;
+      --panel-border: #e8eaed;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--toolbar-bg);
+      color: var(--text-primary);
       height: 100vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-    }
-    
-    /* Header */
-    header {
-      background: var(--bg-secondary);
-      padding: 12px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    header .logo-icon {
-      width: 28px;
-      height: 28px;
-      background: var(--primary);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: var(--bg);
-      font-size: 14px;
-    }
-    header h1 { 
-      font-size: 15px; 
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.3px;
-    }
-    header .header-actions {
-      display: flex;
-      gap: 8px;
-    }
-    header .btn-icon {
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-      transition: all 0.15s;
-    }
-    header .btn-icon:hover {
-      background: var(--border);
-      color: var(--text);
-    }
-    header .btn-icon.primary {
-      background: var(--primary);
-      color: var(--bg);
-      border-color: var(--primary);
-    }
-    header .btn-icon.primary:hover {
-      background: var(--primary-dim);
+      -webkit-user-select: none;
+      user-select: none;
     }
 
-    /* Status Bar */
-    .status-bar {
-      background: var(--bg-secondary);
-      padding: 10px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      font-size: 13px;
-    }
-    .status-bar .status-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .status-bar .status-label {
-      color: var(--text-dim);
-    }
-    .status-bar .status-value {
-      color: var(--text);
-      font-weight: 500;
-    }
-    .status-bar .connection-status {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-left: auto;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-    .status-bar .connection-status.disconnected {
-      background: var(--bg-tertiary);
-      color: var(--text-dim);
-    }
-    .status-bar .connection-status.connecting {
-      background: var(--warning);
-      background: rgba(158, 106, 3, 0.2);
-      color: #d29922;
-    }
-    .status-bar .connection-status.connected {
-      background: var(--success);
-      background: rgba(35, 134, 54, 0.2);
-      color: #3fb950;
-    }
-    .status-bar .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    /* Quick Actions */
-    .quick-actions {
-      background: var(--bg);
-      padding: 12px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      gap: 10px;
-    }
-    .quick-actions .btn-action {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 500;
-      transition: all 0.15s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .quick-actions .btn-action:hover:not(:disabled) {
-      background: var(--bg-tertiary);
-      border-color: var(--text-dim);
-    }
-    .quick-actions .btn-action:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-    .quick-actions .btn-action.record {
-      background: var(--danger);
-      border-color: var(--danger);
-    }
-    .quick-actions .btn-action.record:hover:not(:disabled) {
-      background: #b93a37;
-      border-color: #b93a37;
-    }
-    .quick-actions .btn-action.end {
-      background: var(--bg-tertiary);
-      border-color: var(--danger);
-      color: var(--danger);
-    }
-    .quick-actions .btn-action.end:hover:not(:disabled) {
-      background: var(--danger);
-      color: white;
-    }
-    .quick-actions .btn-action.active {
-      border-color: var(--primary);
-      color: var(--primary);
-    }
-
-    /* Tab Bar */
+    /* ========== TAB BAR ========== */
     .tab-bar {
-      background: var(--bg-secondary);
-      padding: 0 10px;
-      border-bottom: 1px solid var(--border);
+      background: var(--tab-bar-bg);
       display: flex;
-      align-items: center;
-      gap: 2px;
-      height: 36px;
-      overflow-x: auto;
+      align-items: flex-end;
+      padding: 6px 8px 0 8px;
+      height: 38px;
+      gap: 0;
+      -webkit-app-region: drag;
     }
-    .tab-bar::-webkit-scrollbar { height: 4px; }
-    .tab-bar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
     .tab {
       display: flex;
       align-items: center;
       gap: 6px;
       padding: 6px 12px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: 6px 6px 0 0;
-      color: var(--text-dim);
+      background: var(--tab-inactive-bg);
+      border-radius: 8px 8px 0 0;
+      color: var(--text-secondary);
       font-size: 12px;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.15s;
-      min-width: 80px;
-      max-width: 160px;
+      max-width: 180px;
+      min-width: 60px;
+      transition: background 0.15s;
+      position: relative;
+      -webkit-app-region: no-drag;
+      height: 32px;
+      margin-right: 1px;
     }
-    .tab:hover { background: var(--border); color: var(--text); }
-    .tab.active { background: var(--bg); color: var(--text); border-bottom-color: var(--bg); }
-    .tab-icon { font-size: 11px; }
-    .tab-name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+    .tab:hover { background: var(--tab-hover-bg); }
+    .tab.active {
+      background: var(--tab-active-bg);
+      color: var(--text-primary);
+      z-index: 1;
+    }
+    .tab-icon { font-size: 12px; flex-shrink: 0; }
+    .tab-name {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 400;
+    }
+    .tab.active .tab-name { font-weight: 500; }
     .tab-close {
       background: none;
       border: none;
-      color: var(--text-dim);
+      color: var(--text-secondary);
       cursor: pointer;
       padding: 0 2px;
       font-size: 14px;
       line-height: 1;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.1s;
     }
-    .tab-close:hover { color: var(--danger); }
+    .tab:hover .tab-close { opacity: 0.6; }
+    .tab-close:hover { opacity: 1 !important; background: var(--border); }
     .tab-add {
       background: none;
-      border: 1px dashed var(--border);
-      color: var(--text-dim);
-      padding: 4px 10px;
-      border-radius: 6px;
+      border: none;
+      color: var(--text-secondary);
+      padding: 0;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      margin-left: 4px;
+      -webkit-app-region: no-drag;
+      align-self: center;
+    }
+    .tab-add:hover { background: var(--tab-hover-bg); }
+
+    /* ========== NAVIGATION BAR ========== */
+    .nav-bar {
+      background: var(--toolbar-bg);
+      padding: 4px 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 40px;
+      -webkit-app-region: drag;
+    }
+    .nav-actions {
+      display: flex;
+      gap: 2px;
+      -webkit-app-region: no-drag;
+    }
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
       font-size: 14px;
+      transition: background 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) { background: var(--url-bar-bg); color: var(--text-primary); }
+    .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .nav-url-container {
+      flex: 1;
+      position: relative;
+      -webkit-app-region: no-drag;
+    }
+    .nav-url {
+      width: 100%;
+      background: var(--url-bar-bg);
+      border: 2px solid transparent;
+      color: var(--text-primary);
+      padding: 6px 36px 6px 14px;
+      border-radius: 24px;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .nav-url:focus {
+      background: var(--url-bar-focus-bg);
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px rgba(26, 115, 232, 0.2);
+    }
+    .nav-url[readonly] {
+      background: var(--url-bar-bg);
+      color: var(--text-secondary);
+      cursor: default;
+    }
+    .nav-loading {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+    .nav-loading.active { display: block; }
+    @keyframes spin { 100% { transform: translateY(-50%) rotate(360deg); } }
+
+    .nav-panel-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.15s;
+      -webkit-app-region: no-drag;
+      position: relative;
+    }
+    .nav-panel-btn:hover { background: var(--url-bar-bg); color: var(--text-primary); }
+    .nav-panel-btn.active { color: var(--keledon); background: #e0f7f3; }
+    .nav-panel-btn .badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--danger);
+      display: none;
+    }
+    .nav-panel-btn .badge.visible { display: block; }
+
+    /* Connection indicator in nav */
+    .conn-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+      margin-right: 4px;
+      flex-shrink: 0;
+      -webkit-app-region: no-drag;
+    }
+    .conn-dot.connected { background: var(--success); }
+    .conn-dot.connecting { background: var(--warning); animation: pulse 1.5s infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ========== CONTENT AREA (New Tab Page) ========== */
+    .content-area {
+      flex: 1;
+      background: var(--new-tab-bg);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 15vh;
+    }
+    .content-area.hidden { display: none; }
+    .new-tab-logo {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--keledon), var(--keledon-dim));
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0, 212, 170, 0.3);
+    }
+    .new-tab-title {
+      font-size: 22px;
+      font-weight: 300;
+      color: var(--text-primary);
+      margin-bottom: 32px;
+      letter-spacing: -0.3px;
+    }
+    .new-tab-search {
+      width: 100%;
+      max-width: 560px;
+      margin-bottom: 40px;
+    }
+    .new-tab-search input {
+      width: 100%;
+      padding: 12px 20px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      font-size: 15px;
+      color: var(--text-primary);
+      background: var(--new-tab-shortcut-bg);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .new-tab-search input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 2px 12px rgba(26, 115, 232, 0.2);
+      background: #fff;
+    }
+    .new-tab-search input::placeholder { color: var(--text-secondary); }
+    .shortcuts {
+      display: grid;
+      grid-template-columns: repeat(4, 96px);
+      gap: 16px;
+    }
+    .shortcut {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 12px 8px;
+      border-radius: 12px;
+      transition: background 0.15s;
+    }
+    .shortcut:hover { background: var(--new-tab-shortcut-bg); }
+    .shortcut-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .shortcut-icon.google { background: #ffffff; border: 1px solid var(--border); }
+    .shortcut-icon.keledon { background: linear-gradient(135deg, var(--keledon), var(--keledon-dim)); color: white; }
+    .shortcut-icon.connect { background: #e8f0fe; }
+    .shortcut-icon.execute { background: #fce8e6; }
+    .shortcut-name {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-align: center;
+      max-width: 80px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ========== SIDE PANEL (KELEDON Controls) ========== */
+    .side-panel-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 100;
+    }
+    .side-panel-overlay.show { display: block; }
+    .side-panel {
+      position: fixed;
+      top: 0; right: -400px; bottom: 0;
+      width: 380px;
+      background: var(--panel-bg);
+      box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+      z-index: 101;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.25s ease;
+      overflow: hidden;
+    }
+    .side-panel.open { right: 0; }
+    .side-panel-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .side-panel-header h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .side-panel-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .side-panel-close:hover { background: var(--new-tab-shortcut-bg); }
+    .side-panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+    }
+    .panel-section {
+      margin-bottom: 20px;
+    }
+    .panel-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+
+    /* Connection form */
+    .conn-form { display: flex; flex-direction: column; gap: 10px; }
+    .conn-form input {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-primary);
+      background: var(--url-bar-bg);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .conn-form input:focus { border-color: var(--accent); }
+    .btn-connect {
+      padding: 10px;
+      background: var(--keledon);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-connect:hover:not(:disabled) { background: var(--keledon-dim); }
+    .btn-connect:disabled { opacity: 0.5; cursor: not-allowed; }
+    .conn-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+    .conn-status.disconnected { background: #f1f3f4; color: var(--text-secondary); }
+    .conn-status.connecting { background: #fef7e0; color: var(--warning); }
+    .conn-status.connected { background: #e6f4ea; color: var(--success); }
+    .conn-dot-lg {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* Execute section */
+    .execute-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-primary);
+      background: var(--url-bar-bg);
+      outline: none;
+      transition: border-color 0.15s;
+      margin-bottom: 8px;
+    }
+    .execute-input:focus { border-color: var(--keledon); }
+    .btn-execute {
+      width: 100%;
+      padding: 10px;
+      background: #ffffff;
+      border: 1px solid var(--keledon);
+      border-radius: 8px;
+      color: var(--keledon);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
       transition: all 0.15s;
     }
-    .tab-add:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-execute:hover:not(:disabled) { background: var(--keledon); color: white; }
+    .btn-execute:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* Escalation Modal */
+    /* Activity log */
+    .activity-log {
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 12px;
+    }
+    .activity-entry {
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--panel-border);
+      color: var(--text-secondary);
+      font-size: 11px;
+    }
+    .activity-entry.info { border-left: 3px solid var(--accent); }
+    .activity-entry.success { border-left: 3px solid var(--success); }
+    .activity-entry.error { border-left: 3px solid var(--danger); }
+    .activity-entry .time { color: var(--text-secondary); font-size: 10px; }
+    .activity-entry .msg { color: var(--text-primary); }
+
+    /* Call controls in panel */
+    .call-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .call-btn {
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #fff;
+      color: var(--text-primary);
+      transition: all 0.15s;
+    }
+    .call-btn:hover:not(:disabled) { background: var(--url-bar-bg); }
+    .call-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .call-btn.start { border-color: var(--success); color: var(--success); }
+    .call-btn.start:hover:not(:disabled) { background: var(--success); color: #fff; }
+    .call-btn.end { border-color: var(--danger); color: var(--danger); }
+    .call-btn.end:hover:not(:disabled) { background: var(--danger); color: #fff; }
+    .call-btn.active { border-color: var(--accent); color: var(--accent); }
+
+    /* Version badge */
+    .version-badge {
+      font-size: 10px;
+      color: var(--text-secondary);
+      padding: 2px 8px;
+      background: var(--url-bar-bg);
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .version-badge:hover { background: var(--border); }
+
+    /* ========== ESCALATION MODAL ========== */
     .escalation-modal {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 1000;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
       align-items: center;
       justify-content: center;
     }
     .escalation-modal.show { display: flex; }
     .escalation-content {
-      background: var(--bg-secondary);
-      border: 2px solid var(--danger);
+      background: #fff;
       border-radius: 12px;
       padding: 24px;
-      max-width: 480px;
+      max-width: 420px;
       width: 90%;
-      box-shadow: 0 0 30px rgba(218, 54, 51, 0.3);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     }
     .escalation-header {
       display: flex;
@@ -278,8 +563,8 @@
       gap: 12px;
       margin-bottom: 16px;
     }
-    .escalation-icon { font-size: 32px; }
-    .escalation-title { font-size: 18px; font-weight: 600; color: var(--danger); }
+    .escalation-icon { font-size: 28px; }
+    .escalation-title { font-size: 16px; font-weight: 600; color: var(--danger); }
     .escalation-type {
       font-size: 10px;
       padding: 2px 8px;
@@ -287,486 +572,495 @@
       text-transform: uppercase;
       font-weight: 600;
     }
-    .escalation-type.trigger { background: var(--warning); color: var(--bg); }
-    .escalation-type.failure { background: var(--danger); color: white; }
-    .escalation-message { color: var(--text); font-size: 14px; margin-bottom: 12px; line-height: 1.5; }
+    .escalation-type.trigger { background: #fef7e0; color: var(--warning); }
+    .escalation-type.failure { background: #fce8e6; color: var(--danger); }
+    .escalation-message { color: var(--text-primary); font-size: 14px; margin-bottom: 12px; line-height: 1.5; }
     .escalation-detail {
-      background: var(--bg-tertiary);
+      background: var(--url-bar-bg);
       padding: 10px 12px;
       border-radius: 6px;
       font-family: monospace;
       font-size: 12px;
-      color: var(--text-dim);
+      color: var(--text-secondary);
       margin-bottom: 20px;
     }
-    .escalation-buttons {
-      display: flex;
-      gap: 12px;
-      justify-content: flex-end;
-    }
+    .escalation-buttons { display: flex; gap: 10px; justify-content: flex-end; }
     .escalation-btn {
-      padding: 10px 20px;
+      padding: 8px 16px;
       border-radius: 6px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text-primary);
       transition: all 0.15s;
     }
-    .escalation-btn.continue {
-      background: var(--primary);
-      border: none;
-      color: var(--bg);
-    }
-    .escalation-btn.continue:hover { background: var(--primary-dim); }
-    .escalation-btn.fix {
-      background: transparent;
-      border: 1px solid var(--warning);
-      color: var(--warning);
-    }
-    .escalation-btn.fix:hover { background: var(--warning); color: var(--bg); }
-    .escalation-btn.abort {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-    }
-    .escalation-btn.abort:hover { border-color: var(--danger); color: var(--danger); }
+    .escalation-btn:hover { background: var(--url-bar-bg); }
+    .escalation-btn.continue { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .escalation-btn.continue:hover { background: var(--accent-hover); }
+    .escalation-btn.fix { border-color: var(--warning); color: var(--warning); }
+    .escalation-btn.fix:hover { background: var(--warning); color: #fff; }
+    .escalation-btn.abort { border-color: var(--danger); color: var(--danger); }
+    .escalation-btn.abort:hover { background: var(--danger); color: #fff; }
 
-    /* Panels Row */
-    .panels-row {
-      flex: 1;
-      display: flex;
-      gap: 1px;
-      background: var(--border);
-      overflow: hidden;
+    /* Loading bar at top */
+    .loading-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: var(--accent);
+      z-index: 50;
+      transition: width 0.3s ease;
+      display: none;
     }
-    .panel {
-      flex: 1;
-      background: var(--bg);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .panel-header {
-      padding: 10px 16px;
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border);
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-dim);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .panel-content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px;
-    }
-
-    /* Activity Log Entry */
-    .activity-entry {
-      padding: 10px 12px;
-      background: var(--bg-secondary);
-      border-radius: 6px;
-      margin-bottom: 8px;
-      font-size: 12px;
-      border-left: 3px solid var(--border);
-    }
-    .activity-entry.info { border-left-color: var(--text-dim); }
-    .activity-entry.success { border-left-color: var(--success); }
-    .activity-entry.error { border-left-color: var(--danger); }
-    .activity-entry .time { 
-      color: var(--text-dim); 
-      font-size: 11px;
-      margin-bottom: 4px;
-    }
-    .activity-entry .msg { color: var(--text); }
-
-    /* Transcript Entry */
-    .transcript-entry {
-      padding: 10px 12px;
-      background: var(--bg-secondary);
-      border-radius: 6px;
-      margin-bottom: 8px;
-    }
-    .transcript-entry .meta {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-    .transcript-entry .speaker {
-      font-weight: 600;
-      font-size: 12px;
-    }
-    .transcript-entry.agent .speaker { color: var(--primary); }
-    .transcript-entry.customer .speaker { color: #58a6ff; }
-    .transcript-entry .time { color: var(--text-dim); font-size: 11px; }
-    .transcript-entry .text { color: var(--text); font-size: 13px; line-height: 1.5; }
-    .transcript-entry .confidence { 
-      font-size: 10px; 
-      color: var(--text-dim); 
-      margin-top: 4px; 
-    }
-
-    /* Command Entry */
-    .command-entry {
-      padding: 10px 12px;
-      background: var(--bg-secondary);
-      border-radius: 6px;
-      margin-bottom: 8px;
-      font-size: 12px;
-      border-left: 3px solid var(--primary);
-    }
-    .command-entry .meta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-    .command-entry .time { color: var(--text-dim); font-size: 11px; }
-    .command-entry .type { 
-      background: var(--primary);
-      color: var(--bg);
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 600;
-    }
-    .command-entry .payload { 
-      color: var(--text-dim); 
-      font-family: monospace;
-      font-size: 11px;
-      white-space: pre-wrap;
-      word-break: break-all;
-    }
-    .command-entry .flow-id { 
-      color: var(--text-dim); 
-      font-size: 10px; 
-      margin-top: 4px; 
-    }
-
-    /* Bottom Panels */
-    .bottom-row {
-      display: flex;
-      gap: 1px;
-      background: var(--border);
-      border-top: 1px solid var(--border);
-      height: 160px;
-    }
-    .bottom-panel {
-      flex: 1;
-      background: var(--bg);
-      display: flex;
-      flex-direction: column;
-    }
-    .bottom-panel-header {
-      padding: 8px 12px;
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border);
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-dim);
-    }
-    .bottom-panel-content {
-      flex: 1;
-      padding: 12px;
-      overflow-y: auto;
-    }
-
-    /* Input styling */
-    .input-group {
-      margin-bottom: 10px;
-    }
-    .input-group label {
+    .loading-bar.active {
       display: block;
-      font-size: 11px;
-      color: var(--text-dim);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      animation: loading-progress 2s ease-in-out;
     }
-    .input-group input {
-      width: 100%;
-      padding: 10px 12px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      font-size: 13px;
-    }
-    .input-group input:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-    .input-group input::placeholder {
-      color: var(--text-dim);
-    }
-
-    .btn-connect {
-      width: 100%;
-      padding: 10px;
-      background: var(--primary);
-      border: none;
-      border-radius: 6px;
-      color: var(--bg);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .btn-connect:hover:not(:disabled) {
-      background: var(--primary-dim);
-    }
-    .btn-connect:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* Execute panel */
-    .execute-input {
-      width: 100%;
-      padding: 10px 12px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-    .execute-input:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-    .btn-execute {
-      width: 100%;
-      padding: 10px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--primary);
-      border-radius: 6px;
-      color: var(--primary);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .btn-execute:hover:not(:disabled) {
-      background: var(--primary);
-      color: var(--bg);
-    }
-    .btn-execute:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* Debug toggle */
-    .debug-toggle {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      padding: 4px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 10px;
-    }
-    .debug-toggle:hover { background: var(--bg-tertiary); }
-    .debug-toggle.active { 
-      border-color: var(--primary); 
-      color: var(--primary); 
+    @keyframes loading-progress {
+      0% { width: 0%; }
+      30% { width: 40%; }
+      60% { width: 70%; }
+      100% { width: 100%; }
     }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <div class="logo">
-      <div class="logo-icon">K</div>
-      <h1>KELEDON Browser</h1>
-      <button id="versionBtn" class="btn-icon">v?.?.?</button>
-    </div>
-    <div class="header-actions">
-      <button id="copyLogsBtn" class="btn-icon">Copy Logs</button>
-    </div>
-  </header>
-
-  <!-- Status Bar -->
-  <div class="status-bar">
-    <div class="status-item">
-      <span class="status-label">Device:</span>
-      <span class="status-value" id="deviceId">Loading...</span>
-    </div>
-    <div class="status-item">
-      <span class="status-label">Session:</span>
-      <span class="status-value" id="sessionId">-</span>
-    </div>
-    <div class="status-item">
-      <span class="status-label">Keledon:</span>
-      <span class="status-value" id="keledonStatus">Not linked</span>
-    </div>
-    <div class="connection-status disconnected" id="connectionStatus">
-      <span class="status-dot"></span>
-      <span>Disconnected</span>
-    </div>
-  </div>
-
-  <!-- Quick Actions -->
-  <div class="quick-actions">
-    <button id="startCallBtn" class="btn-action primary" disabled>📞 Start Call</button>
-    <button id="muteBtn" class="btn-action" disabled>🔇 Mute</button>
-    <button id="holdBtn" class="btn-action" disabled>⏸ Hold</button>
-    <button id="hangupBtn" class="btn-action end" disabled>📵 End</button>
-    <button id="callStatusBadge" class="btn-action" disabled>Idle</button>
-  </div>
+  <!-- Loading bar -->
+  <div class="loading-bar" id="loadingBar"></div>
 
   <!-- Tab Bar -->
   <div class="tab-bar" id="tabBar">
     <div class="tab active" data-tab-id="home">
       <span class="tab-icon">🏠</span>
-      <span class="tab-name">Home</span>
-      <button class="tab-close" data-close="home">×</button>
+      <span class="tab-name">New Tab</span>
     </div>
-    <button class="tab-add" id="tabAddBtn" title="New Tab">+</button>
+    <button class="tab-add" id="tabAddBtn" title="New tab">+</button>
   </div>
 
-  <!-- Main Panels -->
-  <div class="panels-row">
-    <!-- Activity Panel -->
-    <div class="panel" style="flex: 0.6;">
-      <div class="panel-header">
-        Activity
-        <button id="clearLog" class="debug-toggle">Clear</button>
-      </div>
-      <div id="activityLog" class="panel-content"></div>
+  <!-- Navigation Bar -->
+  <div class="nav-bar">
+    <div class="nav-actions">
+      <button class="nav-btn" id="navBack" disabled title="Back">&#x2190;</button>
+      <button class="nav-btn" id="navForward" disabled title="Forward">&#x2192;</button>
+      <button class="nav-btn" id="navRefresh" disabled title="Reload">&#x21BB;</button>
+      <button class="nav-btn" id="navHome" title="Home">&#x1F3E0;</button>
     </div>
-    
-    <!-- Transcript Panel -->
-    <div class="panel">
-      <div class="panel-header">Transcript</div>
-      <div id="transcript" class="panel-content"></div>
+    <div class="nav-url-container">
+      <input type="text" class="nav-url" id="navUrl" placeholder="Search or enter URL" readonly>
+      <div class="nav-loading" id="navLoading"></div>
     </div>
-    
-    <!-- Brain Status Panel -->
-    <div class="panel">
-      <div class="panel-header">
-        Brain
-        <button id="debugToggle" class="debug-toggle">Debug</button>
-      </div>
-      <div id="brainStatus" class="panel-content"></div>
+    <div class="conn-dot" id="connDot" title="Disconnected"></div>
+    <button class="nav-panel-btn" id="panelBtn" title="KELEDON Controls">&#x2699;</button>
+    <span class="version-badge" id="versionBtn">v?.?.?</span>
+  </div>
+
+  <!-- Content Area (New Tab Page — hidden when BrowserView active) -->
+  <div class="content-area" id="contentArea">
+    <div class="new-tab-logo">K</div>
+    <div class="new-tab-title">KELEDON Browser</div>
+    <div class="new-tab-search">
+      <input type="text" id="newTabUrl" placeholder="Search or enter URL" autocomplete="off">
     </div>
-    
-    <!-- Event Log Panel -->
-    <div class="panel">
-      <div class="panel-header">
-        Event Log
-        <button id="clearEventLog" class="debug-toggle">Clear</button>
+    <div class="shortcuts">
+      <div class="shortcut" data-url="https://www.google.com">
+        <div class="shortcut-icon google">G</div>
+        <span class="shortcut-name">Google</span>
       </div>
-      <div id="eventLog" class="panel-content" style="font-size: 11px;"></div>
+      <div class="shortcut" data-url="https://keledon.tuyoisaza.com">
+        <div class="shortcut-icon keledon">K</div>
+        <span class="shortcut-name">KELEDON</span>
+      </div>
+      <div class="shortcut" id="shortcutConnect">
+        <div class="shortcut-icon connect">&#x1F517;</div>
+        <span class="shortcut-name">Connect</span>
+      </div>
+      <div class="shortcut" id="shortcutExecute">
+        <div class="shortcut-icon execute">&#x25B6;</div>
+        <span class="shortcut-name">Execute</span>
+      </div>
     </div>
   </div>
 
-  <!-- Bottom Panels -->
-  <div class="bottom-row">
-    <!-- Connect Panel -->
-    <div class="bottom-panel" style="flex: 0.6;">
-      <div class="bottom-panel-header">Connect</div>
-      <div class="bottom-panel-content">
-        <div class="input-group">
-          <label>Cloud URL</label>
-          <input type="text" id="cloudUrl" value="https://keledon.tuyoisaza.com" placeholder="https://...">
+  <!-- Side Panel Overlay -->
+  <div class="side-panel-overlay" id="panelOverlay"></div>
+
+  <!-- Side Panel (KELEDON Controls) -->
+  <div class="side-panel" id="sidePanel">
+    <div class="side-panel-header">
+      <h2>&#x2699; KELEDON</h2>
+      <button class="side-panel-close" id="panelClose">&#x2715;</button>
+    </div>
+    <div class="side-panel-content">
+      <!-- Connection Status -->
+      <div class="panel-section">
+        <div class="panel-section-title">Connection</div>
+        <div class="conn-status disconnected" id="panelConnStatus">
+          <div class="conn-dot-lg"></div>
+          <span>Disconnected</span>
         </div>
-        <div class="input-group">
-          <label>Pairing Code</label>
-          <input type="text" id="pairingCode" placeholder="XXXX-XXXX">
+        <div class="conn-form">
+          <input type="text" id="cloudUrl" value="https://keledon.tuyoisaza.com" placeholder="Cloud URL">
+          <input type="text" id="pairingCode" placeholder="Pairing Code (XXXX-XXXX)">
+          <input type="text" id="keledonId" placeholder="Keledon ID (optional)">
+          <button id="connectBtn" class="btn-connect">Connect</button>
         </div>
-        <div class="input-group">
-          <label>Keledon ID</label>
-          <input type="text" id="keledonId" placeholder="keledon-xxx">
+      </div>
+
+      <!-- Execute -->
+      <div class="panel-section">
+        <div class="panel-section-title">Execute Goal</div>
+        <input type="text" id="goalInput" class="execute-input" placeholder="Enter automation goal...">
+        <button id="executeBtn" class="btn-execute" disabled>&#x25B6; Execute</button>
+        <div id="execute-progress" style="display:none; margin-top:8px; padding:8px; background:#f1f3f4; border-radius:4px; font-size:12px;">
+          <div id="progress-text" style="color:#5f6368;">Ready</div>
+          <div style="margin-top:4px; height:4px; background:#e8eaed; border-radius:2px;">
+            <div id="progress-bar" style="height:4px; background:#1a73e8; border-radius:2px; width:0%; transition:width 0.2s;"></div>
+          </div>
         </div>
-        <button id="connectBtn" class="btn-connect">Connect</button>
+      </div>
+
+      <!-- Call Controls -->
+      <div class="panel-section" id="callSection" style="display:none;">
+        <div class="panel-section-title">Call Controls</div>
+        <div class="call-controls">
+          <button id="startCallBtn" class="call-btn start">&#x1F4DE; Start Call</button>
+          <button id="muteBtn" class="call-btn" disabled>&#x1F507; Mute</button>
+          <button id="holdBtn" class="call-btn" disabled>&#x23F8; Hold</button>
+          <button id="hangupBtn" class="call-btn end" disabled>&#x1F4F7; End</button>
+        </div>
+      </div>
+
+      <!-- Activity Log -->
+      <div class="panel-section">
+        <div class="panel-section-title">Activity</div>
+        <div class="activity-log" id="activityLog"></div>
       </div>
     </div>
+  </div>
 
-    <!-- Execute Panel -->
-    <div class="bottom-panel">
-      <div class="bottom-panel-header">Execute</div>
-      <div class="bottom-panel-content">
-        <input type="text" id="goalInput" class="execute-input" placeholder="Enter goal...">
-        <button id="executeBtn" class="btn-execute" disabled>▶ Execute</button>
+  <!-- Escalation Modal -->
+  <div class="escalation-modal" id="escalationModal">
+    <div class="escalation-content">
+      <div class="escalation-header">
+        <span class="escalation-icon">&#x26A0;&#xFE0F;</span>
+        <span class="escalation-title">Human Assistance Required</span>
+        <span class="escalation-type" id="escalationType">trigger</span>
+      </div>
+      <div class="escalation-message" id="escalationMessage"></div>
+      <div class="escalation-detail" id="escalationDetail"></div>
+      <div class="escalation-buttons">
+        <button class="escalation-btn abort" id="escalationAbort">Abort</button>
+        <button class="escalation-btn fix" id="escalationFix">Fix</button>
+        <button class="escalation-btn continue" id="escalationContinue">Continue</button>
       </div>
     </div>
   </div>
 
   <script>
-    // Elements
-    const deviceIdEl = document.getElementById('deviceId');
-    const sessionIdEl = document.getElementById('sessionId');
-    const keledonStatusEl = document.getElementById('keledonStatus');
-    const connectionStatusEl = document.getElementById('connectionStatus');
-    const transcriptEl = document.getElementById('transcript');
-    const brainStatusEl = document.getElementById('brainStatus');
-    const activityLogEl = document.getElementById('activityLog');
-    const muteBtn = document.getElementById('muteBtn');
-    const holdBtn = document.getElementById('holdBtn');
-    const hangupBtn = document.getElementById('hangupBtn');
-    const startCallBtn = document.getElementById('startCallBtn');
-    const callStatusBadge = document.getElementById('callStatusBadge');
-    const debugToggle = document.getElementById('debugToggle');
-    const clearLogBtn = document.getElementById('clearLog');
+    // ==================== ELEMENTS ====================
+    const tabBar = document.getElementById('tabBar');
+    const tabAddBtn = document.getElementById('tabAddBtn');
+    const navBack = document.getElementById('navBack');
+    const navForward = document.getElementById('navForward');
+    const navRefresh = document.getElementById('navRefresh');
+    const navHome = document.getElementById('navHome');
+    const navUrl = document.getElementById('navUrl');
+    const navLoading = document.getElementById('navLoading');
+    const connDot = document.getElementById('connDot');
+    const panelBtn = document.getElementById('panelBtn');
+    const versionBtn = document.getElementById('versionBtn');
+    const contentArea = document.getElementById('contentArea');
+    const newTabUrl = document.getElementById('newTabUrl');
+    const sidePanel = document.getElementById('sidePanel');
+    const panelOverlay = document.getElementById('panelOverlay');
+    const panelClose = document.getElementById('panelClose');
+    const panelConnStatus = document.getElementById('panelConnStatus');
+
+    // Side panel form elements
     const cloudUrlInput = document.getElementById('cloudUrl');
     const pairingCodeInput = document.getElementById('pairingCode');
     const keledonIdInput = document.getElementById('keledonId');
     const connectBtn = document.getElementById('connectBtn');
     const goalInput = document.getElementById('goalInput');
     const executeBtn = document.getElementById('executeBtn');
-    const versionBtn = document.getElementById('versionBtn');
-    const copyLogsBtn = document.getElementById('copyLogsBtn');
+    const startCallBtn = document.getElementById('startCallBtn');
+    const muteBtn = document.getElementById('muteBtn');
+    const holdBtn = document.getElementById('holdBtn');
+    const hangupBtn = document.getElementById('hangupBtn');
+    const callSection = document.getElementById('callSection');
+    const activityLogEl = document.getElementById('activityLog');
+    const loadingBar = document.getElementById('loadingBar');
 
     let isMuted = false;
     let isOnHold = false;
-    let debugEnabled = false;
     let isConnected = false;
+    let tabs = [];
+    let activeTabId = 'home';
+    let panelOpen = false;
 
-    // Logging
+    // ==================== LOGGING ====================
     function log(message, type = 'info') {
       const entry = document.createElement('div');
       entry.className = `activity-entry ${type}`;
-      entry.innerHTML = `
-        <div class="time">${new Date().toLocaleTimeString()}</div>
-        <div class="msg">${message}</div>
-      `;
+      entry.innerHTML = `<div class="time">${new Date().toLocaleTimeString()}</div><div class="msg">${message}</div>`;
       activityLogEl.appendChild(entry);
       activityLogEl.scrollTop = activityLogEl.scrollHeight;
       console.log(`[${type.toUpperCase()}] ${message}`);
     }
 
-    // Connection status
+    // ==================== CONNECTION STATUS ====================
     function setConnectionStatus(status) {
-      connectionStatusEl.className = `connection-status ${status}`;
       const labels = { disconnected: 'Disconnected', connecting: 'Connecting...', connected: 'Connected' };
-      connectionStatusEl.querySelector('span:last-child').textContent = labels[status] || status;
+      panelConnStatus.className = `conn-status ${status}`;
+      panelConnStatus.innerHTML = `<div class="conn-dot-lg"></div><span>${labels[status]}</span>`;
+      connDot.className = `conn-dot ${status}`;
+      connDot.title = labels[status];
+      if (status === 'connected') {
+        callSection.style.display = 'block';
+        executeBtn.disabled = false;
+      } else {
+        callSection.style.display = 'none';
+        executeBtn.disabled = true;
+      }
     }
 
-    // Load device info
+    // ==================== DEVICE INFO ====================
     async function loadDeviceInfo() {
       try {
         const info = await window.keledon.device.getInfo();
-        deviceIdEl.textContent = info.deviceId;
         versionBtn.textContent = 'v' + info.version;
         log('Device initialized: ' + info.deviceId, 'info');
       } catch (e) {
-        deviceIdEl.textContent = 'Error';
+        versionBtn.textContent = 'v?.?';
         log('Device info error: ' + e.message, 'error');
       }
     }
 
-    // Auto-connect handler
+    // ==================== TAB MANAGEMENT ====================
+    async function loadTabs() {
+      try {
+        tabs = await window.keledon.tabs.list();
+        renderTabs();
+      } catch (e) {
+        console.error('Failed to load tabs:', e);
+      }
+    }
+
+    function renderTabs() {
+      // Remove all tab elements except home tab and add button
+      const existingTabs = tabBar.querySelectorAll('.tab:not([data-tab-id="home"])');
+      existingTabs.forEach(t => t.remove());
+
+      // Update home tab styling
+      const homeTab = tabBar.querySelector('.tab[data-tab-id="home"]');
+      if (homeTab) {
+        const isHomeActive = activeTabId === 'home' || !tabs.find(t => t.active);
+        homeTab.className = `tab ${isHomeActive ? 'active' : ''}`;
+      }
+
+      // Render tabs from main process
+      let activeTabInfo = null;
+      tabs.forEach(tab => {
+        if (tab.active) activeTabInfo = tab;
+        const tabEl = document.createElement('div');
+        tabEl.className = `tab ${tab.active ? 'active' : ''}`;
+        tabEl.dataset.tabId = tab.id;
+        const icon = tab.loading ? '&#x21BB;' : '&#x1F4C4;';
+        tabEl.innerHTML = `
+          <span class="tab-icon">${icon}</span>
+          <span class="tab-name">${tab.name || 'Loading...'}</span>
+          <button class="tab-close" data-close="${tab.id}">&#x00D7;</button>
+        `;
+        tabEl.addEventListener('click', (e) => {
+          if (!e.target.classList.contains('tab-close')) {
+            switchTab(tab.id);
+          }
+        });
+        tabEl.querySelector('.tab-close').addEventListener('click', (e) => {
+          e.stopPropagation();
+          closeTab(tab.id);
+        });
+        tabBar.insertBefore(tabEl, tabAddBtn);
+      });
+
+      // Show/hide content area based on active tab
+      if (activeTabInfo) {
+        contentArea.classList.add('hidden');
+      } else {
+        contentArea.classList.remove('hidden');
+      }
+
+      updateNavBar(activeTabInfo);
+    }
+
+    async function switchTab(tabId) {
+      try {
+        await window.keledon.tabs.switch(tabId);
+        activeTabId = tabId;
+        loadTabs();
+      } catch (e) {
+        log('Switch tab error: ' + e.message, 'error');
+      }
+    }
+
+    async function closeTab(tabId) {
+      try {
+        await window.keledon.tabs.close(tabId);
+        loadTabs();
+      } catch (e) {
+        log('Close tab error: ' + e.message, 'error');
+      }
+    }
+
+    // ==================== TAB ADD BUTTON ====================
+    tabAddBtn.addEventListener('click', () => {
+      window.keledon.tabs.create('New Tab', 'https://www.google.com').then(result => {
+        log('Created tab: ' + result.id, 'info');
+        loadTabs();
+      }).catch(e => {
+        log('Create tab error: ' + e.message, 'error');
+      });
+    });
+
+    // Listen for tab updates from main process
+    window.keledon.tabs.onUpdate((newTabs) => {
+      tabs = newTabs;
+      // Find active tab
+      const active = tabs.find(t => t.active);
+      if (active) {
+        activeTabId = active.id;
+      } else {
+        activeTabId = 'home';
+      }
+      renderTabs();
+    });
+
+    // ==================== NAVIGATION BAR ====================
+    function updateNavBar(activeTab) {
+      if (!activeTab || activeTab.id === 'home') {
+        navUrl.value = '';
+        navUrl.readOnly = true;
+        navUrl.placeholder = 'Search or enter URL';
+        navBack.disabled = true;
+        navForward.disabled = true;
+        navRefresh.disabled = true;
+        contentArea.classList.remove('hidden');
+        navLoading.classList.remove('active');
+        return;
+      }
+
+      navUrl.value = activeTab.url || '';
+      navUrl.readOnly = false;
+      navUrl.placeholder = 'Search or enter URL';
+      navBack.disabled = !activeTab.canGoBack;
+      navForward.disabled = !activeTab.canGoForward;
+      navRefresh.disabled = false;
+      contentArea.classList.add('hidden');
+
+      if (activeTab.loading) {
+        navLoading.classList.add('active');
+      } else {
+        navLoading.classList.remove('active');
+      }
+    }
+
+    navBack.addEventListener('click', () => window.keledon.tabs.goBack());
+    navForward.addEventListener('click', () => window.keledon.tabs.goForward());
+    navRefresh.addEventListener('click', () => window.keledon.tabs.reload());
+
+    navHome.addEventListener('click', () => {
+      // Switch to home tab
+      activeTabId = 'home';
+      renderTabs();
+      // Remove BrowserView by switching to home
+      window.keledon.tabs.switch('home').catch(() => {});
+    });
+
+    navUrl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        let url = navUrl.value.trim();
+        if (!url) return;
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+          // Check if it looks like a URL
+          if (url.includes('.') && !url.includes(' ')) {
+            url = 'https://' + url;
+          } else {
+            // Search query - use Google
+            url = 'https://www.google.com/search?q=' + encodeURIComponent(url);
+          }
+        }
+        if (activeTabId === 'home') {
+          // Create new tab
+          window.keledon.tabs.create('New Tab', url).then(() => loadTabs());
+        } else {
+          // Navigate current tab
+          window.keledon.tabs.navigate(url);
+        }
+      }
+    });
+
+    // New tab page search
+    newTabUrl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        let url = newTabUrl.value.trim();
+        if (!url) return;
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+          if (url.includes('.') && !url.includes(' ')) {
+            url = 'https://' + url;
+          } else {
+            url = 'https://www.google.com/search?q=' + encodeURIComponent(url);
+          }
+        }
+        window.keledon.tabs.create('New Tab', url).then(() => loadTabs());
+      }
+    });
+
+    // Shortcuts on new tab page
+    document.querySelectorAll('.shortcut[data-url]').forEach(el => {
+      el.addEventListener('click', () => {
+        window.keledon.tabs.create('New Tab', el.dataset.url).then(() => loadTabs());
+      });
+    });
+
+    document.getElementById('shortcutConnect').addEventListener('click', () => {
+      togglePanel(true);
+      cloudUrlInput.focus();
+    });
+
+    document.getElementById('shortcutExecute').addEventListener('click', () => {
+      if (!isConnected) {
+        togglePanel(true);
+        cloudUrlInput.focus();
+      } else {
+        togglePanel(true);
+        goalInput.focus();
+      }
+    });
+
+    // ==================== SIDE PANEL ====================
+    function togglePanel(forceOpen) {
+      if (forceOpen === true) {
+        panelOpen = true;
+      } else if (forceOpen === false) {
+        panelOpen = false;
+      } else {
+        panelOpen = !panelOpen;
+      }
+      sidePanel.classList.toggle('open', panelOpen);
+      panelOverlay.classList.toggle('show', panelOpen);
+      panelBtn.classList.toggle('active', panelOpen);
+    }
+
+    panelBtn.addEventListener('click', () => togglePanel());
+    panelClose.addEventListener('click', () => togglePanel(false));
+    panelOverlay.addEventListener('click', () => togglePanel(false));
+
+    // ==================== CONNECTION ====================
     window.keledon.launcher.onLaunch((data) => {
       log('Launch data received', 'info');
-      keledonStatusEl.textContent = 'Pending: ' + data.keledonId;
-      
       if (data.action === 'auto-connect' && data.keledonId && data.code) {
         cloudUrlInput.value = data.cloudUrl || 'https://keledon.tuyoisaza.com';
         pairingCodeInput.value = data.code;
@@ -779,7 +1073,6 @@
       }
     });
 
-    // Connect
     connectBtn.addEventListener('click', async () => {
       const cloudUrl = cloudUrlInput.value.trim();
       const pairingCode = pairingCodeInput.value.trim();
@@ -791,14 +1084,12 @@
       setConnectionStatus('connecting');
       log('Connecting to ' + cloudUrl + '...', 'info');
       try {
-        const result = await window.keledon.runtime.connect({ 
+        const result = await window.keledon.runtime.connect({
           cloudUrl, token: pairingCode, keledonId: keledonId || null
         });
         if (result.success) {
           isConnected = true;
           setConnectionStatus('connected');
-          keledonStatusEl.textContent = keledonId || 'Linked';
-          executeBtn.disabled = false;
           log('Connected to ' + (keledonId || 'cloud'), 'success');
         } else {
           setConnectionStatus('disconnected');
@@ -810,82 +1101,130 @@
       }
     });
 
-    // Execute
+    window.keledon.runtime.onStatusChange((status) => {
+      if (status.connected) {
+        setConnectionStatus('connected');
+      } else if (status.status === 'connecting') {
+        setConnectionStatus('connecting');
+      } else {
+        setConnectionStatus('disconnected');
+      }
+    });
+
+    // ==================== EXECUTE ====================
+    const progressDiv = document.getElementById('execute-progress');
+    const progressText = document.getElementById('progress-text');
+    const progressBar = document.getElementById('progress-bar');
+
     executeBtn.addEventListener('click', async () => {
       const goal = goalInput.value.trim();
-      if (!goal) {
-        log('Goal required', 'error');
-        return;
-      }
+      if (!goal) { log('Goal required', 'error'); return; }
+
+      // Show progress UI
+      if (progressDiv) progressDiv.style.display = 'block';
+      if (progressText) progressText.textContent = 'Starting...';
+      if (progressBar) { progressBar.style.width = '5%'; progressBar.style.background = '#f9ab00'; }
+
+      // Listen for progress updates
+      let currentStep = 0;
+      let totalSteps = 100;
+      window.keledon.executor.onProgress((p) => {
+        if (!progressText || !progressBar) return;
+        currentStep = p.step || 0;
+        totalSteps = p.total || 100;
+        const pct = Math.round((currentStep / totalSteps) * 100);
+        progressText.textContent = `[${currentStep}/${totalSteps}] ${p.action}: ${p.description}`;
+        progressBar.style.width = Math.max(pct, 5) + '%';
+        if (p.status === 'done') progressBar.style.background = '#1a73e8';
+        else if (p.status === 'failed') progressBar.style.background = '#d93025';
+        else progressBar.style.background = '#f9ab00';
+      });
+
       try {
         const result = await window.keledon.executor.executeGoal(goal, {});
-        log('Executed: ' + goal.substring(0, 50), 'success');
+        if (progressText) {
+          const finalText = result.goal_status === 'success' ? '✓ Success' : result.goal_status === 'uncertain' ? '⚠ Partial' : '✗ Failed';
+          progressText.textContent = `${finalText} - ${result.steps?.length || 0} steps`;
+        }
+        if (progressBar) {
+          progressBar.style.width = '100%';
+          if (result.goal_status === 'success') progressBar.style.background = '#1a73e8';
+          else if (result.goal_status === 'failed') progressBar.style.background = '#d93025';
+          else progressBar.style.background = '#f9ab00';
+        }
+        log('Executed: ' + goal.substring(0, 50), result.goal_status === 'success' ? 'success' : 'error');
         goalInput.value = '';
+        setTimeout(() => { if (progressDiv) progressDiv.style.display = 'none'; }, 3000);
       } catch (e) {
+        if (progressText) progressText.textContent = '✗ Error: ' + e.message;
+        if (progressBar) progressBar.style.background = '#d93025';
         log('Execution error: ' + e.message, 'error');
       }
     });
 
-    // Runtime events
-    window.keledon.runtime.onConnect(({ sessionId }) => {
-      sessionIdEl.textContent = sessionId || '-';
-      startCallBtn.disabled = false;
-      callStatusBadge.textContent = 'Ready';
-      callStatusBadge.classList.remove('active');
-      log('Connected to cloud, ready for calls', 'success');
-    });
-
-    // Start Call
+    // ==================== CALL CONTROLS ====================
     startCallBtn.addEventListener('click', async () => {
       if (startCallBtn.classList.contains('active')) {
-        // End call
         try {
           await window.keledon.media.stopCall();
           startCallBtn.classList.remove('active');
-          startCallBtn.textContent = '📞 Start Call';
-          callStatusBadge.textContent = 'Idle';
+          startCallBtn.textContent = '\u{1F4DE} Start Call';
           muteBtn.disabled = true;
           holdBtn.disabled = true;
           hangupBtn.disabled = true;
           log('Call ended', 'info');
-        } catch (e) {
-          log('End call error: ' + e.message, 'error');
-        }
+        } catch (e) { log('End call error: ' + e.message, 'error'); }
       } else {
-        // Start call
         try {
           await window.keledon.media.startCall();
           startCallBtn.classList.add('active');
-          startCallBtn.textContent = '📵 End Call';
-          callStatusBadge.textContent = 'Active';
+          startCallBtn.textContent = '\u{1F4F7} End Call';
           muteBtn.disabled = false;
           holdBtn.disabled = false;
           hangupBtn.disabled = false;
           log('Call started', 'success');
-        } catch (e) {
-          log('Start call error: ' + e.message, 'error');
-        }
+        } catch (e) { log('Start call error: ' + e.message, 'error'); }
       }
     });
 
-    // Transcript
-    window.keledon.media.onTranscript((entry) => {
-      const div = document.createElement('div');
-      div.className = `transcript-entry ${entry.speaker || 'customer'}`;
-      div.innerHTML = `
-        <div class="meta">
-          <span class="speaker">${entry.speaker === 'agent' ? 'Agent' : 'Customer'}</span>
-          <span class="time">${entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString()}</span>
-        </div>
-        <div class="text">${entry.text}</div>
-      `;
-      transcriptEl.appendChild(div);
-      transcriptEl.scrollTop = transcriptEl.scrollHeight;
+    muteBtn.addEventListener('click', async () => {
+      isMuted = !isMuted;
+      try {
+        await (isMuted ? window.keledon.media.mute() : window.keledon.media.unmute());
+        muteBtn.textContent = isMuted ? '\u{1F50A} Unmute' : '\u{1F507} Mute';
+      } catch (e) { log('Mute error: ' + e.message, 'error'); }
     });
 
-    // Brain commands - handle TTS from cloud
+    holdBtn.addEventListener('click', async () => {
+      isOnHold = !isOnHold;
+      try {
+        await (isOnHold ? window.keledon.media.hold() : window.keledon.media.resume());
+        holdBtn.textContent = isOnHold ? '\u25B6 Resume' : '\u23F8 Hold';
+      } catch (e) { log('Hold error: ' + e.message, 'error'); }
+    });
+
+    hangupBtn.addEventListener('click', async () => {
+      try {
+        await window.keledon.media.hangup();
+        startCallBtn.classList.remove('active');
+        startCallBtn.textContent = '\u{1F4DE} Start Call';
+        muteBtn.disabled = true; holdBtn.disabled = true; hangupBtn.disabled = true;
+        muteBtn.textContent = '\u{1F507} Mute';
+        holdBtn.textContent = '\u23F8 Hold';
+        log('Call ended', 'info');
+      } catch (e) { log('Hangup error: ' + e.message, 'error'); }
+    });
+
+    window.keledon.media.onTranscript((entry) => {
+      log('Transcript (' + (entry.speaker || 'customer') + '): ' + entry.text, 'info');
+    });
+
+    window.keledon.media.onCallStatus((data) => {
+      log('Call status: ' + data.status, 'info');
+    });
+
+    // ==================== BRAIN ====================
     window.keledon.brain.onCommand((cmd) => {
-      // Handle say command from cloud (TTS)
       if (cmd.type === 'say' || (cmd.data && cmd.data.say)) {
         const text = cmd.data.say?.text || cmd.data.text;
         if (text) {
@@ -894,295 +1233,61 @@
           });
         }
       }
-
-      const div = document.createElement('div');
-      div.className = 'command-entry';
-      div.innerHTML = `
-        <div class="meta">
-          <span class="time">${cmd.timestamp ? new Date(cmd.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString()}</span>
-          <span class="type">${cmd.type || 'command'}</span>
-        </div>
-        <div class="payload">${JSON.stringify(cmd.payload || cmd.data || {})}</div>
-        ${cmd.flow_id ? `<div class="flow-id">flow_id: ${cmd.flow_id}</div>` : ''}
-      `;
-      brainStatusEl.appendChild(div);
-      brainStatusEl.scrollTop = brainStatusEl.scrollHeight;
+      log('Brain command: ' + cmd.type, 'info');
     });
 
-    // Mute
-    muteBtn.addEventListener('click', async () => {
-      isMuted = !isMuted;
-      try {
-        await (isMuted ? window.keledon.media.mute() : window.keledon.media.unmute());
-        muteBtn.classList.toggle('active', isMuted);
-        muteBtn.textContent = isMuted ? '🔊 Unmute' : '🔇 Mute';
-      } catch (e) {
-        log('Mute error: ' + e.message, 'error');
-      }
+    // ==================== ESCALATION ====================
+    window.keledon.escalation.onShow(({ type, data }) => {
+      document.getElementById('escalationType').className = `escalation-type ${type}`;
+      document.getElementById('escalationType').textContent = type === 'trigger' ? 'ESCALATION' : 'RPA FAILURE';
+      document.getElementById('escalationMessage').innerHTML = type === 'trigger'
+        ? `<strong>Escalation keyword:</strong> "${data.triggerWord}"`
+        : `<strong>RPA execution failed:</strong> ${data.message}`;
+      document.getElementById('escalationDetail').textContent = type === 'trigger'
+        ? `Customer said: "${data.message}"`
+        : `Step: ${data.step || 'unknown'} | Retries: ${data.retryCount || 0}`;
+      document.getElementById('escalationModal').classList.add('show');
     });
 
-    // Hold
-    holdBtn.addEventListener('click', async () => {
-      isOnHold = !isOnHold;
-      try {
-        await (isOnHold ? window.keledon.media.hold() : window.keledon.media.resume());
-        holdBtn.classList.toggle('active', isOnHold);
-        holdBtn.textContent = isOnHold ? '▶ Resume' : '⏸ Hold';
-      } catch (e) {
-        log('Hold error: ' + e.message, 'error');
-      }
+    document.getElementById('escalationContinue').addEventListener('click', () => {
+      document.getElementById('escalationModal').classList.remove('show');
+      window.keledon.escalation.action('continue');
+    });
+    document.getElementById('escalationFix').addEventListener('click', () => {
+      document.getElementById('escalationModal').classList.remove('show');
+      window.keledon.escalation.action('fix');
+    });
+    document.getElementById('escalationAbort').addEventListener('click', () => {
+      document.getElementById('escalationModal').classList.remove('show');
+      window.keledon.escalation.action('abort');
     });
 
-    // Hangup
-    hangupBtn.addEventListener('click', async () => {
-      try {
-        await window.keledon.media.hangup();
-        sessionIdEl.textContent = '-';
-        callStatusBadge.textContent = 'Idle';
-        callStatusBadge.classList.remove('active');
-        muteBtn.disabled = true;
-        holdBtn.disabled = true;
-        hangupBtn.disabled = true;
-        muteBtn.classList.remove('active');
-        holdBtn.classList.remove('active');
-        muteBtn.textContent = '🔇 Mute';
-        holdBtn.textContent = '⏸ Hold';
-        log('Call ended', 'info');
-      } catch (e) {
-        log('Hangup error: ' + e.message, 'error');
-      }
-    });
-
-    // Debug toggle
-    debugToggle.addEventListener('click', () => {
-      debugEnabled = !debugEnabled;
-      debugToggle.classList.toggle('active', debugEnabled);
-      debugToggle.textContent = debugEnabled ? 'Debug: ON' : 'Debug';
-      window.keledon.brain.setDebugMode(debugEnabled);
-    });
-
-    // Clear log
-    clearLogBtn.addEventListener('click', () => {
-      activityLogEl.innerHTML = '';
-      log('Log cleared', 'info');
-    });
-
-    // Event Log Panel
-    const eventLogEl = document.getElementById('eventLog');
-    const clearEventLogBtn = document.getElementById('clearEventLog');
-    let eventLogInterval = null;
-
-    async function loadEventLogs() {
-      try {
-        const result = await window.keledon.evidence.getEventLogs({ limit: 100 });
-        if (result.logs && result.logs.length > 0) {
-          eventLogEl.innerHTML = result.logs.map(log => {
-            const levelColors = { debug: '#8b949e', info: '#58a6ff', warn: '#d29922', error: '#f85149', critical: '#ff7b72' };
-            return `<div style="color: ${levelColors[log.level] || '#8b949e'}; border-bottom: 1px solid #21262d; padding: 2px 0;">
-              <span style="color: #6e7681;">${new Date(log.timestamp).toLocaleTimeString()}</span>
-              <span style="background: #30363d; padding: 1px 4px; border-radius: 3px; margin-left: 4px; font-size: 10px;">${log.category}</span>
-              <span>${log.event}</span>
-            </div>`;
-          }).join('');
-          eventLogEl.scrollTop = eventLogEl.scrollHeight;
-        }
-      } catch (e) {
-        console.error('Failed to load event logs:', e);
-      }
-    }
-
-    // Load event logs on start and every 2 seconds
-    loadEventLogs();
-    eventLogInterval = setInterval(loadEventLogs, 2000);
-
-    // Clear event logs
-    clearEventLogBtn.addEventListener('click', async () => {
-      try {
-        await window.keledon.evidence.clearEventLogs();
-        eventLogEl.innerHTML = '';
-        log('Event logs cleared', 'info');
-      } catch (e) {
-        log('Failed to clear event logs: ' + e.message, 'error');
-      }
-    });
-
-    // Version button
+    // ==================== VERSION ====================
     versionBtn.addEventListener('click', async () => {
       const info = await window.keledon.device.getInfo();
-      navigator.clipboard.writeText('Keledon Browser v' + info.version);
+      navigator.clipboard.writeText('KELEDON Browser v' + info.version);
       versionBtn.textContent = 'Copied!';
       setTimeout(() => versionBtn.textContent = 'v' + info.version, 1000);
     });
 
-    // Copy logs
-    copyLogsBtn.addEventListener('click', async () => {
-      try {
-        const logs = await window.keledon.evidence.getLogs();
-        navigator.clipboard.writeText(logs.logs || 'No logs');
-        copyLogsBtn.textContent = 'Copied!';
-        setTimeout(() => copyLogsBtn.textContent = 'Copy Logs', 1000);
-      } catch (e) {
-        copyLogsBtn.textContent = 'Error';
-        setTimeout(() => copyLogsBtn.textContent = 'Copy Logs', 1000);
-      }
-    });
-
-    // ========== TAB BAR ==========
-    const tabBar = document.getElementById('tabBar');
-    const tabAddBtn = document.getElementById('tabAddBtn');
-    let tabs = [];
-    let activeTabId = 'home';
-
-    async function loadTabs() {
-      try {
-        tabs = await window.keledon.tabs.list();
-        renderTabs();
-      } catch (e) {
-        console.error('Failed to load tabs:', e);
-      }
-    }
-
-    function renderTabs() {
-      const homeTab = tabBar.querySelector('.tab[data-tab-id="home"]');
-      const existingTabs = tabBar.querySelectorAll('.tab:not([data-tab-id="home"])');
-      existingTabs.forEach(t => t.remove());
-      
-      tabs.forEach(tab => {
-        const tabEl = document.createElement('div');
-        tabEl.className = `tab ${tab.active ? 'active' : ''}`;
-        tabEl.dataset.tabId = tab.id;
-        tabEl.innerHTML = `
-          <span class="tab-icon">📄</span>
-          <span class="tab-name">${tab.name}</span>
-          <button class="tab-close" data-close="${tab.id}">×</button>
-        `;
-        tabEl.addEventListener('click', (e) => {
-          if (!e.target.classList.contains('tab-close')) {
-            switchTab(tab.id);
-          }
-        });
-        tabBar.insertBefore(tabEl, tabAddBtn);
+    // ==================== KEYBOARD SHORTCUTS ====================
+    if (window.keledon.shortcuts) {
+      window.keledon.shortcuts.onNewTab(() => tabAddBtn.click());
+      window.keledon.shortcuts.onFocusUrlBar(() => {
+        if (!navUrl.readOnly) {
+          navUrl.focus();
+          navUrl.select();
+        }
+      });
+      window.keledon.shortcuts.onFindInPage(() => {
+        log('Find in page (Ctrl+F)', 'info');
       });
     }
 
-    async function switchTab(tabId) {
-      try {
-        await window.keledon.tabs.switch(tabId);
-        activeTabId = tabId;
-        renderTabs();
-      } catch (e) {
-        console.error('Failed to switch tab:', e);
-      }
-    }
-
-    async function closeTab(tabId) {
-      try {
-        await window.keledon.tabs.close(tabId);
-        loadTabs();
-      } catch (e) {
-        console.error('Failed to close tab:', e);
-      }
-    }
-
-    tabAddBtn.addEventListener('click', () => {
-      const url = prompt('Enter URL:');
-      if (url) {
-        window.keledon.tabs.create('New Tab', url).then(() => loadTabs());
-      }
-    });
-
-    tabBar.addEventListener('click', (e) => {
-      if (e.target.classList.contains('tab-close')) {
-        const tabId = e.target.dataset.close;
-        closeTab(tabId);
-      }
-    });
-
-    // Listen for tab updates from main process
-    window.keledon.tabs.onUpdate((newTabs) => {
-      tabs = newTabs;
-      renderTabs();
-    });
-
-    // ========== ESCALATION MODAL ==========
-    const escalationModal = document.createElement('div');
-    escalationModal.className = 'escalation-modal';
-    escalationModal.innerHTML = `
-      <div class="escalation-content">
-        <div class="escalation-header">
-          <span class="escalation-icon">⚠️</span>
-          <span class="escalation-title">Human Assistance Required</span>
-          <span class="escalation-type" id="escalationType">trigger</span>
-        </div>
-        <div class="escalation-message" id="escalationMessage"></div>
-        <div class="escalation-detail" id="escalationDetail"></div>
-        <div class="escalation-buttons">
-          <button class="escalation-btn abort" id="escalationAbort">Abort</button>
-          <button class="escalation-btn fix" id="escalationFix">Fix</button>
-          <button class="escalation-btn continue" id="escalationContinue">Continue</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(escalationModal);
-
-    const escalationTypeEl = document.getElementById('escalationType');
-    const escalationMessageEl = document.getElementById('escalationMessage');
-    const escalationDetailEl = document.getElementById('escalationDetail');
-    const escalationContinueBtn = document.getElementById('escalationContinue');
-    const escalationFixBtn = document.getElementById('escalationFix');
-    const escalationAbortBtn = document.getElementById('escalationAbort');
-
-    function showEscalationModal(type, data) {
-      escalationTypeEl.className = `escalation-type ${type}`;
-      escalationTypeEl.textContent = type === 'trigger' ? '⚠️ ESCALATION TRIGGER' : '❌ RPA FAILURE';
-      
-      if (type === 'trigger') {
-        escalationMessageEl.innerHTML = `<strong>Escalation keyword detected:</strong> "${data.triggerWord}"`;
-        escalationDetailEl.textContent = `Customer said: "${data.message}"`;
-      } else {
-        escalationMessageEl.innerHTML = `<strong>RPA execution failed:</strong> ${data.message}`;
-        escalationDetailEl.textContent = `Step: ${data.step || 'unknown'} | Retries: ${data.retryCount || 0}`;
-      }
-      
-      escalationModal.classList.add('show');
-      log('⚠️ Escalation: ' + type, 'error');
-    }
-
-    function hideEscalationModal() {
-      escalationModal.classList.remove('show');
-    }
-
-    escalationContinueBtn.addEventListener('click', () => {
-      hideEscalationModal();
-      log('Escalation: Continue', 'info');
-      // Emit continue action
-      if (window.keledon.escalation) {
-        window.keledon.escalation.onAction((action) => {});
-      }
-    });
-
-    escalationFixBtn.addEventListener('click', () => {
-      hideEscalationModal();
-      log('Escalation: Fix mode', 'info');
-    });
-
-    escalationAbortBtn.addEventListener('click', () => {
-      hideEscalationModal();
-      log('Escalation: Aborted', 'error');
-    });
-
-    // Listen for escalation events from main process
-    if (window.keledon.escalation) {
-      window.keledon.escalation.onAction((action, data) => {
-        console.log('Escalation action:', action, data);
-      });
-    }
-
-    // Load tabs on init
+    // ==================== INIT ====================
     loadTabs();
-
-    // Initialize
     loadDeviceInfo();
+    log('KELEDON Browser initialized', 'success');
   </script>
 </body>
 </html>

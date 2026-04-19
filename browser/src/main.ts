@@ -19,21 +19,53 @@ const getInstallPath = (): string => {
 };
 
 const INSTALL_DIR = getInstallPath();
-const LOGS_DIR = path.join(INSTALL_DIR, 'logs');
-const STARTUP_LOG = path.join(LOGS_DIR, 'startup.log');
-const MAIN_LOG = path.join(LOGS_DIR, 'keledon-browser.log');
 const MAX_LOG_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_LOG_FILES = 5;
 
-// Ensure logs directory exists
-try {
-  if (!fs.existsSync(LOGS_DIR)) {
-    fs.mkdirSync(LOGS_DIR, { recursive: true });
+// Lazy log directory — initialized on first use, not at module load
+// This is critical because app.getPath('userData') is NOT available before app.whenReady()
+let _logsDir: string = '';
+let _startupLog: string = '';
+let _mainLog: string = '';
+
+function getLogsDir(): string {
+  if (!_logsDir) {
+    if (app.isReady()) {
+      try {
+        _logsDir = path.join(app.getPath('userData'), 'logs');
+      } catch {
+        _logsDir = path.join(os.tmpdir(), 'keledon-logs');
+      }
+    } else {
+      _logsDir = path.join(os.tmpdir(), 'keledon-logs');
+    }
+    try {
+      if (!fs.existsSync(_logsDir)) {
+        fs.mkdirSync(_logsDir, { recursive: true });
+      }
+    } catch { /* ignore */ }
   }
-} catch (e) {
-  // Last resort — try AppData
-  // But install_dir/logs/ is the canonical location per v3_KELEDON_BROWSER.md
+  return _logsDir;
 }
+
+function getStartupLogPath(): string {
+  if (!_startupLog) {
+    _startupLog = path.join(getLogsDir(), 'startup.log');
+  }
+  return _startupLog;
+}
+
+function getMainLogPath(): string {
+  if (!_mainLog) {
+    _mainLog = path.join(getLogsDir(), 'keledon-browser.log');
+  }
+  return _mainLog;
+}
+
+// Backwards-compatible aliases that TypeScript accepts as strings
+const LOGS_DIR = ''; // Use getLogsDir() instead
+const STARTUP_LOG = ''; // Use getStartupLogPath() instead
+const MAIN_LOG = ''; // Use getMainLogPath() instead
 
 // Log rotation: rename old logs when size exceeds MAX_LOG_SIZE
 const rotateLog = (logPath: string): void => {
@@ -63,12 +95,14 @@ const earlyLog = (msg: string): void => {
   const timestamp = new Date().toISOString();
   const logLine = `[${timestamp}] ${msg}\n`;
   try {
-    rotateLog(STARTUP_LOG);
-    fs.appendFileSync(STARTUP_LOG, logLine);
+    const startupPath = getStartupLogPath();
+    rotateLog(startupPath);
+    fs.appendFileSync(startupPath, logLine);
   } catch (e) {
-    // Cannot write to install dir — try fallback
+    // Cannot write to log dir — try fallback to tmpdir
     try {
-      fs.appendFileSync(path.join(os.tmpdir(), 'keledon-startup.log'), logLine);
+      const fallbackPath = path.join(os.tmpdir(), 'keledon-startup.log');
+      fs.appendFileSync(fallbackPath, logLine);
     } catch (_) { /* truly cannot log */ }
   }
   console.log(logLine.trimEnd());
@@ -77,7 +111,7 @@ const earlyLog = (msg: string): void => {
 // Write crash log with full system state
 const writeCrashLog = (error: Error | string): void => {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const crashFile = path.join(LOGS_DIR, `crash-${timestamp}.log`);
+  const crashFile = path.join(getLogsDir(), `crash-${timestamp}.log`);
   const errorStr = error instanceof Error
     ? `${error.message}\n\nStack:\n${error.stack || 'No stack'}`
     : String(error);
@@ -125,7 +159,7 @@ earlyLog('[START] KELEDON Browser starting...');
 earlyLog(`[INFO] App packaged: ${app.isPackaged}`);
 earlyLog(`[INFO] Exec path: ${process.execPath}`);
 earlyLog(`[INFO] Install path: ${INSTALL_DIR}`);
-earlyLog(`[INFO] Logs directory: ${LOGS_DIR}`);
+earlyLog(`[INFO] Logs directory: ${getLogsDir()}`);
 earlyLog(`[INFO] Args: ${JSON.stringify(process.argv)}`);
 earlyLog(`[INFO] Electron: ${process.versions.electron}`);
 earlyLog(`[INFO] Chrome: ${process.versions.chrome}`);
@@ -152,6 +186,11 @@ const registerProtocol = () => {
 
 // Try to register protocol
 registerProtocol();
+
+// Enable CDP debug port for Playwright/AutoBrowse automation
+const CDP_PORT = parseInt(process.env.KELEDON_CDP_PORT || '9222', 10);
+app.commandLine.appendSwitch('remote-debugging-port', String(CDP_PORT));
+earlyLog(`[CDP] Debug port enabled on ${CDP_PORT}`);
 
 // Also register when app is ready
 app.whenReady().then(() => {
@@ -572,7 +611,8 @@ function checkEscalationTriggers(text: string): boolean {
 }
 
 // ========== TAB MANAGEMENT ==========
-const TAB_HEIGHT = 40;
+// Chrome-like: height of tab bar (38px) + nav bar (42px) = 80px
+const CHROME_HEIGHT = 80;
 
 function createTab(name: string, url: string): Tab {
   const id = `tab-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -586,8 +626,55 @@ function createTab(name: string, url: string): Tab {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
-      nodeIntegration: false
+      nodeIntegration: false,
+      sandbox: false,
+      webSecurity: false
     }
+  });
+
+  // Wire up webContents events so the renderer stays in sync
+  view.webContents.on('did-navigate', (_event: Electron.Event, navigatedUrl: string) => {
+    // Update the tab's stored URL
+    const tab = tabs.find(t => t.id === id);
+    if (tab) {
+      tab.url = navigatedUrl;
+    }
+    // Update the URL bar in renderer
+    mainWindow?.webContents.send('tabs:updated', getTabs());
+    // Sync to AutoBrowse bridge
+    broadcastTabs();
+    log.info(`[Tabs] did-navigate: ${id} -> ${navigatedUrl}`);
+  });
+
+  view.webContents.on('page-title-updated', (_event: Electron.Event, title: string) => {
+    // Update the tab name in the tab bar
+    const tab = tabs.find(t => t.id === id);
+    if (tab) {
+      tab.name = title || name;
+    }
+    mainWindow?.webContents.send('tabs:updated', getTabs());
+    log.info(`[Tabs] page-title-updated: ${id} -> ${title}`);
+  });
+
+  view.webContents.on('did-start-loading', () => {
+    mainWindow?.webContents.send('tabs:updated', getTabs());
+  });
+
+  view.webContents.on('did-stop-loading', () => {
+    mainWindow?.webContents.send('tabs:updated', getTabs());
+  });
+
+  view.webContents.on('did-fail-load', (_event: Electron.Event, errorCode: number, errorDesc: string, validatedURL: string) => {
+    if (errorCode !== -3) { // -3 is ERR_ABORTED, common during redirects
+      log.warn(`[Tabs] did-fail-load: ${id} error=${errorCode} desc=${errorDesc} url=${validatedURL}`);
+    }
+    mainWindow?.webContents.send('tabs:updated', getTabs());
+  });
+
+  // Intercept new-window requests from BrowserView (links with target="_blank")
+  view.webContents.setWindowOpenHandler(({ url }) => {
+    createTab('New Tab', url);
+    return { action: 'deny' };
   });
 
   view.webContents.loadURL(url);
@@ -610,17 +697,38 @@ function createTab(name: string, url: string): Tab {
 function showTab(tabId: string) {
   if (!mainWindow) return;
 
-  const tab = tabs.find(t => t.id === tabId);
-  if (!tab || !tab.view) return;
+  // Remove current BrowserView first
+  const currentView = mainWindow.getBrowserView();
+  if (currentView) {
+    try { mainWindow.removeBrowserView(currentView); } catch (e) {}
+  }
 
-  mainWindow.setBrowserView(tab.view);
-  const bounds = mainWindow.getBounds();
+  if (tabId === 'home') {
+    // No BrowserView for home tab — renderer shows new tab page
+    activeTabId = 'home';
+    broadcastTabs();
+    return;
+  }
+
+  const tab = tabs.find(t => t.id === tabId);
+  if (!tab || !tab.view) {
+    log.warn('[Tabs] showTab: tab not found or no view:', tabId);
+    activeTabId = tabId;
+    broadcastTabs();
+    return;
+  }
+
+  mainWindow.addBrowserView(tab.view);
+  const contentSize = mainWindow.getContentSize();
   tab.view.setBounds({
     x: 0,
-    y: TAB_HEIGHT,
-    width: bounds.width,
-    height: bounds.height - TAB_HEIGHT
+    y: CHROME_HEIGHT,
+    width: contentSize[0],
+    height: contentSize[1] - CHROME_HEIGHT
   });
+
+  // Make sure the BrowserView is focused
+  tab.view.webContents.focus();
 
   activeTabId = tabId;
   log.info('[Tabs] Switched to:', tab.name);
@@ -665,18 +773,25 @@ function broadcastTabs() {
   if (mainWindow) {
     mainWindow.webContents.send('tabs:updated', getTabs());
   }
+  // Sync tab state to AutoBrowse bridge
+  (async () => {
+    try {
+      const bridge = await getAutoBrowseBridge();
+      bridge.setTabs(tabs, activeTabId);
+    } catch { /* bridge not loaded yet */ }
+  })();
 }
 
 function resizeTabs() {
   if (!mainWindow) return;
-  const bounds = mainWindow.getBounds();
+  const contentSize = mainWindow.getContentSize();
   for (const tab of tabs) {
     if (tab.view) {
       tab.view.setBounds({
         x: 0,
-        y: TAB_HEIGHT,
-        width: bounds.width,
-        height: bounds.height - TAB_HEIGHT
+        y: CHROME_HEIGHT,
+        width: contentSize[0],
+        height: contentSize[1] - CHROME_HEIGHT
       });
     }
   }
@@ -701,7 +816,7 @@ const createWindow = (): void => {
     minWidth: 800,
     minHeight: 600,
     title: 'KELEDON Browser',
-    backgroundColor: '#0d1117',
+    backgroundColor: '#ffffff',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -717,13 +832,21 @@ const createWindow = (): void => {
   mainWindow.webContents.setVisualZoomLevelLimits(1, 4);
   mainWindow.webContents.setZoomLevel(0);
 
+  // Handle new window requests from BrowserView (links with target="_blank")
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    // Open external links in a new tab instead of a new window
+    createTab('New Tab', url);
+    return { action: 'deny' };
+  });
+
   (async () => {
     const bridge = await getAutoBrowseBridge();
     bridge.setMainWindow(mainWindow);
+    bridge.setTabs(tabs, activeTabId);
   })();
 
   // Configure electron-log to write to install_dir/logs/
-  log.transports.file.resolvePathFn = () => MAIN_LOG;
+  log.transports.file.resolvePathFn = () => getMainLogPath();
 
   const rendererPath = path.join(__dirname, '../renderer/index.html');
   earlyLog(`[WINDOW] Loading renderer: ${rendererPath}`);
@@ -736,7 +859,7 @@ const createWindow = (): void => {
     log.info('Main window loaded');
     
     // Inject runtime info including log path for Copy Logs
-    const logPathEscaped = STARTUP_LOG.replace(/\\/g, '\\\\');
+    const logPathEscaped = getStartupLogPath().replace(/\\/g, '\\\\');
     mainWindow?.webContents.executeJavaScript(`
       window.keledon = window.keledon || {};
       window.keledon.internal = { 
@@ -920,7 +1043,12 @@ const connectWebSockets = (cloudUrl: string, token: string): void => {
   deviceSocket.on('call_status', (data) => {
     mainWindow?.webContents.send('media:callStatus', data);
   });
-  
+
+  // Forward cloud brain commands to renderer (voice:transcript → DecisionEngine → brain:command)
+  deviceSocket.on('brain:command', (data) => {
+    mainWindow?.webContents.send('brain:command', data);
+  });
+
   deviceSocket.on('goal_execute', async (data) => {
     log.info('[Main] Received goal from cloud:', data.goal);
     
@@ -1242,17 +1370,19 @@ ipcMain.handle('executor:getScreenshot', async () => {
 
 ipcMain.handle('evidence:getLogs', async () => {
   const parts: string[] = [];
+  const startupPath = getStartupLogPath();
+  const mainPath = getMainLogPath();
   // Read startup log
-  if (fs.existsSync(STARTUP_LOG)) {
+  if (fs.existsSync(startupPath)) {
     parts.push('=== STARTUP LOG ===\n');
-    parts.push(fs.readFileSync(STARTUP_LOG, 'utf-8'));
+    parts.push(fs.readFileSync(startupPath, 'utf-8'));
   }
   // Read main runtime log
-  if (fs.existsSync(MAIN_LOG)) {
+  if (fs.existsSync(mainPath)) {
     parts.push('\n=== RUNTIME LOG ===\n');
-    parts.push(fs.readFileSync(MAIN_LOG, 'utf-8'));
+    parts.push(fs.readFileSync(mainPath, 'utf-8'));
   }
-  return { logs: parts.join('') || 'No logs found', logPath: LOGS_DIR };
+  return { logs: parts.join('') || 'No logs found', logPath: getLogsDir() };
 });
 
 ipcMain.handle('evidence:copyAllLogs', async () => {
@@ -1263,20 +1393,23 @@ ipcMain.handle('evidence:copyAllLogs', async () => {
     `Install: ${INSTALL_DIR}`,
     `\n`
   ];
-  if (fs.existsSync(STARTUP_LOG)) {
+  const startupPath = getStartupLogPath();
+  const mainPath = getMainLogPath();
+  if (fs.existsSync(startupPath)) {
     parts.push('=== STARTUP LOG ===\n');
-    parts.push(fs.readFileSync(STARTUP_LOG, 'utf-8'));
+    parts.push(fs.readFileSync(startupPath, 'utf-8'));
   }
-  if (fs.existsSync(MAIN_LOG)) {
+  if (fs.existsSync(mainPath)) {
     parts.push('\n=== RUNTIME LOG ===\n');
-    parts.push(fs.readFileSync(MAIN_LOG, 'utf-8'));
+    parts.push(fs.readFileSync(mainPath, 'utf-8'));
   }
   // Include crash logs
   try {
-    const crashFiles = fs.readdirSync(LOGS_DIR).filter(f => f.startsWith('crash-'));
+    const logsDir = getLogsDir();
+    const crashFiles = fs.readdirSync(logsDir).filter(f => f.startsWith('crash-'));
     for (const cf of crashFiles.slice(-3)) {
       parts.push(`\n=== ${cf} ===\n`);
-      parts.push(fs.readFileSync(path.join(LOGS_DIR, cf), 'utf-8'));
+      parts.push(fs.readFileSync(path.join(logsDir, cf), 'utf-8'));
     }
   } catch (_) {}
   return { logs: parts.join('') };
@@ -1476,6 +1609,17 @@ ipcMain.handle('tabs:close', async (_event, tabId: string) => {
 
 ipcMain.handle('tabs:getActive', async () => {
   return activeTabId;
+});
+
+ipcMain.handle('tabs:navigate', async (_event, url: string) => {
+  const tab = tabs.find(t => t.id === activeTabId);
+  if (tab?.view) {
+    tab.url = url;
+    tab.view.webContents.loadURL(url);
+    broadcastTabs();
+    return { success: true };
+  }
+  return { success: false };
 });
 
 // ========== CDP IPC HANDLER ==========
