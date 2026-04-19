@@ -17,15 +17,16 @@ Do not follow legacy documentation, READMEs, or comments if they contradict the 
 
 Before performing ANY work, you **MUST** read and internalize the following Canonical Specifications:
 
-1.  **Behavior & Workflow**: `docs/specs/keledon_canonical_autonomous_development_prompt.md`
+1.  **Behavior & Workflow**: `docs/specs/v1_keledon_canonical_autonomous_development_prompt.md`
     *   *Defines HOW you work (Scan → Claim → Plan → Execute...)*
-2.  **Scope & Meaning**: `docs/specs/keledon_context_canonical.md`
+2.  **Scope & Meaning**: `docs/specs/v1_keledon_context_canonical.md`
     *   *Defines WHAT Keledon is (Cloud agent, Browser executor).*
-3.  **Technical Specs**: `docs/specs/keledon_v_1_canonical_technical_spec.md`
+3.  **Technical Specs**: `docs/specs/v1_keledon_canonical_technical_spec.md`
     *   *Defines the system boundaries and definition of done.*
-4.  **Architecture**: `docs/specs/keledon_canonical_architecture.md`
+4.  **Architecture**: `docs/specs/v1_keledon_canonical_architecture.md`
     *   *Defines the storage and execution layers.*
-5.  **Contracts**: `docs/specs/keledon_canonical_contracts.md`
+5.  **Contracts**: `docs/specs/v1_keledon_canonical_contracts.md`
+6.  **V3 Canon (Current)**: `docs/specs/v3_KELEDON_CANON.md`
     *   *Defines the JSON payloads for all communication.*
 
 ## 2. Core Invariants (The Law)

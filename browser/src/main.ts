@@ -19,7 +19,8 @@ const getInstallPath = (): string => {
 };
 
 const INSTALL_DIR = getInstallPath();
-const LOGS_DIR = path.join(INSTALL_DIR, 'logs');
+// Use userData for logs (always writable, unlike Program Files)
+const LOGS_DIR = path.join(app.getPath('userData'), 'logs');
 const STARTUP_LOG = path.join(LOGS_DIR, 'startup.log');
 const MAIN_LOG = path.join(LOGS_DIR, 'keledon-browser.log');
 const MAX_LOG_SIZE = 10 * 1024 * 1024; // 10MB
@@ -152,6 +153,11 @@ const registerProtocol = () => {
 
 // Try to register protocol
 registerProtocol();
+
+// Enable CDP debug port for Playwright/AutoBrowse automation
+const CDP_PORT = parseInt(process.env.KELEDON_CDP_PORT || '9222', 10);
+app.commandLine.appendSwitch('remote-debugging-port', String(CDP_PORT));
+earlyLog(`[CDP] Debug port enabled on ${CDP_PORT}`);
 
 // Also register when app is ready
 app.whenReady().then(() => {
@@ -572,7 +578,8 @@ function checkEscalationTriggers(text: string): boolean {
 }
 
 // ========== TAB MANAGEMENT ==========
-const TAB_HEIGHT = 40;
+// Chrome-like: height of tab bar (38px) + nav bar (42px) = 80px
+const CHROME_HEIGHT = 80;
 
 function createTab(name: string, url: string): Tab {
   const id = `tab-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -586,8 +593,55 @@ function createTab(name: string, url: string): Tab {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
-      nodeIntegration: false
+      nodeIntegration: false,
+      sandbox: false,
+      webSecurity: false
     }
+  });
+
+  // Wire up webContents events so the renderer stays in sync
+  view.webContents.on('did-navigate', (_event: Electron.Event, navigatedUrl: string) => {
+    // Update the tab's stored URL
+    const tab = tabs.find(t => t.id === id);
+    if (tab) {
+      tab.url = navigatedUrl;
+    }
+    // Update the URL bar in renderer
+    mainWindow?.webContents.send('tabs:updated', getTabs());
+    // Sync to AutoBrowse bridge
+    broadcastTabs();
+    log.info(`[Tabs] did-navigate: ${id} -> ${navigatedUrl}`);
+  });
+
+  view.webContents.on('page-title-updated', (_event: Electron.Event, title: string) => {
+    // Update the tab name in the tab bar
+    const tab = tabs.find(t => t.id === id);
+    if (tab) {
+      tab.name = title || name;
+    }
+    mainWindow?.webContents.send('tabs:updated', getTabs());
+    log.info(`[Tabs] page-title-updated: ${id} -> ${title}`);
+  });
+
+  view.webContents.on('did-start-loading', () => {
+    mainWindow?.webContents.send('tabs:updated', getTabs());
+  });
+
+  view.webContents.on('did-stop-loading', () => {
+    mainWindow?.webContents.send('tabs:updated', getTabs());
+  });
+
+  view.webContents.on('did-fail-load', (_event: Electron.Event, errorCode: number, errorDesc: string, validatedURL: string) => {
+    if (errorCode !== -3) { // -3 is ERR_ABORTED, common during redirects
+      log.warn(`[Tabs] did-fail-load: ${id} error=${errorCode} desc=${errorDesc} url=${validatedURL}`);
+    }
+    mainWindow?.webContents.send('tabs:updated', getTabs());
+  });
+
+  // Intercept new-window requests from BrowserView (links with target="_blank")
+  view.webContents.setWindowOpenHandler(({ url }) => {
+    createTab('New Tab', url);
+    return { action: 'deny' };
   });
 
   view.webContents.loadURL(url);
@@ -610,17 +664,38 @@ function createTab(name: string, url: string): Tab {
 function showTab(tabId: string) {
   if (!mainWindow) return;
 
-  const tab = tabs.find(t => t.id === tabId);
-  if (!tab || !tab.view) return;
+  // Remove current BrowserView first
+  const currentView = mainWindow.getBrowserView();
+  if (currentView) {
+    try { mainWindow.removeBrowserView(currentView); } catch (e) {}
+  }
 
-  mainWindow.setBrowserView(tab.view);
-  const bounds = mainWindow.getBounds();
+  if (tabId === 'home') {
+    // No BrowserView for home tab — renderer shows new tab page
+    activeTabId = 'home';
+    broadcastTabs();
+    return;
+  }
+
+  const tab = tabs.find(t => t.id === tabId);
+  if (!tab || !tab.view) {
+    log.warn('[Tabs] showTab: tab not found or no view:', tabId);
+    activeTabId = tabId;
+    broadcastTabs();
+    return;
+  }
+
+  mainWindow.addBrowserView(tab.view);
+  const contentSize = mainWindow.getContentSize();
   tab.view.setBounds({
     x: 0,
-    y: TAB_HEIGHT,
-    width: bounds.width,
-    height: bounds.height - TAB_HEIGHT
+    y: CHROME_HEIGHT,
+    width: contentSize[0],
+    height: contentSize[1] - CHROME_HEIGHT
   });
+
+  // Make sure the BrowserView is focused
+  tab.view.webContents.focus();
 
   activeTabId = tabId;
   log.info('[Tabs] Switched to:', tab.name);
@@ -665,18 +740,25 @@ function broadcastTabs() {
   if (mainWindow) {
     mainWindow.webContents.send('tabs:updated', getTabs());
   }
+  // Sync tab state to AutoBrowse bridge
+  (async () => {
+    try {
+      const bridge = await getAutoBrowseBridge();
+      bridge.setTabs(tabs, activeTabId);
+    } catch { /* bridge not loaded yet */ }
+  })();
 }
 
 function resizeTabs() {
   if (!mainWindow) return;
-  const bounds = mainWindow.getBounds();
+  const contentSize = mainWindow.getContentSize();
   for (const tab of tabs) {
     if (tab.view) {
       tab.view.setBounds({
         x: 0,
-        y: TAB_HEIGHT,
-        width: bounds.width,
-        height: bounds.height - TAB_HEIGHT
+        y: CHROME_HEIGHT,
+        width: contentSize[0],
+        height: contentSize[1] - CHROME_HEIGHT
       });
     }
   }
@@ -701,7 +783,7 @@ const createWindow = (): void => {
     minWidth: 800,
     minHeight: 600,
     title: 'KELEDON Browser',
-    backgroundColor: '#0d1117',
+    backgroundColor: '#ffffff',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -717,9 +799,17 @@ const createWindow = (): void => {
   mainWindow.webContents.setVisualZoomLevelLimits(1, 4);
   mainWindow.webContents.setZoomLevel(0);
 
+  // Handle new window requests from BrowserView (links with target="_blank")
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    // Open external links in a new tab instead of a new window
+    createTab('New Tab', url);
+    return { action: 'deny' };
+  });
+
   (async () => {
     const bridge = await getAutoBrowseBridge();
     bridge.setMainWindow(mainWindow);
+    bridge.setTabs(tabs, activeTabId);
   })();
 
   // Configure electron-log to write to install_dir/logs/
@@ -920,7 +1010,12 @@ const connectWebSockets = (cloudUrl: string, token: string): void => {
   deviceSocket.on('call_status', (data) => {
     mainWindow?.webContents.send('media:callStatus', data);
   });
-  
+
+  // Forward cloud brain commands to renderer (voice:transcript → DecisionEngine → brain:command)
+  deviceSocket.on('brain:command', (data) => {
+    mainWindow?.webContents.send('brain:command', data);
+  });
+
   deviceSocket.on('goal_execute', async (data) => {
     log.info('[Main] Received goal from cloud:', data.goal);
     
@@ -1476,6 +1571,17 @@ ipcMain.handle('tabs:close', async (_event, tabId: string) => {
 
 ipcMain.handle('tabs:getActive', async () => {
   return activeTabId;
+});
+
+ipcMain.handle('tabs:navigate', async (_event, url: string) => {
+  const tab = tabs.find(t => t.id === activeTabId);
+  if (tab?.view) {
+    tab.url = url;
+    tab.view.webContents.loadURL(url);
+    broadcastTabs();
+    return { success: true };
+  }
+  return { success: false };
 });
 
 // ========== CDP IPC HANDLER ==========
