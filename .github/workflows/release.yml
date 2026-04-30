@@ -97,17 +97,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-browser
     steps:
-      - name: Trigger Railway deploy hook
+      - name: Deploy to Railway
         run: |
-          if [ -z "${{ secrets.RAILWAY_DEPLOY_HOOK }}" ]; then
-            echo "WARNING: RAILWAY_DEPLOY_HOOK secret not set — skipping cloud deploy"
-          else
-            echo "Triggering Railway deploy for ${{ github.ref_name }}..."
-            curl -s -X POST "${{ secrets.RAILWAY_DEPLOY_HOOK }}" \
-              -H "Content-Type: application/json" \
-              -d "{\"version\": \"${{ github.ref_name }}\"}"
-            echo "Deploy triggered."
-          fi
+          echo "Deploying cloud to Railway for ${{ github.ref_name }}..."
+          npm install -g @railway/cli
+          railway redeploy --service keledon --yes
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
   # ─────────────────────────────────────────────────────────────────────────────
   # 3. Update Landing page download URL
