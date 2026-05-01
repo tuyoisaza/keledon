@@ -6,6 +6,7 @@ import * as crypto from 'crypto';
 import log from 'electron-log';
 import { io, Socket } from 'socket.io-client';
 import { autoUpdater } from 'electron-updater';
+import { webrtcInjector } from './webrtc-injector';
 
 // === DIAGNOSTIC LOGGING SYSTEM ===
 // Writes to {install_dir}/logs/ so logs are always findable
@@ -1029,6 +1030,20 @@ const connectWebSockets = (cloudUrl: string, token: string): void => {
     mainWindow?.webContents.send('brain:command', data);
   });
 
+  // Forward cloud TTS audio to renderer + inject into armed WebRTC tabs
+  deviceSocket.on('brain:audio', (data) => {
+    mainWindow?.webContents.send('brain:audio', data);
+
+    // Auto-inject into any armed BrowserView tab
+    if (data.audio) {
+      for (const tab of tabs) {
+        if (tab.view && webrtcInjector.isArmed(tab.view.webContents.id)) {
+          webrtcInjector.injectAudio(tab.view.webContents, data.audio);
+        }
+      }
+    }
+  });
+
   deviceSocket.on('goal_execute', async (data) => {
     log.info('[Main] Received goal from cloud:', data.goal);
     
@@ -1609,6 +1624,39 @@ ipcMain.handle('executor:getCDPUrl', async () => {
 });
 
 log.info('KELEDON Desktop Agent main process initialized');
+
+// ========== WEBRTC INJECTOR IPC HANDLERS ==========
+// cite: docs/specs/v1_keledon_webrtc_agent_participation.md
+ipcMain.handle('webrtc:arm', async (_event, tabId: string) => {
+  const tab = tabs.find(t => t.id === tabId) || tabs.find(t => t.id === activeTabId);
+  if (!tab?.view) {
+    return { success: false, error: 'No active BrowserView tab found' };
+  }
+  const sessionId = runtimeStatus.sessionId || `inject_${Date.now()}`;
+  const result = await webrtcInjector.arm(tab.view.webContents, sessionId, true);
+  log.info(`[WebRTC] Arm result for tab ${tabId}: ${JSON.stringify(result)}`);
+  return result;
+});
+
+ipcMain.handle('webrtc:inject-audio', async (_event, audioBase64: string) => {
+  const tab = tabs.find(t => t.id === activeTabId);
+  if (!tab?.view) return { success: false, error: 'No active tab' };
+  await webrtcInjector.injectAudio(tab.view.webContents, audioBase64);
+  return { success: true };
+});
+
+ipcMain.handle('webrtc:disarm', async (_event, tabId?: string) => {
+  const tab = tabs.find(t => t.id === (tabId || activeTabId));
+  if (!tab?.view) return { success: false, error: 'No active tab' };
+  await webrtcInjector.disarm(tab.view.webContents);
+  return { success: true };
+});
+
+ipcMain.handle('webrtc:status', async () => {
+  const tab = tabs.find(t => t.id === activeTabId);
+  if (!tab?.view) return { armed: false };
+  return { armed: webrtcInjector.isArmed(tab.view.webContents.id) };
+});
 
 // ========== ESCALATION IPC HANDLERS ==========
 ipcMain.on('escalation:action', (_event, action: string, data?: any) => {

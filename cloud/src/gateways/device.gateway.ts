@@ -13,6 +13,7 @@ import { DeviceService } from '../devices/device.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { DecisionEngineService, DecisionContext, DecisionResult } from '../services/decision-engine.service';
 import { EscalationService } from '../services/escalation.service';
+import { TTSService } from '../tts/tts.service';
 
 const deviceCorsOrigins = process.env.KELEDON_ALLOW_ALL_CORS === 'true'
   ? true
@@ -33,6 +34,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private prisma: PrismaService,
     @Optional() private decisionEngine?: DecisionEngineService,
     @Optional() private escalationService?: EscalationService,
+    @Optional() @Inject(TTSService) private ttsService?: TTSService,
   ) {}
 
   @WebSocketServer()
@@ -115,18 +117,36 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
         );
         
         if (result.command.say?.text) {
+          const sayText = result.command.say.text;
+          const interruptible = result.command.say.interruptible ?? true;
+
+          // Send text command immediately so browser can display it
           client.emit('brain:command', {
             type: 'say',
             data: {
-              say: {
-                text: result.command.say.text,
-                interruptible: result.command.say.interruptible ?? true
-              },
+              say: { text: sayText, interruptible },
               confidence: result.confidence,
               decision_id: result.decisionEvidence?.decision_id
             },
             timestamp: new Date().toISOString()
           });
+
+          // Async: generate ElevenLabs audio and send when ready
+          if (this.ttsService) {
+            this.ttsService.speak(sayText, { interruptible }).then(ttsResult => {
+              if (ttsResult.audioData && ttsResult.audioData.length > 0) {
+                client.emit('brain:audio', {
+                  audio: ttsResult.audioData.toString('base64'),
+                  format: 'mp3',
+                  duration: ttsResult.duration,
+                  text: sayText,
+                  timestamp: new Date().toISOString()
+                });
+              }
+            }).catch(err => {
+              this.logger.warn(`TTS generation failed for brain:command: ${err.message}`);
+            });
+          }
         }
       } catch (error) {
         this.logger.error('Decision engine error:', error);

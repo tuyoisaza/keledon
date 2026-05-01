@@ -5,10 +5,10 @@
   "updated": "2026-04-19",
 
   "session_state": {
-    "last_session": "2026-04-19",
-    "last_completed": "B-001 Release Ops COMPLETE — branch hygiene (17 local pruned), release.yml fixed, signing policy, E2E runbook, docs spine",
+    "last_session": "2026-05-01",
+    "last_completed": "B-002 WebRTC+RPA COMPLETE — ElevenLabs TTS wired into brain:command flow (brain:audio), WebRTC getUserMedia injector (webrtc-injector.ts, spec §4 compliant), consent UI in renderer, ui_steps brain:command handler, v0.2.0",
     "blocking_issue": null,
-    "next_action": "B-002: WebRTC + RPA Voice Integration — read plan, execute phases"
+    "next_action": "B-003: tag v0.2.0 → CI release build, then plan next boulder"
   },
 
   "active_plan": {
@@ -16,7 +16,7 @@
     "name": "WebRTC + RPA Voice Integration",
     "target_version": "0.2.0",
     "goal": "Wire WebRTC media layer, Cloud decision loop, RPA automation, Agent participation for real-time voice-driven browser control.",
-    "status": "PENDING"
+    "status": "DONE"
   },
 
   "tasks": [
@@ -92,8 +92,14 @@
       "id": "B-002",
       "title": "WebRTC + RPA Voice Integration",
       "plan": ".sisyphus/plans/2026-04-19-keledon-webrtc-rpa.md",
+      "status": "done",
+      "notes": "ElevenLabs audio wired into brain:command flow. WebRTC injector (spec-compliant getUserMedia override). Consent UI. ui_steps handler. v0.2.0."
+    },
+    {
+      "id": "B-003",
+      "title": "Release v0.2.0 + Next Planning",
       "status": "pending",
-      "notes": "4 phases: WebRTC media layer, Cloud decision loop, RPA automation, Agent participation."
+      "notes": "Tag v0.2.0 to trigger CI release build. Smoke test cloud TTS audio in browser. Plan next feature cycle."
     }
   ],
 

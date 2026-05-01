@@ -69,7 +69,17 @@ contextBridge.exposeInMainWorld('keledon', {
       ipcRenderer.on('brain:command', (_event, data) => callback(data));
       return () => ipcRenderer.removeAllListeners('brain:command');
     },
+    onAudio: (callback: (data: AudioData) => void) => {
+      ipcRenderer.on('brain:audio', (_event, data) => callback(data));
+      return () => ipcRenderer.removeAllListeners('brain:audio');
+    },
     setDebugMode: (enabled: boolean) => ipcRenderer.invoke('brain:setDebugMode', enabled)
+  },
+  webrtc: {
+    arm: (tabId?: string) => ipcRenderer.invoke('webrtc:arm', tabId),
+    disarm: (tabId?: string) => ipcRenderer.invoke('webrtc:disarm', tabId),
+    injectAudio: (audioBase64: string) => ipcRenderer.invoke('webrtc:inject-audio', audioBase64),
+    status: () => ipcRenderer.invoke('webrtc:status'),
   },
   launcher: {
     onLaunch: (callback: (data: { keledonId: string; code: string; cloudUrl?: string; action?: string }) => void) => {
@@ -141,6 +151,14 @@ interface CommandData {
   timestamp: string;
 }
 
+interface AudioData {
+  audio: string;  // base64 MP3
+  format: 'mp3';
+  duration?: number;
+  text?: string;
+  timestamp: string;
+}
+
 interface TabData {
   id: string;
   name: string;
@@ -202,7 +220,14 @@ declare global {
       };
       brain: {
         onCommand: (callback: (data: CommandData) => void) => () => void;
+        onAudio: (callback: (data: AudioData) => void) => () => void;
         setDebugMode: (enabled: boolean) => Promise<{ success: boolean }>;
+      };
+      webrtc: {
+        arm: (tabId?: string) => Promise<{ success: boolean; error?: string }>;
+        disarm: (tabId?: string) => Promise<{ success: boolean; error?: string }>;
+        injectAudio: (audioBase64: string) => Promise<{ success: boolean }>;
+        status: () => Promise<{ armed: boolean }>;
       };
       launcher: {
         onLaunch: (callback: (data: { keledonId: string; code: string; cloudUrl?: string; action?: string }) => void) => () => void;
