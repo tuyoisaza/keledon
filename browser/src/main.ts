@@ -1344,26 +1344,16 @@ ipcMain.handle('executor:executeGoal', async (_event, goal: any, context?: Recor
   }
 });
 
-ipcMain.handle('executor:executeSteps', async (_event, steps: unknown[], context?: Record<string, unknown>) => {
+ipcMain.handle('executor:executeSteps', async (_event, steps: unknown[]) => {
   log.info('Executing steps:', steps.length);
-  
+
   const bridge = await getAutoBrowseBridge();
   if (!bridge.isAutoBrowseInitialized()) {
     return { error: 'AutoBrowse not initialized' };
   }
-  
-  const goalInput = {
-    execution_id: `exec-${Date.now()}`,
-    goal: 'Execute predefined steps',
-    inputs: { steps, ...context },
-    constraints: {
-      max_steps: steps.length,
-      timeout_ms: context?.timeoutMs as number
-    }
-  };
-  
+
   try {
-    const result = await bridge.executeGoal(goalInput);
+    const result = await bridge.executeSteps(steps as any[]);
     return result;
   } catch (error) {
     return { error: String(error) };

@@ -53,11 +53,22 @@ interface BrowserState {
 }
 
 interface GoalAction {
-  type: 'navigate' | 'click' | 'fill' | 'extract' | 'wait' | 'screenshot' | 'scroll' | 'press_key' | 'select' | 'hover' | 'wait_for' | 'submit';
+  type: 'navigate' | 'click' | 'fill' | 'extract' | 'wait' | 'screenshot' | 'scroll' | 'press_key' | 'select' | 'hover' | 'wait_for' | 'submit' | 'assert';
   selector?: string;
   value?: string;
   url?: string;
   description: string;
+  timeout?: number;
+  direction?: string;
+}
+
+interface RpaStep {
+  step_id?: string;
+  action: string;
+  selector?: string;
+  value?: string;
+  url?: string;
+  description?: string;
   timeout?: number;
   direction?: string;
 }
@@ -500,6 +511,30 @@ async function executeAction(view: BrowserView, action: GoalAction): Promise<Ste
         return { id, type: 'submit', description: action.description, success: true, duration: Date.now() - startTime };
       }
 
+      case 'assert': {
+        if (action.selector) {
+          const result = await wc.executeJavaScript(`
+            (function() {
+              var el = document.querySelector(${JSON.stringify(action.selector)});
+              if (!el) return { found: false, text: '' };
+              return { found: true, text: el.innerText || el.textContent || el.value || '' };
+            })()
+          `);
+          if (!result?.found) throw new Error(`Assert: element not found: ${action.selector}`);
+          if (action.value && !result.text.includes(action.value)) {
+            throw new Error(`Assert: "${result.text.substring(0, 100)}" does not contain "${action.value}"`);
+          }
+        } else if (action.value) {
+          const text: string = await wc.executeJavaScript(
+            `document.body ? (document.body.innerText || document.body.textContent || '') : ''`
+          );
+          if (!text.includes(action.value)) {
+            throw new Error(`Assert: page does not contain "${action.value}"`);
+          }
+        }
+        return { id, type: 'assert', description: action.description, success: true, duration: Date.now() - startTime };
+      }
+
       default:
         throw new Error(`Unknown action type: ${action.type}`);
     }
@@ -636,6 +671,92 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
       error: String(error)
     };
   }
+}
+
+// Maps cloud action names to internal GoalAction types
+const ACTION_TYPE_MAP: Record<string, GoalAction['type']> = {
+  fill_field: 'fill',
+  type: 'fill',
+  navigate: 'navigate',
+  click: 'click',
+  fill: 'fill',
+  scroll: 'scroll',
+  hover: 'hover',
+  extract: 'extract',
+  screenshot: 'screenshot',
+  wait: 'wait',
+  press_key: 'press_key',
+  select: 'select',
+  wait_for: 'wait_for',
+  submit: 'submit',
+  assert: 'assert',
+};
+
+export async function executeSteps(steps: RpaStep[]): Promise<BridgeExecutionResult> {
+  const activeTab = electronTabs.find(t => t.id === activeTabId);
+  if (!activeTab?.view) {
+    return {
+      execution_id: `steps-${Date.now()}`,
+      status: 'failed',
+      goal_status: 'failed',
+      steps: [],
+      duration: 0,
+      artifacts: { screenshots: [], logs: [] },
+      error: 'No active BrowserView'
+    };
+  }
+
+  const view = activeTab.view;
+  const startTime = Date.now();
+  const executionId = `steps-${Date.now()}`;
+  const stepResults: StepResult[] = [];
+  const screenshots: string[] = [];
+  const logs: string[] = [];
+
+  for (let i = 0; i < steps.length; i++) {
+    const step = steps[i];
+    const mappedType = ACTION_TYPE_MAP[step.action] ?? (step.action as GoalAction['type']);
+    const action: GoalAction = {
+      type: mappedType,
+      selector: step.selector,
+      value: step.value,
+      url: step.url,
+      description: step.description || `${step.action}${step.selector ? ` on ${step.selector}` : ''}`,
+      timeout: step.timeout,
+      direction: step.direction,
+    };
+
+    emitProgress(i + 1, steps.length, action.type, 'running', action.description);
+    logs.push(`[Step ${i + 1}/${steps.length}] ${action.type}: ${action.description}`);
+
+    const result = await executeAction(view, action);
+    stepResults.push(result);
+
+    if (result.extractedValue && result.type === 'screenshot') screenshots.push(result.extractedValue);
+    if (!result.success) logs.push(`[Step ${i + 1}] Failed: ${result.error}`);
+    emitProgress(i + 1, steps.length, action.type, result.success ? 'done' : 'failed', action.description);
+    await new Promise(r => setTimeout(r, 200));
+  }
+
+  try {
+    const image = await view.webContents.capturePage();
+    screenshots.push(image.toDataURL());
+  } catch { /* ignore */ }
+
+  const successCount = stepResults.filter(s => s.success).length;
+  const failCount = stepResults.filter(s => !s.success).length;
+  const goalStatus: 'success' | 'failed' | 'uncertain' =
+    failCount === 0 ? 'success' : successCount === 0 ? 'failed' : 'uncertain';
+
+  logs.push(`[Result] ${goalStatus}: ${successCount} ok, ${failCount} failed`);
+  return {
+    execution_id: executionId,
+    status: goalStatus === 'failed' ? 'failed' : 'completed',
+    goal_status: goalStatus,
+    steps: stepResults,
+    duration: Date.now() - startTime,
+    artifacts: { screenshots, logs },
+  };
 }
 
 export async function getBrowserState(): Promise<BrowserState> {
