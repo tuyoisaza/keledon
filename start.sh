@@ -25,6 +25,11 @@ export VOSK_SAMPLE_RATE=${VOSK_SAMPLE_RATE:-16000}
 
 mkdir -p /app/data /app/data/qdrant
 
+# Remove stale Qdrant WAL/RocksDB lock files left by unclean container shutdown.
+# Safe to delete: if Qdrant is not running, all locks are dead.
+find /app/data/qdrant -type f \( -name "LOCK" -o -name "*.lock" -o -name "lock" \) -delete 2>/dev/null || true
+echo "[BOOT] Cleared any stale Qdrant lock files"
+
 echo "[BOOT] Starting embedded Qdrant on 127.0.0.1:6333"
 QDRANT__SERVICE__HTTP_PORT=6333 \
 QDRANT__SERVICE__GRPC_PORT=6334 \

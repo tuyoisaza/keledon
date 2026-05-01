@@ -6,17 +6,17 @@
 
   "session_state": {
     "last_session": "2026-04-19",
-    "last_completed": "Brain Fix v0.1.18 COMPLETE — Electron-native automation, progress reporting, log fix, installer cleanup",
+    "last_completed": "B-001 Release Ops COMPLETE — branch hygiene (17 local pruned), release.yml fixed, signing policy, E2E runbook, docs spine",
     "blocking_issue": null,
-    "next_action": "Promote B-001: Release Ops plan, OR build+smoke-test v0.1.18 installer"
+    "next_action": "B-002: WebRTC + RPA Voice Integration — read plan, execute phases"
   },
 
   "active_plan": {
-    "file": ".sisyphus/plans/brain-fix.md",
-    "name": "Brain Fix & Integration",
-    "target_version": "0.1.18",
-    "goal": "Fix CDP/BrowserView automation in autobrowse-bridge, enhance goal mapper, add progress reporting, fix logs, fix installer size.",
-    "status": "IN_PROGRESS"
+    "file": ".sisyphus/plans/2026-04-19-keledon-webrtc-rpa.md",
+    "name": "WebRTC + RPA Voice Integration",
+    "target_version": "0.2.0",
+    "goal": "Wire WebRTC media layer, Cloud decision loop, RPA automation, Agent participation for real-time voice-driven browser control.",
+    "status": "PENDING"
   },
 
   "tasks": [
@@ -25,75 +25,69 @@
       "title": "Fix CDP Connection - use Electron APIs directly for BrowserView control",
       "status": "done",
       "priority": 1,
-      "files": ["browser/src/autobrowse-bridge.ts"],
-      "what": "Replace playwright CDP connection with direct Electron BrowserView APIs: webContents.loadURL for navigation, executeJavaScript for DOM manipulation, capturePage for screenshots. Keep Playwright only as fallback.",
-      "acceptance": "Goals that navigate to URLs actually load in the BrowserView. Goals that click/fill actually manipulate the page DOM.",
-      "guardrails": ["No Google Generative AI API - Ollama/OpenAI only", "Don't break existing tab navigation", "Preserve exported API surface"]
+      "files": ["browser/src/autobrowse-bridge.ts"]
     },
     {
       "id": "T-002",
       "title": "Enhance Goal Mapper with Better Pattern Matching",
       "status": "done",
       "priority": 2,
-      "files": ["browser/src/autobrowse-bridge.ts"],
-      "what": "Expand mapGoalToActions() to handle: 'go to [domain]', 'login to [vendor]', 'click the [button]', 'fill [field] with [value]', 'search for [query]', 'extract [data]', 'scroll down/up', 'take a screenshot'. Add URL auto-detection.",
-      "acceptance": "Natural language goals map to correct actions without regex failures"
+      "files": ["browser/src/autobrowse-bridge.ts"]
     },
     {
       "id": "T-003",
       "title": "Add Progress Reporting to Renderer",
       "status": "done",
       "priority": 3,
-      "files": ["browser/src/autobrowse-bridge.ts", "browser/src/main.ts", "browser/renderer/index.html"],
-      "what": "Emit executor:progress IPC events during goal execution. Renderer already has onProgress listener - bridge just needs to emit. Show step status in renderer UI.",
-      "acceptance": "When a goal executes, renderer shows step-by-step progress in real-time"
+      "files": ["browser/src/autobrowse-bridge.ts", "browser/src/main.ts", "browser/renderer/index.html"]
     },
     {
       "id": "T-004",
       "title": "Fix Logs - lazy initialization of log paths",
       "status": "done",
       "priority": 4,
-      "files": ["browser/src/main.ts"],
-      "what": "Replace module-load-time LOGS_DIR with getLogsDir() getter that initializes lazily inside app.whenReady(). Fall back to os.tmpdir() if app not ready.",
-      "acceptance": "After app starts, logs appear in %APPDATA%/KELEDON Browser/logs/ immediately. If app crashes early, early logs go to os.tmpdir()."
+      "files": ["browser/src/main.ts"]
     },
     {
       "id": "T-005",
       "title": "Fix Installer Size - pre-build cleanup script",
       "status": "done",
       "priority": 5,
-      "files": ["browser/package.json", "browser/scripts/clean-dist.js"],
-      "what": "Add pre_dist script that deletes old installers and win-unpacked before building. Create clean-dist.js cleanup script.",
-      "acceptance": "Installer size drops from 1.8GB back to ~150-200MB"
+      "files": ["browser/package.json", "browser/scripts/clean-dist.js"]
     },
     {
       "id": "T-006",
       "title": "Version Bump to 0.1.18",
       "status": "done",
       "priority": 6,
-      "files": ["browser/package.json", "landing/package.json", "cloud/package.json", "landing/src/pages/LaunchKeledonPage.tsx"],
-      "what": "Bump all packages to 0.1.18. Update launch-keledon page version.",
-      "acceptance": "All packages report 0.1.18, GitHub release created"
+      "files": ["browser/package.json", "landing/package.json", "cloud/package.json", "landing/src/pages/LaunchKeledonPage.tsx"]
     },
     {
       "id": "T-007",
       "title": "Build and Smoke Test",
       "status": "done",
       "priority": 7,
-      "files": ["browser/"],
-      "what": "Build installer, verify size, run installer, verify app starts with logs",
-      "acceptance": "Build succeeds, installer ~150-200MB, app runs, logs appear"
+      "files": ["browser/"]
+    },
+    {
+      "id": "B-001",
+      "title": "Release Ops: branch hygiene + CI skeleton",
+      "status": "done",
+      "priority": 8,
+      "files": [
+        ".github/workflows/release.yml",
+        ".sisyphus/docs/branch-governance.md",
+        ".sisyphus/docs/windows-signing-policy.md",
+        ".sisyphus/docs/e2e-testing-runbook.md",
+        ".sisyphus/scripts/prune-remote-branches.sh",
+        "docs/release-governance.md"
+      ],
+      "what": "5 phases: branch pruning (17 local deleted), release.yml (fixed build + signing gate + cloud deploy + landing update), signing policy (Azure Trusted Signing), E2E runbook (5 scenarios), docs spine.",
+      "acceptance": "PR merged to main, branch-governance.md committed, release.yml triggers on vX.Y.Z tags"
     }
   ],
 
   "backlog": [
-    {
-      "id": "B-001",
-      "title": "Release Ops: branch hygiene + CI skeleton",
-      "plan": ".sisyphus/plans/2026-04-18-keledon-release-ops.md",
-      "status": "pending",
-      "notes": "5 phases: branch pruning, release automation, Windows signing, E2E testing, docs spine."
-    },
     {
       "id": "B-002",
       "title": "WebRTC + RPA Voice Integration",
