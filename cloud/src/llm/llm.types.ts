@@ -22,3 +22,34 @@ export interface LLMConfig {
   maxTokens: number;
   temperature: number;
 }
+
+export type UIStepAction =
+  | 'navigate'
+  | 'click'
+  | 'type'
+  | 'fill'
+  | 'wait'
+  | 'extract'
+  | 'select'
+  | 'hover'
+  | 'scroll'
+  | 'screenshot';
+
+export interface UIStep {
+  action: UIStepAction;
+  selector?: string;
+  value?: string;
+  url?: string;
+  description?: string;
+}
+
+export type CommandType = 'say' | 'ui_steps' | 'mode' | 'stop' | 'ask';
+
+export interface CommandDecision {
+  type: CommandType;
+  text?: string;
+  steps?: UIStep[];
+  mode?: 'normal' | 'safe' | 'silent';
+  reasoning?: string;
+  confidence?: number;
+}

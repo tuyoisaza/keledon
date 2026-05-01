@@ -6,9 +6,9 @@
 
   "session_state": {
     "last_session": "2026-05-01",
-    "last_completed": "B-003 COMPLETE — v0.2.0 tagged, CI built NSIS installer + ZIP, GitHub Release live with assets, 69 stale remote branches pruned (only main remains), release.yml fixed (contents:write perm, deploy-cloud via hook + continue-on-error)",
+    "last_completed": "B-004 CODE COMPLETE — OpenAI TTS fallback committed to main (7c33391). nginx.conf fixed: /tts route was not proxied to backend (405 on POST /tts/speak), now added /tts|/ws to backend proxy regex.",
     "blocking_issue": null,
-    "next_action": "B-004: plan next feature cycle — options: (a) smoke test cloud TTS audio, (b) ElevenLabs API key setup, (c) next product feature"
+    "next_action": "B-005: LLM structured command output — replace keyword-reparse with OpenAI function calling in DecisionEngine"
   },
 
   "active_plan": {
@@ -104,8 +104,14 @@
     {
       "id": "B-004",
       "title": "ElevenLabs Integration Smoke Test + Next Feature",
-      "status": "pending",
-      "notes": "Verify ELEVENLABS_API_KEY is set in Railway env. Smoke test brain:audio flow end-to-end. Plan next product feature (options: multi-tab RPA, VOSK STT upgrade, vendor portal login flows, dashboard)."
+      "status": "done",
+      "notes": "Code complete: OpenAI TTS fallback (tts-1, nova voice) deployed to main. Railway uses OpenAI since ELEVENLABS_API_KEY not set. Smoke test (WebSocket voice chain) requires live Electron app — manual step for user. nginx fix: /tts POST was 405 because route not in nginx proxy regex; fixed."
+    },
+    {
+      "id": "B-005",
+      "title": "LLM Structured Command Output",
+      "status": "in-progress",
+      "notes": "Replace keyword-reparse pattern in DecisionEngine with OpenAI function calling. LLM now returns structured {type, text?, steps?, mode?} via tool_calls. Eliminates mapLLMResponseToCommand() text-scan anti-pattern. Steps use action enum: navigate|click|type|fill|wait|extract|select|hover|scroll|screenshot."
     }
   ],
 
