@@ -95,18 +95,25 @@ jobs:
 
   # ─────────────────────────────────────────────────────────────────────────────
   # 2. Deploy Cloud (NestJS) to Railway
+  # Note: Railway auto-deploys from main branch merges. This step calls the
+  # deploy hook URL (if set) for an explicit release redeploy. Non-blocking.
   # ─────────────────────────────────────────────────────────────────────────────
   deploy-cloud:
     runs-on: ubuntu-latest
     needs: build-browser
+    continue-on-error: true
     steps:
-      - name: Deploy to Railway
+      - name: Deploy to Railway via deploy hook
         run: |
           echo "Deploying cloud to Railway for ${{ github.ref_name }}..."
-          npm install -g @railway/cli
-          railway redeploy --service keledon --yes
+          if [ -n "$RAILWAY_DEPLOY_HOOK" ]; then
+            curl -fsS -X POST "$RAILWAY_DEPLOY_HOOK"
+            echo "Deploy hook triggered."
+          else
+            echo "RAILWAY_DEPLOY_HOOK not set — Railway auto-deploys from main. Skipping."
+          fi
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_DEPLOY_HOOK: ${{ secrets.RAILWAY_DEPLOY_HOOK }}
 
   # ─────────────────────────────────────────────────────────────────────────────
   # 3. Update Landing page download URL
