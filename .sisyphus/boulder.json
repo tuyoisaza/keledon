@@ -2,22 +2,16 @@
   "_readme": "KELEDON autonomous task queue — optimized for Claude Sonnet 4.6. Read fully before touching any file.",
   "version": "2.0",
   "agent": "claude-sonnet-4-6",
-  "updated": "2026-04-19",
+  "updated": "2026-05-01",
 
   "session_state": {
     "last_session": "2026-05-01",
-    "last_completed": "B-003 COMPLETE — v0.2.0 tagged, CI built NSIS installer + ZIP, GitHub Release live with assets, 69 stale remote branches pruned (only main remains), release.yml fixed (contents:write perm, deploy-cloud via hook + continue-on-error)",
+    "last_completed": "B-008 DONE — PR #35 open with B-005 through B-008: structured RPA step execution, Azure Trusted Signing CI, version dynamic from package.json, auto patch bump workflow",
     "blocking_issue": null,
-    "next_action": "B-004: plan next feature cycle — options: (a) smoke test cloud TTS audio, (b) ElevenLabs API key setup, (c) next product feature"
+    "next_action": "Merge PR #35 into main. After merge: verify B-007 (version badge shows 0.2.x in landing), verify B-008 (bump commit appears on main), smoke test B-005 end-to-end voice→ui_steps flow"
   },
 
-  "active_plan": {
-    "file": ".sisyphus/plans/2026-04-19-keledon-webrtc-rpa.md",
-    "name": "WebRTC + RPA Voice Integration",
-    "target_version": "0.2.0",
-    "goal": "Wire WebRTC media layer, Cloud decision loop, RPA automation, Agent participation for real-time voice-driven browser control.",
-    "status": "DONE"
-  },
+  "active_plan": null,
 
   "tasks": [
     {
@@ -103,9 +97,37 @@
     },
     {
       "id": "B-004",
-      "title": "ElevenLabs Integration Smoke Test + Next Feature",
-      "status": "pending",
-      "notes": "Verify ELEVENLABS_API_KEY is set in Railway env. Smoke test brain:audio flow end-to-end. Plan next product feature (options: multi-tab RPA, VOSK STT upgrade, vendor portal login flows, dashboard)."
+      "title": "OpenAI TTS Fallback",
+      "status": "done",
+      "notes": "cloud/src/tts/tts.service.ts: speakWithOpenAI() added. Auto-selects ElevenLabs > OpenAI > mock. OPENAI_API_KEY set in Railway. brain:audio now delivers real TTS."
+    },
+    {
+      "id": "B-005",
+      "title": "RPA step execution + assert action type",
+      "status": "pr_open",
+      "pr": 35,
+      "notes": "autobrowse-bridge: executeSteps() export, assert action type, ACTION_TYPE_MAP for cloud→internal normalization. main.ts: executor:executeSteps calls bridge.executeSteps(). device.gateway: emits brain:command(ui_steps) when decision engine returns ui_steps — was silently swallowed before."
+    },
+    {
+      "id": "B-006",
+      "title": "Azure Trusted Signing CI integration",
+      "status": "pr_open",
+      "pr": 35,
+      "notes": "release.yml: azure/trusted-signing-action@v0.3.20 step, gated on AZURE_SIGNING_ENABLED=true. docs/WINDOWS_SIGNING_POLICY.md: complete Azure setup checklist (account, cert profile, App Registration, 6 secrets + 2 variables)."
+    },
+    {
+      "id": "B-007",
+      "title": "Fix stale version in dashboard debug report",
+      "status": "pr_open",
+      "pr": 35,
+      "notes": "debug-report.ts and Sidebar.tsx: hardcoded versions replaced with __APP_VERSION__ Vite define. vite.config.ts reads from package.json at build time. vite-env.d.ts declares global."
+    },
+    {
+      "id": "B-008",
+      "title": "Auto patch version bump on merge to main",
+      "status": "pr_open",
+      "pr": 35,
+      "notes": ".github/workflows/version-bump.yml: bumps patch in browser/cloud/landing package.json + LaunchKeledonPage.tsx download URL on every main push; skips chore(release): commits to prevent loops."
     }
   ],
 
