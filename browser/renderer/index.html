@@ -733,6 +733,29 @@
         </div>
       </div>
 
+      <!-- Agent Participation (WebRTC Injection) -->
+      <!-- cite: docs/specs/v1_keledon_webrtc_agent_participation.md -->
+      <div class="panel-section" id="agentInjectionSection" style="display:none;">
+        <div class="panel-section-title">Agent Voice Injection</div>
+        <div style="font-size:11px;color:#aaa;margin-bottom:6px;">
+          Arms KELEDON agent audio into the active tab's WebRTC call.
+          Other participants will hear the agent through the meeting's audio pipeline.
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <input type="checkbox" id="consentCheckbox" />
+          <label for="consentCheckbox" style="font-size:12px;cursor:pointer;">
+            I consent to KELEDON agent audio joining this call
+          </label>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:6px;">
+          <button id="armInjectionBtn" class="call-btn start" disabled>&#x1F399; Arm Agent</button>
+          <button id="disarmInjectionBtn" class="call-btn end" disabled>&#x26D4; Disarm</button>
+        </div>
+        <div id="injectionStatus" style="font-size:11px;padding:4px 6px;border-radius:3px;background:#222;color:#888;">
+          DISARMED
+        </div>
+      </div>
+
       <!-- Activity Log -->
       <div class="panel-section">
         <div class="panel-section-title">Activity</div>
@@ -1228,12 +1251,38 @@
       if (cmd.type === 'say' || (cmd.data && cmd.data.say)) {
         const text = cmd.data.say?.text || cmd.data.text;
         if (text) {
+          // Fallback to local SpeechSynthesis; cloud audio arrives via brain:audio
           window.keledon.media.speak(text, cmd.data.say?.interruptible ?? true).catch(e => {
             log('TTS error: ' + e.message, 'error');
           });
         }
       }
+      if (cmd.type === 'ui_steps' && cmd.data && cmd.data.steps) {
+        window.keledon.executor.executeSteps(cmd.data.steps).then(result => {
+          log('ui_steps result: ' + JSON.stringify(result).substring(0, 80), 'info');
+        }).catch(e => {
+          log('ui_steps error: ' + e.message, 'error');
+        });
+      }
       log('Brain command: ' + cmd.type, 'info');
+    });
+
+    // Cloud TTS audio — play ElevenLabs MP3 when available (overrides local SpeechSynthesis)
+    window.keledon.brain.onAudio((audioData) => {
+      try {
+        const bytes = Uint8Array.from(atob(audioData.audio), c => c.charCodeAt(0));
+        const blob = new Blob([bytes], { type: 'audio/mpeg' });
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audio.onended = () => URL.revokeObjectURL(url);
+        audio.onerror = (e) => log('Cloud audio playback error: ' + e, 'error');
+        // Cancel any in-progress local SpeechSynthesis before playing cloud audio
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        audio.play().catch(e => log('Cloud audio play() failed: ' + e.message, 'error'));
+        log('Playing cloud TTS audio (' + (audioData.duration ? audioData.duration.toFixed(1) + 's' : '?') + ')', 'info');
+      } catch (e) {
+        log('Cloud audio decode error: ' + e.message, 'error');
+      }
     });
 
     // ==================== ESCALATION ====================
@@ -1260,6 +1309,61 @@
     document.getElementById('escalationAbort').addEventListener('click', () => {
       document.getElementById('escalationModal').classList.remove('show');
       window.keledon.escalation.action('abort');
+    });
+
+    // ==================== AGENT INJECTION (WebRTC) ====================
+    // cite: docs/specs/v1_keledon_webrtc_agent_participation.md
+    const consentCheckbox = document.getElementById('consentCheckbox');
+    const armInjectionBtn = document.getElementById('armInjectionBtn');
+    const disarmInjectionBtn = document.getElementById('disarmInjectionBtn');
+    const injectionStatus = document.getElementById('injectionStatus');
+
+    function setInjectionStatus(state) {
+      const colors = { DISARMED: '#888', ARMED: '#4caf50', FAILED: '#f44336' };
+      injectionStatus.textContent = state;
+      injectionStatus.style.color = colors[state] || '#888';
+    }
+
+    consentCheckbox.addEventListener('change', () => {
+      armInjectionBtn.disabled = !consentCheckbox.checked;
+    });
+
+    armInjectionBtn.addEventListener('click', async () => {
+      armInjectionBtn.disabled = true;
+      setInjectionStatus('ARMING...');
+      log('Agent injection: arming — consent granted', 'info');
+      try {
+        const result = await window.keledon.webrtc.arm();
+        if (result.success) {
+          setInjectionStatus('ARMED');
+          disarmInjectionBtn.disabled = false;
+          log('Agent injection: ARMED — getUserMedia override active', 'info');
+        } else {
+          setInjectionStatus('FAILED');
+          armInjectionBtn.disabled = false;
+          log('Agent injection arm failed: ' + result.error, 'error');
+        }
+      } catch (e) {
+        setInjectionStatus('FAILED');
+        armInjectionBtn.disabled = false;
+        log('Agent injection error: ' + e.message, 'error');
+      }
+    });
+
+    disarmInjectionBtn.addEventListener('click', async () => {
+      disarmInjectionBtn.disabled = true;
+      await window.keledon.webrtc.disarm();
+      setInjectionStatus('DISARMED');
+      armInjectionBtn.disabled = !consentCheckbox.checked;
+      log('Agent injection: DISARMED', 'info');
+    });
+
+    // Show agent injection panel when connected (it depends on an active tab)
+    window.keledon.runtime.onStatusChange((status) => {
+      const injSection = document.getElementById('agentInjectionSection');
+      if (injSection && status && status.connected) {
+        injSection.style.display = 'block';
+      }
     });
 
     // ==================== VERSION ====================
