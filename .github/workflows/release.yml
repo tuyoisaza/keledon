@@ -12,6 +12,9 @@ on:
 env:
   NODE_VERSION: '20'
 
+permissions:
+  contents: write
+
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   # 1. Build Electron installer on Windows
