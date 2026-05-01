@@ -54,6 +54,25 @@ jobs:
           echo "name=$($exe.Name)" >> $env:GITHUB_OUTPUT
           Write-Host "Installer: $($exe.FullName)"
 
+      - name: Sign installer with Azure Trusted Signing
+        # Activate by setting AZURE_SIGNING_ENABLED=true in repo Variables and
+        # adding secrets: AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET,
+        # AZURE_SIGNING_ENDPOINT, AZURE_SIGNING_ACCOUNT, AZURE_SIGNING_PROFILE
+        if: vars.AZURE_SIGNING_ENABLED == 'true'
+        uses: azure/trusted-signing-action@v0.3.20
+        with:
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          endpoint: ${{ secrets.AZURE_SIGNING_ENDPOINT }}
+          trusted-signing-account-name: ${{ secrets.AZURE_SIGNING_ACCOUNT }}
+          certificate-profile-name: ${{ secrets.AZURE_SIGNING_PROFILE }}
+          files-folder: browser/dist
+          files-folder-filter: exe
+          file-digest: SHA256
+          timestamp-rfc3161: http://timestamp.acs.microsoft.com
+          timestamp-digest: SHA256
+
       - name: Verify code signing
         # Soft-gate: warns if unsigned; set REQUIRE_SIGNING=true to block releases
         shell: pwsh
