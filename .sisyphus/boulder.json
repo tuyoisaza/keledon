@@ -6,9 +6,9 @@
 
   "session_state": {
     "last_session": "2026-05-01",
-    "last_completed": "B-002 WebRTC+RPA COMPLETE — ElevenLabs TTS wired into brain:command flow (brain:audio), WebRTC getUserMedia injector (webrtc-injector.ts, spec §4 compliant), consent UI in renderer, ui_steps brain:command handler, v0.2.0",
+    "last_completed": "B-003 COMPLETE — v0.2.0 tagged, CI built NSIS installer + ZIP, GitHub Release live with assets, 69 stale remote branches pruned (only main remains), release.yml fixed (contents:write perm, deploy-cloud via hook + continue-on-error)",
     "blocking_issue": null,
-    "next_action": "B-003: tag v0.2.0 → CI release build, then plan next boulder"
+    "next_action": "B-004: plan next feature cycle — options: (a) smoke test cloud TTS audio, (b) ElevenLabs API key setup, (c) next product feature"
   },
 
   "active_plan": {
@@ -98,8 +98,14 @@
     {
       "id": "B-003",
       "title": "Release v0.2.0 + Next Planning",
+      "status": "done",
+      "notes": "v0.2.0 tagged, CI passed, GitHub Release live (KELEDON.Browser.Setup.0.2.0.exe + keledon-v0.2.0-win-x64.zip). 69 stale branches pruned. release.yml: contents:write perm + deploy-cloud via hook."
+    },
+    {
+      "id": "B-004",
+      "title": "ElevenLabs Integration Smoke Test + Next Feature",
       "status": "pending",
-      "notes": "Tag v0.2.0 to trigger CI release build. Smoke test cloud TTS audio in browser. Plan next feature cycle."
+      "notes": "Verify ELEVENLABS_API_KEY is set in Railway env. Smoke test brain:audio flow end-to-end. Plan next product feature (options: multi-tab RPA, VOSK STT upgrade, vendor portal login flows, dashboard)."
     }
   ],
 
