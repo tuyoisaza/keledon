@@ -19,15 +19,31 @@ export class TTSService {
   }
 
   async speak(text: string, options: { interruptible?: boolean } = {}): Promise<TTSResult> {
-    const provider = process.env.TTS_PROVIDER || 'elevenlabs';
-    
+    // Provider selection: explicit env > auto-detect from available keys
+    const explicitProvider = process.env.TTS_PROVIDER;
+    const hasElevenLabs = !!process.env.ELEVENLABS_API_KEY;
+    const hasOpenAI = !!process.env.OPENAI_API_KEY;
+
+    let provider: string;
+    if (explicitProvider && explicitProvider !== 'auto') {
+      provider = explicitProvider;
+    } else if (hasElevenLabs) {
+      provider = 'elevenlabs';
+    } else if (hasOpenAI) {
+      provider = 'openai';
+    } else {
+      provider = 'mock';
+    }
+
     console.log(`[TTS] Speaking with ${provider}: "${text.substring(0, 50)}..."`);
-    
+
     try {
       if (provider === 'elevenlabs') {
         return await this.speakWithElevenLabs(text, options);
+      } else if (provider === 'openai') {
+        return await this.speakWithOpenAI(text, options);
       } else {
-        console.log('[TTS] Mock TTS mode');
+        console.log('[TTS] Mock TTS mode (no provider configured)');
         return { audioData: Buffer.from(''), duration: 0 };
       }
     } finally {
@@ -75,6 +91,39 @@ export class TTSService {
       return { audioData, duration };
     } catch (error: any) {
       console.error('[TTS] ElevenLabs error:', error.message);
+      return { error: error.message };
+    }
+  }
+
+  async speakWithOpenAI(text: string, _options: { interruptible?: boolean }): Promise<TTSResult> {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return { error: 'OPENAI_API_KEY not configured' };
+    }
+
+    try {
+      const { OpenAI } = await import('openai');
+      const openai = new OpenAI({ apiKey });
+
+      const voice = (process.env.OPENAI_TTS_VOICE || 'nova') as
+        'alloy' | 'ash' | 'coral' | 'echo' | 'fable' | 'nova' | 'onyx' | 'sage' | 'shimmer';
+      const model = (process.env.OPENAI_TTS_MODEL || 'tts-1') as 'tts-1' | 'tts-1-hd' | 'gpt-4o-mini-tts';
+
+      const response = await openai.audio.speech.create({
+        model,
+        voice,
+        input: text,
+        response_format: 'mp3',
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const audioData = Buffer.from(arrayBuffer);
+      const duration = this.estimateDuration(audioData.length);
+
+      console.log(`[TTS] OpenAI generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio (voice: ${voice})`);
+      return { audioData, duration };
+    } catch (error: any) {
+      console.error('[TTS] OpenAI TTS error:', error.message);
       return { error: error.message };
     }
   }
