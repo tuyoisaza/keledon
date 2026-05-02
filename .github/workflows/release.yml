@@ -133,36 +133,3 @@ jobs:
           fi
         env:
           RAILWAY_DEPLOY_HOOK: ${{ secrets.RAILWAY_DEPLOY_HOOK }}
-
-  # ─────────────────────────────────────────────────────────────────────────────
-  # 3. Update Landing page download URL
-  # ─────────────────────────────────────────────────────────────────────────────
-  update-landing:
-    runs-on: ubuntu-latest
-    needs: build-browser
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update download URL in landing page
-        run: |
-          VERSION="${{ github.ref_name }}"
-          FILE="landing/src/pages/LaunchKeledonPage.tsx"
-          # Replace the installer download URL to point at the new release asset
-          sed -i \
-            "s|/releases/download/v[0-9][0-9.]*[0-9]/KELEDON\.Browser\.Setup\.[0-9][0-9.]*[0-9]\.exe|/releases/download/${VERSION}/KELEDON.Browser.Setup.${VERSION#v}.exe|g" \
-            "$FILE"
-          echo "Updated $FILE to $VERSION"
-
-      - name: Commit and push landing update
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add landing/src/pages/LaunchKeledonPage.tsx
-          if git diff --staged --quiet; then
-            echo "No changes to landing page — already up to date"
-          else
-            git commit -m "chore(landing): update download URL to ${{ github.ref_name }}"
-            git push origin HEAD:main
-          fi

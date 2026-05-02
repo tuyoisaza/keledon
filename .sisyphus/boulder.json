@@ -148,7 +148,8 @@
       "Never modify docs/specs/ without a governance Issue.",
       "Never declare completion without a PR.",
       "Never simulate success. Fail loudly.",
-      "NO Google Generative AI API - Ollama/OpenAI only"
+      "NO Google Generative AI API - Ollama/OpenAI only",
+      "All commit messages must start with vX.X.X: (e.g. v0.2.4: fix ...)"
     ]
   }
 }
