@@ -30,7 +30,9 @@
     "seed:qdrant": "npx ts-node scripts/seed-qdrant.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.92.0",
     "@deepgram/sdk": "^4.11.3",
+    "@google/generative-ai": "^0.24.1",
     "@modelcontextprotocol/sdk": "^1.26.0",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
