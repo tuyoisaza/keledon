@@ -185,7 +185,9 @@ export class HealthService {
   }
 
   private async checkBrowserDownload(): Promise<boolean> {
-    const url = 'https://github.com/tuyoisaza/keledon/releases/download/v0.2.0/KELEDON.Browser.Setup.0.2.0.exe';
+    // KELEDON_BROWSER_DOWNLOAD_URL env var overrides the default stable URL
+    const url = process.env.KELEDON_BROWSER_DOWNLOAD_URL ||
+      'https://github.com/tuyoisaza/keledon/releases/latest/download/KELEDON.Browser.Setup.exe';
     try {
       const response = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
       return response.status !== 404;

@@ -63,6 +63,7 @@
       ]
     },
     "nsis": {
+      "artifactName": "KELEDON.Browser.Setup.exe",
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
