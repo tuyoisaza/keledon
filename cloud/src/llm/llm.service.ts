@@ -1,9 +1,9 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { LLMRequest, LLMResponse } from './llm.types';
 
-type LLMProvider = 'anthropic' | 'google' | 'openai' | 'ollama';
+type LLMProvider = 'anthropic' | 'google' | 'openai' | 'ollama' | 'none';
 
-const VALID_PROVIDERS: LLMProvider[] = ['anthropic', 'google', 'openai', 'ollama'];
+const CONFIGURED_PROVIDERS: LLMProvider[] = ['anthropic', 'google', 'openai', 'ollama'];
 
 @Injectable()
 export class LLMService implements OnModuleInit {
@@ -13,17 +13,24 @@ export class LLMService implements OnModuleInit {
 
   onModuleInit() {
     this.provider = this.resolveProvider();
+    if (this.provider === 'none') {
+      this.logger.warn(
+        '[LLM] WARNING: No LLM provider configured. Set ANTHROPIC_API_KEY, GOOGLE_AI_API_KEY, OPENAI_API_KEY, or OLLAMA_URL to enable AI responses. Running in degraded mode.'
+      );
+      return;
+    }
     this.model = this.resolveModel(this.provider);
     this.logger.log(`LLM provider: ${this.provider}, model: ${this.model}`);
   }
 
   private resolveProvider(): LLMProvider {
     const forced = process.env.LLM_PROVIDER?.toLowerCase() as LLMProvider | undefined;
-    if (forced) {
-      if (!VALID_PROVIDERS.includes(forced)) {
-        throw new Error(
-          `Unknown LLM_PROVIDER: "${forced}". Valid values: ${VALID_PROVIDERS.join(', ')}`
+    if (forced && forced !== 'none') {
+      if (!CONFIGURED_PROVIDERS.includes(forced)) {
+        this.logger.warn(
+          `Unknown LLM_PROVIDER: "${forced}". Valid values: ${CONFIGURED_PROVIDERS.join(', ')}. Running in degraded mode.`
         );
+        return 'none';
       }
       return forced;
     }
@@ -33,9 +40,7 @@ export class LLMService implements OnModuleInit {
     if (process.env.OPENAI_API_KEY) return 'openai';
     if (process.env.OLLAMA_URL) return 'ollama';
 
-    throw new Error(
-      'No LLM provider configured. Set ANTHROPIC_API_KEY, GOOGLE_AI_API_KEY, OPENAI_API_KEY, or OLLAMA_URL.'
-    );
+    return 'none';
   }
 
   private resolveModel(provider: LLMProvider): string {
@@ -48,10 +53,20 @@ export class LLMService implements OnModuleInit {
         return process.env.OPENAI_MODEL || 'gpt-4o';
       case 'ollama':
         return process.env.OLLAMA_MODEL || 'llama3';
+      default:
+        return '';
     }
   }
 
   async generate(request: LLMRequest): Promise<LLMResponse> {
+    if (this.provider === 'none') {
+      return {
+        text: this.generateFallback(request.prompt),
+        finishReason: 'stop',
+        usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+      };
+    }
+
     const systemPrompt = this.buildSystemPrompt(request.context || []);
     try {
       switch (this.provider) {
@@ -215,6 +230,6 @@ Always respond in a way that can be spoken aloud.`;
   }
 
   isEnabled(): boolean {
-    return !!this.provider;
+    return this.provider !== 'none' && !!this.provider;
   }
 }
