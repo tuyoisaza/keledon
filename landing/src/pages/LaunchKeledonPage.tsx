@@ -69,22 +69,14 @@ export default function LaunchKeledonPage() {
             
             // Open deep link
             if (data.deep_link) {
-                const deepLink = data.deep_link;
-                const currentUrl = window.location.href;
-                
-                // Try to open deep link
-                window.location.href = deepLink;
-                
-                // Check if protocol handler exists (page didn't change = no handler)
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                if (window.location.href === currentUrl) {
-                    // Protocol not registered - prompt download
-                    toast.error('Browser not detected. Downloading...');
-                    window.open('https://github.com/tuyoisaza/keledon/releases', '_blank');
-                } else {
-                    toast.success(`Launching ${data.keledon_name || keledonId}...`);
-                }
+                // Fire the deep link — the OS hands it to the registered KELEDON browser.
+                // We cannot reliably detect whether the protocol handler was invoked, so
+                // we show a success toast and a fallback hint after a short delay.
+                window.location.href = data.deep_link;
+                toast.success(`Launching ${data.keledon_name || keledonId}...`);
+                setTimeout(() => {
+                    toast.info('If KELEDON Browser did not open, use the Download App button to install it first.');
+                }, 2500);
             }
         } catch (error: any) {
             console.error('Failed to launch keledon:', error);

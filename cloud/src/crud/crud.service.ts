@@ -563,26 +563,44 @@ export class CrudService {
       }
       console.log('[Launch] Keledon found:', keledon.name);
 
-      // Get device for this keledon
-      const device = await this.prisma.device.findFirst({
+      // Get or create a pending device slot for this keledon
+      let device = await this.prisma.device.findFirst({
         where: { keledonId }
       });
 
       if (!device) {
-        console.log('[Launch] No device found for keledon');
-        throw new Error('Keledon has no paired device');
-      }
-      console.log('[Launch] Device found, pairingCode:', device.pairingCode);
-
-      if (!device.pairingCode) {
-        console.log('[Launch] No pairing code, generating on-demand...');
-        device.pairingCode = this.generatePairingCodeString();
-        device.pairingCodeExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-        await this.prisma.device.update({
-          where: { id: device.id },
-          data: { pairingCode: device.pairingCode, pairingCodeExpiresAt: device.pairingCodeExpiresAt }
+        // No device yet — create a pending slot so the first browser launch can pair
+        console.log('[Launch] No device found, creating pending slot for first-time pairing');
+        const pairingCode = this.generatePairingCodeString();
+        device = await this.prisma.device.create({
+          data: {
+            keledonId,
+            name: 'KELEDON Desktop Agent',
+            machineId: `pending-${keledonId}-${Date.now()}`,
+            platform: 'pending',
+            status: 'pending',
+            pairingCode,
+            pairingCodeExpiresAt: new Date(Date.now() + 10 * 60 * 1000)
+          }
         });
-        console.log('[Launch] New pairing code generated:', device.pairingCode);
+        console.log('[Launch] Pending device slot created, pairingCode:', device.pairingCode);
+      } else {
+        console.log('[Launch] Device found, status:', device.status, 'pairingCode:', device.pairingCode);
+
+        if (!device.pairingCode || (device.pairingCodeExpiresAt && device.pairingCodeExpiresAt < new Date())) {
+          console.log('[Launch] Generating fresh pairing code...');
+          const pairingCode = this.generatePairingCodeString();
+          await this.prisma.device.update({
+            where: { id: device.id },
+            data: {
+              pairingCode,
+              pairingCodeExpiresAt: new Date(Date.now() + 10 * 60 * 1000),
+              status: 'pending'
+            }
+          });
+          device = { ...device, pairingCode, status: 'pending' };
+          console.log('[Launch] Fresh pairing code generated:', device.pairingCode);
+        }
       }
 
       // Verify user has access - check Prisma first, then fallback for Google users
