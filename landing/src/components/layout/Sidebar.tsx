@@ -23,8 +23,7 @@ import {
     Users as UsersIcon,
     Copy,
     Check,
-    Trash2,
-    FlaskConical
+    Trash2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
@@ -39,7 +38,6 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-    { icon: FlaskConical, label: 'Test Browser', href: '/test-browser', minRole: 'user' },
     { icon: Play, label: 'Launch Keledon', href: '/launch-keledon', minRole: 'user' },
     { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard', minRole: 'user' },
     { icon: Radio, label: 'Sessions', href: '/sessions/history', minRole: 'user' },
