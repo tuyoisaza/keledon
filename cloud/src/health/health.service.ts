@@ -108,7 +108,7 @@ export class HealthService {
     const startTime = Date.now();
     const sttConfig = this.configService.getSttConfig();
     const voskUrl = `http://127.0.0.1:${sttConfig.voskPort}/health`;
-    
+
     try {
       const response = await fetch(voskUrl, { signal: AbortSignal.timeout(3000) });
       if (response.ok) {
@@ -138,7 +138,7 @@ export class HealthService {
   private async checkQdrant(): Promise<HealthCheck> {
     const startTime = Date.now();
     const vsConfig = this.configService.getVectorStoreConfig();
-    
+
     try {
       const response = await fetch(`${vsConfig.qdrantUrl}/collections`, { signal: AbortSignal.timeout(3000) });
       if (response.ok) {
@@ -168,14 +168,14 @@ export class HealthService {
   private async checkServices(): Promise<HealthCheck> {
     const startTime = Date.now();
     const flags = this.configService.getFeatureFlags();
-    
+
     const availableServices: string[] = [];
     if (flags.vectorStore) availableServices.push('RAG');
     if (flags.realStt) availableServices.push('STT');
     if (flags.realTts) availableServices.push('TTS');
     if (flags.rpa) availableServices.push('RPA');
     if (flags.otel) availableServices.push('OTEL');
-    
+
     return {
       service: 'services',
       status: 'healthy',
@@ -184,13 +184,26 @@ export class HealthService {
     };
   }
 
-  getBasicHealth() {
+  async checkBrowserDownloadUrl(): Promise<{ url: string; reachable: boolean }> {
+    // KELEDON_BROWSER_DOWNLOAD_URL env var overrides the default stable URL
+    const url = process.env.KELEDON_BROWSER_DOWNLOAD_URL ||
+      'https://github.com/tuyoisaza/keledon/releases/latest/download/KELEDON.Browser.Setup.exe';
+    try {
+      const response = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
+      return { url, reachable: response.ok || response.status === 302 || response.status === 301 };
+    } catch {
+      return { url, reachable: false };
+    }
+  }
+
+  async getBasicHealth() {
     const memUsage = process.memoryUsage();
     const flags = this.configService.getFeatureFlags();
     const sttConfig = this.configService.getSttConfig();
     const vsConfig = this.configService.getVectorStoreConfig();
     const ttsConfig = this.configService.getTtsConfig();
-    
+    const browserDownload = await this.checkBrowserDownloadUrl();
+
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),
@@ -207,14 +220,14 @@ export class HealthService {
       },
       services: {
         rag: { enabled: flags.vectorStore, status: flags.vectorStore ? 'active' : 'disabled' },
-        stt: { 
-          provider: sttConfig.provider, 
+        stt: {
+          provider: sttConfig.provider,
           status: flags.realStt ? 'active' : 'web-speech',
-          voskPort: sttConfig.voskPort 
+          voskPort: sttConfig.voskPort
         },
-        tts: { 
-          provider: ttsConfig?.provider || 'web-speech', 
-          status: flags.realTts ? 'active' : 'web-speech' 
+        tts: {
+          provider: ttsConfig?.provider || 'web-speech',
+          status: flags.realTts ? 'active' : 'web-speech'
         },
         rpa: { enabled: flags.rpa, status: flags.rpa ? 'active' : 'disabled' },
         otel: { enabled: flags.otel, status: flags.otel ? 'active' : 'disabled' }
@@ -236,6 +249,8 @@ export class HealthService {
         rss: Math.round(memUsage.rss / 1024 / 1024) + 'MB',
         external: Math.round(memUsage.external / 1024 / 1024) + 'MB'
       },
+      browser_download_url: browserDownload.url,
+      browser_download_reachable: browserDownload.reachable,
       logs: errorBuffer.slice(-MAX_ERRORS)
     };
   }

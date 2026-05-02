@@ -1,0 +1,75 @@
+# Auto version bump on every merge to main.
+# Runs npm version patch on browser/, cloud/, and landing/ in lockstep,
+# commits, and pushes. Skipped when the merge commit is itself a version bump
+# (prevents infinite loop) or a docs-only / chore change.
+name: Version Bump
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    # Skip if commit was already a version bump or a release tag push
+    if: |
+      !startsWith(github.event.head_commit.message, 'chore(release):') &&
+      !startsWith(github.event.head_commit.message, 'chore: bump version') &&
+      !startsWith(github.event.head_commit.message, 'chore(version):')
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump patch version in all packages
+        id: bump
+        run: |
+          # Read current version from browser/package.json (single source of truth)
+          CURRENT=$(node -p "require('./browser/package.json').version")
+          # Compute next patch version
+          NEXT=$(node -p "
+            const [maj, min, pat] = '${CURRENT}'.split('.').map(Number);
+            \`\${maj}.\${min}.\${pat + 1}\`
+          ")
+          echo "current=$CURRENT" >> $GITHUB_OUTPUT
+          echo "next=$NEXT" >> $GITHUB_OUTPUT
+
+          # Update all three packages
+          npm --prefix browser version "$NEXT" --no-git-tag-version
+          npm --prefix cloud version "$NEXT" --no-git-tag-version
+          npm --prefix landing version "$NEXT" --no-git-tag-version
+
+          # Update download URL in landing page (keeps LaunchKeledonPage in sync)
+          sed -i \
+            "s|/KELEDON\.Browser\.Setup\.[0-9][0-9.]*[0-9]\.exe|/KELEDON.Browser.Setup.${NEXT}.exe|g" \
+            landing/src/pages/LaunchKeledonPage.tsx
+
+          echo "Bumped $CURRENT → $NEXT"
+
+      - name: Commit and push version bump
+        run: |
+          NEXT="${{ steps.bump.outputs.next }}"
+          git add \
+            browser/package.json \
+            cloud/package.json \
+            landing/package.json \
+            landing/src/pages/LaunchKeledonPage.tsx
+          git diff --staged --quiet && { echo "Nothing to commit"; exit 0; }
+          git commit -m "chore(release): bump version to $NEXT [skip ci]"
+          git push origin main

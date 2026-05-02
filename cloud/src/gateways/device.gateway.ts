@@ -148,6 +148,19 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
             });
           }
         }
+
+        if (result.command.type === 'ui_steps' && Array.isArray(result.command.ui_steps) && result.command.ui_steps.length > 0) {
+          client.emit('brain:command', {
+            type: 'ui_steps',
+            data: {
+              steps: result.command.ui_steps,
+              confidence: result.confidence,
+              decision_id: result.decisionEvidence?.decision_id
+            },
+            timestamp: new Date().toISOString()
+          });
+          this.logger.log(`Emitted ui_steps command: ${result.command.ui_steps.length} steps`);
+        }
       } catch (error) {
         this.logger.error('Decision engine error:', error);
       }
