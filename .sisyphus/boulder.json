@@ -128,6 +128,12 @@
       "status": "pr_open",
       "pr": 35,
       "notes": ".github/workflows/version-bump.yml: bumps patch in browser/cloud/landing package.json + LaunchKeledonPage.tsx download URL on every main push; skips chore(release): commits to prevent loops."
+    },
+    {
+      "id": "B-009",
+      "title": "Configurable LLM provider (Anthropic / Google / OpenAI / Ollama)",
+      "status": "pr_open",
+      "notes": "cloud/src/llm/llm.service.ts: full provider chain — ANTHROPIC_API_KEY > GOOGLE_AI_API_KEY > OPENAI_API_KEY > OLLAMA_URL, throws loud startup error if none set. Optional LLM_PROVIDER env var forces specific provider. Installed @anthropic-ai/sdk + @google/generative-ai. Updated .env.example + CLAUDE.md."
     }
   ],
 
@@ -148,7 +154,7 @@
       "Never modify docs/specs/ without a governance Issue.",
       "Never declare completion without a PR.",
       "Never simulate success. Fail loudly.",
-      "NO Google Generative AI API - Ollama/OpenAI only",
+      "AI provider auto-selects: ANTHROPIC_API_KEY > GOOGLE_AI_API_KEY > OPENAI_API_KEY > OLLAMA_URL (see CLAUDE.md)",
       "All commit messages must start with vX.X.X: (e.g. v0.2.4: fix ...)"
     ]
   }
