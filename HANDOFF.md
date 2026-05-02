@@ -54,10 +54,19 @@ User speaks → Browser (Electron)
 - Fixed `deploy-cloud` job: uses `RAILWAY_DEPLOY_HOOK` (curl POST) + `continue-on-error: true` (Railway auto-deploys from main merges anyway)
 - **69 stale remote branches deleted** — only `main` remains
 
-### B-004: OpenAI TTS Fallback (committed to main, Railway deploying)
+### B-004: OpenAI TTS Fallback (DONE — deployed to main)
 - `cloud/src/tts/tts.service.ts`: Added `speakWithOpenAI()`. Auto-selects provider: ElevenLabs if key set, else OpenAI TTS, else mock.
-- `OPENAI_API_KEY` is already set in Railway → `brain:audio` will now produce real MP3 audio via OpenAI `tts-1` model, `nova` voice.
-- Configurable: `OPENAI_TTS_VOICE`, `OPENAI_TTS_MODEL` env vars.
+- `OPENAI_API_KEY` is already set in Railway → `brain:audio` now produces real MP3 audio via OpenAI `tts-1` model, `nova` voice.
+- **nginx fix**: `POST /tts/speak` was returning 405 because `/tts` was not in the nginx backend proxy regex. Fixed: added `|tts|ws` to the location regex.
+
+### B-005: LLM Structured Command Output (in-progress — this PR)
+- Replaced keyword-reparse anti-pattern in `DecisionEngineService.makeDecision()` with OpenAI function calling.
+- `LLMService.generateCommand()`: new method using `tool_calls` with a `decide_action` function schema. Returns structured `{type, text?, steps?, mode?}` — no text re-parsing needed.
+- `CommandDecision` type added to `llm.types.ts`: `say | ui_steps | mode | stop | ask`.
+- `ui_steps` steps now carry proper action enum: `navigate | click | type | fill | wait | extract | select | hover | scroll | screenshot`.
+- GPT-4o system prompt updated: explains KELEDON Browser, when to use `ui_steps` vs `say`, CSS selector guidance.
+- Eliminated double RAG call: `makeDecision` now receives `vectorContext` from caller instead of re-fetching.
+- Rule-based fallback retained for `stop`/`safe mode`/`silent` keywords when LLM is unavailable.
 
 ---
 
@@ -65,12 +74,12 @@ User speaks → Browser (Electron)
 
 | Component | State |
 |---|---|
-| Cloud (Railway) | Healthy — deploying B-004 commit now |
+| Cloud (Railway) | Healthy — v0.2.0 deployed, B-005 PR pending |
 | Cloud version | 0.2.0 (package.json) |
 | Browser version | 0.2.0 |
 | GitHub Release v0.2.0 | Live with NSIS installer + ZIP |
 | Remote branches | Only `main` |
-| Boulder queue | B-001, B-002, B-003 done; B-004 in progress |
+| Boulder queue | B-001–B-004 done; B-005 in-progress (this PR) |
 
 **Railway env vars (stable):**
 - `KELEDON_ENV_TIER=CI_PROOF`
@@ -86,12 +95,13 @@ User speaks → Browser (Electron)
 ## Pending / Open
 
 ### Immediate next step
-After Railway finishes deploying the B-004 commit, smoke test the full voice chain:
+Merge B-005 PR to main → Railway auto-deploys. Then smoke test the full voice + LLM chain:
 1. Connect browser to cloud
 2. Start a call
-3. Speak a phrase → should trigger `voice:transcript` → cloud → `brain:command(say)` + `brain:audio`
+3. Speak a phrase → should trigger `voice:transcript` → cloud → `[LLM] Decision: say/ui_steps` in Railway logs → `brain:command` + `brain:audio`
 4. Verify browser plays the OpenAI TTS audio (not robot SpeechSynthesis)
-5. Check Railway logs: `[TTS] Speaking with openai:` and `[TTS] OpenAI generated N bytes`
+5. Say "go to google.com" → should produce `brain:command(ui_steps)` with `{action:"navigate", url:"https://google.com"}`
+6. Check Railway logs: `[LLM] Decision: ui_steps — navigate action` and `[TTS] OpenAI generated N bytes`
 
 ### Open / Blockers
 - **`RAILWAY_DEPLOY_HOOK` not set** in GitHub secrets: the `deploy-cloud` CI job currently does nothing (it prints "skipping" and exits). To enable explicit release-triggered deploys:

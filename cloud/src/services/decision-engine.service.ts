@@ -15,6 +15,7 @@ import {
 import { FlowService } from '../flows/flow.service';
 import { SubAgentService } from '../subagents/subagent.service';
 import { LLMService } from '../llm/llm.service';
+import { CommandDecision } from '../llm/llm.types';
 
 export interface DecisionContext {
   sessionId: string;
@@ -146,7 +147,7 @@ export class DecisionEngineService {
 
         try {
           const vectorContext = await this.retrieveVectorContext(sessionId, text, metadata, decisionId);
-          const decision = await this.makeDecision(context);
+          const decision = await this.makeDecision(context, vectorContext);
           const decisionType = this.mapDecisionType(decision?.type);
           const policy = await this.enforcePolicy(decisionId, decision, decisionType, vectorContext);
 
@@ -471,10 +472,28 @@ export class DecisionEngineService {
           type: 'ui_steps',
           confidence: decision.confidence || 0.8,
           mode: decision.mode || 'normal',
-          flow_id: decision.flow_id,
+          flow_id: decision.flow_id || null,
           flow_run_id: decision.flow_run_id || null,
           metadata: commandMetadata,
-          ui_steps: decision.steps
+          ui_steps: (decision.steps || []).map((s: any) => ({ step_id: uuidv4(), ...s })),
+        };
+
+      case 'ask':
+        return {
+          command_id: commandId,
+          session_id: sessionId,
+          timestamp,
+          type: 'say',
+          confidence: decision.confidence || 0.7,
+          mode: 'normal',
+          flow_id: null,
+          flow_run_id: null,
+          metadata: commandMetadata,
+          say: {
+            text: decision.text || 'Could you clarify what you need?',
+            interruptible: true,
+            metadata: commandMetadata,
+          },
         };
 
       case 'mode':
@@ -545,148 +564,44 @@ export class DecisionEngineService {
   }
 
   /**
-   * Core decision making logic
+   * Core decision making logic — uses LLM function calling when available,
+   * falls back to rule-based for stop/mode/safe-mode keywords.
+   * vectorContext is already fetched by the caller; pass it in to avoid a second RAG call.
    */
-  private async makeDecision(context: DecisionContext): Promise<any> {
-    const { currentTranscript, confidence, previousEvents, metadata, sessionId } = context;
-    const text = currentTranscript.toLowerCase().trim();
+  private async makeDecision(context: DecisionContext, vectorContext: RetrievalResult[] = []): Promise<CommandDecision> {
+    const { currentTranscript, confidence } = context;
+    const lower = currentTranscript.toLowerCase().trim();
+    const ragContext = vectorContext.map(r => r.document.content);
 
-    // Get vector context from RAG for grounding
-    let vectorContext: RetrievalResult[] = [];
-    try {
-      if (this.ragService) {
-        vectorContext = await this.ragService.retrieveKnowledge(currentTranscript, {
-          sessionId,
-          companyId: metadata?.companyId || '',
-          maxResults: 3
-        });
-      }
-    } catch (e) {
-      this.logger.warn('Vector context retrieval failed:', e);
-    }
-
-    // If LLM is enabled, use it for decision making
+    // LLM path: structured function calling (preferred when available)
     if (this.llmService?.isEnabled()) {
       try {
-        const llmResponse = await this.llmService.generate({
-          prompt: currentTranscript,
-          context: vectorContext.map(v => v.document.content),
-          maxTokens: 300,
-          temperature: 0.7
-        });
-        
-        return this.mapLLMResponseToCommand(llmResponse.text, confidence, text);
+        const decision = await this.llmService.generateCommand(currentTranscript, ragContext);
+        return { ...decision, confidence: decision.confidence ?? confidence };
       } catch (error) {
-        this.logger.error('LLM decision failed, falling back to rule-based:', error);
+        this.logger.error('LLM generateCommand failed, falling back to rule-based:', error);
       }
     }
 
-    // Fallback to rule-based decisions
-    // Check for explicit commands
-    if (text.includes('stop') || text.includes('cancel') || text.includes('never mind')) {
-      return {
-        type: 'stop',
-        confidence: 0.9,
-        mode: 'normal',
-        reasoning: 'User requested to stop'
-      };
+    // Rule-based fallback
+    if (lower.includes('stop') || lower.includes('cancel') || lower.includes('never mind')) {
+      return { type: 'stop', confidence: 0.9, reasoning: 'stop keyword detected' };
     }
 
-    if (text.includes('safe mode') || text.includes('be careful')) {
-      return {
-        type: 'mode',
-        mode: 'safe',
-        confidence: 0.9,
-        reasoning: 'User requested safe mode'
-      };
+    if (lower.includes('safe mode') || lower.includes('be careful')) {
+      return { type: 'mode', mode: 'safe', confidence: 0.9, reasoning: 'safe-mode keyword detected' };
     }
 
-    if (text.includes('silent') || text.includes('quiet')) {
-      return {
-        type: 'mode',
-        mode: 'silent',
-        confidence: 0.9,
-        reasoning: 'User requested silent mode'
-      };
+    if (lower.includes('silent') || lower.includes('quiet')) {
+      return { type: 'mode', mode: 'silent', confidence: 0.9, reasoning: 'silent keyword detected' };
     }
 
-    // Check for UI automation patterns
-    if (text.includes('click') || text.includes('type') || text.includes('select') || text.includes('fill')) {
-      return {
-        type: 'ui_steps',
-        confidence: 0.7,
-        mode: 'normal',
-        reasoning: 'User requested UI automation',
-        steps: this.parseUISteps(text)
-      };
-    }
-
-    // Default to saying something back
     return {
       type: 'say',
       text: `I heard: ${currentTranscript}`,
-      confidence: confidence,
-      mode: 'normal',
-      reasoning: 'Default response to user input'
+      confidence,
+      reasoning: 'rule-based default — LLM not available',
     };
-  }
-
-  /**
-   * Map LLM response to command
-   */
-  private mapLLMResponseToCommand(responseText: string, confidence: number, text: string): any {
-    const lower = text;
-    
-    if (lower.includes('stop') || lower.includes('cancel')) {
-      return { type: 'stop', text: responseText, confidence: 0.9, mode: 'normal' };
-    }
-    
-    if (lower.includes('click') || lower.includes('type') || lower.includes('select')) {
-      return { 
-        type: 'ui_steps', 
-        text: responseText, 
-        confidence: 0.7, 
-        mode: 'normal',
-        steps: this.parseUISteps(lower)
-      };
-    }
-    
-    return { type: 'say', text: responseText, confidence, mode: 'normal' };
-  }
-
-  /**
-   * Parse UI automation steps from text
-   */
-  private parseUISteps(text: string): any[] {
-    // Simple parsing logic - can be enhanced with NLP
-    const steps: any[] = [];
-    
-    if (text.includes('click')) {
-      const match = text.match(/click\s+(?:on\s+)?(.+?)(?:\s+(?:and|then)\s+|$)/i);
-      if (match) {
-        steps.push({
-          step_id: uuidv4(),
-          action: 'click',
-          selector: match[1].trim(),
-          description: `Click on ${match[1]}`
-        });
-      }
-    }
-
-    if (text.includes('type') || text.includes('fill')) {
-      const match = text.match(/(?:type|fill)\s+(.+?)\s+(?:into|in)\s+(.+?)(?:\s+(?:and|then)\s+|$)/i);
-      if (match) {
-        steps.push({
-          step_id: uuidv4(),
-          action: 'type',
-          selector: match[2].trim(),
-          value: match[1].trim().replace(/['"]/g, ''),
-          description: `Type "${match[1]}" into ${match[2]}`
-        });
-      }
-    }
-
-    return steps;
   }
 
   /**
