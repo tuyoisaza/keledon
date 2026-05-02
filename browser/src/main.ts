@@ -279,6 +279,7 @@ function handleDeepLink(url: string) {
     log.info('[DeepLink] Pairing code:', code);
 
     // Auto-connect with the pairing code
+    runtimeStatus.cloudUrl = cloudUrl; // CRITICAL: set cloudUrl from deep link before fetch
     runtimeStatus.pendingKeledonId = keledonId;
     runtimeStatus.pendingPairingCode = code;
     
