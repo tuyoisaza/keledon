@@ -11,7 +11,7 @@ export class HealthController {
   }
 
   @Get('health')
-  getBasicHealth() {
+  async getBasicHealth() {
     return this.healthService.getBasicHealth();
   }
 

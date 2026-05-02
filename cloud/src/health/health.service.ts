@@ -184,13 +184,24 @@ export class HealthService {
     };
   }
 
-  getBasicHealth() {
+  private async checkBrowserDownload(): Promise<boolean> {
+    const url = 'https://github.com/tuyoisaza/keledon/releases/download/v0.2.0/KELEDON.Browser.Setup.0.2.0.exe';
+    try {
+      const response = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
+      return response.status !== 404;
+    } catch {
+      return false;
+    }
+  }
+
+  async getBasicHealth() {
     const memUsage = process.memoryUsage();
     const flags = this.configService.getFeatureFlags();
     const sttConfig = this.configService.getSttConfig();
     const vsConfig = this.configService.getVectorStoreConfig();
     const ttsConfig = this.configService.getTtsConfig();
-    
+    const browser_download_reachable = await this.checkBrowserDownload();
+
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),
@@ -236,6 +247,7 @@ export class HealthService {
         rss: Math.round(memUsage.rss / 1024 / 1024) + 'MB',
         external: Math.round(memUsage.external / 1024 / 1024) + 'MB'
       },
+      browser_download_reachable,
       logs: errorBuffer.slice(-MAX_ERRORS)
     };
   }
