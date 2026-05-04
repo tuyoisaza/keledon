@@ -320,7 +320,7 @@ Always prefer "say" for questions, confirmations, and conversational responses.`
         });
 
         const toolCall = response.choices[0]?.message?.tool_calls?.[0];
-        if (!toolCall || toolCall.function.name !== 'decide_action') {
+        if (!toolCall || toolCall.type !== 'function' || toolCall.function.name !== 'decide_action') {
           this.logger.warn('LLM did not return a tool call, using fallback');
           return this.fallbackCommand(transcript);
         }

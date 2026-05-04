@@ -52,4 +52,5 @@ export interface CommandDecision {
   mode?: 'normal' | 'safe' | 'silent';
   reasoning?: string;
   confidence?: number;
+  context?: Record<string, any>;
 }
