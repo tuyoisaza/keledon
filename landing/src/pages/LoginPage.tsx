@@ -4,8 +4,7 @@ import { Bot, Mail, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 
-const APP_VERSION = '0.0.66';
-const BUILD_TIME = '2026-04-13T10:00:00Z';
+declare const __APP_VERSION__: string;
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -161,8 +160,7 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-8 text-center text-xs text-muted-foreground">
-          <p>v{APP_VERSION} | Built: {BUILD_TIME}</p>
-          <p>Client Time: {currentTime}</p>
+          <p>v{__APP_VERSION__} | {currentTime}</p>
         </div>
       </div>
     </div>
