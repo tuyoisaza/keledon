@@ -1,7 +1,9 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { trace } from '@opentelemetry/api';
 import { startTelemetry } from './telemetry/otel';
+import { join } from 'path';
 import {
   assertManagedRuntimeDependencies,
   getRuntimeTier,
@@ -49,7 +51,7 @@ async function bootstrap() {
     await startTelemetry();
     console.log('[Bootstrap] Creating NestJS application...');
 
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
     app.use((req, res, next) => {
       const activeSpan = trace.getActiveSpan();
@@ -59,6 +61,9 @@ async function bootstrap() {
       next();
     });
     
+    // Serve installer binary at /download — populated by start.sh at container startup
+    app.useStaticAssets(join(__dirname, '..', 'public', 'download'), { prefix: '/download' });
+
     const corsOrigins = resolveCorsOrigins(runtimeTier);
     const allowAllCors = process.env.KELEDON_ALLOW_ALL_CORS === 'true';
     app.enableCors({
