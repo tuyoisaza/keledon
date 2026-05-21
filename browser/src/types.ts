@@ -1,5 +1,5 @@
 export interface RuntimeStatus {
-  status: 'idle' | 'connecting' | 'connected' | 'disconnected';
+  status: 'idle' | 'connecting' | 'connected' | 'disconnected' | 'reconnecting';
   deviceId: string;
   cloudUrl: string;
   sessionId: string | null;
