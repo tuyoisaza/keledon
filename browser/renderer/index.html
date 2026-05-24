@@ -1367,11 +1367,79 @@
     });
 
     // ==================== VERSION ====================
-    versionBtn.addEventListener('click', async () => {
+    function sanitizeDiagnosticValue(value) {
+      if (value === undefined) return null;
+      if (typeof value !== 'string') return value;
+      if (value.length > 120) return value.substring(0, 120) + '…';
+      return value;
+    }
+
+    async function buildDiagnosticReport() {
       const info = await window.keledon.device.getInfo();
-      navigator.clipboard.writeText('KELEDON Browser v' + info.version);
-      versionBtn.textContent = 'Copied!';
-      setTimeout(() => versionBtn.textContent = 'v' + info.version, 1000);
+      const status = await window.keledon.runtime.getStatus();
+      const internal = (window.keledon && window.keledon.internal) || {};
+      const diagnostics = status.diagnostics || {};
+      return {
+        product: 'KELEDON Browser',
+        browserVersion: info.version,
+        copiedAt: new Date().toISOString(),
+        platform: info.platform,
+        osRelease: info.osRelease || navigator.platform,
+        userAgent: navigator.userAgent,
+        electron: info.electron,
+        chrome: info.chrome,
+        node: info.node,
+        deviceId: status.deviceId || info.deviceId,
+        cloudUrl: status.cloudUrl || cloudUrlInput.value || null,
+        runtime: {
+          status: status.status,
+          connected: Boolean(status.connected),
+          sessionId: status.sessionId || null,
+          keledonId: status.keledonId || status.pendingKeledonId || keledonIdInput.value || null,
+          teamId: status.teamId || null,
+          teamName: status.teamName || null,
+          vendorCount: status.vendorCount ?? null,
+        },
+        launchForm: {
+          cloudUrl: cloudUrlInput.value || null,
+          keledonId: keledonIdInput.value || null,
+          pairingCodePresent: Boolean(pairingCodeInput.value),
+          pairingCodeLength: pairingCodeInput.value ? pairingCodeInput.value.length : 0,
+        },
+        deepLinkDiagnostics: Object.fromEntries(Object.entries(diagnostics).map(([key, value]) => [key, sanitizeDiagnosticValue(value)])),
+        logPaths: {
+          logsDir: info.logsDir || internal.logsDir || internal.installDir || null,
+          mainLogPath: info.mainLogPath || internal.mainLogPath || null,
+          startupLogPath: info.startupLogPath || internal.startupLogPath || internal.logPath || null,
+          internalLogPath: internal.logPath || null,
+          windowsLogHint: '%APPDATA%\\KELEDON Browser\\logs\\keledon-browser.log',
+        },
+        internal: {
+          cdpUrl: internal.cdpUrl || null,
+          version: internal.version || null,
+        },
+      };
+    }
+
+    versionBtn.addEventListener('click', async () => {
+      try {
+        const report = await buildDiagnosticReport();
+        const text = JSON.stringify(report, null, 2);
+        try {
+          await navigator.clipboard.writeText(text);
+          versionBtn.textContent = 'Diagnostics copied!';
+          log('Copied sanitized Browser diagnostics to clipboard', 'success');
+        } catch (clipboardError) {
+          console.log('KELEDON Browser diagnostics fallback:\n' + text);
+          log('Clipboard unavailable; diagnostics printed to DevTools console', 'error');
+          versionBtn.textContent = 'Diagnostics in console';
+        }
+        setTimeout(() => versionBtn.textContent = 'v' + report.browserVersion, 1600);
+      } catch (e) {
+        log('Diagnostics error: ' + e.message, 'error');
+        versionBtn.textContent = 'Diag failed';
+        setTimeout(loadDeviceInfo, 1600);
+      }
     });
 
     // ==================== KEYBOARD SHORTCUTS ====================

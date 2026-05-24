@@ -20,6 +20,19 @@ export const runtimeStatus: RuntimeStatus = {
   vendors: [],
   keledonId: null,
   escalationTriggers: [],
+  diagnostics: {
+    lastDeepLinkReceivedAt: null,
+    lastDeepLinkAction: null,
+    lastDeepLinkHadRequiredParams: null,
+    lastDeepLinkValidation: null,
+    lastAutoConnectStatus: 'not_attempted',
+    lastAutoConnectHttpStatus: null,
+    lastAutoConnectError: null,
+    lastLaunchKeledonId: null,
+    lastLaunchCloudUrl: null,
+    lastRendererLaunchBufferedAt: null,
+    lastRendererLaunchDeliveredAt: null,
+  },
 };
 
 export let mainWindow: BrowserWindow | null = null;

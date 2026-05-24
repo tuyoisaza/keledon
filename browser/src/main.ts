@@ -9,7 +9,7 @@ import { earlyLog, writeCrashLog, getLogsDir, getMainLogPath, getStartupLogPath 
 import { runtimeStatus, mainWindow, setMainWindow } from './runtime-state.js';
 import { TabManager } from './tab-manager.js';
 import { connectWebSockets } from './cloud-connection.js';
-import { handleDeepLink } from './deep-link.js';
+import { handleDeepLink, flushPendingDeepLinkLaunch } from './deep-link.js';
 import { registerIpcHandlers, autoLoginToVendor, initializeAutoBrowseEngine, getAutoBrowseBridge } from './ipc-handlers.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
 
@@ -156,9 +156,13 @@ function createWindow(): void {
         cdpUrl: 'http://localhost:9222',
         version: '${app.getVersion()}',
         logPath: '${logPathEscaped}',
+        startupLogPath: '${logPathEscaped}',
+        mainLogPath: '${getMainLogPath().replace(/\\\\/g, '\\\\\\\\')}',
+        logsDir: '${getLogsDir().replace(/\\\\/g, '\\\\\\\\')}',
         installDir: '${getLogsDir().replace(/\\\\/g, '\\\\\\\\')}'
       };
     `).catch(err => earlyLog(`[WINDOW] Failed to inject runtime info: ${err}`));
+    flushPendingDeepLinkLaunch();
     console.log('Keledon Browser v' + app.getVersion() + ' ready');
     autoConnect();
   });

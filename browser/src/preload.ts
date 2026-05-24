@@ -184,6 +184,10 @@ declare global {
           electron: string;
           chrome: string;
           node: string;
+          osRelease?: string;
+          logsDir?: string;
+          mainLogPath?: string;
+          startupLogPath?: string;
         }>;
       };
       runtime: {
@@ -191,8 +195,16 @@ declare global {
           status: string;
           connected: boolean;
           sessionId: string | null;
+          cloudUrl?: string;
+          deviceId?: string;
+          keledonId?: string | null;
+          pendingKeledonId?: string | null;
+          teamId?: string | null;
+          teamName?: string | null;
+          vendorCount?: number;
+          diagnostics?: Record<string, unknown>;
         }>;
-        connect: (config: { cloudUrl: string; token: string }) => Promise<{ success: boolean }>;
+        connect: (config: { cloudUrl: string; token: string; keledonId?: string | null }) => Promise<{ success: boolean; error?: string }>;
         disconnect: () => Promise<{ success: boolean }>;
         startSession: (sessionId: string, teamId?: string) => Promise<{ success: boolean; sessionId?: string; error?: string }>;
         onStatusChange: (callback: (status: unknown) => void) => () => void;

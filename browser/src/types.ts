@@ -11,6 +11,21 @@ export interface RuntimeStatus {
   vendors: any[];
   keledonId: string | null;
   escalationTriggers: string[];
+  diagnostics: BrowserDiagnostics;
+}
+
+export interface BrowserDiagnostics {
+  lastDeepLinkReceivedAt: string | null;
+  lastDeepLinkAction: string | null;
+  lastDeepLinkHadRequiredParams: boolean | null;
+  lastDeepLinkValidation: 'ok' | 'missing_params' | 'expired' | 'invalid_signature' | 'parse_error' | null;
+  lastAutoConnectStatus: 'ok' | 'http_error' | 'exception' | 'not_attempted';
+  lastAutoConnectHttpStatus: number | null;
+  lastAutoConnectError: string | null;
+  lastLaunchKeledonId: string | null;
+  lastLaunchCloudUrl: string | null;
+  lastRendererLaunchBufferedAt: string | null;
+  lastRendererLaunchDeliveredAt: string | null;
 }
 
 export interface TabInfo {

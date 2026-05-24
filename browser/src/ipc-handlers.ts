@@ -229,17 +229,28 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     deviceId: runtimeStatus.deviceId,
     version: app.getVersion(),
     platform: process.platform,
+    osRelease: `${process.platform} ${process.arch}`,
     electron: process.versions.electron,
     chrome: process.versions.chrome,
     node: process.versions.node,
+    logsDir: getLogsDir(),
+    mainLogPath: getMainLogPath(),
+    startupLogPath: getStartupLogPath(),
   }));
 
   // --- Runtime Status ---
   ipcMain.handle('runtime:getStatus', async () => ({
     status: runtimeStatus.status,
+    connected: runtimeStatus.status === 'connected',
     deviceId: runtimeStatus.deviceId,
     sessionId: runtimeStatus.sessionId,
     cloudUrl: runtimeStatus.cloudUrl,
+    keledonId: runtimeStatus.keledonId,
+    pendingKeledonId: runtimeStatus.pendingKeledonId,
+    teamId: runtimeStatus.teamId,
+    teamName: runtimeStatus.teamName,
+    vendorCount: runtimeStatus.vendors.length,
+    diagnostics: { ...runtimeStatus.diagnostics },
   }));
 
   // --- Runtime Connect ---
@@ -249,6 +260,9 @@ export function registerIpcHandlers(tabManager: TabManager): void {
 
     runtimeStatus.status = 'connecting';
     runtimeStatus.cloudUrl = config.cloudUrl;
+    runtimeStatus.diagnostics.lastAutoConnectStatus = 'not_attempted';
+    runtimeStatus.diagnostics.lastAutoConnectHttpStatus = null;
+    runtimeStatus.diagnostics.lastAutoConnectError = null;
 
     try {
       const response = await fetch(`${config.cloudUrl}/api/devices/pair`, {
@@ -264,6 +278,8 @@ export function registerIpcHandlers(tabManager: TabManager): void {
         }),
       });
 
+      runtimeStatus.diagnostics.lastAutoConnectHttpStatus = response.status;
+
       if (response.ok) {
         const data = await response.json();
         runtimeStatus.status = 'connected';
@@ -275,6 +291,8 @@ export function registerIpcHandlers(tabManager: TabManager): void {
         runtimeStatus.teamName = data.team?.name || null;
         runtimeStatus.vendors = data.vendors || [];
         runtimeStatus.escalationTriggers = data.team?.escalationTriggers || [];
+        runtimeStatus.diagnostics.lastAutoConnectStatus = 'ok';
+        runtimeStatus.diagnostics.lastAutoConnectError = null;
         transcriptMonitor.setTriggers(runtimeStatus.escalationTriggers);
         log.info('Connected to cloud, keledon_id:', data.keledon_id);
 
@@ -292,10 +310,16 @@ export function registerIpcHandlers(tabManager: TabManager): void {
 
         return { success: true, deviceId: runtimeStatus.deviceId };
       } else {
+        runtimeStatus.diagnostics.lastAutoConnectStatus = 'http_error';
+        runtimeStatus.diagnostics.lastAutoConnectError = `HTTP ${response.status}`;
         throw new Error(`Cloud connection failed: ${response.status}`);
       }
     } catch (error) {
       runtimeStatus.status = 'disconnected';
+      if (runtimeStatus.diagnostics.lastAutoConnectStatus !== 'http_error') {
+        runtimeStatus.diagnostics.lastAutoConnectStatus = 'exception';
+        runtimeStatus.diagnostics.lastAutoConnectError = String(error instanceof Error ? error.message : error);
+      }
       log.error('Cloud connection error:', error);
       return { success: false, error: String(error) };
     }
