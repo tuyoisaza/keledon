@@ -5,7 +5,7 @@
 Version: 4.0.0
 Date: 2026-05-25
 
-This document describes the browser-side end-state of KELEDON: the edge execution surface that boots from a launch/deep-link, pairs with Cloud, participates in live calls, and writes back to Salesforce.
+This document describes the browser-side end-state of KELEDON: the edge execution surface that boots from a launch/deep-link, pairs with Cloud, participates in live calls, and writes back to the client-configured CRM surface.
 
 ---
 
@@ -15,14 +15,17 @@ This document describes the browser-side end-state of KELEDON: the edge executio
 
 KELEDON Browser is the **edge execution surface** of KELEDON V4.
 It is an Electron application that behaves like a managed browser while acting as a deterministic call-handling and vendor-automation runtime.
+Its vendor surfaces, STT/TTS providers, and vector-store settings are resolved from Keledon Admin.
 
 It must support:
 
 - deep-link launch and launch-button startup
 - diagnostics and proof-of-life UI
 - pairing with Cloud
-- Genesys call handling
-- Salesforce workflow actions
+- client-configured call handling
+- client-configured CRM workflow actions
+- admin-configured STT/TTS providers
+- admin-configured vector-store backend
 - live STT/TTS call loops
 - standby / recovery / resume
 
@@ -56,8 +59,8 @@ On launch or deep-link receipt, the browser must:
 1. validate the payload
 2. record diagnostics
 3. pair with Cloud
-4. open vendor tabs
-5. log in to Genesys and Salesforce
+4. open the client-configured vendor tabs
+5. log in to the required client-configured surfaces
 6. enter standby
 7. wait for the inbound call
 
@@ -83,12 +86,11 @@ RECEIVE LAUNCH OR DEEP LINK
   → VALIDATE PAYLOAD
   → RECORD DIAGNOSTICS
   → PAIR WITH CLOUD
-  → OPEN GENESYS TAB
-  → OPEN SALESFORCE TAB
-  → AUTO-LOGIN BOTH SURFACES
+  → OPEN CLIENT-CONFIGURED CALL/CRM TABS
+  → AUTO-LOGIN REQUIRED SURFACES
   → WAIT IN STANDBY
   → INBOUND CALL ARRIVES
-  → ANSWER / ACCEPT CALL
+  → ANSWER / ACCEPT CALL IN THE CONFIGURED CALL SURFACE
   → CAPTURE AUDIO
   → TRANSCRIBE AUDIO TO TEXT
   → SEND TEXT TO CLOUD BRAIN
@@ -96,10 +98,10 @@ RECEIVE LAUNCH OR DEEP LINK
   → SPEAK RESPONSE INTO CALL
   → WAIT FOR HUMAN REPLY
   → CAPTURE NEXT TURN
-  → EXECUTE SALESFORCE ACTIONS
+  → EXECUTE CONFIGURED CRM ACTIONS
   → WRITE CALL SUMMARY / DISPOSITION
   → HANG UP OR CALL ENDS
-  → FINALIZE SALESFORCE NOTES
+  → FINALIZE CONFIGURED CRM NOTES
   → RETURN TO STANDBY
 ```
 
@@ -112,7 +114,7 @@ RECEIVE LAUNCH OR DEEP LINK
 - **INIT** — process start, logging, and window creation
 - **LAUNCHING** — launch payload received or launch form submitted
 - **PAIRING** — cloud authentication and config loading
-- **VENDOR_BOOTSTRAP** — open and login Genesys/Salesforce
+- **VENDOR_BOOTSTRAP** — open and login the configured call/CRM surfaces
 - **STANDBY** — wait for the next inbound call
 - **RINGING** — incoming call detected
 - **IN_CALL** — live conversation active
@@ -125,9 +127,9 @@ RECEIVE LAUNCH OR DEEP LINK
 
 ## 4. Vendor Responsibilities
 
-### 4.1 Genesys
+### 4.1 Configured Call Surface
 
-Genesys is the live call interface.
+The configured call surface is the live call interface for that client.
 The browser must be able to:
 
 - detect an inbound call
@@ -136,9 +138,9 @@ The browser must be able to:
 - remain stable during the conversation
 - end or hang up the call when instructed or when the conversation ends
 
-### 4.2 Salesforce
+### 4.2 Configured CRM Surface
 
-Salesforce is the system of record.
+The configured CRM surface is the system of record for that client.
 The browser must be able to:
 
 - open the relevant customer record
@@ -150,7 +152,7 @@ The browser must be able to:
 
 ### 4.3 Other Tabs
 
-Additional vendor tabs may exist, but Genesys and Salesforce are the canonical pair for V4.
+Additional vendor tabs may exist, but the client-configured call and CRM surfaces are the canonical pair for V4. Genesys and Salesforce are examples, not assumptions.
 
 ---
 
@@ -182,7 +184,7 @@ For each cloud response, the browser must receive:
 
 - response text to speak
 - optional UI action(s)
-- optional Salesforce action(s)
+- optional CRM action(s)
 - optional escalation or abort instruction
 - any evidence or trace identifiers
 
@@ -203,7 +205,7 @@ When the call ends, the browser must provide:
 
 - summary text
 - disposition
-- result of Salesforce writeback
+- result of CRM writeback
 - remaining diagnostics
 - confirmation of standby state
 
@@ -238,7 +240,7 @@ The browser must log:
 - transcript receipt
 - cloud responses
 - UI actions
-- Salesforce writeback
+- CRM writeback
 - errors and stack traces
 - recovery / standby transitions
 

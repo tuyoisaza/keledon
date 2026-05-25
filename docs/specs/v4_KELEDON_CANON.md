@@ -17,17 +17,17 @@ It is the end-state specification for the platform: a cloud-governed, browser-ex
 KELEDON V4 is an **autonomous contact-center runtime** built around two real surfaces:
 
 - **Cloud Brain** — the only decision-maker
-- **Browser Edge Agent** — the execution surface that controls vendor portals, audio I/O, and deterministic UI actions
+- **Browser Edge Agent** — the execution surface that controls client-configured vendor portals, audio I/O, and deterministic UI actions
 
 Its purpose is to:
 
 1. Launch from a deep link or launch button
 2. Pair with Cloud
-3. Open and maintain the required vendor sessions
+3. Open and maintain the client-configured vendor sessions
 4. Answer inbound calls in the live vendor interface
 5. Convert speech to text and text back to speech
 6. Apply the brain’s policy decisions in real time
-7. Execute CRM / workflow actions in Salesforce
+7. Execute CRM / workflow actions in the configured client surfaces
 8. Produce a complete summary and disposition at call end
 9. Return to standby and wait for the next call
 
@@ -42,8 +42,7 @@ Implications:
 - The cloud owns business policy, response selection, and action selection
 - The browser never invents the next move
 - The browser executes only approved actions and reports evidence
-- Genesys is the live call interface
-- Salesforce is the system of record for notes, disposition, and post-call work
+- The live call interface and CRM surfaces come from the client configuration in Keledon Admin
 - If state is ambiguous, the browser must surface diagnostics and wait
 
 ---
@@ -56,11 +55,11 @@ Implications:
 LAUNCH / DEEP LINK
   → VALIDATE
   → PAIR WITH CLOUD
-  → OPEN VENDOR TABS
-  → AUTO-LOGIN GENESYS + SALESFORCE
+  → OPEN CLIENT-CONFIGURED VENDOR TABS
+  → AUTO-LOGIN REQUIRED SURFACES
   → STANDBY
   → INBOUND CALL ARRIVES
-  → ANSWER IN GENESYS
+  → ANSWER IN THE CONFIGURED CALL SURFACE
   → CAPTURE AUDIO
   → TRANSCRIBE TO TEXT
   → SEND TEXT TO CLOUD BRAIN
@@ -68,10 +67,10 @@ LAUNCH / DEEP LINK
   → SPEAK RESPONSE INTO CALL
   → WAIT FOR HUMAN REPLY
   → CAPTURE NEXT TURN
-  → EXECUTE SALESFORCE ACTIONS WHEN DECIDED
+  → EXECUTE CONFIGURED CRM ACTIONS WHEN DECIDED
   → WRITE SUMMARY / DISPOSITION
   → HANG UP OR CALL ENDS
-  → FINALIZE SALESFORCE RECORDS
+  → FINALIZE CONFIGURED CRM RECORDS
   → RETURN TO STANDBY
 ```
 
@@ -87,8 +86,8 @@ The system is only compliant if:
 - real audio can be captured and converted to text
 - the cloud can decide the next turn using the policy set
 - the browser can speak the response back into the call
-- the browser can execute UI actions in Salesforce
-- the browser can write the final outcome back to Salesforce
+- the browser can execute UI actions in the configured CRM surface
+- the browser can write the final outcome back to the configured CRM surface
 - every step is logged and reviewable
 
 If any step is simulated, skipped, or hidden, KELEDON V4 is not complete.
@@ -124,12 +123,21 @@ The browser is responsible for:
 
 ### 3.3 Vendor Surfaces
 
-The minimum vendor surfaces for the canonical workflow are:
+The minimum vendor surfaces for the canonical workflow are the client-configured call and CRM surfaces defined in Keledon Admin.
 
-- **Genesys** — inbound call control and live conversation UI
-- **Salesforce** — customer record, notes, disposition, and follow-up actions
+These surfaces must support inbound call control, customer record access, notes, disposition, and follow-up actions.
 
-Other vendor portals may exist, but they are not required to define V4.
+Other vendor portals may exist, but they are not required to define V4. Genesys and Salesforce are canonical examples, not hard-coded assumptions.
+
+### 3.4 Admin-Configured Integrations
+
+Keledon Admin is the source of truth for per-client integrations:
+
+- **vendors** — the client’s call and CRM surfaces
+- **providers** — STT/TTS providers and other runtime services
+- **vector-store** — the Qdrant-backed retrieval configuration
+
+The runtime must resolve these dependencies from admin configuration rather than hard-coding them in the browser.
 
 ---
 
@@ -249,8 +257,8 @@ V3 may include:
 V4 adds:
 - inbound call answering
 - continuous STT/brain/TTS loop
-- Genesys call control
-- Salesforce execution/writeback
+- client-configured call/CRM surface control
+- CRM execution/writeback on the configured surfaces
 - post-call summary lifecycle
 
 ---
