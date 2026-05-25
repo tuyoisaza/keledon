@@ -222,6 +222,30 @@ Two socket.io connections after pairing:
 - Mute/unmute, hold/resume
 - Transcript events forwarded to cloud via device socket
 
+### 3.8 Launch Button, Deep-Link Diagnostics, and Standby
+
+The visible version badge / launch diagnostics control is an operator proof-of-life surface.
+
+**Expected behavior when the user clicks launch / connect:**
+1. The browser receives or builds a launch payload (`keledon://launch` or the local launch form).
+2. It validates the payload and records deep-link diagnostics in runtime state.
+3. It pairs with Cloud using the keledon ID and pairing code.
+4. It establishes the runtime WebSocket connection and receives vendor/session configuration.
+5. It opens the required vendor tabs for the active role, at minimum Genesys for calls and Salesforce for CRM/work notes.
+6. It enters standby and waits for the inbound call or next cloud command.
+
+**Diagnostics the operator must be able to see/copy:**
+- app version
+- device ID
+- cloud URL
+- deep-link validation status
+- last launch time
+- pairing status
+- logs directory and main log path
+- last launch error, if any
+
+The launch UI and the version badge both act as a diagnostics surface, not just as a UI flourish.
+
 ---
 
 ## 3. OPERATIONAL REQUIREMENTS (Non-Negotiable)
@@ -337,6 +361,54 @@ The KELEDON Browser should evolve from a manual-connect desktop app into a **ful
 9. **Reports health, metrics, and evidence** continuously to Cloud
 10. **Self-updates** without manual intervention
 
+### 4.1 Canonical Launch-to-Call Lifecycle
+
+This is the ideal end-state flow after the launch button is clicked:
+
+```text
+LAUNCH/DEEPLINK
+  → VALIDATE
+  → PAIR WITH CLOUD
+  → OPEN VENDOR TABS
+  → AUTO-LOGIN GENESYS + SALESFORCE
+  → STANDBY FOR INBOUND CALL
+  → ANSWER / ACCEPT IN GENESYS UI
+  → CAPTURE AUDIO
+  → TRANSCRIBE TO TEXT
+  → SEND TEXT TO CLOUD BRAIN
+  → RECEIVE BRAIN RESPONSE (quadrant policy)
+  → SPEAK RESPONSE BACK INTO CALL
+  → WAIT FOR HUMAN REPLY
+  → CAPTURE NEXT TURN
+  → EXECUTE SALESFORCE ACTIONS WHEN DECIDED
+  → WRITE CLIENT-FACING SUMMARY
+  → HANG UP / CALL END
+  → FINAL DISPOSITION + SUMMARY TO SALESFORCE
+  → RETURN TO STANDBY
+```
+
+**Canonical runtime states:**
+`INIT -> LAUNCHING -> PAIRING -> VENDOR_BOOTSTRAP -> STANDBY -> RINGING -> IN_CALL -> THINKING -> SPEAKING -> ACTING -> SUMMARIZING -> STANDBY`
+
+**Hard rules:**
+- The browser never invents the next business action on its own.
+- The cloud brain owns the decision.
+- Genesys is the live call interface.
+- Salesforce is the system of record for notes, disposition, and post-call summary.
+- If the call or browser state is ambiguous, the browser must surface diagnostics and wait.
+
+### 4.2 Brain Policy Contract
+
+The cloud response should be shaped by the quadrant-trained policy set, not raw free-form chat.
+
+Minimum expectation for each turn:
+1. Transcript arrives from browser/STT.
+2. Brain selects the quadrant / policy lane.
+3. Brain emits the next call instruction, expected speech, and any required UI action.
+4. Browser executes exactly one step or a small step batch.
+5. Browser returns execution evidence.
+6. The loop repeats until the call ends.
+
 ### 4.0.1 The Edge SaaS Model
 
 ```
@@ -416,6 +488,66 @@ The cloud runs **centrally** because:
 - Implement keyboard shortcuts: Ctrl+T (new tab), Ctrl+W (close tab), Ctrl+Tab (next tab), F5 (refresh), Ctrl+L (focus URL bar)
 - Extract and display favicons in tab headers
 - Implement Ctrl+F find-in-page
+
+### 5.1 Launch-to-Call Delivery Plan (from current implementation)
+
+This is the practical sequence to get from today's browser to the full vision above.
+
+#### Stage A — Launch Bootstrap + Diagnostics
+**Current assets already present:** deep-link parsing, pairing flow, renderer launch events, version badge diagnostics.
+
+**Work remaining:**
+- make the launch badge/CTA a first-class operator control
+- preserve the deep-link payload in visible runtime diagnostics
+- ensure the copied diagnostics include launch payload, pairing status, and log paths
+
+**Exit criteria:** clicking launch produces a visible, copyable diagnostic summary and the browser reaches paired standby.
+
+#### Stage B — Vendor Session Bootstrap
+**Goal:** after pairing, the browser opens and authenticates the vendor surfaces needed for the job.
+
+**Work remaining:**
+- open/pin Genesys call console tab
+- open/pin Salesforce CRM tab
+- auto-login each vendor and report session status
+- keep tabs warm across reloads/restarts
+
+**Exit criteria:** a fresh launch lands on a ready Genesys + Salesforce workspace without manual navigation.
+
+#### Stage C — Live Call Loop
+**Goal:** the browser can answer, listen, transcribe, speak, and loop.
+
+**Work remaining:**
+- detect ring / incoming-call state in Genesys
+- answer the call from the Genesys UI
+- capture caller audio continuously
+- send final transcripts to the cloud brain
+- render cloud text back as TTS into the call
+
+**Exit criteria:** one complete call turn can repeat end-to-end without manual intervention.
+
+#### Stage D — Action Execution + Salesforce Writeback
+**Goal:** brain-decided actions are executed in Salesforce and summarized for the client.
+
+**Work remaining:**
+- map brain actions to Salesforce UI actions
+- return execution evidence for every step
+- write disposition, notes, and summary back to Salesforce
+- keep the call loop running until hangup/end
+
+**Exit criteria:** the browser can resolve a call, record the outcome, and hand off cleanly to standby.
+
+#### Stage E — Hardening
+**Goal:** make the flow resilient enough for real operations.
+
+**Work remaining:**
+- retry/reconnect logic
+- per-step diagnostics and screenshots
+- vendor session recovery
+- observability and heartbeat reporting
+- service/headless mode where appropriate
+
+**Exit criteria:** the system can survive restarts and recover into the correct standby state.
 
 ---
 
