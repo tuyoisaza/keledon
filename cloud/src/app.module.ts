@@ -29,6 +29,7 @@ import { DeviceController } from './devices/device.controller';
 import { LLMModule } from './llm/llm.module';
 import { EscalationService } from './services/escalation.service';
 import { EscalationController } from './controllers/escalation.controller';
+import { BrainController } from './controllers/brain.controller';
 import { VoiceModule } from './voice/voice.module';
 
 @Module({
@@ -60,6 +61,7 @@ import { VoiceModule } from './voice/voice.module';
     SubAgentController,
     DeviceController,
     EscalationController,
+    BrainController,
   ],
   providers: [
     AppService,

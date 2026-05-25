@@ -55,7 +55,7 @@ export interface Team {
     ttsProvider?: string;
     createdAt?: string;
     updatedAt?: string;
-    brand?: { id: string; name: string; color?: string; companyId?: string };
+    brand?: { id: string; name: string; color?: string; companyId?: string; company?: { id: string; name: string } };
     company?: { id: string; name: string };
     _count?: { users: number; keledons: number };
 }
@@ -162,6 +162,54 @@ export interface Session {
     updatedAt?: string;
     user?: { id: string; name: string };
     team?: { id: string; name: string };
+}
+
+export interface BrainChatMessage {
+    role: 'user' | 'assistant';
+    content: string;
+}
+
+export interface BrainChatRequest {
+    message: string;
+    history?: BrainChatMessage[];
+    companyId?: string;
+    companyName?: string;
+    brandId?: string;
+    brandName?: string;
+    teamId?: string;
+    teamName?: string;
+    language?: string;
+}
+
+export interface BrainChatResponse {
+    success: boolean;
+    reply: string;
+    usage?: {
+        promptTokens: number;
+        completionTokens: number;
+        totalTokens: number;
+    };
+    context?: {
+        companyId?: string;
+        companyName?: string;
+        brandId?: string;
+        brandName?: string;
+        teamId?: string;
+        teamName?: string;
+    };
+}
+
+async function fetchBrainApi(endpoint: string, method = 'POST', body?: any) {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: body ? JSON.stringify(body) : undefined,
+    });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`API Error ${response.status}: ${text || response.statusText}`);
+    }
+    return response.json();
 }
 
 // Companies
@@ -278,13 +326,12 @@ export async function getTeamInterfaces(teamId: string): Promise<ManagedInterfac
 
 // Sessions
 export async function getSessions(companyId?: string, limit = 100): Promise<Session[]> {
-    let endpoint = `/sessions?limit=${limit}`;
-    if (companyId) endpoint += `&companyId=${companyId}`;
-    return fetchApi(endpoint);
+    const query = companyId ? `?companyId=${companyId}&limit=${limit}` : `?limit=${limit}`;
+    return fetchApi(`/sessions${query}`);
 }
 
-export async function getSession(id: string): Promise<Session> {
-    return fetchApi(`/sessions/${id}`);
+export async function brainChat(data: BrainChatRequest): Promise<BrainChatResponse> {
+    return fetchBrainApi('/api/brain/chat', 'POST', data);
 }
 
 export async function getOrphanedSessionCount(): Promise<number> {

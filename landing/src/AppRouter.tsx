@@ -9,6 +9,7 @@ import LoginPage from '@/pages/LoginPage';
 import LaunchKeledonPage from '@/pages/LaunchKeledonPage';
 import TestBrowserPage from '@/pages/TestBrowserPage';
 import DashboardPage from '@/pages/DashboardPage';
+import BrainPage from '@/pages/BrainPage';
 import KnowledgePage from '@/pages/KnowledgePage';
 import AdminPage from '@/pages/AdminPage';
 import AdminUsersPage from '@/pages/AdminUsersPage';
@@ -96,6 +97,16 @@ export function AppRouter() {
                         <ProtectedRoute minRole="user">
                             <AppLayout>
                                 <DashboardPage />
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/brain"
+                    element={
+                        <ProtectedRoute minRole="user">
+                            <AppLayout>
+                                <BrainPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }
