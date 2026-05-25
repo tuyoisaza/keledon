@@ -92,7 +92,7 @@ export default function KnowledgePage() {
                 type: 'text' as const,
                 status: 'indexed' as const,
                 size: d.content ? `${Math.round(d.content.length / 1024)} KB` : undefined,
-                chunks: Math.max(1, Math.ceil(d.content.length / 500)),
+                chunks: Math.max(1, Math.ceil((d.content ?? '').length / 500)),
                 lastUpdated: new Date(d.created_at).toLocaleDateString(),
                 company_id: d.company_id,
                 brand_id: d.brand_id,
@@ -100,7 +100,7 @@ export default function KnowledgePage() {
             })));
         } catch (err: any) {
             console.error('Failed to fetch vector store data', err);
-            setVectorError(err.message || 'Failed to connect to vector store. Please check configuration.');
+            setVectorError(err?.message || 'Failed to connect to vector store. Please check configuration.');
             setDocuments([]);
         } finally {
             setIsLoading(false);
@@ -244,7 +244,10 @@ export default function KnowledgePage() {
             {vectorError && (
                 <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive">
                     <strong>Vector Store Error:</strong> {vectorError}
-                    <p className="text-sm mt-1">Please configure QDRANT_URL and OPENAI_API_KEY in your environment.</p>
+                    <p className="text-sm mt-1">
+                        If this is a connection issue, check QDRANT_URL and OPENAI_API_KEY on the cloud side.
+                        If the page opened but documents failed to render, the store may contain legacy entries without content.
+                    </p>
                 </div>
             )}
 

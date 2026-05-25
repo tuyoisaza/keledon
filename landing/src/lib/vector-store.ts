@@ -107,7 +107,11 @@ class VectorStoreAPI {
 
   async listAllDocuments(): Promise<PolicyDocument[]> {
     const result = await this.fetchApi('/documents');
-    return result.documents || [];
+    return (result.documents || []).map((document: any) => ({
+      ...document,
+      content: document.content ?? document.text ?? '',
+      title: document.title ?? document.text ?? 'Untitled document',
+    }));
   }
 
   private getRelevanceLevel(score: number): 'high' | 'medium' | 'low' {
