@@ -574,6 +574,17 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
   if (!isInitialized) {
     throw new Error('AutoBrowse not initialized');
   }
+  if (!input?.goal || !String(input.goal).trim()) {
+    return {
+      execution_id: input?.execution_id || `exec-${Date.now()}`,
+      status: 'failed',
+      goal_status: 'failed',
+      steps: [],
+      duration: 0,
+      artifacts: { screenshots: [], logs: [] },
+      error: 'Goal is required'
+    };
+  }
 
   const activeTab = electronTabs.find(t => t.id === activeTabId);
   if (!activeTab?.view) {

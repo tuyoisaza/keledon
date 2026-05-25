@@ -491,6 +491,37 @@
       overflow-y: auto;
       font-size: 12px;
     }
+    .activity-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .activity-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .activity-copy-btn {
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text-primary);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .activity-copy-btn:hover:not(:disabled) { background: var(--url-bar-bg); }
+    .activity-copy-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .activity-copy-status {
+      font-size: 10px;
+      color: var(--text-secondary);
+      min-height: 12px;
+      text-align: right;
+    }
     .activity-entry {
       padding: 6px 8px;
       border-bottom: 1px solid var(--panel-border);
@@ -758,7 +789,13 @@
 
       <!-- Activity Log -->
       <div class="panel-section">
-        <div class="panel-section-title">Activity</div>
+        <div class="activity-header">
+          <div class="panel-section-title">Activity</div>
+          <div class="activity-header-actions">
+            <button id="copyActivityBtn" class="activity-copy-btn" title="Copy all activity logs">Copy</button>
+          </div>
+        </div>
+        <div class="activity-copy-status" id="activityCopyStatus">Ready</div>
         <div class="activity-log" id="activityLog"></div>
       </div>
     </div>
@@ -815,6 +852,8 @@
     const hangupBtn = document.getElementById('hangupBtn');
     const callSection = document.getElementById('callSection');
     const activityLogEl = document.getElementById('activityLog');
+    const copyActivityBtn = document.getElementById('copyActivityBtn');
+    const activityCopyStatus = document.getElementById('activityCopyStatus');
     const loadingBar = document.getElementById('loadingBar');
 
     let isMuted = false;
@@ -823,6 +862,7 @@
     let tabs = [];
     let activeTabId = 'home';
     let panelOpen = false;
+    let deviceVersion = 'v?.?.?';
 
     // ==================== LOGGING ====================
     function log(message, type = 'info') {
@@ -832,6 +872,59 @@
       activityLogEl.appendChild(entry);
       activityLogEl.scrollTop = activityLogEl.scrollHeight;
       console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+
+    function setActivityCopyStatus(message, kind = 'info') {
+      if (!activityCopyStatus) return;
+      activityCopyStatus.textContent = message;
+      activityCopyStatus.style.color = kind === 'error' ? '#d93025' : kind === 'success' ? '#1e8e3e' : 'var(--text-secondary)';
+    }
+
+    function serializeActivityEntries() {
+      const entries = Array.from(activityLogEl.querySelectorAll('.activity-entry')).map((entry) => {
+        const time = entry.querySelector('.time')?.textContent?.trim() || '';
+        const msg = entry.querySelector('.msg')?.textContent?.trim() || '';
+        const type = entry.classList.contains('success') ? 'success' : entry.classList.contains('error') ? 'error' : 'info';
+        return { time, type, msg };
+      });
+
+      return entries.map((entry) => `[${entry.time}] [${entry.type.toUpperCase()}] ${entry.msg}`).join('\n');
+    }
+
+    async function copyActivityLogs() {
+      const copiedAt = new Date().toISOString();
+      const body = serializeActivityEntries() || '(no activity entries yet)';
+      const payload = [
+        'KELEDON Browser Activity Dump',
+        `Version: ${deviceVersion}`,
+        `Time: ${copiedAt}`,
+        '',
+        body,
+      ].join('\n');
+
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(payload);
+        } else {
+          const fallback = document.createElement('textarea');
+          fallback.value = payload;
+          fallback.setAttribute('readonly', 'true');
+          fallback.style.position = 'fixed';
+          fallback.style.opacity = '0';
+          document.body.appendChild(fallback);
+          fallback.focus();
+          fallback.select();
+          const ok = document.execCommand('copy');
+          document.body.removeChild(fallback);
+          if (!ok) throw new Error('document.execCommand("copy") failed');
+        }
+        setActivityCopyStatus(`Copied ${activityLogEl.querySelectorAll('.activity-entry').length} entries`, 'success');
+        log(`Copied activity logs for ${deviceVersion}`, 'success');
+      } catch (error) {
+        console.error('Failed to copy activity logs:', error);
+        setActivityCopyStatus('Copy failed', 'error');
+        log('Failed to copy activity logs', 'error');
+      }
     }
 
     // ==================== CONNECTION STATUS ====================
@@ -854,11 +947,15 @@
     async function loadDeviceInfo() {
       try {
         const info = await window.keledon.device.getInfo();
-        versionBtn.textContent = 'v' + info.version;
+        deviceVersion = `v${info.version}`;
+        versionBtn.textContent = deviceVersion;
         log('Device initialized: ' + info.deviceId, 'info');
+        setActivityCopyStatus(`Version ${deviceVersion} loaded`, 'info');
       } catch (e) {
-        versionBtn.textContent = 'v?.?';
+        deviceVersion = 'v?.?';
+        versionBtn.textContent = deviceVersion;
         log('Device info error: ' + e.message, 'error');
+        setActivityCopyStatus('Version unavailable', 'error');
       }
     }
 
@@ -947,6 +1044,8 @@
         log('Create tab error: ' + e.message, 'error');
       });
     });
+
+    copyActivityBtn.addEventListener('click', copyActivityLogs);
 
     // Listen for tab updates from main process
     window.keledon.tabs.onUpdate((newTabs) => {
@@ -1164,7 +1263,7 @@
       });
 
       try {
-        const result = await window.keledon.executor.executeGoal(goal, {});
+        const result = await window.keledon.executor.executeGoal({ goal }, {});
         if (progressText) {
           const finalText = result.goal_status === 'success' ? '✓ Success' : result.goal_status === 'uncertain' ? '⚠ Partial' : '✗ Failed';
           progressText.textContent = `${finalText} - ${result.steps?.length || 0} steps`;

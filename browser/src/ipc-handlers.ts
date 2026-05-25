@@ -353,21 +353,28 @@ export function registerIpcHandlers(tabManager: TabManager): void {
 
   // --- Executor: Execute Goal ---
   ipcMain.handle('executor:executeGoal', async (_event, goal: any, context?: Record<string, unknown>) => {
-    log.info('Executing goal:', goal.objective || goal.goal);
+    const normalizedGoal = typeof goal === 'string'
+      ? goal
+      : goal?.objective || goal?.goal || '';
+    if (!normalizedGoal) {
+      return { error: 'Goal is required' };
+    }
+
+    log.info('Executing goal:', normalizedGoal);
     const bridge = await getAutoBrowseBridge();
     if (!bridge.isAutoBrowseInitialized()) {
       return { error: 'AutoBrowse not initialized' };
     }
     try {
       const goalInput = {
-        execution_id: goal.execution_id || `exec-${Date.now()}`,
-        goal: goal.objective || goal.goal,
-        inputs: goal.inputs || context,
+        execution_id: typeof goal === 'string' ? `exec-${Date.now()}` : goal.execution_id || `exec-${Date.now()}`,
+        goal: normalizedGoal,
+        inputs: typeof goal === 'string' ? context : goal.inputs || context,
         constraints: {
-          max_steps: goal.max_steps || goal.constraints?.max_steps,
-          timeout_ms: goal.timeout_ms || goal.constraints?.timeout_ms,
+          max_steps: typeof goal === 'string' ? undefined : goal.max_steps || goal.constraints?.max_steps,
+          timeout_ms: typeof goal === 'string' ? undefined : goal.timeout_ms || goal.constraints?.timeout_ms,
         },
-        success_criteria: goal.success_criteria,
+        success_criteria: typeof goal === 'string' ? undefined : goal.success_criteria,
       };
       const result = await bridge.executeGoal(goalInput);
       log.info('Goal execution completed:', result.goal_status);
@@ -376,7 +383,7 @@ export function registerIpcHandlers(tabManager: TabManager): void {
       log.error('Goal execution failed:', error);
       return {
         execution_id: `exec-${Date.now()}`,
-        goal: goal.objective || goal.goal,
+        goal: normalizedGoal,
         goal_status: 'failed',
         steps: [],
         duration: 0,

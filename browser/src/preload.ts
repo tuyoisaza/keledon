@@ -21,7 +21,7 @@ contextBridge.exposeInMainWorld('keledon', {
     }
   },
   executor: {
-    executeGoal: (goal: string, context: Record<string, unknown>) =>
+    executeGoal: (goal: string | { goal: string; objective?: string; execution_id?: string; inputs?: Record<string, unknown>; constraints?: { max_steps?: number; timeout_ms?: number }; max_steps?: number; timeout_ms?: number; success_criteria?: string }, context: Record<string, unknown>) =>
       ipcRenderer.invoke('executor:executeGoal', goal, context),
     executeSteps: (steps: unknown[]) =>
       ipcRenderer.invoke('executor:executeSteps', steps),
@@ -211,7 +211,7 @@ declare global {
         onConnect: (callback: (data: { keledonId: string; code: string; cloudUrl?: string; action?: string }) => void) => () => void;
       };
       executor: {
-        executeGoal: (goal: string, context: Record<string, unknown>) => Promise<unknown>;
+        executeGoal: (goal: string | { goal: string; objective?: string; execution_id?: string; inputs?: Record<string, unknown>; constraints?: { max_steps?: number; timeout_ms?: number }; max_steps?: number; timeout_ms?: number; success_criteria?: string }, context: Record<string, unknown>) => Promise<unknown>;
         executeSteps: (steps: unknown[]) => Promise<unknown>;
         getCDPUrl: () => Promise<string>;
         getCurrentUrl: () => Promise<string>;
@@ -220,6 +220,7 @@ declare global {
       evidence: {
         getLogs: () => Promise<unknown>;
         getScreenshots: () => Promise<unknown>;
+        copyAllLogs: () => Promise<{ logs: string }>;
       };
       media: {
         mute: () => Promise<{ success: boolean }>;
