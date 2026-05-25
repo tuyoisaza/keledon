@@ -41,6 +41,22 @@ const DECIDE_ACTION_TOOL = {
 
 const CONFIGURED_PROVIDERS: LLMProvider[] = ['anthropic', 'google', 'openai', 'ollama'];
 
+function isOpenAIFunctionToolCall(
+  toolCall: unknown
+): toolCall is { type: 'function'; function: { name: string; arguments: string } } {
+  return (
+    typeof toolCall === 'object' &&
+    toolCall !== null &&
+    'type' in toolCall &&
+    (toolCall as { type?: unknown }).type === 'function' &&
+    'function' in toolCall &&
+    typeof (toolCall as { function?: unknown }).function === 'object' &&
+    (toolCall as { function?: { name?: unknown; arguments?: unknown } }).function !== null &&
+    typeof (toolCall as { function?: { name?: unknown; arguments?: unknown } }).function?.name === 'string' &&
+    typeof (toolCall as { function?: { name?: unknown; arguments?: unknown } }).function?.arguments === 'string'
+  );
+}
+
 @Injectable()
 export class LLMService implements OnModuleInit {
   private readonly logger = new Logger(LLMService.name);
@@ -320,7 +336,7 @@ Always prefer "say" for questions, confirmations, and conversational responses.`
         });
 
         const toolCall = response.choices[0]?.message?.tool_calls?.[0];
-        if (!toolCall || toolCall.type !== 'function' || toolCall.function.name !== 'decide_action') {
+        if (!isOpenAIFunctionToolCall(toolCall) || toolCall.function.name !== 'decide_action') {
           this.logger.warn('LLM did not return a tool call, using fallback');
           return this.fallbackCommand(transcript);
         }
