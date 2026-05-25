@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check, Download, Building2 } from 'lucide-react';
+import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check, Download, Building2, ArrowRightCircle, ListChecks } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getKeledons, getVendors, type Keledon, type Vendor } from '@/lib/crud-api';
 import { getBrowserDownloadUrl } from '@/lib/knowledge-source-utils.js';
@@ -12,6 +12,14 @@ export default function LaunchKeledonPage() {
     const [loading, setLoading] = useState(true);
     const [launching, setLaunching] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [launchDetails, setLaunchDetails] = useState<null | {
+        keledonId: string;
+        teamId: string | null;
+        keledonName: string;
+        deepLink: string;
+        vendors: Vendor[];
+        nextSteps: Array<{ title: string; detail: string }>;
+    }>(null);
 
     useEffect(() => {
         loadKeledons();
@@ -67,6 +75,15 @@ export default function LaunchKeledonPage() {
             if (!response.ok) {
                 throw new Error(data.message || `Failed to launch (${response.status})`);
             }
+
+            setLaunchDetails({
+                keledonId,
+                teamId: data.team_id || null,
+                keledonName: data.keledon_name || keledonId,
+                deepLink: data.deep_link,
+                vendors: data.vendors || (data.team_id ? vendorsMap[data.team_id] : []) || [],
+                nextSteps: data.next_steps || [],
+            });
             
             // Open deep link
             if (data.deep_link) {
@@ -229,6 +246,40 @@ export default function LaunchKeledonPage() {
                                     </div>
                                 )}
                             </div>
+
+                            {launchDetails?.keledonId === keledon.id && (
+                                <div className="mb-4 p-4 bg-muted/70 rounded-lg border border-border">
+                                    <div className="flex items-center justify-between gap-2 mb-3">
+                                        <div className="flex items-center gap-2">
+                                            <ListChecks className="w-4 h-4 text-primary" />
+                                            <p className="text-sm font-semibold">Next Steps</p>
+                                        </div>
+                                        <ArrowRightCircle className="w-4 h-4 text-muted-foreground" />
+                                    </div>
+                                    <div className="space-y-3 text-sm">
+                                        <div>
+                                            <p className="text-xs text-muted-foreground mb-1">From Keledon Site</p>
+                                            <p className="font-medium">{launchDetails.keledonName}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-muted-foreground mb-1">Vendors to open</p>
+                                            <p className="font-medium">
+                                                {launchDetails.vendors.length > 0
+                                                    ? launchDetails.vendors.map(v => v.name).join(', ')
+                                                    : 'No vendors returned yet'}
+                                            </p>
+                                        </div>
+                                        <ol className="space-y-2 list-decimal list-inside text-muted-foreground">
+                                            {launchDetails.nextSteps.map(step => (
+                                                <li key={`${launchDetails.keledonId}-${step.title}`}>
+                                                    <span className="text-foreground font-medium">{step.title}.</span>{' '}
+                                                    {step.detail}
+                                                </li>
+                                            ))}
+                                        </ol>
+                                    </div>
+                                </div>
+                            )}
 
                             {isSuperAdmin && (
                                 <div className="mb-4 p-3 bg-muted rounded-lg">

@@ -606,6 +606,32 @@ export class CrudService {
         throw new Error('User not authorized to launch this Keledon');
       }
 
+      const vendors = await this.getVendors(keledon.teamId);
+      const activeVendors = vendors.filter(v => v.isActive !== false);
+      const nextSteps = activeVendors.length > 0
+        ? [
+            {
+              title: 'Open vendor surfaces',
+              detail: activeVendors.map(v => v.name).join(', '),
+            },
+            ...activeVendors.map((vendor, index) => ({
+              title: `Step ${index + 1}: Open ${vendor.name}`,
+              detail: vendor.baseUrl
+                ? `${vendor.baseUrl}${vendor.type ? ` • ${vendor.type}` : ''}`
+                : vendor.type || 'No base URL configured',
+            })),
+            {
+              title: 'Return to standby',
+              detail: 'Stay connected, watch the activity log, and wait for the next call trigger.',
+            },
+          ]
+        : [
+            {
+              title: 'No vendors configured yet',
+              detail: 'Open Management → Vendors on the keledon site and register the call / CRM surfaces for this team.',
+            },
+          ];
+
       // Generate signed launch link
       const timestamp = Date.now();
       const payload = `${keledonId}:${userId}:${timestamp}`;
@@ -617,10 +643,13 @@ export class CrudService {
       console.log('[Launch] Success, deepLink:', deepLink.substring(0, 50) + '...');
       return {
         keledon_id: keledonId,
+        team_id: keledon.teamId,
         keledon_name: keledon.name,
         deep_link: deepLink,
         expires_at: new Date(timestamp + 60000),
-        device_status: device.status
+        device_status: device.status,
+        vendors: activeVendors,
+        next_steps: nextSteps
       };
     } catch (error) {
       console.error('[Launch] Error:', error.message);
