@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check, Download, Building2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getKeledons, getVendors, type Keledon, type Vendor } from '@/lib/crud-api';
+import { getBrowserDownloadUrl } from '@/lib/knowledge-source-utils.js';
 import { toast } from 'sonner';
 
 export default function LaunchKeledonPage() {
@@ -130,7 +131,7 @@ export default function LaunchKeledonPage() {
                 <div className="flex items-center gap-2">
                     {/* KELEDON_BROWSER_DOWNLOAD_URL env var on Railway can override this URL if needed */}
                     <a
-                        href="https://github.com/tuyoisaza/keledon/releases/download/v0.2.20/KELEDON.Browser.Setup.exe"
+                        href={getBrowserDownloadUrl(import.meta.env)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"

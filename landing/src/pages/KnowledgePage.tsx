@@ -3,6 +3,7 @@ import { Search, Upload, FileText, Database, Bot, RefreshCw, X, Building2, Tag, 
 import { API_URL } from '@/lib/config';
 import { vectorStoreAPI, type PolicyDocument, type VectorStoreStatus } from '@/lib/vector-store';
 import { getCompanies, getBrands, getTeams, type Company, type Brand, type Team } from '@/lib/crud-api';
+import { getBrandsForCompany, getTeamsForBrand, readPlainTextFile } from '@/lib/knowledge-source-utils.js';
 
 interface KnowledgeDocument {
     id: string;
@@ -35,9 +36,10 @@ export default function KnowledgePage() {
     // Add source modal
     const [showAddModal, setShowAddModal] = useState(false);
     const [addForm, setAddForm] = useState({
-        sourceType: 'text' as 'text' | 'url',
+        sourceType: 'text' as 'text' | 'url' | 'file',
         content: '',
         url: '',
+        file: null as File | null,
         company_id: '',
         brand_id: '',
         team_id: '',
@@ -112,10 +114,27 @@ export default function KnowledgePage() {
             alert('Please select a company');
             return;
         }
-        
-        const content = addForm.sourceType === 'url' ? addForm.url : addForm.content;
-        if (!content.trim()) {
-            alert('Please enter content or URL');
+
+        let content = '';
+        let title = '';
+
+        if (addForm.sourceType === 'url') {
+            content = addForm.url.trim();
+            title = addForm.url.trim();
+        } else if (addForm.sourceType === 'file') {
+            if (!addForm.file) {
+                alert('Please select a plain text file');
+                return;
+            }
+            content = (await readPlainTextFile(addForm.file)).trim();
+            title = addForm.file.name;
+        } else {
+            content = addForm.content.trim();
+            title = `Text - ${new Date().toLocaleTimeString()}`;
+        }
+
+        if (!content) {
+            alert('Please enter content, URL, or choose a file');
             return;
         }
 
@@ -124,8 +143,8 @@ export default function KnowledgePage() {
             const now = new Date().toISOString();
             const newDocument: PolicyDocument = {
                 id: `doc-${Date.now()}`,
-                title: addForm.sourceType === 'url' ? addForm.url : `Text - ${new Date().toLocaleTimeString()}`,
-                content: content,
+                title,
+                content,
                 category: 'knowledge',
                 company_id: addForm.company_id,
                 brand_id: addForm.brand_id || undefined,
@@ -142,6 +161,7 @@ export default function KnowledgePage() {
                 sourceType: 'text',
                 content: '',
                 url: '',
+                file: null,
                 company_id: '',
                 brand_id: '',
                 team_id: '',
@@ -432,6 +452,16 @@ export default function KnowledgePage() {
                                     >
                                         URL
                                     </button>
+                                    <button
+                                        onClick={() => setAddForm(prev => ({ ...prev, sourceType: 'file', content: '', url: '' }))}
+                                        className={`flex-1 py-2 rounded-lg border ${
+                                            addForm.sourceType === 'file'
+                                                ? 'bg-primary text-primary-foreground border-primary'
+                                                : 'border-border hover:bg-muted'
+                                        }`}
+                                    >
+                                        File
+                                    </button>
                                 </div>
                             </div>
 
@@ -473,8 +503,7 @@ export default function KnowledgePage() {
                                     className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 outline-none disabled:opacity-50"
                                 >
                                     <option value="">Select brand...</option>
-                                    {brands
-                                        .filter(b => b.company_id === addForm.company_id)
+                                    {getBrandsForCompany(brands, addForm.company_id)
                                         .map(brand => (
                                             <option key={brand.id} value={brand.id}>
                                                 {brand.name}
@@ -494,8 +523,7 @@ export default function KnowledgePage() {
                                     className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 outline-none disabled:opacity-50"
                                 >
                                     <option value="">Select team...</option>
-                                    {teams
-                                        .filter(t => t.brand_id === addForm.brand_id)
+                                    {getTeamsForBrand(teams, addForm.brand_id)
                                         .map(team => (
                                             <option key={team.id} value={team.id}>
                                                 {team.name}
@@ -508,7 +536,7 @@ export default function KnowledgePage() {
                             {/* Content */}
                             <div>
                                 <label className="block text-sm font-medium mb-2">
-                                    {addForm.sourceType === 'url' ? 'URL' : 'Content'} <span className="text-destructive">*</span>
+                                    {addForm.sourceType === 'url' ? 'URL' : addForm.sourceType === 'file' ? 'Plain Text File' : 'Content'} <span className="text-destructive">*</span>
                                 </label>
                                 {addForm.sourceType === 'url' ? (
                                     <input
@@ -517,6 +545,13 @@ export default function KnowledgePage() {
                                         onChange={(e) => setAddForm(prev => ({ ...prev, url: e.target.value }))}
                                         placeholder="https://example.com/document"
                                         className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 outline-none"
+                                    />
+                                ) : addForm.sourceType === 'file' ? (
+                                    <input
+                                        type="file"
+                                        accept=".txt,text/plain"
+                                        onChange={(e) => setAddForm(prev => ({ ...prev, file: e.target.files?.[0] ?? null }))}
+                                        className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 outline-none file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-2 file:text-primary-foreground"
                                     />
                                 ) : (
                                     <textarea
@@ -531,7 +566,7 @@ export default function KnowledgePage() {
 
                             <button
                                 onClick={handleAddSource}
-                                disabled={!addForm.company_id || (!addForm.content && !addForm.url) || isUploading}
+                                disabled={!addForm.company_id || (addForm.sourceType === 'url' ? !addForm.url : addForm.sourceType === 'file' ? !addForm.file : !addForm.content) || isUploading}
                                 className="w-full py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isUploading ? 'Adding to Vector Store...' : 'Add Source'}
