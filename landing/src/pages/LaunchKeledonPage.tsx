@@ -130,7 +130,7 @@ export default function LaunchKeledonPage() {
                 <div className="flex items-center gap-2">
                     {/* KELEDON_BROWSER_DOWNLOAD_URL env var on Railway can override this URL if needed */}
                     <a
-                        href="https://github.com/tuyoisaza/keledon/releases/latest/download/KELEDON.Browser.Setup.exe"
+                        href="https://github.com/tuyoisaza/keledon/releases/download/v0.2.20/KELEDON.Browser.Setup.exe"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
