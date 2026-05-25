@@ -10,7 +10,7 @@ import { runtimeStatus, mainWindow, setMainWindow } from './runtime-state.js';
 import { TabManager } from './tab-manager.js';
 import { connectWebSockets } from './cloud-connection.js';
 import { handleDeepLink, flushPendingDeepLinkLaunch } from './deep-link.js';
-import { registerIpcHandlers, autoLoginToVendor, initializeAutoBrowseEngine, getAutoBrowseBridge } from './ipc-handlers.js';
+import { registerIpcHandlers, bootstrapTeamVendors, initializeAutoBrowseEngine, getAutoBrowseBridge } from './ipc-handlers.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
 
 // ===================== TAB MANAGER =====================
@@ -103,8 +103,16 @@ async function autoConnect(): Promise<void> {
       runtimeStatus.escalationTriggers = data.team?.escalationTriggers || [];
       transcriptMonitor.setTriggers(runtimeStatus.escalationTriggers);
       log.info('Auto-connect successful, keledon_id:', data.keledon_id);
-      connectWebSockets(runtimeStatus.cloudUrl, data.auth_token, runtimeStatus, tabManager, mainWindow, getAutoBrowseBridge);
-      if (data.vendors?.length > 0) { autoLoginToVendor(data.vendors[0], tabManager); }
+      connectWebSockets(
+        runtimeStatus.cloudUrl,
+        data.auth_token,
+        runtimeStatus,
+        tabManager,
+        mainWindow,
+        getAutoBrowseBridge,
+        () => bootstrapTeamVendors(tabManager),
+      );
+      runtimeStatus.vendors = data.vendors || [];
       const AUTO_SESSION_ID = process.env.SESSION_ID || '';
       if (AUTO_SESSION_ID) { runtimeStatus.sessionId = AUTO_SESSION_ID; log.info('Auto-join session:', AUTO_SESSION_ID); }
     } else { log.error('Auto-connect failed:', res.status); }

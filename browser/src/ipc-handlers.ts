@@ -78,6 +78,9 @@ const vendorLoginState = {
   vendorId: null as string | null,
 };
 
+const bootstrappedVendorIds = new Set<string>();
+let bootstrappedTeamId: string | null = null;
+
 function decrypt(text: string): string {
   try {
     const crypto = require('crypto');
@@ -94,10 +97,10 @@ function decrypt(text: string): string {
   }
 }
 
-async function autoLoginToVendor(vendor: any, tabManager: TabManager) {
+async function autoLoginToVendor(vendor: any, tabManager: TabManager): Promise<boolean> {
   if (vendorLoginState.isLoggingIn || !vendor.baseUrl) {
     log.warn('[Vendor] Skipping login - already logging in or no baseUrl');
-    return;
+    return false;
   }
 
   vendorLoginState.isLoggingIn = true;
@@ -116,7 +119,7 @@ async function autoLoginToVendor(vendor: any, tabManager: TabManager) {
     const bridge = await getAutoBrowseBridge();
     if (!bridge.isAutoBrowseInitialized()) {
       log.error('[Vendor] AutoBrowse not initialized, cannot login');
-      return;
+      return false;
     }
 
     // Wait for tab to load
@@ -129,27 +132,80 @@ async function autoLoginToVendor(vendor: any, tabManager: TabManager) {
       loginGoal = `Login to ${vendor.name} using API key`;
     }
 
-    if (loginGoal) {
-      log.info('[Vendor] Executing login goal:', loginGoal);
-      const result = await bridge.executeGoal({
-        execution_id: `vendor-login-${Date.now()}`,
-        goal: loginGoal,
-        inputs: { username, password, apiKey },
-        constraints: { max_steps: 20, timeout_ms: 60000 },
-      });
-
-      log.info('[Vendor] Login result:', result.goal_status);
-      mainWindow?.webContents.send('vendor:login', {
-        vendorId: vendor.id,
-        vendorName: vendor.name,
-        status: result.goal_status,
-        timestamp: new Date().toISOString(),
-      });
+    if (!loginGoal) {
+      log.warn('[Vendor] No login credentials available for:', vendor.name);
+      return false;
     }
+
+    log.info('[Vendor] Executing login goal:', loginGoal);
+    const result = await bridge.executeGoal({
+      execution_id: `vendor-login-${Date.now()}`,
+      goal: loginGoal,
+      inputs: { username, password, apiKey },
+      constraints: { max_steps: 20, timeout_ms: 60000 },
+    });
+
+    log.info('[Vendor] Login result:', result.goal_status);
+    mainWindow?.webContents.send('vendor:login', {
+      vendorId: vendor.id,
+      vendorName: vendor.name,
+      status: result.goal_status,
+      timestamp: new Date().toISOString(),
+    });
+    return result.goal_status === 'success';
   } catch (error) {
     log.error('[Vendor] Auto-login error:', error);
+    return false;
   } finally {
     vendorLoginState.isLoggingIn = false;
+  }
+}
+
+export async function bootstrapTeamVendors(tabManager: TabManager): Promise<void> {
+  const teamId = runtimeStatus.teamId;
+  if (!teamId) {
+    log.info('[Vendor] No team loaded yet; skipping vendor bootstrap');
+    return;
+  }
+
+  if (bootstrappedTeamId !== teamId) {
+    bootstrappedVendorIds.clear();
+    bootstrappedTeamId = teamId;
+  }
+
+  let vendors = Array.isArray(runtimeStatus.vendors) ? [...runtimeStatus.vendors] : [];
+
+  try {
+    const response = await fetch(`${runtimeStatus.cloudUrl}/api/crud/vendors/${teamId}`);
+    if (response.ok) {
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        vendors = data;
+        runtimeStatus.vendors = data;
+        log.info('[Vendor] Loaded vendors from cloud:', data.length);
+      }
+    } else {
+      log.warn('[Vendor] Vendor query failed:', response.status, response.statusText);
+    }
+  } catch (error) {
+    log.warn('[Vendor] Vendor query errored; falling back to launch payload vendors:', error);
+  }
+
+  const runnableVendors = vendors.filter((vendor: any) => vendor?.id && vendor?.baseUrl && vendor.isActive !== false);
+  if (runnableVendors.length === 0) {
+    log.info('[Vendor] No runnable vendors found for team:', teamId);
+    return;
+  }
+
+  log.info('[Vendor] Bootstrapping vendor connections for team:', teamId, 'count:', runnableVendors.length);
+  for (const vendor of runnableVendors) {
+    if (bootstrappedVendorIds.has(vendor.id)) {
+      continue;
+    }
+    const success = await autoLoginToVendor(vendor, tabManager);
+    if (success) {
+      bootstrappedVendorIds.add(vendor.id);
+    }
   }
 }
 
@@ -296,11 +352,15 @@ export function registerIpcHandlers(tabManager: TabManager): void {
         transcriptMonitor.setTriggers(runtimeStatus.escalationTriggers);
         log.info('Connected to cloud, keledon_id:', data.keledon_id);
 
-        connectWebSockets(config.cloudUrl, data.auth_token, runtimeStatus, tabManager, mainWindow, getAutoBrowseBridge);
-
-        if (data.vendors?.length > 0) {
-          autoLoginToVendor(data.vendors[0], tabManager);
-        }
+        connectWebSockets(
+          config.cloudUrl,
+          data.auth_token,
+          runtimeStatus,
+          tabManager,
+          mainWindow,
+          getAutoBrowseBridge,
+          () => bootstrapTeamVendors(tabManager),
+        );
 
         try {
           await mediaLayerWrapper.initialize();
@@ -830,4 +890,4 @@ export function registerIpcHandlers(tabManager: TabManager): void {
 
 // ===================== EXPORTS =====================
 
-export { autoLoginToVendor, initializeAutoBrowseEngine, showEscalation, getAutoBrowseBridge };
+export { autoLoginToVendor, bootstrapTeamVendors, initializeAutoBrowseEngine, showEscalation, getAutoBrowseBridge };

@@ -140,6 +140,7 @@ function createDeviceSocket(
   token: string,
   tabManager: TabManager,
   getAutoBrowseBridge: () => Promise<any>,
+  onConnected?: () => Promise<void> | void,
 ): Socket {
   const socket = io(`${cloudUrl}/ws/runtime`, {
     auth: { token, device_id: runtimeStatus.deviceId },
@@ -178,6 +179,12 @@ function createDeviceSocket(
     }
 
     startHeartbeat(socket);
+
+    if (onConnected) {
+      void Promise.resolve(onConnected()).catch((error) => {
+        log.warn('[Connection] Post-connect callback failed:', error);
+      });
+    }
   });
 
   // ------ disconnect ------
@@ -354,6 +361,7 @@ export function connectWebSockets(
   tabManager: TabManager,
   mainWindow: BrowserWindow | null,
   getAutoBrowseBridge: () => Promise<any>,
+  onConnected?: () => Promise<void> | void,
 ): void {
   // Disconnect any existing sockets first (idempotent)
   disconnectSockets();
@@ -364,7 +372,7 @@ export function connectWebSockets(
   sendStatusToRenderer('connecting');
   eventLogger.info('connection', 'connecting', { cloudUrl });
 
-  deviceSocket = createDeviceSocket(cloudUrl, token, tabManager, getAutoBrowseBridge);
+  deviceSocket = createDeviceSocket(cloudUrl, token, tabManager, getAutoBrowseBridge, onConnected);
   agentSocket = createAgentSocket(cloudUrl, token);
 }
 

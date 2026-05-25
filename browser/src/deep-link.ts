@@ -2,7 +2,7 @@ import * as crypto from 'crypto';
 import log from 'electron-log';
 import { runtimeStatus, mainWindow } from './runtime-state.js';
 import { connectWebSockets } from './cloud-connection.js';
-import { getAutoBrowseBridge, autoLoginToVendor } from './ipc-handlers.js';
+import { getAutoBrowseBridge, bootstrapTeamVendors } from './ipc-handlers.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
 import type { TabManager } from './tab-manager.js';
 
@@ -150,9 +150,17 @@ export function handleDeepLink(url: string, tabManager: TabManager): void {
           transcriptMonitor.setTriggers(runtimeStatus.escalationTriggers);
           log.info('[DeepLink] Auto-connect successful, keledon_id:', data.keledon_id);
 
-          connectWebSockets(runtimeStatus.cloudUrl, data.auth_token, runtimeStatus, tabManager, mainWindow, getAutoBrowseBridge);
+          connectWebSockets(
+            runtimeStatus.cloudUrl,
+            data.auth_token,
+            runtimeStatus,
+            tabManager,
+            mainWindow,
+            getAutoBrowseBridge,
+            () => bootstrapTeamVendors(tabManager),
+          );
 
-          if (data.vendors?.length > 0) { autoLoginToVendor(data.vendors[0], tabManager); }
+          runtimeStatus.vendors = data.vendors || [];
         } else {
           runtimeStatus.diagnostics.lastAutoConnectStatus = 'http_error';
           runtimeStatus.diagnostics.lastAutoConnectError = `HTTP ${response.status}`;
