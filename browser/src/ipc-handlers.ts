@@ -890,4 +890,4 @@ export function registerIpcHandlers(tabManager: TabManager): void {
 
 // ===================== EXPORTS =====================
 
-export { autoLoginToVendor, bootstrapTeamVendors, initializeAutoBrowseEngine, showEscalation, getAutoBrowseBridge };
+export { autoLoginToVendor, initializeAutoBrowseEngine, showEscalation, getAutoBrowseBridge };
