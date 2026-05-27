@@ -10,6 +10,7 @@
     "start:dev": "node canonical-dev-server.js",
     "lint": "eslint \"src/**/*.ts\" --fix",
     "test": "jest",
+    "test:regression": "node test/regression/run.js",
     "build:typescript": "npx tsc --noEmit",
     "dev:vector-store": "npm run start:dev",
     "build:vector-store": "npm run build && npm run package:vector-store",
@@ -70,6 +71,7 @@
     "concurrently": "^8.2.2",
     "jest": "^30.3.0",
     "prisma": "^5.22.0",
+    "ts-jest": "^29.4.11",
     "typescript": "^5.9.3"
   }
 }
