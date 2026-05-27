@@ -72,6 +72,7 @@ jobs:
       - name: Generate SHA256 checksum for installer
         id: checksum
         shell: pwsh
+        working-directory: ${{ github.workspace }}
         run: |
           $exePath = "${{ steps.find_installer.outputs.path }}"
           $hash = Get-FileHash -Path $exePath -Algorithm SHA256 | Select-Object -ExpandProperty Hash
