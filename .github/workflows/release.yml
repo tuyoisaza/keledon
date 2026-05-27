@@ -168,35 +168,24 @@ jobs:
           RAILWAY_DEPLOY_HOOK: ${{ secrets.RAILWAY_DEPLOY_HOOK }}
       - name: Verify published assets (Gate 4 sanity check)
         if: ${{ success() }}
-        shell: bash
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          RELEASE_TAG="${{ github.ref_name }}"
+          TAG="${{ github.ref_name }}"
           REPO="${{ github.repository }}"
-          echo "Verifying release $RELEASE_TAG for $REPO ..."
-          # Fetch release data
-          API_URL="https://api.github.com/repos/$REPO/releases/tags/$RELEASE_TAG"
-          RELEASE_JSON=$(curl -fsS -H "Authorization: token $GITHUB_TOKEN" "$API_URL")
-          # Check assets exist
-          echo "$RELEASE_JSON" | jq -e '.assets[] | select(.name=="KELEDON.Browser.Setup.exe")' > /dev/null || { echo "ERROR: Installer asset missing"; exit 1; }
-          echo "$RELEASE_JSON" | jq -e '.assets[] | select(.name=="KELEDON.Browser.Setup.exe.sha256")' > /dev/null || { echo "ERROR: Checksum asset missing"; exit 1; }
-          echo "✅ All required assets found in release."
-          # Download assets
-          INSTALLER_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name=="KELEDON.Browser.Setup.exe") | .browser_download_url')
-          CHECKSUM_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name=="KELEDON.Browser.Setup.exe.sha256") | .browser_download_url')
-          TMPDIR=$(mktemp -d)
-          curl -fsSL -H "Authorization: token $GITHUB_TOKEN" -o "$TMPDIR/KELEDON.Browser.Setup.exe" "$INSTALLER_URL"
-          curl -fsSL -H "Authorization: token $GITHUB_TOKEN" -o "$TMPDIR/KELEDON.Browser.Setup.exe.sha256" "$CHECKSUM_URL"
-          # Compute and compare checksum
-          COMPUTED=$(sha256sum "$TMPDIR/KELEDON.Browser.Setup.exe" | cut -d' ' -f1)
-          EXPECTED=$(cat "$TMPDIR/KELEDON.Browser.Setup.exe.sha256" | tr -d '[:space:]')
-          if [ "$COMPUTED" != "$EXPECTED" ]; then
-            echo "ERROR: Checksum mismatch"
-            echo "  Computed: $COMPUTED"
-            echo "  Expected: $EXPECTED"
+          echo "Verifying release $TAG for $REPO ..."
+          gh release view "$TAG" --repo "$REPO" --json assets --jq '(.assets | length) as $count | "\($count) assets found"'
+          gh release view "$TAG" --repo "$REPO" --json assets --jq '.assets[] | .name' | while read name; do echo "  - $name"; done
+          # Check specific assets exist
+          gh release view "$TAG" --repo "$REPO" --json assets --jq '.assets[] | .name' | grep -q '^KELEDON.Browser.Setup.exe$' || { echo "ERROR: KELEDON.Browser.Setup.exe missing"; exit 1; }
+          gh release view "$TAG" --repo "$REPO" --json assets --jq '.assets[] | .name' | grep -q '^KELEDON.Browser.Setup.exe.sha256$' || { echo "ERROR: checksum file missing"; exit 1; }
+          echo "✅ All required assets verified."
+          # Download and verify checksum via gh (no token needed in env)
+          gh release download "$TAG" --repo "$REPO" --pattern 'KELEDON.Browser.Setup.exe*' --dir /tmp/keledon-verify
+          COMPUTED=$(sha256sum /tmp/keledon-verify/KELEDON.Browser.Setup.exe  | cut -d' ' -f1)
+          EXPECTED=$(cat /tmp/keledon-verify/KELEDON.Browser.Setup.exe.sha256 | tr -d '[:space:]' | tr '[:lower:]' '[:upper:]')
+          if [ "${COMPUTED^^}" != "$EXPECTED" ]; then
+            echo "ERROR: Checksum mismatch: computed=${COMPUTED^^} expected=$EXPECTED"
             exit 1
           fi
-          echo "✅ Published assets verified successfully (SHA256 match)."
+          echo "✅ SHA256 checksum verified."
 
