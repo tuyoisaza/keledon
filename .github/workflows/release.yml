@@ -168,25 +168,35 @@ jobs:
           RAILWAY_DEPLOY_HOOK: ${{ secrets.RAILWAY_DEPLOY_HOOK }}
       - name: Verify published assets (Gate 4 sanity check)
         if: ${{ success() }}
-        shell: pwsh
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Retrieve the release URL (GitHub automatically sets GITHUB_SERVER_URL and GITHUB_REPOSITORY)
-          $releaseTag = "${{ github.ref_name }}"
-          $apiUrl = "https://api.github.com/repos/${{ github.repository }}/releases/tags/$releaseTag"
-          $releaseJson = Invoke-RestMethod -Uri $apiUrl -Headers @{ Authorization = "token ${{ secrets.GITHUB_TOKEN }}" }
-          $installerAsset = $releaseJson.assets | Where-Object { $_.name -eq "KELEDON.Browser.Setup.exe" }
-          $checksumAsset = $releaseJson.assets | Where-Object { $_.name -eq "KELEDON.Browser.Setup.exe.sha256" }
-          if (-not $installerAsset) { Write-Error "Installer asset missing in release"; exit 1 }
-          if (-not $checksumAsset) { Write-Error "Checksum asset missing in release"; exit 1 }
-          # Download assets to temp folder
-          $tmp = New-Item -ItemType Directory -Path (Join-Path $env:TEMP "keledon_verify") -Force
-          $installerPath = Join-Path $tmp "KELEDON.Browser.Setup.exe"
-          $checksumPath = Join-Path $tmp "KELEDON.Browser.Setup.exe.sha256"
-          Invoke-WebRequest -Uri $installerAsset.browser_download_url -OutFile $installerPath -Headers @{ Authorization = "token ${{ secrets.GITHUB_TOKEN }}" }
-          Invoke-WebRequest -Uri $checksumAsset.browser_download_url -OutFile $checksumPath -Headers @{ Authorization = "token ${{ secrets.GITHUB_TOKEN }}" }
-          # Compute SHA256 and compare
-          $computed = Get-FileHash -Path $installerPath -Algorithm SHA256 | Select-Object -ExpandProperty Hash
-          $expected = Get-Content -Path $checksumPath -Raw
-          if ($computed -ne $expected) { Write-Error "Checksum mismatch: $computed != $expected"; exit 1 }
-          Write-Host "✅ Published assets verified successfully."
+          set -euo pipefail
+          RELEASE_TAG="${{ github.ref_name }}"
+          REPO="${{ github.repository }}"
+          echo "Verifying release $RELEASE_TAG for $REPO ..."
+          # Fetch release data
+          API_URL="https://api.github.com/repos/$REPO/releases/tags/$RELEASE_TAG"
+          RELEASE_JSON=$(curl -fsS -H "Authorization: token $GITHUB_TOKEN" "$API_URL")
+          # Check assets exist
+          echo "$RELEASE_JSON" | jq -e '.assets[] | select(.name=="KELEDON.Browser.Setup.exe")' > /dev/null || { echo "ERROR: Installer asset missing"; exit 1; }
+          echo "$RELEASE_JSON" | jq -e '.assets[] | select(.name=="KELEDON.Browser.Setup.exe.sha256")' > /dev/null || { echo "ERROR: Checksum asset missing"; exit 1; }
+          echo "✅ All required assets found in release."
+          # Download assets
+          INSTALLER_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name=="KELEDON.Browser.Setup.exe") | .browser_download_url')
+          CHECKSUM_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name=="KELEDON.Browser.Setup.exe.sha256") | .browser_download_url')
+          TMPDIR=$(mktemp -d)
+          curl -fsSL -H "Authorization: token $GITHUB_TOKEN" -o "$TMPDIR/KELEDON.Browser.Setup.exe" "$INSTALLER_URL"
+          curl -fsSL -H "Authorization: token $GITHUB_TOKEN" -o "$TMPDIR/KELEDON.Browser.Setup.exe.sha256" "$CHECKSUM_URL"
+          # Compute and compare checksum
+          COMPUTED=$(sha256sum "$TMPDIR/KELEDON.Browser.Setup.exe" | cut -d' ' -f1)
+          EXPECTED=$(cat "$TMPDIR/KELEDON.Browser.Setup.exe.sha256" | tr -d '[:space:]')
+          if [ "$COMPUTED" != "$EXPECTED" ]; then
+            echo "ERROR: Checksum mismatch"
+            echo "  Computed: $COMPUTED"
+            echo "  Expected: $EXPECTED"
+            exit 1
+          fi
+          echo "✅ Published assets verified successfully (SHA256 match)."
 
