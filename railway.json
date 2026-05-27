@@ -26,7 +26,7 @@
     },
     {
       "key": "KELEDON_ENV_TIER",
-      "value": "PRODUCTION_MANAGED"
+      "value": "CI_PROOF"
     },
     {
       "key": "KELEDON_ALLOW_ALL_CORS",
@@ -38,7 +38,7 @@
     },
     {
       "key": "KELEDON_REQUIRE_QDRANT",
-      "value": "false"
+      "value": "true"
     },
     {
       "key": "QDRANT_URL",
@@ -74,7 +74,7 @@
     },
     {
       "key": "ENABLE_VECTOR_STORE",
-      "value": "false"
+      "value": "true"
     },
     {
       "key": "ENABLE_OTEL",

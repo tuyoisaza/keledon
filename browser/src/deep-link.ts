@@ -102,8 +102,7 @@ export function handleDeepLink(url: string, tabManager: TabManager): void {
     }
 
     const payload = `${keledonId}:${userId}:${timestamp}`;
-    const launchSecret = process.env.KELEDON_LAUNCH_SECRET || process.env.KELDEON_LAUNCH_SECRET || 'keledon-default-secret';
-    const expectedSignature = crypto.createHmac('sha256', launchSecret)
+    const expectedSignature = crypto.createHmac('sha256', process.env.KELEDON_LAUNCH_SECRET || process.env.KELDEON_LAUNCH_SECRET || 'keledon-default-secret')
       .update(payload).digest('hex').substring(0, 16);
 
     if (signature === expectedSignature) {

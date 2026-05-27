@@ -19,6 +19,8 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   # 1. Build Electron installer on Windows
   # ─────────────────────────────────────────────────────────────────────────────
+  
+
   build-browser:
     runs-on: windows-latest
     defaults:
@@ -53,6 +55,30 @@ jobs:
           echo "path=browser/dist/$($exe.Name)" >> $env:GITHUB_OUTPUT
           echo "name=$($exe.Name)" >> $env:GITHUB_OUTPUT
           Write-Host "Installer: $($exe.FullName)"
+
+      # Verify installer name matches expected
+      - name: Verify installer name
+        shell: pwsh
+        run: |
+          $expected = "KELEDON.Browser.Setup.exe"
+          $actual = "${{ steps.find_installer.outputs.name }}"
+          if ($actual -ne $expected) {
+            Write-Error "Unexpected installer name: $actual (expected $expected)"
+            exit 1
+          } else {
+            Write-Host "Installer name verification passed."
+          }
+
+      - name: Generate SHA256 checksum for installer
+        id: checksum
+        shell: pwsh
+        run: |
+          $exePath = "${{ steps.find_installer.outputs.path }}"
+          $hash = Get-FileHash -Path $exePath -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+          $checksumFile = "$exePath.sha256"
+          Set-Content -Path $checksumFile -Value $hash
+          Write-Host "Checksum: $hash"
+          echo "checksum_file=$checksumFile" >> $env:GITHUB_OUTPUT
 
       - name: Sign installer with Azure Trusted Signing
         # Activate by setting AZURE_SIGNING_ENABLED=true in repo Variables and
@@ -107,6 +133,7 @@ jobs:
           files: |
             browser/dist/${{ steps.find_installer.outputs.name }}
             browser/dist/${{ steps.create_zip.outputs.zip_name }}
+            ${{ steps.checksum.outputs.checksum_file }}
           generate_release_notes: true
           fail_on_unmatched_files: true
         env:
@@ -117,6 +144,11 @@ jobs:
   # Note: Railway auto-deploys from main branch merges. This step calls the
   # deploy hook URL (if set) for an explicit release redeploy. Non-blocking.
   # ─────────────────────────────────────────────────────────────────────────────
+  #
+  # NOTE: This workflow requires a GITHUB_TOKEN with the "workflow" scope to
+  # create releases and upload assets. Ensure the token has that permission if
+  # you modify this file.
+  #
   deploy-cloud:
     runs-on: ubuntu-latest
     needs: build-browser
@@ -133,3 +165,27 @@ jobs:
           fi
         env:
           RAILWAY_DEPLOY_HOOK: ${{ secrets.RAILWAY_DEPLOY_HOOK }}
+      - name: Verify published assets (Gate 4 sanity check)
+        if: ${{ success() }}
+        shell: pwsh
+        run: |
+          # Retrieve the release URL (GitHub automatically sets GITHUB_SERVER_URL and GITHUB_REPOSITORY)
+          $releaseTag = "${{ github.ref_name }}"
+          $apiUrl = "https://api.github.com/repos/${{ github.repository }}/releases/tags/$releaseTag"
+          $releaseJson = Invoke-RestMethod -Uri $apiUrl -Headers @{ Authorization = "token ${{ secrets.GITHUB_TOKEN }}" }
+          $installerAsset = $releaseJson.assets | Where-Object { $_.name -eq "KELEDON.Browser.Setup.exe" }
+          $checksumAsset = $releaseJson.assets | Where-Object { $_.name -eq "KELEDON.Browser.Setup.exe.sha256" }
+          if (-not $installerAsset) { Write-Error "Installer asset missing in release"; exit 1 }
+          if (-not $checksumAsset) { Write-Error "Checksum asset missing in release"; exit 1 }
+          # Download assets to temp folder
+          $tmp = New-Item -ItemType Directory -Path (Join-Path $env:TEMP "keledon_verify") -Force
+          $installerPath = Join-Path $tmp "KELEDON.Browser.Setup.exe"
+          $checksumPath = Join-Path $tmp "KELEDON.Browser.Setup.exe.sha256"
+          Invoke-WebRequest -Uri $installerAsset.browser_download_url -OutFile $installerPath -Headers @{ Authorization = "token ${{ secrets.GITHUB_TOKEN }}" }
+          Invoke-WebRequest -Uri $checksumAsset.browser_download_url -OutFile $checksumPath -Headers @{ Authorization = "token ${{ secrets.GITHUB_TOKEN }}" }
+          # Compute SHA256 and compare
+          $computed = Get-FileHash -Path $installerPath -Algorithm SHA256 | Select-Object -ExpandProperty Hash
+          $expected = Get-Content -Path $checksumPath -Raw
+          if ($computed -ne $expected) { Write-Error "Checksum mismatch: $computed != $expected"; exit 1 }
+          Write-Host "✅ Published assets verified successfully."
+
