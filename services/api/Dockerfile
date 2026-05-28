@@ -6,9 +6,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm install --omit=dev && \
-    npx prisma@5.22.0 generate && \
+RUN npx prisma@5.22.0 generate && \
     npx tsc -p tsconfig.mvp.json
+RUN npm install --omit=dev
 
 FROM node:20-slim
 WORKDIR /app
