@@ -8,7 +8,7 @@ import { EscalationService } from '../services/escalation.service';
 @Module({
   imports: [PrismaModule],
   controllers: [CallsController],
-  providers: [CallsService, DecisionEngineService, EscalationService],
+  providers: [CallsService, EscalationService],
   exports: [CallsService],
 })
 export class CallsModule {}
