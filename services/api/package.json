@@ -18,6 +18,7 @@
     "dev:full": "concurrently \"npm run dev:vector-store\" \"cd ../landing && npm run dev\"",
     "prepare:env": "echo 'Environment preparation complete'",
     "seed": "npx ts-node scripts/seed-main-data.ts",
+    "seed:operational": "npx ts-node scripts/seed-operational-data.ts",
     "db:push": "npx prisma db push",
     "proof:c07:local": "node scripts/c07-local-proof.js --dev-only-bootstrap",
     "proof:c09:local": "node scripts/c09-local-proof.js --dev-only-bootstrap",
