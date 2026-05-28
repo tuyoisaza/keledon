@@ -1,19 +1,11 @@
 # KELEDON Web Service — Vite/React static site
-#
-# Source code comes from git clone (avoids WSL COPY null byte corruption).
-# The source stage clones the repo; later stages COPY --from=source.
-# Only small config files (nginx.conf) come from build context.
-
-FROM node:20-alpine AS source
-WORKDIR /tmp/repo
-RUN apk add --no-cache git
-RUN git clone --depth 1 https://github.com/tuyoisaza/KELEDON.git /tmp/repo
+# Deploys from native Linux filesystem build context (no git clone source stage).
 
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY --from=source /tmp/repo/services/web/package*.json ./
+COPY package*.json ./
 RUN npm ci
-COPY --from=source /tmp/repo/services/web . .
+COPY . .
 RUN rm -f tsconfig.json tsconfig.node.json tsconfig.app.json
 ARG VITE_API_URL=/api
 ENV VITE_API_URL=$VITE_API_URL
