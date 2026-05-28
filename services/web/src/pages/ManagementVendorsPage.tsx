@@ -3,6 +3,7 @@ import { Store, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X, Key, Lock }
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { getVendors, createVendor, updateVendor, deleteVendor, getTeams, getBrands, type Vendor, type Team, type Brand } from '@/lib/crud-api';
+import VendorConnectionChecklist from '@/components/phase4/VendorConnectionChecklist';
 
 const VENDOR_TYPES = [
     { value: 'crm', label: 'CRM' },
@@ -201,6 +202,8 @@ export default function ManagementVendorsPage() {
                     className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg pl-10 pr-4 py-2"
                 />
             </div>
+
+            <VendorConnectionChecklist />
 
             {loading ? (
                 <div className="flex items-center justify-center py-12">

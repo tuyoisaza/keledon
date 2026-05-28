@@ -3,6 +3,7 @@ import { getCompanies, getUsers, getSessions } from '@/lib/crud-api';
 import { Filter, RefreshCw, Radio } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
+import CallMonitorPlaceholder from '@/components/phase4/CallMonitorPlaceholder';
 
 export default function SessionsLivePage() {
     const { user } = useAuth();
@@ -111,6 +112,8 @@ export default function SessionsLivePage() {
                     </button>
                 </div>
             )}
+
+            <CallMonitorPlaceholder />
 
             <div className="rounded-xl border border-border bg-card overflow-hidden">
                 <table className="w-full">

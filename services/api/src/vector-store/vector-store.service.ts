@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { QdrantClient } from '@qdrant/qdrant-js';
 import * as crypto from 'crypto';
 
@@ -21,6 +22,9 @@ export class VectorStoreService {
       vector[i] = (hash[i] / 255) * 2 - 1;
     }
     const norm = Math.sqrt(vector.reduce((sum, val) => sum + val * val, 0));
+    if (norm === 0) {
+      return vector;
+    }
     return vector.map(v => v / norm);
   }
 
@@ -44,6 +48,43 @@ export class VectorStoreService {
         distance: 'Cosine',
       };
     }
+  }
+
+  async getCollections(prefix?: string) {
+    const normalizedPrefix = this.normalizeAllowedCollectionPrefix(prefix);
+    const response = await this.qdrant.getCollections();
+    const collections = (response as any)?.collections || [];
+
+    return {
+      collections: collections
+        .map((collection: any) => ({
+          name: String(collection.name || ''),
+        }))
+        .filter((collection: { name: string }) => {
+          if (normalizedPrefix) {
+            return collection.name.startsWith(normalizedPrefix);
+          }
+
+          return collection.name === this.collectionName;
+        }),
+    };
+  }
+
+  async getCollectionStats(name: string) {
+    this.assertSafeCollectionName(name);
+    const normalizedName = name.trim();
+    const collection = await this.qdrant.getCollection(normalizedName);
+    const result = collection as any;
+
+    return {
+      name: normalizedName,
+      pointsCount: result.points_count || result.points || 0,
+      indexedVectorsCount: result.indexed_vectors_count || 0,
+      vectorSize: result.config?.params?.vectors?.size || this.vectorSize,
+      distance: result.config?.params?.vectors?.distance || 'Cosine',
+      status: result.status || 'green',
+      optimizerStatus: result.optimizer_status || null,
+    };
   }
 
   async addDocument(document: any) {
@@ -149,6 +190,45 @@ export class VectorStoreService {
       };
     } catch (error) {
       return { documents: [] };
+    }
+  }
+
+  private normalizeAllowedCollectionPrefix(prefix?: string): string | undefined {
+    if (typeof prefix !== 'string' || prefix.trim().length === 0) {
+      return undefined;
+    }
+
+    const normalizedPrefix = prefix.trim();
+    if (normalizedPrefix === 'knowledge-base-' || normalizedPrefix.startsWith('knowledge-base-')) {
+      throw new BadRequestException(
+        'Tenant knowledge-base collections are not exposed by this endpoint',
+      );
+    }
+
+    if (normalizedPrefix !== this.collectionName) {
+      throw new BadRequestException(
+        `Unsupported collection prefix. Allowed prefix: ${this.collectionName}`,
+      );
+    }
+
+    return normalizedPrefix;
+  }
+
+  private assertSafeCollectionName(name: string): void {
+    if (typeof name !== 'string' || name.trim().length === 0) {
+      throw new BadRequestException('Collection name is required');
+    }
+
+    const normalizedName = name.trim();
+
+    if (normalizedName === 'knowledge-base-' || normalizedName.startsWith('knowledge-base-')) {
+      throw new BadRequestException(
+        'Tenant knowledge-base collections are not exposed by this endpoint',
+      );
+    }
+
+    if (normalizedName !== this.collectionName) {
+      throw new BadRequestException(`Collection name must be ${this.collectionName}`);
     }
   }
 }

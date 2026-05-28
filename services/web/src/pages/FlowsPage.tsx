@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Workflow, Plus, Settings } from 'lucide-react';
+import FlowBuilderPlaceholder from '@/components/phase4/RpaFlowBuilderPreview';
 
 export default function FlowsPage() {
     return (
@@ -27,6 +28,8 @@ export default function FlowsPage() {
                     Use the Vector Store to add knowledge documents for the AI agent.
                 </p>
             </div>
+
+            <FlowBuilderPlaceholder />
         </div>
     );
 }

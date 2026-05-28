@@ -365,4 +365,21 @@ export class AuditInterceptor implements NestInterceptor {
       return value;
     };
   }
+
+  private stringifyAuditPayload(value: any): string {
+    return JSON.stringify(value, this.sanitizeBody());
+  }
+
+  private isSecretLikeString(value: string): boolean {
+    const secretLikePatterns = [
+      /bearer\s+[a-z0-9._-]+/i,
+      /sk-[a-z0-9]{12,}/i,
+      /api[_-]?key/i,
+      /authorization/i,
+      /password/i,
+      /secret/i,
+      /token/i,
+    ];
+    return secretLikePatterns.some((pattern) => pattern.test(value));
+  }
 }

@@ -4,6 +4,7 @@ import { API_URL } from '@/lib/config';
 import { vectorStoreAPI, type PolicyDocument, type VectorStoreStatus } from '@/lib/vector-store';
 import { getCompanies, getBrands, getTeams, type Company, type Brand, type Team } from '@/lib/crud-api';
 import { getBrandsForCompany, getTeamsForBrand, readPlainTextFile } from '@/lib/knowledge-source-utils.js';
+import KnowledgeSourceWizard from '@/components/phase4/TrainingUploadPlaceholder';
 
 interface KnowledgeDocument {
     id: string;
@@ -575,6 +576,8 @@ export default function KnowledgePage() {
                     </div>
                 </div>
             )}
+
+            <KnowledgeSourceWizard />
         </div>
     );
 }

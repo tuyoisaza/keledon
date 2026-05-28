@@ -35,6 +35,9 @@ import { STTModule } from './stt/stt.module';
 import { AppConfigModule } from './config/config.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuditInterceptor } from './interceptors/audit.interceptor';
+import { KnowledgeModule } from './knowledge/knowledge.module';
+import { CallsModule } from './calls/calls.module';
+import { BrowserCommandsModule } from './browser-commands/browser-commands.module';
 
 @Module({
   imports: [
@@ -50,6 +53,9 @@ import { AuditInterceptor } from './interceptors/audit.interceptor';
     CrudModule,
     TTSModule,
     VectorStoreModule,
+    KnowledgeModule,
+    CallsModule,
+    BrowserCommandsModule,
     FlowModule,
     SubAgentModule,
     DeviceModule,
