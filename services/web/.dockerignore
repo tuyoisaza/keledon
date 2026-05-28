@@ -12,4 +12,5 @@ test
 README.md
 Dockerfile
 .dockerignore
-*.md
+# macOS resource forks
+._*
