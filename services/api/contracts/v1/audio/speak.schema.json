@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://keledon.com/contracts/v1/audio/speak.schema.json",
+  "title": "Speak Command",
+  "description": "TTS input for text-to-speech processing",
+  "type": "object",
+  "required": ["text", "provider", "timestamp"],
+  "properties": {
+    "text": {
+      "type": "string",
+      "description": "Text to be converted to speech"
+    },
+    "provider": {
+      "type": "string",
+      "enum": ["elevenlabs", "local", "azure", "google", "aws"],
+      "description": "TTS provider name"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when command was generated"
+    },
+    "voice": {
+      "type": "string",
+      "description": "Voice ID or name to use"
+    },
+    "language": {
+      "type": "string",
+      "description": "Language code (e.g., 'en-US', 'es-ES')"
+    },
+    "speed": {
+      "type": "number",
+      "minimum": 0.25,
+      "maximum": 4.0,
+      "default": 1.0,
+      "description": "Speech speed multiplier"
+    },
+    "pitch": {
+      "type": "number",
+      "minimum": -20.0,
+      "maximum": 20.0,
+      "default": 0.0,
+      "description": "Pitch adjustment in semitones"
+    },
+    "volume": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "default": 1.0,
+      "description": "Volume level (0.0 = silent, 1.0 = full volume)"
+    },
+    "interruptible": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this speech can be interrupted by new input"
+    },
+    "emotion": {
+      "type": "string",
+      "enum": ["neutral", "happy", "sad", "angry", "excited", "calm"],
+      "default": "neutral",
+      "description": "Emotional tone for the speech"
+    },
+    "ssml": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether text contains SSML markup"
+    },
+    "format": {
+      "type": "string",
+      "enum": ["mp3", "wav", "ogg", "pcm"],
+      "default": "mp3",
+      "description": "Output audio format"
+    },
+    "sample_rate": {
+      "type": "integer",
+      "enum": [8000, 16000, 22050, 44100, 48000],
+      "default": 22050,
+      "description": "Audio sample rate"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Provider-specific metadata",
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "Model to use for generation"
+        },
+        "voice_settings": {
+          "type": "object",
+          "description": "Provider-specific voice settings"
+        },
+        "output_format": {
+          "type": "string",
+          "description": "Detailed output format specification"
+        }
+      }
+    }
+  }
+}

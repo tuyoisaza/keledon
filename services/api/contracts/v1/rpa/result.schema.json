@@ -1,0 +1,154 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://keledon.com/contracts/v1/rpa/result.schema.json",
+  "title": "RPA Step Result",
+  "description": "Result of executing a single RPA step",
+  "type": "object",
+  "required": ["step_id", "status", "timestamp"],
+  "properties": {
+    "step_id": {
+      "type": "string",
+      "description": "Identifier of the step that was executed"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["success", "failure", "timeout"],
+      "description": "Execution status of the step"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when step completed"
+    },
+    "duration_ms": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Execution duration in milliseconds"
+    },
+    "result": {
+      "type": "object",
+      "description": "Result data from successful execution",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "Text content (for read actions)"
+        },
+        "attribute": {
+          "type": "string",
+          "description": "Attribute value (for read attribute actions)"
+        },
+        "element_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of elements found"
+        },
+        "element_state": {
+          "type": "object",
+          "description": "Element state information",
+          "properties": {
+            "visible": {
+              "type": "boolean"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "selected": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "description": "Error details for failed execution",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "element_not_found",
+            "element_not_visible",
+            "element_not_interactable",
+            "timeout",
+            "selector_invalid",
+            "javascript_error",
+            "network_error",
+            "permission_denied",
+            "unknown_error"
+          ],
+          "description": "Machine-readable error code"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message"
+        },
+        "details": {
+          "type": "object",
+          "description": "Additional error details",
+          "properties": {
+            "selector": {
+              "type": "string",
+              "description": "Selector that failed"
+            },
+            "attempt": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Which attempt failed"
+            },
+            "stack_trace": {
+              "type": "string",
+              "description": "JavaScript stack trace (if applicable)"
+            },
+            "page_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Current page URL when error occurred"
+            }
+          }
+        }
+      }
+    },
+    "screenshot": {
+      "type": "object",
+      "description": "Screenshot captured at point of failure (if enabled)",
+      "properties": {
+        "data_url": {
+          "type": "string",
+          "format": "data-url",
+          "description": "Base64 encoded screenshot"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Screenshot width"
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Screenshot height"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional result metadata",
+      "properties": {
+        "retry_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of retries attempted"
+        },
+        "tab_id": {
+          "type": "string",
+          "description": "Browser tab ID where step executed"
+        },
+        "page_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Page URL after step execution"
+        }
+      }
+    }
+  }
+}

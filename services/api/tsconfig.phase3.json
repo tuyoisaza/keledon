@@ -1,0 +1,34 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/phase3",
+    "rootDir": "./src",
+    "baseUrl": "./src"
+  },
+  "include": [
+    "src/phase3/decision-engine/**/*.ts",
+    "src/phase3/ui-automation/**/*.ts",
+    "src/phase3/voice-analytics/**/*.ts",
+    "src/phase3/agent-orchestration/**/*.ts",
+    "src/phase3/side-panel-intelligence/**/*.ts",
+    "src/phase3/observability/**/*.ts",
+    "src/entities/session.entity.ts",
+    "src/entities/event.entity.ts",
+    "src/services/database-health.service.ts",
+    "src/services/vector-health.service.ts",
+    "src/services/session.service.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts",
+    "src/ui-automation/**",
+    "src/voice-analytics/**",
+    "src/decision-engine/**",
+    "src/gateways/**",
+    "src/controllers/**",
+    "src/auth-*",
+    "src/local-services/**",
+    "src/modules/**",
+    "src/supabase-clean/**",
+    "src/MinimalCloudServer.ts"
+  ]
+}

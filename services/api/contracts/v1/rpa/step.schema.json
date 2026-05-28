@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://keledon.com/contracts/v1/rpa/step.schema.json",
+  "title": "RPA Step",
+  "description": "Definition of a single RPA automation step",
+  "type": "object",
+  "required": ["id", "action", "selector"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for this step within the flow"
+    },
+    "action": {
+      "type": "string",
+      "enum": ["click", "fill", "read", "wait_for", "navigate", "select", "assert", "hover"],
+      "description": "Action to perform"
+    },
+    "selector": {
+      "type": "string",
+      "description": "CSS selector or XPath to locate element"
+    },
+    "value": {
+      "type": "string",
+      "description": "Value to input (for fill, select actions)"
+    },
+    "text": {
+      "type": "string",
+      "description": "Expected text (for assert action)"
+    },
+    "attribute": {
+      "type": "string",
+      "description": "Attribute to read (for read action)"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to navigate to (for navigate action)"
+    },
+    "option": {
+      "type": "string",
+      "description": "Option value to select (for select action)"
+    },
+    "timeout_ms": {
+      "type": "number",
+      "minimum": 0,
+      "default": 5000,
+      "description": "Timeout in milliseconds for this step"
+    },
+    "condition": {
+      "type": "object",
+      "description": "Pre-condition check before executing step",
+      "properties": {
+        "element_exists": {
+          "type": "boolean",
+          "description": "Whether element must exist before execution"
+        },
+        "element_visible": {
+          "type": "boolean",
+          "description": "Whether element must be visible before execution"
+        },
+        "element_enabled": {
+          "type": "boolean",
+          "description": "Whether element must be enabled before execution"
+        }
+      }
+    },
+    "post_condition": {
+      "type": "object",
+      "description": "Post-condition validation after execution",
+      "properties": {
+        "element_exists": {
+          "type": "boolean",
+          "description": "Whether element should exist after execution"
+        },
+        "element_visible": {
+          "type": "boolean",
+          "description": "Whether element should be visible after execution"
+        },
+        "text_contains": {
+          "type": "string",
+          "description": "Text that should be present after execution"
+        }
+      }
+    },
+    "retry": {
+      "type": "object",
+      "description": "Retry configuration",
+      "properties": {
+        "max_attempts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "default": 1,
+          "description": "Maximum number of retry attempts"
+        },
+        "delay_ms": {
+          "type": "number",
+          "minimum": 0,
+          "default": 1000,
+          "description": "Delay between retries in milliseconds"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional step metadata"
+    }
+  }
+}

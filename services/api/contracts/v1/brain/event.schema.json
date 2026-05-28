@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://keledon.com/contracts/v1/brain/event.schema.json",
+  "title": "Brain Event",
+  "description": "Canonical event schema for Agent→Cloud communication",
+  "type": "object",
+  "required": ["event_id", "session_id", "timestamp", "type", "payload"],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "session_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Identifier for the current conversation session"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when event was generated"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["text_input", "ui_result", "system"],
+      "description": "Type of event being sent"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Event payload, structure depends on type",
+      "oneOf": [
+        {
+          "title": "Text Input Payload",
+          "description": "Payload for text_input events (STT output)",
+          "type": "object",
+          "required": ["text", "confidence", "provider"],
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "Transcribed text from speech"
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Confidence score from STT provider"
+            },
+            "provider": {
+              "type": "string",
+              "description": "STT provider name (e.g., 'deepgram', 'local')"
+            },
+            "metadata": {
+              "type": "object",
+              "description": "Additional provider-specific metadata"
+            }
+          }
+        },
+        {
+          "title": "UI Result Payload",
+          "description": "Payload for ui_result events (RPA execution results)",
+          "type": "object",
+          "required": ["flow_id", "step_id", "status"],
+          "properties": {
+            "flow_id": {
+              "type": "string",
+              "description": "Identifier of the flow being executed"
+            },
+            "step_id": {
+              "type": "string",
+              "description": "Identifier of the step that was executed"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["success", "failure", "timeout"],
+              "description": "Execution status of the step"
+            },
+            "result": {
+              "type": "object",
+              "description": "Result data from successful execution"
+            },
+            "error": {
+              "type": "object",
+              "description": "Error details for failed execution",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "Error code"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Error message"
+                },
+                "details": {
+                  "type": "object",
+                  "description": "Additional error details"
+                }
+              }
+            },
+            "duration_ms": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Execution duration in milliseconds"
+            }
+          }
+        },
+        {
+          "title": "System Payload",
+          "description": "Payload for system events (lifecycle, errors, etc.)",
+          "type": "object",
+          "required": ["event"],
+          "properties": {
+            "event": {
+              "type": "string",
+              "enum": ["call_started", "call_ended", "error", "connection_lost", "connection_restored"],
+              "description": "System event type"
+            },
+            "data": {
+              "type": "object",
+              "description": "Event-specific data"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,63 @@
+runtime: nodejs20
+
+# Simple configuration without problematic mappings
+manual_scaling:
+  instances: 1
+
+# Basic resource limits
+resources:
+  cpu: 1
+  memory_gb: 0.5
+  disk_size_gb: 5
+
+# Network configuration
+network:
+  forwarded_ports:
+    - 80
+    instance_tag: keledon-backend
+
+# Basic handlers
+handlers:
+  - url: /.*
+    script: auto
+    secure: always
+    timeout: 60s
+    resources:
+      cpu: 1
+      memory_gb: 0.5
+      timeout: 60s
+
+  - url: /health
+    script: auto
+    secure: always
+    timeout: 30s
+    resources:
+      cpu: 0.5
+      memory_gb: 0.256
+
+  - url: /api/.*
+    script: auto
+    secure: always
+    timeout: 300s
+    resources:
+      cpu: 1
+      memory_gb: 1
+      timeout: 300s
+
+# Skip files to speed up deployment
+skip_files:
+  - node_modules
+  - dist
+  - .env
+  - Dockerfile
+  - gcloudignore
+  - docker-compose.*
+
+# Simple health check
+probes:
+  health_check:
+    path: /health
+    check_interval_sec: 30
+    timeout_sec: 10
+    failure_threshold: 2
+    success_threshold: 2

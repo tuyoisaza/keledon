@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://keledon.com/contracts/v1/device/pairing.schema.json",
+  "title": "Device Pairing",
+  "description": "Schema for device registration and pairing",
+  "type": "object",
+  "properties": {
+    "pairing_request": {
+      "type": "object",
+      "required": ["device_id", "machine_id", "pairing_code", "platform", "name"],
+      "properties": {
+        "device_id": {
+          "type": "string",
+          "description": "Unique device identifier generated locally"
+        },
+        "machine_id": {
+          "type": "string",
+          "description": "Hash of machine characteristics"
+        },
+        "pairing_code": {
+          "type": "string",
+          "pattern": "^[A-Z]{4}-[0-9]{4}$",
+          "description": "User-entered pairing code from web UI"
+        },
+        "platform": {
+          "type": "string",
+          "enum": ["win32", "darwin", "linux"]
+        },
+        "name": {
+          "type": "string",
+          "description": "Device name (e.g., hostname)"
+        }
+      }
+    },
+    "pairing_response": {
+      "type": "object",
+      "properties": {
+        "device_id": {
+          "type": "string"
+        },
+        "auth_token": {
+          "type": "string",
+          "description": "JWT token for cloud authentication"
+        },
+        "cloud_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "device_status": {
+      "type": "object",
+      "properties": {
+        "device_id": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "paired", "disconnected", "revoked"]
+        },
+        "last_seen": { "type": "string", "format": "date-time" },
+        "organization_id": { "type": "string" }
+      }
+    }
+  }
+}

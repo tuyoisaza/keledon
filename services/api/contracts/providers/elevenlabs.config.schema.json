@@ -1,0 +1,105 @@
+{
+  "$id": "https://keledon.com/providers/elevenlabs.config.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ElevenLabs Provider Configuration",
+  "description": "Configuration schema for ElevenLabs TTS provider",
+  "type": "object",
+  "properties": {
+    "apiKey": {
+      "type": "string",
+      "description": "ElevenLabs API key",
+      "minLength": 1
+    },
+    "voice": {
+      "type": "string",
+      "description": "Voice ID or name",
+      "default": "Rachel"
+    },
+    "model": {
+      "type": "string",
+      "description": "TTS model to use",
+      "enum": ["eleven_monolingual_v1", "eleven_multilingual_v1", "eleven_multilingual_v2", "eleven_turbo_v2"],
+      "default": "eleven_monolingual_v1"
+    },
+    "language": {
+      "type": "string",
+      "description": "Language code (e.g., 'en', 'es', 'fr')",
+      "default": "en"
+    },
+    "voiceDescription": {
+      "type": "string",
+      "description": "Custom voice description for voice generation"
+    },
+    "speed": {
+      "type": "number",
+      "description": "Speech speed (0.25 to 4.0)",
+      "minimum": 0.25,
+      "maximum": 4.0,
+      "default": 1.0
+    },
+    "pitch": {
+      "type": "number",
+      "description": "Voice pitch (-20.0 to 20.0)",
+      "minimum": -20,
+      "maximum": 20,
+      "default": 0
+    },
+    "outputFormat": {
+      "type": "string",
+      "description": "Audio output format",
+      "enum": ["mp3_22050_32", "mp3_44100_32", "mp3_44100_64", "mp3_44100_96", "mp3_44100_128", "mp3_44100_192", "pcm_16000", "pcm_22050", "pcm_44100"],
+      "default": "mp3_44100_128"
+    },
+    "optimizeStreamingLatency": {
+      "type": "string",
+      "description": "Streaming latency optimization",
+      "enum": [0, 1, 2, 3, 4],
+      "default": "0"
+    },
+    "voiceSettings": {
+      "type": "object",
+      "properties": {
+        "stability": {
+          "type": "number",
+          "description": "Voice stability (0 to 1)",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.5
+        },
+        "similarityBoost": {
+          "type": "number",
+          "description": "Voice similarity boost (0 to 1)",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.5
+        },
+        "style": {
+          "type": "number",
+          "description": "Voice style (0 to 1)",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.0
+        },
+        "useSpeakerBoost": {
+          "type": "boolean",
+          "description": "Enable speaker boost",
+          "default": false
+        }
+      }
+    },
+    "pronunciationLocales": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Pronunciation locale preferences"
+    },
+    "endpoint": {
+      "type": "string",
+      "description": "Custom API endpoint",
+      "format": "uri"
+    }
+  },
+  "required": ["apiKey"],
+  "additionalProperties": false
+}

@@ -1,0 +1,627 @@
+openapi: 3.0.3
+info:
+  title: KELEDON Admin API
+  description: REST API for KELEDON administration and configuration
+  version: 1.0.0
+  contact:
+    name: KELEDON Team
+    email: support@keledon.com
+
+servers:
+  - url: https://api.keledon.com/v1
+    description: Production server
+  - url: https://staging-api.keledon.com/v1
+    description: Staging server
+  - url: http://localhost:3000/v1
+    description: Development server
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Returns the health status of the API
+      tags:
+        - System
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, unhealthy]
+                  timestamp:
+                    type: string
+                    format: date-time
+                  version:
+                    type: string
+
+  /auth/login:
+    post:
+      summary: Authenticate user
+      description: Authenticate with email/password or OAuth token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              oneOf:
+                - type: object
+                  title: Email/Password Login
+                  required: [email, password]
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                    password:
+                      type: string
+                      format: password
+                - type: object
+                  title: OAuth Login
+                  required: [provider, token]
+                  properties:
+                    provider:
+                      type: string
+                      enum: [google, microsoft, github]
+                    token:
+                      type: string
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [access_token, refresh_token, user]
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+                  expires_in:
+                    type: integer
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Authentication failed
+        '400':
+          description: Invalid request
+
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      description: Exchange refresh token for new access token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [access_token, expires_in]
+                properties:
+                  access_token:
+                    type: string
+                  expires_in:
+                    type: integer
+        '401':
+          description: Invalid refresh token
+
+  /config:
+    get:
+      summary: Get configuration
+      description: Retrieve current configuration for the authenticated user/tenant
+      tags:
+        - Configuration
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Configuration'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Configuration not found
+
+    put:
+      summary: Update configuration
+      description: Update configuration settings
+      tags:
+        - Configuration
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigurationUpdate'
+      responses:
+        '200':
+          description: Configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Configuration'
+        '400':
+          description: Invalid configuration
+        '401':
+          description: Unauthorized
+
+  /projects:
+    get:
+      summary: List projects
+      description: Retrieve list of projects accessible to the user
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Projects retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [projects, pagination]
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Project'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          description: Unauthorized
+
+    post:
+      summary: Create project
+      description: Create a new project
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreate'
+      responses:
+        '201':
+          description: Project created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: Invalid project data
+        '401':
+          description: Unauthorized
+
+  /projects/{projectId}:
+    get:
+      summary: Get project
+      description: Retrieve specific project details
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Project retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Project not found
+
+    put:
+      summary: Update project
+      description: Update project details
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectUpdate'
+      responses:
+        '200':
+          description: Project updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: Invalid project data
+        '401':
+          description: Unauthorized
+        '404':
+          description: Project not found
+
+    delete:
+      summary: Delete project
+      description: Delete a project
+      tags:
+        - Projects
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Project deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Project not found
+
+  /flows:
+    get:
+      summary: List flows
+      description: Retrieve list of automation flows
+      tags:
+        - Flows
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: projectId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Flows retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [flows, pagination]
+                properties:
+                  flows:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Flow'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          description: Unauthorized
+
+    post:
+      summary: Create flow
+      description: Create a new automation flow
+      tags:
+        - Flows
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlowCreate'
+      responses:
+        '201':
+          description: Flow created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flow'
+        '400':
+          description: Invalid flow data
+        '401':
+          description: Unauthorized
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      required: [id, email, name, role]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, user, viewer]
+        tenant_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Configuration:
+      type: object
+      required: [user_id, tenant_id]
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          format: uuid
+        stt:
+          type: object
+          properties:
+            provider:
+              type: string
+              enum: [deepgram, whisper, local]
+            api_key:
+              type: string
+            model:
+              type: string
+            language:
+              type: string
+        tts:
+          type: object
+          properties:
+            provider:
+              type: string
+              enum: [elevenlabs, local, azure]
+            api_key:
+              type: string
+            voice:
+              type: string
+            language:
+              type: string
+        llm:
+          type: object
+          properties:
+            provider:
+              type: string
+              enum: [openai, anthropic, local]
+            api_key:
+              type: string
+            model:
+              type: string
+            temperature:
+              type: number
+              minimum: 0
+              maximum: 2
+        features:
+          type: object
+          properties:
+            local_stt:
+              type: boolean
+            local_tts:
+              type: boolean
+            rpa_enabled:
+              type: boolean
+            rag_enabled:
+              type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ConfigurationUpdate:
+      type: object
+      properties:
+        stt:
+          $ref: '#/components/schemas/Configuration#/properties/stt'
+        tts:
+          $ref: '#/components/schemas/Configuration#/properties/tts'
+        llm:
+          $ref: '#/components/schemas/Configuration#/properties/llm'
+        features:
+          $ref: '#/components/schemas/Configuration#/properties/features'
+
+    Project:
+      type: object
+      required: [id, name, tenant_id, created_by]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        tenant_id:
+          type: string
+          format: uuid
+        created_by:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [active, inactive, archived]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ProjectCreate:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 500
+
+    ProjectUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 500
+        status:
+          type: string
+          enum: [active, inactive, archived]
+
+    Flow:
+      type: object
+      required: [id, name, project_id, version, steps]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        project_id:
+          type: string
+          format: uuid
+        version:
+          type: string
+        status:
+          type: string
+          enum: [draft, active, deprecated]
+        steps:
+          type: array
+          items:
+            $ref: '../rpa/step.schema.json'
+        created_by:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    FlowCreate:
+      type: object
+      required: [name, project_id, steps]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 500
+        project_id:
+          type: string
+          format: uuid
+        steps:
+          type: array
+          items:
+            $ref: '../rpa/step.schema.json'
+
+    Pagination:
+      type: object
+      required: [page, limit, total, total_pages]
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        limit:
+          type: integer
+          minimum: 1
+        total:
+          type: integer
+          minimum: 0
+        total_pages:
+          type: integer
+          minimum: 0
+        has_next:
+          type: boolean
+        has_prev:
+          type: boolean

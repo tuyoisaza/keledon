@@ -1,0 +1,23 @@
+{
+  "name": "keledon-backend",
+  "version": "1.0.0",
+  "description": "KELEDON Backend for Cloud Run",
+  "main": "dist/src/main.js",
+  "scripts": {
+    "start": "node dist/src/main.js",
+    "build": "nest build",
+    "start:prod": "node dist/src/main"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/platform-socket.io": "^11.1.12",
+    "@nestjs/websockets": "^11.1.12",
+    "@supabase/supabase-js": "^2.90.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "socket.io": "^4.8.3",
+    "dotenv": "^17.2.3"
+  }
+}

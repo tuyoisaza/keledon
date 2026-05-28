@@ -1,0 +1,24 @@
+runtime: nodejs20
+
+env_variables:
+  NODE_ENV: production
+  PORT: 8080
+  SUPABASE_URL: https://isoyzcvjoevyphnaznkl.supabase.co
+  SUPABASE_ANON_KEY: sb_publishable_9sKVxamNyK4CdXM-yH69qg_fEHRvHRa
+  SUPABASE_SERVICE_KEY: sb_secret_yqq_tgfKS_2BgKviwVn1lw_W_RbzJVV
+  DEFAULT_STT_PROVIDER: mock
+  DEFAULT_TTS_PROVIDER: mock
+
+automatic_scaling:
+  max_instances: 1
+  min_instances: 0
+
+resources:
+  cpu: 1
+  memory_gb: 0.5
+  disk_size_gb: 0.5
+
+handlers:
+  - url: /.*
+    script: auto
+    secure: always

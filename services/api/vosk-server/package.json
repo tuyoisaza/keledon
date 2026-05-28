@@ -1,0 +1,10 @@
+{
+  "name": "keledon-vosk-server",
+  "version": "1.0.0",
+  "description": "KELEDON VOSK STT Server - Real speech recognition",
+  "main": "server.py",
+  "scripts": {
+    "start": "python server.py",
+    "dev": "python server.py"
+  }
+}
