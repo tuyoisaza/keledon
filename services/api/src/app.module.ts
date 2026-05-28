@@ -25,7 +25,6 @@ import { SubAgentController } from './subagents/subagent.controller';
 import { DeviceModule } from './devices/device.module';
 import { DeviceController } from './devices/device.controller';
 import { LLMModule } from './llm/llm.module';
-import { EscalationController } from './controllers/escalation.controller';
 import { BrainController } from './controllers/brain.controller';
 import { VoiceModule } from './voice/voice.module';
 import { STTModule } from './stt/stt.module';
@@ -36,6 +35,7 @@ import { KnowledgeModule } from './knowledge/knowledge.module';
 import { CallsModule } from './calls/calls.module';
 import { BrowserCommandsModule } from './browser-commands/browser-commands.module';
 import { SessionModule } from './modules/session.module';
+import { EscalationModule } from './modules/escalation.module';
 
 @Module({
   imports: [
@@ -55,6 +55,7 @@ import { SessionModule } from './modules/session.module';
     KnowledgeModule,
     CallsModule,
     BrowserCommandsModule,
+    EscalationModule,
     FlowModule,
     SubAgentModule,
     DeviceModule,
@@ -71,7 +72,6 @@ import { SessionModule } from './modules/session.module';
     FlowController,
     SubAgentController,
     DeviceController,
-    EscalationController,
     BrainController,
   ],
   providers: [
