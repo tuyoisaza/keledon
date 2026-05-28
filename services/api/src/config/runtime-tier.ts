@@ -33,6 +33,7 @@ const ENDPOINT_SPECS: EndpointSpec[] = [
     canonicalEnv: 'KELEDON_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT',
     legacyEnv: ['OTEL_EXPORTER_OTLP_TRACES_ENDPOINT'],
     devLocalDefault: 'http://localhost:4318/v1/traces',
+    optional: true,
   },
 ];
 
@@ -190,9 +191,12 @@ export async function assertManagedRuntimeDependencies(): Promise<void> {
       headers: qdrantHeaders,
     });
   }
-  await assertReachable('OTel exporter', endpoints.otelExporterUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: '{"resourceSpans":[]}',
-  });
+  const otelConfigured = (process.env.KELEDON_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || '').trim();
+  if (otelConfigured) {
+    await assertReachable('OTel exporter', endpoints.otelExporterUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{"resourceSpans":[]}',
+    });
+  }
 }
