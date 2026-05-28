@@ -4,6 +4,7 @@ import { AILoopService } from '../services/ai-loop.service';
 import { VoiceAnalyticsService } from '../services/voice-analytics.service';
 import { IntegrationHealthService } from '../services/integration-health.service';
 import { FlowExecutionService } from '../services/flow-execution.service';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 export interface AgentStatusFilters {
   status?: string;
@@ -16,6 +17,7 @@ export interface TimeRange {
   period?: '1h' | '24h' | '7d' | '30d';
 }
 
+@ApiTags('Dashboard')
 @Controller('api/dashboard')
 export class DashboardController {
   constructor(

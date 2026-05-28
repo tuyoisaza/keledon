@@ -33,6 +33,8 @@ import { BrainController } from './controllers/brain.controller';
 import { VoiceModule } from './voice/voice.module';
 import { STTModule } from './stt/stt.module';
 import { AppConfigModule } from './config/config.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AuditInterceptor } from './interceptors/audit.interceptor';
 
 @Module({
   imports: [
@@ -77,6 +79,10 @@ import { AppConfigModule } from './config/config.module';
     EscalationService,
     TeamController,
     MvpStoreService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditInterceptor,
+    },
   ],
   exports: [SessionService, DatabaseHealthService, TTSModule, VectorStoreModule, FlowModule, SubAgentModule],
 })

@@ -1,11 +1,14 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { SubAgentService } from './subagent.service';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('SubAgents')
 @Controller('api/subagents')
 export class SubAgentController {
   constructor(private readonly subAgentService: SubAgentService) {}
 
   @Post('session/:sessionId/init')
+  @ApiOperation({ summary: 'Initialize sub-agents for a session' })
   async initializeSession(@Param('sessionId') sessionId: string) {
     const agents = await this.subAgentService.initializeSession(sessionId);
     return { success: true, agents };

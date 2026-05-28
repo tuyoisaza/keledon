@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { MvpStoreService } from '../mvp/mvp-store.service';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('MVP Data')
 @Controller('api')
 export class MvpDataController {
   constructor(private readonly mvpStore: MvpStoreService) {}

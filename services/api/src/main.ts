@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { trace } from '@opentelemetry/api';
 import { startTelemetry } from './telemetry/otel';
@@ -8,6 +9,8 @@ import {
   isManagedProductionTier,
   resolveCorsOrigins,
 } from './config/runtime-tier';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AuthGuard } from './guards/auth.guard';
 
 // Global error handlers - must be first
 process.on('uncaughtException', (err) => {
@@ -66,6 +69,11 @@ async function bootstrap() {
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       credentials: true,
     });
+
+    // Register AuthGuard as a global guard — applies to all routes
+    // Routes with @Public() decorator are skipped
+    const reflector = app.get(Reflector);
+    app.useGlobalGuards(new AuthGuard(reflector));
     
     const port = process.env.PORT || 9999;
     const host = process.env.HOST || '0.0.0.0';
@@ -73,6 +81,17 @@ async function bootstrap() {
     if (isManagedProductionTier(runtimeTier) && !process.env.DATABASE_URL) {
       throw new Error('[Bootstrap] DATABASE_URL is required in PRODUCTION_MANAGED (Railway + Prisma contract).');
     }
+
+    // Swagger / OpenAPI documentation
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('KELEDON API')
+      .setDescription('Agentic browser automation backend')
+      .setVersion('0.3.0')
+      .addBearerAuth()
+      .build();
+    const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('api/docs', app, swaggerDocument);
+    console.log('[Bootstrap] Swagger UI available at /api/docs');
 
     await app.listen(port, host);
 

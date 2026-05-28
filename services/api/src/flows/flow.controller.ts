@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { FlowService } from './flow.service';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('Flows')
 @Controller('api/flows')
 export class FlowController {
   constructor(private readonly flowService: FlowService) {}

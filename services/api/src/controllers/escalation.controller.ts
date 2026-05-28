@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Param, Query, Body } from '@nestjs/common';
 import { EscalationService } from '../services/escalation.service';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('Escalations')
 @Controller('api/escalations')
 export class EscalationController {
   constructor(private readonly escalationService: EscalationService) {}

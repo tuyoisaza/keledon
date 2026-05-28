@@ -1,153 +1,191 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import * as fs from 'fs';
-
-interface SimpleUser {
-  id: string;
-  email: string;
-  name: string;
-  provider: string;
-  company_id?: string;
-  team_id?: string;
-  role?: string;
-  last_session?: string;
-}
+import * as crypto from 'crypto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class LocalAuthService {
-  private usersFile = '/app/data/google_users.json';
-  private users: SimpleUser[] = [];
+  private readonly authSecret: string;
 
-  constructor() {
-    // Reset users file if it has old Date.now() IDs
-    if (fs.existsSync(this.usersFile)) {
-      const oldUsers = JSON.parse(fs.readFileSync(this.usersFile, 'utf-8'));
-      const hasBadIds = oldUsers.some((u: any) => u.id.match(/^google_\d+$/));
-      if (hasBadIds) {
-        console.log('[Auth] Clearing users with old ID format');
-        fs.unlinkSync(this.usersFile);
-      }
+  constructor(private prisma: PrismaService) {
+    this.authSecret =
+      process.env.KELEDON_AUTH_SECRET || 'keledon-dev-secret-do-not-use-in-production';
+    if (!process.env.KELEDON_AUTH_SECRET) {
+      console.warn(
+        '[LocalAuth] WARNING: KELEDON_AUTH_SECRET not set. Using insecure default for development.',
+      );
     }
-    this.loadUsers();
-  }
-
-  private loadUsers() {
-    try {
-      if (fs.existsSync(this.usersFile)) {
-        this.users = JSON.parse(fs.readFileSync(this.usersFile, 'utf-8'));
-      }
-    } catch (e) {
-      this.users = [];
-    }
-  }
-
-  private saveUsers() {
-    const dir = '/app/data';
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(this.usersFile, JSON.stringify(this.users, null, 2));
-  }
-
-  async findOrCreateGoogleUser(googleUser: any): Promise<SimpleUser> {
-    const newId = 'google_' + googleUser.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '_');
-    let user = this.users.find(u => u.email === googleUser.email);
-    
-    if (!user) {
-      user = {
-        id: newId,
-        email: googleUser.email,
-        name: googleUser.name || googleUser.email.split('@')[0],
-        provider: 'google',
-        company_id: 'default-company',
-        role: 'superadmin',
-      };
-      this.users.push(user);
-    } else {
-      // Force update to email-based ID format
-      user.id = newId;
-    }
-    user.last_session = new Date().toISOString();
-    this.saveUsers();
-    
-    return user;
   }
 
   async register(email: string, password: string, name?: string) {
-    const user: SimpleUser = {
-      id: 'user_' + Date.now(),
-      email,
-      name: name || email.split('@')[0],
-      provider: 'email',
+    // Check for existing user
+    const existing = await this.prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      throw new ConflictException('Email already registered');
+    }
+
+    // Hash password with bcrypt
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Store user in Prisma DB
+    const user = await this.prisma.user.create({
+      data: {
+        email,
+        name: name || email.split('@')[0],
+        passwordHash,
+        role: 'admin',
+      },
+    });
+
+    // Generate HMAC-signed token
+    const token = this.generateToken(user.id, user.email, user.role);
+
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      token,
     };
-    this.users.push(user);
-    this.saveUsers();
-    return { id: user.id, email: user.email, name: user.name };
   }
 
   async login(email: string, password: string) {
-    const user = this.users.find(u => u.email === email);
-    if (!user) {
-      throw new Error('Invalid credentials');
+    // Look up user by email in Prisma DB
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user || !user.passwordHash) {
+      throw new UnauthorizedException('Invalid credentials');
     }
-    user.last_session = new Date().toISOString();
-    this.saveUsers();
-    
-    // Also check crud.json for additional user data (company, team assignments)
-    const crudData = await this.getCrudData();
-    const crudUser = crudData.users?.find((u: any) => u.email === email);
-    
-    return { 
-      id: user.id, 
-      email: user.email, 
-      name: user.name, 
-      role: crudUser?.role || user.role || 'admin',
-      company_id: crudUser?.company_id || user.company_id,
-      team_id: crudUser?.team_id || user.team_id,
+
+    // Verify password with bcrypt
+    const isValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Update last login timestamp
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { lastLogin: new Date() },
+    });
+
+    // Generate HMAC-signed token
+    const token = this.generateToken(user.id, user.email, user.role);
+
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      company_id: user.companyId,
+      team_id: user.teamId,
+      token,
     };
   }
 
+  async findOrCreateGoogleUser(googleUser: { id: string; email: string; name: string }) {
+    // Look up user by email in Prisma DB
+    let user = await this.prisma.user.findUnique({ where: { email: googleUser.email } });
+
+    if (!user) {
+      // Create new user from Google data
+      user = await this.prisma.user.create({
+        data: {
+          email: googleUser.email,
+          name: googleUser.name || googleUser.email.split('@')[0],
+          role: 'superadmin',
+        },
+      });
+    }
+
+    // Update last login
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { lastLogin: new Date() },
+    });
+
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      company_id: user.companyId,
+      team_id: user.teamId,
+    };
+  }
+
+  /**
+   * Generate an HMAC-SHA256 signed token.
+   * Format: base64(JSON.stringify({userId, email, role, expiresAt})).<HMAC signature>
+   * Expires in 7 days.
+   */
+  generateToken(userId: string, email: string, role: string): string {
+    const tokenPayload = {
+      userId,
+      email,
+      role,
+      expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
+    };
+
+    const base64Payload = Buffer.from(JSON.stringify(tokenPayload)).toString('base64');
+    const signature = crypto
+      .createHmac('sha256', this.authSecret)
+      .update(base64Payload)
+      .digest('hex');
+
+    return `${base64Payload}.${signature}`;
+  }
+
+  /**
+   * Validate a token by checking HMAC signature and expiry.
+   * Returns user data from DB if valid, null otherwise.
+   */
   async validateToken(token: string) {
     try {
-      const payload = JSON.parse(Buffer.from(token, 'base64').toString());
-      if (!payload.userId || !payload.expiresAt) {
+      const tokenParts = token.split('.');
+      if (tokenParts.length !== 2) return null;
+
+      const [base64Payload, signature] = tokenParts;
+
+      // Verify HMAC-SHA256 signature
+      const expectedSignature = crypto
+        .createHmac('sha256', this.authSecret)
+        .update(base64Payload)
+        .digest('hex');
+
+      if (
+        expectedSignature.length !== signature.length ||
+        !crypto.timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(signature))
+      ) {
         return null;
       }
-      if (Date.now() > payload.expiresAt) {
-        return null;
-      }
-      const user = this.users.find(u => u.id === payload.userId);
+
+      const payload = JSON.parse(Buffer.from(base64Payload, 'base64').toString('utf-8'));
+
+      // Check token expiry
+      if (Date.now() > payload.expiresAt) return null;
+
+      // Look up user in Prisma DB
+      const user = await this.prisma.user.findUnique({ where: { id: payload.userId } });
       if (!user) return null;
-      
-      // Also check crud.json for additional user data
-      const crudData = await this.getCrudData();
-      const crudUser = crudData.users?.find((u: any) => u.email === user.email);
-      
-      return { 
-        id: user.id, 
-        email: user.email, 
-        name: user.name, 
-        role: crudUser?.role || user.role || 'admin',
-        company_id: crudUser?.company_id || user.company_id,
-        team_id: crudUser?.team_id || user.team_id,
-        brand_id: crudUser?.brand_id,
-        last_session: user.last_session,
+
+      return {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        company_id: user.companyId,
+        team_id: user.teamId,
+        last_session: user.lastLogin?.toISOString(),
       };
     } catch {
       return null;
     }
   }
 
-  generateToken(userId: string): string {
-    const payload = {
-      userId,
-      expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
-    };
-    return Buffer.from(JSON.stringify(payload)).toString('base64');
-  }
-
+  // Keep for backward compatibility — used by controller to enrich user data
   async getCrudData() {
     try {
+      const fs = await import('fs');
       const dataFile = '/app/data/crud.json';
       if (fs.existsSync(dataFile)) {
         return JSON.parse(fs.readFileSync(dataFile, 'utf-8'));

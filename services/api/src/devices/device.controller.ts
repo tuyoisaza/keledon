@@ -1,10 +1,14 @@
 import { Controller, Post, Get, Body, Headers, Param, Delete, UseGuards } from '@nestjs/common';
 import { DeviceService } from './device.service';
+import { Public } from '../guards/public.decorator';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('Devices')
 @Controller('api/devices')
 export class DeviceController {
   constructor(private deviceService: DeviceService) {}
 
+  @Public()
   @Post('pair')
   async pairDevice(
     @Body() body: {
@@ -30,6 +34,7 @@ export class DeviceController {
     }
   }
 
+  @Public()
   @Post('register')
   async registerDevice(
     @Body() body: {
@@ -48,6 +53,7 @@ export class DeviceController {
     });
   }
 
+  @Public()
   @Post('pairing-code')
   async createPairingCode(
     @Body() body: { userId?: string; organizationId?: string; keledon_id?: string }

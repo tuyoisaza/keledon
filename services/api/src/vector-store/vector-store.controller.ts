@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { VectorStoreService } from './vector-store.service';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('Vector Store')
 @Controller('api/vector-store')
 export class VectorStoreController {
   constructor(private readonly vectorStoreService: VectorStoreService) {}

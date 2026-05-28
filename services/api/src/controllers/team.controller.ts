@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Put, Body, Param, UseGuards } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 export class TeamConfigDto {
   sttProvider?: string;
@@ -10,6 +11,7 @@ export class TeamConfigDto {
   elevenlabsApiKey?: string;
 }
 
+@ApiTags('Teams')
 @Controller('api/teams')
 export class TeamController {
   constructor(private readonly prisma: PrismaService) {}

@@ -1,5 +1,6 @@
 import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { RAGService } from './rag.service';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 interface RetrieveRequest {
   query: string;
@@ -16,6 +17,7 @@ interface EvaluateRequest {
   usedContext?: string[];
 }
 
+@ApiTags('RAG')
 @Controller('rag')
 export class RAGController {
   constructor(private readonly ragService: RAGService) {}

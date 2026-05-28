@@ -2,6 +2,8 @@ import { Controller, Post, Body, Get, Headers, UnauthorizedException, Res, Query
 import { LocalAuthService } from './auth-local.service';
 import { GoogleOAuthService } from './google-oauth.service';
 import { ConfigService } from '@nestjs/config';
+import { Public } from '../guards/public.decorator';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 interface LoginDto {
   email: string;
@@ -23,10 +25,18 @@ interface AuthResponse {
     name: string;
     role?: string;
     company_id?: string;
+    companyId?: string;
+    teamId?: string;
+    companyName?: string | null;
+    brandName?: string | null;
+    teamName?: string | null;
+    createdAt?: string | null;
+    lastSession?: string | null;
   };
   token?: string;
 }
 
+@ApiTags('Auth')
 @Controller('api/auth')
 export class LocalAuthController {
   constructor(
@@ -35,6 +45,7 @@ export class LocalAuthController {
     private readonly configService: ConfigService
   ) {}
 
+  @Public()
   @Get('debug')
   debug(@Res() res: any) {
     return res.json({
@@ -46,6 +57,7 @@ export class LocalAuthController {
     });
   }
 
+  @Public()
   @Get('google')
   googleLogin(@Res() res: any) {
     const clientId = this.configService.get('GOOGLE_CLIENT_ID');
@@ -58,6 +70,7 @@ export class LocalAuthController {
     return res.redirect(authUrl);
   }
 
+  @Public()
   @Get('google/callback')
   async googleCallback(@Query('code') code: string, @Res() res: any) {
     if (!code) {
@@ -75,7 +88,7 @@ export class LocalAuthController {
         name: googleUser.name,
       });
       
-      const token = this.authService.generateToken(user.id);
+      const token = this.authService.generateToken(user.id, user.email, user.role);
 
       return res.redirect(`/login?token=${token}&email=${encodeURIComponent(user.email)}&name=${encodeURIComponent(user.name || '')}`);
     } catch (error) {
@@ -84,16 +97,22 @@ export class LocalAuthController {
     }
   }
 
+  @Public()
   @Post('register')
+  @ApiOperation({ summary: 'Register a new user account' })
   async register(@Body() dto: RegisterDto): Promise<AuthResponse> {
     try {
-      const user = await this.authService.register(dto.email, dto.password, dto.name);
-      const token = this.authService.generateToken(user.id);
+      const result = await this.authService.register(dto.email, dto.password, dto.name);
       return {
         success: true,
         message: 'Registration successful',
-        user,
-        token,
+        user: {
+          id: result.id,
+          email: result.email,
+          name: result.name,
+          role: result.role,
+        },
+        token: result.token,
       };
     } catch (error) {
       return {
@@ -103,28 +122,29 @@ export class LocalAuthController {
     }
   }
 
+  @Public()
   @Post('login')
+  @ApiOperation({ summary: 'Login with email and password' })
   async login(@Body() dto: LoginDto): Promise<AuthResponse> {
     try {
-      const user = await this.authService.login(dto.email, dto.password);
-      const token = this.authService.generateToken(user.id);
+      const result = await this.authService.login(dto.email, dto.password);
       
       const crudData = await this.authService.getCrudData();
       const companies = crudData.companies || [];
       const brands = crudData.brands || [];
       const teams = crudData.teams || [];
       
-      const company = companies.find(c => c.id === user.company_id);
-      const team = teams.find(t => t.id === user.team_id);
+      const company = companies.find(c => c.id === result.company_id);
+      const team = teams.find(t => t.id === result.team_id);
       const brand = team?.brand_id ? brands.find(b => b.id === team.brand_id) : null;
       
       const fullUser = {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        companyId: user.company_id,
-        teamId: user.team_id,
+        id: result.id,
+        email: result.email,
+        name: result.name,
+        role: result.role,
+        companyId: result.company_id,
+        teamId: result.team_id,
         companyName: company?.name || null,
         brandName: brand?.name || null,
         teamName: team?.name || null,
@@ -135,7 +155,7 @@ export class LocalAuthController {
         success: true,
         message: 'Login successful',
         user: fullUser,
-        token,
+        token: result.token,
       };
     } catch (error) {
       return {
@@ -146,8 +166,11 @@ export class LocalAuthController {
   }
 
   @Get('me')
-  async getCurrentUser(@Headers('authorization') authHeader: string): Promise<AuthResponse> {
+  @ApiOperation({ summary: 'Get current authenticated user profile' })
+  async getCurrentUser(@Req() req: any, @Headers('authorization') authHeader: string): Promise<AuthResponse> {
     try {
+      // Token is already validated by global AuthGuard, but also validate explicitly
+      // for backward compatibility
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         throw new UnauthorizedException('No token provided');
       }

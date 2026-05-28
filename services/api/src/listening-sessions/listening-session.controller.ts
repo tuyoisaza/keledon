@@ -1,6 +1,8 @@
 import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
 import { ListeningSessionService } from './listening-session.service';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('Listening Sessions')
 @Controller('listening-sessions')
 export class ListeningSessionController {
     constructor(private readonly listeningSessionService: ListeningSessionService) { }

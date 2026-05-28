@@ -1,7 +1,9 @@
 import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { TTSService } from './tts.service';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('TTS')
 @Controller('tts')
 export class TTSController {
   constructor(private readonly ttsService: TTSService) {}

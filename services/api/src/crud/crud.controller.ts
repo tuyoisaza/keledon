@@ -1,7 +1,9 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { CrudService } from './crud.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('CRUD')
 @Controller('api/crud')
 export class CrudController {
   constructor(private readonly crud: CrudService, private readonly prisma: PrismaService) {}
@@ -9,6 +11,7 @@ export class CrudController {
   // ========== HEALTH ==========
 
   @Get('health')
+  @ApiOperation({ summary: 'Get CRUD service health status' })
   getHealth() {
     return this.crud.getHealth();
   }
@@ -44,6 +47,7 @@ export class CrudController {
   // ========== COMPANIES ==========
 
   @Get('companies')
+  @ApiOperation({ summary: 'Get all companies' })
   getCompanies() {
     return this.crud.getCompanies();
   }
@@ -54,6 +58,7 @@ export class CrudController {
   }
 
   @Post('companies')
+  @ApiOperation({ summary: 'Create a new company' })
   createCompany(@Body() data: any) {
     return this.crud.createCompany(data);
   }
@@ -361,8 +366,26 @@ export class CrudController {
   // ========== AUDIT LOGS ==========
 
   @Get('audit-logs')
-  getAuditLogs(@Query('companyId') companyId?: string, @Query('limit') limit?: number) {
-    return this.crud.getAuditLogs(companyId, limit ? parseInt(String(limit)) : undefined);
+  getAuditLogs(
+    @Query('companyId') companyId?: string,
+    @Query('limit') limit?: number,
+    @Query('offset') offset?: number,
+    @Query('action') action?: string,
+    @Query('entity') entity?: string,
+    @Query('userId') userId?: string,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ) {
+    return this.crud.getAuditLogs({
+      companyId,
+      limit: limit ? parseInt(String(limit)) : undefined,
+      offset: offset ? parseInt(String(offset)) : undefined,
+      action,
+      entity,
+      userId,
+      startDate,
+      endDate,
+    });
   }
 
   @Post('audit-logs')

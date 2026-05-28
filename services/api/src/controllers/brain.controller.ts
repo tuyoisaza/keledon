@@ -1,6 +1,7 @@
 import { Body, Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { LLMService } from '../llm/llm.service';
 import type { LLMResponse } from '../llm/llm.types';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 interface BrainChatMessage {
   role: 'user' | 'assistant';
@@ -19,6 +20,7 @@ interface BrainChatRequest {
   language?: string;
 }
 
+@ApiTags('Brain')
 @Controller('api/brain')
 export class BrainController {
   constructor(private readonly llmService: LLMService) {}
