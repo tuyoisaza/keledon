@@ -15,8 +15,7 @@ COPY --from=source /tmp/repo/services/api/package*.json ./
 RUN npm install
 COPY --from=source /tmp/repo/services/api . .
 RUN rm -f tsconfig*.json && \
-    echo '{"compilerOptions":{"module":"commonjs","moduleResolution":"node","esModuleInterop":true,"declaration":true,"removeComments":true,"emitDecoratorMetadata":true,"experimentalDecorators":true,"allowSyntheticDefaultImports":true,"target":"ES2022","lib":["ES2022","DOM"],"sourceMap":true,"outDir":"./dist","baseUrl":"./","incremental":true,"skipLibCheck":true,"strictNullChecks":false},"include":["src/**/*"]}' > tsconfig.json && \
-    echo '{"compilerOptions":{"module":"commonjs","moduleResolution":"node","esModuleInterop":true,"declaration":false,"removeComments":true,"emitDecoratorMetadata":true,"experimentalDecorators":true,"allowSyntheticDefaultImports":true,"target":"ES2022","lib":["ES2022","DOM"],"outDir":"./dist","baseUrl":"./","incremental":false,"skipLibCheck":true,"strictNullChecks":false},"include":["src/**/*"],"exclude":["node_modules","dist"]}' > tsconfig.mvp.json
+    cp tsconfig.mvp.json tsconfig.json
 RUN npm install --omit=dev
 RUN npx prisma@5.22.0 generate
 RUN npx tsc -p tsconfig.mvp.json
