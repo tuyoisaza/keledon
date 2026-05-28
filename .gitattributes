@@ -1,5 +1,5 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Auto detect text files and enforce LF normalization
+* text=auto eol=lf
 
 # Explicitly declare text files you want to always be normalized and converted
 # to native line endings on checkout.
@@ -17,6 +17,8 @@
 *.xml text eol=lf
 *.sql text eol=lf
 *.sh text eol=lf
+*.bash text eol=lf
+*.zsh text eol=lf
 *.bat text eol=crlf
 *.ps1 text eol=crlf
 
@@ -61,7 +63,9 @@
 
 # Ensure Docker files use LF
 Dockerfile text eol=lf
+docker-compose*.yml text eol=lf
 *.dockerfile text eol=lf
+*.toml text eol=lf
 
 # Configuration files
 .env* text eol=lf
@@ -69,9 +73,9 @@ Dockerfile text eol=lf
 *.config.ts text eol=lf
 *.config.json text eol=lf
 
-# Package lock files (keep as-is to avoid merge conflicts)
-package-lock.json text eol=crlf
-yarn.lock text eol=crlf
+# Package lock files
+package-lock.json text eol=lf
+yarn.lock text eol=lf
 
 # Git files
 .gitignore text eol=lf
