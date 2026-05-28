@@ -23,12 +23,12 @@ function assertIncludes(text, needle, label) {
 }
 
 function main() {
-  const repoRoot = path.resolve(__dirname, '..', '..');
+  const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
-  const cloudContractsPath = path.join(repoRoot, 'cloud', 'src', 'contracts', 'events.ts');
+  const cloudContractsPath = path.join(repoRoot, 'services', 'api', 'src', 'contracts', 'events.ts');
   const sharedContractsPath = path.join(repoRoot, 'contracts', 'events.ts');
   const execSchemaPath = path.join(repoRoot, 'contracts', 'v1', 'agent', 'exec.schema.json');
-  const c12ProofPath = path.join(repoRoot, 'cloud', 'scripts', 'c12-local-proof.js');
+  const c12ProofPath = path.join(repoRoot, 'services', 'api', 'scripts', 'c12-local-proof.js');
 
   const cloudContracts = read(cloudContractsPath);
   const sharedContracts = read(sharedContractsPath);
