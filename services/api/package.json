@@ -59,13 +59,13 @@
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",
     "uuid": "^9.0.0",
-    "@prisma/client": "^5.22.0"
+    "@prisma/client": "^5.22.0",
+    "@nestjs/swagger": "^11.2.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/common": "^11.1.12",
-    "@nestjs/swagger": "^11.2.5",
     "@nestjs/websockets": "^11.1.12",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.19.7",
