@@ -32,13 +32,14 @@ import { EscalationController } from './controllers/escalation.controller';
 import { BrainController } from './controllers/brain.controller';
 import { VoiceModule } from './voice/voice.module';
 import { STTModule } from './stt/stt.module';
-import { ConfigService } from './config/config.service';
+import { AppConfigModule } from './config/config.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    AppConfigModule,
     PrismaModule,
     HealthModule,
     RAGModule,
@@ -70,7 +71,6 @@ import { ConfigService } from './config/config.service';
     AppService,
     SessionService,
     DatabaseHealthService,
-    ConfigService,
     AgentGateway,
     DeviceGateway,
     DecisionEngineService,
