@@ -2,6 +2,9 @@ import { BrowserWindow } from 'electron';
 import { io, Socket } from 'socket.io-client';
 import log from 'electron-log';
 import { webrtcInjector } from './webrtc-injector.js';
+import { startPolling, stopPolling, registerCommandHandler, type BrowserCommand, type CommandResult } from './command-poller.js';
+import { startCall, appendTranscript, processDecision, executeRpaFlowFromCommand, closeCall, setMainWindow as setCallMainWindow, getCurrentCall } from './call-handler.js';
+import { setMainWindow as setRpaMainWindow } from './rpa-executor.js';
 import { mediaLayer } from './media/media-layer.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
 import { eventLogger } from './media/event-logger.js';
@@ -382,6 +385,7 @@ export function connectWebSockets(
  */
 export function disconnectSockets() {
   stopHeartbeat();
+  stopPolling();
 
   if (deviceSocket) {
     deviceSocket.removeAllListeners();
@@ -400,3 +404,98 @@ export function disconnectSockets() {
   missedHeartbeats = 0;
   lastPongTime = 0;
 }
+
+// ===================== PHASE 6: Command Polling Integration =====================
+
+/**
+ * Set up Phase 6 command handlers and start polling.
+ * Called after WebSockets are connected and auth is established.
+ */
+export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
+  setCallMainWindow(mainWindow);
+  setRpaMainWindow(mainWindow);
+
+  // Register command handlers
+  registerCommandHandler('call_start', async (command: BrowserCommand): Promise<CommandResult> => {
+    const sessionId = (command.payload.session_id as string) || '';
+    if (!sessionId) {
+      return { command_id: command.id, status: 'failed', error: 'No session_id', timestamp: new Date().toISOString() };
+    }
+    startCall(sessionId);
+    return { command_id: command.id, status: 'success', output: { sessionId }, timestamp: new Date().toISOString() };
+  });
+
+  registerCommandHandler('call_transcript', async (command: BrowserCommand): Promise<CommandResult> => {
+    const text = (command.payload.text as string) || '';
+    const isFinal = (command.payload.is_final as boolean) || false;
+    appendTranscript(text, isFinal);
+    return { command_id: command.id, status: 'success', timestamp: new Date().toISOString() };
+  });
+
+  registerCommandHandler('call_decide', async (command: BrowserCommand): Promise<CommandResult> => {
+    processDecision(command.payload);
+    return { command_id: command.id, status: 'success', timestamp: new Date().toISOString() };
+  });
+
+  registerCommandHandler('rpa_flow', async (command: BrowserCommand): Promise<CommandResult> => {
+    const payload = command.payload as { flow_id?: string; name?: string; steps?: Array<{ step_id?: string; action: string; selector?: string; value?: string; url?: string; description?: string; timeout?: number; direction?: string }> };
+    if (!payload.steps || payload.steps.length === 0) {
+      return { command_id: command.id, status: 'failed', error: 'No RPA steps', timestamp: new Date().toISOString() };
+    }
+    // Cast steps to RpaStep[] — action is validated at execution time
+    const steps = payload.steps as Array<{ step_id?: string; action: 'navigate' | 'click' | 'fill' | 'extract' | 'wait' | 'screenshot' | 'scroll' | 'press_key' | 'select' | 'hover' | 'wait_for' | 'submit' | 'assert'; selector?: string; value?: string; url?: string; description?: string; timeout?: number; direction?: string }>;
+    const result = await executeRpaFlowFromCommand({
+      flow_id: payload.flow_id,
+      name: payload.name,
+      steps,
+    });
+    return {
+      command_id: command.id,
+      status: result.status === 'completed' ? 'success' : 'failed',
+      output: { flow_result: result },
+      timestamp: new Date().toISOString(),
+    };
+  });
+
+  registerCommandHandler('call_close', async (command: BrowserCommand): Promise<CommandResult> => {
+    const reason = (command.payload.reason as string) || 'Cloud requested close';
+    closeCall(reason);
+    return { command_id: command.id, status: 'success', timestamp: new Date().toISOString() };
+  });
+
+  registerCommandHandler('call_escalate', async (command: BrowserCommand): Promise<CommandResult> => {
+    const reason = (command.payload.reason as string) || 'Escalation requested';
+    log.info(`[CommandPoller] Escalation: ${reason}`);
+    return { command_id: command.id, status: 'success', output: { reason }, timestamp: new Date().toISOString() };
+  });
+
+  registerCommandHandler('status_query', async (command: BrowserCommand): Promise<CommandResult> => {
+    return {
+      command_id: command.id,
+      status: 'success',
+      output: {
+        deviceId: runtimeStatus.deviceId,
+        callState: getCurrentCallState(),
+        status: runtimeStatus.status,
+      },
+      timestamp: new Date().toISOString(),
+    };
+  });
+
+  // Start polling
+  startPolling();
+  log.info('[Connection] Phase 6 command polling initialized');
+}
+
+function getCurrentCallState(): Record<string, unknown> | null {
+  const call = getCurrentCall();
+  if (!call) return null;
+  return {
+    sessionId: call.sessionId,
+    state: call.state,
+    duration_ms: Date.now() - call.startTime,
+  };
+}
+
+// Re-export for use in other modules
+export { getCurrentCall } from './call-handler.js';

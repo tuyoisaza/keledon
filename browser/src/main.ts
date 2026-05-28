@@ -8,7 +8,7 @@ import { autoUpdater } from 'electron-updater';
 import { earlyLog, writeCrashLog, getLogsDir, getMainLogPath, getStartupLogPath } from './logger.js';
 import { runtimeStatus, mainWindow, setMainWindow } from './runtime-state.js';
 import { TabManager } from './tab-manager.js';
-import { connectWebSockets } from './cloud-connection.js';
+import { connectWebSockets, setupCommandPolling } from './cloud-connection.js';
 import { handleDeepLink, flushPendingDeepLinkLaunch } from './deep-link.js';
 import { registerIpcHandlers, bootstrapTeamVendors, initializeAutoBrowseEngine, getAutoBrowseBridge } from './ipc-handlers.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
@@ -112,6 +112,8 @@ async function autoConnect(): Promise<void> {
         getAutoBrowseBridge,
         () => bootstrapTeamVendors(tabManager),
       );
+      // Phase 6: Start command polling after WebSocket connection
+      setupCommandPolling(mainWindow);
       runtimeStatus.vendors = data.vendors || [];
       const AUTO_SESSION_ID = process.env.SESSION_ID || '';
       if (AUTO_SESSION_ID) { runtimeStatus.sessionId = AUTO_SESSION_ID; log.info('Auto-join session:', AUTO_SESSION_ID); }
