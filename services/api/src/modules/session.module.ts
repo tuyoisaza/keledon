@@ -8,6 +8,6 @@ import { DecisionEngineService } from '../services/decision-engine.service';
 @Module({
   imports: [PrismaModule],
   providers: [SessionService, AgentGateway, DecisionEngineService],
-  exports: [SessionService],
+  exports: [SessionService, DecisionEngineService],
 })
 export class SessionModule {}
