@@ -14,8 +14,7 @@ WORKDIR /app
 COPY --from=source /tmp/repo/services/api/package*.json ./
 RUN npm install
 COPY --from=source /tmp/repo/services/api . .
-RUN rm -f tsconfig*.json && \
-    cp tsconfig.mvp.json tsconfig.json
+RUN cp tsconfig.mvp.json tsconfig.json
 RUN npm install --omit=dev
 RUN npx prisma@5.22.0 generate
 RUN npx tsc -p tsconfig.mvp.json
