@@ -8,6 +8,7 @@ interface EndpointSpec {
   canonicalEnv: string;
   legacyEnv: string[];
   devLocalDefault: string;
+  optional?: boolean;
 }
 
 const ENDPOINT_SPECS: EndpointSpec[] = [
@@ -24,6 +25,7 @@ const ENDPOINT_SPECS: EndpointSpec[] = [
     canonicalEnv: 'KELEDON_QDRANT_URL',
     legacyEnv: ['QDRANT_URL'],
     devLocalDefault: 'http://localhost:6333',
+    optional: true,
   },
   {
     key: 'otelExporterUrl',
@@ -91,6 +93,10 @@ function requireCanonicalEndpoint(spec: EndpointSpec, tier: RuntimeTier): string
   }
 
   if (tier === 'DEV_LOCAL') {
+    return spec.devLocalDefault;
+  }
+
+  if (spec.optional) {
     return spec.devLocalDefault;
   }
 
@@ -178,9 +184,12 @@ export async function assertManagedRuntimeDependencies(): Promise<void> {
   if (qdrantApiKey) {
     qdrantHeaders['api-key'] = qdrantApiKey;
   }
-  await assertReachable('Managed Qdrant', `${endpoints.qdrantUrl.replace(/\/$/, '')}/collections`, {
-    headers: qdrantHeaders,
-  });
+  const qdrantConfigured = (process.env.KELEDON_QDRANT_URL || process.env.QDRANT_URL || '').trim();
+  if (qdrantConfigured) {
+    await assertReachable('Managed Qdrant', `${endpoints.qdrantUrl.replace(/\/$/, '')}/collections`, {
+      headers: qdrantHeaders,
+    });
+  }
   await assertReachable('OTel exporter', endpoints.otelExporterUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
