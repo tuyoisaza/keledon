@@ -104,7 +104,7 @@ function requireCanonicalEndpoint(spec: EndpointSpec, tier: RuntimeTier): string
 }
 
 function assertEndpointAllowed(spec: EndpointSpec, value: string, tier: RuntimeTier): void {
-  if (isManagedProductionTier(tier) && hasLoopbackHost(value)) {
+  if (!spec.optional && isManagedProductionTier(tier) && hasLoopbackHost(value)) {
     throw new Error(
       `[Config] ${spec.service} in PRODUCTION_MANAGED cannot target localhost/loopback (${value}).`,
     );
