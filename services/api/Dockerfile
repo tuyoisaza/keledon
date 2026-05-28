@@ -1,8 +1,19 @@
+# KELEDON API Service — NestJS cloud backend
+#
+# Source code comes from git clone (avoids WSL COPY null byte corruption).
+# The source stage clones the repo; later stages COPY --from=source.
+# Only small config files (none currently) come from build context.
+
+FROM node:20-slim AS source
+WORKDIR /tmp/repo
+RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
+RUN git clone --depth 1 https://github.com/tuyoisaza/KELEDON.git /tmp/repo
+
 FROM node:20-slim AS builder
 WORKDIR /app
-COPY package*.json ./
+COPY --from=source /tmp/repo/services/api/package*.json ./
 RUN npm install
-COPY . .
+COPY --from=source /tmp/repo/services/api . .
 RUN rm -f tsconfig*.json && \
     echo '{"compilerOptions":{"module":"commonjs","moduleResolution":"node","esModuleInterop":true,"declaration":true,"removeComments":true,"emitDecoratorMetadata":true,"experimentalDecorators":true,"allowSyntheticDefaultImports":true,"target":"ES2022","lib":["ES2022","DOM"],"sourceMap":true,"outDir":"./dist","baseUrl":"./","incremental":true,"skipLibCheck":true,"strictNullChecks":false},"include":["src/**/*"]}' > tsconfig.json && \
     echo '{"compilerOptions":{"module":"commonjs","moduleResolution":"node","esModuleInterop":true,"declaration":false,"removeComments":true,"emitDecoratorMetadata":true,"experimentalDecorators":true,"allowSyntheticDefaultImports":true,"target":"ES2022","lib":["ES2022","DOM"],"outDir":"./dist","baseUrl":"./","incremental":false,"skipLibCheck":true,"strictNullChecks":false},"include":["src/**/*"],"exclude":["node_modules","dist"]}' > tsconfig.mvp.json

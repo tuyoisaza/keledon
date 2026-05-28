@@ -1,12 +1,20 @@
+# KELEDON Web Service — Vite/React static site
+#
+# Source code comes from git clone (avoids WSL COPY null byte corruption).
+# The source stage clones the repo; later stages COPY --from=source.
+# Only small config files (nginx.conf) come from build context.
+
+FROM node:20-alpine AS source
+WORKDIR /tmp/repo
+RUN apk add --no-cache git
+RUN git clone --depth 1 https://github.com/tuyoisaza/KELEDON.git /tmp/repo
+
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY package*.json ./
+COPY --from=source /tmp/repo/services/web/package*.json ./
 RUN npm ci
-COPY . .
-RUN rm -f tsconfig.json tsconfig.node.json tsconfig.app.json && \
-    echo '{"compilerOptions":{"target":"ES2020","useDefineForClassFields":true,"module":"ESNext","lib":["ES2020","DOM","DOM.Iterable"],"skipLibCheck":true,"moduleResolution":"bundler","allowImportingTsExtensions":true,"resolveJsonModule":true,"isolatedModules":true,"noEmit":true,"jsx":"react-jsx"},"include":["src"]}' > tsconfig.json && \
-    echo '{"compilerOptions":{"target":"ES2023","lib":["ES2023"],"module":"ESNext","types":["node"],"skipLibCheck":true,"moduleResolution":"bundler","allowImportingTsExtensions":true,"moduleDetection":"force","noEmit":true,"strict":true},"include":["vite.config.ts"]}' > tsconfig.node.json && \
-    echo '{"compilerOptions":{"target":"ES2020","useDefineForClassFields":true,"module":"ESNext","lib":["ES2020","DOM","DOM.Iterable"],"skipLibCheck":true,"moduleResolution":"bundler","allowImportingTsExtensions":true,"isolatedModules":true,"moduleDetection":"force","noEmit":true,"jsx":"react-jsx","strict":true,"noUnusedLocals":true,"noUnusedParameters":true},"include":["src"]}' > tsconfig.app.json
+COPY --from=source /tmp/repo/services/web . .
+RUN rm -f tsconfig.json tsconfig.node.json tsconfig.app.json
 ARG VITE_API_URL=/api
 ENV VITE_API_URL=$VITE_API_URL
 RUN npx vite build
