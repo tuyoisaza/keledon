@@ -32,6 +32,7 @@ import { EscalationController } from './controllers/escalation.controller';
 import { BrainController } from './controllers/brain.controller';
 import { VoiceModule } from './voice/voice.module';
 import { STTModule } from './stt/stt.module';
+import { ConfigService } from './config/config.service';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { STTModule } from './stt/stt.module';
     AppService,
     SessionService,
     DatabaseHealthService,
+    ConfigService,
     AgentGateway,
     DeviceGateway,
     DecisionEngineService,
