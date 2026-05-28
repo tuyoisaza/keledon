@@ -7,7 +7,7 @@
 FROM node:20-slim AS source
 WORKDIR /tmp/repo
 RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates && rm -rf /var/lib/apt/lists/*
-RUN git clone --depth 1 --branch main https://github.com/tuyoisaza/KELEDON.git /tmp/repo
+RUN git clone --depth 1 --branch main --single-branch https://github.com/tuyoisaza/KELEDON.git /tmp/repo
 
 FROM node:20-slim AS builder
 WORKDIR /app
