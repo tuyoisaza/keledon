@@ -147,7 +147,7 @@ function createDeviceSocket(
 ): Socket {
   const socket = io(`${cloudUrl}/ws/runtime`, {
     auth: { token, device_id: runtimeStatus.deviceId },
-    transports: ['websocket'],
+    transports: ['websocket', 'polling'],
     reconnection: true,
     reconnectionDelay: INITIAL_RECONNECT_DELAY,
     reconnectionDelayMax: MAX_RECONNECT_DELAY,
@@ -315,7 +315,7 @@ function registerMessageHandlers(
 function createAgentSocket(cloudUrl: string, token: string): Socket {
   const socket = io(`${cloudUrl}/agent`, {
     auth: { token },
-    transports: ['websocket'],
+    transports: ['websocket', 'polling'],
     reconnection: true,
     reconnectionDelay: INITIAL_RECONNECT_DELAY,
     reconnectionDelayMax: MAX_RECONNECT_DELAY,

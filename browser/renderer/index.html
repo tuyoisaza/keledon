@@ -485,6 +485,64 @@
     .btn-execute:hover:not(:disabled) { background: var(--keledon); color: white; }
     .btn-execute:disabled { opacity: 0.4; cursor: not-allowed; }
 
+    /* Pending instructions */
+    .pending-instructions { min-height: 60px; }
+    .pending-list {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 6px;
+    }
+    .pending-empty {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-align: center;
+      padding: 20px 0;
+    }
+    .pending-item {
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 4px;
+      font-size: 12px;
+      border-left: 3px solid var(--border);
+      background: var(--url-bar-bg);
+      transition: opacity 0.3s;
+    }
+    .pending-item.pending { border-left-color: var(--warning); }
+    .pending-item.in_progress { border-left-color: var(--accent); }
+    .pending-item.completed { border-left-color: var(--success); opacity: 0.7; }
+    .pending-item.failed { border-left-color: var(--danger); }
+    .pending-item .pi-type {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 2px;
+    }
+    .pending-item .pi-content {
+      color: var(--text-primary);
+      word-break: break-word;
+    }
+    .pending-item .pi-status {
+      font-size: 10px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .pending-item .pi-source {
+      font-size: 9px;
+      color: var(--text-secondary);
+      margin-top: 1px;
+    }
+    .pending-clear-btn {
+      font-size: 10px;
+      color: var(--text-secondary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .pending-clear-btn:hover { background: var(--url-bar-bg); color: var(--text-primary); }
+
     /* Activity log */
     .activity-log {
       max-height: 200px;
@@ -737,6 +795,19 @@
           <input type="text" id="pairingCode" placeholder="Pairing Code (XXXX-XXXX)">
           <input type="text" id="keledonId" placeholder="Keledon ID (optional)">
           <button id="connectBtn" class="btn-connect">Connect</button>
+        </div>
+      </div>
+
+      <!-- Pending Instructions -->
+      <div class="panel-section pending-instructions">
+        <div class="activity-header">
+          <div class="panel-section-title">Pending Instructions</div>
+          <div class="activity-header-actions">
+            <button id="clearPendingBtn" class="activity-copy-btn" title="Clear all">Clear</button>
+          </div>
+        </div>
+        <div class="pending-list" id="pendingList">
+          <div class="pending-empty">No instructions pending</div>
         </div>
       </div>
 
@@ -1237,10 +1308,85 @@
     const progressDiv = document.getElementById('execute-progress');
     const progressText = document.getElementById('progress-text');
     const progressBar = document.getElementById('progress-bar');
+    const pendingList = document.getElementById('pendingList');
+
+    // ==================== PENDING INSTRUCTIONS ====================
+    let pendingInstructions = [];
+    let pendingIdCounter = 0;
+
+    function addPendingInstruction(type, content, opts = {}) {
+      const id = 'pi-' + (++pendingIdCounter);
+      const source = opts.source || 'local';
+      const status = opts.status || 'pending';
+      const data = opts.data || null;
+
+      pendingInstructions.push({ id, type, content, source, status, data });
+      renderPendingInstructions();
+      return id;
+    }
+
+    function updatePendingInstruction(id, changes) {
+      const idx = pendingInstructions.findIndex(i => i.id === id);
+      if (idx === -1) return;
+      pendingInstructions[idx] = { ...pendingInstructions[idx], ...changes };
+      renderPendingInstructions();
+    }
+
+    function removePendingInstruction(id) {
+      pendingInstructions = pendingInstructions.filter(i => i.id !== id);
+      renderPendingInstructions();
+    }
+
+    function clearPendingInstructions() {
+      pendingInstructions = [];
+      renderPendingInstructions();
+    }
+
+    function renderPendingInstructions() {
+      if (!pendingList) return;
+      if (pendingInstructions.length === 0) {
+        pendingList.innerHTML = '<div class="pending-empty">No instructions pending</div>';
+        return;
+      }
+      pendingList.innerHTML = pendingInstructions.map(item => {
+        const statusLabel = item.status === 'pending' ? 'Waiting...'
+          : item.status === 'in_progress' ? 'In Progress'
+          : item.status === 'completed' ? '✓ Completed'
+          : item.status === 'failed' ? '✗ Failed'
+          : item.status;
+        const sourceLabel = item.source === 'brain' ? 'From Brain'
+          : item.source === 'local' ? 'Manual'
+          : item.source;
+        return `
+          <div class="pending-item ${item.status}" data-pi-id="${item.id}">
+            <div class="pi-type">${item.type}</div>
+            <div class="pi-content">${item.content}</div>
+            <div class="pi-status">${statusLabel}</div>
+            <div class="pi-source">${sourceLabel}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const clearPendingBtn = document.getElementById('clearPendingBtn');
+      if (clearPendingBtn) {
+        clearPendingBtn.addEventListener('click', () => {
+          pendingInstructions = pendingInstructions.filter(i => i.status === 'in_progress' || i.status === 'pending');
+          if (pendingInstructions.length === 0 || confirm('Clear completed/failed items?')) {
+            pendingInstructions = pendingInstructions.filter(i => i.status === 'in_progress' || i.status === 'pending');
+            renderPendingInstructions();
+          }
+        });
+      }
+    });
 
     executeBtn.addEventListener('click', async () => {
       const goal = goalInput.value.trim();
       if (!goal) { log('Goal required', 'error'); return; }
+
+      // Add to pending instructions
+      const piId = addPendingInstruction('GOAL', goal, { status: 'in_progress', source: 'local' });
 
       // Show progress UI
       if (progressDiv) progressDiv.style.display = 'block';
@@ -1264,23 +1410,29 @@
 
       try {
         const result = await window.keledon.executor.executeGoal({ goal }, {});
+        const success = result.goal_status === 'success';
+        const finalText = success ? '✓ Success' : result.goal_status === 'uncertain' ? '⚠ Partial' : '✗ Failed';
         if (progressText) {
-          const finalText = result.goal_status === 'success' ? '✓ Success' : result.goal_status === 'uncertain' ? '⚠ Partial' : '✗ Failed';
           progressText.textContent = `${finalText} - ${result.steps?.length || 0} steps`;
         }
         if (progressBar) {
           progressBar.style.width = '100%';
-          if (result.goal_status === 'success') progressBar.style.background = '#1a73e8';
+          if (success) progressBar.style.background = '#1a73e8';
           else if (result.goal_status === 'failed') progressBar.style.background = '#d93025';
           else progressBar.style.background = '#f9ab00';
         }
-        log('Executed: ' + goal.substring(0, 50), result.goal_status === 'success' ? 'success' : 'error');
+        log('Executed: ' + goal.substring(0, 50), success ? 'success' : 'error');
+        updatePendingInstruction(piId, {
+          status: success ? 'completed' : 'failed',
+          content: goal + (success ? ' ✓' : ' ✗'),
+        });
         goalInput.value = '';
         setTimeout(() => { if (progressDiv) progressDiv.style.display = 'none'; }, 3000);
       } catch (e) {
         if (progressText) progressText.textContent = '✗ Error: ' + e.message;
         if (progressBar) progressBar.style.background = '#d93025';
         log('Execution error: ' + e.message, 'error');
+        updatePendingInstruction(piId, { status: 'failed', content: goal + ' ✗' });
       }
     });
 
@@ -1357,10 +1509,35 @@
         }
       }
       if (cmd.type === 'ui_steps' && cmd.data && cmd.data.steps) {
+        const stepCount = cmd.data.steps.length;
+        const stepNames = cmd.data.steps.map(s => s.name || s.action || 'step').join(', ');
+        const piId = addPendingInstruction('UI STEPS', stepNames.substring(0, 80), {
+          status: 'in_progress',
+          source: 'brain',
+          data: cmd.data,
+        });
         window.keledon.executor.executeSteps(cmd.data.steps).then(result => {
           log('ui_steps result: ' + JSON.stringify(result).substring(0, 80), 'info');
+          updatePendingInstruction(piId, { status: 'completed' });
         }).catch(e => {
           log('ui_steps error: ' + e.message, 'error');
+          updatePendingInstruction(piId, { status: 'failed' });
+        });
+      }
+      if (cmd.type === 'goal_execute' && cmd.data) {
+        const goalText = cmd.data.goal || cmd.data.objective || cmd.data.text || JSON.stringify(cmd.data).substring(0, 60);
+        const piId = addPendingInstruction('GOAL', goalText, {
+          status: 'in_progress',
+          source: 'brain',
+          data: cmd.data,
+        });
+        window.keledon.executor.executeGoal(cmd.data, {}).then(result => {
+          const success = result.goal_status === 'success';
+          log('Brain goal: ' + goalText.substring(0, 50), success ? 'success' : 'error');
+          updatePendingInstruction(piId, { status: success ? 'completed' : 'failed', content: goalText + (success ? ' ✓' : ' ✗') });
+        }).catch(e => {
+          log('Brain goal error: ' + e.message, 'error');
+          updatePendingInstruction(piId, { status: 'failed', content: goalText + ' ✗' });
         });
       }
       log('Brain command: ' + cmd.type, 'info');
