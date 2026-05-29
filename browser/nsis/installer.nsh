@@ -1,5 +1,34 @@
 ; KELEDON Browser NSIS Installer Script
 ; Auto-uninstalls previous version, registers keledon:// protocol, writes installation log
+; Checks for running instances and offers to close them before install
+
+!macro customInit
+  ; ===== CHECK AND CLOSE RUNNING INSTANCE =====
+  ; Prevents "file in use" errors during update/reinstall.
+  ; The app may be running in background (system tray) with no visible window.
+  
+  ClearErrors
+  ExecWait 'tasklist /NH /FI "IMAGENAME eq keledon-browser.exe" 2>NUL | find /I "keledon-browser.exe"'
+  ${If} ${Errors}
+    ; Process not found — proceed normally
+    DetailPrint "No running KELEDON Browser instance detected."
+  ${Else}
+    ; Process found — ask user to close it
+    DetailPrint "KELEDON Browser is running — prompting user..."
+    MessageBox MB_OKCANCEL|MB_ICONINFORMATION \
+      "KELEDON Browser is currently running.$\r$\n$\r$\nThe installer needs to close it before installing.$\r$\n$\r$\nClick OK to close it automatically." \
+      /SD IDOK IDOK close_app IDCANCEL abort_install
+    close_app:
+      DetailPrint "Stopping keledon-browser.exe..."
+      ExecWait 'taskkill /F /IM keledon-browser.exe'
+      Sleep 2000
+      DetailPrint "Process terminated."
+      Goto done_checking
+    abort_install:
+      Abort "Installation cancelled.$\r$\nPlease close KELEDON Browser manually and run the installer again."
+  ${EndIf}
+  done_checking:
+!macroend
 
 !macro CUSTOM_INSTALL
 
