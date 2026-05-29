@@ -7,7 +7,7 @@ import { mediaLayer } from './media/media-layer.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
 import { eventLogger } from './media/event-logger.js';
 import { runtimeStatus, mainWindow, setDebugMode } from './runtime-state.js';
-import { getDeviceSocket, connectWebSockets } from './cloud-connection.js';
+import { getDeviceSocket, connectWebSockets, setupCommandPolling } from './cloud-connection.js';
 import { getStartupLogPath, getMainLogPath, getLogsDir, getInstallDir } from './logger.js';
 import type { TabManager } from './tab-manager.js';
 
@@ -382,6 +382,9 @@ export function registerIpcHandlers(tabManager: TabManager): void {
           console.warn('[Main] mediaLayer.initialize skipped:', e);
         }
 
+        // Phase 6: Start command polling after WebSocket connection
+        setupCommandPolling(mainWindow);
+
         return { success: true, deviceId: runtimeStatus.deviceId };
       } else {
         runtimeStatus.diagnostics.lastAutoConnectStatus = 'http_error';
@@ -390,7 +393,8 @@ export function registerIpcHandlers(tabManager: TabManager): void {
       }
     } catch (error) {
       runtimeStatus.status = 'disconnected';
-      if (runtimeStatus.diagnostics.lastAutoConnectStatus !== 'http_error') {
+      if (runtimeStatus.diagnostics.lastAutoConnectStatus !== 'http_error' &&
+          runtimeStatus.diagnostics.lastAutoConnectStatus !== 'pair_error') {
         runtimeStatus.diagnostics.lastAutoConnectStatus = 'exception';
         runtimeStatus.diagnostics.lastAutoConnectError = String(error instanceof Error ? error.message : error);
       }
