@@ -85,6 +85,10 @@ export default function LaunchKeledonPage() {
             
             const data = await response.json();
             console.log('Launch response:', response.status, data);
+            console.log('[Launch] Deep link:', data.deep_link);
+            console.log('[Launch] Vendors:', data.vendors?.map((v: any) => `${v.name} [${v.type}]`) || 'none');
+            console.log('[Launch] Next steps:', data.next_steps?.map((s: any) => s.title) || 'none');
+            console.log('[Launch] WebSocket URL:', `wss://${window.location.hostname}/ws/runtime`);
             
             if (!response.ok) {
                 throw new Error(data.message || `Failed to launch (${response.status})`);
@@ -98,6 +102,16 @@ export default function LaunchKeledonPage() {
                 vendors: data.vendors || (data.team_id ? vendorsMap[data.team_id] : []) || [],
                 nextSteps: data.next_steps || [],
             });
+            
+            // Store debug info globally so the debug report picks it up
+            (window as any).__KELEDON_LAUNCH_DEBUG__ = {
+                keledonId,
+                keledonName: data.keledon_name || keledonId,
+                teamId: data.team_id || null,
+                vendors: (data.vendors || []).map((v: any) => ({ name: v.name, type: v.type, url: v.baseUrl })),
+                nextSteps: data.next_steps || [],
+                timestamp: new Date().toISOString(),
+            };
             
             // Open deep link
             if (data.deep_link) {

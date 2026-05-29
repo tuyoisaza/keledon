@@ -17,6 +17,7 @@ import {
 } from '../services/decision-engine.service';
 import { EscalationService } from '../services/escalation.service';
 import { TTSService } from '../tts/tts.service';
+import { v4 as uuidv4 } from 'uuid';
 
 const deviceCorsOrigins =
   process.env.KELEDON_ALLOW_ALL_CORS === 'true'
@@ -107,33 +108,53 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
 
       if (vendors.length > 0) {
-        // Auto-send goal_execute to open first vendor in browser
-        const firstVendor = vendors[0];
-        this.logger.log(
-          `[LAUNCH DEBUG] Auto-sending goal_execute: open ${firstVendor.name}`,
-        );
+        // Build navigation steps for each vendor
+        const uiSteps = vendors.map((v, i) => ({
+          step_id: uuidv4(),
+          type: 'navigate',
+          label: `Open ${v.name}`,
+          action: 'open_url',
+          url: v.baseUrl,
+          vendor_type: v.type,
+          order: i + 1,
+        }));
 
-        // Emit goal_execute directly to this device
-        client.emit('goal_execute', {
-          device_id: client.data.deviceId,
-          execution_id: `launch-auto-${Date.now()}`,
-          goal: `open ${firstVendor.name}`,
-          inputs: { url: firstVendor.baseUrl, vendor_type: firstVendor.type },
-          constraints: { max_steps: 5 },
-          timestamp: new Date().toISOString(),
-        });
+        const commandId = uuidv4();
+        const timestamp = new Date().toISOString();
+        const brainCommand = {
+          command_id: commandId,
+          session_id: data.session_id,
+          timestamp,
+          type: 'ui_steps',
+          confidence: 1.0,
+          mode: 'normal',
+          flow_id: null,
+          flow_run_id: null,
+          metadata: {
+            source: 'launch:auto',
+            team_id: data.team_id,
+            vendor_count: vendors.length,
+            auto_mode: true,
+          },
+          ui_steps: uiSteps,
+        };
+
+        this.logger.log(
+          `[LAUNCH DEBUG] Auto-sending brain:command with ${uiSteps.length} steps for session ${data.session_id}`,
+        );
+        for (const s of uiSteps) {
+          this.logger.log(`[LAUNCH DEBUG]   step: ${s.label} -> ${s.url}`);
+        }
+
+        // Send as brain:command — the format the browser understands
+        client.emit('brain:command', brainCommand);
+
+        // Also broadcast to session room so other listeners see it
+        this.server.to(`session:${data.session_id}`).emit('brain:command', brainCommand);
       } else {
         this.logger.log(
-          `[LAUNCH DEBUG] No active vendors found for team ${data.team_id} — auto-sending standby goal`,
+          `[LAUNCH DEBUG] No active vendors found for team ${data.team_id} — no steps to auto-execute`,
         );
-        client.emit('goal_execute', {
-          device_id: client.data.deviceId,
-          execution_id: `launch-auto-${Date.now()}`,
-          goal: 'return to standby',
-          inputs: {},
-          constraints: {},
-          timestamp: new Date().toISOString(),
-        });
       }
     } catch (error) {
       this.logger.error(`[LAUNCH DEBUG] Error looking up vendors: ${error.message}`);

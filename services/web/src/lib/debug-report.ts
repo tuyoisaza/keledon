@@ -159,6 +159,38 @@ export function getDebugInfo(): string {
         });
     }
 
+    // Add launch debug context if available
+    try {
+        const launchDebug = (window as any).__KELEDON_LAUNCH_DEBUG__;
+        if (launchDebug) {
+            lines.push('');
+            lines.push('───────────────────────────────────────────────────────────────');
+            lines.push('LAUNCH DEBUG');
+            lines.push('───────────────────────────────────────────────────────────────');
+            lines.push(`Keledon: ${launchDebug.keledonName} (${launchDebug.keledonId})`);
+            lines.push(`Team: ${launchDebug.teamId || 'N/A'}`);
+            lines.push('');
+            if (launchDebug.vendors && launchDebug.vendors.length > 0) {
+                lines.push('Vendors:');
+                launchDebug.vendors.forEach((v: any) => {
+                    lines.push(`  - ${v.name} [${v.type}] → ${v.url || 'no URL'}`);
+                });
+            } else {
+                lines.push('Vendors: none returned');
+            }
+            lines.push('');
+            if (launchDebug.nextSteps && launchDebug.nextSteps.length > 0) {
+                lines.push('Next Steps:');
+                launchDebug.nextSteps.forEach((s: any, i: number) => {
+                    lines.push(`  ${i + 1}. ${s.title}: ${s.detail}`);
+                });
+            }
+            lines.push(`Sent to WS: ${launchDebug.timestamp}`);
+        }
+    } catch (_e) {
+        // Silently skip if launch debug not available
+    }
+
     lines.push('');
     lines.push('═══════════════════════════════════════════════════════════════');
     lines.push('                        END OF REPORT');
