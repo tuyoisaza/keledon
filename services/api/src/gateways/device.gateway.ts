@@ -88,7 +88,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     client.data.sessionId = data.session_id;
     this.logger.log(
-      `Device ${client.data.deviceId} started session: ${data.session_id}, team: ${data.team_id}`,
+      `[SESSION START] Device ${client.data.deviceId} started session: ${data.session_id}, team: ${data.team_id}`,
     );
 
     client.join(`session:${data.session_id}`);
@@ -350,6 +350,14 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
       });
     }
     return { received: true };
+  }
+
+  @SubscribeMessage('heartbeat:ping')
+  handleHeartbeatPing(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { timestamp?: number },
+  ) {
+    client.emit('heartbeat:pong', { timestamp: Date.now(), echo: data.timestamp });
   }
 
   @SubscribeMessage('goal:execute')
