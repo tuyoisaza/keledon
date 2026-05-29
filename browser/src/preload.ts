@@ -75,6 +75,14 @@ contextBridge.exposeInMainWorld('keledon', {
     },
     setDebugMode: (enabled: boolean) => ipcRenderer.invoke('brain:setDebugMode', enabled)
   },
+  cmdlog: {
+    onEntry: (callback: (entry: CmdLogEntry) => void) => {
+      ipcRenderer.on('cmdlog:entry', (_event, entry) => callback(entry));
+      return () => ipcRenderer.removeAllListeners('cmdlog:entry');
+    },
+    getLog: () => ipcRenderer.invoke('cmdlog:getLog'),
+    clearLog: () => ipcRenderer.invoke('cmdlog:clearLog'),
+  },
   webrtc: {
     arm: (tabId?: string) => ipcRenderer.invoke('webrtc:arm', tabId),
     disarm: (tabId?: string) => ipcRenderer.invoke('webrtc:disarm', tabId),
@@ -131,6 +139,12 @@ contextBridge.exposeInMainWorld('keledon', {
     }
   }
 });
+
+interface CmdLogEntry {
+  timestamp: string;
+  event: string;
+  detail: string;
+}
 
 interface TranscriptData {
   text: string;
@@ -235,6 +249,11 @@ declare global {
         onCommand: (callback: (data: CommandData) => void) => () => void;
         onAudio: (callback: (data: AudioData) => void) => () => void;
         setDebugMode: (enabled: boolean) => Promise<{ success: boolean }>;
+      };
+      cmdlog: {
+        onEntry: (callback: (entry: CmdLogEntry) => void) => () => void;
+        getLog: () => Promise<CmdLogEntry[]>;
+        clearLog: () => Promise<{ cleared: boolean }>;
       };
       webrtc: {
         arm: (tabId?: string) => Promise<{ success: boolean; error?: string }>;

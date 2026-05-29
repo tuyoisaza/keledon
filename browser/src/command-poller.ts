@@ -7,6 +7,7 @@
 
 import log from 'electron-log';
 import { runtimeStatus } from './runtime-state.js';
+import * as cmdlog from './cmdlog.js';
 
 export interface BrowserCommand {
   id: string;
@@ -83,6 +84,8 @@ async function pollForCommand(): Promise<void> {
       headers: getAuthHeaders(),
       signal: AbortSignal.timeout(10000),
     });
+    
+    cmdlog.log('POLL', `GET /next-command → ${res.status}`);
 
     if (res.ok) {
       resetBackoff();
@@ -90,22 +93,27 @@ async function pollForCommand(): Promise<void> {
 
       // No commands available
       if (!data || !data.command) {
+        cmdlog.log('POLL', `No commands queued (poll every ${getPollInterval()}ms)`);
         return;
       }
 
       const command: BrowserCommand = data;
+      cmdlog.log('CMD', `Received: ${command.command} (${command.id})`);
       log.info(`[CommandPoller] Received command: ${command.command} (${command.id})`);
 
       // Execute the command
       await executeCommand(command);
     } else if (res.status === 401 || res.status === 403) {
+      cmdlog.log('ERR', `Poll auth failed: ${res.status} — token may be invalid`);
       log.error(`[CommandPoller] Auth failed: ${res.status}`);
       // Don't increase backoff for auth errors — they need immediate retry after reconnect
     } else {
+      cmdlog.log('POLL', `Poll returned ${res.status}, backing off`);
       log.warn(`[CommandPoller] Poll error: ${res.status}`);
       increaseBackoff();
     }
   } catch (error) {
+    cmdlog.log('ERR', `Poll network error: ${error}, backing off`);
     log.error('[CommandPoller] Poll failed:', error);
     increaseBackoff();
   }
@@ -115,6 +123,7 @@ async function executeCommand(command: BrowserCommand): Promise<void> {
   const handler = handlers.get(command.command);
 
   if (!handler) {
+    cmdlog.log('CMD', `No handler for command: ${command.command} — reporting failed`);
     log.warn(`[CommandPoller] No handler for command: ${command.command}`);
     // Report as failed — unknown command
     await reportResult({
@@ -126,10 +135,13 @@ async function executeCommand(command: BrowserCommand): Promise<void> {
     return;
   }
 
+  cmdlog.log('CMD', `Executing: ${command.command} (${command.id})`);
   try {
     const result = await handler(command);
+    cmdlog.log('CMD', `Result: ${command.command} (${command.id}) → ${result.status}`);
     await reportResult(result);
   } catch (error) {
+    cmdlog.log('ERR', `Execution failed: ${command.command} (${command.id}): ${error}`);
     log.error(`[CommandPoller] Command execution failed:`, error);
     await reportResult({
       command_id: command.id,
@@ -142,6 +154,7 @@ async function executeCommand(command: BrowserCommand): Promise<void> {
 
 async function reportResult(result: CommandResult): Promise<void> {
   if (!runtimeStatus.deviceId || !runtimeStatus.authToken) {
+    cmdlog.log('ERR', 'Cannot report result — no device ID or auth token');
     log.warn('[CommandPoller] Cannot report result — no device ID or auth token');
     return;
   }
@@ -158,11 +171,14 @@ async function reportResult(result: CommandResult): Promise<void> {
     });
 
     if (res.ok) {
+      cmdlog.log('CMD', `Result reported: ${result.command_id} (${result.status})`);
       log.info(`[CommandPoller] Result reported: ${result.command_id} (${result.status})`);
     } else {
+      cmdlog.log('ERR', `Failed to report result: ${res.status}`);
       log.error(`[CommandPoller] Failed to report result: ${res.status}`);
     }
   } catch (error) {
+    cmdlog.log('ERR', `Report network error: ${error}`);
     log.error('[CommandPoller] Report failed:', error);
   }
 }
@@ -174,6 +190,8 @@ export function startPolling(config: PollerConfig = {}): void {
   }
 
   isPolling = true;
+  const interval = getPollInterval();
+  cmdlog.log('SYS', `Command polling started (interval: ${interval}ms)`);
   log.info('[CommandPoller] Starting command polling loop');
 
   // Poll immediately, then on interval
@@ -193,6 +211,7 @@ export function stopPolling(): void {
   }
   isPolling = false;
   handlers.clear();
+  cmdlog.log('SYS', 'Command polling stopped');
   log.info('[CommandPoller] Stopped command polling loop');
 }
 

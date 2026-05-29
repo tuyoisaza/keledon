@@ -877,6 +877,18 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     return { armed: webrtcInjector.isArmed(tab.view.webContents.id) };
   });
 
+  // --- Command Log ---
+  ipcMain.handle('cmdlog:getLog', async () => {
+    const { getLog } = await import('./cmdlog.js');
+    return getLog();
+  });
+
+  ipcMain.handle('cmdlog:clearLog', async () => {
+    const { clearLog } = await import('./cmdlog.js');
+    clearLog();
+    return { cleared: true };
+  });
+
   // ===================== MEDIA LAYER EVENT FORWARDING =====================
 
   mediaLayer.on('transcript', (text: string, isFinal: boolean) => {

@@ -3,6 +3,7 @@ import { io, Socket } from 'socket.io-client';
 import log from 'electron-log';
 import { webrtcInjector } from './webrtc-injector.js';
 import { startPolling, stopPolling, registerCommandHandler, type BrowserCommand, type CommandResult } from './command-poller.js';
+import * as cmdlog from './cmdlog.js';
 import { startCall, appendTranscript, processDecision, executeRpaFlowFromCommand, closeCall, setMainWindow as setCallMainWindow, getCurrentCall } from './call-handler.js';
 import { setMainWindow as setRpaMainWindow } from './rpa-executor.js';
 import { mediaLayer } from './media/media-layer.js';
@@ -160,6 +161,7 @@ function createDeviceSocket(
   socket.on('connect', () => {
     reconnectionAttempt = 0;
     runtimeStatus.status = 'connected';
+    cmdlog.log('WS', 'Device WebSocket connected');
     log.info('Device WebSocket connected');
     eventLogger.info('connection', 'device_connected', {
       deviceId: runtimeStatus.deviceId,
@@ -193,6 +195,7 @@ function createDeviceSocket(
   // ------ disconnect ------
   socket.on('disconnect', (reason) => {
     runtimeStatus.status = 'disconnected';
+    cmdlog.log('WS', `Device WebSocket disconnected: ${reason}`);
     log.warn('Device WebSocket disconnected:', reason);
     eventLogger.warn('connection', 'device_disconnected', { reason });
     stopHeartbeat();
@@ -204,6 +207,7 @@ function createDeviceSocket(
     reconnectionAttempt++;
     runtimeStatus.status = 'reconnecting';
     const delay = getReconnectDelay();
+    cmdlog.log('WS', `WebSocket connect error (attempt ${reconnectionAttempt}), retry in ${delay}ms: ${error.message}`);
     log.warn(
       `Device WebSocket connect error (attempt ${reconnectionAttempt}), ` +
       `retrying in ${delay}ms: ${error.message}`,
@@ -275,6 +279,7 @@ function registerMessageHandlers(
 
   // goal_execute → AutoBrowse bridge
   socket.on('goal_execute', async (data) => {
+    cmdlog.log('CMD', `goal_execute received: ${data.goal?.substring(0, 80)}`);
     log.info('[Main] Received goal from cloud:', data.goal);
     const bridge = await getAutoBrowseBridge();
     if (!bridge.isAutoBrowseInitialized()) {
@@ -370,6 +375,7 @@ export function connectWebSockets(
   disconnectSockets();
 
   currentMainWindow = mainWindow;
+  cmdlog.setMainWindow(mainWindow);
 
   runtimeStatus.status = 'connecting';
   sendStatusToRenderer('connecting');
@@ -412,11 +418,13 @@ export function disconnectSockets() {
  * Called after WebSockets are connected and auth is established.
  */
 export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
+  cmdlog.log('SYS', 'Setting up command handlers and starting polling');
   setCallMainWindow(mainWindow);
   setRpaMainWindow(mainWindow);
 
   // Register command handlers
   registerCommandHandler('call_start', async (command: BrowserCommand): Promise<CommandResult> => {
+    cmdlog.log('CMD', `call_start → session ${command.payload.session_id}`);
     const sessionId = (command.payload.session_id as string) || '';
     if (!sessionId) {
       return { command_id: command.id, status: 'failed', error: 'No session_id', timestamp: new Date().toISOString() };
@@ -428,11 +436,13 @@ export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
   registerCommandHandler('call_transcript', async (command: BrowserCommand): Promise<CommandResult> => {
     const text = (command.payload.text as string) || '';
     const isFinal = (command.payload.is_final as boolean) || false;
+    cmdlog.log('CMD', `call_transcript → ${text.substring(0, 60)}${isFinal ? ' (final)' : ' (partial)'}`);
     appendTranscript(text, isFinal);
     return { command_id: command.id, status: 'success', timestamp: new Date().toISOString() };
   });
 
   registerCommandHandler('call_decide', async (command: BrowserCommand): Promise<CommandResult> => {
+    cmdlog.log('CMD', `call_decide → processing decision`);
     processDecision(command.payload);
     return { command_id: command.id, status: 'success', timestamp: new Date().toISOString() };
   });
@@ -440,10 +450,12 @@ export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
   registerCommandHandler('rpa_flow', async (command: BrowserCommand): Promise<CommandResult> => {
     const payload = command.payload as { flow_id?: string; name?: string; steps?: Array<{ step_id?: string; action: string; selector?: string; value?: string; url?: string; description?: string; timeout?: number; direction?: string }> };
     if (!payload.steps || payload.steps.length === 0) {
+      cmdlog.log('CMD', `rpa_flow (${command.id}) → no steps, failed`);
       return { command_id: command.id, status: 'failed', error: 'No RPA steps', timestamp: new Date().toISOString() };
     }
     // Cast steps to RpaStep[] — action is validated at execution time
     const steps = payload.steps as Array<{ step_id?: string; action: 'navigate' | 'click' | 'fill' | 'extract' | 'wait' | 'screenshot' | 'scroll' | 'press_key' | 'select' | 'hover' | 'wait_for' | 'submit' | 'assert'; selector?: string; value?: string; url?: string; description?: string; timeout?: number; direction?: string }>;
+    cmdlog.log('CMD', `rpa_flow (${command.id}) → ${steps.length} steps: ${steps.map(s => s.action).join(', ')}`);
     const result = await executeRpaFlowFromCommand({
       flow_id: payload.flow_id,
       name: payload.name,
@@ -459,17 +471,20 @@ export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
 
   registerCommandHandler('call_close', async (command: BrowserCommand): Promise<CommandResult> => {
     const reason = (command.payload.reason as string) || 'Cloud requested close';
+    cmdlog.log('CMD', `call_close → ${reason}`);
     closeCall(reason);
     return { command_id: command.id, status: 'success', timestamp: new Date().toISOString() };
   });
 
   registerCommandHandler('call_escalate', async (command: BrowserCommand): Promise<CommandResult> => {
     const reason = (command.payload.reason as string) || 'Escalation requested';
+    cmdlog.log('CMD', `call_escalate → ${reason}`);
     log.info(`[CommandPoller] Escalation: ${reason}`);
     return { command_id: command.id, status: 'success', output: { reason }, timestamp: new Date().toISOString() };
   });
 
   registerCommandHandler('status_query', async (command: BrowserCommand): Promise<CommandResult> => {
+    cmdlog.log('CMD', `status_query → reporting device state`);
     return {
       command_id: command.id,
       status: 'success',
@@ -484,6 +499,7 @@ export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
 
   // Start polling
   startPolling();
+  cmdlog.log('SYS', 'Command polling initialized and running');
   log.info('[Connection] Phase 6 command polling initialized');
 }
 
