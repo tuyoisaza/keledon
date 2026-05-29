@@ -35,12 +35,18 @@ export interface VectorStoreStatus {
 }
 
 class VectorStoreAPI {
+  private getAuthToken(): string | null {
+    return sessionStorage.getItem('auth_token');
+  }
+
   private async fetchApi(endpoint: string, options: RequestInit = {}) {
     const config = getConfig();
+    const token = this.getAuthToken();
     const response = await fetch(`${config.apiUrl}api/vector-store${endpoint}`, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         ...options.headers,
       },
     });

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Loader2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, AlertCircle, Upload } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { vectorStoreAPI, type PolicyDocument } from '@/lib/vector-store';
@@ -232,6 +232,43 @@ export default function VectorStoreAddDocumentPage() {
             className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none h-48 resize-none"
             placeholder="Document content..."
           />
+        </div>
+
+        {/* File Upload */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Or Upload File</label>
+          <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+            <input
+              type="file"
+              accept=".txt,.md,.csv,.json,.html,.pdf"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                try {
+                  if (file.name.endsWith('.pdf')) {
+                    toast.error('PDF upload requires server-side processing. Please copy text content for now.');
+                    return;
+                  }
+                  const text = await file.text();
+                  setFormData(prev => ({
+                    ...prev,
+                    content: text,
+                    title: prev.title || file.name.replace(/\.[^/.]+$/, ''),
+                  }));
+                  toast.success(`Loaded content from ${file.name}`);
+                } catch (err) {
+                  toast.error('Failed to read file');
+                }
+              }}
+              className="hidden"
+              id="file-upload"
+            />
+            <label htmlFor="file-upload" className="cursor-pointer">
+              <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">Click to upload or drag and drop</p>
+              <p className="text-xs text-muted-foreground mt-1">TXT, MD, CSV, JSON, HTML (max 10MB)</p>
+            </label>
+          </div>
         </div>
 
         {/* Company, Brand, Team */}
