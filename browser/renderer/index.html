@@ -965,12 +965,31 @@
     async function copyActivityLogs() {
       const copiedAt = new Date().toISOString();
       const body = serializeActivityEntries() || '(no activity entries yet)';
+
+      // Gather diagnostic data for richer copy
+      let diagSection = '';
+      let mainLogs = '';
+      try {
+        const report = await buildAggregatedCopyReport();
+        diagSection = report.diagnosticJSON;
+        mainLogs = report.mainLogs;
+      } catch (e) {
+        diagSection = '--- Diagnostic Report (unavailable) ---\n' + e.message;
+      }
+
       const payload = [
-        'KELEDON Browser Activity Dump',
+        '========================================',
+        '  KELEDON Browser Activity Dump',
+        '========================================',
         `Version: ${deviceVersion}`,
         `Time: ${copiedAt}`,
         '',
+        '--- Activity Log ---',
         body,
+        '',
+        mainLogs,
+        '',
+        diagSection,
       ].join('\n');
 
       try {
@@ -996,6 +1015,67 @@
         setActivityCopyStatus('Copy failed', 'error');
         log('Failed to copy activity logs', 'error');
       }
+    }
+
+    async function buildAggregatedCopyReport() {
+      const info = await window.keledon.device.getInfo();
+      const status = await window.keledon.runtime.getStatus();
+      const internal = (window.keledon && window.keledon.internal) || {};
+      const diagnostics = status.diagnostics || {};
+
+      // Try to read main process logs via evidence API
+      let mainLogs = '';
+      try {
+        const logsResult = await window.keledon.evidence.copyAllLogs();
+        mainLogs = '--- Main Process Logs ---\n' + (logsResult?.logs || '(no main logs available)');
+      } catch (_e) {
+        mainLogs = '--- Main Process Logs ---\n(unavailable)';
+      }
+
+      const sanitize = (v) => v === undefined ? null : (typeof v !== 'string' ? v : (v.length > 120 ? v.substring(0, 120) + '…' : v));
+
+      const report = {
+        product: 'KELEDON Browser',
+        browserVersion: info.version,
+        copiedAt: new Date().toISOString(),
+        platform: info.platform,
+        osRelease: info.osRelease || navigator.platform,
+        userAgent: navigator.userAgent,
+        electron: info.electron,
+        chrome: info.chrome,
+        node: info.node,
+        deviceId: status.deviceId || info.deviceId,
+        cloudUrl: status.cloudUrl || cloudUrlInput.value || null,
+        runtime: {
+          status: status.status,
+          connected: Boolean(status.connected),
+          sessionId: status.sessionId || null,
+          keledonId: status.keledonId || status.pendingKeledonId || keledonIdInput.value || null,
+          teamId: status.teamId || null,
+          teamName: status.teamName || null,
+          vendorCount: status.vendorCount ?? null,
+        },
+        launchForm: {
+          cloudUrl: cloudUrlInput.value || null,
+          keledonId: keledonIdInput.value || null,
+          pairingCodePresent: Boolean(pairingCodeInput.value),
+          pairingCodeLength: pairingCodeInput.value ? pairingCodeInput.value.length : 0,
+        },
+        deepLinkDiagnostics: Object.fromEntries(Object.entries(diagnostics).map(([k, v]) => [k, sanitize(v)])),
+        logPaths: {
+          logsDir: info.logsDir || internal.logsDir || internal.installDir || null,
+          mainLogPath: info.mainLogPath || internal.mainLogPath || null,
+          startupLogPath: info.startupLogPath || internal.startupLogPath || internal.logPath || null,
+          internalLogPath: internal.logPath || null,
+          windowsLogHint: '%APPDATA%\\KELEDON Browser\\logs\\keledon-browser.log',
+        },
+        internal: {
+          cdpUrl: internal.cdpUrl || null,
+          version: internal.version || null,
+        },
+      };
+
+      return { diagnosticJSON: '--- Diagnostic Report ---\n' + JSON.stringify(report, null, 2), mainLogs };
     }
 
     // ==================== CONNECTION STATUS ====================
@@ -1695,6 +1775,12 @@
         internal: {
           cdpUrl: internal.cdpUrl || null,
           version: internal.version || null,
+        },
+        endpoints: {
+          cloudUrl: status.cloudUrl || cloudUrlInput.value || 'https://keledon.tuyoisaza.com',
+          pairEndpoint: (status.cloudUrl || cloudUrlInput.value || 'https://keledon.tuyoisaza.com') + '/api/devices/pair',
+          launchEndpoint: (status.cloudUrl || cloudUrlInput.value || 'https://keledon.tuyoisaza.com') + '/api/crud/keledons/:id/launch',
+          wsEndpoint: (status.cloudUrl || cloudUrlInput.value || 'https://keledon.tuyoisaza.com') + '/ws/runtime',
         },
       };
     }

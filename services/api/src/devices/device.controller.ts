@@ -111,6 +111,13 @@ export class DeviceController {
     return this.deviceService.revokeDevice(deviceId);
   }
 
+  @Public()
+  @Get('debug/device/:id')
+  async debugDevice(@Param('id') keledonId: string) {
+    return this.deviceService.getDeviceDebug(keledonId);
+  }
+
+  @Public()
   @Get('test-browser')
   async testBrowser() {
     const pairingCode = this.generateTestPairingCode();

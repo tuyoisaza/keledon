@@ -662,6 +662,17 @@ export class CrudService {
         });
       }
 
+      // Re-read device status from DB so the response is accurate
+      const updatedDevice = await this.prisma.device.findUnique({
+        where: { id: device.id },
+        select: { status: true, pairingCode: true, pairingCodeExpiresAt: true },
+      });
+      if (updatedDevice) {
+        device.status = updatedDevice.status;
+        device.pairingCode = updatedDevice.pairingCode;
+        device.pairingCodeExpiresAt = updatedDevice.pairingCodeExpiresAt;
+      }
+
       // Verify user has access - check Prisma first, then fallback for Google users
       const user = await this.prisma.user.findUnique({ where: { id: userId } });
       let isAuthorized = false;
@@ -730,6 +741,7 @@ export class CrudService {
         keledon_name: keledon.name,
         deep_link: deepLink,
         expires_at: new Date(timestamp + 60000),
+        code_expires_at: device.pairingCodeExpiresAt,
         device_status: device.status,
         vendors: activeVendors,
         next_steps: nextSteps,

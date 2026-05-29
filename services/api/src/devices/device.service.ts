@@ -253,6 +253,38 @@ export class DeviceService {
     });
   }
 
+  async getDeviceDebug(keledonId: string) {
+    const device = await this.prisma.device.findFirst({
+      where: { keledonId },
+      select: {
+        id: true,
+        status: true,
+        pairingCode: true,
+        pairingCodeExpiresAt: true,
+        lastSeen: true,
+        version: true,
+        name: true,
+        machineId: true,
+        platform: true,
+        keledonId: true,
+      },
+    });
+
+    if (!device) {
+      return { error: 'Device not found for keledonId', keledonId };
+    }
+
+    return {
+      device,
+      now: new Date().toISOString(),
+      is_expired: device.pairingCodeExpiresAt
+        ? new Date(device.pairingCodeExpiresAt) < new Date()
+        : null,
+      is_pending: device.status === 'pending',
+      pairing_code_set: device.pairingCode !== null,
+    };
+  }
+
   async createTestDevice(pairingCode: string, expiresAt: Date) {
     return this.prisma.device.create({
       data: {

@@ -96,7 +96,10 @@ export function handleDeepLink(url: string, tabManager: TabManager): void {
     }
 
     const linkTime = parseInt(timestamp, 10);
-    if (!Number.isFinite(linkTime) || Date.now() - linkTime > 60000) {
+    // Pairing codes are valid for 7 days in the DB; use a generous window
+    // (7 days in ms) so that browser protocol handler delays don't invalidate them.
+    const PAIRING_CODE_VALIDITY_MS = 7 * 24 * 60 * 60 * 1000;
+    if (!Number.isFinite(linkTime) || Date.now() - linkTime > PAIRING_CODE_VALIDITY_MS) {
       runtimeStatus.diagnostics.lastDeepLinkValidation = 'expired';
       log.error('[DeepLink] Link expired'); return;
     }
