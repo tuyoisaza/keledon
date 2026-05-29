@@ -14,4 +14,8 @@ export declare function getBrowserDownloadUrl(
   env?: Record<string, string | undefined>,
 ): string;
 
+export declare const BROWSER_RELEASES_API: string;
+
+export declare function getBrowserInstallerUrl(tagName: string): string;
+
 export declare function readPlainTextFile(file: { text?: () => Promise<string> | string } | null | undefined): Promise<string>;

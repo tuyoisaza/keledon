@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check, Download, Building2, ArrowRightCircle, ListChecks } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getKeledons, getVendors, type Keledon, type Vendor } from '@/lib/crud-api';
-import { getBrowserDownloadUrl } from '@/lib/knowledge-source-utils.js';
+import { getBrowserDownloadUrl, BROWSER_RELEASES_API } from '@/lib/knowledge-source-utils.js';
 import { toast } from 'sonner';
 import { apiFetch } from '@/lib/api-fetch';
 
@@ -13,6 +13,8 @@ export default function LaunchKeledonPage() {
     const [loading, setLoading] = useState(true);
     const [launching, setLaunching] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [browserVersion, setBrowserVersion] = useState<string | null>(null);
+    const [versionLoading, setVersionLoading] = useState(true);
     const [launchDetails, setLaunchDetails] = useState<null | {
         keledonId: string;
         teamId: string | null;
@@ -25,6 +27,17 @@ export default function LaunchKeledonPage() {
     useEffect(() => {
         loadKeledons();
     }, [user]);
+
+    // Fetch latest browser version from GitHub
+    useEffect(() => {
+        const controller = new AbortController();
+        fetch(BROWSER_RELEASES_API, { signal: controller.signal })
+            .then(r => r.ok ? r.json() : null)
+            .then(d => setBrowserVersion(d?.tag_name?.replace(/^v/, '') || null))
+            .catch(() => setBrowserVersion(null))
+            .finally(() => setVersionLoading(false));
+        return () => controller.abort();
+    }, []);
 
     const loadKeledons = async () => {
         setLoading(true);
@@ -156,6 +169,14 @@ export default function LaunchKeledonPage() {
                     >
                         <Download className="w-4 h-4" />
                         Download App
+                        {browserVersion && (
+                            <span className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-primary-foreground/15 rounded">
+                                v{browserVersion}
+                            </span>
+                        )}
+                        {versionLoading && (
+                            <Loader2 className="w-3 h-3 animate-spin ml-1" />
+                        )}
                     </a>
                     <button 
                         onClick={() => {

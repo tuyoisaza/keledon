@@ -19,6 +19,13 @@ export function getBrowserDownloadUrl(env = {}) {
   );
 }
 
+export const BROWSER_RELEASES_API =
+  'https://api.github.com/repos/tuyoisaza/keledon/releases/latest';
+
+export function getBrowserInstallerUrl(tagName) {
+  return `https://github.com/tuyoisaza/keledon/releases/download/${tagName}/KELEDON.Browser.Setup.exe`;
+}
+
 export async function readPlainTextFile(file) {
   if (!file) {
     throw new Error('No file selected');
