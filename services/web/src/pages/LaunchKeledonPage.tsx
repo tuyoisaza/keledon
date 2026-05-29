@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { getKeledons, getVendors, type Keledon, type Vendor } from '@/lib/crud-api';
 import { getBrowserDownloadUrl } from '@/lib/knowledge-source-utils.js';
 import { toast } from 'sonner';
+import { apiFetch } from '@/lib/api-fetch';
 
 export default function LaunchKeledonPage() {
     const { user } = useAuth();
@@ -63,7 +64,7 @@ export default function LaunchKeledonPage() {
         try {
             console.log('Launching keledon:', keledonId, 'with userId:', user.id);
             
-            const response = await fetch(`/api/crud/keledons/${keledonId}/launch`, {
+            const response = await apiFetch(`/api/crud/keledons/${keledonId}/launch`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: user.id })

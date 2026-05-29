@@ -3,6 +3,7 @@ import { Mic, Plus, RefreshCw, Loader2, Pencil, Trash2, Settings, Volume2 } from
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
+import { apiFetch } from '@/lib/api-fetch';
 
 export default function ManagementVoiceProfilesPage() {
     const { user } = useAuth();
@@ -27,7 +28,7 @@ export default function ManagementVoiceProfilesPage() {
         try {
             setLoading(true);
             if (user?.companyId) {
-                const response = await fetch(`/api/tenant/voice-profiles?companyId=${user.companyId}`);
+                const response = await apiFetch(`/api/tenant/voice-profiles?companyId=${user.companyId}`);
                 if (response.ok) {
                     const data = await response.json();
                     setVoiceProfiles(data || []);
@@ -47,13 +48,12 @@ export default function ManagementVoiceProfilesPage() {
         }
         setSaving(true);
         try {
-            const response = await fetch('/api/tenant/voice-profiles', {
+            const response = await apiFetch('/api/tenant/voice-profiles', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...formData,
-                    companyId: user?.companyId
-                })
+                    companyId: user?.companyId,
+                }),
             });
             if (response.ok) {
                 toast.success('Voice profile created');
@@ -73,7 +73,7 @@ export default function ManagementVoiceProfilesPage() {
     const handleDelete = async (id: string) => {
         if (!confirm('Delete this voice profile?')) return;
         try {
-            await fetch(`/api/tenant/voice-profiles/${id}`, { method: 'DELETE' });
+            await apiFetch(`/api/tenant/voice-profiles/${id}`, { method: 'DELETE' });
             toast.success('Voice profile deleted');
             fetchVoiceProfiles();
         } catch (error) {

@@ -3,6 +3,7 @@ import { Settings, Save, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getCompanies, type Company } from '@/lib/crud-api';
 import { API_URL } from '@/lib/config';
+import { apiFetch } from '@/lib/api-fetch';
 
 interface TeamConfig {
     teamId: string;
@@ -47,7 +48,7 @@ export default function AdminSettingsPage() {
 
     const fetchTeamConfig = async (companyId: string) => {
         try {
-            const response = await fetch(`${cloudUrl}/api/teams/${companyId}/config`);
+            const response = await apiFetch(`/api/teams/${companyId}/config`);
             if (response.ok) {
                 const data = await response.json();
                 setTeamConfig(data);
@@ -81,15 +82,14 @@ export default function AdminSettingsPage() {
         setConfigMessage(null);
         
         try {
-            const response = await fetch(`${cloudUrl}/api/teams/${teamConfig.teamId}/config`, {
+            const response = await apiFetch(`/api/teams/${teamConfig.teamId}/config`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     sttProvider: teamConfig.sttProvider,
                     ttsProvider: teamConfig.ttsProvider,
                     voskServerUrl: teamConfig.voskServerUrl,
                     voskModel: teamConfig.voskModel,
-                })
+                }),
             });
             
             if (response.ok) {

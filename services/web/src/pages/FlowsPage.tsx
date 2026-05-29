@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Workflow, Plus, Settings, Play, Pause, Trash2, Edit2, Eye, Search, Filter, Mic, Square, Download, Upload, ChevronDown, ChevronRight, StepForward, ArrowUp, ArrowDown, Save, X, PlusCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import { API_URL } from '@/lib/config';
+import { apiFetch } from '@/lib/api-fetch';
 
 interface FlowStep {
   id: string;
@@ -66,7 +66,7 @@ export default function FlowsPage() {
   const loadFlows = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/flows`);
+      const res = await apiFetch('/api/flows');
       if (!res.ok) throw new Error('Failed to load flows');
       const data = await res.json();
       setFlows(Array.isArray(data) ? data : []);
@@ -81,7 +81,7 @@ export default function FlowsPage() {
   const handleDeleteFlow = async (flowId: string) => {
     if (!confirm('Delete this flow? This cannot be undone.')) return;
     try {
-      const res = await fetch(`${API_URL}/api/flows/${flowId}`, { method: 'DELETE' });
+      const res = await apiFetch(`/api/flows/${flowId}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete');
       toast.success('Flow deleted');
       loadFlows();
@@ -363,11 +363,10 @@ function FlowFormModal({ flow, onClose, onSuccess }: { flow?: Flow; onClose: () 
         steps: steps.map((s, i) => ({ ...s, order: i })),
       };
 
-      const url = flow ? `${API_URL}/api/flows/${flow.id}` : `${API_URL}/api/flows`;
+      const endpoint = flow ? `/api/flows/${flow.id}` : '/api/flows';
       const method = flow ? 'PUT' : 'POST';
-      const res = await fetch(url, {
+      const res = await apiFetch(endpoint, {
         method,
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -675,9 +674,8 @@ function FlowRecordModal({ onClose, onSuccess }: { onClose: () => void; onSucces
     if (recordingSteps.length === 0) { toast.error('Add at least one step'); return; }
 
     try {
-      const res = await fetch(`${API_URL}/api/flows`, {
+      const res = await apiFetch('/api/flows', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: flowName,
           description: flowDescription,

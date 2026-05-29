@@ -8,9 +8,13 @@ import { API_URL } from './config';
 const CRUD_API = `${API_URL}/api/crud`;
 
 async function fetchApi(endpoint: string, method = 'GET', body?: any) {
+    const token = sessionStorage.getItem('auth_token');
     const response = await fetch(`${CRUD_API}${endpoint}`, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        },
         body: body ? JSON.stringify(body) : undefined,
     });
     if (!response.ok) {

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Settings, RefreshCw, Loader2, Check, X, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { apiFetch } from '@/lib/api-fetch';
 
 const defaultProviderCatalog = [
     { id: 'vosk', type: 'stt', name: 'Vosk (Local Streaming)', status: 'experimental', is_enabled: true },
@@ -26,7 +27,7 @@ export default function ManagementProvidersPage() {
     const fetchCatalog = async () => {
         try {
             setLoading(true);
-            const response = await fetch('/api/provider-catalog');
+            const response = await apiFetch('/api/provider-catalog');
             if (response.ok) {
                 const data = await response.json();
                 if (data && data.length > 0) setCatalog(data);
@@ -45,10 +46,9 @@ export default function ManagementProvidersPage() {
         setCatalog(updated);
         
         try {
-            await fetch('/api/provider-catalog', {
+            await apiFetch('/api/provider-catalog', {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updated)
+                body: JSON.stringify({ id: providerId, is_enabled: !provider.is_enabled }),
             });
             toast.success('Provider updated');
         } catch (error) {

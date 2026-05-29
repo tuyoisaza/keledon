@@ -48,6 +48,7 @@ interface ProviderCatalogEntry {
 }
 
 import { API_URL, LAUNCHER_URL } from '@/lib/config';
+import { apiFetch } from '@/lib/api-fetch';
 const CLOUD_URL = API_URL;
 
 const statusStyles: Record<string, string> = {
@@ -127,9 +128,9 @@ export default function ManagementPage() {
             setError(null);
             try {
                 const [techRes, providerRes, readyRes] = await Promise.all([
-                    fetch(`${CLOUD_URL}/api/tech-status`),
-                    fetch(`${CLOUD_URL}/api/provider-catalog`),
-                    fetch(`${CLOUD_URL}/api/provider-catalog?localOnly=true`)
+                    apiFetch('/api/tech-status'),
+                    apiFetch('/api/provider-catalog'),
+                    apiFetch('/api/provider-catalog?localOnly=true')
                 ]);
 
                 if (!techRes.ok) throw new Error('Backend status unavailable');

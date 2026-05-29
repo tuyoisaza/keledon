@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Plus, Pencil, Trash2, Radio } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { API_URL } from '@/lib/config';
+import { apiFetch } from '@/lib/api-fetch';
 
 const CLOUD_URL = API_URL;
 
@@ -70,7 +71,7 @@ export function InterfacesManager() {
         setIsLoading(true);
         setError(null);
         try {
-            const res = await fetch(`${CLOUD_URL}/api/interfaces`);
+            const res = await apiFetch('/api/interfaces');
             if (!res.ok) throw new Error('Failed to load interfaces');
             const data = await res.json();
             setInterfaces(data || []);
@@ -97,16 +98,14 @@ export function InterfacesManager() {
             };
 
             if (editingId) {
-                const res = await fetch(`${CLOUD_URL}/api/interfaces/${editingId}`, {
+                const res = await apiFetch(`/api/interfaces/${editingId}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 });
                 if (!res.ok) throw new Error('Failed to update interface');
             } else {
-                const res = await fetch(`${CLOUD_URL}/api/interfaces`, {
+                const res = await apiFetch('/api/interfaces', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 });
                 if (!res.ok) throw new Error('Failed to create interface');
@@ -146,7 +145,7 @@ export function InterfacesManager() {
 
     const handleDelete = async (id: string) => {
         try {
-            const res = await fetch(`${CLOUD_URL}/api/interfaces/${id}`, { method: 'DELETE' });
+            const res = await apiFetch(`/api/interfaces/${id}`, { method: 'DELETE' });
             if (!res.ok) throw new Error('Failed to delete interface');
             await loadInterfaces();
         } catch (err: any) {
