@@ -157,12 +157,19 @@ export class CallsService {
     this.assertOptionalString(dto.teamId, 'teamId');
     this.assertOptionalString(dto.state, 'state');
     this.assertOptionalRecord(dto.metadata, 'metadata');
-    this.assertOptionalRecord(dto.caller as Record<string, unknown> | undefined, 'caller');
+    this.assertOptionalRecord(dto.caller, 'caller');
 
     const actorContext = await this.resolveActorContext(actor);
-    const device = await this.requireAccessibleDevice(dto.deviceId, actorContext);
+    const device = await this.requireAccessibleDevice(
+      dto.deviceId,
+      actorContext,
+    );
     const resolvedUserId = this.resolveUserId(dto.userId, actorContext);
-    const resolvedTeamId = await this.resolveTeamId(dto.teamId, actorContext, device.userId);
+    const resolvedTeamId = await this.resolveTeamId(
+      dto.teamId,
+      actorContext,
+      device.userId,
+    );
     const initialState = dto.state || 'call_received';
     this.assertAllowedState(initialState, 'state');
 
@@ -195,16 +202,20 @@ export class CallsService {
       },
     });
 
-    await this.appendCallEvent(session.id, {
-      type: 'call.received',
-      source: 'browser',
-      stateAfter: metadata.state,
-      correlationId: metadata.callId,
-      data: {
-        deviceId: dto.deviceId,
-        caller: dto.caller,
+    await this.appendCallEvent(
+      session.id,
+      {
+        type: 'call.received',
+        source: 'browser',
+        stateAfter: metadata.state,
+        correlationId: metadata.callId,
+        data: {
+          deviceId: dto.deviceId,
+          caller: dto.caller,
+        },
       },
-    }, actor);
+      actor,
+    );
 
     return this.getCall(session.id, actor);
   }
@@ -215,7 +226,13 @@ export class CallsService {
       where: { id: sessionId },
       include: {
         user: { select: { id: true, name: true } },
-        team: { select: { id: true, name: true, brand: { select: { companyId: true } } } },
+        team: {
+          select: {
+            id: true,
+            name: true,
+            brand: { select: { companyId: true } },
+          },
+        },
         flowRuns: {
           orderBy: { startedAt: 'desc' },
           take: 10,
@@ -246,7 +263,11 @@ export class CallsService {
     };
   }
 
-  async appendCallEvent(sessionId: string, dto: CreateCallEventDto, actor?: AuthenticatedActor) {
+  async appendCallEvent(
+    sessionId: string,
+    dto: CreateCallEventDto,
+    actor?: AuthenticatedActor,
+  ) {
     this.assertNonEmptyString(sessionId, 'sessionId');
     this.assertNonEmptyString(dto.type, 'type');
     this.assertAllowedEventType(dto.type);
@@ -258,14 +279,23 @@ export class CallsService {
     await this.assertSessionAccess(session, actor);
     const metadata = this.parseMetadata(session.metadata);
     this.validateStateTransition(
-      dto.stateAfter || dto.stateBefore || metadata.state || session.status || null,
+      dto.stateAfter ||
+        dto.stateBefore ||
+        metadata.state ||
+        session.status ||
+        null,
       dto.stateBefore || metadata.state || session.status || null,
     );
     const eventPayload = {
       schemaVersion: 1,
       correlationId: dto.correlationId || metadata.callId || sessionId,
       stateBefore: dto.stateBefore || metadata.state || session.status || null,
-      stateAfter: dto.stateAfter || dto.stateBefore || metadata.state || session.status || null,
+      stateAfter:
+        dto.stateAfter ||
+        dto.stateBefore ||
+        metadata.state ||
+        session.status ||
+        null,
       source: dto.source || 'cloud',
       data: dto.data || {},
       metadata: dto.metadata || {},
@@ -293,7 +323,11 @@ export class CallsService {
     };
   }
 
-  async appendTranscript(sessionId: string, dto: TranscriptTurnDto, actor?: AuthenticatedActor) {
+  async appendTranscript(
+    sessionId: string,
+    dto: TranscriptTurnDto,
+    actor?: AuthenticatedActor,
+  ) {
     this.assertNonEmptyString(sessionId, 'sessionId');
     this.assertNonEmptyString(dto.text, 'text');
     this.assertOptionalString(dto.language, 'language');
@@ -303,7 +337,9 @@ export class CallsService {
     const session = await this.requireSession(sessionId);
     await this.assertSessionAccess(session, actor);
     const metadata = this.parseMetadata(session.metadata);
-    const nextTranscript = Array.isArray(metadata.transcript) ? [...metadata.transcript] : [];
+    const nextTranscript = Array.isArray(metadata.transcript)
+      ? [...metadata.transcript]
+      : [];
     const transcriptTurn = {
       text: dto.text,
       language: dto.language || metadata.language || 'es-MX',
@@ -332,14 +368,20 @@ export class CallsService {
       },
     });
 
-    const eventType = transcriptTurn.isFinal ? 'stt.transcript.final' : 'stt.transcript.partial';
-    const event = await this.appendCallEvent(sessionId, {
-      type: eventType,
-      source: transcriptTurn.source,
-      stateBefore: session.status || metadata.state,
-      stateAfter: transcriptTurn.isFinal ? 'transcribing' : metadata.state,
-      data: transcriptTurn,
-    }, actor);
+    const eventType = transcriptTurn.isFinal
+      ? 'stt.transcript.final'
+      : 'stt.transcript.partial';
+    const event = await this.appendCallEvent(
+      sessionId,
+      {
+        type: eventType,
+        source: transcriptTurn.source,
+        stateBefore: session.status || metadata.state,
+        stateAfter: transcriptTurn.isFinal ? 'transcribing' : metadata.state,
+        data: transcriptTurn,
+      },
+      actor,
+    );
 
     return {
       sessionId,
@@ -349,7 +391,11 @@ export class CallsService {
     };
   }
 
-  async decide(sessionId: string, dto: DecideCallDto, actor?: AuthenticatedActor) {
+  async decide(
+    sessionId: string,
+    dto: DecideCallDto,
+    actor?: AuthenticatedActor,
+  ) {
     this.assertNonEmptyString(sessionId, 'sessionId');
     this.assertOptionalString(dto.text, 'text');
     this.assertOptionalString(dto.provider, 'provider');
@@ -359,26 +405,35 @@ export class CallsService {
     await this.assertSessionAccess(session, actor);
     const metadata = this.parseMetadata(session.metadata);
     const previousState = metadata.state || session.status || 'listening';
-    const transcript = Array.isArray(metadata.transcript) ? metadata.transcript : [];
+    const transcript = Array.isArray(metadata.transcript)
+      ? metadata.transcript
+      : [];
     const text =
       dto.text ||
-      String(transcript[transcript.length - 1]?.text || '').trim();
+      (String(transcript[transcript.length - 1]?.text ?? '')
+        .trim() as string);
 
     if (!text) {
-      throw new BadRequestException('No transcript text available for decisioning');
+      throw new BadRequestException(
+        'No transcript text available for decisioning',
+      );
     }
 
     await this.updateSessionState(sessionId, 'thinking', { metadata });
-    await this.appendCallEvent(sessionId, {
-      type: 'brain.intent.detected',
-      source: 'cloud',
-      stateBefore: previousState,
-      stateAfter: 'thinking',
-      data: {
-        text,
-        provider: dto.provider || 'api',
+    await this.appendCallEvent(
+      sessionId,
+      {
+        type: 'brain.intent.detected',
+        source: 'cloud',
+        stateBefore: previousState,
+        stateAfter: 'thinking',
+        data: {
+          text,
+          provider: dto.provider || 'api',
+        },
       },
-    }, actor);
+      actor,
+    );
 
     const decision = await this.decisionEngineService.processTextInput(
       sessionId,
@@ -420,21 +475,25 @@ export class CallsService {
           ? 'reporting'
           : 'answer_ready';
 
-    await this.appendCallEvent(sessionId, {
-      type:
-        decision.command.type === 'ui_steps'
-          ? 'rpa.command.issued'
-          : 'brain.answer.generated',
-      source: 'cloud',
-      stateBefore: 'thinking',
-      stateAfter: nextState,
-      data: {
-        command: decision.command,
-        reasoning: decision.reasoning,
-        confidence: decision.confidence,
-        flowRunId: flowRun?.id || null,
+    await this.appendCallEvent(
+      sessionId,
+      {
+        type:
+          decision.command.type === 'ui_steps'
+            ? 'rpa.command.issued'
+            : 'brain.answer.generated',
+        source: 'cloud',
+        stateBefore: 'thinking',
+        stateAfter: nextState,
+        data: {
+          command: decision.command,
+          reasoning: decision.reasoning,
+          confidence: decision.confidence,
+          flowRunId: flowRun?.id || null,
+        },
       },
-    }, actor);
+      actor,
+    );
 
     if (decision.command.type === 'ui_steps') {
       await this.prisma.event.create({
@@ -471,7 +530,11 @@ export class CallsService {
     };
   }
 
-  async close(sessionId: string, dto: CloseCallDto, actor?: AuthenticatedActor) {
+  async close(
+    sessionId: string,
+    dto: CloseCallDto,
+    actor?: AuthenticatedActor,
+  ) {
     this.assertNonEmptyString(sessionId, 'sessionId');
     this.assertOptionalString(dto.reason, 'reason');
     this.assertOptionalString(dto.finalReport, 'finalReport');
@@ -486,33 +549,43 @@ export class CallsService {
     metadata.closedAt = now;
     metadata.closeReason = dto.reason || 'completed';
 
-    await this.appendCallEvent(sessionId, {
-      type: 'call.report.generated',
-      source: 'cloud',
-      stateBefore: previousState,
-      stateAfter: 'reporting',
-      data: {
-        finalReport: dto.finalReport || null,
-        reason: dto.reason || 'completed',
+    await this.appendCallEvent(
+      sessionId,
+      {
+        type: 'call.report.generated',
+        source: 'cloud',
+        stateBefore: previousState,
+        stateAfter: 'reporting',
+        data: {
+          finalReport: dto.finalReport || null,
+          reason: dto.reason || 'completed',
+        },
       },
-    }, actor);
+      actor,
+    );
 
-    await this.appendCallEvent(sessionId, {
-      type: 'call.closed',
-      source: 'cloud',
-      stateBefore: 'reporting',
-      stateAfter: 'closed',
-      data: {
-        reason: dto.reason || 'completed',
+    await this.appendCallEvent(
+      sessionId,
+      {
+        type: 'call.closed',
+        source: 'cloud',
+        stateBefore: 'reporting',
+        stateAfter: 'closed',
+        data: {
+          reason: dto.reason || 'completed',
+        },
       },
-    }, actor);
+      actor,
+    );
 
     await this.prisma.session.update({
       where: { id: sessionId },
       data: {
         status: 'closed',
         metadata: JSON.stringify({
-          ...this.parseMetadata((await this.requireSession(sessionId)).metadata),
+          ...this.parseMetadata(
+            (await this.requireSession(sessionId)).metadata,
+          ),
           ...(dto.metadata || {}),
           finalReport: metadata.finalReport,
           closedAt: now,
@@ -526,7 +599,11 @@ export class CallsService {
     return this.getCall(sessionId, actor);
   }
 
-  async escalate(sessionId: string, dto: EscalateCallDto, actor?: AuthenticatedActor) {
+  async escalate(
+    sessionId: string,
+    dto: EscalateCallDto,
+    actor?: AuthenticatedActor,
+  ) {
     this.assertNonEmptyString(sessionId, 'sessionId');
     this.assertNonEmptyString(dto.trigger, 'trigger');
     this.assertOptionalString(dto.triggerType, 'triggerType');
@@ -552,17 +629,21 @@ export class CallsService {
       },
     });
 
-    await this.appendCallEvent(sessionId, {
-      type: 'call.escalated',
-      source: 'cloud',
-      stateBefore: previousState,
-      stateAfter: 'escalated',
-      data: {
-        escalationId: escalation.id,
-        trigger: dto.trigger,
-        instruction: dto.instruction || 'transfer_to_human',
+    await this.appendCallEvent(
+      sessionId,
+      {
+        type: 'call.escalated',
+        source: 'cloud',
+        stateBefore: previousState,
+        stateAfter: 'escalated',
+        data: {
+          escalationId: escalation.id,
+          trigger: dto.trigger,
+          instruction: dto.instruction || 'transfer_to_human',
+        },
       },
-    }, actor);
+      actor,
+    );
 
     await this.prisma.event.create({
       data: {
@@ -593,7 +674,9 @@ export class CallsService {
       data: {
         status: 'escalated',
         metadata: JSON.stringify({
-          ...this.parseMetadata((await this.requireSession(sessionId)).metadata),
+          ...this.parseMetadata(
+            (await this.requireSession(sessionId)).metadata,
+          ),
           escalatedAt: now,
           state: 'escalated',
           lastTransitionAt: now,
@@ -630,7 +713,9 @@ export class CallsService {
     });
   }
 
-  private parseMetadata(metadata: string | null | undefined): CallSessionMetadata {
+  private parseMetadata(
+    metadata: string | null | undefined,
+  ): CallSessionMetadata {
     const parsed = this.parseJson(metadata);
     return {
       callId: String(parsed.callId || ''),
@@ -639,7 +724,9 @@ export class CallsService {
       turnCount: Number(parsed.turnCount || 0),
       transcript: Array.isArray(parsed.transcript) ? parsed.transcript : [],
       startedAt: String(parsed.startedAt || new Date().toISOString()),
-      lastTransitionAt: String(parsed.lastTransitionAt || new Date().toISOString()),
+      lastTransitionAt: String(
+        parsed.lastTransitionAt || new Date().toISOString(),
+      ),
       ...parsed,
     };
   }
@@ -655,8 +742,16 @@ export class CallsService {
     const sessionUserId = session.userId || null;
     const sessionCompanyId = session.team?.brand?.companyId || null;
 
-    const userMatches = Boolean(actorContext.userId && sessionUserId && actorContext.userId === sessionUserId);
-    const teamMatches = Boolean(actorContext.teamId && sessionTeamId && actorContext.teamId === sessionTeamId);
+    const userMatches = Boolean(
+      actorContext.userId &&
+      sessionUserId &&
+      actorContext.userId === sessionUserId,
+    );
+    const teamMatches = Boolean(
+      actorContext.teamId &&
+      sessionTeamId &&
+      actorContext.teamId === sessionTeamId,
+    );
     const companyMatches = Boolean(
       actorContext.companyId &&
       sessionCompanyId &&
@@ -668,7 +763,9 @@ export class CallsService {
     );
 
     if (!userMatches && !teamMatches && !companyMatches && !deviceMatches) {
-      throw new ForbiddenException(`Session ${session.id} is not accessible to this user`);
+      throw new ForbiddenException(
+        `Session ${session.id} is not accessible to this user`,
+      );
     }
   }
 
@@ -687,7 +784,9 @@ export class CallsService {
     return session;
   }
 
-  private async resolveActorContext(actor?: AuthenticatedActor): Promise<ActorContext> {
+  private async resolveActorContext(
+    actor?: AuthenticatedActor,
+  ): Promise<ActorContext> {
     if (!actor?.userId) {
       return { role: actor?.role };
     }
@@ -709,7 +808,9 @@ export class CallsService {
     });
 
     if (!user) {
-      throw new ForbiddenException(`Authenticated user ${actor.userId} was not found`);
+      throw new ForbiddenException(
+        `Authenticated user ${actor.userId} was not found`,
+      );
     }
 
     return {
@@ -743,7 +844,11 @@ export class CallsService {
     }
 
     const sameUser = Boolean(device.userId && device.userId === actor.userId);
-    const sameTeam = Boolean(device.user?.teamId && actor.teamId && device.user.teamId === actor.teamId);
+    const sameTeam = Boolean(
+      device.user?.teamId &&
+      actor.teamId &&
+      device.user.teamId === actor.teamId,
+    );
     const sameCompany = Boolean(
       actor.companyId &&
       ((device.user?.companyId && device.user.companyId === actor.companyId) ||
@@ -751,7 +856,9 @@ export class CallsService {
     );
 
     if (!sameUser && !sameTeam && !sameCompany) {
-      throw new ForbiddenException(`Device ${deviceId} is not accessible to this user`);
+      throw new ForbiddenException(
+        `Device ${deviceId} is not accessible to this user`,
+      );
     }
 
     return device;
@@ -768,15 +875,23 @@ export class CallsService {
 
   private resolveUserId(dtoUserId: string | undefined, actor: ActorContext) {
     if (actor.userId && dtoUserId && dtoUserId !== actor.userId) {
-      throw new ForbiddenException('dto.userId does not match authenticated user');
+      throw new ForbiddenException(
+        'dto.userId does not match authenticated user',
+      );
     }
 
     return actor.userId || dtoUserId;
   }
 
-  private async resolveTeamId(dtoTeamId: string | undefined, actor: ActorContext, deviceUserId?: string | null) {
+  private async resolveTeamId(
+    dtoTeamId: string | undefined,
+    actor: ActorContext,
+    deviceUserId?: string | null,
+  ) {
     if (actor.teamId && dtoTeamId && dtoTeamId !== actor.teamId) {
-      throw new ForbiddenException('dto.teamId does not match authenticated user team');
+      throw new ForbiddenException(
+        'dto.teamId does not match authenticated user team',
+      );
     }
 
     if (dtoTeamId) {
@@ -819,11 +934,19 @@ export class CallsService {
     }
 
     if (actor.teamId && actor.teamId !== teamId) {
-      throw new ForbiddenException(`Team ${teamId} is not accessible to this user`);
+      throw new ForbiddenException(
+        `Team ${teamId} is not accessible to this user`,
+      );
     }
 
-    if (actor.companyId && team.brand?.companyId && actor.companyId !== team.brand.companyId) {
-      throw new ForbiddenException(`Team ${teamId} is not accessible to this company`);
+    if (
+      actor.companyId &&
+      team.brand?.companyId &&
+      actor.companyId !== team.brand.companyId
+    ) {
+      throw new ForbiddenException(
+        `Team ${teamId} is not accessible to this company`,
+      );
     }
   }
 
@@ -845,7 +968,10 @@ export class CallsService {
     }
   }
 
-  private validateStateTransition(nextState: string | null, previousState: string | null) {
+  private validateStateTransition(
+    nextState: string | null,
+    previousState: string | null,
+  ) {
     if (!nextState) {
       return;
     }
@@ -858,7 +984,9 @@ export class CallsService {
     this.assertAllowedState(previousState, 'stateBefore');
     const transition = `${previousState}->${nextState}`;
     if (!ALLOWED_CALL_TRANSITIONS.has(transition)) {
-      throw new BadRequestException(`Unsupported call state transition: ${transition}`);
+      throw new BadRequestException(
+        `Unsupported call state transition: ${transition}`,
+      );
     }
   }
 
@@ -874,8 +1002,14 @@ export class CallsService {
     }
   }
 
-  private assertOptionalRecord(value: Record<string, unknown> | undefined, fieldName: string) {
-    if (value !== undefined && (typeof value !== 'object' || value === null || Array.isArray(value))) {
+  private assertOptionalRecord(
+    value: Record<string, unknown> | undefined,
+    fieldName: string,
+  ) {
+    if (
+      value !== undefined &&
+      (typeof value !== 'object' || value === null || Array.isArray(value))
+    ) {
       throw new BadRequestException(`${fieldName} must be an object`);
     }
   }
@@ -888,7 +1022,9 @@ export class CallsService {
     try {
       return JSON.parse(value);
     } catch (error) {
-      this.logger.warn(`Failed to parse JSON metadata: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.warn(
+        `Failed to parse JSON metadata: ${error instanceof Error ? error.message : String(error)}`,
+      );
       return {};
     }
   }

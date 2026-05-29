@@ -7,7 +7,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CommandResultDto } from './dto/browser-commands.dto';
 
-interface BrowserCommandEnvelope {
+export interface BrowserCommandEnvelope {
   id: string;
   sessionId: string;
   flowRunId?: string | null;
@@ -18,11 +18,7 @@ interface BrowserCommandEnvelope {
   metadata?: Record<string, unknown>;
 }
 
-interface AuthenticatedActor {
-  userId?: string;
-  email?: string;
-  role?: string;
-}
+import { AuthenticatedActor } from '../types/auth.types';
 
 interface ActorContext {
   userId?: string;
@@ -31,7 +27,11 @@ interface ActorContext {
   role?: string;
 }
 
-const ALLOWED_COMMAND_RESULT_STATUSES = new Set(['completed', 'failed', 'partial']);
+const ALLOWED_COMMAND_RESULT_STATUSES = new Set([
+  'completed',
+  'failed',
+  'partial',
+]);
 
 @Injectable()
 export class BrowserCommandsService {
@@ -88,7 +88,11 @@ export class BrowserCommandsService {
     };
   }
 
-  async recordCommandResult(deviceId: string, dto: CommandResultDto, actor?: AuthenticatedActor) {
+  async recordCommandResult(
+    deviceId: string,
+    dto: CommandResultDto,
+    actor?: AuthenticatedActor,
+  ) {
     this.assertNonEmptyString(deviceId, 'deviceId');
     this.assertNonEmptyString(dto.commandId, 'commandId');
     this.assertOptionalString(dto.startedAt, 'startedAt');
@@ -119,13 +123,20 @@ export class BrowserCommandsService {
       take: 200,
     });
 
-    const matchedSession = sessions.find((session) => this.findIssuedCommand(session.events, dto.commandId, deviceId));
+    const matchedSession = sessions.find((session) =>
+      this.findIssuedCommand(session.events, dto.commandId, deviceId),
+    );
 
     if (!matchedSession) {
-      throw new NotFoundException(`Command ${dto.commandId} not found for device ${deviceId}`);
+      throw new NotFoundException(
+        `Command ${dto.commandId} not found for device ${deviceId}`,
+      );
     }
 
-    const existingResult = this.findExistingResultEvent(matchedSession.events, dto.commandId);
+    const existingResult = this.findExistingResultEvent(
+      matchedSession.events,
+      dto.commandId,
+    );
     if (existingResult) {
       return {
         sessionId: matchedSession.id,
@@ -139,7 +150,9 @@ export class BrowserCommandsService {
         return false;
       }
       const payload = this.parseJson(event.payload);
-      return payload.id === dto.commandId && payload.metadata?.deviceId === deviceId;
+      return (
+        payload.id === dto.commandId && payload.metadata?.deviceId === deviceId
+      );
     });
 
     const resultEvent = await this.prisma.event.create({
@@ -163,13 +176,20 @@ export class BrowserCommandsService {
       },
     });
 
-    const commandPayload = issuedCommand?.payload ? this.parseJson(issuedCommand.payload) : {};
+    const commandPayload = issuedCommand?.payload
+      ? this.parseJson(issuedCommand.payload)
+      : {};
     const flowRunId = this.findFlowRunId(matchedSession.events, dto.commandId);
     if (flowRunId) {
       await this.prisma.flowRun.update({
         where: { id: flowRunId },
         data: {
-          status: dto.status === 'completed' ? 'completed' : dto.status === 'failed' ? 'failed' : 'running',
+          status:
+            dto.status === 'completed'
+              ? 'completed'
+              : dto.status === 'failed'
+                ? 'failed'
+                : 'running',
           completedAt: dto.status === 'partial' ? null : new Date(),
           error: dto.error || null,
           result: JSON.stringify({
@@ -187,7 +207,8 @@ export class BrowserCommandsService {
       data: {
         id: `event_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`,
         sessionId: matchedSession.id,
-        type: dto.status === 'failed' ? 'rpa.step.failed' : 'rpa.step.completed',
+        type:
+          dto.status === 'failed' ? 'rpa.step.failed' : 'rpa.step.completed',
         payload: JSON.stringify({
           commandId: dto.commandId,
           deviceId,
@@ -208,40 +229,62 @@ export class BrowserCommandsService {
     };
   }
 
-  private findNextPendingCommand(sessions: Array<{ id: string; metadata: string | null; events: Array<{ type: string; payload: string | null; createdAt?: Date }> }>, deviceId: string) {
+  private findNextPendingCommand(
+    sessions: Array<{
+      id: string;
+      metadata: string | null;
+      events: Array<{ type: string; payload: string | null; createdAt?: Date }>;
+    }>,
+    deviceId: string,
+  ) {
     const candidates = sessions.flatMap((session) => {
       const sessionMetadata = this.parseJson(session.metadata);
       const sessionMatchesDevice = sessionMetadata.deviceId === deviceId;
 
       return session.events
-        .filter((event) => event.type === 'browser.command.issued' && Boolean(event.payload))
+        .filter(
+          (event) =>
+            event.type === 'browser.command.issued' && Boolean(event.payload),
+        )
         .map((event) => {
-          const command = this.parseJson(event.payload) as BrowserCommandEnvelope;
+          const command = this.parseJson(
+            event.payload,
+          ) as BrowserCommandEnvelope;
           return {
             sessionId: session.id,
-            eventCreatedAt: event.createdAt ? new Date(event.createdAt).getTime() : 0,
+            eventCreatedAt: event.createdAt
+              ? new Date(event.createdAt).getTime()
+              : 0,
             command,
             sessionMatchesDevice,
           };
         })
-        .filter(({ command, sessionMatchesDevice }) =>
-          Boolean(command.id) &&
-          (command.metadata?.deviceId === deviceId || sessionMatchesDevice) &&
-          !this.isExpired(command) &&
-          !this.commandHasResult(session.events, command.id) &&
-          !this.commandHasBeenClaimed(session.events, command.id, deviceId),
+        .filter(
+          ({ command, sessionMatchesDevice }) =>
+            Boolean(command.id) &&
+            (command.metadata?.deviceId === deviceId || sessionMatchesDevice) &&
+            !this.isExpired(command) &&
+            !this.commandHasResult(session.events, command.id) &&
+            !this.commandHasBeenClaimed(session.events, command.id, deviceId),
         );
     });
 
-    candidates.sort((left, right) => left.eventCreatedAt - right.eventCreatedAt);
+    candidates.sort(
+      (left, right) => left.eventCreatedAt - right.eventCreatedAt,
+    );
     return candidates[0] || null;
   }
 
-  private findPendingCommandForLegacyReaders(events: Array<{ type: string; payload: string | null }>, deviceId: string) {
+  private findPendingCommandForLegacyReaders(
+    events: Array<{ type: string; payload: string | null }>,
+    deviceId: string,
+  ) {
     const issued = events
       .filter((event) => event.type === 'browser.command.issued')
       .map((event) => this.parseJson(event.payload) as BrowserCommandEnvelope)
-      .filter((command) => command.id && command.metadata?.deviceId === deviceId)
+      .filter(
+        (command) => command.id && command.metadata?.deviceId === deviceId,
+      )
       .filter((command) => !this.isExpired(command));
 
     const completed = new Set(
@@ -254,7 +297,10 @@ export class BrowserCommandsService {
     return issued.find((command) => !completed.has(command.id)) || null;
   }
 
-  private commandHasResult(events: Array<{ type: string; payload: string | null }>, commandId: string) {
+  private commandHasResult(
+    events: Array<{ type: string; payload: string | null }>,
+    commandId: string,
+  ) {
     return Boolean(this.findExistingResultEvent(events, commandId));
   }
 
@@ -269,22 +315,39 @@ export class BrowserCommandsService {
       }
 
       const payload = this.parseJson(event.payload);
-      return payload.commandId === commandId && payload.metadata?.deviceId === deviceId;
+      return (
+        payload.commandId === commandId &&
+        payload.metadata?.deviceId === deviceId
+      );
     });
   }
 
-  private findIssuedCommand(events: Array<{ type: string; payload: string | null }>, commandId: string, deviceId: string) {
+  private findIssuedCommand(
+    events: Array<{ type: string; payload: string | null }>,
+    commandId: string,
+    deviceId: string,
+  ) {
     return events.some((event) => {
       if (event.type !== 'browser.command.issued' || !event.payload) {
         return false;
       }
 
       const payload = this.parseJson(event.payload);
-      return payload.id === commandId && payload.metadata?.deviceId === deviceId;
+      return (
+        payload.id === commandId && payload.metadata?.deviceId === deviceId
+      );
     });
   }
 
-  private findExistingResultEvent(events: Array<{ id?: string; type: string; payload: string | null; createdAt?: Date }>, commandId: string) {
+  private findExistingResultEvent(
+    events: Array<{
+      id?: string;
+      type: string;
+      payload: string | null;
+      createdAt?: Date;
+    }>,
+    commandId: string,
+  ) {
     const existing = events.find((event) => {
       if (event.type !== 'browser.command.result' || !event.payload) {
         return false;
@@ -305,15 +368,26 @@ export class BrowserCommandsService {
   }
 
   private isExpired(command: BrowserCommandEnvelope) {
-    return Boolean(command.expiresAt && new Date(command.expiresAt).getTime() <= Date.now());
+    return Boolean(
+      command.expiresAt && new Date(command.expiresAt).getTime() <= Date.now(),
+    );
   }
 
-  private findPendingCommand(events: Array<{ type: string; payload: string | null }>, deviceId: string) {
+  private findPendingCommand(
+    events: Array<{ type: string; payload: string | null }>,
+    deviceId: string,
+  ) {
     const issued = events
       .filter((event) => event.type === 'browser.command.issued')
       .map((event) => this.parseJson(event.payload) as BrowserCommandEnvelope)
-      .filter((command) => command.id && command.metadata?.deviceId === deviceId)
-      .filter((command) => !command.expiresAt || new Date(command.expiresAt).getTime() > Date.now());
+      .filter(
+        (command) => command.id && command.metadata?.deviceId === deviceId,
+      )
+      .filter(
+        (command) =>
+          !command.expiresAt ||
+          new Date(command.expiresAt).getTime() > Date.now(),
+      );
 
     const completed = new Set(
       events
@@ -325,7 +399,10 @@ export class BrowserCommandsService {
     return issued.find((command) => !completed.has(command.id)) || null;
   }
 
-  private findFlowRunId(events: Array<{ type: string; payload: string | null }>, commandId: string) {
+  private findFlowRunId(
+    events: Array<{ type: string; payload: string | null }>,
+    commandId: string,
+  ) {
     const issued = events.find((event) => {
       if (event.type !== 'browser.command.issued') {
         return false;
@@ -353,7 +430,9 @@ export class BrowserCommandsService {
     }
   }
 
-  private async resolveActorContext(actor?: AuthenticatedActor): Promise<ActorContext> {
+  private async resolveActorContext(
+    actor?: AuthenticatedActor,
+  ): Promise<ActorContext> {
     if (!actor?.userId) {
       return { role: actor?.role };
     }
@@ -375,7 +454,9 @@ export class BrowserCommandsService {
     });
 
     if (!user) {
-      throw new ForbiddenException(`Authenticated user ${actor.userId} was not found`);
+      throw new ForbiddenException(
+        `Authenticated user ${actor.userId} was not found`,
+      );
     }
 
     return {
@@ -386,7 +467,10 @@ export class BrowserCommandsService {
     };
   }
 
-  private async requireAccessibleDevice(deviceId: string, actor?: AuthenticatedActor) {
+  private async requireAccessibleDevice(
+    deviceId: string,
+    actor?: AuthenticatedActor,
+  ) {
     const device = await this.prisma.device.findUnique({
       where: { id: deviceId },
       include: {
@@ -409,16 +493,26 @@ export class BrowserCommandsService {
     }
 
     const actorContext = await this.resolveActorContext(actor);
-    const sameUser = Boolean(device.userId && device.userId === actorContext.userId);
-    const sameTeam = Boolean(actorContext.teamId && device.user?.teamId && actorContext.teamId === device.user.teamId);
+    const sameUser = Boolean(
+      device.userId && device.userId === actorContext.userId,
+    );
+    const sameTeam = Boolean(
+      actorContext.teamId &&
+      device.user?.teamId &&
+      actorContext.teamId === device.user.teamId,
+    );
     const sameCompany = Boolean(
       actorContext.companyId &&
-      ((device.user?.companyId && actorContext.companyId === device.user.companyId) ||
-        (device.organizationId && actorContext.companyId === device.organizationId)),
+      ((device.user?.companyId &&
+        actorContext.companyId === device.user.companyId) ||
+        (device.organizationId &&
+          actorContext.companyId === device.organizationId)),
     );
 
     if (!sameUser && !sameTeam && !sameCompany) {
-      throw new ForbiddenException(`Device ${deviceId} is not accessible to this user`);
+      throw new ForbiddenException(
+        `Device ${deviceId} is not accessible to this user`,
+      );
     }
 
     return device;
@@ -436,8 +530,14 @@ export class BrowserCommandsService {
     }
   }
 
-  private assertOptionalRecord(value: Record<string, unknown> | undefined, fieldName: string) {
-    if (value !== undefined && (typeof value !== 'object' || value === null || Array.isArray(value))) {
+  private assertOptionalRecord(
+    value: Record<string, unknown> | undefined,
+    fieldName: string,
+  ) {
+    if (
+      value !== undefined &&
+      (typeof value !== 'object' || value === null || Array.isArray(value))
+    ) {
       throw new BadRequestException(`${fieldName} must be an object`);
     }
   }
@@ -452,7 +552,12 @@ export class BrowserCommandsService {
     }
 
     for (const item of evidence) {
-      if (!item || typeof item !== 'object' || typeof item.type !== 'string' || !item.type.trim()) {
+      if (
+        !item ||
+        typeof item !== 'object' ||
+        typeof item.type !== 'string' ||
+        !item.type.trim()
+      ) {
         throw new BadRequestException('evidence entries must include a type');
       }
     }

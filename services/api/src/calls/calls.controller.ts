@@ -38,31 +38,51 @@ export class CallsController {
 
   @Post(':sessionId/events')
   @ApiOperation({ summary: 'Append a call event from browser or provider' })
-  appendEvent(@Param('sessionId') sessionId: string, @Body() dto: CreateCallEventDto, @Req() request: any) {
+  appendEvent(
+    @Param('sessionId') sessionId: string,
+    @Body() dto: CreateCallEventDto,
+    @Req() request: any,
+  ) {
     return this.callsService.appendCallEvent(sessionId, dto, request.user);
   }
 
   @Post(':sessionId/transcript')
   @ApiOperation({ summary: 'Append a transcript turn from STT' })
-  appendTranscript(@Param('sessionId') sessionId: string, @Body() dto: TranscriptTurnDto, @Req() request: any) {
+  appendTranscript(
+    @Param('sessionId') sessionId: string,
+    @Body() dto: TranscriptTurnDto,
+    @Req() request: any,
+  ) {
     return this.callsService.appendTranscript(sessionId, dto, request.user);
   }
 
   @Post(':sessionId/decide')
   @ApiOperation({ summary: 'Run Cloud decisioning for the current call turn' })
-  decide(@Param('sessionId') sessionId: string, @Body() dto: DecideCallDto, @Req() request: any) {
+  decide(
+    @Param('sessionId') sessionId: string,
+    @Body() dto: DecideCallDto,
+    @Req() request: any,
+  ) {
     return this.callsService.decide(sessionId, dto, request.user);
   }
 
   @Post(':sessionId/close')
   @ApiOperation({ summary: 'Close a call and persist final report metadata' })
-  close(@Param('sessionId') sessionId: string, @Body() dto: CloseCallDto, @Req() request: any) {
+  close(
+    @Param('sessionId') sessionId: string,
+    @Body() dto: CloseCallDto,
+    @Req() request: any,
+  ) {
     return this.callsService.close(sessionId, dto, request.user);
   }
 
   @Post(':sessionId/escalate')
   @ApiOperation({ summary: 'Escalate a call and queue transfer instruction' })
-  escalate(@Param('sessionId') sessionId: string, @Body() dto: EscalateCallDto, @Req() request: any) {
+  escalate(
+    @Param('sessionId') sessionId: string,
+    @Body() dto: EscalateCallDto,
+    @Req() request: any,
+  ) {
     return this.callsService.escalate(sessionId, dto, request.user);
   }
 }
