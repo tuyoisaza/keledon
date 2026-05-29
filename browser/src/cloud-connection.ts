@@ -14,7 +14,21 @@ import type { RuntimeStatus } from './types.js';
 import type { TabManager, Tab } from './tab-manager.js';
 
 function buildWsCtx(cloudUrl: string, token: string): string {
-  return `ws=${cloudUrl}/ws/runtime token=${cmdlog.truncate(token, 16, 0)} device=${cmdlog.truncate(runtimeStatus.deviceId, 8, 4)}`;
+  return `ws=${deriveWsUrl(cloudUrl)}/ws/runtime token=${cmdlog.truncate(token, 16, 0)} device=${cmdlog.truncate(runtimeStatus.deviceId, 8, 4)}`;
+}
+
+/**
+ * Derive the WebSocket API URL from the cloudUrl. WebSocket connections go
+ * directly to the API service instead of through the nginx proxy.
+ */
+function deriveWsUrl(cloudUrl: string): string {
+  try {
+    const u = new URL(cloudUrl);
+    if (u.hostname === 'keledon.tuyoisaza.com') {
+      return `https://keledonapi.tuyoisaza.com`;
+    }
+  } catch { /* fall through */ }
+  return cloudUrl;
 }
 
 // ===================== SOCKET REFERENCES =====================
@@ -150,7 +164,8 @@ function createDeviceSocket(
   getAutoBrowseBridge: () => Promise<any>,
   onConnected?: () => Promise<void> | void,
 ): Socket {
-  const socket = io(`${cloudUrl}/ws/runtime`, {
+  const wsUrl = deriveWsUrl(cloudUrl);
+  const socket = io(`${wsUrl}/ws/runtime`, {
     auth: { token, device_id: runtimeStatus.deviceId },
     transports: ['websocket', 'polling'],
     reconnection: true,
@@ -327,7 +342,8 @@ function registerMessageHandlers(
  * Uses the same reconnection config as the device socket.
  */
 function createAgentSocket(cloudUrl: string, token: string): Socket {
-  const socket = io(`${cloudUrl}/agent`, {
+  const wsUrl = deriveWsUrl(cloudUrl);
+  const socket = io(`${wsUrl}/agent`, {
     auth: { token },
     transports: ['websocket', 'polling'],
     reconnection: true,
