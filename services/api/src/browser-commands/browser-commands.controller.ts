@@ -8,8 +8,10 @@ import {
 import { BrowserCommandsService } from './browser-commands.service';
 import { CommandResultDto } from './dto/browser-commands.dto';
 import { AuthenticatedRequest } from '../types/auth.types';
+import { Public } from '../guards/public.decorator';
 
 @ApiTags('Browser Commands')
+@Public()
 @Controller('api/browser/devices')
 export class BrowserCommandsController {
   constructor(
