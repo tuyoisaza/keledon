@@ -713,7 +713,7 @@ export class CrudService {
 
   async getLaunchContext(keledonId: string) {
     try {
-      const keledon = await this.prisma.agent.findUnique({
+      const keledon = await this.prisma.keledon.findUnique({
         where: { id: keledonId },
       });
       if (!keledon) {
@@ -741,7 +741,7 @@ export class CrudService {
 
       return {
         keledon: { id: keledon.id, name: keledon.name, teamId: keledon.teamId, brandId: keledon.brandId, countryCode: keledon.countryCode },
-        team: team ? { id: team.id, name: team.name, companyId: team.companyId } : null,
+        team: team ? { id: team.id, name: team.name, brandId: team.brandId, country: team.country } : null,
         activeVendors: activeVendors.map((v) => ({ id: v.id, name: v.name, type: v.type, baseUrl: v.baseUrl })),
         nextSteps,
         autoExecute: activeVendors.length > 0
