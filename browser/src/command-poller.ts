@@ -38,13 +38,18 @@ let backoffMs = 1000;
 const DEFAULT_INTERVAL = 2000;
 const MAX_BACKOFF = 30000;
 const handlers: Map<string, CommandHandler> = new Map();
+let totalPolls = 0;
+let failedPolls = 0;
+let successfulPolls = 0;
 
 function getPollInterval(): number {
   return Math.min(backoffMs, DEFAULT_INTERVAL);
 }
 
 function resetBackoff(): void {
-  backoffMs = 1000;
+  if (backoffMs !== 1000) {
+    backoffMs = 1000;
+  }
 }
 
 function increaseBackoff(): void {
@@ -68,6 +73,24 @@ function getAuthHeaders(): Record<string, string> {
   };
 }
 
+function buildContext(): string {
+  const deviceId = runtimeStatus.deviceId || '(unset)';
+  const tokenPre = cmdlog.truncate(runtimeStatus.authToken, 16, 0);
+  const cloudUrl = runtimeStatus.cloudUrl || '(unset)';
+  const connStatus = runtimeStatus.status || 'unknown';
+  return `device=${cmdlog.truncate(deviceId, 8, 4)} token=${tokenPre} cloud=${cloudUrl} status=${connStatus}`;
+}
+
+async function readResponseBody(res: Response): Promise<string> {
+  try {
+    const text = await res.text();
+    if (!text) return '(empty body)';
+    return text.length > 200 ? text.slice(0, 200) + '…' : text;
+  } catch {
+    return '(unreadable body)';
+  }
+}
+
 async function pollForCommand(): Promise<void> {
   if (!isPolling) return;
   if (!runtimeStatus.deviceId) {
@@ -77,43 +100,58 @@ async function pollForCommand(): Promise<void> {
 
   const cloudUrl = runtimeStatus.cloudUrl;
   const deviceId = runtimeStatus.deviceId;
+  const url = `${cloudUrl}/api/browser/devices/${deviceId}/next-command`;
+  const ctx = buildContext();
+
+  totalPolls++;
 
   try {
-    const res = await fetch(`${cloudUrl}/api/browser/devices/${deviceId}/next-command`, {
+    const res = await fetch(url, {
       method: 'GET',
       headers: getAuthHeaders(),
       signal: AbortSignal.timeout(10000),
     });
-    
-    cmdlog.log('POLL', `GET /next-command → ${res.status}`);
+
+    const status = res.status;
+    const statusText = res.statusText || '';
 
     if (res.ok) {
       resetBackoff();
-      const data = await res.json();
+      successfulPolls++;
+      const body = await readResponseBody(res);
+      const data = JSON.parse(body);
 
       // No commands available
       if (!data || !data.command) {
-        cmdlog.log('POLL', `No commands queued (poll every ${getPollInterval()}ms)`);
+        const interval = getPollInterval();
+        cmdlog.log('POLL', `← GET /next-command → ${status} ${statusText} | no command queued | poll #${totalPolls} | ctx: ${ctx} | interval: ${interval}ms`);
         return;
       }
 
       const command: BrowserCommand = data;
-      cmdlog.log('CMD', `Received: ${command.command} (${command.id})`);
+      cmdlog.log('CMD', `← GET /next-command → ${status} ${statusText} | command: ${command.command} (${command.id}) | poll #${totalPolls} | ctx: ${ctx}`);
+      cmdlog.log('CMD', `→ Executing: ${command.command} (${command.id}) | payload: ${cmdlog.preview(command.payload)}`);
       log.info(`[CommandPoller] Received command: ${command.command} (${command.id})`);
 
       // Execute the command
       await executeCommand(command);
-    } else if (res.status === 401 || res.status === 403) {
-      cmdlog.log('ERR', `Poll auth failed: ${res.status} — token may be invalid`);
-      log.error(`[CommandPoller] Auth failed: ${res.status}`);
+    } else if (status === 401 || status === 403) {
+      failedPolls++;
+      const responseBody = await readResponseBody(res);
+      cmdlog.log('ERR', `← GET /next-command → ${status} ${statusText} | poll #${totalPolls} | ctx: ${ctx} | response: ${responseBody}`);
+      log.error(`[CommandPoller] Auth failed: ${status} — body: ${responseBody}`);
       // Don't increase backoff for auth errors — they need immediate retry after reconnect
     } else {
-      cmdlog.log('POLL', `Poll returned ${res.status}, backing off`);
-      log.warn(`[CommandPoller] Poll error: ${res.status}`);
+      failedPolls++;
+      const responseBody = await readResponseBody(res);
+      cmdlog.log('POLL', `← GET /next-command → ${status} ${statusText} | poll #${totalPolls} | ctx: ${ctx} | response: ${responseBody} | backing off to ${backoffMs * 2}ms`);
+      log.warn(`[CommandPoller] Poll error: ${status} — body: ${responseBody}`);
       increaseBackoff();
     }
   } catch (error) {
-    cmdlog.log('ERR', `Poll network error: ${error}, backing off`);
+    failedPolls++;
+    const errMsg = error instanceof Error ? error.message : String(error);
+    cmdlog.log('ERR', `← GET /next-command → NETWORK ERROR | poll #${totalPolls} | ctx: ${ctx} | error: ${errMsg} | backing off to ${backoffMs * 2}ms`);
     log.error('[CommandPoller] Poll failed:', error);
     increaseBackoff();
   }
@@ -123,9 +161,8 @@ async function executeCommand(command: BrowserCommand): Promise<void> {
   const handler = handlers.get(command.command);
 
   if (!handler) {
-    cmdlog.log('CMD', `No handler for command: ${command.command} — reporting failed`);
+    cmdlog.log('CMD', `→ No handler registered for command type "${command.command}" (${command.id}) — reporting failed`);
     log.warn(`[CommandPoller] No handler for command: ${command.command}`);
-    // Report as failed — unknown command
     await reportResult({
       command_id: command.id,
       status: 'failed',
@@ -135,13 +172,15 @@ async function executeCommand(command: BrowserCommand): Promise<void> {
     return;
   }
 
-  cmdlog.log('CMD', `Executing: ${command.command} (${command.id})`);
+  const payloadPreview = cmdlog.preview(command.payload);
+  cmdlog.log('CMD', `→ Executing handler: ${command.command} (${command.id}) | payload: ${payloadPreview}`);
   try {
     const result = await handler(command);
-    cmdlog.log('CMD', `Result: ${command.command} (${command.id}) → ${result.status}`);
+    cmdlog.log('CMD', `← Handler result: ${command.command} (${command.id}) → ${result.status}${result.error ? ` | error: ${result.error}` : ''}${result.output ? ` | output: ${cmdlog.preview(result.output)}` : ''}`);
     await reportResult(result);
   } catch (error) {
-    cmdlog.log('ERR', `Execution failed: ${command.command} (${command.id}): ${error}`);
+    const errMsg = error instanceof Error ? error.message : String(error);
+    cmdlog.log('ERR', `→ Handler threw: ${command.command} (${command.id}) | error: ${errMsg}`);
     log.error(`[CommandPoller] Command execution failed:`, error);
     await reportResult({
       command_id: command.id,
@@ -154,31 +193,38 @@ async function executeCommand(command: BrowserCommand): Promise<void> {
 
 async function reportResult(result: CommandResult): Promise<void> {
   if (!runtimeStatus.deviceId || !runtimeStatus.authToken) {
-    cmdlog.log('ERR', 'Cannot report result — no device ID or auth token');
+    cmdlog.log('ERR', `Cannot report result for ${result.command_id} — no device ID or auth token | ctx: ${buildContext()}`);
     log.warn('[CommandPoller] Cannot report result — no device ID or auth token');
     return;
   }
 
   const cloudUrl = runtimeStatus.cloudUrl;
   const deviceId = runtimeStatus.deviceId;
+  const url = `${cloudUrl}/api/browser/devices/${deviceId}/command-result`;
+  const ctx = buildContext();
 
   try {
-    const res = await fetch(`${cloudUrl}/api/browser/devices/${deviceId}/command-result`, {
+    cmdlog.log('CMD', `→ POST /command-result | command: ${result.command_id} (${result.status}) | body: ${cmdlog.preview(result)} | ctx: ${ctx}`);
+
+    const res = await fetch(url, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(result),
       signal: AbortSignal.timeout(10000),
     });
 
+    const responseBody = await readResponseBody(res);
+
     if (res.ok) {
-      cmdlog.log('CMD', `Result reported: ${result.command_id} (${result.status})`);
+      cmdlog.log('CMD', `← POST /command-result → ${res.status} | ${result.command_id} (${result.status}) reported | response: ${responseBody}`);
       log.info(`[CommandPoller] Result reported: ${result.command_id} (${result.status})`);
     } else {
-      cmdlog.log('ERR', `Failed to report result: ${res.status}`);
+      cmdlog.log('ERR', `← POST /command-result → ${res.status} | ${result.command_id} | ctx: ${ctx} | response: ${responseBody}`);
       log.error(`[CommandPoller] Failed to report result: ${res.status}`);
     }
   } catch (error) {
-    cmdlog.log('ERR', `Report network error: ${error}`);
+    const errMsg = error instanceof Error ? error.message : String(error);
+    cmdlog.log('ERR', `← POST /command-result → NETWORK ERROR | ${result.command_id} | ctx: ${ctx} | error: ${errMsg}`);
     log.error('[CommandPoller] Report failed:', error);
   }
 }
@@ -190,8 +236,15 @@ export function startPolling(config: PollerConfig = {}): void {
   }
 
   isPolling = true;
+  totalPolls = 0;
+  failedPolls = 0;
+  successfulPolls = 0;
   const interval = getPollInterval();
-  cmdlog.log('SYS', `Command polling started (interval: ${interval}ms)`);
+  const intervalConfig = config.intervalMs || DEFAULT_INTERVAL;
+  const ctx = buildContext();
+  const handlerCount = handlers.size;
+
+  cmdlog.log('SYS', `Command polling started | interval: ${interval}ms (configured: ${intervalConfig}ms) | handlers: ${handlerCount} registered | ctx: ${ctx}`);
   log.info('[CommandPoller] Starting command polling loop');
 
   // Poll immediately, then on interval
@@ -211,7 +264,7 @@ export function stopPolling(): void {
   }
   isPolling = false;
   handlers.clear();
-  cmdlog.log('SYS', 'Command polling stopped');
+  cmdlog.log('SYS', `Command polling stopped | stats: ${totalPolls} polls (${successfulPolls} ok, ${failedPolls} failed)`);
   log.info('[CommandPoller] Stopped command polling loop');
 }
 

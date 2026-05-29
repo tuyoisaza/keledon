@@ -13,6 +13,10 @@ import { runtimeStatus } from './runtime-state.js';
 import type { RuntimeStatus } from './types.js';
 import type { TabManager, Tab } from './tab-manager.js';
 
+function buildWsCtx(cloudUrl: string, token: string): string {
+  return `ws=${cloudUrl}/ws/runtime token=${cmdlog.truncate(token, 16, 0)} device=${cmdlog.truncate(runtimeStatus.deviceId, 8, 4)}`;
+}
+
 // ===================== SOCKET REFERENCES =====================
 
 let deviceSocket: Socket | null = null;
@@ -161,7 +165,8 @@ function createDeviceSocket(
   socket.on('connect', () => {
     reconnectionAttempt = 0;
     runtimeStatus.status = 'connected';
-    cmdlog.log('WS', 'Device WebSocket connected');
+    const wsCtx = buildWsCtx(cloudUrl, token);
+    cmdlog.log('WS', `→ WebSocket CONNECTED | ctx: ${wsCtx} | transport: ${socket.io?.engine?.transport?.name || 'unknown'} | session: ${runtimeStatus.sessionId ? 'active (' + runtimeStatus.sessionId + ')' : 'none'}`);
     log.info('Device WebSocket connected');
     eventLogger.info('connection', 'device_connected', {
       deviceId: runtimeStatus.deviceId,
@@ -176,6 +181,7 @@ function createDeviceSocket(
         session_id: runtimeStatus.sessionId,
         team_id: runtimeStatus.teamId || 'default-team',
       });
+      cmdlog.log('WS', `→ Emitted session:start | session_id: ${runtimeStatus.sessionId} | team_id: ${runtimeStatus.teamId || 'default-team'}`);
       log.info('Re-joined session after reconnect:', runtimeStatus.sessionId);
       eventLogger.info('connection', 'session_rejoin', {
         sessionId: runtimeStatus.sessionId,
@@ -195,7 +201,8 @@ function createDeviceSocket(
   // ------ disconnect ------
   socket.on('disconnect', (reason) => {
     runtimeStatus.status = 'disconnected';
-    cmdlog.log('WS', `Device WebSocket disconnected: ${reason}`);
+    const wsCtx = buildWsCtx(cloudUrl, token);
+    cmdlog.log('WS', `← WebSocket DISCONNECTED | reason: ${reason} | ctx: ${wsCtx} | reconnection attempts: ${reconnectionAttempt}`);
     log.warn('Device WebSocket disconnected:', reason);
     eventLogger.warn('connection', 'device_disconnected', { reason });
     stopHeartbeat();
@@ -207,7 +214,9 @@ function createDeviceSocket(
     reconnectionAttempt++;
     runtimeStatus.status = 'reconnecting';
     const delay = getReconnectDelay();
-    cmdlog.log('WS', `WebSocket connect error (attempt ${reconnectionAttempt}), retry in ${delay}ms: ${error.message}`);
+    const wsCtx = buildWsCtx(cloudUrl, token);
+    const transport = socket.io?.engine?.transport?.name || 'unknown';
+    cmdlog.log('WS', `← WebSocket CONNECT_ERROR | attempt: ${reconnectionAttempt} | retry in: ${delay}ms | error: ${error.message} | ctx: ${wsCtx} | transport: ${transport}`);
     log.warn(
       `Device WebSocket connect error (attempt ${reconnectionAttempt}), ` +
       `retrying in ${delay}ms: ${error.message}`,
@@ -381,6 +390,8 @@ export function connectWebSockets(
   sendStatusToRenderer('connecting');
   eventLogger.info('connection', 'connecting', { cloudUrl });
 
+  cmdlog.log('WS', `→ Connecting WebSockets | cloud: ${cloudUrl} | device: ${cmdlog.truncate(runtimeStatus.deviceId, 8, 4)} | token: ${cmdlog.truncate(token, 16, 0)} | transports: [websocket, polling]`);
+
   deviceSocket = createDeviceSocket(cloudUrl, token, tabManager, getAutoBrowseBridge, onConnected);
   agentSocket = createAgentSocket(cloudUrl, token);
 }
@@ -392,6 +403,8 @@ export function connectWebSockets(
 export function disconnectSockets() {
   stopHeartbeat();
   stopPolling();
+
+  cmdlog.log('WS', `← Disconnecting WebSockets | device socket: ${deviceSocket ? 'active' : 'none'} | agent socket: ${agentSocket ? 'active' : 'none'} | reconnectionAttempt: ${reconnectionAttempt}`);
 
   if (deviceSocket) {
     deviceSocket.removeAllListeners();
@@ -418,7 +431,11 @@ export function disconnectSockets() {
  * Called after WebSockets are connected and auth is established.
  */
 export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
-  cmdlog.log('SYS', 'Setting up command handlers and starting polling');
+  const deviceId = cmdlog.truncate(runtimeStatus.deviceId, 8, 4);
+  const tokenPre = cmdlog.truncate(runtimeStatus.authToken, 16, 0);
+  const cloudUrl = runtimeStatus.cloudUrl || '(unset)';
+  const sessionId = runtimeStatus.sessionId || 'none';
+  cmdlog.log('SYS', `Setting up command handlers and starting polling | device: ${deviceId} | token: ${tokenPre} | cloud: ${cloudUrl} | session: ${sessionId}`);
   setCallMainWindow(mainWindow);
   setRpaMainWindow(mainWindow);
 
