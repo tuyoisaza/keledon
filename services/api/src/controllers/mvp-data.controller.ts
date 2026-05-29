@@ -1,6 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { MvpStoreService } from '../mvp/mvp-store.service';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('MVP Data')
 @Controller('api')
@@ -63,7 +72,10 @@ export class MvpDataController {
   }
 
   @Put('flow-versions/:id')
-  updateFlowVersion(@Param('id') id: string, @Body() body: Record<string, any>) {
+  updateFlowVersion(
+    @Param('id') id: string,
+    @Body() body: Record<string, any>,
+  ) {
     return this.mvpStore.updateFlowVersion(id, body);
   }
 

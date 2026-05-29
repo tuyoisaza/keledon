@@ -1,19 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { 
   Activity, 
-  Mic, 
   Brain, 
-  Cpu, 
   ArrowRight, 
-  Play, 
-  Pause, 
-  RotateCcw,
   CheckCircle,
   XCircle,
   Clock,
-  Zap,
-  MessageSquare,
-  Settings
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useAILoops } from '../../hooks/useAILoops';
@@ -101,7 +93,7 @@ export default function AIAgentLoop() {
 
       {/* Loops Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {loops.map((loop) => (
+        {loops.map((loop: AgentLoop) => (
           <div key={loop.id} className="p-6 rounded-xl bg-card border border-border">
             {/* Loop Header */}
             <div className="flex justify-between items-start mb-4">

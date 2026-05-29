@@ -14,7 +14,9 @@ function captureError(msg: string) {
 
 const originalConsoleError = console.error;
 console.error = (...args: any[]): void => {
-  const msg = args.map((a: any) => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+  const msg = args
+    .map((a: any) => (typeof a === 'object' ? JSON.stringify(a) : String(a)))
+    .join(' ');
   captureError(msg);
   originalConsoleError.apply(console, args);
 };
@@ -36,16 +38,18 @@ export class CrudService {
         heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024) + 'MB',
         heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024) + 'MB',
         rss: Math.round(memUsage.rss / 1024 / 1024) + 'MB',
-        external: Math.round(memUsage.external / 1024 / 1024) + 'MB'
+        external: Math.round(memUsage.external / 1024 / 1024) + 'MB',
       },
       env: {
         NODE_ENV: process.env.NODE_ENV || 'development',
         CLOUD_URL: process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
-        KELEDON_LAUNCH_SECRET: process.env.KELEDON_LAUNCH_SECRET ? 'set' : 'not set'
+        KELEDON_LAUNCH_SECRET: process.env.KELEDON_LAUNCH_SECRET
+          ? 'set'
+          : 'not set',
       },
       versions: {
-        cloud: process.env.npm_package_version || '0.0.92'
-      }
+        cloud: process.env.npm_package_version || '0.0.92',
+      },
     };
   }
 
@@ -55,9 +59,9 @@ export class CrudService {
     return this.prisma.company.findMany({
       include: {
         countries: true,
-        _count: { select: { brands: true, users: true } }
+        _count: { select: { brands: true, users: true } },
       },
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
   }
 
@@ -67,27 +71,36 @@ export class CrudService {
       include: {
         countries: true,
         brands: true,
-        users: true
-      }
+        users: true,
+      },
     });
   }
 
-  async createCompany(data: { name: string; industry?: string; countries?: string[] }) {
+  async createCompany(data: {
+    name: string;
+    industry?: string;
+    countries?: string[];
+  }) {
     const { countries, ...companyData } = data;
     return this.prisma.company.create({
       data: {
         ...companyData,
-        countries: countries ? {
-          create: countries.map(code => ({ countryCode: code }))
-        } : undefined
+        countries: countries
+          ? {
+              create: countries.map((code) => ({ countryCode: code })),
+            }
+          : undefined,
       },
-      include: { countries: true }
+      include: { countries: true },
     });
   }
 
-  async updateCompany(id: string, data: { name?: string; industry?: string; countries?: string[] }) {
+  async updateCompany(
+    id: string,
+    data: { name?: string; industry?: string; countries?: string[] },
+  ) {
     const { countries, ...companyData } = data;
-    
+
     // Delete existing countries and create new ones if provided
     if (countries !== undefined) {
       await this.prisma.companyCountry.deleteMany({ where: { companyId: id } });
@@ -97,13 +110,15 @@ export class CrudService {
       where: { id },
       data: {
         ...companyData,
-        ...(countries !== undefined ? {
-          countries: {
-            create: countries.map(code => ({ countryCode: code }))
-          }
-        } : {})
+        ...(countries !== undefined
+          ? {
+              countries: {
+                create: countries.map((code) => ({ countryCode: code })),
+              },
+            }
+          : {}),
       },
-      include: { countries: true }
+      include: { countries: true },
     });
 
     return result;
@@ -115,13 +130,13 @@ export class CrudService {
 
   async addCompanyCountry(companyId: string, countryCode: string) {
     return this.prisma.companyCountry.create({
-      data: { companyId, countryCode }
+      data: { companyId, countryCode },
     });
   }
 
   async removeCompanyCountry(companyId: string, countryCode: string) {
     return this.prisma.companyCountry.deleteMany({
-      where: { companyId, countryCode }
+      where: { companyId, countryCode },
     });
   }
 
@@ -132,16 +147,16 @@ export class CrudService {
       where: companyId ? { companyId } : undefined,
       include: {
         company: { select: { id: true, name: true } },
-        _count: { select: { teams: true } }
+        _count: { select: { teams: true } },
       },
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
   }
 
   async createBrand(data: { name: string; companyId: string; color?: string }) {
     return this.prisma.brand.create({
       data,
-      include: { company: { select: { id: true, name: true } } }
+      include: { company: { select: { id: true, name: true } } },
     });
   }
 
@@ -149,7 +164,7 @@ export class CrudService {
     return this.prisma.brand.update({
       where: { id },
       data,
-      include: { company: { select: { id: true, name: true } } }
+      include: { company: { select: { id: true, name: true } } },
     });
   }
 
@@ -166,14 +181,14 @@ export class CrudService {
         keledons: { select: { id: true } },
         brand: {
           include: {
-            company: { select: { id: true, name: true } }
-          }
-        }
+            company: { select: { id: true, name: true } },
+          },
+        },
       },
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
 
-    return teams.map(t => ({
+    return teams.map((t) => ({
       id: t.id,
       name: t.name,
       brandId: t.brandId,
@@ -184,7 +199,9 @@ export class CrudService {
       createdAt: t.createdAt,
       updatedAt: t.updatedAt,
       _count: { users: t.users.length, keledons: t.keledons.length },
-      company: t.brand?.company ? { id: t.brand.company.id, name: t.brand.company.name } : undefined
+      company: t.brand?.company
+        ? { id: t.brand.company.id, name: t.brand.company.name }
+        : undefined,
     }));
   }
 
@@ -205,18 +222,23 @@ export class CrudService {
             id: true,
             name: true,
             color: true,
-            company: { select: { id: true, name: true } }
-          }
-        }
-      }
+            company: { select: { id: true, name: true } },
+          },
+        },
+      },
     });
     return {
       ...team,
-      company: team.brand?.company ? { id: team.brand.company.id, name: team.brand.company.name } : undefined
+      company: team.brand?.company
+        ? { id: team.brand.company.id, name: team.brand.company.name }
+        : undefined,
     };
   }
 
-  async updateTeam(id: string, data: { name?: string; country?: string; escalationTriggers?: string[] }) {
+  async updateTeam(
+    id: string,
+    data: { name?: string; country?: string; escalationTriggers?: string[] },
+  ) {
     const team = await this.prisma.team.update({
       where: { id },
       data,
@@ -235,14 +257,16 @@ export class CrudService {
             id: true,
             name: true,
             color: true,
-            company: { select: { id: true, name: true } }
-          }
-        }
-      }
+            company: { select: { id: true, name: true } },
+          },
+        },
+      },
     });
     return {
       ...team,
-      company: team.brand?.company ? { id: team.brand.company.id, name: team.brand.company.name } : undefined
+      company: team.brand?.company
+        ? { id: team.brand.company.id, name: team.brand.company.name }
+        : undefined,
     };
   }
 
@@ -267,28 +291,28 @@ export class CrudService {
         updatedAt: true,
         company: { select: { id: true, name: true } },
         team: {
-          select: { 
-            id: true, 
-            name: true, 
+          select: {
+            id: true,
+            name: true,
             brandId: true,
-            brand: { select: { id: true, name: true } }
-          }
-        }
+            brand: { select: { id: true, name: true } },
+          },
+        },
       },
       where: companyId ? { companyId } : undefined,
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
 
-    return users.map(u => ({
+    return users.map((u) => ({
       ...u,
-      brandId: u.team?.brandId || undefined
+      brandId: u.team?.brandId || undefined,
     }));
   }
 
-  async createUser(data: { 
-    email: string; 
-    name?: string; 
-    companyId?: string; 
+  async createUser(data: {
+    email: string;
+    name?: string;
+    companyId?: string;
     teamId?: string;
     role?: string;
     passwordHash?: string;
@@ -307,18 +331,21 @@ export class CrudService {
         createdAt: true,
         updatedAt: true,
         company: { select: { id: true, name: true } },
-        team: { select: { id: true, name: true, brandId: true } }
-      }
+        team: { select: { id: true, name: true, brandId: true } },
+      },
     });
   }
 
-  async updateUser(id: string, data: { 
-    email?: string; 
-    name?: string; 
-    companyId?: string; 
-    teamId?: string;
-    role?: string;
-  }) {
+  async updateUser(
+    id: string,
+    data: {
+      email?: string;
+      name?: string;
+      companyId?: string;
+      teamId?: string;
+      role?: string;
+    },
+  ) {
     return this.prisma.user.update({
       where: { id },
       data,
@@ -334,8 +361,8 @@ export class CrudService {
         createdAt: true,
         updatedAt: true,
         company: { select: { id: true, name: true } },
-        team: { select: { id: true, name: true, brandId: true } }
-      }
+        team: { select: { id: true, name: true, brandId: true } },
+      },
     });
   }
 
@@ -371,18 +398,18 @@ export class CrudService {
             name: true,
             country: true,
             brandId: true,
-            brand: { select: { id: true, name: true, companyId: true } }
-          }
+            brand: { select: { id: true, name: true, companyId: true } },
+          },
         },
-        user: { select: { id: true, name: true, email: true } }
+        user: { select: { id: true, name: true, email: true } },
       },
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
   }
 
-  async createKeledon(data: { 
-    name: string; 
-    teamId: string; 
+  async createKeledon(data: {
+    name: string;
+    teamId: string;
     brandId?: string;
     countryCode?: string;
     userId?: string;
@@ -395,7 +422,9 @@ export class CrudService {
     const keledon = await this.prisma.keledon.create({
       data: {
         ...data,
-        uiInterfaces: data.uiInterfaces ? JSON.stringify(data.uiInterfaces) : undefined,
+        uiInterfaces: data.uiInterfaces
+          ? JSON.stringify(data.uiInterfaces)
+          : undefined,
       },
       select: {
         id: true,
@@ -421,11 +450,11 @@ export class CrudService {
             name: true,
             country: true,
             brandId: true,
-            brand: { select: { id: true, name: true } }
-          }
+            brand: { select: { id: true, name: true } },
+          },
         },
-        user: { select: { id: true, name: true, email: true } }
-      }
+        user: { select: { id: true, name: true, email: true } },
+      },
     });
 
     // Auto-create device with pairing code for this Keledon
@@ -440,8 +469,8 @@ export class CrudService {
         platform: 'keledon',
         status: 'pending',
         pairingCode: code,
-        pairingCodeExpiresAt: expiresAt
-      }
+        pairingCodeExpiresAt: expiresAt,
+      },
     });
 
     // Return keledon with pairing code info
@@ -449,31 +478,36 @@ export class CrudService {
       ...keledon,
       pairingCode: code,
       pairingCodeExpiresAt: expiresAt,
-      deviceId: device.id
+      deviceId: device.id,
     };
   }
 
-  async updateKeledon(id: string, data: { 
-    name?: string; 
-    teamId?: string; 
-    brandId?: string;
-    countryCode?: string;
-    userId?: string;
-    email?: string;
-    role?: string;
-    isActive?: boolean;
-    callsHandled?: number;
-    fcrRate?: number;
-    avgHandleTime?: number;
-    autonomyLevel?: number;
-    policies?: string;
-    uiInterfaces?: string[];
-  }) {
+  async updateKeledon(
+    id: string,
+    data: {
+      name?: string;
+      teamId?: string;
+      brandId?: string;
+      countryCode?: string;
+      userId?: string;
+      email?: string;
+      role?: string;
+      isActive?: boolean;
+      callsHandled?: number;
+      fcrRate?: number;
+      avgHandleTime?: number;
+      autonomyLevel?: number;
+      policies?: string;
+      uiInterfaces?: string[];
+    },
+  ) {
     return this.prisma.keledon.update({
       where: { id },
       data: {
         ...data,
-        uiInterfaces: data.uiInterfaces ? JSON.stringify(data.uiInterfaces) : undefined,
+        uiInterfaces: data.uiInterfaces
+          ? JSON.stringify(data.uiInterfaces)
+          : undefined,
       },
       select: {
         id: true,
@@ -499,11 +533,11 @@ export class CrudService {
             name: true,
             country: true,
             brandId: true,
-            brand: { select: { id: true, name: true } }
-          }
+            brand: { select: { id: true, name: true } },
+          },
         },
-        user: { select: { id: true, name: true, email: true } }
-      }
+        user: { select: { id: true, name: true, email: true } },
+      },
     });
   }
 
@@ -512,14 +546,16 @@ export class CrudService {
   }
 
   async regenerateKeledonPairingCode(keledonId: string) {
-    const keledon = await this.prisma.keledon.findUnique({ where: { id: keledonId } });
+    const keledon = await this.prisma.keledon.findUnique({
+      where: { id: keledonId },
+    });
     if (!keledon) {
       throw new Error('Keledon not found');
     }
 
     // Check if device exists for this keledon
     const existingDevice = await this.prisma.device.findFirst({
-      where: { keledonId }
+      where: { keledonId },
     });
 
     const code = this.generatePairingCodeString();
@@ -532,8 +568,8 @@ export class CrudService {
         data: {
           pairingCode: code,
           pairingCodeExpiresAt: expiresAt,
-          status: 'pending'
-        }
+          status: 'pending',
+        },
       });
     } else {
       // Create new device
@@ -545,8 +581,8 @@ export class CrudService {
           platform: 'keledon',
           status: 'pending',
           pairingCode: code,
-          pairingCodeExpiresAt: expiresAt
-        }
+          pairingCodeExpiresAt: expiresAt,
+        },
       });
     }
 
@@ -554,9 +590,16 @@ export class CrudService {
   }
 
   async generateKeledonLaunchLink(keledonId: string, userId: string) {
-    console.log('[Launch] Starting for keledonId:', keledonId, 'userId:', userId);
+    console.log(
+      '[Launch] Starting for keledonId:',
+      keledonId,
+      'userId:',
+      userId,
+    );
     try {
-      const keledon = await this.prisma.keledon.findUnique({ where: { id: keledonId } });
+      const keledon = await this.prisma.keledon.findUnique({
+        where: { id: keledonId },
+      });
       if (!keledon) {
         console.log('[Launch] Keledon not found');
         throw new Error('Keledon not found');
@@ -565,7 +608,7 @@ export class CrudService {
 
       // Get device for this keledon
       const device = await this.prisma.device.findFirst({
-        where: { keledonId }
+        where: { keledonId },
       });
 
       if (!device) {
@@ -577,24 +620,29 @@ export class CrudService {
       if (!device.pairingCode) {
         console.log('[Launch] No pairing code, generating on-demand...');
         device.pairingCode = this.generatePairingCodeString();
-        device.pairingCodeExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        device.pairingCodeExpiresAt = new Date(
+          Date.now() + 7 * 24 * 60 * 60 * 1000,
+        );
         await this.prisma.device.update({
           where: { id: device.id },
-          data: { pairingCode: device.pairingCode, pairingCodeExpiresAt: device.pairingCodeExpiresAt }
+          data: {
+            pairingCode: device.pairingCode,
+            pairingCodeExpiresAt: device.pairingCodeExpiresAt,
+          },
         });
         console.log('[Launch] New pairing code generated:', device.pairingCode);
       }
 
       // Verify user has access - check Prisma first, then fallback for Google users
-      let user = await this.prisma.user.findUnique({ where: { id: userId } });
+      const user = await this.prisma.user.findUnique({ where: { id: userId } });
       let isAuthorized = false;
-      
+
       if (!user && userId.startsWith('google_')) {
         console.log('[Launch] Google user, allowing');
         isAuthorized = true;
       } else if (user) {
         console.log('[Launch] Prisma user found, role:', user.role);
-        isAuthorized = 
+        isAuthorized =
           user.role === 'superadmin' ||
           user.role === 'admin' ||
           keledon.userId === userId;
@@ -607,30 +655,33 @@ export class CrudService {
       }
 
       const vendors = await this.getVendors(keledon.teamId);
-      const activeVendors = vendors.filter(v => v.isActive !== false);
-      const nextSteps = activeVendors.length > 0
-        ? [
-            {
-              title: 'Open vendor surfaces',
-              detail: activeVendors.map(v => v.name).join(', '),
-            },
-            ...activeVendors.map((vendor, index) => ({
-              title: `Step ${index + 1}: Open ${vendor.name}`,
-              detail: vendor.baseUrl
-                ? `${vendor.baseUrl}${vendor.type ? ` • ${vendor.type}` : ''}`
-                : vendor.type || 'No base URL configured',
-            })),
-            {
-              title: 'Return to standby',
-              detail: 'Stay connected, watch the activity log, and wait for the next call trigger.',
-            },
-          ]
-        : [
-            {
-              title: 'No vendors configured yet',
-              detail: 'Open Management → Vendors on the keledon site and register the call / CRM surfaces for this team.',
-            },
-          ];
+      const activeVendors = vendors.filter((v) => v.isActive !== false);
+      const nextSteps =
+        activeVendors.length > 0
+          ? [
+              {
+                title: 'Open vendor surfaces',
+                detail: activeVendors.map((v) => v.name).join(', '),
+              },
+              ...activeVendors.map((vendor, index) => ({
+                title: `Step ${index + 1}: Open ${vendor.name}`,
+                detail: vendor.baseUrl
+                  ? `${vendor.baseUrl}${vendor.type ? ` • ${vendor.type}` : ''}`
+                  : vendor.type || 'No base URL configured',
+              })),
+              {
+                title: 'Return to standby',
+                detail:
+                  'Stay connected, watch the activity log, and wait for the next call trigger.',
+              },
+            ]
+          : [
+              {
+                title: 'No vendors configured yet',
+                detail:
+                  'Open Management → Vendors on the keledon site and register the call / CRM surfaces for this team.',
+              },
+            ];
 
       // Generate signed launch link
       const timestamp = Date.now();
@@ -640,7 +691,10 @@ export class CrudService {
       const cloudUrl = process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com';
       const deepLink = `keledon://launch?keledonId=${keledonId}&code=${device.pairingCode}&userId=${userId}&timestamp=${timestamp}&signature=${signature}&cloudUrl=${encodeURIComponent(cloudUrl)}`;
 
-      console.log('[Launch] Success, deepLink:', deepLink.substring(0, 50) + '...');
+      console.log(
+        '[Launch] Success, deepLink:',
+        deepLink.substring(0, 50) + '...',
+      );
       return {
         keledon_id: keledonId,
         team_id: keledon.teamId,
@@ -649,7 +703,7 @@ export class CrudService {
         expires_at: new Date(timestamp + 60000),
         device_status: device.status,
         vendors: activeVendors,
-        next_steps: nextSteps
+        next_steps: nextSteps,
       };
     } catch (error) {
       console.error('[Launch] Error:', error.message);
@@ -659,15 +713,22 @@ export class CrudService {
 
   private signPayload(payload: string): string {
     const crypto = require('crypto');
-    const secret = process.env.KELEDON_LAUNCH_SECRET || process.env.KELDEON_LAUNCH_SECRET || 'keledon-default-secret';
-    return crypto.createHmac('sha256', secret).update(payload).digest('hex').substring(0, 16);
+    const secret =
+      process.env.KELEDON_LAUNCH_SECRET ||
+      process.env.KELDEON_LAUNCH_SECRET ||
+      'keledon-default-secret';
+    return crypto
+      .createHmac('sha256', secret)
+      .update(payload)
+      .digest('hex')
+      .substring(0, 16);
   }
 
   // ========== MANAGED INTERFACES ==========
 
   async getManagedInterfaces() {
     return this.prisma.managedInterface.findMany({
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
   }
 
@@ -684,13 +745,16 @@ export class CrudService {
     return this.prisma.managedInterface.create({ data });
   }
 
-  async updateManagedInterface(id: string, data: {
-    name?: string;
-    baseUrl?: string;
-    category?: string;
-    status?: string;
-    credentials?: string;
-  }) {
+  async updateManagedInterface(
+    id: string,
+    data: {
+      name?: string;
+      baseUrl?: string;
+      category?: string;
+      status?: string;
+      credentials?: string;
+    },
+  ) {
     return this.prisma.managedInterface.update({ where: { id }, data });
   }
 
@@ -701,15 +765,15 @@ export class CrudService {
   async getTeamInterfaces(teamId: string) {
     const teamInterfaces = await this.prisma.teamInterface.findMany({
       where: { teamId },
-      include: { managedInterface: true }
+      include: { managedInterface: true },
     });
-    return teamInterfaces.map(ti => ti.managedInterface);
+    return teamInterfaces.map((ti) => ti.managedInterface);
   }
 
   async setTeamInterfaces(teamId: string, interfaceIds: string[]) {
     await this.prisma.teamInterface.deleteMany({ where: { teamId } });
     return this.prisma.teamInterface.createMany({
-      data: interfaceIds.map(interfaceId => ({ teamId, interfaceId }))
+      data: interfaceIds.map((interfaceId) => ({ teamId, interfaceId })),
     });
   }
 
@@ -717,7 +781,7 @@ export class CrudService {
 
   async getWorkflows() {
     return this.prisma.workflow.findMany({
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
   }
 
@@ -733,14 +797,17 @@ export class CrudService {
     return this.prisma.workflow.create({ data });
   }
 
-  async updateWorkflow(id: string, data: {
-    name?: string;
-    description?: string;
-    trigger?: string;
-    steps?: string;
-    variables?: string;
-    isEnabled?: boolean;
-  }) {
+  async updateWorkflow(
+    id: string,
+    data: {
+      name?: string;
+      description?: string;
+      trigger?: string;
+      steps?: string;
+      variables?: string;
+      isEnabled?: boolean;
+    },
+  ) {
     return this.prisma.workflow.update({ where: { id }, data });
   }
 
@@ -752,27 +819,29 @@ export class CrudService {
 
   async getProviderCatalog() {
     return this.prisma.providerCatalog.findMany({
-      orderBy: [{ type: 'asc' }, { name: 'asc' }]
+      orderBy: [{ type: 'asc' }, { name: 'asc' }],
     });
   }
 
-  async upsertProviderCatalog(entries: Array<{
-    id: string;
-    type: string;
-    name: string;
-    description?: string;
-    status?: string;
-    isEnabled?: boolean;
-    metadata?: string;
-  }>) {
+  async upsertProviderCatalog(
+    entries: Array<{
+      id: string;
+      type: string;
+      name: string;
+      description?: string;
+      status?: string;
+      isEnabled?: boolean;
+      metadata?: string;
+    }>,
+  ) {
     return this.prisma.$transaction(
-      entries.map(entry =>
+      entries.map((entry) =>
         this.prisma.providerCatalog.upsert({
           where: { id: entry.id },
           update: entry,
-          create: entry
-        })
-      )
+          create: entry,
+        }),
+      ),
     );
   }
 
@@ -781,26 +850,33 @@ export class CrudService {
   async getTenantProviderConfig(companyId: string) {
     return this.prisma.tenantProviderConfig.findMany({
       where: { companyId },
-      include: { providerCatalog: true }
+      include: { providerCatalog: true },
     });
   }
 
-  async upsertTenantProviderConfig(entries: Array<{
-    companyId: string;
-    providerId: string;
-    providerType: string;
-    isEnabled?: boolean;
-    isDefault?: boolean;
-    limits?: string;
-  }>) {
+  async upsertTenantProviderConfig(
+    entries: Array<{
+      companyId: string;
+      providerId: string;
+      providerType: string;
+      isEnabled?: boolean;
+      isDefault?: boolean;
+      limits?: string;
+    }>,
+  ) {
     return this.prisma.$transaction(
-      entries.map(entry =>
+      entries.map((entry) =>
         this.prisma.tenantProviderConfig.upsert({
-          where: { companyId_providerId: { companyId: entry.companyId, providerId: entry.providerId } },
+          where: {
+            companyId_providerId: {
+              companyId: entry.companyId,
+              providerId: entry.providerId,
+            },
+          },
           update: entry,
-          create: entry
-        })
-      )
+          create: entry,
+        }),
+      ),
     );
   }
 
@@ -810,7 +886,7 @@ export class CrudService {
     return this.prisma.tenantVoiceProfile.findMany({
       where: { companyId },
       include: { providerCatalog: true },
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
   }
 
@@ -825,22 +901,25 @@ export class CrudService {
   }) {
     return this.prisma.tenantVoiceProfile.create({
       data,
-      include: { providerCatalog: true }
+      include: { providerCatalog: true },
     });
   }
 
-  async updateTenantVoiceProfile(id: string, data: {
-    name?: string;
-    providerId?: string;
-    language?: string;
-    isEnabled?: boolean;
-    isDefault?: boolean;
-    config?: string;
-  }) {
+  async updateTenantVoiceProfile(
+    id: string,
+    data: {
+      name?: string;
+      providerId?: string;
+      language?: string;
+      isEnabled?: boolean;
+      isDefault?: boolean;
+      config?: string;
+    },
+  ) {
     return this.prisma.tenantVoiceProfile.update({
       where: { id },
       data,
-      include: { providerCatalog: true }
+      include: { providerCatalog: true },
     });
   }
 
@@ -851,21 +930,23 @@ export class CrudService {
   // ========== SESSIONS ==========
 
   async getSessions(companyId?: string, limit = 100) {
-    const teams = companyId 
+    const teams = companyId
       ? await this.prisma.team.findMany({
           where: { brand: { companyId } },
-          select: { id: true }
+          select: { id: true },
         })
       : null;
-    
+
     return this.prisma.session.findMany({
-      where: companyId ? { teamId: { in: teams?.map(t => t.id) } } : undefined,
+      where: companyId
+        ? { teamId: { in: teams?.map((t) => t.id) } }
+        : undefined,
       include: {
         user: { select: { id: true, name: true } },
-        team: { select: { id: true, name: true } }
+        team: { select: { id: true, name: true } },
       },
       orderBy: { createdAt: 'desc' },
-      take: limit
+      take: limit,
     });
   }
 
@@ -875,26 +956,31 @@ export class CrudService {
       include: {
         user: { select: { id: true, name: true } },
         team: { select: { id: true, name: true } },
-        events: { orderBy: { createdAt: 'asc' } }
-      }
+        events: { orderBy: { createdAt: 'asc' } },
+      },
     });
   }
 
-  async createSession(data: { userId?: string; teamId?: string; status?: string; metadata?: string }) {
+  async createSession(data: {
+    userId?: string;
+    teamId?: string;
+    status?: string;
+    metadata?: string;
+  }) {
     return this.prisma.session.create({ data });
   }
 
-  async updateSession(id: string, data: { status?: string; metadata?: string }) {
+  async updateSession(
+    id: string,
+    data: { status?: string; metadata?: string },
+  ) {
     return this.prisma.session.update({ where: { id }, data });
   }
 
   async deleteOrphanedSessions(): Promise<{ deleted: number }> {
     const result = await this.prisma.session.deleteMany({
       where: {
-        OR: [
-          { userId: null },
-          { teamId: null },
-        ],
+        OR: [{ userId: null }, { teamId: null }],
       },
     });
     return { deleted: result.count };
@@ -903,10 +989,7 @@ export class CrudService {
   async getOrphanedSessionCount(): Promise<number> {
     const count = await this.prisma.session.count({
       where: {
-        OR: [
-          { userId: null },
-          { teamId: null },
-        ],
+        OR: [{ userId: null }, { teamId: null }],
       },
     });
     return count;
@@ -918,11 +1001,15 @@ export class CrudService {
     return this.prisma.knowledgeBase.findMany({
       where: { companyId },
       include: { _count: { select: { documents: true } } },
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
   }
 
-  async createKnowledgeBase(data: { companyId: string; name: string; description?: string }) {
+  async createKnowledgeBase(data: {
+    companyId: string;
+    name: string;
+    description?: string;
+  }) {
     return this.prisma.knowledgeBase.create({ data });
   }
 
@@ -933,7 +1020,7 @@ export class CrudService {
   async getKnowledgeDocuments(knowledgeBaseId: string) {
     return this.prisma.knowledgeDocument.findMany({
       where: { knowledgeBaseId },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -1028,18 +1115,21 @@ export class CrudService {
     ]);
 
     // Enrich with user info (name + email)
-    const userIdsInLogs = [...new Set(logs.map((l) => l.userId).filter(Boolean))] as string[];
-    const users = userIdsInLogs.length > 0
-      ? await this.prisma.user.findMany({
-          where: { id: { in: userIdsInLogs } },
-          select: { id: true, name: true, email: true },
-        })
-      : [];
+    const userIdsInLogs = [
+      ...new Set(logs.map((l) => l.userId).filter(Boolean)),
+    ] as string[];
+    const users =
+      userIdsInLogs.length > 0
+        ? await this.prisma.user.findMany({
+            where: { id: { in: userIdsInLogs } },
+            select: { id: true, name: true, email: true },
+          })
+        : [];
     const userMap = new Map(users.map((u) => [u.id, u]));
 
     const enriched = logs.map((log) => ({
       ...log,
-      user: log.userId ? (userMap.get(log.userId) || null) : null,
+      user: log.userId ? userMap.get(log.userId) || null : null,
     }));
 
     return {
@@ -1055,10 +1145,15 @@ export class CrudService {
 
   // ========== SEED FROM CRUD.JSON ==========
 
-  async seedFromCrudJson(): Promise<{ companies: number; brands: number; teams: number; users: number }> {
+  async seedFromCrudJson(): Promise<{
+    companies: number;
+    brands: number;
+    teams: number;
+    users: number;
+  }> {
     const fs = require('fs');
     const dataPath = '/app/data/crud.json';
-    
+
     if (!fs.existsSync(dataPath)) {
       throw new Error('crud.json not found');
     }
@@ -1072,13 +1167,15 @@ export class CrudService {
     // Seed Companies
     if (data.companies && Array.isArray(data.companies)) {
       for (const company of data.companies) {
-        const existing = await this.prisma.company.findFirst({ where: { name: company.name } });
+        const existing = await this.prisma.company.findFirst({
+          where: { name: company.name },
+        });
         if (!existing) {
           await this.prisma.company.create({
             data: {
               name: company.name,
               industry: company.industry || null,
-            }
+            },
           });
           companiesCreated++;
         }
@@ -1088,16 +1185,20 @@ export class CrudService {
     // Seed Brands
     if (data.brands && Array.isArray(data.brands)) {
       for (const brand of data.brands) {
-        const existing = await this.prisma.brand.findFirst({ where: { name: brand.name } });
+        const existing = await this.prisma.brand.findFirst({
+          where: { name: brand.name },
+        });
         if (!existing) {
-          const company = await this.prisma.company.findFirst({ where: { name: brand.company_name } });
+          const company = await this.prisma.company.findFirst({
+            where: { name: brand.company_name },
+          });
           if (company) {
             await this.prisma.brand.create({
               data: {
                 name: brand.name,
                 companyId: company.id,
                 color: brand.color || '#6366f1',
-              }
+              },
             });
             brandsCreated++;
           }
@@ -1108,11 +1209,15 @@ export class CrudService {
     // Seed Teams
     if (data.teams && Array.isArray(data.teams)) {
       for (const team of data.teams) {
-        const existing = await this.prisma.team.findFirst({ where: { name: team.name } });
+        const existing = await this.prisma.team.findFirst({
+          where: { name: team.name },
+        });
         if (!existing) {
           let brandId = null;
           if (team.brand_name) {
-            const brand = await this.prisma.brand.findFirst({ where: { name: team.brand_name } });
+            const brand = await this.prisma.brand.findFirst({
+              where: { name: team.brand_name },
+            });
             brandId = brand?.id || null;
           }
           await this.prisma.team.create({
@@ -1122,7 +1227,7 @@ export class CrudService {
               country: team.country || null,
               sttProvider: team.stt_provider || 'vosk',
               ttsProvider: team.tts_provider || 'elevenlabs',
-            }
+            },
           });
           teamsCreated++;
         }
@@ -1132,17 +1237,23 @@ export class CrudService {
     // Seed Users
     if (data.users && Array.isArray(data.users)) {
       for (const user of data.users) {
-        const existing = await this.prisma.user.findFirst({ where: { email: user.email } });
+        const existing = await this.prisma.user.findFirst({
+          where: { email: user.email },
+        });
         if (!existing) {
           let companyId = null;
           let teamId = null;
 
           if (user.company_name) {
-            const company = await this.prisma.company.findFirst({ where: { name: user.company_name } });
+            const company = await this.prisma.company.findFirst({
+              where: { name: user.company_name },
+            });
             companyId = company?.id || null;
           }
           if (user.team_name) {
-            const team = await this.prisma.team.findFirst({ where: { name: user.team_name } });
+            const team = await this.prisma.team.findFirst({
+              where: { name: user.team_name },
+            });
             teamId = team?.id || null;
           }
 
@@ -1153,7 +1264,7 @@ export class CrudService {
               role: user.role || 'user',
               companyId: companyId,
               teamId: teamId,
-            }
+            },
           });
           usersCreated++;
         }
@@ -1164,7 +1275,7 @@ export class CrudService {
       companies: companiesCreated,
       brands: brandsCreated,
       teams: teamsCreated,
-      users: usersCreated
+      users: usersCreated,
     };
   }
 
@@ -1187,9 +1298,9 @@ export class CrudService {
   async getVendors(teamId: string) {
     const vendors = await this.prisma.vendor.findMany({
       where: { teamId },
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
-    return vendors.map(v => ({
+    return vendors.map((v) => ({
       id: v.id,
       teamId: v.teamId,
       name: v.name,
@@ -1200,7 +1311,7 @@ export class CrudService {
       hasApiKey: !!v.apiKey,
       isActive: v.isActive,
       createdAt: v.createdAt,
-      updatedAt: v.updatedAt
+      updatedAt: v.updatedAt,
     }));
   }
 
@@ -1223,8 +1334,8 @@ export class CrudService {
         username: data.username,
         password: data.password,
         apiKey: data.apiKey,
-        config: data.config as any
-      }
+        config: data.config as any,
+      },
     });
     return {
       id: vendor.id,
@@ -1237,27 +1348,30 @@ export class CrudService {
       hasApiKey: !!vendor.apiKey,
       isActive: vendor.isActive,
       createdAt: vendor.createdAt,
-      updatedAt: vendor.updatedAt
+      updatedAt: vendor.updatedAt,
     };
   }
 
-  async updateVendor(id: string, data: {
-    name?: string;
-    type?: string;
-    baseUrl?: string;
-    username?: string;
-    password?: string;
-    apiKey?: string;
-    config?: Record<string, unknown>;
-    isActive?: boolean;
-  }) {
+  async updateVendor(
+    id: string,
+    data: {
+      name?: string;
+      type?: string;
+      baseUrl?: string;
+      username?: string;
+      password?: string;
+      apiKey?: string;
+      config?: Record<string, unknown>;
+      isActive?: boolean;
+    },
+  ) {
     const updateData: any = { ...data };
     if (data.config) {
       updateData.config = data.config;
     }
     const vendor = await this.prisma.vendor.update({
       where: { id },
-      data: updateData
+      data: updateData,
     });
     return {
       id: vendor.id,
@@ -1270,7 +1384,7 @@ export class CrudService {
       hasApiKey: !!vendor.apiKey,
       isActive: vendor.isActive,
       createdAt: vendor.createdAt,
-      updatedAt: vendor.updatedAt
+      updatedAt: vendor.updatedAt,
     };
   }
 

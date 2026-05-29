@@ -1,7 +1,16 @@
-import { WebSocketGateway, SubscribeMessage, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, WebSocketServer } from '@nestjs/websockets';
+import {
+  WebSocketGateway,
+  SubscribeMessage,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  WebSocketServer,
+} from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { Socket } from 'socket.io';
-import { AgentMonitoringService, SystemHealth } from '../services/agent-monitoring.service';
+import {
+  AgentMonitoringService,
+  SystemHealth,
+} from '../services/agent-monitoring.service';
 import { AILoopService } from '../services/ai-loop.service';
 import { VoiceAnalyticsService } from '../services/voice-analytics.service';
 import { IntegrationHealthService } from '../services/integration-health.service';
@@ -30,11 +39,11 @@ export interface DashboardSocketData {
   cors: {
     origin: ['http://localhost:5173', 'http://localhost:3000'],
     methods: ['GET', 'POST'],
-    credentials: true
-  }
+    credentials: true,
+  },
 })
 export class DashboardGateway {
-  @WebSocketServer() 
+  @WebSocketServer()
   server: Server;
 
   constructor(
@@ -42,7 +51,7 @@ export class DashboardGateway {
     private readonly aiLoopService: AILoopService,
     private readonly voiceAnalyticsService: VoiceAnalyticsService,
     private readonly integrationHealthService: IntegrationHealthService,
-    private readonly flowExecutionService: FlowExecutionService
+    private readonly flowExecutionService: FlowExecutionService,
   ) {
     console.log('DashboardGateway: Initialized with real services');
     // Start broadcasting intervals
@@ -52,7 +61,7 @@ export class DashboardGateway {
   @OnGatewayConnection()
   handleConnection(client: Socket): void {
     console.log(`Dashboard client connected: ${client.id}`);
-    
+
     // Send initial data
     this.sendInitialData(client);
   }
@@ -91,25 +100,42 @@ export class DashboardGateway {
   handleAgentAudioLevel(client: Socket, data: DashboardSocketData): void {
     try {
       if (data.agentId && data.audioLevel !== undefined) {
-        this.agentMonitoringService.setAudioLevel(data.agentId, data.audioLevel);
+        this.agentMonitoringService.setAudioLevel(
+          data.agentId,
+          data.audioLevel,
+        );
         this.broadcastAgentStatus();
       }
     } catch (error) {
-      console.error('DashboardGateway: Error updating agent audio level', error);
+      console.error(
+        'DashboardGateway: Error updating agent audio level',
+        error,
+      );
       client.emit('error', { message: 'Failed to update agent audio level' });
     }
   }
 
   @SubscribeMessage('dashboard:agent-performance-metrics')
-  handleAgentPerformanceMetrics(client: Socket, data: DashboardSocketData): void {
+  handleAgentPerformanceMetrics(
+    client: Socket,
+    data: DashboardSocketData,
+  ): void {
     try {
       if (data.agentId && data.performance) {
-        this.agentMonitoringService.recordPerformanceMetrics(data.agentId, data.performance);
+        this.agentMonitoringService.recordPerformanceMetrics(
+          data.agentId,
+          data.performance,
+        );
         this.broadcastAgentStatus();
       }
     } catch (error) {
-      console.error('DashboardGateway: Error updating agent performance metrics', error);
-      client.emit('error', { message: 'Failed to update agent performance metrics' });
+      console.error(
+        'DashboardGateway: Error updating agent performance metrics',
+        error,
+      );
+      client.emit('error', {
+        message: 'Failed to update agent performance metrics',
+      });
     }
   }
 
@@ -117,7 +143,10 @@ export class DashboardGateway {
   handleAgentStatus(client: Socket, data: DashboardSocketData): void {
     try {
       if (data.agentId && data.status) {
-        this.agentMonitoringService.updateAgentStatus(data.agentId, data.status as any);
+        this.agentMonitoringService.updateAgentStatus(
+          data.agentId,
+          data.status as any,
+        );
         this.broadcastAgentStatus();
       }
     } catch (error) {
@@ -226,7 +255,7 @@ export class DashboardGateway {
       const flow = this.flowExecutionService.createExecution(
         data.flowData?.name || 'New Flow',
         undefined,
-        { priority: data.flowData?.priority }
+        { priority: data.flowData?.priority },
       );
       this.broadcastFlowExecutions();
       console.log(`DashboardGateway: Created flow: ${flow.id}`);
@@ -268,7 +297,10 @@ export class DashboardGateway {
   handleStopFlow(client: Socket, data: DashboardSocketData): void {
     try {
       if (data.executionId) {
-        this.flowExecutionService.stopExecution(data.executionId, 'Stopped by user');
+        this.flowExecutionService.stopExecution(
+          data.executionId,
+          'Stopped by user',
+        );
         this.broadcastFlowExecutions();
         console.log(`DashboardGateway: Stopped flow ${data.executionId}`);
       }
@@ -348,7 +380,9 @@ export class DashboardGateway {
     try {
       if (data.providerId) {
         this.integrationHealthService.disconnectProvider(data.providerId);
-        console.log(`DashboardGateway: Disconnected provider ${data.providerId}`);
+        console.log(
+          `DashboardGateway: Disconnected provider ${data.providerId}`,
+        );
       }
     } catch (error) {
       console.error('DashboardGateway: Error disconnecting provider', error);
@@ -386,7 +420,9 @@ export class DashboardGateway {
   @SubscribeMessage('dashboard:get-voice-analytics')
   handleGetVoiceAnalytics(client: Socket, data: DashboardSocketData): void {
     try {
-      const analytics = this.voiceAnalyticsService.getAnalytics(data.timeRange as any || '24h');
+      const analytics = this.voiceAnalyticsService.getAnalytics(
+        (data.timeRange as any) || '24h',
+      );
       client.emit('dashboard:voice-analytics-update', analytics);
       console.log(`DashboardGateway: Sent voice analytics to ${client.id}`);
     } catch (error) {
@@ -414,7 +450,7 @@ export class DashboardGateway {
       client.emit('dashboard:integrations-update', integrations);
       client.emit('dashboard:connections-update', connections);
       client.emit('dashboard:voice-analytics-update', analytics);
-      
+
       console.log(`DashboardGateway: Sent initial data to ${client.id}`);
     } catch (error) {
       console.error('DashboardGateway: Error sending initial data', error);
@@ -463,7 +499,10 @@ export class DashboardGateway {
       const health = this.agentMonitoringService.getCurrentHealth();
       this.server.emit('dashboard:system-health-update', health);
     } catch (error) {
-      console.error('DashboardGateway: Error broadcasting system health', error);
+      console.error(
+        'DashboardGateway: Error broadcasting system health',
+        error,
+      );
     }
   }
 
@@ -481,7 +520,10 @@ export class DashboardGateway {
       const executions = this.flowExecutionService.getExecutions({ limit: 50 });
       this.server.emit('dashboard:flow-executions-update', executions);
     } catch (error) {
-      console.error('DashboardGateway: Error broadcasting flow executions', error);
+      console.error(
+        'DashboardGateway: Error broadcasting flow executions',
+        error,
+      );
     }
   }
 
@@ -501,7 +543,10 @@ export class DashboardGateway {
       const analytics = this.voiceAnalyticsService.getAnalytics('24h');
       this.server.emit('dashboard:voice-analytics-realtime', analytics);
     } catch (error) {
-      console.error('DashboardGateway: Error broadcasting voice analytics', error);
+      console.error(
+        'DashboardGateway: Error broadcasting voice analytics',
+        error,
+      );
     }
   }
 

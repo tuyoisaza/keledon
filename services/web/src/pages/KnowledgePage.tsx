@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Search, Upload, FileText, Database, Bot, RefreshCw, X, Building2, Tag, Users } from 'lucide-react';
-import { API_URL } from '@/lib/config';
 import { vectorStoreAPI, type PolicyDocument, type VectorStoreStatus } from '@/lib/vector-store';
 import { getCompanies, getBrands, getTeams, type Company, type Brand, type Team } from '@/lib/crud-api';
 import { getBrandsForCompany, getTeamsForBrand, readPlainTextFile } from '@/lib/knowledge-source-utils.js';

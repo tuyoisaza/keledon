@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { Observable, Subject, interval } from 'rxjs';
-import { randomUUID } from 'crypto';
 import { SystemMonitoringService } from './system-monitoring.service';
 
 export interface AgentStatus {
@@ -36,8 +35,12 @@ export class AgentMonitoringService {
   private agentStatusUpdates = new Subject<AgentStatus[]>();
   private connectedSockets = new Set<string>();
 
-  constructor(private readonly systemMonitoringService: SystemMonitoringService) {
-    console.log('AgentMonitoringService: Initialized with real system monitoring');
+  constructor(
+    private readonly systemMonitoringService: SystemMonitoringService,
+  ) {
+    console.log(
+      'AgentMonitoringService: Initialized with real system monitoring',
+    );
     // Start monitoring intervals
     this.startPerformanceMonitoring();
     this.startHealthChecks();
@@ -47,7 +50,7 @@ export class AgentMonitoringService {
   registerSocket(socket: Socket): void {
     this.connectedSockets.add(socket.id);
     console.log(`AgentMonitoring: Socket ${socket.id} registered`);
-    
+
     // Send initial status
     socket.emit('agent:initial-status', this.getAllAgentStatuses());
     socket.emit('system:health', this.getCurrentHealth());
@@ -62,7 +65,11 @@ export class AgentMonitoringService {
   updateAgentStatus(socketId: string, status: Partial<AgentStatus>): void {
     const existingAgent = this.agentStatuses.get(socketId);
     if (existingAgent) {
-      const updatedAgent = { ...existingAgent, ...status, lastActivity: new Date() };
+      const updatedAgent = {
+        ...existingAgent,
+        ...status,
+        lastActivity: new Date(),
+      };
       this.agentStatuses.set(socketId, updatedAgent);
       this.broadcastAgentUpdate(updatedAgent);
     }
@@ -72,11 +79,21 @@ export class AgentMonitoringService {
     this.updateAgentStatus(socketId, { audioLevel });
   }
 
-  setAgentState(socketId: string, state: AgentStatus['status'], currentStep?: string): void {
-    this.updateAgentStatus(socketId, { status: state, currentStep: currentStep });
+  setAgentState(
+    socketId: string,
+    state: AgentStatus['status'],
+    currentStep?: string,
+  ): void {
+    this.updateAgentStatus(socketId, {
+      status: state,
+      currentStep: currentStep,
+    });
   }
 
-  recordPerformanceMetrics(socketId: string, performance: AgentStatus['performance']): void {
+  recordPerformanceMetrics(
+    socketId: string,
+    performance: AgentStatus['performance'],
+  ): void {
     this.updateAgentStatus(socketId, { performance: performance });
   }
 
@@ -91,13 +108,13 @@ export class AgentMonitoringService {
 
   private assessSystemHealth(): SystemHealth {
     const connectedSocketCount = this.connectedSockets.size;
-    
+
     return {
       overall: connectedSocketCount > 0 ? 'healthy' : 'warning',
       websocket: connectedSocketCount > 0 ? 'connected' : 'disconnected',
       tts: this.randomHealthStatus(),
       stt: this.randomHealthStatus(),
-      ai: this.randomHealthStatus()
+      ai: this.randomHealthStatus(),
     };
   }
 
@@ -113,13 +130,13 @@ export class AgentMonitoringService {
   }
 
   private updateAllPerformances(): void {
-    const systemMetrics = this.systemMonitoringService.getCurrentMetrics();
-    
-    for (const [socketId, agent] of this.agentStatuses) {
+    this.systemMonitoringService.getCurrentMetrics();
+
+    for (const [socketId] of this.agentStatuses) {
       const performance: AgentStatus['performance'] = {
         cpu: 0,
         memory: 0,
-        network: 0
+        network: 0,
       };
       this.recordPerformanceMetrics(socketId, performance);
     }

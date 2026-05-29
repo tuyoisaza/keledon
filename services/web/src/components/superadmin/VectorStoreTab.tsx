@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Database, Plus, Search, FileText, Trash2, RefreshCw, Eye, AlertCircle, CheckCircle, Clock, Settings } from 'lucide-react';
+import { Database, Plus, Search, FileText, Trash2, RefreshCw, Eye, AlertCircle, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { vectorStoreAPI, type PolicyDocument, type RetrievalResult, type VectorStoreStatus } from '@/lib/vector-store';
 import VectorStoreConfig from './VectorStoreConfig';

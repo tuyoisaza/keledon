@@ -1,12 +1,19 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 
 export const ROLES_KEY = 'roles';
-export const Roles = (...roles: string[]) => (target: any, key?: string, descriptor?: any) => {
-  Reflect.defineMetadata(ROLES_KEY, roles, descriptor?.value ?? target);
-  return descriptor ?? target;
-};
+export const Roles =
+  (...roles: string[]) =>
+  (target: any, key?: string, descriptor?: any) => {
+    Reflect.defineMetadata(ROLES_KEY, roles, descriptor?.value ?? target);
+    return descriptor ?? target;
+  };
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -16,10 +23,10 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(
+      ROLES_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
     if (!requiredRoles || requiredRoles.length === 0) {
       return true;
@@ -42,13 +49,17 @@ export class RolesGuard implements CanActivate {
     }
 
     const hasRole = requiredRoles.includes(dbUser.role);
-    
+
     if (!hasRole) {
-      console.log(`[RBAC] Access denied for user ${user.userId} with role ${dbUser.role}. Required: ${requiredRoles}`);
+      console.log(
+        `[RBAC] Access denied for user ${user.userId} with role ${dbUser.role}. Required: ${requiredRoles}`,
+      );
       throw new ForbiddenException('Insufficient permissions');
     }
 
-    console.log(`[RBAC] Access granted for user ${user.userId} with role ${dbUser.role}`);
+    console.log(
+      `[RBAC] Access granted for user ${user.userId} with role ${dbUser.role}`,
+    );
     return true;
   }
 }

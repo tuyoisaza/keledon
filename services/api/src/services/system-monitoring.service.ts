@@ -66,19 +66,21 @@ export class SystemMonitoringService {
       disk: diskInfo,
       uptime: os.uptime(),
       loadAverage: os.loadavg(),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     // Store in history
     this.addToHistory(metrics);
-    
+
     return metrics;
   }
 
   // Get metrics history
   getMetricsHistory(durationMinutes: number = 60): SystemMetrics[] {
     const cutoffTime = new Date(Date.now() - durationMinutes * 60 * 1000);
-    return this.metricsHistory.filter(metric => metric.timestamp >= cutoffTime);
+    return this.metricsHistory.filter(
+      (metric) => metric.timestamp >= cutoffTime,
+    );
   }
 
   // Get process-specific metrics
@@ -91,7 +93,7 @@ export class SystemMonitoringService {
       cpu: this.getCurrentProcessCpuUsage(),
       memory: this.getCurrentProcessMemoryUsage(),
       uptime: process.uptime(),
-      status: 'running' as const
+      status: 'running' as const,
     };
 
     const processes: ProcessMetrics[] = [currentProcess];
@@ -101,7 +103,7 @@ export class SystemMonitoringService {
       { name: 'chrome', cpu: 0, memory: 0 },
       { name: 'node', cpu: 0, memory: 0 },
       { name: 'systemd', cpu: 0, memory: 0 },
-      { name: 'docker', cpu: 0, memory: 0 }
+      { name: 'docker', cpu: 0, memory: 0 },
     ];
 
     commonProcesses.forEach((proc, index) => {
@@ -111,7 +113,7 @@ export class SystemMonitoringService {
         cpu: proc.cpu,
         memory: proc.memory,
         uptime: 0,
-        status: 'running' as const
+        status: 'running' as const,
       });
     });
 
@@ -134,14 +136,14 @@ export class SystemMonitoringService {
         type: 'cpu',
         level: 'critical',
         message: `CPU usage is critically high: ${metrics.cpu.usage.toFixed(1)}%`,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     } else if (metrics.cpu.usage > 75) {
       alerts.push({
         type: 'cpu',
         level: 'warning',
         message: `CPU usage is high: ${metrics.cpu.usage.toFixed(1)}%`,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
 
@@ -151,14 +153,14 @@ export class SystemMonitoringService {
         type: 'memory',
         level: 'critical',
         message: `Memory usage is critically high: ${metrics.memory.usage.toFixed(1)}%`,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     } else if (metrics.memory.usage > 80) {
       alerts.push({
         type: 'memory',
         level: 'warning',
         message: `Memory usage is high: ${metrics.memory.usage.toFixed(1)}%`,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
 
@@ -168,14 +170,14 @@ export class SystemMonitoringService {
         type: 'disk',
         level: 'critical',
         message: `Disk usage is critically high: ${metrics.disk.usage.toFixed(1)}%`,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     } else if (metrics.disk.usage > 85) {
       alerts.push({
         type: 'disk',
         level: 'warning',
         message: `Disk usage is high: ${metrics.disk.usage.toFixed(1)}%`,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
 
@@ -204,7 +206,7 @@ export class SystemMonitoringService {
       cpu: Math.round(cpuScore),
       memory: Math.round(memoryScore),
       disk: Math.round(diskScore),
-      network: Math.round(networkScore)
+      network: Math.round(networkScore),
     };
   }
 
@@ -221,7 +223,7 @@ export class SystemMonitoringService {
       const userUsage = endUsage.user;
       const systemUsage = endUsage.system;
       const totalUsage = userUsage + systemUsage;
-      
+
       // This is a simplified calculation
       return Math.min(100, (totalUsage / 1000000) * 100); // Convert to percentage
     }, 100);
@@ -242,7 +244,7 @@ export class SystemMonitoringService {
       total: Math.round(total / 1024 / 1024), // MB
       used: Math.round(used / 1024 / 1024), // MB
       free: Math.round(free / 1024 / 1024), // MB
-      usage: Math.round(usage * 100) / 100
+      usage: Math.round(usage * 100) / 100,
     };
   }
 
@@ -252,7 +254,7 @@ export class SystemMonitoringService {
       bytesReceived: 0,
       bytesSent: 0,
       packetsReceived: 0,
-      packetsSent: 0
+      packetsSent: 0,
     };
   }
 
@@ -267,7 +269,7 @@ export class SystemMonitoringService {
       total,
       used,
       free,
-      usage: usagePercent
+      usage: usagePercent,
     };
   }
 
@@ -283,7 +285,7 @@ export class SystemMonitoringService {
 
   private addToHistory(metrics: SystemMetrics): void {
     this.metricsHistory.push(metrics);
-    
+
     // Keep only recent metrics
     if (this.metricsHistory.length > this.maxHistorySize) {
       this.metricsHistory = this.metricsHistory.slice(-this.maxHistorySize);
@@ -292,14 +294,14 @@ export class SystemMonitoringService {
 
   private initializeBaselineMetrics(): void {
     console.log('SystemMonitoringService: Initializing baseline metrics');
-    
+
     // Create initial metrics
     const initialMetrics = this.getCurrentMetrics();
     console.log('System baseline:', {
       cpu: `${initialMetrics.cpu.usage.toFixed(1)}% (${initialMetrics.cpu.cores} cores)`,
       memory: `${initialMetrics.memory.usage.toFixed(1)}% (${initialMetrics.memory.used}MB/${initialMetrics.memory.total}MB)`,
       disk: `${initialMetrics.disk.usage.toFixed(1)}% (${initialMetrics.disk.used}MB/${initialMetrics.disk.total}MB)`,
-      uptime: `${Math.round(initialMetrics.uptime / 3600)}h`
+      uptime: `${Math.round(initialMetrics.uptime / 3600)}h`,
     });
   }
 
@@ -307,33 +309,41 @@ export class SystemMonitoringService {
   cleanup(): void {
     const cutoffTime = new Date(Date.now() - 24 * 60 * 60 * 1000); // Keep 24 hours
     const beforeCount = this.metricsHistory.length;
-    
-    this.metricsHistory = this.metricsHistory.filter(metric => metric.timestamp >= cutoffTime);
-    
+
+    this.metricsHistory = this.metricsHistory.filter(
+      (metric) => metric.timestamp >= cutoffTime,
+    );
+
     const cleanedCount = beforeCount - this.metricsHistory.length;
     if (cleanedCount > 0) {
-      console.log(`SystemMonitoringService: Cleaned up ${cleanedCount} old metric records`);
+      console.log(
+        `SystemMonitoringService: Cleaned up ${cleanedCount} old metric records`,
+      );
     }
   }
 
   // Export metrics for monitoring systems
   exportMetrics(): string {
     const metrics = this.getCurrentMetrics();
-    return JSON.stringify({
-      timestamp: metrics.timestamp.toISOString(),
-      system: {
-        cpu: metrics.cpu.usage,
-        memory: metrics.memory.usage,
-        disk: metrics.disk.usage,
-        uptime: metrics.uptime,
-        loadAverage: metrics.loadAverage
+    return JSON.stringify(
+      {
+        timestamp: metrics.timestamp.toISOString(),
+        system: {
+          cpu: metrics.cpu.usage,
+          memory: metrics.memory.usage,
+          disk: metrics.disk.usage,
+          uptime: metrics.uptime,
+          loadAverage: metrics.loadAverage,
+        },
+        network: {
+          bytesReceived: metrics.network.bytesReceived,
+          bytesSent: metrics.network.bytesSent,
+          packetsReceived: metrics.network.packetsReceived,
+          packetsSent: metrics.network.packetsSent,
+        },
       },
-      network: {
-        bytesReceived: metrics.network.bytesReceived,
-        bytesSent: metrics.network.bytesSent,
-        packetsReceived: metrics.network.packetsReceived,
-        packetsSent: metrics.network.packetsSent
-      }
-    }, null, 2);
+      null,
+      2,
+    );
   }
 }

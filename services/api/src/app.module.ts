@@ -86,7 +86,13 @@ import { EscalationModule } from './modules/escalation.module';
       useClass: AuditInterceptor,
     },
   ],
-  exports: [DatabaseHealthService, TTSModule, VectorStoreModule, FlowModule, SubAgentModule],
+  exports: [
+    DatabaseHealthService,
+    TTSModule,
+    VectorStoreModule,
+    FlowModule,
+    SubAgentModule,
+  ],
 })
 export class AppModule {
   constructor() {

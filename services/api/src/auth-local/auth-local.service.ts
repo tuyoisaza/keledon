@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -9,7 +13,8 @@ export class LocalAuthService {
 
   constructor(private prisma: PrismaService) {
     this.authSecret =
-      process.env.KELEDON_AUTH_SECRET || 'keledon-dev-secret-do-not-use-in-production';
+      process.env.KELEDON_AUTH_SECRET ||
+      'keledon-dev-secret-do-not-use-in-production';
     if (!process.env.KELEDON_AUTH_SECRET) {
       console.warn(
         '[LocalAuth] WARNING: KELEDON_AUTH_SECRET not set. Using insecure default for development.',
@@ -82,9 +87,15 @@ export class LocalAuthService {
     };
   }
 
-  async findOrCreateGoogleUser(googleUser: { id: string; email: string; name: string }) {
+  async findOrCreateGoogleUser(googleUser: {
+    id: string;
+    email: string;
+    name: string;
+  }) {
     // Look up user by email in Prisma DB
-    let user = await this.prisma.user.findUnique({ where: { email: googleUser.email } });
+    let user = await this.prisma.user.findUnique({
+      where: { email: googleUser.email },
+    });
 
     if (!user) {
       // Create new user from Google data
@@ -126,7 +137,9 @@ export class LocalAuthService {
       expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
     };
 
-    const base64Payload = Buffer.from(JSON.stringify(tokenPayload)).toString('base64');
+    const base64Payload = Buffer.from(JSON.stringify(tokenPayload)).toString(
+      'base64',
+    );
     const signature = crypto
       .createHmac('sha256', this.authSecret)
       .update(base64Payload)
@@ -154,18 +167,25 @@ export class LocalAuthService {
 
       if (
         expectedSignature.length !== signature.length ||
-        !crypto.timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(signature))
+        !crypto.timingSafeEqual(
+          Buffer.from(expectedSignature),
+          Buffer.from(signature),
+        )
       ) {
         return null;
       }
 
-      const payload = JSON.parse(Buffer.from(base64Payload, 'base64').toString('utf-8'));
+      const payload = JSON.parse(
+        Buffer.from(base64Payload, 'base64').toString('utf-8'),
+      );
 
       // Check token expiry
       if (Date.now() > payload.expiresAt) return null;
 
       // Look up user in Prisma DB
-      const user = await this.prisma.user.findUnique({ where: { id: payload.userId } });
+      const user = await this.prisma.user.findUnique({
+        where: { id: payload.userId },
+      });
       if (!user) return null;
 
       return {

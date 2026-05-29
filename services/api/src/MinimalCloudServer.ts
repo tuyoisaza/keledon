@@ -18,7 +18,7 @@ class MinimalCloudServer {
     this.app = express();
     this.httpServer = createServer(this.app);
     this.cloudServer = new CloudServer(this.httpServer);
-    
+
     this.setupRoutes();
   }
 
@@ -31,7 +31,7 @@ class MinimalCloudServer {
       res.json({
         status: 'healthy',
         timestamp: new Date().toISOString(),
-        stats: this.cloudServer.getStats()
+        stats: this.cloudServer.getStats(),
       });
     });
 
@@ -40,14 +40,14 @@ class MinimalCloudServer {
       const sessions = this.cloudServer.getActiveSessions();
       res.json({
         active_sessions: sessions.length,
-        sessions: sessions.map(s => ({
+        sessions: sessions.map((s) => ({
           session_id: s.session_id,
           agent_id: s.agent_id,
           status: s.status,
           created_at: s.created_at,
           last_heartbeat: s.last_heartbeat,
-          message_count: s.message_count
-        }))
+          message_count: s.message_count,
+        })),
       });
     });
 
@@ -58,7 +58,7 @@ class MinimalCloudServer {
         version: '1.0.0',
         status: 'running',
         endpoints: ['/health', '/sessions'],
-        websocket: 'enabled on /socket.io'
+        websocket: 'enabled on /socket.io',
       });
     });
   }
@@ -89,9 +89,9 @@ class MinimalCloudServer {
    */
   async stop(): Promise<void> {
     console.log('Stopping cloud server...');
-    
+
     this.cloudServer.shutdown();
-    
+
     return new Promise((resolve) => {
       this.httpServer.close(() => {
         console.log('Cloud server stopped.');
@@ -111,7 +111,7 @@ class MinimalCloudServer {
 // Start server if this file is executed directly
 if (require.main === module) {
   const server = new MinimalCloudServer();
-  
+
   server.start().catch((error) => {
     console.error('Failed to start server:', error);
     process.exit(1);

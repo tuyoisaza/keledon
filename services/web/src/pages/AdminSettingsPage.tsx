@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Settings, Save, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getCompanies, type Company } from '@/lib/crud-api';
-import { API_URL } from '@/lib/config';
 import { apiFetch } from '@/lib/api-fetch';
 
 interface TeamConfig {
@@ -15,7 +14,6 @@ interface TeamConfig {
 }
 
 export default function AdminSettingsPage() {
-    const cloudUrl = API_URL;
     const [companies, setCompanies] = useState<Company[]>([]);
     const [selectedCompany, setSelectedCompany] = useState<string>('');
     const [loading, setLoading] = useState(true);
@@ -97,7 +95,7 @@ export default function AdminSettingsPage() {
             } else {
                 setConfigMessage({ type: 'error', text: 'Failed to save settings' });
             }
-        } catch (error) {
+        } catch (_error) {
             setConfigMessage({ type: 'error', text: 'Error saving settings' });
         } finally {
             setSavingConfig(false);

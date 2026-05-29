@@ -2,7 +2,8 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateKnowledgeDocumentDto {
   @ApiPropertyOptional({
-    description: 'Optional company ownership check for the target knowledge base',
+    description:
+      'Optional company ownership check for the target knowledge base',
     example: 'company_123',
   })
   companyId?: string;
@@ -20,7 +21,8 @@ export class CreateKnowledgeDocumentDto {
   content!: string;
 
   @ApiPropertyOptional({
-    description: 'Metadata stored with the document and copied to Qdrant chunks',
+    description:
+      'Metadata stored with the document and copied to Qdrant chunks',
     example: {
       companyId: 'company_123',
       teamId: 'team_mx_support',

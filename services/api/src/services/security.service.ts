@@ -63,7 +63,7 @@ export interface SecurityEvent {
   resolved: boolean;
 }
 
-export type SecurityEventType = 
+export type SecurityEventType =
   | 'login_success'
   | 'login_failed'
   | 'login_locked'
@@ -100,43 +100,87 @@ export class SecurityService implements OnModuleInit {
     console.log('SecurityService: Security monitoring started');
   }
 
-  async authenticate(email: string, password: string, context: {
-    ipAddress: string;
-    userAgent: string;
-  }): Promise<{ success: boolean; user?: User; session?: Session; error?: string }> {
+  async authenticate(
+    email: string,
+    password: string,
+    context: {
+      ipAddress: string;
+      userAgent: string;
+    },
+  ): Promise<{
+    success: boolean;
+    user?: User;
+    session?: Session;
+    error?: string;
+  }> {
     const user = await this.getUserByEmail(email);
-    
+
     if (!user) {
-      await this.logSecurityEvent('login_failed', 'medium', context.ipAddress, context.userAgent, 
-        'User not found', { email });
+      await this.logSecurityEvent(
+        'login_failed',
+        'medium',
+        context.ipAddress,
+        context.userAgent,
+        'User not found',
+        { email },
+      );
       return { success: false, error: 'Invalid credentials' };
     }
 
     if (!user.isActive) {
-      await this.logSecurityEvent('login_failed', 'medium', context.ipAddress, context.userAgent, 
-        'User account inactive', { userId: user.id });
+      await this.logSecurityEvent(
+        'login_failed',
+        'medium',
+        context.ipAddress,
+        context.userAgent,
+        'User account inactive',
+        { userId: user.id },
+      );
       return { success: false, error: 'Account inactive' };
     }
 
     if (user.lockedUntil && user.lockedUntil > new Date()) {
-      await this.logSecurityEvent('login_locked', 'high', context.ipAddress, context.userAgent, 
-        'User account locked', { userId: user.id, lockedUntil: user.lockedUntil });
+      await this.logSecurityEvent(
+        'login_locked',
+        'high',
+        context.ipAddress,
+        context.userAgent,
+        'User account locked',
+        { userId: user.id, lockedUntil: user.lockedUntil },
+      );
       return { success: false, error: 'Account locked' };
     }
 
-    const isPasswordValid = await this.verifyPassword(password, user.metadata.passwordHash || '');
-    
+    const isPasswordValid = await this.verifyPassword(
+      password,
+      user.metadata.passwordHash || '',
+    );
+
     if (!isPasswordValid) {
       user.loginAttempts++;
       if (user.loginAttempts >= this.config.maxLoginAttempts) {
-        user.lockedUntil = new Date(Date.now() + this.config.lockoutDuration * 60 * 1000);
-        await this.logSecurityEvent('login_locked', 'high', context.ipAddress, context.userAgent, 
-          'Account locked due to too many failed attempts', { userId: user.id });
+        user.lockedUntil = new Date(
+          Date.now() + this.config.lockoutDuration * 60 * 1000,
+        );
+        await this.logSecurityEvent(
+          'login_locked',
+          'high',
+          context.ipAddress,
+          context.userAgent,
+          'Account locked due to too many failed attempts',
+          { userId: user.id },
+        );
       } else {
-        await this.logSecurityEvent('login_failed', 'medium', context.ipAddress, context.userAgent, 
-          'Invalid password', { userId: user.id, attempts: user.loginAttempts });
+        await this.logSecurityEvent(
+          'login_failed',
+          'medium',
+          context.ipAddress,
+          context.userAgent,
+          'Invalid password',
+          { userId: user.id, attempts: user.loginAttempts },
+        );
       }
-      
+
       await this.updateUser(user);
       return { success: false, error: 'Invalid credentials' };
     }
@@ -148,20 +192,29 @@ export class SecurityService implements OnModuleInit {
 
     const session = await this.createSession(user.id, context);
 
-    await this.logSecurityEvent('login_success', 'low', context.ipAddress, context.userAgent, 
-      'User authenticated successfully', { userId: user.id, sessionId: session.id });
+    await this.logSecurityEvent(
+      'login_success',
+      'low',
+      context.ipAddress,
+      context.userAgent,
+      'User authenticated successfully',
+      { userId: user.id, sessionId: session.id },
+    );
 
-    return { 
-      success: true, 
-      user: this.sanitizeUser(user), 
-      session 
+    return {
+      success: true,
+      user: this.sanitizeUser(user),
+      session,
     };
   }
 
-  async createSession(userId: string, context: {
-    ipAddress: string;
-    userAgent: string;
-  }): Promise<Session> {
+  async createSession(
+    userId: string,
+    context: {
+      ipAddress: string;
+      userAgent: string;
+    },
+  ): Promise<Session> {
     const sessionId = this.generateId();
     const token = await this.generateJWT(userId);
     const refreshToken = this.generateId();
@@ -174,40 +227,57 @@ export class SecurityService implements OnModuleInit {
       ipAddress: context.ipAddress,
       userAgent: context.userAgent,
       isActive: true,
-      expiresAt: new Date(Date.now() + this.parseExpiration(this.config.jwtExpiration)),
+      expiresAt: new Date(
+        Date.now() + this.parseExpiration(this.config.jwtExpiration),
+      ),
       createdAt: new Date(),
       lastActivity: new Date(),
-      metadata: {}
+      metadata: {},
     };
 
     this.sessions.set(sessionId, session);
     return session;
   }
 
-  async validateSession(sessionId: string, context: {
-    ipAddress: string;
-    userAgent: string;
-  }): Promise<{ valid: boolean; user?: User; session?: Session }> {
+  async validateSession(
+    sessionId: string,
+    context: {
+      ipAddress: string;
+      userAgent: string;
+    },
+  ): Promise<{ valid: boolean; user?: User; session?: Session }> {
     const session = this.sessions.get(sessionId);
-    
+
     if (!session || !session.isActive) {
       return { valid: false };
     }
 
     if (session.expiresAt < new Date()) {
       session.isActive = false;
-      await this.logSecurityEvent('session_expired', 'medium', context.ipAddress, context.userAgent, 
-        'Session expired', { sessionId });
+      await this.logSecurityEvent(
+        'session_expired',
+        'medium',
+        context.ipAddress,
+        context.userAgent,
+        'Session expired',
+        { sessionId },
+      );
       return { valid: false };
     }
 
     if (session.ipAddress !== context.ipAddress) {
-      await this.logSecurityEvent('suspicious_activity', 'high', context.ipAddress, context.userAgent, 
-        'IP address changed during session', { 
-          sessionId, 
+      await this.logSecurityEvent(
+        'suspicious_activity',
+        'high',
+        context.ipAddress,
+        context.userAgent,
+        'IP address changed during session',
+        {
+          sessionId,
           originalIP: session.ipAddress,
-          newIP: context.ipAddress 
-        });
+          newIP: context.ipAddress,
+        },
+      );
     }
 
     session.lastActivity = new Date();
@@ -218,10 +288,10 @@ export class SecurityService implements OnModuleInit {
       return { valid: false };
     }
 
-    return { 
-      valid: true, 
-      user: this.sanitizeUser(user), 
-      session 
+    return {
+      valid: true,
+      user: this.sanitizeUser(user),
+      session,
     };
   }
 
@@ -230,38 +300,46 @@ export class SecurityService implements OnModuleInit {
     if (!session) return false;
 
     session.isActive = false;
-    await this.logSecurityEvent('logout', 'low', session.ipAddress, session.userAgent, 
-      reason || 'Session revoked', { sessionId, userId: session.userId });
+    await this.logSecurityEvent(
+      'logout',
+      'low',
+      session.ipAddress,
+      session.userAgent,
+      reason || 'Session revoked',
+      { sessionId, userId: session.userId },
+    );
 
     return true;
   }
 
-  async getSecurityEvents(filters: {
-    type?: SecurityEventType[];
-    severity?: string[];
-    userId?: string;
-    from?: Date;
-    to?: Date;
-    limit?: number;
-    offset?: number;
-  } = {}): Promise<SecurityEvent[]> {
+  async getSecurityEvents(
+    filters: {
+      type?: SecurityEventType[];
+      severity?: string[];
+      userId?: string;
+      from?: Date;
+      to?: Date;
+      limit?: number;
+      offset?: number;
+    } = {},
+  ): Promise<SecurityEvent[]> {
     let events = Array.from(this.securityEvents.values());
 
     // Apply filters
     if (filters.type) {
-      events = events.filter(e => filters.type!.includes(e.type));
+      events = events.filter((e) => filters.type.includes(e.type));
     }
     if (filters.severity) {
-      events = events.filter(e => filters.severity!.includes(e.severity));
+      events = events.filter((e) => filters.severity.includes(e.severity));
     }
     if (filters.userId) {
-      events = events.filter(e => e.userId === filters.userId);
+      events = events.filter((e) => e.userId === filters.userId);
     }
     if (filters.from) {
-      events = events.filter(e => e.timestamp >= filters.from!);
+      events = events.filter((e) => e.timestamp >= filters.from);
     }
     if (filters.to) {
-      events = events.filter(e => e.timestamp <= filters.to!);
+      events = events.filter((e) => e.timestamp <= filters.to);
     }
 
     // Sort by timestamp (newest first)
@@ -280,7 +358,8 @@ export class SecurityService implements OnModuleInit {
 
   private loadSecurityConfig(): SecurityConfig {
     return {
-      jwtSecret: process.env.JWT_SECRET || 'default-secret-change-in-production',
+      jwtSecret:
+        process.env.JWT_SECRET || 'default-secret-change-in-production',
       jwtExpiration: process.env.JWT_EXPIRATION || '24h',
       passwordMinLength: parseInt(process.env.PASSWORD_MIN_LENGTH || '8'),
       passwordRequireSpecial: process.env.PASSWORD_REQUIRE_SPECIAL === 'true',
@@ -291,7 +370,7 @@ export class SecurityService implements OnModuleInit {
       enableIPWhitelist: process.env.ENABLE_IP_WHITELIST === 'true',
       enableRateLimiting: process.env.ENABLE_RATE_LIMITING === 'true',
       rateLimitWindow: parseInt(process.env.RATE_LIMIT_WINDOW || '15'),
-      rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX || '100')
+      rateLimitMax: parseInt(process.env.RATE_LIMIT_MAX || '100'),
     };
   }
 
@@ -313,11 +392,13 @@ export class SecurityService implements OnModuleInit {
         updatedAt: new Date(),
         metadata: {
           passwordHash: '$2b$10$default.hash.change.in.production', // Change this in production
-        }
+        },
       };
 
       this.users.set(defaultAdmin.id, defaultAdmin);
-      console.log('SecurityService: Created default admin user (change password in production)');
+      console.log(
+        'SecurityService: Created default admin user (change password in production)',
+      );
     }
   }
 
@@ -345,7 +426,9 @@ export class SecurityService implements OnModuleInit {
     }
 
     if (cleanedCount > 0) {
-      console.log(`SecurityService: Cleaned up ${cleanedCount} expired sessions`);
+      console.log(
+        `SecurityService: Cleaned up ${cleanedCount} expired sessions`,
+      );
     }
   }
 
@@ -362,7 +445,9 @@ export class SecurityService implements OnModuleInit {
     }
 
     if (archivedCount > 0) {
-      console.log(`SecurityService: Archived ${archivedCount} old security events`);
+      console.log(
+        `SecurityService: Archived ${archivedCount} old security events`,
+      );
     }
   }
 
@@ -372,7 +457,7 @@ export class SecurityService implements OnModuleInit {
     ipAddress: string,
     userAgent: string,
     description: string,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, any> = {},
   ): Promise<void> {
     const event: SecurityEvent = {
       id: this.generateId(),
@@ -383,7 +468,7 @@ export class SecurityService implements OnModuleInit {
       description,
       metadata,
       timestamp: new Date(),
-      resolved: false
+      resolved: false,
     };
 
     this.securityEvents.set(event.id, event);
@@ -392,13 +477,20 @@ export class SecurityService implements OnModuleInit {
 
   private async hashPassword(password: string): Promise<string> {
     const salt = crypto.randomBytes(16).toString('hex');
-    const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+    const hash = crypto
+      .pbkdf2Sync(password, salt, 10000, 64, 'sha512')
+      .toString('hex');
     return `${salt}:${hash}`;
   }
 
-  private async verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+  private async verifyPassword(
+    password: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
     const [salt, hash] = hashedPassword.split(':');
-    const verifyHash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+    const verifyHash = crypto
+      .pbkdf2Sync(password, salt, 10000, 64, 'sha512')
+      .toString('hex');
     return hash === verifyHash;
   }
 
@@ -406,7 +498,9 @@ export class SecurityService implements OnModuleInit {
     const payload = {
       userId,
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + this.parseExpiration(this.config.jwtExpiration)
+      exp:
+        Math.floor(Date.now() / 1000) +
+        this.parseExpiration(this.config.jwtExpiration),
     };
 
     return Buffer.from(JSON.stringify(payload)).toString('base64');
@@ -415,18 +509,23 @@ export class SecurityService implements OnModuleInit {
   private parseExpiration(expiration: string): number {
     const unit = expiration.slice(-1);
     const value = parseInt(expiration.slice(0, -1));
-    
+
     switch (unit) {
-      case 's': return value;
-      case 'm': return value * 60;
-      case 'h': return value * 3600;
-      case 'd': return value * 86400;
-      default: return 3600; // Default to 1 hour
+      case 's':
+        return value;
+      case 'm':
+        return value * 60;
+      case 'h':
+        return value * 3600;
+      case 'd':
+        return value * 86400;
+      default:
+        return 3600; // Default to 1 hour
     }
   }
 
   private async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.email === email);
+    return Array.from(this.users.values()).find((user) => user.email === email);
   }
 
   private async getUserById(id: string): Promise<User | undefined> {
@@ -443,9 +542,9 @@ export class SecurityService implements OnModuleInit {
       ...sanitized,
       metadata: {
         ...metadata,
-        passwordHash: undefined // Never return password hash
-      }
-    } as User;
+        passwordHash: undefined, // Never return password hash
+      },
+    };
   }
 
   private generateId(): string {

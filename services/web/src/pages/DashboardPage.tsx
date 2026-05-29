@@ -52,7 +52,7 @@ export default function DashboardPage() {
             toast.success(`Deleted ${result.deleted} orphaned session(s)`);
             setOrphanedCount(0);
             fetchData();
-        } catch (e) {
+        } catch (_e) {
             toast.error('Failed to delete orphaned sessions');
         } finally {
             setCleaning(false);

@@ -7,6 +7,6 @@ import { TTSModule } from '../tts/tts.module';
   imports: [TTSModule],
   controllers: [DeviceController],
   providers: [DeviceService],
-  exports: [DeviceService]
+  exports: [DeviceService],
 })
 export class DeviceModule {}

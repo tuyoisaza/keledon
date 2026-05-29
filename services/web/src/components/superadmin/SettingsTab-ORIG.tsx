@@ -277,7 +277,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
     };
 
     const handleSaveTenantConfig = async () => {
-        const payload = tenantConfigState.map(({ id, ...rest }) => rest);
+        const payload = tenantConfigState.map(({ id: _id, ...rest }) => rest);
         await onSaveTenantConfig(payload);
     };
 

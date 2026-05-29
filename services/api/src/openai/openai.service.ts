@@ -14,22 +14,26 @@ export class OpenAIService {
 
   constructor() {
     this.apiKey = process.env.OPENAI_API_KEY || '';
-    
+
     if (!this.apiKey) {
-      console.warn('[OpenAI] No API key configured. Please set OPENAI_API_KEY environment variable.');
+      console.warn(
+        '[OpenAI] No API key configured. Please set OPENAI_API_KEY environment variable.',
+      );
     }
   }
 
   /**
    * Generate text completion
    */
-  async generateCompletion(options: OpenAICompletionOptions): Promise<{ content: string; usage?: any }> {
+  async generateCompletion(
+    options: OpenAICompletionOptions,
+  ): Promise<{ content: string; usage?: any }> {
     try {
       const response = await fetch(`${this.baseURL}/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
           model: options.model || 'gpt-4o-mini',
@@ -40,15 +44,16 @@ export class OpenAIService {
       });
 
       if (!response.ok) {
-        throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `OpenAI API error: ${response.status} ${response.statusText}`,
+        );
       }
 
-      const data = await response.json() as any;
+      const data = await response.json();
       return {
         content: data.choices?.[0]?.message?.content || '',
-        usage: data.usage
+        usage: data.usage,
       };
-
     } catch (error) {
       console.error('[OpenAI] Error generating completion:', error.message);
       throw error;
@@ -64,7 +69,7 @@ export class OpenAIService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
           model: 'text-embedding-3-small',
@@ -73,12 +78,13 @@ export class OpenAIService {
       });
 
       if (!response.ok) {
-        throw new Error(`OpenAI embeddings error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `OpenAI embeddings error: ${response.status} ${response.statusText}`,
+        );
       }
 
-      const data = await response.json() as any;
+      const data = await response.json();
       return data.data?.[0]?.embedding;
-
     } catch (error) {
       console.error('[OpenAI] Error generating embedding:', error.message);
       throw error;
@@ -88,35 +94,38 @@ export class OpenAIService {
   /**
    * Generate structured response
    */
-  async generateStructuredResponse(
-    prompt: string,
-    schema?: any
-  ): Promise<any> {
+  async generateStructuredResponse(prompt: string, schema?: any): Promise<any> {
     try {
       const response = await fetch(`${this.baseURL}/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
           model: 'gpt-4o-mini',
           messages: [{ role: 'user', content: prompt }],
-          response_format: schema ? { type: 'json_schema', json_schema: schema } : undefined,
+          response_format: schema
+            ? { type: 'json_schema', json_schema: schema }
+            : undefined,
           max_tokens: 1000,
           temperature: 0.2,
         }),
       });
 
       if (!response.ok) {
-        throw new Error(`OpenAI structured response error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `OpenAI structured response error: ${response.status} ${response.statusText}`,
+        );
       }
 
-      const data = await response.json() as any;
+      const data = await response.json();
       return JSON.parse(data.choices?.[0]?.message?.content || '{}');
-
     } catch (error) {
-      console.error('[OpenAI] Error generating structured response:', error.message);
+      console.error(
+        '[OpenAI] Error generating structured response:',
+        error.message,
+      );
       throw error;
     }
   }
@@ -128,19 +137,20 @@ export class OpenAIService {
     try {
       const response = await fetch(`${this.baseURL}/models`, {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apiKey}`,
         },
       });
 
       if (!response.ok) {
-        throw new Error(`OpenAI models error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `OpenAI models error: ${response.status} ${response.statusText}`,
+        );
       }
 
-      const data = await response.json() as any;
+      const data = await response.json();
       return {
         models: data.data?.map((model: any) => model.id) || [],
       };
-
     } catch (error) {
       console.error('[OpenAI] Error getting model info:', error.message);
       throw error;

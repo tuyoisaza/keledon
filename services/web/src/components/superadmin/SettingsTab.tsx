@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertTriangle, Settings, Globe, Database, Save, Loader2, Trash2, Plus } from 'lucide-react';
+import { AlertTriangle, Globe, Database, Loader2, Trash2, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ProviderConfig {
@@ -52,7 +52,7 @@ export function SettingsTab({
   tenantVoiceProfiles,
   onSaveProviderCatalog,
   onSaveTenantConfig,
-  onSaveVoiceProfiles,
+  onSaveVoiceProfiles: _onSaveVoiceProfiles,
   onCreateVoiceProfile,
   onDeleteVoiceProfile,
 }: SettingsTabProps) {
@@ -80,7 +80,7 @@ export function SettingsTab({
     try {
       await onSaveProviderCatalog(catalogState);
       toast.success('Provider catalog saved');
-    } catch (err) {
+    } catch (_err) {
       toast.error('Failed to save provider catalog');
     } finally {
       setSaving(false);
@@ -96,7 +96,7 @@ export function SettingsTab({
     try {
       await onSaveTenantConfig(tenantProviderConfig);
       toast.success('Tenant config saved');
-    } catch (err) {
+    } catch (_err) {
       toast.error('Failed to save tenant config');
     } finally {
       setSaving(false);
@@ -112,7 +112,7 @@ export function SettingsTab({
       await onCreateVoiceProfile({ name: newProfileName, provider_id: newProfileProvider });
       setNewProfileName('');
       toast.success('Voice profile created');
-    } catch (err) {
+    } catch (_err) {
       toast.error('Failed to create profile');
     }
   };
@@ -122,7 +122,7 @@ export function SettingsTab({
     try {
       await onDeleteVoiceProfile(id);
       toast.success('Profile deleted');
-    } catch (err) {
+    } catch (_err) {
       toast.error('Failed to delete profile');
     }
   };

@@ -7,7 +7,10 @@ import {
   SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
   SEMRESATTRS_SERVICE_NAME,
 } from '@opentelemetry/semantic-conventions';
-import { getRuntimeTier, resolveServiceEndpoints } from '../config/runtime-tier';
+import {
+  getRuntimeTier,
+  resolveServiceEndpoints,
+} from '../config/runtime-tier';
 
 const serviceName = 'keledon-cloud';
 const deploymentEnvironment = getRuntimeTier();

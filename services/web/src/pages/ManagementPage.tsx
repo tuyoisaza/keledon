@@ -47,9 +47,7 @@ interface ProviderCatalogEntry {
     metadata?: Record<string, any>;
 }
 
-import { API_URL, LAUNCHER_URL } from '@/lib/config';
 import { apiFetch } from '@/lib/api-fetch';
-const CLOUD_URL = API_URL;
 
 const statusStyles: Record<string, string> = {
     online: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',

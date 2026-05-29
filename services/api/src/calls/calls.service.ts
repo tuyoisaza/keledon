@@ -409,9 +409,7 @@ export class CallsService {
       ? metadata.transcript
       : [];
     const text =
-      dto.text ||
-      (String(transcript[transcript.length - 1]?.text ?? '')
-        .trim() as string);
+      dto.text || String(transcript[transcript.length - 1]?.text ?? '').trim();
 
     if (!text) {
       throw new BadRequestException(

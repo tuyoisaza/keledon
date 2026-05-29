@@ -38,7 +38,7 @@ export default function LaunchKeledonPage() {
                     try {
                         const vendors = await getVendors(keledon.teamId);
                         vendorsByTeam[keledon.teamId] = vendors;
-                    } catch (e) {
+                    } catch (_e) {
                         console.error('Failed to load vendors for team:', keledon.teamId);
                     }
                 }

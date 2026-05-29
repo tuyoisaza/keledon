@@ -285,12 +285,12 @@ export async function getUsers(companyId?: string): Promise<User[]> {
 }
 
 export async function createUser(data: { email: string; name?: string; companyId?: string; brandId?: string; teamId?: string; role?: string }): Promise<User> {
-    const { brandId, ...rest } = data;
+    const { brandId: _brandId, ...rest } = data;
     return fetchApi('/users', 'POST', rest);
 }
 
 export async function updateUser(id: string, data: { email?: string; name?: string; companyId?: string; brandId?: string; teamId?: string; role?: string }): Promise<User> {
-    const { brandId, ...rest } = data;
+    const { brandId: _brandId, ...rest } = data;
     return fetchApi(`/users/${id}`, 'PUT', rest);
 }
 

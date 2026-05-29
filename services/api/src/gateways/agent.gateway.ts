@@ -12,7 +12,6 @@ import { SessionService } from '../services/session.service';
 import {
   AgentEvent,
   AgentExecResultAck,
-  CloudCommand,
   ExecutionEvidence,
 } from '../contracts/events';
 import { DecisionEngineService } from '../services/decision-engine.service';
@@ -24,13 +23,15 @@ import {
   SpanStatusCode,
   trace,
 } from '@opentelemetry/api';
-import { KELEDON_AGENT_EVENTS, KELEDON_TRACE_SPANS } from '../telemetry/trace-model';
+import {
+  KELEDON_AGENT_EVENTS,
+  KELEDON_TRACE_SPANS,
+} from '../telemetry/trace-model';
 import { AGENT_EXEC_ATTRS } from '../telemetry/decision-evidence';
 import { resolveCorsOrigins } from '../config/runtime-tier';
 
-const gatewayCorsOrigins = process.env.KELEDON_ALLOW_ALL_CORS === 'true'
-  ? true
-  : resolveCorsOrigins();
+const gatewayCorsOrigins =
+  process.env.KELEDON_ALLOW_ALL_CORS === 'true' ? true : resolveCorsOrigins();
 
 // Import from canonical contracts
 export interface AgentSocketData {
@@ -52,15 +53,16 @@ export interface CommandSocketData {
 }
 
 @WebSocketGateway({
-  cors: { 
+  cors: {
     origin: gatewayCorsOrigins,
-    credentials: true 
+    credentials: true,
   },
   transports: ['websocket', 'polling'],
-  namespace: '/agent'
+  namespace: '/agent',
 })
-
-export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class AgentGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer()
   server: Server;
 
@@ -76,38 +78,38 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     private readonly decisionEngine: DecisionEngineService,
   ) {}
 
-  afterInit(server: Server): void {
+  afterInit(_server: Server): void {
     this.logger.log('AgentGateway: WebSocket server initialized');
   }
 
   handleConnection(client: Socket): void {
     this.logger.log(`Agent connected: ${client.id}`);
     this.connectedAgents.set(client.id, client);
-    
+
     // Send initial connection acknowledgment
     client.emit('connected', {
       agent_id: client.id,
       timestamp: new Date().toISOString(),
-      status: 'connected'
+      status: 'connected',
     });
   }
 
   handleDisconnect(client: Socket): void {
     this.logger.log(`Agent disconnected: ${client.id}`);
     this.connectedAgents.delete(client.id);
-    
+
     // End the session if one was created for this agent
     const sessionId = this.agentSessions.get(client.id);
     if (sessionId) {
       this.agentSessions.delete(client.id);
       this.endSession(sessionId);
     }
-    
+
     // Broadcast agent disconnection to dashboard if needed
     if (this.server && typeof (this.server as any).of === 'function') {
       this.server.of('/dashboard').emit('agent:disconnected', {
         agent_id: client.id,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   }
@@ -123,78 +125,93 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   @SubscribeMessage('brain_event')
   async handleBrainEvent(client: Socket, event: AgentEvent): Promise<void> {
-    const extractedContext = this.extractContextFromMetadata(event?.payload?.metadata);
+    const extractedContext = this.extractContextFromMetadata(
+      event?.payload?.metadata,
+    );
 
     await context.with(extractedContext, async () => {
-      await this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.LISTEN, async (span) => {
-        span.setAttribute('session_id', event?.session_id || 'unknown');
+      await this.tracer.startActiveSpan(
+        KELEDON_TRACE_SPANS.LISTEN,
+        async (span) => {
+          span.setAttribute('session_id', event?.session_id || 'unknown');
 
-        try {
-          // Validate session exists (canon rule: if no session_id, it does not exist)
-          const session = await this.sessionService.getSession(event.session_id);
-          if (!session) {
-            console.error(`[AgentGateway] Invalid session ${event.session_id} from agent ${client.id}`);
-            client.emit('error', { message: 'Invalid session_id' });
-            return;
-          }
-
-          // Process event with decision engine (Cloud decides)
-          if (this.decisionEngine) {
-            const decision = await this.decisionEngine.processTextInput(
+          try {
+            // Validate session exists (canon rule: if no session_id, it does not exist)
+            const session = await this.sessionService.getSession(
               event.session_id,
-              event.payload.text,
-              event.payload.confidence || 0.8,
-              event.payload.provider || 'deepgram',
-              event.payload.metadata || {},
             );
-            const command = decision.command as any;
+            if (!session) {
+              console.error(
+                `[AgentGateway] Invalid session ${event.session_id} from agent ${client.id}`,
+              );
+              client.emit('error', { message: 'Invalid session_id' });
+              return;
+            }
 
-            // Send command back to agent
-            this.sendCommand(event.session_id, command);
+            // Process event with decision engine (Cloud decides)
+            if (this.decisionEngine) {
+              const decision = await this.decisionEngine.processTextInput(
+                event.session_id,
+                event.payload.text,
+                event.payload.confidence || 0.8,
+                event.payload.provider || 'deepgram',
+                event.payload.metadata || {},
+              );
+              const command = decision.command as any;
+
+              // Send command back to agent
+              this.sendCommand(event.session_id, command);
+            }
+
+            // Persist the original event (canon: all events must be persisted)
+            const persistedEvent = await this.sessionService.persistEvent(
+              event.session_id,
+              event,
+            );
+
+            console.log(`[AgentGateway] Event processed: ${persistedEvent.id}`);
+          } catch (error) {
+            span.setStatus({
+              code: SpanStatusCode.ERROR,
+              message: error instanceof Error ? error.message : String(error),
+            });
+
+            console.error(`[AgentGateway] Error processing event:`, error);
+
+            // Send error command (anti-demo rule: show failure)
+            const errorCommand: any = {
+              command_id: uuidv4(),
+              session_id: event.session_id,
+              timestamp: new Date().toISOString(),
+              type: 'error',
+              confidence: 0,
+              mode: 'error',
+              flow_id: null,
+              flow_run_id: null,
+              say: {
+                text: `Decision processing failed: ${error.message}`,
+                interruptible: true,
+              },
+            };
+
+            this.sendCommand(event.session_id, errorCommand);
+          } finally {
+            span.end();
           }
-
-          // Persist the original event (canon: all events must be persisted)
-          const persistedEvent = await this.sessionService.persistEvent(event.session_id, event);
-
-          console.log(`[AgentGateway] Event processed: ${persistedEvent.id}`);
-        } catch (error) {
-          span.setStatus({
-            code: SpanStatusCode.ERROR,
-            message: error instanceof Error ? error.message : String(error),
-          });
-
-          console.error(`[AgentGateway] Error processing event:`, error);
-
-          // Send error command (anti-demo rule: show failure)
-          const errorCommand: any = {
-            command_id: uuidv4(),
-            session_id: event.session_id,
-            timestamp: new Date().toISOString(),
-            type: 'error',
-            confidence: 0,
-            mode: 'error',
-            flow_id: null,
-            flow_run_id: null,
-            say: {
-              text: `Decision processing failed: ${error.message}`,
-              interruptible: true,
-            },
-          };
-
-          this.sendCommand(event.session_id, errorCommand);
-        } finally {
-          span.end();
-        }
-      });
+        },
+      );
     });
   }
 
   @SubscribeMessage('session.create')
-  async handleSessionCreate(client: Socket, data: {
-    agent_id: string;
-    tab_url?: string;
-    tab_title?: string;
-  }): Promise<void> {
+  async handleSessionCreate(
+    client: Socket,
+    data: {
+      agent_id: string;
+      tab_url?: string;
+      tab_title?: string;
+    },
+  ): Promise<void> {
     try {
       // End any existing session for this client before creating a new one
       const existingSessionId = this.agentSessions.get(client.id);
@@ -204,21 +221,22 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
       const session = await this.sessionService.create(data.agent_id, {
         tab_url: data.tab_url,
-        tab_title: data.tab_title
+        tab_title: data.tab_title,
       });
 
       // Track this session for the client
       this.agentSessions.set(client.id, session.id);
 
-      console.log(`[AgentGateway] Session created: ${session.id} for agent ${data.agent_id}`);
+      console.log(
+        `[AgentGateway] Session created: ${session.id} for agent ${data.agent_id}`,
+      );
 
       client.emit('session.created', {
         session_id: session.id,
         agent_id: data.agent_id,
         status: session.status,
-        created_at: session.created_at
+        created_at: session.created_at,
       });
-
     } catch (error) {
       console.error(`[AgentGateway] Error creating session:`, error);
       client.emit('error', { message: 'Failed to create session' });
@@ -226,17 +244,26 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   @SubscribeMessage(KELEDON_AGENT_EVENTS.EXECUTION_RESULT_ACK)
-  async handleAgentExecResultAck(client: Socket, ack: AgentExecResultAck): Promise<void> {
+  async handleAgentExecResultAck(
+    client: Socket,
+    ack: AgentExecResultAck,
+  ): Promise<void> {
     const normalizedEvidence = this.normalizeAgentExecAck(ack);
     await this.processExecutionEvidence(client, normalizedEvidence);
   }
 
   @SubscribeMessage(KELEDON_AGENT_EVENTS.EXECUTION_EVIDENCE)
-  async handleExecutionEvidence(client: Socket, evidence: ExecutionEvidence): Promise<void> {
+  async handleExecutionEvidence(
+    client: Socket,
+    evidence: ExecutionEvidence,
+  ): Promise<void> {
     await this.processExecutionEvidence(client, evidence);
   }
 
-  private async processExecutionEvidence(client: Socket, evidence: ExecutionEvidence): Promise<void> {
+  private async processExecutionEvidence(
+    client: Socket,
+    evidence: ExecutionEvidence,
+  ): Promise<void> {
     const requiredFields = [
       'event',
       'session_id',
@@ -254,79 +281,121 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     }
 
     if (String(evidence.decision_id).trim().toLowerCase() === 'unknown') {
-      throw new Error('execution.evidence malformed: decision_id must be real and non-placeholder');
+      throw new Error(
+        'execution.evidence malformed: decision_id must be real and non-placeholder',
+      );
     }
 
     if (String(evidence.trace_id).trim().toLowerCase() === 'unknown') {
-      throw new Error('execution.evidence malformed: trace_id must be real and non-placeholder');
+      throw new Error(
+        'execution.evidence malformed: trace_id must be real and non-placeholder',
+      );
     }
 
-    const executionStatus = evidence.execution_status || evidence.execution_result;
+    const executionStatus =
+      evidence.execution_status || evidence.execution_result;
     if (!executionStatus) {
-      throw new Error('execution.evidence missing required field: execution_status');
+      throw new Error(
+        'execution.evidence missing required field: execution_status',
+      );
     }
 
-    const extractedContext = this.extractContextFromMetadata(evidence?.metadata);
+    const extractedContext = this.extractContextFromMetadata(
+      evidence?.metadata,
+    );
 
     await context.with(extractedContext, async () => {
-      await this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.AGENT_EXEC, async (span) => {
-        try {
-          span.setAttribute('session_id', String(evidence?.session_id || 'unknown'));
-          span.setAttribute(AGENT_EXEC_ATTRS.EVENT, String(evidence?.event || 'unknown'));
-          span.setAttribute(AGENT_EXEC_ATTRS.DECISION_ID, String(evidence?.decision_id || 'unknown'));
-          span.setAttribute(AGENT_EXEC_ATTRS.TRACE_ID, String(evidence?.trace_id || 'unknown'));
-          span.setAttribute('command_id', String(evidence?.command_id || 'unknown'));
-          span.setAttribute(AGENT_EXEC_ATTRS.COMMAND_TYPE, String(evidence?.command_type || 'unknown'));
-          span.setAttribute(AGENT_EXEC_ATTRS.TAB_ID, String(evidence?.tab_id || 'unknown'));
-          span.setAttribute(AGENT_EXEC_ATTRS.EXECUTION_RESULT, String(evidence?.execution_result || 'unknown'));
-          span.setAttribute(AGENT_EXEC_ATTRS.EXECUTION_STATUS, String(executionStatus));
-          span.setAttribute('outcome', String(evidence?.outcome || 'unknown'));
-          span.setAttribute('latency_ms', Number(evidence?.latency_ms || 0));
+      await this.tracer.startActiveSpan(
+        KELEDON_TRACE_SPANS.AGENT_EXEC,
+        async (span) => {
+          try {
+            span.setAttribute(
+              'session_id',
+              String(evidence?.session_id || 'unknown'),
+            );
+            span.setAttribute(
+              AGENT_EXEC_ATTRS.EVENT,
+              String(evidence?.event || 'unknown'),
+            );
+            span.setAttribute(
+              AGENT_EXEC_ATTRS.DECISION_ID,
+              String(evidence?.decision_id || 'unknown'),
+            );
+            span.setAttribute(
+              AGENT_EXEC_ATTRS.TRACE_ID,
+              String(evidence?.trace_id || 'unknown'),
+            );
+            span.setAttribute(
+              'command_id',
+              String(evidence?.command_id || 'unknown'),
+            );
+            span.setAttribute(
+              AGENT_EXEC_ATTRS.COMMAND_TYPE,
+              String(evidence?.command_type || 'unknown'),
+            );
+            span.setAttribute(
+              AGENT_EXEC_ATTRS.TAB_ID,
+              String(evidence?.tab_id || 'unknown'),
+            );
+            span.setAttribute(
+              AGENT_EXEC_ATTRS.EXECUTION_RESULT,
+              String(evidence?.execution_result || 'unknown'),
+            );
+            span.setAttribute(
+              AGENT_EXEC_ATTRS.EXECUTION_STATUS,
+              String(executionStatus),
+            );
+            span.setAttribute(
+              'outcome',
+              String(evidence?.outcome || 'unknown'),
+            );
+            span.setAttribute('latency_ms', Number(evidence?.latency_ms || 0));
 
-          if (executionStatus !== 'success') {
+            if (executionStatus !== 'success') {
+              span.setStatus({
+                code: SpanStatusCode.ERROR,
+                message: `Extension execution reported ${executionStatus}`,
+              });
+            }
+
+            this.logger.log(
+              `[C10] execution.evidence ${evidence.event} decision_id=${evidence.decision_id} trace_id=${evidence.trace_id} command_type=${evidence.command_type} tab_id=${evidence.tab_id} result=${evidence.execution_result}`,
+            );
+
+            await this.sessionService.persistEvent(evidence.session_id, {
+              session_id: evidence.session_id,
+              event_type: 'ui_result',
+              agent_id: client.id,
+              ts: evidence.completed_at,
+              payload: {
+                kind: 'execution_evidence',
+                decision_id: evidence.decision_id,
+                trace_id: evidence.trace_id,
+                command_id: evidence.command_id,
+                event: evidence.event,
+                command_type: evidence.command_type,
+                tab_id: evidence.tab_id,
+                execution_result: evidence.execution_result,
+                execution_status: executionStatus,
+                execution_timestamp: evidence.execution_timestamp,
+                outcome: evidence.outcome,
+                started_at: evidence.started_at,
+                completed_at: evidence.completed_at,
+                latency_ms: evidence.latency_ms,
+                evidence: evidence.evidence,
+              },
+            });
+          } catch (error) {
             span.setStatus({
               code: SpanStatusCode.ERROR,
-              message: `Extension execution reported ${executionStatus}`,
+              message: error instanceof Error ? error.message : String(error),
             });
+            throw error;
+          } finally {
+            span.end();
           }
-
-          this.logger.log(
-            `[C10] execution.evidence ${evidence.event} decision_id=${evidence.decision_id} trace_id=${evidence.trace_id} command_type=${evidence.command_type} tab_id=${evidence.tab_id} result=${evidence.execution_result}`,
-          );
-
-          await this.sessionService.persistEvent(evidence.session_id, {
-            session_id: evidence.session_id,
-            event_type: 'ui_result',
-            agent_id: client.id,
-            ts: evidence.completed_at,
-            payload: {
-              kind: 'execution_evidence',
-              decision_id: evidence.decision_id,
-              trace_id: evidence.trace_id,
-              command_id: evidence.command_id,
-              event: evidence.event,
-              command_type: evidence.command_type,
-              tab_id: evidence.tab_id,
-              execution_result: evidence.execution_result,
-              execution_status: executionStatus,
-              execution_timestamp: evidence.execution_timestamp,
-              outcome: evidence.outcome,
-              started_at: evidence.started_at,
-              completed_at: evidence.completed_at,
-              latency_ms: evidence.latency_ms,
-              evidence: evidence.evidence,
-            },
-          } as AgentEvent);
-        } catch (error) {
-          span.setStatus({
-            code: SpanStatusCode.ERROR,
-            message: error instanceof Error ? error.message : String(error),
-          });
-          throw error;
-        } finally {
-          span.end();
-        }
-      });
+        },
+      );
     });
   }
 
@@ -362,7 +431,7 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   @SubscribeMessage('test_connection')
   handleTestConnection(client: Socket, data: any): void {
     this.logger.log(`Test connection received from agent ${client.id}:`, data);
-    
+
     // Echo back the test message to prove roundtrip
     client.emit('test_connection_response', {
       type: 'test_connection_response',
@@ -373,8 +442,8 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         originalTimestamp: data.timestamp,
         roundtripTime: Date.now() - data.timestamp,
         cloudServer: process.env.HOSTNAME || 'localhost',
-        agentVersion: data.payload?.agentVersion || 'unknown'
-      }
+        agentVersion: data.payload?.agentVersion || 'unknown',
+      },
     });
   }
 
@@ -383,10 +452,13 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   handleEvent(client: Socket, data: AgentSocketData): void {
     try {
       this.logger.log(`Received event from agent ${client.id}: ${data.type}`);
-      
+
       // Validate event structure against canonical contract
       if (!this.validateEvent(data)) {
-        this.logger.error(`Invalid event structure from agent ${client.id}`, data);
+        this.logger.error(
+          `Invalid event structure from agent ${client.id}`,
+          data,
+        );
         client.emit('error', { message: 'Invalid event structure' });
         return;
       }
@@ -405,9 +477,11 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         default:
           this.logger.warn(`Unknown event type: ${data.type}`);
       }
-      
     } catch (error) {
-      this.logger.error(`Error processing event from agent ${client.id}`, error);
+      this.logger.error(
+        `Error processing event from agent ${client.id}`,
+        error,
+      );
       client.emit('error', { message: 'Failed to process event' });
     }
   }
@@ -415,9 +489,9 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   // Method to send commands to agent (Cloud → Agent)
   sendCommand(sessionId: string, command: any): void {
     this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.COMMAND_EMIT, (span) => {
-      span.setAttribute('command_type', String((command as any)?.type || 'unknown'));
+      span.setAttribute('command_type', String(command?.type || 'unknown'));
       span.setAttribute('session_id', sessionId);
-      const decisionId = (command as any)?.metadata?.decision_id;
+      const decisionId = command?.metadata?.decision_id;
       if (decisionId) {
         span.setAttribute('decision.id', String(decisionId));
       }
@@ -435,8 +509,10 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       );
 
       this.server.emit(`command.${sessionId}`, command);
-      if ((command as any).say) {
-        console.log(`[AgentGateway] Command sent to session ${sessionId}: ${(command as any).say.text}`);
+      if (command.say) {
+        console.log(
+          `[AgentGateway] Command sent to session ${sessionId}: ${command.say.text}`,
+        );
       }
 
       span.end();
@@ -454,7 +530,10 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
       // Validate command structure against canonical contract
       if (!this.validateCommand(command)) {
-        this.logger.error(`Invalid command structure for agent ${agentId}`, command);
+        this.logger.error(
+          `Invalid command structure for agent ${agentId}`,
+          command,
+        );
         return;
       }
 
@@ -476,8 +555,12 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
             ...command.payload?.metadata,
             trace_id: traceId,
             ...(decisionId ? { decision_id: decisionId } : {}),
-            ...(propagationCarrier.traceparent ? { traceparent: propagationCarrier.traceparent } : {}),
-            ...(propagationCarrier.tracestate ? { tracestate: propagationCarrier.tracestate } : {}),
+            ...(propagationCarrier.traceparent
+              ? { traceparent: propagationCarrier.traceparent }
+              : {}),
+            ...(propagationCarrier.tracestate
+              ? { tracestate: propagationCarrier.tracestate }
+              : {}),
           },
         };
 
@@ -485,7 +568,6 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         this.logger.log(`Sent command to agent ${agentId}: ${command.type}`);
         span.end();
       });
-      
     } catch (error) {
       this.logger.error(`Error sending command to agent ${agentId}`, error);
     }
@@ -494,7 +576,7 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   // Handle text input events (STT output)
   private handleTextInput(client: Socket, event: AgentSocketData): void {
     this.logger.log(`Processing text input: ${event.payload.text}`);
-    
+
     // TODO: Integrate with AI decision engine
     // For now, send back a simple acknowledgment command
     const command: CommandSocketData = {
@@ -504,30 +586,30 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       type: 'say',
       payload: {
         text: `Received: ${event.payload.text}`,
-        interruptible: true
-      }
+        interruptible: true,
+      },
     };
-    
+
     this.sendCommandToAgent(client.id, command);
   }
 
   // Handle UI result events (RPA execution results)
   private handleUIResult(client: Socket, event: AgentSocketData): void {
     this.logger.log(`Processing UI result: ${JSON.stringify(event.payload)}`);
-    
+
     // Store the UI result in database
-    this.storeUIResult(event).catch(err => {
+    this.storeUIResult(event).catch((err) => {
       this.logger.error('Failed to store UI result:', err);
     });
-    
+
     // Emit to any listeners that might be waiting for this result
     client.emit('ui_result_stored', {
       session_id: event.session_id,
       command_id: event.command_id,
-      status: 'stored'
+      status: 'stored',
     });
   }
-  
+
   private async storeUIResult(event: AgentSocketData): Promise<void> {
     try {
       if (this.sessionService) {
@@ -537,10 +619,10 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
           payload: {
             command_id: event.command_id,
             results: event.payload?.results || [],
-            error: event.payload?.error
+            error: event.payload?.error,
           },
           ts: event.timestamp || new Date().toISOString(),
-          agent_id: event.agent_id || 'unknown'
+          agent_id: event.agent_id || 'unknown',
         });
         this.logger.log(`UI result stored for session ${event.session_id}`);
       }
@@ -553,7 +635,7 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   // Handle system events (lifecycle, errors)
   private handleSystemEvent(client: Socket, event: AgentSocketData): void {
     this.logger.log(`Processing system event: ${event.payload.event}`);
-    
+
     // TODO: Handle system events like call_started, call_ended
     switch (event.payload.event) {
       case 'call_started':
@@ -600,7 +682,9 @@ export class AgentGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.server.of('/sidepanel').emit(event, data);
   }
 
-  private extractContextFromMetadata(metadata: Record<string, any> | undefined) {
+  private extractContextFromMetadata(
+    metadata: Record<string, any> | undefined,
+  ) {
     const traceparent = metadata?.traceparent;
     const tracestate = metadata?.tracestate;
 

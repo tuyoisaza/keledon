@@ -27,7 +27,9 @@ export class DeepgramSTTService {
     const apiKey = sttConfig.deepgramApiKey;
 
     if (!apiKey) {
-      this.logger.warn('[DeepgramSTT] No DEEPGRAM_API_KEY configured — service unavailable');
+      this.logger.warn(
+        '[DeepgramSTT] No DEEPGRAM_API_KEY configured — service unavailable',
+      );
       return false;
     }
 
@@ -38,7 +40,10 @@ export class DeepgramSTTService {
       this.logger.log('[DeepgramSTT] Client initialized');
       return true;
     } catch (error: any) {
-      this.logger.error('[DeepgramSTT] Failed to initialize Deepgram SDK:', error.message);
+      this.logger.error(
+        '[DeepgramSTT] Failed to initialize Deepgram SDK:',
+        error.message,
+      );
       return false;
     }
   }
@@ -55,32 +60,35 @@ export class DeepgramSTTService {
     const model = sttConfig.deepgramModel || 'nova-2';
 
     try {
-      this.logger.log(`[DeepgramSTT] Transcoding ${audioBuffer.length} bytes with model=${model}`);
+      this.logger.log(
+        `[DeepgramSTT] Transcoding ${audioBuffer.length} bytes with model=${model}`,
+      );
 
-      const { result, error } = await this.client.listen.prerecorded.transcribeFile(
-        audioBuffer,
-        {
+      const { result, error } =
+        await this.client.listen.prerecorded.transcribeFile(audioBuffer, {
           model,
           smart_format: true,
           punctuate: true,
           language: sttConfig.deepgramLanguage || 'en',
           encoding: sttConfig.deepgramEncoding || 'linear16',
           sample_rate: sttConfig.deepgramSampleRate || 16000,
-        },
-      );
+        });
 
       if (error) {
         this.logger.error('[DeepgramSTT] Transcription error:', error.message);
         return null;
       }
 
-      const transcript = result?.results?.channels?.[0]?.alternatives?.[0]?.transcript;
+      const transcript =
+        result?.results?.channels?.[0]?.alternatives?.[0]?.transcript;
       if (!transcript) {
         this.logger.warn('[DeepgramSTT] No transcript in response');
         return '';
       }
 
-      this.logger.log(`[DeepgramSTT] Transcript: "${transcript.substring(0, 100)}..."`);
+      this.logger.log(
+        `[DeepgramSTT] Transcript: "${transcript.substring(0, 100)}..."`,
+      );
       return transcript;
     } catch (error: any) {
       this.logger.error('[DeepgramSTT] Transcription failed:', error.message);
@@ -114,7 +122,10 @@ export class DeepgramSTTService {
       });
 
       connection.on('error', (err: any) => {
-        this.logger.error('[DeepgramSTT] Live connection error:', err?.message || err);
+        this.logger.error(
+          '[DeepgramSTT] Live connection error:',
+          err?.message || err,
+        );
       });
 
       connection.on('close', () => {
@@ -123,7 +134,10 @@ export class DeepgramSTTService {
 
       return connection;
     } catch (error: any) {
-      this.logger.error('[DeepgramSTT] Failed to create live stream:', error.message);
+      this.logger.error(
+        '[DeepgramSTT] Failed to create live stream:',
+        error.message,
+      );
       return null;
     }
   }

@@ -8,7 +8,13 @@ import { VoiceAnalyticsService } from './voice-analytics.service';
 
 export interface Alert {
   id: string;
-  type: 'system' | 'integration' | 'flow' | 'voice' | 'security' | 'performance';
+  type:
+    | 'system'
+    | 'integration'
+    | 'flow'
+    | 'voice'
+    | 'security'
+    | 'performance';
   severity: 'info' | 'warning' | 'critical' | 'emergency';
   title: string;
   message: string;
@@ -112,13 +118,17 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   private alerts = new Map<string, Alert>();
   private channels = new Map<string, NotificationChannel>();
   private rules = new Map<string, AlertRule>();
-  
+
   private alertSubject = new Subject<Alert>();
-  private notificationSubject = new Subject<{ alert: Alert; channel: NotificationChannel; success: boolean }>();
-  
+  private notificationSubject = new Subject<{
+    alert: Alert;
+    channel: NotificationChannel;
+    success: boolean;
+  }>();
+
   private monitoringIntervals: any[] = [];
   private cooldownTimers = new Map<string, any>();
-  
+
   public alerts$ = this.alertSubject.asObservable();
   public notifications$ = this.notificationSubject.asObservable();
 
@@ -126,7 +136,7 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
     private readonly systemMonitoringService: SystemMonitoringService,
     private readonly integrationHealthService: IntegrationHealthService,
     private readonly flowExecutionService: FlowExecutionService,
-    private readonly voiceAnalyticsService: VoiceAnalyticsService
+    private readonly voiceAnalyticsService: VoiceAnalyticsService,
   ) {
     console.log('RealTimeAlertingService: Initialized');
   }
@@ -135,7 +145,9 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
     this.initializeDefaultChannels();
     this.initializeDefaultRules();
     this.startMonitoring();
-    console.log('RealTimeAlertingService: Started monitoring with real-time alerts');
+    console.log(
+      'RealTimeAlertingService: Started monitoring with real-time alerts',
+    );
   }
 
   onModuleDestroy() {
@@ -143,13 +155,15 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   }
 
   // Create a new alert
-  async createAlert(alert: Omit<Alert, 'id' | 'timestamp' | 'acknowledged' | 'resolved'>): Promise<Alert> {
+  async createAlert(
+    alert: Omit<Alert, 'id' | 'timestamp' | 'acknowledged' | 'resolved'>,
+  ): Promise<Alert> {
     const fullAlert: Alert = {
       ...alert,
       id: this.generateAlertId(),
       timestamp: new Date(),
       acknowledged: false,
-      resolved: false
+      resolved: false,
     };
 
     this.alerts.set(fullAlert.id, fullAlert);
@@ -161,7 +175,9 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
     // Send notifications
     await this.sendNotifications(fullAlert);
 
-    console.log(`RealTimeAlerting: Created alert ${fullAlert.id} - ${fullAlert.title}`);
+    console.log(
+      `RealTimeAlerting: Created alert ${fullAlert.id} - ${fullAlert.title}`,
+    );
     return fullAlert;
   }
 
@@ -180,7 +196,11 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   }
 
   // Resolve an alert
-  async resolveAlert(alertId: string, userId: string, resolution?: string): Promise<boolean> {
+  async resolveAlert(
+    alertId: string,
+    userId: string,
+    resolution?: string,
+  ): Promise<boolean> {
     const alert = this.alerts.get(alertId);
     if (!alert) return false;
 
@@ -197,40 +217,46 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   }
 
   // Get all alerts
-  getAlerts(filters: {
-    type?: Alert['type'];
-    severity?: Alert['severity'];
-    acknowledged?: boolean;
-    resolved?: boolean;
-    source?: string;
-    from?: Date;
-    to?: Date;
-    limit?: number;
-    offset?: number;
-  } = {}): Alert[] {
+  getAlerts(
+    filters: {
+      type?: Alert['type'];
+      severity?: Alert['severity'];
+      acknowledged?: boolean;
+      resolved?: boolean;
+      source?: string;
+      from?: Date;
+      to?: Date;
+      limit?: number;
+      offset?: number;
+    } = {},
+  ): Alert[] {
     let alerts = Array.from(this.alerts.values());
 
     // Apply filters
     if (filters.type) {
-      alerts = alerts.filter(alert => filters.type!.includes(alert.type));
+      alerts = alerts.filter((alert) => filters.type.includes(alert.type));
     }
     if (filters.severity) {
-      alerts = alerts.filter(alert => filters.severity!.includes(alert.severity));
+      alerts = alerts.filter((alert) =>
+        filters.severity.includes(alert.severity),
+      );
     }
     if (filters.acknowledged !== undefined) {
-      alerts = alerts.filter(alert => alert.acknowledged === filters.acknowledged);
+      alerts = alerts.filter(
+        (alert) => alert.acknowledged === filters.acknowledged,
+      );
     }
     if (filters.resolved !== undefined) {
-      alerts = alerts.filter(alert => alert.resolved === filters.resolved);
+      alerts = alerts.filter((alert) => alert.resolved === filters.resolved);
     }
     if (filters.source) {
-      alerts = alerts.filter(alert => alert.source.includes(filters.source!));
+      alerts = alerts.filter((alert) => alert.source.includes(filters.source));
     }
     if (filters.from) {
-      alerts = alerts.filter(alert => alert.timestamp >= filters.from!);
+      alerts = alerts.filter((alert) => alert.timestamp >= filters.from);
     }
     if (filters.to) {
-      alerts = alerts.filter(alert => alert.timestamp <= filters.to!);
+      alerts = alerts.filter((alert) => alert.timestamp <= filters.to);
     }
 
     // Sort by timestamp (newest first)
@@ -260,37 +286,41 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   } {
     const alerts = this.getAlerts({
       from: timeRange.from,
-      to: timeRange.to
+      to: timeRange.to,
     });
 
     const stats = {
       total: alerts.length,
       byType: {} as Record<Alert['type'], number>,
       bySeverity: {} as Record<Alert['severity'], number>,
-      acknowledged: alerts.filter(a => a.acknowledged).length,
-      resolved: alerts.filter(a => a.resolved).length,
+      acknowledged: alerts.filter((a) => a.acknowledged).length,
+      resolved: alerts.filter((a) => a.resolved).length,
       avgResolutionTime: 0,
       critical: 0,
-      emergency: 0
+      emergency: 0,
     };
 
     // Count by type and severity
-    alerts.forEach(alert => {
+    alerts.forEach((alert) => {
       stats.byType[alert.type] = (stats.byType[alert.type] || 0) + 1;
-      stats.bySeverity[alert.severity] = (stats.bySeverity[alert.severity] || 0) + 1;
+      stats.bySeverity[alert.severity] =
+        (stats.bySeverity[alert.severity] || 0) + 1;
     });
 
     // Calculate average resolution time
-    const resolvedAlerts = alerts.filter(a => a.resolved && a.resolvedAt);
+    const resolvedAlerts = alerts.filter((a) => a.resolved && a.resolvedAt);
     if (resolvedAlerts.length > 0) {
-      const totalResolutionTime = resolvedAlerts.reduce((sum, alert) => 
-        sum + (alert.resolvedAt!.getTime() - alert.timestamp.getTime()), 0);
+      const totalResolutionTime = resolvedAlerts.reduce(
+        (sum, alert) =>
+          sum + (alert.resolvedAt.getTime() - alert.timestamp.getTime()),
+        0,
+      );
       stats.avgResolutionTime = totalResolutionTime / resolvedAlerts.length;
     }
 
     // Count critical and emergency
-    stats.critical = alerts.filter(a => a.severity === 'critical').length;
-    stats.emergency = alerts.filter(a => a.severity === 'emergency').length;
+    stats.critical = alerts.filter((a) => a.severity === 'critical').length;
+    stats.emergency = alerts.filter((a) => a.severity === 'emergency').length;
 
     return stats;
   }
@@ -299,16 +329,21 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   createChannel(channel: Omit<NotificationChannel, 'id'>): NotificationChannel {
     const fullChannel: NotificationChannel = {
       ...channel,
-      id: this.generateChannelId()
+      id: this.generateChannelId(),
     };
 
     this.channels.set(fullChannel.id, fullChannel);
-    console.log(`RealTimeAlerting: Created notification channel ${fullChannel.id}`);
+    console.log(
+      `RealTimeAlerting: Created notification channel ${fullChannel.id}`,
+    );
     return fullChannel;
   }
 
   // Update notification channel
-  updateChannel(channelId: string, updates: Partial<NotificationChannel>): boolean {
+  updateChannel(
+    channelId: string,
+    updates: Partial<NotificationChannel>,
+  ): boolean {
     const channel = this.channels.get(channelId);
     if (!channel) return false;
 
@@ -322,7 +357,9 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   deleteChannel(channelId: string): boolean {
     const deleted = this.channels.delete(channelId);
     if (deleted) {
-      console.log(`RealTimeAlerting: Deleted notification channel ${channelId}`);
+      console.log(
+        `RealTimeAlerting: Deleted notification channel ${channelId}`,
+      );
     }
     return deleted;
   }
@@ -348,37 +385,46 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
       metadata: { test: true },
       acknowledged: false,
       resolved: false,
-      tags: ['test']
+      tags: ['test'],
     };
 
     try {
       const success = await this.sendNotificationToChannel(testAlert, channel);
-      
+
       this.notificationSubject.next({
         alert: testAlert,
         channel,
-        success
+        success,
       });
 
-      console.log(`RealTimeAlerting: Test notification ${success ? 'sent' : 'failed'} to channel ${channelId}`);
+      console.log(
+        `RealTimeAlerting: Test notification ${success ? 'sent' : 'failed'} to channel ${channelId}`,
+      );
       return success;
     } catch (error) {
-      console.error(`RealTimeAlerting: Failed to test channel ${channelId}:`, error);
+      console.error(
+        `RealTimeAlerting: Failed to test channel ${channelId}:`,
+        error,
+      );
       return false;
     }
   }
 
   // Create alert rule
-  createRule(rule: Omit<AlertRule, 'id' | 'lastTriggered' | 'triggerCount'>): AlertRule {
+  createRule(
+    rule: Omit<AlertRule, 'id' | 'lastTriggered' | 'triggerCount'>,
+  ): AlertRule {
     const fullRule: AlertRule = {
       ...rule,
       id: this.generateRuleId(),
       lastTriggered: undefined,
-      triggerCount: 0
+      triggerCount: 0,
     };
 
     this.rules.set(fullRule.id, fullRule);
-    console.log(`RealTimeAlerting: Created alert rule ${fullRule.id} - ${fullRule.name}`);
+    console.log(
+      `RealTimeAlerting: Created alert rule ${fullRule.id} - ${fullRule.name}`,
+    );
     return fullRule;
   }
 
@@ -395,7 +441,7 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
         type: 'dashboard',
         enabled: true,
         config: { dashboard: { enabled: true, priority: true } },
-        filters: [{ severity: ['warning', 'critical', 'emergency'] }]
+        filters: [{ severity: ['warning', 'critical', 'emergency'] }],
       },
       {
         name: 'Email Alerts',
@@ -404,18 +450,21 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
         config: {
           email: {
             to: [process.env.ADMIN_EMAIL || 'admin@keledon.com'],
-            template: 'alert-email'
-          }
+            template: 'alert-email',
+          },
         },
-        filters: [{ severity: ['critical', 'emergency'] }]
-      }
+        filters: [{ severity: ['critical', 'emergency'] }],
+      },
     ];
 
-    defaultChannels.forEach(channel => this.createChannel(channel));
+    defaultChannels.forEach((channel) => this.createChannel(channel));
   }
 
   private initializeDefaultRules(): void {
-    const defaultRules: Omit<AlertRule, 'id' | 'lastTriggered' | 'triggerCount'>[] = [
+    const defaultRules: Omit<
+      AlertRule,
+      'id' | 'lastTriggered' | 'triggerCount'
+    >[] = [
       {
         name: 'High CPU Usage',
         description: 'Alert when CPU usage exceeds 90%',
@@ -424,12 +473,12 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
           metric: 'cpu.usage',
           operator: 'gt',
           threshold: 90,
-          duration: 300 // 5 minutes
+          duration: 300, // 5 minutes
         },
         action: {
-          channels: ['dashboard', 'email']
+          channels: ['dashboard', 'email'],
         },
-        cooldownMinutes: 15
+        cooldownMinutes: 15,
       },
       {
         name: 'Memory Usage Critical',
@@ -439,12 +488,12 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
           metric: 'memory.usage',
           operator: 'gt',
           threshold: 95,
-          duration: 60 // 1 minute
+          duration: 60, // 1 minute
         },
         action: {
-          channels: ['dashboard', 'email']
+          channels: ['dashboard', 'email'],
         },
-        cooldownMinutes: 10
+        cooldownMinutes: 10,
       },
       {
         name: 'Provider Connection Failed',
@@ -453,12 +502,12 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
         condition: {
           metric: 'provider.status',
           operator: 'eq',
-          threshold: 'error'
+          threshold: 'error',
         },
         action: {
-          channels: ['dashboard']
+          channels: ['dashboard'],
         },
-        cooldownMinutes: 5
+        cooldownMinutes: 5,
       },
       {
         name: 'Flow Execution Failed',
@@ -467,12 +516,12 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
         condition: {
           metric: 'flow.status',
           operator: 'eq',
-          threshold: 'failed'
+          threshold: 'failed',
         },
         action: {
-          channels: ['dashboard']
+          channels: ['dashboard'],
         },
-        cooldownMinutes: 2
+        cooldownMinutes: 2,
       },
       {
         name: 'Negative Sentiment Spike',
@@ -483,48 +532,48 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
           operator: 'gt',
           threshold: 30,
           aggregation: 'avg',
-          duration: 600 // 10 minutes
+          duration: 600, // 10 minutes
         },
         action: {
-          channels: ['dashboard']
+          channels: ['dashboard'],
         },
-        cooldownMinutes: 30
-      }
+        cooldownMinutes: 30,
+      },
     ];
 
-    defaultRules.forEach(rule => this.createRule(rule));
+    defaultRules.forEach((rule) => this.createRule(rule));
   }
 
   private startMonitoring(): void {
     // System monitoring
     this.monitoringIntervals.push(
-      interval(30000).subscribe(() => this.checkSystemAlerts())
+      interval(30000).subscribe(() => this.checkSystemAlerts()),
     );
 
     // Integration monitoring
     this.monitoringIntervals.push(
-      interval(60000).subscribe(() => this.checkIntegrationAlerts())
+      interval(60000).subscribe(() => this.checkIntegrationAlerts()),
     );
 
     // Flow execution monitoring
     this.monitoringIntervals.push(
-      interval(10000).subscribe(() => this.checkFlowAlerts())
+      interval(10000).subscribe(() => this.checkFlowAlerts()),
     );
 
     // Voice analytics monitoring
     this.monitoringIntervals.push(
-      interval(120000).subscribe(() => this.checkVoiceAlerts())
+      interval(120000).subscribe(() => this.checkVoiceAlerts()),
     );
 
     console.log('RealTimeAlerting: Started monitoring intervals');
   }
 
   private stopMonitoring(): void {
-    this.monitoringIntervals.forEach(interval => interval.unsubscribe());
+    this.monitoringIntervals.forEach((interval) => interval.unsubscribe());
     this.monitoringIntervals = [];
 
     // Clear cooldown timers
-    this.cooldownTimers.forEach(timer => clearTimeout(timer));
+    this.cooldownTimers.forEach((timer) => clearTimeout(timer));
     this.cooldownTimers.clear();
   }
 
@@ -542,12 +591,18 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
           source: 'SystemMonitoringService',
           metadata: {
             metric: alert.type,
-            value: alert.type === 'cpu' ? metrics.cpu.usage : 
-                   alert.type === 'memory' ? metrics.memory.usage :
-                   alert.type === 'disk' ? metrics.disk.usage : 0,
-            threshold: alert.type === 'cpu' ? 90 : alert.type === 'memory' ? 95 : 85
+            value:
+              alert.type === 'cpu'
+                ? metrics.cpu.usage
+                : alert.type === 'memory'
+                  ? metrics.memory.usage
+                  : alert.type === 'disk'
+                    ? metrics.disk.usage
+                    : 0,
+            threshold:
+              alert.type === 'cpu' ? 90 : alert.type === 'memory' ? 95 : 85,
           },
-          tags: ['system', alert.type, alert.level]
+          tags: ['system', alert.type, alert.level],
         });
       }
     } catch (error) {
@@ -558,7 +613,7 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   private async checkIntegrationAlerts(): Promise<void> {
     try {
       const providers = this.integrationHealthService.getProviders();
-      const failedProviders = providers.filter(p => p.status === 'error');
+      const failedProviders = providers.filter((p) => p.status === 'error');
 
       for (const provider of failedProviders) {
         await this.createAlert({
@@ -571,20 +626,27 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
             providerId: provider.id,
             providerName: provider.name,
             category: provider.category,
-            health: provider.health
+            health: provider.health,
           },
-          tags: ['integration', 'provider-failed', provider.category]
+          tags: ['integration', 'provider-failed', provider.category],
         });
       }
     } catch (error) {
-      console.error('RealTimeAlerting: Failed to check integration alerts:', error);
+      console.error(
+        'RealTimeAlerting: Failed to check integration alerts:',
+        error,
+      );
     }
   }
 
   private async checkFlowAlerts(): Promise<void> {
     try {
-      const executions = this.flowExecutionService.getExecutions({ limit: 100 });
-      const failedExecutions = executions.filter(e => e.status === 'failed' && !e.endTime);
+      const executions = this.flowExecutionService.getExecutions({
+        limit: 100,
+      });
+      const failedExecutions = executions.filter(
+        (e) => e.status === 'failed' && !e.endTime,
+      );
 
       for (const execution of failedExecutions) {
         await this.createAlert({
@@ -597,9 +659,9 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
             executionId: execution.id,
             flowName: execution.name,
             error: execution.error,
-            stepCount: execution.currentStepIndex
+            stepCount: execution.currentStepIndex,
           },
-          tags: ['flow', 'execution-failed', 'rpa']
+          tags: ['flow', 'execution-failed', 'rpa'],
         });
       }
     } catch (error) {
@@ -610,7 +672,7 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   private async checkVoiceAlerts(): Promise<void> {
     try {
       const analytics = this.voiceAnalyticsService.getAnalytics('24h');
-      
+
       if (analytics.sentimentDistribution.negative > 40) {
         await this.createAlert({
           type: 'voice',
@@ -621,9 +683,9 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
           metadata: {
             sentimentDistribution: analytics.sentimentDistribution,
             totalConversations: analytics.totalConversations,
-            threshold: 40
+            threshold: 40,
           },
-          tags: ['voice', 'sentiment', 'customer-satisfaction']
+          tags: ['voice', 'sentiment', 'customer-satisfaction'],
         });
       }
     } catch (error) {
@@ -648,16 +710,27 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   private alertMatchesRule(alert: Alert, rule: AlertRule): boolean {
     // Check type filter
     if (rule.condition.metric.includes('.') && !alert.type) return false;
-    if (!rule.condition.metric.includes('.') && alert.type !== rule.condition.metric) return false;
+    if (
+      !rule.condition.metric.includes('.') &&
+      alert.type !== rule.condition.metric
+    )
+      return false;
 
     // Check severity filter
     const minSeverity = this.getRuleMinSeverity(rule);
-    if (this.getSeverityLevel(alert.severity) < this.getSeverityLevel(minSeverity)) return false;
+    if (
+      this.getSeverityLevel(alert.severity) < this.getSeverityLevel(minSeverity)
+    )
+      return false;
 
     return true;
   }
 
-  private async triggerRule(ruleId: string, rule: AlertRule, alert: Alert): Promise<void> {
+  private async triggerRule(
+    ruleId: string,
+    rule: AlertRule,
+    alert: Alert,
+  ): Promise<void> {
     rule.lastTriggered = new Date();
     rule.triggerCount++;
 
@@ -672,12 +745,17 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
       }
     }
 
-    console.log(`RealTimeAlerting: Triggered alert rule ${ruleId} for alert ${alert.id}`);
+    console.log(
+      `RealTimeAlerting: Triggered alert rule ${ruleId} for alert ${alert.id}`,
+    );
   }
 
   private isInCooldown(ruleId: string, rule: AlertRule): boolean {
-    return rule.lastTriggered && 
-           (Date.now() - rule.lastTriggered.getTime()) < (rule.cooldownMinutes * 60 * 1000);
+    return (
+      rule.lastTriggered &&
+      Date.now() - rule.lastTriggered.getTime() <
+        rule.cooldownMinutes * 60 * 1000
+    );
   }
 
   private setCooldown(ruleId: string, duration: number): void {
@@ -703,7 +781,10 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
         for (const filter of channel.filters) {
           if (filter.severity) {
             for (const severity of filter.severity) {
-              if (this.getSeverityLevel(severity) < this.getSeverityLevel(minSeverity)) {
+              if (
+                this.getSeverityLevel(severity) <
+                this.getSeverityLevel(minSeverity)
+              ) {
                 minSeverity = severity;
               }
             }
@@ -716,7 +797,7 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   }
 
   private getSeverityLevel(severity: Alert['severity']): number {
-    const levels = { 'info': 1, 'warning': 2, 'critical': 3, 'emergency': 4 };
+    const levels = { info: 1, warning: 2, critical: 3, emergency: 4 };
     return levels[severity] || 1;
   }
 
@@ -727,86 +808,137 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
 
       try {
         const success = await this.sendNotificationToChannel(alert, channel);
-        
+
         this.notificationSubject.next({
           alert,
           channel,
-          success
+          success,
         });
       } catch (error) {
-        console.error(`RealTimeAlerting: Failed to send notification to channel ${channelId}:`, error);
+        console.error(
+          `RealTimeAlerting: Failed to send notification to channel ${channelId}:`,
+          error,
+        );
       }
     }
   }
 
-  private channelMatchesAlert(channel: NotificationChannel, alert: Alert): boolean {
+  private channelMatchesAlert(
+    channel: NotificationChannel,
+    alert: Alert,
+  ): boolean {
     for (const filter of channel.filters) {
       if (filter.type && !filter.type.includes(alert.type)) return false;
-      if (filter.severity && !filter.severity.includes(alert.severity)) return false;
-      if (filter.source && !filter.source.some(source => alert.source.includes(source))) return false;
-      if (filter.tags && !filter.tags.some(tag => alert.tags.includes(tag))) return false;
-      if (filter.minSeverity && this.getSeverityLevel(alert.severity) < this.getSeverityLevel(filter.minSeverity)) return false;
+      if (filter.severity && !filter.severity.includes(alert.severity))
+        return false;
+      if (
+        filter.source &&
+        !filter.source.some((source) => alert.source.includes(source))
+      )
+        return false;
+      if (filter.tags && !filter.tags.some((tag) => alert.tags.includes(tag)))
+        return false;
+      if (
+        filter.minSeverity &&
+        this.getSeverityLevel(alert.severity) <
+          this.getSeverityLevel(filter.minSeverity)
+      )
+        return false;
     }
     return true;
   }
 
-  private async sendNotificationToChannel(alert: Alert, channel: NotificationChannel): Promise<boolean> {
+  private async sendNotificationToChannel(
+    alert: Alert,
+    channel: NotificationChannel,
+  ): Promise<boolean> {
     try {
       switch (channel.type) {
         case 'email':
-          return await this.sendEmailNotification(alert, channel.config.email!);
+          return await this.sendEmailNotification(alert, channel.config.email);
         case 'slack':
-          return await this.sendSlackNotification(alert, channel.config.slack!);
+          return await this.sendSlackNotification(alert, channel.config.slack);
         case 'webhook':
-          return await this.sendWebhookNotification(alert, channel.config.webhook!);
+          return await this.sendWebhookNotification(
+            alert,
+            channel.config.webhook,
+          );
         case 'sms':
-          return await this.sendSMSNotification(alert, channel.config.sms!);
+          return await this.sendSMSNotification(alert, channel.config.sms);
         case 'push':
-          return await this.sendPushNotification(alert, channel.config.push!);
+          return await this.sendPushNotification(alert, channel.config.push);
         case 'dashboard':
-          return await this.sendDashboardNotification(alert, channel.config.dashboard!);
+          return await this.sendDashboardNotification(
+            alert,
+            channel.config.dashboard,
+          );
         default:
           return false;
       }
     } catch (error) {
-      console.error(`RealTimeAlerting: Failed to send ${channel.type} notification:`, error);
+      console.error(
+        `RealTimeAlerting: Failed to send ${channel.type} notification:`,
+        error,
+      );
       return false;
     }
   }
 
-  private async sendEmailNotification(alert: Alert, config: NotificationChannelConfig['email']): Promise<boolean> {
+  private async sendEmailNotification(
+    alert: Alert,
+    config: NotificationChannelConfig['email'],
+  ): Promise<boolean> {
     // In a real implementation, this would use an email service
-    console.log(`Email notification to ${config.to?.join(', ')}: ${alert.title}`);
+    console.log(
+      `Email notification to ${config.to?.join(', ')}: ${alert.title}`,
+    );
     return true;
   }
 
-  private async sendSlackNotification(alert: Alert, config: NotificationChannelConfig['slack']): Promise<boolean> {
+  private async sendSlackNotification(
+    alert: Alert,
+    config: NotificationChannelConfig['slack'],
+  ): Promise<boolean> {
     // In a real implementation, this would send to Slack webhook
     console.log(`Slack notification to ${config.channel}: ${alert.title}`);
     return true;
   }
 
-  private async sendWebhookNotification(alert: Alert, config: NotificationChannelConfig['webhook']): Promise<boolean> {
+  private async sendWebhookNotification(
+    alert: Alert,
+    config: NotificationChannelConfig['webhook'],
+  ): Promise<boolean> {
     // In a real implementation, this would send HTTP request to webhook
     console.log(`Webhook notification to ${config.url}: ${alert.title}`);
     return true;
   }
 
-  private async sendSMSNotification(alert: Alert, config: NotificationChannelConfig['sms']): Promise<boolean> {
+  private async sendSMSNotification(
+    alert: Alert,
+    config: NotificationChannelConfig['sms'],
+  ): Promise<boolean> {
     // In a real implementation, this would use SMS provider
     console.log(`SMS notification to ${config.to?.join(', ')}: ${alert.title}`);
     return true;
   }
 
-  private async sendPushNotification(alert: Alert, config: NotificationChannelConfig['push']): Promise<boolean> {
+  private async sendPushNotification(
+    alert: Alert,
+    config: NotificationChannelConfig['push'],
+  ): Promise<boolean> {
     // In a real implementation, this would use push notification service
-    console.log(`Push notification to ${config.tokens?.length} devices: ${alert.title}`);
+    console.log(
+      `Push notification to ${config.tokens?.length} devices: ${alert.title}`,
+    );
     return true;
   }
 
-  private async sendDashboardNotification(alert: Alert, config: NotificationChannelConfig['dashboard']): Promise<boolean> {
+  private async sendDashboardNotification(
+    alert: Alert,
+    config: NotificationChannelConfig['dashboard'],
+  ): Promise<boolean> {
     if (!config.enabled) return false;
-    
+
     // Dashboard notifications are already handled by the alertSubject
     console.log(`Dashboard notification: ${alert.title}`);
     return true;

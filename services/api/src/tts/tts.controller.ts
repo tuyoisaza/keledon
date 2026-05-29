@@ -11,7 +11,7 @@ export class TTSController {
   @Post('speak')
   async speak(@Body() body: { text: string }, @Res() res: Response) {
     const result = await this.ttsService.speak(body.text);
-    
+
     if (result.error) {
       return res.status(500).json({ error: result.error });
     }
@@ -21,7 +21,7 @@ export class TTSController {
       'Content-Length': result.audioData?.length || 0,
       'X-Duration': result.duration?.toString() || '0',
     });
-    
+
     res.end(result.audioData);
   }
 }

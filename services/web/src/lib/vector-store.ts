@@ -62,7 +62,7 @@ class VectorStoreAPI {
   async getCollectionStatus(): Promise<VectorStoreStatus> {
     try {
       return await this.fetchApi('/status');
-    } catch (error) {
+    } catch (_error) {
       return {
         collectionExists: false,
         documentCount: 0,

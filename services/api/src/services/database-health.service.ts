@@ -20,23 +20,29 @@ export class DatabaseHealthService implements OnModuleInit {
     } catch (error) {
       const errorMessage = `Database connection failed: ${error.message}`;
       this.logger.error(errorMessage);
-      console.error('❌ DATABASE: CRITICAL FAILURE - Database connection required');
+      console.error(
+        '❌ DATABASE: CRITICAL FAILURE - Database connection required',
+      );
       process.exit(1);
     }
   }
 
-  async checkHealth(): Promise<{ status: string; database: boolean; error?: string }> {
+  async checkHealth(): Promise<{
+    status: string;
+    database: boolean;
+    error?: string;
+  }> {
     try {
       await this.prisma.$queryRaw`SELECT 1 as test`;
       return {
         status: 'healthy',
-        database: true
+        database: true,
       };
     } catch (error) {
       return {
         status: 'unhealthy',
         database: false,
-        error: error.message
+        error: error.message,
       };
     }
   }

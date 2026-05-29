@@ -1,10 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Plus, Pencil, Trash2, Radio } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { API_URL } from '@/lib/config';
 import { apiFetch } from '@/lib/api-fetch';
-
-const CLOUD_URL = API_URL;
 
 type InterfaceStatus = 'connected' | 'disconnected' | 'error';
 type InterfaceCategory = 'talk' | 'case';

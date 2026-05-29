@@ -25,7 +25,8 @@ export class SearchKnowledgeDto {
   query!: string;
 
   @ApiPropertyOptional({
-    description: 'Optional knowledge base scope. Either knowledgeBaseId or companyId must be supplied.',
+    description:
+      'Optional knowledge base scope. Either knowledgeBaseId or companyId must be supplied.',
     example: 'kb_123',
   })
   knowledgeBaseId?: string;

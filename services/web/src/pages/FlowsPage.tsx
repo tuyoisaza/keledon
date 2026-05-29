@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Workflow, Plus, Settings, Play, Pause, Trash2, Edit2, Eye, Search, Filter, Mic, Square, Download, Upload, ChevronDown, ChevronRight, StepForward, ArrowUp, ArrowDown, Save, X, PlusCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Workflow, Plus, Trash2, Edit2, Search, Filter, Mic, ChevronDown, ChevronRight, ArrowUp, ArrowDown, X, PlusCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { apiFetch } from '@/lib/api-fetch';
 
@@ -85,7 +85,7 @@ export default function FlowsPage() {
       if (!res.ok) throw new Error('Failed to delete');
       toast.success('Flow deleted');
       loadFlows();
-    } catch (err) {
+    } catch (_err) {
       toast.error('Failed to delete flow');
     }
   };
@@ -372,7 +372,7 @@ function FlowFormModal({ flow, onClose, onSuccess }: { flow?: Flow; onClose: () 
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       toast.success(flow ? 'Flow updated' : 'Flow created');
       onSuccess();
-    } catch (err) {
+    } catch (_err) {
       toast.error('Failed to save flow');
     } finally {
       setSaving(false);
@@ -646,7 +646,7 @@ function FlowFormModal({ flow, onClose, onSuccess }: { flow?: Flow; onClose: () 
 /* ─── Flow Record Modal ─── */
 
 function FlowRecordModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
-  const [isRecording, setIsRecording] = useState(false);
+  const [isRecording] = useState(false);
   const [recordingSteps, setRecordingSteps] = useState<Partial<FlowStep>[]>([]);
   const [flowName, setFlowName] = useState('');
   const [flowDescription, setFlowDescription] = useState('');
@@ -688,7 +688,7 @@ function FlowRecordModal({ onClose, onSuccess }: { onClose: () => void; onSucces
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       toast.success('Flow recorded and saved!');
       onSuccess();
-    } catch (err) {
+    } catch (_err) {
       toast.error('Failed to save flow');
     }
   };
@@ -825,7 +825,7 @@ function FlowRecordModal({ onClose, onSuccess }: { onClose: () => void; onSucces
 
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {recordingSteps.map((step, idx) => {
-                const stepType = STEP_TYPES.find(t => t.value === step.type);
+                const _stepType = STEP_TYPES.find(t => t.value === step.type);
                 return (
                   <div key={idx} className="bg-muted/20 border border-border rounded-lg p-3 space-y-2">
                     <div className="flex items-center justify-between">

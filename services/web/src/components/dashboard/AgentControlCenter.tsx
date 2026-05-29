@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Activity, 
-  Mic, 
-  MicOff, 
-  Cpu, 
-  Globe, 
-  AlertCircle, 
-  CheckCircle, 
-  Clock, 
+import React from 'react';
+import {
+  Activity,
+  Mic,
+  Globe,
+  AlertCircle,
+  Clock,
   Zap,
   Brain,
   Volume2,
@@ -72,7 +69,7 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
             onClick={() => {/* TODO: Implement real-time toggle */}}
             className={cn(
               "px-3 py-1 rounded-lg text-sm font-medium border transition-all",
-              true /* realTimeUpdates */ ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-muted-foreground border-border"
+              /* realTimeUpdates - currently disabled */ "bg-muted text-muted-foreground border-border"
             )}
           >
             {/* realTimeUpdates ? 'Live' : 'Paused' */}

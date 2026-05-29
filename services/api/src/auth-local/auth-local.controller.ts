@@ -1,4 +1,14 @@
-import { Controller, Post, Body, Get, Headers, UnauthorizedException, Res, Query, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Headers,
+  UnauthorizedException,
+  Res,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { LocalAuthService } from './auth-local.service';
 import { GoogleOAuthService } from './google-oauth.service';
 import { ConfigService } from '@nestjs/config';
@@ -42,18 +52,24 @@ export class LocalAuthController {
   constructor(
     private readonly authService: LocalAuthService,
     private readonly googleOAuthService: GoogleOAuthService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {}
 
   @Public()
   @Get('debug')
   debug(@Res() res: any) {
     return res.json({
-      googleClientId: this.configService.get('GOOGLE_CLIENT_ID') ? 'set' : 'not set',
-      googleClientSecret: this.configService.get('GOOGLE_CLIENT_SECRET') ? 'set' : 'not set',
+      googleClientId: this.configService.get('GOOGLE_CLIENT_ID')
+        ? 'set'
+        : 'not set',
+      googleClientSecret: this.configService.get('GOOGLE_CLIENT_SECRET')
+        ? 'set'
+        : 'not set',
       googleRedirectUri: this.configService.get('GOOGLE_REDIRECT_URI'),
       nodeEnv: this.configService.get('NODE_ENV'),
-      allEnv: Object.keys(process.env).filter(k => !k.includes('SECRET') && !k.includes('PASSWORD')).sort(),
+      allEnv: Object.keys(process.env)
+        .filter((k) => !k.includes('SECRET') && !k.includes('PASSWORD'))
+        .sort(),
     });
   }
 
@@ -61,7 +77,7 @@ export class LocalAuthController {
   @Get('google')
   googleLogin(@Res() res: any) {
     const clientId = this.configService.get('GOOGLE_CLIENT_ID');
-    
+
     if (!clientId) {
       return res.status(500).json({ message: 'Google OAuth not configured' });
     }
@@ -74,12 +90,14 @@ export class LocalAuthController {
   @Get('google/callback')
   async googleCallback(@Query('code') code: string, @Res() res: any) {
     if (!code) {
-      return res.status(400).json({ message: 'No authorization code provided' });
+      return res
+        .status(400)
+        .json({ message: 'No authorization code provided' });
     }
 
     try {
       const googleUser = await this.googleOAuthService.verifyCode(code);
-      
+
       console.log('Google user verified:', googleUser.email);
 
       const user = await this.authService.findOrCreateGoogleUser({
@@ -87,13 +105,21 @@ export class LocalAuthController {
         email: googleUser.email,
         name: googleUser.name,
       });
-      
-      const token = this.authService.generateToken(user.id, user.email, user.role);
 
-      return res.redirect(`/login?token=${token}&email=${encodeURIComponent(user.email)}&name=${encodeURIComponent(user.name || '')}`);
+      const token = this.authService.generateToken(
+        user.id,
+        user.email,
+        user.role,
+      );
+
+      return res.redirect(
+        `/login?token=${token}&email=${encodeURIComponent(user.email)}&name=${encodeURIComponent(user.name || '')}`,
+      );
     } catch (error) {
       console.error('Google OAuth error:', error);
-      return res.status(500).json({ message: 'Google login failed', error: error.message });
+      return res
+        .status(500)
+        .json({ message: 'Google login failed', error: error.message });
     }
   }
 
@@ -102,7 +128,11 @@ export class LocalAuthController {
   @ApiOperation({ summary: 'Register a new user account' })
   async register(@Body() dto: RegisterDto): Promise<AuthResponse> {
     try {
-      const result = await this.authService.register(dto.email, dto.password, dto.name);
+      const result = await this.authService.register(
+        dto.email,
+        dto.password,
+        dto.name,
+      );
       return {
         success: true,
         message: 'Registration successful',
@@ -128,16 +158,18 @@ export class LocalAuthController {
   async login(@Body() dto: LoginDto): Promise<AuthResponse> {
     try {
       const result = await this.authService.login(dto.email, dto.password);
-      
+
       const crudData = await this.authService.getCrudData();
       const companies = crudData.companies || [];
       const brands = crudData.brands || [];
       const teams = crudData.teams || [];
-      
-      const company = companies.find(c => c.id === result.company_id);
-      const team = teams.find(t => t.id === result.team_id);
-      const brand = team?.brand_id ? brands.find(b => b.id === team.brand_id) : null;
-      
+
+      const company = companies.find((c) => c.id === result.company_id);
+      const team = teams.find((t) => t.id === result.team_id);
+      const brand = team?.brand_id
+        ? brands.find((b) => b.id === team.brand_id)
+        : null;
+
       const fullUser = {
         id: result.id,
         email: result.email,
@@ -150,7 +182,7 @@ export class LocalAuthController {
         teamName: team?.name || null,
         createdAt: company?.created_at || null,
       };
-      
+
       return {
         success: true,
         message: 'Login successful',
@@ -167,7 +199,10 @@ export class LocalAuthController {
 
   @Get('me')
   @ApiOperation({ summary: 'Get current authenticated user profile' })
-  async getCurrentUser(@Req() req: any, @Headers('authorization') authHeader: string): Promise<AuthResponse> {
+  async getCurrentUser(
+    @Req() req: any,
+    @Headers('authorization') authHeader: string,
+  ): Promise<AuthResponse> {
     try {
       // Token is already validated by global AuthGuard, but also validate explicitly
       // for backward compatibility
@@ -185,9 +220,11 @@ export class LocalAuthController {
       const brands = crudData.brands || [];
       const teams = crudData.teams || [];
 
-      const company = companies.find(c => c.id === user.company_id);
-      const team = teams.find(t => t.id === user.team_id);
-      const brand = team?.brand_id ? brands.find(b => b.id === team.brand_id) : null;
+      const company = companies.find((c) => c.id === user.company_id);
+      const team = teams.find((t) => t.id === user.team_id);
+      const brand = team?.brand_id
+        ? brands.find((b) => b.id === team.brand_id)
+        : null;
 
       const fullUser = {
         id: user.id,

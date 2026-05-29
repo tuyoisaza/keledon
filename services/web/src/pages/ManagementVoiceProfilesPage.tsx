@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Mic, Plus, RefreshCw, Loader2, Pencil, Trash2, Settings, Volume2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Mic, Plus, Loader2, Trash2, Volume2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { apiFetch } from '@/lib/api-fetch';
@@ -63,7 +62,7 @@ export default function ManagementVoiceProfilesPage() {
             } else {
                 toast.error('Failed to create voice profile');
             }
-        } catch (error) {
+        } catch (_error) {
             toast.error('Failed to create voice profile');
         } finally {
             setSaving(false);
@@ -76,7 +75,7 @@ export default function ManagementVoiceProfilesPage() {
             await apiFetch(`/api/tenant/voice-profiles/${id}`, { method: 'DELETE' });
             toast.success('Voice profile deleted');
             fetchVoiceProfiles();
-        } catch (error) {
+        } catch (_error) {
             toast.error('Failed to delete');
         }
     };

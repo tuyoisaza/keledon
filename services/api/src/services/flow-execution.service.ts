@@ -29,7 +29,17 @@ export interface FlowExecution {
 export interface FlowStep {
   id: string;
   name: string;
-  type: 'navigate' | 'input' | 'click' | 'wait' | 'extract' | 'validate' | 'conditional' | 'loop' | 'api' | 'script';
+  type:
+    | 'navigate'
+    | 'input'
+    | 'click'
+    | 'wait'
+    | 'extract'
+    | 'validate'
+    | 'conditional'
+    | 'loop'
+    | 'api'
+    | 'script';
   status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
   description?: string;
   parameters?: Record<string, any>;
@@ -78,7 +88,10 @@ export interface FlowTemplate {
   description: string;
   category: string;
   version: string;
-  steps: Omit<FlowStep, 'status' | 'startTime' | 'endTime' | 'duration' | 'error' | 'retries'>[];
+  steps: Omit<
+    FlowStep,
+    'status' | 'startTime' | 'endTime' | 'duration' | 'error' | 'retries'
+  >[];
   estimatedDuration: number;
   complexity: 'simple' | 'moderate' | 'complex';
   tags: string[];
@@ -93,7 +106,7 @@ export class FlowExecutionService {
   private templates = new Map<string, FlowTemplate>();
   private executionUpdate = new Subject<FlowExecution>();
   private performanceUpdate = new Subject<FlowPerformance>();
-  
+
   public executions$ = this.executionUpdate.asObservable();
   public performance$ = this.performanceUpdate.asObservable();
 
@@ -111,20 +124,20 @@ export class FlowExecutionService {
       agentId?: string;
       priority?: FlowExecution['priority'];
       metadata?: Record<string, any>;
-    } = {}
+    } = {},
   ): FlowExecution {
     const executionId = `exec_${Date.now()}_${randomUUID()}`;
-    
+
     let steps: FlowStep[] = [];
     let estimatedDuration = 60000; // Default 1 minute
 
     if (templateId) {
       const template = this.templates.get(templateId);
       if (template) {
-        steps = template.steps.map(step => ({
+        steps = template.steps.map((step) => ({
           ...step,
           status: 'pending' as const,
-          retries: 0
+          retries: 0,
         }));
         estimatedDuration = template.estimatedDuration;
       }
@@ -152,17 +165,19 @@ export class FlowExecutionService {
         errorRate: 0,
         retriedSteps: 0,
         fastestStep: '',
-        slowestStep: ''
+        slowestStep: '',
       },
       metadata: options.metadata || {},
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.executions.set(executionId, execution);
     this.broadcastExecution(execution);
-    
-    console.log(`FlowExecution: Created execution ${executionId} for flow "${name}"`);
+
+    console.log(
+      `FlowExecution: Created execution ${executionId} for flow "${name}"`,
+    );
     return execution;
   }
 
@@ -174,18 +189,20 @@ export class FlowExecutionService {
     }
 
     if (execution.status !== 'idle' && execution.status !== 'paused') {
-      throw new Error(`Execution ${executionId} cannot be started in status ${execution.status}`);
+      throw new Error(
+        `Execution ${executionId} cannot be started in status ${execution.status}`,
+      );
     }
 
     execution.status = 'running';
     execution.startTime = new Date();
     execution.updatedAt = new Date();
-    
+
     this.broadcastExecution(execution);
-    
+
     // Start executing steps
     this.executeSteps(executionId);
-    
+
     console.log(`FlowExecution: Started execution ${executionId}`);
     return true;
   }
@@ -200,7 +217,7 @@ export class FlowExecutionService {
     execution.status = 'paused';
     execution.updatedAt = new Date();
     this.broadcastExecution(execution);
-    
+
     console.log(`FlowExecution: Paused execution ${executionId}`);
     return true;
   }
@@ -215,10 +232,10 @@ export class FlowExecutionService {
     execution.status = 'running';
     execution.updatedAt = new Date();
     this.broadcastExecution(execution);
-    
+
     // Continue executing steps
     this.executeSteps(executionId);
-    
+
     console.log(`FlowExecution: Resumed execution ${executionId}`);
     return true;
   }
@@ -234,14 +251,15 @@ export class FlowExecutionService {
     execution.endTime = new Date();
     execution.error = reason || 'Execution cancelled by user';
     execution.updatedAt = new Date();
-    
+
     if (execution.startTime) {
-      execution.duration = execution.endTime.getTime() - execution.startTime.getTime();
+      execution.duration =
+        execution.endTime.getTime() - execution.startTime.getTime();
       this.updatePerformance(execution);
     }
-    
+
     this.broadcastExecution(execution);
-    
+
     console.log(`FlowExecution: Stopped execution ${executionId}: ${reason}`);
     return true;
   }
@@ -254,7 +272,7 @@ export class FlowExecutionService {
     }
 
     // Reset steps
-    execution.steps.forEach(step => {
+    execution.steps.forEach((step) => {
       step.status = 'pending';
       step.startTime = undefined;
       step.endTime = undefined;
@@ -278,7 +296,7 @@ export class FlowExecutionService {
     execution.updatedAt = new Date();
 
     this.broadcastExecution(execution);
-    
+
     console.log(`FlowExecution: Reset execution ${executionId}`);
     return true;
   }
@@ -298,28 +316,36 @@ export class FlowExecutionService {
   }
 
   // Get all executions
-  getExecutions(filters: {
-    status?: FlowExecution['status'];
-    agentId?: string;
-    sessionId?: string;
-    flowId?: string;
-    limit?: number;
-    offset?: number;
-  } = {}): FlowExecution[] {
+  getExecutions(
+    filters: {
+      status?: FlowExecution['status'];
+      agentId?: string;
+      sessionId?: string;
+      flowId?: string;
+      limit?: number;
+      offset?: number;
+      sortBy?: keyof FlowExecution;
+      sortOrder?: 'asc' | 'desc';
+    } = {},
+  ): FlowExecution[] {
     let executions = Array.from(this.executions.values());
 
     // Apply filters
     if (filters.status) {
-      executions = executions.filter(exec => exec.status === filters.status);
+      executions = executions.filter((exec) => exec.status === filters.status);
     }
     if (filters.agentId) {
-      executions = executions.filter(exec => exec.agentId === filters.agentId);
+      executions = executions.filter(
+        (exec) => exec.agentId === filters.agentId,
+      );
     }
     if (filters.sessionId) {
-      executions = executions.filter(exec => exec.sessionId === filters.sessionId);
+      executions = executions.filter(
+        (exec) => exec.sessionId === filters.sessionId,
+      );
     }
     if (filters.flowId) {
-      executions = executions.filter(exec => exec.flowId === filters.flowId);
+      executions = executions.filter((exec) => exec.flowId === filters.flowId);
     }
 
     // Sort by creation date (newest first)
@@ -339,12 +365,16 @@ export class FlowExecutionService {
   // Get flow templates
   getTemplates(category?: string): FlowTemplate[] {
     let templates = Array.from(this.templates.values());
-    
+
     if (category) {
-      templates = templates.filter(template => template.category === category);
+      templates = templates.filter(
+        (template) => template.category === category,
+      );
     }
-    
-    return templates.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+
+    return templates.sort(
+      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime(),
+    );
   }
 
   // Get template by ID
@@ -353,19 +383,23 @@ export class FlowExecutionService {
   }
 
   // Create flow template
-  createTemplate(template: Omit<FlowTemplate, 'id' | 'createdAt' | 'updatedAt'>): FlowTemplate {
+  createTemplate(
+    template: Omit<FlowTemplate, 'id' | 'createdAt' | 'updatedAt'>,
+  ): FlowTemplate {
     const templateId = `template_${Date.now()}_${randomUUID()}`;
-    
+
     const newTemplate: FlowTemplate = {
       ...template,
       id: templateId,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.templates.set(templateId, newTemplate);
-    
-    console.log(`FlowExecution: Created template ${templateId} for flow "${template.name}"`);
+
+    console.log(
+      `FlowExecution: Created template ${templateId} for flow "${template.name}"`,
+    );
     return newTemplate;
   }
 
@@ -379,12 +413,12 @@ export class FlowExecutionService {
       error?: string;
       screenshot?: string;
       data?: any;
-    }
+    },
   ): boolean {
     const execution = this.executions.get(executionId);
     if (!execution) return false;
 
-    const step = execution.steps.find(s => s.id === stepId);
+    const step = execution.steps.find((s) => s.id === stepId);
     if (!step) return false;
 
     step.status = result.status;
@@ -402,7 +436,7 @@ export class FlowExecutionService {
 
     execution.updatedAt = new Date();
     this.broadcastExecution(execution);
-    
+
     return true;
   }
 
@@ -421,10 +455,10 @@ export class FlowExecutionService {
       const step = execution.steps[i];
       execution.currentStepIndex = i;
       execution.progress = (i / execution.totalSteps) * 100;
-      
+
       // Execute step
       await this.executeStep(executionId, step);
-      
+
       // Update execution
       execution.updatedAt = new Date();
       this.broadcastExecution(execution);
@@ -434,14 +468,15 @@ export class FlowExecutionService {
         step.retries++;
         step.status = 'pending';
         i--; // Retry this step
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Delay before retry
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Delay before retry
       } else if (step.status === 'failed') {
         // Step failed permanently
         execution.status = 'failed';
         execution.error = `Step ${step.name} failed: ${step.error}`;
         execution.endTime = new Date();
         if (execution.startTime) {
-          execution.duration = execution.endTime.getTime() - execution.startTime.getTime();
+          execution.duration =
+            execution.endTime.getTime() - execution.startTime.getTime();
         }
         this.updatePerformance(execution);
         break;
@@ -450,20 +485,27 @@ export class FlowExecutionService {
 
     // Check if all steps completed
     const currentExec = this.executions.get(executionId);
-    if (currentExec && currentExec.status === 'running' && currentExec.currentStepIndex >= currentExec.steps.length - 1) {
+    if (
+      currentExec &&
+      currentExec.status === 'running' &&
+      currentExec.currentStepIndex >= currentExec.steps.length - 1
+    ) {
       this.completeExecution(executionId);
     }
   }
 
-  private async executeStep(executionId: string, step: FlowStep): Promise<void> {
+  private async executeStep(
+    executionId: string,
+    step: FlowStep,
+  ): Promise<void> {
     step.status = 'running';
     step.startTime = new Date();
 
     // Simulate step execution based on type
     const executionTime = this.getStepExecutionTime(step.type);
-    
-    await new Promise(resolve => setTimeout(resolve, executionTime));
-    
+
+    await new Promise((resolve) => setTimeout(resolve, executionTime));
+
     // Deterministic execution
     const successRate = this.getStepSuccessRate(step.type);
     const success = false;
@@ -491,9 +533,9 @@ export class FlowExecutionService {
       conditional: 100,
       loop: 500,
       api: 2000,
-      script: 1500
+      script: 1500,
     };
-    
+
     return times[stepType] || 1000;
   }
 
@@ -504,14 +546,14 @@ export class FlowExecutionService {
       click: 0.98,
       wait: 1.0,
       extract: 0.88,
-      validate: 0.90,
+      validate: 0.9,
       conditional: 1.0,
       loop: 0.95,
       api: 0.85,
-      script: 0.87
+      script: 0.87,
     };
-    
-    return rates[stepType] || 0.90;
+
+    return rates[stepType] || 0.9;
   }
 
   private generateStepResult(step: FlowStep): any {
@@ -519,15 +561,29 @@ export class FlowExecutionService {
       case 'navigate':
         return { url: step.parameters?.url, title: 'Page loaded successfully' };
       case 'input':
-        return { field: step.parameters?.selector, value: step.parameters?.value, entered: true };
+        return {
+          field: step.parameters?.selector,
+          value: step.parameters?.value,
+          entered: true,
+        };
       case 'click':
         return { element: step.parameters?.selector, clicked: true };
       case 'extract':
-        return { data: `Sample extracted data from ${step.parameters?.selector}`, count: 5 };
+        return {
+          data: `Sample extracted data from ${step.parameters?.selector}`,
+          count: 5,
+        };
       case 'validate':
-        return { validated: true, expected: step.expectedResult, actual: 'matches' };
+        return {
+          validated: true,
+          expected: step.expectedResult,
+          actual: 'matches',
+        };
       case 'api':
-        return { status: 200, response: { success: true, data: 'API response' } };
+        return {
+          status: 200,
+          response: { success: true, data: 'API response' },
+        };
       default:
         return { completed: true };
     }
@@ -539,11 +595,15 @@ export class FlowExecutionService {
       input: ['Element not found', 'Field not editable', 'Invalid input'],
       click: ['Element not clickable', 'Element not found', 'Overlay blocking'],
       extract: ['No data found', 'Invalid selector', 'Extraction failed'],
-      validate: ['Validation failed', 'Expected value not found', 'Format mismatch'],
+      validate: [
+        'Validation failed',
+        'Expected value not found',
+        'Format mismatch',
+      ],
       api: ['API timeout', 'Invalid response', 'Authentication failed'],
-      script: ['Script error', 'Runtime exception', 'Dependency missing']
+      script: ['Script error', 'Runtime exception', 'Dependency missing'],
     };
-    
+
     const stepErrors = errors[stepType] || ['Unknown error'];
     return stepErrors[0];
   }
@@ -555,9 +615,10 @@ export class FlowExecutionService {
     execution.status = 'completed';
     execution.endTime = new Date();
     execution.progress = 100;
-    
+
     if (execution.startTime) {
-      execution.duration = execution.endTime.getTime() - execution.startTime.getTime();
+      execution.duration =
+        execution.endTime.getTime() - execution.startTime.getTime();
       this.updatePerformance(execution);
     }
 
@@ -567,9 +628,11 @@ export class FlowExecutionService {
       action: `Flow "${execution.name}" completed successfully`,
       fields_filled: this.countStepsByType(execution, 'input'),
       forms_submitted: this.countStepsByType(execution, 'click'),
-      processes_automated: [`Completed ${execution.steps.filter(s => s.status === 'completed').length} steps`],
-      time_saved: Math.round((execution.duration || 0) / 1000 / 60 * 5), // Assume 5x faster than manual
-      errors_avoided: this.countStepsByType(execution, 'validate').length
+      processes_automated: [
+        `Completed ${execution.steps.filter((s) => s.status === 'completed').length} steps`,
+      ],
+      time_saved: Math.round(((execution.duration || 0) / 1000 / 60) * 5), // Assume 5x faster than manual
+      errors_avoided: this.countStepsByType(execution, 'validate').length,
     };
 
     this.broadcastExecution(execution);
@@ -577,32 +640,46 @@ export class FlowExecutionService {
   }
 
   private updatePerformance(execution: FlowExecution): void {
-    const completedSteps = execution.steps.filter(s => s.status === 'completed');
-    const failedSteps = execution.steps.filter(s => s.status === 'failed');
-    const stepsWithDuration = execution.steps.filter(s => s.duration);
+    const completedSteps = execution.steps.filter(
+      (s) => s.status === 'completed',
+    );
+    const failedSteps = execution.steps.filter((s) => s.status === 'failed');
+    const stepsWithDuration = execution.steps.filter((s) => s.duration);
 
     execution.performance = {
       totalDuration: execution.duration || 0,
-      averageStepTime: stepsWithDuration.length > 0 
-        ? stepsWithDuration.reduce((sum, s) => sum + (s.duration || 0), 0) / stepsWithDuration.length
-        : 0,
-      successRate: execution.steps.length > 0 
-        ? (completedSteps.length / execution.steps.length) * 100 
-        : 0,
-      errorRate: execution.steps.length > 0 
-        ? (failedSteps.length / execution.steps.length) * 100 
-        : 0,
+      averageStepTime:
+        stepsWithDuration.length > 0
+          ? stepsWithDuration.reduce((sum, s) => sum + (s.duration || 0), 0) /
+            stepsWithDuration.length
+          : 0,
+      successRate:
+        execution.steps.length > 0
+          ? (completedSteps.length / execution.steps.length) * 100
+          : 0,
+      errorRate:
+        execution.steps.length > 0
+          ? (failedSteps.length / execution.steps.length) * 100
+          : 0,
       retriedSteps: execution.steps.reduce((sum, s) => sum + s.retries, 0),
-      fastestStep: stepsWithDuration.length > 0 
-        ? stepsWithDuration.reduce((fastest, current) => 
-            (!fastest.duration || (current.duration && current.duration < fastest.duration)) ? current : fastest
-          ).name
-        : '',
-      slowestStep: stepsWithDuration.length > 0 
-        ? stepsWithDuration.reduce((slowest, current) => 
-            (!slowest.duration || (current.duration && current.duration > slowest.duration)) ? current : slowest
-          ).name
-        : ''
+      fastestStep:
+        stepsWithDuration.length > 0
+          ? stepsWithDuration.reduce((fastest, current) =>
+              !fastest.duration ||
+              (current.duration && current.duration < fastest.duration)
+                ? current
+                : fastest,
+            ).name
+          : '',
+      slowestStep:
+        stepsWithDuration.length > 0
+          ? stepsWithDuration.reduce((slowest, current) =>
+              !slowest.duration ||
+              (current.duration && current.duration > slowest.duration)
+                ? current
+                : slowest,
+            ).name
+          : '',
     };
 
     this.performanceUpdate.next(execution.performance);
@@ -610,8 +687,8 @@ export class FlowExecutionService {
 
   private countStepsByType(execution: FlowExecution, type: string): string[] {
     return execution.steps
-      .filter(s => s.type === type && s.status === 'completed')
-      .map(s => s.name || s.id);
+      .filter((s) => s.type === type && s.status === 'completed')
+      .map((s) => s.name || s.id);
   }
 
   private createDefaultSteps(): FlowStep[] {
@@ -623,7 +700,7 @@ export class FlowExecutionService {
         status: 'pending',
         parameters: { url: 'https://example.com' },
         maxRetries: 3,
-        retries: 0
+        retries: 0,
       },
       {
         id: 'step_2',
@@ -632,7 +709,7 @@ export class FlowExecutionService {
         status: 'pending',
         parameters: { selector: '#login-form', timeout: 5000 },
         maxRetries: 2,
-        retries: 0
+        retries: 0,
       },
       {
         id: 'step_3',
@@ -641,7 +718,7 @@ export class FlowExecutionService {
         status: 'pending',
         parameters: { selector: '#username', value: 'test@example.com' },
         maxRetries: 3,
-        retries: 0
+        retries: 0,
       },
       {
         id: 'step_4',
@@ -650,7 +727,7 @@ export class FlowExecutionService {
         status: 'pending',
         parameters: { selector: '#password', value: '********' },
         maxRetries: 3,
-        retries: 0
+        retries: 0,
       },
       {
         id: 'step_5',
@@ -659,13 +736,16 @@ export class FlowExecutionService {
         status: 'pending',
         parameters: { selector: '#login-button' },
         maxRetries: 3,
-        retries: 0
-      }
+        retries: 0,
+      },
     ];
   }
 
   private initializeDefaultTemplates(): void {
-    const defaultTemplates: Omit<FlowTemplate, 'id' | 'createdAt' | 'updatedAt'>[] = [
+    const defaultTemplates: Omit<
+      FlowTemplate,
+      'id' | 'createdAt' | 'updatedAt'
+    >[] = [
       {
         name: 'Login Flow',
         description: 'Standard login automation for web applications',
@@ -678,7 +758,7 @@ export class FlowExecutionService {
             type: 'navigate',
             description: 'Open the login page',
             parameters: { url: 'https://example.com/login' },
-            maxRetries: 3
+            maxRetries: 3,
           },
           {
             id: 'login_user',
@@ -686,7 +766,7 @@ export class FlowExecutionService {
             type: 'input',
             description: 'Input username/email',
             parameters: { selector: '#username', required: true },
-            maxRetries: 3
+            maxRetries: 3,
           },
           {
             id: 'login_pass',
@@ -694,7 +774,7 @@ export class FlowExecutionService {
             type: 'input',
             description: 'Input password',
             parameters: { selector: '#password', required: true },
-            maxRetries: 3
+            maxRetries: 3,
           },
           {
             id: 'login_submit',
@@ -702,7 +782,7 @@ export class FlowExecutionService {
             type: 'click',
             description: 'Click login button',
             parameters: { selector: '#login-button' },
-            maxRetries: 3
+            maxRetries: 3,
           },
           {
             id: 'login_verify',
@@ -710,13 +790,13 @@ export class FlowExecutionService {
             type: 'validate',
             description: 'Verify successful login',
             parameters: { selector: '.dashboard', expectedText: 'Welcome' },
-            maxRetries: 2
-          }
+            maxRetries: 2,
+          },
         ],
         estimatedDuration: 15000,
         complexity: 'simple',
         tags: ['login', 'authentication', 'web'],
-        author: 'System'
+        author: 'System',
       },
       {
         name: 'Data Export Flow',
@@ -730,15 +810,19 @@ export class FlowExecutionService {
             type: 'api',
             description: 'Establish database connection',
             parameters: { endpoint: '/api/db/connect', method: 'POST' },
-            maxRetries: 3
+            maxRetries: 3,
           },
           {
             id: 'export_query',
             name: 'Execute Query',
             type: 'api',
             description: 'Run data extraction query',
-            parameters: { endpoint: '/api/data/query', method: 'POST', query: 'SELECT * FROM users' },
-            maxRetries: 2
+            parameters: {
+              endpoint: '/api/data/query',
+              method: 'POST',
+              query: 'SELECT * FROM users',
+            },
+            maxRetries: 2,
           },
           {
             id: 'export_format',
@@ -746,7 +830,7 @@ export class FlowExecutionService {
             type: 'script',
             description: 'Convert data to CSV format',
             parameters: { script: 'format-csv.js' },
-            maxRetries: 1
+            maxRetries: 1,
           },
           {
             id: 'export_save',
@@ -754,17 +838,17 @@ export class FlowExecutionService {
             type: 'api',
             description: 'Save CSV file to storage',
             parameters: { endpoint: '/api/files/save', method: 'POST' },
-            maxRetries: 3
-          }
+            maxRetries: 3,
+          },
         ],
         estimatedDuration: 30000,
         complexity: 'moderate',
         tags: ['export', 'csv', 'database'],
-        author: 'System'
-      }
+        author: 'System',
+      },
     ];
 
-    defaultTemplates.forEach(template => {
+    defaultTemplates.forEach((template) => {
       this.createTemplate(template);
     });
   }
@@ -780,8 +864,12 @@ export class FlowExecutionService {
 
     let cleanedCount = 0;
     for (const [id, execution] of this.executions.entries()) {
-      if (execution.updatedAt < cutoffDate && 
-          (execution.status === 'completed' || execution.status === 'failed' || execution.status === 'cancelled')) {
+      if (
+        execution.updatedAt < cutoffDate &&
+        (execution.status === 'completed' ||
+          execution.status === 'failed' ||
+          execution.status === 'cancelled')
+      ) {
         this.executions.delete(id);
         cleanedCount++;
       }

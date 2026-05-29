@@ -142,7 +142,9 @@ export class MvpStoreService {
         status: 'production',
         is_enabled: true,
         metadata: {
-          endpoint: process.env.VOSK_SERVER_URL || 'wss://keledon.tuyoisaza.com/listen/ws',
+          endpoint:
+            process.env.VOSK_SERVER_URL ||
+            'wss://keledon.tuyoisaza.com/listen/ws',
           requires_api_key: false,
           auto_start: true,
         },
@@ -214,8 +216,12 @@ export class MvpStoreService {
     return providers.filter((provider) => {
       const metadata = provider.metadata || {};
       if (!metadata.requires_api_key) return true;
-      const requiredEnv = Array.isArray(metadata.required_env) ? metadata.required_env : [];
-      return requiredEnv.every((envName: string) => Boolean(process.env[envName]));
+      const requiredEnv = Array.isArray(metadata.required_env)
+        ? metadata.required_env
+        : [];
+      return requiredEnv.every((envName: string) =>
+        Boolean(process.env[envName]),
+      );
     });
   }
 
@@ -256,10 +262,10 @@ export class MvpStoreService {
       name: String(input.name || 'New Interface'),
       baseUrl: String(input.baseUrl || input.base_url || ''),
       base_url: String(input.baseUrl || input.base_url || ''),
-      category: (input.category as 'talk' | 'case') || 'case',
+      category: input.category || 'case',
       providerKey: input.providerKey,
       capabilities: input.capabilities || { rpa: true },
-      status: (input.status as 'connected' | 'disconnected' | 'error') || 'connected',
+      status: input.status || 'connected',
       icon: input.icon,
       createdAt: now,
       updatedAt: now,
@@ -269,7 +275,10 @@ export class MvpStoreService {
     return iface;
   }
 
-  updateInterface(id: string, input: Partial<ManagedInterface>): ManagedInterface | null {
+  updateInterface(
+    id: string,
+    input: Partial<ManagedInterface>,
+  ): ManagedInterface | null {
     const index = this.store.interfaces.findIndex((item) => item.id === id);
     if (index < 0) return null;
     const current = this.store.interfaces[index];
@@ -288,7 +297,9 @@ export class MvpStoreService {
 
   deleteInterface(id: string): boolean {
     const before = this.store.interfaces.length;
-    this.store.interfaces = this.store.interfaces.filter((item) => item.id !== id);
+    this.store.interfaces = this.store.interfaces.filter(
+      (item) => item.id !== id,
+    );
     const changed = this.store.interfaces.length !== before;
     if (changed) this.saveStore();
     return changed;
@@ -306,7 +317,7 @@ export class MvpStoreService {
       interfaceId: input.interfaceId,
       name: String(input.name || 'New Flow'),
       description: input.description,
-      category: (input.category as 'talk' | 'case') || 'case',
+      category: input.category || 'case',
       intentTags: Array.isArray(input.intentTags) ? input.intentTags : [],
       createdAt: now,
       updatedAt: now,
@@ -326,7 +337,7 @@ export class MvpStoreService {
       id: randomUUID(),
       flowDefinitionId: String(input.flowDefinitionId || ''),
       version: Number(input.version || 1),
-      status: (input.status as 'draft' | 'approved' | 'deprecated') || 'draft',
+      status: input.status || 'draft',
       steps: Array.isArray(input.steps) ? input.steps : [],
       createdBy: input.createdBy,
       createdAt: now,
@@ -337,7 +348,10 @@ export class MvpStoreService {
     return flowVersion;
   }
 
-  updateFlowVersion(id: string, input: Partial<FlowVersion>): FlowVersion | null {
+  updateFlowVersion(
+    id: string,
+    input: Partial<FlowVersion>,
+  ): FlowVersion | null {
     const index = this.store.flowVersions.findIndex((item) => item.id === id);
     if (index < 0) return null;
     const updated: FlowVersion = {
@@ -351,17 +365,23 @@ export class MvpStoreService {
   }
 
   getTenantFlowPermissions(companyId: string): TenantFlowPermission[] {
-    return this.store.tenantFlowPermissions.filter((item) => item.companyId === companyId);
+    return this.store.tenantFlowPermissions.filter(
+      (item) => item.companyId === companyId,
+    );
   }
 
-  upsertTenantFlowPermissions(entries: Array<Partial<TenantFlowPermission>>): TenantFlowPermission[] {
+  upsertTenantFlowPermissions(
+    entries: Array<Partial<TenantFlowPermission>>,
+  ): TenantFlowPermission[] {
     for (const entry of entries) {
       const companyId = String(entry.companyId || '');
       const flowDefinitionId = String(entry.flowDefinitionId || '');
       if (!companyId || !flowDefinitionId) continue;
 
       const existing = this.store.tenantFlowPermissions.find(
-        (item) => item.companyId === companyId && item.flowDefinitionId === flowDefinitionId,
+        (item) =>
+          item.companyId === companyId &&
+          item.flowDefinitionId === flowDefinitionId,
       );
 
       if (existing) {
@@ -387,13 +407,19 @@ export class MvpStoreService {
   }
 
   getIntentFlowMappings(companyId: string): IntentFlowMapping[] {
-    return this.store.intentFlowMappings.filter((item) => item.companyId === companyId);
+    return this.store.intentFlowMappings.filter(
+      (item) => item.companyId === companyId,
+    );
   }
 
-  upsertIntentFlowMapping(entry: Partial<IntentFlowMapping>): IntentFlowMapping {
+  upsertIntentFlowMapping(
+    entry: Partial<IntentFlowMapping>,
+  ): IntentFlowMapping {
     const companyId = String(entry.companyId || '');
     const intent = String(entry.intent || '').trim();
-    const allowedFlowDefinitionIds = Array.isArray(entry.allowedFlowDefinitionIds)
+    const allowedFlowDefinitionIds = Array.isArray(
+      entry.allowedFlowDefinitionIds,
+    )
       ? entry.allowedFlowDefinitionIds
       : [];
 
@@ -426,14 +452,16 @@ export class MvpStoreService {
     return this.store.knowledgeDocuments;
   }
 
-  createKnowledgeDocument(input: Partial<KnowledgeDocument>): KnowledgeDocument {
+  createKnowledgeDocument(
+    input: Partial<KnowledgeDocument>,
+  ): KnowledgeDocument {
     const now = new Date().toISOString();
     const content = String(input.content || '');
     const doc: KnowledgeDocument = {
       id: randomUUID(),
       title: String(input.title || 'Untitled Document'),
       content,
-      type: (input.type as 'pdf' | 'docx' | 'url' | 'text') || 'text',
+      type: input.type || 'text',
       status: 'indexed',
       chunk_count: Math.max(1, Math.ceil(content.length / 500)),
       size_bytes: Buffer.byteLength(content, 'utf-8'),
@@ -454,7 +482,11 @@ export class MvpStoreService {
   private loadStore(): StoreData {
     if (!fs.existsSync(this.storePath)) {
       const initial = this.defaultStore();
-      fs.writeFileSync(this.storePath, JSON.stringify(initial, null, 2), 'utf8');
+      fs.writeFileSync(
+        this.storePath,
+        JSON.stringify(initial, null, 2),
+        'utf8',
+      );
       return initial;
     }
 
@@ -463,21 +495,39 @@ export class MvpStoreService {
       const parsed = JSON.parse(raw);
       return {
         interfaces: Array.isArray(parsed.interfaces) ? parsed.interfaces : [],
-        flowDefinitions: Array.isArray(parsed.flowDefinitions) ? parsed.flowDefinitions : [],
-        flowVersions: Array.isArray(parsed.flowVersions) ? parsed.flowVersions : [],
-        tenantFlowPermissions: Array.isArray(parsed.tenantFlowPermissions) ? parsed.tenantFlowPermissions : [],
-        intentFlowMappings: Array.isArray(parsed.intentFlowMappings) ? parsed.intentFlowMappings : [],
-        knowledgeDocuments: Array.isArray(parsed.knowledgeDocuments) ? parsed.knowledgeDocuments : [],
+        flowDefinitions: Array.isArray(parsed.flowDefinitions)
+          ? parsed.flowDefinitions
+          : [],
+        flowVersions: Array.isArray(parsed.flowVersions)
+          ? parsed.flowVersions
+          : [],
+        tenantFlowPermissions: Array.isArray(parsed.tenantFlowPermissions)
+          ? parsed.tenantFlowPermissions
+          : [],
+        intentFlowMappings: Array.isArray(parsed.intentFlowMappings)
+          ? parsed.intentFlowMappings
+          : [],
+        knowledgeDocuments: Array.isArray(parsed.knowledgeDocuments)
+          ? parsed.knowledgeDocuments
+          : [],
       };
     } catch {
       const initial = this.defaultStore();
-      fs.writeFileSync(this.storePath, JSON.stringify(initial, null, 2), 'utf8');
+      fs.writeFileSync(
+        this.storePath,
+        JSON.stringify(initial, null, 2),
+        'utf8',
+      );
       return initial;
     }
   }
 
   private saveStore(): void {
-    fs.writeFileSync(this.storePath, JSON.stringify(this.store, null, 2), 'utf8');
+    fs.writeFileSync(
+      this.storePath,
+      JSON.stringify(this.store, null, 2),
+      'utf8',
+    );
   }
 
   private defaultStore(): StoreData {

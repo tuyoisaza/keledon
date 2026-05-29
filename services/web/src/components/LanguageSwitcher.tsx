@@ -1,5 +1,5 @@
 import { Globe } from 'lucide-react';
-import { useTranslation, Locale } from '@/context/I18nContext';
+import { useTranslation } from '@/context/I18nContext';
 import {
   DropdownMenu,
   DropdownMenuContent,

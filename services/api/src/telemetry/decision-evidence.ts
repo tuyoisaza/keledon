@@ -27,7 +27,10 @@ export const POLICY_CHECK_ATTRS = {
   PLAYBOOK_ID: 'policy.playbook_id',
 } as const;
 
-export type AgentExecEventType = 'agent.exec.start' | 'agent.exec.end' | 'agent.exec.error';
+export type AgentExecEventType =
+  | 'agent.exec.start'
+  | 'agent.exec.end'
+  | 'agent.exec.error';
 
 export interface AgentExecutionEvidence {
   event: AgentExecEventType;

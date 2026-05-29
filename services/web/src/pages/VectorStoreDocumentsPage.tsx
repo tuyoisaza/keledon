@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Database, Plus, Search, FileText, Trash2, RefreshCw, Eye, AlertCircle, Settings, ArrowLeft, Tag } from 'lucide-react';
+import { Database, Plus, Search, FileText, Trash2, RefreshCw, Eye, AlertCircle, ArrowLeft, Tag } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { vectorStoreAPI, type PolicyDocument, type RetrievalResult, type VectorStoreStatus } from '@/lib/vector-store';
@@ -17,7 +17,7 @@ type Category = typeof defaultCategories[number];
 
 export default function VectorStoreDocumentsPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
   const [status, setStatus] = useState<VectorStoreStatus | null>(null);
   const [documents, setDocuments] = useState<PolicyDocument[]>([]);
   const [searchResults, setSearchResults] = useState<RetrievalResult[]>([]);
@@ -90,7 +90,7 @@ export default function VectorStoreDocumentsPage() {
     }
   };
 
-  const getCategoryColor = (category: string) => {
+  const _getCategoryColor = (category: string) => {
     const cat = categories.find(c => c.name.toLowerCase() === category.toLowerCase());
     return cat?.color || '#6b7280';
   };

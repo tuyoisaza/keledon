@@ -9,7 +9,9 @@ export class GoogleOAuthService {
   constructor(private configService: ConfigService) {
     const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
     const clientSecret = this.configService.get<string>('GOOGLE_CLIENT_SECRET');
-    const redirectUri = this.configService.get<string>('GOOGLE_REDIRECT_URI') || 'https://keledon.tuyoisaza.com/api/auth/google/callback';
+    const redirectUri =
+      this.configService.get<string>('GOOGLE_REDIRECT_URI') ||
+      'https://keledon.tuyoisaza.com/api/auth/google/callback';
 
     this.oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUri);
   }
@@ -38,7 +40,7 @@ export class GoogleOAuthService {
     this.oauth2Client.setCredentials(tokens);
 
     const ticket = await this.oauth2Client.verifyIdToken({
-      idToken: tokens.id_token!,
+      idToken: tokens.id_token,
       audience: this.configService.get<string>('GOOGLE_CLIENT_ID'),
     });
 
@@ -50,7 +52,7 @@ export class GoogleOAuthService {
 
     return {
       id: payload.sub,
-      email: payload.email!,
+      email: payload.email,
       name: payload.name,
       picture: payload.picture,
     };

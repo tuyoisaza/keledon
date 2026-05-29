@@ -57,17 +57,32 @@ export class KnowledgeService {
     };
   }
 
-  async createKnowledgeDocument(knowledgeBaseId: string, body: CreateKnowledgeDocumentDto) {
+  async createKnowledgeDocument(
+    knowledgeBaseId: string,
+    body: CreateKnowledgeDocumentDto,
+  ) {
     this.assertBody(body, 'Request body is required');
     this.assertNonEmpty(knowledgeBaseId, 'knowledge base ID is required');
     this.assertNonEmpty(body.companyId, 'companyId is required');
     this.assertNonEmpty(body.title, 'title is required');
     this.assertNonEmpty(body.content, 'content is required');
-    this.assertOptionalString(body.companyId, 'companyId must be a non-empty string when provided');
-    this.assertOptionalPlainObject(body.metadata, 'metadata must be an object when provided');
+    this.assertOptionalString(
+      body.companyId,
+      'companyId must be a non-empty string when provided',
+    );
+    this.assertOptionalPlainObject(
+      body.metadata,
+      'metadata must be an object when provided',
+    );
 
-    const knowledgeBase = await this.requireKnowledgeBase(knowledgeBaseId, body.companyId);
-    const metadata = this.normalizeMetadata(body.metadata, knowledgeBase.companyId);
+    const knowledgeBase = await this.requireKnowledgeBase(
+      knowledgeBaseId,
+      body.companyId,
+    );
+    const metadata = this.normalizeMetadata(
+      body.metadata,
+      knowledgeBase.companyId,
+    );
 
     return this.prisma.knowledgeDocument.create({
       data: {
@@ -79,23 +94,49 @@ export class KnowledgeService {
     });
   }
 
-  async ingestKnowledgeBase(knowledgeBaseId: string, body: IngestKnowledgeBaseDto) {
+  async ingestKnowledgeBase(
+    knowledgeBaseId: string,
+    body: IngestKnowledgeBaseDto,
+  ) {
     const requestBody = body ?? {};
     this.assertNonEmpty(requestBody.companyId, 'companyId is required');
-    this.assertOptionalString(requestBody.companyId, 'companyId must be a non-empty string when provided');
-    this.assertOptionalStringArray(requestBody.documentIds, 'documentIds must be an array of non-empty strings');
-    this.assertOptionalNumber(requestBody.chunkSize, 'chunkSize must be a finite number when provided');
-    this.assertOptionalNumber(requestBody.chunkOverlap, 'chunkOverlap must be a finite number when provided');
+    this.assertOptionalString(
+      requestBody.companyId,
+      'companyId must be a non-empty string when provided',
+    );
+    this.assertOptionalStringArray(
+      requestBody.documentIds,
+      'documentIds must be an array of non-empty strings',
+    );
+    this.assertOptionalNumber(
+      requestBody.chunkSize,
+      'chunkSize must be a finite number when provided',
+    );
+    this.assertOptionalNumber(
+      requestBody.chunkOverlap,
+      'chunkOverlap must be a finite number when provided',
+    );
 
-    const knowledgeBase = await this.requireKnowledgeBase(knowledgeBaseId, requestBody.companyId);
-    const documents = await this.loadKnowledgeDocuments(knowledgeBase.id, requestBody.documentIds);
+    const knowledgeBase = await this.requireKnowledgeBase(
+      knowledgeBaseId,
+      requestBody.companyId,
+    );
+    const documents = await this.loadKnowledgeDocuments(
+      knowledgeBase.id,
+      requestBody.documentIds,
+    );
 
     if (documents.length === 0) {
-      throw new BadRequestException('No matching knowledge documents found for ingestion');
+      throw new BadRequestException(
+        'No matching knowledge documents found for ingestion',
+      );
     }
 
     const chunkSize = this.normalizeChunkSize(requestBody.chunkSize);
-    const chunkOverlap = this.normalizeChunkOverlap(requestBody.chunkOverlap, chunkSize);
+    const chunkOverlap = this.normalizeChunkOverlap(
+      requestBody.chunkOverlap,
+      chunkSize,
+    );
     const collectionName = this.getCollectionName(knowledgeBase.id);
 
     await this.ensureCollection(collectionName);
@@ -104,8 +145,15 @@ export class KnowledgeService {
     const vectorIdsByDocument = new Map<string, string[]>();
 
     for (const document of documents) {
-      const metadata = this.parseMetadata(document.metadata, knowledgeBase.companyId);
-      const chunks = this.chunkContent(document.content, chunkSize, chunkOverlap);
+      const metadata = this.parseMetadata(
+        document.metadata,
+        knowledgeBase.companyId,
+      );
+      const chunks = this.chunkContent(
+        document.content,
+        chunkSize,
+        chunkOverlap,
+      );
 
       vectorIdsByDocument.set(document.id, []);
 
@@ -167,27 +215,58 @@ export class KnowledgeService {
     this.assertBody(body, 'Request body is required');
     this.assertNonEmpty(body.query, 'query is required');
     this.assertNonEmpty(body.companyId, 'companyId is required');
-    this.assertOptionalString(body.knowledgeBaseId, 'knowledgeBaseId must be a non-empty string when provided');
-    this.assertOptionalString(body.companyId, 'companyId must be a non-empty string when provided');
-    this.assertOptionalString(body.teamId, 'teamId must be a non-empty string when provided');
-    this.assertOptionalString(body.language, 'language must be a non-empty string when provided');
-    this.assertOptionalNumber(body.limit, 'limit must be a finite number when provided');
+    this.assertOptionalString(
+      body.knowledgeBaseId,
+      'knowledgeBaseId must be a non-empty string when provided',
+    );
+    this.assertOptionalString(
+      body.companyId,
+      'companyId must be a non-empty string when provided',
+    );
+    this.assertOptionalString(
+      body.teamId,
+      'teamId must be a non-empty string when provided',
+    );
+    this.assertOptionalString(
+      body.language,
+      'language must be a non-empty string when provided',
+    );
+    this.assertOptionalNumber(
+      body.limit,
+      'limit must be a finite number when provided',
+    );
     this.assertOptionalNumber(
       body.scoreThreshold,
       'scoreThreshold must be a finite number when provided',
     );
-    this.assertOptionalPlainObject(body.filters, 'filters must be an object when provided');
-    this.assertOptionalString(body.filters?.country, 'filters.country must be a non-empty string when provided');
-    this.assertOptionalString(body.filters?.language, 'filters.language must be a non-empty string when provided');
-    this.assertOptionalString(body.filters?.source, 'filters.source must be a non-empty string when provided');
-    this.assertOptionalString(body.filters?.brandId, 'filters.brandId must be a non-empty string when provided');
+    this.assertOptionalPlainObject(
+      body.filters,
+      'filters must be an object when provided',
+    );
+    this.assertOptionalString(
+      body.filters?.country,
+      'filters.country must be a non-empty string when provided',
+    );
+    this.assertOptionalString(
+      body.filters?.language,
+      'filters.language must be a non-empty string when provided',
+    );
+    this.assertOptionalString(
+      body.filters?.source,
+      'filters.source must be a non-empty string when provided',
+    );
+    this.assertOptionalString(
+      body.filters?.brandId,
+      'filters.brandId must be a non-empty string when provided',
+    );
     this.assertOptionalStringArray(
       body.filters?.category,
       'filters.category must be an array of non-empty strings when provided',
     );
 
     const limit = this.normalizeLimit(body.limit);
-    const scoreThreshold = typeof body.scoreThreshold === 'number' ? body.scoreThreshold : undefined;
+    const scoreThreshold =
+      typeof body.scoreThreshold === 'number' ? body.scoreThreshold : undefined;
     const knowledgeBases = await this.resolveSearchKnowledgeBases(body);
     const searchVector = this.textToVector(body.query.trim());
     const filter = this.buildFilter(body);
@@ -233,7 +312,9 @@ export class KnowledgeService {
       }
     }
 
-    aggregatedResults.sort((left, right) => Number(right.score || 0) - Number(left.score || 0));
+    aggregatedResults.sort(
+      (left, right) => Number(right.score || 0) - Number(left.score || 0),
+    );
 
     return {
       query: body.query.trim(),
@@ -249,8 +330,14 @@ export class KnowledgeService {
 
   async getKnowledgeBaseStats(knowledgeBaseId: string, companyId?: string) {
     this.assertNonEmpty(companyId, 'companyId is required');
-    this.assertOptionalString(companyId, 'companyId must be a non-empty string when provided');
-    const knowledgeBase = await this.requireKnowledgeBase(knowledgeBaseId, companyId);
+    this.assertOptionalString(
+      companyId,
+      'companyId must be a non-empty string when provided',
+    );
+    const knowledgeBase = await this.requireKnowledgeBase(
+      knowledgeBaseId,
+      companyId,
+    );
     const collectionName = this.getCollectionName(knowledgeBase.id);
     const documents = await this.prisma.knowledgeDocument.findMany({
       where: { knowledgeBaseId: knowledgeBase.id },
@@ -290,7 +377,9 @@ export class KnowledgeService {
     });
 
     if (!knowledgeBase) {
-      throw new NotFoundException(`Knowledge base not found: ${knowledgeBaseId}`);
+      throw new NotFoundException(
+        `Knowledge base not found: ${knowledgeBaseId}`,
+      );
     }
 
     if (companyId && knowledgeBase.companyId !== companyId.trim()) {
@@ -302,17 +391,24 @@ export class KnowledgeService {
     return knowledgeBase;
   }
 
-  private async loadKnowledgeDocuments(knowledgeBaseId: string, documentIds?: string[]): Promise<KnowledgeDocument[]> {
+  private async loadKnowledgeDocuments(
+    knowledgeBaseId: string,
+    documentIds?: string[],
+  ): Promise<KnowledgeDocument[]> {
     return this.prisma.knowledgeDocument.findMany({
       where: {
         knowledgeBaseId,
-        ...(documentIds && documentIds.length > 0 ? { id: { in: documentIds } } : {}),
+        ...(documentIds && documentIds.length > 0
+          ? { id: { in: documentIds } }
+          : {}),
       },
       orderBy: { createdAt: 'asc' },
     });
   }
 
-  private async resolveSearchKnowledgeBases(body: SearchKnowledgeDto): Promise<KnowledgeBase[]> {
+  private async resolveSearchKnowledgeBases(
+    body: SearchKnowledgeDto,
+  ): Promise<KnowledgeBase[]> {
     const knowledgeBaseId = body.knowledgeBaseId?.trim();
     const companyId = body.companyId?.trim();
 
@@ -323,18 +419,22 @@ export class KnowledgeService {
     }
 
     return this.prisma.knowledgeBase.findMany({
-      where: { companyId: companyId as string },
+      where: { companyId: companyId },
       orderBy: { createdAt: 'asc' },
     });
   }
 
-  private buildFilter(body: SearchKnowledgeDto): Record<string, unknown> | undefined {
+  private buildFilter(
+    body: SearchKnowledgeDto,
+  ): Record<string, unknown> | undefined {
     const must: Array<Record<string, unknown>> = [];
     const companyId = this.optionalString(body.companyId);
     const teamId = this.optionalString(body.teamId);
     const brandId = this.optionalString(body.filters?.brandId);
     const country = this.optionalString(body.filters?.country);
-    const language = this.optionalString(body.filters?.language) || this.optionalString(body.language);
+    const language =
+      this.optionalString(body.filters?.language) ||
+      this.optionalString(body.language);
     const source = this.optionalString(body.filters?.source);
 
     if (companyId) {
@@ -362,7 +462,11 @@ export class KnowledgeService {
     return must.length > 0 ? { must } : undefined;
   }
 
-  private chunkContent(content: string, chunkSize: number, chunkOverlap: number): string[] {
+  private chunkContent(
+    content: string,
+    chunkSize: number,
+    chunkOverlap: number,
+  ): string[] {
     const normalized = content.replace(/\r\n/g, '\n').trim();
     if (!normalized) {
       return [];
@@ -401,14 +505,20 @@ export class KnowledgeService {
     return `knowledge-base-${knowledgeBaseId}`;
   }
 
-  private normalizeMetadata(metadata: Record<string, unknown> | undefined, companyId: string): KnowledgeMetadata {
+  private normalizeMetadata(
+    metadata: Record<string, unknown> | undefined,
+    companyId: string,
+  ): KnowledgeMetadata {
     return {
       ...(metadata || {}),
       companyId,
     };
   }
 
-  private parseMetadata(metadata: string | null, companyId: string): KnowledgeMetadata {
+  private parseMetadata(
+    metadata: string | null,
+    companyId: string,
+  ): KnowledgeMetadata {
     if (!metadata) {
       return { companyId };
     }
@@ -436,12 +546,17 @@ export class KnowledgeService {
       .filter((value) => value.length > 0);
   }
 
-  private mergeVectorIds(existingIds: string[], ingestedIds: string[]): string[] {
+  private mergeVectorIds(
+    existingIds: string[],
+    ingestedIds: string[],
+  ): string[] {
     return Array.from(new Set([...existingIds, ...ingestedIds]));
   }
 
   private optionalString(value: unknown): string | undefined {
-    return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+    return typeof value === 'string' && value.trim().length > 0
+      ? value.trim()
+      : undefined;
   }
 
   private getChunkPointId(documentId: string, chunkIndex: number): string {
@@ -460,11 +575,17 @@ export class KnowledgeService {
     return Math.min(4000, Math.max(200, Math.floor(chunkSize)));
   }
 
-  private normalizeChunkOverlap(chunkOverlap: number | undefined, chunkSize: number): number {
+  private normalizeChunkOverlap(
+    chunkOverlap: number | undefined,
+    chunkSize: number,
+  ): number {
     if (typeof chunkOverlap !== 'number' || !Number.isFinite(chunkOverlap)) {
       return Math.min(120, Math.floor(chunkSize / 4));
     }
-    return Math.max(0, Math.min(Math.floor(chunkOverlap), Math.floor(chunkSize / 2)));
+    return Math.max(
+      0,
+      Math.min(Math.floor(chunkOverlap), Math.floor(chunkSize / 2)),
+    );
   }
 
   private normalizeLimit(limit?: number): number {
@@ -480,7 +601,10 @@ export class KnowledgeService {
     }
   }
 
-  private assertBody<T>(value: T | null | undefined, message: string): asserts value is T {
+  private assertBody<T>(
+    value: T | null | undefined,
+    message: string,
+  ): asserts value is T {
     if (value == null) {
       throw new BadRequestException(message);
     }
@@ -501,7 +625,12 @@ export class KnowledgeService {
       return;
     }
 
-    if (!Array.isArray(value) || value.some((entry) => typeof entry !== 'string' || entry.trim().length === 0)) {
+    if (
+      !Array.isArray(value) ||
+      value.some(
+        (entry) => typeof entry !== 'string' || entry.trim().length === 0,
+      )
+    ) {
       throw new BadRequestException(message);
     }
   }
@@ -558,7 +687,9 @@ export class KnowledgeService {
         pointsCount: Number(details.points_count || details.points || 0),
         indexedVectorsCount: Number(details.indexed_vectors_count || 0),
         status: String(details.status || 'green'),
-        vectorSize: Number(details.config?.params?.vectors?.size || this.vectorSize),
+        vectorSize: Number(
+          details.config?.params?.vectors?.size || this.vectorSize,
+        ),
         distance: String(details.config?.params?.vectors?.distance || 'Cosine'),
       };
     } catch {

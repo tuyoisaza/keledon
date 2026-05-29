@@ -24,9 +24,7 @@ interface AuditEntry {
 export class AuditInterceptor implements NestInterceptor {
   private readonly logger = new Logger(AuditInterceptor.name);
 
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
@@ -87,7 +85,11 @@ export class AuditInterceptor implements NestInterceptor {
         // For auth/google/callback, extract user from the redirect query params
         // Actually, for google callback, the response is a redirect, so we can't
         // extract from response body. We'll rely on the query params if present.
-        if (!entityId && auditEntry.action === 'GOOGLE_LOGIN' && responseBody?.url) {
+        if (
+          !entityId &&
+          auditEntry.action === 'GOOGLE_LOGIN' &&
+          responseBody?.url
+        ) {
           // The response is a redirect — we can't extract user id easily here
           // The user ID was extracted from the request or is unknown
         }
@@ -157,12 +159,28 @@ export class AuditInterceptor implements NestInterceptor {
 
     // ===== CRUD Endpoints =====
     if (url.startsWith('/api/crud/')) {
-      return this.buildCrudEntry(method, url, body, params, userId, ipAddress, userAgent);
+      return this.buildCrudEntry(
+        method,
+        url,
+        body,
+        params,
+        userId,
+        ipAddress,
+        userAgent,
+      );
     }
 
     // ===== Auth Endpoints =====
     if (url.startsWith('/api/auth/')) {
-      return this.buildAuthEntry(method, url, body, request, userId, ipAddress, userAgent);
+      return this.buildAuthEntry(
+        method,
+        url,
+        body,
+        request,
+        userId,
+        ipAddress,
+        userAgent,
+      );
     }
 
     return null;
@@ -189,8 +207,15 @@ export class AuditInterceptor implements NestInterceptor {
     // Determine entity and ID from route
     // Check if next segment is an ID parameter (non-numeric string that isn't a known sub-resource)
     const nextIndex = entityIndex + 1;
-    const knownSubResources = ['countries', 'interfaces', 'documents', 'pairing-code', 'launch'];
-    const isIdSegment = nextIndex < parts.length &&
+    const knownSubResources = [
+      'countries',
+      'interfaces',
+      'documents',
+      'pairing-code',
+      'launch',
+    ];
+    const isIdSegment =
+      nextIndex < parts.length &&
       !knownSubResources.includes(parts[nextIndex]) &&
       !parts[nextIndex].startsWith('orphaned');
 
@@ -358,7 +383,14 @@ export class AuditInterceptor implements NestInterceptor {
 
   private sanitizeBody() {
     return (key: string, value: any): any => {
-      const sensitiveFields = ['password', 'passwordHash', 'token', 'secret', 'apiKey', 'authorization'];
+      const sensitiveFields = [
+        'password',
+        'passwordHash',
+        'token',
+        'secret',
+        'apiKey',
+        'authorization',
+      ];
       if (sensitiveFields.includes(key)) {
         return '[REDACTED]';
       }

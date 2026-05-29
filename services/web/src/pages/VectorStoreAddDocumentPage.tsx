@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, Loader2, AlertCircle, Upload } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { vectorStoreAPI, type PolicyDocument } from '@/lib/vector-store';
 import { getCompanies, getBrands, getTeams, type Company, type Brand, type Team } from '@/lib/crud-api';
@@ -63,8 +62,8 @@ export default function VectorStoreAddDocumentPage() {
         } else if (companiesData.length > 0) {
           setFormData(prev => ({ ...prev, company_id: companiesData[0].id }));
         }
-      } catch (err) {
-        console.error('Failed to fetch data:', err);
+      } catch (_err) {
+        console.error('Failed to fetch data:', _err);
         setError('Failed to load form data');
       }
     };
@@ -256,7 +255,7 @@ export default function VectorStoreAddDocumentPage() {
                     title: prev.title || file.name.replace(/\.[^/.]+$/, ''),
                   }));
                   toast.success(`Loaded content from ${file.name}`);
-                } catch (err) {
+                } catch (_err) {
                   toast.error('Failed to read file');
                 }
               }}

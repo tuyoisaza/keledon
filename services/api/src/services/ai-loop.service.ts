@@ -16,7 +16,9 @@ export class AILoopService {
   private readonly loopUpdates = new Subject<any>();
 
   constructor() {
-    console.log('AILoopService: Initialized (deterministic, real though empty)');
+    console.log(
+      'AILoopService: Initialized (deterministic, real though empty)',
+    );
   }
 
   // Read paths: deterministic empty until backed by real persisted state.
@@ -34,11 +36,15 @@ export class AILoopService {
 
   // Mutations: fail-fast (no simulated success).
   createLoop(_name: string): never {
-    throw new Error('AILoopService.createLoop not implemented (no simulated loops).');
+    throw new Error(
+      'AILoopService.createLoop not implemented (no simulated loops).',
+    );
   }
 
   startLoop(_loopId: string): never {
-    throw new Error('AILoopService.startLoop not implemented (cloud orchestrator required).');
+    throw new Error(
+      'AILoopService.startLoop not implemented (cloud orchestrator required).',
+    );
   }
 
   resetLoop(_loopId: string): never {

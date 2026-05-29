@@ -16,11 +16,7 @@ import {
     Monitor,
     User,
     Activity,
-    Building2,
     Brain,
-    LucideIcon,
-    Tag,
-    Users as UsersIcon,
     Copy,
     Check,
     Trash2
@@ -52,8 +48,6 @@ const navItems: NavItem[] = [
     { icon: User, label: 'Profile', href: '/profile', minRole: 'user' },
     { icon: Settings, label: 'Management', href: '/management/companies', minRole: 'admin' },
 ];
-
-const managementItems: NavItem[] = [];
 
 export function Sidebar() {
     const [collapsed, setCollapsed] = useState(false);

@@ -19,8 +19,6 @@ export const DebugTab: React.FC<DebugTabProps> = ({
     modelError,
     debugLogs,
     setDebugLogs,
-    addDebugLog,
-    setModelStatus
 }) => {
     return (
         <div className="space-y-6">

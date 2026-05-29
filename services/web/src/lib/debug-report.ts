@@ -56,7 +56,7 @@ class DebugCapture {
             if (typeof arg === 'object') {
                 try {
                     return JSON.stringify(arg, null, 2);
-                } catch {
+                } catch (_e) {
                     return String(arg);
                 }
             }
@@ -122,7 +122,7 @@ export function getDebugInfo(): string {
         lines.push(`Auth Token: ${authToken ? 'Present (' + authToken.length + ' chars)' : 'None'}`);
         lines.push(`Session Keys: ${sessionStorage.length}`);
         lines.push(`Local Keys: ${localStorage.length}`);
-    } catch (e) {
+    } catch (_e) {
         lines.push('Storage: Access denied');
     }
 

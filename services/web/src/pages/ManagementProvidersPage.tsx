@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings, RefreshCw, Loader2, Check, X, Globe } from 'lucide-react';
+import { Settings, RefreshCw, Check, X, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { apiFetch } from '@/lib/api-fetch';
@@ -18,7 +18,6 @@ const defaultProviderCatalog = [
 export default function ManagementProvidersPage() {
     const [catalog, setCatalog] = useState(defaultProviderCatalog);
     const [loading, setLoading] = useState(false);
-    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         fetchCatalog();
@@ -51,7 +50,7 @@ export default function ManagementProvidersPage() {
                 body: JSON.stringify({ id: providerId, is_enabled: !provider.is_enabled }),
             });
             toast.success('Provider updated');
-        } catch (error) {
+        } catch (_error) {
             toast.error('Failed to update provider');
         }
     };

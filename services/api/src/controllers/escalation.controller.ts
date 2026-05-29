@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Param, Query, Body } from '@nestjs/common';
 import { EscalationService } from '../services/escalation.service';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Escalations')
 @Controller('api/escalations')
@@ -25,15 +25,18 @@ export class EscalationController {
   @Get('team/:teamId')
   async getByTeam(
     @Param('teamId') teamId: string,
-    @Query('limit') limit?: string
+    @Query('limit') limit?: string,
   ) {
-    return this.escalationService.getByTeamId(teamId, limit ? parseInt(limit, 10) : 100);
+    return this.escalationService.getByTeamId(
+      teamId,
+      limit ? parseInt(limit, 10) : 100,
+    );
   }
 
   @Post(':id/acknowledge')
   async acknowledge(
     @Param('id') id: string,
-    @Body('acknowledgedBy') acknowledgedBy: string
+    @Body('acknowledgedBy') acknowledgedBy: string,
   ) {
     return this.escalationService.acknowledge(id, acknowledgedBy);
   }

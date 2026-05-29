@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { getRuntimeTier, isManagedProductionTier, resolveServiceEndpoints } from './runtime-tier';
+import {
+  getRuntimeTier,
+  isManagedProductionTier,
+  resolveServiceEndpoints,
+} from './runtime-tier';
 
 @Injectable()
 export class ConfigService {
@@ -8,11 +12,14 @@ export class ConfigService {
 
   private readonly config = {
     backendUrl: this.endpoints.cloudBaseUrl,
-    wsUrl: process.env.WS_URL || this.endpoints.cloudBaseUrl.replace(/^http/i, 'ws'),
+    wsUrl:
+      process.env.WS_URL || this.endpoints.cloudBaseUrl.replace(/^http/i, 'ws'),
     environment: this.runtimeTier,
     port: parseInt(process.env.PORT || '3001', 10),
     database: {
-      url: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres',
+      url:
+        process.env.DATABASE_URL ||
+        'postgresql://postgres:postgres@localhost:5432/postgres',
     },
     services: {
       tts: {
@@ -29,7 +36,10 @@ export class ConfigService {
         deepgramModel: process.env.DEEPGRAM_MODEL || 'nova-2',
         deepgramLanguage: process.env.DEEPGRAM_LANGUAGE || 'en',
         deepgramEncoding: process.env.DEEPGRAM_ENCODING || 'linear16',
-        deepgramSampleRate: parseInt(process.env.DEEPGRAM_SAMPLE_RATE || '16000', 10),
+        deepgramSampleRate: parseInt(
+          process.env.DEEPGRAM_SAMPLE_RATE || '16000',
+          10,
+        ),
       },
       rpa: {
         provider: process.env.RPA_PROVIDER || 'playwright',
@@ -40,7 +50,8 @@ export class ConfigService {
         qdrantUrl: process.env.QDRANT_URL || this.endpoints.qdrantUrl,
         qdrantApiKey: process.env.QDRANT_API_KEY,
         qdrantCollection: process.env.QDRANT_COLLECTION || 'keledon',
-        embeddingsModel: process.env.EMBEDDINGS_MODEL || 'text-embedding-3-small',
+        embeddingsModel:
+          process.env.EMBEDDINGS_MODEL || 'text-embedding-3-small',
       },
     },
     featureFlags: {

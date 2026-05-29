@@ -4,7 +4,8 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class FlowService {
-  private readonly qdrantUrl = process.env.QDRANT_URL || 'http://127.0.0.1:6333';
+  private readonly qdrantUrl =
+    process.env.QDRANT_URL || 'http://127.0.0.1:6333';
   private readonly collectionName = 'keledon-flows';
   private readonly vectorSize = 768;
 
@@ -17,7 +18,7 @@ export class FlowService {
       vector[i] = (hash[i] / 255) * 2 - 1;
     }
     const norm = Math.sqrt(vector.reduce((sum, val) => sum + val * val, 0));
-    return vector.map(v => v / norm);
+    return vector.map((v) => v / norm);
   }
 
   private async ensureCollection(): Promise<void> {
@@ -44,21 +45,23 @@ export class FlowService {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        points: [{
-          id: flow.id,
-          vector,
-          payload: {
+        points: [
+          {
             id: flow.id,
-            name: flow.name,
-            description: flow.description,
-            triggerKeywords: flow.triggerKeywords,
-            category: flow.category,
-            tool: flow.tool,
-            teamId: flow.teamId,
-            isActive: flow.isActive,
-            stepCount: flow.steps?.length || 0,
+            vector,
+            payload: {
+              id: flow.id,
+              name: flow.name,
+              description: flow.description,
+              triggerKeywords: flow.triggerKeywords,
+              category: flow.category,
+              tool: flow.tool,
+              teamId: flow.teamId,
+              isActive: flow.isActive,
+              stepCount: flow.steps?.length || 0,
+            },
           },
-        }],
+        ],
       }),
     });
   }
@@ -74,17 +77,20 @@ export class FlowService {
     }
     filter.must.push({ key: 'isActive', match: { value: true } });
 
-    const response = await fetch(`${this.qdrantUrl}/collections/${this.collectionName}/points/search`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        vector: queryVector,
-        limit,
-        score_threshold: 0.3,
-        filter: filter.must.length > 0 ? filter : undefined,
-        with_payload: true,
-      }),
-    });
+    const response = await fetch(
+      `${this.qdrantUrl}/collections/${this.collectionName}/points/search`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          vector: queryVector,
+          limit,
+          score_threshold: 0.3,
+          filter: filter.must.length > 0 ? filter : undefined,
+          with_payload: true,
+        }),
+      },
+    );
 
     const data = await response.json();
     return data.result || [];
@@ -121,27 +127,32 @@ export class FlowService {
         tool: data.tool || 'browser',
         teamId: data.teamId,
         createdBy: data.createdBy,
-        steps: data.steps ? {
-          create: data.steps.map((step, index) => ({
-            order: step.order ?? index,
-            type: step.type,
-            selector: step.selector,
-            selectorType: step.selectorType || 'css',
-            value: step.value,
-            extract: step.extract,
-            waitFor: step.waitFor,
-            condition: step.condition,
-            timeout: step.timeout || 10000,
-            optional: step.optional || false,
-            nextStepId: step.nextStepId,
-          })),
-        } : undefined,
+        steps: data.steps
+          ? {
+              create: data.steps.map((step, index) => ({
+                order: step.order ?? index,
+                type: step.type,
+                selector: step.selector,
+                selectorType: step.selectorType || 'css',
+                value: step.value,
+                extract: step.extract,
+                waitFor: step.waitFor,
+                condition: step.condition,
+                timeout: step.timeout || 10000,
+                optional: step.optional || false,
+                nextStepId: step.nextStepId,
+              })),
+            }
+          : undefined,
       },
       include: { steps: { orderBy: { order: 'asc' } } },
     });
 
-    this.indexFlow(flow).catch(err => {
-      console.error('[FlowService] Failed to index flow in Qdrant:', err.message);
+    this.indexFlow(flow).catch((err) => {
+      console.error(
+        '[FlowService] Failed to index flow in Qdrant:',
+        err.message,
+      );
     });
     return flow;
   }
@@ -168,27 +179,30 @@ export class FlowService {
     return this.searchFlows(keyword, teamId, 10);
   }
 
-  async update(id: string, data: {
-    name?: string;
-    description?: string;
-    triggerKeywords?: string[];
-    category?: string;
-    tool?: string;
-    isActive?: boolean;
-    steps?: Array<{
-      order: number;
-      type: string;
-      selector?: string;
-      selectorType?: string;
-      value?: string;
-      extract?: string;
-      waitFor?: string;
-      condition?: string;
-      timeout?: number;
-      optional?: boolean;
-      nextStepId?: string;
-    }>;
-  }): Promise<any> {
+  async update(
+    id: string,
+    data: {
+      name?: string;
+      description?: string;
+      triggerKeywords?: string[];
+      category?: string;
+      tool?: string;
+      isActive?: boolean;
+      steps?: Array<{
+        order: number;
+        type: string;
+        selector?: string;
+        selectorType?: string;
+        value?: string;
+        extract?: string;
+        waitFor?: string;
+        condition?: string;
+        timeout?: number;
+        optional?: boolean;
+        nextStepId?: string;
+      }>;
+    },
+  ): Promise<any> {
     const existing = await this.prisma.flow.findUnique({
       where: { id },
       include: { steps: true },
@@ -203,33 +217,40 @@ export class FlowService {
       data: {
         name: data.name,
         description: data.description,
-        triggerKeywords: data.triggerKeywords ? JSON.stringify(data.triggerKeywords) : undefined,
+        triggerKeywords: data.triggerKeywords
+          ? JSON.stringify(data.triggerKeywords)
+          : undefined,
         category: data.category,
         tool: data.tool,
         isActive: data.isActive,
         version: existing.version + 1,
-        steps: data.steps ? {
-          deleteMany: { flowId: id },
-          create: data.steps.map((step, index) => ({
-            order: step.order ?? index,
-            type: step.type,
-            selector: step.selector,
-            selectorType: step.selectorType || 'css',
-            value: step.value,
-            extract: step.extract,
-            waitFor: step.waitFor,
-            condition: step.condition,
-            timeout: step.timeout || 10000,
-            optional: step.optional || false,
-            nextStepId: step.nextStepId,
-          })),
-        } : undefined,
+        steps: data.steps
+          ? {
+              deleteMany: { flowId: id },
+              create: data.steps.map((step, index) => ({
+                order: step.order ?? index,
+                type: step.type,
+                selector: step.selector,
+                selectorType: step.selectorType || 'css',
+                value: step.value,
+                extract: step.extract,
+                waitFor: step.waitFor,
+                condition: step.condition,
+                timeout: step.timeout || 10000,
+                optional: step.optional || false,
+                nextStepId: step.nextStepId,
+              })),
+            }
+          : undefined,
       },
       include: { steps: { orderBy: { order: 'asc' } } },
     });
 
-    this.indexFlow(flow).catch(err => {
-      console.error('[FlowService] Failed to index flow in Qdrant:', err.message);
+    this.indexFlow(flow).catch((err) => {
+      console.error(
+        '[FlowService] Failed to index flow in Qdrant:',
+        err.message,
+      );
     });
     return flow;
   }
@@ -238,13 +259,16 @@ export class FlowService {
     await this.prisma.flow.delete({ where: { id } });
 
     try {
-      await fetch(`${this.qdrantUrl}/collections/${this.collectionName}/points/delete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          points: [id],
-        }),
-      });
+      await fetch(
+        `${this.qdrantUrl}/collections/${this.collectionName}/points/delete`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            points: [id],
+          }),
+        },
+      );
     } catch {
       // Ignore Qdrant delete errors
     }
@@ -257,38 +281,44 @@ export class FlowService {
     });
   }
 
-  async updateStep(id: string, data: Partial<{
-    order: number;
-    type: string;
-    selector: string;
-    selectorType: string;
-    value: string;
-    extract: string;
-    waitFor: string;
-    condition: string;
-    timeout: number;
-    optional: boolean;
-    nextStepId: string;
-  }>): Promise<any> {
+  async updateStep(
+    id: string,
+    data: Partial<{
+      order: number;
+      type: string;
+      selector: string;
+      selectorType: string;
+      value: string;
+      extract: string;
+      waitFor: string;
+      condition: string;
+      timeout: number;
+      optional: boolean;
+      nextStepId: string;
+    }>,
+  ): Promise<any> {
     return this.prisma.flowStep.update({
       where: { id },
       data,
     });
   }
 
-  async createStep(flowId: string, data: {
-    order: number;
-    type: string;
-    selector?: string;
-    selectorType?: string;
-    value?: string;
-    extract?: string;
-    waitFor?: string;
-    condition?: string;
-    timeout?: number;
-    optional?: boolean;
-    nextStepId?: string;
-  }): Promise<any> {
+  async createStep(
+    flowId: string,
+    data: {
+      order: number;
+      type: string;
+      selector?: string;
+      selectorType?: string;
+      value?: string;
+      extract?: string;
+      waitFor?: string;
+      condition?: string;
+      timeout?: number;
+      optional?: boolean;
+      nextStepId?: string;
+    },
+  ): Promise<any> {
     return this.prisma.flowStep.create({
       data: {
         flowId,
@@ -317,8 +347,8 @@ export class FlowService {
         this.prisma.flowStep.update({
           where: { id },
           data: { order: index },
-        })
-      )
+        }),
+      ),
     );
   }
 }

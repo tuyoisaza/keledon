@@ -36,9 +36,13 @@ export interface FlowExecutionResult {
 @Injectable()
 export class SubAgentService {
   private readonly logger = new Logger(SubAgentService.name);
-  
+
   private readonly activeSubAgents = new Map<string, SubAgentStatus>();
-  private readonly taskQueue: Array<{ task: SubAgentTask; resolve: Function; reject: Function }> = [];
+  private readonly taskQueue: Array<{
+    task: SubAgentTask;
+    resolve: Function;
+    reject: Function;
+  }> = [];
   private readonly maxConcurrentPerAgent = 3;
 
   constructor(private prisma: PrismaService) {}
@@ -79,7 +83,7 @@ export class SubAgentService {
         role: dbAgent.role,
         status: 'idle',
       };
-      
+
       this.activeSubAgents.set(dbAgent.id, status);
       agents.push(status);
     }
@@ -111,8 +115,9 @@ export class SubAgentService {
   }
 
   getAvailableAgentsByRole(role: string): SubAgentStatus[] {
-    return Array.from(this.activeSubAgents.values())
-      .filter(agent => agent.role === role && agent.status === 'idle');
+    return Array.from(this.activeSubAgents.values()).filter(
+      (agent) => agent.role === role && agent.status === 'idle',
+    );
   }
 
   async assignTask(agentId: string, task: SubAgentTask): Promise<void> {
@@ -170,7 +175,11 @@ export class SubAgentService {
     });
   }
 
-  async executeFlow(flowId: string, parameters: Record<string, any>, sessionId: string): Promise<FlowExecutionResult> {
+  async executeFlow(
+    flowId: string,
+    parameters: Record<string, any>,
+    sessionId: string,
+  ): Promise<FlowExecutionResult> {
     const flow = await this.prisma.flow.findUnique({
       where: { id: flowId },
       include: { steps: { orderBy: { order: 'asc' } } },
@@ -203,7 +212,7 @@ export class SubAgentService {
         id: `task-${Date.now()}`,
         type: 'flow',
         flowId,
-        stepIds: flow.steps.map(s => s.id),
+        stepIds: flow.steps.map((s) => s.id),
         parameters,
       });
 
@@ -211,7 +220,10 @@ export class SubAgentService {
         const stepStart = Date.now();
 
         if (step.type === 'decision' && step.condition) {
-          const shouldSkip = !this.evaluateCondition(step.condition, extractedData);
+          const shouldSkip = !this.evaluateCondition(
+            step.condition,
+            extractedData,
+          );
           if (shouldSkip) {
             executionLog.push({
               stepId: step.id,
@@ -223,7 +235,11 @@ export class SubAgentService {
           }
         }
 
-        const result = await this.simulateStepExecution(step, extractedData, executorAgent.id);
+        const result = await this.simulateStepExecution(
+          step,
+          extractedData,
+          executorAgent.id,
+        );
 
         executionLog.push({
           stepId: step.id,
@@ -243,10 +259,13 @@ export class SubAgentService {
         }
       }
 
-      await this.completeTask(executorAgent.id, { extractedData, executionLog });
+      await this.completeTask(executorAgent.id, {
+        extractedData,
+        executionLog,
+      });
 
       const flowRunResult: FlowExecutionResult = {
-        success: executionLog.every(e => e.status !== 'failed'),
+        success: executionLog.every((e) => e.status !== 'failed'),
         flowId,
         extractedData,
         executionLog,
@@ -276,7 +295,10 @@ export class SubAgentService {
     }
   }
 
-  private evaluateCondition(condition: string, context: Record<string, any>): boolean {
+  private evaluateCondition(
+    condition: string,
+    context: Record<string, any>,
+  ): boolean {
     try {
       const func = new Function('context', `return ${condition}`);
       return func(context);
@@ -285,10 +307,16 @@ export class SubAgentService {
     }
   }
 
-  private async simulateStepExecution(step: any, context: Record<string, any>, agentId: string): Promise<{ success: boolean; data?: any; error?: string }> {
-    this.logger.log(`[SubAgent:${agentId}] Executing step: ${step.type} - ${step.selector || step.value || ''}`);
+  private async simulateStepExecution(
+    step: any,
+    context: Record<string, any>,
+    agentId: string,
+  ): Promise<{ success: boolean; data?: any; error?: string }> {
+    this.logger.log(
+      `[SubAgent:${agentId}] Executing step: ${step.type} - ${step.selector || step.value || ''}`,
+    );
 
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     switch (step.type) {
       case 'navigate':
@@ -296,12 +324,20 @@ export class SubAgentService {
       case 'click':
         return { success: true, data: { clicked: step.selector } };
       case 'input':
-        const inputValue = step.value?.replace(/\{\{(\w+)\}\}/g, (_, key) => context[key] || '');
+        const inputValue = step.value?.replace(
+          /\{\{(\w+)\}\}/g,
+          (_, key) => context[key] || '',
+        );
         return { success: true, data: { input: inputValue } };
       case 'read':
-        return { success: true, data: { extracted: `Mock data for ${step.extract}` } };
+        return {
+          success: true,
+          data: { extracted: `Mock data for ${step.extract}` },
+        };
       case 'wait':
-        await new Promise(resolve => setTimeout(resolve, step.timeout || 1000));
+        await new Promise((resolve) =>
+          setTimeout(resolve, step.timeout || 1000),
+        );
         return { success: true };
       case 'submit':
         return { success: true };
@@ -312,7 +348,11 @@ export class SubAgentService {
     }
   }
 
-  async executeParallelFlows(flowIds: string[], parameters: Record<string, any>, sessionId: string): Promise<FlowExecutionResult[]> {
+  async executeParallelFlows(
+    flowIds: string[],
+    parameters: Record<string, any>,
+    sessionId: string,
+  ): Promise<FlowExecutionResult[]> {
     const availableExecutors = this.getAvailableAgentsByRole('flow-executor');
     const maxParallel = Math.min(availableExecutors.length, flowIds.length);
 
@@ -324,18 +364,20 @@ export class SubAgentService {
     }
 
     for (const batch of batches) {
-      const batchPromises = batch.map(flowId => 
-        this.executeFlow(flowId, parameters, sessionId)
-          .catch(error => ({
-            success: false,
-            flowId,
-            extractedData: {},
-            executionLog: [],
-            totalDuration: 0,
-            error: error.message,
-          } as FlowExecutionResult))
+      const batchPromises = batch.map((flowId) =>
+        this.executeFlow(flowId, parameters, sessionId).catch(
+          (error) =>
+            ({
+              success: false,
+              flowId,
+              extractedData: {},
+              executionLog: [],
+              totalDuration: 0,
+              error: error.message,
+            }) as FlowExecutionResult,
+        ),
       );
-      
+
       const batchResults = await Promise.all(batchPromises);
       results.push(...batchResults);
     }
@@ -355,11 +397,13 @@ export class SubAgentService {
       where: { sessionId },
     });
 
-    return dbAgents.map(agent => ({
+    return dbAgents.map((agent) => ({
       id: agent.id,
       role: agent.role,
       status: agent.status as 'idle' | 'active' | 'waiting' | 'error',
-      currentTask: agent.currentTask ? JSON.parse(agent.currentTask) : undefined,
+      currentTask: agent.currentTask
+        ? JSON.parse(agent.currentTask)
+        : undefined,
       lastActivity: agent.updatedAt,
     }));
   }

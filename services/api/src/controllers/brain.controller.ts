@@ -1,7 +1,13 @@
-import { Body, Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpException,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 import { LLMService } from '../llm/llm.service';
 import type { LLMResponse } from '../llm/llm.types';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 
 interface BrainChatMessage {
   role: 'user' | 'assistant';
@@ -32,8 +38,10 @@ export class BrainController {
       throw new HttpException('Message is required', HttpStatus.BAD_REQUEST);
     }
 
-    const companyName = body.companyName?.trim() || body.companyId || 'Unspecified Company';
-    const brandName = body.brandName?.trim() || body.brandId || 'Unspecified Brand';
+    const companyName =
+      body.companyName?.trim() || body.companyId || 'Unspecified Company';
+    const brandName =
+      body.brandName?.trim() || body.brandId || 'Unspecified Brand';
     const teamName = body.teamName?.trim() || body.teamId || 'Unspecified Team';
     const history = Array.isArray(body.history) ? body.history.slice(-12) : [];
 
@@ -45,7 +53,9 @@ export class BrainController {
     ];
 
     const conversation = history
-      .map((item) => `${item.role === 'user' ? 'User' : 'Brain'}: ${item.content}`)
+      .map(
+        (item) => `${item.role === 'user' ? 'User' : 'Brain'}: ${item.content}`,
+      )
       .join('\n');
 
     const prompt = [
@@ -76,7 +86,9 @@ export class BrainController {
 
       return {
         success: true,
-        reply: response.text.trim() || 'I am ready, but I do not have a response yet.',
+        reply:
+          response.text.trim() ||
+          'I am ready, but I do not have a response yet.',
         usage: response.usage,
         context: {
           companyId: body.companyId,
@@ -89,7 +101,10 @@ export class BrainController {
       };
     } catch (error) {
       console.error('BrainController: failed to generate chat response', error);
-      throw new HttpException('Failed to talk to Brain', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Failed to talk to Brain',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

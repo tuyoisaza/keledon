@@ -55,7 +55,7 @@ class DebugLogger {
         // Persist to session storage so logs survive reloads
         try {
             sessionStorage.setItem('keledon_debug_logs', JSON.stringify(this.logs));
-        } catch (e) {
+        } catch (_e) {
             // Ignore storage errors
         }
 

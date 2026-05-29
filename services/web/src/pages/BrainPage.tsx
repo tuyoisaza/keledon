@@ -7,7 +7,6 @@ import {
     Send,
     Sparkles,
     Tag,
-    Users,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';

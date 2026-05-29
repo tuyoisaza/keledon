@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Edit2, Save, X, Loader2, Tag, AlertCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Plus, Trash2, Edit2, Save, Loader2, Tag, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { getCategories, createCategory, updateCategory, deleteCategory, type Category } from '@/lib/crud-api';
 import { useAuth } from '@/context/AuthContext';
@@ -21,7 +20,7 @@ export default function VectorStoreCategoriesPage() {
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({

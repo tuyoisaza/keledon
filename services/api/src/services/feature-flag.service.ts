@@ -17,7 +17,11 @@ export class FeatureFlagService {
 
   constructor(private prisma: PrismaService) {}
 
-  async isEnabled(name: string, scope?: string, scopeId?: string): Promise<boolean> {
+  async isEnabled(
+    name: string,
+    scope?: string,
+    scopeId?: string,
+  ): Promise<boolean> {
     const flag = await this.prisma.featureFlag.findFirst({
       where: {
         name,
@@ -95,7 +99,9 @@ export class FeatureFlagService {
         ...(data.enabled !== undefined && { enabled: data.enabled }),
         ...(data.scope !== undefined && { scope: data.scope }),
         ...(data.scopeId !== undefined && { scopeId: data.scopeId }),
-        ...(data.metadata !== undefined && { metadata: JSON.stringify(data.metadata) }),
+        ...(data.metadata !== undefined && {
+          metadata: JSON.stringify(data.metadata),
+        }),
         ...(data.expiresAt !== undefined && { expiresAt: data.expiresAt }),
       },
     });

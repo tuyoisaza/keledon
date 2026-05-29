@@ -1,4 +1,12 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { KnowledgeService } from './knowledge.service';
 import { CreateKnowledgeBaseDto } from './dto/create-knowledge-base.dto';
@@ -41,7 +49,9 @@ export class KnowledgeController {
   }
 
   @Post('knowledge-bases/:id/ingest')
-  @ApiOperation({ summary: 'Chunk and ingest knowledge-base documents into Qdrant' })
+  @ApiOperation({
+    summary: 'Chunk and ingest knowledge-base documents into Qdrant',
+  })
   async ingestKnowledgeBase(
     @Param('id') id: string,
     @Body() body?: IngestKnowledgeBaseDto,
@@ -56,7 +66,9 @@ export class KnowledgeController {
   }
 
   @Post('knowledge/search')
-  @ApiOperation({ summary: 'Search knowledge across one or more Qdrant knowledge collections' })
+  @ApiOperation({
+    summary: 'Search knowledge across one or more Qdrant knowledge collections',
+  })
   async searchKnowledge(@Body() body?: SearchKnowledgeDto) {
     if (!body) {
       throw new BadRequestException('Request body is required');
@@ -66,8 +78,13 @@ export class KnowledgeController {
   }
 
   @Get('knowledge-bases/:id/stats')
-  @ApiOperation({ summary: 'Get database and vector stats for a knowledge base' })
-  async getKnowledgeBaseStats(@Param('id') id: string, @Query('companyId') companyId?: string) {
+  @ApiOperation({
+    summary: 'Get database and vector stats for a knowledge base',
+  })
+  async getKnowledgeBaseStats(
+    @Param('id') id: string,
+    @Query('companyId') companyId?: string,
+  ) {
     return this.knowledgeService.getKnowledgeBaseStats(id, companyId);
   }
 }

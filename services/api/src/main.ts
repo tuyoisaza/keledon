@@ -24,7 +24,7 @@ process.on('unhandledRejection', (reason) => {
 
 async function bootstrap() {
   console.log('[Bootstrap] Starting KELEDON Cloud...');
-  
+
   try {
     // Span attachment map (cloud-side):
     // - HTTP ingress: auto HTTP instrumentation + x-trace-id response header
@@ -33,7 +33,7 @@ async function bootstrap() {
     // - Vector retrieval: RAGService
     const runtimeTier = getRuntimeTier();
     console.log(`[Bootstrap] Runtime tier: ${runtimeTier}`);
-    
+
     const isCloudRun = Boolean(process.env.K_SERVICE);
     if (isCloudRun && !isManagedProductionTier(runtimeTier)) {
       throw new Error(
@@ -42,7 +42,9 @@ async function bootstrap() {
     }
 
     if (isManagedProductionTier(runtimeTier) && !process.env.PORT) {
-      throw new Error('[Bootstrap] PRODUCTION_MANAGED requires PORT (Cloud Run contract).');
+      throw new Error(
+        '[Bootstrap] PRODUCTION_MANAGED requires PORT (Cloud Run contract).',
+      );
     }
 
     console.log('[Bootstrap] Checking managed dependencies...');
@@ -61,7 +63,7 @@ async function bootstrap() {
       }
       next();
     });
-    
+
     const corsOrigins = resolveCorsOrigins(runtimeTier);
     const allowAllCors = process.env.KELEDON_ALLOW_ALL_CORS === 'true';
     app.enableCors({
@@ -74,12 +76,14 @@ async function bootstrap() {
     // Routes with @Public() decorator are skipped
     const reflector = app.get(Reflector);
     app.useGlobalGuards(new AuthGuard(reflector));
-    
+
     const port = process.env.PORT || 9999;
     const host = process.env.HOST || '0.0.0.0';
 
     if (isManagedProductionTier(runtimeTier) && !process.env.DATABASE_URL) {
-      throw new Error('[Bootstrap] DATABASE_URL is required in PRODUCTION_MANAGED (Railway + Prisma contract).');
+      throw new Error(
+        '[Bootstrap] DATABASE_URL is required in PRODUCTION_MANAGED (Railway + Prisma contract).',
+      );
     }
 
     // Swagger / OpenAPI documentation
@@ -97,11 +101,21 @@ async function bootstrap() {
 
     console.log(`🚀 KELEDON Cloud Backend running on ${host}:${port}`);
     console.log(`🌐 Runtime tier: ${runtimeTier}`);
-    console.log(`🌐 Cloud Run service: ${process.env.K_SERVICE || 'not-detected'}`);
-    console.log(`🌐 CORS enabled for: ${allowAllCors ? 'ALL ORIGINS (MVP)' : corsOrigins.join(', ')}`);
-    console.log('⚙️ Managed runtime compatibility: stateless process; no local persistence assumptions');
-    console.log(`💾 DATABASE-READY: Persistence via PostgreSQL (DATABASE_URL / Prisma canonical contract)`);
-    console.log(`⚡ DATABASE-READY: No in-memory fallbacks - Cloud fails fast without database`);
+    console.log(
+      `🌐 Cloud Run service: ${process.env.K_SERVICE || 'not-detected'}`,
+    );
+    console.log(
+      `🌐 CORS enabled for: ${allowAllCors ? 'ALL ORIGINS (MVP)' : corsOrigins.join(', ')}`,
+    );
+    console.log(
+      '⚙️ Managed runtime compatibility: stateless process; no local persistence assumptions',
+    );
+    console.log(
+      `💾 DATABASE-READY: Persistence via PostgreSQL (DATABASE_URL / Prisma canonical contract)`,
+    );
+    console.log(
+      `⚡ DATABASE-READY: No in-memory fallbacks - Cloud fails fast without database`,
+    );
     console.log(`✅ PHASE 2 DATABASE-READY: Complete`);
   } catch (error) {
     console.error('❌ DATABASE-READY: Failed to start server:', error);

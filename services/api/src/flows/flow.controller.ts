@@ -1,6 +1,15 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { FlowService } from './flow.service';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Flows')
 @Controller('api/flows')
@@ -70,7 +79,10 @@ export class FlowController {
   }
 
   @Put(':id/steps/reorder')
-  async reorderSteps(@Param('id') id: string, @Body() body: { stepIds: string[] }) {
+  async reorderSteps(
+    @Param('id') id: string,
+    @Body() body: { stepIds: string[] },
+  ) {
     await this.flowService.reorderSteps(id, body.stepIds);
     return { success: true };
   }

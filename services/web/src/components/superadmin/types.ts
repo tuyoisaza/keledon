@@ -7,11 +7,6 @@ export interface SettingsTabProps {
     onCreateVoiceProfile?: (profile: Omit<VoiceProfile, 'id' | 'config'>) => Promise<void>;
 }
 
-export default function SettingsTab({
-    onSaveProviderCatalog,
-    onSaveTenantConfig,
-    onSaveVoiceProfiles,
-    onCreateVoiceProfile
-}: SettingsTabProps) {
+export default function SettingsTab(_props: SettingsTabProps) {
     return null;
 }

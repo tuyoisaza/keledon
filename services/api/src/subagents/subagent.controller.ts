@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { SubAgentService } from './subagent.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
@@ -46,16 +55,34 @@ export class SubAgentController {
 
   @Post('execute/flow')
   async executeFlow(
-    @Body() body: { flowId: string; parameters?: Record<string, any>; sessionId: string },
+    @Body()
+    body: {
+      flowId: string;
+      parameters?: Record<string, any>;
+      sessionId: string;
+    },
   ) {
-    return this.subAgentService.executeFlow(body.flowId, body.parameters || {}, body.sessionId);
+    return this.subAgentService.executeFlow(
+      body.flowId,
+      body.parameters || {},
+      body.sessionId,
+    );
   }
 
   @Post('execute/parallel')
   async executeParallelFlows(
-    @Body() body: { flowIds: string[]; parameters?: Record<string, any>; sessionId: string },
+    @Body()
+    body: {
+      flowIds: string[];
+      parameters?: Record<string, any>;
+      sessionId: string;
+    },
   ) {
-    return this.subAgentService.executeParallelFlows(body.flowIds, body.parameters || {}, body.sessionId);
+    return this.subAgentService.executeParallelFlows(
+      body.flowIds,
+      body.parameters || {},
+      body.sessionId,
+    );
   }
 
   @Get('flow-runs/:runId')

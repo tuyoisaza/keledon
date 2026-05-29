@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getCompanies, getUsers, getSessions } from '@/lib/crud-api';
 import { Filter, RefreshCw, Radio } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import CallMonitorPlaceholder from '@/components/phase4/CallMonitorPlaceholder';
 

@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Query, Body, HttpException, HttpStatus, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Body,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { VoiceAnalyticsService } from '../services/voice-analytics.service';
 import { IntegrationHealthService } from '../services/integration-health.service';
@@ -59,7 +67,7 @@ export interface DashboardLayout {
   id: string;
   name: string;
   description: string;
-  widgets: DashboardWidget[];
+  widgets: string[];
   layout: {
     columns: number;
     widgets: Array<{
@@ -80,7 +88,7 @@ export class AnalyticsController {
     private readonly flowExecutionService: FlowExecutionService,
     private readonly agentMonitoringService: AgentMonitoringService,
     private readonly securityService: SecurityService,
-    private readonly systemMonitoringService: SystemMonitoringService
+    private readonly systemMonitoringService: SystemMonitoringService,
   ) {
     console.log('AnalyticsController: Initialized with advanced analytics');
   }
@@ -88,7 +96,7 @@ export class AnalyticsController {
   @Get('dashboard/overview')
   async getDashboardOverview(
     @Query() timeRange: AnalyticsTimeRange,
-    @Query() filters: AnalyticsFilters = {}
+    @Query() filters: AnalyticsFilters = {},
   ): Promise<{
     success: boolean;
     data: {
@@ -103,15 +111,22 @@ export class AnalyticsController {
   }> {
     try {
       const period = timeRange.period || '24h';
-      
+
       // Get metrics from all services
-      const [voiceMetrics, integrationMetrics, flowMetrics, agentMetrics, securityMetrics, systemMetrics] = await Promise.all([
+      const [
+        voiceMetrics,
+        integrationMetrics,
+        flowMetrics,
+        agentMetrics,
+        securityMetrics,
+        systemMetrics,
+      ] = await Promise.all([
         this.getVoiceAnalyticsData(period, filters),
         this.getIntegrationAnalyticsData(period, filters),
         this.getFlowAnalyticsData(period, filters),
         this.getAgentAnalyticsData(period, filters),
         this.getSecurityAnalyticsData(period, filters),
-        this.getSystemAnalyticsData()
+        this.getSystemAnalyticsData(),
       ]);
 
       // Calculate overall health score
@@ -119,7 +134,7 @@ export class AnalyticsController {
         voiceMetrics,
         integrationMetrics,
         flowMetrics,
-        systemMetrics
+        systemMetrics,
       ]);
 
       const overviewData = {
@@ -128,44 +143,50 @@ export class AnalyticsController {
           flows: flowMetrics.totalExecutions,
           integrations: integrationMetrics.totalProviders,
           agents: agentMetrics.totalAgents,
-          alerts: securityMetrics.totalEvents
+          alerts: securityMetrics.totalEvents,
         },
         healthScore,
         activeUsers: agentMetrics.activeAgents,
         systemLoad: {
           cpu: systemMetrics.cpu.usage,
           memory: systemMetrics.memory.usage,
-          disk: systemMetrics.disk.usage
+          disk: systemMetrics.disk.usage,
         },
         recentAlerts: securityMetrics.recentEvents.slice(0, 5),
         performance: {
           avgResponseTime: this.calculateAvgResponseTime([
             integrationMetrics.avgResponseTime,
-            flowMetrics.avgExecutionTime
+            flowMetrics.avgExecutionTime,
           ]),
           successRate: this.calculateOverallSuccessRate([
             voiceMetrics.successRate,
-            flowMetrics.successRate
+            flowMetrics.successRate,
           ]),
-          uptime: systemMetrics.uptime
-        }
+          uptime: systemMetrics.uptime,
+        },
       };
 
       return {
         success: true,
         data: overviewData,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('AnalyticsController: Error getting dashboard overview', error);
-      throw new HttpException('Failed to get dashboard overview', HttpStatus.INTERNAL_SERVER_ERROR);
+      console.error(
+        'AnalyticsController: Error getting dashboard overview',
+        error,
+      );
+      throw new HttpException(
+        'Failed to get dashboard overview',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get('dashboard/widgets')
   async getDashboardWidgets(
     @Query() timeRange: AnalyticsTimeRange,
-    @Query() filters: AnalyticsFilters = {}
+    @Query() filters: AnalyticsFilters = {},
   ): Promise<{
     success: boolean;
     data: any[];
@@ -186,19 +207,19 @@ export class AnalyticsController {
             thresholds: {
               good: 80,
               warning: 60,
-              critical: 40
+              critical: 40,
             },
             colors: {
               good: '#10b981',
               warning: '#f59e0b',
-              critical: '#ef4444'
-            }
+              critical: '#ef4444',
+            },
           },
-          data: this.getSystemHealthGauge() as any,
+          data: this.getSystemHealthGauge(),
           lastUpdated: new Date(),
-          refreshInterval: 30
+          refreshInterval: 30,
         },
-        
+
         // Voice Analytics Widget
         {
           id: 'voice-analytics',
@@ -212,23 +233,23 @@ export class AnalyticsController {
                 label: 'Conversations',
                 yAxisID: 'conversations',
                 borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)'
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
               },
               {
                 label: 'Sentiment Score',
                 yAxisID: 'sentiment',
                 borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)'
-              }
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              },
             ],
             timeScale: true,
-            responsive: true
+            responsive: true,
           },
           data: await this.getVoiceAnalyticsChartData(period, filters),
           lastUpdated: new Date(),
-          refreshInterval: 60
+          refreshInterval: 60,
         },
-        
+
         // Flow Execution Widget
         {
           id: 'flow-execution',
@@ -240,16 +261,16 @@ export class AnalyticsController {
               { key: 'name', label: 'Flow Name', sortable: true },
               { key: 'status', label: 'Status', sortable: true },
               { key: 'duration', label: 'Duration', sortable: true },
-              { key: 'progress', label: 'Progress', sortable: true }
+              { key: 'progress', label: 'Progress', sortable: true },
             ],
             pagination: true,
-            pageSize: 10
+            pageSize: 10,
           },
           data: await this.getFlowExecutionTableData(period, filters),
           lastUpdated: new Date(),
-          refreshInterval: 30
+          refreshInterval: 30,
         },
-        
+
         // Integration Health Widget
         {
           id: 'integration-health',
@@ -260,13 +281,13 @@ export class AnalyticsController {
             xAxis: 'Provider',
             yAxis: 'Status',
             colorScale: 'RdYlGn',
-            responsive: true
+            responsive: true,
           },
           data: await this.getIntegrationHeatmapData(filters),
           lastUpdated: new Date(),
-          refreshInterval: 120
+          refreshInterval: 120,
         },
-        
+
         // System Metrics Widget
         {
           id: 'system-metrics',
@@ -276,13 +297,13 @@ export class AnalyticsController {
           config: {
             metrics: ['cpu', 'memory', 'network'],
             timeScale: true,
-            responsive: true
+            responsive: true,
           },
           data: await this.getSystemTrendData(period),
           lastUpdated: new Date(),
-          refreshInterval: 15
+          refreshInterval: 15,
         },
-        
+
         // Security Events Widget
         {
           id: 'security-events',
@@ -291,28 +312,44 @@ export class AnalyticsController {
           description: 'Recent security events and alerts',
           config: {
             columns: [
-              { key: 'timestamp', label: 'Time', sortable: true, type: 'datetime' },
+              {
+                key: 'timestamp',
+                label: 'Time',
+                sortable: true,
+                type: 'datetime',
+              },
               { key: 'type', label: 'Type', sortable: true, type: 'badge' },
-              { key: 'severity', label: 'Severity', sortable: true, type: 'severity' },
-              { key: 'description', label: 'Description', sortable: false }
+              {
+                key: 'severity',
+                label: 'Severity',
+                sortable: true,
+                type: 'severity',
+              },
+              { key: 'description', label: 'Description', sortable: false },
             ],
             pagination: true,
-            pageSize: 15
+            pageSize: 15,
           },
           data: await this.getSecurityEventsTableData(period, filters),
           lastUpdated: new Date(),
-          refreshInterval: 30
-        }
+          refreshInterval: 30,
+        },
       ];
 
       return {
         success: true,
         data: widgets,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('AnalyticsController: Error getting dashboard widgets', error);
-      throw new HttpException('Failed to get dashboard widgets', HttpStatus.INTERNAL_SERVER_ERROR);
+      console.error(
+        'AnalyticsController: Error getting dashboard widgets',
+        error,
+      );
+      throw new HttpException(
+        'Failed to get dashboard widgets',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -328,31 +365,89 @@ export class AnalyticsController {
           id: 'default',
           name: 'Default Dashboard',
           description: 'Standard layout for most users',
-          widgets: ['system-health', 'voice-analytics', 'flow-execution', 'integration-health'],
+          widgets: [
+            'system-health',
+            'voice-analytics',
+            'flow-execution',
+            'integration-health',
+          ],
           layout: {
             columns: 3,
             widgets: [
-              { widgetId: 'system-health', row: 0, col: 0, width: 2, height: 1 },
-              { widgetId: 'voice-analytics', row: 0, col: 2, width: 3, height: 2 },
-              { widgetId: 'flow-execution', row: 2, col: 0, width: 3, height: 2 },
-              { widgetId: 'integration-health', row: 2, col: 3, width: 3, height: 2 }
-            ]
-          }
+              {
+                widgetId: 'system-health',
+                row: 0,
+                col: 0,
+                width: 2,
+                height: 1,
+              },
+              {
+                widgetId: 'voice-analytics',
+                row: 0,
+                col: 2,
+                width: 3,
+                height: 2,
+              },
+              {
+                widgetId: 'flow-execution',
+                row: 2,
+                col: 0,
+                width: 3,
+                height: 2,
+              },
+              {
+                widgetId: 'integration-health',
+                row: 2,
+                col: 3,
+                width: 3,
+                height: 2,
+              },
+            ],
+          },
         },
         {
           id: 'operations',
           name: 'Operations Dashboard',
           description: 'Focused on operational metrics',
-          widgets: ['system-health', 'flow-execution', 'system-metrics', 'security-events'],
+          widgets: [
+            'system-health',
+            'flow-execution',
+            'system-metrics',
+            'security-events',
+          ],
           layout: {
             columns: 2,
             widgets: [
-              { widgetId: 'system-health', row: 0, col: 0, width: 1, height: 1 },
-              { widgetId: 'flow-execution', row: 0, col: 1, width: 1, height: 2 },
-              { widgetId: 'system-metrics', row: 1, col: 0, width: 1, height: 2 },
-              { widgetId: 'security-events', row: 1, col: 1, width: 1, height: 2 }
-            ]
-          }
+              {
+                widgetId: 'system-health',
+                row: 0,
+                col: 0,
+                width: 1,
+                height: 1,
+              },
+              {
+                widgetId: 'flow-execution',
+                row: 0,
+                col: 1,
+                width: 1,
+                height: 2,
+              },
+              {
+                widgetId: 'system-metrics',
+                row: 1,
+                col: 0,
+                width: 1,
+                height: 2,
+              },
+              {
+                widgetId: 'security-events',
+                row: 1,
+                col: 1,
+                width: 1,
+                height: 2,
+              },
+            ],
+          },
         },
         {
           id: 'executive',
@@ -362,32 +457,59 @@ export class AnalyticsController {
           layout: {
             columns: 2,
             widgets: [
-              { widgetId: 'system-health', row: 0, col: 0, width: 1, height: 1 },
-              { widgetId: 'voice-analytics', row: 0, col: 1, width: 1, height: 2 },
-              { widgetId: 'integration-health', row: 1, col: 0, width: 1, height: 1 }
-            ]
-          }
-        }
+              {
+                widgetId: 'system-health',
+                row: 0,
+                col: 0,
+                width: 1,
+                height: 1,
+              },
+              {
+                widgetId: 'voice-analytics',
+                row: 0,
+                col: 1,
+                width: 1,
+                height: 2,
+              },
+              {
+                widgetId: 'integration-health',
+                row: 1,
+                col: 0,
+                width: 1,
+                height: 1,
+              },
+            ],
+          },
+        },
       ];
 
       return {
         success: true,
         data: layouts,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('AnalyticsController: Error getting dashboard layouts', error);
-      throw new HttpException('Failed to get dashboard layouts', HttpStatus.INTERNAL_SERVER_ERROR);
+      console.error(
+        'AnalyticsController: Error getting dashboard layouts',
+        error,
+      );
+      throw new HttpException(
+        'Failed to get dashboard layouts',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Post('dashboard/layouts')
-  async createDashboardLayout(@Body() layoutData: {
-    name: string;
-    description: string;
-    widgets: string[];
-    layout: DashboardLayout['layout'];
-  }): Promise<{
+  async createDashboardLayout(
+    @Body()
+    layoutData: {
+      name: string;
+      description: string;
+      widgets: string[];
+      layout: DashboardLayout['layout'];
+    },
+  ): Promise<{
     success: boolean;
     data: DashboardLayout;
     timestamp: string;
@@ -398,17 +520,23 @@ export class AnalyticsController {
         name: layoutData.name,
         description: layoutData.description,
         widgets: layoutData.widgets,
-        layout: layoutData.layout
+        layout: layoutData.layout,
       };
 
       return {
         success: true,
         data: newLayout,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('AnalyticsController: Error creating dashboard layout', error);
-      throw new HttpException('Failed to create dashboard layout', HttpStatus.INTERNAL_SERVER_ERROR);
+      console.error(
+        'AnalyticsController: Error creating dashboard layout',
+        error,
+      );
+      throw new HttpException(
+        'Failed to create dashboard layout',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -416,7 +544,7 @@ export class AnalyticsController {
   async exportAnalyticsReport(
     @Query() timeRange: AnalyticsTimeRange,
     @Query() format: 'json' | 'csv' | 'pdf' = 'json',
-    @Query() filters: AnalyticsFilters = {}
+    @Query() filters: AnalyticsFilters = {},
   ): Promise<{
     success: boolean;
     data: any;
@@ -454,17 +582,23 @@ export class AnalyticsController {
         data,
         filename,
         mimeType,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      console.error('AnalyticsController: Error exporting analytics report', error);
-      throw new HttpException('Failed to export analytics report', HttpStatus.INTERNAL_SERVER_ERROR);
+      console.error(
+        'AnalyticsController: Error exporting analytics report',
+        error,
+      );
+      throw new HttpException(
+        'Failed to export analytics report',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @Get('realtime')
   async getRealTimeData(
-    @Query() types: string = 'system,voice,flows,integrations'
+    @Query() types: string = 'system,voice,flows,integrations',
   ): Promise<{
     success: boolean;
     data: {
@@ -498,73 +632,114 @@ export class AnalyticsController {
       return {
         success: true,
         data,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       console.error('AnalyticsController: Error getting real-time data', error);
-      throw new HttpException('Failed to get real-time data', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Failed to get real-time data',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   // Private helper methods
-  private async getVoiceAnalyticsData(period: string, filters: AnalyticsFilters) {
+  private async getVoiceAnalyticsData(
+    period: string,
+    _filters: AnalyticsFilters,
+  ) {
     return this.voiceAnalyticsService.getAnalytics(period as any);
   }
 
-  private async getIntegrationAnalyticsData(period: string, filters: AnalyticsFilters) {
+  private async getIntegrationAnalyticsData(
+    _period: string,
+    _filters: AnalyticsFilters,
+  ) {
     const providers = this.integrationHealthService.getProviders();
-    const connectedProviders = providers.filter(p => p.status === 'connected');
-    
+    const connectedProviders = providers.filter(
+      (p) => p.status === 'connected',
+    );
+
     return {
       totalProviders: providers.length,
       connectedProviders: connectedProviders.length,
-      avgResponseTime: connectedProviders.reduce((sum, p) => 
-        sum + (p.health?.responseTime || 0), 0) / connectedProviders.length,
-      uptime: connectedProviders.reduce((sum, p) => 
-        sum + (p.health?.uptime || 0), 0) / connectedProviders.length
+      avgResponseTime:
+        connectedProviders.reduce(
+          (sum, p) => sum + (p.health?.responseTime || 0),
+          0,
+        ) / connectedProviders.length,
+      uptime:
+        connectedProviders.reduce(
+          (sum, p) => sum + (p.health?.uptime || 0),
+          0,
+        ) / connectedProviders.length,
     };
   }
 
-  private async getFlowAnalyticsData(period: string, filters: AnalyticsFilters) {
+  private async getFlowAnalyticsData(
+    _period: string,
+    _filters: AnalyticsFilters,
+  ) {
     const executions = this.flowExecutionService.getExecutions();
-    const completedFlows = executions.filter(e => e.status === 'completed');
-    
+    const completedFlows = executions.filter((e) => e.status === 'completed');
+
     return {
       totalExecutions: executions.length,
       completedExecutions: completedFlows.length,
-      successRate: executions.length > 0 ? (completedFlows.length / executions.length) * 100 : 0,
-      avgExecutionTime: completedFlows.length > 0 ? 
-        completedFlows.reduce((sum, e) => sum + (e.duration || 0), 0) / completedFlows.length : 0
+      successRate:
+        executions.length > 0
+          ? (completedFlows.length / executions.length) * 100
+          : 0,
+      avgExecutionTime:
+        completedFlows.length > 0
+          ? completedFlows.reduce((sum, e) => sum + (e.duration || 0), 0) /
+            completedFlows.length
+          : 0,
     };
   }
 
-  private async getAgentAnalyticsData(period: string, filters: AnalyticsFilters) {
+  private async getAgentAnalyticsData(
+    _period: string,
+    _filters: AnalyticsFilters,
+  ) {
     const agents = this.agentMonitoringService.getAllAgentStatuses();
-    const activeAgents = agents.filter(a => a.status !== 'idle');
-    
+    const activeAgents = agents.filter((a) => a.status !== 'idle');
+
     return {
       totalAgents: agents.length,
       activeAgents: activeAgents.length,
-      avgCpuUsage: agents.length > 0 ? 
-        agents.reduce((sum, a) => sum + a.performance.cpu, 0) / agents.length : 0,
-      avgMemoryUsage: agents.length > 0 ? 
-        agents.reduce((sum, a) => sum + a.performance.memory, 0) / agents.length : 0
+      avgCpuUsage:
+        agents.length > 0
+          ? agents.reduce((sum, a) => sum + a.performance.cpu, 0) /
+            agents.length
+          : 0,
+      avgMemoryUsage:
+        agents.length > 0
+          ? agents.reduce((sum, a) => sum + a.performance.memory, 0) /
+            agents.length
+          : 0,
     };
   }
 
-  private async getSecurityAnalyticsData(period: string, filters: AnalyticsFilters) {
+  private async getSecurityAnalyticsData(
+    period: string,
+    filters: AnalyticsFilters,
+  ) {
     const events = await this.securityService.getSecurityEvents({
       from: this.getDateFromPeriod(period),
-      severity: filters.severities
+      severity: filters.severities,
     });
-    
-    const criticalEvents = events.filter(e => e.severity === 'critical' || e.severity === 'emergency');
-    
+
+    const criticalEvents = events.filter((e) => e.severity === 'critical');
+
     return {
       totalEvents: events.length,
       criticalEvents: criticalEvents.length,
       recentEvents: events.slice(-20),
-      securityScore: events.length > 0 ? Math.max(0, 100 - (criticalEvents.length / events.length) * 100) : 100
+      securityScore:
+        events.length > 0
+          ? Math.max(0, 100 - (criticalEvents.length / events.length) * 100)
+          : 100,
     };
   }
 
@@ -573,144 +748,179 @@ export class AnalyticsController {
   }
 
   private calculateOverallHealthScore(metrics: any[]): number {
-    const scores = metrics.map(m => {
+    const scores = metrics.map((m) => {
       // Simple health scoring based on various metrics
       let score = 100;
-      
+
       if (m.avgResponseTime > 1000) score -= 20;
       if (m.uptime < 95) score -= 15;
       if (m.successRate < 90) score -= 25;
-      
+
       return Math.max(0, score);
     });
-    
-    return scores.length > 0 ? Math.round(scores.reduce((sum, s) => sum + s, 0) / scores.length) : 100;
+
+    return scores.length > 0
+      ? Math.round(scores.reduce((sum, s) => sum + s, 0) / scores.length)
+      : 100;
   }
 
   private calculateAvgResponseTime(responseTimes: number[]): number {
-    return responseTimes.length > 0 ? 
-      responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length : 0;
+    return responseTimes.length > 0
+      ? responseTimes.reduce((sum, time) => sum + time, 0) /
+          responseTimes.length
+      : 0;
   }
 
   private calculateOverallSuccessRate(successRates: number[]): number {
-    return successRates.length > 0 ? 
-      successRates.reduce((sum, rate) => sum + rate, 0) / successRates.length : 0;
+    return successRates.length > 0
+      ? successRates.reduce((sum, rate) => sum + rate, 0) / successRates.length
+      : 0;
   }
 
   private getSystemHealthGauge(): any {
     const metrics = this.systemMonitoringService.getCurrentMetrics();
-    const healthScore = 100 - ((metrics.cpu.usage + metrics.memory.usage) / 2);
-    
+    const healthScore = 100 - (metrics.cpu.usage + metrics.memory.usage) / 2;
+
     return {
       value: Math.round(healthScore),
-      status: healthScore >= 80 ? 'good' : healthScore >= 60 ? 'warning' : 'critical',
+      status:
+        healthScore >= 80 ? 'good' : healthScore >= 60 ? 'warning' : 'critical',
       details: {
         cpu: metrics.cpu.usage.toFixed(1),
         memory: metrics.memory.usage.toFixed(1),
-        uptime: metrics.uptime
-      }
+        uptime: metrics.uptime,
+      },
     };
   }
 
-  private async getVoiceAnalyticsChartData(period: string, filters: AnalyticsFilters): Promise<any> {
+  private async getVoiceAnalyticsChartData(
+    period: string,
+    filters: AnalyticsFilters,
+  ): Promise<any> {
     const analytics = await this.getVoiceAnalyticsData(period, filters);
-    
+
     return {
       labels: this.getTimeLabels(period),
       datasets: [
         {
           label: 'Conversations',
-          data: this.generateTimeSeriesData(analytics.totalConversations, period),
+          data: this.generateTimeSeriesData(
+            analytics.totalConversations,
+            period,
+          ),
         },
         {
           label: 'Sentiment Score',
-          data: this.generateTimeSeriesData(analytics.sentimentDistribution.positive, period),
-        }
-      ]
+          data: this.generateTimeSeriesData(
+            analytics.sentimentDistribution.positive,
+            period,
+          ),
+        },
+      ],
     };
   }
 
-  private async getFlowExecutionTableData(period: string, filters: AnalyticsFilters): Promise<any[]> {
+  private async getFlowExecutionTableData(
+    _period: string,
+    _filters: AnalyticsFilters,
+  ): Promise<any[]> {
     const executions = this.flowExecutionService.getExecutions({
       limit: 50,
       sortBy: 'updatedAt',
-      sortOrder: 'desc'
+      sortOrder: 'desc',
     });
-    
-    return executions.map(exec => ({
+
+    return executions.map((exec) => ({
       id: exec.id,
       name: exec.name,
       status: exec.status,
       duration: exec.duration ? Math.round(exec.duration / 1000) : null,
       progress: exec.progress,
       steps: `${exec.currentStepIndex}/${exec.totalSteps}`,
-      lastUpdated: exec.updatedAt
+      lastUpdated: exec.updatedAt,
     }));
   }
 
-  private async getIntegrationHeatmapData(filters: AnalyticsFilters): Promise<any> {
+  private async getIntegrationHeatmapData(
+    _filters: AnalyticsFilters,
+  ): Promise<any> {
     const providers = this.integrationHealthService.getProviders();
-    
-    return providers.map(provider => ({
+
+    return providers.map((provider) => ({
       x: provider.name,
       y: this.getHealthValue(provider.status),
       v: {
         status: provider.status,
         responseTime: provider.health?.responseTime || 0,
-        uptime: provider.health?.uptime || 0
-      }
+        uptime: provider.health?.uptime || 0,
+      },
     }));
   }
 
   private async getSystemTrendData(period: string): Promise<any> {
-    const metrics = this.systemMonitoringService.getMetricsHistory(this.getMinutesFromPeriod(period));
-    
+    const metrics = this.systemMonitoringService.getMetricsHistory(
+      this.getMinutesFromPeriod(period),
+    );
+
     return {
       labels: this.getTimeLabels(period),
       datasets: [
         {
           label: 'CPU Usage (%)',
-          data: metrics.map(m => m.cpu.usage),
-          borderColor: '#ef4444'
+          data: metrics.map((m) => m.cpu.usage),
+          borderColor: '#ef4444',
         },
         {
           label: 'Memory Usage (%)',
-          data: metrics.map(m => m.memory.usage),
-          borderColor: '#f59e0b'
+          data: metrics.map((m) => m.memory.usage),
+          borderColor: '#f59e0b',
         },
         {
           label: 'Network I/O',
-          data: metrics.map(m => m.network.bytesReceived / 1000000), // Convert to MB
-          borderColor: '#10b981'
-        }
-      ]
+          data: metrics.map((m) => m.network.bytesReceived / 1000000), // Convert to MB
+          borderColor: '#10b981',
+        },
+      ],
     };
   }
 
-  private async getSecurityEventsTableData(period: string, filters: AnalyticsFilters): Promise<any[]> {
+  private async getSecurityEventsTableData(
+    period: string,
+    filters: AnalyticsFilters,
+  ): Promise<any[]> {
     const events = await this.securityService.getSecurityEvents({
       from: this.getDateFromPeriod(period),
-      severity: filters.severities
+      severity: filters.severities,
     });
-    
-    return events.slice(0, 50).map(event => ({
+
+    return events.slice(0, 50).map((event) => ({
       id: event.id,
       timestamp: event.timestamp,
       type: event.type,
       severity: event.severity,
       description: event.description,
-      userId: event.userId
+      userId: event.userId,
     }));
   }
 
-  private async generateReportData(period: string, filters: AnalyticsFilters): Promise<any> {
-    const [voiceData, integrationData, flowData, agentData, securityData, systemData] = await Promise.all([
+  private async generateReportData(
+    period: string,
+    filters: AnalyticsFilters,
+  ): Promise<any> {
+    const [
+      voiceData,
+      integrationData,
+      flowData,
+      agentData,
+      securityData,
+      systemData,
+    ] = await Promise.all([
       this.getVoiceAnalyticsData(period, filters),
       this.getIntegrationAnalyticsData(period, filters),
       this.getFlowAnalyticsData(period, filters),
       this.getAgentAnalyticsData(period, filters),
       this.getSecurityAnalyticsData(period, filters),
-      this.getSystemAnalyticsData()
+      this.getSystemAnalyticsData(),
     ]);
 
     return {
@@ -721,7 +931,7 @@ export class AnalyticsController {
       flowAnalytics: flowData,
       agentAnalytics: agentData,
       securityAnalytics: securityData,
-      systemAnalytics: systemData
+      systemAnalytics: systemData,
     };
   }
 
@@ -729,39 +939,47 @@ export class AnalyticsController {
     const now = new Date();
     const labels: string[] = [];
     const intervals = this.getIntervalsForPeriod(period);
-    
+
     for (let i = intervals - 1; i >= 0; i--) {
-      const date = new Date(now.getTime() - i * this.getIntervalMsForPeriod(period));
+      const date = new Date(
+        now.getTime() - i * this.getIntervalMsForPeriod(period),
+      );
       labels.push(date.toLocaleTimeString());
     }
-    
+
     return labels;
   }
 
   private generateTimeSeriesData(value: number, period: string): number[] {
     const data: number[] = [];
     const intervals = this.getIntervalsForPeriod(period);
-    
+
     for (let i = 0; i < intervals; i++) {
       // Deterministic variation (no randomness)
       data.push(value);
     }
-    
+
     return data;
   }
 
   private getMinutesFromPeriod(period: string): number {
     switch (period) {
-      case '1h': return 60;
-      case '24h': return 1440;
-      case '7d': return 10080;
-      case '30d': return 43200;
-      case '90d': return 129600;
-      default: return 1440;
+      case '1h':
+        return 60;
+      case '24h':
+        return 1440;
+      case '7d':
+        return 10080;
+      case '30d':
+        return 43200;
+      case '90d':
+        return 129600;
+      default:
+        return 1440;
     }
   }
 
-  private getIntervalsForPeriod(period: string): number {
+  private getIntervalsForPeriod(_period: string): number {
     return 12; // Show 12 data points for all periods
   }
 
@@ -777,10 +995,14 @@ export class AnalyticsController {
 
   private getHealthValue(status: string): number {
     switch (status) {
-      case 'connected': return 100;
-      case 'error': return 25;
-      case 'disconnected': return 50;
-      default: return 75;
+      case 'connected':
+        return 100;
+      case 'error':
+        return 25;
+      case 'disconnected':
+        return 50;
+      default:
+        return 75;
     }
   }
 
@@ -788,15 +1010,15 @@ export class AnalyticsController {
     // Simple CSV conversion
     const headers = Object.keys(data);
     const rows = [headers.join(',')];
-    
+
     if (Array.isArray(data)) {
-      data.forEach(item => {
-        rows.push(headers.map(header => `"${item[header] || ''}"`).join(','));
+      data.forEach((item) => {
+        rows.push(headers.map((header) => `"${item[header] || ''}"`).join(','));
       });
     } else {
-      rows.push(headers.map(header => `"${data[header] || ''}"`).join(','));
+      rows.push(headers.map((header) => `"${data[header] || ''}"`).join(','));
     }
-    
+
     return rows.join('\n');
   }
 

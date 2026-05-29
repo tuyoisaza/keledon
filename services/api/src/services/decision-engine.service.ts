@@ -1,4 +1,10 @@
-import { Injectable, Logger, Inject, forwardRef, Optional } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  Inject,
+  forwardRef,
+  Optional,
+} from '@nestjs/common';
 import { SessionService } from './session.service';
 import { AgentGateway } from '../gateways/agent.gateway';
 import { AgentEvent, CloudCommand } from '../contracts/events';
@@ -120,71 +126,114 @@ export class DecisionEngineService {
    * Process text_input event and generate canonical brain command
    * This is the core "Cloud decides" functionality per canonical specs
    */
-  async processTextInput(sessionId: string, text: string, confidence: number, provider: string, metadata: Record<string, any> = {}): Promise<DecisionResult> {
+  async processTextInput(
+    sessionId: string,
+    text: string,
+    confidence: number,
+    provider: string,
+    metadata: Record<string, any> = {},
+  ): Promise<DecisionResult> {
     const startTime = Date.now();
     const decisionId = uuidv4();
-    
+
     try {
       // Validate session exists (canonical rule: if no session_id, it does not exist)
       const session = await this.sessionService.getSession(sessionId);
       if (!session) {
-        throw new Error(`Session ${sessionId} does not exist - cannot process text input`);
+        throw new Error(
+          `Session ${sessionId} does not exist - cannot process text input`,
+        );
       }
 
       // Get session context for decision making
-      const sessionEvents = await this.sessionService.getSessionEvents(sessionId);
-      const context = await this.buildDecisionContext(sessionId, text, sessionEvents, metadata);
+      const sessionEvents =
+        await this.sessionService.getSessionEvents(sessionId);
+      const context = await this.buildDecisionContext(
+        sessionId,
+        text,
+        sessionEvents,
+        metadata,
+      );
 
       // Core decision logic (Cloud decides), including mandatory evidence checks.
-      const decisionOutcome = await this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.DECIDE, async (span) => {
-        const model = metadata.model || provider || process.env.KELEDON_DECISION_MODEL || 'rule-engine';
-        span.setAttribute(DECISION_EVIDENCE_ATTRS.DECISION_ID, decisionId);
-        span.setAttribute('model', String(model));
+      const decisionOutcome = await this.tracer.startActiveSpan(
+        KELEDON_TRACE_SPANS.DECIDE,
+        async (span) => {
+          const model =
+            metadata.model ||
+            provider ||
+            process.env.KELEDON_DECISION_MODEL ||
+            'rule-engine';
+          span.setAttribute(DECISION_EVIDENCE_ATTRS.DECISION_ID, decisionId);
+          span.setAttribute('model', String(model));
 
-        if (typeof metadata.token_count === 'number') {
-          span.setAttribute('token_count', metadata.token_count);
-        }
+          if (typeof metadata.token_count === 'number') {
+            span.setAttribute('token_count', metadata.token_count);
+          }
 
-        try {
-          const vectorContext = await this.retrieveVectorContext(sessionId, text, metadata, decisionId);
-          const decision = await this.makeDecision(context, vectorContext);
-          const decisionType = this.mapDecisionType(decision?.type);
-          const policy = await this.enforcePolicy(decisionId, decision, decisionType, vectorContext);
+          try {
+            const vectorContext = await this.retrieveVectorContext(
+              sessionId,
+              text,
+              metadata,
+              decisionId,
+            );
+            const decision = await this.makeDecision(context, vectorContext);
+            const decisionType = this.mapDecisionType(decision?.type);
+            const policy = await this.enforcePolicy(
+              decisionId,
+              decision,
+              decisionType,
+              vectorContext,
+            );
 
-          const evidence: DecisionEvidence = {
-            decision_id: decisionId,
-            policy_ids: policy.policyIds,
-            playbook_id: policy.playbookId,
-            vector_collections: this.collectVectorCollections(vectorContext),
-            vector_doc_ids: vectorContext.map((item) => item.document.id),
-            confidence_score: Number(decision?.confidence ?? context.confidence ?? 0),
-            decision_type: decisionType,
-          };
+            const evidence: DecisionEvidence = {
+              decision_id: decisionId,
+              policy_ids: policy.policyIds,
+              playbook_id: policy.playbookId,
+              vector_collections: this.collectVectorCollections(vectorContext),
+              vector_doc_ids: vectorContext.map((item) => item.document.id),
+              confidence_score: Number(
+                decision?.confidence ?? context.confidence ?? 0,
+              ),
+              decision_type: decisionType,
+            };
 
-          this.attachDecisionEvidence(span, evidence);
-          span.setAttribute('decision.command_type', String(decision?.type || 'unknown'));
+            this.attachDecisionEvidence(span, evidence);
+            span.setAttribute(
+              'decision.command_type',
+              String(decision?.type || 'unknown'),
+            );
 
-          return {
-            decision,
-            vectorContext,
-            evidence,
-          };
-        } catch (decisionError) {
-          span.setStatus({
-            code: SpanStatusCode.ERROR,
-            message: decisionError instanceof Error ? decisionError.message : String(decisionError),
-          });
-          throw decisionError;
-        } finally {
-          span.end();
-        }
-      });
-      
+            return {
+              decision,
+              vectorContext,
+              evidence,
+            };
+          } catch (decisionError) {
+            span.setStatus({
+              code: SpanStatusCode.ERROR,
+              message:
+                decisionError instanceof Error
+                  ? decisionError.message
+                  : String(decisionError),
+            });
+            throw decisionError;
+          } finally {
+            span.end();
+          }
+        },
+      );
+
       context.metadata.vector_context = decisionOutcome.vectorContext;
       context.metadata.decision_evidence = decisionOutcome.evidence;
 
       // Generate canonical brain command
-      const command = await this.generateCommand(decisionOutcome.decision, sessionId, decisionOutcome.evidence);
+      const command = await this.generateCommand(
+        decisionOutcome.decision,
+        sessionId,
+        decisionOutcome.evidence,
+      );
 
       // Persist the decision
       await this.persistDecision(sessionId, text, command, {
@@ -196,9 +245,11 @@ export class DecisionEngineService {
       });
 
       const processingTime = Date.now() - startTime;
-      
-      console.log(`[DecisionEngine] Processed text_input: "${text}" -> command: ${command.type} (confidence: ${command.confidence})`);
-      
+
+      console.log(
+        `[DecisionEngine] Processed text_input: "${text}" -> command: ${command.type} (confidence: ${command.confidence})`,
+      );
+
       return {
         command,
         confidence: command.confidence,
@@ -210,10 +261,9 @@ export class DecisionEngineService {
         processingTime,
         decisionEvidence: decisionOutcome.evidence,
       };
-
     } catch (error) {
       console.error('[DecisionEngine] Error processing text input:', error);
-      
+
       // Return error command (anti-demo rule: show failure)
       const errorCommand: CloudCommand = {
         command_id: uuidv4(),
@@ -226,8 +276,8 @@ export class DecisionEngineService {
         flow_run_id: null,
         say: {
           text: `Decision processing failed: ${error.message}`,
-          interruptible: true
-        }
+          interruptible: true,
+        },
       };
 
       return {
@@ -235,17 +285,23 @@ export class DecisionEngineService {
         confidence: 0,
         reasoning: `Error: ${error.message}`,
         context: { error: error.message, decision_id: decisionId },
-        processingTime: Date.now() - startTime
+        processingTime: Date.now() - startTime,
       };
     }
   }
 
-  private mapDecisionType(commandType: string | undefined): CanonicalDecisionType {
+  private mapDecisionType(
+    commandType: string | undefined,
+  ): CanonicalDecisionType {
     if (commandType === 'say') {
       return 'RESPOND';
     }
 
-    if (commandType === 'ui_steps' || commandType === 'mode' || commandType === 'stop') {
+    if (
+      commandType === 'ui_steps' ||
+      commandType === 'mode' ||
+      commandType === 'stop'
+    ) {
       return 'ACT';
     }
 
@@ -257,13 +313,31 @@ export class DecisionEngineService {
   }
 
   private attachDecisionEvidence(span: any, evidence: DecisionEvidence): void {
-    span.setAttribute(DECISION_EVIDENCE_ATTRS.DECISION_ID, evidence.decision_id);
+    span.setAttribute(
+      DECISION_EVIDENCE_ATTRS.DECISION_ID,
+      evidence.decision_id,
+    );
     span.setAttribute(DECISION_EVIDENCE_ATTRS.POLICY_IDS, evidence.policy_ids);
-    span.setAttribute(DECISION_EVIDENCE_ATTRS.PLAYBOOK_ID, evidence.playbook_id);
-    span.setAttribute(DECISION_EVIDENCE_ATTRS.VECTOR_COLLECTIONS, evidence.vector_collections);
-    span.setAttribute(DECISION_EVIDENCE_ATTRS.VECTOR_DOC_IDS, evidence.vector_doc_ids);
-    span.setAttribute(DECISION_EVIDENCE_ATTRS.CONFIDENCE_SCORE, evidence.confidence_score);
-    span.setAttribute(DECISION_EVIDENCE_ATTRS.DECISION_TYPE, evidence.decision_type);
+    span.setAttribute(
+      DECISION_EVIDENCE_ATTRS.PLAYBOOK_ID,
+      evidence.playbook_id,
+    );
+    span.setAttribute(
+      DECISION_EVIDENCE_ATTRS.VECTOR_COLLECTIONS,
+      evidence.vector_collections,
+    );
+    span.setAttribute(
+      DECISION_EVIDENCE_ATTRS.VECTOR_DOC_IDS,
+      evidence.vector_doc_ids,
+    );
+    span.setAttribute(
+      DECISION_EVIDENCE_ATTRS.CONFIDENCE_SCORE,
+      evidence.confidence_score,
+    );
+    span.setAttribute(
+      DECISION_EVIDENCE_ATTRS.DECISION_TYPE,
+      evidence.decision_type,
+    );
   }
 
   private collectVectorCollections(vectorContext: RetrievalResult[]): string[] {
@@ -282,7 +356,10 @@ export class DecisionEngineService {
     return Array.from(collections);
   }
 
-  private resolvePlaybookId(commandType: string, decisionType: CanonicalDecisionType): string {
+  private resolvePlaybookId(
+    commandType: string,
+    decisionType: CanonicalDecisionType,
+  ): string {
     if (commandType === 'ui_steps') {
       return 'playbook.browser.automation.v1';
     }
@@ -308,63 +385,68 @@ export class DecisionEngineService {
     decisionType: CanonicalDecisionType,
     vectorContext: RetrievalResult[],
   ): Promise<{ policyIds: string[]; playbookId: string }> {
-    return this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.POLICY_CHECK, async (span) => {
-      span.setAttribute(DECISION_EVIDENCE_ATTRS.DECISION_ID, decisionId);
-      span.setAttribute(POLICY_CHECK_ATTRS.DECISION_ID, decisionId);
+    return this.tracer.startActiveSpan(
+      KELEDON_TRACE_SPANS.POLICY_CHECK,
+      async (span) => {
+        span.setAttribute(DECISION_EVIDENCE_ATTRS.DECISION_ID, decisionId);
+        span.setAttribute(POLICY_CHECK_ATTRS.DECISION_ID, decisionId);
 
-      try {
-        if (!vectorContext.length) {
-          throw new Error('No vector documents retrieved - policy enforcement failed');
+        try {
+          if (!vectorContext.length) {
+            throw new Error(
+              'No vector documents retrieved - policy enforcement failed',
+            );
+          }
+
+          const commandType = String(decision?.type || '').toLowerCase();
+          const policyIds: string[] = ['POLICY_VECTOR_GROUNDED_DECISION'];
+
+          if (['say', 'ui_steps', 'mode', 'stop'].includes(commandType)) {
+            policyIds.push('POLICY_COMMAND_TYPE_ALLOWED');
+          }
+
+          if (decisionType === 'ACT') {
+            policyIds.push('POLICY_ACTION_ALLOWED_BY_CLOUD');
+          }
+
+          if (decisionType === 'RESPOND') {
+            policyIds.push('POLICY_RESPONSE_REQUIRES_GROUNDING');
+          }
+
+          if (decisionType === 'ASK') {
+            policyIds.push('POLICY_CLARIFICATION_ALLOWED');
+          }
+
+          if (decisionType === 'WAIT') {
+            policyIds.push('POLICY_WAIT_FOR_NEXT_EVENT');
+          }
+
+          if (!policyIds.length) {
+            throw new Error('No applicable policy for decision');
+          }
+
+          const playbookId = this.resolvePlaybookId(commandType, decisionType);
+
+          span.setAttribute(POLICY_CHECK_ATTRS.POLICY_IDS, policyIds);
+          span.setAttribute(POLICY_CHECK_ATTRS.PLAYBOOK_ID, playbookId);
+          span.setAttribute(POLICY_CHECK_ATTRS.APPLIED, true);
+
+          return {
+            policyIds,
+            playbookId,
+          };
+        } catch (error) {
+          span.setAttribute(POLICY_CHECK_ATTRS.APPLIED, false);
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: error instanceof Error ? error.message : String(error),
+          });
+          throw error;
+        } finally {
+          span.end();
         }
-
-        const commandType = String(decision?.type || '').toLowerCase();
-        const policyIds: string[] = ['POLICY_VECTOR_GROUNDED_DECISION'];
-
-        if (['say', 'ui_steps', 'mode', 'stop'].includes(commandType)) {
-          policyIds.push('POLICY_COMMAND_TYPE_ALLOWED');
-        }
-
-        if (decisionType === 'ACT') {
-          policyIds.push('POLICY_ACTION_ALLOWED_BY_CLOUD');
-        }
-
-        if (decisionType === 'RESPOND') {
-          policyIds.push('POLICY_RESPONSE_REQUIRES_GROUNDING');
-        }
-
-        if (decisionType === 'ASK') {
-          policyIds.push('POLICY_CLARIFICATION_ALLOWED');
-        }
-
-        if (decisionType === 'WAIT') {
-          policyIds.push('POLICY_WAIT_FOR_NEXT_EVENT');
-        }
-
-        if (!policyIds.length) {
-          throw new Error('No applicable policy for decision');
-        }
-
-        const playbookId = this.resolvePlaybookId(commandType, decisionType);
-
-        span.setAttribute(POLICY_CHECK_ATTRS.POLICY_IDS, policyIds);
-        span.setAttribute(POLICY_CHECK_ATTRS.PLAYBOOK_ID, playbookId);
-        span.setAttribute(POLICY_CHECK_ATTRS.APPLIED, true);
-
-        return {
-          policyIds,
-          playbookId,
-        };
-      } catch (error) {
-        span.setAttribute(POLICY_CHECK_ATTRS.APPLIED, false);
-        span.setStatus({
-          code: SpanStatusCode.ERROR,
-          message: error instanceof Error ? error.message : String(error),
-        });
-        throw error;
-      } finally {
-        span.end();
-      }
-    });
+      },
+    );
   }
 
   private async retrieveVectorContext(
@@ -373,61 +455,75 @@ export class DecisionEngineService {
     metadata: Record<string, any>,
     decisionId: string,
   ): Promise<RetrievalResult[]> {
-    return this.tracer.startActiveSpan(KELEDON_TRACE_SPANS.VECTOR_RETRIEVE, async (span) => {
-      const startedAt = Date.now();
-      const topK = Number(metadata.topK || 3);
-      const collection = process.env.QDRANT_COLLECTION || 'keledon';
+    return this.tracer.startActiveSpan(
+      KELEDON_TRACE_SPANS.VECTOR_RETRIEVE,
+      async (span) => {
+        const startedAt = Date.now();
+        const topK = Number(metadata.topK || 3);
+        const collection = process.env.QDRANT_COLLECTION || 'keledon';
 
-      span.setAttribute('vector.collection', collection);
-      span.setAttribute('topK', topK);
-      span.setAttribute(DECISION_EVIDENCE_ATTRS.DECISION_ID, decisionId);
+        span.setAttribute('vector.collection', collection);
+        span.setAttribute('topK', topK);
+        span.setAttribute(DECISION_EVIDENCE_ATTRS.DECISION_ID, decisionId);
 
-      if (!this.ragService) {
-        const errorMessage = 'RAGService unavailable - vector retrieval is mandatory for decisions';
-        span.setStatus({ code: SpanStatusCode.ERROR, message: errorMessage });
-        throw new Error(errorMessage);
-      }
-
-      try {
-        const results = await this.ragService.retrieveKnowledge(text, {
-          sessionId,
-          companyId: metadata.companyId || 'keledon-default',
-          decisionId,
-          maxResults: topK,
-          minScore: typeof metadata.minScore === 'number' ? metadata.minScore : undefined,
-        });
-
-        const latencyMs = Date.now() - startedAt;
-        const docIds = results.map((result) => result.document.id);
-        span.setAttribute('latency_ms', latencyMs);
-        span.setAttribute('vector.results', results.length);
-        span.setAttribute('vector.doc_ids', docIds);
-
-        if (!results.length) {
-          const errorMessage = 'Vector retrieval returned zero documents';
+        if (!this.ragService) {
+          const errorMessage =
+            'RAGService unavailable - vector retrieval is mandatory for decisions';
           span.setStatus({ code: SpanStatusCode.ERROR, message: errorMessage });
           throw new Error(errorMessage);
         }
 
-        return results;
-      } catch (error) {
-        const latencyMs = Date.now() - startedAt;
-        span.setAttribute('latency_ms', latencyMs);
-        span.setStatus({
-          code: SpanStatusCode.ERROR,
-          message: error instanceof Error ? error.message : String(error),
-        });
-        throw error;
-      } finally {
-        span.end();
-      }
-    });
+        try {
+          const results = await this.ragService.retrieveKnowledge(text, {
+            sessionId,
+            companyId: metadata.companyId || 'keledon-default',
+            decisionId,
+            maxResults: topK,
+            minScore:
+              typeof metadata.minScore === 'number'
+                ? metadata.minScore
+                : undefined,
+          });
+
+          const latencyMs = Date.now() - startedAt;
+          const docIds = results.map((result) => result.document.id);
+          span.setAttribute('latency_ms', latencyMs);
+          span.setAttribute('vector.results', results.length);
+          span.setAttribute('vector.doc_ids', docIds);
+
+          if (!results.length) {
+            const errorMessage = 'Vector retrieval returned zero documents';
+            span.setStatus({
+              code: SpanStatusCode.ERROR,
+              message: errorMessage,
+            });
+            throw new Error(errorMessage);
+          }
+
+          return results;
+        } catch (error) {
+          const latencyMs = Date.now() - startedAt;
+          span.setAttribute('latency_ms', latencyMs);
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: error instanceof Error ? error.message : String(error),
+          });
+          throw error;
+        } finally {
+          span.end();
+        }
+      },
+    );
   }
 
   /**
    * Generate canonical brain command from decision
    */
-  async generateCommand(decision: any, sessionId: string, evidence?: DecisionEvidence): Promise<CloudCommand> {
+  async generateCommand(
+    decision: any,
+    sessionId: string,
+    evidence?: DecisionEvidence,
+  ): Promise<CloudCommand> {
     const commandId = uuidv4();
     const timestamp = new Date().toISOString();
 
@@ -461,7 +557,7 @@ export class DecisionEngineService {
             pitch: decision.pitch,
             volume: decision.volume,
             metadata: commandMetadata,
-          }
+          },
         };
 
       case 'ui_steps':
@@ -475,7 +571,10 @@ export class DecisionEngineService {
           flow_id: decision.flow_id || null,
           flow_run_id: decision.flow_run_id || null,
           metadata: commandMetadata,
-          ui_steps: (decision.steps || []).map((s: any) => ({ step_id: uuidv4(), ...s })),
+          ui_steps: (decision.steps || []).map((s: any) => ({
+            step_id: uuidv4(),
+            ...s,
+          })),
         };
 
       case 'ask':
@@ -538,7 +637,7 @@ export class DecisionEngineService {
             text: `I understand you said: ${decision.text || 'something'}`,
             interruptible: true,
             metadata: commandMetadata,
-          }
+          },
         };
     }
   }
@@ -546,7 +645,12 @@ export class DecisionEngineService {
   /**
    * Build decision context from session history and current input
    */
-  private async buildDecisionContext(sessionId: string, text: string, events: any[], metadata: Record<string, any>): Promise<DecisionContext> {
+  private async buildDecisionContext(
+    sessionId: string,
+    text: string,
+    events: any[],
+    metadata: Record<string, any>,
+  ): Promise<DecisionContext> {
     // Get session to extract agent ID
     const session = await this.sessionService.getSession(sessionId);
     if (!session) {
@@ -559,7 +663,7 @@ export class DecisionEngineService {
       previousEvents: events,
       currentTranscript: text,
       confidence: metadata.confidence || 0.8,
-      metadata
+      metadata,
     };
   }
 
@@ -568,32 +672,59 @@ export class DecisionEngineService {
    * falls back to rule-based for stop/mode/safe-mode keywords.
    * vectorContext is already fetched by the caller; pass it in to avoid a second RAG call.
    */
-  private async makeDecision(context: DecisionContext, vectorContext: RetrievalResult[] = []): Promise<CommandDecision> {
+  private async makeDecision(
+    context: DecisionContext,
+    vectorContext: RetrievalResult[] = [],
+  ): Promise<CommandDecision> {
     const { currentTranscript, confidence } = context;
     const lower = currentTranscript.toLowerCase().trim();
-    const ragContext = vectorContext.map(r => r.document.content);
+    const ragContext = vectorContext.map((r) => r.document.content);
 
     // LLM path: structured function calling (preferred when available)
     if (this.llmService?.isEnabled()) {
       try {
-        const decision = await this.llmService.generateCommand(currentTranscript, ragContext);
+        const decision = await this.llmService.generateCommand(
+          currentTranscript,
+          ragContext,
+        );
         return { ...decision, confidence: decision.confidence ?? confidence };
       } catch (error) {
-        this.logger.error('LLM generateCommand failed, falling back to rule-based:', error);
+        this.logger.error(
+          'LLM generateCommand failed, falling back to rule-based:',
+          error,
+        );
       }
     }
 
     // Rule-based fallback
-    if (lower.includes('stop') || lower.includes('cancel') || lower.includes('never mind')) {
-      return { type: 'stop', confidence: 0.9, reasoning: 'stop keyword detected' };
+    if (
+      lower.includes('stop') ||
+      lower.includes('cancel') ||
+      lower.includes('never mind')
+    ) {
+      return {
+        type: 'stop',
+        confidence: 0.9,
+        reasoning: 'stop keyword detected',
+      };
     }
 
     if (lower.includes('safe mode') || lower.includes('be careful')) {
-      return { type: 'mode', mode: 'safe', confidence: 0.9, reasoning: 'safe-mode keyword detected' };
+      return {
+        type: 'mode',
+        mode: 'safe',
+        confidence: 0.9,
+        reasoning: 'safe-mode keyword detected',
+      };
     }
 
     if (lower.includes('silent') || lower.includes('quiet')) {
-      return { type: 'mode', mode: 'silent', confidence: 0.9, reasoning: 'silent keyword detected' };
+      return {
+        type: 'mode',
+        mode: 'silent',
+        confidence: 0.9,
+        reasoning: 'silent keyword detected',
+      };
     }
 
     return {
@@ -607,7 +738,12 @@ export class DecisionEngineService {
   /**
    * Persist decision for audit trail
    */
-  private async persistDecision(sessionId: string, text: string, command: CloudCommand, decision: any): Promise<void> {
+  private async persistDecision(
+    sessionId: string,
+    text: string,
+    command: CloudCommand,
+    decision: any,
+  ): Promise<void> {
     // Create a synthetic event to persist the decision
     const decisionEvent: AgentEvent = {
       event_id: uuidv4(),
@@ -619,8 +755,8 @@ export class DecisionEngineService {
         input_text: text,
         decision: decision,
         command: command,
-        processed_at: new Date().toISOString()
-      }
+        processed_at: new Date().toISOString(),
+      },
     };
 
     try {
@@ -657,7 +793,11 @@ export class DecisionEngineService {
    * Execute a flow and return results
    * Called when brain decides a flow should run
    */
-  async executeFlow(flowId: string, parameters: Record<string, any>, sessionId: string): Promise<{
+  async executeFlow(
+    flowId: string,
+    parameters: Record<string, any>,
+    sessionId: string,
+  ): Promise<{
     success: boolean;
     extractedData: Record<string, any>;
     executionLog: any[];
@@ -667,7 +807,9 @@ export class DecisionEngineService {
       throw new Error('SubAgentService not available');
     }
 
-    this.logger.log(`[DecisionEngine] Executing flow ${flowId} for session ${sessionId}`);
+    this.logger.log(
+      `[DecisionEngine] Executing flow ${flowId} for session ${sessionId}`,
+    );
     return this.subAgentService.executeFlow(flowId, parameters, sessionId);
   }
 
@@ -675,7 +817,10 @@ export class DecisionEngineService {
    * Analyze conversation context and suggest flows
    * Called during decision making to incorporate flow knowledge
    */
-  async suggestFlowsForContext(transcript: string, context: DecisionContext): Promise<{
+  async suggestFlowsForContext(
+    transcript: string,
+    context: DecisionContext,
+  ): Promise<{
     flows: any[];
     reasoning: string;
   }> {
@@ -685,9 +830,12 @@ export class DecisionEngineService {
     const triggerKeywords = this.extractTriggerKeywords(transcript);
 
     for (const keyword of triggerKeywords) {
-      const matchedFlows = await this.findFlowsByTrigger(keyword, context.metadata?.teamId);
+      const matchedFlows = await this.findFlowsByTrigger(
+        keyword,
+        context.metadata?.teamId,
+      );
       for (const flow of matchedFlows) {
-        if (!suggestions.find(s => s.id === flow.id)) {
+        if (!suggestions.find((s) => s.id === flow.id)) {
           suggestions.push({
             ...flow.payload,
             matchKeyword: keyword,
@@ -736,10 +884,14 @@ export class DecisionEngineService {
   /**
    * Generate a flow execution command
    */
-  async generateFlowCommand(flow: any, parameters: Record<string, any>, sessionId: string): Promise<CloudCommand> {
+  async generateFlowCommand(
+    flow: any,
+    parameters: Record<string, any>,
+    sessionId: string,
+  ): Promise<CloudCommand> {
     const commandId = uuidv4();
-    
-    const flowRun = this.subAgentService 
+
+    const flowRun = this.subAgentService
       ? await this.subAgentService.executeFlow(flow.id, parameters, sessionId)
       : null;
 
@@ -752,16 +904,17 @@ export class DecisionEngineService {
       mode: 'normal',
       flow_id: flow.id,
       flow_run_id: flowRun?.flowId,
-      ui_steps: flow.steps?.map((step: any) => ({
-        step_id: step.id,
-        action: step.type,
-        selector: step.selector,
-        value: step.value,
-      })) || [],
+      ui_steps:
+        flow.steps?.map((step: any) => ({
+          step_id: step.id,
+          action: step.type,
+          selector: step.selector,
+          value: step.value,
+        })) || [],
       say: {
         text: flow.description || 'Executing workflow',
-        interruptible: true
-      }
+        interruptible: true,
+      },
     };
 
     return command;

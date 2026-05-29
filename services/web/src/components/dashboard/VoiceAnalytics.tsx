@@ -1,6 +1,5 @@
 import React from 'react';
 import { 
-  Mic, 
   TrendingUp, 
   TrendingDown, 
   MessageSquare, 
@@ -8,14 +7,10 @@ import {
   Clock,
   BarChart3,
   Activity,
-  Volume2,
   Brain,
   AlertTriangle,
   CheckCircle,
-  XCircle,
   Calendar,
-  Filter,
-  Download,
   Eye,
   Heart,
   ThumbsUp,
@@ -26,48 +21,6 @@ import {
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useVoiceAnalytics } from '../../hooks/useVoiceAnalytics';
-
-interface VoiceAnalyticsData {
-  totalConversations: number;
-  avgDuration: number;
-  successRate: number;
-  sentimentDistribution: {
-    positive: number;
-    neutral: number;
-    negative: number;
-  };
-  topKeywords: Array<{ word: string; count: number; trend: 'up' | 'down' | 'stable' }>;
-  speakerStats: {
-    customer: {
-      totalSpeakTime: number;
-      avgSpeakingRate: number;
-      interruptions: number;
-    };
-    agent: {
-      totalSpeakTime: number;
-      avgSpeakingRate: number;
-      interruptions: number;
-    };
-  };
-  qualityMetrics: {
-    clarity: number;
-    completeness: number;
-    relevance: number;
-    satisfaction: number;
-  };
-  recentConversations: Array<{
-    id: string;
-    timestamp: Date;
-    duration: number;
-    sentiment: 'positive' | 'neutral' | 'negative';
-    summary: string;
-    issues: Array<{
-      type: string;
-      severity: 'low' | 'medium' | 'high';
-      description: string;
-    }>;
-  }>;
-}
 
 interface VoiceAnalyticsProps {
   className?: string;
@@ -83,7 +36,6 @@ export default function VoiceAnalyticsDashboard({ className }: VoiceAnalyticsPro
     sentimentPercentages,
     refreshAnalytics,
     selectConversation,
-    clearSelection,
     setTimeRangeValue,
     toggleRealtime
   } = useVoiceAnalytics();

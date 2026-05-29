@@ -1,6 +1,13 @@
-import { Controller, Get, Post, Put, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Body,
+  Param,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 
 export class TeamConfigDto {
   sttProvider?: string;
@@ -30,7 +37,7 @@ export class TeamController {
           voskModel: true,
           deepgramApiKey: true,
           elevenlabsApiKey: true,
-        }
+        },
       });
 
       if (!team) {
@@ -46,13 +53,13 @@ export class TeamController {
         voskConfig: {
           serverUrl: team.voskServerUrl || 'ws://localhost:9091',
           model: team.voskModel || 'vosk-model-small',
-          sampleRate: 16000
+          sampleRate: 16000,
         },
         elevenlabsConfig: {
           apiKey: team.elevenlabsApiKey || '',
-          voiceId: 'rachel'
+          voiceId: 'rachel',
         },
-        vendorConfig: {}
+        vendorConfig: {},
       };
     } catch (error) {
       console.error('[TeamController] Error getting config:', error);
@@ -72,9 +79,9 @@ export class TeamController {
               email: true,
               name: true,
               role: true,
-            }
-          }
-        }
+            },
+          },
+        },
       });
 
       if (!team) {
@@ -102,12 +109,12 @@ export class TeamController {
             select: {
               users: true,
               sessions: true,
-            }
-          }
+            },
+          },
         },
         orderBy: {
-          createdAt: 'desc'
-        }
+          createdAt: 'desc',
+        },
       });
 
       return teams;
@@ -120,7 +127,7 @@ export class TeamController {
   @Put(':id/config')
   async updateTeamConfig(
     @Param('id') teamId: string,
-    @Body() config: TeamConfigDto
+    @Body() config: TeamConfigDto,
   ) {
     try {
       const allowedSttProviders = ['vosk', 'deepgram', 'webspeech'];
@@ -128,11 +135,17 @@ export class TeamController {
 
       const updateData: any = {};
 
-      if (config.sttProvider && allowedSttProviders.includes(config.sttProvider)) {
+      if (
+        config.sttProvider &&
+        allowedSttProviders.includes(config.sttProvider)
+      ) {
         updateData.sttProvider = config.sttProvider;
       }
 
-      if (config.ttsProvider && allowedTtsProviders.includes(config.ttsProvider)) {
+      if (
+        config.ttsProvider &&
+        allowedTtsProviders.includes(config.ttsProvider)
+      ) {
         updateData.ttsProvider = config.ttsProvider;
       }
 
@@ -162,7 +175,7 @@ export class TeamController {
           ttsProvider: true,
           voskServerUrl: true,
           voskModel: true,
-        }
+        },
       });
 
       return {
@@ -188,7 +201,7 @@ export class TeamController {
           name: data.name,
           sttProvider: 'vosk',
           ttsProvider: 'elevenlabs',
-        }
+        },
       });
 
       return {

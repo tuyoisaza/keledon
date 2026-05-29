@@ -9,7 +9,7 @@ export default function ManagementDebugPage() {
         return saved === 'true';
     });
     const [debugLogs, setDebugLogs] = useState<string>('');
-    const [modelStatus, setModelStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
+    const [modelStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
     const [modelError] = useState<string | null>(null);
 
     const handleDebugToggle = (enabled: boolean) => {

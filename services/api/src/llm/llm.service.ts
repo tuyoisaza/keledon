@@ -14,15 +14,37 @@ const DECIDE_ACTION_TOOL = {
     parameters: {
       type: 'object',
       properties: {
-        type: { type: 'string', enum: ['say', 'ui_steps', 'mode', 'stop', 'ask'] },
-        text: { type: 'string', description: 'Text to speak aloud (required for "say" and "ask" types)' },
+        type: {
+          type: 'string',
+          enum: ['say', 'ui_steps', 'mode', 'stop', 'ask'],
+        },
+        text: {
+          type: 'string',
+          description:
+            'Text to speak aloud (required for "say" and "ask" types)',
+        },
         steps: {
           type: 'array',
-          description: 'Browser automation steps (required for "ui_steps" type)',
+          description:
+            'Browser automation steps (required for "ui_steps" type)',
           items: {
             type: 'object',
             properties: {
-              action: { type: 'string', enum: ['navigate', 'click', 'type', 'fill', 'wait', 'extract', 'select', 'hover', 'scroll', 'screenshot'] },
+              action: {
+                type: 'string',
+                enum: [
+                  'navigate',
+                  'click',
+                  'type',
+                  'fill',
+                  'wait',
+                  'extract',
+                  'select',
+                  'hover',
+                  'scroll',
+                  'screenshot',
+                ],
+              },
               selector: { type: 'string' },
               value: { type: 'string' },
               url: { type: 'string' },
@@ -39,11 +61,17 @@ const DECIDE_ACTION_TOOL = {
   },
 };
 
-const CONFIGURED_PROVIDERS: LLMProvider[] = ['anthropic', 'google', 'openai', 'ollama'];
+const CONFIGURED_PROVIDERS: LLMProvider[] = [
+  'anthropic',
+  'google',
+  'openai',
+  'ollama',
+];
 
-function isOpenAIFunctionToolCall(
-  toolCall: unknown
-): toolCall is { type: 'function'; function: { name: string; arguments: string } } {
+function isOpenAIFunctionToolCall(toolCall: unknown): toolCall is {
+  type: 'function';
+  function: { name: string; arguments: string };
+} {
   return (
     typeof toolCall === 'object' &&
     toolCall !== null &&
@@ -51,9 +79,12 @@ function isOpenAIFunctionToolCall(
     (toolCall as { type?: unknown }).type === 'function' &&
     'function' in toolCall &&
     typeof (toolCall as { function?: unknown }).function === 'object' &&
-    (toolCall as { function?: { name?: unknown; arguments?: unknown } }).function !== null &&
-    typeof (toolCall as { function?: { name?: unknown; arguments?: unknown } }).function?.name === 'string' &&
-    typeof (toolCall as { function?: { name?: unknown; arguments?: unknown } }).function?.arguments === 'string'
+    (toolCall as { function?: { name?: unknown; arguments?: unknown } })
+      .function !== null &&
+    typeof (toolCall as { function?: { name?: unknown; arguments?: unknown } })
+      .function?.name === 'string' &&
+    typeof (toolCall as { function?: { name?: unknown; arguments?: unknown } })
+      .function?.arguments === 'string'
   );
 }
 
@@ -67,7 +98,7 @@ export class LLMService implements OnModuleInit {
     this.provider = this.resolveProvider();
     if (this.provider === 'none') {
       this.logger.warn(
-        '[LLM] WARNING: No LLM provider configured. Set ANTHROPIC_API_KEY, GOOGLE_AI_API_KEY, OPENAI_API_KEY, or OLLAMA_URL to enable AI responses. Running in degraded mode.'
+        '[LLM] WARNING: No LLM provider configured. Set ANTHROPIC_API_KEY, GOOGLE_AI_API_KEY, OPENAI_API_KEY, or OLLAMA_URL to enable AI responses. Running in degraded mode.',
       );
       return;
     }
@@ -76,11 +107,13 @@ export class LLMService implements OnModuleInit {
   }
 
   private resolveProvider(): LLMProvider {
-    const forced = process.env.LLM_PROVIDER?.toLowerCase() as LLMProvider | undefined;
+    const forced = process.env.LLM_PROVIDER?.toLowerCase() as
+      | LLMProvider
+      | undefined;
     if (forced && forced !== 'none') {
       if (!CONFIGURED_PROVIDERS.includes(forced)) {
         this.logger.warn(
-          `Unknown LLM_PROVIDER: "${forced}". Valid values: ${CONFIGURED_PROVIDERS.join(', ')}. Running in degraded mode.`
+          `Unknown LLM_PROVIDER: "${forced}". Valid values: ${CONFIGURED_PROVIDERS.join(', ')}. Running in degraded mode.`,
         );
         return 'none';
       }
@@ -141,7 +174,10 @@ export class LLMService implements OnModuleInit {
     }
   }
 
-  private async generateWithAnthropic(request: LLMRequest, systemPrompt: string): Promise<LLMResponse> {
+  private async generateWithAnthropic(
+    request: LLMRequest,
+    systemPrompt: string,
+  ): Promise<LLMResponse> {
     const { Anthropic } = await import('@anthropic-ai/sdk');
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -166,10 +202,15 @@ export class LLMService implements OnModuleInit {
     };
   }
 
-  private async generateWithGoogle(request: LLMRequest, systemPrompt: string): Promise<LLMResponse> {
+  private async generateWithGoogle(
+    request: LLMRequest,
+    systemPrompt: string,
+  ): Promise<LLMResponse> {
     const { GoogleGenerativeAI } = await import('@google/generative-ai');
-    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
-    const genModel = genAI.getGenerativeModel({ model: request.model || this.model });
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
+    const genModel = genAI.getGenerativeModel({
+      model: request.model || this.model,
+    });
 
     const result = await genModel.generateContent({
       systemInstruction: systemPrompt,
@@ -192,7 +233,10 @@ export class LLMService implements OnModuleInit {
     };
   }
 
-  private async generateWithOpenAI(request: LLMRequest, systemPrompt: string): Promise<LLMResponse> {
+  private async generateWithOpenAI(
+    request: LLMRequest,
+    systemPrompt: string,
+  ): Promise<LLMResponse> {
     const { OpenAI } = await import('openai');
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -220,8 +264,11 @@ export class LLMService implements OnModuleInit {
     };
   }
 
-  private async generateWithOllama(request: LLMRequest, systemPrompt: string): Promise<LLMResponse> {
-    const ollamaUrl = process.env.OLLAMA_URL!;
+  private async generateWithOllama(
+    request: LLMRequest,
+    systemPrompt: string,
+  ): Promise<LLMResponse> {
+    const ollamaUrl = process.env.OLLAMA_URL;
 
     const res = await fetch(`${ollamaUrl}/api/generate`, {
       method: 'POST',
@@ -255,9 +302,10 @@ export class LLMService implements OnModuleInit {
   }
 
   private buildSystemPrompt(context: string[]): string {
-    const contextSection = context.length > 0
-      ? `Context from knowledge base:\n${context.map((c, i) => `${i + 1}. ${c}`).join('\n')}\n\n`
-      : '';
+    const contextSection =
+      context.length > 0
+        ? `Context from knowledge base:\n${context.map((c, i) => `${i + 1}. ${c}`).join('\n')}\n\n`
+        : '';
 
     return `You are KELEDON, an AI voice agent for customer service.
 
@@ -277,7 +325,8 @@ Always respond in a way that can be spoken aloud.`;
   }
 
   private generateFallback(prompt: string): string {
-    const truncated = prompt.length > 50 ? prompt.substring(0, 50) + '...' : prompt;
+    const truncated =
+      prompt.length > 50 ? prompt.substring(0, 50) + '...' : prompt;
     return `I understand you're asking about "${truncated}". Let me help you with that. Could you provide more details?`;
   }
 
@@ -313,7 +362,10 @@ Always prefer "ui_steps" over "say" when the user is asking you to DO something 
 Always prefer "say" for questions, confirmations, and conversational responses.`;
   }
 
-  async generateCommand(transcript: string, context: string[] = []): Promise<CommandDecision> {
+  async generateCommand(
+    transcript: string,
+    context: string[] = [],
+  ): Promise<CommandDecision> {
     if (this.provider === 'none') {
       return this.fallbackCommand(transcript);
     }
@@ -330,19 +382,29 @@ Always prefer "say" for questions, confirmations, and conversational responses.`
             { role: 'user', content: transcript },
           ],
           tools: [DECIDE_ACTION_TOOL],
-          tool_choice: { type: 'function', function: { name: 'decide_action' } },
+          tool_choice: {
+            type: 'function',
+            function: { name: 'decide_action' },
+          },
           max_tokens: 500,
           temperature: 0.7,
         });
 
         const toolCall = response.choices[0]?.message?.tool_calls?.[0];
-        if (!isOpenAIFunctionToolCall(toolCall) || toolCall.function.name !== 'decide_action') {
+        if (
+          !isOpenAIFunctionToolCall(toolCall) ||
+          toolCall.function.name !== 'decide_action'
+        ) {
           this.logger.warn('LLM did not return a tool call, using fallback');
           return this.fallbackCommand(transcript);
         }
 
-        const decision: CommandDecision = JSON.parse(toolCall.function.arguments);
-        this.logger.log(`[LLM] Decision: ${decision.type}${decision.reasoning ? ' — ' + decision.reasoning : ''}`);
+        const decision: CommandDecision = JSON.parse(
+          toolCall.function.arguments,
+        );
+        this.logger.log(
+          `[LLM] Decision: ${decision.type}${decision.reasoning ? ' — ' + decision.reasoning : ''}`,
+        );
         return decision;
       } catch (error) {
         this.logger.error('OpenAI function calling error:', error);
@@ -358,7 +420,11 @@ Always prefer "say" for questions, confirmations, and conversational responses.`
         maxTokens: 300,
         temperature: 0.7,
       });
-      return { type: 'say', text: response.text, reasoning: `${this.provider} text response` };
+      return {
+        type: 'say',
+        text: response.text,
+        reasoning: `${this.provider} text response`,
+      };
     } catch (error) {
       this.logger.error('generateCommand fallback error:', error);
       return this.fallbackCommand(transcript);

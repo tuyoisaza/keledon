@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { CrudService } from './crud.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
@@ -6,7 +15,10 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 @ApiTags('CRUD')
 @Controller('api/crud')
 export class CrudController {
-  constructor(private readonly crud: CrudService, private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly crud: CrudService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   // ========== HEALTH ==========
 
@@ -37,7 +49,8 @@ export class CrudController {
           "updatedAt" TIMESTAMP DEFAULT now()
         )
       `;
-      await this.prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "vendors_teamId_idx" ON "vendors"("teamId")`;
+      await this.prisma
+        .$executeRaw`CREATE INDEX IF NOT EXISTS "vendors_teamId_idx" ON "vendors"("teamId")`;
       return { status: 'ok', message: 'Vendors table created' };
     } catch (error) {
       return { status: 'error', message: error.message };
@@ -75,7 +88,10 @@ export class CrudController {
   }
 
   @Post('companies/:id/countries')
-  addCompanyCountry(@Param('id') id: string, @Body() data: { countryCode: string }) {
+  addCompanyCountry(
+    @Param('id') id: string,
+    @Body() data: { countryCode: string },
+  ) {
     return this.crud.addCompanyCountry(id, data.countryCode);
   }
 
@@ -141,7 +157,10 @@ export class CrudController {
   }
 
   @Put('teams/:id/interfaces')
-  setTeamInterfaces(@Param('id') id: string, @Body() data: { interfaceIds: string[] }) {
+  setTeamInterfaces(
+    @Param('id') id: string,
+    @Body() data: { interfaceIds: string[] },
+  ) {
     return this.crud.setTeamInterfaces(id, data.interfaceIds);
   }
 
@@ -199,7 +218,7 @@ export class CrudController {
   @Post('keledons/:id/launch')
   async launchKeledon(
     @Param('id') keledonId: string,
-    @Body() body: { userId: string }
+    @Body() body: { userId: string },
   ) {
     return this.crud.generateKeledonLaunchLink(keledonId, body.userId);
   }
@@ -300,8 +319,14 @@ export class CrudController {
   // ========== SESSIONS ==========
 
   @Get('sessions')
-  getSessions(@Query('companyId') companyId?: string, @Query('limit') limit?: number) {
-    return this.crud.getSessions(companyId, limit ? parseInt(String(limit)) : undefined);
+  getSessions(
+    @Query('companyId') companyId?: string,
+    @Query('limit') limit?: number,
+  ) {
+    return this.crud.getSessions(
+      companyId,
+      limit ? parseInt(String(limit)) : undefined,
+    );
   }
 
   @Get('sessions/:id')
@@ -402,13 +427,13 @@ export class CrudController {
       return {
         success: true,
         message: 'Seed completed',
-        ...result
+        ...result,
       };
     } catch (error) {
       return {
         success: false,
         message: 'Seed failed',
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -421,23 +446,27 @@ export class CrudController {
   }
 
   @Post('vendors')
-  createVendor(@Body() data: {
-    teamId: string;
-    name: string;
-    type: string;
-    baseUrl?: string;
-    username?: string;
-    password?: string;
-    apiKey?: string;
-    config?: Record<string, unknown>;
-  }) {
+  createVendor(
+    @Body()
+    data: {
+      teamId: string;
+      name: string;
+      type: string;
+      baseUrl?: string;
+      username?: string;
+      password?: string;
+      apiKey?: string;
+      config?: Record<string, unknown>;
+    },
+  ) {
     return this.crud.createVendor(data);
   }
 
   @Put('vendors/:id')
   updateVendor(
     @Param('id') id: string,
-    @Body() data: {
+    @Body()
+    data: {
       name?: string;
       type?: string;
       baseUrl?: string;
@@ -446,7 +475,7 @@ export class CrudController {
       apiKey?: string;
       config?: Record<string, unknown>;
       isActive?: boolean;
-    }
+    },
   ) {
     return this.crud.updateVendor(id, data);
   }

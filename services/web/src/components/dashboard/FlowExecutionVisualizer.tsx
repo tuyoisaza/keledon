@@ -4,12 +4,10 @@ import {
   Pause, 
   Square, 
   RotateCcw, 
-  Eye, 
   CheckCircle, 
   XCircle, 
   Clock, 
   Zap,
-  ArrowRight,
   Code,
   MousePointer,
   Type,
@@ -68,7 +66,6 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
     selectedExecution,
     loading,
     selectExecution,
-    clearSelection,
     createExecution,
     startExecution,
     pauseExecution,
@@ -89,7 +86,7 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
     search: Search
   };
 
-  const getStepColor = (status: FlowStep['status']) => {
+  const _getStepColor = (status: FlowStep['status']) => {
     switch (status) {
       case 'pending': return 'text-gray-500 bg-gray-50 border-gray-200';
       case 'running': return 'text-blue-500 bg-blue-50 border-blue-200 animate-pulse';
@@ -300,7 +297,7 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
               {/* Steps */}
               {showDetails && execution.steps.length > 0 && (
                 <div className="space-y-2 mb-4">
-                  {execution.steps.slice(0, 5).map((step, index) => {
+                  {execution.steps.slice(0, 5).map((step, _index) => {
                     const Icon = stepIcons[step.type];
                     return (
                       <div key={step.id} className="flex items-center gap-2 text-sm">

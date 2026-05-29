@@ -3,10 +3,20 @@ import { v4 as uuidv4 } from 'uuid';
 
 export interface UIAction {
   id: string;
-  action_type: 'click' | 'type' | 'select' | 'hover' | 'scroll' | 'navigate' | 'screenshot' | 'wait' | 'extract_text' | 'submit_form';
+  action_type:
+    | 'click'
+    | 'type'
+    | 'select'
+    | 'hover'
+    | 'scroll'
+    | 'navigate'
+    | 'screenshot'
+    | 'wait'
+    | 'extract_text'
+    | 'submit_form';
   selector: string;
   value?: string;
-  options?: any;
+  options?: Record<string, unknown>;
   timeout?: number;
   wait_condition?: string;
 }
@@ -19,7 +29,7 @@ export interface UIActionResult {
   value?: string;
   screenshot?: string;
   text?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
   execution_time?: number;
   timestamp: string;
 }
@@ -34,11 +44,33 @@ export interface UIStep {
   completed_at?: string;
 }
 
+interface UIExecutionSummary {
+  action_id: string;
+  results: UIActionResult[];
+  summary: {
+    total_steps: number;
+    successful_steps: number;
+    failed_steps: number;
+    execution_time: number;
+  };
+  timestamp: string;
+}
+
+interface UIExecutionHistoryEntry {
+  sessionId: string;
+  result: UIExecutionSummary;
+  timestamp: string;
+}
+
 @Injectable()
 export class UIAutomationService {
-  private executionHistory = new Map<string, UIStep[]>();
-  private currentExecution: { sessionId: string; stepIndex: number } | null = null;
-  
+  private executionHistory = new Map<string, UIExecutionHistoryEntry[]>();
+  private currentExecution: {
+    sessionId: string;
+    stepIndex: number;
+    stepCount: number;
+  } | null = null;
+
   constructor() {
     console.log('UIAutomationService: Initialized');
   }
@@ -46,17 +78,22 @@ export class UIAutomationService {
   /**
    * Execute UI steps from cloud decision
    */
-  async executeUISteps(sessionId: string, steps: UIAction[]): Promise<UIActionResult[]> {
+  async executeUISteps(
+    sessionId: string,
+    steps: UIAction[],
+  ): Promise<UIExecutionSummary> {
     const results: UIActionResult[] = [];
     const executionId = uuidv4();
-    
+
     this.currentExecution = {
       sessionId,
       stepIndex: 0,
-      stepCount: steps.length
+      stepCount: steps.length,
     };
 
-    console.log(`[UIAutomation] Executing ${steps.length} UI steps for session ${sessionId}`);
+    console.log(
+      `[UIAutomation] Executing ${steps.length} UI steps for session ${sessionId}`,
+    );
 
     // Initialize page context
     await this.initializePage();
@@ -70,10 +107,10 @@ export class UIAutomationService {
           action: steps[i],
           description: this.getActionDescription(steps[i]),
           status: 'executing',
-          started_at: new Date().toISOString()
+          started_at: new Date().toISOString(),
         };
 
-        const result = await this.executeStep(step, i, steps.length);
+        const result = await this.executeStep(step.action, i, steps.length);
         step.result = result;
         step.completed_at = new Date().toISOString();
         step.status = result.success ? 'completed' : 'failed';
@@ -92,33 +129,36 @@ export class UIAutomationService {
       // Update execution status in session context
       this.currentExecution = null;
 
-      const finalResult = {
+      const finalResult: UIExecutionSummary = {
         action_id: executionId,
         results,
         summary: {
           total_steps: steps.length,
-          successful_steps: results.filter(r => r.success).length,
-          failed_steps: results.filter(r => !r.success).length,
-          execution_time: Date.now() - new Date().getTime()
+          successful_steps: results.filter((r) => r.success).length,
+          failed_steps: results.filter((r) => !r.success).length,
+          execution_time: Date.now() - new Date().getTime(),
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       // Persist UI execution results
       await this.persistUIExecution(sessionId, finalResult);
 
-      console.log(`[UIAutomation] UI execution completed: ${finalResult.summary.successful_steps}/${finalResult.summary.total_steps} steps successful`);
-      
-      return finalResult;
+      console.log(
+        `[UIAutomation] UI execution completed: ${finalResult.summary.successful_steps}/${finalResult.summary.total_steps} steps successful`,
+      );
 
+      return finalResult;
     } catch (error) {
       console.error('[UIAutomation] UI execution failed:', error);
-      
+
+      const errorMsg = error instanceof Error ? error.message : String(error);
+
       const errorResult: UIActionResult = {
         action_id: executionId,
         success: false,
-        error: error.message,
-        timestamp: new Date().toISOString()
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
       };
 
       return {
@@ -128,9 +168,9 @@ export class UIAutomationService {
           total_steps: steps.length,
           successful_steps: 0,
           failed_steps: steps.length,
-          execution_time: 0
+          execution_time: 0,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -141,13 +181,19 @@ export class UIAutomationService {
   private async initializePage(): Promise<void> {
     try {
       // Wait for page to be ready
-      if (document.readyState !== 'complete') {
-        await new Promise(resolve => {
-          if (document.readyState === 'complete') {
-            resolve();
-          } else {
-            setTimeout(resolve, 100);
-          }
+      if (
+        typeof document !== 'undefined' &&
+        document.readyState !== 'complete'
+      ) {
+        await new Promise<void>((resolve) => {
+          const check = () => {
+            if (document.readyState === 'complete') {
+              resolve();
+            } else {
+              setTimeout(check, 100);
+            }
+          };
+          check();
         });
       }
     } catch (error) {
@@ -158,12 +204,18 @@ export class UIAutomationService {
   /**
    * Execute individual UI step
    */
-  private async executeStep(step: UIAction, stepIndex: number, totalSteps: number): Promise<UIActionResult> {
+  private async executeStep(
+    step: UIAction,
+    stepIndex: number,
+    totalSteps: number,
+  ): Promise<UIActionResult> {
     const startTime = Date.now();
-    
+
     try {
-      console.log(`[UIAutomation] Executing step ${stepIndex + 1}: ${this.getActionDescription(step)}`);
-      
+      console.log(
+        `[UIAutomation] Executing step ${stepIndex + 1}/${totalSteps}: ${this.getActionDescription(step)}`,
+      );
+
       switch (step.action_type) {
         case 'click':
           return await this.executeClick(step);
@@ -190,13 +242,14 @@ export class UIAutomationService {
       }
     } catch (error) {
       const executionTime = Date.now() - startTime;
-      
+      const errorMsg = error instanceof Error ? error.message : String(error);
+
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: false,
-        error: error.message,
+        error: errorMsg,
         timestamp: new Date().toISOString(),
-        execution_time
+        execution_time: executionTime,
       };
     }
   }
@@ -207,7 +260,7 @@ export class UIAutomationService {
   private async executeClick(step: UIAction): Promise<UIActionResult> {
     try {
       const element = await this.waitForElement(step.selector, step.timeout);
-      
+
       if (!element) {
         throw new Error(`Element not found: ${step.selector}`);
       }
@@ -221,23 +274,25 @@ export class UIAutomationService {
       await this.scrollIntoView(element);
 
       // Perform click
-      element.click();
+      const clickable = element as HTMLElement;
+      clickable.click?.();
 
       // Wait for any navigation or page changes
       await this.waitForPageStability(1000);
 
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: true,
         element: step.selector,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: false,
-        error: error.message,
-        timestamp: new Date().toISOString()
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -248,15 +303,16 @@ export class UIAutomationService {
   private async executeType(step: UIAction): Promise<UIActionResult> {
     try {
       const element = await this.waitForElement(step.selector, step.timeout);
-      
+
       if (!element) {
         throw new Error(`Element not found: ${step.selector}`);
       }
 
-      element.focus();
-      
+      const focusable = element as HTMLElement;
+      focusable.focus?.();
+
       const text = step.value || '';
-      
+
       if (element instanceof HTMLInputElement) {
         element.value = text;
         element.dispatchEvent(new Event('input', { bubbles: true }));
@@ -269,18 +325,19 @@ export class UIAutomationService {
       await this.waitForPageStability(500);
 
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: true,
         element: step.selector,
         value: text,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: false,
-        error: error.message,
-        timestamp: new Date().toISOString()
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -291,25 +348,27 @@ export class UIAutomationService {
   private async executeSelect(step: UIAction): Promise<UIActionResult> {
     try {
       const element = await this.waitForElement(step.selector, step.timeout);
-      
+
       if (!element) {
         throw new Error(`Element not found: ${step.selector}`);
       }
 
-      element.selected = true;
-      
+      const optionEl = element as HTMLOptionElement;
+      optionEl.selected = true;
+
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: true,
         element: step.selector,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: false,
-        error: error.message,
-        timestamp: new Date().toISOString()
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -320,7 +379,7 @@ export class UIAutomationService {
   private async executeHover(step: UIAction): Promise<UIActionResult> {
     try {
       const element = await this.waitForElement(step.selector, step.timeout);
-      
+
       if (!element) {
         throw new Error(`Element not found: ${step.selector}`);
       }
@@ -330,22 +389,23 @@ export class UIAutomationService {
 
       // Simulate hover
       element.dispatchEvent(new Event('mouseover', { bubbles: true }));
-      
+
       // Wait for hover effects
       await this.waitForPageStability(500);
 
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: true,
         element: step.selector,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: false,
-        error: error.message,
-        timestamp: new Date().toISOString()
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -356,51 +416,55 @@ export class UIAutomationService {
   private async executeScroll(step: UIAction): Promise<UIActionResult> {
     try {
       const element = await this.waitForElement(step.selector, step.timeout);
-      
+
       if (!element) {
         throw new Error(`Element not found: ${step.selector}`);
       }
 
       const scrollOptions = step.options || {};
-      const direction = scrollOptions.direction || 'down';
-      const amount = scrollOptions.amount || 500;
+      const direction = (scrollOptions.direction as string) || 'down';
+      const amount = (scrollOptions.amount as number) || 500;
+
+      const scrollable = element as HTMLElement;
 
       // Execute scroll
       switch (direction) {
         case 'up':
-          element.scrollTop -= amount;
+          scrollable.scrollTop -= amount;
           break;
         case 'down':
-          element.scrollTop += amount;
+          scrollable.scrollTop += amount;
           break;
         case 'left':
-          element.scrollLeft -= amount;
+          scrollable.scrollLeft -= amount;
           break;
         case 'right':
-          element.scrollLeft += amount;
+          scrollable.scrollLeft += amount;
           break;
         case 'top':
-          element.scrollTop = 0;
+          scrollable.scrollTop = 0;
           break;
         case 'bottom':
-          element.scrollTop = element.scrollHeight - element.clientHeight;
+          scrollable.scrollTop =
+            scrollable.scrollHeight - scrollable.clientHeight;
           break;
       }
 
       await this.waitForPageStability(1000);
 
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: true,
         element: step.selector,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: false,
-        error: error.message,
-        timestamp: new Date().toISOString()
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -410,30 +474,33 @@ export class UIAutomationService {
    */
   private async executeNavigate(step: UIAction): Promise<UIActionResult> {
     try {
-      const url = step.value || step.options?.url;
-      
+      const url = step.value || (step.options?.url as string);
+
       if (!url) {
         throw new Error('No URL provided for navigation');
       }
 
       // Navigate to new URL
-      window.location.href = url;
+      if (typeof window !== 'undefined') {
+        window.location.href = url;
+      }
 
       // Wait for page to load
       await this.waitForPageLoad(step.timeout || 5000);
 
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: true,
         value: url,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: false,
-        error: error.message,
-        timestamp: new Date().toISOString()
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -446,39 +513,56 @@ export class UIAutomationService {
       // Wait for page to be ready
       await this.waitForPageStability(1000);
 
-      // Capture screenshot
+      // Capture screenshot using canvas
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      
+
+      if (!ctx) {
+        throw new Error('Failed to get canvas context');
+      }
+
       // Get device pixel ratio for high-quality screenshots
       const dpr = window.devicePixelRatio || 1;
-      
+
       // Set canvas size
       const width = window.innerWidth * dpr;
       const height = window.innerHeight * dpr;
-      
+
       canvas.width = width;
       canvas.height = height;
-      
-      // Draw the page
-      ctx.scale(dpr, dpr);
-      ctx.drawWindow(window, 0, 0, width, height);
-      
+
+      // Draw the page - note: drawWindow is Firefox-specific
+      // This will only work in Firefox environments
+      if ('drawWindow' in ctx) {
+        (
+          ctx as CanvasRenderingContext2D & {
+            drawWindow: (
+              win: Window,
+              x: number,
+              y: number,
+              w: number,
+              h: number,
+            ) => void;
+          }
+        ).drawWindow(window, 0, 0, width, height);
+      }
+
       // Convert to data URL
       const dataUrl = canvas.toDataURL('image/png');
-      
+
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: true,
         screenshot: dataUrl,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: false,
-        error: error.message,
-        timestamp: new Date().toISOString()
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -490,30 +574,31 @@ export class UIAutomationService {
     try {
       const condition = step.wait_condition;
       const timeout = step.timeout || 5000;
-      
+
       if (!condition) {
         throw new Error('No wait condition specified');
       }
 
       const startTime = Date.now();
-      
+
       // Wait for condition to be met
       await this.waitForCondition(condition, timeout);
-      
+
       const executionTime = Date.now() - startTime;
 
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: true,
-        execution_time,
-        timestamp: new Date().toISOString()
+        execution_time: executionTime,
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: false,
-        error: error.message,
-        timestamp: new Date().toISOString()
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -524,29 +609,31 @@ export class UIAutomationService {
   private async executeExtractText(step: UIAction): Promise<UIActionResult> {
     try {
       const element = await this.waitForElement(step.selector, step.timeout);
-      
+
       if (!element) {
         throw new Error(`Element not found: ${step.selector}`);
       }
 
-      const text = element.textContent || element.value || '';
-      
+      const text =
+        element.textContent || (element as HTMLInputElement).value || '';
+
       if (!text) {
         throw new Error(`No text content found in element: ${step.selector}`);
       }
 
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: true,
         text,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: false,
-        error: error.message,
-        timestamp: new Date().toISOString()
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -558,7 +645,7 @@ export class UIAutomationService {
     try {
       const form = await this.findParentForm(step.selector);
       const submitButton = await this.findSubmitButton(form);
-      
+
       if (!form || !submitButton) {
         throw new Error('Form or submit button not found');
       }
@@ -570,22 +657,23 @@ export class UIAutomationService {
 
       // Submit form
       submitButton.click();
-      
+
       // Wait for form submission
       await this.waitForPageStability(2000);
 
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: true,
         element: step.selector,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
       return {
-        action_id: step.step_id || uuidv4(),
+        action_id: step.id || uuidv4(),
         success: false,
-        error: error.message,
-        timestamp: new Date().toISOString()
+        error: errorMsg,
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -593,86 +681,117 @@ export class UIAutomationService {
   /**
    * Helper methods for element interaction
    */
-  private async waitForElement(selector: string, timeout: number = 5000): Promise<Element> {
+  private async waitForElement(
+    selector: string,
+    timeout: number = 5000,
+  ): Promise<Element | null> {
     const startTime = Date.now();
-    
-    return new Promise((resolve, reject) => {
-      const checkElement = () => {
+
+    return new Promise<Element | null>((resolve, reject) => {
+      const checkInterval = setInterval(() => {
         const element = document.querySelector(selector);
         if (element) {
+          clearInterval(checkInterval);
+          clearTimeout(timeoutId);
           resolve(element);
+        } else if (Date.now() - startTime >= timeout) {
+          clearInterval(checkInterval);
+          clearTimeout(timeoutId);
+          reject(
+            new Error(`Element not found within ${timeout}ms: ${selector}`),
+          );
         }
-      };
+      }, 100);
 
-      const checkInterval = setInterval(checkElement, 100);
-      
       const timeoutId = setTimeout(() => {
         clearInterval(checkInterval);
         reject(new Error(`Element not found within ${timeout}ms: ${selector}`));
       }, timeout);
 
       // Check immediately
-      checkElement();
-      
-      // Clear timeout if found
-      checkElement = (element) => {
-        if (element) {
-          clearInterval(checkInterval);
-          clearTimeout(timeoutId);
-        }
-      };
+      const element = document.querySelector(selector);
+      if (element) {
+        clearInterval(checkInterval);
+        clearTimeout(timeoutId);
+        resolve(element);
+      }
     });
   }
 
   private async scrollIntoView(element: Element): Promise<void> {
-    element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'nearest',
+    });
     await this.waitForPageStability(1000);
   }
 
   private async waitForPageStability(timeout: number = 1000): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, timeout));
+    await new Promise((resolve) => setTimeout(resolve, timeout));
   }
 
   private async waitForPageLoad(timeout: number = 5000): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise<void>((resolve, reject) => {
       if (document.readyState === 'complete') {
         resolve();
+        return;
       }
       const checkReady = () => {
         if (document.readyState === 'complete') {
+          document.removeEventListener('readystatechange', checkReady);
           resolve();
         }
       };
       document.addEventListener('readystatechange', checkReady);
-      setTimeout(() => reject(new Error('Page load timeout')), timeout);
+      setTimeout(() => {
+        document.removeEventListener('readystatechange', checkReady);
+        reject(new Error('Page load timeout'));
+      }, timeout);
     });
   }
 
-  private async waitForCondition(condition: string, timeout: number): Promise<void> {
-    return new Promise((resolve, reject) => {
+  private async waitForCondition(
+    condition: string,
+    timeout: number,
+  ): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
       const startTime = Date.now();
-      
-      const checkCondition = () => {
+
+      const checkInterval = setInterval(() => {
         if (this.evaluateCondition(condition)) {
+          clearInterval(checkInterval);
+          clearTimeout(timeoutId);
           resolve();
+        } else if (Date.now() - startTime >= timeout) {
+          clearInterval(checkInterval);
+          clearTimeout(timeoutId);
+          reject(
+            new Error(`Condition not met within ${timeout}ms: ${condition}`),
+          );
         }
-      };
-      
-      const checkInterval = setInterval(checkCondition, 100);
-      
+      }, 100);
+
       const timeoutId = setTimeout(() => {
         clearInterval(checkInterval);
-        reject(new Error(`Condition not met within ${timeout}ms: ${condition}`));
+        reject(
+          new Error(`Condition not met within ${timeout}ms: ${condition}`),
+        );
       }, timeout);
-      
+
       // Check immediately
-      checkCondition();
+      if (this.evaluateCondition(condition)) {
+        clearInterval(checkInterval);
+        clearTimeout(timeoutId);
+        resolve();
+      }
     });
   }
 
   private evaluateCondition(condition: string): boolean {
     try {
       // Simple condition evaluation (can be extended)
+
       return eval(condition);
     } catch (error) {
       console.error('Error evaluating condition:', error);
@@ -680,29 +799,41 @@ export class UIAutomationService {
     }
   }
 
-  private async findParentForm(selector: string): Promise<HTMLFormElement | null> {
-    let element = document.querySelector(selector) as HTMLElement;
-    
+  private async findParentForm(
+    selector: string,
+  ): Promise<HTMLFormElement | null> {
+    let element = document.querySelector(selector);
+
     while (element && element.tagName !== 'FORM') {
-      element = element.parentElement as HTMLElement;
+      element = element.parentElement;
     }
-    
-    return element as HTMLFormElement;
+
+    return element as HTMLFormElement | null;
   }
 
-  private async findSubmitButton(form: HTMLFormElement): Promise<HTMLButtonElement | null> {
-    const buttons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
-    
-    return buttons.length > 0 ? buttons[0] : null;
+  private async findSubmitButton(
+    form: HTMLFormElement,
+  ): Promise<HTMLButtonElement | null> {
+    const buttons = form.querySelectorAll(
+      'button[type="submit"], input[type="submit"]',
+    );
+
+    return buttons.length > 0 ? (buttons[0] as HTMLButtonElement) : null;
   }
 
-  private async fillFormField(form: HTMLFormElement, fieldName: string, value: string): Promise<void> {
-    const input = form.querySelector(`input[name="${fieldName}"], textarea[name="${fieldName}"], select[name="${fieldName}"]`);
-    
+  private async fillFormField(
+    form: HTMLFormElement,
+    fieldName: string,
+    value: string,
+  ): Promise<void> {
+    const input = form.querySelector(
+      `input[name="${fieldName}"], textarea[name="${fieldName}"], select[name="${fieldName}"]`,
+    );
+
     if (input) {
-      input.focus();
+      input.focus?.();
       input.value = value;
-      
+
       // Trigger change events
       input.dispatchEvent(new Event('input', { bubbles: true }));
       input.dispatchEvent(new Event('change', { bubbles: true }));
@@ -711,15 +842,19 @@ export class UIAutomationService {
 
   private isElementVisible(element: Element): boolean {
     const rect = element.getBoundingClientRect();
-    return rect.top >= 0 && rect.left >= 0 && 
-           rect.bottom <= window.innerHeight && rect.right <= window.innerWidth;
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <= window.innerHeight &&
+      rect.right <= window.innerWidth
+    );
   }
 
   /**
    * Get description of action for logging
    */
   private getActionDescription(action: UIAction): string {
-    const descriptions = {
+    const descriptions: Record<string, string> = {
       click: `Click element: ${action.selector}`,
       type: `Type text: ${action.value || ''} in ${action.selector}`,
       select: `Select element: ${action.selector}`,
@@ -729,25 +864,36 @@ export class UIAutomationService {
       screenshot: `Take screenshot of: ${action.selector}`,
       wait: `Wait for condition: ${action.wait_condition}`,
       extract_text: `Extract text from: ${action.selector}`,
-      submit_form: `Submit form: ${action.selector}`
+      submit_form: `Submit form: ${action.selector}`,
     };
-    
-    return descriptions[action.action_type] || `Unknown action: ${action.action_type}`;
+
+    return (
+      descriptions[action.action_type] ||
+      `Unknown action: ${action.action_type}`
+    );
   }
 
   /**
    * Persist UI execution results
    */
-  private async persistUIExecution(sessionId: string, result: any): Promise<void> {
+  private async persistUIExecution(
+    sessionId: string,
+    result: UIExecutionSummary,
+  ): Promise<void> {
     try {
       // Store execution history (would go to database in production)
-      this.executionHistory.set(sessionId, {
+      const entry: UIExecutionHistoryEntry = {
         sessionId,
         result,
-        timestamp: new Date().toISOString()
-      });
-      
-      console.log(`[UIAutomation] UI execution persisted for session ${sessionId}`);
+        timestamp: new Date().toISOString(),
+      };
+      const existing = this.executionHistory.get(sessionId) || [];
+      existing.push(entry);
+      this.executionHistory.set(sessionId, existing);
+
+      console.log(
+        `[UIAutomation] UI execution persisted for session ${sessionId}`,
+      );
     } catch (error) {
       console.error('Failed to persist UI execution:', error);
     }
@@ -756,7 +902,7 @@ export class UIAutomationService {
   /**
    * Get execution history
    */
-  getExecutionHistory(sessionId: string): any[] {
-    return Array.from(this.executionHistory.get(sessionId) || []);
+  getExecutionHistory(sessionId: string): UIExecutionHistoryEntry[] {
+    return this.executionHistory.get(sessionId) || [];
   }
 }

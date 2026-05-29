@@ -37,7 +37,7 @@ export class EscalationService {
           transcript: params.transcript || null,
           status: 'triggered',
           metadata: params.metadata ? JSON.stringify(params.metadata) : null,
-        }
+        },
       });
 
       this.logger.log(`Escalation created in DB: ${escalation.id}`);
@@ -51,7 +51,7 @@ export class EscalationService {
   async getById(id: string): Promise<any | null> {
     try {
       return await this.prisma.escalationLog.findUnique({
-        where: { id }
+        where: { id },
       });
     } catch (error) {
       this.logger.error(`Failed to get escalation from DB: ${error.message}`);
@@ -63,7 +63,7 @@ export class EscalationService {
     try {
       return await this.prisma.escalationLog.findMany({
         where: { sessionId },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
       });
     } catch (error) {
       this.logger.error(`Failed to get escalations from DB: ${error.message}`);
@@ -76,7 +76,7 @@ export class EscalationService {
       return await this.prisma.escalationLog.findMany({
         where: { teamId },
         orderBy: { createdAt: 'desc' },
-        take: limit
+        take: limit,
       });
     } catch (error) {
       this.logger.error(`Failed to get escalations from DB: ${error.message}`);
@@ -89,10 +89,12 @@ export class EscalationService {
       return await this.prisma.escalationLog.findMany({
         where: { status: 'triggered' },
         orderBy: { createdAt: 'desc' },
-        take: limit
+        take: limit,
       });
     } catch (error) {
-      this.logger.error(`Failed to get active escalations from DB: ${error.message}`);
+      this.logger.error(
+        `Failed to get active escalations from DB: ${error.message}`,
+      );
       throw new Error(`Escalation retrieval failed: ${error.message}`);
     }
   }
@@ -110,10 +112,12 @@ export class EscalationService {
           status: 'acknowledged',
           acknowledgedBy,
           acknowledgedAt: new Date(),
-        }
+        },
       });
     } catch (error) {
-      this.logger.error(`Failed to acknowledge escalation in DB: ${error.message}`);
+      this.logger.error(
+        `Failed to acknowledge escalation in DB: ${error.message}`,
+      );
       throw new Error(`Escalation acknowledge failed: ${error.message}`);
     }
   }
@@ -130,7 +134,7 @@ export class EscalationService {
         data: {
           status: 'resolved',
           resolvedAt: new Date(),
-        }
+        },
       });
     } catch (error) {
       this.logger.error(`Failed to resolve escalation in DB: ${error.message}`);
@@ -145,15 +149,17 @@ export class EscalationService {
     }
 
     try {
-      const metadata = escalation.metadata ? JSON.parse(escalation.metadata) : {};
+      const metadata = escalation.metadata
+        ? JSON.parse(escalation.metadata)
+        : {};
       metadata.abortReason = reason || 'user_abort';
-      
+
       return await this.prisma.escalationLog.update({
         where: { id },
         data: {
           status: 'aborted',
           metadata: JSON.stringify(metadata),
-        }
+        },
       });
     } catch (error) {
       this.logger.error(`Failed to abort escalation in DB: ${error.message}`);
@@ -170,14 +176,23 @@ export class EscalationService {
   }> {
     try {
       const where = teamId ? { teamId } : {};
-      
-      const [total, triggered, acknowledged, resolved, aborted] = await Promise.all([
-        this.prisma.escalationLog.count({ where }),
-        this.prisma.escalationLog.count({ where: { ...where, status: 'triggered' } }),
-        this.prisma.escalationLog.count({ where: { ...where, status: 'acknowledged' } }),
-        this.prisma.escalationLog.count({ where: { ...where, status: 'resolved' } }),
-        this.prisma.escalationLog.count({ where: { ...where, status: 'aborted' } }),
-      ]);
+
+      const [total, triggered, acknowledged, resolved, aborted] =
+        await Promise.all([
+          this.prisma.escalationLog.count({ where }),
+          this.prisma.escalationLog.count({
+            where: { ...where, status: 'triggered' },
+          }),
+          this.prisma.escalationLog.count({
+            where: { ...where, status: 'acknowledged' },
+          }),
+          this.prisma.escalationLog.count({
+            where: { ...where, status: 'resolved' },
+          }),
+          this.prisma.escalationLog.count({
+            where: { ...where, status: 'aborted' },
+          }),
+        ]);
 
       return { total, triggered, acknowledged, resolved, aborted };
     } catch (error) {

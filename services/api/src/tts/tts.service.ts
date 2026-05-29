@@ -18,7 +18,10 @@ export class TTSService {
     console.log('[TTS] TTSService initialized with voice:', this.voiceId);
   }
 
-  async speak(text: string, options: { interruptible?: boolean } = {}): Promise<TTSResult> {
+  async speak(
+    text: string,
+    options: { interruptible?: boolean } = {},
+  ): Promise<TTSResult> {
     // Provider selection: explicit env > auto-detect from available keys
     const explicitProvider = process.env.TTS_PROVIDER;
     const hasElevenLabs = !!process.env.ELEVENLABS_API_KEY;
@@ -35,7 +38,9 @@ export class TTSService {
       provider = 'mock';
     }
 
-    console.log(`[TTS] Speaking with ${provider}: "${text.substring(0, 50)}..."`);
+    console.log(
+      `[TTS] Speaking with ${provider}: "${text.substring(0, 50)}..."`,
+    );
 
     try {
       if (provider === 'elevenlabs') {
@@ -51,9 +56,12 @@ export class TTSService {
     }
   }
 
-  async speakWithElevenLabs(text: string, options: { interruptible?: boolean }): Promise<TTSResult> {
+  async speakWithElevenLabs(
+    text: string,
+    options: { interruptible?: boolean },
+  ): Promise<TTSResult> {
     const apiKey = process.env.ELEVENLABS_API_KEY;
-    
+
     if (!apiKey) {
       console.log('[TTS] ElevenLabs API key not configured, using mock');
       return { error: 'ELEVENLABS_API_KEY not configured' };
@@ -62,7 +70,7 @@ export class TTSService {
     try {
       const { ElevenLabsClient } = await import('elevenlabs');
       const client = new ElevenLabsClient({ apiKey });
-      
+
       const audio = await client.textToSpeech.convertAsStream(this.voiceId, {
         text,
         model_id: 'eleven_turbo_v2_5',
@@ -76,7 +84,10 @@ export class TTSService {
 
       const chunks: Buffer[] = [];
       for await (const chunk of audio) {
-        if (options.interruptible && this.eventEmitter.listenerCount('stop') > 0) {
+        if (
+          options.interruptible &&
+          this.eventEmitter.listenerCount('stop') > 0
+        ) {
           console.log('[TTS] Interrupted');
           break;
         }
@@ -85,9 +96,11 @@ export class TTSService {
 
       const audioData = Buffer.concat(chunks);
       const duration = this.estimateDuration(audioData.length);
-      
-      console.log(`[TTS] Generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio`);
-      
+
+      console.log(
+        `[TTS] Generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio`,
+      );
+
       return { audioData, duration };
     } catch (error: any) {
       console.error('[TTS] ElevenLabs error:', error.message);
@@ -95,7 +108,10 @@ export class TTSService {
     }
   }
 
-  async speakWithOpenAI(text: string, _options: { interruptible?: boolean }): Promise<TTSResult> {
+  async speakWithOpenAI(
+    text: string,
+    _options: { interruptible?: boolean },
+  ): Promise<TTSResult> {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return { error: 'OPENAI_API_KEY not configured' };
@@ -106,8 +122,19 @@ export class TTSService {
       const openai = new OpenAI({ apiKey });
 
       const voice = (process.env.OPENAI_TTS_VOICE || 'nova') as
-        'alloy' | 'ash' | 'coral' | 'echo' | 'fable' | 'nova' | 'onyx' | 'sage' | 'shimmer';
-      const model = (process.env.OPENAI_TTS_MODEL || 'tts-1') as 'tts-1' | 'tts-1-hd' | 'gpt-4o-mini-tts';
+        | 'alloy'
+        | 'ash'
+        | 'coral'
+        | 'echo'
+        | 'fable'
+        | 'nova'
+        | 'onyx'
+        | 'sage'
+        | 'shimmer';
+      const model = (process.env.OPENAI_TTS_MODEL || 'tts-1') as
+        | 'tts-1'
+        | 'tts-1-hd'
+        | 'gpt-4o-mini-tts';
 
       const response = await openai.audio.speech.create({
         model,
@@ -120,7 +147,9 @@ export class TTSService {
       const audioData = Buffer.from(arrayBuffer);
       const duration = this.estimateDuration(audioData.length);
 
-      console.log(`[TTS] OpenAI generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio (voice: ${voice})`);
+      console.log(
+        `[TTS] OpenAI generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio (voice: ${voice})`,
+      );
       return { audioData, duration };
     } catch (error: any) {
       console.error('[TTS] OpenAI TTS error:', error.message);

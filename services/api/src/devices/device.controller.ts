@@ -1,7 +1,15 @@
-import { Controller, Post, Get, Body, Headers, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Headers,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { DeviceService } from './device.service';
 import { Public } from '../guards/public.decorator';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Devices')
 @Controller('api/devices')
@@ -11,7 +19,8 @@ export class DeviceController {
   @Public()
   @Post('pair')
   async pairDevice(
-    @Body() body: {
+    @Body()
+    body: {
       device_id: string;
       machine_id: string;
       pairing_code: string;
@@ -20,13 +29,13 @@ export class DeviceController {
       keledon_id?: string;
     },
     @Headers('x-organization-id') organizationId?: string,
-    @Headers('x-user-id') userId?: string
+    @Headers('x-user-id') userId?: string,
   ) {
     try {
       const result = await this.deviceService.pairDevice({
         ...body,
         organizationId,
-        userId
+        userId,
       });
       return result;
     } catch (error) {
@@ -37,31 +46,37 @@ export class DeviceController {
   @Public()
   @Post('register')
   async registerDevice(
-    @Body() body: {
+    @Body()
+    body: {
       device_id: string;
       machine_id: string;
       platform: string;
       name: string;
     },
     @Headers('x-organization-id') organizationId?: string,
-    @Headers('x-user-id') userId?: string
+    @Headers('x-user-id') userId?: string,
   ) {
     return this.deviceService.registerPendingDevice({
       ...body,
       organizationId,
-      userId
+      userId,
     });
   }
 
   @Public()
   @Post('pairing-code')
   async createPairingCode(
-    @Body() body: { userId?: string; organizationId?: string; keledon_id?: string }
+    @Body()
+    body: {
+      userId?: string;
+      organizationId?: string;
+      keledon_id?: string;
+    },
   ) {
     const code = await this.deviceService.generatePairingCode(
       body.userId,
       body.organizationId,
-      body.keledon_id
+      body.keledon_id,
     );
     return { pairing_code: code };
   }
@@ -69,7 +84,7 @@ export class DeviceController {
   @Get()
   async getDevices(
     @Headers('x-user-id') userId?: string,
-    @Headers('x-organization-id') organizationId?: string
+    @Headers('x-organization-id') organizationId?: string,
   ) {
     if (userId) {
       return this.deviceService.getDevicesByUser(userId);
@@ -83,11 +98,11 @@ export class DeviceController {
   @Get(':id/status')
   async getDeviceStatus(@Param('id') deviceId: string) {
     const devices = await this.deviceService.getDevicesByUser(deviceId);
-    const device = devices.find(d => d.id === deviceId);
-    return { 
-      device_id: deviceId, 
+    const device = devices.find((d) => d.id === deviceId);
+    return {
+      device_id: deviceId,
       status: device?.status || 'unknown',
-      last_seen: device?.lastSeen
+      last_seen: device?.lastSeen,
     };
   }
 
@@ -107,7 +122,8 @@ export class DeviceController {
       test_url: `keledon://launch?keledonId=test-keledon&code=${pairingCode}&userId=test-user&timestamp=${Date.now()}&signature=testsig&cloudUrl=https%3A%2F%2Fkeledon.tuyoisaza.com`,
       pairing_code: pairingCode,
       expires_at: expiresAt.toISOString(),
-      instructions: '1. Click test link or open keledon:// URL\n2. Browser app opens\n3. Device pairs with cloud\n4. Auto-login to vendor portal'
+      instructions:
+        '1. Click test link or open keledon:// URL\n2. Browser app opens\n3. Device pairs with cloud\n4. Auto-login to vendor portal',
     };
   }
 

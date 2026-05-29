@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Bot, Mail, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { cn } from '@/lib/utils';
 
 declare const __APP_VERSION__: string;
 
@@ -35,7 +34,7 @@ export default function LoginPage() {
     try {
       await signInWithEmail(email, password);
       navigate('/dashboard');
-    } catch (err) {
+    } catch (_err) {
       // Error handled in context
     }
   };
@@ -44,7 +43,7 @@ export default function LoginPage() {
     try {
       await loginWithGoogle();
       navigate('/dashboard');
-    } catch (err) {
+    } catch (_err) {
       // Error handled in context
     }
   };

@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import * as crypto from 'crypto';
 import { IS_PUBLIC_KEY } from './public.decorator';
@@ -21,7 +26,8 @@ export class AuthGuard implements CanActivate {
 
   constructor(private reflector: Reflector) {
     this.authSecret =
-      process.env.KELEDON_AUTH_SECRET || 'keledon-dev-secret-do-not-use-in-production';
+      process.env.KELEDON_AUTH_SECRET ||
+      'keledon-dev-secret-do-not-use-in-production';
     if (!process.env.KELEDON_AUTH_SECRET) {
       console.warn(
         '[AuthGuard] WARNING: KELEDON_AUTH_SECRET not set. Using insecure default for development.',
@@ -81,7 +87,10 @@ export class AuthGuard implements CanActivate {
       // Timing-safe comparison to prevent timing attacks
       if (
         expectedSignature.length !== signature.length ||
-        !crypto.timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(signature))
+        !crypto.timingSafeEqual(
+          Buffer.from(expectedSignature),
+          Buffer.from(signature),
+        )
       ) {
         return null;
       }

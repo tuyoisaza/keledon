@@ -25,7 +25,7 @@ export class VectorStoreService {
     if (norm === 0) {
       return vector;
     }
-    return vector.map(v => v / norm);
+    return vector.map((v) => v / norm);
   }
 
   async getStatus() {
@@ -90,24 +90,26 @@ export class VectorStoreService {
   async addDocument(document: any) {
     const vector = this.deterministicHash(document.content);
     const id = document.id || `doc-${Date.now()}`;
-    
+
     await this.qdrant.upsert(this.collectionName, {
-      points: [{
-        id,
-        vector,
-        payload: {
-          title: document.title,
-          content: document.content,
-          category: document.category,
-          metadata: document.metadata || {},
-          company_id: document.company_id || '',
-          brand_id: document.brand_id || '',
-          team_id: document.team_id || '',
-          created_by: document.created_by || 'user',
-          created_at: document.created_at || new Date().toISOString(),
-          updated_at: document.updated_at || new Date().toISOString(),
+      points: [
+        {
+          id,
+          vector,
+          payload: {
+            title: document.title,
+            content: document.content,
+            category: document.category,
+            metadata: document.metadata || {},
+            company_id: document.company_id || '',
+            brand_id: document.brand_id || '',
+            team_id: document.team_id || '',
+            created_by: document.created_by || 'user',
+            created_at: document.created_at || new Date().toISOString(),
+            updated_at: document.updated_at || new Date().toISOString(),
+          },
         },
-      }],
+      ],
     });
 
     return { id, success: true };
@@ -125,25 +127,28 @@ export class VectorStoreService {
     return { success: true };
   }
 
-  async search(query: string, options: {
-    limit?: number;
-    scoreThreshold?: number;
-    category?: string[];
-    company_id?: string;
-    brand_id?: string;
-    team_id?: string;
-  } = {}) {
+  async search(
+    query: string,
+    options: {
+      limit?: number;
+      scoreThreshold?: number;
+      category?: string[];
+      company_id?: string;
+      brand_id?: string;
+      team_id?: string;
+    } = {},
+  ) {
     const queryVector = this.deterministicHash(query);
-    
+
     const filter: any = { must: [] };
-    
+
     if (options.category && options.category.length > 0) {
       filter.must.push({
         key: 'category',
         match: { any: options.category },
       });
     }
-    
+
     if (options.company_id) {
       filter.must.push({
         key: 'company_id',
@@ -193,13 +198,18 @@ export class VectorStoreService {
     }
   }
 
-  private normalizeAllowedCollectionPrefix(prefix?: string): string | undefined {
+  private normalizeAllowedCollectionPrefix(
+    prefix?: string,
+  ): string | undefined {
     if (typeof prefix !== 'string' || prefix.trim().length === 0) {
       return undefined;
     }
 
     const normalizedPrefix = prefix.trim();
-    if (normalizedPrefix === 'knowledge-base-' || normalizedPrefix.startsWith('knowledge-base-')) {
+    if (
+      normalizedPrefix === 'knowledge-base-' ||
+      normalizedPrefix.startsWith('knowledge-base-')
+    ) {
       throw new BadRequestException(
         'Tenant knowledge-base collections are not exposed by this endpoint',
       );
@@ -221,14 +231,19 @@ export class VectorStoreService {
 
     const normalizedName = name.trim();
 
-    if (normalizedName === 'knowledge-base-' || normalizedName.startsWith('knowledge-base-')) {
+    if (
+      normalizedName === 'knowledge-base-' ||
+      normalizedName.startsWith('knowledge-base-')
+    ) {
       throw new BadRequestException(
         'Tenant knowledge-base collections are not exposed by this endpoint',
       );
     }
 
     if (normalizedName !== this.collectionName) {
-      throw new BadRequestException(`Collection name must be ${this.collectionName}`);
+      throw new BadRequestException(
+        `Collection name must be ${this.collectionName}`,
+      );
     }
   }
 }

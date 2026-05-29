@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as crypto from 'crypto';
 
-const ENCRYPTION_KEY = process.env.KELEDON_VENDOR_KEY || 'keledon-vendor-secret-key-32!';
+const ENCRYPTION_KEY =
+  process.env.KELEDON_VENDOR_KEY || 'keledon-vendor-secret-key-32!';
 
 @Injectable()
 export class DeviceService {
@@ -42,15 +43,15 @@ export class DeviceService {
     keledonId?: string;
   }) {
     const code = data.pairing_code.toUpperCase();
-    
+
     const device = await this.prisma.device.findFirst({
       where: {
         pairingCode: code,
         status: 'pending',
         pairingCodeExpiresAt: {
-          gte: new Date()
-        }
-      }
+          gte: new Date(),
+        },
+      },
     });
 
     if (!device) {
@@ -71,8 +72,8 @@ export class DeviceService {
         authToken,
         platform: data.platform,
         name: data.name,
-        lastSeen: new Date()
-      }
+        lastSeen: new Date(),
+      },
     });
 
     const response: any = {
@@ -80,7 +81,7 @@ export class DeviceService {
       auth_token: authToken,
       cloud_url: process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
       organization_id: paired.organizationId,
-      keledon_id: paired.keledonId
+      keledon_id: paired.keledonId,
     };
 
     if (paired.keledonId) {
@@ -89,10 +90,10 @@ export class DeviceService {
         include: {
           team: {
             include: {
-              brand: { include: { company: true } }
-            }
-          }
-        }
+              brand: { include: { company: true } },
+            },
+          },
+        },
       });
 
       if (keledon?.team) {
@@ -103,17 +104,19 @@ export class DeviceService {
           sttProvider: keledon.team.sttProvider,
           ttsProvider: keledon.team.ttsProvider,
           escalationTriggers: keledon.team.escalationTriggers || [],
-          company: keledon.team.brand?.company ? {
-            id: keledon.team.brand.company.id,
-            name: keledon.team.brand.company.name
-          } : null
+          company: keledon.team.brand?.company
+            ? {
+                id: keledon.team.brand.company.id,
+                name: keledon.team.brand.company.name,
+              }
+            : null,
         };
 
         const vendors = await this.prisma.vendor.findMany({
-          where: { teamId: keledon.team.id, isActive: true }
+          where: { teamId: keledon.team.id, isActive: true },
         });
 
-        response.vendors = vendors.map(v => ({
+        response.vendors = vendors.map((v) => ({
           id: v.id,
           name: v.name,
           type: v.type,
@@ -121,7 +124,7 @@ export class DeviceService {
           username: v.username ? this.encrypt(v.username) : null,
           password: v.password ? this.encrypt(v.password) : null,
           apiKey: v.apiKey ? this.encrypt(v.apiKey) : null,
-          config: v.config
+          config: v.config,
         }));
       }
     }
@@ -138,7 +141,7 @@ export class DeviceService {
     organizationId?: string;
   }) {
     const existing = await this.prisma.device.findUnique({
-      where: { machineId: data.machine_id }
+      where: { machineId: data.machine_id },
     });
 
     if (existing) {
@@ -154,21 +157,27 @@ export class DeviceService {
         userId: data.userId,
         organizationId: data.organizationId,
         status: 'pending',
-        version: '0.0.1'
-      }
+        version: '0.0.1',
+      },
     });
 
     return { device_id: device.id, already_registered: false };
   }
 
-  async generatePairingCode(userId?: string, organizationId?: string, keledonId?: string): Promise<string> {
+  async generatePairingCode(
+    userId?: string,
+    organizationId?: string,
+    keledonId?: string,
+  ): Promise<string> {
     const code = this.generatePairingCodeString();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
     // Only set userId if provided and user exists
     let resolvedUserId: string | null = null;
     if (userId) {
-      const userExists = await this.prisma.user.findUnique({ where: { id: userId } });
+      const userExists = await this.prisma.user.findUnique({
+        where: { id: userId },
+      });
       if (userExists) {
         resolvedUserId = userId;
       }
@@ -184,8 +193,8 @@ export class DeviceService {
         platform: 'pending',
         status: 'pending',
         pairingCode: code,
-        pairingCodeExpiresAt: expiresAt
-      }
+        pairingCodeExpiresAt: expiresAt,
+      },
     });
 
     return code;
@@ -194,33 +203,35 @@ export class DeviceService {
   async getDevicesByUser(userId: string) {
     return this.prisma.device.findMany({
       where: { userId },
-      orderBy: { lastSeen: 'desc' }
+      orderBy: { lastSeen: 'desc' },
     });
   }
 
   async getDevicesByOrganization(organizationId: string) {
     return this.prisma.device.findMany({
       where: { organizationId },
-      orderBy: { lastSeen: 'desc' }
+      orderBy: { lastSeen: 'desc' },
     });
   }
 
   async updateDeviceStatus(deviceId: string, status: string) {
     return this.prisma.device.update({
       where: { id: deviceId },
-      data: { 
+      data: {
         status,
-        lastSeen: status === 'paired' ? new Date() : undefined
-      }
+        lastSeen: status === 'paired' ? new Date() : undefined,
+      },
     });
   }
 
-  async validateAuthToken(token: string): Promise<{ valid: boolean; deviceId?: string }> {
+  async validateAuthToken(
+    token: string,
+  ): Promise<{ valid: boolean; deviceId?: string }> {
     const device = await this.prisma.device.findFirst({
-      where: { 
+      where: {
         authToken: token,
-        status: 'paired'
-      }
+        status: 'paired',
+      },
     });
 
     if (!device) {
@@ -229,7 +240,7 @@ export class DeviceService {
 
     await this.prisma.device.update({
       where: { id: device.id },
-      data: { lastSeen: new Date() }
+      data: { lastSeen: new Date() },
     });
 
     return { valid: true, deviceId: device.id };
@@ -238,7 +249,7 @@ export class DeviceService {
   async revokeDevice(deviceId: string) {
     return this.prisma.device.update({
       where: { id: deviceId },
-      data: { status: 'revoked', authToken: null }
+      data: { status: 'revoked', authToken: null },
     });
   }
 
@@ -251,8 +262,8 @@ export class DeviceService {
         platform: 'keledon',
         status: 'pending',
         pairingCode,
-        pairingCodeExpiresAt: expiresAt
-      }
+        pairingCodeExpiresAt: expiresAt,
+      },
     });
   }
 

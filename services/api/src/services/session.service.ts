@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AgentEvent } from '../contracts/events';
 
@@ -8,13 +13,16 @@ export class SessionService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(agentId: string, metadata?: {
-    tab_url?: string;
-    tab_title?: string;
-    name?: string;
-    userId?: string;
-    teamId?: string;
-  }): Promise<any> {
+  async create(
+    agentId: string,
+    metadata?: {
+      tab_url?: string;
+      tab_title?: string;
+      name?: string;
+      userId?: string;
+      teamId?: string;
+    },
+  ): Promise<any> {
     this.logger.log(`Creating session for agent: ${agentId}`);
 
     try {
@@ -25,9 +33,9 @@ export class SessionService {
           userId: metadata?.userId || null,
           teamId: metadata?.teamId || null,
           metadata: JSON.stringify(metadata || {}),
-        }
+        },
       });
-      
+
       this.logger.log(`Session created in DB: ${session.id}`);
       return session;
     } catch (error) {
@@ -39,7 +47,7 @@ export class SessionService {
   async getSession(sessionId: string): Promise<any | null> {
     try {
       const session = await this.prisma.session.findUnique({
-        where: { id: sessionId }
+        where: { id: sessionId },
       });
       return session;
     } catch (error) {
@@ -57,7 +65,7 @@ export class SessionService {
     try {
       await this.prisma.session.update({
         where: { id: sessionId },
-        data: { status }
+        data: { status },
       });
     } catch (error) {
       this.logger.error(`Failed to update session in DB: ${error.message}`);
@@ -68,7 +76,9 @@ export class SessionService {
   async persistEvent(sessionId: string, event: AgentEvent): Promise<any> {
     const session = await this.getSession(sessionId);
     if (!session) {
-      throw new BadRequestException(`Session ${sessionId} does not exist - cannot persist event`);
+      throw new BadRequestException(
+        `Session ${sessionId} does not exist - cannot persist event`,
+      );
     }
 
     try {
@@ -78,7 +88,7 @@ export class SessionService {
           sessionId: sessionId,
           type: event.event_type,
           payload: JSON.stringify(event.payload || {}),
-        }
+        },
       });
 
       await this.updateSessionTimestamp(sessionId);
@@ -94,7 +104,7 @@ export class SessionService {
     try {
       const dbEvents = await this.prisma.event.findMany({
         where: { sessionId: sessionId },
-        orderBy: { createdAt: 'asc' }
+        orderBy: { createdAt: 'asc' },
       });
       return dbEvents;
     } catch (error) {
@@ -107,17 +117,19 @@ export class SessionService {
     try {
       await this.prisma.session.update({
         where: { id: sessionId },
-        data: { updatedAt: new Date() }
+        data: { updatedAt: new Date() },
       });
     } catch (error) {
-      this.logger.error(`Failed to update session timestamp in DB: ${error.message}`);
+      this.logger.error(
+        `Failed to update session timestamp in DB: ${error.message}`,
+      );
     }
   }
 
   async validateSession(sessionId: string): Promise<boolean> {
     try {
       const session = await this.prisma.session.findUnique({
-        where: { id: sessionId }
+        where: { id: sessionId },
       });
       return !!session;
     } catch (error) {
@@ -139,10 +151,10 @@ export class SessionService {
   async remove(sessionId: string): Promise<void> {
     try {
       await this.prisma.event.deleteMany({
-        where: { sessionId: sessionId }
+        where: { sessionId: sessionId },
       });
       await this.prisma.session.delete({
-        where: { id: sessionId }
+        where: { id: sessionId },
       });
     } catch (error) {
       this.logger.error(`Failed to delete from DB: ${error.message}`);
