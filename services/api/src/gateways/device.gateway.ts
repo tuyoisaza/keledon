@@ -66,7 +66,8 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return;
     }
 
-    this.logger.log(`Device connected: ${deviceId}`);
+    const statusLabel = validation.status && validation.status !== 'paired' ? ` (reconnecting from ${validation.status})` : '';
+    this.logger.log(`Device connected: ${deviceId}${statusLabel}`);
     client.data.deviceId = deviceId;
     client.data.sessionId = null;
 

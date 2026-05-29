@@ -226,11 +226,13 @@ export class DeviceService {
 
   async validateAuthToken(
     token: string,
-  ): Promise<{ valid: boolean; deviceId?: string }> {
+  ): Promise<{ valid: boolean; deviceId?: string; status?: string }> {
     const device = await this.prisma.device.findFirst({
       where: {
         authToken: token,
-        status: 'paired',
+        status: {
+          in: ['paired', 'disconnected'],
+        },
       },
     });
 
@@ -243,7 +245,7 @@ export class DeviceService {
       data: { lastSeen: new Date() },
     });
 
-    return { valid: true, deviceId: device.id };
+    return { valid: true, deviceId: device.id, status: device.status };
   }
 
   async revokeDevice(deviceId: string) {
