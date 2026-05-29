@@ -87,10 +87,57 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     client.data.sessionId = data.session_id;
     this.logger.log(
-      `Device ${client.data.deviceId} started session: ${data.session_id}`,
+      `Device ${client.data.deviceId} started session: ${data.session_id}, team: ${data.team_id}`,
     );
 
     client.join(`session:${data.session_id}`);
+
+    // --- DEBUG: lookup vendors for this team and auto-send navigation goal ---
+    try {
+      const vendors = await this.prisma.vendor.findMany({
+        where: { teamId: data.team_id, isActive: true },
+      });
+      this.logger.log(
+        `[LAUNCH DEBUG] Team ${data.team_id} active vendors: ${vendors.length}`,
+      );
+      for (const v of vendors) {
+        this.logger.log(
+          `[LAUNCH DEBUG]   vendor: ${v.name} | type: ${v.type} | url: ${v.baseUrl}`,
+        );
+      }
+
+      if (vendors.length > 0) {
+        // Auto-send goal_execute to open first vendor in browser
+        const firstVendor = vendors[0];
+        this.logger.log(
+          `[LAUNCH DEBUG] Auto-sending goal_execute: open ${firstVendor.name}`,
+        );
+
+        // Emit goal_execute directly to this device
+        client.emit('goal_execute', {
+          device_id: client.data.deviceId,
+          execution_id: `launch-auto-${Date.now()}`,
+          goal: `open ${firstVendor.name}`,
+          inputs: { url: firstVendor.baseUrl, vendor_type: firstVendor.type },
+          constraints: { max_steps: 5 },
+          timestamp: new Date().toISOString(),
+        });
+      } else {
+        this.logger.log(
+          `[LAUNCH DEBUG] No active vendors found for team ${data.team_id} — auto-sending standby goal`,
+        );
+        client.emit('goal_execute', {
+          device_id: client.data.deviceId,
+          execution_id: `launch-auto-${Date.now()}`,
+          goal: 'return to standby',
+          inputs: {},
+          constraints: {},
+          timestamp: new Date().toISOString(),
+        });
+      }
+    } catch (error) {
+      this.logger.error(`[LAUNCH DEBUG] Error looking up vendors: ${error.message}`);
+    }
 
     return { success: true, session_id: data.session_id };
   }

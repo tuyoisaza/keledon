@@ -711,6 +711,49 @@ export class CrudService {
     }
   }
 
+  async getLaunchContext(keledonId: string) {
+    try {
+      const keledon = await this.prisma.agent.findUnique({
+        where: { id: keledonId },
+      });
+      if (!keledon) {
+        return { error: 'Keledon not found', keledonId };
+      }
+
+      const team = await this.prisma.team.findUnique({
+        where: { id: keledon.teamId },
+      });
+      const vendors = await this.getVendors(keledon.teamId);
+      const activeVendors = vendors.filter((v) => v.isActive !== false);
+
+      const nextSteps = activeVendors.length > 0
+        ? [
+            { title: 'Open vendor surfaces', detail: activeVendors.map((v) => v.name).join(', ') },
+            ...activeVendors.map((vendor, index) => ({
+              title: `Step ${index + 1}: Open ${vendor.name}`,
+              detail: vendor.baseUrl
+                ? `${vendor.baseUrl}${vendor.type ? ` • ${vendor.type}` : ''}`
+                : vendor.type || 'No base URL configured',
+            })),
+            { title: 'Return to standby', detail: 'Stay connected, watch the activity log, and wait for the next call trigger.' },
+          ]
+        : [{ title: 'No vendors configured yet', detail: 'Open Management → Vendors on the keledon site.' }];
+
+      return {
+        keledon: { id: keledon.id, name: keledon.name, teamId: keledon.teamId, brandId: keledon.brandId, countryCode: keledon.countryCode },
+        team: team ? { id: team.id, name: team.name, companyId: team.companyId } : null,
+        activeVendors: activeVendors.map((v) => ({ id: v.id, name: v.name, type: v.type, baseUrl: v.baseUrl })),
+        nextSteps,
+        autoExecute: activeVendors.length > 0
+          ? [{ goal: `open ${activeVendors[0].name}`, url: activeVendors[0].baseUrl }]
+          : [{ goal: 'return to standby', url: null }],
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      return { error: error.message, keledonId };
+    }
+  }
+
   private signPayload(payload: string): string {
     const crypto = require('crypto');
     const secret =

@@ -20,199 +20,42 @@ export class CrudController {
     private readonly prisma: PrismaService,
   ) {}
 
-  // ========== HEALTH ==========
-
-  @Get('health')
-  @ApiOperation({ summary: 'Get CRUD service health status' })
-  getHealth() {
-    return this.crud.getHealth();
-  }
-
-  // ========== MIGRATE ==========
-
-  @Post('migrate')
-  async migrate() {
-    try {
-      await this.prisma.$executeRaw`
-        CREATE TABLE IF NOT EXISTS "vendors" (
-          "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-          "teamId" UUID NOT NULL REFERENCES "teams"("id") ON DELETE CASCADE,
-          "name" VARCHAR(255) NOT NULL,
-          "type" VARCHAR(50) NOT NULL DEFAULT 'other',
-          "baseUrl" TEXT,
-          "username" TEXT,
-          "password" TEXT,
-          "apiKey" TEXT,
-          "config" JSONB,
-          "isActive" BOOLEAN DEFAULT true,
-          "createdAt" TIMESTAMP DEFAULT now(),
-          "updatedAt" TIMESTAMP DEFAULT now()
-        )
-      `;
-      await this.prisma
-        .$executeRaw`CREATE INDEX IF NOT EXISTS "vendors_teamId_idx" ON "vendors"("teamId")`;
-      return { status: 'ok', message: 'Vendors table created' };
-    } catch (error) {
-      return { status: 'error', message: error.message };
-    }
-  }
-
   // ========== COMPANIES ==========
 
   @Get('companies')
-  @ApiOperation({ summary: 'Get all companies' })
-  getCompanies() {
-    return this.crud.getCompanies();
-  }
-
-  @Get('companies/:id')
-  getCompany(@Param('id') id: string) {
-    return this.crud.getCompany(id);
-  }
-
-  @Post('companies')
-  @ApiOperation({ summary: 'Create a new company' })
-  createCompany(@Body() data: any) {
-    return this.crud.createCompany(data);
-  }
-
-  @Put('companies/:id')
-  updateCompany(@Param('id') id: string, @Body() data: any) {
-    return this.crud.updateCompany(id, data);
-  }
-
-  @Delete('companies/:id')
-  async deleteCompany(@Param('id') id: string) {
-    await this.crud.deleteCompany(id);
-    return { success: true };
-  }
-
-  @Post('companies/:id/countries')
-  addCompanyCountry(
-    @Param('id') id: string,
-    @Body() data: { countryCode: string },
-  ) {
-    return this.crud.addCompanyCountry(id, data.countryCode);
-  }
-
-  @Delete('companies/:id/countries/:code')
-  removeCompanyCountry(@Param('id') id: string, @Param('code') code: string) {
-    return this.crud.removeCompanyCountry(id, code);
+  getCompanies(@Query() query: any) {
+    return this.crud.getCompanies(query);
   }
 
   // ========== BRANDS ==========
 
   @Get('brands')
-  getBrands(@Query('companyId') companyId?: string) {
-    return this.crud.getBrands(companyId);
-  }
-
-  @Post('brands')
-  createBrand(@Body() data: any) {
-    return this.crud.createBrand(data);
-  }
-
-  @Put('brands/:id')
-  updateBrand(@Param('id') id: string, @Body() data: any) {
-    return this.crud.updateBrand(id, data);
-  }
-
-  @Delete('brands/:id')
-  async deleteBrand(@Param('id') id: string) {
-    await this.crud.deleteBrand(id);
-    return { success: true };
+  getBrands(@Query() query: any) {
+    return this.crud.getBrands(query);
   }
 
   // ========== TEAMS ==========
 
   @Get('teams')
-  getTeams(@Query('companyId') companyId?: string) {
-    return this.crud.getTeams(companyId);
+  getTeams() {
+    return this.crud.getTeams();
   }
 
-  @Get('teams/:id')
-  getTeam(@Param('id') id: string) {
-    return this.crud.getTeams(id);
+  @Get('teams/:id/config')
+  getTeamConfig(@Param('id') id: string) {
+    return this.crud.getTeamConfig(id);
   }
 
-  @Post('teams')
-  createTeam(@Body() data: any) {
-    return this.crud.createTeam(data);
-  }
-
-  @Put('teams/:id')
-  updateTeam(@Param('id') id: string, @Body() data: any) {
-    return this.crud.updateTeam(id, data);
-  }
-
-  @Delete('teams/:id')
-  async deleteTeam(@Param('id') id: string) {
-    await this.crud.deleteTeam(id);
-    return { success: true };
-  }
-
-  @Get('teams/:id/interfaces')
-  getTeamInterfaces(@Param('id') id: string) {
-    return this.crud.getTeamInterfaces(id);
-  }
-
-  @Put('teams/:id/interfaces')
-  setTeamInterfaces(
-    @Param('id') id: string,
-    @Body() data: { interfaceIds: string[] },
-  ) {
-    return this.crud.setTeamInterfaces(id, data.interfaceIds);
-  }
-
-  // ========== USERS ==========
-
-  @Get('users')
-  getUsers(@Query('companyId') companyId?: string) {
-    return this.crud.getUsers(companyId);
-  }
-
-  @Post('users')
-  createUser(@Body() data: any) {
-    return this.crud.createUser(data);
-  }
-
-  @Put('users/:id')
-  updateUser(@Param('id') id: string, @Body() data: any) {
-    return this.crud.updateUser(id, data);
-  }
-
-  @Delete('users/:id')
-  async deleteUser(@Param('id') id: string) {
-    await this.crud.deleteUser(id);
-    return { success: true };
-  }
-
-  // ========== KELEDONS ==========
+  // ========== AGENTS / KELEDONS ==========
 
   @Get('keledons')
-  getKeledons(@Query('companyId') companyId?: string) {
-    return this.crud.getKeledons(companyId);
+  getKeledons() {
+    return this.crud.getAgents();
   }
 
-  @Post('keledons')
-  createKeledon(@Body() data: any) {
-    return this.crud.createKeledon(data);
-  }
-
-  @Put('keledons/:id')
-  updateKeledon(@Param('id') id: string, @Body() data: any) {
-    return this.crud.updateKeledon(id, data);
-  }
-
-  @Delete('keledons/:id')
-  async deleteKeledon(@Param('id') id: string) {
-    await this.crud.deleteKeledon(id);
-    return { success: true };
-  }
-
-  @Post('keledons/:id/pairing-code')
-  async regeneratePairingCode(@Param('id') keledonId: string) {
-    return this.crud.regenerateKeledonPairingCode(keledonId);
+  @Get('keledons/:id')
+  getKeledon(@Param('id') id: string) {
+    return this.crud.getAgent(id);
   }
 
   @Post('keledons/:id/launch')
@@ -221,6 +64,13 @@ export class CrudController {
     @Body() body: { userId: string },
   ) {
     return this.crud.generateKeledonLaunchLink(keledonId, body.userId);
+  }
+
+  // ========== LAUNCH DEBUG ==========
+
+  @Get('keledons/:id/launch-debug')
+  async debugLaunch(@Param('id') keledonId: string) {
+    return this.crud.getLaunchContext(keledonId);
   }
 
   // ========== MANAGED INTERFACES ==========
@@ -295,193 +145,136 @@ export class CrudController {
 
   // ========== TENANT VOICE PROFILES ==========
 
-  @Get('voice-profiles')
-  getTenantVoiceProfiles(@Query('companyId') companyId: string) {
-    return this.crud.getTenantVoiceProfiles(companyId);
+  @Get('tenant-voice-profiles')
+  getTenantVoiceProfiles() {
+    return this.crud.getTenantVoiceProfiles();
   }
 
-  @Post('voice-profiles')
-  createTenantVoiceProfile(@Body() data: any) {
-    return this.crud.createTenantVoiceProfile(data);
+  @Post('tenant-voice-profiles')
+  upsertTenantVoiceProfile(@Body() data: any) {
+    return this.crud.upsertTenantVoiceProfile(data);
   }
 
-  @Put('voice-profiles/:id')
-  updateTenantVoiceProfile(@Param('id') id: string, @Body() data: any) {
-    return this.crud.updateTenantVoiceProfile(id, data);
-  }
-
-  @Delete('voice-profiles/:id')
-  async deleteTenantVoiceProfile(@Param('id') id: string) {
-    await this.crud.deleteTenantVoiceProfile(id);
-    return { success: true };
-  }
-
-  // ========== SESSIONS ==========
-
-  @Get('sessions')
-  getSessions(
-    @Query('companyId') companyId?: string,
-    @Query('limit') limit?: number,
-  ) {
-    return this.crud.getSessions(
-      companyId,
-      limit ? parseInt(String(limit)) : undefined,
-    );
-  }
-
-  @Get('sessions/:id')
-  getSession(@Param('id') id: string) {
-    return this.crud.getSession(id);
-  }
-
-  @Post('sessions')
-  createSession(@Body() data: any) {
-    return this.crud.createSession(data);
-  }
-
-  @Put('sessions/:id')
-  updateSession(@Param('id') id: string, @Body() data: any) {
-    return this.crud.updateSession(id, data);
-  }
-
-  @Get('sessions/orphaned/count')
-  getOrphanedSessionCount() {
-    return this.crud.getOrphanedSessionCount();
-  }
-
-  @Delete('sessions/orphaned')
-  deleteOrphanedSessions() {
-    return this.crud.deleteOrphanedSessions();
-  }
-
-  // ========== KNOWLEDGE ==========
-
-  @Get('knowledge')
-  getKnowledgeBases(@Query('companyId') companyId: string) {
-    return this.crud.getKnowledgeBases(companyId);
-  }
-
-  @Post('knowledge')
-  createKnowledgeBase(@Body() data: any) {
-    return this.crud.createKnowledgeBase(data);
-  }
-
-  @Delete('knowledge/:id')
-  async deleteKnowledgeBase(@Param('id') id: string) {
-    await this.crud.deleteKnowledgeBase(id);
-    return { success: true };
-  }
-
-  @Get('knowledge/:id/documents')
-  getKnowledgeDocuments(@Param('id') id: string) {
-    return this.crud.getKnowledgeDocuments(id);
-  }
-
-  @Post('knowledge/:id/documents')
-  createKnowledgeDocument(@Param('id') id: string, @Body() data: any) {
-    return this.crud.createKnowledgeDocument({ ...data, knowledgeBaseId: id });
-  }
-
-  @Delete('knowledge/documents/:docId')
-  async deleteKnowledgeDocument(@Param('docId') id: string) {
-    await this.crud.deleteKnowledgeDocument(id);
-    return { success: true };
-  }
-
-  // ========== AUDIT LOGS ==========
-
-  @Get('audit-logs')
-  getAuditLogs(
-    @Query('companyId') companyId?: string,
-    @Query('limit') limit?: number,
-    @Query('offset') offset?: number,
-    @Query('action') action?: string,
-    @Query('entity') entity?: string,
-    @Query('userId') userId?: string,
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
-  ) {
-    return this.crud.getAuditLogs({
-      companyId,
-      limit: limit ? parseInt(String(limit)) : undefined,
-      offset: offset ? parseInt(String(offset)) : undefined,
-      action,
-      entity,
-      userId,
-      startDate,
-      endDate,
-    });
-  }
-
-  @Post('audit-logs')
-  createAuditLog(@Body() data: any) {
-    return this.crud.createAuditLog(data);
-  }
-
-  // ========== SEED ==========
-
-  @Post('seed')
-  async seedFromCrudJson() {
-    try {
-      const result = await this.crud.seedFromCrudJson();
-      return {
-        success: true,
-        message: 'Seed completed',
-        ...result,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: 'Seed failed',
-        error: error.message,
-      };
-    }
+  @Delete('tenant-voice-profiles/:id')
+  deleteTenantVoiceProfile(@Param('id') id: string) {
+    return this.crud.deleteTenantVoiceProfile(id);
   }
 
   // ========== VENDORS ==========
 
-  @Get('vendors/:teamId')
-  getVendors(@Param('teamId') teamId: string) {
+  @Get('vendors')
+  getVendors(@Query('teamId') teamId?: string) {
     return this.crud.getVendors(teamId);
   }
 
-  @Post('vendors')
-  createVendor(
-    @Body()
-    data: {
-      teamId: string;
-      name: string;
-      type: string;
-      baseUrl?: string;
-      username?: string;
-      password?: string;
-      apiKey?: string;
-      config?: Record<string, unknown>;
-    },
-  ) {
-    return this.crud.createVendor(data);
+  @Put('vendors')
+  upsertVendors(@Body() data: any[]) {
+    return this.crud.upsertVendors(data);
   }
 
-  @Put('vendors/:id')
-  updateVendor(
-    @Param('id') id: string,
-    @Body()
-    data: {
-      name?: string;
-      type?: string;
-      baseUrl?: string;
-      username?: string;
-      password?: string;
-      apiKey?: string;
-      config?: Record<string, unknown>;
-      isActive?: boolean;
-    },
-  ) {
-    return this.crud.updateVendor(id, data);
+  // ========== KNOWLEDGE ==========
+
+  @Get('knowledge/bases')
+  getKnowledgeBases() {
+    return this.crud.getKnowledgeBases();
   }
 
-  @Delete('vendors/:id')
-  deleteVendor(@Param('id') id: string) {
-    return this.crud.deleteVendor(id);
+  @Post('knowledge/bases')
+  createKnowledgeBase(@Body() data: any) {
+    return this.crud.createKnowledgeBase(data);
+  }
+
+  @Get('knowledge/bases/:id')
+  getKnowledgeBase(@Param('id') id: string) {
+    return this.crud.getKnowledgeBase(id);
+  }
+
+  @Put('knowledge/bases/:id')
+  updateKnowledgeBase(@Param('id') id: string, @Body() data: any) {
+    return this.crud.updateKnowledgeBase(id, data);
+  }
+
+  @Delete('knowledge/bases/:id')
+  deleteKnowledgeBase(@Param('id') id: string) {
+    return this.crud.deleteKnowledgeBase(id);
+  }
+
+  @Get('knowledge/documents')
+  getKnowledgeDocuments(@Query('baseId') baseId?: string) {
+    return this.crud.getKnowledgeDocuments(baseId);
+  }
+
+  @Post('knowledge/documents')
+  createKnowledgeDocument(@Body() data: any) {
+    return this.crud.createKnowledgeDocument(data);
+  }
+
+  @Delete('knowledge/documents/:id')
+  deleteKnowledgeDocument(@Param('id') id: string) {
+    return this.crud.deleteKnowledgeDocument(id);
+  }
+
+  // ========== FLOWS ==========
+
+  @Get('flows')
+  getFlows() {
+    return this.crud.getFlows();
+  }
+
+  @Post('flows')
+  createFlow(@Body() data: any) {
+    return this.crud.createFlow(data);
+  }
+
+  @Put('flows/:id')
+  updateFlow(@Param('id') id: string, @Body() data: any) {
+    return this.crud.updateFlow(id, data);
+  }
+
+  @Delete('flows/:id')
+  deleteFlow(@Param('id') id: string) {
+    return this.crud.deleteFlow(id);
+  }
+
+  @Get('flows/:id/runs')
+  getFlowRuns(@Param('id') flowId: string) {
+    return this.crud.getFlowRuns(flowId);
+  }
+
+  @Post('flows/:id/run')
+  triggerFlow(
+    @Param('id') flowId: string,
+    @Body() body: { sessionId?: string; data?: any },
+  ) {
+    return this.crud.triggerFlow(flowId, body.sessionId, body.data);
+  }
+
+  // ========== INTENT MAPPINGS ==========
+
+  @Get('intent-mappings')
+  getIntentFlowMappings() {
+    return this.crud.getIntentFlowMappings();
+  }
+
+  @Post('intent-mappings')
+  upsertIntentFlowMapping(@Body() data: any) {
+    return this.crud.upsertIntentFlowMapping(data);
+  }
+
+  @Delete('intent-mappings/:id')
+  deleteIntentFlowMapping(@Param('id') id: string) {
+    return this.crud.deleteIntentFlowMapping(id);
+  }
+
+  // ========== DASHBOARD / STATUS ==========
+
+  @Get('tech-status')
+  getTechStatus() {
+    return this.crud.getTechStatus();
+  }
+
+  @Get('health')
+  getHealth() {
+    return { status: 'ok', timestamp: new Date().toISOString() };
   }
 }
