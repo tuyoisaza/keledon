@@ -311,6 +311,12 @@ export function registerIpcHandlers(tabManager: TabManager): void {
 
   // --- Runtime Connect ---
   ipcMain.handle('runtime:connect', async (_event, config: { cloudUrl: string; token: string; keledonId?: string }) => {
+    // Prevent duplicate connection — deep-link.ts already paired & connected
+    if (runtimeStatus.authToken && (runtimeStatus.status === 'connected' || runtimeStatus.status === 'connecting')) {
+      log.info('[Runtime] Already connected/connecting, skipping duplicate connect');
+      runtimeStatus.status = 'connected';
+      return { success: true, alreadyConnected: true };
+    }
     log.info('Connecting to cloud:', config.cloudUrl);
     eventLogger.info('runtime', 'connect_start', { cloudUrl: config.cloudUrl, keledonId: config.keledonId });
 
@@ -338,6 +344,14 @@ export function registerIpcHandlers(tabManager: TabManager): void {
 
       if (response.ok) {
         const data = await response.json();
+
+        // Cloud controller returns HTTP 200 with { error: '...' } on failure
+        if (data.error) {
+          runtimeStatus.diagnostics.lastAutoConnectStatus = 'pair_error';
+          runtimeStatus.diagnostics.lastAutoConnectError = data.error;
+          throw new Error(data.error);
+        }
+
         runtimeStatus.status = 'connected';
         runtimeStatus.authToken = data.auth_token;
         runtimeStatus.sessionId = data.keledon_id || null;
@@ -425,6 +439,22 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     if (!bridge.isAutoBrowseInitialized()) {
       return { error: 'AutoBrowse not initialized' };
     }
+
+    // Ensure there's a BrowserView available for execution
+    const currentTabId = tabManager.getActiveTabId();
+    const currentTabs = tabManager.getInternalTabs();
+    const hasView = currentTabs.some(t => t.id === currentTabId && t.view !== null);
+    if (!hasView) {
+      log.info('[Main] No active BrowserView — creating a new tab for goal execution');
+      const newTab = tabManager.createTab('Goal Execution', 'about:blank');
+      if (newTab.view) {
+        tabManager.setActiveTabId(newTab.id);
+        tabManager.showTab(newTab.id);
+        // Sync tabs to bridge directly (avoids race with broadcastTabs async import)
+        bridge.setTabs(tabManager.getInternalTabs(), tabManager.getActiveTabId());
+      }
+    }
+
     try {
       const goalInput = {
         execution_id: typeof goal === 'string' ? `exec-${Date.now()}` : goal.execution_id || `exec-${Date.now()}`,

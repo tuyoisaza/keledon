@@ -1508,21 +1508,23 @@
           });
         }
       }
-      if (cmd.type === 'ui_steps' && cmd.data && cmd.data.steps) {
-        const stepCount = cmd.data.steps.length;
-        const stepNames = cmd.data.steps.map(s => s.name || s.action || 'step').join(', ');
-        const piId = addPendingInstruction('UI STEPS', stepNames.substring(0, 80), {
-          status: 'in_progress',
-          source: 'brain',
-          data: cmd.data,
-        });
-        window.keledon.executor.executeSteps(cmd.data.steps).then(result => {
-          log('ui_steps result: ' + JSON.stringify(result).substring(0, 80), 'info');
-          updatePendingInstruction(piId, { status: 'completed' });
-        }).catch(e => {
-          log('ui_steps error: ' + e.message, 'error');
-          updatePendingInstruction(piId, { status: 'failed' });
-        });
+      if (cmd.type === 'ui_steps') {
+        const steps = cmd.ui_steps || cmd.data?.steps || cmd.steps || [];
+        if (steps.length > 0) {
+          const stepNames = steps.map(s => s.label || s.name || s.action || 'step').join(', ');
+          const piId = addPendingInstruction('UI STEPS', stepNames.substring(0, 80), {
+            status: 'in_progress',
+            source: 'brain',
+            data: steps,
+          });
+          window.keledon.executor.executeSteps(steps).then(result => {
+            log('ui_steps result: ' + JSON.stringify(result).substring(0, 80), 'info');
+            updatePendingInstruction(piId, { status: 'completed' });
+          }).catch(e => {
+            log('ui_steps error: ' + e.message, 'error');
+            updatePendingInstruction(piId, { status: 'failed' });
+          });
+        }
       }
       if (cmd.type === 'goal_execute' && cmd.data) {
         const goalText = cmd.data.goal || cmd.data.objective || cmd.data.text || JSON.stringify(cmd.data).substring(0, 60);

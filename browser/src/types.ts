@@ -19,7 +19,7 @@ export interface BrowserDiagnostics {
   lastDeepLinkAction: string | null;
   lastDeepLinkHadRequiredParams: boolean | null;
   lastDeepLinkValidation: 'ok' | 'missing_params' | 'expired' | 'invalid_signature' | 'parse_error' | null;
-  lastAutoConnectStatus: 'ok' | 'http_error' | 'exception' | 'not_attempted';
+  lastAutoConnectStatus: 'ok' | 'http_error' | 'exception' | 'not_attempted' | 'pair_error';
   lastAutoConnectHttpStatus: number | null;
   lastAutoConnectError: string | null;
   lastLaunchKeledonId: string | null;
