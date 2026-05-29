@@ -545,6 +545,21 @@ export class CrudService {
     return this.prisma.keledon.delete({ where: { id } });
   }
 
+  async getKeledonPairingCode(keledonId: string) {
+    const device = await this.prisma.device.findFirst({
+      where: { keledonId },
+      select: { pairingCode: true, pairingCodeExpiresAt: true, status: true },
+    });
+    if (!device) {
+      return { pairing_code: null, device_status: 'none' };
+    }
+    return {
+      pairing_code: device.pairingCode,
+      expires_at: device.pairingCodeExpiresAt,
+      device_status: device.status,
+    };
+  }
+
   async regenerateKeledonPairingCode(keledonId: string) {
     const keledon = await this.prisma.keledon.findUnique({
       where: { id: keledonId },

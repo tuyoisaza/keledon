@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { getKeledons, getVendors, type Keledon, type Vendor } from '@/lib/crud-api';
 import { getBrowserDownloadUrl, BROWSER_RELEASES_API } from '@/lib/knowledge-source-utils.js';
 import { toast } from 'sonner';
-import { apiFetch } from '@/lib/api-fetch';
+import { apiFetch, apiJson } from '@/lib/api-fetch';
 
 export default function LaunchKeledonPage() {
     const { user } = useAuth();
@@ -23,10 +23,20 @@ export default function LaunchKeledonPage() {
         vendors: Vendor[];
         nextSteps: Array<{ title: string; detail: string }>;
     }>(null);
+    const [pairingCodes, setPairingCodes] = useState<Record<string, { code: string | null; expiresAt: string } | null>>({});
+    const [resettingCode, setResettingCode] = useState<string | null>(null);
+    const [loadingPairingCodes, setLoadingPairingCodes] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
         loadKeledons();
     }, [user]);
+
+    // Load pairing codes for superadmin when keledons change
+    useEffect(() => {
+        if (user?.role === 'superadmin' && keledons.length > 0) {
+            keledons.forEach(k => fetchPairingCode(k.id));
+        }
+    }, [keledons, user?.role]);
 
     // Fetch latest browser version from GitHub
     useEffect(() => {
@@ -137,6 +147,38 @@ export default function LaunchKeledonPage() {
             toast.error(error.message || 'Failed to launch Keledon');
         } finally {
             setLaunching(null);
+        }
+    };
+
+    const fetchPairingCode = async (keledonId: string) => {
+        setLoadingPairingCodes(prev => ({ ...prev, [keledonId]: true }));
+        try {
+            const data = await apiJson(`/api/crud/keledons/${keledonId}/pairing-code`);
+            setPairingCodes(prev => ({
+                ...prev,
+                [keledonId]: { code: data.pairing_code, expiresAt: data.expires_at }
+            }));
+        } catch (e) {
+            console.error('Failed to fetch pairing code:', e);
+            setPairingCodes(prev => ({ ...prev, [keledonId]: null }));
+        } finally {
+            setLoadingPairingCodes(prev => ({ ...prev, [keledonId]: false }));
+        }
+    };
+
+    const resetPairingCode = async (keledonId: string) => {
+        setResettingCode(keledonId);
+        try {
+            const data = await apiJson(`/api/crud/keledons/${keledonId}/pairing-code`, { method: 'POST' });
+            setPairingCodes(prev => ({
+                ...prev,
+                [keledonId]: { code: data.pairing_code, expiresAt: data.expires_at }
+            }));
+            toast.success('New pairing code generated');
+        } catch (e: any) {
+            toast.error(e.message || 'Failed to reset pairing code');
+        } finally {
+            setResettingCode(null);
         }
     };
 
@@ -319,21 +361,44 @@ export default function LaunchKeledonPage() {
 
                             {isSuperAdmin && (
                                 <div className="mb-4 p-3 bg-muted rounded-lg">
-                                    <p className="text-xs text-muted-foreground mb-2">Pairing Code</p>
-                                    <div className="flex items-center gap-2">
-                                        <code className="flex-1 font-mono text-sm">{'XXXX-XXXX'}</code>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <p className="text-xs text-muted-foreground">Pairing Code</p>
                                         <button
-                                            onClick={() => copyPairingCode('manual', keledon.id)}
-                                            className="p-1 hover:bg-background rounded"
-                                            title="Copy code"
+                                            onClick={() => resetPairingCode(keledon.id)}
+                                            disabled={resettingCode === keledon.id}
+                                            className="text-xs px-2 py-1 bg-primary/10 hover:bg-primary/20 text-primary rounded transition-colors disabled:opacity-50"
+                                            title="Generate new pairing code"
                                         >
-                                            {copiedId === keledon.id ? (
-                                                <Check className="w-4 h-4 text-green-500" />
-                                            ) : (
-                                                <Copy className="w-4 h-4" />
-                                            )}
+                                            {resettingCode === keledon.id ? (
+                                                <Loader2 className="w-3 h-3 animate-spin" />
+                                            ) : 'Reset'}
                                         </button>
                                     </div>
+                                    <div className="flex items-center gap-2">
+                                        <code className="flex-1 font-mono text-sm break-all">
+                                            {loadingPairingCodes[keledon.id]
+                                                ? 'Loading...'
+                                                : pairingCodes[keledon.id]?.code || 'No code'}
+                                        </code>
+                                        {pairingCodes[keledon.id]?.code && (
+                                            <button
+                                                onClick={() => copyPairingCode(pairingCodes[keledon.id]!.code!, keledon.id)}
+                                                className="p-1 hover:bg-background rounded shrink-0"
+                                                title="Copy code"
+                                            >
+                                                {copiedId === keledon.id ? (
+                                                    <Check className="w-4 h-4 text-green-500" />
+                                                ) : (
+                                                    <Copy className="w-4 h-4" />
+                                                )}
+                                            </button>
+                                        )}
+                                    </div>
+                                    {pairingCodes[keledon.id]?.expiresAt && (
+                                        <p className="text-[10px] text-muted-foreground mt-1">
+                                            Expires: {new Date(pairingCodes[keledon.id]!.expiresAt).toLocaleString()}
+                                        </p>
+                                    )}
                                 </div>
                             )}
 

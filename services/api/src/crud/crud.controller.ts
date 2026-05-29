@@ -210,6 +210,11 @@ export class CrudController {
     return { success: true };
   }
 
+  @Get('keledons/:id/pairing-code')
+  async getPairingCode(@Param('id') keledonId: string) {
+    return this.crud.getKeledonPairingCode(keledonId);
+  }
+
   @Post('keledons/:id/pairing-code')
   async regeneratePairingCode(@Param('id') keledonId: string) {
     return this.crud.regenerateKeledonPairingCode(keledonId);

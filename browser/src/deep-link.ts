@@ -134,8 +134,16 @@ export function handleDeepLink(url: string, tabManager: TabManager): void {
 
         runtimeStatus.diagnostics.lastAutoConnectHttpStatus = response.status;
 
+        const data = await response.json();
+
+        if (data.error) {
+          runtimeStatus.diagnostics.lastAutoConnectStatus = 'pair_error';
+          runtimeStatus.diagnostics.lastAutoConnectError = data.error;
+          log.error('[DeepLink] Auto-connect failed:', data.error);
+          return;
+        }
+
         if (response.ok) {
-          const data = await response.json();
           runtimeStatus.status = 'connected';
           runtimeStatus.authToken = data.auth_token;
           runtimeStatus.sessionId = data.keledon_id || null;
