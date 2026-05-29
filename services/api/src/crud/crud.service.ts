@@ -643,9 +643,23 @@ export class CrudService {
           data: {
             pairingCode: device.pairingCode,
             pairingCodeExpiresAt: device.pairingCodeExpiresAt,
+            status: 'pending',
           },
         });
         console.log('[Launch] New pairing code generated:', device.pairingCode);
+      } else {
+        // Refresh expiry and reset status so pairing always works
+        console.log('[Launch] Refreshing existing pairing code expiry and status');
+        device.pairingCodeExpiresAt = new Date(
+          Date.now() + 7 * 24 * 60 * 60 * 1000,
+        );
+        await this.prisma.device.update({
+          where: { id: device.id },
+          data: {
+            pairingCodeExpiresAt: device.pairingCodeExpiresAt,
+            status: 'pending',
+          },
+        });
       }
 
       // Verify user has access - check Prisma first, then fallback for Google users
