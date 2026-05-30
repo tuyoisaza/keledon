@@ -1,5 +1,6 @@
 # KELEDON Web Service — Vite/React static site
 # Deploys from native Linux filesystem build context (no git clone source stage).
+# ENSURE FRESH BUILD — bust stale single-container cache.
 
 FROM node:20-alpine AS builder
 WORKDIR /app
