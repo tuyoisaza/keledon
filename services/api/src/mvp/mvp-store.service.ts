@@ -230,14 +230,16 @@ export class MvpStoreService {
       {
         id: 'testing-library-dom',
         name: 'Testing Library DOM',
-        description: 'Semantic element finding by accessible labels, roles, and text',
+        description:
+          'Semantic element finding by accessible labels, roles, and text',
         requiresBackend: false,
         requiresApiKey: false,
       },
       {
         id: 'playwright-style',
         name: 'Playwright-Style Selectors',
-        description: 'Chained selectors, XPath, data-testid, text=, and role= syntax',
+        description:
+          'Chained selectors, XPath, data-testid, text=, and role= syntax',
         requiresBackend: false,
         requiresApiKey: false,
       },

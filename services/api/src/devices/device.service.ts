@@ -168,7 +168,7 @@ export class DeviceService {
     userId?: string,
     organizationId?: string,
     keledonId?: string,
-  ): Promise<string> {
+  ): Promise<{ code: string; device_id: string }> {
     const code = this.generatePairingCodeString();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
@@ -197,7 +197,8 @@ export class DeviceService {
       },
     });
 
-    return code;
+    // Return pairing code; device object kept in case caller needs ID later
+    return { code, device_id: device.id };
   }
 
   async getDevicesByUser(userId: string) {
@@ -260,7 +261,11 @@ export class DeviceService {
     fallback: true,
     providers: {
       'native-dom': { enabled: true, priority: 2 },
-      'testing-library-dom': { enabled: true, priority: 1, options: { timeout: 5000 } },
+      'testing-library-dom': {
+        enabled: true,
+        priority: 1,
+        options: { timeout: 5000 },
+      },
       'ai-vision': { enabled: false, options: { model: 'gpt-4o' } },
     },
   };
@@ -282,7 +287,11 @@ export class DeviceService {
 
   async updateRpaProviderConfig(
     deviceId: string,
-    config: { chain: string[]; providers: Record<string, any>; fallback?: boolean },
+    config: {
+      chain: string[];
+      providers: Record<string, any>;
+      fallback?: boolean;
+    },
   ) {
     await this.prisma.device.update({
       where: { id: deviceId },

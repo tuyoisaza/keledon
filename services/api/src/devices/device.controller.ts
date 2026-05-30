@@ -74,12 +74,12 @@ export class DeviceController {
       keledon_id?: string;
     },
   ) {
-    const code = await this.deviceService.generatePairingCode(
+    const { code, device_id } = await this.deviceService.generatePairingCode(
       body.userId,
       body.organizationId,
       body.keledon_id,
     );
-    return { pairing_code: code };
+    return { pairing_code: code, device_id };
   }
 
   @Get()
@@ -128,7 +128,12 @@ export class DeviceController {
   @Put(':id/rpa-config')
   async updateDeviceRpaConfig(
     @Param('id') deviceId: string,
-    @Body() body: { chain: string[]; providers: Record<string, any>; fallback?: boolean },
+    @Body()
+    body: {
+      chain: string[];
+      providers: Record<string, any>;
+      fallback?: boolean;
+    },
   ) {
     return this.deviceService.updateRpaProviderConfig(deviceId, body);
   }
