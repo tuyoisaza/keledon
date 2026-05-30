@@ -28,6 +28,7 @@ const defaultRpaChain = {
 
 const rpaProviderInfo: Record<string, { name: string; description: string }> = {
     'testing-library-dom': { name: 'Testing Library DOM', description: 'Semantic element finding by accessible labels, roles, and text' },
+    'playwright-style': { name: 'Playwright-Style Selectors', description: 'Chained selectors, XPath, data-testid, text=, and role= syntax' },
     'native-dom': { name: 'Native DOM', description: 'CSS selectors and text content matching (fallback)' },
     'ai-vision': { name: 'AI Vision (future)', description: 'LLM-powered element finding via screenshots' },
 };

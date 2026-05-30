@@ -11,6 +11,7 @@
  */
 
 import log from 'electron-log';
+import { PlaywrightStyleProvider } from './rpa-provider-playwright-style';
 
 // ─── Types ───────────────────────────────────────────────────────────
 
@@ -50,11 +51,12 @@ export interface RpaProviderConfig {
 
 // Default config (matching cloud defaults)
 export const DEFAULT_RPA_CONFIG: RpaProviderConfig = {
-  chain: ['testing-library-dom', 'native-dom'],
+  chain: ['testing-library-dom', 'playwright-style', 'native-dom'],
   fallback: true,
   providers: {
-    'native-dom': { enabled: true, priority: 2 },
+    'native-dom': { enabled: true, priority: 3 },
     'testing-library-dom': { enabled: true, priority: 1, options: { timeout: 5000 } },
+    'playwright-style': { enabled: true, priority: 2 },
     'ai-vision': { enabled: false, priority: 99, options: { model: 'gpt-4o' } },
   },
 };
@@ -311,6 +313,7 @@ let activeConfig: RpaProviderConfig = DEFAULT_RPA_CONFIG;
 const providers = new Map<string, RpaProvider>([
   ['native-dom', new NativeDomProvider()],
   ['testing-library-dom', new TestingLibraryDomProvider()],
+  ['playwright-style', new PlaywrightStyleProvider()],
 ]);
 
 export function setRpaProviderConfig(config: RpaProviderConfig): void {

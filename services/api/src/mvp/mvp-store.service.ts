@@ -235,6 +235,13 @@ export class MvpStoreService {
         requiresApiKey: false,
       },
       {
+        id: 'playwright-style',
+        name: 'Playwright-Style Selectors',
+        description: 'Chained selectors, XPath, data-testid, text=, and role= syntax',
+        requiresBackend: false,
+        requiresApiKey: false,
+      },
+      {
         id: 'native-dom',
         name: 'Native DOM Automation',
         description: 'Browser APIs and DOM-native execution',
