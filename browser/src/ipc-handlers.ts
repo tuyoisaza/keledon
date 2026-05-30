@@ -815,6 +815,16 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     return { url: '', title: '' };
   });
 
+  // --- Tabs: Chrome Overlay State ---
+  // BrowserView is a native child view that draws above renderer DOM, so CSS z-index
+  // cannot lift KELEDON controls over a loaded page. The renderer reports when
+  // first-party overlays are open and the main process moves/detaches the active
+  // BrowserView so settings, command logs, and other KELEDON browser features stay visible.
+  ipcMain.handle('tabs:setChromeOverlayState', async (_event, state: { rightInset?: number; hideContent?: boolean; reason?: string }) => {
+    tabManager.setChromeOverlayState(state || {});
+    return { success: true };
+  });
+
   // --- Executor: Get CDP URL ---
   ipcMain.handle('executor:getCDPUrl', async () => {
     if (!mainWindow) return '';

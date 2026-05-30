@@ -106,6 +106,8 @@ contextBridge.exposeInMainWorld('keledon', {
     reload: () => ipcRenderer.invoke('tabs:reload'),
     getUrl: () => ipcRenderer.invoke('tabs:getUrl'),
     navigate: (url: string) => ipcRenderer.invoke('tabs:navigate', url),
+    setChromeOverlayState: (state: { rightInset?: number; hideContent?: boolean; reason?: string }) =>
+      ipcRenderer.invoke('tabs:setChromeOverlayState', state),
     onUpdate: (callback: (tabs: TabData[]) => void) => {
       ipcRenderer.on('tabs:updated', (_event, tabs) => callback(tabs));
       return () => ipcRenderer.removeAllListeners('tabs:updated');
@@ -275,6 +277,7 @@ declare global {
         reload: () => Promise<{ success: boolean }>;
         getUrl: () => Promise<string>;
         navigate: (url: string) => Promise<{ success: boolean }>;
+        setChromeOverlayState: (state: { rightInset?: number; hideContent?: boolean; reason?: string }) => Promise<{ success: boolean }>;
         onUpdate: (callback: (tabs: { id: string; name: string; url: string; active: boolean }[]) => void) => () => void;
       };
       escalation: {

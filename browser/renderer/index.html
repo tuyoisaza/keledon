@@ -29,6 +29,9 @@
       --new-tab-shortcut-bg: #f1f3f4;
       --panel-bg: #ffffff;
       --panel-border: #e8eaed;
+      --keledon-overlay-z: 2147483000;
+      --keledon-modal-z: 2147483100;
+      --keledon-topbar-z: 2147483200;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -52,6 +55,8 @@
       height: 38px;
       gap: 0;
       -webkit-app-region: drag;
+      position: relative;
+      z-index: var(--keledon-topbar-z);
     }
     .tab {
       display: flex;
@@ -135,6 +140,8 @@
       gap: 4px;
       height: 40px;
       -webkit-app-region: drag;
+      position: relative;
+      z-index: var(--keledon-topbar-z);
     }
     .nav-actions {
       display: flex;
@@ -347,7 +354,7 @@
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.3);
-      z-index: 100;
+      z-index: var(--keledon-overlay-z);
     }
     .side-panel-overlay.show { display: block; }
     .side-panel {
@@ -356,7 +363,7 @@
       width: 380px;
       background: var(--panel-bg);
       box-shadow: -4px 0 20px rgba(0,0,0,0.15);
-      z-index: 101;
+      z-index: calc(var(--keledon-overlay-z) + 1);
       display: flex;
       flex-direction: column;
       transition: right 0.25s ease;
@@ -648,7 +655,7 @@
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.5);
-      z-index: 300;
+      z-index: var(--keledon-modal-z);
       align-items: center;
       justify-content: center;
     }
@@ -773,7 +780,7 @@
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.5);
-      z-index: 200;
+      z-index: var(--keledon-modal-z);
       align-items: center;
       justify-content: center;
     }
@@ -840,7 +847,7 @@
       left: 0;
       height: 2px;
       background: var(--accent);
-      z-index: 50;
+      z-index: var(--keledon-topbar-z);
       transition: width 0.3s ease;
       display: none;
     }
@@ -1092,6 +1099,21 @@
     let activeTabId = 'home';
     let panelOpen = false;
     let deviceVersion = 'v?.?.?';
+
+    // BrowserView is rendered by Electron above normal DOM, so z-index alone cannot
+    // keep KELEDON controls visible over a loaded tab. Whenever a first-party
+    // panel/modal opens, tell the main process to inset or detach the active tab view.
+    function syncKeledonChromeLayer(reason = 'sync') {
+      if (!window.keledon?.tabs?.setChromeOverlayState) return;
+      const commandLogOpen = Boolean(cmdlogModal?.classList.contains('show'));
+      const escalationOpen = Boolean(document.getElementById('escalationModal')?.classList.contains('show'));
+      if (commandLogOpen || escalationOpen) {
+        window.keledon.tabs.setChromeOverlayState({ hideContent: true, rightInset: 0, reason }).catch(() => {});
+        return;
+      }
+      const panelWidth = panelOpen ? Math.ceil(sidePanel.getBoundingClientRect().width || 380) : 0;
+      window.keledon.tabs.setChromeOverlayState({ hideContent: false, rightInset: panelWidth, reason }).catch(() => {});
+    }
 
     // ==================== LOGGING ====================
     function escapeHtml(str) {
@@ -1489,6 +1511,7 @@
       sidePanel.classList.toggle('open', panelOpen);
       panelOverlay.classList.toggle('show', panelOpen);
       panelBtn.classList.toggle('active', panelOpen);
+      syncKeledonChromeLayer(panelOpen ? 'side-panel-open' : 'side-panel-closed');
     }
 
     panelBtn.addEventListener('click', () => togglePanel());
@@ -1818,18 +1841,22 @@
         ? `Customer said: "${data.message}"`
         : `Step: ${data.step || 'unknown'} | Retries: ${data.retryCount || 0}`;
       document.getElementById('escalationModal').classList.add('show');
+      syncKeledonChromeLayer('escalation-open');
     });
 
     document.getElementById('escalationContinue').addEventListener('click', () => {
       document.getElementById('escalationModal').classList.remove('show');
+      syncKeledonChromeLayer('escalation-continue');
       window.keledon.escalation.action('continue');
     });
     document.getElementById('escalationFix').addEventListener('click', () => {
       document.getElementById('escalationModal').classList.remove('show');
+      syncKeledonChromeLayer('escalation-fix');
       window.keledon.escalation.action('fix');
     });
     document.getElementById('escalationAbort').addEventListener('click', () => {
       document.getElementById('escalationModal').classList.remove('show');
+      syncKeledonChromeLayer('escalation-abort');
       window.keledon.escalation.action('abort');
     });
 
@@ -1998,6 +2025,7 @@
 
     function cmdlogOpen() {
       cmdlogModal.classList.add('show');
+      syncKeledonChromeLayer('cmdlog-open');
       // Load existing entries from main process
       window.keledon.cmdlog.getLog().then(entries => {
         cmdlogBody.innerHTML = '';
@@ -2020,6 +2048,7 @@
 
     function cmdlogCloseFn() {
       cmdlogModal.classList.remove('show');
+      syncKeledonChromeLayer('cmdlog-closed');
     }
 
     cmdlogBtn.addEventListener('click', cmdlogOpen);
@@ -2097,6 +2126,7 @@
     // ==================== INIT ====================
     loadTabs();
     loadDeviceInfo();
+    syncKeledonChromeLayer('init');
     log('KELEDON Browser initialized', 'success');
   </script>
 </body>

@@ -12,12 +12,24 @@ export interface Tab {
 }
 
 const CHROME_HEIGHT = 80;
+const MIN_VISIBLE_BROWSER_WIDTH = 320;
+
+export interface ChromeOverlayState {
+  rightInset?: number;
+  hideContent?: boolean;
+  reason?: string;
+}
 
 export class TabManager {
   private tabs: Tab[] = [];
   private activeTabId: string = 'home';
   private homeUrl: string;
   private mainWindow: BrowserWindow | null = null;
+  private chromeOverlayState: Required<ChromeOverlayState> = {
+    rightInset: 0,
+    hideContent: false,
+    reason: 'none',
+  };
 
   constructor() {
     this.homeUrl = 'file://' + path.join(__dirname, '../renderer/index.html');
@@ -119,15 +131,14 @@ export class TabManager {
       return;
     }
 
-    this.mainWindow.addBrowserView(tab.view);
-    const contentSize = this.mainWindow.getContentSize();
-    tab.view.setBounds({
-      x: 0, y: CHROME_HEIGHT,
-      width: contentSize[0], height: contentSize[1] - CHROME_HEIGHT
-    });
-    tab.view.webContents.focus();
-
     this.activeTabId = tabId;
+    if (this.chromeOverlayState.hideContent) {
+      log.info('[Tabs] Active BrowserView kept detached for KELEDON overlay:', this.chromeOverlayState.reason);
+    } else {
+      this.mainWindow.addBrowserView(tab.view);
+      this.applyActiveTabBounds();
+      tab.view.webContents.focus();
+    }
     log.info('[Tabs] Switched to:', tab.name);
     this.broadcastTabs();
   }
@@ -170,17 +181,62 @@ export class TabManager {
 
   setActiveTabId(id: string) { this.activeTabId = id; }
 
+  setChromeOverlayState(state: ChromeOverlayState) {
+    const nextRightInset = Math.max(0, Math.floor(Number(state.rightInset || 0)));
+    this.chromeOverlayState = {
+      rightInset: nextRightInset,
+      hideContent: Boolean(state.hideContent),
+      reason: state.reason || (state.hideContent ? 'overlay' : nextRightInset > 0 ? 'inset' : 'none'),
+    };
+    this.applyActiveTabBounds();
+  }
+
+  private getActiveTab(): Tab | undefined {
+    return this.tabs.find(t => t.id === this.activeTabId);
+  }
+
+  private getBrowserBounds() {
+    if (!this.mainWindow) {
+      return { x: 0, y: CHROME_HEIGHT, width: MIN_VISIBLE_BROWSER_WIDTH, height: 1 };
+    }
+    const [contentWidth, contentHeight] = this.mainWindow.getContentSize();
+    const safeRightInset = Math.min(
+      Math.max(0, this.chromeOverlayState.rightInset),
+      Math.max(0, contentWidth - MIN_VISIBLE_BROWSER_WIDTH),
+    );
+    return {
+      x: 0,
+      y: CHROME_HEIGHT,
+      width: Math.max(MIN_VISIBLE_BROWSER_WIDTH, contentWidth - safeRightInset),
+      height: Math.max(1, contentHeight - CHROME_HEIGHT),
+    };
+  }
+
+  private applyActiveTabBounds() {
+    if (!this.mainWindow) return;
+    const activeTab = this.getActiveTab();
+    if (!activeTab?.view) return;
+
+    const currentView = this.mainWindow.getBrowserView();
+    if (this.chromeOverlayState.hideContent) {
+      if (currentView === activeTab.view) {
+        try { this.mainWindow.removeBrowserView(activeTab.view); } catch (e) {}
+      }
+      return;
+    }
+
+    if (currentView !== activeTab.view) {
+      if (currentView) {
+        try { this.mainWindow.removeBrowserView(currentView); } catch (e) {}
+      }
+      this.mainWindow.addBrowserView(activeTab.view);
+    }
+    activeTab.view.setBounds(this.getBrowserBounds());
+  }
+
   resizeTabs() {
     if (!this.mainWindow) return;
-    const contentSize = this.mainWindow.getContentSize();
-    for (const tab of this.tabs) {
-      if (tab.view) {
-        tab.view.setBounds({
-          x: 0, y: CHROME_HEIGHT,
-          width: contentSize[0], height: contentSize[1] - CHROME_HEIGHT
-        });
-      }
-    }
+    this.applyActiveTabBounds();
   }
 
   broadcastTabs() {
