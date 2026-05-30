@@ -63,4 +63,12 @@ assert.ok(searchGoal.some((action) => action.type === 'fill' && /safe browser au
 const extractGoal = planGoalActions('go to example.com then extract page content', {});
 assert.ok(extractGoal.some((action) => action.type === 'extract'), actionSummary(extractGoal).join(' | '));
 
+// Behavior regression: many sites call the email/username field "login".
+// If the planner only searches email/user attributes, vendor auto-login lands on the page
+// but does not use the saved email as the login value.
+const emailAsLoginGoal = planGoalActions('Login to vendor portal', { username: 'tuyo@example.com', password: 'hunter2' });
+const emailFill = emailAsLoginGoal.find((action) => action.type === 'fill' && action.value === 'tuyo@example.com');
+assert.ok(emailFill, actionSummary(emailAsLoginGoal).join(' | '));
+assert.ok(/login/i.test(emailFill.selector || '') || /login/i.test(emailFill.target || ''), emailFill.selector || emailFill.target || '');
+
 console.log('goal-planner tests passed');

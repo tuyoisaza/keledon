@@ -124,6 +124,8 @@ export class DeviceService {
           username: v.username ? this.encrypt(v.username) : null,
           password: v.password ? this.encrypt(v.password) : null,
           apiKey: v.apiKey ? this.encrypt(v.apiKey) : null,
+          startGoal: v.startGoal || null,
+          isActive: v.isActive,
           config: v.config,
         }));
       }

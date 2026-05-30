@@ -81,6 +81,23 @@ const vendorLoginState = {
 const bootstrappedVendorIds = new Set<string>();
 let bootstrappedTeamId: string | null = null;
 
+function mergeRuntimeVendorCredentials(fetchedVendors: any[], existingVendors: any[]): any[] {
+  const existingById = new Map((existingVendors || []).filter((vendor: any) => vendor?.id).map((vendor: any) => [vendor.id, vendor]));
+  return (fetchedVendors || []).map((vendor: any) => {
+    const existing = existingById.get(vendor?.id) || {};
+    return {
+      ...existing,
+      ...vendor,
+      // CRUD vendor responses are intentionally masked for management UI display.
+      // Preserve encrypted runtime credentials from the pairing payload so browser auto-login
+      // uses the actual email/login/password instead of typing "***".
+      username: vendor.username === '***' ? existing.username : vendor.username,
+      password: vendor.password === '***' ? existing.password : vendor.password,
+      apiKey: vendor.apiKey === '***' ? existing.apiKey : vendor.apiKey,
+    };
+  });
+}
+
 function decrypt(text: string): string {
   try {
     const crypto = require('crypto');
@@ -184,8 +201,8 @@ export async function bootstrapTeamVendors(tabManager: TabManager): Promise<void
     if (response.ok) {
       const data = await response.json();
       if (Array.isArray(data)) {
-        vendors = data;
-        runtimeStatus.vendors = data;
+        vendors = mergeRuntimeVendorCredentials(data, runtimeStatus.vendors);
+        runtimeStatus.vendors = vendors;
         log.info('[Vendor] Loaded vendors from cloud:', data.length);
       }
     } else {

@@ -1678,7 +1678,8 @@
       try {
         const result = await window.keledon.executor.executeGoal({ goal }, {});
         const success = result.goal_status === 'success';
-        const finalText = success ? '✓ Success' : result.goal_status === 'uncertain' ? '⚠ Partial' : '✗ Failed';
+        const partial = result.goal_status === 'uncertain';
+        const finalText = success ? '✓ Success' : partial ? '⚠ Partial - continuing goal where possible' : '✗ Failed';
         if (progressText) {
           progressText.textContent = `${finalText} - ${result.steps?.length || 0} steps`;
         }
@@ -1690,8 +1691,8 @@
         }
         log('Executed: ' + goal.substring(0, 50), success ? 'success' : 'error');
         updatePendingInstruction(piId, {
-          status: success ? 'completed' : 'failed',
-          content: goal + (success ? ' ✓' : ' ✗'),
+          status: success ? 'completed' : partial ? 'in_progress' : 'failed',
+          content: goal + (success ? ' ✓' : partial ? ' ⚠ continuing' : ' ✗'),
         });
         goalInput.value = '';
         setTimeout(() => { if (progressDiv) progressDiv.style.display = 'none'; }, 3000);
@@ -1802,8 +1803,9 @@
         });
         window.keledon.executor.executeGoal(cmd.data, {}).then(result => {
           const success = result.goal_status === 'success';
-          log('Brain goal: ' + goalText.substring(0, 50), success ? 'success' : 'error');
-          updatePendingInstruction(piId, { status: success ? 'completed' : 'failed', content: goalText + (success ? ' ✓' : ' ✗') });
+          const partial = result.goal_status === 'uncertain';
+          log('Brain goal: ' + goalText.substring(0, 50), success ? 'success' : partial ? 'info' : 'error');
+          updatePendingInstruction(piId, { status: success ? 'completed' : partial ? 'in_progress' : 'failed', content: goalText + (success ? ' ✓' : partial ? ' ⚠ continuing' : ' ✗') });
         }).catch(e => {
           log('Brain goal error: ' + e.message, 'error');
           updatePendingInstruction(piId, { status: 'failed', content: goalText + ' ✗' });

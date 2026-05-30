@@ -43,8 +43,8 @@ function fieldSelector(field: string): string {
   if (lower.includes('password')) {
     return 'input[type="password"], input[name*="pass" i], input[id*="pass" i], input[autocomplete="current-password"]';
   }
-  if (lower.includes('email') || lower.includes('user')) {
-    return 'input[type="email"], input[name*="email" i], input[id*="email" i], input[name*="user" i], input[id*="user" i], input[autocomplete="username"]';
+  if (lower.includes('email') || lower.includes('user') || lower.includes('login')) {
+    return 'input[type="email"], input[name*="email" i], input[id*="email" i], input[name*="user" i], input[id*="user" i], input[name*="login" i], input[id*="login" i], input[placeholder*="login" i], input[autocomplete="username"]';
   }
   if (lower.includes('search')) {
     return 'input[name="q"], input[type="search"], textarea[name="q"], input[placeholder*="search" i]';

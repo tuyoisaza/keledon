@@ -420,7 +420,7 @@ async function executeAction(view: BrowserView, action: GoalAction): Promise<Ste
               var target = ${JSON.stringify(action.target)};
               var val = ${JSON.stringify(action.value)};
               var explicit = (target.match(/'([^']+)'|\"([^\"]+)\"/) || [])[1] || (target.match(/'([^']+)'|\"([^\"]+)\"/) || [])[2] || target;
-              var needles = [explicit, target, 'email', 'username', 'password'].map(function(x) { return String(x || '').toLowerCase(); });
+              var needles = [explicit, target, 'email', 'username', 'login', 'password'].map(function(x) { return String(x || '').toLowerCase(); });
               var inputs = Array.from(document.querySelectorAll('input, textarea, [contenteditable=\"true\"]'));
               for (var n = 0; n < needles.length; n++) {
                 var needle = needles[n];
