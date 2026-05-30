@@ -561,6 +561,7 @@ export interface Vendor {
     hasPassword?: boolean;
     hasApiKey?: boolean;
     isActive: boolean;
+    startGoal?: string;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -578,6 +579,7 @@ export async function createVendor(data: {
     password?: string;
     apiKey?: string;
     config?: Record<string, unknown>;
+    startGoal?: string;
 }): Promise<Vendor> {
     return fetchApi('/vendors', 'POST', data);
 }

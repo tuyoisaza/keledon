@@ -35,6 +35,12 @@ export class CrudController {
         )
       `;
       await this.prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "vendors_teamId_idx" ON "vendors"("teamId")`;
+
+      // Add startGoal column if missing (v0.3.35+)
+      await this.prisma.$executeRaw`
+        ALTER TABLE "vendors" ADD COLUMN IF NOT EXISTS "startGoal" TEXT
+      `;
+
       return { status: 'ok', message: 'Vendors table created' };
     } catch (error) {
       return { status: 'error', message: error.message };
@@ -407,6 +413,7 @@ export class CrudController {
     password?: string;
     apiKey?: string;
     config?: Record<string, unknown>;
+    startGoal?: string;
   }) {
     return this.crud.createVendor(data);
   }
@@ -423,6 +430,7 @@ export class CrudController {
       apiKey?: string;
       config?: Record<string, unknown>;
       isActive?: boolean;
+      startGoal?: string;
     }
   ) {
     return this.crud.updateVendor(id, data);

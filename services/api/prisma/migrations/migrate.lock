@@ -1,0 +1,16 @@
+[
+  {
+    "checksum": "20260304210600_init",
+    "steps": 1,
+    "startedAt": "2026-03-04T21:06:00.000Z",
+    "finishedAt": "2026-03-04T21:06:05.000Z",
+    "status": "applied"
+  },
+  {
+    "checksum": "20260529220000_add_rpa_provider_config",
+    "steps": 1,
+    "startedAt": "2026-05-29T22:00:00.000Z",
+    "finishedAt": "2026-05-29T22:00:05.000Z",
+    "status": "applied"
+  }
+]

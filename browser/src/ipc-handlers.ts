@@ -126,7 +126,11 @@ async function autoLoginToVendor(vendor: any, tabManager: TabManager): Promise<b
     await new Promise(resolve => setTimeout(resolve, 3000));
 
     let loginGoal = '';
-    if (username && password) {
+    if (vendor.startGoal) {
+      // Use custom start goal from vendor config
+      loginGoal = vendor.startGoal;
+      log.info('[Vendor] Using custom start goal:', loginGoal);
+    } else if (username && password) {
       loginGoal = `Login to ${vendor.name} with username "${username}" and password "${password}"`;
     } else if (apiKey) {
       loginGoal = `Login to ${vendor.name} using API key`;

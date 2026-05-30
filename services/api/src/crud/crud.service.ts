@@ -1394,6 +1394,7 @@ export class CrudService {
       hasPassword: !!v.password,
       hasApiKey: !!v.apiKey,
       isActive: v.isActive,
+      startGoal: v.startGoal || null,
       createdAt: v.createdAt,
       updatedAt: v.updatedAt,
     }));
@@ -1408,6 +1409,7 @@ export class CrudService {
     password?: string;
     apiKey?: string;
     config?: Record<string, unknown>;
+    startGoal?: string;
   }) {
     const vendor = await this.prisma.vendor.create({
       data: {
@@ -1419,6 +1421,7 @@ export class CrudService {
         password: data.password,
         apiKey: data.apiKey,
         config: data.config as any,
+        startGoal: data.startGoal,
       },
     });
     return {
@@ -1431,6 +1434,7 @@ export class CrudService {
       hasPassword: !!vendor.password,
       hasApiKey: !!vendor.apiKey,
       isActive: vendor.isActive,
+      startGoal: vendor.startGoal || null,
       createdAt: vendor.createdAt,
       updatedAt: vendor.updatedAt,
     };
@@ -1447,6 +1451,7 @@ export class CrudService {
       apiKey?: string;
       config?: Record<string, unknown>;
       isActive?: boolean;
+      startGoal?: string;
     },
   ) {
     const updateData: any = { ...data };
@@ -1467,6 +1472,7 @@ export class CrudService {
       hasPassword: !!vendor.password,
       hasApiKey: !!vendor.apiKey,
       isActive: vendor.isActive,
+      startGoal: vendor.startGoal || null,
       createdAt: vendor.createdAt,
       updatedAt: vendor.updatedAt,
     };

@@ -582,6 +582,7 @@ model Vendor {
   password    String?  // encrypted
   apiKey      String?  // encrypted
   config      Json?    // additional config (encrypted JSON)
+  startGoal   String?  // startup instructions for the vendor agent
   isActive   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

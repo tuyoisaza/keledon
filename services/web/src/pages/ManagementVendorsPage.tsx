@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Store, Plus, Loader2, Pencil, Trash2, Search, X, Key, Lock } from 'lucide-react';
+import { Store, Plus, Loader2, Pencil, Trash2, Search, X, Key, Lock, ScrollText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { getVendors, createVendor, updateVendor, deleteVendor, getTeams, getBrands, type Vendor, type Team, type Brand } from '@/lib/crud-api';
@@ -30,6 +30,7 @@ export default function ManagementVendorsPage() {
         username: '',
         password: '',
         apiKey: '',
+        startGoal: '',
     });
 
     useEffect(() => {
@@ -73,7 +74,7 @@ export default function ManagementVendorsPage() {
     };
 
     const resetForm = () => {
-        setFormData({ name: '', type: 'crm', baseUrl: '', username: '', password: '', apiKey: '' });
+        setFormData({ name: '', type: 'crm', baseUrl: '', username: '', password: '', apiKey: '', startGoal: '' });
     };
 
     const openCreateForm = () => {
@@ -90,6 +91,7 @@ export default function ManagementVendorsPage() {
             username: vendor.username || '',
             password: '',
             apiKey: '',
+            startGoal: vendor.startGoal || '',
         });
         setEditingVendor(vendor);
         setShowForm(true);
@@ -112,6 +114,7 @@ export default function ManagementVendorsPage() {
             if (formData.username) submitData.username = formData.username;
             if (formData.password) submitData.password = formData.password;
             if (formData.apiKey) submitData.apiKey = formData.apiKey;
+            if (formData.startGoal) submitData.startGoal = formData.startGoal;
 
             if (editingVendor) {
                 await updateVendor(editingVendor.id, submitData);
@@ -244,6 +247,12 @@ export default function ManagementVendorsPage() {
                             {vendor.baseUrl && (
                                 <p className="text-sm text-gray-400 truncate mb-2">{vendor.baseUrl}</p>
                             )}
+                            {vendor.startGoal && (
+                                <div className="flex items-start gap-2 mb-3">
+                                    <ScrollText className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
+                                    <p className="text-sm text-gray-300 line-clamp-2">{vendor.startGoal}</p>
+                                </div>
+                            )}
                             <div className="flex gap-4 text-sm">
                                 <span className={cn(
                                     "flex items-center gap-1",
@@ -368,6 +377,19 @@ export default function ManagementVendorsPage() {
                                     onChange={(e) => setFormData({ ...formData, apiKey: e.target.value })}
                                     placeholder={editingVendor ? 'Leave blank to keep current' : 'API Key (optional)'}
                                     className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-1">
+                                    Start Goal / Instructions
+                                </label>
+                                <textarea
+                                    value={formData.startGoal}
+                                    onChange={(e) => setFormData({ ...formData, startGoal: e.target.value })}
+                                    placeholder='e.g., Login using the password, then navigate to Reports'
+                                    rows={3}
+                                    className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2 resize-none"
                                 />
                             </div>
 
