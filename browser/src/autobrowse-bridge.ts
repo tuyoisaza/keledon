@@ -11,6 +11,7 @@
 import log from 'electron-log';
 import { BrowserWindow, BrowserView, ipcRenderer } from 'electron';
 import { chromium, Browser, BrowserContext, Page } from 'playwright-core';
+import { planGoalActions } from './goal-planner';
 
 interface BridgeGoalInput {
   execution_id?: string;
@@ -706,9 +707,11 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
       await new Promise(r => setTimeout(r, 500));
     }
 
-    // Map goal to actions
-    const actions = mapGoalToActions(input.goal, input.inputs);
-    logs.push(`[Actions] ${actions.length} steps mapped from goal`);
+    // Map goal to actions.
+    // v0.3.38 additive planner: preserves the legacy mapGoalToActions() above as historical fallback context,
+    // but routes new Execute Goal traffic through a reusable multi-step natural-language planner.
+    const actions = planGoalActions(input.goal, input.inputs);
+    logs.push(`[Actions] ${actions.length} steps planned from goal`);
 
     const maxSteps = input.constraints?.max_steps || 50;
     const timeout = input.constraints?.timeout_ms || 120000;
