@@ -114,6 +114,36 @@ function decrypt(text: string): string {
   }
 }
 
+function enrichGoalInputsFromRuntimeVendor(goal: any, baseInputs: Record<string, unknown> | undefined): Record<string, unknown> | undefined {
+  const inputs = { ...(baseInputs || {}) };
+  const vendorId = goal?.vendor_id || goal?.vendorId || goal?.metadata?.vendor_id || goal?.metadata?.vendorId || inputs.vendor_id || inputs.vendorId;
+  if (!vendorId || !Array.isArray(runtimeStatus.vendors)) {
+    return Object.keys(inputs).length > 0 ? inputs : baseInputs;
+  }
+
+  const vendor = runtimeStatus.vendors.find((candidate: any) => candidate?.id === vendorId);
+  if (!vendor) {
+    return Object.keys(inputs).length > 0 ? inputs : baseInputs;
+  }
+
+  // Server-origin launch goals only carry a vendor id. The desktop has the encrypted
+  // pairing payload and can safely decrypt locally so the browser uses the real email/login
+  // value without the cloud command needing to include or log raw credentials.
+  if (vendor.username && !inputs.username && !inputs.email && !inputs.login) {
+    const username = decrypt(vendor.username);
+    inputs.username = username;
+    inputs.email = username;
+    inputs.login = username;
+  }
+  if (vendor.password && !inputs.password) {
+    inputs.password = decrypt(vendor.password);
+  }
+  if (vendor.apiKey && !inputs.apiKey) {
+    inputs.apiKey = decrypt(vendor.apiKey);
+  }
+  return Object.keys(inputs).length > 0 ? inputs : baseInputs;
+}
+
 async function autoLoginToVendor(vendor: any, tabManager: TabManager): Promise<boolean> {
   if (vendorLoginState.isLoggingIn || !vendor.baseUrl) {
     log.warn('[Vendor] Skipping login - already logging in or no baseUrl');
@@ -482,10 +512,11 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     }
 
     try {
+      const providedInputs = typeof goal === 'string' ? context : goal.inputs || context;
       const goalInput = {
         execution_id: typeof goal === 'string' ? `exec-${Date.now()}` : goal.execution_id || `exec-${Date.now()}`,
         goal: normalizedGoal,
-        inputs: typeof goal === 'string' ? context : goal.inputs || context,
+        inputs: typeof goal === 'string' ? providedInputs : enrichGoalInputsFromRuntimeVendor(goal, providedInputs),
         constraints: {
           max_steps: typeof goal === 'string' ? undefined : goal.max_steps || goal.constraints?.max_steps,
           timeout_ms: typeof goal === 'string' ? undefined : goal.timeout_ms || goal.constraints?.timeout_ms,

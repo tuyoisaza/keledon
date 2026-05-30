@@ -109,7 +109,10 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
 
       if (vendors.length > 0) {
-        // Build navigation steps for each vendor
+        // Build navigation steps for each vendor. Keep the legacy ui_steps payload in
+        // metadata for visibility, but send browser-native goal_execute commands so the
+        // desktop planner can actualize the vendor's startGoal into multiple fill/click
+        // attempts and keep going after recoverable failures.
         const uiSteps = vendors.map((v, i) => ({
           step_id: uuidv4(),
           type: 'navigate',
@@ -120,38 +123,42 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
           order: i + 1,
         }));
 
-        const commandId = uuidv4();
         const timestamp = new Date().toISOString();
-        const brainCommand = {
-          command_id: commandId,
+        const goalCommands = vendors.map((v, i) => ({
+          command_id: uuidv4(),
           session_id: data.session_id,
           timestamp,
-          type: 'ui_steps',
+          type: 'goal_execute',
           confidence: 1.0,
           mode: 'normal',
           flow_id: null,
           flow_run_id: null,
+          data: {
+            execution_id: `launch-vendor-${v.id}-${Date.now()}`,
+            goal: v.startGoal || `Open ${v.name}, sign in if a login form appears, and continue toward the vendor home page`,
+            vendor_id: v.id,
+            inputs: { vendor_id: v.id },
+            constraints: { max_steps: 20, timeout_ms: 60000 },
+            success_criteria: 'Reach the vendor surface or continue after any recoverable login/navigation failure.',
+          },
           metadata: {
             source: 'launch:auto',
             team_id: data.team_id,
+            vendor_id: v.id,
             vendor_count: vendors.length,
             auto_mode: true,
+            legacy_ui_step: uiSteps[i],
           },
-          ui_steps: uiSteps,
-        };
+        }));
 
         this.logger.log(
-          `[LAUNCH DEBUG] Auto-sending brain:command with ${uiSteps.length} steps for session ${data.session_id}`,
+          `[LAUNCH DEBUG] Auto-sending goal_execute with ${goalCommands.length} vendor goals for session ${data.session_id}`,
         );
-        for (const s of uiSteps) {
-          this.logger.log(`[LAUNCH DEBUG]   step: ${s.label} -> ${s.url}`);
+        for (const command of goalCommands) {
+          this.logger.log(`[LAUNCH DEBUG]   goal_execute vendor_id: ${command.data.vendor_id}`);
+          client.emit('brain:command', command);
+          this.server.to(`session:${data.session_id}`).emit('brain:command', command);
         }
-
-        // Send as brain:command — the format the browser understands
-        client.emit('brain:command', brainCommand);
-
-        // Also broadcast to session room so other listeners see it
-        this.server.to(`session:${data.session_id}`).emit('brain:command', brainCommand);
       } else {
         this.logger.log(
           `[LAUNCH DEBUG] No active vendors found for team ${data.team_id} — no steps to auto-execute`,

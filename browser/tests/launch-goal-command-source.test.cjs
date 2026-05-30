@@ -1,0 +1,16 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const gatewaySource = fs.readFileSync(path.join(__dirname, '..', '..', 'services', 'api', 'src', 'gateways', 'device.gateway.ts'), 'utf8');
+const ipcSource = fs.readFileSync(path.join(__dirname, '..', 'src', 'ipc-handlers.ts'), 'utf8');
+
+assert.match(gatewaySource, /type:\s*'goal_execute'/, 'launch auto-command should use goal_execute, not navigate-only ui_steps');
+assert.match(gatewaySource, /vendor_id:\s*v\.id/, 'launch goal command should identify the vendor for local credential enrichment');
+assert.match(gatewaySource, /legacy_ui_step:\s*uiSteps\[i\]/, 'legacy navigation step should be preserved as metadata');
+assert.doesNotMatch(gatewaySource, /goal:\s*\$\{command\.data\.goal\}/, 'launch logs must not print raw goal text that could include credentials');
+assert.match(ipcSource, /function enrichGoalInputsFromRuntimeVendor/, 'browser executor should enrich launch goals from local runtime vendors');
+assert.match(ipcSource, /inputs\.email\s*=\s*username/, 'local vendor username should also be available as email');
+assert.match(ipcSource, /inputs\.login\s*=\s*username/, 'local vendor username should also be available as login');
+
+console.log('launch goal command source tests passed');
