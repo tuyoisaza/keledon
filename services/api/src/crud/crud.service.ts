@@ -1390,7 +1390,7 @@ export class CrudService {
       name: v.name,
       type: v.type,
       baseUrl: v.baseUrl,
-      username: v.username ? '***' : null,
+      username: v.username || null,
       hasPassword: !!v.password,
       hasApiKey: !!v.apiKey,
       isActive: v.isActive,
@@ -1430,7 +1430,7 @@ export class CrudService {
       name: vendor.name,
       type: vendor.type,
       baseUrl: vendor.baseUrl,
-      username: vendor.username ? '***' : null,
+      username: vendor.username || null,
       hasPassword: !!vendor.password,
       hasApiKey: !!vendor.apiKey,
       isActive: vendor.isActive,
@@ -1455,6 +1455,10 @@ export class CrudService {
     },
   ) {
     const updateData: any = { ...data };
+    // Safety: never write masked placeholder values to the DB
+    if (updateData.username === '***') delete updateData.username;
+    if (updateData.password === '***') delete updateData.password;
+    if (updateData.apiKey === '***') delete updateData.apiKey;
     if (data.config) {
       updateData.config = data.config;
     }
@@ -1468,7 +1472,7 @@ export class CrudService {
       name: vendor.name,
       type: vendor.type,
       baseUrl: vendor.baseUrl,
-      username: vendor.username ? '***' : null,
+      username: vendor.username || null,
       hasPassword: !!vendor.password,
       hasApiKey: !!vendor.apiKey,
       isActive: vendor.isActive,
