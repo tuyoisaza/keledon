@@ -158,6 +158,8 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
           this.logger.log(`[LAUNCH DEBUG]   goal_execute vendor_id: ${command.data.vendor_id}`);
           client.emit('brain:command', command);
           this.server.to(`session:${data.session_id}`).emit('brain:command', command);
+          client.emit('goal_execute', command.data);
+          this.server.to(`session:${data.session_id}`).emit('goal_execute', command.data);
         }
       } else {
         this.logger.log(

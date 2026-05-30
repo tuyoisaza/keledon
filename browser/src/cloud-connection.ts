@@ -287,6 +287,8 @@ function registerMessageHandlers(
 
   // brain:command → renderer
   socket.on('brain:command', (data) => {
+    const commandType = data?.type || data?.data?.type || 'unknown';
+    cmdlog.log('CMD', `brain:command received | type: ${commandType} | execution: ${data?.data?.execution_id || data?.execution_id || 'none'}`);
     currentMainWindow?.webContents.send('brain:command', data);
   });
 
