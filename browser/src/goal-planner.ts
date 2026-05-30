@@ -57,11 +57,22 @@ function fieldTarget(field: string): string {
   return `textbox '${label.replace(/'/g, '')}'`;
 }
 
+function isSensitiveField(field: string): boolean {
+  return /password|passcode|secret|token|api\s*key|credential/i.test(field);
+}
+
+function visibleFillDescription(value: string, field: string): string {
+  return isSensitiveField(field) ? `Fill ${field} with [REDACTED]` : `Fill ${field} with ${value}`;
+}
+
 function clickAction(label: string, description?: string): GoalPlannerAction {
   const safe = label.replace(/"/g, '\\"');
   return {
     type: 'click',
-    selector: `button[aria-label*="${safe}" i], a[aria-label*="${safe}" i], button, a, input[type="button"], input[type="submit"], [role="button"], [role="link"]`,
+    // v0.3.39 safety: keep matching semantic/label-specific. The legacy broad fallback
+    // (`button, a, [role="button"]`) is intentionally not used here because it can click
+    // the first arbitrary button/link when text matching fails.
+    selector: `button[aria-label*="${safe}" i], a[aria-label*="${safe}" i], input[aria-label*="${safe}" i], input[value*="${safe}" i]`,
     target: `button '${label.replace(/'/g, '')}'`,
     description: description || `Click ${label}`,
   };
@@ -73,7 +84,7 @@ function fillAction(value: string, field: string): GoalPlannerAction {
     selector: fieldSelector(field),
     target: fieldTarget(field),
     value,
-    description: `Fill ${field} with ${value}`,
+    description: visibleFillDescription(value, field),
   };
 }
 
@@ -116,6 +127,7 @@ function planClause(clause: string): GoalPlannerAction[] {
   if (lower.includes('search')) {
     const query = quotedOrTrailingText(clause, ['search for', 'search']);
     if (query) {
+      actions.push({ type: 'navigate', url: 'https://www.google.com', description: 'Navigate to Google search' });
       actions.push(fillAction(query, 'search'));
       actions.push({ type: 'press_key', selector: fieldSelector('search'), value: 'Enter', description: `Submit search for ${query}` });
       actions.push({ type: 'wait', value: '2000', description: 'Wait for search results' });
@@ -139,6 +151,12 @@ function planClause(clause: string): GoalPlannerAction[] {
     const direction = lower.includes('up') ? 'up' : 'down';
     const amountMatch = clause.match(/scroll\s+(?:by\s+)?(\d+)/i);
     actions.push({ type: 'scroll', direction, value: amountMatch?.[1] || '500', description: `Scroll ${direction}` });
+    return actions;
+  }
+
+  if (lower.includes('extract') || lower.includes('scrape') || lower.includes('get text') || lower.includes('page content')) {
+    actions.push({ type: 'wait', value: '1000', description: 'Wait for page to be ready' });
+    actions.push({ type: 'extract', description: 'Extract page content' });
     return actions;
   }
 
@@ -195,7 +213,7 @@ function planLogin(goal: string, inputs?: Record<string, unknown>): GoalPlannerA
     actions.push({ type: 'press_key', selector: fieldSelector('email'), value: 'Tab', description: 'Move to password field' });
   }
   if (password) actions.push(fillAction(password, 'Password'));
-  actions.push({ ...clickAction('Sign in'), selector: 'button[type="submit"], input[type="submit"], button, [role="button"]', description: 'Click submit/login button' });
+  actions.push({ ...clickAction('Sign in'), selector: 'button[type="submit"][aria-label*="sign" i], input[type="submit"][value*="sign" i], button[aria-label*="login" i], input[type="submit"][value*="login" i]', description: 'Click submit/login button' });
   actions.push({ type: 'wait', value: '3000', description: 'Wait for page to load after login' });
   return actions;
 }
@@ -210,9 +228,11 @@ export function planGoalActions(goal: string, inputs?: Record<string, unknown>):
     actions.push(...planClause(clause));
   }
 
-  const hasStructuredFillOrLogin = actions.some((action) => action.type === 'fill') || goalHasAny(goalLower, LOGIN_WORDS);
+  const hasExplicitFormFill = actions.some((action) => action.type === 'fill');
+  const hasExplicitInteractiveStep = actions.some((action) => action.type === 'click' || action.type === 'fill' || action.type === 'submit');
+  const hasCredentialInputs = Boolean((inputs?.username as string) || (inputs?.email as string) || (inputs?.password as string));
   actions.push(...planAccountCreation(goalLower));
-  if (!hasStructuredFillOrLogin || goalHasAny(goalLower, LOGIN_WORDS)) {
+  if (goalHasAny(goalLower, LOGIN_WORDS) && (hasCredentialInputs || !hasExplicitInteractiveStep) && !hasExplicitFormFill) {
     actions.push(...planLogin(goal, inputs));
   }
 

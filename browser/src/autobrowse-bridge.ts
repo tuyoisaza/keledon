@@ -710,7 +710,10 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
     // Map goal to actions.
     // v0.3.38 additive planner: preserves the legacy mapGoalToActions() above as historical fallback context,
     // but routes new Execute Goal traffic through a reusable multi-step natural-language planner.
-    const actions = planGoalActions(input.goal, input.inputs);
+    // v0.3.39 safety: executeGoal already performs the optional input URL pre-navigation above,
+    // so pass planner inputs with URL fields neutralized to avoid duplicate navigation side effects.
+    const plannerInputs = url ? { ...(input.inputs || {}), url: undefined, targetUrl: undefined } : input.inputs;
+    const actions = planGoalActions(input.goal, plannerInputs);
     logs.push(`[Actions] ${actions.length} steps planned from goal`);
 
     const maxSteps = input.constraints?.max_steps || 50;
