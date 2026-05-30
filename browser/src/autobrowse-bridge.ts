@@ -55,6 +55,7 @@ interface BrowserState {
 interface GoalAction {
   type: 'navigate' | 'click' | 'fill' | 'extract' | 'wait' | 'screenshot' | 'scroll' | 'press_key' | 'select' | 'hover' | 'wait_for' | 'submit' | 'assert';
   selector?: string;
+  target?: string;
   value?: string;
   url?: string;
   description: string;
@@ -66,6 +67,7 @@ interface RpaStep {
   step_id?: string;
   action: string;
   selector?: string;
+  target?: string;
   value?: string;
   url?: string;
   description?: string;
@@ -167,6 +169,9 @@ async function connectCDP(): Promise<{ browser: Browser; page: Page } | null> {
 function mapGoalToActions(goal: string, inputs?: Record<string, unknown>): GoalAction[] {
   const actions: GoalAction[] = [];
   const goalLower = goal.toLowerCase();
+  const wantsAccountCreation = goalLower.includes('create an account') || goalLower.includes('create account') || goalLower.includes('sign up') || goalLower.includes('signup') || goalLower.includes('register');
+  const googleLikeLogin = goalLower.includes('google') || goalLower.includes('meet.google') || goalLower.includes('meet ');
+  const wantsNextAfterEmail = googleLikeLogin || goalLower.includes('next screen') || goalLower.includes('advancing to the next') || goalLower.includes('clicking in advance') || goalLower.includes('clicking advance');
 
   // If inputs contain a URL, navigate first
   const url = (inputs?.url as string) || (inputs?.targetUrl as string);
@@ -184,19 +189,44 @@ function mapGoalToActions(goal: string, inputs?: Record<string, unknown>): GoalA
     }
   }
 
+  // Account creation goals: one natural-language goal should become a real multi-step browser plan,
+  // not just a URL open. Site-specific cloud ui_steps can still override with more exact selectors.
+  if (wantsAccountCreation) {
+    actions.push({ type: 'wait', value: '1500', description: 'Wait for account page to render' });
+    actions.push({ type: 'click', selector: 'a[href*="signup"], a[href*="sign-up"], a[href*="create"], button, a', target: "button 'Create account'", description: 'Click create account / sign up entry point' });
+    actions.push({ type: 'wait', value: '2500', description: 'Wait for account creation form' });
+  }
+
   // Login goals
-  if (goalLower.includes('login') || goalLower.includes('sign in') || goalLower.includes('log in')) {
+  const handledGoogleStyleLogin = (goalLower.includes('login') || goalLower.includes('sign in') || goalLower.includes('log in')) && wantsNextAfterEmail;
+  if (handledGoogleStyleLogin) {
     const username = (inputs?.username as string) || (inputs?.email as string) || '';
     const password = (inputs?.password as string) || '';
 
     if (username) {
-      actions.push({ type: 'fill', selector: 'input[type="email"], input[name="user"], input[name="email"], input[id="user"], input[id="email"], input[autocomplete="username"]', value: username, description: `Fill username: ${username}` });
+      actions.push({ type: 'fill', selector: 'input[type="email"], input[name="identifier"], input[id="identifierId"], input[autocomplete="username"], input[name="Email"], input[name="email"]', target: "textbox 'Email'", value: username, description: `Fill username/email: ${username}` });
+      actions.push({ type: 'click', selector: '#identifierNext button, button[type="button"], button, [role="button"]', target: "button 'Next'", description: 'Advance to password screen' });
+      actions.push({ type: 'wait', value: '2500', description: 'Wait for password challenge' });
+    }
+    if (password) {
+      actions.push({ type: 'fill', selector: 'input[type="password"], input[name="Passwd"], input[name="password"], input[id="password"], input[autocomplete="current-password"]', target: "textbox 'Password'", value: password, description: 'Fill password' });
+      actions.push({ type: 'click', selector: '#passwordNext button, button[type="button"], button, [role="button"]', target: "button 'Next'", description: 'Submit password / continue' });
+      actions.push({ type: 'wait', value: '4000', description: 'Wait after password submit' });
+    }
+  }
+
+  if (!handledGoogleStyleLogin && (goalLower.includes('login') || goalLower.includes('sign in') || goalLower.includes('log in'))) {
+    const username = (inputs?.username as string) || (inputs?.email as string) || '';
+    const password = (inputs?.password as string) || '';
+
+    if (username) {
+      actions.push({ type: 'fill', selector: 'input[type="email"], input[name="user"], input[name="email"], input[id="user"], input[id="email"], input[autocomplete="username"]', target: "textbox 'Email'", value: username, description: `Fill username: ${username}` });
       actions.push({ type: 'press_key', selector: 'input[type="email"], input[name="user"], input[name="email"]', value: 'Tab', description: 'Move to password field' });
     }
     if (password) {
-      actions.push({ type: 'fill', selector: 'input[type="password"], input[name="pass"], input[id="pass"]', value: password, description: 'Fill password' });
+      actions.push({ type: 'fill', selector: 'input[type="password"], input[name="pass"], input[id="pass"]', target: "textbox 'Password'", value: password, description: 'Fill password' });
     }
-    actions.push({ type: 'click', selector: 'button[type="submit"], input[type="submit"]', description: 'Click submit/login button' });
+    actions.push({ type: 'click', selector: 'button[type="submit"], input[type="submit"]', target: "button 'Sign in'", description: 'Click submit/login button' });
     actions.push({ type: 'wait', value: '3000', description: 'Wait for page to load after login' });
   }
 
@@ -325,9 +355,34 @@ async function executeAction(view: BrowserView, action: GoalAction): Promise<Ste
       }
 
       case 'click': {
-        if (!action.selector) throw new Error('No selector for click');
-        const selectors = action.selector.split(',').map(s => s.trim());
+        if (!action.selector && !action.target) throw new Error('No selector or target for click');
         let clicked = false;
+        if (action.target) {
+          const targetClick = await wc.executeJavaScript(`
+            (function() {
+              var target = ${JSON.stringify(action.target)};
+              var explicit = (target.match(/'([^']+)'|\"([^\"]+)\"/) || [])[1] || (target.match(/'([^']+)'|\"([^\"]+)\"/) || [])[2] || target;
+              var wanted = [explicit, target, 'Create account', 'Sign up', 'Sign in', 'Next', 'Continue', 'Get started'].filter(Boolean);
+              var all = Array.from(document.querySelectorAll('button, a, input[type=\"button\"], input[type=\"submit\"], [role=\"button\"], [role=\"link\"]'));
+              for (var w = 0; w < wanted.length; w++) {
+                var needle = String(wanted[w]).toLowerCase();
+                if (!needle || needle.length < 2) continue;
+                for (var i = 0; i < all.length; i++) {
+                  var el = all[i];
+                  var text = (el.textContent || el.value || el.getAttribute('aria-label') || el.getAttribute('title') || '').trim().toLowerCase();
+                  if (text && (text === needle || text.includes(needle))) {
+                    el.scrollIntoView({ behavior: 'instant', block: 'center' });
+                    el.click();
+                    return { success: true, matched: text };
+                  }
+                }
+              }
+              return { success: false, error: 'target not found' };
+            })()
+          `).catch((error) => ({ success: false, error: String(error) }));
+          if (targetClick?.success) clicked = true;
+        }
+        const selectors = (action.selector || '').split(',').map(s => s.trim()).filter(Boolean);
         for (const sel of selectors) {
           try {
             const result = await wc.executeJavaScript(`
@@ -355,10 +410,39 @@ async function executeAction(view: BrowserView, action: GoalAction): Promise<Ste
       }
 
       case 'fill': {
-        if (!action.selector) throw new Error('No selector for fill');
+        if (!action.selector && !action.target) throw new Error('No selector or target for fill');
         if (action.value === undefined) throw new Error('No value for fill');
-        const selectors = action.selector.split(',').map(s => s.trim());
         let filled = false;
+        if (action.target) {
+          const targetFill = await wc.executeJavaScript(`
+            (function() {
+              var target = ${JSON.stringify(action.target)};
+              var val = ${JSON.stringify(action.value)};
+              var explicit = (target.match(/'([^']+)'|\"([^\"]+)\"/) || [])[1] || (target.match(/'([^']+)'|\"([^\"]+)\"/) || [])[2] || target;
+              var needles = [explicit, target, 'email', 'username', 'password'].map(function(x) { return String(x || '').toLowerCase(); });
+              var inputs = Array.from(document.querySelectorAll('input, textarea, [contenteditable=\"true\"]'));
+              for (var n = 0; n < needles.length; n++) {
+                var needle = needles[n];
+                if (!needle || needle.length < 2) continue;
+                for (var i = 0; i < inputs.length; i++) {
+                  var el = inputs[i];
+                  var hay = [el.getAttribute('aria-label'), el.getAttribute('placeholder'), el.getAttribute('name'), el.id, el.type, el.autocomplete].join(' ').toLowerCase();
+                  if (hay.includes(needle)) {
+                    el.scrollIntoView({ behavior: 'instant', block: 'center' });
+                    el.focus();
+                    if ('value' in el) el.value = val; else el.textContent = val;
+                    el.dispatchEvent(new Event('input', { bubbles: true }));
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                    return { success: true, matched: hay };
+                  }
+                }
+              }
+              return { success: false, error: 'target not found' };
+            })()
+          `).catch((error) => ({ success: false, error: String(error) }));
+          if (targetFill?.success) filled = true;
+        }
+        const selectors = (action.selector || '').split(',').map(s => s.trim()).filter(Boolean);
         for (const sel of selectors) {
           try {
             const result = await wc.executeJavaScript(`
@@ -730,6 +814,7 @@ export async function executeSteps(steps: RpaStep[]): Promise<BridgeExecutionRes
     const action: GoalAction = {
       type: mappedType,
       selector: step.selector,
+      target: step.target,
       value: step.value,
       url: step.url,
       description: step.description || `${step.action}${step.selector ? ` on ${step.selector}` : ''}`,
