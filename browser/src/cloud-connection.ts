@@ -169,6 +169,48 @@ function ensureActiveGoalTab(tabManager: TabManager, bridge: any): void {
 }
 
 /**
+ * When the cloud sends a goal_execute without a vendor_id, try to match a runtime
+ * vendor by scanning the goal text for the vendor's name, URL domain, or other hints.
+ * v0.3.47: bridges cloud-originated bare goals with the desktop's paired
+ * vendor configuration so credentials are available at plan time.
+ */
+function findMatchingVendorFromGoal(goal: string): any | null {
+  if (!goal || !Array.isArray(runtimeStatus.vendors)) return null;
+  const goalLower = goal.toLowerCase();
+
+  for (const vendor of runtimeStatus.vendors) {
+    if (!vendor?.id || !vendor?.baseUrl || vendor.isActive === false) continue;
+
+    // Check if goal mentions the vendor name
+    if (vendor.name && goalLower.includes(vendor.name.toLowerCase())) {
+      cmdlog.log('CMD', `goal_execute vendor match by name | vendor_id=${cmdlog.truncate(String(vendor.id), 8, 4)} | name=${vendor.name}`);
+      return vendor;
+    }
+
+    // Check if goal mentions the vendor's base URL domain
+    try {
+      const hostname = new URL(vendor.baseUrl).hostname.replace(/^www\./, '');
+      const domainParts = hostname.split('.');
+      // Match on the registered domain (e.g. "google" from "accounts.google.com")
+      const primaryDomain = domainParts.length >= 2 ? domainParts[domainParts.length - 2] : domainParts[0];
+      if (goalLower.includes(primaryDomain)) {
+        cmdlog.log('CMD', `goal_execute vendor match by domain | vendor_id=${cmdlog.truncate(String(vendor.id), 8, 4)} | domain=${primaryDomain}`);
+        return vendor;
+      }
+    } catch { /* URL parse error */ }
+  }
+
+  // Single-vendor short-circuit: if there's exactly one runnable vendor, assume it's the target
+  const runnable = runtimeStatus.vendors.filter((v: any) => v?.id && v?.baseUrl && v.isActive !== false);
+  if (runnable.length === 1) {
+    cmdlog.log('CMD', `goal_execute vendor match by single-vendor fallback | vendor_id=${cmdlog.truncate(String(runnable[0].id), 8, 4)}`);
+    return runnable[0];
+  }
+
+  return null;
+}
+
+/**
  * Calculate exponential backoff delay for reconnection.
  * Sequence: 1s → 2s → 4s → 8s → 16s → 30s (capped)
  */
@@ -444,7 +486,17 @@ function registerMessageHandlers(
   // goal_execute → AutoBrowse bridge
   // goal_execute → AutoBrowse bridge
   socket.on('goal_execute', async (data) => {
-    const enrichedData = enrichGoalExecuteDataFromRuntimeVendor(data);
+    // If no vendor_id, try to match a runtime vendor from goal text so the enrichment
+    // functions can pull credentials and startGoal below. v0.3.47:
+    // bridges cloud-originated bare goals with the desktop's paired vendor config.
+    let goalData = data;
+    if (!data.vendor_id && !data.vendorId && !data.inputs?.vendor_id && !data.inputs?.vendorId) {
+      const matchedVendor = findMatchingVendorFromGoal(data.goal || '');
+      if (matchedVendor) {
+        goalData = { ...data, vendor_id: matchedVendor.id };
+      }
+    }
+    const enrichedData = enrichGoalExecuteDataFromRuntimeVendor(goalData);
     cmdlog.log('CMD', `goal_execute received | ${summarizeGoalExecuteData(enrichedData)}`);
     log.info('[Main] Received goal from cloud:', { execution_id: enrichedData.execution_id, goalLength: String(enrichedData.goal || '').length });
     const bridge = await getAutoBrowseBridge();
@@ -458,7 +510,7 @@ function registerMessageHandlers(
     try {
       ensureActiveGoalTab(tabManager, bridge);
       ensureBrowserViewForGoalExecution(tabManager, bridge);
-      const enrichedInputs = enrichCloudGoalInputsFromRuntimeVendor(data, data.inputs) || enrichedData.inputs;
+      const enrichedInputs = enrichCloudGoalInputsFromRuntimeVendor(goalData, goalData.inputs) || enrichedData.inputs;
       Object.assign(enrichedInputs, { ...(enrichedData.inputs || {}), ...(enrichedInputs || {}) });
       enrichedData.inputs = enrichedInputs;
       const enrichedGoalData = {
