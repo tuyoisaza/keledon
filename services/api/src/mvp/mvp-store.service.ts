@@ -228,6 +228,13 @@ export class MvpStoreService {
   getRpaProviders() {
     return [
       {
+        id: 'testing-library-dom',
+        name: 'Testing Library DOM',
+        description: 'Semantic element finding by accessible labels, roles, and text',
+        requiresBackend: false,
+        requiresApiKey: false,
+      },
+      {
         id: 'native-dom',
         name: 'Native DOM Automation',
         description: 'Browser APIs and DOM-native execution',

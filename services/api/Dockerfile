@@ -18,5 +18,6 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/contracts ./contracts
+RUN printf '#!/bin/sh\nset -e\nnpx prisma@5.22.0 migrate deploy 2>/dev/null || true\nexec node dist/main\n' > /start.sh && chmod +x /start.sh
 EXPOSE 3001
-CMD ["node", "dist/main"]
+CMD ["/start.sh"]

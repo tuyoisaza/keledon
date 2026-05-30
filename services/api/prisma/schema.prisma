@@ -124,6 +124,7 @@ model Device {
   authToken       String?
   cdpUrl          String?
   lastSeen        DateTime?
+  rpaProviderConfig String?  // JSON — RPA provider chain config
   version         String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

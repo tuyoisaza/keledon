@@ -6,6 +6,7 @@ import {
   Headers,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { DeviceService } from './device.service';
 import { Public } from '../guards/public.decorator';
@@ -115,6 +116,21 @@ export class DeviceController {
   @Get('debug/device/:id')
   async debugDevice(@Param('id') keledonId: string) {
     return this.deviceService.getDeviceDebug(keledonId);
+  }
+
+  @Public()
+  @Get(':id/rpa-config')
+  async getDeviceRpaConfig(@Param('id') deviceId: string) {
+    return this.deviceService.getRpaProviderConfig(deviceId);
+  }
+
+  @Public()
+  @Put(':id/rpa-config')
+  async updateDeviceRpaConfig(
+    @Param('id') deviceId: string,
+    @Body() body: { chain: string[]; providers: Record<string, any>; fallback?: boolean },
+  ) {
+    return this.deviceService.updateRpaProviderConfig(deviceId, body);
   }
 
   @Public()

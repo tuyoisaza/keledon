@@ -255,6 +255,42 @@ export class DeviceService {
     });
   }
 
+  private readonly defaultRpaConfig = {
+    chain: ['testing-library-dom', 'native-dom'],
+    fallback: true,
+    providers: {
+      'native-dom': { enabled: true, priority: 2 },
+      'testing-library-dom': { enabled: true, priority: 1, options: { timeout: 5000 } },
+      'ai-vision': { enabled: false, options: { model: 'gpt-4o' } },
+    },
+  };
+
+  async getRpaProviderConfig(deviceId: string) {
+    const device = await this.prisma.device.findUnique({
+      where: { id: deviceId },
+      select: { rpaProviderConfig: true },
+    });
+    if (device?.rpaProviderConfig) {
+      try {
+        return JSON.parse(device.rpaProviderConfig);
+      } catch {
+        return this.defaultRpaConfig;
+      }
+    }
+    return this.defaultRpaConfig;
+  }
+
+  async updateRpaProviderConfig(
+    deviceId: string,
+    config: { chain: string[]; providers: Record<string, any>; fallback?: boolean },
+  ) {
+    await this.prisma.device.update({
+      where: { id: deviceId },
+      data: { rpaProviderConfig: JSON.stringify(config) },
+    });
+    return { success: true };
+  }
+
   async getDeviceDebug(keledonId: string) {
     const device = await this.prisma.device.findFirst({
       where: { keledonId },

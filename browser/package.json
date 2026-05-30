@@ -1,10 +1,6 @@
 {
   "name": "keledon-desktop-agent",
   "version": "0.3.28",
-  "version": "0.3.28",
-=======
-  "version": "0.3.26",
->>>>>>> f732b3e (v0.3.26: route WebSocket connections directly to API (via deriveWsUrl), bypass nginx proxy)
   "description": "KELEDON Desktop Agent - Electron runtime with AutoBrowse",
   "author": "Keledon Team <team@keledon.com>",
   "main": "dist/main.js",
@@ -20,6 +16,7 @@
     "dist:zip": "npm run build && electron-builder --win zip"
   },
   "dependencies": {
+    "@testing-library/dom": "^10.4.1",
     "electron-log": "^5.1.0",
     "electron-updater": "^6.1.7",
     "playwright-core": "^1.41.0",

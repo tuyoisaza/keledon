@@ -6,6 +6,7 @@ import { startPolling, stopPolling, registerCommandHandler, type BrowserCommand,
 import * as cmdlog from './cmdlog.js';
 import { startCall, appendTranscript, processDecision, executeRpaFlowFromCommand, closeCall, setMainWindow as setCallMainWindow, getCurrentCall } from './call-handler.js';
 import { setMainWindow as setRpaMainWindow } from './rpa-executor.js';
+import { setRpaProviderConfig } from './rpa-provider.js';
 import { mediaLayer } from './media/media-layer.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
 import { eventLogger } from './media/event-logger.js';
@@ -410,6 +411,33 @@ export function connectWebSockets(
 
   deviceSocket = createDeviceSocket(cloudUrl, token, tabManager, getAutoBrowseBridge, onConnected);
   agentSocket = createAgentSocket(cloudUrl, token);
+
+  // Fetch RPA provider config from cloud (non-blocking)
+  fetchRpaConfig(cloudUrl, token).catch((err) =>
+    log.warn('[RpaProvider] Failed to fetch config:', err),
+  );
+}
+
+/**
+ * Fetch the RPA provider config for this device and apply it.
+ */
+async function fetchRpaConfig(cloudUrl: string, token: string): Promise<void> {
+  const deviceId = runtimeStatus.deviceId;
+  if (!deviceId) {
+    log.warn('[RpaProvider] No device ID, using default config');
+    return;
+  }
+  const url = `${cloudUrl}/api/devices/${encodeURIComponent(deviceId)}/rpa-config`;
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) {
+    log.warn(`[RpaProvider] Config fetch failed (${res.status}), using defaults`);
+    return;
+  }
+  const config = await res.json();
+  setRpaProviderConfig(config);
+  log.info(`[RpaProvider] Config loaded from cloud: chain=[${config.chain?.join(', ') || 'default'}]`);
 }
 
 /**
