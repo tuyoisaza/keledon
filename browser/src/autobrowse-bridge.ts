@@ -1,6 +1,6 @@
 /**
  * AutoBrowse Bridge - KELEDON Browser integration with AutoBrowse engine
- * v0.1.18 - Electron API-first automation
+ * v0.3.46 - Multi-step goal actualization
  *
  * Controls the active BrowserView using Electron APIs directly.
  * Playwright CDP is kept as optional fallback only.

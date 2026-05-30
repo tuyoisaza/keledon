@@ -71,4 +71,16 @@ const emailFill = emailAsLoginGoal.find((action) => action.type === 'fill' && ac
 assert.ok(emailFill, actionSummary(emailAsLoginGoal).join(' | '));
 assert.ok(/login/i.test(emailFill.selector || '') || /login/i.test(emailFill.target || ''), emailFill.selector || emailFill.target || '');
 
+// Behavior regression: a high-level goal that starts with navigation must keep actualizing
+// the rest of the goal instead of returning after the URL. This is the vendor launch shape:
+// land on the page, use the saved email/login, advance, and continue toward the goal.
+const navigationalLoginGoal = planGoalActions(
+  'Open vendor.example.com and sign in if a login form appears, then continue toward the vendor home page',
+  { username: 'tuyo@example.com', password: 'hunter2' },
+);
+assert.equal(navigationalLoginGoal[0].type, 'navigate', actionSummary(navigationalLoginGoal).join(' | '));
+assert.ok(navigationalLoginGoal.some((action) => action.type === 'fill' && action.value === 'tuyo@example.com'), actionSummary(navigationalLoginGoal).join(' | '));
+assert.ok(navigationalLoginGoal.some((action) => action.type === 'fill' && action.value === 'hunter2'), actionSummary(navigationalLoginGoal).join(' | '));
+assert.ok(navigationalLoginGoal.length >= 5, `expected navigation plus several real actions, got ${navigationalLoginGoal.length}: ${actionSummary(navigationalLoginGoal).join(' | ')}`);
+
 console.log('goal-planner tests passed');

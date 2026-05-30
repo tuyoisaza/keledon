@@ -10,14 +10,40 @@ export interface GoalPlannerAction {
 }
 
 const LOGIN_WORDS = ['login', 'log in', 'sign in'];
+const EMAIL_WORDS = ['email', 'e-mail', 'username', 'user'];
+const PASSWORD_WORDS = ['password', 'passcode', 'passwd'];
 
 function normalizeUrl(raw: string): string {
   const clean = raw.trim().replace(/[),.;]+$/g, '');
   return clean.match(/^https?:\/\//i) ? clean : `https://${clean}`;
 }
 
+function equivalentPlannedUrl(a: string | null | undefined, b: string | null | undefined): boolean {
+  if (!a || !b) return false;
+  try {
+    const left = new URL(normalizeUrl(a));
+    const right = new URL(normalizeUrl(b));
+    return left.hostname.toLowerCase() === right.hostname.toLowerCase()
+      && left.pathname.replace(/\/$/, '') === right.pathname.replace(/\/$/, '');
+  } catch {
+    return normalizeUrl(a) === normalizeUrl(b);
+  }
+}
+
 function goalHasAny(goalLower: string, words: string[]): boolean {
   return words.some((word) => goalLower.includes(word));
+}
+
+function goalLooksGoogleLike(goalLower: string): boolean {
+  return goalLower.includes('google') || goalLower.includes('gmail') || goalLower.includes('meet.google') || goalLower.includes('meet ');
+}
+
+function goalWantsEmailStep(goalLower: string): boolean {
+  return goalHasAny(goalLower, EMAIL_WORDS) || goalLower.includes('using the email') || goalLower.includes('usingthe email') || goalLower.includes('use the email');
+}
+
+function goalWantsPasswordStep(goalLower: string): boolean {
+  return goalHasAny(goalLower, PASSWORD_WORDS) || goalLower.includes('using the password') || goalLower.includes('usingthe password') || goalLower.includes('use the password');
 }
 
 function extractUrlFromText(text: string): string | null {
@@ -58,11 +84,12 @@ function fieldTarget(field: string): string {
 }
 
 function isSensitiveField(field: string): boolean {
-  return /password|passcode|secret|token|api\s*key|credential/i.test(field);
+  return /password|passcode|secret|token|api\s*key|credential|email|username|login/i.test(field);
 }
 
 function visibleFillDescription(value: string, field: string): string {
-  return isSensitiveField(field) ? `Fill ${field} with [REDACTED]` : `Fill ${field} with ${value}`;
+  if (isSensitiveField(field)) return `Fill ${field} with [REDACTED]`;
+  return ['Fill', field, 'with', value].join(' ');
 }
 
 function clickAction(label: string, description?: string): GoalPlannerAction {
@@ -78,6 +105,13 @@ function clickAction(label: string, description?: string): GoalPlannerAction {
   };
 }
 
+function googleNextClickAction(description: string): GoalPlannerAction {
+  return {
+    ...clickAction('Next', description),
+    selector: '#identifierNext button, #passwordNext button, button[aria-label*="Next" i], button[type="button"], [role="button"]',
+  };
+}
+
 function fillAction(value: string, field: string): GoalPlannerAction {
   return {
     type: 'fill',
@@ -88,13 +122,37 @@ function fillAction(value: string, field: string): GoalPlannerAction {
   };
 }
 
+/**
+ * Normalize contiguous verb+preposition constructions that lack a space,
+ * e.g. "usingthe email" → "using the email", "clickingin advance" → "clicking in advance".
+ * v0.3.46: handles cloud-originated goals where the NL generation emits run-together forms.
+ */
+function normalizeContiguousText(text: string): string {
+  return text
+    .replace(/\b(using)(the|a|an|my|your)\b/gi, '$1 $2')
+    .replace(/\b(use)(the|a|an|my|your)\b/gi, '$1 $2')
+    .replace(/\b(clicking)(in|on|the|a|advance|next)\b/gi, '$1 $2')
+    .replace(/\b(click)(in|on|the|a|advance|next)\b/gi, '$1 $2')
+    .replace(/\b(advancing)(to|the|a|in|on)\b/gi, '$1 $2')
+    .replace(/\b(advance)(to|the|a|in|on)\b/gi, '$1 $2')
+    .replace(/\b(filling)(in|the|a|with)\b/gi, '$1 $2')
+    .replace(/\b(fill)(in|the|a|with)\b/gi, '$1 $2')
+    .replace(/\b(entering)(the|a|my|your|in|into)\b/gi, '$1 $2')
+    .replace(/\b(typing)(in|the|a|my|your)\b/gi, '$1 $2');
+}
+
 function splitGoalIntoClauses(goal: string): string[] {
   const numbered = goal
     .replace(/\r?\n+/g, ' then ')
     .replace(/\b(?:first|second|third|finally)[:,]?\s+/gi, ' then ')
     .replace(/\b\d+[.)]\s+/g, ' then ');
   // v0.3.38 additive guard: do not split on the word "Next" by itself because it is also a button label.
-  return numbered
+  // v0.3.46 additive planner: split comma/and connector phrases that describe separate browser work,
+  // e.g. "login to Google, using the email, advancing to the next screen and using the password".
+  // First normalize contiguous verb+preposition forms (cloud NL often emits "usingthe" for "using the").
+  return normalizeContiguousText(numbered)
+    .replace(/,\s*(?=(?:using|use|advancing|advance|clicking|click|entering|enter|typing|type|filling|fill)\b)/gi, ' then ')
+    .replace(/\s+and\s+(?=(?:using|use|advancing|advance|clicking|click|entering|enter|typing|type|filling|fill)\b)/gi, ' then ')
     .split(/\s+(?:then|and then|after that)\s+|[;\n]+/i)
     .map((clause) => clause.trim())
     .filter((clause) => clause.length > 0);
@@ -168,6 +226,22 @@ function planClause(clause: string): GoalPlannerAction[] {
     }
   }
 
+  if (goalWantsEmailStep(lower)) {
+    actions.push(fillAction('', 'Email'));
+    return actions;
+  }
+
+  if (lower.includes('advance') || lower.includes('next screen') || lower.includes('clicking in advance') || lower.includes('click advance') || lower.includes('click next')) {
+    actions.push(googleNextClickAction('Advance to the next screen'));
+    actions.push({ type: 'wait', value: '2500', description: 'Wait for the next screen' });
+    return actions;
+  }
+
+  if (goalWantsPasswordStep(lower)) {
+    actions.push(fillAction('', 'Password'));
+    return actions;
+  }
+
   if (lower.includes('submit')) {
     actions.push({ type: 'submit', description: 'Submit form' });
   }
@@ -191,19 +265,27 @@ function planLogin(goal: string, inputs?: Record<string, unknown>): GoalPlannerA
   const actions: GoalPlannerAction[] = [];
   const username = (inputs?.username as string) || (inputs?.email as string) || '';
   const password = (inputs?.password as string) || '';
-  const googleLikeLogin = goalLower.includes('google') || goalLower.includes('meet.google') || goalLower.includes('meet ');
+  const googleLikeLogin = goalLooksGoogleLike(goalLower);
   const wantsNextAfterEmail = googleLikeLogin || goalLower.includes('next screen') || goalLower.includes('advance') || goalLower.includes('click next');
 
   if (wantsNextAfterEmail) {
+    if (googleLikeLogin && !actions.some((action) => action.type === 'navigate') && !((inputs?.url as string) || (inputs?.targetUrl as string))) {
+      actions.push({ type: 'navigate', url: 'https://accounts.google.com/', description: 'Navigate to Google sign-in' });
+      actions.push({ type: 'wait', value: '1500', description: 'Wait for Google sign-in page' });
+    }
     if (username) {
       actions.push(fillAction(username, 'Email'));
-      actions.push({ ...clickAction('Next'), selector: '#identifierNext button, button[type="button"], button, [role="button"]', description: 'Advance to password screen' });
+      actions.push(googleNextClickAction('Advance to password screen'));
       actions.push({ type: 'wait', value: '2500', description: 'Wait for password challenge' });
+    } else if (goalWantsEmailStep(goalLower)) {
+      actions.push({ type: 'wait_for', selector: fieldSelector('Email'), description: 'Wait for email field' });
     }
     if (password) {
       actions.push(fillAction(password, 'Password'));
-      actions.push({ ...clickAction('Next'), selector: '#passwordNext button, button[type="button"], button, [role="button"]', description: 'Submit password / continue' });
+      actions.push(googleNextClickAction('Submit password / continue'));
       actions.push({ type: 'wait', value: '4000', description: 'Wait after password submit' });
+    } else if (goalWantsPasswordStep(goalLower)) {
+      actions.push({ type: 'wait_for', selector: fieldSelector('Password'), description: 'Wait for password field' });
     }
     return actions;
   }
@@ -225,14 +307,45 @@ export function planGoalActions(goal: string, inputs?: Record<string, unknown>):
   if (inputUrl) actions.push({ type: 'navigate', url: normalizeUrl(inputUrl), description: `Navigate to ${normalizeUrl(inputUrl)}` });
 
   for (const clause of splitGoalIntoClauses(goal)) {
-    actions.push(...planClause(clause));
+    const clauseActions = planClause(clause);
+    if (inputUrl && clauseActions.length === 1 && clauseActions[0]?.type === 'navigate' && equivalentPlannedUrl(clauseActions[0].url, inputUrl)) {
+      continue;
+    }
+    for (const action of clauseActions) {
+      // v0.3.46 additive credential binding: phrases such as "using the email" or "using the password"
+      // describe a real fill step. Bind already-decrypted runtime inputs when present instead of
+      // leaving the step empty or falling back to a web search.
+      if (action.type === 'fill' && !action.value) {
+        const target = `${action.target || action.description || action.selector || ''}`.toLowerCase();
+        if (target.includes('email') || target.includes('user') || target.includes('login')) {
+          action.value = ((inputs?.username as string) || (inputs?.email as string) || (inputs?.login as string) || '').trim();
+          action.description = action.value ? visibleFillDescription(action.value, 'Email') : 'Focus email field';
+        }
+        if (target.includes('password')) {
+          action.value = ((inputs?.password as string) || '').trim();
+          action.description = action.value ? visibleFillDescription(action.value, 'Password') : 'Focus password field';
+        }
+      }
+      actions.push(action);
+    }
   }
 
   const hasExplicitFormFill = actions.some((action) => action.type === 'fill');
   const hasExplicitInteractiveStep = actions.some((action) => action.type === 'click' || action.type === 'fill' || action.type === 'submit');
   const hasCredentialInputs = Boolean((inputs?.username as string) || (inputs?.email as string) || (inputs?.password as string));
+  const hasNavigateStep = actions.some((action) => action.type === 'navigate');
+  if (goalHasAny(goalLower, LOGIN_WORDS) && goalLooksGoogleLike(goalLower) && hasExplicitInteractiveStep && !hasNavigateStep && !inputUrl) {
+    // v0.3.46 additive actualization: direct browser goals like "login to google..." must open
+    // the real sign-in surface before doing email/password/Next steps, not search the sentence.
+    actions.unshift({ type: 'wait', value: '1500', description: 'Wait for Google sign-in page' });
+    actions.unshift({ type: 'navigate', url: 'https://accounts.google.com/', description: 'Navigate to Google sign-in' });
+  }
   actions.push(...planAccountCreation(goalLower));
-  if (goalHasAny(goalLower, LOGIN_WORDS) && (hasCredentialInputs || !hasExplicitInteractiveStep) && !hasExplicitFormFill) {
+  if (goalHasAny(goalLower, LOGIN_WORDS) && (hasCredentialInputs || !hasExplicitInteractiveStep || goalLooksGoogleLike(goalLower)) && !hasExplicitFormFill) {
+    actions.push(...planLogin(goal, inputs));
+  }
+
+  if (goalHasAny(goalLower, LOGIN_WORDS) && actions.length === 0) {
     actions.push(...planLogin(goal, inputs));
   }
 
