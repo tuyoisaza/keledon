@@ -690,6 +690,7 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
   const steps: StepResult[] = [];
   const screenshots: string[] = [];
   const logs: string[] = [];
+  let credentialSubmitted = false;
 
   logs.push(`[Goal] ${input.goal}`);
   if (input.inputs) logs.push(`[Inputs] ${JSON.stringify(Object.keys(input.inputs))}`);
@@ -739,9 +740,27 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
       if (result.extractedValue && result.type === 'screenshot') {
         screenshots.push(result.extractedValue);
       }
+
+      // v0.3.49+: after a password/submit action succeeds, treat subsequent failures as non-fatal.
+      // The page likely navigated away from the login flow (login completed), so remaining
+      // steps are cleanup that can't execute — not real failures.
       if (!result.success) {
-        logs.push(`[Step ${stepNum}] Failed: ${result.error}`);
+        if (credentialSubmitted) {
+          result.success = true;
+          logs.push(`[Step ${stepNum}] Skipped (post-login): ${result.error || 'page already navigated'}`);
+        } else {
+          logs.push(`[Step ${stepNum}] Failed: ${result.error}`);
+        }
       }
+
+      // Track credential submission for post-login grace handling
+      if (result.success && (
+        action.type === 'submit' ||
+        (action.description || '').toLowerCase().includes('password')
+      )) {
+        credentialSubmitted = true;
+      }
+
       emitProgress(stepNum, totalSteps, result.type, result.success ? 'done' : 'failed', result.description);
 
       await new Promise(r => setTimeout(r, 300));

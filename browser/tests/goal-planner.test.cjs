@@ -83,4 +83,26 @@ assert.ok(navigationalLoginGoal.some((action) => action.type === 'fill' && actio
 assert.ok(navigationalLoginGoal.some((action) => action.type === 'fill' && action.value === 'hunter2'), actionSummary(navigationalLoginGoal).join(' | '));
 assert.ok(navigationalLoginGoal.length >= 5, `expected navigation plus several real actions, got ${navigationalLoginGoal.length}: ${actionSummary(navigationalLoginGoal).join(' | ')}`);
 
+// Regression: vendor "meet" startGoal with run-together NL forms and two advance/Next steps.
+// The goal: "login to google, usingthe email, advancing to the next screen and using the password, and clickingin advance"
+// This should produce: navigate to accounts.google.com, wait, fill email, click Next, wait, fill password, click Next, wait, screenshot
+const meetVendorGoal = planGoalActions(
+  'login to google, usingthe email, advancing to the next screen and using the password, and clickingin advance',
+  { username: 'tuyo@example.com', password: 'hunter2' },
+);
+assert.equal(meetVendorGoal[0].type, 'navigate', actionSummary(meetVendorGoal).join(' | '));
+assert.equal(meetVendorGoal[0].url, 'https://accounts.google.com/', meetVendorGoal[0].url);
+// Should have exactly 2 Next/advance clicks (email→password and password→submit)
+const nextClicks = meetVendorGoal.filter((action) => action.type === 'click' && /next|advance/i.test(action.description));
+assert.equal(nextClicks.length, 2, `expected 2 Next clicks, got ${nextClicks.length}: ${actionSummary(meetVendorGoal).join(' | ')}`);
+// Should have fills for both email and password
+assert.ok(meetVendorGoal.some((action) => action.type === 'fill' && action.value === 'tuyo@example.com'), actionSummary(meetVendorGoal).join(' | '));
+assert.ok(meetVendorGoal.some((action) => action.type === 'fill' && action.value === 'hunter2'), actionSummary(meetVendorGoal).join(' | '));
+// No passwords in descriptions
+for (const action of meetVendorGoal) {
+  assert.ok(!String(action.description).includes('hunter2'), `secret leaked in description: ${action.description}`);
+}
+// Final action must be screenshot
+assert.equal(meetVendorGoal.at(-1).type, 'screenshot');
+
 console.log('goal-planner tests passed');
