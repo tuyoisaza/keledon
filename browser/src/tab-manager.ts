@@ -57,6 +57,12 @@ export class TabManager {
       }
     });
 
+    // Use real Chrome UA (no "Electron") so Google Meet & other web apps work
+    const chromeVersion = process.versions.chrome;
+    view.webContents.setUserAgent(
+      `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`
+    );
+
     view.webContents.on('did-navigate', (_event: Electron.Event, navigatedUrl: string) => {
       const tab = this.tabs.find(t => t.id === id);
       if (tab) { tab.url = navigatedUrl; }

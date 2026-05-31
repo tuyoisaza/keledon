@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, screen, session } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -221,6 +221,25 @@ log.transports.console.level = 'debug';
 log.info('KELEDON Desktop Agent starting...');
 
 app.on('ready', async () => {
+  // ===================== SESSION SETUP =====================
+  // Override User-Agent: strip "Electron" so Google Meet (and other sites)
+  // see a real Chrome browser instead of an Electron app.
+  const chromeVersion = process.versions.chrome;
+  const chromeUA = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
+  session.defaultSession.setUserAgent(chromeUA);
+  earlyLog(`[SESSION] User-Agent set to Chrome ${chromeVersion} (Electron stripped)`);
+
+  // Auto-grant ALL permissions (notifications, media, clipboard, etc.)
+  // so web apps like Google Meet can show call alerts and use mic/camera.
+  session.defaultSession.setPermissionRequestHandler((_wc, _permission, callback) => {
+    callback(true);
+  });
+
+  // Windows: required for native notification center integration
+  if (process.platform === 'win32') {
+    app.setAppUserModelId('com.keledon.browser');
+  }
+
   createWindow();
   registerIpcHandlers(tabManager);
 
