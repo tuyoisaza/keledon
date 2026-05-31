@@ -883,6 +883,12 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     return { success: true };
   });
 
+  // --- Tabs: DevTools toggle ---
+  ipcMain.handle('tabs:openDevTools', async () => {
+    tabManager.openDevTools();
+    return { success: true };
+  });
+
   // --- Executor: Get CDP URL ---
   ipcMain.handle('executor:getCDPUrl', async () => {
     if (!mainWindow) return '';

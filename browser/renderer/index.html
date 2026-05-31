@@ -801,6 +801,157 @@
       text-align: right;
     }
 
+    /* ========== CONSOLE VIEWER ========== */
+    .console-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px 8px;
+      line-height: 1;
+      border-radius: 6px;
+      position: relative;
+    }
+    .console-btn:hover { background: var(--url-bar-bg); color: var(--text-primary); }
+    .console-btn.active { background: var(--url-bar-bg); color: var(--text-primary); }
+    .console-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 8px;
+      background: #d93025;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      line-height: 16px;
+      text-align: center;
+      padding: 0 4px;
+      display: none;
+    }
+    .console-badge.show { display: block; }
+
+    .console-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: var(--keledon-modal-z);
+      align-items: center;
+      justify-content: center;
+    }
+    .console-modal.show { display: flex; }
+    .console-content {
+      background: #1e1e1e;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      color: #d4d4d4;
+      font-family: 'SF Mono', 'Consolas', 'Courier New', monospace;
+    }
+    .console-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      border-bottom: 1px solid #333;
+    }
+    .console-header h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #d4d4d4;
+    }
+    .console-close {
+      background: none;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .console-close:hover { color: #fff; background: #333; }
+    .console-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 12px;
+      font-size: 11px;
+      line-height: 1.5;
+      min-height: 150px;
+      max-height: 60vh;
+    }
+    .console-entry {
+      padding: 2px 4px;
+      border-bottom: 1px solid #2a2a2a;
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .console-entry:last-child { border-bottom: none; }
+    .console-entry .time {
+      color: #666;
+      white-space: nowrap;
+      flex-shrink: 0;
+      min-width: 65px;
+      font-size: 10px;
+    }
+    .console-entry .level-tag {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      min-width: 44px;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+    .console-entry .level-tag.error   { background: #5c1a1a; color: #f48771; }
+    .console-entry .level-tag.warning { background: #5c4a1a; color: #ffd580; }
+    .console-entry .level-tag.info    { background: #1a3a5c; color: #75beff; }
+    .console-entry .level-tag.verbose { background: #2a2a2a; color: #888; }
+    .console-entry .msg {
+      color: #d4d4d4;
+      word-break: break-word;
+      font-size: 11px;
+    }
+    .console-empty {
+      color: #666;
+      text-align: center;
+      padding: 40px 0;
+      font-size: 12px;
+    }
+    .console-footer {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      padding: 10px 18px;
+      border-top: 1px solid #333;
+    }
+    .console-footer button {
+      font-size: 11px;
+      padding: 5px 14px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #2a2a2a;
+      cursor: pointer;
+      color: #d4d4d4;
+    }
+    .console-footer button:hover { background: #3a3a3a; }
+    .console-footer button.primary {
+      background: #1a73e8;
+      color: #fff;
+      border-color: #1a73e8;
+    }
+    .console-footer button.primary:hover { background: #1557b0; }
+
     /* ========== ESCALATION MODAL ========== */
     .escalation-modal {
       display: none;
@@ -918,6 +1069,8 @@
     <div class="conn-dot" id="connDot" title="Disconnected"></div>
     <button class="rpa-stop-btn" id="rpaStopBtn" title="Stop RPA (Esc)">&#x1F6D1;</button>
     <button class="nav-panel-btn" id="panelBtn" title="KELEDON Controls">&#x2699;</button>
+    <button class="cmdlog-btn" id="devtoolsBtn" title="Toggle DevTools (F12)">&#x1F6E0;</button>
+    <button class="console-btn" id="consoleBtn" title="Console Logs">&#x1F4DD;<span class="console-badge" id="consoleBadge">0</span></button>
     <button class="cmdlog-btn" id="cmdlogBtn" title="Command Activity Log">&#x1F4CB;</button><span class="version-badge" id="versionBtn">v?.?.?</span>
   </div>
 
@@ -1079,6 +1232,23 @@
       <div class="cmdlog-footer">
         <button id="cmdlogClearBtn">Clear</button>
         <button class="primary" id="cmdlogCopyBtn">&#x1F4CB; Copy Log</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Console Log Modal -->
+  <div class="console-modal" id="consoleModal">
+    <div class="console-content">
+      <div class="console-header">
+        <h3>&#x1F4DD; Page Console Logs</h3>
+        <button class="console-close" id="consoleClose">&#x2715;</button>
+      </div>
+      <div class="console-body" id="consoleBody">
+        <div class="console-empty" id="consoleEmpty">No console logs yet.<br>Open a page and it will appear here.</div>
+      </div>
+      <div class="console-footer">
+        <button id="consoleClearBtn">Clear</button>
+        <button class="primary" id="consoleCopyBtn">&#x1F4CB; Copy All</button>
       </div>
     </div>
   </div>
@@ -2167,6 +2337,135 @@
       }
     });
 
+    // ==================== DEVTOOLS BUTTON ====================
+    const devtoolsBtn = document.getElementById('devtoolsBtn');
+    devtoolsBtn.addEventListener('click', () => {
+      window.keledon.tabs.openDevTools();
+    });
+
+    // ==================== CONSOLE VIEWER ====================
+    const consoleBtn = document.getElementById('consoleBtn');
+    const consoleModal = document.getElementById('consoleModal');
+    const consoleClose = document.getElementById('consoleClose');
+    const consoleBody = document.getElementById('consoleBody');
+    const consoleEmpty = document.getElementById('consoleEmpty');
+    const consoleClearBtn = document.getElementById('consoleClearBtn');
+    const consoleCopyBtn = document.getElementById('consoleCopyBtn');
+    const consoleBadge = document.getElementById('consoleBadge');
+
+    let consoleEntries = [];
+    let consoleUnread = 0;
+    const MAX_CONSOLE_ENTRIES = 500;
+
+    function addConsoleEntry(entry) {
+      consoleEntries.push(entry);
+      if (consoleEntries.length > MAX_CONSOLE_ENTRIES) {
+        consoleEntries = consoleEntries.slice(-MAX_CONSOLE_ENTRIES);
+      }
+      // If modal is open, show immediately
+      if (consoleModal.classList.contains('show')) {
+        renderConsoleEntry(entry);
+      } else {
+        // Increment badge
+        consoleUnread++;
+        consoleBadge.textContent = consoleUnread;
+        consoleBadge.classList.add('show');
+      }
+    }
+
+    function renderConsoleEntry(entry) {
+      consoleEmpty.style.display = 'none';
+      const timeStr = new Date(entry.timestamp).toLocaleTimeString();
+      const level = entry.level === 'warning' ? 'warning' : entry.level === 'error' ? 'error' : entry.level === 'info' ? 'info' : 'verbose';
+      const msg = entry.message;
+      const row = document.createElement('div');
+      row.className = 'console-entry';
+      row.innerHTML = `<span class="time">${timeStr}</span><span class="level-tag ${level}">${level.toUpperCase()}</span><span class="msg">${escapeHtml(msg)}</span>`;
+      consoleBody.appendChild(row);
+      consoleBody.scrollTop = consoleBody.scrollHeight;
+    }
+
+    function renderAllConsoleEntries() {
+      consoleBody.innerHTML = '';
+      if (consoleEntries.length === 0) {
+        consoleEmpty.style.display = 'block';
+        return;
+      }
+      consoleEmpty.style.display = 'none';
+      consoleEntries.forEach(renderConsoleEntry);
+      consoleBody.scrollTop = consoleBody.scrollHeight;
+    }
+
+    // Console modal open
+    function consoleOpen() {
+      consoleModal.classList.add('show');
+      consoleUnread = 0;
+      consoleBadge.classList.remove('show');
+      syncKeledonChromeLayer('console-open');
+      renderAllConsoleEntries();
+      if (window.keledon.console) {
+        window.keledon.console.onEntry(addConsoleEntry);
+      }
+    }
+
+    function consoleCloseFn() {
+      consoleModal.classList.remove('show');
+      syncKeledonChromeLayer('console-closed');
+    }
+
+    consoleBtn.addEventListener('click', consoleOpen);
+    consoleClose.addEventListener('click', consoleCloseFn);
+    consoleModal.addEventListener('click', (e) => {
+      if (e.target === consoleModal) consoleCloseFn();
+    });
+
+    consoleClearBtn.addEventListener('click', () => {
+      consoleEntries = [];
+      consoleBody.innerHTML = '';
+      consoleEmpty.style.display = 'block';
+      consoleUnread = 0;
+      consoleBadge.classList.remove('show');
+    });
+
+    consoleCopyBtn.addEventListener('click', async () => {
+      const body = consoleEntries.length
+        ? consoleEntries.map(e => `[${new Date(e.timestamp).toLocaleTimeString()}] [${e.level.toUpperCase()}] ${e.message}`).join('\n')
+        : '(no entries)';
+      const payload = [
+        '========================================',
+        '  KELEDON Browser Console Logs',
+        '========================================',
+        `Copied: ${new Date().toISOString()}`,
+        `Entries: ${consoleEntries.length}`,
+        '',
+        body,
+      ].join('\n');
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(payload);
+        } else {
+          const fb = document.createElement('textarea');
+          fb.value = payload;
+          fb.readOnly = true;
+          fb.style.position = 'fixed';
+          fb.style.opacity = '0';
+          document.body.appendChild(fb);
+          fb.focus();
+          fb.select();
+          document.execCommand('copy');
+          document.body.removeChild(fb);
+        }
+        consoleBtn.textContent = '\u{2713} Copied';
+        setTimeout(() => {
+          consoleBtn.textContent = '';
+          consoleBtn.innerHTML = '\u{1F4DD}<span class="console-badge" id="consoleBadge">' + (consoleUnread || '') + '</span>';
+          if (!consoleUnread) consoleBadge.classList.remove('show');
+        }, 2000);
+      } catch (e) {
+        console.log('Console logs fallback:\n' + payload);
+      }
+    });
+
     // ==================== KEYBOARD SHORTCUTS ====================
     if (window.keledon.shortcuts) {
       window.keledon.shortcuts.onNewTab(() => tabAddBtn.click());
@@ -2187,6 +2486,10 @@
         log('RPA stopped via Esc key', 'info');
         window.keledon.executor.abortGoal();
         if (rpaStopBtn) rpaStopBtn.classList.remove('visible');
+      }
+      // Close console modal with Escape
+      if (e.key === 'Escape' && consoleModal.classList.contains('show')) {
+        consoleCloseFn();
       }
     });
 

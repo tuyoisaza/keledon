@@ -100,6 +100,19 @@ export class TabManager {
       return { action: 'deny' };
     });
 
+    // Capture page JavaScript console logs and forward to the renderer
+    view.webContents.on('console-message', (_event: Electron.Event, level: number, message: string, line: number, sourceId: string) => {
+      const levelLabel = ['verbose', 'info', 'warning', 'error'][level] || 'unknown';
+      this.mainWindow?.webContents.send('console:entry', {
+        level: levelLabel,
+        message,
+        line,
+        sourceId,
+        tabId: id,
+        timestamp: new Date().toISOString()
+      });
+    });
+
     view.webContents.loadURL(url);
 
     const tab: Tab = { id, name, url, view };
@@ -169,6 +182,17 @@ export class TabManager {
 
     log.info('[Tabs] Closed tab:', tabId);
     this.broadcastTabs();
+  }
+
+  openDevTools() {
+    const activeTab = this.getActiveTab();
+    if (activeTab?.view) {
+      if (activeTab.view.webContents.isDevToolsOpened()) {
+        activeTab.view.webContents.closeDevTools();
+      } else {
+        activeTab.view.webContents.openDevTools({ mode: 'detach' });
+      }
+    }
   }
 
   getTabs(): TabInfo[] {

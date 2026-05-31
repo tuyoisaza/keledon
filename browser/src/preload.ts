@@ -110,9 +110,16 @@ contextBridge.exposeInMainWorld('keledon', {
     navigate: (url: string) => ipcRenderer.invoke('tabs:navigate', url),
     setChromeOverlayState: (state: { rightInset?: number; hideContent?: boolean; reason?: string }) =>
       ipcRenderer.invoke('tabs:setChromeOverlayState', state),
+    openDevTools: () => ipcRenderer.invoke('tabs:openDevTools'),
     onUpdate: (callback: (tabs: TabData[]) => void) => {
       ipcRenderer.on('tabs:updated', (_event, tabs) => callback(tabs));
       return () => ipcRenderer.removeAllListeners('tabs:updated');
+    }
+  },
+  console: {
+    onEntry: (callback: (entry: ConsoleEntry) => void) => {
+      ipcRenderer.on('console:entry', (_event, entry) => callback(entry));
+      return () => ipcRenderer.removeAllListeners('console:entry');
     }
   },
   escalation: {
@@ -148,6 +155,15 @@ interface CmdLogEntry {
   timestamp: string;
   event: string;
   detail: string;
+}
+
+interface ConsoleEntry {
+  level: string;
+  message: string;
+  line: number;
+  sourceId: string;
+  tabId: string;
+  timestamp: string;
 }
 
 interface TranscriptData {
@@ -260,6 +276,9 @@ declare global {
         getLog: () => Promise<CmdLogEntry[]>;
         clearLog: () => Promise<{ cleared: boolean }>;
       };
+      console: {
+        onEntry: (callback: (entry: ConsoleEntry) => void) => () => void;
+      };
       webrtc: {
         arm: (tabId?: string) => Promise<{ success: boolean; error?: string }>;
         disarm: (tabId?: string) => Promise<{ success: boolean; error?: string }>;
@@ -281,6 +300,7 @@ declare global {
         getUrl: () => Promise<string>;
         navigate: (url: string) => Promise<{ success: boolean }>;
         setChromeOverlayState: (state: { rightInset?: number; hideContent?: boolean; reason?: string }) => Promise<{ success: boolean }>;
+        openDevTools: () => Promise<{ success: boolean }>;
         onUpdate: (callback: (tabs: { id: string; name: string; url: string; active: boolean }[]) => void) => () => void;
       };
       escalation: {
