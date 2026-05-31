@@ -57,10 +57,10 @@ export class TabManager {
       }
     });
 
-    // Use real Chrome UA (no "Electron") so Google Meet & other web apps work
-    const chromeVersion = process.versions.chrome;
+    // Use a modern Chrome UA so Google Meet & other web apps don't reject us.
+    // Our engine is Chromium v120 but the version string is just a server-side check.
     view.webContents.setUserAgent(
-      `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`
+      `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.6723.92 Safari/537.36`
     );
 
     view.webContents.on('did-navigate', (_event: Electron.Event, navigatedUrl: string) => {

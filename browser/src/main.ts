@@ -222,12 +222,14 @@ log.info('KELEDON Desktop Agent starting...');
 
 app.on('ready', async () => {
   // ===================== SESSION SETUP =====================
-  // Override User-Agent: strip "Electron" so Google Meet (and other sites)
-  // see a real Chrome browser instead of an Electron app.
-  const chromeVersion = process.versions.chrome;
-  const chromeUA = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Safari/537.36`;
+  // Override User-Agent: use a modern Chrome version so Google Meet (and other sites)
+  // don't reject the browser as "unsupported". Our embedded Chromium (v120) is fully
+  // capable — the version string is just a flag that Google checks server-side.
+  // Using Chrome 130 (~Oct 2024) as a safe modern floor that Meet will accept.
+  const SPOOFED_CHROME = '130.0.6723.92';
+  const chromeUA = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${SPOOFED_CHROME} Safari/537.36`;
   session.defaultSession.setUserAgent(chromeUA);
-  earlyLog(`[SESSION] User-Agent set to Chrome ${chromeVersion} (Electron stripped)`);
+  earlyLog(`[SESSION] User-Agent spoofed as Chrome ${SPOOFED_CHROME} (real engine: ${process.versions.chrome})`);
 
   // Auto-grant ALL permissions (notifications, media, clipboard, etc.)
   // so web apps like Google Meet can show call alerts and use mic/camera.
