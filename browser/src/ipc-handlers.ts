@@ -1,4 +1,4 @@
-import { ipcMain, app, session, BrowserWindow } from 'electron';
+import { ipcMain, app, session, BrowserWindow, Notification as ElectronNotification } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import log from 'electron-log';
@@ -965,6 +965,26 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     const { clearLog } = await import('./cmdlog.js');
     clearLog();
     return { cleared: true };
+  });
+
+  // --- Notifications: Forward page Notification API to native OS notifications ---
+  ipcMain.on('show-notification', (_event, data: { title: string; body?: string; icon?: string; silent?: boolean }) => {
+    try {
+      const notif = new ElectronNotification({
+        title: data.title || 'KELEDON',
+        body: data.body || '',
+        silent: data.silent ?? false,
+      });
+      notif.on('click', () => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          if (mainWindow.isMinimized()) mainWindow.restore();
+          mainWindow.focus();
+        }
+      });
+      notif.show();
+    } catch (e) {
+      log.error('[Notifications] Failed to show notification:', e);
+    }
   });
 
   // ===================== MEDIA LAYER EVENT FORWARDING =====================

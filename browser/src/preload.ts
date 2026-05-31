@@ -151,6 +151,15 @@ contextBridge.exposeInMainWorld('keledon', {
   }
 });
 
+// Bridge for BrowserView pages — exposes a notification relay so
+// intercepted window.Notification() calls can be forwarded to the
+// main process for native OS notification display.
+contextBridge.exposeInMainWorld('__keledonBridge', {
+  notify: (title: string, options?: Record<string, unknown>) => {
+    ipcRenderer.send('show-notification', { title, ...options });
+  }
+});
+
 interface CmdLogEntry {
   timestamp: string;
   event: string;

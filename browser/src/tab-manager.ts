@@ -95,6 +95,33 @@ export class TabManager {
       this.mainWindow?.webContents.send('tabs:updated', this.getTabs());
     });
 
+    // Intercept window.Notification() so Google Meet calls trigger native OS notifications.
+    // The page's Notification API may be a no-op in Electron BrowserView. We override it
+    // at did-finish-load so our preload bridge (__keledonBridge.notify) relays to the main
+    // process, which creates an Electron Notification that pops natively on Windows.
+    view.webContents.on('did-finish-load', () => {
+      view.webContents.executeJavaScript(`
+        try {
+          if (window.__keledonNotifPatched) return;
+          window.__keledonNotifPatched = true;
+          const Orig = window.Notification;
+          const Patched = function(title, opts) {
+            if (window.__keledonBridge) {
+              window.__keledonBridge.notify(title, opts || {});
+            }
+            return new Orig(title, opts);
+          };
+          Patched.prototype = Orig.prototype;
+          Patched.requestPermission = Orig.requestPermission;
+          Patched.permission = Orig.permission;
+          Patched.maxActions = Orig.maxActions;
+          window.Notification = Patched;
+        } catch(e) {
+          console.warn('[KELEDON] patch Notification:', e);
+        }
+      `).catch(() => {});
+    });
+
     view.webContents.setWindowOpenHandler(({ url }) => {
       this.createTab('New Tab', url);
       return { action: 'deny' };
