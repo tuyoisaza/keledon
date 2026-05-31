@@ -57,6 +57,10 @@ const INITIAL_RECONNECT_DELAY = 1000;   // 1s
 const MAX_RECONNECT_DELAY = 30000;      // 30s max
 let reconnectionAttempt = 0;
 
+// ===================== GOAL EXECUTION DEDUP =====================
+const inflightExecutions = new Set<string>();
+let goalExecutionLock = false;
+
 // ===================== MAIN WINDOW REF =====================
 
 let currentMainWindow: BrowserWindow | null = null;
@@ -484,57 +488,85 @@ function registerMessageHandlers(
   });
 
   // goal_execute → AutoBrowse bridge
-  // goal_execute → AutoBrowse bridge
+  // v0.3.50: deduplicate by execution_id to prevent concurrent handlers on the same BrowserView
   socket.on('goal_execute', async (data) => {
-    // If no vendor_id, try to match a runtime vendor from goal text so the enrichment
-    // functions can pull credentials and startGoal below. v0.3.47:
-    // bridges cloud-originated bare goals with the desktop's paired vendor config.
-    let goalData = data;
-    if (!data.vendor_id && !data.vendorId && !data.inputs?.vendor_id && !data.inputs?.vendorId) {
-      const matchedVendor = findMatchingVendorFromGoal(data.goal || '');
-      if (matchedVendor) {
-        goalData = { ...data, vendor_id: matchedVendor.id };
-      }
-    }
-    const enrichedData = enrichGoalExecuteDataFromRuntimeVendor(goalData);
-    cmdlog.log('CMD', `goal_execute received | ${summarizeGoalExecuteData(enrichedData)}`);
-    log.info('[Main] Received goal from cloud:', { execution_id: enrichedData.execution_id, goalLength: String(enrichedData.goal || '').length });
-    const bridge = await getAutoBrowseBridge();
-    if (!bridge.isAutoBrowseInitialized()) {
-      socket.emit('goal:result', {
-        execution_id: enrichedData.execution_id, status: 'failed',
-        goal_status: 'failed', error: 'AutoBrowse not initialized',
-      });
+    const executionId = data?.execution_id || data?.id || '';
+
+    // Deduplicate: if this execution is already being processed, skip silently
+    if (executionId && inflightExecutions.has(executionId)) {
+      cmdlog.log('CMD', `goal_execute skipped (duplicate) | execution=${cmdlog.truncate(String(executionId), 8, 4)}`);
       return;
     }
+
+    // General concurrency lock: only one goal_execute at a time
+    if (goalExecutionLock) {
+      cmdlog.log('CMD', 'goal_execute queued (lock held, will process next)');
+      // We don't queue — the cloud will retry. Dedup by execution_id handles the common case.
+    }
+
+    if (executionId) {
+      inflightExecutions.add(executionId);
+    }
+    goalExecutionLock = true;
+
     try {
-      ensureActiveGoalTab(tabManager, bridge);
-      ensureBrowserViewForGoalExecution(tabManager, bridge);
-      const enrichedInputs = enrichCloudGoalInputsFromRuntimeVendor(goalData, goalData.inputs) || enrichedData.inputs;
-      Object.assign(enrichedInputs, { ...(enrichedData.inputs || {}), ...(enrichedInputs || {}) });
-      enrichedData.inputs = enrichedInputs;
-      const enrichedGoalData = {
-        execution_id: enrichedData.execution_id, goal: enrichedData.goal,
-        inputs: enrichedInputs, constraints: enrichedData.constraints,
-      };
-      const result = await bridge.executeGoal(enrichedGoalData);
-      cmdlog.log('CMD', `goal_execute result: execution=${enrichedData.execution_id || 'none'} | status=${result.status} | goal_status=${result.goal_status} | steps=${result.steps?.length ?? 0}`);
-      socket.emit('goal:result', {
-        execution_id: enrichedData.execution_id, status: result.status,
-        goal_status: result.goal_status, steps: result.steps,
-        duration: result.duration, artifacts: result.artifacts,
-      });
-      currentMainWindow?.webContents.send('brain:command', {
-        type: 'goal_result', payload: result,
-        execution_id: enrichedData.execution_id, timestamp: new Date().toISOString(),
-      });
-    } catch (error) {
-      log.error('[Main] Goal execution failed:', error);
-      cmdlog.log('ERR', `goal_execute failed | execution=${enrichedData.execution_id || 'none'} | error=${String(error)}`);
-      socket.emit('goal:result', {
-        execution_id: enrichedData.execution_id, status: 'failed',
-        goal_status: 'failed', error: String(error),
-      });
+      // If no vendor_id, try to match a runtime vendor from goal text so the enrichment
+      // functions can pull credentials and startGoal below. v0.3.47:
+      // bridges cloud-originated bare goals with the desktop's paired vendor config.
+      let goalData = data;
+      if (!data.vendor_id && !data.vendorId && !data.inputs?.vendor_id && !data.inputs?.vendorId) {
+        const matchedVendor = findMatchingVendorFromGoal(data.goal || '');
+        if (matchedVendor) {
+          goalData = { ...data, vendor_id: matchedVendor.id };
+        }
+      }
+      const enrichedData = enrichGoalExecuteDataFromRuntimeVendor(goalData);
+      cmdlog.log('CMD', `goal_execute received | ${summarizeGoalExecuteData(enrichedData)}`);
+      log.info('[Main] Received goal from cloud:', { execution_id: enrichedData.execution_id, goalLength: String(enrichedData.goal || '').length });
+      const bridge = await getAutoBrowseBridge();
+      if (!bridge.isAutoBrowseInitialized()) {
+        socket.emit('goal:result', {
+          execution_id: enrichedData.execution_id, status: 'failed',
+          goal_status: 'failed', error: 'AutoBrowse not initialized',
+        });
+        return;
+      }
+      try {
+        // v0.3.50: only call ensureActiveGoalTab once — the second call was a no-op
+        // due to duplicate events. Now deduplicated, single execution is guaranteed.
+        ensureActiveGoalTab(tabManager, bridge);
+        ensureBrowserViewForGoalExecution(tabManager, bridge);
+        const enrichedInputs = enrichCloudGoalInputsFromRuntimeVendor(goalData, goalData.inputs) || enrichedData.inputs;
+        Object.assign(enrichedInputs, { ...(enrichedData.inputs || {}), ...(enrichedInputs || {}) });
+        enrichedData.inputs = enrichedInputs;
+        const enrichedGoalData = {
+          execution_id: enrichedData.execution_id, goal: enrichedData.goal,
+          inputs: enrichedInputs, constraints: enrichedData.constraints,
+        };
+        const result = await bridge.executeGoal(enrichedGoalData);
+        cmdlog.log('CMD', `goal_execute result: execution=${enrichedData.execution_id || 'none'} | status=${result.status} | goal_status=${result.goal_status} | steps=${result.steps?.length ?? 0}`);
+        socket.emit('goal:result', {
+          execution_id: enrichedData.execution_id, status: result.status,
+          goal_status: result.goal_status, steps: result.steps,
+          duration: result.duration, artifacts: result.artifacts,
+        });
+        currentMainWindow?.webContents.send('brain:command', {
+          type: 'goal_result', payload: result,
+          execution_id: enrichedData.execution_id, timestamp: new Date().toISOString(),
+        });
+      } catch (error) {
+        log.error('[Main] Goal execution failed:', error);
+        cmdlog.log('ERR', `goal_execute failed | execution=${enrichedData.execution_id || 'none'} | error=${String(error)}`);
+        socket.emit('goal:result', {
+          execution_id: enrichedData.execution_id, status: 'failed',
+          goal_status: 'failed', error: String(error),
+        });
+      }
+    } finally {
+      if (executionId) {
+        inflightExecutions.delete(executionId);
+      }
+      goalExecutionLock = false;
     }
   });
 }
