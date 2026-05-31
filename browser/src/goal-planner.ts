@@ -108,7 +108,16 @@ function clickAction(label: string, description?: string): GoalPlannerAction {
 function googleNextClickAction(description: string): GoalPlannerAction {
   return {
     ...clickAction('Next', description),
-    selector: '#identifierNext button, #passwordNext button, button[aria-label*="Next" i], button[type="button"], [role="button"]',
+    // v0.3.51: expanded selectors to handle modern Google sign-in UI structures.
+    // The old `#identifierNext button` assumed a direct <button> child — Google now uses
+    // nested <div> containers with role="button" or jsname attributes. Added:
+    //   - [jsname*="V67aGc"]  ← Google's sign-in Next button JS name
+    //   - #identifierNext [role="button"] ← when the button is a <div> with role
+    //   - [data-idom-child*="Next"]  ← Google Material button containers
+    //   - button[jsname]  ← generic fallback for Google buttons
+    // Also prioritize text/target matching over generic [role="button"] to avoid
+    // clicking the first arbitrary element on the page.
+    selector: '#identifierNext button, #identifierNext [role="button"], #passwordNext button, #passwordNext [role="button"], [jsname*="V67aGc"], [data-idom-child*="Next" i], button[aria-label*="Next" i], button[aria-label*="Siguiente" i], button:has-text("Next"), button:has-text("Siguiente"), button[jsname]',
   };
 }
 
@@ -232,6 +241,10 @@ function planClause(clause: string): GoalPlannerAction[] {
   }
 
   if (lower.includes('advance') || lower.includes('next screen') || lower.includes('clicking in advance') || lower.includes('click advance') || lower.includes('click next')) {
+    // v0.3.51: wait_for before clicking ensures the button is rendered and interactive.
+    // Google's sign-in page uses lazy-rendered JavaScript — the Next button may not be
+    // present in the DOM immediately after navigation or after filling the email field.
+    actions.push({ type: 'wait_for', selector: '#identifierNext button, #identifierNext [role="button"], #passwordNext button, #passwordNext [role="button"], button[aria-label*="Next" i], button:has-text("Next"), [jsname*="V67aGc"]', timeout: 10000, description: 'Wait for Next button to render' });
     actions.push(googleNextClickAction('Advance to the next screen'));
     actions.push({ type: 'wait', value: '2500', description: 'Wait for the next screen' });
     return actions;
@@ -275,6 +288,8 @@ function planLogin(goal: string, inputs?: Record<string, unknown>): GoalPlannerA
     }
     if (username) {
       actions.push(fillAction(username, 'Email'));
+      // v0.3.51: wait_for Next button before clicking — Google's UI may lazy-render it
+      actions.push({ type: 'wait_for', selector: '#identifierNext button, #identifierNext [role="button"], button[aria-label*="Next" i], button:has-text("Next"), [jsname*="V67aGc"]', timeout: 10000, description: 'Wait for Next button on identifier page' });
       actions.push(googleNextClickAction('Advance to password screen'));
       actions.push({ type: 'wait', value: '2500', description: 'Wait for password challenge' });
     } else if (goalWantsEmailStep(goalLower)) {
@@ -282,6 +297,8 @@ function planLogin(goal: string, inputs?: Record<string, unknown>): GoalPlannerA
     }
     if (password) {
       actions.push(fillAction(password, 'Password'));
+      // v0.3.51: wait_for password Next button before clicking — ensures the password page has rendered
+      actions.push({ type: 'wait_for', selector: '#passwordNext button, #passwordNext [role="button"], button[aria-label*="Next" i], button:has-text("Next"), [jsname*="V67aGc"]', timeout: 10000, description: 'Wait for Next button on password page' });
       actions.push(googleNextClickAction('Submit password / continue'));
       actions.push({ type: 'wait', value: '4000', description: 'Wait after password submit' });
     } else if (goalWantsPasswordStep(goalLower)) {

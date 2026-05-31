@@ -358,55 +358,69 @@ async function executeAction(view: BrowserView, action: GoalAction): Promise<Ste
       case 'click': {
         if (!action.selector && !action.target) throw new Error('No selector or target for click');
         let clicked = false;
-        if (action.target) {
-          const targetClick = await wc.executeJavaScript(`
-            (function() {
-              var target = ${JSON.stringify(action.target)};
-              var explicit = (target.match(/'([^']+)'|\"([^\"]+)\"/) || [])[1] || (target.match(/'([^']+)'|\"([^\"]+)\"/) || [])[2] || target;
-              var wanted = [explicit, target, 'Create account', 'Sign up', 'Sign in', 'Next', 'Continue', 'Get started'].filter(Boolean);
-              var all = Array.from(document.querySelectorAll('button, a, input[type=\"button\"], input[type=\"submit\"], [role=\"button\"], [role=\"link\"]'));
-              for (var w = 0; w < wanted.length; w++) {
-                var needle = String(wanted[w]).toLowerCase();
-                if (!needle || needle.length < 2) continue;
-                for (var i = 0; i < all.length; i++) {
-                  var el = all[i];
-                  var text = (el.textContent || el.value || el.getAttribute('aria-label') || el.getAttribute('title') || '').trim().toLowerCase();
-                  if (text && (text === needle || text.includes(needle))) {
-                    el.scrollIntoView({ behavior: 'instant', block: 'center' });
-                    el.click();
-                    return { success: true, matched: text };
-                  }
-                }
-              }
-              return { success: false, error: 'target not found' };
-            })()
-          `).catch((error) => ({ success: false, error: String(error) }));
-          if (targetClick?.success) clicked = true;
-        }
-        const selectors = (action.selector || '').split(',').map(s => s.trim()).filter(Boolean);
-        for (const sel of selectors) {
-          try {
-            const result = await wc.executeJavaScript(`
+        let lastError = '';
+        // v0.3.51: retry click up to 3 times with increasing delays for resilience.
+        // Google's sign-in pages may lazy-render buttons or have race conditions where
+        // the button exists in DOM but isn't interactive yet (disabled, transitioning).
+        const MAX_CLICK_RETRIES = 3;
+        for (let attempt = 0; attempt < MAX_CLICK_RETRIES && !clicked; attempt++) {
+          if (attempt > 0) {
+            await new Promise(r => setTimeout(r, 500 * attempt));
+          }
+          if (action.target) {
+            const targetClick = await wc.executeJavaScript(`
               (function() {
-                var sel = ${JSON.stringify(sel)};
-                var el = document.querySelector(sel);
-                if (!el) return { success: false, error: 'not found' };
-                if (typeof el.click === 'function') { el.click(); return { success: true }; }
-                // Try text content match
-                var all = document.querySelectorAll('button, a, [role="button"]');
-                for (var i = 0; i < all.length; i++) {
-                  if (all[i].textContent.trim() === sel.replace(/^has-text\\(["'](.+)["']\\)$/, '$1')) {
-                    all[i].click();
-                    return { success: true };
+                var target = ${JSON.stringify(action.target)};
+                var explicit = (target.match(/'([^']+)'|\\"([^\\"]+)\\"/) || [])[1] || (target.match(/'([^']+)'|\\"([^\\"]+)\\"/) || [])[2] || target;
+                var wanted = [explicit, target, 'Create account', 'Sign up', 'Sign in', 'Next', 'Continue', 'Get started'].filter(Boolean);
+                var all = Array.from(document.querySelectorAll('button, a, input[type=\\"button\\"], input[type=\\"submit\\"], [role=\\"button\\"], [role=\\"link\\"]'));
+                for (var w = 0; w < wanted.length; w++) {
+                  var needle = String(wanted[w]).toLowerCase();
+                  if (!needle || needle.length < 2) continue;
+                  for (var i = 0; i < all.length; i++) {
+                    var el = all[i];
+                    var text = (el.textContent || el.value || el.getAttribute('aria-label') || el.getAttribute('title') || '').trim().toLowerCase();
+                    if (text && (text === needle || text.includes(needle))) {
+                      el.scrollIntoView({ behavior: 'instant', block: 'center' });
+                      el.click();
+                      return { success: true, matched: text };
+                    }
                   }
                 }
-                return { success: false, error: 'not clickable' };
+                return { success: false, error: 'target not found' };
               })()
-            `);
-            if (result?.success) { clicked = true; break; }
-          } catch { continue; }
+            `).catch((error) => ({ success: false, error: String(error) }));
+            if (targetClick?.success) clicked = true;
+            if (attempt === 0 && !clicked) lastError = targetClick?.error || 'target not found';
+          }
+          if (!clicked) {
+            const selectors = (action.selector || '').split(',').map(s => s.trim()).filter(Boolean);
+            for (const sel of selectors) {
+              try {
+                const result = await wc.executeJavaScript(`
+                  (function() {
+                    var sel = ${JSON.stringify(sel)};
+                    var el = document.querySelector(sel);
+                    if (!el) return { success: false, error: 'not found' };
+                    if (typeof el.click === 'function') { el.click(); return { success: true }; }
+                    // Try text content match
+                    var all = document.querySelectorAll('button, a, [role="button"]');
+                    for (var i = 0; i < all.length; i++) {
+                      if (all[i].textContent.trim() === sel.replace(/^has-text\\\\(["'](.+)\\"']\\\\)$/, '$1')) {
+                        all[i].click();
+                        return { success: true };
+                      }
+                    }
+                    return { success: false, error: 'not clickable' };
+                  })()
+                `);
+                if (result?.success) { clicked = true; break; }
+                if (attempt === 0 && !clicked) lastError = result?.error || 'selector failed';
+              } catch { continue; }
+            }
+          }
         }
-        if (!clicked) throw new Error(`Could not click: ${action.selector}`);
+        if (!clicked) throw new Error(`Could not click: ${action.selector || action.target} (${lastError})`);
         return { id, type: 'click', description: action.description, success: true, duration: Date.now() - startTime };
       }
 
@@ -695,10 +709,26 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
   logs.push(`[Goal] ${input.goal}`);
   if (input.inputs) logs.push(`[Inputs] ${JSON.stringify(Object.keys(input.inputs))}`);
 
+  // v0.3.51: extract URL before planning so we can check if planner will handle navigation.
+  const url = (input.inputs?.url as string) || (input.inputs?.targetUrl as string);
+  const plannerInputs = url ? { ...(input.inputs || {}), url: undefined, targetUrl: undefined } : input.inputs;
+
   try {
-    // Navigate first if URL in inputs (BEFORE mapped actions)
-    const url = (input.inputs?.url as string) || (input.inputs?.targetUrl as string);
-    if (url) {
+    // Map goal to actions FIRST so we can check if the planner will handle navigation.
+    // v0.3.51: avoids duplicate navigation when vendor URL matches planner's first step.
+    const actions = planGoalActions(input.goal, plannerInputs);
+    logs.push(`[Actions] ${actions.length} steps planned from goal`);
+
+    // Only pre-navigate if the planner doesn't already produce a navigation as step 1.
+    // Prevents wasted navigation (e.g., vendor URL = meet.google.com but planner navigates
+    // to accounts.google.com for a "login to google" goal).
+    const plannerFirstNav = actions.length > 0 && actions[0].type === 'navigate' && actions[0].url;
+    const shouldPreNavigate = Boolean(url && !plannerFirstNav);
+    if (url && !shouldPreNavigate && plannerFirstNav) {
+      logs.push(`[Nav] Skipping pre-navigation — planner step 1 already navigates to ${plannerFirstNav}`);
+    }
+
+    if (shouldPreNavigate) {
       logs.push(`[Step 1] navigate: ${url}`);
       emitProgress(1, 999, 'navigate', 'running', `Navigate to ${url}`);
       const result = await executeAction(view, { type: 'navigate', url, description: `Navigate to ${url}` });
@@ -708,20 +738,11 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
       await new Promise(r => setTimeout(r, 500));
     }
 
-    // Map goal to actions.
-    // v0.3.38 additive planner: preserves the legacy mapGoalToActions() above as historical fallback context,
-    // but routes new Execute Goal traffic through a reusable multi-step natural-language planner.
-    // v0.3.39 safety: executeGoal already performs the optional input URL pre-navigation above,
-    // so pass planner inputs with URL fields neutralized to avoid duplicate navigation side effects.
-    const plannerInputs = url ? { ...(input.inputs || {}), url: undefined, targetUrl: undefined } : input.inputs;
-    const actions = planGoalActions(input.goal, plannerInputs);
-    logs.push(`[Actions] ${actions.length} steps planned from goal`);
-
     const maxSteps = input.constraints?.max_steps || 50;
     const timeout = input.constraints?.timeout_ms || 120000;
     const start = Date.now();
-    let stepNum = url ? 1 : 0;
-    const totalSteps = actions.length + (url ? 1 : 0);
+    let stepNum = shouldPreNavigate ? 1 : 0;
+    const totalSteps = actions.length + (shouldPreNavigate ? 1 : 0);
 
     for (let i = 0; i < Math.min(actions.length, maxSteps); i++) {
       if (Date.now() - start > timeout) {

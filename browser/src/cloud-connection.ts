@@ -532,10 +532,9 @@ function registerMessageHandlers(
         return;
       }
       try {
-        // v0.3.50: only call ensureActiveGoalTab once — the second call was a no-op
-        // due to duplicate events. Now deduplicated, single execution is guaranteed.
+        // v0.3.50: deduplication ensures single execution — create the Goal Execution BrowserView
+        // v0.3.51: removed redundant second ensureBrowserViewForGoalExecution call (ensureActiveGoalTab already calls it)
         ensureActiveGoalTab(tabManager, bridge);
-        ensureBrowserViewForGoalExecution(tabManager, bridge);
         const enrichedInputs = enrichCloudGoalInputsFromRuntimeVendor(goalData, goalData.inputs) || enrichedData.inputs;
         Object.assign(enrichedInputs, { ...(enrichedData.inputs || {}), ...(enrichedInputs || {}) });
         enrichedData.inputs = enrichedInputs;
