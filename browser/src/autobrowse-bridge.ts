@@ -26,8 +26,8 @@ interface BridgeGoalInput {
 
 interface BridgeExecutionResult {
   execution_id: string;
-  status: 'running' | 'completed' | 'failed';
-  goal_status: 'success' | 'failed' | 'uncertain';
+  status: 'running' | 'completed' | 'failed' | 'aborted';
+  goal_status: 'success' | 'failed' | 'uncertain' | 'aborted';
   steps: StepResult[];
   duration: number;
   artifacts: {
@@ -83,6 +83,26 @@ let cdpContext: BrowserContext | null = null;
 let electronTabs: { id: string; name: string; url: string; view: BrowserView | null }[] = [];
 let activeTabId: string = 'home';
 const CDP_PORT = parseInt(process.env.KELEDON_CDP_PORT || '9222', 10);
+
+// ==================== Abort Mechanism ====================
+
+let _goalAborted = false;
+
+/**
+ * Abort the currently executing goal or step sequence.
+ * The running loop checks _goalAborted between iterations and exits cleanly.
+ */
+export function abortCurrentExecution(): void {
+  _goalAborted = true;
+}
+
+function resetAbortFlag(): void {
+  _goalAborted = false;
+}
+
+function isAborted(): boolean {
+  return _goalAborted;
+}
 
 // ==================== Progress Reporting ====================
 
@@ -670,6 +690,7 @@ export async function initializeAutoBrowse(electronSession: any): Promise<void> 
 }
 
 export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecutionResult> {
+  resetAbortFlag();
   if (!isInitialized) {
     throw new Error('AutoBrowse not initialized');
   }
@@ -745,6 +766,17 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
     const totalSteps = actions.length + (shouldPreNavigate ? 1 : 0);
 
     for (let i = 0; i < Math.min(actions.length, maxSteps); i++) {
+      if (isAborted()) {
+        logs.push('[Abort] Goal execution cancelled by user');
+        return {
+          execution_id: executionId,
+          status: 'aborted',
+          goal_status: 'aborted',
+          steps,
+          duration: Date.now() - startTime,
+          artifacts: { screenshots, logs },
+        };
+      }
       if (Date.now() - start > timeout) {
         logs.push('[Timeout] Exceeded timeout');
         break;
@@ -834,6 +866,7 @@ const ACTION_TYPE_MAP: Record<string, GoalAction['type']> = {
 };
 
 export async function executeSteps(steps: RpaStep[]): Promise<BridgeExecutionResult> {
+  resetAbortFlag();
   const activeTab = electronTabs.find(t => t.id === activeTabId);
   if (!activeTab?.view) {
     return {
@@ -855,6 +888,17 @@ export async function executeSteps(steps: RpaStep[]): Promise<BridgeExecutionRes
   const logs: string[] = [];
 
   for (let i = 0; i < steps.length; i++) {
+    if (isAborted()) {
+      logs.push('[Abort] Step execution cancelled by user');
+      return {
+        execution_id: executionId,
+        status: 'aborted',
+        goal_status: 'aborted',
+        steps: stepResults,
+        duration: Date.now() - startTime,
+        artifacts: { screenshots, logs },
+      };
+    }
     const step = steps[i];
     const mappedType = ACTION_TYPE_MAP[step.action] ?? (step.action as GoalAction['type']);
     const action: GoalAction = {

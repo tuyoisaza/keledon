@@ -25,6 +25,8 @@ contextBridge.exposeInMainWorld('keledon', {
       ipcRenderer.invoke('executor:executeGoal', goal, context),
     executeSteps: (steps: unknown[]) =>
       ipcRenderer.invoke('executor:executeSteps', steps),
+    abortGoal: () =>
+      ipcRenderer.send('executor:abortGoal'),
     getCDPUrl: () => ipcRenderer.invoke('executor:getCDPUrl'),
     getCurrentUrl: () => ipcRenderer.invoke('executor:getUrl'),
     onProgress: (callback: (progress: unknown) => void) => {
@@ -229,6 +231,7 @@ declare global {
       executor: {
         executeGoal: (goal: string | { goal: string; objective?: string; execution_id?: string; inputs?: Record<string, unknown>; constraints?: { max_steps?: number; timeout_ms?: number }; max_steps?: number; timeout_ms?: number; success_criteria?: string }, context: Record<string, unknown>) => Promise<unknown>;
         executeSteps: (steps: unknown[]) => Promise<unknown>;
+        abortGoal: () => void;
         getCDPUrl: () => Promise<string>;
         getCurrentUrl: () => Promise<string>;
         onProgress: (callback: (progress: unknown) => void) => () => void;

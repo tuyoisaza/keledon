@@ -253,6 +253,33 @@
       50% { opacity: 0.4; }
     }
 
+    /* RPA Stop button in nav next to conn-dot */
+    .rpa-stop-btn {
+      background: none;
+      border: none;
+      color: var(--danger);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      transition: background 0.15s, transform 0.1s;
+      flex-shrink: 0;
+      -webkit-app-region: no-drag;
+    }
+    .rpa-stop-btn.visible { display: flex; }
+    .rpa-stop-btn:hover {
+      background: rgba(217, 48, 37, 0.12);
+      transform: scale(1.1);
+    }
+    .rpa-stop-btn:active {
+      transform: scale(0.9);
+    }
+
     /* ========== CONTENT AREA (New Tab Page) ========== */
     .content-area {
       flex: 1;
@@ -889,6 +916,7 @@
       <div class="nav-loading" id="navLoading"></div>
     </div>
     <div class="conn-dot" id="connDot" title="Disconnected"></div>
+    <button class="rpa-stop-btn" id="rpaStopBtn" title="Stop RPA (Esc)">&#x1F6D1;</button>
     <button class="nav-panel-btn" id="panelBtn" title="KELEDON Controls">&#x2699;</button>
     <button class="cmdlog-btn" id="cmdlogBtn" title="Command Activity Log">&#x1F4CB;</button><span class="version-badge" id="versionBtn">v?.?.?</span>
   </div>
@@ -1575,7 +1603,14 @@
     const progressDiv = document.getElementById('execute-progress');
     const progressText = document.getElementById('progress-text');
     const progressBar = document.getElementById('progress-bar');
+    const rpaStopBtn = document.getElementById('rpaStopBtn');
     const pendingList = document.getElementById('pendingList');
+
+    let isExecuting = false;
+    function setExecutingState(active) {
+      isExecuting = active;
+      if (rpaStopBtn) rpaStopBtn.classList.toggle('visible', active);
+    }
 
     // ==================== PENDING INSTRUCTIONS ====================
     let pendingInstructions = [];
@@ -1655,10 +1690,11 @@
       // Add to pending instructions
       const piId = addPendingInstruction('GOAL', goal, { status: 'in_progress', source: 'local' });
 
-      // Show progress UI
+      // Show progress UI + stop button
       if (progressDiv) progressDiv.style.display = 'block';
       if (progressText) progressText.textContent = 'Starting...';
       if (progressBar) { progressBar.style.width = '5%'; progressBar.style.background = '#f9ab00'; }
+      setExecutingState(true);
 
       // Listen for progress updates
       let currentStep = 0;
@@ -1677,32 +1713,45 @@
 
       try {
         const result = await window.keledon.executor.executeGoal({ goal }, {});
+        setExecutingState(false);
         const success = result.goal_status === 'success';
+        const aborted = result.goal_status === 'aborted' || result.status === 'aborted';
         const partial = result.goal_status === 'uncertain';
-        const finalText = success ? '✓ Success' : partial ? '⚠ Partial - continuing goal where possible' : '✗ Failed';
+        const finalText = aborted ? '⏹ Stopped' : success ? '✓ Success' : partial ? '⚠ Partial' : '✗ Failed';
         if (progressText) {
           progressText.textContent = `${finalText} - ${result.steps?.length || 0} steps`;
         }
         if (progressBar) {
           progressBar.style.width = '100%';
-          if (success) progressBar.style.background = '#1a73e8';
+          if (aborted) progressBar.style.background = '#5f6368';
+          else if (success) progressBar.style.background = '#1a73e8';
           else if (result.goal_status === 'failed') progressBar.style.background = '#d93025';
           else progressBar.style.background = '#f9ab00';
         }
         log('Executed: ' + goal.substring(0, 50), success ? 'success' : 'error');
         updatePendingInstruction(piId, {
-          status: success ? 'completed' : partial ? 'in_progress' : 'failed',
-          content: goal + (success ? ' ✓' : partial ? ' ⚠ continuing' : ' ✗'),
+          status: aborted ? 'cancelled' : success ? 'completed' : partial ? 'in_progress' : 'failed',
+          content: goal + (aborted ? ' ⏹' : success ? ' ✓' : partial ? ' ⚠ continuing' : ' ✗'),
         });
         goalInput.value = '';
         setTimeout(() => { if (progressDiv) progressDiv.style.display = 'none'; }, 3000);
       } catch (e) {
+        setExecutingState(false);
         if (progressText) progressText.textContent = '✗ Error: ' + e.message;
         if (progressBar) progressBar.style.background = '#d93025';
         log('Execution error: ' + e.message, 'error');
         updatePendingInstruction(piId, { status: 'failed', content: goal + ' ✗' });
       }
     });
+
+    // Stop button handler — aborts the current RPA execution
+    if (rpaStopBtn) {
+      rpaStopBtn.addEventListener('click', () => {
+        log('RPA Stop requested', 'info');
+        window.keledon.executor.abortGoal();
+        rpaStopBtn.classList.remove('visible');  // immediate feedback
+      });
+    }
 
     // ==================== CALL CONTROLS ====================
     startCallBtn.addEventListener('click', async () => {
@@ -1785,10 +1834,13 @@
             source: 'brain',
             data: steps,
           });
+          setExecutingState(true);
           window.keledon.executor.executeSteps(steps).then(result => {
+            setExecutingState(false);
             log('ui_steps result: ' + JSON.stringify(result).substring(0, 80), 'info');
             updatePendingInstruction(piId, { status: 'completed' });
           }).catch(e => {
+            setExecutingState(false);
             log('ui_steps error: ' + e.message, 'error');
             updatePendingInstruction(piId, { status: 'failed' });
           });
@@ -1801,12 +1853,16 @@
           source: 'brain',
           data: cmd.data,
         });
+        setExecutingState(true);
         window.keledon.executor.executeGoal(cmd.data, {}).then(result => {
+          setExecutingState(false);
+          const aborted = result.goal_status === 'aborted' || result.status === 'aborted';
           const success = result.goal_status === 'success';
           const partial = result.goal_status === 'uncertain';
-          log('Brain goal: ' + goalText.substring(0, 50), success ? 'success' : partial ? 'info' : 'error');
-          updatePendingInstruction(piId, { status: success ? 'completed' : partial ? 'in_progress' : 'failed', content: goalText + (success ? ' ✓' : partial ? ' ⚠ continuing' : ' ✗') });
+          log('Brain goal: ' + goalText.substring(0, 50), success ? 'success' : aborted ? 'info' : partial ? 'info' : 'error');
+          updatePendingInstruction(piId, { status: aborted ? 'cancelled' : success ? 'completed' : partial ? 'in_progress' : 'failed', content: goalText + (aborted ? ' ⏹' : success ? ' ✓' : partial ? ' ⚠ continuing' : ' ✗') });
         }).catch(e => {
+          setExecutingState(false);
           log('Brain goal error: ' + e.message, 'error');
           updatePendingInstruction(piId, { status: 'failed', content: goalText + ' ✗' });
         });
@@ -2124,6 +2180,15 @@
         log('Find in page (Ctrl+F)', 'info');
       });
     }
+
+    // ==================== ESC KEY ====================
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isExecuting) {
+        log('RPA stopped via Esc key', 'info');
+        window.keledon.executor.abortGoal();
+        if (rpaStopBtn) rpaStopBtn.classList.remove('visible');
+      }
+    });
 
     // ==================== INIT ====================
     loadTabs();

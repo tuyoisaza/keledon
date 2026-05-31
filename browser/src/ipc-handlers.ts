@@ -554,6 +554,16 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     }
   });
 
+  // --- Executor: Abort Current Goal ---
+  ipcMain.on('executor:abortGoal', () => {
+    log.info('Aborting current goal execution');
+    getAutoBrowseBridge().then(bridge => {
+      bridge.abortCurrentExecution();
+    }).catch(err => {
+      log.error('Failed to abort goal:', err);
+    });
+  });
+
   // --- Executor: Get Screenshot ---
   ipcMain.handle('executor:getScreenshot', async () => {
     const bridge = await getAutoBrowseBridge();
