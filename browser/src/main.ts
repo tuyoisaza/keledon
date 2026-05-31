@@ -225,8 +225,8 @@ app.on('ready', async () => {
   // Override User-Agent: use a modern Chrome version so Google Meet (and other sites)
   // don't reject the browser as "unsupported". Our embedded Chromium (v120) is fully
   // capable — the version string is just a flag that Google checks server-side.
-  // Using Chrome 130 (~Oct 2024) as a safe modern floor that Meet will accept.
-  const SPOOFED_CHROME = '130.0.6723.92';
+  // Chrome 130 (~Oct 2024) is our safe default. Override via KELEDON_CHROME_VERSION env.
+  const SPOOFED_CHROME = process.env.KELEDON_CHROME_VERSION || '130.0.6723.92';
   const chromeUA = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${SPOOFED_CHROME} Safari/537.36`;
   session.defaultSession.setUserAgent(chromeUA);
   earlyLog(`[SESSION] User-Agent spoofed as Chrome ${SPOOFED_CHROME} (real engine: ${process.versions.chrome})`);
