@@ -812,6 +812,41 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
         (action.description || '').toLowerCase().includes('password')
       )) {
         credentialSubmitted = true;
+
+        // v0.3.53+: post-login navigation recovery.
+        // After credential submission succeeds, OAuth/SSO redirects may leave
+        // the browser on a different domain (e.g., accounts.google.com) instead
+        // of the target vendor URL. Navigate back to the vendor URL so that
+        // remaining planner steps execute on the correct page.
+        // This is vendor-agnostic — works for Google, Microsoft, Facebook, etc.
+        if (url) {
+          await new Promise(r => setTimeout(r, 2000));
+          try {
+            const currentUrl = view.webContents.getURL() || '';
+            let targetHost = '';
+            let currentHost = '';
+            try { targetHost = new URL(url).hostname; } catch {}
+            try { currentHost = new URL(currentUrl).hostname; } catch {}
+            if (targetHost && currentHost && currentHost !== targetHost) {
+              logs.push(`[Nav] Post-login: ${currentHost} ≠ target ${targetHost}, navigating to ${url}`);
+              await view.webContents.loadURL(url);
+              await new Promise(r => setTimeout(r, 2000));
+              steps.push({
+                id: `postlogin-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+                type: 'navigate',
+                description: 'Navigate back to vendor after login',
+                success: true,
+                duration: Date.now() - startTime,
+              });
+            } else if (targetHost && currentHost && currentHost === targetHost) {
+              logs.push(`[Nav] Post-login: already on vendor domain ${currentHost}`);
+            } else {
+              logs.push(`[Nav] Post-login: no target URL configured, skipping recovery`);
+            }
+          } catch (navErr: any) {
+            logs.push(`[Nav] Post-login navigation error: ${navErr.message || navErr}`);
+          }
+        }
       }
 
       emitProgress(stepNum, totalSteps, result.type, result.success ? 'done' : 'failed', result.description);
