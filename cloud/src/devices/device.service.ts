@@ -242,6 +242,84 @@ export class DeviceService {
     });
   }
 
+  private readonly DEFAULT_RPA_CONFIG = {
+    chain: ['testing-library-dom', 'playwright-style', 'native-dom'],
+    fallback: true,
+    providers: {
+      'native-dom':           { enabled: true,  priority: 3 },
+      'testing-library-dom':  { enabled: true,  priority: 1, options: { timeout: 5000 } },
+      'playwright-style':     { enabled: true,  priority: 2 },
+      'ai-vision':            { enabled: false, priority: 99, options: { model: 'gpt-4o' } },
+    } as Record<string, { enabled: boolean; priority: number; options?: Record<string, any> }>,
+  };
+
+  async getRpaConfig(deviceId: string) {
+    try {
+      // Walk device → keledon → team → brand → company for tenant overrides
+      const device = await this.prisma.device.findUnique({
+        where: { id: deviceId },
+        select: { keledonId: true },
+      });
+
+      let companyId: string | null = null;
+      if (device?.keledonId) {
+        const keledon = await this.prisma.keledon.findUnique({
+          where: { id: device.keledonId },
+          include: { team: { include: { brand: true } } },
+        });
+        companyId = keledon?.team?.brand?.companyId ?? null;
+      }
+
+      // Global RPA catalog entries
+      const globalEntries = await this.prisma.providerCatalog.findMany({
+        where: { type: 'rpa' },
+      });
+
+      if (globalEntries.length === 0) {
+        return this.DEFAULT_RPA_CONFIG;
+      }
+
+      // Tenant overrides (if we resolved a company)
+      const tenantOverrides = companyId
+        ? await this.prisma.tenantProviderConfig.findMany({
+            where: { companyId, providerType: 'rpa' },
+          })
+        : [];
+      const overrideMap = new Map(tenantOverrides.map(o => [o.providerId, o]));
+
+      // Merge: start from browser defaults so unconfigured providers keep sane values
+      const providers: Record<string, { enabled: boolean; priority: number; options?: Record<string, any> }> = {
+        ...this.DEFAULT_RPA_CONFIG.providers,
+      };
+
+      for (const entry of globalEntries) {
+        const override = overrideMap.get(entry.id);
+        const enabled = override !== undefined ? override.isEnabled : entry.isEnabled;
+
+        let meta: Record<string, any> = {};
+        try { if (entry.metadata) meta = JSON.parse(entry.metadata); } catch { /* ignore bad JSON */ }
+
+        providers[entry.id] = {
+          enabled,
+          priority: meta.priority ?? providers[entry.id]?.priority ?? 99,
+          ...(meta.options ?? providers[entry.id]?.options
+            ? { options: meta.options ?? providers[entry.id]?.options }
+            : {}),
+        };
+      }
+
+      // Chain = enabled providers sorted by priority
+      const chain = Object.entries(providers)
+        .filter(([, cfg]) => cfg.enabled)
+        .sort(([, a], [, b]) => a.priority - b.priority)
+        .map(([id]) => id);
+
+      return { chain, fallback: true, providers };
+    } catch {
+      return this.DEFAULT_RPA_CONFIG;
+    }
+  }
+
   async createTestDevice(pairingCode: string, expiresAt: Date) {
     return this.prisma.device.create({
       data: {

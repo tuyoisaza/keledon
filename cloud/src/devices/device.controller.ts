@@ -74,6 +74,21 @@ export class DeviceController {
     return { error: 'Missing userId or organizationId header' };
   }
 
+  @Get(':id/rpa-config')
+  async getRpaConfig(
+    @Param('id') deviceId: string,
+    @Headers('authorization') authHeader?: string,
+  ) {
+    const token = authHeader?.replace(/^Bearer\s+/i, '');
+    if (token) {
+      const validation = await this.deviceService.validateAuthToken(token);
+      if (!validation.valid || validation.deviceId !== deviceId) {
+        return { error: 'Unauthorized' };
+      }
+    }
+    return this.deviceService.getRpaConfig(deviceId);
+  }
+
   @Get(':id/status')
   async getDeviceStatus(@Param('id') deviceId: string) {
     const devices = await this.deviceService.getDevicesByUser(deviceId);
