@@ -3,14 +3,19 @@ import {
     Brain,
     Building2,
     Loader2,
+    Mic,
+    MicOff,
     RotateCcw,
     Send,
     Sparkles,
     Tag,
+    Volume2,
+    VolumeX,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
+import { API_URL } from '@/lib/config';
 import {
     brainChat,
     getBrands,
@@ -32,6 +37,7 @@ interface ChatLine {
 }
 
 const STORAGE_KEY = 'keledon-brain-context';
+const AUTOSPEAK_KEY = 'keledon-brain-autospeak';
 
 function storageKeyFor(userId?: string) {
     return userId ? `${STORAGE_KEY}:${userId}` : STORAGE_KEY;
@@ -39,7 +45,6 @@ function storageKeyFor(userId?: string) {
 
 function readStoredContext(key: string) {
     if (typeof window === 'undefined') return {};
-
     try {
         const raw = window.localStorage.getItem(key);
         return raw ? JSON.parse(raw) : {};
@@ -73,29 +78,42 @@ export default function BrainPage() {
     const [draft, setDraft] = useState('');
     const [loading, setLoading] = useState(true);
     const [sending, setSending] = useState(false);
+
+    // Voice state
+    const [isListening, setIsListening] = useState(false);
+    const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
+    const [autoSpeak, setAutoSpeak] = useState(() => {
+        try { return localStorage.getItem(AUTOSPEAK_KEY) !== 'false'; } catch { return true; }
+    });
+
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    const recognitionRef = useRef<any>(null);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+    const ttsAbortRef = useRef<AbortController | null>(null);
 
     const selectedCompany = useMemo(
-        () => companies.find((company) => company.id === selectedCompanyId),
+        () => companies.find((c) => c.id === selectedCompanyId),
         [companies, selectedCompanyId],
     );
     const selectedBrand = useMemo(
-        () => brands.find((brand) => brand.id === selectedBrandId),
+        () => brands.find((b) => b.id === selectedBrandId),
         [brands, selectedBrandId],
     );
     const selectedTeam = useMemo(
-        () => teams.find((team) => team.id === selectedTeamId),
+        () => teams.find((t) => t.id === selectedTeamId),
         [teams, selectedTeamId],
     );
     const brandsForCompany = useMemo(
-        () => brands.filter((brand) => brand.companyId === selectedCompanyId),
+        () => brands.filter((b) => b.companyId === selectedCompanyId),
         [brands, selectedCompanyId],
     );
     const teamsForBrand = useMemo(
-        () => teams.filter((team) => team.brandId === selectedBrandId),
+        () => teams.filter((t) => t.brandId === selectedBrandId),
         [teams, selectedBrandId],
     );
     const configReady = Boolean(selectedCompany && selectedBrand && selectedTeam);
+
+    // ── Data loading ────────────────────────────────────────────────────
 
     useEffect(() => {
         const key = storageKeyFor(user?.id);
@@ -108,21 +126,20 @@ export default function BrainPage() {
                     getBrands(),
                     getTeams(),
                 ]);
-
                 setCompanies(companyList);
                 setBrands(brandList);
                 setTeams(teamList);
 
                 const stored = readStoredContext(key);
                 const initialCompanyId = stored.companyId || user?.companyId || companyList[0]?.id || '';
-                const companyBrands = brandList.filter((brand) => brand.companyId === initialCompanyId);
+                const companyBrands = brandList.filter((b) => b.companyId === initialCompanyId);
                 const initialBrandId =
-                    stored.brandId && companyBrands.some((brand) => brand.id === stored.brandId)
+                    stored.brandId && companyBrands.some((b) => b.id === stored.brandId)
                         ? stored.brandId
                         : companyBrands[0]?.id || '';
-                const brandTeams = teamList.filter((team) => team.brandId === initialBrandId);
+                const brandTeams = teamList.filter((t) => t.brandId === initialBrandId);
                 const initialTeamId =
-                    stored.teamId && brandTeams.some((team) => team.id === stored.teamId)
+                    stored.teamId && brandTeams.some((t) => t.id === stored.teamId)
                         ? stored.teamId
                         : brandTeams[0]?.id || '';
 
@@ -137,14 +154,11 @@ export default function BrainPage() {
             }
         }
 
-        if (user) {
-            loadContext();
-        }
+        if (user) loadContext();
     }, [user]);
 
     useEffect(() => {
         if (!user || !selectedCompanyId) return;
-
         const key = storageKeyFor(user.id);
         saveStoredContext(key, {
             companyId: selectedCompanyId,
@@ -159,34 +173,152 @@ export default function BrainPage() {
 
     useEffect(() => {
         if (!selectedCompanyId || !brandsForCompany.length) return;
-        if (!brandsForCompany.some((brand) => brand.id === selectedBrandId)) {
-            const nextBrand = brandsForCompany[0];
-            setSelectedBrandId(nextBrand.id);
-            const nextTeam = teams.filter((team) => team.brandId === nextBrand.id)[0];
-            setSelectedTeamId(nextTeam?.id || '');
+        if (!brandsForCompany.some((b) => b.id === selectedBrandId)) {
+            const next = brandsForCompany[0];
+            setSelectedBrandId(next.id);
+            setSelectedTeamId(teams.filter((t) => t.brandId === next.id)[0]?.id || '');
         }
     }, [brandsForCompany, selectedBrandId, selectedCompanyId, teams]);
 
     useEffect(() => {
         if (!selectedBrandId || !teamsForBrand.length) return;
-        if (!teamsForBrand.some((team) => team.id === selectedTeamId)) {
+        if (!teamsForBrand.some((t) => t.id === selectedTeamId)) {
             setSelectedTeamId(teamsForBrand[0].id);
         }
     }, [selectedBrandId, selectedTeamId, teamsForBrand]);
 
+    // Stop everything on unmount
+    useEffect(() => {
+        return () => {
+            recognitionRef.current?.abort();
+            ttsAbortRef.current?.abort();
+            if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+        };
+    }, []);
+
+    // ── TTS ─────────────────────────────────────────────────────────────
+
+    function stopSpeaking() {
+        ttsAbortRef.current?.abort();
+        ttsAbortRef.current = null;
+        if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        setSpeakingMessageId(null);
+    }
+
+    function fallbackSpeak(text: string, messageId: string) {
+        if (!window.speechSynthesis) { setSpeakingMessageId(null); return; }
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.onend = () => setSpeakingMessageId(null);
+        utterance.onerror = () => setSpeakingMessageId(null);
+        setSpeakingMessageId(messageId);
+        window.speechSynthesis.speak(utterance);
+    }
+
+    async function speakReply(text: string, messageId: string) {
+        stopSpeaking();
+        const controller = new AbortController();
+        ttsAbortRef.current = controller;
+
+        try {
+            const res = await fetch(`${API_URL}/tts/speak`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text }),
+                signal: controller.signal,
+            });
+
+            if (controller.signal.aborted) return;
+
+            if (res.ok) {
+                const blob = await res.blob();
+                if (!controller.signal.aborted && blob.size > 100) {
+                    const url = URL.createObjectURL(blob);
+                    const audio = new Audio(url);
+                    audioRef.current = audio;
+                    audio.onended = () => { URL.revokeObjectURL(url); setSpeakingMessageId(null); };
+                    audio.onerror = () => { URL.revokeObjectURL(url); fallbackSpeak(text, messageId); };
+                    setSpeakingMessageId(messageId);
+                    await audio.play();
+                    return;
+                }
+            }
+            if (!controller.signal.aborted) fallbackSpeak(text, messageId);
+        } catch (err: any) {
+            if (err?.name !== 'AbortError') fallbackSpeak(text, messageId);
+        }
+    }
+
+    function toggleAutoSpeak() {
+        const next = !autoSpeak;
+        setAutoSpeak(next);
+        try { localStorage.setItem(AUTOSPEAK_KEY, String(next)); } catch { /* ignore */ }
+        if (!next) stopSpeaking();
+    }
+
+    // ── STT ─────────────────────────────────────────────────────────────
+
+    function toggleListening() {
+        if (isListening) {
+            recognitionRef.current?.stop();
+            setIsListening(false);
+            return;
+        }
+
+        const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (!SR) {
+            toast.error('Speech recognition not supported in this browser (try Chrome or Edge)');
+            return;
+        }
+
+        const recognition = new SR();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = () => setIsListening(true);
+
+        recognition.onresult = (event: any) => {
+            let interim = '';
+            let final = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                if (event.results[i].isFinal) {
+                    final += event.results[i][0].transcript;
+                } else {
+                    interim += event.results[i][0].transcript;
+                }
+            }
+            if (final) setDraft(final);
+            else if (interim) setDraft(interim);
+        };
+
+        recognition.onend = () => setIsListening(false);
+
+        recognition.onerror = (event: any) => {
+            setIsListening(false);
+            if (event.error !== 'no-speech' && event.error !== 'aborted') {
+                toast.error(`Microphone error: ${event.error}`);
+            }
+        };
+
+        recognitionRef.current = recognition;
+        recognition.start();
+    }
+
+    // ── Chat ─────────────────────────────────────────────────────────────
+
     function handleCompanyChange(companyId: string) {
         setSelectedCompanyId(companyId);
-        const nextBrands = brands.filter((brand) => brand.companyId === companyId);
-        const nextBrand = nextBrands[0];
-        setSelectedBrandId(nextBrand?.id || '');
-        const nextTeam = teams.filter((team) => team.brandId === nextBrand?.id)[0];
-        setSelectedTeamId(nextTeam?.id || '');
+        const next = brands.filter((b) => b.companyId === companyId)[0];
+        setSelectedBrandId(next?.id || '');
+        setSelectedTeamId(teams.filter((t) => t.brandId === next?.id)[0]?.id || '');
     }
 
     function handleBrandChange(brandId: string) {
         setSelectedBrandId(brandId);
-        const nextTeam = teams.filter((team) => team.brandId === brandId)[0];
-        setSelectedTeamId(nextTeam?.id || '');
+        setSelectedTeamId(teams.filter((t) => t.brandId === brandId)[0]?.id || '');
     }
 
     async function handleSend() {
@@ -197,6 +329,12 @@ export default function BrainPage() {
             return;
         }
 
+        // Stop listening before sending
+        if (isListening) {
+            recognitionRef.current?.stop();
+            setIsListening(false);
+        }
+
         const userMessage: ChatLine = {
             id: `user-${Date.now()}`,
             role: 'user',
@@ -204,12 +342,12 @@ export default function BrainPage() {
             timestamp: new Date().toISOString(),
         };
 
-        const nextHistory: BrainChatMessage[] = [...messages, userMessage].map((message) => ({
-            role: message.role,
-            content: message.content,
+        const nextHistory: BrainChatMessage[] = [...messages, userMessage].map((m) => ({
+            role: m.role,
+            content: m.content,
         }));
 
-        setMessages((current) => [...current, userMessage]);
+        setMessages((cur) => [...cur, userMessage]);
         setDraft('');
         setSending(true);
 
@@ -226,25 +364,29 @@ export default function BrainPage() {
                 language: user?.role ? 'en' : undefined,
             });
 
-            setMessages((current) => [
-                ...current,
+            const replyId = `assistant-${Date.now()}`;
+            setMessages((cur) => [
+                ...cur,
                 {
-                    id: `assistant-${Date.now()}`,
+                    id: replyId,
                     role: 'assistant',
                     content: response.reply,
                     timestamp: new Date().toISOString(),
                 },
             ]);
+
+            if (autoSpeak) {
+                void speakReply(response.reply, replyId);
+            }
         } catch (error) {
             console.error('Brain chat failed', error);
             toast.error('Could not reach the Brain right now');
-            setMessages((current) => [
-                ...current,
+            setMessages((cur) => [
+                ...cur,
                 {
                     id: `assistant-error-${Date.now()}`,
                     role: 'assistant',
-                    content:
-                        'I could not reach the Brain service. Check the cloud API and try again.',
+                    content: 'I could not reach the Brain service. Check the cloud API and try again.',
                     timestamp: new Date().toISOString(),
                 },
             ]);
@@ -254,6 +396,7 @@ export default function BrainPage() {
     }
 
     function resetChat() {
+        stopSpeaking();
         setMessages([
             {
                 id: `brain-reset-${Date.now()}`,
@@ -266,10 +409,12 @@ export default function BrainPage() {
     }
 
     const contextSummary = [
-        selectedCompany ? selectedCompany.name : 'No company selected',
-        selectedBrand ? selectedBrand.name : 'No brand selected',
-        selectedTeam ? selectedTeam.name : 'No team selected',
+        selectedCompany?.name ?? 'No company selected',
+        selectedBrand?.name ?? 'No brand selected',
+        selectedTeam?.name ?? 'No team selected',
     ].join(' • ');
+
+    // ── Render ───────────────────────────────────────────────────────────
 
     return (
         <div className="space-y-6">
@@ -282,7 +427,7 @@ export default function BrainPage() {
                     <div>
                         <h1 className="text-2xl font-bold text-foreground">Brain</h1>
                         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-                            Configure the company, brand, and team context, then chat with KELEDON Brain the same way the operator brain would.
+                            Configure the company, brand, and team context, then chat with KELEDON Brain — by text or voice.
                         </p>
                     </div>
                 </div>
@@ -297,6 +442,7 @@ export default function BrainPage() {
             </div>
 
             <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
+                {/* ── Context panel ── */}
                 <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
                     <div className="mb-4 flex items-center gap-2">
                         <Building2 className="h-4 w-4 text-primary" />
@@ -320,10 +466,8 @@ export default function BrainPage() {
                                     className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-primary"
                                 >
                                     <option value="">Select company</option>
-                                    {companies.map((company) => (
-                                        <option key={company.id} value={company.id}>
-                                            {company.name}
-                                        </option>
+                                    {companies.map((c) => (
+                                        <option key={c.id} value={c.id}>{c.name}</option>
                                     ))}
                                 </select>
                             </label>
@@ -339,10 +483,8 @@ export default function BrainPage() {
                                     className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-primary disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     <option value="">Select brand</option>
-                                    {brandsForCompany.map((brand) => (
-                                        <option key={brand.id} value={brand.id}>
-                                            {brand.name}
-                                        </option>
+                                    {brandsForCompany.map((b) => (
+                                        <option key={b.id} value={b.id}>{b.name}</option>
                                     ))}
                                 </select>
                             </label>
@@ -358,10 +500,8 @@ export default function BrainPage() {
                                     className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none transition-colors focus:border-primary disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     <option value="">Select team</option>
-                                    {teamsForBrand.map((team) => (
-                                        <option key={team.id} value={team.id}>
-                                            {team.name}
-                                        </option>
+                                    {teamsForBrand.map((t) => (
+                                        <option key={t.id} value={t.id}>{t.name}</option>
                                     ))}
                                 </select>
                             </label>
@@ -382,6 +522,7 @@ export default function BrainPage() {
                     )}
                 </section>
 
+                {/* ── Chat panel ── */}
                 <section className="flex min-h-[720px] flex-col rounded-2xl border border-border bg-card shadow-sm">
                     <div className="flex items-center justify-between gap-4 border-b border-border px-5 py-4">
                         <div>
@@ -390,16 +531,35 @@ export default function BrainPage() {
                                 Talk to the brain as the selected brand context.
                             </p>
                         </div>
-                        <button
-                            type="button"
-                            onClick={resetChat}
-                            className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                        >
-                            <RotateCcw className="h-4 w-4" />
-                            Reset
-                        </button>
+                        <div className="flex items-center gap-2">
+                            {/* Auto-speak toggle */}
+                            <button
+                                type="button"
+                                onClick={toggleAutoSpeak}
+                                title={autoSpeak ? 'Auto-speak on — click to mute' : 'Auto-speak off — click to enable'}
+                                className={cn(
+                                    'inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm transition-colors',
+                                    autoSpeak
+                                        ? 'border-primary/40 bg-primary/10 text-primary'
+                                        : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground',
+                                )}
+                            >
+                                {autoSpeak ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                                <span className="hidden sm:inline">{autoSpeak ? 'Speaking' : 'Muted'}</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={resetChat}
+                                className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                            >
+                                <RotateCcw className="h-4 w-4" />
+                                Reset
+                            </button>
+                        </div>
                     </div>
 
+                    {/* Messages */}
                     <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
                         {messages.map((message) => (
                             <div
@@ -418,29 +578,56 @@ export default function BrainPage() {
                                     )}
                                 >
                                     <p className="whitespace-pre-wrap">{message.content}</p>
-                                    <p
-                                        className={cn(
-                                            'mt-2 text-[11px] uppercase tracking-wide',
-                                            message.role === 'user'
-                                                ? 'text-primary-foreground/70'
-                                                : 'text-muted-foreground',
+                                    <div className={cn(
+                                        'mt-2 flex items-center gap-2 text-[11px] uppercase tracking-wide',
+                                        message.role === 'user'
+                                            ? 'text-primary-foreground/70'
+                                            : 'text-muted-foreground',
+                                    )}>
+                                        <span>
+                                            {new Date(message.timestamp).toLocaleTimeString([], {
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                            })}
+                                        </span>
+                                        {/* Speaking indicator */}
+                                        {speakingMessageId === message.id && (
+                                            <span className="flex items-center gap-0.5">
+                                                <span className="h-1 w-1 animate-bounce rounded-full bg-primary [animation-delay:0ms]" />
+                                                <span className="h-1 w-1 animate-bounce rounded-full bg-primary [animation-delay:150ms]" />
+                                                <span className="h-1 w-1 animate-bounce rounded-full bg-primary [animation-delay:300ms]" />
+                                            </span>
                                         )}
-                                    >
-                                        {new Date(message.timestamp).toLocaleTimeString([], {
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                        })}
-                                    </p>
+                                    </div>
                                 </div>
                             </div>
                         ))}
+                        {/* Typing indicator while sending */}
+                        {sending && (
+                            <div className="flex justify-start">
+                                <div className="rounded-2xl border border-border bg-muted/40 px-4 py-3 text-sm shadow-sm">
+                                    <span className="flex items-center gap-1 text-muted-foreground">
+                                        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:0ms]" />
+                                        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:150ms]" />
+                                        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:300ms]" />
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                         <div ref={messagesEndRef} />
                     </div>
 
+                    {/* Input area */}
                     <div className="border-t border-border p-5">
                         <label className="block space-y-2">
-                            <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                                Message
+                            <span className="flex items-center justify-between text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                                <span>Message</span>
+                                {isListening && (
+                                    <span className="flex items-center gap-1.5 text-red-400">
+                                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-400" />
+                                        Listening...
+                                    </span>
+                                )}
                             </span>
                             <textarea
                                 value={draft}
@@ -451,9 +638,16 @@ export default function BrainPage() {
                                         void handleSend();
                                     }
                                 }}
-                                placeholder="Ask Brain what the brand should do, say, or explain..."
+                                placeholder={
+                                    isListening
+                                        ? 'Listening — speak now...'
+                                        : 'Ask Brain what the brand should do, say, or explain...'
+                                }
                                 rows={4}
-                                className="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+                                className={cn(
+                                    'w-full rounded-2xl border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary',
+                                    isListening ? 'border-red-400/60' : 'border-border',
+                                )}
                             />
                         </label>
 
@@ -463,19 +657,37 @@ export default function BrainPage() {
                                     ? 'Brain will answer using the selected company, brand, and team.'
                                     : 'Select all context fields before sending.'}
                             </div>
-                            <button
-                                type="button"
-                                onClick={() => void handleSend()}
-                                disabled={sending || !draft.trim() || !configReady}
-                                className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
-                            >
-                                {sending ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                    <Send className="h-4 w-4" />
-                                )}
-                                Send to Brain
-                            </button>
+                            <div className="flex items-center gap-2">
+                                {/* Mic button */}
+                                <button
+                                    type="button"
+                                    onClick={toggleListening}
+                                    title={isListening ? 'Stop listening' : 'Speak to Brain'}
+                                    className={cn(
+                                        'inline-flex items-center justify-center rounded-xl border px-3 py-2.5 text-sm font-medium transition-all',
+                                        isListening
+                                            ? 'animate-pulse border-red-400/60 bg-red-500/10 text-red-400 hover:bg-red-500/20'
+                                            : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground',
+                                    )}
+                                >
+                                    {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                                </button>
+
+                                {/* Send button */}
+                                <button
+                                    type="button"
+                                    onClick={() => void handleSend()}
+                                    disabled={sending || !draft.trim() || !configReady}
+                                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+                                >
+                                    {sending ? (
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                        <Send className="h-4 w-4" />
+                                    )}
+                                    Send to Brain
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </section>
