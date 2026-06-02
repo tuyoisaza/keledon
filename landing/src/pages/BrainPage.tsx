@@ -81,7 +81,6 @@ export default function BrainPage() {
 
     // Voice state
     const [isListening, setIsListening] = useState(false);
-    const [isSpeaking, setIsSpeaking] = useState(false);
     const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
     const [autoSpeak, setAutoSpeak] = useState(() => {
         try { return localStorage.getItem(AUTOSPEAK_KEY) !== 'false'; } catch { return true; }
@@ -90,7 +89,7 @@ export default function BrainPage() {
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const recognitionRef = useRef<any>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
-    const interimRef = useRef('');
+    const ttsAbortRef = useRef<AbortController | null>(null);
 
     const selectedCompany = useMemo(
         () => companies.find((c) => c.id === selectedCompanyId),
@@ -192,70 +191,63 @@ export default function BrainPage() {
     useEffect(() => {
         return () => {
             recognitionRef.current?.abort();
-            stopSpeaking();
+            ttsAbortRef.current?.abort();
+            if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
         };
     }, []);
 
     // ── TTS ─────────────────────────────────────────────────────────────
 
     function stopSpeaking() {
-        if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current = null;
-        }
-        if (window.speechSynthesis) {
-            window.speechSynthesis.cancel();
-        }
-        setIsSpeaking(false);
+        ttsAbortRef.current?.abort();
+        ttsAbortRef.current = null;
+        if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
         setSpeakingMessageId(null);
     }
 
     function fallbackSpeak(text: string, messageId: string) {
-        if (!window.speechSynthesis) { setIsSpeaking(false); setSpeakingMessageId(null); return; }
+        if (!window.speechSynthesis) { setSpeakingMessageId(null); return; }
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.onend = () => { setIsSpeaking(false); setSpeakingMessageId(null); };
-        utterance.onerror = () => { setIsSpeaking(false); setSpeakingMessageId(null); };
+        utterance.onend = () => setSpeakingMessageId(null);
+        utterance.onerror = () => setSpeakingMessageId(null);
         setSpeakingMessageId(messageId);
-        setIsSpeaking(true);
         window.speechSynthesis.speak(utterance);
     }
 
     async function speakReply(text: string, messageId: string) {
         stopSpeaking();
+        const controller = new AbortController();
+        ttsAbortRef.current = controller;
 
         try {
             const res = await fetch(`${API_URL}/tts/speak`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text }),
+                signal: controller.signal,
             });
+
+            if (controller.signal.aborted) return;
 
             if (res.ok) {
                 const blob = await res.blob();
-                if (blob.size > 100) {
+                if (!controller.signal.aborted && blob.size > 100) {
                     const url = URL.createObjectURL(blob);
                     const audio = new Audio(url);
                     audioRef.current = audio;
-                    audio.onended = () => {
-                        URL.revokeObjectURL(url);
-                        setIsSpeaking(false);
-                        setSpeakingMessageId(null);
-                    };
-                    audio.onerror = () => {
-                        URL.revokeObjectURL(url);
-                        fallbackSpeak(text, messageId);
-                    };
+                    audio.onended = () => { URL.revokeObjectURL(url); setSpeakingMessageId(null); };
+                    audio.onerror = () => { URL.revokeObjectURL(url); fallbackSpeak(text, messageId); };
                     setSpeakingMessageId(messageId);
-                    setIsSpeaking(true);
                     await audio.play();
                     return;
                 }
             }
-            // Cloud TTS returned empty (mock mode) — use browser synthesis
-            fallbackSpeak(text, messageId);
-        } catch {
-            fallbackSpeak(text, messageId);
+            if (!controller.signal.aborted) fallbackSpeak(text, messageId);
+        } catch (err: any) {
+            if (err?.name !== 'AbortError') fallbackSpeak(text, messageId);
         }
     }
 
@@ -286,10 +278,7 @@ export default function BrainPage() {
         recognition.interimResults = true;
         recognition.lang = 'en-US';
 
-        recognition.onstart = () => {
-            setIsListening(true);
-            interimRef.current = '';
-        };
+        recognition.onstart = () => setIsListening(true);
 
         recognition.onresult = (event: any) => {
             let interim = '';
@@ -301,24 +290,14 @@ export default function BrainPage() {
                     interim += event.results[i][0].transcript;
                 }
             }
-            if (interim) {
-                interimRef.current = interim;
-                setDraft(interim);
-            }
-            if (final) {
-                interimRef.current = '';
-                setDraft(final);
-            }
+            if (final) setDraft(final);
+            else if (interim) setDraft(interim);
         };
 
-        recognition.onend = () => {
-            setIsListening(false);
-            interimRef.current = '';
-        };
+        recognition.onend = () => setIsListening(false);
 
         recognition.onerror = (event: any) => {
             setIsListening(false);
-            interimRef.current = '';
             if (event.error !== 'no-speech' && event.error !== 'aborted') {
                 toast.error(`Microphone error: ${event.error}`);
             }

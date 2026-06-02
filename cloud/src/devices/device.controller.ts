@@ -80,11 +80,10 @@ export class DeviceController {
     @Headers('authorization') authHeader?: string,
   ) {
     const token = authHeader?.replace(/^Bearer\s+/i, '');
-    if (token) {
-      const validation = await this.deviceService.validateAuthToken(token);
-      if (!validation.valid || validation.deviceId !== deviceId) {
-        return { error: 'Unauthorized' };
-      }
+    if (!token) return { error: 'Unauthorized' };
+    const validation = await this.deviceService.validateAuthToken(token);
+    if (!validation.valid || validation.deviceId !== deviceId) {
+      return { error: 'Unauthorized' };
     }
     return this.deviceService.getRpaConfig(deviceId);
   }

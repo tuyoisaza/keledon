@@ -299,12 +299,12 @@ export class DeviceService {
         let meta: Record<string, any> = {};
         try { if (entry.metadata) meta = JSON.parse(entry.metadata); } catch { /* ignore bad JSON */ }
 
+        const resolvedOptions = meta.options !== undefined ? meta.options
+          : providers[entry.id]?.options;
         providers[entry.id] = {
           enabled,
           priority: meta.priority ?? providers[entry.id]?.priority ?? 99,
-          ...(meta.options ?? providers[entry.id]?.options
-            ? { options: meta.options ?? providers[entry.id]?.options }
-            : {}),
+          ...(resolvedOptions !== undefined ? { options: resolvedOptions } : {}),
         };
       }
 
