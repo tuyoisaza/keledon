@@ -20,10 +20,10 @@ export class DatabaseHealthService implements OnModuleInit {
     } catch (error) {
       const errorMessage = `Database connection failed: ${error.message}`;
       this.logger.error(errorMessage);
-      console.error(
-        '❌ DATABASE: CRITICAL FAILURE - Database connection required',
+      console.warn(
+        '⚠️ DATABASE: Connection failed at startup — will retry on health checks.',
       );
-      process.exit(1);
+      return false;
     }
   }
 
