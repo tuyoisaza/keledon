@@ -158,8 +158,38 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="mt-8 text-center text-xs text-muted-foreground">
-          <p>v{__APP_VERSION__} | {currentTime}</p>
+        <div className="mt-8 flex items-center justify-center gap-3 text-xs text-muted-foreground">
+          <span>v{__APP_VERSION__} | {currentTime}</span>
+          <button
+            type="button"
+            onClick={() => {
+              const logs = [
+                `App Version: v${__APP_VERSION__}`,
+                `Time: ${currentTime}`,
+                `URL: ${window.location.href}`,
+                `User Agent: ${navigator.userAgent}`,
+              ];
+              navigator.clipboard.writeText(logs.join('\n'));
+            }}
+            className="hover:text-foreground transition-colors underline underline-offset-2"
+            title="Copy diagnostic info"
+          >
+            Copy Logs
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm('Reset all local state? This will clear saved data and reload.')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.reload();
+              }
+            }}
+            className="hover:text-destructive transition-colors underline underline-offset-2"
+            title="Clear all local storage and reload"
+          >
+            Reset
+          </button>
         </div>
       </div>
     </div>
