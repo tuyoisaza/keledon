@@ -131,7 +131,12 @@ export default function BrainPage() {
                 setTeams(teamList);
 
                 const stored = readStoredContext(key);
-                const initialCompanyId = stored.companyId || user?.companyId || companyList[0]?.id || '';
+                // Prefer a company that has brands, fallback to stored → user → first with brands → first
+                const firstCompanyWithBrands = companyList.find((c) =>
+                    brandList.some((b) => b.companyId === c.id),
+                );
+                const fallbackCompanyId = firstCompanyWithBrands?.id || companyList[0]?.id || '';
+                const initialCompanyId = stored.companyId || user?.companyId || fallbackCompanyId;
                 const companyBrands = brandList.filter((b) => b.companyId === initialCompanyId);
                 const initialBrandId =
                     stored.brandId && companyBrands.some((b) => b.id === stored.brandId)
