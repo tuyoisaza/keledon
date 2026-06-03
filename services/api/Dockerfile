@@ -24,6 +24,12 @@ RUN npm install -g ts-node@10.9.2
 RUN cat > /start.sh << 'SEEDSCRIPT'
 #!/bin/sh
 set -e
+# Auto-injected variable fallback: Railway creates DATABASE_<url> with the real password
+_real_db_url=$(env | awk -F= '!/^DATABASE_URL=/ && /^DATABASE_/ && /postgresql:\/\// {rest=substr($0, index($0,"=")+1); print rest; exit}')
+if [ -n "$_real_db_url" ]; then
+  export DATABASE_URL="$_real_db_url"
+  echo "Using real DATABASE_URL from auto-injected variable"
+fi
 echo "--- Waiting for database ---"
 # Retry loop: DB proxy may take a moment to accept connections
 for i in 1 2 3 4 5; do
