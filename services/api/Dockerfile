@@ -31,9 +31,9 @@ if [ -n "$_real_db_url" ]; then
   echo "Using real DATABASE_URL from auto-injected variable"
 fi
 echo "--- Waiting for database ---"
-# Resolve failed migrations from old attempts with wrong password
-npx prisma@5.22.0 migrate resolve --rolled-back 20260304210600_init 2>/dev/null || true
-npx prisma@5.22.0 migrate resolve --rolled-back 20260529220000_add_rpa_provider_config 2>/dev/null || true
+# Resolve any failed migrations from previous deploys
+npx prisma@5.22.0 migrate resolve --rolled-back 20260304210600_init 2>&1 || true
+npx prisma@5.22.0 migrate resolve --rolled-back 20260529220000_add_rpa_provider_config 2>&1 || true
 # Retry loop: DB proxy may take a moment to accept connections
 for i in 1 2 3 4 5; do
   npx prisma@5.22.0 migrate deploy && break
