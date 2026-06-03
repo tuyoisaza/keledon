@@ -19,12 +19,12 @@ async function main() {
 
   // Create PepsiCo countries
   await prisma.companyCountry.upsert({
-    where: { countryCode_companyId: { countryCode: 'US', companyId: pepsico.id } },
+    where: { companyId_countryCode: { countryCode: 'US', companyId: pepsico.id } },
     update: {},
     create: { companyId: pepsico.id, countryCode: 'US' }
   });
   await prisma.companyCountry.upsert({
-    where: { countryCode_companyId: { countryCode: 'MX', companyId: pepsico.id } },
+    where: { companyId_countryCode: { countryCode: 'MX', companyId: pepsico.id } },
     update: {},
     create: { companyId: pepsico.id, countryCode: 'MX' }
   });
@@ -57,12 +57,12 @@ async function main() {
 
   // Create Stellantis countries
   await prisma.companyCountry.upsert({
-    where: { countryCode_companyId: { countryCode: 'US', companyId: stellantis.id } },
+    where: { companyId_countryCode: { countryCode: 'US', companyId: stellantis.id } },
     update: {},
     create: { companyId: stellantis.id, countryCode: 'US' }
   });
   await prisma.companyCountry.upsert({
-    where: { countryCode_companyId: { countryCode: 'MX', companyId: stellantis.id } },
+    where: { companyId_countryCode: { countryCode: 'MX', companyId: stellantis.id } },
     update: {},
     create: { companyId: stellantis.id, countryCode: 'MX' }
   });
