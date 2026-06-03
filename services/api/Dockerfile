@@ -24,7 +24,13 @@ RUN npm install -g ts-node@10.9.2
 RUN cat > /start.sh << 'SEEDSCRIPT'
 #!/bin/sh
 set -e
-npx prisma@5.22.0 migrate deploy 2>/dev/null || echo "migration skipped"
+echo "--- Waiting for database ---"
+# Retry loop: DB proxy may take a moment to accept connections
+for i in 1 2 3 4 5; do
+  npx prisma@5.22.0 migrate deploy 2>/dev/null && break
+  echo "migrate attempt $i failed, retrying in 3s..."
+  sleep 3
+done
 echo "--- Seeding database ---"
 ts-node -O '{"module":"commonjs"}' scripts/seed-main-data.ts && echo "seed-main-data OK" || echo "seed-main-data FAILED (non-fatal)"
 ts-node -O '{"module":"commonjs"}' scripts/seed-operational-data.ts && echo "seed-operational-data OK" || echo "seed-operational-data FAILED (non-fatal)"
