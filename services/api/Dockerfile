@@ -21,6 +21,16 @@ COPY --from=builder /app/contracts ./contracts
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/data ./data
 RUN npm install -g ts-node@10.9.2
-RUN printf '#!/bin/sh\nset -e\nnpx prisma@5.22.0 migrate deploy 2>/dev/null || echo "migration skipped"\necho "--- Seeding database ---"\nNODE_OPTIONS="--no-experimental-detect-module" ts-node scripts/seed-main-data.ts && echo "seed-main-data OK" || echo "seed-main-data FAILED (non-fatal)"\nNODE_OPTIONS="--no-experimental-detect-module" ts-node scripts/seed-operational-data.ts && echo "seed-operational-data OK" || echo "seed-operational-data FAILED (non-fatal)"\necho "--- Seeds complete ---"\nexec node dist/main\n' > /start.sh && chmod +x /start.sh
+RUN cat > /start.sh << 'SEEDSCRIPT'
+#!/bin/sh
+set -e
+npx prisma@5.22.0 migrate deploy 2>/dev/null || echo "migration skipped"
+echo "--- Seeding database ---"
+ts-node -O '{"module":"commonjs"}' scripts/seed-main-data.ts && echo "seed-main-data OK" || echo "seed-main-data FAILED (non-fatal)"
+ts-node -O '{"module":"commonjs"}' scripts/seed-operational-data.ts && echo "seed-operational-data OK" || echo "seed-operational-data FAILED (non-fatal)"
+echo "--- Seeds complete ---"
+exec node dist/main
+SEEDSCRIPT
+RUN chmod +x /start.sh
 EXPOSE 3001
 CMD ["/start.sh"]
