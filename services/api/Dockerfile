@@ -33,7 +33,7 @@ fi
 echo "--- Waiting for database ---"
 # Retry loop: DB proxy may take a moment to accept connections
 for i in 1 2 3 4 5; do
-  npx prisma@5.22.0 migrate deploy 2>/dev/null && break
+  npx prisma@5.22.0 migrate deploy && break
   echo "migrate attempt $i failed, retrying in 3s..."
   sleep 3
 done
