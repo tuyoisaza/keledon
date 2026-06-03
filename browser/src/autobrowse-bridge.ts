@@ -11,7 +11,8 @@
 import log from 'electron-log';
 import { BrowserWindow, BrowserView, ipcRenderer } from 'electron';
 import { chromium, Browser, BrowserContext, Page } from 'playwright-core';
-import { planGoalActions } from './goal-planner';
+import { planGoalActions, planGoalActionsWithAI } from './goal-planner';
+import { runtimeStatus } from './runtime-state';
 
 interface BridgeGoalInput {
   execution_id?: string;
@@ -689,6 +690,99 @@ export async function initializeAutoBrowse(electronSession: any): Promise<void> 
   log.info('[AutoBrowse] Initialized successfully (Electron API mode)');
 }
 
+/**
+ * Call the cloud planner API to decompose a goal into actionable steps
+ */
+async function callPlannerAPI(
+  goal: string,
+  url: string,
+  pageContext: string,
+  pageTitle: string,
+  previousActions: string[]
+): Promise<{ steps: GoalAction[]; reasoning?: string; explanation?: string }> {
+  try {
+    const cloudUrl = runtimeStatus.cloudUrl || 'https://keledon.tuyoisaza.com';
+    const res = await fetch(`${cloudUrl}/api/planner/decompose`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        goal,
+        url,
+        pageContext,
+        pageTitle,
+        previousActions,
+        maxSteps: 8,
+      }),
+    });
+    if (!res.ok) {
+      log.warn(`[AI Planner] API returned ${res.status}`);
+      return { steps: [] };
+    }
+    const data = await res.json();
+    if (!data.success || !Array.isArray(data.steps) || data.steps.length === 0) {
+      log.warn('[AI Planner] No steps returned from API');
+      return { steps: [] };
+    }
+    return {
+      steps: data.steps.map((s: any) => ({
+        type: s.type,
+        selector: s.selector,
+        target: s.selector,
+        value: s.value,
+        url: s.url,
+        description: s.description || `${s.type} step`,
+      })),
+      reasoning: data.reasoning,
+      explanation: data.explanation,
+    };
+  } catch (error) {
+    log.warn(`[AI Planner] API call failed: ${error}`);
+    return { steps: [] };
+  }
+}
+
+/**
+ * Extract visible page state from a BrowserView for AI planning context
+ */
+async function extractPageState(view: BrowserView): Promise<{ url: string; title: string; content: string }> {
+  try {
+    const url = view.webContents.getURL() || '';
+    const title = view.webContents.getTitle() || '';
+    // Extract visible text content via executeJavaScript
+    const content = await view.webContents.executeJavaScript(`
+      (() => {
+        const MAX_LEN = 3000;
+        // Get main body text, strip excessive whitespace
+        let text = document.body?.innerText || '';
+        if (!text) text = document.body?.textContent || '';
+        text = text.replace(/\\s+/g, ' ').trim().slice(0, MAX_LEN);
+        // Include key interactive elements summary
+        const inputs = document.querySelectorAll('input, button, select, textarea, a');
+        const elements = Array.from(inputs).slice(0, 20).map(el => {
+          const tag = el.tagName.toLowerCase();
+          const type = el.getAttribute('type') || '';
+          const name = el.getAttribute('name') || '';
+          const id = el.getAttribute('id') || '';
+          const placeholder = el.getAttribute('placeholder') || '';
+          const ariaLabel = el.getAttribute('aria-label') || '';
+          const text = (el as HTMLElement).innerText?.slice(0, 40) || '';
+          const href = el.getAttribute('href') || '';
+          return [tag, type, name, id, placeholder, ariaLabel, text, href].filter(Boolean).join('|');
+        }).join('\\n');
+        return JSON.stringify({ text, elements });
+      })()
+    `).catch(() => '{}');
+    const parsed = JSON.parse(content || '{}');
+    const combined = [
+      parsed.text ? `Content: ${parsed.text}` : '',
+      parsed.elements ? `Interactive: ${parsed.elements}` : '',
+    ].filter(Boolean).join('\\n').slice(0, 3000);
+    return { url, title, content: combined || url };
+  } catch {
+    return { url, title, content: url };
+  }
+}
+
 export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecutionResult> {
   resetAbortFlag();
   if (!isInitialized) {
@@ -737,7 +831,7 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
   try {
     // Map goal to actions FIRST so we can check if the planner will handle navigation.
     // v0.3.51: avoids duplicate navigation when vendor URL matches planner's first step.
-    const actions = planGoalActions(input.goal, plannerInputs);
+    const actions = await planGoalActionsWithAI(input.goal, plannerInputs, runtimeStatus.cloudUrl);
     logs.push(`[Actions] ${actions.length} steps planned from goal`);
 
     // Only pre-navigate if the planner doesn't already produce a navigation as step 1.
@@ -865,10 +959,92 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
       await new Promise(r => setTimeout(r, 300));
     }
 
+    // ======================== AI Iterative Re-planning ========================
+    // After heuristic steps complete, check if the goal needs more steps
+    // by asking the cloud AI planner. Loop up to 3 times.
+    const MAX_ITERATIONS = 3;
+    let iteration = 0;
+    let goalSatisfied = false;
+
+    while (!goalSatisfied && iteration < MAX_ITERATIONS) {
+      if (isAborted()) {
+        logs.push('[Abort] Goal execution cancelled during AI re-planning');
+        break;
+      }
+      if (Date.now() - start > timeout) {
+        logs.push('[Timeout] Exceeded timeout during AI re-planning');
+        break;
+      }
+
+      iteration++;
+      logs.push(`[AI Iteration ${iteration}/${MAX_ITERATIONS}] Checking if more steps needed...`);
+
+      // Extract current page state
+      const state = await extractPageState(view);
+      const previousDescription = steps
+        .filter(s => s.success)
+        .slice(-10)
+        .map(s => s.description);
+
+      // Call the AI planner to determine next steps
+      const plan = await callPlannerAPI(
+        input.goal,
+        state.url,
+        state.content,
+        state.title,
+        previousDescription
+      );
+
+      if (!plan.steps || plan.steps.length === 0) {
+        // AI says no more steps needed — goal is complete
+        logs.push(`[AI Iteration ${iteration}] AI: No more steps needed. ${plan.explanation || 'Goal complete.'}`);
+        goalSatisfied = true;
+        break;
+      }
+
+      logs.push(`[AI Iteration ${iteration}] AI suggested ${plan.steps.length} steps: ${plan.reasoning || plan.explanation || ''}`);
+
+      // Execute the AI-generated steps
+      for (const aiAction of plan.steps) {
+        if (isAborted()) {
+          logs.push('[Abort] AI step cancelled');
+          break;
+        }
+        if (Date.now() - start > timeout) {
+          logs.push('[Timeout] Exceeded timeout during AI step');
+          break;
+        }
+
+        stepNum++;
+        logs.push(`[Step ${stepNum}] AI ${aiAction.type}: ${aiAction.description}`);
+        emitProgress(stepNum, 999, aiAction.type, 'running', aiAction.description);
+
+        const result = await executeAction(view, aiAction);
+        steps.push(result);
+
+        if (result.extractedValue && result.type === 'screenshot') {
+          screenshots.push(result.extractedValue);
+        }
+
+        if (!result.success) {
+          logs.push(`[Step ${stepNum}] AI step failed: ${result.error}`);
+        }
+
+        emitProgress(stepNum, 999, result.type, result.success ? 'done' : 'failed', result.description);
+        await new Promise(r => setTimeout(r, 200));
+      }
+    }
+
+    // Capture final screenshot
+    try {
+      const image = await view.webContents.capturePage();
+      screenshots.push(image.toDataURL());
+    } catch { /* ignore */ }
+
     const successCount = steps.filter(s => s.success).length;
     const failCount = steps.filter(s => !s.success).length;
     const goalStatus: 'success' | 'failed' | 'uncertain' = failCount === 0 ? 'success' : successCount === 0 ? 'failed' : 'uncertain';
-    logs.push(`[Result] ${goalStatus}: ${successCount} ok, ${failCount} failed`);
+    logs.push(`[Result] ${goalStatus}: ${successCount} ok, ${failCount} failed` + (iteration > 0 ? ` (AI iterations: ${iteration})` : ''));
 
     return {
       execution_id: executionId,

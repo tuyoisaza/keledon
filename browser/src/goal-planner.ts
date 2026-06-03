@@ -379,3 +379,69 @@ export function planGoalActions(goal: string, inputs?: Record<string, unknown>):
   actions.push({ type: 'screenshot', description: 'Capture final state' });
   return actions;
 }
+
+/**
+ * Heuristic + AI hybrid goal planner.
+ * Uses the heuristic planner first. If it produces ≤2 non-trivial steps,
+ * calls the cloud AI planner API for a better decomposition.
+ * Falls back to heuristic result if the AI call fails or is unavailable.
+ */
+export async function planGoalActionsWithAI(
+  goal: string,
+  inputs?: Record<string, unknown>,
+  cloudUrl?: string,
+): Promise<GoalPlannerAction[]> {
+  // Step 1: Run the heuristic planner
+  const heuristicActions = planGoalActions(goal, inputs);
+
+  // Count meaningful steps (exclude boilerplate wait/screenshot at end)
+  const meaningfulSteps = heuristicActions.filter(
+    (a) => a.type !== 'screenshot' && a.type !== 'wait',
+  );
+
+  // If the heuristic planner produced a reasonable plan, use it
+  if (meaningfulSteps.length > 2) {
+    return heuristicActions;
+  }
+
+  // Step 2: Try the AI cloud planner for better decomposition
+  const apiUrl = cloudUrl || 'https://keledon.tuyoisaza.com';
+  try {
+    const res = await fetch(`${apiUrl}/api/planner/decompose`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        goal,
+        url: (inputs?.url as string) || (inputs?.targetUrl as string) || undefined,
+        maxSteps: 10,
+      }),
+    });
+
+    if (!res.ok) {
+      return heuristicActions;
+    }
+
+    const data = await res.json();
+    if (!data.success || !Array.isArray(data.steps) || data.steps.length < 3) {
+      return heuristicActions;
+    }
+
+    // Map AI steps to GoalPlannerAction format
+    const aiActions: GoalPlannerAction[] = data.steps.map((s: any) => ({
+      type: s.type,
+      selector: s.selector,
+      target: s.selector,
+      value: s.value,
+      url: s.url,
+      description: s.description || `${s.type} step`,
+    }));
+
+    // Add final screenshot
+    aiActions.push({ type: 'screenshot', description: 'Capture final state' });
+
+    return aiActions;
+  } catch {
+    // AI fallback unavailable — use heuristic
+    return heuristicActions;
+  }
+}
