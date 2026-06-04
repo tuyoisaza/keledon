@@ -21,6 +21,8 @@ import {
 import { enrichGoalInputsFromRuntimeVendor, autoLoginToVendor, bootstrapTeamVendors } from './ipc-vendor-login.js';
 import { showEscalation, checkEscalationTriggers } from './ipc-escalation.js';
 import { getAutoBrowseBridge, initializeAutoBrowseEngine } from './ipc-bridge.js';
+import { registerEvidenceIpcHandlers } from './ipc-evidence-handlers.js';
+import { registerMediaIpcHandlers } from './ipc-media-handlers.js';
 
 // ===================== IPC HANDLER REGISTRATION =====================
 
@@ -274,165 +276,6 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     }
   });
 
-  // --- Evidence: Get Logs ---
-  ipcMain.handle('evidence:getLogs', async () => {
-    const parts: string[] = [];
-    const startupPath = getStartupLogPath();
-    const mainPath = getMainLogPath();
-    if (fs.existsSync(startupPath)) {
-      parts.push('=== STARTUP LOG ===\n');
-      parts.push(fs.readFileSync(startupPath, 'utf-8'));
-    }
-    if (fs.existsSync(mainPath)) {
-      parts.push('\n=== RUNTIME LOG ===\n');
-      parts.push(fs.readFileSync(mainPath, 'utf-8'));
-    }
-    return { logs: parts.join('') || 'No logs found', logPath: getLogsDir() };
-  });
-
-  // --- Evidence: Copy All Logs ---
-  ipcMain.handle('evidence:copyAllLogs', async () => {
-    const parts: string[] = [
-      `KELEDON Browser Log Dump`,
-      `Time: ${new Date().toISOString()}`,
-      `Version: ${app.getVersion()}`,
-      `Install: ${INSTALL_DIR}`,
-      `\n`,
-    ];
-    const startupPath = getStartupLogPath();
-    const mainPath = getMainLogPath();
-    if (fs.existsSync(startupPath)) {
-      parts.push('=== STARTUP LOG ===\n');
-      parts.push(fs.readFileSync(startupPath, 'utf-8'));
-    }
-    if (fs.existsSync(mainPath)) {
-      parts.push('\n=== RUNTIME LOG ===\n');
-      parts.push(fs.readFileSync(mainPath, 'utf-8'));
-    }
-    try {
-      const logsDir = getLogsDir();
-      const crashFiles = fs.readdirSync(logsDir).filter(f => f.startsWith('crash-'));
-      for (const cf of crashFiles.slice(-3)) {
-        parts.push(`\n=== ${cf} ===\n`);
-        parts.push(fs.readFileSync(path.join(logsDir, cf), 'utf-8'));
-      }
-    } catch (_) {}
-    return { logs: parts.join('') };
-  });
-
-  // --- Evidence: Event Logs ---
-  ipcMain.handle('evidence:getEventLogs', async (_event, filter?: { level?: string; category?: string; limit?: number }) => {
-    const logs = eventLogger.getLogs(filter as any);
-    const stats = eventLogger.getStats();
-    return { logs, stats };
-  });
-
-  ipcMain.handle('evidence:clearEventLogs', async () => {
-    eventLogger.clear();
-    return { success: true };
-  });
-
-  ipcMain.handle('evidence:getLogCategories', async () => {
-    return { categories: eventLogger.getCategories() };
-  });
-
-  ipcMain.handle('evidence:getScreenshots', async () => {
-    return { screenshots: [] };
-  });
-
-  // --- Media: Start Call ---
-  ipcMain.handle('media:startCall', async (_event, sessionId: string) => {
-    try {
-      await mediaLayerWrapper.startCall(sessionId);
-      runtimeStatus.sessionId = sessionId;
-      return { success: true, sessionId };
-    } catch (error) {
-      return { success: false, error: String(error) };
-    }
-  });
-
-  // --- Media: Stop Call ---
-  ipcMain.handle('media:stopCall', async () => {
-    try {
-      await mediaLayerWrapper.stopCall();
-      runtimeStatus.sessionId = null;
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: String(error) };
-    }
-  });
-
-  // --- Media: Speak ---
-  ipcMain.handle('media:speak', async (_event, text: string, interruptible: boolean = true) => {
-    try {
-      await mediaLayerWrapper.speak(text, interruptible);
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: String(error) };
-    }
-  });
-
-  // --- Media: Stop Speaking ---
-  ipcMain.handle('media:stopSpeaking', async () => {
-    try {
-      await mediaLayerWrapper.stopSpeaking();
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: String(error) };
-    }
-  });
-
-  // --- Media: Get Status ---
-  ipcMain.handle('media:getStatus', async () => {
-    return mediaLayerWrapper.getCallStatus();
-  });
-
-  // --- Media: Mute ---
-  ipcMain.handle('media:mute', async () => {
-    mediaLayerWrapper.mute();
-    return { success: true };
-  });
-
-  // --- Media: Unmute ---
-  ipcMain.handle('media:unmute', async () => {
-    mediaLayerWrapper.unmute();
-    return { success: true };
-  });
-
-  // --- Media: Hold ---
-  ipcMain.handle('media:hold', async () => {
-    try {
-      await mediaLayerWrapper.hold();
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: String(error) };
-    }
-  });
-
-  // --- Media: Resume ---
-  ipcMain.handle('media:resume', async () => {
-    try {
-      await mediaLayerWrapper.resume();
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: String(error) };
-    }
-  });
-
-  // --- Media: Hangup ---
-  ipcMain.handle('media:hangup', async () => {
-    try {
-      await mediaLayerWrapper.stopCall();
-      runtimeStatus.sessionId = null;
-      const deviceSocket = getDeviceSocket();
-      if (deviceSocket) {
-        deviceSocket.emit('session:end');
-      }
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: String(error) };
-    }
-  });
 
   // --- Brain: Set Debug Mode ---
   ipcMain.handle('brain:setDebugMode', async (_event, enabled: boolean) => {
@@ -727,6 +570,15 @@ export function registerIpcHandlers(tabManager: TabManager): void {
   mediaLayerWrapper.on('media:error', (data) => {
     mainWindow?.webContents.send('media:error', data);
   });
+
+  registerEvidenceIpcHandlers(
+    getStartupLogPath,
+    getMainLogPath,
+    getLogsDir,
+    INSTALL_DIR,
+    eventLogger,
+  );
+  registerMediaIpcHandlers(ipcMain, runtimeStatus, getDeviceSocket);
 }
 
 // ===================== EXPORTS =====================

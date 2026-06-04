@@ -84,3 +84,104 @@ export const mediaLayerWrapper = {
   /** Emit a media layer event */
   emit: (event: string, data?: unknown) => mediaLayer.emit(event, data),
 };
+
+export function registerMediaIpcHandlers(
+  ipcMain: any,
+  runtimeStatus: any,
+  getDeviceSocket: () => any | null,
+): void {
+
+  // --- Media: Start Call ---
+  ipcMain.handle('media:startCall', async (_event, sessionId: string) => {
+    try {
+      await mediaLayerWrapper.startCall(sessionId);
+      runtimeStatus.sessionId = sessionId;
+      return { success: true, sessionId };
+    } catch (error) {
+      return { success: false, error: String(error) };
+    }
+  });
+
+  // --- Media: Stop Call ---
+  ipcMain.handle('media:stopCall', async () => {
+    try {
+      await mediaLayerWrapper.stopCall();
+      runtimeStatus.sessionId = null;
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: String(error) };
+    }
+  });
+
+  // --- Media: Speak ---
+  ipcMain.handle('media:speak', async (_event, text: string, interruptible: boolean = true) => {
+    try {
+      await mediaLayerWrapper.speak(text, interruptible);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: String(error) };
+    }
+  });
+
+  // --- Media: Stop Speaking ---
+  ipcMain.handle('media:stopSpeaking', async () => {
+    try {
+      await mediaLayerWrapper.stopSpeaking();
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: String(error) };
+    }
+  });
+
+  // --- Media: Get Status ---
+  ipcMain.handle('media:getStatus', async () => {
+    return mediaLayerWrapper.getCallStatus();
+  });
+
+  // --- Media: Mute ---
+  ipcMain.handle('media:mute', async () => {
+    mediaLayerWrapper.mute();
+    return { success: true };
+  });
+
+  // --- Media: Unmute ---
+  ipcMain.handle('media:unmute', async () => {
+    mediaLayerWrapper.unmute();
+    return { success: true };
+  });
+
+  // --- Media: Hold ---
+  ipcMain.handle('media:hold', async () => {
+    try {
+      await mediaLayerWrapper.hold();
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: String(error) };
+    }
+  });
+
+  // --- Media: Resume ---
+  ipcMain.handle('media:resume', async () => {
+    try {
+      await mediaLayerWrapper.resume();
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: String(error) };
+    }
+  });
+
+  // --- Media: Hangup ---
+  ipcMain.handle('media:hangup', async () => {
+    try {
+      await mediaLayerWrapper.stopCall();
+      runtimeStatus.sessionId = null;
+      const deviceSocket = getDeviceSocket();
+      if (deviceSocket) {
+        deviceSocket.emit('session:end');
+      }
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: String(error) };
+    }
+  });
+}
