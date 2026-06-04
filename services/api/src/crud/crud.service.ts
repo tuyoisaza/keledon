@@ -5,6 +5,7 @@ import { generatePairingCodeString } from './crud-keledon.service';
 import { CrudAuditService } from './crud-audit.service';
 import { CrudSeedService } from './crud-seed.service';
 import { CrudVendorService } from './crud-vendor.service';
+import { CrudCompanyService } from './crud-company.service';
 
 const errorBuffer: string[] = [];
 const MAX_ERRORS = 50;
@@ -34,6 +35,7 @@ export class CrudService {
     private readonly auditService: CrudAuditService,
     private readonly seedService: CrudSeedService,
     private readonly vendorService: CrudVendorService,
+    private readonly companyService: CrudCompanyService,
   ) {}
 
   // ========== HEALTH ==========
@@ -67,257 +69,73 @@ export class CrudService {
   // ========== COMPANIES ==========
 
   async getCompanies() {
-    return this.prisma.company.findMany({
-      include: {
-        countries: true,
-        _count: { select: { brands: true, users: true } },
-      },
-      orderBy: { name: 'asc' },
-    });
+    return this.companyService.getCompanies();
   }
 
   async getCompany(id: string) {
-    return this.prisma.company.findUnique({
-      where: { id },
-      include: {
-        countries: true,
-        brands: true,
-        users: true,
-      },
-    });
+    return this.companyService.getCompany(id);
   }
 
-  async createCompany(data: {
-    name: string;
-    industry?: string;
-    countries?: string[];
-  }) {
-    const { countries, ...companyData } = data;
-    return this.prisma.company.create({
-      data: {
-        ...companyData,
-        countries: countries
-          ? {
-              create: countries.map((code) => ({ countryCode: code })),
-            }
-          : undefined,
-      },
-      include: { countries: true },
-    });
+  async createCompany(data: { name: string; industry?: string; countries?: string[] }) {
+    return this.companyService.createCompany(data);
   }
 
-  async updateCompany(
-    id: string,
-    data: { name?: string; industry?: string; countries?: string[] },
-  ) {
-    const { countries, ...companyData } = data;
-
-    // Delete existing countries and create new ones if provided
-    if (countries !== undefined) {
-      await this.prisma.companyCountry.deleteMany({ where: { companyId: id } });
-    }
-
-    const result = await this.prisma.company.update({
-      where: { id },
-      data: {
-        ...companyData,
-        ...(countries !== undefined
-          ? {
-              countries: {
-                create: countries.map((code) => ({ countryCode: code })),
-              },
-            }
-          : {}),
-      },
-      include: { countries: true },
-    });
-
-    return result;
+  async updateCompany(id: string, data: { name?: string; industry?: string; countries?: string[] }) {
+    return this.companyService.updateCompany(id, data);
   }
 
   async deleteCompany(id: string) {
-    return this.prisma.company.delete({ where: { id } });
+    return this.companyService.deleteCompany(id);
   }
 
   async addCompanyCountry(companyId: string, countryCode: string) {
-    return this.prisma.companyCountry.create({
-      data: { companyId, countryCode },
-    });
+    return this.companyService.addCompanyCountry(companyId, countryCode);
   }
 
   async removeCompanyCountry(companyId: string, countryCode: string) {
-    return this.prisma.companyCountry.deleteMany({
-      where: { companyId, countryCode },
-    });
+    return this.companyService.removeCompanyCountry(companyId, countryCode);
   }
 
   // ========== BRANDS ==========
 
   async getBrands(companyId?: string) {
-    return this.prisma.brand.findMany({
-      where: companyId ? { companyId } : undefined,
-      include: {
-        company: { select: { id: true, name: true } },
-        _count: { select: { teams: true } },
-      },
-      orderBy: { name: 'asc' },
-    });
+    return this.companyService.getBrands(companyId);
   }
 
   async createBrand(data: { name: string; companyId: string; color?: string }) {
-    return this.prisma.brand.create({
-      data,
-      include: { company: { select: { id: true, name: true } } },
-    });
+    return this.companyService.createBrand(data);
   }
 
   async updateBrand(id: string, data: { name?: string; color?: string }) {
-    return this.prisma.brand.update({
-      where: { id },
-      data,
-      include: { company: { select: { id: true, name: true } } },
-    });
+    return this.companyService.updateBrand(id, data);
   }
 
   async deleteBrand(id: string) {
-    return this.prisma.brand.delete({ where: { id } });
+    return this.companyService.deleteBrand(id);
   }
 
   // ========== TEAMS ==========
 
   async getTeams(companyId?: string) {
-    const teams = await this.prisma.team.findMany({
-      include: {
-        users: { select: { id: true } },
-        keledons: { select: { id: true } },
-        brand: {
-          include: {
-            company: { select: { id: true, name: true } },
-          },
-        },
-      },
-      orderBy: { name: 'asc' },
-    });
-
-    return teams.map((t) => ({
-      id: t.id,
-      name: t.name,
-      brandId: t.brandId,
-      country: t.country,
-      sttProvider: t.sttProvider,
-      ttsProvider: t.ttsProvider,
-      escalationTriggers: t.escalationTriggers,
-      createdAt: t.createdAt,
-      updatedAt: t.updatedAt,
-      _count: { users: t.users.length, keledons: t.keledons.length },
-      company: t.brand?.company
-        ? { id: t.brand.company.id, name: t.brand.company.name }
-        : undefined,
-    }));
+    return this.companyService.getTeams(companyId);
   }
 
   async createTeam(data: { name: string; brandId: string; country?: string }) {
-    const team = await this.prisma.team.create({
-      data,
-      select: {
-        id: true,
-        name: true,
-        brandId: true,
-        country: true,
-        sttProvider: true,
-        ttsProvider: true,
-        createdAt: true,
-        updatedAt: true,
-        brand: {
-          select: {
-            id: true,
-            name: true,
-            color: true,
-            company: { select: { id: true, name: true } },
-          },
-        },
-      },
-    });
-    return {
-      ...team,
-      company: team.brand?.company
-        ? { id: team.brand.company.id, name: team.brand.company.name }
-        : undefined,
-    };
+    return this.companyService.createTeam(data);
   }
 
-  async updateTeam(
-    id: string,
-    data: { name?: string; country?: string; escalationTriggers?: string[] },
-  ) {
-    const team = await this.prisma.team.update({
-      where: { id },
-      data,
-      select: {
-        id: true,
-        name: true,
-        brandId: true,
-        country: true,
-        sttProvider: true,
-        ttsProvider: true,
-        escalationTriggers: true,
-        createdAt: true,
-        updatedAt: true,
-        brand: {
-          select: {
-            id: true,
-            name: true,
-            color: true,
-            company: { select: { id: true, name: true } },
-          },
-        },
-      },
-    });
-    return {
-      ...team,
-      company: team.brand?.company
-        ? { id: team.brand.company.id, name: team.brand.company.name }
-        : undefined,
-    };
+  async updateTeam(id: string, data: { name?: string; country?: string; escalationTriggers?: string[] }) {
+    return this.companyService.updateTeam(id, data);
   }
 
   async deleteTeam(id: string) {
-    return this.prisma.team.delete({ where: { id } });
+    return this.companyService.deleteTeam(id);
   }
 
   // ========== USERS ==========
 
   async getUsers(companyId?: string) {
-    const users = await this.prisma.user.findMany({
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        companyId: true,
-        teamId: true,
-        isOnline: true,
-        lastLogin: true,
-        createdAt: true,
-        updatedAt: true,
-        company: { select: { id: true, name: true } },
-        team: {
-          select: {
-            id: true,
-            name: true,
-            brandId: true,
-            brand: { select: { id: true, name: true } },
-          },
-        },
-      },
-      where: companyId ? { companyId } : undefined,
-      orderBy: { name: 'asc' },
-    });
-
-    return users.map((u) => ({
-      ...u,
-      brandId: u.team?.brandId || undefined,
-    }));
+    return this.companyService.getUsers(companyId);
   }
 
   async createUser(data: {
@@ -328,57 +146,21 @@ export class CrudService {
     role?: string;
     passwordHash?: string;
   }) {
-    return this.prisma.user.create({
-      data,
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        companyId: true,
-        teamId: true,
-        isOnline: true,
-        lastLogin: true,
-        createdAt: true,
-        updatedAt: true,
-        company: { select: { id: true, name: true } },
-        team: { select: { id: true, name: true, brandId: true } },
-      },
-    });
+    return this.companyService.createUser(data);
   }
 
-  async updateUser(
-    id: string,
-    data: {
-      email?: string;
-      name?: string;
-      companyId?: string;
-      teamId?: string;
-      role?: string;
-    },
-  ) {
-    return this.prisma.user.update({
-      where: { id },
-      data,
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        companyId: true,
-        teamId: true,
-        isOnline: true,
-        lastLogin: true,
-        createdAt: true,
-        updatedAt: true,
-        company: { select: { id: true, name: true } },
-        team: { select: { id: true, name: true, brandId: true } },
-      },
-    });
+  async updateUser(id: string, data: {
+    email?: string;
+    name?: string;
+    companyId?: string;
+    teamId?: string;
+    role?: string;
+  }) {
+    return this.companyService.updateUser(id, data);
   }
 
   async deleteUser(id: string) {
-    return this.prisma.user.delete({ where: { id } });
+    return this.companyService.deleteUser(id);
   }
 
   // ========== KELEDONS ==========
