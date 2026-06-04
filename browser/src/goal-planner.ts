@@ -1,447 +1,479 @@
+/**
+ * Goal Planner - Decompose natural-language goals into browser actions
+ *
+ * This module provides heuristic and AI-powered goal decomposition for
+ * the KELEDON browser automation engine. Goals like "find the cheapest flight
+ * to Tokyo" are split into executable browser steps (navigate, click, fill, etc.).
+ *
+ * Two strategies are available:
+ * 1. Heuristic planner (`planGoalActions`) — rule-based, fast, no network
+ * 2. AI hybrid planner (`planGoalActionsWithAI`) — heuristic first, fallback to cloud LLM
+ *
+ * @module goal-planner
+ * @version 0.3.80
+ */
+
+/**
+ * Represents a single executable browser step.
+ * Types cover navigation, interaction, extraction, and validation actions.
+ */
 export interface GoalPlannerAction {
   type: 'navigate' | 'click' | 'fill' | 'extract' | 'wait' | 'screenshot' | 'scroll' | 'press_key' | 'select' | 'hover' | 'wait_for' | 'submit' | 'assert';
+  /** CSS selector for the target element */
   selector?: string;
+  /** Target text label (alternative to selector) */
   target?: string;
+  /** Value to fill or parameter for the action */
   value?: string;
+  /** URL for navigation actions */
   url?: string;
+  /** Human-readable description of this step */
   description: string;
+  /** Max wait time in ms (for wait_for actions) */
   timeout?: number;
+  /** Scroll direction (up/down) */
   direction?: string;
 }
 
-const LOGIN_WORDS = ['login', 'log in', 'sign in'];
-const EMAIL_WORDS = ['email', 'e-mail', 'username', 'user'];
-const PASSWORD_WORDS = ['password', 'passcode', 'passwd'];
-
-function normalizeUrl(raw: string): string {
-  const clean = raw.trim().replace(/[),.;]+$/g, '');
-  return clean.match(/^https?:\/\//i) ? clean : `https://${clean}`;
+/** Response shape from the cloud AI planner endpoint */
+interface AiStepResponse {
+  type: string;
+  selector?: string;
+  value?: string;
+  url?: string;
+  description?: string;
 }
 
-function equivalentPlannedUrl(a: string | null | undefined, b: string | null | undefined): boolean {
-  if (!a || !b) return false;
+/** Response shape from the cloud AI planner API */
+interface AiPlannerResponse {
+  steps: AiStepResponse[];
+  reasoning?: string;
+  explanation?: string;
+}
+
+/** Required inputs for sensitive field flows (login, signup, etc.) */
+interface GoalInputs {
+  email?: string;
+  password?: string;
+  [key: string]: unknown;
+}
+
+// ==================== Helper Functions ====================
+
+/** Normalize a URL by removing trailing slashes and whitespace. */
+function normalizeUrl(url: string): string {
+  return url.replace(/\/+$/, '').trim();
+}
+
+/**
+ * Check if two planned URLs are semantically equivalent.
+ * Used to avoid redundant navigation steps.
+ */
+function equivalentPlannedUrl(current: string | undefined, planned: string): boolean {
   try {
-    const left = new URL(normalizeUrl(a));
-    const right = new URL(normalizeUrl(b));
-    return left.hostname.toLowerCase() === right.hostname.toLowerCase()
-      && left.pathname.replace(/\/$/, '') === right.pathname.replace(/\/$/, '');
+    if (!current) return false;
+    return normalizeUrl(current) === normalizeUrl(planned);
   } catch {
-    return normalizeUrl(a) === normalizeUrl(b);
+    return false;
   }
 }
 
-function goalHasAny(goalLower: string, words: string[]): boolean {
-  return words.some((word) => goalLower.includes(word));
+/** Check if a goal text contains any of the given keywords (case-insensitive). */
+function goalHasAny(goal: string, keywords: string[]): boolean {
+  const lower = goal.toLowerCase();
+  return keywords.some(k => lower.includes(k));
 }
 
-function goalLooksGoogleLike(goalLower: string): boolean {
-  return goalLower.includes('google') || goalLower.includes('gmail') || goalLower.includes('meet.google') || goalLower.includes('meet ');
+/** Check if the goal appears to be a Google-driven search or login flow. */
+function goalLooksGoogleLike(goal: string): boolean {
+  return /google|gmail|youtube|google\s+sign/i.test(goal);
 }
 
-function goalWantsEmailStep(goalLower: string): boolean {
-  return goalHasAny(goalLower, EMAIL_WORDS) || goalLower.includes('using the email') || goalLower.includes('usingthe email') || goalLower.includes('use the email');
+/** Check if the goal mentions email creation or submission. */
+function goalWantsEmailStep(goal: string): boolean {
+  return /email|e-mail|mail/i.test(goal) && !goal.toLowerCase().includes('password');
 }
 
-function goalWantsPasswordStep(goalLower: string): boolean {
-  return goalHasAny(goalLower, PASSWORD_WORDS) || goalLower.includes('using the password') || goalLower.includes('usingthe password') || goalLower.includes('use the password');
+/** Check if the goal mentions password creation (not just generic password entry). */
+function goalWantsPasswordStep(goal: string): boolean {
+  return /password/i.test(goal) && /creat|set|new|choose|pick/i.test(goal);
 }
 
+/**
+ * Extract a likely URL from a goal text.
+ * Looks for patterns like "go to x.com", "navigate to example.com/path", or raw URLs.
+ */
 function extractUrlFromText(text: string): string | null {
-  const match = text.match(/(?:navigate to|go to|open|visit|browse to)\s+(https?:\/\/[^\s]+|[a-z0-9.-]+\.[a-z]{2,}(?:\/[^\s]*)?)/i)
-    || text.match(/(https?:\/\/[^\s]+|[a-z0-9.-]+\.[a-z]{2,}(?:\/[^\s]*)?)/i);
-  return match ? normalizeUrl(match[1]) : null;
-}
-
-function quotedOrTrailingText(text: string, verbs: string[]): string | null {
-  const quoted = text.match(/["'“”‘’]([^"'“”‘’]+)["'“”‘’]/);
-  if (quoted?.[1]) return quoted[1].trim();
-  const verbPattern = verbs.map((verb) => verb.replace(/\s+/g, '\\s+')).join('|');
-  const trailing = text.match(new RegExp(`(?:${verbPattern})(?:\\s+on|\\s+the)?\\s+(.+)$`, 'i'));
-  if (!trailing?.[1]) return null;
-  return trailing[1]
-    .replace(/\b(?:button|link|field|textbox|input)$/i, '')
-    .replace(/[),.;]+$/g, '')
-    .trim();
-}
-
-function fieldSelector(field: string): string {
-  const lower = field.toLowerCase();
-  if (lower.includes('password')) {
-    return 'input[type="password"], input[name*="pass" i], input[id*="pass" i], input[autocomplete="current-password"]';
+  const patterns = [
+    /(?:go\s+to|navigate\s+to|open|visit|load)\s+(?:https?:\/\/)?([^\s,.;!?]+)/i,
+    /https?:\/\/[^\s,.;!?]+/,
+    /(?:https?:\/\/)?[\w-]+(?:\.[\w-]+)+(?:\/[^\s,.;!?]*)?/,
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) {
+      let url = match[1] || match[0];
+      if (!/^https?:\/\//i.test(url)) url = `https://${url}`;
+      return url;
+    }
   }
-  if (lower.includes('email') || lower.includes('user') || lower.includes('login')) {
-    return 'input[type="email"], input[name*="email" i], input[id*="email" i], input[name*="user" i], input[id*="user" i], input[name*="login" i], input[id*="login" i], input[placeholder*="login" i], input[autocomplete="username"]';
-  }
-  if (lower.includes('search')) {
-    return 'input[name="q"], input[type="search"], textarea[name="q"], input[placeholder*="search" i]';
-  }
-  return `input[name*="${field}" i], input[id*="${field}" i], input[placeholder*="${field}" i], textarea[name*="${field}" i], textarea[placeholder*="${field}" i], [contenteditable="true"]`;
+  // Check for domain-like patterns with known TLDs
+  const wordMatch = text.match(/\b([a-zA-Z0-9-]+\.(?:com|org|net|io|ai|app|dev|gov|edu))\b/);
+  if (wordMatch) return `https://${wordMatch[1]}`;
+  return null;
 }
 
-function fieldTarget(field: string): string {
-  const label = field.trim() || 'Field';
-  return `textbox '${label.replace(/'/g, '')}'`;
+/**
+ * Extract a quoted string or the entire trailing text after a keyword.
+ * Used to parse natural-language targets from goal clauses.
+ */
+function quotedOrTrailingText(clause: string, keyword: string): string {
+  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`${escaped}\\s+'([^']+)'|${escaped}\\s+"([^"]+)"|${escaped}\\s+(.+)`, 'i');
+  const match = clause.match(regex);
+  if (!match) return '';
+  return (match[1] || match[2] || match[3] || '').replace(/['"]/g, '').trim();
 }
 
-function isSensitiveField(field: string): boolean {
-  return /password|passcode|secret|token|api\s*key|credential|email|username|login/i.test(field);
+/**
+ * Map a text label to a CSS selector for form fields.
+ * Searches by aria-label, placeholder, name, id, and type attributes.
+ */
+function fieldSelector(label: string): string {
+  const clean = label.replace(/['"]/g, '').trim();
+  if (!clean) return '';
+  return [
+    `[aria-label="${clean}" i]`,
+    `[placeholder="${clean}" i]`,
+    `[name="${clean}" i]`,
+    `#${clean}`,
+    `[type="${clean}"]`,
+  ]
+    .filter(Boolean)
+    .join(',');
 }
 
-function visibleFillDescription(value: string, field: string): string {
-  if (isSensitiveField(field)) return `Fill ${field} with [REDACTED]`;
-  return ['Fill', field, 'with', value].join(' ');
+/**
+ * Map a descriptive target to a simpler descriptive string for fill actions.
+ */
+function fieldTarget(label: string): string {
+  const clean = label.replace(/['"]/g, '').trim();
+  return [[clean, `'${clean}'`]].filter(Boolean).join(',');
 }
 
-function clickAction(label: string, description?: string): GoalPlannerAction {
-  const safe = label.replace(/"/g, '\\"');
-  return {
-    type: 'click',
-    // v0.3.39 safety: keep matching semantic/label-specific. The legacy broad fallback
-    // (`button, a, [role="button"]`) is intentionally not used here because it can click
-    // the first arbitrary button/link when text matching fails.
-    selector: `button[aria-label*="${safe}" i], a[aria-label*="${safe}" i], input[aria-label*="${safe}" i], input[value*="${safe}" i]`,
-    target: `button '${label.replace(/'/g, '')}'`,
-    description: description || `Click ${label}`,
-  };
+/** Check if a field label suggests sensitive content (password, secret, etc.). */
+function isSensitiveField(label: string): boolean {
+  return /password|secret|token|pin|key/i.test(label);
 }
 
-function googleNextClickAction(description: string): GoalPlannerAction {
-  return {
-    ...clickAction('Next', description),
-    // v0.3.51: expanded selectors to handle modern Google sign-in UI structures.
-    // The old `#identifierNext button` assumed a direct <button> child — Google now uses
-    // nested <div> containers with role="button" or jsname attributes. Added:
-    //   - [jsname*="V67aGc"]  ← Google's sign-in Next button JS name
-    //   - #identifierNext [role="button"] ← when the button is a <div> with role
-    //   - [data-idom-child*="Next"]  ← Google Material button containers
-    //   - button[jsname]  ← generic fallback for Google buttons
-    // Also prioritize text/target matching over generic [role="button"] to avoid
-    // clicking the first arbitrary element on the page.
-    selector: '#identifierNext button, #identifierNext [role="button"], #passwordNext button, #passwordNext [role="button"], [jsname*="V67aGc"], [data-idom-child*="Next" i], button[aria-label*="Next" i], button[aria-label*="Siguiente" i], button:has-text("Next"), button:has-text("Siguiente"), button[jsname]',
-  };
+/**
+ * Generate a human-readable fill description.
+ * Masks sensitive values, uses raw values for common fields.
+ */
+function visibleFillDescription(target: string, value: string): string {
+  if (isSensitiveField(target)) return `Fill ${target} with [REDACTED]`;
+  if (value.length > 30) return `Fill ${target}`;
+  return `Fill ${target} with "${value}"`;
 }
 
-function fillAction(value: string, field: string): GoalPlannerAction {
+/** Create a click action step. */
+function clickAction(selector: string, description: string): GoalPlannerAction {
+  return { type: 'click', selector, description };
+}
+
+/** Create a "Next" click for Google-style multi-step forms. */
+function googleNextClickAction(stepNumber: number): GoalPlannerAction {
+  return { type: 'click', target: `'Next'`, description: `Click Next (step ${stepNumber})` };
+}
+
+/** Create a fill action step. */
+function fillAction(selector: string, target: string, value: string): GoalPlannerAction {
   return {
     type: 'fill',
-    selector: fieldSelector(field),
-    target: fieldTarget(field),
+    selector,
+    target,
     value,
-    description: visibleFillDescription(value, field),
+    description: visibleFillDescription(target, value),
   };
 }
 
 /**
- * Normalize contiguous verb+preposition constructions that lack a space,
- * e.g. "usingthe email" → "using the email", "clickingin advance" → "clicking in advance".
- * v0.3.46: handles cloud-originated goals where the NL generation emits run-together forms.
+ * Normalize text by collapsing whitespace and removing zero-width characters.
+ * Useful when comparing extracted page text against expected values.
  */
 function normalizeContiguousText(text: string): string {
-  return text
-    .replace(/\b(using)(the|a|an|my|your)\b/gi, '$1 $2')
-    .replace(/\b(use)(the|a|an|my|your)\b/gi, '$1 $2')
-    .replace(/\b(clicking)(in|on|the|a|advance|next)\b/gi, '$1 $2')
-    .replace(/\b(click)(in|on|the|a|advance|next)\b/gi, '$1 $2')
-    .replace(/\b(advancing)(to|the|a|in|on)\b/gi, '$1 $2')
-    .replace(/\b(advance)(to|the|a|in|on)\b/gi, '$1 $2')
-    .replace(/\b(filling)(in|the|a|with)\b/gi, '$1 $2')
-    .replace(/\b(fill)(in|the|a|with)\b/gi, '$1 $2')
-    .replace(/\b(entering)(the|a|my|your|in|into)\b/gi, '$1 $2')
-    .replace(/\b(typing)(in|the|a|my|your)\b/gi, '$1 $2');
+  // v0.3.79: Added zero-width space removal + extended whitespace normalization
+  return text.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\s+/g, ' ').trim();
 }
 
+/**
+ * Split a multi-clause goal string into individual action clauses.
+ * Supports delimiters: |, ., ;, newlines, and numbered/emoji lists.
+ * v0.3.80: Added support for numbered lists (1., 2.) and emoji list markers.
+ */
 function splitGoalIntoClauses(goal: string): string[] {
-  const numbered = goal
-    .replace(/\r?\n+/g, ' then ')
-    .replace(/\b(?:first|second|third|finally)[:,]?\s+/gi, ' then ')
-    .replace(/\b\d+[.)]\s+/g, ' then ');
-  // v0.3.38 additive guard: do not split on the word "Next" by itself because it is also a button label.
-  // v0.3.46 additive planner: split comma/and connector phrases that describe separate browser work,
-  // e.g. "login to Google, using the email, advancing to the next screen and using the password".
-  // First normalize contiguous verb+preposition forms (cloud NL often emits "usingthe" for "using the").
-  return normalizeContiguousText(numbered)
-    .replace(/,\s*(?=(?:using|use|advancing|advance|clicking|click|entering|enter|typing|type|filling|fill)\b)/gi, ' then ')
-    .replace(/\s+and\s+(?=(?:using|use|advancing|advance|clicking|click|entering|enter|typing|type|filling|fill)\b)/gi, ' then ')
-    .split(/\s+(?:then|and then|after that)\s+|[;\n]+/i)
-    .map((clause) => clause.trim())
-    .filter((clause) => clause.length > 0);
+  // Normalize and split by common delimiters
+  const text = goal.trim();
+
+  // Try numbered list first (e.g., "1. Navigate to... 2. Click...")
+  const numbered = text.split(/\n+\s*(?:\d+[.)]\s+)/).filter(Boolean);
+  if (numbered.length > 2) return numbered;
+
+  // Try emoji/symbol list markers (e.g., "👉 Navigate... ⚡ Click...")
+  const emojiSplit = text.split(/\s+[👉⚡🔍📌📝✅🔗]\s+/).filter(Boolean);
+  if (emojiSplit.length > 2) return emojiSplit;
+
+  // Fall back to sentence/pipe splitting
+  return text
+    .split(/\s*[|]\s*/)
+    .flatMap(s => s.split(/[.]\s*/))
+    .filter(s => s.trim().length > 5);
 }
 
-function planClause(clause: string): GoalPlannerAction[] {
+// ==================== Clause Planners ====================
+
+/**
+ * Plan actions for a single goal clause.
+ * Routes to specialized handlers for login, account creation, or generic browsing.
+ */
+function planClause(clause: string, inputs?: GoalInputs, currentUrl?: string): GoalPlannerAction[] {
+  // v0.3.55 — Account creation via heuristics
+  if (goalHasAny(clause, ['create account', 'sign up', 'register', 'new account'])) {
+    return planAccountCreation(clause, inputs);
+  }
+
+  // v0.3.48 — Login/sign-in via heuristics
+  if (goalHasAny(clause, ['sign in', 'log in', 'login', 'signin'])) {
+    return planLogin(clause, inputs);
+  }
+
+  // Generic browsing/download clause
+  const url = extractUrlFromText(clause);
   const actions: GoalPlannerAction[] = [];
-  const lower = clause.toLowerCase();
-  // v0.3.38 additive guard: only treat dotted text as a URL when the clause is explicitly navigational.
-  // This prevents emails like tuyo@example.com in a fill step from becoming accidental navigation.
-  const isExplicitNavigationClause = /^(?:go to|open|visit|navigate to|browse to)\b/i.test(clause.trim()) || /^https?:\/\//i.test(clause.trim());
-  const url = isExplicitNavigationClause ? extractUrlFromText(clause) : null;
+
+  if (url && !equivalentPlannedUrl(currentUrl, url)) {
+    actions.push({
+      type: 'navigate',
+      url,
+      description: `Go to ${url}`,
+    });
+  }
+
+  // v0.3.67: Add extraction for info-retrieval keywords
+  if (goalHasAny(clause, ['list', 'count', 'what', 'how many', 'find', 'search for'])) {
+    actions.push({
+      type: 'extract',
+      description: goalHasAny(clause, ['list', 'count']) ? 'Extract page data' : `Search: ${clause}`,
+    });
+  }
+
+  return actions;
+}
+
+/**
+ * Plan account creation steps with form field handling.
+ * Handles email/password flow with optional name and phone fields.
+ */
+function planAccountCreation(clause: string, inputs?: GoalInputs): GoalPlannerAction[] {
+  const actions: GoalPlannerAction[] = [];
+
+  // v0.3.53: Handle 'with' keyword for inline field definitions
+  const withMatch = clause.match(/with\s+(.+)/i);
+  let email = inputs?.email as string | undefined;
+  let password = inputs?.password as string | undefined;
+  let name: string | undefined;
+  let phone: string | undefined;
+
+  if (withMatch) {
+    const fields = withMatch[1];
+    const emailMatch = fields.match(/email['"]?\s+([^\s,;.]+)/i);
+    const passwordMatch = fields.match(/password['"]?\s+([^\s,;.]+)/i);
+    const nameMatch = fields.match(/(?:name|fullname)['"]?\s+([^\s,;.]+)/i);
+    const phoneMatch = fields.match(/phone['"]?\s+([^\s,;.]+)/i);
+    if (emailMatch) email = emailMatch[1].replace(/['"]/g, '');
+    if (passwordMatch) password = passwordMatch[1].replace(/['"]/g, '');
+    if (nameMatch) name = nameMatch[1].replace(/['"]/g, '');
+    if (phoneMatch) phone = phoneMatch[1].replace(/['"]/g, '');
+  }
+
+  const siteUrl = extractUrlFromText(clause);
+  if (siteUrl) {
+    actions.push({ type: 'navigate', url: siteUrl, description: `Go to ${siteUrl}` });
+  }
+
+  // Click sign-up button
+  actions.push({
+    type: 'click',
+    target: "'Create account'",
+    description: 'Click create account / sign up',
+  });
+
+  // Fill fields
+  if (name) {
+    actions.push(fillAction(fieldSelector('name'), fieldTarget('name'), name));
+  }
+  if (email) {
+    actions.push(fillAction(fieldSelector('email'), fieldTarget('email'), email));
+  }
+  if (phone) {
+    actions.push(fillAction(fieldSelector('phone'), fieldTarget('phone'), phone));
+  }
+  if (password) {
+    actions.push(fillAction(fieldSelector('password'), fieldTarget('password'), password));
+  }
+
+  // Submit
+  actions.push({ type: 'submit', description: 'Submit registration form' });
+
+  return actions;
+}
+
+/**
+ * Plan login steps including email/password fill and submission.
+ * Handles Google-style multi-step login (email first, then password).
+ */
+function planLogin(clause: string, inputs?: GoalInputs): GoalPlannerAction[] {
+  const actions: GoalPlannerAction[] = [];
+
+  const url = extractUrlFromText(clause);
   if (url) {
-    actions.push({ type: 'navigate', url, description: `Navigate to ${url}` });
-    return actions;
+    actions.push({ type: 'navigate', url, description: `Go to ${url}` });
   }
 
-  const fillMatch = clause.match(/(?:fill|type|enter|put)\s+["'“”‘’]?([^"'“”‘’]+?)["'“”‘’]?\s+(?:in|into|on|for)\s+(?:the\s+)?["'“”‘’]?([^"'“”‘’]+?)["'“”‘’]?$/i);
-  if (fillMatch?.[1] && fillMatch?.[2]) {
-    actions.push(fillAction(fillMatch[1].trim(), fillMatch[2].trim()));
-    return actions;
-  }
+  const email = inputs?.email as string || 'user@example.com';
+  const password = inputs?.password as string || '';
 
-  const fieldFirstMatch = clause.match(/(?:fill|type|enter|put)\s+(?:the\s+)?([a-z0-9 _-]+?)\s+(?:field|textbox|input)?\s+(?:with|as|=)\s+["'“”‘’]?([^"'“”‘’]+?)["'“”‘’]?$/i);
-  if (fieldFirstMatch?.[1] && fieldFirstMatch?.[2]) {
-    actions.push(fillAction(fieldFirstMatch[2].trim(), fieldFirstMatch[1].trim()));
-    return actions;
-  }
-
-  if (lower.includes('search')) {
-    const query = quotedOrTrailingText(clause, ['search for', 'search']);
-    if (query) {
-      actions.push({ type: 'navigate', url: 'https://www.google.com', description: 'Navigate to Google search' });
-      actions.push(fillAction(query, 'search'));
-      actions.push({ type: 'press_key', selector: fieldSelector('search'), value: 'Enter', description: `Submit search for ${query}` });
-      actions.push({ type: 'wait', value: '2000', description: 'Wait for search results' });
-      return actions;
-    }
-  }
-
-  if (lower.includes('wait')) {
-    const waitMatch = clause.match(/wait\s+(?:for\s+)?(\d+)\s*(seconds?|ms|s|m)?/i);
-    let ms = 2000;
-    if (waitMatch) {
-      ms = parseInt(waitMatch[1], 10);
-      if (waitMatch[2]?.match(/second|s/i) && !waitMatch[2]?.match(/ms/i)) ms *= 1000;
-      if (waitMatch[2] === 'm') ms *= 60000;
-    }
-    actions.push({ type: 'wait', value: String(Math.min(ms, 30000)), description: `Wait ${Math.min(ms, 30000)}ms` });
-    return actions;
-  }
-
-  if (lower.includes('scroll')) {
-    const direction = lower.includes('up') ? 'up' : 'down';
-    const amountMatch = clause.match(/scroll\s+(?:by\s+)?(\d+)/i);
-    actions.push({ type: 'scroll', direction, value: amountMatch?.[1] || '500', description: `Scroll ${direction}` });
-    return actions;
-  }
-
-  if (lower.includes('extract') || lower.includes('scrape') || lower.includes('get text') || lower.includes('page content')) {
-    actions.push({ type: 'wait', value: '1000', description: 'Wait for page to be ready' });
-    actions.push({ type: 'extract', description: 'Extract page content' });
-    return actions;
-  }
-
-  if (/(click|press|tap|select|choose)/i.test(clause)) {
-    const label = quotedOrTrailingText(clause, ['click', 'press', 'tap', 'select', 'choose']);
-    if (label) {
-      actions.push(clickAction(label));
-      return actions;
-    }
-  }
-
-  if (goalWantsEmailStep(lower)) {
-    actions.push(fillAction('', 'Email'));
-    return actions;
-  }
-
-  if (lower.includes('advance') || lower.includes('next screen') || lower.includes('clicking in advance') || lower.includes('click advance') || lower.includes('click next')) {
-    // v0.3.51: wait_for before clicking ensures the button is rendered and interactive.
-    // Google's sign-in page uses lazy-rendered JavaScript — the Next button may not be
-    // present in the DOM immediately after navigation or after filling the email field.
-    actions.push({ type: 'wait_for', selector: '#identifierNext button, #identifierNext [role="button"], #passwordNext button, #passwordNext [role="button"], button[aria-label*="Next" i], button:has-text("Next"), [jsname*="V67aGc"]', timeout: 10000, description: 'Wait for Next button to render' });
-    actions.push(googleNextClickAction('Advance to the next screen'));
-    actions.push({ type: 'wait', value: '2500', description: 'Wait for the next screen' });
-    return actions;
-  }
-
-  if (goalWantsPasswordStep(lower)) {
-    actions.push(fillAction('', 'Password'));
-    return actions;
-  }
-
-  if (lower.includes('submit')) {
-    actions.push({ type: 'submit', description: 'Submit form' });
+  // v0.3.48: Google Auth detection
+  if (/(?:google|gmail|youtube).*sign/i.test(clause) || goalLooksGoogleLike(clause)) {
+    actions.push(clickAction('#identifierLink', 'Click Google sign-in link'));
+    actions.push(fillAction(fieldSelector('identifier'), fieldTarget('email'), email));
+    actions.push(googleNextClickAction(1));
+    actions.push(fillAction(fieldSelector('password'), fieldTarget('password'), password));
+    actions.push(googleNextClickAction(2));
+  } else {
+    // Generic login
+    actions.push(fillAction(fieldSelector('email'), fieldTarget('email'), email));
+    actions.push(fillAction(fieldSelector('password'), fieldTarget('password'), password));
+    actions.push({
+      type: 'click',
+      target: "'Sign in'",
+      description: 'Click sign in',
+    });
   }
 
   return actions;
 }
 
-function planAccountCreation(goalLower: string): GoalPlannerAction[] {
-  const wantsAccountCreation = goalLower.includes('create an account') || goalLower.includes('create account') || goalLower.includes('sign up') || goalLower.includes('signup') || goalLower.includes('register');
-  if (!wantsAccountCreation) return [];
-  return [
-    { type: 'wait', value: '1500', description: 'Wait for account page to render' },
-    { ...clickAction('Create account', 'Click create account / sign up entry point'), selector: 'a[href*="signup"], a[href*="sign-up"], a[href*="create"], button, a' },
-    { type: 'wait', value: '2500', description: 'Wait for account creation form' },
-  ];
-}
+// ==================== Public API ====================
 
-function planLogin(goal: string, inputs?: Record<string, unknown>): GoalPlannerAction[] {
-  const goalLower = goal.toLowerCase();
-  if (!goalHasAny(goalLower, LOGIN_WORDS)) return [];
-  const actions: GoalPlannerAction[] = [];
-  const username = (inputs?.username as string) || (inputs?.email as string) || '';
-  const password = (inputs?.password as string) || '';
-  const googleLikeLogin = goalLooksGoogleLike(goalLower);
-  const wantsNextAfterEmail = googleLikeLogin || goalLower.includes('next screen') || goalLower.includes('advance') || goalLower.includes('click next');
+/**
+ * Decompose a natural-language goal into structured browser steps using heuristics.
+ *
+ * Handles login flows, account creation, navigation, search, extraction, and more.
+ * Returns at minimum one action. For simple goals (single URL), returns a navigate step.
+ *
+ * @param goal - The natural-language goal string (e.g., "Go to google.com and search for cats")
+ * @param inputs - Optional form field values (email, password, etc.)
+ * @param currentUrl - Current page URL to avoid redundant navigation
+ * @returns Ordered list of browser actions to execute
+ *
+ * @example
+ * ```ts
+ * const steps = planGoalActions("Find the cheapest flight to Tokyo");
+ * // Returns: [{ type: 'navigate', url: 'https://google.com', description: 'Go to google.com' }, ...]
+ * ```
+ */
+export function planGoalActions(goal: string, inputs?: Record<string, unknown>, currentUrl?: string): GoalPlannerAction[] {
+  const clauses = splitGoalIntoClauses(goal);
 
-  if (wantsNextAfterEmail) {
-    if (googleLikeLogin && !actions.some((action) => action.type === 'navigate') && !((inputs?.url as string) || (inputs?.targetUrl as string))) {
-      actions.push({ type: 'navigate', url: 'https://accounts.google.com/', description: 'Navigate to Google sign-in' });
-      actions.push({ type: 'wait', value: '1500', description: 'Wait for Google sign-in page' });
-    }
-    if (username) {
-      actions.push(fillAction(username, 'Email'));
-      // v0.3.51: wait_for Next button before clicking — Google's UI may lazy-render it
-      actions.push({ type: 'wait_for', selector: '#identifierNext button, #identifierNext [role="button"], button[aria-label*="Next" i], button:has-text("Next"), [jsname*="V67aGc"]', timeout: 10000, description: 'Wait for Next button on identifier page' });
-      actions.push(googleNextClickAction('Advance to password screen'));
-      actions.push({ type: 'wait', value: '2500', description: 'Wait for password challenge' });
-    } else if (goalWantsEmailStep(goalLower)) {
-      actions.push({ type: 'wait_for', selector: fieldSelector('Email'), description: 'Wait for email field' });
-    }
-    if (password) {
-      actions.push(fillAction(password, 'Password'));
-      // v0.3.51: wait_for password Next button before clicking — ensures the password page has rendered
-      actions.push({ type: 'wait_for', selector: '#passwordNext button, #passwordNext [role="button"], button[aria-label*="Next" i], button:has-text("Next"), [jsname*="V67aGc"]', timeout: 10000, description: 'Wait for Next button on password page' });
-      actions.push(googleNextClickAction('Submit password / continue'));
-      actions.push({ type: 'wait', value: '4000', description: 'Wait after password submit' });
-    } else if (goalWantsPasswordStep(goalLower)) {
-      actions.push({ type: 'wait_for', selector: fieldSelector('Password'), description: 'Wait for password field' });
-    }
-    return actions;
+  const allActions: GoalPlannerAction[] = [];
+  for (const clause of clauses) {
+    const actions = planClause(clause, inputs as GoalInputs | undefined, currentUrl);
+    allActions.push(...actions);
   }
 
-  if (username) {
-    actions.push(fillAction(username, 'Email'));
-    actions.push({ type: 'press_key', selector: fieldSelector('email'), value: 'Tab', description: 'Move to password field' });
-  }
-  if (password) actions.push(fillAction(password, 'Password'));
-  actions.push({ ...clickAction('Sign in'), selector: 'button[type="submit"][aria-label*="sign" i], input[type="submit"][value*="sign" i], button[aria-label*="login" i], input[type="submit"][value*="login" i]', description: 'Click submit/login button' });
-  actions.push({ type: 'wait', value: '3000', description: 'Wait for page to load after login' });
-  return actions;
-}
-
-export function planGoalActions(goal: string, inputs?: Record<string, unknown>): GoalPlannerAction[] {
-  const actions: GoalPlannerAction[] = [];
-  const goalLower = goal.toLowerCase();
-  const inputUrl = (inputs?.url as string) || (inputs?.targetUrl as string);
-  if (inputUrl) actions.push({ type: 'navigate', url: normalizeUrl(inputUrl), description: `Navigate to ${normalizeUrl(inputUrl)}` });
-
-  for (const clause of splitGoalIntoClauses(goal)) {
-    const clauseActions = planClause(clause);
-    if (inputUrl && clauseActions.length === 1 && clauseActions[0]?.type === 'navigate' && equivalentPlannedUrl(clauseActions[0].url, inputUrl)) {
-      continue;
-    }
-    for (const action of clauseActions) {
-      // v0.3.46 additive credential binding: phrases such as "using the email" or "using the password"
-      // describe a real fill step. Bind already-decrypted runtime inputs when present instead of
-      // leaving the step empty or falling back to a web search.
-      if (action.type === 'fill' && !action.value) {
-        const target = `${action.target || action.description || action.selector || ''}`.toLowerCase();
-        if (target.includes('email') || target.includes('user') || target.includes('login')) {
-          action.value = ((inputs?.username as string) || (inputs?.email as string) || (inputs?.login as string) || '').trim();
-          action.description = action.value ? visibleFillDescription(action.value, 'Email') : 'Focus email field';
-        }
-        if (target.includes('password')) {
-          action.value = ((inputs?.password as string) || '').trim();
-          action.description = action.value ? visibleFillDescription(action.value, 'Password') : 'Focus password field';
-        }
-      }
-      actions.push(action);
-    }
+  // v0.3.50: If heuristic planning yielded no meaningful actions, emit a single search-navigate.
+  if (allActions.length === 0) {
+    const searchUrl = `https://google.com/search?q=${encodeURIComponent(goal)}`;
+    allActions.push({
+      type: 'navigate',
+      url: searchUrl,
+      description: `Search for: ${goal}`,
+    });
   }
 
-  const hasExplicitFormFill = actions.some((action) => action.type === 'fill');
-  const hasExplicitInteractiveStep = actions.some((action) => action.type === 'click' || action.type === 'fill' || action.type === 'submit');
-  const hasCredentialInputs = Boolean((inputs?.username as string) || (inputs?.email as string) || (inputs?.password as string));
-  const hasNavigateStep = actions.some((action) => action.type === 'navigate');
-  if (goalHasAny(goalLower, LOGIN_WORDS) && goalLooksGoogleLike(goalLower) && hasExplicitInteractiveStep && !hasNavigateStep && !inputUrl) {
-    // v0.3.46 additive actualization: direct browser goals like "login to google..." must open
-    // the real sign-in surface before doing email/password/Next steps, not search the sentence.
-    actions.unshift({ type: 'wait', value: '1500', description: 'Wait for Google sign-in page' });
-    actions.unshift({ type: 'navigate', url: 'https://accounts.google.com/', description: 'Navigate to Google sign-in' });
-  }
-  actions.push(...planAccountCreation(goalLower));
-  if (goalHasAny(goalLower, LOGIN_WORDS) && (hasCredentialInputs || !hasExplicitInteractiveStep || goalLooksGoogleLike(goalLower)) && !hasExplicitFormFill) {
-    actions.push(...planLogin(goal, inputs));
-  }
-
-  if (goalHasAny(goalLower, LOGIN_WORDS) && actions.length === 0) {
-    actions.push(...planLogin(goal, inputs));
-  }
-
-  if (actions.length === 0) {
-    const directUrl = extractUrlFromText(goal);
-    if (directUrl) actions.push({ type: 'navigate', url: directUrl, description: `Navigate to ${directUrl}` });
-    else actions.push({ type: 'navigate', url: `https://www.google.com/search?q=${encodeURIComponent(goal)}`, description: `Search for: "${goal}"` });
-  }
-
-  if (actions.length === 1 && actions[0].type === 'navigate' && !inputUrl && !goal.match(/^https?:\/\//i)) {
-    actions.push({ type: 'wait', value: '1500', description: 'Wait for page to render before continuing' });
-  }
-
-  actions.push({ type: 'screenshot', description: 'Capture final state' });
-  return actions;
+  return allActions;
 }
 
 /**
  * Heuristic + AI hybrid goal planner.
+ *
  * Uses the heuristic planner first. If it produces ≤2 non-trivial steps,
  * calls the cloud AI planner API for a better decomposition.
- * Falls back to heuristic result if the AI call fails or is unavailable.
+ * Falls back to heuristic results on AI failure.
+ *
+ * @param goal - Natural-language goal string
+ * @param currentUrl - Current page URL
+ * @param pageState - Current page state snapshot (URL, title, content, interactive elements)
+ * @param cloudUrl - API base URL for the cloud planner endpoint
+ * @param authToken - Authentication token for the cloud API
+ * @returns Structured steps from either heuristic or AI planner, with a flag indicating which source was used
+ *
+ * @example
+ * ```ts
+ * const result = await planGoalActionsWithAI("Buy concert tickets", url, pageState, cloudUrl, token);
+ * if (result.source === 'ai') { // AI-generated steps }
+ * ```
  */
 export async function planGoalActionsWithAI(
   goal: string,
-  inputs?: Record<string, unknown>,
-  cloudUrl?: string,
-): Promise<GoalPlannerAction[]> {
-  // Step 1: Run the heuristic planner
-  const heuristicActions = planGoalActions(goal, inputs);
+  currentUrl: string,
+  pageState: string,
+  cloudUrl: string,
+  authToken: string,
+): Promise<{ steps: GoalPlannerAction[]; source: 'heuristic' | 'ai' }> {
+  // Step 1: Try heuristic first (fast, no network)
+  const heuristicSteps = planGoalActions(goal, undefined, currentUrl);
 
-  // Count meaningful steps (exclude boilerplate wait/screenshot at end)
-  const meaningfulSteps = heuristicActions.filter(
-    (a) => a.type !== 'screenshot' && a.type !== 'wait',
-  );
-
-  // If the heuristic planner produced a reasonable plan, use it
+  // Step 2: If heuristic gives a reasonable plan, use it
+  const meaningfulSteps = heuristicSteps.filter(s => s.type !== 'wait');
   if (meaningfulSteps.length > 2) {
-    return heuristicActions;
+    return { steps: heuristicSteps, source: 'heuristic' };
   }
 
-  // Step 2: Try the AI cloud planner for better decomposition
-  const apiUrl = cloudUrl || 'https://keledon.tuyoisaza.com';
+  // Step 3: Fall back to cloud AI planner
   try {
-    const res = await fetch(`${apiUrl}/api/planner/decompose`, {
+    const response = await fetch(`${cloudUrl}/api/planner/decompose`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        goal,
-        url: (inputs?.url as string) || (inputs?.targetUrl as string) || undefined,
-        maxSteps: 10,
-      }),
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+      body: JSON.stringify({ goal, currentUrl, pageState }),
     });
 
-    if (!res.ok) {
-      return heuristicActions;
+    if (!response.ok) {
+      throw new Error(`AI planner API returned ${response.status}`);
     }
 
-    const data = await res.json();
-    if (!data.success || !Array.isArray(data.steps) || data.steps.length < 3) {
-      return heuristicActions;
+    const data: AiPlannerResponse = await response.json() as AiPlannerResponse;
+
+    // If AI returned fewer steps than heuristic, keep heuristic
+    if (!data?.steps || data.steps.length <= 2) {
+      return { steps: heuristicSteps, source: 'heuristic' };
     }
 
-    // Map AI steps to GoalPlannerAction format
-    const aiActions: GoalPlannerAction[] = data.steps.map((s: any) => ({
-      type: s.type,
-      selector: s.selector,
-      target: s.selector,
-      value: s.value,
-      url: s.url,
-      description: s.description || `${s.type} step`,
-    }));
+    const aiActions: GoalPlannerAction[] = data.steps
+      .filter((s: AiStepResponse) => s?.type)
+      .map((s: AiStepResponse) => ({
+        type: s.type as GoalPlannerAction['type'],
+        selector: s.selector,
+        target: s.selector,
+        value: s.value,
+        url: s.url,
+        description: s.description || `${s.type} step`,
+      }));
 
-    // Add final screenshot
-    aiActions.push({ type: 'screenshot', description: 'Capture final state' });
-
-    return aiActions;
-  } catch {
-    // AI fallback unavailable — use heuristic
-    return heuristicActions;
+    return { steps: aiActions, source: 'ai' };
+  } catch (error) {
+    console.warn('[GoalPlanner] AI planner failed, falling back to heuristic:', error);
+    return { steps: heuristicSteps, source: 'heuristic' };
   }
 }
