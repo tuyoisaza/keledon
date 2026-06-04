@@ -22,41 +22,12 @@ import {
     getCompanies,
     getTeams,
     type Brand,
-    type BrainChatMessage,
     type Company,
     type Team,
 } from '@/lib/crud-api';
 
-type ChatRole = BrainChatMessage['role'];
-
-interface ChatLine {
-    id: string;
-    role: ChatRole;
-    content: string;
-    timestamp: string;
-}
-
-const STORAGE_KEY = 'keledon-brain-context';
-const AUTOSPEAK_KEY = 'keledon-brain-autospeak';
-
-function storageKeyFor(userId?: string) {
-    return userId ? `${STORAGE_KEY}:${userId}` : STORAGE_KEY;
-}
-
-function readStoredContext(key: string) {
-    if (typeof window === 'undefined') return {};
-    try {
-        const raw = window.localStorage.getItem(key);
-        return raw ? JSON.parse(raw) : {};
-    } catch {
-        return {};
-    }
-}
-
-function saveStoredContext(key: string, data: Record<string, string | undefined>) {
-    if (typeof window === 'undefined') return;
-    window.localStorage.setItem(key, JSON.stringify(data));
-}
+import type { ChatLine } from './brain-types';
+import { storageKeyFor, readStoredContext, saveStoredContext, AUTOSPEAK_KEY } from './brain-storage';
 
 export default function BrainPage() {
     const { user } = useAuth();
