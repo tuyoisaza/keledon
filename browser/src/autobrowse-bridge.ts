@@ -5,62 +5,20 @@
 
 import log from 'electron-log';
 import { BrowserWindow, BrowserView, ipcRenderer } from 'electron';
-import { chromium, Browser, BrowserContext, Page } from 'playwright-core';
 import { planGoalActions, planGoalActionsWithAI } from './goal-planner';
 import type { GoalPlannerAction as GoalAction } from './goal-planner';
 import type { RpaStep } from './rpa-executor';
 import { runtimeStatus } from './runtime-state';
 import { executeAction } from './autobrowse-actions';
 import type { StepResult } from './autobrowse-actions';
-
-interface BridgeGoalInput {
-  execution_id?: string;
-  goal: string;
-  inputs?: Record<string, unknown>;
-  constraints?: {
-    max_steps?: number;
-    timeout_ms?: number;
-  };
-  success_criteria?: string;
-}
-
-interface BridgeExecutionResult {
-  execution_id: string;
-  status: 'running' | 'completed' | 'failed' | 'aborted';
-  goal_status: 'success' | 'failed' | 'uncertain' | 'aborted';
-  steps: StepResult[];
-  duration: number;
-  artifacts: {
-    screenshots: string[];
-    logs: string[];
-  };
-  error?: string;
-}
-
-/**
- * Browser state snapshot.
- * @deprecated Types moved to autobrowse-actions.ts — StepResult is imported from there.
- * GoalAction is now an alias for GoalPlannerAction from goal-planner.ts.
- * RpaStep is imported from rpa-executor.ts.
- */
-interface BrowserState {
-  url: string;
-  title: string;
-  tabs: { id: string; url: string; title: string }[];
-}
-
-// GoalAction is now an alias for GoalPlannerAction — imported at top.
-// Legacy definition preserved below for reference:
-// type GoalAction = GoalPlannerAction;
-// type RpaStep   = import('./rpa-executor').RpaStep;
+import { connectCDP, disconnectCDP, getCdpBrowser, getCdpContext, getCdpPort } from './autobrowse-cdp';
+import { mapGoalToActions, callPlannerAPI } from './autobrowse-planner';
+import type { BridgeGoalInput, BridgeExecutionResult, BrowserState } from './autobrowse-types';
 
 let isInitialized = false;
 let mainWindow: BrowserWindow | null = null;
-let cdpBrowser: Browser | null = null;
-let cdpContext: BrowserContext | null = null;
 let electronTabs: { id: string; name: string; url: string; view: BrowserView | null }[] = [];
 let activeTabId: string = 'home';
-const CDP_PORT = parseInt(process.env.KELEDON_CDP_PORT || '9222', 10);
 
 // ==================== Abort Mechanism ====================
 
@@ -101,233 +59,7 @@ export function setTabs(tabList: typeof electronTabs, activeId: string) {
   activeTabId = activeId;
 }
 
-// ==================== CDP Connection (OPTIONAL FALLBACK) ====================
-
-async function connectCDP(): Promise<{ browser: Browser; page: Page } | null> {
-  const cdpUrl = `http://localhost:${CDP_PORT}`;
-  log.info(`[AutoBrowse] Connecting to CDP at ${cdpUrl}`);
-
-  try {
-    if (!cdpBrowser || !cdpBrowser.isConnected()) {
-      cdpBrowser = await chromium.connectOverCDP(cdpUrl);
-      const contexts = cdpBrowser.contexts();
-      cdpContext = contexts[0] || await cdpBrowser.newContext();
-      log.info('[AutoBrowse] CDP connected successfully');
-    }
-
-    const pages = cdpContext?.pages() || [];
-    log.info(`[AutoBrowse] Found ${pages.length} CDP pages`);
-
-    const activeTab = electronTabs.find(t => t.id === activeTabId);
-    if (activeTab?.view) {
-      const activeUrl = activeTab.view.webContents.getURL();
-      for (const page of pages) {
-        try {
-          const pageUrl = page.url();
-          if (pageUrl && pageUrl !== 'about:blank' && activeUrl) {
-            try {
-              const activeHost = new URL(activeUrl).hostname;
-              const pageHost = new URL(pageUrl).hostname;
-              if (activeHost && pageHost && activeHost === pageHost) {
-                log.info(`[AutoBrowse] Matched active tab page: ${pageUrl}`);
-                return { browser: cdpBrowser, page };
-              }
-            } catch { /* URL parse error, skip */ }
-          }
-        } catch { /* page.url() failed, skip */ }
-      }
-    }
-
-    for (let i = pages.length - 1; i >= 0; i--) {
-      try {
-        const pageUrl = pages[i].url();
-        if (pageUrl && pageUrl !== 'about:blank' && pageUrl !== '') {
-          log.info(`[AutoBrowse] Using fallback page: ${pageUrl}`);
-          return { browser: cdpBrowser, page: pages[i] };
-        }
-      } catch { /* skip */ }
-    }
-
-    if (pages.length > 0) {
-      log.info(`[AutoBrowse] Using first page: ${pages[0].url()}`);
-      return { browser: cdpBrowser, page: pages[0] };
-    }
-
-    log.warn('[AutoBrowse] No pages available via CDP');
-    return null;
-  } catch (error) {
-    log.error('[AutoBrowse] CDP connection failed:', error);
-    cdpBrowser = null;
-    cdpContext = null;
-    return null;
-  }
-}
-
 // ==================== Goal Mapper ====================
-
-function mapGoalToActions(goal: string, inputs?: Record<string, unknown>): GoalAction[] {
-  const actions: GoalAction[] = [];
-  const goalLower = goal.toLowerCase();
-  const wantsAccountCreation = goalLower.includes('create an account') || goalLower.includes('create account') || goalLower.includes('sign up') || goalLower.includes('signup') || goalLower.includes('register');
-  const googleLikeLogin = goalLower.includes('google') || goalLower.includes('meet.google') || goalLower.includes('meet ');
-  const wantsNextAfterEmail = googleLikeLogin || goalLower.includes('next screen') || goalLower.includes('advancing to the next') || goalLower.includes('clicking in advance') || goalLower.includes('clicking advance');
-
-  // If inputs contain a URL, navigate first
-  const url = (inputs?.url as string) || (inputs?.targetUrl as string);
-  if (url) {
-    actions.push({ type: 'navigate', url, description: `Navigate to ${url}` });
-  }
-
-  // Navigate goals
-  if (goalLower.includes('navigate to') || goalLower.includes('go to') || goalLower.includes('open')) {
-    const urlMatch = goal.match(/(?:navigate to|go to|open)\s+(https?:\/\/[^\s]+|[^\s]+\.[^\s]+)/i);
-    if (urlMatch && !url) {
-      let targetUrl = urlMatch[1];
-      if (!targetUrl.startsWith('http')) targetUrl = 'https://' + targetUrl;
-      actions.push({ type: 'navigate', url: targetUrl, description: `Navigate to ${targetUrl}` });
-    }
-  }
-
-  // Account creation goals: one natural-language goal should become a real multi-step browser plan,
-  // not just a URL open. Site-specific cloud ui_steps can still override with more exact selectors.
-  if (wantsAccountCreation) {
-    actions.push({ type: 'wait', value: '1500', description: 'Wait for account page to render' });
-    actions.push({ type: 'click', selector: 'a[href*="signup"], a[href*="sign-up"], a[href*="create"], button, a', target: "button 'Create account'", description: 'Click create account / sign up entry point' });
-    actions.push({ type: 'wait', value: '2500', description: 'Wait for account creation form' });
-  }
-
-  // Login goals
-  const handledGoogleStyleLogin = (goalLower.includes('login') || goalLower.includes('sign in') || goalLower.includes('log in')) && wantsNextAfterEmail;
-  if (handledGoogleStyleLogin) {
-    const username = (inputs?.username as string) || (inputs?.email as string) || '';
-    const password = (inputs?.password as string) || '';
-
-    if (username) {
-      actions.push({ type: 'fill', selector: 'input[type="email"], input[name="identifier"], input[id="identifierId"], input[autocomplete="username"], input[name="Email"], input[name="email"]', target: "textbox 'Email'", value: username, description: `Fill username/email: ${username}` });
-      actions.push({ type: 'click', selector: '#identifierNext button, button[type="button"], button, [role="button"]', target: "button 'Next'", description: 'Advance to password screen' });
-      actions.push({ type: 'wait', value: '2500', description: 'Wait for password challenge' });
-    }
-    if (password) {
-      actions.push({ type: 'fill', selector: 'input[type="password"], input[name="Passwd"], input[name="password"], input[id="password"], input[autocomplete="current-password"]', target: "textbox 'Password'", value: password, description: 'Fill password' });
-      actions.push({ type: 'click', selector: '#passwordNext button, button[type="button"], button, [role="button"]', target: "button 'Next'", description: 'Submit password / continue' });
-      actions.push({ type: 'wait', value: '4000', description: 'Wait after password submit' });
-    }
-  }
-
-  if (!handledGoogleStyleLogin && (goalLower.includes('login') || goalLower.includes('sign in') || goalLower.includes('log in'))) {
-    const username = (inputs?.username as string) || (inputs?.email as string) || '';
-    const password = (inputs?.password as string) || '';
-
-    if (username) {
-      actions.push({ type: 'fill', selector: 'input[type="email"], input[name="user"], input[name="email"], input[id="user"], input[id="email"], input[autocomplete="username"]', target: "textbox 'Email'", value: username, description: `Fill username: ${username}` });
-      actions.push({ type: 'press_key', selector: 'input[type="email"], input[name="user"], input[name="email"]', value: 'Tab', description: 'Move to password field' });
-    }
-    if (password) {
-      actions.push({ type: 'fill', selector: 'input[type="password"], input[name="pass"], input[id="pass"]', target: "textbox 'Password'", value: password, description: 'Fill password' });
-    }
-    actions.push({ type: 'click', selector: 'button[type="submit"], input[type="submit"]', target: "button 'Sign in'", description: 'Click submit/login button' });
-    actions.push({ type: 'wait', value: '3000', description: 'Wait for page to load after login' });
-  }
-
-  // Click goals
-  if (goalLower.includes('click') || goalLower.includes('press button')) {
-    const clickMatch = goal.match(/(?:click|press)\s+(?:on\s+)?["']?([^"']+)["']?/i);
-    if (clickMatch) {
-      const text = clickMatch[1].trim();
-      // Try text match first
-      actions.push({ type: 'click', selector: `button:has-text("${text}"), a:has-text("${text}"), [has-text("${text}")]`, description: `Click "${text}"` });
-    }
-  }
-
-  // Fill / type goals
-  if (goalLower.includes('fill') || goalLower.includes('type') || goalLower.includes('enter')) {
-    const fillMatch = goal.match(/(?:fill|type|enter)\s+["']?([^"']+)["']?\s+(?:in|into|on)\s+["']?([^"']+)["']?/i);
-    if (fillMatch) {
-      actions.push({ type: 'fill', selector: fillMatch[2], value: fillMatch[1], description: `Fill "${fillMatch[1]}" into ${fillMatch[2]}` });
-    }
-  }
-
-  // Search goals
-  if (goalLower.includes('search') || goalLower.includes('find')) {
-    const searchMatch = goal.match(/(?:search|find)\s+(?:for\s+)?["']?([^"']+)["']?/i);
-    if (searchMatch) {
-      const query = searchMatch[1];
-      if (!url && !goalLower.includes('navigate to')) {
-        actions.push({ type: 'navigate', url: 'https://www.google.com', description: 'Navigate to Google' });
-      }
-      actions.push({ type: 'fill', selector: 'input[name="q"], input[type="search"], textarea[name="q"]', value: query, description: `Type search: "${query}"` });
-      actions.push({ type: 'press_key', selector: 'input[name="q"], input[type="search"]', value: 'Enter', description: 'Press Enter to search' });
-      actions.push({ type: 'wait', value: '2000', description: 'Wait for search results' });
-    }
-  }
-
-  // Extract / scrape goals
-  if (goalLower.includes('extract') || goalLower.includes('scrape') || goalLower.includes('get text')) {
-    actions.push({ type: 'wait', value: '1000', description: 'Wait for page to be ready' });
-    actions.push({ type: 'extract', description: 'Extract page content' });
-  }
-
-  // Scroll goals
-  if (goalLower.includes('scroll down') || goalLower.includes('scroll up') || (goalLower.includes('scroll') && !goalLower.includes('scrollbar'))) {
-    const direction = goalLower.includes('up') ? 'up' : 'down';
-    const amountMatch = goal.match(/scroll\s+(?:by\s+)?(\d+)/i);
-    const amount = amountMatch ? amountMatch[1] : '500';
-    actions.push({ type: 'scroll', direction, value: amount, description: `Scroll ${direction}` });
-  }
-
-  // Hover goals
-  if (goalLower.includes('hover') || goalLower.includes('mouse over')) {
-    const hoverMatch = goal.match(/(?:hover|mouse over)\s+(?:on\s+)?["']?([^"']+)["']?/i);
-    if (hoverMatch) {
-      actions.push({ type: 'hover', selector: hoverMatch[1], description: `Hover over ${hoverMatch[1]}` });
-    }
-  }
-
-  // Submit / press button goals
-  if ((goalLower.includes('press') || goalLower.includes('click')) && (goalLower.includes('button') || goalLower.includes('submit'))) {
-    const btnMatch = goal.match(/(?:press|click)\s+(?:the\s+)?["']?([^"']+)?["']?\s*(?:button|submit)?/i);
-    if (btnMatch?.[1] && btnMatch[1].length > 0 && btnMatch[1].length < 50) {
-      const text = btnMatch[1].trim();
-      actions.push({ type: 'click', selector: `button:has-text("${text}"), input[type="submit"]:has-text("${text}")`, description: `Click button: ${text}` });
-    } else {
-      actions.push({ type: 'submit', description: 'Submit form' });
-    }
-  }
-
-  // Wait goals
-  if (goalLower.includes('wait')) {
-    const waitMatch = goal.match(/wait\s+(?:for\s+)?(\d+)\s*(seconds?|ms|s|m)?/i);
-    if (waitMatch) {
-      let ms = parseInt(waitMatch[1], 10);
-      if (waitMatch[2]?.match(/second|sec/i)) ms *= 1000;
-      if (waitMatch[2] === 'm' && !waitMatch[2]?.match(/ms/i)) ms *= 60000;
-      actions.push({ type: 'wait', value: String(Math.min(ms, 30000)), description: `Wait ${ms}ms` });
-    } else if (goalLower === 'wait' || goalLower === 'wait a bit') {
-      actions.push({ type: 'wait', value: '2000', description: 'Wait 2s' });
-    }
-  }
-
-  // Refresh / reload goals
-  if (goalLower.includes('reload') || goalLower === 'refresh page') {
-    actions.push({ type: 'wait', value: '500', description: 'Reload page' });
-  }
-
-  // If no actions were mapped, try as a URL or search
-  if (actions.length === 0) {
-    if (goal.match(/^https?:\/\//i) || goal.match(/\.[a-z]{2,}$/i)) {
-      const targetUrl = goal.startsWith('http') ? goal : 'https://' + goal;
-      actions.push({ type: 'navigate', url: targetUrl, description: `Navigate to ${targetUrl}` });
-    } else {
-      actions.push({ type: 'navigate', url: `https://www.google.com/search?q=${encodeURIComponent(goal)}`, description: `Search for: "${goal}"` });
-    }
-  }
-
-  // Always screenshot at end
-  actions.push({ type: 'screenshot', description: 'Capture final state' });
-
-  return actions;
-}
-
 // ==================== Action Execution (Electron APIs) ====================
 // executeAction MOVED to autobrowse-actions.ts (v0.3.80)
 // Implementation is import { executeAction } from './autobrowse-actions';
@@ -343,11 +75,11 @@ export async function initializeAutoBrowse(electronSession: any): Promise<void> 
   }
 
   log.info('[AutoBrowse] Initializing...');
-  log.info(`[AutoBrowse] CDP port: ${CDP_PORT}`);
+  log.info(`[AutoBrowse] CDP port: ${getCdpPort()}`);
 
   // Pre-connect CDP in background (optional - not required for Electron API mode)
   try {
-    const connection = await connectCDP();
+    const connection = await connectCDP(electronTabs, activeTabId);
     if (!connection) {
       log.warn('[AutoBrowse] CDP connection failed on init (non-fatal - using Electron APIs)');
     } else {
@@ -362,74 +94,18 @@ export async function initializeAutoBrowse(electronSession: any): Promise<void> 
 }
 
 /**
- * Call the cloud planner API to decompose a goal into actionable steps
- */
-async function callPlannerAPI(
-  goal: string,
-  url: string,
-  pageContext: string,
-  pageTitle: string,
-  previousActions: string[]
-): Promise<{ steps: GoalAction[]; reasoning?: string; explanation?: string }> {
-  try {
-    const cloudUrl = runtimeStatus.cloudUrl || 'https://keledon.tuyoisaza.com';
-    const res = await fetch(`${cloudUrl}/api/planner/decompose`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        goal,
-        url,
-        pageContext,
-        pageTitle,
-        previousActions,
-        maxSteps: 8,
-      }),
-    });
-    if (!res.ok) {
-      log.warn(`[AI Planner] API returned ${res.status}`);
-      return { steps: [] };
-    }
-    const data = await res.json();
-    if (!data.success || !Array.isArray(data.steps) || data.steps.length === 0) {
-      log.warn('[AI Planner] No steps returned from API');
-      return { steps: [] };
-    }
-    return {
-      steps: data.steps
-        .filter((s: GoalAction) => s?.type)
-        .map((s: GoalAction) => ({
-          type: s.type,
-          selector: s.selector,
-          target: s.selector,
-          value: s.value,
-          url: s.url,
-          description: s.description || `${s.type} step`,
-        })),
-      reasoning: data.reasoning,
-      explanation: data.explanation,
-    };
-  } catch (error) {
-    log.warn(`[AI Planner] API call failed: ${error}`);
-    return { steps: [] };
-  }
-}
-
-/**
  * Extract visible page state from a BrowserView for AI planning context
  */
 async function extractPageState(view: BrowserView): Promise<{ url: string; title: string; content: string }> {
   const url = view.webContents.getURL() || '';
   const title = view.webContents.getTitle() || '';
   try {
-    // Extract visible text content via executeJavaScript
     const content = await view.webContents.executeJavaScript(`
       (() => {
         const MAX_LEN = 3000;
-        // Get main body text, strip excessive whitespace
         let text = document.body?.innerText || '';
         if (!text) text = document.body?.textContent || '';
         text = text.replace(/\\s+/g, ' ').trim().slice(0, MAX_LEN);
-        // Include key interactive elements summary
         const inputs = document.querySelectorAll('input, button, select, textarea, a');
         const elements = Array.from(inputs).slice(0, 20).map(el => {
           const tag = el.tagName.toLowerCase();
@@ -887,7 +563,7 @@ export async function captureScreenshot(): Promise<string> {
 }
 
 export function getEngine(): any {
-  return cdpBrowser;
+  return getCdpBrowser();
 }
 
 export function isAutoBrowseInitialized(): boolean {
@@ -895,16 +571,7 @@ export function isAutoBrowseInitialized(): boolean {
 }
 
 export async function disposeAutoBrowse(): Promise<void> {
-  try {
-    if (cdpBrowser) {
-      await cdpBrowser.close();
-    }
-  } catch (error) {
-    log.error('[AutoBrowse] Error disposing CDP browser:', error);
-  }
-
-  cdpBrowser = null;
-  cdpContext = null;
+  await disconnectCDP();
   isInitialized = false;
   mainWindow = null;
   log.info('[AutoBrowse] Disposed');
