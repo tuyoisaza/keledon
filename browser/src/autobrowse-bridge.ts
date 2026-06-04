@@ -1,18 +1,17 @@
 /**
  * AutoBrowse Bridge - KELEDON Browser integration with AutoBrowse engine
- * v0.3.47 - Multi-step goal actualization + vendor credential flow
- *
- * Controls the active BrowserView using Electron APIs directly.
- * Playwright CDP is kept as optional fallback only.
- *
- * Flow: Renderer → IPC → executeGoal() → BrowserView webContents → DOM
+ * v0.3.80 - executeAction split into autobrowse-actions.ts
  */
 
 import log from 'electron-log';
 import { BrowserWindow, BrowserView, ipcRenderer } from 'electron';
 import { chromium, Browser, BrowserContext, Page } from 'playwright-core';
 import { planGoalActions, planGoalActionsWithAI } from './goal-planner';
+import type { GoalPlannerAction as GoalAction } from './goal-planner';
+import type { RpaStep } from './rpa-executor';
 import { runtimeStatus } from './runtime-state';
+import { executeAction } from './autobrowse-actions';
+import type { StepResult } from './autobrowse-actions';
 
 interface BridgeGoalInput {
   execution_id?: string;
@@ -38,44 +37,22 @@ interface BridgeExecutionResult {
   error?: string;
 }
 
-interface StepResult {
-  id: string;
-  type: string;
-  description: string;
-  success: boolean;
-  duration: number;
-  error?: string;
-  extractedValue?: string;
-}
-
+/**
+ * Browser state snapshot.
+ * @deprecated Types moved to autobrowse-actions.ts — StepResult is imported from there.
+ * GoalAction is now an alias for GoalPlannerAction from goal-planner.ts.
+ * RpaStep is imported from rpa-executor.ts.
+ */
 interface BrowserState {
   url: string;
   title: string;
   tabs: { id: string; url: string; title: string }[];
 }
 
-interface GoalAction {
-  type: 'navigate' | 'click' | 'fill' | 'extract' | 'wait' | 'screenshot' | 'scroll' | 'press_key' | 'select' | 'hover' | 'wait_for' | 'submit' | 'assert';
-  selector?: string;
-  target?: string;
-  value?: string;
-  url?: string;
-  description: string;
-  timeout?: number;
-  direction?: string;
-}
-
-interface RpaStep {
-  step_id?: string;
-  action: string;
-  selector?: string;
-  target?: string;
-  value?: string;
-  url?: string;
-  description?: string;
-  timeout?: number;
-  direction?: string;
-}
+// GoalAction is now an alias for GoalPlannerAction — imported at top.
+// Legacy definition preserved below for reference:
+// type GoalAction = GoalPlannerAction;
+// type RpaStep   = import('./rpa-executor').RpaStep;
 
 let isInitialized = false;
 let mainWindow: BrowserWindow | null = null;
@@ -352,316 +329,10 @@ function mapGoalToActions(goal: string, inputs?: Record<string, unknown>): GoalA
 }
 
 // ==================== Action Execution (Electron APIs) ====================
-
-async function executeAction(view: BrowserView, action: GoalAction): Promise<StepResult> {
-  const startTime = Date.now();
-  const id = `step-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-  const wc = view.webContents;
-
-  try {
-    switch (action.type) {
-      case 'navigate': {
-        if (!action.url) throw new Error('No URL provided for navigate');
-        await new Promise<void>((resolve, reject) => {
-          const done = () => { cleanup(); resolve(); };
-          const fail = (_e: any, errCode: number, errMsg: string) => { cleanup(); reject(new Error(`${errMsg} (${errCode})`)); };
-          const cleanup = () => {
-            wc.removeListener('did-finish-load', done);
-            wc.removeListener('did-fail-load', fail);
-          };
-          wc.once('did-finish-load', done);
-          wc.once('did-fail-load', fail);
-          wc.loadURL(action.url!);
-        });
-        return { id, type: 'navigate', description: action.description, success: true, duration: Date.now() - startTime };
-      }
-
-      case 'click': {
-        if (!action.selector && !action.target) throw new Error('No selector or target for click');
-        let clicked = false;
-        let lastError = '';
-        // v0.3.51: retry click up to 3 times with increasing delays for resilience.
-        // Google's sign-in pages may lazy-render buttons or have race conditions where
-        // the button exists in DOM but isn't interactive yet (disabled, transitioning).
-        const MAX_CLICK_RETRIES = 3;
-        for (let attempt = 0; attempt < MAX_CLICK_RETRIES && !clicked; attempt++) {
-          if (attempt > 0) {
-            await new Promise(r => setTimeout(r, 500 * attempt));
-          }
-          if (action.target) {
-            const targetClick = await wc.executeJavaScript(`
-              (function() {
-                var target = ${JSON.stringify(action.target)};
-                var explicit = (target.match(/'([^']+)'|\\"([^\\"]+)\\"/) || [])[1] || (target.match(/'([^']+)'|\\"([^\\"]+)\\"/) || [])[2] || target;
-                var wanted = [explicit, target, 'Create account', 'Sign up', 'Sign in', 'Next', 'Continue', 'Get started'].filter(Boolean);
-                var all = Array.from(document.querySelectorAll('button, a, input[type=\\"button\\"], input[type=\\"submit\\"], [role=\\"button\\"], [role=\\"link\\"]'));
-                for (var w = 0; w < wanted.length; w++) {
-                  var needle = String(wanted[w]).toLowerCase();
-                  if (!needle || needle.length < 2) continue;
-                  for (var i = 0; i < all.length; i++) {
-                    var el = all[i];
-                    var text = (el.textContent || el.value || el.getAttribute('aria-label') || el.getAttribute('title') || '').trim().toLowerCase();
-                    if (text && (text === needle || text.includes(needle))) {
-                      el.scrollIntoView({ behavior: 'instant', block: 'center' });
-                      el.click();
-                      return { success: true, matched: text };
-                    }
-                  }
-                }
-                return { success: false, error: 'target not found' };
-              })()
-            `).catch((error) => ({ success: false, error: String(error) }));
-            if (targetClick?.success) clicked = true;
-            if (attempt === 0 && !clicked) lastError = targetClick?.error || 'target not found';
-          }
-          if (!clicked) {
-            const selectors = (action.selector || '').split(',').map(s => s.trim()).filter(Boolean);
-            for (const sel of selectors) {
-              try {
-                const result = await wc.executeJavaScript(`
-                  (function() {
-                    var sel = ${JSON.stringify(sel)};
-                    var el = document.querySelector(sel);
-                    if (!el) return { success: false, error: 'not found' };
-                    if (typeof el.click === 'function') { el.click(); return { success: true }; }
-                    // Try text content match
-                    var all = document.querySelectorAll('button, a, [role="button"]');
-                    for (var i = 0; i < all.length; i++) {
-                      if (all[i].textContent.trim() === sel.replace(/^has-text\\\\(["'](.+)\\"']\\\\)$/, '$1')) {
-                        all[i].click();
-                        return { success: true };
-                      }
-                    }
-                    return { success: false, error: 'not clickable' };
-                  })()
-                `);
-                if (result?.success) { clicked = true; break; }
-                if (attempt === 0 && !clicked) lastError = result?.error || 'selector failed';
-              } catch { continue; }
-            }
-          }
-        }
-        if (!clicked) throw new Error(`Could not click: ${action.selector || action.target} (${lastError})`);
-        return { id, type: 'click', description: action.description, success: true, duration: Date.now() - startTime };
-      }
-
-      case 'fill': {
-        if (!action.selector && !action.target) throw new Error('No selector or target for fill');
-        if (action.value === undefined) throw new Error('No value for fill');
-        let filled = false;
-        if (action.target) {
-          const targetFill = await wc.executeJavaScript(`
-            (function() {
-              var target = ${JSON.stringify(action.target)};
-              var val = ${JSON.stringify(action.value)};
-              var explicit = (target.match(/'([^']+)'|\"([^\"]+)\"/) || [])[1] || (target.match(/'([^']+)'|\"([^\"]+)\"/) || [])[2] || target;
-              var needles = [explicit, target, 'email', 'username', 'login', 'password'].map(function(x) { return String(x || '').toLowerCase(); });
-              var inputs = Array.from(document.querySelectorAll('input, textarea, [contenteditable=\"true\"]'));
-              for (var n = 0; n < needles.length; n++) {
-                var needle = needles[n];
-                if (!needle || needle.length < 2) continue;
-                for (var i = 0; i < inputs.length; i++) {
-                  var el = inputs[i];
-                  var hay = [el.getAttribute('aria-label'), el.getAttribute('placeholder'), el.getAttribute('name'), el.id, el.type, el.autocomplete].join(' ').toLowerCase();
-                  if (hay.includes(needle)) {
-                    el.scrollIntoView({ behavior: 'instant', block: 'center' });
-                    el.focus();
-                    if ('value' in el) el.value = val; else el.textContent = val;
-                    el.dispatchEvent(new Event('input', { bubbles: true }));
-                    el.dispatchEvent(new Event('change', { bubbles: true }));
-                    return { success: true, matched: hay };
-                  }
-                }
-              }
-              return { success: false, error: 'target not found' };
-            })()
-          `).catch((error) => ({ success: false, error: String(error) }));
-          if (targetFill?.success) filled = true;
-        }
-        const selectors = (action.selector || '').split(',').map(s => s.trim()).filter(Boolean);
-        for (const sel of selectors) {
-          try {
-            const result = await wc.executeJavaScript(`
-              (function() {
-                var sel = ${JSON.stringify(sel)};
-                var val = ${JSON.stringify(action.value)};
-                var el = document.querySelector(sel);
-                if (!el) return { success: false, error: 'not found' };
-                el.focus();
-                el.value = val;
-                el.dispatchEvent(new Event('input', { bubbles: true }));
-                el.dispatchEvent(new Event('change', { bubbles: true }));
-                return { success: true, value: el.value };
-              })()
-            `);
-            if (result?.success) { filled = true; break; }
-          } catch { continue; }
-        }
-        if (!filled) throw new Error(`Could not fill: ${action.selector}`);
-        return { id, type: 'fill', description: action.description, success: true, duration: Date.now() - startTime };
-      }
-
-      case 'press_key': {
-        if (!action.selector) {
-          await wc.executeJavaScript(`
-            if (document.activeElement) {
-              var evt = new KeyboardEvent('keydown', { key: ${JSON.stringify(action.value || 'Enter')}, bubbles: true });
-              document.activeElement.dispatchEvent(evt);
-              var evt2 = new KeyboardEvent('keyup', { key: ${JSON.stringify(action.value || 'Enter')}, bubbles: true });
-              document.activeElement.dispatchEvent(evt2);
-            }
-          `).catch(() => {});
-        } else {
-          const selectors = action.selector.split(',').map(s => s.trim());
-          for (const sel of selectors) {
-            try {
-              const result = await wc.executeJavaScript(`
-                (function() {
-                  var sel = ${JSON.stringify(sel)};
-                  var el = document.querySelector(sel);
-                  if (!el) return false;
-                  if (typeof el.press === 'function') { el.press(${JSON.stringify(action.value || 'Enter')}); return true; }
-                  var evt = new KeyboardEvent('keydown', { key: ${JSON.stringify(action.value || 'Enter')}, bubbles: true });
-                  el.dispatchEvent(evt);
-                  return true;
-                })()
-              `);
-              if (result) break;
-            } catch { continue; }
-          }
-        }
-        return { id, type: 'press_key', description: action.description, success: true, duration: Date.now() - startTime };
-      }
-
-      case 'select': {
-        if (!action.selector) throw new Error('No selector for select');
-        const result = await wc.executeJavaScript(`
-          (function() {
-            var sel = ${JSON.stringify(action.selector)};
-            var val = ${JSON.stringify(action.value || '')};
-            var el = document.querySelector(sel);
-            if (!el) return { success: false, error: 'not found' };
-            if (el.tagName !== 'SELECT') return { success: false, error: 'not a select' };
-            el.value = val;
-            el.dispatchEvent(new Event('change', { bubbles: true }));
-            return { success: true };
-          })()
-        `);
-        if (!result?.success) throw new Error(result?.error || 'Select failed');
-        return { id, type: 'select', description: action.description, success: true, duration: Date.now() - startTime };
-      }
-
-      case 'hover': {
-        if (!action.selector) throw new Error('No selector for hover');
-        await wc.executeJavaScript(`
-          (function() {
-            var sel = ${JSON.stringify(action.selector)};
-            var el = document.querySelector(sel);
-            if (!el) return;
-            var rect = el.getBoundingClientRect();
-            var evt = new MouseEvent('mouseover', { bubbles: true, clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 });
-            el.dispatchEvent(evt);
-          })()
-        `);
-        return { id, type: 'hover', description: action.description, success: true, duration: Date.now() - startTime };
-      }
-
-      case 'scroll': {
-        const direction = action.direction || 'down';
-        const amount = action.value || '500';
-        await wc.executeJavaScript(`window.scrollBy(0, ${direction === 'up' ? '-' : ''}${amount});`);
-        return { id, type: 'scroll', description: action.description, success: true, duration: Date.now() - startTime };
-      }
-
-      case 'wait': {
-        const ms = parseInt(action.value || '2000', 10);
-        await new Promise(r => setTimeout(r, Math.min(ms, 30000)));
-        return { id, type: 'wait', description: action.description, success: true, duration: Date.now() - startTime };
-      }
-
-      case 'screenshot': {
-        const image = await wc.capturePage();
-        const base64 = image.toDataURL();
-        return { id, type: 'screenshot', description: action.description, success: true, duration: Date.now() - startTime, extractedValue: base64 };
-      }
-
-      case 'extract': {
-        let value = '';
-        if (action.selector) {
-          const result = await wc.executeJavaScript(`
-            (function() {
-              var sel = ${JSON.stringify(action.selector)};
-              var el = document.querySelector(sel);
-              return el ? (el.innerText || el.textContent || '') : '';
-            })()
-          `);
-          value = result || '';
-        }
-        if (!value) {
-          value = await wc.executeJavaScript(`(document.body ? document.body.innerText || document.body.textContent : '')?.substring(0, 5000) || ''`);
-        }
-        return { id, type: 'extract', description: action.description, success: true, duration: Date.now() - startTime, extractedValue: value };
-      }
-
-      case 'wait_for': {
-        if (!action.selector) throw new Error('No selector for wait_for');
-        const timeout = action.timeout || 15000;
-        const start = Date.now();
-        while (Date.now() - start < timeout) {
-          try {
-            const exists = await wc.executeJavaScript(`!!document.querySelector(${JSON.stringify(action.selector)})`);
-            if (exists) return { id, type: 'wait_for', description: action.description, success: true, duration: Date.now() - startTime };
-          } catch { /* ignore */ }
-          await new Promise(r => setTimeout(r, 200));
-        }
-        return { id, type: 'wait_for', description: action.description, success: false, error: 'Timeout waiting for selector', duration: Date.now() - startTime };
-      }
-
-      case 'submit': {
-        await wc.executeJavaScript(`
-          (function() {
-            var form = document.querySelector('form');
-            if (form) form.submit();
-            else {
-              var btn = document.querySelector('button[type="submit"], input[type="submit"]');
-              if (btn) btn.click();
-            }
-          })()
-        `);
-        return { id, type: 'submit', description: action.description, success: true, duration: Date.now() - startTime };
-      }
-
-      case 'assert': {
-        if (action.selector) {
-          const result = await wc.executeJavaScript(`
-            (function() {
-              var el = document.querySelector(${JSON.stringify(action.selector)});
-              if (!el) return { found: false, text: '' };
-              return { found: true, text: el.innerText || el.textContent || el.value || '' };
-            })()
-          `);
-          if (!result?.found) throw new Error(`Assert: element not found: ${action.selector}`);
-          if (action.value && !result.text.includes(action.value)) {
-            throw new Error(`Assert: "${result.text.substring(0, 100)}" does not contain "${action.value}"`);
-          }
-        } else if (action.value) {
-          const text: string = await wc.executeJavaScript(
-            `document.body ? (document.body.innerText || document.body.textContent || '') : ''`
-          );
-          if (!text.includes(action.value)) {
-            throw new Error(`Assert: page does not contain "${action.value}"`);
-          }
-        }
-        return { id, type: 'assert', description: action.description, success: true, duration: Date.now() - startTime };
-      }
-
-      default:
-        throw new Error(`Unknown action type: ${action.type}`);
-    }
-  } catch (error) {
-    return { id, type: action.type, description: action.description, success: false, duration: Date.now() - startTime, error: String(error) };
-  }
-}
+// executeAction MOVED to autobrowse-actions.ts (v0.3.80)
+// Implementation is import { executeAction } from './autobrowse-actions';
+// Legacy code preserved below lines can be found in /browser/src/autobrowse-actions.ts
+// ========================================================================
 
 // ==================== Public API ====================
 
@@ -724,14 +395,16 @@ async function callPlannerAPI(
       return { steps: [] };
     }
     return {
-      steps: data.steps.map((s: any) => ({
-        type: s.type,
-        selector: s.selector,
-        target: s.selector,
-        value: s.value,
-        url: s.url,
-        description: s.description || `${s.type} step`,
-      })),
+      steps: data.steps
+        .filter((s: GoalAction) => s?.type)
+        .map((s: GoalAction) => ({
+          type: s.type,
+          selector: s.selector,
+          target: s.selector,
+          value: s.value,
+          url: s.url,
+          description: s.description || `${s.type} step`,
+        })),
       reasoning: data.reasoning,
       explanation: data.explanation,
     };
@@ -745,9 +418,9 @@ async function callPlannerAPI(
  * Extract visible page state from a BrowserView for AI planning context
  */
 async function extractPageState(view: BrowserView): Promise<{ url: string; title: string; content: string }> {
+  const url = view.webContents.getURL() || '';
+  const title = view.webContents.getTitle() || '';
   try {
-    const url = view.webContents.getURL() || '';
-    const title = view.webContents.getTitle() || '';
     // Extract visible text content via executeJavaScript
     const content = await view.webContents.executeJavaScript(`
       (() => {
@@ -831,8 +504,15 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
   try {
     // Map goal to actions FIRST so we can check if the planner will handle navigation.
     // v0.3.51: avoids duplicate navigation when vendor URL matches planner's first step.
-    const actions = await planGoalActionsWithAI(input.goal, plannerInputs, runtimeStatus.cloudUrl);
-    logs.push(`[Actions] ${actions.length} steps planned from goal`);
+    const plannerResult = await planGoalActionsWithAI(
+      input.goal,
+      '',
+      JSON.stringify({ url: '', title: '', content: '' }),
+      runtimeStatus.cloudUrl,
+      runtimeStatus.authToken || '',
+    );
+    const actions = plannerResult.steps;
+    logs.push(`[Actions] ${actions.length} steps planned from goal (${plannerResult.source})`);
 
     // Only pre-navigate if the planner doesn't already produce a navigation as step 1.
     // Prevents wasted navigation (e.g., vendor URL = meet.google.com but planner navigates

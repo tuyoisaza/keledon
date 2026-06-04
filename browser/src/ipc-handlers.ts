@@ -3,61 +3,22 @@ import * as fs from 'fs';
 import * as path from 'path';
 import log from 'electron-log';
 import { webrtcInjector } from './webrtc-injector.js';
-import { mediaLayer } from './media/media-layer.js';
+import { mediaLayerWrapper } from './ipc-media-handlers.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
 import { eventLogger } from './media/event-logger.js';
 import { runtimeStatus, mainWindow, setDebugMode } from './runtime-state.js';
 import { getDeviceSocket, connectWebSockets, setupCommandPolling } from './cloud-connection.js';
 import { getStartupLogPath, getMainLogPath, getLogsDir, getInstallDir } from './logger.js';
 import type { TabManager } from './tab-manager.js';
-
-// ===================== MEDIA LAYER WRAPPER =====================
-
-export const mediaLayerWrapper = {
-  initialize: async () => {
-    eventLogger.info('media', 'initialize', {});
-    return mediaLayer.initialize();
-  },
-  getCallStatus: () => mediaLayer.getCallStatus(),
-  startCall: async (sessionId?: string) => {
-    eventLogger.info('media', 'call_start', { sessionId });
-    await mediaLayer.startCall(sessionId);
-    transcriptMonitor.setMediaLayer(mediaLayer);
-    transcriptMonitor.startMonitoring();
-    eventLogger.info('media', 'call_started', { sessionId });
-    return { success: true };
-  },
-  stopCall: async () => {
-    eventLogger.info('media', 'call_stop', {});
-    await mediaLayer.stopCall();
-    transcriptMonitor.stopMonitoring();
-    eventLogger.info('media', 'call_stopped', {});
-    return { success: true };
-  },
-  speak: async (text: string, interruptible?: boolean) => {
-    eventLogger.debug('media', 'tts_speak', { textLength: text.length, interruptible });
-    return mediaLayer.speak(text, interruptible);
-  },
-  stopSpeaking: async () => mediaLayer.stopSpeaking(),
-  mute: () => {
-    eventLogger.info('media', 'mute', {});
-    mediaLayer.mute();
-  },
-  unmute: () => {
-    eventLogger.info('media', 'unmute', {});
-    mediaLayer.unmute();
-  },
-  hold: async () => {
-    eventLogger.info('media', 'hold', {});
-    return mediaLayer.hold();
-  },
-  resume: async () => {
-    eventLogger.info('media', 'resume', {});
-    return mediaLayer.resume();
-  },
-  on: (event: string, callback: any) => mediaLayer.on(event, callback),
-  emit: (event: string, data?: any) => mediaLayer.emit(event, data),
-};
+import {
+  vendorLoginState,
+  bootstrappedVendorIds,
+  bootstrappedTeamId,
+  setBootstrappedTeamId,
+  mergeRuntimeVendorCredentials,
+  logVendorLogin,
+} from './ipc-vendor-state.js';
+// ===================== AUTO-BROWSE BRIDGE =====================
 
 /**
  * Lazy-loaded auto-browse bridge (cached after first import).
@@ -71,32 +32,9 @@ async function getAutoBrowseBridge() {
   return autobrowseBridge;
 }
 
+
+
 // ===================== VENDOR LOGIN =====================
-
-const vendorLoginState = {
-  isLoggingIn: false,
-  vendorId: null as string | null,
-};
-
-const bootstrappedVendorIds = new Set<string>();
-let bootstrappedTeamId: string | null = null;
-
-function mergeRuntimeVendorCredentials(fetchedVendors: any[], existingVendors: any[]): any[] {
-  const existingById = new Map((existingVendors || []).filter((vendor: any) => vendor?.id).map((vendor: any) => [vendor.id, vendor]));
-  return (fetchedVendors || []).map((vendor: any) => {
-    const existing = existingById.get(vendor?.id) || {};
-    return {
-      ...existing,
-      ...vendor,
-      // CRUD vendor responses are intentionally masked for management UI display.
-      // Preserve encrypted runtime credentials from the pairing payload so browser auto-login
-      // uses the actual email/login/password instead of typing "***".
-      username: vendor.username === '***' ? existing.username : vendor.username,
-      password: vendor.password === '***' ? existing.password : vendor.password,
-      apiKey: vendor.apiKey === '***' ? existing.apiKey : vendor.apiKey,
-    };
-  });
-}
 
 function decrypt(text: string): string {
   try {
@@ -221,7 +159,7 @@ export async function bootstrapTeamVendors(tabManager: TabManager): Promise<void
 
   if (bootstrappedTeamId !== teamId) {
     bootstrappedVendorIds.clear();
-    bootstrappedTeamId = teamId;
+    setBootstrappedTeamId(teamId);
   }
 
   let vendors = Array.isArray(runtimeStatus.vendors) ? [...runtimeStatus.vendors] : [];
@@ -431,7 +369,7 @@ export function registerIpcHandlers(tabManager: TabManager): void {
         try {
           await mediaLayerWrapper.initialize();
         } catch (e) {
-          console.warn('[Main] mediaLayer.initialize skipped:', e);
+          console.warn('[Main] mediaLayerWrapper.initialize skipped:', e);
         }
 
         // Phase 6: Start command polling after WebSocket connection
@@ -726,7 +664,7 @@ export function registerIpcHandlers(tabManager: TabManager): void {
   // --- Media: Hangup ---
   ipcMain.handle('media:hangup', async () => {
     try {
-      await mediaLayer.stopCall();
+      await mediaLayerWrapper.stopCall();
       runtimeStatus.sessionId = null;
       const deviceSocket = getDeviceSocket();
       if (deviceSocket) {
@@ -989,7 +927,7 @@ export function registerIpcHandlers(tabManager: TabManager): void {
 
   // ===================== MEDIA LAYER EVENT FORWARDING =====================
 
-  mediaLayer.on('transcript', (text: string, isFinal: boolean) => {
+  mediaLayerWrapper.on('transcript', (text: string, isFinal: boolean) => {
     eventLogger.debug('media', isFinal ? 'transcript_final' : 'transcript_interim', {
       textLength: text.length,
       isFinal,
@@ -1001,7 +939,7 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     });
   });
 
-  mediaLayer.on('call-status', (status: 'idle' | 'in-call' | 'on-hold') => {
+  mediaLayerWrapper.on('call-status', (status: 'idle' | 'in-call' | 'on-hold') => {
     eventLogger.info('media', 'call_status_change', { status });
     mainWindow?.webContents.send('media:callStatus', {
       status,
@@ -1009,26 +947,26 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     });
   });
 
-  mediaLayer.on('error', (error: Error) => {
+  mediaLayerWrapper.on('error', (error: Error) => {
     eventLogger.error('media', 'media_error', {
       message: error.message,
       stack: error.stack,
     });
   });
 
-  mediaLayer.on('media:transcript', (data) => {
+  mediaLayerWrapper.on('media:transcript', (data) => {
     mainWindow?.webContents.send('media:transcript', data);
   });
 
-  mediaLayer.on('call:started', (data) => {
+  mediaLayerWrapper.on('call:started', (data) => {
     mainWindow?.webContents.send('call:started', data);
   });
 
-  mediaLayer.on('call:ended', (data) => {
+  mediaLayerWrapper.on('call:ended', (data) => {
     mainWindow?.webContents.send('call:ended', data);
   });
 
-  mediaLayer.on('media:error', (data) => {
+  mediaLayerWrapper.on('media:error', (data) => {
     mainWindow?.webContents.send('media:error', data);
   });
 }
