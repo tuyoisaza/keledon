@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { apiJson } from '@/lib/api-fetch';
 
 export default function DevicesPage() {
-  const { user, api } = useAuth();
+  const { user } = useAuth();
   const [devices, setDevices] = useState<any[]>([]);
   const [pairingCode, setPairingCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -13,7 +14,7 @@ export default function DevicesPage() {
 
   const loadDevices = async () => {
     try {
-      const response = await api.get('/api/devices', {
+      const response = await apiJson('/api/devices', {
         headers: { 'x-user-id': user?.id }
       });
       setDevices(Array.isArray(response) ? response : []);
@@ -26,8 +27,10 @@ export default function DevicesPage() {
 
   const generatePairingCode = async () => {
     try {
-      const response = await api.post('/api/devices/pairing-code', {
-        userId: user?.id
+      const response = await apiJson('/api/devices/pairing-code', {
+        method: 'POST',
+        body: JSON.stringify({ userId: user?.id }),
+        headers: { 'Content-Type': 'application/json' }
       });
       setPairingCode(response.pairing_code);
     } catch (error) {
