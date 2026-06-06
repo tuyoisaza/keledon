@@ -24,8 +24,6 @@ export default function BrainPage() {
     handleSend,
     handleCompanyChange,
     handleBrandChange,
-    handleCompanyKeyDown,
-    handleCompanyKeyUp,
     speakReply,
     setAutoSpeak,
     setMessages,

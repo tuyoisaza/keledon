@@ -412,8 +412,6 @@ export function useBrainChat() {
     handleSend,
     handleCompanyChange,
     handleBrandChange,
-    handleCompanyKeyDown,
-    handleCompanyKeyUp,
     speakReply,
     setAutoSpeak,
     setMessages,
