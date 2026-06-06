@@ -40,10 +40,15 @@ for i in 1 2 3 4 5; do
   echo "migrate attempt $i failed, retrying in 3s..."
   sleep 3
 done
-echo "--- Seeding database ---"
-ts-node -O '{"module":"commonjs"}' scripts/seed-main-data.ts && echo "seed-main-data OK" || echo "seed-main-data FAILED (non-fatal)"
-ts-node -O '{"module":"commonjs"}' scripts/seed-operational-data.ts && echo "seed-operational-data OK" || echo "seed-operational-data FAILED (non-fatal)"
-echo "--- Seeds complete ---"
+echo "--- Seeding database (only if empty) ---"
+_COMPANY_COUNT=$(node -e "const{PrismaClient}=require('@prisma/client');new PrismaClient().company.count().then(c=>{console.log(c);process.exit(0)}).catch(e=>{console.log(0);process.exit(0)})" 2>/dev/null || echo "0")
+if [ "$_COMPANY_COUNT" = "0" ]; then
+  ts-node -O '{"module":"commonjs"}' scripts/seed-main-data.ts && echo "seed-main-data OK" || echo "seed-main-data FAILED (non-fatal)"
+  ts-node -O '{"module":"commonjs"}' scripts/seed-operational-data.ts && echo "seed-operational-data OK" || echo "seed-operational-data FAILED (non-fatal)"
+  echo "--- Seeds complete ---"
+else
+  echo "Database has $_COMPANY_COUNT companies — skipping seeds"
+fi
 exec node dist/main
 SEEDSCRIPT
 RUN chmod +x /start.sh
