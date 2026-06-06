@@ -7,10 +7,10 @@ async function main() {
 
   // Create PepsiCo company
   const pepsico = await prisma.company.upsert({
-    where: { id: 'pepsico-001' },
+    where: { id: 'company-pepsico' },
     update: {},
     create: {
-      id: 'pepsico-001',
+      id: 'company-pepsico',
       name: 'PepsiCo',
       industry: 'Food & Beverage',
     }
@@ -45,10 +45,10 @@ async function main() {
 
   // Create Stellantis company
   const stellantis = await prisma.company.upsert({
-    where: { id: 'stellantis-001' },
+    where: { id: 'company-stellantis' },
     update: {},
     create: {
-      id: 'stellantis-001',
+      id: 'company-stellantis',
       name: 'Stellantis',
       industry: 'Automotive',
     }
