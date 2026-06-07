@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { MvpStoreService } from '../mvp/mvp-store.service';
 import { ApiTags } from '@nestjs/swagger';
+import { Public } from '../guards/public.decorator';
 
 @ApiTags('MVP Data')
 @Controller('api')
@@ -32,6 +33,7 @@ export class MvpDataController {
   }
 
   @Get('cloud-config')
+  @Public()
   getCloudConfig() {
     return this.mvpStore.getCloudConfig();
   }
