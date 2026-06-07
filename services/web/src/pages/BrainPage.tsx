@@ -11,6 +11,8 @@ import {
     Tag,
     Volume2,
     VolumeX,
+    Phone,
+    PhoneOff,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
@@ -56,11 +58,13 @@ export default function BrainPage() {
     const [autoSpeak, setAutoSpeak] = useState(() => {
         try { return localStorage.getItem(AUTOSPEAK_KEY) !== 'false'; } catch { return true; }
     });
+    const [conversationMode, setConversationMode] = useState(false);
 
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const recognitionRef = useRef<any>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const ttsAbortRef = useRef<AbortController | null>(null);
+    const conversationModeRef = useRef(false);
 
     const selectedCompany = useMemo(
         () => companies.find((c) => c.id === selectedCompanyId),
@@ -187,7 +191,16 @@ export default function BrainPage() {
         if (!window.speechSynthesis) { setSpeakingMessageId(null); return; }
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.onend = () => setSpeakingMessageId(null);
+        utterance.onend = () => {
+            setSpeakingMessageId(null);
+            if (conversationModeRef.current) {
+                setTimeout(() => {
+                    if (conversationModeRef.current && !isListening) {
+                        toggleListening();
+                    }
+                }, 300);
+            }
+        };
         utterance.onerror = () => setSpeakingMessageId(null);
         setSpeakingMessageId(messageId);
         window.speechSynthesis.speak(utterance);
@@ -214,7 +227,19 @@ export default function BrainPage() {
                     const url = URL.createObjectURL(blob);
                     const audio = new Audio(url);
                     audioRef.current = audio;
-                    audio.onended = () => { URL.revokeObjectURL(url); setSpeakingMessageId(null); };
+                    audio.onended = () => {
+                        URL.revokeObjectURL(url);
+                        setSpeakingMessageId(null);
+                        // In conversation mode, re-listen after speaking
+                        if (conversationModeRef.current) {
+                            // Re-listen after a short pause
+                            setTimeout(() => {
+                                if (conversationModeRef.current && !isListening) {
+                                    toggleListening();
+                                }
+                            }, 300);
+                        }
+                    };
                     audio.onerror = () => { URL.revokeObjectURL(url); fallbackSpeak(text, messageId); };
                     setSpeakingMessageId(messageId);
                     await audio.play();
@@ -270,7 +295,16 @@ export default function BrainPage() {
             else if (interim) setDraft(interim);
         };
 
-        recognition.onend = () => setIsListening(false);
+        recognition.onend = () => {
+            setIsListening(false);
+            // In conversation mode, auto-submit on speech end
+            if (conversationModeRef.current) {
+                const currentDraft = draft;
+                if (typeof currentDraft === 'string' && currentDraft.trim()) {
+                    void handleSend();
+                }
+            }
+        };
 
         recognition.onerror = (event: any) => {
             setIsListening(false);
@@ -281,6 +315,30 @@ export default function BrainPage() {
 
         recognitionRef.current = recognition;
         recognition.start();
+    }
+
+    function toggleConversationMode() {
+        if (conversationMode) {
+            // Exiting conversation mode
+            setConversationMode(false);
+            conversationModeRef.current = false;
+            if (isListening) {
+                recognitionRef.current?.stop();
+                setIsListening(false);
+            }
+            stopTts();
+            setAutoSpeak(true);
+        } else {
+            // Entering conversation mode
+            setConversationMode(true);
+            conversationModeRef.current = true;
+            setAutoSpeak(true);
+            // Start listening if not already
+            if (!isListening) {
+                // Small delay so state settles, then start mic
+                setTimeout(() => toggleListening(), 100);
+            }
+        }
     }
 
     // ── Chat ─────────────────────────────────────────────────────────────
@@ -532,6 +590,22 @@ export default function BrainPage() {
                                 <RotateCcw className="h-4 w-4" />
                                 Reset
                             </button>
+
+                            {/* Conversation mode toggle */}
+                            <button
+                                type="button"
+                                onClick={toggleConversationMode}
+                                title={conversationMode ? 'Exit conversation mode' : 'Enter conversation mode (hands-free voice loop)'}
+                                className={cn(
+                                    'inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm transition-colors',
+                                    conversationMode
+                                        ? 'border-green-400/60 bg-green-500/10 text-green-500 animate-pulse'
+                                        : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground',
+                                )}
+                            >
+                                {conversationMode ? <Phone className="h-4 w-4" /> : <PhoneOff className="h-4 w-4" />}
+                                <span className="hidden sm:inline">{conversationMode ? 'On Call' : 'Call'}</span>
+                            </button>
                         </div>
                     </div>
 
@@ -597,40 +671,73 @@ export default function BrainPage() {
                     <div className="border-t border-border p-5">
                         <label className="block space-y-2">
                             <span className="flex items-center justify-between text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                                <span>Message</span>
+                                <span>{conversationMode ? 'Conversation mode' : 'Message'}</span>
                                 {isListening && (
                                     <span className="flex items-center gap-1.5 text-red-400">
                                         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-400" />
-                                        Listening...
+                                        {conversationMode ? 'Listening — speak now' : 'Listening...'}
+                                    </span>
+                                )}
+                                {conversationMode && !isListening && (
+                                    <span className="flex items-center gap-1.5 text-green-400">
+                                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-400" />
+                                        Processing...
                                     </span>
                                 )}
                             </span>
-                            <textarea
-                                value={draft}
-                                onChange={(e) => setDraft(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' && !e.shiftKey) {
-                                        e.preventDefault();
-                                        void handleSend();
-                                    }
-                                }}
-                                placeholder={
+                            {conversationMode ? (
+                                <div className={cn(
+                                    'flex items-center justify-center rounded-2xl border-2 px-4 py-8 text-sm transition-colors',
                                     isListening
-                                        ? 'Listening — speak now...'
-                                        : 'Ask Brain what the brand should do, say, or explain...'
-                                }
-                                rows={4}
-                                className={cn(
-                                    'w-full rounded-2xl border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary',
-                                    isListening ? 'border-red-400/60' : 'border-border',
-                                )}
-                            />
+                                        ? 'border-red-400/60 bg-red-500/5'
+                                        : 'border-green-400/40 bg-green-500/5',
+                                )}>
+                                    <div className="text-center">
+                                        {isListening ? (
+                                            <>
+                                                <Mic className="mx-auto h-8 w-8 text-red-400 animate-pulse" />
+                                                <p className="mt-2 font-medium text-red-400">Listening...</p>
+                                                <p className="mt-1 text-muted-foreground">Your speech will auto-send when you stop speaking</p>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Volume2 className="mx-auto h-8 w-8 text-green-500 animate-pulse" />
+                                                <p className="mt-2 font-medium text-green-500">Brain is speaking...</p>
+                                                <p className="mt-1 text-muted-foreground">Wait for the response, then speak when you hear the tone</p>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+                            ) : (
+                                <textarea
+                                    value={draft}
+                                    onChange={(e) => setDraft(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                            e.preventDefault();
+                                            void handleSend();
+                                        }
+                                    }}
+                                    placeholder={
+                                        isListening
+                                            ? 'Listening — speak now...'
+                                            : 'Ask Brain what the brand should do, say, or explain...'
+                                    }
+                                    rows={4}
+                                    className={cn(
+                                        'w-full rounded-2xl border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary',
+                                        isListening ? 'border-red-400/60' : 'border-border',
+                                    )}
+                                />
+                            )}
                         </label>
 
                         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <div className="text-xs text-muted-foreground">
                                 {configReady
-                                    ? 'Brain will answer using the selected company, brand, and team.'
+                                    ? conversationMode
+                                        ? 'Brain will answer and re-listen automatically. Tap Call again to exit.'
+                                        : 'Brain will answer using the selected company, brand, and team.'
                                     : 'Select all context fields before sending.'}
                             </div>
                             <div className="flex items-center gap-2">
@@ -649,20 +756,22 @@ export default function BrainPage() {
                                     {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                                 </button>
 
-                                {/* Send button */}
-                                <button
-                                    type="button"
-                                    onClick={() => void handleSend()}
-                                    disabled={sending || !draft.trim() || !configReady}
-                                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
-                                >
-                                    {sending ? (
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                    ) : (
-                                        <Send className="h-4 w-4" />
-                                    )}
-                                    Send to Brain
-                                </button>
+                                {/* Send button — hidden in conversation mode */}
+                                {!conversationMode && (
+                                    <button
+                                        type="button"
+                                        onClick={() => void handleSend()}
+                                        disabled={sending || !draft.trim() || !configReady}
+                                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+                                    >
+                                        {sending ? (
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <Send className="h-4 w-4" />
+                                        )}
+                                        Send to Brain
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
