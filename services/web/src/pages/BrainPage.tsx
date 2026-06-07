@@ -65,6 +65,7 @@ export default function BrainPage() {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const ttsAbortRef = useRef<AbortController | null>(null);
     const conversationModeRef = useRef(false);
+    const draftRef = useRef(draft);
 
     const selectedCompany = useMemo(
         () => companies.find((c) => c.id === selectedCompanyId),
@@ -291,17 +292,18 @@ export default function BrainPage() {
                     interim += event.results[i][0].transcript;
                 }
             }
-            if (final) setDraft(final);
-            else if (interim) setDraft(interim);
+            if (final) { setDraft(final); draftRef.current = final; }
+            else if (interim) { setDraft(interim); draftRef.current = interim; }
         };
 
         recognition.onend = () => {
             setIsListening(false);
             // In conversation mode, auto-submit on speech end
             if (conversationModeRef.current) {
-                const currentDraft = draft;
+                const currentDraft = draftRef.current;
                 if (typeof currentDraft === 'string' && currentDraft.trim()) {
                     void handleSend();
+                    draftRef.current = '';
                 }
             }
         };
