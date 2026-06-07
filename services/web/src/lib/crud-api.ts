@@ -204,9 +204,13 @@ export interface BrainChatResponse {
 }
 
 async function fetchBrainApi(endpoint: string, method = 'POST', body?: any) {
+    const token = sessionStorage.getItem('auth_token');
     const response = await fetch(`${API_URL}${endpoint}`, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: body ? JSON.stringify(body) : undefined,
     });
     if (!response.ok) {
