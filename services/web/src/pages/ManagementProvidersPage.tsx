@@ -13,6 +13,7 @@ const defaultProviderCatalog = [
     { id: 'coqui', type: 'tts', name: 'Coqui XTTS-v2', status: 'production', is_enabled: true },
     { id: 'ui-automation', type: 'rpa', name: 'UI Automation', status: 'production', is_enabled: true },
     { id: 'browser-control', type: 'rpa', name: 'Browser Control', status: 'experimental', is_enabled: false },
+    { id: 'cloud-brain', type: 'cloud', name: 'Cloud Brain', status: 'production', is_enabled: true, metadata: { api_url: 'https://keledonapi.tuyoisaza.com', ws_url: 'wss://keledonapi.tuyoisaza.com' } },
 ];
 
 // Default RPA provider config (matching browser defaults)
@@ -33,8 +34,17 @@ const rpaProviderInfo: Record<string, { name: string; description: string }> = {
     'ai-vision': { name: 'AI Vision (future)', description: 'LLM-powered element finding via screenshots' },
 };
 
+interface CatalogEntry {
+    id: string;
+    type: string;
+    name: string;
+    status: string;
+    is_enabled: boolean;
+    metadata?: Record<string, any>;
+}
+
 export default function ManagementProvidersPage() {
-    const [catalog, setCatalog] = useState(defaultProviderCatalog);
+    const [catalog, setCatalog] = useState<CatalogEntry[]>(defaultProviderCatalog);
     const [loading, setLoading] = useState(false);
     const [deviceId, setDeviceId] = useState('');
     const [rpaConfig, setRpaConfig] = useState(defaultRpaChain);
@@ -144,6 +154,7 @@ export default function ManagementProvidersPage() {
     const sttProviders = catalog.filter(p => p.type === 'stt');
     const ttsProviders = catalog.filter(p => p.type === 'tts');
     const rpaProviders = catalog.filter(p => p.type === 'rpa');
+    const cloudProviders = catalog.filter(p => p.type === 'cloud');
 
     const getStatusBadge = (status: string) => {
         switch (status) {
@@ -412,6 +423,61 @@ export default function ManagementProvidersPage() {
                     ))}
                 </div>
             </div>
+
+            {/* Cloud Brain */}
+            {cloudProviders.length > 0 && (
+                <div className="rounded-xl border border-border bg-card p-6">
+                    <h3 className="font-semibold mb-4 flex items-center gap-2">
+                        <Globe className="w-5 h-5" />
+                        Cloud Brain
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                        API and WebSocket URL for the KELEDON Brain service. The frontend uses these to connect to the cloud.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {cloudProviders.map((provider) => (
+                            <div key={provider.id} className={cn(
+                                "p-4 rounded-lg border transition-colors",
+                                provider.is_enabled ? "border-primary/50 bg-primary/5" : "border-border bg-muted/50"
+                            )}>
+                                <div className="flex items-start justify-between mb-2">
+                                    <div>
+                                        <span className="font-medium">{provider.name}</span>
+                                        <span className={cn("ml-2 px-2 py-0.5 text-xs rounded", getStatusBadge(provider.status))}>
+                                            {provider.status}
+                                        </span>
+                                    </div>
+                                    <button
+                                        onClick={() => toggleProvider(provider.id)}
+                                        className={cn(
+                                            "p-1 rounded transition-colors",
+                                            provider.is_enabled ? "text-primary" : "text-muted-foreground"
+                                        )}
+                                    >
+                                        {provider.is_enabled ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
+                                    </button>
+                                </div>
+                                <div className="space-y-2 mt-3">
+                                    <div>
+                                        <label className="text-xs text-muted-foreground">API URL</label>
+                                        <div className="text-sm font-mono truncate bg-muted px-2 py-1 rounded mt-1">
+                                            {provider.metadata?.api_url || 'https://keledonapi.tuyoisaza.com'}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-muted-foreground">WebSocket URL</label>
+                                        <div className="text-sm font-mono truncate bg-muted px-2 py-1 rounded mt-1">
+                                            {provider.metadata?.ws_url || 'wss://keledonapi.tuyoisaza.com'}
+                                        </div>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-muted-foreground mt-2">ID: {provider.id}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }

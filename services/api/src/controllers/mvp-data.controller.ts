@@ -31,6 +31,11 @@ export class MvpDataController {
     return this.mvpStore.getRpaProviders();
   }
 
+  @Get('cloud-config')
+  getCloudConfig() {
+    return this.mvpStore.getCloudConfig();
+  }
+
   @Get('interfaces')
   getInterfaces() {
     return this.mvpStore.getInterfaces();

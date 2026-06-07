@@ -22,47 +22,72 @@ interface SocketProviderProps {
   children: React.ReactNode;
 }
 
+/** Fetch the cloud Brain WebSocket URL from the API, falling back to env var */
+async function resolveWsUrl(): Promise<string> {
+  // If an explicit env var is set, use it directly (bypass cloud-config)
+  if (import.meta.env.VITE_WEBSOCKET_URL) {
+    return import.meta.env.VITE_WEBSOCKET_URL;
+  }
+  try {
+    const res = await fetch('/api/cloud-config', { signal: AbortSignal.timeout(5000) });
+    if (res.ok) {
+      const config = await res.json();
+      if (config.ws_url) {
+        console.log('[SocketContext] Using cloud-config WS URL:', config.ws_url);
+        return config.ws_url;
+      }
+    }
+  } catch (e) {
+    console.warn('[SocketContext] Failed to fetch cloud-config, falling back:', e);
+  }
+  return WEBSOCKET_URL;
+}
+
 export function SocketProvider({ children }: SocketProviderProps) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
-  const [connecting, setConnecting] = useState(false);
+  const [connecting, setConnecting] = useState(true);
 
   useEffect(() => {
-    setConnecting(true);
-    
-    const newSocket = io(WEBSOCKET_URL, {
-      transports: ['websocket', 'polling'],
-      timeout: 20000,
-      forceNew: true
-    });
+    let newSocket: Socket | null = null;
 
-    newSocket.on('connect', () => {
-      console.log('Socket connected:', newSocket.id);
-      setConnected(true);
-      setConnecting(false);
-    });
+    resolveWsUrl().then((url) => {
+      newSocket = io(url, {
+        transports: ['websocket', 'polling'],
+        timeout: 20000,
+        forceNew: true,
+      });
 
-    newSocket.on('disconnect', (reason) => {
-      console.log('Socket disconnected:', reason);
-      setConnected(false);
-    });
+      newSocket.on('connect', () => {
+        console.log('Socket connected:', newSocket!.id);
+        setConnected(true);
+        setConnecting(false);
+      });
 
-    newSocket.on('connect_error', (error) => {
-      console.error('Socket connection error:', error);
-      setConnecting(false);
-    });
+      newSocket.on('disconnect', (reason) => {
+        console.log('Socket disconnected:', reason);
+        setConnected(false);
+      });
 
-    setSocket(newSocket);
+      newSocket.on('connect_error', (error) => {
+        console.error('Socket connection error:', error);
+        setConnecting(false);
+      });
+
+      setSocket(newSocket);
+    });
 
     return () => {
-      newSocket.close();
+      if (newSocket) {
+        newSocket.close();
+      }
     };
   }, []);
 
   const value: SocketContextType = {
     socket,
     connected,
-    connecting
+    connecting,
   };
 
   return (
