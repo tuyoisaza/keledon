@@ -83,7 +83,7 @@ interface StoreData {
 
 export interface ProviderCatalogEntry {
   id: string;
-  type: 'stt' | 'tts' | 'rpa';
+  type: 'stt' | 'tts' | 'rpa' | 'cloud';
   name: string;
   description: string;
   status: 'production' | 'experimental' | 'deprecated';
@@ -207,6 +207,20 @@ export class MvpStoreService {
           requires_api_key: false,
         },
       },
+      {
+        id: 'cloud-brain',
+        type: 'cloud',
+        name: 'Cloud Brain',
+        description: 'KELEDON Brain API endpoint — URL del servicio cloud que procesa las solicitudes del Brain',
+        status: 'production',
+        is_enabled: true,
+        metadata: {
+          api_url: process.env.CLOUD_API_URL || 'https://keledonapi.tuyoisaza.com',
+          ws_url: process.env.CLOUD_WS_URL || 'wss://keledonapi.tuyoisaza.com',
+          requires_api_key: true,
+          required_env: ['CLOUD_API_URL'],
+        },
+      },
     ];
 
     if (!localOnly) {
@@ -265,6 +279,16 @@ export class MvpStoreService {
         requiresApiKey: false,
       },
     ];
+  }
+
+  getCloudConfig() {
+    const cloudProvider = this.getProviderCatalog().find(
+      (p) => p.id === 'cloud-brain',
+    );
+    return cloudProvider?.metadata || {
+      api_url: process.env.CLOUD_API_URL || 'https://keledonapi.tuyoisaza.com',
+      ws_url: process.env.CLOUD_WS_URL || 'wss://keledonapi.tuyoisaza.com',
+    };
   }
 
   getInterfaces(): ManagedInterface[] {
