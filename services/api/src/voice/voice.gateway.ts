@@ -10,17 +10,34 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger, Inject, OnModuleInit } from '@nestjs/common';
 import { TTSService } from '../tts/tts.service';
+import { LLMService } from '../llm/llm.service';
 
 const voiceCorsOrigins =
   process.env.KELEDON_ALLOW_ALL_CORS === 'true'
     ? true
     : process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000'];
 
+export interface CallContext {
+  companyName: string;
+  brandName: string;
+  teamName: string;
+  companyId?: string;
+  brandId?: string;
+  teamId?: string;
+}
+
 export interface VoiceSession {
   deviceId: string;
   sessionId: string;
   startedAt: Date;
   transcript: string[];
+  context?: CallContext;
+  /** Conversation history for brain context */
+  history: { role: 'user' | 'assistant'; content: string }[];
+  /** Whether the brain is currently speaking */
+  isSpeaking: boolean;
+  /** Abort controller for current TTS stream */
+  abortTTS: () => void;
 }
 
 export interface VoiceCallEvents {
@@ -48,10 +65,11 @@ export class VoiceGateway
   constructor(
     @Inject(TTSService)
     private ttsService?: TTSService,
+    private llmService?: LLMService,
   ) {}
 
   onModuleInit() {
-    this.logger.log('VoiceGateway initialized');
+    this.logger.log('VoiceGateway initialized (Brain-integrated)');
   }
 
   @WebSocketServer()
@@ -77,12 +95,14 @@ export class VoiceGateway
       sessionId: sessionId || `voice_${Date.now()}`,
       startedAt: new Date(),
       transcript: [],
+      history: [],
+      isSpeaking: false,
+      abortTTS: () => {},
     };
 
     this.activeSessions.set(client.id, session);
     client.data.session = session;
 
-    // Notify other parts of the system
     this.server.emit('voice:connected', {
       device_id: deviceId,
       session_id: session.sessionId,
@@ -96,7 +116,6 @@ export class VoiceGateway
         `Voice disconnected: ${session.deviceId}, transcript length: ${session.transcript.length}`,
       );
 
-      // End the call properly
       this.server.emit('voice:disconnected', {
         device_id: session.deviceId,
         session_id: session.sessionId,
@@ -109,7 +128,6 @@ export class VoiceGateway
 
   /**
    * WebRTC Signaling: Handle incoming offer from browser
-   * The browser creates an RTCPeerConnection and sends us the offer
    */
   @SubscribeMessage('webrtc:offer')
   async handleWebRTCOffer(
@@ -117,19 +135,10 @@ export class VoiceGateway
     @MessageBody()
     data: { sdp: RTCSessionDescriptionInit; session_id?: string },
   ) {
-    const session = client.data.session;
+    const session = client.data.session as VoiceSession | undefined;
     this.logger.log(`WebRTC offer from ${session?.deviceId}`);
 
-    // In a full implementation, we would:
-    // 1. Create an RTCPeerConnection on the server side (or use a media server)
-    // 2. Set the remote description (the offer)
-    // 3. Create an answer
-    // 4. Send the answer back
-
-    // For now, we log and return a placeholder
-    // In production, this would connect to a media server like mediasoup or Jitsi
-    this.logger.log('WebRTC signaling - awaiting media server integration');
-
+    // Phase 2: In production, this would connect to a media server like LiveKit or mediasoup
     return {
       type: 'answer',
       sdp: {
@@ -147,10 +156,8 @@ export class VoiceGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { candidate: RTCIceCandidateInit },
   ) {
-    const session = client.data.session;
+    const session = client.data.session as VoiceSession | undefined;
     this.logger.debug(`ICE candidate from ${session?.deviceId}`);
-
-    // In production, relay to TURN/STUN server
     return { received: true };
   }
 
@@ -167,7 +174,7 @@ export class VoiceGateway
       return { error: 'No active voice session' };
     }
 
-    // In production, stream this audio to Deepgram or another STT service
+    // Phase 2: stream audio to Deepgram STT for real-time transcription
     this.logger.debug(
       `Audio stream from ${session.deviceId}: ${data.audio.length} bytes`,
     );
@@ -176,7 +183,8 @@ export class VoiceGateway
   }
 
   /**
-   * Text input (transcript) from browser's STT
+   * Text transcript from browser's STT
+   * When final: call Brain API, stream TTS audio back
    */
   @SubscribeMessage('voice:transcript')
   async handleTranscript(
@@ -189,34 +197,150 @@ export class VoiceGateway
       return { error: 'No active voice session' };
     }
 
-    if (data.is_final) {
-      session.transcript.push(data.text);
-      this.logger.log(
-        `Transcript (final) from ${session.deviceId}: ${data.text.substring(0, 50)}...`,
-      );
-
-      // Broadcast to session room
-      this.server.to(`voice:${session.sessionId}`).emit('transcript', {
-        text: data.text,
-        confidence: data.confidence,
-        is_final: true,
-        timestamp: new Date().toISOString(),
-      });
-    } else {
-      // Interim result
-      this.server.to(`voice:${session.sessionId}`).emit('transcript', {
-        text: data.text,
-        confidence: data.confidence,
-        is_final: false,
-        timestamp: new Date().toISOString(),
-      });
+    if (!data.is_final) {
+      // Interim result — broadcast to dashboard if needed
+      return { received: true };
     }
+
+    // Final transcript
+    session.transcript.push(data.text);
+    session.history.push({ role: 'user', content: data.text });
+
+    this.logger.log(
+      `Transcript (final) from ${session.deviceId}: ${data.text.substring(0, 50)}...`,
+    );
+
+    // Broadcast transcript to the session room
+    this.server.to(`voice:${session.sessionId}`).emit('transcript', {
+      text: data.text,
+      confidence: data.confidence,
+      is_final: true,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Process through Brain LLM + TTS
+    await this.processBrainReply(client, session, data.text);
 
     return { received: true };
   }
 
   /**
-   * Request TTS from cloud (browser requests cloud to speak)
+   * Process a user message through the Brain LLM and stream TTS audio back
+   */
+  private async processBrainReply(
+    client: Socket,
+    session: VoiceSession,
+    userMessage: string,
+  ): Promise<void> {
+    if (!this.llmService || !this.ttsService) {
+      client.emit('voice:error', { error: 'Brain services not available' });
+      return;
+    }
+
+    try {
+      // 1. Tell the client the brain is thinking
+      client.emit('voice:brain:thinking', { text: userMessage });
+
+      // 2. Build the brain prompt
+      const context = session.context;
+      const contextLines = [
+        `Company: ${context?.companyName || 'Unspecified Company'}`,
+        `Brand: ${context?.brandName || 'Unspecified Brand'}`,
+        `Team: ${context?.teamName || 'Unspecified Team'}`,
+      ];
+
+      const conversation = session.history
+        .slice(-10) // last 10 exchanges
+        .map(
+          (item) =>
+            `${item.role === 'user' ? 'User' : 'Brain'}: ${item.content}`,
+        )
+        .join('\n');
+
+      const prompt = [
+        'You are KELEDON Brain inside the operator dashboard.',
+        'Respond as the live brand brain for the selected company, brand, and team.',
+        'Be concise, practical, and ready for production operations.',
+        'Keep responses brief — this is a voice conversation.',
+        'Do not mention internal policy unless the user asks.',
+        '',
+        'Selected context:',
+        ...contextLines.map((line) => `- ${line}`),
+        '',
+        conversation ? `Conversation so far:\n${conversation}\n` : '',
+        `User: ${userMessage}`,
+        '',
+        'Answer as the brain for this brand only. Return the direct reply and nothing else.',
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      // 3. Call the LLM
+      const response = await this.llmService.generate({
+        prompt,
+        context: contextLines,
+        maxTokens: 300, // shorter for voice
+        temperature: 0.35,
+      });
+
+      const replyText =
+        response.text.trim() || 'I am ready, but I do not have a response yet.';
+
+      session.history.push({ role: 'assistant', content: replyText });
+
+      // 4. Tell client the brain's reply text (so UI can show it)
+      client.emit('voice:brain:reply', {
+        text: replyText,
+        usage: response.usage,
+      });
+
+      // 5. Stream TTS audio back
+      session.isSpeaking = true;
+
+      // Set up abort handler
+      let aborted = false;
+      session.abortTTS = () => {
+        aborted = true;
+        this.ttsService?.stop();
+      };
+
+      // Send audio chunks as they arrive
+      const streamResult = await this.ttsService.speakStreaming(
+        replyText,
+        (chunkBase64) => {
+          if (aborted) return;
+          client.emit('voice:audio', {
+            audio: chunkBase64,
+            sequence: 'chunk',
+            format: 'mp3',
+          });
+        },
+        { interruptible: true },
+      );
+
+      // 6. Signal end of audio stream
+      session.isSpeaking = false;
+      session.abortTTS = () => {};
+
+      client.emit('voice:audio', {
+        sequence: 'end',
+        format: 'mp3',
+        duration: streamResult.duration,
+      });
+
+      this.logger.log(
+        `Brain reply streamed: ${replyText.substring(0, 50)}... (${streamResult.audioData?.length || 0} bytes)`,
+      );
+    } catch (error) {
+      this.logger.error('Brain reply error:', error);
+      session.isSpeaking = false;
+      session.abortTTS = () => {};
+      client.emit('voice:error', { error: 'Failed to generate brain reply' });
+    }
+  }
+
+  /**
+   * Request TTS from cloud
    */
   @SubscribeMessage('voice:speak')
   async handleSpeak(
@@ -239,11 +363,11 @@ export class VoiceGateway
         });
 
         if (result.audioData) {
-          // Send audio back to browser
           client.emit('voice:audio', {
             audio: result.audioData.toString('base64'),
             duration: result.duration,
             format: 'mp3',
+            sequence: 'single',
           });
 
           return { success: true, duration: result.duration };
@@ -260,31 +384,62 @@ export class VoiceGateway
   }
 
   /**
-   * Start a voice call
+   * Interrupt current brain speech
+   */
+  @SubscribeMessage('voice:interrupt')
+  async handleInterrupt(@ConnectedSocket() client: Socket) {
+    const session = this.activeSessions.get(client.id);
+    if (!session) {
+      return { error: 'No active voice session' };
+    }
+
+    if (session.isSpeaking) {
+      this.logger.log(`Interrupting TTS for ${session.deviceId}`);
+      session.abortTTS();
+      session.isSpeaking = false;
+      client.emit('voice:interrupted', {});
+    }
+
+    return { success: true };
+  }
+
+  /**
+   * Start a voice call with brain context
    */
   @SubscribeMessage('call:start')
   async handleCallStart(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { session_id?: string; call_type?: string },
+    @MessageBody()
+    data: {
+      session_id?: string;
+      call_type?: string;
+      context?: CallContext;
+    },
   ) {
-    const session = client.data.session;
+    const session = this.activeSessions.get(client.id);
     if (!session) {
       return { error: 'No session' };
     }
 
     session.sessionId = data.session_id || session.sessionId;
+    session.context = data.context || {
+      companyName: 'Unspecified Company',
+      brandName: 'Unspecified Brand',
+      teamName: 'Unspecified Team',
+    };
+    session.history = []; // Reset history for new call
 
     this.logger.log(
-      `Call started: ${session.deviceId}, session: ${session.sessionId}`,
+      `Call started: ${session.deviceId}, session: ${session.sessionId}, context: ${session.context?.companyName}/${session.context?.brandName}`,
     );
 
     client.join(`voice:${session.sessionId}`);
 
-    // Notify dashboard
     this.server.emit('voice:call_started', {
       device_id: session.deviceId,
       session_id: session.sessionId,
       call_type: data.call_type || 'voice',
+      context: session.context,
       timestamp: new Date().toISOString(),
     });
 
@@ -308,12 +463,16 @@ export class VoiceGateway
       `Call ended: ${session.deviceId}, session: ${session.sessionId}`,
     );
 
+    // Abort any ongoing TTS
+    if (session.isSpeaking) {
+      session.abortTTS();
+      session.isSpeaking = false;
+    }
+
     const transcript = [...session.transcript];
 
-    // Leave the room
     client.leave(`voice:${session.sessionId}`);
 
-    // Notify dashboard
     this.server.emit('voice:call_ended', {
       device_id: session.deviceId,
       session_id: session.sessionId,
@@ -322,14 +481,16 @@ export class VoiceGateway
       timestamp: new Date().toISOString(),
     });
 
-    // Clear session but keep connection for next call
+    // Reset session for next call
     session.transcript = [];
+    session.history = [];
+    session.startedAt = new Date();
 
     return { success: true };
   }
 
   /**
-   * Get active voice sessions (for dashboard)
+   * Get active voice sessions
    */
   @SubscribeMessage('voice:sessions')
   handleGetSessions() {

@@ -13,6 +13,7 @@ import {
     VolumeX,
     Phone,
     PhoneOff,
+    PhoneIncoming,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
@@ -27,6 +28,7 @@ import {
     type Company,
     type Team,
 } from '@/lib/crud-api';
+import { io, type Socket } from 'socket.io-client';
 
 import type { ChatLine } from './brain-types';
 import { storageKeyFor, readStoredContext, saveStoredContext, AUTOSPEAK_KEY } from './brain-storage';
@@ -77,6 +79,14 @@ export default function BrainPage() {
     const ttsAbortRef = useRef<AbortController | null>(null);
     const conversationModeRef = useRef(false);
     const draftRef = useRef(draft);
+    // ── Voice WebSocket ──────────────────────────────────────────────
+    const voiceSocketRef = useRef<Socket | null>(null);
+    const [callStatus, setCallStatus] = useState<'idle' | 'connecting' | 'connected' | 'disconnected'>('idle');
+    const [callTimer, setCallTimer] = useState(0);
+    const callTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const audioQueueRef = useRef<{ data: string; seq: string }[]>([]);
+    const audioPlayingRef = useRef(false);
+    const voiceSessionIdRef = useRef<string | null>(null);
 
     const selectedCompany = useMemo(
         () => companies.find((c) => c.id === selectedCompanyId),
@@ -186,6 +196,7 @@ export default function BrainPage() {
             ttsAbortRef.current?.abort();
             if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
             if (window.speechSynthesis) window.speechSynthesis.cancel();
+            disconnectVoiceSocket();
         };
     }, []);
 
@@ -197,6 +208,182 @@ export default function BrainPage() {
         if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
         if (window.speechSynthesis) window.speechSynthesis.cancel();
         setSpeakingMessageId(null);
+    }
+
+    // ── Voice WebSocket ────────────────────────────────────────────────
+
+    function connectVoiceSocket() {
+        if (voiceSocketRef.current?.connected) return;
+        const token = localStorage.getItem('auth_token');
+        const sessionId = `brain_${Date.now()}`;
+        voiceSessionIdRef.current = sessionId;
+        const socketUrl = API_URL.replace('/api', '');
+        addLog(`Connecting voice WS to ${socketUrl}/ws/voice`);
+        setCallStatus('connecting');
+        const socket = io(`${socketUrl}/ws/voice`, {
+            auth: {
+                token,
+                device_id: `brain_${user?.id || 'anon'}`,
+                session_id: sessionId,
+            },
+            transports: ['websocket', 'polling'],
+            reconnection: true,
+            reconnectionAttempts: 3,
+            reconnectionDelay: 1000,
+        });
+        socket.on('connect', () => {
+            addLog('Voice WS connected: ' + socket.id);
+            setCallStatus('connected');
+            // Start call timer
+            setCallTimer(0);
+            if (callTimerRef.current) clearInterval(callTimerRef.current);
+            callTimerRef.current = setInterval(() => {
+                setCallTimer((t) => t + 1);
+            }, 1000);
+            // Send call:start with current context
+            socket.emit('call:start', {
+                session_id: sessionId,
+                call_type: 'brain_conversation',
+                context: {
+                    companyName: selectedCompany?.name || 'Unspecified Company',
+                    brandName: selectedBrand?.name || 'Unspecified Brand',
+                    teamName: selectedTeam?.name || 'Unspecified Team',
+                    companyId: selectedCompany?.id,
+                    brandId: selectedBrand?.id,
+                    teamId: selectedTeam?.id,
+                },
+            });
+        });
+        socket.on('voice:call_started', (data: any) => {
+            addLog('Call started: ' + data.session_id);
+        });
+        socket.on('voice:brain:thinking', (data: any) => {
+            addLog('Brain thinking about: ' + data.text);
+        });
+        socket.on('voice:brain:reply', (data: any) => {
+            addLog('Brain reply: ' + data.text);
+            setSending(false);
+            const replyId = `assistant-${Date.now()}`;
+            setMessages(cur => [...cur, {
+                id: replyId,
+                role: 'assistant',
+                content: data.text,
+                timestamp: new Date().toISOString(),
+            }]);
+        });
+        socket.on('voice:audio', (data: { audio: string; sequence: string; format?: string; duration?: number }) => {
+            if (data.sequence === 'end') {
+                addLog('Audio stream end' + (data.duration ? ' dur=' + data.duration.toFixed(1) : ''));
+                audioPlayingRef.current = false;
+                // Re-listen in conversation mode
+                setTimeout(() => {
+                    if (conversationModeRef.current && !listeningRef.current) {
+                        toggleListening();
+                    }
+                }, 300);
+                return;
+            }
+            // Queue the chunk
+            audioQueueRef.current.push({ data: data.audio, seq: data.sequence || 'chunk' });
+            if (!audioPlayingRef.current) {
+                playNextAudioChunk();
+            }
+        });
+        socket.on('voice:error', (data: any) => {
+            addLog('Voice WS error: ' + (data.error || 'unknown'));
+            toast.error('Voice call error: ' + (data.error || 'unknown'));
+        });
+        socket.on('disconnect', (reason) => {
+            addLog('Voice WS disconnected: ' + reason);
+            setCallStatus('disconnected');
+            if (callTimerRef.current) { clearInterval(callTimerRef.current); callTimerRef.current = null; }
+            audioPlayingRef.current = false;
+        });
+        socket.on('connect_error', (err) => {
+            addLog('Voice WS connect error: ' + err.message);
+            setCallStatus('disconnected');
+            toast.error('Failed to connect voice channel');
+        });
+        voiceSocketRef.current = socket;
+    }
+
+    function disconnectVoiceSocket() {
+        addLog('Disconnecting voice WS');
+        if (callTimerRef.current) { clearInterval(callTimerRef.current); callTimerRef.current = null; }
+        audioPlayingRef.current = false;
+        audioQueueRef.current = [];
+        const socket = voiceSocketRef.current;
+        if (socket) {
+            if (socket.connected) {
+                socket.emit('call:end');
+            }
+            socket.removeAllListeners();
+            socket.disconnect();
+        }
+        voiceSocketRef.current = null;
+        voiceSessionIdRef.current = null;
+        setCallStatus('idle');
+        setCallTimer(0);
+    }
+
+    /** Play streaming audio chunks in sequence */
+    function playNextAudioChunk() {
+        const queue = audioQueueRef.current;
+        if (queue.length === 0) {
+            audioPlayingRef.current = false;
+            return;
+        }
+        audioPlayingRef.current = true;
+        const chunk = queue.shift()!;
+        try {
+            const binary = atob(chunk.data);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+            const blob = new Blob([bytes], { type: 'audio/mpeg' });
+            const url = URL.createObjectURL(blob);
+            const audio = new Audio(url);
+            audioRef.current = audio;
+            audio.onended = () => {
+                URL.revokeObjectURL(url);
+                playNextAudioChunk();
+            };
+            audio.onerror = () => {
+                URL.revokeObjectURL(url);
+                playNextAudioChunk();
+            };
+            void audio.play();
+        } catch (e) {
+            addLog('Audio chunk play error: ' + e);
+            playNextAudioChunk();
+        }
+    }
+
+    /** Send STT transcript via voice WS */
+    function sendVoiceTranscript(text: string) {
+        const socket = voiceSocketRef.current;
+        if (socket?.connected) {
+            addLog('Sending voice transcript: ' + text);
+            // Add user message to chat
+            const userMsgId = `user-${Date.now()}`;
+            setMessages(cur => [...cur, {
+                id: userMsgId,
+                role: 'user',
+                content: text,
+                timestamp: new Date().toISOString(),
+            }]);
+            socket.emit('voice:transcript', { text, is_final: true });
+            // Show Brain thinking indicator
+            setSending(true);
+        } else {
+            addLog('Voice WS not connected, falling back to HTTP');
+            void handleSend(text);
+        }
+    }
+
+    function formatCallTime(seconds: number): string {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     }
 
     function fallbackSpeak(text: string, messageId: string) {
@@ -335,7 +522,11 @@ export default function BrainPage() {
                         addLog('→ auto-submit (silence timer)');
                         const text = draftRef.current;
                         draftRef.current = '';
-                        void handleSend(text);
+                        if (voiceSocketRef.current?.connected) {
+                            sendVoiceTranscript(text);
+                        } else {
+                            void handleSend(text);
+                        }
                     }
                 }, 1200);
             } else if (interim) {
@@ -393,6 +584,7 @@ export default function BrainPage() {
                 setIsListening(false);
             }
             stopSpeaking();
+            disconnectVoiceSocket();
             setAutoSpeak(true);
         } else {
             // Entering conversation mode
@@ -400,6 +592,8 @@ export default function BrainPage() {
             setConversationMode(true);
             conversationModeRef.current = true;
             setAutoSpeak(true);
+            // Connect voice WebSocket
+            connectVoiceSocket();
             // Start listening if not already
             if (!isListening) {
                 // Small delay so state settles, then start mic
@@ -674,7 +868,13 @@ export default function BrainPage() {
                                 )}
                             >
                                 {conversationMode ? <PhoneOff className="h-4 w-4" /> : <Phone className="h-4 w-4" />}
-                                <span className="hidden sm:inline">{conversationMode ? 'On Call' : 'Call'}</span>
+                                <span className="hidden sm:inline">
+                                    {conversationMode
+                                        ? (callStatus === 'connecting' ? 'Connecting...'
+                                            : callStatus === 'connected' ? formatCallTime(callTimer)
+                                            : 'On Call')
+                                        : 'Call'}
+                                </span>
                             </button>
 
                             {/* Test TTS */}
@@ -764,47 +964,99 @@ export default function BrainPage() {
                     <div className="border-t border-border p-5">
                         <label className="block space-y-2">
                             <span className="flex items-center justify-between text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                                <span>{conversationMode ? 'Conversation mode' : 'Message'}</span>
-                                {isListening && (
-                                    <span className="flex items-center gap-1.5 text-red-400">
-                                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-400" />
-                                        {conversationMode ? 'Listening — speak now' : 'Listening...'}
+                                <span>{conversationMode ? 'Call with Brain' : 'Message'}</span>
+                                {callStatus === 'connected' && (
+                                    <span className="flex items-center gap-1.5 text-green-400">
+                                        <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
+                                        {formatCallTime(callTimer)}
                                     </span>
                                 )}
-                                {conversationMode && !isListening && (
-                                    <span className="flex items-center gap-1.5 text-green-400">
-                                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-400" />
-                                        Processing...
+                                {callStatus === 'connecting' && (
+                                    <span className="flex items-center gap-1.5 text-yellow-400">
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                        Connecting
                                     </span>
                                 )}
                             </span>
                             {conversationMode ? (
                                 <div className={cn(
-                                    'flex items-center justify-center rounded-2xl border-2 px-4 py-8 text-sm transition-colors',
-                                    isListening
-                                        ? 'border-red-400/60 bg-red-500/5'
-                                        : 'border-green-400/40 bg-green-500/5',
+                                    'flex flex-col items-center justify-center rounded-2xl border-2 px-4 py-6 text-sm transition-colors',
+                                    callStatus === 'connecting' && 'border-yellow-400/40 bg-yellow-500/5',
+                                    callStatus === 'connected' && isListening && 'border-red-400/60 bg-red-500/5',
+                                    callStatus === 'connected' && !isListening && 'border-green-400/40 bg-green-500/5',
+                                    callStatus === 'disconnected' && 'border-muted bg-muted/20',
                                 )}>
-                                    <div className="text-center">
-                                        {isListening ? (
-                                            <>
-                                                <Mic className="mx-auto h-8 w-8 text-red-400 animate-pulse" />
-                                                <p className="mt-2 font-medium text-red-400">Listening...</p>
-                                                {draft && (
-                                                    <p className="mt-2 max-w-md mx-auto text-sm text-foreground/80 italic">
-                                                        "{draft}"
-                                                    </p>
+                                    {callStatus === 'connecting' && (
+                                        <div className="text-center">
+                                            <PhoneIncoming className="mx-auto h-10 w-10 text-yellow-400 animate-pulse" />
+                                            <p className="mt-3 text-base font-medium text-yellow-400">Calling KELEDON Brain...</p>
+                                            <p className="mt-1 text-muted-foreground">Establishing secure voice channel</p>
+                                        </div>
+                                    )}
+                                    {callStatus === 'connected' && (
+                                        <div className="w-full text-center">
+                                            {/* Large status area */}
+                                            <div className="mb-4">
+                                                {isListening ? (
+                                                    <>
+                                                        <Mic className="mx-auto h-12 w-12 text-red-400 animate-pulse" />
+                                                        <p className="mt-3 text-lg font-bold text-red-400">You're speaking</p>
+                                                        {draft && (
+                                                            <p className="mt-2 max-w-md mx-auto text-sm text-foreground/80 italic">
+                                                                "{draft}"
+                                                            </p>
+                                                        )}
+                                                    </>
+                                                ) : sending ? (
+                                                    <>
+                                                        <Loader2 className="mx-auto h-12 w-12 text-blue-400 animate-spin" />
+                                                        <p className="mt-3 text-lg font-bold text-blue-400">Brain is thinking...</p>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Volume2 className="mx-auto h-12 w-12 text-green-500 animate-pulse" />
+                                                        <p className="mt-3 text-lg font-bold text-green-500">Brain is speaking</p>
+                                                    </>
                                                 )}
-                                                <p className="mt-1 text-muted-foreground">Your speech will auto-send when you stop speaking</p>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Volume2 className="mx-auto h-8 w-8 text-green-500 animate-pulse" />
-                                                <p className="mt-2 font-medium text-green-500">Brain is speaking...</p>
-                                                <p className="mt-1 text-muted-foreground">Wait for the response, then speak when you hear the tone</p>
-                                            </>
-                                        )}
-                                    </div>
+                                            </div>
+                                            {/* Call timer */}
+                                            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-1.5 font-mono text-sm">
+                                                <span className="h-2 w-2 rounded-full bg-green-500" />
+                                                Connected · {formatCallTime(callTimer)}
+                                            </div>
+                                            {/* End Call button */}
+                                            <div className="mt-4 flex justify-center gap-3">
+                                                {isListening && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            recognitionRef.current?.stop();
+                                                            setIsListening(false);
+                                                        }}
+                                                        className="inline-flex items-center gap-2 rounded-xl border border-yellow-400/40 px-4 py-2 text-sm text-yellow-500 hover:bg-yellow-500/10 transition-colors"
+                                                    >
+                                                        <MicOff className="h-4 w-4" />
+                                                        Mute
+                                                    </button>
+                                                )}
+                                                <button
+                                                    type="button"
+                                                    onClick={toggleConversationMode}
+                                                    className="inline-flex items-center gap-2 rounded-xl bg-red-500 px-6 py-2.5 text-sm font-bold text-white hover:bg-red-600 transition-colors shadow-lg"
+                                                >
+                                                    <PhoneOff className="h-4 w-4" />
+                                                    End Call
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {callStatus === 'disconnected' && (
+                                        <div className="text-center">
+                                            <PhoneOff className="mx-auto h-10 w-10 text-muted-foreground" />
+                                            <p className="mt-3 text-base font-medium text-muted-foreground">Call ended</p>
+                                            <p className="mt-1 text-muted-foreground">Duration: {formatCallTime(callTimer)}</p>
+                                        </div>
+                                    )}
                                 </div>
                             ) : (
                                 <textarea

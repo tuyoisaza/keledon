@@ -60,6 +60,102 @@ export class TTSService {
     }
   }
 
+  /**
+   * Stream TTS audio chunks via a callback, for WebSocket delivery.
+   * The callback receives base64-encoded audio chunks as they arrive.
+   */
+  async speakStreaming(
+    text: string,
+    onChunk: (base64: string) => void,
+    options: { interruptible?: boolean } = {},
+  ): Promise<TTSResult> {
+    const ttsConfig = this.mvpStore.getTTSConfig();
+    const providerId = ttsConfig.providerId || 'webspeech';
+    const apiKeyFromStore = ttsConfig.apiKey;
+
+    const hasElevenLabs = !!(apiKeyFromStore || process.env.ELEVENLABS_API_KEY);
+    const hasOpenAI = !!(apiKeyFromStore || process.env.OPENAI_API_KEY);
+
+    let provider: string;
+    if (providerId !== 'webspeech' && providerId !== 'auto') {
+      provider = providerId;
+    } else if (hasElevenLabs) {
+      provider = 'elevenlabs';
+    } else if (hasOpenAI) {
+      provider = 'openai';
+    } else {
+      provider = 'mock';
+    }
+
+    console.log(
+      `[TTS] Streaming with ${provider}: "${text.substring(0, 50)}..."`,
+    );
+
+    if (provider === 'elevenlabs') {
+      return await this.streamWithElevenLabs(text, onChunk, options);
+    } else if (provider === 'openai') {
+      return await this.speakWithOpenAI(text, options);
+    } else {
+      console.log('[TTS] Mock streaming — no provider configured');
+      return { audioData: Buffer.from(''), duration: 0 };
+    }
+  }
+
+  async streamWithElevenLabs(
+    text: string,
+    onChunk: (base64: string) => void,
+    options: { interruptible?: boolean },
+  ): Promise<TTSResult> {
+    const ttsConfig = this.mvpStore.getTTSConfig();
+    const apiKey = ttsConfig.apiKey || process.env.ELEVENLABS_API_KEY;
+
+    if (!apiKey) {
+      return { error: 'ELEVENLABS_API_KEY not configured' };
+    }
+
+    try {
+      const { ElevenLabsClient } = await import('elevenlabs');
+      const client = new ElevenLabsClient({ apiKey });
+
+      const audio = await client.textToSpeech.convertAsStream(this.voiceId, {
+        text,
+        model_id: 'eleven_turbo_v2_5',
+        voice_settings: {
+          stability: 0.5,
+          similarity_boost: 0.8,
+          style: 0.0,
+          use_speaker_boost: true,
+        },
+      });
+
+      const chunks: Buffer[] = [];
+      for await (const chunk of audio) {
+        if (
+          options.interruptible &&
+          this.eventEmitter.listenerCount('stop') > 0
+        ) {
+          console.log('[TTS] Streaming interrupted');
+          break;
+        }
+        const buf = Buffer.from(chunk);
+        chunks.push(buf);
+        onChunk(buf.toString('base64'));
+      }
+
+      const audioData = Buffer.concat(chunks);
+      const duration = this.estimateDuration(audioData.length);
+
+      console.log(
+        `[TTS] Streamed ${chunks.length} chunks, ${audioData.length} bytes, ~${duration.toFixed(1)}s audio`,
+      );
+
+      return { audioData, duration };
+    } catch (error: any) {
+      console.error('[TTS] ElevenLabs streaming error:', error.message);
+      return { error: error.message };
+    }
+  }
+
   async speakWithElevenLabs(
     text: string,
     options: { interruptible?: boolean },
