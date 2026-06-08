@@ -52,9 +52,12 @@ export default function BrainPage() {
     const [loading, setLoading] = useState(true);
     const [sending, setSending] = useState(false);
 
-    // Voice state
+    const [brainLogs, setBrainLogs] = useState<string[]>([]);
     const [isListening, setIsListening] = useState(false);
     const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
+    const listeningRef = useRef(false);
+    const reListenTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [autoSpeak, setAutoSpeak] = useState(() => {
         try { return localStorage.getItem(AUTOSPEAK_KEY) !== 'false'; } catch { return true; }
     });
@@ -278,8 +281,15 @@ export default function BrainPage() {
 
     function toggleListening() {
         addLog('toggleListening() isListening=' + isListening);
-        if (isListening) {
+        // Clear any pending re-listen timers
+        if (reListenTimerRef.current) {
+            clearTimeout(reListenTimerRef.current);
+            reListenTimerRef.current = null;
+        }
+
+        if (listeningRef.current) {
             addLog('→ stopping recognition');
+            listeningRef.current = false;
             recognitionRef.current?.stop();
             setIsListening(false);
             return;
@@ -292,17 +302,18 @@ export default function BrainPage() {
         }
 
         const recognition = new SR();
-        recognition.continuous = false;
+        recognition.continuous = true;
         recognition.interimResults = true;
-        recognition.lang = 'en-US';
+        recognition.lang = navigator.language || 'en-US';
 
         recognition.onstart = () => {
-            addLog('recognition started');
+            addLog('recognition started (continuous)');
             // Interruption: if Brain is speaking, cut it off
             if (speakingMessageId) {
                 addLog('→ interruption! stopping TTS');
                 stopSpeaking();
             }
+            listeningRef.current = true;
             setIsListening(true);
         };
 
@@ -316,51 +327,59 @@ export default function BrainPage() {
                     interim += event.results[i][0].transcript;
                 }
             }
-            if (final) { setDraft(final); draftRef.current = final; addLog('STT final: "' + final.trimEnd() + '"'); }
-            else if (interim) { setDraft(interim); draftRef.current = interim; }
+            if (final) {
+                setDraft(final); draftRef.current = final; addLog('STT final: "' + final.trimEnd() + '"');
+                // Reset silence timer — auto-submit after 1.2s of silence
+                if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+                silenceTimerRef.current = setTimeout(() => {
+                    if (conversationModeRef.current && draftRef.current?.trim()) {
+                        addLog('→ auto-submit (silence timer)');
+                        const text = draftRef.current;
+                        draftRef.current = '';
+                        void handleSend(text);
+                    }
+                }, 1200);
+            } else if (interim) {
+                setDraft(interim); draftRef.current = interim;
+            }
         };
 
         recognition.onend = () => {
             addLog('recognition onend, draftRef=' + (draftRef.current ? '"' + draftRef.current.trimEnd() + '"' : '(empty)'));
+            listeningRef.current = false;
             setIsListening(false);
-            recognitionRef.current = null;
-            // In conversation mode, auto-submit on speech end
-            if (conversationModeRef.current) {
-                const currentDraft = draftRef.current;
-                if (typeof currentDraft === 'string' && currentDraft.trim()) {
-                    addLog('→ auto-submit in conv mode');
-                    void handleSend(currentDraft);  // pass ref text to avoid stale-closure on draft state
-                    draftRef.current = '';
-                } else {
-                    addLog('→ no-speech, re-listen in 500ms');
-                    setTimeout(() => {
-                        if (conversationModeRef.current) {
-                            toggleListening();
-                        }
-                    }, 500);
-                }
+            // In continuous mode, restart if we're still in conversation mode
+            if (conversationModeRef.current && recognitionRef.current === recognition) {
+                addLog('→ restarting recognition in 300ms');
+                reListenTimerRef.current = setTimeout(() => {
+                    if (conversationModeRef.current && !listeningRef.current) {
+                        toggleListening();
+                    }
+                }, 300);
             }
         };
 
         recognition.onerror = (event: any) => {
             addLog('recognition error: ' + event.error);
+            listeningRef.current = false;
             setIsListening(false);
-            recognitionRef.current = null;
+            // Don't show toast for transient errors
             if (event.error !== 'no-speech' && event.error !== 'aborted') {
-                toast.error(`Microphone error: ${event.error}`);
+                toast.error('Microphone error: ' + event.error);
             }
-            // In conversation mode, re-listen on transient errors
-            if (conversationModeRef.current && event.error !== 'aborted') {
-                setTimeout(() => {
-                    if (conversationModeRef.current) {
+            // Restart on transient errors in conversation mode
+            if (conversationModeRef.current && event.error !== 'aborted' && recognitionRef.current === recognition) {
+                reListenTimerRef.current = setTimeout(() => {
+                    if (conversationModeRef.current && !listeningRef.current) {
                         toggleListening();
                     }
                 }, 500);
             }
         };
 
+        listeningRef.current = true;
         recognitionRef.current = recognition;
-        recognition.start();
+        try { recognition.start(); } catch (e) { addLog('recognition start error: ' + e); listeningRef.current = false; }
     }
 
     function toggleConversationMode() {
@@ -374,7 +393,7 @@ export default function BrainPage() {
                 recognitionRef.current?.stop();
                 setIsListening(false);
             }
-            stopTts();
+            stopSpeaking();
             setAutoSpeak(true);
         } else {
             // Entering conversation mode
