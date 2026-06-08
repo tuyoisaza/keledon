@@ -52,7 +52,6 @@ export default function BrainPage() {
     const [loading, setLoading] = useState(true);
     const [sending, setSending] = useState(false);
 
-    const [brainLogs, setBrainLogs] = useState<string[]>([]);
     const [isListening, setIsListening] = useState(false);
     const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
     const listeningRef = useRef(false);
