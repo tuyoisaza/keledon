@@ -241,57 +241,41 @@ export class VoiceGateway
       // 1. Tell the client the brain is thinking
       client.emit('voice:brain:thinking', { text: userMessage });
 
-      // 2. Build the brain prompt
+      // 2. Call the Brain chat API (same endpoint the web chat uses)
+      //    This uses the same LLM config as the BrainController — fallback, provider, etc.
+      const apiPort = process.env.PORT || 3001;
+      const brainApiUrl = `http://localhost:${apiPort}/api/brain/chat`;
       const context = session.context;
-      const contextLines = [
-        `Company: ${context?.companyName || 'Unspecified Company'}`,
-        `Brand: ${context?.brandName || 'Unspecified Brand'}`,
-        `Team: ${context?.teamName || 'Unspecified Team'}`,
-      ];
+      const brainPayload = {
+        message: userMessage,
+        companyName: context?.companyName || 'Unspecified Company',
+        brandName: context?.brandName || 'Unspecified Brand',
+        teamName: context?.teamName || 'Unspecified Team',
+        history: session.history.slice(-10).map((h) => ({
+          role: h.role,
+          content: h.content,
+        })),
+      };
 
-      const conversation = session.history
-        .slice(-10) // last 10 exchanges
-        .map(
-          (item) =>
-            `${item.role === 'user' ? 'User' : 'Brain'}: ${item.content}`,
-        )
-        .join('\n');
-
-      const prompt = [
-        'You are KELEDON Brain inside the operator dashboard.',
-        'Respond as the live brand brain for the selected company, brand, and team.',
-        'Be concise, practical, and ready for production operations.',
-        'Keep responses brief — this is a voice conversation.',
-        'Do not mention internal policy unless the user asks.',
-        '',
-        'Selected context:',
-        ...contextLines.map((line) => `- ${line}`),
-        '',
-        conversation ? `Conversation so far:\n${conversation}\n` : '',
-        `User: ${userMessage}`,
-        '',
-        'Answer as the brain for this brand only. Return the direct reply and nothing else.',
-      ]
-        .filter(Boolean)
-        .join('\n');
-
-      // 3. Call the LLM
-      const response = await this.llmService.generate({
-        prompt,
-        context: contextLines,
-        maxTokens: 300, // shorter for voice
-        temperature: 0.35,
+      const brainResponse = await fetch(brainApiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(brainPayload),
       });
 
-      const replyText =
-        response.text.trim() || 'I am ready, but I do not have a response yet.';
+      if (!brainResponse.ok) {
+        throw new Error(`Brain API returned ${brainResponse.status}`);
+      }
+
+      const brainData: any = await brainResponse.json();
+      const replyText = brainData.reply?.trim() || '';
 
       session.history.push({ role: 'assistant', content: replyText });
 
       // 4. Tell client the brain's reply text (so UI can show it)
       client.emit('voice:brain:reply', {
         text: replyText,
-        usage: response.usage,
+        usage: brainData.usage,
       });
 
       // 5. Stream TTS audio back
