@@ -195,11 +195,7 @@ export default function BrainPage() {
         utterance.onend = () => {
             setSpeakingMessageId(null);
             if (conversationModeRef.current) {
-                setTimeout(() => {
-                    if (conversationModeRef.current && !isListening) {
-                        toggleListening();
-                    }
-                }, 300);
+                setTimeout(() => toggleListening(), 300);
             }
         };
         utterance.onerror = () => setSpeakingMessageId(null);
@@ -233,12 +229,7 @@ export default function BrainPage() {
                         setSpeakingMessageId(null);
                         // In conversation mode, re-listen after speaking
                         if (conversationModeRef.current) {
-                            // Re-listen after a short pause
-                            setTimeout(() => {
-                                if (conversationModeRef.current && !isListening) {
-                                    toggleListening();
-                                }
-                            }, 300);
+                            setTimeout(() => toggleListening(), 300);
                         }
                     };
                     audio.onerror = () => { URL.revokeObjectURL(url); fallbackSpeak(text, messageId); };
@@ -298,20 +289,37 @@ export default function BrainPage() {
 
         recognition.onend = () => {
             setIsListening(false);
+            recognitionRef.current = null;
             // In conversation mode, auto-submit on speech end
             if (conversationModeRef.current) {
                 const currentDraft = draftRef.current;
                 if (typeof currentDraft === 'string' && currentDraft.trim()) {
                     void handleSend();
                     draftRef.current = '';
+                } else {
+                    // No speech detected — re-listen after a short pause
+                    setTimeout(() => {
+                        if (conversationModeRef.current) {
+                            toggleListening();
+                        }
+                    }, 500);
                 }
             }
         };
 
         recognition.onerror = (event: any) => {
             setIsListening(false);
+            recognitionRef.current = null;
             if (event.error !== 'no-speech' && event.error !== 'aborted') {
                 toast.error(`Microphone error: ${event.error}`);
+            }
+            // In conversation mode, re-listen on transient errors
+            if (conversationModeRef.current && event.error !== 'aborted') {
+                setTimeout(() => {
+                    if (conversationModeRef.current) {
+                        toggleListening();
+                    }
+                }, 500);
             }
         };
 
@@ -699,6 +707,11 @@ export default function BrainPage() {
                                             <>
                                                 <Mic className="mx-auto h-8 w-8 text-red-400 animate-pulse" />
                                                 <p className="mt-2 font-medium text-red-400">Listening...</p>
+                                                {draft && (
+                                                    <p className="mt-2 max-w-md mx-auto text-sm text-foreground/80 italic">
+                                                        "{draft}"
+                                                    </p>
+                                                )}
                                                 <p className="mt-1 text-muted-foreground">Your speech will auto-send when you stop speaking</p>
                                             </>
                                         ) : (
