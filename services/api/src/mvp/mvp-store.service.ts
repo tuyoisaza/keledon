@@ -79,6 +79,14 @@ interface StoreData {
   tenantFlowPermissions: TenantFlowPermission[];
   intentFlowMappings: IntentFlowMapping[];
   knowledgeDocuments: KnowledgeDocument[];
+  ttsConfig: TTSConfigEntry;
+}
+
+export interface TTSConfigEntry {
+  providerId: string;
+  apiKey: string;
+  voiceId?: string;
+  updatedAt: string;
 }
 
 export interface ProviderCatalogEntry {
@@ -289,6 +297,21 @@ export class MvpStoreService {
       api_url: process.env.CLOUD_API_URL || 'https://keledonapi.tuyoisaza.com',
       ws_url: process.env.CLOUD_WS_URL || 'wss://keledonapi.tuyoisaza.com',
     };
+  }
+
+  getTTSConfig(): TTSConfigEntry {
+    return this.store.ttsConfig || this.defaultTTSConfig();
+  }
+
+  updateTTSConfig(input: Partial<TTSConfigEntry>): TTSConfigEntry {
+    this.store.ttsConfig = {
+      ...this.defaultTTSConfig(),
+      ...this.store.ttsConfig,
+      ...input,
+      updatedAt: new Date().toISOString(),
+    };
+    this.saveStore();
+    return this.store.ttsConfig;
   }
 
   getInterfaces(): ManagedInterface[] {
@@ -550,6 +573,7 @@ export class MvpStoreService {
         knowledgeDocuments: Array.isArray(parsed.knowledgeDocuments)
           ? parsed.knowledgeDocuments
           : [],
+        ttsConfig: parsed.ttsConfig || this.defaultTTSConfig(),
       };
     } catch {
       const initial = this.defaultStore();
@@ -593,6 +617,15 @@ export class MvpStoreService {
       tenantFlowPermissions: [],
       intentFlowMappings: [],
       knowledgeDocuments: [],
+      ttsConfig: this.defaultTTSConfig(),
+    };
+  }
+
+  private defaultTTSConfig(): TTSConfigEntry {
+    return {
+      providerId: 'webspeech',
+      apiKey: '',
+      updatedAt: new Date().toISOString(),
     };
   }
 }

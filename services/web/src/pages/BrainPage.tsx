@@ -298,6 +298,11 @@ export default function BrainPage() {
 
         recognition.onstart = () => {
             addLog('recognition started');
+            // Interruption: if Brain is speaking, cut it off
+            if (speakingMessageId) {
+                addLog('→ interruption! stopping TTS');
+                stopSpeaking();
+            }
             setIsListening(true);
         };
 

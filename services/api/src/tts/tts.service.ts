@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { Readable } from 'stream';
+import { MvpStoreService } from '../mvp/mvp-store.service';
 
 export interface TTSResult {
   audioData?: Buffer;
@@ -14,22 +15,25 @@ export class TTSService {
   private currentStream: Readable | null = null;
   private voiceId = process.env.ELEVENLABS_VOICE_ID || 'pFZP5JQG7iQjIQuC4Bku';
 
-  constructor() {
-    console.log('[TTS] TTSService initialized with voice:', this.voiceId);
+  constructor(private readonly mvpStore: MvpStoreService) {
+    console.log('[TTS] TTSService initialized');
   }
 
   async speak(
     text: string,
     options: { interruptible?: boolean } = {},
   ): Promise<TTSResult> {
-    // Provider selection: explicit env > auto-detect from available keys
-    const explicitProvider = process.env.TTS_PROVIDER;
-    const hasElevenLabs = !!process.env.ELEVENLABS_API_KEY;
-    const hasOpenAI = !!process.env.OPENAI_API_KEY;
+    // Provider selection: stored config > env vars > default
+    const ttsConfig = this.mvpStore.getTTSConfig();
+    const providerId = ttsConfig.providerId || 'webspeech';
+    const apiKeyFromStore = ttsConfig.apiKey;
+
+    const hasElevenLabs = !!(apiKeyFromStore || process.env.ELEVENLABS_API_KEY);
+    const hasOpenAI = !!(apiKeyFromStore || process.env.OPENAI_API_KEY);
 
     let provider: string;
-    if (explicitProvider && explicitProvider !== 'auto') {
-      provider = explicitProvider;
+    if (providerId !== 'webspeech' && providerId !== 'auto') {
+      provider = providerId;
     } else if (hasElevenLabs) {
       provider = 'elevenlabs';
     } else if (hasOpenAI) {
@@ -39,7 +43,7 @@ export class TTSService {
     }
 
     console.log(
-      `[TTS] Speaking with ${provider}: "${text.substring(0, 50)}..."`,
+      `[TTS] Speaking with ${provider} (config providerId=${providerId}): "${text.substring(0, 50)}..."`,
     );
 
     try {
@@ -60,7 +64,8 @@ export class TTSService {
     text: string,
     options: { interruptible?: boolean },
   ): Promise<TTSResult> {
-    const apiKey = process.env.ELEVENLABS_API_KEY;
+    const ttsConfig = this.mvpStore.getTTSConfig();
+    const apiKey = ttsConfig.apiKey || process.env.ELEVENLABS_API_KEY;
 
     if (!apiKey) {
       console.log('[TTS] ElevenLabs API key not configured, using mock');
@@ -112,7 +117,8 @@ export class TTSService {
     text: string,
     _options: { interruptible?: boolean },
   ): Promise<TTSResult> {
-    const apiKey = process.env.OPENAI_API_KEY;
+    const ttsConfig = this.mvpStore.getTTSConfig();
+    const apiKey = ttsConfig.apiKey || process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return { error: 'OPENAI_API_KEY not configured' };
     }

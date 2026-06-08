@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -36,6 +37,16 @@ export class MvpDataController {
   @Public()
   getCloudConfig() {
     return this.mvpStore.getCloudConfig();
+  }
+
+  @Get('tts-config')
+  getTTSConfig() {
+    return this.mvpStore.getTTSConfig();
+  }
+
+  @Patch('tts-config')
+  updateTTSConfig(@Body() body: { providerId?: string; apiKey?: string; voiceId?: string }) {
+    return this.mvpStore.updateTTSConfig(body);
   }
 
   @Get('interfaces')

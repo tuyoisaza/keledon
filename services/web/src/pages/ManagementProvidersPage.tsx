@@ -49,9 +49,12 @@ export default function ManagementProvidersPage() {
     const [deviceId, setDeviceId] = useState('');
     const [rpaConfig, setRpaConfig] = useState(defaultRpaChain);
     const [rpaLoading, setRpaLoading] = useState(false);
+    const [ttsConfig, setTTSConfig] = useState({ providerId: 'webspeech', apiKey: '', voiceId: '' });
+    const [ttsSaving, setTTSSaving] = useState(false);
 
     useEffect(() => {
         fetchCatalog();
+        fetchTTSConfig();
     }, []);
 
     const fetchCatalog = async () => {
@@ -66,6 +69,45 @@ export default function ManagementProvidersPage() {
             console.error('Failed to fetch catalog:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchTTSConfig = async () => {
+        try {
+            const res = await apiFetch('/api/tts-config');
+            if (res.ok) {
+                const data = await res.json();
+                setTTSConfig({
+                    providerId: data.providerId || 'webspeech',
+                    apiKey: data.apiKey || '',
+                    voiceId: data.voiceId || '',
+                });
+            }
+        } catch (e) {
+            console.error('Failed to fetch TTS config', e);
+        }
+    };
+
+    const saveTTSConfig = async () => {
+        setTTSSaving(true);
+        try {
+            const res = await apiFetch('/api/tts-config', {
+                method: 'PATCH',
+                body: JSON.stringify({
+                    providerId: ttsConfig.providerId,
+                    apiKey: ttsConfig.apiKey,
+                    voiceId: ttsConfig.voiceId,
+                }),
+            });
+            if (res.ok) {
+                toast.success('TTS config saved');
+            } else {
+                toast.error('Failed to save TTS config');
+            }
+        } catch {
+            toast.error('Failed to save TTS config');
+        } finally {
+            setTTSSaving(false);
         }
     };
 
@@ -221,13 +263,25 @@ export default function ManagementProvidersPage() {
                 <h3 className="font-semibold mb-4 flex items-center gap-2">
                     <Globe className="w-5 h-5" />
                     Text-to-Speech (TTS)
+                    <button
+                        onClick={saveTTSConfig}
+                        disabled={ttsSaving}
+                        className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
+                    >
+                        <Save className="w-4 h-4" />
+                        {ttsSaving ? 'Saving...' : 'Save TTS Config'}
+                    </button>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {ttsProviders.map((provider) => (
-                        <div key={provider.id} className={cn(
-                            "p-4 rounded-lg border transition-colors",
-                            provider.is_enabled ? "border-primary/50 bg-primary/5" : "border-border bg-muted/50"
-                        )}>
+                        <div
+                            key={provider.id}
+                            className={cn(
+                                "p-4 rounded-lg border transition-colors cursor-pointer",
+                                ttsConfig.providerId === provider.id ? "border-primary bg-primary/10" : "border-border bg-muted/50 hover:bg-muted"
+                            )}
+                            onClick={() => setTTSConfig(prev => ({ ...prev, providerId: provider.id }))}
+                        >
                             <div className="flex items-start justify-between mb-2">
                                 <div>
                                     <span className="font-medium">{provider.name}</span>
@@ -235,17 +289,37 @@ export default function ManagementProvidersPage() {
                                         {provider.status}
                                     </span>
                                 </div>
-                                <button
-                                    onClick={() => toggleProvider(provider.id)}
-                                    className={cn(
-                                        "p-1 rounded transition-colors",
-                                        provider.is_enabled ? "text-primary" : "text-muted-foreground"
-                                    )}
-                                >
-                                    {provider.is_enabled ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
-                                </button>
+                                {ttsConfig.providerId === provider.id && (
+                                    <Check className="w-5 h-5 text-primary" />
+                                )}
                             </div>
                             <p className="text-sm text-muted-foreground">ID: {provider.id}</p>
+                            {ttsConfig.providerId === provider.id && provider.metadata?.requires_api_key !== false && (
+                                <div className="mt-3 space-y-2" onClick={e => e.stopPropagation()}>
+                                    <div>
+                                        <label className="text-xs text-muted-foreground">API Key</label>
+                                        <input
+                                            type="password"
+                                            value={ttsConfig.apiKey}
+                                            onChange={e => setTTSConfig(prev => ({ ...prev, apiKey: e.target.value }))}
+                                            placeholder="Enter API key..."
+                                            className="w-full mt-1 px-2 py-1.5 text-sm rounded border border-border bg-background focus:border-primary focus:outline-none"
+                                        />
+                                    </div>
+                                    {provider.id === 'elevenlabs' && (
+                                        <div>
+                                            <label className="text-xs text-muted-foreground">Voice ID (optional)</label>
+                                            <input
+                                                type="text"
+                                                value={ttsConfig.voiceId}
+                                                onChange={e => setTTSConfig(prev => ({ ...prev, voiceId: e.target.value }))}
+                                                placeholder="pFZP5JQG7iQjIQuC4Bku"
+                                                className="w-full mt-1 px-2 py-1.5 text-sm rounded border border-border bg-background focus:border-primary focus:outline-none"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
