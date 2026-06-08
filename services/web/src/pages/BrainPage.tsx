@@ -60,6 +60,15 @@ export default function BrainPage() {
     });
     const [conversationMode, setConversationMode] = useState(false);
 
+    // Debug logging
+    const [brainLogs, setBrainLogs] = useState<string[]>([]);
+    const BRAIN_LOG_MAX = 50;
+    function addLog(msg: string) {
+        const entry = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        console.log('[Brain]', msg);
+        setBrainLogs(prev => [entry, ...prev].slice(0, BRAIN_LOG_MAX));
+    }
+
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const recognitionRef = useRef<any>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -204,6 +213,7 @@ export default function BrainPage() {
     }
 
     async function speakReply(text: string, messageId: string) {
+        addLog('speakReply() textLen=' + text.length + ' msgId=' + messageId);
         stopSpeaking();
         const controller = new AbortController();
         ttsAbortRef.current = controller;
@@ -220,27 +230,40 @@ export default function BrainPage() {
 
             if (res.ok) {
                 const blob = await res.blob();
+                addLog('TTS fetch OK status=' + res.status + ' blobSize=' + blob.size);
                 if (!controller.signal.aborted && blob.size > 100) {
                     const url = URL.createObjectURL(blob);
                     const audio = new Audio(url);
                     audioRef.current = audio;
                     audio.onended = () => {
+                        addLog('TTS audio ended');
                         URL.revokeObjectURL(url);
                         setSpeakingMessageId(null);
                         // In conversation mode, re-listen after speaking
                         if (conversationModeRef.current) {
+                            addLog('→ re-listen after TTS');
                             setTimeout(() => toggleListening(), 300);
                         }
                     };
-                    audio.onerror = () => { URL.revokeObjectURL(url); fallbackSpeak(text, messageId); };
+                    audio.onerror = (e) => {
+                        addLog('TTS audio onerror: ' + e);
+                        URL.revokeObjectURL(url);
+                        fallbackSpeak(text, messageId);
+                    };
                     setSpeakingMessageId(messageId);
                     await audio.play();
                     return;
                 }
             }
-            if (!controller.signal.aborted) fallbackSpeak(text, messageId);
+            if (!controller.signal.aborted) {
+                addLog('TTS fallback — res.ok=' + res.ok + ' blobSize=' + (blob?.size ?? 'N/A'));
+                fallbackSpeak(text, messageId);
+            }
         } catch (err: any) {
-            if (err?.name !== 'AbortError') fallbackSpeak(text, messageId);
+            if (err?.name !== 'AbortError') {
+                addLog('speakReply catch: ' + (err?.message ?? String(err)));
+                fallbackSpeak(text, messageId);
+            }
         }
     }
 
@@ -254,7 +277,9 @@ export default function BrainPage() {
     // ── STT ─────────────────────────────────────────────────────────────
 
     function toggleListening() {
+        addLog('toggleListening() isListening=' + isListening);
         if (isListening) {
+            addLog('→ stopping recognition');
             recognitionRef.current?.stop();
             setIsListening(false);
             return;
@@ -271,7 +296,10 @@ export default function BrainPage() {
         recognition.interimResults = true;
         recognition.lang = 'en-US';
 
-        recognition.onstart = () => setIsListening(true);
+        recognition.onstart = () => {
+            addLog('recognition started');
+            setIsListening(true);
+        };
 
         recognition.onresult = (event: any) => {
             let interim = '';
@@ -283,21 +311,23 @@ export default function BrainPage() {
                     interim += event.results[i][0].transcript;
                 }
             }
-            if (final) { setDraft(final); draftRef.current = final; }
+            if (final) { setDraft(final); draftRef.current = final; addLog('STT final: "' + final.trimEnd() + '"'); }
             else if (interim) { setDraft(interim); draftRef.current = interim; }
         };
 
         recognition.onend = () => {
+            addLog('recognition onend, draftRef=' + (draftRef.current ? '"' + draftRef.current.trimEnd() + '"' : '(empty)'));
             setIsListening(false);
             recognitionRef.current = null;
             // In conversation mode, auto-submit on speech end
             if (conversationModeRef.current) {
                 const currentDraft = draftRef.current;
                 if (typeof currentDraft === 'string' && currentDraft.trim()) {
+                    addLog('→ auto-submit in conv mode');
                     void handleSend();
                     draftRef.current = '';
                 } else {
-                    // No speech detected — re-listen after a short pause
+                    addLog('→ no-speech, re-listen in 500ms');
                     setTimeout(() => {
                         if (conversationModeRef.current) {
                             toggleListening();
@@ -308,6 +338,7 @@ export default function BrainPage() {
         };
 
         recognition.onerror = (event: any) => {
+            addLog('recognition error: ' + event.error);
             setIsListening(false);
             recognitionRef.current = null;
             if (event.error !== 'no-speech' && event.error !== 'aborted') {
@@ -328,8 +359,10 @@ export default function BrainPage() {
     }
 
     function toggleConversationMode() {
+        addLog('toggleConversationMode to=' + !conversationMode);
         if (conversationMode) {
             // Exiting conversation mode
+            addLog('→ exiting conv mode');
             setConversationMode(false);
             conversationModeRef.current = false;
             if (isListening) {
@@ -340,6 +373,7 @@ export default function BrainPage() {
             setAutoSpeak(true);
         } else {
             // Entering conversation mode
+            addLog('→ entering conv mode');
             setConversationMode(true);
             conversationModeRef.current = true;
             setAutoSpeak(true);
@@ -367,6 +401,7 @@ export default function BrainPage() {
 
     async function handleSend() {
         const trimmed = draft.trim();
+        addLog('handleSend() trimmed="' + trimmed + '" sending=' + sending + ' configReady=' + configReady);
         if (!trimmed || sending) return;
         if (!configReady) {
             toast.error('Select a company, brand, and team first');
@@ -407,6 +442,7 @@ export default function BrainPage() {
                 teamName: selectedTeam?.name,
                 language: user?.role ? 'en' : undefined,
             });
+            addLog('brainChat OK, replyLen=' + (response.reply?.length ?? 0) + ' autoSpeak=' + autoSpeak);
 
             const replyId = `assistant-${Date.now()}`;
             setMessages((cur) => [
@@ -423,6 +459,7 @@ export default function BrainPage() {
                 void speakReply(response.reply, replyId);
             }
         } catch (error) {
+            addLog('brainChat ERROR: ' + (error instanceof Error ? error.message : String(error)));
             console.error('Brain chat failed', error);
             toast.error('Could not reach the Brain right now');
             setMessages((cur) => [
@@ -605,16 +642,39 @@ export default function BrainPage() {
                             <button
                                 type="button"
                                 onClick={toggleConversationMode}
-                                title={conversationMode ? 'Exit conversation mode' : 'Enter conversation mode (hands-free voice loop)'}
+                                title={conversationMode ? 'Exit call mode' : 'Call — hands-free conversation'}
                                 className={cn(
                                     'inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm transition-colors',
                                     conversationMode
-                                        ? 'border-green-400/60 bg-green-500/10 text-green-500 animate-pulse'
+                                        ? 'border-green-500/60 bg-green-500/10 text-green-500'
                                         : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground',
                                 )}
                             >
-                                {conversationMode ? <Phone className="h-4 w-4" /> : <PhoneOff className="h-4 w-4" />}
+                                {conversationMode ? <PhoneOff className="h-4 w-4" /> : <Phone className="h-4 w-4" />}
                                 <span className="hidden sm:inline">{conversationMode ? 'On Call' : 'Call'}</span>
+                            </button>
+
+                            {/* Test TTS */}
+                            <button
+                                type="button"
+                                onClick={async () => {
+                                    addLog('Test TTS button clicked');
+                                    const msg = 'Hello, this is a test of the audio system.';
+                                    // Call speakReply directly with test text
+                                    const testId = 'test-tts-' + Date.now();
+                                    setMessages(cur => [...cur, {
+                                        id: testId,
+                                        role: 'assistant',
+                                        content: '🔊 Test: ' + msg,
+                                        timestamp: new Date().toISOString(),
+                                    }]);
+                                    await speakReply(msg, testId);
+                                }}
+                                title="Test TTS audio"
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                            >
+                                <Volume2 className="h-4 w-4" />
+                                <span className="hidden sm:inline">Test Audio</span>
                             </button>
                         </div>
                     </div>
@@ -791,6 +851,45 @@ export default function BrainPage() {
                         </div>
                     </div>
                 </section>
+
+                {/* ── Debug Logs ─────────────────────────────────────────────── */}
+                <details className="mt-4 rounded-lg border border-border">
+                    <summary className="flex cursor-pointer items-center justify-between px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground">
+                        <span>Brain Logs ({brainLogs.length})</span>
+                        <span className="flex items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigator.clipboard.writeText(brainLogs.join('\n'));
+                                    toast.success('Logs copied to clipboard');
+                                }}
+                                className="rounded border border-border px-2 py-0.5 text-xs hover:bg-muted"
+                            >
+                                Copy
+                            </button>
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setBrainLogs([]);
+                                }}
+                                className="rounded border border-border px-2 py-0.5 text-xs hover:bg-muted"
+                            >
+                                Clear
+                            </button>
+                        </span>
+                    </summary>
+                    <pre className="max-h-48 overflow-auto px-4 pb-3 text-xs text-muted-foreground">
+                        {brainLogs.length === 0 ? (
+                            <span className="italic">No logs yet</span>
+                        ) : (
+                            brainLogs.map((l, i) => (
+                                <div key={i} className="py-0.5 leading-relaxed">{l}</div>
+                            ))
+                        )}
+                    </pre>
+                </details>
             </div>
         </div>
     );
