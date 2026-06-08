@@ -324,7 +324,7 @@ export default function BrainPage() {
                 const currentDraft = draftRef.current;
                 if (typeof currentDraft === 'string' && currentDraft.trim()) {
                     addLog('→ auto-submit in conv mode');
-                    void handleSend();
+                    void handleSend(currentDraft);  // pass ref text to avoid stale-closure on draft state
                     draftRef.current = '';
                 } else {
                     addLog('→ no-speech, re-listen in 500ms');
@@ -399,9 +399,9 @@ export default function BrainPage() {
         setSelectedTeamId(teams.filter((t) => t.brandId === brandId)[0]?.id || '');
     }
 
-    async function handleSend() {
-        const trimmed = draft.trim();
-        addLog('handleSend() trimmed="' + trimmed + '" sending=' + sending + ' configReady=' + configReady);
+    async function handleSend(overrideText?: string) {
+        const trimmed = (overrideText ?? draft).trim();
+        addLog('handleSend() trimmed="' + trimmed + '" sending=' + sending + ' configReady=' + configReady + ' override=' + (overrideText ? 'yes' : 'no'));
         if (!trimmed || sending) return;
         if (!configReady) {
             toast.error('Select a company, brand, and team first');
