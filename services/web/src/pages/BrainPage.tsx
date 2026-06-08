@@ -29,6 +29,7 @@ import {
     type Team,
 } from '@/lib/crud-api';
 import { io, type Socket } from 'socket.io-client';
+import { WEBSOCKET_URL } from '@/lib/config';
 
 import type { ChatLine } from './brain-types';
 import { storageKeyFor, readStoredContext, saveStoredContext, AUTOSPEAK_KEY } from './brain-storage';
@@ -191,7 +192,10 @@ export default function BrainPage() {
 
     // Stop everything on unmount
     useEffect(() => {
+        addLog(`[v${__APP_VERSION__ || '?'}] BrainPage mounted`);
+        addLog(`[v${__APP_VERSION__ || '?'}]   API_URL=${API_URL} | WEBSOCKET_URL=${WEBSOCKET_URL || '(same origin)'}`);
         return () => {
+            addLog(`[v${__APP_VERSION__ || '?'}] BrainPage unmounting — cleanup`);
             recognitionRef.current?.abort();
             ttsAbortRef.current?.abort();
             if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
@@ -214,13 +218,18 @@ export default function BrainPage() {
 
     function connectVoiceSocket() {
         if (voiceSocketRef.current?.connected) return;
-        const token = localStorage.getItem('auth_token');
+        const token = sessionStorage.getItem('auth_token');
         const sessionId = `brain_${Date.now()}`;
         voiceSessionIdRef.current = sessionId;
-        const socketUrl = API_URL.replace('/api', '');
-        addLog(`Connecting voice WS to ${socketUrl}/ws/voice`);
+        // Build WebSocket URL: WEBSOCKET_URL already includes protocol+host, just add /ws/voice
+        const socketBase = WEBSOCKET_URL || window.location.origin;
+        const fullUrl = `${socketBase}/ws/voice`;
+        const appVersion = __APP_VERSION__ || '0.4.6';
+        addLog(`[v${appVersion}] Connecting voice WS → ${fullUrl}`);
+        addLog(`[v${appVersion}] Session: ${sessionId} | User: ${user?.email || user?.id || 'anon'}`);
+        addLog(`[v${appVersion}] Auth token: ${token ? token.substring(0, 12) + '...' : 'MISSING!'}`);
         setCallStatus('connecting');
-        const socket = io(`${socketUrl}/ws/voice`, {
+        const socket = io(fullUrl, {
             auth: {
                 token,
                 device_id: `brain_${user?.id || 'anon'}`,
@@ -294,15 +303,17 @@ export default function BrainPage() {
             toast.error('Voice call error: ' + (data.error || 'unknown'));
         });
         socket.on('disconnect', (reason) => {
-            addLog('Voice WS disconnected: ' + reason);
+            addLog(`[v${__APP_VERSION__ || '?'}] WS DISCONNECTED: "${reason}"`);
+            addLog(`[v${__APP_VERSION__ || '?'}]   Session: ${voiceSessionIdRef.current || 'none'} | Duration: ${formatCallTime(callTimer)}`);
             setCallStatus('disconnected');
             if (callTimerRef.current) { clearInterval(callTimerRef.current); callTimerRef.current = null; }
             audioPlayingRef.current = false;
         });
         socket.on('connect_error', (err) => {
-            addLog('Voice WS connect error: ' + err.message);
+            addLog(`[v${__APP_VERSION__ || '?'}] WS CONNECT ERROR: ${err.message}`);
+            addLog(`[v${__APP_VERSION__ || '?'}]   Check: CORS? API running? URL=${fullUrl}`);
             setCallStatus('disconnected');
-            toast.error('Failed to connect voice channel');
+            toast.error('Failed to connect voice channel: ' + err.message);
         });
         voiceSocketRef.current = socket;
     }
@@ -466,7 +477,8 @@ export default function BrainPage() {
     // ── STT ─────────────────────────────────────────────────────────────
 
     function toggleListening() {
-        addLog('toggleListening() isListening=' + isListening);
+        const action = isListening ? 'STOPPING' : 'STARTING';
+        addLog(`[v${__APP_VERSION__ || '?'}] 👤 ACTION: ${action} mic listening`);
         // Clear any pending re-listen timers
         if (reListenTimerRef.current) {
             clearTimeout(reListenTimerRef.current);
@@ -573,7 +585,9 @@ export default function BrainPage() {
     }
 
     function toggleConversationMode() {
-        addLog('toggleConversationMode to=' + !conversationMode);
+        const action = !conversationMode ? 'ENTERING' : 'EXITING';
+        addLog(`[v${__APP_VERSION__ || '?'}] 👤 ACTION: ${action} call mode`);
+        addLog(`[v${__APP_VERSION__ || '?'}]   Context: ${selectedCompany?.name || '-'} / ${selectedBrand?.name || '-'} / ${selectedTeam?.name || '-'}`);
         if (conversationMode) {
             // Exiting conversation mode
             addLog('→ exiting conv mode');
