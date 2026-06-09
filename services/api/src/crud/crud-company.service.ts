@@ -147,6 +147,7 @@ export class CrudCompanyService {
       country: t.country,
       sttProvider: t.sttProvider,
       ttsProvider: t.ttsProvider,
+      llmProvider: t.llmProvider,
       escalationTriggers: t.escalationTriggers,
       createdAt: t.createdAt,
       updatedAt: t.updatedAt,

@@ -57,6 +57,7 @@ export interface Team {
     country?: string;
     sttProvider?: string;
     ttsProvider?: string;
+    llmProvider?: string;
     createdAt?: string;
     updatedAt?: string;
     brand?: { id: string; name: string; color?: string; companyId?: string; company?: { id: string; name: string } };

@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 import { API_URL } from '@/lib/config';
+import { apiFetch } from '@/lib/api-fetch';
 import {
     brainChat,
     getBrands,
@@ -203,7 +204,7 @@ export default function BrainPage() {
         }
 
         // Then fetch full config from API for API keys / real values
-        fetch(`/api/teams/${selectedTeamId}/config`)
+        apiFetch(`/api/teams/${selectedTeamId}/config`)
             .then(res => res.ok ? res.json() : null)
             .then(data => {
                 if (data) {
@@ -211,6 +212,8 @@ export default function BrainPage() {
                     setTtsProvider(data.ttsProvider || null);
                     setSttProvider(data.sttProvider || null);
                     addLog(`Provider config loaded: LLM=${data.llmProvider || '?'} TTS=${data.ttsProvider || '?'} STT=${data.sttProvider || '?'}`);
+                } else {
+                    addLog('Provider config fetch returned no data (maybe auth issue?)');
                 }
             })
             .catch(err => console.error('Failed to load provider config:', err))
