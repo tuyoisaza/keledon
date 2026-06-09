@@ -9,17 +9,19 @@ export class TTSController {
   constructor(private readonly ttsService: TTSService) {}
 
   @Post('speak')
-  async speak(@Body() body: { text: string }, @Res() res: Response) {
-    const result = await this.ttsService.speak(body.text);
+  async speak(@Body() body: { text: string; teamId?: string }, @Res() res: Response) {
+    const result = await this.ttsService.speak(body.text, { teamId: body.teamId });
 
     if (result.error) {
       return res.status(500).json({ error: result.error });
     }
 
+    const isWav = result.audioData?.subarray(0, 4).toString('ascii') === 'RIFF';
     res.set({
-      'Content-Type': 'audio/mpeg',
+      'Content-Type': isWav ? 'audio/wav' : 'audio/mpeg',
       'Content-Length': result.audioData?.length || 0,
       'X-Duration': result.duration?.toString() || '0',
+      'X-Keledon-TTS-Team': body.teamId || 'none',
     });
 
     res.end(result.audioData);

@@ -25,6 +25,7 @@ import {
     getBrands,
     getCompanies,
     getTeams,
+    type BrainChatMessage,
     type Brand,
     type Company,
     type Team,
@@ -100,8 +101,13 @@ export default function BrainPage() {
     const [callStatus, setCallStatus] = useState<'idle' | 'connecting' | 'connected' | 'disconnected'>('idle');
     const [callTimer, setCallTimer] = useState(0);
     const callTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-    const audioQueueRef = useRef<{ data: string; seq: string }[]>([]);
+    const audioQueueRef = useRef<{ data: string; seq: string; format?: string }[]>([]);
     const voiceSessionIdRef = useRef<string | null>(null);
+    const listenSocketRef = useRef<Socket | null>(null);
+    const listenAudioStreamRef = useRef<MediaStream | null>(null);
+    const listenAudioContextRef = useRef<AudioContext | null>(null);
+    const listenSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+    const listenProcessorRef = useRef<ScriptProcessorNode | null>(null);
 
     const selectedCompany = useMemo(
         () => companies.find((c) => c.id === selectedCompanyId),
@@ -395,7 +401,7 @@ export default function BrainPage() {
             // Clear flag: we received actual audio data from backend
             lastChunkPlayedRef.current = true;
             // Queue the chunk
-            audioQueueRef.current.push({ data: data.audio, seq: data.sequence || 'chunk' });
+            audioQueueRef.current.push({ data: data.audio, seq: data.sequence || 'chunk', format: data.format });
             if (!audioPlayingRef.current) {
                 playNextAudioChunk();
             }
@@ -466,7 +472,8 @@ export default function BrainPage() {
             const binary = atob(chunk.data);
             const bytes = new Uint8Array(binary.length);
             for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-            const blob = new Blob([bytes], { type: 'audio/mpeg' });
+            const isWav = chunk.format === 'wav' || binary.slice(0, 4) === 'RIFF';
+            const blob = new Blob([bytes], { type: isWav ? 'audio/wav' : 'audio/mpeg' });
             const url = URL.createObjectURL(blob);
             const audio = new Audio(url);
             audioRef.current = audio;
@@ -535,17 +542,17 @@ export default function BrainPage() {
         ttsAbortRef.current = controller;
 
         try {
-            const res = await fetch(`${API_URL}/tts/speak`, {
+            let blob: Blob | null = null;
+            const res = await apiFetch('/tts/speak', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text }),
+                body: JSON.stringify({ text, teamId: selectedTeam?.id }),
                 signal: controller.signal,
             });
 
             if (controller.signal.aborted) return;
 
             if (res.ok) {
-                const blob = await res.blob();
+                blob = await res.blob();
                 addLog('TTS fetch OK status=' + res.status + ' blobSize=' + blob.size);
                 if (!controller.signal.aborted && blob.size > 100) {
                     const url = URL.createObjectURL(blob);
@@ -592,7 +599,113 @@ export default function BrainPage() {
 
     // ── STT ─────────────────────────────────────────────────────────────
 
-    function toggleListening() {
+    function floatTo16BitPcmBase64(input: Float32Array, inputSampleRate: number, outputSampleRate = 16000): string {
+        const ratio = inputSampleRate / outputSampleRate;
+        const outputLength = Math.floor(input.length / ratio);
+        const bytes = new Uint8Array(outputLength * 2);
+        let offset = 0;
+        for (let i = 0; i < outputLength; i++) {
+            const idx = Math.floor(i * ratio);
+            const s = Math.max(-1, Math.min(1, input[idx] || 0));
+            const sample = s < 0 ? s * 0x8000 : s * 0x7fff;
+            const intSample = Math.round(sample);
+            bytes[offset++] = intSample & 0xff;
+            bytes[offset++] = (intSample >> 8) & 0xff;
+        }
+        let binary = '';
+        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+        return btoa(binary);
+    }
+
+    async function startVoskListening(): Promise<void> {
+        const appVersion = __APP_VERSION__ || '?';
+        addLog(`[v${appVersion}] STT provider=vosk → starting Railway Vosk session`);
+        const sessionRes = await apiFetch('/listening-sessions', {
+            method: 'POST',
+            body: JSON.stringify({ source: 'brain-call', tabUrl: window.location.href, tabTitle: document.title }),
+        });
+        if (!sessionRes.ok) {
+            const body = await sessionRes.text().catch(() => '');
+            throw new Error(`Vosk session create failed ${sessionRes.status}: ${body}`);
+        }
+        const session = await sessionRes.json();
+        const sessionId = session.sessionId;
+        const socketBase = WEBSOCKET_URL || window.location.origin;
+        const language = (sttLangRef.current || navigator.language || 'en').toLowerCase().startsWith('es') ? 'es' : 'en';
+        const listenSocket = io(`${socketBase}/listen`, {
+            path: '/listen/ws',
+            query: { session: sessionId, language, debug: 'false', team_id: selectedTeam?.id || '' },
+            transports: ['websocket', 'polling'],
+            reconnection: true,
+            reconnectionAttempts: 3,
+            reconnectionDelay: 1000,
+        });
+        listenSocketRef.current = listenSocket;
+
+        listenSocket.on('connect', async () => {
+            addLog(`[v${appVersion}] Vosk WS connected: ${listenSocket.id} | session=${sessionId} | lang=${language}`);
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+            const audioCtx = new AudioContext();
+            const source = audioCtx.createMediaStreamSource(stream);
+            const processor = audioCtx.createScriptProcessor(4096, 1, 1);
+            processor.onaudioprocess = (event) => {
+                if (!listenSocket.connected || !listeningRef.current) return;
+                const input = event.inputBuffer.getChannelData(0);
+                const payload = floatTo16BitPcmBase64(input, audioCtx.sampleRate, 16000);
+                listenSocket.emit('AUDIO_CHUNK', { payload });
+            };
+            source.connect(processor);
+            processor.connect(audioCtx.destination);
+            listenAudioStreamRef.current = stream;
+            listenAudioContextRef.current = audioCtx;
+            listenSourceRef.current = source;
+            listenProcessorRef.current = processor;
+            listeningRef.current = true;
+            setIsListening(true);
+        });
+
+        listenSocket.on('asr.partial', (data: { text?: string }) => {
+            if (data.text) { setDraft(data.text); draftRef.current = data.text; }
+        });
+        listenSocket.on('asr.final', (data: { text?: string }) => {
+            const text = (data.text || '').trim();
+            if (!text) return;
+            addLog(`[v${appVersion}] Vosk final: "${text}"`);
+            setDraft(text); draftRef.current = text;
+            if (conversationModeRef.current) {
+                draftRef.current = '';
+                sendVoiceTranscript(text);
+            }
+        });
+        listenSocket.on('session.ended', (data: any) => {
+            addLog(`[v${appVersion}] Vosk session ended: ${data?.reason || 'unknown'}`);
+            stopVoskListening();
+        });
+        listenSocket.on('connect_error', (err) => {
+            addLog(`[v${appVersion}] Vosk WS connect error: ${err.message}`);
+        });
+    }
+
+    function stopVoskListening(): void {
+        listenProcessorRef.current?.disconnect();
+        listenSourceRef.current?.disconnect();
+        listenAudioContextRef.current?.close().catch(() => undefined);
+        listenAudioStreamRef.current?.getTracks().forEach((track) => track.stop());
+        if (listenSocketRef.current) {
+            if (listenSocketRef.current.connected) listenSocketRef.current.emit('session.stop');
+            listenSocketRef.current.removeAllListeners();
+            listenSocketRef.current.disconnect();
+        }
+        listenProcessorRef.current = null;
+        listenSourceRef.current = null;
+        listenAudioContextRef.current = null;
+        listenAudioStreamRef.current = null;
+        listenSocketRef.current = null;
+        listeningRef.current = false;
+        setIsListening(false);
+    }
+
+    async function toggleListening() {
         const action = isListening ? 'STOPPING' : 'STARTING';
         addLog(`[v${__APP_VERSION__ || '?'}] 👤 ACTION: ${action} mic listening`);
         // Clear any pending re-listen timers
@@ -602,11 +715,24 @@ export default function BrainPage() {
         }
 
         if (listeningRef.current) {
-            addLog('→ stopping recognition');
-            listeningRef.current = false;
-            recognitionRef.current?.stop();
-            setIsListening(false);
+            addLog('→ stopping STT');
+            if (listenSocketRef.current) {
+                stopVoskListening();
+            } else {
+                listeningRef.current = false;
+                recognitionRef.current?.stop();
+                setIsListening(false);
+            }
             return;
+        }
+
+        if (sttProvider === 'vosk') {
+            try {
+                await startVoskListening();
+                return;
+            } catch (error) {
+                addLog(`[v${__APP_VERSION__ || '?'}] Vosk unavailable, falling back to browser SpeechRecognition: ${error instanceof Error ? error.message : String(error)}`);
+            }
         }
 
         const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;

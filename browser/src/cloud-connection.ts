@@ -15,6 +15,7 @@ import { runtimeStatus } from './runtime-state.js';
 import type { RuntimeStatus } from './types.js';
 import type { TabManager, Tab } from './tab-manager.js';
 import { sendStatusToRenderer, buildWsCtx, deriveWsUrl, decryptRuntimeVendorValue, enrichGoalExecuteDataFromRuntimeVendor, summarizeGoalExecuteData, ensureBrowserViewForGoalExecution, ensureActiveGoalTab, findMatchingVendorFromGoal, getReconnectDelay, decryptRuntimeVendorSecret, enrichCloudGoalInputsFromRuntimeVendor } from './cloud-helpers.js';
+import { initVoiceClient, getVoiceClient } from './media/voice-ws-client.js';
 
 
 /**
@@ -430,6 +431,37 @@ export function connectWebSockets(
   fetchRpaConfig(cloudUrl, token).catch((err) =>
     log.warn('[RpaProvider] Failed to fetch config:', err),
   );
+
+  // Initialize Voice Gateway client for cloud TTS/STT
+  const voiceClient = initVoiceClient({
+    cloudUrl,
+    authToken: token,
+    deviceId: runtimeStatus.deviceId || 'unknown',
+    teamId: runtimeStatus.teamId || undefined,
+  });
+  voiceClient.connect().catch((err) =>
+    log.warn('[VoiceWS] Failed to connect:', err),
+  );
+
+  // Forward voice client events to renderer
+  voiceClient.on('brain:reply', (text: string) => {
+    if (currentMainWindow && !currentMainWindow.isDestroyed()) {
+      currentMainWindow.webContents.send('brain:command', {
+        type: 'say',
+        data: { say: { text } },
+        timestamp: new Date().toISOString(),
+      });
+    }
+  });
+
+  voiceClient.on('brain:thinking', () => {
+    if (currentMainWindow && !currentMainWindow.isDestroyed()) {
+      currentMainWindow.webContents.send('call:state', {
+        state: 'thinking',
+        timestamp: new Date().toISOString(),
+      });
+    }
+  });
 }
 
 /**
@@ -461,6 +493,12 @@ async function fetchRpaConfig(cloudUrl: string, token: string): Promise<void> {
 export function disconnectSockets() {
   stopHeartbeat();
   stopPolling();
+
+  // Disconnect Voice Gateway client
+  const vc = getVoiceClient();
+  if (vc) {
+    vc.disconnect();
+  }
 
   cmdlog.log('WS', `← Disconnecting WebSockets | device socket: ${deviceSocket ? 'active' : 'none'} | agent socket: ${agentSocket ? 'active' : 'none'} | reconnectionAttempt: ${reconnectionAttempt}`);
 

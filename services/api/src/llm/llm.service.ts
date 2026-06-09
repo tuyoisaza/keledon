@@ -208,16 +208,17 @@ export class LLMService implements OnModuleInit {
     }
 
     const systemPrompt = this.buildSystemPrompt(request.context || []);
+    const providerRequest: LLMRequest = { ...request, model: request.model || activeModel };
     try {
       switch (activeProvider) {
         case 'anthropic':
-          return await this.generateWithAnthropic(request, systemPrompt, activeApiKey);
+          return await this.generateWithAnthropic(providerRequest, systemPrompt, activeApiKey);
         case 'google':
-          return await this.generateWithGoogle(request, systemPrompt, activeApiKey);
+          return await this.generateWithGoogle(providerRequest, systemPrompt, activeApiKey);
         case 'openai':
-          return await this.generateWithOpenAI(request, systemPrompt, activeApiKey);
+          return await this.generateWithOpenAI(providerRequest, systemPrompt, activeApiKey);
         case 'ollama':
-          return await this.generateWithOllama(request, systemPrompt);
+          return await this.generateWithOllama(providerRequest, systemPrompt);
       }
     } catch (error) {
       this.logger.error(`LLM [${activeProvider}] error:`, error);

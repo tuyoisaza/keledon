@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { VoiceWSClient, getVoiceClient } from './voice-ws-client';
 
 // TypeScript declarations for Web Speech API
 interface SpeechRecognitionEvent extends Event {
@@ -67,6 +68,10 @@ export interface MediaLayerEvents {
   'call-status': (status: 'idle' | 'in-call' | 'on-hold') => void;
   'audio-level': (level: number) => void;
   'error': (error: Error) => void;
+  /** Emitted when the cloud brain responds with text */
+  'brain:reply': (text: string) => void;
+  /** Emitted when cloud TTS finishes */
+  'speak:end': (duration?: number) => void;
 }
 
 export class MediaLayer extends EventEmitter {
@@ -76,6 +81,7 @@ export class MediaLayer extends EventEmitter {
   private callStatus: 'idle' | 'in-call' | 'on-hold' = 'idle';
   private isSpeaking: boolean = false;
   private isMuted: boolean = false;
+  private useCloudTTS: boolean = false;
 
   constructor() {
     super();
@@ -85,7 +91,7 @@ export class MediaLayer extends EventEmitter {
 
   async initialize(): Promise<void> {
     console.log('[MediaLayer] Initializing...');
-    
+
     // Only initialize browser APIs if in renderer context
     if (typeof window !== 'undefined') {
       this.initializeSpeechRecognition();
@@ -93,7 +99,7 @@ export class MediaLayer extends EventEmitter {
     } else {
       console.warn('[MediaLayer] Not in browser context, skipping browser API init');
     }
-    
+
     console.log('[MediaLayer] Initialized');
   }
 
@@ -138,9 +144,16 @@ export class MediaLayer extends EventEmitter {
       this.currentStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       this.callStatus = 'in-call';
       this.emit('call-status', this.callStatus);
-      
+
       if (this.recognition) {
         this.recognition.start();
+      }
+
+      // Check if voice client is connected and available
+      const vc = getVoiceClient();
+      this.useCloudTTS = vc?.getStatus().connected ?? false;
+      if (this.useCloudTTS) {
+        console.log('[MediaLayer] Using cloud TTS via Voice Gateway');
       }
     } catch (error) {
       console.error('[MediaLayer] Failed to start call:', error);
@@ -153,13 +166,38 @@ export class MediaLayer extends EventEmitter {
       this.currentStream.getTracks().forEach(track => track.stop());
       this.currentStream = null;
     }
-    
+
     this.recognition?.stop();
     this.callStatus = 'idle';
     this.emit('call-status', this.callStatus);
   }
 
+  /**
+   * Speak text using the best available TTS method:
+   * 1. Cloud TTS via Voice Gateway (respects team's provider config)
+   * 2. Fallback: browser speechSynthesis
+   */
   async speak(text: string, interruptible: boolean = true): Promise<void> {
+    // Try cloud TTS first if available
+    const vc = getVoiceClient();
+    if (vc?.getStatus().connected) {
+      try {
+        this.isSpeaking = true;
+        await vc.speak(text, interruptible);
+        return;
+      } catch (error) {
+        console.warn('[MediaLayer] Cloud TTS failed, falling back to local:', error);
+      }
+    }
+
+    // Fallback to browser speechSynthesis
+    this.speakLocal(text, interruptible);
+  }
+
+  /**
+   * Speak text using browser's built-in speechSynthesis (fallback).
+   */
+  private speakLocal(text: string, interruptible: boolean = true): void {
     if (!this.synthesis) {
       console.warn('[MediaLayer] Synthesis not available');
       return;
@@ -180,6 +218,7 @@ export class MediaLayer extends EventEmitter {
 
     utterance.onend = () => {
       this.isSpeaking = false;
+      this.emit('speak:end', {});
     };
 
     utterance.onerror = (event) => {
@@ -191,6 +230,13 @@ export class MediaLayer extends EventEmitter {
   }
 
   async stopSpeaking(): Promise<void> {
+    // Interrupt cloud TTS if active
+    const vc = getVoiceClient();
+    if (vc?.getIsSpeaking()) {
+      vc.interrupt();
+    }
+
+    // Cancel local TTS
     this.synthesis?.cancel();
     this.isSpeaking = false;
   }
@@ -219,11 +265,18 @@ export class MediaLayer extends EventEmitter {
     this.emit('call-status', this.callStatus);
   }
 
+  /**
+   * Configure whether to use cloud TTS (if Voice Gateway is connected).
+   */
+  setUseCloudTTS(enabled: boolean): void {
+    this.useCloudTTS = enabled;
+  }
+
   getCallStatus(): { status: 'idle' | 'in-call' | 'on-hold'; isSpeaking: boolean; isMuted: boolean } {
     return {
       status: this.callStatus,
       isSpeaking: this.isSpeaking,
-      isMuted: this.isMuted
+      isMuted: this.isMuted,
     };
   }
 }

@@ -136,11 +136,9 @@ export class TTSService {
       const voice = ttsConfig.voiceId || 'ef_dora';
       const result = await this.speakWithKokoro(text, baseUrl, voice);
       if (result.audioData && result.audioData.length > 0) {
-        const chunkSize = 32000; // ~1s of WAV audio
-        for (let i = 0; i < result.audioData.length; i += chunkSize) {
-          const chunk = result.audioData.slice(i, Math.min(i + chunkSize, result.audioData.length));
-          onChunk(chunk.toString('base64'));
-        }
+        // Kokoro returns a complete WAV file. Do not split WAV bytes into arbitrary
+        // chunks: each browser Audio() playback needs the RIFF header.
+        onChunk(result.audioData.toString('base64'));
       }
       return result;
     } else if (provider === 'elevenlabs') {

@@ -251,8 +251,11 @@ export class VoiceGateway
       const authToken = client.handshake.auth?.token;
       const brainPayload = {
         message: userMessage,
+        companyId: context?.companyId,
         companyName: context?.companyName || 'Unspecified Company',
+        brandId: context?.brandId,
         brandName: context?.brandName || 'Unspecified Brand',
+        teamId: context?.teamId,
         teamName: context?.teamName || 'Unspecified Team',
         history: session.history.slice(-10).map((h) => ({
           role: h.role,
@@ -349,13 +352,14 @@ export class VoiceGateway
     }
 
     this.logger.log(
-      `TTS request from ${session.deviceId}: ${data.text.substring(0, 50)}...`,
+      `[v${getApiVersion()}] TTS request from ${session.deviceId}: ${data.text.substring(0, 50)}... team=${session.context?.teamId || 'none'}`,
     );
 
     if (this.ttsService) {
       try {
         const result = await this.ttsService.speak(data.text, {
           interruptible: data.interruptible ?? true,
+          teamId: session.context?.teamId,
         });
 
         if (result.audioData) {
