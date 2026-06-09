@@ -14,12 +14,14 @@ FROM node:20-slim
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/listening-sessions/vosk.worker.js ./dist/listening-sessions/vosk.worker.js
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/contracts ./contracts
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/data ./data
+COPY --from=builder /app/models ./models
 RUN npm install -g ts-node@10.9.2
 RUN cat > /start.sh << 'SEEDSCRIPT'
 #!/bin/sh

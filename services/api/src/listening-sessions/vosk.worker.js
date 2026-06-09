@@ -11,31 +11,39 @@ console.log('[Worker] __dirname:', __dirname);
 let vosk;
 
 try {
-    // Calculate absolute path to Vosk DLLs
-    // Worker runs from dist/, but node_modules is at project root
-    const projectRoot = process.cwd(); // c:\Keldon\cloud
-    const voskLibPath = path.join(projectRoot, 'node_modules', 'vosk', 'lib', 'win-x86_64');
-
-    console.log('[Worker] Looking for Vosk DLLs at:', voskLibPath);
-
-    if (fs.existsSync(voskLibPath)) {
-        // List DLLs to verify they exist
-        const files = fs.readdirSync(voskLibPath);
-        console.log('[Worker] Found DLL files:', files.join(', '));
-
-        // Prepend to PATH
-        const oldPath = process.env.PATH || '';
-        process.env.PATH = `${voskLibPath}${path.delimiter}${oldPath}`;
-        console.log('[Worker] Added to PATH. First entry:', process.env.PATH.split(path.delimiter)[0]);
-
-        console.log('[Worker] Attempting to require vosk...');
+    // Prefer the platform-native package loader. On Railway/Linux the vosk
+    // package resolves its own native binaries; the Windows DLL path below is
+    // kept as a legacy fallback for local Windows installs.
+    console.log('[Worker] Attempting platform-native require("vosk")...');
+    try {
         vosk = require('vosk');
-        console.log('[Worker] Vosk module loaded successfully!');
-    } else {
-        console.error('[Worker] WARNING: Vosk lib path does not exist!');
-        throw new Error('Vosk lib path does not exist: ' + voskLibPath);
-    }
+        console.log('[Worker] Vosk module loaded via platform-native require.');
+    } catch (nativeError) {
+        console.warn('[Worker] Platform-native require failed:', nativeError.message);
+        // Calculate absolute path to Vosk DLLs
+        // Worker runs from dist/, but node_modules is at project root
+        const projectRoot = process.cwd();
+        const voskLibPath = path.join(projectRoot, 'node_modules', 'vosk', 'lib', 'win-x86_64');
 
+        console.log('[Worker] Looking for legacy Windows Vosk DLLs at:', voskLibPath);
+
+        if (fs.existsSync(voskLibPath)) {
+            // List DLLs to verify they exist
+            const files = fs.readdirSync(voskLibPath);
+            console.log('[Worker] Found DLL files:', files.join(', '));
+
+            // Prepend to PATH
+            const oldPath = process.env.PATH || '';
+            process.env.PATH = `${voskLibPath}${path.delimiter}${oldPath}`;
+            console.log('[Worker] Added to PATH. First entry:', process.env.PATH.split(path.delimiter)[0]);
+
+            console.log('[Worker] Attempting legacy Windows require("vosk")...');
+            vosk = require('vosk');
+            console.log('[Worker] Vosk module loaded via legacy Windows fallback.');
+        } else {
+            throw nativeError;
+        }
+    }
 } catch (e) {
     console.error('[Worker] ====================================');
     console.error('[Worker] FAILED to load vosk module!');
