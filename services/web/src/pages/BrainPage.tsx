@@ -512,7 +512,7 @@ export default function BrainPage() {
         recognition.lang = navigator.language || 'en-US';
 
         recognition.onstart = () => {
-            addLog(`[v${__APP_VERSION__ || '?'}] STT: lang=${SR.lang}, continuous=${SR.continuous}, interim=${SR.interimResults}`);
+            addLog(`[v${__APP_VERSION__ || '?'}] STT: lang=${recognition.lang}, continuous=${recognition.continuous}, interim=${recognition.interimResults}`);
             addLog('recognition started (continuous)');
             // Interruption: if Brain is speaking, cut it off
             if (speakingMessageId) {

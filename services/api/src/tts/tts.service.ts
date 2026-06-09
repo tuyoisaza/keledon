@@ -94,7 +94,16 @@ export class TTSService {
     if (provider === 'elevenlabs') {
       return await this.streamWithElevenLabs(text, onChunk, options);
     } else if (provider === 'openai') {
-      return await this.speakWithOpenAI(text, options);
+      // OpenAI's TTS isn't streaming, so generate full audio then chunk it
+      const result = await this.speakWithOpenAI(text, options);
+      if (result.audioData && result.audioData.length > 0) {
+        const chunkSize = 32000; // ~1s of MP3 audio
+        for (let i = 0; i < result.audioData.length; i += chunkSize) {
+          const chunk = result.audioData.slice(i, Math.min(i + chunkSize, result.audioData.length));
+          onChunk(chunk.toString('base64'));
+        }
+      }
+      return result;
     } else {
       console.log('[TTS] Mock streaming — no provider configured');
       return { audioData: Buffer.from(''), duration: 0 };
