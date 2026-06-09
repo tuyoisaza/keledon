@@ -88,7 +88,8 @@ export default function BrainPage() {
     const ttsAbortRef = useRef<AbortController | null>(null);
     const conversationModeRef = useRef(false);
     const draftRef = useRef(draft);
-    // ── Voice WebSocket ──────────────────────────────────────────────
+    const audioPlayingRef = useRef(false);
+    const lastBrainReplyRef = useRef('');
     const voiceSocketRef = useRef<Socket | null>(null);
     const [callStatus, setCallStatus] = useState<'idle' | 'connecting' | 'connected' | 'disconnected'>('idle');
     const [callTimer, setCallTimer] = useState(0);
@@ -291,6 +292,9 @@ export default function BrainPage() {
                 content: data.text || '',
                 timestamp: new Date().toISOString(),
             }]);
+            // Save brain reply text in a ref (synchronous) so TTS fallback
+            // can read it even before React state update processes
+            lastBrainReplyRef.current = data.text || '';
             // Browser TTS fallback: if no audio chunks arrive in 2s, use SpeechSynthesis
             if (window.speechSynthesis && data.text) {
                 if (ttsFallbackTimerRef.current) clearTimeout(ttsFallbackTimerRef.current);
@@ -311,7 +315,7 @@ export default function BrainPage() {
                 }, 2000);
             }
         });
-        socket.on('voice:audio', (data: { audio: string; sequence: string; format?: string; duration?: number }) => {
+        socket.on('voice:audio', (data: { audio: string; sequence: string; format?: string; duration?: number; apiVersion?: string }) => {
             // Cancel TTS fallback timer — backend streaming is working
             if (ttsFallbackTimerRef.current) {
                 clearTimeout(ttsFallbackTimerRef.current);
@@ -323,11 +327,10 @@ export default function BrainPage() {
                 // If no audio chunks were played, use browser SpeechSynthesis fallback
                 if (audioQueueRef.current.length === 0 && !lastChunkPlayedRef.current) {
                     addLog(`[v${__APP_VERSION__ || '?'}] No audio from backend — using browser SpeechSynthesis`);
-                    // Find the last brain reply message to speak
-                    const lastReply = [...messages].reverse().find(m => m.role === 'assistant' && !m.id.startsWith('assistant-error'));
-                    if (lastReply?.content && window.speechSynthesis) {
+                    const fallbackText = lastBrainReplyRef.current;
+                    if (fallbackText && window.speechSynthesis) {
                         window.speechSynthesis.cancel();
-                        const utterance = new SpeechSynthesisUtterance(lastReply.content);
+                        const utterance = new SpeechSynthesisUtterance(fallbackText);
                         utterance.lang = sttLangRef.current || 'en-US';
                         utterance.onend = () => {
                             audioPlayingRef.current = false;
