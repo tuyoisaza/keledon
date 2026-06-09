@@ -95,7 +95,6 @@ export default function BrainPage() {
     const [callTimer, setCallTimer] = useState(0);
     const callTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const audioQueueRef = useRef<{ data: string; seq: string }[]>([]);
-    const audioPlayingRef = useRef(false);
     const voiceSessionIdRef = useRef<string | null>(null);
 
     const selectedCompany = useMemo(
