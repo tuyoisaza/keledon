@@ -71,8 +71,8 @@ export default function ManagementProvidersPage() {
     const [rpaConfig, setRpaConfig] = useState(defaultRpaChain);
     const [rpaLoading, setRpaLoading] = useState(false);
 
-    // TTS config
-    const [ttsConfig, setTTSConfig] = useState({ providerId: 'webspeech', apiKey: '', voiceId: '' });
+    // TTS config — starts empty, loaded from DB when team is available
+    const [ttsConfig, setTTSConfig] = useState({ providerId: '', apiKey: '', voiceId: '' });
     const [ttsSaving, setTTSSaving] = useState(false);
 
     // STT config
@@ -92,9 +92,14 @@ export default function ManagementProvidersPage() {
 
     useEffect(() => {
         fetchCatalog();
-        fetchTTSConfig();
+        // Load provider config FROM DATABASE first (survives deploys)
+        // The file-based /api/tts-config endpoint resets on each Railway deploy
+        // because the filesystem is ephemeral — DB is the source of truth.
         if (teamId) {
             fetchTeamConfig();
+        } else {
+            // No team logged in — fall back to file-based config (legacy)
+            fetchTTSConfig();
         }
     }, [teamId]);
 
@@ -132,15 +137,7 @@ export default function ManagementProvidersPage() {
     const saveTTSConfig = async () => {
         setTTSSaving(true);
         try {
-            const res = await apiFetch('/api/tts-config', {
-                method: 'PATCH',
-                body: JSON.stringify({
-                    providerId: ttsConfig.providerId,
-                    apiKey: ttsConfig.apiKey,
-                    voiceId: ttsConfig.voiceId,
-                }),
-            });
-            // Also persist to DB via team config
+            // Save TO DATABASE first (survives deploys — Railway filesystem is ephemeral)
             let dbOk = true;
             if (teamId) {
                 const dbRes = await apiFetch(`/api/teams/${teamId}/config`, {
@@ -153,8 +150,19 @@ export default function ManagementProvidersPage() {
                 });
                 dbOk = dbRes.ok;
             }
-            if (res.ok) {
-                toast.success('TTS config saved' + (teamId && dbOk ? ' ✓ DB' : ''));
+            // Also save to legacy file-based endpoint (backward compat)
+            const res = await apiFetch('/api/tts-config', {
+                method: 'PATCH',
+                body: JSON.stringify({
+                    providerId: ttsConfig.providerId,
+                    apiKey: ttsConfig.apiKey,
+                    voiceId: ttsConfig.voiceId,
+                }),
+            });
+            if (teamId && dbOk) {
+                toast.success(`TTS config saved to DB: ${ttsConfig.providerId}`);
+            } else if (res.ok) {
+                toast.success('TTS config saved (file, not DB)');
             } else {
                 toast.error('Failed to save TTS config');
             }
