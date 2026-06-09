@@ -246,6 +246,7 @@ export class VoiceGateway
       const apiPort = process.env.PORT || 3001;
       const brainApiUrl = `http://localhost:${apiPort}/api/brain/chat`;
       const context = session.context;
+      const authToken = client.handshake.auth?.token;
       const brainPayload = {
         message: userMessage,
         companyName: context?.companyName || 'Unspecified Company',
@@ -259,7 +260,10 @@ export class VoiceGateway
 
       const brainResponse = await fetch(brainApiUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+        },
         body: JSON.stringify(brainPayload),
       });
 

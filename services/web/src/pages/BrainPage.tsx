@@ -267,16 +267,20 @@ export default function BrainPage() {
             addLog('Call started: ' + data.session_id);
         });
         socket.on('voice:brain:thinking', (data: any) => {
-            addLog('Brain thinking about: ' + data.text);
+            addLog(`[v${__APP_VERSION__ || '?'}] Brain thinking "${data.text?.slice(0, 60)}"`);
         });
         socket.on('voice:brain:reply', (data: any) => {
-            addLog('Brain reply: ' + data.text);
+            addLog(`[v${__APP_VERSION__ || '?'}] Brain reply: ${data.text?.slice(0, 120)}`);
             setSending(false);
+            // Stop listening while brain speaks
+            if (listeningRef.current) {
+                recognitionRef.current?.stop();
+            }
             const replyId = `assistant-${Date.now()}`;
             setMessages(cur => [...cur, {
                 id: replyId,
                 role: 'assistant',
-                content: data.text,
+                content: data.text || '',
                 timestamp: new Date().toISOString(),
             }]);
         });
@@ -299,8 +303,11 @@ export default function BrainPage() {
             }
         });
         socket.on('voice:error', (data: any) => {
-            addLog('Voice WS error: ' + (data.error || 'unknown'));
-            toast.error('Voice call error: ' + (data.error || 'unknown'));
+            addLog(`[v${__APP_VERSION__ || '?'}] WS ERROR: ${data.error || 'unknown'}`);
+            setSending(false);
+            audioPlayingRef.current = false;
+            audioQueueRef.current = [];
+            toast.error('Voice error: ' + (data.error || 'unknown'));
         });
         socket.on('disconnect', (reason) => {
             addLog(`[v${__APP_VERSION__ || '?'}] WS DISCONNECTED: "${reason}"`);
@@ -505,6 +512,7 @@ export default function BrainPage() {
         recognition.lang = navigator.language || 'en-US';
 
         recognition.onstart = () => {
+            addLog(`[v${__APP_VERSION__ || '?'}] STT: lang=${SR.lang}, continuous=${SR.continuous}, interim=${SR.interimResults}`);
             addLog('recognition started (continuous)');
             // Interruption: if Brain is speaking, cut it off
             if (speakingMessageId) {
