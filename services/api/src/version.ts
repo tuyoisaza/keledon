@@ -5,7 +5,7 @@ let _version: string | undefined;
 
 /**
  * Application version, read from package.json at first access.
- * Falls back to env API_VERSION or '0.0.0'.
+ * Uses process.cwd() (reliable in Railway) or env override.
  */
 export function getApiVersion(): string {
   if (_version) return _version;
@@ -15,11 +15,21 @@ export function getApiVersion(): string {
     return _version;
   }
   try {
-    const pkgPath = join(__dirname, '..', '..', 'package.json');
-    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+    // Try cwd first (reliable in Railway container)
+    let pkgPath = join(process.cwd(), 'package.json');
+    let pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
     _version = pkg.version || '0.0.0';
+    return _version;
   } catch {
-    _version = '0.0.0';
+    // Fallback: try __dirname path
+    try {
+      const pkgPath = join(__dirname, '..', '..', 'package.json');
+      const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+      _version = pkg.version || '0.0.0';
+      return _version;
+    } catch {
+      _version = '0.0.0';
+      return _version;
+    }
   }
-  return _version;
 }
