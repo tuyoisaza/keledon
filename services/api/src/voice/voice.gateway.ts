@@ -11,6 +11,7 @@ import { Server, Socket } from 'socket.io';
 import { Logger, Inject, OnModuleInit } from '@nestjs/common';
 import { TTSService } from '../tts/tts.service';
 import { LLMService } from '../llm/llm.service';
+import { getApiVersion } from '../version';
 
 const voiceCorsOrigins =
   process.env.KELEDON_ALLOW_ALL_CORS === 'true'
@@ -87,7 +88,7 @@ export class VoiceGateway
     }
 
     this.logger.log(
-      `Voice connection from device: ${deviceId}, session: ${sessionId || 'none'}`,
+      `[v${getApiVersion()}] Voice connection: device=${deviceId}, session=${sessionId || 'none'}`,
     );
 
     const session: VoiceSession = {
@@ -106,6 +107,7 @@ export class VoiceGateway
     this.server.emit('voice:connected', {
       device_id: deviceId,
       session_id: session.sessionId,
+      api_version: getApiVersion(),
     });
   }
 
@@ -113,7 +115,7 @@ export class VoiceGateway
     const session = this.activeSessions.get(client.id);
     if (session) {
       this.logger.log(
-        `Voice disconnected: ${session.deviceId}, transcript length: ${session.transcript.length}`,
+        `[v${getApiVersion()}] Voice disconnected: ${session.deviceId}, transcript length: ${session.transcript.length}`,
       );
 
       this.server.emit('voice:disconnected', {
@@ -280,7 +282,12 @@ export class VoiceGateway
       client.emit('voice:brain:reply', {
         text: replyText,
         usage: brainData.usage,
+        apiVersion: getApiVersion(),
       });
+
+      this.logger.log(
+        `[v${getApiVersion()}] Brain reply: "${replyText.substring(0, 50)}..."`,
+      );
 
       // 5. Stream TTS audio back
       session.isSpeaking = true;
@@ -314,10 +321,11 @@ export class VoiceGateway
         sequence: 'end',
         format: 'mp3',
         duration: streamResult.duration,
+        apiVersion: getApiVersion(),
       });
 
       this.logger.log(
-        `Brain reply streamed: ${replyText.substring(0, 50)}... (${streamResult.audioData?.length || 0} bytes)`,
+        `[v${getApiVersion()}] Brain reply streamed: ${replyText.substring(0, 50)}... (${streamResult.audioData?.length || 0} bytes)`,
       );
     } catch (error) {
       this.logger.error('Brain reply error:', error);

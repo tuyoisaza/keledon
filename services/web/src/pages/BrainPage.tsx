@@ -200,7 +200,7 @@ export default function BrainPage() {
 
     // Stop everything on unmount
     useEffect(() => {
-        addLog(`[v${__APP_VERSION__ || '?'}] BrainPage mounted`);
+        addLog(`[v${__APP_VERSION__ || '?'}] BrainPage mounted — web v${__APP_VERSION__ || '?'}`);
         addLog(`[v${__APP_VERSION__ || '?'}]   API_URL=${API_URL} | WEBSOCKET_URL=${WEBSOCKET_URL || '(same origin)'}`);
         return () => {
             addLog(`[v${__APP_VERSION__ || '?'}] BrainPage unmounting — cleanup`);
@@ -249,7 +249,7 @@ export default function BrainPage() {
             reconnectionDelay: 1000,
         });
         socket.on('connect', () => {
-            addLog('Voice WS connected: ' + socket.id);
+            addLog(`[v${__APP_VERSION__ || '?'}] Voice WS connected: ${socket.id}`);
             setCallStatus('connected');
             // Start call timer
             setCallTimer(0);
@@ -272,13 +272,13 @@ export default function BrainPage() {
             });
         });
         socket.on('voice:call_started', (data: any) => {
-            addLog('Call started: ' + data.session_id);
+            addLog(`[v${__APP_VERSION__ || '?'}] Call started: ${data.session_id}`);
         });
         socket.on('voice:brain:thinking', (data: any) => {
             addLog(`[v${__APP_VERSION__ || '?'}] Brain thinking "${data.text?.slice(0, 60)}"`);
         });
         socket.on('voice:brain:reply', (data: any) => {
-            addLog(`[v${__APP_VERSION__ || '?'}] Brain reply: ${data.text?.slice(0, 120)}`);
+            addLog(`[v${__APP_VERSION__ || '?'}] Brain reply: ${data.text?.slice(0, 120)} | API v${data.apiVersion || '?'}`);
             setSending(false);
             // Stop listening while brain speaks
             if (listeningRef.current) {
@@ -318,7 +318,7 @@ export default function BrainPage() {
                 ttsFallbackTimerRef.current = null;
             }
             if (data.sequence === 'end') {
-                addLog('Audio stream end' + (data.duration ? ' dur=' + data.duration.toFixed(1) : ''));
+                addLog('Audio stream end' + (data.duration ? ' dur=' + data.duration.toFixed(1) : '') + ` | API v${data.apiVersion || '?'}`);
                 audioPlayingRef.current = false;
                 // If no audio chunks were played, use browser SpeechSynthesis fallback
                 if (audioQueueRef.current.length === 0 && !lastChunkPlayedRef.current) {

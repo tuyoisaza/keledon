@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { Readable } from 'stream';
 import { MvpStoreService } from '../mvp/mvp-store.service';
+import { getApiVersion } from '../version';
 
 export interface TTSResult {
   audioData?: Buffer;
@@ -43,7 +44,7 @@ export class TTSService {
     }
 
     console.log(
-      `[TTS] Speaking with ${provider} (config providerId=${providerId}): "${text.substring(0, 50)}..."`,
+      `[v${getApiVersion()}] [TTS] Speaking with ${provider} (config providerId=${providerId}): "${text.substring(0, 50)}..."`,
     );
 
     try {
@@ -92,7 +93,7 @@ export class TTSService {
     }
 
     console.log(
-      `[TTS] Streaming with ${provider}: "${text.substring(0, 50)}..."`,
+      `[v${getApiVersion()}] [TTS] Streaming with ${provider}: "${text.substring(0, 50)}..."`,
     );
 
     if (provider === 'kokoro') {

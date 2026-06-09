@@ -25,6 +25,14 @@ process.on('unhandledRejection', (reason) => {
 async function bootstrap() {
   console.log('[Bootstrap] Starting KELEDON Cloud...');
 
+  // Log version from package.json
+  try {
+    const pkg = require('../package.json');
+    console.log(`[Bootstrap] API v${pkg.version || '0.0.0'}`);
+  } catch {
+    console.log('[Bootstrap] API v0.0.0 (could not read package.json)');
+  }
+
   try {
     // Span attachment map (cloud-side):
     // - HTTP ingress: auto HTTP instrumentation + x-trace-id response header
