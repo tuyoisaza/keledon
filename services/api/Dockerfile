@@ -21,7 +21,7 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/contracts ./contracts
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/data ./data
-COPY --from=builder /app/models ./models
+COPY --from=builder /app/services/api/models ./models
 RUN npm install -g ts-node@10.9.2
 RUN cat > /start.sh << 'SEEDSCRIPT'
 #!/bin/sh
