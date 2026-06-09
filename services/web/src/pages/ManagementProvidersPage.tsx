@@ -81,8 +81,8 @@ export default function ManagementProvidersPage() {
     const [deepgramKeyMasked, setDeepgramKeyMasked] = useState(true);
     const [sttSaving, setSttSaving] = useState(false);
 
-    // LLM / AI provider config
-    const [llmProvider, setLlmProvider] = useState('openai');
+    // LLM / AI provider config — default to Gemini since user has the API key
+    const [llmProvider, setLlmProvider] = useState('google');
     const [openaiApiKey, setOpenaiApiKey] = useState('');
     const [openaiKeyMasked, setOpenaiKeyMasked] = useState(true);
     const [googleApiKey, setGoogleApiKey] = useState('');
@@ -532,12 +532,12 @@ export default function ManagementProvidersPage() {
 
                 {/* OpenAI */}
                 <div className={cn(
-                    "mb-3 p-4 rounded-lg border transition-all",
+                    "mb-3 p-4 rounded-lg border transition-all cursor-pointer",
                     llmProvider === 'openai'
                         ? "border-primary/40 bg-primary/5"
-                        : "border-border bg-muted/30"
-                )}>
-                    <label className="flex items-center gap-3 cursor-pointer" onClick={() => setLlmProvider('openai')}>
+                        : "border-border bg-muted/30 hover:border-muted-foreground/30"
+                )} onClick={() => setLlmProvider('openai')}>
+                    <div className="flex items-center gap-3">
                         <input
                             type="radio"
                             name="llm-provider"
@@ -545,13 +545,15 @@ export default function ManagementProvidersPage() {
                             onChange={() => setLlmProvider('openai')}
                             className="accent-primary"
                         />
-                        <div>
+                        <div className="flex-1">
                             <span className="font-medium text-sm">🤖 OpenAI (GPT-4o)</span>
-                            {openaiApiKey && openaiKeyMasked && (
+                            {openaiApiKey ? (
                                 <span className="ml-2 text-xs text-green-400">✓ Configured</span>
+                            ) : (
+                                <span className="ml-2 text-xs text-amber-400">No key set</span>
                             )}
                         </div>
-                    </label>
+                    </div>
                     {llmProvider === 'openai' && (
                         <div className="mt-3 ml-6">
                             <div className="flex items-center gap-2">
@@ -559,7 +561,7 @@ export default function ManagementProvidersPage() {
                                     type={openaiKeyMasked && openaiApiKey ? 'password' : 'text'}
                                     value={openaiApiKey}
                                     onChange={e => { setOpenaiApiKey(e.target.value); setOpenaiKeyMasked(false); }}
-                                    placeholder="sk-..."
+                                    placeholder="sk-... (enter your OpenAI API key)"
                                     className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
                                 />
                                 <button
@@ -571,7 +573,10 @@ export default function ManagementProvidersPage() {
                                 </button>
                             </div>
                             {openaiApiKey && openaiKeyMasked && (
-                                <p className="text-xs text-green-400 mt-1">✓ Key saved (hidden)</p>
+                                <p className="text-xs text-green-400 mt-1">✓ Key saved in DB (hidden — click eye to view/edit)</p>
+                            )}
+                            {!openaiApiKey && (
+                                <p className="text-xs text-amber-400/70 mt-1">No OpenAI key stored — enter one above and save</p>
                             )}
                         </div>
                     )}
@@ -579,12 +584,12 @@ export default function ManagementProvidersPage() {
 
                 {/* Gemini */}
                 <div className={cn(
-                    "mb-4 p-4 rounded-lg border transition-all",
+                    "mb-4 p-4 rounded-lg border transition-all cursor-pointer",
                     llmProvider === 'google'
                         ? "border-primary/40 bg-primary/5"
-                        : "border-border bg-muted/30"
-                )}>
-                    <label className="flex items-center gap-3 cursor-pointer" onClick={() => setLlmProvider('google')}>
+                        : "border-border bg-muted/30 hover:border-muted-foreground/30"
+                )} onClick={() => setLlmProvider('google')}>
+                    <div className="flex items-center gap-3">
                         <input
                             type="radio"
                             name="llm-provider"
@@ -592,13 +597,15 @@ export default function ManagementProvidersPage() {
                             onChange={() => setLlmProvider('google')}
                             className="accent-primary"
                         />
-                        <div>
+                        <div className="flex-1">
                             <span className="font-medium text-sm">🔮 Google Gemini 2.5 Pro</span>
-                            {googleApiKey && googleKeyMasked && (
+                            {googleApiKey ? (
                                 <span className="ml-2 text-xs text-green-400">✓ Configured</span>
+                            ) : (
+                                <span className="ml-2 text-xs text-amber-400">No key set</span>
                             )}
                         </div>
-                    </label>
+                    </div>
                     {llmProvider === 'google' && (
                         <div className="mt-3 ml-6">
                             <div className="flex items-center gap-2">
@@ -606,7 +613,7 @@ export default function ManagementProvidersPage() {
                                     type={googleKeyMasked && googleApiKey ? 'password' : 'text'}
                                     value={googleApiKey}
                                     onChange={e => { setGoogleApiKey(e.target.value); setGoogleKeyMasked(false); }}
-                                    placeholder="AIza..."
+                                    placeholder="AIza... (enter your Gemini API key)"
                                     className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
                                 />
                                 <button
@@ -618,7 +625,10 @@ export default function ManagementProvidersPage() {
                                 </button>
                             </div>
                             {googleApiKey && googleKeyMasked && (
-                                <p className="text-xs text-green-400 mt-1">✓ Key saved (hidden)</p>
+                                <p className="text-xs text-green-400 mt-1">✓ Key saved in DB (hidden — click eye to view/edit)</p>
+                            )}
+                            {!googleApiKey && (
+                                <p className="text-xs text-amber-400/70 mt-1">No Gemini key stored — enter one above and save</p>
                             )}
                         </div>
                     )}
