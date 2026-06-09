@@ -86,6 +86,7 @@ export interface TTSConfigEntry {
   providerId: string;
   apiKey: string;
   voiceId?: string;
+  kokoroApiUrl?: string;
   updatedAt: string;
 }
 
@@ -190,6 +191,18 @@ export class MvpStoreService {
         is_enabled: true,
         metadata: {
           requires_api_key: false,
+        },
+      },
+      {
+        id: 'kokoro',
+        type: 'tts',
+        name: 'Kokoro TTS',
+        description: 'Open-weight TTS on Railway (Spanish/English/JP)',
+        status: 'experimental',
+        is_enabled: true,
+        metadata: {
+          requires_api_key: false,
+          requires_url: true,
         },
       },
       {

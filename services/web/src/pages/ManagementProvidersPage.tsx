@@ -10,6 +10,7 @@ const defaultProviderCatalog = [
     { id: 'deepgram', type: 'stt', name: 'Deepgram', status: 'production', is_enabled: true },
     { id: 'elevenlabs', type: 'tts', name: 'ElevenLabs', status: 'production', is_enabled: true },
     { id: 'openai-tts', type: 'tts', name: 'OpenAI TTS', status: 'production', is_enabled: true },
+    { id: 'kokoro', type: 'tts', name: 'Kokoro TTS (Railway)', status: 'experimental', is_enabled: true, metadata: { requires_api_key: false, api_url: 'https://kokoro-api-production-0bfa.up.railway.app' } },
     { id: 'coqui', type: 'tts', name: 'Coqui XTTS-v2', status: 'production', is_enabled: true },
     { id: 'ui-automation', type: 'rpa', name: 'UI Automation', status: 'production', is_enabled: true },
     { id: 'browser-control', type: 'rpa', name: 'Browser Control', status: 'experimental', is_enabled: false },
@@ -318,6 +319,37 @@ export default function ManagementProvidersPage() {
                                             />
                                         </div>
                                     )}
+                                </div>
+                            )}
+                            {ttsConfig.providerId === provider.id && provider.id === 'kokoro' && (
+                                <div className="mt-3 space-y-2" onClick={e => e.stopPropagation()}>
+                                    <div>
+                                        <label className="text-xs text-muted-foreground">Voice</label>
+                                        <select
+                                            value={ttsConfig.voiceId || 'ef_dora'}
+                                            onChange={e => setTTSConfig(prev => ({ ...prev, voiceId: e.target.value }))}
+                                            className="w-full mt-1 px-2 py-1.5 text-sm rounded border border-border bg-background focus:border-primary focus:outline-none"
+                                        >
+                                            <option value="ef_dora">Dora (Spanish, female)</option>
+                                            <option value="em_alex">Alex (Spanish, male)</option>
+                                            <option value="em_santa">Santa (Spanish, male)</option>
+                                            <option value="af_bella">Bella (English, female)</option>
+                                            <option value="am_adam">Adam (English, male)</option>
+                                            <option value="af_sky">Sky (English, female)</option>
+                                            <option value="af_nova">Nova (English, female)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-muted-foreground">API URL</label>
+                                        <input
+                                            type="text"
+                                            value={ttsConfig.apiKey || provider.metadata?.api_url || ''}
+                                            onChange={e => setTTSConfig(prev => ({ ...prev, apiKey: e.target.value }))}
+                                            placeholder="https://kokoro-api-production-0bfa.up.railway.app"
+                                            className="w-full mt-1 px-2 py-1.5 text-sm rounded border border-border bg-background focus:border-primary focus:outline-none"
+                                        />
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">Self-hosted Kokoro API on Railway. No API key needed.</p>
                                 </div>
                             )}
                         </div>

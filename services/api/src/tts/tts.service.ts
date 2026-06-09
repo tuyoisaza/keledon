@@ -47,7 +47,11 @@ export class TTSService {
     );
 
     try {
-      if (provider === 'elevenlabs') {
+      if (provider === 'kokoro') {
+        const baseUrl = apiKeyFromStore || 'https://kokoro-api-production-0bfa.up.railway.app';
+        const voice = ttsConfig.voiceId || 'ef_dora';
+        return await this.speakWithKokoro(text, baseUrl, voice);
+      } else if (provider === 'elevenlabs') {
         return await this.speakWithElevenLabs(text, options);
       } else if (provider === 'openai') {
         return await this.speakWithOpenAI(text, options);
@@ -91,7 +95,19 @@ export class TTSService {
       `[TTS] Streaming with ${provider}: "${text.substring(0, 50)}..."`,
     );
 
-    if (provider === 'elevenlabs') {
+    if (provider === 'kokoro') {
+      const baseUrl = apiKeyFromStore || 'https://kokoro-api-production-0bfa.up.railway.app';
+      const voice = ttsConfig.voiceId || 'ef_dora';
+      const result = await this.speakWithKokoro(text, baseUrl, voice);
+      if (result.audioData && result.audioData.length > 0) {
+        const chunkSize = 32000; // ~1s of WAV audio
+        for (let i = 0; i < result.audioData.length; i += chunkSize) {
+          const chunk = result.audioData.slice(i, Math.min(i + chunkSize, result.audioData.length));
+          onChunk(chunk.toString('base64'));
+        }
+      }
+      return result;
+    } else if (provider === 'elevenlabs') {
       return await this.streamWithElevenLabs(text, onChunk, options);
     } else if (provider === 'openai') {
       // OpenAI's TTS isn't streaming, so generate full audio then chunk it
@@ -264,6 +280,46 @@ export class TTSService {
       return { audioData, duration };
     } catch (error: any) {
       console.error('[TTS] OpenAI TTS error:', error.message);
+      return { error: error.message };
+    }
+  }
+
+  async speakWithKokoro(
+    text: string,
+    baseUrl: string,
+    voice: string,
+  ): Promise<TTSResult> {
+    try {
+      const response = await fetch(`${baseUrl}/v1/audio/speech`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'kokoro',
+          input: text,
+          voice,
+          response_format: 'wav',
+        }),
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        console.error(`[TTS] Kokoro error (${response.status}): ${errText}`);
+        return { error: `Kokoro API returned ${response.status}` };
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      const audioData = Buffer.from(arrayBuffer);
+      // WAV at 24kHz: duration = bytes / (sampleRate * channels * bitsPerSample/8)
+      const duration = audioData.length / (24000 * 2); // 24kHz, 16-bit, mono
+      // Fallback: OpenAI-style estimate
+      const duration2 = this.estimateDuration(audioData.length);
+
+      console.log(
+        `[TTS] Kokoro generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio (voice: ${voice})`,
+      );
+      return { audioData, duration: duration || duration2 };
+    } catch (error: any) {
+      console.error('[TTS] Kokoro error:', error.message);
       return { error: error.message };
     }
   }
