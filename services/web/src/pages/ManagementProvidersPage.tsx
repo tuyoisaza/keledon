@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings, RefreshCw, Check, X, Globe, ArrowUp, ArrowDown, Save, Cpu } from 'lucide-react';
+import { Settings, RefreshCw, Check, X, Globe, ArrowUp, ArrowDown, Save, Cpu, Brain } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { apiFetch } from '@/lib/api-fetch';
@@ -44,6 +44,12 @@ interface CatalogEntry {
     metadata?: Record<string, any>;
 }
 
+interface LLMProviderOption {
+    id: string;
+    name: string;
+    available: boolean;
+}
+
 export default function ManagementProvidersPage() {
     const [catalog, setCatalog] = useState<CatalogEntry[]>(defaultProviderCatalog);
     const [loading, setLoading] = useState(false);
@@ -53,9 +59,17 @@ export default function ManagementProvidersPage() {
     const [ttsConfig, setTTSConfig] = useState({ providerId: 'webspeech', apiKey: '', voiceId: '' });
     const [ttsSaving, setTTSSaving] = useState(false);
 
+    // LLM provider state
+    const [llmProviders, setLLMProviders] = useState<LLMProviderOption[]>([]);
+    const [selectedLLM, setSelectedLLM] = useState('');
+    const [llmSaving, setLLMSaving] = useState(false);
+    const [llmLoading, setLLMLoading] = useState(false);
+
     useEffect(() => {
         fetchCatalog();
         fetchTTSConfig();
+        fetchLLMProviders();
+        fetchActiveProviders();
     }, []);
 
     const fetchCatalog = async () => {
@@ -92,7 +106,8 @@ export default function ManagementProvidersPage() {
     const saveTTSConfig = async () => {
         setTTSSaving(true);
         try {
-            const res = await apiFetch('/api/tts-config', {
+            // Save to file-based store (existing endpoint)
+            const res1 = await apiFetch('/api/tts-config', {
                 method: 'PATCH',
                 body: JSON.stringify({
                     providerId: ttsConfig.providerId,
@@ -100,8 +115,17 @@ export default function ManagementProvidersPage() {
                     voiceId: ttsConfig.voiceId,
                 }),
             });
-            if (res.ok) {
-                toast.success('TTS config saved');
+            // Also save to DB (persistent across restarts)
+            const res2 = await apiFetch('/api/active-providers/tts', {
+                method: 'PATCH',
+                body: JSON.stringify({
+                    providerId: ttsConfig.providerId,
+                    apiKey: ttsConfig.apiKey,
+                    voiceId: ttsConfig.voiceId,
+                }),
+            });
+            if (res1.ok && res2.ok) {
+                toast.success('TTS config saved (persistent)');
             } else {
                 toast.error('Failed to save TTS config');
             }
@@ -109,6 +133,67 @@ export default function ManagementProvidersPage() {
             toast.error('Failed to save TTS config');
         } finally {
             setTTSSaving(false);
+        }
+    };
+
+    const fetchLLMProviders = async () => {
+        setLLMLoading(true);
+        try {
+            const res = await apiFetch('/api/active-providers/available-llm');
+            if (res.ok) {
+                const data = await res.json();
+                setLLMProviders(data.providers || []);
+            }
+        } catch (e) {
+            console.error('Failed to fetch LLM providers', e);
+        } finally {
+            setLLMLoading(false);
+        }
+    };
+
+    const fetchActiveProviders = async () => {
+        try {
+            const res = await apiFetch('/api/active-providers');
+            if (res.ok) {
+                const data = await res.json();
+                if (data.llmProviderId) {
+                    setSelectedLLM(data.llmProviderId);
+                } else {
+                    // Auto-detect first available
+                    const firstAvail = llmProviders.find(p => p.available)?.id || '';
+                    if (firstAvail) setSelectedLLM(firstAvail);
+                }
+                if (data.ttsProviderId && ttsConfig.providerId === 'webspeech') {
+                    setTTSConfig(prev => ({
+                        ...prev,
+                        providerId: data.ttsProviderId,
+                        voiceId: data.ttsVoiceId || prev.voiceId,
+                    }));
+                }
+            }
+        } catch (e) {
+            console.error('Failed to fetch active providers', e);
+        }
+    };
+
+    const saveLLMConfig = async (providerId: string) => {
+        setLLMSaving(true);
+        try {
+            const res = await apiFetch('/api/active-providers/llm', {
+                method: 'PATCH',
+                body: JSON.stringify({ providerId }),
+            });
+            if (res.ok) {
+                setSelectedLLM(providerId);
+                toast.success(`AI provider set to ${llmProviders.find(p => p.id === providerId)?.name || providerId}`);
+            } else {
+                const err = await res.text();
+                toast.error(`Failed to save: ${err}`);
+            }
+        } catch {
+            toast.error('Failed to save LLM provider selection');
+        } finally {
+            setLLMSaving(false);
         }
     };
 
@@ -216,12 +301,84 @@ export default function ManagementProvidersPage() {
                     <Settings className="w-6 h-6 text-primary" />
                     <div>
                         <h1 className="text-2xl font-bold">Providers</h1>
-                        <p className="text-muted-foreground">Configure STT, TTS, and RPA providers</p>
+                        <p className="text-muted-foreground">Configure STT, TTS, AI (LLM), and RPA providers</p>
                     </div>
                 </div>
                 <button onClick={fetchCatalog} className="p-2 hover:bg-muted rounded-lg transition-colors" title="Refresh">
                     <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
                 </button>
+            </div>
+
+            {/* AI / LLM Provider Selection */}
+            <div className="rounded-xl border border-border bg-card p-6">
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                    <Brain className="w-5 h-5" />
+                    AI / LLM Provider
+                    <button
+                        onClick={fetchLLMProviders}
+                        className="p-1 hover:bg-muted rounded transition-colors ml-1"
+                        title="Refresh available providers"
+                    >
+                        <RefreshCw className={cn("w-3.5 h-3.5", llmLoading && "animate-spin")} />
+                    </button>
+                    <button
+                        onClick={() => saveLLMConfig(selectedLLM)}
+                        disabled={llmSaving || !selectedLLM}
+                        className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
+                    >
+                        <Save className="w-4 h-4" />
+                        {llmSaving ? 'Saving...' : 'Save AI Provider'}
+                    </button>
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                    Select which AI provider the Brain uses for responses. Only providers with an API key configured in Railway are shown.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {llmProviders.map((provider) => (
+                        <div
+                            key={provider.id}
+                            className={cn(
+                                "p-4 rounded-lg border transition-colors",
+                                !provider.available && "opacity-40 cursor-not-allowed",
+                                selectedLLM === provider.id && provider.available
+                                    ? "border-primary bg-primary/10 cursor-pointer"
+                                    : provider.available
+                                    ? "border-border bg-muted/50 hover:bg-muted cursor-pointer"
+                                    : "border-border bg-muted/30"
+                            )}
+                            onClick={() => {
+                                if (provider.available) {
+                                    setSelectedLLM(provider.id);
+                                } else {
+                                    toast.error(`${provider.name} not available — no API key configured`);
+                                }
+                            }}
+                        >
+                            <div className="flex items-start justify-between mb-2">
+                                <div>
+                                    <span className="font-medium">{provider.name}</span>
+                                    {!provider.available && (
+                                        <span className="ml-2 px-2 py-0.5 text-xs rounded bg-red-500/20 text-red-400">
+                                            No key
+                                        </span>
+                                    )}
+                                </div>
+                                {selectedLLM === provider.id && provider.available && (
+                                    <Check className="w-5 h-5 text-primary" />
+                                )}
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                                {provider.available ? 'Ready' : 'Not configured'}
+                            </p>
+                        </div>
+                    ))}
+                    {llmProviders.length === 0 && !llmLoading && (
+                        <p className="text-sm text-muted-foreground col-span-full">No LLM providers detected. Configure an API key in Railway environment variables.</p>
+                    )}
+                    {llmLoading && (
+                        <p className="text-sm text-muted-foreground col-span-full">Loading available providers...</p>
+                    )}
+                </div>
             </div>
 
             {/* STT Providers */}
@@ -264,6 +421,7 @@ export default function ManagementProvidersPage() {
                 <h3 className="font-semibold mb-4 flex items-center gap-2">
                     <Globe className="w-5 h-5" />
                     Text-to-Speech (TTS)
+                    <span className="ml-2 px-2 py-0.5 text-xs rounded bg-blue-500/20 text-blue-400">DB persisted</span>
                     <button
                         onClick={saveTTSConfig}
                         disabled={ttsSaving}
@@ -273,6 +431,9 @@ export default function ManagementProvidersPage() {
                         {ttsSaving ? 'Saving...' : 'Save TTS Config'}
                     </button>
                 </h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                    Select TTS provider and configure. Selections now persist in the database across deployments.
+                </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {ttsProviders.map((provider) => (
                         <div

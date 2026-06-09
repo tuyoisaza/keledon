@@ -11,7 +11,9 @@ import { ListeningSessionModule } from './listening-sessions/listening-session.m
 import { PrismaModule } from './prisma/prisma.module';
 import { TeamController } from './controllers/team.controller';
 import { MvpDataController } from './controllers/mvp-data.controller';
+import { ActiveProvidersController } from './controllers/active-providers.controller';
 import { MvpStoreService } from './mvp/mvp-store.service';
+import { ProviderConfigGlobalModule } from './provider-config-global.module';
 import { AuthLocalModule } from './auth-local/auth-local.module';
 import { CrudModule } from './crud/crud.module';
 import { CrudController } from './crud/crud.controller';
@@ -63,6 +65,7 @@ import { EscalationModule } from './modules/escalation.module';
     LLMModule,
     VoiceModule,
     STTModule,
+    ProviderConfigGlobalModule,
   ],
   controllers: [
     AppController,
@@ -75,6 +78,7 @@ import { EscalationModule } from './modules/escalation.module';
     DeviceController,
     BrainController,
     PlannerController,
+    ActiveProvidersController,
   ],
   providers: [
     AppService,
