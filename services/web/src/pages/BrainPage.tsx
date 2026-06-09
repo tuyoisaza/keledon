@@ -56,10 +56,18 @@ export default function BrainPage() {
     const [sending, setSending] = useState(false);
 
     const [isListening, setIsListening] = useState(false);
+    const [sttLang, setSttLang] = useState(() => {
+        try { return localStorage.getItem('keledon_stt_lang') || navigator.language || 'en-US'; }
+        catch { return navigator.language || 'en-US'; }
+    });
     const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
     const listeningRef = useRef(false);
     const reListenTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const ttsFallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const sttLangRef = useRef(sttLang);
+    const lastChunkPlayedRef = useRef(false);
+    const reconErrorCountRef = useRef(0);
     const [autoSpeak, setAutoSpeak] = useState(() => {
         try { return localStorage.getItem(AUTOSPEAK_KEY) !== 'false'; } catch { return true; }
     });
@@ -283,11 +291,55 @@ export default function BrainPage() {
                 content: data.text || '',
                 timestamp: new Date().toISOString(),
             }]);
+            // Browser TTS fallback: if no audio chunks arrive in 2s, use SpeechSynthesis
+            if (window.speechSynthesis && data.text) {
+                if (ttsFallbackTimerRef.current) clearTimeout(ttsFallbackTimerRef.current);
+                ttsFallbackTimerRef.current = setTimeout(() => {
+                    if (!audioPlayingRef.current && audioQueueRef.current.length === 0) {
+                        addLog(`[v${__APP_VERSION__ || '?'}] TTS fallback: using browser SpeechSynthesis`);
+                        const utterance = new SpeechSynthesisUtterance(data.text);
+                        utterance.lang = sttLangRef.current || 'en-US';
+                        utterance.onend = () => {
+                            audioPlayingRef.current = false;
+                            if (conversationModeRef.current && !listeningRef.current) {
+                                setTimeout(() => toggleListening(), 300);
+                            }
+                        };
+                        audioPlayingRef.current = true;
+                        window.speechSynthesis.speak(utterance);
+                    }
+                }, 2000);
+            }
         });
         socket.on('voice:audio', (data: { audio: string; sequence: string; format?: string; duration?: number }) => {
+            // Cancel TTS fallback timer — backend streaming is working
+            if (ttsFallbackTimerRef.current) {
+                clearTimeout(ttsFallbackTimerRef.current);
+                ttsFallbackTimerRef.current = null;
+            }
             if (data.sequence === 'end') {
                 addLog('Audio stream end' + (data.duration ? ' dur=' + data.duration.toFixed(1) : ''));
                 audioPlayingRef.current = false;
+                // If no audio chunks were played, use browser SpeechSynthesis fallback
+                if (audioQueueRef.current.length === 0 && !lastChunkPlayedRef.current) {
+                    addLog(`[v${__APP_VERSION__ || '?'}] No audio from backend — using browser SpeechSynthesis`);
+                    // Find the last brain reply message to speak
+                    const lastReply = [...messages].reverse().find(m => m.role === 'assistant' && !m.id.startsWith('assistant-error'));
+                    if (lastReply?.content && window.speechSynthesis) {
+                        window.speechSynthesis.cancel();
+                        const utterance = new SpeechSynthesisUtterance(lastReply.content);
+                        utterance.lang = sttLangRef.current || 'en-US';
+                        utterance.onend = () => {
+                            audioPlayingRef.current = false;
+                            if (conversationModeRef.current && !listeningRef.current) {
+                                setTimeout(() => toggleListening(), 300);
+                            }
+                        };
+                        audioPlayingRef.current = true;
+                        window.speechSynthesis.speak(utterance);
+                        return;
+                    }
+                }
                 // Re-listen in conversation mode
                 setTimeout(() => {
                     if (conversationModeRef.current && !listeningRef.current) {
@@ -296,6 +348,8 @@ export default function BrainPage() {
                 }, 300);
                 return;
             }
+            // Clear flag: we received actual audio data from backend
+            lastChunkPlayedRef.current = true;
             // Queue the chunk
             audioQueueRef.current.push({ data: data.audio, seq: data.sequence || 'chunk' });
             if (!audioPlayingRef.current) {
@@ -309,9 +363,20 @@ export default function BrainPage() {
             audioQueueRef.current = [];
             toast.error('Voice error: ' + (data.error || 'unknown'));
         });
-        socket.on('disconnect', (reason) => {
-            addLog(`[v${__APP_VERSION__ || '?'}] WS DISCONNECTED: "${reason}"`);
+        socket.on('disconnect', (reason: string) => {
+            addLog(`[v${__APP_VERSION__ || '?'}] WS DISCONNECTED: ${reason}`);
             addLog(`[v${__APP_VERSION__ || '?'}]   Session: ${voiceSessionIdRef.current || 'none'} | Duration: ${formatCallTime(callTimer)}`);
+            // Auto-reconnect for unexpected disconnects (not user-initiated)
+            if (reason !== 'io client disconnect' && conversationModeRef.current) {
+                addLog(`[v${__APP_VERSION__ || '?'}] → auto-reconnecting in 2s`);
+                setTimeout(() => {
+                    if (conversationModeRef.current) {
+                        disconnectVoiceSocket();
+                        connectVoiceSocket();
+                    }
+                }, 2000);
+                return;
+            }
             setCallStatus('disconnected');
             if (callTimerRef.current) { clearInterval(callTimerRef.current); callTimerRef.current = null; }
             audioPlayingRef.current = false;
@@ -509,7 +574,7 @@ export default function BrainPage() {
         const recognition = new SR();
         recognition.continuous = true;
         recognition.interimResults = true;
-        recognition.lang = navigator.language || 'en-US';
+        recognition.lang = sttLangRef.current || navigator.language || 'en-US';
 
         recognition.onstart = () => {
             addLog(`[v${__APP_VERSION__ || '?'}] STT: lang=${recognition.lang}, continuous=${recognition.continuous}, interim=${recognition.interimResults}`);
@@ -558,6 +623,8 @@ export default function BrainPage() {
             addLog('recognition onend, draftRef=' + (draftRef.current ? '"' + draftRef.current.trimEnd() + '"' : '(empty)'));
             listeningRef.current = false;
             setIsListening(false);
+            // Reset error counter on successful ended recognition (not error-triggered)
+            reconErrorCountRef.current = 0;
             // In continuous mode, restart if we're still in conversation mode
             if (conversationModeRef.current && recognitionRef.current === recognition) {
                 addLog('→ restarting recognition in 300ms');
@@ -571,14 +638,21 @@ export default function BrainPage() {
 
         recognition.onerror = (event: any) => {
             addLog('recognition error: ' + event.error);
+            reconErrorCountRef.current++;
             listeningRef.current = false;
             setIsListening(false);
             // Don't show toast for transient errors
             if (event.error !== 'no-speech' && event.error !== 'aborted') {
                 toast.error('Microphone error: ' + event.error);
             }
-            // Restart on transient errors in conversation mode
+            // Restart on transient errors in conversation mode (max 3 consecutive)
             if (conversationModeRef.current && event.error !== 'aborted' && recognitionRef.current === recognition) {
+                if (reconErrorCountRef.current >= 3) {
+                    addLog('→ too many recognition errors, giving up');
+                    toast.error('Microphone keeps failing — check your mic and refresh');
+                    reconErrorCountRef.current = 0;
+                    return;
+                }
                 reListenTimerRef.current = setTimeout(() => {
                     if (conversationModeRef.current && !listeningRef.current) {
                         toggleListening();
@@ -1113,6 +1187,31 @@ export default function BrainPage() {
                                     : 'Select all context fields before sending.'}
                             </div>
                             <div className="flex items-center gap-2">
+                                {/* STT Language selector */}
+                                <select
+                                    value={sttLang}
+                                    onChange={(e) => {
+                                        const lang = e.target.value;
+                                        setSttLang(lang);
+                                        sttLangRef.current = lang;
+                                        try { localStorage.setItem('keledon_stt_lang', lang); } catch {}
+                                        // Recreate recognition with new language if currently listening
+                                        if (listeningRef.current) {
+                                            recognitionRef.current?.stop();
+                                            setTimeout(() => toggleListening(), 100);
+                                        }
+                                    }}
+                                    title="Speech recognition language"
+                                    className="rounded-xl border border-border bg-background px-2 py-2.5 text-xs outline-none transition-colors focus:border-primary"
+                                >
+                                    <option value="en-US">English</option>
+                                    <option value="es-MX">Español</option>
+                                    <option value="pt-BR">Português</option>
+                                    <option value="fr-FR">Français</option>
+                                    <option value="de-DE">Deutsch</option>
+                                    <option value="it-IT">Italiano</option>
+                                    <option value="ja-JP">日本語</option>
+                                </select>
                                 {/* Mic button */}
                                 <button
                                     type="button"
