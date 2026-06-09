@@ -72,10 +72,15 @@ export default function BrainPage() {
         try { return localStorage.getItem(AUTOSPEAK_KEY) !== 'false'; } catch { return true; }
     });
     const [conversationMode, setConversationMode] = useState(false);
-
-    // Debug logging
     const [brainLogs, setBrainLogs] = useState<string[]>([]);
     const BRAIN_LOG_MAX = 50;
+
+    // Provider status indicators
+    const [llmProvider, setLlmProvider] = useState<string | null>(null);
+    const [ttsProvider, setTtsProvider] = useState<string | null>(null);
+    const [sttProvider, setSttProvider] = useState<string | null>(null);
+    const [teamConfigLoading, setTeamConfigLoading] = useState(false);
+
     function addLog(msg: string) {
         const entry = `[${new Date().toLocaleTimeString()}] ${msg}`;
         console.log('[Brain]', msg);
@@ -177,6 +182,40 @@ export default function BrainPage() {
             teamId: selectedTeamId,
         });
     }, [selectedCompanyId, selectedBrandId, selectedTeamId, user]);
+
+    // ── Load provider config for selected team ──
+
+    useEffect(() => {
+        if (!selectedTeamId) {
+            setLlmProvider(null);
+            setTtsProvider(null);
+            setSttProvider(null);
+            return;
+        }
+
+        setTeamConfigLoading(true);
+        const team = teams.find(t => t.id === selectedTeamId);
+        // Optimistic: use the team's stored fields first
+        if (team) {
+            setLlmProvider((team as any).llmProvider || null);
+            setTtsProvider((team as any).ttsProvider || null);
+            setSttProvider((team as any).sttProvider || null);
+        }
+
+        // Then fetch full config from API for API keys / real values
+        fetch(`/api/teams/${selectedTeamId}/config`)
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data) {
+                    setLlmProvider(data.llmProvider || null);
+                    setTtsProvider(data.ttsProvider || null);
+                    setSttProvider(data.sttProvider || null);
+                    addLog(`Provider config loaded: LLM=${data.llmProvider || '?'} TTS=${data.ttsProvider || '?'} STT=${data.sttProvider || '?'}`);
+                }
+            })
+            .catch(err => console.error('Failed to load provider config:', err))
+            .finally(() => setTeamConfigLoading(false));
+    }, [selectedTeamId, teams]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -828,12 +867,70 @@ export default function BrainPage() {
                     </div>
                 </div>
 
-                <div className="rounded-xl border border-border bg-card px-4 py-3 text-sm text-muted-foreground shadow-sm">
-                    <div className="flex items-center gap-2 text-foreground">
-                        <Sparkles className="h-4 w-4 text-primary" />
-                        Live context
+                <div className="rounded-xl border border-border bg-card px-4 py-3 text-sm shadow-sm space-y-3">
+                    <div>
+                        <div className="flex items-center gap-2 text-foreground">
+                            <Sparkles className="h-4 w-4 text-primary" />
+                            Live context
+                        </div>
+                        <p className="mt-1 max-w-sm text-muted-foreground">{contextSummary}</p>
                     </div>
-                    <p className="mt-1 max-w-sm">{contextSummary}</p>
+                    {/* Provider status indicators */}
+                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border">
+                        {/* AI provider */}
+                        {teamConfigLoading ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-muted/60 text-xs text-muted-foreground">
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                                Loading...
+                            </span>
+                        ) : selectedTeamId ? (
+                            <>
+                                <span
+                                    className={cn(
+                                        "inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium",
+                                        llmProvider
+                                            ? "bg-primary/10 text-primary border border-primary/20"
+                                            : "bg-muted/60 text-muted-foreground border border-border"
+                                    )}
+                                    title="AI / LLM Provider configured in Management > Providers"
+                                >
+                                    <Brain className="h-3 w-3" />
+                                    {llmProvider === 'openai' ? 'GPT-4o' :
+                                     llmProvider === 'google' ? 'Gemini' :
+                                     llmProvider || 'AI: none'}
+                                </span>
+                                <span
+                                    className={cn(
+                                        "inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium",
+                                        ttsProvider
+                                            ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                                            : "bg-muted/60 text-muted-foreground border border-border"
+                                    )}
+                                    title="TTS Provider configured in Management > Providers"
+                                >
+                                    <Volume2 className="h-3 w-3" />
+                                    {ttsProvider || 'TTS: none'}
+                                </span>
+                                <span
+                                    className={cn(
+                                        "inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium",
+                                        sttProvider
+                                            ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                                            : "bg-muted/60 text-muted-foreground border border-border"
+                                    )}
+                                    title="STT Provider configured in Management > Providers"
+                                >
+                                    <Mic className="h-3 w-3" />
+                                    {sttProvider === 'vosk' ? 'Vosk' :
+                                     sttProvider === 'deepgram' ? 'Deepgram' :
+                                     sttProvider === 'webspeech' ? 'Web Speech' :
+                                     sttProvider || 'STT: none'}
+                                </span>
+                            </>
+                        ) : (
+                            <span className="text-xs text-muted-foreground">Select a team to see provider config</span>
+                        )}
+                    </div>
                 </div>
             </div>
 

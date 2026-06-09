@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings, RefreshCw, Check, X, Globe, ArrowUp, ArrowDown, Save, Cpu, Brain } from 'lucide-react';
+import { Settings, RefreshCw, Check, X, Globe, ArrowUp, ArrowDown, Save, Cpu, Brain, Eye, EyeOff, Mic, Volume2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { apiFetch } from '@/lib/api-fetch';
@@ -45,22 +45,50 @@ interface CatalogEntry {
     metadata?: Record<string, any>;
 }
 
+// All RPA provider IDs used in chain management
+const allRpaProviderIds = Object.keys(rpaProviderInfo);
+
+// STT provider options
+const sttProviderOptions = [
+    { id: 'vosk', name: 'Vosk (Local)', description: 'Local STT via Vosk server' },
+    { id: 'deepgram', name: 'Deepgram', description: 'Cloud STT via Deepgram API' },
+    { id: 'webspeech', name: 'Web Speech API', description: 'Browser-native speech recognition' },
+];
+
+// LLM options (only OpenAI + Gemini per user request)
+const llmOptions = [
+    { id: 'openai', name: 'OpenAI (GPT-4o)', icon: '🤖' },
+    { id: 'google', name: 'Google Gemini 2.5 Pro', icon: '🔮' },
+];
+
 export default function ManagementProvidersPage() {
     const { user } = useAuth();
     const teamId = user?.teamId || user?.team_id || '';
+
     const [catalog, setCatalog] = useState<CatalogEntry[]>(defaultProviderCatalog);
     const [loading, setLoading] = useState(false);
     const [deviceId, setDeviceId] = useState('');
     const [rpaConfig, setRpaConfig] = useState(defaultRpaChain);
     const [rpaLoading, setRpaLoading] = useState(false);
+
+    // TTS config
     const [ttsConfig, setTTSConfig] = useState({ providerId: 'webspeech', apiKey: '', voiceId: '' });
     const [ttsSaving, setTTSSaving] = useState(false);
 
-    // LLM / AI provider state
+    // STT config
+    const [sttProvider, setSttProvider] = useState('vosk');
+    const [deepgramApiKey, setDeepgramApiKey] = useState('');
+    const [deepgramKeyMasked, setDeepgramKeyMasked] = useState(true);
+    const [sttSaving, setSttSaving] = useState(false);
+
+    // LLM / AI provider config
     const [llmProvider, setLlmProvider] = useState('openai');
-    const [availableLlmProviders, setAvailableLlmProviders] = useState<{id: string; name: string; available: boolean}[]>([]);
-    const [llmLoading, setLlmLoading] = useState(false);
+    const [openaiApiKey, setOpenaiApiKey] = useState('');
+    const [openaiKeyMasked, setOpenaiKeyMasked] = useState(true);
+    const [googleApiKey, setGoogleApiKey] = useState('');
+    const [googleKeyMasked, setGoogleKeyMasked] = useState(true);
     const [llmSaving, setLlmSaving] = useState(false);
+    const [llmLoading, setLlmLoading] = useState(false);
 
     useEffect(() => {
         fetchCatalog();
@@ -68,7 +96,6 @@ export default function ManagementProvidersPage() {
         if (teamId) {
             fetchTeamConfig();
         }
-        detectAvailableLlmProviders();
     }, [teamId]);
 
     const fetchCatalog = async () => {
@@ -127,7 +154,7 @@ export default function ManagementProvidersPage() {
                 dbOk = dbRes.ok;
             }
             if (res.ok) {
-                toast.success('TTS config saved' + (teamId && dbOk ? ' (DB)' : ''));
+                toast.success('TTS config saved' + (teamId && dbOk ? ' ✓ DB' : ''));
             } else {
                 toast.error('Failed to save TTS config');
             }
@@ -138,15 +165,7 @@ export default function ManagementProvidersPage() {
         }
     };
 
-    const detectAvailableLlmProviders = () => {
-        // Show all common LLM providers; backend validates API key availability
-        setAvailableLlmProviders([
-            { id: 'openai', name: 'OpenAI (GPT-4o)', available: true },
-            { id: 'google', name: 'Google (Gemini 2.5 Pro)', available: true },
-            { id: 'anthropic', name: 'Anthropic (Claude Sonnet 4)', available: true },
-            { id: 'ollama', name: 'Ollama (Local)', available: true },
-        ]);
-    };
+    // ── Team config (load all persisted provider configs from DB) ──
 
     const fetchTeamConfig = async () => {
         if (!teamId) return;
@@ -155,7 +174,11 @@ export default function ManagementProvidersPage() {
             const res = await apiFetch(`/api/teams/${teamId}/config`);
             if (res.ok) {
                 const data = await res.json();
-                if (data.llmProvider) setLlmProvider(data.llmProvider);
+
+                // STT provider
+                if (data.sttProvider) setSttProvider(data.sttProvider);
+
+                // TTS provider
                 if (data.ttsProvider) {
                     setTTSConfig(prev => ({
                         ...prev,
@@ -163,6 +186,23 @@ export default function ManagementProvidersPage() {
                         voiceId: data.ttsVoiceId || prev.voiceId,
                         apiKey: data.ttsApiKey || prev.apiKey,
                     }));
+                }
+
+                // LLM provider
+                if (data.llmProvider) setLlmProvider(data.llmProvider);
+
+                // API keys (masked — show only that they exist)
+                if (data.openaiApiKey) {
+                    setOpenaiApiKey(data.openaiApiKey);
+                    setOpenaiKeyMasked(true);
+                }
+                if (data.googleAiApiKey) {
+                    setGoogleApiKey(data.googleAiApiKey);
+                    setGoogleKeyMasked(true);
+                }
+                if (data.deepgramApiKey) {
+                    setDeepgramApiKey(data.deepgramApiKey);
+                    setDeepgramKeyMasked(true);
                 }
             }
         } catch (e) {
@@ -172,21 +212,31 @@ export default function ManagementProvidersPage() {
         }
     };
 
+    // ── LLM / AI Provider ──
+
     const saveLLMProvider = async () => {
         if (!teamId) {
-            toast.error('No team ID found — cannot save provider');
+            toast.error('No team ID found — cannot save');
             return;
         }
         setLlmSaving(true);
         try {
+            const payload: Record<string, string> = {
+                llmProvider: llmProvider,
+            };
+            // Only include API keys if the user entered something
+            if (openaiApiKey && !openaiKeyMasked) payload.openaiApiKey = openaiApiKey;
+            if (googleApiKey && !googleKeyMasked) payload.googleAiApiKey = googleApiKey;
+
             const res = await apiFetch(`/api/teams/${teamId}/config`, {
                 method: 'PUT',
-                body: JSON.stringify({
-                    llmProvider: llmProvider,
-                }),
+                body: JSON.stringify(payload),
             });
             if (res.ok) {
-                toast.success(`AI provider set to ${llmProvider}`);
+                toast.success(`AI provider saved: ${llmProvider === 'openai' ? 'OpenAI' : 'Gemini'}`);
+                // Mask keys after save
+                if (openaiApiKey) setOpenaiKeyMasked(true);
+                if (googleApiKey) setGoogleKeyMasked(true);
             } else {
                 toast.error('Failed to save AI provider');
             }
@@ -197,20 +247,55 @@ export default function ManagementProvidersPage() {
         }
     };
 
-    const loadRpaConfig = async () => {
-        if (!deviceId.trim()) {
-            toast.error('Enter a device ID first');
+    // ── STT Provider ──
+
+    const saveSTTProvider = async () => {
+        if (!teamId) {
+            toast.error('No team ID found — cannot save');
             return;
         }
+        setSttSaving(true);
+        try {
+            const payload: Record<string, string> = {
+                sttProvider: sttProvider,
+            };
+            // Include Deepgram key only if user entered a new one
+            if (deepgramApiKey && !deepgramKeyMasked) payload.deepgramApiKey = deepgramApiKey;
+
+            const res = await apiFetch(`/api/teams/${teamId}/config`, {
+                method: 'PUT',
+                body: JSON.stringify(payload),
+            });
+            if (res.ok) {
+                toast.success(`STT provider saved: ${sttProvider}`);
+                if (deepgramApiKey) setDeepgramKeyMasked(true);
+            } else {
+                toast.error('Failed to save STT provider');
+            }
+        } catch {
+            toast.error('Failed to save STT provider');
+        } finally {
+            setSttSaving(false);
+        }
+    };
+
+    // ── RPA ──
+
+    const loadRpaConfig = async () => {
+        if (!deviceId.trim()) return;
         setRpaLoading(true);
         try {
-            const res = await apiFetch(`/api/devices/${encodeURIComponent(deviceId.trim())}/rpa-config`);
+            const res = await apiFetch(`/api/browser/${deviceId}/rpa-config`);
             if (res.ok) {
                 const data = await res.json();
-                setRpaConfig(data);
+                setRpaConfig({
+                    chain: data.chain || defaultRpaChain.chain,
+                    fallback: data.fallback ?? defaultRpaChain.fallback,
+                    providers: { ...defaultRpaChain.providers, ...data.providers },
+                });
                 toast.success('RPA config loaded');
             } else {
-                toast.error('Failed to load — using defaults');
+                toast.error('Failed to load RPA config');
             }
         } catch {
             toast.error('Failed to load RPA config');
@@ -220,20 +305,17 @@ export default function ManagementProvidersPage() {
     };
 
     const saveRpaConfig = async () => {
-        if (!deviceId.trim()) {
-            toast.error('Enter a device ID first');
-            return;
-        }
+        if (!deviceId.trim()) return;
         setRpaLoading(true);
         try {
-            const res = await apiFetch(`/api/devices/${encodeURIComponent(deviceId.trim())}/rpa-config`, {
-                method: 'PUT',
+            const res = await apiFetch(`/api/browser/${deviceId}/rpa-config`, {
+                method: 'PATCH',
                 body: JSON.stringify(rpaConfig),
             });
             if (res.ok) {
-                toast.success('RPA provider config saved');
+                toast.success('RPA config saved');
             } else {
-                toast.error('Failed to save');
+                toast.error('Failed to save RPA config');
             }
         } catch {
             toast.error('Failed to save RPA config');
@@ -242,207 +324,193 @@ export default function ManagementProvidersPage() {
         }
     };
 
-    const moveInChain = (index: number, direction: 'up' | 'down') => {
+    const moveInChain = (index: number, dir: 'up' | 'down') => {
         const chain = [...rpaConfig.chain];
-        const target = direction === 'up' ? index - 1 : index + 1;
+        const target = dir === 'up' ? index - 1 : index + 1;
         if (target < 0 || target >= chain.length) return;
         [chain[index], chain[target]] = [chain[target], chain[index]];
-        setRpaConfig({ ...rpaConfig, chain });
+        setRpaConfig(prev => ({ ...prev, chain }));
     };
 
     const toggleRpaProvider = (id: string) => {
-        const providers = { ...rpaConfig.providers };
-        if (providers[id]) {
-            providers[id] = { ...providers[id], enabled: !providers[id].enabled };
-        } else {
-            providers[id] = { enabled: true, priority: rpaConfig.chain.length + 1 };
-        }
-        // Update chain
-        const chain = [...rpaConfig.chain];
-        if (providers[id].enabled && !chain.includes(id)) {
-            chain.push(id);
-        } else if (!providers[id].enabled) {
-            const idx = chain.indexOf(id);
-            if (idx >= 0) chain.splice(idx, 1);
-        }
-        setRpaConfig({ ...rpaConfig, chain, providers });
+        setRpaConfig(prev => {
+            const providers = { ...prev.providers };
+            if (!providers[id]) {
+                providers[id] = { enabled: true, priority: prev.chain.length + 1, options: {} };
+                return { ...prev, chain: [...prev.chain, id], providers };
+            }
+            const enabled = !providers[id].enabled;
+            providers[id] = { ...providers[id], enabled };
+            if (enabled) {
+                return { ...prev, chain: [...prev.chain, id], providers };
+            }
+            return { ...prev, chain: prev.chain.filter(c => c !== id), providers };
+        });
     };
 
     const toggleFallback = () => {
-        setRpaConfig({ ...rpaConfig, fallback: !rpaConfig.fallback });
+        setRpaConfig(prev => ({ ...prev, fallback: !prev.fallback }));
     };
 
-    const toggleProvider = async (id: string) => {
-        const updated = catalog.map(p =>
-            p.id === id ? { ...p, is_enabled: !p.is_enabled } : p
-        );
-        setCatalog(updated);
-    };
+    const sttProviderName = (id: string) => sttProviderOptions.find(o => o.id === id)?.name || id;
+    const llmProviderName = (id: string) => llmOptions.find(o => o.id === id)?.name || id;
 
-    const sttProviders = catalog.filter(p => p.type === 'stt');
-    const ttsProviders = catalog.filter(p => p.type === 'tts');
-    const rpaProviders = catalog.filter(p => p.type === 'rpa');
-    const cloudProviders = catalog.filter(p => p.type === 'cloud');
-
-    const getStatusBadge = (status: string) => {
-        switch (status) {
-            case 'production': return 'bg-green-500/20 text-green-400';
-            case 'experimental': return 'bg-yellow-500/20 text-yellow-400';
-            default: return 'bg-muted text-muted-foreground';
-        }
-    };
-
-    const allRpaProviderIds = [...new Set([...rpaConfig.chain, ...Object.keys(rpaConfig.providers), ...Object.keys(rpaProviderInfo)])];
+    // ── Render ──
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <Settings className="w-6 h-6 text-primary" />
-                    <div>
-                        <h1 className="text-2xl font-bold">Providers</h1>
-                        <p className="text-muted-foreground">Configure STT, TTS, and RPA providers</p>
-                    </div>
-                </div>
-                <button onClick={fetchCatalog} className="p-2 hover:bg-muted rounded-lg transition-colors" title="Refresh">
-                    <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
-                </button>
+        <div className="space-y-6 p-6 max-w-4xl mx-auto">
+            <div className="flex items-center gap-3">
+                <Settings className="w-6 h-6" />
+                <h1 className="text-2xl font-bold">Management — Providers</h1>
             </div>
 
-            {/* STT Providers */}
+            {/* ────────── STT Provider ────────── */}
             <div className="rounded-xl border border-border bg-card p-6">
                 <h3 className="font-semibold mb-4 flex items-center gap-2">
-                    <Globe className="w-5 h-5" />
-                    Speech-to-Text (STT)
+                    <Mic className="w-5 h-5" />
+                    Speech-to-Text Provider
+                    <span className="ml-2 px-2 py-0.5 text-xs rounded bg-green-500/20 text-green-400">DB PERSISTED</span>
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {sttProviders.map((provider) => (
-                        <div key={provider.id} className={cn(
-                            "p-4 rounded-lg border transition-colors",
-                            provider.is_enabled ? "border-primary/50 bg-primary/5" : "border-border bg-muted/50"
-                        )}>
-                            <div className="flex items-start justify-between mb-2">
-                                <div>
-                                    <span className="font-medium">{provider.name}</span>
-                                    <span className={cn("ml-2 px-2 py-0.5 text-xs rounded", getStatusBadge(provider.status))}>
-                                        {provider.status}
-                                    </span>
-                                </div>
-                                <button
-                                    onClick={() => toggleProvider(provider.id)}
-                                    className={cn(
-                                        "p-1 rounded transition-colors",
-                                        provider.is_enabled ? "text-primary" : "text-muted-foreground"
-                                    )}
-                                >
-                                    {provider.is_enabled ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
-                                </button>
-                            </div>
-                            <p className="text-sm text-muted-foreground">ID: {provider.id}</p>
-                        </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                    Select which engine transcribes voice. Vosk runs locally, Deepgram is cloud-based, 
+                    Web Speech API uses the browser's built-in speech recognition.
+                </p>
+
+                <div className="flex flex-wrap gap-3 mb-4">
+                    {sttProviderOptions.map(opt => (
+                        <button
+                            key={opt.id}
+                            onClick={() => setSttProvider(opt.id)}
+                            disabled={!teamId}
+                            className={cn(
+                                "px-4 py-3 rounded-lg border text-sm font-medium transition-all text-left",
+                                sttProvider === opt.id
+                                    ? "border-primary bg-primary/10 text-primary"
+                                    : "border-border bg-muted/50 text-muted-foreground hover:border-muted-foreground/30",
+                            )}
+                        >
+                            <div className="font-medium">{opt.name}</div>
+                            <div className="text-xs text-muted-foreground mt-1">{opt.description}</div>
+                        </button>
                     ))}
                 </div>
+
+                {/* Deepgram API key (only shown when Deepgram selected) */}
+                {sttProvider === 'deepgram' && (
+                    <div className="mb-4 p-3 rounded-lg bg-muted/30 border border-border">
+                        <label className="block text-xs font-medium text-muted-foreground mb-1.5">Deepgram API Key</label>
+                        <div className="flex items-center gap-2">
+                            <input
+                                type={deepgramKeyMasked && deepgramApiKey ? 'password' : 'text'}
+                                value={deepgramApiKey}
+                                onChange={e => { setDeepgramApiKey(e.target.value); setDeepgramKeyMasked(false); }}
+                                placeholder="Enter Deepgram API key..."
+                                className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
+                            />
+                            <button
+                                onClick={() => setDeepgramKeyMasked(!deepgramKeyMasked)}
+                                className="p-2 hover:bg-muted rounded-lg transition-colors"
+                                title={deepgramKeyMasked ? 'Show key' : 'Hide key'}
+                            >
+                                {deepgramKeyMasked ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                        </div>
+                        {deepgramApiKey && deepgramKeyMasked && (
+                            <p className="text-xs text-green-400 mt-1">✓ Key saved (hidden)</p>
+                        )}
+                    </div>
+                )}
+
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={saveSTTProvider}
+                        disabled={sttSaving || !teamId}
+                        className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
+                    >
+                        <Save className="w-4 h-4" />
+                        {sttSaving ? 'Saving...' : 'Save STT Provider'}
+                    </button>
+                    {!teamId && (
+                        <span className="text-xs text-amber-400">Sign in to save selection</span>
+                    )}
+                    {sttProvider && teamId && (
+                        <span className="text-xs text-muted-foreground">
+                            Active: <span className="font-mono text-foreground">{sttProviderName(sttProvider)}</span>
+                        </span>
+                    )}
+                </div>
             </div>
 
-            {/* TTS Providers */}
+            {/* ────────── TTS Configuration ────────── */}
             <div className="rounded-xl border border-border bg-card p-6">
                 <h3 className="font-semibold mb-4 flex items-center gap-2">
-                    <Globe className="w-5 h-5" />
-                    Text-to-Speech (TTS)
+                    <Volume2 className="w-5 h-5" />
+                    TTS Configuration
+                    <span className="ml-2 px-2 py-0.5 text-xs rounded bg-green-500/20 text-green-400">DB PERSISTED</span>
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                    Configure which voice engine speaks the Brain's responses.
+                </p>
+                <div className="flex flex-wrap gap-3 mb-4">
+                    {catalog.filter(p => p.type === 'tts').map(p => (
+                        <button
+                            key={p.id}
+                            onClick={() => setTTSConfig(prev => ({ ...prev, providerId: p.id }))}
+                            className={cn(
+                                "px-4 py-2 rounded-lg border text-sm font-medium transition-all",
+                                ttsConfig.providerId === p.id
+                                    ? "border-primary bg-primary/10 text-primary"
+                                    : "border-border bg-muted/50 text-muted-foreground hover:border-muted-foreground/30",
+                            )}
+                        >
+                            {p.name}
+                        </button>
+                    ))}
+                </div>
+                <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                            API Key / Endpoint
+                        </label>
+                        <input
+                            type="text"
+                            value={ttsConfig.apiKey}
+                            onChange={e => setTTSConfig(prev => ({ ...prev, apiKey: e.target.value }))}
+                            placeholder="API key or endpoint URL (if required)"
+                            className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                            Voice ID
+                        </label>
+                        <input
+                            type="text"
+                            value={ttsConfig.voiceId}
+                            onChange={e => setTTSConfig(prev => ({ ...prev, voiceId: e.target.value }))}
+                            placeholder="Voice ID (e.g. ef_dora for Kokoro)"
+                            className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
+                        />
+                    </div>
+                </div>
+                <div className="flex items-center gap-3">
                     <button
                         onClick={saveTTSConfig}
                         disabled={ttsSaving}
-                        className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
+                        className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
                     >
                         <Save className="w-4 h-4" />
                         {ttsSaving ? 'Saving...' : 'Save TTS Config'}
                     </button>
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {ttsProviders.map((provider) => (
-                        <div
-                            key={provider.id}
-                            className={cn(
-                                "p-4 rounded-lg border transition-colors cursor-pointer",
-                                ttsConfig.providerId === provider.id ? "border-primary bg-primary/10" : "border-border bg-muted/50 hover:bg-muted"
-                            )}
-                            onClick={() => setTTSConfig(prev => ({ ...prev, providerId: provider.id }))}
-                        >
-                            <div className="flex items-start justify-between mb-2">
-                                <div>
-                                    <span className="font-medium">{provider.name}</span>
-                                    <span className={cn("ml-2 px-2 py-0.5 text-xs rounded", getStatusBadge(provider.status))}>
-                                        {provider.status}
-                                    </span>
-                                </div>
-                                {ttsConfig.providerId === provider.id && (
-                                    <Check className="w-5 h-5 text-primary" />
-                                )}
-                            </div>
-                            <p className="text-sm text-muted-foreground">ID: {provider.id}</p>
-                            {ttsConfig.providerId === provider.id && provider.metadata?.requires_api_key !== false && (
-                                <div className="mt-3 space-y-2" onClick={e => e.stopPropagation()}>
-                                    <div>
-                                        <label className="text-xs text-muted-foreground">API Key</label>
-                                        <input
-                                            type="password"
-                                            value={ttsConfig.apiKey}
-                                            onChange={e => setTTSConfig(prev => ({ ...prev, apiKey: e.target.value }))}
-                                            placeholder="Enter API key..."
-                                            className="w-full mt-1 px-2 py-1.5 text-sm rounded border border-border bg-background focus:border-primary focus:outline-none"
-                                        />
-                                    </div>
-                                    {provider.id === 'elevenlabs' && (
-                                        <div>
-                                            <label className="text-xs text-muted-foreground">Voice ID (optional)</label>
-                                            <input
-                                                type="text"
-                                                value={ttsConfig.voiceId}
-                                                onChange={e => setTTSConfig(prev => ({ ...prev, voiceId: e.target.value }))}
-                                                placeholder="pFZP5JQG7iQjIQuC4Bku"
-                                                className="w-full mt-1 px-2 py-1.5 text-sm rounded border border-border bg-background focus:border-primary focus:outline-none"
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                            {ttsConfig.providerId === provider.id && provider.id === 'kokoro' && (
-                                <div className="mt-3 space-y-2" onClick={e => e.stopPropagation()}>
-                                    <div>
-                                        <label className="text-xs text-muted-foreground">Voice</label>
-                                        <select
-                                            value={ttsConfig.voiceId || 'ef_dora'}
-                                            onChange={e => setTTSConfig(prev => ({ ...prev, voiceId: e.target.value }))}
-                                            className="w-full mt-1 px-2 py-1.5 text-sm rounded border border-border bg-background focus:border-primary focus:outline-none"
-                                        >
-                                            <option value="ef_dora">Dora (Spanish, female)</option>
-                                            <option value="em_alex">Alex (Spanish, male)</option>
-                                            <option value="em_santa">Santa (Spanish, male)</option>
-                                            <option value="af_bella">Bella (English, female)</option>
-                                            <option value="am_adam">Adam (English, male)</option>
-                                            <option value="af_sky">Sky (English, female)</option>
-                                            <option value="af_nova">Nova (English, female)</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className="text-xs text-muted-foreground">API URL</label>
-                                        <input
-                                            type="text"
-                                            value={ttsConfig.apiKey || provider.metadata?.api_url || ''}
-                                            onChange={e => setTTSConfig(prev => ({ ...prev, apiKey: e.target.value }))}
-                                            placeholder="https://kokoro-api-production-0bfa.up.railway.app"
-                                            className="w-full mt-1 px-2 py-1.5 text-sm rounded border border-border bg-background focus:border-primary focus:outline-none"
-                                        />
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">Self-hosted Kokoro API on Railway. No API key needed.</p>
-                                </div>
-                            )}
-                        </div>
-                    ))}
+                    {ttsConfig.providerId && (
+                        <span className="text-xs text-muted-foreground">
+                            Active: <span className="font-mono text-foreground">{ttsConfig.providerId}</span>
+                        </span>
+                    )}
                 </div>
             </div>
 
-            {/* AI / LLM Provider Selection */}
+            {/* ────────── AI / LLM Provider ────────── */}
             <div className="rounded-xl border border-border bg-card p-6">
                 <h3 className="font-semibold mb-4 flex items-center gap-2">
                     <Brain className="w-5 h-5" />
@@ -450,49 +518,125 @@ export default function ManagementProvidersPage() {
                     <span className="ml-2 px-2 py-0.5 text-xs rounded bg-green-500/20 text-green-400">DB PERSISTED</span>
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                    Select which AI engine powers the Brain. The backend checks each provider's API key 
-                    and falls back to the next available one if the selected one is not configured.
+                    Select which AI engine powers the Brain. Enter your API keys below — they will be saved
+                    to the database and hidden once stored.
                 </p>
 
-                <div className="flex flex-wrap gap-3 mb-4">
-                    {availableLlmProviders.map(p => (
-                        <button
-                            key={p.id}
-                            onClick={() => setLlmProvider(p.id)}
-                            disabled={!teamId}
-                            className={cn(
-                                "px-4 py-2 rounded-lg border text-sm font-medium transition-all",
-                                llmProvider === p.id
-                                    ? "border-primary bg-primary/10 text-primary"
-                                    : "border-border bg-muted/50 text-muted-foreground hover:border-muted-foreground/30",
-                                !p.available && "opacity-40 cursor-not-allowed",
+                {/* OpenAI */}
+                <div className={cn(
+                    "mb-3 p-4 rounded-lg border transition-all",
+                    llmProvider === 'openai'
+                        ? "border-primary/40 bg-primary/5"
+                        : "border-border bg-muted/30"
+                )}>
+                    <label className="flex items-center gap-3 cursor-pointer" onClick={() => setLlmProvider('openai')}>
+                        <input
+                            type="radio"
+                            name="llm-provider"
+                            checked={llmProvider === 'openai'}
+                            onChange={() => setLlmProvider('openai')}
+                            className="accent-primary"
+                        />
+                        <div>
+                            <span className="font-medium text-sm">🤖 OpenAI (GPT-4o)</span>
+                            {openaiApiKey && openaiKeyMasked && (
+                                <span className="ml-2 text-xs text-green-400">✓ Configured</span>
                             )}
-                        >
-                            {p.name}
-                        </button>
-                    ))}
+                        </div>
+                    </label>
+                    {llmProvider === 'openai' && (
+                        <div className="mt-3 ml-6">
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type={openaiKeyMasked && openaiApiKey ? 'password' : 'text'}
+                                    value={openaiApiKey}
+                                    onChange={e => { setOpenaiApiKey(e.target.value); setOpenaiKeyMasked(false); }}
+                                    placeholder="sk-..."
+                                    className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
+                                />
+                                <button
+                                    onClick={() => setOpenaiKeyMasked(!openaiKeyMasked)}
+                                    className="p-2 hover:bg-muted rounded-lg transition-colors"
+                                    title={openaiKeyMasked ? 'Show key' : 'Hide key'}
+                                >
+                                    {openaiKeyMasked ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                            {openaiApiKey && openaiKeyMasked && (
+                                <p className="text-xs text-green-400 mt-1">✓ Key saved (hidden)</p>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {/* Gemini */}
+                <div className={cn(
+                    "mb-4 p-4 rounded-lg border transition-all",
+                    llmProvider === 'google'
+                        ? "border-primary/40 bg-primary/5"
+                        : "border-border bg-muted/30"
+                )}>
+                    <label className="flex items-center gap-3 cursor-pointer" onClick={() => setLlmProvider('google')}>
+                        <input
+                            type="radio"
+                            name="llm-provider"
+                            checked={llmProvider === 'google'}
+                            onChange={() => setLlmProvider('google')}
+                            className="accent-primary"
+                        />
+                        <div>
+                            <span className="font-medium text-sm">🔮 Google Gemini 2.5 Pro</span>
+                            {googleApiKey && googleKeyMasked && (
+                                <span className="ml-2 text-xs text-green-400">✓ Configured</span>
+                            )}
+                        </div>
+                    </label>
+                    {llmProvider === 'google' && (
+                        <div className="mt-3 ml-6">
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type={googleKeyMasked && googleApiKey ? 'password' : 'text'}
+                                    value={googleApiKey}
+                                    onChange={e => { setGoogleApiKey(e.target.value); setGoogleKeyMasked(false); }}
+                                    placeholder="AIza..."
+                                    className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
+                                />
+                                <button
+                                    onClick={() => setGoogleKeyMasked(!googleKeyMasked)}
+                                    className="p-2 hover:bg-muted rounded-lg transition-colors"
+                                    title={googleKeyMasked ? 'Show key' : 'Hide key'}
+                                >
+                                    {googleKeyMasked ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                            {googleApiKey && googleKeyMasked && (
+                                <p className="text-xs text-green-400 mt-1">✓ Key saved (hidden)</p>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex items-center gap-3">
                     <button
                         onClick={saveLLMProvider}
                         disabled={llmSaving || !teamId}
-                        className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                        className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
                     >
+                        <Save className="w-4 h-4" />
                         {llmSaving ? 'Saving...' : 'Save AI Provider'}
                     </button>
                     {!teamId && (
                         <span className="text-xs text-amber-400">Sign in to save selection</span>
                     )}
-                    {llmProvider && (
+                    {llmProvider && teamId && (
                         <span className="text-xs text-muted-foreground">
-                            Active: <span className="font-mono text-foreground">{llmProvider}</span>
+                            Active: <span className="font-mono text-foreground">{llmProviderName(llmProvider)}</span>
                         </span>
                     )}
                 </div>
             </div>
 
-            {/* RPA Providers — Execution Engine */}
+            {/* ────────── RPA Providers ────────── */}
             <div className="rounded-xl border border-border bg-card p-6">
                 <h3 className="font-semibold mb-4 flex items-center gap-2">
                     <Cpu className="w-5 h-5" />
@@ -637,88 +781,42 @@ export default function ManagementProvidersPage() {
                     Legacy RPA provider readiness (from system catalog)
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {rpaProviders.map((provider) => (
-                        <div key={provider.id} className={cn(
-                            "p-4 rounded-lg border transition-colors",
-                            provider.is_enabled ? "border-primary/50 bg-primary/5" : "border-border bg-muted/50"
-                        )}>
-                            <div className="flex items-start justify-between mb-2">
-                                <div>
-                                    <span className="font-medium">{provider.name}</span>
-                                    <span className={cn("ml-2 px-2 py-0.5 text-xs rounded", getStatusBadge(provider.status))}>
-                                        {provider.status}
+                    {catalog
+                        .filter(p => p.type === 'rpa' || p.type === 'cloud')
+                        .map(p => (
+                            <div
+                                key={p.id}
+                                className={cn(
+                                    "rounded-xl border p-4 transition-colors",
+                                    p.is_enabled
+                                        ? "border-border bg-card"
+                                        : "border-border/50 bg-muted/30 opacity-60"
+                                )}
+                            >
+                                <div className="mb-2 flex items-center justify-between">
+                                    <span className={cn(
+                                        "px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider rounded",
+                                        p.status === 'production'
+                                            ? "bg-green-500/20 text-green-400"
+                                            : p.status === 'experimental'
+                                                ? "bg-yellow-500/20 text-yellow-400"
+                                                : "bg-muted text-muted-foreground"
+                                    )}>
+                                        {p.status}
                                     </span>
                                 </div>
-                                <button
-                                    onClick={() => toggleProvider(provider.id)}
-                                    className={cn(
-                                        "p-1 rounded transition-colors",
-                                        provider.is_enabled ? "text-primary" : "text-muted-foreground"
+                                <p className="text-sm font-medium">{p.name}</p>
+                                <div className="mt-2 text-xs text-muted-foreground">
+                                    {p.is_enabled ? (
+                                        <span className="text-green-400">✓ Connected</span>
+                                    ) : (
+                                        <span className="text-muted-foreground">— Not connected</span>
                                     )}
-                                >
-                                    {provider.is_enabled ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
-                                </button>
-                            </div>
-                            <p className="text-sm text-muted-foreground">ID: {provider.id}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Cloud Brain */}
-            {cloudProviders.length > 0 && (
-                <div className="rounded-xl border border-border bg-card p-6">
-                    <h3 className="font-semibold mb-4 flex items-center gap-2">
-                        <Globe className="w-5 h-5" />
-                        Cloud Brain
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                        API and WebSocket URL for the KELEDON Brain service. The frontend uses these to connect to the cloud.
-                    </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {cloudProviders.map((provider) => (
-                            <div key={provider.id} className={cn(
-                                "p-4 rounded-lg border transition-colors",
-                                provider.is_enabled ? "border-primary/50 bg-primary/5" : "border-border bg-muted/50"
-                            )}>
-                                <div className="flex items-start justify-between mb-2">
-                                    <div>
-                                        <span className="font-medium">{provider.name}</span>
-                                        <span className={cn("ml-2 px-2 py-0.5 text-xs rounded", getStatusBadge(provider.status))}>
-                                            {provider.status}
-                                        </span>
-                                    </div>
-                                    <button
-                                        onClick={() => toggleProvider(provider.id)}
-                                        className={cn(
-                                            "p-1 rounded transition-colors",
-                                            provider.is_enabled ? "text-primary" : "text-muted-foreground"
-                                        )}
-                                    >
-                                        {provider.is_enabled ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
-                                    </button>
                                 </div>
-                                <div className="space-y-2 mt-3">
-                                    <div>
-                                        <label className="text-xs text-muted-foreground">API URL</label>
-                                        <div className="text-sm font-mono truncate bg-muted px-2 py-1 rounded mt-1">
-                                            {provider.metadata?.api_url || 'https://keledonapi.tuyoisaza.com'}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="text-xs text-muted-foreground">WebSocket URL</label>
-                                        <div className="text-sm font-mono truncate bg-muted px-2 py-1 rounded mt-1">
-                                            {provider.metadata?.ws_url || 'wss://keledonapi.tuyoisaza.com'}
-                                        </div>
-                                    </div>
-                                </div>
-                                <p className="text-sm text-muted-foreground mt-2">ID: {provider.id}</p>
                             </div>
                         ))}
-                    </div>
                 </div>
-            )}
-
+            </div>
         </div>
     );
 }
