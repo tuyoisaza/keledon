@@ -1,0 +1,8 @@
+-- Add LLM provider field to teams table
+ALTER TABLE "teams" ADD COLUMN IF NOT EXISTS "llmProvider" TEXT NOT NULL DEFAULT 'openai';
+ALTER TABLE "teams" ADD COLUMN IF NOT EXISTS "openaiApiKey" TEXT;
+ALTER TABLE "teams" ADD COLUMN IF NOT EXISTS "googleAiApiKey" TEXT;
+ALTER TABLE "teams" ADD COLUMN IF NOT EXISTS "anthropicApiKey" TEXT;
+ALTER TABLE "teams" ADD COLUMN IF NOT EXISTS "ttsApiKey" TEXT;
+ALTER TABLE "teams" ADD COLUMN IF NOT EXISTS "ttsVoiceId" TEXT;
+ALTER TABLE "teams" ADD COLUMN IF NOT EXISTS "ttsEndpointUrl" TEXT;

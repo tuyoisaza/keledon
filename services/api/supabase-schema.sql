@@ -435,21 +435,3 @@ $$;
 SELECT 'Schema and RPC created successfully!' as message;
 SELECT 'Tables created:' as info, 
        (SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public') as table_count;
-
--- ========================================
--- COMPANY CONFIG (Persistent provider settings)
--- ========================================
-CREATE TABLE IF NOT EXISTS company_configs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    company_id UUID REFERENCES companies(id) ON DELETE CASCADE,
-    config_key TEXT NOT NULL,
-    config_value JSONB NOT NULL DEFAULT '{}',
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE (company_id, config_key)
-);
-
-CREATE INDEX IF NOT EXISTS idx_company_configs_key ON company_configs(config_key);
-ALTER TABLE company_configs ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Allow all for company_configs" ON company_configs;
-CREATE POLICY "Allow all for company_configs" ON company_configs FOR ALL USING (true) WITH CHECK (true);

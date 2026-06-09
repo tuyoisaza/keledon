@@ -82,6 +82,7 @@ export class BrainController {
         context,
         maxTokens: 500,
         temperature: 0.35,
+        teamId: body.teamId || undefined,
       });
 
       return {

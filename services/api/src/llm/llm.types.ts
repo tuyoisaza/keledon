@@ -4,6 +4,7 @@ export interface LLMRequest {
   maxTokens?: number;
   temperature?: number;
   model?: string;
+  teamId?: string; // For team-specific LLM provider config
 }
 
 export interface LLMResponse {

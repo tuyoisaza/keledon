@@ -50,7 +50,6 @@
     "@opentelemetry/semantic-conventions": "^1.39.0",
     "@prisma/client": "^5.22.0",
     "@qdrant/qdrant-js": "^1.17.0",
-    "@supabase/supabase-js": "^2.108.1",
     "@types/bcrypt": "^5.0.2",
     "@types/os-utils": "^0.0.4",
     "@types/uuid": "^9.0.0",

@@ -16,6 +16,17 @@ export class TeamConfigDto {
   voskModel?: string;
   deepgramApiKey?: string;
   elevenlabsApiKey?: string;
+  
+  // LLM / AI Provider
+  llmProvider?: string;
+  openaiApiKey?: string;
+  googleAiApiKey?: string;
+  anthropicApiKey?: string;
+  
+  // TTS extended config
+  ttsApiKey?: string;
+  ttsVoiceId?: string;
+  ttsEndpointUrl?: string;
 }
 
 @ApiTags('Teams')
@@ -33,10 +44,17 @@ export class TeamController {
           name: true,
           sttProvider: true,
           ttsProvider: true,
+          llmProvider: true,
           voskServerUrl: true,
           voskModel: true,
           deepgramApiKey: true,
           elevenlabsApiKey: true,
+          openaiApiKey: true,
+          googleAiApiKey: true,
+          anthropicApiKey: true,
+          ttsApiKey: true,
+          ttsVoiceId: true,
+          ttsEndpointUrl: true,
         },
       });
 
@@ -49,6 +67,7 @@ export class TeamController {
         teamName: team.name,
         sttProvider: team.sttProvider || 'vosk',
         ttsProvider: team.ttsProvider || 'elevenlabs',
+        llmProvider: team.llmProvider || 'openai',
         vendorAdapter: 'web',
         voskConfig: {
           serverUrl: team.voskServerUrl || 'ws://localhost:9091',
@@ -59,10 +78,125 @@ export class TeamController {
           apiKey: team.elevenlabsApiKey || '',
           voiceId: 'rachel',
         },
+        // TTS extended config (DB-persisted)
+        ttsApiKey: team.ttsApiKey || '',
+        ttsVoiceId: team.ttsVoiceId || (team.ttsProvider === 'kokoro' ? 'ef_dora' : ''),
+        ttsEndpointUrl: team.ttsEndpointUrl || '',
+        // LLM config
+        openaiApiKey: team.openaiApiKey || '',
+        googleAiApiKey: team.googleAiApiKey || '',
+        anthropicApiKey: team.anthropicApiKey || '',
         vendorConfig: {},
       };
     } catch (error) {
       console.error('[TeamController] Error getting config:', error);
+      return { error: error.message, status: 500 };
+    }
+  }
+
+  @Put(':id/config')
+  async updateTeamConfig(
+    @Param('id') teamId: string,
+    @Body() config: TeamConfigDto,
+  ) {
+    try {
+      const allowedSttProviders = ['vosk', 'deepgram', 'webspeech'];
+      const allowedTtsProviders = ['elevenlabs', 'webspeech', 'kokoro', 'openai-tts', 'coqui'];
+      const allowedLlmProviders = ['openai', 'google', 'anthropic', 'ollama'];
+
+      const updateData: any = {};
+
+      if (
+        config.sttProvider &&
+        allowedSttProviders.includes(config.sttProvider)
+      ) {
+        updateData.sttProvider = config.sttProvider;
+      }
+
+      if (
+        config.ttsProvider &&
+        allowedTtsProviders.includes(config.ttsProvider)
+      ) {
+        updateData.ttsProvider = config.ttsProvider;
+      }
+
+      if (
+        config.llmProvider &&
+        allowedLlmProviders.includes(config.llmProvider)
+      ) {
+        updateData.llmProvider = config.llmProvider;
+      }
+
+      if (config.voskServerUrl !== undefined) {
+        updateData.voskServerUrl = config.voskServerUrl;
+      }
+
+      if (config.voskModel !== undefined) {
+        updateData.voskModel = config.voskModel;
+      }
+
+      if (config.deepgramApiKey !== undefined) {
+        updateData.deepgramApiKey = config.deepgramApiKey;
+      }
+
+      if (config.elevenlabsApiKey !== undefined) {
+        updateData.elevenlabsApiKey = config.elevenlabsApiKey;
+      }
+
+      // LLM API keys
+      if (config.openaiApiKey !== undefined) {
+        updateData.openaiApiKey = config.openaiApiKey;
+      }
+      if (config.googleAiApiKey !== undefined) {
+        updateData.googleAiApiKey = config.googleAiApiKey;
+      }
+      if (config.anthropicApiKey !== undefined) {
+        updateData.anthropicApiKey = config.anthropicApiKey;
+      }
+
+      // TTS extended config
+      if (config.ttsApiKey !== undefined) {
+        updateData.ttsApiKey = config.ttsApiKey;
+      }
+      if (config.ttsVoiceId !== undefined) {
+        updateData.ttsVoiceId = config.ttsVoiceId;
+      }
+      if (config.ttsEndpointUrl !== undefined) {
+        updateData.ttsEndpointUrl = config.ttsEndpointUrl;
+      }
+
+      const team = await this.prisma.team.update({
+        where: { id: teamId },
+        data: updateData,
+        select: {
+          id: true,
+          name: true,
+          sttProvider: true,
+          ttsProvider: true,
+          llmProvider: true,
+          voskServerUrl: true,
+          voskModel: true,
+          ttsApiKey: true,
+          ttsVoiceId: true,
+          ttsEndpointUrl: true,
+        },
+      });
+
+      return {
+        success: true,
+        teamId: team.id,
+        teamName: team.name,
+        sttProvider: team.sttProvider,
+        ttsProvider: team.ttsProvider,
+        llmProvider: team.llmProvider,
+        voskServerUrl: team.voskServerUrl,
+        voskModel: team.voskModel,
+        ttsApiKey: team.ttsApiKey,
+        ttsVoiceId: team.ttsVoiceId,
+        ttsEndpointUrl: team.ttsEndpointUrl,
+      };
+    } catch (error) {
+      console.error('[TeamController] Error updating config:', error);
       return { error: error.message, status: 500 };
     }
   }
@@ -104,6 +238,7 @@ export class TeamController {
           name: true,
           sttProvider: true,
           ttsProvider: true,
+          llmProvider: true,
           createdAt: true,
           _count: {
             select: {
@@ -124,75 +259,6 @@ export class TeamController {
     }
   }
 
-  @Put(':id/config')
-  async updateTeamConfig(
-    @Param('id') teamId: string,
-    @Body() config: TeamConfigDto,
-  ) {
-    try {
-      const allowedSttProviders = ['vosk', 'deepgram', 'webspeech'];
-      const allowedTtsProviders = ['elevenlabs', 'webspeech'];
-
-      const updateData: any = {};
-
-      if (
-        config.sttProvider &&
-        allowedSttProviders.includes(config.sttProvider)
-      ) {
-        updateData.sttProvider = config.sttProvider;
-      }
-
-      if (
-        config.ttsProvider &&
-        allowedTtsProviders.includes(config.ttsProvider)
-      ) {
-        updateData.ttsProvider = config.ttsProvider;
-      }
-
-      if (config.voskServerUrl !== undefined) {
-        updateData.voskServerUrl = config.voskServerUrl;
-      }
-
-      if (config.voskModel !== undefined) {
-        updateData.voskModel = config.voskModel;
-      }
-
-      if (config.deepgramApiKey !== undefined) {
-        updateData.deepgramApiKey = config.deepgramApiKey;
-      }
-
-      if (config.elevenlabsApiKey !== undefined) {
-        updateData.elevenlabsApiKey = config.elevenlabsApiKey;
-      }
-
-      const team = await this.prisma.team.update({
-        where: { id: teamId },
-        data: updateData,
-        select: {
-          id: true,
-          name: true,
-          sttProvider: true,
-          ttsProvider: true,
-          voskServerUrl: true,
-          voskModel: true,
-        },
-      });
-
-      return {
-        success: true,
-        teamId: team.id,
-        teamName: team.name,
-        sttProvider: team.sttProvider,
-        ttsProvider: team.ttsProvider,
-        voskServerUrl: team.voskServerUrl,
-        voskModel: team.voskModel,
-      };
-    } catch (error) {
-      console.error('[TeamController] Error updating config:', error);
-      return { error: error.message, status: 500 };
-    }
-  }
-
   @Post()
   async createTeam(@Body() data: { name: string }) {
     try {
@@ -201,6 +267,7 @@ export class TeamController {
           name: data.name,
           sttProvider: 'vosk',
           ttsProvider: 'elevenlabs',
+          llmProvider: 'openai',
         },
       });
 

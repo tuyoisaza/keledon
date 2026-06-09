@@ -310,7 +310,7 @@ export class VoiceGateway
             format: 'mp3',
           });
         },
-        { interruptible: true },
+        { interruptible: true, teamId: session.context?.teamId },
       );
 
       // 6. Signal end of audio stream

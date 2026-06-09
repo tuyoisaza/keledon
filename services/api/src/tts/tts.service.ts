@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { Readable } from 'stream';
 import { MvpStoreService } from '../mvp/mvp-store.service';
-import { ProviderConfigService } from '../providers/provider-config.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { getApiVersion } from '../version';
 
 export interface TTSResult {
@@ -19,69 +19,76 @@ export class TTSService {
 
   constructor(
     private readonly mvpStore: MvpStoreService,
-    private readonly providerConfig: ProviderConfigService,
+    private readonly prisma: PrismaService,
   ) {
-    console.log('[TTS] TTSService initialized (with DB persistence)');
+    console.log('[TTS] TTSService initialized');
   }
 
-  /**
-   * Resolve provider config: Supabase DB → MvpStore (file/JSON) → env vars → mock
-   */
-  private async resolveTTSConfig() {
-    // Try Supabase database first
-    const companyId = process.env.COMPANY_ID || 'default';
-    const dbConfig = await this.providerConfig.fetchActiveConfig(companyId);
-
-    if (dbConfig.ttsProviderId && dbConfig.ttsProviderId !== 'webspeech') {
-      return {
-        providerId: dbConfig.ttsProviderId,
-        apiKey: dbConfig.ttsApiKey,
-        voiceId: dbConfig.ttsVoiceId,
-        source: 'database',
-      };
+  private async resolveTTSConfig(teamId?: string): Promise<{ providerId: string; apiKey: string; voiceId: string }> {
+    // Try DB first if teamId provided
+    if (teamId) {
+      try {
+        const team = await this.prisma.team.findUnique({
+          where: { id: teamId },
+          select: { ttsProvider: true, ttsApiKey: true, ttsVoiceId: true },
+        });
+        if (team?.ttsProvider) {
+          return {
+            providerId: team.ttsProvider,
+            apiKey: team.ttsApiKey || '',
+            voiceId: team.ttsVoiceId || '',
+          };
+        }
+      } catch (e) {
+        console.warn('[TTS] Failed to fetch team config from DB, falling back to store:', e);
+      }
     }
 
-    // Fallback to local MvpStore (file-based, ephemeral)
-    const fileConfig = this.mvpStore.getTTSConfig();
-    if (fileConfig.providerId && fileConfig.providerId !== 'webspeech' && fileConfig.providerId !== 'auto') {
-      return {
-        providerId: fileConfig.providerId,
-        apiKey: fileConfig.apiKey,
-        voiceId: fileConfig.voiceId || 'ef_dora',
-        source: 'file',
-      };
-    }
-
-    // Fallback to env vars / auto-detect
-    const hasElevenLabs = !!process.env.ELEVENLABS_API_KEY;
-    const hasOpenAI = !!process.env.OPENAI_API_KEY;
-
+    // Fall back to MvpStore (file-based config)
+    const ttsConfig = this.mvpStore.getTTSConfig();
     return {
-      providerId: hasElevenLabs ? 'elevenlabs' : hasOpenAI ? 'openai' : 'mock',
-      apiKey: '',
-      voiceId: 'ef_dora',
-      source: 'env',
+      providerId: ttsConfig.providerId || 'webspeech',
+      apiKey: ttsConfig.apiKey || '',
+      voiceId: ttsConfig.voiceId || '',
     };
   }
 
   async speak(
     text: string,
-    options: { interruptible?: boolean } = {},
+    options: { interruptible?: boolean; teamId?: string } = {},
   ): Promise<TTSResult> {
-    const cfg = await this.resolveTTSConfig();
-    const provider = cfg.providerId;
+    // Provider selection: DB > file config > env vars > default
+    const teamConfig = options.teamId ? await this.resolveTTSConfig(options.teamId) : null;
+    const ttsConfig = teamConfig || this.mvpStore.getTTSConfig();
+    const providerId = ttsConfig.providerId || 'webspeech';
+    const apiKeyFromStore = ttsConfig.apiKey;
+
+    const hasElevenLabs = !!(apiKeyFromStore || process.env.ELEVENLABS_API_KEY);
+    const hasOpenAI = !!(apiKeyFromStore || process.env.OPENAI_API_KEY);
+
+    let provider: string;
+    if (providerId !== 'webspeech' && providerId !== 'auto') {
+      provider = providerId;
+    } else if (hasElevenLabs) {
+      provider = 'elevenlabs';
+    } else if (hasOpenAI) {
+      provider = 'openai';
+    } else {
+      provider = 'mock';
+    }
 
     console.log(
-      `[v${getApiVersion()}] [TTS] Speaking with ${provider} (source: ${cfg.source}): "${text.substring(0, 50)}..."`,
+      `[v${getApiVersion()}] [TTS] Speaking with ${provider} (config providerId=${providerId}): "${text.substring(0, 50)}..."`,
     );
 
     try {
       if (provider === 'kokoro') {
-        const baseUrl = cfg.apiKey || 'https://kokoro-api-production-0bfa.up.railway.app';
-        return await this.speakWithKokoro(text, baseUrl, cfg.voiceId);
+        const baseUrl = apiKeyFromStore || 'https://kokoro-api-production-0bfa.up.railway.app';
+        const voice = ttsConfig.voiceId || 'ef_dora';
+        return await this.speakWithKokoro(text, baseUrl, voice);
       } else if (provider === 'elevenlabs') {
         return await this.speakWithElevenLabs(text, options);
-      } else if (provider === 'openai' || provider === 'openai-tts') {
+      } else if (provider === 'openai') {
         return await this.speakWithOpenAI(text, options);
       } else {
         console.log('[TTS] Mock TTS mode (no provider configured)');
@@ -94,24 +101,42 @@ export class TTSService {
 
   /**
    * Stream TTS audio chunks via a callback, for WebSocket delivery.
+   * The callback receives base64-encoded audio chunks as they arrive.
    */
   async speakStreaming(
     text: string,
     onChunk: (base64: string) => void,
-    options: { interruptible?: boolean } = {},
+    options: { interruptible?: boolean; teamId?: string } = {},
   ): Promise<TTSResult> {
-    const cfg = await this.resolveTTSConfig();
-    const provider = cfg.providerId;
+    const teamConfig = options.teamId ? await this.resolveTTSConfig(options.teamId) : null;
+    const ttsConfig = teamConfig || this.mvpStore.getTTSConfig();
+    const providerId = ttsConfig.providerId || 'webspeech';
+    const apiKeyFromStore = ttsConfig.apiKey;
+
+    const hasElevenLabs = !!(apiKeyFromStore || process.env.ELEVENLABS_API_KEY);
+    const hasOpenAI = !!(apiKeyFromStore || process.env.OPENAI_API_KEY);
+
+    let provider: string;
+    if (providerId !== 'webspeech' && providerId !== 'auto') {
+      provider = providerId;
+    } else if (hasElevenLabs) {
+      provider = 'elevenlabs';
+    } else if (hasOpenAI) {
+      provider = 'openai';
+    } else {
+      provider = 'mock';
+    }
 
     console.log(
-      `[v${getApiVersion()}] [TTS] Streaming with ${provider} (source: ${cfg.source}): "${text.substring(0, 50)}..."`,
+      `[v${getApiVersion()}] [TTS] Streaming with ${provider}: "${text.substring(0, 50)}..."`,
     );
 
     if (provider === 'kokoro') {
-      const baseUrl = cfg.apiKey || 'https://kokoro-api-production-0bfa.up.railway.app';
-      const result = await this.speakWithKokoro(text, baseUrl, cfg.voiceId);
+      const baseUrl = apiKeyFromStore || 'https://kokoro-api-production-0bfa.up.railway.app';
+      const voice = ttsConfig.voiceId || 'ef_dora';
+      const result = await this.speakWithKokoro(text, baseUrl, voice);
       if (result.audioData && result.audioData.length > 0) {
-        const chunkSize = 32000;
+        const chunkSize = 32000; // ~1s of WAV audio
         for (let i = 0; i < result.audioData.length; i += chunkSize) {
           const chunk = result.audioData.slice(i, Math.min(i + chunkSize, result.audioData.length));
           onChunk(chunk.toString('base64'));
@@ -120,10 +145,11 @@ export class TTSService {
       return result;
     } else if (provider === 'elevenlabs') {
       return await this.streamWithElevenLabs(text, onChunk, options);
-    } else if (provider === 'openai' || provider === 'openai-tts') {
+    } else if (provider === 'openai') {
+      // OpenAI's TTS isn't streaming, so generate full audio then chunk it
       const result = await this.speakWithOpenAI(text, options);
       if (result.audioData && result.audioData.length > 0) {
-        const chunkSize = 32000;
+        const chunkSize = 32000; // ~1s of MP3 audio
         for (let i = 0; i < result.audioData.length; i += chunkSize) {
           const chunk = result.audioData.slice(i, Math.min(i + chunkSize, result.audioData.length));
           onChunk(chunk.toString('base64'));
@@ -141,8 +167,8 @@ export class TTSService {
     onChunk: (base64: string) => void,
     options: { interruptible?: boolean },
   ): Promise<TTSResult> {
-    const cfg = await this.resolveTTSConfig();
-    const apiKey = cfg.apiKey || process.env.ELEVENLABS_API_KEY;
+    const ttsConfig = this.mvpStore.getTTSConfig();
+    const apiKey = ttsConfig.apiKey || process.env.ELEVENLABS_API_KEY;
 
     if (!apiKey) {
       return { error: 'ELEVENLABS_API_KEY not configured' };
@@ -195,10 +221,11 @@ export class TTSService {
     text: string,
     options: { interruptible?: boolean },
   ): Promise<TTSResult> {
-    const cfg = await this.resolveTTSConfig();
-    const apiKey = cfg.apiKey || process.env.ELEVENLABS_API_KEY;
+    const ttsConfig = this.mvpStore.getTTSConfig();
+    const apiKey = ttsConfig.apiKey || process.env.ELEVENLABS_API_KEY;
 
     if (!apiKey) {
+      console.log('[TTS] ElevenLabs API key not configured, using mock');
       return { error: 'ELEVENLABS_API_KEY not configured' };
     }
 
@@ -247,9 +274,8 @@ export class TTSService {
     text: string,
     _options: { interruptible?: boolean },
   ): Promise<TTSResult> {
-    const cfg = await this.resolveTTSConfig();
-    const apiKey = cfg.apiKey || process.env.OPENAI_API_KEY;
-
+    const ttsConfig = this.mvpStore.getTTSConfig();
+    const apiKey = ttsConfig.apiKey || process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return { error: 'OPENAI_API_KEY not configured' };
     }
@@ -259,9 +285,19 @@ export class TTSService {
       const openai = new OpenAI({ apiKey });
 
       const voice = (process.env.OPENAI_TTS_VOICE || 'nova') as
-        | 'alloy' | 'ash' | 'coral' | 'echo' | 'fable' | 'nova' | 'onyx' | 'sage' | 'shimmer';
+        | 'alloy'
+        | 'ash'
+        | 'coral'
+        | 'echo'
+        | 'fable'
+        | 'nova'
+        | 'onyx'
+        | 'sage'
+        | 'shimmer';
       const model = (process.env.OPENAI_TTS_MODEL || 'tts-1') as
-        | 'tts-1' | 'tts-1-hd' | 'gpt-4o-mini-tts';
+        | 'tts-1'
+        | 'tts-1-hd'
+        | 'gpt-4o-mini-tts';
 
       const response = await openai.audio.speech.create({
         model,
@@ -309,7 +345,9 @@ export class TTSService {
 
       const arrayBuffer = await response.arrayBuffer();
       const audioData = Buffer.from(arrayBuffer);
-      const duration = audioData.length / (24000 * 2);
+      // WAV at 24kHz: duration = bytes / (sampleRate * channels * bitsPerSample/8)
+      const duration = audioData.length / (24000 * 2); // 24kHz, 16-bit, mono
+      // Fallback: OpenAI-style estimate
       const duration2 = this.estimateDuration(audioData.length);
 
       console.log(
