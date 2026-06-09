@@ -64,16 +64,22 @@ vosk.setLogLevel(-1);
 
 // Select model based on language
 const language = workerData.language || 'en';
-const modelName = language === 'es' ? 'vosk-model-small-es-0.42' : 'vosk-model-small-en-us-0.15';
-const MODEL_PATH = path.resolve(__dirname, '../../models', modelName);
+let selectedModelName = language === 'es' ? 'vosk-model-small-es-0.42' : 'vosk-model-small-en-us-0.15';
+let MODEL_PATH = path.resolve(__dirname, '../../models', selectedModelName);
 
-console.log(`[Worker] Selected Language: ${language}, Model: ${modelName}`);
+console.log(`[Worker] Selected Language: ${language}, Model: ${selectedModelName}`);
 
 if (!fs.existsSync(MODEL_PATH)) {
-    console.error(`Model not found at ${MODEL_PATH}`);
-    // Provide a clear error
-    parentPort?.postMessage({ type: 'ERROR', error: 'Model not found on server' });
-    // Don't exit yet, maybe they fix it? But really we should.
+    const fallbackModelName = 'vosk-model-small-en-us-0.15';
+    const fallbackModelPath = path.resolve(__dirname, '../../models', fallbackModelName);
+    if (selectedModelName !== fallbackModelName && fs.existsSync(fallbackModelPath)) {
+        console.warn(`[Worker] Requested model ${selectedModelName} not found at ${MODEL_PATH}; falling back to ${fallbackModelName}`);
+        selectedModelName = fallbackModelName;
+        MODEL_PATH = fallbackModelPath;
+    } else {
+        console.error(`Model not found at ${MODEL_PATH}`);
+        parentPort?.postMessage({ type: 'ERROR', error: 'Model not found on server' });
+    }
 }
 
 let model;

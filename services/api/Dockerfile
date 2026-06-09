@@ -12,7 +12,11 @@ RUN npm install --omit=dev
 
 FROM node:20-slim
 WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates unzip && rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /app/models && \
+    curl -L https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip -o /tmp/vosk-en.zip && \
+    unzip -q /tmp/vosk-en.zip -d /app/models && \
+    rm /tmp/vosk-en.zip
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/src/listening-sessions/vosk.worker.js ./dist/listening-sessions/vosk.worker.js
 COPY --from=builder /app/node_modules ./node_modules
@@ -21,7 +25,6 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/contracts ./contracts
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/data ./data
-COPY --from=builder /app/services/api/models ./models
 RUN npm install -g ts-node@10.9.2
 RUN cat > /start.sh << 'SEEDSCRIPT'
 #!/bin/sh
