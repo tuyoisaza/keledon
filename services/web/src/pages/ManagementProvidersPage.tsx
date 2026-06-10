@@ -36,23 +36,21 @@ export default function ManagementProvidersPage() {
     }, [user]);
 
     const loadTeamId = async () => {
-        // Fetch all available teams
-        try {
-            const allTeams = await getTeams();
-            setTeams(allTeams);
-        } catch { /* ignore */ }
-
         // 1) Try from auth context
         if (user?.teamId || user?.team_id) {
             setTeamId(user.teamId || user.team_id || '');
             return;
         }
-        // 2) Fallback: fetch first available team
+        // 2) Fetch teams for the dropdown AND to find first team
         try {
-            const allTeams = await getTeams();
-            if (Array.isArray(allTeams) && allTeams.length > 0) {
-                setTeamId(allTeams[0].id || allTeams[0]._id || '');
-                return;
+            const res = await apiFetch('/api/teams');
+            if (res.ok) {
+                const allTeams = await res.json();
+                if (Array.isArray(allTeams) && allTeams.length > 0) {
+                    setTeams(allTeams);
+                    setTeamId(allTeams[0].id || allTeams[0]._id || '');
+                    return;
+                }
             }
         } catch {
             // ignore
