@@ -75,7 +75,7 @@ export default function BrainPage() {
     });
     const [conversationMode, setConversationMode] = useState(false);
     const [brainLogs, setBrainLogs] = useState<string[]>([]);
-    const BRAIN_LOG_MAX = 50;
+    const BRAIN_LOG_MAX = 200;
 
     // ── Audio device selection ──
     const [audioInputDevices, setAudioInputDevices] = useState<MediaDeviceInfo[]>([]);
