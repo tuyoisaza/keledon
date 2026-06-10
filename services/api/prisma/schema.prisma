@@ -61,7 +61,7 @@ model Team {
   updatedAt DateTime @updatedAt
 
   // Provider configuration per team
-  sttProvider String   @default("vosk")   // vosk, deepgram, webspeech
+  sttProvider String   @default("vosk")   // vosk, deepgram, webspeech, speaches
   ttsProvider String   @default("elevenlabs") // elevenlabs, webspeech
   
   // VOSK configuration
@@ -70,6 +70,10 @@ model Team {
   
   // Deepgram configuration
   deepgramApiKey String?
+  
+  // Speaches configuration
+  speachesApiUrl    String?   // Speaches server URL (e.g., https://speaches-production-c63f.up.railway.app)
+  speachesApiKey    String?   // Speaches API key
   
   // ElevenLabs configuration
   elevenlabsApiKey String?

@@ -9,6 +9,7 @@ import { getTeams, type Team } from '@/lib/crud-api';
 const sttProviderOptions = [
     { id: 'vosk', name: 'Vosk (Local)', description: 'Local STT via Vosk server' },
     { id: 'deepgram', name: 'Deepgram', description: 'Cloud STT via Deepgram API' },
+    { id: 'speaches', name: 'Speaches (Whisper)', description: 'OpenAI-compatible Whisper STT on Railway (no API key needed if public)' },
     { id: 'webspeech', name: 'Web Speech API', description: 'Browser-native speech recognition' },
 ];
 
@@ -63,6 +64,8 @@ export default function ManagementProvidersPage() {
     const [sttProvider, setSttProvider] = useState('vosk');
     const [deepgramApiKey, setDeepgramApiKey] = useState('');
     const [deepgramKeyMasked, setDeepgramKeyMasked] = useState(true);
+    const [speachesApiUrl, setSpeachesApiUrl] = useState('https://speaches-production-c63f.up.railway.app');
+    const [speachesApiKey, setSpeachesApiKey] = useState('');
     const [sttSaving, setSttSaving] = useState(false);
 
     // ── TTS ──
@@ -102,6 +105,10 @@ export default function ManagementProvidersPage() {
                     setDeepgramApiKey(d.deepgramApiKey);
                     setDeepgramKeyMasked(true);
                 }
+                if (d.speachesApiUrl) setSpeachesApiUrl(d.speachesApiUrl);
+                if (d.speachesApiKey) {
+                    setSpeachesApiKey(d.speachesApiKey);
+                }
 
                 // TTS
                 if (d.ttsProvider) setTtsProvider(d.ttsProvider);
@@ -134,6 +141,10 @@ export default function ManagementProvidersPage() {
         try {
             const payload: Record<string, string> = { sttProvider };
             if (deepgramApiKey && !deepgramKeyMasked) payload.deepgramApiKey = deepgramApiKey;
+            if (sttProvider === 'speaches') {
+                payload.speachesApiUrl = speachesApiUrl;
+                payload.speachesApiKey = speachesApiKey;
+            }
             const res = await apiFetch(`/api/teams/${teamId}/config`, {
                 method: 'PUT',
                 body: JSON.stringify(payload),
@@ -323,6 +334,28 @@ export default function ManagementProvidersPage() {
                         {deepgramApiKey && deepgramKeyMasked && (
                             <p className="text-[11px] text-green-400/80">✓ Key saved in DB</p>
                         )}
+                    </div>
+                )}
+
+                {/* Speaches expanded config */}
+                {sttProvider === 'speaches' && (
+                    <div className="mb-5 p-4 rounded-lg bg-muted/20 border border-border/60 space-y-3">
+                        <label className="block text-xs font-medium text-muted-foreground">Speaches Server URL</label>
+                        <input
+                            type="text"
+                            value={speachesApiUrl}
+                            onChange={e => setSpeachesApiUrl(e.target.value)}
+                            placeholder="https://speaches-production-c63f.up.railway.app"
+                            className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
+                        />
+                        <label className="block text-xs font-medium text-muted-foreground">API Key {speachesApiKey ? '(saved)' : '(optional — set via SPEACHES_API_KEY env var on Railway)'}</label>
+                        <input
+                            type="text"
+                            value={speachesApiKey}
+                            onChange={e => setSpeachesApiKey(e.target.value)}
+                            placeholder="Speaches API key if configured"
+                            className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
+                        />
                     </div>
                 )}
 

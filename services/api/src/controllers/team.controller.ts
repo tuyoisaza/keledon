@@ -17,6 +17,10 @@ export class TeamConfigDto {
   deepgramApiKey?: string;
   elevenlabsApiKey?: string;
   
+  // Speaches (Whisper STT) config
+  speachesApiUrl?: string;
+  speachesApiKey?: string;
+  
   // LLM / AI Provider
   llmProvider?: string;
   openaiApiKey?: string;
@@ -48,6 +52,8 @@ export class TeamController {
           voskServerUrl: true,
           voskModel: true,
           deepgramApiKey: true,
+          speachesApiUrl: true,
+          speachesApiKey: true,
           elevenlabsApiKey: true,
           openaiApiKey: true,
           googleAiApiKey: true,
@@ -82,6 +88,12 @@ export class TeamController {
         ttsApiKey: team.ttsApiKey || '',
         ttsVoiceId: team.ttsVoiceId || (team.ttsProvider === 'kokoro' ? 'ef_dora' : ''),
         ttsEndpointUrl: team.ttsEndpointUrl || '',
+        deepgramConfig: {
+          apiKey: team.deepgramApiKey || '',
+        },
+        // Speaches (Whisper-based STT) config
+        speachesApiUrl: team.speachesApiUrl || 'https://speaches-production-c63f.up.railway.app',
+        speachesApiKey: team.speachesApiKey || '',
         // LLM config
         openaiApiKey: team.openaiApiKey || '',
         googleAiApiKey: team.googleAiApiKey || '',
@@ -100,7 +112,7 @@ export class TeamController {
     @Body() config: TeamConfigDto,
   ) {
     try {
-      const allowedSttProviders = ['vosk', 'deepgram', 'webspeech'];
+      const allowedSttProviders = ['vosk', 'deepgram', 'webspeech', 'speaches'];
       const allowedTtsProviders = ['elevenlabs', 'webspeech', 'kokoro', 'openai-tts', 'coqui'];
       const allowedLlmProviders = ['openai', 'google', 'anthropic', 'ollama'];
 
@@ -137,6 +149,14 @@ export class TeamController {
 
       if (config.deepgramApiKey !== undefined) {
         updateData.deepgramApiKey = config.deepgramApiKey;
+      }
+
+      // Speaches (Whisper STT) config
+      if (config.speachesApiUrl !== undefined) {
+        updateData.speachesApiUrl = config.speachesApiUrl;
+      }
+      if (config.speachesApiKey !== undefined) {
+        updateData.speachesApiKey = config.speachesApiKey;
       }
 
       if (config.elevenlabsApiKey !== undefined) {

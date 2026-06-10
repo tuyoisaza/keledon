@@ -843,6 +843,108 @@ export default function BrainPage() {
         setIsListening(false);
     }
 
+    // ── Speaches STT: capture audio, send to Whisper API ──
+
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const audioChunksRef = useRef<Blob[]>([]);
+    const mediaStreamRef = useRef<MediaStream | null>(null);
+
+    async function startSpeachesListening() {
+        const appVersion = __APP_VERSION__ || '?';
+        addLog(`[v${appVersion}] STT provider=speaches → starting Whisper STT via Speaches`);
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaStreamRef.current = stream;
+            audioChunksRef.current = [];
+
+            const recorder = new MediaRecorder(stream);
+            mediaRecorderRef.current = recorder;
+
+            recorder.ondataavailable = (e) => {
+                if (e.data.size > 0) audioChunksRef.current.push(e.data);
+            };
+
+            recorder.onstop = async () => {
+                addLog('[STT] Speaches: audio captured, transcribing...');
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+
+                // Fetch Speaches config from the API
+                try {
+                    const cfgRes = await apiFetch(`/api/teams/${selectedTeamId}/config`);
+                    const cfg = cfgRes.ok ? await cfgRes.json() : {};
+                    const apiUrl = cfg.speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
+                    const apiKey = cfg.speachesApiKey || '';
+
+                    const formData = new FormData();
+                    formData.append('file', audioBlob, 'recording.webm');
+                    formData.append('model', 'whisper-1');
+                    formData.append('response_format', 'json');
+                    formData.append('language', (sttLangRef.current || navigator.language || 'en').split('-')[0]);
+
+                    const headers: Record<string, string> = {};
+                    if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+
+                    const res = await fetch(`${apiUrl}/v1/audio/transcriptions`, {
+                        method: 'POST',
+                        headers,
+                        body: formData,
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        const text = (data.text || '').trim();
+                        addLog(`[TEST] STT: ✅ Speaches transcript: "${text.substring(0, 80)}${text.length > 80 ? '...' : ''}"`);
+                        if (text) {
+                            setDraft(text);
+                            draftRef.current = text;
+                            if (voiceSocketRef.current?.connected) {
+                                sendVoiceTranscript(text);
+                            } else if (conversationModeRef.current) {
+                                // Auto-submit in conversation mode
+                                addLog('→ auto-submit (speaches)');
+                                handleSend(true);
+                            }
+                        }
+                    } else {
+                        const err = await res.text().catch(() => '');
+                        addLog(`[TEST] STT: ❌ Speaches HTTP ${res.status}: ${err.substring(0, 200)}`);
+                    }
+                } catch (err) {
+                    addLog(`[TEST] STT: ❌ Speaches error: ${err instanceof Error ? err.message : String(err)}`);
+                }
+
+                // Stop the stream tracks
+                stream.getTracks().forEach(t => t.stop());
+                listeningRef.current = false;
+                setIsListening(false);
+            };
+
+            recorder.start(1000); // collect in 1s chunks
+            listeningRef.current = true;
+            setIsListening(true);
+            addLog(`[v${appVersion}] Speaches: listening...`);
+
+            // Interruption: if Brain is speaking, cut it off
+            if (speakingMessageId) {
+                addLog('→ interruption! stopping TTS');
+                stopSpeaking();
+            }
+        } catch (err) {
+            addLog(`[v${appVersion}] Speaches: ❌ could not start: ${err instanceof Error ? err.message : String(err)}`);
+            toast.error('Could not start mic for Speaches');
+            listeningRef.current = false;
+            setIsListening(false);
+        }
+    }
+
+    function stopSpeachesListening() {
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+            mediaRecorderRef.current.stop();
+        }
+        mediaStreamRef.current?.getTracks().forEach(t => t.stop());
+        mediaStreamRef.current = null;
+    }
+
     async function toggleListening() {
         const action = isListening ? 'STOPPING' : 'STARTING';
         addLog(`[v${__APP_VERSION__ || '?'}] 👤 ACTION: ${action} mic listening`);
@@ -856,11 +958,18 @@ export default function BrainPage() {
             addLog('→ stopping STT');
             if (listenSocketRef.current) {
                 stopVoskListening();
+            } else if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+                stopSpeachesListening();
             } else {
                 listeningRef.current = false;
                 recognitionRef.current?.stop();
                 setIsListening(false);
             }
+            return;
+        }
+
+        if (sttProvider === 'speaches') {
+            await startSpeachesListening();
             return;
         }
 
@@ -1102,6 +1211,23 @@ export default function BrainPage() {
                 const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
                 if (SR) addLog(`[TEST] STT: ✅ Web Speech API available`);
                 else addLog(`[TEST] STT: ❌ Web Speech API not available in this browser`);
+            } else if (sttProvider === 'speaches') {
+                const { apiBase } = await resolveBrainCloudConfig();
+                const cfgRes = await apiFetch(`${apiBase}/teams/${selectedTeamId}/config`);
+                const cfg = cfgRes.ok ? await cfgRes.json() : {};
+                const speachesUrl = cfg.speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
+                addLog(`[TEST] STT: Speaches server: ${speachesUrl}`);
+                try {
+                    const hRes = await fetch(`${speachesUrl}/health`, { signal: AbortSignal.timeout(5000) });
+                    if (hRes.ok) {
+                        addLog(`[TEST] STT: ✅ Speaches health OK`);
+                    } else {
+                        const txt = await hRes.text().catch(() => '');
+                        addLog(`[TEST] STT: ⚠️ Speaches health: HTTP ${hRes.status} ${txt.substring(0, 100)}`);
+                    }
+                } catch (err) {
+                    addLog(`[TEST] STT: ❌ Speaches unreachable: ${err instanceof Error ? err.message : String(err)}`);
+                }
             } else if (sttProvider) {
                 addLog(`[TEST] STT: ⚠️ no automated test for ${sttProvider}`);
             } else {
@@ -1367,6 +1493,7 @@ export default function BrainPage() {
                                             <Mic className="h-3 w-3 text-green-400" />, 'STT',
                                             sttProvider === 'vosk' ? 'Vosk' :
                                             sttProvider === 'deepgram' ? 'Deepgram' :
+                                            sttProvider === 'speaches' ? 'Speaches' :
                                             sttProvider === 'webspeech' ? 'Web Speech' :
                                             sttProvider || 'none', sttKeySet, 'key',
                                             sttProvider ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-muted/60 text-muted-foreground border border-border',
