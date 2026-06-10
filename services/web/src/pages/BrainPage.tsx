@@ -1005,6 +1005,100 @@ export default function BrainPage() {
         }
     }
 
+    // ── Provider Test Functions ──
+
+    const [testingLLM, setTestingLLM] = useState(false);
+    const [testingTTS, setTestingTTS] = useState(false);
+    const [testingSTT, setTestingSTT] = useState(false);
+
+    async function testLLMProvider() {
+        if (!selectedTeamId || testingLLM) return;
+        setTestingLLM(true);
+        const testMsg = 'Reply with exactly one word: WORKING';
+        addLog(`[TEST] LLM: sending to ${llmProvider || '?'}...`);
+        try {
+            const response = await brainChat({
+                message: testMsg,
+                history: [],
+                companyId: selectedCompany?.id,
+                companyName: selectedCompany?.name,
+                brandId: selectedBrand?.id,
+                brandName: selectedBrand?.name,
+                teamId: selectedTeam?.id,
+                teamName: selectedTeam?.name,
+                language: 'en',
+            });
+            const reply = (response.reply || '').trim();
+            addLog(`[TEST] LLM: response (${reply.length} chars): "${reply.substring(0, 120)}"`);
+            if (reply) addLog(`[TEST] LLM: ✅ reply received`);
+            else addLog(`[TEST] LLM: ❌ empty reply`);
+        } catch (err) {
+            addLog(`[TEST] LLM: ❌ ${err instanceof Error ? err.message : String(err)}`);
+        } finally {
+            setTestingLLM(false);
+        }
+    }
+
+    async function testTTSProvider() {
+        if (!selectedTeamId || testingTTS) return;
+        setTestingTTS(true);
+        addLog(`[TEST] TTS: testing ${ttsProvider || '?'}...`);
+        try {
+            const { apiBase } = await resolveBrainCloudConfig();
+            const res = await apiFetch(`${apiBase}/tts/speak`, {
+                method: 'POST',
+                body: JSON.stringify({ text: 'Hello, this is a TTS test.', teamId: selectedTeamId }),
+            });
+            if (res.ok) {
+                const blob = await res.blob();
+                addLog(`[TEST] TTS: ✅ HTTP ${res.status} blob=${blob.size} bytes`);
+                if (blob.size > 200) addLog(`[TEST] TTS: ✅ audio content received`);
+                else addLog(`[TEST] TTS: ⚠️ blob small (${blob.size} bytes), may be empty audio`);
+            } else {
+                const text = await res.text().catch(() => '');
+                addLog(`[TEST] TTS: ❌ HTTP ${res.status}: ${text.substring(0, 300)}`);
+            }
+        } catch (err) {
+            addLog(`[TEST] TTS: ❌ ${err instanceof Error ? err.message : String(err)}`);
+        } finally {
+            setTestingTTS(false);
+        }
+    }
+
+    async function testSTTProvider() {
+        if (!selectedTeamId || testingSTT) return;
+        setTestingSTT(true);
+        addLog(`[TEST] STT: testing ${sttProvider || '?'}...`);
+        try {
+            if (sttProvider === 'vosk') {
+                const { apiBase } = await resolveBrainCloudConfig();
+                const res = await apiFetch(`${apiBase}/listening-sessions`, {
+                    method: 'POST',
+                    body: JSON.stringify({ source: 'brain-test', tabUrl: window.location.href, tabTitle: document.title }),
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    addLog(`[TEST] STT: ✅ Vosk session created: ${data.sessionId}`);
+                } else {
+                    const text = await res.text().catch(() => '');
+                    addLog(`[TEST] STT: ❌ Vosk session failed HTTP ${res.status}: ${text.substring(0, 300)}`);
+                }
+            } else if (sttProvider === 'webspeech') {
+                const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+                if (SR) addLog(`[TEST] STT: ✅ Web Speech API available`);
+                else addLog(`[TEST] STT: ❌ Web Speech API not available in this browser`);
+            } else if (sttProvider) {
+                addLog(`[TEST] STT: ⚠️ no automated test for ${sttProvider}`);
+            } else {
+                addLog(`[TEST] STT: ❌ no STT provider configured`);
+            }
+        } catch (err) {
+            addLog(`[TEST] STT: ❌ ${err instanceof Error ? err.message : String(err)}`);
+        } finally {
+            setTestingSTT(false);
+        }
+    }
+
     // ── Chat ─────────────────────────────────────────────────────────────
 
     function handleCompanyChange(companyId: string) {
@@ -1143,7 +1237,7 @@ export default function BrainPage() {
                     </div>
                     {/* Provider status indicators */}
 
-                    {/* Helper to render a provider row with name + key status */}
+                    {/* Helper to render a provider row with name + key status + test button */}
                     {(() => {
                         const providerRow = (
                             icon: React.ReactNode,
@@ -1152,6 +1246,8 @@ export default function BrainPage() {
                             keySet: boolean,
                             keyLabel: string,
                             badgeClass: string,
+                            onTest?: () => void,
+                            testing?: boolean,
                         ) => (
                             <div className="flex items-center justify-between gap-2 px-2 py-1.5 rounded-md bg-muted/30 text-xs">
                                 <span className="flex items-center gap-1.5 font-medium text-foreground">
@@ -1173,6 +1269,24 @@ export default function BrainPage() {
                                         <span className={`h-1.5 w-1.5 rounded-full ${keySet ? 'bg-green-400' : 'bg-red-400'}`} />
                                         {keySet ? keyLabel : 'no key'}
                                     </span>
+                                    {onTest && (
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); onTest(); }}
+                                            disabled={testing}
+                                            className={`px-1.5 py-0.5 rounded text-[10px] font-medium border transition-colors ${
+                                                testing
+                                                    ? 'bg-muted/30 text-muted-foreground border-border cursor-wait'
+                                                    : 'bg-muted/50 text-muted-foreground hover:text-foreground hover:border-foreground/30 border-border'
+                                            }`}
+                                            title={`Test ${label} provider`}
+                                        >
+                                            {testing ? (
+                                                <Loader2 className="h-2.5 w-2.5 animate-spin" />
+                                            ) : (
+                                                'test'
+                                            )}
+                                        </button>
+                                    )}
                                 </span>
                             </div>
                         );
@@ -1201,12 +1315,14 @@ export default function BrainPage() {
                                             llmProvider === 'anthropic' ? 'Claude' :
                                             llmProvider || 'none',
                                             llmApiKeySet, 'key',
-                                            llmProvider ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-muted/60 text-muted-foreground border border-border'
+                                            llmProvider ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-muted/60 text-muted-foreground border border-border',
+                                            testLLMProvider, testingLLM
                                         )}
                                         {providerRow(
                                             <Volume2 className="h-3 w-3 text-blue-400" />, 'TTS',
                                             ttsProvider || 'none', ttsApiKeySet, 'key',
-                                            ttsProvider ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'bg-muted/60 text-muted-foreground border border-border'
+                                            ttsProvider ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'bg-muted/60 text-muted-foreground border border-border',
+                                            testTTSProvider, testingTTS
                                         )}
                                         {providerRow(
                                             <Mic className="h-3 w-3 text-green-400" />, 'STT',
@@ -1214,7 +1330,8 @@ export default function BrainPage() {
                                             sttProvider === 'deepgram' ? 'Deepgram' :
                                             sttProvider === 'webspeech' ? 'Web Speech' :
                                             sttProvider || 'none', sttKeySet, 'key',
-                                            sttProvider ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-muted/60 text-muted-foreground border border-border'
+                                            sttProvider ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-muted/60 text-muted-foreground border border-border',
+                                            testSTTProvider, testingSTT
                                         )}
                                         {ttsVoiceId && (
                                             <div className="flex items-center justify-between px-2 py-1 text-[10px] text-muted-foreground">
