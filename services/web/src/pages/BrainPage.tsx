@@ -740,50 +740,86 @@ export default function BrainPage() {
         });
         listenSocketRef.current = listenSocket;
 
-        listenSocket.on('connect', async () => {
-            addLog(`[v${appVersion}] Vosk WS connected: ${listenSocket.id} | session=${sessionId} | lang=${language}`);
-            const stream = await navigator.mediaDevices.getUserMedia({
-                audio: selectedMicId ? { deviceId: { exact: selectedMicId } } : true,
-                video: false,
-            });
-            const audioCtx = new AudioContext();
-            const source = audioCtx.createMediaStreamSource(stream);
-            const processor = audioCtx.createScriptProcessor(4096, 1, 1);
-            processor.onaudioprocess = (event) => {
-                if (!listenSocket.connected || !listeningRef.current) return;
-                const input = event.inputBuffer.getChannelData(0);
-                const payload = floatTo16BitPcmBase64(input, audioCtx.sampleRate, 16000);
-                listenSocket.emit('AUDIO_CHUNK', { payload });
-            };
-            source.connect(processor);
-            processor.connect(audioCtx.destination);
-            listenAudioStreamRef.current = stream;
-            listenAudioContextRef.current = audioCtx;
-            listenSourceRef.current = source;
-            listenProcessorRef.current = processor;
-            listeningRef.current = true;
-            setIsListening(true);
-        });
+        return new Promise<void>((resolve, reject) => {
+            const VOSK_FAIL_REASON = 'Vosk module load failed';
+            let rejected = false;
+            const failSafe = setTimeout(() => {
+                if (!rejected && !listenSocket.connected) {
+                    rejected = true;
+                    reject(new Error('Vosk connection timeout'));
+                }
+            }, 8000);
 
-        listenSocket.on('asr.partial', (data: { text?: string }) => {
-            if (data.text) { setDraft(data.text); draftRef.current = data.text; }
-        });
-        listenSocket.on('asr.final', (data: { text?: string }) => {
-            const text = (data.text || '').trim();
-            if (!text) return;
-            addLog(`[v${appVersion}] Vosk final: "${text}"`);
-            setDraft(text); draftRef.current = text;
-            if (conversationModeRef.current) {
-                draftRef.current = '';
-                sendVoiceTranscript(text);
-            }
-        });
-        listenSocket.on('session.ended', (data: any) => {
-            addLog(`[v${appVersion}] Vosk session ended: ${data?.reason || 'unknown'}`);
-            stopVoskListening();
-        });
-        listenSocket.on('connect_error', (err) => {
-            addLog(`[v${appVersion}] Vosk WS connect error: ${err.message}`);
+            listenSocket.on('connect', async () => {
+                addLog(`[v${appVersion}] Vosk WS connected: ${listenSocket.id} | session=${sessionId} | lang=${language}`);
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        audio: selectedMicId ? { deviceId: { exact: selectedMicId } } : true,
+                        video: false,
+                    });
+                    const audioCtx = new AudioContext();
+                    const source = audioCtx.createMediaStreamSource(stream);
+                    const processor = audioCtx.createScriptProcessor(4096, 1, 1);
+                    processor.onaudioprocess = (event) => {
+                        if (!listenSocket.connected || !listeningRef.current) return;
+                        const input = event.inputBuffer.getChannelData(0);
+                        const payload = floatTo16BitPcmBase64(input, audioCtx.sampleRate, 16000);
+                        listenSocket.emit('AUDIO_CHUNK', { payload });
+                    };
+                    source.connect(processor);
+                    processor.connect(audioCtx.destination);
+                    listenAudioStreamRef.current = stream;
+                    listenAudioContextRef.current = audioCtx;
+                    listenSourceRef.current = source;
+                    listenProcessorRef.current = processor;
+                    listeningRef.current = true;
+                    setIsListening(true);
+                    clearTimeout(failSafe);
+                    if (!rejected) resolve();
+                } catch (err) {
+                    clearTimeout(failSafe);
+                    if (!rejected) {
+                        rejected = true;
+                        reject(err instanceof Error ? err : new Error(String(err)));
+                    }
+                }
+            });
+
+            listenSocket.on('asr.partial', (data: { text?: string }) => {
+                if (data.text) { setDraft(data.text); draftRef.current = data.text; }
+            });
+            listenSocket.on('asr.final', (data: { text?: string }) => {
+                const text = (data.text || '').trim();
+                if (!text) return;
+                addLog(`[v${appVersion}] Vosk final: "${text}"`);
+                setDraft(text); draftRef.current = text;
+                if (conversationModeRef.current) {
+                    draftRef.current = '';
+                    sendVoiceTranscript(text);
+                }
+            });
+            listenSocket.on('session.ended', (data: any) => {
+                const reason = data?.reason || 'unknown';
+                addLog(`[v${appVersion}] Vosk session ended: ${reason}`);
+                clearTimeout(failSafe);
+                if (reason.includes('worker_error') && reason.includes(VOSK_FAIL_REASON)) {
+                    if (!rejected) {
+                        rejected = true;
+                        stopVoskListening();
+                        reject(new Error(reason));
+                    }
+                } else {
+                    stopVoskListening();
+                }
+            });
+            listenSocket.on('connect_error', (err) => {
+                addLog(`[v${appVersion}] Vosk WS connect error: ${err.message}`);
+                clearTimeout(failSafe);
+                if (!rejected) {
+                    rejected = true;
+                    reject(err);
+                }
+            });
         });
     }
 
