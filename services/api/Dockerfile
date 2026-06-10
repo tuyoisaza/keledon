@@ -1,17 +1,16 @@
 # KELEDON API Dockerfile — deploys from build context (no git clone source stage)
 # Build context is services/api/ via `railway up ./services/api --path-as-root`
 
-FROM node:18-slim AS builder
+FROM node:20-slim AS builder
 WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends python3 make gcc g++ && rm -rf /var/lib/apt/lists/*
 COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npx prisma@5.22.0 generate && \
     npx tsc -p tsconfig.mvp.json
-RUN npm install --omit=dev && npm install vosk@0.3.39
+RUN npm install --omit=dev
 
-FROM node:18-slim
+FROM node:20-slim
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates unzip && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /app/models && \
