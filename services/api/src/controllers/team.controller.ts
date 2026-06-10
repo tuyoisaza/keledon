@@ -5,6 +5,8 @@ import {
   Put,
   Body,
   Param,
+  Req,
+  ForbiddenException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -38,9 +40,99 @@ export class TeamConfigDto {
 export class TeamController {
   constructor(private readonly prisma: PrismaService) {}
 
-  @Get(':id/config')
-  async getTeamConfig(@Param('id') teamId: string) {
+  private async getActorScope(req: any) {
+    const requestUser = req?.user;
+    if (!requestUser?.userId) {
+      return { role: 'anonymous', companyId: null as string | null, teamId: null as string | null };
+    }
+
+    const dbUser = await this.prisma.user.findUnique({
+      where: { id: requestUser.userId },
+      select: { role: true, companyId: true, teamId: true },
+    });
+
+    return {
+      role: dbUser?.role || requestUser.role || 'user',
+      companyId: dbUser?.companyId || null,
+      teamId: dbUser?.teamId || null,
+    };
+  }
+
+  private teamScopeWhere(scope: { role: string; companyId: string | null; teamId: string | null }) {
+    if (scope.role === 'superadmin') return {};
+    if (scope.companyId) return { brand: { companyId: scope.companyId } };
+    if (scope.teamId) return { id: scope.teamId };
+    return { id: '__NO_TEAM_ACCESS__' };
+  }
+
+  private async assertTeamAccess(teamId: string, req: any) {
+    const scope = await this.getActorScope(req);
+    const team = await this.prisma.team.findFirst({
+      where: {
+        id: teamId,
+        ...this.teamScopeWhere(scope),
+      },
+      select: { id: true },
+    });
+    if (!team) {
+      throw new ForbiddenException('Team access denied');
+    }
+  }
+
+  @Get()
+  async listTeams(@Req() req: any) {
     try {
+      const scope = await this.getActorScope(req);
+      const teams = await this.prisma.team.findMany({
+        where: this.teamScopeWhere(scope),
+        include: {
+          users: { select: { id: true } },
+          keledons: { select: { id: true } },
+          brand: {
+            include: {
+              company: { select: { id: true, name: true } },
+            },
+          },
+        },
+        orderBy: { name: 'asc' },
+      });
+
+      return teams.map((team) => ({
+        id: team.id,
+        name: team.name,
+        brandId: team.brandId,
+        country: team.country,
+        sttProvider: team.sttProvider,
+        ttsProvider: team.ttsProvider,
+        llmProvider: team.llmProvider,
+        createdAt: team.createdAt,
+        updatedAt: team.updatedAt,
+        brand: team.brand
+          ? {
+              id: team.brand.id,
+              name: team.brand.name,
+              color: team.brand.color,
+              companyId: team.brand.companyId,
+              company: team.brand.company
+                ? { id: team.brand.company.id, name: team.brand.company.name }
+                : undefined,
+            }
+          : undefined,
+        company: team.brand?.company
+          ? { id: team.brand.company.id, name: team.brand.company.name }
+          : undefined,
+        _count: { users: team.users.length, keledons: team.keledons.length },
+      }));
+    } catch (error) {
+      console.error('[TeamController] Error listing teams:', error);
+      return { error: error.message, status: 500 };
+    }
+  }
+
+  @Get(':id/config')
+  async getTeamConfig(@Param('id') teamId: string, @Req() req: any) {
+    try {
+      await this.assertTeamAccess(teamId, req);
       const team = await this.prisma.team.findUnique({
         where: { id: teamId },
         select: {
@@ -110,8 +202,10 @@ export class TeamController {
   async updateTeamConfig(
     @Param('id') teamId: string,
     @Body() config: TeamConfigDto,
+    @Req() req: any,
   ) {
     try {
+      await this.assertTeamAccess(teamId, req);
       const allowedSttProviders = ['vosk', 'deepgram', 'webspeech', 'speaches'];
       const allowedTtsProviders = ['elevenlabs', 'webspeech', 'kokoro', 'openai-tts', 'coqui'];
       const allowedLlmProviders = ['openai', 'google', 'anthropic', 'ollama'];
@@ -222,8 +316,9 @@ export class TeamController {
   }
 
   @Get(':id')
-  async getTeam(@Param('id') teamId: string) {
+  async getTeam(@Param('id') teamId: string, @Req() req: any) {
     try {
+      await this.assertTeamAccess(teamId, req);
       const team = await this.prisma.team.findUnique({
         where: { id: teamId },
         include: {

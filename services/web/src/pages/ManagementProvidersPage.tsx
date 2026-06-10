@@ -36,25 +36,45 @@ export default function ManagementProvidersPage() {
     }, [user]);
 
     const loadTeamId = async () => {
-        // 1) Try from auth context
-        if (user?.teamId || user?.team_id) {
-            setTeamId(user.teamId || user.team_id || '');
-            return;
-        }
-        // 2) Fetch teams for the dropdown AND to find first team
+        // Fetch teams for the dropdown first so users with an auth-context team still see/select all teams
+        let allTeams: Array<Team & { _id?: string }> = [];
         try {
             const res = await apiFetch('/api/teams');
             if (res.ok) {
-                const allTeams = await res.json();
-                if (Array.isArray(allTeams) && allTeams.length > 0) {
-                    setTeams(allTeams);
-                    setTeamId(allTeams[0].id || allTeams[0]._id || '');
-                    return;
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    allTeams = data;
+                    setTeams(data);
                 }
             }
         } catch {
-            // ignore
+            // ignore; CRUD fallback below still runs
         }
+
+        // Fallback to CRUD API client if the REST team list route is unavailable or returns no rows.
+        if (allTeams.length === 0) {
+            try {
+                const data = await getTeams();
+                allTeams = data;
+                setTeams(data);
+            } catch {
+                // ignore; auth-context team fallback below still runs
+            }
+        }
+
+        // 1) Prefer auth context team if present
+        const authTeamId = user?.teamId || user?.team_id;
+        if (authTeamId) {
+            setTeamId(authTeamId);
+            return;
+        }
+
+        // 2) Fallback: first available team
+        if (allTeams.length > 0) {
+            setTeamId(allTeams[0].id || allTeams[0]._id || '');
+            return;
+        }
+
         setTeamId('');
     };
 
