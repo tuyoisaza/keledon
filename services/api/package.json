@@ -1,6 +1,6 @@
 {
   "name": "cloud",
-  "version": "0.3.111",
+  "version": "0.3.112",
   "description": "KELEDON Backend",
   "private": true,
   "license": "UNLICENSED",
@@ -62,7 +62,7 @@
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",
     "uuid": "^9.0.0",
-    "vosk": "^0.3.45"
+    "vosk": "^0.3.39"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

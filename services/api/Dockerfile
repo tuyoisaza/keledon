@@ -8,7 +8,7 @@ RUN npm install
 COPY . .
 RUN npx prisma@5.22.0 generate && \
     npx tsc -p tsconfig.mvp.json
-RUN npm install --omit=dev && npm install vosk@0.3.45
+RUN npm install --omit=dev && npm install vosk@0.3.39
 
 FROM node:20-slim
 WORKDIR /app
