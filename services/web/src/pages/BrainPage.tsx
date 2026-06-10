@@ -108,6 +108,35 @@ export default function BrainPage() {
     const listenAudioContextRef = useRef<AudioContext | null>(null);
     const listenSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
     const listenProcessorRef = useRef<ScriptProcessorNode | null>(null);
+    const cloudApiBaseRef = useRef<string | null>(null);
+    const cloudWsBaseRef = useRef<string | null>(null);
+
+    async function resolveBrainCloudConfig(): Promise<{ apiBase: string; wsBase: string }> {
+        if (cloudApiBaseRef.current && cloudWsBaseRef.current) {
+            return { apiBase: cloudApiBaseRef.current, wsBase: cloudWsBaseRef.current };
+        }
+        let apiBase = API_URL || '';
+        let wsBase = WEBSOCKET_URL || '';
+        try {
+            const res = await fetch('/api/cloud-config', { signal: AbortSignal.timeout(5000) });
+            if (res.ok) {
+                const config = await res.json();
+                if (config.api_url) apiBase = config.api_url;
+                if (config.ws_url) wsBase = config.ws_url;
+                if (!apiBase && config.ws_url) apiBase = String(config.ws_url).replace(/^wss:/, 'https:').replace(/^ws:/, 'http:');
+            }
+        } catch (e) {
+            addLog(`[v${__APP_VERSION__ || '?'}] cloud-config lookup failed, using fallback: ${e instanceof Error ? e.message : String(e)}`);
+        }
+        if ((!apiBase || !wsBase) && window.location.hostname === 'keledon.tuyoisaza.com') {
+            apiBase = apiBase || 'https://keledonapi.tuyoisaza.com';
+            wsBase = wsBase || 'wss://keledonapi.tuyoisaza.com';
+        }
+        cloudApiBaseRef.current = apiBase;
+        cloudWsBaseRef.current = wsBase || window.location.origin.replace(/^http/, 'ws');
+        addLog(`[v${__APP_VERSION__ || '?'}] Brain cloud endpoints: api=${cloudApiBaseRef.current || '(same-origin)'} ws=${cloudWsBaseRef.current}`);
+        return { apiBase: cloudApiBaseRef.current, wsBase: cloudWsBaseRef.current };
+    }
 
     const selectedCompany = useMemo(
         () => companies.find((c) => c.id === selectedCompanyId),
@@ -272,14 +301,13 @@ export default function BrainPage() {
 
     // ── Voice WebSocket ────────────────────────────────────────────────
 
-    function connectVoiceSocket() {
+    async function connectVoiceSocket() {
         if (voiceSocketRef.current?.connected) return;
         const token = sessionStorage.getItem('auth_token');
         const sessionId = `brain_${Date.now()}`;
         voiceSessionIdRef.current = sessionId;
-        // Build WebSocket URL: WEBSOCKET_URL already includes protocol+host, just add /ws/voice
-        const socketBase = WEBSOCKET_URL || window.location.origin;
-        const fullUrl = `${socketBase}/ws/voice`;
+        const { wsBase } = await resolveBrainCloudConfig();
+        const fullUrl = `${wsBase}/ws/voice`;
         const appVersion = __APP_VERSION__ || '0.4.6';
         addLog(`[v${appVersion}] Connecting voice WS → ${fullUrl}`);
         addLog(`[v${appVersion}] Session: ${sessionId} | User: ${user?.email || user?.id || 'anon'}`);
@@ -422,7 +450,7 @@ export default function BrainPage() {
                 setTimeout(() => {
                     if (conversationModeRef.current) {
                         disconnectVoiceSocket();
-                        connectVoiceSocket();
+                        void connectVoiceSocket();
                     }
                 }, 2000);
                 return;
@@ -543,9 +571,10 @@ export default function BrainPage() {
 
         try {
             let blob: Blob | null = null;
-            const res = await apiFetch('/tts/speak', {
+            const { apiBase } = await resolveBrainCloudConfig();
+            const res = await apiFetch(`${apiBase}/api/tts/speak`, {
                 method: 'POST',
-                body: JSON.stringify({ text, teamId: selectedTeam?.id }),
+                body: JSON.stringify({ text, teamId: selectedTeamId }),
                 signal: controller.signal,
             });
 
@@ -620,7 +649,8 @@ export default function BrainPage() {
     async function startVoskListening(): Promise<void> {
         const appVersion = __APP_VERSION__ || '?';
         addLog(`[v${appVersion}] STT provider=vosk → starting Railway Vosk session`);
-        const sessionRes = await apiFetch('/listening-sessions', {
+        const { apiBase, wsBase } = await resolveBrainCloudConfig();
+        const sessionRes = await apiFetch(`${apiBase}/api/listening-sessions`, {
             method: 'POST',
             body: JSON.stringify({ source: 'brain-call', tabUrl: window.location.href, tabTitle: document.title }),
         });
@@ -630,9 +660,10 @@ export default function BrainPage() {
         }
         const session = await sessionRes.json();
         const sessionId = session.sessionId;
-        const socketBase = WEBSOCKET_URL || window.location.origin;
         const language = (sttLangRef.current || navigator.language || 'en').toLowerCase().startsWith('es') ? 'es' : 'en';
-        const listenSocket = io(`${socketBase}/listen`, {
+        const listenUrl = `${wsBase}/listen`;
+        addLog(`[v${appVersion}] Connecting Vosk WS → ${listenUrl} path=/listen/ws session=${sessionId}`);
+        const listenSocket = io(listenUrl, {
             path: '/listen/ws',
             query: { session: sessionId, language, debug: 'false', team_id: selectedTeam?.id || '' },
             transports: ['websocket', 'polling'],
@@ -859,7 +890,7 @@ export default function BrainPage() {
             conversationModeRef.current = true;
             setAutoSpeak(true);
             // Connect voice WebSocket
-            connectVoiceSocket();
+            void connectVoiceSocket();
             // Start listening if not already
             if (!isListening) {
                 // Small delay so state settles, then start mic
