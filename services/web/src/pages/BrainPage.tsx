@@ -93,6 +93,7 @@ export default function BrainPage() {
     const [ttsProvider, setTtsProvider] = useState<string | null>(null);
     const [sttProvider, setSttProvider] = useState<string | null>(null);
     const [teamConfigLoading, setTeamConfigLoading] = useState(false);
+    const [configRefreshKey, setConfigRefreshKey] = useState(0);
     // API key presence tracking
     const [llmApiKeySet, setLlmApiKeySet] = useState(false);
     const [ttsApiKeySet, setTtsApiKeySet] = useState(false);
@@ -283,7 +284,7 @@ export default function BrainPage() {
             })
             .catch(err => console.error('Failed to load provider config:', err))
             .finally(() => setTeamConfigLoading(false));
-    }, [selectedTeamId, teams]);
+    }, [selectedTeamId, teams, configRefreshKey]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -1308,13 +1309,37 @@ export default function BrainPage() {
                             <div className="space-y-1 pt-2 border-t border-border">
                                 <div className="flex items-center justify-between px-1">
                                     <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Provider Configuration</span>
-                                    <a
-                                        href="/management/providers"
-                                        className="text-[10px] text-primary hover:underline"
-                                        onClick={(e) => { e.preventDefault(); window.open('/management/providers', '_blank'); }}
-                                    >
-                                        Edit in Management →
-                                    </a>
+                                    <span className="flex items-center gap-2">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); setConfigRefreshKey(k => k + 1); }}
+                                            disabled={teamConfigLoading}
+                                            className={`text-[10px] inline-flex items-center gap-0.5 transition-colors ${
+                                                teamConfigLoading
+                                                    ? 'text-muted-foreground cursor-wait'
+                                                    : 'text-muted-foreground hover:text-foreground'
+                                            }`}
+                                            title="Refresh provider configuration"
+                                        >
+                                            {teamConfigLoading ? (
+                                                <Loader2 className="h-2.5 w-2.5 animate-spin" />
+                                            ) : (
+                                                <svg className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                                                    <path d="M3 3v5h5" />
+                                                    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+                                                    <path d="M21 21v-5h-5" />
+                                                </svg>
+                                            )}
+                                            refresh
+                                        </button>
+                                        <a
+                                            href="/management/providers"
+                                            className="text-[10px] text-primary hover:underline"
+                                            onClick={(e) => { e.preventDefault(); window.open('/management/providers', '_blank'); }}
+                                        >
+                                            edit →
+                                        </a>
+                                    </span>
                                 </div>
                                 {teamConfigLoading ? (
                                     <div className="flex items-center justify-center py-2">
