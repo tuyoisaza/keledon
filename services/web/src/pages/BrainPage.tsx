@@ -1015,7 +1015,8 @@ export default function BrainPage() {
         if (!selectedTeamId || testingLLM) return;
         setTestingLLM(true);
         const testMsg = 'Reply with exactly one word: WORKING';
-        addLog(`[TEST] LLM: sending to ${llmProvider || '?'}...`);
+        const tid = selectedTeam?.id || selectedTeamId || '(none)';
+        addLog(`[TEST] LLM: sending to ${llmProvider || '?'} teamId=${tid}...`);
         try {
             const response = await brainChat({
                 message: testMsg,
@@ -1024,14 +1025,19 @@ export default function BrainPage() {
                 companyName: selectedCompany?.name,
                 brandId: selectedBrand?.id,
                 brandName: selectedBrand?.name,
-                teamId: selectedTeam?.id,
+                teamId: tid,
                 teamName: selectedTeam?.name,
                 language: 'en',
             });
             const reply = (response.reply || '').trim();
             addLog(`[TEST] LLM: response (${reply.length} chars): "${reply.substring(0, 120)}"`);
-            if (reply) addLog(`[TEST] LLM: ✅ reply received`);
-            else addLog(`[TEST] LLM: ❌ empty reply`);
+            if (reply.toLowerCase().includes('working')) {
+                addLog(`[TEST] LLM: ✅ reply contains "WORKING" - Gemini is responding`);
+            } else if (reply.startsWith('I understand')) {
+                addLog(`[TEST] LLM: ❌ FALLBACK detected - LLM provider resolved to 'none'`);
+            } else {
+                addLog(`[TEST] LLM: ⚠️ response received but unexpected content`);
+            }
         } catch (err) {
             addLog(`[TEST] LLM: ❌ ${err instanceof Error ? err.message : String(err)}`);
         } finally {
@@ -1045,10 +1051,14 @@ export default function BrainPage() {
         addLog(`[TEST] TTS: testing ${ttsProvider || '?'}...`);
         try {
             const { apiBase } = await resolveBrainCloudConfig();
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 8000);
             const res = await apiFetch(`${apiBase}/tts/speak`, {
                 method: 'POST',
                 body: JSON.stringify({ text: 'Hello, this is a TTS test.', teamId: selectedTeamId }),
+                signal: controller.signal,
             });
+            clearTimeout(timeout);
             if (res.ok) {
                 const blob = await res.blob();
                 addLog(`[TEST] TTS: ✅ HTTP ${res.status} blob=${blob.size} bytes`);
@@ -1058,8 +1068,12 @@ export default function BrainPage() {
                 const text = await res.text().catch(() => '');
                 addLog(`[TEST] TTS: ❌ HTTP ${res.status}: ${text.substring(0, 300)}`);
             }
-        } catch (err) {
-            addLog(`[TEST] TTS: ❌ ${err instanceof Error ? err.message : String(err)}`);
+        } catch (err: any) {
+            if (err?.name === 'AbortError') {
+                addLog(`[TEST] TTS: ❌ timeout (8s) - server did not respond`);
+            } else {
+                addLog(`[TEST] TTS: ❌ ${err instanceof Error ? err.message : String(err)}`);
+            }
         } finally {
             setTestingTTS(false);
         }
