@@ -77,6 +77,17 @@ export default function BrainPage() {
     const [brainLogs, setBrainLogs] = useState<string[]>([]);
     const BRAIN_LOG_MAX = 50;
 
+    // ── Audio device selection ──
+    const [audioInputDevices, setAudioInputDevices] = useState<MediaDeviceInfo[]>([]);
+    const [audioOutputDevices, setAudioOutputDevices] = useState<MediaDeviceInfo[]>([]);
+    const [selectedMicId, setSelectedMicId] = useState(() => {
+        try { return localStorage.getItem('keledon_brain_mic_id') || ''; } catch { return ''; }
+    });
+    const [selectedSpeakerId, setSelectedSpeakerId] = useState(() => {
+        try { return localStorage.getItem('keledon_brain_speaker_id') || ''; } catch { return ''; }
+    });
+    const [showDeviceSettings, setShowDeviceSettings] = useState(false);
+
     // Provider status indicators
     const [llmProvider, setLlmProvider] = useState<string | null>(null);
     const [ttsProvider, setTtsProvider] = useState<string | null>(null);
@@ -274,6 +285,37 @@ export default function BrainPage() {
             setSelectedTeamId(teamsForBrand[0].id);
         }
     }, [selectedBrandId, selectedTeamId, teamsForBrand]);
+
+    // ── Enumerate audio devices on mount ──
+    useEffect(() => {
+        if (!navigator.mediaDevices?.enumerateDevices) return;
+        navigator.mediaDevices.enumerateDevices().then(devices => {
+            setAudioInputDevices(devices.filter(d => d.kind === 'audioinput'));
+            setAudioOutputDevices(devices.filter(d => d.kind === 'audiooutput'));
+        }).catch(() => {});
+        // Re-enumerate when devices change
+        const handleDeviceChange = () => {
+            navigator.mediaDevices.enumerateDevices().then(devices => {
+                setAudioInputDevices(devices.filter(d => d.kind === 'audioinput'));
+                setAudioOutputDevices(devices.filter(d => d.kind === 'audiooutput'));
+            }).catch(() => {});
+        };
+        navigator.mediaDevices.addEventListener('devicechange', handleDeviceChange);
+        return () => navigator.mediaDevices.removeEventListener('devicechange', handleDeviceChange);
+    }, []);
+
+    // Close device panel on outside click
+    useEffect(() => {
+        if (!showDeviceSettings) return;
+        const handler = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (!target.closest('[data-device-panel]') && !target.closest('[data-device-btn]')) {
+                setShowDeviceSettings(false);
+            }
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, [showDeviceSettings]);
 
     // Stop everything on unmount
     useEffect(() => {
@@ -505,6 +547,9 @@ export default function BrainPage() {
             const url = URL.createObjectURL(blob);
             const audio = new Audio(url);
             audioRef.current = audio;
+            if (audio.setSinkId && selectedSpeakerId) {
+                audio.setSinkId(selectedSpeakerId).catch(() => {});
+            }
             audio.onended = () => {
                 URL.revokeObjectURL(url);
                 playNextAudioChunk();
@@ -587,6 +632,9 @@ export default function BrainPage() {
                     const url = URL.createObjectURL(blob);
                     const audio = new Audio(url);
                     audioRef.current = audio;
+                    if (audio.setSinkId && selectedSpeakerId) {
+                        audio.setSinkId(selectedSpeakerId).catch(() => {});
+                    }
                     audio.onended = () => {
                         addLog('TTS audio ended');
                         URL.revokeObjectURL(url);
@@ -675,7 +723,10 @@ export default function BrainPage() {
 
         listenSocket.on('connect', async () => {
             addLog(`[v${appVersion}] Vosk WS connected: ${listenSocket.id} | session=${sessionId} | lang=${language}`);
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: selectedMicId ? { deviceId: { exact: selectedMicId } } : true,
+                video: false,
+            });
             const audioCtx = new AudioContext();
             const source = audioCtx.createMediaStreamSource(stream);
             const processor = audioCtx.createScriptProcessor(4096, 1, 1);
@@ -1231,6 +1282,64 @@ export default function BrainPage() {
                                         : 'Call'}
                                 </span>
                             </button>
+
+                            {/* Audio device settings */}
+                            <div className="relative">
+                                <button
+                                    type="button"
+                                    data-device-btn
+                                    onClick={() => setShowDeviceSettings(!showDeviceSettings)}
+                                    title="Select microphone and speaker"
+                                    className={cn(
+                                        'inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm transition-colors',
+                                        showDeviceSettings
+                                            ? 'border-blue-500/40 bg-blue-500/10 text-blue-500'
+                                            : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground',
+                                    )}
+                                >
+                                    <Mic className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Devices</span>
+                                </button>
+                                {showDeviceSettings && (
+                                    <div data-device-panel className="absolute right-0 top-full z-50 mt-2 w-72 rounded-xl border border-border bg-card p-4 shadow-lg">
+                                        <div className="space-y-3 text-sm">
+                                            <label className="block space-y-1">
+                                                <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Microphone</span>
+                                                <select
+                                                    value={selectedMicId}
+                                                    onChange={(e) => {
+                                                        setSelectedMicId(e.target.value);
+                                                        try { localStorage.setItem('keledon_brain_mic_id', e.target.value); } catch {}
+                                                    }}
+                                                    className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-xs outline-none focus:border-primary"
+                                                >
+                                                    <option value="">System default</option>
+                                                    {audioInputDevices.map((d) => (
+                                                        <option key={d.deviceId} value={d.deviceId}>{d.label || `Mic ${d.deviceId.slice(0, 8)}…`}</option>
+                                                    ))}
+                                                </select>
+                                            </label>
+                                            <label className="block space-y-1">
+                                                <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Speaker</span>
+                                                <select
+                                                    value={selectedSpeakerId}
+                                                    onChange={(e) => {
+                                                        setSelectedSpeakerId(e.target.value);
+                                                        try { localStorage.setItem('keledon_brain_speaker_id', e.target.value); } catch {}
+                                                    }}
+                                                    className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-xs outline-none focus:border-primary"
+                                                >
+                                                    <option value="">System default</option>
+                                                    {audioOutputDevices.map((d) => (
+                                                        <option key={d.deviceId} value={d.deviceId}>{d.label || `Speaker ${d.deviceId.slice(0, 8)}…`}</option>
+                                                    ))}
+                                                </select>
+                                            </label>
+                                            <p className="text-[11px] text-muted-foreground">Speaker selection works in Chrome/Edge when using TTS or voice call audio.</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
 
                             {/* Test TTS */}
                             <button
