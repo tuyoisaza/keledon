@@ -93,6 +93,11 @@ export default function BrainPage() {
     const [ttsProvider, setTtsProvider] = useState<string | null>(null);
     const [sttProvider, setSttProvider] = useState<string | null>(null);
     const [teamConfigLoading, setTeamConfigLoading] = useState(false);
+    // API key presence tracking
+    const [llmApiKeySet, setLlmApiKeySet] = useState(false);
+    const [ttsApiKeySet, setTtsApiKeySet] = useState(false);
+    const [sttKeySet, setSttKeySet] = useState(false);
+    const [ttsVoiceId, setTtsVoiceId] = useState<string | null>(null);
 
     function addLog(msg: string) {
         const entry = `[${new Date().toLocaleTimeString()}] ${msg}`;
@@ -237,6 +242,10 @@ export default function BrainPage() {
             setLlmProvider(null);
             setTtsProvider(null);
             setSttProvider(null);
+            setLlmApiKeySet(false);
+            setTtsApiKeySet(false);
+            setSttKeySet(false);
+            setTtsVoiceId(null);
             return;
         }
 
@@ -257,7 +266,17 @@ export default function BrainPage() {
                     setLlmProvider(data.llmProvider || null);
                     setTtsProvider(data.ttsProvider || null);
                     setSttProvider(data.sttProvider || null);
-                    addLog(`Provider config loaded: LLM=${data.llmProvider || '?'} TTS=${data.ttsProvider || '?'} STT=${data.sttProvider || '?'}`);
+                    setTtsVoiceId(data.ttsVoiceId || null);
+                    // Detect API key presence per provider
+                    const llmKey = data.llmProvider === 'openai' ? data.openaiApiKey
+                        : data.llmProvider === 'google' ? data.googleAiApiKey
+                        : data.llmProvider === 'anthropic' ? data.anthropicApiKey
+                        : null;
+                    setLlmApiKeySet(!!llmKey);
+                    setTtsApiKeySet(!!(data.ttsApiKey));
+                    const sttKey = data.sttProvider === 'deepgram' ? data.deepgramApiKey : null;
+                    setSttKeySet(!!sttKey);
+                    addLog(`Provider config loaded: LLM=${data.llmProvider || '?'} (key=${!!llmKey}) TTS=${data.ttsProvider || '?'} (key=${!!data.ttsApiKey}) STT=${data.sttProvider || '?'}`);
                 } else {
                     addLog('Provider config fetch returned no data (maybe auth issue?)');
                 }
@@ -1087,61 +1106,93 @@ export default function BrainPage() {
                         <p className="mt-1 max-w-sm text-muted-foreground">{contextSummary}</p>
                     </div>
                     {/* Provider status indicators */}
-                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border">
-                        {/* AI provider */}
-                        {teamConfigLoading ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-muted/60 text-xs text-muted-foreground">
-                                <Loader2 className="h-3 w-3 animate-spin" />
-                                Loading...
-                            </span>
-                        ) : selectedTeamId ? (
-                            <>
-                                <span
-                                    className={cn(
-                                        "inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium",
-                                        llmProvider
-                                            ? "bg-primary/10 text-primary border border-primary/20"
-                                            : "bg-muted/60 text-muted-foreground border border-border"
-                                    )}
-                                    title="AI / LLM Provider configured in Management > Providers"
-                                >
-                                    <Brain className="h-3 w-3" />
-                                    {llmProvider === 'openai' ? 'GPT-4o' :
-                                     llmProvider === 'google' ? 'Gemini' :
-                                     llmProvider || 'AI: none'}
+
+                    {/* Helper to render a provider row with name + key status */}
+                    {(() => {
+                        const providerRow = (
+                            icon: React.ReactNode,
+                            label: string,
+                            providerName: string | null,
+                            keySet: boolean,
+                            keyLabel: string,
+                            badgeClass: string,
+                        ) => (
+                            <div className="flex items-center justify-between gap-2 px-2 py-1.5 rounded-md bg-muted/30 text-xs">
+                                <span className="flex items-center gap-1.5 font-medium text-foreground">
+                                    {icon}
+                                    {label}
                                 </span>
-                                <span
-                                    className={cn(
-                                        "inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium",
-                                        ttsProvider
-                                            ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
-                                            : "bg-muted/60 text-muted-foreground border border-border"
-                                    )}
-                                    title="TTS Provider configured in Management > Providers"
-                                >
-                                    <Volume2 className="h-3 w-3" />
-                                    {ttsProvider || 'TTS: none'}
+                                <span className="flex items-center gap-1.5">
+                                    <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium ${badgeClass}`}>
+                                        {providerName || 'none'}
+                                    </span>
+                                    <span
+                                        className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] ${
+                                            keySet
+                                                ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                                                : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                                        }`}
+                                        title={keySet ? `${keyLabel} configured` : `${keyLabel} not configured`}
+                                    >
+                                        <span className={`h-1.5 w-1.5 rounded-full ${keySet ? 'bg-green-400' : 'bg-red-400'}`} />
+                                        {keySet ? keyLabel : 'no key'}
+                                    </span>
                                 </span>
-                                <span
-                                    className={cn(
-                                        "inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium",
-                                        sttProvider
-                                            ? "bg-green-500/10 text-green-400 border border-green-500/20"
-                                            : "bg-muted/60 text-muted-foreground border border-border"
-                                    )}
-                                    title="STT Provider configured in Management > Providers"
-                                >
-                                    <Mic className="h-3 w-3" />
-                                    {sttProvider === 'vosk' ? 'Vosk' :
-                                     sttProvider === 'deepgram' ? 'Deepgram' :
-                                     sttProvider === 'webspeech' ? 'Web Speech' :
-                                     sttProvider || 'STT: none'}
-                                </span>
-                            </>
-                        ) : (
-                            <span className="text-xs text-muted-foreground">Select a team to see provider config</span>
-                        )}
-                    </div>
+                            </div>
+                        );
+                        return (
+                            <div className="space-y-1 pt-2 border-t border-border">
+                                <div className="flex items-center justify-between px-1">
+                                    <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Provider Configuration</span>
+                                    <a
+                                        href="/management/providers"
+                                        className="text-[10px] text-primary hover:underline"
+                                        onClick={(e) => { e.preventDefault(); window.open('/management/providers', '_blank'); }}
+                                    >
+                                        Edit in Management →
+                                    </a>
+                                </div>
+                                {teamConfigLoading ? (
+                                    <div className="flex items-center justify-center py-2">
+                                        <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
+                                    </div>
+                                ) : selectedTeamId ? (
+                                    <div className="space-y-1">
+                                        {providerRow(
+                                            <Brain className="h-3 w-3 text-primary" />, 'LLM',
+                                            llmProvider === 'openai' ? 'GPT-4o' :
+                                            llmProvider === 'google' ? 'Gemini' :
+                                            llmProvider === 'anthropic' ? 'Claude' :
+                                            llmProvider || 'none',
+                                            llmApiKeySet, 'key',
+                                            llmProvider ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-muted/60 text-muted-foreground border border-border'
+                                        )}
+                                        {providerRow(
+                                            <Volume2 className="h-3 w-3 text-blue-400" />, 'TTS',
+                                            ttsProvider || 'none', ttsApiKeySet, 'key',
+                                            ttsProvider ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'bg-muted/60 text-muted-foreground border border-border'
+                                        )}
+                                        {providerRow(
+                                            <Mic className="h-3 w-3 text-green-400" />, 'STT',
+                                            sttProvider === 'vosk' ? 'Vosk' :
+                                            sttProvider === 'deepgram' ? 'Deepgram' :
+                                            sttProvider === 'webspeech' ? 'Web Speech' :
+                                            sttProvider || 'none', sttKeySet, 'key',
+                                            sttProvider ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-muted/60 text-muted-foreground border border-border'
+                                        )}
+                                        {ttsVoiceId && (
+                                            <div className="flex items-center justify-between px-2 py-1 text-[10px] text-muted-foreground">
+                                                <span>Voice ID</span>
+                                                <code className="px-1 py-0.5 rounded bg-muted/50 font-mono">{ttsVoiceId}</code>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="px-2 py-1 text-[10px] text-muted-foreground">Select a team to see provider config</div>
+                                )}
+                            </div>
+                        );
+                    })()}
                 </div>
             </div>
 
