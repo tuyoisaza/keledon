@@ -142,12 +142,21 @@ export class LLMService implements OnModuleInit {
           anthropicApiKey: true,
         },
       });
-      if (!team || !team.llmProvider) return null;
+      if (!team) {
+        this.logger.warn(`[LLM] resolveTeamProvider(${teamId}): team not found`);
+        return null;
+      }
+      if (!team.llmProvider) {
+        this.logger.warn(`[LLM] resolveTeamProvider(${teamId}): llmProvider is ${team.llmProvider}`);
+        return null;
+      }
       
       const provider = team.llmProvider as LLMProvider;
-      if (!CONFIGURED_PROVIDERS.includes(provider)) return null;
+      if (!CONFIGURED_PROVIDERS.includes(provider)) {
+        this.logger.warn(`[LLM] resolveTeamProvider(${teamId}): provider ${provider} not in configured list`);
+        return null;
+      }
       
-      // Check if the selected provider has a key configured (either in DB or env)
       const dbApiKey = provider === 'openai' ? team.openaiApiKey
         : provider === 'google' ? team.googleAiApiKey
         : provider === 'anthropic' ? team.anthropicApiKey
@@ -159,11 +168,15 @@ export class LLMService implements OnModuleInit {
           : provider === 'anthropic' ? process.env.ANTHROPIC_API_KEY
           : null);
       
-      if (!effectiveKey && provider !== 'ollama') return null;
+      if (!effectiveKey && provider !== 'ollama') {
+        this.logger.warn(`[LLM] resolveTeamProvider(${teamId}): no effective key for ${provider} (dbApiKey=${!!dbApiKey}, env=not set)`);
+        return null;
+      }
       
+      this.logger.log(`[LLM] resolveTeamProvider(${teamId}): resolved to ${provider} (key=${!!effectiveKey})`);
       return { provider, apiKey: effectiveKey || '' };
     } catch (error) {
-      this.logger.warn(`Failed to resolve team provider for ${teamId}:`, error);
+      this.logger.warn(`[LLM] Failed to resolve team provider for ${teamId}:`, error);
       return null;
     }
   }
