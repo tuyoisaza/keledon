@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { apiFetch } from '@/lib/api-fetch';
 import { useAuth } from '@/context/AuthContext';
+import { getTeams, type Team } from '@/lib/crud-api';
 
 const sttProviderOptions = [
     { id: 'vosk', name: 'Vosk (Local)', description: 'Local STT via Vosk server' },
@@ -27,12 +28,19 @@ const llmOptions = [
 export default function ManagementProvidersPage() {
     const { user } = useAuth();
     const [teamId, setTeamId] = useState<string>('');
+    const [teams, setTeams] = useState<Team[]>([]);
 
     useEffect(() => {
         loadTeamId();
     }, [user]);
 
     const loadTeamId = async () => {
+        // Fetch all available teams
+        try {
+            const allTeams = await getTeams();
+            setTeams(allTeams);
+        } catch { /* ignore */ }
+
         // 1) Try from auth context
         if (user?.teamId || user?.team_id) {
             setTeamId(user.teamId || user.team_id || '');
@@ -40,13 +48,10 @@ export default function ManagementProvidersPage() {
         }
         // 2) Fallback: fetch first available team
         try {
-            const res = await apiFetch('/api/teams');
-            if (res.ok) {
-                const teams = await res.json();
-                if (Array.isArray(teams) && teams.length > 0) {
-                    setTeamId(teams[0].id || teams[0]._id || '');
-                    return;
-                }
+            const allTeams = await getTeams();
+            if (Array.isArray(allTeams) && allTeams.length > 0) {
+                setTeamId(allTeams[0].id || allTeams[0]._id || '');
+                return;
             }
         } catch {
             // ignore
@@ -243,12 +248,28 @@ export default function ManagementProvidersPage() {
                     <Settings className="w-6 h-6" />
                     <h1 className="text-2xl font-bold">Management — Providers</h1>
                 </div>
-                {teamId && (
+                {teamId && teams.length > 0 ? (
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Users className="w-3.5 h-3.5 shrink-0" />
+                        <select
+                            value={teamId}
+                            onChange={(e) => { setTeamId(e.target.value); }}
+                            className="bg-background border border-border rounded px-2 py-1 text-xs font-mono text-foreground focus:outline-none focus:border-primary max-w-[200px]"
+                            title="Select team to configure"
+                        >
+                            {teams.map(t => (
+                                <option key={t.id} value={t.id}>
+                                    {t.name || t.id.slice(0, 12) + '…'}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                ) : teamId ? (
                     <span className="text-xs text-muted-foreground flex items-center gap-1.5">
                         <Users className="w-3.5 h-3.5" />
                         Team: <span className="font-mono text-foreground">{teamId.slice(0, 12)}…</span>
                     </span>
-                )}
+                ) : null}
             </div>
 
             {!teamId && !loading && (
