@@ -178,13 +178,7 @@ async function seedBrandsAndTeams() {
   for (const team of teams) {
     await prisma.team.upsert({
       where: { id: team.id },
-      update: {
-        brandId: team.brandId,
-        name: team.name,
-        country: team.country,
-        sttProvider: team.sttProvider,
-        ttsProvider: team.ttsProvider,
-      },
+      update: {},
       create: team,
     });
   }
