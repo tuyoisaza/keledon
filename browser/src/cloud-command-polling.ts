@@ -3,8 +3,10 @@ import log from 'electron-log';
 import * as cmdlog from './cmdlog.js';
 import { runtimeStatus } from './runtime-state.js';
 import { setMainWindow as setCallMainWindow, startCall, appendTranscript, processDecision, executeRpaFlowFromCommand, closeCall, getCurrentCall } from './call-handler.js';
-import { setMainWindow as setRpaMainWindow } from './rpa-executor.js';
+import { setMainWindow as setRpaMainWindow, executeRpaFlow } from './rpa-executor.js';
 import { startPolling, registerCommandHandler, type BrowserCommand, type CommandResult } from './command-poller.js';
+import { planGoalActions } from './goal-planner.js';
+import type { RpaStep } from './rpa-executor.js';
 
 /**
  * Set up Phase 6 command handlers and start polling.
@@ -89,6 +91,97 @@ export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
         callState: getCurrentCallState(),
         status: runtimeStatus.status,
       },
+      timestamp: new Date().toISOString(),
+    };
+  });
+
+  // ── goal_execute / rpa_execute: accept a natural-language goal → plan → execute steps ──
+  registerCommandHandler('goal_execute', async (command: BrowserCommand): Promise<CommandResult> => {
+    const goal = (command.payload.goal as string) || '';
+    if (!goal.trim()) {
+      cmdlog.log('CMD', `goal_execute (${command.id}) → empty goal, failed`);
+      return { command_id: command.id, status: 'failed', error: 'Empty goal', timestamp: new Date().toISOString() };
+    }
+    const inputs = command.payload.inputs as Record<string, unknown> | undefined;
+    cmdlog.log('CMD', `goal_execute (${command.id}) → goal: "${goal.substring(0, 100)}" | inputs: ${inputs ? Object.keys(inputs).join(',') : 'none'}`);
+
+    // Step 1: Decompose goal into actions using the heuristic planner
+    const actions = planGoalActions(goal, inputs);
+    if (actions.length === 0) {
+      return { command_id: command.id, status: 'failed', error: 'Could not plan goal', timestamp: new Date().toISOString() };
+    }
+    cmdlog.log('CMD', `goal_execute (${command.id}) → ${actions.length} planned steps: ${actions.map(a => a.type).join(', ')}`);
+
+    // Step 2: Map GoalPlannerAction[] → RpaStep[]
+    const rpaSteps: RpaStep[] = actions.map((a, i) => ({
+      step_id: `step-${i + 1}`,
+      action: a.type as RpaStep['action'],
+      selector: a.selector || a.target || undefined,
+      value: a.value,
+      url: a.url,
+      description: a.description || a.type,
+      direction: a.direction,
+      timeout: a.timeout,
+    }));
+
+    // Step 3: Execute via RPA engine
+    const result = await executeRpaFlow({
+      flow_id: `goal-${command.id}`,
+      name: `Goal: ${goal.substring(0, 60)}`,
+      steps: rpaSteps,
+    });
+
+    cmdlog.log('CMD', `goal_execute (${command.id}) → status=${result.status} | steps=${result.steps?.length ?? 0} | duration=${result.total_duration_ms}ms${result.error ? ` error=${result.error}` : ''}`);
+    return {
+      command_id: command.id,
+      status: result.status === 'completed' ? 'success' : 'failed',
+      output: { steps: result.steps, duration_ms: result.total_duration_ms },
+      error: result.error,
+      timestamp: new Date().toISOString(),
+    };
+  });
+
+  // rpa_execute: accept a natural-language goal and execute via goal planner
+  registerCommandHandler('rpa_execute', async (command: BrowserCommand): Promise<CommandResult> => {
+    const goal = (command.payload.goal as string) || '';
+    if (!goal.trim()) {
+      cmdlog.log('CMD', `rpa_execute (${command.id}) → empty goal, failed`);
+      return { command_id: command.id, status: 'failed', error: 'Empty goal', timestamp: new Date().toISOString() };
+    }
+    const inputs = command.payload.inputs as Record<string, unknown> | undefined;
+    cmdlog.log('CMD', `rpa_execute (${command.id}) → goal: "${goal.substring(0, 100)}" | inputs: ${inputs ? Object.keys(inputs).join(',') : 'none'}`);
+
+    // Decompose goal into actions
+    const actions = planGoalActions(goal, inputs);
+    if (actions.length === 0) {
+      return { command_id: command.id, status: 'failed', error: 'Could not plan goal', timestamp: new Date().toISOString() };
+    }
+    cmdlog.log('CMD', `rpa_execute (${command.id}) → ${actions.length} planned steps: ${actions.map(a => a.type).join(', ')}`);
+
+    // Map to RPA steps and execute
+    const rpaSteps: RpaStep[] = actions.map((a, i) => ({
+      step_id: `step-${i + 1}`,
+      action: a.type as RpaStep['action'],
+      selector: a.selector || a.target || undefined,
+      value: a.value,
+      url: a.url,
+      description: a.description || a.type,
+      direction: a.direction,
+      timeout: a.timeout,
+    }));
+
+    const result = await executeRpaFlow({
+      flow_id: `rpa-${command.id}`,
+      name: `RPA: ${goal.substring(0, 60)}`,
+      steps: rpaSteps,
+    });
+
+    cmdlog.log('CMD', `rpa_execute (${command.id}) → status=${result.status} | duration=${result.total_duration_ms}ms`);
+    return {
+      command_id: command.id,
+      status: result.status === 'completed' ? 'success' : 'failed',
+      output: { steps: result.steps, duration_ms: result.total_duration_ms },
+      error: result.error,
       timestamp: new Date().toISOString(),
     };
   });

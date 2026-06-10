@@ -11,7 +11,7 @@ import * as cmdlog from './cmdlog.js';
 
 export interface BrowserCommand {
   id: string;
-  command: 'rpa_execute' | 'call_start' | 'call_transcript' | 'call_decide' | 'call_close' | 'call_escalate' | 'rpa_flow' | 'status_query';
+  command: 'rpa_execute' | 'goal_execute' | 'call_start' | 'call_transcript' | 'call_decide' | 'call_close' | 'call_escalate' | 'rpa_flow' | 'status_query';
   payload: Record<string, unknown>;
   created_at: string;
 }
