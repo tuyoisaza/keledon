@@ -572,7 +572,7 @@ export default function BrainPage() {
         try {
             let blob: Blob | null = null;
             const { apiBase } = await resolveBrainCloudConfig();
-            const res = await apiFetch(`${apiBase}/api/tts/speak`, {
+            const res = await apiFetch(`${apiBase}/tts/speak`, {
                 method: 'POST',
                 body: JSON.stringify({ text, teamId: selectedTeamId }),
                 signal: controller.signal,
@@ -650,7 +650,7 @@ export default function BrainPage() {
         const appVersion = __APP_VERSION__ || '?';
         addLog(`[v${appVersion}] STT provider=vosk → starting Railway Vosk session`);
         const { apiBase, wsBase } = await resolveBrainCloudConfig();
-        const sessionRes = await apiFetch(`${apiBase}/api/listening-sessions`, {
+        const sessionRes = await apiFetch(`${apiBase}/listening-sessions`, {
             method: 'POST',
             body: JSON.stringify({ source: 'brain-call', tabUrl: window.location.href, tabTitle: document.title }),
         });
