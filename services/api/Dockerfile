@@ -3,6 +3,7 @@
 
 FROM node:20-slim AS builder
 WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make gcc g++ && rm -rf /var/lib/apt/lists/*
 COPY package*.json ./
 RUN npm install
 COPY . .
