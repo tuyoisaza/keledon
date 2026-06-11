@@ -879,9 +879,9 @@ export default function BrainPage() {
 
                     const formData = new FormData();
                     formData.append('file', audioBlob, 'recording.webm');
-                    formData.append('model', 'whisper-1');
+                    formData.append('model', 'Systran/faster-distil-whisper-small.en');
                     formData.append('response_format', 'json');
-                    formData.append('language', (sttLangRef.current || navigator.language || 'en').split('-')[0]);
+                    formData.append('language', 'en');
 
                     const res = await apiFetch(`/api/teams/${selectedTeamId}/speaches/transcriptions`, {
                         method: 'POST',
@@ -1199,7 +1199,7 @@ export default function BrainPage() {
         try {
             const { apiBase } = await resolveBrainCloudConfig();
             const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 8000);
+            const timeout = setTimeout(() => controller.abort(), 30000);
             const res = await apiFetch(`${apiBase}/tts/speak`, {
                 method: 'POST',
                 body: JSON.stringify({ text: 'Hello, this is a TTS test.', teamId: selectedTeamId }),
@@ -1224,7 +1224,7 @@ export default function BrainPage() {
         } catch (err: any) {
             if (err?.name === 'AbortError') {
                 setTtsTestStatus('fail');
-                addLog(`[TEST] TTS: FAIL ❌ timeout (8s) - server did not respond`);
+                addLog(`[TEST] TTS: FAIL ❌ timeout (30s) - server did not respond`);
             } else {
                 setTtsTestStatus('fail');
                 addLog(`[TEST] TTS: FAIL ❌ ${err instanceof Error ? err.message : String(err)}`);
@@ -1267,7 +1267,7 @@ export default function BrainPage() {
             } else if (sttProvider === 'speaches') {
                 const formData = new FormData();
                 formData.append('file', makeTestWavBlob(), 'brain-stt-test.wav');
-                formData.append('model', 'whisper-1');
+                formData.append('model', 'Systran/faster-distil-whisper-small.en');
                 formData.append('response_format', 'json');
                 formData.append('language', 'en');
                 const res = await apiFetch(`/api/teams/${selectedTeamId}/speaches/transcriptions`, {

@@ -79,7 +79,9 @@ export class SpeachesController {
 
     const form = new FormData();
     form.append('file', new Blob([file.buffer], { type: file.mimetype || 'audio/webm' }), file.originalname || 'recording.webm');
-    form.append('model', body.model || 'whisper-1');
+    const requestedModel = body.model || 'Systran/faster-distil-whisper-small.en';
+    const speachesModel = requestedModel === 'whisper-1' ? 'Systran/faster-distil-whisper-small.en' : requestedModel;
+    form.append('model', speachesModel);
     form.append('response_format', body.response_format || 'json');
     if (body.language) form.append('language', body.language);
 
