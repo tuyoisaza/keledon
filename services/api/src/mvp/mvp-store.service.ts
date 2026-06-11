@@ -208,7 +208,7 @@ export class MvpStoreService {
       {
         id: 'speaches-tts',
         type: 'tts',
-        name: 'Speaches TTS',
+        name: 'Speaches',
         description: 'Self-hosted OpenAI-compatible text-to-speech via /v1/audio/speech',
         status: 'production',
         is_enabled: true,
