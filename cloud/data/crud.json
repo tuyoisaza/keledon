@@ -1,0 +1,63 @@
+{
+  "companies": [
+    {
+      "name": "PepsiCo",
+      "industry": "Food & Beverage"
+    },
+    {
+      "name": "Stellantis",
+      "industry": "Automotive"
+    }
+  ],
+  "brands": [
+    {
+      "name": "Cheetos",
+      "company_name": "PepsiCo",
+      "color": "#FF6B00"
+    },
+    {
+      "name": "Jeep",
+      "company_name": "Stellantis",
+      "color": "#000000"
+    }
+  ],
+  "teams": [
+    {
+      "name": "PepsiCo US",
+      "brand_name": "Cheetos",
+      "country": "US",
+      "stt_provider": "vosk",
+      "tts_provider": "elevenlabs"
+    },
+    {
+      "name": "PepsiCo Mexico",
+      "brand_name": "Cheetos",
+      "country": "MX",
+      "stt_provider": "vosk",
+      "tts_provider": "elevenlabs"
+    },
+    {
+      "name": "Stellantis US",
+      "brand_name": "Jeep",
+      "country": "US",
+      "stt_provider": "vosk",
+      "tts_provider": "elevenlabs"
+    },
+    {
+      "name": "Stellantis Mexico",
+      "brand_name": "Jeep",
+      "country": "MX",
+      "stt_provider": "vosk",
+      "tts_provider": "elevenlabs"
+    }
+  ],
+  "users": [
+    {
+      "email": "thetboard@gmail.com",
+      "name": "Tuyo Isaza",
+      "role": "superadmin",
+      "company_name": "PepsiCo",
+      "team_name": "PepsiCo US"
+    }
+  ]
+}
