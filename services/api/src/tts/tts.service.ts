@@ -390,7 +390,7 @@ export class TTSService {
           model: 'speaches-ai/Kokoro-82M-v1.0-ONNX',
           input: text,
           voice,
-          response_format: 'mp3',
+          response_format: 'wav',
         }),
       });
 

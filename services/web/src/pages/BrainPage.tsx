@@ -648,11 +648,15 @@ export default function BrainPage() {
             if (controller.signal.aborted) return;
 
             if (res.ok) {
-                blob = await res.blob();
-                addLog('TTS fetch OK status=' + res.status + ' blobSize=' + blob.size);
+                const contentType = res.headers.get('content-type') || 'audio/wav';
+                const arrayBuffer = await res.arrayBuffer();
+                blob = new Blob([arrayBuffer], { type: contentType.includes('audio/') ? contentType : 'audio/wav' });
+                addLog('TTS fetch OK status=' + res.status + ' contentType=' + blob.type + ' blobSize=' + blob.size);
                 if (!controller.signal.aborted && blob.size > 100) {
                     const url = URL.createObjectURL(blob);
-                    const audio = new Audio(url);
+                    const audio = new Audio();
+                    audio.preload = 'auto';
+                    audio.src = url;
                     audioRef.current = audio;
                     if (audio.setSinkId && selectedSpeakerId) {
                         audio.setSinkId(selectedSpeakerId).catch(() => {});
