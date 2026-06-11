@@ -1,6 +1,9 @@
 # Stage 1: Build
 FROM node:20-bookworm AS builder
 
+ARG CACHEBUST
+RUN echo "Build $CACHEBUST"
+
 WORKDIR /app
 
 # Copy root-level contracts folder (needed for C13 sentinel)
