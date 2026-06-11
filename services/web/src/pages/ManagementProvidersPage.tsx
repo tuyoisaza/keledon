@@ -16,6 +16,7 @@ const sttProviderOptions = [
 const ttsProviderOptions = [
     { id: 'elevenlabs', name: 'ElevenLabs', description: 'Cloud TTS via ElevenLabs API', needsKey: true },
     { id: 'openai-tts', name: 'OpenAI TTS', description: 'Cloud TTS via OpenAI API', needsKey: true },
+    { id: 'speaches', name: 'Speaches', description: 'OpenAI-compatible TTS via Speaches /v1/audio/speech', needsKey: false },
     { id: 'kokoro', name: 'Kokoro TTS', description: 'Self-hosted on Railway (no API key needed)', needsKey: false },
     { id: 'coqui', name: 'Coqui XTTS-v2', description: 'Local Coqui XTTS-v2', needsKey: false },
     { id: 'webspeech', name: 'Browser Speech', description: 'Browser-native speech synthesis', needsKey: false },
