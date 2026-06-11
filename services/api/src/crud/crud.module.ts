@@ -6,10 +6,11 @@ import { CrudAuditService } from './crud-audit.service';
 import { CrudSeedService } from './crud-seed.service';
 import { CrudCompanyService } from './crud-company.service';
 import { CrudVendorService } from './crud-vendor.service';
+import { TenantController } from '../controllers/tenant.controller';
 import { WebhookGuard } from '../guards/webhook.guard';
 
 @Module({
-  controllers: [CrudController],
+  controllers: [CrudController, TenantController],
   providers: [CrudService, CrudKeledonService, CrudAuditService, CrudSeedService, CrudCompanyService, CrudVendorService, WebhookGuard],
   exports: [CrudService, CrudKeledonService, CrudAuditService, CrudSeedService, CrudCompanyService, CrudVendorService],
 })
