@@ -12,6 +12,7 @@ import {
 import { CrudService } from './crud.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { WebhookGuard } from '../guards/webhook.guard';
+import { Public } from '../guards/public.decorator';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('CRUD')
@@ -505,6 +506,7 @@ export class CrudController {
 
   // ========== WEBHOOK ==========
 
+  @Public()
   @UseGuards(WebhookGuard)
   @Post('webhook')
   async webhook(@Body() body: any) {
