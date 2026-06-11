@@ -274,10 +274,12 @@ export default function BrainPage() {
                         : data.llmProvider === 'anthropic' ? data.anthropicApiKey
                         : null;
                     setLlmApiKeySet(!!llmKey);
-                    setTtsApiKeySet(!!(data.ttsApiKey));
-                    const sttKey = data.sttProvider === 'deepgram' ? data.deepgramApiKey : null;
+                    setTtsApiKeySet(!!(data.ttsApiKey || (data.ttsProvider === 'speaches' ? data.speachesApiKey : null)));
+                    const sttKey = data.sttProvider === 'deepgram' ? data.deepgramApiKey
+                        : data.sttProvider === 'speaches' ? data.speachesApiKey
+                        : null;
                     setSttKeySet(!!sttKey);
-                    addLog(`Provider config loaded: LLM=${data.llmProvider || '?'} (key=${!!llmKey}) TTS=${data.ttsProvider || '?'} (key=${!!data.ttsApiKey}) STT=${data.sttProvider || '?'}`);
+                    addLog(`Provider config loaded: LLM=${data.llmProvider || '?'} (key=${!!llmKey}) TTS=${data.ttsProvider || '?'} (key=${!!(data.ttsApiKey || (data.ttsProvider === 'speaches' ? data.speachesApiKey : null))}) STT=${data.sttProvider || '?'} (key=${!!sttKey})`);
                 } else {
                     addLog('Provider config fetch returned no data (maybe auth issue?)');
                 }
@@ -881,12 +883,8 @@ export default function BrainPage() {
                     formData.append('response_format', 'json');
                     formData.append('language', (sttLangRef.current || navigator.language || 'en').split('-')[0]);
 
-                    const headers: Record<string, string> = {};
-                    if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
-
-                    const res = await fetch(`${apiUrl}/v1/audio/transcriptions`, {
+                    const res = await apiFetch(`/api/teams/${selectedTeamId}/speaches/transcriptions`, {
                         method: 'POST',
-                        headers,
                         body: formData,
                     });
 
@@ -902,7 +900,7 @@ export default function BrainPage() {
                             } else if (conversationModeRef.current) {
                                 // Auto-submit in conversation mode
                                 addLog('→ auto-submit (speaches)');
-                                handleSend(true);
+                                handleSend(text);
                             }
                         }
                     } else {

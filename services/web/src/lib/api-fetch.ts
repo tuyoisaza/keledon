@@ -20,11 +20,13 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}): Pro
   const url = endpoint.startsWith('http')
     ? endpoint
     : `${API_URL}${endpoint}`;
+  const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+  const defaultHeaders = isFormData ? {} : { 'Content-Type': 'application/json' };
 
   return fetch(url, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
+      ...defaultHeaders,
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },

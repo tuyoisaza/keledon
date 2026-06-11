@@ -27,6 +27,7 @@ import { DeviceController } from './devices/device.controller';
 import { LLMModule } from './llm/llm.module';
 import { BrainController } from './controllers/brain.controller';
 import { PlannerController } from './controllers/planner.controller';
+import { SpeachesController } from './controllers/speaches.controller';
 import { VoiceModule } from './voice/voice.module';
 import { STTModule } from './stt/stt.module';
 import { AppConfigModule } from './config/config.module';
@@ -75,6 +76,7 @@ import { EscalationModule } from './modules/escalation.module';
     DeviceController,
     BrainController,
     PlannerController,
+    SpeachesController,
   ],
   providers: [
     AppService,
