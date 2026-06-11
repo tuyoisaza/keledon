@@ -1115,13 +1115,47 @@ export default function BrainPage() {
 
     // ── Provider Test Functions ──
 
+    type ProviderTestStatus = 'idle' | 'running' | 'pass' | 'fail' | 'warn';
     const [testingLLM, setTestingLLM] = useState(false);
     const [testingTTS, setTestingTTS] = useState(false);
     const [testingSTT, setTestingSTT] = useState(false);
+    const [llmTestStatus, setLlmTestStatus] = useState<ProviderTestStatus>('idle');
+    const [ttsTestStatus, setTtsTestStatus] = useState<ProviderTestStatus>('idle');
+    const [sttTestStatus, setSttTestStatus] = useState<ProviderTestStatus>('idle');
+
+    function makeTestWavBlob(): Blob {
+        const sampleRate = 16000;
+        const durationSeconds = 0.5;
+        const sampleCount = Math.floor(sampleRate * durationSeconds);
+        const buffer = new ArrayBuffer(44 + sampleCount * 2);
+        const view = new DataView(buffer);
+        const writeString = (offset: number, value: string) => {
+            for (let i = 0; i < value.length; i++) view.setUint8(offset + i, value.charCodeAt(i));
+        };
+        writeString(0, 'RIFF');
+        view.setUint32(4, 36 + sampleCount * 2, true);
+        writeString(8, 'WAVE');
+        writeString(12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, 1, true);
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, sampleRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+        writeString(36, 'data');
+        view.setUint32(40, sampleCount * 2, true);
+        for (let i = 0; i < sampleCount; i++) {
+            const sample = Math.sin((2 * Math.PI * 440 * i) / sampleRate) * 0.25;
+            view.setInt16(44 + i * 2, Math.max(-1, Math.min(1, sample)) * 0x7fff, true);
+        }
+        return new Blob([buffer], { type: 'audio/wav' });
+    }
 
     async function testLLMProvider() {
         if (!selectedTeamId || testingLLM) return;
         setTestingLLM(true);
+        setLlmTestStatus('running');
         const testMsg = 'Reply with exactly one word: WORKING';
         const tid = selectedTeam?.id || selectedTeamId || '(none)';
         addLog(`[TEST] LLM: sending to ${llmProvider || '?'} teamId=${tid}...`);
@@ -1140,14 +1174,18 @@ export default function BrainPage() {
             const reply = (response.reply || '').trim();
             addLog(`[TEST] LLM: response (${reply.length} chars): "${reply.substring(0, 120)}"`);
             if (reply.toLowerCase().includes('working')) {
-                addLog(`[TEST] LLM: ✅ reply contains "WORKING" - Gemini is responding`);
+                setLlmTestStatus('pass');
+                addLog(`[TEST] LLM: PASS ✅ reply contains "WORKING" - configured provider is responding`);
             } else if (reply.startsWith('I understand')) {
-                addLog(`[TEST] LLM: ❌ FALLBACK detected - LLM provider resolved to 'none'`);
+                setLlmTestStatus('fail');
+                addLog(`[TEST] LLM: FAIL ❌ fallback response detected - configured provider did not answer`);
             } else {
-                addLog(`[TEST] LLM: ⚠️ response received but unexpected content`);
+                setLlmTestStatus('warn');
+                addLog(`[TEST] LLM: WARN ⚠️ response received but unexpected content`);
             }
         } catch (err) {
-            addLog(`[TEST] LLM: ❌ ${err instanceof Error ? err.message : String(err)}`);
+            setLlmTestStatus('fail');
+            addLog(`[TEST] LLM: FAIL ❌ ${err instanceof Error ? err.message : String(err)}`);
         } finally {
             setTestingLLM(false);
         }
@@ -1156,6 +1194,7 @@ export default function BrainPage() {
     async function testTTSProvider() {
         if (!selectedTeamId || testingTTS) return;
         setTestingTTS(true);
+        setTtsTestStatus('running');
         addLog(`[TEST] TTS: testing ${ttsProvider || '?'}...`);
         try {
             const { apiBase } = await resolveBrainCloudConfig();
@@ -1169,18 +1208,26 @@ export default function BrainPage() {
             clearTimeout(timeout);
             if (res.ok) {
                 const blob = await res.blob();
-                addLog(`[TEST] TTS: ✅ HTTP ${res.status} blob=${blob.size} bytes`);
-                if (blob.size > 200) addLog(`[TEST] TTS: ✅ audio content received`);
-                else addLog(`[TEST] TTS: ⚠️ blob small (${blob.size} bytes), may be empty audio`);
+                addLog(`[TEST] TTS: HTTP ${res.status} blob=${blob.size} bytes`);
+                if (blob.size > 200) {
+                    setTtsTestStatus('pass');
+                    addLog(`[TEST] TTS: PASS ✅ audio content received`);
+                } else {
+                    setTtsTestStatus('fail');
+                    addLog(`[TEST] TTS: FAIL ❌ empty/small audio blob (${blob.size} bytes)`);
+                }
             } else {
                 const text = await res.text().catch(() => '');
-                addLog(`[TEST] TTS: ❌ HTTP ${res.status}: ${text.substring(0, 300)}`);
+                setTtsTestStatus('fail');
+                addLog(`[TEST] TTS: FAIL ❌ HTTP ${res.status}: ${text.substring(0, 300)}`);
             }
         } catch (err: any) {
             if (err?.name === 'AbortError') {
-                addLog(`[TEST] TTS: ❌ timeout (8s) - server did not respond`);
+                setTtsTestStatus('fail');
+                addLog(`[TEST] TTS: FAIL ❌ timeout (8s) - server did not respond`);
             } else {
-                addLog(`[TEST] TTS: ❌ ${err instanceof Error ? err.message : String(err)}`);
+                setTtsTestStatus('fail');
+                addLog(`[TEST] TTS: FAIL ❌ ${err instanceof Error ? err.message : String(err)}`);
             }
         } finally {
             setTestingTTS(false);
@@ -1190,6 +1237,7 @@ export default function BrainPage() {
     async function testSTTProvider() {
         if (!selectedTeamId || testingSTT) return;
         setTestingSTT(true);
+        setSttTestStatus('running');
         addLog(`[TEST] STT: testing ${sttProvider || '?'}...`);
         try {
             if (sttProvider === 'vosk') {
@@ -1200,39 +1248,51 @@ export default function BrainPage() {
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    addLog(`[TEST] STT: ✅ Vosk session created: ${data.sessionId}`);
+                    setSttTestStatus('pass');
+                    addLog(`[TEST] STT: PASS ✅ Vosk session created: ${data.sessionId}`);
                 } else {
                     const text = await res.text().catch(() => '');
-                    addLog(`[TEST] STT: ❌ Vosk session failed HTTP ${res.status}: ${text.substring(0, 300)}`);
+                    setSttTestStatus('fail');
+                    addLog(`[TEST] STT: FAIL ❌ Vosk session failed HTTP ${res.status}: ${text.substring(0, 300)}`);
                 }
             } else if (sttProvider === 'webspeech') {
                 const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-                if (SR) addLog(`[TEST] STT: ✅ Web Speech API available`);
-                else addLog(`[TEST] STT: ❌ Web Speech API not available in this browser`);
+                if (SR) {
+                    setSttTestStatus('pass');
+                    addLog(`[TEST] STT: PASS ✅ Web Speech API available`);
+                } else {
+                    setSttTestStatus('fail');
+                    addLog(`[TEST] STT: FAIL ❌ Web Speech API not available in this browser`);
+                }
             } else if (sttProvider === 'speaches') {
-                const { apiBase } = await resolveBrainCloudConfig();
-                const cfgRes = await apiFetch(`${apiBase}/teams/${selectedTeamId}/config`);
-                const cfg = cfgRes.ok ? await cfgRes.json() : {};
-                const speachesUrl = cfg.speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
-                addLog(`[TEST] STT: Speaches server: ${speachesUrl}`);
-                try {
-                    const hRes = await fetch(`${speachesUrl}/health`, { signal: AbortSignal.timeout(5000) });
-                    if (hRes.ok) {
-                        addLog(`[TEST] STT: ✅ Speaches health OK`);
-                    } else {
-                        const txt = await hRes.text().catch(() => '');
-                        addLog(`[TEST] STT: ⚠️ Speaches health: HTTP ${hRes.status} ${txt.substring(0, 100)}`);
-                    }
-                } catch (err) {
-                    addLog(`[TEST] STT: ❌ Speaches unreachable: ${err instanceof Error ? err.message : String(err)}`);
+                const formData = new FormData();
+                formData.append('file', makeTestWavBlob(), 'brain-stt-test.wav');
+                formData.append('model', 'whisper-1');
+                formData.append('response_format', 'json');
+                formData.append('language', 'en');
+                const res = await apiFetch(`/api/teams/${selectedTeamId}/speaches/transcriptions`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                if (res.ok) {
+                    const data = await res.json().catch(() => ({}));
+                    setSttTestStatus('pass');
+                    addLog(`[TEST] STT: PASS ✅ Speaches proxy transcription OK (${(data.text || '').substring(0, 80) || 'no speech text from synthetic test audio'})`);
+                } else {
+                    const txt = await res.text().catch(() => '');
+                    setSttTestStatus('fail');
+                    addLog(`[TEST] STT: FAIL ❌ Speaches proxy HTTP ${res.status}: ${txt.substring(0, 300)}`);
                 }
             } else if (sttProvider) {
-                addLog(`[TEST] STT: ⚠️ no automated test for ${sttProvider}`);
+                setSttTestStatus('warn');
+                addLog(`[TEST] STT: WARN ⚠️ no automated test for ${sttProvider}`);
             } else {
-                addLog(`[TEST] STT: ❌ no STT provider configured`);
+                setSttTestStatus('fail');
+                addLog(`[TEST] STT: FAIL ❌ no STT provider configured`);
             }
         } catch (err) {
-            addLog(`[TEST] STT: ❌ ${err instanceof Error ? err.message : String(err)}`);
+            setSttTestStatus('fail');
+            addLog(`[TEST] STT: FAIL ❌ ${err instanceof Error ? err.message : String(err)}`);
         } finally {
             setTestingSTT(false);
         }
@@ -1387,7 +1447,18 @@ export default function BrainPage() {
                             badgeClass: string,
                             onTest?: () => void,
                             testing?: boolean,
-                        ) => (
+                            testStatus: ProviderTestStatus = 'idle',
+                        ) => {
+                            const statusMeta = testStatus === 'pass'
+                                ? { label: 'PASS', cls: 'bg-green-500/10 text-green-400 border-green-500/20', dot: 'bg-green-400' }
+                                : testStatus === 'fail'
+                                    ? { label: 'FAIL', cls: 'bg-red-500/10 text-red-400 border-red-500/20', dot: 'bg-red-400' }
+                                    : testStatus === 'warn'
+                                        ? { label: 'WARN', cls: 'bg-yellow-500/10 text-yellow-300 border-yellow-500/20', dot: 'bg-yellow-300' }
+                                        : testStatus === 'running'
+                                            ? { label: 'RUNNING', cls: 'bg-blue-500/10 text-blue-300 border-blue-500/20', dot: 'bg-blue-300 animate-pulse' }
+                                            : { label: 'UNTESTED', cls: 'bg-muted/40 text-muted-foreground border-border', dot: 'bg-muted-foreground' };
+                            return (
                             <div className="flex items-center justify-between gap-2 px-2 py-1.5 rounded-md bg-muted/30 text-xs">
                                 <span className="flex items-center gap-1.5 font-medium text-foreground">
                                     {icon}
@@ -1407,6 +1478,13 @@ export default function BrainPage() {
                                     >
                                         <span className={`h-1.5 w-1.5 rounded-full ${keySet ? 'bg-green-400' : 'bg-red-400'}`} />
                                         {keySet ? keyLabel : 'no key'}
+                                    </span>
+                                    <span
+                                        className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] border ${statusMeta.cls}`}
+                                        title={`${label} test status: ${statusMeta.label}`}
+                                    >
+                                        <span className={`h-1.5 w-1.5 rounded-full ${statusMeta.dot}`} />
+                                        {statusMeta.label}
                                     </span>
                                     {onTest && (
                                         <button
@@ -1429,6 +1507,7 @@ export default function BrainPage() {
                                 </span>
                             </div>
                         );
+                        };
                         return (
                             <div className="space-y-1 pt-2 border-t border-border">
                                 <div className="flex items-center justify-between px-1">
@@ -1479,13 +1558,13 @@ export default function BrainPage() {
                                             llmProvider || 'none',
                                             llmApiKeySet, 'key',
                                             llmProvider ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-muted/60 text-muted-foreground border border-border',
-                                            testLLMProvider, testingLLM
+                                            testLLMProvider, testingLLM, llmTestStatus
                                         )}
                                         {providerRow(
                                             <Volume2 className="h-3 w-3 text-blue-400" />, 'TTS',
                                             ttsProvider || 'none', ttsApiKeySet, 'key',
                                             ttsProvider ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'bg-muted/60 text-muted-foreground border border-border',
-                                            testTTSProvider, testingTTS
+                                            testTTSProvider, testingTTS, ttsTestStatus
                                         )}
                                         {providerRow(
                                             <Mic className="h-3 w-3 text-green-400" />, 'STT',
@@ -1495,7 +1574,7 @@ export default function BrainPage() {
                                             sttProvider === 'webspeech' ? 'Web Speech' :
                                             sttProvider || 'none', sttKeySet, 'key',
                                             sttProvider ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-muted/60 text-muted-foreground border border-border',
-                                            testSTTProvider, testingSTT
+                                            testSTTProvider, testingSTT, sttTestStatus
                                         )}
                                         {ttsVoiceId && (
                                             <div className="flex items-center justify-between px-2 py-1 text-[10px] text-muted-foreground">

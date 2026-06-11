@@ -24,19 +24,20 @@ export class TTSService {
     console.log('[TTS] TTSService initialized');
   }
 
-  private async resolveTTSConfig(teamId?: string): Promise<{ providerId: string; apiKey: string; voiceId: string }> {
+  private async resolveTTSConfig(teamId?: string): Promise<{ providerId: string; apiKey: string; voiceId: string; apiUrl?: string }> {
     // Try DB first if teamId provided
     if (teamId) {
       try {
         const team = await this.prisma.team.findUnique({
           where: { id: teamId },
-          select: { ttsProvider: true, ttsApiKey: true, ttsVoiceId: true },
+          select: { ttsProvider: true, ttsApiKey: true, ttsVoiceId: true, ttsEndpointUrl: true, speachesApiUrl: true, speachesApiKey: true },
         });
         if (team?.ttsProvider) {
           return {
             providerId: team.ttsProvider,
-            apiKey: team.ttsApiKey || '',
+            apiKey: team.ttsProvider === 'speaches' ? (team.speachesApiKey || team.ttsApiKey || '') : (team.ttsApiKey || ''),
             voiceId: team.ttsVoiceId || '',
+            apiUrl: team.ttsProvider === 'speaches' ? (team.speachesApiUrl || team.ttsEndpointUrl || undefined) : (team.ttsEndpointUrl || undefined),
           };
         }
       } catch (e) {
@@ -86,6 +87,11 @@ export class TTSService {
         const baseUrl = apiKeyFromStore || 'https://kokoro-api-production-0bfa.up.railway.app';
         const voice = ttsConfig.voiceId || 'ef_dora';
         return await this.speakWithKokoro(text, baseUrl, voice);
+      } else if (provider === 'speaches') {
+        const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
+        const baseUrl = speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
+        const voice = ttsConfig.voiceId || 'ef_dora';
+        return await this.speakWithSpeaches(text, baseUrl, apiKeyFromStore || process.env.SPEACHES_API_KEY || '', voice);
       } else if (provider === 'elevenlabs') {
         return await this.speakWithElevenLabs(text, options);
       } else if (provider === 'openai') {
@@ -138,6 +144,15 @@ export class TTSService {
       if (result.audioData && result.audioData.length > 0) {
         // Kokoro returns a complete WAV file. Do not split WAV bytes into arbitrary
         // chunks: each browser Audio() playback needs the RIFF header.
+        onChunk(result.audioData.toString('base64'));
+      }
+      return result;
+    } else if (provider === 'speaches') {
+      const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
+      const baseUrl = speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
+      const voice = ttsConfig.voiceId || 'ef_dora';
+      const result = await this.speakWithSpeaches(text, baseUrl, apiKeyFromStore || process.env.SPEACHES_API_KEY || '', voice);
+      if (result.audioData && result.audioData.length > 0) {
         onChunk(result.audioData.toString('base64'));
       }
       return result;
@@ -354,6 +369,49 @@ export class TTSService {
       return { audioData, duration: duration || duration2 };
     } catch (error: any) {
       console.error('[TTS] Kokoro error:', error.message);
+      return { error: error.message };
+    }
+  }
+
+
+  async speakWithSpeaches(
+    text: string,
+    baseUrl: string,
+    apiKey: string,
+    voice: string,
+  ): Promise<TTSResult> {
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (apiKey) headers.Authorization = `Bearer ${apiKey}`;
+      const response = await fetch(`${baseUrl.replace(/\/+$/, '')}/v1/audio/speech`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          model: 'speaches-ai/Kokoro-82M-v1.0-ONNX',
+          input: text,
+          voice,
+          response_format: 'mp3',
+        }),
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        console.error(`[TTS] Speaches error (${response.status}): ${errText}`);
+        return { error: `Speaches API returned ${response.status}: ${errText.substring(0, 200)}` };
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      const audioData = Buffer.from(arrayBuffer);
+      const duration = this.estimateDuration(audioData.length);
+      console.log(
+        `[TTS] Speaches generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio (voice: ${voice})`,
+      );
+      if (audioData.length === 0) {
+        return { error: 'Speaches returned empty audio' };
+      }
+      return { audioData, duration };
+    } catch (error: any) {
+      console.error('[TTS] Speaches error:', error.message);
       return { error: error.message };
     }
   }
