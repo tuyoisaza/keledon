@@ -235,6 +235,18 @@ export class LLMService implements OnModuleInit {
       }
     } catch (error) {
       this.logger.error(`LLM [${activeProvider}] error:`, error);
+      if (activeProvider !== 'openai' && process.env.OPENAI_API_KEY) {
+        try {
+          this.logger.warn(`[LLM] ${activeProvider} failed; retrying with OpenAI fallback`);
+          return await this.generateWithOpenAI(
+            { ...request, model: 'gpt-4o-mini' },
+            systemPrompt,
+            process.env.OPENAI_API_KEY,
+          );
+        } catch (fallbackError) {
+          this.logger.error('LLM [openai-fallback] error:', fallbackError);
+        }
+      }
       return {
         text: this.generateFallback(request.prompt),
         finishReason: 'content_filter',
