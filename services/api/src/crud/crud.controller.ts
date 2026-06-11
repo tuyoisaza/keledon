@@ -7,9 +7,11 @@ import {
   Body,
   Param,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CrudService } from './crud.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { WebhookGuard } from '../guards/webhook.guard';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('CRUD')
@@ -499,5 +501,61 @@ export class CrudController {
   @Delete('vendors/:id')
   deleteVendor(@Param('id') id: string) {
     return this.crud.deleteVendor(id);
+  }
+
+  // ========== WEBHOOK ==========
+
+  @UseGuards(WebhookGuard)
+  @Post('webhook')
+  async webhook(@Body() body: any) {
+    const { action, data } = body;
+
+    if (action === 'seed') {
+      return this.webhookSeed(data);
+    }
+    if (action === 'migrate') {
+      return this.webhookMigrate();
+    }
+    return { status: 'error', message: 'Unknown action. Use "seed" or "migrate".' };
+  }
+
+  private async webhookSeed(seedData?: any) {
+    // If seedData is provided, save to crud.json and seed from it
+    if (seedData?.companies) {
+      const fs = require('fs');
+      const path = require('path');
+      const dataDir = path.resolve(__dirname, '../../data');
+      fs.mkdirSync(dataDir, { recursive: true });
+      fs.writeFileSync(path.join(dataDir, 'crud.json'), JSON.stringify(seedData, null, 2));
+    }
+
+    return this.crud.seedFromFile('crud.json');
+  }
+
+  private async webhookMigrate() {
+    try {
+      await this.prisma.$executeRaw`
+        CREATE TABLE IF NOT EXISTS "vendors" (
+          "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          "teamId" UUID NOT NULL REFERENCES "teams"("id") ON DELETE CASCADE,
+          "name" VARCHAR(255) NOT NULL,
+          "type" VARCHAR(50) NOT NULL DEFAULT 'other',
+          "baseUrl" TEXT,
+          "username" TEXT,
+          "password" TEXT,
+          "apiKey" TEXT,
+          "config" JSONB,
+          "isActive" BOOLEAN DEFAULT true,
+          "startGoal" TEXT,
+          "createdAt" TIMESTAMP DEFAULT now(),
+          "updatedAt" TIMESTAMP DEFAULT now()
+        )
+      `;
+      await this.prisma
+        .$executeRaw`CREATE INDEX IF NOT EXISTS "vendors_teamId_idx" ON "vendors"("teamId")`;
+      return { success: true, message: 'Migration webhook: vendors table ensured' };
+    } catch (error) {
+      return { success: false, message: 'Migration webhook failed', error: error.message };
+    }
   }
 }

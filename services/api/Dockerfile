@@ -2,6 +2,10 @@
 # Build context is services/api/ via `railway up ./services/api --path-as-root`
 
 FROM node:20-slim AS builder
+
+ARG CACHEBUST
+RUN echo "Build $CACHEBUST"
+
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
