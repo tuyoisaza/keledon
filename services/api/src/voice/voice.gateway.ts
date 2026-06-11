@@ -249,8 +249,12 @@ export class VoiceGateway
       const brainApiUrl = `http://localhost:${apiPort}/api/brain/chat`;
       const context = session.context;
       const authToken = client.handshake.auth?.token;
+      const voiceModeMessage = [
+        'VOICE MODE INSTRUCTION: Answer like a live phone conversation. Keep it brief: one short sentence unless the user explicitly asks for detail. Do not explain your reasoning. User said:',
+        userMessage,
+      ].join('\n');
       const brainPayload = {
-        message: userMessage,
+        message: voiceModeMessage,
         companyId: context?.companyId,
         companyName: context?.companyName || 'Unspecified Company',
         brandId: context?.brandId,
@@ -310,7 +314,7 @@ export class VoiceGateway
           client.emit('voice:audio', {
             audio: chunkBase64,
             sequence: 'chunk',
-            format: 'mp3',
+            format: 'wav',
           });
         },
         { interruptible: true, teamId: session.context?.teamId },
@@ -322,7 +326,7 @@ export class VoiceGateway
 
       client.emit('voice:audio', {
         sequence: 'end',
-        format: 'mp3',
+        format: 'wav',
         duration: streamResult.duration,
         apiVersion: getApiVersion(),
       });
@@ -366,7 +370,7 @@ export class VoiceGateway
           client.emit('voice:audio', {
             audio: result.audioData.toString('base64'),
             duration: result.duration,
-            format: 'mp3',
+            format: 'wav',
             sequence: 'single',
           });
 

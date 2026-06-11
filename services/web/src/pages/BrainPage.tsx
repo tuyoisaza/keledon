@@ -125,6 +125,12 @@ export default function BrainPage() {
     const listenAudioContextRef = useRef<AudioContext | null>(null);
     const listenSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
     const listenProcessorRef = useRef<ScriptProcessorNode | null>(null);
+    const speachesVadContextRef = useRef<AudioContext | null>(null);
+    const speachesVadSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+    const speachesVadProcessorRef = useRef<ScriptProcessorNode | null>(null);
+    const speachesStopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const provisionalRecognitionRef = useRef<any>(null);
+    const provisionalTextRef = useRef('');
     const cloudApiBaseRef = useRef<string | null>(null);
     const cloudWsBaseRef = useRef<string | null>(null);
 
@@ -346,6 +352,8 @@ export default function BrainPage() {
         return () => {
             addLog(`[v${__APP_VERSION__ || '?'}] BrainPage unmounting — cleanup`);
             recognitionRef.current?.abort();
+            stopSpeachesListening();
+            stopVoskListening();
             ttsAbortRef.current?.abort();
             if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
             if (window.speechSynthesis) window.speechSynthesis.cancel();
@@ -855,13 +863,132 @@ export default function BrainPage() {
     const audioChunksRef = useRef<Blob[]>([]);
     const mediaStreamRef = useRef<MediaStream | null>(null);
 
+    function stopSpeachesProvisionalRecognition() {
+        const provisional = provisionalRecognitionRef.current;
+        provisionalRecognitionRef.current = null;
+        if (provisional) {
+            try { provisional.onresult = null; provisional.onerror = null; provisional.onend = null; provisional.stop(); } catch { /* ignore */ }
+        }
+    }
+
+    function startSpeachesProvisionalRecognition() {
+        const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (!SR) {
+            addLog('[STT] Provisional transcript unavailable in this browser');
+            return;
+        }
+        try {
+            const provisional = new SR();
+            provisional.continuous = true;
+            provisional.interimResults = true;
+            provisional.lang = sttLangRef.current || navigator.language || 'en-US';
+            provisional.onresult = (event: any) => {
+                let interim = '';
+                let final = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0]?.transcript || '';
+                    if (event.results[i].isFinal) final += transcript;
+                    else interim += transcript;
+                }
+                const text = (final || interim).trim();
+                if (text) {
+                    provisionalTextRef.current = text;
+                    setDraft(text);
+                    draftRef.current = text;
+                }
+            };
+            provisional.onerror = (event: any) => addLog('[STT] Provisional transcript ended: ' + (event?.error || 'unknown'));
+            provisional.onend = () => {
+                if (listeningRef.current && provisionalRecognitionRef.current === provisional) {
+                    try { provisional.start(); } catch { /* ignore */ }
+                }
+            };
+            provisionalRecognitionRef.current = provisional;
+            provisional.start();
+            addLog('[STT] Provisional transcript: ON (Speaches final remains source of truth)');
+        } catch (err) {
+            addLog('[STT] Provisional transcript start failed: ' + (err instanceof Error ? err.message : String(err)));
+        }
+    }
+
+    function cleanupSpeachesVad() {
+        if (speachesStopTimerRef.current) {
+            clearTimeout(speachesStopTimerRef.current);
+            speachesStopTimerRef.current = null;
+        }
+        speachesVadProcessorRef.current?.disconnect();
+        speachesVadSourceRef.current?.disconnect();
+        speachesVadContextRef.current?.close().catch(() => undefined);
+        speachesVadProcessorRef.current = null;
+        speachesVadSourceRef.current = null;
+        speachesVadContextRef.current = null;
+        stopSpeachesProvisionalRecognition();
+    }
+
+    function startSpeachesVad(stream: MediaStream) {
+        try {
+            const audioCtx = new AudioContext();
+            const source = audioCtx.createMediaStreamSource(stream);
+            const processor = audioCtx.createScriptProcessor(2048, 1, 1);
+            let heardSpeech = false;
+            let silenceMs = 0;
+            let elapsedMs = 0;
+            let lastLevelLog = 0;
+            const minListenMs = 900;
+            const maxListenMs = 9000;
+            const silenceStopMs = 850;
+            const threshold = 0.018;
+
+            processor.onaudioprocess = (event) => {
+                if (!listeningRef.current || mediaRecorderRef.current?.state !== 'recording') return;
+                const input = event.inputBuffer.getChannelData(0);
+                let sum = 0;
+                for (let i = 0; i < input.length; i++) sum += input[i] * input[i];
+                const rms = Math.sqrt(sum / Math.max(1, input.length));
+                const frameMs = (input.length / audioCtx.sampleRate) * 1000;
+                elapsedMs += frameMs;
+                if (rms > threshold) {
+                    heardSpeech = true;
+                    silenceMs = 0;
+                } else if (heardSpeech) {
+                    silenceMs += frameMs;
+                }
+                if (elapsedMs - lastLevelLog > 1200) {
+                    lastLevelLog = elapsedMs;
+                    addLog(`[STT] Speaches listening… level=${rms.toFixed(3)} heard=${heardSpeech ? 'yes' : 'no'}`);
+                }
+                if (heardSpeech && elapsedMs > minListenMs && silenceMs >= silenceStopMs) {
+                    addLog(`[STT] Speaches VAD: ${Math.round(silenceMs)}ms silence → transcribe now`);
+                    stopSpeachesListening();
+                } else if (elapsedMs >= maxListenMs) {
+                    addLog('[STT] Speaches VAD: max turn length reached → transcribe now');
+                    stopSpeachesListening();
+                }
+            };
+            source.connect(processor);
+            processor.connect(audioCtx.destination);
+            speachesVadContextRef.current = audioCtx;
+            speachesVadSourceRef.current = source;
+            speachesVadProcessorRef.current = processor;
+            speachesStopTimerRef.current = setTimeout(() => {
+                if (listeningRef.current && mediaRecorderRef.current?.state === 'recording') {
+                    addLog('[STT] Speaches VAD: safety stop → transcribe now');
+                    stopSpeachesListening();
+                }
+            }, maxListenMs + 1500);
+        } catch (err) {
+            addLog('[STT] Speaches VAD unavailable: ' + (err instanceof Error ? err.message : String(err)));
+        }
+    }
+
     async function startSpeachesListening() {
         const appVersion = __APP_VERSION__ || '?';
-        addLog(`[v${appVersion}] STT provider=speaches → starting Whisper STT via Speaches`);
+        addLog(`[v${appVersion}] STT provider=speaches → starting fast turn capture via Speaches`);
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: selectedMicId ? { deviceId: { exact: selectedMicId } } : true });
             mediaStreamRef.current = stream;
             audioChunksRef.current = [];
+            provisionalTextRef.current = '';
 
             const recorder = new MediaRecorder(stream);
             mediaRecorderRef.current = recorder;
@@ -871,7 +998,9 @@ export default function BrainPage() {
             };
 
             recorder.onstop = async () => {
-                addLog('[STT] Speaches: audio captured, transcribing...');
+                cleanupSpeachesVad();
+                const provisional = provisionalTextRef.current.trim();
+                addLog(`[STT] Speaches: audio captured, transcribing final${provisional ? ` (provisional="${provisional.substring(0, 80)}${provisional.length > 80 ? '...' : ''}")` : ''}...`);
                 const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
 
                 // Fetch Speaches config from the API
@@ -895,10 +1024,11 @@ export default function BrainPage() {
                     if (res.ok) {
                         const data = await res.json();
                         const text = (data.text || '').trim();
-                        addLog(`[TEST] STT: ✅ Speaches transcript: "${text.substring(0, 80)}${text.length > 80 ? '...' : ''}"`);
+                        addLog(`[TEST] STT: ✅ Speaches final transcript: "${text.substring(0, 80)}${text.length > 80 ? '...' : ''}"`);
                         if (text) {
                             setDraft(text);
                             draftRef.current = text;
+                            addLog('[VOICE] Thinking… sending final transcript to Brain');
                             if (voiceSocketRef.current?.connected) {
                                 sendVoiceTranscript(text);
                             } else if (conversationModeRef.current) {
@@ -921,10 +1051,12 @@ export default function BrainPage() {
                 setIsListening(false);
             };
 
-            recorder.start(1000); // collect in 1s chunks
+            recorder.start(250); // collect short chunks so VAD stop submits quickly
             listeningRef.current = true;
             setIsListening(true);
-            addLog(`[v${appVersion}] Speaches: listening...`);
+            startSpeachesProvisionalRecognition();
+            startSpeachesVad(stream);
+            addLog(`[v${appVersion}] Speaches: listening with VAD (silence≈850ms, max≈9s)...`);
 
             // Interruption: if Brain is speaking, cut it off
             if (speakingMessageId) {
@@ -940,6 +1072,7 @@ export default function BrainPage() {
     }
 
     function stopSpeachesListening() {
+        cleanupSpeachesVad();
         if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
             mediaRecorderRef.current.stop();
         }
@@ -1096,6 +1229,8 @@ export default function BrainPage() {
             conversationModeRef.current = false;
             if (isListening) {
                 recognitionRef.current?.stop();
+                stopSpeachesListening();
+                stopVoskListening();
                 setIsListening(false);
             }
             stopSpeaking();
@@ -1347,9 +1482,13 @@ export default function BrainPage() {
         setDraft('');
         setSending(true);
 
+        const chatMessage = conversationModeRef.current
+            ? `VOICE MODE INSTRUCTION: Answer like a live phone conversation. Keep it brief: one short sentence unless I explicitly ask for detail. Do not explain your reasoning. User said:\n${trimmed}`
+            : trimmed;
+
         try {
             const response = await brainChat({
-                message: trimmed,
+                message: chatMessage,
                 history: nextHistory.slice(-12),
                 companyId: selectedCompany?.id,
                 companyName: selectedCompany?.name,
