@@ -206,6 +206,25 @@ export class MvpStoreService {
         },
       },
       {
+        id: 'speaches-tts',
+        type: 'tts',
+        name: 'Speaches TTS',
+        description: 'Self-hosted OpenAI-compatible text-to-speech via /v1/audio/speech',
+        status: 'production',
+        is_enabled: true,
+        metadata: {
+          endpoint:
+            process.env.SPEACHES_API_URL ||
+            'https://speaches-production-c63f.up.railway.app/v1/audio/speech',
+          voices_endpoint:
+            process.env.SPEACHES_API_URL ||
+            'https://speaches-production-c63f.up.railway.app/v1/audio/voices',
+          requires_api_key: false,
+          openai_compatible: true,
+          configured_per_team: true,
+        },
+      },
+      {
         id: 'native-dom',
         type: 'rpa',
         name: 'Native DOM Automation',
