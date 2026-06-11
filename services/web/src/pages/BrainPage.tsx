@@ -119,6 +119,8 @@ export default function BrainPage() {
     const [callTimer, setCallTimer] = useState(0);
     const callTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const audioQueueRef = useRef<{ data: string; seq: string; format?: string }[]>([]);
+    const webAudioContextRef = useRef<AudioContext | null>(null);
+    const webAudioSourceRef = useRef<AudioBufferSourceNode | null>(null);
     const voiceSessionIdRef = useRef<string | null>(null);
     const listenSocketRef = useRef<Socket | null>(null);
     const listenAudioStreamRef = useRef<MediaStream | null>(null);
@@ -369,8 +371,107 @@ export default function BrainPage() {
         ttsAbortRef.current?.abort();
         ttsAbortRef.current = null;
         if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+        if (webAudioSourceRef.current) { try { webAudioSourceRef.current.stop(); } catch { /* ignore */ } webAudioSourceRef.current = null; }
         if (window.speechSynthesis) window.speechSynthesis.cancel();
         setSpeakingMessageId(null);
+    }
+
+    async function playWavPcmViaWebAudio(bytes: Uint8Array, label: string, onEnded: () => void): Promise<boolean> {
+        try {
+            if (bytes.length < 44) return false;
+            const ascii = (start: number, end: number) => String.fromCharCode(...bytes.slice(start, end));
+            if (ascii(0, 4) !== 'RIFF' || ascii(8, 12) !== 'WAVE') return false;
+            const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+            let pos = 12;
+            let audioFormat = 0;
+            let channels = 0;
+            let sampleRate = 0;
+            let bitsPerSample = 0;
+            let dataStart = 0;
+            let dataSize = 0;
+            while (pos + 8 <= bytes.length) {
+                const id = ascii(pos, pos + 4);
+                const declaredSize = view.getUint32(pos + 4, true);
+                const payloadStart = pos + 8;
+                const remaining = Math.max(0, bytes.length - payloadStart);
+                const chunkSize = declaredSize === 0xffffffff || declaredSize > remaining ? remaining : declaredSize;
+                if (id === 'fmt ' && chunkSize >= 16) {
+                    audioFormat = view.getUint16(payloadStart, true);
+                    channels = view.getUint16(payloadStart + 2, true);
+                    sampleRate = view.getUint32(payloadStart + 4, true);
+                    bitsPerSample = view.getUint16(payloadStart + 14, true);
+                } else if (id === 'data') {
+                    dataStart = payloadStart;
+                    dataSize = chunkSize;
+                    break;
+                }
+                pos = payloadStart + chunkSize + (chunkSize % 2);
+            }
+            if (audioFormat !== 1 || channels < 1 || sampleRate < 8000 || bitsPerSample !== 16 || dataStart <= 0 || dataSize <= 0) {
+                addLog(`[${label}] WebAudio WAV parser unsupported fmt=${audioFormat} channels=${channels} rate=${sampleRate} bits=${bitsPerSample} data=${dataSize}`);
+                return false;
+            }
+            const sampleCount = Math.floor(dataSize / 2 / channels);
+            const AudioContextCtor = window.AudioContext || (window as any).webkitAudioContext;
+            if (!AudioContextCtor) return false;
+            const ctx = webAudioContextRef.current || new AudioContextCtor();
+            webAudioContextRef.current = ctx;
+            if (ctx.state === 'suspended') await ctx.resume();
+            const buffer = ctx.createBuffer(channels, sampleCount, sampleRate);
+            let offset = dataStart;
+            for (let i = 0; i < sampleCount; i++) {
+                for (let ch = 0; ch < channels; ch++) {
+                    const sample = view.getInt16(offset, true) / 32768;
+                    buffer.getChannelData(ch)[i] = sample;
+                    offset += 2;
+                }
+            }
+            const source = ctx.createBufferSource();
+            source.buffer = buffer;
+            source.connect(ctx.destination);
+            webAudioSourceRef.current = source;
+            source.onended = () => {
+                if (webAudioSourceRef.current === source) webAudioSourceRef.current = null;
+                addLog(`[${label}] WebAudio WAV playback ended`);
+                onEnded();
+            };
+            addLog(`[${label}] WebAudio WAV playback start channels=${channels} rate=${sampleRate} samples=${sampleCount}`);
+            source.start();
+            return true;
+        } catch (err) {
+            addLog(`[${label}] WebAudio WAV playback failed: ${err instanceof Error ? err.message : String(err)}`);
+            return false;
+        }
+    }
+
+    function playBlobViaAudioElement(blob: Blob, label: string, onEnded: () => void, onFailed: () => void) {
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audioRef.current = audio;
+        if (audio.setSinkId && selectedSpeakerId) {
+            audio.setSinkId(selectedSpeakerId).catch(() => {});
+        }
+        audio.onended = () => {
+            addLog(`[${label}] Audio element playback ended`);
+            URL.revokeObjectURL(url);
+            onEnded();
+        };
+        audio.onerror = () => {
+            addLog(`[${label}] Audio element playback error`);
+            URL.revokeObjectURL(url);
+            onFailed();
+        };
+        void audio.play().catch((err) => {
+            addLog(`[${label}] Audio element play() rejected: ${err instanceof Error ? err.message : String(err)}`);
+            URL.revokeObjectURL(url);
+            onFailed();
+        });
+    }
+
+    async function playAudioBytes(bytes: Uint8Array, mimeType: string, label: string, onEnded: () => void, onFailed: () => void) {
+        const isWav = mimeType.includes('wav') || String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF';
+        if (isWav && await playWavPcmViaWebAudio(bytes, label, onEnded)) return;
+        playBlobViaAudioElement(new Blob([bytes], { type: mimeType }), label, onEnded, onFailed);
     }
 
     // ── Voice WebSocket ────────────────────────────────────────────────
@@ -559,29 +660,14 @@ export default function BrainPage() {
             const bytes = new Uint8Array(binary.length);
             for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
             const isWav = chunk.format === 'wav' || binary.slice(0, 4) === 'RIFF';
-            const blob = new Blob([bytes], { type: isWav ? 'audio/wav' : 'audio/mpeg' });
             addLog(`[VOICE] Backend audio chunk received seq=${chunk.seq} format=${isWav ? 'wav' : 'mpeg'} bytes=${bytes.length}`);
-            const url = URL.createObjectURL(blob);
-            const audio = new Audio(url);
-            audioRef.current = audio;
-            if (audio.setSinkId && selectedSpeakerId) {
-                audio.setSinkId(selectedSpeakerId).catch(() => {});
-            }
-            audio.onended = () => {
-                addLog('[VOICE] Backend audio playback ended');
-                URL.revokeObjectURL(url);
-                playNextAudioChunk();
-            };
-            audio.onerror = () => {
-                addLog('[VOICE] Backend audio playback error; trying next chunk');
-                URL.revokeObjectURL(url);
-                playNextAudioChunk();
-            };
-            void audio.play().catch((err) => {
-                addLog('[VOICE] Backend audio play() rejected: ' + (err instanceof Error ? err.message : String(err)));
-                URL.revokeObjectURL(url);
-                playNextAudioChunk();
-            });
+            void playAudioBytes(
+                bytes,
+                isWav ? 'audio/wav' : 'audio/mpeg',
+                'VOICE',
+                () => playNextAudioChunk(),
+                () => playNextAudioChunk(),
+            );
         } catch (e) {
             addLog('Audio chunk play error: ' + e);
             playNextAudioChunk();
@@ -653,34 +739,24 @@ export default function BrainPage() {
             if (res.ok) {
                 const contentType = res.headers.get('content-type') || 'audio/wav';
                 const arrayBuffer = await res.arrayBuffer();
-                blob = new Blob([arrayBuffer], { type: contentType.includes('audio/') ? contentType : 'audio/wav' });
+                const bytes = new Uint8Array(arrayBuffer);
+                blob = new Blob([bytes], { type: contentType.includes('audio/') ? contentType : 'audio/wav' });
                 addLog('TTS fetch OK status=' + res.status + ' contentType=' + blob.type + ' blobSize=' + blob.size);
                 if (!controller.signal.aborted && blob.size > 100) {
-                    const url = URL.createObjectURL(blob);
-                    const audio = new Audio();
-                    audio.preload = 'auto';
-                    audio.src = url;
-                    audioRef.current = audio;
-                    if (audio.setSinkId && selectedSpeakerId) {
-                        audio.setSinkId(selectedSpeakerId).catch(() => {});
-                    }
-                    audio.onended = () => {
-                        addLog('TTS audio ended');
-                        URL.revokeObjectURL(url);
-                        setSpeakingMessageId(null);
-                        // In conversation mode, re-listen after speaking
-                        if (conversationModeRef.current) {
-                            addLog('→ re-listen after TTS');
-                            setTimeout(() => toggleListening(), 300);
-                        }
-                    };
-                    audio.onerror = (e) => {
-                        addLog('TTS audio onerror: ' + e);
-                        URL.revokeObjectURL(url);
-                        fallbackSpeak(text, messageId);
-                    };
                     setSpeakingMessageId(messageId);
-                    await audio.play();
+                    await playAudioBytes(
+                        bytes,
+                        blob.type || 'audio/wav',
+                        'TTS',
+                        () => {
+                            setSpeakingMessageId(null);
+                            if (conversationModeRef.current) {
+                                addLog('→ re-listen after TTS');
+                                setTimeout(() => toggleListening(), 300);
+                            }
+                        },
+                        () => fallbackSpeak(text, messageId),
+                    );
                     return;
                 }
             }
