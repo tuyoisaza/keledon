@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { CrudService } from './crud.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { WebhookGuard } from '../guards/webhook.guard';
 
 @Controller('api/crud')
 export class CrudController {
@@ -393,6 +394,167 @@ export class CrudController {
         message: 'Seed failed',
         error: error.message
       };
+    }
+  }
+
+  // ========== WEBHOOK (secure ops: seed DB or fix structure) ==========
+  //
+  //   curl -X POST https://keledonapi.tuyoisaza.com/api/crud/webhook \
+  //     -H "Authorization: Bearer <WEBHOOK_SECRET>" \
+  //     -H "Content-Type: application/json" \
+  //     -d '{"action":"seed","companies":[...],"brands":[...],"teams":[...],"users":[...]}'
+  //
+  //   curl -X POST https://keledonapi.tuyoisaza.com/api/crud/webhook \
+  //     -H "Authorization: Bearer <WEBHOOK_SECRET>" \
+  //     -d '{"action":"migrate"}'
+  //
+  @UseGuards(WebhookGuard)
+  @Post('webhook')
+  async webhook(@Body() body: any) {
+    const { action } = body;
+
+    if (!action) {
+      return { success: false, message: 'Missing "action" in body (seed | migrate)' };
+    }
+
+    if (action === 'seed') {
+      return this.webhookSeed(body);
+    }
+
+    if (action === 'migrate') {
+      return this.webhookMigrate();
+    }
+
+    return { success: false, message: `Unknown action "${action}". Use "seed" or "migrate".` };
+  }
+
+  private async webhookSeed(body: any) {
+    const counters = { companies: 0, brands: 0, teams: 0, users: 0 };
+    const errors: string[] = [];
+
+    try {
+      // Companies
+      if (body.companies && Array.isArray(body.companies)) {
+        for (const company of body.companies) {
+          const existing = await this.prisma.company.findFirst({ where: { name: company.name } });
+          if (!existing) {
+            await this.prisma.company.create({
+              data: { name: company.name, industry: company.industry || null }
+            });
+            counters.companies++;
+          }
+        }
+      }
+
+      // Brands
+      if (body.brands && Array.isArray(body.brands)) {
+        for (const brand of body.brands) {
+          const existing = await this.prisma.brand.findFirst({ where: { name: brand.name } });
+          if (!existing) {
+            const company = brand.company_name
+              ? await this.prisma.company.findFirst({ where: { name: brand.company_name } })
+              : null;
+            if (company) {
+              await this.prisma.brand.create({
+                data: { name: brand.name, companyId: company.id, color: brand.color || '#6366f1' }
+              });
+              counters.brands++;
+            } else {
+              errors.push(`Brand "${brand.name}": company "${brand.company_name}" not found`);
+            }
+          }
+        }
+      }
+
+      // Teams
+      if (body.teams && Array.isArray(body.teams)) {
+        for (const team of body.teams) {
+          const existing = await this.prisma.team.findFirst({ where: { name: team.name } });
+          if (!existing) {
+            let brandId = null;
+            if (team.brand_name) {
+              const brand = await this.prisma.brand.findFirst({ where: { name: team.brand_name } });
+              brandId = brand?.id || null;
+            }
+            await this.prisma.team.create({
+              data: {
+                name: team.name,
+                brandId,
+                country: team.country || null,
+                sttProvider: team.stt_provider || 'vosk',
+                ttsProvider: team.tts_provider || 'elevenlabs',
+              }
+            });
+            counters.teams++;
+          }
+        }
+      }
+
+      // Users
+      if (body.users && Array.isArray(body.users)) {
+        for (const user of body.users) {
+          const existing = await this.prisma.user.findFirst({ where: { email: user.email } });
+          if (!existing) {
+            let companyId = null;
+            let teamId = null;
+            if (user.company_name) {
+              const company = await this.prisma.company.findFirst({ where: { name: user.company_name } });
+              companyId = company?.id || null;
+            }
+            if (user.team_name) {
+              const team = await this.prisma.team.findFirst({ where: { name: user.team_name } });
+              teamId = team?.id || null;
+            }
+            await this.prisma.user.create({
+              data: {
+                email: user.email,
+                name: user.name || user.email.split('@')[0],
+                role: user.role || 'user',
+                companyId,
+                teamId,
+              }
+            });
+            counters.users++;
+          }
+        }
+      }
+
+      return {
+        success: true,
+        message: 'Webhook seed completed',
+        created: counters,
+        errors: errors.length > 0 ? errors : undefined,
+      };
+    } catch (error) {
+      return { success: false, message: 'Webhook seed failed', error: error.message, partial: counters };
+    }
+  }
+
+  private async webhookMigrate() {
+    try {
+      // Re-run all raw migrations (idempotent)
+      await this.prisma.$executeRaw`
+        CREATE TABLE IF NOT EXISTS "vendors" (
+          "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          "teamId" UUID NOT NULL REFERENCES "teams"("id") ON DELETE CASCADE,
+          "name" VARCHAR(255) NOT NULL,
+          "type" VARCHAR(50) NOT NULL DEFAULT 'other',
+          "baseUrl" TEXT,
+          "username" TEXT,
+          "password" TEXT,
+          "apiKey" TEXT,
+          "config" JSONB,
+          "isActive" BOOLEAN DEFAULT true,
+          "createdAt" TIMESTAMP DEFAULT now(),
+          "updatedAt" TIMESTAMP DEFAULT now()
+        )
+      `;
+      await this.prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "vendors_teamId_idx" ON "vendors"("teamId")`;
+      await this.prisma.$executeRaw`ALTER TABLE "vendors" ADD COLUMN IF NOT EXISTS "startGoal" TEXT`;
+
+      return { success: true, message: 'Migration webhook: vendors table ensured' };
+    } catch (error) {
+      return { success: false, message: 'Migration webhook failed', error: error.message };
     }
   }
 
