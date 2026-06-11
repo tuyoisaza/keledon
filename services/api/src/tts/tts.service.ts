@@ -401,10 +401,11 @@ export class TTSService {
       }
 
       const arrayBuffer = await response.arrayBuffer();
-      const audioData = Buffer.from(arrayBuffer);
-      const duration = this.estimateDuration(audioData.length);
+      const rawAudioData = Buffer.from(arrayBuffer);
+      const audioData = this.finalizeWavHeader(rawAudioData);
+      const duration = this.estimateWavOrCompressedDuration(audioData);
       console.log(
-        `[TTS] Speaches generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio (voice: ${voice})`,
+        `[TTS] Speaches generated ${rawAudioData.length} bytes, finalized=${audioData !== rawAudioData}, ~${duration.toFixed(1)}s audio (voice: ${voice})`,
       );
       if (audioData.length === 0) {
         return { error: 'Speaches returned empty audio' };
@@ -414,6 +415,71 @@ export class TTSService {
       console.error('[TTS] Speaches error:', error.message);
       return { error: error.message };
     }
+  }
+
+  private estimateWavOrCompressedDuration(audioData: Buffer): number {
+    const wavDuration = this.estimateWavDuration(audioData);
+    return wavDuration || this.estimateDuration(audioData.length);
+  }
+
+  private estimateWavDuration(audioData: Buffer): number | null {
+    if (audioData.length < 44) return null;
+    if (audioData.subarray(0, 4).toString('ascii') !== 'RIFF') return null;
+    if (audioData.subarray(8, 12).toString('ascii') !== 'WAVE') return null;
+
+    let pos = 12;
+    let byteRate = 0;
+    let dataSize = 0;
+    while (pos + 8 <= audioData.length) {
+      const chunkId = audioData.subarray(pos, pos + 4).toString('ascii');
+      const declaredSize = audioData.readUInt32LE(pos + 4);
+      const payloadStart = pos + 8;
+      const payloadRemaining = Math.max(0, audioData.length - payloadStart);
+      const chunkSize = declaredSize === 0xffffffff || declaredSize > payloadRemaining ? payloadRemaining : declaredSize;
+      if (chunkId === 'fmt ' && chunkSize >= 16 && payloadStart + 12 <= audioData.length) {
+        byteRate = audioData.readUInt32LE(payloadStart + 8);
+      }
+      if (chunkId === 'data') {
+        dataSize = chunkSize;
+        break;
+      }
+      pos = payloadStart + chunkSize + (chunkSize % 2);
+    }
+
+    return byteRate > 0 && dataSize > 0 ? dataSize / byteRate : null;
+  }
+
+  private finalizeWavHeader(audioData: Buffer): Buffer {
+    if (audioData.length < 44) return audioData;
+    if (audioData.subarray(0, 4).toString('ascii') !== 'RIFF') return audioData;
+    if (audioData.subarray(8, 12).toString('ascii') !== 'WAVE') return audioData;
+
+    const fixed = Buffer.from(audioData);
+    let changed = false;
+    const riffSize = Math.max(0, fixed.length - 8);
+    if (fixed.readUInt32LE(4) !== riffSize) {
+      fixed.writeUInt32LE(riffSize, 4);
+      changed = true;
+    }
+
+    let pos = 12;
+    while (pos + 8 <= fixed.length) {
+      const chunkId = fixed.subarray(pos, pos + 4).toString('ascii');
+      const declaredSize = fixed.readUInt32LE(pos + 4);
+      const payloadStart = pos + 8;
+      const payloadRemaining = Math.max(0, fixed.length - payloadStart);
+      if (chunkId === 'data') {
+        if (declaredSize !== payloadRemaining) {
+          fixed.writeUInt32LE(payloadRemaining, pos + 4);
+          changed = true;
+        }
+        break;
+      }
+      const chunkSize = declaredSize === 0xffffffff || declaredSize > payloadRemaining ? payloadRemaining : declaredSize;
+      pos = payloadStart + chunkSize + (chunkSize % 2);
+    }
+
+    return changed ? fixed : audioData;
   }
 
   private estimateDuration(bytes: number): number {
