@@ -529,7 +529,7 @@ export class CrudController {
       fs.writeFileSync(path.join(dataDir, 'crud.json'), JSON.stringify(seedData, null, 2));
     }
 
-    return this.crud.seedFromFile('crud.json');
+    return this.crud.seedFromCrudJson();
   }
 
   private async webhookMigrate() {
