@@ -131,6 +131,8 @@ export default function BrainPage() {
     const speachesStopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const provisionalRecognitionRef = useRef<any>(null);
     const provisionalTextRef = useRef('');
+    const speachesHeardSpeechRef = useRef(false);
+    const speachesFastSentRef = useRef(false);
     const cloudApiBaseRef = useRef<string | null>(null);
     const cloudWsBaseRef = useRef<string | null>(null);
 
@@ -442,25 +444,9 @@ export default function BrainPage() {
             // Save brain reply text in a ref (synchronous) so TTS fallback
             // can read it even before React state update processes
             lastBrainReplyRef.current = data.text || '';
-            // Browser TTS fallback: if no audio chunks arrive in 2s, use SpeechSynthesis
-            if (window.speechSynthesis && data.text) {
-                if (ttsFallbackTimerRef.current) clearTimeout(ttsFallbackTimerRef.current);
-                ttsFallbackTimerRef.current = setTimeout(() => {
-                    if (!audioPlayingRef.current && audioQueueRef.current.length === 0) {
-                        addLog(`[v${__APP_VERSION__ || '?'}] TTS fallback: using browser SpeechSynthesis`);
-                        const utterance = new SpeechSynthesisUtterance(data.text);
-                        utterance.lang = sttLangRef.current || 'en-US';
-                        utterance.onend = () => {
-                            audioPlayingRef.current = false;
-                            if (conversationModeRef.current && !listeningRef.current) {
-                                setTimeout(() => toggleListening(), 300);
-                            }
-                        };
-                        audioPlayingRef.current = true;
-                        window.speechSynthesis.speak(utterance);
-                    }
-                }, 2000);
-            }
+            // Backend Speaches TTS can take several seconds on Railway.
+            // Do not use Chrome SpeechSynthesis on a fixed timer; only fallback
+            // if the backend explicitly ends/errors without playable audio.
         });
         socket.on('voice:audio', (data: { audio: string; sequence: string; format?: string; duration?: number; apiVersion?: string }) => {
             // Cancel TTS fallback timer — backend streaming is working
@@ -574,6 +560,7 @@ export default function BrainPage() {
             for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
             const isWav = chunk.format === 'wav' || binary.slice(0, 4) === 'RIFF';
             const blob = new Blob([bytes], { type: isWav ? 'audio/wav' : 'audio/mpeg' });
+            addLog(`[VOICE] Backend audio chunk received seq=${chunk.seq} format=${isWav ? 'wav' : 'mpeg'} bytes=${bytes.length}`);
             const url = URL.createObjectURL(blob);
             const audio = new Audio(url);
             audioRef.current = audio;
@@ -581,14 +568,20 @@ export default function BrainPage() {
                 audio.setSinkId(selectedSpeakerId).catch(() => {});
             }
             audio.onended = () => {
+                addLog('[VOICE] Backend audio playback ended');
                 URL.revokeObjectURL(url);
                 playNextAudioChunk();
             };
             audio.onerror = () => {
+                addLog('[VOICE] Backend audio playback error; trying next chunk');
                 URL.revokeObjectURL(url);
                 playNextAudioChunk();
             };
-            void audio.play();
+            void audio.play().catch((err) => {
+                addLog('[VOICE] Backend audio play() rejected: ' + (err instanceof Error ? err.message : String(err)));
+                URL.revokeObjectURL(url);
+                playNextAudioChunk();
+            });
         } catch (e) {
             addLog('Audio chunk play error: ' + e);
             playNextAudioChunk();
@@ -600,6 +593,8 @@ export default function BrainPage() {
         const socket = voiceSocketRef.current;
         if (socket?.connected) {
             addLog('Sending voice transcript: ' + text);
+            lastChunkPlayedRef.current = false;
+            audioQueueRef.current = [];
             // Add user message to chat
             const userMsgId = `user-${Date.now()}`;
             setMessages(cur => [...cur, {
@@ -949,6 +944,7 @@ export default function BrainPage() {
                 elapsedMs += frameMs;
                 if (rms > threshold) {
                     heardSpeech = true;
+                    speachesHeardSpeechRef.current = true;
                     silenceMs = 0;
                 } else if (heardSpeech) {
                     silenceMs += frameMs;
@@ -989,6 +985,8 @@ export default function BrainPage() {
             mediaStreamRef.current = stream;
             audioChunksRef.current = [];
             provisionalTextRef.current = '';
+            speachesHeardSpeechRef.current = false;
+            speachesFastSentRef.current = false;
 
             const recorder = new MediaRecorder(stream);
             mediaRecorderRef.current = recorder;
@@ -1000,6 +998,27 @@ export default function BrainPage() {
             recorder.onstop = async () => {
                 cleanupSpeachesVad();
                 const provisional = provisionalTextRef.current.trim();
+                const heardSpeech = speachesHeardSpeechRef.current;
+                if (!heardSpeech && !provisional) {
+                    addLog('[STT] Speaches: no speech detected — skipping transcription');
+                    stream.getTracks().forEach(t => t.stop());
+                    listeningRef.current = false;
+                    setIsListening(false);
+                    if (conversationModeRef.current) {
+                        setTimeout(() => {
+                            if (conversationModeRef.current && !listeningRef.current && !sending) toggleListening();
+                        }, 300);
+                    }
+                    return;
+                }
+                if (conversationModeRef.current && provisional && !speachesFastSentRef.current) {
+                    speachesFastSentRef.current = true;
+                    setDraft(provisional);
+                    draftRef.current = provisional;
+                    addLog(`[VOICE] Fast path: sending provisional transcript to Brain now: "${provisional.substring(0, 80)}${provisional.length > 80 ? '...' : ''}"`);
+                    if (voiceSocketRef.current?.connected) sendVoiceTranscript(provisional);
+                    else void handleSend(provisional);
+                }
                 addLog(`[STT] Speaches: audio captured, transcribing final${provisional ? ` (provisional="${provisional.substring(0, 80)}${provisional.length > 80 ? '...' : ''}")` : ''}...`);
                 const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
 
@@ -1028,13 +1047,23 @@ export default function BrainPage() {
                         if (text) {
                             setDraft(text);
                             draftRef.current = text;
-                            addLog('[VOICE] Thinking… sending final transcript to Brain');
-                            if (voiceSocketRef.current?.connected) {
-                                sendVoiceTranscript(text);
-                            } else if (conversationModeRef.current) {
-                                // Auto-submit in conversation mode
-                                addLog('→ auto-submit (speaches)');
-                                handleSend(text);
+                            if (speachesFastSentRef.current) {
+                                const normalizedFinal = text.toLowerCase().replace(/\s+/g, ' ').trim();
+                                const normalizedProvisional = provisional.toLowerCase().replace(/\s+/g, ' ').trim();
+                                if (normalizedFinal && normalizedFinal !== normalizedProvisional) {
+                                    addLog(`[STT] Speaches final differed from fast provisional; not re-sending this turn (final="${text.substring(0, 80)}${text.length > 80 ? '...' : ''}")`);
+                                } else {
+                                    addLog('[STT] Speaches final confirmed fast provisional');
+                                }
+                            } else {
+                                addLog('[VOICE] Thinking… sending final transcript to Brain');
+                                if (voiceSocketRef.current?.connected) {
+                                    sendVoiceTranscript(text);
+                                } else if (conversationModeRef.current) {
+                                    // Auto-submit in conversation mode
+                                    addLog('→ auto-submit (speaches)');
+                                    handleSend(text);
+                                }
                             }
                         }
                     } else {
