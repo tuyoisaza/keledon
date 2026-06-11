@@ -522,14 +522,15 @@ export class CrudController {
   }
 
   private async webhookSeed(seedData?: any) {
-    // If seedData is provided, save to crud.json and seed from it
-    if (seedData?.companies) {
-      const fs = require('fs');
-      const path = require('path');
-      const dataDir = path.resolve(__dirname, '../../data');
-      fs.mkdirSync(dataDir, { recursive: true });
-      fs.writeFileSync(path.join(dataDir, 'crud.json'), JSON.stringify(seedData, null, 2));
+    if (!seedData?.companies) {
+      return { status: 'error', message: 'Seed requires data.companies array in the request body' };
     }
+
+    const fs = require('fs');
+    const path = require('path');
+    const dataDir = path.resolve(__dirname, '../../data');
+    fs.mkdirSync(dataDir, { recursive: true });
+    fs.writeFileSync(path.join(dataDir, 'crud.json'), JSON.stringify(seedData, null, 2));
 
     return this.crud.seedFromCrudJson();
   }
