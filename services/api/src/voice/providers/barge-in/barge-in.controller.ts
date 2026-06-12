@@ -16,15 +16,25 @@ export class BargeInController {
   private _isSpeaking = false;
   private onInterruptListeners: Array<() => void> = [];
   private sessions = new Set<string>();
+  private ttsStartedAt: number | null = null;
+  private interruptedAt: number | null = null;
 
   get isSpeaking(): boolean {
     return this._isSpeaking;
+  }
+
+  /** How many ms into TTS the last barge-in occurred, or null if none */
+  get lastInterruptLatencyMs(): number | null {
+    if (!this.ttsStartedAt || !this.interruptedAt) return null;
+    return this.interruptedAt - this.ttsStartedAt;
   }
 
   /** Mark that TTS playback has started for a session */
   startSpeaking(sessionId: string): void {
     this._isSpeaking = true;
     this.sessions.add(sessionId);
+    this.ttsStartedAt = Date.now();
+    this.interruptedAt = null;
     this.logger.debug(`[barge-in] TTS started session=${sessionId}`);
   }
 
@@ -33,6 +43,7 @@ export class BargeInController {
     if (!this._isSpeaking) return;
     this._isSpeaking = false;
     this.sessions.delete(sessionId);
+    this.ttsStartedAt = null;
     this.logger.debug(`[barge-in] TTS ended session=${sessionId}`);
   }
 
@@ -43,7 +54,12 @@ export class BargeInController {
   triggerInterrupt(reason: string, sessionId?: string): void {
     if (!this._isSpeaking) return; // no-op if not speaking
 
-    this.logger.log(`[barge-in] INTERRUPT reason="${reason}" session=${sessionId || 'unknown'}`);
+    this.interruptedAt = Date.now();
+    const latency = this.lastInterruptLatencyMs;
+
+    this.logger.log(
+      `[barge-in] INTERRUPT reason="${reason}" session=${sessionId || 'unknown'} latency=${latency ?? '?'}ms`,
+    );
 
     // Fire all listeners
     for (const listener of this.onInterruptListeners) {
@@ -71,13 +87,16 @@ export class BargeInController {
     this._isSpeaking = false;
     this.sessions.clear();
     this.onInterruptListeners = [];
+    this.ttsStartedAt = null;
+    this.interruptedAt = null;
   }
 
-  getStatus(): { isSpeaking: boolean; sessions: string[]; listenerCount: number } {
+  getStatus(): { isSpeaking: boolean; sessions: string[]; listenerCount: number; lastInterruptMs: number | null } {
     return {
       isSpeaking: this._isSpeaking,
       sessions: Array.from(this.sessions),
       listenerCount: this.onInterruptListeners.length,
+      lastInterruptMs: this.lastInterruptLatencyMs,
     };
   }
 }

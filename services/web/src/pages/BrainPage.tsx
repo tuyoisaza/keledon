@@ -1225,6 +1225,8 @@ export default function BrainPage() {
             if (speakingMessageId) {
                 addLog('→ interruption! stopping TTS');
                 stopSpeaking();
+                // Notify backend so it can stop TTS at the source too
+                voiceSocketRef.current?.emit('voice:interrupt');
             }
         } catch (err) {
             addLog(`[v${appVersion}] Speaches: ❌ could not start: ${err instanceof Error ? err.message : String(err)}`);
@@ -1298,6 +1300,8 @@ export default function BrainPage() {
             if (speakingMessageId) {
                 addLog('→ interruption! stopping TTS');
                 stopSpeaking();
+                // Notify backend so it can stop TTS at the source too
+                voiceSocketRef.current?.emit('voice:interrupt');
             }
             listeningRef.current = true;
             setIsListening(true);
