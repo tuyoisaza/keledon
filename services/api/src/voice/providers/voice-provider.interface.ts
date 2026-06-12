@@ -66,6 +66,7 @@ export interface VoiceProviderConfig {
   sttApiKey?: string;
   ttsApiKey?: string;
   llmApiKey?: string;
+  authToken?: string;
   voiceId?: string;
   speachesApiUrl?: string;
   vadEnabled: boolean;

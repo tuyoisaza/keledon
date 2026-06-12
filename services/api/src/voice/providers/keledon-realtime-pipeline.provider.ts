@@ -289,7 +289,10 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
 
       const brainResponse = await fetch(brainApiUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(this.config.authToken ? { Authorization: `Bearer ${this.config.authToken}` } : {}),
+        },
         body: JSON.stringify(brainPayload),
       });
 

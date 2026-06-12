@@ -495,6 +495,19 @@ export class VoiceGateway
       `Call started: ${session.deviceId}, session: ${session.sessionId}, context: ${session.context?.companyName}/${session.context?.brandName}`,
     );
 
+    // Create provider for this session if not already created and config is available
+    const ctx = session.context;
+    if (ctx?.teamId && this.configResolver && this.registry) {
+      try {
+        const config = await this.configResolver.resolveTeamConfig(ctx.teamId);
+        config.authToken = client.handshake.auth?.token as string || undefined;
+        await this.registry.getOrCreateProvider(session.sessionId, config);
+        this.logger.log(`Provider configured for team ${ctx.teamId}: STT=${config.sttProvider} TTS=${config.ttsProvider}`);
+      } catch (err) {
+        this.logger.warn(`Could not resolve provider config: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
+
     client.join(`voice:${session.sessionId}`);
 
     this.server.emit('voice:call_started', {
