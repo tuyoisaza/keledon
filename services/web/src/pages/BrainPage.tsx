@@ -32,6 +32,7 @@ import {
 } from '@/lib/crud-api';
 import { io, type Socket } from 'socket.io-client';
 import { WEBSOCKET_URL } from '@/lib/config';
+import { executeRpaSteps, type RpaStep } from '@/lib/rpa-engine';
 
 import type { ChatLine } from './brain-types';
 import { storageKeyFor, readStoredContext, saveStoredContext, AUTOSPEAK_KEY } from './brain-storage';
@@ -653,6 +654,23 @@ export default function BrainPage() {
             audioPlayingRef.current = false;
             audioQueueRef.current = [];
             toast.error('Voice error: ' + (data.error || 'unknown'));
+        });
+        socket.on('voice:rpa:steps', async (data: { steps: RpaStep[] }) => {
+            if (!data.steps?.length) return;
+            addLog(`[v${__APP_VERSION__ || '?'}] RPA: executing ${data.steps.length} steps`);
+            try {
+                const result = await executeRpaSteps(data.steps);
+                const okCount = result.results.filter(r => r.success).length;
+                addLog(`[v${__APP_VERSION__ || '?'}] RPA: ${okCount}/${result.results.length} OK`);
+                // Send result back to gateway
+                voiceSocketRef.current?.emit('voice:rpa:result', result);
+            } catch (err) {
+                addLog(`[v${__APP_VERSION__ || '?'}] RPA: error — ${err instanceof Error ? err.message : String(err)}`);
+                voiceSocketRef.current?.emit('voice:rpa:result', {
+                    success: false,
+                    results: [{ step_index: 0, action: 'error', success: false, error: String(err) }],
+                });
+            }
         });
         socket.on('disconnect', (reason: string) => {
             addLog(`[v${__APP_VERSION__ || '?'}] WS DISCONNECTED: ${reason}`);

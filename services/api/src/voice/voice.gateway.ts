@@ -465,6 +465,79 @@ export class VoiceGateway
     return { success: true };
   }
 
+  // ── RPA ────────────────────────────────────────────────────────────
+
+  /**
+   * Execute RPA steps in the browser.
+   * Browser calls this when the Cloud Brain sends ui_steps.
+   */
+  @SubscribeMessage('voice:rpa:execute')
+  async handleRpaExecute(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    data: {
+      steps: Array<{
+        action: string;
+        selector?: string;
+        value?: string;
+        url?: string;
+        attribute?: string;
+        ms?: number;
+      }>;
+    },
+  ) {
+    const session = this.activeSessions.get(client.id);
+    if (!session) {
+      return { error: 'No active voice session' };
+    }
+
+    this.logger.log(
+      `[v${getApiVersion()}] RPA execute: ${data.steps.length} steps for ${session.deviceId}`,
+    );
+
+    // Forward to the browser for execution
+    client.emit('voice:rpa:steps', { steps: data.steps });
+
+    return { success: true, steps_count: data.steps.length };
+  }
+
+  /**
+   * Receive RPA execution result from the browser.
+   */
+  @SubscribeMessage('voice:rpa:result')
+  async handleRpaResult(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    data: {
+      success: boolean;
+      results: Array<{
+        step_index: number;
+        action: string;
+        success: boolean;
+        data?: unknown;
+        error?: string;
+      }>;
+    },
+  ) {
+    const session = this.activeSessions.get(client.id);
+    if (!session) {
+      return { error: 'No active voice session' };
+    }
+
+    const successCount = data.results.filter((r) => r.success).length;
+    this.logger.log(
+      `[v${getApiVersion()}] RPA result: ${successCount}/${data.results.length} steps OK for ${session.deviceId}`,
+    );
+
+    // Store in session for context
+    if (!session.transcript) session.transcript = [];
+    session.transcript.push(
+      `[RPA] ${data.results.length} steps, ${successCount} succeeded`,
+    );
+
+    return { success: true };
+  }
+
   /**
    * Start a voice call with brain context
    */
