@@ -46,14 +46,21 @@ export interface VoicePipelineStatus {
   activeSessionId?: string;
   /** ISO timestamp of this status snapshot */
   timestamp: string;
+  /** Provider-level error (last runtime error) */
+  error?: { message: string; at: string };
 }
 
 /**
  * Voice provider configuration resolved from team/tenant settings.
  */
 export interface VoiceProviderConfig {
+  /** Team identifier */
   teamId?: string;
+  /** Unified voice pipeline provider (e.g. keledon-realtime-pipeline, web-speech-local) */
+  voiceProvider?: string;
+  /** STT provider id */
   sttProvider: string;
+  /** TTS provider id */
   ttsProvider: string;
   llmProvider: string;
   sttApiKey?: string;

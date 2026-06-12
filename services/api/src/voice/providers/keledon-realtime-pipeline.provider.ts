@@ -45,6 +45,8 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
   private ttsAdapter: TtsAdapter | null = null;
   private readonly bargeIn = new BargeInController();
   private destroyed = false;
+  private lastError: string | null = null;
+  private lastErrorAt: string | null = null;
 
   constructor(
     private readonly ttsService: TTSService,
@@ -141,7 +143,9 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
       // Process through Brain
       await this.processBrainReply(session, result.text);
     } catch (error) {
-      this.logger.error(`[${sessionId}] STT error: ${error instanceof Error ? error.message : String(error)}`);
+      this.lastError = `STT error: ${error instanceof Error ? error.message : String(error)}`;
+      this.lastErrorAt = new Date().toISOString();
+      this.logger.error(`[${sessionId}] STT error: ${this.lastError}`);
     }
   }
 
@@ -180,7 +184,9 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
         },
       });
     } catch (error) {
-      this.logger.error(`TTS error: ${error instanceof Error ? error.message : String(error)}`);
+      this.lastError = `TTS error: ${error instanceof Error ? error.message : String(error)}`;
+      this.lastErrorAt = new Date().toISOString();
+      this.logger.error(`TTS error: ${this.lastError}`);
     } finally {
       this.bargeIn.offInterrupt(interruptHandler);
       this.bargeIn.endSpeaking(sessionId || 'unknown');
@@ -240,6 +246,7 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
       bargeInEnabled: this.config.bargeInEnabled ?? true,
       activeSessionId: sessionId || undefined,
       timestamp: new Date().toISOString(),
+      error: this.lastError ? { message: this.lastError, at: this.lastErrorAt! } : undefined,
     };
   }
 

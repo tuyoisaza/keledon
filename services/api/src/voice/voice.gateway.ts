@@ -12,6 +12,8 @@ import { Logger, Inject, OnModuleInit } from '@nestjs/common';
 import { TTSService } from '../tts/tts.service';
 import { LLMService } from '../llm/llm.service';
 import { getApiVersion } from '../version';
+import { ProviderConfigResolver } from './providers/provider-config.resolver';
+import { VoiceProviderRegistry } from './providers/voice-provider.registry';
 
 const voiceCorsOrigins =
   process.env.KELEDON_ALLOW_ALL_CORS === 'true'
@@ -39,6 +41,16 @@ export interface VoiceSession {
   isSpeaking: boolean;
   /** Abort controller for current TTS stream */
   abortTTS: () => void;
+  /** Timestamps at each pipeline stage (ms since epoch) */
+  latencyTimestamps?: {
+    vadEnd?: number;
+    sttFinal?: number;
+    brainStart?: number;
+    brainEnd?: number;
+    ttsFirstChunk?: number;
+    ttsComplete?: number;
+    interrupt?: number;
+  };
 }
 
 export interface VoiceCallEvents {
@@ -67,6 +79,8 @@ export class VoiceGateway
     @Inject(TTSService)
     private ttsService?: TTSService,
     private llmService?: LLMService,
+    private readonly configResolver?: ProviderConfigResolver,
+    private readonly registry?: VoiceProviderRegistry,
   ) {}
 
   onModuleInit() {
@@ -99,10 +113,28 @@ export class VoiceGateway
       history: [],
       isSpeaking: false,
       abortTTS: () => {},
+      latencyTimestamps: {},
     };
 
     this.activeSessions.set(client.id, session);
     client.data.session = session;
+
+    // Resolve team provider config from auth context if available
+    const ctx = client.handshake.auth?.context
+      ? (typeof client.handshake.auth.context === 'string'
+          ? JSON.parse(client.handshake.auth.context)
+          : client.handshake.auth.context)
+      : null;
+    if (ctx?.teamId && this.configResolver && this.registry) {
+      try {
+        const config = await this.configResolver.resolveTeamConfig(ctx.teamId);
+        session.context = ctx;
+        await this.registry.getOrCreateProvider(session.sessionId, config);
+        this.logger.log(`Provider configured for team ${ctx.teamId}: STT=${config.sttProvider} TTS=${config.ttsProvider}`);
+      } catch (err) {
+        this.logger.warn(`Could not resolve provider config: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
 
     this.server.emit('voice:connected', {
       device_id: deviceId,
@@ -125,6 +157,11 @@ export class VoiceGateway
       });
 
       this.activeSessions.delete(client.id);
+
+      // Clean up provider session
+      if (this.registry) {
+        this.registry.endSession(session.sessionId).catch(() => {});
+      }
     }
   }
 
@@ -267,6 +304,10 @@ export class VoiceGateway
         })),
       };
 
+      // Track brain latency
+      if (!session.latencyTimestamps) session.latencyTimestamps = {};
+      session.latencyTimestamps.brainStart = Date.now();
+
       const brainResponse = await fetch(brainApiUrl, {
         method: 'POST',
         headers: {
@@ -279,6 +320,8 @@ export class VoiceGateway
       if (!brainResponse.ok) {
         throw new Error(`Brain API returned ${brainResponse.status}`);
       }
+
+      session.latencyTimestamps.brainEnd = Date.now();
 
       const brainData: any = await brainResponse.json();
       const replyText = brainData.reply?.trim() || '';
@@ -307,10 +350,15 @@ export class VoiceGateway
       };
 
       // Send audio chunks as they arrive
+      let ttsFirstChunkLogged = false;
       const streamResult = await this.ttsService.speakStreaming(
         replyText,
         (chunkBase64) => {
           if (aborted) return;
+          if (!ttsFirstChunkLogged) {
+            ttsFirstChunkLogged = true;
+            session.latencyTimestamps.ttsFirstChunk = Date.now();
+          }
           client.emit('voice:audio', {
             audio: chunkBase64,
             sequence: 'chunk',
@@ -323,6 +371,7 @@ export class VoiceGateway
       // 6. Signal end of audio stream
       session.isSpeaking = false;
       session.abortTTS = () => {};
+      session.latencyTimestamps.ttsComplete = Date.now();
 
       client.emit('voice:audio', {
         sequence: 'end',
@@ -330,6 +379,15 @@ export class VoiceGateway
         duration: streamResult.duration,
         apiVersion: getApiVersion(),
       });
+
+      // Log latency metrics for this turn
+      const ts = session.latencyTimestamps;
+      const brainMs = ts.brainEnd && ts.brainStart ? ts.brainEnd - ts.brainStart : -1;
+      const ttsFirstMs = ts.ttsFirstChunk && ts.brainEnd ? ts.ttsFirstChunk - ts.brainEnd : -1;
+      const totalMs = ts.ttsComplete && ts.brainStart ? ts.ttsComplete - ts.brainStart : -1;
+      this.logger.log(
+        `[v${getApiVersion()}] Latency — brain=${brainMs}ms ttsFirst=${ttsFirstMs}ms total=${totalMs}ms | "${replyText.substring(0, 40)}..."`,
+      );
 
       this.logger.log(
         `[v${getApiVersion()}] Brain reply streamed: ${replyText.substring(0, 50)}... (${streamResult.audioData?.length || 0} bytes)`,
