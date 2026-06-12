@@ -42,8 +42,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   private startPeriodicCleanup(): void {
     // Run cleanup every hour
     this.cleanupInterval = setInterval(
-      async () => {
-        await this.cleanupOrphanedSessions();
+      () => {
+        void this.cleanupOrphanedSessions();
       },
       60 * 60 * 1000,
     );
@@ -184,8 +184,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   async enableShutdownHooks(app: INestApplication) {
-    process.on('beforeExit', async () => {
-      await app.close();
+    process.on('beforeExit', () => {
+      void app.close();
     });
   }
 }

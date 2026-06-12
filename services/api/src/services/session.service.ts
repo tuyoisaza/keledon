@@ -40,7 +40,9 @@ export class SessionService {
       return session;
     } catch (error) {
       this.logger.error(`Failed to create session in DB: ${error.message}`);
-      throw new Error(`Session creation failed: ${error.message}`);
+      throw new Error(`Session creation failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 
@@ -52,7 +54,9 @@ export class SessionService {
       return session;
     } catch (error) {
       this.logger.error(`Failed to get session from DB: ${error.message}`);
-      throw new Error(`Session retrieval failed: ${error.message}`);
+      throw new Error(`Session retrieval failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 
@@ -69,7 +73,9 @@ export class SessionService {
       });
     } catch (error) {
       this.logger.error(`Failed to update session in DB: ${error.message}`);
-      throw new Error(`Session update failed: ${error.message}`);
+      throw new Error(`Session update failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 
@@ -96,7 +102,9 @@ export class SessionService {
       return persistedEvent;
     } catch (error) {
       this.logger.error(`Failed to persist event to DB: ${error.message}`);
-      throw new Error(`Event persistence failed: ${error.message}`);
+      throw new Error(`Event persistence failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 
@@ -109,7 +117,9 @@ export class SessionService {
       return dbEvents;
     } catch (error) {
       this.logger.error(`Failed to get events from DB: ${error.message}`);
-      throw new Error(`Event retrieval failed: ${error.message}`);
+      throw new Error(`Event retrieval failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 
@@ -144,7 +154,9 @@ export class SessionService {
       return dbSessions;
     } catch (error) {
       this.logger.error(`Failed to get sessions from DB: ${error.message}`);
-      throw new Error(`Session listing failed: ${error.message}`);
+      throw new Error(`Session listing failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 
@@ -158,7 +170,9 @@ export class SessionService {
       });
     } catch (error) {
       this.logger.error(`Failed to delete from DB: ${error.message}`);
-      throw new Error(`Session deletion failed: ${error.message}`);
+      throw new Error(`Session deletion failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 }

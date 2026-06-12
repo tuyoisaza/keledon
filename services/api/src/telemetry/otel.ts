@@ -47,7 +47,7 @@ export async function startTelemetry(): Promise<void> {
   }
 
   try {
-    await sdk.start();
+    sdk.start();
     console.log(
       `[OTEL] Tracing started for ${serviceName} -> ${resolvedEndpoints.otelExporterUrl}`,
     );

@@ -507,10 +507,10 @@ export class IntegrationHealthService {
     }
 
     // Schedule health checks every 30 seconds
-    const interval = setInterval(async () => {
+    const interval = setInterval(() => {
       const provider = this.providers.get(providerId);
       if (provider && provider.status === 'connected') {
-        await this.testProviderConnection(providerId);
+        void this.testProviderConnection(providerId);
       }
     }, 30000);
 
@@ -519,14 +519,16 @@ export class IntegrationHealthService {
 
   private startHealthChecks(): void {
     // Start periodic health checks for all connected providers
-    interval(60000).subscribe(async () => {
-      const connectedProviders = Array.from(this.providers.values()).filter(
-        (provider) => provider.status === 'connected',
-      );
+    interval(60000).subscribe(() => {
+      void (async () => {
+        const connectedProviders = Array.from(this.providers.values()).filter(
+          (provider) => provider.status === 'connected',
+        );
 
-      for (const provider of connectedProviders) {
-        await this.testProviderConnection(provider.id);
-      }
+        for (const provider of connectedProviders) {
+          await this.testProviderConnection(provider.id);
+        }
+      })();
 
       // Broadcast connection metrics
       this.connectionUpdate.next(this.getConnectionMetrics());

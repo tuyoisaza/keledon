@@ -205,7 +205,9 @@ async function assertReachable(
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`[Config] ${label} unreachable at ${url}: ${message}`);
+    throw new Error(`[Config] ${label} unreachable at ${url}: ${message}`, {
+      cause: error,
+    });
   } finally {
     clearTimeout(timeout);
   }

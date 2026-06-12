@@ -183,14 +183,18 @@ export class PlannerController {
       if (blockMatch) {
         try {
           return JSON.parse(blockMatch[1].trim());
-        } catch {}
+        } catch {
+          // Ignore malformed fenced JSON and try the next extraction strategy.
+        }
       }
       // Try finding the first { }
       const braceMatch = text.match(/\{[\s\S]*\}/);
       if (braceMatch) {
         try {
           return JSON.parse(braceMatch[0]);
-        } catch {}
+        } catch {
+          // Ignore malformed braced JSON and fall through to null.
+        }
       }
     }
     return null;

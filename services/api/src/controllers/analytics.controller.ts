@@ -126,7 +126,7 @@ export class AnalyticsController {
         this.getFlowAnalyticsData(period, filters),
         this.getAgentAnalyticsData(period, filters),
         this.getSecurityAnalyticsData(period, filters),
-        this.getSystemAnalyticsData(),
+        Promise.resolve(this.getSystemAnalyticsData()),
       ]);
 
       // Calculate overall health score
@@ -920,7 +920,7 @@ export class AnalyticsController {
       this.getFlowAnalyticsData(period, filters),
       this.getAgentAnalyticsData(period, filters),
       this.getSecurityAnalyticsData(period, filters),
-      this.getSystemAnalyticsData(),
+      Promise.resolve(this.getSystemAnalyticsData()),
     ]);
 
     return {

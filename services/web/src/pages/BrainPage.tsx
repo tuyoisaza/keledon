@@ -1272,8 +1272,8 @@ export default function BrainPage() {
                 try {
                     const cfgRes = await apiFetch(`/api/teams/${selectedTeamId}/config`);
                     const cfg = cfgRes.ok ? await cfgRes.json() : {};
-                    const apiUrl = cfg.speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
-                    const apiKey = cfg.speachesApiKey || '';
+                    const _apiUrl = cfg.speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
+                    const _apiKey = cfg.speachesApiKey || '';
 
                     const formData = new FormData();
                     formData.append('file', audioBlob, 'recording.webm');
@@ -2224,7 +2224,7 @@ export default function BrainPage() {
                                                     value={selectedMicId}
                                                     onChange={(e) => {
                                                         setSelectedMicId(e.target.value);
-                                                        try { localStorage.setItem('keledon_brain_mic_id', e.target.value); } catch {}
+                                                        try { localStorage.setItem('keledon_brain_mic_id', e.target.value); } catch { /* ignore localStorage errors */ }
                                                     }}
                                                     className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-xs outline-none focus:border-primary"
                                                 >
@@ -2240,7 +2240,7 @@ export default function BrainPage() {
                                                     value={selectedSpeakerId}
                                                     onChange={(e) => {
                                                         setSelectedSpeakerId(e.target.value);
-                                                        try { localStorage.setItem('keledon_brain_speaker_id', e.target.value); } catch {}
+                                                        try { localStorage.setItem('keledon_brain_speaker_id', e.target.value); } catch { /* ignore localStorage errors */ }
                                                     }}
                                                     className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-xs outline-none focus:border-primary"
                                                 >
@@ -2477,7 +2477,7 @@ export default function BrainPage() {
                                         const lang = e.target.value;
                                         setSttLang(lang);
                                         sttLangRef.current = lang;
-                                        try { localStorage.setItem('keledon_stt_lang', lang); } catch {}
+                                        try { localStorage.setItem('keledon_stt_lang', lang); } catch { /* ignore localStorage errors */ }
                                         // Recreate recognition with new language if currently listening
                                         if (listeningRef.current) {
                                             recognitionRef.current?.stop();

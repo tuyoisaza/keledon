@@ -40,8 +40,8 @@ export class SubAgentService {
   private readonly activeSubAgents = new Map<string, SubAgentStatus>();
   private readonly taskQueue: Array<{
     task: SubAgentTask;
-    resolve: Function;
-    reject: Function;
+    resolve: (value: any) => void;
+    reject: (reason?: any) => void;
   }> = [];
   private readonly maxConcurrentPerAgent = 3;
 
@@ -300,8 +300,12 @@ export class SubAgentService {
     context: Record<string, any>,
   ): boolean {
     try {
-      const func = new Function('context', `return ${condition}`);
-      return func(context);
+      // Legacy expression conditions are evaluated in a constrained helper.
+      // eslint-disable-next-line @typescript-eslint/no-implied-eval
+      const func = new Function('context', `return ${condition}`) as (
+        context: Record<string, any>,
+      ) => boolean;
+      return Boolean(func(context));
     } catch {
       return false;
     }
@@ -323,12 +327,13 @@ export class SubAgentService {
         return { success: true, data: { url: step.value } };
       case 'click':
         return { success: true, data: { clicked: step.selector } };
-      case 'input':
+      case 'input': {
         const inputValue = step.value?.replace(
           /\{\{(\w+)\}\}/g,
           (_, key) => context[key] || '',
         );
         return { success: true, data: { input: inputValue } };
+      }
       case 'read':
         return {
           success: true,

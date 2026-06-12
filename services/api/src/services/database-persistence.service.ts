@@ -434,8 +434,8 @@ export class DatabasePersistenceService
     if (this.config.backupEnabled && this.config.backupInterval > 0) {
       this.backupInterval = interval(
         this.config.backupInterval * 60 * 1000,
-      ).subscribe(async () => {
-        await this.createBackup('incremental');
+      ).subscribe(() => {
+        void this.createBackup('incremental');
       });
       console.log(
         `DatabasePersistence: Started backup scheduler (${this.config.backupInterval} minutes)`,
@@ -445,8 +445,8 @@ export class DatabasePersistenceService
 
   private startCleanupScheduler(): void {
     // Run cleanup every hour
-    this.cleanupInterval = interval(60 * 60 * 1000).subscribe(async () => {
-      await this.cleanup();
+    this.cleanupInterval = interval(60 * 60 * 1000).subscribe(() => {
+      void this.cleanup();
     });
     console.log('DatabasePersistence: Started cleanup scheduler (hourly)');
   }

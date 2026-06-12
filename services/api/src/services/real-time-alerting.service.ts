@@ -547,22 +547,30 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   private startMonitoring(): void {
     // System monitoring
     this.monitoringIntervals.push(
-      interval(30000).subscribe(() => this.checkSystemAlerts()),
+      interval(30000).subscribe(() => {
+        void this.checkSystemAlerts();
+      }),
     );
 
     // Integration monitoring
     this.monitoringIntervals.push(
-      interval(60000).subscribe(() => this.checkIntegrationAlerts()),
+      interval(60000).subscribe(() => {
+        void this.checkIntegrationAlerts();
+      }),
     );
 
     // Flow execution monitoring
     this.monitoringIntervals.push(
-      interval(10000).subscribe(() => this.checkFlowAlerts()),
+      interval(10000).subscribe(() => {
+        void this.checkFlowAlerts();
+      }),
     );
 
     // Voice analytics monitoring
     this.monitoringIntervals.push(
-      interval(120000).subscribe(() => this.checkVoiceAlerts()),
+      interval(120000).subscribe(() => {
+        void this.checkVoiceAlerts();
+      }),
     );
 
     console.log('RealTimeAlerting: Started monitoring intervals');

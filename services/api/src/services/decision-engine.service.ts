@@ -825,8 +825,6 @@ export class DecisionEngineService {
     reasoning: string;
   }> {
     const suggestions: any[] = [];
-    let reasoning = '';
-
     const triggerKeywords = this.extractTriggerKeywords(transcript);
 
     for (const keyword of triggerKeywords) {
@@ -845,11 +843,10 @@ export class DecisionEngineService {
       }
     }
 
-    if (suggestions.length > 0) {
-      reasoning = `Found ${suggestions.length} flow(s) matching context triggers: ${triggerKeywords.join(', ')}`;
-    } else {
-      reasoning = 'No flows found matching current context';
-    }
+    const reasoning =
+      suggestions.length > 0
+        ? `Found ${suggestions.length} flow(s) matching context triggers: ${triggerKeywords.join(', ')}`
+        : 'No flows found matching current context';
 
     return { flows: suggestions, reasoning };
   }

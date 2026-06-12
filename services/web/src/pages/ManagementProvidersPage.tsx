@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings, Save, Cpu, Brain, Eye, EyeOff, Mic, Volume2, Users } from 'lucide-react';
+import { Settings, Save, Cpu as _Cpu, Brain, Eye, EyeOff, Mic, Volume2, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { apiFetch } from '@/lib/api-fetch';

@@ -64,61 +64,63 @@ export class AuditInterceptor implements NestInterceptor {
     }
 
     return next.handle().pipe(
-      tap(async (responseBody: any) => {
-        let entityId = auditEntry.entityId;
-        let resolvedUserId = auditEntry.userId;
+      tap((responseBody: any) => {
+        void (async () => {
+          let entityId = auditEntry.entityId;
+          let resolvedUserId = auditEntry.userId;
 
-        // For create operations, try to extract the created entity ID from the response
-        if (!entityId && responseBody?.id) {
-          entityId = responseBody.id;
-        }
+          // For create operations, try to extract the created entity ID from the response
+          if (!entityId && responseBody?.id) {
+            entityId = responseBody.id;
+          }
 
-        // For auth endpoints, try to extract userId from response body
-        if (!resolvedUserId && responseBody?.user?.id) {
-          resolvedUserId = responseBody.user.id;
-        }
-        if (!resolvedUserId && responseBody?.id && !entityId) {
-          // Register response has id at top level
-          resolvedUserId = responseBody.id;
-        }
+          // For auth endpoints, try to extract userId from response body
+          if (!resolvedUserId && responseBody?.user?.id) {
+            resolvedUserId = responseBody.user.id;
+          }
+          if (!resolvedUserId && responseBody?.id && !entityId) {
+            // Register response has id at top level
+            resolvedUserId = responseBody.id;
+          }
 
-        // For auth/google/callback, extract user from the redirect query params
-        // Actually, for google callback, the response is a redirect, so we can't
-        // extract from response body. We'll rely on the query params if present.
-        if (
-          !entityId &&
-          auditEntry.action === 'GOOGLE_LOGIN' &&
-          responseBody?.url
-        ) {
-          // The response is a redirect — we can't extract user id easily here
-          // The user ID was extracted from the request or is unknown
-        }
+          // For auth/google/callback, extract user from the redirect query params
+          // Actually, for google callback, the response is a redirect, so we can't
+          // extract from response body. We'll rely on the query params if present.
+          if (
+            !entityId &&
+            auditEntry.action === 'GOOGLE_LOGIN' &&
+            responseBody?.url
+          ) {
+            // The response is a redirect — we can't extract user id easily here
+            // The user ID was extracted from the request or is unknown
+          }
 
-        // For DELETE operations, entityId comes from route params
-        if (!entityId && method === 'DELETE') {
-          entityId = request.params?.id;
-        }
+          // For DELETE operations, entityId comes from route params
+          if (!entityId && method === 'DELETE') {
+            entityId = request.params?.id;
+          }
 
-        try {
-          await this.prisma.auditLog.create({
-            data: {
-              userId: resolvedUserId,
-              action: auditEntry.action,
-              entity: auditEntry.entity,
-              entityId: entityId || undefined,
-              changes: auditEntry.changes,
-              ipAddress: auditEntry.ipAddress,
-              userAgent: auditEntry.userAgent,
-            },
-          });
-          this.logger.debug(
-            `[Audit] ${auditEntry.action} on ${auditEntry.entity}${entityId ? '#' + entityId : ''} by ${resolvedUserId || 'anonymous'}`,
-          );
-        } catch (error: any) {
-          this.logger.error(
-            `[Audit] Failed to log ${auditEntry.action}: ${error.message}`,
-          );
-        }
+          try {
+            await this.prisma.auditLog.create({
+              data: {
+                userId: resolvedUserId,
+                action: auditEntry.action,
+                entity: auditEntry.entity,
+                entityId: entityId || undefined,
+                changes: auditEntry.changes,
+                ipAddress: auditEntry.ipAddress,
+                userAgent: auditEntry.userAgent,
+              },
+            });
+            this.logger.debug(
+              `[Audit] ${auditEntry.action} on ${auditEntry.entity}${entityId ? '#' + entityId : ''} by ${resolvedUserId || 'anonymous'}`,
+            );
+          } catch (error: any) {
+            this.logger.error(
+              `[Audit] Failed to log ${auditEntry.action}: ${error.message}`,
+            );
+          }
+        })();
       }),
     );
   }

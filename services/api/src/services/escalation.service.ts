@@ -44,7 +44,9 @@ export class EscalationService {
       return escalation;
     } catch (error) {
       this.logger.error(`Failed to create escalation in DB: ${error.message}`);
-      throw new Error(`Escalation creation failed: ${error.message}`);
+      throw new Error(`Escalation creation failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 
@@ -55,7 +57,9 @@ export class EscalationService {
       });
     } catch (error) {
       this.logger.error(`Failed to get escalation from DB: ${error.message}`);
-      throw new Error(`Escalation retrieval failed: ${error.message}`);
+      throw new Error(`Escalation retrieval failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 
@@ -67,7 +71,9 @@ export class EscalationService {
       });
     } catch (error) {
       this.logger.error(`Failed to get escalations from DB: ${error.message}`);
-      throw new Error(`Escalation retrieval failed: ${error.message}`);
+      throw new Error(`Escalation retrieval failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 
@@ -80,7 +86,9 @@ export class EscalationService {
       });
     } catch (error) {
       this.logger.error(`Failed to get escalations from DB: ${error.message}`);
-      throw new Error(`Escalation retrieval failed: ${error.message}`);
+      throw new Error(`Escalation retrieval failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 
@@ -95,7 +103,9 @@ export class EscalationService {
       this.logger.error(
         `Failed to get active escalations from DB: ${error.message}`,
       );
-      throw new Error(`Escalation retrieval failed: ${error.message}`);
+      throw new Error(`Escalation retrieval failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 
@@ -118,7 +128,9 @@ export class EscalationService {
       this.logger.error(
         `Failed to acknowledge escalation in DB: ${error.message}`,
       );
-      throw new Error(`Escalation acknowledge failed: ${error.message}`);
+      throw new Error(`Escalation acknowledge failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 
@@ -138,7 +150,9 @@ export class EscalationService {
       });
     } catch (error) {
       this.logger.error(`Failed to resolve escalation in DB: ${error.message}`);
-      throw new Error(`Escalation resolve failed: ${error.message}`);
+      throw new Error(`Escalation resolve failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 
@@ -163,7 +177,9 @@ export class EscalationService {
       });
     } catch (error) {
       this.logger.error(`Failed to abort escalation in DB: ${error.message}`);
-      throw new Error(`Escalation abort failed: ${error.message}`);
+      throw new Error(`Escalation abort failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 
@@ -197,7 +213,9 @@ export class EscalationService {
       return { total, triggered, acknowledged, resolved, aborted };
     } catch (error) {
       this.logger.error(`Failed to get escalation stats: ${error.message}`);
-      throw new Error(`Escalation stats failed: ${error.message}`);
+      throw new Error(`Escalation stats failed: ${error.message}`, {
+        cause: error,
+      });
     }
   }
 }
