@@ -110,6 +110,12 @@ export default function BrainPage() {
         bargeInEnabled: boolean;
     } | null>(null);
     const pipelinePollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const [transportStatus, setTransportStatus] = useState<{
+        mode: 'webrtc' | 'ws-fallback' | 'disconnected' | 'initializing';
+        iceState?: string;
+        peerState?: string;
+        detail?: string;
+    }>({ mode: 'disconnected', detail: 'No active call' });
 
     function addLog(msg: string) {
         const entry = `[${new Date().toLocaleTimeString()}] ${msg}`;
@@ -571,8 +577,15 @@ export default function BrainPage() {
             // Fetch live pipeline provider status once on connect
             void fetchPipelineStatus(sessionId);
             // Try WebRTC peer connection (fallback to WS audio if fails)
+            setTransportStatus({ mode: 'initializing', detail: 'Negotiating WebRTC offer/answer' });
+            addLog('[VOICE] Transport negotiation: attempting WebRTC; will fall back to WS audio if unavailable');
             void setupWebRtc().then((ok) => {
-                addLog(`[WebRTC] ${ok ? 'established ✓' : 'not available — using WS audio'}`);
+                if (ok) {
+                    addLog('[VOICE] Transport selected: WebRTC media channel');
+                } else {
+                    setTransportStatus({ mode: 'ws-fallback', detail: 'WebRTC unavailable; using existing WS audio path' });
+                    addLog('[VOICE] Transport selected: WS fallback audio path');
+                }
             });
             // Poll provider status every 10s during session
             if (pipelinePollRef.current) clearInterval(pipelinePollRef.current);
@@ -686,6 +699,7 @@ export default function BrainPage() {
             addLog(`[v${__APP_VERSION__ || '?'}]   Session: ${voiceSessionIdRef.current || 'none'} | Duration: ${formatCallTime(callTimer)}`);
             if (pipelinePollRef.current) { clearInterval(pipelinePollRef.current); pipelinePollRef.current = null; }
             setPipelineStatus(null);
+            setTransportStatus({ mode: 'disconnected', detail: `WS disconnected: ${reason}` });
             // Auto-reconnect for unexpected disconnects (not user-initiated)
             if (reason !== 'io client disconnect' && conversationModeRef.current) {
                 addLog(`[v${__APP_VERSION__ || '?'}] → auto-reconnecting in 2s`);
@@ -721,7 +735,11 @@ export default function BrainPage() {
      */
     async function setupWebRtc(): Promise<boolean> {
         const socket = voiceSocketRef.current;
-        if (!socket?.connected) return false;
+        if (!socket?.connected) {
+            setTransportStatus({ mode: 'ws-fallback', detail: 'WS connected but signaling socket was not ready for WebRTC setup' });
+            addLog('[WebRTC] signaling socket not ready — using WS fallback');
+            return false;
+        }
 
         try {
             const pc = new RTCPeerConnection({
@@ -735,14 +753,48 @@ export default function BrainPage() {
             // Log ICE connection state changes
             pc.oniceconnectionstatechange = () => {
                 addLog(`[WebRTC] ICE state: ${pc.iceConnectionState}`);
+                setTransportStatus(prev => ({
+                    ...prev,
+                    iceState: pc.iceConnectionState,
+                    detail: `ICE ${pc.iceConnectionState}; peer ${pc.connectionState}`,
+                }));
                 if (pc.iceConnectionState === 'failed' || pc.iceConnectionState === 'disconnected') {
                     webrtcConnectedRef.current = false;
+                    setTransportStatus({
+                        mode: 'ws-fallback',
+                        iceState: pc.iceConnectionState,
+                        peerState: pc.connectionState,
+                        detail: `WebRTC ICE ${pc.iceConnectionState}; WS audio remains available`,
+                    });
+                    addLog(`[VOICE] Transport fallback active: ICE ${pc.iceConnectionState}, continuing over WS audio`);
                 }
             };
             pc.onconnectionstatechange = () => {
                 addLog(`[WebRTC] connection state: ${pc.connectionState}`);
-                if (pc.connectionState === 'connected') webrtcConnectedRef.current = true;
-                if (pc.connectionState === 'failed') webrtcConnectedRef.current = false;
+                setTransportStatus(prev => ({
+                    ...prev,
+                    peerState: pc.connectionState,
+                    detail: `ICE ${pc.iceConnectionState}; peer ${pc.connectionState}`,
+                }));
+                if (pc.connectionState === 'connected') {
+                    webrtcConnectedRef.current = true;
+                    setTransportStatus({
+                        mode: 'webrtc',
+                        iceState: pc.iceConnectionState,
+                        peerState: pc.connectionState,
+                        detail: 'WebRTC media channel connected',
+                    });
+                }
+                if (pc.connectionState === 'failed') {
+                    webrtcConnectedRef.current = false;
+                    setTransportStatus({
+                        mode: 'ws-fallback',
+                        iceState: pc.iceConnectionState,
+                        peerState: pc.connectionState,
+                        detail: 'WebRTC peer failed; WS audio fallback active',
+                    });
+                    addLog('[VOICE] Transport fallback active: WebRTC peer failed, continuing over WS audio');
+                }
             };
 
             // Send ICE candidates to server
@@ -764,6 +816,7 @@ export default function BrainPage() {
 
             if (response.error) {
                 addLog(`[WebRTC] offer rejected: ${response.error}`);
+                setTransportStatus({ mode: 'ws-fallback', detail: `Offer rejected: ${response.error}` });
                 pc.close();
                 peerConnectionRef.current = null;
                 return false;
@@ -771,10 +824,18 @@ export default function BrainPage() {
 
             // Set remote description from server's answer
             await pc.setRemoteDescription(new RTCSessionDescription(response.sdp));
-            addLog(`[WebRTC] connected — mic can be added`);
+            setTransportStatus({
+                mode: 'webrtc',
+                iceState: pc.iceConnectionState,
+                peerState: pc.connectionState,
+                detail: 'SDP answer accepted; waiting for ICE/peer connected',
+            });
+            addLog(`[WebRTC] SDP answer accepted — ICE=${pc.iceConnectionState} peer=${pc.connectionState}`);
             return true;
         } catch (err) {
-            addLog(`[WebRTC] setup error: ${err instanceof Error ? err.message : String(err)}`);
+            const detail = err instanceof Error ? err.message : String(err);
+            addLog(`[WebRTC] setup error: ${detail}`);
+            setTransportStatus({ mode: 'ws-fallback', detail: `Setup error: ${detail}` });
             webrtcConnectedRef.current = false;
             return false;
         }
@@ -787,6 +848,8 @@ export default function BrainPage() {
             peerConnectionRef.current.close();
             peerConnectionRef.current = null;
             webrtcConnectedRef.current = false;
+            setTransportStatus({ mode: 'disconnected', detail: 'Call disconnected; WebRTC peer closed' });
+            addLog('[VOICE] Transport disconnected: WebRTC peer closed');
         }
         if (callTimerRef.current) { clearInterval(callTimerRef.current); callTimerRef.current = null; }
         if (pipelinePollRef.current) { clearInterval(pipelinePollRef.current); pipelinePollRef.current = null; }
@@ -1229,6 +1292,13 @@ export default function BrainPage() {
                     pc.addTrack(track, stream);
                 });
                 addLog(`[WebRTC] mic track added to peer connection`);
+                setTransportStatus(prev => ({
+                    ...prev,
+                    mode: 'webrtc',
+                    detail: 'Mic track attached to WebRTC media channel',
+                }));
+            } else {
+                addLog('[VOICE] Audio capture path: WS fallback/recorder path active for this turn');
             }
             provisionalTextRef.current = '';
             speachesHeardSpeechRef.current = false;
@@ -2019,6 +2089,34 @@ export default function BrainPage() {
                                 <span className={`h-1.5 w-1.5 rounded-full ${callStatus === 'connected' ? 'bg-green-400 animate-pulse' : 'bg-muted-foreground'}`} />
                             </div>
                             <div className="space-y-1">
+                                {(() => {
+                                    const transportMeta: Record<typeof transportStatus.mode, { label: string; cls: string; dot: string; value: string }> = {
+                                        webrtc: { label: 'WEBRTC', value: 'media channel', cls: 'bg-green-500/10 text-green-400 border-green-500/20', dot: 'bg-green-400' },
+                                        'ws-fallback': { label: 'WS FALLBACK', value: 'websocket audio', cls: 'bg-yellow-500/10 text-yellow-300 border-yellow-500/20', dot: 'bg-yellow-300' },
+                                        initializing: { label: 'NEGOTIATING', value: 'offer/answer', cls: 'bg-blue-500/10 text-blue-300 border-blue-500/20', dot: 'bg-blue-300 animate-pulse' },
+                                        disconnected: { label: 'OFFLINE', value: 'not connected', cls: 'bg-muted/40 text-muted-foreground border-border', dot: 'bg-muted-foreground' },
+                                    };
+                                    const meta = transportMeta[transportStatus.mode];
+                                    return (
+                                        <div className="rounded-md bg-muted/20 px-2 py-1 text-[10px]">
+                                            <div className="flex items-center justify-between">
+                                                <span className="font-medium text-foreground">Transport</span>
+                                                <span className="flex items-center gap-1.5">
+                                                    <span className="text-muted-foreground">{meta.value}</span>
+                                                    <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded border ${meta.cls}`}>
+                                                        <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
+                                                        {meta.label}
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            {(transportStatus.iceState || transportStatus.peerState || transportStatus.detail) && (
+                                                <div className="mt-0.5 truncate text-[9px] text-muted-foreground" title={transportStatus.detail || ''}>
+                                                    ICE={transportStatus.iceState || '?'} · Peer={transportStatus.peerState || '?'}{transportStatus.detail ? ` · ${transportStatus.detail}` : ''}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })()}
                                 {[pipelineStatus.llm, pipelineStatus.stt, pipelineStatus.tts].filter(Boolean).map((provider) => {
                                     if (!provider) return null;
                                     const healthMap: Record<string, { label: string; cls: string; dot: string }> = {
