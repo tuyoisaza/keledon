@@ -131,7 +131,9 @@ export class LLMService implements OnModuleInit {
     return 'none';
   }
 
-  private async resolveTeamProvider(teamId: string): Promise<{ provider: LLMProvider; apiKey: string } | null> {
+  private async resolveTeamProvider(
+    teamId: string,
+  ): Promise<{ provider: LLMProvider; apiKey: string } | null> {
     try {
       const team = await this.prisma.team.findUnique({
         where: { id: teamId },
@@ -143,40 +145,61 @@ export class LLMService implements OnModuleInit {
         },
       });
       if (!team) {
-        this.logger.warn(`[LLM] resolveTeamProvider(${teamId}): team not found`);
+        this.logger.warn(
+          `[LLM] resolveTeamProvider(${teamId}): team not found`,
+        );
         return null;
       }
       if (!team.llmProvider) {
-        this.logger.warn(`[LLM] resolveTeamProvider(${teamId}): llmProvider is ${team.llmProvider}`);
+        this.logger.warn(
+          `[LLM] resolveTeamProvider(${teamId}): llmProvider is ${team.llmProvider}`,
+        );
         return null;
       }
-      
+
       const provider = team.llmProvider as LLMProvider;
       if (!CONFIGURED_PROVIDERS.includes(provider)) {
-        this.logger.warn(`[LLM] resolveTeamProvider(${teamId}): provider ${provider} not in configured list`);
+        this.logger.warn(
+          `[LLM] resolveTeamProvider(${teamId}): provider ${provider} not in configured list`,
+        );
         return null;
       }
-      
-      const dbApiKey = provider === 'openai' ? team.openaiApiKey
-        : provider === 'google' ? team.googleAiApiKey
-        : provider === 'anthropic' ? team.anthropicApiKey
-        : null;
-      
-      const effectiveKey = dbApiKey || 
-        (provider === 'openai' ? process.env.OPENAI_API_KEY
-          : provider === 'google' ? process.env.GOOGLE_AI_API_KEY
-          : provider === 'anthropic' ? process.env.ANTHROPIC_API_KEY
-          : null);
-      
+
+      const dbApiKey =
+        provider === 'openai'
+          ? team.openaiApiKey
+          : provider === 'google'
+            ? team.googleAiApiKey
+            : provider === 'anthropic'
+              ? team.anthropicApiKey
+              : null;
+
+      const effectiveKey =
+        dbApiKey ||
+        (provider === 'openai'
+          ? process.env.OPENAI_API_KEY
+          : provider === 'google'
+            ? process.env.GOOGLE_AI_API_KEY
+            : provider === 'anthropic'
+              ? process.env.ANTHROPIC_API_KEY
+              : null);
+
       if (!effectiveKey && provider !== 'ollama') {
-        this.logger.warn(`[LLM] resolveTeamProvider(${teamId}): no effective key for ${provider} (dbApiKey=${!!dbApiKey}, env=not set)`);
+        this.logger.warn(
+          `[LLM] resolveTeamProvider(${teamId}): no effective key for ${provider} (dbApiKey=${!!dbApiKey}, env=not set)`,
+        );
         return null;
       }
-      
-      this.logger.log(`[LLM] resolveTeamProvider(${teamId}): resolved to ${provider} (key=${!!effectiveKey})`);
+
+      this.logger.log(
+        `[LLM] resolveTeamProvider(${teamId}): resolved to ${provider} (key=${!!effectiveKey})`,
+      );
       return { provider, apiKey: effectiveKey || '' };
     } catch (error) {
-      this.logger.warn(`[LLM] Failed to resolve team provider for ${teamId}:`, error);
+      this.logger.warn(
+        `[LLM] Failed to resolve team provider for ${teamId}:`,
+        error,
+      );
       return null;
     }
   }
@@ -208,7 +231,9 @@ export class LLMService implements OnModuleInit {
         activeProvider = teamConfig.provider;
         activeApiKey = teamConfig.apiKey;
         activeModel = this.resolveModel(teamConfig.provider);
-        this.logger.log(`[LLM] Using team provider: ${activeProvider} for team ${request.teamId}`);
+        this.logger.log(
+          `[LLM] Using team provider: ${activeProvider} for team ${request.teamId}`,
+        );
       }
     }
 
@@ -221,15 +246,30 @@ export class LLMService implements OnModuleInit {
     }
 
     const systemPrompt = this.buildSystemPrompt(request.context || []);
-    const providerRequest: LLMRequest = { ...request, model: request.model || activeModel };
+    const providerRequest: LLMRequest = {
+      ...request,
+      model: request.model || activeModel,
+    };
     try {
       switch (activeProvider) {
         case 'anthropic':
-          return await this.generateWithAnthropic(providerRequest, systemPrompt, activeApiKey);
+          return await this.generateWithAnthropic(
+            providerRequest,
+            systemPrompt,
+            activeApiKey,
+          );
         case 'google':
-          return await this.generateWithGoogle(providerRequest, systemPrompt, activeApiKey);
+          return await this.generateWithGoogle(
+            providerRequest,
+            systemPrompt,
+            activeApiKey,
+          );
         case 'openai':
-          return await this.generateWithOpenAI(providerRequest, systemPrompt, activeApiKey);
+          return await this.generateWithOpenAI(
+            providerRequest,
+            systemPrompt,
+            activeApiKey,
+          );
         case 'ollama':
           return await this.generateWithOllama(providerRequest, systemPrompt);
       }
@@ -237,7 +277,9 @@ export class LLMService implements OnModuleInit {
       this.logger.error(`LLM [${activeProvider}] error:`, error);
       if (activeProvider !== 'openai' && process.env.OPENAI_API_KEY) {
         try {
-          this.logger.warn(`[LLM] ${activeProvider} failed; retrying with OpenAI fallback`);
+          this.logger.warn(
+            `[LLM] ${activeProvider} failed; retrying with OpenAI fallback`,
+          );
           return await this.generateWithOpenAI(
             { ...request, model: 'gpt-4o-mini' },
             systemPrompt,
@@ -261,7 +303,9 @@ export class LLMService implements OnModuleInit {
     apiKey?: string,
   ): Promise<LLMResponse> {
     const { Anthropic } = await import('@anthropic-ai/sdk');
-    const client = new Anthropic({ apiKey: apiKey || process.env.ANTHROPIC_API_KEY });
+    const client = new Anthropic({
+      apiKey: apiKey || process.env.ANTHROPIC_API_KEY,
+    });
 
     const response = await client.messages.create({
       model: request.model || this.model,
@@ -290,7 +334,9 @@ export class LLMService implements OnModuleInit {
     apiKey?: string,
   ): Promise<LLMResponse> {
     const { GoogleGenerativeAI } = await import('@google/generative-ai');
-    const genAI = new GoogleGenerativeAI(apiKey || process.env.GOOGLE_AI_API_KEY);
+    const genAI = new GoogleGenerativeAI(
+      apiKey || process.env.GOOGLE_AI_API_KEY,
+    );
     const genModel = genAI.getGenerativeModel({
       model: request.model || this.model,
     });
@@ -471,7 +517,9 @@ Always prefer "say" for questions, confirmations, and conversational responses.`
     if (activeProvider === 'openai') {
       try {
         const { OpenAI } = await import('openai');
-        const client = new OpenAI({ apiKey: activeApiKey || process.env.OPENAI_API_KEY });
+        const client = new OpenAI({
+          apiKey: activeApiKey || process.env.OPENAI_API_KEY,
+        });
         const response = await client.chat.completions.create({
           model: this.model || 'gpt-4o',
           messages: [

@@ -1,5 +1,9 @@
 import { Logger, Injectable } from '@nestjs/common';
-import { RTCPeerConnection, RTCSessionDescription, RTCIceCandidate } from '@roamhq/wrtc';
+import {
+  RTCPeerConnection,
+  RTCSessionDescription,
+  RTCIceCandidate,
+} from '@roamhq/wrtc';
 
 export interface WebRtcPeer {
   pc: RTCPeerConnection;
@@ -46,13 +50,19 @@ export class WebRtcService {
     // ICE candidate logging
     pc.onicecandidate = (ev) => {
       if (ev.candidate) {
-        this.logger.debug(`[WebRTC/${sessionId}] ICE candidate: ${ev.candidate.candidate.slice(0, 80)}`);
+        this.logger.debug(
+          `[WebRTC/${sessionId}] ICE candidate: ${ev.candidate.candidate.slice(0, 80)}`,
+        );
       }
     };
 
     pc.onconnectionstatechange = () => {
       this.logger.log(`[WebRTC/${sessionId}] state: ${pc.connectionState}`);
-      if (pc.connectionState === 'failed' || pc.connectionState === 'disconnected' || pc.connectionState === 'closed') {
+      if (
+        pc.connectionState === 'failed' ||
+        pc.connectionState === 'disconnected' ||
+        pc.connectionState === 'closed'
+      ) {
         this.destroyPeer(sessionId).catch(() => {});
       }
     };
@@ -60,32 +70,41 @@ export class WebRtcService {
     // Incoming audio track from browser mic
     if (onTrack) {
       pc.ontrack = (ev: RTCTrackEvent) => {
-        this.logger.log(`[WebRTC/${sessionId}] track received: kind=${ev.track.kind} id=${ev.track.id}`);
-        onTrack(ev.receiver, Array.from(ev.streams) as MediaStream[]);
+        this.logger.log(
+          `[WebRTC/${sessionId}] track received: kind=${ev.track.kind} id=${ev.track.id}`,
+        );
+        onTrack(ev.receiver, Array.from(ev.streams));
       };
     }
 
     // Data channel (for control messages)
     pc.ondatachannel = (ev) => {
-      this.logger.log(`[WebRTC/${sessionId}] data channel: ${ev.channel.label}`);
+      this.logger.log(
+        `[WebRTC/${sessionId}] data channel: ${ev.channel.label}`,
+      );
       if (onDataChannel) onDataChannel(ev.channel);
     };
 
     // Set remote description (browser's offer)
-    await pc.setRemoteDescription(new RTCSessionDescription({ type: 'offer', sdp: offerSdp }));
+    await pc.setRemoteDescription(
+      new RTCSessionDescription({ type: 'offer', sdp: offerSdp }),
+    );
 
     // Create answer
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
 
     this.logger.log(`[WebRTC/${sessionId}] connection established`);
-    return { sdp: answer.sdp! };
+    return { sdp: answer.sdp };
   }
 
   /**
    * Add an ICE candidate from the browser.
    */
-  async addIceCandidate(sessionId: string, candidate: RTCIceCandidateInit): Promise<void> {
+  async addIceCandidate(
+    sessionId: string,
+    candidate: RTCIceCandidateInit,
+  ): Promise<void> {
     const peer = this.peers.get(sessionId);
     if (!peer) {
       this.logger.warn(`[WebRTC/${sessionId}] no peer for ICE candidate`);
@@ -116,7 +135,9 @@ export class WebRtcService {
     if (!peer) return;
     try {
       peer.pc.close();
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     this.peers.delete(sessionId);
     this.logger.log(`[WebRTC/${sessionId}] peer destroyed`);
   }

@@ -24,24 +24,45 @@ export class TTSService {
     console.log('[TTS] TTSService initialized');
   }
 
-  private async resolveTTSConfig(teamId?: string): Promise<{ providerId: string; apiKey: string; voiceId: string; apiUrl?: string }> {
+  private async resolveTTSConfig(teamId?: string): Promise<{
+    providerId: string;
+    apiKey: string;
+    voiceId: string;
+    apiUrl?: string;
+  }> {
     // Try DB first if teamId provided
     if (teamId) {
       try {
         const team = await this.prisma.team.findUnique({
           where: { id: teamId },
-          select: { ttsProvider: true, ttsApiKey: true, ttsVoiceId: true, ttsEndpointUrl: true, speachesApiUrl: true, speachesApiKey: true },
+          select: {
+            ttsProvider: true,
+            ttsApiKey: true,
+            ttsVoiceId: true,
+            ttsEndpointUrl: true,
+            speachesApiUrl: true,
+            speachesApiKey: true,
+          },
         });
         if (team?.ttsProvider) {
           return {
             providerId: team.ttsProvider,
-            apiKey: team.ttsProvider === 'speaches' ? (team.speachesApiKey || team.ttsApiKey || '') : (team.ttsApiKey || ''),
+            apiKey:
+              team.ttsProvider === 'speaches'
+                ? team.speachesApiKey || team.ttsApiKey || ''
+                : team.ttsApiKey || '',
             voiceId: team.ttsVoiceId || '',
-            apiUrl: team.ttsProvider === 'speaches' ? (team.speachesApiUrl || team.ttsEndpointUrl || undefined) : (team.ttsEndpointUrl || undefined),
+            apiUrl:
+              team.ttsProvider === 'speaches'
+                ? team.speachesApiUrl || team.ttsEndpointUrl || undefined
+                : team.ttsEndpointUrl || undefined,
           };
         }
       } catch (e) {
-        console.warn('[TTS] Failed to fetch team config from DB, falling back to store:', e);
+        console.warn(
+          '[TTS] Failed to fetch team config from DB, falling back to store:',
+          e,
+        );
       }
     }
 
@@ -59,7 +80,9 @@ export class TTSService {
     options: { interruptible?: boolean; teamId?: string } = {},
   ): Promise<TTSResult> {
     // Provider selection: DB > file config > env vars > default
-    const teamConfig = options.teamId ? await this.resolveTTSConfig(options.teamId) : null;
+    const teamConfig = options.teamId
+      ? await this.resolveTTSConfig(options.teamId)
+      : null;
     const ttsConfig = teamConfig || this.mvpStore.getTTSConfig();
     const providerId = ttsConfig.providerId || 'webspeech';
     const apiKeyFromStore = ttsConfig.apiKey;
@@ -84,14 +107,22 @@ export class TTSService {
 
     try {
       if (provider === 'kokoro') {
-        const baseUrl = apiKeyFromStore || 'https://kokoro-api-production-0bfa.up.railway.app';
+        const baseUrl =
+          apiKeyFromStore ||
+          'https://kokoro-api-production-0bfa.up.railway.app';
         const voice = ttsConfig.voiceId || 'ef_dora';
         return await this.speakWithKokoro(text, baseUrl, voice);
       } else if (provider === 'speaches') {
         const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
-        const baseUrl = speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
+        const baseUrl =
+          speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
         const voice = ttsConfig.voiceId || 'ef_dora';
-        return await this.speakWithSpeaches(text, baseUrl, apiKeyFromStore || process.env.SPEACHES_API_KEY || '', voice);
+        return await this.speakWithSpeaches(
+          text,
+          baseUrl,
+          apiKeyFromStore || process.env.SPEACHES_API_KEY || '',
+          voice,
+        );
       } else if (provider === 'elevenlabs') {
         return await this.speakWithElevenLabs(text, options);
       } else if (provider === 'openai') {
@@ -114,7 +145,9 @@ export class TTSService {
     onChunk: (base64: string) => void,
     options: { interruptible?: boolean; teamId?: string } = {},
   ): Promise<TTSResult> {
-    const teamConfig = options.teamId ? await this.resolveTTSConfig(options.teamId) : null;
+    const teamConfig = options.teamId
+      ? await this.resolveTTSConfig(options.teamId)
+      : null;
     const ttsConfig = teamConfig || this.mvpStore.getTTSConfig();
     const providerId = ttsConfig.providerId || 'webspeech';
     const apiKeyFromStore = ttsConfig.apiKey;
@@ -138,7 +171,8 @@ export class TTSService {
     );
 
     if (provider === 'kokoro') {
-      const baseUrl = apiKeyFromStore || 'https://kokoro-api-production-0bfa.up.railway.app';
+      const baseUrl =
+        apiKeyFromStore || 'https://kokoro-api-production-0bfa.up.railway.app';
       const voice = ttsConfig.voiceId || 'ef_dora';
       const result = await this.speakWithKokoro(text, baseUrl, voice);
       if (result.audioData && result.audioData.length > 0) {
@@ -149,13 +183,21 @@ export class TTSService {
       return result;
     } else if (provider === 'speaches') {
       const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
-      const baseUrl = speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
+      const baseUrl =
+        speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
       const voice = this.getSpeachesVoice(text, ttsConfig.voiceId);
-      const result = await this.speakWithSpeaches(text, baseUrl, apiKeyFromStore || process.env.SPEACHES_API_KEY || '', voice);
+      const result = await this.speakWithSpeaches(
+        text,
+        baseUrl,
+        apiKeyFromStore || process.env.SPEACHES_API_KEY || '',
+        voice,
+      );
       if (result.audioData && result.audioData.length > 0) {
         onChunk(result.audioData.toString('base64'));
       }
-      console.log(`[TTS] Speaches generated ${result.audioData?.length || 0} bytes (voice: ${voice}, lang: ${this.detectLanguage(text)})`);
+      console.log(
+        `[TTS] Speaches generated ${result.audioData?.length || 0} bytes (voice: ${voice}, lang: ${this.detectLanguage(text)})`,
+      );
       return result;
     } else if (provider === 'elevenlabs') {
       return await this.streamWithElevenLabs(text, onChunk, options);
@@ -165,7 +207,10 @@ export class TTSService {
       if (result.audioData && result.audioData.length > 0) {
         const chunkSize = 32000; // ~1s of MP3 audio
         for (let i = 0; i < result.audioData.length; i += chunkSize) {
-          const chunk = result.audioData.slice(i, Math.min(i + chunkSize, result.audioData.length));
+          const chunk = result.audioData.slice(
+            i,
+            Math.min(i + chunkSize, result.audioData.length),
+          );
           onChunk(chunk.toString('base64'));
         }
       }
@@ -374,7 +419,6 @@ export class TTSService {
     }
   }
 
-
   async speakWithSpeaches(
     text: string,
     baseUrl: string,
@@ -382,23 +426,30 @@ export class TTSService {
     voice: string,
   ): Promise<TTSResult> {
     try {
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
       if (apiKey) headers.Authorization = `Bearer ${apiKey}`;
-      const response = await fetch(`${baseUrl.replace(/\/+$/, '')}/v1/audio/speech`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          model: 'speaches-ai/Kokoro-82M-v1.0-ONNX',
-          input: text,
-          voice,
-          response_format: 'wav',
-        }),
-      });
+      const response = await fetch(
+        `${baseUrl.replace(/\/+$/, '')}/v1/audio/speech`,
+        {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            model: 'speaches-ai/Kokoro-82M-v1.0-ONNX',
+            input: text,
+            voice,
+            response_format: 'wav',
+          }),
+        },
+      );
 
       if (!response.ok) {
         const errText = await response.text();
         console.error(`[TTS] Speaches error (${response.status}): ${errText}`);
-        return { error: `Speaches API returned ${response.status}: ${errText.substring(0, 200)}` };
+        return {
+          error: `Speaches API returned ${response.status}: ${errText.substring(0, 200)}`,
+        };
       }
 
       const arrayBuffer = await response.arrayBuffer();
@@ -435,31 +486,147 @@ export class TTSService {
     const spanishChars = (lower.match(/[áéíóúñü¿¡]/g) || []).length;
 
     // Common Spanish function words (high frequency)
-    const spanishWords = ['el', 'la', 'los', 'las', 'de', 'del', 'en', 'un', 'una',
-      'que', 'es', 'por', 'para', 'con', 'su', 'al', 'lo', 'como', 'más',
-      'pero', 'sus', 'le', 'ya', 'este', 'esta', 'entre', 'pero', 'todo',
-      'también', 'porque', 'bien', 'muy', 'sin', 'sobre', 'tiene', 'ser',
-      'hay', 'esa', 'ese', 'eso', 'era', 'han', 'ella', 'ello', 'ellos',
-      'está', 'están', 'estoy', 'estamos', 'estáis', 'están',
-      'hola', 'gracias', 'bueno', 'buena', 'adiós', 'sí', 'no',
-      'cómo', 'cuándo', 'dónde', 'qué', 'quién', 'cuál',
-      'me', 'te', 'se', 'nos', 'os', 'lo', 'la', 'le',
-      'pero', 'sino', 'cuando', 'donde', 'como', 'quien',
+    const spanishWords = [
+      'el',
+      'la',
+      'los',
+      'las',
+      'de',
+      'del',
+      'en',
+      'un',
+      'una',
+      'que',
+      'es',
+      'por',
+      'para',
+      'con',
+      'su',
+      'al',
+      'lo',
+      'como',
+      'más',
+      'pero',
+      'sus',
+      'le',
+      'ya',
+      'este',
+      'esta',
+      'entre',
+      'pero',
+      'todo',
+      'también',
+      'porque',
+      'bien',
+      'muy',
+      'sin',
+      'sobre',
+      'tiene',
+      'ser',
+      'hay',
+      'esa',
+      'ese',
+      'eso',
+      'era',
+      'han',
+      'ella',
+      'ello',
+      'ellos',
+      'está',
+      'están',
+      'estoy',
+      'estamos',
+      'estáis',
+      'están',
+      'hola',
+      'gracias',
+      'bueno',
+      'buena',
+      'adiós',
+      'sí',
+      'no',
+      'cómo',
+      'cuándo',
+      'dónde',
+      'qué',
+      'quién',
+      'cuál',
+      'me',
+      'te',
+      'se',
+      'nos',
+      'os',
+      'lo',
+      'la',
+      'le',
+      'pero',
+      'sino',
+      'cuando',
+      'donde',
+      'como',
+      'quien',
     ];
     const words = lower.split(/\s+/);
-    const spanishWordCount = words.filter(w => spanishWords.includes(w)).length;
+    const spanishWordCount = words.filter((w) =>
+      spanishWords.includes(w),
+    ).length;
     const totalWords = words.length || 1;
     const spanishRatio = (spanishChars + spanishWordCount) / totalWords;
 
     // English-specific common words (high frequency, low chance of Spanish overlap)
-    const englishWords = ['the', 'and', 'you', 'for', 'are', 'all', 'but', 'not',
-      'have', 'has', 'had', 'was', 'were', 'been', 'will', 'would',
-      'could', 'should', 'may', 'might', 'shall', 'can', 'does', 'did',
-      'with', 'this', 'that', 'from', 'they', 'them', 'their', 'what',
-      'when', 'where', 'which', 'who', 'whom', 'why', 'how', 'than',
-      'then', 'just', 'about', 'also', 'very', 'too', 'here', 'there',
+    const englishWords = [
+      'the',
+      'and',
+      'you',
+      'for',
+      'are',
+      'all',
+      'but',
+      'not',
+      'have',
+      'has',
+      'had',
+      'was',
+      'were',
+      'been',
+      'will',
+      'would',
+      'could',
+      'should',
+      'may',
+      'might',
+      'shall',
+      'can',
+      'does',
+      'did',
+      'with',
+      'this',
+      'that',
+      'from',
+      'they',
+      'them',
+      'their',
+      'what',
+      'when',
+      'where',
+      'which',
+      'who',
+      'whom',
+      'why',
+      'how',
+      'than',
+      'then',
+      'just',
+      'about',
+      'also',
+      'very',
+      'too',
+      'here',
+      'there',
     ];
-    const englishWordCount = words.filter(w => englishWords.includes(w)).length;
+    const englishWordCount = words.filter((w) =>
+      englishWords.includes(w),
+    ).length;
 
     // Decision: if Spanish ratio is high enough, classify as Spanish
     if (spanishRatio > 0.12) return 'es';
@@ -473,16 +640,22 @@ export class TTSService {
    * Map detected language + optional configured voiceId to a Speaches Kokoro voice.
    * If user has explicitly set a voiceId, respect it.
    */
-  private getSpeachesVoice(text: string, configuredVoiceId?: string | null): string {
+  private getSpeachesVoice(
+    text: string,
+    configuredVoiceId?: string | null,
+  ): string {
     if (configuredVoiceId && configuredVoiceId !== 'ef_dora') {
       return configuredVoiceId; // Explicit user choice
     }
     const lang = this.detectLanguage(text);
     // Default voice mapping by language
     switch (lang) {
-      case 'es': return 'af_bella'; // Latin American Spanish female
-      case 'en': return 'af_sky';   // American English female
-      default:   return 'af_sky';
+      case 'es':
+        return 'af_bella'; // Latin American Spanish female
+      case 'en':
+        return 'af_sky'; // American English female
+      default:
+        return 'af_sky';
     }
   }
 
@@ -499,8 +672,15 @@ export class TTSService {
       const declaredSize = audioData.readUInt32LE(pos + 4);
       const payloadStart = pos + 8;
       const payloadRemaining = Math.max(0, audioData.length - payloadStart);
-      const chunkSize = declaredSize === 0xffffffff || declaredSize > payloadRemaining ? payloadRemaining : declaredSize;
-      if (chunkId === 'fmt ' && chunkSize >= 16 && payloadStart + 12 <= audioData.length) {
+      const chunkSize =
+        declaredSize === 0xffffffff || declaredSize > payloadRemaining
+          ? payloadRemaining
+          : declaredSize;
+      if (
+        chunkId === 'fmt ' &&
+        chunkSize >= 16 &&
+        payloadStart + 12 <= audioData.length
+      ) {
         byteRate = audioData.readUInt32LE(payloadStart + 8);
       }
       if (chunkId === 'data') {
@@ -516,7 +696,8 @@ export class TTSService {
   private finalizeWavHeader(audioData: Buffer): Buffer {
     if (audioData.length < 44) return audioData;
     if (audioData.subarray(0, 4).toString('ascii') !== 'RIFF') return audioData;
-    if (audioData.subarray(8, 12).toString('ascii') !== 'WAVE') return audioData;
+    if (audioData.subarray(8, 12).toString('ascii') !== 'WAVE')
+      return audioData;
 
     const fixed = Buffer.from(audioData);
     let changed = false;
@@ -539,7 +720,10 @@ export class TTSService {
         }
         break;
       }
-      const chunkSize = declaredSize === 0xffffffff || declaredSize > payloadRemaining ? payloadRemaining : declaredSize;
+      const chunkSize =
+        declaredSize === 0xffffffff || declaredSize > payloadRemaining
+          ? payloadRemaining
+          : declaredSize;
       pos = payloadStart + chunkSize + (chunkSize % 2);
     }
 

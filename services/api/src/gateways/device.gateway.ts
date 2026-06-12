@@ -66,7 +66,10 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return;
     }
 
-    const statusLabel = validation.status && validation.status !== 'paired' ? ` (reconnecting from ${validation.status})` : '';
+    const statusLabel =
+      validation.status && validation.status !== 'paired'
+        ? ` (reconnecting from ${validation.status})`
+        : '';
     this.logger.log(`Device connected: ${deviceId}${statusLabel}`);
     client.data.deviceId = deviceId;
     client.data.sessionId = null;
@@ -135,11 +138,14 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
           flow_run_id: null,
           data: {
             execution_id: `launch-vendor-${v.id}-${Date.now()}`,
-            goal: v.startGoal || `Open ${v.name}, sign in if a login form appears, and continue toward the vendor home page`,
+            goal:
+              v.startGoal ||
+              `Open ${v.name}, sign in if a login form appears, and continue toward the vendor home page`,
             vendor_id: v.id,
             inputs: { vendor_id: v.id },
             constraints: { max_steps: 20, timeout_ms: 60000 },
-            success_criteria: 'Reach the vendor surface or continue after any recoverable login/navigation failure.',
+            success_criteria:
+              'Reach the vendor surface or continue after any recoverable login/navigation failure.',
           },
           metadata: {
             source: 'launch:auto',
@@ -155,11 +161,17 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
           `[LAUNCH DEBUG] Auto-sending goal_execute with ${goalCommands.length} vendor goals for session ${data.session_id}`,
         );
         for (const command of goalCommands) {
-          this.logger.log(`[LAUNCH DEBUG]   goal_execute vendor_id: ${command.data.vendor_id}`);
+          this.logger.log(
+            `[LAUNCH DEBUG]   goal_execute vendor_id: ${command.data.vendor_id}`,
+          );
           client.emit('brain:command', command);
-          this.server.to(`session:${data.session_id}`).emit('brain:command', command);
+          this.server
+            .to(`session:${data.session_id}`)
+            .emit('brain:command', command);
           client.emit('goal_execute', command.data);
-          this.server.to(`session:${data.session_id}`).emit('goal_execute', command.data);
+          this.server
+            .to(`session:${data.session_id}`)
+            .emit('goal_execute', command.data);
         }
       } else {
         this.logger.log(
@@ -167,7 +179,9 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
         );
       }
     } catch (error) {
-      this.logger.error(`[LAUNCH DEBUG] Error looking up vendors: ${error.message}`);
+      this.logger.error(
+        `[LAUNCH DEBUG] Error looking up vendors: ${error.message}`,
+      );
     }
 
     return { success: true, session_id: data.session_id };
@@ -367,7 +381,10 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { timestamp?: number },
   ) {
-    client.emit('heartbeat:pong', { timestamp: Date.now(), echo: data.timestamp });
+    client.emit('heartbeat:pong', {
+      timestamp: Date.now(),
+      echo: data.timestamp,
+    });
   }
 
   @SubscribeMessage('goal:execute')

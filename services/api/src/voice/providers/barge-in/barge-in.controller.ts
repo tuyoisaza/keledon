@@ -63,7 +63,9 @@ export class BargeInController {
 
     // Fire all listeners
     for (const listener of this.onInterruptListeners) {
-      try { listener(); } catch (e) {
+      try {
+        listener();
+      } catch (e) {
         this.logger.error(`[barge-in] listener error: ${e}`);
       }
     }
@@ -79,7 +81,9 @@ export class BargeInController {
 
   /** Remove a previously registered listener */
   offInterrupt(listener: () => void): void {
-    this.onInterruptListeners = this.onInterruptListeners.filter(l => l !== listener);
+    this.onInterruptListeners = this.onInterruptListeners.filter(
+      (l) => l !== listener,
+    );
   }
 
   /** Reset all state (on session end) */
@@ -91,7 +95,12 @@ export class BargeInController {
     this.interruptedAt = null;
   }
 
-  getStatus(): { isSpeaking: boolean; sessions: string[]; listenerCount: number; lastInterruptMs: number | null } {
+  getStatus(): {
+    isSpeaking: boolean;
+    sessions: string[];
+    listenerCount: number;
+    lastInterruptMs: number | null;
+  } {
     return {
       isSpeaking: this._isSpeaking,
       sessions: Array.from(this.sessions),

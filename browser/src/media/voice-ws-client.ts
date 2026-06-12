@@ -126,6 +126,10 @@ export class VoiceWSClient extends EventEmitter {
       this.isSpeaking = false;
       this.emit('speak:interrupted');
     });
+
+    this.socket.on('voice:rpa:steps', (data: { steps: unknown[] }) => {
+      this.emit('rpa:steps', data.steps);
+    });
   }
 
   /**

@@ -45,7 +45,9 @@ export class MvpDataController {
   }
 
   @Patch('tts-config')
-  updateTTSConfig(@Body() body: { providerId?: string; apiKey?: string; voiceId?: string }) {
+  updateTTSConfig(
+    @Body() body: { providerId?: string; apiKey?: string; voiceId?: string },
+  ) {
     return this.mvpStore.updateTTSConfig(body);
   }
 

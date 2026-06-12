@@ -14,7 +14,9 @@ export class VoiceProviderController {
   constructor(private readonly registry: VoiceProviderRegistry) {}
 
   @Get('status/:sessionId')
-  getStatus(@Param('sessionId') sessionId: string): VoicePipelineStatus | { error: string } {
+  getStatus(
+    @Param('sessionId') sessionId: string,
+  ): VoicePipelineStatus | { error: string } {
     const status = this.registry.getPipelineStatus(sessionId);
     if (!status) {
       return { error: `No active session: ${sessionId}` };

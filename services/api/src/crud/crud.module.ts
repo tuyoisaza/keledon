@@ -11,7 +11,22 @@ import { WebhookGuard } from '../guards/webhook.guard';
 
 @Module({
   controllers: [CrudController, TenantController],
-  providers: [CrudService, CrudKeledonService, CrudAuditService, CrudSeedService, CrudCompanyService, CrudVendorService, WebhookGuard],
-  exports: [CrudService, CrudKeledonService, CrudAuditService, CrudSeedService, CrudCompanyService, CrudVendorService],
+  providers: [
+    CrudService,
+    CrudKeledonService,
+    CrudAuditService,
+    CrudSeedService,
+    CrudCompanyService,
+    CrudVendorService,
+    WebhookGuard,
+  ],
+  exports: [
+    CrudService,
+    CrudKeledonService,
+    CrudAuditService,
+    CrudSeedService,
+    CrudCompanyService,
+    CrudVendorService,
+  ],
 })
 export class CrudModule {}

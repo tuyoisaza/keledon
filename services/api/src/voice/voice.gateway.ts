@@ -123,18 +123,22 @@ export class VoiceGateway
 
     // Resolve team provider config from auth context if available
     const ctx = client.handshake.auth?.context
-      ? (typeof client.handshake.auth.context === 'string'
-          ? JSON.parse(client.handshake.auth.context)
-          : client.handshake.auth.context)
+      ? typeof client.handshake.auth.context === 'string'
+        ? JSON.parse(client.handshake.auth.context)
+        : client.handshake.auth.context
       : null;
     if (ctx?.teamId && this.configResolver && this.registry) {
       try {
         const config = await this.configResolver.resolveTeamConfig(ctx.teamId);
         session.context = ctx;
         await this.registry.getOrCreateProvider(session.sessionId, config);
-        this.logger.log(`Provider configured for team ${ctx.teamId}: STT=${config.sttProvider} TTS=${config.ttsProvider}`);
+        this.logger.log(
+          `Provider configured for team ${ctx.teamId}: STT=${config.sttProvider} TTS=${config.ttsProvider}`,
+        );
       } catch (err) {
-        this.logger.warn(`Could not resolve provider config: ${err instanceof Error ? err.message : String(err)}`);
+        this.logger.warn(
+          `Could not resolve provider config: ${err instanceof Error ? err.message : String(err)}`,
+        );
       }
     }
 
@@ -180,7 +184,9 @@ export class VoiceGateway
     const session = this.activeSessions.get(client.id);
     if (!session) return { error: 'No active session' };
 
-    this.logger.log(`WebRTC offer from ${session.deviceId} (session=${session.sessionId})`);
+    this.logger.log(
+      `WebRTC offer from ${session.deviceId} (session=${session.sessionId})`,
+    );
 
     if (!this.webrtcService) {
       return { error: 'WebRTC not available' };
@@ -189,24 +195,32 @@ export class VoiceGateway
     try {
       const answer = await this.webrtcService.createPeer(
         session.sessionId,
-        data.sdp.sdp!,
+        data.sdp.sdp,
         // On incoming audio track — pipe to STT pipeline
         (receiver, streams) => {
-          this.logger.log(`[WebRTC/${session.sessionId}] mic audio track received`);
+          this.logger.log(
+            `[WebRTC/${session.sessionId}] mic audio track received`,
+          );
           // Phase 2: pipe track audio to Speaches STT
         },
         // On data channel — handle control messages
         (dc) => {
-          this.logger.log(`[WebRTC/${session.sessionId}] data channel: ${dc.label}`);
+          this.logger.log(
+            `[WebRTC/${session.sessionId}] data channel: ${dc.label}`,
+          );
           dc.onmessage = (ev) => {
             try {
               const msg = JSON.parse(ev.data);
-              this.logger.debug(`[WebRTC/${session.sessionId}] DC msg: ${msg.type}`);
+              this.logger.debug(
+                `[WebRTC/${session.sessionId}] DC msg: ${msg.type}`,
+              );
               if (msg.type === 'transcript') {
                 // Forward to brain processing
                 client.emit('voice:brain:reply', msg);
               }
-            } catch { /* ignore non-JSON messages */ }
+            } catch {
+              /* ignore non-JSON messages */
+            }
           };
         },
       );
@@ -229,7 +243,10 @@ export class VoiceGateway
     const session = this.activeSessions.get(client.id);
     if (!session) return { received: true };
     if (this.webrtcService) {
-      await this.webrtcService.addIceCandidate(session.sessionId, data.candidate);
+      await this.webrtcService.addIceCandidate(
+        session.sessionId,
+        data.candidate,
+      );
     }
     return { received: true };
   }
@@ -416,9 +433,12 @@ export class VoiceGateway
 
       // Log latency metrics for this turn
       const ts = session.latencyTimestamps;
-      const brainMs = ts.brainEnd && ts.brainStart ? ts.brainEnd - ts.brainStart : -1;
-      const ttsFirstMs = ts.ttsFirstChunk && ts.brainEnd ? ts.ttsFirstChunk - ts.brainEnd : -1;
-      const totalMs = ts.ttsComplete && ts.brainStart ? ts.ttsComplete - ts.brainStart : -1;
+      const brainMs =
+        ts.brainEnd && ts.brainStart ? ts.brainEnd - ts.brainStart : -1;
+      const ttsFirstMs =
+        ts.ttsFirstChunk && ts.brainEnd ? ts.ttsFirstChunk - ts.brainEnd : -1;
+      const totalMs =
+        ts.ttsComplete && ts.brainStart ? ts.ttsComplete - ts.brainStart : -1;
       this.logger.log(
         `[v${getApiVersion()}] Latency — brain=${brainMs}ms ttsFirst=${ttsFirstMs}ms total=${totalMs}ms | "${replyText.substring(0, 40)}..."`,
       );
@@ -607,11 +627,16 @@ export class VoiceGateway
     if (ctx?.teamId && this.configResolver && this.registry) {
       try {
         const config = await this.configResolver.resolveTeamConfig(ctx.teamId);
-        config.authToken = client.handshake.auth?.token as string || undefined;
+        config.authToken =
+          (client.handshake.auth?.token as string) || undefined;
         await this.registry.getOrCreateProvider(session.sessionId, config);
-        this.logger.log(`Provider configured for team ${ctx.teamId}: STT=${config.sttProvider} TTS=${config.ttsProvider}`);
+        this.logger.log(
+          `Provider configured for team ${ctx.teamId}: STT=${config.sttProvider} TTS=${config.ttsProvider}`,
+        );
       } catch (err) {
-        this.logger.warn(`Could not resolve provider config: ${err instanceof Error ? err.message : String(err)}`);
+        this.logger.warn(
+          `Could not resolve provider config: ${err instanceof Error ? err.message : String(err)}`,
+        );
       }
     }
 

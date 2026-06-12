@@ -209,7 +209,8 @@ export class MvpStoreService {
         id: 'speaches-tts',
         type: 'tts',
         name: 'Speaches',
-        description: 'Self-hosted OpenAI-compatible text-to-speech via /v1/audio/speech',
+        description:
+          'Self-hosted OpenAI-compatible text-to-speech via /v1/audio/speech',
         status: 'production',
         is_enabled: true,
         metadata: {
@@ -251,11 +252,13 @@ export class MvpStoreService {
         id: 'cloud-brain',
         type: 'cloud',
         name: 'Cloud Brain',
-        description: 'KELEDON Brain API endpoint — URL del servicio cloud que procesa las solicitudes del Brain',
+        description:
+          'KELEDON Brain API endpoint — URL del servicio cloud que procesa las solicitudes del Brain',
         status: 'production',
         is_enabled: true,
         metadata: {
-          api_url: process.env.CLOUD_API_URL || 'https://keledonapi.tuyoisaza.com',
+          api_url:
+            process.env.CLOUD_API_URL || 'https://keledonapi.tuyoisaza.com',
           ws_url: process.env.CLOUD_WS_URL || 'wss://keledonapi.tuyoisaza.com',
           requires_api_key: true,
           required_env: ['CLOUD_API_URL'],
@@ -325,10 +328,13 @@ export class MvpStoreService {
     const cloudProvider = this.getProviderCatalog().find(
       (p) => p.id === 'cloud-brain',
     );
-    return cloudProvider?.metadata || {
-      api_url: process.env.CLOUD_API_URL || 'https://keledonapi.tuyoisaza.com',
-      ws_url: process.env.CLOUD_WS_URL || 'wss://keledonapi.tuyoisaza.com',
-    };
+    return (
+      cloudProvider?.metadata || {
+        api_url:
+          process.env.CLOUD_API_URL || 'https://keledonapi.tuyoisaza.com',
+        ws_url: process.env.CLOUD_WS_URL || 'wss://keledonapi.tuyoisaza.com',
+      }
+    );
   }
 
   getTTSConfig(): TTSConfigEntry {

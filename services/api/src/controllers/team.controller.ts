@@ -18,17 +18,17 @@ export class TeamConfigDto {
   voskModel?: string;
   deepgramApiKey?: string;
   elevenlabsApiKey?: string;
-  
+
   // Speaches (Whisper STT) config
   speachesApiUrl?: string;
   speachesApiKey?: string;
-  
+
   // LLM / AI Provider
   llmProvider?: string;
   openaiApiKey?: string;
   googleAiApiKey?: string;
   anthropicApiKey?: string;
-  
+
   // TTS extended config
   ttsApiKey?: string;
   ttsVoiceId?: string;
@@ -43,7 +43,11 @@ export class TeamController {
   private async getActorScope(req: any) {
     const requestUser = req?.user;
     if (!requestUser?.userId) {
-      return { role: 'anonymous', companyId: null as string | null, teamId: null as string | null };
+      return {
+        role: 'anonymous',
+        companyId: null as string | null,
+        teamId: null as string | null,
+      };
     }
 
     const dbUser = await this.prisma.user.findUnique({
@@ -58,7 +62,11 @@ export class TeamController {
     };
   }
 
-  private teamScopeWhere(scope: { role: string; companyId: string | null; teamId: string | null }) {
+  private teamScopeWhere(scope: {
+    role: string;
+    companyId: string | null;
+    teamId: string | null;
+  }) {
     if (scope.role === 'superadmin') return {};
     if (scope.companyId) return { brand: { companyId: scope.companyId } };
     if (scope.teamId) return { id: scope.teamId };
@@ -178,13 +186,16 @@ export class TeamController {
         },
         // TTS extended config (DB-persisted)
         ttsApiKey: team.ttsApiKey || '',
-        ttsVoiceId: team.ttsVoiceId || (team.ttsProvider === 'kokoro' ? 'ef_dora' : ''),
+        ttsVoiceId:
+          team.ttsVoiceId || (team.ttsProvider === 'kokoro' ? 'ef_dora' : ''),
         ttsEndpointUrl: team.ttsEndpointUrl || '',
         deepgramConfig: {
           apiKey: team.deepgramApiKey || '',
         },
         // Speaches (Whisper-based STT) config
-        speachesApiUrl: team.speachesApiUrl || 'https://speaches-production-c63f.up.railway.app',
+        speachesApiUrl:
+          team.speachesApiUrl ||
+          'https://speaches-production-c63f.up.railway.app',
         speachesApiKey: team.speachesApiKey || '',
         // LLM config
         openaiApiKey: team.openaiApiKey || '',
@@ -207,7 +218,13 @@ export class TeamController {
     try {
       await this.assertTeamAccess(teamId, req);
       const allowedSttProviders = ['vosk', 'deepgram', 'webspeech', 'speaches'];
-      const allowedTtsProviders = ['elevenlabs', 'webspeech', 'kokoro', 'openai-tts', 'coqui'];
+      const allowedTtsProviders = [
+        'elevenlabs',
+        'webspeech',
+        'kokoro',
+        'openai-tts',
+        'coqui',
+      ];
       const allowedLlmProviders = ['openai', 'google', 'anthropic', 'ollama'];
 
       const updateData: any = {};

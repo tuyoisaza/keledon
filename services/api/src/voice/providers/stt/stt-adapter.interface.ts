@@ -16,5 +16,8 @@ export interface SttResult {
 export interface SttAdapter {
   readonly id: string;
   initialize(config: Record<string, any>): Promise<void>;
-  transcribe(audio: Buffer, options?: { language?: string }): Promise<SttResult>;
+  transcribe(
+    audio: Buffer,
+    options?: { language?: string },
+  ): Promise<SttResult>;
 }

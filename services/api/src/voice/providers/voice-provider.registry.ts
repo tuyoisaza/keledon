@@ -20,7 +20,10 @@ import { LLMService } from '../../llm/llm.service';
 @Injectable()
 export class VoiceProviderRegistry {
   private readonly logger = new Logger(VoiceProviderRegistry.name);
-  private readonly sessions = new Map<string, { provider: VoiceProvider; config: VoiceProviderConfig }>();
+  private readonly sessions = new Map<
+    string,
+    { provider: VoiceProvider; config: VoiceProviderConfig }
+  >();
 
   constructor(
     private readonly ttsService: TTSService,
@@ -70,7 +73,9 @@ export class VoiceProviderRegistry {
    * Instantiate the correct provider based on config.
    * Currently returns keledon-realtime-pipeline for all sessions.
    */
-  private async createProvider(config: VoiceProviderConfig): Promise<VoiceProvider> {
+  private async createProvider(
+    config: VoiceProviderConfig,
+  ): Promise<VoiceProvider> {
     const provider = new KeledonRealtimePipelineProvider(
       this.ttsService,
       this.llmService,

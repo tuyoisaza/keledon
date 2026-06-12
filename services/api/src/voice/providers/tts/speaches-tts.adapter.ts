@@ -31,16 +31,22 @@ export class SpeachesTtsAdapter implements TtsAdapter {
   async initialize(config: SpeachesTtsAdapterConfig): Promise<void> {
     this.config = config;
     this.stopped = false;
-    this.logger.log(`SpeachesTTS adapter initialized voice=${config.voice || 'auto'} lang=${config.language || 'auto'}`);
+    this.logger.log(
+      `SpeachesTTS adapter initialized voice=${config.voice || 'auto'} lang=${config.language || 'auto'}`,
+    );
   }
 
   async speak(
     text: string,
-    options?: { voice?: string; interruptible?: boolean; onChunk?: (chunk: TtsChunk) => void },
+    options?: {
+      voice?: string;
+      interruptible?: boolean;
+      onChunk?: (chunk: TtsChunk) => void;
+    },
   ): Promise<{ duration?: number; error?: string }> {
     if (this.stopped) return { error: 'Adapter stopped' };
 
-    let lastChunkFormat = 'wav';
+    const lastChunkFormat = 'wav';
 
     const result = await this.ttsService.speakStreaming(
       text,

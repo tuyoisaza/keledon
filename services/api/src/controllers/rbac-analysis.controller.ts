@@ -8,11 +8,7 @@ import {
   HttpStatus,
   Param,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import {
   RBACRecommendationService,
   RBACAnalysis,

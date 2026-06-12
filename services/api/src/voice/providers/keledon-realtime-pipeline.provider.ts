@@ -16,7 +16,11 @@ import { BargeInController } from './barge-in/barge-in.controller';
 export interface SessionState {
   sessionId: string;
   startedAt: Date;
-  history: { role: 'user' | 'assistant'; content: string; timestamp?: string }[];
+  history: {
+    role: 'user' | 'assistant';
+    content: string;
+    timestamp?: string;
+  }[];
   isSpeaking: boolean;
   lastActivity: Date;
   sttLatencyMs?: number;
@@ -61,7 +65,10 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
     if (config.sttProvider === 'speaches' || !config.sttProvider) {
       const adapter = new SpeachesSttAdapter();
       await adapter.initialize({
-        baseUrl: (config as any).speachesApiUrl || process.env.SPEACHES_API_URL || 'https://speaches-production-c63f.up.railway.app',
+        baseUrl:
+          (config as any).speachesApiUrl ||
+          process.env.SPEACHES_API_URL ||
+          'https://speaches-production-c63f.up.railway.app',
         apiKey: (config as any).sttApiKey || process.env.SPEACHES_API_KEY || '',
         model: (config as any).sttModel || 'whisper-1',
       });
@@ -69,7 +76,11 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
     }
 
     // Initialize TTS adapter based on config
-    if (config.ttsProvider === 'speaches' || config.ttsProvider === 'kokoro' || !config.ttsProvider) {
+    if (
+      config.ttsProvider === 'speaches' ||
+      config.ttsProvider === 'kokoro' ||
+      !config.ttsProvider
+    ) {
       const adapter = new SpeachesTtsAdapter(this.ttsService);
       await adapter.initialize({
         voice: config.voiceId,
@@ -79,7 +90,9 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
       this.ttsAdapter = adapter;
     }
 
-    this.logger.log(`KeledonRealtimePipeline initialized: STT=${this.sttAdapter?.id || 'none'} TTS=${this.ttsAdapter?.id || 'none'}`);
+    this.logger.log(
+      `KeledonRealtimePipeline initialized: STT=${this.sttAdapter?.id || 'none'} TTS=${this.ttsAdapter?.id || 'none'}`,
+    );
   }
 
   async startSession(sessionId: string): Promise<void> {
@@ -135,10 +148,16 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
       if (!result.text || !result.isFinal) return;
 
       // Log the transcript
-      this.logger.log(`[${sessionId}] STT: "${result.text.slice(0, 80)}" (conf=${result.confidence}, ${session.sttLatencyMs}ms)`);
+      this.logger.log(
+        `[${sessionId}] STT: "${result.text.slice(0, 80)}" (conf=${result.confidence}, ${session.sttLatencyMs}ms)`,
+      );
 
       // Add to history
-      session.history.push({ role: 'user', content: result.text, timestamp: new Date().toISOString() });
+      session.history.push({
+        role: 'user',
+        content: result.text,
+        timestamp: new Date().toISOString(),
+      });
 
       // Process through Brain
       await this.processBrainReply(session, result.text);
@@ -152,7 +171,10 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
   /**
    * Speak a given text (from Cloud command 'say').
    */
-  async speak(command: { text: string; interruptible?: boolean }): Promise<void> {
+  async speak(command: {
+    text: string;
+    interruptible?: boolean;
+  }): Promise<void> {
     if (!this.ttsAdapter) {
       this.logger.warn('No TTS adapter available');
       return;
@@ -175,10 +197,16 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
         interruptible: command.interruptible ?? true,
         onChunk: (chunk) => {
           if (chunk.sequence === 'end') {
-            const session = sessionId ? this.sessions.get(sessionId) : undefined;
+            const session = sessionId
+              ? this.sessions.get(sessionId)
+              : undefined;
             if (session) {
               session.ttsLatencyMs = Date.now() - ttsStart;
-              session.history.push({ role: 'assistant', content: command.text, timestamp: new Date().toISOString() });
+              session.history.push({
+                role: 'assistant',
+                content: command.text,
+                timestamp: new Date().toISOString(),
+              });
             }
           }
         },
@@ -216,7 +244,9 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
   getStatus(): VoicePipelineStatus {
     const sttHealth: ProviderHealth = this.sttAdapter ? 'ready' : 'degraded';
     const ttsHealth: ProviderHealth = this.ttsAdapter ? 'ready' : 'degraded';
-    const llmHealth: ProviderHealth = this.llmService ? 'ready' : 'initializing';
+    const llmHealth: ProviderHealth = this.llmService
+      ? 'ready'
+      : 'initializing';
 
     const sessionId = this.getCurrentSessionId();
     const session = sessionId ? this.sessions.get(sessionId) : undefined;
@@ -228,25 +258,35 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
         id: this.sttAdapter?.id || 'none',
         health: sttHealth,
         name: this.sttAdapter?.id || 'not configured',
-        detail: session?.sttLatencyMs ? `last: ${session.sttLatencyMs}ms` : undefined,
+        detail: session?.sttLatencyMs
+          ? `last: ${session.sttLatencyMs}ms`
+          : undefined,
       },
       tts: {
         id: this.ttsAdapter?.id || 'none',
         health: ttsHealth,
         name: this.ttsAdapter?.id || 'not configured',
-        detail: this.bargeIn.isSpeaking ? 'speaking' : session?.ttsLatencyMs ? `last: ${session.ttsLatencyMs}ms` : undefined,
+        detail: this.bargeIn.isSpeaking
+          ? 'speaking'
+          : session?.ttsLatencyMs
+            ? `last: ${session.ttsLatencyMs}ms`
+            : undefined,
       },
       llm: {
         id: 'brain',
         health: llmHealth,
         name: this.llmService ? 'Cloud Brain' : 'waiting',
-        detail: session?.cloudLatencyMs ? `last: ${session.cloudLatencyMs}ms` : undefined,
+        detail: session?.cloudLatencyMs
+          ? `last: ${session.cloudLatencyMs}ms`
+          : undefined,
       },
       vadEnabled: this.config.vadEnabled ?? true,
       bargeInEnabled: this.config.bargeInEnabled ?? true,
       activeSessionId: sessionId || undefined,
       timestamp: new Date().toISOString(),
-      error: this.lastError ? { message: this.lastError, at: this.lastErrorAt! } : undefined,
+      error: this.lastError
+        ? { message: this.lastError, at: this.lastErrorAt }
+        : undefined,
     };
   }
 
@@ -259,7 +299,10 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
   ): Promise<void> {
     if (!this.llmService) {
       this.logger.warn('No LLM service — using fallback echo reply');
-      await this.speak({ text: `I heard: ${userMessage}`, interruptible: true });
+      await this.speak({
+        text: `I heard: ${userMessage}`,
+        interruptible: true,
+      });
       return;
     }
 
@@ -291,7 +334,9 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(this.config.authToken ? { Authorization: `Bearer ${this.config.authToken}` } : {}),
+          ...(this.config.authToken
+            ? { Authorization: `Bearer ${this.config.authToken}` }
+            : {}),
         },
         body: JSON.stringify(brainPayload),
       });
@@ -310,12 +355,16 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
         return;
       }
 
-      this.logger.log(`[${session.sessionId}] Cloud → "${replyText.slice(0, 80)}" (${session.cloudLatencyMs}ms)`);
+      this.logger.log(
+        `[${session.sessionId}] Cloud → "${replyText.slice(0, 80)}" (${session.cloudLatencyMs}ms)`,
+      );
 
       // Speak the reply
       await this.speak({ text: replyText, interruptible: true });
     } catch (error) {
-      this.logger.error(`Brain error: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `Brain error: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 

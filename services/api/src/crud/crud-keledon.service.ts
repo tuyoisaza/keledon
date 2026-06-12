@@ -304,7 +304,9 @@ export class CrudKeledonService {
         console.log('[Launch] New pairing code generated:', device.pairingCode);
       } else {
         // Refresh expiry and reset status so pairing always works
-        console.log('[Launch] Refreshing existing pairing code expiry and status');
+        console.log(
+          '[Launch] Refreshing existing pairing code expiry and status',
+        );
         device.pairingCodeExpiresAt = new Date(
           Date.now() + 7 * 24 * 60 * 60 * 1000,
         );
@@ -349,7 +351,9 @@ export class CrudKeledonService {
         throw new Error('User not authorized to launch this Keledon');
       }
 
-      const vendors = await this.prisma.vendor.findMany({ where: { teamId: keledon.teamId } });
+      const vendors = await this.prisma.vendor.findMany({
+        where: { teamId: keledon.teamId },
+      });
       const activeVendors = vendors.filter((v) => v.isActive !== false);
       const nextSteps =
         activeVendors.length > 0
@@ -419,30 +423,69 @@ export class CrudKeledonService {
       const team = await this.prisma.team.findUnique({
         where: { id: keledon.teamId },
       });
-      const vendors = await this.prisma.vendor.findMany({ where: { teamId: keledon.teamId } });
+      const vendors = await this.prisma.vendor.findMany({
+        where: { teamId: keledon.teamId },
+      });
       const activeVendors = vendors.filter((v) => v.isActive !== false);
 
-      const nextSteps = activeVendors.length > 0
-        ? [
-            { title: 'Open vendor surfaces', detail: activeVendors.map((v) => v.name).join(', ') },
-            ...activeVendors.map((vendor, index) => ({
-              title: `Step ${index + 1}: Open ${vendor.name}`,
-              detail: vendor.baseUrl
-                ? `${vendor.baseUrl}${vendor.type ? ` • ${vendor.type}` : ''}`
-                : vendor.type || 'No base URL configured',
-            })),
-            { title: 'Return to standby', detail: 'Stay connected, watch the activity log, and wait for the next call trigger.' },
-          ]
-        : [{ title: 'No vendors configured yet', detail: 'Open Management → Vendors on the keledon site.' }];
+      const nextSteps =
+        activeVendors.length > 0
+          ? [
+              {
+                title: 'Open vendor surfaces',
+                detail: activeVendors.map((v) => v.name).join(', '),
+              },
+              ...activeVendors.map((vendor, index) => ({
+                title: `Step ${index + 1}: Open ${vendor.name}`,
+                detail: vendor.baseUrl
+                  ? `${vendor.baseUrl}${vendor.type ? ` • ${vendor.type}` : ''}`
+                  : vendor.type || 'No base URL configured',
+              })),
+              {
+                title: 'Return to standby',
+                detail:
+                  'Stay connected, watch the activity log, and wait for the next call trigger.',
+              },
+            ]
+          : [
+              {
+                title: 'No vendors configured yet',
+                detail: 'Open Management → Vendors on the keledon site.',
+              },
+            ];
 
       return {
-        keledon: { id: keledon.id, name: keledon.name, teamId: keledon.teamId, brandId: keledon.brandId, countryCode: keledon.countryCode },
-        team: team ? { id: team.id, name: team.name, brandId: team.brandId, country: team.country } : null,
-        activeVendors: activeVendors.map((v) => ({ id: v.id, name: v.name, type: v.type, baseUrl: v.baseUrl })),
+        keledon: {
+          id: keledon.id,
+          name: keledon.name,
+          teamId: keledon.teamId,
+          brandId: keledon.brandId,
+          countryCode: keledon.countryCode,
+        },
+        team: team
+          ? {
+              id: team.id,
+              name: team.name,
+              brandId: team.brandId,
+              country: team.country,
+            }
+          : null,
+        activeVendors: activeVendors.map((v) => ({
+          id: v.id,
+          name: v.name,
+          type: v.type,
+          baseUrl: v.baseUrl,
+        })),
         nextSteps,
-        autoExecute: activeVendors.length > 0
-          ? [{ goal: `open ${activeVendors[0].name}`, url: activeVendors[0].baseUrl }]
-          : [{ goal: 'return to standby', url: null }],
+        autoExecute:
+          activeVendors.length > 0
+            ? [
+                {
+                  goal: `open ${activeVendors[0].name}`,
+                  url: activeVendors[0].baseUrl,
+                },
+              ]
+            : [{ goal: 'return to standby', url: null }],
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
@@ -462,5 +505,4 @@ export class CrudKeledonService {
       .digest('hex')
       .substring(0, 16);
   }
-
 }

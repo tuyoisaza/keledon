@@ -11,7 +11,12 @@ import { PrismaModule } from '../prisma/prisma.module';
 @Module({
   imports: [TTSModule, LLMModule, PrismaModule],
   controllers: [VoiceProviderController],
-  providers: [VoiceGateway, VoiceProviderRegistry, ProviderConfigResolver, WebRtcService],
+  providers: [
+    VoiceGateway,
+    VoiceProviderRegistry,
+    ProviderConfigResolver,
+    WebRtcService,
+  ],
   exports: [VoiceGateway, VoiceProviderRegistry],
 })
 export class VoiceModule {}

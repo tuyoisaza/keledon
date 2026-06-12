@@ -10,7 +10,20 @@ import type { LLMResponse } from '../llm/llm.types';
 import { ApiTags } from '@nestjs/swagger';
 
 interface DecomposeStep {
-  type: 'navigate' | 'click' | 'fill' | 'wait' | 'extract' | 'scroll' | 'screenshot' | 'press_key' | 'select' | 'hover' | 'wait_for' | 'submit' | 'assert';
+  type:
+    | 'navigate'
+    | 'click'
+    | 'fill'
+    | 'wait'
+    | 'extract'
+    | 'scroll'
+    | 'screenshot'
+    | 'press_key'
+    | 'select'
+    | 'hover'
+    | 'wait_for'
+    | 'submit'
+    | 'assert';
   selector?: string;
   value?: string;
   url?: string;
@@ -34,8 +47,19 @@ interface DecomposeResponse {
 }
 
 const VALID_ACTION_TYPES = [
-  'navigate', 'click', 'fill', 'wait', 'extract', 'scroll',
-  'screenshot', 'press_key', 'select', 'hover', 'wait_for', 'submit', 'assert',
+  'navigate',
+  'click',
+  'fill',
+  'wait',
+  'extract',
+  'scroll',
+  'screenshot',
+  'press_key',
+  'select',
+  'hover',
+  'wait_for',
+  'submit',
+  'assert',
 ];
 
 @ApiTags('Planner')
@@ -119,7 +143,10 @@ export class PlannerController {
       }
 
       const validatedSteps: DecomposeStep[] = json.steps
-        .filter((s: any) => s && typeof s === 'object' && VALID_ACTION_TYPES.includes(s.type))
+        .filter(
+          (s: any) =>
+            s && typeof s === 'object' && VALID_ACTION_TYPES.includes(s.type),
+        )
         .map((s: any) => ({
           type: s.type,
           selector: s.selector || undefined,
@@ -132,8 +159,10 @@ export class PlannerController {
       return {
         success: validatedSteps.length > 0,
         steps: validatedSteps,
-        reasoning: typeof json.reasoning === 'string' ? json.reasoning : undefined,
-        explanation: typeof json.explanation === 'string' ? json.explanation : undefined,
+        reasoning:
+          typeof json.reasoning === 'string' ? json.reasoning : undefined,
+        explanation:
+          typeof json.explanation === 'string' ? json.explanation : undefined,
       };
     } catch (error) {
       console.error('PlannerController: decomposition failed', error);

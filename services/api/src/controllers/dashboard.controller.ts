@@ -8,9 +8,7 @@ import {
   HttpStatus,
   Param,
 } from '@nestjs/common';
-import {
-  AgentMonitoringService,
-} from '../services/agent-monitoring.service';
+import { AgentMonitoringService } from '../services/agent-monitoring.service';
 import { AILoopService } from '../services/ai-loop.service';
 import { VoiceAnalyticsService } from '../services/voice-analytics.service';
 import { IntegrationHealthService } from '../services/integration-health.service';

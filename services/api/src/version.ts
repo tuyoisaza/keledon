@@ -16,8 +16,8 @@ export function getApiVersion(): string {
   }
   try {
     // Try cwd first (reliable in Railway container)
-    let pkgPath = join(process.cwd(), 'package.json');
-    let pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+    const pkgPath = join(process.cwd(), 'package.json');
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
     _version = pkg.version || '0.0.0';
     return _version;
   } catch {

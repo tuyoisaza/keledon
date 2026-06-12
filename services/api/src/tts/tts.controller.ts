@@ -9,8 +9,13 @@ export class TTSController {
   constructor(private readonly ttsService: TTSService) {}
 
   @Post('speak')
-  async speak(@Body() body: { text: string; teamId?: string }, @Res() res: Response) {
-    const result = await this.ttsService.speak(body.text, { teamId: body.teamId });
+  async speak(
+    @Body() body: { text: string; teamId?: string },
+    @Res() res: Response,
+  ) {
+    const result = await this.ttsService.speak(body.text, {
+      teamId: body.teamId,
+    });
 
     if (result.error) {
       return res.status(500).json({ error: result.error });

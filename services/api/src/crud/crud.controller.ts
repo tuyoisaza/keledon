@@ -518,19 +518,28 @@ export class CrudController {
     if (action === 'migrate') {
       return this.webhookMigrate();
     }
-    return { status: 'error', message: 'Unknown action. Use "seed" or "migrate".' };
+    return {
+      status: 'error',
+      message: 'Unknown action. Use "seed" or "migrate".',
+    };
   }
 
   private async webhookSeed(seedData?: any) {
     if (!seedData?.companies) {
-      return { status: 'error', message: 'Seed requires data.companies array in the request body' };
+      return {
+        status: 'error',
+        message: 'Seed requires data.companies array in the request body',
+      };
     }
 
     const fs = require('fs');
     const path = require('path');
     const dataDir = path.resolve(__dirname, '../../data');
     fs.mkdirSync(dataDir, { recursive: true });
-    fs.writeFileSync(path.join(dataDir, 'crud.json'), JSON.stringify(seedData, null, 2));
+    fs.writeFileSync(
+      path.join(dataDir, 'crud.json'),
+      JSON.stringify(seedData, null, 2),
+    );
 
     return this.crud.seedFromCrudJson();
   }
@@ -556,9 +565,16 @@ export class CrudController {
       `;
       await this.prisma
         .$executeRaw`CREATE INDEX IF NOT EXISTS "vendors_teamId_idx" ON "vendors"("teamId")`;
-      return { success: true, message: 'Migration webhook: vendors table ensured' };
+      return {
+        success: true,
+        message: 'Migration webhook: vendors table ensured',
+      };
     } catch (error) {
-      return { success: false, message: 'Migration webhook failed', error: error.message };
+      return {
+        success: false,
+        message: 'Migration webhook failed',
+        error: error.message,
+      };
     }
   }
 }

@@ -27,14 +27,21 @@ export class SpeachesSttAdapter implements SttAdapter {
       model: config.model || 'whisper-1',
       language: config.language || undefined,
     };
-    this.logger.log(`SpeachesSTT initialized → ${this.config.baseUrl} model=${this.config.model}`);
+    this.logger.log(
+      `SpeachesSTT initialized → ${this.config.baseUrl} model=${this.config.model}`,
+    );
   }
 
-  async transcribe(audio: Buffer, options?: { language?: string }): Promise<SttResult> {
+  async transcribe(
+    audio: Buffer,
+    options?: { language?: string },
+  ): Promise<SttResult> {
     if (!this.config) throw new Error('SpeachesSTT not initialized');
 
     const formData = new FormData();
-    const blob = new Blob([audio as unknown as BlobPart], { type: 'audio/wav' });
+    const blob = new Blob([audio as unknown as BlobPart], {
+      type: 'audio/wav',
+    });
     formData.append('file', blob, 'audio.wav');
     formData.append('model', this.config.model);
     const lang = options?.language || this.config.language;
@@ -48,13 +55,15 @@ export class SpeachesSttAdapter implements SttAdapter {
 
     if (!res.ok) {
       const errText = await res.text().catch(() => 'unknown error');
-      throw new Error(`Speaches STT error ${res.status}: ${errText.slice(0, 200)}`);
+      throw new Error(
+        `Speaches STT error ${res.status}: ${errText.slice(0, 200)}`,
+      );
     }
 
     const data = await res.json();
     return {
       text: data.text || '',
-      confidence: data.confidence ?? (data.segments?.[0]?.confidence ?? 1.0),
+      confidence: data.confidence ?? data.segments?.[0]?.confidence ?? 1.0,
       isFinal: true,
       language: data.language || lang || undefined,
       durationMs: data.duration_ms || undefined,

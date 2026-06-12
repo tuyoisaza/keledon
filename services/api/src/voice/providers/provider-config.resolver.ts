@@ -34,7 +34,8 @@ export class ProviderConfigResolver {
     const llmProvider = team.llmProvider || 'openai';
 
     // Voice provider — the unified pipeline provider
-    const voiceProvider = (team as any).voiceProvider || 'keledon-realtime-pipeline';
+    const voiceProvider =
+      (team as any).voiceProvider || 'keledon-realtime-pipeline';
 
     const config: VoiceProviderConfig = {
       teamId,
@@ -53,17 +54,23 @@ export class ProviderConfigResolver {
       teamRaw: team,
     };
 
-    this.logger.debug(`Team ${teamId} config: STT=${sttProvider} TTS=${ttsProvider} LLM=${llmProvider}`);
+    this.logger.debug(
+      `Team ${teamId} config: STT=${sttProvider} TTS=${ttsProvider} LLM=${llmProvider}`,
+    );
 
     return config;
   }
 
   private resolveLlmApiKey(team: any, provider: string): string {
     switch (provider) {
-      case 'openai': return team.openaiApiKey || '';
-      case 'google': return team.googleAiApiKey || '';
-      case 'anthropic': return team.anthropicApiKey || '';
-      default: return '';
+      case 'openai':
+        return team.openaiApiKey || '';
+      case 'google':
+        return team.googleAiApiKey || '';
+      case 'anthropic':
+        return team.anthropicApiKey || '';
+      default:
+        return '';
     }
   }
 

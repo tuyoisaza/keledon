@@ -76,11 +76,18 @@ export class CrudService {
     return this.companyService.getCompany(id);
   }
 
-  async createCompany(data: { name: string; industry?: string; countries?: string[] }) {
+  async createCompany(data: {
+    name: string;
+    industry?: string;
+    countries?: string[];
+  }) {
     return this.companyService.createCompany(data);
   }
 
-  async updateCompany(id: string, data: { name?: string; industry?: string; countries?: string[] }) {
+  async updateCompany(
+    id: string,
+    data: { name?: string; industry?: string; countries?: string[] },
+  ) {
     return this.companyService.updateCompany(id, data);
   }
 
@@ -124,7 +131,10 @@ export class CrudService {
     return this.companyService.createTeam(data);
   }
 
-  async updateTeam(id: string, data: { name?: string; country?: string; escalationTriggers?: string[] }) {
+  async updateTeam(
+    id: string,
+    data: { name?: string; country?: string; escalationTriggers?: string[] },
+  ) {
     return this.companyService.updateTeam(id, data);
   }
 
@@ -149,13 +159,16 @@ export class CrudService {
     return this.companyService.createUser(data);
   }
 
-  async updateUser(id: string, data: {
-    email?: string;
-    name?: string;
-    companyId?: string;
-    teamId?: string;
-    role?: string;
-  }) {
+  async updateUser(
+    id: string,
+    data: {
+      email?: string;
+      name?: string;
+      companyId?: string;
+      teamId?: string;
+      role?: string;
+    },
+  ) {
     return this.companyService.updateUser(id, data);
   }
 
@@ -572,16 +585,19 @@ export class CrudService {
     return this.vendorService.createVendor(data);
   }
 
-  async updateVendor(id: string, data: {
-    name?: string;
-    type?: string;
-    baseUrl?: string;
-    isActive?: boolean;
-    username?: string;
-    password?: string;
-    apiKey?: string;
-    config?: Record<string, unknown>;
-  }) {
+  async updateVendor(
+    id: string,
+    data: {
+      name?: string;
+      type?: string;
+      baseUrl?: string;
+      isActive?: boolean;
+      username?: string;
+      password?: string;
+      apiKey?: string;
+      config?: Record<string, unknown>;
+    },
+  ) {
     return this.vendorService.updateVendor(id, data);
   }
 

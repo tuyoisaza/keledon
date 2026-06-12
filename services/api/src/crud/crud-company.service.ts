@@ -322,5 +322,4 @@ export class CrudCompanyService {
   async deleteUser(id: string) {
     return this.prisma.user.delete({ where: { id } });
   }
-
 }

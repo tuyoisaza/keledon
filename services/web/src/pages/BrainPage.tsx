@@ -659,6 +659,11 @@ export default function BrainPage() {
             audioQueueRef.current = [];
             toast.error('Voice error: ' + (data.error || 'unknown'));
         });
+        socket.on('voice:interrupted', () => {
+            addLog(`[v${__APP_VERSION__ || '?'}] WS: TTS interrupted (server ack)`);
+            audioPlayingRef.current = false;
+            setSending(false);
+        });
         socket.on('voice:rpa:steps', async (data: { steps: RpaStep[] }) => {
             if (!data.steps?.length) return;
             addLog(`[v${__APP_VERSION__ || '?'}] RPA: executing ${data.steps.length} steps`);

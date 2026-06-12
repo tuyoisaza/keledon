@@ -21,7 +21,11 @@ export class SpeachesController {
   private async getActorScope(req: any) {
     const requestUser = req?.user;
     if (!requestUser?.userId) {
-      return { role: 'anonymous', companyId: null as string | null, teamId: null as string | null };
+      return {
+        role: 'anonymous',
+        companyId: null as string | null,
+        teamId: null as string | null,
+      };
     }
 
     const dbUser = await this.prisma.user.findUnique({
@@ -36,7 +40,11 @@ export class SpeachesController {
     };
   }
 
-  private teamScopeWhere(scope: { role: string; companyId: string | null; teamId: string | null }) {
+  private teamScopeWhere(scope: {
+    role: string;
+    companyId: string | null;
+    teamId: string | null;
+  }) {
     if (scope.role === 'superadmin') return {};
     if (scope.companyId) return { brand: { companyId: scope.companyId } };
     if (scope.teamId) return { id: scope.teamId };
@@ -74,13 +82,27 @@ export class SpeachesController {
       throw new ForbiddenException('Team access denied');
     }
 
-    const apiUrl = (team.speachesApiUrl || 'https://speaches-production-c63f.up.railway.app').replace(/\/+$/, '');
-    const apiKey = team.speachesApiKey || process.env.SPEACHES_API_KEY || process.env.API_KEY || '';
+    const apiUrl = (
+      team.speachesApiUrl || 'https://speaches-production-c63f.up.railway.app'
+    ).replace(/\/+$/, '');
+    const apiKey =
+      team.speachesApiKey ||
+      process.env.SPEACHES_API_KEY ||
+      process.env.API_KEY ||
+      '';
 
     const form = new FormData();
-    form.append('file', new Blob([file.buffer], { type: file.mimetype || 'audio/webm' }), file.originalname || 'recording.webm');
-    const requestedModel = body.model || 'Systran/faster-distil-whisper-small.en';
-    const speachesModel = requestedModel === 'whisper-1' ? 'Systran/faster-distil-whisper-small.en' : requestedModel;
+    form.append(
+      'file',
+      new Blob([file.buffer], { type: file.mimetype || 'audio/webm' }),
+      file.originalname || 'recording.webm',
+    );
+    const requestedModel =
+      body.model || 'Systran/faster-distil-whisper-small.en';
+    const speachesModel =
+      requestedModel === 'whisper-1'
+        ? 'Systran/faster-distil-whisper-small.en'
+        : requestedModel;
     form.append('model', speachesModel);
     form.append('response_format', body.response_format || 'json');
     if (body.language) form.append('language', body.language);
