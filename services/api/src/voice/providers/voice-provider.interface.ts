@@ -9,54 +9,61 @@
 export type ProviderHealth = 'unknown' | 'initializing' | 'ready' | 'degraded' | 'error';
 
 /**
- * Structured status object for a single provider (STT, TTS, or LLM).
+ * Structured status object for a single pipeline component (STT, TTS, or LLM).
  */
 export interface ProviderStatus {
   /** Provider identifier (e.g. 'speaches', 'openai', 'kokoro') */
   id: string;
   /** Human-readable name */
   name: string;
-  /** Provider category */
-  kind: 'stt' | 'tts' | 'llm';
   /** Current health level */
   health: ProviderHealth;
   /** Additional detail (e.g. model name, latency, error message) */
   detail?: string;
-  /** Whether an API key is configured */
-  keyConfigured: boolean;
-  /** ISO timestamp of last check */
-  lastChecked?: string;
 }
 
 /**
- * Aggregate voice pipeline status for a team session.
+ * Aggregate voice pipeline status for a team/session.
+ * Returned by the provider's getStatus() and exposed via
+ * GET /api/voice-provider/status/:sessionId.
  */
 export interface VoicePipelineStatus {
-  sessionId?: string;
+  /** Provider id (e.g. 'keledon-realtime-pipeline') */
+  provider: string;
+  /** Whether initialize() completed */
+  initialized: boolean;
+  /** STT component status */
   stt: ProviderStatus;
+  /** TTS component status */
   tts: ProviderStatus;
+  /** LLM / Cloud Brain component status */
   llm: ProviderStatus;
   /** Whether VAD is enabled */
   vadEnabled: boolean;
   /** Whether barge-in is enabled */
   bargeInEnabled: boolean;
+  /** Active session id (if any) */
+  activeSessionId?: string;
+  /** ISO timestamp of this status snapshot */
+  timestamp: string;
 }
 
 /**
  * Voice provider configuration resolved from team/tenant settings.
  */
 export interface VoiceProviderConfig {
-  teamId: string;
+  teamId?: string;
   sttProvider: string;
   ttsProvider: string;
   llmProvider: string;
-  sttApiKey: string;
-  ttsApiKey: string;
-  llmApiKey: string;
+  sttApiKey?: string;
+  ttsApiKey?: string;
+  llmApiKey?: string;
   voiceId?: string;
   speachesApiUrl?: string;
   vadEnabled: boolean;
   bargeInEnabled: boolean;
+  [key: string]: any; // allow provider-specific extras
 }
 
 /**
@@ -77,16 +84,16 @@ export interface VoiceProvider {
   stopSession(sessionId: string): Promise<void>;
 
   /** Feed captured audio into the STT pipeline */
-  onAudioInput(audio: { data: string; format: string }): Promise<void>;
+  onAudioInput(audio: Buffer): Promise<void>;
 
   /** Speak text through the TTS pipeline (called when Cloud sends a say command) */
-  speak(text: string, interruptible: boolean): Promise<void>;
+  speak(command: { text: string; interruptible?: boolean }): Promise<void>;
 
-  /** Interrupt current speech (barge-in) */
+  /** Interrupt current speech (barge-in or system interrupt) */
   interrupt(reason: string): Promise<void>;
 
-  /** Get current provider health */
-  getStatus(): ProviderStatus;
+  /** Get current aggregate pipeline status */
+  getStatus(): VoicePipelineStatus;
 
   /** Clean up resources */
   destroy(): Promise<void>;
