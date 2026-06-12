@@ -100,6 +100,16 @@ export default function BrainPage() {
     const [sttKeySet, setSttKeySet] = useState(false);
     const [ttsVoiceId, setTtsVoiceId] = useState<string | null>(null);
 
+    // Live pipeline status (from API /api/voice-provider/status/:sessionId)
+    const [pipelineStatus, setPipelineStatus] = useState<{
+        stt: { id: string; health: string; name: string; detail?: string } | null;
+        tts: { id: string; health: string; name: string; detail?: string } | null;
+        llm: { id: string; health: string; name: string; detail?: string } | null;
+        vadEnabled: boolean;
+        bargeInEnabled: boolean;
+    } | null>(null);
+    const pipelinePollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
     function addLog(msg: string) {
         const entry = `[${new Date().toLocaleTimeString()}] ${msg}`;
         console.log('[Brain]', msg);
@@ -163,6 +173,42 @@ export default function BrainPage() {
         cloudWsBaseRef.current = wsBase || window.location.origin.replace(/^http/, 'ws');
         addLog(`[v${__APP_VERSION__ || '?'}] Brain cloud endpoints: api=${cloudApiBaseRef.current || '(same-origin)'} ws=${cloudWsBaseRef.current}`);
         return { apiBase: cloudApiBaseRef.current, wsBase: cloudWsBaseRef.current };
+    }
+
+    /**
+     * Fetch live pipeline provider status from the backend.
+     * Uses the registry endpoint: GET /api/voice-provider/status/:sessionId
+     */
+    async function fetchPipelineStatus(sessionId: string) {
+        try {
+            const { apiBase } = await resolveBrainCloudConfig();
+            const token = sessionStorage.getItem('auth_token');
+            const res = await fetch(`${apiBase}/api/voice-provider/status/${encodeURIComponent(sessionId)}`, {
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+                signal: AbortSignal.timeout(5000),
+            });
+            if (!res.ok) {
+                addLog(`[VOICE] Provider status fetch failed: ${res.status}`);
+                return;
+            }
+            const data = await res.json();
+            if (data.error) {
+                setPipelineStatus(null);
+                return;
+            }
+            // Map API response to our state shape
+            setPipelineStatus({
+                stt: data.stt ? { id: data.stt.id, health: data.stt.health, name: data.stt.name, detail: data.stt.detail } : null,
+                tts: data.tts ? { id: data.tts.id, health: data.tts.health, name: data.tts.name, detail: data.tts.detail } : null,
+                llm: data.llm ? { id: data.llm.id, health: data.llm.health, name: data.llm.name, detail: data.llm.detail } : null,
+                vadEnabled: data.vadEnabled ?? true,
+                bargeInEnabled: data.bargeInEnabled ?? true,
+            });
+        } catch (e) {
+            // Quiet fail — status is secondary to voice functionality
+            if (e instanceof DOMException && e.name === 'AbortError') return;
+            addLog(`[VOICE] Provider status error: ${e instanceof Error ? e.message : String(e)}`);
+        }
     }
 
     const selectedCompany = useMemo(
@@ -521,6 +567,14 @@ export default function BrainPage() {
                     teamId: selectedTeam?.id,
                 },
             });
+            // Fetch live pipeline provider status once on connect
+            void fetchPipelineStatus(sessionId);
+            // Poll provider status every 10s during session
+            if (pipelinePollRef.current) clearInterval(pipelinePollRef.current);
+            pipelinePollRef.current = setInterval(() => {
+                const sid = voiceSessionIdRef.current;
+                if (sid) void fetchPipelineStatus(sid);
+            }, 10_000);
         });
         socket.on('voice:call_started', (data: any) => {
             addLog(`[v${__APP_VERSION__ || '?'}] Call started: ${data.session_id}`);
@@ -603,6 +657,8 @@ export default function BrainPage() {
         socket.on('disconnect', (reason: string) => {
             addLog(`[v${__APP_VERSION__ || '?'}] WS DISCONNECTED: ${reason}`);
             addLog(`[v${__APP_VERSION__ || '?'}]   Session: ${voiceSessionIdRef.current || 'none'} | Duration: ${formatCallTime(callTimer)}`);
+            if (pipelinePollRef.current) { clearInterval(pipelinePollRef.current); pipelinePollRef.current = null; }
+            setPipelineStatus(null);
             // Auto-reconnect for unexpected disconnects (not user-initiated)
             if (reason !== 'io client disconnect' && conversationModeRef.current) {
                 addLog(`[v${__APP_VERSION__ || '?'}] → auto-reconnecting in 2s`);
@@ -630,6 +686,8 @@ export default function BrainPage() {
     function disconnectVoiceSocket() {
         addLog('Disconnecting voice WS');
         if (callTimerRef.current) { clearInterval(callTimerRef.current); callTimerRef.current = null; }
+        if (pipelinePollRef.current) { clearInterval(pipelinePollRef.current); pipelinePollRef.current = null; }
+        setPipelineStatus(null);
         audioPlayingRef.current = false;
         audioQueueRef.current = [];
         const socket = voiceSocketRef.current;
@@ -1837,6 +1895,52 @@ export default function BrainPage() {
                             </div>
                         );
                     })()}
+                    {/* ── Live Provider Status ── */}
+                    {callStatus === 'connected' && pipelineStatus && (
+                        <div className="space-y-1 pt-2 border-t border-border mt-2">
+                            <div className="flex items-center justify-between px-1">
+                                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Live Provider Status</span>
+                                <span className={`h-1.5 w-1.5 rounded-full ${callStatus === 'connected' ? 'bg-green-400 animate-pulse' : 'bg-muted-foreground'}`} />
+                            </div>
+                            <div className="space-y-1">
+                                {[pipelineStatus.llm, pipelineStatus.stt, pipelineStatus.tts].filter(Boolean).map((provider) => {
+                                    if (!provider) return null;
+                                    const healthMap: Record<string, { label: string; cls: string; dot: string }> = {
+                                        ready: { label: 'READY', cls: 'bg-green-500/10 text-green-400 border-green-500/20', dot: 'bg-green-400' },
+                                        degraded: { label: 'DEGRADED', cls: 'bg-yellow-500/10 text-yellow-300 border-yellow-500/20', dot: 'bg-yellow-300' },
+                                        error: { label: 'ERROR', cls: 'bg-red-500/10 text-red-400 border-red-500/20', dot: 'bg-red-400' },
+                                        initializing: { label: 'INIT', cls: 'bg-blue-500/10 text-blue-300 border-blue-500/20', dot: 'bg-blue-300 animate-pulse' },
+                                    };
+                                    const meta = healthMap[provider.health] || { label: provider.health.toUpperCase(), cls: 'bg-muted/40 text-muted-foreground border-border', dot: 'bg-muted-foreground' };
+                                    const kindLabel = provider === pipelineStatus.llm ? 'LLM' : provider === pipelineStatus.stt ? 'STT' : 'TTS';
+                                    return (
+                                        <div key={kindLabel} className="flex items-center justify-between px-2 py-1 rounded-md bg-muted/20 text-[10px]">
+                                            <span className="font-medium text-foreground">{kindLabel}</span>
+                                            <span className="flex items-center gap-1.5">
+                                                <span className="text-muted-foreground">{provider.name}</span>
+                                                <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded border ${meta.cls}`}>
+                                                    <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
+                                                    {meta.label}
+                                                </span>
+                                            </span>
+                                        </div>
+                                    );
+                                })}
+                                {pipelineStatus.vadEnabled && (
+                                    <div className="flex items-center justify-between px-2 py-0.5 text-[10px] text-muted-foreground">
+                                        <span>VAD</span>
+                                        <span className="text-green-400">enabled</span>
+                                    </div>
+                                )}
+                                {pipelineStatus.bargeInEnabled && (
+                                    <div className="flex items-center justify-between px-2 py-0.5 text-[10px] text-muted-foreground">
+                                        <span>Barge-in</span>
+                                        <span className="text-green-400">enabled</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
