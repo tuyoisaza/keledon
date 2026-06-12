@@ -150,11 +150,12 @@ export class TTSService {
     } else if (provider === 'speaches') {
       const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
       const baseUrl = speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
-      const voice = ttsConfig.voiceId || 'ef_dora';
+      const voice = this.getSpeachesVoice(text, ttsConfig.voiceId);
       const result = await this.speakWithSpeaches(text, baseUrl, apiKeyFromStore || process.env.SPEACHES_API_KEY || '', voice);
       if (result.audioData && result.audioData.length > 0) {
         onChunk(result.audioData.toString('base64'));
       }
+      console.log(`[TTS] Speaches generated ${result.audioData?.length || 0} bytes (voice: ${voice}, lang: ${this.detectLanguage(text)})`);
       return result;
     } else if (provider === 'elevenlabs') {
       return await this.streamWithElevenLabs(text, onChunk, options);
@@ -420,6 +421,69 @@ export class TTSService {
   private estimateWavOrCompressedDuration(audioData: Buffer): number {
     const wavDuration = this.estimateWavDuration(audioData);
     return wavDuration || this.estimateDuration(audioData.length);
+  }
+
+  /**
+   * Detect dominant language in text: 'es' (Spanish) or 'en' (English) or 'other'.
+   * Uses simple character frequency heuristics — no external API.
+   */
+  private detectLanguage(text: string): 'es' | 'en' | 'other' {
+    if (!text || text.length < 2) return 'en';
+    const lower = text.toLowerCase().trim();
+
+    // Spanish-specific character patterns
+    const spanishChars = (lower.match(/[áéíóúñü¿¡]/g) || []).length;
+
+    // Common Spanish function words (high frequency)
+    const spanishWords = ['el', 'la', 'los', 'las', 'de', 'del', 'en', 'un', 'una',
+      'que', 'es', 'por', 'para', 'con', 'su', 'al', 'lo', 'como', 'más',
+      'pero', 'sus', 'le', 'ya', 'este', 'esta', 'entre', 'pero', 'todo',
+      'también', 'porque', 'bien', 'muy', 'sin', 'sobre', 'tiene', 'ser',
+      'hay', 'esa', 'ese', 'eso', 'era', 'han', 'ella', 'ello', 'ellos',
+      'está', 'están', 'estoy', 'estamos', 'estáis', 'están',
+      'hola', 'gracias', 'bueno', 'buena', 'adiós', 'sí', 'no',
+      'cómo', 'cuándo', 'dónde', 'qué', 'quién', 'cuál',
+      'me', 'te', 'se', 'nos', 'os', 'lo', 'la', 'le',
+      'pero', 'sino', 'cuando', 'donde', 'como', 'quien',
+    ];
+    const words = lower.split(/\s+/);
+    const spanishWordCount = words.filter(w => spanishWords.includes(w)).length;
+    const totalWords = words.length || 1;
+    const spanishRatio = (spanishChars + spanishWordCount) / totalWords;
+
+    // English-specific common words (high frequency, low chance of Spanish overlap)
+    const englishWords = ['the', 'and', 'you', 'for', 'are', 'all', 'but', 'not',
+      'have', 'has', 'had', 'was', 'were', 'been', 'will', 'would',
+      'could', 'should', 'may', 'might', 'shall', 'can', 'does', 'did',
+      'with', 'this', 'that', 'from', 'they', 'them', 'their', 'what',
+      'when', 'where', 'which', 'who', 'whom', 'why', 'how', 'than',
+      'then', 'just', 'about', 'also', 'very', 'too', 'here', 'there',
+    ];
+    const englishWordCount = words.filter(w => englishWords.includes(w)).length;
+
+    // Decision: if Spanish ratio is high enough, classify as Spanish
+    if (spanishRatio > 0.12) return 'es';
+    // If English words dominate and Spanish ratio is very low, classify as English
+    if (englishWordCount > 0 && spanishRatio < 0.05) return 'en';
+    // Default to English for short/ambiguous text
+    return 'en';
+  }
+
+  /**
+   * Map detected language + optional configured voiceId to a Speaches Kokoro voice.
+   * If user has explicitly set a voiceId, respect it.
+   */
+  private getSpeachesVoice(text: string, configuredVoiceId?: string | null): string {
+    if (configuredVoiceId && configuredVoiceId !== 'ef_dora') {
+      return configuredVoiceId; // Explicit user choice
+    }
+    const lang = this.detectLanguage(text);
+    // Default voice mapping by language
+    switch (lang) {
+      case 'es': return 'af_bella'; // Latin American Spanish female
+      case 'en': return 'af_sky';   // American English female
+      default:   return 'af_sky';
+    }
   }
 
   private estimateWavDuration(audioData: Buffer): number | null {
