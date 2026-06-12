@@ -14,6 +14,7 @@ import { LLMService } from '../llm/llm.service';
 import { getApiVersion } from '../version';
 import { ProviderConfigResolver } from './providers/provider-config.resolver';
 import { VoiceProviderRegistry } from './providers/voice-provider.registry';
+import { WebRtcService } from './webrtc/webrtc.service';
 
 const voiceCorsOrigins =
   process.env.KELEDON_ALLOW_ALL_CORS === 'true'
@@ -81,6 +82,7 @@ export class VoiceGateway
     private llmService?: LLMService,
     private readonly configResolver?: ProviderConfigResolver,
     private readonly registry?: VoiceProviderRegistry,
+    private readonly webrtcService?: WebRtcService,
   ) {}
 
   onModuleInit() {
@@ -167,6 +169,7 @@ export class VoiceGateway
 
   /**
    * WebRTC Signaling: Handle incoming offer from browser
+   * Creates a real peer connection via WebRtcService.
    */
   @SubscribeMessage('webrtc:offer')
   async handleWebRTCOffer(
@@ -174,17 +177,45 @@ export class VoiceGateway
     @MessageBody()
     data: { sdp: RTCSessionDescriptionInit; session_id?: string },
   ) {
-    const session = client.data.session as VoiceSession | undefined;
-    this.logger.log(`WebRTC offer from ${session?.deviceId}`);
+    const session = this.activeSessions.get(client.id);
+    if (!session) return { error: 'No active session' };
 
-    // Phase 2: In production, this would connect to a media server like LiveKit or mediasoup
-    return {
-      type: 'answer',
-      sdp: {
-        type: 'answer',
-        sdp: 'placeholder_sdp_for_development',
-      },
-    };
+    this.logger.log(`WebRTC offer from ${session.deviceId} (session=${session.sessionId})`);
+
+    if (!this.webrtcService) {
+      return { error: 'WebRTC not available' };
+    }
+
+    try {
+      const answer = await this.webrtcService.createPeer(
+        session.sessionId,
+        data.sdp.sdp!,
+        // On incoming audio track — pipe to STT pipeline
+        (receiver, streams) => {
+          this.logger.log(`[WebRTC/${session.sessionId}] mic audio track received`);
+          // Phase 2: pipe track audio to Speaches STT
+        },
+        // On data channel — handle control messages
+        (dc) => {
+          this.logger.log(`[WebRTC/${session.sessionId}] data channel: ${dc.label}`);
+          dc.onmessage = (ev) => {
+            try {
+              const msg = JSON.parse(ev.data);
+              this.logger.debug(`[WebRTC/${session.sessionId}] DC msg: ${msg.type}`);
+              if (msg.type === 'transcript') {
+                // Forward to brain processing
+                client.emit('voice:brain:reply', msg);
+              }
+            } catch { /* ignore non-JSON messages */ }
+          };
+        },
+      );
+
+      return { type: 'answer', sdp: { type: 'answer', sdp: answer.sdp } };
+    } catch (err) {
+      this.logger.error(`WebRTC offer error: ${err}`);
+      return { error: 'Failed to create WebRTC peer' };
+    }
   }
 
   /**
@@ -195,8 +226,11 @@ export class VoiceGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { candidate: RTCIceCandidateInit },
   ) {
-    const session = client.data.session as VoiceSession | undefined;
-    this.logger.debug(`ICE candidate from ${session?.deviceId}`);
+    const session = this.activeSessions.get(client.id);
+    if (!session) return { received: true };
+    if (this.webrtcService) {
+      await this.webrtcService.addIceCandidate(session.sessionId, data.candidate);
+    }
     return { received: true };
   }
 

@@ -570,6 +570,10 @@ export default function BrainPage() {
             });
             // Fetch live pipeline provider status once on connect
             void fetchPipelineStatus(sessionId);
+            // Try WebRTC peer connection (fallback to WS audio if fails)
+            void setupWebRtc().then((ok) => {
+                addLog(`[WebRTC] ${ok ? 'established ✓' : 'not available — using WS audio'}`);
+            });
             // Poll provider status every 10s during session
             if (pipelinePollRef.current) clearInterval(pipelinePollRef.current);
             pipelinePollRef.current = setInterval(() => {
@@ -701,8 +705,84 @@ export default function BrainPage() {
         voiceSocketRef.current = socket;
     }
 
+    // ── WebRTC Peer Connection ───────────────────────────────────────
+
+    const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
+    const webrtcConnectedRef = useRef(false);
+
+    /**
+     * Create RTCPeerConnection, exchange SDP offer/answer via WS signaling.
+     * On success, the server has a media pipeline ready for the mic track.
+     */
+    async function setupWebRtc(): Promise<boolean> {
+        const socket = voiceSocketRef.current;
+        if (!socket?.connected) return false;
+
+        try {
+            const pc = new RTCPeerConnection({
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' },
+                ],
+            });
+            peerConnectionRef.current = pc;
+
+            // Log ICE connection state changes
+            pc.oniceconnectionstatechange = () => {
+                addLog(`[WebRTC] ICE state: ${pc.iceConnectionState}`);
+                if (pc.iceConnectionState === 'failed' || pc.iceConnectionState === 'disconnected') {
+                    webrtcConnectedRef.current = false;
+                }
+            };
+            pc.onconnectionstatechange = () => {
+                addLog(`[WebRTC] connection state: ${pc.connectionState}`);
+                if (pc.connectionState === 'connected') webrtcConnectedRef.current = true;
+                if (pc.connectionState === 'failed') webrtcConnectedRef.current = false;
+            };
+
+            // Send ICE candidates to server
+            pc.onicecandidate = (ev) => {
+                if (ev.candidate) {
+                    socket.emit('webrtc:ice-candidate', { candidate: ev.candidate.toJSON() });
+                }
+            };
+
+            // Create offer
+            const offer = await pc.createOffer({ offerToReceiveAudio: true });
+            await pc.setLocalDescription(offer);
+
+            // Send offer and wait for answer
+            const response = await socket.emitWithAck('webrtc:offer', {
+                sdp: { type: offer.type, sdp: offer.sdp! },
+                session_id: voiceSessionIdRef.current,
+            });
+
+            if (response.error) {
+                addLog(`[WebRTC] offer rejected: ${response.error}`);
+                pc.close();
+                peerConnectionRef.current = null;
+                return false;
+            }
+
+            // Set remote description from server's answer
+            await pc.setRemoteDescription(new RTCSessionDescription(response.sdp));
+            addLog(`[WebRTC] connected — mic can be added`);
+            return true;
+        } catch (err) {
+            addLog(`[WebRTC] setup error: ${err instanceof Error ? err.message : String(err)}`);
+            webrtcConnectedRef.current = false;
+            return false;
+        }
+    }
+
     function disconnectVoiceSocket() {
         addLog('Disconnecting voice WS');
+        // Close WebRTC peer connection
+        if (peerConnectionRef.current) {
+            peerConnectionRef.current.close();
+            peerConnectionRef.current = null;
+            webrtcConnectedRef.current = false;
+        }
         if (callTimerRef.current) { clearInterval(callTimerRef.current); callTimerRef.current = null; }
         if (pipelinePollRef.current) { clearInterval(pipelinePollRef.current); pipelinePollRef.current = null; }
         setPipelineStatus(null);
@@ -1136,6 +1216,15 @@ export default function BrainPage() {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: selectedMicId ? { deviceId: { exact: selectedMicId } } : true });
             mediaStreamRef.current = stream;
             audioChunksRef.current = [];
+
+            // Add mic track to WebRTC peer connection if connected
+            if (webrtcConnectedRef.current && peerConnectionRef.current) {
+                const pc = peerConnectionRef.current;
+                stream.getAudioTracks().forEach((track) => {
+                    pc.addTrack(track, stream);
+                });
+                addLog(`[WebRTC] mic track added to peer connection`);
+            }
             provisionalTextRef.current = '';
             speachesHeardSpeechRef.current = false;
             speachesFastSentRef.current = false;
