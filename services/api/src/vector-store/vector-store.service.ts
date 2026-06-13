@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
 import { QdrantClient } from '@qdrant/qdrant-js';
 import * as crypto from 'crypto';
 
 @Injectable()
 export class VectorStoreService {
+  private readonly logger = new Logger(VectorStoreService.name);
   private qdrant: QdrantClient;
   private readonly collectionName = 'keledon';
   private readonly vectorSize = 768;
@@ -28,6 +29,18 @@ export class VectorStoreService {
     return vector.map((v) => v / norm);
   }
 
+  private logVectorStoreUnavailable(operation: string, error: unknown): void {
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === 'string'
+          ? error
+          : JSON.stringify(error);
+    this.logger.warn(
+      `[VectorStore] ${operation} unavailable; returning empty degraded response (${message})`,
+    );
+  }
+
   async getStatus() {
     try {
       const collection = await this.qdrant.getCollection(this.collectionName);
@@ -39,7 +52,8 @@ export class VectorStoreService {
         dimensions: result.config?.params?.vectors?.size || this.vectorSize,
         distance: result.config?.params?.vectors?.distance || 'Cosine',
       };
-    } catch {
+    } catch (error) {
+      this.logVectorStoreUnavailable('status', error);
       return {
         collectionExists: false,
         documentCount: 0,
@@ -52,39 +66,60 @@ export class VectorStoreService {
 
   async getCollections(prefix?: string) {
     const normalizedPrefix = this.normalizeAllowedCollectionPrefix(prefix);
-    const response = await this.qdrant.getCollections();
-    const collections = (response as any)?.collections || [];
+    try {
+      const response = await this.qdrant.getCollections();
+      const collections = (response as any)?.collections || [];
 
-    return {
-      collections: collections
-        .map((collection: any) => ({
-          name: String(collection.name || ''),
-        }))
-        .filter((collection: { name: string }) => {
-          if (normalizedPrefix) {
-            return collection.name.startsWith(normalizedPrefix);
-          }
+      return {
+        collections: collections
+          .map((collection: any) => ({
+            name: String(collection.name || ''),
+          }))
+          .filter((collection: { name: string }) => {
+            if (normalizedPrefix) {
+              return collection.name.startsWith(normalizedPrefix);
+            }
 
-          return collection.name === this.collectionName;
-        }),
-    };
+            return collection.name === this.collectionName;
+          }),
+      };
+    } catch (error) {
+      this.logVectorStoreUnavailable('collections', error);
+      return { collections: [] };
+    }
   }
 
   async getCollectionStats(name: string) {
     this.assertSafeCollectionName(name);
     const normalizedName = name.trim();
-    const collection = await this.qdrant.getCollection(normalizedName);
-    const result = collection as any;
+    try {
+      const collection = await this.qdrant.getCollection(normalizedName);
+      const result = collection as any;
 
-    return {
-      name: normalizedName,
-      pointsCount: result.points_count || result.points || 0,
-      indexedVectorsCount: result.indexed_vectors_count || 0,
-      vectorSize: result.config?.params?.vectors?.size || this.vectorSize,
-      distance: result.config?.params?.vectors?.distance || 'Cosine',
-      status: result.status || 'green',
-      optimizerStatus: result.optimizer_status || null,
-    };
+      return {
+        name: normalizedName,
+        pointsCount: result.points_count || result.points || 0,
+        indexedVectorsCount: result.indexed_vectors_count || 0,
+        vectorSize: result.config?.params?.vectors?.size || this.vectorSize,
+        distance: result.config?.params?.vectors?.distance || 'Cosine',
+        status: result.status || 'green',
+        optimizerStatus: result.optimizer_status || null,
+      };
+    } catch (error) {
+      this.logVectorStoreUnavailable(
+        `collection stats for ${normalizedName}`,
+        error,
+      );
+      return {
+        name: normalizedName,
+        pointsCount: 0,
+        indexedVectorsCount: 0,
+        vectorSize: this.vectorSize,
+        distance: 'Cosine',
+        status: 'unavailable',
+        optimizerStatus: null,
+      };
+    }
   }
 
   async addDocument(document: any) {
@@ -138,46 +173,52 @@ export class VectorStoreService {
       team_id?: string;
     } = {},
   ) {
-    const queryVector = this.deterministicHash(query);
+    try {
+      const queryVector = this.deterministicHash(query);
 
-    const filter: any = { must: [] };
+      const filter: any = { must: [] };
 
-    if (options.category && options.category.length > 0) {
-      filter.must.push({
-        key: 'category',
-        match: { any: options.category },
+      if (options.category && options.category.length > 0) {
+        filter.must.push({
+          key: 'category',
+          match: { any: options.category },
+        });
+      }
+
+      if (options.company_id) {
+        filter.must.push({
+          key: 'company_id',
+          match: { value: options.company_id },
+        });
+      }
+
+      if (filter.must.length === 0) {
+        delete filter.must;
+      }
+
+      const results = await this.qdrant.search(this.collectionName, {
+        vector: queryVector,
+        limit: options.limit || 5,
+        score_threshold: options.scoreThreshold || 0.3,
+        filter: filter.must ? filter : undefined,
+        with_payload: true,
       });
+
+      return {
+        results: results.map((r: any) => ({
+          document: {
+            id: r.id,
+            ...r.payload,
+          },
+          score: r.score,
+          relevance:
+            r.score >= 0.8 ? 'high' : r.score >= 0.6 ? 'medium' : 'low',
+        })),
+      };
+    } catch (error) {
+      this.logVectorStoreUnavailable('search', error);
+      return { results: [] };
     }
-
-    if (options.company_id) {
-      filter.must.push({
-        key: 'company_id',
-        match: { value: options.company_id },
-      });
-    }
-
-    if (filter.must.length === 0) {
-      delete filter.must;
-    }
-
-    const results = await this.qdrant.search(this.collectionName, {
-      vector: queryVector,
-      limit: options.limit || 5,
-      score_threshold: options.scoreThreshold || 0.3,
-      filter: filter.must ? filter : undefined,
-      with_payload: true,
-    });
-
-    return {
-      results: results.map((r: any) => ({
-        document: {
-          id: r.id,
-          ...r.payload,
-        },
-        score: r.score,
-        relevance: r.score >= 0.8 ? 'high' : r.score >= 0.6 ? 'medium' : 'low',
-      })),
-    };
   }
 
   async listDocuments() {
@@ -194,6 +235,7 @@ export class VectorStoreService {
         })),
       };
     } catch (error) {
+      this.logVectorStoreUnavailable('documents list', error);
       return { documents: [] };
     }
   }
