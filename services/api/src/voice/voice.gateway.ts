@@ -399,7 +399,7 @@ export class VoiceGateway
         client.emit('voice:audio', {
           audio: chunkBase64,
           sequence: 'chunk',
-          format: 'wav',
+          format: 'mp3',
         });
       },
       {
@@ -415,7 +415,7 @@ export class VoiceGateway
 
     client.emit('voice:audio', {
       sequence: 'end',
-      format: 'wav',
+      format: 'mp3',
       duration: streamResult.duration,
       voice: streamResult.voice,
       language: streamResult.language,
@@ -531,7 +531,7 @@ export class VoiceGateway
           client.emit('voice:audio', {
             audio: chunkBase64,
             sequence: 'chunk',
-            format: 'wav',
+            format: 'mp3',
           });
         },
         {
@@ -548,7 +548,7 @@ export class VoiceGateway
 
       client.emit('voice:audio', {
         sequence: 'end',
-        format: 'wav',
+        format: 'mp3',
         duration: streamResult.duration,
         voice: streamResult.voice,
         language: streamResult.language,
@@ -608,7 +608,7 @@ export class VoiceGateway
           client.emit('voice:audio', {
             audio: result.audioData.toString('base64'),
             duration: result.duration,
-            format: 'wav',
+            format: 'mp3',
             sequence: 'single',
           });
 

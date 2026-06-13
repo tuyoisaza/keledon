@@ -213,11 +213,11 @@ export class TTSService {
         voice,
       );
       if (result.audioData && result.audioData.length > 0) {
+        console.log(
+          `[TTS] Speaches encoded MP3 ${result.audioData.length} bytes (voice: ${voice}, lang: ${this.detectLanguage(text)})`,
+        );
         onChunk(result.audioData.toString('base64'));
       }
-      console.log(
-        `[TTS] Speaches generated ${result.audioData?.length || 0} bytes (voice: ${voice}, lang: ${this.detectLanguage(text)})`,
-      );
       return result;
     } else if (provider === 'elevenlabs') {
       return await this.streamWithElevenLabs(text, onChunk, options);
@@ -464,7 +464,8 @@ export class TTSService {
             model: 'speaches-ai/Kokoro-82M-v1.0-ONNX',
             input: text,
             voice,
-            response_format: 'wav',
+            response_format: 'mp3',
+            speed: 1.15,
           }),
         },
       );
@@ -479,11 +480,10 @@ export class TTSService {
 
       const arrayBuffer = await response.arrayBuffer();
       const elapsedMs = Date.now() - startedAt;
-      const rawAudioData = Buffer.from(arrayBuffer);
-      const audioData = this.finalizeWavHeader(rawAudioData);
-      const duration = this.estimateWavOrCompressedDuration(audioData);
+      const audioData = Buffer.from(arrayBuffer);
+      const duration = this.estimateDuration(audioData.length);
       console.log(
-        `[TTS] Speaches generated ${rawAudioData.length} bytes, finalized=${audioData !== rawAudioData}, ~${duration.toFixed(1)}s audio (voice: ${voice}, lang: ${lang}, elapsed=${elapsedMs}ms)`,
+        `[TTS] Speaches MP3 ${audioData.length} bytes, ~${duration.toFixed(1)}s audio (voice: ${voice}, lang: ${lang}, elapsed=${elapsedMs}ms)`,
       );
       if (audioData.length === 0) {
         return { error: 'Speaches returned empty audio' };
