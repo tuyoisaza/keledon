@@ -138,6 +138,12 @@ export default function BrainPage() {
     const audioQueueRef = useRef<{ data: string; seq: string; format?: string }[]>([]);
     const webAudioContextRef = useRef<AudioContext | null>(null);
     const webAudioSourceRef = useRef<AudioBufferSourceNode | null>(null);
+    const bargeInStreamRef = useRef<MediaStream | null>(null);
+    const bargeInContextRef = useRef<AudioContext | null>(null);
+    const bargeInProcessorRef = useRef<ScriptProcessorNode | null>(null);
+    const bargeInActiveRef = useRef(false);
+    const ttsPlaybackActiveRef = useRef(false);
+    const postPlaybackEchoGuardUntilRef = useRef(0);
     const voiceSessionIdRef = useRef<string | null>(null);
     const listenSocketRef = useRef<Socket | null>(null);
     const listenAudioStreamRef = useRef<MediaStream | null>(null);
@@ -412,6 +418,7 @@ export default function BrainPage() {
             addLog(`[v${__APP_VERSION__ || '?'}] BrainPage unmounting — cleanup`);
             recognitionRef.current?.abort();
             stopSpeachesListening();
+            stopBargeInMonitor();
             stopVoskListening();
             ttsAbortRef.current?.abort();
             if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
@@ -422,7 +429,88 @@ export default function BrainPage() {
 
     // ── TTS ─────────────────────────────────────────────────────────────
 
+    function stopBargeInMonitor() {
+        bargeInActiveRef.current = false;
+        try { bargeInProcessorRef.current?.disconnect(); } catch { /* ignore */ }
+        try { bargeInContextRef.current?.close(); } catch { /* ignore */ }
+        bargeInStreamRef.current?.getTracks().forEach(t => t.stop());
+        bargeInProcessorRef.current = null;
+        bargeInContextRef.current = null;
+        bargeInStreamRef.current = null;
+    }
+
+    async function startBargeInMonitor(label: string) {
+        if (!conversationModeRef.current || listeningRef.current || bargeInActiveRef.current) return;
+        bargeInActiveRef.current = true;
+        try {
+            const AudioContextCtor = window.AudioContext || (window as any).webkitAudioContext;
+            if (!AudioContextCtor) throw new Error('AudioContext unavailable');
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: selectedMicId ? { deviceId: { exact: selectedMicId } } : true });
+            if (!ttsPlaybackActiveRef.current || listeningRef.current) {
+                stream.getTracks().forEach(t => t.stop());
+                bargeInActiveRef.current = false;
+                return;
+            }
+            const ctx = new AudioContextCtor();
+            const source = ctx.createMediaStreamSource(stream);
+            const processor = ctx.createScriptProcessor(1024, 1, 1);
+            let hotFrames = 0;
+            let elapsedMs = 0;
+            let lastLog = 0;
+            const threshold = 0.032;
+            const framesToTrigger = 3;
+            processor.onaudioprocess = (event) => {
+                if (!bargeInActiveRef.current || !ttsPlaybackActiveRef.current || listeningRef.current) return;
+                const input = event.inputBuffer.getChannelData(0);
+                let sum = 0;
+                for (let i = 0; i < input.length; i++) sum += input[i] * input[i];
+                const rms = Math.sqrt(sum / Math.max(1, input.length));
+                const frameMs = (input.length / ctx.sampleRate) * 1000;
+                elapsedMs += frameMs;
+                hotFrames = rms > threshold ? hotFrames + 1 : 0;
+                if (elapsedMs - lastLog > 1200) {
+                    lastLog = elapsedMs;
+                    addLog(`[BARGE-IN] monitoring during ${label}… level=${rms.toFixed(3)} hot=${hotFrames}`);
+                }
+                if (hotFrames >= framesToTrigger && elapsedMs > 250) {
+                    addLog(`[BARGE-IN] user speech detected during ${label} → interrupting TTS (level=${rms.toFixed(3)})`);
+                    stopBargeInMonitor();
+                    audioQueueRef.current = [];
+                    voiceSocketRef.current?.emit('voice:interrupt');
+                    stopSpeaking();
+                    setTimeout(() => {
+                        if (conversationModeRef.current && !listeningRef.current) void startSpeachesListening();
+                    }, 80);
+                }
+            };
+            source.connect(processor);
+            processor.connect(ctx.destination);
+            bargeInStreamRef.current = stream;
+            bargeInContextRef.current = ctx;
+            bargeInProcessorRef.current = processor;
+            addLog(`[BARGE-IN] monitor armed during ${label}`);
+        } catch (err) {
+            bargeInActiveRef.current = false;
+            addLog(`[BARGE-IN] monitor unavailable: ${err instanceof Error ? err.message : String(err)}`);
+        }
+    }
+
+    function markTtsPlaybackStarted(label: string) {
+        ttsPlaybackActiveRef.current = true;
+        setSpeakingMessageId(prev => prev || `voice-${Date.now()}`);
+        void startBargeInMonitor(label);
+    }
+
+    function markTtsPlaybackEnded() {
+        ttsPlaybackActiveRef.current = false;
+        postPlaybackEchoGuardUntilRef.current = Date.now() + 700;
+        stopBargeInMonitor();
+        setSpeakingMessageId(null);
+    }
+
     function stopSpeaking() {
+        ttsPlaybackActiveRef.current = false;
+        stopBargeInMonitor();
         ttsAbortRef.current?.abort();
         ttsAbortRef.current = null;
         if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
@@ -488,9 +576,11 @@ export default function BrainPage() {
             source.onended = () => {
                 if (webAudioSourceRef.current === source) webAudioSourceRef.current = null;
                 addLog(`[${label}] WebAudio WAV playback ended`);
+                markTtsPlaybackEnded();
                 onEnded();
             };
             addLog(`[${label}] WebAudio WAV playback start channels=${channels} rate=${sampleRate} samples=${sampleCount}`);
+            markTtsPlaybackStarted(label);
             source.start();
             return true;
         } catch (err) {
@@ -508,16 +598,20 @@ export default function BrainPage() {
         }
         audio.onended = () => {
             addLog(`[${label}] Audio element playback ended`);
+            markTtsPlaybackEnded();
             URL.revokeObjectURL(url);
             onEnded();
         };
         audio.onerror = () => {
             addLog(`[${label}] Audio element playback error`);
+            markTtsPlaybackEnded();
             URL.revokeObjectURL(url);
             onFailed();
         };
+        markTtsPlaybackStarted(label);
         void audio.play().catch((err) => {
             addLog(`[${label}] Audio element play() rejected: ${err instanceof Error ? err.message : String(err)}`);
+            markTtsPlaybackEnded();
             URL.revokeObjectURL(url);
             onFailed();
         });
@@ -526,7 +620,9 @@ export default function BrainPage() {
     async function playAudioBytes(bytes: Uint8Array, mimeType: string, label: string, onEnded: () => void, onFailed: () => void) {
         const isWav = mimeType.includes('wav') || String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF';
         if (isWav && await playWavPcmViaWebAudio(bytes, label, onEnded)) return;
-        playBlobViaAudioElement(new Blob([bytes], { type: mimeType }), label, onEnded, onFailed);
+        const audioCopy: ArrayBuffer = new ArrayBuffer(bytes.byteLength);
+        new Uint8Array(audioCopy).set(bytes);
+        playBlobViaAudioElement(new Blob([audioCopy], { type: mimeType }), label, onEnded, onFailed);
     }
 
     // ── Voice WebSocket ────────────────────────────────────────────────
@@ -1422,6 +1518,19 @@ export default function BrainPage() {
                         const text = (data.text || '').trim();
                         addLog(`[TEST] STT: ✅ Speaches final transcript: "${text.substring(0, 80)}${text.length > 80 ? '...' : ''}"`);
                         if (text) {
+                            const normalizedTextForNoise = text.toLowerCase().replace(/[^a-záéíóúñü¿¡\s]/gi, '').replace(/\s+/g, ' ').trim();
+                            const postPlaybackEcho = Date.now() < postPlaybackEchoGuardUntilRef.current;
+                            const lowInfoFinalOnly = !provisional && (
+                                normalizedTextForNoise.length < 6 ||
+                                ['so', 'yeah', 'ok', 'okay', 'uh', 'um', 'eh', 'ah'].includes(normalizedTextForNoise)
+                            );
+                            if (lowInfoFinalOnly || postPlaybackEcho && !provisional && normalizedTextForNoise.split(' ').length <= 2) {
+                                addLog(`[STT] Speaches final looks like playback echo/noise; skipping auto-send (final="${text.substring(0, 80)}")`);
+                                stream.getTracks().forEach(t => t.stop());
+                                listeningRef.current = false;
+                                setIsListening(false);
+                                return;
+                            }
                             setDraft(text);
                             draftRef.current = text;
                             if (speachesFastSentRef.current) {
