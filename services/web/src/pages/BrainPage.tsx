@@ -84,6 +84,7 @@ export default function BrainPage() {
   const ttsFallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
+  const greetingSpeechActiveRef = useRef(false);
   const sttLangRef = useRef(sttLang);
   const lastChunkPlayedRef = useRef(false);
   const reconErrorCountRef = useRef(0);
@@ -946,10 +947,33 @@ export default function BrainPage() {
       // Save brain reply text in a ref (synchronous) so TTS fallback
       // can read it even before React state update processes
       lastBrainReplyRef.current = data.text || "";
-      // Progressive enhancement: start a 2s timer. If Speaches premium
-      // audio hasn't arrived by then, use browser SpeechSynthesis
-      // for instant voice. When Speaches audio arrives later,
-      // it cancels SpeechSynthesis and upgrades seamlessly.
+      // ── Greeting: use browser SpeechSynthesis instantly, skip Speaches ──
+      if (data.source === "greeting") {
+        if (ttsFallbackTimerRef.current)
+          clearTimeout(ttsFallbackTimerRef.current);
+        const text = data.text || "";
+        if (text && window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = sttLangRef.current || "es-MX";
+          utterance.rate = 1.1;
+          greetingSpeechActiveRef.current = true;
+          utterance.onend = () => {
+            greetingSpeechActiveRef.current = false;
+            audioPlayingRef.current = false;
+            if (conversationModeRef.current && !listeningRef.current) {
+              setTimeout(() => toggleListening(), 300);
+            }
+          };
+          audioPlayingRef.current = true;
+          window.speechSynthesis.speak(utterance);
+          addLog(
+            `[v${__APP_VERSION__ || "?"}] Greeting: instant SpeechSynthesis (source=greeting)`,
+          );
+        }
+        return; // Don't set timer or queue Speaches for greeting
+      }
+      // ── Brain reply: progressive enhancement with 2s timer ──
       if (ttsFallbackTimerRef.current)
         clearTimeout(ttsFallbackTimerRef.current);
       ttsFallbackTimerRef.current = setTimeout(() => {
@@ -999,8 +1023,11 @@ export default function BrainPage() {
             "[VOICE] Speaches audio ready — switching from browser SpeechSynthesis to premium voice",
           );
           window.speechSynthesis.cancel();
+          audioPlayingRef.current = false; // Allow queued premium audio to play
         }
         if (data.sequence === "end") {
+          // If greeting was handled by SpeechSynthesis, ignore Speaches end event
+          if (greetingSpeechActiveRef.current) return;
           addLog(
             "Audio stream end" +
               (data.duration ? " dur=" + data.duration.toFixed(1) : "") +
@@ -1046,6 +1073,13 @@ export default function BrainPage() {
         }
         if (!data.audio) {
           addLog("[VOICE] Backend audio chunk missing payload — skipping");
+          return;
+        }
+        // If greeting already handled by SpeechSynthesis, skip Speaches audio
+        if (greetingSpeechActiveRef.current) {
+          addLog(
+            "[VOICE] Greeting already spoken by SpeechSynthesis — skipping Speaches audio chunk",
+          );
           return;
         }
         // Clear flag: we received actual audio data from backend
