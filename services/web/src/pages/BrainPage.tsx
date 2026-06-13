@@ -147,6 +147,8 @@ export default function BrainPage() {
     const speachesVadContextRef = useRef<AudioContext | null>(null);
     const speachesVadSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
     const speachesVadProcessorRef = useRef<ScriptProcessorNode | null>(null);
+    const speachesPcmChunksRef = useRef<Float32Array[]>([]);
+    const speachesPcmSampleRateRef = useRef(16000);
     const speachesStopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const provisionalRecognitionRef = useRef<any>(null);
     const provisionalTextRef = useRef('');
@@ -581,7 +583,7 @@ export default function BrainPage() {
             addLog('[VOICE] Transport negotiation: attempting WebRTC; will fall back to WS audio if unavailable');
             void setupWebRtc().then((ok) => {
                 if (ok) {
-                    addLog('[VOICE] Transport selected: WebRTC media channel');
+                    addLog('[VOICE] WebRTC SDP negotiation complete; waiting for ICE/peer connected before selecting media channel');
                 } else {
                     setTransportStatus({ mode: 'ws-fallback', detail: 'WebRTC unavailable; using existing WS audio path' });
                     addLog('[VOICE] Transport selected: WS fallback audio path');
@@ -728,6 +730,7 @@ export default function BrainPage() {
 
     const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
     const webrtcConnectedRef = useRef(false);
+    const webrtcMicSenderRef = useRef<RTCRtpSender | null>(null);
 
     /**
      * Create RTCPeerConnection, exchange SDP offer/answer via WS signaling.
@@ -749,6 +752,9 @@ export default function BrainPage() {
                 ],
             });
             peerConnectionRef.current = pc;
+            const audioTransceiver = pc.addTransceiver('audio', { direction: 'sendrecv' });
+            webrtcMicSenderRef.current = audioTransceiver.sender;
+            addLog('[WebRTC] audio transceiver reserved before SDP offer');
 
             // Log ICE connection state changes
             pc.oniceconnectionstatechange = () => {
@@ -784,6 +790,7 @@ export default function BrainPage() {
                         peerState: pc.connectionState,
                         detail: 'WebRTC media channel connected',
                     });
+                    addLog('[VOICE] Transport selected: WebRTC media channel');
                 }
                 if (pc.connectionState === 'failed') {
                     webrtcConnectedRef.current = false;
@@ -804,8 +811,8 @@ export default function BrainPage() {
                 }
             };
 
-            // Create offer
-            const offer = await pc.createOffer({ offerToReceiveAudio: true });
+            // Create offer after reserving the audio transceiver so later replaceTrack() does not need renegotiation.
+            const offer = await pc.createOffer();
             await pc.setLocalDescription(offer);
 
             // Send offer and wait for answer
@@ -825,7 +832,7 @@ export default function BrainPage() {
             // Set remote description from server's answer
             await pc.setRemoteDescription(new RTCSessionDescription(response.sdp));
             setTransportStatus({
-                mode: 'webrtc',
+                mode: 'initializing',
                 iceState: pc.iceConnectionState,
                 peerState: pc.connectionState,
                 detail: 'SDP answer accepted; waiting for ICE/peer connected',
@@ -847,6 +854,7 @@ export default function BrainPage() {
         if (peerConnectionRef.current) {
             peerConnectionRef.current.close();
             peerConnectionRef.current = null;
+            webrtcMicSenderRef.current = null;
             webrtcConnectedRef.current = false;
             setTransportStatus({ mode: 'disconnected', detail: 'Call disconnected; WebRTC peer closed' });
             addLog('[VOICE] Transport disconnected: WebRTC peer closed');
@@ -1021,6 +1029,42 @@ export default function BrainPage() {
         let binary = '';
         for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
         return btoa(binary);
+    }
+
+    function makePcmWavBlob(chunks: Float32Array[], inputSampleRate: number, outputSampleRate = 16000): Blob {
+        const totalInputSamples = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+        const merged = new Float32Array(totalInputSamples);
+        let mergeOffset = 0;
+        for (const chunk of chunks) {
+            merged.set(chunk, mergeOffset);
+            mergeOffset += chunk.length;
+        }
+        const ratio = inputSampleRate / outputSampleRate;
+        const sampleCount = Math.floor(merged.length / ratio);
+        const buffer = new ArrayBuffer(44 + sampleCount * 2);
+        const view = new DataView(buffer);
+        const writeString = (offset: number, value: string) => {
+            for (let i = 0; i < value.length; i++) view.setUint8(offset + i, value.charCodeAt(i));
+        };
+        writeString(0, 'RIFF');
+        view.setUint32(4, 36 + sampleCount * 2, true);
+        writeString(8, 'WAVE');
+        writeString(12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, 1, true);
+        view.setUint32(24, outputSampleRate, true);
+        view.setUint32(28, outputSampleRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+        writeString(36, 'data');
+        view.setUint32(40, sampleCount * 2, true);
+        for (let i = 0; i < sampleCount; i++) {
+            const idx = Math.floor(i * ratio);
+            const s = Math.max(-1, Math.min(1, merged[idx] || 0));
+            view.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+        }
+        return new Blob([buffer], { type: 'audio/wav' });
     }
 
     async function startVoskListening(): Promise<void> {
@@ -1237,6 +1281,8 @@ export default function BrainPage() {
             processor.onaudioprocess = (event) => {
                 if (!listeningRef.current || mediaRecorderRef.current?.state !== 'recording') return;
                 const input = event.inputBuffer.getChannelData(0);
+                speachesPcmSampleRateRef.current = audioCtx.sampleRate;
+                speachesPcmChunksRef.current.push(new Float32Array(input));
                 let sum = 0;
                 for (let i = 0; i < input.length; i++) sum += input[i] * input[i];
                 const rms = Math.sqrt(sum / Math.max(1, input.length));
@@ -1284,18 +1330,22 @@ export default function BrainPage() {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: selectedMicId ? { deviceId: { exact: selectedMicId } } : true });
             mediaStreamRef.current = stream;
             audioChunksRef.current = [];
+            speachesPcmChunksRef.current = [];
+            speachesPcmSampleRateRef.current = 16000;
 
-            // Add mic track to WebRTC peer connection if connected
-            if (webrtcConnectedRef.current && peerConnectionRef.current) {
-                const pc = peerConnectionRef.current;
-                stream.getAudioTracks().forEach((track) => {
-                    pc.addTrack(track, stream);
-                });
-                addLog(`[WebRTC] mic track added to peer connection`);
+            // Attach mic track to the pre-negotiated WebRTC audio sender when possible.
+            const micTrack = stream.getAudioTracks()[0];
+            const pc = peerConnectionRef.current;
+            const sender = webrtcMicSenderRef.current;
+            if (micTrack && pc && sender && pc.connectionState !== 'failed' && pc.connectionState !== 'closed') {
+                await sender.replaceTrack(micTrack);
+                addLog(`[WebRTC] mic track attached via replaceTrack; ICE=${pc.iceConnectionState} peer=${pc.connectionState}`);
                 setTransportStatus(prev => ({
                     ...prev,
-                    mode: 'webrtc',
-                    detail: 'Mic track attached to WebRTC media channel',
+                    mode: pc.connectionState === 'connected' ? 'webrtc' : 'initializing',
+                    iceState: pc.iceConnectionState,
+                    peerState: pc.connectionState,
+                    detail: 'Mic track attached to negotiated WebRTC sender',
                 }));
             } else {
                 addLog('[VOICE] Audio capture path: WS fallback/recorder path active for this turn');
@@ -1313,6 +1363,12 @@ export default function BrainPage() {
 
             recorder.onstop = async () => {
                 cleanupSpeachesVad();
+                const activeSender = webrtcMicSenderRef.current;
+                if (activeSender) {
+                    void activeSender.replaceTrack(null).catch((err) => {
+                        addLog(`[WebRTC] mic track detach failed: ${err instanceof Error ? err.message : String(err)}`);
+                    });
+                }
                 const provisional = provisionalTextRef.current.trim();
                 const heardSpeech = speachesHeardSpeechRef.current;
                 if (!heardSpeech && !provisional) {
@@ -1336,7 +1392,8 @@ export default function BrainPage() {
                     else void handleSend(provisional);
                 }
                 addLog(`[STT] Speaches: audio captured, transcribing final${provisional ? ` (provisional="${provisional.substring(0, 80)}${provisional.length > 80 ? '...' : ''}")` : ''}...`);
-                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                const wavBlob = makePcmWavBlob(speachesPcmChunksRef.current, speachesPcmSampleRateRef.current, 16000);
+                addLog(`[STT] Speaches: sending WAV PCM ${wavBlob.size} bytes @16kHz to transcription proxy`);
 
                 // Fetch Speaches config from the API
                 try {
@@ -1346,7 +1403,7 @@ export default function BrainPage() {
                     const _apiKey = cfg.speachesApiKey || '';
 
                     const formData = new FormData();
-                    formData.append('file', audioBlob, 'recording.webm');
+                    formData.append('file', wavBlob, 'recording.wav');
                     formData.append('model', 'Systran/faster-distil-whisper-small.en');
                     formData.append('response_format', 'json');
                     formData.append('language', 'en');

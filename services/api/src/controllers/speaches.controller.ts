@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
+import { memoryStorage } from 'multer';
 import { PrismaService } from '../prisma/prisma.service';
 
 @ApiTags('Speaches')
@@ -52,7 +53,7 @@ export class SpeachesController {
   }
 
   @Post('transcriptions')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async transcribe(
     @Param('teamId') teamId: string,
     @UploadedFile() file: any,
