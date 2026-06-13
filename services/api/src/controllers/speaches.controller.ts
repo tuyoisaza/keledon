@@ -52,6 +52,36 @@ export class SpeachesController {
     return { id: '__NO_TEAM_ACCESS__' };
   }
 
+  private normalizeTranscriptionLanguage(
+    language?: string,
+  ): 'es' | 'en' | 'auto' {
+    const normalized = (language || '').toLowerCase();
+    if (normalized.startsWith('es')) return 'es';
+    if (normalized.startsWith('en')) return 'en';
+    return 'auto';
+  }
+
+  private resolveSpeachesTranscriptionModel(
+    requestedModel?: string,
+    language?: string,
+  ): string {
+    const normalizedLanguage = this.normalizeTranscriptionLanguage(language);
+    const model = requestedModel || 'whisper-1';
+    const englishOnlyModel = 'Systran/faster-distil-whisper-small.en';
+    const multilingualModel = 'Systran/faster-whisper-large-v3';
+
+    // Legacy clients used whisper-1 or the English-only model for every turn.
+    // Keep the fast English model for English, but route Spanish/auto final STT
+    // to the installed multilingual model so Spanish speech is not decoded as English.
+    if (model === 'whisper-1') {
+      return normalizedLanguage === 'en' ? englishOnlyModel : multilingualModel;
+    }
+    if (model === englishOnlyModel && normalizedLanguage === 'es') {
+      return multilingualModel;
+    }
+    return model;
+  }
+
   @Post('transcriptions')
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async transcribe(
@@ -98,15 +128,22 @@ export class SpeachesController {
       new Blob([file.buffer], { type: file.mimetype || 'audio/webm' }),
       file.originalname || 'recording.webm',
     );
-    const requestedModel =
-      body.model || 'Systran/faster-distil-whisper-small.en';
-    const speachesModel =
-      requestedModel === 'whisper-1'
-        ? 'Systran/faster-distil-whisper-small.en'
-        : requestedModel;
+    const requestedModel = body.model || 'whisper-1';
+    const speachesLanguage = this.normalizeTranscriptionLanguage(body.language);
+    const speachesModel = this.resolveSpeachesTranscriptionModel(
+      requestedModel,
+      body.language,
+    );
+    console.log(
+      `[STT] Speaches transcription proxy model=${speachesModel} requested=${requestedModel} language=${speachesLanguage} bytes=${file.buffer.length}`,
+    );
     form.append('model', speachesModel);
     form.append('response_format', body.response_format || 'json');
-    if (body.language) form.append('language', body.language);
+    if (body.language)
+      form.append(
+        'language',
+        speachesLanguage === 'auto' ? body.language : speachesLanguage,
+      );
 
     const headers: Record<string, string> = {};
     if (apiKey) headers.Authorization = `Bearer ${apiKey}`;

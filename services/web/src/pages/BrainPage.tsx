@@ -1113,6 +1113,27 @@ export default function BrainPage() {
 
     // ── STT ─────────────────────────────────────────────────────────────
 
+    function getSpeachesTranscriptionLanguage(): 'es' | 'en' {
+        const lang = (sttLangRef.current || navigator.language || 'en').toLowerCase();
+        return lang.startsWith('es') ? 'es' : 'en';
+    }
+
+    function getSpeachesTranscriptionModel(language: 'es' | 'en'): string {
+        // Legacy behavior used Systran/faster-distil-whisper-small.en for every turn.
+        // Keep that fast English-only model for English, but let the API proxy map
+        // whisper-1 + language=es to the installed multilingual model.
+        return language === 'en' ? 'Systran/faster-distil-whisper-small.en' : 'whisper-1';
+    }
+
+    function appendSpeachesTranscriptionFields(formData: FormData): { language: 'es' | 'en'; model: string } {
+        const language = getSpeachesTranscriptionLanguage();
+        const model = getSpeachesTranscriptionModel(language);
+        formData.append('model', model);
+        formData.append('response_format', 'json');
+        formData.append('language', language);
+        return { language, model };
+    }
+
     function floatTo16BitPcmBase64(input: Float32Array, inputSampleRate: number, outputSampleRate = 16000): string {
         const ratio = inputSampleRate / outputSampleRate;
         const outputLength = Math.floor(input.length / ratio);
@@ -1501,12 +1522,12 @@ export default function BrainPage() {
                     const cfg = cfgRes.ok ? await cfgRes.json() : {};
                     const _apiUrl = cfg.speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
                     const _apiKey = cfg.speachesApiKey || '';
+                    addLog(`[STT] Speaches proxy config resolved url=${String(_apiUrl).replace(/\/+$/, '')} key=${_apiKey ? 'yes' : 'no'}`);
 
                     const formData = new FormData();
                     formData.append('file', wavBlob, 'recording.wav');
-                    formData.append('model', 'Systran/faster-distil-whisper-small.en');
-                    formData.append('response_format', 'json');
-                    formData.append('language', 'en');
+                    const sttRequest = appendSpeachesTranscriptionFields(formData);
+                    addLog(`[STT] Speaches final request lang=${sttRequest.language} model=${sttRequest.model}`);
 
                     const res = await apiFetch(`/api/teams/${selectedTeamId}/speaches/transcriptions`, {
                         method: 'POST',
@@ -1925,9 +1946,8 @@ export default function BrainPage() {
             } else if (sttProvider === 'speaches') {
                 const formData = new FormData();
                 formData.append('file', makeTestWavBlob(), 'brain-stt-test.wav');
-                formData.append('model', 'Systran/faster-distil-whisper-small.en');
-                formData.append('response_format', 'json');
-                formData.append('language', 'en');
+                const sttRequest = appendSpeachesTranscriptionFields(formData);
+                addLog(`[TEST] STT: Speaches request lang=${sttRequest.language} model=${sttRequest.model}`);
                 const res = await apiFetch(`/api/teams/${selectedTeamId}/speaches/transcriptions`, {
                     method: 'POST',
                     body: formData,
