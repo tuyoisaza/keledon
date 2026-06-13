@@ -323,6 +323,114 @@ export class VoiceGateway
     return { received: true };
   }
 
+  private buildConversationalSpokenReply(replyText: string): string {
+    const normalized = replyText
+      .replace(/```[\s\S]*?```/g, ' ')
+      .replace(/[#*_`>-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!normalized) return '';
+
+    const sentences = normalized.match(/[^.!?¿¡]+[.!?]+/g) || [normalized];
+    const firstSentence = (sentences[0] || normalized).trim();
+    const secondSentence = (sentences[1] || '').trim();
+    const candidate =
+      firstSentence.length < 90 && secondSentence
+        ? `${firstSentence} ${secondSentence}`
+        : firstSentence;
+
+    if (candidate.length <= 220) return candidate;
+
+    const cut = candidate.slice(0, 220);
+    const lastSpace = cut.lastIndexOf(' ');
+    return `${cut.slice(0, lastSpace > 120 ? lastSpace : 220).trim()}…`;
+  }
+
+  private buildCallGreeting(context?: CallContext): string {
+    const rawName = context?.teamName || context?.brandName || 'KELEDON';
+    const name = rawName.replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
+    return `Hola, soy ${name}. ¿En qué puedo ayudarte?`;
+  }
+
+  private async speakVoiceText(
+    client: Socket,
+    session: VoiceSession,
+    replyText: string,
+    source: 'brain' | 'greeting',
+  ): Promise<void> {
+    if (!this.ttsService) {
+      client.emit('voice:error', { error: 'TTS service not available' });
+      return;
+    }
+
+    const spokenReplyText = this.buildConversationalSpokenReply(replyText);
+    client.emit('voice:brain:reply', {
+      text: replyText,
+      apiVersion: getApiVersion(),
+      source,
+    });
+
+    this.logger.log(
+      `[v${getApiVersion()}] Voice speech source=${source} text="${replyText.substring(0, 80)}..." spokenChars=${spokenReplyText.length}`,
+    );
+
+    session.isSpeaking = true;
+    if (!session.latencyTimestamps) session.latencyTimestamps = {};
+    const latencyTimestamps = session.latencyTimestamps;
+    latencyTimestamps.brainEnd = Date.now();
+
+    let aborted = false;
+    session.abortTTS = () => {
+      aborted = true;
+      void this.ttsService?.stop();
+    };
+
+    let ttsFirstChunkLogged = false;
+    const startedAt = Date.now();
+    const streamResult = await this.ttsService.speakStreaming(
+      spokenReplyText || replyText,
+      (chunkBase64) => {
+        if (aborted) return;
+        if (!ttsFirstChunkLogged) {
+          ttsFirstChunkLogged = true;
+          latencyTimestamps.ttsFirstChunk = Date.now();
+        }
+        client.emit('voice:audio', {
+          audio: chunkBase64,
+          sequence: 'chunk',
+          format: 'wav',
+        });
+      },
+      {
+        interruptible: true,
+        teamId: session.context?.teamId,
+        forceLanguageVoice: true,
+      },
+    );
+
+    session.isSpeaking = false;
+    session.abortTTS = () => {};
+    session.latencyTimestamps.ttsComplete = Date.now();
+
+    client.emit('voice:audio', {
+      sequence: 'end',
+      format: 'wav',
+      duration: streamResult.duration,
+      voice: streamResult.voice,
+      language: streamResult.language,
+      ttsElapsedMs: streamResult.elapsedMs,
+      apiVersion: getApiVersion(),
+    });
+
+    const firstAudioMs = session.latencyTimestamps.ttsFirstChunk
+      ? session.latencyTimestamps.ttsFirstChunk - startedAt
+      : -1;
+    this.logger.log(
+      `[v${getApiVersion()}] Voice speech done source=${source} firstAudio=${firstAudioMs}ms total=${Date.now() - startedAt}ms voice=${streamResult.voice || '?'} lang=${streamResult.language || '?'} spokenChars=${spokenReplyText.length}`,
+    );
+  }
+
   /**
    * Process a user message through the Brain LLM and stream TTS audio back
    */
@@ -385,6 +493,7 @@ export class VoiceGateway
 
       const brainData: any = await brainResponse.json();
       const replyText = brainData.reply?.trim() || '';
+      const spokenReplyText = this.buildConversationalSpokenReply(replyText);
 
       session.history.push({ role: 'assistant', content: replyText });
 
@@ -396,7 +505,7 @@ export class VoiceGateway
       });
 
       this.logger.log(
-        `[v${getApiVersion()}] Brain reply: "${replyText.substring(0, 50)}..."`,
+        `[v${getApiVersion()}] Brain reply: "${replyText.substring(0, 50)}..." spoken="${spokenReplyText.substring(0, 80)}..." fullChars=${replyText.length} spokenChars=${spokenReplyText.length}`,
       );
 
       // 5. Stream TTS audio back
@@ -406,13 +515,13 @@ export class VoiceGateway
       let aborted = false;
       session.abortTTS = () => {
         aborted = true;
-        this.ttsService?.stop();
+        void this.ttsService?.stop();
       };
 
       // Send audio chunks as they arrive
       let ttsFirstChunkLogged = false;
       const streamResult = await this.ttsService.speakStreaming(
-        replyText,
+        spokenReplyText || replyText,
         (chunkBase64) => {
           if (aborted) return;
           if (!ttsFirstChunkLogged) {
@@ -456,7 +565,7 @@ export class VoiceGateway
       const totalMs =
         ts.ttsComplete && ts.brainStart ? ts.ttsComplete - ts.brainStart : -1;
       this.logger.log(
-        `[v${getApiVersion()}] Latency — brain=${brainMs}ms ttsFirst=${ttsFirstMs}ms total=${totalMs}ms ttsElapsed=${streamResult.elapsedMs ?? -1}ms voice=${streamResult.voice || '?'} lang=${streamResult.language || '?'} | "${replyText.substring(0, 40)}..."`,
+        `[v${getApiVersion()}] Latency — brain=${brainMs}ms ttsFirst=${ttsFirstMs}ms total=${totalMs}ms ttsElapsed=${streamResult.elapsedMs ?? -1}ms voice=${streamResult.voice || '?'} lang=${streamResult.language || '?'} fullChars=${replyText.length} spokenChars=${spokenReplyText.length} | "${(spokenReplyText || replyText).substring(0, 40)}..."`,
       );
 
       this.logger.log(
@@ -675,6 +784,19 @@ export class VoiceGateway
       context: session.context,
       timestamp: new Date().toISOString(),
     });
+
+    const greeting = this.buildCallGreeting(session.context);
+    session.history.push({ role: 'assistant', content: greeting });
+    this.logger.log(
+      `[v${getApiVersion()}] Call greeting queued session=${session.sessionId} text="${greeting}"`,
+    );
+    void this.speakVoiceText(client, session, greeting, 'greeting').catch(
+      (err) => {
+        this.logger.warn(
+          `Call greeting failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      },
+    );
 
     return {
       success: true,
