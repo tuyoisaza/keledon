@@ -132,6 +132,15 @@ export class VoiceGateway
         const config = await this.configResolver.resolveTeamConfig(ctx.teamId);
         session.context = ctx;
         await this.registry.getOrCreateProvider(session.sessionId, config);
+        if (config.ttsProvider === 'speaches') {
+          void this.ttsService
+            ?.warmSpeachesForTeam(ctx.teamId, 'es')
+            .catch((err) => {
+              this.logger.warn(
+                `Speaches warmup failed: ${err instanceof Error ? err.message : String(err)}`,
+              );
+            });
+        }
         this.logger.log(
           `Provider configured for team ${ctx.teamId}: STT=${config.sttProvider} TTS=${config.ttsProvider}`,
         );
@@ -416,7 +425,11 @@ export class VoiceGateway
             format: 'wav',
           });
         },
-        { interruptible: true, teamId: session.context?.teamId },
+        {
+          interruptible: true,
+          teamId: session.context?.teamId,
+          forceLanguageVoice: true,
+        },
       );
 
       // 6. Signal end of audio stream
@@ -428,6 +441,9 @@ export class VoiceGateway
         sequence: 'end',
         format: 'wav',
         duration: streamResult.duration,
+        voice: streamResult.voice,
+        language: streamResult.language,
+        ttsElapsedMs: streamResult.elapsedMs,
         apiVersion: getApiVersion(),
       });
 
@@ -440,7 +456,7 @@ export class VoiceGateway
       const totalMs =
         ts.ttsComplete && ts.brainStart ? ts.ttsComplete - ts.brainStart : -1;
       this.logger.log(
-        `[v${getApiVersion()}] Latency — brain=${brainMs}ms ttsFirst=${ttsFirstMs}ms total=${totalMs}ms | "${replyText.substring(0, 40)}..."`,
+        `[v${getApiVersion()}] Latency — brain=${brainMs}ms ttsFirst=${ttsFirstMs}ms total=${totalMs}ms ttsElapsed=${streamResult.elapsedMs ?? -1}ms voice=${streamResult.voice || '?'} lang=${streamResult.language || '?'} | "${replyText.substring(0, 40)}..."`,
       );
 
       this.logger.log(
@@ -476,6 +492,7 @@ export class VoiceGateway
         const result = await this.ttsService.speak(data.text, {
           interruptible: data.interruptible ?? true,
           teamId: session.context?.teamId,
+          forceLanguageVoice: true,
         });
 
         if (result.audioData) {
@@ -630,6 +647,15 @@ export class VoiceGateway
         config.authToken =
           (client.handshake.auth?.token as string) || undefined;
         await this.registry.getOrCreateProvider(session.sessionId, config);
+        if (config.ttsProvider === 'speaches') {
+          void this.ttsService
+            ?.warmSpeachesForTeam(ctx.teamId, 'es')
+            .catch((err) => {
+              this.logger.warn(
+                `Speaches warmup failed: ${err instanceof Error ? err.message : String(err)}`,
+              );
+            });
+        }
         this.logger.log(
           `Provider configured for team ${ctx.teamId}: STT=${config.sttProvider} TTS=${config.ttsProvider}`,
         );

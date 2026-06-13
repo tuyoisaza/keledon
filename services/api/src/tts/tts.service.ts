@@ -9,12 +9,16 @@ export interface TTSResult {
   audioData?: Buffer;
   duration?: number;
   error?: string;
+  voice?: string;
+  language?: 'es' | 'en' | 'other';
+  elapsedMs?: number;
 }
 
 @Injectable()
 export class TTSService {
   private eventEmitter = new EventEmitter();
   private currentStream: Readable | null = null;
+  private readonly speachesWarmups = new Set<string>();
   private voiceId = process.env.ELEVENLABS_VOICE_ID || 'pFZP5JQG7iQjIQuC4Bku';
 
   constructor(
@@ -77,7 +81,11 @@ export class TTSService {
 
   async speak(
     text: string,
-    options: { interruptible?: boolean; teamId?: string } = {},
+    options: {
+      interruptible?: boolean;
+      teamId?: string;
+      forceLanguageVoice?: boolean;
+    } = {},
   ): Promise<TTSResult> {
     // Provider selection: DB > file config > env vars > default
     const teamConfig = options.teamId
@@ -116,7 +124,11 @@ export class TTSService {
         const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
         const baseUrl =
           speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
-        const voice = ttsConfig.voiceId || 'ef_dora';
+        const voice = this.getSpeachesVoice(
+          text,
+          ttsConfig.voiceId,
+          options.forceLanguageVoice,
+        );
         return await this.speakWithSpeaches(
           text,
           baseUrl,
@@ -143,7 +155,11 @@ export class TTSService {
   async speakStreaming(
     text: string,
     onChunk: (base64: string) => void,
-    options: { interruptible?: boolean; teamId?: string } = {},
+    options: {
+      interruptible?: boolean;
+      teamId?: string;
+      forceLanguageVoice?: boolean;
+    } = {},
   ): Promise<TTSResult> {
     const teamConfig = options.teamId
       ? await this.resolveTTSConfig(options.teamId)
@@ -185,7 +201,11 @@ export class TTSService {
       const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
       const baseUrl =
         speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
-      const voice = this.getSpeachesVoice(text, ttsConfig.voiceId);
+      const voice = this.getSpeachesVoice(
+        text,
+        ttsConfig.voiceId,
+        options.forceLanguageVoice,
+      );
       const result = await this.speakWithSpeaches(
         text,
         baseUrl,
@@ -426,6 +446,11 @@ export class TTSService {
     voice: string,
   ): Promise<TTSResult> {
     try {
+      const startedAt = Date.now();
+      const lang = this.detectLanguage(text);
+      console.log(
+        `[TTS] Speaches request start voice=${voice} lang=${lang} textLen=${text.length}`,
+      );
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
       };
@@ -453,16 +478,17 @@ export class TTSService {
       }
 
       const arrayBuffer = await response.arrayBuffer();
+      const elapsedMs = Date.now() - startedAt;
       const rawAudioData = Buffer.from(arrayBuffer);
       const audioData = this.finalizeWavHeader(rawAudioData);
       const duration = this.estimateWavOrCompressedDuration(audioData);
       console.log(
-        `[TTS] Speaches generated ${rawAudioData.length} bytes, finalized=${audioData !== rawAudioData}, ~${duration.toFixed(1)}s audio (voice: ${voice})`,
+        `[TTS] Speaches generated ${rawAudioData.length} bytes, finalized=${audioData !== rawAudioData}, ~${duration.toFixed(1)}s audio (voice: ${voice}, lang: ${lang}, elapsed=${elapsedMs}ms)`,
       );
       if (audioData.length === 0) {
         return { error: 'Speaches returned empty audio' };
       }
-      return { audioData, duration };
+      return { audioData, duration, voice, language: lang, elapsedMs };
     } catch (error: any) {
       console.error('[TTS] Speaches error:', error.message);
       return { error: error.message };
@@ -472,6 +498,37 @@ export class TTSService {
   private estimateWavOrCompressedDuration(audioData: Buffer): number {
     const wavDuration = this.estimateWavDuration(audioData);
     return wavDuration || this.estimateDuration(audioData.length);
+  }
+
+  async warmSpeachesForTeam(
+    teamId?: string,
+    language: 'es' | 'en' = 'es',
+  ): Promise<void> {
+    const warmupKey = `${teamId || 'default'}:${language}`;
+    if (this.speachesWarmups.has(warmupKey)) return;
+    this.speachesWarmups.add(warmupKey);
+    const startedAt = Date.now();
+    const ttsConfig = teamId
+      ? await this.resolveTTSConfig(teamId)
+      : this.mvpStore.getTTSConfig();
+    if ((ttsConfig.providerId || '').toLowerCase() !== 'speaches') return;
+    const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
+    const baseUrl =
+      speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
+    const voice = this.getSpeachesVoiceForLanguage(language);
+    const warmText = language === 'es' ? 'Hola.' : 'Hello.';
+    console.log(
+      `[TTS] Speaches warmup start team=${teamId || 'default'} lang=${language} voice=${voice}`,
+    );
+    const result = await this.speakWithSpeaches(
+      warmText,
+      baseUrl,
+      ttsConfig.apiKey || process.env.SPEACHES_API_KEY || '',
+      voice,
+    );
+    console.log(
+      `[TTS] Speaches warmup done team=${teamId || 'default'} lang=${language} voice=${voice} elapsed=${Date.now() - startedAt}ms bytes=${result.audioData?.length || 0} error=${result.error || 'none'}`,
+    );
   }
 
   /**
@@ -638,20 +695,29 @@ export class TTSService {
 
   /**
    * Map detected language + optional configured voiceId to a Speaches Kokoro voice.
-   * If user has explicitly set a voiceId, respect it.
+   * In voice/call mode, language wins over team default voice so Spanish replies never use an English voice.
    */
   private getSpeachesVoice(
     text: string,
     configuredVoiceId?: string | null,
+    forceLanguageVoice = false,
   ): string {
-    if (configuredVoiceId && configuredVoiceId !== 'ef_dora') {
-      return configuredVoiceId; // Explicit user choice
-    }
     const lang = this.detectLanguage(text);
-    // Default voice mapping by language
+    const languageVoice = this.getSpeachesVoiceForLanguage(lang);
+    if (
+      forceLanguageVoice ||
+      !configuredVoiceId ||
+      configuredVoiceId === 'ef_dora'
+    ) {
+      return languageVoice;
+    }
+    return configuredVoiceId; // Explicit non-default user choice outside forced call mode
+  }
+
+  private getSpeachesVoiceForLanguage(lang: 'es' | 'en' | 'other'): string {
     switch (lang) {
       case 'es':
-        return 'af_bella'; // Latin American Spanish female
+        return 'ef_dora'; // Spanish Kokoro voice; af_* voices are English/American
       case 'en':
         return 'af_sky'; // American English female
       default:

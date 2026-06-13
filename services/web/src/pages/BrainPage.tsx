@@ -623,14 +623,14 @@ export default function BrainPage() {
             // Do not use Chrome SpeechSynthesis on a fixed timer; only fallback
             // if the backend explicitly ends/errors without playable audio.
         });
-        socket.on('voice:audio', (data: { audio: string; sequence: string; format?: string; duration?: number; apiVersion?: string }) => {
+        socket.on('voice:audio', (data: { audio?: string; sequence: string; format?: string; duration?: number; apiVersion?: string; voice?: string; language?: string; ttsElapsedMs?: number }) => {
             // Cancel TTS fallback timer — backend streaming is working
             if (ttsFallbackTimerRef.current) {
                 clearTimeout(ttsFallbackTimerRef.current);
                 ttsFallbackTimerRef.current = null;
             }
             if (data.sequence === 'end') {
-                addLog('Audio stream end' + (data.duration ? ' dur=' + data.duration.toFixed(1) : '') + ` | API v${data.apiVersion || '?'}`);
+                addLog('Audio stream end' + (data.duration ? ' dur=' + data.duration.toFixed(1) : '') + (data.voice || data.language || data.ttsElapsedMs ? ` voice=${data.voice || '?'} lang=${data.language || '?'} tts=${data.ttsElapsedMs ?? '?'}ms` : '') + ` | API v${data.apiVersion || '?'}`);
                 audioPlayingRef.current = false;
                 // If no audio chunks were played, use browser SpeechSynthesis fallback
                 if (audioQueueRef.current.length === 0 && !lastChunkPlayedRef.current) {
@@ -657,6 +657,10 @@ export default function BrainPage() {
                         toggleListening();
                     }
                 }, 300);
+                return;
+            }
+            if (!data.audio) {
+                addLog('[VOICE] Backend audio chunk missing payload — skipping');
                 return;
             }
             // Clear flag: we received actual audio data from backend

@@ -14,7 +14,7 @@ export interface SpeachesTtsAdapterConfig {
  * The TTSService already handles:
  *   - Speaches HTTP call with /v1/audio/speech
  *   - WAV header finalization
- *   - Language-aware voice selection (es→af_bella, en→af_sky)
+ *   - Language-aware voice selection (es→ef_dora, en→af_sky)
  *   - Raw PCM / compressed audio fallback
  *
  * This adapter provides a clean TtsAdapter interface over that service
