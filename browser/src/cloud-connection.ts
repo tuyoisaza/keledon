@@ -463,6 +463,19 @@ export function connectWebSockets(
       });
     }
   });
+
+  // Forward call ended event
+  voiceClient.on('call:ended', (data: { reason?: string; session_id?: string }) => {
+    log.info('[CloudConn] Voice call ended:', data.reason || 'no reason');
+    closeCall(data.reason || 'disconnected');
+    if (currentMainWindow && !currentMainWindow.isDestroyed()) {
+      currentMainWindow.webContents.send('call:state', {
+        state: 'standby',
+        reason: data.reason,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  });
 }
 
 /**
