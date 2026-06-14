@@ -132,6 +132,13 @@ export class VoiceWSClient extends EventEmitter {
     this.socket.on('voice:rpa:steps', (data: { steps: unknown[] }) => {
       this.emit('rpa:steps', data.steps);
     });
+
+    // Handle call ended event
+    this.socket.on('voice:call_ended', (data: { reason?: string; session_id?: string }) => {
+      log.info('[VoiceWS] Call ended:', data.reason || 'no reason');
+      this.isSpeaking = false;
+      this.emit('call:ended', data);
+    });
   }
 
   /**

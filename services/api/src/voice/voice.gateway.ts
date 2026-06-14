@@ -15,51 +15,8 @@ import { getApiVersion } from '../version';
 import { ProviderConfigResolver } from './providers/provider-config.resolver';
 import { VoiceProviderRegistry } from './providers/voice-provider.registry';
 import { WebRtcService } from './webrtc/webrtc.service';
-
-const voiceCorsOrigins =
-  process.env.KELEDON_ALLOW_ALL_CORS === 'true'
-    ? true
-    : process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000'];
-
-export interface CallContext {
-  companyName: string;
-  brandName: string;
-  teamName: string;
-  companyId?: string;
-  brandId?: string;
-  teamId?: string;
-  language?: string;
-}
-
-export interface VoiceSession {
-  deviceId: string;
-  sessionId: string;
-  startedAt: Date;
-  transcript: string[];
-  context?: CallContext;
-  /** Conversation history for brain context */
-  history: { role: 'user' | 'assistant'; content: string }[];
-  /** Whether the brain is currently speaking */
-  isSpeaking: boolean;
-  /** Abort controller for current TTS stream */
-  abortTTS: () => void;
-  /** Timestamps at each pipeline stage (ms since epoch) */
-  latencyTimestamps?: {
-    vadEnd?: number;
-    sttFinal?: number;
-    brainStart?: number;
-    brainEnd?: number;
-    ttsFirstChunk?: number;
-    ttsComplete?: number;
-    interrupt?: number;
-  };
-}
-
-export interface VoiceCallEvents {
-  'call:start': (session: VoiceSession) => void;
-  'call:end': (session: VoiceSession, transcript: string[]) => void;
-  transcript: (text: string, isFinal: boolean) => void;
-}
+import { voiceCorsOrigins, type CallContext, type VoiceSession } from './voice.types';
+import { buildCallGreeting, buildConversationalSpokenReply } from './voice-helpers';
 
 @WebSocketGateway({
   cors: {
@@ -327,40 +284,6 @@ export class VoiceGateway
     return { received: true };
   }
 
-  private buildConversationalSpokenReply(replyText: string): string {
-    const normalized = replyText
-      .replace(/```[\s\S]*?```/g, ' ')
-      .replace(/[#*_`>-]+/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    if (!normalized) return '';
-
-    const sentences = normalized.match(/[^.!?¿¡]+[.!?]+/g) || [normalized];
-    const firstSentence = (sentences[0] || normalized).trim();
-    const secondSentence = (sentences[1] || '').trim();
-    const candidate =
-      firstSentence.length < 90 && secondSentence
-        ? `${firstSentence} ${secondSentence}`
-        : firstSentence;
-
-    if (candidate.length <= 220) return candidate;
-
-    const cut = candidate.slice(0, 220);
-    const lastSpace = cut.lastIndexOf(' ');
-    return `${cut.slice(0, lastSpace > 120 ? lastSpace : 220).trim()}…`;
-  }
-
-  private buildCallGreeting(context?: CallContext): string {
-    const rawName = context?.teamName || context?.brandName || 'KELEDON';
-    const name = rawName.replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
-    const lang = (context?.language || 'en-US').toLowerCase();
-    if (lang.startsWith('es')) {
-      return `Hola, soy ${name}. ¿En qué puedo ayudarte?`;
-    }
-    return `Hello, I'm ${name}. How can I help you?`;
-  }
-
   private async speakVoiceText(
     client: Socket,
     session: VoiceSession,
@@ -372,7 +295,7 @@ export class VoiceGateway
       return;
     }
 
-    const spokenReplyText = this.buildConversationalSpokenReply(replyText);
+    const spokenReplyText = buildConversationalSpokenReply(replyText);
     client.emit('voice:brain:reply', {
       text: replyText,
       apiVersion: getApiVersion(),
@@ -501,7 +424,7 @@ export class VoiceGateway
 
       const brainData: any = await brainResponse.json();
       const replyText = brainData.reply?.trim() || '';
-      const spokenReplyText = this.buildConversationalSpokenReply(replyText);
+      const spokenReplyText = buildConversationalSpokenReply(replyText);
 
       session.history.push({ role: 'assistant', content: replyText });
 
@@ -796,7 +719,7 @@ export class VoiceGateway
       timestamp: new Date().toISOString(),
     });
 
-    const greeting = this.buildCallGreeting(session.context);
+    const greeting = buildCallGreeting(session.context);
     session.history.push({ role: 'assistant', content: greeting });
     this.logger.log(
       `[v${getApiVersion()}] Call greeting queued session=${session.sessionId} text="${greeting}"`,

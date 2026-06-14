@@ -4,15 +4,9 @@ import { Readable } from 'stream';
 import { MvpStoreService } from '../mvp/mvp-store.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { getApiVersion } from '../version';
-
-export interface TTSResult {
-  audioData?: Buffer;
-  duration?: number;
-  error?: string;
-  voice?: string;
-  language?: 'es' | 'en' | 'other';
-  elapsedMs?: number;
-}
+import type { TTSResult } from './tts.types';
+import { detectLanguage, getSpeachesVoice, getSpeachesVoiceForLanguage } from './tts-language';
+import { estimateDuration } from './tts-utils';
 
 @Injectable()
 export class TTSService {
@@ -124,7 +118,7 @@ export class TTSService {
         const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
         const baseUrl =
           speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
-        const voice = this.getSpeachesVoice(
+        const voice = getSpeachesVoice(
           text,
           ttsConfig.voiceId,
           options.forceLanguageVoice,
@@ -201,7 +195,7 @@ export class TTSService {
       const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
       const baseUrl =
         speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
-      const voice = this.getSpeachesVoice(
+      const voice = getSpeachesVoice(
         text,
         ttsConfig.voiceId,
         options.forceLanguageVoice,
@@ -214,7 +208,7 @@ export class TTSService {
       );
       if (result.audioData && result.audioData.length > 0) {
         console.log(
-          `[TTS] Speaches encoded MP3 ${result.audioData.length} bytes (voice: ${voice}, lang: ${this.detectLanguage(text)})`,
+          `[TTS] Speaches encoded MP3 ${result.audioData.length} bytes (voice: ${voice}, lang: ${detectLanguage(text)})`,
         );
         onChunk(result.audioData.toString('base64'));
       }
@@ -283,7 +277,7 @@ export class TTSService {
       }
 
       const audioData = Buffer.concat(chunks);
-      const duration = this.estimateDuration(audioData.length);
+      const duration = estimateDuration(audioData.length);
 
       console.log(
         `[TTS] Streamed ${chunks.length} chunks, ${audioData.length} bytes, ~${duration.toFixed(1)}s audio`,
@@ -336,7 +330,7 @@ export class TTSService {
       }
 
       const audioData = Buffer.concat(chunks);
-      const duration = this.estimateDuration(audioData.length);
+      const duration = estimateDuration(audioData.length);
 
       console.log(
         `[TTS] Generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio`,
@@ -387,7 +381,7 @@ export class TTSService {
 
       const arrayBuffer = await response.arrayBuffer();
       const audioData = Buffer.from(arrayBuffer);
-      const duration = this.estimateDuration(audioData.length);
+      const duration = estimateDuration(audioData.length);
 
       console.log(
         `[TTS] OpenAI generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio (voice: ${voice})`,
@@ -427,7 +421,7 @@ export class TTSService {
       // WAV at 24kHz: duration = bytes / (sampleRate * channels * bitsPerSample/8)
       const duration = audioData.length / (24000 * 2); // 24kHz, 16-bit, mono
       // Fallback: OpenAI-style estimate
-      const duration2 = this.estimateDuration(audioData.length);
+      const duration2 = estimateDuration(audioData.length);
 
       console.log(
         `[TTS] Kokoro generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio (voice: ${voice})`,
@@ -447,7 +441,7 @@ export class TTSService {
   ): Promise<TTSResult> {
     try {
       const startedAt = Date.now();
-      const lang = this.detectLanguage(text);
+      const lang = detectLanguage(text);
       console.log(
         `[TTS] Speaches request start voice=${voice} lang=${lang} textLen=${text.length}`,
       );
@@ -481,7 +475,7 @@ export class TTSService {
       const arrayBuffer = await response.arrayBuffer();
       const elapsedMs = Date.now() - startedAt;
       const audioData = Buffer.from(arrayBuffer);
-      const duration = this.estimateDuration(audioData.length);
+      const duration = estimateDuration(audioData.length);
       console.log(
         `[TTS] Speaches MP3 ${audioData.length} bytes, ~${duration.toFixed(1)}s audio (voice: ${voice}, lang: ${lang}, elapsed=${elapsedMs}ms)`,
       );
@@ -495,10 +489,6 @@ export class TTSService {
     }
   }
 
-  private estimateWavOrCompressedDuration(audioData: Buffer): number {
-    const wavDuration = this.estimateWavDuration(audioData);
-    return wavDuration || this.estimateDuration(audioData.length);
-  }
 
   async warmSpeachesForTeam(
     teamId?: string,
@@ -515,7 +505,7 @@ export class TTSService {
     const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
     const baseUrl =
       speachesApiUrl || 'https://speaches-production-c63f.up.railway.app';
-    const voice = this.getSpeachesVoiceForLanguage(language);
+    const voice = getSpeachesVoiceForLanguage(language);
     const warmText = language === 'es' ? 'Hola.' : 'Hello.';
     console.log(
       `[TTS] Speaches warmup start team=${teamId || 'default'} lang=${language} voice=${voice}`,
@@ -529,276 +519,6 @@ export class TTSService {
     console.log(
       `[TTS] Speaches warmup done team=${teamId || 'default'} lang=${language} voice=${voice} elapsed=${Date.now() - startedAt}ms bytes=${result.audioData?.length || 0} error=${result.error || 'none'}`,
     );
-  }
-
-  /**
-   * Detect dominant language in text: 'es' (Spanish) or 'en' (English) or 'other'.
-   * Uses simple character frequency heuristics — no external API.
-   */
-  private detectLanguage(text: string): 'es' | 'en' | 'other' {
-    if (!text || text.length < 2) return 'en';
-    const lower = text.toLowerCase().trim();
-
-    // Spanish-specific character patterns
-    const spanishChars = (lower.match(/[áéíóúñü¿¡]/g) || []).length;
-
-    // Common Spanish function words (high frequency)
-    const spanishWords = [
-      'el',
-      'la',
-      'los',
-      'las',
-      'de',
-      'del',
-      'en',
-      'un',
-      'una',
-      'que',
-      'es',
-      'por',
-      'para',
-      'con',
-      'su',
-      'al',
-      'lo',
-      'como',
-      'más',
-      'pero',
-      'sus',
-      'le',
-      'ya',
-      'este',
-      'esta',
-      'entre',
-      'pero',
-      'todo',
-      'también',
-      'porque',
-      'bien',
-      'muy',
-      'sin',
-      'sobre',
-      'tiene',
-      'ser',
-      'hay',
-      'esa',
-      'ese',
-      'eso',
-      'era',
-      'han',
-      'ella',
-      'ello',
-      'ellos',
-      'está',
-      'están',
-      'estoy',
-      'estamos',
-      'estáis',
-      'están',
-      'hola',
-      'gracias',
-      'bueno',
-      'buena',
-      'adiós',
-      'sí',
-      'no',
-      'cómo',
-      'cuándo',
-      'dónde',
-      'qué',
-      'quién',
-      'cuál',
-      'me',
-      'te',
-      'se',
-      'nos',
-      'os',
-      'lo',
-      'la',
-      'le',
-      'pero',
-      'sino',
-      'cuando',
-      'donde',
-      'como',
-      'quien',
-    ];
-    const words = lower.split(/\s+/);
-    const spanishWordCount = words.filter((w) =>
-      spanishWords.includes(w),
-    ).length;
-    const totalWords = words.length || 1;
-    const spanishRatio = (spanishChars + spanishWordCount) / totalWords;
-
-    // English-specific common words (high frequency, low chance of Spanish overlap)
-    const englishWords = [
-      'the',
-      'and',
-      'you',
-      'for',
-      'are',
-      'all',
-      'but',
-      'not',
-      'have',
-      'has',
-      'had',
-      'was',
-      'were',
-      'been',
-      'will',
-      'would',
-      'could',
-      'should',
-      'may',
-      'might',
-      'shall',
-      'can',
-      'does',
-      'did',
-      'with',
-      'this',
-      'that',
-      'from',
-      'they',
-      'them',
-      'their',
-      'what',
-      'when',
-      'where',
-      'which',
-      'who',
-      'whom',
-      'why',
-      'how',
-      'than',
-      'then',
-      'just',
-      'about',
-      'also',
-      'very',
-      'too',
-      'here',
-      'there',
-    ];
-    const englishWordCount = words.filter((w) =>
-      englishWords.includes(w),
-    ).length;
-
-    // Decision: if Spanish ratio is high enough, classify as Spanish
-    if (spanishRatio > 0.12) return 'es';
-    // If English words dominate and Spanish ratio is very low, classify as English
-    if (englishWordCount > 0 && spanishRatio < 0.05) return 'en';
-    // Default to English for short/ambiguous text
-    return 'en';
-  }
-
-  /**
-   * Map detected language + optional configured voiceId to a Speaches Kokoro voice.
-   * In voice/call mode, language wins over team default voice so Spanish replies never use an English voice.
-   */
-  private getSpeachesVoice(
-    text: string,
-    configuredVoiceId?: string | null,
-    forceLanguageVoice = false,
-  ): string {
-    const lang = this.detectLanguage(text);
-    const languageVoice = this.getSpeachesVoiceForLanguage(lang);
-    if (
-      forceLanguageVoice ||
-      !configuredVoiceId ||
-      configuredVoiceId === 'ef_dora'
-    ) {
-      return languageVoice;
-    }
-    return configuredVoiceId; // Explicit non-default user choice outside forced call mode
-  }
-
-  private getSpeachesVoiceForLanguage(lang: 'es' | 'en' | 'other'): string {
-    switch (lang) {
-      case 'es':
-        return 'ef_dora'; // Spanish Kokoro voice; af_* voices are English/American
-      case 'en':
-        return 'af_sky'; // American English female
-      default:
-        return 'af_sky';
-    }
-  }
-
-  private estimateWavDuration(audioData: Buffer): number | null {
-    if (audioData.length < 44) return null;
-    if (audioData.subarray(0, 4).toString('ascii') !== 'RIFF') return null;
-    if (audioData.subarray(8, 12).toString('ascii') !== 'WAVE') return null;
-
-    let pos = 12;
-    let byteRate = 0;
-    let dataSize = 0;
-    while (pos + 8 <= audioData.length) {
-      const chunkId = audioData.subarray(pos, pos + 4).toString('ascii');
-      const declaredSize = audioData.readUInt32LE(pos + 4);
-      const payloadStart = pos + 8;
-      const payloadRemaining = Math.max(0, audioData.length - payloadStart);
-      const chunkSize =
-        declaredSize === 0xffffffff || declaredSize > payloadRemaining
-          ? payloadRemaining
-          : declaredSize;
-      if (
-        chunkId === 'fmt ' &&
-        chunkSize >= 16 &&
-        payloadStart + 12 <= audioData.length
-      ) {
-        byteRate = audioData.readUInt32LE(payloadStart + 8);
-      }
-      if (chunkId === 'data') {
-        dataSize = chunkSize;
-        break;
-      }
-      pos = payloadStart + chunkSize + (chunkSize % 2);
-    }
-
-    return byteRate > 0 && dataSize > 0 ? dataSize / byteRate : null;
-  }
-
-  private finalizeWavHeader(audioData: Buffer): Buffer {
-    if (audioData.length < 44) return audioData;
-    if (audioData.subarray(0, 4).toString('ascii') !== 'RIFF') return audioData;
-    if (audioData.subarray(8, 12).toString('ascii') !== 'WAVE')
-      return audioData;
-
-    const fixed = Buffer.from(audioData);
-    let changed = false;
-    const riffSize = Math.max(0, fixed.length - 8);
-    if (fixed.readUInt32LE(4) !== riffSize) {
-      fixed.writeUInt32LE(riffSize, 4);
-      changed = true;
-    }
-
-    let pos = 12;
-    while (pos + 8 <= fixed.length) {
-      const chunkId = fixed.subarray(pos, pos + 4).toString('ascii');
-      const declaredSize = fixed.readUInt32LE(pos + 4);
-      const payloadStart = pos + 8;
-      const payloadRemaining = Math.max(0, fixed.length - payloadStart);
-      if (chunkId === 'data') {
-        if (declaredSize !== payloadRemaining) {
-          fixed.writeUInt32LE(payloadRemaining, pos + 4);
-          changed = true;
-        }
-        break;
-      }
-      const chunkSize =
-        declaredSize === 0xffffffff || declaredSize > payloadRemaining
-          ? payloadRemaining
-          : declaredSize;
-      pos = payloadStart + chunkSize + (chunkSize % 2);
-    }
-
-    return changed ? fixed : audioData;
-  }
-
-  private estimateDuration(bytes: number): number {
-    const bitrate = 128000;
-    return (bytes * 8) / bitrate;
   }
 
   async stop(): Promise<void> {

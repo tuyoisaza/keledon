@@ -1110,6 +1110,16 @@ export default function BrainPage() {
       audioPlayingRef.current = false;
       setSending(false);
     });
+    socket.on("voice:call_ended", (data: any) => {
+      addLog(
+        `[v${__APP_VERSION__ || "?"}] Call ended: ${data.reason || "unknown reason"} | session=${data.session_id || "?"}`,
+      );
+      audioPlayingRef.current = false;
+      audioQueueRef.current = [];
+      lastChunkPlayedRef.current = false;
+      greetingSpeechActiveRef.current = false;
+      setSending(false);
+    });
     socket.on("voice:rpa:steps", async (data: { steps: RpaStep[] }) => {
       if (!data.steps?.length) return;
       addLog(
