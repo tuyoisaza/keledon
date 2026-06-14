@@ -8,11 +8,11 @@ RUN echo "Build $CACHEBUST"
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 COPY . .
 RUN npx prisma@5.22.0 generate && \
     npx tsc -p tsconfig.mvp.json
-RUN npm install --omit=dev
+RUN npm install --omit=dev --legacy-peer-deps
 
 FROM node:20-slim
 WORKDIR /app
