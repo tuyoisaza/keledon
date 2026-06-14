@@ -438,17 +438,18 @@ export function connectWebSockets(
     authToken: token,
     deviceId: runtimeStatus.deviceId || 'unknown',
     teamId: runtimeStatus.teamId || undefined,
+    language: runtimeStatus.language || 'en-US',
   });
   voiceClient.connect().catch((err) =>
     log.warn('[VoiceWS] Failed to connect:', err),
   );
 
   // Forward voice client events to renderer
-  voiceClient.on('brain:reply', (text: string) => {
+  voiceClient.on('brain:reply', (text: string, source?: string) => {
     if (currentMainWindow && !currentMainWindow.isDestroyed()) {
       currentMainWindow.webContents.send('brain:command', {
         type: 'say',
-        data: { say: { text } },
+        data: { say: { text, source } },
         timestamp: new Date().toISOString(),
       });
     }

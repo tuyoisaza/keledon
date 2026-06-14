@@ -28,6 +28,7 @@ export interface CallContext {
   companyId?: string;
   brandId?: string;
   teamId?: string;
+  language?: string;
 }
 
 export interface VoiceSession {
@@ -133,8 +134,9 @@ export class VoiceGateway
         session.context = ctx;
         await this.registry.getOrCreateProvider(session.sessionId, config);
         if (config.ttsProvider === 'speaches') {
+          const warmupLang = (ctx.language || 'en').startsWith('es') ? 'es' : 'en';
           void this.ttsService
-            ?.warmSpeachesForTeam(ctx.teamId, 'es')
+            ?.warmSpeachesForTeam(ctx.teamId, warmupLang)
             .catch((err) => {
               this.logger.warn(
                 `Speaches warmup failed: ${err instanceof Error ? err.message : String(err)}`,
@@ -350,7 +352,11 @@ export class VoiceGateway
   private buildCallGreeting(context?: CallContext): string {
     const rawName = context?.teamName || context?.brandName || 'KELEDON';
     const name = rawName.replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
-    return `Hola, soy ${name}. ¿En qué puedo ayudarte?`;
+    const lang = (context?.language || 'en-US').toLowerCase();
+    if (lang.startsWith('es')) {
+      return `Hola, soy ${name}. ¿En qué puedo ayudarte?`;
+    }
+    return `Hello, I'm ${name}. How can I help you?`;
   }
 
   private async speakVoiceText(
@@ -757,8 +763,9 @@ export class VoiceGateway
           (client.handshake.auth?.token as string) || undefined;
         await this.registry.getOrCreateProvider(session.sessionId, config);
         if (config.ttsProvider === 'speaches') {
+          const warmupLang = (ctx.language || 'en').startsWith('es') ? 'es' : 'en';
           void this.ttsService
-            ?.warmSpeachesForTeam(ctx.teamId, 'es')
+            ?.warmSpeachesForTeam(ctx.teamId, warmupLang)
             .catch((err) => {
               this.logger.warn(
                 `Speaches warmup failed: ${err instanceof Error ? err.message : String(err)}`,

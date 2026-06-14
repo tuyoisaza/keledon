@@ -9,6 +9,7 @@ export interface VoiceClientOptions {
   authToken: string;
   deviceId: string;
   teamId?: string;
+  language?: string;
 }
 
 export interface VoiceClientStatus {
@@ -75,6 +76,7 @@ export class VoiceWSClient extends EventEmitter {
           brandName: 'Unspecified Brand',
           teamName: runtimeStatus.teamName || 'Unspecified Team',
           teamId: this.options.teamId,
+          language: this.options.language || runtimeStatus.language || 'en-US',
         },
       });
     });
@@ -114,8 +116,8 @@ export class VoiceWSClient extends EventEmitter {
     });
 
     // Handle brain replies (text display)
-    this.socket.on('voice:brain:reply', (data: { text: string }) => {
-      this.emit('brain:reply', data.text);
+    this.socket.on('voice:brain:reply', (data: { text: string; source?: string }) => {
+      this.emit('brain:reply', data.text, data.source);
     });
 
     this.socket.on('voice:brain:thinking', () => {

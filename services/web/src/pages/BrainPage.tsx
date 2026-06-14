@@ -885,6 +885,7 @@ export default function BrainPage() {
           companyId: selectedCompany?.id,
           brandId: selectedBrand?.id,
           teamId: selectedTeam?.id,
+          language: sttLangRef.current || "en-US",
         },
       });
       // Fetch live pipeline provider status once on connect

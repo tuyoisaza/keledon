@@ -8,6 +8,7 @@ export interface RuntimeStatus {
   pendingPairingCode: string | null;
   teamId: string | null;
   teamName: string | null;
+  language: string;
   vendors: any[];
   keledonId: string | null;
   escalationTriggers: string[];

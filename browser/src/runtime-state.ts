@@ -17,6 +17,7 @@ export const runtimeStatus: RuntimeStatus = {
   pendingPairingCode: null,
   teamId: null,
   teamName: null,
+  language: 'en-US',
   vendors: [],
   keledonId: null,
   escalationTriggers: [],
