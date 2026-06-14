@@ -134,7 +134,9 @@ export class VoiceGateway
         session.context = ctx;
         await this.registry.getOrCreateProvider(session.sessionId, config);
         if (config.ttsProvider === 'speaches') {
-          const warmupLang = (ctx.language || 'en').startsWith('es') ? 'es' : 'en';
+          const warmupLang = (ctx.language || 'en').startsWith('es')
+            ? 'es'
+            : 'en';
           void this.ttsService
             ?.warmSpeachesForTeam(ctx.teamId, warmupLang)
             .catch((err) => {
@@ -763,7 +765,9 @@ export class VoiceGateway
           (client.handshake.auth?.token as string) || undefined;
         await this.registry.getOrCreateProvider(session.sessionId, config);
         if (config.ttsProvider === 'speaches') {
-          const warmupLang = (ctx.language || 'en').startsWith('es') ? 'es' : 'en';
+          const warmupLang = (ctx.language || 'en').startsWith('es')
+            ? 'es'
+            : 'en';
           void this.ttsService
             ?.warmSpeachesForTeam(ctx.teamId, warmupLang)
             .catch((err) => {
