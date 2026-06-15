@@ -1025,32 +1025,17 @@ export default function BrainPage() {
         }
         return; // Don't set timer or queue Speaches for greeting
       }
-      // ── Brain reply: progressive enhancement with 2s timer ──
+      // ── Brain reply: wait for Speaches TTS (no SpeechSynthesis fallback) ──
+      // The greeting already provides instant feedback.
+      // For subsequent replies, wait for Speaches to maintain a single consistent voice.
+      // If Speaches fails completely, the no-audio fallback in voice:audio:end handles it.
       if (ttsFallbackTimerRef.current)
         clearTimeout(ttsFallbackTimerRef.current);
-      ttsFallbackTimerRef.current = setTimeout(() => {
-        ttsFallbackTimerRef.current = null;
-        const text = lastBrainReplyRef.current;
-        if (!text || !window.speechSynthesis) return;
-        // Don't start if premium audio already arrived
-        if (lastChunkPlayedRef.current || audioQueueRef.current.length > 0)
-          return;
-        addLog(
-          `[v${__APP_VERSION__ || "?"}] Speaches TTS pending — using browser SpeechSynthesis for instant voice`,
-        );
+      // Also clean up the audio reference from progressive enhancement
+      if (window.speechSynthesis?.speaking) {
         window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = sttLangRef.current || "es-MX";
-        utterance.rate = 1.1;
-        utterance.onend = () => {
-          audioPlayingRef.current = false;
-          if (conversationModeRef.current && !listeningRef.current) {
-            setTimeout(() => toggleListening(), 300);
-          }
-        };
-        audioPlayingRef.current = true;
-        window.speechSynthesis.speak(utterance);
-      }, 2000);
+        audioPlayingRef.current = false;
+      }
     });
     socket.on(
       "voice:audio",
@@ -2246,7 +2231,7 @@ export default function BrainPage() {
       startSpeachesProvisionalRecognition();
       startSpeachesVad(stream);
       addLog(
-        `[v${appVersion}] Speaches: listening with VAD (silence≈850ms, max≈9s)...`,
+        `[v${appVersion}] Speaches: listening with VAD (silence≈1500ms, max≈30s)...`,
       );
 
       // Interruption: if Brain is speaking, cut it off
