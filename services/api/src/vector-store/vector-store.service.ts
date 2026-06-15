@@ -124,7 +124,11 @@ export class VectorStoreService {
 
   async addDocument(document: any) {
     const vector = this.deterministicHash(document.content);
-    const id = document.id || `doc-${Date.now()}`;
+    // Qdrant only accepts unsigned integers or UUIDs as point IDs
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const id = document.id && uuidRegex.test(document.id)
+      ? document.id
+      : crypto.randomUUID();
 
     await this.qdrant.upsert(this.collectionName, {
       points: [
