@@ -160,8 +160,10 @@ export class VectorStoreService {
   }
 
   async deleteDocument(id: string) {
+    // Qdrant point IDs can be integer or UUID — match stored type
+    const pointId = /^\d+$/.test(id) ? parseInt(id, 10) : id;
     await this.qdrant.delete(this.collectionName, {
-      points: [id],
+      points: [pointId],
     });
     return { success: true };
   }
