@@ -780,6 +780,54 @@ export default function BrainPage() {
     }
   }
 
+  async function playMp3ViaWebAudio(
+    bytes: Uint8Array,
+    label: string,
+    onEnded: () => void,
+  ): Promise<boolean> {
+    try {
+      const AudioContextCtor =
+        window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextCtor) return false;
+      const ctx = webAudioContextRef.current || new AudioContextCtor();
+      webAudioContextRef.current = ctx;
+      if (ctx.state === "suspended") await ctx.resume();
+      const arrayBuf = bytes.buffer.slice(
+        bytes.byteOffset,
+        bytes.byteOffset + bytes.byteLength,
+      );
+      return new Promise<boolean>((resolve) => {
+        ctx.decodeAudioData(
+          arrayBuf,
+          (audioBuffer) => {
+            const source = ctx.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(ctx.destination);
+            webAudioSourceRef.current = source;
+            source.onended = () => {
+              if (webAudioSourceRef.current === source)
+                webAudioSourceRef.current = null;
+              addLog(`[${label}] WebAudio MP3 playback ended`);
+              markTtsPlaybackEnded();
+              onEnded();
+            };
+            addLog(
+              `[${label}] WebAudio MP3 playback start duration=${audioBuffer.duration.toFixed(2)}s`,
+            );
+            markTtsPlaybackStarted(label);
+            source.start();
+            resolve(true);
+          },
+          () => {
+            resolve(false);
+          },
+        );
+      });
+    } catch {
+      return false;
+    }
+  }
+
   function playBlobViaAudioElement(
     blob: Blob,
     label: string,
@@ -826,6 +874,9 @@ export default function BrainPage() {
       mimeType.includes("wav") ||
       String.fromCharCode(...bytes.slice(0, 4)) === "RIFF";
     if (isWav && (await playWavPcmViaWebAudio(bytes, label, onEnded))) return;
+    // Try MP3 via WebAudio API (decodeAudioData)
+    if (await playMp3ViaWebAudio(bytes, label, onEnded)) return;
+    // Fallback: Audio element with blob URL
     const audioCopy: ArrayBuffer = new ArrayBuffer(bytes.byteLength);
     new Uint8Array(audioCopy).set(bytes);
     playBlobViaAudioElement(
@@ -1901,8 +1952,8 @@ export default function BrainPage() {
       let elapsedMs = 0;
       let lastLevelLog = 0;
       const minListenMs = 900;
-      const maxListenMs = 9000;
-      const silenceStopMs = 850;
+      const maxListenMs = 30000;
+      const silenceStopMs = 1500;
       const threshold = 0.018;
 
       processor.onaudioprocess = (event) => {
