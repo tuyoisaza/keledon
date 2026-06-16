@@ -3,6 +3,7 @@ import { BadRequestException } from '@nestjs/common';
 import { QdrantClient } from '@qdrant/qdrant-js';
 import * as crypto from 'crypto';
 import OpenAI from 'openai';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class VectorStoreService {
@@ -12,7 +13,7 @@ export class VectorStoreService {
   private readonly collectionName = 'keledon';
   private readonly vectorSize = 768;
 
-  constructor() {
+  constructor(private readonly prisma: PrismaService) {
     const qdrantUrl = process.env.QDRANT_URL || 'http://127.0.0.1:6333';
     const qdrantApiKey = process.env.QDRANT_API_KEY || undefined;
     this.qdrant = new QdrantClient({ url: qdrantUrl, apiKey: qdrantApiKey });
@@ -23,12 +24,17 @@ export class VectorStoreService {
 
   /**
    * Generate a vector embedding for text using OpenAI's embedding API.
-   * Falls back to deterministicHash if OpenAI is not configured.
+   * Accepts an optional per-request API key (for team-specific keys).
+   * Falls back to deterministicHash if no API key is available.
    */
-  private async embedText(text: string): Promise<number[]> {
-    if (this.openai) {
+  private async embedText(text: string, apiKey?: string): Promise<number[]> {
+    const effectiveKey = apiKey || process.env.OPENAI_API_KEY;
+    if (effectiveKey) {
       try {
-        const response = await this.openai.embeddings.create({
+        const client = apiKey
+          ? new OpenAI({ apiKey })
+          : (this.openai as OpenAI);
+        const response = await client.embeddings.create({
           model: 'text-embedding-3-small',
           input: text.slice(0, 8191), // OpenAI input limit
           dimensions: this.vectorSize,
@@ -148,7 +154,15 @@ export class VectorStoreService {
   }
 
   async addDocument(document: any) {
-    const vector = await this.embedText(document.content);
+    // Resolve team OpenAI API key for embedding
+    let apiKey: string | undefined;
+    if (document.team_id) {
+      try {
+        const team = await this.prisma.team.findUnique({ where: { id: document.team_id }, select: { openaiApiKey: true } });
+        if (team?.openaiApiKey) apiKey = team.openaiApiKey;
+      } catch { /* ignore */ }
+    }
+    const vector = await this.embedText(document.content, apiKey);
     // Qdrant only accepts unsigned integers or UUIDs as point IDs
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     const id = document.id && uuidRegex.test(document.id)
@@ -205,7 +219,15 @@ export class VectorStoreService {
     } = {},
   ) {
     try {
-      const queryVector = await this.embedText(query);
+      // Resolve team OpenAI API key for embedding
+      let apiKey: string | undefined;
+      if (options.team_id) {
+        try {
+          const team = await this.prisma.team.findUnique({ where: { id: options.team_id }, select: { openaiApiKey: true } });
+          if (team?.openaiApiKey) apiKey = team.openaiApiKey;
+        } catch { /* ignore */ }
+      }
+      const queryVector = await this.embedText(query, apiKey);
 
       const filter: any = { must: [] };
 
