@@ -78,4 +78,12 @@ export class VectorStoreController {
   async listDocuments() {
     return this.vectorStoreService.listDocuments();
   }
+
+  @Post('reindex')
+  @ApiOperation({
+    summary: 'Re-index all documents with current embedding model',
+  })
+  async reindex() {
+    return this.vectorStoreService.reindex();
+  }
 }

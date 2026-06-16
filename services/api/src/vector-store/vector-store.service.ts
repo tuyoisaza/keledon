@@ -2,11 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
 import { QdrantClient } from '@qdrant/qdrant-js';
 import * as crypto from 'crypto';
+import OpenAI from 'openai';
 
 @Injectable()
 export class VectorStoreService {
   private readonly logger = new Logger(VectorStoreService.name);
   private qdrant: QdrantClient;
+  private openai: OpenAI | null = null;
   private readonly collectionName = 'keledon';
   private readonly vectorSize = 768;
 
@@ -14,6 +16,29 @@ export class VectorStoreService {
     const qdrantUrl = process.env.QDRANT_URL || 'http://127.0.0.1:6333';
     const qdrantApiKey = process.env.QDRANT_API_KEY || undefined;
     this.qdrant = new QdrantClient({ url: qdrantUrl, apiKey: qdrantApiKey });
+    if (process.env.OPENAI_API_KEY) {
+      this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    }
+  }
+
+  /**
+   * Generate a vector embedding for text using OpenAI's embedding API.
+   * Falls back to deterministicHash if OpenAI is not configured.
+   */
+  private async embedText(text: string): Promise<number[]> {
+    if (this.openai) {
+      try {
+        const response = await this.openai.embeddings.create({
+          model: 'text-embedding-3-small',
+          input: text.slice(0, 8191), // OpenAI input limit
+          dimensions: this.vectorSize,
+        });
+        return response.data[0].embedding;
+      } catch (err) {
+        this.logger.warn(`[VectorStore] OpenAI embedding failed, falling back to hash: ${err}`);
+      }
+    }
+    return this.deterministicHash(text);
   }
 
   private deterministicHash(text: string): number[] {
@@ -123,7 +148,7 @@ export class VectorStoreService {
   }
 
   async addDocument(document: any) {
-    const vector = this.deterministicHash(document.content);
+    const vector = await this.embedText(document.content);
     // Qdrant only accepts unsigned integers or UUIDs as point IDs
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     const id = document.id && uuidRegex.test(document.id)
@@ -180,7 +205,7 @@ export class VectorStoreService {
     } = {},
   ) {
     try {
-      const queryVector = this.deterministicHash(query);
+      const queryVector = await this.embedText(query);
 
       const filter: any = { must: [] };
 
@@ -244,6 +269,47 @@ export class VectorStoreService {
       this.logVectorStoreUnavailable('documents list', error);
       return { documents: [] };
     }
+  }
+
+  /**
+   * Re-index all documents: re-embed every document with OpenAI embeddings.
+   * Existing documents were stored with deterministicHash — this fixes them.
+   */
+  async reindex(): Promise<{ reindexed: number; failed: number }> {
+    const list = await this.listDocuments();
+    const docs = list.documents;
+    if (docs.length === 0) return { reindexed: 0, failed: 0 };
+
+    // Delete all points
+    const ids = docs.map((d: any) => {
+      const raw = d.id;
+      return /^\d+$/.test(String(raw)) ? parseInt(String(raw), 10) : raw;
+    });
+    await this.qdrant.delete(this.collectionName, { points: ids });
+
+    // Re-add with proper embeddings
+    let reindexed = 0;
+    let failed = 0;
+    for (const doc of docs) {
+      try {
+        await this.addDocument({
+          id: doc.id,
+          title: doc.title,
+          content: doc.content,
+          category: doc.category,
+          company_id: doc.company_id,
+          brand_id: doc.brand_id,
+          team_id: doc.team_id,
+          created_by: doc.created_by,
+          created_at: doc.created_at,
+          metadata: doc.metadata,
+        });
+        reindexed++;
+      } catch {
+        failed++;
+      }
+    }
+    return { reindexed, failed };
   }
 
   private normalizeAllowedCollectionPrefix(
