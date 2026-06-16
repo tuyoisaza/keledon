@@ -6,6 +6,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { LLMService } from '../llm/llm.service';
+import { VectorStoreService } from '../vector-store/vector-store.service';
 import type { LLMResponse } from '../llm/llm.types';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -29,7 +30,10 @@ interface BrainChatRequest {
 @ApiTags('Brain')
 @Controller('api/brain')
 export class BrainController {
-  constructor(private readonly llmService: LLMService) {}
+  constructor(
+    private readonly llmService: LLMService,
+    private readonly vectorStoreService: VectorStoreService,
+  ) {}
 
   @Post('chat')
   async chat(@Body() body: BrainChatRequest) {
@@ -52,6 +56,37 @@ export class BrainController {
       body.language ? `Language: ${body.language}` : 'Language: auto',
     ];
 
+    // ── Vector Store RAG ──
+    let knowledgeContext = '';
+    try {
+      const searchResult = await this.vectorStoreService.search(message, {
+        limit: 5,
+        scoreThreshold: 0.35,
+        team_id: body.teamId,
+        company_id: body.companyId,
+        brand_id: body.brandId,
+      });
+      const relevantDocs = searchResult.results?.filter(
+        (r: any) => r.score >= 0.35,
+      );
+      if (relevantDocs && relevantDocs.length > 0) {
+        knowledgeContext =
+          '\n\nRelevant knowledge base documents:\n' +
+          relevantDocs
+            .map(
+              (r: any, i: number) =>
+                `[${i + 1}] ${r.document.title || 'Untitled'} (${r.document.category || 'general'}, relevance=${(r.score * 100).toFixed(0)}%):\n${r.document.content}`,
+            )
+            .join('\n\n');
+        context.push('Knowledge retrieval: active');
+      } else {
+        context.push('Knowledge retrieval: no relevant documents found');
+      }
+    } catch (err) {
+      console.warn('BrainController: vector store search failed', err);
+      context.push('Knowledge retrieval: unavailable');
+    }
+
     const conversation = history
       .map(
         (item) => `${item.role === 'user' ? 'User' : 'Brain'}: ${item.content}`,
@@ -69,6 +104,7 @@ export class BrainController {
       ...context.map((line) => `- ${line}`),
       '',
       conversation ? `Conversation so far:\n${conversation}\n` : '',
+      knowledgeContext,
       `Latest user message: ${message}`,
       '',
       'Answer as the brain for this brand only. Return the direct reply and nothing else.',
