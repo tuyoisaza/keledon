@@ -7,9 +7,11 @@ import {
   Param,
   Req,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ApiTags } from '@nestjs/swagger';
+import OpenAI from 'openai';
 
 export class TeamConfigDto {
   sttProvider?: string;
@@ -209,6 +211,51 @@ export class TeamController {
     }
   }
 
+  private async validateOpenAiKey(apiKey: string): Promise<string | null> {
+    try {
+      const openai = new OpenAI({ apiKey });
+      // Verify key by listing models (first page only)
+      for await (const _ of openai.models.list()) break;
+      return null; // valid
+    } catch (err: any) {
+      if (err?.status === 401) return '401: OpenAI rechazó la key (invalida o expirada)';
+      if (err?.status === 429) return null; // rate limited ≠ invalid
+      return `Error al validar: ${err?.message || err}`;
+    }
+  }
+
+  @Get(':id/config/status')
+  async getConfigStatus(@Param('id') teamId: string, @Req() req: any) {
+    try {
+      await this.assertTeamAccess(teamId, req);
+      const team = await this.prisma.team.findUnique({
+        where: { id: teamId },
+        select: {
+          id: true,
+          name: true,
+          llmProvider: true,
+          sttProvider: true,
+          ttsProvider: true,
+          openaiApiKey: true,
+          speachesApiKey: true,
+        },
+      });
+      if (!team) return { error: 'Team not found', status: 404 };
+      return {
+        teamId: team.id,
+        teamName: team.name,
+        llmProvider: team.llmProvider || null,
+        sttProvider: team.sttProvider || null,
+        ttsProvider: team.ttsProvider || null,
+        openaiKeySet: !!team.openaiApiKey,
+        speachesKeySet: !!team.speachesApiKey,
+      };
+    } catch (error) {
+      console.error('[TeamController] Error getting config status:', error);
+      return { error: error.message, status: 500 };
+    }
+  }
+
   @Put(':id/config')
   async updateTeamConfig(
     @Param('id') teamId: string,
@@ -276,6 +323,12 @@ export class TeamController {
 
       // LLM API keys
       if (config.openaiApiKey !== undefined) {
+        if (config.openaiApiKey) {
+          const validationError = await this.validateOpenAiKey(config.openaiApiKey);
+          if (validationError) {
+            throw new BadRequestException(`OpenAI API key invalida: ${validationError}`);
+          }
+        }
         updateData.openaiApiKey = config.openaiApiKey;
       }
       if (config.googleAiApiKey !== undefined) {
