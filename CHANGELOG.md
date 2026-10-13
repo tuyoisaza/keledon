@@ -1,4 +1,9 @@
 # Changelog
+## v5.1.6 — 2026-10-13 (PHDK Auto candidate)
+
+- Repair Speaches provider columns to target Prisma's mapped `teams` table, with an idempotent forward migration for previously recorded installs.
+- Align all five app package/lock roots at 5.1.6.
+
 
 ## v5.1.5 — 2026-10-13 (PHDK Auto candidate)
 

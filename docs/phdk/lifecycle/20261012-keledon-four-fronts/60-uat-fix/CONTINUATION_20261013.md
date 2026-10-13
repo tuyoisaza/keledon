@@ -41,3 +41,7 @@ UI calls are intercepted; Nest fixtures are isolated; no persistence proof.
 Stage: SEO/AEO-GEO/Check
 Required inputs: updated UAT and remediation records, current source SHA
 Verify: revalidate source-relevant controls; preserve deployed/external limitations.
+
+## Database persistence continuation — 2026-10-13
+
+A fresh isolated PostgreSQL run found that the historical Speaches migration altered Team while Prisma maps the model to 	eams. The migration SQL now targets 	eams; an additive idempotent forward repair supports installations that already recorded the historical migration. Fresh seven-migration deploy, forward repair, schema status, Prisma Company/Brand/Team/User synthetic CRUD transaction and rollback all passed. The exact local evidence and important checksum limitation are recorded in DATABASE_MIGRATION_RETEST_20261013.md. No live database was accessed. Acceptance remains partial until deployment migration history, exhaustive CRUD matrix, native device/audio, broad accessibility/localization and deployed metadata are verified.
