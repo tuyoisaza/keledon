@@ -1,10 +1,10 @@
 # Current task
 
-## PHDK Auto — current candidate 5.1.14
+## PHDK Auto — current delivery 5.1.14
 
-PR #70 (5.1.13 provider page) and readback PR #71 are merged. Current branch `fix/phdk-admin-crud-i18n` is a 5.1.14 candidate based on `84bfdb901068f4fab12fa88e0b5b3cd3394b7180`. Companies, brands, teams, users and vendors now use existing English/Spanish/Portuguese catalogs; country display follows the selected locale. Web typecheck/build and synthetic SPA UAT pass; API regression 14/14; catalog parity 452/452. ESLint has 0 errors and 9 warnings on touched pages. Product PR and remote-main readback for this candidate remain pending.
+PR [#72](https://github.com/tuyoisaza/keledon/pull/72) delivered v5.1.14 by squash; fresh `origin/main` readback is `899306fcddf7528cb3411577f8008f0c0552223a`, with all five app package/lock roots at 5.1.14. Companies, brands, teams, users and vendors now use the English/Spanish/Portuguese catalogs; country display follows the selected locale. Web typecheck/build and synthetic SPA UAT pass; API regression 14/14; catalog parity 452/452; PHDK coherence 52/52. Touched-page ESLint exits 0 with 9 warnings. Overall Auto remains PARTIALLY DELIVERED for the recorded external/persisted acceptance gaps.
 
-The four owner-confirmed fronts remain tracked. Overall PHDK Auto is **PARTIALLY DELIVERED** while persisted CRUD/migration, native permission/device/audio, broad accessibility/localization and deployed SEO/AEO acceptance remain open. See `docs/phdk/lifecycle/20261013-keledon-v5111/`. No production DB/provider/customer workflow or deployment was used.
+The four owner-confirmed fronts remain tracked. Overall PHDK Auto is **PARTIALLY DELIVERED** while persisted CRUD/migration, native permission/device/audio, broad accessibility/localization and deployed SEO/AEO acceptance remain open. See `docs/phdk/lifecycle/20261013-keledon-v5114/`. No production DB/provider/customer workflow or deployment was used.
 
 ## 5.1.10 delivery readback — 2026-10-13
 

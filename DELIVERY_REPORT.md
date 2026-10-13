@@ -1,8 +1,16 @@
 # Delivery report — current status PARTIALLY DELIVERED
 
-## 5.1.14 source candidate — delivery pending
+## 5.1.14 delivery — PARTIALLY DELIVERED
 
-Candidate `fix/phdk-admin-crud-i18n` starts from remote `main` `84bfdb901068f4fab12fa88e0b5b3cd3394b7180`; five app package/lock roots are 5.1.14. Local web typecheck/build, API regression 14/14, local synthetic UAT 1/1, locale parity 452/452 and PHDK coherence 52/52 pass. Touched-page ESLint exits 0 with 9 warnings. Product PR, push/merge, and final remote-main SHA/readback are not yet recorded; no deployment is claimed. Current PHDK status remains PARTIALLY DELIVERED. After merge, refresh the completion-gate evidence and append the verified PR/SHA/check rollup here.
+Product PR [#72](https://github.com/tuyoisaza/keledon/pull/72) merged by squash; source commit `f0452dce52e2402083d4c1fa77ef2b6ceba90814` is integrated at remote `main` SHA `899306fcddf7528cb3411577f8008f0c0552223a`. All five app package/lock roots are 5.1.14. Local web typecheck/build, API regression 14/14, synthetic UAT 1/1, locale parity 452/452, touched-page ESLint (0 errors/9 warnings), and PHDK coherence 52/52 pass. PR #72 has no hosted status checks or review decision; no deployment is claimed. Persisted CRUD/migration, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open, so the Auto result is PARTIALLY DELIVERED.
+
+### Mandatory delivery evidence
+
+- **VERSION_BUMP=PASS** — remote base 5.1.13 advanced once to 5.1.14; all five application package and lock roots align.
+- **COMMIT_PREFIX=PASS** — source commit `f0452dce52e2402083d4c1fa77ef2b6ceba90814` is titled `v5.1.14 fix(web): localize management CRUD routes`.
+- **PUSH_AND_PR=PASS** — branch `fix/phdk-admin-crud-i18n` was pushed; PR #72 targets `main` and is merged.
+- **REMOTE_MAIN=PASS** — fresh fetch/readback after PR #72 verified `origin/main` at `899306fcddf7528cb3411577f8008f0c0552223a`, with v5.1.14 and changed content present.
+- **SCOPE_AND_CHECKS=PASS** — the four confirmed fronts remain tracked; scoped checks pass and gaps are explicit. GitHub reported no required status checks or review decision for #72. Overall product acceptance remains partial; no deployment is claimed.
 
 ## 5.1.10 delivery readback — 2026-10-13
 
