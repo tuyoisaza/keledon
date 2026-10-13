@@ -173,7 +173,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.ok(!Object.hasOwn(writes.at(-1),'openaiApiKey'));
   await provider.context.close();
   checks.push('UAT-004 provider write-only key: no response prefill; replacement cleared after success; untouched blank omitted PASS');
-  const guest=await pageFor('guest');await guest.page.goto(origin+'/management/companies');await guest.page.waitForURL(origin+'/');assert.equal(await guest.page.locator('[data-testid="version-actions"]').count(),1);await guest.context.close();
+  const guest=await pageFor('guest');await guest.page.goto(origin+'/management/companies');await guest.page.waitForURL(origin+'/');const guestVersionActions=guest.page.locator('[data-testid="version-actions"]');await guestVersionActions.waitFor();assert.equal(await guestVersionActions.count(),1);await guest.context.close();
   checks.push('UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)');
   const diagnostic=await pageFor('admin');
   await diagnostic.page.goto(origin+'/management/debug');
