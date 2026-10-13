@@ -2,12 +2,11 @@
 
 Date: 2026-10-13. Candidate: 5.0.54. Rule: source files remain below 600 physical lines. Count includes blank lines; scan includes `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`, excluding dependency and generated directories.
 
-The current inventory contains **20 files** at or above the limit. This remains an open remediation backlog, not a passing Check result.
+The current inventory contains **18 files** at or above the limit. This remains an open remediation backlog, not a passing Check result.
 
 | Lines | File |
 |---:|---|
 | 1301 | `agent/src/background/legacy-background.js` |
-| 1272 | `agent/extension/background/legacy-background.js` |
 | 1041 | `cloud/src/controllers/analytics.controller.ts` |
 | 1035 | `services/api/src/controllers/analytics.controller.ts` |
 | 1029 | `services/api/src/calls/calls.service.ts` |
@@ -25,4 +24,3 @@ The current inventory contains **20 files** at or above the limit. This remains 
 | 765 | `src/test/phase5-integration-test.js` |
 | 762 | `cloud/src/services/ui-automation.service.ts` |
 | 625 | `test/production/production-test-suite.js` |
-| 612 | `agent/test/rpa-engine.test.ts` |

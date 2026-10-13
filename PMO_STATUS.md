@@ -15,4 +15,4 @@ Open conformity debt: localization inventory, very large Brain/Flows modules, st
 
 PR #42 is OPEN/DRAFT against `main` and includes this candidate update. The owner approved inclusion/merge of the additive managed-AI migration using the normal DB procedure. No database connection or migration execution occurred. Four workstreams remain locally implemented/reviewed; no remote delivery to `main` is complete.
 
-Current Check is PARTIAL: 20 physical source files remain over 600 lines; landing/agent type/test limitations and locale/indexability/rendered accessibility findings remain. This candidate update extracts sidepanel/test-harness assets, CRM adapter helpers, brain chat/voice/storage, analytics types, and log state. Continue remediation, then run final checks and normal PR controls.
+Current Check is PARTIAL: 18 physical source files remain over 600 lines; landing/agent type/test limitations and locale/indexability/rendered accessibility findings remain. This candidate update extracts sidepanel/test-harness assets, CRM adapter helpers, brain chat/voice/storage, analytics types, and log state. Continue remediation, then run final checks and normal PR controls.
