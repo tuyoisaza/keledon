@@ -29,7 +29,7 @@
     },
     "delivery": {
       "status": "BLOCKED",
-      "evidence": "PR #42 is draft/open at remote HEAD eacf6da; current remediation changes remain local/unpushed. Physical-line inventory has 0 source files at or above 600 lines. Local production-SPA UAT passes 10/10; API and Cloud builds/C13 and regressions pass 8/8 each; browser tests pass 19/19; agent extension validation passes. Strict Cloud lint passes 16 changed files with 0 errors/0 warnings; changed API files have 0 errors/13 warnings. Final Check and normal PR merge/main readback remain pending. Three additive Cloud schema migrations are included but were not executed. The vendored completion gate and coherence utility have documented null-SHA and missing-README tool limitations."
+      "evidence": "PR #42 is draft/open at remote HEAD 2b1df9e. Physical-line inventory has 0 source files at or above 600 lines. Local production-SPA UAT passes 10/10; API and Cloud builds/C13 and regressions pass 8/8 each; browser tests pass 19/19; Agent Jest passes 9/9 suites and 78/78 tests; extension validation passes. Strict Cloud lint passes 16 changed files with 0 errors/0 warnings; changed API files have 0 errors/13 warnings. Check remains partial and normal PR review/merge/main readback remain pending. Cloud schema migrations are included but were not executed. The vendored completion gate and coherence utility have documented null-SHA and missing-README tool limitations."
     }
   }
 }

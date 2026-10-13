@@ -1,6 +1,6 @@
 # Final integrated revalidation — current local candidate
 
-Run: `20261012-keledon-four-fronts` · Date: 2026-10-13 · PHDK 2.50.8 · Candidate 5.0.54. Branch `chore/phdk-install-v2.50.8`; base revision `eacf6da`. Current remediation edits are local and have not been pushed to PR #42.
+Run: `20261012-keledon-four-fronts` · Date: 2026-10-13 · PHDK 2.50.8 · Candidate 5.0.54. Branch `chore/phdk-install-v2.50.8`; base revision `eacf6da`; remediation commit `2b1df9e` is pushed to PR #42.
 
 ## Integration review and UAT
 
@@ -26,6 +26,6 @@ Run: `20261012-keledon-four-fronts` · Date: 2026-10-13 · PHDK 2.50.8 · Candid
 - Salesforce adapter tests pass 19/19 with stable Node-based DOM mocks; temporary Jest/JSDOM dependencies left project manifests unchanged.
 - The Agent Jest suite passes 9/9 suites and 78/78 tests, including both source and packaged-extension tenant-configured tab registries. Full legacy landing/agent typechecks retain baseline diagnostics. The agent build was not run because its build script recursively removes repository-root `dist`.
 - Full translation/content review remains open despite matching catalog keys. Full contrast matrix, 200%/400% zoom, screen-reader keyboard session and native Electron rendered accessibility acceptance remain unverified. The vendored PHDK completion gate fails on the absent merged SHA (`null`) and its coherence script has the missing-package-root-file issue noted above.
-- PR #42 is OPEN/DRAFT at remote `eacf6da`; these local changes have not been committed or pushed. Normal review/merge and remote `main` readback remain pending.
+- PR #42 is OPEN/DRAFT at remote head `2b1df9e`. Normal review/merge and remote `main` readback remain pending.
 
 SIGUIENTE PASO: cerrar las verificaciones posibles de accesibilidad y traducciones; después preparar commits versionados, actualizar el PR y completar la revisión/merge normal antes de verificar `main`.
