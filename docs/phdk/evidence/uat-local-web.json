@@ -1,9 +1,9 @@
 {
-  "version": "5.1.0",
-  "date": "2026-10-13T12:16:12.574Z",
-  "candidateRevision": "7df6f77dd47670cfa7671f27f9ca67c38aa7161e",
+  "version": "5.1.2",
+  "date": "2026-10-13T14:48:52.483Z",
+  "candidateRevision": "0d98f2812d8eb88a8626101f81f9bf9ca6d52de0",
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:54849",
+  "origin": "http://127.0.0.1:59126",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-THEME actual dark/light/corporate shell selection and persistence PASS; full-app contrast certification not claimed",
@@ -11,9 +11,10 @@
     "UAT-004 superadmin frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
     "UAT-004 admin frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
     "UAT-004 coordinator frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
+    "UAT-004 admin user create and same-company team reassignment: no role/company controls or payload fields; foreign company team absent PASS (synthetic UI; API guard tested separately)",
     "UAT-004 provider write-only key: no response prefill; replacement cleared after success; untouched blank omitted PASS",
     "UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)",
-    "UAT-002 5.1.0 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
+    "UAT-002 5.1.2 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
   ],
   "apiEvidence": "services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts",
   "realVendorAudioCRM": "NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed"

@@ -1,9 +1,23 @@
 # Delivery report — PARTIALLY DELIVERED
 
-Product version 5.1.0; PHDK 2.50.8. Branch `chore/phdk-install-v2.50.8`; latest verified pushed head `e2276dc64db3eff5e99a83fdd5ad3711fc7eecfa`; product-source check candidate `cc9b94dae7ad89e9133da8e5172d2d907d03f8cb`. PR [#42](https://github.com/tuyoisaza/keledon/pull/42), base `main`, OPEN/DRAFT, mergeable. Remote `main` remains `52537140e67d0d6c05486fa13837df3eb5316fb3`. No PR review submissions or hosted statuses are reported. No merge or production deployment is claimed.
+Goal: PHDK Auto for the four owner-confirmed KELEDON fronts, maximum applicable code conformity. Product candidate 5.1.2; PHDK 2.50.8. Branch `chore/phdk-install-v2.50.8`; local source commits `cff60c675ec3e4b21864a24821cbda34a9c51d64` (`v5.1.1: enforce tenant-scoped user management and safe diagnostics`) and `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0` (`v5.1.2: label manager company context accessibly`). These candidates are not yet pushed in this checkpoint. Verified remote branch still points to `b3f2853a509b35e7ad803b4b25ef93142afee5b8`.
 
-The candidate covers all four owner-confirmed fronts: baseline/version/PR, protected diagnostics, client-selected voice/Cloud/Browser/CRM contracts, and administration/permissions. Only source/contracts and synthetic acceptance are demonstrated for some paths; the full role/resource/tenant CRUD matrix, Electron/device acceptance, broad accessibility/localization, deployed private-route headers and client-specific integration journeys remain open. Call/CRM providers remain tenant-selected. The owner approved inclusion of the additive managed-AI migration; no database was connected and no migration was run.
+PR [#42](https://github.com/tuyoisaza/keledon/pull/42) targets `main`, remains OPEN/DRAFT at the old remote head, and is mergeable in the last observed metadata. No review submissions or hosted checks were returned. Remote `main` SHA remains `52537140e67d0d6c05486fa13837df3eb5316fb3`; no merge/deployment is claimed.
 
-Current checks: landing typecheck, full lint (zero errors/warnings), production build, and `git diff --check` pass; Vite reports stale Browserslist data, empty `supabase` chunk, and a large entry chunk. Cloud regression passes 8/8. Prior integration evidence includes API/C13 and 12 focused tests, Cloud/C13, web build/typecheck and 18 diagnostics tests, SEO source test 1/1, and synthetic diagnostics SPA UAT 1/1. The current user-management UI retest passed on source candidate `74c849e` with synthetic Company Co identities and mocked CRUD; this does not prove backend persistence. Full evidence is in `PHDK_CHECK_REPORT.md` and `docs/phdk/lifecycle/20261012-keledon-four-fronts/`.
+The candidate covers all four commitments: baseline/version/PR, protected diagnostics, tenant-configurable voice/Cloud/Browser/CRM contracts, and restrictive administration/permissions. New work removes raw CRUD health error/URL disclosure and permits manager team reassignment only inside the actor's company. Full evidence is in `PHDK_CHECK_REPORT.md`, `PHDK_DELIVERY_EVIDENCE.json`, and `docs/phdk/lifecycle/20261012-keledon-four-fronts/`.
 
-The vendored PHDK coherence checker cannot run from this installed standards-only folder because its expected `phdk-standards/README.md` is absent. The completion gate cannot validate a null pre-merge SHA. The completion evidence therefore remains PARTIAL. Target `main` SHA/version readback and 4/4 remote delivery have not occurred.
+Validation: API and Cloud builds/regressions 10/10 each; scoped changed API ESLint clean; web build/typecheck, diagnostics tests 18/18, SEO source regression 1/1 and synthetic production-SPA UAT 1/1 on exact 5.1.2 SHA; landing typecheck/lint/build pass. Full web lint has 0 errors/135 warnings. Strict 1,073-file source/test scan has 0 files at/above 600 lines. UAT browser APIs and data are synthetic; guard tests use isolated Prisma fixtures. No persistent DB, migration, live provider, customer data, production endpoint or deployment was used.
+
+Remaining acceptance limits: persisted CRUD × role × tenant coverage, full route/theme/locale accessibility and localization, native Electron/device/audio, deployed SEO headers/AEO evidence, and runtime migration behavior. The PHDK coherence utility stops because `phdk-standards/README.md` is absent from the installed manifest surface; no filler was added. Owner-approved migration inclusion does not mean the migration was applied.
+
+## Delivery gate
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS (local) | Five app package/lock roots and browser version at 5.1.2; changelog updated. |
+| COMMIT_PREFIX | PASS (local) | Source candidate commits are prefixed `v5.1.1:` and `v5.1.2:`. |
+| PUSH_AND_PR | BLOCKED / pending | Candidate not yet pushed; PR #42 remains OPEN/DRAFT at prior head. |
+| REMOTE_MAIN | BLOCKED / pending | No merge or post-merge `main` SHA/version readback. |
+| SCOPE_AND_CHECKS | PARTIAL | Scoped tests pass; confirmed persistence/native/accessibility acceptance remains open. |
+
+Next: push/update PR #42, inspect actual branch/review controls, integrate through the normal permitted path if they pass, then read back remote `main` SHA/version and run the completion gate. Overall status remains **PARTIALLY DELIVERED**.

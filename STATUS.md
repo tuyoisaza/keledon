@@ -41,3 +41,20 @@ Commit 3af566a163024c3f2b69be7991e99437d47b0528 is on chore/phdk-install-v2.50.8
 - PR #42 remains OPEN/DRAFT on `main` and includes the harness and sidepanel stylesheet splits from this candidate update.
 - The strict physical-line audit finds 4 source files at or above PHDK's 600-line maximum. The PHDK Check and delivery gates remain partial/open; see `PHDK_CHECK_REPORT.md`, `PHDK_LINE_LIMIT_AUDIT.md`, and `PHDK_COMPLETION_AUDIT.md`.
 - SIGUIENTE PASO: continue source-size remediation and close evidence-backed Check findings, then rerun integrated checks and use normal PR review/merge controls.
+
+## 2026-10-13 — PHDK Auto continuation, 5.1.1
+
+- Confirmed active checkout after owner clarification: `C:\Users\tboar\OneDrive\Documentos\GitHub\KELEDON`, remote `https://github.com/tuyoisaza/keledon.git`. The `C:\KELEDON` workspace contains only reports and is not a Git checkout.
+- Versioned source candidate: `cff60c675ec3e4b21864a24821cbda34a9c51d64`, subject `v5.1.1: enforce tenant-scoped user management and safe diagnostics`. Five app package/lock roots align at 5.1.1. Current branch remote is still the prior 5.1.0 head until push.
+- Closed two concrete UAT findings: CRUD health no longer buffers global logs or reveals URL path/query; managers can reassign ordinary users only within their DB-derived company, with superadmin role/company controls retained. Test suite split now brings all app/test files below 600 physical lines.
+- Candidate checks: API build and regression 10/10, scoped API ESLint clean; Cloud build/regression 10/10; web build, synthetic local Edge UAT 1/1, diagnostics 18/18 and SEO source test 1/1; landing typecheck/lint/build pass; physical-line inventory 1,073 files, 0 over limit. Web full lint has 0 errors and 135 warnings.
+- UAT evidence `docs/phdk/evidence/uat-local-web.json` is bound to source SHA `cff60c675ec3e4b21864a24821cbda34a9c51d64`; its APIs are intercepted and records synthetic. No persistent DB, migration, provider, customer record, native Electron/device/audio, deployed SEO headers or production site was tested.
+- PHDK Check remains GAPS FOUND: complete CRUD persistence matrix, broad accessibility/localization/native acceptance and deployed metadata remain open. The static PHDK coherence utility stops because `phdk-standards/README.md` is missing from its installed surface. No placeholder added.
+- PR #42 remains OPEN/DRAFT on the prior remote head; `main` SHA is `52537140e67d0d6c05486fa13837df3eb5316fb3`. Completion evidence records delivery BLOCKED pending PR update/merge/readback.
+- SIGUIENTE PASO: push the versioned candidate and reconcile PR #42, preserve all controls, then verify the exact resulting `main` SHA/version and run the completion gate.
+
+## 2026-10-13 — PHDK Auto candidate follow-up, 5.1.2
+
+- Source candidate is `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0`, following the 5.1.1 tenant/health-policy implementation. All five app package/lock roots and the Browser visible version now align at 5.1.2.
+- Updated the manager company context to native `fieldset`/`legend`; exact 5.1.2 local production-SPA UAT passes 1/1 and verifies the accessible “Company” group.
+- Candidate and PR state remain local/open in this checkpoint. All synthetic/persistence, native, deployed SEO/AEO and PHDK coherence utility limitations remain as documented; current overall status is PARTIALLY DELIVERED.

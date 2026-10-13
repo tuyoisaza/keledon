@@ -1,27 +1,28 @@
 # Lifecycle status — 20261012-keledon-four-fronts
 
 Project: `C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON`
-PHDK: 2.50.8 installed and verified; candidate 5.1.0. Branch `chore/phdk-install-v2.50.8`; PR #42 OPEN/DRAFT; latest verified pushed head `e2276dc64db3eff5e99a83fdd5ad3711fc7eecfa`; product-source candidate `cc9b94dae7ad89e9133da8e5172d2d907d03f8cb`. No target-main merge/readback.
 
-Goal: complete PHDK Auto for the four owner-confirmed fronts. Telephony/CRM vendors are tenant-selected; user requested maximum applicable code conformity. The restrictive role and tenant policy is owner-approved.
+PHDK: 2.50.8 installed and integrity-verified. Candidate: 5.1.2, source commit `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0`; preceding 5.1.1 source commit `cff60c675ec3e4b21864a24821cbda34a9c51d64`. Branch: `chore/phdk-install-v2.50.8`; remote branch still at `b3f2853a509b35e7ad803b4b25ef93142afee5b8` before candidate push. PR #42 https://github.com/tuyoisaza/keledon/pull/42 is OPEN/DRAFT; `origin/main` = `52537140e67d0d6c05486fa13837df3eb5316fb3`. No merge or deployment is claimed.
 
-| Stage | Status | Evidence / next condition |
+Goal: finish PHDK Auto for the four owner-confirmed fronts. Telephony/CRM are client-selected; the owner requested maximum applicable code conformity. The restrictive role, tenant and write-only-secret policy is owner-approved.
+
+| Stage | Status | Evidence / exit condition |
 |---|---|---|
-| Preflight | REUSED | Correct checkout, pull, PHDK 2.50.8 installation/integrity verified. |
-| Capture | REUSED | Four fronts, priorities, restrictive policy and tenant-vendor scope recorded. |
-| Plan | REUSED | Four confirmed commitments and task map define scope. |
-| PMO / Workstreams | REUSED | Four workstreams tracked; remote delivery remains 0/4 until merge and `main` verification. |
-| Integration Review | PARTIAL | Cross-package contracts and version 5.1.0 reconciled; focused API/Cloud/web builds and tests pass. See `40-integration/INTEGRATION_REPORT.md`. |
-| UAT | PARTIAL | Synthetic local production-SPA diagnostics journey passes on a prior candidate. CRUD, full roles and current management UI journey are not accepted. |
-| UAT Fix | SCOPED PASS | Prior diagnostics fixes passed; current-candidate user-management retest passed with synthetic identities and mocked CRUD. Real backend/persistence remains outside this evidence. See `60-uat-fix/MANAGEMENT_USERS_RETEST.md`. |
-| SEO | PASS (SOURCE) | NGINX source assertions pass; deployed response headers remain unverified. |
-| AEO/GEO | PARTIAL | Source/content inventory only; no external citation/rank measurements. |
-| Check | PARTIAL | Current landing typecheck/build/lint pass; lint has zero warnings; Cloud regression passes 8/8. CRUD persistence, accessibility/localization/Electron and deployed metadata gaps remain. See root `PHDK_CHECK_REPORT.md`. |
-| Remediation | SCOPED PASS | Landing typing, provider/hook boundaries, manager tenant-scoped inputs and all ESLint findings are remediated in pushed head `cc9b94d`; typecheck/build/lint pass. |
-| Delivery | IN PROGRESS | PR #42 is open/draft at pushed head `cc9b94d`. Normal merge and target `main` SHA/version verification remain. |
+| Preflight | REUSED | Correct remote checkout, fetch, PHDK 2.50.8 manifest and managed instructions verified; PHDK coherence utility has a missing-input blocker recorded in Check. |
+| Capture | REUSED | Owner confirmed four ordered fronts, variable client providers and approved restrictive admin policy. |
+| Plan | REUSED | Brownfield architecture, CRUD matrix and dependency-ordered tasks are recorded in the 20261012 lifecycle folder. |
+| PMO / Workstreams | REUSED | Four commitments CMT-001..004 are confirmed. Local work is not remote delivery; remote progress is not credited until merge/readback. |
+| Integration Review | COMPLETED (LOCAL) | 5.1.2 versions/locks aligned; API/Cloud contracts, tests and scoped UI reconciled. Candidate source SHA above. See `40-integration/INTEGRATION_REPORT.md`. |
+| UAT | ACCEPTANCE INCOMPLETE | Exact 5.1.2 local production-SPA UAT passes 1/1 with synthetic Company Co/Other Co fixtures and intercepted APIs. CRUD/persistence, native and broad accessibility acceptance remain open. See `50-uat/UAT_REPORT.md`. |
+| UAT Fix | COMPLETED (SCOPED) | UAT-FIX-002 health disclosure and UAT-FIX-003 manager team scope, plus accessible company fieldset/legend, retested on 5.1.2; historical failures retained. No persistence claim. See `60-uat-fix/`. |
+| SEO | REUSED / SOURCE PASS | NGINX SEO source regression passes; deployed response headers remain unverified. |
+| AEO/GEO | REUSED / PARTIAL | Source/content inventory only; external citation/rank measurements are not applicable to this local review and were not run. |
+| Check | GAPS FOUND | API/Cloud/web/landing checks recorded in root `PHDK_CHECK_REPORT.md`; strict 600-line scan now passes. Persisted CRUD, accessibility/localization/Electron, deployed metadata and PHDK coherence-input gaps remain. |
+| Remediation | PARTIAL | Fixed raw health disclosure, same-tenant team reassignment, accessible company context and oversized test module. Other Check gaps require database/native/deployed evidence or remain documented. |
+| Delivery | RUNNING | Candidate source commit exists locally; PR #42 still reflects the prior remote head until push/update. Normal PR review/merge, remote main version/SHA verification and completion gate remain. |
 
-Owner-approved managed-AI migration inclusion remains source-only; no DB was connected and no migration was executed. See `docs/phdk/lifecycle/20261012-keledon-four-fronts/` and root `PHDK_CHECK_REPORT.md` for handoffs and evidence limits.
+No production database, migration, customer/provider data, metered model or live site was contacted. The owner approved including the additive managed-AI migration in reviewed source delivery but did not authorize applying it to a database.
 
-Current stage: Delivery — `PARTIALLY DELIVERED`; PR #42 remains OPEN/DRAFT and remote delivery is 0/4. The remaining confirmed acceptance work includes persisted CRUD/tenant coverage and broader UAT, followed by normal PR integration and remote `main` verification.
+Current lifecycle conclusion: **PARTIALLY DELIVERED**. Confirmed commitments remain unmerged and/or incompletely verified. Continue with candidate publication and normal PR integration; preserve residual UAT/Check limits and verify remote `main` before any completion claim.
 
-SIGUIENTE PASO: cerrar o documentar como manual los hallazgos restantes de UAT/CRUD y Check; después completar la entrega normal del PR y verificar SHA/versión en `main`.
+SIGUIENTE PASO: finish the delivery evidence and update PR #42 with 5.1.2; reconcile actual review/check controls, then integrate normally if they pass and read back the resulting `main` SHA/version.

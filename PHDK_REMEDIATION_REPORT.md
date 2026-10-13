@@ -1,6 +1,16 @@
 # PHDK remediation report — active candidate
 
-Run: `20261012-keledon-four-fronts` · Candidate: `5.0.54` · Branch: `chore/phdk-install-v2.50.8` · Stage: Check (PARTIAL); remediation (PASS).
+Run: `20261012-keledon-four-fronts` · Current candidate: `5.1.2` (`0d98f2812d8eb88a8626101f81f9bf9ca6d52de0`) · Branch: `chore/phdk-install-v2.50.8` · Stage: Check (GAPS FOUND); remediation (PARTIAL).
+
+## 2026-10-13 continuation — current Check remediations
+
+- `CHK-LIMIT-001` — the current full app/test source inventory exposed a 719-line API regression suite. Split its authentication/service and management-policy suites into `services/api/test/regression/20-admin-boundaries.test.js` and `25-approved-management-policy.test.js`; preserved assertions and verified both plus the full API runner (10/10 suites). Fresh 1,073-file inventory has 0 files at or above 600 lines.
+- `CHK-SEC-HEALTH-002` / UAT-FIX-002 — stopped global `console.error` interception and removed raw error-buffer/cloud-URL exposure. API build, safe-output regression and Nest guard HTTP cases pass.
+- `CHK-TENANT-USERS-003` / UAT-FIX-003 — managers may reassign ordinary users only within their DB-derived company. UI and guard permit same-company team updates while rejecting foreign team, company and role changes. Synthetic SPA UAT and isolated Nest guard regression pass; persistence remains unverified.
+- `CHK-A11Y-USERS-004` — exposed managers' fixed company context as a native fieldset with a legend; verified the accessible “Company” group in exact 5.1.2 local SPA UAT.
+- Changed API files pass scoped ESLint. API/Cloud/web/landing builds and the applicable API, Cloud, diagnostics, SEO and synthetic UI tests pass as enumerated in `PHDK_CHECK_REPORT.md`.
+
+Residual Check items remain: persisted full CRUD matrix and migration behavior, broad app accessibility/localization and native Electron/device/audio acceptance, deployed SEO/AEO evidence, and the installed PHDK coherence utility's missing `phdk-standards/README.md` input. Do not classify them as fixed by these scoped changes.
 
 ## Resolved defects and modularity gaps
 
