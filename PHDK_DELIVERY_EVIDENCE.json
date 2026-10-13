@@ -9,27 +9,27 @@
   "checks": {
     "lint": {
       "status": "PASS",
-      "evidence": "services/web npm run lint -- --quiet, latest BrainPage modularization"
+      "evidence": "services/web lint passes; changed landing files and changed API modules lint clean."
     },
     "typecheck": {
       "status": "BLOCKED",
-      "evidence": "services/web typecheck passes. Legacy landing full-project typecheck reports existing unrelated diagnostics; the modified BrainPage, speech hook and api-fetch have no diagnostics."
+      "evidence": "services/web passes; full legacy landing project has unrelated baseline diagnostics and agent adapter source has existing contract/type mismatches."
     },
     "build": {
       "status": "PASS",
-      "evidence": "services/web Vite production build passes; landing Vite production build passes with existing platform optional Rollup binary resolved via NODE_PATH to installed services/web dependency."
+      "evidence": "services/web and landing Vite builds pass; services/api build+C13 passes. Agent build not run because script deletes repository-root dist."
     },
     "focused_tests": {
-      "status": "PASS",
-      "evidence": "Browser 19/19; web synthetic suite 10/10; API regression 8/8 and focused 10/10 on preceding pushed candidate"
+      "status": "BLOCKED",
+      "evidence": "Browser 19/19; web synthetic 10/10; API regression 8/8; Salesforce adapter suite 17/19 with two existing read-only location-fixture failures."
     },
     "uat": {
       "status": "PASS",
-      "evidence": "Synthetic local built-SPA role/diagnostic/theme UAT; client-specific live CRM/voice acceptance excluded by owner clarification"
+      "evidence": "Synthetic local built-SPA role/diagnostic/theme UAT; tenant-specific live CRM/voice acceptance excluded by owner clarification."
     },
     "delivery": {
       "status": "BLOCKED",
-      "evidence": "PR #42 draft/open and unmerged; current refactor local; repository inventory has 29 source files over 600 lines; final main readback not available."
+      "evidence": "PR #42 draft/open at 5205c92; repository inventory has 23 source files over 600 lines; no merge/main readback."
     }
   }
 }

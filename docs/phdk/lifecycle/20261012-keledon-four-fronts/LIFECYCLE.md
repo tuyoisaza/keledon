@@ -1,7 +1,7 @@
 # PHDK Auto lifecycle — 20261012-keledon-four-fronts
 
-Status: PARTIALLY DELIVERED. Candidate 5.0.54, PHDK 2.50.8. Four workstreams confirmed and implemented/reviewed locally; call and CRM vendors are selected by each customer.
+Status: PARTIALLY DELIVERED. Candidate 5.0.54, PHDK 2.50.8. Four workstreams confirmed and implemented/reviewed locally; telephony and CRM are customer-selected.
 
-PR #42 is OPEN/DRAFT and unmerged on `chore/phdk-install-v2.50.8`. The current BrainPage modularization is local. Owner approval for including/merging the additive managed-AI migration through the normal database procedure was given 2026-10-13; no database connection or migration execution occurred.
+PR #42 is OPEN/DRAFT and unmerged at head `5205c92` on `chore/phdk-install-v2.50.8`. Owner approved inclusion/merge of the additive managed-AI migration through the normal DB procedure on 2026-10-13; no database connection or migration execution occurred.
 
-Current gate evidence and next actions are in `90-delivery/PHDK_COMPLETION_AUDIT.md`, `90-delivery/DELIVERY_REPORT.md`, and `90-delivery/PHDK_DELIVERY_EVIDENCE.json`. The repository still has 29 source files above the 600-line maximum, with locale, indexability, and broad accessibility findings open. Continue remediation and final verification before merge; no main readback or production deployment is claimed.
+The current repository scan finds 23 source files above 600 lines. Locale, private-route indexability, accessibility, landing typecheck, and agent adapter test/build limitations remain recorded in `90-delivery/`. Continue remediation and final verification before merge; no main readback or production deployment is claimed.
