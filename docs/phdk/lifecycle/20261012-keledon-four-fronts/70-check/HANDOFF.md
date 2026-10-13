@@ -3,7 +3,7 @@
 Run ID: `20261012-keledon-four-fronts`
 Stage: `70-check`
 Status: `PARTIAL`
-Source/UAT candidate: prior product candidate `7df6f77dd47670cfa7671f27f9ca67c38aa7161e`; current Check/remediation candidate `74c849effa6ecb1c9e33790e2387a70c4afa4079` is pushed.
+Source/UAT candidate: prior product candidate `7df6f77dd47670cfa7671f27f9ca67c38aa7161e`; current Check/remediation candidate `cc9b94dae7ad89e9133da8e5172d2d907d03f8cb` is pushed.
 PR #42: open/draft; checks have no hosted CI statuses
 Date: `2026-10-13 America/Mexico_City`
 
