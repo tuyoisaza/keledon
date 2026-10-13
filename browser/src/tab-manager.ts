@@ -3,6 +3,11 @@ import * as path from 'path';
 import log from 'electron-log';
 import { eventLogger } from './media/event-logger.js';
 import type { TabInfo } from './types.js';
+import {
+  isAllowedVendorTabUrl,
+  isAllowedVendorUrl,
+  secureRendererPreferences,
+} from './security-policy.js';
 
 export interface Tab {
   id: string;
@@ -40,8 +45,14 @@ export class TabManager {
   }
 
   createTab(name: string, url: string): Tab {
+    // about:blank is used internally as the clean starting surface for a goal
+    // when the user has not selected a vendor tab yet. It still receives only
+    // the restricted vendor preload.
+    if (!isAllowedVendorTabUrl(url)) {
+      throw new Error('Vendor tabs require an HTTP(S) URL without embedded credentials.');
+    }
     const id = `tab-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    eventLogger.info('tabs', 'tab_create', { id, name, url });
+    eventLogger.info('tabs', 'tab_create', { id });
 
     if (!this.mainWindow) {
       return { id, name, url, view: null };
@@ -49,11 +60,7 @@ export class TabManager {
 
     const view = new BrowserView({
       webPreferences: {
-        preload: path.join(__dirname, 'preload.js'),
-        contextIsolation: true,
-        nodeIntegration: false,
-        sandbox: false,
-        webSecurity: false
+        ...secureRendererPreferences(path.join(__dirname, 'vendor-preload.js')),
       }
     });
 
@@ -70,14 +77,23 @@ export class TabManager {
       if (tab) { tab.url = navigatedUrl; }
       this.mainWindow?.webContents.send('tabs:updated', this.getTabs());
       this.broadcastTabs();
-      log.info(`[Tabs] did-navigate: ${id} -> ${navigatedUrl}`);
+      log.info(`[Tabs] did-navigate: ${id}`);
     });
+
+    const guardVendorNavigation = (event: Electron.Event, targetUrl: string) => {
+      if (!isAllowedVendorTabUrl(targetUrl)) {
+        event.preventDefault();
+        log.warn(`[SECURITY] Blocked non-HTTP(S) navigation in vendor tab ${id}.`);
+      }
+    };
+    view.webContents.on('will-navigate', guardVendorNavigation);
+    view.webContents.on('will-redirect', guardVendorNavigation);
 
     view.webContents.on('page-title-updated', (_event: Electron.Event, title: string) => {
       const tab = this.tabs.find(t => t.id === id);
       if (tab) { tab.name = title || name; }
       this.mainWindow?.webContents.send('tabs:updated', this.getTabs());
-      log.info(`[Tabs] page-title-updated: ${id} -> ${title}`);
+      log.info(`[Tabs] page-title-updated: ${id}`);
     });
 
     view.webContents.on('did-start-loading', () => {
@@ -88,9 +104,10 @@ export class TabManager {
       this.mainWindow?.webContents.send('tabs:updated', this.getTabs());
     });
 
-    view.webContents.on('did-fail-load', (_event: Electron.Event, errorCode: number, errorDesc: string, validatedURL: string) => {
+    view.webContents.on('did-fail-load', (_event: Electron.Event, errorCode: number) => {
       if (errorCode !== -3) {
-        log.warn(`[Tabs] did-fail-load: ${id} error=${errorCode} desc=${errorDesc} url=${validatedURL}`);
+        // Failure descriptions and URLs can contain customer or session data.
+        log.warn(`[Tabs] did-fail-load: ${id} error=${errorCode}`);
       }
       this.mainWindow?.webContents.send('tabs:updated', this.getTabs());
     });
@@ -123,7 +140,7 @@ export class TabManager {
     });
 
     view.webContents.setWindowOpenHandler(({ url }) => {
-      this.createTab('New Tab', url);
+      if (isAllowedVendorUrl(url)) this.createTab('New Tab', url);
       return { action: 'deny' };
     });
 
@@ -144,14 +161,14 @@ export class TabManager {
 
     const tab: Tab = { id, name, url, view };
     this.tabs.push(tab);
-    eventLogger.info('tabs', 'tab_created', { id, name, url });
+    eventLogger.info('tabs', 'tab_created', { id });
 
     if (this.activeTabId === 'home' || !this.tabs.find(t => t.id === this.activeTabId)) {
       this.activeTabId = id;
       this.showTab(id);
     }
 
-    log.info('[Tabs] Created tab:', name, id);
+    log.info(`[Tabs] Created tab: ${id}`);
     this.broadcastTabs();
 
     return tab;
@@ -236,6 +253,10 @@ export class TabManager {
 
   getInternalTabs(): Tab[] { return this.tabs; }
   getActiveTabId(): string { return this.activeTabId; }
+
+  ownsVendorWebContents(webContents: Electron.WebContents): boolean {
+    return this.tabs.some((tab) => tab.view?.webContents === webContents);
+  }
   getHomeUrl(): string { return this.homeUrl; }
 
   setActiveTabId(id: string) { this.activeTabId = id; }

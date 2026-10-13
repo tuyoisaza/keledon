@@ -2,7 +2,7 @@
 
 Project: `C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON`.
 
-PHDK: v2.50.10 installed and byte-verified at canonical `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`. Product: 5.1.2; source PR #42 merged. PHDK central fixes #48/#49 are merged. KELEDON standards sync PR #43 merged as `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d`; fresh `origin/main` readback confirms both product and PHDK sync commits. No deployment is claimed.
+PHDK: v2.50.10 installed and byte-verified at canonical `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`. Product: 5.1.2; source PR #42 merged. PHDK central fixes #48/#49 are merged. KELEDON standards sync PR #43 merged; PR #44 records the readback. Current `origin/main` is `81a8e1d667abcca63923cf5666c5c6bcc70b0b6b`; product and PHDK sync commits are ancestors. No deployment is claimed.
 
 Goal: finish PHDK Auto for the four owner-confirmed fronts. Telephony/CRM vendors vary by client. The owner-approved restrictive role, tenant and write-only-secret policy remains in force.
 
@@ -19,7 +19,7 @@ Goal: finish PHDK Auto for the four owner-confirmed fronts. Telephony/CRM vendor
 | AEO/GEO | REUSED / PARTIAL | Source/content inventory only; no external citation/rank measurement or deployed assertion. |
 | Check | COMPLETED (GAPS RECORDED) | API/Cloud/web/landing results, commitment matrix and widget readiness reconciled. PHDK v2.50.10 coherence and JSON-version tool defects are fixed and locally verified; remaining product/runtime acceptance is still open. |
 | Remediation | PARTIAL | Scoped product fixes and PHDK central corrections are integrated. Persisted DB/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO evidence remain open. |
-| Delivery | COMPLETED (READBACK PASS) | Product PR #42 and KELEDON PHDK sync PR #43 are merged. Fresh `origin/main` is `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d`; both source commits are ancestors and five product package/lock roots remain 5.1.2. No hosted checks or reviews were reported for PR #43. |
+| Delivery | COMPLETED (READBACK PASS) | Product PR #42 and KELEDON PHDK sync PR #43 are merged; evidence readback PR #44 is merged. Fresh `origin/main` is `81a8e1d667abcca63923cf5666c5c6bcc70b0b6b`; source commits are ancestors and five product package/lock roots remain 5.1.2. PRs #43/#44 had no hosted checks or reviews. |
 
 No production database, migration, customer/provider data, metered model or live endpoint was used. Owner approval to include the additive managed-AI migration does not mean it was applied.
 

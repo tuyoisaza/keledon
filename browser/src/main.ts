@@ -12,6 +12,11 @@ import { connectWebSockets, setupCommandPolling } from './cloud-connection.js';
 import { handleDeepLink, flushPendingDeepLinkLaunch } from './deep-link.js';
 import { registerIpcHandlers, bootstrapTeamVendors, initializeAutoBrowseEngine, getAutoBrowseBridge } from './ipc-handlers.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
+import {
+  isAllowedVendorUrl,
+  isTrustedAppRendererUrl,
+  secureRendererPreferences,
+} from './security-policy.js';
 
 // ===================== TAB MANAGER =====================
 const tabManager = new TabManager();
@@ -130,8 +135,7 @@ function createWindow(): void {
     width: 1200, height: 800, minWidth: 800, minHeight: 600,
     title: 'KELEDON Browser', backgroundColor: '#ffffff',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true, nodeIntegration: false, sandbox: false, webSecurity: false,
+      ...secureRendererPreferences(path.join(__dirname, 'preload.js')),
     },
   });
 
@@ -140,8 +144,18 @@ function createWindow(): void {
   win.webContents.setVisualZoomLevelLimits(1, 4);
   win.webContents.setZoomLevel(0);
 
+  const rendererPath = path.join(__dirname, '../renderer/index.html');
+  const guardRendererNavigation = (event: Electron.Event, targetUrl: string) => {
+    if (!isTrustedAppRendererUrl(targetUrl, rendererPath)) {
+      event.preventDefault();
+      earlyLog('[SECURITY] Blocked main renderer navigation outside the local app.');
+    }
+  };
+  win.webContents.on('will-navigate', guardRendererNavigation);
+  win.webContents.on('will-redirect', guardRendererNavigation);
+
   win.webContents.setWindowOpenHandler(({ url }) => {
-    tabManager.createTab('New Tab', url);
+    if (isAllowedVendorUrl(url)) tabManager.createTab('New Tab', url);
     return { action: 'deny' };
   });
 
@@ -153,7 +167,6 @@ function createWindow(): void {
 
   log.transports.file.resolvePathFn = () => getMainLogPath();
 
-  const rendererPath = path.join(__dirname, '../renderer/index.html');
   win.loadFile(rendererPath);
 
   // Renderer lifecycle
@@ -179,8 +192,8 @@ function createWindow(): void {
   });
 
   win.webContents.on('did-fail-load', (_event, ec, desc, url) => {
-    earlyLog(`[WINDOW] did-fail-load — errorCode=${ec} desc="${desc}" url="${url}"`);
-    writeCrashLog(new Error(`Renderer failed to load: ${ec} ${desc} (${url})`));
+    earlyLog(`[WINDOW] did-fail-load — errorCode=${ec} desc="${desc}"`);
+    writeCrashLog(new Error(`Renderer failed to load: ${ec} ${desc}`));
   });
   win.webContents.on('render-process-gone', (_event, details) => {
     earlyLog(`[WINDOW] render-process-gone — reason=${details.reason} exitCode=${details.exitCode}`);

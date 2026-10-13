@@ -5,8 +5,8 @@
   "expected_version": "5.1.2",
   "version_file": "services/web/package.json",
   "version_property": "version",
-  "merged_commit_sha": "5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/43",
+  "merged_commit_sha": "81a8e1d667abcca63923cf5666c5c6bcc70b0b6b",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/44",
   "checks": {
     "lint": {
       "status": "PASS",
@@ -30,7 +30,7 @@
     },
     "delivery": {
       "status": "PASS",
-      "evidence": "Product PR #42 and PHDK standards-sync PR #43 are merged. Verified remote origin/main merge SHA 5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d; all five app package and lock roots remain at 5.1.2; source commit 0d98f2812d8eb88a8626101f81f9bf9ca6d52de0 and PHDK sync commit b818a2705a82fb62068f37349b26794786467af7 are ancestors of main. PR #43 had no hosted checks or review submissions."
+      "evidence": "Product PR #42 and PHDK standards-sync PR #43 are merged; PR #44 records post-merge evidence. Verified remote origin/main merge SHA 81a8e1d667abcca63923cf5666c5c6bcc70b0b6b; all five app package and lock roots remain at 5.1.2; source commit 0d98f2812d8eb88a8626101f81f9bf9ca6d52de0 and PHDK sync commit b818a2705a82fb62068f37349b26794786467af7 are ancestors of main. PRs #43/#44 had no hosted checks or review submissions."
     },
     "scope_and_checks": {
       "status": "BLOCKED",

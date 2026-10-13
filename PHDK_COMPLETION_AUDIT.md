@@ -1,6 +1,6 @@
 # PHDK Auto completion audit — PARTIALLY DELIVERED
 
-Run: `20261012-keledon-four-fronts`; product source version 5.1.2. Product PR #42 and PHDK sync PR #43 are merged on KELEDON `main`; fresh readback is `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d`. PHDK central is v2.50.10 at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`; central PRs #48 and #49 are merged. Sync commit `b818a2705a82fb62068f37349b26794786467af7` is an ancestor of `main`.
+Run: `20261012-keledon-four-fronts`; product source version 5.1.2. Product PR #42, PHDK sync PR #43 and evidence PR #44 are merged on KELEDON `main`; latest readback is `81a8e1d667abcca63923cf5666c5c6bcc70b0b6b`. PHDK central is v2.50.10 at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`; central PRs #48 and #49 are merged. Sync commit `b818a2705a82fb62068f37349b26794786467af7` is an ancestor of `main`.
 
 ## Commitment audit
 

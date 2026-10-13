@@ -8,7 +8,7 @@ KELEDON PR [#42](https://github.com/tuyoisaza/keledon/pull/42) is MERGED at `e30
 
 ## PHDK source and installed standards
 
-PHDK PRs [#48](https://github.com/tuyoisaza/PHDK/pull/48) and [#49](https://github.com/tuyoisaza/PHDK/pull/49) are merged. Canonical PHDK `main` is v2.50.10 at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`. KELEDON PR [#43](https://github.com/tuyoisaza/keledon/pull/43), based on product `main`, merged the byte-verified installation of all 52 standards mappings and updated Auto evidence. Merge/readback SHA: `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d`; sync commit `b818a2705a82fb62068f37349b26794786467af7` is its ancestor.
+PHDK PRs [#48](https://github.com/tuyoisaza/PHDK/pull/48) and [#49](https://github.com/tuyoisaza/PHDK/pull/49) are merged. Canonical PHDK `main` is v2.50.10 at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`. KELEDON PR [#43](https://github.com/tuyoisaza/keledon/pull/43) merged the byte-verified installation of all 52 standards mappings; PR [#44](https://github.com/tuyoisaza/keledon/pull/44) recorded its post-merge evidence. Latest `origin/main` readback is `81a8e1d667abcca63923cf5666c5c6bcc70b0b6b`; sync commit `b818a2705a82fb62068f37349b26794786467af7` is an ancestor.
 
 ## Validation
 

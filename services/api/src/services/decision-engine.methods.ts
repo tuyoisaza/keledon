@@ -52,7 +52,8 @@ export class DecisionContextMethods {
 
   /**
    * Core decision making logic — uses LLM function calling when available,
-   * falls back to rule-based for stop/mode/safe-mode keywords.
+   * falls back to rule-based for stop/mode/safe-mode keywords and reports
+   * unavailable reasoning instead of inventing a response.
    * vectorContext is already fetched by the caller; pass it in to avoid a second RAG call.
    */
   async makeDecision(
@@ -73,7 +74,7 @@ export class DecisionContextMethods {
         return { ...decision, confidence: decision.confidence ?? confidence };
       } catch (error) {
         this.logger.error(
-          'LLM generateCommand failed, falling back to rule-based:',
+          'LLM generateCommand failed; applying only deterministic safety rules:',
           error,
         );
       }
@@ -111,10 +112,10 @@ export class DecisionContextMethods {
     }
 
     return {
-      type: 'say',
-      text: `I heard: ${currentTranscript}`,
-      confidence,
-      reasoning: 'rule-based default — LLM not available',
+      type: 'ask',
+      text: 'The AI service is unavailable, so I cannot process that request right now. Please try again later.',
+      confidence: 0,
+      reasoning: 'AI reasoning unavailable; no user intent was inferred',
     };
   }
 
