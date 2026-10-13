@@ -4,9 +4,12 @@ import { useAuth } from '@/context/AuthContext';
 import { getKeledons, getVendors, type Keledon, type Vendor } from '@/lib/crud-api';
 import { getBrowserDownloadUrl } from '@/lib/knowledge-source-utils.js';
 import { toast } from 'sonner';
+import { useTranslation } from '@/context/I18nContext';
+import { requestKeledonLaunch } from '@/lib/launch-protocol.js';
 
 export default function LaunchKeledonPage() {
     const { user } = useAuth();
+    const { t } = useTranslation();
     const [keledons, setKeledons] = useState<Keledon[]>([]);
     const [vendorsMap, setVendorsMap] = useState<Record<string, Vendor[]>>({});
     const [loading, setLoading] = useState(true);
@@ -16,7 +19,6 @@ export default function LaunchKeledonPage() {
         keledonId: string;
         teamId: string | null;
         keledonName: string;
-        deepLink: string;
         vendors: Vendor[];
         nextSteps: Array<{ title: string; detail: string }>;
     }>(null);
@@ -61,7 +63,6 @@ export default function LaunchKeledonPage() {
         
         setLaunching(keledonId);
         try {
-            console.log('Launching keledon:', keledonId, 'with userId:', user.id);
             
             const response = await fetch(`/api/crud/keledons/${keledonId}/launch`, {
                 method: 'POST',
@@ -70,7 +71,6 @@ export default function LaunchKeledonPage() {
             });
             
             const data = await response.json();
-            console.log('Launch response:', response.status, data);
             
             if (!response.ok) {
                 throw new Error(data.message || `Failed to launch (${response.status})`);
@@ -80,33 +80,19 @@ export default function LaunchKeledonPage() {
                 keledonId,
                 teamId: data.team_id || null,
                 keledonName: data.keledon_name || keledonId,
-                deepLink: data.deep_link,
                 vendors: data.vendors || (data.team_id ? vendorsMap[data.team_id] : []) || [],
                 nextSteps: data.next_steps || [],
             });
             
-            // Open deep link
-            if (data.deep_link) {
-                const deepLink = data.deep_link;
-                const currentUrl = window.location.href;
-                
-                // Try to open deep link
-                window.location.href = deepLink;
-                
-                // Check if protocol handler exists (page didn't change = no handler)
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                if (window.location.href === currentUrl) {
-                    // Protocol not registered - prompt download
-                    toast.error('Browser not detected. Downloading...');
-                    window.open('https://github.com/tuyoisaza/keledon/releases', '_blank');
-                } else {
-                    toast.success(`Launching ${data.keledon_name || keledonId}...`);
-                }
+            // OS handoff is a request; page navigation cannot prove installation or launch.
+            if (!requestKeledonLaunch(data.deep_link, url => window.location.assign(url))) {
+                toast.error(t('launch.invalidLink'));
+                return;
             }
+            toast.info(t('launch.requested'));
         } catch (error: any) {
-            console.error('Failed to launch keledon:', error);
-            toast.error(error.message || 'Failed to launch Keledon');
+            console.error('[Launch] Request failed');
+            toast.error(t('launch.failed'));
         } finally {
             setLaunching(null);
         }

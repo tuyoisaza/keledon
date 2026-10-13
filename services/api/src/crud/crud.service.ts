@@ -105,6 +105,16 @@ export class CrudService {
 
   // ========== BRANDS ==========
 
+  async getBrand(id: string) {
+    return this.companyService.getBrand(id);
+  }
+  async getUser(id: string) {
+    return this.companyService.getUser(id);
+  }
+  async getVendor(id: string) {
+    return this.vendorService.getVendor(id);
+  }
+
   async getBrands(companyId?: string) {
     return this.companyService.getBrands(companyId);
   }
@@ -125,6 +135,10 @@ export class CrudService {
 
   async getTeams(companyId?: string) {
     return this.companyService.getTeams(companyId);
+  }
+
+  async getTeam(id: string) {
+    return this.companyService.getTeam(id);
   }
 
   async createTeam(data: { name: string; brandId: string; country?: string }) {
@@ -179,8 +193,8 @@ export class CrudService {
   // ========== KELEDONS ==========
   // Delegated to CrudKeledonService (crud-keledon.service.ts)
 
-  async getKeledons(companyId?: string) {
-    return this.keledonService.getKeledons(companyId);
+  async getKeledons(companyId?: string, userId?: string) {
+    return this.keledonService.getKeledons(companyId, userId);
   }
 
   async createKeledon(data: any) {
@@ -214,9 +228,13 @@ export class CrudService {
   // ========== MANAGED INTERFACES ==========
 
   async getManagedInterfaces() {
-    return this.prisma.managedInterface.findMany({
+    const rows = await this.prisma.managedInterface.findMany({
       orderBy: { name: 'asc' },
     });
+    return rows.map(({ credentials, ...record }) => ({
+      ...record,
+      hasCredentials: !!credentials,
+    }));
   }
 
   async createManagedInterface(data: {
@@ -229,7 +247,9 @@ export class CrudService {
     status?: string;
     credentials?: string;
   }) {
-    return this.prisma.managedInterface.create({ data });
+    const { credentials, ...record } =
+      await this.prisma.managedInterface.create({ data });
+    return { ...record, hasCredentials: !!credentials };
   }
 
   async updateManagedInterface(
@@ -242,7 +262,9 @@ export class CrudService {
       credentials?: string;
     },
   ) {
-    return this.prisma.managedInterface.update({ where: { id }, data });
+    const { credentials, ...record } =
+      await this.prisma.managedInterface.update({ where: { id }, data });
+    return { ...record, hasCredentials: !!credentials };
   }
 
   async deleteManagedInterface(id: string) {
@@ -254,7 +276,12 @@ export class CrudService {
       where: { teamId },
       include: { managedInterface: true },
     });
-    return teamInterfaces.map((ti) => ti.managedInterface);
+    return teamInterfaces.map(
+      ({ managedInterface: { credentials, ...record } }) => ({
+        ...record,
+        hasCredentials: !!credentials,
+      }),
+    );
   }
 
   async setTeamInterfaces(teamId: string, interfaceIds: string[]) {

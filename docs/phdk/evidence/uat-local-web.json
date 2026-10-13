@@ -1,0 +1,16 @@
+{
+  "version": "5.0.54",
+  "date": "2026-10-12",
+  "origin": "http://127.0.0.1:52852",
+  "provenance": "Local built web with intercepted Company Co API; not real server/DB or production authentication",
+  "checks": [
+    "UAT-THEME actual dark/light/corporate shell selection and persistence PASS; full-app contrast certification not claimed",
+    "UAT-002 anonymous home/login, compact sizes, awaited copy/check/revert, failure no false check, owned reset/foreign preservation, 390px layout PASS",
+    "UAT-004 superadmin frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
+    "UAT-004 admin frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
+    "UAT-004 coordinator frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
+    "UAT-004 provider write-only key: no response prefill; replacement cleared after success; untouched blank omitted PASS",
+    "UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)"
+  ],
+  "realVendorAudioCRM": "NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed"
+}

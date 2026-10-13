@@ -86,16 +86,6 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
     search: Search
   };
 
-  const _getStepColor = (status: FlowStep['status']) => {
-    switch (status) {
-      case 'pending': return 'text-gray-500 bg-gray-50 border-gray-200';
-      case 'running': return 'text-blue-500 bg-blue-50 border-blue-200 animate-pulse';
-      case 'completed': return 'text-green-500 bg-green-50 border-green-200';
-      case 'failed': return 'text-red-500 bg-red-50 border-red-200';
-      case 'skipped': return 'text-yellow-500 bg-yellow-50 border-yellow-200';
-      default: return 'text-gray-500 bg-gray-50 border-gray-200';
-    }
-  };
 
   const getStatusIcon = (status: FlowExecution['status']) => {
     switch (status) {
@@ -201,7 +191,7 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
                       execution.status === 'completed' && "text-green-500 bg-green-100",
                       execution.status === 'failed' && "text-red-500 bg-red-100",
                       execution.status === 'paused' && "text-yellow-500 bg-yellow-100",
-                      execution.status === 'idle' && "text-gray-500 bg-gray-100"
+                      execution.status === 'idle' && "text-muted-foreground bg-gray-100"
                     )}>
                       {execution.status.toUpperCase()}
                     </span>
@@ -217,7 +207,7 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
                   {execution.status === 'idle' && (
                     <button
                       onClick={() => startExecution(execution.id)}
-                      className="p-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors"
+                      className="p-2 rounded-lg bg-green-500 text-foreground hover:bg-green-600 transition-colors"
                       title="Start Execution"
                     >
                       <Play className="w-4 h-4" />
@@ -226,7 +216,7 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
                   {execution.status === 'running' && (
                     <button
                       onClick={() => pauseExecution(execution.id)}
-                      className="p-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600 transition-colors"
+                      className="p-2 rounded-lg bg-yellow-500 text-foreground hover:bg-yellow-600 transition-colors"
                       title="Pause Execution"
                     >
                       <Pause className="w-4 h-4" />
@@ -235,7 +225,7 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
                   {execution.status === 'paused' && (
                     <button
                       onClick={() => startExecution(execution.id)}
-                      className="p-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors"
+                      className="p-2 rounded-lg bg-green-500 text-foreground hover:bg-green-600 transition-colors"
                       title="Resume Execution"
                     >
                       <Play className="w-4 h-4" />
@@ -244,7 +234,7 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
                   {execution.status === 'running' && (
                     <button
                       onClick={() => stopExecution(execution.id)}
-                      className="p-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors"
+                      className="p-2 rounded-lg bg-red-500 text-foreground hover:bg-red-600 transition-colors"
                       title="Stop Execution"
                     >
                       <Square className="w-4 h-4" />
@@ -252,7 +242,7 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
                   )}
                   <button
                     onClick={() => resetExecution(execution.id)}
-                    className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+                    className="p-2 rounded-lg bg-blue-500 text-foreground hover:bg-blue-600 transition-colors"
                     title="Reset Execution"
                   >
                     <RotateCcw className="w-4 h-4" />
@@ -266,7 +256,7 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
                   </button>
                   <button
                     onClick={() => deleteExecution(execution.id)}
-                    className="p-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors"
+                    className="p-2 rounded-lg bg-red-500 text-foreground hover:bg-red-600 transition-colors"
                     title="Delete Execution"
                   >
                     <XCircle className="w-4 h-4" />

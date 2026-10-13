@@ -1,0 +1,3 @@
+# UAT report
+Local scoped web journey suite PASS on built5.0.54 with external network blocked. Exact evidence docs/phdk/evidence/uat-local-web.json and uat-login-{dark,light,corporate,mobile}.png. No real backend authorization is inferred from intercepted API responses. Independent actual Nest HTTP and fake-Prisma/security tests exercise server logic.
+Native Electron widget is covered by actual helper contracts/source review; full installed Electron visual/audio run NOT EXECUTED. No claim of end-to-end Google login, live browser vendor adapter, client CRM, deployment health or WCAG certification. Current owner scope excludes client-specific live integrations. Overall status: scoped acceptance PASS; full conformance/release not yet PASS.

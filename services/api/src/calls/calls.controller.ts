@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { ResourceScopeGuard } from '../guards/resource-scope.guard';
+import { RuntimeActorGuard } from '../gateways/runtime-identity';
+import { Public } from '../guards/public.decorator';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -18,6 +29,8 @@ import {
 
 @ApiTags('Calls')
 @Controller('api/calls')
+@Public()
+@UseGuards(RuntimeActorGuard, ResourceScopeGuard)
 export class CallsController {
   constructor(private readonly callsService: CallsService) {}
 

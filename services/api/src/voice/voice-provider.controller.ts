@@ -1,7 +1,9 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Req, UseGuards, ForbiddenException } from '@nestjs/common';
 import { VoiceProviderRegistry } from './providers/voice-provider.registry';
 import { VoicePipelineStatus } from './providers/voice-provider.interface';
-import { AuthGuard } from '../guards/auth.guard';
+import { Public } from '../guards/public.decorator';
+import { RuntimeActorGuard, ownsRuntimeSession } from '../gateways/runtime-identity';
+import { PrismaService } from '../prisma/prisma.service';
 
 /**
  * Read-only status endpoint for the voice pipeline provider registry.
@@ -9,14 +11,17 @@ import { AuthGuard } from '../guards/auth.guard';
  * Used by the BrainPage Side Panel to display active provider status.
  */
 @Controller('api/voice-provider')
-@UseGuards(AuthGuard)
+@Public()
+@UseGuards(RuntimeActorGuard)
 export class VoiceProviderController {
-  constructor(private readonly registry: VoiceProviderRegistry) {}
+  constructor(private readonly registry: VoiceProviderRegistry, private readonly prisma: PrismaService) {}
 
   @Get('status/:sessionId')
-  getStatus(
+  async getStatus(
     @Param('sessionId') sessionId: string,
-  ): VoicePipelineStatus | { error: string } {
+    @Req() request: any,
+  ): Promise<VoicePipelineStatus | { error: string }> {
+    if (!await ownsRuntimeSession(this.prisma, request.runtimeIdentity, sessionId)) throw new ForbiddenException('Session scope mismatch');
     const status = this.registry.getPipelineStatus(sessionId);
     if (!status) {
       return { error: `No active session: ${sessionId}` };

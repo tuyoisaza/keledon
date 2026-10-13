@@ -8,15 +8,18 @@ import {
   Param,
   Query,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { CrudService } from './crud.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { WebhookGuard } from '../guards/webhook.guard';
 import { Public } from '../guards/public.decorator';
+import { CrudAccessGuard } from '../guards/crud-access.guard';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('CRUD')
 @Controller('api/crud')
+@UseGuards(CrudAccessGuard)
 export class CrudController {
   constructor(
     private readonly crud: CrudService,
@@ -70,7 +73,11 @@ export class CrudController {
 
   @Get('companies')
   @ApiOperation({ summary: 'Get all companies' })
-  getCompanies() {
+  async getCompanies(@Req() req: any) {
+    if (req.companyScope) {
+      const company = await this.crud.getCompany(req.companyScope);
+      return company ? [company] : [];
+    }
     return this.crud.getCompanies();
   }
 
@@ -121,6 +128,11 @@ export class CrudController {
     return this.crud.createBrand(data);
   }
 
+  @Get('brands/:id')
+  getBrand(@Param('id') id: string) {
+    return this.crud.getBrand(id);
+  }
+
   @Put('brands/:id')
   updateBrand(@Param('id') id: string, @Body() data: any) {
     return this.crud.updateBrand(id, data);
@@ -141,7 +153,7 @@ export class CrudController {
 
   @Get('teams/:id')
   getTeam(@Param('id') id: string) {
-    return this.crud.getTeams(id);
+    return this.crud.getTeam(id);
   }
 
   @Post('teams')
@@ -185,6 +197,11 @@ export class CrudController {
     return this.crud.createUser(data);
   }
 
+  @Get('users/:id')
+  getUser(@Param('id') id: string) {
+    return this.crud.getUser(id);
+  }
+
   @Put('users/:id')
   updateUser(@Param('id') id: string, @Body() data: any) {
     return this.crud.updateUser(id, data);
@@ -199,8 +216,11 @@ export class CrudController {
   // ========== KELEDONS ==========
 
   @Get('keledons')
-  getKeledons(@Query('companyId') companyId?: string) {
-    return this.crud.getKeledons(companyId);
+  getKeledons(@Req() req: any, @Query('companyId') companyId?: string) {
+    const ownOnly = !['superadmin', 'admin', 'coordinator'].includes(
+      req.actor.role,
+    );
+    return this.crud.getKeledons(companyId, ownOnly ? req.actor.id : undefined);
   }
 
   @Post('keledons')
@@ -458,6 +478,11 @@ export class CrudController {
   }
 
   // ========== VENDORS ==========
+
+  @Get('vendor/:id')
+  getVendor(@Param('id') id: string) {
+    return this.crud.getVendor(id);
+  }
 
   @Get('vendors/:teamId')
   getVendors(@Param('teamId') teamId: string) {

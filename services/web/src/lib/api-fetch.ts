@@ -21,16 +21,11 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}): Pro
     ? endpoint
     : `${API_URL}${endpoint}`;
   const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
-  const defaultHeaders = isFormData ? {} : { 'Content-Type': 'application/json' };
+  const headers = new Headers(options.headers);
+  if (!isFormData && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+  if (token && !headers.has('Authorization')) headers.set('Authorization', 'Bearer ' + token);
+  return fetch(url, { ...options, headers });
 
-  return fetch(url, {
-    ...options,
-    headers: {
-      ...defaultHeaders,
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
-  });
 }
 
 /**

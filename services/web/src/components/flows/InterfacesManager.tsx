@@ -155,8 +155,8 @@ export function InterfacesManager() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-xl font-semibold text-white">Managed Interfaces</h2>
-                    <p className="text-gray-400 text-sm">Map talk and case systems to approved providers.</p>
+                    <h2 className="text-xl font-semibold text-foreground">Managed Interfaces</h2>
+                    <p className="text-muted-foreground text-sm">Map talk and case systems to approved providers.</p>
                 </div>
                 <button
                     onClick={() => setShowForm(true)}
@@ -174,7 +174,7 @@ export function InterfacesManager() {
             )}
 
             {isLoading ? (
-                <div className="text-gray-400 text-sm">Loading interfaces...</div>
+                <div className="text-muted-foreground text-sm">Loading interfaces...</div>
             ) : (
                 <div className="space-y-3">
                     {interfaces.map((iface) => (
@@ -187,9 +187,9 @@ export function InterfacesManager() {
                                     {iface.category || 'case'}
                                 </span>
                                 <div>
-                                    <p className="font-medium text-white">{iface.name}</p>
-                                    <p className="text-sm text-gray-500 font-mono">{iface.baseUrl}</p>
-                                    <p className="text-xs text-gray-400">Provider: {iface.providerKey || 'custom'}</p>
+                                    <p className="font-medium text-foreground">{iface.name}</p>
+                                    <p className="text-sm text-muted-foreground font-mono">{iface.baseUrl}</p>
+                                    <p className="text-xs text-muted-foreground">Provider: {iface.providerKey || 'custom'}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-4">
@@ -197,10 +197,10 @@ export function InterfacesManager() {
                                     <Radio className="w-3.5 h-3.5" />
                                     {iface.status}
                                 </span>
-                                <button onClick={() => handleEdit(iface)} className="p-2 rounded-lg hover:bg-gray-700 text-gray-400 hover:text-white">
+                                <button onClick={() => handleEdit(iface)} className="p-2 rounded-lg hover:bg-gray-700 text-muted-foreground hover:text-foreground">
                                     <Pencil className="w-4 h-4" />
                                 </button>
-                                <button onClick={() => handleDelete(iface.id)} className="p-2 rounded-lg hover:bg-red-900/20 text-gray-400 hover:text-red-400">
+                                <button onClick={() => handleDelete(iface.id)} className="p-2 rounded-lg hover:bg-red-900/20 text-muted-foreground hover:text-red-400">
                                     <Trash2 className="w-4 h-4" />
                                 </button>
                             </div>
@@ -210,23 +210,23 @@ export function InterfacesManager() {
             )}
 
             {showForm && (
-                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-background/60 flex items-center justify-center z-50">
                     <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 w-full max-w-md">
-                        <h3 className="text-lg font-semibold text-white mb-4">
+                        <h3 className="text-lg font-semibold text-foreground mb-4">
                             {editingId ? 'Edit Interface' : 'Add New Interface'}
                         </h3>
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm text-gray-400 mb-1">Name</label>
+                                <label className="block text-sm text-muted-foreground mb-1">Name</label>
                                 <input
                                     type="text"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                                    className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-600 text-foreground focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm text-gray-400 mb-1">Category</label>
+                                <label className="block text-sm text-muted-foreground mb-1">Category</label>
                                 <select
                                     value={formData.category}
                                     onChange={(e) =>
@@ -241,18 +241,18 @@ export function InterfacesManager() {
                                             }
                                         })
                                     }
-                                    className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                                    className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-600 text-foreground focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                                 >
                                     <option value="talk">Talk</option>
                                     <option value="case">Case</option>
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm text-gray-400 mb-1">Provider</label>
+                                <label className="block text-sm text-muted-foreground mb-1">Provider</label>
                                 <select
                                     value={formData.providerKey}
                                     onChange={(e) => setFormData({ ...formData, providerKey: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                                    className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-600 text-foreground focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                                 >
                                     {providerOptions.map((option) => (
                                         <option key={option.value} value={option.value}>{option.label}</option>
@@ -260,16 +260,16 @@ export function InterfacesManager() {
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm text-gray-400 mb-1">Base URL</label>
+                                <label className="block text-sm text-muted-foreground mb-1">Base URL</label>
                                 <input
                                     type="text"
                                     value={formData.baseUrl}
                                     onChange={(e) => setFormData({ ...formData, baseUrl: e.target.value })}
-                                    className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+                                    className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-600 text-foreground focus:outline-none focus:ring-2 focus:ring-teal-500/50"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="block text-sm text-gray-400">Capabilities</label>
+                                <label className="block text-sm text-muted-foreground">Capabilities</label>
                                 <div className="flex flex-wrap gap-3 text-sm text-gray-200">
                                     <label className="flex items-center gap-2">
                                         <input
@@ -310,7 +310,7 @@ export function InterfacesManager() {
                         <div className="flex justify-end gap-3 mt-6">
                             <button
                                 onClick={() => { setShowForm(false); setEditingId(null); }}
-                                className="px-4 py-2 rounded-lg bg-gray-700 text-white hover:bg-gray-600"
+                                className="px-4 py-2 rounded-lg bg-gray-700 text-foreground hover:bg-gray-600"
                             >
                                 Cancel
                             </button>

@@ -5,7 +5,7 @@ import type { TabManager } from './tab-manager.js';
 import { runtimeStatus } from './runtime-state.js';
 
 export function buildWsCtx(cloudUrl: string, token: string): string {
-  return `ws=${deriveWsUrl(cloudUrl)}/ws/runtime token=${cmdlog.truncate(token, 16, 0)} device=${cmdlog.truncate(runtimeStatus.deviceId, 8, 4)}`;
+  return `ws=${deriveWsUrl(cloudUrl)}/ws/runtime token=${token ? '[present]' : '[absent]'} device=${cmdlog.truncate(runtimeStatus.deviceId, 8, 4)}`;
 }
 export function deriveWsUrl(cloudUrl: string): string {
   try {
@@ -90,6 +90,7 @@ export function enrichGoalExecuteDataFromRuntimeVendor(data: any): any {
     inputs.apiKey = decryptRuntimeVendorValue(vendor.apiKey);
   }
 
+  inputs.vendor_id = vendorId;
   enriched.inputs = inputs;
   enriched.goal = vendor.startGoal || enriched.goal;
   cmdlog.log('CMD', `goal_execute vendor enrichment | vendor_id=${cmdlog.truncate(String(vendorId), 8, 4)} | url_present=${inputs.url ? 'yes' : 'no'} | username_present=${inputs.username ? 'yes' : 'no'} | password_present=${inputs.password ? 'yes' : 'no'} | startGoal_present=${vendor.startGoal ? 'yes' : 'no'}`);
@@ -219,6 +220,7 @@ export function enrichCloudGoalInputsFromRuntimeVendor(goal: any, baseInputs: Re
     inputs.apiKey = decryptRuntimeVendorSecret(vendor.apiKey);
   }
 
+  inputs.vendor_id = vendorId;
   cmdlog.log('CMD', `goal_execute enriched runtime vendor inputs | vendor_id: ${cmdlog.truncate(String(vendorId), 8, 4)} | keys: ${Object.keys(inputs).sort().join(',') || 'none'}`);
   return Object.keys(inputs).length > 0 ? inputs : baseInputs;
 }

@@ -1,3 +1,4 @@
+import { AiAdminModule } from './ai-admin/ai-admin.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseHealthService } from './services/database-health.service';
@@ -61,6 +62,7 @@ import { EscalationModule } from './modules/escalation.module';
     FlowModule,
     SubAgentModule,
     DeviceModule,
+    AiAdminModule,
     LLMModule,
     VoiceModule,
     STTModule,

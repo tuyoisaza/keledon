@@ -1,3 +1,4 @@
+import { redactDiagnostic } from './diagnostics-core';
 export type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 
 interface LogEntry {
@@ -11,21 +12,11 @@ class DebugLogger {
     private logs: LogEntry[] = [];
     private listeners: ((logs: LogEntry[]) => void)[] = [];
     private maxLogs = 1000;
-    private isEnabled = true; // Enabled by default to catch early issues
+    private isEnabled = import.meta.env.DEV; // Production debug defaults OFF.
 
     constructor() {
-        // Recover logs from session storage if possible
-        try {
-            const savedLogs = sessionStorage.getItem('keledon_debug_logs');
-            if (savedLogs) {
-                this.logs = JSON.parse(savedLogs);
-                if (this.logs.length > 0) {
-                    this.log('info', 'Logger re-initialized, previous logs restored');
-                }
-            }
-        } catch (e) {
-            console.error('Failed to restore logs', e);
-        }
+        // Do not restore arbitrary pre-sanitization log payloads from older releases.
+        try { sessionStorage.removeItem('keledon_debug_logs'); } catch { /* Storage may be unavailable. */ }
     }
 
     enable(enabled: boolean) {
@@ -41,8 +32,8 @@ class DebugLogger {
         const entry: LogEntry = {
             timestamp: Date.now(),
             level,
-            message,
-            details
+            message: String(redactDiagnostic(message)),
+            details: redactDiagnostic(details)
         };
 
         this.logs.unshift(entry);
@@ -55,7 +46,7 @@ class DebugLogger {
         // Persist to session storage so logs survive reloads
         try {
             sessionStorage.setItem('keledon_debug_logs', JSON.stringify(this.logs));
-        } catch (e) {
+        } catch (_e) {
             // Ignore storage errors
         }
 
@@ -65,11 +56,11 @@ class DebugLogger {
         const style = level === 'error' ? 'color: red' :
             level === 'warn' ? 'color: orange' :
                 'color: blue';
-        console.log(`%c[${level.toUpperCase()}] ${message}`, style, details || '');
+        console.log(`%c[${level.toUpperCase()}] ${entry.message}`, style, entry.details || '');
     }
 
     getLogs() {
-        return this.logs;
+        return this.logs.map(entry => ({ ...entry }));
     }
 
     clear() {

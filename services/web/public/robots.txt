@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /admin
+Disallow: /management
+Disallow: /dashboard
+Disallow: /api/
+Disallow: /sessions
+Disallow: /brain
+Disallow: /knowledge
+Disallow: /profile
+Disallow: /devices
+Disallow: /flows
+Disallow: /test-browser
+Sitemap: https://keledon.tuyoisaza.com/sitemap.xml

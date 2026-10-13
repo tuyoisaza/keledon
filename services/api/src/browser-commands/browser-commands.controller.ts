@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import {
   ApiOkResponse,
   ApiOperation,
@@ -8,10 +8,12 @@ import {
 import { BrowserCommandsService } from './browser-commands.service';
 import { CommandResultDto } from './dto/browser-commands.dto';
 import { AuthenticatedRequest } from '../types/auth.types';
+import { RuntimeDeviceGuard } from '../gateways/runtime-identity';
 import { Public } from '../guards/public.decorator';
 
 @ApiTags('Browser Commands')
 @Public()
+@UseGuards(RuntimeDeviceGuard)
 @Controller('api/browser/devices')
 export class BrowserCommandsController {
   constructor(

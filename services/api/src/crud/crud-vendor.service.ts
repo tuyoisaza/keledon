@@ -5,6 +5,24 @@ import { PrismaService } from '../prisma/prisma.service';
 export class CrudVendorService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async getVendor(id: string) {
+    return this.prisma.vendor.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        teamId: true,
+        name: true,
+        type: true,
+        baseUrl: true,
+        username: true,
+        isActive: true,
+        startGoal: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
   async getVendors(teamId: string) {
     const vendors = await this.prisma.vendor.findMany({
       where: { teamId },

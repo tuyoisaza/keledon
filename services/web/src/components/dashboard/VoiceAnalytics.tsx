@@ -1,4 +1,3 @@
-import React from 'react';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -51,7 +50,7 @@ export default function VoiceAnalyticsDashboard({ className }: VoiceAnalyticsPro
     switch (trend) {
       case 'up': return <TrendingUp className="w-3 h-3 text-green-500" />;
       case 'down': return <TrendingDown className="w-3 h-3 text-red-500" />;
-      default: return <Activity className="w-3 h-3 text-gray-500" />;
+      default: return <Activity className="w-3 h-3 text-muted-foreground" />;
     }
   };
 
@@ -67,7 +66,7 @@ export default function VoiceAnalyticsDashboard({ className }: VoiceAnalyticsPro
     switch (severity) {
       case 'high': return 'text-red-500 bg-red-100 border-red-200';
       case 'medium': return 'text-yellow-500 bg-yellow-100 border-yellow-200';
-      default: return 'text-gray-500 bg-gray-100 border-gray-200';
+      default: return 'text-muted-foreground bg-gray-100 border-gray-200';
     }
   };
 

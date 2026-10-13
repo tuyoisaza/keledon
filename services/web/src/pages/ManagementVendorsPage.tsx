@@ -1,3 +1,6 @@
+import ManagementModal from '@/components/common/ManagementModal';
+import RecordDetails from '@/components/common/RecordDetails';
+import { useTranslation } from '@/context/I18nContext';
 import { useState, useEffect } from 'react';
 import { Store, Plus, Loader2, Pencil, Trash2, Search, X, Key, Lock, ScrollText } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -13,6 +16,7 @@ const VENDOR_TYPES = [
 ];
 
 export default function ManagementVendorsPage() {
+    const { t } = useTranslation();
     const [vendors, setVendors] = useState<Vendor[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
     const [brands, setBrands] = useState<Brand[]>([]);
@@ -150,9 +154,6 @@ export default function ManagementVendorsPage() {
         v.type?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const _getTeamName = (teamId: string) => {
-        return teams.find(t => t.id === teamId)?.name || '—';
-    };
 
     const getBrandName = (brandId?: string) => {
         if (!brandId) return '—';
@@ -163,20 +164,19 @@ export default function ManagementVendorsPage() {
         return VENDOR_TYPES.find(t => t.value === type)?.label || type;
     };
 
-    const _selectedTeam = teams.find(t => t.id === selectedTeamId);
 
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-white">Vendors</h1>
-                    <p className="text-gray-400">Manage external vendor integrations</p>
+                    <h1 className="text-2xl font-bold text-foreground">Vendors</h1>
+                    <p className="text-muted-foreground">Manage external vendor integrations</p>
                 </div>
                 <div className="flex gap-3">
                     <select
                         value={selectedTeamId}
                         onChange={(e) => setSelectedTeamId(e.target.value)}
-                        className="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-2"
+                        className="bg-gray-800 border border-gray-700 text-foreground rounded-lg px-4 py-2"
                     >
                         {teams.map(team => (
                             <option key={team.id} value={team.id}>
@@ -187,7 +187,7 @@ export default function ManagementVendorsPage() {
                     <button
                         onClick={openCreateForm}
                         disabled={!selectedTeamId}
-                        className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+                        className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-foreground px-4 py-2 rounded-lg disabled:opacity-50"
                     >
                         <Plus className="w-4 h-4" />
                         Add Vendor
@@ -196,13 +196,13 @@ export default function ManagementVendorsPage() {
             </div>
 
             <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <input
                     type="text"
                     placeholder="Search vendors..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg pl-10 pr-4 py-2"
+                    className="w-full bg-gray-800 border border-gray-700 text-foreground rounded-lg pl-10 pr-4 py-2"
                 />
             </div>
 
@@ -213,7 +213,7 @@ export default function ManagementVendorsPage() {
                     <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 </div>
             ) : filteredVendors.length === 0 ? (
-                <div className="text-center py-12 text-gray-400">
+                <div className="text-center py-12 text-muted-foreground">
                     <Store className="w-12 h-12 mx-auto mb-4 opacity-50" />
                     {selectedTeamId ? 'No vendors yet for this team' : 'Select a team to view vendors'}
                 </div>
@@ -226,15 +226,24 @@ export default function ManagementVendorsPage() {
                         >
                             <div className="flex items-start justify-between mb-2">
                                 <div>
-                                    <h3 className="font-semibold text-white">{vendor.name}</h3>
-                                    <span className="text-sm text-gray-400">{getTypeLabel(vendor.type)}</span>
+                                    <h3 className="font-semibold text-foreground">{vendor.name}</h3>
+                                    <span className="text-sm text-muted-foreground">{getTypeLabel(vendor.type)}</span>
                                 </div>
                                 <div className="flex gap-2">
+                                    <RecordDetails name={vendor.name || vendor.id} fields={[
+                                        { label: t('records.id'), value: vendor.id },
+                                        { label: t('records.name'), value: vendor.name },
+                                        { label: t('records.type'), value: getTypeLabel(vendor.type) },
+                                        { label: t('records.team'), value: teams.find(team => team.id === vendor.teamId)?.name },
+                                        { label: t('records.status'), value: vendor.isActive ? t('records.active') : t('records.inactive') },
+                                        { label: t('records.created'), value: vendor.createdAt },
+                                        { label: t('records.updated'), value: vendor.updatedAt }
+                                    ]} />
                                     <button
                                         onClick={() => openEditForm(vendor)}
                                         className="p-1 hover:bg-gray-700 rounded"
                                     >
-                                        <Pencil className="w-4 h-4 text-gray-400" />
+                                        <Pencil className="w-4 h-4 text-muted-foreground" />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(vendor.id)}
@@ -245,35 +254,35 @@ export default function ManagementVendorsPage() {
                                 </div>
                             </div>
                             {vendor.baseUrl && (
-                                <p className="text-sm text-gray-400 truncate mb-2">{vendor.baseUrl}</p>
+                                <p className="text-sm text-muted-foreground truncate mb-2">{vendor.baseUrl}</p>
                             )}
                             {vendor.startGoal && (
                                 <div className="flex items-start gap-2 mb-3">
                                     <ScrollText className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
-                                    <p className="text-sm text-gray-300 line-clamp-2">{vendor.startGoal}</p>
+                                    <p className="text-sm text-muted-foreground line-clamp-2">{vendor.startGoal}</p>
                                 </div>
                             )}
                             <div className="flex gap-4 text-sm">
                                 <span className={cn(
                                     "flex items-center gap-1",
-                                    vendor.isActive ? "text-green-400" : "text-gray-500"
+                                    vendor.isActive ? "text-green-400" : "text-muted-foreground"
                                 )}>
                                     {vendor.isActive ? 'Active' : 'Inactive'}
                                 </span>
                                 {vendor.username && (
-                                    <span className="flex items-center gap-1 text-gray-400">
+                                    <span className="flex items-center gap-1 text-muted-foreground">
                                         <Key className="w-3 h-3" />
                                         {vendor.username}
                                     </span>
                                 )}
                                 {vendor.hasPassword && (
-                                    <span className="flex items-center gap-1 text-gray-400">
+                                    <span className="flex items-center gap-1 text-muted-foreground">
                                         <Lock className="w-3 h-3" />
                                         Password
                                     </span>
                                 )}
                                 {vendor.hasApiKey && (
-                                    <span className="flex items-center gap-1 text-gray-400">
+                                    <span className="flex items-center gap-1 text-muted-foreground">
                                         <Lock className="w-3 h-3" />
                                         API Key
                                     </span>
@@ -285,40 +294,40 @@ export default function ManagementVendorsPage() {
             )}
 
             {showForm && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <ManagementModal title={t('records.vendor')} onClose={() => setShowForm(false)}>
                     <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 w-full max-w-md">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-xl font-bold text-white">
+                            <h2 className="text-xl font-bold text-foreground">
                                 {editingVendor ? 'Edit Vendor' : 'Add Vendor'}
                             </h2>
-                            <button onClick={() => setShowForm(false)}>
-                                <X className="w-5 h-5 text-gray-400" />
+                            <button type="button" aria-label={t('records.close')} onClick={() => setShowForm(false)}>
+                                <X className="w-5 h-5 text-muted-foreground" />
                             </button>
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-1">
+                                <label htmlFor="management-vendors-field-1" className="block text-sm font-medium text-muted-foreground mb-1">
                                     Vendor Name
                                 </label>
-                                <input
+                                <input id="management-vendors-field-1"
                                     type="text"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     placeholder="e.g., Salesforce, Genesys, HubSpot"
-                                    className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2"
+                                    className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2"
                                     required
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-1">
+                                <label htmlFor="management-vendors-field-2" className="block text-sm font-medium text-muted-foreground mb-1">
                                     Type
                                 </label>
-                                <select
+                                <select id="management-vendors-field-2"
                                     value={formData.type}
                                     onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                                    className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2"
+                                    className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2"
                                 >
                                     {VENDOR_TYPES.map(type => (
                                         <option key={type.value} value={type.value}>
@@ -329,67 +338,67 @@ export default function ManagementVendorsPage() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-1">
+                                <label htmlFor="management-vendors-field-3" className="block text-sm font-medium text-muted-foreground mb-1">
                                     Base URL
                                 </label>
-                                <input
+                                <input id="management-vendors-field-3"
                                     type="url"
                                     value={formData.baseUrl}
                                     onChange={(e) => setFormData({ ...formData, baseUrl: e.target.value })}
                                     placeholder="https://login.salesforce.com"
-                                    className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2"
+                                    className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-1">
+                                <label htmlFor="management-vendors-field-4" className="block text-sm font-medium text-muted-foreground mb-1">
                                     Username
                                 </label>
-                                <input
+                                <input id="management-vendors-field-4"
                                     type="text"
                                     value={formData.username}
                                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                                     placeholder="Username (optional)"
-                                    className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2"
+                                    className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-1">
+                                <label htmlFor="management-vendors-field-5" className="block text-sm font-medium text-muted-foreground mb-1">
                                     Password
                                 </label>
-                                <input
+                                <input id="management-vendors-field-5"
                                     type="password"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     placeholder={editingVendor ? 'Leave blank to keep current' : 'Password (optional)'}
-                                    className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2"
+                                    className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-1">
+                                <label htmlFor="management-vendors-field-6" className="block text-sm font-medium text-muted-foreground mb-1">
                                     API Key
                                 </label>
-                                <input
+                                <input id="management-vendors-field-6"
                                     type="password"
                                     value={formData.apiKey}
                                     onChange={(e) => setFormData({ ...formData, apiKey: e.target.value })}
                                     placeholder={editingVendor ? 'Leave blank to keep current' : 'API Key (optional)'}
-                                    className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2"
+                                    className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-1">
+                                <label htmlFor="management-vendors-field-7" className="block text-sm font-medium text-muted-foreground mb-1">
                                     Start Goal / Instructions
                                 </label>
-                                <textarea
+                                <textarea id="management-vendors-field-7"
                                     value={formData.startGoal}
                                     onChange={(e) => setFormData({ ...formData, startGoal: e.target.value })}
                                     placeholder='e.g., Login using the password, then navigate to Reports'
                                     rows={3}
-                                    className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2 resize-none"
+                                    className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2 resize-none"
                                 />
                             </div>
 
@@ -397,14 +406,14 @@ export default function ManagementVendorsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setShowForm(false)}
-                                    className="flex-1 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg"
+                                    className="flex-1 bg-gray-700 hover:bg-gray-600 text-foreground px-4 py-2 rounded-lg"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={saving}
-                                    className="flex-1 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+                                    className="flex-1 bg-primary hover:bg-primary/90 text-foreground px-4 py-2 rounded-lg disabled:opacity-50"
                                 >
                                     {saving ? (
                                         <Loader2 className="w-5 h-5 animate-spin mx-auto" />
@@ -415,7 +424,7 @@ export default function ManagementVendorsPage() {
                             </div>
                         </form>
                     </div>
-                </div>
+                </ManagementModal>
             )}
         </div>
     );

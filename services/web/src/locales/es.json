@@ -185,7 +185,8 @@
     "close": "Cerrar",
     "refresh": "Actualizar",
     "copy": "Copiar",
-    "copied": "¡Copiado!"
+    "copied": "¡Copiado!",
+    "language": "Idioma"
   },
   "errors": {
     "generic": "Ocurrió un error",
@@ -198,5 +199,95 @@
   "version": {
     "version": "Versión",
     "build": "Build"
+  },
+  "diagnostics": {
+    "copy": "Copiar diagnóstico completo",
+    "clear": "Limpiar caché",
+    "copied": "Diagnóstico copiado",
+    "copyFailed": "No se pudo copiar el diagnóstico",
+    "cleared": "Estado local de KELEDON limpiado",
+    "clearFailed": "La limpieza quedó incompleta; no se confirmó el reinicio",
+    "expand": "Expandir navegación",
+    "collapse": "Contraer navegación"
+  },
+  "launch": {
+    "invalidLink": "El enlace de lanzamiento no es válido. Inténtalo de nuevo.",
+    "requested": "Lanzamiento solicitado. Si KELEDON Browser no se abre, usa Descargar app o el emparejamiento manual.",
+    "failed": "No se pudo solicitar el lanzamiento. Inténtalo de nuevo."
+  },
+  "records": {
+    "details": "Ver detalle",
+    "close": "Cerrar detalle",
+    "id": "ID",
+    "name": "Nombre",
+    "industry": "Industria",
+    "countries": "Países",
+    "created": "Creado",
+    "updated": "Actualizado",
+    "company": "Empresa",
+    "color": "Color",
+    "brand": "Marca",
+    "country": "País",
+    "email": "Correo",
+    "role": "Rol",
+    "team": "Equipo",
+    "lastLogin": "Último acceso",
+    "type": "Tipo",
+    "status": "Estado",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "saveDenied": "El servidor rechazó el cambio. Revisa los permisos y el registro.",
+    "saveFailed": "No se pudo guardar. Inténtalo de nuevo.",
+    "superadminOnly": "Solo un superadmin puede eliminar empresas.",
+    "user": "Usuario",
+    "vendor": "Interfaz"
+  },
+  "providers": {
+    "loadFailed": "No se pudo cargar la configuración de proveedores",
+    "savedPlaceholder": "Clave guardada; deja vacío para conservarla"
+  },
+  "theme": {
+    "label": "Tema de color",
+    "dark": "Oscuro",
+    "light": "Claro",
+    "corporate": "Corporativo"
+  },
+  "aiAdmin": {
+    "prompts": "Prompts",
+    "consumption": "Consumo de IA",
+    "promptIntro": "Administra las instrucciones de sistema, ejecución y contrato de salida de cada flujo de IA activo.",
+    "consumptionIntro": "Llamadas de IA registradas en la última ventana limitada. Las mediciones faltantes permanecen desconocidas.",
+    "denied": "No tienes permiso para administrar IA. Inicia sesión como superadmin autorizado.",
+    "conflict": "Este prompt cambió en otra sesión. Tu borrador se conserva. Recarga la revisión actual antes de guardar.",
+    "failed": "La administración de IA no está disponible. Reintenta cuando el servicio y el esquema de datos estén listos.",
+    "discard": "¿Descartar los cambios sin guardar y cargar el prompt seleccionado?",
+    "loading": "Cargando administración de IA…",
+    "emptyPrompts": "No hay prompts administrados disponibles.",
+    "promptList": "Definiciones de prompts administrados",
+    "schemaError": "El esquema de salida debe ser JSON válido que contenga un objeto de esquema.",
+    "required": "El nombre y los prompts de personalidad y ejecución son obligatorios.",
+    "saved": "Prompt guardado con una nueva revisión auditada.",
+    "revision": "Revisión",
+    "unsaved": "Cambios sin guardar",
+    "current": "Revisión guardada actual",
+    "name": "Nombre",
+    "personality": "Prompt de personalidad / sistema",
+    "execution": "Prompt de ejecución",
+    "schema": "Esquema JSON de salida",
+    "enabled": "Habilitado para ejecución",
+    "saving": "Guardando…",
+    "save": "Guardar revisión",
+    "reload": "Recargar",
+    "unknown": "Desconocido",
+    "calls": "Llamadas registradas",
+    "inputTokens": "Tokens de entrada",
+    "outputTokens": "Tokens de salida",
+    "cost": "Costo (USD)",
+    "pricingUnavailable": "No hay precios verificados disponibles; los costos desconocidos no equivalen a cero.",
+    "emptyUsage": "No hay llamadas de IA registradas en esta ventana.",
+    "prompt": "ID del prompt",
+    "provider": "Proveedor",
+    "model": "Modelo",
+    "time": "Fecha de registro"
   }
 }

@@ -49,6 +49,7 @@ export function enrichGoalInputsFromRuntimeVendor(goal: any, baseInputs: Record<
   if (vendor.apiKey && !inputs.apiKey) {
     inputs.apiKey = decrypt(vendor.apiKey);
   }
+  inputs.vendor_id = vendorId;
   return Object.keys(inputs).length > 0 ? inputs : baseInputs;
 }
 
@@ -84,9 +85,9 @@ export async function autoLoginToVendor(vendor: any, tabManager: TabManager): Pr
     if (vendor.startGoal) {
       // Use custom start goal from vendor config
       loginGoal = vendor.startGoal;
-      log.info('[Vendor] Using custom start goal:', loginGoal);
+      log.info('[Vendor] Using configured start goal', { vendorId: vendor.id });
     } else if (username && password) {
-      loginGoal = `Login to ${vendor.name} with username "${username}" and password "${password}"`;
+      loginGoal = `Authenticate at the configured vendor using the supplied local username and password inputs`;
     } else if (apiKey) {
       loginGoal = `Login to ${vendor.name} using API key`;
     }
@@ -96,11 +97,11 @@ export async function autoLoginToVendor(vendor: any, tabManager: TabManager): Pr
       return false;
     }
 
-    log.info('[Vendor] Executing login goal:', loginGoal);
+    log.info('[Vendor] Executing configured login goal', { vendorId: vendor.id, goalLength: loginGoal.length });
     const result = await bridge.executeGoal({
       execution_id: `vendor-login-${Date.now()}`,
       goal: loginGoal,
-      inputs: { username, password, apiKey },
+      inputs: { vendor_id: vendor.id, url: vendor.baseUrl, username, password, apiKey },
       constraints: { max_steps: 20, timeout_ms: 60000 },
     });
 
@@ -135,7 +136,7 @@ export async function bootstrapTeamVendors(tabManager: TabManager): Promise<void
   let vendors = Array.isArray(runtimeStatus.vendors) ? [...runtimeStatus.vendors] : [];
 
   try {
-    const response = await fetch(`${runtimeStatus.cloudUrl}/api/crud/vendors/${teamId}`);
+    const response = await fetch(`${runtimeStatus.cloudUrl}/api/crud/vendors/${teamId}`, { headers: { Authorization: `Bearer ${runtimeStatus.authToken || ''}` }, signal: AbortSignal.timeout(10000) });
     if (response.ok) {
       const data = await response.json();
       if (Array.isArray(data)) {

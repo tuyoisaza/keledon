@@ -185,7 +185,8 @@
     "close": "Close",
     "refresh": "Refresh",
     "copy": "Copy",
-    "copied": "Copied!"
+    "copied": "Copied!",
+    "language": "Language"
   },
   "errors": {
     "generic": "An error occurred",
@@ -198,5 +199,95 @@
   "version": {
     "version": "Version",
     "build": "Build"
+  },
+  "diagnostics": {
+    "copy": "Copy complete diagnostics",
+    "clear": "Clear application cache",
+    "copied": "Diagnostics copied",
+    "copyFailed": "Diagnostics could not be copied",
+    "cleared": "KELEDON local state cleared",
+    "clearFailed": "Clearing was incomplete; reset was not confirmed",
+    "expand": "Expand navigation",
+    "collapse": "Collapse navigation"
+  },
+  "launch": {
+    "invalidLink": "The launch link is invalid. Try again.",
+    "requested": "Launch requested. If KELEDON Browser does not open, use Download App or manual pairing.",
+    "failed": "Unable to request launch. Try again."
+  },
+  "records": {
+    "details": "View details",
+    "close": "Close details",
+    "id": "ID",
+    "name": "Name",
+    "industry": "Industry",
+    "countries": "Countries",
+    "created": "Created",
+    "updated": "Updated",
+    "company": "Company",
+    "color": "Color",
+    "brand": "Brand",
+    "country": "Country",
+    "email": "Email",
+    "role": "Role",
+    "team": "Team",
+    "lastLogin": "Last login",
+    "type": "Type",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "saveDenied": "The server rejected this change. Check permissions and record details.",
+    "saveFailed": "Unable to save. Try again.",
+    "superadminOnly": "Only a superadmin can delete companies.",
+    "user": "User",
+    "vendor": "Vendor"
+  },
+  "providers": {
+    "loadFailed": "Unable to load provider configuration",
+    "savedPlaceholder": "Key on file — leave blank to keep it"
+  },
+  "theme": {
+    "label": "Color theme",
+    "dark": "Dark",
+    "light": "Light",
+    "corporate": "Corporate"
+  },
+  "aiAdmin": {
+    "prompts": "Prompts",
+    "consumption": "AI consumption",
+    "promptIntro": "Manage the system, execution instructions and output contract for each active AI workflow.",
+    "consumptionIntro": "Recorded AI calls in the latest bounded window. Missing measurements remain unknown.",
+    "denied": "You do not have permission to administer AI. Sign in as a provisioned superadmin.",
+    "conflict": "This prompt changed elsewhere. Your draft is preserved. Reload the current revision before saving again.",
+    "failed": "AI administration is unavailable. Retry after the service and required data schema are ready.",
+    "discard": "Discard unsaved changes and load the selected prompt?",
+    "loading": "Loading AI administration…",
+    "emptyPrompts": "No managed prompts are available.",
+    "promptList": "Managed prompt definitions",
+    "schemaError": "Output schema must be valid JSON containing a schema object.",
+    "required": "Name, personality prompt and execution prompt are required.",
+    "saved": "Prompt saved with a new audited revision.",
+    "revision": "Revision",
+    "unsaved": "Unsaved changes",
+    "current": "Current saved revision",
+    "name": "Name",
+    "personality": "Personality / system prompt",
+    "execution": "Execution prompt",
+    "schema": "Output JSON schema",
+    "enabled": "Enabled for runtime use",
+    "saving": "Saving…",
+    "save": "Save revision",
+    "reload": "Reload",
+    "unknown": "Unknown",
+    "calls": "Recorded calls",
+    "inputTokens": "Input tokens",
+    "outputTokens": "Output tokens",
+    "cost": "Cost (USD)",
+    "pricingUnavailable": "Verified pricing metadata is unavailable; unknown costs are not zero.",
+    "emptyUsage": "No AI calls have been recorded in this window.",
+    "prompt": "Prompt ID",
+    "provider": "Provider",
+    "model": "Model",
+    "time": "Recorded at"
   }
 }

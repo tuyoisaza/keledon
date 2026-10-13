@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useTranslation } from '@/context/I18nContext';
+import { useState, useEffect, useRef } from 'react';
 import { Settings, Save, Cpu as _Cpu, Brain, Eye, EyeOff, Mic, Volume2, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -29,6 +30,7 @@ const llmOptions = [
 
 export default function ManagementProvidersPage() {
     const { user } = useAuth();
+    const { t } = useTranslation();
     const [teamId, setTeamId] = useState<string>('');
     const [teams, setTeams] = useState<Team[]>([]);
 
@@ -102,8 +104,12 @@ export default function ManagementProvidersPage() {
     const [llmSaving, setLlmSaving] = useState(false);
 
     const [loading, setLoading] = useState(true);
+    const configRequest = useRef(0);
+    const selectedTeam = useRef(teamId);
+    const [storedKeys, setStoredKeys] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
+        selectedTeam.current = teamId;
         if (!teamId) {
             setLoading(false);
             return;
@@ -112,57 +118,45 @@ export default function ManagementProvidersPage() {
     }, [teamId]);
 
     const loadConfigs = async () => {
+        if (selectedTeam.current !== teamId) return;
+        const request = ++configRequest.current;
         setLoading(true);
+        setDeepgramApiKey(''); setSpeachesApiKey(''); setTtsApiKey('');
+        setOpenaiApiKey(''); setGoogleApiKey(''); setStoredKeys({});
         try {
-            const res = await apiFetch(`/api/teams/${teamId}/config`);
-            if (res.ok) {
-                const d = await res.json();
-
-                // STT
-                if (d.sttProvider) setSttProvider(d.sttProvider);
-                if (d.deepgramApiKey) {
-                    setDeepgramApiKey(d.deepgramApiKey);
-                    setDeepgramKeyMasked(true);
-                }
-                if (d.speachesApiUrl) setSpeachesApiUrl(d.speachesApiUrl);
-                if (d.speachesApiKey) {
-                    setSpeachesApiKey(d.speachesApiKey);
-                }
-
-                // TTS
-                if (d.ttsProvider) setTtsProvider(d.ttsProvider);
-                if (d.ttsApiKey) setTtsApiKey(d.ttsApiKey);
-                if (d.ttsVoiceId) setTtsVoiceId(d.ttsVoiceId);
-
-                // LLM
-                if (d.llmProvider) setLlmProvider(d.llmProvider);
-                if (d.openaiApiKey) {
-                    setOpenaiApiKey(d.openaiApiKey);
-                    setOpenaiKeyMasked(true);
-                }
-                if (d.googleAiApiKey) {
-                    setGoogleApiKey(d.googleAiApiKey);
-                    setGoogleKeyMasked(true);
-                }
-            }
-        } catch (e) {
-            console.error('Failed to load configs', e);
+            const res = await apiFetch('/api/teams/' + teamId + '/config');
+            if (!res.ok) throw new Error('Configuration unavailable');
+            const d = await res.json();
+            if (request !== configRequest.current || selectedTeam.current !== teamId) return;
+            setStoredKeys({
+                deepgram: d.deepgramConfig?.hasApiKey === true || d.deepgramApiKeySet === true,
+                speaches: d.speachesApiKeySet === true,
+                tts: d.ttsApiKeySet === true,
+                openai: d.openaiApiKeySet === true,
+                google: d.googleAiApiKeySet === true,
+            });
+            setSttProvider(d.sttProvider || 'vosk');
+            setSpeachesApiUrl(d.speachesApiUrl || '');
+            setTtsProvider(d.ttsProvider || '');
+            setTtsVoiceId(d.ttsVoiceId || '');
+            setLlmProvider(d.llmProvider || 'google');
+            setDeepgramKeyMasked(true); setOpenaiKeyMasked(true); setGoogleKeyMasked(true);
+        } catch {
+            if (request === configRequest.current && selectedTeam.current === teamId) toast.error(t('providers.loadFailed'));
         } finally {
-            setLoading(false);
+            if (request === configRequest.current && selectedTeam.current === teamId) setLoading(false);
         }
     };
-
-    // ── Save handlers ──
 
     const saveSTT = async () => {
         if (!teamId) return toast.error('No team selected');
         setSttSaving(true);
         try {
             const payload: Record<string, string> = { sttProvider };
-            if (deepgramApiKey && !deepgramKeyMasked) payload.deepgramApiKey = deepgramApiKey;
+            if (deepgramApiKey.trim()) payload.deepgramApiKey = deepgramApiKey.trim();
             if (sttProvider === 'speaches') {
                 payload.speachesApiUrl = speachesApiUrl;
-                payload.speachesApiKey = speachesApiKey;
+                if (speachesApiKey.trim()) payload.speachesApiKey = speachesApiKey.trim();
             }
             const res = await apiFetch(`/api/teams/${teamId}/config`, {
                 method: 'PUT',
@@ -170,7 +164,7 @@ export default function ManagementProvidersPage() {
             });
             if (res.ok) {
                 toast.success(`STT provider saved: ${sttProvider}`);
-                if (deepgramApiKey) setDeepgramKeyMasked(true);
+                await loadConfigs();
             } else toast.error('Failed to save STT provider');
         } catch { toast.error('Failed to save STT provider') }
         finally { setSttSaving(false) }
@@ -184,11 +178,11 @@ export default function ManagementProvidersPage() {
                 method: 'PUT',
                 body: JSON.stringify({
                     ttsProvider,
-                    ttsApiKey,
+                    ...(ttsApiKey.trim() ? { ttsApiKey: ttsApiKey.trim() } : {}),
                     ttsVoiceId,
                 }),
             });
-            if (res.ok) toast.success(`TTS provider saved: ${ttsProvider}`);
+            if (res.ok) { toast.success(`TTS provider saved: ${ttsProvider}`); await loadConfigs(); }
             else toast.error('Failed to save TTS provider');
         } catch { toast.error('Failed to save TTS provider') }
         finally { setTtsSaving(false) }
@@ -199,16 +193,15 @@ export default function ManagementProvidersPage() {
         setLlmSaving(true);
         try {
             const payload: Record<string, string> = { llmProvider };
-            if (openaiApiKey && !openaiKeyMasked) payload.openaiApiKey = openaiApiKey;
-            if (googleApiKey && !googleKeyMasked) payload.googleAiApiKey = googleApiKey;
+            if (openaiApiKey.trim()) payload.openaiApiKey = openaiApiKey.trim();
+            if (googleApiKey.trim()) payload.googleAiApiKey = googleApiKey.trim();
             const res = await apiFetch(`/api/teams/${teamId}/config`, {
                 method: 'PUT',
                 body: JSON.stringify(payload),
             });
             if (res.ok) {
                 toast.success(`AI provider saved: ${llmProvider === 'openai' ? 'OpenAI' : 'Gemini'}`);
-                if (openaiApiKey) setOpenaiKeyMasked(true);
-                if (googleApiKey) setGoogleKeyMasked(true);
+                await loadConfigs();
             } else toast.error('Failed to save AI provider');
         } catch { toast.error('Failed to save AI provider') }
         finally { setLlmSaving(false) }
@@ -283,7 +276,7 @@ export default function ManagementProvidersPage() {
                         <Users className="w-3.5 h-3.5 shrink-0" />
                         <select
                             value={teamId}
-                            onChange={(e) => { setTeamId(e.target.value); }}
+                            onChange={(e) => { selectedTeam.current = e.target.value; setTeamId(e.target.value); }}
                             className="bg-background border border-border rounded px-2 py-1 text-xs font-mono text-foreground focus:outline-none focus:border-primary max-w-[200px]"
                             title="Select team to configure"
                         >
@@ -348,9 +341,9 @@ export default function ManagementProvidersPage() {
                             v => { setDeepgramApiKey(v); setDeepgramKeyMasked(false); },
                             () => setDeepgramKeyMasked(!deepgramKeyMasked),
                             'Enter Deepgram API key',
-                            !!deepgramApiKey,
+                            storedKeys.deepgram === true,
                         )}
-                        {deepgramApiKey && deepgramKeyMasked && (
+                        {storedKeys.deepgram && !deepgramApiKey && (
                             <p className="text-[11px] text-green-400/80">✓ Key saved in DB</p>
                         )}
                     </div>
@@ -367,7 +360,7 @@ export default function ManagementProvidersPage() {
                             placeholder="https://speaches-production-c63f.up.railway.app"
                             className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
                         />
-                        <label className="block text-xs font-medium text-muted-foreground">API Key {speachesApiKey ? '(saved)' : '(optional — set via SPEACHES_API_KEY env var on Railway)'}</label>
+                        <label className="block text-xs font-medium text-muted-foreground">API Key {storedKeys.speaches ? '(saved)' : '(optional — set via SPEACHES_API_KEY env var on Railway)'}</label>
                         <input
                             type="text"
                             value={speachesApiKey}
@@ -420,9 +413,9 @@ export default function ManagementProvidersPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
                                 <label className="block text-xs font-medium text-muted-foreground mb-1.5">API Key / Endpoint</label>
-                                <input type="text" value={ttsApiKey}
+                                <input type="password" autoComplete="new-password" value={ttsApiKey}
                                     onChange={e => setTtsApiKey(e.target.value)}
-                                    placeholder="API key or endpoint URL (if required)"
+                                    placeholder={storedKeys.tts ? t('providers.savedPlaceholder') : 'API key or endpoint URL (if required)'}
                                     className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
                                 />
                             </div>
@@ -468,8 +461,8 @@ export default function ManagementProvidersPage() {
                             opt.id,
                             `${opt.icon} ${opt.name}`,
                             llmProvider === opt.id
-                                ? (opt.id === 'openai' ? (openaiApiKey ? '✓ Configured' : 'No key yet') : (googleApiKey ? '✓ Configured' : 'No key yet'))
-                                : (opt.id === 'openai' ? (openaiApiKey ? '✓ Key on file' : 'No key') : (googleApiKey ? '✓ Key on file' : 'No key')),
+                                ? (opt.id === 'openai' ? (storedKeys.openai ? '✓ Configured' : 'No key yet') : (storedKeys.google ? '✓ Configured' : 'No key yet'))
+                                : (opt.id === 'openai' ? (storedKeys.openai ? '✓ Key on file' : 'No key') : (storedKeys.google ? '✓ Key on file' : 'No key')),
                             llmProvider === opt.id,
                             () => setLlmProvider(opt.id),
                         )
@@ -486,9 +479,9 @@ export default function ManagementProvidersPage() {
                             v => { setOpenaiApiKey(v); setOpenaiKeyMasked(false); },
                             () => setOpenaiKeyMasked(!openaiKeyMasked),
                             'sk-… (enter your OpenAI API key)',
-                            !!openaiApiKey,
+                            storedKeys.openai === true,
                         )}
-                        {openaiApiKey && openaiKeyMasked
+                        {storedKeys.openai && !openaiApiKey
                             ? <p className="text-[11px] text-green-400/80">✓ Key saved in DB</p>
                             : <p className="text-[11px] text-muted-foreground/60">No OpenAI key stored</p>
                         }
@@ -504,9 +497,9 @@ export default function ManagementProvidersPage() {
                             v => { setGoogleApiKey(v); setGoogleKeyMasked(false); },
                             () => setGoogleKeyMasked(!googleKeyMasked),
                             'AIza… (enter your Gemini API key)',
-                            !!googleApiKey,
+                            storedKeys.google === true,
                         )}
-                        {googleApiKey && googleKeyMasked
+                        {storedKeys.google && !googleApiKey
                             ? <p className="text-[11px] text-green-400/80">✓ Key saved in DB</p>
                             : <p className="text-[11px] text-muted-foreground/60">No Gemini key stored</p>
                         }

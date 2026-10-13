@@ -1,5 +1,7 @@
+import { ResourceScopeGuard } from '../guards/resource-scope.guard';
 import {
   Controller,
+  UseGuards,
   Get,
   Post,
   Put,
@@ -13,6 +15,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('Vector Store')
 @Controller('api/vector-store')
+@UseGuards(ResourceScopeGuard)
 export class VectorStoreController {
   constructor(private readonly vectorStoreService: VectorStoreService) {}
 

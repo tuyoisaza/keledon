@@ -1,81 +1,15 @@
-# KELEDON Release Governance
+# Current scoped release process
+Updated 2026-10-12 for the owner-confirmed KELEDON Auto portfolio.
 
-**Owner:** Engineering
-**Effective:** 2026-04-19
-**Appended to:** KELEDON_V3 Canon
+## Current source and version
+services/web and services/api are the current source-configured services; browser is Electron. cloud/landing remain retained compatibility trees. Source configuration is not proof of production deployment.
+Keep the five package manifests and each matching package-lock root/packages-empty-key version coherent for one integrated repair release; never downgrade to historical 0.2.x.
 
----
+## Delivery
+Finish confirmed implementation, central diff/security review and applicable local acceptance/check gates. Use a scoped branch, version-prefixed commit, PR, required reviews and authorized merge, then independently read back remote main SHA/version/content. Never call an open PR completed target delivery.
+Preserve actual protections/checks and existing service-specific watch paths. Report merged separately from deployed. No provider CLI/API/dashboard deployment, new previews, settings writes or secret reads.
 
-## Release Cadence
-
-| Type | Trigger | Version bump |
-|------|---------|-------------|
-| Patch | Bug fix, hotfix | `0.0.X` |
-| Minor | New feature, integration | `0.X.0` |
-| Major | Breaking architecture change | `X.0.0` |
-
-All three packages (`browser/`, `cloud/`, `landing/`) must be bumped together and must always be in sync.
-
----
-
-## Release Checklist
-
-### Pre-release
-1. All planned tasks in `.sisyphus/boulder.json` for the milestone are `done`
-2. Version bumped in `browser/package.json`, `cloud/package.json`, `landing/package.json`
-3. `landing/src/pages/LaunchKeledonPage.tsx` download URL updated to new version
-4. E2E runbook scenarios pass (see `.sisyphus/docs/e2e-testing-runbook.md`)
-5. No `VIOLATION` from regression guards
-6. PR merged to `main`
-
-### Release
-1. Tag `main` with `git tag vX.Y.Z && git push origin vX.Y.Z`
-2. GitHub Actions `release.yml` triggers automatically:
-   - Builds NSIS installer on `windows-latest`
-   - Checks signing (gates if `REQUIRE_SIGNING=true`)
-   - Publishes `KELEDON.Browser.Setup.X.Y.Z.exe` to GitHub Release
-   - Triggers Railway cloud deploy
-   - Updates landing page download URL via PR
-
-### Post-release
-1. Verify landing page at `https://keledon.tuyoisaza.com` shows new version
-2. Smoke-test install on a clean Windows machine
-3. Update `boulder.json` `session_state.last_completed`
-
----
-
-## Branch Lifecycle
-
-Governed by `.sisyphus/docs/branch-governance.md`.
-Remote stale branch cleanup: run `.sisyphus/scripts/prune-remote-branches.sh` monthly.
-
----
-
-## Secrets Required
-
-| Secret | Purpose | Where to set |
-|--------|---------|-------------|
-| `GITHUB_TOKEN` | Auto-provided by Actions | GitHub Actions |
-| `RAILWAY_DEPLOY_HOOK` | Triggers Railway cloud deploy | GitHub Repo Secrets |
-| `AZURE_TENANT_ID` | Code signing (future) | GitHub Repo Secrets |
-| `AZURE_CLIENT_ID` | Code signing (future) | GitHub Repo Secrets |
-| `AZURE_CLIENT_SECRET` | Code signing (future) | GitHub Repo Secrets |
-| `AZURE_ENDPOINT_URL` | Code signing (future) | GitHub Repo Secrets |
-| `AZURE_CODE_SIGNING_NAME` | Code signing (future) | GitHub Repo Secrets |
-| `AZURE_CERT_PROFILE_NAME` | Code signing (future) | GitHub Repo Secrets |
-
-### Repository Variables
-
-| Variable | Value | Effect |
-|----------|-------|--------|
-| `REQUIRE_SIGNING` | `true` / `false` | Gates unsigned builds in CI |
-
----
-
-## Cross-references
-
-- Architecture spec: `docs/specs/v3_KELEDON_CANON.md`
-- Branch policy: `.sisyphus/docs/branch-governance.md`
-- Signing policy: `.sisyphus/docs/windows-signing-policy.md`
-- E2E runbook: `.sisyphus/docs/e2e-testing-runbook.md`
-- Task queue: `.sisyphus/boulder.json`
+## Automation and installer limitations
+The version-bump.yml and release.yml workflows were deliberately deleted on main (5253714/58e1bb5). Do not create/enable/dispatch/retry hosted CI, recurring branch pruning or background maintenance. This document creates none.
+No tag/installer build, signing, asset upload or release publication is authorized merely by product code delivery. Existing downloaded assets may be old; installer/production behavior remains UNVERIFIED without actual evidence. Preserve manual download/pairing recovery UX.
+Historical release logs/specs remain provenance only; current evidence is DELIVERY_REPORT.md and the lifecycle history.

@@ -245,7 +245,7 @@ export default function BrainPage() {
     addLog(
       `[v${__APP_VERSION__ || "?"}] Brain cloud endpoints: api=${cloudApiBaseRef.current || "(same-origin)"} ws=${cloudWsBaseRef.current}`,
     );
-    return { apiBase: cloudApiBaseRef.current, wsBase: cloudWsBaseRef.current };
+    return { apiBase: cloudApiBaseRef.current || "", wsBase: cloudWsBaseRef.current || "" };
   }
 
   /**
@@ -792,10 +792,7 @@ export default function BrainPage() {
       const ctx = webAudioContextRef.current || new AudioContextCtor();
       webAudioContextRef.current = ctx;
       if (ctx.state === "suspended") await ctx.resume();
-      const arrayBuf = bytes.buffer.slice(
-        bytes.byteOffset,
-        bytes.byteOffset + bytes.byteLength,
-      );
+      const arrayBuf = new Uint8Array(bytes).buffer;
       return new Promise<boolean>((resolve) => {
         ctx.decodeAudioData(
           arrayBuf,
@@ -3703,7 +3700,7 @@ export default function BrainPage() {
                         <button
                           type="button"
                           onClick={toggleConversationMode}
-                          className="inline-flex items-center gap-2 rounded-xl bg-red-500 px-6 py-2.5 text-sm font-bold text-white hover:bg-red-600 transition-colors shadow-lg"
+                          className="inline-flex items-center gap-2 rounded-xl bg-red-500 px-6 py-2.5 text-sm font-bold text-foreground hover:bg-red-600 transition-colors shadow-lg"
                         >
                           <PhoneOff className="h-4 w-4" />
                           End Call

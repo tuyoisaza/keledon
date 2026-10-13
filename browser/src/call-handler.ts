@@ -92,7 +92,7 @@ export function appendTranscript(text: string, isFinal: boolean = false): void {
   }
 
   currentCall.transcript.push(text);
-  log.info(`[CallHandler] Transcript appended: "${text.substring(0, 50)}..."`);
+  log.info('[CallHandler] Transcript appended');
   setState('transcribing');
 
   // Notify renderer
@@ -115,7 +115,7 @@ export function processDecision(decision: Record<string, unknown>): void {
   currentCall.lastDecision = decision;
   setState('thinking');
 
-  log.info(`[CallHandler] Decision received: ${JSON.stringify(decision).substring(0, 100)}`);
+  log.info('[CallHandler] Decision received');
 }
 
 export async function executeRpaFlowFromCommand(flow: RpaFlow): Promise<RpaFlowResult> {
@@ -130,8 +130,19 @@ export async function executeRpaFlowFromCommand(flow: RpaFlow): Promise<RpaFlowR
     };
   }
 
+  const allowedOrigins = (runtimeStatus.vendors || []).flatMap(vendor => {
+    try { return [new URL(vendor.baseUrl || vendor.url).origin]; } catch { return []; }
+  });
+  if (!allowedOrigins.length) {
+    const missing: RpaFlowResult = { flow_id: flow.flow_id, status: 'failed', steps: [], total_duration_ms: 0, error: 'Configured vendor surfaces required for call actions' };
+    currentCall.rpaResult = missing;
+    return missing;
+  }
   setState('executing');
-  const result = await executeRpaFlow(flow);
+  const activeCall = currentCall;
+  const authToken = runtimeStatus.authToken;
+  const result = await executeRpaFlow({ ...flow, allowed_origins: allowedOrigins, is_cancelled: () => currentCall !== activeCall || runtimeStatus.authToken !== authToken });
+  if (currentCall !== activeCall) return result;
   currentCall.rpaResult = result;
   setState('reporting');
 
@@ -156,7 +167,7 @@ export function closeCall(reason?: string): void {
     reason,
   };
 
-  log.info(`[CallHandler] Call closed: ${JSON.stringify(summary)}`);
+  log.info('[CallHandler] Call closed', { duration_ms: summary.duration_ms, transcriptLength: summary.transcriptLength, rpaStatus: summary.rpaResult?.status });
 
   currentCall = null;
   setState('standby');

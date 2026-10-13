@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 import es from '../locales/es.json';
 import en from '../locales/en.json';
 import pt from '../locales/pt.json';
@@ -27,8 +27,13 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | null>(null);
 
-function getNestedValue(obj: Record<string, any>, path: string): string | undefined {
-  return path.split('.').reduce((acc, part) => acc?.[part], obj);
+function getNestedValue(obj: unknown, key: string): string | undefined {
+  let value: unknown = obj;
+  for (const part of key.split('.')) {
+    if (!value || typeof value !== 'object') return undefined;
+    value = (value as Record<string, unknown>)[part];
+  }
+  return typeof value === 'string' ? value : undefined;
 }
 
 function detectLocale(): Locale {

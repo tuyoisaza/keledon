@@ -1,3 +1,6 @@
+import AdminPromptsPage from '@/pages/AdminPromptsPage';
+import AdminAiConsumptionPage from '@/pages/AdminAiConsumptionPage';
+import { RouteMetadata } from '@/components/common/RouteMetadata';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth, type UserRole } from '@/context/AuthContext';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -59,7 +62,7 @@ function ProtectedRoute({ children, minRole }: ProtectedRouteProps) {
     }
 
     if (!hasRole(minRole)) {
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to={hasRole('user') ? '/dashboard' : '/'} replace />;
     }
 
     return <>{children}</>;
@@ -68,6 +71,7 @@ function ProtectedRoute({ children, minRole }: ProtectedRouteProps) {
 export function AppRouter() {
     return (
         <BrowserRouter>
+            <RouteMetadata />
             <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<LandingPage />} />
@@ -450,6 +454,9 @@ export function AppRouter() {
                         </ProtectedRoute>
                     }
                 />
+
+                <Route path="/admin/prompts" element={<ProtectedRoute minRole="superadmin"><AppLayout><AdminPromptsPage /></AppLayout></ProtectedRoute>} />
+                <Route path="/admin/ai-consumption" element={<ProtectedRoute minRole="superadmin"><AppLayout><AdminAiConsumptionPage /></AppLayout></ProtectedRoute>} />
 
                 {/* Catch all */}
                 <Route path="*" element={<Navigate to="/" replace />} />

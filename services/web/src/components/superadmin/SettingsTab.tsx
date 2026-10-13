@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { AlertTriangle, Globe, Database, Loader2, Trash2, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface ProviderConfig {
+export interface ProviderConfig {
   id: string;
   type: string;
   name: string;
@@ -11,13 +11,13 @@ interface ProviderConfig {
   metadata?: Record<string, any>;
 }
 
-interface VoiceProfile {
+export interface VoiceProfile {
   id: string;
   name: string;
   provider_id: string;
 }
 
-interface TenantConfig {
+export interface TenantConfig {
   company_id: string;
   provider_id: string;
   provider_type: string;
@@ -183,7 +183,7 @@ export function SettingsTab({
               <button
                 onClick={handleSaveProviderCatalog}
                 disabled={saving || isLoading}
-                className="px-4 py-2 bg-blue-600 text-white rounded flex items-center gap-2 disabled:opacity-50"
+                className="px-4 py-2 bg-blue-600 text-foreground rounded flex items-center gap-2 disabled:opacity-50"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Globe className="h-4 w-4" />}
                 Save
@@ -200,7 +200,7 @@ export function SettingsTab({
                     <div className="flex justify-between items-center">
                       <div>
                         <strong>{provider.name}</strong>
-                        <span className="text-xs text-gray-500 ml-2">({provider.status})</span>
+                        <span className="text-xs text-muted-foreground ml-2">({provider.status})</span>
                       </div>
                       <input
                         type="checkbox"
@@ -239,7 +239,7 @@ export function SettingsTab({
                     <div className="flex justify-between items-center">
                       <div>
                         <strong>{provider.name}</strong>
-                        <span className="text-xs text-gray-500 ml-2">({provider.status})</span>
+                        <span className="text-xs text-muted-foreground ml-2">({provider.status})</span>
                       </div>
                       <input
                         type="checkbox"
@@ -278,7 +278,7 @@ export function SettingsTab({
                     <div className="flex justify-between items-center">
                       <div>
                         <strong>{provider.name}</strong>
-                        <span className="text-xs text-gray-500 ml-2">({provider.status})</span>
+                        <span className="text-xs text-muted-foreground ml-2">({provider.status})</span>
                       </div>
                       <input
                         type="checkbox"
@@ -359,14 +359,14 @@ export function SettingsTab({
                 })}
               </div>
             ) : (
-              <p className="text-gray-500">No tenant configuration found</p>
+              <p className="text-muted-foreground">No tenant configuration found</p>
             )}
           </div>
 
           <button
             onClick={handleSaveTenantConfig}
             disabled={saving || !companyId}
-            className="px-4 py-2 bg-blue-600 text-white rounded flex items-center gap-2 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-600 text-foreground rounded flex items-center gap-2 disabled:opacity-50"
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Database className="h-4 w-4" />}
             Save Tenant Config
@@ -403,7 +403,7 @@ export function SettingsTab({
             </div>
             <button
               onClick={handleAddProfile}
-              className="px-4 py-2 bg-green-600 text-white rounded flex items-center gap-2"
+              className="px-4 py-2 bg-green-600 text-foreground rounded flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
               Add Profile
@@ -416,7 +416,7 @@ export function SettingsTab({
                 <div key={profile.id} className="border rounded p-4 flex justify-between items-center">
                   <div>
                     <strong>{profile.name}</strong>
-                    <span className="text-sm text-gray-500 ml-2">({profile.provider_id})</span>
+                    <span className="text-sm text-muted-foreground ml-2">({profile.provider_id})</span>
                   </div>
                   <button
                     onClick={() => handleDeleteProfile(profile.id)}
@@ -428,7 +428,7 @@ export function SettingsTab({
               ))}
             </div>
           ) : (
-            <div className="text-gray-500">No voice profiles configured</div>
+            <div className="text-muted-foreground">No voice profiles configured</div>
           )}
         </div>
       )}

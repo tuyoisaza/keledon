@@ -1,3 +1,5 @@
+import { ThemeControls } from '@/components/common/ThemeControls';
+import { VersionActions } from '@/components/common/VersionActions';
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Bot, Mail, Lock, Loader2 } from 'lucide-react';
@@ -10,13 +12,8 @@ export default function LoginPage() {
   const [searchParams] = useSearchParams();
   const { signInWithEmail, loginWithGoogle, email, setEmail, password, setPassword, error, isLoading } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
-  const [currentTime, setCurrentTime] = useState('');
 
-  useEffect(() => {
-    setCurrentTime(new Date().toISOString());
-  }, []);
-
-  useEffect(() => {
+useEffect(() => {
     const token = searchParams.get('token');
     const userEmail = searchParams.get('email');
     const userName = searchParams.get('name');
@@ -50,14 +47,18 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2">
+      <div className="fixed left-4 top-4 z-50 flex flex-col items-start gap-1">
+<Link to="/" className="inline-flex items-center gap-2">
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <Bot className="w-6 h-6 text-primary-foreground" />
             </div>
             <span className="font-bold text-2xl tracking-tight text-foreground">Keledon</span>
           </Link>
+          <VersionActions />
+                <ThemeControls />
+      </div>
+      <div className="w-full max-w-md pt-24 pb-8">
+        <div className="text-center mb-8">
           <h1 className="mt-6 text-2xl font-bold text-foreground">
             {isSignUp ? 'Create an account' : 'Welcome back'}
           </h1>
@@ -116,7 +117,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground aria-disabled:opacity-100 py-2.5 rounded-lg font-medium transition-colors"
             >
               {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
               {isSignUp ? 'Create Account' : 'Sign In'}
@@ -158,39 +159,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="mt-8 flex items-center justify-center gap-3 text-xs text-muted-foreground">
-          <span>v{__APP_VERSION__} | {currentTime}</span>
-          <button
-            type="button"
-            onClick={() => {
-              const logs = [
-                `App Version: v${__APP_VERSION__}`,
-                `Time: ${currentTime}`,
-                `URL: ${window.location.href}`,
-                `User Agent: ${navigator.userAgent}`,
-              ];
-              navigator.clipboard.writeText(logs.join('\n'));
-            }}
-            className="hover:text-foreground transition-colors underline underline-offset-2"
-            title="Copy diagnostic info"
-          >
-            Copy Logs
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              if (window.confirm('Reset all local state? This will clear saved data and reload.')) {
-                localStorage.clear();
-                sessionStorage.clear();
-                window.location.reload();
-              }
-            }}
-            className="hover:text-destructive transition-colors underline underline-offset-2"
-            title="Clear all local storage and reload"
-          >
-            Reset
-          </button>
-        </div>
+
       </div>
     </div>
   );

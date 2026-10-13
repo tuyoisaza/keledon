@@ -1,3 +1,6 @@
+import ManagementModal from '@/components/common/ManagementModal';
+import RecordDetails from '@/components/common/RecordDetails';
+import { useTranslation } from '@/context/I18nContext';
 import { useState, useEffect } from 'react';
 import { Users, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -15,6 +18,7 @@ const availableCountries = [
 ];
 
 export default function ManagementTeamsPage() {
+    const { t } = useTranslation();
     const [teams, setTeams] = useState<Team[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [brands, setBrands] = useState<Brand[]>([]);
@@ -145,8 +149,8 @@ export default function ManagementTeamsPage() {
     };
 
     const selectedCompany = companies.find(c => c.id === formData.companyId);
-    const companyCountries = selectedCompany?.countries?.length > 0 
-        ? selectedCompany.countries 
+    const companyCountries = (selectedCompany?.countries?.length ?? 0) > 0
+        ? selectedCompany!.countries!
         : availableCountries;
 
     return (
@@ -217,6 +221,15 @@ export default function ManagementTeamsPage() {
                                     <td className="px-4 py-3 text-muted-foreground">{getCountryName(team.country)}</td>
                                     <td className="px-4 py-3">
                                         <div className="flex gap-2">
+                                            <RecordDetails name={team.name || team.id} fields={[
+                                                { label: t('records.id'), value: team.id },
+                                                { label: t('records.name'), value: team.name },
+                                                { label: t('records.company'), value: getCompanyName(team) },
+                                                { label: t('records.brand'), value: getBrandName(team.brandId) },
+                                                { label: t('records.country'), value: getCountryName(team.country) },
+                                                { label: t('records.created'), value: team.createdAt },
+                                                { label: t('records.updated'), value: team.updatedAt }
+                                            ]} />
                                             <button onClick={() => openEditForm(team)} className="p-1.5 hover:bg-muted rounded transition-colors" title="Edit">
                                                 <Pencil className="w-4 h-4" />
                                             </button>
@@ -233,20 +246,20 @@ export default function ManagementTeamsPage() {
             </div>
 
             {showForm && (
-                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+                <ManagementModal title={t('records.team')} onClose={() => setShowForm(false)}>
                     <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold">
                                 {editingTeam ? 'Edit' : 'Add'} Team
                             </h3>
-                            <button onClick={() => setShowForm(false)} className="p-1 hover:bg-muted rounded">
+                            <button type="button" aria-label={t('records.close')} onClick={() => setShowForm(false)} className="p-1 hover:bg-muted rounded">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm text-muted-foreground mb-1">Company</label>
-                                <select
+                                <label htmlFor="management-teams-field-1" className="block text-sm text-muted-foreground mb-1">Company</label>
+                                <select id="management-teams-field-1"
                                     value={formData.companyId}
                                     onChange={(e) => setFormData({ ...formData, companyId: e.target.value, brandId: '', country: '' })}
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
@@ -258,8 +271,8 @@ export default function ManagementTeamsPage() {
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm text-muted-foreground mb-1">Brand</label>
-                                <select
+                                <label htmlFor="management-teams-field-2" className="block text-sm text-muted-foreground mb-1">Brand</label>
+                                <select id="management-teams-field-2"
                                     value={formData.brandId}
                                     onChange={(e) => setFormData({ ...formData, brandId: e.target.value, country: '' })}
                                     required
@@ -273,8 +286,8 @@ export default function ManagementTeamsPage() {
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm text-muted-foreground mb-1">Country</label>
-                                <select
+                                <label htmlFor="management-teams-field-3" className="block text-sm text-muted-foreground mb-1">Country</label>
+                                <select id="management-teams-field-3"
                                     value={formData.country}
                                     onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                                     required
@@ -289,8 +302,8 @@ export default function ManagementTeamsPage() {
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm text-muted-foreground mb-1">Team Name</label>
-                                <input
+                                <label htmlFor="management-teams-field-4" className="block text-sm text-muted-foreground mb-1">Team Name</label>
+                                <input id="management-teams-field-4"
                                     type="text"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -317,7 +330,7 @@ export default function ManagementTeamsPage() {
                             </div>
                         </form>
                     </div>
-                </div>
+                </ManagementModal>
             )}
         </div>
     );

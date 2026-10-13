@@ -1,7 +1,7 @@
 {
   "name": "landing",
   "private": true,
-  "version": "5.0.40",
+  "version": "5.0.54",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,7 +16,7 @@
     "status:qdrant": "node scripts/setup-qdrant.js status",
     "health:qdrant": "node scripts/setup-qdrant.js health",
     "package:vector-store": "echo 'Vector Store frontend built successfully'",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
     "dev:full": "concurrently \"npm run start:qdrant\" \"npm run dev\""
   },
   "dependencies": {

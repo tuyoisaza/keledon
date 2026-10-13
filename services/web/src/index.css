@@ -75,7 +75,35 @@
   }
 
   .glass {
-    background: hsla(220 20% 10% / 0.8);
+    background: color-mix(in srgb, var(--color-card) 80%, transparent);
     backdrop-filter: blur(12px);
   }
+}
+/* Shared semantic palettes; every shell uses the same theme contract. */
+:root[data-keledon-theme="light"] {
+  --color-background: #f8fafc; --color-foreground: #0f172a;
+  --color-card: #fff; --color-card-foreground: #0f172a;
+  --color-popover: #fff; --color-popover-foreground: #0f172a;
+  --color-border: #cbd5e1; --color-input: #cbd5e1;
+  --color-muted: #e2e8f0; --color-muted-foreground: #475569;
+  --color-primary: #0f766e; --color-primary-foreground: #fff; --color-ring: #0f766e;
+  --color-secondary: #e2e8f0; --color-secondary-foreground: #0f172a;
+  --color-accent: #0f766e; --color-accent-foreground: #fff;
+  --color-sidebar: #fff; --color-sidebar-foreground: #334155; --color-sidebar-active: #0f766e;
+  --color-success: #15803d;
+}
+:root[data-keledon-theme="corporate"] {
+  --color-background: #f3f6fc; --color-foreground: #102a43;
+  --color-card: #fff; --color-card-foreground: #102a43;
+  --color-popover: #fff; --color-popover-foreground: #102a43;
+  --color-border: #bcccdc; --color-input: #bcccdc;
+  --color-muted: #d9e2ec; --color-muted-foreground: #486581;
+  --color-primary: #194185; --color-primary-foreground: #fff; --color-ring: #194185;
+  --color-secondary: #d9e2ec; --color-secondary-foreground: #102a43;
+  --color-accent: #194185; --color-accent-foreground: #fff;
+  --color-sidebar: #fff; --color-sidebar-foreground: #334e68; --color-sidebar-active: #194185;
+  --color-success: #15803d;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }

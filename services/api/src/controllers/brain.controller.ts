@@ -4,10 +4,14 @@ import {
   HttpException,
   HttpStatus,
   Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { LLMService } from '../llm/llm.service';
 import { VectorStoreService } from '../vector-store/vector-store.service';
 import type { LLMResponse } from '../llm/llm.types';
+import { Public } from '../guards/public.decorator';
+import { RuntimeActorGuard } from '../gateways/runtime-identity';
 import { ApiTags } from '@nestjs/swagger';
 
 interface BrainChatMessage {
@@ -25,6 +29,7 @@ interface BrainChatRequest {
   teamId?: string;
   teamName?: string;
   language?: string;
+  voiceMode?: boolean;
 }
 
 @ApiTags('Brain')
@@ -36,8 +41,16 @@ export class BrainController {
   ) {}
 
   @Post('chat')
-  async chat(@Body() body: BrainChatRequest) {
-    const message = body?.message?.trim();
+  @Public()
+  @UseGuards(RuntimeActorGuard)
+  async chat(@Body() body: BrainChatRequest, @Req() request: any) {
+    body = { ...body, ...request.runtimeIdentity };
+    if ((body?.voiceMode !== undefined && typeof body.voiceMode !== 'boolean') || !body || typeof body.message !== 'string' || body.message.length > 8000 ||
+        (body.language !== undefined && (typeof body.language !== 'string' || body.language.length > 20)) ||
+        (body.history !== undefined && (!Array.isArray(body.history) || body.history.length > 12 || body.history.some(item => !item || !['user', 'assistant'].includes(item.role) || typeof item.content !== 'string' || item.content.length > 8000)))) {
+      throw new HttpException('Invalid Brain request', HttpStatus.BAD_REQUEST);
+    }
+    const message = body.message.trim();
     if (!message) {
       throw new HttpException('Message is required', HttpStatus.BAD_REQUEST);
     }
@@ -115,10 +128,12 @@ export class BrainController {
     try {
       const response: LLMResponse = await this.llmService.generate({
         prompt,
+        feature: body.voiceMode ? 'voice-reply' : 'brain-chat',
         context,
         maxTokens: 500,
         temperature: 0.35,
-        teamId: body.teamId || undefined,
+        teamId: request.runtimeIdentity.teamId,
+        actorId: request.runtimeIdentity.userId,
       });
 
       return {
@@ -132,7 +147,7 @@ export class BrainController {
           companyName,
           brandId: body.brandId,
           brandName,
-          teamId: body.teamId,
+          teamId: request.runtimeIdentity.teamId,
           teamName,
         },
       };

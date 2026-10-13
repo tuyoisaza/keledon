@@ -1,3 +1,7 @@
+import ManagementModal from '@/components/common/ManagementModal';
+import { useAuth } from '@/context/AuthContext';
+import RecordDetails from '@/components/common/RecordDetails';
+import { useTranslation } from '@/context/I18nContext';
 import { useState, useEffect } from 'react';
 import { Building2, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -19,6 +23,9 @@ const availableCountries = [
 ];
 
 export default function ManagementCompaniesPage() {
+    const { t } = useTranslation();
+    const { user } = useAuth();
+    const isSuperAdmin = user?.role === 'superadmin';
     const [companies, setCompanies] = useState<Company[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
@@ -55,6 +62,7 @@ export default function ManagementCompaniesPage() {
     };
 
     const openCreateForm = () => {
+        if (!isSuperAdmin) return;
         resetForm();
         setEditingCompany(null);
         setShowForm(true);
@@ -93,6 +101,7 @@ export default function ManagementCompaniesPage() {
     };
 
     const handleDelete = async (id: string) => {
+        if (!isSuperAdmin) return;
         if (!confirm('Are you sure you want to delete this company?')) return;
         try {
             await deleteCompany(id);
@@ -119,6 +128,7 @@ export default function ManagementCompaniesPage() {
                     </div>
                 </div>
                 <button
+                    disabled={!isSuperAdmin}
                     onClick={openCreateForm}
                     className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                 >
@@ -152,7 +162,7 @@ export default function ManagementCompaniesPage() {
                     <div className="text-center py-12 text-muted-foreground">
                         <Building2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
                         <p>No companies found</p>
-                        <button onClick={openCreateForm} className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
+                        <button disabled={!isSuperAdmin} onClick={openCreateForm} className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
                             Add First Company
                         </button>
                     </div>
@@ -191,10 +201,18 @@ export default function ManagementCompaniesPage() {
                                     </td>
                                     <td className="px-4 py-3">
                                         <div className="flex gap-2">
+                                            <RecordDetails name={company.name || company.id} fields={[
+                                                { label: t('records.id'), value: company.id },
+                                                { label: t('records.name'), value: company.name },
+                                                { label: t('records.industry'), value: company.industry },
+                                                { label: t('records.countries'), value: company.countries?.map(c => c.countryCode).join(', ') },
+                                                { label: t('records.created'), value: company.createdAt },
+                                                { label: t('records.updated'), value: company.updatedAt }
+                                            ]} />
                                             <button onClick={() => openEditForm(company)} className="p-1.5 hover:bg-muted rounded transition-colors" title="Edit">
                                                 <Pencil className="w-4 h-4" />
                                             </button>
-                                            <button onClick={() => handleDelete(company.id)} className="p-1.5 hover:bg-destructive/10 text-destructive rounded transition-colors" title="Delete">
+                                            <button disabled={!isSuperAdmin} aria-label={isSuperAdmin ? undefined : t('records.superadminOnly')} onClick={() => handleDelete(company.id)} className="p-1.5 hover:bg-destructive/10 text-destructive rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed" title="Delete">
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
                                         </div>
@@ -207,20 +225,20 @@ export default function ManagementCompaniesPage() {
             </div>
 
             {showForm && (
-                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+                <ManagementModal title={t('records.company')} onClose={() => setShowForm(false)}>
                     <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold">
                                 {editingCompany ? 'Edit' : 'Add'} Company
                             </h3>
-                            <button onClick={() => setShowForm(false)} className="p-1 hover:bg-muted rounded">
+                            <button type="button" aria-label={t('records.close')} onClick={() => setShowForm(false)} className="p-1 hover:bg-muted rounded">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm text-muted-foreground mb-1">Company Name</label>
-                                <input
+                                <label htmlFor="management-companies-field-1" className="block text-sm text-muted-foreground mb-1">Company Name</label>
+                                <input id="management-companies-field-1"
                                     type="text"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -229,8 +247,8 @@ export default function ManagementCompaniesPage() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm text-muted-foreground mb-1">Industry</label>
-                                <input
+                                <label htmlFor="management-companies-field-2" className="block text-sm text-muted-foreground mb-1">Industry</label>
+                                <input id="management-companies-field-2"
                                     type="text"
                                     value={formData.industry}
                                     onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
@@ -238,7 +256,7 @@ export default function ManagementCompaniesPage() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm text-muted-foreground mb-1">Operating Countries</label>
+                                <label htmlFor="management-companies-field-3" className="block text-sm text-muted-foreground mb-1">Operating Countries</label>
                                 <div className="mb-2 min-h-[60px] p-3 bg-muted rounded-lg border border-border">
                                     {selectedCountries.length > 0 ? (
                                         <div className="space-y-2">
@@ -262,7 +280,7 @@ export default function ManagementCompaniesPage() {
                                         <p className="text-sm text-muted-foreground italic text-center py-4">No countries added</p>
                                     )}
                                 </div>
-                                <select
+                                <select id="management-companies-field-3"
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                                     onChange={(e) => {
                                         const val = e.target.value;
@@ -291,7 +309,7 @@ export default function ManagementCompaniesPage() {
                             </div>
                         </form>
                     </div>
-                </div>
+                </ManagementModal>
             )}
         </div>
     );

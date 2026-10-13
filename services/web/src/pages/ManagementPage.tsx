@@ -1,3 +1,4 @@
+import { LAUNCHER_URL } from '@/lib/config';
 import { useEffect, useMemo, useState } from 'react';
 import type { ElementType } from 'react';
 import { Activity, AlertTriangle, Cpu, Database, Server, Settings2, Wifi } from 'lucide-react';

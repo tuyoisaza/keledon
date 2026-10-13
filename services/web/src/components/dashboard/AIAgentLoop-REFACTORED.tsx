@@ -1,8 +1,7 @@
-import React from 'react';
-import { 
-  Activity, 
-  Brain, 
-  ArrowRight, 
+import {
+  Activity,
+  Brain,
+  ArrowRight,
   CheckCircle,
   XCircle,
   Clock,
@@ -13,7 +12,7 @@ import { useAILoops } from '../../hooks/useAILoops';
 interface AgentStep {
   id: string;
   name: string;
-  type: string;
+  type?: string;
   status: string;
   duration?: number;
   data?: any;
@@ -25,18 +24,18 @@ interface AgentLoop {
   name: string;
   status: string;
   steps: AgentStep[];
-  currentStepIndex: number;
-  totalSteps: number;
-  progress: number;
-  performance: any;
+  currentStepIndex?: number;
+  totalSteps?: number;
+  progress?: number;
+  performance?: any;
   error?: string;
   confidence?: number;
 }
 
 export default function AIAgentLoop() {
-  const { 
-    loops, 
-    selectedLoop, 
+  const {
+    loops,
+    selectedLoop,
     loading,
     createLoop,
     startLoop,
@@ -46,11 +45,11 @@ export default function AIAgentLoop() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'idle': return 'text-gray-500 bg-gray-500/10 border-gray-500/20';
+      case 'idle': return 'text-muted-foreground bg-gray-500/10 border-gray-500/20';
       case 'running': return 'text-blue-500 bg-blue-500/10 border-blue-500/20 animate-pulse';
       case 'completed': return 'text-green-500 bg-green-500/10 border-green-500/20';
       case 'failed': return 'text-red-500 bg-red-500/10 border-red-500/20';
-      default: return 'text-gray-500 bg-gray-500/10 border-gray-500/20';
+      default: return 'text-muted-foreground bg-gray-500/10 border-gray-500/20';
     }
   };
 
@@ -83,7 +82,7 @@ export default function AIAgentLoop() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={createLoop}
+            onClick={() => createLoop()}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90"
           >
             Create New Loop
@@ -116,12 +115,12 @@ export default function AIAgentLoop() {
             <div className="mb-4">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-muted-foreground">
-                  Step {loop.currentStepIndex + 1} of {loop.totalSteps}
+                  Step {(loop.currentStepIndex ?? 0) + 1} of {loop.totalSteps}
                 </span>
                 <div className="text-sm font-medium">{Math.round(loop.progress || 0)}%</div>
               </div>
               <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="h-full bg-blue-500 transition-all duration-300"
                   style={{ width: `${loop.progress || 0}%` }}
                 />
@@ -134,8 +133,8 @@ export default function AIAgentLoop() {
                 <div key={step.id} className="flex items-center gap-3">
                   <div className={cn(
                     "w-12 h-12 rounded-lg border-2 flex items-center justify-center",
-                    index < loop.currentStepIndex ? "border-gray-300 bg-gray-50" : 
-                    index === loop.currentStepIndex ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-gray-50",
+                    index < (loop.currentStepIndex ?? 0) ? "border-gray-300 bg-gray-50" :
+                    index === (loop.currentStepIndex ?? 0) ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-gray-50",
                     step.status === 'completed' ? "bg-green-50" : "",
                     step.status === 'failed' ? "bg-red-50" : ""
                   )}>
@@ -152,7 +151,7 @@ export default function AIAgentLoop() {
                     )}
                   </div>
                   {index < loop.steps.length - 1 && (
-                    <ArrowRight className="w-4 h-4 text-gray-400" />
+                    <ArrowRight className="w-4 h-4 text-muted-foreground" />
                   )}
                 </div>
               ))}
@@ -162,21 +161,21 @@ export default function AIAgentLoop() {
             <div className="flex gap-2 mt-4">
               <button
                 onClick={() => startLoop(loop.id)}
-                className="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600"
+                className="px-3 py-1 bg-green-500 text-foreground rounded text-sm hover:bg-green-600"
                 disabled={loop.status === 'running'}
               >
                 Start
               </button>
               <button
                 onClick={() => pauseLoop(loop.id)}
-                className="px-3 py-1 bg-yellow-500 text-white rounded text-sm hover:bg-yellow-600"
+                className="px-3 py-1 bg-yellow-500 text-foreground rounded text-sm hover:bg-yellow-600"
                 disabled={loop.status !== 'running'}
               >
                 Pause
               </button>
               <button
                 onClick={() => resetLoop(loop.id)}
-                className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                className="px-3 py-1 bg-red-500 text-foreground rounded text-sm hover:bg-red-600"
               >
                 Reset
               </button>

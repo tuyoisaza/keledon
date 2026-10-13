@@ -5,30 +5,21 @@ export function generatePairingCodeString(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let code = '';
   for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
+    code += chars.charAt(require('crypto').randomInt(chars.length));
   }
   return code;
-}
-
-function signPayload(payload: string): string {
-  const crypto = require('crypto');
-  const secret =
-    process.env.KELEDON_LAUNCH_SECRET ||
-    process.env.KELDEON_LAUNCH_SECRET ||
-    'keledon-default-secret';
-  return crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex')
-    .substring(0, 16);
 }
 
 @Injectable()
 export class CrudKeledonService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getKeledons(companyId?: string) {
+  async getKeledons(companyId?: string, userId?: string) {
     return this.prisma.keledon.findMany({
+      where: {
+        ...(companyId ? { team: { brand: { companyId } } } : {}),
+        ...(userId ? { userId } : {}),
+      },
       select: {
         id: true,
         name: true,
@@ -276,16 +267,45 @@ export class CrudKeledonService {
       }
       console.log('[Launch] Keledon found:', keledon.name);
 
+      // Authorize the stored actor and tenant before any pairing mutation.
+      const user = await this.prisma.user.findUnique({ where: { id: userId } });
+      const team = await this.prisma.team.findUnique({
+        where: { id: keledon.teamId },
+        include: { brand: true },
+      });
+      const inCompany =
+        !!user?.companyId && team?.brand?.companyId === user.companyId;
+      const authorized =
+        !!user &&
+        (user.role === 'superadmin' ||
+          (['admin', 'coordinator'].includes(user.role) && inCompany) ||
+          (keledon.userId === user.id && user.teamId === keledon.teamId));
+      if (!authorized)
+        throw new Error('User not authorized to launch this Keledon');
+
       // Get device for this keledon
-      const device = await this.prisma.device.findFirst({
+      let device = await this.prisma.device.findFirst({
         where: { keledonId },
       });
 
       if (!device) {
-        console.log('[Launch] No device found for keledon');
-        throw new Error('Keledon has no paired device');
+        device = await this.prisma.device.create({
+          data: {
+            keledonId,
+            userId: keledon.userId || user.id,
+            organizationId: team?.brand?.companyId || null,
+            name: keledon.name,
+            machineId: `pending-${keledonId}-${Date.now()}`,
+            platform: 'pending',
+            status: 'pending',
+            pairingCode: generatePairingCodeString(),
+            pairingCodeExpiresAt: new Date(
+              Date.now() + 7 * 24 * 60 * 60 * 1000,
+            ),
+          },
+        });
       }
-      console.log('[Launch] Device found, pairingCode:', device.pairingCode);
+      console.log('[Launch] Authorized device available');
 
       if (!device.pairingCode) {
         console.log('[Launch] No pairing code, generating on-demand...');
@@ -299,9 +319,11 @@ export class CrudKeledonService {
             pairingCode: device.pairingCode,
             pairingCodeExpiresAt: device.pairingCodeExpiresAt,
             status: 'pending',
+            userId: keledon.userId || user.id,
+            organizationId: team?.brand?.companyId || null,
           },
         });
-        console.log('[Launch] New pairing code generated:', device.pairingCode);
+        console.log('[Launch] Pairing code renewed');
       } else {
         // Refresh expiry and reset status so pairing always works
         console.log(
@@ -315,6 +337,8 @@ export class CrudKeledonService {
           data: {
             pairingCodeExpiresAt: device.pairingCodeExpiresAt,
             status: 'pending',
+            userId: keledon.userId || user.id,
+            organizationId: team?.brand?.companyId || null,
           },
         });
       }
@@ -328,27 +352,6 @@ export class CrudKeledonService {
         device.status = updatedDevice.status;
         device.pairingCode = updatedDevice.pairingCode;
         device.pairingCodeExpiresAt = updatedDevice.pairingCodeExpiresAt;
-      }
-
-      // Verify user has access - check Prisma first, then fallback for Google users
-      const user = await this.prisma.user.findUnique({ where: { id: userId } });
-      let isAuthorized = false;
-
-      if (!user && userId.startsWith('google_')) {
-        console.log('[Launch] Google user, allowing');
-        isAuthorized = true;
-      } else if (user) {
-        console.log('[Launch] Prisma user found, role:', user.role);
-        isAuthorized =
-          user.role === 'superadmin' ||
-          user.role === 'admin' ||
-          keledon.userId === userId;
-      } else {
-        console.log('[Launch] User not found in Prisma');
-      }
-
-      if (!isAuthorized) {
-        throw new Error('User not authorized to launch this Keledon');
       }
 
       const vendors = await this.prisma.vendor.findMany({
@@ -384,16 +387,13 @@ export class CrudKeledonService {
 
       // Generate signed launch link
       const timestamp = Date.now();
-      const payload = `${keledonId}:${userId}:${timestamp}`;
+      const cloudUrl = process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com';
+      const payload = JSON.stringify([keledonId, userId, String(timestamp), String(device.pairingCode), new URL(cloudUrl).origin]);
       const signature = this.signPayload(payload);
 
-      const cloudUrl = process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com';
       const deepLink = `keledon://launch?keledonId=${keledonId}&code=${device.pairingCode}&userId=${userId}&timestamp=${timestamp}&signature=${signature}&cloudUrl=${encodeURIComponent(cloudUrl)}`;
 
-      console.log(
-        '[Launch] Success, deepLink:',
-        deepLink.substring(0, 50) + '...',
-      );
+      console.log('[Launch] Authorized link generated');
       return {
         keledon_id: keledonId,
         team_id: keledon.teamId,
@@ -402,11 +402,17 @@ export class CrudKeledonService {
         expires_at: new Date(timestamp + 60000),
         code_expires_at: device.pairingCodeExpiresAt,
         device_status: device.status,
-        vendors: activeVendors,
+        vendors: activeVendors.map(({ id, name, type, baseUrl, isActive }) => ({
+          id,
+          name,
+          type,
+          baseUrl,
+          isActive,
+        })),
         next_steps: nextSteps,
       };
     } catch (error) {
-      console.error('[Launch] Error:', error.message);
+      console.error('[Launch] Failed:', error?.name || 'Error');
       throw error;
     }
   }
@@ -498,6 +504,7 @@ export class CrudKeledonService {
     const secret =
       process.env.KELEDON_LAUNCH_SECRET ||
       process.env.KELDEON_LAUNCH_SECRET ||
+      process.env.KELEDON_AUTH_SECRET ||
       'keledon-default-secret';
     return crypto
       .createHmac('sha256', secret)

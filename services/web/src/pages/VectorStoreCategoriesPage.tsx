@@ -6,10 +6,10 @@ import { getCategories, createCategory, updateCategory, deleteCategory, type Cat
 import { useAuth } from '@/context/AuthContext';
 
 const defaultCategories = [
-  { id: 'safety', name: 'Safety', color: '#ef4444', description: 'Safety guidelines and procedures', company_id: '' },
-  { id: 'procedure', name: 'Procedure', color: '#3b82f6', description: 'Standard operating procedures', company_id: '' },
-  { id: 'compliance', name: 'Compliance', color: '#a855f7', description: 'Compliance and regulations', company_id: '' },
-  { id: 'knowledge', name: 'Knowledge', color: '#22c55e', description: 'General knowledge base', company_id: '' },
+  { id: 'safety', name: 'Safety', color: '#ef4444', description: 'Safety guidelines and procedures', companyId: '' },
+  { id: 'procedure', name: 'Procedure', color: '#3b82f6', description: 'Standard operating procedures', companyId: '' },
+  { id: 'compliance', name: 'Compliance', color: '#a855f7', description: 'Compliance and regulations', companyId: '' },
+  { id: 'knowledge', name: 'Knowledge', color: '#22c55e', description: 'General knowledge base', companyId: '' },
 ];
 
 export default function VectorStoreCategoriesPage() {
@@ -306,7 +306,7 @@ export default function VectorStoreCategoriesPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div
-                        className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold"
+                        className="w-10 h-10 rounded-lg flex items-center justify-center text-foreground font-bold"
                         style={{ backgroundColor: cat.color }}
                       >
                         {cat.name.charAt(0).toUpperCase()}

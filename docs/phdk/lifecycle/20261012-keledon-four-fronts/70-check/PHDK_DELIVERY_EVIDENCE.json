@@ -1,0 +1,35 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto 4 fronts; vendor-independent code conformance",
+  "target_branch": "main",
+  "expected_version": "5.0.54",
+  "version_file": "services/web/package.json",
+  "merged_commit_sha": null,
+  "pr_url": null,
+  "checks": {
+    "lint": {
+      "status": "PASS",
+      "evidence": "services/web npm run lint -- --quiet"
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "services/web npm run typecheck; browser TypeScript compiler from services/api node_modules"
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "services/web npm run build; services/api npm run build"
+    },
+    "focused_tests": {
+      "status": "PASS",
+      "evidence": "Browser15/15; API regression8/8 plus focused10/10; web20/20; AI UI fixture12 cases"
+    },
+    "uat": {
+      "status": "PASS",
+      "evidence": "Synthetic local built-SPA role/diagnostic/theme UAT; no client live CRM/voice claim"
+    },
+    "delivery": {
+      "status": "BLOCKED",
+      "evidence": "No PR/merge/readback; sensitive additive AI schema owner review pending; PHDK_CONFORMITY_REVIEW.md contains unresolved obligations"
+    }
+  }
+}

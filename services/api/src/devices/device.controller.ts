@@ -1,24 +1,29 @@
+import { AuthAttemptGuard } from '../guards/auth-attempt.guard';
 import {
   Controller,
   Post,
   Get,
   Body,
-  Headers,
   Param,
   Delete,
   Put,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { DeviceService } from './device.service';
 import { Public } from '../guards/public.decorator';
 import { ApiTags } from '@nestjs/swagger';
+import { DeviceAccessGuard } from '../guards/device-access.guard';
 
 @ApiTags('Devices')
 @Controller('api/devices')
+@UseGuards(DeviceAccessGuard)
 export class DeviceController {
   constructor(private deviceService: DeviceService) {}
 
   @Public()
   @Post('pair')
+  @UseGuards(AuthAttemptGuard)
   async pairDevice(
     @Body()
     body: {
@@ -29,22 +34,17 @@ export class DeviceController {
       name: string;
       keledon_id?: string;
     },
-    @Headers('x-organization-id') organizationId?: string,
-    @Headers('x-user-id') userId?: string,
   ) {
     try {
       const result = await this.deviceService.pairDevice({
         ...body,
-        organizationId,
-        userId,
       });
       return result;
     } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) };
+      return { error: 'Invalid pairing request or expired proof' };
     }
   }
 
-  @Public()
   @Post('register')
   async registerDevice(
     @Body()
@@ -54,17 +54,15 @@ export class DeviceController {
       platform: string;
       name: string;
     },
-    @Headers('x-organization-id') organizationId?: string,
-    @Headers('x-user-id') userId?: string,
+    @Req() req: any,
   ) {
     return this.deviceService.registerPendingDevice({
       ...body,
-      organizationId,
-      userId,
+      organizationId: req.deviceBinding.companyId,
+      userId: req.deviceBinding.userId,
     });
   }
 
-  @Public()
   @Post('pairing-code')
   async createPairingCode(
     @Body()
@@ -73,33 +71,33 @@ export class DeviceController {
       organizationId?: string;
       keledon_id?: string;
     },
+    @Req() req: any,
   ) {
     const { code, device_id } = await this.deviceService.generatePairingCode(
-      body.userId,
-      body.organizationId,
-      body.keledon_id,
+      req.deviceBinding.userId,
+      req.deviceBinding.companyId,
+      req.deviceBinding.keledonId,
     );
     return { pairing_code: code, device_id };
   }
 
   @Get()
-  async getDevices(
-    @Headers('x-user-id') userId?: string,
-    @Headers('x-organization-id') organizationId?: string,
-  ) {
-    if (userId) {
-      return this.deviceService.getDevicesByUser(userId);
-    }
-    if (organizationId) {
-      return this.deviceService.getDevicesByOrganization(organizationId);
-    }
-    return { error: 'Missing userId or organizationId header' };
+  async getDevices(@Req() req: any) {
+    const actor = req.actor;
+    const rows =
+      actor.role === 'superadmin'
+        ? await this.deviceService.getAllDevices()
+        : ['admin', 'coordinator'].includes(actor.role)
+          ? await this.deviceService.getDevicesByOrganization(actor.companyId)
+          : await this.deviceService.getDevicesByUser(actor.id);
+    return rows.map(
+      ({ authToken, pairingCode, pairingCodeExpiresAt, ...device }) => device,
+    );
   }
 
   @Get(':id/status')
   async getDeviceStatus(@Param('id') deviceId: string) {
-    const devices = await this.deviceService.getDevicesByUser(deviceId);
-    const device = devices.find((d) => d.id === deviceId);
+    const device = await this.deviceService.getDeviceStatus(deviceId);
     return {
       device_id: deviceId,
       status: device?.status || 'unknown',
@@ -109,10 +107,10 @@ export class DeviceController {
 
   @Delete(':id')
   async revokeDevice(@Param('id') deviceId: string) {
-    return this.deviceService.revokeDevice(deviceId);
+    await this.deviceService.revokeDevice(deviceId);
+    return { success: true };
   }
 
-  @Public()
   @Get('debug/device/:id')
   async debugDevice(@Param('id') keledonId: string) {
     return this.deviceService.getDeviceDebug(keledonId);
@@ -124,7 +122,6 @@ export class DeviceController {
     return this.deviceService.getRpaProviderConfig(deviceId);
   }
 
-  @Public()
   @Put(':id/rpa-config')
   async updateDeviceRpaConfig(
     @Param('id') deviceId: string,
@@ -138,7 +135,6 @@ export class DeviceController {
     return this.deviceService.updateRpaProviderConfig(deviceId, body);
   }
 
-  @Public()
   @Get('test-browser')
   async testBrowser() {
     const pairingCode = this.generateTestPairingCode();

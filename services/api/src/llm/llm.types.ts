@@ -1,5 +1,9 @@
+import type { AiFeature } from '../ai-admin/ai-prompt.defaults';
 export interface LLMRequest {
   prompt: string;
+  actorId?: string;
+  feature?: AiFeature;
+  requestId?: string;
   context?: string[];
   maxTokens?: number;
   temperature?: number;
@@ -8,6 +12,9 @@ export interface LLMRequest {
 }
 
 export interface LLMResponse {
+  provider?: string;
+  requestedModel?: string;
+  responseModel?: string;
   text: string;
   finishReason: 'stop' | 'length' | 'content_filter';
   usage: {

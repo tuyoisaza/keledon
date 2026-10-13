@@ -1,4 +1,10 @@
 import {
+  createOAuthChallenge,
+  validateOAuthChallenge,
+  oauthCookie,
+} from './oauth-state';
+import { AuthAttemptGuard } from '../guards/auth-attempt.guard';
+import {
   Controller,
   Post,
   Body,
@@ -8,6 +14,7 @@ import {
   Res,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { LocalAuthService } from './auth-local.service';
 import { GoogleOAuthService } from './google-oauth.service';
@@ -48,6 +55,7 @@ interface AuthResponse {
 
 @ApiTags('Auth')
 @Controller('api/auth')
+@UseGuards(AuthAttemptGuard)
 export class LocalAuthController {
   constructor(
     private readonly authService: LocalAuthService,
@@ -67,9 +75,6 @@ export class LocalAuthController {
         : 'not set',
       googleRedirectUri: this.configService.get('GOOGLE_REDIRECT_URI'),
       nodeEnv: this.configService.get('NODE_ENV'),
-      allEnv: Object.keys(process.env)
-        .filter((k) => !k.includes('SECRET') && !k.includes('PASSWORD'))
-        .sort(),
     });
   }
 
@@ -82,13 +87,37 @@ export class LocalAuthController {
       return res.status(500).json({ message: 'Google OAuth not configured' });
     }
 
-    const authUrl = this.googleOAuthService.getAuthUrl();
+    const challenge = createOAuthChallenge();
+    res.cookie(oauthCookie.name, challenge.cookie, {
+      ...oauthCookie,
+      secure: process.env.NODE_ENV === 'production',
+    });
+    const authUrl = this.googleOAuthService.getAuthUrl(
+      challenge.state,
+      challenge.nonce,
+    );
     return res.redirect(authUrl);
   }
 
   @Public()
   @Get('google/callback')
-  async googleCallback(@Query('code') code: string, @Res() res: any) {
+  async googleCallback(
+    @Query('code') code: string,
+    @Query('state') state: string,
+    @Req() req: any,
+    @Res() res: any,
+  ) {
+    const nonce = validateOAuthChallenge(req.headers?.cookie, state);
+    res.clearCookie(oauthCookie.name, {
+      path: oauthCookie.path,
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
+    if (!nonce)
+      return res
+        .status(400)
+        .json({ message: 'Invalid or expired OAuth state' });
     if (!code) {
       return res
         .status(400)
@@ -96,9 +125,9 @@ export class LocalAuthController {
     }
 
     try {
-      const googleUser = await this.googleOAuthService.verifyCode(code);
+      const googleUser = await this.googleOAuthService.verifyCode(code, nonce);
 
-      console.log('Google user verified:', googleUser.email);
+      console.log('[Auth] Google identity verified');
 
       const user = await this.authService.findOrCreateGoogleUser({
         id: googleUser.id,
@@ -116,10 +145,8 @@ export class LocalAuthController {
         `/login?token=${token}&email=${encodeURIComponent(user.email)}&name=${encodeURIComponent(user.name || '')}`,
       );
     } catch (error) {
-      console.error('Google OAuth error:', error);
-      return res
-        .status(500)
-        .json({ message: 'Google login failed', error: error.message });
+      console.error('[Auth] Google login failed:', error?.name || 'Error');
+      return res.status(500).json({ message: 'Google login failed' });
     }
   }
 

@@ -1,0 +1,3 @@
+# UX/UI remediation
+Fixed missing native modal semantics/labels and observed Tab escape; preserved controlled close and opener focus. Replaced false provider-save success and stale secret fields with actual status/error/loading and write-only inputs. Shared diagnostic row reports asynchronous success accurately and uses hidden live announcements. Added dark/light/corporate tokens, persisted selector and reduced-motion override. Removed unsupported public integration/security claims and nonfunctional legal/social links rather than inventing destinations.
+Remaining: localization candidates, full contrast/zoom/screen-reader coverage, legacy component size and robust private-route server indexing policy. These are not silently waived by brownfield compatibility.

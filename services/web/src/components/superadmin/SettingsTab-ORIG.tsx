@@ -1,10 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import type {
-    ProviderCatalogEntry,
-    ProviderType,
-    TenantProviderConfig,
-    TenantVoiceProfile
-} from '@/lib/supabase';
+// Historical settings component keeps its snake_case contract locally.
+type ProviderType = 'stt' | 'tts' | 'rpa';
+interface ProviderCatalogEntry { id: string; type: ProviderType; name: string; description?: string; status: string; is_enabled: boolean; metadata?: Record<string, unknown>; }
+interface TenantProviderConfig { id?: string; company_id: string; provider_id: string; provider_type: ProviderType; is_enabled: boolean; is_default: boolean; limits?: Record<string, unknown>; }
+interface TenantVoiceProfile { id: string; company_id: string; provider_id: string; name: string; language?: string; is_enabled: boolean; is_default: boolean; config?: Record<string, unknown>; }
 
 type TenantConfigState = Omit<TenantProviderConfig, 'id' | 'provider_catalog' | 'created_at' | 'updated_at'> & {
     id?: string;
@@ -346,7 +345,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
     };
 
     const renderConfigField = (
-        providerId: string,
+        _providerId: string,
         field: ConfigFieldDefinition,
         config: Record<string, any>,
         onChange: (key: string, value: any) => void
@@ -374,7 +373,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
                 <div className="space-y-1">
                     <label className="text-xs text-muted-foreground">{field.label}</label>
                     <select
-                        value={value ?? ''}
+                        value={displayValue ?? ''}
                         onChange={(e) => onChange(field.key, e.target.value)}
                         className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-sm text-foreground"
                     >

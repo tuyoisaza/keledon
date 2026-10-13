@@ -1,4 +1,6 @@
 import { BrowserWindow } from 'electron';
+import { abortCurrentExecution } from './autobrowse-bridge.js';
+import { CloudGoalQueue } from './cloud-goal-queue.js';
 import { io, Socket } from 'socket.io-client';
 import log from 'electron-log';
 import crypto from 'crypto';
@@ -49,7 +51,7 @@ let reconnectionAttempt = 0;
 
 // ===================== GOAL EXECUTION DEDUP =====================
 const inflightExecutions = new Set<string>();
-let goalExecutionLock = false;
+const goalExecutionQueue = new CloudGoalQueue(20);
 
 // ===================== MAIN WINDOW REF =====================
 
@@ -271,8 +273,9 @@ function registerMessageHandlers(
 
   // goal_execute → AutoBrowse bridge
   // v0.3.50: deduplicate by execution_id to prevent concurrent handlers on the same BrowserView
-  socket.on('goal_execute', async (data) => {
+  socket.on('goal_execute', (data) => {
     const executionId = data?.execution_id || data?.id || '';
+    void goalExecutionQueue.run(String(executionId), async () => {
 
     // Deduplicate: if this execution is already being processed, skip silently
     if (executionId && inflightExecutions.has(executionId)) {
@@ -280,28 +283,13 @@ function registerMessageHandlers(
       return;
     }
 
-    // General concurrency lock: only one goal_execute at a time
-    if (goalExecutionLock) {
-      cmdlog.log('CMD', 'goal_execute queued (lock held, will process next)');
-      // We don't queue — the cloud will retry. Dedup by execution_id handles the common case.
-    }
-
     if (executionId) {
       inflightExecutions.add(executionId);
     }
-    goalExecutionLock = true;
 
     try {
-      // If no vendor_id, try to match a runtime vendor from goal text so the enrichment
-      // functions can pull credentials and startGoal below. v0.3.47:
-      // bridges cloud-originated bare goals with the desktop's paired vendor config.
-      let goalData = data;
-      if (!data.vendor_id && !data.vendorId && !data.inputs?.vendor_id && !data.inputs?.vendorId) {
-        const matchedVendor = findMatchingVendorFromGoal(data.goal || '');
-        if (matchedVendor) {
-          goalData = { ...data, vendor_id: matchedVendor.id };
-        }
-      }
+      // Vendor identity must be explicit in the Cloud command; never infer credentials from goal text.
+      const goalData = data;
       const enrichedData = enrichGoalExecuteDataFromRuntimeVendor(goalData);
       cmdlog.log('CMD', `goal_execute received | ${summarizeGoalExecuteData(enrichedData)}`);
       log.info('[Main] Received goal from cloud:', { execution_id: enrichedData.execution_id, goalLength: String(enrichedData.goal || '').length });
@@ -317,7 +305,7 @@ function registerMessageHandlers(
         // v0.3.50: deduplication ensures single execution — create the Goal Execution BrowserView
         // v0.3.51: removed redundant second ensureBrowserViewForGoalExecution call (ensureActiveGoalTab already calls it)
         ensureActiveGoalTab(tabManager, bridge);
-        const enrichedInputs = enrichCloudGoalInputsFromRuntimeVendor(goalData, goalData.inputs) || enrichedData.inputs;
+        const enrichedInputs = enrichCloudGoalInputsFromRuntimeVendor(goalData, goalData.inputs) || enrichedData.inputs || {};
         Object.assign(enrichedInputs, { ...(enrichedData.inputs || {}), ...(enrichedInputs || {}) });
         enrichedData.inputs = enrichedInputs;
         const enrichedGoalData = {
@@ -347,8 +335,13 @@ function registerMessageHandlers(
       if (executionId) {
         inflightExecutions.delete(executionId);
       }
-      goalExecutionLock = false;
     }
+    }).catch((error) => {
+      socket.emit('goal:result', {
+        execution_id: executionId, status: 'failed', goal_status: 'failed',
+        error: error instanceof Error ? error.message : 'Cloud goal execution failed',
+      });
+    });
   });
 }
 
@@ -373,6 +366,17 @@ function createAgentSocket(cloudUrl: string, token: string): Socket {
   socket.on('connect', () => {
     log.info('Agent WebSocket connected');
     eventLogger.info('connection', 'agent_connected', {});
+  });
+
+  // Server acknowledges only after stored-device authorization completed.
+  socket.on('connected', () => {
+    socket.emit('session.create', { agent_id: runtimeStatus.deviceId });
+  });
+  socket.on('session.created', (data) => {
+    if (typeof data?.session_id !== 'string' || !data.session_id) return;
+    runtimeStatus.sessionId = data.session_id;
+    if (deviceSocket?.connected) deviceSocket.emit('session:start', { session_id: data.session_id, team_id: runtimeStatus.teamId });
+    getVoiceClient()?.startCallSession(data.session_id);
   });
 
   socket.on('disconnect', (reason) => {
@@ -422,7 +426,7 @@ export function connectWebSockets(
   sendStatusToRenderer(currentMainWindow, 'connecting');
   eventLogger.info('connection', 'connecting', { cloudUrl });
 
-  cmdlog.log('WS', `→ Connecting WebSockets | cloud: ${cloudUrl} | device: ${cmdlog.truncate(runtimeStatus.deviceId, 8, 4)} | token: ${cmdlog.truncate(token, 16, 0)} | transports: [websocket, polling]`);
+  cmdlog.log('WS', `→ Connecting WebSockets | cloud: ${cloudUrl} | device: ${cmdlog.truncate(runtimeStatus.deviceId, 8, 4)} | token: ${token ? '[present]' : '[absent]'} | transports: [websocket, polling]`);
 
   deviceSocket = createDeviceSocket(cloudUrl, token, tabManager, getAutoBrowseBridge, onConnected);
   agentSocket = createAgentSocket(cloudUrl, token);
@@ -443,6 +447,10 @@ export function connectWebSockets(
   voiceClient.connect().catch((err) =>
     log.warn('[VoiceWS] Failed to connect:', err),
   );
+
+  voiceClient.on('connected', () => {
+    if (runtimeStatus.sessionId) voiceClient.startCallSession(runtimeStatus.sessionId);
+  });
 
   // Forward voice client events to renderer
   voiceClient.on('brain:reply', (text: string, source?: string) => {
@@ -505,6 +513,9 @@ async function fetchRpaConfig(cloudUrl: string, token: string): Promise<void> {
  * Idempotent — safe to call multiple times.
  */
 export function disconnectSockets() {
+  goalExecutionQueue.invalidate();
+  abortCurrentExecution();
+  closeCall('Runtime disconnected');
   stopHeartbeat();
   stopPolling();
 

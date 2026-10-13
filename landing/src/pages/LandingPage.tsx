@@ -28,7 +28,7 @@ export default function LandingPage() {
                     navigate('/management');
                     break;
                 default:
-                    navigate('/dashboard');
+                    break;
             }
         }
     }, [isAuthenticated, isLoading, navigate, user]);

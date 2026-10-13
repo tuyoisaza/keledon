@@ -1,0 +1,6 @@
+# PHDK remediation status
+Closed with regression evidence: dangerous database-derived role/tenant fallbacks; OAuth callback binding and finite auth/pair throttles; unsafe provider-secret echo/stale input; diagnostics raw logging and destructive unrelated local-state deletion; modal keyboard escape/labels; silent vector metrics; unverified browser launch; arbitrary tenant session/pairing; unscoped CRM execution, fallback action plans and false completion paths; provider-specific marketing/security claims and dead links; AI prompt/schema/usage governance implementation.
+
+Open: full locale conversion; intentional seams to split BrainPage and FlowsPage with regression; private-route deployment-level indexing controls need architecture/hosting review; app-wide palette/contrast and assistive-tech coverage; native Electron rendered widget acceptance; no metered client-specific voice+CRM end-to-end.
+
+Sensitive release dependency: AiPromptDefinition, AiPromptRevision, AiCallUsage additive migration under services/api/prisma/migrations/20261012000000_add_managed_ai/migration.sql. It creates new tables only, but changes durable operational AI configuration/usage and makes workflows fail closed until installed. Not applied. Ask owner to approve inclusion/release plan before publishing this candidate.

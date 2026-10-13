@@ -1039,6 +1039,15 @@
       60% { width: 70%; }
       100% { width: 100%; }
     }
+    .diagnostic-brand { width: 120px; flex-shrink: 0; align-self: center; font-size: 12px; font-weight: 600; }
+    .diagnostic-actions { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; flex-shrink: 0; }
+    .diagnostic-actions #versionBtn { font-size: 12px; font-weight: 400; }
+    .diagnostic-actions button { width: 28px; height: 28px; min-width: 28px; flex-shrink: 0; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 4px; background: transparent; color: var(--text-primary); cursor: pointer; }
+    .diagnostic-actions button:hover { background: var(--border); }
+    .diagnostic-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .diagnostic-actions svg { width: 14px; height: 14px; }
+    .diagnostic-actions .diagnostic-success { color: #15803d; }
+    .diagnostic-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
   </style>
 </head>
 <body>
@@ -1047,6 +1056,7 @@
 
   <!-- Tab Bar -->
   <div class="tab-bar" id="tabBar">
+    <span class="diagnostic-brand">KELEDON</span>
     <div class="tab active" data-tab-id="home">
       <span class="tab-icon">🏠</span>
       <span class="tab-name">New Tab</span>
@@ -1056,6 +1066,7 @@
 
   <!-- Navigation Bar -->
   <div class="nav-bar">
+    <div class="diagnostic-actions"><span id="versionBtn">v5.0.54</span><button type="button" id="diagnosticCopy"></button><button type="button" id="diagnosticClear"></button><span class="diagnostic-status" id="diagnosticStatus" role="status" aria-live="polite"></span></div>
     <div class="nav-actions">
       <button class="nav-btn" id="navBack" disabled title="Back">&#x2190;</button>
       <button class="nav-btn" id="navForward" disabled title="Forward">&#x2192;</button>
@@ -1071,7 +1082,7 @@
     <button class="nav-panel-btn" id="panelBtn" title="KELEDON Controls">&#x2699;</button>
     <button class="cmdlog-btn" id="devtoolsBtn" title="Toggle DevTools (F12)">&#x1F6E0;</button>
     <button class="console-btn" id="consoleBtn" title="Console Logs">&#x1F4DD;<span class="console-badge" id="consoleBadge">0</span></button>
-    <button class="cmdlog-btn" id="cmdlogBtn" title="Command Activity Log">&#x1F4CB;</button><span class="version-badge" id="versionBtn">v?.?.?</span>
+    <button class="cmdlog-btn" id="cmdlogBtn" title="Command Activity Log">&#x1F4CB;</button>
   </div>
 
   <!-- Content Area (New Tab Page — hidden when BrowserView active) -->
@@ -1253,6 +1264,7 @@
     </div>
   </div>
 
+  <script src="./version-actions.js"></script>
   <script>
     // ==================== ELEMENTS ====================
     const tabBar = document.getElementById('tabBar');
@@ -1296,7 +1308,7 @@
     let tabs = [];
     let activeTabId = 'home';
     let panelOpen = false;
-    let deviceVersion = 'v?.?.?';
+    let deviceVersion = 'v5.0.54';
 
     // BrowserView is rendered by Electron above normal DOM, so z-index alone cannot
     // keep KELEDON controls visible over a loaded tab. Whenever a first-party
@@ -1348,7 +1360,7 @@
 
     async function copyActivityLogs() {
       const copiedAt = new Date().toISOString();
-      const body = serializeActivityEntries() || '(no activity entries yet)';
+      const body = 'Raw activity messages excluded for privacy; see safe event counts below.';
 
       // Gather diagnostic data for richer copy
       let diagSection = '';
@@ -1402,64 +1414,7 @@
     }
 
     async function buildAggregatedCopyReport() {
-      const info = await window.keledon.device.getInfo();
-      const status = await window.keledon.runtime.getStatus();
-      const internal = (window.keledon && window.keledon.internal) || {};
-      const diagnostics = status.diagnostics || {};
-
-      // Try to read main process logs via evidence API
-      let mainLogs = '';
-      try {
-        const logsResult = await window.keledon.evidence.copyAllLogs();
-        mainLogs = '--- Main Process Logs ---\n' + (logsResult?.logs || '(no main logs available)');
-      } catch (_e) {
-        mainLogs = '--- Main Process Logs ---\n(unavailable)';
-      }
-
-      const sanitize = (v) => v === undefined ? null : (typeof v !== 'string' ? v : (v.length > 120 ? v.substring(0, 120) + '…' : v));
-
-      const report = {
-        product: 'KELEDON Browser',
-        browserVersion: info.version,
-        copiedAt: new Date().toISOString(),
-        platform: info.platform,
-        osRelease: info.osRelease || navigator.platform,
-        userAgent: navigator.userAgent,
-        electron: info.electron,
-        chrome: info.chrome,
-        node: info.node,
-        deviceId: status.deviceId || info.deviceId,
-        cloudUrl: status.cloudUrl || cloudUrlInput.value || null,
-        runtime: {
-          status: status.status,
-          connected: Boolean(status.connected),
-          sessionId: status.sessionId || null,
-          keledonId: status.keledonId || status.pendingKeledonId || keledonIdInput.value || null,
-          teamId: status.teamId || null,
-          teamName: status.teamName || null,
-          vendorCount: status.vendorCount ?? null,
-        },
-        launchForm: {
-          cloudUrl: cloudUrlInput.value || null,
-          keledonId: keledonIdInput.value || null,
-          pairingCodePresent: Boolean(pairingCodeInput.value),
-          pairingCodeLength: pairingCodeInput.value ? pairingCodeInput.value.length : 0,
-        },
-        deepLinkDiagnostics: Object.fromEntries(Object.entries(diagnostics).map(([k, v]) => [k, sanitize(v)])),
-        logPaths: {
-          logsDir: info.logsDir || internal.logsDir || internal.installDir || null,
-          mainLogPath: info.mainLogPath || internal.mainLogPath || null,
-          startupLogPath: info.startupLogPath || internal.startupLogPath || internal.logPath || null,
-          internalLogPath: internal.logPath || null,
-          windowsLogHint: '%APPDATA%\\KELEDON Browser\\logs\\keledon-browser.log',
-        },
-        internal: {
-          cdpUrl: internal.cdpUrl || null,
-          version: internal.version || null,
-        },
-      };
-
-      return { diagnosticJSON: '--- Diagnostic Report ---\n' + JSON.stringify(report, null, 2), mainLogs };
+      return { diagnosticJSON: JSON.stringify(await buildDiagnosticReport(), null, 2), mainLogs: 'Raw logs excluded for privacy.' };
     }
 
     // ==================== CONNECTION STATUS ====================
@@ -1487,7 +1442,7 @@
         log('Device initialized: ' + info.deviceId, 'info');
         setActivityCopyStatus(`Version ${deviceVersion} loaded`, 'info');
       } catch (e) {
-        deviceVersion = 'v?.?';
+        deviceVersion = 'v5.0.54';
         versionBtn.textContent = deviceVersion;
         log('Device info error: ' + e.message, 'error');
         setActivityCopyStatus('Version unavailable', 'error');
@@ -2144,86 +2099,11 @@
     });
 
     // ==================== VERSION ====================
-    function sanitizeDiagnosticValue(value) {
-      if (value === undefined) return null;
-      if (typeof value !== 'string') return value;
-      if (value.length > 120) return value.substring(0, 120) + '…';
-      return value;
-    }
-
     async function buildDiagnosticReport() {
-      const info = await window.keledon.device.getInfo();
-      const status = await window.keledon.runtime.getStatus();
-      const internal = (window.keledon && window.keledon.internal) || {};
-      const diagnostics = status.diagnostics || {};
-      return {
-        product: 'KELEDON Browser',
-        browserVersion: info.version,
-        copiedAt: new Date().toISOString(),
-        platform: info.platform,
-        osRelease: info.osRelease || navigator.platform,
-        userAgent: navigator.userAgent,
-        electron: info.electron,
-        chrome: info.chrome,
-        node: info.node,
-        deviceId: status.deviceId || info.deviceId,
-        cloudUrl: status.cloudUrl || cloudUrlInput.value || null,
-        runtime: {
-          status: status.status,
-          connected: Boolean(status.connected),
-          sessionId: status.sessionId || null,
-          keledonId: status.keledonId || status.pendingKeledonId || keledonIdInput.value || null,
-          teamId: status.teamId || null,
-          teamName: status.teamName || null,
-          vendorCount: status.vendorCount ?? null,
-        },
-        launchForm: {
-          cloudUrl: cloudUrlInput.value || null,
-          keledonId: keledonIdInput.value || null,
-          pairingCodePresent: Boolean(pairingCodeInput.value),
-          pairingCodeLength: pairingCodeInput.value ? pairingCodeInput.value.length : 0,
-        },
-        deepLinkDiagnostics: Object.fromEntries(Object.entries(diagnostics).map(([key, value]) => [key, sanitizeDiagnosticValue(value)])),
-        logPaths: {
-          logsDir: info.logsDir || internal.logsDir || internal.installDir || null,
-          mainLogPath: info.mainLogPath || internal.mainLogPath || null,
-          startupLogPath: info.startupLogPath || internal.startupLogPath || internal.logPath || null,
-          internalLogPath: internal.logPath || null,
-          windowsLogHint: '%APPDATA%\\KELEDON Browser\\logs\\keledon-browser.log',
-        },
-        internal: {
-          cdpUrl: internal.cdpUrl || null,
-          version: internal.version || null,
-        },
-        endpoints: {
-          cloudUrl: status.cloudUrl || cloudUrlInput.value || 'https://keledon.tuyoisaza.com',
-          pairEndpoint: (status.cloudUrl || cloudUrlInput.value || 'https://keledon.tuyoisaza.com') + '/api/devices/pair',
-          launchEndpoint: (status.cloudUrl || cloudUrlInput.value || 'https://keledon.tuyoisaza.com') + '/api/crud/keledons/:id/launch',
-          wsEndpoint: (status.cloudUrl || cloudUrlInput.value || 'https://keledon.tuyoisaza.com') + '/ws/runtime',
-        },
-      };
+      return KeledonVersionActions.safeReport(await window.keledon.device.getInfo(),
+        await window.keledon.runtime.getStatus(), { activity: activityLogEl.querySelectorAll('.activity-entry').length });
     }
-
-    versionBtn.addEventListener('click', async () => {
-      try {
-        const report = await buildDiagnosticReport();
-        const text = JSON.stringify(report, null, 2);
-        try {
-          await navigator.clipboard.writeText(text);
-          versionBtn.textContent = 'Diagnostics copied!';
-          log('Copied sanitized Browser diagnostics to clipboard', 'success');
-        } catch (clipboardError) {
-          console.log('KELEDON Browser diagnostics fallback:\n' + text);
-          log('Clipboard unavailable; diagnostics printed to DevTools console', 'error');
-          versionBtn.textContent = 'Diagnostics in console';
-        }
-        setTimeout(() => versionBtn.textContent = 'v' + report.browserVersion, 1600);
-      } catch (e) {
-        log('Diagnostics error: ' + e.message, 'error');
-        versionBtn.textContent = 'Diag failed';
-        setTimeout(loadDeviceInfo, 1600);
-      }
-    });
+    KeledonVersionActions.mount(window);
 
     // ==================== COMMAND ACTIVITY LOG ====================
     const cmdlogBtn = document.getElementById('cmdlogBtn');

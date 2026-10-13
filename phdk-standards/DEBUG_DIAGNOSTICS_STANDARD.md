@@ -1,0 +1,388 @@
+# DEBUG_DIAGNOSTICS_STANDARD.md
+
+## Purpose
+
+This file defines the debug mode behavior, copy diagnostics report specification, and auth diagnostics requirements for all PHDK app-style projects.
+
+Debug diagnostics exist to reduce back-and-forth between the AI developer and the human. A human may supply a redacted diagnostics report as context for a code fix, without having to re-explain the failure.
+
+---
+
+## When This File Applies
+
+This file applies to all app-style projects — projects with interactive features, user flows, login, dashboards, forms, workflows, or dynamic behavior.
+
+For static or public-only projects, debug mode is a recommended technical note, not a required implementation.
+
+---
+
+## Product Implementation and Agent Scope
+
+`EXECUTION_SCOPE.md` is authoritative. This document describes application features for authorized product users; it does not instruct the agent to operate them.
+
+PHDK agents review diagnostics code and run permitted local static/build checks or risk-triggered unit/in-process integration tests. Browser APIs, OAuth, database access, network requests, and metered providers must be replaced with test doubles in those tests. Agents must not open a browser, press debug buttons, collect screenshots, copy reports from a live session, call application/health/probe endpoints, or change cloud settings. Requested non-secret provider metadata reads follow the separate boundary below; another tool, skill, or subagent cannot widen it.
+
+When `PHDK auto` is explicitly active, follow `PHDK_AUTO.md`: implement diagnostics and necessary test coverage as part of the full goal, then verify these requirements with the completed integrated candidate. The checklist below is not a separate release, human acceptance, or intermediate test gate. Only an actual implementation blocker or mandatory control justifies an earlier check; permitted scope remains unchanged.
+
+For a current request such as "verifica Railway", follow `EXECUTION_SCOPE.md` — **Bounded read-only provider diagnostics**. Existing authorized API/CLI/connector access may retrieve finite service/deployment status, non-secret source/branch/configuration/watch metadata, and relevant logs. Neither Developer Mode nor unlock is required, and an older code-sync task exclusion cannot veto a newer read request. No secret values, application probes, browser use, streams, polling, watchers, writes, or recurring work. Report provider observations and user-supplied redacted diagnostics separately from source checks; retain `visual/runtime unverified` for behavior not exercised. Independent human product use is optional, never a checklist chore.
+
+Do not create recurring diagnostics, monitoring jobs, or scheduled agents. Existing product behavior remains subject to its own authentication, redaction, and consumption controls.
+
+---
+
+## Mandatory debug version-and-actions widget (canonical UI contract)
+
+This is a **required, reusable component**, not a design suggestion. For every applicable app-style product, implement and mount one shared version/debug-actions component; do not independently redraw or reinterpret it per page. The same component is used on **every user-facing surface**, including public home/landing pages, the unauthenticated login page, authenticated app shell and admin pages. **The version → clipboard → trash row is ALWAYS visible, regardless of authentication, user role or debug-mode setting**. Do not hide or disable the widget solely because debug is OFF. The expanded floating debug panel, detailed server diagnostics and privileged endpoint probes remain independently controlled by debug mode and server-side authorization.
+
+Exact inline visual order, left to right:
+
+```text
+vX.Y.Z  [clipboard]  [trash]
+```
+
+- The visible version MUST be exactly `vMAJOR.MINOR.PATCH`, without commit SHA, date, build timestamp, parentheses, environment, or ellipsis. Preserve commit and timestamps only inside the copied diagnostics report, where they remain useful.
+- Use a fixed compact visual specification: version font-size **12px**, regular/medium weight, no wrapping; each square icon button **28×28px** (`width`, `height`, `min-width` and `flex-shrink:0`), icon glyph **14×14px**, gap **4px**, minimal padding, subtle or transparent button background without oversized white tiles. For accessibility, provide an extended **44×44px effective hit target** when feasible without enlarging the visible square; maintain keyboard focus and avoid collisions. On narrow layouts keep all three elements on one line using `inline-flex`, `white-space:nowrap`, and do not truncate the version. No responsive rule may scale icons or tiles above these fixed visible dimensions.
+- Version first; immediately to its right exactly TWO icon-only, adjacent buttons, **clipboard** then **trash**. No visible button labels, helper text, captions below, status text, extra badges, third control, toast, or success/error banner generated by this widget. No line break between these three items. Never substitute emoji text for icon assets when a consistent icon set exists; use stable clipboard, trash-2 and check icons (e.g. Lucide) with consistent dimensions.
+- The two buttons have accessible names and tooltips, e.g. `Copiar diagnóstico completo` and `Limpiar caché`; hidden ARIA status may communicate a result. Keep keyboard focus and contrast using design tokens; preserve an effective 44px pointer/touch target through invisible hit-area extension where feasible, while keeping the **visible control exactly 28×28px**; do not enlarge visible tiles to 44px.
+- Clipboard click: build a **verbose, comprehensive, sanitized** diagnostics report from available bounded frontend buffers and safe server-provided diagnostic summaries following the report/redaction contract below; copy the entire report as plain text with the Clipboard API (permitted fallback where appropriate). **Only after confirmed clipboard success**, temporarily replace *that* clipboard icon with a **green checkmark**, then restore the original clipboard icon automatically (suggested 1.5 seconds). No extra user-facing text. On failure, retain clipboard icon and provide an accessible nonvisual failure status; never display a false success.
+- Trash click: clear only the application's permitted client caches, service worker caches, debug log buffers and accessible session state; invalidate application auth/logout when relevant, without deleting business data. **Only after confirmed permitted clearing**, temporarily replace *that* trash icon with a **green checkmark**, then restore trash icon automatically (suggested 1.5 seconds). If logout/reload is required, arrange the reset so the success indicator is perceivable before navigation; avoid timers/state updates after unmount. On partial failure, do not report full success; expose an accessible nonvisual failure reason and log the limitation safely. Do not claim the browser's global HTTP cache/cookies inaccessible to app code were cleared.
+- Actions must be independent; disable repeat presses while each respective action is running; do not let an older timer reset a newer success state. Green must never be the only confirmation mechanism: icon semantics and screen-reader live status also communicate success. Keep statuses hidden visually.
+- **Public-safe by default:** every unauthenticated visitor can copy a sanitized client-side report and clear only their own application-accessible client state. No privileged logs, user identifiers, internal URLs, secret flags, backend diagnostic details or account-specific history may be exposed to anonymous/unauthorized callers. Additional safe server-provided diagnostics must remain permission-checked server-side. Production debug logging still defaults OFF; this does NOT hide the always-visible version/actions row.
+- Do not duplicate the widget within the same visual region, introduce independent variant layouts, or display copy/cache actions separately from the version.
+- Source and unit/component tests must establish: widget remains visible for anonymous users and with debug OFF, including login and public home; exact icon order and no visible subordinate text; complete sanitized report copying; copy-success green-check-and-revert; cache-success green-check-and-revert; failure leaves original icon; no destructive data deletion; cache/logout/reload ordering; reusable component mounted in each applicable surface. During explicit UAT/UAT Fix, permitted browser tests may supplement these checks under `EXECUTION_SCOPE.md`; otherwise label visual/runtime behavior UNVERIFIED. Missing source, missing tests, or unavailable evidence is **not PASS**.
+
+This contract overrides older gating instructions: only privileged diagnostics content and the floating debug panel are gated, **never** the version/actions row. The widget must expose the current build version everywhere, including before login.
+
+## Required UI Controls
+
+Near the version number in the app shell, every app-style project must include:
+
+```txt
+Copy diagnostics button — clipboard icon
+Clear cache button — trash icon
+```
+
+The clear cache button must sit immediately next to the copy diagnostics button, not elsewhere in the shell — they are a single control pair so a developer can copy the report and reset state in one place, one after the other.
+
+These controls must be visible in:
+
+- Public home/landing pages and login page, before authentication
+- App shell and admin pages at all times, including debug OFF
+- Inside an expanded admin debug panel when applicable, without duplicating the row within one visual region
+
+These two public-safe controls appear for all users. Privileged diagnostic details and debug-only panels remain restricted.
+
+---
+
+## Debug Mode Behavior
+
+### When debug mode is off (default)
+
+- Always-visible version → clipboard → trash row remains available, including anonymous home/login
+- No floating panel
+- No verbose console logs
+- Normal production behavior
+
+### When debug mode is on
+
+- Always-visible version/actions row remains unchanged; privileged floating debug panel is separate
+- Important execution boundaries report high-signal status through the shared debug-log helper; trivial helpers are not blanket-instrumented — see `High-Signal Status Logging` below
+- A floating panel appears in the top-left corner
+- The canonical shared version/actions row remains available in the normal shell; the floating panel may display it using that same component without duplication
+- Auth failures emit structured logs with safe redaction
+- API failures include correlation IDs
+- Frontend captures recent console, error, and network history
+
+### Activation
+
+- App-style projects with login: debug mode is toggled from the admin or config panel
+- App-style projects without login: debug mode is toggled via environment variable or local developer config
+- **In every non-production environment (local, dev, preview, staging) debug mode defaults to ON.** It is not an opt-in the developer has to remember to flip — a fresh clone or a fresh deploy to a non-production environment must show the debug panel and populate the console without any manual setup step.
+- Debug mode is never active in production by default
+- Before a production release or promotion, review the code and committed configuration that keep the forced-on default limited to non-production. Cover risky default-selection logic with local tests when needed; do not change live environment settings or retrieve secret values. Requested bounded non-secret provider observations are separate evidence, not a completion gate or a product test. Record production runtime state as unverified. See `Debug Diagnostics QA` and `QA_CHECKLIST.md`.
+- Debug mode activation must be audited when login and admin exist
+
+---
+
+## Clear Cache Button Behavior
+
+Implement the following behavior for an authorized human pressing the clear cache button:
+
+1. Clear browser cache
+2. Clear service worker cache if applicable
+3. Force logout if login exists
+4. Force reload of cookies and session files
+5. Reload the page
+
+The action may clear only application-accessible cache/session state; it must report any browser-managed or platform state it cannot clear. It must never delete durable business data. This behavior is reviewed in code and tested with local adapters when risk warrants it; the agent does not press the control or reset a user's session.
+
+This resolves the most common vibe-coding debugging pain point: stale cache causing confusing behavior that looks like a bug.
+
+---
+
+## Copy Diagnostics Report
+
+### What the report must include
+
+```txt
+project name
+environment
+version
+git SHA
+build timestamp
+client timestamp
+current route
+locale and timezone
+browser name and version
+viewport dimensions
+screen size
+auth state — authenticated yes/no
+user ID if authenticated
+user role if authenticated
+feature flags
+debug mode state
+API base URL — hostname only, never full URL with tokens
+/health status
+deep-health status if available
+DB provider if available
+recent frontend logs — last 20 entries
+recent frontend runtime errors
+recent failed API requests — endpoint and status only
+safe backend diagnostics if available
+recent API errors with correlation IDs
+last endpoint probe — id, method, path, expected status, actual status, latency, correlation ID
+sanitized request/response examples for the affected registered endpoint
+current correlation ID
+recent metered API call counts and failures, if the feature touches a metered API
+```
+
+### What must always be redacted
+
+```txt
+passwords
+tokens of any kind
+cookies and cookie values
+API keys
+authorization headers
+secrets
+private user data
+payment data
+sensitive environment variable values
+full database connection strings
+raw server logs
+full URLs containing tokens or private query params
+request or response bodies unless explicitly sanitized
+```
+
+### Report format
+
+The copy diagnostics button copies a structured text report:
+
+```txt
+=== PHDK Debug Diagnostics Report ===
+
+Project: [name]
+Environment: [development / staging / production]
+Version: [vX.Y.Z]
+Git SHA: [shortSHA or unavailable]
+Build: [UTC timestamp or unavailable]
+Client: [UTC timestamp]
+
+Route: [current route]
+Locale: [locale]
+Timezone: [timezone]
+Browser: [name and version]
+Viewport: [width x height]
+Screen: [width x height]
+
+Auth: [authenticated yes/no]
+User ID: [ID or not authenticated]
+Role: [role or not authenticated]
+
+Debug mode: [on/off]
+Feature flags: [list or none]
+
+API: [hostname only]
+/health: [status or unavailable]
+/health/deep: [status or unavailable / protected]
+DB provider: [provider or unavailable]
+
+Recent frontend logs:
+[last 20 entries or none]
+
+Recent errors:
+[list or none]
+
+Recent failed API requests:
+[endpoint and status code only, or none]
+
+Endpoint probe:
+[id / method / path / probe mode / expected / actual / latency / correlation ID, or none]
+
+Expected example:
+[sanitized example or unavailable]
+
+Correlation ID: [ID]
+
+=== End of Report ===
+[SENSITIVE VALUES REDACTED]
+```
+
+---
+
+## Auth Diagnostics Requirements
+
+When login exists, diagnostics must safely capture the following without exposing sensitive data:
+
+```txt
+Auth route reached — yes/no
+Google OAuth redirect triggered — yes/no
+OAuth callback reached — yes/no
+Redirect URI — hostname only, never full URI with tokens or state params
+Callback result — success/failure
+Session detected — yes/no
+Auth error stage — which step failed
+Auth error code — safe error code only
+User ID — if authenticated
+Role — if authenticated
+Cookie presence — summary only, never cookie values
+Correlation ID
+```
+
+This information lets the AI developer trace likely code faults from a supplied diagnostics report without operating the login flow or accessing the OAuth provider.
+
+---
+
+## Metered API / Cost Diagnostics Requirements
+
+When a feature calls a metered or paid external API (AI/image/video generation, LLM calls, SMS, email sending, etc.), diagnostics must safely capture:
+
+```txt
+Metered API name/provider
+Call count in current session or last N minutes
+Failure count and last failure reason
+Retry count on the most recent call
+Usage cap configured — yes/no
+Kill switch state — enabled/disabled
+Correlation ID
+```
+
+Never include request or response payloads from the metered API, and never include API keys or provider account identifiers.
+
+This lets a supplied report identify code paths that may need a bounded retry, quota, or kill-switch fix — see `DEVSECOPS.md` Cost and Consumption Safety. The agent does not query provider billing, invoke the metered integration, or operate the kill switch as verification. Requested provider observations remain governed by `EXECUTION_SCOPE.md` — **Bounded read-only provider diagnostics**.
+
+---
+
+## Implementation Notes
+
+### Frontend
+
+- Capture recent console logs in a circular buffer (last 50 entries)
+- Capture recent unhandled errors
+- Capture recent failed fetch or axios requests (status and endpoint only)
+- Do not capture request or response bodies
+- Clear the buffer on clear cache
+
+### High-Signal Status Logging
+
+The goal is diagnostic signal, not log volume.
+
+Every project exposes one shared debug-log helper (for example `debugLog(scope, status, detail)`) that writes structured entries into the diagnostic buffer. Ad hoc `console.log` calls do not satisfy this requirement.
+
+When debug mode is active, instrument **important execution boundaries**, not every helper function:
+
+- API route entry/result and client API calls
+- auth and authorization decisions
+- form submissions and meaningful mutations
+- service operations containing business rules
+- database/migration/import state transitions
+- existing product background jobs and queue consumers, when present; this is not an instruction to create or schedule them
+- metered or paid external API calls
+- caught errors that affect user-visible behavior
+
+Do not add entry/success/failure logging to pure helpers, trivial getters, rendering-only functions, or other low-signal code merely to satisfy a rule.
+
+When debug mode is off, debug-only logging is a no-op or minimal-overhead path.
+
+Source review must confirm that important new execution boundaries propagate correlation IDs into relevant safe logs. Local tests cover risky logging/redaction behavior with synthetic fixtures; a live request or probe is not a completion requirement.
+
+### Endpoint Diagnostics Console
+
+App-style projects expose an authorized Diagnostics section in `/admin/system` or `/admin/debug`.
+
+It consumes the endpoint diagnostic registry defined in `VERIFICATION_LOOP.md` and shows:
+
+- endpoint id, method, path, and purpose
+- auth and role requirements
+- probe mode
+- sanitized request example
+- sanitized success and common-error examples
+- expected status codes
+- last actual status and latency
+- correlation ID
+- safe related log summary
+- a human-operated **Test** button only when the registered probe mode permits safe execution
+- human-triggered **Run safe probes** for the registered safe modes, without creating a schedule
+- **Copy diagnostics** for the current result
+
+The endpoint registry is the source of truth. Do not maintain a second manually duplicated list in the UI.
+
+Unsafe, destructive, private, or metered operations must be `manual_only`, `validation_only`, or true `dry_run`; diagnostics must never create real side effects just to prove health. These are product controls, not agent verification tools. PHDK agents do not execute even a `safe_read` probe against a service.
+
+### Backend
+
+- Include correlation ID in every API response header
+- Include correlation ID in every error response
+- Expose safe diagnostics through `/health/deep` when available
+- Do not include sensitive data in any diagnostic response
+
+### Version badge component
+
+The version badge must:
+
+- Mount the reusable component on public home, login, app shell and admin surfaces; render it regardless of login, role or debug mode
+- Show format: **`vX.Y.Z` only**. Keep SHA and timestamps inside the copied diagnostics report, never next to the version in the UI.
+- Include copy diagnostics button with clipboard icon, and the clear cache button with trash icon immediately next to it — always paired, never separated elsewhere in the UI
+- Be positioned consistently — top area of the shell or admin panel
+- Never obstruct primary UI
+
+---
+
+## Debug Diagnostics QA
+
+Before claiming the requested delivery complete, record source references and applicable permitted local checks for these requirements. During Auto, collect this evidence in the whole goal's final integrated verification, repair in-scope failures, and continue authorized delivery without another PHDK-only approval. A checked item confirms implementation evidence only; it does not claim the UI was rendered or a live action succeeded.
+
+- [ ] Source mounts one always-visible shared version/actions component on public home, login, shell and admin; anonymous users and debug OFF still see it.
+- [ ] Source and component tests enforce exact visible `vX.Y.Z` (no SHA/date/parentheses), 12px version, 28px button boxes, 14px glyphs, 4px gaps, no wrap/truncation and the exact version → clipboard → trash icon-only row, independent green-check confirmation/revert, zero visible helper/success text, and visible anonymous/debug-OFF states.
+- [ ] Clipboard handler and report formatting are wired; any local test stubs the clipboard API.
+- [ ] Report schema includes all required fields and handles unavailable data honestly.
+- [ ] Redaction excludes passwords, tokens, cookies, secrets, private data, and sensitive URLs.
+- [ ] Auth diagnostics map the required safe fields when login exists.
+- [ ] Metered diagnostics map counts, failures, retry bounds, cap/kill-switch state, and correlation IDs without payloads, keys, or provider account identifiers.
+- [ ] Clear-cache handler implements authorized cache/session reset and reload, reports unsupported clearing, and cannot delete durable data.
+- [ ] Only the expanded debug panel and privileged diagnostic content depend on debug mode/authorization; version/actions row does not.
+- [ ] Code defaults debug mode to ON in non-production and OFF in production; risky default-selection changes have a local test.
+- [ ] Production runtime state is not claimed from source/configuration review.
+- [ ] Important execution boundaries emit structured correlated diagnostics without blanket logging on trivial helpers.
+- [ ] Endpoint registry access and diagnostic actions enforce admin/developer permissions server-side.
+- [ ] Probe-mode guards refuse unsafe automatic execution; local tests use fake probes when these security boundaries change.
+- [ ] Request/success/error examples are sanitized.
+- [ ] Failure-report mapping includes expected/actual status, latency, correlation ID, and safe log context when available.
+- [ ] Diagnostic buffering collects meaningful bounded entries and does not invent successful live results.
+- [ ] No browser, application/health/probe request, metered integration call, service administration, or recurring job was used as verification.
+- [ ] Any requested provider observations followed `EXECUTION_SCOPE.md` — **Bounded read-only provider diagnostics**, including finite query limits and redaction; non-secret metadata and relevant logs are reported as diagnostic evidence rather than a product test.
+- [ ] Final evidence states `visual/runtime unverified` for the actual UI and deployed behavior.
+
+
+## Non-negotiable functional acceptance — not just green icons
+
+The widget belongs in the **top-left application branding region directly below the project name** on public home, login, authenticated shell and admin. Show exactly `vX.Y.Z` (no SHA/date/parentheses), then small adjacent clipboard/trash icons, using the fixed dimensions above. Do not relocate it to the right, footer or floating corner when the name occupies the top-left.
+
+A green check is **evidence of successful operations, not an onClick animation**. Implement and verify both end-to-end paths:
+
+1. **Clipboard**: register a bounded, sanitized diagnostic event buffer early in application bootstrap, including route/navigation history, application lifecycle events, API failures, frontend exceptions/rejected promises, correlation IDs and available safe backend summaries. Include app identity, current rendered version, build metadata (inside copied report only), environment, timestamp, current/previous route, recent errors and event counts. Copy the fully assembled UTF-8/plain-text report with `navigator.clipboard.writeText` or a supported verified fallback; read back the mock clipboard payload in automated tests and assert actual content, nonempty sections and redaction. Never show a check before the write promise succeeds. A dummy constant string, static empty report, icon state toggle or placeholder callback is a FAIL.
+2. **Trash**: execute and await clearing **this origin's** accessible Cache Storage entries, registered service-worker caches/registration when appropriate, localStorage/sessionStorage entries owned by the app, in-memory diagnostic buffers and the app's authentication session via its actual logout/invalidation mechanism. For HTTP-only cookies, use a first-party logout endpoint that returns expired Set-Cookie headers; client JavaScript cannot directly erase them. Delete only app-scoped accessible cookies, respecting domain/path/SameSite; never claim to clear the browser-wide HTTP cache. Verify completion with mocked cache/storage/cookie/logout adapters and assertions that relevant entries are removed and session invalidation is called, and verify failure/partial-success states. Show check only once all supported required steps finish successfully, then restore icon and reload/navigate if needed. A timeout, icon-only handler, bare `window.location.reload()`, or unawaited promise is a FAIL.
+3. **Public-safe reporting**: unauthenticated users get safe version, route, and client error summaries without privileged logs or personally identifiable data. Authenticated/admin reporting may add properly authorized sanitized details. Debug OFF does not suppress the control or fabricated success, but may limit buffered verbose events to safe minimum diagnostics. Never record raw request bodies, cookie values, access tokens, headers or personal data.
+4. **Tests**: assertions must trigger real event handlers with adapters, inspect the actual clipboard payload, validate navigation/error capture, assert cache/session/cookie reset calls and resulting state, negative/error cases, accessible feedback, the brief checkmark, and icon reset. Document unsupported browser capabilities as limitations; do not silently ignore them or label them cleared.
+
+A visually correct widget with no proven clipboard write or completed clear workflow is **NONCOMPLIANT**. Auto and Check must classify this as a blocking product defect, not a styling nit.

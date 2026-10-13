@@ -1,3 +1,6 @@
+import { runtimeAiBudget } from '../llm/runtime-ai-budget';
+import { Public } from '../guards/public.decorator';
+import { RuntimeActorGuard } from '../gateways/runtime-identity';
 import {
   BadRequestException,
   Controller,
@@ -8,6 +11,7 @@ import {
   UploadedFile,
   UseInterceptors,
   Body,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
@@ -16,6 +20,8 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @ApiTags('Speaches')
 @Controller('api/teams/:teamId/speaches')
+@Public()
+@UseGuards(RuntimeActorGuard)
 export class SpeachesController {
   constructor(private readonly prisma: PrismaService) {}
 
@@ -35,7 +41,7 @@ export class SpeachesController {
     });
 
     return {
-      role: dbUser?.role || requestUser.role || 'user',
+      role: dbUser?.role || 'anonymous',
       companyId: dbUser?.companyId || null,
       teamId: dbUser?.teamId || null,
     };
@@ -47,7 +53,7 @@ export class SpeachesController {
     teamId: string | null;
   }) {
     if (scope.role === 'superadmin') return {};
-    if (scope.companyId) return { brand: { companyId: scope.companyId } };
+    if (['admin', 'coordinator'].includes(scope.role) && scope.companyId) return { brand: { companyId: scope.companyId } };
     if (scope.teamId) return { id: scope.teamId };
     return { id: '__NO_TEAM_ACCESS__' };
   }
@@ -79,21 +85,24 @@ export class SpeachesController {
     if (model === englishOnlyModel && normalizedLanguage === 'es') {
       return multilingualModel;
     }
+    if (![englishOnlyModel, multilingualModel].includes(model)) throw new BadRequestException('Unsupported transcription model');
     return model;
   }
 
   @Post('transcriptions')
-  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage(), limits: { fileSize: 4 * 1024 * 1024, files: 1 } }))
   async transcribe(
     @Param('teamId') teamId: string,
     @UploadedFile() file: any,
     @Body() body: Record<string, string>,
     @Req() req: any,
   ) {
-    if (!file?.buffer?.length) {
+    if (!file?.buffer?.length || file.buffer.length > 4 * 1024 * 1024) {
       throw new BadRequestException('Audio file is required');
     }
 
+    body = body || {};
+    if (['model', 'language'].some(key => body[key] !== undefined && (typeof body[key] !== 'string' || body[key].length > 100))) throw new BadRequestException('Invalid transcription options');
     const scope = await this.getActorScope(req);
     const team = await this.prisma.team.findFirst({
       where: {
@@ -113,14 +122,10 @@ export class SpeachesController {
       throw new ForbiddenException('Team access denied');
     }
 
-    const apiUrl = (
-      team.speachesApiUrl || 'https://speaches-production-c63f.up.railway.app'
-    ).replace(/\/+$/, '');
-    const apiKey =
-      team.speachesApiKey ||
-      process.env.SPEACHES_API_KEY ||
-      process.env.API_KEY ||
-      '';
+    if (team.sttProvider !== 'speaches' || !team.speachesApiUrl || process.env.KELEDON_VOICE_DISABLED === 'true') throw new BadRequestException('Configured server STT required');
+    const apiUrl = team.speachesApiUrl.replace(/\/+$/, '');
+    const apiKey = team.speachesApiKey || '';
+    await runtimeAiBudget.run(`stt:${req.runtimeIdentity.userId}`, undefined, async () => undefined);
 
     const form = new FormData();
     form.append(
@@ -138,7 +143,7 @@ export class SpeachesController {
       `[STT] Speaches transcription proxy model=${speachesModel} requested=${requestedModel} language=${speachesLanguage} bytes=${file.buffer.length}`,
     );
     form.append('model', speachesModel);
-    form.append('response_format', body.response_format || 'json');
+    form.append('response_format', 'json');
     if (body.language)
       form.append(
         'language',
@@ -152,13 +157,14 @@ export class SpeachesController {
       method: 'POST',
       headers,
       body: form as any,
+      signal: AbortSignal.timeout(15000),
     });
 
     const text = await upstream.text();
     if (!upstream.ok) {
       throw new BadRequestException({
         message: `Speaches transcription failed with HTTP ${upstream.status}`,
-        detail: text.slice(0, 1000),
+        detail: 'Configured STT provider returned an error',
       });
     }
 

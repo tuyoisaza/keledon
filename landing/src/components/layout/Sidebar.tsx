@@ -1,3 +1,5 @@
+import { ThemeControls } from '@/components/common/ThemeControls';
+import { useTranslation } from '@/context/I18nContext';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
@@ -20,24 +22,23 @@ import {
     Brain,
     LucideIcon,
     Tag,
-    Users as UsersIcon,
-    Copy,
-    Check,
-    Trash2
+    Users as UsersIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
-import { copyDebugReport } from '@/lib/debug-report';
-import { toast } from 'sonner';
+import { VersionActions } from '@/components/common/VersionActions';
 
 interface NavItem {
     icon: React.ElementType;
     label: string;
     href: string;
+    i18nKey?: string;
     minRole: 'user' | 'agent' | 'admin' | 'coordinator' | 'superadmin';
 }
 
 const navItems: NavItem[] = [
+    { icon: BookOpen, label: 'Prompts', i18nKey: 'aiAdmin.prompts', href: '/admin/prompts', minRole: 'superadmin' },
+    { icon: Activity, label: 'AI consumption', i18nKey: 'aiAdmin.consumption', href: '/admin/ai-consumption', minRole: 'superadmin' },
     { icon: Play, label: 'Launch Keledon', href: '/launch-keledon', minRole: 'user' },
     { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard', minRole: 'user' },
     { icon: Brain, label: 'Brain', href: '/brain', minRole: 'user' },
@@ -56,8 +57,8 @@ const navItems: NavItem[] = [
 const managementItems: NavItem[] = [];
 
 export function Sidebar() {
+    const { t } = useTranslation();
     const [collapsed, setCollapsed] = useState(false);
-    const [copied, setCopied] = useState(false);
     const location = useLocation();
     const { user, logout, hasRole } = useAuth();
 
@@ -76,98 +77,26 @@ export function Sidebar() {
         <aside
             className={cn(
                 'h-screen flex flex-col bg-sidebar border-r border-border transition-all duration-300',
-                collapsed ? 'w-16' : 'w-56'
+                collapsed ? 'w-36' : 'w-56'
             )}
         >
-            {/* Logo */}
-            <div className="h-16 flex items-center justify-between px-4 border-b border-border">
-                {!collapsed && (
-                    <div className="flex flex-col items-start">
-                        <Link to="/dashboard" className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                                <span className="text-primary-foreground font-bold text-sm">K</span>
-                            </div>
-                            <span className="font-bold text-lg text-foreground">Keledon</span>
-                        </Link>
-                        <div className="flex items-center gap-2 ml-10 mt-0.5">
-                            <span className="text-[10px] text-muted-foreground">v{__APP_VERSION__}</span>
-                            <button
-                                onClick={async () => {
-                                    const success = await copyDebugReport();
-                                    if (success) {
-                                        setCopied(true);
-                                        toast.success('Debug report copied to clipboard!');
-                                        setTimeout(() => setCopied(false), 2000);
-                                    } else {
-                                        toast.error('Failed to copy debug report');
-                                    }
-                                }}
-                                className="p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                                title="Copy debug report"
-                            >
-                                {copied ? (
-                                    <Check className="w-3 h-3 text-green-500" />
-                                ) : (
-                                    <Copy className="w-3 h-3" />
-                                )}
-                            </button>
-                            <button
-                                onClick={() => {
-                                    sessionStorage.clear();
-                                    localStorage.clear();
-                                    toast.info('Cache cleared, redirecting...');
-                                    window.location.href = '/login';
-                                }}
-                                className="p-0.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                                title="Flush cache and logout"
-                            >
-                                <Trash2 className="w-3 h-3" />
-                            </button>
-                        </div>
-                    </div>
-                )}
-                {collapsed && (
-                    <div className="flex flex-col items-center gap-1">
+            {/* Shared diagnostics stay visible in both navigation modes. */}
+            <div className="flex flex-col items-start gap-1 p-3 border-b border-border">
+                <div className="flex w-full items-center justify-between gap-2">
+                    <Link to="/dashboard" className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                             <span className="text-primary-foreground font-bold text-sm">K</span>
                         </div>
-                        <button
-                            onClick={async () => {
-                                const success = await copyDebugReport();
-                                if (success) {
-                                    toast.success('Debug report copied!');
-                                } else {
-                                    toast.error('Failed to copy');
-                                }
-                            }}
-                            className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                            title="Copy debug report"
-                        >
-                            <Copy className="w-3 h-3" />
-                        </button>
-                        <button
-                            onClick={() => {
-                                sessionStorage.clear();
-                                localStorage.clear();
-                                toast.info('Cache cleared');
-                                window.location.href = '/login';
-                            }}
-                            className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-                            title="Flush cache and logout"
-                        >
-                            <Trash2 className="w-3 h-3" />
-                        </button>
-                    </div>
-                )}
-                <button
-                    onClick={() => setCollapsed(!collapsed)}
-                    className={cn(
-                        'p-1 rounded hover:bg-muted text-muted-foreground',
-                        collapsed && 'mx-auto mt-2'
-                    )}
-                >
-                    {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-                </button>
+                        {!collapsed && <span className="font-bold text-lg text-foreground">Keledon</span>}
+                    </Link>
+                    <button type="button" onClick={() => setCollapsed(!collapsed)}
+                        aria-label={t(collapsed ? 'diagnostics.expand' : 'diagnostics.collapse')}
+                        className="p-1 rounded hover:bg-muted text-muted-foreground focus-visible:outline-2">
+                        {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                    </button>
+                </div>
+                <VersionActions />
+                <ThemeControls />
             </div>
 
             {/* Navigation */}
@@ -186,7 +115,7 @@ export function Sidebar() {
                             )}
                         >
                             <item.icon className="w-5 h-5 flex-shrink-0" />
-                            {!collapsed && <span className="text-sm font-medium">{item.label}</span>}
+                            {!collapsed && <span className="text-sm font-medium">{item.i18nKey ? t(item.i18nKey) : item.label}</span>}
                         </Link>
                     );
                 })}

@@ -1,0 +1,34 @@
+{
+  "kind": "SYNTHETIC_COMPANY_CO_CLOUD_COMMANDS",
+  "productionDefault": false,
+  "sessionId": "company-co-synthetic-call-001",
+  "description": "Repository-only cloud-side acceptance fixture. No vendor credentials, real calls or provider operations. Cloud issues the next command only after successful execution evidence.",
+  "surfaces": {
+    "call": "http://127.0.0.1:4173/company-co/call",
+    "crm": "http://127.0.0.1:4173/company-co/crm"
+  },
+  "commands": [
+    { "id": "start", "command": "call_start", "payload": { "session_id": "company-co-synthetic-call-001" } },
+    { "id": "answer", "command": "rpa_flow", "payload": { "flow_id": "company-co-answer", "steps": [
+      { "action": "navigate", "url": "http://127.0.0.1:4173/company-co/call" },
+      { "action": "assert", "selector": "#incoming-call", "value": "ringing" },
+      { "action": "click", "selector": "#answer-call" }
+    ] } },
+    { "id": "transcript", "command": "call_transcript", "payload": { "text": "Synthetic caller requests product information.", "is_final": true } },
+    { "id": "decision", "command": "call_decide", "payload": { "decision_id": "company-co-decision-001", "say": { "text": "Here is the requested product information." } } },
+    { "id": "finalize", "command": "rpa_flow", "payload": { "flow_id": "company-co-crm-finalize", "steps": [
+      { "action": "navigate", "url": "http://127.0.0.1:4173/company-co/crm" },
+      { "action": "assert", "selector": "#customer-id", "value": "COMPANY-CO-TEST-CUSTOMER" },
+      { "action": "fill", "selector": "#summary", "value": "Synthetic product information supplied." },
+      { "action": "select", "selector": "#disposition", "value": "information-provided" },
+      { "action": "click", "selector": "#save-record" },
+      { "action": "assert", "selector": "#save-status", "value": "saved" }
+    ] } },
+    { "id": "hangup", "command": "rpa_flow", "payload": { "flow_id": "company-co-hangup", "steps": [
+      { "action": "navigate", "url": "http://127.0.0.1:4173/company-co/call" },
+      { "action": "click", "selector": "#hangup-call" }
+    ] } },
+    { "id": "close", "command": "call_close", "payload": { "reason": "Cloud verified summary, disposition and hangup evidence" } }
+  ],
+  "negativeCases": ["CRM finalization failure prevents Cloud hangup/close", "Unknown surface rejects action", "No active call rejects CRM flow"]
+}

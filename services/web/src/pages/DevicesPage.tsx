@@ -15,7 +15,7 @@ export default function DevicesPage() {
   const loadDevices = async () => {
     try {
       const response = await apiJson('/api/devices', {
-        headers: { 'x-user-id': user?.id }
+        headers: user?.id ? { 'x-user-id': user.id } : {}
       });
       setDevices(Array.isArray(response) ? response : []);
     } catch (error) {
@@ -54,7 +54,7 @@ export default function DevicesPage() {
         <h1 className="text-2xl font-bold">Devices</h1>
         <button
           onClick={generatePairingCode}
-          className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark"
+          className="bg-primary text-foreground px-4 py-2 rounded-lg hover:bg-primary-dark"
         >
           Add New Device
         </button>
@@ -79,7 +79,7 @@ export default function DevicesPage() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
       ) : devices.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-muted-foreground">
           No devices found. Click "Add New Device" to add your first device.
         </div>
       ) : (
@@ -91,7 +91,7 @@ export default function DevicesPage() {
             >
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-semibold text-lg">{device.name}</h3>
-                <span className={`px-2 py-1 rounded-full text-xs text-white ${getStatusColor(device.status)}`}>
+                <span className={`px-2 py-1 rounded-full text-xs text-foreground ${getStatusColor(device.status)}`}>
                   {device.status}
                 </span>
               </div>

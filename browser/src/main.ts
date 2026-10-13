@@ -96,7 +96,7 @@ async function autoConnect(): Promise<void> {
       runtimeStatus.status = 'connected';
       runtimeStatus.authToken = data.auth_token;
       runtimeStatus.deviceId = data.device_id;  // Use server's DB UUID for WebSocket auth
-      runtimeStatus.sessionId = data.keledon_id || null;
+      runtimeStatus.sessionId = null; // Agent identity is not a DB call/session identity.
       runtimeStatus.keledonId = data.keledon_id || null;
       runtimeStatus.teamId = data.team?.id || null;
       runtimeStatus.teamName = data.team?.name || null;

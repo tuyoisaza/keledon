@@ -1,10 +1,22 @@
-import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
+import { ResourceScopeGuard } from '../guards/resource-scope.guard';
+import { RuntimeActorGuard } from '../gateways/runtime-identity';
+import { Public } from '../guards/public.decorator';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { TTSService } from './tts.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('TTS')
 @Controller('tts')
+@Public()
+@UseGuards(RuntimeActorGuard, ResourceScopeGuard)
 export class TTSController {
   constructor(private readonly ttsService: TTSService) {}
 

@@ -41,3 +41,17 @@ export function setMainWindow(win: BrowserWindow | null) { mainWindow = win; }
 
 export let debugMode = false;
 export function setDebugMode(mode: boolean) { debugMode = mode; }
+
+/** Explicit logout clears tenant/session configuration and all cached runtime credentials. */
+export function clearRuntimeSessionState(): void {
+  runtimeStatus.authToken = null;
+  runtimeStatus.sessionId = null;
+  runtimeStatus.pendingKeledonId = null;
+  runtimeStatus.pendingPairingCode = null;
+  runtimeStatus.teamId = null;
+  runtimeStatus.teamName = null;
+  runtimeStatus.keledonId = null;
+  runtimeStatus.vendors = [];
+  runtimeStatus.escalationTriggers = [];
+  runtimeStatus.language = 'en-US';
+}

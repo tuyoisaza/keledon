@@ -51,9 +51,9 @@ export function mergeRuntimeVendorCredentials(fetchedVendors: any[], existingVen
       // CRUD vendor responses are intentionally masked for management UI display.
       // Preserve encrypted runtime credentials from the pairing payload so browser auto-login
       // uses the actual email/login/password instead of typing "***".
-      username: vendor.username === '***' ? existing.username : vendor.username,
-      password: vendor.password === '***' ? existing.password : vendor.password,
-      apiKey: vendor.apiKey === '***' ? existing.apiKey : vendor.apiKey,
+      username: vendor.username == null || vendor.username === '***' ? existing.username : vendor.username,
+      password: vendor.password == null || vendor.password === '***' ? existing.password : vendor.password,
+      apiKey: vendor.apiKey == null || vendor.apiKey === '***' ? existing.apiKey : vendor.apiKey,
     };
   });
 }
@@ -61,4 +61,11 @@ export function mergeRuntimeVendorCredentials(fetchedVendors: any[], existingVen
 /** Log vendor login events */
 export function logVendorLogin(action: string, vendorId: string | null, details?: Record<string, unknown>): void {
   eventLogger.info('vendor', action, { vendorId, ...details });
+}
+
+export function clearVendorSessionState(): void {
+  vendorLoginState.isLoggingIn = false;
+  vendorLoginState.vendorId = null;
+  bootstrappedVendorIds.clear();
+  bootstrappedTeamId = null;
 }

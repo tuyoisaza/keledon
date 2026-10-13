@@ -68,17 +68,8 @@ export class VoiceWSClient extends EventEmitter {
       log.info('[VoiceWS] Connected to Voice Gateway');
       this.emit('connected');
 
-      // Start a voice session
-      this.socket?.emit('call:start', {
-        session_id: runtimeStatus.sessionId || undefined,
-        context: {
-          companyName: 'Unspecified Company',
-          brandName: 'Unspecified Brand',
-          teamName: runtimeStatus.teamName || 'Unspecified Team',
-          teamId: this.options.teamId,
-          language: this.options.language || runtimeStatus.language || 'en-US',
-        },
-      });
+      // Call starts only after the Cloud establishes an owned DB session.
+
     });
 
     this.socket.on('disconnect', (reason) => {
@@ -138,6 +129,14 @@ export class VoiceWSClient extends EventEmitter {
       log.info('[VoiceWS] Call ended:', data.reason || 'no reason');
       this.isSpeaking = false;
       this.emit('call:ended', data);
+    });
+  }
+
+  startCallSession(sessionId: string): void {
+    if (!this.socket?.connected || !sessionId) return;
+    this.socket.emit('call:start', {
+      session_id: sessionId,
+      context: { language: this.options.language || runtimeStatus.language || 'en-US' },
     });
   }
 

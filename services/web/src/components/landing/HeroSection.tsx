@@ -1,4 +1,5 @@
-import { ArrowRight, Play } from "lucide-react";
+import { Link } from 'react-router-dom';
+import { ArrowRight } from "lucide-react";
 
 export const HeroSection = () => {
     return (
@@ -12,12 +13,13 @@ export const HeroSection = () => {
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-16 z-10">
                 {/* Left: Copy */}
                 <div className="lg:w-1/2">
+                    <p className="text-xs text-muted-foreground mb-2">Illustrative interface; no live session or service metrics.</p>
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-8">
                         <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                         <span className="text-sm text-primary">Autonomous AI for Contact Centers</span>
                     </div>
 
-                    <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-white mb-6 leading-tight">
+                    <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-tight">
                         The Cloud Decides.
                         <br />
                         <span className="gradient-text">The Agent Executes.</span>
@@ -28,38 +30,37 @@ export const HeroSection = () => {
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4">
-                        <button className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all">
-                            Request Early Access
+                        <Link to="/login" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all">
+                            Open KELEDON
                             <ArrowRight className="w-5 h-5 ml-2" />
-                        </button>
-                        <button className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-transparent text-white font-semibold hover:bg-white/5 border border-white/20 transition-all">
-                            <Play className="w-4 h-4 mr-2" />
-                            Watch Demo
-                        </button>
+                        </Link>
+                        <a href="#architecture" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-transparent text-foreground font-semibold hover:bg-foreground/5 border border-border/20 transition-all">
+                            See architecture
+                        </a>
                     </div>
 
                     {/* Stats */}
-                    <div className="flex gap-12 mt-12 pt-8 border-t border-white/10">
+                    <div className="flex gap-12 mt-12 pt-8 border-t border-border/10">
                         <div>
-                            <p className="text-3xl font-bold text-white">100%</p>
-                            <p className="text-sm text-muted-foreground">Automation Ready</p>
+                            <p className="text-3xl font-bold text-foreground">Cloud</p>
+                            <p className="text-sm text-muted-foreground">Policy decisions</p>
                         </div>
                         <div>
-                            <p className="text-3xl font-bold text-white">&lt;500ms</p>
-                            <p className="text-sm text-muted-foreground">Response Time</p>
+                            <p className="text-3xl font-bold text-foreground">Browser</p>
+                            <p className="text-sm text-muted-foreground">Deterministic execution</p>
                         </div>
                         <div>
-                            <p className="text-3xl font-bold text-white">24/7</p>
-                            <p className="text-sm text-muted-foreground">Availability</p>
+                            <p className="text-3xl font-bold text-foreground">Client</p>
+                            <p className="text-sm text-muted-foreground">Configured interfaces</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Right: Session Preview */}
                 <div className="lg:w-1/2">
-                    <div className="relative rounded-2xl border border-white/10 bg-card/80 backdrop-blur-xl shadow-2xl overflow-hidden">
+                    <div className="relative rounded-2xl border border-border/10 bg-card/80 backdrop-blur-xl shadow-2xl overflow-hidden">
                         {/* Window Chrome */}
-                        <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-black/40">
+                        <div className="flex items-center gap-2 px-4 py-3 border-b border-border/10 bg-background/40">
                             <div className="flex gap-1.5">
                                 <div className="w-3 h-3 rounded-full bg-red-500/60" />
                                 <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
@@ -97,7 +98,7 @@ export const HeroSection = () => {
                             </div>
 
                             {/* Transcript */}
-                            <div className="p-4 rounded-lg bg-muted/50 border border-white/5">
+                            <div className="p-4 rounded-lg bg-muted/50 border border-border/5">
                                 <p className="text-xs text-muted-foreground mb-1">Transcription</p>
                                 <p className="text-foreground font-mono">"I need to check my case status..."</p>
                             </div>

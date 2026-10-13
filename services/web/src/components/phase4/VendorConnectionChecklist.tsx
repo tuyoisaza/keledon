@@ -16,25 +16,25 @@ export default function VendorConnectionChecklist() {
                         <Link2 className="h-3.5 w-3.5" />
                         Connection Readiness
                     </div>
-                    <h2 className="mt-3 text-lg font-semibold text-white">Vendor connection checklist</h2>
-                    <p className="mt-1 text-sm text-gray-400">
+                    <h2 className="mt-3 text-lg font-semibold text-foreground">Vendor connection checklist</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">
                         Additive Phase 4 stub for the future `test-connection` and credential rotation workflow.
                     </p>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                     <div className="rounded-lg border border-gray-700 bg-gray-900/70 px-4 py-3">
-                        <div className="flex items-center gap-2 text-sm font-medium text-white">
+                        <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                             <ServerCog className="h-4 w-4 text-primary" />
                             Planned endpoint
                         </div>
-                        <p className="mt-1 text-xs text-gray-400">`POST /api/vendors/:vendorId/test-connection`</p>
+                        <p className="mt-1 text-xs text-muted-foreground">`POST /api/vendors/:vendorId/test-connection`</p>
                     </div>
                     <div className="rounded-lg border border-gray-700 bg-gray-900/70 px-4 py-3">
-                        <div className="flex items-center gap-2 text-sm font-medium text-white">
+                        <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                             <KeyRound className="h-4 w-4 text-primary" />
                             Planned rotation
                         </div>
-                        <p className="mt-1 text-xs text-gray-400">`POST /api/vendors/:vendorId/rotate-credentials`</p>
+                        <p className="mt-1 text-xs text-muted-foreground">`POST /api/vendors/:vendorId/rotate-credentials`</p>
                     </div>
                 </div>
             </div>

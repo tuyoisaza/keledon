@@ -22,7 +22,7 @@ export default function VectorStoreTab() {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    category: 'knowledge' as const,
+    category: 'knowledge' as PolicyDocument['category'],
     metadata: '',
     brand_id: '',
     team_id: ''

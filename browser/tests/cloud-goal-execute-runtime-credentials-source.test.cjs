@@ -1,38 +1,20 @@
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
-
-const sourcePath = path.join(__dirname, '..', 'src', 'cloud-connection.ts');
-const source = fs.readFileSync(sourcePath, 'utf8');
-
-assert.match(
-  source,
-  /function\s+enrichCloudGoalInputsFromRuntimeVendor\s*\(/,
-  'cloud goal_execute handler should have a local runtime-vendor credential enrichment helper',
-);
-
-assert.match(
-  source,
-  /const\s+enrichedInputs\s*=\s*enrichCloudGoalInputsFromRuntimeVendor\(data,\s*data\.inputs\)/,
-  'goal_execute should enrich inputs before calling AutoBrowse',
-);
-
-assert.match(
-  source,
-  /inputs:\s*enrichedInputs/,
-  'AutoBrowse executeGoal should receive enriched inputs, not raw data.inputs',
-);
-
-assert.match(
-  source,
-  /inputs\.login\s*=\s*username/,
-  'enrichment should expose username as login so sites with login fields use the saved email',
-);
-
-assert.doesNotMatch(
-  source,
-  /cmdlog\.log\([^\n]*(username|password|apiKey)\s*[:=]/,
-  'cloud connection must not log raw credential values while enriching runtime inputs',
-);
-
-console.log('cloud goal_execute runtime credential source tests passed');
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),ts=require('typescript');
+const runtimeStatus={deviceId:'synthetic-device',vendors:[{id:'v',baseUrl:'https://configured.invalid',username:'synthetic-user',password:'synthetic-password',isActive:true}]};
+const source=fs.readFileSync(path.join(__dirname,'../src/cloud-helpers.ts'),'utf8');
+const cloud=fs.readFileSync(path.join(__dirname,'../src/cloud-connection.ts'),'utf8');
+const output=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020,esModuleInterop:true}}).outputText;
+const box={exports:{},URL,process:{env:{}},require:name=>{
+ if(name==='electron-log')return {info(){},warn(){}};
+ if(name==='crypto')return require('node:crypto');
+ if(name==='./runtime-state.js')return {runtimeStatus};
+ if(name==='./cmdlog.js')return {log(){},truncate:value=>value};
+ throw new Error(name);
+}};
+vm.runInNewContext(output,box);const helper=box.exports;
+const enriched=helper.enrichGoalExecuteDataFromRuntimeVendor({vendor_id:'v',goal:'configured goal'});
+assert.equal(enriched.inputs.vendor_id,'v');assert.equal(enriched.inputs.password,'synthetic-password');assert.equal(enriched.inputs.email,'synthetic-user');assert.equal(enriched.inputs.login,'synthetic-user');
+assert.equal(helper.enrichGoalExecuteDataFromRuntimeVendor({goal:'unrelated'}).inputs,undefined);
+assert.equal(helper.buildWsCtx('https://cloud.invalid','synthetic-secret').includes('synthetic-secret'),false);
+assert.doesNotMatch(cloud,/findMatchingVendorFromGoal\(/,'Cloud must identify vendors explicitly; never attach credentials from inferred goal text');
+assert.match(cloud,/enrichCloudGoalInputsFromRuntimeVendor\(goalData,\s*goalData\.inputs\)/);
+console.log('PASS explicit runtime-vendor enrichment and token-safe metadata; no inferred credential attachment');

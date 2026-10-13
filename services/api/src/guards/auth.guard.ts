@@ -25,6 +25,12 @@ export class AuthGuard implements CanActivate {
   private readonly authSecret: string;
 
   constructor(private reflector: Reflector) {
+    if (
+      process.env.NODE_ENV === 'production' &&
+      !process.env.KELEDON_AUTH_SECRET
+    ) {
+      throw new Error('KELEDON_AUTH_SECRET is required in production');
+    }
     this.authSecret =
       process.env.KELEDON_AUTH_SECRET ||
       'keledon-dev-secret-do-not-use-in-production';
@@ -101,7 +107,16 @@ export class AuthGuard implements CanActivate {
       );
 
       // Check token expiry
-      if (Date.now() > payload.expiresAt) {
+      if (
+        !payload ||
+        typeof payload.userId !== 'string' ||
+        !payload.userId.trim() ||
+        typeof payload.email !== 'string' ||
+        typeof payload.role !== 'string' ||
+        typeof payload.expiresAt !== 'number' ||
+        !Number.isFinite(payload.expiresAt) ||
+        Date.now() >= payload.expiresAt
+      ) {
         return null;
       }
 

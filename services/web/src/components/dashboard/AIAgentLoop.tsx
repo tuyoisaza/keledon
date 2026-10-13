@@ -74,21 +74,21 @@ export default function AIAgentLoop({ className }: AIAgentLoopProps) {
 
   const getStepColor = (status: AgentStep['status']) => {
     switch (status) {
-      case 'idle': return 'text-gray-500 border-gray-200';
+      case 'idle': return 'text-muted-foreground border-gray-200';
       case 'active': return 'text-blue-500 border-blue-200 bg-blue-50 animate-pulse';
       case 'completed': return 'text-green-500 border-green-200 bg-green-50';
       case 'error': return 'text-red-500 border-red-200 bg-red-50';
-      default: return 'text-gray-500 border-gray-200';
+      default: return 'text-muted-foreground border-gray-200';
     }
   };
 
   const getLoopStatusColor = (status: AgentLoop['status']) => {
     switch (status) {
-      case 'idle': return 'text-gray-500 bg-gray-100';
+      case 'idle': return 'text-muted-foreground bg-gray-100';
       case 'running': return 'text-blue-500 bg-blue-100';
       case 'completed': return 'text-green-500 bg-green-100';
       case 'error': return 'text-red-500 bg-red-100';
-      default: return 'text-gray-500 bg-gray-100';
+      default: return 'text-muted-foreground bg-gray-100';
     }
   };
 
@@ -187,7 +187,7 @@ export default function AIAgentLoop({ className }: AIAgentLoopProps) {
                   {loop.status === 'idle' && (
                     <button
                       onClick={() => startLoop(loop.id)}
-                      className="p-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors"
+                      className="p-2 rounded-lg bg-green-500 text-foreground hover:bg-green-600 transition-colors"
                       title="Run Loop"
                     >
                       <Play className="w-4 h-4" />
@@ -196,7 +196,7 @@ export default function AIAgentLoop({ className }: AIAgentLoopProps) {
                   {loop.status === 'running' && (
                     <button
                       onClick={() => pauseLoop(loop.id)}
-                      className="p-2 rounded-lg bg-yellow-500 text-white animate-pulse"
+                      className="p-2 rounded-lg bg-yellow-500 text-foreground animate-pulse"
                       title="Pause Loop"
                     >
                       <Activity className="w-4 h-4" />
@@ -205,7 +205,7 @@ export default function AIAgentLoop({ className }: AIAgentLoopProps) {
                   {(loop.status === 'completed' || loop.status === 'error') && (
                     <button
                       onClick={() => resetLoop(loop.id)}
-                      className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+                      className="p-2 rounded-lg bg-blue-500 text-foreground hover:bg-blue-600 transition-colors"
                       title="Reset Loop"
                     >
                       <RotateCcw className="w-4 h-4" />
@@ -220,7 +220,7 @@ export default function AIAgentLoop({ className }: AIAgentLoopProps) {
                   </button>
                   <button
                     onClick={() => deleteLoop(loop.id)}
-                    className="p-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors"
+                    className="p-2 rounded-lg bg-red-500 text-foreground hover:bg-red-600 transition-colors"
                     title="Delete Loop"
                   >
                     <XCircle className="w-4 h-4" />

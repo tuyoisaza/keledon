@@ -5,19 +5,19 @@ export const CTASection = () => {
                 <div className="relative rounded-3xl overflow-hidden bg-primary px-6 py-16 sm:px-16 sm:py-24 md:p-20">
                     <div className="absolute inset-0 bg-gradient-to-tr from-black/40 to-transparent" />
                     <div className="relative z-10 text-center">
-                        <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                        <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                             Ready to transform your contact center?
                         </h2>
                         <p className="mx-auto mt-6 max-w-xl text-lg text-blue-100">
-                            Start your pilot today and see how Keledon can reduce generic call times by up to 40%.
+                            Configure KELEDON for the call and CRM interfaces your organization uses, then validate the workflow with a controlled pilot.
                         </p>
                         <div className="mt-10 flex justify-center gap-6">
-                            <button className="rounded-lg bg-white px-8 py-3.5 text-base font-semibold text-primary hover:bg-blue-50 transition-colors shadow-lg">
+                            <a href="/login" className="rounded-lg bg-white px-8 py-3.5 text-base font-semibold text-primary hover:bg-blue-50 transition-colors shadow-lg">
                                 Get Started
-                            </button>
-                            <button className="rounded-lg bg-transparent border border-white px-8 py-3.5 text-base font-semibold text-white hover:bg-white/10 transition-colors">
-                                Contact Sales
-                            </button>
+                            </a>
+                            <a href="#architecture" className="rounded-lg bg-transparent border border-white px-8 py-3.5 text-base font-semibold text-primary-foreground hover:bg-foreground/10 transition-colors">
+                                Explore the workflow
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -58,14 +58,21 @@ export class DeviceService {
       throw new Error('Invalid or expired pairing code');
     }
 
+    if (!device.userId || !device.keledonId || !device.organizationId)
+      throw new Error('Device requires an authorized stored binding');
     const authToken = this.generateAuthToken();
 
     const paired = await this.prisma.device.update({
-      where: { id: device.id },
+      where: {
+        id: device.id,
+        status: 'pending',
+        pairingCode: code,
+        pairingCodeExpiresAt: { gte: new Date() },
+      },
       data: {
-        userId: data.userId,
-        organizationId: data.organizationId,
-        keledonId: data.keledonId,
+        userId: device.userId,
+        organizationId: device.organizationId,
+        keledonId: device.keledonId,
         status: 'paired',
         pairingCode: null,
         pairingCodeExpiresAt: null,
@@ -147,6 +154,12 @@ export class DeviceService {
     });
 
     if (existing) {
+      if (
+        existing.userId !== data.userId ||
+        existing.organizationId !== data.organizationId
+      ) {
+        throw new Error('Device access denied');
+      }
       return { device_id: existing.id, already_registered: true };
     }
 
@@ -201,6 +214,17 @@ export class DeviceService {
 
     // Return pairing code; device object kept in case caller needs ID later
     return { code, device_id: device.id };
+  }
+
+  async getDeviceStatus(id: string) {
+    return this.prisma.device.findUnique({
+      where: { id },
+      select: { id: true, status: true, lastSeen: true },
+    });
+  }
+
+  async getAllDevices() {
+    return this.prisma.device.findMany({ orderBy: { lastSeen: 'desc' } });
   }
 
   async getDevicesByUser(userId: string) {
@@ -308,7 +332,7 @@ export class DeviceService {
       select: {
         id: true,
         status: true,
-        pairingCode: true,
+
         pairingCodeExpiresAt: true,
         lastSeen: true,
         version: true,
@@ -330,7 +354,7 @@ export class DeviceService {
         ? new Date(device.pairingCodeExpiresAt) < new Date()
         : null,
       is_pending: device.status === 'pending',
-      pairing_code_set: device.pairingCode !== null,
+      pairing_code_set: !!device.pairingCodeExpiresAt,
     };
   }
 
@@ -349,18 +373,18 @@ export class DeviceService {
   }
 
   private generateAuthToken(): string {
-    return `keledon_${Date.now()}_${Math.random().toString(36).slice(2, 16)}`;
+    return `keledon_${crypto.randomBytes(32).toString('hex')}`;
   }
 
   private generatePairingCodeString(): string {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let code = '';
     for (let i = 0; i < 4; i++) {
-      code += chars[Math.floor(Math.random() * chars.length)];
+      code += chars[crypto.randomInt(chars.length)];
     }
     code += '-';
     for (let i = 0; i < 4; i++) {
-      code += chars[Math.floor(Math.random() * chars.length)];
+      code += chars[crypto.randomInt(chars.length)];
     }
     return code;
   }
