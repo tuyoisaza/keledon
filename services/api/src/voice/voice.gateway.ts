@@ -1,5 +1,3 @@
-import { transcribeConfiguredAudio } from './providers/configured-stt';
-import { SpeachesSttAdapter } from './providers/stt/speaches-stt.adapter';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   resolveRuntimeIdentity,
@@ -33,6 +31,7 @@ import {
   getAuthorizedVoiceSession,
   listVoiceSessionSummaries,
 } from './voice-session-access';
+import { VoiceWebRtcHandlers } from './voice-webrtc.handlers';
 
 @WebSocketGateway({
   cors: {
@@ -48,6 +47,7 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private activeSessions: Map<string, VoiceSession> = new Map();
   private readonly brainProcessor: VoiceBrainProcessor;
+  private readonly webRtcHandlers: VoiceWebRtcHandlers;
 
   constructor(
     @Inject(TTSService)
@@ -64,6 +64,14 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.logger,
       (client) =>
         getAuthorizedVoiceSession(this.prisma, this.activeSessions, client),
+    );
+    this.webRtcHandlers = new VoiceWebRtcHandlers(
+      this.prisma,
+      this.activeSessions,
+      this.logger,
+      this.configResolver,
+      this.webrtcService,
+      this.handleTranscript.bind(this),
     );
   }
 
@@ -185,99 +193,7 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody()
     data: { sdp: RTCSessionDescriptionInit; session_id?: string },
   ) {
-    const session = await getAuthorizedVoiceSession(
-      this.prisma,
-      this.activeSessions,
-      client,
-    );
-    if (!session) return { error: 'No active session' };
-
-    this.logger.log(
-      `WebRTC offer from ${session.deviceId} (session=${session.sessionId})`,
-    );
-
-    if (!this.webrtcService) {
-      return { error: 'WebRTC not available' };
-    }
-
-    try {
-      const answer = await this.webrtcService.createPeer(
-        session.sessionId,
-        data.sdp.sdp,
-        // On incoming audio track — pipe to STT pipeline
-        (receiver, streams) => {
-          this.logger.log(
-            `[WebRTC/${session.sessionId}] mic audio track received`,
-          );
-          this.webrtcService.attachAudioReceiver(
-            session.sessionId,
-            receiver,
-            async (wav) => {
-              const callGeneration = session.callGeneration;
-              if (
-                !(await getAuthorizedVoiceSession(
-                  this.prisma,
-                  this.activeSessions,
-                  client,
-                ))
-              )
-                throw new Error('Device authorization revoked');
-              if (process.env.KELEDON_VOICE_DISABLED === 'true')
-                throw new Error('Voice disabled');
-              const config = await this.configResolver.resolveTeamConfig(
-                session.context.teamId,
-              );
-              const result = await transcribeConfiguredAudio(
-                config,
-                wav,
-                session.context.language,
-              );
-              if (
-                this.activeSessions.get(client.id) !== session ||
-                session.callGeneration !== callGeneration
-              )
-                return;
-              if (result.text && result.isFinal)
-                await this.handleTranscript(client, {
-                  text: result.text,
-                  is_final: true,
-                  confidence: result.confidence,
-                });
-            },
-            (error) => client.emit('voice:error', { error }),
-          );
-        },
-        // On data channel — handle control messages
-        (dc) => {
-          this.logger.log(
-            `[WebRTC/${session.sessionId}] data channel: ${dc.label}`,
-          );
-          dc.onmessage = (ev) => {
-            try {
-              const msg = JSON.parse(ev.data);
-              this.logger.debug(
-                `[WebRTC/${session.sessionId}] DC msg: ${msg.type}`,
-              );
-              if (msg.type === 'transcript') {
-                // Forward to brain processing
-                void this.handleTranscript(client, {
-                  text: msg.text,
-                  is_final: msg.is_final === true,
-                  confidence: msg.confidence,
-                });
-              }
-            } catch {
-              /* ignore non-JSON messages */
-            }
-          };
-        },
-      );
-
-      return { type: 'answer', sdp: { type: 'answer', sdp: answer.sdp } };
-    } catch (err) {
-      this.logger.error(`WebRTC offer error: ${err}`);
-      return { error: 'Failed to create WebRTC peer' };
-    }
+    return this.webRtcHandlers.handleOffer(client, data);
   }
 
   /**
@@ -288,19 +204,7 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { candidate: RTCIceCandidateInit },
   ) {
-    const session = await getAuthorizedVoiceSession(
-      this.prisma,
-      this.activeSessions,
-      client,
-    );
-    if (!session) return { received: true };
-    if (this.webrtcService) {
-      await this.webrtcService.addIceCandidate(
-        session.sessionId,
-        data.candidate,
-      );
-    }
-    return { received: true };
+    return this.webRtcHandlers.handleIceCandidate(client, data);
   }
 
   /**
@@ -311,21 +215,7 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { audio: Buffer; format: string },
   ) {
-    const session = await getAuthorizedVoiceSession(
-      this.prisma,
-      this.activeSessions,
-      client,
-    );
-    if (!session) {
-      return { error: 'No active voice session' };
-    }
-
-    // Phase 2: stream audio to Deepgram STT for real-time transcription
-    this.logger.debug(
-      `Audio stream from ${session.deviceId}: ${data.audio.length} bytes`,
-    );
-
-    return { received: true };
+    return this.webRtcHandlers.handleAudioStream(client, data);
   }
 
   /**
@@ -444,31 +334,9 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect {
    */
   @SubscribeMessage('voice:interrupt')
   async handleInterrupt(@ConnectedSocket() client: Socket) {
-    const session = await getAuthorizedVoiceSession(
-      this.prisma,
-      this.activeSessions,
-      client,
-    );
-    if (!session) {
-      return { error: 'No active voice session' };
-    }
-
-    if (session.isSpeaking) {
-      this.logger.log(`Interrupting TTS for ${session.deviceId}`);
-      session.abortTTS();
-      session.isSpeaking = false;
-      client.emit('voice:interrupted', {});
-    }
-
-    return { success: true };
+    return this.webRtcHandlers.interrupt(client);
   }
 
-  // ── RPA ────────────────────────────────────────────────────────────
-
-  /**
-   * Execute RPA steps in the browser.
-   * Browser calls this when the Cloud Brain sends ui_steps.
-   */
   @SubscribeMessage('voice:rpa:execute')
   async handleRpaExecute(
     @ConnectedSocket() client: Socket,

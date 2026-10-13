@@ -1,3 +1,8 @@
+## v5.1.10 — 2026-10-13 (PHDK Auto candidate)
+
+- Replace blanket Electron permission grants with secure-origin, per-session microphone/camera consent; deny other permission types and skip update checks in unpackaged development runs.
+- Add localized permission-policy regressions and align all five app package/lock roots at 5.1.10.
+
 ## v5.1.9 — 2026-10-13 (PHDK Auto candidate)
 
 - Derive escalation reads and acknowledgements from the current database actor and constrain team/session access to the actor's company and own identity; protect global analytics, dashboard and RBAC operations with the current-database superadmin role.

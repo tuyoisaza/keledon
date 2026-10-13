@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen, session } from 'electron';
+import { app, BrowserWindow, dialog, screen, session } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -13,6 +13,12 @@ import { handleDeepLink, flushPendingDeepLinkLaunch } from './deep-link.js';
 import { registerIpcHandlers, bootstrapTeamVendors, initializeAutoBrowseEngine, getAutoBrowseBridge } from './ipc-handlers.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
 import {
+  createPermissionHandlers,
+  getMediaPermissionPrompt,
+  type MediaPermissionContext,
+  type PermissionDetails,
+} from './permission-policy.js';
+import {
   isAllowedVendorUrl,
   isTrustedAppRendererUrl,
   secureRendererPreferences,
@@ -20,6 +26,26 @@ import {
 
 // ===================== TAB MANAGER =====================
 const tabManager = new TabManager();
+
+function registerPermissionHandlers(): void {
+  const handlers = createPermissionHandlers(showMediaPermissionConsent);
+  session.defaultSession.setPermissionCheckHandler((_webContents, permission, requestingOrigin, details) =>
+    handlers.check(permission, requestingOrigin, details as PermissionDetails));
+  session.defaultSession.setPermissionRequestHandler((webContents, permission, callback, details) =>
+    handlers.request(webContents, permission, callback, details as PermissionDetails));
+}
+
+function showMediaPermissionConsent(context: MediaPermissionContext): Promise<boolean> {
+  const copy = getMediaPermissionPrompt(context, runtimeStatus.language || 'en-US');
+  const parent = BrowserWindow.getAllWindows().find(window => !window.isDestroyed());
+  return dialog.showMessageBox(parent, {
+    type: 'question',
+    ...copy,
+    defaultId: 1,
+    cancelId: 1,
+    noLink: true,
+  }).then(({ response }) => response === 0);
+}
 
 // ===================== STARTUP =====================
 earlyLog('========================================');
@@ -244,11 +270,7 @@ app.on('ready', async () => {
   session.defaultSession.setUserAgent(chromeUA);
   earlyLog(`[SESSION] User-Agent spoofed as Chrome ${SPOOFED_CHROME} (real engine: ${process.versions.chrome})`);
 
-  // Auto-grant ALL permissions (notifications, media, clipboard, etc.)
-  // so web apps like Google Meet can show call alerts and use mic/camera.
-  session.defaultSession.setPermissionRequestHandler((_wc, _permission, callback) => {
-    callback(true);
-  });
+  registerPermissionHandlers();
 
   // Windows: required for native notification center integration
   if (process.platform === 'win32') {
@@ -264,8 +286,10 @@ app.on('ready', async () => {
   const deepLinkArg = process.argv.find(arg => arg.startsWith('keledon://'));
   if (deepLinkArg) { handleDeepLink(deepLinkArg, tabManager); }
 
-  autoUpdater.logger = log;
-  autoUpdater.checkForUpdatesAndNotify().catch(err => log.warn('[AutoUpdater] Check for updates failed:', err));
+  if (app.isPackaged) {
+    autoUpdater.logger = log;
+    autoUpdater.checkForUpdatesAndNotify().catch(err => log.warn('[AutoUpdater] Check for updates failed:', err));
+  }
 
   app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
 });

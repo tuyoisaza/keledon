@@ -1,4 +1,13 @@
 # Current task
+
+PHDK v2.50.10 is installed; all 52 coherence mappings pass. Candidate branch `v5.1.10-browser-permission-consent` is based on remote `main` `f5b9e43bd272408b3b5493c6eddfd24fc2095c75`. All five application package/lock roots are 5.1.10. Integrated source checks pass: API build/regression 14/14/lint (0 errors, 135 warnings); Cloud build/regression 8/8; web typecheck/build, diagnostics 18/18, SEO 1/1, synthetic local SPA UAT 1/1; Browser build/regression 24/24; Landing build/lint; PHDK coherence 52/52. Repository source/test inventory has 1,086 files and zero at/above 600 lines.
+
+The Browser no longer approves permissions wholesale. Secure-origin media requests require a session-only user grant; all other permissions and stale-page grants are denied. Six oversized API/test files were split into focused modules, and isolated backup/TTS provider tests were added. SEO/AEO source findings for private-route headers and live primary links are closed in source/local checks; no deployed or external discovery claim is made.
+
+Delivery is still in progress and overall acceptance is **PARTIALLY DELIVERED**. Persisted CRUD/migration, native Electron/device/audio, broad screen-reader/zoom/contrast/localization, and deployed SEO/AEO evidence remain unverified. `npm run dev` attempted to acquire Electron; it was stopped before running the new runtime because the Computer Use skill requires action-time confirmation for a newly acquired app/runtime. No production database/provider/API or deployment was touched. Current run archive: `docs/phdk/lifecycle/20261013-keledon-v5110/`.
+
+SIGUIENTE PASO: finish branch review, commit/push/open the authorized PR, verify merge/readback and completion gate; then request only the Electron runtime confirmation if native acceptance is still needed.
+
 Run 20261012-keledon-four-fronts; owner confirms all four in order, 2026-10-12.
 - [x] Pull correct repository; install current canonical PHDK (v2.50.10).
 - [x] Verify preflight; discover and confirm portfolio; Capture and Plan artifacts.

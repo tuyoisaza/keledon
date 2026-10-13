@@ -9,6 +9,7 @@ import type {
   StoredEntity,
 } from './database-persistence.types';
 import { applyFilters, getNestedValue } from './database-query.utils';
+import { DatabaseBackupStore } from './database-backup.store';
 export type {
   BackupInfo,
   DatabaseConfig,
@@ -25,6 +26,7 @@ export class DatabasePersistenceService
   private backupSubject = new Subject<BackupInfo>();
   private backupInterval: any;
   private cleanupInterval: any;
+  private readonly backupStore = new DatabaseBackupStore();
 
   public backup$ = this.backupSubject.asObservable();
 
@@ -204,62 +206,24 @@ export class DatabasePersistenceService
   async createBackup(
     type: 'full' | 'incremental' = 'full',
   ): Promise<BackupInfo> {
-    const backupId = this.generateId();
-    const backup: BackupInfo = {
-      id: backupId,
-      timestamp: new Date(),
-      size: 0,
-      type,
-      status: 'in_progress',
-    };
-
-    this.backupSubject.next(backup);
-
-    try {
-      const backupData = await this.prepareBackupData(type);
-      const filePath = await this.writeBackupFile(backupId, backupData, type);
-
-      backup.status = 'completed';
-      backup.size = backupData.length;
-      backup.filePath = filePath;
-
-      console.log(
-        `DatabasePersistence: Created ${type} backup ${backupId} (${backup.size} bytes)`,
-      );
-    } catch (error) {
-      backup.status = 'failed';
-      backup.error = error.message;
-      console.error(`DatabasePersistence: Backup ${backupId} failed:`, error);
-    }
-
-    this.backupSubject.next(backup);
-    return backup;
+    return this.backupStore.createBackup(type, this.storage, (backup) =>
+      this.backupSubject.next(backup),
+    );
   }
 
   // Restore from backup
   async restoreFromBackup(backupId: string): Promise<boolean> {
-    try {
-      const backupData = await this.readBackupFile(backupId);
-      const restored = await this.parseBackupData(backupData);
-
-      if (restored) {
-        this.storage.clear();
-        this.storage = new Map(restored);
-        console.log(`DatabasePersistence: Restored from backup ${backupId}`);
-        return true;
-      }
-    } catch (error) {
-      console.error(
-        `DatabasePersistence: Restore from backup ${backupId} failed:`,
-        error,
-      );
-    }
-    return false;
+    const restored = await this.backupStore.restore(backupId);
+    if (!restored) return false;
+    this.storage.clear();
+    this.storage = new Map(restored);
+    console.log(`DatabasePersistence: Restored from backup ${backupId}`);
+    return true;
   }
 
   // Get backup history
   async getBackupHistory(): Promise<BackupInfo[]> {
-    return await this.listBackupFiles();
+    return this.backupStore.getHistory();
   }
 
   // Cleanup expired entities
@@ -276,7 +240,9 @@ export class DatabasePersistenceService
     }
 
     // Also cleanup old backups based on retention policy
-    const backupCleanup = await this.cleanupOldBackups();
+    const backupCleanup = await this.backupStore.cleanupOld(
+      this.config.retentionDays,
+    );
     cleanedCount += backupCleanup;
 
     if (cleanedCount > 0) {
@@ -450,158 +416,5 @@ export class DatabasePersistenceService
     } catch (error) {
       console.error('DatabasePersistence: Failed to load from disk:', error);
     }
-  }
-
-  private async prepareBackupData(
-    type: 'full' | 'incremental',
-  ): Promise<string> {
-    const data: any = {
-      timestamp: new Date().toISOString(),
-      type,
-      entities: {},
-    };
-
-    if (type === 'full') {
-      for (const [key, entity] of this.storage.entries()) {
-        const collection = key.split(':')[0];
-        if (!data.entities[collection]) {
-          data.entities[collection] = [];
-        }
-        data.entities[collection].push(entity);
-      }
-    } else {
-      // Incremental backup - only entities changed in last hour
-      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-      for (const [key, entity] of this.storage.entries()) {
-        if (entity.updatedAt >= oneHourAgo) {
-          const collection = key.split(':')[0];
-          if (!data.entities[collection]) {
-            data.entities[collection] = [];
-          }
-          data.entities[collection].push(entity);
-        }
-      }
-    }
-
-    return JSON.stringify(data, null, 2);
-  }
-
-  private async writeBackupFile(
-    backupId: string,
-    data: string,
-    type: 'full' | 'incremental',
-  ): Promise<string> {
-    const fs = require('fs').promises;
-    const path = require('path');
-    const backupDir = path.join(process.cwd(), 'backups');
-
-    await fs.mkdir(backupDir, { recursive: true });
-
-    const fileName = `backup_${type}_${backupId}_${Date.now()}.json`;
-    const filePath = path.join(backupDir, fileName);
-
-    await fs.writeFile(filePath, data, 'utf8');
-    return filePath;
-  }
-
-  private async readBackupFile(backupId: string): Promise<string> {
-    const fs = require('fs').promises;
-    const path = require('path');
-    const backupDir = path.join(process.cwd(), 'backups');
-
-    const files = await fs.readdir(backupDir);
-    const backupFile = files.find((file) => file.includes(backupId));
-
-    if (!backupFile) {
-      throw new Error(`Backup file not found: ${backupId}`);
-    }
-
-    const filePath = path.join(backupDir, backupFile);
-    return await fs.readFile(filePath, 'utf8');
-  }
-
-  private async parseBackupData(
-    data: string,
-  ): Promise<Array<[string, StoredEntity<any>]> | null> {
-    try {
-      const backup = JSON.parse(data);
-      const entities: Array<[string, StoredEntity<any>]> = [];
-
-      for (const [collection, collectionEntities] of Object.entries(
-        backup.entities,
-      )) {
-        for (const entity of collectionEntities as StoredEntity<any>[]) {
-          entities.push([`${collection}:${entity.id}`, entity]);
-        }
-      }
-
-      return entities;
-    } catch (error) {
-      console.error('DatabasePersistence: Failed to parse backup data:', error);
-      return null;
-    }
-  }
-
-  private async listBackupFiles(): Promise<BackupInfo[]> {
-    try {
-      const fs = require('fs').promises;
-      const path = require('path');
-      const backupDir = path.join(process.cwd(), 'backups');
-
-      const files = await fs.readdir(backupDir);
-      const backupFiles = files.filter(
-        (file) => file.startsWith('backup_') && file.endsWith('.json'),
-      );
-
-      const backups: BackupInfo[] = [];
-
-      for (const file of backupFiles) {
-        const filePath = path.join(backupDir, file);
-        const stats = await fs.stat(filePath);
-
-        const parts = file.replace('.json', '').split('_');
-        backups.push({
-          id: parts[2],
-          timestamp: new Date(parseInt(parts[3])),
-          size: stats.size,
-          type: parts[1] as 'full' | 'incremental',
-          status: 'completed',
-          filePath,
-        });
-      }
-
-      return backups.sort(
-        (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
-      );
-    } catch (error) {
-      return [];
-    }
-  }
-
-  private async cleanupOldBackups(): Promise<number> {
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - this.config.retentionDays);
-
-    const backups = await this.listBackupFiles();
-    const oldBackups = backups.filter(
-      (backup) => backup.timestamp < cutoffDate,
-    );
-
-    let cleanedCount = 0;
-
-    for (const backup of oldBackups) {
-      try {
-        const fs = require('fs').promises;
-        await fs.unlink(backup.filePath);
-        cleanedCount++;
-      } catch (error) {
-        console.error(
-          `DatabasePersistence: Failed to delete old backup ${backup.id}:`,
-          error,
-        );
-      }
-    }
-
-    return cleanedCount;
   }
 }

@@ -19,3 +19,11 @@ Outcome PARTIAL / BLOCKED on remaining SEO-F01/F03 (F02 source repaired) and cur
 ## Source revalidation after root public-copy repair
 
 Root's current Features text now states client compatibility validation, configured cloud models/managed prompts/validated outputs and approved-origin actions; PII-out-of-box/local-optional-cloud/named vendor guarantees removed. UseCases are explicitly example configured workflows, without healthcare/insurance/EMR/Jira/SAP claims. Footer `#` legal/social links removed; real architecture anchor preserved. **SEO-F02 CLOSED in source; SEO-F03 footer portion CLOSED, CTA buttons remain inert at this snapshot.** No live workflow proof inferred. Private client-only noindex limitation F01 remains, and nginx/provider changes are explicitly outside this documentation task. Final source fingerprint above updated; initial historical snapshots retained unchanged, with this revalidation recorded separately.
+
+## Revalidación integrada — candidato 5.1.10 (2026-10-13)
+
+Esta sección supersede el estado de la auditoría fuente anterior para el candidato actual. KELEDON identifica su propósito, explica Cloud decide/Browser ejecuta y califica integraciones como dependientes de configuración del cliente; no nombra proveedores como garantías universales. La CTA/navegación apunta a rutas existentes y las pruebas locales de SEO/UAT pasan.
+
+AG-02 canonical/indexable source: **PASS (fuente)**, con index hints públicos y exclusión privada server-side; respuesta desplegada/rastreo siguen sin medirse. AG-09 supporting paths: **PASS (fuente/local)**. AG-13 privacy/crawler alignment: **PASS (fuente)** para headers NGINX previstos. AG-15 regression: **PASS (fuente/local)** en los checks SEO 1/1 y SPA UAT 1/1. AG-11 localization, AG-12 respuesta sin JS/accesibilidad completa y AG-14 observación de citas externas siguen **BLOCKED / NOT MEASURED**.
+
+**Resultado: SOURCE PASS; EXTERNAL DISCOVERY ACCEPTANCE NOT MEASURED.** No hay afirmaciones de indexación, citas, ranking, descubrimiento por motores generativos o adecuación de proveedores en clientes. La evidencia no incluye observación de despliegue.

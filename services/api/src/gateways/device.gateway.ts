@@ -23,6 +23,7 @@ import {
 import { EscalationService } from '../services/escalation.service';
 import { TTSService } from '../tts/tts.service';
 import { v4 as uuidv4 } from 'uuid';
+import { DeviceEscalationHandlers } from './device-escalation.handlers';
 
 const deviceCorsOrigins =
   process.env.KELEDON_ALLOW_ALL_CORS === 'true'
@@ -38,6 +39,7 @@ const deviceCorsOrigins =
 })
 export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(DeviceGateway.name);
+  private readonly escalationHandlers: DeviceEscalationHandlers;
 
   constructor(
     private deviceService: DeviceService,
@@ -45,7 +47,12 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @Optional() private decisionEngine?: DecisionEngineService,
     @Optional() private escalationService?: EscalationService,
     @Optional() @Inject(TTSService) private ttsService?: TTSService,
-  ) {}
+  ) {
+    this.escalationHandlers = new DeviceEscalationHandlers(
+      escalationService,
+      this.logger,
+    );
+  }
 
   @WebSocketServer()
   server: Server;
@@ -541,42 +548,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody()
     data: { trigger: string; transcript: string; timestamp: string },
   ) {
-    this.logger.warn(
-      `Escalation trigger from ${client.data.deviceId}:`,
-      data.trigger,
-    );
-
-    if (this.escalationService) {
-      try {
-        const escalation = await this.escalationService.create({
-          sessionId: client.data.sessionId || null,
-          deviceId: client.data.deviceId,
-          trigger: data.trigger,
-          triggerType: 'keyword',
-          transcript: data.transcript,
-          metadata: { timestamp: data.timestamp },
-        });
-
-        this.logger.log(`Escalation logged: ${escalation.id}`);
-
-        // Emit to session room for real-time notification
-        if (client.data.sessionId) {
-          this.server
-            .to(`session:${client.data.sessionId}`)
-            .emit('escalation_triggered', {
-              escalation_id: escalation.id,
-              trigger: data.trigger,
-              timestamp: data.timestamp,
-            });
-        }
-
-        return { received: true, escalation_id: escalation.id };
-      } catch (error) {
-        this.logger.error(`Failed to log escalation:`, error);
-      }
-    }
-
-    return { received: true };
+    return this.escalationHandlers.trigger(client, data, this.server);
   }
 
   @SubscribeMessage('escalation:abort')
@@ -584,35 +556,6 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { reason: string; timestamp: string },
   ) {
-    this.logger.warn(
-      `Escalation abort from ${client.data.deviceId}:`,
-      data.reason,
-    );
-
-    if (this.escalationService) {
-      try {
-        // Find the active escalation for this session
-        if (client.data.sessionId) {
-          const escalations = await this.escalationService.getBySessionId(
-            client.data.sessionId,
-          );
-          const activeEscalation = escalations.find(
-            (e) => e.status === 'triggered',
-          );
-
-          if (activeEscalation) {
-            await this.escalationService.abort(
-              activeEscalation.id,
-              data.reason,
-            );
-            this.logger.log(`Escalation aborted: ${activeEscalation.id}`);
-          }
-        }
-      } catch (error) {
-        this.logger.error(`Failed to abort escalation:`, error);
-      }
-    }
-
-    return { received: true };
+    return this.escalationHandlers.abort(client, data);
   }
 }

@@ -23,11 +23,9 @@ import {
   ExecutionEvidence,
 } from '../contracts/events';
 import { DecisionEngineService } from '../services/decision-engine.service';
-import { v4 as uuidv4 } from 'uuid';
 import {
   context,
   propagation,
-  ROOT_CONTEXT,
   SpanStatusCode,
   trace,
 } from '@opentelemetry/api';
@@ -37,6 +35,13 @@ import {
 } from '../telemetry/trace-model';
 import { AGENT_EXEC_ATTRS } from '../telemetry/decision-evidence';
 import { resolveCorsOrigins } from '../config/runtime-tier';
+import {
+  extractAgentTraceContext,
+  injectAgentTraceMetadata,
+  isValidAgentCommand,
+  isValidAgentEvent,
+  newAgentMessageId,
+} from './agent-gateway-contracts';
 
 const gatewayCorsOrigins =
   process.env.KELEDON_ALLOW_ALL_CORS === 'true' ? true : resolveCorsOrigins();
@@ -73,7 +78,7 @@ export class AgentGateway
       this.sessionService,
       this.logger,
       this.tracer,
-      this.extractContextFromMetadata.bind(this),
+      extractAgentTraceContext,
     );
   }
 
@@ -152,9 +157,7 @@ export class AgentGateway
       return;
     }
     client.join(`session:${event.session_id}`);
-    const extractedContext = this.extractContextFromMetadata(
-      event?.payload?.metadata,
-    );
+    const extractedContext = extractAgentTraceContext(event?.payload?.metadata);
 
     await context.with(extractedContext, async () => {
       await this.tracer.startActiveSpan(
@@ -207,7 +210,7 @@ export class AgentGateway
 
             // Send error command (anti-demo rule: show failure)
             const errorCommand: any = {
-              command_id: uuidv4(),
+              command_id: newAgentMessageId(),
               session_id: event.session_id,
               timestamp: new Date().toISOString(),
               type: 'error',
@@ -366,7 +369,7 @@ export class AgentGateway
       this.logger.log(`Received event from agent ${client.id}: ${data.type}`);
 
       // Validate event structure against canonical contract
-      if (!this.validateEvent(data)) {
+      if (!isValidAgentEvent(data)) {
         this.logger.error(
           `Invalid event structure from agent ${client.id}`,
           data,
@@ -412,7 +415,7 @@ export class AgentGateway
       const propagationCarrier: Record<string, string> = {};
       const spanContext = trace.setSpan(context.active(), span);
       propagation.inject(spanContext, propagationCarrier);
-      this.injectTraceMetadata(
+      injectAgentTraceMetadata(
         command as Record<string, any>,
         traceId,
         decisionId,
@@ -443,7 +446,7 @@ export class AgentGateway
       }
 
       // Validate command structure against canonical contract
-      if (!this.validateCommand(command)) {
+      if (!isValidAgentCommand(command)) {
         this.logger.error(
           `Invalid command structure for agent ${agentId}`,
           command,
@@ -494,7 +497,7 @@ export class AgentGateway
     // TODO: Integrate with AI decision engine
     // For now, send back a simple acknowledgment command
     const command: CommandSocketData = {
-      command_id: this.generateUUID(),
+      command_id: newAgentMessageId(),
       session_id: event.session_id,
       timestamp: new Date().toISOString(),
       type: 'say',
@@ -564,33 +567,6 @@ export class AgentGateway
     }
   }
 
-  // Validate event against canonical contract
-  private validateEvent(event: AgentSocketData): boolean {
-    return !!(
-      event.event_id &&
-      event.session_id &&
-      event.timestamp &&
-      ['text_input', 'ui_result', 'system'].includes(event.type) &&
-      event.payload
-    );
-  }
-
-  // Validate command against canonical contract
-  private validateCommand(command: CommandSocketData): boolean {
-    return !!(
-      command.command_id &&
-      command.session_id &&
-      command.timestamp &&
-      ['say', 'ui_steps', 'mode', 'stop'].includes(command.type) &&
-      command.payload
-    );
-  }
-
-  // Generate UUID for events/commands
-  private generateUUID(): string {
-    return uuidv4();
-  }
-
   // Broadcast to sidepanel
   private broadcastToSidePanel(event: string, data: any): void {
     if (data?.session_id)
@@ -598,50 +574,6 @@ export class AgentGateway
         .of('/sidepanel')
         .to(`session:${data.session_id}`)
         .emit(event, data);
-  }
-
-  private extractContextFromMetadata(
-    metadata: Record<string, any> | undefined,
-  ) {
-    const traceparent = metadata?.traceparent;
-    const tracestate = metadata?.tracestate;
-
-    if (!traceparent) {
-      return ROOT_CONTEXT;
-    }
-
-    const carrier: Record<string, string> = { traceparent };
-    if (tracestate) {
-      carrier.tracestate = tracestate;
-    }
-
-    return propagation.extract(ROOT_CONTEXT, carrier);
-  }
-
-  private injectTraceMetadata(
-    command: Record<string, any>,
-    traceId: string,
-    decisionId?: string,
-    traceparent?: string,
-    tracestate?: string,
-  ): void {
-    command.metadata = {
-      ...(command.metadata || {}),
-      trace_id: traceId,
-      ...(decisionId ? { decision_id: decisionId } : {}),
-      ...(traceparent ? { traceparent } : {}),
-      ...(tracestate ? { tracestate } : {}),
-    };
-
-    if (command.say && typeof command.say === 'object') {
-      command.say.metadata = {
-        ...(command.say.metadata || {}),
-        trace_id: traceId,
-        ...(decisionId ? { decision_id: decisionId } : {}),
-        ...(traceparent ? { traceparent } : {}),
-        ...(tracestate ? { tracestate } : {}),
-      };
-    }
   }
 
   getConnectedAgentsCount(): number {

@@ -1,4 +1,21 @@
-# UAT cases — integrated 5.1.7 UI journey plus 5.1.9 operational API regression
+# UAT cases — latest local candidate 5.1.10
+
+Latest run: 2026-10-13; candidate branch `v5.1.10-browser-permission-consent`, based on `origin/main` `f5b9e43bd272408b3b5493c6eddfd24fc2095c75`; not yet committed/merged. `npm run test:uat` passes 1/1 suite on the current 5.1.10 production bundle with synthetic Company Co fixtures and intercepted API/WebSocket traffic. API regression passes 14/14; Browser build/regression 24/24. The native Electron launch was stopped when its missing runtime began downloading; no native UAT is claimed.
+
+| Case / story | Acceptance | Latest result |
+|---|---|---|
+| UAT-001/UAT-002/UAT-004/UAT-006 | Current diagnostics widget and selected public/login/admin journeys, widget actions, themes, narrow viewport, role controls and safe diagnostics | PASS, local UI subset, synthetic fixtures; APIs intercepted. Evidence: `docs/phdk/evidence/uat-local-web.json` and screenshots. |
+| UAT-API / US-004 | Current DB-derived role/company/team/session checks, startup fail-closed behavior, and selected cross-tenant denials | PASS, API regression 14/14 with isolated doubles; not persisted acceptance. |
+| UAT-BROWSER-PERMISSION / US-002/US-003 | Per-origin HTTPS media consent; deny other permissions; remember grants only for session; reject stale navigation | PASS, unit/policy contract tests; native dialog itself not exercised. |
+| UAT-ROLE/UAT-CRUD | Full persisted resource × role × tenant × operation matrix and migration ledger | BLOCKED: no isolated PostgreSQL runtime; PHDK scope prohibits provisioning/administering it in this run. |
+| UAT-ELECTRON/UAT-DEVICE-AUDIO | Native render, OS permission decision, device and call/audio lifecycle | MANUAL/BLOCKED: Electron runtime download requires owner action-time authorization; no physical audio/client call. |
+| UAT-A11Y-I18N | Broad screen-reader, 200%/400% zoom, contrast and en/es/pt route review | ACCEPTANCE INCOMPLETE: selected keyboard/focus/theme/mobile flows passed only. |
+| UAT-SEO-AEO | Local source route/indexability/content controls | SOURCE PASS; deployed headers, crawler behavior, field metrics and answer-engine citations remain NOT MEASURED. |
+| UAT-CLIENT-CRM | Tenant-specific live telephony/CRM workflow | NOT APPLICABLE to universal flow; vendors are client-selected. |
+
+No in-scope source FAIL remains in the tests executed. Overall UAT is **ACCEPTANCE INCOMPLETE**; full action cards are in `UAT_REPORT.md`.
+
+---
 
 Latest source regression: PR #58, version 5.1.9, product merge SHA `6d0112dd940c142c20b5e4c56c766da64d000b3b`; PHDK handoff PRs #59 and #60 are also merged on `main`. API regression is 12/12, including operational tenant-boundary checks. This does not constitute a new browser journey; the local Edge journey below remains bound to its recorded 5.1.7 source revision. The exact current `main` SHA is in `PHDK_DELIVERY_EVIDENCE.json`.
 
