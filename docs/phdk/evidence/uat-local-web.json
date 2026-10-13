@@ -1,9 +1,9 @@
 {
   "version": "5.1.2",
-  "date": "2026-10-13T14:48:52.483Z",
-  "candidateRevision": "0d98f2812d8eb88a8626101f81f9bf9ca6d52de0",
+  "date": "2026-10-13T15:48:17.871Z",
+  "candidateRevision": "16b96b9a63f732f0515291d6e764579102736e2c",
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:59126",
+  "origin": "http://127.0.0.1:49671",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-THEME actual dark/light/corporate shell selection and persistence PASS; full-app contrast certification not claimed",

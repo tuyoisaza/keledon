@@ -1,6 +1,6 @@
 # PHDK Auto completion audit — PARTIALLY DELIVERED
 
-Run: `20261012-keledon-four-fronts`; product 5.1.2; installed PHDK v2.50.10. Product PR #42 and standards-sync PR #43 are merged. Fresh `origin/main` readback is `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d`; PHDK sync commit `b818a2705a82fb62068f37349b26794786467af7` and product source `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0` are ancestors. All five app package/lock roots remain 5.1.2.
+Run: `20261012-keledon-four-fronts`; product 5.1.2; installed PHDK v2.50.10. Product PR #42, standards-sync PR #43 and evidence PR #44 are merged. Fresh `origin/main` readback is `81a8e1d667abcca63923cf5666c5c6bcc70b0b6b`; PHDK sync commit `b818a2705a82fb62068f37349b26794786467af7` and product source `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0` are ancestors. All five app package/lock roots remain 5.1.2.
 
 ## Confirmed commitments
 

@@ -64,11 +64,11 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
 
     // Initialize STT adapter based on config
     if (config.sttProvider === 'speaches') {
-      if (!config.speachesApiUrl) throw new Error('Configured Speaches endpoint required');
+      if (!config.speachesApiUrl)
+        throw new Error('Configured Speaches endpoint required');
       const adapter = new SpeachesSttAdapter();
       await adapter.initialize({
-        baseUrl:
-          config.speachesApiUrl,
+        baseUrl: config.speachesApiUrl,
         apiKey: config.sttApiKey || '',
         model: (config as any).sttModel || 'whisper-1',
       });
@@ -77,7 +77,9 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
 
     // Initialize TTS adapter based on config
     if (
-      ['speaches', 'kokoro', 'elevenlabs', 'openai'].includes(config.ttsProvider)
+      ['speaches', 'kokoro', 'elevenlabs', 'openai'].includes(
+        config.ttsProvider,
+      )
     ) {
       const adapter = new SpeachesTtsAdapter(this.ttsService);
       await adapter.initialize({
@@ -139,7 +141,11 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
     const sttStart = Date.now();
 
     try {
-      const result = await transcribeConfiguredAudio(this.config, audio, this.config.language);
+      const result = await transcribeConfiguredAudio(
+        this.config,
+        audio,
+        this.config.language,
+      );
       session.sttLatencyMs = Date.now() - sttStart;
 
       if (!result.text || !result.isFinal) return;
@@ -241,10 +247,30 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
   getStatus(): VoicePipelineStatus {
     const sessionId = this.getCurrentSessionId();
     const session = sessionId ? this.sessions.get(sessionId) : undefined;
-    const serverStt = ['speaches', 'deepgram'].includes(this.config.sttProvider);
-    const sttHealth: ProviderHealth = !serverStt ? 'degraded' : this.lastError?.startsWith('STT') ? 'error' : session?.sttLatencyMs ? 'ready' : 'unknown';
-    const ttsHealth: ProviderHealth = !this.ttsAdapter ? 'degraded' : this.lastError?.startsWith('TTS') ? 'error' : session?.ttsLatencyMs ? 'ready' : 'unknown';
-    const llmHealth: ProviderHealth = !this.llmService ? 'degraded' : session?.cloudLatencyMs ? 'ready' : 'unknown';
+    const serverStt = ['speaches', 'deepgram'].includes(
+      this.config.sttProvider,
+    );
+    const sttHealth: ProviderHealth = !serverStt
+      ? 'degraded'
+      : this.lastError?.startsWith('STT')
+        ? 'error'
+        : session?.sttLatencyMs
+          ? 'ready'
+          : 'unknown';
+    const ttsHealth: ProviderHealth = !this.ttsAdapter
+      ? 'degraded'
+      : this.lastError?.startsWith('TTS')
+        ? 'error'
+        : session?.ttsLatencyMs
+          ? 'ready'
+          : 'unknown';
+    const llmHealth: ProviderHealth = this.lastError?.startsWith('Brain')
+      ? 'error'
+      : !this.llmService
+        ? 'degraded'
+        : session?.cloudLatencyMs
+          ? 'ready'
+          : 'unknown';
 
     return {
       provider: this.id,
@@ -293,13 +319,18 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
     userMessage: string,
   ): Promise<void> {
     if (!this.llmService) {
-      this.logger.warn('No LLM service — using fallback echo reply');
+      this.lastError = 'Brain unavailable: LLM service is not configured';
+      this.lastErrorAt = new Date().toISOString();
+      this.logger.error(this.lastError);
       await this.speak({
-        text: `I heard: ${userMessage}`,
+        text: 'The AI service is temporarily unavailable. Please try again later.',
         interruptible: true,
       });
       return;
     }
+
+    this.lastError = null;
+    this.lastErrorAt = null;
 
     const cloudStart = Date.now();
 
@@ -348,7 +379,9 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
       const replyText = brainData.reply?.trim() || '';
 
       if (!replyText) {
-        this.logger.warn('Empty Brain reply');
+        this.lastError = 'Brain returned an empty response';
+        this.lastErrorAt = new Date().toISOString();
+        this.logger.error(this.lastError);
         return;
       }
 
@@ -358,10 +391,16 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
 
       // Speak the reply
       await this.speak({ text: replyText, interruptible: true });
-    } catch (error) {
-      this.logger.error(
-        `Brain error: ${error instanceof Error ? error.message : String(error)}`,
-      );
+    } catch {
+      // Provider errors may embed URLs or credentials; status and diagnostics
+      // expose only a bounded, non-sensitive message.
+      this.lastError = 'Brain error: request failed';
+      this.lastErrorAt = new Date().toISOString();
+      this.logger.error(this.lastError);
+      await this.speak({
+        text: 'The AI service could not process that request. Please try again later.',
+        interruptible: true,
+      });
     }
   }
 

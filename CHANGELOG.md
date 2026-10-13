@@ -1,5 +1,12 @@
 # Changelog
 
+## v5.1.3 — 2026-10-13 (PHDK Auto candidate)
+
+- Isolate customer browser tabs from privileged Electron APIs and restore renderer sandbox and web security.
+- Fail closed when Cloud AI reasoning is unavailable; retain explicit deterministic stop/mode safety commands.
+- Apply compatible dependency fixes, declare the Nest runtime's `reflect-metadata` dependency, upgrade the Electron build toolchain, and align all five app package/lock versions.
+- Record remaining transitive API and Electron toolchain advisories and external runtime acceptance gaps in the PHDK evidence; no forced major upgrades or deployment.
+
 ## v5.1.2 — 2026-10-13 (local candidate, PHDK Auto)
 
 - Give managers' fixed company context a native fieldset/legend accessible name and verify it in rendered UAT.

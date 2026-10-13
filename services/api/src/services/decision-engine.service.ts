@@ -390,22 +390,18 @@ export class DecisionEngineService {
         };
 
       default:
-        // Default to say command for unknown types
+        // Unknown decisions must surface as an error, never as a fabricated
+        // acknowledgement that could be mistaken for a completed action.
         return {
           command_id: commandId,
           session_id: sessionId,
           timestamp,
-          type: 'say',
-          confidence: 0.5,
-          mode: 'normal',
+          type: 'error',
+          confidence: 0,
+          mode: 'error',
           flow_id: null,
           flow_run_id: null,
           metadata: commandMetadata,
-          say: {
-            text: `I understand you said: ${decision.text || 'something'}`,
-            interruptible: true,
-            metadata: commandMetadata,
-          },
         };
     }
   }

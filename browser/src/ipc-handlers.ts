@@ -8,6 +8,7 @@ import { webrtcInjector } from './webrtc-injector.js';
 import { mediaLayerWrapper } from './ipc-media-handlers.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
 import { eventLogger } from './media/event-logger.js';
+import { sanitizeVendorNotification } from './security-policy.js';
 import { runtimeStatus, mainWindow, setDebugMode, clearRuntimeSessionState } from './runtime-state.js';
 import { getDeviceSocket, connectWebSockets, disconnectSockets, setupCommandPolling } from './cloud-connection.js';
 import { getStartupLogPath, getMainLogPath, getLogsDir, getInstallDir } from './logger.js';
@@ -512,12 +513,15 @@ export function registerIpcHandlers(tabManager: TabManager): void {
   });
 
   // --- Notifications: Forward page Notification API to native OS notifications ---
-  ipcMain.on('show-notification', (_event, data: { title: string; body?: string; icon?: string; silent?: boolean }) => {
+  ipcMain.on('show-notification', (event, data: unknown) => {
+    if (!tabManager.ownsVendorWebContents(event.sender)) return;
+    const safeNotification = sanitizeVendorNotification(data);
+    if (!safeNotification) return;
     try {
       const notif = new ElectronNotification({
-        title: data.title || 'KELEDON',
-        body: data.body || '',
-        silent: data.silent ?? false,
+        title: safeNotification.title,
+        body: safeNotification.body,
+        silent: safeNotification.silent,
       });
       notif.on('click', () => {
         if (mainWindow && !mainWindow.isDestroyed()) {
