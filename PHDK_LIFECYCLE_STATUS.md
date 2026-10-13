@@ -1,7 +1,7 @@
 # Lifecycle status — 20261012-keledon-four-fronts
 
 Project: `C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON`
-PHDK: 2.50.8 verified; candidate 5.1.0. Branch `chore/phdk-install-v2.50.8`; PR #42 OPEN/DRAFT. Product source/UAT candidate `7df6f77`; later branch commits refresh evidence and lifecycle records. No target-main merge/readback.
+PHDK: 2.50.8 verified; candidate 5.1.0. Branch `chore/phdk-install-v2.50.8`; PR #42 OPEN/DRAFT. Browser UAT ran against product candidate `7df6f77`; the later NGINX source change is covered by `npm run test:seo` and a production build. Evidence/lifecycle commits are on the same PR branch. No target-main merge/readback.
 
 Goal: complete PHDK Auto for the four owner-confirmed fronts. Telephony/CRM vendors are tenant-selected; owner requested maximum applicable code conformity.
 
