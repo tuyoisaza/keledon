@@ -1,5 +1,11 @@
 # Delivery handoff — KELEDON v5.1.11
 
+## v5.1.12 delivery — completed
+
+PR #68 merged by squash at `7d67b09ee2b6d9c408bd8c4c1dbce0eb327ee4e2`; all five app/lock roots read 5.1.12 from remote `main`. Post-merge completion gate passes for the integrated SHA. No deployment is claimed. Full PHDK Auto remains PARTIALLY DELIVERED due the explicitly listed acceptance gaps in `PHDK_COMPLETION_AUDIT.md`.
+
+**SIGUIENTE PASO:** reanudar solo cuando exista entorno sintético de DB, runtime nativo y acceso autorizado al target público para las verificaciones aún pendientes.
+
 Run ID: `20261013-keledon-v5111`
 Status: COMPLETED — SOURCE MERGED; OVERALL ACCEPTANCE PARTIAL
 Started from: remote main `f06d9a11b04dd2caa079e42f8119311e3b7a6503`
