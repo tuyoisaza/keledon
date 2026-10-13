@@ -1,4 +1,8 @@
 # Commitment ledger
+## Latest continuation — 2026-10-13, 5.1.13 merged
+
+Product PR [#70](https://github.com/tuyoisaza/keledon/pull/70) delivered provider-settings localization to `main` at `45be8d82de1f402ee6199a19cd4fa5083bb9ecb1`; all five app roots align at 5.1.13. The owner-confirmed four fronts remain active. The provider route uses the existing en/es/pt catalogs; Spanish UAT and 404-key parity pass. CRM/telephony remains tenant-selected. Overall Auto is PARTIALLY DELIVERED pending the recorded persisted CRUD/migration, native device/audio, whole-app accessibility/localization and deployed SEO/AEO acceptance.
+
 ## Latest continuation — 2026-10-13, 5.1.9 integrated
 
 PR #58 delivered 5.1.9 to `main` at `6d0112dd940c142c20b5e4c56c766da64d000b3b`; all five app package/lock roots align. CMT-004's operational escalation, global dashboards/analytics/RBAC, and listening-session routes now enforce DB-derived actor/tenant roles and strong expiring capabilities. API regressions pass 12/12, build/typecheck pass, and changed-file ESLint has 0 errors/15 existing warnings. All four commitments remain confirmed. Overall Auto remains PARTIALLY DELIVERED pending persisted CRUD/migration, native Electron/audio, broad accessibility/localization and deployed SEO/AEO evidence.

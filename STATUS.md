@@ -1,5 +1,12 @@
 # STATUS
 
+## 2026-10-13 — PHDK Auto 5.1.13 merged; overall partial
+
+- Product PR [#70](https://github.com/tuyoisaza/keledon/pull/70) merged to `main` at `45be8d82de1f402ee6199a19cd4fa5083bb9ecb1`; all five app package/lock roots are 5.1.13.
+- Provider settings and descriptions now use the existing en/es/pt catalogs. Local Spanish UAT passes for the translated page and write-only key replacement; locale key sets match at 404. Web typecheck/build, API regressions 14/14, AI administration contracts 6/6, and PHDK coherence 52/52 pass.
+- CMT-003 remains tenant-specific; no CRM/call provider was assumed. Overall Auto remains PARTIALLY DELIVERED pending persisted CRUD/migration, native Electron/device/audio, whole-app accessibility/localization and deployed SEO/AEO acceptance.
+- SIGUIENTE PASO: continue only the remaining acceptance already in scope; this delivery did not access production data, databases, providers or deployments.
+
 ## 2026-10-13 — PHDK Auto 5.1.9 merged; overall partial
 
 - PR [#58](https://github.com/tuyoisaza/keledon/pull/58) merged to `main` at `6d0112dd940c142c20b5e4c56c766da64d000b3b`; all five app package/lock roots align at 5.1.9.

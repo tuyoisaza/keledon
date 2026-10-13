@@ -1,10 +1,10 @@
 # PHDK Auto completion audit — PARTIALLY DELIVERED
 
-## Latest candidate — 5.1.13
+## Latest source delivery — 5.1.13
 
-Provider-management localization remediation is in progress on `fix/phdk-provider-settings-i18n`. The web page and provider descriptions now use the existing en/es/pt catalogs; its Spanish UAT verifies rendering and write-only key behavior. Web typecheck/build/UAT pass, API regression passes 14/14, AI administration contracts pass 6/6, and locale key parity passes 404/404. This narrows CF-005 for one route. It does not change the overall decision: persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO remain unverified. Client-selected CRM/telephony has no universal provider acceptance case. PR and remote-main delivery readback are pending.
+Product PR [#70](https://github.com/tuyoisaza/keledon/pull/70) merged by squash at `45be8d82de1f402ee6199a19cd4fa5083bb9ecb1`; all five app roots report 5.1.13. Provider-management copy now uses the existing en/es/pt catalogs; its Spanish UAT verifies rendering and write-only key behavior. Web typecheck/build/UAT pass, API regression passes 14/14, AI administration contracts pass 6/6, and locale key parity passes 404/404. This narrows CF-005 for one route. It does not change the overall decision: persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO remain unverified. Client-selected CRM/telephony has no universal provider acceptance case. Final remote-main readback and mechanical gate follow this documentation reconciliation.
 
-## Current verified delivery — 5.1.11
+## Previous verified delivery — 5.1.11
 
 PR [#66](https://github.com/tuyoisaza/keledon/pull/66) merged by squash. Fresh origin/main and GitHub readback confirm `829caf32978571ac439b8236c2cf7605a38aea4b`; five package roots are 5.1.11. The PHDK completion gate passes. Four confirmed commitments are reconciled in `docs/phdk/lifecycle/20261013-keledon-v5111/90-delivery/PHDK_COMMITMENT_COVERAGE.md`.
 
