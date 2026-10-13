@@ -6,7 +6,9 @@ import {
   Body,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
+import { SuperAdminGuard } from '../guards/roles.guard';
 import { VoiceAnalyticsService } from '../services/voice-analytics.service';
 import { IntegrationHealthService } from '../services/integration-health.service';
 import { FlowExecutionService } from '../services/flow-execution.service';
@@ -23,6 +25,7 @@ import {
 import { AnalyticsControllerHelpers } from './analytics.controller-helpers';
 
 @Controller('api/analytics')
+@UseGuards(SuperAdminGuard)
 export class AnalyticsController extends AnalyticsControllerHelpers {
   constructor(
     protected readonly voiceAnalyticsService: VoiceAnalyticsService,

@@ -7,7 +7,9 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  UseGuards,
 } from '@nestjs/common';
+import { SuperAdminGuard } from '../guards/roles.guard';
 import { AgentMonitoringService } from '../services/agent-monitoring.service';
 import { AILoopService } from '../services/ai-loop.service';
 import { VoiceAnalyticsService } from '../services/voice-analytics.service';
@@ -28,6 +30,7 @@ export interface TimeRange {
 
 @ApiTags('Dashboard')
 @Controller('api/dashboard')
+@UseGuards(SuperAdminGuard)
 export class DashboardController {
   constructor(
     private readonly agentMonitoringService: AgentMonitoringService,

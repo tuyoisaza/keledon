@@ -4,12 +4,15 @@ import {
   Body,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { ListeningSessionService } from './listening-session.service';
 import { ApiTags } from '@nestjs/swagger';
+import { RuntimeActorGuard } from '../gateways/runtime-identity';
 
 @ApiTags('Listening Sessions')
 @Controller('listening-sessions')
+@UseGuards(RuntimeActorGuard)
 export class ListeningSessionController {
   constructor(
     private readonly listeningSessionService: ListeningSessionService,
