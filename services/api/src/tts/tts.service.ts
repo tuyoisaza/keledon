@@ -31,6 +31,19 @@ export class TTSService {
     console.log('[TTS] TTSService initialized');
   }
 
+  private trackProviderResult(
+    provider: string,
+    correlationId: string | undefined,
+    operation: () => Promise<TTSResult>,
+  ): Promise<TTSResult> {
+    return runtimeAiBudget.trackProviderCall(
+      provider,
+      correlationId,
+      operation,
+      (result) => !result.error,
+    );
+  }
+
   private async resolveTTSConfig(teamId?: string): Promise<{
     providerId: string;
     apiKey: string;
@@ -91,6 +104,7 @@ export class TTSService {
       interruptible?: boolean;
       teamId?: string;
       forceLanguageVoice?: boolean;
+      correlationId?: string;
     } = {},
   ): Promise<TTSResult> {
     if (
@@ -140,7 +154,11 @@ export class TTSService {
           (!options.teamId ? process.env.KOKORO_API_URL : undefined);
         if (!baseUrl) return { error: 'Configured TTS endpoint required' };
         const voice = ttsConfig.voiceId || 'ef_dora';
-        return await this.speakWithKokoro(text, baseUrl, voice);
+        return await this.trackProviderResult(
+          provider,
+          options.correlationId,
+          () => this.speakWithKokoro(text, baseUrl, voice),
+        );
       } else if (provider === 'speaches') {
         const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
         const baseUrl =
@@ -152,18 +170,31 @@ export class TTSService {
           ttsConfig.voiceId,
           options.forceLanguageVoice,
         );
-        return await this.speakWithSpeaches(
-          text,
-          baseUrl,
-          apiKeyFromStore ||
-            (!options.teamId ? process.env.SPEACHES_API_KEY : '') ||
-            '',
-          voice,
+        return await this.trackProviderResult(
+          provider,
+          options.correlationId,
+          () =>
+            this.speakWithSpeaches(
+              text,
+              baseUrl,
+              apiKeyFromStore ||
+                (!options.teamId ? process.env.SPEACHES_API_KEY : '') ||
+                '',
+              voice,
+            ),
         );
       } else if (provider === 'elevenlabs') {
-        return await this.speakWithElevenLabs(text, options);
+        return await this.trackProviderResult(
+          provider,
+          options.correlationId,
+          () => this.speakWithElevenLabs(text, options),
+        );
       } else if (provider === 'openai') {
-        return await this.speakWithOpenAI(text, options);
+        return await this.trackProviderResult(
+          provider,
+          options.correlationId,
+          () => this.speakWithOpenAI(text, options),
+        );
       } else {
         console.log('[TTS] Mock TTS mode (no provider configured)');
         return {
@@ -187,6 +218,7 @@ export class TTSService {
       interruptible?: boolean;
       teamId?: string;
       forceLanguageVoice?: boolean;
+      correlationId?: string;
     } = {},
   ): Promise<TTSResult> {
     if (
@@ -234,7 +266,11 @@ export class TTSService {
         (!options.teamId ? process.env.KOKORO_API_URL : undefined);
       if (!baseUrl) return { error: 'Configured TTS endpoint required' };
       const voice = ttsConfig.voiceId || 'ef_dora';
-      const result = await this.speakWithKokoro(text, baseUrl, voice);
+      const result = await this.trackProviderResult(
+        provider,
+        options.correlationId,
+        () => this.speakWithKokoro(text, baseUrl, voice),
+      );
       if (result.audioData && result.audioData.length > 0) {
         // Kokoro returns a complete WAV file. Do not split WAV bytes into arbitrary
         // chunks: each browser Audio() playback needs the RIFF header.
@@ -252,13 +288,18 @@ export class TTSService {
         ttsConfig.voiceId,
         options.forceLanguageVoice,
       );
-      const result = await this.speakWithSpeaches(
-        text,
-        baseUrl,
-        apiKeyFromStore ||
-          (!options.teamId ? process.env.SPEACHES_API_KEY : '') ||
-          '',
-        voice,
+      const result = await this.trackProviderResult(
+        provider,
+        options.correlationId,
+        () =>
+          this.speakWithSpeaches(
+            text,
+            baseUrl,
+            apiKeyFromStore ||
+              (!options.teamId ? process.env.SPEACHES_API_KEY : '') ||
+              '',
+            voice,
+          ),
       );
       if (result.audioData && result.audioData.length > 0) {
         console.log(
@@ -268,10 +309,18 @@ export class TTSService {
       }
       return result;
     } else if (provider === 'elevenlabs') {
-      return await this.streamWithElevenLabs(text, onChunk, options);
+      return await this.trackProviderResult(
+        provider,
+        options.correlationId,
+        () => this.streamWithElevenLabs(text, onChunk, options),
+      );
     } else if (provider === 'openai') {
       // OpenAI's TTS isn't streaming, so generate full audio then chunk it
-      const result = await this.speakWithOpenAI(text, options);
+      const result = await this.trackProviderResult(
+        provider,
+        options.correlationId,
+        () => this.speakWithOpenAI(text, options),
+      );
       if (result.audioData && result.audioData.length > 0) {
         const chunkSize = 32000; // ~1s of MP3 audio
         for (let i = 0; i < result.audioData.length; i += chunkSize) {

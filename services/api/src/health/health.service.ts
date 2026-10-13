@@ -5,6 +5,7 @@ import { randomUUID } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { EndpointDiagnosticsRegistry } from './endpoint-diagnostics.registry';
 import { getApiVersion } from '../version';
+import { runtimeAiBudget } from '../llm/runtime-ai-budget';
 
 export type DiagnosticProbeMode =
   'safe_read' | 'validation_only' | 'dry_run' | 'manual_only';
@@ -72,7 +73,7 @@ export class HealthService {
     };
   }
 
-  async getDeepHealth() {
+  async getDeepHealth(actorId?: string) {
     const packageVersion = getApiVersion();
     let databaseStatus: 'healthy' | 'unavailable' = 'healthy';
     let migrationStatus: 'present' | 'unavailable' = 'present';
@@ -90,6 +91,24 @@ export class HealthService {
       databaseStatus = 'unavailable';
       migrationStatus = 'unavailable';
     }
+    let currentActorRole: string | undefined;
+    if (actorId) {
+      try {
+        const actor = await this.prisma.user.findUnique({
+          where: { id: actorId },
+          select: { role: true },
+        });
+        currentActorRole = actor?.role;
+      } catch {
+        currentActorRole = undefined;
+      }
+    }
+    const featureFlags = this.configService.getFeatureFlags();
+    const meteredUsage =
+      currentActorRole === 'superadmin'
+        ? runtimeAiBudget.getDiagnostics()
+        : { status: 'protected' as const };
+
     return {
       status:
         databaseStatus === 'healthy' && migrationStatus === 'present'
@@ -118,9 +137,21 @@ export class HealthService {
         anthropic: process.env.ANTHROPIC_API_KEY
           ? 'configured'
           : 'not_configured',
+        google: process.env.GOOGLE_AI_API_KEY ? 'configured' : 'not_configured',
+        ollama: process.env.OLLAMA_URL ? 'configured' : 'not_configured',
+        elevenlabs: process.env.ELEVENLABS_API_KEY
+          ? 'configured'
+          : 'not_configured',
+        speaches:
+          process.env.SPEACHES_API_URL || process.env.SPEACHES_API_KEY
+            ? 'configured'
+            : 'not_configured',
+        kokoro: process.env.KOKORO_API_URL ? 'configured' : 'not_configured',
         probeCallsMade: 0,
         tenantProviderCredentials: 'not_enumerated',
       },
+      meteredUsage,
+      featureFlags: { ...featureFlags },
       latestSafeProbes: this.probeHistory.map((probe) => ({ ...probe })),
       endpointDiagnostics: this.endpointRegistry.list(),
     };

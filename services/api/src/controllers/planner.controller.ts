@@ -174,6 +174,7 @@ export class PlannerController {
         feature: 'browser-planner',
         teamId: request.runtimeIdentity.teamId,
         actorId: request.runtimeIdentity.userId,
+        correlationId: request.correlationId,
         requestId: body.requestId,
         context: ['Browser automation planning', `Goal: ${goal}`],
         maxTokens: 2000,

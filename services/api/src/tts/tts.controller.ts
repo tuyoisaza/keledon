@@ -5,6 +5,7 @@ import {
   Controller,
   Post,
   Body,
+  Req,
   Res,
   HttpStatus,
   UseGuards,
@@ -22,11 +23,13 @@ export class TTSController {
 
   @Post('speak')
   async speak(
+    @Req() request: any,
     @Body() body: { text: string; teamId?: string },
     @Res() res: Response,
   ) {
     const result = await this.ttsService.speak(body.text, {
       teamId: body.teamId,
+      correlationId: request.correlationId,
     });
 
     if (result.error) {

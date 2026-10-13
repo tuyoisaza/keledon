@@ -12,7 +12,11 @@ describe('HealthService diagnostics', () => {
   const registry = new EndpointDiagnosticsRegistry({
     getControllers: () => [{ metatype: HealthController }],
   } as any);
-  const service = new HealthService({} as any, prisma as any, registry);
+  const service = new HealthService(
+    { getFeatureFlags: () => ({}) } as any,
+    prisma as any,
+    registry,
+  );
 
   it('publishes endpoint metadata without exposing configured environment values', async () => {
     const previousDatabaseUrl = process.env.DATABASE_URL;
@@ -35,6 +39,32 @@ describe('HealthService diagnostics', () => {
     }
   });
 
+  it('restricts process-wide metered usage to an actor whose current DB role is superadmin', async () => {
+    let role = 'admin';
+    const guardedPrisma = {
+      $queryRaw: jest.fn().mockResolvedValue([{ migration_name: 'initial' }]),
+      user: {
+        findUnique: jest.fn().mockImplementation(async () => ({ role })),
+      },
+    };
+    const guardedService = new HealthService(
+      { getFeatureFlags: () => ({ realAuth: true }) } as any,
+      guardedPrisma as any,
+      registry,
+    );
+
+    const adminHealth = await guardedService.getDeepHealth('actor-admin');
+    expect(adminHealth.meteredUsage).toEqual({ status: 'protected' });
+    role = 'superadmin';
+    const superadminHealth = await guardedService.getDeepHealth('actor-root');
+    expect(superadminHealth.meteredUsage.status).toBe('measured');
+    expect(superadminHealth.featureFlags).toEqual({ realAuth: true });
+    expect(guardedPrisma.user.findUnique).toHaveBeenNthCalledWith(2, {
+      where: { id: 'actor-root' },
+      select: { role: true },
+    });
+  });
+
   it('reports degraded health when the migration ledger is empty', async () => {
     const unavailableDatabase = {
       $queryRaw: jest
@@ -43,7 +73,7 @@ describe('HealthService diagnostics', () => {
         .mockResolvedValueOnce([]),
     };
     const serviceWithoutMigrations = new HealthService(
-      {} as any,
+      { getFeatureFlags: () => ({}) } as any,
       unavailableDatabase as any,
       registry,
     );
