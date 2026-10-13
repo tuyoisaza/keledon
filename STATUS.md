@@ -1,9 +1,9 @@
 # STATUS
 
-## 2026-10-13 — PHDK Auto 5.1.14 candidate; overall partial
+## 2026-10-13 — PHDK Auto 5.1.14 merged; overall partial
 
-- Candidate branch `fix/phdk-admin-crud-i18n` is based on remote `main` `84bfdb901068f4fab12fa88e0b5b3cd3394b7180`, with all five app package/lock roots at 5.1.14. Companies, brands, teams, users and vendors use the en/es/pt catalogs; catalog key parity is 452/452.
-- Web typecheck/build and local synthetic SPA UAT pass (1/1); API regression passes 14/14; touched-page ESLint exits 0 with 9 warnings. Product PR, merge and remote-main readback for 5.1.14 are pending. PR #70/#71 remain the verified 5.1.13 product/readback deliveries.
+- Source branch `fix/phdk-admin-crud-i18n` was based on remote `main` `84bfdb901068f4fab12fa88e0b5b3cd3394b7180`; all five app package/lock roots are now merged at 5.1.14. Companies, brands, teams, users and vendors use the en/es/pt catalogs; catalog key parity is 452/452.
+- Web typecheck/build and local synthetic SPA UAT pass (1/1); API regression passes 14/14; touched-page ESLint exits 0 with 9 warnings. Product PR [#72](https://github.com/tuyoisaza/keledon/pull/72) merged by squash; fresh remote-main readback is `899306fcddf7528cb3411577f8008f0c0552223a`; all five app roots are 5.1.14. No hosted checks or deployment are claimed.
 - CMT-003 remains tenant-specific; no CRM/call provider was assumed. Overall Auto remains PARTIALLY DELIVERED pending persisted CRUD/migration, native Electron/device/audio, whole-app accessibility/localization and deployed SEO/AEO acceptance.
 - SIGUIENTE PASO: continue only the remaining acceptance already in scope; this delivery did not access production data, databases, providers or deployments.
 
