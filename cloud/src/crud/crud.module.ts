@@ -10,12 +10,14 @@ import { TenantController } from '../controllers/tenant.controller';
 import { WebhookGuard } from '../guards/webhook.guard';
 import { CrudAccessGuard } from '../guards/crud-access.guard';
 import { CrudHealthService } from './crud-health.service';
+import { CrudMigrationService } from './crud-migration.service';
 
 @Module({
   controllers: [CrudController, TenantController],
   providers: [
     CrudService,
     CrudHealthService,
+    CrudMigrationService,
     CrudKeledonService,
     CrudAuditService,
     CrudSeedService,

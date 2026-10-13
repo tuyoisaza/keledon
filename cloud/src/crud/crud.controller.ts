@@ -15,6 +15,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { WebhookGuard } from '../guards/webhook.guard';
 import { Public } from '../guards/public.decorator';
 import { CrudAccessGuard } from '../guards/crud-access.guard';
+import { CrudMigrationService } from './crud-migration.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('CRUD')
@@ -24,6 +25,7 @@ export class CrudController {
   constructor(
     private readonly crud: CrudService,
     private readonly prisma: PrismaService,
+    private readonly migrationService: CrudMigrationService,
   ) {}
 
   // ========== HEALTH ==========
@@ -38,35 +40,7 @@ export class CrudController {
 
   @Post('migrate')
   async migrate() {
-    try {
-      await this.prisma.$executeRaw`
-        CREATE TABLE IF NOT EXISTS "vendors" (
-          "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-          "teamId" UUID NOT NULL REFERENCES "teams"("id") ON DELETE CASCADE,
-          "name" VARCHAR(255) NOT NULL,
-          "type" VARCHAR(50) NOT NULL DEFAULT 'other',
-          "baseUrl" TEXT,
-          "username" TEXT,
-          "password" TEXT,
-          "apiKey" TEXT,
-          "config" JSONB,
-          "isActive" BOOLEAN DEFAULT true,
-          "createdAt" TIMESTAMP DEFAULT now(),
-          "updatedAt" TIMESTAMP DEFAULT now()
-        )
-      `;
-      await this.prisma
-        .$executeRaw`CREATE INDEX IF NOT EXISTS "vendors_teamId_idx" ON "vendors"("teamId")`;
-
-      // Add startGoal column if missing (v0.3.35+)
-      await this.prisma.$executeRaw`
-        ALTER TABLE "vendors" ADD COLUMN IF NOT EXISTS "startGoal" TEXT
-      `;
-
-      return { status: 'ok', message: 'Vendors table created' };
-    } catch (error) {
-      return { status: 'error', message: error.message };
-    }
+    return this.migrationService.ensureVendorsSchema();
   }
 
   // ========== COMPANIES ==========

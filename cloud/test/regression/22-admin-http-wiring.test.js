@@ -53,6 +53,7 @@ const {
 const { MvpStoreService } = require('../../src/mvp/mvp-store.service.ts');
 const { CrudController } = require('../../src/crud/crud.controller.ts');
 const { CrudService } = require('../../src/crud/crud.service.ts');
+const { CrudMigrationService } = require('../../src/crud/crud-migration.service.ts');
 const { BrainController } = require('../../src/controllers/brain.controller.ts');
 const { LLMService } = require('../../src/llm/llm.service.ts');
 
@@ -112,6 +113,7 @@ async function main() {
     ],
     providers: [
       { provide: PrismaService, useValue: prisma },
+      { provide: CrudMigrationService, useValue: { ensureVendorsSchema: async () => ({ status: 'ok' }) } },
       { provide: ResourceScopeGuard, useFactory: () => new ResourceScopeGuard(prisma) },
       { provide: LLMService, useValue: { generate: async () => ({ text: 'hello', usage: {} }) } },
       { provide: ConfigService, useValue: { get: () => undefined } },

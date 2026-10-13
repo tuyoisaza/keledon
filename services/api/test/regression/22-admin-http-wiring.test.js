@@ -52,6 +52,7 @@ const {
 const { MvpStoreService } = require('../../src/mvp/mvp-store.service.ts');
 const { CrudController } = require('../../src/crud/crud.controller.ts');
 const { CrudService } = require('../../src/crud/crud.service.ts');
+const { CrudMigrationService } = require('../../src/crud/crud-migration.service.ts');
 
 async function main() {
   process.env.KELEDON_AUTH_SECRET = 'isolated-http-wiring-secret';
@@ -106,6 +107,7 @@ async function main() {
     ],
     providers: [
       { provide: PrismaService, useValue: prisma },
+      { provide: CrudMigrationService, useValue: { ensureVendorsSchema: async () => ({ status: 'ok' }) } },
       { provide: ConfigService, useValue: { get: () => undefined } },
       {
         provide: CrudService,

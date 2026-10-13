@@ -2,7 +2,7 @@
 
 Date: 2026-10-13. Candidate: 5.0.54. Rule: source files remain below 600 physical lines. Count includes blank lines; scan includes `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`, excluding dependency and generated directories.
 
-The current inventory contains **29 files** at or above the limit. This remains an open remediation backlog, not a passing Check result.
+The current inventory contains **27 files** at or above the limit. This remains an open remediation backlog, not a passing Check result.
 
 | Lines | File |
 |---:|---|
@@ -33,5 +33,3 @@ The current inventory contains **29 files** at or above the limit. This remains 
 | 634 | `services/api/src/crud/crud.service.ts` |
 | 625 | `test/production/production-test-suite.js` |
 | 612 | `agent/test/rpa-engine.test.ts` |
-| 605 | `cloud/src/crud/crud.controller.ts` |
-| 605 | `services/api/src/crud/crud.controller.ts` |
