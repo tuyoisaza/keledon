@@ -4,92 +4,27 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 
-export interface ManagedInterface {
-  id: string;
-  name: string;
-  baseUrl: string;
-  base_url: string;
-  category: 'talk' | 'case';
-  providerKey?: string;
-  capabilities?: Record<string, boolean>;
-  status: 'connected' | 'disconnected' | 'error';
-  icon?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface FlowDefinition {
-  id: string;
-  companyId?: string;
-  interfaceId?: string;
-  name: string;
-  description?: string;
-  category?: 'talk' | 'case';
-  intentTags: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface FlowVersion {
-  id: string;
-  flowDefinitionId: string;
-  version: number;
-  status: 'draft' | 'approved' | 'deprecated';
-  steps: Array<Record<string, any>>;
-  createdBy?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface TenantFlowPermission {
-  id: string;
-  companyId: string;
-  flowDefinitionId: string;
-  isEnabled: boolean;
-  defaultForIntent?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface IntentFlowMapping {
-  id: string;
-  companyId: string;
-  intent: string;
-  allowedFlowDefinitionIds: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface KnowledgeDocument {
-  id: string;
-  title: string;
-  content: string;
-  type: 'pdf' | 'docx' | 'url' | 'text';
-  status: 'indexed' | 'indexing' | 'error';
-  chunk_count: number;
-  size_bytes: number;
-  created_at: string;
-  updated_at: string;
-}
-
-interface StoreData {
-  interfaces: ManagedInterface[];
-  flowDefinitions: FlowDefinition[];
-  flowVersions: FlowVersion[];
-  tenantFlowPermissions: TenantFlowPermission[];
-  intentFlowMappings: IntentFlowMapping[];
-  knowledgeDocuments: KnowledgeDocument[];
-}
-
-export interface ProviderCatalogEntry {
-  id: string;
-  type: 'stt' | 'tts' | 'rpa';
-  name: string;
-  description: string;
-  status: 'production' | 'experimental' | 'deprecated';
-  is_enabled: boolean;
-  metadata: Record<string, any>;
-}
+import type {
+  StoreData,
+  ManagedInterface,
+  FlowDefinition,
+  FlowVersion,
+  TenantFlowPermission,
+  IntentFlowMapping,
+  KnowledgeDocument,
+  TTSConfigEntry,
+  ProviderCatalogEntry,
+} from './mvp-store.types';
+export type {
+  ManagedInterface,
+  FlowDefinition,
+  FlowVersion,
+  TenantFlowPermission,
+  IntentFlowMapping,
+  KnowledgeDocument,
+  TTSConfigEntry,
+  ProviderCatalogEntry,
+} from './mvp-store.types';
 
 @Injectable()
 export class MvpStoreService {
@@ -142,7 +77,9 @@ export class MvpStoreService {
         status: 'production',
         is_enabled: true,
         metadata: {
-          endpoint: process.env.VOSK_SERVER_URL || 'wss://keledon.tuyoisaza.com/listen/ws',
+          endpoint:
+            process.env.VOSK_SERVER_URL ||
+            'wss://keledon.tuyoisaza.com/listen/ws',
           requires_api_key: false,
           auto_start: true,
         },
@@ -183,6 +120,38 @@ export class MvpStoreService {
         },
       },
       {
+        id: 'kokoro',
+        type: 'tts',
+        name: 'Kokoro TTS',
+        description: 'Open-weight TTS on Railway (Spanish/English/JP)',
+        status: 'experimental',
+        is_enabled: true,
+        metadata: {
+          requires_api_key: false,
+          requires_url: true,
+        },
+      },
+      {
+        id: 'speaches-tts',
+        type: 'tts',
+        name: 'Speaches',
+        description:
+          'Self-hosted OpenAI-compatible text-to-speech via /v1/audio/speech',
+        status: 'production',
+        is_enabled: true,
+        metadata: {
+          endpoint:
+            process.env.SPEACHES_API_URL ||
+            'https://speaches-production-c63f.up.railway.app/v1/audio/speech',
+          voices_endpoint:
+            process.env.SPEACHES_API_URL ||
+            'https://speaches-production-c63f.up.railway.app/v1/audio/voices',
+          requires_api_key: false,
+          openai_compatible: true,
+          configured_per_team: true,
+        },
+      },
+      {
         id: 'native-dom',
         type: 'rpa',
         name: 'Native DOM Automation',
@@ -205,6 +174,22 @@ export class MvpStoreService {
           requires_api_key: false,
         },
       },
+      {
+        id: 'cloud-brain',
+        type: 'cloud',
+        name: 'Cloud Brain',
+        description:
+          'KELEDON Brain API endpoint — URL del servicio cloud que procesa las solicitudes del Brain',
+        status: 'production',
+        is_enabled: true,
+        metadata: {
+          api_url:
+            process.env.CLOUD_API_URL || 'https://keledonapi.tuyoisaza.com',
+          ws_url: process.env.CLOUD_WS_URL || 'wss://keledonapi.tuyoisaza.com',
+          requires_api_key: true,
+          required_env: ['CLOUD_API_URL'],
+        },
+      },
     ];
 
     if (!localOnly) {
@@ -214,13 +199,33 @@ export class MvpStoreService {
     return providers.filter((provider) => {
       const metadata = provider.metadata || {};
       if (!metadata.requires_api_key) return true;
-      const requiredEnv = Array.isArray(metadata.required_env) ? metadata.required_env : [];
-      return requiredEnv.every((envName: string) => Boolean(process.env[envName]));
+      const requiredEnv = Array.isArray(metadata.required_env)
+        ? metadata.required_env
+        : [];
+      return requiredEnv.every((envName: string) =>
+        Boolean(process.env[envName]),
+      );
     });
   }
 
   getRpaProviders() {
     return [
+      {
+        id: 'testing-library-dom',
+        name: 'Testing Library DOM',
+        description:
+          'Semantic element finding by accessible labels, roles, and text',
+        requiresBackend: false,
+        requiresApiKey: false,
+      },
+      {
+        id: 'playwright-style',
+        name: 'Playwright-Style Selectors',
+        description:
+          'Chained selectors, XPath, data-testid, text=, and role= syntax',
+        requiresBackend: false,
+        requiresApiKey: false,
+      },
       {
         id: 'native-dom',
         name: 'Native DOM Automation',
@@ -245,6 +250,34 @@ export class MvpStoreService {
     ];
   }
 
+  getCloudConfig() {
+    const cloudProvider = this.getProviderCatalog().find(
+      (p) => p.id === 'cloud-brain',
+    );
+    return (
+      cloudProvider?.metadata || {
+        api_url:
+          process.env.CLOUD_API_URL || 'https://keledonapi.tuyoisaza.com',
+        ws_url: process.env.CLOUD_WS_URL || 'wss://keledonapi.tuyoisaza.com',
+      }
+    );
+  }
+
+  getTTSConfig(): TTSConfigEntry {
+    return this.store.ttsConfig || this.defaultTTSConfig();
+  }
+
+  updateTTSConfig(input: Partial<TTSConfigEntry>): TTSConfigEntry {
+    this.store.ttsConfig = {
+      ...this.defaultTTSConfig(),
+      ...this.store.ttsConfig,
+      ...input,
+      updatedAt: new Date().toISOString(),
+    };
+    this.saveStore();
+    return this.store.ttsConfig;
+  }
+
   getInterfaces(): ManagedInterface[] {
     return this.store.interfaces;
   }
@@ -256,10 +289,10 @@ export class MvpStoreService {
       name: String(input.name || 'New Interface'),
       baseUrl: String(input.baseUrl || input.base_url || ''),
       base_url: String(input.baseUrl || input.base_url || ''),
-      category: (input.category as 'talk' | 'case') || 'case',
+      category: input.category || 'case',
       providerKey: input.providerKey,
       capabilities: input.capabilities || { rpa: true },
-      status: (input.status as 'connected' | 'disconnected' | 'error') || 'connected',
+      status: input.status || 'connected',
       icon: input.icon,
       createdAt: now,
       updatedAt: now,
@@ -269,7 +302,10 @@ export class MvpStoreService {
     return iface;
   }
 
-  updateInterface(id: string, input: Partial<ManagedInterface>): ManagedInterface | null {
+  updateInterface(
+    id: string,
+    input: Partial<ManagedInterface>,
+  ): ManagedInterface | null {
     const index = this.store.interfaces.findIndex((item) => item.id === id);
     if (index < 0) return null;
     const current = this.store.interfaces[index];
@@ -288,7 +324,9 @@ export class MvpStoreService {
 
   deleteInterface(id: string): boolean {
     const before = this.store.interfaces.length;
-    this.store.interfaces = this.store.interfaces.filter((item) => item.id !== id);
+    this.store.interfaces = this.store.interfaces.filter(
+      (item) => item.id !== id,
+    );
     const changed = this.store.interfaces.length !== before;
     if (changed) this.saveStore();
     return changed;
@@ -306,7 +344,7 @@ export class MvpStoreService {
       interfaceId: input.interfaceId,
       name: String(input.name || 'New Flow'),
       description: input.description,
-      category: (input.category as 'talk' | 'case') || 'case',
+      category: input.category || 'case',
       intentTags: Array.isArray(input.intentTags) ? input.intentTags : [],
       createdAt: now,
       updatedAt: now,
@@ -326,7 +364,7 @@ export class MvpStoreService {
       id: randomUUID(),
       flowDefinitionId: String(input.flowDefinitionId || ''),
       version: Number(input.version || 1),
-      status: (input.status as 'draft' | 'approved' | 'deprecated') || 'draft',
+      status: input.status || 'draft',
       steps: Array.isArray(input.steps) ? input.steps : [],
       createdBy: input.createdBy,
       createdAt: now,
@@ -337,7 +375,10 @@ export class MvpStoreService {
     return flowVersion;
   }
 
-  updateFlowVersion(id: string, input: Partial<FlowVersion>): FlowVersion | null {
+  updateFlowVersion(
+    id: string,
+    input: Partial<FlowVersion>,
+  ): FlowVersion | null {
     const index = this.store.flowVersions.findIndex((item) => item.id === id);
     if (index < 0) return null;
     const updated: FlowVersion = {
@@ -351,17 +392,23 @@ export class MvpStoreService {
   }
 
   getTenantFlowPermissions(companyId: string): TenantFlowPermission[] {
-    return this.store.tenantFlowPermissions.filter((item) => item.companyId === companyId);
+    return this.store.tenantFlowPermissions.filter(
+      (item) => item.companyId === companyId,
+    );
   }
 
-  upsertTenantFlowPermissions(entries: Array<Partial<TenantFlowPermission>>): TenantFlowPermission[] {
+  upsertTenantFlowPermissions(
+    entries: Array<Partial<TenantFlowPermission>>,
+  ): TenantFlowPermission[] {
     for (const entry of entries) {
       const companyId = String(entry.companyId || '');
       const flowDefinitionId = String(entry.flowDefinitionId || '');
       if (!companyId || !flowDefinitionId) continue;
 
       const existing = this.store.tenantFlowPermissions.find(
-        (item) => item.companyId === companyId && item.flowDefinitionId === flowDefinitionId,
+        (item) =>
+          item.companyId === companyId &&
+          item.flowDefinitionId === flowDefinitionId,
       );
 
       if (existing) {
@@ -387,13 +434,19 @@ export class MvpStoreService {
   }
 
   getIntentFlowMappings(companyId: string): IntentFlowMapping[] {
-    return this.store.intentFlowMappings.filter((item) => item.companyId === companyId);
+    return this.store.intentFlowMappings.filter(
+      (item) => item.companyId === companyId,
+    );
   }
 
-  upsertIntentFlowMapping(entry: Partial<IntentFlowMapping>): IntentFlowMapping {
+  upsertIntentFlowMapping(
+    entry: Partial<IntentFlowMapping>,
+  ): IntentFlowMapping {
     const companyId = String(entry.companyId || '');
     const intent = String(entry.intent || '').trim();
-    const allowedFlowDefinitionIds = Array.isArray(entry.allowedFlowDefinitionIds)
+    const allowedFlowDefinitionIds = Array.isArray(
+      entry.allowedFlowDefinitionIds,
+    )
       ? entry.allowedFlowDefinitionIds
       : [];
 
@@ -426,14 +479,16 @@ export class MvpStoreService {
     return this.store.knowledgeDocuments;
   }
 
-  createKnowledgeDocument(input: Partial<KnowledgeDocument>): KnowledgeDocument {
+  createKnowledgeDocument(
+    input: Partial<KnowledgeDocument>,
+  ): KnowledgeDocument {
     const now = new Date().toISOString();
     const content = String(input.content || '');
     const doc: KnowledgeDocument = {
       id: randomUUID(),
       title: String(input.title || 'Untitled Document'),
       content,
-      type: (input.type as 'pdf' | 'docx' | 'url' | 'text') || 'text',
+      type: input.type || 'text',
       status: 'indexed',
       chunk_count: Math.max(1, Math.ceil(content.length / 500)),
       size_bytes: Buffer.byteLength(content, 'utf-8'),
@@ -454,7 +509,11 @@ export class MvpStoreService {
   private loadStore(): StoreData {
     if (!fs.existsSync(this.storePath)) {
       const initial = this.defaultStore();
-      fs.writeFileSync(this.storePath, JSON.stringify(initial, null, 2), 'utf8');
+      fs.writeFileSync(
+        this.storePath,
+        JSON.stringify(initial, null, 2),
+        'utf8',
+      );
       return initial;
     }
 
@@ -463,21 +522,40 @@ export class MvpStoreService {
       const parsed = JSON.parse(raw);
       return {
         interfaces: Array.isArray(parsed.interfaces) ? parsed.interfaces : [],
-        flowDefinitions: Array.isArray(parsed.flowDefinitions) ? parsed.flowDefinitions : [],
-        flowVersions: Array.isArray(parsed.flowVersions) ? parsed.flowVersions : [],
-        tenantFlowPermissions: Array.isArray(parsed.tenantFlowPermissions) ? parsed.tenantFlowPermissions : [],
-        intentFlowMappings: Array.isArray(parsed.intentFlowMappings) ? parsed.intentFlowMappings : [],
-        knowledgeDocuments: Array.isArray(parsed.knowledgeDocuments) ? parsed.knowledgeDocuments : [],
+        flowDefinitions: Array.isArray(parsed.flowDefinitions)
+          ? parsed.flowDefinitions
+          : [],
+        flowVersions: Array.isArray(parsed.flowVersions)
+          ? parsed.flowVersions
+          : [],
+        tenantFlowPermissions: Array.isArray(parsed.tenantFlowPermissions)
+          ? parsed.tenantFlowPermissions
+          : [],
+        intentFlowMappings: Array.isArray(parsed.intentFlowMappings)
+          ? parsed.intentFlowMappings
+          : [],
+        knowledgeDocuments: Array.isArray(parsed.knowledgeDocuments)
+          ? parsed.knowledgeDocuments
+          : [],
+        ttsConfig: parsed.ttsConfig || this.defaultTTSConfig(),
       };
     } catch {
       const initial = this.defaultStore();
-      fs.writeFileSync(this.storePath, JSON.stringify(initial, null, 2), 'utf8');
+      fs.writeFileSync(
+        this.storePath,
+        JSON.stringify(initial, null, 2),
+        'utf8',
+      );
       return initial;
     }
   }
 
   private saveStore(): void {
-    fs.writeFileSync(this.storePath, JSON.stringify(this.store, null, 2), 'utf8');
+    fs.writeFileSync(
+      this.storePath,
+      JSON.stringify(this.store, null, 2),
+      'utf8',
+    );
   }
 
   private defaultStore(): StoreData {
@@ -503,6 +581,15 @@ export class MvpStoreService {
       tenantFlowPermissions: [],
       intentFlowMappings: [],
       knowledgeDocuments: [],
+      ttsConfig: this.defaultTTSConfig(),
+    };
+  }
+
+  private defaultTTSConfig(): TTSConfigEntry {
+    return {
+      providerId: 'webspeech',
+      apiKey: '',
+      updatedAt: new Date().toISOString(),
     };
   }
 }

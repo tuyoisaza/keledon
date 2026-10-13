@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Param, Query, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Query,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
 import { EscalationService } from '../services/escalation.service';
+import { ResourceScopeGuard } from '../guards/resource-scope.guard';
 
 @Controller('api/escalations')
+@UseGuards(ResourceScopeGuard)
 export class EscalationController {
   constructor(private readonly escalationService: EscalationService) {}
 
@@ -23,15 +33,18 @@ export class EscalationController {
   @Get('team/:teamId')
   async getByTeam(
     @Param('teamId') teamId: string,
-    @Query('limit') limit?: string
+    @Query('limit') limit?: string,
   ) {
-    return this.escalationService.getByTeamId(teamId, limit ? parseInt(limit, 10) : 100);
+    return this.escalationService.getByTeamId(
+      teamId,
+      limit ? parseInt(limit, 10) : 100,
+    );
   }
 
   @Post(':id/acknowledge')
   async acknowledge(
     @Param('id') id: string,
-    @Body('acknowledgedBy') acknowledgedBy: string
+    @Body('acknowledgedBy') acknowledgedBy: string,
   ) {
     return this.escalationService.acknowledge(id, acknowledgedBy);
   }

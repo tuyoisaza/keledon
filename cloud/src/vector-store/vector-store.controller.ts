@@ -1,7 +1,19 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { VectorStoreService } from './vector-store.service';
+import { ResourceScopeGuard } from '../guards/resource-scope.guard';
 
 @Controller('api/vector-store')
+@UseGuards(ResourceScopeGuard)
 export class VectorStoreController {
   constructor(private readonly vectorStoreService: VectorStoreService) {}
 
@@ -26,7 +38,16 @@ export class VectorStoreController {
   }
 
   @Post('search')
-  async search(@Body() body: { query: string; limit?: number; scoreThreshold?: number; category?: string[]; company_id?: string }) {
+  async search(
+    @Body()
+    body: {
+      query: string;
+      limit?: number;
+      scoreThreshold?: number;
+      category?: string[];
+      company_id?: string;
+    },
+  ) {
     return this.vectorStoreService.search(body.query, body);
   }
 

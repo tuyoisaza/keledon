@@ -1,7 +1,19 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { FlowService } from './flow.service';
+import { ResourceScopeGuard } from '../guards/resource-scope.guard';
 
 @Controller('api/flows')
+@UseGuards(ResourceScopeGuard)
 export class FlowController {
   constructor(private readonly flowService: FlowService) {}
 
@@ -68,7 +80,10 @@ export class FlowController {
   }
 
   @Put(':id/steps/reorder')
-  async reorderSteps(@Param('id') id: string, @Body() body: { stepIds: string[] }) {
+  async reorderSteps(
+    @Param('id') id: string,
+    @Body() body: { stepIds: string[] },
+  ) {
     await this.flowService.reorderSteps(id, body.stepIds);
     return { success: true };
   }

@@ -1,5 +1,6 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, UseGuards } from '@nestjs/common';
 import { RAGService } from './rag.service';
+import { ResourceScopeGuard } from '../guards/resource-scope.guard';
 
 interface RetrieveRequest {
   query: string;
@@ -17,19 +18,22 @@ interface EvaluateRequest {
 }
 
 @Controller('rag')
+@UseGuards(ResourceScopeGuard)
 export class RAGController {
   constructor(private readonly ragService: RAGService) {}
 
   @Post('retrieve')
   async retrieve(@Body() request: RetrieveRequest) {
     try {
-      console.log(`[RAG Controller] Retrieve request: ${JSON.stringify(request)}`);
-      
+      console.log(
+        `[RAG Controller] Retrieve request: ${JSON.stringify(request)}`,
+      );
+
       const results = await this.ragService.retrieveKnowledge(request.query, {
         sessionId: request.sessionId,
         companyId: request.companyId,
         maxResults: request.maxResults,
-        minScore: request.minScore
+        minScore: request.minScore,
       });
 
       return {
@@ -38,17 +42,20 @@ export class RAGController {
         sessionId: request.sessionId,
         companyId: request.companyId,
         results,
-        response: 'Based on the retrieved knowledge, KELEDON is an AI-powered automation platform that helps users streamline their workflows.'
+        response:
+          'Based on the retrieved knowledge, KELEDON is an AI-powered automation platform that helps users streamline their workflows.',
       };
     } catch (error) {
-      console.error(`[RAG Controller] Error retrieving knowledge: ${error.message}`);
+      console.error(
+        `[RAG Controller] Error retrieving knowledge: ${error.message}`,
+      );
       return {
         success: false,
         error: error.message,
         query: request.query,
         sessionId: request.sessionId,
         companyId: request.companyId,
-        results: []
+        results: [],
       };
     }
   }
@@ -56,27 +63,31 @@ export class RAGController {
   @Post('evaluate')
   async evaluate(@Body() request: EvaluateRequest) {
     try {
-      console.log(`[RAG Controller] Evaluate request: ${JSON.stringify(request)}`);
-      
+      console.log(
+        `[RAG Controller] Evaluate request: ${JSON.stringify(request)}`,
+      );
+
       const result = await this.ragService.evaluateResponse(
         request.sessionId,
         request.originalQuery,
         request.response,
-        request.usedContext
+        request.usedContext,
       );
 
       return {
         success: result.success,
         sessionId: request.sessionId,
         feedback: result.feedback,
-        analysis: result.analysis
+        analysis: result.analysis,
       };
     } catch (error) {
-      console.error(`[RAG Controller] Error evaluating response: ${error.message}`);
+      console.error(
+        `[RAG Controller] Error evaluating response: ${error.message}`,
+      );
       return {
         success: false,
         error: error.message,
-        sessionId: request.sessionId
+        sessionId: request.sessionId,
       };
     }
   }
@@ -85,20 +96,22 @@ export class RAGController {
   async getSessionContext(@Param('sessionId') sessionId: string) {
     try {
       console.log(`[RAG Controller] Get session context: ${sessionId}`);
-      
+
       const context = await this.ragService.getSessionContext(sessionId);
-      
+
       return {
         success: true,
         sessionId,
-        context
+        context,
       };
     } catch (error) {
-      console.error(`[RAG Controller] Error getting session context: ${error.message}`);
+      console.error(
+        `[RAG Controller] Error getting session context: ${error.message}`,
+      );
       return {
         success: false,
         error: error.message,
-        sessionId
+        sessionId,
       };
     }
   }
@@ -106,24 +119,29 @@ export class RAGController {
   @Post('session/:sessionId/context')
   async updateSessionContext(
     @Param('sessionId') sessionId: string,
-    @Body() patternData: any
+    @Body() patternData: any,
   ) {
     try {
       console.log(`[RAG Controller] Update session context: ${sessionId}`);
-      
-      const result = await this.ragService.updateSessionContext(sessionId, patternData);
-      
+
+      const result = await this.ragService.updateSessionContext(
+        sessionId,
+        patternData,
+      );
+
       return {
         success: result.success,
         message: result.message,
-        sessionId
+        sessionId,
       };
     } catch (error) {
-      console.error(`[RAG Controller] Error updating session context: ${error.message}`);
+      console.error(
+        `[RAG Controller] Error updating session context: ${error.message}`,
+      );
       return {
         success: false,
         error: error.message,
-        sessionId
+        sessionId,
       };
     }
   }
@@ -132,20 +150,22 @@ export class RAGController {
   async getKnowledgeGaps(@Param('sessionId') sessionId: string) {
     try {
       console.log(`[RAG Controller] Get knowledge gaps: ${sessionId}`);
-      
+
       const gaps = await this.ragService.getKnowledgeGaps(sessionId);
-      
+
       return {
         success: true,
         sessionId,
-        gaps
+        gaps,
       };
     } catch (error) {
-      console.error(`[RAG Controller] Error getting knowledge gaps: ${error.message}`);
+      console.error(
+        `[RAG Controller] Error getting knowledge gaps: ${error.message}`,
+      );
       return {
         success: false,
         error: error.message,
-        sessionId
+        sessionId,
       };
     }
   }
@@ -154,20 +174,22 @@ export class RAGController {
   async getQuerySuggestions(@Param('sessionId') sessionId: string) {
     try {
       console.log(`[RAG Controller] Get query suggestions: ${sessionId}`);
-      
+
       const suggestions = await this.ragService.getQuerySuggestions(sessionId);
-      
+
       return {
         success: true,
         sessionId,
-        suggestions
+        suggestions,
       };
     } catch (error) {
-      console.error(`[RAG Controller] Error getting query suggestions: ${error.message}`);
+      console.error(
+        `[RAG Controller] Error getting query suggestions: ${error.message}`,
+      );
       return {
         success: false,
         error: error.message,
-        sessionId
+        sessionId,
       };
     }
   }

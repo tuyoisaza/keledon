@@ -8,8 +8,8 @@
   "pr_url": "https://github.com/tuyoisaza/keledon/pull/42",
   "checks": {
     "lint": {
-      "status": "PASS",
-      "evidence": "services/web lint passes; changed landing files and changed API modules lint clean."
+      "status": "BLOCKED",
+      "evidence": "services/web lint and ESLint on changed landing files pass. Touched Cloud TypeScript modules still fail strict ESLint with type-aware unsafe-access and related diagnostics (550 errors, 74 warnings after scoped auto-fixes)."
     },
     "typecheck": {
       "status": "BLOCKED",
@@ -17,11 +17,11 @@
     },
     "build": {
       "status": "PASS",
-      "evidence": "services/web and landing Vite builds pass; services/api build+C13 passes. Agent build not run because script deletes repository-root dist."
+      "evidence": "Cloud C13/typecheck build, services/web and landing Vite builds, and services/api build+C13 pass. Agent build not run because its script deletes repository-root dist."
     },
     "focused_tests": {
       "status": "BLOCKED",
-      "evidence": "Browser 19/19; web synthetic 10/10; API regression 8/8; Salesforce adapter suite 17/19 with two existing read-only location-fixture failures."
+      "evidence": "Cloud authorization/OAuth/resource regression 8/8; Browser 19/19; web synthetic 10/10; API regression 8/8; Salesforce adapter suite 17/19 with two existing read-only location-fixture failures."
     },
     "uat": {
       "status": "PASS",
@@ -29,7 +29,7 @@
     },
     "delivery": {
       "status": "BLOCKED",
-      "evidence": "PR #42 is draft/open and includes this candidate update. Physical-line inventory has 30 source files at or above 600 lines; no merge/main readback. The vendored completion gate throws TypeError when merged_commit_sha is null."
+      "evidence": "PR #42 is draft/open. Physical-line inventory has 29 source files at or above 600 lines; no merge/main readback. Three additive Cloud schema migrations are included but were not executed. The vendored completion gate throws TypeError when merged_commit_sha is null."
     }
   }
 }

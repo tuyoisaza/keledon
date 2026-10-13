@@ -1,6 +1,15 @@
-import { Body, Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { LLMService } from '../llm/llm.service';
 import type { LLMResponse } from '../llm/llm.types';
+import { PrismaService } from '../prisma/prisma.service';
 
 interface BrainChatMessage {
   role: 'user' | 'assistant';
@@ -21,18 +30,55 @@ interface BrainChatRequest {
 
 @Controller('api/brain')
 export class BrainController {
-  constructor(private readonly llmService: LLMService) {}
+  constructor(
+    private readonly llmService: LLMService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   @Post('chat')
-  async chat(@Body() body: BrainChatRequest) {
+  async chat(@Body() body: BrainChatRequest, @Req() req: any) {
     const message = body?.message?.trim();
-    if (!message) {
+    if (!message || message.length > 8000) {
       throw new HttpException('Message is required', HttpStatus.BAD_REQUEST);
     }
 
-    const companyName = body.companyName?.trim() || body.companyId || 'Unspecified Company';
-    const brandName = body.brandName?.trim() || body.brandId || 'Unspecified Brand';
-    const teamName = body.teamName?.trim() || body.teamId || 'Unspecified Team';
+    const actor = await this.prisma.user.findUnique({
+      where: { id: req.user?.userId },
+      include: {
+        company: true,
+        team: { include: { brand: { include: { company: true } } } },
+      },
+    });
+    if (!actor) throw new ForbiddenException('Resource access denied');
+    if (
+      actor.companyId &&
+      actor.team?.brand?.companyId &&
+      actor.companyId !== actor.team.brand.companyId
+    )
+      throw new ForbiddenException('Resource access denied');
+
+    const companyId = actor.companyId || actor.team?.brand?.companyId;
+    const teamId = actor.teamId;
+    const companyName = actor.company?.name || 'Unspecified Company';
+    const brandId = actor.team?.brand?.id;
+    const brandName = actor.team?.brand?.name || 'Unspecified Brand';
+    const teamName = actor.team?.name || 'Unspecified Team';
+    if (
+      (body?.language !== undefined &&
+        (typeof body.language !== 'string' || body.language.length > 20)) ||
+      (body?.history !== undefined &&
+        (!Array.isArray(body.history) ||
+          body.history.length > 12 ||
+          body.history.some(
+            (item) =>
+              !item ||
+              !['user', 'assistant'].includes(item.role) ||
+              typeof item.content !== 'string' ||
+              item.content.length > 8000,
+          )))
+    )
+      throw new HttpException('Invalid Brain request', HttpStatus.BAD_REQUEST);
+
     const history = Array.isArray(body.history) ? body.history.slice(-12) : [];
 
     const context = [
@@ -43,7 +89,9 @@ export class BrainController {
     ];
 
     const conversation = history
-      .map((item) => `${item.role === 'user' ? 'User' : 'Brain'}: ${item.content}`)
+      .map(
+        (item) => `${item.role === 'user' ? 'User' : 'Brain'}: ${item.content}`,
+      )
       .join('\n');
 
     const prompt = [
@@ -74,20 +122,25 @@ export class BrainController {
 
       return {
         success: true,
-        reply: response.text.trim() || 'I am ready, but I do not have a response yet.',
+        reply:
+          response.text.trim() ||
+          'I am ready, but I do not have a response yet.',
         usage: response.usage,
         context: {
-          companyId: body.companyId,
+          companyId,
           companyName,
-          brandId: body.brandId,
+          brandId,
           brandName,
-          teamId: body.teamId,
+          teamId,
           teamName,
         },
       };
     } catch (error) {
       console.error('BrainController: failed to generate chat response', error);
-      throw new HttpException('Failed to talk to Brain', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Failed to talk to Brain',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

@@ -16,7 +16,6 @@ import { MvpDataController } from './controllers/mvp-data.controller';
 import { MvpStoreService } from './mvp/mvp-store.service';
 import { AuthLocalModule } from './auth-local/auth-local.module';
 import { CrudModule } from './crud/crud.module';
-import { CrudController } from './crud/crud.controller';
 import { TTSModule } from './tts/tts.module';
 import { VectorStoreModule } from './vector-store/vector-store.module';
 import { VectorStoreController } from './vector-store/vector-store.controller';
@@ -31,6 +30,7 @@ import { EscalationService } from './services/escalation.service';
 import { EscalationController } from './controllers/escalation.controller';
 import { BrainController } from './controllers/brain.controller';
 import { VoiceModule } from './voice/voice.module';
+import { ResourceScopeGuard } from './guards/resource-scope.guard';
 
 @Module({
   imports: [
@@ -55,7 +55,6 @@ import { VoiceModule } from './voice/voice.module';
     AppController,
     TeamController,
     MvpDataController,
-    CrudController,
     VectorStoreController,
     FlowController,
     SubAgentController,
@@ -73,8 +72,16 @@ import { VoiceModule } from './voice/voice.module';
     EscalationService,
     TeamController,
     MvpStoreService,
+    ResourceScopeGuard,
   ],
-  exports: [SessionService, DatabaseHealthService, TTSModule, VectorStoreModule, FlowModule, SubAgentModule],
+  exports: [
+    SessionService,
+    DatabaseHealthService,
+    TTSModule,
+    VectorStoreModule,
+    FlowModule,
+    SubAgentModule,
+  ],
 })
 export class AppModule {
   constructor() {
