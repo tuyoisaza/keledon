@@ -321,7 +321,6 @@ export class CrudCompanyService {
     companyId?: string;
     teamId?: string;
     role?: string;
-    passwordHash?: string;
   }) {
     return this.prisma.user.create({
       data,

@@ -1,8 +1,31 @@
-# PHDK Check — current candidate 5.1.7
+# PHDK Check — 5.1.7 integrated source; acceptance partial
 
 Date: 2026-10-13 America/Mexico_City · PHDK 2.50.10 · Auto goal `20261012-keledon-four-fronts`.
 
-Remote `origin/main` was re-fetched at `3c6e4c71bc5672984a1fd07df62d722f95beb4e7` (5.1.6). PRs #51–53 are merged; no PR is open. The uncommitted branch `fix/fail-closed-api-migrations` has a local 5.1.7 candidate; no commit, push, PR, or deployment was made.
+## 2026-10-13 follow-up source audit — candidate 5.1.8
+
+The role/tenant CRUD review found a credential-integrity gap: `/api/crud/users` accepted a client-provided `passwordHash` and forwarded it directly to Prisma. An in-company manager could therefore choose the bcrypt hash for a newly created user's password. The guard now rejects that field on both POST and PUT for all roles, and service input types no longer expose it. `services/api/test/regression/25-approved-management-policy.test.js` covers admin/coordinator create/update and superadmin create attempts. API typecheck and all 11 API regression suites pass; full API typed ESLint exits 0 with 0 errors/139 warnings. Candidate release 5.1.8 is under normal branch/PR delivery; do not treat it as integrated until verified on remote `main`.
+
+PR #54 is MERGED. Remote `origin/main` is `a854ca7634307538305cd9b5ad1f91f8a066b1a1`, version 5.1.7. Tested commit `edce7eafbe13ac16ab93274a87e12571e7b04b2e` has the identical Git tree `a77afde0f6142583887921fe46376b84cf3af279`. No open PRs or required hosted checks/reviews were reported. No deployment is claimed.
+
+## Current source evidence
+
+- API typed ESLint passes 184 source files (0 errors/139 warnings); API full-source typecheck, production/C13 build and regression 11/11 pass.
+- Cloud build/regression 8/8, web typecheck/build, diagnostics 18/18 and SEO 1/1, Landing typecheck/build/lint, Browser regressions 19/19 pass. PHDK coherence passes 52/52.
+- Fresh local Edge UAT on the 5.1.7 tree passes 1/1 suite with synthetic Company Co fixtures and intercepted APIs. See root `UAT_REPORT.md` and `docs/phdk/evidence/uat-local-web.json`.
+- API startup removes automatic migration rollback, fails closed on migration/company-count errors and Docker invokes the checked-in entrypoint. Full details are retained below and in `docs/phdk/lifecycle/20261012-keledon-four-fronts/70-check/PHDK_CHECK_REPORT_5.1.7.md`.
+
+## Open applicable findings
+
+- Full persisted CRUD by resource × role × tenant × operation × surface, direct-ID DB-backed sessions and deployed migration ledger/runtime are unverified. No local Docker/PostgreSQL service was available; no production DB/migration was accessed.
+- Native Electron rendering/device/microphone/audio requires Windows device acceptance.
+- Broad route/theme/locale/accessibility, zoom, contrast and screen-reader acceptance remains incomplete; current local UAT covers only specified flows and viewports.
+- Deployed SEO headers and AEO/GEO visibility remain unverified. Source SEO test is not deployed evidence.
+- Client-selected integrations remain provider-independent in source; no live vendor was contacted.
+
+Check: **SOURCE CHECKS PASS; ACCEPTANCE PARTIAL.** Gate evidence is machine PASS for stated checks, but the full Auto portfolio remains **PARTIALLY DELIVERED** until the open acceptance is collected or explicitly dispositioned. Exact next actions are in `UAT_REPORT.md` and `PHDK_COMPLETION_AUDIT.md`.
+
+---
 
 ## Remediation verified
 

@@ -122,7 +122,9 @@ export class CrudAccessGuard implements CanActivate {
           'escalationTriggers',
           'interfaceIds',
         ],
-        users: ['email', 'name', 'companyId', 'teamId', 'role', 'passwordHash'],
+        // Password hashes are produced only by the authentication service; never accept
+        // credential material through the general-purpose user CRUD endpoint.
+        users: ['email', 'name', 'companyId', 'teamId', 'role'],
         vendors: [
           'teamId',
           'name',
