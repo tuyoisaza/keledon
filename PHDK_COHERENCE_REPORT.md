@@ -26,11 +26,21 @@ Baseline: remote `main` `52537140e67d0d6c05486fa13837df3eb5316fb3`. Candidate so
 - GAP/P1: full persisted CRUD × role × tenant matrix and direct cross-company ID tests are not demonstrated; current role API tests use isolated Prisma fixtures.
 - GAP/P1: native Electron/device/audio and broad route/theme/locale accessibility evidence is absent.
 - GAP/P2: deployed SEO headers and external AEO/GEO measurements are not verified; source-only evidence must not be presented as live behavior.
-- CONFLICT/BLOCKED: installed `phdk-standards/scripts/phdk_coherence_check.py` expects `phdk-standards/README.md`; execution fails with `FileNotFoundError` because that file is absent from the installed manifest surface. No placeholder was added. This prevents that static utility from running, not the independent candidate review.
+- CONFLICT/BLOCKED: installed `phdk-standards/scripts/phdk_coherence_check.py` reads `phdk-standards/README.md` and then `CHANGELOG.md`; neither file is present in the installed manifest surface. Execution stops first with `FileNotFoundError` for README. No placeholder was added. This is a mismatch between the PHDK checker and its manifest, not a product-code finding.
 - UNVERIFIED: migration/runtime against an actual database; PR merge/review controls until refreshed PR metadata; deployment outcome.
 
-Next action: publish the authorized versioned branch, refresh PR #42, inspect actual review/check rules and rerun the delivery gate after remote integration. Keep the lifecycle PARTIALLY DELIVERED until every confirmed commitment is verified and `main` is read back.
+Historical next action: publish the authorized versioned branch and refresh PR #42. This was completed; see the post-merge delivery evidence below.
 
 ## Candidate follow-up — 5.1.2
 
-Source candidate is now `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0`. It updates all five app package/lock roots and Browser's visible version to 5.1.2; the fixed-company context uses an accessible native `fieldset`/`legend`, verified by the exact production-SPA UAT. This does not change the recorded coherence utility limitation: `phdk-standards/README.md` is absent, so the utility still cannot run. No new production, database or external integration evidence is claimed. Candidate commits are pushed; PR #42 is OPEN and ready for review at `cf9be2fe6951c1dbaad3ab02189583fcf0d0658f`. Remote `main` remains `52537140e67d0d6c05486fa13837df3eb5316fb3` pending integration/readback.
+Source candidate is `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0`. It updates all five app package/lock roots and Browser's visible version to 5.1.2; the fixed-company context uses an accessible native `fieldset`/`legend`, verified by the exact production-SPA UAT. This does not change the recorded coherence utility limitation: `README.md` and `CHANGELOG.md` are both absent from the installed manifest. No new production, database or external integration evidence is claimed. PR #42 is merged; remote `main` SHA is `e305d3d817ff20ed52ed889315e2d618127d7d9f`. The completion-gate script cannot parse the package JSON version field and remains blocked; see the delivery report.
+
+## Current installed-standard revalidation — 2026-10-13
+
+PHDK central fixes are merged: PR [#48](https://github.com/tuyoisaza/PHDK/pull/48) adds JSON version-property support to the completion gate, and PR [#49](https://github.com/tuyoisaza/PHDK/pull/49) adds the coherence checker's README/CHANGELOG inputs to the manifest and enforces their presence. Canonical PHDK `main` is v2.50.10 at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`.
+
+- **VERIFIED:** conservative downstream sync installed all 52 v2.50.10 mappings byte-for-byte and refreshed the exact marked native rules block.
+- **VERIFIED:** installed coherence checker passes v2.50.10 / 52 mappings.
+- **VERIFIED:** installed completion gate reads the actual KELEDON remote `services/web/package.json.version` and returns PASS for SHA `e305d3d817ff20ed52ed889315e2d618127d7d9f`, version 5.1.2, in an isolated gate smoke fixture.
+- **PARTIAL:** the real Auto evidence record still contains acceptance items marked BLOCKED, so the complete gate must remain BLOCKED even though its JSON-source incompatibility is fixed.
+- **UNVERIFIED:** native Electron visual runtime, persistent database/migration behavior, full app accessibility/localization, and deployed SEO/AEO remain unverified as described in the current Check report.

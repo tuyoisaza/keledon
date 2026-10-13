@@ -57,4 +57,12 @@ Commit 3af566a163024c3f2b69be7991e99437d47b0528 is on chore/phdk-install-v2.50.8
 
 - Source candidate is `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0`, following the 5.1.1 tenant/health-policy implementation. All five app package/lock roots and the Browser visible version now align at 5.1.2.
 - Updated the manager company context to native `fieldset`/`legend`; exact 5.1.2 local production-SPA UAT passes 1/1 and verifies the accessible “Company” group.
-- Candidate is pushed at `cf9be2fe6951c1dbaad3ab02189583fcf0d0658f`; PR #42 is OPEN and ready for review. All synthetic/persistence, native, deployed SEO/AEO and PHDK coherence utility limitations remain as documented; current overall status is PARTIALLY DELIVERED.
+- PR #42 is merged at `e305d3d817ff20ed52ed889315e2d618127d7d9f`; remote `main` version 5.1.2 and source ancestry are verified. Overall PHDK Auto remains PARTIALLY DELIVERED because the official completion gate cannot parse package.json's version field and acceptance evidence remains open.
+
+## 2026-10-13 — PHDK Auto standards remediation
+
+- Pulled canonical PHDK and repaired both central delivery-tool gaps in versioned releases: PR #48 adds JSON version-property support; PR #49 ensures README/CHANGELOG are vendored for coherence checks. Both are merged and read back on PHDK `main`, v2.50.10 at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`.
+- Installed PHDK 2.50.10 in `phdk-standards/`; all 52 mappings and the native managed block were verified. Installed coherence checker PASS; isolated installed gate smoke PASS on actual KELEDON remote main/version.
+- Revalidated debug diagnostics source/tests; no new widget source defect found. Electron visual/device/audio, persisted CRUD/migration, broad accessibility/localization and deployed SEO/AEO remain unverified.
+- Current KELEDON branch `chore/phdk-upgrade-v2.50.10` is based on remote `main` `e305d3d817ff20ed52ed889315e2d618127d7d9f`; downstream standards-sync PR delivery is still pending.
+- SIGUIENTE PASO: deliver the PHDK v2.50.10 standards sync through a KELEDON PR, then reconcile the full Auto evidence gate without converting open acceptance into PASS.

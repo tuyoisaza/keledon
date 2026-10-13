@@ -1,18 +1,19 @@
-# Debug widget readiness — baseline
-Run: 20261012-keledon-four-fronts; source revision 5253714; no runtime/visual test yet.
-| Surface/control | Evidence | Result |
-|---|---|---|
-| Web public | LandingPage.tsx uses Navbar; no shared diagnostic row | FAIL |
-| Web login | LoginPage.tsx:162-191 timestamp, Copy Logs/Reset text, no confirmed success | FAIL |
-| App/admin | Sidebar.tsx:85-117 10px version/12px icons/gap-2, toasts and raw storage.clear | FAIL |
-| Collapsed app | separate controls, version row not preserved | FAIL |
-| Legacy landing | landing Sidebar repeats implementation | FAIL |
-| Electron | renderer/index.html:1074 command log before version; copy changes version text | FAIL |
-| Redaction | debug-report.ts serializes arbitrary console args and full URL; no sanitizer | FAIL |
-| Capture bounds | MAX_LOGS=100, MAX_LOG_LENGTH=2000 | source present; runtime UNVERIFIED |
-| Reset | broad storage.clear, no scoped cache/cookie result or independent check | FAIL |
-| Regression/component/browser tests | not executed this run | UNVERIFIED |
-Target: shared version/copy/trash row on all applicable shells; version 12px, buttons 28px, icons 14px, gap 4px, accessible localized labels/focus/live status; independent awaited green checks/revert; sanitized bounded report; app-owned cache/session reset only. Preserve business/foreign data and auth policy. No privileged diagnostic fetch for anonymous users. WS-002 owns all findings.
+# Debug widget readiness — current source revalidation
 
-## Current shared implementation status — 2026-10-12
-Web and landing share safe diagnostic capture/reset, locale catalogs, version row and theme controls; native Browser uses its actual helper and IPC. Allowlisted metadata excludes free-form logs, URLs, identity and credential values. Storage reset deletes only owned keys/cache and propagates failures. Local built web UAT verified position/dimensions, copy success/failure, reset boundaries, mobile reflow and dark/light/corporate switch. Focused contract suites pass. The visual evidence is local synthetic; actual Electron rendering is not observed.
+Run: `20261012-keledon-four-fronts`, revalidated 2026-10-13. Product source: merged KELEDON `main` 5.1.2 at `e305d3d817ff20ed52ed889315e2d618127d7d9f`. Current Check is source/test based; browser UAT evidence below is from the previously recorded isolated local UAT, not a new runtime claim.
+
+| Surface/control | Source/test evidence | Result |
+|---|---|---|
+| Public web/landing | Shared `VersionActions` mounted by `services/web/src/components/common/Navbar.tsx:56`; `LandingPage` uses the Navbar. `version-actions.test.cjs` asserts the public mount. | PASS source/test |
+| Login | `services/web/src/pages/LoginPage.tsx:63` mounts the same widget; anonymous/debug-off component test verifies exact row and no visible labels/status text. | PASS source/test |
+| App/admin | `services/web/src/components/layout/Sidebar.tsx:92` mounts it in the shared app shell; `AppLayout`/`ManagementLayout` route tests cover admin. | PASS source/test |
+| Legacy landing source | `landing/src` mirrors the shared diagnostics/component files; diagnostics contract test asserts byte-normalized equality with web sources. | PASS source/test |
+| Native Browser/Electron | `browser/renderer/index.html:27` has version → clipboard → trash; `browser/renderer/version-actions.js:15-64` allowlists report fields, uses localized accessible labels/status, confirms copy/reset before check, restores icons and cleans timers on unload. `diagnostics.test.cjs` exercises sanitization and reset IPC outcomes. | PASS source/test; Electron visual runtime UNVERIFIED |
+| Compact geometry and controls | Web CSS uses 12px version, 28×28 buttons, 14px icons and 4px gap. Component tests assert order, icon-only controls, hidden live regions and copy/clear independence. | PASS source/test |
+| Copy success/failure | `VersionActions.tsx` awaits the clipboard helper; only successful copy shows check, timers restore the icon, failures retain clipboard and announce hidden status. Tests cover both. | PASS source/test |
+| Reset boundaries | `diagnostics-core.ts` removes KELEDON-owned storage/cache/cookies, verifies reset and propagates partial failures; authenticated session is cleared and login navigation waits through the success indicator. Tests preserve foreign state and reject false success. Native Browser checks owned keys/caches and IPC acknowledgements. | PASS source/test |
+| Redaction/bounds | `diagnostics-core.ts` allowlists event fields and sanitizes keys, paths, IDs and strings; buffers are capped at 100 events and string lengths at 2,000. `diagnostics.test.cjs` verifies secrets, identities, URLs and raw messages are excluded. | PASS source/test |
+| Effective 44px pointer target | Visible controls are exactly 28px with 4px visual gap. Expanding both adjacent hit areas to 44px would overlap; no distinct non-overlapping implementation is evidenced. | UNVERIFIED / geometry-limited; visible dimensions remain compliant |
+| Local browser UAT | `50-uat/UAT_REPORT.md` and `60-uat-fix/UAT_RETEST_REPORT.md` record synthetic local production-SPA checks for placement, dimensions, copy success/failure, reset boundaries, responsive reflow and theme switching on 5.1.2. | PASS for recorded cases only |
+
+No current widget source failure was found. Browser/Electron visual rendering, microphone/device/audio, additional route/locale/screen-reader coverage remain outside the recorded evidence and stay open in Check.

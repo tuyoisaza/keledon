@@ -22,6 +22,10 @@ Source PASS is scoped evidence, not citation/ranking/traffic success. Private au
 |AG-14|Answer/citation observation|BLOCKED|NOT MEASURED; no external engines or paid queries executed.|
 |AG-15|Regression/revalidation|BLOCKED|Source review done; exact final integrated UAT/build and open SEO repairs pending.|
 
+## Current source revalidation — candidate 5.1.2
+
+The merged source resolves the stale AG-09 finding: public CTAs point to `/login` or the real `#architecture` section; navigation and footer targets exist. AG-02 and AG-13 pass at source level because `services/web/nginx.conf` explicitly indexes only `/` and sends `noindex, nofollow` for other SPA routes. Production delivery of these headers and crawler rendering remain unverified. AG-14 external citation observation remains NOT MEASURED; no engine query, crawler or deployed probe was part of the owner's code-review scope. Public localization and no-JS availability remain open acceptance observations.
+
 ## Source revalidation after root public-copy repair
 
 Root's current Features text now states client compatibility validation, configured cloud models/managed prompts/validated outputs and approved-origin actions; PII-out-of-box/local-optional-cloud/named vendor guarantees removed. UseCases are explicitly example configured workflows, without healthcare/insurance/EMR/Jira/SAP claims. Footer `#` legal/social links removed; real architecture anchor preserved. **SEO-F02 CLOSED in source; SEO-F03 footer portion CLOSED, CTA buttons remain inert at this snapshot.** No live workflow proof inferred. Private client-only noindex limitation F01 remains, and nginx/provider changes are explicitly outside this documentation task. Final source fingerprint above updated; initial historical snapshots retained unchanged, with this revalidation recorded separately.

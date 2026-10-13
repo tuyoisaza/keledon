@@ -1,23 +1,31 @@
 # Delivery report — PARTIALLY DELIVERED
 
-Goal: PHDK Auto for the four owner-confirmed KELEDON fronts, maximum applicable code conformity. Product candidate 5.1.2; PHDK 2.50.8. Branch `chore/phdk-install-v2.50.8`; source commits `cff60c675ec3e4b21864a24821cbda34a9c51d64` (`v5.1.1: enforce tenant-scoped user management and safe diagnostics`) and `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0` (`v5.1.2: label manager company context accessibly`), followed by evidence commit `cf9be2fe6951c1dbaad3ab02189583fcf0d0658f`. These commits are pushed. Remote branch is `cf9be2fe6951c1dbaad3ab02189583fcf0d0658f`.
+Goal: PHDK Auto for the four owner-confirmed KELEDON fronts, with maximum applicable code conformity. Product version: 5.1.2. PHDK installed: 2.50.10.
 
-PR [#42](https://github.com/tuyoisaza/keledon/pull/42) targets `main`, is OPEN and ready for review, and is mergeable at head `cf9be2fe6951c1dbaad3ab02189583fcf0d0658f`. No review submissions or hosted checks were returned. Remote `main` SHA remains `52537140e67d0d6c05486fa13837df3eb5316fb3`; no merge/deployment is claimed.
+## Integrated product source
 
-The candidate covers all four commitments: baseline/version/PR, protected diagnostics, tenant-configurable voice/Cloud/Browser/CRM contracts, and restrictive administration/permissions. New work removes raw CRUD health error/URL disclosure and permits manager team reassignment only inside the actor's company. Full evidence is in `PHDK_CHECK_REPORT.md`, `PHDK_DELIVERY_EVIDENCE.json`, and `docs/phdk/lifecycle/20261012-keledon-four-fronts/`.
+KELEDON PR [#42](https://github.com/tuyoisaza/keledon/pull/42) is MERGED at `e305d3d817ff20ed52ed889315e2d618127d7d9f`. Fresh `origin/main` readback confirmed the merge SHA, all five app package/lock roots at 5.1.2, and source commit `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0` as an ancestor. No deployment is claimed.
 
-Validation: API and Cloud builds/regressions 10/10 each; scoped changed API ESLint clean; web build/typecheck, diagnostics tests 18/18, SEO source regression 1/1 and synthetic production-SPA UAT 1/1 on exact 5.1.2 SHA; landing typecheck/lint/build pass. Full web lint has 0 errors/135 warnings. Strict 1,073-file source/test scan has 0 files at/above 600 lines. UAT browser APIs and data are synthetic; guard tests use isolated Prisma fixtures. No persistent DB, migration, live provider, customer data, production endpoint or deployment was used.
+## PHDK source and installed standards
 
-Remaining acceptance limits: persisted CRUD × role × tenant coverage, full route/theme/locale accessibility and localization, native Electron/device/audio, deployed SEO headers/AEO evidence, and runtime migration behavior. The PHDK coherence utility stops because `phdk-standards/README.md` is absent from the installed manifest surface; no filler was added. Owner-approved migration inclusion does not mean the migration was applied.
+PHDK PRs [#48](https://github.com/tuyoisaza/PHDK/pull/48) and [#49](https://github.com/tuyoisaza/PHDK/pull/49) are merged. Canonical PHDK `main` is v2.50.10 at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`. KELEDON branch `chore/phdk-upgrade-v2.50.10` is based on the verified product `main` SHA and contains a byte-verified installation of all 52 standards mappings plus updated Auto evidence. The downstream standards-sync branch/PR delivery is still in progress.
 
-## Delivery gate
+## Validation
 
-| Gate | Status | Evidence |
+API and Cloud builds/regression suites pass (10/10 suites each); changed API ESLint is clean. Web build/typecheck pass, diagnostics/debug-mode/version tests 18/18, SEO source test 1/1; full web lint has 0 errors/135 warnings. Landing typecheck/lint/build pass. The synthetic local 5.1.2 production-SPA UAT passes 1/1. Physical-line scan: 1,073 source/test files, none at or above 600 lines.
+
+PHDK installation: 52/52 mappings byte-identical; coherence checker PASS. The installed completion gate passes an isolated smoke against actual remote SHA/version using `services/web/package.json.version`. This smoke is not the full Auto evidence gate.
+
+## Delivery proof
+
+| Field | Status | Evidence |
 |---|---|---|
-| VERSION_BUMP | PASS (local) | Five app package/lock roots and browser version at 5.1.2; changelog updated. |
-| COMMIT_PREFIX | PASS (local) | Source candidate commits are prefixed `v5.1.1:` and `v5.1.2:`. |
-| PUSH_AND_PR | PASS | Candidate pushed; PR #42 updated and ready for review. No review/check results are present. |
-| REMOTE_MAIN | BLOCKED / pending | PR remains open; no merge or post-merge `main` SHA/version readback. |
-| SCOPE_AND_CHECKS | PARTIAL | Scoped tests pass; confirmed persistence/native/accessibility acceptance remains open. |
+| VERSION_BUMP | PASS (scoped rationale) | PHDK standards candidate is v2.50.10 with matching README/changelog; KELEDON app remains 5.1.2 because the follow-up changes only PHDK-owned standards/evidence and no product source. |
+| COMMIT_PREFIX | IN PROGRESS | Downstream sync candidate commit has not yet been created. |
+| PUSH_AND_PR | IN PROGRESS | Branch `chore/phdk-upgrade-v2.50.10` exists locally; downstream PR not yet opened. |
+| REMOTE_MAIN | PARTIAL | Product PR #42 is verified on remote `main`; PHDK v2.50.10 downstream sync is not yet merged. |
+| SCOPE_AND_CHECKS | PARTIAL | Focused checks pass, but persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO remain unverified. |
 
-Next: push/update PR #42, inspect actual branch/review controls, integrate through the normal permitted path if they pass, then read back remote `main` SHA/version and run the completion gate. Overall status remains **PARTIALLY DELIVERED**.
+The full completion gate remains BLOCKED because the evidence record correctly marks those acceptance limits as BLOCKED. Its JSON version-source incompatibility and coherence-manifest omissions are repaired in PHDK v2.50.10. No production database/migration, customer/provider data, paid provider call, live application probe or deployment was used.
+
+Current state: **PARTIALLY DELIVERED**. Continue normal KELEDON PR delivery for the PHDK standards sync, then reconcile acceptance evidence; do not report full completion from the isolated tool smoke.
