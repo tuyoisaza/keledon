@@ -1,5 +1,10 @@
 # Changelog
 
+## v5.1.4 — 2026-10-13 (PHDK Auto candidate)
+
+- Remove all production audit findings from API and compatibility Cloud by pinning patched transitive YAML and UUID dependencies and upgrading the direct UUID API to v11.
+- Align all five app package/lock versions at 5.1.4; retain the remaining moderate findings in development/build-only dependency trees for separately scoped toolchain review.
+
 ## v5.1.3 — 2026-10-13 (PHDK Auto candidate)
 
 - Isolate customer browser tabs from privileged Electron APIs and restore renderer sandbox and web security.
@@ -27,6 +32,7 @@
 - Add focused API and browser-side regression coverage. PHDK Check remains partial; see `PHDK_CHECK_REPORT.md`.
 
 ## v5.0.54 — 2026-10-12 (local candidate, acceptance/publication pending)
+
 - Install canonical PHDK 2.50.8 and reconstruct owner-confirmed four-front baseline.
 - Align five package/lock versions; reconcile stale workflow and PR records without restoring automation.
 - Reusable safe diagnostic actions on public/login/app/admin and native Browser, bounded privacy-safe reports, owned-state reset.
@@ -37,4 +43,3 @@
 - Repair deterministic cloud/runtime queue transport, authenticated session isolation, bounded WebRTC/STT wiring and failure reporting.
 - Repair existing web typecheck/runtime contracts without relaxing strict checks.
 - Client-specific integrations are configured per tenant; live vendor/call/CRM acceptance is outside this code-review scope. Final remote delivery is not yet performed; no production success claim.
-
