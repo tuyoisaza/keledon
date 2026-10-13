@@ -1,18 +1,18 @@
-# PHDK Auto completion audit — PARTIALLY DELIVERED (PR merged; gate blocked)
+# PHDK Auto completion audit — PARTIALLY DELIVERED
 
-Run: `20261012-keledon-four-fronts`; PHDK 2.50.8; candidate 5.1.2, source commit `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0`, preceded by 5.1.1 commit `cff60c675ec3e4b21864a24821cbda34a9c51d64`; branch `chore/phdk-install-v2.50.8`; PR #42 https://github.com/tuyoisaza/keledon/pull/42 is MERGED by merge commit `e305d3d817ff20ed52ed889315e2d618127d7d9f`. Fresh `origin/main` is the same SHA, all five app package and lock roots report 5.1.2, and the source candidate is an ancestor.
+Run: `20261012-keledon-four-fronts`; product 5.1.2; installed PHDK v2.50.10. Product PR #42 and standards-sync PR #43 are merged. Fresh `origin/main` readback is `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d`; PHDK sync commit `b818a2705a82fb62068f37349b26794786467af7` and product source `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0` are ancestors. All five app package/lock roots remain 5.1.2.
 
 ## Confirmed commitments
 
-- CMT-001 baseline/version/PR reconciliation: candidate version and locks aligned; PR merged and `main` SHA/version/content read back.
-- CMT-002 shared diagnostics: safe health output and synthetic web UAT pass. Native Electron rendering remains unverified.
-- CMT-003 voice/Cloud/Browser/CRM: provider-independent contracts and isolated synthetic tests pass. Live client-specific integrations are outside the owner's confirmed scope.
-- CMT-004 administration/permissions: owner-approved policy implemented, with new same-tenant manager team assignment UI/guard tests. Full persisted CRUD × role × tenant evidence remains unverified.
+- CMT-001 baseline/version/PR reconciliation: all 52 PHDK manifest mappings are installed and the coherence checker passes. Open PRs #38–40 were reviewed; their code targets the previous monolithic Cloud/Browser layout, while current equivalents are in `services/api`, split Browser IPC modules and current service configuration. No stale patches were cherry-picked. They remain open for owner disposition.
+- CMT-002 shared diagnostics: safe health output and synthetic web UAT pass. Native Electron rendering/device/audio remain unverified.
+- CMT-003 voice/Cloud/Browser/CRM: provider-independent contracts and isolated synthetic tests pass. Client-specific live integrations remain outside confirmed scope.
+- CMT-004 administration/permissions: owner-approved policy is implemented with scoped guard/UI tests. Full persisted CRUD × role × tenant evidence remains unverified.
 
 ## Evidence and residual limits
 
-API build and 10/10 regression suites pass; Cloud build and 10/10 suites pass; web build/typecheck, 18/18 diagnostics tests, 1/1 SEO source test and 1/1 synthetic SPA UAT pass on 5.1.2; landing typecheck/lint/build pass. Full web ESLint has 0 errors/135 warnings. Physical-line scan covers 1,073 app/test source files with 0 files at or above 600 lines. The PHDK coherence script is blocked because both README.md and CHANGELOG.md are absent from the installed manifest; execution stops at README.md. No production or local persistent database, migration, customer/provider data, metered model, deployed headers, Electron runtime or live client platform was exercised.
+API and Cloud build/regression suites pass 10/10 each; web build/typecheck, diagnostics (18/18), SEO source test (1/1) and synthetic SPA UAT (1/1) pass on 5.1.2; landing typecheck/lint/build pass. Full web ESLint has 0 errors/135 warnings. Physical-line scan covers 1,073 app/test source files with none at or above 600 lines. PHDK coherence passes v2.50.10 / 52 mappings. The installed completion verifier's isolated JSON-version smoke passes against the real remote SHA and `services/web/package.json.version`.
 
-`PHDK_DELIVERY_EVIDENCE.json` records the verified merge SHA and PASS for PR/main delivery. The official completion verifier remains BLOCKED: its `version_file` points at the canonical `services/web/package.json`, but it compares the whole JSON document with `5.1.2` and has no JSON property support. The exact remote `version` field and all app package roots were independently read as 5.1.2. The scope gate also remains blocked by the acceptance items above.
+The full completion evidence gate returns BLOCKED because persistent CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO acceptance remain unverified. No persistent database or migration, customer/provider data, metered model, deployed endpoint or production site was exercised. PR #43 reported no hosted checks or review submissions; `main` is not branch-protected. No deployment is claimed.
 
-Decision: the four commitments' code changes are integrated on `main`, but full acceptance and the official mechanical gate are not proven. The task remains **PARTIALLY DELIVERED**, not complete. Resolve the gate's version-source incompatibility through an approved standards correction and obtain or explicitly disposition the remaining acceptance evidence before claiming completion.
+Decision: **PARTIALLY DELIVERED**. The product and PHDK standards changes are merged; full acceptance and owner disposition of legacy PRs #38–40 remain open. See root `PHDK_DELIVERY_EVIDENCE.json` and `PHDK_COMMITMENT_COVERAGE.md` for current records.
