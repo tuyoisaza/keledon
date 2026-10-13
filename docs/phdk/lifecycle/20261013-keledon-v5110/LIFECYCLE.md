@@ -18,7 +18,7 @@ Goal: four owner-confirmed KELEDON fronts, in order: baseline/version/PR; widget
 | AEO/GEO | SOURCE PASS | Factual source review; external citations/discovery unmeasured. |
 | Check | SOURCE GATES PASS | API/Cloud/Web/Browser/Landing and coherence checks pass; 1,086 source files, zero >=600. |
 | Remediation | COMPLETED, SCOPED | Source findings fixed; open acceptance preserved. |
-| Delivery | SOURCE DELIVERED; ACCEPTANCE PARTIAL | Product PR #62 merged by squash; fresh remote main readback a806617f430d084831a079b92c821a694b925467; all five app package roots 5.1.10. |
+| Delivery | SOURCE DELIVERED; ACCEPTANCE PARTIAL | Product PR #62 source merge `a806617f430d084831a079b92c821a694b925467`; documentation PR #63 merged; current main `fde8a1f7b5042d333e45a77f4354a2a41f959954`; all five app package roots 5.1.10. |
 
 Run stages and immutable handoffs are in this folder. Canonical reports remain in the repository root. Overall acceptance is **PARTIALLY DELIVERED** because persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO are not verified. No database, customer provider, production endpoint, or deployment was used.
 
