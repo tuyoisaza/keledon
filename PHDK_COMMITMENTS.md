@@ -3,7 +3,7 @@
 
 PR #58 delivered 5.1.9 to `main` at `6d0112dd940c142c20b5e4c56c766da64d000b3b`; all five app package/lock roots align. CMT-004's operational escalation, global dashboards/analytics/RBAC, and listening-session routes now enforce DB-derived actor/tenant roles and strong expiring capabilities. API regressions pass 12/12, build/typecheck pass, and changed-file ESLint has 0 errors/15 existing warnings. All four commitments remain confirmed. Overall Auto remains PARTIALLY DELIVERED pending persisted CRUD/migration, native Electron/audio, broad accessibility/localization and deployed SEO/AEO evidence.
 
-Current ledger below retains historical plan fields; the latest git/acceptance disposition is superseded by this continuation and `HANDOFF_5.1.9.md`. Last revalidated 2026-10-13 against remote `main` `6d0112dd940c142c20b5e4c56c766da64d000b3b` and merged PR #58. Four commitments have integrated source; remaining manual/persisted acceptance is tracked, not waived. See `UAT_REPORT.md`.
+Current ledger below retains historical plan fields; the latest git/acceptance disposition is superseded by this continuation and `HANDOFF_5.1.9.md`. Last revalidated 2026-10-13 against product merge PR #58 (`6d0112dd940c142c20b5e4c56c766da64d000b3b`) and current remote `main` `91da4060bfaf6833877c24b30e98521dcb8fe988` after docs PR #59. Four commitments have integrated source; remaining manual/persisted acceptance is tracked, not waived. See `UAT_REPORT.md`.
 
 ## Current continuation — 2026-10-13, candidate 5.1.8
 

@@ -4,7 +4,7 @@
 
 PR #58 merged at `6d0112dd940c142c20b5e4c56c766da64d000b3b`; all five application package/lock roots are 5.1.9. CMT-004 operational APIs now enforce current-DB actor and tenant scope, and system-wide analytics/dashboard/RBAC endpoints require current-DB superadmin. Listening-session REST routes require a DB-backed actor; session IDs use UUID capabilities and expire. API regression passes 12/12; build/typecheck pass; touched-file ESLint has 0 errors/15 pre-existing warnings. No deployment or client-provider run is claimed. The four fronts stay in scope and overall status stays PARTIALLY DELIVERED pending persisted CRUD/migration, native Electron/audio, broad accessibility/localization and deployed SEO/AEO acceptance.
 
-Current delivery: PR #58 merged; remote `main` is `6d0112dd940c142c20b5e4c56c766da64d000b3b`, product 5.1.9. PHDK v2.50.10 remains installed and its prior coherence check passed 52/52 mappings. PR #58 has no hosted required checks or review requirement; no deployment is claimed.
+Current delivery: product PR #58 merged at `6d0112dd940c142c20b5e4c56c766da64d000b3b`; PHDK handoff PR #59 then merged. Current remote `main` is `91da4060bfaf6833877c24b30e98521dcb8fe988` and includes the product commit; product version is 5.1.9. PHDK v2.50.10 coherence passes 52/52 mappings. Neither PR had hosted required checks or review requirements; no deployment is claimed.
 
 ## Candidate follow-up — 2026-10-13, 5.1.8
 
