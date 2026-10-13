@@ -1,11 +1,8 @@
-/**
- * Salesforce RPA Adapter
- * Domain-specific adapter for Salesforce CRM platform
- * Handles Salesforce-specific UI elements and workflows
- */
+/** Salesforce adapter for CRM workflows. */
 
 import { RPAStep, RPAResult } from '../../../contracts/types';
 import { selectorManager } from '../selectors/selector-maps';
+import { SALESFORCE_CAPABILITIES } from './salesforce.constants';
 import { fillInputField, navigateToCase, selectDropdownOption, waitForElementSelector, waitForTimeout } from './salesforce-dom.utils';
 
 export class SalesforceAdapter {
@@ -595,17 +592,7 @@ export class SalesforceAdapter {
     return {
       name: this.name,
       version: this.version,
-      capabilities: [
-        'create_case',
-        'update_case',
-        'search_records',
-        'navigate_salesforce_ui',
-        'click_element',
-        'fill_field',
-        'select_option',
-        'wait_for_element',
-        'read_text'
-      ]
+      capabilities: [...SALESFORCE_CAPABILITIES]
     };
   }
 }

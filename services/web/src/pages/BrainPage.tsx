@@ -16,6 +16,7 @@ import { createBrainVoiceSocket } from "./brain-voice-socket";
 import { createBrainSpeechFlow } from "./brain-speech-flow";
 import { createBrainSpeechCapture } from "./brain-speech-capture";
 import { createBrainAudioController } from "./brain-audio-controller";
+import { useBrainLogs } from "./useBrainLogs";
 import { BrainProviderPanel } from './BrainProviderPanel';
 import { BrainContextPanel } from './BrainContextPanel';
 import { BrainConversationPanel } from './BrainConversationPanel';
@@ -75,8 +76,7 @@ export default function BrainPage() {
     }
   });
   const [conversationMode, setConversationMode] = useState(false);
-  const [brainLogs, setBrainLogs] = useState<string[]>([]);
-  const BRAIN_LOG_MAX = 200;
+  const { brainLogs, setBrainLogs, addLog } = useBrainLogs();
 
   // Live pipeline status (from API /api/voice-provider/status/:sessionId)
   const [pipelineStatus, setPipelineStatus] = useState<BrainPipelineStatus | null>(null);
@@ -87,12 +87,6 @@ export default function BrainPage() {
     peerState?: string;
     detail?: string;
   }>({ mode: "disconnected", detail: "No active call" });
-
-  function addLog(msg: string) {
-    const entry = `[${new Date().toLocaleTimeString()}] ${msg}`;
-    console.log("[Brain]", msg);
-    setBrainLogs((prev) => [entry, ...prev].slice(0, BRAIN_LOG_MAX));
-  }
 
   const { resolveBrainCloudConfig, fetchPipelineStatus } = useBrainCloudStatus(addLog, setPipelineStatus);
 

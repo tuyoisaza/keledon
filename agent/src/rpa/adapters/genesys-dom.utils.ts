@@ -16,3 +16,10 @@ export function isElementVisible(element: Element): boolean {
     style.opacity !== '0' &&
     element.offsetParent !== null;
 }
+
+export function isGenesysPage(): boolean {
+  return window.location.hostname.includes('genesys.com') ||
+    window.location.hostname.includes('mypurecloud.com') ||
+    document.querySelector<HTMLMetaElement>('meta[name="generator"]')?.content?.includes('genesys') ||
+    document.querySelector('[data-app="genesys-cloud"]') !== null;
+}

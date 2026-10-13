@@ -16,7 +16,8 @@ import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { useBrainSpeechRecognition } from './useBrainSpeechRecognition';
 import { cn } from '@/lib/utils';
-import { API_URL } from '@/lib/config';
+import { readStoredContext, saveStoredContext, storageKeyFor } from '@/lib/brain-chat-storage';
+import type { ChatLine } from '@/lib/brain-chat-storage';
 import {
     brainChat,
     getBrands,
@@ -27,37 +28,7 @@ import {
     type Company,
     type Team,
 } from '@/lib/crud-api';
-
-type ChatRole = BrainChatMessage['role'];
-
-interface ChatLine {
-    id: string;
-    role: ChatRole;
-    content: string;
-    timestamp: string;
-}
-
-const STORAGE_KEY = 'keledon-brain-context';
-const AUTOSPEAK_KEY = 'keledon-brain-autospeak';
-
-function storageKeyFor(userId?: string) {
-    return userId ? `${STORAGE_KEY}:${userId}` : STORAGE_KEY;
-}
-
-function readStoredContext(key: string) {
-    if (typeof window === 'undefined') return {};
-    try {
-        const raw = window.localStorage.getItem(key);
-        return raw ? JSON.parse(raw) : {};
-    } catch {
-        return {};
-    }
-}
-
-function saveStoredContext(key: string, data: Record<string, string | undefined>) {
-    if (typeof window === 'undefined') return;
-    window.localStorage.setItem(key, JSON.stringify(data));
-}
+import { useBrainVoiceOutput } from './useBrainVoiceOutput';
 
 export default function BrainPage() {
     const { user } = useAuth();
@@ -82,15 +53,10 @@ export default function BrainPage() {
 
     // Voice state
     const [isListening, setIsListening] = useState(false);
-    const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
-    const [autoSpeak, setAutoSpeak] = useState(() => {
-        try { return localStorage.getItem(AUTOSPEAK_KEY) !== 'false'; } catch { return true; }
-    });
+    const { autoSpeak, speakingMessageId, speakReply, stopSpeaking, toggleAutoSpeak } = useBrainVoiceOutput();
 
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const { recognitionRef, toggleListening } = useBrainSpeechRecognition(isListening, setIsListening, setDraft);
-    const audioRef = useRef<HTMLAudioElement | null>(null);
-    const ttsAbortRef = useRef<AbortController | null>(null);
 
     const selectedCompany = useMemo(
         () => companies.find((c) => c.id === selectedCompanyId),
@@ -194,74 +160,8 @@ export default function BrainPage() {
             // Read the active recognizer at unmount because the hook replaces it during use.
             // eslint-disable-next-line react-hooks/exhaustive-deps
             recognitionRef.current?.abort();
-            ttsAbortRef.current?.abort();
-            if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
-            if (window.speechSynthesis) window.speechSynthesis.cancel();
         };
     }, [recognitionRef]);
-
-    // ── TTS ─────────────────────────────────────────────────────────────
-
-    function stopSpeaking() {
-        ttsAbortRef.current?.abort();
-        ttsAbortRef.current = null;
-        if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
-        if (window.speechSynthesis) window.speechSynthesis.cancel();
-        setSpeakingMessageId(null);
-    }
-
-    function fallbackSpeak(text: string, messageId: string) {
-        if (!window.speechSynthesis) { setSpeakingMessageId(null); return; }
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.onend = () => setSpeakingMessageId(null);
-        utterance.onerror = () => setSpeakingMessageId(null);
-        setSpeakingMessageId(messageId);
-        window.speechSynthesis.speak(utterance);
-    }
-
-    async function speakReply(text: string, messageId: string) {
-        stopSpeaking();
-        const controller = new AbortController();
-        ttsAbortRef.current = controller;
-
-        try {
-            const res = await fetch(`${API_URL}/tts/speak`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text }),
-                signal: controller.signal,
-            });
-
-            if (controller.signal.aborted) return;
-
-            if (res.ok) {
-                const blob = await res.blob();
-                if (!controller.signal.aborted && blob.size > 100) {
-                    const url = URL.createObjectURL(blob);
-                    const audio = new Audio(url);
-                    audioRef.current = audio;
-                    audio.onended = () => { URL.revokeObjectURL(url); setSpeakingMessageId(null); };
-                    audio.onerror = () => { URL.revokeObjectURL(url); fallbackSpeak(text, messageId); };
-                    setSpeakingMessageId(messageId);
-                    await audio.play();
-                    return;
-                }
-            }
-            if (!controller.signal.aborted) fallbackSpeak(text, messageId);
-        } catch (err: unknown) {
-            if (!(err instanceof DOMException && err.name === 'AbortError')) fallbackSpeak(text, messageId);
-        }
-    }
-
-    function toggleAutoSpeak() {
-        const next = !autoSpeak;
-        setAutoSpeak(next);
-        try { localStorage.setItem(AUTOSPEAK_KEY, String(next)); } catch { /* ignore */ }
-        if (!next) stopSpeaking();
-    }
-
-    // ── STT ─────────────────────────────────────────────────────────────
 
     // ── Chat ─────────────────────────────────────────────────────────────
 

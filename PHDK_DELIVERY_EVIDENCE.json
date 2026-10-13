@@ -29,7 +29,7 @@
     },
     "delivery": {
       "status": "BLOCKED",
-      "evidence": "PR #42 is draft/open and includes this candidate update. Physical-line inventory has 38 source files over 600 lines; no merge/main readback. The vendored completion gate throws TypeError when merged_commit_sha is null."
+      "evidence": "PR #42 is draft/open and includes this candidate update. Physical-line inventory has 30 source files at or above 600 lines; no merge/main readback. The vendored completion gate throws TypeError when merged_commit_sha is null."
     }
   }
 }
