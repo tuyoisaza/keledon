@@ -4,6 +4,13 @@
 - Extend local web UAT to assert theme-token propagation, button colors, login text contrast, and 200/400% viewport reflow.
 - Align all five app package and lock roots at 5.1.12.
 
+### Verification
+- Web and Landing builds pass; Web typecheck, 18 diagnostics/version tests, local UAT 1/1 and SEO header test pass.
+- API lint/build and 14/14 regression suites pass; Cloud build/regression 8/8 pass; Browser build and 29/29 CJS regression checks pass; Landing typecheck/lint pass; PHDK coherence 52/52.
+
+### Limitations
+- Persisted CRUD/migration, native Electron/device/audio, broad manual accessibility/localization, and deployed SEO/AEO acceptance remain open.
+
 ## v5.1.11 — 2026-10-13 (PHDK Auto candidate)
 
 - Add protected, process-window metered provider diagnostics for LLM, speech-to-text and text-to-speech calls, with safe provider/failure/correlation summaries, explicit retry counts, request-budget caps and AI/voice kill-switch states.
