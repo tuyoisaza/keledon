@@ -1,31 +1,28 @@
 # Delivery report — PARTIALLY DELIVERED
 
-Goal: PHDK Auto for the four owner-confirmed KELEDON fronts, with maximum applicable code conformity. Product version: 5.1.2. PHDK installed: 2.50.10.
+Goal: PHDK Auto across the four owner-confirmed KELEDON fronts, with maximum applicable code conformity. Product version: 5.1.3. Installed PHDK: 2.50.10.
 
-## Integrated product source
+## Integrated source
 
-KELEDON PR [#42](https://github.com/tuyoisaza/keledon/pull/42) is MERGED at `e305d3d817ff20ed52ed889315e2d618127d7d9f`. Fresh `origin/main` readback confirmed the merge SHA, all five app package/lock roots at 5.1.2, and source commit `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0` as an ancestor. No deployment is claimed.
+KELEDON PR [#45](https://github.com/tuyoisaza/keledon/pull/45) merged at `3de6db7b3ce0b411fe3a2f4f045d246108b2391d`; source commit `a034363430d3eb7bc85029141ab950ddd2318d6a` is an ancestor. All five app package and lock roots are 5.1.3. Previous product PR [#42](https://github.com/tuyoisaza/keledon/pull/42), standards sync [#43](https://github.com/tuyoisaza/keledon/pull/43), and evidence readback [#44](https://github.com/tuyoisaza/keledon/pull/44) are merged. Central PHDK PRs [#48](https://github.com/tuyoisaza/PHDK/pull/48) and [#49](https://github.com/tuyoisaza/PHDK/pull/49) are merged at v2.50.10; all 52 installed mappings match canonical upstream.
 
-## PHDK source and installed standards
+## Code changes
 
-PHDK PRs [#48](https://github.com/tuyoisaza/PHDK/pull/48) and [#49](https://github.com/tuyoisaza/PHDK/pull/49) are merged. Canonical PHDK `main` is v2.50.10 at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`. KELEDON PR [#43](https://github.com/tuyoisaza/keledon/pull/43) merged the byte-verified installation of all 52 standards mappings; PR [#44](https://github.com/tuyoisaza/keledon/pull/44) recorded its post-merge evidence. Latest `origin/main` readback is `81a8e1d667abcca63923cf5666c5c6bcc70b0b6b`; sync commit `b818a2705a82fb62068f37349b26794786467af7` is an ancestor.
+- Customer Browser tabs use a restricted notification-only preload, sandboxing, web security, and navigation/notification validation. The privileged preload remains bound to the local application document. Diagnostics omit vendor URLs and failure details.
+- Voice/decision paths state when Cloud AI is unavailable instead of echoing input or implying completion. Deterministic stop and safety-mode rules remain available.
+- Supported bcrypt and OpenTelemetry security releases are installed and verified. Compatible dependency fixes and a direct Nest `reflect-metadata` dependency are recorded in the lockfiles.
+- All package/lock roots are aligned at 5.1.3.
 
 ## Validation
 
-API and Cloud builds/regression suites pass (10/10 suites each); changed API ESLint is clean. Web build/typecheck pass, diagnostics/debug-mode/version tests 18/18, SEO source test 1/1; full web lint has 0 errors/135 warnings. Landing typecheck/lint/build pass. The synthetic local 5.1.2 production-SPA UAT passes 1/1. Physical-line scan: 1,073 source/test files, none at or above 600 lines.
+API and Cloud production builds pass; API regression is 10/10 suites and AI unavailable-path tests are 3/3. Services web build/typecheck pass; diagnostics/debug-mode/version tests are 18/18 and SEO source test is 1/1. The Electron Windows x64 Squirrel installer packages successfully; Browser security tests are 5/5. PHDK coherence passes v2.50.10 with 52 mappings.
 
-PHDK installation: 52/52 mappings byte-identical; coherence checker PASS. The installed completion gate passes an isolated smoke against actual remote SHA/version using `services/web/package.json.version`. This smoke is not the full Auto evidence gate.
+Prettier passes on the changed API files. The changed-file ESLint invocation stalled locally and produced no result; no hosted PR checks were available.
 
-## Delivery proof
+Production dependency audits show no high or critical advisories. Remaining moderate production advisories: API 4 and compatibility Cloud 2. Browser has 7 moderate advisories in its development/build tree and none in production; services/web and landing production audits are clean. No `npm audit fix --force` changes were applied.
 
-| Field | Status | Evidence |
-|---|---|---|
-| VERSION_BUMP | PASS (scoped rationale) | PHDK standards candidate is v2.50.10 with matching README/changelog; KELEDON app remains 5.1.2 because the follow-up changes only PHDK-owned standards/evidence and no product source. |
-| COMMIT_PREFIX | PASS | Sync commit `b818a2705a82fb62068f37349b26794786467af7` uses the required `v2.50.10:` prefix. |
-| PUSH_AND_PR | PASS | KELEDON PR #43 merged; GitHub reported no hosted checks and no review submissions; `main` is not branch-protected. |
-| REMOTE_MAIN | PASS | Fresh remote readback is merge SHA `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d`; product PR #42 and PHDK sync commit are ancestors; five app package/lock roots remain 5.1.2. |
-| SCOPE_AND_CHECKS | PARTIAL | Installed PHDK coherence passes 52 mappings and JSON version smoke passes, but persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO remain unverified. |
+## Limits
 
-The full completion gate remains BLOCKED because the evidence record correctly marks those acceptance limits as BLOCKED. Its JSON version-source incompatibility and coherence-manifest omissions are repaired in PHDK v2.50.10. No production database/migration, customer/provider data, paid provider call, live application probe or deployment was used.
+The synthetic local production-SPA UAT is 1/1 on version 5.1.2; it is not a claim of 5.1.3 native Browser UAT. Persisted CRUD/migration, live device/audio, broad accessibility/localization, deployed SEO/AEO, and client-specific call/CRM acceptance remain unverified. Client vendors are configured per tenant; no single provider was hard-coded or exercised. PRs #43–45 had no hosted checks or review submissions. No production migration or deployment was performed.
 
-Current state: **PARTIALLY DELIVERED**. The PHDK standards sync is merged. Reconcile the remaining acceptance evidence and legacy PR disposition; do not report full completion from the isolated tool smoke.
+The stale legacy PRs #38–40 were closed after review because they target the superseded monolithic Cloud/Browser architecture. Their current equivalents were reviewed in `services/api` and split Browser IPC. Overall status remains **PARTIALLY DELIVERED** until remaining acceptance gaps and moderate advisories are resolved or explicitly dispositioned.
