@@ -125,7 +125,7 @@ export default function LaunchKeledonPage() {
     const fetchPairingCode = async (keledonId: string) => {
         setLoadingPairingCodes(prev => ({ ...prev, [keledonId]: true }));
         try {
-            const data = await apiJson(`/api/crud/keledons/${keledonId}/pairing-code`);
+            const data = await apiJson<{ pairing_code: string; expires_at: string }>(`/api/crud/keledons/${keledonId}/pairing-code`);
             setPairingCodes(prev => ({
                 ...prev,
                 [keledonId]: { code: data.pairing_code, expiresAt: data.expires_at }
@@ -141,7 +141,7 @@ export default function LaunchKeledonPage() {
     const resetPairingCode = async (keledonId: string) => {
         setResettingCode(keledonId);
         try {
-            const data = await apiJson(`/api/crud/keledons/${keledonId}/pairing-code`, { method: 'POST' });
+            const data = await apiJson<{ pairing_code: string; expires_at: string }>(`/api/crud/keledons/${keledonId}/pairing-code`, { method: 'POST' });
             setPairingCodes(prev => ({
                 ...prev,
                 [keledonId]: { code: data.pairing_code, expiresAt: data.expires_at }

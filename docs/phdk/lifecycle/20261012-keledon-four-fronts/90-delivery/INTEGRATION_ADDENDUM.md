@@ -13,4 +13,10 @@ Verification after these changes:
 - Browser renderer scripts: `node --check` passed; Browser TypeScript project compilation passed.
 - PHDK coherence checker: v2.50.8, all 50 manifest mappings passed.
 
-The full repository inventory still has 32 source files above the PHDK 600-line limit. BrainPage.tsx is 3,726 lines and remains changed by this PR, so the strict file-size gate is not complete. PR #42 remains draft and unmerged pending that remediation. No production release is claimed.
+At the initial integration checkpoint, the inventory had 32 files over 600 lines and the active BrainPage was 3,726 lines. That snapshot is historical and is superseded by the following remediation follow-up; the current inventory is recorded there.
+
+## BrainPage modularization follow-up — 2026-10-13
+
+The web BrainPage source was split into speech capture/flow, voice socket/output/audio, chat actions, provider tests, cloud status and focused context/provider/audio hooks and UI panels. The remaining page is 565 lines. The callback refs are wired after render and invoked by deferred actions; browser speech recognition remains typed at the browser boundary because the configured DOM library lacks its API types. services/web typecheck, lint, and build pass; browser regressions pass 19/19 and web synthetic UAT passes 10/10. The legacy landing Vite build also passes using the installed workspace Rollup native package through NODE_PATH; its full-project TypeScript check still reports unrelated baseline errors, with no diagnostics in the changed BrainPage, speech hook, or API fetch module.
+
+The current whole-repository source scan is 29 files above 600 lines. This refactor is local and not yet pushed. PR #42 is still draft/open and unmerged. Owner migration approval is recorded; this workspace did not connect to a database or execute the migration.

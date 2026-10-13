@@ -14,7 +14,7 @@ export default function DevicesPage() {
 
   const loadDevices = async () => {
     try {
-      const response = await apiJson('/api/devices', {
+      const response = await apiJson<unknown>('/api/devices', {
         headers: user?.id ? { 'x-user-id': user.id } : {}
       });
       setDevices(Array.isArray(response) ? response : []);
@@ -27,7 +27,7 @@ export default function DevicesPage() {
 
   const generatePairingCode = async () => {
     try {
-      const response = await apiJson('/api/devices/pairing-code', {
+      const response = await apiJson<{ pairing_code: string }>('/api/devices/pairing-code', {
         method: 'POST',
         body: JSON.stringify({ userId: user?.id }),
         headers: { 'Content-Type': 'application/json' }

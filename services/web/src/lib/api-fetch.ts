@@ -31,7 +31,7 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}): Pro
 /**
  * Like apiFetch but throws on non-OK responses and returns parsed JSON.
  */
-export async function apiJson<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
+export async function apiJson<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const res = await apiFetch(endpoint, options);
   if (!res.ok) {
     const text = await res.text();

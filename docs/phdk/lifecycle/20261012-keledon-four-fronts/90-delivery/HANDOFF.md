@@ -2,37 +2,26 @@
 
 Run ID: 20261012-keledon-four-fronts
 Stage: 90-delivery
-Status: BLOCKED
-Started from revision: 52537140e67d0d6c05486fa13837df3eb5316fb3
-Completed at revision/worktree: commit 3af566a on branch chore/phdk-install-v2.50.8; draft PR42 open
-Date/time: 2026-10-12 America/Mexico_City
+Status: PARTIALLY DELIVERED
+Candidate: 5.0.54
+Branch: chore/phdk-install-v2.50.8
+PR: https://github.com/tuyoisaza/keledon/pull/42 (draft/open; not merged)
+Date/time: 2026-10-13 America/Mexico_City
 
 ## Goal / scope
-Execute owner-confirmed PHDK Auto code review and ordered four fronts; call/CRM integrations are selected per tenant.
+Execute PHDK Auto across the owner-confirmed four workstreams. Telephony and CRM integrations are tenant-selected and code is checked vendor-independently.
 
-## Inputs verified
-- DELIVERY_REPORT.md
+## Owner decisions
+The owner approved including and merging the additive managed-AI storage migration using the normal DB procedure. No DB was accessed and no migration was run.
 
-## Work performed
-- PHDK_COMPLETION_AUDIT.md
-
-## Deliverables
-- DELIVERY_REPORT.md
-- PHDK_COMPLETION_AUDIT.md
-- PHDK_DELIVERY_EVIDENCE.json
-- 90-delivery/HANDOFF.md
+## Current evidence
+- BrainPage modularization reduced `services/web/src/pages/BrainPage.tsx` from 3,726 to 565 lines.
+- Web typecheck, lint and production build pass; Browser tests 19/19; web synthetic tests 10/10; PHDK coherence check 50/50 mappings.
+- The repository-wide inventory still finds 29 files over 600 lines. Other PHDK findings include locale parity, private-route indexability and full rendered accessibility coverage.
+- `landing/src/pages/BrainPage.tsx` is also 594 lines; its speech-recognition action was moved to a typed focused hook. The unused `landing/src/components/superadmin/SettingsTab-ORIG.tsx` duplicate was removed after confirming no imports. The legacy landing build passes using the workspace-installed Rollup native package through NODE_PATH; the full legacy TypeScript project still has unrelated baseline diagnostics. Current local changes are not yet committed or pushed.
 
 ## Exit gate
-- [ ] Pushed scoped candidate and opened draft PR42; no merge or main readback.
-
-## Decisions / assumptions
-- Client-specific live provider acceptance was not silently invented; local contracts use synthetic fixture.
-
-## Risks / blockers
-- Prepared local result and evidence record; draft PR42 open; no merge/main readback.
-
-## Evidence
-- Local worktree, commands, source review and synthetic records named in reports. No remote delivery evidence.
-
-## Next stage
-- Owner decides whether managed AI tables/migration ship; after that close any remaining applicable Check findings then main delivery.
+- [ ] Reduce all applicable files to at most 600 lines and resolve or evidence all PHDK findings.
+- [ ] Run final integrated checks and update machine-readable completion evidence.
+- [ ] Push the scoped candidate, satisfy existing review controls, merge PR #42, and verify main content/version remotely.
+- [ ] Record deployment observation separately; no production health claim.

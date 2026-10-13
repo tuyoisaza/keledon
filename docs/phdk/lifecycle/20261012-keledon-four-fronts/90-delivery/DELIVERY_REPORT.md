@@ -1,9 +1,9 @@
 # Delivery report — draft PR, not merged
 
-Candidate 5.0.54; branch chore/phdk-install-v2.50.8; PR [#42](https://github.com/tuyoisaza/keledon/pull/42), base main. The PR remains draft pending the PHDK hard file-size requirement and final integration review. Local changes are prepared for the next versioned commit; no merge or production deployment is claimed.
+Candidate 5.0.54; branch `chore/phdk-install-v2.50.8`; PR [#42](https://github.com/tuyoisaza/keledon/pull/42), base `main`, currently draft/open. The current BrainPage modularization is local and not yet committed or pushed. No merge or production deployment is claimed.
 
-Owner decision: additive managed-AI storage migration approved for inclusion and merge via the normal database migration procedure. No database migration was run in this workspace.
+Owner decision: additive managed-AI storage migration approved for inclusion and merge through the normal database migration procedure on 2026-10-13. No database was connected to and no migration was run.
 
-Checks after the current module extraction: API production build and C13 sentinel pass; API regression 8/8 suites pass; browser regression 19/19 pass; web typecheck, lint, and production build pass; Browser renderer JavaScript syntax and TypeScript checks pass; PHDK 2.50.8 coherence checker passes its 50 manifest mappings. Local SPA and managed-AI UI UAT are recorded in the preceding check report.
+Latest validation: services/web `npm run typecheck`, `npm run lint -- --quiet`, and `npm run build` pass; browser tests 19/19 pass; services/web synthetic tests 10/10 pass; PHDK 2.50.8 coherence check passes all 50 manifest mappings. Build reports the existing outdated Browserslist data, empty Supabase chunk, and 664.05 kB main bundle warnings. API build/regression and renderer syntax/type checks passed after the preceding pushed commit; rerun final integrated checks before delivery.
 
-PHDK hard-limit audit: 32 repository code files exceed 600 lines; one oversized file remains modified in this PR (services/web/src/pages/BrainPage.tsx, 3,726 lines). The browser renderer, Flows modules, voice gateway, and agent gateway were split and are now within the limit. Full conformance and merge are therefore still pending.
+The repository-wide source scan finds 29 files over the PHDK 600-line hard limit. `services/web/src/pages/BrainPage.tsx` is 565 lines after this local split. The strict file-size gate remains open, so PR #42 remains draft and unmerged. See `PHDK_COMPLETION_AUDIT.md` and the lifecycle evidence for remaining obligations.

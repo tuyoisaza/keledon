@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
+import { useBrainSpeechRecognition } from './useBrainSpeechRecognition';
 import { cn } from '@/lib/utils';
 import { API_URL } from '@/lib/config';
 import {
@@ -87,7 +88,7 @@ export default function BrainPage() {
     });
 
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
-    const recognitionRef = useRef<any>(null);
+    const { recognitionRef, toggleListening } = useBrainSpeechRecognition(isListening, setIsListening, setDraft);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const ttsAbortRef = useRef<AbortController | null>(null);
 
@@ -190,12 +191,14 @@ export default function BrainPage() {
     // Stop everything on unmount
     useEffect(() => {
         return () => {
+            // Read the active recognizer at unmount because the hook replaces it during use.
+            // eslint-disable-next-line react-hooks/exhaustive-deps
             recognitionRef.current?.abort();
             ttsAbortRef.current?.abort();
             if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
             if (window.speechSynthesis) window.speechSynthesis.cancel();
         };
-    }, []);
+    }, [recognitionRef]);
 
     // ── TTS ─────────────────────────────────────────────────────────────
 
@@ -246,8 +249,8 @@ export default function BrainPage() {
                 }
             }
             if (!controller.signal.aborted) fallbackSpeak(text, messageId);
-        } catch (err: any) {
-            if (err?.name !== 'AbortError') fallbackSpeak(text, messageId);
+        } catch (err: unknown) {
+            if (!(err instanceof DOMException && err.name === 'AbortError')) fallbackSpeak(text, messageId);
         }
     }
 
@@ -259,53 +262,6 @@ export default function BrainPage() {
     }
 
     // ── STT ─────────────────────────────────────────────────────────────
-
-    function toggleListening() {
-        if (isListening) {
-            recognitionRef.current?.stop();
-            setIsListening(false);
-            return;
-        }
-
-        const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-        if (!SR) {
-            toast.error('Speech recognition not supported in this browser (try Chrome or Edge)');
-            return;
-        }
-
-        const recognition = new SR();
-        recognition.continuous = false;
-        recognition.interimResults = true;
-        recognition.lang = 'en-US';
-
-        recognition.onstart = () => setIsListening(true);
-
-        recognition.onresult = (event: any) => {
-            let interim = '';
-            let final = '';
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                if (event.results[i].isFinal) {
-                    final += event.results[i][0].transcript;
-                } else {
-                    interim += event.results[i][0].transcript;
-                }
-            }
-            if (final) setDraft(final);
-            else if (interim) setDraft(interim);
-        };
-
-        recognition.onend = () => setIsListening(false);
-
-        recognition.onerror = (event: any) => {
-            setIsListening(false);
-            if (event.error !== 'no-speech' && event.error !== 'aborted') {
-                toast.error(`Microphone error: ${event.error}`);
-            }
-        };
-
-        recognitionRef.current = recognition;
-        recognition.start();
-    }
 
     // ── Chat ─────────────────────────────────────────────────────────────
 

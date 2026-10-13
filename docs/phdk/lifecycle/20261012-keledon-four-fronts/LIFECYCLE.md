@@ -1,16 +1,7 @@
-# Lifecycle status — 20261012-keledon-four-fronts
-Project: C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON
-PHDK:2.50.8 verified; candidate5.0.54. Base 52537140e67d0d6c05486fa13837df3eb5316fb3. Branch chore/phdk-install-v2.50.8; commit pushed; draft PR #42 OPEN.
-Goal: four owner-confirmed workstreams; client-selected call/CRM varies, in-scope vendor-independent review as clarified 2026-10-12.
-| Stage | Status | Evidence |
-|---|---|---|
-| Preflight/Capture/Plan | COMPLETED | immutable initial stage folders |
-| PMO/Integration | COMPLETED WITH OPEN RELEASE FINDINGS | INTEGRATION_REPORT.md, PMO_STATUS.md |
-| UAT | SCOPED PASS | UAT_REPORT.md, local + AI synthetic evidence |
-| UAT Fix | COMPLETED WITH OPEN DESIGN DEBT | UAT_REMEDIATION.md, UX_UI_REMEDIATION_REPORT.md |
-| SEO/AEO-GEO | COMPLETED AS CODE AUDITS | reports + separate stage snapshots; no field metrics |
-| Check | PARTIAL | PHDK_CHECK_REPORT.md |
-| Remediation | PARTIAL | PHDK_REMEDIATION_REPORT.md |
-| Delivery | BLOCKED PENDING SENSITIVE OWNER REVIEW | DELIVERY_REPORT.md; PR #42 open; no merge/main readback |
-Confirmed fronts: all 4 implemented/reviewed locally; remote delivered0/4.
-SIGUIENTE PASO: owner reviews the explicit AI schema/migration decision on this candidate; then resolve residual conformity findings and return to delivery checks.
+# PHDK Auto lifecycle — 20261012-keledon-four-fronts
+
+Status: PARTIALLY DELIVERED. Candidate 5.0.54, PHDK 2.50.8. Four workstreams confirmed and implemented/reviewed locally; call and CRM vendors are selected by each customer.
+
+PR #42 is OPEN/DRAFT and unmerged on `chore/phdk-install-v2.50.8`. The current BrainPage modularization is local. Owner approval for including/merging the additive managed-AI migration through the normal database procedure was given 2026-10-13; no database connection or migration execution occurred.
+
+Current gate evidence and next actions are in `90-delivery/PHDK_COMPLETION_AUDIT.md`, `90-delivery/DELIVERY_REPORT.md`, and `90-delivery/PHDK_DELIVERY_EVIDENCE.json`. The repository still has 29 source files above the 600-line maximum, with locale, indexability, and broad accessibility findings open. Continue remediation and final verification before merge; no main readback or production deployment is claimed.

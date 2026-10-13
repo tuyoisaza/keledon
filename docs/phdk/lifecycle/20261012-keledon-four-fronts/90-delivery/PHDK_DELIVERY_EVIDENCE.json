@@ -5,31 +5,31 @@
   "expected_version": "5.0.54",
   "version_file": "services/web/package.json",
   "merged_commit_sha": null,
-  "pr_url": null,
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/42",
   "checks": {
     "lint": {
       "status": "PASS",
-      "evidence": "services/web npm run lint -- --quiet"
+      "evidence": "services/web npm run lint -- --quiet, latest BrainPage modularization"
     },
     "typecheck": {
-      "status": "PASS",
-      "evidence": "services/web npm run typecheck; browser TypeScript compiler from services/api node_modules"
+      "status": "BLOCKED",
+      "evidence": "services/web typecheck passes. Legacy landing full-project typecheck reports existing unrelated diagnostics; the modified BrainPage, speech hook and api-fetch have no diagnostics."
     },
     "build": {
       "status": "PASS",
-      "evidence": "services/web npm run build; services/api npm run build"
+      "evidence": "services/web Vite production build passes; landing Vite production build passes with existing platform optional Rollup binary resolved via NODE_PATH to installed services/web dependency."
     },
     "focused_tests": {
       "status": "PASS",
-      "evidence": "Browser15/15; API regression8/8 plus focused10/10; web20/20; AI UI fixture12 cases"
+      "evidence": "Browser 19/19; web synthetic suite 10/10; API regression 8/8 and focused 10/10 on preceding pushed candidate"
     },
     "uat": {
       "status": "PASS",
-      "evidence": "Synthetic local built-SPA role/diagnostic/theme UAT; no client live CRM/voice claim"
+      "evidence": "Synthetic local built-SPA role/diagnostic/theme UAT; client-specific live CRM/voice acceptance excluded by owner clarification"
     },
     "delivery": {
       "status": "BLOCKED",
-      "evidence": "No PR/merge/readback; sensitive additive AI schema owner review pending; PHDK_CONFORMITY_REVIEW.md contains unresolved obligations"
+      "evidence": "PR #42 draft/open and unmerged; current refactor local; repository inventory has 29 source files over 600 lines; final main readback not available."
     }
   }
 }
