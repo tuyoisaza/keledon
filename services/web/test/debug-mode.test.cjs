@@ -50,7 +50,7 @@ test('the floating diagnostics panel is mounted across public, login, shell and 
   }
   const overlayPath = path.join(root, 'services/web/src/components/common/DebugOverlay.tsx');
   const overlay = require('node:fs').readFileSync(overlayPath, 'utf8');
-  assert.match(overlay, /if \(!enabled\) return null/);
+  assert.match(overlay, /if \(!enabled \|\| location\.pathname === '\/management\/debug'\) return null/);
   assert.match(overlay, /debugCapture\.getLogs\(\)/);
   assert.match(overlay, /event\.correlationId/);
 });

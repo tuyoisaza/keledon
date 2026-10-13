@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Bug, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from '@/context/I18nContext';
 import { debugLogger } from '@/lib/debug-logger';
@@ -6,6 +7,7 @@ import { debugCapture } from '@/lib/debug-report';
 
 export function DebugOverlay() {
   const { t } = useTranslation();
+  const location = useLocation();
   const [enabled, setEnabled] = useState(() => debugLogger.isEnabled());
   const [expanded, setExpanded] = useState(false);
   const [events, setEvents] = useState(() => debugCapture.getLogs());
@@ -16,7 +18,10 @@ export function DebugOverlay() {
     return () => { unsubscribeLogger(); unsubscribeCapture(); };
   }, []);
 
-  if (!enabled) return null;
+  // The management diagnostics page already renders the same event stream and
+  // endpoint results. Avoid covering its navigation and controls with the
+  // floating duplicate panel.
+  if (!enabled || location.pathname === '/management/debug') return null;
 
   const visibleEvents = events.slice(-20).reverse();
   return (

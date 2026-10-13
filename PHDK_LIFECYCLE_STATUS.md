@@ -1,23 +1,23 @@
 # Lifecycle status — 20261012-keledon-four-fronts
-Project: C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON
-PHDK: 2.50.8 verified; candidate 5.1.0. Branch `chore/phdk-install-v2.50.8`; PR #42 OPEN/DRAFT; commit `6b43c07` and current description are pushed; no main merge/readback.
-Goal: complete PHDK Auto for all four owner-confirmed fronts; each tenant selects telephony/CRM vendors.
-Current stage: Check — PARTIAL; Remediation — PASS; Delivery — IN PROGRESS.
-Historical folder: `docs/phdk/lifecycle/20261012-keledon-four-fronts/`.
-| Stage | Status | Current evidence / next condition |
+
+Project: `C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON`
+PHDK: 2.50.8 verified; candidate 5.1.0. Branch `chore/phdk-install-v2.50.8`; PR #42 OPEN/DRAFT. Current committed PR head before this UAT fix: `4d07ae1578e5f9c15c47e747f3c4fb6e24acc41d`; latest UI/UAT remediation is in the worktree and will be committed after final verification. No target-main merge/readback.
+
+Goal: complete PHDK Auto for the four owner-confirmed fronts. Telephony/CRM vendors are tenant-selected; owner requested maximum applicable code conformity.
+
+| Stage | Status | Evidence / next condition |
 |---|---|---|
-| Preflight | REUSED | `00-preflight/HANDOFF.md`; installed PHDK 2.50.8 integrity verified |
-| Capture | REUSED | `10-capture/`; four fronts and vendor independence confirmed |
-| Plan | REUSED | `20-plan/`; all four commitments mapped |
-| PMO / Workstreams | REUSED | `30-pmo/`; all four workstreams locally tracked |
-| Integration Review | PARTIAL | API build and focused diagnostics tests 12/12; web typecheck/build and diagnostics tests 18/18; landing build; legacy landing typecheck and broad visual checks remain open |
-| UAT | PASS (SCOPED) | Historical local production-SPA synthetic UAT 10/10; client vendor live journey excluded by owner clarification |
-| UAT Fix | PASS (SCOPED) | Current API/web focused regression suites and builds pass |
-| SEO | PASS (SOURCE) | Nginx source marks only `/` indexable; deployed headers unverified |
-| AEO/GEO | PARTIAL | Product answers/navigation revalidated; public locale/crawler/engine citation data unmeasured |
-| Check | PARTIAL | API/web focused tests and builds pass; broader translation/accessibility and platform/environment limits remain open |
-| Remediation | PASS | Repository-wide line inventory has 0 files at/above 600 lines |
-| Delivery | IN PROGRESS | Candidate 5.1.0 commit and PR update are remote; review/merge controls and remote `main` SHA/version readback remain |
-Confirmed commitments: 4; locally implemented/reviewed: 4; verified delivered to remote target: 0/4. PR #42 remains OPEN/DRAFT. Owner approved managed-AI migration inclusion/merge through normal DB procedure; no database connection or migration execution occurred.
-Open: full translation/content review; deployed private-route header verification; rendered accessibility/contrast and Electron widget acceptance; legacy landing diagnostics; normal PR delivery and remote verification.
-SIGUIENTE PASO: finish remaining Check findings and normal review/merge/readback for PR #42.
+| Preflight | REUSED | Correct checkout, pull, PHDK 2.50.8 install/integrity verified. |
+| Capture | REUSED | Four fronts, ordered priorities, restrictive policy, tenant vendor scope recorded. |
+| Plan | REUSED | Commitments and task map exist; ledger needs current branch delivery values. |
+| PMO / Workstreams | REUSED | Four workstreams tracked; update remote delivery from old 0/4 snapshot. |
+| Integration Review | PARTIAL | Shared contracts and 5.1.0 package versions reconciled; API/Cloud/web focused builds/tests pass. See current 40-integration report. |
+| UAT | PARTIAL | Production SPA Edge UAT passes on fully mocked local API; backend CRUD/roles, Electron, full a11y/localization remain incomplete. |
+| UAT Fix | SCOPED PASS | Two harness defects fixed; screenshot review found and fixed diagnostics overlay occlusion; final rebuild/UAT pending. |
+| SEO | PASS (SOURCE) | Nginx source directives only; deployed headers unverified. |
+| AEO/GEO | PARTIAL | Source/content inventory only; external citation/rank not measured. |
+| Check | PARTIAL | Reconcile full conformance/legacy landing typecheck, role/CRUD evidence, accessibility, deployed metadata, tool limitations. |
+| Remediation | PARTIAL | New UAT visual remediation underway; line inventory previously passed at 0 files >=600 lines. Recheck final tree. |
+| Delivery | IN PROGRESS | Draft PR #42; must update docs/body, push, perform normal review/merge and read back remote main SHA/version. |
+
+Owner-approved managed-AI migration inclusion is in the reviewed code path; no database was connected and no migration was run. Do not describe an open PR as delivered. See `docs/phdk/lifecycle/20261012-keledon-four-fronts/` for stage handoffs and `PHDK_CHECK_REPORT.md` for full open items.

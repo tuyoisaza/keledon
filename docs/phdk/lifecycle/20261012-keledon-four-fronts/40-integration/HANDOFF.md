@@ -1,42 +1,40 @@
-# PHDK Lifecycle Handoff — integration
+# PHDK Lifecycle Handoff — integration review
 
-Run ID: 20261012-keledon-four-fronts
-Stage: 40-integration
-Status: PARTIAL
-Started from revision: 52537140e67d0d6c05486fa13837df3eb5316fb3
-Completed at revision/worktree: chore/phdk-install-v2.50.8 uncommitted candidate 5.0.54
-Date/time: 2026-10-12 America/Mexico_City
+Run ID: `20261012-keledon-four-fronts`
+Stage: `40-integration`
+Status: `PARTIAL — integration evidence current; Check remains`
+Base revision: `52537140e67d0d6c05486fa13837df3eb5316fb3`
+Integrated candidate: `4d07ae1578e5f9c15c47e747f3c4fb6e24acc41d`
+Branch: `chore/phdk-install-v2.50.8`
+PR: `https://github.com/tuyoisaza/keledon/pull/42` (draft/open)
+Date: `2026-10-13 America/Mexico_City`
 
-## Goal / scope
-Execute owner-confirmed PHDK Auto code review and ordered four fronts; call/CRM integrations are selected per tenant.
+## Inputs reconciled
 
-## Inputs verified
-- INTEGRATION_REPORT.md
-- PMO_WORKSTREAMS.md
-- PMO_STATUS.md
-- WS-001 source baseline + PR audit
-- WS-002 diagnostics + QA
+- Owner-confirmed ordered workstreams, restrictive role/tenant policy, managed-AI migration inclusion, and tenant-selected call/CRM providers.
+- Five package versions and locks at 5.1.0; shared API/web/browser/Cloud contracts.
+- API and Cloud builds/C13 plus focused regression suites; web typecheck/build and 18 diagnostics tests; landing production build.
+- Local production SPA Edge UAT with isolated Company Co fixtures, mocked API, and blocked external HTTP/WebSocket calls.
 
-## Work performed
-- WS-003 provider-independent runtime repairs and tests
+## Integration evidence
 
-## Deliverables
-- INTEGRATION_REPORT.md
-- PMO_WORKSTREAMS.md
-- PMO_STATUS.md
-- 40-integration/HANDOFF.md
+- API focused tests: 12/12 pass; Cloud focused regression tests: 8/8 pass.
+- Web diagnostics tests: 18/18 pass; local Edge UAT: pass, including debug-off/no-read, explicit one-time deep-health read, explicitly clicked safe probe, no manual-only CRM probe, and toggle-off clearing.
+- Web lint has zero errors with 135 warnings. Landing build passes; legacy full typecheck still has errors in untouched source.
+- Detailed risks and boundaries: `INTEGRATION_REPORT.md`, `../50-uat/UAT_REPORT.md`, and `docs/phdk/evidence/uat-local-web.json`.
 
 ## Exit gate
-- [ ] Central review reconciled shared API/web/browser/schema and one version; additive schema reviewed but not applied.
 
-## Decisions / assumptions
-- Client-specific live provider acceptance was not silently invented; local contracts use synthetic fixture.
+- [x] Shared package version and source contracts reconciled.
+- [x] Current code builds and focused API/Cloud/web regressions pass.
+- [x] Scoped browser UAT run with all application API and WebSocket calls isolated.
+- [ ] Check closes the remaining source-conformance and acceptance gaps or records bounded, independently actionable blockers.
+- [ ] Reviewed candidate reaches `main`; remote commit and PR state are read back.
 
-## Risks / blockers
-- Central review reconciled shared API/web/browser/schema and one version; additive schema reviewed but not applied.
+## Constraints and unresolved acceptance
 
-## Evidence
-- Local worktree, commands, source review and synthetic records named in reports. No remote delivery evidence.
+No customer database, provider, real account, or production deployment was accessed. The approved additive migration is source-reviewed but unapplied. Real backend role sessions, comprehensive CRUD mutation/access paths, installed Electron/audio, deployment headers, and full-app accessibility/localization certification remain unproven. Client-specific live telephony/CRM was expressly excluded from this provider-independent code review.
 
 ## Next stage
-- Resolve sensitive AI migration owner decision and remaining conformance before publish.
+
+Proceed to `50-uat` using the generated local synthetic evidence, then `60-uat-fix` only for reproduced defects. Keep lifecycle acceptance partial until remaining Check items are dispositioned and target-main delivery is verified.

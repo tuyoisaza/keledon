@@ -1,42 +1,28 @@
 # PHDK Lifecycle Handoff — UAT Fix
 
-Run ID: 20261012-keledon-four-fronts
-Stage: 60-uat-fix
-Status: PARTIAL
-Started from revision: 52537140e67d0d6c05486fa13837df3eb5316fb3
-Completed at revision/worktree: chore/phdk-install-v2.50.8 uncommitted candidate 5.0.54
-Date/time: 2026-10-12 America/Mexico_City
+Run ID: `20261012-keledon-four-fronts`
+Stage: `60-uat-fix`
+Status: `SCOPED PASS — harness defects fixed; product acceptance remains partial`
+Candidate base: `4d07ae1578e5f9c15c47e747f3c4fb6e24acc41d` plus test changes
+Date: `2026-10-13 America/Mexico_City`
 
-## Goal / scope
-Execute owner-confirmed PHDK Auto code review and ordered four fronts; call/CRM integrations are selected per tenant.
+## Reproduced failures and disposition
 
-## Inputs verified
-- UAT_REMEDIATION.md
-- UAT_RETEST_REPORT.md
-- UAT_CASES.md
-
-## Work performed
-- UAT_REPORT.md
-
-## Deliverables
-- UAT_REMEDIATION.md
-- UAT_RETEST_REPORT.md
-- UAT_CASES.md
-- UAT_REPORT.md
-- UX_UI_REMEDIATION_REPORT.md
-- 60-uat-fix/HANDOFF.md
+- Stale local test expected diagnostics clipboard output to be JSON. Product correctly emits a formatted, redacted report; corrected the test to assert its displayed version.
+- Playwright attempted to click a screen-reader-only checkbox whose visible switch thumb receives pointer events. Changed UAT interaction to click the visible label/control and assert the checkbox state.
+- Rebuilt production SPA and reran `npm run test:uat`; Edge UAT passes 1/1 with no failures, including the newly covered diagnostics flow.
+- No new product defect reproduced in this UAT-Fix pass. Earlier product remediations remain in `UAT_REMEDIATION.md` and `UAT_RETEST_REPORT.md`.
 
 ## Exit gate
-- [ ] Applied fixes for observed focus, secret replacement, CTA and fact-boundary defects; reran local browser.
 
-## Decisions / assumptions
-- Client-specific live provider acceptance was not silently invented; local contracts use synthetic fixture.
-
-## Risks / blockers
-- Applied fixes for observed focus, secret replacement, CTA and fact-boundary defects; reran local browser.
+- [x] Fix each currently reproduced harness failure and rerun the complete scoped browser suite.
+- [x] Record generated evidence and preserve synthetic-only boundaries.
+- [ ] Broader backend role/resource CRUD, Electron, full accessibility, deployment header and complete localization gaps move to Check; they are not UAT-Fix product defects because this run did not reproduce them.
 
 ## Evidence
-- Local worktree, commands, source review and synthetic records named in reports. No remote delivery evidence.
+
+`services/web/test/local-uat.test.cjs`, `services/web/package.json`, `services/web/dist` build output, `docs/phdk/evidence/uat-local-web.json`, and `docs/phdk/evidence/uat-admin-endpoint-diagnostics.png`.
 
 ## Next stage
-- 65-seo
+
+Proceed to `65-seo`, then `67-aeo-geo`, preserving the scoped acceptance limits in `70-check`.
