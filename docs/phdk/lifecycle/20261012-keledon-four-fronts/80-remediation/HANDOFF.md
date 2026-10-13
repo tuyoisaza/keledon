@@ -2,7 +2,7 @@
 
 Run ID: 20261012-keledon-four-fronts
 Stage: 80-remediation
-Status: PARTIAL / IN PROGRESS (Check-remediation tranche completed; current-candidate UAT retest pending)
+Status: SCOPED PASS (Check-remediation tranche and current-candidate UI retest completed; broader UAT and Check findings remain)
 Started from revision: `eacf6dab304971d35f9d386c786aac2b3cf16d07`
 Completed at revision/worktree: working tree candidate on `chore/phdk-install-v2.50.8`
 Date/time: 2026-10-13 America/Mexico_City
@@ -63,9 +63,9 @@ SIGUIENTE PASO: cerrar los hallazgos restantes de Check, actualizar el PR con co
 
 On pushed baseline `77bf2700266d187f0768974f8b34c7e869e32238`, full landing ESLint initially reported 99 errors and 8 warnings. The current working-tree remediation removes the errors through typed API/UI contracts, isolated provider hooks, safe unknown-error handling, and removal of three unreferenced legacy superadmin components. The users page now withholds role/company writes from non-superadmins and scopes manager brand/team choices to the actor's company. `landing` typecheck and production build pass; Cloud regression is 8/8. Final full lint reports zero errors and remaining effect-dependency warnings; exact count is in root `PHDK_CHECK_REPORT.md` after the latest edit. `git diff --check` passes.
 
-The user-management UI restriction has not yet been exercised in the authorized browser on this candidate. This tranche therefore closes source-checkable Check findings but does not claim UAT acceptance. No live DB, customer/provider interaction, migration execution, or deployment occurred.
+The user-management UI restriction passed a synthetic local browser retest. The manager form exposed no role or company assignment controls; brand/team choices were tenant-scoped; the captured request omitted `role`, `companyId` and `brandId`. A superadmin positive control retained the elevated controls. Exact evidence is `../60-uat-fix/MANAGEMENT_USERS_RETEST.md`. This closes the scoped UI retest but does not claim backend persistence or full UAT acceptance. No live DB, customer/provider interaction, migration execution, or deployment occurred.
 
-Next stage: UAT Fix retest using synthetic Company Co identities and local/staging fixture only; then return to Check and reconcile the exact retest evidence. `SIGUIENTE PASO`: ejecutar el retest local de administración de usuarios con identidad sintética y confirmar que los roles elevados y la empresa no se puedan modificar desde perfiles no superadmin.
+Next stage: return to Check, reconcile all outstanding PHDK findings, and prepare normal PR delivery. `SIGUIENTE PASO`: consolidar el resultado del retest en Check, resolver los hallazgos de lint restantes si están dentro de alcance, y preparar revisión independiente del PR.
 
 
 ## 2026-10-13 integrated candidate revalidation

@@ -13,11 +13,11 @@ Goal: complete PHDK Auto for the four owner-confirmed fronts. Telephony/CRM vend
 | PMO / Workstreams | REUSED | Four workstreams tracked; remote delivery remains 0/4 until merge and `main` verification. |
 | Integration Review | PARTIAL | Cross-package contracts and version 5.1.0 reconciled; focused API/Cloud/web builds and tests pass. See `40-integration/INTEGRATION_REPORT.md`. |
 | UAT | PARTIAL | Synthetic local production-SPA diagnostics journey passes on a prior candidate. CRUD, full roles and current management UI journey are not accepted. |
-| UAT Fix | SCOPED PASS; RETEST REQUIRED | Prior diagnostics overlay/harness fixes passed their retest. Latest user-management restrictions still need a safe browser journey on the current candidate. |
+| UAT Fix | SCOPED PASS | Prior diagnostics fixes passed; current-candidate user-management retest passed with synthetic identities and mocked CRUD. Real backend/persistence remains outside this evidence. See `60-uat-fix/MANAGEMENT_USERS_RETEST.md`. |
 | SEO | PASS (SOURCE) | NGINX source assertions pass; deployed response headers remain unverified. |
 | AEO/GEO | PARTIAL | Source/content inventory only; no external citation/rank measurements. |
 | Check | PARTIAL | Current landing typecheck/build pass; lint has zero errors with remaining effect-dependency warnings; Cloud regression passes 8/8. CRUD persistence, accessibility/localization/Electron and deployed metadata gaps remain. See root `PHDK_CHECK_REPORT.md`. |
-| Remediation | IN PROGRESS | Landing typing, provider/hook boundaries and manager tenant-scoped inputs remediated in the uncommitted candidate; final lint/build/diff check and safe UAT retest remain. |
-| Delivery | IN PROGRESS | PR #42 is open/draft. Candidate must be committed/pushed, PR refreshed, reviewed/merged through normal controls, then target `main` SHA/version verified. |
+| Remediation | SCOPED PASS | Landing typing, provider/hook boundaries and manager tenant-scoped inputs remediated in pushed commit `74c849e`; typecheck/build pass; lint has zero errors and 7 warnings. |
+| Delivery | IN PROGRESS | PR #42 is open/draft at pushed head `74c849e`. Normal independent review/merge and target `main` SHA/version verification remain. |
 
 Owner-approved managed-AI migration inclusion remains source-only; no DB was connected and no migration was executed. See `docs/phdk/lifecycle/20261012-keledon-four-fronts/` and root `PHDK_CHECK_REPORT.md` for handoffs and evidence limits.
