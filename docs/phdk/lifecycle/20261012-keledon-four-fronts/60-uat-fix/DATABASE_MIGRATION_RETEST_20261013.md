@@ -9,7 +9,7 @@ A fresh `prisma migrate deploy` stopped at `20260610195649_add_speaches_fields`:
 ## Evidence
 
 - Fresh database: all seven migrations applied; `prisma migrate status` reports schema up to date.
-- Upgrade path: the prior six-migration database accepted the new forward migration; status reports all seven up to date.
+- Upgrade path: the prior six-migration database accepted the new forward migration; status reports all seven up to date. A separate synthetic legacy-ledger clone restored the original SHA-256 checksum for the old migration, removed its expected columns, and then applied only the new forward repair; Prisma 5.22.0 `migrate deploy` and status passed, and Prisma Client selected both fields.
 - Prisma schema validation and client generation passed.
 - A rolled-back synthetic Prisma transaction created/read/updated Company → Brand → Team → User; verified foreign-key relations, default user role and Speaches columns, then rolled back all fixtures.
 - API regression suite: 10/10 suites passed. API build and C13 sentinel passed.
@@ -17,7 +17,7 @@ A fresh `prisma migrate deploy` stopped at `20260610195649_add_speaches_fields`:
 
 ## Migration history limitation
 
-The original Speaches migration is historical. This repair changes its SQL so a fresh database can pass the sequence. [Prisma migration history guidance](https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/migration-histories) recommends not editing migrations already applied elsewhere. The forward migration repairs schema state for installations that recorded the old migration, but the deployed migration ledger and checksum are unknown because no customer or production database was inspected. Before applying to an environment that may have recorded the old checksum, reconcile that environment's migration history with its owner. This local pass is not approval to run a live migration or claim deployment acceptance.
+The original Speaches migration is historical. This repair changes its SQL so a fresh database can pass the sequence. [Prisma migration history guidance](https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/migration-histories) recommends not editing migrations already applied elsewhere. The forward migration repairs schema state for installations that recorded the old migration, but the deployed migration ledger and checksum are unknown because no customer or production database was inspected. Prisma 5.22.0 passed a synthetic old-checksum-ledger upgrade, but the actual environment still requires its normal migration review. This local pass is not approval to run a live migration or claim deployment acceptance.
 
 ## Acceptance
 
