@@ -2,7 +2,7 @@
 
 Date: 2026-10-13. Candidate: 5.0.54. Rule: source files remain below 600 physical lines. Count includes blank lines; scan includes `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`, excluding dependency and generated directories.
 
-The current inventory contains **17 files** at or above the limit. This remains an open remediation backlog, not a passing Check result.
+The current inventory contains **16 files** at or above the limit. The 828-line integration test suite was split into a 370-line coordinator and a 471-line case mixin; both files pass syntax checks. This remains an open remediation backlog, not a passing Check result.
 
 | Lines | File |
 |---:|---|
@@ -17,7 +17,6 @@ The current inventory contains **17 files** at or above the limit. This remains 
 | 882 | `services/api/src/services/flow-execution.service.ts` |
 | 861 | `agent/extension/rpa/executor/index.js` |
 | 861 | `agent/src/rpa/executor/index.js` |
-| 828 | `test/integration/integration-test-suite.js` |
 | 826 | `cloud/src/services/real-time-alerting.service.ts` |
 | 794 | `cloud/src/services/flow-execution.service.ts` |
 | 769 | `cloud/src/services/decision-engine.service.ts` |
