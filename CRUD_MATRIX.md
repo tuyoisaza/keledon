@@ -2,7 +2,7 @@
 
 Source review updated 2026-10-13 for candidate 5.1.0; the current worktree also contains uncommitted landing type and flow repairs. Local source/test evidence does not imply production DB execution.
 
-Owner-approved restrictive policy; 2026-10-12. API cells describe implemented authorization, not an executed production or browser result. L=list, R=detail; - means forbidden or unavailable; explicit exceptions below. Prisma storage is first-party; no live persistence exercised.
+Owner-approved restrictive policy; 2026-10-12. API cells describe implemented authorization, not an executed production or browser result. L=list, R=detail; - means forbidden or unavailable; explicit exceptions below. Prisma storage is first-party; no live persistence exercised. `services/api/test/regression/20-admin-boundaries.test.js` now exercises positive admin/coordinator list, detail, create, update and delete guard decisions for company, brand, team, user, vendor and session routes, plus denials and superadmin role assignment. These isolated guard fixtures are operation-level authorization evidence only; they do not prove handler persistence, every route/entity, full cross-tenant direct-ID behavior, or browser detail journeys.
 
 | Resource | Role | Surface | Route/list | C | L | R | U | D | Record/field scope | Backend enforcement | UI affordance | Deletion/exception | Evidence/status |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -135,7 +135,7 @@ Owner-approved restrictive policy; 2026-10-12. API cells describe implemented au
 
 Exceptions: provider catalog/config have no separate delete/detail endpoint; embedded team provider config has no independent create/delete. Voice profile detail is a GAP. Safe detail endpoints exist for company, brand, team, user and vendor, but a source endpoint is not proof of a usable detail journey; applicable web rows remain BLOCKED until exercised. Anonymous requests are rejected by global auth; webhook uses its separate shared-secret guard and is outside human-role CRUD. Unknown roles and missing current DB actors are denied. Admin/coordinator cannot create/delete companies or alter peer/elevated users. Bulk provider config validates every entry and replaces caller company filters with DB-derived scope. Delete/recovery persistence and audit behavior have not been exercised.
 
-Check result: PARTIAL/BLOCKED. The nine listed resource families have role × API/web rows, but this matrix is not yet exhaustive against all first-party persisted entities and controllers. Operation-level backend tests, full UI record-detail UAT, persistence, and tenant-A-to-B direct-ID cases remain open. No row is a PASS solely because a route or button exists.
+Check result: PARTIAL/BLOCKED. The nine listed resource families have role × API/web rows, but this matrix is not yet exhaustive against all first-party persisted entities and controllers. The new role/operation regression closes selected authorization cases for six route families but not handler persistence or complete route coverage. Full UI record-detail UAT, persistence, and tenant-A-to-B direct-ID cases remain open. No row is a PASS solely because a route or button exists.
 
 
 ## Explicitly scoped exceptions

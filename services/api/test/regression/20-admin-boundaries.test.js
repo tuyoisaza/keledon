@@ -9,7 +9,11 @@ const ts = require(process.env.KELEDON_TEST_TYPESCRIPT || 'typescript');
 const decorator = () => () => {};
 class Denied extends Error {}
 const common = new Proxy(
-  { UnauthorizedException: Denied, ForbiddenException: Denied, BadRequestException: Denied },
+  {
+    UnauthorizedException: Denied,
+    ForbiddenException: Denied,
+    BadRequestException: Denied,
+  },
   {
     get: (target, key) => target[key] || decorator,
   },
@@ -262,6 +266,13 @@ async function main() {
         companyId: where.id === 'vp-a' ? 'co-a' : 'co-b',
       }),
     },
+    session: {
+      findUnique: async ({ where }) => ({
+        id: where.id,
+        teamId: where.id === 'session-a' ? 'team-a' : 'team-b',
+        userId: where.id === 'session-a' ? 'user-a' : 'user-b',
+      }),
+    },
   };
   const access = new CrudAccessGuard(prisma);
   const run = (
@@ -294,27 +305,28 @@ async function main() {
       'brands',
       'teams',
       'users',
-      'vendors',
       'tenant-provider-config',
       'voice-profiles',
+      'sessions',
     ]) {
-      await assert.rejects(run(resource, 'POST').result, Denied);
+      for (const method of ['GET', 'POST', 'PUT', 'DELETE']) {
+        await assert.rejects(run(resource, method).result, Denied);
+      }
     }
-  }
-  rows.user.role = 'admin';
-  for (const [resource, params] of [
-    ['companies', { id: 'co-b' }],
-    ['brands', { id: 'brand-b' }],
-    ['teams', { id: 'team-b' }],
-    ['users', { id: 'user-b' }],
-    ['vendors', { id: 'vendor-b' }],
-    ['voice-profiles', { id: 'vp-b' }],
-  ]) {
-    for (const method of ['GET', 'PUT', 'DELETE'])
-      await assert.rejects(run(resource, method, params).result, Denied);
   }
   for (const role of ['admin', 'coordinator']) {
     rows.user.role = role;
+    for (const [resource, params] of [
+      ['companies', { id: 'co-b' }],
+      ['brands', { id: 'brand-b' }],
+      ['teams', { id: 'team-b' }],
+      ['users', { id: 'user-b' }],
+      ['vendors', { id: 'vendor-b' }],
+      ['voice-profiles', { id: 'vp-b' }],
+    ]) {
+      for (const method of ['GET', 'PUT', 'DELETE'])
+        await assert.rejects(run(resource, method, params).result, Denied);
+    }
     await assert.rejects(
       run('users', 'PUT', { id: 'user-a' }, { role: 'superadmin' }).result,
       Denied,
@@ -354,7 +366,91 @@ async function main() {
       await run('users', 'PUT', { id: 'user-a' }, { name: 'safe' }).result,
       true,
     );
+    // Positive operation matrix for first-party CRUD routes. Each case exercises
+    // the real CrudAccessGuard with a current database actor and scoped fixtures.
+    rows.user.role = role;
+    const allow = async (resource, method, params = {}, body = {}) => {
+      const request = run(resource, method, params, body);
+      assert.equal(
+        await request.result,
+        true,
+        `${rows.user.role} should be allowed: ${method} /api/crud/${resource}`,
+      );
+      return request.req;
+    };
+
+    await allow('companies', 'GET');
+    await allow('companies', 'GET', { id: 'co-a' });
+    await allow('companies', 'PUT', { id: 'co-a' }, { name: 'Scoped company' });
+    await assert.rejects(
+      allow('companies', 'POST', {}, { name: 'New company' }),
+      Denied,
+    );
+    await assert.rejects(allow('companies', 'DELETE', { id: 'co-a' }), Denied);
+
+    const createdBrand = await allow('brands', 'POST', {}, { name: 'Brand A' });
+    assert.equal(createdBrand.body.companyId, 'co-a');
+    await allow('brands', 'GET');
+    await allow('brands', 'GET', { id: 'brand-a' });
+    await allow('brands', 'PUT', { id: 'brand-a' }, { name: 'Updated brand' });
+    await allow('brands', 'DELETE', { id: 'brand-a' });
+
+    await allow('teams', 'POST', {}, { name: 'Team A', brandId: 'brand-a' });
+    await allow('teams', 'GET');
+    await allow('teams', 'GET', { id: 'team-a' });
+    await allow('teams', 'PUT', { id: 'team-a' }, { name: 'Updated team' });
+    await allow('teams', 'DELETE', { id: 'team-a' });
+
+    const createdUser = await allow(
+      'users',
+      'POST',
+      {},
+      { email: 'new@example.invalid' },
+    );
+    assert.equal(createdUser.body.role, 'user');
+    assert.equal(createdUser.body.companyId, 'co-a');
+    await allow('users', 'GET');
+    await allow('users', 'GET', { id: 'user-a' });
+    await allow('users', 'PUT', { id: 'user-a' }, { name: 'Updated user' });
+    await allow('users', 'DELETE', { id: 'user-a' });
+
+    const createdVendor = await allow(
+      'vendors',
+      'POST',
+      {},
+      {
+        name: 'Vendor A',
+        type: 'crm',
+        teamId: 'team-a',
+      },
+    );
+    assert.equal(createdVendor.body.teamId, 'team-a');
+    await allow('vendors/:teamId', 'GET', { teamId: 'team-a' });
+    await allow('vendors/:id', 'GET', { id: 'vendor-a' });
+    await allow(
+      'vendors/:id',
+      'PUT',
+      { id: 'vendor-a' },
+      { name: 'Updated vendor' },
+    );
+    await allow('vendors/:id', 'DELETE', { id: 'vendor-a' });
+
+    await allow('sessions', 'GET');
+    await allow('sessions/:id', 'GET', { id: 'session-a' });
+    await allow('sessions', 'POST', {}, { teamId: 'team-a', userId: 'user-a' });
+    await allow(
+      'sessions/:id',
+      'PUT',
+      { id: 'session-a' },
+      { summary: 'Updated summary' },
+    );
+    await assert.rejects(
+      run('sessions/orphaned', 'DELETE', {}, {}, 'deleteOrphanedSessions')
+        .result,
+      Denied,
+    );
   }
+
   rows.user = {
     id: 'actor',
     role: 'user',
@@ -383,6 +479,17 @@ async function main() {
     teamId: null,
   };
   assert.equal(await run('companies', 'DELETE', { id: 'co-b' }).result, true);
+  const elevatedUser = run(
+    'users',
+    'POST',
+    {},
+    {
+      email: 'manager@example.invalid',
+      role: 'admin',
+      companyId: 'co-a',
+    },
+  );
+  assert.equal(await elevatedUser.result, true);
 
   // Auto-provisioning never grants privilege, and existing roles remain unchanged.
   let created;
@@ -478,11 +585,22 @@ async function main() {
     '',
   );
   assert.equal(configWrites, 1);
-  await assert.rejects(() => teamController.updateTeamConfig('team-a', { ttsProvider: 'untrusted-provider' }, actorReq), Denied);
+  await assert.rejects(
+    () =>
+      teamController.updateTeamConfig(
+        'team-a',
+        { ttsProvider: 'untrusted-provider' },
+        actorReq,
+      ),
+    Denied,
+  );
   assert.equal(configWrites, 1, 'unsupported provider must not silently save');
-  await teamController.updateTeamConfig('team-a', { ttsProvider: 'speaches' }, actorReq);
+  await teamController.updateTeamConfig(
+    'team-a',
+    { ttsProvider: 'speaches' },
+    actorReq,
+  );
   assert.equal(configWrites, 2, 'supported Speaches selection persists');
-
 
   let deviceWrites = 0;
   const launchService = new CrudKeledonService({
@@ -568,10 +686,26 @@ async function main() {
   assert.equal(pendingDevice.status, 'pending');
   assert.equal(link.deep_link.startsWith('keledon://launch?'), true);
   const launchUrl = new URL(link.deep_link);
-  const launchPayload = JSON.stringify(['k-a', 'owner', launchUrl.searchParams.get('timestamp'),
-    launchUrl.searchParams.get('code'), new URL(launchUrl.searchParams.get('cloudUrl')).origin]);
-  const signingSecret = process.env.KELEDON_LAUNCH_SECRET || process.env.KELDEON_LAUNCH_SECRET || process.env.KELEDON_AUTH_SECRET || 'keledon-default-secret';
-  assert.equal(launchUrl.searchParams.get('signature'), crypto.createHmac('sha256', signingSecret).update(launchPayload).digest('hex').substring(0, 16));
+  const launchPayload = JSON.stringify([
+    'k-a',
+    'owner',
+    launchUrl.searchParams.get('timestamp'),
+    launchUrl.searchParams.get('code'),
+    new URL(launchUrl.searchParams.get('cloudUrl')).origin,
+  ]);
+  const signingSecret =
+    process.env.KELEDON_LAUNCH_SECRET ||
+    process.env.KELDEON_LAUNCH_SECRET ||
+    process.env.KELEDON_AUTH_SECRET ||
+    'keledon-default-secret';
+  assert.equal(
+    launchUrl.searchParams.get('signature'),
+    crypto
+      .createHmac('sha256', signingSecret)
+      .update(launchPayload)
+      .digest('hex')
+      .substring(0, 16),
+  );
   assert.equal(JSON.stringify(link.vendors).includes('isolated-hidden'), false);
   let keledonQuery;
   await new CrudKeledonService({
@@ -589,6 +723,9 @@ async function main() {
   );
   console.log(
     'PASS admin boundaries: 7 signed malformed payloads, 4 auth negatives, 12 stale-role negatives, absent actor, valid controls, tenant filter/detail and secret projections.',
+  );
+  console.log(
+    'PASS CRUD operation matrix: low-role denials across list/create/update/delete; admin/coordinator company, brand, team, user, vendor and session operations; tenant-derived user scope; superadmin role assignment.',
   );
 }
 main().catch((error) => {

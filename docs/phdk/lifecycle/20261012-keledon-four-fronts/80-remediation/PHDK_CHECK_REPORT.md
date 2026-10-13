@@ -4,6 +4,8 @@ Date: 2026-10-13. This handoff updates the earlier Check snapshot after source-o
 
 ## Remediation verified
 
+- Current API regression run passes 8/8 suites. The admin-boundaries suite now exercises selected positive admin/coordinator CRUD guard operations (list/detail/create/update/delete) across company, brand, team, user, vendor and session routes, plus low-role denials, DB-derived user/company scope and superadmin role assignment. These isolated guard tests do not establish handler persistence or exhaustive CRUD coverage.
+
 - Landing TypeScript typecheck and production build pass.
 - Fixed selected-agent comparisons, API JSON body typing/serialization, snake_case relationship reads, category unions, company-country narrowing, a team fetch signature, and the Vite config's unused environment load.
 - Replaced the device page's forged `x-user-id` request and unsupported pairing call with session-authenticated listing and navigation into the Keledon launch flow.
