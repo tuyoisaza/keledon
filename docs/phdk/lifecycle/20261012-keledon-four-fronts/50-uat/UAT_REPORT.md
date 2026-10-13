@@ -1,6 +1,6 @@
 # UAT report — KELEDON 5.1.0
 
-Run `20261012-keledon-four-fronts`; executed 2026-10-13 America/Mexico_City against the production web bundle in headless Edge. Current working candidate is based on commit `4d07ae1578e5f9c15c47e747f3c4fb6e24acc41d` plus the test-runner changes recorded in this branch worktree. Browser traffic outside the local origin and every WebSocket were blocked; all `/api` and diagnostics API responses were synthetic fixtures. No backend server, database, account, provider, customer record, or deployed site was contacted.
+Run `20261012-keledon-four-fronts`; executed 2026-10-13 America/Mexico_City against the production web bundle in headless Edge at candidate `7df6f77dd47670cfa7671f27f9ca67c38aa7161e`. Browser traffic outside the local origin and every WebSocket were blocked; all `/api` and diagnostics API responses were synthetic fixtures. No backend server, database, account, provider, customer record, or deployed site was contacted.
 
 The scoped SPA journeys pass: diagnostic telemetry stays idle until enabled; enabling causes one deep-health read; a safe endpoint probe runs only after a deliberate click; the manual-only CRM endpoint has no probe action; turning diagnostics off clears displayed evidence without another request. Existing login/version/reset, 390px, theme shell, company-detail keyboard/focus, tenant-admin UI, and write-only provider-key fixture checks also pass. The production build passed before UAT; Vite reported a large-chunk advisory and stale Browserslist data.
 

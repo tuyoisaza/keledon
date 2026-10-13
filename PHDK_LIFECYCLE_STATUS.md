@@ -1,7 +1,7 @@
 # Lifecycle status — 20261012-keledon-four-fronts
 
 Project: `C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON`
-PHDK: 2.50.8 verified; candidate 5.1.0. Branch `chore/phdk-install-v2.50.8`; PR #42 OPEN/DRAFT. Current committed PR head before this UAT fix: `4d07ae1578e5f9c15c47e747f3c4fb6e24acc41d`; latest UI/UAT remediation is in the worktree and will be committed after final verification. No target-main merge/readback.
+PHDK: 2.50.8 verified; candidate 5.1.0. Branch `chore/phdk-install-v2.50.8`; PR #42 OPEN/DRAFT. Current branch head: `7df6f77dd47670cfa7671f27f9ca67c38aa7161e`; latest Edge UAT evidence records this exact candidate. No target-main merge/readback.
 
 Goal: complete PHDK Auto for the four owner-confirmed fronts. Telephony/CRM vendors are tenant-selected; owner requested maximum applicable code conformity.
 
@@ -13,7 +13,7 @@ Goal: complete PHDK Auto for the four owner-confirmed fronts. Telephony/CRM vend
 | PMO / Workstreams | REUSED | Four workstreams tracked; update remote delivery from old 0/4 snapshot. |
 | Integration Review | PARTIAL | Shared contracts and 5.1.0 package versions reconciled; API/Cloud/web focused builds/tests pass. See current 40-integration report. |
 | UAT | PARTIAL | Production SPA Edge UAT passes on fully mocked local API; backend CRUD/roles, Electron, full a11y/localization remain incomplete. |
-| UAT Fix | SCOPED PASS | Two harness defects fixed; screenshot review found and fixed diagnostics overlay occlusion; final rebuild/UAT pending. |
+| UAT Fix | SCOPED PASS | Harness defects and diagnostics overlay occlusion fixed; rebuilt SPA and post-commit Edge UAT pass. |
 | SEO | PASS (SOURCE) | Nginx source directives only; deployed headers unverified. |
 | AEO/GEO | PARTIAL | Source/content inventory only; external citation/rank not measured. |
 | Check | PARTIAL | Reconcile full conformance/legacy landing typecheck, role/CRUD evidence, accessibility, deployed metadata, tool limitations. |

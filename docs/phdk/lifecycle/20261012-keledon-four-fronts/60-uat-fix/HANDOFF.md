@@ -3,7 +3,7 @@
 Run ID: `20261012-keledon-four-fronts`
 Stage: `60-uat-fix`
 Status: `SCOPED PASS — harness defects fixed; product acceptance remains partial`
-Candidate base: `4d07ae1578e5f9c15c47e747f3c4fb6e24acc41d` plus test changes
+Candidate: `7df6f77dd47670cfa7671f27f9ca67c38aa7161e`
 Date: `2026-10-13 America/Mexico_City`
 
 ## Reproduced failures and disposition
@@ -11,6 +11,7 @@ Date: `2026-10-13 America/Mexico_City`
 - Stale local test expected diagnostics clipboard output to be JSON. Product correctly emits a formatted, redacted report; corrected the test to assert its displayed version.
 - Playwright attempted to click a screen-reader-only checkbox whose visible switch thumb receives pointer events. Changed UAT interaction to click the visible label/control and assert the checkbox state.
 - Rebuilt production SPA and reran `npm run test:uat`; Edge UAT passes 1/1 with no failures, including the newly covered diagnostics flow.
+- Visual screenshot review found the global floating debug panel covered navigation on the dedicated `/management/debug` page. It now hides only on that route; the rerun assertion and screenshot confirm all diagnostic controls stay unobstructed.
 - No new product defect reproduced in this UAT-Fix pass. Earlier product remediations remain in `UAT_REMEDIATION.md` and `UAT_RETEST_REPORT.md`.
 
 ## Exit gate

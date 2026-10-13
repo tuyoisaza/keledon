@@ -4,7 +4,7 @@ Run ID: `20261012-keledon-four-fronts`
 Stage: `50-uat`
 Status: `PARTIAL — scoped local UAT PASS; overall acceptance incomplete`
 Base revision: `52537140e67d0d6c05486fa13837df3eb5316fb3`
-Candidate base: `4d07ae1578e5f9c15c47e747f3c4fb6e24acc41d` plus current UAT test changes
+Candidate: `7df6f77dd47670cfa7671f27f9ca67c38aa7161e`
 Date: `2026-10-13 America/Mexico_City`
 
 ## Inputs and deliverables
@@ -25,4 +25,4 @@ Date: `2026-10-13 America/Mexico_City`
 
 ## Next stage
 
-Run `60-uat-fix`: investigate the reproduced harness defects from this run (outdated copy assertion and clicking a hidden checkbox instead of its visible label), retest after correction, and log no product defect unless reproduced in the product. Then proceed to SEO/AEO and Check with acceptance still partial.
+`60-uat-fix` is complete for the reproduced harness issues and diagnostics overlay obstruction. Proceed to SEO/AEO and Check with overall acceptance still partial.

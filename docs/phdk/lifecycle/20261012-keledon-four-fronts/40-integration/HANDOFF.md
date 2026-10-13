@@ -4,7 +4,7 @@ Run ID: `20261012-keledon-four-fronts`
 Stage: `40-integration`
 Status: `PARTIAL — integration evidence current; Check remains`
 Base revision: `52537140e67d0d6c05486fa13837df3eb5316fb3`
-Integrated candidate: `4d07ae1578e5f9c15c47e747f3c4fb6e24acc41d`
+Integrated candidate: `7df6f77dd47670cfa7671f27f9ca67c38aa7161e`
 Branch: `chore/phdk-install-v2.50.8`
 PR: `https://github.com/tuyoisaza/keledon/pull/42` (draft/open)
 Date: `2026-10-13 America/Mexico_City`
