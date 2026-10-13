@@ -1,5 +1,10 @@
 # Changelog
 
+## v5.1.2 — 2026-10-13 (local candidate, PHDK Auto)
+
+- Give managers' fixed company context a native fieldset/legend accessible name and verify it in rendered UAT.
+- Keep all five app package/lock versions and visible browser diagnostics aligned at 5.1.2.
+
 ## v5.1.1 — 2026-10-13 (local candidate, PHDK Auto)
 
 - Remove raw error-buffer and cloud URL disclosure from privileged CRUD health diagnostics.

@@ -14,7 +14,7 @@ export default function ManagementUsersPage() {
     const isSuperAdmin = currentUser?.role === 'superadmin';
     const canManageUser = (target: UserType) => isSuperAdmin || (['admin', 'coordinator'].includes(currentUser?.role || '') && target.role === 'user');
 
-    const [users, setUsers] = useState<any[]>([]);
+    const [users, setUsers] = useState<UserType[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [brands, setBrands] = useState<Brand[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
@@ -291,12 +291,12 @@ export default function ManagementUsersPage() {
                                         </select>
                                     </>
                                 ) : (
-                                    <div>
-                                        <span id="management-users-company-label" className="block text-sm text-muted-foreground mb-1">Company</span>
-                                        <p id="management-users-field-3" aria-labelledby="management-users-company-label" className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-muted-foreground">
+                                    <fieldset className="min-w-0">
+                                        <legend className="block text-sm text-muted-foreground mb-1">Company</legend>
+                                        <p id="management-users-field-3" className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-muted-foreground">
                                             {companies.find(company => company.id === currentUser?.companyId)?.name || 'Your company'}
                                         </p>
-                                    </div>
+                                    </fieldset>
                                 )}
                             </div>
                             <div>

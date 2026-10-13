@@ -76,7 +76,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
    });
    await page.route(/\/health\/deep\/?$/,async route=>{
     deepReads++;
-    return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({status:'healthy',version:'5.1.1',gitSha:'4d07ae1',buildTimestamp:'2026-10-13T00:00:00.000Z',endpointDiagnostics:safeEndpoints,database:{status:'healthy',migrations:'present'},meteredProviders:{probeCallsMade:0,tenantProviderCredentials:'not_enumerated'},latestSafeProbes:[]})});
+    return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({status:'healthy',version:'5.1.2',gitSha:'4d07ae1',buildTimestamp:'2026-10-13T00:00:00.000Z',endpointDiagnostics:safeEndpoints,database:{status:'healthy',migrations:'present'},meteredProviders:{probeCallsMade:0,tenantProviderCredentials:'not_enumerated'},latestSafeProbes:[]})});
    });
    await page.route(/\/health\/deep\/probes\/[^/]+$/,async route=>{
     const id=new URL(route.request().url()).pathname.split('/').at(-1);
@@ -94,12 +94,12 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   const page=anonymous.page;
   await page.goto(origin+'/login');await page.locator('[data-testid="version-actions"]').waitFor();
   const row=page.locator('[data-testid="version-actions"]');assert.equal(await row.count(),1);
-  assert.equal((await row.innerText()).trim(),'v5.1.1');
+  assert.equal((await row.innerText()).trim(),'v5.1.2');
   const dims=await row.evaluate(el=>({gap:getComputedStyle(el).gap,font:getComputedStyle(el.querySelector('span')).fontSize,buttons:[...el.querySelectorAll('button')].map(b=>({w:b.getBoundingClientRect().width,h:b.getBoundingClientRect().height,icon:b.querySelector('svg').getBoundingClientRect().width})),x:el.getBoundingClientRect().x}));
   assert.equal(dims.gap,'4px');assert.equal(dims.font,'12px');for(const b of dims.buttons){assert.equal(b.w,28);assert.equal(b.h,28);assert.equal(b.icon,14);}assert.ok(dims.x<30);
   await row.locator('[data-action="copy"]').click();
   await row.locator('[data-action="copy"] .keledon-action-success').waitFor();
-  assert.match(await page.evaluate(()=>window.__copied),/Version:\s*v5\.1\.1/);
+  assert.match(await page.evaluate(()=>window.__copied),/Version:\s*v5\.1\.2/);
   await page.waitForFunction(()=>!document.querySelector('[data-action="copy"]').disabled);
   assert.equal(await row.locator('.keledon-action-success').count(),0);
   await page.evaluate(()=>window.__denyCopy=true);await row.locator('[data-action="copy"]').click();assert.equal(await row.locator('[data-action="copy"] .keledon-action-success').count(),0);
@@ -135,7 +135,8 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   const userForm=userDialog.locator('form');
   assert.equal(await userForm.locator('select').count(),2,'admin has brand/team choices only; role/company remain server-derived');
   assert.equal(await userForm.getByText('Company Co',{exact:true}).count(),1);
-  assert.equal(await userForm.locator('#management-users-field-3').getAttribute('aria-labelledby'),'management-users-company-label');
+  const companyGroup=userForm.getByRole('group',{name:'Company'});
+  assert.equal(await companyGroup.getByText('Company Co',{exact:true}).count(),1);
   await userForm.locator('select').nth(0).selectOption(brand.id);await userForm.locator('select').nth(1).selectOption(team.id);
   await userForm.locator('input[type="text"]').fill('Synthetic Company Co User');
   await userForm.locator('input[type="email"]').fill('synthetic.user@company-co.invalid');
@@ -200,8 +201,8 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await basicEndpoint.waitFor({state:'hidden'});
   assert.equal(deepReads,1);
   await diagnostic.context.close();
-  checks.push('UAT-002 5.1.1 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)');
-  await fs.writeFile(path.join(evidence,'uat-local-web.json'),JSON.stringify({version:'5.1.1',date:new Date().toISOString(),candidateRevision:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),targetEnvironment:'local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked',origin,provenance:'UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance',checks,apiEvidence:'services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts',realVendorAudioCRM:'NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed'},null,2));
+  checks.push('UAT-002 5.1.2 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)');
+  await fs.writeFile(path.join(evidence,'uat-local-web.json'),JSON.stringify({version:'5.1.2',date:new Date().toISOString(),candidateRevision:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),targetEnvironment:'local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked',origin,provenance:'UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance',checks,apiEvidence:'services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts',realVendorAudioCRM:'NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed'},null,2));
   console.log('PASS local web journeys:',checks.join('\n'));
  }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
 });

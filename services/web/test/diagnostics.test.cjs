@@ -52,7 +52,7 @@ test('diagnostic paths and correlation ids retain safe route context only',()=>{
   assert.equal(core.sanitizeCorrelationId('eyJhbGci.eyJzdWIi.signature'),undefined);
 });
 test('report capture never stores private messages or request URLs and handles clipboard failure honestly',async()=>{
-  const result=esbuild.buildSync({entryPoints:[path.join(lib,'debug-report.ts')],bundle:true,write:false,format:'cjs',platform:'browser',define:{'import.meta.env.DEV':'false','import.meta.env.PROD':'true','import.meta.env.MODE':'"test"','import.meta.env.VITE_API_URL':'"https://api.example.test/private?token=secret"','import.meta.hot':'undefined','__APP_VERSION__':'"5.1.1"','__GIT_SHA__':'"abcdef1234567890"','__BUILD_TIMESTAMP__':'"2026-10-13T00:00:00.000Z"'}});
+  const result=esbuild.buildSync({entryPoints:[path.join(lib,'debug-report.ts')],bundle:true,write:false,format:'cjs',platform:'browser',define:{'import.meta.env.DEV':'false','import.meta.env.PROD':'true','import.meta.env.MODE':'"test"','import.meta.env.VITE_API_URL':'"https://api.example.test/private?token=secret"','import.meta.hot':'undefined','__APP_VERSION__':'"5.1.2"','__GIT_SHA__':'"abcdef1234567890"','__BUILD_TIMESTAMP__':'"2026-10-13T00:00:00.000Z"'}});
   const listeners=new Map();let copied='',reject=false;const response={ok:false,status:401,headers:{get:key=>key.toLowerCase()==='x-correlation-id'?'req-1234.abcd':null}};
   const navigator={onLine:true,language:'es-MX',userAgent:'Mozilla/5.0 Chrome/128.0.0.0',cookieEnabled:true,clipboard:{writeText:async value=>{if(reject)throw Error('denied');copied=value;}}};
   const localStorage=store({'keldon-debug-mode':'true'}),sessionStorage=store();
@@ -63,7 +63,7 @@ test('report capture never stores private messages or request URLs and handles c
   listeners.get('error')({message:'customer@example.org secret=private'});
   assert.equal(await api.copyDebugReport({isAuthenticated:true,user:{id:'user-123',role:'admin'},pathname:'/management/users/91?email=hidden@example.org'}),true);
   for(const forbidden of ['private.example','provider-key','customer@example.org','secret=private','token=raw','hidden@example.org'])assert.ok(!copied.includes(forbidden));
-  for(const required of ['=== PHDK Debug Diagnostics Report ===','Project: KELEDON','Version: v5.1.1','Git SHA: abcdef123456','Build: 2026-10-13T00:00:00.000Z','Route: /management/users/[redacted]','User ID: user-123','Role: admin','API: api.example.test','Recent failed API requests','status=401 correlation=req-1234.abcd','Last endpoint probe: Unavailable'])assert.ok(copied.includes(required),required);
+  for(const required of ['=== PHDK Debug Diagnostics Report ===','Project: KELEDON','Version: v5.1.2','Git SHA: abcdef123456','Build: 2026-10-13T00:00:00.000Z','Route: /management/users/[redacted]','User ID: user-123','Role: admin','API: api.example.test','Recent failed API requests','status=401 correlation=req-1234.abcd','Last endpoint probe: Unavailable'])assert.ok(copied.includes(required),required);
   assert.equal(copied.includes('Bearer'),false);reject=false;copied='';assert.equal(await api.copyDebugReport(),true);assert.ok(copied.includes('User ID: Not authenticated'));assert.ok(!copied.includes('user-123'));reject=true;assert.equal(await api.copyDebugReport(),false);
   api.debugCapture.setEndpointDiagnostics([{id:'health.deep',method:'GET',path:'/health/deep',expectedStatuses:[200],sanitizedRequestExample:null,sanitizedSuccessExample:{status:'healthy',key:'private-secret',url:'https://private.example'},sanitizedErrorExamples:[{statusCode:403,message:'Forbidden'}]}]);
   api.debugCapture.setBackendSummary({status:'healthy',database:{status:'healthy',migrations:'present'},meteredProviders:{deepgram:'configured',openai:'not_configured',anthropic:'configured',secretProvider:'private'}});
@@ -95,7 +95,7 @@ test('web/legacy shared diagnostics behavior stays aligned across separate servi
 });
 test('native report allowlist excludes device/team/url/credential details and reset verifies IPC results',async()=>{
   const native=require(path.resolve(__dirname,'../../../browser/renderer/version-actions.js'));
-  const report=JSON.stringify(native.safeReport({version:'5.1.1',deviceId:'private-device',logsDir:'private-path'},{status:'connected',connected:true,vendorCount:2,token:'raw',teamName:'Private',cloudUrl:'https://internal'},{}));
+  const report=JSON.stringify(native.safeReport({version:'5.1.2',deviceId:'private-device',logsDir:'private-path'},{status:'connected',connected:true,vendorCount:2,token:'raw',teamName:'Private',cloudUrl:'https://internal'},{}));
   for(const forbidden of ['private-device','private-path','raw','Private','https://internal'])assert.ok(!report.includes(forbidden));
   const win={localStorage:store({'keledon-config':'x',foreign:'safe'}),sessionStorage:store({auth_token:'x'})};
   await assert.rejects(native.clearOwnedState(win,{runtime:{disconnect:async()=>({success:false})}}),/disconnect/);
