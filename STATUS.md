@@ -24,3 +24,10 @@
 
 ## 2026-10-12 — Draft review published
 Commit 3af566a163024c3f2b69be7991e99437d47b0528 is on chore/phdk-install-v2.50.8. Draft PR #42 OPEN against main; review/publishing still pending. No merge or database migration. Owner decision on additive AI schema remains required.
+
+## 2026-10-13 — PHDK Auto revalidation
+
+- The owner approved inclusion/merge of the additive managed-AI migration through the normal DB procedure. No database was connected to and no migration was executed.
+- PR #42 remains OPEN/DRAFT on `main` and includes the harness and sidepanel stylesheet splits from this candidate update.
+- The strict physical-line audit finds 38 source files above PHDK's 600-line maximum. The PHDK Check and delivery gates remain partial/open; see `PHDK_CHECK_REPORT.md`, `PHDK_LINE_LIMIT_AUDIT.md`, and `PHDK_COMPLETION_AUDIT.md`.
+- SIGUIENTE PASO: continue source-size remediation and close evidence-backed Check findings, then rerun integrated checks and use normal PR review/merge controls.

@@ -4,24 +4,30 @@ Run ID: 20261012-keledon-four-fronts
 Stage: 90-delivery
 Status: PARTIALLY DELIVERED
 Candidate: 5.0.54
-Branch: chore/phdk-install-v2.50.8
-PR: https://github.com/tuyoisaza/keledon/pull/42 (draft/open; not merged)
-Date/time: 2026-10-13 America/Mexico_City
+Branch: `chore/phdk-install-v2.50.8`
+PR: [#42](https://github.com/tuyoisaza/keledon/pull/42) (draft/open; not merged)
+The candidate update is committed to the PR branch; see the linked PR for its current head.
+Date: 2026-10-13 America/Mexico_City
 
-## Goal / scope
-Execute PHDK Auto across the owner-confirmed four workstreams. Telephony and CRM integrations are tenant-selected and code is checked vendor-independently.
+## Goal and scope
 
-## Owner decisions
-The owner approved including and merging the additive managed-AI storage migration using the normal DB procedure. No DB was accessed and no migration was run.
+Execute PHDK Auto across the four owner-confirmed workstreams: baseline/version/PR; widget and safe diagnostics; vendor-independent voice-to-cloud/browser/CRM contracts; and administration/permissions. Telephony and CRM integrations are tenant-selected and were reviewed vendor-independently.
+
+## Owner decision
+
+The owner approved inclusion and merge of the additive managed-AI storage migration through the normal DB procedure. PR #42 contains it. No database connection or migration execution occurred.
 
 ## Current evidence
-- BrainPage modularization reduced `services/web/src/pages/BrainPage.tsx` from 3,726 to 565 lines. API MVP and knowledge helpers and agent Salesforce/Genesys DOM helpers were also split.
-- Web typecheck, lint and production build pass; Browser tests 19/19; web synthetic tests 10/10; PHDK coherence check 50/50 mappings.
-- The latest repository-wide inventory finds 23 files over 600 lines. Other PHDK findings include locale parity, private-route indexability and full rendered accessibility coverage.
-- `landing/src/pages/BrainPage.tsx` is also 594 lines; its speech-recognition action was moved to a typed focused hook. The unused `landing/src/components/superadmin/SettingsTab-ORIG.tsx` duplicate was removed after confirming no imports. The legacy landing build passes using the workspace-installed Rollup native package through NODE_PATH; its full TypeScript check still has unrelated baseline diagnostics. Salesforce adapter tests: 17/19; full adapter typecheck has existing contract/type mismatches. Agent build was not run because it deletes repository-root `dist`. Latest branch head `5205c92` is pushed to the open draft PR.
+
+- The sidepanel stylesheet was split into two ordered CSS files under 600 physical lines each; original selector/declaration order is preserved after trailing-whitespace cleanup. The standalone test harness is split into HTML, CSS, core JavaScript and services JavaScript; both scripts pass `node --check`, and `agent/validate-test-harness.js` passes.
+- Web typecheck, lint and production build pass; Browser tests 19/19; web synthetic tests 10/10; API build/C13 sentinel and regression 8/8; PHDK coherence check 50/50 mappings.
+- Physical-line inventory of source files finds 38 files over PHDK's 600-line maximum. See `PHDK_LINE_LIMIT_AUDIT.md`.
+- Salesforce adapter tests are 17/19; two existing environment-sensitive cases attempt to assign read-only `window.location.hostname`. Full landing typecheck reports baseline diagnostics; full agent adapter typecheck has existing contract/type errors. Agent dependencies/config are absent locally, and its build script deletes the repository-root `dist`, so that build was not run.
+- Locale parity, private-route server indexability and broad rendered accessibility/contrast remain open. No client-specific live call/CRM, production migration, deployment, or production health was claimed.
 
 ## Exit gate
-- [ ] Reduce all applicable files to at most 600 lines and resolve or evidence all PHDK findings.
+
+- [ ] Reduce all applicable files below 600 physical lines and close/evidence remaining PHDK findings.
 - [ ] Run final integrated checks and update machine-readable completion evidence.
-- [ ] Push the scoped candidate, satisfy existing review controls, merge PR #42, and verify main content/version remotely.
-- [ ] Record deployment observation separately; no production health claim.
+- [ ] Commit/push the scoped candidate, satisfy actual review controls, merge PR #42, and verify remote `main` content/version.
+- [ ] Record deployment evidence separately; no production health claim.

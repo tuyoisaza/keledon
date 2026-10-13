@@ -72,3 +72,8 @@ SIGUIENTE PASO: root integrates the bounded fixes and test, then presents the co
 The owner approved the restrictive policy in this conversation. Questions asking them to decide it are historical and superseded. New identities default to user, actors and tenant resolve from current DB, only existing superadmin grants elevated roles/tenants, admin/coordinator stay within company, keys are write-only, and existing provisioned roles are preserved. API regression 8/8 suites, focused tests 10/10 and AI UI synthetic fixture 12 cases pass. The additive managed-AI schema exists but was not run.
 
 Sensitive rollout is distinct from auth policy approval: source adds three AI tables; this task has not explicitly authorized applying a database migration. Root requested owner review before publication under MAIN_DELIVERY_STANDARD. No live DB used.
+
+
+### Owner migration decision - 2026-10-13
+
+The earlier pending-review statement is superseded. The owner approved inclusion and merge of the additive managed-AI migration through the normal DB procedure. PR #42 contains it. This does not authorize live database access or migration execution; neither occurred. The PHDK source-conformance findings remain open.

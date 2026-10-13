@@ -1,0 +1,11 @@
+# PHDK Check report — candidate 5.0.54
+
+Scope: integrated candidate and BrainPage/backend/agent/test-harness helper splits, 2026-10-13. No production provider, database, customer data, or metered API use.
+
+PASS: services/web typecheck, ESLint quiet, production Vite build; browser regression 19/19; services/web synthetic UAT 10/10; API production build/C13 sentinel and regression 8/8; PHDK 2.50.8 coherence checker 50/50 mappings. The legacy landing production Vite build also passes when the installed workspace Rollup native package is made resolvable through NODE_PATH. New Salesforce/Genesys DOM helper modules pass isolated TypeScript compilation.
+
+PARTIAL/BLOCKED: Salesforce adapter tests 17/19; two existing test setup cases fail when they mutate read-only `window.location.hostname` under the available Node environment. Full legacy landing TypeScript check reports unrelated baseline diagnostics, though changed files have no diagnostics. Full agent adapter typecheck reports existing contract/type mismatches; agent test dependencies/config are not installed in its tree. The agent build was not run because the script removes repository-root `dist`. Config plus both extracted test-harness scripts pass a combined classic-script `node --check`; its validator confirms assets, required features and inline handler targets. Extraction exposed and fixed a duplicate local declaration and premature function-closing braces in the original harness. Sidepanel and harness CSS preserve the original selector/declaration order after trailing-whitespace cleanup.
+
+OPEN: the physical-line inventory in `PHDK_LINE_LIMIT_AUDIT.md`, excluding generated/dependency directories, still contains 38 source files over PHDK's hard 600-line limit. Locale parity, server-delivered private-route indexability, and broad rendered accessibility/contrast coverage remain unresolved.
+
+DELIVERY: PR #42 is OPEN/DRAFT; this candidate update is committed to its branch. Owner migration inclusion/merge approval is recorded; no DB migration was executed. No main readback or production deployment is claimed. The vendored completion-gate script currently raises `TypeError` when the accurate no-merge `merged_commit_sha` value is JSON `null`; no completion PASS is claimed and the PHDK tool was not modified in this product task.

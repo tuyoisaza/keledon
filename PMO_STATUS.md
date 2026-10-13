@@ -11,4 +11,8 @@ Integrated local validation: web typecheck/lint/build PASS; API build PASS; Pris
 
 Open conformity debt: localization inventory, very large Brain/Flows modules, static server private-route index directives/robots conflict, full contrast/zoom/screen-reader and native Electron visual acceptance. CTA/claims/footer were corrected. No traffic or ranking is claimed.
 
-See PMO_WORKSTREAMS.md and workstream reports. Status is LOCAL ONLY, no remote PR or commit. Main completion is held pending owner review of sensitive AI schema rollout and remaining high-priority conformance work.
+## Revalidated 2026-10-13
+
+PR #42 is OPEN/DRAFT against `main` and includes this candidate update. The owner approved inclusion/merge of the additive managed-AI migration using the normal DB procedure. No database connection or migration execution occurred. Four workstreams remain locally implemented/reviewed; no remote delivery to `main` is complete.
+
+Current Check is PARTIAL: 38 physical source files remain over 600 lines; landing/agent type/test limitations and locale/indexability/rendered accessibility findings remain. This candidate update extracts sidepanel and test-harness assets. Continue remediation, then run final checks and normal PR controls.
