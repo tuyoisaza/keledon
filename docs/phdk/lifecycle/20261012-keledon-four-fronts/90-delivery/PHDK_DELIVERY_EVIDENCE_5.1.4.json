@@ -1,0 +1,44 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto: four confirmed KELEDON fronts, maximum applicable code conformity",
+  "target_branch": "main",
+  "expected_version": "5.1.4",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "merged_commit_sha": "95800c149baa4dbb62af5587b3ed5122c924aa2a",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/47",
+  "checks": {
+    "lint": {
+      "status": "BLOCKED",
+      "evidence": "Changed API ESLint stalled without output on the previous candidate; the v5.1.4 diff changes manifests, lockfiles and documentation only. Prettier and git diff --check pass."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "Services web build/typecheck pass; API and Cloud production TypeScript builds pass."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "API, Cloud, services/web and landing builds pass; Electron Windows x64 Squirrel package generated."
+    },
+    "focused_tests": {
+      "status": "PASS",
+      "evidence": "API regression 10/10 and AI-unavailable tests 3/3; Browser security 5/5; diagnostics 18/18; SEO 1/1; Cloud bcrypt/UUID smoke pass."
+    },
+    "uat": {
+      "status": "BLOCKED",
+      "evidence": "Synthetic production-SPA UAT is verified only on 5.1.2. Persisted CRUD/migration and native 5.1.4 Browser/device/audio acceptance remain unverified."
+    },
+    "delivery": {
+      "status": "PASS",
+      "evidence": "Product PR #47 merged; verified remote origin/main SHA 95800c149baa4dbb62af5587b3ed5122c924aa2a, version 5.1.4, all five package/lock roots aligned."
+    },
+    "scope_and_checks": {
+      "status": "BLOCKED",
+      "evidence": "Persisted CRUD/migration, live device/audio, broad accessibility/localization and deployed SEO/AEO remain unverified. Production audits are zero across all five packages; development/build advisories and lint evidence remain."
+    },
+    "completion_gate": {
+      "status": "BLOCKED",
+      "evidence": "Fail-closed because UAT, scope_and_checks and lint evidence remain BLOCKED."
+    }
+  }
+}

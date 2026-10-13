@@ -1,29 +1,25 @@
-# PHDK Check report — KELEDON 5.1.2 / PHDK 2.50.10
+# PHDK Check report — KELEDON 5.1.4 / PHDK 2.50.10
 
-Date: 2026-10-13 America/Mexico_City. Run: `20261012-keledon-four-fronts`. Product source PR #42 and PHDK sync PR #43 are merged on KELEDON `main`; fresh readback is `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d`; all five app package/lock roots remain 5.1.2. PHDK central releases #48/#49 are merged; installed v2.50.10 and all 52 coherence mappings pass.
+Date: 2026-10-13 America/Mexico_City. Run: `20261012-keledon-four-fronts`. Product PR #47 is merged on KELEDON `main` at `95800c149baa4dbb62af5587b3ed5122c924aa2a`; all five app package/lock roots are 5.1.4. PHDK central v2.50.10 and all 52 installed coherence mappings pass.
 
-The four confirmed fronts remain in scope. The owner specified that voice/CRM providers vary by client and asked for maximum applicable code conformity. The restrictive DB-derived role/tenant and write-only-secret policy remains owner-approved.
+The four owner-confirmed fronts remain in scope. Voice/CRM providers vary by tenant. The restrictive DB-derived role/tenant and write-only-secret policy is owner-approved and remains in force.
 
 ## Verified code and source checks
 
-- API and Cloud production builds pass; API and Cloud regression suites each pass 10/10 suites. Changed API health/access-guard ESLint is clean.
-- Web production build and typecheck pass; diagnostics/debug-mode/version tests pass 18/18; SEO source test passes 1/1; full web lint has 0 errors and 135 warnings.
-- Landing typecheck, lint and production build pass. The build has previously recorded stale Browserslist data, an empty Supabase chunk and a 698.94 kB entry-chunk advisory.
-- Exact 5.1.2 synthetic production-SPA UAT passes 1/1 with Company Co/Other Co fixtures and intercepted APIs. This is not a real database or production acceptance run.
-- The shared diagnostic row is source/test verified on public landing, login, app and admin; the separate Electron Browser helper is source/test verified for allowlisted report/reset behavior. `DEBUG_WIDGET_READINESS.md` records dimensions, action outcomes and the remaining visual/runtime boundaries.
-- Physical-line audit covers 1,073 application/test source files with zero files at or above 600 lines.
-- PHDK v2.50.10 install: 52/52 mappings byte-identical; coherence checker passes. Installed completion gate's isolated smoke passes against actual remote KELEDON SHA/version using JSON property `version`.
-- Policy evidence: Nest HTTP wiring rejects anonymous/low-role actions and foreign-tenant user detail; guard regressions exercise direct-ID cross-tenant GET/PUT/DELETE and manager privilege escalation using isolated Prisma fixtures. Those fixtures are not persisted-database evidence.
+- API and Cloud production builds pass; API regression is 10/10 and AI-unavailable-path tests are 3/3. Cloud bcrypt hash/verify and UUID v4 smoke checks pass.
+- Web build/typecheck pass; diagnostics/debug-mode/version tests pass 18/18; SEO source test passes 1/1. Browser security tests pass 5/5; Windows x64 Squirrel package generation succeeds.
+- Production `npm audit --omit=dev` reports zero vulnerabilities for Browser, Cloud, landing, API and web. Moderate advisories remain in development/build-only trees.
+- PHDK v2.50.10 is installed and all 52 manifest mappings match canonical upstream byte-for-byte. The installed coherence checker passes. `git diff --check` and Prettier on changed package/changelog files pass.
+- Changed API ESLint stalled without output on the preceding candidate. No hosted checks or review submissions were present for PR #47.
 
 ## Open acceptance findings
 
-- Full persisted resource × role × surface × CRUD matrix and runtime database/migration behavior remain unverified. No local PostgreSQL/Docker test database was available or used; the approved migration has not been applied.
-- Native Electron rendering, device/microphone/audio behavior, broader route/theme/locale/screen-reader acceptance and effective 44px hit-area behavior remain unverified. The compact web controls intentionally remain 28px with 4px spacing; the report does not claim a larger non-overlapping target.
-- Deployed SEO headers/canonical behavior and external AEO/GEO visibility remain unverified. Source checks do not establish deployed behavior. Client-specific live voice/CRM provider calls were excluded by the owner.
-- PHDK standards delivery completed in KELEDON PR #43; owner disposition of legacy PRs #38–40 remains outstanding after applicability review.
+- Persisted resource × role × surface × CRUD and database/migration runtime acceptance remain unverified. No migration was applied.
+- Native Electron rendering/device/microphone/audio, broader accessibility/localization, route/theme/screen-reader acceptance and effective hit-area behavior remain unverified. Installer packaging and security tests do not establish live-device behavior.
+- Deployed SEO headers/canonical behavior and external AEO/GEO visibility remain unverified. Source checks do not establish deployed behavior. Client-specific live voice/CRM calls were out of scope; the code remains tenant-configurable.
 
 ## Gate conclusion
 
-The two PHDK tool defects found previously are repaired upstream and pass locally: coherence inputs are now included in the installed 52-file manifest, and completion-gate JSON property parsing passes a real remote-source smoke. The actual Auto evidence still contains BLOCKED acceptance items; the full gate therefore remains BLOCKED by its fail-closed scope record, not by the repaired version parser.
+The installed completion gate's JSON version-property support and coherence inputs were repaired upstream and pass locally. Its full Auto evidence remains BLOCKED by the acceptance limits and lint evidence above. No production database, customer data, provider call, app probe or deployment was used.
 
-Overall status: **PARTIALLY DELIVERED**. Product PR #42 and standards PR #43 are merged and read back; no deployment is claimed. The listed acceptance limits and owner disposition of legacy PRs #38–40 remain open.
+Overall status: **PARTIALLY DELIVERED**. Product PR #47 and the earlier PHDK sync/readbacks are merged; no deployment or full live acceptance is claimed.
