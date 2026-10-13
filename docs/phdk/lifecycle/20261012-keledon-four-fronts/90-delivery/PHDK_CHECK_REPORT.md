@@ -1,27 +1,22 @@
-# PHDK Check — integrated 5.1.0 candidate
+# PHDK Check report — KELEDON 5.1.0
 
-Date: 2026-10-13 America/Mexico_City. Source/UAT candidate `7df6f77dd47670cfa7671f27f9ca67c38aa7161e`; PR #42 open/draft with current lifecycle evidence on its branch. All four owner-confirmed fronts are included. CRM/telephony vendors are selected per tenant. No production provider, customer data, database, or metered API call was used.
+Date: 2026-10-13 America/Mexico_City. Checkout: `C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON`; branch `chore/phdk-install-v2.50.8`; pushed candidate `cc9b94dae7ad89e9133da8e5172d2d907d03f8cb`. PR #42 remains OPEN/DRAFT. The four owner-confirmed fronts remain in scope, and telephony/CRM vendors remain tenant-selected. The restrictive account, role, tenant and write-only secret policy is approved and implemented in source/API paths. No production provider, customer data, database, migration, or metered API was used.
 
-## PASS evidence
+## Current candidate verification
 
-- API production/C13 build; focused health, persisted-role, and correlation suites 12/12.
-- Cloud production/C13 build and regression 8/8.
-- Web typecheck and production build; diagnostics/reset/widget tests 18/18; local production-SPA Edge UAT 1/1. UAT blocks external HTTP/WebSocket traffic and intercepts all application API responses with synthetic Company Co fixtures.
-- Landing production build; full web lint 0 errors/135 warnings; changed UI/UAT ESLint clean.
-- `git diff --check`; tracked-source line inventory 0 at/above 600 lines.
-- Dynamic API diagnostic route registry fails closed to manual-only; deep health is persisted-role protected; only explicit safe probes can run on click; public health remains liveness-only; errors/evidence are sanitized and correlated.
-- Screenshot review found and fixed the floating event panel covering the diagnostics route. The final UAT screenshot shows the page clear and the test asserts the duplicate panel is absent there.
-- SEO-F01 is now fixed in source: the root location serves the existing HTML file without switching into the private-route location; the private SPA fallback keeps `noindex, nofollow`. NGINX config regression passes 1/1 and the web production build passes; deployment headers remain unverified.
+- `landing`: `npm run typecheck` PASS.
+- `landing`: full `npm run lint` PASS with zero errors and zero warnings after correcting effect dependencies while preserving fetch-once behavior.
+- `landing`: production `npm run build` PASS (3m40s). Vite reports stale Browserslist data, an empty `supabase` chunk, and a 576.76 kB entry chunk advisory.
+- `landing`: `git diff --check` PASS.
+- `cloud`: `npm run test:regression` PASS, 8/8 suites, including approved role, tenant boundary, registration, secret projection and OAuth abuse cases.
+- Repository tracked source inventory remains below the 600-line limit per prior audit; no backend source changed in this candidate.
 
-## PARTIAL / OPEN
+The landing lint remediation reduced the earlier full scan from 99 errors/8 warnings to zero errors/zero warnings. It corrected unsafe/implicit DTO types and error handling, extracted Auth/i18n/socket hooks from provider modules for React refresh compliance, removed three unreferenced stale superadmin components, and fixed effect dependencies without repeating fetches for empty results. User management hides role/company assignment from non-superadmins, derives their company from the current actor, and scopes brand/team choices to that tenant. Its rendered browser retest passed on pushed candidate `74c849e` with synthetic fixtures; subsequent lint cleanup did not change this page. It verifies UI/payload only, not real backend authorization or persistence. Evidence: `docs/phdk/lifecycle/20261012-keledon-four-fronts/60-uat-fix/MANAGEMENT_USERS_RETEST.md`.
 
-- `landing` production build passes, but full legacy TypeScript check still reports roughly 135 diagnostics in untouched files. Web lint has 135 warnings, no errors.
-- Full active-route localization and translated feedback are not complete; previous 954 JSX text plus 102 literal-attribute counts are historical candidates, not an exact current untranslated inventory.
-- Broad accessibility/contrast/zoom/screen-reader verification across all routes/themes and native Electron visual/device acceptance remain open.
-- The frontend UAT uses synthetic role tokens; isolated API tests cover selected rules, but the complete backend role × tenant × CRUD resource matrix is not proven. See `../20-plan/CRUD_MATRIX.md` and `../50-uat/UAT_CASES.md`.
-- Private-route indexing headers are unverified on a deployed host. Existing source directives are not deployment evidence.
-- PHDK coherence helper expects `phdk-standards/README.md` and `CHANGELOG.md`, absent from the installed source set. Completion evidence is valid JSON, but the vendored completion gate raises `TypeError` while processing the valid null merge SHA. The owner-approved additive managed-AI migration remains unapplied; no database was connected.
+## Remaining findings and evidence limits
 
-## Decision
+Check remains PARTIAL. Browser UAT covers the synthetic diagnostics journey and the synthetic user-management form/payload, but not real backend authorization/persistence. Persisted API CRUD coverage across every resource/role/operation, direct cross-tenant detail/mutation journeys, installed Electron rendering, broad responsive/keyboard/contrast/localization acceptance, deployed SEO headers, and real client-selected provider journeys are not demonstrated. The owner-approved managed-AI migration remains source-only and was not executed.
 
-Check remains PARTIAL. Keep the PR draft until remaining source-checkable findings are fixed or explicitly dispositioned, then use normal review controls. Do not call the branch delivered or production accepted. Remote target-main merge/readback is still required for goal completion.
+The PHDK coherence utility expects missing `phdk-standards/README.md` and `CHANGELOG.md`; the completion gate cannot process the valid pre-merge null SHA. These are tool/input blockers, not product passes. No synthetic files or pre-merge SHA were supplied to force green results.
+
+PR #42 is not delivered: independent review, normal merge, required-check reconciliation, and target-`main` SHA/version readback remain outstanding. Do not claim remote delivery or Auto completion.

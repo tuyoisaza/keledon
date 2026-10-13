@@ -2,11 +2,11 @@
 
 Run ID: `20261012-keledon-four-fronts`
 Stage: `90-delivery`
-Status: `IN PROGRESS — candidate published to review branch; not delivered to main`
+Status: `PARTIALLY DELIVERED — candidate published to draft review branch; not delivered to main`
 PHDK 2.50.8; product candidate 5.1.0
 Branch: `chore/phdk-install-v2.50.8`
-Source/UAT candidate: `7df6f77dd47670cfa7671f27f9ca67c38aa7161e`
-PR: [#42](https://github.com/tuyoisaza/keledon/pull/42) (open/draft; no review decision; no CI statuses returned)
+Latest pushed head: `bde2a594130d3c14a4ec779a4b8821b45f865d7b`; product-source Check candidate: `cc9b94dae7ad89e9133da8e5172d2d907d03f8cb`
+PR: [#42](https://github.com/tuyoisaza/keledon/pull/42) (open/draft; mergeable; no review submissions or CI statuses returned)
 Date: `2026-10-13 America/Mexico_City`
 
 ## Scope and owner decisions
@@ -18,12 +18,13 @@ The candidate covers the four owner-confirmed fronts: baseline/version/PR, prote
 - API build/C13 and focused tests 12/12; Cloud build/C13 and regressions 8/8.
 - Web typecheck/build and diagnostics suite 18/18; Edge synthetic UAT 1/1 with external HTTP/WebSocket blocked; landing production build.
 - Screenshot review corrected floating diagnostics overlay occlusion. Full evidence and limitations are in root/local Check and UAT reports.
-- All tracked source files are below 600 physical lines. Full localization, accessibility, Electron, CRUD/role matrix, deployed private-route headers, and legacy landing typecheck remain open.
+- Landing typecheck/build/lint pass (lint 0 errors/0 warnings); Cloud regressions 8/8 pass. All tracked source files are below 600 physical lines. Full localization, accessibility, Electron, exhaustive CRUD/role matrix, deployed private-route headers, and real backend persistence journeys remain open.
 
 ## Delivery gate
 
 - [x] Candidate commits pushed and PR body updated with current evidence.
-- [ ] Close or explicitly disposition Check findings and satisfy normal review controls.
+- [ ] Complete or formally disposition remaining confirmed PHDK acceptance gaps.
+- [ ] Update PR to ready only when the confirmed acceptance scope is reviewable; no reviewers or hosted checks are currently reported.
 - [ ] Merge PR #42 through normal review process.
 - [ ] Read back remote `main` SHA, package version, and merged PR state.
 - [ ] Record deployment evidence separately if/when one is authorized and available.

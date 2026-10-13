@@ -21,3 +21,7 @@ Goal: complete PHDK Auto for the four owner-confirmed fronts. Telephony/CRM vend
 | Delivery | IN PROGRESS | PR #42 is open/draft at pushed head `cc9b94d`. Normal merge and target `main` SHA/version verification remain. |
 
 Owner-approved managed-AI migration inclusion remains source-only; no DB was connected and no migration was executed. See `docs/phdk/lifecycle/20261012-keledon-four-fronts/` and root `PHDK_CHECK_REPORT.md` for handoffs and evidence limits.
+
+Current stage: Delivery — `PARTIALLY DELIVERED`; PR #42 remains OPEN/DRAFT and remote delivery is 0/4. The remaining confirmed acceptance work includes persisted CRUD/tenant coverage and broader UAT, followed by normal PR integration and remote `main` verification.
+
+SIGUIENTE PASO: cerrar o documentar como manual los hallazgos restantes de UAT/CRUD y Check; después completar la entrega normal del PR y verificar SHA/versión en `main`.
