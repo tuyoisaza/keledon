@@ -1,6 +1,6 @@
 # UAT cases — KELEDON 5.1.5 candidate
 
-Candidate source revision: `3185c047b70d7380ec4eeb1f86a7d83864bd600a` (`fix/uat-version-v5.1.5`). Run `docs/phdk/evidence/uat-local-web.json` records the full revision, environment and results.
+Candidate source revision: `fc114099cd805dd90d8ba1f3bdcddbcb54d464ba` (verified remote `main`, product PR #49). Run `docs/phdk/evidence/uat-local-web.json` records the full revision, environment and results.
 
 | ID        | Journey / expected behavior                                                                                                                                                            | Result / evidence                                                                                                                 |
 | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
