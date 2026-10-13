@@ -6,8 +6,8 @@
 - Candidate adds protected dynamic API diagnostics, liveness/deep-health separation, persisted-role checks, bounded correlated safe-probe evidence, and shared safe diagnostics/report/reset behavior in web and landing shells.
 - Current checks: API build/C13 and focused tests 12/12; web typecheck/build and diagnostics tests 18/18; landing build; diff whitespace check; physical-line inventory 0 at/above 600; full web lint 0 errors/135 warnings; scoped API lint 0 errors/2 warnings; scoped Cloud lint clean. Full landing typecheck retains unrelated legacy errors. See `PHDK_CHECK_REPORT.md`.
 - All four workstreams remain in scope. CRM/telephony are client-selected. Owner approved migration inclusion; no DB connection or migration execution occurred.
-- Check remains PARTIAL for full locale coverage, rendered accessibility/contrast and Electron acceptance, deployed SEO/header verification, and legacy landing diagnostics. PR #42 delivery/readback remains pending.
-- SIGUIENTE PASO: commit and push candidate 5.1.0, update PR #42 with current evidence, then finish the remaining Check findings and normal review/merge/readback.
+- Check remains PARTIAL for full locale coverage, rendered accessibility/contrast and Electron acceptance, deployed SEO/header verification, and legacy landing diagnostics. Commit `6b43c07` is pushed and PR #42 refreshed; review/merge and `main` readback remain pending.
+- SIGUIENTE PASO: finish remaining Check findings and normal review/merge/readback for PR #42.
 
 
 ## 2026-10-12 — PHDK installation

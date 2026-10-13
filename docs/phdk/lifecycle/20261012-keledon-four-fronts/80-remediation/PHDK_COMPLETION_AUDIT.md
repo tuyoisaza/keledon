@@ -8,6 +8,6 @@ Current verification: API production/C13 build and focused tests pass (12/12); w
 
 Open PHDK Check items are full active-route translation/content review, rendered accessibility/contrast across app themes/routes, Electron diagnostics widget acceptance, deployed private-route indexing headers, and legacy landing typecheck debt. The installed PHDK coherence command lacks its expected README/CHANGELOG inputs; the earlier canonical-source mapping result is retained as historical evidence. The completion gate remains unavailable without a merge SHA.
 
-PR #42 remains OPEN/DRAFT. Candidate 5.1.0 is prepared on `chore/phdk-install-v2.50.8`; commit/push and PR metadata update are pending. Normal review/merge and `main` readback remain outstanding, so delivery and completion are not claimed.
+Commit `6b43c07` pushed to `chore/phdk-install-v2.50.8`; PR #42 is OPEN/DRAFT with its title and evidence body updated. Normal review/merge and `main` readback remain outstanding, so delivery to the target branch and completion are not claimed.
 
-SIGUIENTE PASO: commit/push 5.1.0, update PR #42 with current evidence, then complete Check and the normal review/merge/readback path.
+SIGUIENTE PASO: close the remaining Check findings, then complete normal PR review/merge and `main` readback.

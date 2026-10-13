@@ -28,8 +28,8 @@
       "evidence": "Historical synthetic production-SPA UAT is 10/10 on 5.0.54. Candidate 5.1.0 was not browser-launched; current changes are covered by local component/API tests. Tenant live voice/CRM checks remain excluded by owner clarification."
     },
     "delivery": {
-      "status": "BLOCKED",
-      "evidence": "PR #42 is OPEN/DRAFT; candidate commit/push and PR description refresh are pending, then normal review/merge/main readback. No production or database operation occurred."
+      "status": "PARTIAL",
+      "evidence": "Commit 6b43c07 is pushed and PR #42 title/body are refreshed. PR remains OPEN/DRAFT. PHDK Check is partial; normal review/merge and main SHA/version readback remain outstanding. No production or database operation occurred."
     }
   }
 }
