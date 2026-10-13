@@ -1,5 +1,9 @@
 # UAT report — KELEDON 5.1.7 (continuation)
 
+### 5.1.9 operational authorization regression
+
+PR #58 integrates version 5.1.9 at `6d0112dd940c142c20b5e4c56c766da64d000b3b`. The 12-suite API regression now includes DB-derived escalation actor/company/team/session scope, cross-tenant and low-role denials, current-DB superadmin checks for global analytics/dashboard/RBAC, and authenticated listening-session routes with UUID-strength capabilities and expiry. API build/typecheck passes and touched-file ESLint exits 0 with 15 existing warnings. This is isolated source/API regression evidence; the Edge journey below remains on its recorded 5.1.7 tree, and persisted CRUD/runtime and device acceptance remain incomplete.
+
 ### 5.1.8 API security follow-up
 
 The subsequent code audit identified generic user CRUD accepting caller-provided password hashes. PR #56 integrates 5.1.8 at `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6`, removes that input, and passes source regressions for admin/coordinator create/update and superadmin create attempts. This is backend regression evidence, not a second browser UAT: the local Edge journeys below remain explicitly bound to the 5.1.7 revision. Full database-backed CRUD acceptance remains blocked as described below.

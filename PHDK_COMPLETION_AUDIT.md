@@ -1,5 +1,9 @@
 # PHDK Auto completion audit — PARTIALLY DELIVERED
 
+## Latest source delivery — 5.1.9 merged
+
+PR #58 merged at `6d0112dd940c142c20b5e4c56c766da64d000b3b`; five application package/lock roots are 5.1.9. The operational tenant-boundary/API authorization review adds escalation company/team/session scoping, current-DB superadmin gates for global analytics/dashboard/RBAC, and authenticated listening-session routes with UUID-strength expiring IDs. API regressions pass 12/12; build/typecheck pass; touched-file ESLint exits 0 with 15 existing warnings. No production database/provider/deployment operation is claimed. Overall status remains PARTIALLY DELIVERED because persistence/migration, Electron/audio, broad accessibility/localization and deployed SEO/AEO acceptance remain open.
+
 ## Follow-up security fix in progress — 5.1.8
 
 CMT-004 audit fix is integrated through PR #56 at `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6`; all five app roots report 5.1.8. API regression 11/11, typecheck/build and typed ESLint (0 errors/139 warnings) pass. PR #55 was CLOSED WITHOUT MERGE because its stale branch ancestry produced a dirty merge base; the clean-based PR #56 carried the candidate. This lifecycle remains PARTIALLY DELIVERED. Persisted CRUD/runtime, native Electron/audio, broad accessibility/localization and deployed SEO/AEO evidence remain outstanding.

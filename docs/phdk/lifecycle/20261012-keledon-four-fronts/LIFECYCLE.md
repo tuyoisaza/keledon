@@ -1,6 +1,6 @@
 # PHDK Auto lifecycle — 20261012-keledon-four-fronts
 
-## Current terminal board — 2026-10-13, product 5.1.8; overall partial
+## Current terminal board — 2026-10-13, product 5.1.9; overall partial
 
 Goal: complete the four owner-confirmed KELEDON fronts under PHDK v2.50.10, keeping call/CRM providers tenant-selected and enforcing the owner-approved restrictive admin policy.
 
@@ -8,14 +8,16 @@ Preflight ............ COMPLETED — PHDK v2.50.10 / 52 mappings
 Capture .............. REUSED — four fronts confirmed
 Plan ................. REUSED — architecture, requirements, CRUD matrix
 PMO / Workstreams .... REUSED — CMT-001..004 reconciled
-Integration Review ... COMPLETED — PR #56 merged; PR #55 closed without merge due stale squash ancestry
-UAT .................. SCOPED PASS — prior 5.1.7 Edge journey + 5.1.8 API security regression 11/11
+Integration Review ... COMPLETED (SCOPED) — PR #58 merged; DB-derived operational API boundaries
+UAT .................. SCOPED PASS — prior 5.1.7 Edge journey + 5.1.9 API regression 12/12
 UAT Fix .............. COMPLETED (SCOPED) — no new FAIL in 5.1.7 browser rerun
 SEO .................. SOURCE PASS — deployed response not observed
 AEO/GEO .............. PARTIAL — no external/deployed measurement
 Check ................ SOURCE CHECKS PASS / ACCEPTANCE PARTIAL
 Remediation .......... COMPLETED (SCOPED)
-Delivery ............. MERGED / REMOTE VERIFIED via PR #56; no deployment claimed
+Delivery ............. MERGED / REMOTE VERIFIED via PR #58; no deployment claimed
+
+PR #58 integrates 5.1.9 to `main` at `6d0112dd940c142c20b5e4c56c766da64d000b3b`; all five app package/lock roots are 5.1.9. Escalation reads/writes use the current DB actor and company/team/session scope; global analytics/dashboard/RBAC require current DB superadmin; listening-session REST routes require a DB-backed actor and use UUID-strength expiring capabilities. API regression 12/12, build/typecheck, and touched-file ESLint (0 errors/15 existing warnings) pass. No required hosted checks/review or deployment is claimed. Acceptance remains PARTIALLY DELIVERED: persisted CRUD/migration, Electron/audio, broad accessibility/localization and deployed SEO/AEO remain open.
 
 PR #56 merged the 5.1.8 candidate. Independent `origin/main` readback is `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6`; all five app package/lock roots are 5.1.8. PR #55 was closed without merge because its old squash ancestry produced a DIRTY merge state; the same change was rebased by cherry-pick onto verified current `main` and delivered through clean PR #56. API regression 11/11, typecheck/build, typed ESLint 0 errors/139 warnings and PHDK coherence 52/52 pass. Overall lifecycle remains **PARTIALLY DELIVERED** because persisted CRUD/role database acceptance, native Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO remain unresolved. No production DB/migration, live vendor, customer operation or deployment is claimed.
 

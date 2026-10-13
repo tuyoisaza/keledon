@@ -1,5 +1,9 @@
 # Delivery report — current status PARTIALLY DELIVERED
 
+## 2026-10-13 — 5.1.9 operational authorization delivered; acceptance partial
+
+PR #58 merged to `main` at `6d0112dd940c142c20b5e4c56c766da64d000b3b`; all five application package/lock roots are 5.1.9. Operational escalation now uses current-DB identity and company/team/session scopes, global analytics/dashboard/RBAC require a current-DB superadmin, and listening-session REST requires a DB-backed actor with UUID-strength expiring session capabilities. API regression 12/12, build/typecheck and touched-file ESLint (0 errors/15 existing warnings) pass. No deployment is claimed. Overall Auto remains PARTIALLY DELIVERED while persisted CRUD/migration, native Electron/audio, broad accessibility/localization and deployed SEO/AEO evidence remain open. Details: `docs/phdk/lifecycle/20261012-keledon-four-fronts/90-delivery/HANDOFF_5.1.9.md`.
+
 ## 2026-10-13 — 5.1.8 security candidate in progress
 
 The in-scope CRUD review removed caller control of `passwordHash` in user creation/update. PR #56 merged to `main` at `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6`; all five application package/lock roots are 5.1.8. API regression 11/11, production/C13 build, typecheck and typed ESLint pass (0 errors/139 warnings). The owner-approved role/tenant policy covers this change. PR #55 was closed without merge due to stale squash ancestry; PR #56 is the clean-based merged delivery. No deployment is claimed. Overall Auto stays PARTIALLY DELIVERED while persistence/runtime, native Electron/audio, broad accessibility/localization and deployed SEO/AEO evidence remain open.
