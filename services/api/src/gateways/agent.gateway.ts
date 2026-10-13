@@ -1,5 +1,9 @@
 import { PrismaService } from '../prisma/prisma.service';
-import { resolveRuntimeIdentity, ownsRuntimeSession, isRuntimeIdentityCurrent } from './runtime-identity';
+import {
+  resolveRuntimeIdentity,
+  ownsRuntimeSession,
+  isRuntimeIdentityCurrent,
+} from './runtime-identity';
 import { AgentExecutionEvidenceProcessor } from './agent-execution-evidence.processor';
 import { AgentSocketData, CommandSocketData } from './agent-socket.types';
 import {
@@ -65,7 +69,10 @@ export class AgentGateway
     private readonly prisma: PrismaService,
   ) {
     this.evidenceProcessor = new AgentExecutionEvidenceProcessor(
-      this.prisma, this.sessionService, this.logger, this.tracer,
+      this.prisma,
+      this.sessionService,
+      this.logger,
+      this.tracer,
       this.extractContextFromMetadata.bind(this),
     );
   }
@@ -75,8 +82,15 @@ export class AgentGateway
   }
 
   async handleConnection(client: Socket): Promise<void> {
-    const identity = await resolveRuntimeIdentity(this.prisma, client.handshake.auth?.token, client.handshake.auth?.device_id);
-    if (!identity) { client.disconnect(); return; }
+    const identity = await resolveRuntimeIdentity(
+      this.prisma,
+      client.handshake.auth?.token,
+      client.handshake.auth?.device_id,
+    );
+    if (!identity) {
+      client.disconnect();
+      return;
+    }
     client.data.runtimeIdentity = identity;
     this.logger.log(`Agent connected: ${client.id}`);
     this.connectedAgents.set(client.id, client);
@@ -101,11 +115,18 @@ export class AgentGateway
     }
 
     // Broadcast agent disconnection to dashboard if needed
-    if (client.data.runtimeIdentity && this.server && typeof (this.server as any).of === 'function') {
-      this.server.of('/dashboard').to(`team:${client.data.runtimeIdentity.teamId}`).emit('agent:disconnected', {
-        agent_id: client.id,
-        timestamp: new Date().toISOString(),
-      });
+    if (
+      client.data.runtimeIdentity &&
+      this.server &&
+      typeof (this.server as any).of === 'function'
+    ) {
+      this.server
+        .of('/dashboard')
+        .to(`team:${client.data.runtimeIdentity.teamId}`)
+        .emit('agent:disconnected', {
+          agent_id: client.id,
+          timestamp: new Date().toISOString(),
+        });
     }
   }
 
@@ -120,7 +141,16 @@ export class AgentGateway
 
   @SubscribeMessage('brain_event')
   async handleBrainEvent(client: Socket, event: AgentEvent): Promise<void> {
-    if (!await ownsRuntimeSession(this.prisma, client.data.runtimeIdentity, event?.session_id)) { client.emit('error', { message: 'Invalid session scope' }); return; }
+    if (
+      !(await ownsRuntimeSession(
+        this.prisma,
+        client.data.runtimeIdentity,
+        event?.session_id,
+      ))
+    ) {
+      client.emit('error', { message: 'Invalid session scope' });
+      return;
+    }
     client.join(`session:${event.session_id}`);
     const extractedContext = this.extractContextFromMetadata(
       event?.payload?.metadata,
@@ -211,7 +241,13 @@ export class AgentGateway
   ): Promise<void> {
     try {
       const identity = client.data.runtimeIdentity;
-      if (!identity || !await isRuntimeIdentityCurrent(this.prisma, identity)) { client.emit('error', { message: 'Unauthenticated device' }); return; }
+      if (
+        !identity ||
+        !(await isRuntimeIdentityCurrent(this.prisma, identity))
+      ) {
+        client.emit('error', { message: 'Unauthenticated device' });
+        return;
+      }
       // End any existing session for this client before creating a new one
       const existingSessionId = this.agentSessions.get(client.id);
       if (existingSessionId) {
@@ -219,7 +255,8 @@ export class AgentGateway
       }
 
       const session = await this.sessionService.create(identity.deviceId, {
-        userId: identity.userId, teamId: identity.teamId,
+        userId: identity.userId,
+        teamId: identity.teamId,
         tab_url: data.tab_url,
         tab_title: data.tab_title,
       });
@@ -250,7 +287,10 @@ export class AgentGateway
     ack: AgentExecResultAck,
   ): Promise<void> {
     const normalizedEvidence = this.normalizeAgentExecAck(ack);
-    await this.evidenceProcessor.processExecutionEvidence(client, normalizedEvidence);
+    await this.evidenceProcessor.processExecutionEvidence(
+      client,
+      normalizedEvidence,
+    );
   }
 
   @SubscribeMessage(KELEDON_AGENT_EVENTS.EXECUTION_EVIDENCE)
@@ -312,7 +352,16 @@ export class AgentGateway
   // Handle Agent → Cloud events (per canonical contract)
   @SubscribeMessage('event')
   async handleEvent(client: Socket, data: AgentSocketData): Promise<void> {
-    if (!await ownsRuntimeSession(this.prisma, client.data.runtimeIdentity, data?.session_id)) { client.emit('error', { message: 'Invalid session scope' }); return; }
+    if (
+      !(await ownsRuntimeSession(
+        this.prisma,
+        client.data.runtimeIdentity,
+        data?.session_id,
+      ))
+    ) {
+      client.emit('error', { message: 'Invalid session scope' });
+      return;
+    }
     try {
       this.logger.log(`Received event from agent ${client.id}: ${data.type}`);
 
@@ -371,7 +420,9 @@ export class AgentGateway
         propagationCarrier.tracestate,
       );
 
-      this.server.to(`session:${sessionId}`).emit(`command.${sessionId}`, command);
+      this.server
+        .to(`session:${sessionId}`)
+        .emit(`command.${sessionId}`, command);
       if (command.say) {
         console.log(
           `[AgentGateway] Command sent to session ${sessionId}: ${command.say.text}`,
@@ -542,7 +593,11 @@ export class AgentGateway
 
   // Broadcast to sidepanel
   private broadcastToSidePanel(event: string, data: any): void {
-    if (data?.session_id) this.server.of('/sidepanel').to(`session:${data.session_id}`).emit(event, data);
+    if (data?.session_id)
+      this.server
+        .of('/sidepanel')
+        .to(`session:${data.session_id}`)
+        .emit(event, data);
   }
 
   private extractContextFromMetadata(

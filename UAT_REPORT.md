@@ -1,5 +1,11 @@
 # UAT report — KELEDON 5.1.5 candidate
 
+## 2026-10-13 continuation — 5.1.7 startup remediation
+
+The existing 5.1.5/5.1.6 SPA and isolated PostgreSQL results below remain historical acceptance evidence for their source revisions. For the uncommitted 5.1.7 startup candidate, `services/api/test/regression/26-startup-migrations.test.js` passes isolated cases for a successful migration/count check, five migration failures, and a failed company-count query; failures stop before seeding and API startup. The test also verifies Docker uses the checked-in startup script and that startup no longer resolves migrations as rolled back. API regression passes 11/11 and the production/C13 build passes.
+
+This is not container/database/production acceptance. No candidate migration ran against a persistent or production database, no application endpoint was probed, and the candidate was not deployed. Full CRUD persistence, actual deployed migration ledger, native Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO remain incomplete. The lifecycle remains PARTIALLY DELIVERED; API-wide typed ESLint passes with 0 errors and 139 warnings.
+
 Status: **SCOPED LOCAL ACCEPTANCE PASS; FULL ACCEPTANCE INCOMPLETE**
 
 - Candidate source revision: `fc114099cd805dd90d8ba1f3bdcddbcb54d464ba` (verified remote `main`, product PR #49 merged).

@@ -1,4 +1,18 @@
-# Delivery report — PARTIALLY DELIVERED (merged; completion gate blocked)
+# Delivery report — current status PARTIALLY DELIVERED
+
+## 5.1.7 local continuation — source checks pass, PR pending
+
+The latest verified remote `main` is `3c6e4c71bc5672984a1fd07df62d722f95beb4e7` at 5.1.6. KELEDON PRs #51–53 are merged; no PR is open. Branch `fix/fail-closed-api-migrations` has an uncommitted local 5.1.7 candidate.
+
+The candidate removes startup migration rollback resolutions, stops after five failed migration deploys, refuses to seed/start if the company-count query fails, and makes the Dockerfile use the checked-in start script. The API lint command is now non-mutating and typed rules remain enabled. API build and regressions 11/11 pass; API full typed ESLint passes across 184 files with 0 errors and 139 warnings after adding its missing Prettier peer and correcting formatting/rule errors. Candidate commit, push, PR and deployment have not yet occurred.
+
+Bounded existing Railway logs for the base deployment reported seven migrations and no pending work, and showed the prior startup marking `20260529220000_add_rpa_provider_config` rolled back. This is log evidence only; no database was directly queried or changed. Full CRUD persistence, native Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO remain incomplete.
+
+Five-field delivery gate for this candidate: VERSION_BUMP PASS (local); COMMIT_PREFIX and PUSH_AND_PR are next; REMOTE_MAIN awaits PR merge; SCOPE_AND_CHECKS PASS/PARTIAL acceptance. See `DELIVERY_REPORT_5.1.7_PREMERGE.md` and `PHDK_COMMITMENT_COVERAGE_5.1.7.md`.
+
+SIGUIENTE PASO: create the version-prefixed commit and PR, complete required review/merge, and verify the resulting main SHA/version before continuing remaining runtime acceptance.
+
+Historical 5.1.2 post-merge report follows.
 
 Goal: PHDK Auto for the four owner-confirmed KELEDON fronts, maximum applicable code conformity. Product version 5.1.2; PHDK 2.50.8. PR [#42](https://github.com/tuyoisaza/keledon/pull/42) was merged by merge commit. Source commits are `cff60c675ec3e4b21864a24821cbda34a9c51d64` (`v5.1.1: enforce tenant-scoped user management and safe diagnostics`) and `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0` (`v5.1.2: label manager company context accessibly`). Final PR head before merge was `8be5501887416efaf869762daf7722f3dfe12590`; remote `main` merge SHA is `e305d3d817ff20ed52ed889315e2d618127d7d9f`.
 

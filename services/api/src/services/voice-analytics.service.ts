@@ -2,8 +2,22 @@ import { Injectable } from '@nestjs/common';
 import { Subject, Observable } from 'rxjs';
 import { randomUUID } from 'crypto';
 
-import type { ConversationMetrics, TranscriptSegment, SpeakerStats, QualityMetrics, KeywordAnalysis, VoiceAnalyticsData } from './voice-analytics.types';
-export type { ConversationMetrics, TranscriptSegment, SpeakerStats, QualityMetrics, KeywordAnalysis, VoiceAnalyticsData } from './voice-analytics.types';
+import type {
+  ConversationMetrics,
+  TranscriptSegment,
+  SpeakerStats,
+  QualityMetrics,
+  KeywordAnalysis,
+  VoiceAnalyticsData,
+} from './voice-analytics.types';
+export type {
+  ConversationMetrics,
+  TranscriptSegment,
+  SpeakerStats,
+  QualityMetrics,
+  KeywordAnalysis,
+  VoiceAnalyticsData,
+} from './voice-analytics.types';
 
 @Injectable()
 export class VoiceAnalyticsService {

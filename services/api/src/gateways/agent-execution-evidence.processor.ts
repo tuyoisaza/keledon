@@ -1,5 +1,10 @@
 import { Logger } from '@nestjs/common';
-import { context, SpanStatusCode, type Context, type Tracer } from '@opentelemetry/api';
+import {
+  context,
+  SpanStatusCode,
+  type Context,
+  type Tracer,
+} from '@opentelemetry/api';
 import { Socket } from 'socket.io';
 import { PrismaService } from '../prisma/prisma.service';
 import { SessionService } from '../services/session.service';
@@ -14,14 +19,25 @@ export class AgentExecutionEvidenceProcessor {
     private readonly sessionService: SessionService,
     private readonly logger: Logger,
     private readonly tracer: Tracer,
-    private readonly extractContext: (metadata: Record<string, any> | undefined) => Context,
+    private readonly extractContext: (
+      metadata: Record<string, any> | undefined,
+    ) => Context,
   ) {}
 
   async processExecutionEvidence(
     client: Socket,
     evidence: ExecutionEvidence,
   ): Promise<void> {
-    if (!await ownsRuntimeSession(this.prisma, client.data.runtimeIdentity, evidence?.session_id)) { client.emit('error', { message: 'Invalid session scope' }); return; }
+    if (
+      !(await ownsRuntimeSession(
+        this.prisma,
+        client.data.runtimeIdentity,
+        evidence?.session_id,
+      ))
+    ) {
+      client.emit('error', { message: 'Invalid session scope' });
+      return;
+    }
     const requiredFields = [
       'event',
       'session_id',
@@ -58,9 +74,7 @@ export class AgentExecutionEvidenceProcessor {
       );
     }
 
-    const extractedContext = this.extractContext(
-      evidence?.metadata,
-    );
+    const extractedContext = this.extractContext(evidence?.metadata);
 
     await context.with(extractedContext, async () => {
       await this.tracer.startActiveSpan(
@@ -156,5 +170,4 @@ export class AgentExecutionEvidenceProcessor {
       );
     });
   }
-
 }

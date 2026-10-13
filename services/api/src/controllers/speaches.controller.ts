@@ -53,7 +53,8 @@ export class SpeachesController {
     teamId: string | null;
   }) {
     if (scope.role === 'superadmin') return {};
-    if (['admin', 'coordinator'].includes(scope.role) && scope.companyId) return { brand: { companyId: scope.companyId } };
+    if (['admin', 'coordinator'].includes(scope.role) && scope.companyId)
+      return { brand: { companyId: scope.companyId } };
     if (scope.teamId) return { id: scope.teamId };
     return { id: '__NO_TEAM_ACCESS__' };
   }
@@ -85,12 +86,18 @@ export class SpeachesController {
     if (model === englishOnlyModel && normalizedLanguage === 'es') {
       return multilingualModel;
     }
-    if (![englishOnlyModel, multilingualModel].includes(model)) throw new BadRequestException('Unsupported transcription model');
+    if (![englishOnlyModel, multilingualModel].includes(model))
+      throw new BadRequestException('Unsupported transcription model');
     return model;
   }
 
   @Post('transcriptions')
-  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage(), limits: { fileSize: 4 * 1024 * 1024, files: 1 } }))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+      limits: { fileSize: 4 * 1024 * 1024, files: 1 },
+    }),
+  )
   async transcribe(
     @Param('teamId') teamId: string,
     @UploadedFile() file: any,
@@ -102,7 +109,14 @@ export class SpeachesController {
     }
 
     body = body || {};
-    if (['model', 'language'].some(key => body[key] !== undefined && (typeof body[key] !== 'string' || body[key].length > 100))) throw new BadRequestException('Invalid transcription options');
+    if (
+      ['model', 'language'].some(
+        (key) =>
+          body[key] !== undefined &&
+          (typeof body[key] !== 'string' || body[key].length > 100),
+      )
+    )
+      throw new BadRequestException('Invalid transcription options');
     const scope = await this.getActorScope(req);
     const team = await this.prisma.team.findFirst({
       where: {
@@ -122,10 +136,19 @@ export class SpeachesController {
       throw new ForbiddenException('Team access denied');
     }
 
-    if (team.sttProvider !== 'speaches' || !team.speachesApiUrl || process.env.KELEDON_VOICE_DISABLED === 'true') throw new BadRequestException('Configured server STT required');
+    if (
+      team.sttProvider !== 'speaches' ||
+      !team.speachesApiUrl ||
+      process.env.KELEDON_VOICE_DISABLED === 'true'
+    )
+      throw new BadRequestException('Configured server STT required');
     const apiUrl = team.speachesApiUrl.replace(/\/+$/, '');
     const apiKey = team.speachesApiKey || '';
-    await runtimeAiBudget.run(`stt:${req.runtimeIdentity.userId}`, undefined, async () => undefined);
+    await runtimeAiBudget.run(
+      `stt:${req.runtimeIdentity.userId}`,
+      undefined,
+      async () => undefined,
+    );
 
     const form = new FormData();
     form.append(

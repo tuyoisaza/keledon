@@ -25,12 +25,12 @@ import { AnalyticsControllerHelpers } from './analytics.controller-helpers';
 @Controller('api/analytics')
 export class AnalyticsController extends AnalyticsControllerHelpers {
   constructor(
-    private readonly voiceAnalyticsService: VoiceAnalyticsService,
-    private readonly integrationHealthService: IntegrationHealthService,
-    private readonly flowExecutionService: FlowExecutionService,
-    private readonly agentMonitoringService: AgentMonitoringService,
-    private readonly securityService: SecurityService,
-    private readonly systemMonitoringService: SystemMonitoringService,
+    protected readonly voiceAnalyticsService: VoiceAnalyticsService,
+    protected readonly integrationHealthService: IntegrationHealthService,
+    protected readonly flowExecutionService: FlowExecutionService,
+    protected readonly agentMonitoringService: AgentMonitoringService,
+    protected readonly securityService: SecurityService,
+    protected readonly systemMonitoringService: SystemMonitoringService,
   ) {
     super(
       voiceAnalyticsService,

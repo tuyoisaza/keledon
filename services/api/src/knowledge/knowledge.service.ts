@@ -69,7 +69,10 @@ export class KnowledgeService {
     body: CreateKnowledgeDocumentDto,
   ) {
     KnowledgeValidation.assertBody(body, 'Request body is required');
-    KnowledgeValidation.assertNonEmpty(knowledgeBaseId, 'knowledge base ID is required');
+    KnowledgeValidation.assertNonEmpty(
+      knowledgeBaseId,
+      'knowledge base ID is required',
+    );
     KnowledgeValidation.assertNonEmpty(body.companyId, 'companyId is required');
     KnowledgeValidation.assertNonEmpty(body.title, 'title is required');
     KnowledgeValidation.assertNonEmpty(body.content, 'content is required');
@@ -106,7 +109,10 @@ export class KnowledgeService {
     body: IngestKnowledgeBaseDto,
   ) {
     const requestBody = body ?? {};
-    KnowledgeValidation.assertNonEmpty(requestBody.companyId, 'companyId is required');
+    KnowledgeValidation.assertNonEmpty(
+      requestBody.companyId,
+      'companyId is required',
+    );
     KnowledgeValidation.assertOptionalString(
       requestBody.companyId,
       'companyId must be a non-empty string when provided',
@@ -177,8 +183,11 @@ export class KnowledgeService {
             country: KnowledgeValidation.optionalString(metadata.country),
             category: KnowledgeValidation.optionalString(metadata.category),
             language: KnowledgeValidation.optionalString(metadata.language),
-            source: KnowledgeValidation.optionalString(metadata.source) || 'manual',
-            effectiveDate: KnowledgeValidation.optionalString(metadata.effectiveDate),
+            source:
+              KnowledgeValidation.optionalString(metadata.source) || 'manual',
+            effectiveDate: KnowledgeValidation.optionalString(
+              metadata.effectiveDate,
+            ),
             title: document.title,
             text: chunkText,
             createdAt: document.createdAt.toISOString(),
@@ -373,7 +382,10 @@ export class KnowledgeService {
     knowledgeBaseId: string,
     companyId?: string,
   ): Promise<KnowledgeBase> {
-    KnowledgeValidation.assertNonEmpty(knowledgeBaseId, 'knowledge base ID is required');
+    KnowledgeValidation.assertNonEmpty(
+      knowledgeBaseId,
+      'knowledge base ID is required',
+    );
     KnowledgeValidation.assertNonEmpty(companyId, 'companyId is required');
     const knowledgeBase = await this.prisma.knowledgeBase.findUnique({
       where: { id: knowledgeBaseId },

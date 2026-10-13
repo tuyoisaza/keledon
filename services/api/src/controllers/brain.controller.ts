@@ -45,9 +45,24 @@ export class BrainController {
   @UseGuards(RuntimeActorGuard)
   async chat(@Body() body: BrainChatRequest, @Req() request: any) {
     body = { ...body, ...request.runtimeIdentity };
-    if ((body?.voiceMode !== undefined && typeof body.voiceMode !== 'boolean') || !body || typeof body.message !== 'string' || body.message.length > 8000 ||
-        (body.language !== undefined && (typeof body.language !== 'string' || body.language.length > 20)) ||
-        (body.history !== undefined && (!Array.isArray(body.history) || body.history.length > 12 || body.history.some(item => !item || !['user', 'assistant'].includes(item.role) || typeof item.content !== 'string' || item.content.length > 8000)))) {
+    if (
+      (body?.voiceMode !== undefined && typeof body.voiceMode !== 'boolean') ||
+      !body ||
+      typeof body.message !== 'string' ||
+      body.message.length > 8000 ||
+      (body.language !== undefined &&
+        (typeof body.language !== 'string' || body.language.length > 20)) ||
+      (body.history !== undefined &&
+        (!Array.isArray(body.history) ||
+          body.history.length > 12 ||
+          body.history.some(
+            (item) =>
+              !item ||
+              !['user', 'assistant'].includes(item.role) ||
+              typeof item.content !== 'string' ||
+              item.content.length > 8000,
+          )))
+    ) {
       throw new HttpException('Invalid Brain request', HttpStatus.BAD_REQUEST);
     }
     const message = body.message.trim();

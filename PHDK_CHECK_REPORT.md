@@ -1,4 +1,30 @@
-# PHDK Check report — KELEDON 5.1.5 / PHDK 2.50.10
+# PHDK Check — current candidate 5.1.7
+
+Date: 2026-10-13 America/Mexico_City · PHDK 2.50.10 · Auto goal `20261012-keledon-four-fronts`.
+
+Remote `origin/main` was re-fetched at `3c6e4c71bc5672984a1fd07df62d722f95beb4e7` (5.1.6). PRs #51–53 are merged; no PR is open. The uncommitted branch `fix/fail-closed-api-migrations` has a local 5.1.7 candidate; no commit, push, PR, or deployment was made.
+
+## Remediation verified
+
+- API startup no longer issues unconditional `prisma migrate resolve --rolled-back` commands. Docker copies and runs checked-in `services/api/start.sh` instead of generating a divergent script.
+- After five failed `migrate deploy` attempts the API refuses to start, before seeds. If the company-count query fails, startup refuses to seed or start rather than treating the error as an empty database.
+- API lint is non-mutating; typed lint rules remain enabled through TypeScript Project Service and the canonical API tsconfig includes all `src/**/*.ts` files. The missing Prettier peer is now explicitly pinned at 3.9.9; API formatting follows the existing `.prettierrc`.
+- API production/C13 build PASS; regression suite PASS 11/11; startup success/migration-failure/count-failure/Docker-wiring regression PASS; shell and harness syntax PASS; ESLint config resolution PASS.
+- Cloud production/C13 build and regression PASS 8/8. `services/web` typecheck/build PASS, diagnostics 18/18 and SEO 1/1 PASS; lint exits 0 with 134 warnings. Landing typecheck/build/lint PASS. Browser regressions PASS 19/19. Frontend builds report large minified chunks (699 kB and 577 kB).
+- Full-source API typecheck initially showed eight errors; all now pass. The final broken import was in duplicate, unreferenced legacy `MinimalCloudServer` entrypoints/manifests. Repository history shows their CloudServer dependency had already been removed during the Supabase-only migration; production Docker uses Nest `dist/main`, so stale entrypoints/manifests and TS references were retired.
+
+## Check blockers and limits
+
+- API full typed ESLint now **PASSES** over all 184 source files with 0 errors and 139 warnings. The prior stall came from `eslint-plugin-prettier` requiring Prettier as a peer when the API package did not install it. Pinning Prettier 3.9.9 and applying the existing `.prettierrc` resolved the stall; no lint rules were disabled. Nine surfaced rule errors were corrected in source.
+- Existing synthetic 5.1.6 browser/PostgreSQL UAT is not 5.1.7 deployed runtime proof. The 5.1.7 startup shell is exercised only with isolated synthetic command mocks.
+- Exhaustive persisted CRUD by resource × role × tenant × operation × surface, production database migration ledger/runtime, native Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO remain incomplete. Client-selected integrations remain provider-independent in source; no live vendor was called.
+- Bounded Railway logs for the base deployment reported seven migrations/no pending work and showed the old startup marking `20260529220000_add_rpa_provider_config` rolled back. Logs are not a direct database read; no production DB or migration was accessed.
+
+Check: **SOURCE CHECKS PASS; ACCEPTANCE PARTIAL.** API typed ESLint and available automated source gates pass. Remaining persisted CRUD, native runtime and deployed acceptance evidence stays open; deliver the code through a versioned PR and keep PHDK Auto **PARTIALLY DELIVERED** until those items are verified. Detailed evidence: `docs/phdk/lifecycle/20261012-keledon-four-fronts/70-check/PHDK_CHECK_REPORT_5.1.7.md`.
+
+---
+
+# Historical PHDK Check report — KELEDON 5.1.5 / PHDK 2.50.10
 
 Date: 2026-10-13 America/Mexico_City. Run: `20261012-keledon-four-fronts`. Product PR #49 merged on KELEDON `main` at `fc114099cd805dd90d8ba1f3bdcddbcb54d464ba`; all five app package/lock roots are 5.1.5. PHDK central v2.50.10 and all 52 installed coherence mappings pass.
 

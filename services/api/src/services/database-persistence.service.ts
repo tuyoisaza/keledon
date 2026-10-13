@@ -2,9 +2,19 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { Subject, Observable, interval } from 'rxjs';
 
-import type { BackupInfo, DatabaseConfig, QueryOptions, StoredEntity } from './database-persistence.types';
+import type {
+  BackupInfo,
+  DatabaseConfig,
+  QueryOptions,
+  StoredEntity,
+} from './database-persistence.types';
 import { applyFilters, getNestedValue } from './database-query.utils';
-export type { BackupInfo, DatabaseConfig, QueryOptions, StoredEntity } from './database-persistence.types';
+export type {
+  BackupInfo,
+  DatabaseConfig,
+  QueryOptions,
+  StoredEntity,
+} from './database-persistence.types';
 
 @Injectable()
 export class DatabasePersistenceService

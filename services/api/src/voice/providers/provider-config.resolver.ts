@@ -42,7 +42,10 @@ export class ProviderConfigResolver {
       sttProvider,
       ttsProvider,
       llmProvider,
-      sttApiKey: (sttProvider === 'deepgram' ? team.deepgramApiKey : team.speachesApiKey) || '',
+      sttApiKey:
+        (sttProvider === 'deepgram'
+          ? team.deepgramApiKey
+          : team.speachesApiKey) || '',
       ttsApiKey: team.ttsApiKey || team.elevenlabsApiKey || '',
       llmApiKey: this.resolveLlmApiKey(team, llmProvider),
       voiceId: team.ttsVoiceId || undefined,

@@ -1,5 +1,9 @@
 # Delivery handoff — post-merge verification
 
+## 2026-10-13 current continuation — 5.1.7 BLOCKED before publication
+
+Latest main readback: `3c6e4c71bc5672984a1fd07df62d722f95beb4e7`, product 5.1.6; PRs #51–53 merged, no PR open. The local `fix/fail-closed-api-migrations` candidate is 5.1.7 and remains uncommitted/unpushed. API build and regressions 11/11 pass; migration/company-count fail-closed shell tests pass. Seven of eight full-source TypeScript errors were corrected; one missing CloudServer import remains in a legacy runtime entrypoint. API targeted/full ESLint has not completed, so no source commit, PR or deployment was made. Current check and delivery evidence: `DELIVERY_REPORT_5.1.7_PREMERGE.md`, `PHDK_COMMITMENT_COVERAGE_5.1.7.md`, and `../70-check/PHDK_CHECK_REPORT_5.1.7.md`. Overall Auto is PARTIALLY DELIVERED.
+
 Run: `20261012-keledon-four-fronts`
 Stage: PHDK SYNC MERGED AND REMOTE READBACK COMPLETED; OVERALL AUTO PARTIAL
 Date: 2026-10-13 America/Mexico_City

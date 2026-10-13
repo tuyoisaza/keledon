@@ -6,12 +6,7 @@ export interface IntegrationProvider {
   id: string;
   name: string;
   category:
-    | 'crm'
-    | 'helpdesk'
-    | 'communication'
-    | 'payment'
-    | 'analytics'
-    | 'storage';
+    'crm' | 'helpdesk' | 'communication' | 'payment' | 'analytics' | 'storage';
   icon: string;
   description: string;
   status: 'connected' | 'disconnected' | 'error' | 'connecting';

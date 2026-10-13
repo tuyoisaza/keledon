@@ -1,5 +1,14 @@
 # STATUS
 
+## 2026-10-13 — PHDK Auto continuation, 5.1.7 candidate
+
+- Correct repository: `C:\Users\tboar\OneDrive\Documentos\GitHub\KELEDON`; PHDK 2.50.10. Remote `origin/main` is `3c6e4c71bc5672984a1fd07df62d722f95beb4e7`, product 5.1.6; PRs #51–53 are merged and no PR is open.
+- Current fix branch: `fix/fail-closed-api-migrations`, local uncommitted 5.1.7 candidate. API startup no longer rolls back named migrations, refuses to start after five migration failures, and refuses to seed/start when the company-count check fails. Docker uses the checked-in startup script. API lint is non-mutating and its type project is scoped to source files without dropping typed rules.
+- Verification: API production/C13 build, all-source typecheck, regression 11/11 and full typed ESLint (184 files; 0 errors/139 warnings) PASS, including migration/count fail-closed cases. The ESLint stall was due to the missing Prettier peer; it is now pinned at 3.9.9 and source is formatted to the existing `.prettierrc`. Unreferenced duplicate `MinimalCloudServer` entrypoints/manifests were retired because the historical migration removed their CloudServer dependency and production runs Nest `dist/main`.
+- Authorized bounded Railway log read for deployed SHA `3c6e4c7` showed seven migrations and no pending work, but also the old startup's unconditional rollback resolution marking `20260529220000_add_rpa_provider_config` rolled back. No production DB was accessed and no production migration or application probe was run.
+- Goal remains PARTIALLY DELIVERED. Exhaustive persisted CRUD evidence, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO remain open. The candidate is not committed, pushed, or in a PR.
+- SIGUIENTE PASO: commit and push the verified candidate through a versioned PR, run CI and remote readback, then continue the remaining acceptance items.
+
 ## 2026-10-13 — PHDK Auto candidate 5.1.0
 
 - Correct checkout: `C:\Users\tboar\OneDrive\Documentos\GitHub\KELEDON`, branch `chore/phdk-install-v2.50.8`; PHDK 2.50.8.

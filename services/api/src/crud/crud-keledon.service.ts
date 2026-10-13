@@ -388,7 +388,13 @@ export class CrudKeledonService {
       // Generate signed launch link
       const timestamp = Date.now();
       const cloudUrl = process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com';
-      const payload = JSON.stringify([keledonId, userId, String(timestamp), String(device.pairingCode), new URL(cloudUrl).origin]);
+      const payload = JSON.stringify([
+        keledonId,
+        userId,
+        String(timestamp),
+        String(device.pairingCode),
+        new URL(cloudUrl).origin,
+      ]);
       const signature = this.signPayload(payload);
 
       const deepLink = `keledon://launch?keledonId=${keledonId}&code=${device.pairingCode}&userId=${userId}&timestamp=${timestamp}&signature=${signature}&cloudUrl=${encodeURIComponent(cloudUrl)}`;

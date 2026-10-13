@@ -1,12 +1,7 @@
 export interface Alert {
   id: string;
   type:
-    | 'system'
-    | 'integration'
-    | 'flow'
-    | 'voice'
-    | 'security'
-    | 'performance';
+    'system' | 'integration' | 'flow' | 'voice' | 'security' | 'performance';
   severity: 'info' | 'warning' | 'critical' | 'emergency';
   title: string;
   message: string;

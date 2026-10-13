@@ -298,7 +298,10 @@ export class TeamController {
         ['ttsProvider', allowedTtsProviders],
         ['llmProvider', allowedLlmProviders],
       ] as const) {
-        if (config[key] !== undefined && (typeof config[key] !== 'string' || !allowed.includes(config[key]))) {
+        if (
+          config[key] !== undefined &&
+          (typeof config[key] !== 'string' || !allowed.includes(config[key]))
+        ) {
           throw new BadRequestException('Unsupported provider selection');
         }
       }

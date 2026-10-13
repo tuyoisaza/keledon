@@ -78,8 +78,7 @@ export class EndpointDiagnosticsRegistry {
           Reflect.getMetadata(IS_PUBLIC_KEY, handler) === true ||
           Reflect.getMetadata(IS_PUBLIC_KEY, controller) === true;
         const swagger = Reflect.getMetadata(API_OPERATION_METADATA, handler) as
-          | { summary?: string }
-          | undefined;
+          { summary?: string } | undefined;
         const documentedResponses = Reflect.getMetadata(
           API_RESPONSE_METADATA,
           handler,

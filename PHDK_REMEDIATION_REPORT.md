@@ -1,5 +1,13 @@
 # PHDK remediation report — active candidate
 
+## 2026-10-13 latest continuation — 5.1.7 local candidate
+
+On branch `fix/fail-closed-api-migrations`, based on verified `origin/main` `3c6e4c71bc5672984a1fd07df62d722f95beb4e7` / 5.1.6, the local uncommitted 5.1.7 candidate removes automatic rollback-resolution commands, fails closed after five migration failures, refuses to seed/start if company count cannot be verified, and makes Docker invoke the checked-in startup script. The API lint command no longer autofixes and keeps typed rules enabled through TypeScript Project Service.
+
+API build/C13 PASS; full `src/**/*.ts` typecheck PASS; regression 11/11 PASS; startup shell and test syntax PASS; full typed ESLint PASS across 184 files (0 errors, 139 warnings). The lint stall was caused by the missing Prettier peer required by the existing ESLint config; Prettier 3.9.9 is now pinned, source formatting is aligned, and all surfaced errors are fixed without disabling rules. Candidate is ready for versioned PR delivery. Remaining acceptance gaps are exhaustive persisted CRUD, native Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO. Bounded existing Railway logs exposed the old rollback command; no direct DB access/migration or deployment was performed. See `docs/phdk/lifecycle/20261012-keledon-four-fronts/80-remediation/CONTINUATION_20261013_5.1.7.md` and `70-check/PHDK_CHECK_REPORT_5.1.7.md`.
+
+The full API source typecheck initially found eight errors; all now pass. Seven were fixed in Analytics/gateway typing and dead legacy modules. The remaining broken path was in duplicate, unreferenced legacy `MinimalCloudServer` entrypoints/manifests; their former CloudServer dependency had already been removed in the Supabase-only migration, while production startup uses Nest `dist/main`. The stale entrypoints/manifests and TypeScript references were retired.
+
 Run: `20261012-keledon-four-fronts` · Product candidate: `5.1.2` (`0d98f2812d8eb88a8626101f81f9bf9ca6d52de0`, merged by #42) · PHDK: 2.50.10 installed from `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`, delivered by KELEDON PR #43 at `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d` · Stage: Check (GAPS RECORDED); remediation (PARTIAL).
 
 ## 2026-10-13 continuation — current Check remediations

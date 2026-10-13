@@ -28,7 +28,6 @@
     "src/auth-*",
     "src/local-services/**",
     "src/modules/**",
-    "src/supabase-clean/**",
-    "src/MinimalCloudServer.ts"
+    "src/supabase-clean/**"
   ]
 }

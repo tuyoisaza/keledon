@@ -211,7 +211,9 @@ export class ResourceScopeGuard implements CanActivate {
         if (flow.teamId !== session.teamId) return deny();
       }
     } else if (kind === 'CallsController') {
-      const session = params.sessionId ? await sessionAllowed(params.sessionId) : null;
+      const session = params.sessionId
+        ? await sessionAllowed(params.sessionId)
+        : null;
       if (handler === 'createCall') {
         const device =
           body.deviceId &&
@@ -231,7 +233,10 @@ export class ResourceScopeGuard implements CanActivate {
       }
       const teamId = session?.teamId || body.teamId;
       if (body.activeVendorId) {
-        const vendor = await this.prisma.vendor.findUnique({ where: { id: body.activeVendorId }, select: { teamId: true } });
+        const vendor = await this.prisma.vendor.findUnique({
+          where: { id: body.activeVendorId },
+          select: { teamId: true },
+        });
         if (!vendor || vendor.teamId !== teamId) return deny();
       }
       if (body.activeFlowId) {

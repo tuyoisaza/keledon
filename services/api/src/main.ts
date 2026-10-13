@@ -11,7 +11,10 @@ import {
 } from './config/runtime-tier';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AuthGuard } from './guards/auth.guard';
-import { ApiCorrelationExceptionFilter, ApiCorrelationMiddleware } from './interceptors/api-correlation';
+import {
+  ApiCorrelationExceptionFilter,
+  ApiCorrelationMiddleware,
+} from './interceptors/api-correlation';
 
 // Global error handlers - must be first
 process.on('uncaughtException', (err) => {
