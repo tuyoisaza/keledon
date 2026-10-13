@@ -1,6 +1,6 @@
 # UAT cases — integrated 5.1.7 UI journey plus 5.1.9 operational API regression
 
-Latest source regression: PR #58, version 5.1.9, main SHA `6d0112dd940c142c20b5e4c56c766da64d000b3b`. API regression is 12/12, including the operational tenant-boundary checks. This does not constitute a new browser journey; the local Edge journey below remains bound to its recorded 5.1.7 source revision.
+Latest source regression: PR #58, version 5.1.9, product merge SHA `6d0112dd940c142c20b5e4c56c766da64d000b3b`; PHDK handoff PR #59 advanced current `main` to `91da4060bfaf6833877c24b30e98521dcb8fe988`. API regression is 12/12, including operational tenant-boundary checks. This does not constitute a new browser journey; the local Edge journey below remains bound to its recorded 5.1.7 source revision.
 
 Current evidence revision: `edce7eafbe13ac16ab93274a87e12571e7b04b2e`; verified remote main `a854ca7634307538305cd9b5ad1f91f8a066b1a1`; identical Git tree. Environment: local built web SPA in headless Edge with Company Co/Other Co synthetic fixtures, blocked external network and intercepted APIs. Full details and actions: `UAT_REPORT.md`.
 
