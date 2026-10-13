@@ -1,7 +1,7 @@
 {
   "version": "5.0.54",
   "date": "2026-10-12",
-  "origin": "http://127.0.0.1:62966",
+  "origin": "http://127.0.0.1:51947",
   "provenance": "Local built web with intercepted Company Co API; not real server/DB or production authentication",
   "checks": [
     "UAT-THEME actual dark/light/corporate shell selection and persistence PASS; full-app contrast certification not claimed",

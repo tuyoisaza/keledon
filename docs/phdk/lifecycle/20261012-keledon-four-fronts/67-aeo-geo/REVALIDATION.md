@@ -1,3 +1,3 @@
-# AEO_GEO source revalidation checkpoint
+# AEO/GEO source revalidation checkpoint
 
-Date2026-10-12; source fingerprint `5ee8649bbab265db46f14d4ba1a83399b9fb268f04ecfde24ede6f2cd85e0dba`. Initial audit snapshots/handoff preserved. Current canonical reports include root public-copy readback: F02 repaired in source; F03 footer placeholder portion repaired, CTA remains inert; F01 client-only private noindex and unmeasured runtime/indexation/rendering remain. No browser/provider/HTTP checks or product edits by worker. Not a successful final exit gate or accepted UAT.
+Revalidated 2026-10-13. Current public copy describes configured capability without claiming live client integrations. CTAs navigate to `/login` and `#architecture`; Nginx source marks only `/` indexable and noindexes other SPA routes. Local production-SPA UAT passed 10/10. Public locale coverage, live deployment/indexation, crawler rendering, and external engine citations remain unmeasured, so no external visibility claim is made.

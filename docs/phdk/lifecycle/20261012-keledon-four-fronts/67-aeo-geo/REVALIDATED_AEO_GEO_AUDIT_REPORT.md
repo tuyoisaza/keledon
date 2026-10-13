@@ -1,21 +1,13 @@
 # AEO/GEO audit — public answers
 
-Run: 20261012-keledon-four-fronts. Date: 2026-10-12 America/Mexico_City. PHDK2.50.8. Baseline52537140e67d0d6c05486fa13837df3eb5316fb3; local dirty candidate. Source fingerprint SHA256 `5ee8649bbab265db46f14d4ba1a83399b9fb268f04ecfde24ede6f2cd85e0dba` (ordered files below), not a commit or deployment SHA. Method: source-only inspection; no browser, HTTP/probe, Search Console, provider, paid model, crawler or database access. Latest integrated UAT not present at snapshot, so this is a prepared audit, not final accepted stage or runtime/indexation proof.
+Run: `20261012-keledon-four-fronts` · Revalidated: 2026-10-13 · PHDK 2.50.8 · Candidate 5.0.54. Review covers source plus local production-SPA UAT only. No external answer engine, crawler, live deployment, provider, paid model, or database was used.
 
-Applicability: public home APPLICABLE; authenticated application/customer data NOT_APPLICABLE for discovery. SEO source audit/handoff prepared separately; essential indexation/content source issues remain open, so final AEO/GEO cannot claim completed.
+Public question map supported by current source:
+- What is KELEDON? It describes a cloud-governed contact-center runtime for voice assistance and browser workflows.
+- Who decides and who executes? The architecture content assigns decisions to Cloud and approved browser actions to the Browser runtime.
+- Which call/CRM platforms work? The source says each client configures its own interfaces and validates compatibility; it does not promise a specific live integration.
+- How can a user enter or understand the workflow? Login links go to `/login`; the secondary CTA goes to the real `#architecture` section.
 
-Real supported question map (editorial source mapping, no demand/volume claim):
-- What is KELEDON? index.html description/noscript and Hero identify cloud-governed contact-center voice/browser runtime.
-- Who makes decisions and who executes? Hero and Architecture explain Cloud decides/Browser executes.
-- Which CRM/call platforms can be used? Current intent and CTA explain client-configured interfaces requiring controlled pilot validation; root has now removed named blanket claims and qualified examples.
-- How do I enter/configure the application? Hero login link is actionable; footer architecture anchor now truthful; CTA buttons remain inert.
+Product copy avoids unsupported customer, certification, measured ROI, price, healthcare, insurance, and live integration claims. Public content is mostly English (`lang=en`); UI translations do not establish localized public answers or locale URLs. The page is client-rendered, and no engine citations, referral traffic, external visibility, or crawler rendering were measured. JSON-LD/FAQ/llms.txt are not treated as mandatory without a specific use case.
 
-Identity is KELEDON; no verifiable author credentials, certifications, customer endorsements, measured ROI, public price facts or update provenance were provided. Do not manufacture them. Product descriptions can be clarified from source contracts; actual client integration, healthcare/insurance suitability and production recovery remain unverified.
-
-No JSON-LD/FAQ/llms.txt is assumed mandatory. No AI engine sample, citations/referrals or search engine response was requested or executed. AEO observations NOT MEASURED. Public React content is JS rendered with short noscript summary; semantic sections are present in source, actual crawler/rendered availability unverified.
-
-Outcome PARTIAL / BLOCKED on remaining SEO-F01/F03 (F02 source repaired) and current integrated UAT. Public market/language content remains largely English with HTML lang=en; UI en/es/pt catalogs do not prove localized public answers or locale URLs. Root code fixes may be source-validated; do not claim citations/indexing guarantees.
-
-## Source revalidation after root public-copy repair
-
-Root's current Features text now states client compatibility validation, configured cloud models/managed prompts/validated outputs and approved-origin actions; PII-out-of-box/local-optional-cloud/named vendor guarantees removed. UseCases are explicitly example configured workflows, without healthcare/insurance/EMR/Jira/SAP claims. Footer `#` legal/social links removed; real architecture anchor preserved. **SEO-F02 CLOSED in source; SEO-F03 footer portion CLOSED, CTA buttons remain inert at this snapshot.** No live workflow proof inferred. Private client-only noindex limitation F01 remains, and nginx/provider changes are explicitly outside this documentation task. Final source fingerprint above updated; initial historical snapshots retained unchanged, with this revalidation recorded separately.
+Local production-SPA UAT passes 10/10. Nginx source marks `/` indexable and other SPA route shells noindex, but the deployed headers remain unverified. Stage outcome: source content is truthful and navigation is actionable; public localization, crawler behavior, live indexation, and external citations remain unmeasured.

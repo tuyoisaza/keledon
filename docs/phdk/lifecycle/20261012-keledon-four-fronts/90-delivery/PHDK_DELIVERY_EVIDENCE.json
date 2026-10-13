@@ -8,8 +8,8 @@
   "pr_url": "https://github.com/tuyoisaza/keledon/pull/42",
   "checks": {
     "lint": {
-      "status": "BLOCKED",
-      "evidence": "services/web lint and ESLint on changed landing files pass. Touched Cloud TypeScript modules still fail strict ESLint with type-aware unsafe-access and related diagnostics (550 errors, 74 warnings after scoped auto-fixes)."
+      "status": "PASS",
+      "evidence": "services/web lint passes with 0 errors and 138 warnings. Strict scoped Cloud ESLint passes all 16 changed service modules with 0 errors/0 warnings. Scoped lint on 28 changed API service files has 0 errors and 13 warnings."
     },
     "typecheck": {
       "status": "BLOCKED",
@@ -20,8 +20,8 @@
       "evidence": "Cloud C13/typecheck build, services/web and landing Vite builds, and services/api build+C13 pass. Agent build not run because its script deletes repository-root dist."
     },
     "focused_tests": {
-      "status": "BLOCKED",
-      "evidence": "Cloud authorization/OAuth/resource regression 8/8; Browser 19/19; web synthetic 10/10; API regression 8/8; Salesforce adapter suite 17/19 with two existing read-only location-fixture failures."
+      "status": "PASS",
+      "evidence": "Cloud authorization/OAuth/resource regression 8/8; Browser 19/19; web synthetic 10/10; API regression 8/8; Agent Jest 9/9 suites and 78/78 tests, including tenant-configured source and packaged-extension tab registries."
     },
     "uat": {
       "status": "PASS",
@@ -29,7 +29,7 @@
     },
     "delivery": {
       "status": "BLOCKED",
-      "evidence": "PR #42 is draft/open. Physical-line inventory has 16 source files at or above 600 lines; no merge/main readback. Three additive Cloud schema migrations are included but were not executed. The vendored completion gate throws TypeError when merged_commit_sha is null."
+      "evidence": "PR #42 is draft/open at remote head eacf6da; current remediation changes are local/unpushed. Physical-line inventory has 0 source files at or above 600 lines; no merge/main readback. Additive Cloud schema migrations are included but were not executed. The vendored completion gate throws TypeError when merged_commit_sha is null."
     }
   }
 }

@@ -1,2 +1,10 @@
 # PMO milestone history
 2026-10-12: owner confirms four fronts in order. Canonical PHDK v2.50.8/50 hashes/native rules verified. PR35 actually merged; PR38-40 still open. Source diagnostic failures inventoried. Capture/Plan mapped all four IDs. No product acceptance/delivered commitment yet. Next: bounded implementation and central integration.
+
+2026-10-13 Check remediation milestone: split the source/extension background runtime, Phase 5 test server, CallsService and mirrored RPA executors. Method-preservation checks passed (background 30, Phase 5 33, RPA 30 in each copy); agent extension validation resolves/parses its 11-module background/RPA graph; API build/C13 and regression passed 8/8; isolated CallsService `getCall` and RPA runtime smoke passed. Physical-line inventory fell from 16 to 6. Remediation remains active; full UAT/Check rerun and PR delivery remain pending.
+
+2026-10-13 Check remediation milestone: split API and Cloud analytics controllers into route roots, helper classes, and type modules. All six new/updated source files are below 600 lines; API and Cloud production/C13 builds and both regression suites pass 8/8. Cloud analytics now counts high severity correctly and sorts executions by update time. Inventory is 8 over-limit files; final UAT/Check and delivery remain pending.
+
+2026-10-13 Check remediation milestone: API and Cloud DecisionEngineService now use focused context/flow/policy modules and public type modules; public service entry points and the flow-execution result type remain intact. Both production/C13 builds pass. The physical-line inventory is now 6 files; final UAT/Check and delivery remain pending.
+
+2026-10-13 Check remediation milestone: API and Cloud FlowExecutionService now use sub-600-line service, step/performance helper, template and public-type modules. Public service method sets are preserved; production/C13 builds and regression suites pass 8/8 in both packages, and default template/default-step smoke checks pass in each. The current inventory is 4 files; final UAT/Check and delivery remain pending.

@@ -2,7 +2,7 @@
 
 Date: 2026-10-13. Candidate: 5.0.54. Rule: source files remain below 600 physical lines. Count includes blank lines; scan includes `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`, excluding dependency and generated directories.
 
-The current inventory contains **16 files** at or above the limit. The 828-line integration test suite was split into a 370-line coordinator and a 471-line case mixin; both files pass syntax checks. This remains an open remediation backlog, not a passing Check result.
+The current inventory contains **0 files** at or above the limit. API/Cloud analytics, decision, flow, alerting and UI automation plus API calls modules are now modularized and validated; source line-limit remediation passes, while the broader PHDK Check retains documented environment and acceptance findings.
 
 | Lines | File |
 |---:|---|

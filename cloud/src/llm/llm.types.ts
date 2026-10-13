@@ -49,6 +49,14 @@ export interface CommandDecision {
   type: CommandType;
   text?: string;
   steps?: UIStep[];
+  interruptible?: boolean;
+  voice?: string;
+  language?: string;
+  speed?: number;
+  pitch?: number;
+  volume?: number;
+  flow_id?: string | null;
+  flow_run_id?: string | null;
   mode?: 'normal' | 'safe' | 'silent';
   reasoning?: string;
   confidence?: number;

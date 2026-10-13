@@ -147,6 +147,72 @@ for (const module of coreModules) {
   }
 }
 
-console.log('\n🎉 Extension validation passed!');
-console.log('✨ All files are present and syntactically correct');
-console.log('🚀 Ready to build with: npm run build');
+// Validate static local imports for the active background and RPA executor graphs.
+const moduleEntryPoints = [
+  'background/background-service.js',
+  'rpa/executor/index.js',
+];
+const checkedModules = new Set();
+
+function validateModuleGraph(filePath) {
+  const resolvedPath = path.resolve(filePath);
+  if (checkedModules.has(resolvedPath)) return;
+  if (!fs.existsSync(resolvedPath)) {
+    throw new Error(`Missing module ${path.relative(extensionDir, resolvedPath)}`);
+  }
+  checkedModules.add(resolvedPath);
+
+  execFileSync(process.execPath, ['--check', resolvedPath], { stdio: 'pipe' });
+  const source = fs.readFileSync(resolvedPath, 'utf8');
+  const localImports = [
+    ...source.matchAll(/\b(?:import|export)\s+(?:[^'";]*?\s+from\s*)?['"](\.[^'"]+)['"]/g),
+    ...source.matchAll(/\bimport\s*\(\s*['"](\.[^'"]+)['"]\s*\)/g),
+  ].filter((match) => {
+    const lineStart = source.lastIndexOf('\n', match.index) + 1;
+    return !source.slice(lineStart, match.index).trim().startsWith('//');
+  });
+
+  for (const match of localImports) {
+    const importPath = path.resolve(path.dirname(resolvedPath), match[1]);
+    validateModuleGraph(importPath);
+  }
+}
+
+try {
+  for (const entryPoint of moduleEntryPoints) {
+    validateModuleGraph(path.join(extensionDir, entryPoint));
+  }
+
+  const executorFiles = [
+    'index.js',
+    'flow-execution.methods.js',
+    'action-execution.methods.js',
+    'step-validation.methods.js',
+    'executor-runtime.methods.js',
+  ];
+  const sourceExecutorDir = path.join(__dirname, '../src/rpa/executor');
+  for (const file of executorFiles) {
+    const sourcePath = path.join(sourceExecutorDir, file);
+    const extensionPath = path.join(extensionDir, 'rpa/executor', file);
+    if (!fs.existsSync(sourcePath) || !fs.existsSync(extensionPath)) {
+      throw new Error(`Missing mirrored RPA executor module: ${file}`);
+    }
+    if (fs.readFileSync(sourcePath, 'utf8') !== fs.readFileSync(extensionPath, 'utf8')) {
+      throw new Error(`Source/extension RPA executor mismatch: ${file}`);
+    }
+  }
+
+  console.log(`✅ Background/RPA local module graph: ${checkedModules.size} modules resolve and parse`);
+  console.log(`✅ Source/extension RPA executor modules match: ${executorFiles.length} files`);
+} catch (error) {
+  console.error('❌ Local module graph validation failed:', error.message);
+  process.exitCode = 1;
+}
+
+if (process.exitCode) {
+  console.error('\n❌ Extension validation failed');
+} else {
+  console.log('\n🎉 Extension validation passed!');
+  console.log('✨ All files are present and syntactically correct');
+  console.log('🚀 Ready to build with: npm run build');
+}

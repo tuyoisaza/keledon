@@ -2,23 +2,4 @@
 
 Date: 2026-10-13. Candidate: 5.0.54. Rule: source files remain below 600 physical lines. Count includes blank lines; scan includes `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`, excluding dependency and generated directories.
 
-The current inventory contains **16 files** at or above the limit. The 828-line integration test suite was split into a 370-line coordinator and a 471-line case mixin; both files pass syntax checks. This remains an open remediation backlog, not a passing Check result.
-
-| Lines | File |
-|---:|---|
-| 1301 | `agent/src/background/legacy-background.js` |
-| 1041 | `cloud/src/controllers/analytics.controller.ts` |
-| 1035 | `services/api/src/controllers/analytics.controller.ts` |
-| 1029 | `services/api/src/calls/calls.service.ts` |
-| 1020 | `agent/extension/background/background-service.js` |
-| 966 | `services/api/src/services/real-time-alerting.service.ts` |
-| 919 | `services/api/src/services/decision-engine.service.ts` |
-| 908 | `services/api/src/services/ui-automation.service.ts` |
-| 882 | `services/api/src/services/flow-execution.service.ts` |
-| 861 | `agent/extension/rpa/executor/index.js` |
-| 861 | `agent/src/rpa/executor/index.js` |
-| 826 | `cloud/src/services/real-time-alerting.service.ts` |
-| 794 | `cloud/src/services/flow-execution.service.ts` |
-| 769 | `cloud/src/services/decision-engine.service.ts` |
-| 765 | `src/test/phase5-integration-test.js` |
-| 762 | `cloud/src/services/ui-automation.service.ts` |
+The current inventory contains **0 files** at or above the limit. In addition to the earlier splits, API and Cloud Alerting were divided into service roots, defaults, notification delivery, monitoring checks and shared public types. UI Automation was divided into service roots, DOM helpers, action helpers and public contracts. The UI roots are 225/225 lines; isolated TypeScript compilation succeeds in both packages. API/Cloud production/C13 builds and regression suites pass 8/8 in both packages. Agent validation passes its 11-module graph and source/extension parity checks. This closes the physical line-limit finding; integrated PHDK Check remains open for other findings and final lifecycle evidence.

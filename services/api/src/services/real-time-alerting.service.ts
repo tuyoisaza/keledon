@@ -1,120 +1,36 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { Subject, Observable, interval } from 'rxjs';
+import { Subject, interval, Subscription } from 'rxjs';
 import { randomUUID } from 'crypto';
+import { AlertNotificationDispatcher } from './alert-notifications';
+import { AlertMonitoringChecks } from './alert-monitoring-checks';
+import {
+  getDefaultAlertRules,
+  getDefaultNotificationChannels,
+} from './alerting.defaults';
 import { SystemMonitoringService } from './system-monitoring.service';
 import { IntegrationHealthService } from './integration-health.service';
 import { FlowExecutionService } from './flow-execution.service';
 import { VoiceAnalyticsService } from './voice-analytics.service';
 
-export interface Alert {
-  id: string;
-  type:
-    | 'system'
-    | 'integration'
-    | 'flow'
-    | 'voice'
-    | 'security'
-    | 'performance';
-  severity: 'info' | 'warning' | 'critical' | 'emergency';
-  title: string;
-  message: string;
-  source: string;
-  timestamp: Date;
-  metadata: Record<string, any>;
-  acknowledged: boolean;
-  resolved: boolean;
-  resolvedBy?: string;
-  resolvedAt?: Date;
-  tags: string[];
-}
-
-export interface NotificationChannel {
-  id: string;
-  name: string;
-  type: 'email' | 'slack' | 'webhook' | 'sms' | 'push' | 'dashboard';
-  enabled: boolean;
-  config: NotificationChannelConfig;
-  filters: AlertFilter[];
-}
-
-export interface NotificationChannelConfig {
-  email?: {
-    to: string[];
-    cc?: string[];
-    bcc?: string[];
-    template?: string;
-  };
-  slack?: {
-    webhook: string;
-    channel: string;
-    username?: string;
-    icon?: string;
-  };
-  webhook?: {
-    url: string;
-    method: 'POST' | 'PUT';
-    headers?: Record<string, string>;
-    retryAttempts?: number;
-  };
-  sms?: {
-    to: string[];
-    provider: 'twilio' | 'aws-sns' | 'nexmo';
-    template?: string;
-  };
-  push?: {
-    service: 'fcm' | 'apns' | 'web-push';
-    tokens: string[];
-    title?: string;
-  };
-  dashboard?: {
-    enabled: boolean;
-    priority: boolean;
-  };
-}
-
-export interface AlertFilter {
-  type?: Alert['type'][];
-  severity?: Alert['severity'][];
-  source?: string[];
-  tags?: string[];
-  minSeverity?: Alert['severity'];
-}
-
-export interface AlertRule {
-  id: string;
-  name: string;
-  description: string;
-  enabled: boolean;
-  condition: AlertCondition;
-  action: AlertAction;
-  cooldownMinutes: number;
-  lastTriggered?: Date;
-  triggerCount: number;
-}
-
-export interface AlertCondition {
-  metric: string;
-  operator: 'gt' | 'lt' | 'gte' | 'lte' | 'eq' | 'ne' | 'contains' | 'regex';
-  threshold: any;
-  duration?: number; // seconds
-  aggregation?: 'avg' | 'min' | 'max' | 'sum' | 'count';
-}
-
-export interface AlertAction {
-  channels: string[];
-  template?: string;
-  escalation?: AlertEscalation;
-}
-
-export interface AlertEscalation {
-  enabled: boolean;
-  delay: number; // minutes
-  channels: string[];
-  condition?: AlertCondition;
-}
-
+import {
+  Alert,
+  AlertRule,
+  NotificationChannel,
+} from './real-time-alerting.types';
+export type {
+  Alert,
+  AlertAction,
+  AlertCondition,
+  AlertEscalation,
+  AlertFilter,
+  AlertRule,
+  NotificationChannel,
+  NotificationChannelConfig,
+} from './real-time-alerting.types';
 @Injectable()
 export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
+  private readonly monitoringChecks: AlertMonitoringChecks;
+  private readonly notificationDispatcher: AlertNotificationDispatcher;
   private alerts = new Map<string, Alert>();
   private channels = new Map<string, NotificationChannel>();
   private rules = new Map<string, AlertRule>();
@@ -126,8 +42,8 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
     success: boolean;
   }>();
 
-  private monitoringIntervals: any[] = [];
-  private cooldownTimers = new Map<string, any>();
+  private monitoringIntervals: Subscription[] = [];
+  private cooldownTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
   public alerts$ = this.alertSubject.asObservable();
   public notifications$ = this.notificationSubject.asObservable();
@@ -138,6 +54,17 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
     private readonly flowExecutionService: FlowExecutionService,
     private readonly voiceAnalyticsService: VoiceAnalyticsService,
   ) {
+    this.monitoringChecks = new AlertMonitoringChecks(
+      this.systemMonitoringService,
+      this.integrationHealthService,
+      this.flowExecutionService,
+      this.voiceAnalyticsService,
+      (alert) => this.createAlert(alert),
+    );
+    this.notificationDispatcher = new AlertNotificationDispatcher(
+      this.channels,
+      this.notificationSubject,
+    );
     console.log('RealTimeAlertingService: Initialized');
   }
 
@@ -182,9 +109,9 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   }
 
   // Acknowledge an alert
-  async acknowledgeAlert(alertId: string, userId: string): Promise<boolean> {
+  acknowledgeAlert(alertId: string, userId: string): Promise<boolean> {
     const alert = this.alerts.get(alertId);
-    if (!alert) return false;
+    if (!alert) return Promise.resolve(false);
 
     alert.acknowledged = true;
     alert.metadata.acknowledgedBy = userId;
@@ -192,17 +119,17 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
 
     this.alertSubject.next({ ...alert });
     console.log(`RealTimeAlerting: Alert ${alertId} acknowledged by ${userId}`);
-    return true;
+    return Promise.resolve(true);
   }
 
   // Resolve an alert
-  async resolveAlert(
+  resolveAlert(
     alertId: string,
     userId: string,
     resolution?: string,
   ): Promise<boolean> {
     const alert = this.alerts.get(alertId);
-    if (!alert) return false;
+    if (!alert) return Promise.resolve(false);
 
     alert.resolved = true;
     alert.resolvedBy = userId;
@@ -213,7 +140,7 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
 
     this.alertSubject.next({ ...alert });
     console.log(`RealTimeAlerting: Alert ${alertId} resolved by ${userId}`);
-    return true;
+    return Promise.resolve(true);
   }
 
   // Get all alerts
@@ -435,141 +362,41 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
 
   // Private helper methods
   private initializeDefaultChannels(): void {
-    const defaultChannels: Omit<NotificationChannel, 'id'>[] = [
-      {
-        name: 'Dashboard Notifications',
-        type: 'dashboard',
-        enabled: true,
-        config: { dashboard: { enabled: true, priority: true } },
-        filters: [{ severity: ['warning', 'critical', 'emergency'] }],
-      },
-      {
-        name: 'Email Alerts',
-        type: 'email',
-        enabled: true,
-        config: {
-          email: {
-            to: [process.env.ADMIN_EMAIL || 'admin@keledon.com'],
-            template: 'alert-email',
-          },
-        },
-        filters: [{ severity: ['critical', 'emergency'] }],
-      },
-    ];
-
-    defaultChannels.forEach((channel) => this.createChannel(channel));
+    getDefaultNotificationChannels().forEach((channel) =>
+      this.createChannel(channel),
+    );
   }
 
   private initializeDefaultRules(): void {
-    const defaultRules: Omit<
-      AlertRule,
-      'id' | 'lastTriggered' | 'triggerCount'
-    >[] = [
-      {
-        name: 'High CPU Usage',
-        description: 'Alert when CPU usage exceeds 90%',
-        enabled: true,
-        condition: {
-          metric: 'cpu.usage',
-          operator: 'gt',
-          threshold: 90,
-          duration: 300, // 5 minutes
-        },
-        action: {
-          channels: ['dashboard', 'email'],
-        },
-        cooldownMinutes: 15,
-      },
-      {
-        name: 'Memory Usage Critical',
-        description: 'Alert when memory usage exceeds 95%',
-        enabled: true,
-        condition: {
-          metric: 'memory.usage',
-          operator: 'gt',
-          threshold: 95,
-          duration: 60, // 1 minute
-        },
-        action: {
-          channels: ['dashboard', 'email'],
-        },
-        cooldownMinutes: 10,
-      },
-      {
-        name: 'Provider Connection Failed',
-        description: 'Alert when integration provider fails',
-        enabled: true,
-        condition: {
-          metric: 'provider.status',
-          operator: 'eq',
-          threshold: 'error',
-        },
-        action: {
-          channels: ['dashboard'],
-        },
-        cooldownMinutes: 5,
-      },
-      {
-        name: 'Flow Execution Failed',
-        description: 'Alert when RPA flow execution fails',
-        enabled: true,
-        condition: {
-          metric: 'flow.status',
-          operator: 'eq',
-          threshold: 'failed',
-        },
-        action: {
-          channels: ['dashboard'],
-        },
-        cooldownMinutes: 2,
-      },
-      {
-        name: 'Negative Sentiment Spike',
-        description: 'Alert when negative sentiment exceeds 30%',
-        enabled: true,
-        condition: {
-          metric: 'voice.sentiment.negative',
-          operator: 'gt',
-          threshold: 30,
-          aggregation: 'avg',
-          duration: 600, // 10 minutes
-        },
-        action: {
-          channels: ['dashboard'],
-        },
-        cooldownMinutes: 30,
-      },
-    ];
-
-    defaultRules.forEach((rule) => this.createRule(rule));
+    getDefaultAlertRules().forEach((rule) => this.createRule(rule));
   }
 
   private startMonitoring(): void {
     // System monitoring
     this.monitoringIntervals.push(
       interval(30000).subscribe(() => {
-        void this.checkSystemAlerts();
+        void this.monitoringChecks.checkSystemAlerts();
       }),
     );
 
     // Integration monitoring
     this.monitoringIntervals.push(
       interval(60000).subscribe(() => {
-        void this.checkIntegrationAlerts();
+        void this.monitoringChecks.checkIntegrationAlerts();
       }),
     );
 
     // Flow execution monitoring
     this.monitoringIntervals.push(
       interval(10000).subscribe(() => {
-        void this.checkFlowAlerts();
+        void this.monitoringChecks.checkFlowAlerts();
       }),
     );
 
     // Voice analytics monitoring
     this.monitoringIntervals.push(
       interval(120000).subscribe(() => {
-        void this.checkVoiceAlerts();
+        void this.monitoringChecks.checkVoiceAlerts();
       }),
     );
 
@@ -583,122 +410,6 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
     // Clear cooldown timers
     this.cooldownTimers.forEach((timer) => clearTimeout(timer));
     this.cooldownTimers.clear();
-  }
-
-  private async checkSystemAlerts(): Promise<void> {
-    try {
-      const metrics = this.systemMonitoringService.getCurrentMetrics();
-      const alerts = this.systemMonitoringService.getPerformanceAlerts();
-
-      for (const alert of alerts) {
-        await this.createAlert({
-          type: 'system',
-          severity: alert.level === 'critical' ? 'critical' : 'warning',
-          title: `System ${alert.type} Alert`,
-          message: alert.message,
-          source: 'SystemMonitoringService',
-          metadata: {
-            metric: alert.type,
-            value:
-              alert.type === 'cpu'
-                ? metrics.cpu.usage
-                : alert.type === 'memory'
-                  ? metrics.memory.usage
-                  : alert.type === 'disk'
-                    ? metrics.disk.usage
-                    : 0,
-            threshold:
-              alert.type === 'cpu' ? 90 : alert.type === 'memory' ? 95 : 85,
-          },
-          tags: ['system', alert.type, alert.level],
-        });
-      }
-    } catch (error) {
-      console.error('RealTimeAlerting: Failed to check system alerts:', error);
-    }
-  }
-
-  private async checkIntegrationAlerts(): Promise<void> {
-    try {
-      const providers = this.integrationHealthService.getProviders();
-      const failedProviders = providers.filter((p) => p.status === 'error');
-
-      for (const provider of failedProviders) {
-        await this.createAlert({
-          type: 'integration',
-          severity: 'critical',
-          title: `Provider ${provider.name} Failed`,
-          message: `Integration provider ${provider.name} is in error state`,
-          source: 'IntegrationHealthService',
-          metadata: {
-            providerId: provider.id,
-            providerName: provider.name,
-            category: provider.category,
-            health: provider.health,
-          },
-          tags: ['integration', 'provider-failed', provider.category],
-        });
-      }
-    } catch (error) {
-      console.error(
-        'RealTimeAlerting: Failed to check integration alerts:',
-        error,
-      );
-    }
-  }
-
-  private async checkFlowAlerts(): Promise<void> {
-    try {
-      const executions = this.flowExecutionService.getExecutions({
-        limit: 100,
-      });
-      const failedExecutions = executions.filter(
-        (e) => e.status === 'failed' && !e.endTime,
-      );
-
-      for (const execution of failedExecutions) {
-        await this.createAlert({
-          type: 'flow',
-          severity: 'critical',
-          title: `Flow Execution Failed: ${execution.name}`,
-          message: `RPA flow "${execution.name}" failed: ${execution.error}`,
-          source: 'FlowExecutionService',
-          metadata: {
-            executionId: execution.id,
-            flowName: execution.name,
-            error: execution.error,
-            stepCount: execution.currentStepIndex,
-          },
-          tags: ['flow', 'execution-failed', 'rpa'],
-        });
-      }
-    } catch (error) {
-      console.error('RealTimeAlerting: Failed to check flow alerts:', error);
-    }
-  }
-
-  private async checkVoiceAlerts(): Promise<void> {
-    try {
-      const analytics = this.voiceAnalyticsService.getAnalytics('24h');
-
-      if (analytics.sentimentDistribution.negative > 40) {
-        await this.createAlert({
-          type: 'voice',
-          severity: 'warning',
-          title: 'High Negative Sentiment Detected',
-          message: `Customer sentiment analysis shows ${analytics.sentimentDistribution.negative}% negative sentiment`,
-          source: 'VoiceAnalyticsService',
-          metadata: {
-            sentimentDistribution: analytics.sentimentDistribution,
-            totalConversations: analytics.totalConversations,
-            threshold: 40,
-          },
-          tags: ['voice', 'sentiment', 'customer-satisfaction'],
-        });
-      }
-    } catch (error) {
-      console.error('RealTimeAlerting: Failed to check voice alerts:', error);
-    }
   }
 
   private async processAlertRules(alert: Alert): Promise<void> {
@@ -759,10 +470,10 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
   }
 
   private isInCooldown(ruleId: string, rule: AlertRule): boolean {
-    return (
+    return Boolean(
       rule.lastTriggered &&
       Date.now() - rule.lastTriggered.getTime() <
-        rule.cooldownMinutes * 60 * 1000
+        rule.cooldownMinutes * 60 * 1000,
     );
   }
 
@@ -809,147 +520,18 @@ export class RealTimeAlertingService implements OnModuleInit, OnModuleDestroy {
     return levels[severity] || 1;
   }
 
-  private async sendNotifications(alert: Alert): Promise<void> {
-    for (const [channelId, channel] of this.channels.entries()) {
-      if (!channel.enabled) continue;
-      if (!this.channelMatchesAlert(channel, alert)) continue;
-
-      try {
-        const success = await this.sendNotificationToChannel(alert, channel);
-
-        this.notificationSubject.next({
-          alert,
-          channel,
-          success,
-        });
-      } catch (error) {
-        console.error(
-          `RealTimeAlerting: Failed to send notification to channel ${channelId}:`,
-          error,
-        );
-      }
-    }
+  private sendNotifications(alert: Alert): Promise<void> {
+    return this.notificationDispatcher.sendNotifications(alert);
   }
 
-  private channelMatchesAlert(
-    channel: NotificationChannel,
-    alert: Alert,
-  ): boolean {
-    for (const filter of channel.filters) {
-      if (filter.type && !filter.type.includes(alert.type)) return false;
-      if (filter.severity && !filter.severity.includes(alert.severity))
-        return false;
-      if (
-        filter.source &&
-        !filter.source.some((source) => alert.source.includes(source))
-      )
-        return false;
-      if (filter.tags && !filter.tags.some((tag) => alert.tags.includes(tag)))
-        return false;
-      if (
-        filter.minSeverity &&
-        this.getSeverityLevel(alert.severity) <
-          this.getSeverityLevel(filter.minSeverity)
-      )
-        return false;
-    }
-    return true;
-  }
-
-  private async sendNotificationToChannel(
+  private sendNotificationToChannel(
     alert: Alert,
     channel: NotificationChannel,
   ): Promise<boolean> {
-    try {
-      switch (channel.type) {
-        case 'email':
-          return await this.sendEmailNotification(alert, channel.config.email);
-        case 'slack':
-          return await this.sendSlackNotification(alert, channel.config.slack);
-        case 'webhook':
-          return await this.sendWebhookNotification(
-            alert,
-            channel.config.webhook,
-          );
-        case 'sms':
-          return await this.sendSMSNotification(alert, channel.config.sms);
-        case 'push':
-          return await this.sendPushNotification(alert, channel.config.push);
-        case 'dashboard':
-          return await this.sendDashboardNotification(
-            alert,
-            channel.config.dashboard,
-          );
-        default:
-          return false;
-      }
-    } catch (error) {
-      console.error(
-        `RealTimeAlerting: Failed to send ${channel.type} notification:`,
-        error,
-      );
-      return false;
-    }
-  }
-
-  private async sendEmailNotification(
-    alert: Alert,
-    config: NotificationChannelConfig['email'],
-  ): Promise<boolean> {
-    // In a real implementation, this would use an email service
-    console.log(
-      `Email notification to ${config.to?.join(', ')}: ${alert.title}`,
+    return this.notificationDispatcher.sendNotificationToChannel(
+      alert,
+      channel,
     );
-    return true;
-  }
-
-  private async sendSlackNotification(
-    alert: Alert,
-    config: NotificationChannelConfig['slack'],
-  ): Promise<boolean> {
-    // In a real implementation, this would send to Slack webhook
-    console.log(`Slack notification to ${config.channel}: ${alert.title}`);
-    return true;
-  }
-
-  private async sendWebhookNotification(
-    alert: Alert,
-    config: NotificationChannelConfig['webhook'],
-  ): Promise<boolean> {
-    // In a real implementation, this would send HTTP request to webhook
-    console.log(`Webhook notification to ${config.url}: ${alert.title}`);
-    return true;
-  }
-
-  private async sendSMSNotification(
-    alert: Alert,
-    config: NotificationChannelConfig['sms'],
-  ): Promise<boolean> {
-    // In a real implementation, this would use SMS provider
-    console.log(`SMS notification to ${config.to?.join(', ')}: ${alert.title}`);
-    return true;
-  }
-
-  private async sendPushNotification(
-    alert: Alert,
-    config: NotificationChannelConfig['push'],
-  ): Promise<boolean> {
-    // In a real implementation, this would use push notification service
-    console.log(
-      `Push notification to ${config.tokens?.length} devices: ${alert.title}`,
-    );
-    return true;
-  }
-
-  private async sendDashboardNotification(
-    alert: Alert,
-    config: NotificationChannelConfig['dashboard'],
-  ): Promise<boolean> {
-    if (!config.enabled) return false;
-
-    // Dashboard notifications are already handled by the alertSubject
-    console.log(`Dashboard notification: ${alert.title}`);
-    return true;
   }
 
   private generateAlertId(): string {

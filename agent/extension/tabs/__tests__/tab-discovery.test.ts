@@ -1,26 +1,53 @@
-// C:\KELEDON\agent\src\tabs\__tests__\tab-discovery.test.ts
-import { TabDiscovery } from '../registry/tab-discovery';
+const tabEvents = () => ({ addListener: jest.fn(), removeListener: jest.fn() });
 
-// Mock chrome.tabs
-(global as any).chrome = {
+const mockChrome = {
   tabs: {
-    query: jest.fn().mockResolvedValue([
-      { id: 1, url: 'https://genesys.com/app' },
-      { id: 2, url: 'https://google.com' },
-    ])
-  }
+    query: jest.fn(),
+    get: jest.fn(),
+    onCreated: tabEvents(),
+    onUpdated: tabEvents(),
+    onRemoved: tabEvents(),
+    onActivated: tabEvents(),
+  },
 };
 
-describe('TabDiscovery', () => {
+(global as any).chrome = mockChrome;
+const { TabDiscovery } = require('../registry/tab-discovery') as typeof import('../registry/tab-discovery');
+
+describe('TabRegistry tenant-configured discovery', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('assigns audio+ui to Genesys tab', async () => {
-    const discovery = TabDiscovery.getInstance();
-    await discovery.discover();
-    const tabs = Array.from(discovery.getTabs().entries());
-    expect(tabs[0][1].role).toBe('audio+ui');
-    expect(tabs[1][1].role).toBe('ui-only');
+  it('tracks ordinary web tabs without assuming a telephony or CRM vendor', async () => {
+    mockChrome.tabs.query.mockResolvedValue([
+      { id: 1, url: 'https://callpicker.example/agent' },
+      { id: 2, url: 'https://local-crm.example/customers' },
+      { id: 3, url: 'https://unrelated.example/news' },
+    ]);
+    const registry = new TabDiscovery({
+      trackedDomains: ['callpicker.example', 'local-crm.example'],
+    });
+
+    const tabs = await registry.discoverTabs();
+
+    expect(mockChrome.tabs.query).toHaveBeenCalledWith({});
+    expect(tabs.map((tab) => tab.type)).toEqual(['ui-only', 'ui-only']);
+    expect(tabs.map((tab) => tab.id)).toEqual([1, 2]);
+  });
+
+  it('classifies only domains supplied by the tenant configuration as audio-capable', async () => {
+    mockChrome.tabs.query.mockResolvedValue([
+      { id: 1, url: 'https://voice.customer.example/agent' },
+      { id: 2, url: 'https://crm.customer.example/cases' },
+    ]);
+    const registry = new TabDiscovery({
+      trackedDomains: ['crm.customer.example'],
+      audioDomains: ['voice.customer.example'],
+    });
+
+    const tabs = await registry.discoverTabs();
+
+    expect(tabs.map((tab) => tab.type)).toEqual(['audio+ui', 'ui-only']);
   });
 });

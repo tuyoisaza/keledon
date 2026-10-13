@@ -1,3 +1,4 @@
+/** @jest-environment node */
 /**
  * Comprehensive test suite for Salesforce adapter
  * Tests Chrome extension RPA automation for Salesforce CRM
@@ -37,6 +38,14 @@ const createMockWindow = (href: string, hostname: string, pathname = '') => {
   return windowMock;
 };
 
+const setMockWindow = (windowMock: ReturnType<typeof createMockWindow>) => {
+  Object.defineProperty(global, 'window', {
+    value: windowMock,
+    configurable: true,
+    writable: true,
+  });
+};
+
 // Helper to create a mock document
 const createMockDocument = () => {
   return {
@@ -50,7 +59,7 @@ const createMockDocument = () => {
       blur: jest.fn()
     })),
     getElementById: jest.fn(),
-    querySelector: jest.fn(),
+    querySelector: jest.fn(() => null),
     querySelectorAll: jest.fn(() => []),
     addEventListener: jest.fn(),
     removeEventListener: jest.fn()
@@ -134,11 +143,11 @@ const mockChrome = {
 
 // Set global mocks BEFORE importing adapter
 (global as any).chrome = mockChrome;
-(global as any).window = createMockWindow(
+setMockWindow(createMockWindow(
   'https://test.salesforce.com/lightning/page/home', 
   'test.salesforce.com', 
   '/lightning/page/home'
-);
+));
 (global as any).document = createMockDocument();
 
 // Now import after all mocks are set up
@@ -176,7 +185,7 @@ describe('SalesforceAdapter', () => {
     });
     mockWindow.location.includes = (str: string) => 'test.salesforce.com'.includes(str);
     
-    (global as any).window = mockWindow;
+    setMockWindow(mockWindow);
     (global as any).document = createMockDocument();
   });
 
@@ -201,20 +210,13 @@ test('should detect Salesforce Lightning domain', () => {
       // Override global document
       (global as any).document = mockDoc;
       
-      // Mock window.location to include salesforce.com (using Object.defineProperty to bypass JSDOM restrictions)
-      const mockHostname = 'test.salesforce.com';
-      Object.defineProperty(global.window.location, 'hostname', {
-        get: () => mockHostname,
-        configurable: true
-      });
-      
-      // Mock the includes method on the hostname
-      const originalHostname = global.window.location.hostname;
-      global.window.location.hostname = {
-        toString: () => originalHostname,
-        valueOf: () => originalHostname,
-        includes: jest.fn((str: string) => originalHostname.includes(str))
-      } as any;
+      // Replace the location object with a mutable test double instead of
+      // redefining JSDOM's read-only Location.hostname property.
+      setMockWindow(createMockWindow(
+        'https://test.salesforce.com/lightning/page/home',
+        'test.salesforce.com',
+        '/lightning/page/home',
+      ));
       
       // Create adapter after mocks are set
       adapter = new SalesforceAdapter();
@@ -233,7 +235,7 @@ test('should detect Salesforce Lightning domain', () => {
       });
       mockWindow.location.hostname.includes = jest.fn((str: string) => 'cs42.salesforce.com'.includes(str));
       
-      (global as any).window = mockWindow;
+      setMockWindow(mockWindow);
       (global as any).document = mockDoc;
       
       adapter = new SalesforceAdapter();
@@ -251,7 +253,7 @@ test('should detect Salesforce Lightning domain', () => {
       });
       mockWindow.location.hostname.includes = jest.fn((str: string) => 'cs42.salesforce.com'.includes(str));
       
-      (global as any).window = mockWindow;
+      setMockWindow(mockWindow);
       (global as any).document = mockDoc;
       
       adapter = new SalesforceAdapter();
@@ -269,7 +271,7 @@ test('should detect Salesforce Lightning domain', () => {
       });
       mockWindow.location.hostname.includes = jest.fn((str: string) => 'www.google.com'.includes(str));
       
-      (global as any).window = mockWindow;
+      setMockWindow(mockWindow);
       (global as any).document = mockDoc;
       
       adapter = new SalesforceAdapter();
@@ -287,12 +289,13 @@ test('should detect Salesforce Lightning domain', () => {
       });
       mockWindow.location.hostname.includes = jest.fn((str: string) => 'test.force.com'.includes(str));
       
-      (global as any).window = mockWindow;
+      setMockWindow(mockWindow);
       (global as any).document = mockDoc;
       
       adapter = new SalesforceAdapter();
 expect(adapter.detect()).toBe(true);
     });
+  });
 
   describe('DOM Interaction Methods', () => {
     beforeEach(() => {
@@ -554,7 +557,7 @@ expect(adapter.detect()).toBe(true);
         });
         mockWindow.location.hostname.includes = jest.fn((str: string) => urlObj.hostname.includes(str));
         
-        (global as any).window = mockWindow;
+        setMockWindow(mockWindow);
         (global as any).document = mockDoc;
         
         adapter = new SalesforceAdapter();

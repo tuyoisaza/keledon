@@ -40,6 +40,7 @@ export class CloudConnection {
   private socket: Socket | null = null;
   private session: SessionInfo | null = null;
   private heartbeatInterval: NodeJS.Timeout | null = null;
+  private connectionTimeout: NodeJS.Timeout | null = null;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
 
@@ -64,12 +65,14 @@ export class CloudConnection {
       });
 
       this.socket.on('connect', () => {
+        this.clearConnectionTimeout();
         console.log(`[Agent:${this.agentId}] Socket connected, creating session...`);
         this.createSession();
         resolve();
       });
 
       this.socket.on('disconnect', () => {
+        this.clearConnectionTimeout();
         console.log(`[Agent:${this.agentId}] Socket disconnected`);
         this.updateSessionStatus('disconnected');
         this.stopHeartbeat();
@@ -96,17 +99,33 @@ export class CloudConnection {
       });
 
       this.socket.on('connect_error', (error) => {
+        this.clearConnectionTimeout();
         console.error(`[Agent:${this.agentId}] Connection error:`, error);
         this.updateSessionStatus('error');
         reject(error);
       });
 
-      setTimeout(() => {
+      this.connectionTimeout = setTimeout(() => {
+        this.connectionTimeout = null;
         if (!this.socket?.connected) {
           reject(new Error('Connection timeout'));
         }
       }, 10000);
     });
+  }
+
+  private clearConnectionTimeout(): void {
+    if (this.connectionTimeout) {
+      clearTimeout(this.connectionTimeout);
+      this.connectionTimeout = null;
+    }
+  }
+
+  private stopHeartbeat(): void {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
+    }
   }
 
   /**
@@ -208,6 +227,7 @@ export class CloudConnection {
   async disconnect(): Promise<void> {
     console.log(`[Agent:${this.agentId}] Disconnecting from cloud...`);
     
+    this.clearConnectionTimeout();
     this.stopHeartbeat();
     
     if (this.socket) {
