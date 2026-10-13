@@ -1,5 +1,11 @@
 # PHDK remediation report — active candidate
 
+## Current remediation — v5.1.11
+
+Closed the diagnostics source gaps: measured/allowlisted LLM, STT and TTS results plus feature flags, request limits, retry and kill-switch status; current-DB-superadmin protection for global usage; Web/Landing reports aligned. Retests: API regression 14/14 and targeted Jest 9/9, Cloud 8/8, Web 16/16 and local UAT 1/1, Browser 29/29, builds/typechecks, PHDK coherence 52/52.
+
+Persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO remain acceptance items requiring their respective environments. No source-only claim closes them. Details: `docs/phdk/lifecycle/20261013-keledon-v5111/80-remediation/`. Overall status remains **PARTIALLY DELIVERED**.
+
 ## 2026-10-13 latest continuation — 5.1.7 local candidate
 
 On branch `fix/fail-closed-api-migrations`, based on verified `origin/main` `3c6e4c71bc5672984a1fd07df62d722f95beb4e7` / 5.1.6, the local uncommitted 5.1.7 candidate removes automatic rollback-resolution commands, fails closed after five migration failures, refuses to seed/start if company count cannot be verified, and makes Docker invoke the checked-in startup script. The API lint command no longer autofixes and keeps typed rules enabled through TypeScript Project Service.
@@ -54,3 +60,8 @@ Status: PARTIALLY DELIVERED; remediation continues. PR merge and remote `main` r
 ## Current continuation — 2026-10-13
 
 Product PR #42 is merged and independently read back. PHDK central tool defects are repaired in merged PRs #48/#49; the v2.50.10 installation and both PHDK checkers pass locally, with the completion gate's actual remote JSON-version smoke passing. KELEDON downstream standards-sync delivery remains pending. Open acceptance remains persisted database/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO; no such runtime evidence is claimed.
+# Remediation — v5.1.11 (2026-10-13)
+
+Closed the in-scope PHDK diagnostics findings: replaced stale feature-flag/provider-metric claims with measured, allowlisted LLM/STT/TTS outcomes and process limits/switch states; protected global usage with the current database superadmin role; updated the shared Web/Landing report; added privacy, role-gating and regression tests. Retests pass: API 14/14 + focused Jest 9/9, Cloud 8/8, Web 16/16 + UAT 1/1, Browser 29/29, all five builds, and PHDK coherence 52/52.
+
+Residual items require separate acceptance environments: persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO. No source-only evidence closes these. Details: `docs/phdk/lifecycle/20261013-keledon-v5111/80-remediation/`. Overall: PARTIALLY DELIVERED.
