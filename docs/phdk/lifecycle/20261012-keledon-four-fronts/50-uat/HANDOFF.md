@@ -26,3 +26,10 @@ Date: `2026-10-13 America/Mexico_City`
 ## Next stage
 
 `60-uat-fix` is complete for the reproduced harness issues and diagnostics overlay obstruction. Proceed to SEO/AEO and Check with overall acceptance still partial.
+
+## Current candidate continuation — 5.1.7 (2026-10-13)
+
+- Integrated candidate tree: `a77afde0f6142583887921fe46376b84cf3af279`; local tested commit `edce7eafbe13ac16ab93274a87e12571e7b04b2e` matches refreshed `origin/main` tree and PR #54 merge SHA `a854ca7634307538305cd9b5ad1f91f8a066b1a1`.
+- `services/web npm run build` PASS; `npm run test:uat` PASS (1 suite, 1 test, nine journey groups); `npm run test:diagnostics` PASS (18/18); `services/api npm run test:regression` PASS (11/11).
+- Refreshed evidence: root `UAT_REPORT.md`, `UAT_CASES.md`, `UAT_ACCESS_REPORT.md`, `UAT_ROLE_MATRIX.md`, `UAT_STORIES.md`, `UAT_JOURNEY_MAP.md`, plus `docs/phdk/evidence/uat-local-web.json` and screenshots.
+- No new fixable FAIL. UAT remains ACCEPTANCE INCOMPLETE for persisted CRUD/database sessions, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO. Client-specific call/CRM UAT stays out of universal scope until a tenant/provider is selected.

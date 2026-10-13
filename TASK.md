@@ -10,10 +10,13 @@ Run 20261012-keledon-four-fronts; owner confirms all four in order, 2026-10-12.
 - [x] T-006 publish 5.1.2 candidate, update and merge PR #42, verify remote `main` SHA/version/content.
 - [x] T-007 fix the PHDK JSON-version completion-gate incompatibility and coherence manifest inputs; install v2.50.10 and verify both installed tools.
 - [x] T-008 deliver the downstream PHDK v2.50.10 standards sync via PR #43; merged and read back at `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d`.
-- [ ] T-009 verify or explicitly disposition the remaining persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO acceptance.
+- [ ] T-009 complete authorized persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO acceptance; gaps remain open after PR #54.
 
-Latest continuation: 5.1.7 local candidate on `fix/fail-closed-api-migrations` removes automatic migration rollback, fails closed on migration/company-count errors, fixes all full-source API typing defects, and makes the API lint command non-mutating. API build, full-source typecheck, all 11 regression suites, and full typed ESLint pass (184 files; 0 errors/139 warnings). The lint stall was caused by the missing Prettier peer; version 3.9.9 is now pinned and source formatting is aligned with `.prettierrc`. Duplicate, unreferenced legacy `MinimalCloudServer` entrypoints/manifests were retired after confirming the former CloudServer source had already been removed and current production uses Nest `dist/main`. Candidate has not been committed or published. Read-only Railway logs for deployed 5.1.6 exposed the prior unconditional rollback command; no production database/migration was touched. See the 5.1.7 lifecycle/check/delivery reports.
+Latest continuation: after PR #54 merged 5.1.7 to main, the CRUD source audit found that user create/update accepted caller-supplied `passwordHash`. The 5.1.8 candidate on `fix/phdk-5.1.8-crud-password-hash` now rejects the field for all roles and removes it from the service contracts. API policy regressions (11/11 suites), typecheck, and typed ESLint (0 errors/139 warnings) pass. Candidate commit/PR/merge are pending; no deployment is claimed. Earlier 5.1.7 checks and lifecycle evidence follow.
 No historical queue activation or parallel floor restoration. This is current task evidence, no future authority.
 
 Current decision record: vendors are per-client; source+synthetic contracts are acceptable for runtime code review.
 Release limitations: `docs/phdk/workstreams/PHDK-CONFORMITY-REVIEW.md`; the migration inclusion decision is approved, but no live DB migration, customer/provider call, or deployment has been performed.
+
+
+Delivery update 2026-10-13: PR #54 is merged at `a854ca7634307538305cd9b5ad1f91f8a066b1a1`, version 5.1.7. Mechanical completion evidence is refreshed; overall goal remains PARTIALLY DELIVERED pending T-009 acceptance.

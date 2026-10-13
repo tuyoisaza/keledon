@@ -28,3 +28,7 @@ Date: `2026-10-13 America/Mexico_City`
 ## Next stage
 
 Return to `70-check` and reconcile this retest with the full CRUD, accessibility, localization and deployment evidence limits.
+
+## 5.1.7 integrated rerun
+
+`services/web npm run test:uat` passes on the current 5.1.7 tree (same Git tree as remote main); diagnostics tests pass 18/18 and API regressions 11/11. No new UAT FAIL was reproduced, so no further product fix was indicated by this rerun. Acceptance remains incomplete for the exact CRUD/role DB matrix, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO. See current root UAT report for owner/runtime actions.

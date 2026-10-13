@@ -1,3 +1,11 @@
+## Current Check continuation — 5.1.7 merged; acceptance partial
+
+PR #54 is MERGED at remote `main` `a854ca7634307538305cd9b5ad1f91f8a066b1a1`; product 5.1.7. Current tested source tree matches remote main. API lint/typecheck/build and 11/11 regression suites pass; Cloud 8/8, web diagnostics 18/18, SEO 1/1, Landing and Browser 19/19 plus PHDK coherence 52/52 are recorded. Current local Edge UAT passes 1/1 suite.
+
+Resolved: delivery and stale pre-merge report state. Still open: DB-persisted CRUD/migration and full role matrix, native Electron/device/audio, broad accessibility/localization, deployed SEO/AEO. No production migration, provider call, live application probe or deployment. Overall Auto remains PARTIALLY DELIVERED. Exact cases/actions: root `UAT_REPORT.md`; current completion audit: root `PHDK_COMPLETION_AUDIT.md`.
+
+Historical Check handoff follows.
+
 # PHDK Lifecycle Handoff — Check
 
 Run ID: `20261012-keledon-four-fronts`

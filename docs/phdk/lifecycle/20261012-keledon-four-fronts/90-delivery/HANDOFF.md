@@ -1,8 +1,14 @@
 # Delivery handoff — post-merge verification
 
-## 2026-10-13 current continuation — 5.1.7 BLOCKED before publication
+## 2026-10-13 current continuation — 5.1.7 MERGED; overall PARTIAL
 
-Latest main readback: `3c6e4c71bc5672984a1fd07df62d722f95beb4e7`, product 5.1.6; PRs #51–53 merged, no PR open. The local `fix/fail-closed-api-migrations` candidate is 5.1.7 and remains uncommitted/unpushed. API build and regressions 11/11 pass; migration/company-count fail-closed shell tests pass. Seven of eight full-source TypeScript errors were corrected; one missing CloudServer import remains in a legacy runtime entrypoint. API targeted/full ESLint has not completed, so no source commit, PR or deployment was made. Current check and delivery evidence: `DELIVERY_REPORT_5.1.7_PREMERGE.md`, `PHDK_COMMITMENT_COVERAGE_5.1.7.md`, and `../70-check/PHDK_CHECK_REPORT_5.1.7.md`. Overall Auto is PARTIALLY DELIVERED.
+PR #54 (https://github.com/tuyoisaza/keledon/pull/54) is MERGED. Independent readback confirms remote `main` SHA `a854ca7634307538305cd9b5ad1f91f8a066b1a1`, product 5.1.7; all five package/lock roots align and GitHub reports no open PRs. The source-changing commit is `edce7eafbe13ac16ab93274a87e12571e7b04b2e`; merge was squash. GitHub reported no required checks/reviews; none are claimed. Deployment is unverified/not claimed.
+
+Current verification: API full typed lint (184 files, 0 errors/139 warnings), API typecheck/build, regression 11/11; Cloud regression 8/8; web build/typecheck, diagnostics 18/18, SEO 1/1; Landing build/typecheck/lint and Browser regression 19/19 pass. Fresh local Edge UAT on the current tree passed 1 suite/1 test with synthetic fixtures and intercepted APIs. The checked tree equals `origin/main`'s tree. Full details and unresolved cases are in root `DELIVERY_REPORT.md`, `UAT_REPORT.md`, `PHDK_COMPLETION_AUDIT.md`, and `PHDK_DELIVERY_EVIDENCE.json`.
+
+PHDK v2.50.10 coherence passes 52/52 manifest mappings. The mechanical completion verifier passes remote SHA/version; it is not all-scope acceptance. Overall Auto remains **PARTIALLY DELIVERED**: persisted CRUD/migration and DB-derived role matrix, native Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO acceptance remain open. Provider-specific call/CRM journeys are per-client and were not run. No production DB/migration, customer/provider operation, live app probe or deployment was used.
+
+Next actions: provide an isolated synthetic PostgreSQL/test-account environment for CRUD/role persistence; run native Windows Electron/device/audio acceptance; complete broad accessibility/localization review; and perform bounded deployed SEO/AEO verification when an authorized deployment target exists. The precise steps are in `UAT_REPORT.md`.
 
 Run: `20261012-keledon-four-fronts`
 Stage: PHDK SYNC MERGED AND REMOTE READBACK COMPLETED; OVERALL AUTO PARTIAL

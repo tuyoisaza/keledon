@@ -187,6 +187,27 @@ async function main() {
       Denied,
     );
     await assert.rejects(
+      run(
+        'users',
+        'POST',
+        {},
+        {
+          email: 'planted@example.invalid',
+          passwordHash: 'attacker-controlled-hash',
+        },
+      ).result,
+      Denied,
+    );
+    await assert.rejects(
+      run(
+        'users',
+        'PUT',
+        { id: 'user-a' },
+        { passwordHash: 'attacker-controlled-hash' },
+      ).result,
+      Denied,
+    );
+    await assert.rejects(
       run('users', 'PUT', { id: 'admin-a' }, { name: 'edit-peer' }).result,
       Denied,
     );
@@ -345,6 +366,19 @@ async function main() {
     },
   );
   assert.equal(await elevatedUser.result, true);
+  await assert.rejects(
+    run(
+      'users',
+      'POST',
+      {},
+      {
+        email: 'planted-superadmin@example.invalid',
+        role: 'user',
+        passwordHash: 'attacker-controlled-hash',
+      },
+    ).result,
+    Denied,
+  );
 
   // Auto-provisioning never grants privilege, and existing roles remain unchanged.
   let created;
@@ -580,7 +614,7 @@ async function main() {
     'PASS admin boundaries: 7 signed malformed payloads, 4 auth negatives, 12 stale-role negatives, absent actor, valid controls, tenant filter/detail and secret projections.',
   );
   console.log(
-    'PASS CRUD operation matrix: low-role denials across list/create/update/delete; admin/coordinator company, brand, team, user, vendor and session operations; tenant-derived user scope; superadmin role assignment.',
+    'PASS CRUD operation matrix: low-role denials across list/create/update/delete; admin/coordinator company, brand, team, user, vendor and session operations; DB-derived scope; only superadmin role assignment; client-supplied credential hashes rejected for every role.',
   );
 }
 main().catch((error) => {

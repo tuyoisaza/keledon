@@ -1,4 +1,15 @@
-# PMO status — current integrated candidate
+# PMO status — 5.1.8 candidate; overall PARTIALLY DELIVERED
+
+## Current continuation — candidate 5.1.8
+
+2026-10-13; PHDK 2.50.10. CMT-004 source audit found the generic user CRUD credential-hash injection gap; guard and regression remediation are complete locally. API regressions 11/11, typecheck and full typed lint (0 errors/139 warnings) pass. Branch `fix/phdk-5.1.8-crud-password-hash`; versioned PR/remote readback are pending. CMT-001..004 stay confirmed; portfolio remains PARTIALLY DELIVERED pending persisted CRUD/runtime, native Electron/audio, broad accessibility/localization, deployed SEO/AEO. No deployment or production DB operation is claimed.
+
+Historical last-main snapshot follows.
+
+2026-10-13; PHDK 2.50.10. PR #54 is merged at `a854ca7634307538305cd9b5ad1f91f8a066b1a1`; all five package/lock roots are 5.1.7. No open PRs were returned at final reconciliation. CMT-001 delivery is DONE; CMT-002 and CMT-004 retain unverified device/audio/accessibility and persisted CRUD acceptance; CMT-003 provider-independent source is delivered while tenant-specific live vendor acceptance is not claimed. Overall completion remains partial.
+
+## Historical PMO snapshots
+
 
 2026-10-12; PHDK 2.50.8; product candidate 5.0.54. User confirmed ordered four workstreams and restrictive administration policy. Vendors are client-defined; no one live vendor selected or required.
 

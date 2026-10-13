@@ -1,9 +1,9 @@
 {
-  "version": "5.1.6",
-  "date": "2026-10-13T17:38:32.906Z",
-  "candidateRevision": "a8e141e4b0f997f691c621dc3f2536ac05c403c6",
+  "version": "5.1.7",
+  "date": "2026-10-13T20:52:20.457Z",
+  "candidateRevision": "edce7eafbe13ac16ab93274a87e12571e7b04b2e",
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:54340",
+  "origin": "http://127.0.0.1:63297",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-THEME actual dark/light/corporate shell selection and persistence PASS; full-app contrast certification not claimed",
@@ -14,7 +14,7 @@
     "UAT-004 admin user create and same-company team reassignment: no role/company controls or payload fields; foreign company team absent PASS (synthetic UI; API guard tested separately)",
     "UAT-004 provider write-only key: no response prefill; replacement cleared after success; untouched blank omitted PASS",
     "UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)",
-    "UAT-002 5.1.6 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
+    "UAT-002 5.1.7 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
   ],
   "apiEvidence": "services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts",
   "realVendorAudioCRM": "NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed"
