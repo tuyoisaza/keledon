@@ -1,36 +1,17 @@
 import { Globe } from 'lucide-react';
-import { useTranslation, Locale } from '@/context/I18nContext';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/context/I18nContext';
 import { cn } from '@/lib/utils';
 
 export function LanguageSwitcher({ className }: { className?: string }) {
-  const { locale, setLocale, supportedLocales, localeNames } = useTranslation();
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className={cn('gap-2', className)}>
-          <Globe className="h-4 w-4" />
-          <span className="hidden sm:inline">{localeNames[locale]}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {supportedLocales.map((loc) => (
-          <DropdownMenuItem
-            key={loc}
-            onClick={() => setLocale(loc)}
-            className={cn(locale === loc && 'bg-accent')}
-          >
-            {localeNames[loc]}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+  const { locale, setLocale, supportedLocales, localeNames, t } = useTranslation();
+  return <label className={cn('inline-flex items-center gap-2', className)}>
+    <Globe className="h-4 w-4" aria-hidden="true" />
+    <span className="sr-only">{t('common.language')}</span>
+    <select value={locale} onChange={event => {
+      const selected = supportedLocales.find(value => value === event.target.value);
+      if (selected) setLocale(selected);
+    }} className="rounded border border-border bg-background text-foreground px-2 py-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
+      {supportedLocales.map(value => <option key={value} value={value}>{localeNames[value]}</option>)}
+    </select>
+  </label>;
 }

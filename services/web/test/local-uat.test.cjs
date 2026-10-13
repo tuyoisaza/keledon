@@ -64,12 +64,12 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   const page=anonymous.page;
   await page.goto(origin+'/login');await page.locator('[data-testid="version-actions"]').waitFor();
   const row=page.locator('[data-testid="version-actions"]');assert.equal(await row.count(),1);
-  assert.equal((await row.innerText()).trim(),'v5.0.54');
+  assert.equal((await row.innerText()).trim(),'v5.1.0');
   const dims=await row.evaluate(el=>({gap:getComputedStyle(el).gap,font:getComputedStyle(el.querySelector('span')).fontSize,buttons:[...el.querySelectorAll('button')].map(b=>({w:b.getBoundingClientRect().width,h:b.getBoundingClientRect().height,icon:b.querySelector('svg').getBoundingClientRect().width})),x:el.getBoundingClientRect().x}));
   assert.equal(dims.gap,'4px');assert.equal(dims.font,'12px');for(const b of dims.buttons){assert.equal(b.w,28);assert.equal(b.h,28);assert.equal(b.icon,14);}assert.ok(dims.x<30);
   await row.locator('[data-action="copy"]').click();
   await row.locator('[data-action="copy"] .keledon-action-success').waitFor();
-  assert.equal(JSON.parse(await page.evaluate(()=>window.__copied)).version,'v5.0.54');
+  assert.equal(JSON.parse(await page.evaluate(()=>window.__copied)).version,'v5.1.0');
   await page.waitForFunction(()=>!document.querySelector('[data-action="copy"]').disabled);
   assert.equal(await row.locator('.keledon-action-success').count(),0);
   await page.evaluate(()=>window.__denyCopy=true);await row.locator('[data-action="copy"]').click();assert.equal(await row.locator('[data-action="copy"] .keledon-action-success').count(),0);
@@ -110,7 +110,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   checks.push('UAT-004 provider write-only key: no response prefill; replacement cleared after success; untouched blank omitted PASS');
   const guest=await pageFor('guest');await guest.page.goto(origin+'/management/companies');await guest.page.waitForURL(origin+'/');assert.equal(await guest.page.locator('[data-testid="version-actions"]').count(),1);await guest.context.close();
   checks.push('UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)');
-  await fs.writeFile(path.join(evidence,'uat-local-web.json'),JSON.stringify({version:'5.0.54',date:'2026-10-12',origin,provenance:'Local built web with intercepted Company Co API; not real server/DB or production authentication',checks,realVendorAudioCRM:'NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed'},null,2));
+  await fs.writeFile(path.join(evidence,'uat-local-web.json'),JSON.stringify({version:'5.1.0',date:'2026-10-12',origin,provenance:'Local built web with intercepted Company Co API; not real server/DB or production authentication',checks,realVendorAudioCRM:'NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed'},null,2));
   console.log('PASS local web journeys:',checks.join('\n'));
  }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
 });

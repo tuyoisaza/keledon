@@ -58,3 +58,10 @@ Stage: physical-line remediation, integration review, local synthetic UAT and so
 Required inputs: latest candidate diff, clean line inventory, current UAT/SEO/AEO evidence.
 Next action: resolve/evidence remaining Check items, prepare versioned commits, update PR, and complete normal review/merge and `main` readback.
 SIGUIENTE PASO: cerrar los hallazgos restantes de Check, actualizar el PR con commits versionados y verificar la entrega en `main`.
+
+
+## 2026-10-13 integrated candidate revalidation
+
+Candidate 5.1.0. Added protected dynamic API diagnostics, safe explicit probes, correlation IDs, and shared sanitized web/landing diagnostics. Split the Cloud decision-flow normalizer into `decision-engine.flow-types.ts`; current physical-line inventory is 0 files at/above 600. API C13 build and focused tests pass (12/12); web typecheck/build and focused diagnostics tests pass (18/18); landing build and Cloud C13/regression 8/8 pass. Full web lint: 0 errors/135 warnings; scoped API lint: 0 errors/2 warnings; scoped Cloud lint clean. Full landing typecheck remains limited by legacy errors in untouched files. Check is partial for translation depth, rendered accessibility/Electron, deployed SEO headers and standard PR delivery.
+
+SIGUIENTE PASO: commit/push 5.1.0 and refresh PR #42, then complete remaining Check findings and normal review/merge/main readback.

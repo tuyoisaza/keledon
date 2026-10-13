@@ -1,5 +1,12 @@
 # Changelog
 
+## v5.1.0 — 2026-10-13 (local candidate, PHDK Auto)
+
+- Add a protected, dynamically discovered API endpoint diagnostics registry with explicit safe probe modes and sanitized examples.
+- Keep public health checks to local liveness; protect dependency/deep health behind persisted-role authorization and add bounded, correlated probe evidence.
+- Add request correlation IDs and sanitized API error responses; extend the shared diagnostics widget/report and app-owned reset behavior across the web and landing shells.
+- Add focused API and browser-side regression coverage. PHDK Check remains partial; see `PHDK_CHECK_REPORT.md`.
+
 ## v5.0.54 — 2026-10-12 (local candidate, acceptance/publication pending)
 - Install canonical PHDK 2.50.8 and reconstruct owner-confirmed four-front baseline.
 - Align five package/lock versions; reconcile stale workflow and PR records without restoring automation.

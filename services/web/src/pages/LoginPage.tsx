@@ -6,6 +6,7 @@ import { Bot, Mail, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from '@/context/I18nContext';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { recordAuthEvent } from '@/lib/debug-report';
 
 declare const __APP_VERSION__: string;
 
@@ -22,9 +23,11 @@ useEffect(() => {
     const userName = searchParams.get('name');
     
     if (token) {
+      recordAuthEvent('oauth-callback', 'reached');
       sessionStorage.setItem('auth_token', token);
       sessionStorage.setItem('user_email', userEmail || '');
       sessionStorage.setItem('user_name', userName || '');
+      recordAuthEvent('oauth-callback', 'success');
       navigate('/dashboard');
     }
   }, [searchParams, navigate]);

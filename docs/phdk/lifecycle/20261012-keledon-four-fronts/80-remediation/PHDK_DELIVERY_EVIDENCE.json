@@ -2,34 +2,34 @@
   "version": "1",
   "goal": "PHDK Auto 4 fronts; vendor-independent code conformance",
   "target_branch": "main",
-  "expected_version": "5.0.54",
+  "expected_version": "5.1.0",
   "version_file": "services/web/package.json",
   "merged_commit_sha": null,
   "pr_url": "https://github.com/tuyoisaza/keledon/pull/42",
   "checks": {
     "lint": {
       "status": "PASS",
-      "evidence": "services/web lint passes with 0 errors and 138 warnings. Strict scoped Cloud ESLint passes all 16 changed service modules with 0 errors/0 warnings. Scoped lint on 28 changed API service files has 0 errors and 13 warnings."
+      "evidence": "services/web full lint: 0 errors, 135 warnings; changed API sources: 0 errors, 2 warnings; changed Cloud decision modules: 0 errors, 0 warnings; changed web diagnostics modules: 0 errors, 3 warnings."
     },
     "typecheck": {
-      "status": "BLOCKED",
-      "evidence": "services/web, Cloud MVP, and API builds/typechecks pass. Full legacy landing project has unrelated baseline diagnostics and agent adapter source has existing contract/type mismatches."
+      "status": "PARTIAL",
+      "evidence": "services/web typecheck and API/Cloud production TypeScript builds pass. Full legacy landing typecheck still reports unrelated baseline diagnostics."
     },
     "build": {
       "status": "PASS",
-      "evidence": "Cloud C13/TypeScript build and regression 8/8, services/web and landing Vite builds, and services/api build/C13 pass. Agent build not run because its script deletes repository-root dist."
+      "evidence": "API and Cloud C13/TypeScript builds pass; services/web and landing production Vite builds pass."
     },
     "focused_tests": {
       "status": "PASS",
-      "evidence": "Cloud authorization/OAuth/resource regression 8/8; Browser 19/19; web synthetic UAT 10/10; API regression 8/8; Agent Jest 9/9 suites and 78/78 tests, including source and packaged-extension tab registries, using temporary test tooling without changing dependency manifests. Agent extension validation passes source/extension parity."
+      "evidence": "API health/role/correlation tests: 3 suites, 12 tests; web diagnostics/debug-mode/version actions: 18/18; Cloud authorization/OAuth/resource regression: 8/8."
     },
     "uat": {
-      "status": "PASS",
-      "evidence": "Final local production-SPA synthetic UAT passed 10/10, covering public/login/reset, diagnostics, themes, responsive layout, role-specific management, write-only provider keys and AI administration states. API and Cloud regressions passed 8/8 each. Tenant-specific live CRM/voice acceptance is excluded by owner clarification."
+      "status": "PARTIAL",
+      "evidence": "Historical synthetic production-SPA UAT is 10/10 on 5.0.54. Candidate 5.1.0 was not browser-launched; current changes are covered by local component/API tests. Tenant live voice/CRM checks remain excluded by owner clarification."
     },
     "delivery": {
       "status": "BLOCKED",
-      "evidence": "PR #42 is draft/open with remediation and lifecycle evidence commits pushed. Physical-line inventory has 0 source files at or above 600 lines. Local production-SPA UAT passes 10/10; API and Cloud builds/C13 and regressions pass 8/8 each; browser tests pass 19/19; Agent Jest passes 9/9 suites and 78/78 tests; extension validation passes. Strict Cloud lint passes 16 changed files with 0 errors/0 warnings; changed API files have 0 errors/13 warnings. Check remains partial and normal PR review/merge/main readback remain pending. Cloud schema migrations are included but were not executed. The vendored completion gate and coherence utility have documented null-SHA and missing-README tool limitations."
+      "evidence": "PR #42 is OPEN/DRAFT; candidate commit/push and PR description refresh are pending, then normal review/merge/main readback. No production or database operation occurred."
     }
   }
 }

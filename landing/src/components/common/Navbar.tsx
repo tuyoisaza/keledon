@@ -5,11 +5,14 @@ import { Menu, X, Bot, LogIn, UserPlus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
+import { useTranslation } from '@/context/I18nContext';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const { isAuthenticated, user, logout } = useAuth();
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -21,9 +24,9 @@ export const Navbar = () => {
     }, []);
 
     const navLinks = [
-        { name: "Features", href: "#features" },
-        { name: "Architecture", href: "#architecture" },
-        { name: "Use Cases", href: "#use-cases" },
+        { name: t('landing.navFeatures'), href: "#features" },
+        { name: t('landing.architecture'), href: "#architecture" },
+        { name: t('landing.navUseCases'), href: "#use-cases" },
     ];
 
     const handleDashboardClick = () => {
@@ -35,10 +38,10 @@ export const Navbar = () => {
     };
 
     return (
-        <nav
+        <nav aria-label={t('landing.primaryNavigation')}
             className={cn(
                 "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent",
-                scrolled ? "glass border-white/10" : "bg-transparent"
+                scrolled ? "glass border-border/10" : "bg-transparent"
             )}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,10 +51,13 @@ export const Navbar = () => {
                             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                                 <Bot className="w-5 h-5 text-primary-foreground" />
                             </div>
-                            <span className="font-bold text-xl tracking-tight text-white">Keledon</span>
+                            <span className="font-bold text-xl tracking-tight text-foreground">Keledon</span>
                         </Link>
                         <VersionActions />
-                <ThemeControls />
+                        <div className="flex items-center gap-2">
+                            <ThemeControls />
+                            <LanguageSwitcher />
+                        </div>
                     </div>
 
                     <div className="hidden md:block">
@@ -60,7 +66,7 @@ export const Navbar = () => {
                                 <a
                                     key={link.name}
                                     href={link.href}
-                                    className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                                 >
                                     {link.name}
                                 </a>
@@ -70,11 +76,11 @@ export const Navbar = () => {
                                 <>
                                     <button
                                         onClick={handleDashboardClick}
-                                        className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                                        className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                                     >
-                                        Dashboard
+                                        {t('landing.navDashboard')}
                                     </button>
-                                    <div className="flex items-center gap-3 pl-4 border-l border-white/20">
+                                    <div className="flex items-center gap-3 pl-4 border-l border-border/20">
                                         <div className="flex items-center gap-2">
                                             {user?.avatar ? (
                                                 <img src={user.avatar} alt="" className="w-7 h-7 rounded-full" />
@@ -83,13 +89,13 @@ export const Navbar = () => {
                                                     {user?.name?.charAt(0)}
                                                 </div>
                                             )}
-                                            <span className="text-sm text-gray-300">{user?.name?.split(' ')[0]}</span>
+                                            <span className="text-sm text-muted-foreground">{user?.name?.split(' ')[0]}</span>
                                         </div>
                                         <button
                                             onClick={logout}
-                                            className="text-sm text-gray-400 hover:text-white transition-colors"
+                                            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                                         >
-                                            Logout
+                                            {t('landing.navLogout')}
                                         </button>
                                     </div>
                                 </>
@@ -97,17 +103,17 @@ export const Navbar = () => {
                                 <>
                                     <Link
                                         to="/login"
-                                        className="flex items-center gap-1.5 text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                                        className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                                     >
                                         <LogIn className="w-4 h-4" />
-                                        Login
+                                        {t('landing.navLogin')}
                                     </Link>
                                     <Link
                                         to="/login"
                                         className="flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                                     >
                                         <UserPlus className="w-4 h-4" />
-                                        Sign Up
+                                        {t('landing.navSignUp')}
                                     </Link>
                                 </>
                             )}
@@ -116,8 +122,12 @@ export const Navbar = () => {
 
                     <div className="md:hidden">
                         <button
+                            type="button"
                             onClick={() => setIsOpen(!isOpen)}
-                            className="text-gray-300 hover:text-white"
+                            aria-expanded={isOpen}
+                            aria-controls="public-mobile-menu"
+                            aria-label={isOpen ? t('landing.closeMenu') : t('landing.openMenu')}
+                            className="text-muted-foreground hover:text-foreground"
                         >
                             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </button>
@@ -126,14 +136,13 @@ export const Navbar = () => {
             </div>
 
             {/* Mobile menu */}
-            {isOpen && (
-                <div className="md:hidden glass border-b border-white/10">
+            <div id="public-mobile-menu" hidden={!isOpen} className="md:hidden glass border-b border-border/10">
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                         {navLinks.map((link) => (
                             <a
                                 key={link.name}
                                 href={link.href}
-                                className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5"
+                                className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5"
                                 onClick={() => setIsOpen(false)}
                             >
                                 {link.name}
@@ -144,26 +153,26 @@ export const Navbar = () => {
                             <>
                                 <button
                                     onClick={() => { handleDashboardClick(); setIsOpen(false); }}
-                                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5"
+                                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5"
                                 >
-                                    Dashboard
+                                    {t('landing.navDashboard')}
                                 </button>
                                 <button
                                     onClick={() => { logout(); setIsOpen(false); }}
-                                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5"
+                                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5"
                                 >
-                                    Logout
+                                    {t('landing.navLogout')}
                                 </button>
                             </>
                         ) : (
-                            <div className="flex flex-col gap-2 pt-4 border-t border-white/10 mt-4">
+                            <div className="flex flex-col gap-2 pt-4 border-t border-border/10 mt-4">
                                 <Link
                                     to="/login"
                                     className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-muted/50 text-foreground font-medium"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <LogIn className="w-4 h-4" />
-                                    Login
+                                    {t('landing.navLogin')}
                                 </Link>
                                 <Link
                                     to="/login"
@@ -171,13 +180,12 @@ export const Navbar = () => {
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <UserPlus className="w-4 h-4" />
-                                    Sign Up
+                                    {t('landing.navSignUp')}
                                 </Link>
                             </div>
                         )}
                     </div>
-                </div>
-            )}
+            </div>
         </nav>
     );
 };

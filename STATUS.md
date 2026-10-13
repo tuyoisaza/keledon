@@ -1,5 +1,15 @@
 # STATUS
 
+## 2026-10-13 — PHDK Auto candidate 5.1.0
+
+- Correct checkout: `C:\Users\tboar\OneDrive\Documentos\GitHub\KELEDON`, branch `chore/phdk-install-v2.50.8`; PHDK 2.50.8.
+- Candidate adds protected dynamic API diagnostics, liveness/deep-health separation, persisted-role checks, bounded correlated safe-probe evidence, and shared safe diagnostics/report/reset behavior in web and landing shells.
+- Current checks: API build/C13 and focused tests 12/12; web typecheck/build and diagnostics tests 18/18; landing build; diff whitespace check; physical-line inventory 0 at/above 600; full web lint 0 errors/135 warnings; scoped API lint 0 errors/2 warnings; scoped Cloud lint clean. Full landing typecheck retains unrelated legacy errors. See `PHDK_CHECK_REPORT.md`.
+- All four workstreams remain in scope. CRM/telephony are client-selected. Owner approved migration inclusion; no DB connection or migration execution occurred.
+- Check remains PARTIAL for full locale coverage, rendered accessibility/contrast and Electron acceptance, deployed SEO/header verification, and legacy landing diagnostics. PR #42 delivery/readback remains pending.
+- SIGUIENTE PASO: commit and push candidate 5.1.0, update PR #42 with current evidence, then finish the remaining Check findings and normal review/merge/readback.
+
+
 ## 2026-10-12 — PHDK installation
 
 - Request: pull KELEDON first, then install PHDK in this repository.
@@ -17,7 +27,7 @@
 ## 2026-10-12 — PHDK Auto integrated review checkpoint
 
 - User-confirmed scope: all four workstreams in order; code conformance with client-specific call/CRM per tenant. Restrictive admin policy approved and implemented in source.
-- Candidate5.0.54 local on chore/phdk-install-v2.50.8; web/API/browser checks and synthetic UAT are recorded in PHDK_CHECK_REPORT.md and evidence files.
+- Candidate 5.0.54 was superseded by the 5.1.0 PHDK Auto candidate above.
 - Full conformity remains partial; see PHDK_CONFORMITY_REVIEW.md. Sensitive managed-AI migration is additive and not applied, and delivery review remains open.
 - No commit, PR, push, merge, production migration, provider request, or deployment performed.
 - SIGUIENTE PASO: owner reviews durable AI schema/migration inclusion for this candidate; proceed with release only after that decision and close remaining Check obligations.

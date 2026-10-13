@@ -1,6 +1,7 @@
 import AdminPromptsPage from '@/pages/AdminPromptsPage';
 import AdminAiConsumptionPage from '@/pages/AdminAiConsumptionPage';
 import { RouteMetadata } from '@/components/common/RouteMetadata';
+import { DebugOverlay } from '@/components/common/DebugOverlay';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth, type UserRole } from '@/context/AuthContext';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -461,6 +462,7 @@ export function AppRouter() {
                 {/* Catch all */}
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+            <DebugOverlay />
         </BrowserRouter>
     );
 }

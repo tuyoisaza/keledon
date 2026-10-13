@@ -1,26 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
 import * as os from 'os';
+import { randomUUID } from 'crypto';
+import { PrismaService } from '../prisma/prisma.service';
+import { EndpointDiagnosticsRegistry } from './endpoint-diagnostics.registry';
+import { getApiVersion } from '../version';
 
-const errorBuffer: string[] = [];
-const MAX_ERRORS = 100;
+export type DiagnosticProbeMode =
+  | 'safe_read'
+  | 'validation_only'
+  | 'dry_run'
+  | 'manual_only';
 
-function captureError(msg: string) {
-  const entry = `${new Date().toISOString()} | ${msg}`;
-  errorBuffer.push(entry);
-  if (errorBuffer.length > MAX_ERRORS) {
-    errorBuffer.shift();
-  }
+export interface EndpointDiagnostic {
+  id: string;
+  method: string;
+  path: string;
+  purpose: string;
+  authRequired: boolean;
+  requiredRoles: string[];
+  probeMode: DiagnosticProbeMode;
+  expectedStatuses: number[];
+  sanitizedRequestExample: Record<string, unknown> | null;
+  sanitizedSuccessExample: Record<string, unknown>;
+  sanitizedErrorExamples: Array<Record<string, unknown>>;
 }
 
-const originalConsoleError = console.error;
-console.error = (...args: any[]): void => {
-  const msg = args
-    .map((a: any) => (typeof a === 'object' ? JSON.stringify(a) : String(a)))
-    .join(' ');
-  captureError(msg);
-  originalConsoleError.apply(console, args);
-};
+export interface ProbeEvidence {
+  id: string;
+  status: 'pass' | 'fail';
+  method: string;
+  path: string;
+  httpStatus: number;
+  latencyMs: number;
+  correlationId: string;
+}
 
 export interface HealthCheck {
   service: string;
@@ -44,8 +58,117 @@ export interface SystemHealth {
 @Injectable()
 export class HealthService {
   private startTime = Date.now();
+  private readonly probeHistory: ProbeEvidence[] = [];
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
+    private readonly endpointRegistry: EndpointDiagnosticsRegistry,
+  ) {}
+
+  getLivenessHealth() {
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      uptimeMs: Math.max(0, Date.now() - this.startTime),
+      version: getApiVersion(),
+    };
+  }
+
+  async getDeepHealth() {
+    const packageVersion = getApiVersion();
+    let databaseStatus: 'healthy' | 'unavailable' = 'healthy';
+    let migrationStatus: 'present' | 'unavailable' = 'present';
+    try {
+      await this.prisma.$queryRaw`SELECT 1`;
+      const migrations = await this.prisma.$queryRaw<
+        Array<{ migration_name: string }>
+      >`
+        SELECT migration_name FROM "_prisma_migrations"
+        WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL
+        ORDER BY finished_at DESC LIMIT 1
+      `;
+      if (!migrations.length) migrationStatus = 'unavailable';
+    } catch {
+      databaseStatus = 'unavailable';
+      migrationStatus = 'unavailable';
+    }
+    return {
+      status:
+        databaseStatus === 'healthy' && migrationStatus === 'present'
+          ? 'healthy'
+          : 'degraded',
+      timestamp: new Date().toISOString(),
+      uptimeMs: Math.max(0, Date.now() - this.startTime),
+      environment: process.env.NODE_ENV || 'development',
+      version: packageVersion,
+      gitSha:
+        process.env.GIT_SHA || process.env.SOURCE_VERSION || 'unavailable',
+      buildTimestamp: process.env.BUILD_TIMESTAMP || 'unavailable',
+      requiredEnvironment: {
+        DATABASE_URL: process.env.DATABASE_URL ? 'set' : 'missing',
+        KELEDON_AUTH_SECRET: process.env.KELEDON_AUTH_SECRET
+          ? 'set'
+          : 'missing',
+      },
+      database: { status: databaseStatus, migrations: migrationStatus },
+      meteredProviders: {
+        scope: 'process_environment_only',
+        deepgram: process.env.DEEPGRAM_API_KEY
+          ? 'configured'
+          : 'not_configured',
+        openai: process.env.OPENAI_API_KEY ? 'configured' : 'not_configured',
+        anthropic: process.env.ANTHROPIC_API_KEY
+          ? 'configured'
+          : 'not_configured',
+        probeCallsMade: 0,
+        tenantProviderCredentials: 'not_enumerated',
+      },
+      latestSafeProbes: this.probeHistory.map((probe) => ({ ...probe })),
+      endpointDiagnostics: this.endpointRegistry.list(),
+    };
+  }
+
+  async runDiagnosticProbe(id: string): Promise<ProbeEvidence> {
+    const endpoint = this.endpointRegistry
+      .list()
+      .find((candidate) => candidate.id === id);
+    if (!endpoint) throw new Error('Diagnostic probe not found');
+    if (endpoint.probeMode === 'manual_only')
+      throw new Error('Diagnostic probe is manual only');
+    if (
+      endpoint.probeMode !== 'safe_read' &&
+      endpoint.probeMode !== 'validation_only' &&
+      endpoint.probeMode !== 'dry_run'
+    ) {
+      throw new Error('Diagnostic probe mode is not executable');
+    }
+
+    const startedAt = Date.now();
+    // Each allowed ID maps to an explicit handler. The liveness probe is local;
+    // the deep-health probe reads only the database and safe runtime metadata.
+    let passed = false;
+    if (id === 'health.deep') {
+      const evidence = await this.getDeepHealth();
+      passed =
+        evidence.status === 'healthy' &&
+        evidence.endpointDiagnostics.some((item) => item.id === id);
+    } else if (id === 'health.basic') {
+      passed = this.getLivenessHealth().status === 'ok';
+    }
+    const result: ProbeEvidence = {
+      id,
+      status: passed ? 'pass' : 'fail',
+      method: endpoint.method,
+      path: endpoint.path,
+      httpStatus: passed ? 200 : 503,
+      latencyMs: Math.max(0, Date.now() - startedAt),
+      correlationId: `diag_${randomUUID().replace(/-/g, '')}`,
+    };
+    this.probeHistory.push(result);
+    if (this.probeHistory.length > 50) this.probeHistory.shift();
+    return { ...result };
+  }
 
   async getSystemHealth(): Promise<SystemHealth> {
     const services = await Promise.allSettled([
@@ -63,7 +186,7 @@ export class HealthService {
       return {
         service: ['database', 'vosk', 'deepgram', 'qdrant', 'services'][index],
         status: 'unhealthy',
-        message: result.reason,
+        message: 'Dependency check failed',
       };
     });
 
@@ -95,17 +218,18 @@ export class HealthService {
   private async checkDatabase(): Promise<HealthCheck> {
     const startTime = Date.now();
     try {
+      await this.prisma.$queryRaw`SELECT 1`;
       return {
         service: 'database',
         status: 'healthy',
         message: 'Prisma PostgreSQL',
         responseTime: Date.now() - startTime,
       };
-    } catch (error) {
+    } catch {
       return {
         service: 'database',
         status: 'unhealthy',
-        message: error.message,
+        message: 'Database is unavailable',
         responseTime: Date.now() - startTime,
       };
     }
@@ -134,7 +258,7 @@ export class HealthService {
         message: `VOSK returned ${response.status}`,
         responseTime: Date.now() - startTime,
       };
-    } catch (error) {
+    } catch {
       return {
         service: 'vosk',
         status: 'degraded',
@@ -183,7 +307,7 @@ export class HealthService {
         return {
           service: 'qdrant',
           status: 'healthy',
-          message: vsConfig.qdrantUrl,
+          message: 'Qdrant responded successfully',
           responseTime: Date.now() - startTime,
         };
       }
@@ -193,7 +317,7 @@ export class HealthService {
         message: `Qdrant returned ${response.status}`,
         responseTime: Date.now() - startTime,
       };
-    } catch (error) {
+    } catch {
       return {
         service: 'qdrant',
         status: 'unhealthy',
@@ -219,98 +343,6 @@ export class HealthService {
       status: 'healthy',
       message: `Available: ${availableServices.join(', ')}`,
       responseTime: Date.now() - startTime,
-    };
-  }
-
-  async checkBrowserDownloadUrl(): Promise<{
-    url: string;
-    reachable: boolean;
-  }> {
-    // KELEDON_BROWSER_DOWNLOAD_URL env var overrides the default stable URL
-    const url =
-      process.env.KELEDON_BROWSER_DOWNLOAD_URL ||
-      'https://github.com/tuyoisaza/keledon/releases/latest/download/KELEDON.Browser.Setup.exe';
-    try {
-      const response = await fetch(url, {
-        method: 'HEAD',
-        signal: AbortSignal.timeout(5000),
-      });
-      return {
-        url,
-        reachable:
-          response.ok || response.status === 302 || response.status === 301,
-      };
-    } catch {
-      return { url, reachable: false };
-    }
-  }
-
-  async getBasicHealth() {
-    const memUsage = process.memoryUsage();
-    const flags = this.configService.getFeatureFlags();
-    const sttConfig = this.configService.getSttConfig();
-    const vsConfig = this.configService.getVectorStoreConfig();
-    const ttsConfig = this.configService.getTtsConfig();
-    const browserDownload = await this.checkBrowserDownloadUrl();
-
-    return {
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-      uptime: Date.now() - this.startTime,
-      versions: {
-        cloud: process.env.npm_package_version || '0.1.0',
-        protocol: 'V3',
-      },
-      environment: {
-        NODE_ENV: process.env.NODE_ENV || 'development',
-        CLOUD_URL: process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
-        KELEDON_LAUNCH_SECRET: process.env.KELEDON_LAUNCH_SECRET
-          ? 'set'
-          : 'not set',
-        RAILWAY_SERVICE_NAME: process.env.RAILWAY_SERVICE_NAME || 'local',
-      },
-      services: {
-        rag: {
-          enabled: flags.vectorStore,
-          status: flags.vectorStore ? 'active' : 'disabled',
-        },
-        stt: {
-          provider: sttConfig.provider,
-          status: flags.realStt ? 'active' : 'web-speech',
-          voskPort: sttConfig.voskPort,
-          deepgramAvailable: !!sttConfig.deepgramApiKey,
-          deepgramModel: sttConfig.deepgramModel || 'nova-2',
-        },
-        tts: {
-          provider: ttsConfig?.provider || 'web-speech',
-          status: flags.realTts ? 'active' : 'web-speech',
-        },
-        rpa: { enabled: flags.rpa, status: flags.rpa ? 'active' : 'disabled' },
-        otel: {
-          enabled: flags.otel,
-          status: flags.otel ? 'active' : 'disabled',
-        },
-      },
-      vectorStore: {
-        provider: 'qdrant',
-        url: vsConfig?.qdrantUrl || 'http://localhost:6333',
-        enabled: flags.vectorStore,
-      },
-      capabilities: {
-        voice: flags.realStt || true,
-        escalation: true,
-        tabs: true,
-        vendorAutoLogin: true,
-      },
-      memory: {
-        heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024) + 'MB',
-        heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024) + 'MB',
-        rss: Math.round(memUsage.rss / 1024 / 1024) + 'MB',
-        external: Math.round(memUsage.external / 1024 / 1024) + 'MB',
-      },
-      browser_download_url: browserDownload.url,
-      browser_download_reachable: browserDownload.reachable,
-      logs: errorBuffer.slice(-MAX_ERRORS),
     };
   }
 }

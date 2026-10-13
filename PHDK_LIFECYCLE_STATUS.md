@@ -1,8 +1,8 @@
 # Lifecycle status — 20261012-keledon-four-fronts
 Project: C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON
-PHDK: 2.50.8 verified; candidate 5.0.54. Branch `chore/phdk-install-v2.50.8`; PR #42 OPEN/DRAFT with remediation and evidence updates pushed; no main merge/readback.
+PHDK: 2.50.8 verified; candidate 5.1.0. Branch `chore/phdk-install-v2.50.8`; PR #42 OPEN/DRAFT, candidate update pending; no main merge/readback.
 Goal: complete PHDK Auto for all four owner-confirmed fronts; each tenant selects telephony/CRM vendors.
-Current stage: Check — PARTIAL; Remediation — PASS.
+Current stage: Check — PARTIAL; Remediation — PASS; Delivery — IN PROGRESS.
 Historical folder: `docs/phdk/lifecycle/20261012-keledon-four-fronts/`.
 | Stage | Status | Current evidence / next condition |
 |---|---|---|
@@ -10,14 +10,14 @@ Historical folder: `docs/phdk/lifecycle/20261012-keledon-four-fronts/`.
 | Capture | REUSED | `10-capture/`; four fronts and vendor independence confirmed |
 | Plan | REUSED | `20-plan/`; all four commitments mapped |
 | PMO / Workstreams | REUSED | `30-pmo/`; all four workstreams locally tracked |
-| Integration Review | PASS | API/Cloud builds + regressions, web typecheck/lint/build/UAT, browser 19/19; Agent Jest 9 suites/78 tests and extension validation |
-| UAT | PASS | final local production-SPA synthetic UAT 10/10; API and Cloud regressions 8/8 each |
-| UAT Fix | PASS | current source fixes passed frontend UAT and API/Cloud regression reruns |
-| SEO | PASS (SOURCE) | truthful CTA targets; only `/` indexable in Nginx source; deployed headers unverified |
-| AEO/GEO | PARTIAL | supported product answers and navigation revalidated; public locale/crawler/engine citation data unmeasured |
-| Check | PARTIAL | source-line scan (0 files >=600 lines), builds/regressions, Agent tests 78/78, extension validation and locale catalog key parity pass; public landing/login are localized and passed local Axe WCAG 2.1 A/AA scans in en/es/pt at the default theme; broader translation/accessibility and platform/environment limits remain open |
-| Remediation | PASS | repository-wide line inventory reduced from 16 to 0 over-limit files; Alerting and UI Automation also split and verified |
-| Delivery | PENDING | final version, version-prefixed commit(s), PR review/merge controls, remote `main` SHA/version readback |
+| Integration Review | PARTIAL | API build and focused diagnostics tests 12/12; web typecheck/build and diagnostics tests 18/18; landing build; legacy landing typecheck and broad visual checks remain open |
+| UAT | PASS (SCOPED) | Historical local production-SPA synthetic UAT 10/10; client vendor live journey excluded by owner clarification |
+| UAT Fix | PASS (SCOPED) | Current API/web focused regression suites and builds pass |
+| SEO | PASS (SOURCE) | Nginx source marks only `/` indexable; deployed headers unverified |
+| AEO/GEO | PARTIAL | Product answers/navigation revalidated; public locale/crawler/engine citation data unmeasured |
+| Check | PARTIAL | API/web focused tests and builds pass; broader translation/accessibility and platform/environment limits remain open |
+| Remediation | PASS | Repository-wide line inventory has 0 files at/above 600 lines |
+| Delivery | IN PROGRESS | Candidate 5.1.0 prepared locally; commit/push, PR update, review/merge controls, remote `main` SHA/version readback remain |
 Confirmed commitments: 4; locally implemented/reviewed: 4; verified delivered to remote target: 0/4. PR #42 remains OPEN/DRAFT. Owner approved managed-AI migration inclusion/merge through normal DB procedure; no database connection or migration execution occurred.
-Open: full translation/content review; deployed private-route header verification; rendered accessibility/contrast and Electron widget acceptance; landing/agent limitations; PHDK tool verification; normal PR delivery and remote verification.
-SIGUIENTE PASO: ampliar la revisión de traducción y accesibilidad a las rutas activas restantes, documentar los límites que dependen del entorno desplegado, completar Check y preparar la entrega normal del PR.
+Open: full translation/content review; deployed private-route header verification; rendered accessibility/contrast and Electron widget acceptance; legacy landing diagnostics; normal PR delivery and remote verification.
+SIGUIENTE PASO: commit and push candidate 5.1.0, update PR #42 with current evidence, then finish the remaining Check findings and normal review/merge/readback.

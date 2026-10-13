@@ -1,6 +1,11 @@
 import { redactDiagnostic } from './diagnostics-core';
 export type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 
+function initialDebugMode() {
+    if (import.meta.env.DEV) return true;
+    try { return localStorage.getItem('keldon-debug-mode') === 'true'; } catch { return false; }
+}
+
 interface LogEntry {
     timestamp: number;
     level: LogLevel;
@@ -12,7 +17,7 @@ class DebugLogger {
     private logs: LogEntry[] = [];
     private listeners: ((logs: LogEntry[]) => void)[] = [];
     private maxLogs = 1000;
-    private isEnabled = import.meta.env.DEV; // Production debug defaults OFF.
+    private enabled = initialDebugMode(); // Non-production defaults ON; production is explicit opt-in.
 
     constructor() {
         // Do not restore arbitrary pre-sanitization log payloads from older releases.
@@ -20,14 +25,16 @@ class DebugLogger {
     }
 
     enable(enabled: boolean) {
-        this.isEnabled = enabled;
+        this.enabled = enabled;
         if (enabled) {
             this.log('info', 'Debug logging enabled');
+        } else {
+            this.notifyListeners();
         }
     }
 
     log(level: LogLevel, message: string, details?: any) {
-        if (!this.isEnabled) return;
+        if (!this.enabled) return;
 
         const entry: LogEntry = {
             timestamp: Date.now(),
@@ -61,6 +68,10 @@ class DebugLogger {
 
     getLogs() {
         return this.logs.map(entry => ({ ...entry }));
+    }
+
+    isEnabled() {
+        return this.enabled;
     }
 
     clear() {

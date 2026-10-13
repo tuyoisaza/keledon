@@ -1,5 +1,5 @@
-# PHDK source line-limit audit
+# PHDK physical line limit audit
 
-Date: 2026-10-13. Candidate: 5.0.54. Rule: source files remain below 600 physical lines. Count includes blank lines; scan includes `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`, excluding dependency and generated directories.
+Date: 2026-10-13. Candidate: 5.1.0. Rule: all tracked application source files remain below 600 physical lines, including blank lines. Inventory extensions: `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, `.vue`; generated, dependency and Git directories are excluded.
 
-The current inventory contains **0 files** at or above the limit. In addition to the earlier splits, API and Cloud Alerting were divided into service roots, defaults, notification delivery, monitoring checks and shared public types. UI Automation was divided into service roots, DOM helpers, action helpers and public contracts. The UI roots are 225/225 lines; isolated TypeScript compilation succeeds in both packages. API/Cloud production/C13 builds and regression suites pass 8/8 in both packages. Agent validation passes its 11-module graph and source/extension parity checks. This closes the physical line-limit finding; integrated PHDK Check remains open for other findings and final lifecycle evidence.
+The prior audit counted only tracked files at that snapshot and missed one current Cloud source file at 612 lines. The flow-normalization types/helper now live in `cloud/src/services/decision-engine.flow-types.ts`, reducing `decision-engine.methods.ts` below the limit without changing its call contract. Fresh post-edit inventory: **0 source files at or above 600 lines**. Check remains partial for other findings even though the line-limit criterion passes.

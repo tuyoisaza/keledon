@@ -1,4 +1,6 @@
 import { useState, useEffect, createContext, useContext, type ReactNode } from 'react';
+import { recordAuthEvent } from '@/lib/debug-report';
+import { debugLogger } from '@/lib/debug-logger';
 
 export type UserRole = 'guest' | 'user' | 'agent' | 'admin' | 'coordinator' | 'superadmin';
 
@@ -31,6 +33,7 @@ interface AuthContextType {
   loginWithGoogle: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  clearLocalSession: () => void;
   hasRole: (minRole: UserRole) => boolean;
   isActuallySuperAdmin: boolean;
   email: string;
@@ -56,9 +59,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function checkAuth() {
+      recordAuthEvent('session-check', 'started');
       try {
         const token = sessionStorage.getItem('auth_token');
         if (!token) {
+          recordAuthEvent('session-check', 'no-session');
           setIsLoading(false);
           return;
         }
@@ -70,11 +75,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (data.success && data.user) {
           setUser(data.user);
+          recordAuthEvent('session-check', 'success');
         } else {
           sessionStorage.removeItem('auth_token');
+          recordAuthEvent('session-check', 'failure');
         }
-      } catch (e) {
-        console.error('Auth check failed:', e);
+      } catch {
+        recordAuthEvent('session-check', 'failure');
+        debugLogger.log('error', 'Authentication session check failed', { stage: 'session-check' });
       } finally {
         setIsLoading(false);
       }
@@ -84,36 +92,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loginWithGoogle = async () => {
+    recordAuthEvent('google-redirect', 'started');
     window.location.href = `${API_URL}/api/auth/google`;
   };
 
   const signInWithEmail = async (email: string, password: string) => {
     setIsLoading(true);
     setError(null);
+    recordAuthEvent('email-login', 'started');
+    try {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
-    const res = await fetch(`${API_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error('Authentication failed');
+      }
 
-    const data = await res.json();
-    setIsLoading(false);
+      if (data.token) {
+        sessionStorage.setItem('auth_token', data.token);
+      }
 
-    if (!data.success) {
-      throw new Error(data.message || 'Login failed');
+      setUser(data.user);
+      recordAuthEvent('email-login', 'success');
+    } catch (error) {
+      recordAuthEvent('email-login', 'failure');
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    if (data.token) {
-      sessionStorage.setItem('auth_token', data.token);
-    }
-
-    setUser(data.user);
+  const clearLocalSession = () => {
+    sessionStorage.removeItem('auth_token');
+    setUser(null);
+    setEmail('');
+    setPassword('');
+    setError(null);
   };
 
   const logout = async () => {
-    sessionStorage.removeItem('auth_token');
-    setUser(null);
+    clearLocalSession();
     window.location.href = '/';
   };
 
@@ -133,6 +155,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loginWithGoogle,
         signInWithEmail,
         logout,
+        clearLocalSession,
         hasRole,
         isActuallySuperAdmin,
         email,
