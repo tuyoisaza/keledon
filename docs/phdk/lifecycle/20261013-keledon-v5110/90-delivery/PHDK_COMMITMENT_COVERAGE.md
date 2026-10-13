@@ -1,5 +1,12 @@
 # PHDK commitment coverage — KELEDON four fronts
 
+## 5.1.10 delivery readback — 2026-10-13
+
+Product PR [#62](https://github.com/tuyoisaza/keledon/pull/62) merged by squash at `a806617f430d084831a079b92c821a694b925467`. A fresh `git fetch origin main` and readback verified `origin/main` at the same SHA; all five package manifests on remote main report 5.1.10. The version-prefixed source commit is `ca0f86a90fbb1444799bebd102fc5253218233a8`, included by the merge. GitHub showed no required checks or branch protection; PR status-check rollup is empty. No deployment is claimed.
+
+The five workstreams remain mapped to the confirmed commitments. The source delivery is complete; overall PHDK Auto remains **PARTIALLY DELIVERED** because persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO acceptance remain open. Detailed stage records are in `docs/phdk/lifecycle/20261013-keledon-v5110/`.
+
+SIGUIENTE PASO: completar aceptación nativa solo después de confirmar la descarga/ejecución de Electron; resolver el resto en un entorno local/owner-managed y mantener las pruebas de despliegue/SEO/AEO como no medidas.
 PHDK v2.50.10 is installed; all 52 coherence mappings pass. Candidate branch `v5.1.10-browser-permission-consent` is based on remote `main` `f5b9e43bd272408b3b5493c6eddfd24fc2095c75`. All five application package/lock roots are 5.1.10. Integrated source checks pass: API build/regression 14/14/lint (0 errors, 135 warnings); Cloud build/regression 8/8; web typecheck/build, diagnostics 18/18, SEO 1/1, synthetic local SPA UAT 1/1; Browser build/regression 24/24; Landing build/lint; PHDK coherence 52/52. Repository source/test inventory has 1,086 files and zero at/above 600 lines.
 
 The Browser no longer approves permissions wholesale. Secure-origin media requests require a session-only user grant; all other permissions and stale-page grants are denied. Six oversized API/test files were split into focused modules, and isolated backup/TTS provider tests were added. SEO/AEO source findings for private-route headers and live primary links are closed in source/local checks; no deployed or external discovery claim is made.
