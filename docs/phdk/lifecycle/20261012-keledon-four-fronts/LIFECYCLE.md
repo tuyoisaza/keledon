@@ -1,5 +1,27 @@
 # PHDK Auto lifecycle — 20261012-keledon-four-fronts
 
+## Current continuation board — 2026-10-13, product candidate 5.1.8
+
+Goal: complete the four owner-confirmed KELEDON fronts under PHDK v2.50.10, keeping call/CRM providers tenant-selected and enforcing the owner-approved restrictive admin policy.
+
+Preflight ............ COMPLETED — PHDK v2.50.10 / 52 mappings
+Capture .............. REUSED — four fronts confirmed
+Plan ................. REUSED — architecture, requirements, CRUD matrix
+PMO / Workstreams .... REUSED — CMT-001..004 reconciled
+Integration Review ... IN PROGRESS — CRUD credential-hash gap fixed; versioned PR pending
+UAT .................. API source regression PASS — 11/11; full acceptance incomplete
+UAT Fix .............. COMPLETED (SCOPED) — no new FAIL in 5.1.7 browser rerun
+SEO .................. SOURCE PASS — deployed response not observed
+AEO/GEO .............. PARTIAL — no external/deployed measurement
+Check ................ SOURCE CHECKS PASS / ACCEPTANCE PARTIAL
+Remediation .......... COMPLETED (SCOPED)
+Delivery ............. IN PROGRESS — 5.1.8 branch candidate; no merge/deployment claimed
+
+The last verified `origin/main` is `a854ca7634307538305cd9b5ad1f91f8a066b1a1`, product 5.1.7, PR #54 MERGED. Current candidate removes client-supplied password hashes on CRUD user create/update; API policy regression, typecheck and full lint pass. The current source change has not yet been merged. Overall lifecycle remains **PARTIALLY DELIVERED** because persisted CRUD/role database acceptance, native Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO remain unresolved. See root `UAT_REPORT.md`, `PHDK_COMPLETION_AUDIT.md`, and the current delivery snapshot after it is created.
+
+Historical lifecycle checkpoints follow.
+
+
 ## 2026-10-13 continuation — 5.1.7 remediation blocked before delivery
 
 After the 5.1.6 main readback at `3c6e4c71bc5672984a1fd07df62d722f95beb4e7`, bounded Railway deployment logs showed the old API startup issuing unconditional rollback-resolution commands despite seven migrations being present and none pending. The local 5.1.7 candidate removes those commands, fails closed after migration/count-query errors, and has Docker invoke the checked-in startup script. API build and all 11 regression suites pass. Seven full-source TS errors were fixed; one missing CloudServer source remains behind a legacy runtime entrypoint. Targeted/full API ESLint remained blocked without a completed result; no commit/push/PR was made. The lifecycle remains PARTIALLY DELIVERED. Detailed current checkpoint: `../90-delivery/DELIVERY_REPORT_5.1.7_PREMERGE.md`.

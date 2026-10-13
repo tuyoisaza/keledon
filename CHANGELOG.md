@@ -1,3 +1,8 @@
+## v5.1.8 — 2026-10-13 (PHDK Auto candidate)
+
+- Reject client-supplied password hashes on user creation and update; credential hashes remain owned by the authentication flow.
+- Add admin/superadmin regression coverage and align all five app package/lock roots at 5.1.8.
+
 # Changelog
 ## v5.1.7 — 2026-10-13 (PHDK Auto candidate)
 

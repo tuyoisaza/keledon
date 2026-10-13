@@ -2,43 +2,35 @@
   "version": "1",
   "goal": "PHDK Auto: four confirmed KELEDON fronts, maximum applicable code conformity",
   "target_branch": "main",
-  "expected_version": "5.1.2",
+  "expected_version": "5.1.7",
   "version_file": "services/web/package.json",
   "version_property": "version",
-  "merged_commit_sha": "81a8e1d667abcca63923cf5666c5c6bcc70b0b6b",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/44",
+  "merged_commit_sha": "a854ca7634307538305cd9b5ad1f91f8a066b1a1",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/54",
   "checks": {
     "lint": {
       "status": "PASS",
-      "evidence": "services/web full ESLint: 0 errors, 135 warnings; changed services/api files ESLint clean; landing full lint pass."
+      "evidence": "services/api npm run lint: 184 TypeScript source files, 0 errors and 139 warnings; services/web 0 errors/134 warnings; Landing lint passed. API lint is non-mutating and typed rules remain enabled."
     },
     "typecheck": {
       "status": "PASS",
-      "evidence": "services/web and landing typecheck pass; services/api and Cloud TypeScript production builds pass."
+      "evidence": "API tsc --noEmit passed; API production build and Cloud, web and Landing typechecks/builds passed on the integrated 5.1.7 candidate."
     },
     "build": {
       "status": "PASS",
-      "evidence": "services/api, Cloud, services/web and landing production/C13 builds pass."
+      "evidence": "API C13/production build, Cloud, web, and Landing production builds passed; Browser package/build regression validation passed. No deploy is implied."
     },
     "focused_tests": {
       "status": "PASS",
-      "evidence": "API regression 10/10 suites; Cloud regression 10/10 suites; web diagnostics/debug-mode/version 18/18; SEO source 1/1."
+      "evidence": "Freshly rerun: API regression 11/11; web diagnostics 18/18; web local Edge UAT 1 suite / 1 test with nine journey groups. Existing Cloud 8/8, Browser 19/19, SEO 1/1 and Landing build/typecheck/lint records remain from integrated candidate verification."
     },
     "uat": {
       "status": "PASS",
-      "evidence": "Candidate 0d98f2812d8eb88a8626101f81f9bf9ca6d52de0: local production-SPA Edge UAT 1/1 on 5.1.2, synthetic Company Co/Other Co fixtures, mocked API and external network blocked; persistence, native and broad app acceptance remain unverified."
+      "evidence": "Current local built-SPA UAT executed against source revision edce7eafbe13ac16ab93274a87e12571e7b04b2e; its Git tree a77afde0f6142583887921fe46376b84cf3af279 matches verified origin/main a854ca7634307538305cd9b5ad1f91f8a066b1a1. Headless Edge, local loopback server, external HTTP/WebSockets blocked, APIs intercepted with synthetic Company Co fixtures. services/web npm run test:uat: 1/1 suite; click-tested anonymous login copy/reset success/failure, 390px layout and theme; public home mount and selected admin/coordinator/superadmin/user/provider/diagnostics journeys. services/web npm run test:diagnostics: 18/18; API regression: 11/11. No DB-backed identity/persistence, Electron/device/audio, broad accessibility/localization, production or deployed SEO/AEO acceptance; see UAT_REPORT.md."
     },
     "delivery": {
       "status": "PASS",
-      "evidence": "Product PR #42 and PHDK standards-sync PR #43 are merged; PR #44 records post-merge evidence. Verified remote origin/main merge SHA 81a8e1d667abcca63923cf5666c5c6bcc70b0b6b; all five app package and lock roots remain at 5.1.2; source commit 0d98f2812d8eb88a8626101f81f9bf9ca6d52de0 and PHDK sync commit b818a2705a82fb62068f37349b26794786467af7 are ancestors of main. PRs #43/#44 had no hosted checks or review submissions."
-    },
-    "scope_and_checks": {
-      "status": "BLOCKED",
-      "evidence": "Persistent CRUD/migration behavior, native Electron/device/audio, broad app accessibility/localization and deployed SEO/AEO remain unverified. PHDK v2.50.10 tool fixes and installed manifest checks pass; these do not substitute for product/runtime acceptance."
-    },
-    "completion_gate": {
-      "status": "BLOCKED",
-      "evidence": "Installed v2.50.10 gate passes an isolated smoke against the actual remote SHA and services/web/package.json.version. The full evidence gate remains BLOCKED because scope_and_checks is honestly marked BLOCKED for unverified acceptance items."
+      "evidence": "PR #54 https://github.com/tuyoisaza/keledon/pull/54 is MERGED; independently read origin/main SHA a854ca7634307538305cd9b5ad1f91f8a066b1a1; all five app package/lock roots are 5.1.7. GitHub reported no required checks, branch protection or review requirement; none are claimed. No deployment/production health is claimed."
     }
   }
 }
