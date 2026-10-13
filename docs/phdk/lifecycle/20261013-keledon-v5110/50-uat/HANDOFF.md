@@ -4,7 +4,7 @@ Run ID: 20261013-keledon-v5110
 Stage: 50-uat
 Status: COMPLETED (SCOPED PASS; ACCEPTANCE INCOMPLETE)
 Started from revision: origin/main f5b9e43bd272408b3b5493c6eddfd24fc2095c75
-Completed at revision/worktree: candidate 5.1.10 working tree, pre-commit
+Completed at revision/worktree: local main 0be102b8b7847bfed3441ff00e00ba4477c57a1e
 Date/time: 2026-10-13 America/Mexico_City
 
 ## Goal / scope
@@ -13,7 +13,7 @@ Validate four owner-confirmed KELEDON workstreams. Provider integrations vary pe
 ## Inputs verified
 - PHDK v2.50.10 installed; 52/52 static coherence mappings pass.
 - Candidate version 5.1.10; browser/widget and API source reviewed.
-- UAT limited to local built SPA and isolated regression tests.
+- UAT includes local built SPA, isolated regressions, and native Electron 44.7 renderer startup.
 
 ## Work performed
 - Ran synthetic local Edge UAT against the built SPA with intercepted API and blocked external requests.
@@ -26,7 +26,8 @@ Validate four owner-confirmed KELEDON workstreams. Provider integrations vary pe
 ## Exit gate
 - [x] Selected local synthetic role/widget journeys pass.
 - [x] Candidate and evidence limitations documented.
-- [ ] Persistence, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO acceptance; carried forward as open.
+- [x] Native Electron renderer startup and home/widget display verified.
+- [ ] Native media dialog/OS permission/device/audio, persistence, broad accessibility/localization and deployed SEO/AEO acceptance remain open.
 
 ## Decisions / assumptions
 - Integrations remain tenant-configurable; no client vendor selected or tested.
@@ -34,15 +35,16 @@ Validate four owner-confirmed KELEDON workstreams. Provider integrations vary pe
 
 ## Risks / blockers
 - No disposable Postgres runtime was available; do not provision one in this run.
-- Native Electron runtime installation/use needs action-time confirmation; no native interaction claimed.
+- Windows app-control bridge unavailable; native permission dialog and device/audio not manually exercised.
 
 ## Evidence
 - `npm run test:uat` in services/web: 1/1 suite.
 - API regression: 14/14; Browser regression: 24/24.
+- Native renderer evidence: `uat-browser-native-initial.png`; permission dialog/device/audio remain untested.
 
 ## Next stage
 Stage: 60-uat-fix
 Required inputs: this UAT report and source review.
 What the next stage must verify: remediate the blanket Browser permission grant, retest source contracts, preserve native runtime limitations.
 
-SIGUIENTE PASO: UAT Fix reparará los hallazgos accionables y volverá a correr las pruebas afectadas.
+SIGUIENTE PASO: UAT Fix verificará los permisos a nivel de fuente y documentará los límites del acceso nativo.

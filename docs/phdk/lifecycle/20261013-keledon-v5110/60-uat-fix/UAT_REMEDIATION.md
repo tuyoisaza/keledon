@@ -15,7 +15,7 @@ Finding: the Electron main process granted every permission request without user
 
 Fix: introduced an isolated permission policy. Only HTTPS getUserMedia requests in the Browser media context can proceed to an explicit native consent dialog. The dialog identifies requester and top-level site; consent lasts for the session and is checked against the current page after the prompt. Navigation races, non-secure origins, and every unrelated permission are denied. Development skips updater network checks.
 
-Retest: PASS for source-policy tests (5 cases) and full Browser regression (24/24); TypeScript build passes. No native Electron window or permission dialog was used because the local command attempted to download an Electron runtime and the action-time installation confirmation remains outstanding. No microphone/audio acceptance is inferred.
+Retest: PASS for source-policy tests (5 cases) and full Browser regression (24/24); TypeScript build passes. After owner authorization, Electron 44.7.0 launched and the v5.1.10 renderer loaded. Windows app control was unavailable, so the native permission dialog and microphone/audio acceptance remain untested.
 
 ## PHDK line-limit remediation — 5.1.10
 
