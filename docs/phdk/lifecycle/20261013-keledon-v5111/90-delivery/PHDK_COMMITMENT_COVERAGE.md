@@ -1,5 +1,14 @@
 # Commitment coverage — KELEDON 5.1.11
 
+## v5.1.12 delivery continuation
+
+| Commitment | Current evidence | Disposition |
+|---|---|---|
+| CMT-001 | PR #68 merged; `origin/main` `7d67b09ee2b6d9c408bd8c4c1dbce0eb327ee4e2`; all five roots 5.1.12; mechanical gate PASS. | Delivered |
+| CMT-002 | Diagnostics/widget PR #66 plus theme propagation P1 fix and UAT evidence in #68. | Source delivered; native and broad manual access remain open |
+| CMT-003 | Provider-independent contracts and regressions; providers remain selected per client. | Common source delivered; no live client CRM/call was selected |
+| CMT-004 | Owner-approved actor/tenant/role/secret policy and isolated regressions. | Source delivered; persisted DB CRUD/migrations unverified |
+
 | ID | Confirmed scope | Delivered evidence | Remaining acceptance |
 |---|---|---|---|
 | CMT-001 | Baseline/version/PR reconciliation | All five app roots 5.1.11; product PR #66 merged; `origin/main` `829caf32978571ac439b8236c2cf7605a38aea4b`; completion gate PASS. | No hosted checks/reviews were required or configured; no deployment claimed. |
