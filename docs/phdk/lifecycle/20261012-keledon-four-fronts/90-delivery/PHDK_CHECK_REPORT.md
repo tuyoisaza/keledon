@@ -1,11 +1,26 @@
-# PHDK Check report — candidate 5.0.54
+# PHDK Check — integrated 5.1.0 candidate
 
-Scope: integrated candidate plus browser/brain, agent, API, and Cloud security/modularity checks and fixes, 2026-10-13. No production provider, database, customer data, or metered API use. Public landing/login copy and navigation are localized and passed a local Axe WCAG 2.1 A/AA scan in all three locales at the default theme; the mobile menu opens its controlled region. Full translation review and broader rendered accessibility across routes/themes remain open.
+Date: 2026-10-13 America/Mexico_City. Current branch candidate `82121189cdf8423f2e7f2cc4bd32c48949e63eb9`, PR #42 open/draft. All four owner-confirmed fronts are included. CRM/telephony vendors are selected per tenant. No production provider, customer data, database, or metered API call was used.
 
-PASS: Cloud production build (C13 + TypeScript) and authorization/OAuth/resource regressions 8/8; services/web typecheck, ESLint (0 errors/138 warnings), production Vite build; browser regression 19/19; web synthetic UAT 10/10; API production build/C13 and regression 8/8; Agent Jest 9/9 suites and 78/78 tests; Agent extension validation and source/extension tab registry parity; PHDK 2.50.8 coherence 50/50 mappings. Cloud uses database-backed auth/tenant guards; runtime and CRM adapter code remains vendor-independent. English, Spanish and Portuguese catalogs have matching keys; full translation review remains open.
+## PASS evidence
 
-PARTIAL/BLOCKED: scoped Cloud ESLint on changed service modules passes with 0 errors/0 warnings; changed API modules have 0 errors/13 warnings. Full legacy landing TypeScript check reports unrelated baseline diagnostics, though the changed web app check passes. Full Agent adapter typecheck reports existing contract/type mismatches. The Agent build was not run because the script removes repository-root `dist`. Config plus extracted test-harness scripts pass combined syntax and asset validation. Both extension sidepanel pages pass asset resolution and combined HTML-order syntax validation.
+- API production/C13 build; focused health, persisted-role, and correlation suites 12/12.
+- Cloud production/C13 build and regression 8/8.
+- Web typecheck and production build; diagnostics/reset/widget tests 18/18; local production-SPA Edge UAT 1/1. UAT blocks external HTTP/WebSocket traffic and intercepts all application API responses with synthetic Company Co fixtures.
+- Landing production build; full web lint 0 errors/135 warnings; changed UI/UAT ESLint clean.
+- `git diff --check`; tracked-source line inventory 0 at/above 600 lines.
+- Dynamic API diagnostic route registry fails closed to manual-only; deep health is persisted-role protected; only explicit safe probes can run on click; public health remains liveness-only; errors/evidence are sanitized and correlated.
+- Screenshot review found and fixed the floating event panel covering the diagnostics route. The final UAT screenshot shows the page clear and the test asserts the duplicate panel is absent there.
 
-OPEN: the physical-line inventory in `PHDK_LINE_LIMIT_AUDIT.md` now finds 0 source files at or above PHDK's hard 600-line limit. Full translation/content review, server-delivered private-route indexability, broad rendered accessibility/contrast and Electron diagnostics-widget acceptance remain unresolved.
+## PARTIAL / OPEN
 
-DELIVERY: PR #42 is OPEN/DRAFT and the branch is synchronized to `origin`. The owner approved the managed-AI migration; additive Cloud provider/schema migrations are included and none has been executed. No main readback or production deployment is claimed. The vendored completion-gate script currently raises `TypeError` when the accurate no-merge `merged_commit_sha` value is JSON `null`; no completion PASS is claimed and the PHDK tool was not modified in this product task.
+- `landing` production build passes, but full legacy TypeScript check still reports roughly 135 diagnostics in untouched files. Web lint has 135 warnings, no errors.
+- Full active-route localization and translated feedback are not complete; previous 954 JSX text plus 102 literal-attribute counts are historical candidates, not an exact current untranslated inventory.
+- Broad accessibility/contrast/zoom/screen-reader verification across all routes/themes and native Electron visual/device acceptance remain open.
+- The frontend UAT uses synthetic role tokens; isolated API tests cover selected rules, but the complete backend role × tenant × CRUD resource matrix is not proven. See `../20-plan/CRUD_MATRIX.md` and `../50-uat/UAT_CASES.md`.
+- Private-route indexing headers are unverified on a deployed host. Existing source directives are not deployment evidence.
+- PHDK coherence helper expects `phdk-standards/README.md` and `CHANGELOG.md`, absent from the installed source set. Completion evidence is valid JSON, but the vendored completion gate raises `TypeError` while processing the valid null merge SHA. The owner-approved additive managed-AI migration remains unapplied; no database was connected.
+
+## Decision
+
+Check remains PARTIAL. Keep the PR draft until remaining source-checkable findings are fixed or explicitly dispositioned, then use normal review controls. Do not call the branch delivered or production accepted. Remote target-main merge/readback is still required for goal completion.

@@ -54,6 +54,21 @@ Preserve React/Vite/custom en-es-pt i18n and native Electron/browser functionali
 
 Report remains local/uncommitted. Root integrates final Check, closes proven fixes, records unresolved capabilities/debt and delivers only to the owner-authorized target. SIGUIENTE PASO: root reviews the named source repairs and exact remaining applicable conformance gaps; worker has no publication authority.
 
+## Integrated revalidation — candidate 5.1.0
+
+Date: 2026-10-13 America/Mexico_City. This current addendum supersedes the old “local/uncommitted” status above; historical observations remain snapshots unless explicitly resolved below. Remote branch candidate: `82121189cdf8423f2e7f2cc4bd32c48949e63eb9`, PR #42 open/draft.
+
+- PHDK Auto run and source delivery handoffs are now reconciled to the four confirmed commitments. API/Cloud/web/local UAT evidence is in `PHDK_CHECK_REPORT.md` and lifecycle `70-check/`.
+- Current tracked-source inventory is 0 files at or above 600 lines; older BrainPage/FlowsPage line counts are superseded. New UAT build ran `services/web` production Vite output in headless Edge. External HTTP/WebSocket requests were blocked and API routes intercepted with Company Co fixtures.
+- The diagnostics page now suppresses the duplicate floating debug event overlay only at `/management/debug`; a focused test and screenshot verify navigation/control visibility. Shared overlay remains elsewhere.
+- `SEO-F03` is CLOSED IN SOURCE: Get Started links to `/login`, the secondary CTA links to the actual `#architecture` section, and placeholder footer anchors were removed. This is source evidence only.
+- `SEO-F01` remains open: private-route exclusion is client-side and the static SPA fallback does not provide verified route-specific server noindex headers. Deployment remains unverified; robots.txt is not access control.
+- `CF-005` localization candidate counts remain historical and are not current exact missing-translation totals. Public copy remains predominantly English; active-route/feedback audit is incomplete. `CF-006` semantic themes/reduced motion exist, but full cross-route contrast/reflow/keyboard/screen-reader acceptance is open.
+- `CF-001` selected native dialogs and focused routes pass keyboard/focus UAT. This does not close a full CRUD access matrix, all roles/resources, Electron rendering, or broad WCAG conformance. Isolated API tests do not substitute for production DB authorization.
+- The installed PHDK coherence checker statically expects README/CHANGELOG inputs absent from the PHDK source directory; manifest/version checks are independently documented. Do not fabricate these metadata files merely to make the helper green.
+
+The source review still cannot claim full PHDK completion. The main branch and additive database migration have not been applied; no provider, customer, or production system was contacted.
+
 ## Integration addendum — implemented source readback
 
 Date2026-10-12, same local changing candidate. This addendum supersedes earlier absence findings only where evidence now exists; it does not rewrite the original audit snapshot.

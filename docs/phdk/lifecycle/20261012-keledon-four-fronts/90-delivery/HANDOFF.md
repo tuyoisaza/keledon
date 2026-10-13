@@ -1,33 +1,31 @@
 # PHDK Lifecycle Handoff — Delivery
 
-Run ID: 20261012-keledon-four-fronts
-Stage: 90-delivery
-Status: PARTIALLY DELIVERED
-Candidate: 5.0.54
+Run ID: `20261012-keledon-four-fronts`
+Stage: `90-delivery`
+Status: `IN PROGRESS — candidate published to review branch; not delivered to main`
+PHDK 2.50.8; product candidate 5.1.0
 Branch: `chore/phdk-install-v2.50.8`
-PR: [#42](https://github.com/tuyoisaza/keledon/pull/42) (draft/open; not merged)
-The candidate update is committed to the PR branch; see the linked PR for its current head.
-Date: 2026-10-13 America/Mexico_City
+Remote branch head: `82121189cdf8423f2e7f2cc4bd32c48949e63eb9`
+PR: [#42](https://github.com/tuyoisaza/keledon/pull/42) (open/draft; no review decision; no CI statuses returned)
+Date: `2026-10-13 America/Mexico_City`
 
-## Goal and scope
+## Scope and owner decisions
 
-Execute PHDK Auto across the four owner-confirmed workstreams: baseline/version/PR; widget and safe diagnostics; vendor-independent voice-to-cloud/browser/CRM contracts; and administration/permissions. Telephony and CRM integrations are tenant-selected and were reviewed vendor-independently.
+The candidate covers the four owner-confirmed fronts: baseline/version/PR, protected diagnostics, tenant-configurable voice/Cloud/Browser/CRM contracts, and administration/permissions. Vendors are client-selected. The restrictive account policy and inclusion of additive managed-AI schema in the reviewed source were approved. No live database or client system was accessed; the migration remains unapplied.
 
-## Owner decision
+## Evidence
 
-The owner approved inclusion and merge of the additive managed-AI storage migration through the normal DB procedure. PR #42 contains it. No database connection or migration execution occurred.
+- API build/C13 and focused tests 12/12; Cloud build/C13 and regressions 8/8.
+- Web typecheck/build and diagnostics suite 18/18; Edge synthetic UAT 1/1 with external HTTP/WebSocket blocked; landing production build.
+- Screenshot review corrected floating diagnostics overlay occlusion. Full evidence and limitations are in root/local Check and UAT reports.
+- All tracked source files are below 600 physical lines. Full localization, accessibility, Electron, CRUD/role matrix, deployed private-route headers, and legacy landing typecheck remain open.
 
-## Current evidence
+## Delivery gate
 
-- The sidepanel stylesheet was split into two ordered CSS files under 600 physical lines each; original selector/declaration order is preserved after trailing-whitespace cleanup. The standalone test harness is split into HTML, CSS, core JavaScript and services JavaScript; both scripts pass `node --check`, and `agent/validate-test-harness.js` passes.
-- Web typecheck, lint and production build pass; Browser tests 19/19; web synthetic tests 10/10; API build/C13 sentinel and regression 8/8; PHDK coherence check 50/50 mappings.
-- Physical-line inventory now finds 0 source files over PHDK's 600-line maximum. See `PHDK_LINE_LIMIT_AUDIT.md`.
-- Agent Jest passes 9/9 suites and 78/78 tests, including Salesforce adapter and tenant-configured source/extension tab registries. Full landing and Agent adapter typechecks retain existing baseline diagnostics. The Agent package build was not run because its script deletes the repository-root `dist`.
-- Full translation/content review, private-route server indexability and broad rendered accessibility/contrast remain open. No client-specific live call/CRM, production migration, deployment, or production health was claimed.
+- [x] Candidate commits pushed and PR body updated with current evidence.
+- [ ] Close or explicitly disposition Check findings and satisfy normal review controls.
+- [ ] Merge PR #42 through normal review process.
+- [ ] Read back remote `main` SHA, package version, and merged PR state.
+- [ ] Record deployment evidence separately if/when one is authorized and available.
 
-## Exit gate
-
-- [ ] Reduce all applicable files below 600 physical lines and close/evidence remaining PHDK findings.
-- [ ] Run final integrated checks and update machine-readable completion evidence.
-- [ ] Commit/push the scoped candidate, satisfy actual review controls, merge PR #42, and verify remote `main` content/version.
-- [ ] Record deployment evidence separately; no production health claim.
+Do not report PHDK Auto complete or 4/4 delivered until the remote target branch and required acceptance are verified.

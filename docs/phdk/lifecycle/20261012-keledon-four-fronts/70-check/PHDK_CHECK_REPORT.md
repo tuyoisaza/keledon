@@ -1,11 +1,26 @@
-# PHDK Check report — candidate 5.0.54
+# PHDK Check — integrated 5.1.0 candidate
 
-Scope: integrated code and documentation at 2026-10-12. Repository/build checks only; no production provider, DB, customer or metered API.
+Date: 2026-10-13 America/Mexico_City. Current branch candidate `82121189cdf8423f2e7f2cc4bd32c48949e63eb9`, PR #42 open/draft. All four owner-confirmed fronts are included. CRM/telephony vendors are selected per tenant. No production provider, customer data, database, or metered API call was used.
 
-PASS: web app+node typecheck; web ESLint quiet; Vite production build (warning: 647.83kB main chunk, empty supabase chunk, outdated Browserslist data). API build+C13 sentinel. Prisma client generate5.22.0. Browser TypeScript via API bundled TypeScript compiler. Browser tests15/15; API focused tests10/10 + regression runner8/8; web contract tests20/20; local isolated SPA UAT1 suite incl role flows/themes/diagnostics; AI admin UI fixture12 cases (docs/phdk/workstreams/AI-ADMIN-UAT.json). git diff --check clean after line-ending normalization.
+## PASS evidence
 
-PARTIAL/OPEN: full-app locale audit shows historical candidates 954 JSX text +102 literal attributes across58 files (snapshot, candidates not exact live untranslated count); BrainPage/FlowsPage large and unsplit. Private route robots disallow contradicts client-side noindex and SPA static HTML sends root canonical; no server/edge rewrite added. UI contrast only scoped login/theme shell; no full contrast/zoom/screenreader/native Electron end-to-end. CTA and unsupported public factual/security claims corrected. Existing UX accessibility patterns were rechecked for native dialogs.
+- API production/C13 build; focused health, persisted-role, and correlation suites 12/12.
+- Cloud production/C13 build and regression 8/8.
+- Web typecheck and production build; diagnostics/reset/widget tests 18/18; local production-SPA Edge UAT 1/1. UAT blocks external HTTP/WebSocket traffic and intercepts all application API responses with synthetic Company Co fixtures.
+- Landing production build; full web lint 0 errors/135 warnings; changed UI/UAT ESLint clean.
+- `git diff --check`; tracked-source line inventory 0 at/above 600 lines.
+- Dynamic API diagnostic route registry fails closed to manual-only; deep health is persisted-role protected; only explicit safe probes can run on click; public health remains liveness-only; errors/evidence are sanitized and correlated.
+- Screenshot review found and fixed the floating event panel covering the diagnostics route. The final UAT screenshot shows the page clear and the test asserts the duplicate panel is absent there.
 
-BLOCKED FOR RELEASE: three-table AI migration is additive, source-reviewed and unexecuted; managed AI fails closed without it. Sensitive owner decision required before source-changing release; no remote PR/commit/head SHA or merge can be asserted. Full PHDK/remote completion gate is not passed. See PHDK_CONFORMITY_REVIEW.md and DELIVERY_REPORT.md.
+## PARTIAL / OPEN
 
-Evidence provenance: all UAT uses synthetic Company Co; API HTTP harness isolates persistence; no live integrations. Client specific CRM/telephony acceptance excluded per owner's clarification, not misreported as completed.
+- `landing` production build passes, but full legacy TypeScript check still reports roughly 135 diagnostics in untouched files. Web lint has 135 warnings, no errors.
+- Full active-route localization and translated feedback are not complete; previous 954 JSX text plus 102 literal-attribute counts are historical candidates, not an exact current untranslated inventory.
+- Broad accessibility/contrast/zoom/screen-reader verification across all routes/themes and native Electron visual/device acceptance remain open.
+- The frontend UAT uses synthetic role tokens; isolated API tests cover selected rules, but the complete backend role × tenant × CRUD resource matrix is not proven. See `../20-plan/CRUD_MATRIX.md` and `../50-uat/UAT_CASES.md`.
+- Private-route indexing headers are unverified on a deployed host. Existing source directives are not deployment evidence.
+- PHDK coherence helper expects `phdk-standards/README.md` and `CHANGELOG.md`, absent from the installed source set. Completion evidence is valid JSON, but the vendored completion gate raises `TypeError` while processing the valid null merge SHA. The owner-approved additive managed-AI migration remains unapplied; no database was connected.
+
+## Decision
+
+Check remains PARTIAL. Keep the PR draft until remaining source-checkable findings are fixed or explicitly dispositioned, then use normal review controls. Do not call the branch delivered or production accepted. Remote target-main merge/readback is still required for goal completion.

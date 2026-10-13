@@ -2,10 +2,10 @@
 
 Run ID: 20261012-keledon-four-fronts
 Stage: 67-aeo-geo
-Status: COMPLETED
+Status: PARTIAL (SOURCE REVIEW; EXTERNAL DISCOVERABILITY UNMEASURED)
 Started from revision: 52537140e67d0d6c05486fa13837df3eb5316fb3
-Completed at revision/worktree: chore/phdk-install-v2.50.8 uncommitted candidate 5.0.54
-Date/time: 2026-10-12 America/Mexico_City
+Revalidated candidate: 5.1.0, remote branch SHA 82121189cdf8423f2e7f2cc4bd32c48949e63eb9
+Date/time: 2026-10-13 America/Mexico_City
 
 ## Goal / scope
 Execute owner-confirmed PHDK Auto code review and ordered four fronts; call/CRM integrations are selected per tenant.
@@ -40,3 +40,5 @@ Execute owner-confirmed PHDK Auto code review and ordered four fronts; call/CRM 
 
 ## Next stage
 - 70-check
+
+Public copy is factual and tenant-configurable; CTA/footer paths are real. Public content remains mostly English and client-rendered. No external answer engine, crawler, citation, referral, or ranking measurement was performed. See `REVALIDATED_AEO_GEO_AUDIT_REPORT.md`.
