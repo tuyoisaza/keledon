@@ -1,5 +1,10 @@
 # Changelog
 
+## v5.1.5 — 2026-10-13 (PHDK Auto candidate)
+
+- Make the local production-SPA UAT read the candidate version from the web package instead of asserting an obsolete release string; keep the diagnostics fixture and generated evidence version-aligned.
+- Align all five app package/lock roots at 5.1.5.
+
 ## v5.1.4 — 2026-10-13 (PHDK Auto candidate)
 
 - Remove all production audit findings from API and compatibility Cloud by pinning patched transitive YAML and UUID dependencies and upgrading the direct UUID API to v11.
