@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Settings, Save, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getCompanies, type Company } from '@/lib/crud-api';
@@ -39,13 +39,7 @@ export default function AdminSettingsPage() {
         fetchData();
     }, []);
 
-    useEffect(() => {
-        if (selectedCompany) {
-            fetchTeamConfig(selectedCompany);
-        }
-    }, [selectedCompany]);
-
-    const fetchTeamConfig = async (companyId: string) => {
+    const fetchTeamConfig = useCallback(async (companyId: string) => {
         try {
             const response = await fetch(`${cloudUrl}/api/teams/${companyId}/config`);
             if (response.ok) {
@@ -72,7 +66,11 @@ export default function AdminSettingsPage() {
                 voskModel: 'vosk-model-en-us'
             });
         }
-    };
+    }, [cloudUrl, companies]);
+
+    useEffect(() => {
+        if (selectedCompany) void fetchTeamConfig(selectedCompany);
+    }, [selectedCompany, fetchTeamConfig]);
 
     const saveTeamConfig = async () => {
         if (!teamConfig) return;

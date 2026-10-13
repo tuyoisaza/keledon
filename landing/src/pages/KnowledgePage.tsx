@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Search, Upload, FileText, Database, Bot, RefreshCw, X, Building2, Tag, Users } from 'lucide-react';
 import { vectorStoreAPI, type PolicyDocument, type VectorStoreStatus } from '@/lib/vector-store';
 import { getCompanies, getBrands, getTeams, type Company, type Brand, type Team } from '@/lib/crud-api';
@@ -35,6 +35,8 @@ export default function KnowledgePage() {
     const [companies, setCompanies] = useState<Company[]>([]);
     const [brands, setBrands] = useState<Brand[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
+    const loadedBrandCompanies = useRef(new Set<string>());
+    const loadedTeamBrands = useRef(new Set<string>());
     
     // Add source modal
     const [showAddModal, setShowAddModal] = useState(false);
@@ -54,22 +56,24 @@ export default function KnowledgePage() {
     }, []);
 
     useEffect(() => {
-        if (addForm.company_id) {
-            const companyBrands = brands.filter(b => b.companyId === addForm.company_id);
-            if (companyBrands.length === 0) {
-                getBrands(addForm.company_id).then(setBrands);
-            }
+        const companyId = addForm.company_id;
+        if (companyId && !loadedBrandCompanies.current.has(companyId)) {
+            loadedBrandCompanies.current.add(companyId);
+            getBrands(companyId).then((companyBrands) => {
+                setBrands((current) => [...new Map([...current, ...companyBrands].map((brand) => [brand.id, brand])).values()]);
+            }).catch(() => loadedBrandCompanies.current.delete(companyId));
         }
     }, [addForm.company_id]);
 
     useEffect(() => {
-        if (addForm.brand_id) {
-            const brandTeams = teams.filter(t => t.brandId === addForm.brand_id);
-            if (brandTeams.length === 0) {
-                getTeams(addForm.company_id).then(setTeams);
-            }
+        const brandId = addForm.brand_id;
+        if (brandId && !loadedTeamBrands.current.has(brandId)) {
+            loadedTeamBrands.current.add(brandId);
+            getTeams(addForm.company_id).then((companyTeams) => {
+                setTeams((current) => [...new Map([...current, ...companyTeams].map((team) => [team.id, team])).values()]);
+            }).catch(() => loadedTeamBrands.current.delete(brandId));
         }
-    }, [addForm.brand_id]);
+    }, [addForm.brand_id, addForm.company_id]);
 
     const fetchCompanies = async () => {
         try {

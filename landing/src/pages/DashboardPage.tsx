@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Phone, CheckCircle, AlertTriangle, Clock, Building2, LayoutGrid, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSessions, getOrphanedSessionCount, deleteOrphanedSessions, type Session } from '@/lib/crud-api';
@@ -52,28 +52,53 @@ export default function DashboardPage() {
     ]);
     const [aggregatedData, setAggregatedData] = useState<AggregatedSessionStats[]>([]);
 
-    useEffect(() => {
-        if (user) {
-            fetchData();
-            checkOrphanedSessions();
-            const interval = setInterval(fetchData, 10000);
-            return () => clearInterval(interval);
-        }
-    }, [user]);
-
-    async function checkOrphanedSessions() {
+    const checkOrphanedSessions = useCallback(async () => {
         try {
             const count = await getOrphanedSessionCount();
             setOrphanedCount(count);
         } catch (e) {
             console.error('Failed to check orphaned sessions:', e);
         }
-    }
+    }, []);
+
+    const fetchData = useCallback(async () => {
+        try {
+            if (!user) return;
+
+            let companyId: string | undefined;
+            if (user.role === 'admin' || user.role === 'coordinator') companyId = user.companyId;
+
+            const fetchedSessions = await getSessions(companyId, 100);
+            setSessions(fetchedSessions);
+            const active = fetchedSessions.filter(s => s.status === 'active').length;
+            const completed = fetchedSessions.filter(s => s.status === 'completed').length;
+            const escalated = fetchedSessions.filter(s => s.status === 'escalated').length;
+            setStats([
+                { label: 'Active Now', value: active, icon: Phone, color: 'text-green-500' },
+                { label: 'Completed Today', value: completed, icon: CheckCircle, color: 'text-blue-500' },
+                { label: 'Escalated', value: escalated, icon: AlertTriangle, color: 'text-yellow-500' },
+            ]);
+            calculateAggregation(fetchedSessions, user.role);
+        } catch (err) {
+            console.error('Error fetching dashboard data:', err);
+        } finally {
+            setLoading(false);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (user) {
+            void fetchData();
+            void checkOrphanedSessions();
+            const interval = setInterval(fetchData, 10000);
+            return () => clearInterval(interval);
+        }
+    }, [user, fetchData, checkOrphanedSessions]);
 
     async function handleCleanOrphanedSessions() {
         if (orphanedCount === 0) return;
         if (!confirm(`Delete ${orphanedCount} orphaned session(s)?`)) return;
-        
+
         setCleaning(true);
         try {
             const result = await deleteOrphanedSessions();
@@ -84,42 +109,6 @@ export default function DashboardPage() {
             toast.error('Failed to delete orphaned sessions');
         } finally {
             setCleaning(false);
-        }
-    }
-
-    async function fetchData() {
-        try {
-            if (!user) return;
-
-            let companyId: string | undefined;
-            
-            if (user.role === 'superadmin') {
-                companyId = undefined;
-            } else if (user.role === 'admin' || user.role === 'coordinator') {
-                companyId = user.companyId;
-            } else if (user.role === 'user' || user.role === 'agent') {
-                companyId = undefined;
-            }
-
-            const fetchedSessions = await getSessions(companyId, 100);
-            setSessions(fetchedSessions);
-
-            const active = fetchedSessions.filter(s => s.status === 'active').length;
-            const completed = fetchedSessions.filter(s => s.status === 'completed').length;
-            const escalated = fetchedSessions.filter(s => s.status === 'escalated').length;
-
-            setStats([
-                { label: 'Active Now', value: active, icon: Phone, color: 'text-green-500' },
-                { label: 'Completed Today', value: completed, icon: CheckCircle, color: 'text-blue-500' },
-                { label: 'Escalated', value: escalated, icon: AlertTriangle, color: 'text-yellow-500' },
-            ]);
-
-            calculateAggregation(fetchedSessions, user.role);
-
-        } catch (err) {
-            console.error('Error fetching dashboard data:', err);
-        } finally {
-            setLoading(false);
         }
     }
 

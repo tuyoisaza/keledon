@@ -16,8 +16,8 @@ Goal: complete PHDK Auto for the four owner-confirmed fronts. Telephony/CRM vend
 | UAT Fix | SCOPED PASS | Prior diagnostics fixes passed; current-candidate user-management retest passed with synthetic identities and mocked CRUD. Real backend/persistence remains outside this evidence. See `60-uat-fix/MANAGEMENT_USERS_RETEST.md`. |
 | SEO | PASS (SOURCE) | NGINX source assertions pass; deployed response headers remain unverified. |
 | AEO/GEO | PARTIAL | Source/content inventory only; no external citation/rank measurements. |
-| Check | PARTIAL | Current landing typecheck/build pass; lint has zero errors with remaining effect-dependency warnings; Cloud regression passes 8/8. CRUD persistence, accessibility/localization/Electron and deployed metadata gaps remain. See root `PHDK_CHECK_REPORT.md`. |
-| Remediation | SCOPED PASS | Landing typing, provider/hook boundaries and manager tenant-scoped inputs remediated in pushed commit `74c849e`; typecheck/build pass; lint has zero errors and 7 warnings. |
-| Delivery | IN PROGRESS | PR #42 is open/draft at pushed head `74c849e`. Normal independent review/merge and target `main` SHA/version verification remain. |
+| Check | PARTIAL | Current landing typecheck/build/lint pass; lint has zero warnings; Cloud regression passes 8/8. CRUD persistence, accessibility/localization/Electron and deployed metadata gaps remain. See root `PHDK_CHECK_REPORT.md`. |
+| Remediation | SCOPED PASS | Landing typing, provider/hook boundaries, manager tenant-scoped inputs and lint warnings are remediated in the current local candidate; final versioned push pending. |
+| Delivery | IN PROGRESS | PR #42 is open/draft at pushed head `52583bb`; refresh after final Check fixes. Normal merge and target `main` SHA/version verification remain. |
 
 Owner-approved managed-AI migration inclusion remains source-only; no DB was connected and no migration was executed. See `docs/phdk/lifecycle/20261012-keledon-four-fronts/` and root `PHDK_CHECK_REPORT.md` for handoffs and evidence limits.

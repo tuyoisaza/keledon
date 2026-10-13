@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check, Download, ArrowRightCircle, ListChecks } from 'lucide-react';
 import { useAuth } from '@/context/useAuth';
 import { getKeledons, getVendors, type Keledon, type Vendor } from '@/lib/crud-api';
@@ -26,10 +26,7 @@ export default function LaunchKeledonPage() {
         vendors: Vendor[];
         nextSteps: Array<{ title: string; detail: string }>;
     }>(null);
-
-    useEffect(() => {
-        loadKeledons();
-    }, [user]);
+    const loadedVendorTeamIds = useRef(new Set<string>());
 
     useEffect(() => {
         if (user?.role === 'superadmin' && keledons.length > 0) {
@@ -37,7 +34,7 @@ export default function LaunchKeledonPage() {
         }
     }, [keledons, user?.role]);
 
-    const loadKeledons = async () => {
+    const loadKeledons = useCallback(async () => {
         setLoading(true);
         try {
             const data = await getKeledons();
@@ -45,10 +42,11 @@ export default function LaunchKeledonPage() {
             
             const vendorsByTeam: Record<string, Vendor[]> = {};
             for (const keledon of data) {
-                if (keledon.teamId && !vendorsMap[keledon.teamId]) {
+                if (keledon.teamId && !loadedVendorTeamIds.current.has(keledon.teamId)) {
                     try {
                         const vendors = await getVendors(keledon.teamId);
                         vendorsByTeam[keledon.teamId] = vendors;
+                        loadedVendorTeamIds.current.add(keledon.teamId);
                     } catch {
                         console.error('Failed to load vendors for team:', keledon.teamId);
                     }
@@ -63,7 +61,11 @@ export default function LaunchKeledonPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        void loadKeledons();
+    }, [user, loadKeledons]);
 
     const handleLaunch = async (keledonId: string) => {
         if (!user) {
