@@ -9,7 +9,7 @@ Run 20261012-keledon-four-fronts; owner confirms all four in order, 2026-10-12.
 - [x] T-005 scoped UAT/SEO/AEO recorded; full conformity Check/remediation remains PARTIAL with explicit gaps in `PHDK_CHECK_REPORT.md`.
 - [x] T-006 publish 5.1.2 candidate, update and merge PR #42, verify remote `main` SHA/version/content.
 - [x] T-007 fix the PHDK JSON-version completion-gate incompatibility and coherence manifest inputs; install v2.50.10 and verify both installed tools.
-- [ ] T-008 deliver the downstream PHDK v2.50.10 standards sync to KELEDON `main`.
+- [x] T-008 deliver the downstream PHDK v2.50.10 standards sync via PR #43; merged and read back at `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d`.
 - [ ] T-009 verify or explicitly disposition the remaining persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO acceptance.
 No historical queue activation or parallel floor restoration. This is current task evidence, no future authority.
 

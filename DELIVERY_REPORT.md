@@ -8,7 +8,7 @@ KELEDON PR [#42](https://github.com/tuyoisaza/keledon/pull/42) is MERGED at `e30
 
 ## PHDK source and installed standards
 
-PHDK PRs [#48](https://github.com/tuyoisaza/PHDK/pull/48) and [#49](https://github.com/tuyoisaza/PHDK/pull/49) are merged. Canonical PHDK `main` is v2.50.10 at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`. KELEDON branch `chore/phdk-upgrade-v2.50.10` is based on the verified product `main` SHA and contains a byte-verified installation of all 52 standards mappings plus updated Auto evidence. The downstream standards-sync branch/PR delivery is still in progress.
+PHDK PRs [#48](https://github.com/tuyoisaza/PHDK/pull/48) and [#49](https://github.com/tuyoisaza/PHDK/pull/49) are merged. Canonical PHDK `main` is v2.50.10 at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`. KELEDON PR [#43](https://github.com/tuyoisaza/keledon/pull/43), based on product `main`, merged the byte-verified installation of all 52 standards mappings and updated Auto evidence. Merge/readback SHA: `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d`; sync commit `b818a2705a82fb62068f37349b26794786467af7` is its ancestor.
 
 ## Validation
 
@@ -21,11 +21,11 @@ PHDK installation: 52/52 mappings byte-identical; coherence checker PASS. The in
 | Field | Status | Evidence |
 |---|---|---|
 | VERSION_BUMP | PASS (scoped rationale) | PHDK standards candidate is v2.50.10 with matching README/changelog; KELEDON app remains 5.1.2 because the follow-up changes only PHDK-owned standards/evidence and no product source. |
-| COMMIT_PREFIX | IN PROGRESS | Downstream sync candidate commit has not yet been created. |
-| PUSH_AND_PR | IN PROGRESS | Branch `chore/phdk-upgrade-v2.50.10` exists locally; downstream PR not yet opened. |
-| REMOTE_MAIN | PARTIAL | Product PR #42 is verified on remote `main`; PHDK v2.50.10 downstream sync is not yet merged. |
-| SCOPE_AND_CHECKS | PARTIAL | Focused checks pass, but persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO remain unverified. |
+| COMMIT_PREFIX | PASS | Sync commit `b818a2705a82fb62068f37349b26794786467af7` uses the required `v2.50.10:` prefix. |
+| PUSH_AND_PR | PASS | KELEDON PR #43 merged; GitHub reported no hosted checks and no review submissions; `main` is not branch-protected. |
+| REMOTE_MAIN | PASS | Fresh remote readback is merge SHA `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d`; product PR #42 and PHDK sync commit are ancestors; five app package/lock roots remain 5.1.2. |
+| SCOPE_AND_CHECKS | PARTIAL | Installed PHDK coherence passes 52 mappings and JSON version smoke passes, but persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO remain unverified. |
 
 The full completion gate remains BLOCKED because the evidence record correctly marks those acceptance limits as BLOCKED. Its JSON version-source incompatibility and coherence-manifest omissions are repaired in PHDK v2.50.10. No production database/migration, customer/provider data, paid provider call, live application probe or deployment was used.
 
-Current state: **PARTIALLY DELIVERED**. Continue normal KELEDON PR delivery for the PHDK standards sync, then reconcile acceptance evidence; do not report full completion from the isolated tool smoke.
+Current state: **PARTIALLY DELIVERED**. The PHDK standards sync is merged. Reconcile the remaining acceptance evidence and legacy PR disposition; do not report full completion from the isolated tool smoke.

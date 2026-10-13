@@ -1,6 +1,6 @@
 # PHDK Check report — KELEDON 5.1.2 / PHDK 2.50.10
 
-Date: 2026-10-13 America/Mexico_City. Run: `20261012-keledon-four-fronts`. Product source: PR #42 merged on KELEDON `main` at `e305d3d817ff20ed52ed889315e2d618127d7d9f`; all five app package/lock roots report 5.1.2. PHDK central releases #48/#49 are merged; downstream PHDK v2.50.10 sync is on `chore/phdk-upgrade-v2.50.10` and its delivery is pending.
+Date: 2026-10-13 America/Mexico_City. Run: `20261012-keledon-four-fronts`. Product source PR #42 and PHDK sync PR #43 are merged on KELEDON `main`; fresh readback is `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d`; all five app package/lock roots remain 5.1.2. PHDK central releases #48/#49 are merged; installed v2.50.10 and all 52 coherence mappings pass.
 
 The four confirmed fronts remain in scope. The owner specified that voice/CRM providers vary by client and asked for maximum applicable code conformity. The restrictive DB-derived role/tenant and write-only-secret policy remains owner-approved.
 
@@ -20,10 +20,10 @@ The four confirmed fronts remain in scope. The owner specified that voice/CRM pr
 - Full persisted resource × role × surface × CRUD matrix and runtime database/migration behavior remain unverified. No local PostgreSQL/Docker test database was available or used; the approved migration has not been applied.
 - Native Electron rendering, device/microphone/audio behavior, broader route/theme/locale/screen-reader acceptance and effective 44px hit-area behavior remain unverified. The compact web controls intentionally remain 28px with 4px spacing; the report does not claim a larger non-overlapping target.
 - Deployed SEO headers/canonical behavior and external AEO/GEO visibility remain unverified. Source checks do not establish deployed behavior. Client-specific live voice/CRM provider calls were excluded by the owner.
-- Downstream delivery of the installed PHDK v2.50.10 standards is pending its KELEDON branch/PR.
+- PHDK standards delivery completed in KELEDON PR #43; owner disposition of legacy PRs #38–40 remains outstanding after applicability review.
 
 ## Gate conclusion
 
 The two PHDK tool defects found previously are repaired upstream and pass locally: coherence inputs are now included in the installed 52-file manifest, and completion-gate JSON property parsing passes a real remote-source smoke. The actual Auto evidence still contains BLOCKED acceptance items; the full gate therefore remains BLOCKED by its fail-closed scope record, not by the repaired version parser.
 
-Overall status: **PARTIALLY DELIVERED**. PR #42 code delivery is merged and read back; no deployment is claimed. The standards-sync branch/PR and the listed acceptance limits remain open.
+Overall status: **PARTIALLY DELIVERED**. Product PR #42 and standards PR #43 are merged and read back; no deployment is claimed. The listed acceptance limits and owner disposition of legacy PRs #38–40 remain open.

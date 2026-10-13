@@ -1,6 +1,6 @@
 # PHDK remediation report — active candidate
 
-Run: `20261012-keledon-four-fronts` · Product candidate: `5.1.2` (`0d98f2812d8eb88a8626101f81f9bf9ca6d52de0`, merged by #42) · PHDK: 2.50.10 installed from `e3958702d30ae6f9cd18e35b82c7a75a0f11e116` · Current branch: `chore/phdk-upgrade-v2.50.10` · Stage: Check (GAPS RECORDED); remediation (PARTIAL).
+Run: `20261012-keledon-four-fronts` · Product candidate: `5.1.2` (`0d98f2812d8eb88a8626101f81f9bf9ca6d52de0`, merged by #42) · PHDK: 2.50.10 installed from `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`, delivered by KELEDON PR #43 at `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d` · Stage: Check (GAPS RECORDED); remediation (PARTIAL).
 
 ## 2026-10-13 continuation — current Check remediations
 
@@ -10,7 +10,7 @@ Run: `20261012-keledon-four-fronts` · Product candidate: `5.1.2` (`0d98f2812d8e
 - `CHK-A11Y-USERS-004` — exposed managers' fixed company context as a native fieldset with a legend; verified the accessible “Company” group in exact 5.1.2 local SPA UAT.
 - Changed API files pass scoped ESLint. API/Cloud/web/landing builds and the applicable API, Cloud, diagnostics, SEO and synthetic UI tests pass as enumerated in `PHDK_CHECK_REPORT.md`.
 
-Residual Check items remain: persisted full CRUD matrix and migration behavior, broad app accessibility/localization and native Electron/device/audio acceptance, and deployed SEO/AEO evidence. The two PHDK tool gaps are now repaired upstream (PHDK PRs #48/#49) and v2.50.10 is installed locally; its coherence checker passes and the completion gate's isolated JSON-source smoke passes. Downstream sync delivery remains pending. Do not classify product/runtime acceptance as fixed by the standards sync.
+Residual Check items remain: persisted full CRUD matrix and migration behavior, broad app accessibility/localization and native Electron/device/audio acceptance, deployed SEO/AEO evidence, and owner disposition of legacy PRs #38–40. The two PHDK tool gaps are repaired upstream (PHDK PRs #48/#49), v2.50.10 is installed and synced through KELEDON PR #43; its coherence checker passes and the completion gate's isolated JSON-source smoke passes. Do not classify product/runtime acceptance as fixed by the standards sync.
 
 ## Resolved defects and modularity gaps
 
