@@ -10,3 +10,11 @@ RecordDetails initial Tab escaped its intended dialog controls. Added explicit f
 - PHDK coherence: PASS, 52/52 mappings. Repository line inventory: 1,086 files, zero at/above 600 lines.
 
 Acceptance remains incomplete for persisted DB CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO. These are blockers or unmeasured acceptance, not regressions reclassified as passes.
+
+## UAT-ELECTRON-STARTUP — local native launch (2026-10-13)
+
+After the owner authorized the Electron runtime, `browser/npm run dev` launched Electron 44.7.0 on Windows x64. Startup output reports `Keledon Browser v5.1.10 ready`; `did-finish-load` recorded the renderer. CDP inspection and screenshot confirm the native renderer title `KELEDON Browser`, v5.1.10 toolbar, home page, connection/activity widget, and initialized device status. Evidence: `docs/phdk/evidence/uat-browser-native-initial.png`.
+
+A safe local New Tab UI action created the second tab. KELEDON automatically navigated it to its default `https://www.google.com` page; the tab was closed while loading. No content was reviewed, no account or data was entered, and no client service was accessed. Evidence of the transition: `docs/phdk/evidence/uat-browser-native-new-tab.png`.
+
+The native renderer startup is **PASS**. Native media-consent dialog, OS microphone/camera permission, physical device/audio and call lifecycle remain **NOT TESTED**. CUA inventory returned no native apps, its app-list API was unavailable, and Sky reported `Trusted RPC service is not configured`; therefore no Windows app UI input was possible. The local permission-policy unit tests remain the only consent-dialog behavior verification. No permission was granted and no customer call occurred.

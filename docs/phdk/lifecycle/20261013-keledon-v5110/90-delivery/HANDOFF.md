@@ -4,7 +4,7 @@ Run ID: 20261013-keledon-v5110
 Stage: 90-delivery
 Status: COMPLETED — SOURCE DELIVERED; OVERALL ACCEPTANCE PARTIAL
 Started from revision: origin/main f5b9e43bd272408b3b5493c6eddfd24fc2095c75
-Completed at revision/worktree: remote main fde8a1f7b5042d333e45a77f4354a2a41f959954
+Completed at revision/worktree: remote main 0be102b8b7847bfed3441ff00e00ba4477c57a1e (verified before the UAT evidence addendum)
 Date/time: 2026-10-13 America/Mexico_City
 
 ## Goal / scope
@@ -27,7 +27,7 @@ Deliver v5.1.10 for all four owner-confirmed KELEDON fronts under PHDK 2.50.10. 
 - [x] VERSION_BUMP: 5.1.9 → 5.1.10 across five package and lock roots, changelog entry present.
 - [x] COMMIT_PREFIX: source commit starts `v5.1.10:`.
 - [x] PUSH_AND_PR: branch pushed; PR #62 targets main and is merged.
-- [x] REMOTE_MAIN: product PR #62 merge `a806617f430d084831a079b92c821a694b925467` and current remote main after PR #63 `fde8a1f7b5042d333e45a77f4354a2a41f959954` independently read back; all five app roots are 5.1.10.
+- [x] REMOTE_MAIN: product PR #62 merge `a806617f430d084831a079b92c821a694b925467`; delivery PRs #63–#64; remote main `0be102b8b7847bfed3441ff00e00ba4477c57a1e` independently read back before this evidence addendum; all five app roots are 5.1.10.
 - [x] SCOPE_AND_CHECKS: four commitments reconciled; all local source checks pass; GitHub reported zero hosted checks and no branch protection/review requirement.
 - [ ] Overall product acceptance: persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO remain open; do not call Auto complete.
 
@@ -47,7 +47,7 @@ Deliver v5.1.10 for all four owner-confirmed KELEDON fronts under PHDK 2.50.10. 
 
 ## Next stage
 Stage: acceptance continuation, only when runtime/environment is available and authorized.
-Required inputs: approved Electron runtime confirmation and/or owner-managed isolated Postgres; separate deployed SEO/AEO observation when available.
+Required inputs: Windows app control for native permission/device/audio, owner-managed isolated Postgres, and separately authorized deployed SEO/AEO observation when available.
 What the next stage must verify: native permission dialog/device behavior and persisted authorization/migration without production/customer data; external search visibility without inference from source.
 
-SIGUIENTE PASO: Para continuar la aceptación Electron, responde “autoriza descarga Electron”; para el resto se requiere runtime PostgreSQL aislado o evidencia del despliegue.
+SIGUIENTE PASO: retomar la aceptación nativa cuando Windows app control esté disponible; DB y despliegue requieren entornos separados.

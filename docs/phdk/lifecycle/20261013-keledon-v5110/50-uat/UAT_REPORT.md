@@ -2,19 +2,20 @@
 
 ## Latest local candidate — 5.1.10 (ACCEPTANCE INCOMPLETE)
 
-Run: `20261013-keledon-v5110` (continuation of `20261012-keledon-four-fronts`), 2026-10-13. Candidate: branch `v5.1.10-browser-permission-consent`, working tree based on `origin/main` `f5b9e43bd272408b3b5493c6eddfd24fc2095c75`; the candidate is not yet a commit or merged build. Intent and roles remain the four owner-confirmed fronts; client telephony/CRM systems are tenant-selected.
+Run: `20261013-keledon-v5110` (continuation of `20261012-keledon-four-fronts`), 2026-10-13. Source delivered by PR #62 (squash merge `a806617f430d084831a079b92c821a694b925467`); the verified local main checkout is `0be102b8b7847bfed3441ff00e00ba4477c57a1e`. The five app package roots are 5.1.10. Intent and roles remain the four owner-confirmed fronts; client telephony/CRM systems are tenant-selected.
 
 The built web SPA UAT was rerun on the 5.1.10 bundle in headless Microsoft Edge. It passed 1/1 suite and exercised the synthetic Company Co public/login widget, themes, 390px layout, role views, keyboard/focus for selected dialogs, same-company user assignment, write-only provider keys, guest denial, and safe diagnostics. APIs and WebSockets were intercepted/blocked; this proves local UI behavior only. API regression passes 14/14 and includes the DB-derived authorization/startup cases, but does not prove persisted CRUD.
 
-Additional same-candidate results: Browser unit/source regression 24/24 and TypeScript build pass. `permission-policy.test.cjs` verifies secure origin matching, user consent/session scope, denial of other permissions, rejection on navigation, and English/Spanish prompt copy. A native Browser launch did not complete: `npm run dev` reported it was downloading Electron and was stopped before a newly acquired runtime was approved for use. No native window, OS microphone permission, physical audio, or live call was tested.
+Additional same-candidate results: Browser unit/source regression 24/24 and TypeScript build pass. `permission-policy.test.cjs` verifies secure origin matching, user consent/session scope, denial of other permissions, rejection on navigation, and English/Spanish prompt copy. After owner authorization, `npm run dev` launched Electron 44.7.0. Startup logs and renderer screenshot show KELEDON Browser v5.1.10 ready with home/widget loaded. Native media/OS permission and physical audio remain untested because native app control is unavailable on this host. See UAT-ELECTRON-STARTUP below.
 
 | Case | Result | Evidence / limitation |
 |---|---|---|
 | UAT-001 / UAT-002 / UAT-004 / UAT-006 | PASS (local UI subset) | `npm run test:uat`: 1/1 suite; updated `docs/phdk/evidence/uat-local-web.json` and `uat-*.png`; all API routes mocked, external HTTP/WebSockets blocked. |
 | UAT-API | PASS (isolated source regression) | `services/api npm run test:regression`: 14/14; no PostgreSQL connection or persistent CRUD acceptance. |
 | UAT-BROWSER-PERMISSION | PASS (policy contracts) | `browser/tests/permission-policy.test.cjs`: user consent, HTTPS origin/context, media-only session grant, navigation race and deny behavior. No native dialog was clicked. |
+| UAT-ELECTRON-STARTUP | PASS (native renderer) | Electron 44.7.0 launched; v5.1.10 home/widget loaded. `docs/phdk/evidence/uat-browser-native-initial.png`. |
 | UAT-ROLE / UAT-CRUD | BLOCKED | Full DB-derived identities, persisted CRUD matrix and migration ledger cannot be verified: no isolated PostgreSQL runtime is available, and PHDK execution scope prohibits provisioning/administering one in this run. |
-| UAT-ELECTRON / UAT-DEVICE-AUDIO | MANUAL / BLOCKED | No native run, OS prompt or device/audio acceptance. Electron runtime download needs action-time confirmation under the Computer Use skill; no customer call is in scope. |
+| UAT-ELECTRON-PERMISSION / UAT-DEVICE-AUDIO | BLOCKED / NOT TESTED | Native app control unavailable (`Trusted RPC service is not configured`; no native apps enumerated). No media permission was granted, no device/audio test or customer call. |
 | UAT-A11Y-I18N | ACCEPTANCE INCOMPLETE | Selected keyboard, focus restoration, theme, mobile and diagnostics flows pass; full route/role screen-reader, 200%/400% zoom, contrast and translated-copy acceptance remain. |
 | UAT-SEO-AEO | SOURCE PASS / FIELD BLOCKED | Source metadata/routes/copy/link tests pass. Deployed headers, crawl/render behavior, field performance and external discovery/citations are not measured. |
 | UAT-CLIENT-CRM | NOT APPLICABLE to common flow | User confirmed integrations vary by client; only provider-independent contracts were tested, with synthetic fixtures. |
@@ -22,7 +23,7 @@ Additional same-candidate results: Browser unit/source regression 24/24 and Type
 ### Action plan
 
 - **UAT-ROLE / UAT-CRUD:** persisted evidence needs an owner-managed disposable PostgreSQL environment with Company Co-only synthetic fixtures and isolated role accounts. PHDK must not create/administer the database in this run. After the environment is prepared through the owner’s permitted process, record each resource × role × tenant × operation result and migration ledger; reconcile whether the current execution scope permits any connection before attempting it.
-- **UAT-ELECTRON / UAT-DEVICE-AUDIO:** the owner must authorize the Electron runtime download by replying `autoriza descarga Electron` (no secret needed). Then launch only the local unpackaged app and check startup/widget plus browser permission-dialog content/deny and session grant. Mic/camera OS prompts require a separate action-time click, and physical audio acceptance needs the owner's confirmation at that prompt. Never place a client call.
+- **UAT-ELECTRON-PERMISSION / UAT-DEVICE-AUDIO:** runtime launch and renderer startup now pass. This host cannot target native windows, so the in-app media dialog could not be inspected or exercised; no mic/camera permission was granted. Retest when Windows app control is available, and obtain separate action-time consent before any OS microphone/camera grant. Never place a client call.
 - **UAT-A11Y-I18N:** a human reviewer with an approved screen reader should check representative public/login/app/admin routes, roles, themes and en/es/pt at 200% and 400% zoom and with keyboard-only navigation; report exact route/control and observed result so source defects can be fixed and retested.
 - **UAT-SEO-AEO:** deployed measurement remains outside this code UAT; after an authorized deployment/status target is supplied, use only the existing bounded read-only evidence route permitted by PHDK. Do not probe the application or infer indexation from source.
 
@@ -69,3 +70,11 @@ Intent alignment: `PROJECT_INTENT.md` INT-001..003 and `REQUIREMENTS_TRACEABILIT
 - **UAT-SEO-AEO** — needs a deployed revision and public discovery measurement. Owner/runtime action: after an authorized deployment exists, provide its public target and permit a bounded read-only header/content review; report observed canonical/robots/meta headers and verifiable discovery evidence. Do not infer it from the local source test.
 
 No code-repairable FAIL was reproduced in this rerun. **Acceptance remains INCOMPLETE** due to the environment/manual items above. No automatic role switching, live identity provisioning, email, provider request or production operation was performed. Historical candidate results remain in the prior UAT handoff; this continuation supersedes only the current candidate and rerun facts.
+
+## UAT-ELECTRON-STARTUP — local native launch (2026-10-13)
+
+After the owner authorized the Electron runtime, `browser/npm run dev` launched Electron 44.7.0 on Windows x64. Startup output reports `Keledon Browser v5.1.10 ready`; `did-finish-load` recorded the renderer. CDP inspection and screenshot confirm the native renderer title `KELEDON Browser`, v5.1.10 toolbar, home page, connection/activity widget, and initialized device status. Evidence: `docs/phdk/evidence/uat-browser-native-initial.png`.
+
+A safe local New Tab UI action created the second tab. KELEDON automatically navigated it to its default `https://www.google.com` page; the tab was closed while loading. No content was reviewed, no account or data was entered, and no client service was accessed. Evidence of the transition: `docs/phdk/evidence/uat-browser-native-new-tab.png`.
+
+The native renderer startup is **PASS**. Native media-consent dialog, OS microphone/camera permission, physical device/audio and call lifecycle remain **NOT TESTED**. CUA inventory returned no native apps, its app-list API was unavailable, and Sky reported `Trusted RPC service is not configured`; therefore no Windows app UI input was possible. The local permission-policy unit tests remain the only consent-dialog behavior verification. No permission was granted and no customer call occurred.

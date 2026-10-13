@@ -1,6 +1,6 @@
 # UAT cases — latest local candidate 5.1.10
 
-Latest run: 2026-10-13; candidate branch `v5.1.10-browser-permission-consent`, based on `origin/main` `f5b9e43bd272408b3b5493c6eddfd24fc2095c75`; not yet committed/merged. `npm run test:uat` passes 1/1 suite on the current 5.1.10 production bundle with synthetic Company Co fixtures and intercepted API/WebSocket traffic. API regression passes 14/14; Browser build/regression 24/24. The native Electron launch was stopped when its missing runtime began downloading; no native UAT is claimed.
+Latest run: 2026-10-13; product PR #62 is merged at `a806617f430d084831a079b92c821a694b925467`; current local checkout is main `0be102b8b7847bfed3441ff00e00ba4477c57a1e`. `npm run test:uat` passes 1/1 suite on the 5.1.10 bundle with synthetic fixtures and intercepted API/WebSocket traffic. API regression 14/14; Browser build/regression 24/24. Native Electron 44.7 launched and renderer loaded; see startup and media-permission cases below.
 
 | Case / story | Acceptance | Latest result |
 |---|---|---|
@@ -8,7 +8,8 @@ Latest run: 2026-10-13; candidate branch `v5.1.10-browser-permission-consent`, b
 | UAT-API / US-004 | Current DB-derived role/company/team/session checks, startup fail-closed behavior, and selected cross-tenant denials | PASS, API regression 14/14 with isolated doubles; not persisted acceptance. |
 | UAT-BROWSER-PERMISSION / US-002/US-003 | Per-origin HTTPS media consent; deny other permissions; remember grants only for session; reject stale navigation | PASS, unit/policy contract tests; native dialog itself not exercised. |
 | UAT-ROLE/UAT-CRUD | Full persisted resource × role × tenant × operation matrix and migration ledger | BLOCKED: no isolated PostgreSQL runtime; PHDK scope prohibits provisioning/administering it in this run. |
-| UAT-ELECTRON/UAT-DEVICE-AUDIO | Native render, OS permission decision, device and call/audio lifecycle | MANUAL/BLOCKED: Electron runtime download requires owner action-time authorization; no physical audio/client call. |
+| UAT-ELECTRON-STARTUP | Native app startup, renderer, widget and version | PASS: Electron 44.7.0 and renderer v5.1.10 launched; screenshots under `docs/phdk/evidence/`. |
+| UAT-ELECTRON-PERMISSION/UAT-DEVICE-AUDIO | Native media dialog, OS permission, device and call/audio lifecycle | BLOCKED/NOT TESTED: native UI controller unavailable; no permission was granted and no client call. Unit policy tests pass; physical audio not exercised. |
 | UAT-A11Y-I18N | Broad screen-reader, 200%/400% zoom, contrast and en/es/pt route review | ACCEPTANCE INCOMPLETE: selected keyboard/focus/theme/mobile flows passed only. |
 | UAT-SEO-AEO | Local source route/indexability/content controls | SOURCE PASS; deployed headers, crawler behavior, field metrics and answer-engine citations remain NOT MEASURED. |
 | UAT-CLIENT-CRM | Tenant-specific live telephony/CRM workflow | NOT APPLICABLE to universal flow; vendors are client-selected. |

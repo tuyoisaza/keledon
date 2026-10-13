@@ -12,7 +12,7 @@ Goal: four owner-confirmed KELEDON fronts, in order: baseline/version/PR; widget
 | Capture | REUSED | User confirmed all four workstreams. |
 | Plan/PMO | REUSED | Existing commitment ledger and architecture plan retained. |
 | Integration | COMPLETED | Candidate 5.1.10 aligned across five app package/lock roots. |
-| UAT | SCOPED PASS | Local synthetic SPA UAT 1/1; API 14/14 and Browser 24/24. Manual/persisted acceptance remains open. |
+| UAT | SCOPED PASS | Local synthetic SPA UAT 1/1; native Electron 44.7 renderer startup PASS; API 14/14 and Browser 24/24. Native media permission and persisted acceptance remain open. |
 | UAT Fix | COMPLETED, SCOPED | Blanket Browser permission grant fixed; line-limit findings extracted; affected tests pass. |
 | SEO | SOURCE PASS | SEO source test 1/1; deployed/crawler metrics unmeasured. |
 | AEO/GEO | SOURCE PASS | Factual source review; external citations/discovery unmeasured. |

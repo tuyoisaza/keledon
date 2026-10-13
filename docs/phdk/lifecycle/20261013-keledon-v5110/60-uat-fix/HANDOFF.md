@@ -29,10 +29,10 @@ Fix UAT-FIX-001 blanket permission approval and all actionable line-limit findin
 
 ## Decisions / assumptions
 - Session-only media grant; no blanket permission or durable site grant.
-- No native runtime download/use without action-time confirmation.
+- The owner authorized runtime use and Electron 44.7 launched; native dialog access remains open.
 
 ## Risks / blockers
-- Electron window/device/audio behavior not manually exercised.
+- Electron renderer startup passed; native permission dialog and device/audio behavior remain untested because the Windows app-control bridge is unavailable.
 - Persisted DB acceptance and broad accessibility remain out of scope for available local runtime.
 
 ## Evidence
@@ -44,4 +44,4 @@ Stage: 65-seo
 Required inputs: current local build and UAT remediation record.
 What the next stage must verify: public index hints, private SPA exclusion and real navigational destinations; distinguish source checks from deployed observation.
 
-SIGUIENTE PASO: SEO verificará fuentes/rutas y reportará por separado cualquier evidencia de despliegue no disponible.
+SIGUIENTE PASO: SEO mantiene las comprobaciones de fuente/local separadas de mediciones desplegadas.
