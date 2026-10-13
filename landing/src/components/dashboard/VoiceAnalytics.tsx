@@ -1,6 +1,4 @@
-import React from 'react';
 import { 
-  Mic, 
   TrendingUp, 
   TrendingDown, 
   MessageSquare, 
@@ -8,14 +6,10 @@ import {
   Clock,
   BarChart3,
   Activity,
-  Volume2,
   Brain,
   AlertTriangle,
   CheckCircle,
-  XCircle,
   Calendar,
-  Filter,
-  Download,
   Eye,
   Heart,
   ThumbsUp,
@@ -26,48 +20,6 @@ import {
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useVoiceAnalytics } from '../../hooks/useVoiceAnalytics';
-
-interface VoiceAnalyticsData {
-  totalConversations: number;
-  avgDuration: number;
-  successRate: number;
-  sentimentDistribution: {
-    positive: number;
-    neutral: number;
-    negative: number;
-  };
-  topKeywords: Array<{ word: string; count: number; trend: 'up' | 'down' | 'stable' }>;
-  speakerStats: {
-    customer: {
-      totalSpeakTime: number;
-      avgSpeakingRate: number;
-      interruptions: number;
-    };
-    agent: {
-      totalSpeakTime: number;
-      avgSpeakingRate: number;
-      interruptions: number;
-    };
-  };
-  qualityMetrics: {
-    clarity: number;
-    completeness: number;
-    relevance: number;
-    satisfaction: number;
-  };
-  recentConversations: Array<{
-    id: string;
-    timestamp: Date;
-    duration: number;
-    sentiment: 'positive' | 'neutral' | 'negative';
-    summary: string;
-    issues: Array<{
-      type: string;
-      severity: 'low' | 'medium' | 'high';
-      description: string;
-    }>;
-  }>;
-}
 
 interface VoiceAnalyticsProps {
   className?: string;
@@ -83,16 +35,15 @@ export default function VoiceAnalyticsDashboard({ className }: VoiceAnalyticsPro
     sentimentPercentages,
     refreshAnalytics,
     selectConversation,
-    clearSelection,
     setTimeRangeValue,
     toggleRealtime
   } = useVoiceAnalytics();
 
   const timeRanges = [
-    { value: '1h', label: '1 Hour' },
-    { value: '24h', label: '24 Hours' },
-    { value: '7d', label: '7 Days' },
-    { value: '30d', label: '30 Days' }
+    { value: '1h' as const, label: '1 Hour' },
+    { value: '24h' as const, label: '24 Hours' },
+    { value: '7d' as const, label: '7 Days' },
+    { value: '30d' as const, label: '30 Days' }
   ];
 
   const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
@@ -177,7 +128,7 @@ export default function VoiceAnalyticsDashboard({ className }: VoiceAnalyticsPro
             {timeRanges.map((range) => (
               <button
                 key={range.value}
-                onClick={() => setTimeRangeValue(range.value as any)}
+                onClick={() => setTimeRangeValue(range.value)}
                 className={cn(
                   "px-3 py-1 rounded-md text-sm font-medium transition-all",
                   timeRange === range.value 

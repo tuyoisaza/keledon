@@ -1,12 +1,8 @@
-import React, { useState, useEffect } from 'react';
 import { 
   Activity, 
   Mic, 
-  MicOff, 
-  Cpu, 
   Globe, 
   AlertCircle, 
-  CheckCircle, 
   Clock, 
   Zap,
   Brain,
@@ -23,6 +19,7 @@ interface AgentControlCenterProps {
 export default function AgentControlCenter({ className }: AgentControlCenterProps) {
   const { 
     agents, 
+    selectedAgent,
     systemHealth, 
     loading, 
     selectAgent,
@@ -63,20 +60,9 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
             Real-time agent monitoring and performance tracking
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex gap-2 text-sm text-muted-foreground bg-muted/50 px-3 py-1 rounded-md border border-border">
-            <Clock className="w-4 h-4" />
-            <span>Real-time Status</span>
-          </div>
-          <button
-            onClick={() => {/* TODO: Implement real-time toggle */}}
-            className={cn(
-              "px-3 py-1 rounded-lg text-sm font-medium border transition-all",
-              true /* realTimeUpdates */ ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-muted-foreground border-border"
-            )}
-          >
-            {/* realTimeUpdates ? 'Live' : 'Paused' */}
-          </button>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-3 py-1 rounded-md border border-border">
+          <Clock className="w-4 h-4" />
+          <span>Agent Status</span>
         </div>
       </div>
 
@@ -121,7 +107,7 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
                   key={agent.id}
                   className={cn(
                     "p-4 rounded-lg border bg-card cursor-pointer transition-all hover:border-primary/30",
-                    agent.id === selectAgent && "border-primary bg-primary/5"
+                    agent.id === selectedAgent && "border-primary bg-primary/5"
                   )}
                   onClick={() => selectAgent(agent.id)}
                 >
@@ -246,30 +232,30 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
       </div>
 
       {/* Selected Agent Details */}
-      {selectAgent && (
+      {selectedAgent && (
         <div className="mt-6 p-4 rounded-lg border bg-card">
-          <h3 className="font-semibold mb-3">Agent Details: {agents.find(a => a.id === selectAgent)?.name}</h3>
+          <h3 className="font-semibold mb-3">Agent Details: {agents.find(a => a.id === selectedAgent)?.name}</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <span className="text-muted-foreground">ID:</span>
-              <p className="font-mono">{selectAgent}</p>
+              <p className="font-mono">{selectedAgent}</p>
             </div>
             <div>
               <span className="text-muted-foreground">Status:</span>
-              <p className="font-semibold">{agents.find(a => a.id === selectAgent)?.status}</p>
+              <p className="font-semibold">{agents.find(a => a.id === selectedAgent)?.status}</p>
             </div>
             <div>
               <span className="text-muted-foreground">Last Activity:</span>
-              <p>{agents.find(a => a.id === selectAgent)?.lastActivity?.toLocaleString()}</p>
+              <p>{agents.find(a => a.id === selectedAgent)?.lastActivity?.toLocaleString()}</p>
             </div>
             <div>
               <span className="text-muted-foreground">Session:</span>
-              <p className="font-mono">{agents.find(a => a.id === selectAgent)?.currentSession || 'None'}</p>
+              <p className="font-mono">{agents.find(a => a.id === selectedAgent)?.currentSession || 'None'}</p>
             </div>
           </div>
           <div className="mt-4 flex gap-2">
             <button 
-              onClick={() => selectAgent(selectAgent)}
+              onClick={() => selectAgent(selectedAgent)}
               className="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition-colors"
             >
               Start Agent

@@ -114,11 +114,6 @@ class VectorStoreAPI {
     }));
   }
 
-  private getRelevanceLevel(score: number): 'high' | 'medium' | 'low' {
-    if (score >= 0.8) return 'high';
-    if (score >= 0.6) return 'medium';
-    return 'low';
-  }
 }
 
 export const vectorStoreAPI = new VectorStoreAPI();

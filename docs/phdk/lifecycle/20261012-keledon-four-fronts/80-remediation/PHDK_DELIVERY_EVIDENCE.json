@@ -8,28 +8,28 @@
   "pr_url": "https://github.com/tuyoisaza/keledon/pull/42",
   "checks": {
     "lint": {
-      "status": "PASS",
-      "evidence": "services/web full lint: 0 errors, 135 warnings; changed API sources: 0 errors, 2 warnings; changed Cloud decision modules: 0 errors, 0 warnings; changed web diagnostics modules: 0 errors, 3 warnings."
+      "status": "PARTIAL",
+      "evidence": "landing full lint currently reports 99 errors and 8 warnings across legacy source; selected changed flows have 0 errors and 1 hook-dependency warning. services/web full lint: 0 errors, 135 warnings; changed API and Cloud findings remain as previously recorded."
     },
     "typecheck": {
-      "status": "PARTIAL",
-      "evidence": "services/web typecheck and API/Cloud production TypeScript builds pass. Full legacy landing typecheck still reports unrelated baseline diagnostics."
+      "status": "PASS",
+      "evidence": "landing typecheck passes after source repairs; services/web typecheck and API/Cloud production TypeScript builds pass."
     },
     "build": {
       "status": "PASS",
-      "evidence": "API and Cloud C13/TypeScript builds pass; services/web and landing production Vite builds pass."
+      "evidence": "API and Cloud C13/TypeScript builds pass; services/web and landing production Vite builds pass. Landing build retains a >500kB main-chunk warning."
     },
     "focused_tests": {
       "status": "PASS",
-      "evidence": "API health/role/correlation tests: 3 suites, 12 tests; web diagnostics/debug-mode/version actions: 18/18; Cloud authorization/OAuth/resource regression: 8/8."
+      "evidence": "Historical API health/role/correlation suites 12 tests; web diagnostics/debug-mode/version actions 18/18; Cloud authorization/OAuth/resource regression 8/8; SEO config regression 1/1."
     },
     "uat": {
       "status": "PARTIAL",
-      "evidence": "Historical synthetic production-SPA UAT is 10/10 on 5.0.54. Candidate 5.1.0 was not browser-launched; current changes are covered by local component/API tests. Tenant live voice/CRM checks remain excluded by owner clarification."
+      "evidence": "Historical synthetic production-SPA UAT passed on the earlier candidate. Current landing device/launch pairing UI edits have not been browser-tested; actual backend role×tenant CRUD and persistence remain blocked. Tenant live voice/CRM checks are excluded by owner clarification."
     },
     "delivery": {
       "status": "PARTIAL",
-      "evidence": "Commit 6b43c07 is pushed and PR #42 title/body are refreshed. PR remains OPEN/DRAFT. PHDK Check is partial; normal review/merge and main SHA/version readback remain outstanding. No production or database operation occurred."
+      "evidence": "Current worktree remediation is not yet committed or pushed. PR #42 remains OPEN/DRAFT; normal review/merge and main SHA/version readback remain outstanding. No production or database operation occurred."
     }
   }
 }

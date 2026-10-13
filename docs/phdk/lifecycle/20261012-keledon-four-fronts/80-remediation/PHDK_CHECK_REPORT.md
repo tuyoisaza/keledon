@@ -1,11 +1,20 @@
-# PHDK Check report — candidate 5.1.0
+# PHDK Check report — remediation update, 5.1.0
 
-Scope: PHDK Auto review and remediation across the four owner-confirmed fronts, 2026-10-13. Telephony and CRM are tenant-selected. No production provider, database, customer data, or metered API use occurred.
+Date: 2026-10-13. This handoff updates the earlier Check snapshot after source-only landing repairs. It applies to branch `chore/phdk-install-v2.50.8` at base `ef93da12c7d1a771eb29f52548479f8ad5530823` plus the current uncommitted worktree; it is not a merged release.
 
-PASS: `services/api` production/C13 TypeScript build; focused API health/role/correlation tests (3 suites, 12 tests); `services/web` typecheck and production Vite build; browser-side diagnostics/reset/widget tests (18/18); `landing` production Vite build; `git diff --check`; and repository physical-line inventory (0 source files at or above 600 lines). Historical evidence remains valid for unchanged areas: Cloud and API authorization/OAuth/resource suites, Agent tests/extension validation, browser regression, local synthetic SPA UAT, PHDK manifest mapping, and source SEO directives. Health diagnostics now use a dynamic Nest route registry, fail closed to `manual_only`, expose sanitized examples, require persisted-role authorization for deep diagnostics, and dispatch only explicit local/database safe reads on a human click. Public `/health` performs liveness only. Request IDs and bounded probe evidence are correlated. The shared diagnostics widget and report/reset behavior apply to both web shells. No client-specific live integration was expected or attempted.
+## Remediation verified
 
-PARTIAL: `landing` build passes, but its full legacy TypeScript check has unrelated baseline errors in untouched modules. Full `services/web` lint exits successfully with 0 errors and 135 warnings; changed web diagnostics modules have 0 errors and 3 warnings. Changed API modules have 0 errors and 2 warnings; changed Cloud decision modules pass lint with 0 errors/warnings. `services/web` typecheck passes; full translation/content coverage, broader accessibility and contrast across app routes/themes, and Electron rendered acceptance have not been completed. The installed PHDK coherence utility expects missing `phdk-standards/README.md`/`CHANGELOG.md`; the earlier canonical-source check remains recorded separately. The completion gate cannot pass without a merged SHA and currently errors on the correct null value.
+- Landing TypeScript typecheck and production build pass.
+- Fixed selected-agent comparisons, API JSON body typing/serialization, snake_case relationship reads, category unions, company-country narrowing, a team fetch signature, and the Vite config's unused environment load.
+- Replaced the device page's forged `x-user-id` request and unsupported pairing call with session-authenticated listing and navigation into the Keledon launch flow.
+- Replaced the launch page's hard-coded fake pairing code with authenticated fetch/rotation, expiry display and copy behavior backed by the existing superadmin-protected endpoints.
+- Removed two unreferenced stale components and dead imports/state; removed a constant, nonfunctional “real-time” toggle from Agent Control Center.
+- Updated root `CRUD_MATRIX.md` with current evidence language and an explicit list of omitted persisted resource families. The CRUD gate remains BLOCKED because that inventory still requires complete role × surface × operation rows and evidence.
 
-OPEN: verify private-route indexing headers on a deployed host; complete active-route translation and rendered accessibility/contrast review; test Electron diagnostics widget visually; resolve or explicitly baseline the legacy landing TypeScript errors; and complete normal PR review/merge/readback. The source inventory is 0 files at or above 600 lines, including the split Cloud decision helper. No deployed behavior, production release, or database migration is claimed.
+Targeted ESLint for the changed dashboard, device, launch and document-add flows passes with 0 errors and one hook-dependency warning. Full `landing npm run lint` still exits nonzero with 99 errors and 8 warnings across legacy source; no global lint pass is claimed. The whole project TypeScript check and build are separate and pass.
 
-DELIVERY: PR #42 remains OPEN/DRAFT pending PHDK Check and normal review. The owner approved inclusion of the additive managed-AI migration; no database was connected and no migration was executed. No main readback or production deployment is claimed.
+## Remaining gates
+
+Full CRUD role/tenant/API/browser tests and database persistence; accessible management detail journeys; landing localization and broad rendered accessibility; native Electron widget acceptance; deployed SEO response headers; clean full-project landing lint; normal PR review and merge; required-check and main SHA/version readback. Browser UAT is not run during Check; prior Edge evidence is limited to synthetic fixtures. No production database or migration was used.
+
+PR #42 remains OPEN/DRAFT. Status is PARTIAL/BLOCKED until the incomplete gates and normal delivery controls are resolved. Do not mark the Auto goal complete.

@@ -4,12 +4,10 @@ import {
   Pause, 
   Square, 
   RotateCcw, 
-  Eye, 
   CheckCircle, 
   XCircle, 
   Clock, 
   Zap,
-  ArrowRight,
   Code,
   MousePointer,
   Type,
@@ -29,14 +27,14 @@ interface FlowStep {
   status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
   selector?: string;
   value?: string;
-  result?: any;
+  result?: unknown;
   duration?: number;
   error?: string;
   metadata?: {
     element_text?: string;
     element_position?: { x: number; y: number };
     screenshot_url?: string;
-    extracted_data?: any;
+    extracted_data?: unknown;
   };
 }
 
@@ -68,7 +66,6 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
     selectedExecution,
     loading,
     selectExecution,
-    clearSelection,
     createExecution,
     startExecution,
     pauseExecution,
@@ -89,18 +86,7 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
     search: Search
   };
 
-  const getStepColor = (status: FlowStep['status']) => {
-    switch (status) {
-      case 'pending': return 'text-gray-500 bg-gray-50 border-gray-200';
-      case 'running': return 'text-blue-500 bg-blue-50 border-blue-200 animate-pulse';
-      case 'completed': return 'text-green-500 bg-green-50 border-green-200';
-      case 'failed': return 'text-red-500 bg-red-50 border-red-200';
-      case 'skipped': return 'text-yellow-500 bg-yellow-50 border-yellow-200';
-      default: return 'text-gray-500 bg-gray-50 border-gray-200';
-    }
-  };
-
-  const getStatusIcon = (status: FlowExecution['status']) => {
+  const getStatusIcon = (status: FlowExecution['status'] | FlowStep['status']) => {
     switch (status) {
       case 'running': return <Activity className="w-4 h-4 animate-pulse" />;
       case 'completed': return <CheckCircle className="w-4 h-4" />;
@@ -300,13 +286,13 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
               {/* Steps */}
               {showDetails && execution.steps.length > 0 && (
                 <div className="space-y-2 mb-4">
-                  {execution.steps.slice(0, 5).map((step, index) => {
+                  {execution.steps.slice(0, 5).map((step) => {
                     const Icon = stepIcons[step.type];
                     return (
                       <div key={step.id} className="flex items-center gap-2 text-sm">
                         <Icon className="w-4 h-4 text-muted-foreground" />
                         <span className="flex-1">{step.name}</span>
-                        {getStatusIcon(step.status as any)}
+                        {getStatusIcon(step.status)}
                         {step.duration && (
                           <span className="text-xs text-muted-foreground">
                             {step.duration}ms

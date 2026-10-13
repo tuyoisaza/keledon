@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check, Download, Building2, ArrowRightCircle, ListChecks } from 'lucide-react';
+import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check, Download, ArrowRightCircle, ListChecks } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getKeledons, getVendors, type Keledon, type Vendor } from '@/lib/crud-api';
 import { getBrowserDownloadUrl } from '@/lib/knowledge-source-utils.js';
 import { toast } from 'sonner';
 import { useTranslation } from '@/context/I18nContext';
 import { requestKeledonLaunch } from '@/lib/launch-protocol.js';
+import { apiJson } from '@/lib/api-fetch';
 
 export default function LaunchKeledonPage() {
     const { user } = useAuth();
@@ -15,6 +16,9 @@ export default function LaunchKeledonPage() {
     const [loading, setLoading] = useState(true);
     const [launching, setLaunching] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [pairingCodes, setPairingCodes] = useState<Record<string, { code: string | null; expiresAt: string } | null>>({});
+    const [resettingCode, setResettingCode] = useState<string | null>(null);
+    const [loadingPairingCodes, setLoadingPairingCodes] = useState<Record<string, boolean>>({});
     const [launchDetails, setLaunchDetails] = useState<null | {
         keledonId: string;
         teamId: string | null;
@@ -26,6 +30,12 @@ export default function LaunchKeledonPage() {
     useEffect(() => {
         loadKeledons();
     }, [user]);
+
+    useEffect(() => {
+        if (user?.role === 'superadmin' && keledons.length > 0) {
+            keledons.forEach(keledon => void fetchPairingCode(keledon.id));
+        }
+    }, [keledons, user?.role]);
 
     const loadKeledons = async () => {
         setLoading(true);
@@ -39,7 +49,7 @@ export default function LaunchKeledonPage() {
                     try {
                         const vendors = await getVendors(keledon.teamId);
                         vendorsByTeam[keledon.teamId] = vendors;
-                    } catch (e) {
+                    } catch {
                         console.error('Failed to load vendors for team:', keledon.teamId);
                     }
                 }
@@ -90,11 +100,37 @@ export default function LaunchKeledonPage() {
                 return;
             }
             toast.info(t('launch.requested'));
-        } catch (error: any) {
+        } catch {
             console.error('[Launch] Request failed');
             toast.error(t('launch.failed'));
         } finally {
             setLaunching(null);
+        }
+    };
+
+    const fetchPairingCode = async (keledonId: string) => {
+        setLoadingPairingCodes(prev => ({ ...prev, [keledonId]: true }));
+        try {
+            const data = await apiJson<{ pairing_code: string; expires_at: string }>(`/api/crud/keledons/${keledonId}/pairing-code`);
+            setPairingCodes(prev => ({ ...prev, [keledonId]: { code: data.pairing_code, expiresAt: data.expires_at } }));
+        } catch (error) {
+            console.error('Failed to fetch pairing code:', error);
+            setPairingCodes(prev => ({ ...prev, [keledonId]: null }));
+        } finally {
+            setLoadingPairingCodes(prev => ({ ...prev, [keledonId]: false }));
+        }
+    };
+
+    const resetPairingCode = async (keledonId: string) => {
+        setResettingCode(keledonId);
+        try {
+            const data = await apiJson<{ pairing_code: string; expires_at: string }>(`/api/crud/keledons/${keledonId}/pairing-code`, { method: 'POST' });
+            setPairingCodes(prev => ({ ...prev, [keledonId]: { code: data.pairing_code, expiresAt: data.expires_at } }));
+            toast.success('New pairing code generated');
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : 'Failed to reset pairing code');
+        } finally {
+            setResettingCode(null);
         }
     };
 
@@ -201,9 +237,8 @@ export default function LaunchKeledonPage() {
 
                             <div className="space-y-2 mb-4">
                                 <div className="text-sm flex items-center gap-2">
-                                    <Building2 className="w-4 h-4 text-muted-foreground" />
-                                    <span className="text-muted-foreground">Company:</span>
-                                    <span className="font-medium">{keledon.team?.brand?.company?.name || 'N/A'}</span>
+                                    <span className="text-muted-foreground">Brand:</span>
+                                    <span className="font-medium">{keledon.team?.brand?.name || 'N/A'}</span>
                                 </div>
                                 <div className="text-sm">
                                     <span className="text-muted-foreground">Team:</span>{' '}
@@ -269,11 +304,27 @@ export default function LaunchKeledonPage() {
 
                             {isSuperAdmin && (
                                 <div className="mb-4 p-3 bg-muted rounded-lg">
-                                    <p className="text-xs text-muted-foreground mb-2">Pairing Code</p>
-                                    <div className="flex items-center gap-2">
-                                        <code className="flex-1 font-mono text-sm">{'XXXX-XXXX'}</code>
+                                    <div className="flex items-center justify-between gap-2 mb-2">
+                                        <p className="text-xs text-muted-foreground">Pairing Code</p>
                                         <button
-                                            onClick={() => copyPairingCode('manual', keledon.id)}
+                                            type="button"
+                                            onClick={() => resetPairingCode(keledon.id)}
+                                            disabled={resettingCode === keledon.id}
+                                            className="text-xs text-primary disabled:opacity-50"
+                                        >
+                                            {resettingCode === keledon.id ? 'Generating…' : 'Generate new'}
+                                        </button>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <code className="flex-1 font-mono text-sm">
+                                            {loadingPairingCodes[keledon.id] ? 'Loading…' : pairingCodes[keledon.id]?.code || 'No code'}
+                                        </code>
+                                        <button
+                                            onClick={() => {
+                                                const code = pairingCodes[keledon.id]?.code;
+                                                if (code) void copyPairingCode(code, keledon.id);
+                                            }}
+                                            disabled={!pairingCodes[keledon.id]?.code}
                                             className="p-1 hover:bg-background rounded"
                                             title="Copy code"
                                         >
@@ -284,6 +335,11 @@ export default function LaunchKeledonPage() {
                                             )}
                                         </button>
                                     </div>
+                                    {pairingCodes[keledon.id]?.expiresAt && (
+                                        <p className="text-xs text-muted-foreground mt-2">
+                                            Expires: {new Date(pairingCodes[keledon.id]!.expiresAt).toLocaleString()}
+                                        </p>
+                                    )}
                                 </div>
                             )}
 

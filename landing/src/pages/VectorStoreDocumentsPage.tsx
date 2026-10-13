@@ -1,23 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Database, Plus, Search, FileText, Trash2, RefreshCw, Eye, AlertCircle, Settings, ArrowLeft, Tag } from 'lucide-react';
+import { Database, Plus, Search, FileText, Trash2, RefreshCw, Eye, AlertCircle, ArrowLeft, Tag } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { vectorStoreAPI, type PolicyDocument, type RetrievalResult, type VectorStoreStatus } from '@/lib/vector-store';
-import { useAuth } from '@/context/AuthContext';
-
-const defaultCategories = [
-  { id: 'safety', name: 'Safety', color: '#ef4444', description: 'Safety guidelines and procedures' },
-  { id: 'procedure', name: 'Procedure', color: '#3b82f6', description: 'Standard operating procedures' },
-  { id: 'compliance', name: 'Compliance', color: '#a855f7', description: 'Compliance and regulations' },
-  { id: 'knowledge', name: 'Knowledge', color: '#22c55e', description: 'General knowledge base' },
-];
-
-type Category = typeof defaultCategories[number];
 
 export default function VectorStoreDocumentsPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [status, setStatus] = useState<VectorStoreStatus | null>(null);
   const [documents, setDocuments] = useState<PolicyDocument[]>([]);
   const [searchResults, setSearchResults] = useState<RetrievalResult[]>([]);
@@ -25,12 +14,10 @@ export default function VectorStoreDocumentsPage() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     fetchStatus();
     fetchDocuments();
-    setCategories(defaultCategories);
   }, []);
 
   const fetchStatus = async () => {
@@ -88,11 +75,6 @@ export default function VectorStoreDocumentsPage() {
       console.error('Failed to delete document:', error);
       toast.error('Failed to delete document');
     }
-  };
-
-  const getCategoryColor = (category: string) => {
-    const cat = categories.find(c => c.name.toLowerCase() === category.toLowerCase());
-    return cat?.color || '#6b7280';
   };
 
   const getCategoryBgClass = (category: string) => {

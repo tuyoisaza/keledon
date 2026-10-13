@@ -145,7 +145,7 @@ export default function ManagementTeamsPage() {
     };
 
     const selectedCompany = companies.find(c => c.id === formData.companyId);
-    const companyCountries = selectedCompany?.countries?.length > 0 
+    const companyCountries = selectedCompany?.countries && selectedCompany.countries.length > 0
         ? selectedCompany.countries 
         : availableCountries;
 

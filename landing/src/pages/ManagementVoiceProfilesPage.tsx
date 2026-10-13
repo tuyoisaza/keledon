@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Mic, Plus, RefreshCw, Loader2, Pencil, Trash2, Settings, Volume2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Mic, Plus, Loader2, Trash2, Volume2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 

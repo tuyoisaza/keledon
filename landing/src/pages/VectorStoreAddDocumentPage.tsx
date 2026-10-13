@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, Loader2, AlertCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { vectorStoreAPI, type PolicyDocument } from '@/lib/vector-store';
 import { getCompanies, getBrands, getTeams, type Company, type Brand, type Team } from '@/lib/crud-api';
@@ -15,6 +14,7 @@ const defaultCategories = [
 ];
 
 type Category = typeof defaultCategories[number];
+type DocumentCategory = PolicyDocument['category'];
 
 export default function VectorStoreAddDocumentPage() {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ export default function VectorStoreAddDocumentPage() {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    category: 'knowledge',
+    category: 'knowledge' as DocumentCategory,
     metadata: '',
     company_id: '',
     brand_id: '',
@@ -152,9 +152,9 @@ export default function VectorStoreAddDocumentPage() {
       }
 
       navigate('/management/vector-store');
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to save document:', err);
-      setError(err.message || 'Failed to save document. Please check your vector store configuration.');
+      setError(err instanceof Error ? err.message : 'Failed to save document. Please check your vector store configuration.');
       toast.error('Failed to save document');
     } finally {
       setSaving(false);
@@ -212,7 +212,7 @@ export default function VectorStoreAddDocumentPage() {
           <label className="block text-sm font-medium mb-2">Category</label>
           <select
             value={formData.category}
-            onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+            onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as DocumentCategory }))}
             className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none"
           >
             {categories.map((cat) => (

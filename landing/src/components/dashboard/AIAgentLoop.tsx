@@ -1,17 +1,10 @@
-import React from 'react';
 import { 
   Activity, 
   Mic, 
-  MicOff, 
   Cpu, 
-  Globe, 
-  AlertCircle, 
   CheckCircle, 
-  Clock, 
   Zap,
   Brain,
-  Volume2,
-  Radio,
   MessageSquare,
   Play,
   RotateCcw,
@@ -28,7 +21,12 @@ interface AgentStep {
   icon: string;
   status: 'idle' | 'active' | 'completed' | 'error';
   duration?: number;
-  data?: any;
+  data?: {
+    transcript?: string;
+    intent?: string;
+    confidence?: number;
+    steps_executed?: number;
+  };
   error?: string;
 }
 
@@ -40,7 +38,7 @@ interface AgentLoop {
   startTime?: Date;
   endTime?: Date;
   confidence?: number;
-  result?: any;
+  result?: { action?: string };
 }
 
 interface AIAgentLoopProps {
@@ -53,7 +51,6 @@ export default function AIAgentLoop({ className }: AIAgentLoopProps) {
     selectedLoop, 
     loading,
     selectLoop,
-    clearSelection,
     createLoop,
     startLoop,
     pauseLoop,
@@ -186,7 +183,7 @@ export default function AIAgentLoop({ className }: AIAgentLoopProps) {
                     )}
                     {loop.startTime && (
                       <span className="text-xs text-muted-foreground">
-                        {Math.round((loop.endTime?.getTime() || Date.now()) - loop.startTime.getTime())}ms
+                        {loop.endTime ? Math.round(loop.endTime.getTime() - loop.startTime.getTime()) : 'In progress'}
                       </span>
                     )}
                   </div>

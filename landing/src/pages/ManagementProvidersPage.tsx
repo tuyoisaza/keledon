@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings, RefreshCw, Loader2, Check, X, Globe } from 'lucide-react';
+import { Settings, RefreshCw, Check, X, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -17,7 +17,6 @@ const defaultProviderCatalog = [
 export default function ManagementProvidersPage() {
     const [catalog, setCatalog] = useState(defaultProviderCatalog);
     const [loading, setLoading] = useState(false);
-    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         fetchCatalog();

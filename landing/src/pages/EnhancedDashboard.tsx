@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { 
   Activity, 
   Cpu, 
-  Mic, 
   Zap, 
   Plug, 
   BarChart3,

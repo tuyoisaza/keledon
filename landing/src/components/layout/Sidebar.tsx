@@ -18,11 +18,7 @@ import {
     Monitor,
     User,
     Activity,
-    Building2,
     Brain,
-    LucideIcon,
-    Tag,
-    Users as UsersIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
@@ -53,8 +49,6 @@ const navItems: NavItem[] = [
     { icon: User, label: 'Profile', href: '/profile', minRole: 'user' },
     { icon: Settings, label: 'Management', href: '/management/companies', minRole: 'admin' },
 ];
-
-const managementItems: NavItem[] = [];
 
 export function Sidebar() {
     const { t } = useTranslation();

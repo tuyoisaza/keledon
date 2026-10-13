@@ -8,8 +8,6 @@ interface DebugTabProps {
     modelError: string | null;
     debugLogs: string;
     setDebugLogs: (logs: string) => void;
-    addDebugLog: (msg: string) => void;
-    setModelStatus: (status: 'idle' | 'loading' | 'ready' | 'error') => void;
 }
 
 export const DebugTab: React.FC<DebugTabProps> = ({
@@ -19,8 +17,6 @@ export const DebugTab: React.FC<DebugTabProps> = ({
     modelError,
     debugLogs,
     setDebugLogs,
-    addDebugLog,
-    setModelStatus
 }) => {
     return (
         <div className="space-y-6">

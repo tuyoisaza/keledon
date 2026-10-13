@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
 
 export default function TestBrowserPage() {
     const [status, setStatus] = useState('Initializing...');

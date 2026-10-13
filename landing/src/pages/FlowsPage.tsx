@@ -1,6 +1,4 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Workflow, Plus, Settings } from 'lucide-react';
+import { Workflow, Plus } from 'lucide-react';
 
 export default function FlowsPage() {
     return (

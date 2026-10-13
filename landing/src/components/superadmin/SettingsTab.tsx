@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertTriangle, Settings, Globe, Database, Save, Loader2, Trash2, Plus } from 'lucide-react';
+import { AlertTriangle, Globe, Database, Loader2, Trash2, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ProviderConfig {
@@ -36,7 +36,6 @@ interface SettingsTabProps {
   tenantVoiceProfiles: VoiceProfile[];
   onSaveProviderCatalog: (catalog: ProviderConfig[]) => Promise<void>;
   onSaveTenantConfig: (config: TenantConfig[]) => Promise<void>;
-  onSaveVoiceProfiles: (profiles: VoiceProfile[]) => Promise<void>;
   onCreateVoiceProfile: (profile: Omit<VoiceProfile, 'id'>) => Promise<void>;
   onDeleteVoiceProfile: (id: string) => Promise<void>;
 }
@@ -52,7 +51,6 @@ export function SettingsTab({
   tenantVoiceProfiles,
   onSaveProviderCatalog,
   onSaveTenantConfig,
-  onSaveVoiceProfiles,
   onCreateVoiceProfile,
   onDeleteVoiceProfile,
 }: SettingsTabProps) {

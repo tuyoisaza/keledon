@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Database, Settings, Check, AlertCircle, RefreshCw, Eye, EyeOff, Server } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 interface VectorStoreConfigProps {

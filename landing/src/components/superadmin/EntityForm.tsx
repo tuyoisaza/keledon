@@ -219,7 +219,7 @@ export const EntityForm: React.FC<EntityFormProps> = ({
                                     disabled={!selectedCompanyId}
                                 >
                                     <option value="">Select Brand...</option>
-                                    {brands.filter(b => b.company_id === selectedCompanyId).map(b => (
+                                    {brands.filter(b => b.companyId === selectedCompanyId).map(b => (
                                         <option key={b.id} value={b.id}>{b.name}</option>
                                     ))}
                                 </select>
@@ -287,7 +287,7 @@ export const EntityForm: React.FC<EntityFormProps> = ({
                                         disabled={!selectedCompanyId}
                                     >
                                         <option value="">Select Brand...</option>
-                                        {brands.filter(b => b.company_id === selectedCompanyId).map(b => (
+                                        {brands.filter(b => b.companyId === selectedCompanyId).map(b => (
                                             <option key={b.id} value={b.id}>{b.name}</option>
                                         ))}
                                     </select>
@@ -305,8 +305,8 @@ export const EntityForm: React.FC<EntityFormProps> = ({
                                     <option value="">Select Team...</option>
                                     {teams
                                         .filter(t => {
-                                            const teamBrand = brands.find(b => b.id === t.brand_id);
-                                            return teamBrand && teamBrand.company_id === selectedCompanyId;
+                                            const teamBrand = brands.find(b => b.id === t.brandId);
+                                            return teamBrand && teamBrand.companyId === selectedCompanyId;
                                         })
                                         .map(t => (
                                             <option key={t.id} value={t.id}>{t.name}</option>
