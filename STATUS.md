@@ -57,4 +57,4 @@ Commit 3af566a163024c3f2b69be7991e99437d47b0528 is on chore/phdk-install-v2.50.8
 
 - Source candidate is `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0`, following the 5.1.1 tenant/health-policy implementation. All five app package/lock roots and the Browser visible version now align at 5.1.2.
 - Updated the manager company context to native `fieldset`/`legend`; exact 5.1.2 local production-SPA UAT passes 1/1 and verifies the accessible “Company” group.
-- Candidate and PR state remain local/open in this checkpoint. All synthetic/persistence, native, deployed SEO/AEO and PHDK coherence utility limitations remain as documented; current overall status is PARTIALLY DELIVERED.
+- Candidate is pushed at `cf9be2fe6951c1dbaad3ab02189583fcf0d0658f`; PR #42 is OPEN and ready for review. All synthetic/persistence, native, deployed SEO/AEO and PHDK coherence utility limitations remain as documented; current overall status is PARTIALLY DELIVERED.

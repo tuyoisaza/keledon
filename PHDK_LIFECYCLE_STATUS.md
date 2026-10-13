@@ -2,7 +2,7 @@
 
 Project: `C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON`
 
-PHDK: 2.50.8 installed and integrity-verified. Candidate: 5.1.2, source commit `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0`; preceding 5.1.1 source commit `cff60c675ec3e4b21864a24821cbda34a9c51d64`. Branch: `chore/phdk-install-v2.50.8`; remote branch still at `b3f2853a509b35e7ad803b4b25ef93142afee5b8` before candidate push. PR #42 https://github.com/tuyoisaza/keledon/pull/42 is OPEN/DRAFT; `origin/main` = `52537140e67d0d6c05486fa13837df3eb5316fb3`. No merge or deployment is claimed.
+PHDK: 2.50.8 installed and integrity-verified. Candidate: 5.1.2, source commit `0d98f2812d8eb88a8626101f81f9bf9ca6d52de0`; preceding 5.1.1 source commit `cff60c675ec3e4b21864a24821cbda34a9c51d64`. Branch: `chore/phdk-install-v2.50.8`, pushed through `cf9be2fe6951c1dbaad3ab02189583fcf0d0658f`. PR #42 https://github.com/tuyoisaza/keledon/pull/42 is OPEN and ready for review; `origin/main` = `52537140e67d0d6c05486fa13837df3eb5316fb3`. No merge or deployment is claimed.
 
 Goal: finish PHDK Auto for the four owner-confirmed fronts. Telephony/CRM are client-selected; the owner requested maximum applicable code conformity. The restrictive role, tenant and write-only-secret policy is owner-approved.
 
@@ -19,10 +19,10 @@ Goal: finish PHDK Auto for the four owner-confirmed fronts. Telephony/CRM are cl
 | AEO/GEO | REUSED / PARTIAL | Source/content inventory only; external citation/rank measurements are not applicable to this local review and were not run. |
 | Check | GAPS FOUND | API/Cloud/web/landing checks recorded in root `PHDK_CHECK_REPORT.md`; strict 600-line scan now passes. Persisted CRUD, accessibility/localization/Electron, deployed metadata and PHDK coherence-input gaps remain. |
 | Remediation | PARTIAL | Fixed raw health disclosure, same-tenant team reassignment, accessible company context and oversized test module. Other Check gaps require database/native/deployed evidence or remain documented. |
-| Delivery | RUNNING | Candidate source commit exists locally; PR #42 still reflects the prior remote head until push/update. Normal PR review/merge, remote main version/SHA verification and completion gate remain. |
+| Delivery | RUNNING | Candidate is pushed and PR #42 is ready for review. Normal integration, remote main version/SHA verification and completion gate remain. |
 
 No production database, migration, customer/provider data, metered model or live site was contacted. The owner approved including the additive managed-AI migration in reviewed source delivery but did not authorize applying it to a database.
 
 Current lifecycle conclusion: **PARTIALLY DELIVERED**. Confirmed commitments remain unmerged and/or incompletely verified. Continue with candidate publication and normal PR integration; preserve residual UAT/Check limits and verify remote `main` before any completion claim.
 
-SIGUIENTE PASO: finish the delivery evidence and update PR #42 with 5.1.2; reconcile actual review/check controls, then integrate normally if they pass and read back the resulting `main` SHA/version.
+SIGUIENTE PASO: reconcile any review/check controls on the ready PR #42, integrate through the normal path, then read back the resulting `main` SHA/version.
