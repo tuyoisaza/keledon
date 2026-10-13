@@ -89,30 +89,32 @@ for (const file of jsFiles) {
   }
 }
 
-// Validate every local script loaded by the side panel, in browser order.
-const sidepanelHtmlPath = path.join(extensionDir, 'ui/sidepanel.html');
-const sidepanelHtml = fs.readFileSync(sidepanelHtmlPath, 'utf8');
-const sidepanelScripts = [...sidepanelHtml.matchAll(/<script\s+src=["']([^"']+)["']/gi)]
-  .map((match) => path.resolve(path.dirname(sidepanelHtmlPath), match[1]));
-
-for (const scriptPath of sidepanelScripts) {
-  if (!fs.existsSync(scriptPath)) {
-    console.error(`❌ Side panel script not found: ${path.relative(extensionDir, scriptPath)}`);
-    process.exit(1);
-  }
-}
-
+// Validate every local script loaded by either side panel, in browser order.
+const panelHtmlFiles = ['ui/sidepanel.html', 'ui/sidepanel-pipeline.html'];
 const sidepanelCheckDir = fs.mkdtempSync(path.join(os.tmpdir(), 'keledon-sidepanel-'));
-const sidepanelBundlePath = path.join(sidepanelCheckDir, 'sidepanel-bundle.js');
 try {
-  const sidepanelBundle = sidepanelScripts
-    .map((scriptPath) => fs.readFileSync(scriptPath, 'utf8'))
-    .join('\n;\n');
-  fs.writeFileSync(sidepanelBundlePath, sidepanelBundle);
-  execFileSync(process.execPath, ['--check', sidepanelBundlePath], { stdio: 'pipe' });
-  console.log(`✅ ${sidepanelScripts.length} side panel scripts exist and parse together in HTML order`);
+  for (const panelFile of panelHtmlFiles) {
+    const htmlPath = path.join(extensionDir, panelFile);
+    const html = fs.readFileSync(htmlPath, 'utf8');
+    const scripts = [...html.matchAll(/<script\s+src=["']([^"']+)["']/gi)]
+      .map((match) => path.resolve(path.dirname(htmlPath), match[1]));
+
+    for (const scriptPath of scripts) {
+      if (!fs.existsSync(scriptPath)) {
+        throw new Error(`Missing ${path.relative(extensionDir, scriptPath)} loaded by ${panelFile}`);
+      }
+    }
+
+    const bundlePath = path.join(sidepanelCheckDir, `${path.basename(panelFile, '.html')}.js`);
+    const bundle = scripts
+      .map((scriptPath) => fs.readFileSync(scriptPath, 'utf8'))
+      .join('\n;\n');
+    fs.writeFileSync(bundlePath, bundle);
+    execFileSync(process.execPath, ['--check', bundlePath], { stdio: 'pipe' });
+    console.log(`✅ ${panelFile}: ${scripts.length} scripts exist and parse together in HTML order`);
+  }
 } catch (error) {
-  console.error('❌ Side panel script bundle failed validation:', error.message);
+  console.error('❌ Side panel script validation failed:', error.message);
   process.exitCode = 1;
 } finally {
   fs.rmSync(sidepanelCheckDir, { recursive: true, force: true });

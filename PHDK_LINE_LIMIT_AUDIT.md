@@ -2,11 +2,10 @@
 
 Date: 2026-10-13. Candidate: 5.0.54. Rule: source files remain below 600 physical lines. Count includes blank lines; scan includes `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`, excluding dependency and generated directories.
 
-The current inventory contains **21 files** at or above the limit. This remains an open remediation backlog, not a passing Check result.
+The current inventory contains **20 files** at or above the limit. This remains an open remediation backlog, not a passing Check result.
 
 | Lines | File |
 |---:|---|
-| 1800 | `agent/extension/ui/sidepanel-pipeline.js` |
 | 1301 | `agent/src/background/legacy-background.js` |
 | 1272 | `agent/extension/background/legacy-background.js` |
 | 1041 | `cloud/src/controllers/analytics.controller.ts` |

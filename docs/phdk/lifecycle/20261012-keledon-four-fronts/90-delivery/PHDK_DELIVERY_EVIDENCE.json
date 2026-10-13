@@ -29,7 +29,7 @@
     },
     "delivery": {
       "status": "BLOCKED",
-      "evidence": "PR #42 is draft/open. Physical-line inventory has 21 source files at or above 600 lines; no merge/main readback. Three additive Cloud schema migrations are included but were not executed. The vendored completion gate throws TypeError when merged_commit_sha is null."
+      "evidence": "PR #42 is draft/open. Physical-line inventory has 20 source files at or above 600 lines; no merge/main readback. Three additive Cloud schema migrations are included but were not executed. The vendored completion gate throws TypeError when merged_commit_sha is null."
     }
   }
 }
