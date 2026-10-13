@@ -29,6 +29,35 @@ type SafeBackendSummary = {
   databaseStatus: string;
   migrationStatus: string;
   providers: Record<string, string>;
+  featureFlags: Record<string, boolean>;
+  meteredUsage:
+    | {
+        status: 'measured';
+        windowMinutes: number;
+        elapsedMinutes: number;
+        calls: number;
+        failures: number;
+        retryCountLastCall: number;
+        lastCall?: {
+          provider: string;
+          at: string;
+          success: boolean;
+          retryCount: number;
+          failureCode?: string;
+          correlationId?: string;
+        };
+        providers: Array<{ provider: string; calls: number; failures: number }>;
+        requestBudget: {
+          calls: number;
+          actors: number;
+          perActorLimit: number;
+          totalLimit: number;
+          actorCardinalityLimit: number;
+        };
+        killSwitches: { ai: boolean; voice: boolean };
+        automaticRetriesEnabled: boolean;
+      }
+    | { status: 'protected' | 'unavailable' };
 };
 
 const buffer = createEventBuffer();
@@ -92,12 +121,48 @@ export const debugCapture = {
     const data = value as Record<string, unknown>;
     const database = data.database && typeof data.database === 'object' ? data.database as Record<string, unknown> : {};
     const metered = data.meteredProviders && typeof data.meteredProviders === 'object' ? data.meteredProviders as Record<string, unknown> : {};
+    const flags = data.featureFlags && typeof data.featureFlags === 'object' ? data.featureFlags as Record<string, unknown> : {};
+    const rawUsage = data.meteredUsage && typeof data.meteredUsage === 'object' ? data.meteredUsage as Record<string, unknown> : {};
+    const safeCount = (value: unknown) => Number.isInteger(value) && Number(value) >= 0 ? Math.min(Number(value), 1_000_000_000) : 0;
+    const allowedProviders = new Set(['anthropic', 'deepgram', 'elevenlabs', 'google', 'kokoro', 'ollama', 'openai', 'speaches', 'other']);
+    const safeProvider = (value: unknown) => typeof value === 'string' && allowedProviders.has(value.toLowerCase()) ? value.toLowerCase() : 'other';
+    const usage = rawUsage.status === 'measured' ? {
+      status: 'measured' as const,
+      windowMinutes: Math.min(60, safeCount(rawUsage.windowMinutes)),
+      elapsedMinutes: Math.min(60, safeCount(rawUsage.elapsedMinutes)),
+      calls: safeCount(rawUsage.calls),
+      failures: safeCount(rawUsage.failures),
+      retryCountLastCall: Math.min(20, safeCount(rawUsage.retryCountLastCall)),
+      providers: Array.isArray(rawUsage.providers) ? rawUsage.providers.slice(0, 12).flatMap((entry) => {
+        if (!entry || typeof entry !== 'object') return [];
+        const item = entry as Record<string, unknown>;
+        return [{ provider: safeProvider(item.provider), calls: safeCount(item.calls), failures: safeCount(item.failures) }];
+      }) : [],
+      requestBudget: (() => {
+        const value = rawUsage.requestBudget && typeof rawUsage.requestBudget === 'object' ? rawUsage.requestBudget as Record<string, unknown> : {};
+        return { calls: safeCount(value.calls), actors: safeCount(value.actors), perActorLimit: safeCount(value.perActorLimit), totalLimit: safeCount(value.totalLimit), actorCardinalityLimit: safeCount(value.actorCardinalityLimit) };
+      })(),
+      killSwitches: (() => {
+        const value = rawUsage.killSwitches && typeof rawUsage.killSwitches === 'object' ? rawUsage.killSwitches as Record<string, unknown> : {};
+        return { ai: value.ai === true, voice: value.voice === true };
+      })(),
+      automaticRetriesEnabled: rawUsage.automaticRetriesEnabled === true,
+      ...(rawUsage.lastCall && typeof rawUsage.lastCall === 'object' ? (() => {
+        const last = rawUsage.lastCall as Record<string, unknown>;
+        const at = typeof last.at === 'string' && /^\d{4}-\d\d-\d\dT[^\s]{1,40}Z$/.test(last.at) ? last.at : 'Unavailable';
+        const failureCode = typeof last.failureCode === 'string' && /^[A-Z0-9_]{1,64}$/.test(last.failureCode) ? last.failureCode : undefined;
+        const correlationId = sanitizeCorrelationId(typeof last.correlationId === 'string' ? last.correlationId : undefined);
+        return { lastCall: { provider: safeProvider(last.provider), at, success: last.success === true, retryCount: Math.min(20, safeCount(last.retryCount)), ...(failureCode ? { failureCode } : {}), ...(correlationId ? { correlationId } : {}) } };
+      })() : {}),
+    } : { status: rawUsage.status === 'protected' ? 'protected' as const : 'unavailable' as const };
     const safeStatus = (status: unknown) => typeof status === 'string' && /^(healthy|degraded|unhealthy|present|unavailable)$/.test(status) ? status : 'unavailable';
     backendSummary = {
       status: safeStatus(data.status),
       databaseStatus: safeStatus(database.status),
       migrationStatus: safeStatus(database.migrations),
-      providers: Object.fromEntries(['deepgram', 'openai', 'anthropic'].map(provider => [provider, metered[provider] === 'configured' ? 'configured' : 'not_configured'])),
+      providers: Object.fromEntries(['anthropic', 'deepgram', 'elevenlabs', 'google', 'ollama', 'openai', 'speaches', 'kokoro'].map(provider => [provider, metered[provider] === 'configured' ? 'configured' : 'not_configured'])),
+      featureFlags: Object.fromEntries(['realAuth', 'realStt', 'realTts', 'rpa', 'otel', 'vectorStore'].map(flag => [flag, flags[flag] === true])),
+      meteredUsage: usage,
     };
   },
   clearEndpointDiagnostics() { endpointSummaries = []; backendSummary = undefined; },
@@ -293,7 +358,7 @@ export function getDebugInfo(context: SafeAuthContext = {}): string {
     'Auth cookie presence: Not inspected; cookie values and HttpOnly state are not accessible to this report',
     '',
     `Debug mode: ${debugLogger.isEnabled() ? 'on' : 'off'}`,
-    'Feature flags: None registered in the client diagnostics contract',
+    `Feature flags: ${diagnosticsAuthorized && backendSummary ? Object.entries(backendSummary.featureFlags).map(([flag, enabled]) => `${flag}=${enabled ? 'on' : 'off'}`).join(', ') : 'Unavailable or protected'}`,
     '',
     `API: ${apiHostname()}`,
     `/health: ${events.filter(event => event.kind === 'network' && event.endpoint === '/health').slice(-1)[0]?.status ?? 'Unavailable (not probed)'}`,
@@ -317,9 +382,17 @@ export function getDebugInfo(context: SafeAuthContext = {}): string {
     `Last endpoint probe: ${visibleProbeEvent ? `id=${visibleProbeEvent.diagnosticId || 'Unavailable'} method=${visibleProbeEvent.method || 'Unavailable'} path=${visibleProbeEvent.endpoint || 'Unavailable'} expected=${visibleProbeEvent.expectedStatus ?? 'Unavailable'} actual=${visibleProbeEvent.status ?? 'Unavailable'} latencyMs=${visibleProbeEvent.durationMs ?? 'Unavailable'} correlation=${visibleProbeEvent.correlationId || 'Unavailable'}` : 'Unavailable (no authorized probe result)'}`,
     `Sanitized request/success/error examples: ${lastProbeSummary ? `id=${lastProbeSummary.id} request=${lastProbeSummary.requestExample} success=${lastProbeSummary.successExample} errors=${lastProbeSummary.errorExamples}` : 'Unavailable (no authorized registered probe result)'}`,
     '',
-    `AI-related client API calls in retained window: ${meteredCandidates.length}`,
-    `AI-related client API failures: ${meteredCandidates.filter(event => event.level === 'error' || (event.status !== undefined && event.status >= 400)).length}`,
-    'Measured server-side usage, retry bounds, usage caps and kill-switch state: Not exposed or not implemented in this API contract',
+    `AI-feature API proxy requests observed by this client in retained window: ${meteredCandidates.length}`,
+    `AI-feature API proxy failures observed by this client: ${meteredCandidates.filter(event => event.level === 'error' || (event.status !== undefined && event.status >= 400)).length}`,
+    `Metered provider usage: ${diagnosticsAuthorized && backendSummary?.meteredUsage.status === 'measured'
+      ? `calls=${backendSummary.meteredUsage.calls} failures=${backendSummary.meteredUsage.failures} windowMinutes=${backendSummary.meteredUsage.windowMinutes} elapsedMinutes=${backendSummary.meteredUsage.elapsedMinutes} providers=${backendSummary.meteredUsage.providers.map(item => `${item.provider}:${item.calls}/${item.failures}`).join(',') || 'none'}`
+      : diagnosticsAuthorized && backendSummary?.meteredUsage.status === 'protected' ? 'Unavailable or protected (superadmin only)' : 'Unavailable'}`,
+    `Last metered provider call: ${diagnosticsAuthorized && backendSummary?.meteredUsage.status === 'measured' && backendSummary.meteredUsage.lastCall
+      ? `provider=${backendSummary.meteredUsage.lastCall.provider} outcome=${backendSummary.meteredUsage.lastCall.success ? 'success' : 'failure'} at=${backendSummary.meteredUsage.lastCall.at} retries=${backendSummary.meteredUsage.lastCall.retryCount} failureCode=${backendSummary.meteredUsage.lastCall.failureCode || 'none'} correlation=${backendSummary.meteredUsage.lastCall.correlationId || 'Unavailable'}`
+      : 'Unavailable'}`,
+    `Metered request budget: ${diagnosticsAuthorized && backendSummary?.meteredUsage.status === 'measured'
+      ? `calls=${backendSummary.meteredUsage.requestBudget.calls} actors=${backendSummary.meteredUsage.requestBudget.actors} perActorLimit=${backendSummary.meteredUsage.requestBudget.perActorLimit}/hour totalLimit=${backendSummary.meteredUsage.requestBudget.totalLimit}/hour actorCardinalityLimit=${backendSummary.meteredUsage.requestBudget.actorCardinalityLimit}/hour aiKillSwitch=${backendSummary.meteredUsage.killSwitches.ai ? 'active' : 'inactive'} voiceKillSwitch=${backendSummary.meteredUsage.killSwitches.voice ? 'active' : 'inactive'} automaticRetries=${backendSummary.meteredUsage.automaticRetriesEnabled ? 'enabled' : 'disabled'}`
+      : 'Unavailable'}`,
     '',
     'Recent authentication diagnostics:',
     authSummary,

@@ -46,10 +46,24 @@ function load(relative, deps = {}, globals = {}) {
  await assert.rejects(guard.canActivate({ switchToHttp: () => ({ getRequest: () => request }) }), /scope mismatch/);
  const common = { Injectable: decorator, Inject: decorator, Logger: class { log() {} warn() {} debug() {} error() {} } };
  const wsDecorators = { WebSocketGateway: decorator, WebSocketServer: decorator, SubscribeMessage: decorator, ConnectedSocket: decorator, MessageBody: decorator };
+ const voiceSessionAccess = {
+  getAuthorizedVoiceSession: async (prisma, sessions, client) => {
+   const session = sessions.get(client.id);
+   if (!session || !prisma || !await auth.isRuntimeIdentityCurrent(prisma, client.data.runtimeIdentity)) { client.disconnect(); return undefined; }
+   return session;
+  },
+  listVoiceSessionSummaries: (sessions, clientId) => Array.from(sessions.entries()).filter(([id]) => id === clientId).map(([, session]) => ({ device_id: session.deviceId, session_id: session.sessionId, started_at: session.startedAt.toISOString(), transcript_length: session.transcript.length })),
+ };
+ const voiceWebRtcHandlers = load('../../services/api/src/voice/voice-webrtc.handlers.ts', {
+  '@nestjs/common': common,
+  './providers/configured-stt': { transcribeConfiguredAudio: async (config, wav) => { assert.equal(config.speachesApiUrl,'https://invalid.example'); assert.equal(wav.toString(),'synthetic-wav'); return {text:'synthetic transcript',isFinal:true,confidence:0.9}; } },
+  './voice-session-access': voiceSessionAccess,
+ });
  const voice = load('../../services/api/src/voice/voice.gateway.ts', {
   '@nestjs/common': common, '@nestjs/websockets': wsDecorators,
   '../prisma/prisma.service': { PrismaService: class {} }, '../gateways/runtime-identity': auth,
   '../tts/tts.service': { TTSService: class {} }, '../llm/llm.service': { LLMService: class {} },
+  '../llm/runtime-ai-budget': { runtimeAiBudget: { trackProviderCall: (_provider, _correlationId, operation) => operation() } },
   '../version': { getApiVersion: () => 'test' },
   './providers/provider-config.resolver': { ProviderConfigResolver: class {} },
   './providers/voice-provider.registry': { VoiceProviderRegistry: class {} },
@@ -57,14 +71,8 @@ function load(relative, deps = {}, globals = {}) {
   './providers/stt/speaches-stt.adapter': { SpeachesSttAdapter: class { async initialize(config) { assert.equal(config.baseUrl, 'https://invalid.example'); } async transcribe(wav) { assert.equal(wav.toString(),'synthetic-wav'); return { text: 'synthetic transcript', isFinal: true, confidence: 0.9 }; } } },
   './webrtc/webrtc.service': { WebRtcService: class {} },
   './voice-brain.processor': { VoiceBrainProcessor: class { async speakVoiceText() {} async processBrainReply() {} } },
-  './voice-session-access': {
-   getAuthorizedVoiceSession: async (prisma, sessions, client) => {
-    const session = sessions.get(client.id);
-    if (!session || !prisma || !await auth.isRuntimeIdentityCurrent(prisma, client.data.runtimeIdentity)) { client.disconnect(); return undefined; }
-    return session;
-   },
-   listVoiceSessionSummaries: (sessions, clientId) => Array.from(sessions.entries()).filter(([id]) => id === clientId).map(([, session]) => ({ device_id: session.deviceId, session_id: session.sessionId, started_at: session.startedAt.toISOString(), transcript_length: session.transcript.length })),
-  },
+  './voice-session-access': voiceSessionAccess,
+  './voice-webrtc.handlers': voiceWebRtcHandlers,
   './voice.types': { voiceCorsOrigins: [] }, './voice-helpers': { buildCallGreeting: () => 'Hello', buildConversationalSpokenReply: value => value },
  });
  db.session.findUnique = async ({where}) => where.id === 'own' ? { userId: 'u', teamId: 't' } : { userId: 'other', teamId: 't' };
@@ -86,7 +94,8 @@ function load(relative, deps = {}, globals = {}) {
   attachAudioReceiver: (_id,_receiver,onAudio) => { audioHandler = onAudio; },
  }, db);
  mediaGateway.activeSessions.set(client.id, client.data.session);
- let transcript; mediaGateway.handleTranscript = async (_client, data) => { transcript = data; };
+ let transcript;
+ mediaGateway.webRtcHandlers.handleTranscript = async (_client, data) => { transcript = data; };
  await mediaGateway.handleWebRTCOffer(client, { sdp: { sdp: 'synthetic' } });
  await audioHandler(Buffer.from('synthetic-wav'));
  assert.equal(transcript.text, 'synthetic transcript'); assert.equal(transcript.is_final,true);

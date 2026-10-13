@@ -7,6 +7,7 @@ import {
   ForbiddenException,
   NotFoundException,
   Res,
+  Req,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { HealthService, SystemHealth } from './health.service';
@@ -88,8 +89,8 @@ export class HealthController {
   @ApiOperation({
     summary: 'Get safe protected deep-health and endpoint diagnostic registry',
   })
-  getDeepHealth() {
-    return this.healthService.getDeepHealth();
+  getDeepHealth(@Req() request: any) {
+    return this.healthService.getDeepHealth(request.user?.userId);
   }
 
   @Post('health/deep/probes/:id')

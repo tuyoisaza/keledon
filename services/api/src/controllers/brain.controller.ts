@@ -149,6 +149,7 @@ export class BrainController {
         temperature: 0.35,
         teamId: request.runtimeIdentity.teamId,
         actorId: request.runtimeIdentity.userId,
+        correlationId: request.correlationId,
       });
 
       return {

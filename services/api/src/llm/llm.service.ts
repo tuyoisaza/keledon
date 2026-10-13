@@ -158,6 +158,7 @@ export class LLMService implements OnModuleInit {
         let response: LLMResponse | undefined;
         const attempted: { provider?: string; requestedModel?: string } = {};
         let failure: string | undefined;
+        let providerSucceeded = false;
         try {
           const system = [
             prepared.personalityPrompt,
@@ -177,6 +178,7 @@ export class LLMService implements OnModuleInit {
             system,
             attempted,
           );
+          providerSucceeded = true;
           const parsed = JSON.parse(response.text);
           const validated: any = this.aiAdmin.validateOutput(prepared, parsed);
           if (feature === 'brain-chat' || feature === 'voice-reply') {
@@ -199,6 +201,17 @@ export class LLMService implements OnModuleInit {
           failure = 'AI_EXECUTION_OR_SCHEMA_FAILURE';
           throw new Error('Managed AI execution failed');
         } finally {
+          if (attempted.provider) {
+            runtimeAiBudget.recordMeteredOutcome({
+              provider: attempted.provider,
+              success: providerSucceeded,
+              retryCount: 0,
+              ...(providerSucceeded
+                ? {}
+                : { failureCode: 'AI_PROVIDER_CALL_FAILED' }),
+              correlationId: request.correlationId,
+            });
+          }
           await this.aiAdmin.recordUsage({
             prepared,
             feature,

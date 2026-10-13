@@ -4,6 +4,7 @@ export interface LLMRequest {
   actorId?: string;
   feature?: AiFeature;
   requestId?: string;
+  correlationId?: string;
   context?: string[];
   maxTokens?: number;
   temperature?: number;

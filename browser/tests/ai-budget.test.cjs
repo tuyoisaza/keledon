@@ -9,7 +9,7 @@ const decorator=()=>()=>{}; const logs=[];
 const common={Injectable:decorator,Logger:class {log(value){logs.push(value)}warn(){}error(value){logs.push(value)}}};
 (async()=>{
  let now=0; const env={};
- const {RuntimeAiBudget}=load('../../services/api/src/llm/runtime-ai-budget.ts',{}, {Date:{now:()=>now},process:{env}});
+ const {RuntimeAiBudget}=load('../../services/api/src/llm/runtime-ai-budget.ts',{}, {Date:class TestDate extends Date { static now(){return now;} },process:{env}});
  const budget=new RuntimeAiBudget();let count=0;
  for(let i=0;i<120;i++)await budget.run('actor',undefined,async()=>count++);
  await assert.rejects(budget.run('actor',undefined,async()=>count++),/budget exceeded/);assert.equal(count,120);
@@ -49,6 +49,9 @@ const common={Injectable:decorator,Logger:class {log(value){logs.push(value)}war
  const {TTSService}=load('../../services/api/src/tts/tts.service.ts',{
   '@nestjs/common':common,'../mvp/mvp-store.service':{MvpStoreService:class{}},'../prisma/prisma.service':{PrismaService:class{}},'../version':{getApiVersion:()=> 'test'},
   '../llm/runtime-ai-budget':{runtimeAiBudget:new RuntimeAiBudget()},
+  './tts-http-providers':load('../../services/api/src/tts/tts-http-providers.ts',{
+   './tts-language':{detectLanguage:()=> 'en'},'./tts-utils':{estimateDuration:()=>1},
+  },{fetch:async (url,options)=>{fetches++;fetchOptions=options;assert.equal(url,'https://tenant.invalid/v1/audio/speech');return new Response(Buffer.from('synthetic-audio'));}}),
   './tts-language':{detectLanguage:()=> 'en',getSpeachesVoice:()=> 'configured-voice',getSpeachesVoiceForLanguage:()=> 'configured-voice'},'./tts-utils':{estimateDuration:()=>1},
  },{fetch:async (url,options)=>{fetches++;fetchOptions=options;assert.equal(url,'https://tenant.invalid/v1/audio/speech');return new Response(Buffer.from('synthetic-audio'))}});
  const tts=new TTSService({getTTSConfig:()=>{throw new Error('Global config must not be read')}},ttsDb);

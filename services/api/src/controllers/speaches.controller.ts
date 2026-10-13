@@ -176,12 +176,18 @@ export class SpeachesController {
     const headers: Record<string, string> = {};
     if (apiKey) headers.Authorization = `Bearer ${apiKey}`;
 
-    const upstream = await fetch(`${apiUrl}/v1/audio/transcriptions`, {
-      method: 'POST',
-      headers,
-      body: form as any,
-      signal: AbortSignal.timeout(15000),
-    });
+    const upstream = await runtimeAiBudget.trackProviderCall(
+      'speaches',
+      req.correlationId,
+      () =>
+        fetch(`${apiUrl}/v1/audio/transcriptions`, {
+          method: 'POST',
+          headers,
+          body: form as any,
+          signal: AbortSignal.timeout(15000),
+        }),
+      (response) => response.ok,
+    );
 
     const text = await upstream.text();
     if (!upstream.ok) {
