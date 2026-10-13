@@ -11,7 +11,9 @@ export class VoiceBrainProcessor {
     private readonly ttsService: TTSService | undefined,
     private readonly llmService: LLMService | undefined,
     private readonly logger: Logger,
-    private readonly getSession: (client: Socket) => Promise<VoiceSession | undefined>,
+    private readonly getSession: (
+      client: Socket,
+    ) => Promise<VoiceSession | undefined>,
   ) {}
 
   async speakVoiceText(
@@ -72,7 +74,10 @@ export class VoiceBrainProcessor {
 
     session.isSpeaking = false;
     session.abortTTS = () => {};
-    if (streamResult.error) { client.emit('voice:error', { error: 'Configured TTS provider failed' }); return; }
+    if (streamResult.error) {
+      client.emit('voice:error', { error: 'Configured TTS provider failed' });
+      return;
+    }
     session.latencyTimestamps.ttsComplete = Date.now();
 
     client.emit('voice:audio', {
@@ -173,7 +178,11 @@ export class VoiceBrainProcessor {
         `[v${getApiVersion()}] Brain reply: "${replyText.substring(0, 50)}..." spoken="${spokenReplyText.substring(0, 80)}..." fullChars=${replyText.length} spokenChars=${spokenReplyText.length}`,
       );
 
-      if (!await this.getSession(client) || session.callGeneration !== generation) return;
+      if (
+        !(await this.getSession(client)) ||
+        session.callGeneration !== generation
+      )
+        return;
       // 5. Stream TTS audio back
       session.isSpeaking = true;
 

@@ -7,11 +7,7 @@
  * 'error' → failed, needs attention
  */
 export type ProviderHealth =
-  | 'unknown'
-  | 'initializing'
-  | 'ready'
-  | 'degraded'
-  | 'error';
+  'unknown' | 'initializing' | 'ready' | 'degraded' | 'error';
 
 /**
  * Structured status object for a single pipeline component (STT, TTS, or LLM).

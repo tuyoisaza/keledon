@@ -101,7 +101,12 @@ export class WebRtcService {
     return { sdp: answer.sdp };
   }
 
-  attachAudioReceiver(sessionId: string, receiver: RTCRtpReceiver, onAudio: (wav: Buffer) => Promise<void>, onError: (message: string) => void): void {
+  attachAudioReceiver(
+    sessionId: string,
+    receiver: RTCRtpReceiver,
+    onAudio: (wav: Buffer) => Promise<void>,
+    onError: (message: string) => void,
+  ): void {
     const peer = this.peers.get(sessionId);
     if (!peer || receiver.track?.kind !== 'audio') return;
     peer.stopAudio?.();
@@ -111,13 +116,31 @@ export class WebRtcService {
     let turns = 0;
     const buffer = new PcmUtteranceBuffer((wav) => {
       if (stopped) return;
-      if (busy) { onError('Audio turn skipped while previous turn is processing'); return; }
-      if (++turns > 120) { onError('Audio session turn limit reached'); peer.stopAudio?.(); return; }
+      if (busy) {
+        onError('Audio turn skipped while previous turn is processing');
+        return;
+      }
+      if (++turns > 120) {
+        onError('Audio session turn limit reached');
+        peer.stopAudio?.();
+        return;
+      }
       busy = true;
-      void onAudio(wav).catch(() => onError('Audio turn processing failed')).finally(() => { busy = false; });
+      void onAudio(wav)
+        .catch(() => onError('Audio turn processing failed'))
+        .finally(() => {
+          busy = false;
+        });
     });
-    sink.ondata = (data: any) => { if (!stopped) buffer.push(data.samples, data.sampleRate, data.channelCount); };
-    peer.stopAudio = () => { stopped = true; buffer.reset(); sink.stop(); };
+    sink.ondata = (data: any) => {
+      if (!stopped)
+        buffer.push(data.samples, data.sampleRate, data.channelCount);
+    };
+    peer.stopAudio = () => {
+      stopped = true;
+      buffer.reset();
+      sink.stop();
+    };
   }
 
   /**

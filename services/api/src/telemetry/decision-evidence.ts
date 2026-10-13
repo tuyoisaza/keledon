@@ -28,9 +28,7 @@ export const POLICY_CHECK_ATTRS = {
 } as const;
 
 export type AgentExecEventType =
-  | 'agent.exec.start'
-  | 'agent.exec.end'
-  | 'agent.exec.error';
+  'agent.exec.start' | 'agent.exec.end' | 'agent.exec.error';
 
 export interface AgentExecutionEvidence {
   event: AgentExecEventType;

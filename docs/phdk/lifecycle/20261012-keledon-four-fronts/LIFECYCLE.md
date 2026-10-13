@@ -1,5 +1,9 @@
 # PHDK Auto lifecycle — 20261012-keledon-four-fronts
 
+## 2026-10-13 continuation — 5.1.7 remediation blocked before delivery
+
+After the 5.1.6 main readback at `3c6e4c71bc5672984a1fd07df62d722f95beb4e7`, bounded Railway deployment logs showed the old API startup issuing unconditional rollback-resolution commands despite seven migrations being present and none pending. The local 5.1.7 candidate removes those commands, fails closed after migration/count-query errors, and has Docker invoke the checked-in startup script. API build and all 11 regression suites pass. Seven full-source TS errors were fixed; one missing CloudServer source remains behind a legacy runtime entrypoint. Targeted/full API ESLint remained blocked without a completed result; no commit/push/PR was made. The lifecycle remains PARTIALLY DELIVERED. Detailed current checkpoint: `../90-delivery/DELIVERY_REPORT_5.1.7_PREMERGE.md`.
+
 Status: PARTIALLY DELIVERED. Candidate 5.1.0, PHDK 2.50.8. Four commitments confirmed; implementation is pushed on a draft review branch. Telephony and CRM are customer-selected.
 
 PR #42 remains OPEN/DRAFT and unmerged on `chore/phdk-install-v2.50.8`; latest verified pushed head `e2276dc64db3eff5e99a83fdd5ad3711fc7eecfa`; product-source candidate `cc9b94dae7ad89e9133da8e5172d2d907d03f8cb`. Remote `main` remains `52537140e67d0d6c05486fa13837df3eb5316fb3`. Owner approved inclusion/merge of the additive managed-AI migration through the normal DB procedure on 2026-10-13; no database connection or migration execution occurred.

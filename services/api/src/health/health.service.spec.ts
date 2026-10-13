@@ -61,7 +61,7 @@ describe('HealthService diagnostics', () => {
     first[0].expectedStatuses.push(418);
     const deep = registry
       .list()
-      .find((endpoint) => endpoint.id === 'health.deep')!;
+      .find((endpoint) => endpoint.id === 'health.deep');
     expect(deep.requiredRoles).not.toContain('user');
     expect(deep.expectedStatuses).not.toContain(418);
   });

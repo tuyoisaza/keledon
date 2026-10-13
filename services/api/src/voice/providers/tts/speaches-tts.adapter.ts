@@ -22,7 +22,9 @@ export interface SpeachesTtsAdapterConfig {
  * so the KeledonRealtimePipelineProvider can use it interchangeably.
  */
 export class SpeachesTtsAdapter implements TtsAdapter {
-  get id(): string { return this.config?.providerId || 'unconfigured'; }
+  get id(): string {
+    return this.config?.providerId || 'unconfigured';
+  }
   private readonly logger = new Logger(SpeachesTtsAdapter.name);
   private config!: SpeachesTtsAdapterConfig;
   private stopped = false;

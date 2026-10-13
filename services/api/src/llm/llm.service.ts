@@ -19,7 +19,10 @@ export class LLMService implements OnModuleInit {
   private provider: LLMProvider;
   private model: string;
 
-  constructor(private readonly prisma: PrismaService, private readonly aiAdmin: AiAdminService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly aiAdmin: AiAdminService,
+  ) {}
 
   onModuleInit() {
     this.provider = this.resolveProvider();
@@ -35,8 +38,7 @@ export class LLMService implements OnModuleInit {
 
   private resolveProvider(): LLMProvider {
     const forced = process.env.LLM_PROVIDER?.toLowerCase() as
-      | LLMProvider
-      | undefined;
+      LLMProvider | undefined;
     if (forced && forced !== 'none') {
       if (!CONFIGURED_PROVIDERS.includes(forced)) {
         this.logger.warn(
@@ -136,41 +138,93 @@ export class LLMService implements OnModuleInit {
   }
 
   async generate(request: LLMRequest): Promise<LLMResponse> {
-    if (!request || typeof request.prompt !== 'string' || request.prompt.length > 20000 || (request.context || []).join('').length > 20000) throw new Error('Invalid AI input size');
+    if (
+      !request ||
+      typeof request.prompt !== 'string' ||
+      request.prompt.length > 20000 ||
+      (request.context || []).join('').length > 20000
+    )
+      throw new Error('Invalid AI input size');
     const feature = request.feature || 'brain-chat';
     const actor = request.actorId || request.teamId || 'system';
-    return runtimeAiBudget.run(actor, request.requestId ? `${feature}:${request.requestId}` : undefined, async () => {
-      const prepared = await this.aiAdmin.prepare(feature, { teamId: request.teamId });
-      const startedAt = Date.now();
-      let response: LLMResponse | undefined;
-      const attempted: { provider?: string; requestedModel?: string } = {};
-      let failure: string | undefined;
-      try {
-        const system = [prepared.personalityPrompt, prepared.executionPrompt, 'Return ONLY JSON conforming exactly to this output schema:', JSON.stringify(prepared.outputSchemaJson)].join('\n\n');
-        response = await this.generateUnchecked({ ...request,
-          prompt: JSON.stringify({ userInput: request.prompt, untrustedContext: request.context || [] }),
-          maxTokens: Math.min(Math.max(request.maxTokens || 500, 1), 2000) }, system, attempted);
-        const parsed = JSON.parse(response.text);
-        const validated: any = this.aiAdmin.validateOutput(prepared, parsed);
-        if (feature === 'brain-chat' || feature === 'voice-reply') {
-          if (typeof validated.reply !== 'string') throw new Error('Managed reply contract mismatch');
-          response.text = validated.reply;
-        } else response.text = JSON.stringify(validated);
-        this.logger.log(JSON.stringify({ event: 'ai.call', actor, teamId: request.teamId, promptId: prepared.id, revision: prepared.revision, usage: response.usage }));
-        return response;
-      } catch {
-        failure = 'AI_EXECUTION_OR_SCHEMA_FAILURE';
-        throw new Error('Managed AI execution failed');
-      } finally {
-        await this.aiAdmin.recordUsage({ prepared, feature, teamId: request.teamId,
-          provider: response?.provider || attempted.provider || 'unknown', requestedModel: response?.requestedModel || attempted.requestedModel || request.model || 'unknown', responseModel: response?.responseModel,
-          inputTokens: response?.usage?.promptTokens, outputTokens: response?.usage?.completionTokens,
-          latencyMs: Date.now() - startedAt, errorCode: failure });
-      }
-    });
+    return runtimeAiBudget.run(
+      actor,
+      request.requestId ? `${feature}:${request.requestId}` : undefined,
+      async () => {
+        const prepared = await this.aiAdmin.prepare(feature, {
+          teamId: request.teamId,
+        });
+        const startedAt = Date.now();
+        let response: LLMResponse | undefined;
+        const attempted: { provider?: string; requestedModel?: string } = {};
+        let failure: string | undefined;
+        try {
+          const system = [
+            prepared.personalityPrompt,
+            prepared.executionPrompt,
+            'Return ONLY JSON conforming exactly to this output schema:',
+            JSON.stringify(prepared.outputSchemaJson),
+          ].join('\n\n');
+          response = await this.generateUnchecked(
+            {
+              ...request,
+              prompt: JSON.stringify({
+                userInput: request.prompt,
+                untrustedContext: request.context || [],
+              }),
+              maxTokens: Math.min(Math.max(request.maxTokens || 500, 1), 2000),
+            },
+            system,
+            attempted,
+          );
+          const parsed = JSON.parse(response.text);
+          const validated: any = this.aiAdmin.validateOutput(prepared, parsed);
+          if (feature === 'brain-chat' || feature === 'voice-reply') {
+            if (typeof validated.reply !== 'string')
+              throw new Error('Managed reply contract mismatch');
+            response.text = validated.reply;
+          } else response.text = JSON.stringify(validated);
+          this.logger.log(
+            JSON.stringify({
+              event: 'ai.call',
+              actor,
+              teamId: request.teamId,
+              promptId: prepared.id,
+              revision: prepared.revision,
+              usage: response.usage,
+            }),
+          );
+          return response;
+        } catch {
+          failure = 'AI_EXECUTION_OR_SCHEMA_FAILURE';
+          throw new Error('Managed AI execution failed');
+        } finally {
+          await this.aiAdmin.recordUsage({
+            prepared,
+            feature,
+            teamId: request.teamId,
+            provider: response?.provider || attempted.provider || 'unknown',
+            requestedModel:
+              response?.requestedModel ||
+              attempted.requestedModel ||
+              request.model ||
+              'unknown',
+            responseModel: response?.responseModel,
+            inputTokens: response?.usage?.promptTokens,
+            outputTokens: response?.usage?.completionTokens,
+            latencyMs: Date.now() - startedAt,
+            errorCode: failure,
+          });
+        }
+      },
+    );
   }
 
-  private async generateUnchecked(request: LLMRequest, systemPrompt: string, attempted: { provider?: string; requestedModel?: string }): Promise<LLMResponse> {
+  private async generateUnchecked(
+    request: LLMRequest,
+    systemPrompt: string,
+    attempted: { provider?: string; requestedModel?: string },
+  ): Promise<LLMResponse> {
     // If teamId is provided, try to use the team's configured LLM provider
     let activeProvider = this.provider;
     let activeApiKey: string | undefined;
@@ -178,7 +232,8 @@ export class LLMService implements OnModuleInit {
 
     if (request.teamId) {
       const teamConfig = await this.resolveTeamProvider(request.teamId);
-      if (!teamConfig) throw new Error('Configured team AI provider unavailable');
+      if (!teamConfig)
+        throw new Error('Configured team AI provider unavailable');
       if (teamConfig) {
         activeProvider = teamConfig.provider;
         activeApiKey = teamConfig.apiKey;
@@ -189,7 +244,8 @@ export class LLMService implements OnModuleInit {
       }
     }
 
-    if (activeProvider === 'none') throw new Error('Configured AI provider unavailable');
+    if (activeProvider === 'none')
+      throw new Error('Configured AI provider unavailable');
 
     const providerRequest: LLMRequest = {
       ...request,
@@ -221,8 +277,16 @@ export class LLMService implements OnModuleInit {
           return await this.generateWithOllama(providerRequest, systemPrompt);
       }
     } catch (error) {
-      this.logger.error(JSON.stringify({ event: 'ai.call.failed', provider: activeProvider, teamId: request.teamId }));
-      throw new Error('Configured AI provider request failed');
+      this.logger.error(
+        JSON.stringify({
+          event: 'ai.call.failed',
+          provider: activeProvider,
+          teamId: request.teamId,
+        }),
+      );
+      throw new Error('Configured AI provider request failed', {
+        cause: error,
+      });
     }
   }
 
@@ -233,7 +297,9 @@ export class LLMService implements OnModuleInit {
   ): Promise<LLMResponse> {
     const { Anthropic } = await import('@anthropic-ai/sdk');
     const client = new Anthropic({
-      apiKey: apiKey || process.env.ANTHROPIC_API_KEY, timeout: 30000, maxRetries: 0,
+      apiKey: apiKey || process.env.ANTHROPIC_API_KEY,
+      timeout: 30000,
+      maxRetries: 0,
     });
 
     const response = await client.messages.create({
@@ -248,7 +314,9 @@ export class LLMService implements OnModuleInit {
 
     return {
       text,
-      provider: 'anthropic', requestedModel: request.model, responseModel: response.model,
+      provider: 'anthropic',
+      requestedModel: request.model,
+      responseModel: response.model,
       finishReason: response.stop_reason === 'end_turn' ? 'stop' : 'length',
       usage: {
         promptTokens: response.usage.input_tokens,
@@ -271,19 +339,23 @@ export class LLMService implements OnModuleInit {
       model: request.model || this.model,
     });
 
-    const result = await genModel.generateContent({
-      systemInstruction: systemPrompt,
-      contents: [{ role: 'user', parts: [{ text: request.prompt }] }],
-      generationConfig: {
-        maxOutputTokens: request.maxTokens || 500,
-        temperature: request.temperature || 0.7,
+    const result = await genModel.generateContent(
+      {
+        systemInstruction: systemPrompt,
+        contents: [{ role: 'user', parts: [{ text: request.prompt }] }],
+        generationConfig: {
+          maxOutputTokens: request.maxTokens || 500,
+          temperature: request.temperature || 0.7,
+        },
       },
-    }, { timeout: 30000 });
+      { timeout: 30000 },
+    );
 
     const resp = result.response;
     return {
       text: resp.text(),
-      provider: 'google', requestedModel: request.model,
+      provider: 'google',
+      requestedModel: request.model,
       finishReason: 'stop',
       usage: {
         promptTokens: resp.usageMetadata?.promptTokenCount || 0,
@@ -299,7 +371,11 @@ export class LLMService implements OnModuleInit {
     apiKey?: string,
   ): Promise<LLMResponse> {
     const { OpenAI } = await import('openai');
-    const client = new OpenAI({ apiKey: apiKey || process.env.OPENAI_API_KEY, timeout: 30000, maxRetries: 0 });
+    const client = new OpenAI({
+      apiKey: apiKey || process.env.OPENAI_API_KEY,
+      timeout: 30000,
+      maxRetries: 0,
+    });
 
     const response = await client.chat.completions.create({
       model: request.model || this.model,
@@ -316,7 +392,9 @@ export class LLMService implements OnModuleInit {
 
     return {
       text: choice.message.content || '',
-      provider: 'openai', requestedModel: request.model, responseModel: response.model,
+      provider: 'openai',
+      requestedModel: request.model,
+      responseModel: response.model,
       finishReason: choice.finish_reason === 'stop' ? 'stop' : 'length',
       usage: {
         promptTokens: usage?.prompt_tokens || 0,
@@ -355,7 +433,9 @@ export class LLMService implements OnModuleInit {
 
     return {
       text: data.response || '',
-      provider: 'ollama', requestedModel: request.model, responseModel: typeof data.model === 'string' ? data.model : undefined,
+      provider: 'ollama',
+      requestedModel: request.model,
+      responseModel: typeof data.model === 'string' ? data.model : undefined,
       finishReason: data.done ? 'stop' : 'length',
       usage: {
         promptTokens: data.prompt_eval_count || 0,
@@ -365,8 +445,18 @@ export class LLMService implements OnModuleInit {
     };
   }
 
-  async generateCommand(transcript: string, context: string[] = [], teamId?: string): Promise<CommandDecision> {
-    const response = await this.generate({ prompt: transcript, context, teamId, feature: 'decision-engine', maxTokens: 1000 });
+  async generateCommand(
+    transcript: string,
+    context: string[] = [],
+    teamId?: string,
+  ): Promise<CommandDecision> {
+    const response = await this.generate({
+      prompt: transcript,
+      context,
+      teamId,
+      feature: 'decision-engine',
+      maxTokens: 1000,
+    });
     return JSON.parse(response.text) as CommandDecision;
   }
 

@@ -1,7 +1,10 @@
 import { transcribeConfiguredAudio } from './providers/configured-stt';
 import { SpeachesSttAdapter } from './providers/stt/speaches-stt.adapter';
 import { PrismaService } from '../prisma/prisma.service';
-import { resolveRuntimeIdentity, ownsRuntimeSession } from '../gateways/runtime-identity';
+import {
+  resolveRuntimeIdentity,
+  ownsRuntimeSession,
+} from '../gateways/runtime-identity';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -19,10 +22,17 @@ import { getApiVersion } from '../version';
 import { ProviderConfigResolver } from './providers/provider-config.resolver';
 import { VoiceProviderRegistry } from './providers/voice-provider.registry';
 import { WebRtcService } from './webrtc/webrtc.service';
-import { voiceCorsOrigins, type CallContext, type VoiceSession } from './voice.types';
+import {
+  voiceCorsOrigins,
+  type CallContext,
+  type VoiceSession,
+} from './voice.types';
 import { buildCallGreeting } from './voice-helpers';
 import { VoiceBrainProcessor } from './voice-brain.processor';
-import { getAuthorizedVoiceSession, listVoiceSessionSummaries } from './voice-session-access';
+import {
+  getAuthorizedVoiceSession,
+  listVoiceSessionSummaries,
+} from './voice-session-access';
 
 @WebSocketGateway({
   cors: {
@@ -33,9 +43,7 @@ import { getAuthorizedVoiceSession, listVoiceSessionSummaries } from './voice-se
   pingInterval: 10000,
   pingTimeout: 5000,
 })
-export class VoiceGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
-{
+export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(VoiceGateway.name);
 
   private activeSessions: Map<string, VoiceSession> = new Map();
@@ -54,7 +62,8 @@ export class VoiceGateway
       this.ttsService,
       this.llmService,
       this.logger,
-      (client) => getAuthorizedVoiceSession(this.prisma, this.activeSessions, client),
+      (client) =>
+        getAuthorizedVoiceSession(this.prisma, this.activeSessions, client),
     );
   }
 
@@ -66,8 +75,14 @@ export class VoiceGateway
     const deviceId = client.handshake.auth?.device_id;
     const sessionId = client.handshake.auth?.session_id;
 
-    const identity = this.prisma ? await resolveRuntimeIdentity(this.prisma, token, deviceId) : null;
-    if (!identity || (sessionId && !await ownsRuntimeSession(this.prisma, identity, sessionId))) {
+    const identity = this.prisma
+      ? await resolveRuntimeIdentity(this.prisma, token, deviceId)
+      : null;
+    if (
+      !identity ||
+      (sessionId &&
+        !(await ownsRuntimeSession(this.prisma, identity, sessionId)))
+    ) {
       this.logger.warn(`Voice connection rejected: missing token or device_id`);
       client.disconnect();
       return;
@@ -93,7 +108,14 @@ export class VoiceGateway
     client.data.session = session;
 
     // Resolve team provider config from auth context if available
-    const ctx: CallContext = { companyId: identity.companyId, companyName: identity.companyName, brandId: identity.brandId, brandName: identity.brandName, teamId: identity.teamId, teamName: identity.teamName };
+    const ctx: CallContext = {
+      companyId: identity.companyId,
+      companyName: identity.companyName,
+      brandId: identity.brandId,
+      brandName: identity.brandName,
+      teamId: identity.teamId,
+      teamName: identity.teamName,
+    };
     session.context = ctx;
     if (ctx?.teamId && this.configResolver && this.registry) {
       try {
@@ -130,7 +152,6 @@ export class VoiceGateway
     });
   }
 
-
   async handleDisconnect(client: Socket): Promise<void> {
     const session = this.activeSessions.get(client.id);
     if (session) {
@@ -164,7 +185,11 @@ export class VoiceGateway
     @MessageBody()
     data: { sdp: RTCSessionDescriptionInit; session_id?: string },
   ) {
-    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
+    const session = await getAuthorizedVoiceSession(
+      this.prisma,
+      this.activeSessions,
+      client,
+    );
     if (!session) return { error: 'No active session' };
 
     this.logger.log(
@@ -184,16 +209,43 @@ export class VoiceGateway
           this.logger.log(
             `[WebRTC/${session.sessionId}] mic audio track received`,
           );
-          this.webrtcService.attachAudioReceiver(session.sessionId, receiver,
+          this.webrtcService.attachAudioReceiver(
+            session.sessionId,
+            receiver,
             async (wav) => {
               const callGeneration = session.callGeneration;
-              if (!await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client)) throw new Error('Device authorization revoked');
-              if (process.env.KELEDON_VOICE_DISABLED === 'true') throw new Error('Voice disabled');
-              const config = await this.configResolver.resolveTeamConfig(session.context.teamId);
-              const result = await transcribeConfiguredAudio(config, wav, session.context.language);
-              if (this.activeSessions.get(client.id) !== session || session.callGeneration !== callGeneration) return;
-              if (result.text && result.isFinal) await this.handleTranscript(client, { text: result.text, is_final: true, confidence: result.confidence });
-            }, (error) => client.emit('voice:error', { error }));
+              if (
+                !(await getAuthorizedVoiceSession(
+                  this.prisma,
+                  this.activeSessions,
+                  client,
+                ))
+              )
+                throw new Error('Device authorization revoked');
+              if (process.env.KELEDON_VOICE_DISABLED === 'true')
+                throw new Error('Voice disabled');
+              const config = await this.configResolver.resolveTeamConfig(
+                session.context.teamId,
+              );
+              const result = await transcribeConfiguredAudio(
+                config,
+                wav,
+                session.context.language,
+              );
+              if (
+                this.activeSessions.get(client.id) !== session ||
+                session.callGeneration !== callGeneration
+              )
+                return;
+              if (result.text && result.isFinal)
+                await this.handleTranscript(client, {
+                  text: result.text,
+                  is_final: true,
+                  confidence: result.confidence,
+                });
+            },
+            (error) => client.emit('voice:error', { error }),
+          );
         },
         // On data channel — handle control messages
         (dc) => {
@@ -208,7 +260,11 @@ export class VoiceGateway
               );
               if (msg.type === 'transcript') {
                 // Forward to brain processing
-                void this.handleTranscript(client, { text: msg.text, is_final: msg.is_final === true, confidence: msg.confidence });
+                void this.handleTranscript(client, {
+                  text: msg.text,
+                  is_final: msg.is_final === true,
+                  confidence: msg.confidence,
+                });
               }
             } catch {
               /* ignore non-JSON messages */
@@ -232,7 +288,11 @@ export class VoiceGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { candidate: RTCIceCandidateInit },
   ) {
-    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
+    const session = await getAuthorizedVoiceSession(
+      this.prisma,
+      this.activeSessions,
+      client,
+    );
     if (!session) return { received: true };
     if (this.webrtcService) {
       await this.webrtcService.addIceCandidate(
@@ -251,7 +311,11 @@ export class VoiceGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { audio: Buffer; format: string },
   ) {
-    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
+    const session = await getAuthorizedVoiceSession(
+      this.prisma,
+      this.activeSessions,
+      client,
+    );
     if (!session) {
       return { error: 'No active voice session' };
     }
@@ -274,27 +338,37 @@ export class VoiceGateway
     @MessageBody()
     data: { text: string; is_final: boolean; confidence?: number },
   ) {
-    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
+    const session = await getAuthorizedVoiceSession(
+      this.prisma,
+      this.activeSessions,
+      client,
+    );
     if (!session) {
       return { error: 'No active voice session' };
     }
 
-    if (!data || typeof data.text !== 'string' || !data.text.trim() || data.text.length > 8000) return { error: 'Invalid transcript' };
-    if (process.env.KELEDON_VOICE_DISABLED === 'true') return { error: 'Voice disabled' };
+    if (
+      !data ||
+      typeof data.text !== 'string' ||
+      !data.text.trim() ||
+      data.text.length > 8000
+    )
+      return { error: 'Invalid transcript' };
+    if (process.env.KELEDON_VOICE_DISABLED === 'true')
+      return { error: 'Voice disabled' };
     if (!data.is_final) {
       // Interim result — broadcast to dashboard if needed
       return { received: true };
     }
 
-    if ((session.turnCount || 0) >= 120) return { error: 'Voice call turn limit reached' };
+    if ((session.turnCount || 0) >= 120)
+      return { error: 'Voice call turn limit reached' };
     session.turnCount = (session.turnCount || 0) + 1;
     // Final transcript
     session.transcript.push(data.text);
     session.history.push({ role: 'user', content: data.text });
 
-    this.logger.log(
-      'Final transcript accepted',
-    );
+    this.logger.log('Final transcript accepted');
 
     // Broadcast transcript to the session room
     this.server.to(`voice:${session.sessionId}`).emit('transcript', {
@@ -315,12 +389,23 @@ export class VoiceGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { text: string; interruptible?: boolean },
   ) {
-    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
+    const session = await getAuthorizedVoiceSession(
+      this.prisma,
+      this.activeSessions,
+      client,
+    );
     if (!session) {
       return { error: 'No active voice session' };
     }
 
-    if (!data || typeof data.text !== 'string' || !data.text.trim() || data.text.length > 8000 || process.env.KELEDON_VOICE_DISABLED === 'true') return { error: 'Invalid or disabled speech request' };
+    if (
+      !data ||
+      typeof data.text !== 'string' ||
+      !data.text.trim() ||
+      data.text.length > 8000 ||
+      process.env.KELEDON_VOICE_DISABLED === 'true'
+    )
+      return { error: 'Invalid or disabled speech request' };
     this.logger.log(
       `[v${getApiVersion()}] TTS request from ${session.deviceId}: ${data.text.substring(0, 50)}... team=${session.context?.teamId || 'none'}`,
     );
@@ -359,7 +444,11 @@ export class VoiceGateway
    */
   @SubscribeMessage('voice:interrupt')
   async handleInterrupt(@ConnectedSocket() client: Socket) {
-    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
+    const session = await getAuthorizedVoiceSession(
+      this.prisma,
+      this.activeSessions,
+      client,
+    );
     if (!session) {
       return { error: 'No active voice session' };
     }
@@ -395,7 +484,11 @@ export class VoiceGateway
       }>;
     },
   ) {
-    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
+    const session = await getAuthorizedVoiceSession(
+      this.prisma,
+      this.activeSessions,
+      client,
+    );
     if (!session) {
       return { error: 'No active voice session' };
     }
@@ -426,7 +519,11 @@ export class VoiceGateway
       }>;
     },
   ) {
-    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
+    const session = await getAuthorizedVoiceSession(
+      this.prisma,
+      this.activeSessions,
+      client,
+    );
     if (!session) {
       return { error: 'No active voice session' };
     }
@@ -458,13 +555,22 @@ export class VoiceGateway
       context?: CallContext;
     },
   ) {
-    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
+    const session = await getAuthorizedVoiceSession(
+      this.prisma,
+      this.activeSessions,
+      client,
+    );
     if (!session) {
       return { error: 'No session' };
     }
 
     const identity = client.data.runtimeIdentity;
-    if (!identity || (data?.session_id && !await ownsRuntimeSession(this.prisma, identity, data.session_id))) return { error: 'Invalid call session' };
+    if (
+      !identity ||
+      (data?.session_id &&
+        !(await ownsRuntimeSession(this.prisma, identity, data.session_id)))
+    )
+      return { error: 'Invalid call session' };
     client.leave(`voice:${session.sessionId}`);
     const previousSessionId = session.sessionId;
     if (data.session_id && data.session_id !== previousSessionId) {
@@ -473,7 +579,18 @@ export class VoiceGateway
     }
     session.callGeneration = (session.callGeneration || 0) + 1;
     session.sessionId = data.session_id || session.sessionId;
-    session.context = { companyId: identity.companyId, companyName: identity.companyName, brandId: identity.brandId, brandName: identity.brandName, teamId: identity.teamId, teamName: identity.teamName, language: typeof data.context?.language === 'string' ? data.context.language : undefined };
+    session.context = {
+      companyId: identity.companyId,
+      companyName: identity.companyName,
+      brandId: identity.brandId,
+      brandName: identity.brandName,
+      teamId: identity.teamId,
+      teamName: identity.teamName,
+      language:
+        typeof data.context?.language === 'string'
+          ? data.context.language
+          : undefined,
+    };
     session.history = []; // Reset history for new call
     session.turnCount = 0;
 
@@ -526,13 +643,13 @@ export class VoiceGateway
     this.logger.log(
       `[v${getApiVersion()}] Call greeting queued session=${session.sessionId} text="${greeting}"`,
     );
-    void this.brainProcessor.speakVoiceText(client, session, greeting, 'greeting').catch(
-      (err) => {
+    void this.brainProcessor
+      .speakVoiceText(client, session, greeting, 'greeting')
+      .catch((err) => {
         this.logger.warn(
           `Call greeting failed: ${err instanceof Error ? err.message : String(err)}`,
         );
-      },
-    );
+      });
 
     return {
       success: true,
@@ -545,7 +662,11 @@ export class VoiceGateway
    */
   @SubscribeMessage('call:end')
   async handleCallEnd(@ConnectedSocket() client: Socket) {
-    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
+    const session = await getAuthorizedVoiceSession(
+      this.prisma,
+      this.activeSessions,
+      client,
+    );
     if (!session) {
       return { error: 'No active session' };
     }
@@ -587,7 +708,9 @@ export class VoiceGateway
    */
   @SubscribeMessage('voice:sessions')
   handleGetSessions(@ConnectedSocket() client: Socket) {
-    return { sessions: listVoiceSessionSummaries(this.activeSessions, client.id) };
+    return {
+      sessions: listVoiceSessionSummaries(this.activeSessions, client.id),
+    };
   }
 }
 

@@ -20,4 +20,10 @@ Repository: `C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON`.
 - Owner-confirmed scope remains the four KELEDON fronts in order. Voice and CRM providers vary by client. Restrictive DB-derived roles/tenants and write-only secrets remain the approved policy.
 - `CLAUDE.md` and `.floor-restore-lock.md` were reread. No floor restoration work was started. No secret values, live database, provider write, production probe or deployment was used.
 
+## Revalidated continuation — 2026-10-13
+
+- Correct repository root: `C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON`; fetched `origin/main` is `3c6e4c71bc5672984a1fd07df62d722f95beb4e7` / product 5.1.6. The earlier 5.1.2 gate smoke above is historical evidence only.
+- PHDK remains canonical v2.50.10 at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`; installed copy and managed root block revalidate with 52/52 mappings.
+- Local candidate is 5.1.7 and remains unpublished. Current product Check is recorded separately; installation PASS does not imply product delivery PASS.
+
 Installation preflight: **PASS**. Product acceptance/runtime gaps are not converted to passes by an installation sync.

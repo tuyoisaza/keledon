@@ -14,21 +14,20 @@ export function applyFilters<T>(
     const { from, to } = options.dateRange;
     filtered = filtered.filter(
       (entity) =>
-        (!from || entity.createdAt >= from) &&
-        (!to || entity.createdAt <= to),
+        (!from || entity.createdAt >= from) && (!to || entity.createdAt <= to),
     );
   }
 
   if (options.tags?.length) {
     filtered = filtered.filter(
       (entity) =>
-        !!entity.tags && options.tags!.some((tag) => entity.tags!.includes(tag)),
+        !!entity.tags && options.tags.some((tag) => entity.tags.includes(tag)),
     );
   }
 
   if (options.filters) {
     filtered = filtered.filter((entity) =>
-      Object.entries(options.filters!).every(([key, value]) =>
+      Object.entries(options.filters).every(([key, value]) =>
         matchesFilter(getNestedValue(entity, key), value),
       ),
     );

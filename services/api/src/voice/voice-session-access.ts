@@ -9,7 +9,11 @@ export async function getAuthorizedVoiceSession(
   client: Socket,
 ): Promise<VoiceSession | undefined> {
   const session = activeSessions.get(client.id);
-  if (!session || !prisma || !await isRuntimeIdentityCurrent(prisma, client.data.runtimeIdentity)) {
+  if (
+    !session ||
+    !prisma ||
+    !(await isRuntimeIdentityCurrent(prisma, client.data.runtimeIdentity))
+  ) {
     client.disconnect();
     return undefined;
   }

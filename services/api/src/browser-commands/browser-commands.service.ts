@@ -43,7 +43,8 @@ export class BrowserCommandsService {
 
     const sessions = await this.prisma.session.findMany({
       where: {
-        userId: actor.userId, teamId: actor.teamId,
+        userId: actor.userId,
+        teamId: actor.teamId,
         status: {
           notIn: ['closed', 'failed'],
         },

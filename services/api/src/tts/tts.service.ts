@@ -6,7 +6,11 @@ import { MvpStoreService } from '../mvp/mvp-store.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { getApiVersion } from '../version';
 import type { TTSResult } from './tts.types';
-import { detectLanguage, getSpeachesVoice, getSpeachesVoiceForLanguage } from './tts-language';
+import {
+  detectLanguage,
+  getSpeachesVoice,
+  getSpeachesVoiceForLanguage,
+} from './tts-language';
 import { estimateDuration } from './tts-utils';
 
 @Injectable()
@@ -50,7 +54,11 @@ export class TTSService {
             apiKey:
               team.ttsProvider === 'speaches'
                 ? team.speachesApiKey || team.ttsApiKey || ''
-                : team.ttsApiKey || (team.ttsProvider === 'elevenlabs' ? team.elevenlabsApiKey : '') || '',
+                : team.ttsApiKey ||
+                  (team.ttsProvider === 'elevenlabs'
+                    ? team.elevenlabsApiKey
+                    : '') ||
+                  '',
             voiceId: team.ttsVoiceId || '',
             apiUrl:
               team.ttsProvider === 'speaches'
@@ -58,7 +66,9 @@ export class TTSService {
                 : team.ttsEndpointUrl || undefined,
           };
         }
-      } catch { throw new Error('Configured team TTS unavailable'); }
+      } catch {
+        throw new Error('Configured team TTS unavailable');
+      }
       throw new Error('Configured team TTS required');
     }
 
@@ -79,8 +89,18 @@ export class TTSService {
       forceLanguageVoice?: boolean;
     } = {},
   ): Promise<TTSResult> {
-    if (typeof text !== 'string' || !text.trim() || text.length > 8000 || process.env.KELEDON_VOICE_DISABLED === 'true') return { error: 'Invalid or disabled speech request' };
-    await runtimeAiBudget.run(`tts:${options.teamId || 'system'}`, undefined, async () => undefined);
+    if (
+      typeof text !== 'string' ||
+      !text.trim() ||
+      text.length > 8000 ||
+      process.env.KELEDON_VOICE_DISABLED === 'true'
+    )
+      return { error: 'Invalid or disabled speech request' };
+    await runtimeAiBudget.run(
+      `tts:${options.teamId || 'system'}`,
+      undefined,
+      async () => undefined,
+    );
     // Provider selection: DB > file config > env vars > default
     const teamConfig = options.teamId
       ? await this.resolveTTSConfig(options.teamId)
@@ -112,14 +132,16 @@ export class TTSService {
     try {
       if (provider === 'kokoro') {
         const baseUrl =
-          (ttsConfig as any).apiUrl || (!options.teamId ? process.env.KOKORO_API_URL : undefined);
+          (ttsConfig as any).apiUrl ||
+          (!options.teamId ? process.env.KOKORO_API_URL : undefined);
         if (!baseUrl) return { error: 'Configured TTS endpoint required' };
         const voice = ttsConfig.voiceId || 'ef_dora';
         return await this.speakWithKokoro(text, baseUrl, voice);
       } else if (provider === 'speaches') {
         const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
         const baseUrl =
-          speachesApiUrl || (!options.teamId ? process.env.SPEACHES_API_URL : undefined);
+          speachesApiUrl ||
+          (!options.teamId ? process.env.SPEACHES_API_URL : undefined);
         if (!baseUrl) return { error: 'Configured TTS endpoint required' };
         const voice = getSpeachesVoice(
           text,
@@ -129,7 +151,9 @@ export class TTSService {
         return await this.speakWithSpeaches(
           text,
           baseUrl,
-          apiKeyFromStore || (!options.teamId ? process.env.SPEACHES_API_KEY : '') || '',
+          apiKeyFromStore ||
+            (!options.teamId ? process.env.SPEACHES_API_KEY : '') ||
+            '',
           voice,
         );
       } else if (provider === 'elevenlabs') {
@@ -138,7 +162,10 @@ export class TTSService {
         return await this.speakWithOpenAI(text, options);
       } else {
         console.log('[TTS] Mock TTS mode (no provider configured)');
-        return { error: 'Configured provider requires browser-side TTS or explicit server provider' };
+        return {
+          error:
+            'Configured provider requires browser-side TTS or explicit server provider',
+        };
       }
     } finally {
       this.eventEmitter.emit('speak:completed');
@@ -158,8 +185,18 @@ export class TTSService {
       forceLanguageVoice?: boolean;
     } = {},
   ): Promise<TTSResult> {
-    if (typeof text !== 'string' || !text.trim() || text.length > 8000 || process.env.KELEDON_VOICE_DISABLED === 'true') return { error: 'Invalid or disabled speech request' };
-    await runtimeAiBudget.run(`tts:${options.teamId || 'system'}`, undefined, async () => undefined);
+    if (
+      typeof text !== 'string' ||
+      !text.trim() ||
+      text.length > 8000 ||
+      process.env.KELEDON_VOICE_DISABLED === 'true'
+    )
+      return { error: 'Invalid or disabled speech request' };
+    await runtimeAiBudget.run(
+      `tts:${options.teamId || 'system'}`,
+      undefined,
+      async () => undefined,
+    );
     const teamConfig = options.teamId
       ? await this.resolveTTSConfig(options.teamId)
       : null;
@@ -189,7 +226,8 @@ export class TTSService {
 
     if (provider === 'kokoro') {
       const baseUrl =
-        (ttsConfig as any).apiUrl || (!options.teamId ? process.env.KOKORO_API_URL : undefined);
+        (ttsConfig as any).apiUrl ||
+        (!options.teamId ? process.env.KOKORO_API_URL : undefined);
       if (!baseUrl) return { error: 'Configured TTS endpoint required' };
       const voice = ttsConfig.voiceId || 'ef_dora';
       const result = await this.speakWithKokoro(text, baseUrl, voice);
@@ -202,7 +240,8 @@ export class TTSService {
     } else if (provider === 'speaches') {
       const speachesApiUrl = (ttsConfig as any).apiUrl as string | undefined;
       const baseUrl =
-        speachesApiUrl || (!options.teamId ? process.env.SPEACHES_API_URL : undefined);
+        speachesApiUrl ||
+        (!options.teamId ? process.env.SPEACHES_API_URL : undefined);
       if (!baseUrl) return { error: 'Configured TTS endpoint required' };
       const voice = getSpeachesVoice(
         text,
@@ -212,7 +251,9 @@ export class TTSService {
       const result = await this.speakWithSpeaches(
         text,
         baseUrl,
-        apiKeyFromStore || (!options.teamId ? process.env.SPEACHES_API_KEY : '') || '',
+        apiKeyFromStore ||
+          (!options.teamId ? process.env.SPEACHES_API_KEY : '') ||
+          '',
         voice,
       );
       if (result.audioData && result.audioData.length > 0) {
@@ -240,7 +281,10 @@ export class TTSService {
       return result;
     } else {
       console.log('[TTS] Mock streaming — no provider configured');
-      return { error: 'Configured provider requires browser-side TTS or explicit server provider' };
+      return {
+        error:
+          'Configured provider requires browser-side TTS or explicit server provider',
+      };
     }
   }
 
@@ -249,8 +293,12 @@ export class TTSService {
     onChunk: (base64: string) => void,
     options: { interruptible?: boolean; teamId?: string },
   ): Promise<TTSResult> {
-    const ttsConfig = options.teamId ? await this.resolveTTSConfig(options.teamId) : this.mvpStore.getTTSConfig();
-    const apiKey = ttsConfig.apiKey || (!options.teamId ? process.env.ELEVENLABS_API_KEY : undefined);
+    const ttsConfig = options.teamId
+      ? await this.resolveTTSConfig(options.teamId)
+      : this.mvpStore.getTTSConfig();
+    const apiKey =
+      ttsConfig.apiKey ||
+      (!options.teamId ? process.env.ELEVENLABS_API_KEY : undefined);
 
     if (!apiKey) {
       return { error: 'ELEVENLABS_API_KEY not configured' };
@@ -260,16 +308,24 @@ export class TTSService {
       const { ElevenLabsClient } = await import('elevenlabs');
       const client = new ElevenLabsClient({ apiKey });
 
-      const audio = await client.textToSpeech.convertAsStream(ttsConfig.voiceId || this.voiceId, {
-        text,
-        model_id: 'eleven_turbo_v2_5',
-        voice_settings: {
-          stability: 0.5,
-          similarity_boost: 0.8,
-          style: 0.0,
-          use_speaker_boost: true,
+      const audio = await client.textToSpeech.convertAsStream(
+        ttsConfig.voiceId || this.voiceId,
+        {
+          text,
+          model_id: 'eleven_turbo_v2_5',
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.8,
+            style: 0.0,
+            use_speaker_boost: true,
+          },
         },
-      }, { timeoutInSeconds: 30, maxRetries: 0, abortSignal: AbortSignal.timeout(30000) });
+        {
+          timeoutInSeconds: 30,
+          maxRetries: 0,
+          abortSignal: AbortSignal.timeout(30000),
+        },
+      );
 
       const chunks: Buffer[] = [];
       for await (const chunk of audio) {
@@ -303,8 +359,12 @@ export class TTSService {
     text: string,
     options: { interruptible?: boolean; teamId?: string },
   ): Promise<TTSResult> {
-    const ttsConfig = options.teamId ? await this.resolveTTSConfig(options.teamId) : this.mvpStore.getTTSConfig();
-    const apiKey = ttsConfig.apiKey || (!options.teamId ? process.env.ELEVENLABS_API_KEY : undefined);
+    const ttsConfig = options.teamId
+      ? await this.resolveTTSConfig(options.teamId)
+      : this.mvpStore.getTTSConfig();
+    const apiKey =
+      ttsConfig.apiKey ||
+      (!options.teamId ? process.env.ELEVENLABS_API_KEY : undefined);
 
     if (!apiKey) {
       console.log('[TTS] ElevenLabs API key not configured, using mock');
@@ -315,16 +375,24 @@ export class TTSService {
       const { ElevenLabsClient } = await import('elevenlabs');
       const client = new ElevenLabsClient({ apiKey });
 
-      const audio = await client.textToSpeech.convertAsStream(ttsConfig.voiceId || this.voiceId, {
-        text,
-        model_id: 'eleven_turbo_v2_5',
-        voice_settings: {
-          stability: 0.5,
-          similarity_boost: 0.8,
-          style: 0.0,
-          use_speaker_boost: true,
+      const audio = await client.textToSpeech.convertAsStream(
+        ttsConfig.voiceId || this.voiceId,
+        {
+          text,
+          model_id: 'eleven_turbo_v2_5',
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.8,
+            style: 0.0,
+            use_speaker_boost: true,
+          },
         },
-      }, { timeoutInSeconds: 30, maxRetries: 0, abortSignal: AbortSignal.timeout(30000) });
+        {
+          timeoutInSeconds: 30,
+          maxRetries: 0,
+          abortSignal: AbortSignal.timeout(30000),
+        },
+      );
 
       const chunks: Buffer[] = [];
       for await (const chunk of audio) {
@@ -356,8 +424,12 @@ export class TTSService {
     text: string,
     _options: { interruptible?: boolean; teamId?: string },
   ): Promise<TTSResult> {
-    const ttsConfig = _options.teamId ? await this.resolveTTSConfig(_options.teamId) : this.mvpStore.getTTSConfig();
-    const apiKey = ttsConfig.apiKey || (!_options.teamId ? process.env.OPENAI_API_KEY : undefined);
+    const ttsConfig = _options.teamId
+      ? await this.resolveTTSConfig(_options.teamId)
+      : this.mvpStore.getTTSConfig();
+    const apiKey =
+      ttsConfig.apiKey ||
+      (!_options.teamId ? process.env.OPENAI_API_KEY : undefined);
     if (!apiKey) {
       return { error: 'OPENAI_API_KEY not configured' };
     }
@@ -377,9 +449,7 @@ export class TTSService {
         | 'sage'
         | 'shimmer';
       const model = (process.env.OPENAI_TTS_MODEL || 'tts-1') as
-        | 'tts-1'
-        | 'tts-1-hd'
-        | 'gpt-4o-mini-tts';
+        'tts-1' | 'tts-1-hd' | 'gpt-4o-mini-tts';
 
       const response = await openai.audio.speech.create({
         model,
@@ -500,15 +570,19 @@ export class TTSService {
     }
   }
 
-
   async warmSpeachesForTeam(
     teamId?: string,
     language: 'es' | 'en' = 'es',
   ): Promise<void> {
     const warmupKey = `${teamId || 'default'}:${language}`;
     if (this.speachesWarmups.has(warmupKey)) return;
-    if (this.speachesWarmups.size >= 5000) throw new Error('Voice warmup identity limit reached');
-    await runtimeAiBudget.run(`tts:${teamId || 'system'}`, undefined, async () => undefined);
+    if (this.speachesWarmups.size >= 5000)
+      throw new Error('Voice warmup identity limit reached');
+    await runtimeAiBudget.run(
+      `tts:${teamId || 'system'}`,
+      undefined,
+      async () => undefined,
+    );
     this.speachesWarmups.add(warmupKey);
     const startedAt = Date.now();
     const ttsConfig = teamId

@@ -7,10 +7,7 @@ import { EndpointDiagnosticsRegistry } from './endpoint-diagnostics.registry';
 import { getApiVersion } from '../version';
 
 export type DiagnosticProbeMode =
-  | 'safe_read'
-  | 'validation_only'
-  | 'dry_run'
-  | 'manual_only';
+  'safe_read' | 'validation_only' | 'dry_run' | 'manual_only';
 
 export interface EndpointDiagnostic {
   id: string;

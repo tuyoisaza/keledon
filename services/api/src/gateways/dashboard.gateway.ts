@@ -42,7 +42,9 @@ export interface DashboardSocketData {
     credentials: true,
   },
 })
-export class DashboardGateway {
+export class DashboardGateway
+  implements OnGatewayConnection<Socket>, OnGatewayDisconnect<Socket>
+{
   @WebSocketServer()
   server: Server;
 
@@ -58,7 +60,6 @@ export class DashboardGateway {
     this.startBroadcasting();
   }
 
-  @OnGatewayConnection()
   handleConnection(client: Socket): void {
     console.log(`Dashboard client connected: ${client.id}`);
 
@@ -66,7 +67,6 @@ export class DashboardGateway {
     this.sendInitialData(client);
   }
 
-  @OnGatewayDisconnect()
   handleDisconnect(client: Socket): void {
     console.log(`Dashboard client disconnected: ${client.id}`);
   }
@@ -171,9 +171,7 @@ export class DashboardGateway {
   @SubscribeMessage('dashboard:ai-loop-create')
   handleCreateAILoop(client: Socket, data: DashboardSocketData): void {
     try {
-      const loop = this.aiLoopService.createLoop(data.loopData?.name);
-      this.broadcastAILoops();
-      console.log(`DashboardGateway: Created AI loop: ${loop.id}`);
+      this.aiLoopService.createLoop(data.loopData?.name);
     } catch (error) {
       console.error('DashboardGateway: Error creating AI loop', error);
       client.emit('error', { message: 'Failed to create AI loop' });
@@ -185,8 +183,6 @@ export class DashboardGateway {
     try {
       if (data.loopId) {
         this.aiLoopService.startLoop(data.loopId);
-        this.broadcastAILoops();
-        console.log(`DashboardGateway: Started AI loop ${data.loopId}`);
       }
     } catch (error) {
       console.error('DashboardGateway: Error starting AI loop', error);
@@ -199,8 +195,6 @@ export class DashboardGateway {
     try {
       if (data.loopId) {
         this.aiLoopService.pauseLoop(data.loopId);
-        this.broadcastAILoops();
-        console.log(`DashboardGateway: Paused AI loop ${data.loopId}`);
       }
     } catch (error) {
       console.error('DashboardGateway: Error pausing AI loop', error);

@@ -33,7 +33,8 @@ export class CrudMigrationService {
     } catch (error) {
       return {
         status: 'error',
-        message: error instanceof Error ? error.message : 'Schema update failed',
+        message:
+          error instanceof Error ? error.message : 'Schema update failed',
       };
     }
   }

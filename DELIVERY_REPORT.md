@@ -1,4 +1,20 @@
-# Delivery report — PARTIALLY DELIVERED
+# Delivery report — current status PARTIALLY DELIVERED
+
+## 2026-10-13 continuation — local 5.1.7 candidate blocked before publication
+
+Remote `origin/main` is `3c6e4c71bc5672984a1fd07df62d722f95beb4e7`, product 5.1.6. PRs #51–53 are merged; no PR is open. The local branch `fix/fail-closed-api-migrations` contains an uncommitted 5.1.7 candidate. It removes automatic migration rollbacks, fails closed on migration/company-count errors, and makes Docker invoke the checked-in API startup script. The API lint command no longer autofixes source; typed rules remain enabled.
+
+API build, full-source typecheck, full typed ESLint (184 files, 0 errors/139 warnings), 11/11 regression suites and startup shell/test syntax pass. ESLint now has its missing pinned Prettier peer; source formatting and nine surfaced typed/lint errors were corrected without disabling rules. Cloud build and 8/8 regressions pass; `services/web` typecheck/build and diagnostics 18/18 plus SEO 1/1 pass; Landing typecheck/build/lint pass; Browser regressions pass 19/19. The stale, unreferenced legacy `MinimalCloudServer` entrypoints/manifests have been retired based on the historical removal of their CloudServer dependency and current Nest runtime references. Candidate has not been committed or pushed, and no PR was opened. Read-only Railway logs for the deployed base SHA reported seven migrations/no pending migrations and also exposed the old rollback-resolution command marking `20260529220000_add_rpa_provider_config` rolled back. No production database was queried or changed, no application endpoint was probed, and this candidate is not deployed.
+
+The full-source API typecheck initially found eight errors; all are resolved. Seven were repaired in Analytics/gateway typing, removal of unreachable AI-loop success reporting, and deletion of unreferenced broken duplicate modules. The last error was in duplicate legacy `MinimalCloudServer` entrypoints/manifests; their former CloudServer implementation had already been removed, and current production startup uses Nest `dist/main`, so those obsolete references were retired.
+
+Delivery gate for 5.1.7: `VERSION_BUMP=PASS (local)`; `COMMIT_PREFIX` and `PUSH_AND_PR` are next; candidate `REMOTE_MAIN` awaits PR merge; `SCOPE_AND_CHECKS=PASS/PARTIAL ACCEPTANCE`. The four source fronts and PHDK sync remain delivered through PRs #51–53. Persisted CRUD coverage, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Detailed evidence: [5.1.7 pre-merge report](docs/phdk/lifecycle/20261012-keledon-four-fronts/90-delivery/DELIVERY_REPORT_5.1.7_PREMERGE.md).
+
+SIGUIENTE PASO: resolve the API typed-lint runtime stall without weakening rules, rerun final checks, then continue versioned PR delivery.
+
+---
+
+Historical delivery summary below: product 5.1.5.
 
 Goal: PHDK Auto across the four owner-confirmed KELEDON fronts, with maximum applicable code conformity. Product version: 5.1.5. Installed PHDK: 2.50.10.
 

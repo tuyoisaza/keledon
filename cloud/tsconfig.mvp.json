@@ -40,7 +40,6 @@
     "src/services/system-monitoring.service.ts",
     "src/services/rbac-recommendation.service.ts",
     "src/services/voice-analytics.service.ts",
-    "src/rbac/**/*",
-    "src/MinimalCloudServer.ts"
+    "src/rbac/**/*"
   ]
 }
