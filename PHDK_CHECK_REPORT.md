@@ -1,5 +1,11 @@
 # PHDK Check — latest candidate 5.1.10; acceptance partial
 
+## Latest continuation — candidate 5.1.13
+
+The current source pass revalidated the AI administration and provider configuration findings against `origin/main` 1ef39dd. CF-003 prompt administration/runtime contracts pass the focused API suite (6/6); CF-004 DB-derived provider scope, secret projection, rejection of unsupported providers, and persistence of supported Speaches TTS pass in API regression suite 14/14 and the local provider UAT. The provider-management UI now uses the existing English/Spanish/Portuguese catalogs for labels, provider descriptions, key states and feedback. The provider UAT renders the Spanish route and confirms write-only key replacement/clearing; locale catalogs have matching 404-key sets.
+
+Web typecheck/build and local Edge UAT pass (1/1). The UAT used synthetic Company Co fixtures with API calls intercepted and external requests blocked. The earlier P1 implementation findings are closed in source and isolated tests; persisted database/migration, native Electron/device/audio, whole-app localization/accessibility and deployed SEO/AEO acceptance remain open. CF-005 is reduced for the provider settings route only, not closed repo-wide. Client-specific CRM/telephony remains tenant-selected.
+
 ## Latest Check — 5.1.11
 
 Product PR #66 is merged at remote `main` `829caf32978571ac439b8236c2cf7605a38aea4b`; all five application roots are 5.1.11. PHDK v2.50.10 coherence passes 52/52. API build/regression 14/14/typed lint (0 errors, 138 warnings); focused API Jest 2 suites/9 tests; Cloud build/regression 8/8; Web typecheck/build/UAT 1/1/diagnostics and version tests 16/16; Browser build/regression 29/29; Landing build/lint pass. Source/test inventory: 1,117 files, zero at/above 600 lines. Post-merge mechanical gate passes.

@@ -8,24 +8,24 @@ import { useAuth } from '@/context/AuthContext';
 import { getTeams, type Team } from '@/lib/crud-api';
 
 const sttProviderOptions = [
-    { id: 'vosk', name: 'Vosk (Local)', description: 'Local STT via Vosk server' },
-    { id: 'deepgram', name: 'Deepgram', description: 'Cloud STT via Deepgram API' },
-    { id: 'speaches', name: 'Speaches (Whisper)', description: 'OpenAI-compatible Whisper STT on Railway (no API key needed if public)' },
-    { id: 'webspeech', name: 'Web Speech API', description: 'Browser-native speech recognition' },
+    { id: 'vosk', nameKey: 'providers.stt.vosk', descriptionKey: 'providers.stt.voskDescription' },
+    { id: 'deepgram', nameKey: 'providers.stt.deepgram', descriptionKey: 'providers.stt.deepgramDescription' },
+    { id: 'speaches', nameKey: 'providers.stt.speaches', descriptionKey: 'providers.stt.speachesDescription' },
+    { id: 'webspeech', nameKey: 'providers.stt.webspeech', descriptionKey: 'providers.stt.webspeechDescription' },
 ];
 
 const ttsProviderOptions = [
-    { id: 'elevenlabs', name: 'ElevenLabs', description: 'Cloud TTS via ElevenLabs API', needsKey: true },
-    { id: 'openai-tts', name: 'OpenAI TTS', description: 'Cloud TTS via OpenAI API', needsKey: true },
-    { id: 'speaches', name: 'Speaches', description: 'OpenAI-compatible TTS via Speaches /v1/audio/speech', needsKey: false },
-    { id: 'kokoro', name: 'Kokoro TTS', description: 'Self-hosted on Railway (no API key needed)', needsKey: false },
-    { id: 'coqui', name: 'Coqui XTTS-v2', description: 'Local Coqui XTTS-v2', needsKey: false },
-    { id: 'webspeech', name: 'Browser Speech', description: 'Browser-native speech synthesis', needsKey: false },
+    { id: 'elevenlabs', nameKey: 'providers.tts.elevenlabs', descriptionKey: 'providers.tts.elevenlabsDescription', needsKey: true },
+    { id: 'openai-tts', nameKey: 'providers.tts.openai', descriptionKey: 'providers.tts.openaiDescription', needsKey: true },
+    { id: 'speaches', nameKey: 'providers.tts.speaches', descriptionKey: 'providers.tts.speachesDescription', needsKey: false },
+    { id: 'kokoro', nameKey: 'providers.tts.kokoro', descriptionKey: 'providers.tts.kokoroDescription', needsKey: false },
+    { id: 'coqui', nameKey: 'providers.tts.coqui', descriptionKey: 'providers.tts.coquiDescription', needsKey: false },
+    { id: 'webspeech', nameKey: 'providers.tts.webspeech', descriptionKey: 'providers.tts.webspeechDescription', needsKey: false },
 ];
 
 const llmOptions = [
-    { id: 'openai', name: 'OpenAI (GPT-4o)', icon: '🤖' },
-    { id: 'google', name: 'Google Gemini 2.5 Pro', icon: '🔮' },
+    { id: 'openai', nameKey: 'providers.llm.openai', icon: '🤖' },
+    { id: 'google', nameKey: 'providers.llm.google', icon: '🔮' },
 ];
 
 export default function ManagementProvidersPage() {
@@ -149,7 +149,7 @@ export default function ManagementProvidersPage() {
     };
 
     const saveSTT = async () => {
-        if (!teamId) return toast.error('No team selected');
+        if (!teamId) return toast.error(t('providers.noTeamSelected'));
         setSttSaving(true);
         try {
             const payload: Record<string, string> = { sttProvider };
@@ -163,15 +163,15 @@ export default function ManagementProvidersPage() {
                 body: JSON.stringify(payload),
             });
             if (res.ok) {
-                toast.success(`STT provider saved: ${sttProvider}`);
+                toast.success(t('providers.saved').replace('{provider}', sttName(sttProvider)));
                 await loadConfigs();
-            } else toast.error('Failed to save STT provider');
-        } catch { toast.error('Failed to save STT provider') }
+            } else toast.error(t('providers.saveFailed'));
+        } catch { toast.error(t('providers.saveFailed')) }
         finally { setSttSaving(false) }
     };
 
     const saveTTS = async () => {
-        if (!teamId) return toast.error('No team selected');
+        if (!teamId) return toast.error(t('providers.noTeamSelected'));
         setTtsSaving(true);
         try {
             const res = await apiFetch(`/api/teams/${teamId}/config`, {
@@ -182,14 +182,14 @@ export default function ManagementProvidersPage() {
                     ttsVoiceId,
                 }),
             });
-            if (res.ok) { toast.success(`TTS provider saved: ${ttsProvider}`); await loadConfigs(); }
-            else toast.error('Failed to save TTS provider');
-        } catch { toast.error('Failed to save TTS provider') }
+            if (res.ok) { toast.success(t('providers.saved').replace('{provider}', ttsName(ttsProvider))); await loadConfigs(); }
+            else toast.error(t('providers.saveFailed'));
+        } catch { toast.error(t('providers.saveFailed')) }
         finally { setTtsSaving(false) }
     };
 
     const saveLLM = async () => {
-        if (!teamId) return toast.error('No team selected');
+        if (!teamId) return toast.error(t('providers.noTeamSelected'));
         setLlmSaving(true);
         try {
             const payload: Record<string, string> = { llmProvider };
@@ -200,18 +200,18 @@ export default function ManagementProvidersPage() {
                 body: JSON.stringify(payload),
             });
             if (res.ok) {
-                toast.success(`AI provider saved: ${llmProvider === 'openai' ? 'OpenAI' : 'Gemini'}`);
+                toast.success(t('providers.saved').replace('{provider}', llmName(llmProvider)));
                 await loadConfigs();
-            } else toast.error('Failed to save AI provider');
-        } catch { toast.error('Failed to save AI provider') }
+            } else toast.error(t('providers.saveFailed'));
+        } catch { toast.error(t('providers.saveFailed')) }
         finally { setLlmSaving(false) }
     };
 
     // ── Helpers ──
 
-    const sttName = (id: string) => sttProviderOptions.find(o => o.id === id)?.name || id;
-    const ttsName = (id: string) => ttsProviderOptions.find(o => o.id === id)?.name || id;
-    const llmName = (id: string) => llmOptions.find(o => o.id === id)?.name || id;
+    const sttName = (id: string) => { const option = sttProviderOptions.find(o => o.id === id); return option ? t(option.nameKey) : id; };
+    const ttsName = (id: string) => { const option = ttsProviderOptions.find(o => o.id === id); return option ? t(option.nameKey) : id; };
+    const llmName = (id: string) => { const option = llmOptions.find(o => o.id === id); return option ? t(option.nameKey) : id; };
 
     const providerCard = (
         id: string,
@@ -254,7 +254,7 @@ export default function ManagementProvidersPage() {
             <button
                 onClick={onToggle}
                 className="p-2 hover:bg-muted rounded-lg transition-colors shrink-0"
-                title={masked ? 'Show key' : 'Hide key'}
+                title={masked ? t('providers.showKey') : t('providers.hideKey')}
             >
                 {masked ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -269,7 +269,7 @@ export default function ManagementProvidersPage() {
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <Settings className="w-6 h-6" />
-                    <h1 className="text-2xl font-bold">Management — Providers</h1>
+                    <h1 className="text-2xl font-bold">{t('providers.title')}</h1>
                 </div>
                 {teamId && teams.length > 0 ? (
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -278,7 +278,7 @@ export default function ManagementProvidersPage() {
                             value={teamId}
                             onChange={(e) => { selectedTeam.current = e.target.value; setTeamId(e.target.value); }}
                             className="bg-background border border-border rounded px-2 py-1 text-xs font-mono text-foreground focus:outline-none focus:border-primary max-w-[200px]"
-                            title="Select team to configure"
+                            title={t('providers.selectTeam')}
                         >
                             {teams.map(t => (
                                 <option key={t.id} value={t.id}>
@@ -290,19 +290,19 @@ export default function ManagementProvidersPage() {
                 ) : teamId ? (
                     <span className="text-xs text-muted-foreground flex items-center gap-1.5">
                         <Users className="w-3.5 h-3.5" />
-                        Team: <span className="font-mono text-foreground">{teamId.slice(0, 12)}…</span>
+                        {t('providers.team')}: <span className="font-mono text-foreground">{teamId.slice(0, 12)}…</span>
                     </span>
                 ) : null}
             </div>
 
             {!teamId && !loading && (
                 <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 text-sm text-amber-400">
-                    No team selected. Make sure you have a team assigned to your account to save provider configurations.
+                    {t('providers.noTeamHelp')}
                 </div>
             )}
 
             {loading ? (
-                <div className="text-sm text-muted-foreground py-8 text-center">Loading configuration…</div>
+                <div className="text-sm text-muted-foreground py-8 text-center">{t('providers.loading')}</div>
             ) : (
 
             <>
@@ -310,12 +310,12 @@ export default function ManagementProvidersPage() {
             <section className="rounded-xl border border-border bg-card p-6">
                 <h3 className="font-semibold mb-1 flex items-center gap-2 text-base">
                     <Mic className="w-5 h-5" />
-                    Speech-to-Text
-                    <span className="ml-auto px-2 py-0.5 text-[10px] rounded bg-green-500/15 text-green-400 font-normal tracking-wider">DB</span>
+                    {t('providers.sttTitle')}
+                    <span className="ml-auto px-2 py-0.5 text-[10px] rounded bg-green-500/15 text-green-400 font-normal tracking-wider">{t('providers.database')}</span>
                 </h3>
                 <p className="text-xs text-muted-foreground mb-4">
-                    Select which engine transcribes voice. {sttProvider && teamId && (
-                        <span className="text-foreground/60">Currently: <span className="font-mono text-foreground">{sttName(sttProvider)}</span></span>
+                    {t('providers.sttHelp')} {sttProvider && teamId && (
+                        <span className="text-foreground/60">{t('providers.currently')}: <span className="font-mono text-foreground">{sttName(sttProvider)}</span></span>
                     )}
                 </p>
 
@@ -323,8 +323,8 @@ export default function ManagementProvidersPage() {
                     {sttProviderOptions.map(opt =>
                         providerCard(
                             opt.id,
-                            opt.name,
-                            opt.description,
+                            t(opt.nameKey),
+                            t(opt.descriptionKey),
                             sttProvider === opt.id,
                             () => setSttProvider(opt.id),
                         )
@@ -334,17 +334,17 @@ export default function ManagementProvidersPage() {
                 {/* Deepgram expanded config */}
                 {sttProvider === 'deepgram' && (
                     <div className="mb-5 p-4 rounded-lg bg-muted/20 border border-border/60 space-y-3">
-                        <label className="block text-xs font-medium text-muted-foreground">Deepgram API Key</label>
+                        <label className="block text-xs font-medium text-muted-foreground">{t('providers.deepgramKey')}</label>
                         {inputWithToggle(
                             deepgramApiKey,
                             deepgramKeyMasked,
                             v => { setDeepgramApiKey(v); setDeepgramKeyMasked(false); },
                             () => setDeepgramKeyMasked(!deepgramKeyMasked),
-                            'Enter Deepgram API key',
+                            t('providers.enterDeepgramKey'),
                             storedKeys.deepgram === true,
                         )}
                         {storedKeys.deepgram && !deepgramApiKey && (
-                            <p className="text-[11px] text-green-400/80">✓ Key saved in DB</p>
+                            <p className="text-[11px] text-green-400/80">✓ {t('providers.keySaved')}</p>
                         )}
                     </div>
                 )}
@@ -352,20 +352,20 @@ export default function ManagementProvidersPage() {
                 {/* Speaches expanded config */}
                 {sttProvider === 'speaches' && (
                     <div className="mb-5 p-4 rounded-lg bg-muted/20 border border-border/60 space-y-3">
-                        <label className="block text-xs font-medium text-muted-foreground">Speaches Server URL</label>
+                        <label className="block text-xs font-medium text-muted-foreground">{t('providers.speachesUrl')}</label>
                         <input
                             type="text"
                             value={speachesApiUrl}
                             onChange={e => setSpeachesApiUrl(e.target.value)}
-                            placeholder="https://speaches-production-c63f.up.railway.app"
+                            placeholder={t('providers.speachesUrlPlaceholder')}
                             className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
                         />
-                        <label className="block text-xs font-medium text-muted-foreground">API Key {storedKeys.speaches ? '(saved)' : '(optional — set via SPEACHES_API_KEY env var on Railway)'}</label>
+                        <label className="block text-xs font-medium text-muted-foreground">{t('providers.apiKey')} {storedKeys.speaches ? `(${t('providers.savedLabel')})` : t('providers.speachesKeyOptional')}</label>
                         <input
                             type="text"
                             value={speachesApiKey}
                             onChange={e => setSpeachesApiKey(e.target.value)}
-                            placeholder="Speaches API key if configured"
+                            placeholder={t('providers.speachesKeyPlaceholder')}
                             className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
                         />
                     </div>
@@ -376,9 +376,9 @@ export default function ManagementProvidersPage() {
                         className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
                     >
                         <Save className="w-4 h-4" />
-                        {sttSaving ? 'Saving…' : 'Save'}
+                        {sttSaving ? t('providers.saving') : t('providers.save')}
                     </button>
-                    {!teamId && <span className="text-xs text-amber-400">Sign in to save</span>}
+                    {!teamId && <span className="text-xs text-amber-400">{t('providers.signInToSave')}</span>}
                 </div>
             </section>
 
@@ -386,12 +386,12 @@ export default function ManagementProvidersPage() {
             <section className="rounded-xl border border-border bg-card p-6">
                 <h3 className="font-semibold mb-1 flex items-center gap-2 text-base">
                     <Volume2 className="w-5 h-5" />
-                    Text-to-Speech
-                    <span className="ml-auto px-2 py-0.5 text-[10px] rounded bg-green-500/15 text-green-400 font-normal tracking-wider">DB</span>
+                    {t('providers.ttsTitle')}
+                    <span className="ml-auto px-2 py-0.5 text-[10px] rounded bg-green-500/15 text-green-400 font-normal tracking-wider">{t('providers.database')}</span>
                 </h3>
                 <p className="text-xs text-muted-foreground mb-4">
-                    Choose the voice engine for the Brain's responses. {ttsProvider && teamId && (
-                        <span className="text-foreground/60">Currently: <span className="font-mono text-foreground">{ttsName(ttsProvider)}</span></span>
+                    {t('providers.ttsHelp')} {ttsProvider && teamId && (
+                        <span className="text-foreground/60">{t('providers.currently')}: <span className="font-mono text-foreground">{ttsName(ttsProvider)}</span></span>
                     )}
                 </p>
 
@@ -399,8 +399,8 @@ export default function ManagementProvidersPage() {
                     {ttsProviderOptions.map(opt =>
                         providerCard(
                             opt.id,
-                            opt.name,
-                            opt.description,
+                            t(opt.nameKey),
+                            t(opt.descriptionKey),
                             ttsProvider === opt.id,
                             () => setTtsProvider(opt.id),
                         )
@@ -412,18 +412,18 @@ export default function ManagementProvidersPage() {
                     <div className="mb-5 p-4 rounded-lg bg-muted/20 border border-border/60 space-y-3">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                                <label className="block text-xs font-medium text-muted-foreground mb-1.5">API Key / Endpoint</label>
+                                <label className="block text-xs font-medium text-muted-foreground mb-1.5">{t('providers.apiKeyEndpoint')}</label>
                                 <input type="password" autoComplete="new-password" value={ttsApiKey}
                                     onChange={e => setTtsApiKey(e.target.value)}
-                                    placeholder={storedKeys.tts ? t('providers.savedPlaceholder') : 'API key or endpoint URL (if required)'}
+                                    placeholder={storedKeys.tts ? t('providers.savedPlaceholder') : t('providers.apiKeyEndpointPlaceholder')}
                                     className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-medium text-muted-foreground mb-1.5">Voice ID</label>
+                                <label className="block text-xs font-medium text-muted-foreground mb-1.5">{t('providers.voiceId')}</label>
                                 <input type="text" value={ttsVoiceId}
                                     onChange={e => setTtsVoiceId(e.target.value)}
-                                    placeholder={ttsProvider === 'kokoro' ? 'ef_dora, em_alex, em_santa…' : 'Voice ID (if required)'}
+                                    placeholder={ttsProvider === 'kokoro' ? t('providers.kokoroVoices') : t('providers.voiceIdPlaceholder')}
                                     className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary font-mono"
                                 />
                             </div>
@@ -436,9 +436,9 @@ export default function ManagementProvidersPage() {
                         className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
                     >
                         <Save className="w-4 h-4" />
-                        {ttsSaving ? 'Saving…' : 'Save'}
+                        {ttsSaving ? t('providers.saving') : t('providers.save')}
                     </button>
-                    {!teamId && <span className="text-xs text-amber-400">Sign in to save</span>}
+                    {!teamId && <span className="text-xs text-amber-400">{t('providers.signInToSave')}</span>}
                 </div>
             </section>
 
@@ -446,12 +446,12 @@ export default function ManagementProvidersPage() {
             <section className="rounded-xl border border-border bg-card p-6">
                 <h3 className="font-semibold mb-1 flex items-center gap-2 text-base">
                     <Brain className="w-5 h-5" />
-                    AI / LLM
-                    <span className="ml-auto px-2 py-0.5 text-[10px] rounded bg-green-500/15 text-green-400 font-normal tracking-wider">DB</span>
+                    {t('providers.llmTitle')}
+                    <span className="ml-auto px-2 py-0.5 text-[10px] rounded bg-green-500/15 text-green-400 font-normal tracking-wider">{t('providers.database')}</span>
                 </h3>
                 <p className="text-xs text-muted-foreground mb-4">
-                    Select which AI powers the Brain. {llmProvider && teamId && (
-                        <span className="text-foreground/60">Currently: <span className="font-mono text-foreground">{llmName(llmProvider)}</span></span>
+                    {t('providers.llmHelp')} {llmProvider && teamId && (
+                        <span className="text-foreground/60">{t('providers.currently')}: <span className="font-mono text-foreground">{llmName(llmProvider)}</span></span>
                     )}
                 </p>
 
@@ -459,10 +459,10 @@ export default function ManagementProvidersPage() {
                     {llmOptions.map(opt =>
                         providerCard(
                             opt.id,
-                            `${opt.icon} ${opt.name}`,
+                            `${opt.icon} ${t(opt.nameKey)}`,
                             llmProvider === opt.id
-                                ? (opt.id === 'openai' ? (storedKeys.openai ? '✓ Configured' : 'No key yet') : (storedKeys.google ? '✓ Configured' : 'No key yet'))
-                                : (opt.id === 'openai' ? (storedKeys.openai ? '✓ Key on file' : 'No key') : (storedKeys.google ? '✓ Key on file' : 'No key')),
+                                ? (opt.id === 'openai' ? (storedKeys.openai ? `✓ ${t('providers.configured')}` : t('providers.noKeyYet')) : (storedKeys.google ? `✓ ${t('providers.configured')}` : t('providers.noKeyYet')))
+                                : (opt.id === 'openai' ? (storedKeys.openai ? `✓ ${t('providers.keyOnFile')}` : t('providers.noKey')) : (storedKeys.google ? `✓ ${t('providers.keyOnFile')}` : t('providers.noKey'))),
                             llmProvider === opt.id,
                             () => setLlmProvider(opt.id),
                         )
@@ -472,36 +472,36 @@ export default function ManagementProvidersPage() {
                 {/* LLM expanded config */}
                 {llmProvider === 'openai' && (
                     <div className="mb-5 p-4 rounded-lg bg-muted/20 border border-border/60 space-y-3">
-                        <label className="block text-xs font-medium text-muted-foreground">OpenAI API Key</label>
+                        <label className="block text-xs font-medium text-muted-foreground">{t('providers.openaiKey')}</label>
                         {inputWithToggle(
                             openaiApiKey,
                             openaiKeyMasked,
                             v => { setOpenaiApiKey(v); setOpenaiKeyMasked(false); },
                             () => setOpenaiKeyMasked(!openaiKeyMasked),
-                            'sk-… (enter your OpenAI API key)',
+                            t('providers.openaiKeyPlaceholder'),
                             storedKeys.openai === true,
                         )}
                         {storedKeys.openai && !openaiApiKey
-                            ? <p className="text-[11px] text-green-400/80">✓ Key saved in DB</p>
-                            : <p className="text-[11px] text-muted-foreground/60">No OpenAI key stored</p>
+                            ? <p className="text-[11px] text-green-400/80">✓ {t('providers.keySaved')}</p>
+                            : <p className="text-[11px] text-muted-foreground/60">{t('providers.openaiKeyMissing')}</p>
                         }
                     </div>
                 )}
 
                 {llmProvider === 'google' && (
                     <div className="mb-5 p-4 rounded-lg bg-muted/20 border border-border/60 space-y-3">
-                        <label className="block text-xs font-medium text-muted-foreground">Google Gemini API Key</label>
+                        <label className="block text-xs font-medium text-muted-foreground">{t('providers.googleKey')}</label>
                         {inputWithToggle(
                             googleApiKey,
                             googleKeyMasked,
                             v => { setGoogleApiKey(v); setGoogleKeyMasked(false); },
                             () => setGoogleKeyMasked(!googleKeyMasked),
-                            'AIza… (enter your Gemini API key)',
+                            t('providers.googleKeyPlaceholder'),
                             storedKeys.google === true,
                         )}
                         {storedKeys.google && !googleApiKey
-                            ? <p className="text-[11px] text-green-400/80">✓ Key saved in DB</p>
-                            : <p className="text-[11px] text-muted-foreground/60">No Gemini key stored</p>
+                            ? <p className="text-[11px] text-green-400/80">✓ {t('providers.keySaved')}</p>
+                            : <p className="text-[11px] text-muted-foreground/60">{t('providers.googleKeyMissing')}</p>
                         }
                     </div>
                 )}
@@ -511,9 +511,9 @@ export default function ManagementProvidersPage() {
                         className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
                     >
                         <Save className="w-4 h-4" />
-                        {llmSaving ? 'Saving…' : 'Save'}
+                        {llmSaving ? t('providers.saving') : t('providers.save')}
                     </button>
-                    {!teamId && <span className="text-xs text-amber-400">Sign in to save</span>}
+                    {!teamId && <span className="text-xs text-amber-400">{t('providers.signInToSave')}</span>}
                 </div>
             </section>
             </>)}

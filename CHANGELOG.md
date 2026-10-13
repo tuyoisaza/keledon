@@ -1,3 +1,8 @@
+## v5.1.13 — 2026-10-13 (PHDK Auto candidate)
+
+- Localize the provider-management interface, provider descriptions, key states, and save feedback in English, Spanish, and Portuguese.
+- Extend local web UAT to verify the Spanish provider screen and preserve write-only key behavior; align all five app package and lock roots at 5.1.13.
+
 ## v5.1.12 — 2026-10-13 (PHDK Auto candidate)
 
 - Apply light and corporate semantic palette variables to descendant controls, so buttons and form elements actually render their selected theme colors.
