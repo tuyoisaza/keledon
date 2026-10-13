@@ -7,7 +7,9 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  UseGuards,
 } from '@nestjs/common';
+import { SuperAdminGuard } from '../guards/roles.guard';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import {
   RBACRecommendationService,
@@ -17,6 +19,7 @@ import {
 
 @ApiTags('RBAC Analysis')
 @Controller('rbac-analysis')
+@UseGuards(SuperAdminGuard)
 export class RBACAnalysisController {
   constructor(
     private readonly rbacRecommendationService: RBACRecommendationService,

@@ -39,6 +39,7 @@ import { CallsModule } from './calls/calls.module';
 import { BrowserCommandsModule } from './browser-commands/browser-commands.module';
 import { SessionModule } from './modules/session.module';
 import { EscalationModule } from './modules/escalation.module';
+import { SuperAdminGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
@@ -91,6 +92,7 @@ import { EscalationModule } from './modules/escalation.module';
       provide: APP_INTERCEPTOR,
       useClass: AuditInterceptor,
     },
+    SuperAdminGuard,
   ],
   exports: [
     DatabaseHealthService,

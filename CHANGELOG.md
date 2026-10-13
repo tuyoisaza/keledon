@@ -1,3 +1,9 @@
+## v5.1.9 — 2026-10-13 (PHDK Auto candidate)
+
+- Derive escalation reads and acknowledgements from the current database actor and constrain team/session access to the actor's company and own identity; protect global analytics, dashboard and RBAC operations with the current-database superadmin role.
+- Require an authenticated DB-backed actor for listening-session APIs, strengthen session capabilities to UUIDs, and enforce their one-hour expiry.
+- Add operational tenant-boundary regressions and align all five app package/lock roots at 5.1.9.
+
 ## v5.1.8 — 2026-10-13 (PHDK Auto candidate)
 
 - Reject client-supplied password hashes on user creation and update; credential hashes remain owned by the authentication flow.

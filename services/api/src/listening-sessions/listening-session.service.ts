@@ -19,7 +19,7 @@ export class ListeningSessionService {
     tabUrl?: string;
     tabTitle?: string;
   }): Promise<ListeningSession> {
-    const sessionId = `ls_${uuidv4().split('-')[0]}`; // Short ID for readability
+    const sessionId = `ls_${uuidv4()}`;
     const expiresAt = new Date(Date.now() + 3600 * 1000).toISOString(); // 1 hour expiry
 
     // Hardcoded WS URL for now - in production this should be dynamic or env var
@@ -40,10 +40,16 @@ export class ListeningSessionService {
   }
 
   validateSession(sessionId: string): boolean {
-    return this.sessions.has(sessionId);
+    const session = this.getSession(sessionId);
+    return Boolean(session);
   }
 
   getSession(sessionId: string): ListeningSession | undefined {
-    return this.sessions.get(sessionId);
+    const session = this.sessions.get(sessionId);
+    if (session && Date.parse(session.expiresAt) <= Date.now()) {
+      this.sessions.delete(sessionId);
+      return undefined;
+    }
+    return session;
   }
 }
