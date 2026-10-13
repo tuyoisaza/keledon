@@ -7,7 +7,7 @@ Run 20261012-keledon-four-fronts; owner confirms all four in order, 2026-10-12.
 - [x] T-003 provider-independent source/contracts and synthetic test (client-specific live workflow excluded by owner).
 - [x] T-004 restrictive policy implementation and isolated API/UAT checks (additive AI migration not applied).
 - [ ] T-005 scoped UAT/SEO/AEO recorded; full conformity Check/remediation PARTIAL with debt below.
-- [ ] T-006 main delivery NOT STARTED; local candidate has no commit/PR/remote evidence.
+- [ ] T-006 draft PR #42 is open on remote; merge/readback blocked pending sensitive schema approval and remaining PHDK findings.
 No historical queue activation or parallel floor restoration. This is current task evidence, no future authority.
 
 Current decision record: vendors are per-client; source+synthetic contracts are acceptable for runtime code review.

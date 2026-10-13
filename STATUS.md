@@ -21,3 +21,6 @@
 - Full conformity remains partial; see PHDK_CONFORMITY_REVIEW.md. Sensitive managed-AI migration is additive and not applied, and delivery review remains open.
 - No commit, PR, push, merge, production migration, provider request, or deployment performed.
 - SIGUIENTE PASO: owner reviews durable AI schema/migration inclusion for this candidate; proceed with release only after that decision and close remaining Check obligations.
+
+## 2026-10-12 — Draft review published
+Commit 3af566a163024c3f2b69be7991e99437d47b0528 is on chore/phdk-install-v2.50.8. Draft PR #42 OPEN against main; review/publishing still pending. No merge or database migration. Owner decision on additive AI schema remains required.

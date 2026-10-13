@@ -2,7 +2,7 @@
 Owner decision 2026-10-12: 'Los cuatro, en ese orden' confirms CMT-001..004. No deferrals/cancellations.
 | ID/title | Origin/category/priority | Scope | Acceptance | Plan/owner | Execution/verification | Git/final disposition |
 |---|---|---|---|---|---|---|
-| CMT-001 baseline/versions/PRs | owner front 1/technical P1 | CONFIRMED | current facts and scoped PR reconciliation | T-001/WS-001/root | SOURCE REVIEW COMPLETE; remote delivery not done | local candidate; no PR/commit |
+| CMT-001 baseline/versions/PRs | owner front 1/technical P1 | CONFIRMED | current facts and scoped PR reconciliation | T-001/WS-001/root | SOURCE REVIEW COMPLETE; remote delivery not done | commit 3af566a pushed; PR #42 open draft; 0/4 remotely delivered |
 | CMT-002 shared safe diagnostics | owner front 2/defect P1/security P0 | CONFIRMED | common row, confirmed actions/redaction/reset/regression | T-002/WS-002/root | IMPLEMENTED; local test and browser fixture UAT PASS; native Electron render open | local; 0/4 remote |
 | CMT-003 voice/cloud/browser/CRM | owner front 3/defect P1 | CONFIRMED | provider-independent configurable contracts + isolated end state | T-003/WS-003/runtime worker | SOURCE/CONTRACT PASS; browser18 checks PASS; client live vendor expressly excluded | local; 0/4 remote |
 | CMT-004 administration/permissions | owner front 4/security P0 | CONFIRMED | restrictive DB actor/tenant, no elevation, secrets write-only | T-004/WS-004/admin worker | POLICY APPROVED AND IMPLEMENTED; API regression/focused PASS, AI UI fixture PASS; migration unapplied | local; 0/4 remote |
