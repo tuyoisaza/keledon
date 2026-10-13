@@ -1,6 +1,6 @@
 # PHDK Check report — candidate 5.0.54
 
-Scope: integrated candidate plus browser/brain, agent, API, and Cloud security/modularity checks and fixes, 2026-10-13. No production provider, database, customer data, or metered API use.
+Scope: integrated candidate plus browser/brain, agent, API, and Cloud security/modularity checks and fixes, 2026-10-13. No production provider, database, customer data, or metered API use. Public landing/login copy and navigation are localized and passed a local Axe WCAG 2.1 A/AA scan in all three locales at the default theme; the mobile menu opens its controlled region. Full translation review and broader rendered accessibility across routes/themes remain open.
 
 PASS: Cloud production build (C13 + TypeScript) and authorization/OAuth/resource regressions 8/8; services/web typecheck, ESLint (0 errors/138 warnings), production Vite build; browser regression 19/19; web synthetic UAT 10/10; API production build/C13 and regression 8/8; Agent Jest 9/9 suites and 78/78 tests; Agent extension validation and source/extension tab registry parity; PHDK 2.50.8 coherence 50/50 mappings. Cloud uses database-backed auth/tenant guards; runtime and CRM adapter code remains vendor-independent. English, Spanish and Portuguese catalogs have matching keys; full translation review remains open.
 

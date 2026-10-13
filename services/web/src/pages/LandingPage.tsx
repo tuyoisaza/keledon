@@ -43,12 +43,16 @@ export default function LandingPage() {
 
     return (
         <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-            <Navbar />
-            <HeroSection />
-            <FeaturesSection />
-            <ArchitectureSection />
-            <UseCasesSection />
-            <CTASection />
+            <header>
+                <Navbar />
+            </header>
+            <main id="main-content">
+                <HeroSection />
+                <FeaturesSection />
+                <ArchitectureSection />
+                <UseCasesSection />
+                <CTASection />
+            </main>
             <Footer />
         </div>
     );

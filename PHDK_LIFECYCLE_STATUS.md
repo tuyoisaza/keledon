@@ -15,9 +15,9 @@ Historical folder: `docs/phdk/lifecycle/20261012-keledon-four-fronts/`.
 | UAT Fix | PASS | current source fixes passed frontend UAT and API/Cloud regression reruns |
 | SEO | PASS (SOURCE) | truthful CTA targets; only `/` indexable in Nginx source; deployed headers unverified |
 | AEO/GEO | PARTIAL | supported product answers and navigation revalidated; public locale/crawler/engine citation data unmeasured |
-| Check | PARTIAL | source-line scan (0 files >=600 lines), builds/regressions, Agent tests 78/78, extension validation and locale catalog key parity pass; translation review, accessibility and platform/environment limits remain open |
+| Check | PARTIAL | source-line scan (0 files >=600 lines), builds/regressions, Agent tests 78/78, extension validation and locale catalog key parity pass; public landing/login are localized and passed local Axe WCAG 2.1 A/AA scans in en/es/pt at the default theme; broader translation/accessibility and platform/environment limits remain open |
 | Remediation | PASS | repository-wide line inventory reduced from 16 to 0 over-limit files; Alerting and UI Automation also split and verified |
 | Delivery | PENDING | final version, version-prefixed commit(s), PR review/merge controls, remote `main` SHA/version readback |
 Confirmed commitments: 4; locally implemented/reviewed: 4; verified delivered to remote target: 0/4. PR #42 remains OPEN/DRAFT. Owner approved managed-AI migration inclusion/merge through normal DB procedure; no database connection or migration execution occurred.
 Open: full translation/content review; deployed private-route header verification; rendered accessibility/contrast and Electron widget acceptance; landing/agent limitations; PHDK tool verification; normal PR delivery and remote verification.
-SIGUIENTE PASO: cerrar los hallazgos de accesibilidad y revisar la cobertura semántica de traducciones con evidencia disponible; documentar los límites que dependen de entorno desplegado; después completar Check y preparar la entrega normal del PR.
+SIGUIENTE PASO: ampliar la revisión de traducción y accesibilidad a las rutas activas restantes, documentar los límites que dependen del entorno desplegado, completar Check y preparar la entrega normal del PR.

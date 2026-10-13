@@ -5,11 +5,14 @@ import { Menu, X, Bot, LogIn, UserPlus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
+import { useTranslation } from '@/context/I18nContext';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const { isAuthenticated, user, logout } = useAuth();
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -21,9 +24,9 @@ export const Navbar = () => {
     }, []);
 
     const navLinks = [
-        { name: "Features", href: "#features" },
-        { name: "Architecture", href: "#architecture" },
-        { name: "Use Cases", href: "#use-cases" },
+        { name: t('landing.navFeatures'), href: "#features" },
+        { name: t('landing.architecture'), href: "#architecture" },
+        { name: t('landing.navUseCases'), href: "#use-cases" },
     ];
 
     const handleDashboardClick = () => {
@@ -35,7 +38,7 @@ export const Navbar = () => {
     };
 
     return (
-        <nav
+        <nav aria-label={t('landing.primaryNavigation')}
             className={cn(
                 "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent",
                 scrolled ? "glass border-border/10" : "bg-transparent"
@@ -51,7 +54,10 @@ export const Navbar = () => {
                             <span className="font-bold text-xl tracking-tight text-foreground">Keledon</span>
                         </Link>
                         <VersionActions />
-                <ThemeControls />
+                        <div className="flex items-center gap-2">
+                            <ThemeControls />
+                            <LanguageSwitcher />
+                        </div>
                     </div>
 
                     <div className="hidden md:block">
@@ -72,7 +78,7 @@ export const Navbar = () => {
                                         onClick={handleDashboardClick}
                                         className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                                     >
-                                        Dashboard
+                                        {t('landing.navDashboard')}
                                     </button>
                                     <div className="flex items-center gap-3 pl-4 border-l border-border/20">
                                         <div className="flex items-center gap-2">
@@ -89,7 +95,7 @@ export const Navbar = () => {
                                             onClick={logout}
                                             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                                         >
-                                            Logout
+                                            {t('landing.navLogout')}
                                         </button>
                                     </div>
                                 </>
@@ -100,14 +106,14 @@ export const Navbar = () => {
                                         className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                                     >
                                         <LogIn className="w-4 h-4" />
-                                        Login
+                                        {t('landing.navLogin')}
                                     </Link>
                                     <Link
                                         to="/login"
                                         className="flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                                     >
                                         <UserPlus className="w-4 h-4" />
-                                        Sign Up
+                                        {t('landing.navSignUp')}
                                     </Link>
                                 </>
                             )}
@@ -116,7 +122,11 @@ export const Navbar = () => {
 
                     <div className="md:hidden">
                         <button
+                            type="button"
                             onClick={() => setIsOpen(!isOpen)}
+                            aria-expanded={isOpen}
+                            aria-controls="public-mobile-menu"
+                            aria-label={isOpen ? t('landing.closeMenu') : t('landing.openMenu')}
                             className="text-muted-foreground hover:text-foreground"
                         >
                             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -126,8 +136,7 @@ export const Navbar = () => {
             </div>
 
             {/* Mobile menu */}
-            {isOpen && (
-                <div className="md:hidden glass border-b border-border/10">
+            <div id="public-mobile-menu" hidden={!isOpen} className="md:hidden glass border-b border-border/10">
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                         {navLinks.map((link) => (
                             <a
@@ -146,13 +155,13 @@ export const Navbar = () => {
                                     onClick={() => { handleDashboardClick(); setIsOpen(false); }}
                                     className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5"
                                 >
-                                    Dashboard
+                                    {t('landing.navDashboard')}
                                 </button>
                                 <button
                                     onClick={() => { logout(); setIsOpen(false); }}
                                     className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5"
                                 >
-                                    Logout
+                                    {t('landing.navLogout')}
                                 </button>
                             </>
                         ) : (
@@ -163,7 +172,7 @@ export const Navbar = () => {
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <LogIn className="w-4 h-4" />
-                                    Login
+                                    {t('landing.navLogin')}
                                 </Link>
                                 <Link
                                     to="/login"
@@ -171,13 +180,12 @@ export const Navbar = () => {
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <UserPlus className="w-4 h-4" />
-                                    Sign Up
+                                    {t('landing.navSignUp')}
                                 </Link>
                             </div>
                         )}
                     </div>
-                </div>
-            )}
+            </div>
         </nav>
     );
 };
