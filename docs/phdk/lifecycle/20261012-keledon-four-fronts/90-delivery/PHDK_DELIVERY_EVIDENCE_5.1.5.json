@@ -1,0 +1,44 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto: four confirmed KELEDON fronts, maximum applicable code conformity",
+  "target_branch": "main",
+  "expected_version": "5.1.5",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "merged_commit_sha": "fc114099cd805dd90d8ba1f3bdcddbcb54d464ba",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/49",
+  "checks": {
+    "lint": {
+      "status": "BLOCKED",
+      "evidence": "Targeted ESLint passes for the changed UAT test; services/web has 0 errors/134 warnings and landing ESLint exits 0. API-wide npx eslint \"src/**/*.ts\" produced no output during the bounded final retry."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "Services web production build and typecheck pass; API and Cloud production TypeScript builds pass."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "API, Cloud, services/web and landing builds pass; Electron Windows x64 Squirrel package generated at 5.1.5."
+    },
+    "focused_tests": {
+      "status": "PASS",
+      "evidence": "API regression 10/10 and AI-unavailable tests 3/3; Browser security 5/5; diagnostics 18/18; SEO 1/1; Cloud bcrypt/UUID smoke pass."
+    },
+    "uat": {
+      "status": "PASS",
+      "evidence": "On verified remote main fc114099cd805dd90d8ba1f3bdcddbcb54d464ba, npm run test:uat passed 1/1 suite and nine synthetic browser journeys using the local production SPA, Edge/Chromium, intercepted API and blocked external network. Screenshots and JSON evidence are in docs/phdk/evidence. This is not persistence or native device/audio acceptance."
+    },
+    "delivery": {
+      "status": "PASS",
+      "evidence": "Product PR #49 merged; verified remote origin/main SHA fc114099cd805dd90d8ba1f3bdcddbcb54d464ba, version 5.1.5, all five package/lock roots aligned."
+    },
+    "scope_and_checks": {
+      "status": "BLOCKED",
+      "evidence": "Persisted CRUD/migration, production authorization, live device/audio, broad accessibility/localization, deployed SEO/AEO remain unverified. Production npm audit --omit=dev reports 0 vulnerabilities in all five packages; moderate findings remain in development/build trees."
+    },
+    "completion_gate": {
+      "status": "BLOCKED",
+      "evidence": "Fail-closed while API-wide lint and scope acceptance remain BLOCKED."
+    }
+  }
+}
