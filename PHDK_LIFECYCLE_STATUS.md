@@ -1,5 +1,13 @@
 # Lifecycle status — 20261012-keledon-four-fronts
 
+## Current Auto continuation — candidate 5.1.14 (2026-10-13)
+
+Current branch: `fix/phdk-admin-crud-i18n`, based on `origin/main` `84bfdb901068f4fab12fa88e0b5b3cd3394b7180`. Candidate local checks pass: web typecheck/build, Spanish synthetic SPA UAT 1/1, API regressions 14/14, locale parity 452/452, PHDK coherence 52/52; ESLint has 0 errors and 9 warnings. The Companies/Brands/Teams/Users/Vendors screens are localized in en/es/pt. Product PR and remote-main readback are pending.
+
+Lifecycle board: Preflight REUSED; Capture REUSED; Plan REUSED; PMO REUSED; Integration Review COMPLETED (candidate); UAT COMPLETED (scoped pass); UAT Fix COMPLETED (bounded source refinements and retest); SEO REUSED; AEO/GEO REUSED; Check COMPLETED (source checks); Remediation COMPLETED (in-scope copy/a11y refinements); Delivery RUNNING.
+
+Persisted CRUD/migration, native device/audio, broader accessibility/localization and deployed SEO/AEO remain open, so overall Auto is **PARTIALLY DELIVERED**. See `PHDK_CHECK_REPORT.md`, `UAT_REPORT.md`, and `PHDK_COMMITMENT_COVERAGE.md`; final delivery evidence awaits the product PR and remote-main verification.
+
 ## Current Auto continuation — 5.1.11 (2026-10-13)
 
 Run `20261013-keledon-v5111` completed the source diagnostics upgrade. Product PR [#66](https://github.com/tuyoisaza/keledon/pull/66) merged; fresh remote `main` readback is `829caf32978571ac439b8236c2cf7605a38aea4b`, with all five app roots at 5.1.11. PHDK v2.50.10 coherence is 52/52; mechanical completion gate passes.

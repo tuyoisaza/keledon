@@ -1,5 +1,9 @@
 # Delivery report — current status PARTIALLY DELIVERED
 
+## 5.1.14 source candidate — delivery pending
+
+Candidate `fix/phdk-admin-crud-i18n` starts from remote `main` `84bfdb901068f4fab12fa88e0b5b3cd3394b7180`; five app package/lock roots are 5.1.14. Local web typecheck/build, API regression 14/14, local synthetic UAT 1/1, locale parity 452/452 and PHDK coherence 52/52 pass. Touched-page ESLint exits 0 with 9 warnings. Product PR, push/merge, and final remote-main SHA/readback are not yet recorded; no deployment is claimed. Current PHDK status remains PARTIALLY DELIVERED. After merge, refresh the completion-gate evidence and append the verified PR/SHA/check rollup here.
+
 ## 5.1.10 delivery readback — 2026-10-13
 
 Product PR [#62](https://github.com/tuyoisaza/keledon/pull/62) merged by squash at `a806617f430d084831a079b92c821a694b925467`; follow-up delivery-record PR [#63](https://github.com/tuyoisaza/keledon/pull/63) merged at `fde8a1f7b5042d333e45a77f4354a2a41f959954`. Fresh fetch/readback verifies current `origin/main` at `fde8a1f7b5042d333e45a77f4354a2a41f959954`; all five application package manifests report 5.1.10. Source commit `ca0f86a90fbb1444799bebd102fc5253218233a8` is included. GitHub showed no required checks or branch protection; both PR status-check rollups are empty. No deployment is claimed.

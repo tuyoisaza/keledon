@@ -1,5 +1,11 @@
 # PHDK Check — latest candidate 5.1.10; acceptance partial
 
+## Latest continuation — candidate 5.1.14
+
+Candidate branch `fix/phdk-admin-crud-i18n` is based on remote `main` `84bfdb901068f4fab12fa88e0b5b3cd3394b7180`; five app package/lock roots align at 5.1.14. Companies, brands, teams, users and vendors now localize their visible CRUD labels, states, feedback, placeholders and controls through the en/es/pt catalogs. Country names follow the active locale. Catalog parity is 452/452. Web typecheck and production build pass; touched-page ESLint exits 0 with 9 warnings. Synthetic local production SPA UAT passes 1/1, exercising Spanish management routes, manager role/company restrictions, provider write-only keys, widget/theme and manual safe diagnostics. The fixture intercepts APIs and blocks external requests. API regression passes 14/14 on this candidate.
+
+CF-005 is reduced for these management routes, not closed repo-wide. Persisted CRUD/migration, native Electron/device/audio, whole-app accessibility/localization, and deployed SEO/AEO remain open. Client-selected CRM/telephony stays tenant-specific; no live vendor was contacted. Candidate delivery PR and remote-main readback are pending. Overall PHDK Auto remains **PARTIALLY DELIVERED**.
+
 ## Latest continuation — candidate 5.1.13
 
 The source pass revalidated the AI administration and provider configuration findings against `origin/main` 1ef39dd. CF-003 prompt administration/runtime service contracts pass the focused isolated API suite (6/6); persisted database execution remains unverified. CF-004 DB-derived provider scope, safe secret projection, rejection of unsupported providers, and forwarding supported Speaches TTS selection to the team update pass the API regression suite (14/14). The provider-management UI now uses the existing English/Spanish/Portuguese catalogs for labels, provider descriptions, key states and feedback. The local provider UAT renders the Spanish route and confirms write-only key replacement/clearing; locale catalogs have matching 404-key sets.

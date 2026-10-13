@@ -1,3 +1,8 @@
+## v5.1.14 — 2026-10-13 (PHDK Auto candidate)
+
+- Localize company, brand, team, user and vendor management screens, including CRUD feedback and vendor type/status labels; display country names in the active locale.
+- Expand local web UAT for the Spanish administration flows; align all five app package and lock roots at 5.1.14.
+
 ## v5.1.13 — 2026-10-13 (PHDK Auto candidate)
 
 - Localize the provider-management interface, provider descriptions, key states, and save feedback in English, Spanish, and Portuguese.

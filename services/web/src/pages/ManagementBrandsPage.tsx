@@ -38,7 +38,7 @@ export default function ManagementBrandsPage() {
             setCompanies(companiesData);
         } catch (error) {
             console.error('Failed to fetch brands:', error);
-            toast.error('Failed to fetch brands');
+            toast.error(t('records.fetchFailedEntity').replace('{entity}', t('records.brandPlural')));
         } finally {
             setLoading(false);
         }
@@ -70,30 +70,30 @@ export default function ManagementBrandsPage() {
         try {
             if (editingBrand) {
                 await updateBrand(editingBrand.id, formData);
-                toast.success('Brand updated successfully');
+                toast.success(t('records.updatedEntity').replace('{entity}', t('records.brand')));
             } else {
                 await createBrand(formData);
-                toast.success('Brand created successfully');
+                toast.success(t('records.createdEntity').replace('{entity}', t('records.brand')));
             }
             setShowForm(false);
             fetchData();
         } catch (error) {
             console.error('Failed to save brand:', error);
-            toast.error('Failed to save brand');
+            toast.error(t('records.saveFailedEntity').replace('{entity}', t('records.brand')));
         } finally {
             setSaving(false);
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this brand?')) return;
+        if (!confirm(t('records.confirmDeleteEntity').replace('{entity}', t('records.brand')))) return;
         try {
             await deleteBrand(id);
-            toast.success('Brand deleted successfully');
+            toast.success(t('records.deletedEntity').replace('{entity}', t('records.brand')));
             fetchData();
         } catch (error) {
             console.error('Failed to delete brand:', error);
-            toast.error('Failed to delete brand');
+            toast.error(t('records.deleteFailedEntity').replace('{entity}', t('records.brand')));
         }
     };
 
@@ -112,8 +112,8 @@ export default function ManagementBrandsPage() {
                 <div className="flex items-center gap-3">
                     <Tag className="w-6 h-6 text-primary" />
                     <div>
-                        <h1 className="text-2xl font-bold">Brands</h1>
-                        <p className="text-muted-foreground">Manage brands for your companies</p>
+                        <h1 className="text-2xl font-bold capitalize">{t('records.brandPlural')}</h1>
+                        <p className="text-muted-foreground">{t('records.manageBrands')}</p>
                     </div>
                 </div>
                 <button
@@ -121,7 +121,7 @@ export default function ManagementBrandsPage() {
                     className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                 >
                     <Plus className="w-4 h-4" />
-                    Add Brand
+                    {t('records.addBrand')}
                 </button>
             </div>
 
@@ -132,11 +132,11 @@ export default function ManagementBrandsPage() {
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search brands..."
+                        placeholder={t('records.searchEntity').replace('{entity}', t('records.brandPlural'))}
                         className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none"
                     />
                 </div>
-                <button onClick={fetchData} className="p-2 hover:bg-muted rounded-lg transition-colors" title="Refresh">
+                <button onClick={fetchData} aria-label={t('records.refresh')} className="p-2 hover:bg-muted rounded-lg transition-colors" title={t('records.refresh')}>
                     <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
                 </button>
             </div>
@@ -149,19 +149,19 @@ export default function ManagementBrandsPage() {
                 ) : filteredBrands.length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground">
                         <Tag className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                        <p>No brands found</p>
+                        <p>{t('records.noEntityFound').replace('{entity}', t('records.brandPlural'))}</p>
                         <button onClick={openCreateForm} className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
-                            Add First Brand
+                            {t('records.addFirst').replace('{entity}', t('records.brand'))}
                         </button>
                     </div>
                 ) : (
                     <table className="w-full">
                         <thead>
                             <tr className="border-b border-border text-left text-sm text-muted-foreground">
-                                <th className="px-4 py-3 font-medium">NAME</th>
-                                <th className="px-4 py-3 font-medium">COMPANY</th>
-                                <th className="px-4 py-3 font-medium">COLOR</th>
-                                <th className="px-4 py-3 font-medium">ACTIONS</th>
+                                <th className="px-4 py-3 font-medium">{t('records.name').toUpperCase()}</th>
+                                <th className="px-4 py-3 font-medium">{t('records.company').toUpperCase()}</th>
+                                <th className="px-4 py-3 font-medium">{t('records.color').toUpperCase()}</th>
+                                <th className="px-4 py-3 font-medium">{t('records.actions').toUpperCase()}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -185,10 +185,10 @@ export default function ManagementBrandsPage() {
                                                 { label: t('records.created'), value: brand.createdAt },
                                                 { label: t('records.updated'), value: brand.updatedAt }
                                             ]} />
-                                            <button onClick={() => openEditForm(brand)} className="p-1.5 hover:bg-muted rounded transition-colors" title="Edit">
+                                            <button onClick={() => openEditForm(brand)} className="p-1.5 hover:bg-muted rounded transition-colors" title={t('records.edit')}>
                                                 <Pencil className="w-4 h-4" />
                                             </button>
-                                            <button onClick={() => handleDelete(brand.id)} className="p-1.5 hover:bg-destructive/10 text-destructive rounded transition-colors" title="Delete">
+                                            <button onClick={() => handleDelete(brand.id)} className="p-1.5 hover:bg-destructive/10 text-destructive rounded transition-colors" title={t('records.delete')}>
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
                                         </div>
@@ -205,7 +205,7 @@ export default function ManagementBrandsPage() {
                     <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold">
-                                {editingBrand ? 'Edit' : 'Add'} Brand
+                                {editingBrand ? t('records.edit') : t('records.add')} {t('records.brand')}
                             </h3>
                             <button type="button" aria-label={t('records.close')} onClick={() => setShowForm(false)} className="p-1 hover:bg-muted rounded">
                                 <X className="w-5 h-5" />
@@ -213,7 +213,7 @@ export default function ManagementBrandsPage() {
                         </div>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label htmlFor="management-brands-field-1" className="block text-sm text-muted-foreground mb-1">Brand Name</label>
+                                <label htmlFor="management-brands-field-1" className="block text-sm text-muted-foreground mb-1">{t('records.brandName')}</label>
                                 <input id="management-brands-field-1"
                                     type="text"
                                     value={formData.name}
@@ -223,21 +223,21 @@ export default function ManagementBrandsPage() {
                                 />
                             </div>
                             <div>
-                                <label htmlFor="management-brands-field-2" className="block text-sm text-muted-foreground mb-1">Company</label>
+                                <label htmlFor="management-brands-field-2" className="block text-sm text-muted-foreground mb-1">{t('records.company')}</label>
                                 <select id="management-brands-field-2"
                                     value={formData.companyId}
                                     onChange={(e) => setFormData({ ...formData, companyId: e.target.value })}
                                     required
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                                 >
-                                    <option value="">Select Company...</option>
+                                    <option value="">{t('records.selectCompany')}</option>
                                     {companies.map(c => (
                                         <option key={c.id} value={c.id}>{c.name}</option>
                                     ))}
                                 </select>
                             </div>
                             <div>
-                                <label htmlFor="management-brands-field-3" className="block text-sm text-muted-foreground mb-1">Color</label>
+                                <label htmlFor="management-brands-field-3" className="block text-sm text-muted-foreground mb-1">{t('records.color')}</label>
                                 <input id="management-brands-field-3"
                                     type="color"
                                     value={formData.color}
@@ -247,11 +247,11 @@ export default function ManagementBrandsPage() {
                             </div>
                             <div className="flex justify-end gap-3 mt-6">
                                 <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors">
-                                    Cancel
+                                    {t('records.cancel')}
                                 </button>
                                 <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium disabled:opacity-50 flex items-center gap-2">
                                     {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-                                    {saving ? 'Saving...' : 'Save'}
+                                    {saving ? t('records.saving') : t('records.save')}
                                 </button>
                             </div>
                         </form>

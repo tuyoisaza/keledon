@@ -1,5 +1,9 @@
 # PHDK Auto completion audit — PARTIALLY DELIVERED
 
+## Current source candidate — 5.1.14
+
+Branch `fix/phdk-admin-crud-i18n` is based on `main` `84bfdb901068f4fab12fa88e0b5b3cd3394b7180`. All five application package/lock roots are 5.1.14. Company, brand, team, user and vendor management screens now use en/es/pt catalogs; country display follows locale. Web typecheck/build pass, locale parity is 452/452, touched-page lint has 0 errors (9 warnings), and synthetic local SPA UAT passes 1/1. API regression passes 14/14. The UAT does not prove persistent writes or server authorization. Product PR and remote-main readback are pending. Overall decision remains **PARTIALLY DELIVERED** because persisted CRUD/migration, native device/audio, broad accessibility/localization and deployed SEO/AEO are unresolved. Client integrations remain customer-selected and no live vendor was contacted.
+
 ## Latest source delivery — 5.1.13
 
 Product PR [#70](https://github.com/tuyoisaza/keledon/pull/70) merged by squash at `45be8d82de1f402ee6199a19cd4fa5083bb9ecb1`; all five app roots report 5.1.13. Provider-management copy now uses the existing en/es/pt catalogs; its Spanish UAT verifies rendering and write-only key behavior. Web typecheck/build/UAT pass, API regression passes 14/14, AI administration contracts pass 6/6, and locale key parity passes 404/404. This narrows CF-005 for one route. It does not change the overall decision: persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO remain unverified. Client-selected CRM/telephony has no universal provider acceptance case. Final remote-main readback and mechanical gate follow this documentation reconciliation.
