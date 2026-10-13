@@ -11,6 +11,7 @@ Date: 2026-10-13 America/Mexico_City. Source/UAT candidate `7df6f77dd47670cfa767
 - `git diff --check`; tracked-source line inventory 0 at/above 600 lines.
 - Dynamic API diagnostic route registry fails closed to manual-only; deep health is persisted-role protected; only explicit safe probes can run on click; public health remains liveness-only; errors/evidence are sanitized and correlated.
 - Screenshot review found and fixed the floating event panel covering the diagnostics route. The final UAT screenshot shows the page clear and the test asserts the duplicate panel is absent there.
+- SEO-F01 is now fixed in source: the root location serves the existing HTML file without switching into the private-route location; the private SPA fallback keeps `noindex, nofollow`. NGINX config regression passes 1/1 and the web production build passes; deployment headers remain unverified.
 
 ## PARTIAL / OPEN
 

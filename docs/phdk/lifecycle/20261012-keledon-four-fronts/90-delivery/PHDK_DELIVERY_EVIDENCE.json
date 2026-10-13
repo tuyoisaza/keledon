@@ -21,7 +21,7 @@
     },
     "focused_tests": {
       "status": "PASS",
-      "evidence": "API health/role/correlation 12/12; web diagnostics/debug-mode/version-actions 18/18; Cloud regression 8/8; local production-SPA UAT 1/1."
+      "evidence": "API health/role/correlation 12/12; web diagnostics/debug-mode/version-actions 18/18; nginx SEO config 1/1; Cloud regression 8/8; local production-SPA UAT 1/1."
     },
     "uat": {
       "status": "PASS",
