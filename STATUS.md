@@ -4,7 +4,7 @@
 
 - Source review identified and fixed generic CRUD acceptance of client-supplied `passwordHash` on user create/update; only the authentication flow owns password hashing.
 - Regression coverage rejects create/update attempts by company managers and create attempts by superadmin. API typecheck and 11/11 regressions pass; full typed ESLint exits 0 with 0 errors/139 warnings.
-- Candidate is on `fix/reject-client-supplied-password-hashes`; source version 5.1.8 is prepared for a normal PR. No remote merge/deployment is claimed yet.
+- Candidate is on `fix/phdk-5.1.8-crud-password-hash`; source version 5.1.8 is prepared for a normal PR. No remote merge/deployment is claimed yet.
 - Overall Auto remains PARTIALLY DELIVERED pending persistence/runtime, native Electron/audio, broad accessibility/localization and deployed SEO/AEO evidence.
 - SIGUIENTE PASO: complete release build and diff review, push the versioned branch, open/update its PR, and verify the merge and remote `main` readback under PHDK controls.
 

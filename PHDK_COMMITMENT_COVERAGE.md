@@ -2,7 +2,7 @@
 
 ## Candidate follow-up — 2026-10-13, 5.1.8
 
-CMT-004 source review caught the CRUD `passwordHash` input gap. Candidate `fix/reject-client-supplied-password-hashes` rejects client credential hashes for admin, coordinator and superadmin; regression and API typecheck pass, full API lint exits 0 (0 errors/139 warnings). This version is not remotely delivered yet. All other outstanding acceptance remains as recorded below; the overall goal is still PARTIALLY DELIVERED.
+CMT-004 source review caught the CRUD `passwordHash` input gap. Candidate `fix/phdk-5.1.8-crud-password-hash` rejects client credential hashes for admin, coordinator and superadmin; regression and API typecheck pass, full API lint exits 0 (0 errors/139 warnings). This version is not remotely delivered yet. All other outstanding acceptance remains as recorded below; the overall goal is still PARTIALLY DELIVERED.
 
 Current delivery: PR #54 merged; remote `main` is `a854ca7634307538305cd9b5ad1f91f8a066b1a1`, product 5.1.7. PHDK v2.50.10 is installed and delivered; all 52 manifest mappings pass coherence. Earlier PRs #51–53 are merged. No open PRs were returned by GitHub at final reconciliation.
 

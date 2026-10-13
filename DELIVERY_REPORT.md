@@ -2,7 +2,7 @@
 
 ## 2026-10-13 — 5.1.8 security candidate in progress
 
-The current in-scope CRUD review removed caller control of `passwordHash` in user creation and update. Candidate branch: `fix/reject-client-supplied-password-hashes`; version 5.1.8 is aligned across all five application package/lock roots. API regression 11/11, TypeScript and typed ESLint pass (0 errors/139 warnings). Owner approval for the restrictive role/tenant policy was already given in this conversation; the candidate behavior is covered by that scope. PR, merge and remote `main` readback are not yet complete. Overall Auto stays PARTIALLY DELIVERED.
+The current in-scope CRUD review removed caller control of `passwordHash` in user creation and update. Candidate branch: `fix/phdk-5.1.8-crud-password-hash`; version 5.1.8 is aligned across all five application package/lock roots. API regression 11/11, TypeScript and typed ESLint pass (0 errors/139 warnings). Owner approval for the restrictive role/tenant policy was already given in this conversation; the candidate behavior is covered by that scope. PR, merge and remote `main` readback are not yet complete. Overall Auto stays PARTIALLY DELIVERED.
 
 ## 2026-10-13 — 5.1.7 merged; acceptance remains partial
 

@@ -2,7 +2,7 @@
 
 ## Current continuation — candidate 5.1.8
 
-2026-10-13; PHDK 2.50.10. CMT-004 source audit found the generic user CRUD credential-hash injection gap; guard and regression remediation are complete locally. API regressions 11/11, typecheck and full typed lint (0 errors/139 warnings) pass. Branch `fix/reject-client-supplied-password-hashes`; versioned PR/remote readback are pending. CMT-001..004 stay confirmed; portfolio remains PARTIALLY DELIVERED pending persisted CRUD/runtime, native Electron/audio, broad accessibility/localization, deployed SEO/AEO. No deployment or production DB operation is claimed.
+2026-10-13; PHDK 2.50.10. CMT-004 source audit found the generic user CRUD credential-hash injection gap; guard and regression remediation are complete locally. API regressions 11/11, typecheck and full typed lint (0 errors/139 warnings) pass. Branch `fix/phdk-5.1.8-crud-password-hash`; versioned PR/remote readback are pending. CMT-001..004 stay confirmed; portfolio remains PARTIALLY DELIVERED pending persisted CRUD/runtime, native Electron/audio, broad accessibility/localization, deployed SEO/AEO. No deployment or production DB operation is claimed.
 
 Historical last-main snapshot follows.
 
