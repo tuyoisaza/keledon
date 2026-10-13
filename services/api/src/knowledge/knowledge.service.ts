@@ -5,12 +5,18 @@ import {
 } from '@nestjs/common';
 import { KnowledgeBase, KnowledgeDocument } from '@prisma/client';
 import { QdrantClient } from '@qdrant/qdrant-js';
-import { createHash } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateKnowledgeBaseDto } from './dto/create-knowledge-base.dto';
 import { CreateKnowledgeDocumentDto } from './dto/create-knowledge-document.dto';
 import { IngestKnowledgeBaseDto } from './dto/ingest-knowledge-base.dto';
 import { SearchKnowledgeDto } from './dto/search-knowledge.dto';
+import {
+  chunkContent,
+  getChunkPointId,
+  normalizeChunkOverlap,
+  normalizeChunkSize,
+  textToVector,
+} from './knowledge-vector-utils';
 
 type KnowledgeMetadata = Record<string, unknown>;
 
@@ -132,8 +138,8 @@ export class KnowledgeService {
       );
     }
 
-    const chunkSize = this.normalizeChunkSize(requestBody.chunkSize);
-    const chunkOverlap = this.normalizeChunkOverlap(
+    const chunkSize = normalizeChunkSize(requestBody.chunkSize);
+    const chunkOverlap = normalizeChunkOverlap(
       requestBody.chunkOverlap,
       chunkSize,
     );
@@ -149,21 +155,17 @@ export class KnowledgeService {
         document.metadata,
         knowledgeBase.companyId,
       );
-      const chunks = this.chunkContent(
-        document.content,
-        chunkSize,
-        chunkOverlap,
-      );
+      const chunks = chunkContent(document.content, chunkSize, chunkOverlap);
 
       vectorIdsByDocument.set(document.id, []);
 
       chunks.forEach((chunkText, index) => {
         const chunkId = `${document.id}:chunk:${index + 1}`;
-        const pointId = this.getChunkPointId(document.id, index);
+        const pointId = getChunkPointId(document.id, index);
         vectorIdsByDocument.get(document.id)?.push(pointId);
         points.push({
           id: pointId,
-          vector: this.textToVector(chunkText),
+          vector: textToVector(chunkText),
           payload: {
             knowledgeBaseId: knowledgeBase.id,
             documentId: document.id,
@@ -268,7 +270,7 @@ export class KnowledgeService {
     const scoreThreshold =
       typeof body.scoreThreshold === 'number' ? body.scoreThreshold : undefined;
     const knowledgeBases = await this.resolveSearchKnowledgeBases(body);
-    const searchVector = this.textToVector(body.query.trim());
+    const searchVector = textToVector(body.query.trim());
     const filter = this.buildFilter(body);
     const aggregatedResults: Array<Record<string, unknown>> = [];
 
@@ -462,45 +464,6 @@ export class KnowledgeService {
     return must.length > 0 ? { must } : undefined;
   }
 
-  private chunkContent(
-    content: string,
-    chunkSize: number,
-    chunkOverlap: number,
-  ): string[] {
-    const normalized = content.replace(/\r\n/g, '\n').trim();
-    if (!normalized) {
-      return [];
-    }
-
-    const chunks: string[] = [];
-    let start = 0;
-
-    while (start < normalized.length) {
-      const end = Math.min(normalized.length, start + chunkSize);
-      const slice = normalized.slice(start, end).trim();
-      if (slice) {
-        chunks.push(slice);
-      }
-      if (end >= normalized.length) {
-        break;
-      }
-      start = Math.max(end - chunkOverlap, start + 1);
-    }
-
-    return chunks;
-  }
-
-  private textToVector(text: string): number[] {
-    const hash = createHash('sha256').update(text).digest();
-    const vector = new Array<number>(this.vectorSize);
-
-    for (let index = 0; index < this.vectorSize; index += 1) {
-      vector[index] = hash[index % hash.length] / 255;
-    }
-
-    return vector;
-  }
-
   private getCollectionName(knowledgeBaseId: string): string {
     return `knowledge-base-${knowledgeBaseId}`;
   }
@@ -557,35 +520,6 @@ export class KnowledgeService {
     return typeof value === 'string' && value.trim().length > 0
       ? value.trim()
       : undefined;
-  }
-
-  private getChunkPointId(documentId: string, chunkIndex: number): string {
-    const digest = createHash('sha256')
-      .update(`${documentId}:chunk:${chunkIndex + 1}`)
-      .digest('hex')
-      .slice(0, 32);
-
-    return `kbdoc-${digest}`;
-  }
-
-  private normalizeChunkSize(chunkSize?: number): number {
-    if (typeof chunkSize !== 'number' || !Number.isFinite(chunkSize)) {
-      return 900;
-    }
-    return Math.min(4000, Math.max(200, Math.floor(chunkSize)));
-  }
-
-  private normalizeChunkOverlap(
-    chunkOverlap: number | undefined,
-    chunkSize: number,
-  ): number {
-    if (typeof chunkOverlap !== 'number' || !Number.isFinite(chunkOverlap)) {
-      return Math.min(120, Math.floor(chunkSize / 4));
-    }
-    return Math.max(
-      0,
-      Math.min(Math.floor(chunkOverlap), Math.floor(chunkSize / 2)),
-    );
   }
 
   private normalizeLimit(limit?: number): number {

@@ -5,6 +5,7 @@
  */
 
 import { RPAStep, RPAResult } from '../../../contracts/types';
+import { isElementVisible, waitForElementSelector } from './genesys-dom.utils';
 
 export class GenesysAdapter {
   constructor() {
@@ -631,34 +632,12 @@ export class GenesysAdapter {
     };
   }
 
-  /**
-   * Wait for element selector with timeout
-   */
   async waitForElementSelector(selector: string, timeout: number): Promise<Element | null> {
-    const startTime = Date.now();
-    
-    while (Date.now() - startTime < timeout) {
-      const element = document.querySelector(selector);
-      if (element && this.isElementVisible(element)) {
-        return element;
-      }
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
-    
-    return null;
+    return waitForElementSelector(selector, timeout);
   }
 
-  /**
-   * Check if element is visible
-   */
   isElementVisible(element: Element): boolean {
-    if (!(element instanceof HTMLElement)) return false;
-    
-    const style = window.getComputedStyle(element);
-    return style.display !== 'none' && 
-           style.visibility !== 'hidden' && 
-           style.opacity !== '0' &&
-           element.offsetParent !== null;
+    return isElementVisible(element);
   }
 
   /**
