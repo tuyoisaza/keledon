@@ -17,7 +17,7 @@ Goal: complete PHDK Auto for the four owner-confirmed fronts. Telephony/CRM vend
 | SEO | PASS (SOURCE) | Nginx source directives only; deployed headers unverified. |
 | AEO/GEO | PARTIAL | Source/content inventory only; external citation/rank not measured. |
 | Check | PARTIAL/BLOCKED | Landing typecheck now passes. `PHDK_CHECK_REPORT.md` and `CRUD_MATRIX.md` record remaining 99-error full landing lint, incomplete persisted-resource role×surface×operation coverage, actual backend CRUD/persistence UAT, accessibility/localization, Electron and deployed SEO evidence. |
-| Remediation | IN PROGRESS | Fixed landing selection/API serialization/device identity/pairing-code/type defects and removed a false live toggle. Landing build/typecheck pass; rerun final lint, diff and line inventory before commit. |
-| Delivery | IN PROGRESS | Worktree changes are not yet committed or pushed. Then refresh PR #42; review/merge and main SHA/version readback remain required. |
+| Remediation | PARTIAL | Commit `4d98fce` fixes landing selection/API serialization/device identity/pairing-code/type defects and removes a false live toggle. Landing build/typecheck pass; full lint and CRUD acceptance remain open. |
+| Delivery | IN PROGRESS | `4d98fce` is pushed and PR #42's body is refreshed; PR remains OPEN/DRAFT. Normal review/merge and main SHA/version readback remain required. |
 
 Owner-approved managed-AI migration inclusion is in the reviewed code path; no database was connected and no migration was run. Do not describe an open PR as delivered. See `docs/phdk/lifecycle/20261012-keledon-four-fronts/` for stage handoffs and `PHDK_CHECK_REPORT.md` for full open items.

@@ -29,7 +29,7 @@
     },
     "delivery": {
       "status": "PARTIAL",
-      "evidence": "Current worktree remediation is not yet committed or pushed. PR #42 remains OPEN/DRAFT; normal review/merge and main SHA/version readback remain outstanding. No production or database operation occurred."
+      "evidence": "Commit 4d98fce is pushed to chore/phdk-install-v2.50.8 and the PR #42 body is refreshed. PR remains OPEN/DRAFT; normal review/merge and main SHA/version readback remain outstanding. No production or database operation occurred."
     }
   }
 }

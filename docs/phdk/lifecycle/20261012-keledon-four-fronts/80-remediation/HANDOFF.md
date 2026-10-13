@@ -65,3 +65,7 @@ SIGUIENTE PASO: cerrar los hallazgos restantes de Check, actualizar el PR con co
 Candidate 5.1.0. Added protected dynamic API diagnostics, safe explicit probes, correlation IDs, and shared sanitized web/landing diagnostics. Split the Cloud decision-flow normalizer into `decision-engine.flow-types.ts`; current physical-line inventory is 0 files at/above 600. API C13 build and focused tests pass (12/12); web typecheck/build and focused diagnostics tests pass (18/18); landing build and Cloud C13/regression 8/8 pass. Full web lint: 0 errors/135 warnings; scoped API lint: 0 errors/2 warnings; scoped Cloud lint clean. Full landing typecheck remains limited by legacy errors in untouched files. Check is partial for translation depth, rendered accessibility/Electron, deployed SEO headers and standard PR delivery.
 
 SIGUIENTE PASO: commit/push 5.1.0 and refresh PR #42, then complete remaining Check findings and normal review/merge/main readback.
+
+## 2026-10-13 Check remediation addendum
+
+Commit `4d98fce` is now pushed and PR #42 body is refreshed. Landing typecheck/build pass; full landing lint reports 99 errors and 8 warnings. Landing device identity and launch pairing-code flows were repaired, including removal of the hard-coded fake code. The CRUD inventory now explicitly marks omitted persisted-resource families and full role × surface × operation coverage BLOCKED. Current canonical status is in root `PHDK_CHECK_REPORT.md`; no browser UAT was run during Check. PR remains OPEN/DRAFT and delivery is not complete.
