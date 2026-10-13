@@ -1,8 +1,23 @@
-# Preflight — KELEDON
-Run: 20261012-keledon-four-fronts; date: 2026-10-12 America/Mexico_City.
-Baseline: 52537140e67d0d6c05486fa13837df3eb5316fb3.
-PASS: PHDK 2.50.8, 50 manifest mappings and root AGENTS.md match SHA-256 of canonical b7a14623fdaef0db6f0becd856f812c6652efcc3; fresh git ls-remote confirms upstream main. No sync needed.
-Correct repository: C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON. Pull and install preceded Auto.
-Capabilities: git/gh repository reader AVAILABLE and used; design:design-system and design:accessibility-review AVAILABLE/read; primary-doc web reader AVAILABLE when needed; bounded in-session PMO workers AVAILABLE after owner confirmation. Core DEVSECOPS security guidance available, no dedicated security skill required. Browser limited to scoped local UAT; no live paid/provider operations. No owner-disabled capability.
-Controls: CLAUDE.md, .floor-restore-lock.md, historical queue reviewed; preserve immutable docs/specs/ and no parallel floor restoration. No active git hooks found; no tracked Actions workflows remain; never restore deleted bots. PR35 actually merged; PR38-40 open, applicability pending. No secret files read.
-Installation gate PASS; source widget FAIL recorded separately. Product runtime remains unverified.
+# PHDK Preflight — KELEDON
+
+Run: `20261012-keledon-four-fronts` continuation · 2026-10-13 America/Mexico_City.
+Repository: `C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON`.
+
+## Installation and integrity
+
+- Canonical: PHDK `main` at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`, version 2.50.10.
+- Installed: `phdk-standards/`, version 2.50.10; all 52 canonical manifest mappings match byte-for-byte.
+- Native instructions: one root `AGENTS.md` managed block, matching `PHDK_NATIVE_RULES.md` from that canonical commit.
+- The conservative sync added only the new manifest-owned `README.md` and `CHANGELOG.md` inputs and refreshed PHDK-owned mappings; no obsolete manifest paths existed. No files outside `phdk-standards/` or the marked managed block were changed by the sync.
+- `python phdk-standards/scripts/phdk_coherence_check.py` PASS: v2.50.10, 52 mappings.
+- Installed `phdk_completion_gate.py` smoke test PASS against the actual KELEDON `origin/main` SHA `e305d3d817ff20ed52ed889315e2d618127d7d9f`, reading `services/web/package.json` property `version` as 5.1.2. This isolated parser/source proof is not the complete PHDK Auto delivery gate; scoped acceptance findings remain separately recorded.
+
+## Relevant capabilities and controls
+
+- Git/GitHub reader AVAILABLE and used for canonical fetch, PR checks and independent remote readback.
+- Local source review and deterministic regression tests AVAILABLE. `design:accessibility-review` was available/read in the original preflight; no new browser access was used during this Check/remediation continuation.
+- Core PHDK DEVSECOPS and CRUD standards are installed and used; no dedicated external security skill was required.
+- Owner-confirmed scope remains the four KELEDON fronts in order. Voice and CRM providers vary by client. Restrictive DB-derived roles/tenants and write-only secrets remain the approved policy.
+- `CLAUDE.md` and `.floor-restore-lock.md` were reread. No floor restoration work was started. No secret values, live database, provider write, production probe or deployment was used.
+
+Installation preflight: **PASS**. Product acceptance/runtime gaps are not converted to passes by an installation sync.

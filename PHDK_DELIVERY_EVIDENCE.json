@@ -4,7 +4,8 @@
   "target_branch": "main",
   "expected_version": "5.1.2",
   "version_file": "services/web/package.json",
-  "merged_commit_sha": null,
+  "version_property": "version",
+  "merged_commit_sha": "e305d3d817ff20ed52ed889315e2d618127d7d9f",
   "pr_url": "https://github.com/tuyoisaza/keledon/pull/42",
   "checks": {
     "lint": {
@@ -28,8 +29,16 @@
       "evidence": "Candidate 0d98f2812d8eb88a8626101f81f9bf9ca6d52de0: local production-SPA Edge UAT 1/1 on 5.1.2, synthetic Company Co/Other Co fixtures, mocked API and external network blocked; persistence, native and broad app acceptance remain unverified."
     },
     "delivery": {
+      "status": "PASS",
+      "evidence": "PR #42 merged by merge commit; verified remote origin/main e305d3d817ff20ed52ed889315e2d618127d7d9f, all five app package and lock roots at 5.1.2, and source commit 0d98f2812d8eb88a8626101f81f9bf9ca6d52de0 is an ancestor of main."
+    },
+    "scope_and_checks": {
       "status": "BLOCKED",
-      "evidence": "Candidate is pushed at cf9be2fe6951c1dbaad3ab02189583fcf0d0658f; PR #42 is OPEN and ready for review. No reviews/checks are reported. Delivery remains blocked until integration and remote main version/SHA readback."
+      "evidence": "Persistent CRUD/migration behavior, native Electron/device/audio, broad app accessibility/localization and deployed SEO/AEO remain unverified. PHDK v2.50.10 tool fixes and installed manifest checks pass; these do not substitute for product/runtime acceptance."
+    },
+    "completion_gate": {
+      "status": "BLOCKED",
+      "evidence": "Installed v2.50.10 gate passes an isolated smoke against the actual remote SHA and services/web/package.json.version. The full evidence gate remains BLOCKED because scope_and_checks is honestly marked BLOCKED for unverified acceptance items."
     }
   }
 }

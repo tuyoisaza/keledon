@@ -32,6 +32,10 @@ PASS means the named source contract only; it never asserts served200, crawler e
 |SEO-24|Search Console|BLOCKED|No authorized real connected coverage/query evidence.|
 |SEO-25|Links/reputation|BLOCKED|No measured backlink/mention profile; source social placeholders are not reputation evidence.|
 
+## Current source revalidation — candidate 5.1.2
+
+This revalidation supersedes the stale source findings above. The merged `services/web/nginx.conf` returns `X-Robots-Tag: index, follow` only for `/` and `noindex, nofollow` for other SPA routes (SEO-02 PASS in source; deployed response remains unverified). The public hero/CTA/footer use `/login` or `#architecture`, and `landing/src/components/landing/ArchitectureSection.tsx` defines the matching section ID (SEO-19 PASS in source). Other rows retain their source/measurement distinctions; this does not certify production headers, crawler rendering or rankings.
+
 ## Source revalidation after root public-copy repair
 
 Root's current Features text now states client compatibility validation, configured cloud models/managed prompts/validated outputs and approved-origin actions; PII-out-of-box/local-optional-cloud/named vendor guarantees removed. UseCases are explicitly example configured workflows, without healthcare/insurance/EMR/Jira/SAP claims. Footer `#` legal/social links removed; real architecture anchor preserved. **SEO-F02 CLOSED in source; SEO-F03 footer portion CLOSED, CTA buttons remain inert at this snapshot.** No live workflow proof inferred. Private client-only noindex limitation F01 remains, and nginx/provider changes are explicitly outside this documentation task. Final source fingerprint above updated; initial historical snapshots retained unchanged, with this revalidation recorded separately.

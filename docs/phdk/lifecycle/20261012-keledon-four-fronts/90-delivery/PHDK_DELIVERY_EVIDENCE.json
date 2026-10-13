@@ -1,38 +1,43 @@
 {
   "version": "1",
-  "goal": "PHDK Auto 4 fronts; vendor-independent code conformance",
+  "goal": "PHDK Auto: four confirmed KELEDON fronts, maximum applicable code conformity",
   "target_branch": "main",
-  "expected_version": "5.1.0",
+  "expected_version": "5.1.2",
   "version_file": "services/web/package.json",
-  "candidate_source_sha": "cc9b94dae7ad89e9133da8e5172d2d907d03f8cb",
-  "merged_commit_sha": null,
-  "remote_main_sha": "52537140e67d0d6c05486fa13837df3eb5316fb3",
+  "merged_commit_sha": "e305d3d817ff20ed52ed889315e2d618127d7d9f",
   "pr_url": "https://github.com/tuyoisaza/keledon/pull/42",
-  "pr_state": "OPEN_DRAFT",
   "checks": {
     "lint": {
-      "status": "PARTIAL",
-      "evidence": "landing full lint passes with 0 errors/0 warnings; existing services/web full lint evidence reports 0 errors/135 warnings."
+      "status": "PASS",
+      "evidence": "services/web full ESLint: 0 errors, 135 warnings; changed services/api files ESLint clean; landing full lint pass."
     },
     "typecheck": {
-      "status": "PARTIAL",
-      "evidence": "landing typecheck passes; API/Cloud/web builds/typecheck pass; agent legacy full-project typecheck remains reported with existing errors."
+      "status": "PASS",
+      "evidence": "services/web and landing typecheck pass; services/api and Cloud TypeScript production builds pass."
     },
     "build": {
       "status": "PASS",
-      "evidence": "landing, API/C13, Cloud/C13 and services/web production builds pass on recorded integration candidate."
+      "evidence": "services/api, Cloud, services/web and landing production/C13 builds pass."
     },
     "focused_tests": {
       "status": "PASS",
-      "evidence": "Cloud regression 8/8; API focused tests 12/12; web diagnostics tests 18/18; SEO source regression 1/1."
+      "evidence": "API regression 10/10 suites; Cloud regression 10/10 suites; web diagnostics/debug-mode/version 18/18; SEO source 1/1."
     },
     "uat": {
-      "status": "PARTIAL",
-      "evidence": "Synthetic diagnostics SPA UAT 1/1 on earlier candidate; current user-management UI/payload retest passes with synthetic Company Co fixtures and mocked CRUD. Real backend persistence, exhaustive role/resource/tenant journeys, Electron, broad a11y/localization and deployed headers remain open."
+      "status": "PASS",
+      "evidence": "Candidate 0d98f2812d8eb88a8626101f81f9bf9ca6d52de0: local production-SPA Edge UAT 1/1 on 5.1.2, synthetic Company Co/Other Co fixtures, mocked API and external network blocked; persistence, native and broad app acceptance remain unverified."
     },
     "delivery": {
-      "status": "PARTIAL",
-      "evidence": "Branch is pushed and PR #42 is OPEN/DRAFT. No merge, required review/check state, target-main readback after merge, database operation, or production deployment."
+      "status": "PASS",
+      "evidence": "PR #42 merged by merge commit; verified remote origin/main e305d3d817ff20ed52ed889315e2d618127d7d9f, all five app package and lock roots at 5.1.2, and source commit 0d98f2812d8eb88a8626101f81f9bf9ca6d52de0 is an ancestor of main."
+    },
+    "scope_and_checks": {
+      "status": "BLOCKED",
+      "evidence": "Persistent CRUD/migration behavior, native Electron/device/audio and broad app accessibility/localization remain unverified. PHDK coherence checker inputs README.md and CHANGELOG.md are absent from its installed manifest; completion gate cannot parse the canonical package.json version field."
+    },
+    "completion_gate": {
+      "status": "BLOCKED",
+      "evidence": "python phdk-standards/scripts/phdk_completion_gate.py --evidence PHDK_DELIVERY_EVIDENCE.json returned BLOCKED: it compared the entire services/web/package.json with expected_version 5.1.2; the repository version source is the JSON version field and the script has no JSON-property support."
     }
   }
 }

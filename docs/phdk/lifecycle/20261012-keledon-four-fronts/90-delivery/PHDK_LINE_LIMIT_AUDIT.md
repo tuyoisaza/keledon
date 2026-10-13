@@ -1,24 +1,5 @@
-# PHDK source line-limit audit
+# PHDK physical line limit audit
 
-Date: 2026-10-13. Candidate: 5.0.54. Rule: source files remain below 600 physical lines. Count includes blank lines; scan includes `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`, excluding dependency and generated directories.
+Date: 2026-10-13. Candidate: 5.1.2. Rule: all application source and test files remain below 600 physical lines, including blank lines. Inventory extensions: `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, `.vue`; generated, dependency and Git directories are excluded.
 
-The current inventory contains **0 files** at or above the limit. API/Cloud analytics, decision, flow, alerting and UI automation plus API calls modules are now modularized and validated; source line-limit remediation passes, while the broader PHDK Check retains documented environment and acceptance findings.
-
-| Lines | File |
-|---:|---|
-| 1301 | `agent/src/background/legacy-background.js` |
-| 1041 | `cloud/src/controllers/analytics.controller.ts` |
-| 1035 | `services/api/src/controllers/analytics.controller.ts` |
-| 1029 | `services/api/src/calls/calls.service.ts` |
-| 1020 | `agent/extension/background/background-service.js` |
-| 966 | `services/api/src/services/real-time-alerting.service.ts` |
-| 919 | `services/api/src/services/decision-engine.service.ts` |
-| 908 | `services/api/src/services/ui-automation.service.ts` |
-| 882 | `services/api/src/services/flow-execution.service.ts` |
-| 861 | `agent/extension/rpa/executor/index.js` |
-| 861 | `agent/src/rpa/executor/index.js` |
-| 826 | `cloud/src/services/real-time-alerting.service.ts` |
-| 794 | `cloud/src/services/flow-execution.service.ts` |
-| 769 | `cloud/src/services/decision-engine.service.ts` |
-| 765 | `src/test/phase5-integration-test.js` |
-| 762 | `cloud/src/services/ui-automation.service.ts` |
+The prior audit counted only tracked files at that snapshot and missed one current Cloud source file at 612 lines. The flow-normalization types/helper now live in `cloud/src/services/decision-engine.flow-types.ts`, reducing `decision-engine.methods.ts` below the limit without changing its call contract. The broader current inventory then found `services/api/test/regression/20-admin-boundaries.test.js` at 719 lines. Its authorization and management-policy suites are now split into `20-admin-boundaries.test.js` and `25-approved-management-policy.test.js` without changing assertions; both suites and the full API regression runner pass. Fresh inventory across tracked and untracked application/test sources: **0 files at or above 600 lines**. Check remains partial for other findings even though the line-limit criterion passes.
