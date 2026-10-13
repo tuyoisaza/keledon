@@ -1,5 +1,11 @@
 # PHDK Check — latest candidate 5.1.10; acceptance partial
 
+## Latest Check — 5.1.11
+
+Product PR #66 is merged at remote `main` `829caf32978571ac439b8236c2cf7605a38aea4b`; all five application roots are 5.1.11. PHDK v2.50.10 coherence passes 52/52. API build/regression 14/14/typed lint (0 errors, 138 warnings); focused API Jest 2 suites/9 tests; Cloud build/regression 8/8; Web typecheck/build/UAT 1/1/diagnostics and version tests 16/16; Browser build/regression 29/29; Landing build/lint pass. Source/test inventory: 1,117 files, zero at/above 600 lines. Post-merge mechanical gate passes.
+
+The prior stale-report diagnostic claims are fixed: actual provider outcomes, flags, budget limits and kill-switch state are measured and allowlisted. Global metering requires the current DB superadmin role. Persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO remain acceptance gaps. Full audit: `docs/phdk/lifecycle/20261013-keledon-v5111/70-check/PHDK_CHECK_REPORT.md`; overall result remains PARTIALLY DELIVERED.
+
 ## Latest integrated candidate check — 2026-10-13
 
 Candidate branch: `v5.1.10-browser-permission-consent`, based on `origin/main` `f5b9e43bd272408b3b5493c6eddfd24fc2095c75`. Five app package/lock roots are aligned at 5.1.10. The user authorized all four fronts; voice/CRM providers remain tenant-selected.
