@@ -13,3 +13,11 @@ Retests: targeted API Jest 2 suites/9 tests; web diagnostics/version 16/16; loca
 - [x] Existing owner security policy preserved.
 
 Next: SEO source review.
+
+## v5.1.12 continuation — completed
+
+`UX-001` P1 (selected light/corporate palette not rendered on descendants) is documented in `UAT_REMEDIATION.md`, fixed in `ca34792`, and independently retested in `UAT_RETEST_REPORT.md` and `UX_UI_REMEDIATION_REPORT.md`. Updated cases, journeys and UAT report are snapshotted here. Remaining acceptance is environment/manual, not a repaired-code claim.
+
+Next: Check, then normal PR delivery.
+
+**SIGUIENTE PASO:** verificar el candidato `ca34792`, reconciliar evidencia y completar entrega normal a `main`.

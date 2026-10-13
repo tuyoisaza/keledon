@@ -34,3 +34,7 @@ Date: 2026-10-13, America/Mexico_City.
 Persisted CRUD/migration acceptance needs an authorized isolated database. Native Electron permission/device/audio and broad accessibility/localization acceptance need their corresponding UI/runtime access. Deployed SEO/AEO needs a deployed target and bounded read-only evidence. These remain unverified; overall PHDK Auto is **PARTIALLY DELIVERED**, not complete.
 
 No production database, customer data, provider request, live CRM/call, or deployment was used. The synthetic SPA UAT intercepts APIs. PR #66 had no hosted checks or review requirement; remote `main` has no branch protection. See `90-delivery/` for merge evidence and the completion gate result.
+
+## 5.1.12 continuation status — 2026-10-13
+
+The Auto goal remains active. Candidate `ca34792` corrects and verifies the palette descendant-token P1 found by UAT. Required UAT journey and UX/UI audit artifacts were added to `50-uat/`; the fix and exact retest are recorded in `60-uat-fix/`. Check passes for the candidate; SEO/AEO source evidence is reused because no public metadata/content routes changed. Normal versioned PR delivery and the post-merge gate are in progress. Persisted DB, native/device/audio, broad manual accessibility/localization and deployed SEO/AEO remain acceptance blockers; no completion claim is made.

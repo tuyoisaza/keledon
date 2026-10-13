@@ -27,6 +27,24 @@ const safeEndpoints=[
  {id:'crm.execute',method:'POST',path:'/crm/execute',purpose:'A client-configured CRM action.',authRequired:true,requiredRoles:['admin'],probeMode:'manual_only',expectedStatuses:[200],sanitizedRequestExample:{action:'[redacted]'},sanitizedSuccessExample:{status:'redacted'},sanitizedErrorExamples:[]},
 ];
 const config={sttProvider:'vosk',ttsProvider:'speaches',llmProvider:'openai',speachesApiUrl:'http://localhost/fixture-stt',ttsVoiceId:'fixture-voice',openaiApiKey:'',openaiApiKeySet:true,deepgramConfig:{apiKey:'',hasApiKey:true},ttsApiKey:'',ttsApiKeySet:true,googleAiApiKey:'',googleAiApiKeySet:false};
+async function inspectTextContrast(page){return page.evaluate(()=>{
+ const parse=value=>{const match=value.match(/rgba?\(([^)]+)\)/);if(!match)return null;const parts=match[1].split(',').map(part=>Number.parseFloat(part));return parts.length>=3?{rgb:parts.slice(0,3),alpha:parts.length>3?parts[3]:1}:null;};
+ const luminance=color=>{const rgb=color.map(value=>value/255).map(value=>value<=0.04045?value/12.92:((value+0.055)/1.055)**2.4);return .2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2];};
+ const contrast=(first,second)=>{const values=[luminance(first),luminance(second)].sort((a,b)=>b-a);return (values[0]+.05)/(values[1]+.05);};
+ const failures=[];
+ for(const el of document.querySelectorAll('body *')){
+  const text=[...el.childNodes].filter(node=>node.nodeType===Node.TEXT_NODE).map(node=>node.textContent).join(' ').replace(/\s+/g,' ').trim();
+  if(!text||text.length<2)continue;
+  const rect=el.getBoundingClientRect(),style=getComputedStyle(el);
+  if(!rect.width||!rect.height||style.visibility==='hidden'||style.display==='none'||Number.parseFloat(style.opacity)===0)continue;
+  let fg=parse(style.color);if(!fg)continue;
+  let bg=[255,255,255];
+  for(let parent=el;parent;parent=parent.parentElement){const background=parse(getComputedStyle(parent).backgroundColor);if(background&&background.alpha>0){bg=background.rgb.map((value,index)=>value*background.alpha+bg[index]*(1-background.alpha));if(background.alpha>=.999)break;}}
+  const size=Number.parseFloat(style.fontSize),weight=Number.parseInt(style.fontWeight,10)||400,large=size>=24||(size>=18.66&&weight>=600),ratio=contrast(fg.rgb,bg);
+  if(ratio<(large?3:4.5))failures.push({text:text.slice(0,72),tag:el.tagName,className:typeof el.className==='string'?el.className:'',ratio:Number(ratio.toFixed(2)),fontPx:size,weight,foreground:fg.rgb.map(Math.round),background:bg.map(Math.round),computedBackground:style.backgroundColor,opacity:style.opacity,ancestorOpacity:getComputedStyle(el.parentElement).opacity});
+ }
+ return failures.slice(0,40);
+});}
 test('local production web UAT with explicitly mocked Company Co API (not real backend acceptance)',{timeout:120000},async()=>{
  await fs.mkdir(evidence,{recursive:true});
  const server=http.createServer(async(req,res)=>{
@@ -109,13 +127,23 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   const reset=await page.evaluate(async()=>({own:localStorage.getItem('keledon-owned'),foreign:localStorage.getItem('foreign-state'),session:sessionStorage.getItem('foreign-session'),caches:await caches.keys()}));
   assert.equal(reset.own,null);assert.equal(reset.foreign,'keep');assert.equal(reset.session,'keep');assert.ok(reset.caches.includes('foreign-cache'));assert.ok(!reset.caches.includes('keledon-owned'));
   await page.waitForFunction(()=>!document.querySelector('[data-action="clear"]').disabled);
-  for (const theme of ['light','corporate','dark']) { await page.getByRole('combobox',{name:'Tema de color',exact:true}).selectOption(theme); await page.waitForFunction(value=>document.documentElement.dataset.keledonTheme===value,theme); assert.equal(await page.evaluate(()=>localStorage.getItem('keledon-theme')),theme); await page.screenshot({path:path.join(evidence,'uat-login-'+theme+'.png')}); }
-  checks.push('UAT-THEME actual dark/light/corporate shell selection and persistence PASS; full-app contrast certification not claimed');
+  const contrastByTheme={},themeTokens={};
+  const expectedPrimary={light:'#0f766e',corporate:'#194185',dark:'#14b8a5'};
+  for (const theme of ['light','corporate','dark']) { await page.getByRole('combobox',{name:'Tema de color',exact:true}).selectOption(theme); await page.waitForFunction(value=>document.documentElement.dataset.keledonTheme===value,theme); await page.waitForTimeout(250); await page.mouse.move(0,0); assert.equal(await page.evaluate(()=>localStorage.getItem('keledon-theme')),theme); themeTokens[theme]=await page.evaluate(()=>{const root=getComputedStyle(document.documentElement),button=getComputedStyle(document.querySelector('button[type="submit"]'));return {theme:document.documentElement.dataset.keledonTheme,primary:root.getPropertyValue('--color-primary').trim(),primaryForeground:root.getPropertyValue('--color-primary-foreground').trim(),buttonPrimary:button.getPropertyValue('--color-primary').trim(),buttonForeground:button.getPropertyValue('--color-primary-foreground').trim(),buttonBg:button.backgroundColor,buttonFg:button.color};}); assert.equal(themeTokens[theme].buttonPrimary,expectedPrimary[theme],`${theme} primary token applies to descendant controls`); assert.equal(themeTokens[theme].buttonBg,theme==='light'?'rgb(15, 118, 110)':theme==='corporate'?'rgb(25, 65, 133)':'rgb(20, 184, 165)',`${theme} button renders its configured primary color`); contrastByTheme[theme]=await inspectTextContrast(page); await page.screenshot({path:path.join(evidence,'uat-login-'+theme+'.png')}); assert.deepEqual(contrastByTheme[theme],[],`${theme} login text contrast failures: ${JSON.stringify(contrastByTheme[theme])}`); }
+  checks.push('UAT-THEME dark/light/corporate tokens reach descendant controls, persistence PASS; automated login text contrast sample has no failures (not a full-app accessibility certification)');
   await page.screenshot({path:path.join(evidence,'uat-login-desktop.png')});
   await page.setViewportSize({width:390,height:844});assert.equal(await row.isVisible(),true);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   await page.screenshot({path:path.join(evidence,'uat-login-mobile.png')});
+  for (const [name,width] of [['200-percent',640],['400-percent',320]]) {
+   await page.setViewportSize({width,height:900});
+   assert.equal(await row.isVisible(),true,`${name} zoom keeps diagnostics visible`);
+   const layout=await page.evaluate(()=>({viewport:innerWidth,document:document.documentElement.scrollWidth,body:document.body.scrollWidth}));
+   assert.ok(layout.document<=layout.viewport && layout.body<=layout.viewport,`${name} zoom horizontal overflow: ${JSON.stringify(layout)}`);
+   await page.screenshot({path:path.join(evidence,`uat-login-${name}.png`)});
+  }
+  await page.setViewportSize({width:1280,height:900});
   await page.goto(origin+'/');await page.locator('[data-testid="version-actions"]').waitFor();assert.equal(await page.locator('[data-testid="version-actions"]').count(),1);
-  checks.push('UAT-002 anonymous home/login, compact sizes, awaited copy/check/revert, failure no false check, owned reset/foreign preservation, 390px layout PASS');
+  checks.push('UAT-002 anonymous home/login, compact sizes, awaited copy/check/revert, failure no false check, owned reset/foreign preservation, 390px layout and 200/400% zoom reflow PASS (viewport simulation)');
   await anonymous.context.close();
   for(const role of ['superadmin','admin','coordinator']){
    const {page,context}=await pageFor(role);await page.goto(origin+'/management/companies');
@@ -126,6 +154,12 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
    await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});assert.equal(await detail.evaluate(el=>el===document.activeElement),true);
    if(role!=='superadmin')assert.equal(await page.locator('tbody tr').first().locator('button').last().isDisabled(),true);
    await page.getByRole('button',{name:'Contraer navegación',exact:true}).click();assert.equal(await page.locator('[data-testid="version-actions"]').count(),1);assert.equal(await page.locator('[data-testid="version-actions"]').isVisible(),true);
+   for (const [name,width] of [['200-percent',640],['400-percent',320]]) {
+    await page.setViewportSize({width,height:900});
+    const layout=await page.evaluate(()=>({viewport:innerWidth,document:document.documentElement.scrollWidth,body:document.body.scrollWidth}));
+    assert.ok(layout.document<=layout.viewport && layout.body<=layout.viewport,`${role} ${name} zoom horizontal overflow: ${JSON.stringify(layout)}`);
+   }
+   await page.setViewportSize({width:1280,height:900});
    await page.screenshot({path:path.join(evidence,'uat-'+role+'-company-details.png')});
    await context.close();
    checks.push('UAT-004 '+role+' frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API');
@@ -203,7 +237,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.equal(deepReads,1);
   await diagnostic.context.close();
   checks.push(`UAT-002 ${appVersion} protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)`);
-  await fs.writeFile(path.join(evidence,'uat-local-web.json'),JSON.stringify({version:appVersion,date:new Date().toISOString(),candidateRevision:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),targetEnvironment:'local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked',origin,provenance:'UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance',checks,apiEvidence:'services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts',realVendorAudioCRM:'NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed'},null,2));
+  await fs.writeFile(path.join(evidence,'uat-local-web.json'),JSON.stringify({version:appVersion,date:new Date().toISOString(),candidateRevision:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),targetEnvironment:'local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked',origin,provenance:'UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance',checks,themeTokens,loginContrastSample:contrastByTheme,apiEvidence:'services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts',realVendorAudioCRM:'NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed'},null,2));
   console.log('PASS local web journeys:',checks.join('\n'));
  }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
 });

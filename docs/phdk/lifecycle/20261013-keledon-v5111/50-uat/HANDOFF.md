@@ -13,3 +13,11 @@ The 5.1.10 Electron renderer startup evidence is retained as historical only; no
 - [ ] Native device/audio, persisted DB, broad accessibility/localization and deployed discovery acceptance remain open.
 
 Next: UAT Fix; resolve all repairable findings and carry only concrete manual/environment gaps forward.
+
+## v5.1.12 continuation — completed
+
+Candidate `ca34792`. The P1 corporate/light descendant-token defect was reproduced, fixed, and retested. UAT now asserts actual button RGB, scans visible login text in all three palettes, and simulates 200/400% widths; all checks pass. Required role/access/story/case/journey/report and UX/UI audit snapshots are present in this folder. The full app remains ACCEPTANCE INCOMPLETE for persisted DB, native device/audio, broad manual accessibility/localization, and deployed SEO/AEO.
+
+Next: UAT Fix, then Check and delivery for the integrated 5.1.12 candidate.
+
+**SIGUIENTE PASO:** corregir la P1 detectada (ya completado en 60-uat-fix) y pasar a Check.

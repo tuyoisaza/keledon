@@ -80,7 +80,7 @@
   }
 }
 /* Shared semantic palettes; every shell uses the same theme contract. */
-:root[data-keledon-theme="light"] {
+:root[data-keledon-theme="light"], :root[data-keledon-theme="light"] * {
   --color-background: #f8fafc; --color-foreground: #0f172a;
   --color-card: #fff; --color-card-foreground: #0f172a;
   --color-popover: #fff; --color-popover-foreground: #0f172a;
@@ -92,7 +92,7 @@
   --color-sidebar: #fff; --color-sidebar-foreground: #334155; --color-sidebar-active: #0f766e;
   --color-success: #15803d;
 }
-:root[data-keledon-theme="corporate"] {
+:root[data-keledon-theme="corporate"], :root[data-keledon-theme="corporate"] * {
   --color-background: #f3f6fc; --color-foreground: #102a43;
   --color-card: #fff; --color-card-foreground: #102a43;
   --color-popover: #fff; --color-popover-foreground: #102a43;

@@ -23,3 +23,9 @@ Run: `20261013-keledon-v5111`. Candidate source: `f809c074b1d5f4427ef016aa7da36d
 - Mechanical completion gate after merge: PASS at remote `main` SHA `829caf32978571ac439b8236c2cf7605a38aea4b`, version 5.1.11.
 
 No production DB, customer/provider data, live CRM/call, or deployment was used. PR #66 has no hosted checks and no review requirement; repository main is unprotected. Mechanical delivery pass does not resolve the open acceptance above.
+
+## Candidate continuation — KELEDON 5.1.12
+
+Candidate commit: `ca34792` on `phdk/theme-palette-descendant-vars`. The PHDK Auto UAT surfaced a reproducible P1: corporate/light semantic tokens did not reach descendant UI controls. Web and Landing now assign the existing palette tokens to descendants; exact button RGB, visible login contrast sample, and 200/400% viewport simulation are covered by the local UAT. The P1 is closed for tested paths. Three-theme login contrast scans have no failures; this is not a full-route accessibility audit.
+
+Validation on this candidate: services/web + Landing builds; Web typecheck, diagnostics/version 18/18, UAT 1/1 and SEO header test 1/1; API lint/build and regression 14/14; Cloud build/regression 8/8; Browser build and CJS regressions 29/29; Landing typecheck/lint; PHDK v2.50.10 coherence 52/52. Remaining acceptance limitations above continue. Candidate delivery PR and post-merge completion gate are pending.
