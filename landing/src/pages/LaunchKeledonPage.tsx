@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check, Download, ArrowRightCircle, ListChecks } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
 import { getKeledons, getVendors, type Keledon, type Vendor } from '@/lib/crud-api';
 import { getBrowserDownloadUrl } from '@/lib/knowledge-source-utils.js';
 import { toast } from 'sonner';
-import { useTranslation } from '@/context/I18nContext';
+import { useTranslation } from '@/context/useTranslation';
 import { requestKeledonLaunch } from '@/lib/launch-protocol.js';
 import { apiJson } from '@/lib/api-fetch';
 

@@ -1,5 +1,5 @@
 import { ThemeControls } from '@/components/common/ThemeControls';
-import { useTranslation } from '@/context/I18nContext';
+import { useTranslation } from '@/context/useTranslation';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
@@ -21,7 +21,7 @@ import {
     Brain,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
 import { VersionActions } from '@/components/common/VersionActions';
 
 interface NavItem {

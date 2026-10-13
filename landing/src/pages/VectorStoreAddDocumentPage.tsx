@@ -4,7 +4,7 @@ import { ArrowLeft, Save, Loader2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { vectorStoreAPI, type PolicyDocument } from '@/lib/vector-store';
 import { getCompanies, getBrands, getTeams, type Company, type Brand, type Team } from '@/lib/crud-api';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
 
 const defaultCategories = [
   { id: 'safety', name: 'Safety', color: '#ef4444', description: 'Safety guidelines and procedures' },

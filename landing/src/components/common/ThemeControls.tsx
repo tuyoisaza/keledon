@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useTranslation } from '@/context/I18nContext';
+import { useTranslation } from '@/context/useTranslation';
 
 type Theme = 'dark' | 'light' | 'corporate';
 const themes: Theme[] = ['dark', 'light', 'corporate'];

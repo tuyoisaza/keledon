@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FileText, Save, RefreshCw } from "lucide-react";
-import { useTranslation } from "@/context/I18nContext";
+import { useTranslation } from "@/context/useTranslation";
 import {
   AiAdminError,
   aiAdminRequest,

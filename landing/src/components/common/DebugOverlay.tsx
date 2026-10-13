@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Bug, ChevronDown, ChevronUp } from 'lucide-react';
-import { useTranslation } from '@/context/I18nContext';
+import { useTranslation } from '@/context/useTranslation';
 import { debugLogger } from '@/lib/debug-logger';
 import { debugCapture } from '@/lib/debug-report';
 

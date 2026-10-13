@@ -20,7 +20,7 @@ class ApiClient {
         return envUrl;
     }
 
-    async request<T = any>(endpoint: string, options: Omit<RequestInit, 'body'> & { body?: unknown } = {}): Promise<T> {
+    async request<T = unknown>(endpoint: string, options: Omit<RequestInit, 'body'> & { body?: unknown } = {}): Promise<T> {
         const url = `${this.baseUrl}${endpoint}`;
         console.log('Making API request to:', url);
 
@@ -58,7 +58,7 @@ class ApiClient {
         });
     }
 
-    async register(userData: any) {
+    async register(userData: Record<string, unknown>) {
         console.log('Attempting registration');
         return this.request('/api/auth/register', {
             body: userData

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Trash2, Edit2, Save, Loader2, Tag, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { getCategories, createCategory, updateCategory, deleteCategory, type Category } from '@/lib/crud-api';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
 
 const defaultCategories = [
   { id: 'safety', name: 'Safety', color: '#ef4444', description: 'Safety guidelines and procedures', companyId: '' },

@@ -97,9 +97,9 @@ export default function ManagementTeamsPage() {
             }
             setShowForm(false);
             fetchData();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Failed to save team:', error);
-            toast.error('Failed to save team: ' + (error?.message || error));
+            toast.error('Failed to save team: ' + (error instanceof Error ? error.message : String(error)));
         } finally {
             setSaving(false);
         }
@@ -146,7 +146,10 @@ export default function ManagementTeamsPage() {
 
     const selectedCompany = companies.find(c => c.id === formData.companyId);
     const companyCountries = selectedCompany?.countries && selectedCompany.countries.length > 0
-        ? selectedCompany.countries 
+        ? selectedCompany.countries.map(({ countryCode }) => ({
+            code: countryCode,
+            name: availableCountries.find(country => country.code === countryCode)?.name || countryCode,
+        }))
         : availableCountries;
 
     return (
@@ -281,11 +284,9 @@ export default function ManagementTeamsPage() {
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                                 >
                                     <option value="">Select Country...</option>
-                                    {companyCountries.map((c: any) => {
-                                        const code = typeof c === 'string' ? c : c.countryCode;
-                                        const country = availableCountries.find(ac => ac.code === code);
-                                        return <option key={code} value={code}>{country?.name || code}</option>;
-                                    })}
+                                    {companyCountries.map(({ code, name }) => (
+                                        <option key={code} value={code}>{name}</option>
+                                    ))}
                                 </select>
                             </div>
                             <div>

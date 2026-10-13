@@ -13,7 +13,7 @@ import {
     VolumeX,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
 import { useBrainSpeechRecognition } from './useBrainSpeechRecognition';
 import { cn } from '@/lib/utils';
 import { readStoredContext, saveStoredContext, storageKeyFor } from '@/lib/brain-chat-storage';

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from "lucide-react";
-import { useTranslation } from '@/context/I18nContext';
+import { useTranslation } from '@/context/useTranslation';
 
 export const HeroSection = () => {
     const { t } = useTranslation();

@@ -1,52 +1,9 @@
-import { useState, useEffect, createContext, useContext, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { recordAuthEvent } from '@/lib/debug-report';
 import { debugLogger } from '@/lib/debug-logger';
-
-export type UserRole = 'guest' | 'user' | 'agent' | 'admin' | 'coordinator' | 'superadmin';
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  avatar?: string;
-  companyId?: string;
-  teamId?: string;
-  companyName?: string;
-  brandName?: string;
-  teamName?: string;
-  createdAt?: string;
-  lastSession?: string;
-  company_id?: string;
-  team_id?: string;
-  company_name?: string;
-  brand_name?: string;
-  team_name?: string;
-  created_at?: string;
-  last_session?: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  loginWithGoogle: () => Promise<void>;
-  signInWithEmail: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  clearLocalSession: () => void;
-  hasRole: (minRole: UserRole) => boolean;
-  isActuallySuperAdmin: boolean;
-  email: string;
-  setEmail: (email: string) => void;
-  password: string;
-  setPassword: (password: string) => void;
-  error: string | null;
-  setError: (error: string | null) => void;
-}
+import { AuthContext, type User, type UserRole } from './auth-context';
 
 const roleHierarchy: UserRole[] = ['guest', 'user', 'agent', 'admin', 'coordinator', 'superadmin'];
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const API_URL = '';
 
@@ -80,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           sessionStorage.removeItem('auth_token');
           recordAuthEvent('session-check', 'failure');
         }
-      } catch (e) {
+      } catch {
         recordAuthEvent('session-check', 'failure');
         debugLogger.log('error', 'Authentication session check failed', { stage: 'session-check' });
       } finally {
@@ -169,12 +126,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-  return context;
 }

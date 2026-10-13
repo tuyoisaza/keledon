@@ -1,5 +1,5 @@
 import { Ear, BrainCircuit, MousePointerClick, ShieldCheck } from "lucide-react";
-import { useTranslation } from '@/context/I18nContext';
+import { useTranslation } from '@/context/useTranslation';
 
 const features = [
     { icon: Ear, title: 'audioFeatureTitle', description: 'audioFeatureDescription' },

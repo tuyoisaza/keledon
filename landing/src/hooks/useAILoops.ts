@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
-import { useSocket } from '../context/SocketContext';
+import { useSocket } from '../context/useSocket';
 
 interface AgentStep {
   id: string;
@@ -8,7 +8,12 @@ interface AgentStep {
   icon: string;
   status: 'idle' | 'active' | 'completed' | 'error';
   duration?: number;
-  data?: any;
+  data?: {
+    transcript?: string;
+    intent?: string;
+    confidence?: number;
+    steps_executed?: number;
+  };
   error?: string;
 }
 
@@ -20,7 +25,7 @@ interface AgentLoop {
   startTime?: Date;
   endTime?: Date;
   confidence?: number;
-  result?: any;
+  result?: { action?: string };
 }
 
 export function useAILoops(socket?: Socket | null) {
@@ -28,17 +33,15 @@ export function useAILoops(socket?: Socket | null) {
   const actualSocket = socket || contextSocket;
   
   const [loops, setLoops] = useState<AgentLoop[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadedSocket, setLoadedSocket] = useState<Socket | null>(null);
+  const loading = Boolean(actualSocket && loadedSocket !== actualSocket);
   const [selectedLoop, setSelectedLoop] = useState<string | null>(null);
 
   useEffect(() => {
     if (!actualSocket) {
       console.warn('useAILoops: No socket connection available');
-      setLoading(false);
       return;
     }
-
-    setLoading(true);
 
     // Request initial data
     actualSocket.emit('dashboard:get-ai-loops');
@@ -46,7 +49,7 @@ export function useAILoops(socket?: Socket | null) {
     // Listen for AI loop updates
     const handleAILoopsUpdate = (data: AgentLoop[]) => {
       setLoops(data);
-      setLoading(false);
+      setLoadedSocket(actualSocket);
     };
 
     const handleAILoopUpdate = (loop: AgentLoop) => {

@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { Menu, X, Bot, LogIn, UserPlus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/context/AuthContext";
-import { useTranslation } from '@/context/I18nContext';
+import { useAuth } from "@/context/useAuth";
+import { useTranslation } from '@/context/useTranslation';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export const Navbar = () => {

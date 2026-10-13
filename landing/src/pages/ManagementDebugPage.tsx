@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Bug, Play, RefreshCw } from 'lucide-react';
 import { API_URL } from '@/lib/config';
 import { debugCapture } from '@/lib/debug-report';
-import { useTranslation } from '@/context/I18nContext';
+import { useTranslation } from '@/context/useTranslation';
 
 type EndpointDiagnostic = {
   id: string;

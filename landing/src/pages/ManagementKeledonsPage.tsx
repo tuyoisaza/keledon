@@ -2,14 +2,24 @@ import { useState, useEffect } from 'react';
 import { Bot, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { getKeledons, createKeledon, updateKeledon, deleteKeledon, getTeams, getCompanies, getBrands, getUsers, type Keledon, type Team, type Company, type Brand } from '@/lib/crud-api';
+import { getKeledons, createKeledon, updateKeledon, deleteKeledon, getTeams, getCompanies, getBrands, getUsers, type Keledon, type Team, type Company, type Brand, type User } from '@/lib/crud-api';
+
+function parseUiInterfaces(value?: string): string[] {
+    if (!value) return [];
+    try {
+        const parsed: unknown = JSON.parse(value);
+        return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : [];
+    } catch {
+        return [];
+    }
+}
 
 export default function ManagementKeledonsPage() {
     const [keledons, setKeledons] = useState<Keledon[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [brands, setBrands] = useState<Brand[]>([]);
-    const [users, setUsers] = useState<any[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [showForm, setShowForm] = useState(false);
@@ -78,7 +88,7 @@ export default function ManagementKeledonsPage() {
             userId: keledon.userId || '',
             role: keledon.role || 'agent',
             autonomyLevel: keledon.autonomyLevel || 5,
-            uiInterfaces: keledon.uiInterfaces ? JSON.parse(keledon.uiInterfaces) : [],
+            uiInterfaces: parseUiInterfaces(keledon.uiInterfaces),
         });
         setEditingKeledon(keledon);
         setShowForm(true);
@@ -89,19 +99,15 @@ export default function ManagementKeledonsPage() {
         setSaving(true);
         try {
             // Build submit data
-            const submitData: any = {
+            const submitData: Parameters<typeof createKeledon>[0] = {
                 name: formData.name,
+                teamId: formData.teamId,
                 email: formData.email,
                 role: formData.role,
-                autonomyLevel: parseInt(formData.autonomyLevel as any) || 5,
+                autonomyLevel: formData.autonomyLevel || 5,
                 countryCode: formData.countryCode || undefined,
                 uiInterfaces: formData.uiInterfaces?.length > 0 ? JSON.stringify(formData.uiInterfaces) : undefined
             };
-            
-            // Add teamId if selected
-            if (formData.teamId) {
-                submitData.teamId = formData.teamId;
-            }
             
             // Add brand if selected
             if (formData.brandId) {
@@ -119,9 +125,9 @@ export default function ManagementKeledonsPage() {
             }
             setShowForm(false);
             fetchData();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Failed to save keledon:', error);
-            toast.error('Failed to save KELEDON: ' + (error?.message || error));
+            toast.error('Failed to save KELEDON: ' + (error instanceof Error ? error.message : String(error)));
         } finally {
             setSaving(false);
         }
@@ -358,7 +364,7 @@ export default function ManagementKeledonsPage() {
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
                                 >
                                     <option value="">Select Country...</option>
-                                    {getCountryOptions().map((c: any) => (
+                                    {getCountryOptions().map((c) => (
                                         <option key={c.countryCode} value={c.countryCode}>{c.countryCode}</option>
                                     ))}
                                 </select>

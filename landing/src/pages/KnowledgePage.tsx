@@ -17,6 +17,10 @@ interface KnowledgeDocument {
     team_id?: string;
 }
 
+function errorMessage(error: unknown, fallback: string): string {
+    return error instanceof Error ? error.message : fallback;
+}
+
 export default function KnowledgePage() {
     const [documents, setDocuments] = useState<KnowledgeDocument[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -99,9 +103,9 @@ export default function KnowledgePage() {
                 brand_id: d.brand_id,
                 team_id: d.team_id,
             })));
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Failed to fetch vector store data', err);
-            setVectorError(err?.message || 'Failed to connect to vector store. Please check configuration.');
+            setVectorError(errorMessage(err, 'Failed to connect to vector store. Please check configuration.'));
             setDocuments([]);
         } finally {
             setIsLoading(false);
@@ -166,9 +170,9 @@ export default function KnowledgePage() {
                 team_id: '',
             });
             fetchVectorStoreData();
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err);
-            alert('Error adding source: ' + err.message);
+            alert('Error adding source: ' + errorMessage(err, 'Unexpected error'));
         } finally {
             setIsUploading(false);
         }
@@ -180,8 +184,8 @@ export default function KnowledgePage() {
         try {
             await vectorStoreAPI.deleteDocument(id);
             fetchVectorStoreData();
-        } catch (err: any) {
-            alert('Error deleting document: ' + err.message);
+        } catch (err: unknown) {
+            alert('Error deleting document: ' + errorMessage(err, 'Unexpected error'));
         }
     };
 

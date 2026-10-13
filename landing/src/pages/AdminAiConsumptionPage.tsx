@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Activity, RefreshCw } from "lucide-react";
-import { useTranslation } from "@/context/I18nContext";
+import { useTranslation } from "@/context/useTranslation";
 import { AiAdminError, aiAdminRequest } from "@/lib/ai-admin";
 
 interface Usage {
@@ -29,13 +29,12 @@ interface Consumption {
 export default function AdminAiConsumptionPage() {
   const { t } = useTranslation();
   const [data, setData] = useState<Consumption | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [refresh, setRefresh] = useState(0);
+  const [loadedRefresh, setLoadedRefresh] = useState(-1);
+  const loading = loadedRefresh !== refresh;
   useEffect(() => {
     const controller = new AbortController();
-    setLoading(true);
-    setError("");
     aiAdminRequest<Consumption>("/consumption?limit=100", {
       signal: controller.signal,
     })
@@ -50,7 +49,7 @@ export default function AdminAiConsumptionPage() {
           );
       })
       .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!controller.signal.aborted) setLoadedRefresh(refresh);
       });
     return () => controller.abort();
   }, [refresh]);
@@ -79,7 +78,7 @@ export default function AdminAiConsumptionPage() {
         <button
           type="button"
           disabled={loading}
-          onClick={() => setRefresh((value) => value + 1)}
+          onClick={() => { setError(""); setRefresh((value) => value + 1); }}
           className="inline-flex gap-2 items-center rounded-md border border-border px-4 py-2"
         >
           <RefreshCw className="w-4 h-4" aria-hidden="true" />

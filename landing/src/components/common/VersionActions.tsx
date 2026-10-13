@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Clipboard, Trash2, Check } from 'lucide-react';
-import { useTranslation } from '@/context/I18nContext';
-import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from '@/context/useTranslation';
+import { useAuth } from '@/context/useAuth';
 import { useLocation } from 'react-router-dom';
 import { copyDebugReport, resetApplicationState } from '@/lib/debug-report';
 import { recordRoute } from '@/lib/debug-report';

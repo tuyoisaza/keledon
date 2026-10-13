@@ -1,4 +1,4 @@
-import { useTranslation } from '@/context/I18nContext';
+import { useTranslation } from '@/context/useTranslation';
 
 export const Footer = () => {
     const { t } = useTranslation();

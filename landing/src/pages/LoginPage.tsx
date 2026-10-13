@@ -3,12 +3,11 @@ import { VersionActions } from '@/components/common/VersionActions';
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Bot, Mail, Lock, Loader2 } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
-import { useTranslation } from '@/context/I18nContext';
+import { useAuth } from '@/context/useAuth';
+import { useTranslation } from '@/context/useTranslation';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { recordAuthEvent } from '@/lib/debug-report';
 
-declare const __APP_VERSION__: string;
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -37,7 +36,7 @@ useEffect(() => {
     try {
       await signInWithEmail(email, password);
       navigate('/dashboard');
-    } catch (_err) {
+    } catch {
       // Error handled in context
     }
   };
@@ -46,7 +45,7 @@ useEffect(() => {
     try {
       await loginWithGoogle();
       navigate('/dashboard');
-    } catch (_err) {
+    } catch {
       // Error handled in context
     }
   };

@@ -1,4 +1,4 @@
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
 import { User, Building2, Tag, Users, Calendar, Clock, Shield } from 'lucide-react';
 
 export default function ProfilePage() {

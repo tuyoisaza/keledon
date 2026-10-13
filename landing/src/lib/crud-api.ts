@@ -7,7 +7,7 @@ import { API_URL } from './config';
 
 const CRUD_API = `${API_URL}/api/crud`;
 
-async function fetchApi(endpoint: string, method = 'GET', body?: any) {
+async function fetchApi(endpoint: string, method = 'GET', body?: unknown) {
     const response = await fetch(`${CRUD_API}${endpoint}`, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -160,8 +160,16 @@ export interface Session {
     metadata?: string;
     createdAt?: string;
     updatedAt?: string;
-    user?: { id: string; name: string };
-    team?: { id: string; name: string };
+    user?: { id: string; name: string; companyId?: string };
+    team?: {
+        id: string;
+        name: string;
+        brand?: {
+            id: string;
+            name: string;
+            company?: { id: string; name: string };
+        };
+    };
 }
 
 export interface BrainChatMessage {
@@ -199,7 +207,7 @@ export interface BrainChatResponse {
     };
 }
 
-async function fetchBrainApi(endpoint: string, method = 'POST', body?: any) {
+async function fetchBrainApi(endpoint: string, method = 'POST', body?: unknown) {
     const response = await fetch(`${API_URL}${endpoint}`, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -280,14 +288,12 @@ export async function getUsers(companyId?: string): Promise<User[]> {
     return users;
 }
 
-export async function createUser(data: { email: string; name?: string; companyId?: string; brandId?: string; teamId?: string; role?: string }): Promise<User> {
-    const { brandId, ...rest } = data;
-    return fetchApi('/users', 'POST', rest);
+export async function createUser(data: { email: string; name?: string; companyId?: string; teamId?: string; role?: string }): Promise<User> {
+    return fetchApi('/users', 'POST', data);
 }
 
-export async function updateUser(id: string, data: { email?: string; name?: string; companyId?: string; brandId?: string; teamId?: string; role?: string }): Promise<User> {
-    const { brandId, ...rest } = data;
-    return fetchApi(`/users/${id}`, 'PUT', rest);
+export async function updateUser(id: string, data: { email?: string; name?: string; companyId?: string; teamId?: string; role?: string }): Promise<User> {
+    return fetchApi(`/users/${id}`, 'PUT', data);
 }
 
 export async function deleteUser(id: string): Promise<void> {
@@ -303,7 +309,9 @@ export async function getKeledons(companyId?: string): Promise<Keledon[]> {
     return keledons;
 }
 
-export async function createKeledon(data: { name: string; teamId: string; brandId?: string; countryCode?: string; userId?: string; email?: string; role?: string; autonomyLevel?: number; uiInterfaces?: string[] }): Promise<Keledon> {
+export type KeledonInput = Omit<Partial<Keledon>, 'id' | 'createdAt' | 'updatedAt'> & Pick<Keledon, 'name' | 'teamId'>;
+
+export async function createKeledon(data: KeledonInput): Promise<Keledon> {
     return fetchApi('/keledons', 'POST', data);
 }
 
@@ -472,20 +480,20 @@ export interface SubAgentTask {
     type: 'flow' | 'read' | 'write' | 'wait';
     flowId?: string;
     stepIds?: string[];
-    parameters?: Record<string, any>;
+    parameters?: Record<string, unknown>;
     priority?: number;
 }
 
 export interface FlowExecutionResult {
     success: boolean;
     flowId: string;
-    extractedData: Record<string, any>;
+    extractedData: Record<string, unknown>;
     executionLog: Array<{
         stepId: string;
         stepType: string;
         status: 'success' | 'failed' | 'skipped';
         duration: number;
-        result?: any;
+        result?: unknown;
         error?: string;
     }>;
     totalDuration: number;
@@ -520,7 +528,7 @@ export async function getAllAgentStatuses(): Promise<SubAgentStatus[]> {
     return response.json();
 }
 
-export async function executeFlow(flowId: string, sessionId: string, parameters?: Record<string, any>): Promise<FlowExecutionResult> {
+export async function executeFlow(flowId: string, sessionId: string, parameters?: Record<string, unknown>): Promise<FlowExecutionResult> {
     const response = await fetch(`${SUBAGENTS_API}/execute/flow`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -530,7 +538,7 @@ export async function executeFlow(flowId: string, sessionId: string, parameters?
     return response.json();
 }
 
-export async function executeParallelFlows(flowIds: string[], sessionId: string, parameters?: Record<string, any>): Promise<FlowExecutionResult[]> {
+export async function executeParallelFlows(flowIds: string[], sessionId: string, parameters?: Record<string, unknown>): Promise<FlowExecutionResult[]> {
     const response = await fetch(`${SUBAGENTS_API}/execute/parallel`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -540,7 +548,7 @@ export async function executeParallelFlows(flowIds: string[], sessionId: string,
     return response.json();
 }
 
-export async function getFlowRunStatus(runId: string): Promise<any> {
+export async function getFlowRunStatus(runId: string): Promise<unknown> {
     const response = await fetch(`${SUBAGENTS_API}/flow-runs/${runId}`);
     if (!response.ok) throw new Error(`Failed to get flow run status: ${response.statusText}`);
     return response.json();
@@ -561,11 +569,7 @@ export interface Vendor {
     updatedAt?: string;
 }
 
-export async function getVendors(teamId: string): Promise<Vendor[]> {
-    return fetchApi(`/vendors/${teamId}`);
-}
-
-export async function createVendor(data: {
+export interface VendorInput {
     teamId: string;
     name: string;
     type: string;
@@ -574,11 +578,17 @@ export async function createVendor(data: {
     password?: string;
     apiKey?: string;
     config?: Record<string, unknown>;
-}): Promise<Vendor> {
+}
+
+export async function getVendors(teamId: string): Promise<Vendor[]> {
+    return fetchApi(`/vendors/${teamId}`);
+}
+
+export async function createVendor(data: VendorInput): Promise<Vendor> {
     return fetchApi('/vendors', 'POST', data);
 }
 
-export async function updateVendor(id: string, data: Partial<Vendor>): Promise<Vendor> {
+export async function updateVendor(id: string, data: Partial<VendorInput>): Promise<Vendor> {
     return fetchApi(`/vendors/${id}`, 'PUT', data);
 }
 

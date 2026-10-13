@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
-import { getCompanies, getUsers, getSessions } from '@/lib/crud-api';
+import { getCompanies, getUsers, getSessions, type Session, type Company, type User } from '@/lib/crud-api';
 import { Filter, RefreshCw, Radio } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
 
 export default function SessionsLivePage() {
     const { user } = useAuth();
-    const [sessions, setSessions] = useState<any[]>([]);
+    const [sessions, setSessions] = useState<Session[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedCompany, setSelectedCompany] = useState<string>('');
     const [selectedUser, setSelectedUser] = useState<string>('');
-    const [companies, setCompanies] = useState<any[]>([]);
-    const [users, setUsers] = useState<any[]>([]);
+    const [companies, setCompanies] = useState<Company[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
         if (user) {

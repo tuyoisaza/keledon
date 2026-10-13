@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 
 export default function TestBrowserPage() {
-    const [status, setStatus] = useState('Initializing...');
+    const [status] = useState('Opening keledon://test deep link...');
 
     useEffect(() => {
         const testInstructions = 'TEST_BROWSER: This is a test to verify the deep link protocol works. Please log all received parameters.';
         
-        setStatus('Opening keledon://test deep link...');
         
         const deepLink = `keledon://test?instructions=${encodeURIComponent(testInstructions)}&timestamp=${Date.now()}`;
         
@@ -15,7 +14,7 @@ export default function TestBrowserPage() {
         window.location.href = deepLink;
         
         setTimeout(() => {
-            setStatus('If browser did not open, check console for errors');
+            // The browser may remain on this page when the custom protocol has no handler.
         }, 2000);
     }, []);
 

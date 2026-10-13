@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
-import { useSocket } from '../context/SocketContext';
+import { useSocket } from '../context/useSocket';
 
 interface FlowStep {
   id: string;
@@ -9,14 +9,14 @@ interface FlowStep {
   status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
   selector?: string;
   value?: string;
-  result?: any;
+  result?: unknown;
   duration?: number;
   error?: string;
   metadata?: {
     element_text?: string;
     element_position?: { x: number; y: number };
     screenshot_url?: string;
-    extracted_data?: any;
+    extracted_data?: unknown;
   };
 }
 
@@ -43,17 +43,15 @@ export function useFlowExecution(socket?: Socket | null) {
   const actualSocket = socket || contextSocket;
   
   const [executions, setExecutions] = useState<FlowExecution[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadedSocket, setLoadedSocket] = useState<Socket | null>(null);
+  const loading = Boolean(actualSocket && loadedSocket !== actualSocket);
   const [selectedExecution, setSelectedExecution] = useState<string | null>(null);
 
   useEffect(() => {
     if (!actualSocket) {
       console.warn('useFlowExecution: No socket connection available');
-      setLoading(false);
       return;
     }
-
-    setLoading(true);
 
     // Request initial data
     actualSocket.emit('dashboard:get-flow-executions');
@@ -61,7 +59,7 @@ export function useFlowExecution(socket?: Socket | null) {
     // Listen for flow execution updates
     const handleFlowExecutionsUpdate = (data: FlowExecution[]) => {
       setExecutions(data);
-      setLoading(false);
+      setLoadedSocket(actualSocket);
     };
 
     const handleFlowExecutionUpdate = (execution: FlowExecution) => {

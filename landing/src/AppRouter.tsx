@@ -2,7 +2,8 @@ import AdminPromptsPage from '@/pages/AdminPromptsPage';
 import AdminAiConsumptionPage from '@/pages/AdminAiConsumptionPage';
 import { DebugOverlay } from '@/components/common/DebugOverlay';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth, type UserRole } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
+import type { UserRole } from '@/context/auth-context';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { ManagementLayout } from '@/components/management/ManagementLayout';
 

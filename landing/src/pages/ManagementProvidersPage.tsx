@@ -50,7 +50,7 @@ export default function ManagementProvidersPage() {
                 body: JSON.stringify(updated)
             });
             toast.success('Provider updated');
-        } catch (error) {
+        } catch {
             toast.error('Failed to update provider');
         }
     };

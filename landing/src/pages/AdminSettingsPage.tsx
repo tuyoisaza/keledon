@@ -97,7 +97,7 @@ export default function AdminSettingsPage() {
             } else {
                 setConfigMessage({ type: 'error', text: 'Failed to save settings' });
             }
-        } catch (error) {
+        } catch {
             setConfigMessage({ type: 'error', text: 'Error saving settings' });
         } finally {
             setSavingConfig(false);

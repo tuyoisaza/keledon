@@ -1,4 +1,4 @@
-import { useTranslation } from '@/context/I18nContext';
+import { useTranslation } from '@/context/useTranslation';
 
 const cases = [
     { title: 'caseClassificationTitle', description: 'caseClassificationDescription', tag: 'caseConfigured' },
