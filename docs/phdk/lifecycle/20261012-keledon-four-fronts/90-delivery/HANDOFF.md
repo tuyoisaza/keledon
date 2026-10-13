@@ -5,7 +5,7 @@ Stage: `90-delivery`
 Status: `PARTIALLY DELIVERED — candidate published to draft review branch; not delivered to main`
 PHDK 2.50.8; product candidate 5.1.0
 Branch: `chore/phdk-install-v2.50.8`
-Latest pushed head: `bde2a594130d3c14a4ec779a4b8821b45f865d7b`; product-source Check candidate: `cc9b94dae7ad89e9133da8e5172d2d907d03f8cb`
+Latest verified pushed head: `e2276dc64db3eff5e99a83fdd5ad3711fc7eecfa`; product-source Check candidate: `cc9b94dae7ad89e9133da8e5172d2d907d03f8cb`
 PR: [#42](https://github.com/tuyoisaza/keledon/pull/42) (open/draft; mergeable; no review submissions or CI statuses returned)
 Date: `2026-10-13 America/Mexico_City`
 

@@ -1,6 +1,6 @@
 # Completion audit — PARTIALLY DELIVERED
 
-Run `20261012-keledon-four-fronts`; product 5.1.0; PHDK 2.50.8. Source candidate `cc9b94dae7ad89e9133da8e5172d2d907d03f8cb`; documentation/evidence pushed through `bde2a594130d3c14a4ec779a4b8821b45f865d7b`. Branch `chore/phdk-install-v2.50.8`. PR #42 targets `main`, remains OPEN/DRAFT, mergeable. Latest observed remote `main` SHA is `52537140e67d0d6c05486fa13837df3eb5316fb3`; no merge or target-main update.
+Run `20261012-keledon-four-fronts`; product 5.1.0; PHDK 2.50.8. Source candidate `cc9b94dae7ad89e9133da8e5172d2d907d03f8cb`; delivery evidence pushed through `e2276dc64db3eff5e99a83fdd5ad3711fc7eecfa`. Branch `chore/phdk-install-v2.50.8`. PR #42 targets `main`, remains OPEN/DRAFT, mergeable. Latest observed remote `main` SHA is `52537140e67d0d6c05486fa13837df3eb5316fb3`; no merge or target-main update.
 
 ## Confirmed commitments
 

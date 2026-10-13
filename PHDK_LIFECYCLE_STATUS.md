@@ -1,7 +1,7 @@
 # Lifecycle status — 20261012-keledon-four-fronts
 
 Project: `C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON`
-PHDK: 2.50.8 installed and verified; candidate 5.1.0. Branch `chore/phdk-install-v2.50.8`; PR #42 OPEN/DRAFT; latest pushed head `cc9b94dae7ad89e9133da8e5172d2d907d03f8cb`. No target-main merge/readback.
+PHDK: 2.50.8 installed and verified; candidate 5.1.0. Branch `chore/phdk-install-v2.50.8`; PR #42 OPEN/DRAFT; latest verified pushed head `e2276dc64db3eff5e99a83fdd5ad3711fc7eecfa`; product-source candidate `cc9b94dae7ad89e9133da8e5172d2d907d03f8cb`. No target-main merge/readback.
 
 Goal: complete PHDK Auto for the four owner-confirmed fronts. Telephony/CRM vendors are tenant-selected; user requested maximum applicable code conformity. The restrictive role and tenant policy is owner-approved.
 
