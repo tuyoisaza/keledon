@@ -1,4 +1,18 @@
-# PHDK Check — 5.1.8 integrated source; acceptance partial
+# PHDK Check — latest candidate 5.1.10; acceptance partial
+
+## Latest integrated candidate check — 2026-10-13
+
+Candidate branch: `v5.1.10-browser-permission-consent`, based on `origin/main` `f5b9e43bd272408b3b5493c6eddfd24fc2095c75`. Five app package/lock roots are aligned at 5.1.10. The user authorized all four fronts; voice/CRM providers remain tenant-selected.
+
+- **Security/runtime source:** removed blanket Electron permission approval. Only HTTPS audio/video requests can reach a confirmation dialog that names both requesting and top-level origins; approval is session-only and denied if the page changes. All other permission types are denied. Unpackaged development runs skip update-network checks.
+- **Regression/build evidence:** API build passes; API regression 14/14; API ESLint passes with 0 errors and 135 warnings; Cloud build/regression passes; web typecheck/build, diagnostics 18/18, SEO 1/1 and synthetic Edge UAT 1/1 pass; Browser build and regression pass 24/24; Landing build/lint pass; PHDK v2.50.10 coherence passes 52/52.
+- **Source-size check:** fresh repository inventory covers 1,086 application/test source files; 0 meet or exceed 600 physical lines. The six violations found in 5.1.9 were split into responsibility-specific modules/harnesses and received regression coverage.
+- **UAT defect repair:** the source audit found unrestricted Electron permission approval (UAT-FIX-001); unit tests cover allow/deny/origin/type/navigation behavior. The new native Electron UI was not launched because the development command began downloading its missing Electron runtime; no newly downloaded executable was approved for use.
+- **SEO/AEO:** source check passes for public `/` indexability, private SPA route noindex headers, title/description/canonical/sitemap, truthful public copy, and live CTA/navigation links. Current source regression passes; deployed headers, crawler behavior, field metrics and external citations remain NOT MEASURED.
+
+**Check result: source gates PASS; Auto acceptance remains PARTIAL.** No persisted CRUD/migration database acceptance, native Electron/device/microphone/audio, broad screen-reader/zoom/contrast/locale acceptance, or deployed SEO/AEO measurement was obtained. No database, customer provider, production endpoint, paid API or deployment was touched. See `UAT_REPORT.md`, `PHDK_LINE_LIMIT_AUDIT.md`, SEO/AEO reports and the 5.1.10 lifecycle handoffs for actionable blockers.
+
+---
 
 ## Latest continuation — 5.1.9 operational authorization audit
 

@@ -1,5 +1,35 @@
 # UAT report — KELEDON 5.1.7 (continuation)
 
+## Latest local candidate — 5.1.10 (ACCEPTANCE INCOMPLETE)
+
+Run: `20261013-keledon-v5110` (continuation of `20261012-keledon-four-fronts`), 2026-10-13. Candidate: branch `v5.1.10-browser-permission-consent`, working tree based on `origin/main` `f5b9e43bd272408b3b5493c6eddfd24fc2095c75`; the candidate is not yet a commit or merged build. Intent and roles remain the four owner-confirmed fronts; client telephony/CRM systems are tenant-selected.
+
+The built web SPA UAT was rerun on the 5.1.10 bundle in headless Microsoft Edge. It passed 1/1 suite and exercised the synthetic Company Co public/login widget, themes, 390px layout, role views, keyboard/focus for selected dialogs, same-company user assignment, write-only provider keys, guest denial, and safe diagnostics. APIs and WebSockets were intercepted/blocked; this proves local UI behavior only. API regression passes 14/14 and includes the DB-derived authorization/startup cases, but does not prove persisted CRUD.
+
+Additional same-candidate results: Browser unit/source regression 24/24 and TypeScript build pass. `permission-policy.test.cjs` verifies secure origin matching, user consent/session scope, denial of other permissions, rejection on navigation, and English/Spanish prompt copy. A native Browser launch did not complete: `npm run dev` reported it was downloading Electron and was stopped before a newly acquired runtime was approved for use. No native window, OS microphone permission, physical audio, or live call was tested.
+
+| Case | Result | Evidence / limitation |
+|---|---|---|
+| UAT-001 / UAT-002 / UAT-004 / UAT-006 | PASS (local UI subset) | `npm run test:uat`: 1/1 suite; updated `docs/phdk/evidence/uat-local-web.json` and `uat-*.png`; all API routes mocked, external HTTP/WebSockets blocked. |
+| UAT-API | PASS (isolated source regression) | `services/api npm run test:regression`: 14/14; no PostgreSQL connection or persistent CRUD acceptance. |
+| UAT-BROWSER-PERMISSION | PASS (policy contracts) | `browser/tests/permission-policy.test.cjs`: user consent, HTTPS origin/context, media-only session grant, navigation race and deny behavior. No native dialog was clicked. |
+| UAT-ROLE / UAT-CRUD | BLOCKED | Full DB-derived identities, persisted CRUD matrix and migration ledger cannot be verified: no isolated PostgreSQL runtime is available, and PHDK execution scope prohibits provisioning/administering one in this run. |
+| UAT-ELECTRON / UAT-DEVICE-AUDIO | MANUAL / BLOCKED | No native run, OS prompt or device/audio acceptance. Electron runtime download needs action-time confirmation under the Computer Use skill; no customer call is in scope. |
+| UAT-A11Y-I18N | ACCEPTANCE INCOMPLETE | Selected keyboard, focus restoration, theme, mobile and diagnostics flows pass; full route/role screen-reader, 200%/400% zoom, contrast and translated-copy acceptance remain. |
+| UAT-SEO-AEO | SOURCE PASS / FIELD BLOCKED | Source metadata/routes/copy/link tests pass. Deployed headers, crawl/render behavior, field performance and external discovery/citations are not measured. |
+| UAT-CLIENT-CRM | NOT APPLICABLE to common flow | User confirmed integrations vary by client; only provider-independent contracts were tested, with synthetic fixtures. |
+
+### Action plan
+
+- **UAT-ROLE / UAT-CRUD:** persisted evidence needs an owner-managed disposable PostgreSQL environment with Company Co-only synthetic fixtures and isolated role accounts. PHDK must not create/administer the database in this run. After the environment is prepared through the owner’s permitted process, record each resource × role × tenant × operation result and migration ledger; reconcile whether the current execution scope permits any connection before attempting it.
+- **UAT-ELECTRON / UAT-DEVICE-AUDIO:** the owner must authorize the Electron runtime download by replying `autoriza descarga Electron` (no secret needed). Then launch only the local unpackaged app and check startup/widget plus browser permission-dialog content/deny and session grant. Mic/camera OS prompts require a separate action-time click, and physical audio acceptance needs the owner's confirmation at that prompt. Never place a client call.
+- **UAT-A11Y-I18N:** a human reviewer with an approved screen reader should check representative public/login/app/admin routes, roles, themes and en/es/pt at 200% and 400% zoom and with keyboard-only navigation; report exact route/control and observed result so source defects can be fixed and retested.
+- **UAT-SEO-AEO:** deployed measurement remains outside this code UAT; after an authorized deployment/status target is supplied, use only the existing bounded read-only evidence route permitted by PHDK. Do not probe the application or infer indexation from source.
+
+No source-code FAIL remains in the tests that ran. **Acceptance remains INCOMPLETE** because persistence, native/device, broad a11y/i18n and deployed discovery are not proven. No customer/provider/production call, database mutation, migration, paid model, email, or deployment was performed.
+
+---
+
 ### 5.1.9 operational authorization regression
 
 PR #58 integrates version 5.1.9 at `6d0112dd940c142c20b5e4c56c766da64d000b3b`. The 12-suite API regression now includes DB-derived escalation actor/company/team/session scope, cross-tenant and low-role denials, current-DB superadmin checks for global analytics/dashboard/RBAC, and authenticated listening-session routes with UUID-strength capabilities and expiry. API build/typecheck passes and touched-file ESLint exits 0 with 15 existing warnings. This is isolated source/API regression evidence; the Edge journey below remains on its recorded 5.1.7 tree, and persisted CRUD/runtime and device acceptance remain incomplete.

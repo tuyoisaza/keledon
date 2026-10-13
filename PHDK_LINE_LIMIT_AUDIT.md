@@ -1,5 +1,15 @@
 # PHDK physical line limit audit
 
+## Latest integrated candidate — 5.1.10
+
+Date: 2026-10-13. Inventory covered all repository application/test files with extensions `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`; `node_modules`, generated `dist`, and `.git` were excluded. `rg --files` returned 1,086 source/test files. **0 files are at or above 600 lines.**
+
+This check corrected the prior 5.1.5 report, which incorrectly claimed zero over-limit files. Six over-limit files found in the integrated 5.1.9 tree were split by responsibility: agent message contracts/trace metadata; device escalation handlers; voice WebRTC handlers; TTS HTTP providers; database backup storage; and the API-management regression harness. Dedicated synthetic regressions cover backup lifecycle/selection/restore and TTS request contracts. `browser/tests/renderer-module-boundaries.test.cjs` also retains its Browser-local 600-line assertion.
+
+Evidence: repository-wide physical-line inventory, API build, API regression 14/14, Browser build and its line-boundary test. This is source/test-size compliance, not a claim that every large document or generated file follows the application-code rule.
+
+---
+
 Date: 2026-10-13. Candidate: 5.1.5 (`fc114099cd805dd90d8ba1f3bdcddbcb54d464ba`). Rule: all application source and test files remain below 600 physical lines, including blank lines. Inventory extensions: `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, `.vue`; generated, dependency and Git directories are excluded.
 
 The prior audit counted only tracked files at that snapshot and missed one current Cloud source file at 612 lines. The flow-normalization types/helper now live in `cloud/src/services/decision-engine.flow-types.ts`, reducing `decision-engine.methods.ts` below the limit without changing its call contract. The broader inventory then found `services/api/test/regression/20-admin-boundaries.test.js` at 719 lines. Its authorization and management-policy suites are now split into `20-admin-boundaries.test.js` and `25-approved-management-policy.test.js` without changing assertions; both suites and the full API regression runner pass. Fresh inventory across 1,077 tracked and untracked application/test source files: **0 files at or above 600 lines**. Check remains partial for other findings even though the line-limit criterion passes.
