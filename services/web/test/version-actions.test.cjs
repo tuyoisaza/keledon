@@ -18,7 +18,7 @@ async function compileComponent() {
   };
   const result = await esbuild.build({
     entryPoints: [componentPath], bundle: true, write: false, format: 'cjs', platform: 'node', jsx: 'automatic',
-    external: ['react', 'react/jsx-runtime', 'lucide-react'], define: { __APP_VERSION__: '"5.1.0"' },
+    external: ['react', 'react/jsx-runtime', 'lucide-react'], define: { __APP_VERSION__: '"5.1.1"' },
     plugins: [{
       name: 'diagnostics-component-test-adapters',
       setup(build) {
@@ -75,7 +75,7 @@ test('anonymous and debug-off render the exact compact version → clipboard →
   const { rootElement } = await mount(t);
   const row = rootElement.querySelector('[data-testid="version-actions"]');
   assert.ok(row);
-  assert.equal(row.querySelector('.keledon-version').textContent, 'v5.1.0');
+  assert.equal(row.querySelector('.keledon-version').textContent, 'v5.1.1');
   const buttons = [...row.querySelectorAll('button')];
   assert.equal(buttons.length, 2);
   assert.deepEqual(buttons.map(button => button.dataset.action), ['copy', 'clear']);

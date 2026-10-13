@@ -1,32 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrudKeledonService } from './crud-keledon.service';
-import { generatePairingCodeString } from './crud-keledon.service';
 import { CrudAuditService } from './crud-audit.service';
 import { CrudSeedService } from './crud-seed.service';
 import { CrudVendorService } from './crud-vendor.service';
 import { CrudCompanyService } from './crud-company.service';
 import { CrudSessionDataService } from './crud-session-data.service';
-
-const errorBuffer: string[] = [];
-const MAX_ERRORS = 50;
-
-function captureError(msg: string) {
-  const entry = `${new Date().toISOString()} | ${msg}`;
-  errorBuffer.push(entry);
-  if (errorBuffer.length > MAX_ERRORS) {
-    errorBuffer.shift();
-  }
-}
-
-const originalConsoleError = console.error;
-console.error = (...args: any[]): void => {
-  const msg = args
-    .map((a: any) => (typeof a === 'object' ? JSON.stringify(a) : String(a)))
-    .join(' ');
-  captureError(msg);
-  originalConsoleError.apply(console, args);
-};
 
 @Injectable()
 export class CrudService {
@@ -42,13 +21,20 @@ export class CrudService {
 
   // ========== HEALTH ==========
 
-  async getHealth() {
+  getHealth() {
     const memUsage = process.memoryUsage();
+    let cloudHost = 'unavailable';
+    try {
+      cloudHost = new URL(
+        process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
+      ).hostname;
+    } catch {
+      // A malformed URL is not useful diagnostic output; never echo it back.
+    }
     return {
       status: 'ok',
       uptime: process.uptime(),
       timestamp: new Date().toISOString(),
-      errors: errorBuffer.slice(-50),
       memory: {
         heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024) + 'MB',
         heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024) + 'MB',
@@ -57,7 +43,7 @@ export class CrudService {
       },
       env: {
         NODE_ENV: process.env.NODE_ENV || 'development',
-        CLOUD_URL: process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
+        CLOUD_HOST: cloudHost,
         KELEDON_LAUNCH_SECRET: process.env.KELEDON_LAUNCH_SECRET
           ? 'set'
           : 'not set',

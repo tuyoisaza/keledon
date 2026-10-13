@@ -58,6 +58,7 @@ async function main() {
   process.env.KELEDON_AUTH_SECRET = 'isolated-http-wiring-secret';
   const actors = {
     member: { id: 'member', role: 'user', companyId: 'co-a', teamId: 'team-a' },
+    'user-a': { id: 'user-a', role: 'user', companyId: 'co-a', teamId: 'team-a' },
     admin: { id: 'admin', role: 'admin', companyId: 'co-a', teamId: 'team-a' },
     superadmin: {
       id: 'superadmin',
@@ -77,7 +78,7 @@ async function main() {
     },
     team: {
       findFirst: async ({ where }) =>
-        where.id === 'team-a' ? { id: 'team-a' } : null,
+        ['team-a', 'team-c'].includes(where.id) ? { id: where.id } : null,
     },
     flow: {
       findUnique: async ({ where }) => ({
@@ -96,6 +97,7 @@ async function main() {
   let writes = 0,
     lastVectorScope,
     userListScope,
+    updatedUser,
     launchedActor;
   const module = await Test.createTestingModule({
     controllers: [
@@ -112,11 +114,19 @@ async function main() {
       {
         provide: CrudService,
         useValue: {
+          getHealth: async () => ({
+            status: 'ok',
+            env: { CLOUD_HOST: 'cloud.example.invalid' },
+          }),
           getUsers: async (companyId) => {
             userListScope = companyId;
             return [];
           },
           getUser: async (id) => ({ id }),
+          updateUser: async (id, data) => {
+            updatedUser = { id, ...data };
+            return updatedUser;
+          },
           generateKeledonLaunchLink: async (_id, userId) => {
             launchedActor = userId;
             return { success: true };
@@ -184,6 +194,40 @@ async function main() {
   };
   try {
     const http = app.getHttpServer();
+    await request(http).get('/api/crud/health').expect(401);
+    await request(http)
+      .get('/api/crud/health')
+      .set('Authorization', token('member'))
+      .expect(403);
+    const crudHealth = await request(http)
+      .get('/api/crud/health')
+      .set('Authorization', token('superadmin'))
+      .expect(200);
+    assert.equal(crudHealth.body.status, 'ok');
+    assert.equal(crudHealth.body.env.CLOUD_HOST, 'cloud.example.invalid');
+    assert.equal('errors' in crudHealth.body, false);
+    await request(http)
+      .put('/api/crud/users/user-a')
+      .set('Authorization', token('admin'))
+      .send({ teamId: 'team-c' })
+      .expect(200);
+    assert.deepEqual(updatedUser, { id: 'user-a', teamId: 'team-c' });
+    await request(http)
+      .put('/api/crud/users/user-a')
+      .set('Authorization', token('admin'))
+      .send({ teamId: 'team-b' })
+      .expect(403);
+    await request(http)
+      .put('/api/crud/users/user-a')
+      .set('Authorization', token('admin'))
+      .send({ companyId: 'co-b' })
+      .expect(403);
+    await request(http)
+      .put('/api/crud/users/user-a')
+      .set('Authorization', token('admin'))
+      .send({ role: 'admin' })
+      .expect(403);
+    assert.deepEqual(updatedUser, { id: 'user-a', teamId: 'team-c' });
     for (let attempt = 0; attempt < 20; attempt++) {
       await request(http).post('/api/devices/pair').send({ pairing_code: 'isolated-proof' }).expect(201);
     }

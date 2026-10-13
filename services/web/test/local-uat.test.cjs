@@ -9,10 +9,16 @@ const root = path.resolve(__dirname,'../../..');
 const dist = path.resolve(__dirname,'../dist');
 const evidence = path.join(root,'docs/phdk/evidence');
 const company={id:'company-co',name:'Company Co',industry:'Synthetic UAT',countries:[{countryCode:'MX'}]};
+const otherCompany={id:'other-company',name:'Other Co',industry:'Synthetic UAT',countries:[{countryCode:'MX'}]};
 const brand={id:'brand-co',name:'Company Co Brand',companyId:company.id,company};
+const brand2={id:'brand-co-2',name:'Company Co Brand 2',companyId:company.id,company};
+const otherBrand={id:'brand-other',name:'Other Co Brand',companyId:otherCompany.id,company:otherCompany};
 const team={id:'team-co',name:'Company Co Service',brandId:brand.id,brand,country:'MX'};
-const person={id:'companyco-001',name:'Company Co Test User',email:'companyco.001@tujuisasa.com',role:'user',companyId:company.id,teamId:team.id,team};
+const team2={id:'team-co-2',name:'Company Co Service 2',brandId:brand2.id,brand:brand2,country:'MX'};
+const otherTeam={id:'team-other',name:'Other Co Service',brandId:otherBrand.id,brand:otherBrand,country:'MX'};
+const person={id:'companyco-001',name:'Company Co Test User',email:'companyco.001@company-co.invalid',role:'user',companyId:company.id,teamId:team.id,brandId:brand.id,team};
 let writes=[];
+let userWrites=[];
 let deepReads=0;
 let probeCalls=[];
 const safeEndpoints=[
@@ -52,17 +58,25 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
       if(route.request().method()==='PUT')writes.push(route.request().postDataJSON());
       body=config;
     }
-    else if(p==='/api/teams'||p==='/api/crud/teams')body=[team];
-    else if(p==='/api/crud/companies')body=[company];
-    else if(p==='/api/crud/brands')body=[brand];
-    else if(p==='/api/crud/users')body=[person];
+    else if(p==='/api/teams'||p==='/api/crud/teams')body=[team,team2,otherTeam];
+    else if(p==='/api/crud/companies')body=[company,otherCompany];
+    else if(p==='/api/crud/brands')body=[brand,brand2,otherBrand];
+    else if(p==='/api/crud/users'){
+      if(route.request().method()!=='GET')userWrites.push({method:route.request().method(),path:p,body:route.request().postDataJSON()});
+      body=[person];
+    }
+    else if(/^\/api\/crud\/users\/[^/]+$/.test(p)){
+      const payload=route.request().method()==='PUT'?route.request().postDataJSON():{};
+      if(route.request().method()==='PUT')userWrites.push({method:'PUT',path:p,body:payload});
+      body={...person,...payload};
+    }
     else if(p.startsWith('/api/crud/vendors/'))body=[{id:'vendor-co',name:'Company Co CRM',type:'crm',teamId:team.id,isActive:true}];
     else body=[];
     return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(body)});
    });
    await page.route(/\/health\/deep\/?$/,async route=>{
     deepReads++;
-    return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({status:'healthy',version:'5.1.0',gitSha:'4d07ae1',buildTimestamp:'2026-10-13T00:00:00.000Z',endpointDiagnostics:safeEndpoints,database:{status:'healthy',migrations:'present'},meteredProviders:{probeCallsMade:0,tenantProviderCredentials:'not_enumerated'},latestSafeProbes:[]})});
+    return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({status:'healthy',version:'5.1.1',gitSha:'4d07ae1',buildTimestamp:'2026-10-13T00:00:00.000Z',endpointDiagnostics:safeEndpoints,database:{status:'healthy',migrations:'present'},meteredProviders:{probeCallsMade:0,tenantProviderCredentials:'not_enumerated'},latestSafeProbes:[]})});
    });
    await page.route(/\/health\/deep\/probes\/[^/]+$/,async route=>{
     const id=new URL(route.request().url()).pathname.split('/').at(-1);
@@ -80,12 +94,12 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   const page=anonymous.page;
   await page.goto(origin+'/login');await page.locator('[data-testid="version-actions"]').waitFor();
   const row=page.locator('[data-testid="version-actions"]');assert.equal(await row.count(),1);
-  assert.equal((await row.innerText()).trim(),'v5.1.0');
+  assert.equal((await row.innerText()).trim(),'v5.1.1');
   const dims=await row.evaluate(el=>({gap:getComputedStyle(el).gap,font:getComputedStyle(el.querySelector('span')).fontSize,buttons:[...el.querySelectorAll('button')].map(b=>({w:b.getBoundingClientRect().width,h:b.getBoundingClientRect().height,icon:b.querySelector('svg').getBoundingClientRect().width})),x:el.getBoundingClientRect().x}));
   assert.equal(dims.gap,'4px');assert.equal(dims.font,'12px');for(const b of dims.buttons){assert.equal(b.w,28);assert.equal(b.h,28);assert.equal(b.icon,14);}assert.ok(dims.x<30);
   await row.locator('[data-action="copy"]').click();
   await row.locator('[data-action="copy"] .keledon-action-success').waitFor();
-  assert.match(await page.evaluate(()=>window.__copied),/Version:\s*v5\.1\.0/);
+  assert.match(await page.evaluate(()=>window.__copied),/Version:\s*v5\.1\.1/);
   await page.waitForFunction(()=>!document.querySelector('[data-action="copy"]').disabled);
   assert.equal(await row.locator('.keledon-action-success').count(),0);
   await page.evaluate(()=>window.__denyCopy=true);await row.locator('[data-action="copy"]').click();assert.equal(await row.locator('[data-action="copy"] .keledon-action-success').count(),0);
@@ -115,6 +129,39 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
    await context.close();
    checks.push('UAT-004 '+role+' frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API');
   }
+  const userAdmin=await pageFor('admin');await userAdmin.page.goto(origin+'/management/users');
+  const addUser=userAdmin.page.getByRole('button',{name:'Add User',exact:true});await addUser.waitFor();await addUser.click();
+  const userDialog=userAdmin.page.getByRole('dialog');
+  const userForm=userDialog.locator('form');
+  assert.equal(await userForm.locator('select').count(),2,'admin has brand/team choices only; role/company remain server-derived');
+  assert.equal(await userForm.getByText('Company Co',{exact:true}).count(),1);
+  assert.equal(await userForm.locator('#management-users-field-3').getAttribute('aria-labelledby'),'management-users-company-label');
+  await userForm.locator('select').nth(0).selectOption(brand.id);await userForm.locator('select').nth(1).selectOption(team.id);
+  await userForm.locator('input[type="text"]').fill('Synthetic Company Co User');
+  await userForm.locator('input[type="email"]').fill('synthetic.user@company-co.invalid');
+  await userForm.getByRole('button',{name:'Save',exact:true}).click();
+  await userAdmin.page.waitForFunction(()=>document.querySelector('form')===null);
+  assert.deepEqual(userWrites.at(-1),{method:'POST',path:'/api/crud/users',body:{name:'Synthetic Company Co User',email:'synthetic.user@company-co.invalid',teamId:team.id}});
+  await userAdmin.page.getByTitle('Edit').first().click();
+  const editForm=userAdmin.page.locator('form');await editForm.waitFor();
+  await editForm.locator('select').nth(0).selectOption(brand2.id);
+  const teamSelect=editForm.locator('select').nth(1);
+  assert.equal(await teamSelect.locator('option[value="team-other"]').count(),0);
+  await teamSelect.selectOption(team2.id);
+  await editForm.getByRole('button',{name:'Save',exact:true}).click();
+  await userAdmin.page.waitForFunction(()=>document.querySelector('form')===null);
+  assert.deepEqual(userWrites.at(-1),{method:'PUT',path:'/api/crud/users/'+person.id,body:{name:person.name,email:person.email,teamId:team2.id}});
+  await userAdmin.page.screenshot({path:path.join(evidence,'uat-admin-users-team-scope.png')});
+  await userAdmin.context.close();
+  const userSuper=await pageFor('superadmin');await userSuper.page.goto(origin+'/management/users');
+  await userSuper.page.getByRole('button',{name:'Add User',exact:true}).click();
+  const superDialog=userSuper.page.getByRole('dialog');await superDialog.waitFor();
+  assert.equal(await superDialog.getByLabel('Company').count(),1);
+  assert.equal(await superDialog.getByLabel('Role').count(),1);
+  assert.equal(await superDialog.getByLabel('Company').locator('option[value="other-company"]').count(),1);
+  await superDialog.getByRole('button',{name:'Cancel',exact:true}).click();await superDialog.waitFor({state:'hidden'});
+  await userSuper.context.close();
+  checks.push('UAT-004 admin user create and same-company team reassignment: no role/company controls or payload fields; foreign company team absent PASS (synthetic UI; API guard tested separately)');
   const provider=await pageFor('admin');await provider.page.goto(origin+'/management/providers');
   const key=provider.page.getByPlaceholder('sk-… (enter your OpenAI API key)');await key.waitFor();assert.equal(await key.inputValue(),'');
   await key.fill('SYNTHETIC-UAT-REPLACEMENT');const section=key.locator('xpath=ancestor::section');await section.getByRole('button',{name:'Save',exact:true}).click();
@@ -153,8 +200,8 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await basicEndpoint.waitFor({state:'hidden'});
   assert.equal(deepReads,1);
   await diagnostic.context.close();
-  checks.push('UAT-002 5.1.0 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)');
-  await fs.writeFile(path.join(evidence,'uat-local-web.json'),JSON.stringify({version:'5.1.0',date:new Date().toISOString(),candidateRevision:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),targetEnvironment:'local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked',origin,provenance:'UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance',checks,apiEvidence:'services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts',realVendorAudioCRM:'NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed'},null,2));
+  checks.push('UAT-002 5.1.1 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)');
+  await fs.writeFile(path.join(evidence,'uat-local-web.json'),JSON.stringify({version:'5.1.1',date:new Date().toISOString(),candidateRevision:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),targetEnvironment:'local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked',origin,provenance:'UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance',checks,apiEvidence:'services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts',realVendorAudioCRM:'NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed'},null,2));
   console.log('PASS local web journeys:',checks.join('\n'));
  }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
 });

@@ -1,5 +1,12 @@
 # Changelog
 
+## v5.1.1 — 2026-10-13 (local candidate, PHDK Auto)
+
+- Remove raw error-buffer and cloud URL disclosure from privileged CRUD health diagnostics.
+- Allow admins and coordinators to reassign users only among teams in their DB-derived company; keep role and company changes superadmin-only.
+- Align management UI controls and payloads with the tenant policy, with synthetic SPA and Nest guard regression coverage.
+- PHDK Check remains partial; see `PHDK_CHECK_REPORT.md`.
+
 ## v5.1.0 — 2026-10-13 (local candidate, PHDK Auto)
 
 - Add a protected, dynamically discovered API endpoint diagnostics registry with explicit safe probe modes and sanitized examples.
