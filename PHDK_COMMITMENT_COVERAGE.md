@@ -1,8 +1,8 @@
 # PHDK commitment coverage — KELEDON four fronts
 
-## Current coverage — 5.1.11
+## Current coverage — 5.1.13
 
-PR #66 merged at `829caf32978571ac439b8236c2cf7605a38aea4b`; all five app roots are 5.1.11; completion gate PASS. Detailed four-commitment reconciliation: `docs/phdk/lifecycle/20261013-keledon-v5111/90-delivery/PHDK_COMMITMENT_COVERAGE.md`. CMT-001 delivered; CMT-002/003/004 source work and selected tests pass. Persisted CRUD, native device/audio, broad accessibility/localization, and deployed SEO/AEO remain open. Overall: PARTIALLY DELIVERED.
+Product PR [#70](https://github.com/tuyoisaza/keledon/pull/70) merged at `45be8d82de1f402ee6199a19cd4fa5083bb9ecb1`; all five app roots report 5.1.13. CMT-001 remains delivered; CMT-002 has scoped widget/theme UAT, CMT-003 remains provider-independent with client-specific CRM/telephony, and CMT-004 keeps the approved DB-derived role/tenant and write-only-secret policy with isolated regressions. Provider settings localization is verified on the Spanish UI fixture and catalogs remain aligned at 404 keys. Persisted CRUD/migration, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Overall: PARTIALLY DELIVERED.
 
 ## 5.1.10 delivery readback — 2026-10-13
 
