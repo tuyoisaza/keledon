@@ -1,6 +1,6 @@
 # CRUD matrix — verified code/policy surface
 
-Source review updated 2026-10-13 for candidate 5.1.0; the current worktree also contains uncommitted landing type and flow repairs. Local source/test evidence does not imply production DB execution.
+Source review updated 2026-10-13 for candidate 5.1.0 on `chore/phdk-install-v2.50.8`; landing type/flow repairs and the current role-operation regression are committed on the PR branch. Local source/test evidence does not imply production DB execution.
 
 Owner-approved restrictive policy; 2026-10-12. API cells describe implemented authorization, not an executed production or browser result. L=list, R=detail; - means forbidden or unavailable; explicit exceptions below. Prisma storage is first-party; no live persistence exercised. `services/api/test/regression/20-admin-boundaries.test.js` now exercises positive admin/coordinator list, detail, create, update and delete guard decisions for company, brand, team, user, vendor and session routes, plus denials and superadmin role assignment. These isolated guard fixtures are operation-level authorization evidence only; they do not prove handler persistence, every route/entity, full cross-tenant direct-ID behavior, or browser detail journeys.
 
