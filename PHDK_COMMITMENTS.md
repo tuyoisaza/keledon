@@ -1,7 +1,7 @@
 # Commitment ledger
 ## Current continuation — 2026-10-13, candidate 5.1.8
 
-The source audit found that generic CRUD accepted caller-supplied `passwordHash` on user create/update. CMT-004 remediation now rejects that field for every role; only LocalAuthService's password-registration path generates bcrypt hashes. API policy regression explicitly covers admin, coordinator and superadmin attempts. Candidate branch `fix/phdk-5.1.8-crud-password-hash`; versioned delivery is in progress and must be reconciled to the actual PR/merge state. The four commitments remain confirmed; overall Auto remains PARTIALLY DELIVERED while persisted CRUD/runtime and other acceptance evidence is outstanding.
+The source audit found that generic CRUD accepted caller-supplied `passwordHash` on user create/update. CMT-004 remediation now rejects that field for every role; only LocalAuthService's password-registration path generates bcrypt hashes. API policy regression explicitly covers admin, coordinator and superadmin attempts. PR #56 merged at `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6` with all application roots at 5.1.8. PR #55 is CLOSED WITHOUT MERGE because its old squash ancestry produced a dirty merge base; its changes were carried by clean-based PR #56. The four commitments remain confirmed; overall Auto remains PARTIALLY DELIVERED while persisted CRUD/runtime and other acceptance evidence is outstanding.
 
 Owner decision 2026-10-12: 'Los cuatro, en ese orden' confirms CMT-001..004. No deferrals/cancellations.
 | ID/title | Origin/category/priority | Scope | Acceptance | Plan/owner | Execution/verification | Git/final disposition |

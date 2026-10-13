@@ -2,7 +2,7 @@
 
 ## 2026-10-13 — 5.1.8 security candidate in progress
 
-The current in-scope CRUD review removed caller control of `passwordHash` in user creation and update. Candidate branch: `fix/phdk-5.1.8-crud-password-hash`; version 5.1.8 is aligned across all five application package/lock roots. API regression 11/11, TypeScript and typed ESLint pass (0 errors/139 warnings). Owner approval for the restrictive role/tenant policy was already given in this conversation; the candidate behavior is covered by that scope. PR, merge and remote `main` readback are not yet complete. Overall Auto stays PARTIALLY DELIVERED.
+The in-scope CRUD review removed caller control of `passwordHash` in user creation/update. PR #56 merged to `main` at `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6`; all five application package/lock roots are 5.1.8. API regression 11/11, production/C13 build, typecheck and typed ESLint pass (0 errors/139 warnings). The owner-approved role/tenant policy covers this change. PR #55 was closed without merge due to stale squash ancestry; PR #56 is the clean-based merged delivery. No deployment is claimed. Overall Auto stays PARTIALLY DELIVERED while persistence/runtime, native Electron/audio, broad accessibility/localization and deployed SEO/AEO evidence remain open.
 
 ## 2026-10-13 — 5.1.7 merged; acceptance remains partial
 

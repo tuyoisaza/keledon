@@ -1,8 +1,8 @@
-# PMO status — 5.1.8 candidate; overall PARTIALLY DELIVERED
+# PMO status — 5.1.8 merged; overall PARTIALLY DELIVERED
 
 ## Current continuation — candidate 5.1.8
 
-2026-10-13; PHDK 2.50.10. CMT-004 source audit found the generic user CRUD credential-hash injection gap; guard and regression remediation are complete locally. API regressions 11/11, typecheck and full typed lint (0 errors/139 warnings) pass. Branch `fix/phdk-5.1.8-crud-password-hash`; versioned PR/remote readback are pending. CMT-001..004 stay confirmed; portfolio remains PARTIALLY DELIVERED pending persisted CRUD/runtime, native Electron/audio, broad accessibility/localization, deployed SEO/AEO. No deployment or production DB operation is claimed.
+2026-10-13; PHDK 2.50.10. CMT-004 source audit found generic user CRUD accepted client-supplied password hashes. PR #56 merged 5.1.8 at `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6`; guard and regression cover all roles. PR #55 CLOSED WITHOUT MERGE after GitHub marked its stale base DIRTY; the corrected clean-based PR #56 is merged. API regressions 11/11, build/typecheck and full typed lint (0 errors/139 warnings) pass. CMT-001..004 stay confirmed; portfolio remains PARTIALLY DELIVERED pending persisted CRUD/runtime, native Electron/audio, broad accessibility/localization and deployed SEO/AEO. No deployment or production DB operation is claimed.
 
 Historical last-main snapshot follows.
 
