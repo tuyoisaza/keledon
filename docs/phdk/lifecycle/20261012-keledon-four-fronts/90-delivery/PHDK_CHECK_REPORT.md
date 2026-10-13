@@ -1,6 +1,6 @@
 # PHDK Check — integrated 5.1.0 candidate
 
-Date: 2026-10-13 America/Mexico_City. Current branch candidate `82121189cdf8423f2e7f2cc4bd32c48949e63eb9`, PR #42 open/draft. All four owner-confirmed fronts are included. CRM/telephony vendors are selected per tenant. No production provider, customer data, database, or metered API call was used.
+Date: 2026-10-13 America/Mexico_City. Source/UAT candidate `7df6f77dd47670cfa7671f27f9ca67c38aa7161e`; PR #42 open/draft with current lifecycle evidence on its branch. All four owner-confirmed fronts are included. CRM/telephony vendors are selected per tenant. No production provider, customer data, database, or metered API call was used.
 
 ## PASS evidence
 

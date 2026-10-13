@@ -1,6 +1,6 @@
 # SEO audit — current source candidate
 
-Run: `20261012-keledon-four-fronts` · Revalidated: 2026-10-13 · PHDK 2.50.8 · Candidate 5.1.0, branch SHA `82121189cdf8423f2e7f2cc4bd32c48949e63eb9`. This is source review plus local production-SPA UAT; no external crawler, Search Console, live deployment, provider, paid model, or database was used. The canonical host is taken from source and has not been verified live.
+Run: `20261012-keledon-four-fronts` · Revalidated: 2026-10-13 · PHDK 2.50.8 · Candidate 5.1.0, source/UAT SHA `7df6f77dd47670cfa7671f27f9ca67c38aa7161e`. This is source review plus local production-SPA UAT; no external crawler, Search Console, live deployment, provider, paid model, or database was used. The canonical host is taken from source and has not been verified live.
 
 Scope is the public `/` page. Login and authenticated application routes are excluded from search discovery. The site is a React SPA: the server HTML contains a short description and noscript note, while most public content is client-rendered. There are no locale-specific public URLs or hreflang declarations.
 

@@ -5,7 +5,7 @@ Stage: `90-delivery`
 Status: `IN PROGRESS — candidate published to review branch; not delivered to main`
 PHDK 2.50.8; product candidate 5.1.0
 Branch: `chore/phdk-install-v2.50.8`
-Remote branch head: `82121189cdf8423f2e7f2cc4bd32c48949e63eb9`
+Source/UAT candidate: `7df6f77dd47670cfa7671f27f9ca67c38aa7161e`
 PR: [#42](https://github.com/tuyoisaza/keledon/pull/42) (open/draft; no review decision; no CI statuses returned)
 Date: `2026-10-13 America/Mexico_City`
 

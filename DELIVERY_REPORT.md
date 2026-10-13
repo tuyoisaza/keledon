@@ -1,6 +1,6 @@
 # Delivery report — candidate on review branch
 
-Candidate 5.1.0; remote branch `chore/phdk-install-v2.50.8` at `82121189cdf8423f2e7f2cc4bd32c48949e63eb9`; PR [#42](https://github.com/tuyoisaza/keledon/pull/42), base `main`, OPEN/DRAFT. Current PR body lists implementation, validation, and remaining PHDK findings. No review decision or hosted CI statuses are present. This is not target-main delivery or a production release.
+Candidate 5.1.0; remote branch `chore/phdk-install-v2.50.8`; PR [#42](https://github.com/tuyoisaza/keledon/pull/42), base `main`, OPEN/DRAFT. Current PR body lists implementation, validation, and remaining PHDK findings. No review decision or hosted CI statuses are present. This is not target-main delivery or a production release.
 
 The branch includes protected dynamic API endpoint diagnostics, explicitly clicked safe probes, correlated/sanitized errors, shared diagnostics/report/reset across web and landing, a route-aware overlay fix, tenant/provider independent voice/CRM contracts, restrictive tenant/admin policy, and approved additive managed-AI migration source. Five product versions are 5.1.0; tracked source inventory has 0 files at/above 600 physical lines.
 

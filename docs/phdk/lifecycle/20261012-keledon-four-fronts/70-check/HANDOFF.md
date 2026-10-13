@@ -3,7 +3,7 @@
 Run ID: `20261012-keledon-four-fronts`
 Stage: `70-check`
 Status: `PARTIAL`
-Candidate: `82121189cdf8423f2e7f2cc4bd32c48949e63eb9`
+Source/UAT candidate: `7df6f77dd47670cfa7671f27f9ca67c38aa7161e`
 PR #42: open/draft; checks have no hosted CI statuses
 Date: `2026-10-13 America/Mexico_City`
 

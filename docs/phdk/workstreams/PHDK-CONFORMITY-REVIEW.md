@@ -56,7 +56,7 @@ Report remains local/uncommitted. Root integrates final Check, closes proven fix
 
 ## Integrated revalidation — candidate 5.1.0
 
-Date: 2026-10-13 America/Mexico_City. This current addendum supersedes the old “local/uncommitted” status above; historical observations remain snapshots unless explicitly resolved below. Remote branch candidate: `82121189cdf8423f2e7f2cc4bd32c48949e63eb9`, PR #42 open/draft.
+Date: 2026-10-13 America/Mexico_City. This current addendum supersedes the old “local/uncommitted” status above; historical observations remain snapshots unless explicitly resolved below. Source/UI candidate tested by local UAT: `7df6f77`; PR #42 is open/draft with current evidence and lifecycle records on its branch.
 
 - PHDK Auto run and source delivery handoffs are now reconciled to the four confirmed commitments. API/Cloud/web/local UAT evidence is in `PHDK_CHECK_REPORT.md` and lifecycle `70-check/`.
 - Current tracked-source inventory is 0 files at or above 600 lines; older BrainPage/FlowsPage line counts are superseded. New UAT build ran `services/web` production Vite output in headless Edge. External HTTP/WebSocket requests were blocked and API routes intercepted with Company Co fixtures.

@@ -4,7 +4,7 @@ Run ID: 20261012-keledon-four-fronts
 Stage: 65-seo
 Status: PASS (SOURCE ONLY; DEPLOYED INDEXABILITY UNVERIFIED)
 Started from revision: 52537140e67d0d6c05486fa13837df3eb5316fb3
-Revalidated candidate: 5.1.0, remote branch SHA 82121189cdf8423f2e7f2cc4bd32c48949e63eb9
+Revalidated candidate: 5.1.0, source/UAT SHA 7df6f77dd47670cfa7671f27f9ca67c38aa7161e
 Date/time: 2026-10-13 America/Mexico_City
 
 ## Goal / scope

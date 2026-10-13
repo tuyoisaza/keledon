@@ -1,6 +1,6 @@
 # AEO/GEO audit — public answers
 
-Run: `20261012-keledon-four-fronts` · Revalidated: 2026-10-13 · PHDK 2.50.8 · Candidate 5.1.0, branch SHA `82121189cdf8423f2e7f2cc4bd32c48949e63eb9`. Review covers source plus local production-SPA UAT only. No external answer engine, crawler, live deployment, provider, paid model, or database was used.
+Run: `20261012-keledon-four-fronts` · Revalidated: 2026-10-13 · PHDK 2.50.8 · Candidate 5.1.0, source/UAT SHA `7df6f77dd47670cfa7671f27f9ca67c38aa7161e`. Review covers source plus local production-SPA UAT only. No external answer engine, crawler, live deployment, provider, paid model, or database was used.
 
 Public question map supported by current source:
 - What is KELEDON? It describes a cloud-governed contact-center runtime for voice assistance and browser workflows.
