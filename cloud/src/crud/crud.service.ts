@@ -7,6 +7,7 @@ import { CrudSeedService } from './crud-seed.service';
 import { CrudVendorService } from './crud-vendor.service';
 import { CrudCompanyService } from './crud-company.service';
 import { CrudHealthService } from './crud-health.service';
+import { CrudSessionDataService } from './crud-session-data.service';
 
 @Injectable()
 export class CrudService {
@@ -18,6 +19,7 @@ export class CrudService {
     private readonly vendorService: CrudVendorService,
     private readonly companyService: CrudCompanyService,
     private readonly healthService: CrudHealthService,
+    private readonly sessionDataService: CrudSessionDataService,
   ) {}
 
   // ========== HEALTH ==========
@@ -401,38 +403,14 @@ export class CrudService {
     return this.prisma.tenantVoiceProfile.delete({ where: { id } });
   }
 
-  // ========== SESSIONS ==========
+  // ========== SESSIONS AND KNOWLEDGE ==========
 
   async getSessions(companyId?: string, limit = 100) {
-    const teams = companyId
-      ? await this.prisma.team.findMany({
-          where: { brand: { companyId } },
-          select: { id: true },
-        })
-      : null;
-
-    return this.prisma.session.findMany({
-      where: companyId
-        ? { teamId: { in: teams?.map((t) => t.id) } }
-        : undefined,
-      include: {
-        user: { select: { id: true, name: true } },
-        team: { select: { id: true, name: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-    });
+    return this.sessionDataService.getSessions(companyId, limit);
   }
 
   async getSession(id: string) {
-    return this.prisma.session.findUnique({
-      where: { id },
-      include: {
-        user: { select: { id: true, name: true } },
-        team: { select: { id: true, name: true } },
-        events: { orderBy: { createdAt: 'asc' } },
-      },
-    });
+    return this.sessionDataService.getSession(id);
   }
 
   async createSession(data: {
@@ -441,42 +419,26 @@ export class CrudService {
     status?: string;
     metadata?: string;
   }) {
-    return this.prisma.session.create({ data });
+    return this.sessionDataService.createSession(data);
   }
 
   async updateSession(
     id: string,
     data: { status?: string; metadata?: string },
   ) {
-    return this.prisma.session.update({ where: { id }, data });
+    return this.sessionDataService.updateSession(id, data);
   }
 
   async deleteOrphanedSessions(): Promise<{ deleted: number }> {
-    const result = await this.prisma.session.deleteMany({
-      where: {
-        OR: [{ userId: null }, { teamId: null }],
-      },
-    });
-    return { deleted: result.count };
+    return this.sessionDataService.deleteOrphanedSessions();
   }
 
   async getOrphanedSessionCount(): Promise<number> {
-    const count = await this.prisma.session.count({
-      where: {
-        OR: [{ userId: null }, { teamId: null }],
-      },
-    });
-    return count;
+    return this.sessionDataService.getOrphanedSessionCount();
   }
 
-  // ========== KNOWLEDGE ==========
-
   async getKnowledgeBases(companyId: string) {
-    return this.prisma.knowledgeBase.findMany({
-      where: { companyId },
-      include: { _count: { select: { documents: true } } },
-      orderBy: { name: 'asc' },
-    });
+    return this.sessionDataService.getKnowledgeBases(companyId);
   }
 
   async createKnowledgeBase(data: {
@@ -484,18 +446,15 @@ export class CrudService {
     name: string;
     description?: string;
   }) {
-    return this.prisma.knowledgeBase.create({ data });
+    return this.sessionDataService.createKnowledgeBase(data);
   }
 
   async deleteKnowledgeBase(id: string) {
-    return this.prisma.knowledgeBase.delete({ where: { id } });
+    return this.sessionDataService.deleteKnowledgeBase(id);
   }
 
   async getKnowledgeDocuments(knowledgeBaseId: string) {
-    return this.prisma.knowledgeDocument.findMany({
-      where: { knowledgeBaseId },
-      orderBy: { createdAt: 'desc' },
-    });
+    return this.sessionDataService.getKnowledgeDocuments(knowledgeBaseId);
   }
 
   async createKnowledgeDocument(data: {
@@ -504,14 +463,14 @@ export class CrudService {
     content: string;
     metadata?: string;
   }) {
-    return this.prisma.knowledgeDocument.create({ data });
+    return this.sessionDataService.createKnowledgeDocument(data);
   }
 
   async deleteKnowledgeDocument(id: string) {
-    return this.prisma.knowledgeDocument.delete({ where: { id } });
+    return this.sessionDataService.deleteKnowledgeDocument(id);
   }
 
-  // ========== ========== AUDIT LOGS ========== ==========
+  // ========== ========== AUDIT LOGS ========== ==========  ========== ==========
   // Delegated to CrudAuditService (crud-audit.service.ts)
 
   async createAuditLog(data: {
