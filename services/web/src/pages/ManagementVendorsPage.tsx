@@ -9,10 +9,10 @@ import { getVendors, createVendor, updateVendor, deleteVendor, getTeams, getBran
 import VendorConnectionChecklist from '@/components/phase4/VendorConnectionChecklist';
 
 const VENDOR_TYPES = [
-    { value: 'crm', label: 'CRM' },
-    { value: 'telephony', label: 'Telephony' },
-    { value: 'helpdesk', label: 'Help Desk' },
-    { value: 'other', label: 'Other' },
+    { value: 'crm', labelKey: 'records.typeCrm' },
+    { value: 'telephony', labelKey: 'records.telephony' },
+    { value: 'helpdesk', labelKey: 'records.helpdesk' },
+    { value: 'other', labelKey: 'records.other' },
 ];
 
 export default function ManagementVendorsPage() {
@@ -61,7 +61,7 @@ export default function ManagementVendorsPage() {
             }
         } catch (error) {
             console.error('Failed to fetch data:', error);
-            toast.error('Failed to fetch data');
+            toast.error(t('records.fetchFailedEntity').replace('{entity}', t('records.vendorPlural')));
         } finally {
             setLoading(false);
         }
@@ -104,7 +104,7 @@ export default function ManagementVendorsPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedTeamId) {
-            toast.error('Please select a team first');
+            toast.error(t('records.selectTeamFirst'));
             return;
         }
         setSaving(true);
@@ -122,30 +122,30 @@ export default function ManagementVendorsPage() {
 
             if (editingVendor) {
                 await updateVendor(editingVendor.id, submitData);
-                toast.success('Vendor updated successfully');
+                toast.success(t('records.updatedEntity').replace('{entity}', t('records.vendor')));
             } else {
                 await createVendor(submitData);
-                toast.success('Vendor created successfully');
+                toast.success(t('records.createdEntity').replace('{entity}', t('records.vendor')));
             }
             setShowForm(false);
             fetchVendors(selectedTeamId);
         } catch (error: any) {
             console.error('Failed to save vendor:', error);
-            toast.error('Failed to save vendor: ' + (error?.message || error));
+            toast.error(t('records.saveFailedEntity').replace('{entity}', t('records.vendor')));
         } finally {
             setSaving(false);
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this vendor?')) return;
+        if (!confirm(t('records.confirmDeleteEntity').replace('{entity}', t('records.vendor')))) return;
         try {
             await deleteVendor(id);
-            toast.success('Vendor deleted successfully');
+            toast.success(t('records.deletedEntity').replace('{entity}', t('records.vendor')));
             fetchVendors(selectedTeamId);
         } catch (error) {
             console.error('Failed to delete vendor:', error);
-            toast.error('Failed to delete vendor');
+            toast.error(t('records.deleteFailedEntity').replace('{entity}', t('records.vendor')));
         }
     };
 
@@ -161,7 +161,8 @@ export default function ManagementVendorsPage() {
     };
 
     const getTypeLabel = (type: string) => {
-        return VENDOR_TYPES.find(t => t.value === type)?.label || type;
+        const option = VENDOR_TYPES.find(item => item.value === type);
+        return option ? t(option.labelKey) : type;
     };
 
 
@@ -169,13 +170,14 @@ export default function ManagementVendorsPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-foreground">Vendors</h1>
-                    <p className="text-muted-foreground">Manage external vendor integrations</p>
+                    <h1 className="text-2xl font-bold text-foreground capitalize">{t('records.vendorPlural')}</h1>
+                    <p className="text-muted-foreground">{t('records.manageVendors')}</p>
                 </div>
                 <div className="flex gap-3">
                     <select
                         value={selectedTeamId}
                         onChange={(e) => setSelectedTeamId(e.target.value)}
+                        aria-label={t('records.selectTeam')}
                         className="bg-gray-800 border border-gray-700 text-foreground rounded-lg px-4 py-2"
                     >
                         {teams.map(team => (
@@ -190,7 +192,7 @@ export default function ManagementVendorsPage() {
                         className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-foreground px-4 py-2 rounded-lg disabled:opacity-50"
                     >
                         <Plus className="w-4 h-4" />
-                        Add Vendor
+                        {t('records.addVendor')}
                     </button>
                 </div>
             </div>
@@ -199,7 +201,7 @@ export default function ManagementVendorsPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <input
                     type="text"
-                    placeholder="Search vendors..."
+                    placeholder={t('records.searchEntity').replace('{entity}', t('records.vendorPlural'))}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-gray-800 border border-gray-700 text-foreground rounded-lg pl-10 pr-4 py-2"
@@ -215,7 +217,7 @@ export default function ManagementVendorsPage() {
             ) : filteredVendors.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                     <Store className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    {selectedTeamId ? 'No vendors yet for this team' : 'Select a team to view vendors'}
+                    {selectedTeamId ? t('records.noVendorsForTeam') : t('records.selectTeamToView')}
                 </div>
             ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -241,12 +243,16 @@ export default function ManagementVendorsPage() {
                                     ]} />
                                     <button
                                         onClick={() => openEditForm(vendor)}
+                                        aria-label={t('records.edit')}
+                                        title={t('records.edit')}
                                         className="p-1 hover:bg-gray-700 rounded"
                                     >
                                         <Pencil className="w-4 h-4 text-muted-foreground" />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(vendor.id)}
+                                        aria-label={t('records.delete')}
+                                        title={t('records.delete')}
                                         className="p-1 hover:bg-gray-700 rounded"
                                     >
                                         <Trash2 className="w-4 h-4 text-red-400" />
@@ -267,7 +273,7 @@ export default function ManagementVendorsPage() {
                                     "flex items-center gap-1",
                                     vendor.isActive ? "text-green-400" : "text-muted-foreground"
                                 )}>
-                                    {vendor.isActive ? 'Active' : 'Inactive'}
+                                    {vendor.isActive ? t('records.active') : t('records.inactive')}
                                 </span>
                                 {vendor.username && (
                                     <span className="flex items-center gap-1 text-muted-foreground">
@@ -278,13 +284,13 @@ export default function ManagementVendorsPage() {
                                 {vendor.hasPassword && (
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         <Lock className="w-3 h-3" />
-                                        Password
+                                        {t('records.password')}
                                     </span>
                                 )}
                                 {vendor.hasApiKey && (
                                     <span className="flex items-center gap-1 text-muted-foreground">
                                         <Lock className="w-3 h-3" />
-                                        API Key
+                                        {t('records.apiKey')}
                                     </span>
                                 )}
                             </div>
@@ -298,7 +304,7 @@ export default function ManagementVendorsPage() {
                     <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 w-full max-w-md">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-xl font-bold text-foreground">
-                                {editingVendor ? 'Edit Vendor' : 'Add Vendor'}
+                                {editingVendor ? t('records.edit') : t('records.addVendor')}
                             </h2>
                             <button type="button" aria-label={t('records.close')} onClick={() => setShowForm(false)}>
                                 <X className="w-5 h-5 text-muted-foreground" />
@@ -308,13 +314,13 @@ export default function ManagementVendorsPage() {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label htmlFor="management-vendors-field-1" className="block text-sm font-medium text-muted-foreground mb-1">
-                                    Vendor Name
+                                    {t('records.vendorName')}
                                 </label>
                                 <input id="management-vendors-field-1"
                                     type="text"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    placeholder="e.g., Salesforce, Genesys, HubSpot"
+                                    placeholder={t('records.vendorNameExample')}
                                     className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2"
                                     required
                                 />
@@ -322,7 +328,7 @@ export default function ManagementVendorsPage() {
 
                             <div>
                                 <label htmlFor="management-vendors-field-2" className="block text-sm font-medium text-muted-foreground mb-1">
-                                    Type
+                                    {t('records.type')}
                                 </label>
                                 <select id="management-vendors-field-2"
                                     value={formData.type}
@@ -331,7 +337,7 @@ export default function ManagementVendorsPage() {
                                 >
                                     {VENDOR_TYPES.map(type => (
                                         <option key={type.value} value={type.value}>
-                                            {type.label}
+                                            {t(type.labelKey)}
                                         </option>
                                     ))}
                                 </select>
@@ -339,64 +345,64 @@ export default function ManagementVendorsPage() {
 
                             <div>
                                 <label htmlFor="management-vendors-field-3" className="block text-sm font-medium text-muted-foreground mb-1">
-                                    Base URL
+                                    {t('records.baseUrl')}
                                 </label>
                                 <input id="management-vendors-field-3"
                                     type="url"
                                     value={formData.baseUrl}
                                     onChange={(e) => setFormData({ ...formData, baseUrl: e.target.value })}
-                                    placeholder="https://login.salesforce.com"
+                                    placeholder="https://login.example.com"
                                     className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2"
                                 />
                             </div>
 
                             <div>
                                 <label htmlFor="management-vendors-field-4" className="block text-sm font-medium text-muted-foreground mb-1">
-                                    Username
+                                    {t('records.username')}
                                 </label>
                                 <input id="management-vendors-field-4"
                                     type="text"
                                     value={formData.username}
                                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                                    placeholder="Username (optional)"
+                                    placeholder={`${t('records.username')} (${t('records.optional')})`}
                                     className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2"
                                 />
                             </div>
 
                             <div>
                                 <label htmlFor="management-vendors-field-5" className="block text-sm font-medium text-muted-foreground mb-1">
-                                    Password
+                                    {t('records.password')}
                                 </label>
                                 <input id="management-vendors-field-5"
                                     type="password"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    placeholder={editingVendor ? 'Leave blank to keep current' : 'Password (optional)'}
+                                    placeholder={editingVendor ? t('records.keepCurrent') : t('records.passwordOptional')}
                                     className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2"
                                 />
                             </div>
 
                             <div>
                                 <label htmlFor="management-vendors-field-6" className="block text-sm font-medium text-muted-foreground mb-1">
-                                    API Key
+                                    {t('records.apiKey')}
                                 </label>
                                 <input id="management-vendors-field-6"
                                     type="password"
                                     value={formData.apiKey}
                                     onChange={(e) => setFormData({ ...formData, apiKey: e.target.value })}
-                                    placeholder={editingVendor ? 'Leave blank to keep current' : 'API Key (optional)'}
+                                    placeholder={editingVendor ? t('records.keepCurrent') : t('records.apiKeyOptional')}
                                     className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2"
                                 />
                             </div>
 
                             <div>
                                 <label htmlFor="management-vendors-field-7" className="block text-sm font-medium text-muted-foreground mb-1">
-                                    Start Goal / Instructions
+                                    {t('records.startGoalInstructions')}
                                 </label>
                                 <textarea id="management-vendors-field-7"
                                     value={formData.startGoal}
                                     onChange={(e) => setFormData({ ...formData, startGoal: e.target.value })}
-                                    placeholder='e.g., Login using the password, then navigate to Reports'
+                                    placeholder={t('records.startGoalExample')}
                                     rows={3}
                                     className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2 resize-none"
                                 />
@@ -408,7 +414,7 @@ export default function ManagementVendorsPage() {
                                     onClick={() => setShowForm(false)}
                                     className="flex-1 bg-gray-700 hover:bg-gray-600 text-foreground px-4 py-2 rounded-lg"
                                 >
-                                    Cancel
+                                    {t('records.cancel')}
                                 </button>
                                 <button
                                     type="submit"
@@ -418,7 +424,7 @@ export default function ManagementVendorsPage() {
                                     {saving ? (
                                         <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                                     ) : (
-                                        editingVendor ? 'Update' : 'Create'
+                                        editingVendor ? t('records.update') : t('records.create')
                                     )}
                                 </button>
                             </div>

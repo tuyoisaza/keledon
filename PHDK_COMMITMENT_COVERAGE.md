@@ -1,5 +1,9 @@
 # PHDK commitment coverage — KELEDON four fronts
 
+## Current candidate — 5.1.14
+
+Product/readback PRs #70/#71 deliver 5.1.13. Candidate `fix/phdk-admin-crud-i18n`, based on `84bfdb901068f4fab12fa88e0b5b3cd3394b7180`, adds Spanish/Portuguese/English localization for Companies, Brands, Teams, Users and Vendors. Web typecheck/build, synthetic SPA UAT 1/1, API regressions 14/14, locale parity 452/452, and PHDK coherence 52/52 pass; touched-page ESLint has 0 errors/9 warnings. It advances CMT-004 usability but does not close persisted CRUD/migration, broad accessibility/locale acceptance, native device/audio or deployed SEO/AEO. CRM/call workflows remain per-client. Product PR and remote readback are pending; overall Auto remains PARTIALLY DELIVERED.
+
 ## Current coverage — 5.1.13
 
 Product PR [#70](https://github.com/tuyoisaza/keledon/pull/70) merged at `45be8d82de1f402ee6199a19cd4fa5083bb9ecb1`; all five app roots report 5.1.13. CMT-001 remains delivered; CMT-002 has scoped widget/theme UAT, CMT-003 remains provider-independent with client-specific CRM/telephony, and CMT-004 keeps the approved DB-derived role/tenant and write-only-secret policy with isolated regressions. Provider settings localization is verified on the Spanish UI fixture and catalogs remain aligned at 404 keys. Persisted CRUD/migration, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Overall: PARTIALLY DELIVERED.

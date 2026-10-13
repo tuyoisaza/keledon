@@ -1,8 +1,8 @@
 # UAT report — KELEDON 5.1.7 (continuation)
 
-## Latest local candidate — 5.1.13 (scoped UAT pass; overall acceptance incomplete)
+## Latest local candidate — 5.1.14 (scoped UAT pass; overall acceptance incomplete)
 
-Run: local production web UAT on the 5.1.13 Vite build, 2026-10-13. The existing synthetic Company Co fixture intercepted every API route and external requests/WebSockets were blocked. The 1/1 UAT suite passes for the Spanish provider settings heading/key placeholder and the existing write-only key flow: saved keys are not prefilled, replacement clears after save, and untouched keys are omitted. Theme/widget, role-fixture and safe-diagnostics cases in the same suite also pass; these are UI-only results.
+Run: local production web UAT on the 5.1.14 Vite build, 2026-10-13. The existing synthetic Company Co fixture intercepted every API route and external requests/WebSockets were blocked. The 1/1 UAT suite passes for Spanish companies, brands, teams, users and vendors search/screens; manager user creation/update still omits role/company controls and payload fields and excludes foreign-company teams. Spanish provider settings and write-only key behavior also pass: saved keys are not prefilled, replacement clears after save, and untouched keys are omitted. Theme/widget, role-fixture and safe-diagnostics cases in the same suite also pass; these are UI-only results. This does not establish persistence, backend auth (covered by separate API regression 14/14), whole-app localization/accessibility or client-specific live CRM/telephony behavior.
 
 `services/web` typecheck and production build pass. English, Spanish and Portuguese catalogs have identical 404-key sets. API regression passes 14/14; focused AI administration contracts pass 6/6. No database, provider, CRM, customer record, native device or deployed endpoint was contacted. This closes provider-page localization evidence for the tested Spanish route only; whole-app locale and accessibility acceptance remain incomplete. Per-client telephony/CRM selection remains outside the common-flow test.
 

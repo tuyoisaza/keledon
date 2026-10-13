@@ -1,8 +1,8 @@
 # Current task
 
-## PHDK Auto — current state 5.1.13
+## PHDK Auto — current candidate 5.1.14
 
-Product PR [#70](https://github.com/tuyoisaza/keledon/pull/70) is merged at `45be8d82de1f402ee6199a19cd4fa5083bb9ecb1`; all five app roots report 5.1.13. The provider-management page now localizes labels, provider descriptions, key states and save feedback using the existing English, Spanish and Portuguese catalogs. Scoped UAT verifies the Spanish page and write-only key behavior; API regression 14/14, AI administration contract tests 6/6, and PHDK coherence 52/52 pass.
+PR #70 (5.1.13 provider page) and readback PR #71 are merged. Current branch `fix/phdk-admin-crud-i18n` is a 5.1.14 candidate based on `84bfdb901068f4fab12fa88e0b5b3cd3394b7180`. Companies, brands, teams, users and vendors now use existing English/Spanish/Portuguese catalogs; country display follows the selected locale. Web typecheck/build and synthetic SPA UAT pass; API regression 14/14; catalog parity 452/452. ESLint has 0 errors and 9 warnings on touched pages. Product PR and remote-main readback for this candidate remain pending.
 
 The four owner-confirmed fronts remain tracked. Overall PHDK Auto is **PARTIALLY DELIVERED** while persisted CRUD/migration, native permission/device/audio, broad accessibility/localization and deployed SEO/AEO acceptance remain open. See `docs/phdk/lifecycle/20261013-keledon-v5111/`. No production DB/provider/customer workflow or deployment was used.
 

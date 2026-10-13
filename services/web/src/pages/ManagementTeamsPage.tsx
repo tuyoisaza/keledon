@@ -17,8 +17,12 @@ const availableCountries = [
     { code: 'BR', name: 'Brazil' },
 ];
 
+const getCountryLabel = (code: string, locale: string) =>
+    new Intl.DisplayNames([locale], { type: 'region' }).of(code) ||
+    availableCountries.find(country => country.code === code)?.name || code;
+
 export default function ManagementTeamsPage() {
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
     const [teams, setTeams] = useState<Team[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [brands, setBrands] = useState<Brand[]>([]);
@@ -52,7 +56,7 @@ export default function ManagementTeamsPage() {
             setBrands(brandsData);
         } catch (error) {
             console.error('Failed to fetch teams:', error);
-            toast.error('Failed to fetch teams');
+            toast.error(t('records.fetchFailedEntity').replace('{entity}', t('records.teamPlural')));
         } finally {
             setLoading(false);
         }
@@ -93,31 +97,31 @@ export default function ManagementTeamsPage() {
             if (editingTeam) {
                 const result = await updateTeam(editingTeam.id, submitData);
                 console.log('Update result:', result);
-                toast.success('Team updated successfully');
+                toast.success(t('records.updatedEntity').replace('{entity}', t('records.team')));
             } else {
                 const result = await createTeam(submitData);
                 console.log('Create result:', result);
-                toast.success('Team created successfully');
+                toast.success(t('records.createdEntity').replace('{entity}', t('records.team')));
             }
             setShowForm(false);
             fetchData();
         } catch (error: any) {
             console.error('Failed to save team:', error);
-            toast.error('Failed to save team: ' + (error?.message || error));
+            toast.error(t('records.saveFailedEntity').replace('{entity}', t('records.team')));
         } finally {
             setSaving(false);
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this team?')) return;
+        if (!confirm(t('records.confirmDeleteEntity').replace('{entity}', t('records.team')))) return;
         try {
             await deleteTeam(id);
-            toast.success('Team deleted successfully');
+            toast.success(t('records.deletedEntity').replace('{entity}', t('records.team')));
             fetchData();
         } catch (error) {
             console.error('Failed to delete team:', error);
-            toast.error('Failed to delete team');
+            toast.error(t('records.deleteFailedEntity').replace('{entity}', t('records.team')));
         }
     };
 
@@ -145,7 +149,7 @@ export default function ManagementTeamsPage() {
 
     const getCountryName = (code?: string) => {
         if (!code) return '—';
-        return availableCountries.find(c => c.code === code)?.name || code;
+        return getCountryLabel(code, locale);
     };
 
     const selectedCompany = companies.find(c => c.id === formData.companyId);
@@ -159,8 +163,8 @@ export default function ManagementTeamsPage() {
                 <div className="flex items-center gap-3">
                     <Users className="w-6 h-6 text-primary" />
                     <div>
-                        <h1 className="text-2xl font-bold">Teams</h1>
-                        <p className="text-muted-foreground">Manage teams for your brands</p>
+                        <h1 className="text-2xl font-bold capitalize">{t('records.teamPlural')}</h1>
+                        <p className="text-muted-foreground">{t('records.manageTeams')}</p>
                     </div>
                 </div>
                 <button
@@ -168,7 +172,7 @@ export default function ManagementTeamsPage() {
                     className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                 >
                     <Plus className="w-4 h-4" />
-                    Add Team
+                    {t('records.addTeam')}
                 </button>
             </div>
 
@@ -179,11 +183,11 @@ export default function ManagementTeamsPage() {
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search teams..."
+                        placeholder={t('records.searchEntity').replace('{entity}', t('records.teamPlural'))}
                         className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none"
                     />
                 </div>
-                <button onClick={fetchData} className="p-2 hover:bg-muted rounded-lg transition-colors" title="Refresh">
+                <button onClick={fetchData} aria-label={t('records.refresh')} className="p-2 hover:bg-muted rounded-lg transition-colors" title={t('records.refresh')}>
                     <RefreshCw className={cn("w-4 h-4", loading && "animate-spin")} />
                 </button>
             </div>
@@ -196,20 +200,20 @@ export default function ManagementTeamsPage() {
                 ) : filteredTeams.length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground">
                         <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                        <p>No teams found</p>
+                        <p>{t('records.noEntityFound').replace('{entity}', t('records.teamPlural'))}</p>
                         <button onClick={openCreateForm} className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
-                            Add First Team
+                            {t('records.addFirst').replace('{entity}', t('records.team'))}
                         </button>
                     </div>
                 ) : (
                     <table className="w-full">
                         <thead>
                             <tr className="border-b border-border text-left text-sm text-muted-foreground">
-                                <th className="px-4 py-3 font-medium">NAME</th>
-                                <th className="px-4 py-3 font-medium">COMPANY</th>
-                                <th className="px-4 py-3 font-medium">BRAND</th>
-                                <th className="px-4 py-3 font-medium">COUNTRY</th>
-                                <th className="px-4 py-3 font-medium">ACTIONS</th>
+                                <th className="px-4 py-3 font-medium">{t('records.name').toUpperCase()}</th>
+                                <th className="px-4 py-3 font-medium">{t('records.company').toUpperCase()}</th>
+                                <th className="px-4 py-3 font-medium">{t('records.brand').toUpperCase()}</th>
+                                <th className="px-4 py-3 font-medium">{t('records.country').toUpperCase()}</th>
+                                <th className="px-4 py-3 font-medium">{t('records.actions').toUpperCase()}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -230,10 +234,10 @@ export default function ManagementTeamsPage() {
                                                 { label: t('records.created'), value: team.createdAt },
                                                 { label: t('records.updated'), value: team.updatedAt }
                                             ]} />
-                                            <button onClick={() => openEditForm(team)} className="p-1.5 hover:bg-muted rounded transition-colors" title="Edit">
+                                            <button onClick={() => openEditForm(team)} className="p-1.5 hover:bg-muted rounded transition-colors" title={t('records.edit')}>
                                                 <Pencil className="w-4 h-4" />
                                             </button>
-                                            <button onClick={() => handleDelete(team.id)} className="p-1.5 hover:bg-destructive/10 text-destructive rounded transition-colors" title="Delete">
+                                            <button onClick={() => handleDelete(team.id)} className="p-1.5 hover:bg-destructive/10 text-destructive rounded transition-colors" title={t('records.delete')}>
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
                                         </div>
@@ -250,7 +254,7 @@ export default function ManagementTeamsPage() {
                     <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold">
-                                {editingTeam ? 'Edit' : 'Add'} Team
+                                {editingTeam ? t('records.edit') : t('records.add')} {t('records.team')}
                             </h3>
                             <button type="button" aria-label={t('records.close')} onClick={() => setShowForm(false)} className="p-1 hover:bg-muted rounded">
                                 <X className="w-5 h-5" />
@@ -258,20 +262,20 @@ export default function ManagementTeamsPage() {
                         </div>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label htmlFor="management-teams-field-1" className="block text-sm text-muted-foreground mb-1">Company</label>
+                                <label htmlFor="management-teams-field-1" className="block text-sm text-muted-foreground mb-1">{t('records.company')}</label>
                                 <select id="management-teams-field-1"
                                     value={formData.companyId}
                                     onChange={(e) => setFormData({ ...formData, companyId: e.target.value, brandId: '', country: '' })}
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                                 >
-                                    <option value="">Select Company...</option>
+                                    <option value="">{t('records.selectCompany')}</option>
                                     {companies.map(c => (
                                         <option key={c.id} value={c.id}>{c.name}</option>
                                     ))}
                                 </select>
                             </div>
                             <div>
-                                <label htmlFor="management-teams-field-2" className="block text-sm text-muted-foreground mb-1">Brand</label>
+                                <label htmlFor="management-teams-field-2" className="block text-sm text-muted-foreground mb-1">{t('records.brand')}</label>
                                 <select id="management-teams-field-2"
                                     value={formData.brandId}
                                     onChange={(e) => setFormData({ ...formData, brandId: e.target.value, country: '' })}
@@ -279,30 +283,29 @@ export default function ManagementTeamsPage() {
                                     disabled={!formData.companyId}
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
                                 >
-                                    <option value="">Select Brand...</option>
+                                    <option value="">{t('records.selectBrand')}</option>
                                     {brands.filter(b => b.companyId === formData.companyId).map(b => (
                                         <option key={b.id} value={b.id}>{b.name}</option>
                                     ))}
                                 </select>
                             </div>
                             <div>
-                                <label htmlFor="management-teams-field-3" className="block text-sm text-muted-foreground mb-1">Country</label>
+                                <label htmlFor="management-teams-field-3" className="block text-sm text-muted-foreground mb-1">{t('records.country')}</label>
                                 <select id="management-teams-field-3"
                                     value={formData.country}
                                     onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                                     required
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                                 >
-                                    <option value="">Select Country...</option>
+                                    <option value="">{t('records.selectCountry')}</option>
                                     {companyCountries.map((c: any) => {
                                         const code = typeof c === 'string' ? c : c.countryCode;
-                                        const country = availableCountries.find(ac => ac.code === code);
-                                        return <option key={code} value={code}>{country?.name || code}</option>;
+                                        return <option key={code} value={code}>{getCountryLabel(code, locale)}</option>;
                                     })}
                                 </select>
                             </div>
                             <div>
-                                <label htmlFor="management-teams-field-4" className="block text-sm text-muted-foreground mb-1">Team Name</label>
+                                <label htmlFor="management-teams-field-4" className="block text-sm text-muted-foreground mb-1">{t('records.teamName')}</label>
                                 <input id="management-teams-field-4"
                                     type="text"
                                     value={formData.name}
@@ -317,7 +320,7 @@ export default function ManagementTeamsPage() {
                                     onClick={() => setShowForm(false)}
                                     className="px-4 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors"
                                 >
-                                    Cancel
+                                    {t('records.cancel')}
                                 </button>
                                 <button
                                     type="submit"
@@ -325,7 +328,7 @@ export default function ManagementTeamsPage() {
                                     className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium disabled:opacity-50 flex items-center gap-2"
                                 >
                                     {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-                                    {saving ? 'Saving...' : 'Save'}
+                                    {saving ? t('records.saving') : t('records.save')}
                                 </button>
                             </div>
                         </form>

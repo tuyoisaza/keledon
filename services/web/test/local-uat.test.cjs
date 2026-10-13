@@ -148,7 +148,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   for(const role of ['superadmin','admin','coordinator']){
    const {page,context}=await pageFor(role);await page.goto(origin+'/management/companies');
    const detail=page.getByRole('button',{name:'Ver detalle: Company Co',exact:true});await detail.waitFor();
-   if(role==='superadmin'){const trigger=page.getByRole('button',{name:'Add Company',exact:true});await trigger.click();const form=page.getByRole('dialog');await form.waitFor();assert.equal(await form.getByLabel('Company Name').count(),1);await page.keyboard.press('Escape');await form.waitFor({state:'hidden'});assert.equal(await trigger.evaluate(el=>el===document.activeElement),true);}
+   if(role==='superadmin'){const trigger=page.getByRole('button',{name:'Agregar empresa',exact:true});await trigger.click();const form=page.getByRole('dialog');await form.waitFor();assert.equal(await form.getByLabel('Nombre de la empresa').count(),1);await page.keyboard.press('Escape');await form.waitFor({state:'hidden'});assert.equal(await trigger.evaluate(el=>el===document.activeElement),true);}
    await detail.click();const dialog=page.getByRole('dialog');await dialog.waitFor();assert.ok((await dialog.innerText()).includes('Synthetic UAT'));
    await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>!!document.activeElement.closest('dialog')),true);
    await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});assert.equal(await detail.evaluate(el=>el===document.activeElement),true);
@@ -164,40 +164,48 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
    await context.close();
    checks.push('UAT-004 '+role+' frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API');
   }
+  for(const [route,placeholder] of [['brands','Buscar marcas...'],['teams','Buscar equipos...']]){
+   const localizedPage=await pageFor('admin');await localizedPage.page.goto(origin+'/management/'+route);
+   await localizedPage.page.getByPlaceholder(placeholder).waitFor();await localizedPage.context.close();
+  }
+  const vendorPage=await pageFor('admin');await vendorPage.page.goto(origin+'/management/vendors');
+  await vendorPage.page.getByPlaceholder('Buscar proveedores...').waitFor();
+  await vendorPage.page.getByRole('heading',{name:/proveedores/i}).waitFor();await vendorPage.context.close();
   const userAdmin=await pageFor('admin');await userAdmin.page.goto(origin+'/management/users');
-  const addUser=userAdmin.page.getByRole('button',{name:'Add User',exact:true});await addUser.waitFor();await addUser.click();
+  await userAdmin.page.getByPlaceholder('Buscar usuarios...').waitFor();
+  const addUser=userAdmin.page.getByRole('button',{name:'Agregar usuario',exact:true});await addUser.waitFor();await addUser.click();
   const userDialog=userAdmin.page.getByRole('dialog');
   const userForm=userDialog.locator('form');
   assert.equal(await userForm.locator('select').count(),2,'admin has brand/team choices only; role/company remain server-derived');
   assert.equal(await userForm.getByText('Company Co',{exact:true}).count(),1);
-  const companyGroup=userForm.getByRole('group',{name:'Company'});
+  const companyGroup=userForm.getByRole('group',{name:'Empresa'});
   assert.equal(await companyGroup.getByText('Company Co',{exact:true}).count(),1);
   await userForm.locator('select').nth(0).selectOption(brand.id);await userForm.locator('select').nth(1).selectOption(team.id);
   await userForm.locator('input[type="text"]').fill('Synthetic Company Co User');
   await userForm.locator('input[type="email"]').fill('synthetic.user@company-co.invalid');
-  await userForm.getByRole('button',{name:'Save',exact:true}).click();
+  await userForm.getByRole('button',{name:'Guardar',exact:true}).click();
   await userAdmin.page.waitForFunction(()=>document.querySelector('form')===null);
   assert.deepEqual(userWrites.at(-1),{method:'POST',path:'/api/crud/users',body:{name:'Synthetic Company Co User',email:'synthetic.user@company-co.invalid',teamId:team.id}});
-  await userAdmin.page.getByTitle('Edit').first().click();
+  await userAdmin.page.getByTitle('Editar').first().click();
   const editForm=userAdmin.page.locator('form');await editForm.waitFor();
   await editForm.locator('select').nth(0).selectOption(brand2.id);
   const teamSelect=editForm.locator('select').nth(1);
   assert.equal(await teamSelect.locator('option[value="team-other"]').count(),0);
   await teamSelect.selectOption(team2.id);
-  await editForm.getByRole('button',{name:'Save',exact:true}).click();
+  await editForm.getByRole('button',{name:'Guardar',exact:true}).click();
   await userAdmin.page.waitForFunction(()=>document.querySelector('form')===null);
   assert.deepEqual(userWrites.at(-1),{method:'PUT',path:'/api/crud/users/'+person.id,body:{name:person.name,email:person.email,teamId:team2.id}});
   await userAdmin.page.screenshot({path:path.join(evidence,'uat-admin-users-team-scope.png')});
   await userAdmin.context.close();
   const userSuper=await pageFor('superadmin');await userSuper.page.goto(origin+'/management/users');
-  await userSuper.page.getByRole('button',{name:'Add User',exact:true}).click();
+  await userSuper.page.getByRole('button',{name:'Agregar usuario',exact:true}).click();
   const superDialog=userSuper.page.getByRole('dialog');await superDialog.waitFor();
-  assert.equal(await superDialog.getByLabel('Company').count(),1);
-  assert.equal(await superDialog.getByLabel('Role').count(),1);
-  assert.equal(await superDialog.getByLabel('Company').locator('option[value="other-company"]').count(),1);
-  await superDialog.getByRole('button',{name:'Cancel',exact:true}).click();await superDialog.waitFor({state:'hidden'});
+  assert.equal(await superDialog.getByLabel('Empresa').count(),1);
+  assert.equal(await superDialog.getByLabel('Rol').count(),1);
+  assert.equal(await superDialog.getByLabel('Empresa').locator('option[value="other-company"]').count(),1);
+  await superDialog.getByRole('button',{name:'Cancelar',exact:true}).click();await superDialog.waitFor({state:'hidden'});
   await userSuper.context.close();
-  checks.push('UAT-004 admin user create and same-company team reassignment: no role/company controls or payload fields; foreign company team absent PASS (synthetic UI; API guard tested separately)');
+  checks.push('UAT-004 company/brand/team/user/vendor administration Spanish copy and manager user restrictions: localized routes/search and modal controls; no role/company payload fields; foreign team absent PASS (synthetic UI; API guard tested separately)');
   const provider=await pageFor('admin');await provider.page.goto(origin+'/management/providers');
   await provider.page.getByRole('heading',{name:'Administración — Proveedores'}).waitFor();
   const key=provider.page.getByPlaceholder('sk-… (introduce tu clave de API de OpenAI)');await key.waitFor();assert.equal(await key.inputValue(),'');
