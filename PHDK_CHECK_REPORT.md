@@ -1,5 +1,9 @@
 # PHDK Check — 5.1.8 integrated source; acceptance partial
 
+## Latest continuation — 5.1.9 operational authorization audit
+
+PR #58 integrates the 5.1.9 audit at `6d0112dd940c142c20b5e4c56c766da64d000b3b`; all five app package/lock roots align. Escalation endpoints now use the current DB actor and company/team/session boundaries; analytics, dashboard and RBAC are guarded by the current DB superadmin role; listening-session REST endpoints require a DB-backed actor and session capabilities are UUID-strength with expiry enforced. `services/api npm run test:regression` passes 12/12, API build/typecheck passes, and ESLint on the touched API files has 0 errors/15 existing warnings. These are code and isolated regression results, not persisted database, native-device, provider or deployed acceptance. Overall PHDK Auto remains PARTIALLY DELIVERED for the open acceptance listed below.
+
 Date: 2026-10-13 America/Mexico_City · PHDK 2.50.10 · Auto goal `20261012-keledon-four-fronts`.
 
 ## 2026-10-13 follow-up source audit — candidate 5.1.8

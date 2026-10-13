@@ -1,4 +1,10 @@
 # Commitment ledger
+## Latest continuation — 2026-10-13, 5.1.9 integrated
+
+PR #58 delivered 5.1.9 to `main` at `6d0112dd940c142c20b5e4c56c766da64d000b3b`; all five app package/lock roots align. CMT-004's operational escalation, global dashboards/analytics/RBAC, and listening-session routes now enforce DB-derived actor/tenant roles and strong expiring capabilities. API regressions pass 12/12, build/typecheck pass, and changed-file ESLint has 0 errors/15 existing warnings. All four commitments remain confirmed. Overall Auto remains PARTIALLY DELIVERED pending persisted CRUD/migration, native Electron/audio, broad accessibility/localization and deployed SEO/AEO evidence.
+
+Current ledger below retains historical plan fields; the latest git/acceptance disposition is superseded by this continuation and `HANDOFF_5.1.9.md`. Last revalidated 2026-10-13 against remote `main` `6d0112dd940c142c20b5e4c56c766da64d000b3b` and merged PR #58. Four commitments have integrated source; remaining manual/persisted acceptance is tracked, not waived. See `UAT_REPORT.md`.
+
 ## Current continuation — 2026-10-13, candidate 5.1.8
 
 The source audit found that generic CRUD accepted caller-supplied `passwordHash` on user create/update. CMT-004 remediation now rejects that field for every role; only LocalAuthService's password-registration path generates bcrypt hashes. API policy regression explicitly covers admin, coordinator and superadmin attempts. PR #56 merged at `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6` with all application roots at 5.1.8. PR #55 is CLOSED WITHOUT MERGE because its old squash ancestry produced a dirty merge base; its changes were carried by clean-based PR #56. The four commitments remain confirmed; overall Auto remains PARTIALLY DELIVERED while persisted CRUD/runtime and other acceptance evidence is outstanding.

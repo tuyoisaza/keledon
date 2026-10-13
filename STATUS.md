@@ -1,5 +1,13 @@
 # STATUS
 
+## 2026-10-13 — PHDK Auto 5.1.9 merged; overall partial
+
+- PR [#58](https://github.com/tuyoisaza/keledon/pull/58) merged to `main` at `6d0112dd940c142c20b5e4c56c766da64d000b3b`; all five app package/lock roots align at 5.1.9.
+- Operational API review now derives escalation actor/tenant from the database, scopes company/team/session access, reserves global dashboard/analytics/RBAC for current DB superadmins, and requires DB-backed identity for listening-session routes. Session capabilities now use UUIDs and enforce their one-hour expiry.
+- API regression: 12/12 suites; API build/typecheck passed; ESLint on touched API files: 0 errors and 15 existing warnings. No hosted checks/review requirement or deployment is claimed.
+- Overall Auto remains PARTIALLY DELIVERED: persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO acceptance remain open. Client-specific CRM/call integrations remain outside universal acceptance.
+- SIGUIENTE PASO: continue the remaining scoped acceptance in `UAT_REPORT.md`; reconcile any new reproducible source findings against CMT-001..004.
+
 ## 2026-10-13 — PHDK Auto candidate 5.1.8
 
 - Source review identified and fixed generic CRUD acceptance of client-supplied `passwordHash` on user create/update; only the authentication flow owns password hashing.
