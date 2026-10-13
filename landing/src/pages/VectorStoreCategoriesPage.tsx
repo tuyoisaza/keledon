@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Edit2, Save, X, Loader2, Tag, AlertCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Plus, Trash2, Edit2, Save, Loader2, Tag, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { getCategories, createCategory, updateCategory, deleteCategory, type Category } from '@/lib/crud-api';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
 
 const defaultCategories = [
-  { id: 'safety', name: 'Safety', color: '#ef4444', description: 'Safety guidelines and procedures', company_id: '' },
-  { id: 'procedure', name: 'Procedure', color: '#3b82f6', description: 'Standard operating procedures', company_id: '' },
-  { id: 'compliance', name: 'Compliance', color: '#a855f7', description: 'Compliance and regulations', company_id: '' },
-  { id: 'knowledge', name: 'Knowledge', color: '#22c55e', description: 'General knowledge base', company_id: '' },
+  { id: 'safety', name: 'Safety', color: '#ef4444', description: 'Safety guidelines and procedures', companyId: '' },
+  { id: 'procedure', name: 'Procedure', color: '#3b82f6', description: 'Standard operating procedures', companyId: '' },
+  { id: 'compliance', name: 'Compliance', color: '#a855f7', description: 'Compliance and regulations', companyId: '' },
+  { id: 'knowledge', name: 'Knowledge', color: '#22c55e', description: 'General knowledge base', companyId: '' },
 ];
 
 export default function VectorStoreCategoriesPage() {
@@ -46,6 +45,7 @@ export default function VectorStoreCategoriesPage() {
       }
     } catch (err) {
       console.error('Failed to fetch categories:', err);
+      setError('Failed to load categories.');
       setCategories(defaultCategories);
     } finally {
       setLoading(false);

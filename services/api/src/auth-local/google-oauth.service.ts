@@ -16,7 +16,7 @@ export class GoogleOAuthService {
     this.oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUri);
   }
 
-  getAuthUrl(): string {
+  getAuthUrl(state: string, nonce: string): string {
     const scopes = [
       'https://www.googleapis.com/auth/userinfo.email',
       'https://www.googleapis.com/auth/userinfo.profile',
@@ -27,10 +27,15 @@ export class GoogleOAuthService {
       access_type: 'offline',
       scope: scopes,
       prompt: 'consent',
+      state,
+      nonce,
     });
   }
 
-  async verifyCode(code: string): Promise<GoogleUserInfo> {
+  async verifyCode(
+    code: string,
+    expectedNonce: string,
+  ): Promise<GoogleUserInfo> {
     const { tokens } = await this.oauth2Client.getToken(code);
 
     if (!tokens.access_token) {
@@ -46,7 +51,12 @@ export class GoogleOAuthService {
 
     const payload = ticket.getPayload();
 
-    if (!payload) {
+    if (
+      !payload ||
+      !payload.email_verified ||
+      !payload.email ||
+      (payload as any).nonce !== expectedNonce
+    ) {
       throw new Error('Invalid ID token payload');
     }
 

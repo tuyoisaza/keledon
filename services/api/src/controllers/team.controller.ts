@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ApiTags } from '@nestjs/swagger';
-import OpenAI from 'openai';
 
 export class TeamConfigDto {
   sttProvider?: string;
@@ -57,10 +56,11 @@ export class TeamController {
       select: { role: true, companyId: true, teamId: true },
     });
 
+    if (!dbUser) throw new ForbiddenException('Actor access denied');
     return {
-      role: dbUser?.role || requestUser.role || 'user',
-      companyId: dbUser?.companyId || null,
-      teamId: dbUser?.teamId || null,
+      role: dbUser.role,
+      companyId: dbUser.companyId,
+      teamId: dbUser.teamId,
     };
   }
 
@@ -70,13 +70,19 @@ export class TeamController {
     teamId: string | null;
   }) {
     if (scope.role === 'superadmin') return {};
-    if (scope.companyId) return { brand: { companyId: scope.companyId } };
+    if (['admin', 'coordinator'].includes(scope.role) && scope.companyId)
+      return { brand: { companyId: scope.companyId } };
     if (scope.teamId) return { id: scope.teamId };
     return { id: '__NO_TEAM_ACCESS__' };
   }
 
-  private async assertTeamAccess(teamId: string, req: any) {
+  private async assertTeamAccess(teamId: string, req: any, management = false) {
     const scope = await this.getActorScope(req);
+    if (
+      management &&
+      !['superadmin', 'admin', 'coordinator'].includes(scope.role)
+    )
+      throw new ForbiddenException('Management access denied');
     const team = await this.prisma.team.findFirst({
       where: {
         id: teamId,
@@ -95,7 +101,16 @@ export class TeamController {
       const scope = await this.getActorScope(req);
       const teams = await this.prisma.team.findMany({
         where: this.teamScopeWhere(scope),
-        include: {
+        select: {
+          id: true,
+          name: true,
+          brandId: true,
+          country: true,
+          sttProvider: true,
+          ttsProvider: true,
+          llmProvider: true,
+          createdAt: true,
+          updatedAt: true,
           users: { select: { id: true } },
           keledons: { select: { id: true } },
           brand: {
@@ -134,15 +149,18 @@ export class TeamController {
         _count: { users: team.users.length, keledons: team.keledons.length },
       }));
     } catch (error) {
-      console.error('[TeamController] Error listing teams:', error);
-      return { error: error.message, status: 500 };
+      console.error(
+        '[TeamController] Error listing teams:',
+        error?.name || 'Error',
+      );
+      throw error;
     }
   }
 
   @Get(':id/config')
   async getTeamConfig(@Param('id') teamId: string, @Req() req: any) {
     try {
-      await this.assertTeamAccess(teamId, req);
+      await this.assertTeamAccess(teamId, req, true);
       const team = await this.prisma.team.findUnique({
         where: { id: teamId },
         select: {
@@ -183,51 +201,48 @@ export class TeamController {
           sampleRate: 16000,
         },
         elevenlabsConfig: {
-          apiKey: team.elevenlabsApiKey || '',
+          apiKey: '',
+          hasApiKey: !!team.elevenlabsApiKey,
           voiceId: 'rachel',
         },
         // TTS extended config (DB-persisted)
-        ttsApiKey: team.ttsApiKey || '',
+        ttsApiKey: '',
+        ttsApiKeySet: !!team.ttsApiKey,
         ttsVoiceId:
           team.ttsVoiceId || (team.ttsProvider === 'kokoro' ? 'ef_dora' : ''),
         ttsEndpointUrl: team.ttsEndpointUrl || '',
         deepgramConfig: {
-          apiKey: team.deepgramApiKey || '',
+          apiKey: '',
+          hasApiKey: !!team.deepgramApiKey,
         },
         // Speaches (Whisper-based STT) config
         speachesApiUrl:
           team.speachesApiUrl ||
           'https://speaches-production-c63f.up.railway.app',
-        speachesApiKey: team.speachesApiKey || '',
+        speachesApiKey: '',
+        speachesApiKeySet: !!team.speachesApiKey,
         // LLM config
-        openaiApiKey: team.openaiApiKey || '',
-        googleAiApiKey: team.googleAiApiKey || '',
-        anthropicApiKey: team.anthropicApiKey || '',
+        openaiApiKey: '',
+        openaiApiKeySet: !!team.openaiApiKey,
+        googleAiApiKey: '',
+        googleAiApiKeySet: !!team.googleAiApiKey,
+        anthropicApiKey: '',
+        anthropicApiKeySet: !!team.anthropicApiKey,
         vendorConfig: {},
       };
     } catch (error) {
-      console.error('[TeamController] Error getting config:', error);
-      return { error: error.message, status: 500 };
-    }
-  }
-
-  private async validateOpenAiKey(apiKey: string): Promise<string | null> {
-    try {
-      const openai = new OpenAI({ apiKey });
-      // Verify key by listing models (first page only)
-      for await (const _ of openai.models.list()) break;
-      return null; // valid
-    } catch (err: any) {
-      if (err?.status === 401) return '401: OpenAI rechazó la key (invalida o expirada)';
-      if (err?.status === 429) return null; // rate limited ≠ invalid
-      return `Error al validar: ${err?.message || err}`;
+      console.error(
+        '[TeamController] Error getting config:',
+        error?.name || 'Error',
+      );
+      throw error;
     }
   }
 
   @Get(':id/config/status')
   async getConfigStatus(@Param('id') teamId: string, @Req() req: any) {
     try {
-      await this.assertTeamAccess(teamId, req);
+      await this.assertTeamAccess(teamId, req, true);
       const team = await this.prisma.team.findUnique({
         where: { id: teamId },
         select: {
@@ -251,8 +266,11 @@ export class TeamController {
         speachesKeySet: !!team.speachesApiKey,
       };
     } catch (error) {
-      console.error('[TeamController] Error getting config status:', error);
-      return { error: error.message, status: 500 };
+      console.error(
+        '[TeamController] Error getting config status:',
+        error?.name || 'Error',
+      );
+      throw error;
     }
   }
 
@@ -263,7 +281,7 @@ export class TeamController {
     @Req() req: any,
   ) {
     try {
-      await this.assertTeamAccess(teamId, req);
+      await this.assertTeamAccess(teamId, req, true);
       const allowedSttProviders = ['vosk', 'deepgram', 'webspeech', 'speaches'];
       const allowedTtsProviders = [
         'elevenlabs',
@@ -271,9 +289,19 @@ export class TeamController {
         'kokoro',
         'openai-tts',
         'coqui',
+        'speaches',
       ];
       const allowedLlmProviders = ['openai', 'google', 'anthropic', 'ollama'];
 
+      for (const [key, allowed] of [
+        ['sttProvider', allowedSttProviders],
+        ['ttsProvider', allowedTtsProviders],
+        ['llmProvider', allowedLlmProviders],
+      ] as const) {
+        if (config[key] !== undefined && (typeof config[key] !== 'string' || !allowed.includes(config[key]))) {
+          throw new BadRequestException('Unsupported provider selection');
+        }
+      }
       const updateData: any = {};
 
       if (
@@ -323,12 +351,11 @@ export class TeamController {
 
       // LLM API keys
       if (config.openaiApiKey !== undefined) {
-        if (config.openaiApiKey) {
-          const validationError = await this.validateOpenAiKey(config.openaiApiKey);
-          if (validationError) {
-            throw new BadRequestException(`OpenAI API key invalida: ${validationError}`);
-          }
-        }
+        if (
+          config.openaiApiKey &&
+          !/^sk-[A-Za-z0-9_-]+$/.test(config.openaiApiKey)
+        )
+          throw new BadRequestException('Invalid OpenAI key format');
         updateData.openaiApiKey = config.openaiApiKey;
       }
       if (config.googleAiApiKey !== undefined) {
@@ -375,23 +402,36 @@ export class TeamController {
         llmProvider: team.llmProvider,
         voskServerUrl: team.voskServerUrl,
         voskModel: team.voskModel,
-        ttsApiKey: team.ttsApiKey,
+        ttsApiKey: '',
+        ttsApiKeySet: !!team.ttsApiKey,
         ttsVoiceId: team.ttsVoiceId,
         ttsEndpointUrl: team.ttsEndpointUrl,
       };
     } catch (error) {
-      console.error('[TeamController] Error updating config:', error);
-      return { error: error.message, status: 500 };
+      console.error(
+        '[TeamController] Error updating config:',
+        error?.name || 'Error',
+      );
+      throw error;
     }
   }
 
   @Get(':id')
   async getTeam(@Param('id') teamId: string, @Req() req: any) {
     try {
-      await this.assertTeamAccess(teamId, req);
+      await this.assertTeamAccess(teamId, req, true);
       const team = await this.prisma.team.findUnique({
         where: { id: teamId },
-        include: {
+        select: {
+          id: true,
+          name: true,
+          brandId: true,
+          country: true,
+          sttProvider: true,
+          ttsProvider: true,
+          llmProvider: true,
+          createdAt: true,
+          updatedAt: true,
           users: {
             select: {
               id: true,
@@ -409,44 +449,20 @@ export class TeamController {
 
       return team;
     } catch (error) {
-      console.error('[TeamController] Error getting team:', error);
-      return { error: error.message, status: 500 };
-    }
-  }
-
-  @Get()
-  async getAllTeams() {
-    try {
-      const teams = await this.prisma.team.findMany({
-        select: {
-          id: true,
-          name: true,
-          sttProvider: true,
-          ttsProvider: true,
-          llmProvider: true,
-          createdAt: true,
-          _count: {
-            select: {
-              users: true,
-              sessions: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-      });
-
-      return teams;
-    } catch (error) {
-      console.error('[TeamController] Error getting teams:', error);
-      return { error: error.message, status: 500 };
+      console.error(
+        '[TeamController] Error getting team:',
+        error?.name || 'Error',
+      );
+      throw error;
     }
   }
 
   @Post()
-  async createTeam(@Body() data: { name: string }) {
+  async createTeam(@Body() data: { name: string }, @Req() req: any) {
     try {
+      const scope = await this.getActorScope(req);
+      if (scope.role !== 'superadmin')
+        throw new ForbiddenException('Super admin access required');
       const team = await this.prisma.team.create({
         data: {
           name: data.name,
@@ -462,8 +478,11 @@ export class TeamController {
         teamName: team.name,
       };
     } catch (error) {
-      console.error('[TeamController] Error creating team:', error);
-      return { error: error.message, status: 500 };
+      console.error(
+        '[TeamController] Error creating team:',
+        error?.name || 'Error',
+      );
+      throw error;
     }
   }
 }

@@ -11,6 +11,7 @@ import {
 } from './config/runtime-tier';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AuthGuard } from './guards/auth.guard';
+import { ApiCorrelationExceptionFilter, ApiCorrelationMiddleware } from './interceptors/api-correlation';
 
 // Global error handlers - must be first
 process.on('uncaughtException', (err) => {
@@ -64,6 +65,10 @@ async function bootstrap() {
 
     const app = await NestFactory.create(AppModule);
 
+    const correlationMiddleware = new ApiCorrelationMiddleware();
+    app.use(correlationMiddleware.use.bind(correlationMiddleware));
+    app.useGlobalFilters(new ApiCorrelationExceptionFilter());
+
     app.use((req, res, next) => {
       const activeSpan = trace.getActiveSpan();
       if (activeSpan) {
@@ -78,6 +83,7 @@ async function bootstrap() {
       origin: allowAllCors ? true : corsOrigins,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       credentials: true,
+      exposedHeaders: ['x-correlation-id', 'x-trace-id'],
     });
 
     // Register AuthGuard as a global guard — applies to all routes

@@ -1,0 +1,38 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto 4 fronts; vendor-independent code conformance",
+  "target_branch": "main",
+  "expected_version": "5.1.0",
+  "version_file": "services/web/package.json",
+  "candidate_source_sha": "cc9b94dae7ad89e9133da8e5172d2d907d03f8cb",
+  "merged_commit_sha": null,
+  "remote_main_sha": "52537140e67d0d6c05486fa13837df3eb5316fb3",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/42",
+  "pr_state": "OPEN_DRAFT",
+  "checks": {
+    "lint": {
+      "status": "PARTIAL",
+      "evidence": "landing full lint passes with 0 errors/0 warnings; existing services/web full lint evidence reports 0 errors/135 warnings."
+    },
+    "typecheck": {
+      "status": "PARTIAL",
+      "evidence": "landing typecheck passes; API/Cloud/web builds/typecheck pass; agent legacy full-project typecheck remains reported with existing errors."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "landing, API/C13, Cloud/C13 and services/web production builds pass on recorded integration candidate."
+    },
+    "focused_tests": {
+      "status": "PASS",
+      "evidence": "Cloud regression 8/8; API focused tests 12/12; web diagnostics tests 18/18; SEO source regression 1/1."
+    },
+    "uat": {
+      "status": "PARTIAL",
+      "evidence": "Synthetic diagnostics SPA UAT 1/1 on earlier candidate; current user-management UI/payload retest passes with synthetic Company Co fixtures and mocked CRUD. Real backend persistence, exhaustive role/resource/tenant journeys, Electron, broad a11y/localization and deployed headers remain open."
+    },
+    "delivery": {
+      "status": "PARTIAL",
+      "evidence": "Branch is pushed and PR #42 is OPEN/DRAFT. No merge, required review/check state, target-main readback after merge, database operation, or production deployment."
+    }
+  }
+}

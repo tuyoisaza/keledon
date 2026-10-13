@@ -1,11 +1,9 @@
-/**
- * Salesforce RPA Adapter
- * Domain-specific adapter for Salesforce CRM platform
- * Handles Salesforce-specific UI elements and workflows
- */
+/** Salesforce adapter for CRM workflows. */
 
 import { RPAStep, RPAResult } from '../../../contracts/types';
 import { selectorManager } from '../selectors/selector-maps';
+import { SALESFORCE_CAPABILITIES } from './salesforce.constants';
+import { fillInputField, navigateToCase, selectDropdownOption, waitForElementSelector, waitForTimeout } from './salesforce-dom.utils';
 
 export class SalesforceAdapter {
   private name: string;
@@ -95,7 +93,7 @@ export class SalesforceAdapter {
       newCaseButton.click();
       
       // Wait for form to load
-      await this.waitForTimeout(2000);
+      await waitForTimeout(2000);
       
       // Fill case fields if provided
       if (step.parameters) {
@@ -105,7 +103,7 @@ export class SalesforceAdapter {
         if (fields.origin) {
           const originField = await selectorManager.findElement('salesforce', 'caseOriginSelect');
           if (originField) {
-            await this.selectDropdownOption(originField, fields.origin);
+            await selectDropdownOption(originField, fields.origin);
           }
         }
         
@@ -113,7 +111,7 @@ export class SalesforceAdapter {
         if (fields.contactName) {
           const contactField = await selectorManager.findElement('salesforce', 'contactNameLookup');
           if (contactField) {
-            await this.fillInputField(contactField, fields.contactName);
+            await fillInputField(contactField, fields.contactName);
           }
         }
         
@@ -121,7 +119,7 @@ export class SalesforceAdapter {
         if (fields.accountName) {
           const accountField = await selectorManager.findElement('salesforce', 'accountNameLookup');
           if (accountField) {
-            await this.fillInputField(accountField, fields.accountName);
+            await fillInputField(accountField, fields.accountName);
           }
         }
         
@@ -129,7 +127,7 @@ export class SalesforceAdapter {
         if (fields.subject) {
           const subjectField = await selectorManager.findElement('salesforce', 'caseSubjectInput');
           if (subjectField) {
-            await this.fillInputField(subjectField, fields.subject);
+            await fillInputField(subjectField, fields.subject);
           }
         }
         
@@ -137,7 +135,7 @@ export class SalesforceAdapter {
         if (fields.description) {
           const descriptionField = await selectorManager.findElement('salesforce', 'caseDescriptionTextarea');
           if (descriptionField) {
-            await this.fillInputField(descriptionField, fields.description);
+            await fillInputField(descriptionField, fields.description);
           }
         }
         
@@ -145,7 +143,7 @@ export class SalesforceAdapter {
         if (fields.priority) {
           const priorityField = await selectorManager.findElement('salesforce', 'casePrioritySelect');
           if (priorityField) {
-            await this.selectDropdownOption(priorityField, fields.priority);
+            await selectDropdownOption(priorityField, fields.priority);
           }
         }
         
@@ -153,7 +151,7 @@ export class SalesforceAdapter {
         if (fields.status) {
           const statusField = await selectorManager.findElement('salesforce', 'caseStatusSelect');
           if (statusField) {
-            await this.selectDropdownOption(statusField, fields.status);
+            await selectDropdownOption(statusField, fields.status);
           }
         }
       }
@@ -167,7 +165,7 @@ export class SalesforceAdapter {
       saveButton.click();
       
       // Wait for case to be saved
-      await this.waitForTimeout(3000);
+      await waitForTimeout(3000);
       
       return {
         step_id: step.id,
@@ -198,7 +196,7 @@ export class SalesforceAdapter {
       
       // Navigate to case if not already on case page
       if (!window.location.href.includes(step.parameters.caseId)) {
-        await this.navigateToCase(step.parameters.caseId);
+        await navigateToCase(step.parameters.caseId);
       }
       
       // Click Edit button
@@ -208,7 +206,7 @@ export class SalesforceAdapter {
       }
       
       editButton.click();
-      await this.waitForTimeout(1000);
+      await waitForTimeout(1000);
       
       // Update fields if provided
       const fields = step.parameters;
@@ -216,28 +214,28 @@ export class SalesforceAdapter {
       if (fields.status) {
         const statusField = await selectorManager.findElement('salesforce', 'caseStatusSelect');
         if (statusField) {
-          await this.selectDropdownOption(statusField, fields.status);
+          await selectDropdownOption(statusField, fields.status);
         }
       }
       
       if (fields.priority) {
         const priorityField = await selectorManager.findElement('salesforce', 'casePrioritySelect');
         if (priorityField) {
-          await this.selectDropdownOption(priorityField, fields.priority);
+          await selectDropdownOption(priorityField, fields.priority);
         }
       }
       
       if (fields.description) {
         const descriptionField = await selectorManager.findElement('salesforce', 'caseDescriptionTextarea');
         if (descriptionField) {
-          await this.fillInputField(descriptionField, fields.description);
+          await fillInputField(descriptionField, fields.description);
         }
       }
       
       if (fields.subject) {
         const subjectField = await selectorManager.findElement('salesforce', 'caseSubjectInput');
         if (subjectField) {
-          await this.fillInputField(subjectField, fields.subject);
+          await fillInputField(subjectField, fields.subject);
         }
       }
       
@@ -248,7 +246,7 @@ export class SalesforceAdapter {
       }
       
       saveButton.click();
-      await this.waitForTimeout(2000);
+      await waitForTimeout(2000);
       
       return {
         step_id: step.id,
@@ -287,13 +285,13 @@ export class SalesforceAdapter {
       // Clear and fill search query
       searchBox.click();
       searchBox.value = '';
-      await this.fillInputField(searchBox, step.parameters.query);
+      await fillInputField(searchBox, step.parameters.query);
       
       // Trigger search
       searchBox.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
       
       // Wait for search results
-      await this.waitForTimeout(2000);
+      await waitForTimeout(2000);
       
       // Look for search results
       const searchResults = await selectorManager.findElement('salesforce', 'searchResultsList');
@@ -375,7 +373,7 @@ export class SalesforceAdapter {
       }
       
       targetElement.click();
-      await this.waitForTimeout(step.parameters.waitTime || 2000);
+      await waitForTimeout(step.parameters.waitTime || 2000);
       
       return {
         step_id: step.id,
@@ -405,7 +403,7 @@ export class SalesforceAdapter {
         throw new Error('Selector is required for click action');
       }
       
-      const element = await this.waitForElementSelector(
+      const element = await waitForElementSelector(
         step.selector,
         step.timeout_ms || 5000
       );
@@ -444,7 +442,7 @@ export class SalesforceAdapter {
         throw new Error('Selector and value are required for fill action');
       }
       
-      const element = await this.waitForElementSelector(
+      const element = await waitForElementSelector(
         step.selector,
         step.timeout_ms || 5000
       );
@@ -453,7 +451,7 @@ export class SalesforceAdapter {
         throw new Error(`Element not found: ${step.selector}`);
       }
       
-      await this.fillInputField(element, step.parameters.value);
+      await fillInputField(element, step.parameters.value);
       
       return {
         step_id: step.id,
@@ -484,7 +482,7 @@ export class SalesforceAdapter {
         throw new Error('Selector and option are required for select action');
       }
       
-      const element = await this.waitForElementSelector(
+      const element = await waitForElementSelector(
         step.selector,
         step.timeout_ms || 5000
       );
@@ -493,7 +491,7 @@ export class SalesforceAdapter {
         throw new Error(`Element not found: ${step.selector}`);
       }
       
-      await this.selectDropdownOption(element, step.parameters.option);
+      await selectDropdownOption(element, step.parameters.option);
       
       return {
         step_id: step.id,
@@ -524,7 +522,7 @@ export class SalesforceAdapter {
         throw new Error('Selector is required for wait action');
       }
       
-      const element = await this.waitForElementSelector(
+      const element = await waitForElementSelector(
         step.selector,
         step.timeout_ms || 10000
       );
@@ -558,7 +556,7 @@ export class SalesforceAdapter {
         throw new Error('Selector is required for read action');
       }
       
-      const element = await this.waitForElementSelector(
+      const element = await waitForElementSelector(
         step.selector,
         step.timeout_ms || 5000
       );
@@ -588,121 +586,13 @@ export class SalesforceAdapter {
   }
 
   /**
-   * Navigate to a specific case
-   */
-  private async navigateToCase(caseId: string): Promise<void> {
-    const currentUrl = window.location.href;
-    const caseUrl = `${window.location.origin}/${caseId}`;
-    
-    if (currentUrl !== caseUrl) {
-      window.location.href = caseUrl;
-      await this.waitForTimeout(3000);
-    }
-  }
-
-  /**
-   * Wait for element using selector
-   */
-  private async waitForElementSelector(selector: string, timeout: number): Promise<Element | null> {
-    return new Promise((resolve) => {
-      const startTime = Date.now();
-      
-      const checkElement = () => {
-        const element = document.querySelector(selector);
-        if (element) {
-          resolve(element);
-          return;
-        }
-        
-        if (Date.now() - startTime > timeout) {
-          resolve(null);
-          return;
-        }
-        
-        setTimeout(checkElement, 100);
-      };
-      
-      checkElement();
-    });
-  }
-
-  /**
-   * Fill an input field
-   */
-  private async fillInputField(element: Element, value: string): Promise<void> {
-    const input = element as HTMLInputElement | HTMLTextAreaElement;
-    
-    // Focus and clear
-    input.focus();
-    input.value = '';
-    
-    // Trigger input events
-    input.dispatchEvent(new Event('focus', { bubbles: true }));
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    
-    // Type the value character by character for better compatibility
-    for (let i = 0; i < value.length; i++) {
-      input.value += value[i];
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      await this.waitForTimeout(50);
-    }
-    
-    // Trigger change event
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-    input.dispatchEvent(new Event('blur', { bubbles: true }));
-  }
-
-  /**
-   * Select option from dropdown
-   */
-  private async selectDropdownOption(element: Element, option: string): Promise<void> {
-    const select = element as HTMLSelectElement;
-    
-    // Try to find option by text or value
-    let targetOption: HTMLOptionElement | null = null;
-    
-    for (let i = 0; i < select.options.length; i++) {
-      const opt = select.options[i];
-      if (opt.text.toLowerCase().includes(option.toLowerCase()) || 
-          opt.value.toLowerCase().includes(option.toLowerCase())) {
-        targetOption = opt;
-        break;
-      }
-    }
-    
-    if (!targetOption) {
-      throw new Error(`Option '${option}' not found in dropdown`);
-    }
-    
-    select.value = targetOption.value;
-    select.dispatchEvent(new Event('change', { bubbles: true }));
-  }
-
-  /**
-   * Wait for specified time
-   */
-  private async waitForTimeout(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  /**
    * Get adapter information
    */
   getInfo() {
     return {
       name: this.name,
       version: this.version,
-      capabilities: [
-        'create_case',
-        'update_case',
-        'search_records',
-        'navigate_salesforce_ui',
-        'click_element',
-        'fill_field',
-        'select_option',
-        'wait_for_element',
-        'read_text'
-      ]
+      capabilities: [...SALESFORCE_CAPABILITIES]
     };
   }
 }

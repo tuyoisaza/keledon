@@ -8,6 +8,9 @@ import { CrudCompanyService } from './crud-company.service';
 import { CrudVendorService } from './crud-vendor.service';
 import { TenantController } from '../controllers/tenant.controller';
 import { WebhookGuard } from '../guards/webhook.guard';
+import { CrudAccessGuard } from '../guards/crud-access.guard';
+import { CrudMigrationService } from './crud-migration.service';
+import { CrudSessionDataService } from './crud-session-data.service';
 
 @Module({
   controllers: [CrudController, TenantController],
@@ -18,7 +21,10 @@ import { WebhookGuard } from '../guards/webhook.guard';
     CrudSeedService,
     CrudCompanyService,
     CrudVendorService,
+    CrudMigrationService,
+    CrudSessionDataService,
     WebhookGuard,
+    CrudAccessGuard,
   ],
   exports: [
     CrudService,
@@ -27,6 +33,8 @@ import { WebhookGuard } from '../guards/webhook.guard';
     CrudSeedService,
     CrudCompanyService,
     CrudVendorService,
+    CrudMigrationService,
+    CrudSessionDataService,
   ],
 })
 export class CrudModule {}

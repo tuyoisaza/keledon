@@ -5,12 +5,19 @@ import {
 } from '@nestjs/common';
 import { KnowledgeBase, KnowledgeDocument } from '@prisma/client';
 import { QdrantClient } from '@qdrant/qdrant-js';
-import { createHash } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateKnowledgeBaseDto } from './dto/create-knowledge-base.dto';
 import { CreateKnowledgeDocumentDto } from './dto/create-knowledge-document.dto';
 import { IngestKnowledgeBaseDto } from './dto/ingest-knowledge-base.dto';
 import { SearchKnowledgeDto } from './dto/search-knowledge.dto';
+import { KnowledgeValidation } from './knowledge-validation';
+import {
+  chunkContent,
+  getChunkPointId,
+  normalizeChunkOverlap,
+  normalizeChunkSize,
+  textToVector,
+} from './knowledge-vector-utils';
 
 type KnowledgeMetadata = Record<string, unknown>;
 
@@ -32,9 +39,9 @@ export class KnowledgeService {
   }
 
   async createKnowledgeBase(body: CreateKnowledgeBaseDto) {
-    this.assertBody(body, 'Request body is required');
-    this.assertNonEmpty(body.companyId, 'companyId is required');
-    this.assertNonEmpty(body.name, 'name is required');
+    KnowledgeValidation.assertBody(body, 'Request body is required');
+    KnowledgeValidation.assertNonEmpty(body.companyId, 'companyId is required');
+    KnowledgeValidation.assertNonEmpty(body.name, 'name is required');
 
     const knowledgeBase = await this.prisma.knowledgeBase.create({
       data: {
@@ -61,16 +68,16 @@ export class KnowledgeService {
     knowledgeBaseId: string,
     body: CreateKnowledgeDocumentDto,
   ) {
-    this.assertBody(body, 'Request body is required');
-    this.assertNonEmpty(knowledgeBaseId, 'knowledge base ID is required');
-    this.assertNonEmpty(body.companyId, 'companyId is required');
-    this.assertNonEmpty(body.title, 'title is required');
-    this.assertNonEmpty(body.content, 'content is required');
-    this.assertOptionalString(
+    KnowledgeValidation.assertBody(body, 'Request body is required');
+    KnowledgeValidation.assertNonEmpty(knowledgeBaseId, 'knowledge base ID is required');
+    KnowledgeValidation.assertNonEmpty(body.companyId, 'companyId is required');
+    KnowledgeValidation.assertNonEmpty(body.title, 'title is required');
+    KnowledgeValidation.assertNonEmpty(body.content, 'content is required');
+    KnowledgeValidation.assertOptionalString(
       body.companyId,
       'companyId must be a non-empty string when provided',
     );
-    this.assertOptionalPlainObject(
+    KnowledgeValidation.assertOptionalPlainObject(
       body.metadata,
       'metadata must be an object when provided',
     );
@@ -99,20 +106,20 @@ export class KnowledgeService {
     body: IngestKnowledgeBaseDto,
   ) {
     const requestBody = body ?? {};
-    this.assertNonEmpty(requestBody.companyId, 'companyId is required');
-    this.assertOptionalString(
+    KnowledgeValidation.assertNonEmpty(requestBody.companyId, 'companyId is required');
+    KnowledgeValidation.assertOptionalString(
       requestBody.companyId,
       'companyId must be a non-empty string when provided',
     );
-    this.assertOptionalStringArray(
+    KnowledgeValidation.assertOptionalStringArray(
       requestBody.documentIds,
       'documentIds must be an array of non-empty strings',
     );
-    this.assertOptionalNumber(
+    KnowledgeValidation.assertOptionalNumber(
       requestBody.chunkSize,
       'chunkSize must be a finite number when provided',
     );
-    this.assertOptionalNumber(
+    KnowledgeValidation.assertOptionalNumber(
       requestBody.chunkOverlap,
       'chunkOverlap must be a finite number when provided',
     );
@@ -132,8 +139,8 @@ export class KnowledgeService {
       );
     }
 
-    const chunkSize = this.normalizeChunkSize(requestBody.chunkSize);
-    const chunkOverlap = this.normalizeChunkOverlap(
+    const chunkSize = normalizeChunkSize(requestBody.chunkSize);
+    const chunkOverlap = normalizeChunkOverlap(
       requestBody.chunkOverlap,
       chunkSize,
     );
@@ -149,33 +156,29 @@ export class KnowledgeService {
         document.metadata,
         knowledgeBase.companyId,
       );
-      const chunks = this.chunkContent(
-        document.content,
-        chunkSize,
-        chunkOverlap,
-      );
+      const chunks = chunkContent(document.content, chunkSize, chunkOverlap);
 
       vectorIdsByDocument.set(document.id, []);
 
       chunks.forEach((chunkText, index) => {
         const chunkId = `${document.id}:chunk:${index + 1}`;
-        const pointId = this.getChunkPointId(document.id, index);
+        const pointId = getChunkPointId(document.id, index);
         vectorIdsByDocument.get(document.id)?.push(pointId);
         points.push({
           id: pointId,
-          vector: this.textToVector(chunkText),
+          vector: textToVector(chunkText),
           payload: {
             knowledgeBaseId: knowledgeBase.id,
             documentId: document.id,
             chunkId,
             companyId: knowledgeBase.companyId,
-            teamId: this.optionalString(metadata.teamId),
-            brandId: this.optionalString(metadata.brandId),
-            country: this.optionalString(metadata.country),
-            category: this.optionalString(metadata.category),
-            language: this.optionalString(metadata.language),
-            source: this.optionalString(metadata.source) || 'manual',
-            effectiveDate: this.optionalString(metadata.effectiveDate),
+            teamId: KnowledgeValidation.optionalString(metadata.teamId),
+            brandId: KnowledgeValidation.optionalString(metadata.brandId),
+            country: KnowledgeValidation.optionalString(metadata.country),
+            category: KnowledgeValidation.optionalString(metadata.category),
+            language: KnowledgeValidation.optionalString(metadata.language),
+            source: KnowledgeValidation.optionalString(metadata.source) || 'manual',
+            effectiveDate: KnowledgeValidation.optionalString(metadata.effectiveDate),
             title: document.title,
             text: chunkText,
             createdAt: document.createdAt.toISOString(),
@@ -212,63 +215,63 @@ export class KnowledgeService {
   }
 
   async searchKnowledge(body: SearchKnowledgeDto) {
-    this.assertBody(body, 'Request body is required');
-    this.assertNonEmpty(body.query, 'query is required');
-    this.assertNonEmpty(body.companyId, 'companyId is required');
-    this.assertOptionalString(
+    KnowledgeValidation.assertBody(body, 'Request body is required');
+    KnowledgeValidation.assertNonEmpty(body.query, 'query is required');
+    KnowledgeValidation.assertNonEmpty(body.companyId, 'companyId is required');
+    KnowledgeValidation.assertOptionalString(
       body.knowledgeBaseId,
       'knowledgeBaseId must be a non-empty string when provided',
     );
-    this.assertOptionalString(
+    KnowledgeValidation.assertOptionalString(
       body.companyId,
       'companyId must be a non-empty string when provided',
     );
-    this.assertOptionalString(
+    KnowledgeValidation.assertOptionalString(
       body.teamId,
       'teamId must be a non-empty string when provided',
     );
-    this.assertOptionalString(
+    KnowledgeValidation.assertOptionalString(
       body.language,
       'language must be a non-empty string when provided',
     );
-    this.assertOptionalNumber(
+    KnowledgeValidation.assertOptionalNumber(
       body.limit,
       'limit must be a finite number when provided',
     );
-    this.assertOptionalNumber(
+    KnowledgeValidation.assertOptionalNumber(
       body.scoreThreshold,
       'scoreThreshold must be a finite number when provided',
     );
-    this.assertOptionalPlainObject(
+    KnowledgeValidation.assertOptionalPlainObject(
       body.filters,
       'filters must be an object when provided',
     );
-    this.assertOptionalString(
+    KnowledgeValidation.assertOptionalString(
       body.filters?.country,
       'filters.country must be a non-empty string when provided',
     );
-    this.assertOptionalString(
+    KnowledgeValidation.assertOptionalString(
       body.filters?.language,
       'filters.language must be a non-empty string when provided',
     );
-    this.assertOptionalString(
+    KnowledgeValidation.assertOptionalString(
       body.filters?.source,
       'filters.source must be a non-empty string when provided',
     );
-    this.assertOptionalString(
+    KnowledgeValidation.assertOptionalString(
       body.filters?.brandId,
       'filters.brandId must be a non-empty string when provided',
     );
-    this.assertOptionalStringArray(
+    KnowledgeValidation.assertOptionalStringArray(
       body.filters?.category,
       'filters.category must be an array of non-empty strings when provided',
     );
 
-    const limit = this.normalizeLimit(body.limit);
+    const limit = KnowledgeValidation.normalizeLimit(body.limit);
     const scoreThreshold =
       typeof body.scoreThreshold === 'number' ? body.scoreThreshold : undefined;
     const knowledgeBases = await this.resolveSearchKnowledgeBases(body);
-    const searchVector = this.textToVector(body.query.trim());
+    const searchVector = textToVector(body.query.trim());
     const filter = this.buildFilter(body);
     const aggregatedResults: Array<Record<string, unknown>> = [];
 
@@ -329,8 +332,8 @@ export class KnowledgeService {
   }
 
   async getKnowledgeBaseStats(knowledgeBaseId: string, companyId?: string) {
-    this.assertNonEmpty(companyId, 'companyId is required');
-    this.assertOptionalString(
+    KnowledgeValidation.assertNonEmpty(companyId, 'companyId is required');
+    KnowledgeValidation.assertOptionalString(
       companyId,
       'companyId must be a non-empty string when provided',
     );
@@ -370,8 +373,8 @@ export class KnowledgeService {
     knowledgeBaseId: string,
     companyId?: string,
   ): Promise<KnowledgeBase> {
-    this.assertNonEmpty(knowledgeBaseId, 'knowledge base ID is required');
-    this.assertNonEmpty(companyId, 'companyId is required');
+    KnowledgeValidation.assertNonEmpty(knowledgeBaseId, 'knowledge base ID is required');
+    KnowledgeValidation.assertNonEmpty(companyId, 'companyId is required');
     const knowledgeBase = await this.prisma.knowledgeBase.findUnique({
       where: { id: knowledgeBaseId },
     });
@@ -412,7 +415,7 @@ export class KnowledgeService {
     const knowledgeBaseId = body.knowledgeBaseId?.trim();
     const companyId = body.companyId?.trim();
 
-    this.assertNonEmpty(companyId, 'companyId is required');
+    KnowledgeValidation.assertNonEmpty(companyId, 'companyId is required');
 
     if (knowledgeBaseId) {
       return [await this.requireKnowledgeBase(knowledgeBaseId, companyId)];
@@ -428,14 +431,14 @@ export class KnowledgeService {
     body: SearchKnowledgeDto,
   ): Record<string, unknown> | undefined {
     const must: Array<Record<string, unknown>> = [];
-    const companyId = this.optionalString(body.companyId);
-    const teamId = this.optionalString(body.teamId);
-    const brandId = this.optionalString(body.filters?.brandId);
-    const country = this.optionalString(body.filters?.country);
+    const companyId = KnowledgeValidation.optionalString(body.companyId);
+    const teamId = KnowledgeValidation.optionalString(body.teamId);
+    const brandId = KnowledgeValidation.optionalString(body.filters?.brandId);
+    const country = KnowledgeValidation.optionalString(body.filters?.country);
     const language =
-      this.optionalString(body.filters?.language) ||
-      this.optionalString(body.language);
-    const source = this.optionalString(body.filters?.source);
+      KnowledgeValidation.optionalString(body.filters?.language) ||
+      KnowledgeValidation.optionalString(body.language);
+    const source = KnowledgeValidation.optionalString(body.filters?.source);
 
     if (companyId) {
       must.push({ key: 'companyId', match: { value: companyId } });
@@ -460,45 +463,6 @@ export class KnowledgeService {
     }
 
     return must.length > 0 ? { must } : undefined;
-  }
-
-  private chunkContent(
-    content: string,
-    chunkSize: number,
-    chunkOverlap: number,
-  ): string[] {
-    const normalized = content.replace(/\r\n/g, '\n').trim();
-    if (!normalized) {
-      return [];
-    }
-
-    const chunks: string[] = [];
-    let start = 0;
-
-    while (start < normalized.length) {
-      const end = Math.min(normalized.length, start + chunkSize);
-      const slice = normalized.slice(start, end).trim();
-      if (slice) {
-        chunks.push(slice);
-      }
-      if (end >= normalized.length) {
-        break;
-      }
-      start = Math.max(end - chunkOverlap, start + 1);
-    }
-
-    return chunks;
-  }
-
-  private textToVector(text: string): number[] {
-    const hash = createHash('sha256').update(text).digest();
-    const vector = new Array<number>(this.vectorSize);
-
-    for (let index = 0; index < this.vectorSize; index += 1) {
-      vector[index] = hash[index % hash.length] / 255;
-    }
-
-    return vector;
   }
 
   private getCollectionName(knowledgeBaseId: string): string {
@@ -551,108 +515,6 @@ export class KnowledgeService {
     ingestedIds: string[],
   ): string[] {
     return Array.from(new Set([...existingIds, ...ingestedIds]));
-  }
-
-  private optionalString(value: unknown): string | undefined {
-    return typeof value === 'string' && value.trim().length > 0
-      ? value.trim()
-      : undefined;
-  }
-
-  private getChunkPointId(documentId: string, chunkIndex: number): string {
-    const digest = createHash('sha256')
-      .update(`${documentId}:chunk:${chunkIndex + 1}`)
-      .digest('hex')
-      .slice(0, 32);
-
-    return `kbdoc-${digest}`;
-  }
-
-  private normalizeChunkSize(chunkSize?: number): number {
-    if (typeof chunkSize !== 'number' || !Number.isFinite(chunkSize)) {
-      return 900;
-    }
-    return Math.min(4000, Math.max(200, Math.floor(chunkSize)));
-  }
-
-  private normalizeChunkOverlap(
-    chunkOverlap: number | undefined,
-    chunkSize: number,
-  ): number {
-    if (typeof chunkOverlap !== 'number' || !Number.isFinite(chunkOverlap)) {
-      return Math.min(120, Math.floor(chunkSize / 4));
-    }
-    return Math.max(
-      0,
-      Math.min(Math.floor(chunkOverlap), Math.floor(chunkSize / 2)),
-    );
-  }
-
-  private normalizeLimit(limit?: number): number {
-    if (typeof limit !== 'number' || !Number.isFinite(limit)) {
-      return 5;
-    }
-    return Math.min(20, Math.max(1, Math.floor(limit)));
-  }
-
-  private assertNonEmpty(value: string | undefined, message: string): void {
-    if (!value || value.trim().length === 0) {
-      throw new BadRequestException(message);
-    }
-  }
-
-  private assertBody<T>(
-    value: T | null | undefined,
-    message: string,
-  ): asserts value is T {
-    if (value == null) {
-      throw new BadRequestException(message);
-    }
-  }
-
-  private assertOptionalString(value: unknown, message: string): void {
-    if (typeof value === 'undefined') {
-      return;
-    }
-
-    if (typeof value !== 'string' || value.trim().length === 0) {
-      throw new BadRequestException(message);
-    }
-  }
-
-  private assertOptionalStringArray(value: unknown, message: string): void {
-    if (typeof value === 'undefined') {
-      return;
-    }
-
-    if (
-      !Array.isArray(value) ||
-      value.some(
-        (entry) => typeof entry !== 'string' || entry.trim().length === 0,
-      )
-    ) {
-      throw new BadRequestException(message);
-    }
-  }
-
-  private assertOptionalNumber(value: unknown, message: string): void {
-    if (typeof value === 'undefined') {
-      return;
-    }
-
-    if (typeof value !== 'number' || !Number.isFinite(value)) {
-      throw new BadRequestException(message);
-    }
-  }
-
-  private assertOptionalPlainObject(value: unknown, message: string): void {
-    if (typeof value === 'undefined') {
-      return;
-    }
-
-    if (!value || typeof value !== 'object' || Array.isArray(value)) {
-      throw new BadRequestException(message);
-    }
   }
 
   private async ensureCollection(collectionName: string): Promise<void> {

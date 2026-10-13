@@ -5,17 +5,19 @@ The Tab Discovery system enables multi-tab coordination for the KELEDON Chrome e
 
 ## Key Components
 
-### TabDiscovery Singleton
+### TabRegistry and TabDiscovery Singleton
 - **Pattern**: Singleton implementation for global access
-- **State Management**: 
+- **State Management**:
   - `tabs`: Map of registered tabs by ID
   - `activeTabId`: Currently active tab reference
 - **Core Methods**:
-  - `discoverTabs()`: Queries and filters extension tabs
+  - `discoverTabs()`: Queries browser tabs and retains only HTTP(S) hosts explicitly configured for the current tenant
   - `getTab(tabId)`: Retrieves specific tab by ID
   - `getActiveTab()`: Gets currently active tab
   - `getAllTabs()`: Returns all registered tabs
   - `updateActiveTab(tabId)`: Updates active tab reference
+
+The registry receives `trackedDomains` and `audioDomains` as tenant configuration. It does not assume Genesys, Salesforce, CallPicker, or any other provider. A configured `audioDomains` host is also tracked; other configured hosts remain UI-only. Unconfigured browser tabs are discarded, and a tab that navigates outside the tenant's configured domains is removed.
 
 ### Event Integration
 - **chrome.tabs.onUpdated**: Triggers tab discovery on tab load completion
@@ -36,14 +38,20 @@ The Tab Discovery system enables multi-tab coordination for the KELEDON Chrome e
 ```typescript
 import { tabDiscovery } from './tab-discovery';
 
-// Discover all extension tabs
-await tabDiscovery.discoverTabs();
+// Construct with the active tenant's non-secret domain configuration
+const registry = new TabRegistry({
+  trackedDomains: tenant.crmDomains,
+  audioDomains: tenant.contactCenterDomains
+});
+
+// Discover only this tenant's configured business tabs
+await registry.discoverTabs();
 
 // Get active tab
-const activeTab = tabDiscovery.getActiveTab();
+const activeTab = registry.getActiveTab();
 
 // Get all registered tabs
-const allTabs = tabDiscovery.getAllTabs();
+const allTabs = registry.getAllTabs();
 ```
 
 ## Dependencies

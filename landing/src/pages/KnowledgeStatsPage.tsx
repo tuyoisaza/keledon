@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Brain, Target, AlertTriangle, TrendingUp, Zap, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getSessions } from '@/lib/crud-api';
-import { useAuth } from '@/context/AuthContext';
+import { getSessions, type Session } from '@/lib/crud-api';
+import { useAuth } from '@/context/useAuth';
 
 interface IntentStat {
     intent: string;
@@ -10,6 +10,23 @@ interface IntentStat {
     avgConfidence: number;
     resolved: number;
     escalated: number;
+}
+
+function readMetadata(value?: string): Record<string, unknown> {
+    if (!value) return {};
+    try {
+        const parsed: unknown = JSON.parse(value);
+        return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
+            ? parsed as Record<string, unknown>
+            : {};
+    } catch {
+        return {};
+    }
+}
+
+function confidenceValue(value: unknown): number {
+    const parsed = typeof value === 'number' ? value : Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
 }
 
 export default function KnowledgeStatsPage() {
@@ -22,7 +39,7 @@ export default function KnowledgeStatsPage() {
     const [containmentRate, setContainmentRate] = useState(0);
     const [fallbackRate, setFallbackRate] = useState(0);
     const [intentStats, setIntentStats] = useState<IntentStat[]>([]);
-    const [gaps, setGaps] = useState<any[]>([]);
+    const [gaps, setGaps] = useState<Session[]>([]);
 
     useEffect(() => {
         let isMounted = true;
@@ -47,14 +64,14 @@ export default function KnowledgeStatsPage() {
                 setTotalSessions(sessions.length);
 
                 const confidenceSum = sessions.reduce((sum, s) => {
-                    const metadata = s.metadata ? JSON.parse(s.metadata) : {};
-                    return sum + (metadata.confidence || 0);
+                    const metadata = readMetadata(s.metadata);
+                    return sum + confidenceValue(metadata.confidence);
                 }, 0);
                 const avgConf = sessions.length > 0 ? Math.round((confidenceSum / sessions.length) * 100) : 0;
 
                 const completed = sessions.filter(s => s.status === 'completed').length;
                 const noIntent = sessions.filter(s => {
-                    const metadata = s.metadata ? JSON.parse(s.metadata) : {};
+                    const metadata = readMetadata(s.metadata);
                     return !metadata.intent || metadata.intent === 'unknown';
                 }).length;
 
@@ -67,8 +84,8 @@ export default function KnowledgeStatsPage() {
 
                 const intentMap: Record<string, IntentStat> = {};
                 sessions.forEach(s => {
-                    const metadata = s.metadata ? JSON.parse(s.metadata) : {};
-                    const intent = metadata.intent || 'unknown';
+                    const metadata = readMetadata(s.metadata);
+                    const intent = typeof metadata.intent === 'string' ? metadata.intent : 'unknown';
                     if (!intentMap[intent]) {
                         intentMap[intent] = {
                             intent,
@@ -79,7 +96,7 @@ export default function KnowledgeStatsPage() {
                         };
                     }
                     intentMap[intent].count++;
-                    intentMap[intent].avgConfidence += (metadata.confidence || 0);
+                    intentMap[intent].avgConfidence += confidenceValue(metadata.confidence);
                     if (s.status === 'completed') intentMap[intent].resolved++;
                     if (s.status === 'escalated') intentMap[intent].escalated++;
                 });
@@ -94,8 +111,8 @@ export default function KnowledgeStatsPage() {
 
                 const gapSessions = sessions
                     .filter(s => {
-                        const metadata = s.metadata ? JSON.parse(s.metadata) : {};
-                        return (metadata.confidence || 0) < 0.6 || s.status === 'escalated';
+                        const metadata = readMetadata(s.metadata);
+                        return confidenceValue(metadata.confidence) < 0.6 || s.status === 'escalated';
                     })
                     .slice(0, 10);
                 setGaps(gapSessions);

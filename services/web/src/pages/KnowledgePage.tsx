@@ -63,7 +63,7 @@ export default function KnowledgePage() {
         if (addForm.brand_id) {
             const brandTeams = teams.filter(t => t.brandId === addForm.brand_id);
             if (brandTeams.length === 0) {
-                getTeams(addForm.company_id, addForm.brand_id).then(setTeams);
+                getTeams(addForm.company_id).then(data => setTeams(data.filter(team => team.brandId === addForm.brand_id)));
             }
         }
     }, [addForm.brand_id]);
@@ -415,7 +415,7 @@ export default function KnowledgePage() {
 
             {/* Add Source Modal */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-background/50 flex items-center justify-center z-50">
                     <div className="bg-card border border-border rounded-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
                         <div className="flex items-center justify-between mb-6">
                             <h2 className="text-lg font-semibold">Add Knowledge Source</h2>

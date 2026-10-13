@@ -1,3 +1,4 @@
+import { transcribeConfiguredAudio } from './configured-stt';
 import { Injectable, Logger } from '@nestjs/common';
 import { TTSService } from '../../tts/tts.service';
 import { LLMService } from '../../llm/llm.service';
@@ -62,14 +63,13 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
     this.initialized = true;
 
     // Initialize STT adapter based on config
-    if (config.sttProvider === 'speaches' || !config.sttProvider) {
+    if (config.sttProvider === 'speaches') {
+      if (!config.speachesApiUrl) throw new Error('Configured Speaches endpoint required');
       const adapter = new SpeachesSttAdapter();
       await adapter.initialize({
         baseUrl:
-          (config as any).speachesApiUrl ||
-          process.env.SPEACHES_API_URL ||
-          'https://speaches-production-c63f.up.railway.app',
-        apiKey: (config as any).sttApiKey || process.env.SPEACHES_API_KEY || '',
+          config.speachesApiUrl,
+        apiKey: config.sttApiKey || '',
         model: (config as any).sttModel || 'whisper-1',
       });
       this.sttAdapter = adapter;
@@ -77,13 +77,12 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
 
     // Initialize TTS adapter based on config
     if (
-      config.ttsProvider === 'speaches' ||
-      config.ttsProvider === 'kokoro' ||
-      !config.ttsProvider
+      ['speaches', 'kokoro', 'elevenlabs', 'openai'].includes(config.ttsProvider)
     ) {
       const adapter = new SpeachesTtsAdapter(this.ttsService);
       await adapter.initialize({
         voice: config.voiceId,
+        providerId: config.ttsProvider,
         language: (config as any).language,
         teamId: (config as any).teamId,
       });
@@ -122,7 +121,7 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
    * Sends to STT adapter, then to Brain, then streams TTS back.
    */
   async onAudioInput(audio: Buffer): Promise<void> {
-    if (!this.sttAdapter) {
+    if (!['speaches', 'deepgram'].includes(this.config.sttProvider)) {
       this.logger.warn('No STT adapter available');
       return;
     }
@@ -140,9 +139,7 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
     const sttStart = Date.now();
 
     try {
-      const result = await this.sttAdapter.transcribe(audio, {
-        language: (this.config as any).language || undefined,
-      });
+      const result = await transcribeConfiguredAudio(this.config, audio, this.config.language);
       session.sttLatencyMs = Date.now() - sttStart;
 
       if (!result.text || !result.isFinal) return;
@@ -242,22 +239,20 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
    * Get current pipeline status for the Side Panel.
    */
   getStatus(): VoicePipelineStatus {
-    const sttHealth: ProviderHealth = this.sttAdapter ? 'ready' : 'degraded';
-    const ttsHealth: ProviderHealth = this.ttsAdapter ? 'ready' : 'degraded';
-    const llmHealth: ProviderHealth = this.llmService
-      ? 'ready'
-      : 'initializing';
-
     const sessionId = this.getCurrentSessionId();
     const session = sessionId ? this.sessions.get(sessionId) : undefined;
+    const serverStt = ['speaches', 'deepgram'].includes(this.config.sttProvider);
+    const sttHealth: ProviderHealth = !serverStt ? 'degraded' : this.lastError?.startsWith('STT') ? 'error' : session?.sttLatencyMs ? 'ready' : 'unknown';
+    const ttsHealth: ProviderHealth = !this.ttsAdapter ? 'degraded' : this.lastError?.startsWith('TTS') ? 'error' : session?.ttsLatencyMs ? 'ready' : 'unknown';
+    const llmHealth: ProviderHealth = !this.llmService ? 'degraded' : session?.cloudLatencyMs ? 'ready' : 'unknown';
 
     return {
       provider: this.id,
       initialized: this.initialized,
       stt: {
-        id: this.sttAdapter?.id || 'none',
+        id: serverStt ? this.config.sttProvider : 'none',
         health: sttHealth,
-        name: this.sttAdapter?.id || 'not configured',
+        name: serverStt ? this.config.sttProvider : 'not configured',
         detail: session?.sttLatencyMs
           ? `last: ${session.sttLatencyMs}ms`
           : undefined,
@@ -318,6 +313,7 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
       ].join('\n');
       const brainPayload = {
         message: voiceModeMessage,
+        voiceMode: true,
         companyId: (this.config as any).companyId,
         companyName: (this.config as any).companyName || 'Unspecified Company',
         brandId: (this.config as any).brandId,
@@ -339,6 +335,7 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
             : {}),
         },
         body: JSON.stringify(brainPayload),
+        signal: AbortSignal.timeout(20000),
       });
 
       session.cloudLatencyMs = Date.now() - cloudStart;

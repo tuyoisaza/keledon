@@ -44,7 +44,15 @@ interface ProviderCatalogEntry {
     description?: string;
     status?: string;
     is_enabled?: boolean;
-    metadata?: Record<string, any>;
+    metadata?: {
+        endpoint?: string;
+        url?: string;
+        required_env?: string;
+        requiredEnv?: string;
+        api_key_env?: string;
+        requires_api_key?: boolean;
+        requiresApiKey?: boolean;
+    };
 }
 
 import { API_URL, LAUNCHER_URL } from '@/lib/config';
@@ -203,10 +211,10 @@ export default function ManagementPage() {
             }
             setStartState('started');
             setTimeout(() => setStartState('idle'), 2000);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Failed to start cloud:', err);
             setStartState('error');
-            setStartError(err?.message || 'Launcher unreachable');
+            setStartError(err instanceof Error ? err.message : 'Launcher unreachable');
             setTimeout(() => setStartState('idle'), 2500);
         }
     };
@@ -222,10 +230,10 @@ export default function ManagementPage() {
             }
             setStartState('started');
             setTimeout(() => setStartState('idle'), 2000);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Failed to start all services:', err);
             setStartState('error');
-            setStartError(err?.message || 'Launcher unreachable');
+            setStartError(err instanceof Error ? err.message : 'Launcher unreachable');
             setTimeout(() => setStartState('idle'), 2500);
         }
     };

@@ -1,4 +1,3 @@
-import React from 'react';
 import { 
   Plug, 
   CheckCircle, 
@@ -51,7 +50,6 @@ interface IntegrationHubProps {
 export default function IntegrationHub({ className }: IntegrationHubProps) {
   const { 
     providers,
-    connections,
     filteredProviders,
     connectedProviders,
     errorProviders,
@@ -93,10 +91,10 @@ export default function IntegrationHub({ className }: IntegrationHubProps) {
   const getStatusColor = (status: IntegrationProvider['status']) => {
     switch (status) {
       case 'connected': return 'text-green-500 bg-green-100 border-green-200';
-      case 'disconnected': return 'text-gray-500 bg-gray-100 border-gray-200';
+      case 'disconnected': return 'text-muted-foreground bg-gray-100 border-gray-200';
       case 'error': return 'text-red-500 bg-red-100 border-red-200';
       case 'connecting': return 'text-yellow-500 bg-yellow-100 border-yellow-200 animate-pulse';
-      default: return 'text-gray-500 bg-gray-100 border-gray-200';
+      default: return 'text-muted-foreground bg-gray-100 border-gray-200';
     }
   };
 
@@ -181,7 +179,6 @@ export default function IntegrationHub({ className }: IntegrationHubProps) {
           filteredProviders.map((provider) => {
             const IconComponent = getIconComponent(provider.icon);
             const CategoryIcon = categoryIcons[provider.category];
-            const _connection = connections.find(c => c.providerId === provider.id);
             const healthStatus = getHealthIndicator(provider.health);
 
             return (
@@ -286,7 +283,7 @@ export default function IntegrationHub({ className }: IntegrationHubProps) {
                       </button>
                       <button
                         onClick={() => disconnectProvider(provider.id)}
-                        className="px-3 py-1.5 text-xs font-medium bg-red-500 text-white hover:bg-red-600 transition-colors"
+                        className="px-3 py-1.5 text-xs font-medium bg-red-500 text-foreground hover:bg-red-600 transition-colors"
                       >
                         Disconnect
                       </button>

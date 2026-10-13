@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Activity,
   Mic,
@@ -18,11 +17,13 @@ interface AgentControlCenterProps {
 }
 
 export default function AgentControlCenter({ className }: AgentControlCenterProps) {
-  const { 
-    agents, 
-    systemHealth, 
-    loading, 
+  const {
+    agents,
+    selectedAgent,
+    systemHealth,
+    loading,
     selectAgent,
+    startAgent,
     clearSelection
   } = useAgentStatus();
 
@@ -39,12 +40,12 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'idle': return 'text-gray-500 bg-gray-500/10 border-gray-500/20';
+      case 'idle': return 'text-muted-foreground bg-gray-500/10 border-gray-500/20';
       case 'listening': return 'text-green-500 bg-green-500/10 border-green-500/20 animate-pulse';
       case 'processing': return 'text-blue-500 bg-blue-500/10 border-blue-500/20';
       case 'executing': return 'text-orange-500 bg-orange-500/10 border-orange-500/20';
       case 'error': return 'text-red-500 bg-red-500/10 border-red-500/20';
-      default: return 'text-gray-500 bg-gray-500/10 border-gray-500/20';
+      default: return 'text-muted-foreground bg-gray-500/10 border-gray-500/20';
     }
   };
 
@@ -118,7 +119,7 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
                   key={agent.id}
                   className={cn(
                     "p-4 rounded-lg border bg-card cursor-pointer transition-all hover:border-primary/30",
-                    agent.id === selectAgent && "border-primary bg-primary/5"
+                    agent.id === selectedAgent && "border-primary bg-primary/5"
                   )}
                   onClick={() => selectAgent(agent.id)}
                 >
@@ -145,7 +146,7 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
                         <span className="text-xs text-muted-foreground">Audio Level</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-green-500 transition-all duration-150"
                           style={{ width: `${agent.audioLevel * 100}%` }}
                         />
@@ -157,7 +158,7 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
                   <div className="mb-3">
                     <div className="flex flex-wrap gap-1">
                       {agent.capabilities.map((cap) => (
-                        <span 
+                        <span
                           key={cap}
                           className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-xs"
                         >
@@ -173,7 +174,7 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
                       <span className="text-xs text-muted-foreground">CPU</span>
                       <div className="flex items-center gap-2">
                         <div className="w-32 h-1.5 bg-muted rounded-full overflow-hidden">
-                          <div 
+                          <div
                             className={cn(
                               "h-full transition-all duration-300",
                               agent.performance.cpu > 70 ? "bg-red-500" :
@@ -189,7 +190,7 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
                       <span className="text-xs text-muted-foreground">Memory</span>
                       <div className="flex items-center gap-2">
                         <div className="w-32 h-1.5 bg-muted rounded-full overflow-hidden">
-                          <div 
+                          <div
                             className={cn(
                               "h-full transition-all duration-300",
                               agent.performance.memory > 70 ? "bg-red-500" :
@@ -205,7 +206,7 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
                       <span className="text-xs text-muted-foreground">Network</span>
                       <div className="flex items-center gap-2">
                         <div className="w-32 h-1.5 bg-muted rounded-full overflow-hidden">
-                          <div 
+                          <div
                             className={cn(
                               "h-full transition-all duration-300",
                               agent.performance.network > 70 ? "bg-red-500" :
@@ -243,41 +244,41 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
       </div>
 
       {/* Selected Agent Details */}
-      {selectAgent && (
+      {selectedAgent && (
         <div className="mt-6 p-4 rounded-lg border bg-card">
-          <h3 className="font-semibold mb-3">Agent Details: {agents.find(a => a.id === selectAgent)?.name}</h3>
+          <h3 className="font-semibold mb-3">Agent Details: {agents.find(a => a.id === selectedAgent)?.name}</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <span className="text-muted-foreground">ID:</span>
-              <p className="font-mono">{selectAgent}</p>
+              <p className="font-mono">{selectedAgent}</p>
             </div>
             <div>
               <span className="text-muted-foreground">Status:</span>
-              <p className="font-semibold">{agents.find(a => a.id === selectAgent)?.status}</p>
+              <p className="font-semibold">{agents.find(a => a.id === selectedAgent)?.status}</p>
             </div>
             <div>
               <span className="text-muted-foreground">Last Activity:</span>
-              <p>{agents.find(a => a.id === selectAgent)?.lastActivity?.toLocaleString()}</p>
+              <p>{agents.find(a => a.id === selectedAgent)?.lastActivity?.toLocaleString()}</p>
             </div>
             <div>
               <span className="text-muted-foreground">Session:</span>
-              <p className="font-mono">{agents.find(a => a.id === selectAgent)?.currentSession || 'None'}</p>
+              <p className="font-mono">{agents.find(a => a.id === selectedAgent)?.currentSession || 'None'}</p>
             </div>
           </div>
           <div className="mt-4 flex gap-2">
-            <button 
-              onClick={() => selectAgent(selectAgent)}
-              className="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition-colors"
+            <button
+              onClick={() => selectedAgent && startAgent(selectedAgent)}
+              className="px-3 py-1 bg-green-500 text-foreground rounded text-sm hover:bg-green-600 transition-colors"
             >
               Start Agent
             </button>
-            <button 
+            <button
               onClick={() => {/* TODO: Implement stopAgent */}}
-              className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors"
+              className="px-3 py-1 bg-red-500 text-foreground rounded text-sm hover:bg-red-600 transition-colors"
             >
               Stop Agent
             </button>
-            <button 
+            <button
               onClick={clearSelection}
               className="px-3 py-1 bg-muted text-muted-foreground rounded text-sm hover:bg-muted/80 transition-colors"
             >

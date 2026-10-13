@@ -21,22 +21,17 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}): Pro
     ? endpoint
     : `${API_URL}${endpoint}`;
   const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
-  const defaultHeaders = isFormData ? {} : { 'Content-Type': 'application/json' };
+  const headers = new Headers(options.headers);
+  if (!isFormData && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+  if (token && !headers.has('Authorization')) headers.set('Authorization', 'Bearer ' + token);
+  return fetch(url, { ...options, headers });
 
-  return fetch(url, {
-    ...options,
-    headers: {
-      ...defaultHeaders,
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
-  });
 }
 
 /**
  * Like apiFetch but throws on non-OK responses and returns parsed JSON.
  */
-export async function apiJson<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
+export async function apiJson<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const res = await apiFetch(endpoint, options);
   if (!res.ok) {
     const text = await res.text();

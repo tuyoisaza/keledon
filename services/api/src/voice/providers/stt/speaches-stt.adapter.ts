@@ -51,6 +51,7 @@ export class SpeachesSttAdapter implements SttAdapter {
       method: 'POST',
       headers: { Authorization: `Bearer ${this.config.apiKey}` },
       body: formData,
+      signal: AbortSignal.timeout(15000),
     });
 
     if (!res.ok) {

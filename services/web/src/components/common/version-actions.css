@@ -1,0 +1,23 @@
+.keledon-version-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  color: var(--color-foreground, #f8fafc);
+  flex-shrink: 0;
+}
+.keledon-version-actions .keledon-version { font-size: 12px; line-height: 1.5; font-weight: 400; }
+.keledon-version-actions button {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; min-width: 28px; flex-shrink: 0; padding: 0;
+  border: 0; border-radius: 4px; background: transparent; color: inherit; cursor: pointer;
+}
+.keledon-version-actions button:hover { background: var(--color-muted, #1a2233); }
+.keledon-version-actions button:focus-visible { outline: 2px solid var(--color-ring, #14b8a6); outline-offset: 2px; }
+.keledon-version-actions button:disabled { cursor: default; }
+.keledon-version-actions svg { width: 14px; height: 14px; flex-shrink: 0; }
+.keledon-version-actions .keledon-action-success { color: var(--color-success, #22c55e); }
+.keledon-action-status {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}

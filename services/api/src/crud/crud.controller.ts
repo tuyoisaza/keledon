@@ -8,19 +8,24 @@ import {
   Param,
   Query,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { CrudService } from './crud.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { WebhookGuard } from '../guards/webhook.guard';
 import { Public } from '../guards/public.decorator';
+import { CrudAccessGuard } from '../guards/crud-access.guard';
+import { CrudMigrationService } from './crud-migration.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('CRUD')
 @Controller('api/crud')
+@UseGuards(CrudAccessGuard)
 export class CrudController {
   constructor(
     private readonly crud: CrudService,
     private readonly prisma: PrismaService,
+    private readonly migrationService: CrudMigrationService,
   ) {}
 
   // ========== HEALTH ==========
@@ -35,42 +40,18 @@ export class CrudController {
 
   @Post('migrate')
   async migrate() {
-    try {
-      await this.prisma.$executeRaw`
-        CREATE TABLE IF NOT EXISTS "vendors" (
-          "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-          "teamId" UUID NOT NULL REFERENCES "teams"("id") ON DELETE CASCADE,
-          "name" VARCHAR(255) NOT NULL,
-          "type" VARCHAR(50) NOT NULL DEFAULT 'other',
-          "baseUrl" TEXT,
-          "username" TEXT,
-          "password" TEXT,
-          "apiKey" TEXT,
-          "config" JSONB,
-          "isActive" BOOLEAN DEFAULT true,
-          "createdAt" TIMESTAMP DEFAULT now(),
-          "updatedAt" TIMESTAMP DEFAULT now()
-        )
-      `;
-      await this.prisma
-        .$executeRaw`CREATE INDEX IF NOT EXISTS "vendors_teamId_idx" ON "vendors"("teamId")`;
-
-      // Add startGoal column if missing (v0.3.35+)
-      await this.prisma.$executeRaw`
-        ALTER TABLE "vendors" ADD COLUMN IF NOT EXISTS "startGoal" TEXT
-      `;
-
-      return { status: 'ok', message: 'Vendors table created' };
-    } catch (error) {
-      return { status: 'error', message: error.message };
-    }
+    return this.migrationService.ensureVendorsSchema();
   }
 
   // ========== COMPANIES ==========
 
   @Get('companies')
   @ApiOperation({ summary: 'Get all companies' })
-  getCompanies() {
+  async getCompanies(@Req() req: any) {
+    if (req.companyScope) {
+      const company = await this.crud.getCompany(req.companyScope);
+      return company ? [company] : [];
+    }
     return this.crud.getCompanies();
   }
 
@@ -121,6 +102,11 @@ export class CrudController {
     return this.crud.createBrand(data);
   }
 
+  @Get('brands/:id')
+  getBrand(@Param('id') id: string) {
+    return this.crud.getBrand(id);
+  }
+
   @Put('brands/:id')
   updateBrand(@Param('id') id: string, @Body() data: any) {
     return this.crud.updateBrand(id, data);
@@ -141,7 +127,7 @@ export class CrudController {
 
   @Get('teams/:id')
   getTeam(@Param('id') id: string) {
-    return this.crud.getTeams(id);
+    return this.crud.getTeam(id);
   }
 
   @Post('teams')
@@ -185,6 +171,11 @@ export class CrudController {
     return this.crud.createUser(data);
   }
 
+  @Get('users/:id')
+  getUser(@Param('id') id: string) {
+    return this.crud.getUser(id);
+  }
+
   @Put('users/:id')
   updateUser(@Param('id') id: string, @Body() data: any) {
     return this.crud.updateUser(id, data);
@@ -199,8 +190,11 @@ export class CrudController {
   // ========== KELEDONS ==========
 
   @Get('keledons')
-  getKeledons(@Query('companyId') companyId?: string) {
-    return this.crud.getKeledons(companyId);
+  getKeledons(@Req() req: any, @Query('companyId') companyId?: string) {
+    const ownOnly = !['superadmin', 'admin', 'coordinator'].includes(
+      req.actor.role,
+    );
+    return this.crud.getKeledons(companyId, ownOnly ? req.actor.id : undefined);
   }
 
   @Post('keledons')
@@ -458,6 +452,11 @@ export class CrudController {
   }
 
   // ========== VENDORS ==========
+
+  @Get('vendor/:id')
+  getVendor(@Param('id') id: string) {
+    return this.crud.getVendor(id);
+  }
 
   @Get('vendors/:teamId')
   getVendors(@Param('teamId') teamId: string) {

@@ -34,6 +34,8 @@ type CommandHandler = (command: BrowserCommand) => Promise<CommandResult>;
 
 let pollInterval: ReturnType<typeof setInterval> | null = null;
 let isPolling = false;
+let pollInFlight = false;
+let pollGeneration = 0;
 let backoffMs = 1000;
 const DEFAULT_INTERVAL = 2000;
 const MAX_BACKOFF = 30000;
@@ -75,7 +77,7 @@ function getAuthHeaders(): Record<string, string> {
 
 function buildContext(): string {
   const deviceId = runtimeStatus.deviceId || '(unset)';
-  const tokenPre = cmdlog.truncate(runtimeStatus.authToken, 16, 0);
+  const tokenPre = runtimeStatus.authToken ? '[present]' : '[absent]';
   const cloudUrl = runtimeStatus.cloudUrl || '(unset)';
   const connStatus = runtimeStatus.status || 'unknown';
   return `device=${cmdlog.truncate(deviceId, 8, 4)} token=${tokenPre} cloud=${cloudUrl} status=${connStatus}`;
@@ -92,18 +94,20 @@ async function readResponseBody(res: Response): Promise<string> {
 }
 
 async function pollForCommand(): Promise<void> {
-  if (!isPolling) return;
+  if (!isPolling || pollInFlight) return;
   if (!runtimeStatus.deviceId) {
     log.debug('[CommandPoller] No device ID, skipping poll');
     return;
   }
 
+  const generation = pollGeneration;
   const cloudUrl = runtimeStatus.cloudUrl;
   const deviceId = runtimeStatus.deviceId;
   const url = `${cloudUrl}/api/browser/devices/${deviceId}/next-command`;
   const ctx = buildContext();
 
   totalPolls++;
+  pollInFlight = true;
 
   try {
     const res = await fetch(url, {
@@ -118,17 +122,30 @@ async function pollForCommand(): Promise<void> {
     if (res.ok) {
       resetBackoff();
       successfulPolls++;
-      const body = await readResponseBody(res);
-      const data = JSON.parse(body);
+      // Diagnostic previews are truncated; command payloads must remain complete.
+      const response: any = await res.json();
+      const data: unknown = response?.command && typeof response.command === 'object'
+        ? { ...response.command, command: response.command.type === 'rpa.executeFlow' ? 'rpa_flow' : response.command.type, created_at: response.command.created_at || response.command.metadata?.createdAt }
+        : response;
+      if (!isPolling || generation !== pollGeneration) return;
+      if (data !== null && (typeof data !== 'object' || Array.isArray(data))) {
+        throw new Error('Invalid command response');
+      }
+      const envelope = data as Partial<BrowserCommand> | null;
 
       // No commands available
-      if (!data || !data.command) {
+      if (!envelope || envelope.command == null) {
         const interval = getPollInterval();
         cmdlog.log('POLL', `← GET /next-command → ${status} ${statusText} | no command queued | poll #${totalPolls} | ctx: ${ctx} | interval: ${interval}ms`);
         return;
       }
 
-      const command: BrowserCommand = data;
+      if (typeof envelope.id !== 'string' || !envelope.id.trim() ||
+          typeof envelope.command !== 'string' || !envelope.command.trim() ||
+          !envelope.payload || typeof envelope.payload !== 'object' || Array.isArray(envelope.payload)) {
+        throw new Error('Invalid command envelope');
+      }
+      const command = envelope as BrowserCommand;
       cmdlog.log('CMD', `← GET /next-command → ${status} ${statusText} | command: ${command.command} (${command.id}) | poll #${totalPolls} | ctx: ${ctx}`);
       cmdlog.log('CMD', `→ Executing: ${command.command} (${command.id}) | payload: ${cmdlog.preview(command.payload)}`);
       log.info(`[CommandPoller] Received command: ${command.command} (${command.id})`);
@@ -154,6 +171,8 @@ async function pollForCommand(): Promise<void> {
     cmdlog.log('ERR', `← GET /next-command → NETWORK ERROR | poll #${totalPolls} | ctx: ${ctx} | error: ${errMsg} | backing off to ${backoffMs * 2}ms`);
     log.error('[CommandPoller] Poll failed:', error);
     increaseBackoff();
+  } finally {
+    pollInFlight = false;
   }
 }
 
@@ -209,7 +228,10 @@ async function reportResult(result: CommandResult): Promise<void> {
     const res = await fetch(url, {
       method: 'POST',
       headers: getAuthHeaders(),
-      body: JSON.stringify(result),
+      body: JSON.stringify({
+        commandId: result.command_id, status: result.status === 'success' ? 'completed' : 'failed',
+        completedAt: result.timestamp, error: result.error, extracted: result.output || {},
+      }),
       signal: AbortSignal.timeout(10000),
     });
 
@@ -263,6 +285,7 @@ export function stopPolling(): void {
     pollInterval = null;
   }
   isPolling = false;
+  pollGeneration++;
   handlers.clear();
   cmdlog.log('SYS', `Command polling stopped | stats: ${totalPolls} polls (${successfulPolls} ok, ${failedPolls} failed)`);
   log.info('[CommandPoller] Stopped command polling loop');

@@ -1,3 +1,7 @@
+import { transcribeConfiguredAudio } from './providers/configured-stt';
+import { SpeachesSttAdapter } from './providers/stt/speaches-stt.adapter';
+import { PrismaService } from '../prisma/prisma.service';
+import { resolveRuntimeIdentity, ownsRuntimeSession } from '../gateways/runtime-identity';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -8,7 +12,7 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger, Inject, OnModuleInit } from '@nestjs/common';
+import { Logger, Inject } from '@nestjs/common';
 import { TTSService } from '../tts/tts.service';
 import { LLMService } from '../llm/llm.service';
 import { getApiVersion } from '../version';
@@ -16,7 +20,9 @@ import { ProviderConfigResolver } from './providers/provider-config.resolver';
 import { VoiceProviderRegistry } from './providers/voice-provider.registry';
 import { WebRtcService } from './webrtc/webrtc.service';
 import { voiceCorsOrigins, type CallContext, type VoiceSession } from './voice.types';
-import { buildCallGreeting, buildConversationalSpokenReply } from './voice-helpers';
+import { buildCallGreeting } from './voice-helpers';
+import { VoiceBrainProcessor } from './voice-brain.processor';
+import { getAuthorizedVoiceSession, listVoiceSessionSummaries } from './voice-session-access';
 
 @WebSocketGateway({
   cors: {
@@ -28,11 +34,12 @@ import { buildCallGreeting, buildConversationalSpokenReply } from './voice-helpe
   pingTimeout: 5000,
 })
 export class VoiceGateway
-  implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit
+  implements OnGatewayConnection, OnGatewayDisconnect
 {
   private readonly logger = new Logger(VoiceGateway.name);
 
   private activeSessions: Map<string, VoiceSession> = new Map();
+  private readonly brainProcessor: VoiceBrainProcessor;
 
   constructor(
     @Inject(TTSService)
@@ -41,10 +48,14 @@ export class VoiceGateway
     private readonly configResolver?: ProviderConfigResolver,
     private readonly registry?: VoiceProviderRegistry,
     private readonly webrtcService?: WebRtcService,
-  ) {}
-
-  onModuleInit() {
-    this.logger.log('VoiceGateway initialized (Brain-integrated)');
+    private readonly prisma?: PrismaService,
+  ) {
+    this.brainProcessor = new VoiceBrainProcessor(
+      this.ttsService,
+      this.llmService,
+      this.logger,
+      (client) => getAuthorizedVoiceSession(this.prisma, this.activeSessions, client),
+    );
   }
 
   @WebSocketServer()
@@ -55,7 +66,8 @@ export class VoiceGateway
     const deviceId = client.handshake.auth?.device_id;
     const sessionId = client.handshake.auth?.session_id;
 
-    if (!token || !deviceId) {
+    const identity = this.prisma ? await resolveRuntimeIdentity(this.prisma, token, deviceId) : null;
+    if (!identity || (sessionId && !await ownsRuntimeSession(this.prisma, identity, sessionId))) {
       this.logger.warn(`Voice connection rejected: missing token or device_id`);
       client.disconnect();
       return;
@@ -67,7 +79,7 @@ export class VoiceGateway
 
     const session: VoiceSession = {
       deviceId,
-      sessionId: sessionId || `voice_${Date.now()}`,
+      sessionId: sessionId || `voice_${client.id}`,
       startedAt: new Date(),
       transcript: [],
       history: [],
@@ -76,18 +88,17 @@ export class VoiceGateway
       latencyTimestamps: {},
     };
 
+    client.data.runtimeIdentity = identity;
     this.activeSessions.set(client.id, session);
     client.data.session = session;
 
     // Resolve team provider config from auth context if available
-    const ctx = client.handshake.auth?.context
-      ? typeof client.handshake.auth.context === 'string'
-        ? JSON.parse(client.handshake.auth.context)
-        : client.handshake.auth.context
-      : null;
+    const ctx: CallContext = { companyId: identity.companyId, companyName: identity.companyName, brandId: identity.brandId, brandName: identity.brandName, teamId: identity.teamId, teamName: identity.teamName };
+    session.context = ctx;
     if (ctx?.teamId && this.configResolver && this.registry) {
       try {
         const config = await this.configResolver.resolveTeamConfig(ctx.teamId);
+        config.authToken = token;
         session.context = ctx;
         await this.registry.getOrCreateProvider(session.sessionId, config);
         if (config.ttsProvider === 'speaches') {
@@ -112,12 +123,13 @@ export class VoiceGateway
       }
     }
 
-    this.server.emit('voice:connected', {
+    client.emit('voice:connected', {
       device_id: deviceId,
       session_id: session.sessionId,
       api_version: getApiVersion(),
     });
   }
+
 
   async handleDisconnect(client: Socket): Promise<void> {
     const session = this.activeSessions.get(client.id);
@@ -126,12 +138,13 @@ export class VoiceGateway
         `[v${getApiVersion()}] Voice disconnected: ${session.deviceId}, transcript length: ${session.transcript.length}`,
       );
 
-      this.server.emit('voice:disconnected', {
+      client.emit('voice:disconnected', {
         device_id: session.deviceId,
         session_id: session.sessionId,
         transcript: session.transcript,
       });
 
+      await this.webrtcService?.destroyPeer(session.sessionId);
       this.activeSessions.delete(client.id);
 
       // Clean up provider session
@@ -151,7 +164,7 @@ export class VoiceGateway
     @MessageBody()
     data: { sdp: RTCSessionDescriptionInit; session_id?: string },
   ) {
-    const session = this.activeSessions.get(client.id);
+    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
     if (!session) return { error: 'No active session' };
 
     this.logger.log(
@@ -171,7 +184,16 @@ export class VoiceGateway
           this.logger.log(
             `[WebRTC/${session.sessionId}] mic audio track received`,
           );
-          // Phase 2: pipe track audio to Speaches STT
+          this.webrtcService.attachAudioReceiver(session.sessionId, receiver,
+            async (wav) => {
+              const callGeneration = session.callGeneration;
+              if (!await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client)) throw new Error('Device authorization revoked');
+              if (process.env.KELEDON_VOICE_DISABLED === 'true') throw new Error('Voice disabled');
+              const config = await this.configResolver.resolveTeamConfig(session.context.teamId);
+              const result = await transcribeConfiguredAudio(config, wav, session.context.language);
+              if (this.activeSessions.get(client.id) !== session || session.callGeneration !== callGeneration) return;
+              if (result.text && result.isFinal) await this.handleTranscript(client, { text: result.text, is_final: true, confidence: result.confidence });
+            }, (error) => client.emit('voice:error', { error }));
         },
         // On data channel — handle control messages
         (dc) => {
@@ -186,7 +208,7 @@ export class VoiceGateway
               );
               if (msg.type === 'transcript') {
                 // Forward to brain processing
-                client.emit('voice:brain:reply', msg);
+                void this.handleTranscript(client, { text: msg.text, is_final: msg.is_final === true, confidence: msg.confidence });
               }
             } catch {
               /* ignore non-JSON messages */
@@ -210,7 +232,7 @@ export class VoiceGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { candidate: RTCIceCandidateInit },
   ) {
-    const session = this.activeSessions.get(client.id);
+    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
     if (!session) return { received: true };
     if (this.webrtcService) {
       await this.webrtcService.addIceCandidate(
@@ -229,7 +251,7 @@ export class VoiceGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { audio: Buffer; format: string },
   ) {
-    const session = this.activeSessions.get(client.id);
+    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
     if (!session) {
       return { error: 'No active voice session' };
     }
@@ -252,22 +274,26 @@ export class VoiceGateway
     @MessageBody()
     data: { text: string; is_final: boolean; confidence?: number },
   ) {
-    const session = this.activeSessions.get(client.id);
+    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
     if (!session) {
       return { error: 'No active voice session' };
     }
 
+    if (!data || typeof data.text !== 'string' || !data.text.trim() || data.text.length > 8000) return { error: 'Invalid transcript' };
+    if (process.env.KELEDON_VOICE_DISABLED === 'true') return { error: 'Voice disabled' };
     if (!data.is_final) {
       // Interim result — broadcast to dashboard if needed
       return { received: true };
     }
 
+    if ((session.turnCount || 0) >= 120) return { error: 'Voice call turn limit reached' };
+    session.turnCount = (session.turnCount || 0) + 1;
     // Final transcript
     session.transcript.push(data.text);
     session.history.push({ role: 'user', content: data.text });
 
     this.logger.log(
-      `Transcript (final) from ${session.deviceId}: ${data.text.substring(0, 50)}...`,
+      'Final transcript accepted',
     );
 
     // Broadcast transcript to the session room
@@ -279,250 +305,22 @@ export class VoiceGateway
     });
 
     // Process through Brain LLM + TTS
-    await this.processBrainReply(client, session, data.text);
+    await this.brainProcessor.processBrainReply(client, session, data.text);
 
     return { received: true };
   }
 
-  private async speakVoiceText(
-    client: Socket,
-    session: VoiceSession,
-    replyText: string,
-    source: 'brain' | 'greeting',
-  ): Promise<void> {
-    if (!this.ttsService) {
-      client.emit('voice:error', { error: 'TTS service not available' });
-      return;
-    }
-
-    const spokenReplyText = buildConversationalSpokenReply(replyText);
-    client.emit('voice:brain:reply', {
-      text: replyText,
-      apiVersion: getApiVersion(),
-      source,
-    });
-
-    this.logger.log(
-      `[v${getApiVersion()}] Voice speech source=${source} text="${replyText.substring(0, 80)}..." spokenChars=${spokenReplyText.length}`,
-    );
-
-    session.isSpeaking = true;
-    if (!session.latencyTimestamps) session.latencyTimestamps = {};
-    const latencyTimestamps = session.latencyTimestamps;
-    latencyTimestamps.brainEnd = Date.now();
-
-    let aborted = false;
-    session.abortTTS = () => {
-      aborted = true;
-      void this.ttsService?.stop();
-    };
-
-    let ttsFirstChunkLogged = false;
-    const startedAt = Date.now();
-    const streamResult = await this.ttsService.speakStreaming(
-      spokenReplyText || replyText,
-      (chunkBase64) => {
-        if (aborted) return;
-        if (!ttsFirstChunkLogged) {
-          ttsFirstChunkLogged = true;
-          latencyTimestamps.ttsFirstChunk = Date.now();
-        }
-        client.emit('voice:audio', {
-          audio: chunkBase64,
-          sequence: 'chunk',
-          format: 'mp3',
-        });
-      },
-      {
-        interruptible: true,
-        teamId: session.context?.teamId,
-        forceLanguageVoice: true,
-      },
-    );
-
-    session.isSpeaking = false;
-    session.abortTTS = () => {};
-    session.latencyTimestamps.ttsComplete = Date.now();
-
-    client.emit('voice:audio', {
-      sequence: 'end',
-      format: 'mp3',
-      duration: streamResult.duration,
-      voice: streamResult.voice,
-      language: streamResult.language,
-      ttsElapsedMs: streamResult.elapsedMs,
-      apiVersion: getApiVersion(),
-    });
-
-    const firstAudioMs = session.latencyTimestamps.ttsFirstChunk
-      ? session.latencyTimestamps.ttsFirstChunk - startedAt
-      : -1;
-    this.logger.log(
-      `[v${getApiVersion()}] Voice speech done source=${source} firstAudio=${firstAudioMs}ms total=${Date.now() - startedAt}ms voice=${streamResult.voice || '?'} lang=${streamResult.language || '?'} spokenChars=${spokenReplyText.length}`,
-    );
-  }
-
-  /**
-   * Process a user message through the Brain LLM and stream TTS audio back
-   */
-  private async processBrainReply(
-    client: Socket,
-    session: VoiceSession,
-    userMessage: string,
-  ): Promise<void> {
-    if (!this.llmService || !this.ttsService) {
-      client.emit('voice:error', { error: 'Brain services not available' });
-      return;
-    }
-
-    try {
-      // 1. Tell the client the brain is thinking
-      client.emit('voice:brain:thinking', { text: userMessage });
-
-      // 2. Call the Brain chat API (same endpoint the web chat uses)
-      //    This uses the same LLM config as the BrainController — fallback, provider, etc.
-      const apiPort = process.env.PORT || 3001;
-      const brainApiUrl = `http://localhost:${apiPort}/api/brain/chat`;
-      const context = session.context;
-      const authToken = client.handshake.auth?.token;
-      const voiceModeMessage = [
-        'VOICE MODE INSTRUCTION: Answer like a live phone conversation. Keep it brief: one short sentence unless the user explicitly asks for detail. Do not explain your reasoning. User said:',
-        userMessage,
-      ].join('\n');
-      const brainPayload = {
-        message: voiceModeMessage,
-        companyId: context?.companyId,
-        companyName: context?.companyName || 'Unspecified Company',
-        brandId: context?.brandId,
-        brandName: context?.brandName || 'Unspecified Brand',
-        teamId: context?.teamId,
-        teamName: context?.teamName || 'Unspecified Team',
-        history: session.history.slice(-10).map((h) => ({
-          role: h.role,
-          content: h.content,
-        })),
-      };
-
-      // Track brain latency
-      if (!session.latencyTimestamps) session.latencyTimestamps = {};
-      session.latencyTimestamps.brainStart = Date.now();
-
-      const brainResponse = await fetch(brainApiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-        },
-        body: JSON.stringify(brainPayload),
-      });
-
-      if (!brainResponse.ok) {
-        throw new Error(`Brain API returned ${brainResponse.status}`);
-      }
-
-      session.latencyTimestamps.brainEnd = Date.now();
-
-      const brainData: any = await brainResponse.json();
-      const replyText = brainData.reply?.trim() || '';
-      const spokenReplyText = buildConversationalSpokenReply(replyText);
-
-      session.history.push({ role: 'assistant', content: replyText });
-
-      // 4. Tell client the brain's reply text (so UI can show it)
-      client.emit('voice:brain:reply', {
-        text: replyText,
-        usage: brainData.usage,
-        apiVersion: getApiVersion(),
-      });
-
-      this.logger.log(
-        `[v${getApiVersion()}] Brain reply: "${replyText.substring(0, 50)}..." spoken="${spokenReplyText.substring(0, 80)}..." fullChars=${replyText.length} spokenChars=${spokenReplyText.length}`,
-      );
-
-      // 5. Stream TTS audio back
-      session.isSpeaking = true;
-
-      // Set up abort handler
-      let aborted = false;
-      session.abortTTS = () => {
-        aborted = true;
-        void this.ttsService?.stop();
-      };
-
-      // Send audio chunks as they arrive
-      let ttsFirstChunkLogged = false;
-      const streamResult = await this.ttsService.speakStreaming(
-        spokenReplyText || replyText,
-        (chunkBase64) => {
-          if (aborted) return;
-          if (!ttsFirstChunkLogged) {
-            ttsFirstChunkLogged = true;
-            session.latencyTimestamps.ttsFirstChunk = Date.now();
-          }
-          client.emit('voice:audio', {
-            audio: chunkBase64,
-            sequence: 'chunk',
-            format: 'mp3',
-          });
-        },
-        {
-          interruptible: true,
-          teamId: session.context?.teamId,
-          forceLanguageVoice: true,
-        },
-      );
-
-      // 6. Signal end of audio stream
-      session.isSpeaking = false;
-      session.abortTTS = () => {};
-      session.latencyTimestamps.ttsComplete = Date.now();
-
-      client.emit('voice:audio', {
-        sequence: 'end',
-        format: 'mp3',
-        duration: streamResult.duration,
-        voice: streamResult.voice,
-        language: streamResult.language,
-        ttsElapsedMs: streamResult.elapsedMs,
-        apiVersion: getApiVersion(),
-      });
-
-      // Log latency metrics for this turn
-      const ts = session.latencyTimestamps;
-      const brainMs =
-        ts.brainEnd && ts.brainStart ? ts.brainEnd - ts.brainStart : -1;
-      const ttsFirstMs =
-        ts.ttsFirstChunk && ts.brainEnd ? ts.ttsFirstChunk - ts.brainEnd : -1;
-      const totalMs =
-        ts.ttsComplete && ts.brainStart ? ts.ttsComplete - ts.brainStart : -1;
-      this.logger.log(
-        `[v${getApiVersion()}] Latency — brain=${brainMs}ms ttsFirst=${ttsFirstMs}ms total=${totalMs}ms ttsElapsed=${streamResult.elapsedMs ?? -1}ms voice=${streamResult.voice || '?'} lang=${streamResult.language || '?'} fullChars=${replyText.length} spokenChars=${spokenReplyText.length} | "${(spokenReplyText || replyText).substring(0, 40)}..."`,
-      );
-
-      this.logger.log(
-        `[v${getApiVersion()}] Brain reply streamed: ${replyText.substring(0, 50)}... (${streamResult.audioData?.length || 0} bytes)`,
-      );
-    } catch (error) {
-      this.logger.error('Brain reply error:', error);
-      session.isSpeaking = false;
-      session.abortTTS = () => {};
-      client.emit('voice:error', { error: 'Failed to generate brain reply' });
-    }
-  }
-
-  /**
-   * Request TTS from cloud
-   */
   @SubscribeMessage('voice:speak')
   async handleSpeak(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { text: string; interruptible?: boolean },
   ) {
-    const session = this.activeSessions.get(client.id);
+    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
     if (!session) {
       return { error: 'No active voice session' };
     }
 
+    if (!data || typeof data.text !== 'string' || !data.text.trim() || data.text.length > 8000 || process.env.KELEDON_VOICE_DISABLED === 'true') return { error: 'Invalid or disabled speech request' };
     this.logger.log(
       `[v${getApiVersion()}] TTS request from ${session.deviceId}: ${data.text.substring(0, 50)}... team=${session.context?.teamId || 'none'}`,
     );
@@ -561,7 +359,7 @@ export class VoiceGateway
    */
   @SubscribeMessage('voice:interrupt')
   async handleInterrupt(@ConnectedSocket() client: Socket) {
-    const session = this.activeSessions.get(client.id);
+    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
     if (!session) {
       return { error: 'No active voice session' };
     }
@@ -597,7 +395,7 @@ export class VoiceGateway
       }>;
     },
   ) {
-    const session = this.activeSessions.get(client.id);
+    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
     if (!session) {
       return { error: 'No active voice session' };
     }
@@ -606,10 +404,8 @@ export class VoiceGateway
       `[v${getApiVersion()}] RPA execute: ${data.steps.length} steps for ${session.deviceId}`,
     );
 
-    // Forward to the browser for execution
-    client.emit('voice:rpa:steps', { steps: data.steps });
-
-    return { success: true, steps_count: data.steps.length };
+    // Only Cloud-issued commands may authorize browser actions. Caller-supplied relay is rejected.
+    return { error: 'Cloud-issued RPA command required' };
   }
 
   /**
@@ -630,7 +426,7 @@ export class VoiceGateway
       }>;
     },
   ) {
-    const session = this.activeSessions.get(client.id);
+    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
     if (!session) {
       return { error: 'No active voice session' };
     }
@@ -662,18 +458,24 @@ export class VoiceGateway
       context?: CallContext;
     },
   ) {
-    const session = this.activeSessions.get(client.id);
+    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
     if (!session) {
       return { error: 'No session' };
     }
 
+    const identity = client.data.runtimeIdentity;
+    if (!identity || (data?.session_id && !await ownsRuntimeSession(this.prisma, identity, data.session_id))) return { error: 'Invalid call session' };
+    client.leave(`voice:${session.sessionId}`);
+    const previousSessionId = session.sessionId;
+    if (data.session_id && data.session_id !== previousSessionId) {
+      await this.registry?.endSession(previousSessionId);
+      await this.webrtcService?.destroyPeer(previousSessionId);
+    }
+    session.callGeneration = (session.callGeneration || 0) + 1;
     session.sessionId = data.session_id || session.sessionId;
-    session.context = data.context || {
-      companyName: 'Unspecified Company',
-      brandName: 'Unspecified Brand',
-      teamName: 'Unspecified Team',
-    };
+    session.context = { companyId: identity.companyId, companyName: identity.companyName, brandId: identity.brandId, brandName: identity.brandName, teamId: identity.teamId, teamName: identity.teamName, language: typeof data.context?.language === 'string' ? data.context.language : undefined };
     session.history = []; // Reset history for new call
+    session.turnCount = 0;
 
     this.logger.log(
       `Call started: ${session.deviceId}, session: ${session.sessionId}, context: ${session.context?.companyName}/${session.context?.brandName}`,
@@ -711,7 +513,7 @@ export class VoiceGateway
 
     client.join(`voice:${session.sessionId}`);
 
-    this.server.emit('voice:call_started', {
+    client.emit('voice:call_started', {
       device_id: session.deviceId,
       session_id: session.sessionId,
       call_type: data.call_type || 'voice',
@@ -724,7 +526,7 @@ export class VoiceGateway
     this.logger.log(
       `[v${getApiVersion()}] Call greeting queued session=${session.sessionId} text="${greeting}"`,
     );
-    void this.speakVoiceText(client, session, greeting, 'greeting').catch(
+    void this.brainProcessor.speakVoiceText(client, session, greeting, 'greeting').catch(
       (err) => {
         this.logger.warn(
           `Call greeting failed: ${err instanceof Error ? err.message : String(err)}`,
@@ -743,7 +545,7 @@ export class VoiceGateway
    */
   @SubscribeMessage('call:end')
   async handleCallEnd(@ConnectedSocket() client: Socket) {
-    const session = this.activeSessions.get(client.id);
+    const session = await getAuthorizedVoiceSession(this.prisma, this.activeSessions, client);
     if (!session) {
       return { error: 'No active session' };
     }
@@ -758,11 +560,13 @@ export class VoiceGateway
       session.isSpeaking = false;
     }
 
+    session.callGeneration = (session.callGeneration || 0) + 1;
     const transcript = [...session.transcript];
 
     client.leave(`voice:${session.sessionId}`);
+    await this.webrtcService?.destroyPeer(session.sessionId);
 
-    this.server.emit('voice:call_ended', {
+    client.emit('voice:call_ended', {
       device_id: session.deviceId,
       session_id: session.sessionId,
       transcript_length: transcript.length,
@@ -782,15 +586,8 @@ export class VoiceGateway
    * Get active voice sessions
    */
   @SubscribeMessage('voice:sessions')
-  handleGetSessions() {
-    const sessions = Array.from(this.activeSessions.values()).map((s) => ({
-      device_id: s.deviceId,
-      session_id: s.sessionId,
-      started_at: s.startedAt.toISOString(),
-      transcript_length: s.transcript.length,
-    }));
-
-    return { sessions };
+  handleGetSessions(@ConnectedSocket() client: Socket) {
+    return { sessions: listVoiceSessionSummaries(this.activeSessions, client.id) };
   }
 }
 

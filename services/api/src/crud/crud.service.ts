@@ -1,31 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrudKeledonService } from './crud-keledon.service';
-import { generatePairingCodeString } from './crud-keledon.service';
 import { CrudAuditService } from './crud-audit.service';
 import { CrudSeedService } from './crud-seed.service';
 import { CrudVendorService } from './crud-vendor.service';
 import { CrudCompanyService } from './crud-company.service';
-
-const errorBuffer: string[] = [];
-const MAX_ERRORS = 50;
-
-function captureError(msg: string) {
-  const entry = `${new Date().toISOString()} | ${msg}`;
-  errorBuffer.push(entry);
-  if (errorBuffer.length > MAX_ERRORS) {
-    errorBuffer.shift();
-  }
-}
-
-const originalConsoleError = console.error;
-console.error = (...args: any[]): void => {
-  const msg = args
-    .map((a: any) => (typeof a === 'object' ? JSON.stringify(a) : String(a)))
-    .join(' ');
-  captureError(msg);
-  originalConsoleError.apply(console, args);
-};
+import { CrudSessionDataService } from './crud-session-data.service';
 
 @Injectable()
 export class CrudService {
@@ -36,17 +16,25 @@ export class CrudService {
     private readonly seedService: CrudSeedService,
     private readonly vendorService: CrudVendorService,
     private readonly companyService: CrudCompanyService,
+    private readonly sessionDataService: CrudSessionDataService,
   ) {}
 
   // ========== HEALTH ==========
 
-  async getHealth() {
+  getHealth() {
     const memUsage = process.memoryUsage();
+    let cloudHost = 'unavailable';
+    try {
+      cloudHost = new URL(
+        process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
+      ).hostname;
+    } catch {
+      // A malformed URL is not useful diagnostic output; never echo it back.
+    }
     return {
       status: 'ok',
       uptime: process.uptime(),
       timestamp: new Date().toISOString(),
-      errors: errorBuffer.slice(-50),
       memory: {
         heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024) + 'MB',
         heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024) + 'MB',
@@ -55,7 +43,7 @@ export class CrudService {
       },
       env: {
         NODE_ENV: process.env.NODE_ENV || 'development',
-        CLOUD_URL: process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
+        CLOUD_HOST: cloudHost,
         KELEDON_LAUNCH_SECRET: process.env.KELEDON_LAUNCH_SECRET
           ? 'set'
           : 'not set',
@@ -105,6 +93,16 @@ export class CrudService {
 
   // ========== BRANDS ==========
 
+  async getBrand(id: string) {
+    return this.companyService.getBrand(id);
+  }
+  async getUser(id: string) {
+    return this.companyService.getUser(id);
+  }
+  async getVendor(id: string) {
+    return this.vendorService.getVendor(id);
+  }
+
   async getBrands(companyId?: string) {
     return this.companyService.getBrands(companyId);
   }
@@ -125,6 +123,10 @@ export class CrudService {
 
   async getTeams(companyId?: string) {
     return this.companyService.getTeams(companyId);
+  }
+
+  async getTeam(id: string) {
+    return this.companyService.getTeam(id);
   }
 
   async createTeam(data: { name: string; brandId: string; country?: string }) {
@@ -179,8 +181,8 @@ export class CrudService {
   // ========== KELEDONS ==========
   // Delegated to CrudKeledonService (crud-keledon.service.ts)
 
-  async getKeledons(companyId?: string) {
-    return this.keledonService.getKeledons(companyId);
+  async getKeledons(companyId?: string, userId?: string) {
+    return this.keledonService.getKeledons(companyId, userId);
   }
 
   async createKeledon(data: any) {
@@ -214,9 +216,13 @@ export class CrudService {
   // ========== MANAGED INTERFACES ==========
 
   async getManagedInterfaces() {
-    return this.prisma.managedInterface.findMany({
+    const rows = await this.prisma.managedInterface.findMany({
       orderBy: { name: 'asc' },
     });
+    return rows.map(({ credentials, ...record }) => ({
+      ...record,
+      hasCredentials: !!credentials,
+    }));
   }
 
   async createManagedInterface(data: {
@@ -229,7 +235,9 @@ export class CrudService {
     status?: string;
     credentials?: string;
   }) {
-    return this.prisma.managedInterface.create({ data });
+    const { credentials, ...record } =
+      await this.prisma.managedInterface.create({ data });
+    return { ...record, hasCredentials: !!credentials };
   }
 
   async updateManagedInterface(
@@ -242,7 +250,9 @@ export class CrudService {
       credentials?: string;
     },
   ) {
-    return this.prisma.managedInterface.update({ where: { id }, data });
+    const { credentials, ...record } =
+      await this.prisma.managedInterface.update({ where: { id }, data });
+    return { ...record, hasCredentials: !!credentials };
   }
 
   async deleteManagedInterface(id: string) {
@@ -254,7 +264,12 @@ export class CrudService {
       where: { teamId },
       include: { managedInterface: true },
     });
-    return teamInterfaces.map((ti) => ti.managedInterface);
+    return teamInterfaces.map(
+      ({ managedInterface: { credentials, ...record } }) => ({
+        ...record,
+        hasCredentials: !!credentials,
+      }),
+    );
   }
 
   async setTeamInterfaces(teamId: string, interfaceIds: string[]) {
@@ -414,38 +429,14 @@ export class CrudService {
     return this.prisma.tenantVoiceProfile.delete({ where: { id } });
   }
 
-  // ========== SESSIONS ==========
+  // ========== SESSIONS AND KNOWLEDGE ==========
 
   async getSessions(companyId?: string, limit = 100) {
-    const teams = companyId
-      ? await this.prisma.team.findMany({
-          where: { brand: { companyId } },
-          select: { id: true },
-        })
-      : null;
-
-    return this.prisma.session.findMany({
-      where: companyId
-        ? { teamId: { in: teams?.map((t) => t.id) } }
-        : undefined,
-      include: {
-        user: { select: { id: true, name: true } },
-        team: { select: { id: true, name: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-    });
+    return this.sessionDataService.getSessions(companyId, limit);
   }
 
   async getSession(id: string) {
-    return this.prisma.session.findUnique({
-      where: { id },
-      include: {
-        user: { select: { id: true, name: true } },
-        team: { select: { id: true, name: true } },
-        events: { orderBy: { createdAt: 'asc' } },
-      },
-    });
+    return this.sessionDataService.getSession(id);
   }
 
   async createSession(data: {
@@ -454,42 +445,26 @@ export class CrudService {
     status?: string;
     metadata?: string;
   }) {
-    return this.prisma.session.create({ data });
+    return this.sessionDataService.createSession(data);
   }
 
   async updateSession(
     id: string,
     data: { status?: string; metadata?: string },
   ) {
-    return this.prisma.session.update({ where: { id }, data });
+    return this.sessionDataService.updateSession(id, data);
   }
 
   async deleteOrphanedSessions(): Promise<{ deleted: number }> {
-    const result = await this.prisma.session.deleteMany({
-      where: {
-        OR: [{ userId: null }, { teamId: null }],
-      },
-    });
-    return { deleted: result.count };
+    return this.sessionDataService.deleteOrphanedSessions();
   }
 
   async getOrphanedSessionCount(): Promise<number> {
-    const count = await this.prisma.session.count({
-      where: {
-        OR: [{ userId: null }, { teamId: null }],
-      },
-    });
-    return count;
+    return this.sessionDataService.getOrphanedSessionCount();
   }
 
-  // ========== KNOWLEDGE ==========
-
   async getKnowledgeBases(companyId: string) {
-    return this.prisma.knowledgeBase.findMany({
-      where: { companyId },
-      include: { _count: { select: { documents: true } } },
-      orderBy: { name: 'asc' },
-    });
+    return this.sessionDataService.getKnowledgeBases(companyId);
   }
 
   async createKnowledgeBase(data: {
@@ -497,18 +472,15 @@ export class CrudService {
     name: string;
     description?: string;
   }) {
-    return this.prisma.knowledgeBase.create({ data });
+    return this.sessionDataService.createKnowledgeBase(data);
   }
 
   async deleteKnowledgeBase(id: string) {
-    return this.prisma.knowledgeBase.delete({ where: { id } });
+    return this.sessionDataService.deleteKnowledgeBase(id);
   }
 
   async getKnowledgeDocuments(knowledgeBaseId: string) {
-    return this.prisma.knowledgeDocument.findMany({
-      where: { knowledgeBaseId },
-      orderBy: { createdAt: 'desc' },
-    });
+    return this.sessionDataService.getKnowledgeDocuments(knowledgeBaseId);
   }
 
   async createKnowledgeDocument(data: {
@@ -517,14 +489,14 @@ export class CrudService {
     content: string;
     metadata?: string;
   }) {
-    return this.prisma.knowledgeDocument.create({ data });
+    return this.sessionDataService.createKnowledgeDocument(data);
   }
 
   async deleteKnowledgeDocument(id: string) {
-    return this.prisma.knowledgeDocument.delete({ where: { id } });
+    return this.sessionDataService.deleteKnowledgeDocument(id);
   }
 
-  // ========== ========== AUDIT LOGS ========== ==========
+  // ========== ========== AUDIT LOGS ========== ==========  ========== ==========
   // Delegated to CrudAuditService (crud-audit.service.ts)
 
   async createAuditLog(data: {

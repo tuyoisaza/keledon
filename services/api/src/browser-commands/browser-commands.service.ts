@@ -43,6 +43,7 @@ export class BrowserCommandsService {
 
     const sessions = await this.prisma.session.findMany({
       where: {
+        userId: actor.userId, teamId: actor.teamId,
         status: {
           notIn: ['closed', 'failed'],
         },
@@ -108,6 +109,7 @@ export class BrowserCommandsService {
 
     await this.requireAccessibleDevice(deviceId, actor);
     const sessions = await this.prisma.session.findMany({
+      where: { userId: actor.userId, teamId: actor.teamId },
       include: {
         events: {
           where: {
@@ -489,7 +491,7 @@ export class BrowserCommandsService {
     }
 
     if (!actor?.userId) {
-      return device;
+      throw new ForbiddenException('Authenticated device actor required');
     }
 
     const actorContext = await this.resolveActorContext(actor);

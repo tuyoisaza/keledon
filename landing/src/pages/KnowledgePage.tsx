@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Search, Upload, FileText, Database, Bot, RefreshCw, X, Building2, Tag, Users } from 'lucide-react';
-import { API_URL } from '@/lib/config';
 import { vectorStoreAPI, type PolicyDocument, type VectorStoreStatus } from '@/lib/vector-store';
 import { getCompanies, getBrands, getTeams, type Company, type Brand, type Team } from '@/lib/crud-api';
 import { getBrandsForCompany, getTeamsForBrand, readPlainTextFile } from '@/lib/knowledge-source-utils.js';
@@ -18,6 +17,10 @@ interface KnowledgeDocument {
     team_id?: string;
 }
 
+function errorMessage(error: unknown, fallback: string): string {
+    return error instanceof Error ? error.message : fallback;
+}
+
 export default function KnowledgePage() {
     const [documents, setDocuments] = useState<KnowledgeDocument[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -32,6 +35,8 @@ export default function KnowledgePage() {
     const [companies, setCompanies] = useState<Company[]>([]);
     const [brands, setBrands] = useState<Brand[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
+    const loadedBrandCompanies = useRef(new Set<string>());
+    const loadedTeamBrands = useRef(new Set<string>());
     
     // Add source modal
     const [showAddModal, setShowAddModal] = useState(false);
@@ -51,22 +56,24 @@ export default function KnowledgePage() {
     }, []);
 
     useEffect(() => {
-        if (addForm.company_id) {
-            const companyBrands = brands.filter(b => b.companyId === addForm.company_id);
-            if (companyBrands.length === 0) {
-                getBrands(addForm.company_id).then(setBrands);
-            }
+        const companyId = addForm.company_id;
+        if (companyId && !loadedBrandCompanies.current.has(companyId)) {
+            loadedBrandCompanies.current.add(companyId);
+            getBrands(companyId).then((companyBrands) => {
+                setBrands((current) => [...new Map([...current, ...companyBrands].map((brand) => [brand.id, brand])).values()]);
+            }).catch(() => loadedBrandCompanies.current.delete(companyId));
         }
     }, [addForm.company_id]);
 
     useEffect(() => {
-        if (addForm.brand_id) {
-            const brandTeams = teams.filter(t => t.brandId === addForm.brand_id);
-            if (brandTeams.length === 0) {
-                getTeams(addForm.company_id, addForm.brand_id).then(setTeams);
-            }
+        const brandId = addForm.brand_id;
+        if (brandId && !loadedTeamBrands.current.has(brandId)) {
+            loadedTeamBrands.current.add(brandId);
+            getTeams(addForm.company_id).then((companyTeams) => {
+                setTeams((current) => [...new Map([...current, ...companyTeams].map((team) => [team.id, team])).values()]);
+            }).catch(() => loadedTeamBrands.current.delete(brandId));
         }
-    }, [addForm.brand_id]);
+    }, [addForm.brand_id, addForm.company_id]);
 
     const fetchCompanies = async () => {
         try {
@@ -100,9 +107,9 @@ export default function KnowledgePage() {
                 brand_id: d.brand_id,
                 team_id: d.team_id,
             })));
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Failed to fetch vector store data', err);
-            setVectorError(err?.message || 'Failed to connect to vector store. Please check configuration.');
+            setVectorError(errorMessage(err, 'Failed to connect to vector store. Please check configuration.'));
             setDocuments([]);
         } finally {
             setIsLoading(false);
@@ -167,9 +174,9 @@ export default function KnowledgePage() {
                 team_id: '',
             });
             fetchVectorStoreData();
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err);
-            alert('Error adding source: ' + err.message);
+            alert('Error adding source: ' + errorMessage(err, 'Unexpected error'));
         } finally {
             setIsUploading(false);
         }
@@ -181,8 +188,8 @@ export default function KnowledgePage() {
         try {
             await vectorStoreAPI.deleteDocument(id);
             fetchVectorStoreData();
-        } catch (err: any) {
-            alert('Error deleting document: ' + err.message);
+        } catch (err: unknown) {
+            alert('Error deleting document: ' + errorMessage(err, 'Unexpected error'));
         }
     };
 

@@ -1,4 +1,5 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { ResourceScopeGuard } from '../guards/resource-scope.guard';
+import { Controller, Post, Body, Get, Param, UseGuards } from '@nestjs/common';
 import { RAGService } from './rag.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -19,15 +20,14 @@ interface EvaluateRequest {
 
 @ApiTags('RAG')
 @Controller('rag')
+@UseGuards(ResourceScopeGuard)
 export class RAGController {
   constructor(private readonly ragService: RAGService) {}
 
   @Post('retrieve')
   async retrieve(@Body() request: RetrieveRequest) {
     try {
-      console.log(
-        `[RAG Controller] Retrieve request: ${JSON.stringify(request)}`,
-      );
+      console.log('[RAG Controller] Scoped retrieve request');
 
       const results = await this.ragService.retrieveKnowledge(request.query, {
         sessionId: request.sessionId,
@@ -63,9 +63,7 @@ export class RAGController {
   @Post('evaluate')
   async evaluate(@Body() request: EvaluateRequest) {
     try {
-      console.log(
-        `[RAG Controller] Evaluate request: ${JSON.stringify(request)}`,
-      );
+      console.log('[RAG Controller] Scoped evaluate request');
 
       const result = await this.ragService.evaluateResponse(
         request.sessionId,

@@ -1,3 +1,6 @@
+import ManagementModal from '@/components/common/ManagementModal';
+import RecordDetails from '@/components/common/RecordDetails';
+import { useTranslation } from '@/context/I18nContext';
 import { useState, useEffect } from 'react';
 import { Tag, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -5,6 +8,7 @@ import { toast } from 'sonner';
 import { getBrands, getCompanies, createBrand, updateBrand, deleteBrand, type Brand, type Company } from '@/lib/crud-api';
 
 export default function ManagementBrandsPage() {
+    const { t } = useTranslation();
     const [brands, setBrands] = useState<Brand[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [loading, setLoading] = useState(true);
@@ -173,6 +177,14 @@ export default function ManagementBrandsPage() {
                                     </td>
                                     <td className="px-4 py-3">
                                         <div className="flex gap-2">
+                                            <RecordDetails name={brand.name || brand.id} fields={[
+                                                { label: t('records.id'), value: brand.id },
+                                                { label: t('records.name'), value: brand.name },
+                                                { label: t('records.company'), value: getCompanyName(brand.companyId) },
+                                                { label: t('records.color'), value: brand.color },
+                                                { label: t('records.created'), value: brand.createdAt },
+                                                { label: t('records.updated'), value: brand.updatedAt }
+                                            ]} />
                                             <button onClick={() => openEditForm(brand)} className="p-1.5 hover:bg-muted rounded transition-colors" title="Edit">
                                                 <Pencil className="w-4 h-4" />
                                             </button>
@@ -189,20 +201,20 @@ export default function ManagementBrandsPage() {
             </div>
 
             {showForm && (
-                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+                <ManagementModal title={t('records.brand')} onClose={() => setShowForm(false)}>
                     <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold">
                                 {editingBrand ? 'Edit' : 'Add'} Brand
                             </h3>
-                            <button onClick={() => setShowForm(false)} className="p-1 hover:bg-muted rounded">
+                            <button type="button" aria-label={t('records.close')} onClick={() => setShowForm(false)} className="p-1 hover:bg-muted rounded">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm text-muted-foreground mb-1">Brand Name</label>
-                                <input
+                                <label htmlFor="management-brands-field-1" className="block text-sm text-muted-foreground mb-1">Brand Name</label>
+                                <input id="management-brands-field-1"
                                     type="text"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -211,8 +223,8 @@ export default function ManagementBrandsPage() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm text-muted-foreground mb-1">Company</label>
-                                <select
+                                <label htmlFor="management-brands-field-2" className="block text-sm text-muted-foreground mb-1">Company</label>
+                                <select id="management-brands-field-2"
                                     value={formData.companyId}
                                     onChange={(e) => setFormData({ ...formData, companyId: e.target.value })}
                                     required
@@ -225,8 +237,8 @@ export default function ManagementBrandsPage() {
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm text-muted-foreground mb-1">Color</label>
-                                <input
+                                <label htmlFor="management-brands-field-3" className="block text-sm text-muted-foreground mb-1">Color</label>
+                                <input id="management-brands-field-3"
                                     type="color"
                                     value={formData.color}
                                     onChange={(e) => setFormData({ ...formData, color: e.target.value })}
@@ -244,7 +256,7 @@ export default function ManagementBrandsPage() {
                             </div>
                         </form>
                     </div>
-                </div>
+                </ManagementModal>
             )}
         </div>
     );

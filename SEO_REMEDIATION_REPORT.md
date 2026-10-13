@@ -1,0 +1,13 @@
+# SEO remediation — implemented vs pending
+
+Run: 20261012-keledon-four-fronts. Date: 2026-10-12 America/Mexico_City. PHDK2.50.8. Baseline52537140e67d0d6c05486fa13837df3eb5316fb3; local dirty candidate. Source fingerprint SHA256 `5ee8649bbab265db46f14d4ba1a83399b9fb268f04ecfde24ede6f2cd85e0dba` (ordered files below), not a commit or deployment SHA. Method: source-only inspection; no browser, HTTP/probe, Search Console, provider, paid model, crawler or database access. Latest integrated UAT not present at snapshot, so this is a prepared audit, not final accepted stage or runtime/indexation proof.
+
+Previously implemented by root in current candidate (source readback): index.html home title/description/canonical/viewport/lang/noscript; public robots.txt/sitemap.xml; RouteMetadata home index/private client-noindex; Hero illustrative metrics disclaimer and CTA controlled-pilot wording. Baseline main had fewer discovery controls; no prior measured performance baseline exists. Worker made no product changes in this task.
+
+Pending safe code actions, not claimed executed: F01 server-delivered private noindex; F02 source claims repaired/read back; F03 footer repaired but inert CTA destinations remain; F04 document SPA limits and use truthful static public summary without inventing framework migration. Root decides implementation and reruns affected local checks.
+
+Retest status: source metadata/robots/sitemap/route inspection performed. Final integrated build, UAT and source regression revalidation pending. No live status/indexation/Search Console/performance measurements. These external observations are outside current owner code-only proof, not new mandatory client work. Outcome PARTIAL, significant source fixes pending. Next action: root repair F01-F03, reconcile final local UAT then update evidence.
+
+## Source revalidation after root public-copy repair
+
+Root's current Features text now states client compatibility validation, configured cloud models/managed prompts/validated outputs and approved-origin actions; PII-out-of-box/local-optional-cloud/named vendor guarantees removed. UseCases are explicitly example configured workflows, without healthcare/insurance/EMR/Jira/SAP claims. Footer `#` legal/social links removed; real architecture anchor preserved. **SEO-F02 CLOSED in source; SEO-F03 footer portion CLOSED, CTA buttons remain inert at this snapshot.** No live workflow proof inferred. Private client-only noindex limitation F01 remains, and nginx/provider changes are explicitly outside this documentation task. Final source fingerprint above updated; initial historical snapshots retained unchanged, with this revalidation recorded separately.

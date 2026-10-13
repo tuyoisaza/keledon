@@ -1,5 +1,7 @@
+import { ResourceScopeGuard } from '../guards/resource-scope.guard';
 import {
   Controller,
+  UseGuards,
   Get,
   Post,
   Put,
@@ -13,6 +15,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('SubAgents')
 @Controller('api/subagents')
+@UseGuards(ResourceScopeGuard)
 export class SubAgentController {
   constructor(private readonly subAgentService: SubAgentService) {}
 

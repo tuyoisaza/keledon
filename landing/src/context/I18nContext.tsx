@@ -1,15 +1,13 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import es from '../locales/es.json';
 import en from '../locales/en.json';
 import pt from '../locales/pt.json';
-
-type Locale = 'es' | 'en' | 'pt';
+import { I18nContext, type Locale } from './i18n-context';
 
 interface LocaleConfig {
   default: Locale;
   supported: Locale[];
 }
-
 const LOCALE_CONFIG: LocaleConfig = {
   default: 'es',
   supported: ['es', 'en', 'pt'],
@@ -17,18 +15,13 @@ const LOCALE_CONFIG: LocaleConfig = {
 
 const translations: Record<Locale, typeof es> = { es, en, pt };
 
-interface I18nContextType {
-  locale: Locale;
-  setLocale: (locale: Locale) => void;
-  t: (key: string) => string;
-  supportedLocales: Locale[];
-  localeNames: Record<Locale, string>;
-}
-
-const I18nContext = createContext<I18nContextType | null>(null);
-
-function getNestedValue(obj: Record<string, any>, path: string): string | undefined {
-  return path.split('.').reduce((acc, part) => acc?.[part], obj);
+function getNestedValue(obj: unknown, key: string): string | undefined {
+  let value: unknown = obj;
+  for (const part of key.split('.')) {
+    if (!value || typeof value !== 'object') return undefined;
+    value = (value as Record<string, unknown>)[part];
+  }
+  return typeof value === 'string' ? value : undefined;
 }
 
 function detectLocale(): Locale {
@@ -81,13 +74,3 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     </I18nContext.Provider>
   );
 }
-
-export function useTranslation() {
-  const context = useContext(I18nContext);
-  if (!context) {
-    throw new Error('useTranslation must be used within I18nProvider');
-  }
-  return context;
-}
-
-export type { Locale };

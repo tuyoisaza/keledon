@@ -23,6 +23,8 @@ export interface VoiceSession {
   history: { role: 'user' | 'assistant'; content: string }[];
   /** Whether the brain is currently speaking */
   isSpeaking: boolean;
+  turnCount?: number;
+  callGeneration?: number;
   /** Abort controller for current TTS stream */
   abortTTS: () => void;
   /** Timestamps at each pipeline stage (ms since epoch) */

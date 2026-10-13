@@ -36,7 +36,18 @@ describe('Tab Registry', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    registry = new TabRegistry();
+    registry = new TabRegistry({
+      trackedDomains: [
+        'example.com',
+        'test.com',
+        'salesforce.com',
+        'genesys.com',
+        'localhost',
+        'newsite.com',
+        'updated.com',
+      ],
+      audioDomains: ['genesys.com', 'salesforce.com', 'localhost'],
+    });
   });
 
   afterEach(() => {
@@ -212,6 +223,26 @@ describe('Tab Registry', () => {
       const registeredTab = registry.getTab(1);
       expect(registeredTab?.type).toBe('audio+ui');
     });
+
+  it('should classify customer-configured domains without built-in vendors', () => {
+    const configuredRegistry = new TabRegistry({
+      trackedDomains: ['local-crm.example'],
+      audioDomains: ['callpicker.example'],
+    });
+    const onCreated = mockChrome.tabs.onCreated.addListener.mock.calls.at(-1)?.[0];
+    onCreated?.({ id: 42, url: 'https://tenant.callpicker.example/agent' });
+
+    expect(configuredRegistry.getTab(42)?.type).toBe('audio+ui');
+    expect(configuredRegistry.getTab(42)?.capabilities.rpa).toBe(true);
+  });
+
+  it('does not register unrelated browser tabs outside configured tenant domains', () => {
+    const configuredRegistry = new TabRegistry({ trackedDomains: ['crm.customer.example'] });
+    const onCreated = mockChrome.tabs.onCreated.addListener.mock.calls.at(-1)?.[0];
+    onCreated?.({ id: 43, url: 'https://unrelated.example/news' });
+
+    expect(configuredRegistry.getTab(43)).toBeUndefined();
+  });
   });
 
   describe('Tab Queries', () => {
@@ -325,7 +356,8 @@ describe('Role Assigner', () => {
     jest.clearAllMocks();
     assigner = new RoleAssigner({
       maxAudioTabs: 2,
-      defaultRole: 'ui-only'
+      defaultRole: 'ui-only',
+      audioDomains: ['genesys.com', 'salesforce.com'],
     });
   });
 
@@ -372,7 +404,10 @@ describe('Role Assigner', () => {
     });
 
     it('should respect maxAudioTabs limit', () => {
-      assigner = new RoleAssigner({ maxAudioTabs: 1 });
+      assigner = new RoleAssigner({
+        maxAudioTabs: 1,
+        audioDomains: ['genesys.com', 'salesforce.com', 'localhost'],
+      });
 
       const tab1 = assigner.registerTab('tab-1', 'https://genesys.com');
       const tab2 = assigner.registerTab('tab-2', 'https://salesforce.com');
@@ -384,7 +419,10 @@ describe('Role Assigner', () => {
     });
 
     it('should use default role when no specific rules apply', () => {
-      const assigner = new RoleAssigner({ defaultRole: 'ui-only' });
+      const assigner = new RoleAssigner({
+        defaultRole: 'ui-only',
+        audioDomains: ['genesys.com', 'salesforce.com'],
+      });
       const tab = assigner.registerTab('tab-1', 'https://random-site.com');
 
       expect(tab.type).toBe('ui-only');

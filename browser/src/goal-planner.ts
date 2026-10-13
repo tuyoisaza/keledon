@@ -431,49 +431,42 @@ export async function planGoalActionsWithAI(
   pageState: string,
   cloudUrl: string,
   authToken: string,
-): Promise<{ steps: GoalPlannerAction[]; source: 'heuristic' | 'ai' }> {
-  // Step 1: Try heuristic first (fast, no network)
-  const heuristicSteps = planGoalActions(goal, undefined, currentUrl);
-
-  // Step 2: If heuristic gives a reasonable plan, use it
-  const meaningfulSteps = heuristicSteps.filter(s => s.type !== 'wait');
-  if (meaningfulSteps.length > 2) {
-    return { steps: heuristicSteps, source: 'heuristic' };
+  inputs?: Record<string, unknown>,
+  requestId?: string,
+): Promise<{ steps: GoalPlannerAction[]; source: 'ai' }> {
+  if (!cloudUrl || !authToken) throw new Error('Authenticated cloud planner is required');
+  const sanitizeInputs = (text: string) => Object.entries(inputs || {}).reduce((result, [key, value]) => {
+    if (/password|secret|token|apiKey|username|email|login/i.test(key) && typeof value === 'string' && value) return result.split(value).join('$' + `{${key}}`);
+    return result;
+  }, text);
+  const response = await fetch(`${cloudUrl}/api/planner/decompose`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+    body: JSON.stringify({ goal: sanitizeInputs(goal), url: currentUrl, pageContext: sanitizeInputs(pageState), inputKeys: Object.keys(inputs || {}), requestId }),
+    signal: AbortSignal.timeout(15000),
+  });
+  if (!response.ok) throw new Error(`Cloud planner API returned ${response.status}`);
+  const data: AiPlannerResponse & { success?: boolean } = await response.json();
+  if (data?.success === false || !Array.isArray(data?.steps) || data.steps.length > 20) {
+    throw new Error('Cloud planner returned an invalid plan');
   }
-
-  // Step 3: Fall back to cloud AI planner
-  try {
-    const response = await fetch(`${cloudUrl}/api/planner/decompose`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-      body: JSON.stringify({ goal, currentUrl, pageState }),
+  const allowed = new Set(['navigate', 'click', 'fill', 'extract', 'wait', 'screenshot', 'scroll', 'press_key', 'select', 'hover', 'wait_for', 'submit', 'assert']);
+  const steps = data.steps.map((step): GoalPlannerAction => {
+    if (!step || !allowed.has(step.type) ||
+        ['selector', 'value', 'url', 'description'].some(key => step[key] !== undefined && typeof step[key] !== 'string')) {
+      throw new Error('Cloud planner returned an invalid action');
+    }
+    if (step.type === 'navigate' && (!step.url || !/^https?:\/\//i.test(step.url))) {
+      throw new Error('Cloud planner returned an invalid navigation URL');
+    }
+    const value = step.value?.replace(/\$\{([a-zA-Z_][a-zA-Z0-9_]*)\}/g, (_, key) => {
+      if (!Object.prototype.hasOwnProperty.call(inputs || {}, key) || typeof inputs[key] !== 'string') {
+        throw new Error('Cloud plan references an unavailable input');
+      }
+      return inputs[key] as string;
     });
-
-    if (!response.ok) {
-      throw new Error(`AI planner API returned ${response.status}`);
-    }
-
-    const data: AiPlannerResponse = await response.json() as AiPlannerResponse;
-
-    // If AI returned fewer steps than heuristic, keep heuristic
-    if (!data?.steps || data.steps.length <= 2) {
-      return { steps: heuristicSteps, source: 'heuristic' };
-    }
-
-    const aiActions: GoalPlannerAction[] = data.steps
-      .filter((s: AiStepResponse) => s?.type)
-      .map((s: AiStepResponse) => ({
-        type: s.type as GoalPlannerAction['type'],
-        selector: s.selector,
-        target: s.selector,
-        value: s.value,
-        url: s.url,
-        description: s.description || `${s.type} step`,
-      }));
-
-    return { steps: aiActions, source: 'ai' };
-  } catch (error) {
-    console.warn('[GoalPlanner] AI planner failed, falling back to heuristic:', error);
-    return { steps: heuristicSteps, source: 'heuristic' };
-  }
+    return { ...step, type: step.type as GoalPlannerAction['type'], value,
+      target: step.selector, description: `${step.type} step` };
+  });
+  return { steps, source: 'ai' };
 }

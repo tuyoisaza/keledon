@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
-import { useSocket } from '../context/SocketContext';
+import { useSocket } from '../context/useSocket';
 
 interface AgentStatus {
   id: string;
@@ -39,16 +39,14 @@ export function useAgentStatus(socket?: Socket | null) {
     stt: 'ready',
     ai: 'ready'
   });
-  const [loading, setLoading] = useState(true);
+  const [loadedSocket, setLoadedSocket] = useState<Socket | null>(null);
+  const loading = Boolean(actualSocket && loadedSocket !== actualSocket);
 
   useEffect(() => {
     if (!actualSocket) {
       console.warn('useAgentStatus: No socket connection available');
-      setLoading(false);
       return;
     }
-
-    setLoading(true);
 
     // Request initial data
     actualSocket.emit('dashboard:get-agent-status');
@@ -57,7 +55,7 @@ export function useAgentStatus(socket?: Socket | null) {
     // Listen for agent status updates
     const handleAgentStatusUpdate = (data: AgentStatus[]) => {
       setAgents(data);
-      setLoading(false);
+      setLoadedSocket(actualSocket);
     };
 
     const handleSystemHealthUpdate = (data: SystemHealth) => {
@@ -84,7 +82,7 @@ export function useAgentStatus(socket?: Socket | null) {
       ));
     };
 
-    const handlePerformanceMetrics = (data: { agentId: string; performance: any }) => {
+    const handlePerformanceMetrics = (data: { agentId: string; performance: AgentStatus['performance'] }) => {
       setAgents(prev => prev.map(agent => 
         agent.id === data.agentId 
           ? { ...agent, performance: data.performance, lastActivity: new Date() }

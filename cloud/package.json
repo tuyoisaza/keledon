@@ -1,11 +1,11 @@
 {
   "name": "cloud",
-  "version": "5.0.53",
+  "version": "5.1.2",
   "description": "KELEDON Backend",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "node scripts/c13-regression-sentinel.js && npx tsc -p tsconfig.mvp.json",
+    "build": "node scripts/c13-regression-sentinel.js && node ./node_modules/typescript/bin/tsc -p tsconfig.mvp.json",
     "start": "node dist/main",
     "start:dev": "node canonical-dev-server.js",
     "lint": "eslint \"src/**/*.ts\" --fix",

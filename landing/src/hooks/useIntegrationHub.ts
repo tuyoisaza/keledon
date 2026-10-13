@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
-import { useSocket } from '../context/SocketContext';
+import { useSocket } from '../context/useSocket';
 
 interface IntegrationProvider {
   id: string;
@@ -42,18 +42,16 @@ export function useIntegrationHub(socket?: Socket | null) {
   
   const [providers, setProviders] = useState<IntegrationProvider[]>([]);
   const [connections, setConnections] = useState<Connection[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadedSocket, setLoadedSocket] = useState<Socket | null>(null);
+  const loading = Boolean(actualSocket && loadedSocket !== actualSocket);
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('all');
 
   useEffect(() => {
     if (!actualSocket) {
       console.warn('useIntegrationHub: No socket connection available');
-      setLoading(false);
       return;
     }
-
-    setLoading(true);
 
     // Request initial data
     actualSocket.emit('dashboard:get-integrations');
@@ -62,7 +60,7 @@ export function useIntegrationHub(socket?: Socket | null) {
     // Listen for integration updates
     const handleIntegrationsUpdate = (data: IntegrationProvider[]) => {
       setProviders(data);
-      setLoading(false);
+      setLoadedSocket(actualSocket);
     };
 
     const handleConnectionsUpdate = (data: Connection[]) => {
@@ -120,7 +118,7 @@ export function useIntegrationHub(socket?: Socket | null) {
   }, [actualSocket]);
 
   // Control functions
-  const connectProvider = (providerId: string, config?: any) => {
+  const connectProvider = (providerId: string, config?: Record<string, unknown>) => {
     if (actualSocket) {
       actualSocket.emit('dashboard:provider-connect', { providerId, config });
     }

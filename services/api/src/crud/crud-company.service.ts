@@ -23,7 +23,16 @@ export class CrudCompanyService {
       include: {
         countries: true,
         brands: true,
-        users: true,
+        users: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            role: true,
+            companyId: true,
+            teamId: true,
+          },
+        },
       },
     });
   }
@@ -53,11 +62,6 @@ export class CrudCompanyService {
   ) {
     const { countries, ...companyData } = data;
 
-    // Delete existing countries and create new ones if provided
-    if (countries !== undefined) {
-      await this.prisma.companyCountry.deleteMany({ where: { companyId: id } });
-    }
-
     const result = await this.prisma.company.update({
       where: { id },
       data: {
@@ -65,6 +69,7 @@ export class CrudCompanyService {
         ...(countries !== undefined
           ? {
               countries: {
+                deleteMany: {},
                 create: countries.map((code) => ({ countryCode: code })),
               },
             }
@@ -112,6 +117,13 @@ export class CrudCompanyService {
     });
   }
 
+  async getBrand(id: string) {
+    return this.prisma.brand.findUnique({
+      where: { id },
+      include: { company: { select: { id: true, name: true } } },
+    });
+  }
+
   async updateBrand(id: string, data: { name?: string; color?: string }) {
     return this.prisma.brand.update({
       where: { id },
@@ -128,6 +140,7 @@ export class CrudCompanyService {
 
   async getTeams(companyId?: string) {
     const teams = await this.prisma.team.findMany({
+      where: companyId ? { brand: { companyId } } : undefined,
       include: {
         users: { select: { id: true } },
         keledons: { select: { id: true } },
@@ -156,6 +169,26 @@ export class CrudCompanyService {
         ? { id: t.brand.company.id, name: t.brand.company.name }
         : undefined,
     }));
+  }
+
+  async getTeam(id: string) {
+    return this.prisma.team.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        brandId: true,
+        country: true,
+        sttProvider: true,
+        ttsProvider: true,
+        llmProvider: true,
+        escalationTriggers: true,
+        createdAt: true,
+        updatedAt: true,
+        brand: { include: { company: { select: { id: true, name: true } } } },
+        _count: { select: { users: true, keledons: true } },
+      },
+    });
   }
 
   async createTeam(data: { name: string; brandId: string; country?: string }) {
@@ -228,6 +261,26 @@ export class CrudCompanyService {
   }
 
   // ========== USERS ==========
+
+  async getUser(id: string) {
+    return this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        companyId: true,
+        teamId: true,
+        isOnline: true,
+        lastLogin: true,
+        createdAt: true,
+        updatedAt: true,
+        company: { select: { id: true, name: true } },
+        team: { select: { id: true, name: true, brandId: true } },
+      },
+    });
+  }
 
   async getUsers(companyId?: string) {
     const users = await this.prisma.user.findMany({

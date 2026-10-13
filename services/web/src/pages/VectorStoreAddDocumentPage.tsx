@@ -35,7 +35,7 @@ export default function VectorStoreAddDocumentPage() {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    category: 'knowledge',
+    category: 'knowledge' as PolicyDocument['category'],
     metadata: '',
     company_id: '',
     brand_id: '',
@@ -211,7 +211,12 @@ export default function VectorStoreAddDocumentPage() {
           <label className="block text-sm font-medium mb-2">Category</label>
           <select
             value={formData.category}
-            onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+            onChange={(e) => {
+              const category = e.target.value;
+              if (category === 'safety' || category === 'procedure' || category === 'compliance' || category === 'knowledge') {
+                setFormData(prev => ({ ...prev, category }));
+              }
+            }}
             className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none"
           >
             {categories.map((cat) => (

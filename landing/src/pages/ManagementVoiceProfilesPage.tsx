@@ -1,40 +1,54 @@
 import { useState, useEffect } from 'react';
-import { Mic, Plus, RefreshCw, Loader2, Pencil, Trash2, Settings, Volume2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Mic, Plus, Loader2, Trash2, Volume2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
+import { createTenantVoiceProfile, deleteTenantVoiceProfile, getTenantVoiceProfiles, type TenantVoiceProfile } from '@/lib/crud-api';
 
 export default function ManagementVoiceProfilesPage() {
     const { user } = useAuth();
-    const [voiceProfiles, setVoiceProfiles] = useState<any[]>([]);
+    const [voiceProfiles, setVoiceProfiles] = useState<TenantVoiceProfile[]>([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
-        provider_id: 'elevenlabs',
+        providerId: 'elevenlabs',
         language: 'en',
-        is_enabled: true,
-        is_default: false,
-        config: {}
+        isEnabled: true,
+        isDefault: false,
     });
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        fetchVoiceProfiles();
-    }, []);
+        if (!user?.companyId) {
+            setVoiceProfiles([]);
+            setLoading(false);
+            return;
+        }
+
+        let current = true;
+        getTenantVoiceProfiles(user.companyId)
+            .then((profiles) => {
+                if (current) setVoiceProfiles(profiles);
+            })
+            .catch((error: unknown) => {
+                console.error('Failed to fetch voice profiles:', error);
+                if (current) toast.error('Failed to fetch voice profiles');
+            })
+            .finally(() => {
+                if (current) setLoading(false);
+            });
+
+        return () => { current = false; };
+    }, [user?.companyId]);
 
     const fetchVoiceProfiles = async () => {
+        if (!user?.companyId) return;
+        setLoading(true);
         try {
-            setLoading(true);
-            if (user?.companyId) {
-                const response = await fetch(`/api/tenant/voice-profiles?companyId=${user.companyId}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setVoiceProfiles(data || []);
-                }
-            }
+            setVoiceProfiles(await getTenantVoiceProfiles(user.companyId));
         } catch (error) {
             console.error('Failed to fetch voice profiles:', error);
+            toast.error('Failed to fetch voice profiles');
         } finally {
             setLoading(false);
         }
@@ -47,23 +61,14 @@ export default function ManagementVoiceProfilesPage() {
         }
         setSaving(true);
         try {
-            const response = await fetch('/api/tenant/voice-profiles', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...formData,
-                    companyId: user?.companyId
-                })
-            });
-            if (response.ok) {
-                toast.success('Voice profile created');
-                setShowForm(false);
-                setFormData({ name: '', provider_id: 'elevenlabs', language: 'en', is_enabled: true, is_default: false, config: {} });
-                fetchVoiceProfiles();
-            } else {
-                toast.error('Failed to create voice profile');
-            }
-        } catch (error) {
+            if (!user?.companyId) throw new Error('Your account has no company assignment');
+            await createTenantVoiceProfile({ ...formData, companyId: user.companyId });
+            toast.success('Voice profile created');
+            setShowForm(false);
+            setFormData({ name: '', providerId: 'elevenlabs', language: 'en', isEnabled: true, isDefault: false });
+            await fetchVoiceProfiles();
+        } catch (error: unknown) {
+            console.error('Failed to create voice profile:', error);
             toast.error('Failed to create voice profile');
         } finally {
             setSaving(false);
@@ -73,10 +78,10 @@ export default function ManagementVoiceProfilesPage() {
     const handleDelete = async (id: string) => {
         if (!confirm('Delete this voice profile?')) return;
         try {
-            await fetch(`/api/tenant/voice-profiles/${id}`, { method: 'DELETE' });
+            await deleteTenantVoiceProfile(id);
             toast.success('Voice profile deleted');
-            fetchVoiceProfiles();
-        } catch (error) {
+            await fetchVoiceProfiles();
+        } catch {
             toast.error('Failed to delete');
         }
     };
@@ -117,8 +122,8 @@ export default function ManagementVoiceProfilesPage() {
                         <div>
                             <label className="block text-sm font-medium mb-1">Provider</label>
                             <select
-                                value={formData.provider_id}
-                                onChange={(e) => setFormData({ ...formData, provider_id: e.target.value })}
+                                value={formData.providerId}
+                                onChange={(e) => setFormData({ ...formData, providerId: e.target.value })}
                                 className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50"
                             >
                                 <option value="elevenlabs">ElevenLabs</option>
@@ -144,8 +149,8 @@ export default function ManagementVoiceProfilesPage() {
                             <label className="flex items-center gap-2">
                                 <input
                                     type="checkbox"
-                                    checked={formData.is_default}
-                                    onChange={(e) => setFormData({ ...formData, is_default: e.target.checked })}
+                                    checked={formData.isDefault}
+                                    onChange={(e) => setFormData({ ...formData, isDefault: e.target.checked })}
                                 />
                                 Default
                             </label>
@@ -185,12 +190,12 @@ export default function ManagementVoiceProfilesPage() {
                                     <div>
                                         <div className="flex items-center gap-2">
                                             <span className="font-medium">{profile.name}</span>
-                                            {profile.is_default && (
+                                            {profile.isDefault && (
                                                 <span className="px-2 py-0.5 bg-primary/20 text-primary text-xs rounded">Default</span>
                                             )}
                                         </div>
                                         <div className="text-sm text-muted-foreground">
-                                            {profile.provider_id} • {profile.language}
+                                            {profile.providerId} • {profile.language}
                                         </div>
                                     </div>
                                 </div>

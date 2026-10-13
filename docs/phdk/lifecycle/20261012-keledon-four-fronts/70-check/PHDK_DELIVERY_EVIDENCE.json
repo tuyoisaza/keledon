@@ -1,0 +1,35 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto 4 fronts; vendor-independent code conformance",
+  "target_branch": "main",
+  "expected_version": "5.1.0",
+  "version_file": "services/web/package.json",
+  "merged_commit_sha": null,
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/42",
+  "checks": {
+    "lint": {
+      "status": "PASS",
+      "evidence": "services/web full lint: 0 errors, 135 warnings; changed UI/UAT ESLint clean; changed API: 0 errors/2 warnings; changed Cloud decision modules: 0 errors."
+    },
+    "typecheck": {
+      "status": "PARTIAL",
+      "evidence": "services/web typecheck and API/Cloud production TypeScript builds pass. Full legacy landing typecheck still reports unrelated baseline diagnostics."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "API and Cloud C13/TypeScript builds pass; services/web and landing production Vite builds pass."
+    },
+    "focused_tests": {
+      "status": "PASS",
+      "evidence": "API health/role/correlation 12/12; web diagnostics/debug-mode/version-actions 18/18; nginx SEO config 1/1; Cloud regression 8/8; local production-SPA UAT 1/1."
+    },
+    "uat": {
+      "status": "PASS",
+      "evidence": "Source candidate 7df6f77dd47670cfa7671f27f9ca67c38aa7161e: production-SPA Edge UAT 1/1, synthetic Company Co fixtures, all app API responses intercepted and external HTTP/WebSocket blocked. See docs/phdk/evidence/uat-local-web.json and 50-uat/UAT_REPORT.md."
+    },
+    "delivery": {
+      "status": "PARTIAL",
+      "evidence": "Candidate source and reconciled lifecycle evidence are pushed on chore/phdk-install-v2.50.8; PR #42 body is current and remains OPEN/DRAFT. No merge/main readback, production, or database operation."
+    }
+  }
+}

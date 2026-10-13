@@ -24,9 +24,25 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "transform": {
+      "^.+\\.[tj]sx?$": [
+        "ts-jest",
+        {
+          "tsconfig": {
+            "allowJs": true,
+            "module": "CommonJS",
+            "target": "ES2020",
+            "esModuleInterop": true
+          },
+          "useESM": false
+        }
+      ]
+    },
     "testEnvironment": "jsdom",
     "roots": [
-      "<rootDir>/test"
+      "<rootDir>/test",
+      "<rootDir>/src/tabs/__tests__",
+      "<rootDir>/extension/tabs/__tests__"
     ],
     "testMatch": [
       "**/*.test.ts"

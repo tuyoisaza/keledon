@@ -1,48 +1,46 @@
+import { redactDiagnostic } from './diagnostics-core';
 export type LogLevel = 'info' | 'warn' | 'error' | 'debug';
+
+function initialDebugMode() {
+    if (import.meta.env.DEV) return true;
+    try { return localStorage.getItem('keldon-debug-mode') === 'true'; } catch { return false; }
+}
 
 interface LogEntry {
     timestamp: number;
     level: LogLevel;
     message: string;
-    details?: any;
+    details?: unknown;
 }
 
 class DebugLogger {
     private logs: LogEntry[] = [];
     private listeners: ((logs: LogEntry[]) => void)[] = [];
     private maxLogs = 1000;
-    private isEnabled = true; // Enabled by default to catch early issues
+    private enabled = initialDebugMode(); // Non-production defaults ON; production is explicit opt-in.
 
     constructor() {
-        // Recover logs from session storage if possible
-        try {
-            const savedLogs = sessionStorage.getItem('keledon_debug_logs');
-            if (savedLogs) {
-                this.logs = JSON.parse(savedLogs);
-                if (this.logs.length > 0) {
-                    this.log('info', 'Logger re-initialized, previous logs restored');
-                }
-            }
-        } catch (e) {
-            console.error('Failed to restore logs', e);
-        }
+        // Do not restore arbitrary pre-sanitization log payloads from older releases.
+        try { sessionStorage.removeItem('keledon_debug_logs'); } catch { /* Storage may be unavailable. */ }
     }
 
     enable(enabled: boolean) {
-        this.isEnabled = enabled;
+        this.enabled = enabled;
         if (enabled) {
             this.log('info', 'Debug logging enabled');
+        } else {
+            this.notifyListeners();
         }
     }
 
-    log(level: LogLevel, message: string, details?: any) {
-        if (!this.isEnabled) return;
+    log(level: LogLevel, message: string, details?: unknown) {
+        if (!this.enabled) return;
 
         const entry: LogEntry = {
             timestamp: Date.now(),
             level,
-            message,
-            details
+            message: String(redactDiagnostic(message)),
+            details: redactDiagnostic(details)
         };
 
         this.logs.unshift(entry);
@@ -55,7 +53,7 @@ class DebugLogger {
         // Persist to session storage so logs survive reloads
         try {
             sessionStorage.setItem('keledon_debug_logs', JSON.stringify(this.logs));
-        } catch (e) {
+        } catch {
             // Ignore storage errors
         }
 
@@ -65,11 +63,15 @@ class DebugLogger {
         const style = level === 'error' ? 'color: red' :
             level === 'warn' ? 'color: orange' :
                 'color: blue';
-        console.log(`%c[${level.toUpperCase()}] ${message}`, style, details || '');
+        console.log(`%c[${level.toUpperCase()}] ${entry.message}`, style, entry.details || '');
     }
 
     getLogs() {
-        return this.logs;
+        return this.logs.map(entry => ({ ...entry }));
+    }
+
+    isEnabled() {
+        return this.enabled;
     }
 
     clear() {

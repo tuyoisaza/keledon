@@ -2,45 +2,9 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { Subject, Observable, interval } from 'rxjs';
 
-export interface DatabaseConfig {
-  type: 'memory' | 'file' | 'sqlite';
-  connectionString?: string;
-  backupEnabled: boolean;
-  backupInterval: number; // minutes
-  retentionDays: number;
-}
-
-export interface StoredEntity<T> {
-  id: string;
-  data: T;
-  createdAt: Date;
-  updatedAt: Date;
-  expiresAt?: Date;
-  tags?: string[];
-}
-
-export interface QueryOptions {
-  limit?: number;
-  offset?: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-  filters?: Record<string, any>;
-  tags?: string[];
-  dateRange?: {
-    from?: Date;
-    to?: Date;
-  };
-}
-
-export interface BackupInfo {
-  id: string;
-  timestamp: Date;
-  size: number;
-  type: 'full' | 'incremental';
-  status: 'in_progress' | 'completed' | 'failed';
-  filePath?: string;
-  error?: string;
-}
+import type { BackupInfo, DatabaseConfig, QueryOptions, StoredEntity } from './database-persistence.types';
+import { applyFilters, getNestedValue } from './database-query.utils';
+export type { BackupInfo, DatabaseConfig, QueryOptions, StoredEntity } from './database-persistence.types';
 
 @Injectable()
 export class DatabasePersistenceService
@@ -188,13 +152,13 @@ export class DatabasePersistenceService
     }
 
     // Apply filters
-    let filtered = this.applyFilters(entities, options);
+    let filtered = applyFilters(entities, options);
 
     // Sort
     if (options.sortBy) {
       filtered.sort((a, b) => {
-        const aValue = this.getNestedValue(a, options.sortBy);
-        const bValue = this.getNestedValue(b, options.sortBy);
+        const aValue = getNestedValue(a, options.sortBy);
+        const bValue = getNestedValue(b, options.sortBy);
 
         if (options.sortOrder === 'desc') {
           return bValue > aValue ? 1 : -1;
@@ -369,65 +333,6 @@ export class DatabasePersistenceService
 
   private generateId(): string {
     return randomUUID();
-  }
-
-  private getNestedValue(obj: any, path: string): any {
-    return path.split('.').reduce((current, key) => current?.[key], obj);
-  }
-
-  private applyFilters<T>(
-    entities: StoredEntity<T>[],
-    options: QueryOptions,
-  ): StoredEntity<T>[] {
-    let filtered = [...entities];
-
-    // Date range filter
-    if (options.dateRange) {
-      filtered = filtered.filter((entity) => {
-        const entityDate = entity.createdAt;
-        const from = options.dateRange.from;
-        const to = options.dateRange.to;
-
-        return (!from || entityDate >= from) && (!to || entityDate <= to);
-      });
-    }
-
-    // Tag filter
-    if (options.tags && options.tags.length > 0) {
-      filtered = filtered.filter((entity) => {
-        if (!entity.tags) return false;
-        return options.tags.some((tag) => entity.tags.includes(tag));
-      });
-    }
-
-    // Custom filters
-    if (options.filters) {
-      filtered = filtered.filter((entity) => {
-        return Object.entries(options.filters).every(([key, value]) => {
-          const entityValue = this.getNestedValue(entity, key);
-          return this.matchesFilter(entityValue, value);
-        });
-      });
-    }
-
-    return filtered;
-  }
-
-  private matchesFilter(entityValue: any, filterValue: any): boolean {
-    if (typeof filterValue === 'object' && filterValue !== null) {
-      // Handle operators
-      if (filterValue.$gt) return entityValue > filterValue.$gt;
-      if (filterValue.$lt) return entityValue < filterValue.$lt;
-      if (filterValue.$gte) return entityValue >= filterValue.$gte;
-      if (filterValue.$lte) return entityValue <= filterValue.$lte;
-      if (filterValue.$ne) return entityValue !== filterValue.$ne;
-      if (filterValue.$in) return filterValue.$in.includes(entityValue);
-      if (filterValue.$nin) return !filterValue.$nin.includes(entityValue);
-      if (filterValue.$regex)
-        return new RegExp(filterValue.$regex).test(String(entityValue));
-    }
-
-    return entityValue === filterValue;
   }
 
   private startBackupScheduler(): void {

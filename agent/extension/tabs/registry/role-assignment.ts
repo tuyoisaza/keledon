@@ -12,12 +12,16 @@ export interface TabRole {
     audio: boolean;
     ui: boolean;
     storage: boolean;
+    rpa: boolean;
+    microphone: boolean;
   };
 }
 
 export interface RoleAssignmentOptions {
   maxAudioTabs?: number;
   defaultRole?: 'audio-ui' | 'ui-only';
+  trackedDomains?: string[];
+  audioDomains?: string[];
   priorityRules?: Record<string, number>;
 }
 
@@ -34,6 +38,12 @@ export class RoleAssigner {
     this.options = {
       maxAudioTabs: options.maxAudioTabs ?? 1,
       defaultRole: options.defaultRole ?? 'ui-only',
+      trackedDomains: (options.trackedDomains ?? []).map((domain) =>
+        domain.trim().toLowerCase().replace(/^\.+|\.+$/g, ''),
+      ),
+      audioDomains: (options.audioDomains ?? []).map((domain) =>
+        domain.trim().toLowerCase().replace(/^\.+|\.+$/g, ''),
+      ),
       priorityRules: options.priorityRules ?? {}
     };
   }
@@ -52,11 +62,13 @@ export class RoleAssigner {
       id: tabId,
       type: roleType,
       priority: this.getRolePriority(roleType),
-      lastActive: Date.now(),
+      lastActive: 0,
       capabilities: {
         audio: capabilities.audio ?? false,
         ui: capabilities.ui ?? true,
-        storage: capabilities.storage ?? true
+        storage: capabilities.storage ?? true,
+        rpa: capabilities.rpa ?? false,
+        microphone: capabilities.microphone ?? false,
       }
     };
 
@@ -96,18 +108,44 @@ export class RoleAssigner {
    * Determine role based on URL and capabilities
    */
   private determineRole(url: string, capabilities: Partial<TabRole['capabilities']>): TabRole['type'] {
-    // Check for audio capabilities first
-    if (capabilities.audio && this.canAssignAudioRole()) {
-      return 'audio-ui';
-    }
-
-    // Check URL patterns
-    if (url.includes('genesys') || url.includes('salesforce')) {
+    // Explicit capability and tenant-configured domains are the only signals
+    // for granting a tab the audio role.
+    if (
+      (capabilities.audio || capabilities.microphone || capabilities.rpa || this.isConfiguredAudioUrl(url)) &&
+      this.canAssignAudioRole()
+    ) {
       return 'audio-ui';
     }
 
     // Default to UI-only
-    return this.options.defaultRole;
+    if (this.options.defaultRole === 'audio-ui' && this.canAssignAudioRole()) {
+      return 'audio-ui';
+    }
+    return 'ui-only';
+  }
+
+  isConfiguredAudioUrl(url: string): boolean {
+    return this.isConfiguredDomain(url, this.options.audioDomains);
+  }
+
+  isConfiguredTrackedUrl(url: string): boolean {
+    return (
+      this.isConfiguredDomain(url, this.options.trackedDomains) ||
+      this.isConfiguredAudioUrl(url)
+    );
+  }
+
+  private isConfiguredDomain(url: string, domains: string[]): boolean {
+    let hostname: string;
+    try {
+      hostname = new URL(url).hostname.toLowerCase();
+    } catch {
+      return false;
+    }
+
+    return domains.some(
+      (domain) => hostname === domain || hostname.endsWith(`.${domain}`),
+    );
   }
 
   /**
@@ -137,6 +175,10 @@ export class RoleAssigner {
    */
   removeTab(tabId: string): void {
     this.tabs.delete(tabId);
+  }
+
+  clear(): void {
+    this.tabs.clear();
   }
 
   /**

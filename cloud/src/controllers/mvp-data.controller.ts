@@ -1,7 +1,23 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { ResourceScopeGuard } from '../guards/resource-scope.guard';
+import {
+  Body,
+  Controller,
+  UseGuards,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { MvpStoreService } from '../mvp/mvp-store.service';
+import { ApiTags } from '@nestjs/swagger';
+import { Public } from '../guards/public.decorator';
 
+@ApiTags('MVP Data')
 @Controller('api')
+@UseGuards(ResourceScopeGuard)
 export class MvpDataController {
   constructor(private readonly mvpStore: MvpStoreService) {}
 
@@ -18,6 +34,27 @@ export class MvpDataController {
   @Get('rpa-providers')
   getRpaProviders() {
     return this.mvpStore.getRpaProviders();
+  }
+
+  @Get('cloud-config')
+  @Public()
+  getCloudConfig() {
+    const config = this.mvpStore.getCloudConfig();
+    return { api_url: config.api_url, ws_url: config.ws_url };
+  }
+
+  @Get('tts-config')
+  getTTSConfig() {
+    const { apiKey, ...config } = this.mvpStore.getTTSConfig();
+    return { ...config, apiKey: '', apiKeySet: !!apiKey };
+  }
+
+  @Patch('tts-config')
+  updateTTSConfig(
+    @Body() body: { providerId?: string; apiKey?: string; voiceId?: string },
+  ) {
+    const { apiKey, ...config } = this.mvpStore.updateTTSConfig(body);
+    return { ...config, apiKey: '', apiKeySet: !!apiKey };
   }
 
   @Get('interfaces')
@@ -61,7 +98,10 @@ export class MvpDataController {
   }
 
   @Put('flow-versions/:id')
-  updateFlowVersion(@Param('id') id: string, @Body() body: Record<string, any>) {
+  updateFlowVersion(
+    @Param('id') id: string,
+    @Body() body: Record<string, any>,
+  ) {
     return this.mvpStore.updateFlowVersion(id, body);
   }
 

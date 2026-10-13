@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { 
   Activity, 
   Cpu, 
-  Mic, 
   Zap, 
   Plug, 
   BarChart3,
@@ -23,7 +22,7 @@ interface TabConfig {
   name: string;
   icon: React.ComponentType<{ className?: string }>;
   description: string;
-  component: React.ComponentType<any>;
+  component: React.ComponentType;
 }
 
 export default function EnhancedDashboard() {

@@ -51,15 +51,9 @@ export class RolesGuard implements CanActivate {
     const hasRole = requiredRoles.includes(dbUser.role);
 
     if (!hasRole) {
-      console.log(
-        `[RBAC] Access denied for user ${user.userId} with role ${dbUser.role}. Required: ${requiredRoles}`,
-      );
       throw new ForbiddenException('Insufficient permissions');
     }
 
-    console.log(
-      `[RBAC] Access granted for user ${user.userId} with role ${dbUser.role}`,
-    );
     return true;
   }
 }

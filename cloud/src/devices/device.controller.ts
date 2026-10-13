@@ -1,13 +1,30 @@
-import { Controller, Post, Get, Body, Headers, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Headers,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { DeviceService } from './device.service';
+import { Public } from '../guards/public.decorator';
+import { AuthAttemptGuard } from '../guards/auth-attempt.guard';
+import { DeviceAccessGuard } from '../guards/device-access.guard';
 
 @Controller('api/devices')
+@UseGuards(DeviceAccessGuard)
 export class DeviceController {
   constructor(private deviceService: DeviceService) {}
 
   @Post('pair')
+  @Public()
+  @UseGuards(AuthAttemptGuard)
   async pairDevice(
-    @Body() body: {
+    @Body()
+    body: {
       device_id: string;
       machine_id: string;
       pairing_code: string;
@@ -15,14 +32,10 @@ export class DeviceController {
       name: string;
       keledon_id?: string;
     },
-    @Headers('x-organization-id') organizationId?: string,
-    @Headers('x-user-id') userId?: string
   ) {
     try {
       const result = await this.deviceService.pairDevice({
         ...body,
-        organizationId,
-        userId
       });
       return result;
     } catch (error) {
@@ -32,49 +45,51 @@ export class DeviceController {
 
   @Post('register')
   async registerDevice(
-    @Body() body: {
+    @Body()
+    body: {
       device_id: string;
       machine_id: string;
       platform: string;
       name: string;
     },
-    @Headers('x-organization-id') organizationId?: string,
-    @Headers('x-user-id') userId?: string
+    @Req() req: any,
   ) {
     return this.deviceService.registerPendingDevice({
       ...body,
-      organizationId,
-      userId
+      organizationId: req.deviceBinding.companyId,
+      userId: req.deviceBinding.userId,
     });
   }
 
   @Post('pairing-code')
   async createPairingCode(
-    @Body() body: { userId?: string; organizationId?: string; keledon_id?: string }
+    @Body() body: { keledon_id: string },
+    @Req() req: any,
   ) {
     const code = await this.deviceService.generatePairingCode(
-      body.userId,
-      body.organizationId,
-      body.keledon_id
+      req.deviceBinding.userId,
+      req.deviceBinding.companyId,
+      body.keledon_id,
     );
     return { pairing_code: code };
   }
 
   @Get()
-  async getDevices(
-    @Headers('x-user-id') userId?: string,
-    @Headers('x-organization-id') organizationId?: string
-  ) {
-    if (userId) {
-      return this.deviceService.getDevicesByUser(userId);
-    }
-    if (organizationId) {
-      return this.deviceService.getDevicesByOrganization(organizationId);
-    }
-    return { error: 'Missing userId or organizationId header' };
+  async getDevices(@Req() req: any) {
+    const actor = req.actor;
+    const devices =
+      actor.role === 'superadmin'
+        ? await this.deviceService.getAllDevices()
+        : ['admin', 'coordinator'].includes(actor.role)
+          ? await this.deviceService.getDevicesByOrganization(actor.companyId)
+          : await this.deviceService.getDevicesByUser(actor.id);
+    return devices.map(
+      ({ authToken, pairingCode, pairingCodeExpiresAt, ...device }) => device,
+    );
   }
 
   @Get(':id/rpa-config')
+  @Public()
   async getRpaConfig(
     @Param('id') deviceId: string,
     @Headers('authorization') authHeader?: string,
@@ -90,12 +105,11 @@ export class DeviceController {
 
   @Get(':id/status')
   async getDeviceStatus(@Param('id') deviceId: string) {
-    const devices = await this.deviceService.getDevicesByUser(deviceId);
-    const device = devices.find(d => d.id === deviceId);
-    return { 
-      device_id: deviceId, 
+    const device = await this.deviceService.getDeviceStatus(deviceId);
+    return {
+      device_id: deviceId,
       status: device?.status || 'unknown',
-      last_seen: device?.lastSeen
+      last_seen: device?.lastSeen,
     };
   }
 
@@ -115,7 +129,8 @@ export class DeviceController {
       test_url: `keledon://launch?keledonId=test-keledon&code=${pairingCode}&userId=test-user&timestamp=${Date.now()}&signature=testsig&cloudUrl=https%3A%2F%2Fkeledon.tuyoisaza.com`,
       pairing_code: pairingCode,
       expires_at: expiresAt.toISOString(),
-      instructions: '1. Click test link or open keledon:// URL\n2. Browser app opens\n3. Device pairs with cloud\n4. Auto-login to vendor portal'
+      instructions:
+        '1. Click test link or open keledon:// URL\n2. Browser app opens\n3. Device pairs with cloud\n4. Auto-login to vendor portal',
     };
   }
 

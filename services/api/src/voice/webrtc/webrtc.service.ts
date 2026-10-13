@@ -1,14 +1,17 @@
+import { PcmUtteranceBuffer } from './pcm-utterance-buffer';
 import { Logger, Injectable } from '@nestjs/common';
 import {
   RTCPeerConnection,
   RTCSessionDescription,
   RTCIceCandidate,
+  nonstandard,
 } from '@roamhq/wrtc';
 
 export interface WebRtcPeer {
   pc: RTCPeerConnection;
   sessionId: string;
   createdAt: Date;
+  stopAudio?: () => void;
 }
 
 /**
@@ -98,6 +101,25 @@ export class WebRtcService {
     return { sdp: answer.sdp };
   }
 
+  attachAudioReceiver(sessionId: string, receiver: RTCRtpReceiver, onAudio: (wav: Buffer) => Promise<void>, onError: (message: string) => void): void {
+    const peer = this.peers.get(sessionId);
+    if (!peer || receiver.track?.kind !== 'audio') return;
+    peer.stopAudio?.();
+    const sink = new nonstandard.RTCAudioSink(receiver.track);
+    let busy = false;
+    let stopped = false;
+    let turns = 0;
+    const buffer = new PcmUtteranceBuffer((wav) => {
+      if (stopped) return;
+      if (busy) { onError('Audio turn skipped while previous turn is processing'); return; }
+      if (++turns > 120) { onError('Audio session turn limit reached'); peer.stopAudio?.(); return; }
+      busy = true;
+      void onAudio(wav).catch(() => onError('Audio turn processing failed')).finally(() => { busy = false; });
+    });
+    sink.ondata = (data: any) => { if (!stopped) buffer.push(data.samples, data.sampleRate, data.channelCount); };
+    peer.stopAudio = () => { stopped = true; buffer.reset(); sink.stop(); };
+  }
+
   /**
    * Add an ICE candidate from the browser.
    */
@@ -134,6 +156,7 @@ export class WebRtcService {
     const peer = this.peers.get(sessionId);
     if (!peer) return;
     try {
+      peer.stopAudio?.();
       peer.pc.close();
     } catch {
       /* ignore */

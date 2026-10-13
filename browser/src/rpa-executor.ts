@@ -27,6 +27,8 @@ export interface RpaFlow {
   name?: string;
   steps: RpaStep[];
   timeout_ms?: number;
+  is_cancelled?: () => boolean;
+  allowed_origins?: string[]; // Internal runtime constraint, derived from paired vendor config.
 }
 
 export interface RpaStepResult {
@@ -98,7 +100,7 @@ async function executeStep(view: BrowserView, step: RpaStep): Promise<RpaStepRes
     switch (step.action) {
       // ── NAVIGATE ──────────────────────────────────────────────
       case 'navigate': {
-        if (!step.url) throw new Error('No URL provided for navigate');
+        if (!step.url || !/^https?:\/\//i.test(step.url)) throw new Error('Valid HTTP(S) URL required for navigate');
         await new Promise<void>((resolve, reject) => {
           const timeout = setTimeout(
             () => reject(new Error('Navigation timeout')),
@@ -323,7 +325,7 @@ async function executeStep(view: BrowserView, step: RpaStep): Promise<RpaStepRes
 
       // ── SUBMIT ────────────────────────────────────────────────
       case 'submit': {
-        await wc.executeJavaScript(`
+        const submitted = await wc.executeJavaScript(`
           (function() {
             var form = document.querySelector('form') || document.activeElement?.closest('form');
             if (form) { form.submit(); return true; }
@@ -332,6 +334,7 @@ async function executeStep(view: BrowserView, step: RpaStep): Promise<RpaStepRes
             return false;
           })()
         `);
+        if (!submitted) throw new Error('No form or submit control found');
         await new Promise(r => setTimeout(r, 2000));
         return { step_id: stepId, action: 'submit', success: true, duration_ms: Date.now() - startTime };
       }
@@ -341,6 +344,13 @@ async function executeStep(view: BrowserView, step: RpaStep): Promise<RpaStepRes
         if (!target) throw new Error('No selector/target for assert');
         const result = await findElement(wc, target);
         if (!result.found) throw new Error(`Assert failed: ${target} not found`);
+        if (step.value !== undefined) {
+          const matches = await wc.executeJavaScript(`(() => {
+            const el = document.querySelector(${JSON.stringify(target)});
+            return !!el && String(el.value ?? el.innerText ?? el.textContent ?? '').trim() === ${JSON.stringify(step.value)};
+          })()`);
+          if (!matches) throw new Error('Assert failed: expected value did not match');
+        }
         return { step_id: stepId, action: 'assert', success: true, duration_ms: Date.now() - startTime, method: result.method };
       }
 
@@ -384,16 +394,30 @@ export async function executeRpaFlow(flow: RpaFlow): Promise<RpaFlowResult> {
 
   for (let i = 0; i < flow.steps.length; i++) {
     const step = flow.steps[i];
+    if (flow.is_cancelled?.()) {
+      results.push({ step_id: step.step_id || `step-${i}`, action: step.action, success: false, duration_ms: 0, error: 'Flow cancelled after runtime disconnect' });
+      hasFailure = true; break;
+    }
     log.info(
       `[RpaExecutor] Step ${i + 1}/${flow.steps.length}: ${step.action} (${step.description || step.target || step.selector || ''})`,
     );
 
+    if (flow.allowed_origins) {
+      let origin = '';
+      try { origin = new URL(step.action === 'navigate' ? step.url : view.webContents.getURL()).origin; } catch { /* reject unknown surface */ }
+      if (!flow.allowed_origins.includes(origin)) {
+        results.push({ step_id: step.step_id || `step-${i}`, action: step.action, success: false, duration_ms: 0, error: 'Action target is outside configured vendor surfaces' });
+        hasFailure = true;
+        break;
+      }
+    }
     const result = await executeStep(view, step);
     results.push(result);
 
     if (!result.success) {
       hasFailure = true;
       log.warn(`[RpaExecutor] Step failed: ${result.error}`);
+      break; // A failed guard/navigation must not permit later writes.
     }
   }
 

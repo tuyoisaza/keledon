@@ -1,15 +1,37 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { CrudService } from './crud.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { WebhookGuard } from '../guards/webhook.guard';
+import { Public } from '../guards/public.decorator';
+import { CrudAccessGuard } from '../guards/crud-access.guard';
+import { CrudMigrationService } from './crud-migration.service';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('CRUD')
 @Controller('api/crud')
+@UseGuards(CrudAccessGuard)
 export class CrudController {
-  constructor(private readonly crud: CrudService, private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly crud: CrudService,
+    private readonly prisma: PrismaService,
+    private readonly migrationService: CrudMigrationService,
+  ) {}
 
   // ========== HEALTH ==========
 
   @Get('health')
+  @ApiOperation({ summary: 'Get CRUD service health status' })
   getHealth() {
     return this.crud.getHealth();
   }
@@ -18,40 +40,18 @@ export class CrudController {
 
   @Post('migrate')
   async migrate() {
-    try {
-      await this.prisma.$executeRaw`
-        CREATE TABLE IF NOT EXISTS "vendors" (
-          "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-          "teamId" UUID NOT NULL REFERENCES "teams"("id") ON DELETE CASCADE,
-          "name" VARCHAR(255) NOT NULL,
-          "type" VARCHAR(50) NOT NULL DEFAULT 'other',
-          "baseUrl" TEXT,
-          "username" TEXT,
-          "password" TEXT,
-          "apiKey" TEXT,
-          "config" JSONB,
-          "isActive" BOOLEAN DEFAULT true,
-          "createdAt" TIMESTAMP DEFAULT now(),
-          "updatedAt" TIMESTAMP DEFAULT now()
-        )
-      `;
-      await this.prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "vendors_teamId_idx" ON "vendors"("teamId")`;
-
-      // Add startGoal column if missing (v0.3.35+)
-      await this.prisma.$executeRaw`
-        ALTER TABLE "vendors" ADD COLUMN IF NOT EXISTS "startGoal" TEXT
-      `;
-
-      return { status: 'ok', message: 'Vendors table created' };
-    } catch (error) {
-      return { status: 'error', message: error.message };
-    }
+    return this.migrationService.ensureVendorsSchema();
   }
 
   // ========== COMPANIES ==========
 
   @Get('companies')
-  getCompanies() {
+  @ApiOperation({ summary: 'Get all companies' })
+  async getCompanies(@Req() req: any) {
+    if (req.companyScope) {
+      const company = await this.crud.getCompany(req.companyScope);
+      return company ? [company] : [];
+    }
     return this.crud.getCompanies();
   }
 
@@ -61,6 +61,7 @@ export class CrudController {
   }
 
   @Post('companies')
+  @ApiOperation({ summary: 'Create a new company' })
   createCompany(@Body() data: any) {
     return this.crud.createCompany(data);
   }
@@ -77,7 +78,10 @@ export class CrudController {
   }
 
   @Post('companies/:id/countries')
-  addCompanyCountry(@Param('id') id: string, @Body() data: { countryCode: string }) {
+  addCompanyCountry(
+    @Param('id') id: string,
+    @Body() data: { countryCode: string },
+  ) {
     return this.crud.addCompanyCountry(id, data.countryCode);
   }
 
@@ -96,6 +100,11 @@ export class CrudController {
   @Post('brands')
   createBrand(@Body() data: any) {
     return this.crud.createBrand(data);
+  }
+
+  @Get('brands/:id')
+  getBrand(@Param('id') id: string) {
+    return this.crud.getBrand(id);
   }
 
   @Put('brands/:id')
@@ -118,7 +127,7 @@ export class CrudController {
 
   @Get('teams/:id')
   getTeam(@Param('id') id: string) {
-    return this.crud.getTeams(id);
+    return this.crud.getTeam(id);
   }
 
   @Post('teams')
@@ -143,7 +152,10 @@ export class CrudController {
   }
 
   @Put('teams/:id/interfaces')
-  setTeamInterfaces(@Param('id') id: string, @Body() data: { interfaceIds: string[] }) {
+  setTeamInterfaces(
+    @Param('id') id: string,
+    @Body() data: { interfaceIds: string[] },
+  ) {
     return this.crud.setTeamInterfaces(id, data.interfaceIds);
   }
 
@@ -157,6 +169,11 @@ export class CrudController {
   @Post('users')
   createUser(@Body() data: any) {
     return this.crud.createUser(data);
+  }
+
+  @Get('users/:id')
+  getUser(@Param('id') id: string) {
+    return this.crud.getUser(id);
   }
 
   @Put('users/:id')
@@ -173,8 +190,11 @@ export class CrudController {
   // ========== KELEDONS ==========
 
   @Get('keledons')
-  getKeledons(@Query('companyId') companyId?: string) {
-    return this.crud.getKeledons(companyId);
+  getKeledons(@Req() req: any, @Query('companyId') companyId?: string) {
+    const ownOnly = !['superadmin', 'admin', 'coordinator'].includes(
+      req.actor.role,
+    );
+    return this.crud.getKeledons(companyId, ownOnly ? req.actor.id : undefined);
   }
 
   @Post('keledons')
@@ -193,6 +213,11 @@ export class CrudController {
     return { success: true };
   }
 
+  @Get('keledons/:id/pairing-code')
+  async getPairingCode(@Param('id') keledonId: string) {
+    return this.crud.getKeledonPairingCode(keledonId);
+  }
+
   @Post('keledons/:id/pairing-code')
   async regeneratePairingCode(@Param('id') keledonId: string) {
     return this.crud.regenerateKeledonPairingCode(keledonId);
@@ -201,9 +226,14 @@ export class CrudController {
   @Post('keledons/:id/launch')
   async launchKeledon(
     @Param('id') keledonId: string,
-    @Body() body: { userId: string }
+    @Body() body: { userId: string },
   ) {
     return this.crud.generateKeledonLaunchLink(keledonId, body.userId);
+  }
+
+  @Get('keledons/:id/launch-debug')
+  async debugKeledonLaunch(@Param('id') keledonId: string) {
+    return this.crud.getLaunchContext(keledonId);
   }
 
   // ========== MANAGED INTERFACES ==========
@@ -302,8 +332,14 @@ export class CrudController {
   // ========== SESSIONS ==========
 
   @Get('sessions')
-  getSessions(@Query('companyId') companyId?: string, @Query('limit') limit?: number) {
-    return this.crud.getSessions(companyId, limit ? parseInt(String(limit)) : undefined);
+  getSessions(
+    @Query('companyId') companyId?: string,
+    @Query('limit') limit?: number,
+  ) {
+    return this.crud.getSessions(
+      companyId,
+      limit ? parseInt(String(limit)) : undefined,
+    );
   }
 
   @Get('sessions/:id')
@@ -368,8 +404,26 @@ export class CrudController {
   // ========== AUDIT LOGS ==========
 
   @Get('audit-logs')
-  getAuditLogs(@Query('companyId') companyId?: string, @Query('limit') limit?: number) {
-    return this.crud.getAuditLogs(companyId, limit ? parseInt(String(limit)) : undefined);
+  getAuditLogs(
+    @Query('companyId') companyId?: string,
+    @Query('limit') limit?: number,
+    @Query('offset') offset?: number,
+    @Query('action') action?: string,
+    @Query('entity') entity?: string,
+    @Query('userId') userId?: string,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ) {
+    return this.crud.getAuditLogs({
+      companyId,
+      limit: limit ? parseInt(String(limit)) : undefined,
+      offset: offset ? parseInt(String(offset)) : undefined,
+      action,
+      entity,
+      userId,
+      startDate,
+      endDate,
+    });
   }
 
   @Post('audit-logs')
@@ -386,153 +440,111 @@ export class CrudController {
       return {
         success: true,
         message: 'Seed completed',
-        ...result
+        ...result,
       };
     } catch (error) {
       return {
         success: false,
         message: 'Seed failed',
-        error: error.message
+        error: error.message,
       };
     }
   }
 
-  // ========== WEBHOOK (secure ops: seed DB or fix structure) ==========
-  //
-  //   curl -X POST https://keledonapi.tuyoisaza.com/api/crud/webhook \
-  //     -H "Authorization: Bearer <WEBHOOK_SECRET>" \
-  //     -H "Content-Type: application/json" \
-  //     -d '{"action":"seed","companies":[...],"brands":[...],"teams":[...],"users":[...]}'
-  //
-  //   curl -X POST https://keledonapi.tuyoisaza.com/api/crud/webhook \
-  //     -H "Authorization: Bearer <WEBHOOK_SECRET>" \
-  //     -d '{"action":"migrate"}'
-  //
+  // ========== VENDORS ==========
+
+  @Get('vendor/:id')
+  getVendor(@Param('id') id: string) {
+    return this.crud.getVendor(id);
+  }
+
+  @Get('vendors/:teamId')
+  getVendors(@Param('teamId') teamId: string) {
+    return this.crud.getVendors(teamId);
+  }
+
+  @Post('vendors')
+  createVendor(
+    @Body()
+    data: {
+      teamId: string;
+      name: string;
+      type: string;
+      baseUrl?: string;
+      username?: string;
+      password?: string;
+      apiKey?: string;
+      config?: Record<string, unknown>;
+    },
+  ) {
+    return this.crud.createVendor(data);
+  }
+
+  @Put('vendors/:id')
+  updateVendor(
+    @Param('id') id: string,
+    @Body()
+    data: {
+      name?: string;
+      type?: string;
+      baseUrl?: string;
+      username?: string;
+      password?: string;
+      apiKey?: string;
+      config?: Record<string, unknown>;
+      isActive?: boolean;
+    },
+  ) {
+    return this.crud.updateVendor(id, data);
+  }
+
+  @Delete('vendors/:id')
+  deleteVendor(@Param('id') id: string) {
+    return this.crud.deleteVendor(id);
+  }
+
+  // ========== WEBHOOK ==========
+
+  @Public()
   @UseGuards(WebhookGuard)
   @Post('webhook')
   async webhook(@Body() body: any) {
-    const { action } = body;
-
-    if (!action) {
-      return { success: false, message: 'Missing "action" in body (seed | migrate)' };
-    }
+    const { action, data } = body;
 
     if (action === 'seed') {
-      return this.webhookSeed(body);
+      return this.webhookSeed(data);
     }
-
     if (action === 'migrate') {
       return this.webhookMigrate();
     }
-
-    return { success: false, message: `Unknown action "${action}". Use "seed" or "migrate".` };
+    return {
+      status: 'error',
+      message: 'Unknown action. Use "seed" or "migrate".',
+    };
   }
 
-  private async webhookSeed(body: any) {
-    const counters = { companies: 0, brands: 0, teams: 0, users: 0 };
-    const errors: string[] = [];
-
-    try {
-      // Companies
-      if (body.companies && Array.isArray(body.companies)) {
-        for (const company of body.companies) {
-          const existing = await this.prisma.company.findFirst({ where: { name: company.name } });
-          if (!existing) {
-            await this.prisma.company.create({
-              data: { name: company.name, industry: company.industry || null }
-            });
-            counters.companies++;
-          }
-        }
-      }
-
-      // Brands
-      if (body.brands && Array.isArray(body.brands)) {
-        for (const brand of body.brands) {
-          const existing = await this.prisma.brand.findFirst({ where: { name: brand.name } });
-          if (!existing) {
-            const company = brand.company_name
-              ? await this.prisma.company.findFirst({ where: { name: brand.company_name } })
-              : null;
-            if (company) {
-              await this.prisma.brand.create({
-                data: { name: brand.name, companyId: company.id, color: brand.color || '#6366f1' }
-              });
-              counters.brands++;
-            } else {
-              errors.push(`Brand "${brand.name}": company "${brand.company_name}" not found`);
-            }
-          }
-        }
-      }
-
-      // Teams
-      if (body.teams && Array.isArray(body.teams)) {
-        for (const team of body.teams) {
-          const existing = await this.prisma.team.findFirst({ where: { name: team.name } });
-          if (!existing) {
-            let brandId = null;
-            if (team.brand_name) {
-              const brand = await this.prisma.brand.findFirst({ where: { name: team.brand_name } });
-              brandId = brand?.id || null;
-            }
-            await this.prisma.team.create({
-              data: {
-                name: team.name,
-                brandId,
-                country: team.country || null,
-                sttProvider: team.stt_provider || 'vosk',
-                ttsProvider: team.tts_provider || 'elevenlabs',
-              }
-            });
-            counters.teams++;
-          }
-        }
-      }
-
-      // Users
-      if (body.users && Array.isArray(body.users)) {
-        for (const user of body.users) {
-          const existing = await this.prisma.user.findFirst({ where: { email: user.email } });
-          if (!existing) {
-            let companyId = null;
-            let teamId = null;
-            if (user.company_name) {
-              const company = await this.prisma.company.findFirst({ where: { name: user.company_name } });
-              companyId = company?.id || null;
-            }
-            if (user.team_name) {
-              const team = await this.prisma.team.findFirst({ where: { name: user.team_name } });
-              teamId = team?.id || null;
-            }
-            await this.prisma.user.create({
-              data: {
-                email: user.email,
-                name: user.name || user.email.split('@')[0],
-                role: user.role || 'user',
-                companyId,
-                teamId,
-              }
-            });
-            counters.users++;
-          }
-        }
-      }
-
+  private async webhookSeed(seedData?: any) {
+    if (!seedData?.companies) {
       return {
-        success: true,
-        message: 'Webhook seed completed',
-        created: counters,
-        errors: errors.length > 0 ? errors : undefined,
+        status: 'error',
+        message: 'Seed requires data.companies array in the request body',
       };
-    } catch (error) {
-      return { success: false, message: 'Webhook seed failed', error: error.message, partial: counters };
     }
+
+    const fs = require('fs');
+    const path = require('path');
+    const dataDir = path.resolve(__dirname, '../../data');
+    fs.mkdirSync(dataDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(dataDir, 'crud.json'),
+      JSON.stringify(seedData, null, 2),
+    );
+
+    return this.crud.seedFromCrudJson();
   }
 
   private async webhookMigrate() {
     try {
-      // Re-run all raw migrations (idempotent)
       await this.prisma.$executeRaw`
         CREATE TABLE IF NOT EXISTS "vendors" (
           "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -545,61 +557,23 @@ export class CrudController {
           "apiKey" TEXT,
           "config" JSONB,
           "isActive" BOOLEAN DEFAULT true,
+          "startGoal" TEXT,
           "createdAt" TIMESTAMP DEFAULT now(),
           "updatedAt" TIMESTAMP DEFAULT now()
         )
       `;
-      await this.prisma.$executeRaw`CREATE INDEX IF NOT EXISTS "vendors_teamId_idx" ON "vendors"("teamId")`;
-      await this.prisma.$executeRaw`ALTER TABLE "vendors" ADD COLUMN IF NOT EXISTS "startGoal" TEXT`;
-
-      return { success: true, message: 'Migration webhook: vendors table ensured' };
+      await this.prisma
+        .$executeRaw`CREATE INDEX IF NOT EXISTS "vendors_teamId_idx" ON "vendors"("teamId")`;
+      return {
+        success: true,
+        message: 'Migration webhook: vendors table ensured',
+      };
     } catch (error) {
-      return { success: false, message: 'Migration webhook failed', error: error.message };
+      return {
+        success: false,
+        message: 'Migration webhook failed',
+        error: error.message,
+      };
     }
-  }
-
-  // ========== VENDORS ==========
-
-  @Get('vendors/:teamId')
-  getVendors(@Param('teamId') teamId: string) {
-    return this.crud.getVendors(teamId);
-  }
-
-  @Post('vendors')
-  createVendor(@Body() data: {
-    teamId: string;
-    name: string;
-    type: string;
-    baseUrl?: string;
-    username?: string;
-    password?: string;
-    apiKey?: string;
-    config?: Record<string, unknown>;
-    startGoal?: string;
-  }) {
-    return this.crud.createVendor(data);
-  }
-
-  @Put('vendors/:id')
-  updateVendor(
-    @Param('id') id: string,
-    @Body() data: {
-      name?: string;
-      type?: string;
-      baseUrl?: string;
-      username?: string;
-      password?: string;
-      apiKey?: string;
-      config?: Record<string, unknown>;
-      isActive?: boolean;
-      startGoal?: string;
-    }
-  ) {
-    return this.crud.updateVendor(id, data);
-  }
-
-  @Delete('vendors/:id')
-  deleteVendor(@Param('id') id: string) {
-    return this.crud.deleteVendor(id);
   }
 }

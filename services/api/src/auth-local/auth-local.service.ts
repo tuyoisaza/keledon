@@ -12,6 +12,12 @@ export class LocalAuthService {
   private readonly authSecret: string;
 
   constructor(private prisma: PrismaService) {
+    if (
+      process.env.NODE_ENV === 'production' &&
+      !process.env.KELEDON_AUTH_SECRET
+    ) {
+      throw new Error('KELEDON_AUTH_SECRET is required in production');
+    }
     this.authSecret =
       process.env.KELEDON_AUTH_SECRET ||
       'keledon-dev-secret-do-not-use-in-production';
@@ -38,7 +44,7 @@ export class LocalAuthService {
         email,
         name: name || email.split('@')[0],
         passwordHash,
-        role: 'admin',
+        role: 'user',
       },
     });
 
@@ -103,7 +109,7 @@ export class LocalAuthService {
         data: {
           email: googleUser.email,
           name: googleUser.name || googleUser.email.split('@')[0],
-          role: 'superadmin',
+          role: 'user',
         },
       });
     }
@@ -180,7 +186,15 @@ export class LocalAuthService {
       );
 
       // Check token expiry
-      if (Date.now() > payload.expiresAt) return null;
+      if (
+        !payload ||
+        typeof payload.userId !== 'string' ||
+        !payload.userId.trim() ||
+        typeof payload.expiresAt !== 'number' ||
+        !Number.isFinite(payload.expiresAt) ||
+        Date.now() >= payload.expiresAt
+      )
+        return null;
 
       // Look up user in Prisma DB
       const user = await this.prisma.user.findUnique({

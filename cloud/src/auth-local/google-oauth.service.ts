@@ -9,12 +9,14 @@ export class GoogleOAuthService {
   constructor(private configService: ConfigService) {
     const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
     const clientSecret = this.configService.get<string>('GOOGLE_CLIENT_SECRET');
-    const redirectUri = this.configService.get<string>('GOOGLE_REDIRECT_URI') || 'https://keledon.tuyoisaza.com/api/auth/google/callback';
+    const redirectUri =
+      this.configService.get<string>('GOOGLE_REDIRECT_URI') ||
+      'https://keledon.tuyoisaza.com/api/auth/google/callback';
 
     this.oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUri);
   }
 
-  getAuthUrl(): string {
+  getAuthUrl(state: string, nonce: string): string {
     const scopes = [
       'https://www.googleapis.com/auth/userinfo.email',
       'https://www.googleapis.com/auth/userinfo.profile',
@@ -25,10 +27,15 @@ export class GoogleOAuthService {
       access_type: 'offline',
       scope: scopes,
       prompt: 'consent',
+      state,
+      nonce,
     });
   }
 
-  async verifyCode(code: string): Promise<GoogleUserInfo> {
+  async verifyCode(
+    code: string,
+    expectedNonce: string,
+  ): Promise<GoogleUserInfo> {
     const { tokens } = await this.oauth2Client.getToken(code);
 
     if (!tokens.access_token) {
@@ -38,19 +45,24 @@ export class GoogleOAuthService {
     this.oauth2Client.setCredentials(tokens);
 
     const ticket = await this.oauth2Client.verifyIdToken({
-      idToken: tokens.id_token!,
+      idToken: tokens.id_token,
       audience: this.configService.get<string>('GOOGLE_CLIENT_ID'),
     });
 
     const payload = ticket.getPayload();
 
-    if (!payload) {
+    if (
+      !payload ||
+      !payload.email_verified ||
+      !payload.email ||
+      (payload as any).nonce !== expectedNonce
+    ) {
       throw new Error('Invalid ID token payload');
     }
 
     return {
       id: payload.sub,
-      email: payload.email!,
+      email: payload.email,
       name: payload.name,
       picture: payload.picture,
     };

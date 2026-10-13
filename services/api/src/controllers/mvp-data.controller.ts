@@ -1,6 +1,8 @@
+import { ResourceScopeGuard } from '../guards/resource-scope.guard';
 import {
   Body,
   Controller,
+  UseGuards,
   Delete,
   Get,
   Param,
@@ -15,6 +17,7 @@ import { Public } from '../guards/public.decorator';
 
 @ApiTags('MVP Data')
 @Controller('api')
+@UseGuards(ResourceScopeGuard)
 export class MvpDataController {
   constructor(private readonly mvpStore: MvpStoreService) {}
 
@@ -36,19 +39,22 @@ export class MvpDataController {
   @Get('cloud-config')
   @Public()
   getCloudConfig() {
-    return this.mvpStore.getCloudConfig();
+    const config = this.mvpStore.getCloudConfig();
+    return { api_url: config.api_url, ws_url: config.ws_url };
   }
 
   @Get('tts-config')
   getTTSConfig() {
-    return this.mvpStore.getTTSConfig();
+    const { apiKey, ...config } = this.mvpStore.getTTSConfig();
+    return { ...config, apiKey: '', apiKeySet: !!apiKey };
   }
 
   @Patch('tts-config')
   updateTTSConfig(
     @Body() body: { providerId?: string; apiKey?: string; voiceId?: string },
   ) {
-    return this.mvpStore.updateTTSConfig(body);
+    const { apiKey, ...config } = this.mvpStore.updateTTSConfig(body);
+    return { ...config, apiKey: '', apiKeySet: !!apiKey };
   }
 
   @Get('interfaces')

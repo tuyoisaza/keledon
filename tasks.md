@@ -1,3 +1,5 @@
+> Historical record. Current work is tracked in TASK.md, STATUS.md and PHDK_LIFECYCLE_STATUS.md. Historical workflow/version/queue claims below are not current operational evidence or authorization.
+
 # 📋 KELEDON - Plan de Acción Basado en Análisis Product-Owner
 
 ## 🎯 **Prioridades Críticas (V1.0)**

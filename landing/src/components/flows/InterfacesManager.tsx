@@ -74,9 +74,9 @@ export function InterfacesManager() {
             if (!res.ok) throw new Error('Failed to load interfaces');
             const data = await res.json();
             setInterfaces(data || []);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Failed to load interfaces:', err);
-            setError(err.message || 'Failed to load interfaces');
+            setError(err instanceof Error ? err.message : 'Failed to load interfaces');
         } finally {
             setIsLoading(false);
         }
@@ -122,9 +122,9 @@ export function InterfacesManager() {
                 providerKey: 'salesforce',
                 capabilities: { stt: false, tts: false, rpa: true }
             });
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Failed to save interface:', err);
-            setError(err.message || 'Failed to save interface');
+            setError(err instanceof Error ? err.message : 'Failed to save interface');
         }
     };
 
@@ -149,9 +149,9 @@ export function InterfacesManager() {
             const res = await fetch(`${CLOUD_URL}/api/interfaces/${id}`, { method: 'DELETE' });
             if (!res.ok) throw new Error('Failed to delete interface');
             await loadInterfaces();
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Failed to delete interface:', err);
-            setError(err.message || 'Failed to delete interface');
+            setError(err instanceof Error ? err.message : 'Failed to delete interface');
         }
     };
 

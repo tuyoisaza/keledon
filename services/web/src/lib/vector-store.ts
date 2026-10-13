@@ -1,9 +1,4 @@
-const getConfig = () => {
-  return {
-    apiUrl: import.meta.env.VITE_API_URL || '/',
-    openaiApiKey: import.meta.env.VITE_OPENAI_API_KEY || '',
-  };
-};
+import { apiFetch } from './api-fetch';
 
 export interface PolicyDocument {
   id: string;
@@ -35,21 +30,9 @@ export interface VectorStoreStatus {
 }
 
 class VectorStoreAPI {
-  private getAuthToken(): string | null {
-    return sessionStorage.getItem('auth_token');
-  }
 
   private async fetchApi(endpoint: string, options: RequestInit = {}) {
-    const config = getConfig();
-    const token = this.getAuthToken();
-    const response = await fetch(`${config.apiUrl}api/vector-store${endpoint}`, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
-        ...options.headers,
-      },
-    });
+    const response = await apiFetch(`/api/vector-store${endpoint}`, options);
     
     if (!response.ok) {
       const error = await response.text();
@@ -60,17 +43,8 @@ class VectorStoreAPI {
   }
 
   async getCollectionStatus(): Promise<VectorStoreStatus> {
-    try {
-      return await this.fetchApi('/status');
-    } catch (_error) {
-      return {
-        collectionExists: false,
-        documentCount: 0,
-        collectionSize: '0 B',
-        dimensions: 768,
-        distance: 'Cosine'
-      };
-    }
+    // Unavailable/unauthorized is an error, never an invented empty collection.
+    return this.fetchApi('/status');
   }
 
   async addDocument(document: PolicyDocument): Promise<void> {
@@ -120,11 +94,6 @@ class VectorStoreAPI {
     }));
   }
 
-  private getRelevanceLevel(score: number): 'high' | 'medium' | 'low' {
-    if (score >= 0.8) return 'high';
-    if (score >= 0.6) return 'medium';
-    return 'low';
-  }
 }
 
 export const vectorStoreAPI = new VectorStoreAPI();

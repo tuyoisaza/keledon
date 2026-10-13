@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Store, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X, Key, Lock } from 'lucide-react';
+import { Store, Plus, Loader2, Pencil, Trash2, Search, X, Key, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { getVendors, createVendor, updateVendor, deleteVendor, getTeams, getBrands, type Vendor, type Team, type Brand } from '@/lib/crud-api';
+import { getVendors, createVendor, updateVendor, deleteVendor, getTeams, getBrands, type Vendor, type Team, type Brand, type VendorInput } from '@/lib/crud-api';
 
 const VENDOR_TYPES = [
     { value: 'crm', label: 'CRM' },
@@ -102,7 +102,7 @@ export default function ManagementVendorsPage() {
         }
         setSaving(true);
         try {
-            const submitData: any = {
+            const submitData: VendorInput = {
                 teamId: selectedTeamId,
                 name: formData.name,
                 type: formData.type,
@@ -121,9 +121,9 @@ export default function ManagementVendorsPage() {
             }
             setShowForm(false);
             fetchVendors(selectedTeamId);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Failed to save vendor:', error);
-            toast.error('Failed to save vendor: ' + (error?.message || error));
+            toast.error('Failed to save vendor: ' + (error instanceof Error ? error.message : String(error)));
         } finally {
             setSaving(false);
         }
@@ -146,10 +146,6 @@ export default function ManagementVendorsPage() {
         v.type?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const getTeamName = (teamId: string) => {
-        return teams.find(t => t.id === teamId)?.name || '—';
-    };
-
     const getBrandName = (brandId?: string) => {
         if (!brandId) return '—';
         return brands.find(b => b.id === brandId)?.name || '—';
@@ -158,8 +154,6 @@ export default function ManagementVendorsPage() {
     const getTypeLabel = (type: string) => {
         return VENDOR_TYPES.find(t => t.value === type)?.label || type;
     };
-
-    const selectedTeam = teams.find(t => t.id === selectedTeamId);
 
     return (
         <div className="space-y-6">

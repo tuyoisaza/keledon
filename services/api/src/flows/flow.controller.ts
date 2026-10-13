@@ -1,5 +1,7 @@
+import { ResourceScopeGuard } from '../guards/resource-scope.guard';
 import {
   Controller,
+  UseGuards,
   Get,
   Post,
   Put,
@@ -13,6 +15,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Flows')
 @Controller('api/flows')
+@UseGuards(ResourceScopeGuard)
 export class FlowController {
   constructor(private readonly flowService: FlowService) {}
 

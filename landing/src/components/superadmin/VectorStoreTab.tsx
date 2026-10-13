@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Database, Plus, Search, FileText, Trash2, RefreshCw, Eye, AlertCircle, CheckCircle, Clock, Settings } from 'lucide-react';
+import { Database, Plus, Search, FileText, Trash2, RefreshCw, Eye, AlertCircle, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { vectorStoreAPI, type PolicyDocument, type RetrievalResult, type VectorStoreStatus } from '@/lib/vector-store';
 import VectorStoreConfig from './VectorStoreConfig';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
 
 export default function VectorStoreTab() {
   const { user } = useAuth();
@@ -22,7 +22,7 @@ export default function VectorStoreTab() {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    category: 'knowledge' as const,
+    category: 'knowledge' as PolicyDocument['category'],
     metadata: '',
     brand_id: '',
     team_id: ''
@@ -194,7 +194,7 @@ export default function VectorStoreTab() {
             <label className="block text-sm font-medium mb-2">Category</label>
             <select
               value={formData.category}
-              onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as any }))}
+              onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as PolicyDocument['category'] }))}
               className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none"
             >
               <option value="safety">Safety</option>

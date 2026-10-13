@@ -1,0 +1,3 @@
+# UAT access and provenance
+Finite local built-SPA server on127.0.0.1; installed Edge headless via existing Playwright package. All external requests and websockets blocked; /api responses intercepted using synthetic Company Co records. Each role has an isolated context with an explicitly synthetic session token. Browser and server close in finally. No network/provider writes, metered inference, customer data or real account provisioning.
+Actual Nest in-process HTTP test22 exercises real decorators/guards with isolated fake persistence. OAuth state tests use local signed fixtures, not a Google request. Live telephony/CRM and real audio are NOT EXECUTED by owner scope.

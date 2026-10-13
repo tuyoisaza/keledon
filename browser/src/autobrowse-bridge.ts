@@ -132,6 +132,14 @@ async function extractPageState(view: BrowserView): Promise<{ url: string; title
   }
 }
 
+async function executeScopedAction(view: BrowserView, action: GoalAction, credentialOrigin?: string): Promise<StepResult> {
+  const allowed = (runtimeStatus.vendors || []).filter(vendor => vendor.isActive !== false).flatMap(vendor => { try { return [new URL(vendor.baseUrl || vendor.url).origin]; } catch { return []; } });
+  let origin = '';
+  try { origin = new URL(action.type === 'navigate' ? action.url : view.webContents.getURL()).origin; } catch { /* reject unknown surface */ }
+  if (!allowed.includes(origin) || (credentialOrigin && credentialOrigin !== origin)) throw new Error('Action target is outside configured vendor scope');
+  return executeAction(view, action);
+}
+
 export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecutionResult> {
   resetAbortFlag();
   if (!isInitialized) {
@@ -163,6 +171,22 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
   }
 
   const view = activeTab.view;
+  const configuredVendors = (runtimeStatus.vendors || []).filter(vendor => vendor.isActive !== false);
+  const allowedOrigins = configuredVendors.flatMap(vendor => { try { return [new URL(vendor.baseUrl || vendor.url).origin]; } catch { return []; } });
+  const selectedId = input.inputs?.vendor_id || input.inputs?.vendorId;
+  const selectedVendor = configuredVendors.find(vendor => vendor.id === selectedId);
+  const hasCredentials = Object.keys(input.inputs || {}).some(key => /^(password|apiKey|token|secret|username|email|login)$/.test(key));
+  let credentialOrigin = '';
+  if (hasCredentials) {
+    if (!selectedVendor) throw new Error('Explicit configured vendor required for credentialed actions');
+    credentialOrigin = new URL(selectedVendor.baseUrl || selectedVendor.url).origin;
+  }
+  async function executeConfiguredAction(action: GoalAction): Promise<StepResult> {
+    let origin = '';
+    try { origin = new URL(action.type === 'navigate' ? action.url : view.webContents.getURL()).origin; } catch { /* fail closed */ }
+    if (!allowedOrigins.includes(origin) || (hasCredentials && origin !== credentialOrigin)) throw new Error('Cloud action target is outside configured vendor scope');
+    return executeScopedAction(view, action, credentialOrigin);
+  }
   const startTime = Date.now();
   const executionId = input.execution_id || `exec-${Date.now()}`;
   const steps: StepResult[] = [];
@@ -170,7 +194,7 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
   const logs: string[] = [];
   let credentialSubmitted = false;
 
-  logs.push(`[Goal] ${input.goal}`);
+  logs.push(`[Goal] length=${input.goal.length}`);
   if (input.inputs) logs.push(`[Inputs] ${JSON.stringify(Object.keys(input.inputs))}`);
 
   // v0.3.51: extract URL before planning so we can check if planner will handle navigation.
@@ -182,10 +206,12 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
     // v0.3.51: avoids duplicate navigation when vendor URL matches planner's first step.
     const plannerResult = await planGoalActionsWithAI(
       input.goal,
-      '',
-      JSON.stringify({ url: '', title: '', content: '' }),
+      url || '',
+      JSON.stringify({ url: url || '', title: '', content: '' }),
       runtimeStatus.cloudUrl,
       runtimeStatus.authToken || '',
+      input.inputs,
+      input.execution_id,
     );
     const actions = plannerResult.steps;
     logs.push(`[Actions] ${actions.length} steps planned from goal (${plannerResult.source})`);
@@ -202,15 +228,15 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
     if (shouldPreNavigate) {
       logs.push(`[Step 1] navigate: ${url}`);
       emitProgress(1, 999, 'navigate', 'running', `Navigate to ${url}`);
-      const result = await executeAction(view, { type: 'navigate', url, description: `Navigate to ${url}` });
+      const result = await executeConfiguredAction( { type: 'navigate', url, description: `Navigate to ${url}` });
       steps.push(result);
       if (result.extractedValue) screenshots.push(result.extractedValue);
       emitProgress(1, 999, 'navigate', result.success ? 'done' : 'failed', result.description);
       await new Promise(r => setTimeout(r, 500));
     }
 
-    const maxSteps = input.constraints?.max_steps || 50;
-    const timeout = input.constraints?.timeout_ms || 120000;
+    const maxSteps = Math.min(Math.max(input.constraints?.max_steps || 20, 1), 50);
+    const timeout = Math.min(Math.max(input.constraints?.timeout_ms || 120000, 1000), 120000);
     const start = Date.now();
     let stepNum = shouldPreNavigate ? 1 : 0;
     const totalSteps = actions.length + (shouldPreNavigate ? 1 : 0);
@@ -237,78 +263,14 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
       logs.push(`[Step ${stepNum}] ${action.type}: ${action.description}`);
       emitProgress(stepNum, totalSteps, action.type, 'running', action.description);
 
-      const result = await executeAction(view, action);
+      const result = await executeConfiguredAction( action);
       steps.push(result);
 
       if (result.extractedValue && result.type === 'screenshot') {
         screenshots.push(result.extractedValue);
       }
 
-      // v0.3.49+: after a password/submit action succeeds, treat subsequent failures as non-fatal.
-      // The page likely navigated away from the login flow (login completed), so remaining
-      // steps are cleanup that can't execute — not real failures.
-      if (!result.success) {
-        if (credentialSubmitted) {
-          result.success = true;
-          logs.push(`[Step ${stepNum}] Skipped (post-login): ${result.error || 'page already navigated'}`);
-        } else {
-          logs.push(`[Step ${stepNum}] Failed: ${result.error}`);
-        }
-      }
-
-      // Track credential submission for post-login grace handling
-      if (result.success && (
-        action.type === 'submit' ||
-        (action.description || '').toLowerCase().includes('password')
-      )) {
-        credentialSubmitted = true;
-      }
-
-      // v0.3.54+: post-login navigation recovery.
-      // After the FINAL login submit succeeds, the OAuth/SSO redirect may leave
-      // the browser on a different domain (myaccount.google.com, etc.) instead
-      // of the target vendor URL. Navigate to the vendor URL so remaining
-      // planner steps execute on the correct page.
-      //
-      // Triggers on:
-      //   - Form submit actions (action.type === 'submit')
-      //   - Post-password click actions (Google-style multi-screen login:
-      //     password filled → credentialSubmitted=true, then next click = submit)
-      //
-      // Must fire AFTER the submit, not during password fill, so the login
-      // session cookies are set before we navigate away. Vendor-agnostic.
-      const isLoginSubmit = result.success && (
-        action.type === 'submit' ||
-        (credentialSubmitted && action.type === 'click')
-      );
-      if (isLoginSubmit && url) {
-        await new Promise(r => setTimeout(r, 3000));
-        try {
-          const currentUrl = view.webContents.getURL() || '';
-          let targetHost = '';
-          let currentHost = '';
-          try { targetHost = new URL(url).hostname; } catch {}
-          try { currentHost = new URL(currentUrl).hostname; } catch {}
-          if (targetHost && currentHost && currentHost !== targetHost) {
-            logs.push(`[Nav] Post-login: ${currentHost} ≠ target ${targetHost}, navigating to ${url}`);
-            await view.webContents.loadURL(url);
-            await new Promise(r => setTimeout(r, 2000));
-            steps.push({
-              id: `postlogin-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-              type: 'navigate',
-              description: 'Navigate back to vendor after login',
-              success: true,
-              duration: Date.now() - startTime,
-            });
-          } else if (targetHost && currentHost && currentHost === targetHost) {
-            logs.push(`[Nav] Post-login: already on vendor domain ${currentHost}`);
-          } else {
-            logs.push(`[Nav] Post-login: no target URL configured, skipping recovery`);
-          }
-        } catch (navErr: any) {
-          logs.push(`[Nav] Post-login navigation error: ${navErr.message || navErr}`);
-        }
-      }
+      if (!result.success) throw new Error('Approved Cloud action failed');
 
       emitProgress(stepNum, totalSteps, result.type, result.success ? 'done' : 'failed', result.description);
 
@@ -320,9 +282,9 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
     // by asking the cloud AI planner. Loop up to 3 times.
     const MAX_ITERATIONS = 3;
     let iteration = 0;
-    let goalSatisfied = false;
+    let goalSatisfied = actions.length === 0;
 
-    while (!goalSatisfied && iteration < MAX_ITERATIONS) {
+    while (!goalSatisfied && iteration < MAX_ITERATIONS && stepNum < maxSteps) {
       if (isAborted()) {
         logs.push('[Abort] Goal execution cancelled during AI re-planning');
         break;
@@ -343,13 +305,7 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
         .map(s => s.description);
 
       // Call the AI planner to determine next steps
-      const plan = await callPlannerAPI(
-        input.goal,
-        state.url,
-        state.content,
-        state.title,
-        previousDescription
-      );
+      const plan = { ...await planGoalActionsWithAI(input.goal, state.url, state.content, runtimeStatus.cloudUrl, runtimeStatus.authToken || '', input.inputs, `${executionId}-replan-${iteration}`), explanation: undefined, reasoning: undefined };
 
       if (!plan.steps || plan.steps.length === 0) {
         // AI says no more steps needed — goal is complete
@@ -361,7 +317,7 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
       logs.push(`[AI Iteration ${iteration}] AI suggested ${plan.steps.length} steps: ${plan.reasoning || plan.explanation || ''}`);
 
       // Execute the AI-generated steps
-      for (const aiAction of plan.steps) {
+      for (const aiAction of plan.steps.slice(0, Math.max(0, maxSteps - stepNum))) {
         if (isAborted()) {
           logs.push('[Abort] AI step cancelled');
           break;
@@ -375,7 +331,7 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
         logs.push(`[Step ${stepNum}] AI ${aiAction.type}: ${aiAction.description}`);
         emitProgress(stepNum, 999, aiAction.type, 'running', aiAction.description);
 
-        const result = await executeAction(view, aiAction);
+        const result = await executeConfiguredAction( aiAction);
         steps.push(result);
 
         if (result.extractedValue && result.type === 'screenshot') {
@@ -384,6 +340,7 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
 
         if (!result.success) {
           logs.push(`[Step ${stepNum}] AI step failed: ${result.error}`);
+          throw new Error('Approved Cloud action failed');
         }
 
         emitProgress(stepNum, 999, result.type, result.success ? 'done' : 'failed', result.description);
@@ -399,7 +356,7 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
 
     const successCount = steps.filter(s => s.success).length;
     const failCount = steps.filter(s => !s.success).length;
-    const goalStatus: 'success' | 'failed' | 'uncertain' = failCount === 0 ? 'success' : successCount === 0 ? 'failed' : 'uncertain';
+    const goalStatus: 'success' | 'failed' | 'uncertain' = failCount > 0 ? (successCount === 0 ? 'failed' : 'uncertain') : goalSatisfied ? 'success' : 'uncertain';
     logs.push(`[Result] ${goalStatus}: ${successCount} ok, ${failCount} failed` + (iteration > 0 ? ` (AI iterations: ${iteration})` : ''));
 
     return {
@@ -493,11 +450,11 @@ export async function executeSteps(steps: RpaStep[]): Promise<BridgeExecutionRes
     emitProgress(i + 1, steps.length, action.type, 'running', action.description);
     logs.push(`[Step ${i + 1}/${steps.length}] ${action.type}: ${action.description}`);
 
-    const result = await executeAction(view, action);
+    const result = await executeScopedAction(view, action);
     stepResults.push(result);
 
     if (result.extractedValue && result.type === 'screenshot') screenshots.push(result.extractedValue);
-    if (!result.success) logs.push(`[Step ${i + 1}] Failed: ${result.error}`);
+    if (!result.success) { logs.push(`[Step ${i + 1}] Failed: ${result.error}`); break; }
     emitProgress(i + 1, steps.length, action.type, result.success ? 'done' : 'failed', action.description);
     await new Promise(r => setTimeout(r, 200));
   }

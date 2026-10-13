@@ -1,69 +1,56 @@
-import { useState, useEffect } from 'react';
-import { getCompanies, getUsers, getSessions } from '@/lib/crud-api';
+import { useState, useEffect, useCallback } from 'react';
+import { getCompanies, getUsers, getSessions, type Session, type Company, type User } from '@/lib/crud-api';
 import { Filter, RefreshCw, History } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
 
 export default function SessionsHistoryPage() {
     const { user } = useAuth();
-    const [sessions, setSessions] = useState<any[]>([]);
+    const [sessions, setSessions] = useState<Session[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedCompany, setSelectedCompany] = useState<string>('');
     const [selectedUser, setSelectedUser] = useState<string>('');
-    const [companies, setCompanies] = useState<any[]>([]);
-    const [users, setUsers] = useState<any[]>([]);
+    const [companies, setCompanies] = useState<Company[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
 
-    useEffect(() => {
-        if (user) {
-            fetchSessions();
-            if (user.role === 'superadmin') {
-                fetchFilterOptions();
-            }
-        }
-    }, [user]);
-
-    async function fetchFilterOptions() {
+    const fetchFilterOptions = useCallback(async () => {
         try {
-            const [c, u] = await Promise.all([
-                getCompanies(),
-                getUsers()
-            ]);
+            const [c, u] = await Promise.all([getCompanies(), getUsers()]);
             setCompanies(c);
             setUsers(u);
         } catch (error) {
             console.error('Error fetching filter options:', error);
         }
-    }
+    }, []);
 
-    async function fetchSessions() {
+    const fetchSessions = useCallback(async () => {
         setLoading(true);
         try {
             if (!user) return;
-
             let companyId: string | undefined;
-            
-            if (user.role === 'superadmin') {
-                companyId = undefined;
-            } else if (user.role === 'admin' || user.role === 'coordinator') {
-                companyId = user.companyId;
-            } else if (user.role === 'user' || user.role === 'agent') {
+            if (user.role === 'admin' || user.role === 'coordinator') companyId = user.companyId;
+            if (user.role === 'user' || user.role === 'agent') {
                 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
                 if (!uuidRegex.test(user.id)) {
                     setSessions([]);
-                    setLoading(false);
                     return;
                 }
             }
-
             const sessions = await getSessions(companyId, 100);
-            const completedSessions = sessions.filter(s => s.status !== 'active');
-            setSessions(completedSessions || []);
+            setSessions(sessions.filter(s => s.status !== 'active'));
         } catch (error) {
             console.error('Error fetching sessions:', error);
         } finally {
             setLoading(false);
         }
-    }
+    }, [user]);
+
+    useEffect(() => {
+        if (user) {
+            void fetchSessions();
+            if (user.role === 'superadmin') void fetchFilterOptions();
+        }
+    }, [user, fetchSessions, fetchFilterOptions]);
 
     const filteredSessions = sessions.filter(session => {
         if (user?.role !== 'superadmin') return true;

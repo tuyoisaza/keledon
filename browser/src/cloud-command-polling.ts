@@ -5,7 +5,7 @@ import { runtimeStatus } from './runtime-state.js';
 import { setMainWindow as setCallMainWindow, startCall, appendTranscript, processDecision, executeRpaFlowFromCommand, closeCall, getCurrentCall } from './call-handler.js';
 import { setMainWindow as setRpaMainWindow, executeRpaFlow } from './rpa-executor.js';
 import { startPolling, registerCommandHandler, type BrowserCommand, type CommandResult } from './command-poller.js';
-import { planGoalActions } from './goal-planner.js';
+import { planGoalActionsWithAI } from './goal-planner.js';
 import type { RpaStep } from './rpa-executor.js';
 
 /**
@@ -14,7 +14,7 @@ import type { RpaStep } from './rpa-executor.js';
  */
 export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
   const deviceId = cmdlog.truncate(runtimeStatus.deviceId, 8, 4);
-  const tokenPre = cmdlog.truncate(runtimeStatus.authToken, 16, 0);
+  const tokenPre = runtimeStatus.authToken ? '[present]' : '[absent]';
   const cloudUrl = runtimeStatus.cloudUrl || '(unset)';
   const sessionId = runtimeStatus.sessionId || 'none';
   cmdlog.log('SYS', `Setting up command handlers and starting polling | device: ${deviceId} | token: ${tokenPre} | cloud: ${cloudUrl} | session: ${sessionId}`);
@@ -52,10 +52,16 @@ export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
       cmdlog.log('CMD', `rpa_flow (${command.id}) → no steps, failed`);
       return { command_id: command.id, status: 'failed', error: 'No RPA steps', timestamp: new Date().toISOString() };
     }
-    const steps = payload.steps as Array<{ step_id?: string; action: 'navigate' | 'click' | 'fill' | 'extract' | 'wait' | 'screenshot' | 'scroll' | 'press_key' | 'select' | 'hover' | 'wait_for' | 'submit' | 'assert'; selector?: string; value?: string; url?: string; description?: string; timeout?: number; direction?: string }>;
+    const normalizedSteps = payload.steps.flatMap((step: any) => {
+      const action = step.action === 'fill_field' ? 'fill' : step.action;
+      const normalized = { ...step, action };
+      const condition = step.post_condition;
+      return condition ? [normalized, { action: 'assert', selector: condition.selector, value: condition.type === 'dom_equals' ? condition.expected : undefined }] : [normalized];
+    });
+    const steps = normalizedSteps as Array<{ step_id?: string; action: 'navigate' | 'click' | 'fill' | 'extract' | 'wait' | 'screenshot' | 'scroll' | 'press_key' | 'select' | 'hover' | 'wait_for' | 'submit' | 'assert'; selector?: string; value?: string; url?: string; description?: string; timeout?: number; direction?: string }>;
     cmdlog.log('CMD', `rpa_flow (${command.id}) → ${steps.length} steps: ${steps.map(s => s.action).join(', ')}`);
     const result = await executeRpaFlowFromCommand({
-      flow_id: payload.flow_id,
+      flow_id: payload.flow_id || (payload as any).flowId,
       name: payload.name,
       steps,
     });
@@ -68,6 +74,10 @@ export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
   });
 
   registerCommandHandler('call_close', async (command: BrowserCommand): Promise<CommandResult> => {
+    const lastFlow = getCurrentCall()?.rpaResult;
+    if (lastFlow && lastFlow.status !== 'completed') {
+      return { command_id: command.id, status: 'failed', error: 'Call remains active: latest approved flow did not complete', timestamp: new Date().toISOString() };
+    }
     const reason = (command.payload.reason as string) || 'Cloud requested close';
     cmdlog.log('CMD', `call_close → ${reason}`);
     closeCall(reason);
@@ -103,10 +113,11 @@ export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
       return { command_id: command.id, status: 'failed', error: 'Empty goal', timestamp: new Date().toISOString() };
     }
     const inputs = command.payload.inputs as Record<string, unknown> | undefined;
+    const tokenAtStart = runtimeStatus.authToken;
     cmdlog.log('CMD', `goal_execute (${command.id}) → goal: "${goal.substring(0, 100)}" | inputs: ${inputs ? Object.keys(inputs).join(',') : 'none'}`);
 
     // Step 1: Decompose goal into actions using the heuristic planner
-    const actions = planGoalActions(goal, inputs);
+    const { steps: actions } = await planGoalActionsWithAI(goal, typeof inputs?.url === 'string' ? inputs.url : '', '', runtimeStatus.cloudUrl || '', runtimeStatus.authToken || '', inputs, command.id);
     if (actions.length === 0) {
       return { command_id: command.id, status: 'failed', error: 'Could not plan goal', timestamp: new Date().toISOString() };
     }
@@ -129,6 +140,8 @@ export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
       flow_id: `goal-${command.id}`,
       name: `Goal: ${goal.substring(0, 60)}`,
       steps: rpaSteps,
+      is_cancelled: () => runtimeStatus.authToken !== tokenAtStart,
+      allowed_origins: (runtimeStatus.vendors || []).filter(vendor => vendor.isActive !== false && (!inputs || !Object.keys(inputs).some(key => /^(password|apiKey|token|secret|username|email|login)$/.test(key)) || vendor.id === (inputs.vendor_id || inputs.vendorId || command.payload.vendor_id))).flatMap(vendor => { try { return [new URL(vendor.baseUrl || vendor.url).origin]; } catch { return []; } }),
     });
 
     cmdlog.log('CMD', `goal_execute (${command.id}) → status=${result.status} | steps=${result.steps?.length ?? 0} | duration=${result.total_duration_ms}ms${result.error ? ` error=${result.error}` : ''}`);
@@ -149,10 +162,11 @@ export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
       return { command_id: command.id, status: 'failed', error: 'Empty goal', timestamp: new Date().toISOString() };
     }
     const inputs = command.payload.inputs as Record<string, unknown> | undefined;
+    const tokenAtStart = runtimeStatus.authToken;
     cmdlog.log('CMD', `rpa_execute (${command.id}) → goal: "${goal.substring(0, 100)}" | inputs: ${inputs ? Object.keys(inputs).join(',') : 'none'}`);
 
     // Decompose goal into actions
-    const actions = planGoalActions(goal, inputs);
+    const { steps: actions } = await planGoalActionsWithAI(goal, typeof inputs?.url === 'string' ? inputs.url : '', '', runtimeStatus.cloudUrl || '', runtimeStatus.authToken || '', inputs, command.id);
     if (actions.length === 0) {
       return { command_id: command.id, status: 'failed', error: 'Could not plan goal', timestamp: new Date().toISOString() };
     }
@@ -174,6 +188,8 @@ export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
       flow_id: `rpa-${command.id}`,
       name: `RPA: ${goal.substring(0, 60)}`,
       steps: rpaSteps,
+      is_cancelled: () => runtimeStatus.authToken !== tokenAtStart,
+      allowed_origins: (runtimeStatus.vendors || []).filter(vendor => vendor.isActive !== false && (!inputs || !Object.keys(inputs).some(key => /^(password|apiKey|token|secret|username|email|login)$/.test(key)) || vendor.id === (inputs.vendor_id || inputs.vendorId || command.payload.vendor_id))).flatMap(vendor => { try { return [new URL(vendor.baseUrl || vendor.url).origin]; } catch { return []; } }),
     });
 
     cmdlog.log('CMD', `rpa_execute (${command.id}) → status=${result.status} | duration=${result.total_duration_ms}ms`);

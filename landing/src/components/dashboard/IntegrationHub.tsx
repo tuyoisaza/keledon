@@ -1,15 +1,11 @@
-import React from 'react';
 import { 
   Plug, 
   CheckCircle, 
-  XCircle, 
   AlertTriangle, 
   Clock, 
   Activity,
-  Zap,
   Settings,
   RefreshCw,
-  Link,
   Database,
   Phone,
   MessageSquare,
@@ -19,8 +15,6 @@ import {
   BarChart3,
   Globe,
   Building,
-  ChevronRight,
-  Info,
   Filter
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -49,17 +43,6 @@ interface IntegrationProvider {
   };
 }
 
-interface Connection {
-  providerId: string;
-  status: 'connected' | 'disconnected' | 'error' | 'connecting';
-  lastSync?: Date;
-  metrics?: {
-    requestsPerMinute: number;
-    dataTransfer: number;
-    errorCount: number;
-  };
-}
-
 interface IntegrationHubProps {
   className?: string;
 }
@@ -67,7 +50,6 @@ interface IntegrationHubProps {
 export default function IntegrationHub({ className }: IntegrationHubProps) {
   const { 
     providers,
-    connections,
     filteredProviders,
     connectedProviders,
     errorProviders,
@@ -75,7 +57,6 @@ export default function IntegrationHub({ className }: IntegrationHubProps) {
     filter,
     loading,
     selectProvider,
-    clearSelection,
     setFilterValue,
     connectProvider,
     disconnectProvider,
@@ -198,7 +179,6 @@ export default function IntegrationHub({ className }: IntegrationHubProps) {
           filteredProviders.map((provider) => {
             const IconComponent = getIconComponent(provider.icon);
             const CategoryIcon = categoryIcons[provider.category];
-            const connection = connections.find(c => c.providerId === provider.id);
             const healthStatus = getHealthIndicator(provider.health);
 
             return (

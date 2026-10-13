@@ -1,3 +1,5 @@
+import { normalizeTrustedCloudUrl } from './cloud-trust.js';
+import { clearVendorSessionState } from './ipc-vendor-state.js';
 import { ipcMain, app, session, BrowserWindow, Notification as ElectronNotification } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -6,8 +8,8 @@ import { webrtcInjector } from './webrtc-injector.js';
 import { mediaLayerWrapper } from './ipc-media-handlers.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
 import { eventLogger } from './media/event-logger.js';
-import { runtimeStatus, mainWindow, setDebugMode } from './runtime-state.js';
-import { getDeviceSocket, connectWebSockets, setupCommandPolling } from './cloud-connection.js';
+import { runtimeStatus, mainWindow, setDebugMode, clearRuntimeSessionState } from './runtime-state.js';
+import { getDeviceSocket, connectWebSockets, disconnectSockets, setupCommandPolling } from './cloud-connection.js';
 import { getStartupLogPath, getMainLogPath, getLogsDir, getInstallDir } from './logger.js';
 import type { TabManager } from './tab-manager.js';
 import {
@@ -76,6 +78,7 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     runtimeStatus.diagnostics.lastAutoConnectError = null;
 
     try {
+      config.cloudUrl = normalizeTrustedCloudUrl(config.cloudUrl);
       const response = await fetch(`${config.cloudUrl}/api/devices/pair`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -104,7 +107,7 @@ export function registerIpcHandlers(tabManager: TabManager): void {
         runtimeStatus.status = 'connected';
         runtimeStatus.authToken = data.auth_token;
         runtimeStatus.deviceId = data.device_id;  // Use the server's DB UUID for WebSocket auth
-        runtimeStatus.sessionId = data.keledon_id || null;
+        runtimeStatus.sessionId = null; // Agent identity is not a DB call/session identity.
         runtimeStatus.keledonId = data.keledon_id || null;
         runtimeStatus.teamId = data.team?.id || null;
         eventLogger.info('runtime', 'connect_success', { keledonId: data.keledon_id, teamId: data.team?.id });
@@ -160,7 +163,9 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     if (runtimeStatus.sessionId && deviceSocket) {
       deviceSocket.emit('session:end');
     }
-    runtimeStatus.sessionId = null;
+    disconnectSockets();
+    clearRuntimeSessionState();
+    clearVendorSessionState();
     return { success: true };
   });
 
@@ -188,7 +193,7 @@ export function registerIpcHandlers(tabManager: TabManager): void {
       return { error: 'Goal is required' };
     }
 
-    log.info('Executing goal:', normalizedGoal);
+    log.info('Executing goal', { goalLength: normalizedGoal.length });
     const bridge = await getAutoBrowseBridge();
     if (!bridge.isAutoBrowseInitialized()) {
       return { error: 'AutoBrowse not initialized' };

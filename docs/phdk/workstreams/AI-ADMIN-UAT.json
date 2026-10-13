@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-13T09:42:23.907Z",
+  "target": "isolated local built React SPA + synthetic Company Co API routes",
+  "result": "PASS",
+  "cases": [
+    "superadmin routes/navigation",
+    "dirty/save disabled state",
+    "invalid JSON/object schema prevents API write",
+    "409 preserves draft",
+    "explicit reload/revision update",
+    "successful save revision",
+    "usage provider/model/tokens",
+    "null cost/tokens remain Unknown",
+    "real empty state",
+    "403 permission state",
+    "503 unavailable state",
+    "admin route/navigation denied"
+  ],
+  "providerCalls": 0,
+  "externalRequestsBlocked": 0,
+  "persistence": "fixture only; no production/database claim"
+}

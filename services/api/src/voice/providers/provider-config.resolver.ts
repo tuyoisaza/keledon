@@ -19,19 +19,18 @@ export class ProviderConfigResolver {
     });
 
     if (!team) {
-      this.logger.warn(`Team ${teamId} not found, using defaults`);
-      return this.defaultConfig(teamId);
+      throw new Error('Configured voice team not found');
     }
 
     // Determine which STT provider to use.
     // "vosk" and "webspeech" are browser-side; "speaches" runs server-side.
-    const sttProvider = team.sttProvider || 'speaches';
+    const sttProvider = team.sttProvider || '';
 
     // TTS provider
-    const ttsProvider = team.ttsProvider || 'speaches';
+    const ttsProvider = team.ttsProvider || '';
 
     // LLM provider (for Cloud Brain)
-    const llmProvider = team.llmProvider || 'openai';
+    const llmProvider = team.llmProvider || '';
 
     // Voice provider — the unified pipeline provider
     const voiceProvider =
@@ -43,7 +42,7 @@ export class ProviderConfigResolver {
       sttProvider,
       ttsProvider,
       llmProvider,
-      sttApiKey: team.speachesApiKey || '',
+      sttApiKey: (sttProvider === 'deepgram' ? team.deepgramApiKey : team.speachesApiKey) || '',
       ttsApiKey: team.ttsApiKey || team.elevenlabsApiKey || '',
       llmApiKey: this.resolveLlmApiKey(team, llmProvider),
       voiceId: team.ttsVoiceId || undefined,

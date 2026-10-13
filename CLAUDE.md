@@ -1,88 +1,25 @@
-# CLAUDE.md
+# KELEDON tool guidance
 
-IMPORTANT: All commit messages must start with `vX.X.X:` (current version is **0.2.5**).
+Read AGENTS.md, phdk-standards/AGENTS.md, EXECUTION_SCOPE.md and current TASK.md/STATUS.md. The current owner request governs scope; historical task queues are evidence, never autonomous work authorization.
 
-## Project overview
+## Current architecture
+Cloud decides; Browser executes. services/web is the current React/Vite web source in root Dockerfile, services/api the NestJS API, browser the deterministic Electron runtime. cloud/landing/agent are retained compatibility/alternative source trees; source configuration does not prove live deployment.
+Canonical V4 intent lives in docs/specs/v4_KELEDON_CANON.md and v4_KELEDON_BROWSER.md. docs/specs/ remains immutable without the required governance issue. Do not run historical floor restoration in parallel.
 
-KELEDON is a multi-tenant autonomous voice agent platform.
+## Delivery and versions
+Use explicit actual repository workdir; this run uses C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON.
+Implementation delivery follows current PHDK branch/check/version-prefixed commit/PR/review/merge/readback semantics within the requested scope. Bare upgrade remains local sync only.
+Read actual five package versions; never reset to obsolete 0.2.x. Reconcile browser/cloud/landing/services/api/services/web plus lock root metadata once for integrated release.
+The version-bump and release workflows were intentionally removed from main. Do not recreate bots, hosted CI, scheduled jobs or tag-triggered publication. Installer assets/production are unverified unless independently evidenced.
+Use normal existing authenticated git, never inject credentials into remote URLs or print secrets. Preserve hooks/protections; no force push.
 
-- **Cloud Brain** (`cloud/`) — NestJS on Railway at https://keledon.tuyoisaza.com. The sole decision-maker.
-- **Browser Runtime** (`browser/`) — Electron desktop app (Windows). Executor only; never decides.
-- **Landing** (`landing/`) — Vite/React, deployed on the same Railway container.
+## Checks and safety
+Run bounded necessary local source/contract checks and final integrated checks, no watchers. A past hanging compiler observation is not current evidence; diagnose actual tooling and resource limits without bypassing controls.
+Restore existing locked dependencies only when needed for the authorized task; no incidental dependency upgrades/additions.
+No paid/live provider probes, migrations, production data, provider/settings writes or browser outside scoped UAT.
+Preserve KELEDON_RESET_DB/KELEDON_RESET_QDRANT production safety; do not inspect secret values or alter live environment settings.
+Do not simulate success. Redact diagnostics, enforce server authorization and tenant isolation, validate untrusted commands; no browser business-policy selection.
 
-Runtime loop: `User speaks → STT → WebSocket /ws/runtime → DecisionEngine (configurable LLM + Qdrant RAG) → brain:command(say|ui_steps) + brain:audio (TTS MP3) → Browser executes`
-
-All architecture contracts live in `docs/specs/`. Source of truth: `docs/specs/v3_KELEDON_CANON.md`.
-
-## Commands
-
-```bash
-# Cloud (NestJS)
-cd cloud && npm run start:dev    # dev server
-cd cloud && npm run lint         # ESLint --fix
-cd cloud && npm test             # Jest
-
-# Browser (Electron)
-cd browser && npm run build      # tsc compile
-cd browser && npm run dev        # build + electron-forge start
-cd browser && npm run dist       # NSIS installer (Windows only)
-
-# Landing (Vite/React)
-cd landing && npm run dev        # Vite dev server
-cd landing && npm run build      # production build
-cd landing && npm run typecheck  # tsc --noEmit (landing only)
-cd landing && npm run lint       # ESLint
-```
-
-## Workflow rules
-
-- **Every commit message must start with the version**: `v0.2.5: description`
-- Do not commit changes unless the user explicitly asks.
-- Do not install or add dependencies without approval.
-- Branch law: only `main` exists as a permanent branch. All work goes through PRs from feature branches.
-- Never declare completion without an open PR (hotfix direct-to-main commits excepted).
-- CI auto-bumps the patch version on every merge to `main` (version-bump.yml). Do not manually bump unless asked.
-- When manually bumping version, update all four locations in lockstep:
-  - `browser/package.json`
-  - `cloud/package.json`
-  - `landing/package.json`
-  - `landing/src/pages/LaunchKeledonPage.tsx` (download URL)
-- Releases are triggered by pushing a `vX.Y.Z` git tag — CI builds the NSIS installer, signs it (if Azure signing is enabled), and uploads to GitHub Releases.
-
-## Architecture rules
-
-**Cloud decides. Browser executes. Browser is BLIND — never decides.**
-
-This is the prime law. Violating it is a hard error, not a style issue.
-
-- No decision logic, no AI calls, no intent parsing in `browser/`.
-- `cloud/src/services/decision-engine.service.ts` — AI decision loop (configurable LLM + Qdrant RAG). Cloud only.
-- `cloud/src/gateways/device.gateway.ts` — WebSocket `/ws/runtime`; routes `voice:transcript` to brain, sends `brain:command` and `brain:audio` back.
-- `cloud/src/tts/tts.service.ts` — TTS: ElevenLabs → OpenAI TTS → mock (auto-selects based on env vars).
-- `browser/src/main.ts` — Electron main; IPC, tabs, WebSocket client.
-- `browser/src/autobrowse-bridge.ts` — Electron-native RPA (uses `webContents.executeJavaScript`/`loadURL`/`capturePage`). Import from `dist-electron/main.cjs`, NOT from `src/`.
-- `browser/src/webrtc-injector.ts` — Spec-compliant `getUserMedia` override; feeds ElevenLabs/OpenAI MP3 into BrowserView audio track.
-- `browser/src/preload.ts` — IPC API surface exposed to renderer.
-- `.sisyphus/boulder.json` — Task queue. Read before touching any file.
-
-## Security and safety
-
-- **AI provider (DecisionEngine/LLM) is configurable via env vars** — same pattern as TTS. Set whichever key you want and the system auto-selects: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_AI_API_KEY`, `OLLAMA_URL`. No provider is forbidden; the chain auto-selects based on which keys are present.
-- TTS provider chain: ElevenLabs (if `ELEVENLABS_API_KEY` set) → OpenAI (`OPENAI_API_KEY`) → mock.
-- `KELEDON_RESET_DB` and `KELEDON_RESET_QDRANT` must remain `false` in Railway production.
-- Railway env tier must remain `KELEDON_ENV_TIER=CI_PROOF` (allows loopback Qdrant; switching breaks production).
-- Never simulate success — fail loudly with real errors.
-
-## Do not edit
-
-- `docs/specs/` — IMMUTABLE. Requires a governance Issue before any change.
-- `.github/workflows/` changes require the `workflow` OAuth scope on the push token.
-
-## Known gotchas
-
-- **Never run `tsc` or `npx tsc` as a compile check** — it hangs indefinitely in this environment. Railway CI handles compilation.
-- Git on Windows: always use `powershell -Command "Set-Location 'C:\KELEDON'; git ..."`. Exit code 1 from PowerShell git often means success (stderr from auto-pack).
-- Push to GitHub requires GH token injection into the remote URL: `git remote set-url origin "https://tuyoisaza:<token>@github.com/tuyoisaza/keledon.git"` → push → restore clean URL.
-- Stale Qdrant WAL lock files crash container restarts. `start.sh` deletes them at boot — don't remove that step.
-- `brain:command(ui_steps)` was silently swallowed before B-005; `device.gateway.ts` now routes it to `executor.executeSteps()`.
-- The version-bump CI skips commits whose message starts with `chore(release):` to prevent infinite loops.
+## Approved policy for current portfolio (2026-10-12)
+Owner explicitly confirmed new email/Google accounts=user without privileges; existing provisioned roles preserved. Existing DB-backed superadmin alone assigns elevated roles/companies. Admin/coordinator operate within authorized company without elevation/company deletion. Resolve actor/tenant from DB; ordinary responses contain secret presence indicators and write-only replacement, never raw keys.
+These are recorded policy decisions, not permission for future autonomous work.

@@ -111,7 +111,7 @@ export default function SubagentsPage() {
     const getStatusIcon = (status: string) => {
         switch (status) {
             case 'idle':
-                return <Clock className="h-4 w-4 text-gray-400" />;
+                return <Clock className="h-4 w-4 text-muted-foreground" />;
             case 'active':
                 return <Activity className="h-4 w-4 text-green-500" />;
             case 'waiting':
@@ -119,7 +119,7 @@ export default function SubagentsPage() {
             case 'error':
                 return <XCircle className="h-4 w-4 text-red-500" />;
             default:
-                return <Clock className="h-4 w-4 text-gray-400" />;
+                return <Clock className="h-4 w-4 text-muted-foreground" />;
         }
     };
 
@@ -194,7 +194,7 @@ export default function SubagentsPage() {
                             <button
                                 onClick={handleCleanup}
                                 disabled={loading || !sessionId.trim()}
-                                className="flex items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                className="flex items-center gap-2 px-3 py-2 bg-red-500 text-foreground rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 <Trash2 className="h-4 w-4" />
                             </button>
@@ -227,7 +227,7 @@ export default function SubagentsPage() {
                         <button
                             onClick={handleExecuteFlow}
                             disabled={executing || !selectedFlowId || !sessionId.trim()}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-500 text-foreground rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                             {executing ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />

@@ -1,3 +1,4 @@
+import { normalizeTrustedCloudUrl } from './cloud-trust.js';
 import * as crypto from 'crypto';
 import log from 'electron-log';
 import { runtimeStatus, mainWindow } from './runtime-state.js';
@@ -48,7 +49,7 @@ export function getDeepLinkDiagnostics() {
 }
 
 export function handleDeepLink(url: string, tabManager: TabManager): void {
-  log.info('[DeepLink] Received:', url);
+  log.info('[DeepLink] Launch protocol received');
   runtimeStatus.diagnostics.lastDeepLinkReceivedAt = nowIso();
   runtimeStatus.diagnostics.lastAutoConnectStatus = 'not_attempted';
   runtimeStatus.diagnostics.lastAutoConnectHttpStatus = null;
@@ -56,6 +57,7 @@ export function handleDeepLink(url: string, tabManager: TabManager): void {
 
   try {
     const parsed = new URL(url);
+    if (parsed.protocol !== 'keledon:' || !['launch', 'test'].includes(parsed.hostname)) throw new Error('Unsupported launch protocol');
     const action = parsed.hostname;
     runtimeStatus.diagnostics.lastDeepLinkAction = action || null;
 
@@ -80,7 +82,7 @@ export function handleDeepLink(url: string, tabManager: TabManager): void {
     const userId = parsed.searchParams.get('userId');
     const timestamp = parsed.searchParams.get('timestamp');
     const signature = parsed.searchParams.get('signature');
-    const cloudUrl = parsed.searchParams.get('cloudUrl') || 'https://keledon.tuyoisaza.com';
+    const cloudUrl = normalizeTrustedCloudUrl(parsed.searchParams.get('cloudUrl') || process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com');
     const hadRequiredParams = Boolean(keledonId && code && userId && timestamp && signature);
 
     runtimeStatus.diagnostics.lastDeepLinkHadRequiredParams = hadRequiredParams;
@@ -92,25 +94,27 @@ export function handleDeepLink(url: string, tabManager: TabManager): void {
       log.error('[DeepLink] Missing required params'); return;
     }
 
-    const linkTime = parseInt(timestamp, 10);
+    const linkTime = /^\d+$/.test(timestamp) ? Number(timestamp) : NaN;
     // Pairing codes are valid for 7 days in the DB; use a generous window
     // (7 days in ms) so that browser protocol handler delays don't invalidate them.
     const PAIRING_CODE_VALIDITY_MS = 7 * 24 * 60 * 60 * 1000;
-    if (!Number.isFinite(linkTime) || Date.now() - linkTime > PAIRING_CODE_VALIDITY_MS) {
+    if (!Number.isFinite(linkTime) || linkTime > Date.now() + 60000 || Date.now() - linkTime > PAIRING_CODE_VALIDITY_MS) {
       runtimeStatus.diagnostics.lastDeepLinkValidation = 'expired';
       log.error('[DeepLink] Link expired'); return;
     }
 
-    const payload = `${keledonId}:${userId}:${timestamp}`;
-    const expectedSignature = crypto.createHmac('sha256', process.env.KELEDON_LAUNCH_SECRET || process.env.KELDEON_LAUNCH_SECRET || 'keledon-default-secret')
-      .update(payload).digest('hex').substring(0, 16);
-
-    if (signature === expectedSignature) {
+    const secret = process.env.KELEDON_LAUNCH_SECRET || process.env.KELDEON_LAUNCH_SECRET;
+    if (secret) {
+      const payload = JSON.stringify([keledonId, userId, timestamp, code, cloudUrl]);
+      const expected = crypto.createHmac('sha256', secret).update(payload).digest('hex').substring(0, 16);
+      if (signature.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
+        runtimeStatus.diagnostics.lastDeepLinkValidation = 'invalid_signature';
+        return;
+      }
       runtimeStatus.diagnostics.lastDeepLinkValidation = 'ok';
-      log.info('[DeepLink] Signature verified for keledon:', keledonId);
     } else {
-      runtimeStatus.diagnostics.lastDeepLinkValidation = 'invalid_signature';
-      log.warn('[DeepLink] Signature mismatch; continuing to server-side pairing validation because packaged clients may not have KELEDON_LAUNCH_SECRET');
+      // Packaged clients prove the one-time code to their pinned Cloud; no local shared secret is claimed.
+      runtimeStatus.diagnostics.lastDeepLinkValidation = 'server_validation_required';
     }
 
     log.info('[DeepLink] Launch request for keledon:', keledonId);

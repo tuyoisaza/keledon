@@ -42,7 +42,7 @@ export const EntityForm: React.FC<EntityFormProps> = ({
     isSuperAdmin
 }) => {
     return (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-background/60 flex items-center justify-center z-50 p-4">
             <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
                 <h3 className="text-lg font-semibold text-foreground mb-4">
                     {editingEntity ? 'Edit' : 'Add'} {
@@ -219,7 +219,7 @@ export const EntityForm: React.FC<EntityFormProps> = ({
                                     disabled={!selectedCompanyId}
                                 >
                                     <option value="">Select Brand...</option>
-                                    {brands.filter(b => b.company_id === selectedCompanyId).map(b => (
+                                    {brands.filter(b => b.companyId === selectedCompanyId).map(b => (
                                         <option key={b.id} value={b.id}>{b.name}</option>
                                     ))}
                                 </select>
@@ -287,7 +287,7 @@ export const EntityForm: React.FC<EntityFormProps> = ({
                                         disabled={!selectedCompanyId}
                                     >
                                         <option value="">Select Brand...</option>
-                                        {brands.filter(b => b.company_id === selectedCompanyId).map(b => (
+                                        {brands.filter(b => b.companyId === selectedCompanyId).map(b => (
                                             <option key={b.id} value={b.id}>{b.name}</option>
                                         ))}
                                     </select>
@@ -305,8 +305,8 @@ export const EntityForm: React.FC<EntityFormProps> = ({
                                     <option value="">Select Team...</option>
                                     {teams
                                         .filter(t => {
-                                            const teamBrand = brands.find(b => b.id === t.brand_id);
-                                            return teamBrand && teamBrand.company_id === selectedCompanyId;
+                                            const teamBrand = brands.find(b => b.id === t.brandId);
+                                            return teamBrand && teamBrand.companyId === selectedCompanyId;
                                         })
                                         .map(t => (
                                             <option key={t.id} value={t.id}>{t.name}</option>

@@ -1,0 +1,35 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto 4 fronts; vendor-independent code conformance",
+  "target_branch": "main",
+  "expected_version": "5.1.0",
+  "version_file": "services/web/package.json",
+  "merged_commit_sha": null,
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/42",
+  "checks": {
+    "lint": {
+      "status": "PARTIAL",
+      "evidence": "landing full lint currently reports 99 errors and 8 warnings across legacy source; selected changed flows have 0 errors and 1 hook-dependency warning. services/web full lint: 0 errors, 135 warnings; changed API and Cloud findings remain as previously recorded."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "landing typecheck passes after source repairs; services/web typecheck and API/Cloud production TypeScript builds pass."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "API and Cloud C13/TypeScript builds pass; services/web and landing production Vite builds pass. Landing build retains a >500kB main-chunk warning."
+    },
+    "focused_tests": {
+      "status": "PASS",
+      "evidence": "Historical API health/role/correlation suites 12 tests; web diagnostics/debug-mode/version actions 18/18; Cloud authorization/OAuth/resource regression 8/8; SEO config regression 1/1."
+    },
+    "uat": {
+      "status": "PARTIAL",
+      "evidence": "Historical synthetic production-SPA UAT passed on the earlier candidate. Current landing device/launch pairing UI edits have not been browser-tested; actual backend role×tenant CRUD and persistence remain blocked. Tenant live voice/CRM checks are excluded by owner clarification."
+    },
+    "delivery": {
+      "status": "PARTIAL",
+      "evidence": "Commit 4d98fce is pushed to chore/phdk-install-v2.50.8 and the PR #42 body is refreshed. PR remains OPEN/DRAFT; normal review/merge and main SHA/version readback remain outstanding. No production or database operation occurred."
+    }
+  }
+}

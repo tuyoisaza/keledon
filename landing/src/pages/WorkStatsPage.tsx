@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Phone, Clock, TrendingUp, Users, Target, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSessions } from '@/lib/crud-api';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
 
 interface AgentStats {
     name: string;

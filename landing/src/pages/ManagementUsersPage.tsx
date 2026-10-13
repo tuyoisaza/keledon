@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { User, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
 import { getUsers, getCompanies, getBrands, getTeams, createUser, updateUser, deleteUser, type User as UserType, type Company, type Brand, type Team } from '@/lib/crud-api';
 
 export default function ManagementUsersPage() {
     const { user: currentUser } = useAuth();
     const isSuperAdmin = currentUser?.role === 'superadmin';
     
-    const [users, setUsers] = useState<any[]>([]);
+    const [users, setUsers] = useState<UserType[]>([]);
     const [companies, setCompanies] = useState<Company[]>([]);
     const [brands, setBrands] = useState<Brand[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
@@ -28,18 +28,14 @@ export default function ManagementUsersPage() {
         teamId: ''
     });
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             const [usersData, companiesData, brandsData, teamsData] = await Promise.all([
                 getUsers(),
                 getCompanies(),
-                getBrands(),
-                getTeams()
+                getBrands(isSuperAdmin ? undefined : currentUser?.companyId),
+                getTeams(isSuperAdmin ? undefined : currentUser?.companyId)
             ]);
             setUsers(usersData);
             setCompanies(companiesData);
@@ -51,7 +47,11 @@ export default function ManagementUsersPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [currentUser?.companyId, isSuperAdmin]);
+
+    useEffect(() => {
+        void fetchData();
+    }, [fetchData]);
 
     const resetForm = () => {
         setFormData({ name: '', email: '', role: 'user', companyId: '', brandId: '', teamId: '' });
@@ -63,7 +63,7 @@ export default function ManagementUsersPage() {
         setShowForm(true);
     };
 
-    const openEditForm = (user: any) => {
+    const openEditForm = (user: UserType) => {
         setFormData({
             name: user.name || '',
             email: user.email || '',
@@ -80,22 +80,22 @@ export default function ManagementUsersPage() {
         e.preventDefault();
         setSaving(true);
         try {
-            // For superadmin, allow empty company/brand/team
-            // For others, filter to only send defined values
-            const submitData: any = {
-                name: formData.name,
-                email: formData.email,
-                role: formData.role
-            };
+            const submitData: {
+                name: string;
+                email: string;
+                role?: string;
+                companyId?: string;
+                teamId?: string;
+            } = { name: formData.name, email: formData.email };
             
             if (isSuperAdmin) {
+                submitData.role = formData.role;
                 if (formData.companyId) submitData.companyId = formData.companyId;
-                if (formData.brandId) submitData.brandId = formData.brandId;
                 if (formData.teamId) submitData.teamId = formData.teamId;
             } else {
-                submitData.companyId = formData.companyId;
-                submitData.brandId = formData.brandId;
-                submitData.teamId = formData.teamId;
+                // The API derives the company from the persisted actor. Managers
+                // may scope a new user within that company but cannot assign roles.
+                if (formData.teamId) submitData.teamId = formData.teamId;
             }
             
             if (editingUser) {
@@ -272,28 +272,33 @@ export default function ManagementUsersPage() {
                                 <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50" />
                             </div>
                             <div>
-                                <label className="block text-sm text-muted-foreground mb-1">Company {!isSuperAdmin && '*'}</label>
-                                <select 
-                                    value={formData.companyId} 
-                                    onChange={(e) => setFormData({ ...formData, companyId: e.target.value, brandId: '', teamId: '' })} 
-                                    required={!isSuperAdmin}
-                                    className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                                >
-                                    <option value="">{isSuperAdmin ? 'All Companies' : 'Select Company...'}</option>
-                                    {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                </select>
+                                <label className="block text-sm text-muted-foreground mb-1">Company</label>
+                                {isSuperAdmin ? (
+                                    <select
+                                        value={formData.companyId}
+                                        onChange={(e) => setFormData({ ...formData, companyId: e.target.value, brandId: '', teamId: '' })}
+                                        className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                    >
+                                        <option value="">Unassigned</option>
+                                        {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                    </select>
+                                ) : (
+                                    <p className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-muted-foreground">
+                                        {companies.find(company => company.id === currentUser?.companyId)?.name || 'Your company'}
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <label className="block text-sm text-muted-foreground mb-1">Brand {!isSuperAdmin && '*'}</label>
                                 <select 
                                     value={formData.brandId} 
                                     onChange={(e) => setFormData({ ...formData, brandId: e.target.value, teamId: '' })} 
-                                    disabled={!isSuperAdmin && !formData.companyId}
+                                    disabled={!isSuperAdmin && !currentUser?.companyId}
                                     required={!isSuperAdmin}
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
                                 >
                                     <option value="">{isSuperAdmin ? 'All Brands' : 'Select Brand...'}</option>
-                                    {brands.filter(b => !formData.companyId || b.companyId === formData.companyId).map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                                    {brands.filter(b => b.companyId === (isSuperAdmin ? formData.companyId : currentUser?.companyId)).map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                                 </select>
                             </div>
                             <div>
@@ -305,10 +310,10 @@ export default function ManagementUsersPage() {
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
                                 >
                                     <option value="">{isSuperAdmin ? 'All Teams' : 'Select Team...'}</option>
-                                    {teams.filter(t => !formData.brandId || t.brandId === formData.brandId).map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                                    {teams.filter(t => (!formData.brandId || t.brandId === formData.brandId) && (isSuperAdmin ? t.brand?.companyId === formData.companyId : t.brand?.companyId === currentUser?.companyId)).map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                                 </select>
                             </div>
-                            <div>
+                            {isSuperAdmin && <div>
                                 <label className="block text-sm text-muted-foreground mb-1">Role</label>
                                 <select value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50">
                                     <option value="user">User</option>
@@ -318,7 +323,7 @@ export default function ManagementUsersPage() {
                                     <option value="admin">Admin</option>
                                     <option value="superadmin">Super Admin</option>
                                 </select>
-                            </div>
+                            </div>}
                             <div className="flex justify-end gap-3 mt-6">
                                 <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors">Cancel</button>
                                 <button type="submit" disabled={saving} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium disabled:opacity-50 flex items-center gap-2">

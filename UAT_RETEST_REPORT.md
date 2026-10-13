@@ -1,0 +1,2 @@
+# UAT retest
+RecordDetails initial Tab escaped its intended dialog controls. Added explicit first/last wrapping; exact local role journeys now PASS. ManagementModal has equivalent containment and controlled Escape/trigger restoration. A later provider fixture check dereferenced an input during legitimate loading; fixed harness optional access and reran full journey PASS. Expanded retest adds create-form associated label and theme selection/persistence. No failed run is reclassified as product success. See UAT_REMEDIATION.md for historical record.

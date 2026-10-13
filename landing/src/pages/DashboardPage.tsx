@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Phone, CheckCircle, AlertTriangle, Clock, Building2, LayoutGrid, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getSessions, getOrphanedSessionCount, deleteOrphanedSessions } from '@/lib/crud-api';
-import { useAuth } from '@/context/AuthContext';
+import { getSessions, getOrphanedSessionCount, deleteOrphanedSessions, type Session } from '@/lib/crud-api';
+import { useAuth } from '@/context/useAuth';
 import { toast } from 'sonner';
 
 const statusStyles: Record<string, string> = {
@@ -11,9 +11,37 @@ const statusStyles: Record<string, string> = {
     escalated: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
 };
 
+interface AggregatedSessionStats {
+    name: string;
+    brand?: string;
+    team?: string;
+    active: number;
+    completed: number;
+    escalated: number;
+    totalDuration: number;
+    count: number;
+}
+
+function readSessionMetadata(value?: string): Record<string, unknown> {
+    if (!value) return {};
+    try {
+        const parsed: unknown = JSON.parse(value);
+        return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
+            ? parsed as Record<string, unknown>
+            : {};
+    } catch {
+        return {};
+    }
+}
+
+function numericMetadataValue(value: unknown): number {
+    const number = typeof value === 'number' ? value : Number(value);
+    return Number.isFinite(number) ? number : 0;
+}
+
 export default function DashboardPage() {
     const { user } = useAuth();
-    const [sessions, setSessions] = useState<any[]>([]);
+    const [sessions, setSessions] = useState<Session[]>([]);
     const [loading, setLoading] = useState(true);
     const [orphanedCount, setOrphanedCount] = useState(0);
     const [cleaning, setCleaning] = useState(false);
@@ -22,82 +50,71 @@ export default function DashboardPage() {
         { label: 'Completed Today', value: 0, icon: CheckCircle, color: 'text-blue-500' },
         { label: 'Escalated', value: 0, icon: AlertTriangle, color: 'text-yellow-500' },
     ]);
-    const [aggregatedData, setAggregatedData] = useState<any[]>([]);
+    const [aggregatedData, setAggregatedData] = useState<AggregatedSessionStats[]>([]);
 
-    useEffect(() => {
-        if (user) {
-            fetchData();
-            checkOrphanedSessions();
-            const interval = setInterval(fetchData, 10000);
-            return () => clearInterval(interval);
-        }
-    }, [user]);
-
-    async function checkOrphanedSessions() {
+    const checkOrphanedSessions = useCallback(async () => {
         try {
             const count = await getOrphanedSessionCount();
             setOrphanedCount(count);
         } catch (e) {
             console.error('Failed to check orphaned sessions:', e);
         }
-    }
+    }, []);
+
+    const fetchData = useCallback(async () => {
+        try {
+            if (!user) return;
+
+            let companyId: string | undefined;
+            if (user.role === 'admin' || user.role === 'coordinator') companyId = user.companyId;
+
+            const fetchedSessions = await getSessions(companyId, 100);
+            setSessions(fetchedSessions);
+            const active = fetchedSessions.filter(s => s.status === 'active').length;
+            const completed = fetchedSessions.filter(s => s.status === 'completed').length;
+            const escalated = fetchedSessions.filter(s => s.status === 'escalated').length;
+            setStats([
+                { label: 'Active Now', value: active, icon: Phone, color: 'text-green-500' },
+                { label: 'Completed Today', value: completed, icon: CheckCircle, color: 'text-blue-500' },
+                { label: 'Escalated', value: escalated, icon: AlertTriangle, color: 'text-yellow-500' },
+            ]);
+            calculateAggregation(fetchedSessions, user.role);
+        } catch (err) {
+            console.error('Error fetching dashboard data:', err);
+        } finally {
+            setLoading(false);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (user) {
+            void fetchData();
+            void checkOrphanedSessions();
+            const interval = setInterval(fetchData, 10000);
+            return () => clearInterval(interval);
+        }
+    }, [user, fetchData, checkOrphanedSessions]);
 
     async function handleCleanOrphanedSessions() {
         if (orphanedCount === 0) return;
         if (!confirm(`Delete ${orphanedCount} orphaned session(s)?`)) return;
-        
+
         setCleaning(true);
         try {
             const result = await deleteOrphanedSessions();
             toast.success(`Deleted ${result.deleted} orphaned session(s)`);
             setOrphanedCount(0);
             fetchData();
-        } catch (e) {
+        } catch {
             toast.error('Failed to delete orphaned sessions');
         } finally {
             setCleaning(false);
         }
     }
 
-    async function fetchData() {
-        try {
-            if (!user) return;
-
-            let companyId: string | undefined;
-            
-            if (user.role === 'superadmin') {
-                companyId = undefined;
-            } else if (user.role === 'admin' || user.role === 'coordinator') {
-                companyId = user.companyId;
-            } else if (user.role === 'user' || user.role === 'agent') {
-                companyId = undefined;
-            }
-
-            const fetchedSessions = await getSessions(companyId, 100);
-            setSessions(fetchedSessions);
-
-            const active = fetchedSessions.filter(s => s.status === 'active').length;
-            const completed = fetchedSessions.filter(s => s.status === 'completed').length;
-            const escalated = fetchedSessions.filter(s => s.status === 'escalated').length;
-
-            setStats([
-                { label: 'Active Now', value: active, icon: Phone, color: 'text-green-500' },
-                { label: 'Completed Today', value: completed, icon: CheckCircle, color: 'text-blue-500' },
-                { label: 'Escalated', value: escalated, icon: AlertTriangle, color: 'text-yellow-500' },
-            ]);
-
-            calculateAggregation(fetchedSessions, user.role);
-
-        } catch (err) {
-            console.error('Error fetching dashboard data:', err);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    function calculateAggregation(data: any[], role: string) {
+    function calculateAggregation(data: Session[], role: string) {
         if (role === 'superadmin') {
-            const groups: Record<string, any> = {};
+            const groups: Record<string, AggregatedSessionStats> = {};
 
             data.forEach(s => {
                 const companyName = s.team?.brand?.company?.name || 'Unknown Client';
@@ -115,14 +132,14 @@ export default function DashboardPage() {
                 if (s.status === 'active') groups[companyName].active++;
                 if (s.status === 'completed') groups[companyName].completed++;
                 if (s.status === 'escalated') groups[companyName].escalated++;
-                const metadata = s.metadata ? JSON.parse(s.metadata) : {};
-                groups[companyName].totalDuration += (metadata.duration || 0);
+                const metadata = readSessionMetadata(s.metadata);
+                groups[companyName].totalDuration += numericMetadataValue(metadata.duration);
             });
 
             setAggregatedData(Object.values(groups));
 
         } else if (role === 'admin' || role === 'coordinator') {
-            const groups: Record<string, any> = {};
+            const groups: Record<string, AggregatedSessionStats> = {};
 
             data.forEach(s => {
                 const brandName = s.team?.brand?.name || 'Unknown Brand';
@@ -145,8 +162,8 @@ export default function DashboardPage() {
                 if (s.status === 'active') groups[key].active++;
                 if (s.status === 'completed') groups[key].completed++;
                 if (s.status === 'escalated') groups[key].escalated++;
-                const metadata = s.metadata ? JSON.parse(s.metadata) : {};
-                groups[key].totalDuration += (metadata.duration || 0);
+                const metadata = readSessionMetadata(s.metadata);
+                groups[key].totalDuration += numericMetadataValue(metadata.duration);
             });
 
             setAggregatedData(Object.values(groups));

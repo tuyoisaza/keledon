@@ -1,69 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
-export interface UIAction {
-  id: string;
-  action_type:
-    | 'click'
-    | 'type'
-    | 'select'
-    | 'hover'
-    | 'scroll'
-    | 'navigate'
-    | 'screenshot'
-    | 'wait'
-    | 'extract_text'
-    | 'submit_form';
-  selector: string;
-  value?: string;
-  options?: Record<string, unknown>;
-  timeout?: number;
-  wait_condition?: string;
-}
-
-export interface UIActionResult {
-  action_id: string;
-  success: boolean;
-  error?: string;
-  element?: string;
-  value?: string;
-  screenshot?: string;
-  text?: string;
-  metadata?: Record<string, unknown>;
-  execution_time?: number;
-  timestamp: string;
-}
-
-export interface UIStep {
-  step_id: string;
-  action: UIAction;
-  description: string;
-  result?: UIActionResult;
-  status: 'pending' | 'executing' | 'completed' | 'failed';
-  started_at?: string;
-  completed_at?: string;
-}
-
-interface UIExecutionSummary {
-  action_id: string;
-  results: UIActionResult[];
-  summary: {
-    total_steps: number;
-    successful_steps: number;
-    failed_steps: number;
-    execution_time: number;
-  };
-  timestamp: string;
-}
-
-interface UIExecutionHistoryEntry {
-  sessionId: string;
-  result: UIExecutionSummary;
-  timestamp: string;
-}
+import {
+  UIAction,
+  UIActionResult,
+  UIStep,
+  UIExecutionSummary,
+  UIExecutionHistoryEntry,
+} from './ui-automation.types';
+export type { UIAction, UIActionResult, UIStep } from './ui-automation.types';
+import { UIActionMethods } from './ui-action-methods';
 
 @Injectable()
-export class UIAutomationService {
+export class UIAutomationService extends UIActionMethods {
   private executionHistory = new Map<string, UIExecutionHistoryEntry[]>();
   private currentExecution: {
     sessionId: string;
@@ -72,6 +21,7 @@ export class UIAutomationService {
   } | null = null;
 
   constructor() {
+    super();
     console.log('UIAutomationService: Initialized');
   }
 
@@ -84,6 +34,7 @@ export class UIAutomationService {
   ): Promise<UIExecutionSummary> {
     const results: UIActionResult[] = [];
     const executionId = uuidv4();
+    const executionStartedAt = Date.now();
 
     this.currentExecution = {
       sessionId,
@@ -95,10 +46,10 @@ export class UIAutomationService {
       `[UIAutomation] Executing ${steps.length} UI steps for session ${sessionId}`,
     );
 
-    // Initialize page context
-    await this.initializePage();
-
     try {
+      // Initialize page context
+      await this.initializePage();
+
       // Execute steps sequentially
       for (let i = 0; i < steps.length; i++) {
         this.currentExecution.stepIndex = i;
@@ -136,13 +87,13 @@ export class UIAutomationService {
           total_steps: steps.length,
           successful_steps: results.filter((r) => r.success).length,
           failed_steps: results.filter((r) => !r.success).length,
-          execution_time: Date.now() - new Date().getTime(),
+          execution_time: Date.now() - executionStartedAt,
         },
         timestamp: new Date().toISOString(),
       };
 
       // Persist UI execution results
-      await this.persistUIExecution(sessionId, finalResult);
+      this.persistUIExecution(sessionId, finalResult);
 
       console.log(
         `[UIAutomation] UI execution completed: ${finalResult.summary.successful_steps}/${finalResult.summary.total_steps} steps successful`,
@@ -168,10 +119,12 @@ export class UIAutomationService {
           total_steps: steps.length,
           successful_steps: 0,
           failed_steps: steps.length,
-          execution_time: 0,
+          execution_time: Date.now() - executionStartedAt,
         },
         timestamp: new Date().toISOString(),
       };
+    } finally {
+      this.currentExecution = null;
     }
   }
 
@@ -180,22 +133,7 @@ export class UIAutomationService {
    */
   private async initializePage(): Promise<void> {
     try {
-      // Wait for page to be ready
-      if (
-        typeof document !== 'undefined' &&
-        document.readyState !== 'complete'
-      ) {
-        await new Promise<void>((resolve) => {
-          const check = () => {
-            if (document.readyState === 'complete') {
-              resolve();
-            } else {
-              setTimeout(check, 100);
-            }
-          };
-          check();
-        });
-      }
+      await this.waitForPageLoad();
     } catch (error) {
       console.error('Failed to initialize page context:', error);
     }
@@ -238,7 +176,7 @@ export class UIAutomationService {
         case 'submit_form':
           return await this.executeSubmitForm(step);
         default:
-          throw new Error(`Unsupported action type: ${step.action_type}`);
+          throw new Error('Unsupported UI action type');
       }
     } catch (error) {
       const executionTime = Date.now() - startTime;
@@ -257,629 +195,38 @@ export class UIAutomationService {
   /**
    * Execute click action
    */
-  private async executeClick(step: UIAction): Promise<UIActionResult> {
-    try {
-      const element = await this.waitForElement(step.selector, step.timeout);
-
-      if (!element) {
-        throw new Error(`Element not found: ${step.selector}`);
-      }
-
-      // Check if element is visible and clickable
-      if (!this.isElementVisible(element)) {
-        throw new Error(`Element not visible: ${step.selector}`);
-      }
-
-      // Scroll element into view if needed
-      await this.scrollIntoView(element);
-
-      // Perform click
-      const clickable = element as HTMLElement;
-      clickable.click?.();
-
-      // Wait for any navigation or page changes
-      await this.waitForPageStability(1000);
-
-      return {
-        action_id: step.id || uuidv4(),
-        success: true,
-        element: step.selector,
-        timestamp: new Date().toISOString(),
-      };
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      return {
-        action_id: step.id || uuidv4(),
-        success: false,
-        error: errorMsg,
-        timestamp: new Date().toISOString(),
-      };
-    }
-  }
-
-  /**
-   * Execute type action
-   */
-  private async executeType(step: UIAction): Promise<UIActionResult> {
-    try {
-      const element = await this.waitForElement(step.selector, step.timeout);
-
-      if (!element) {
-        throw new Error(`Element not found: ${step.selector}`);
-      }
-
-      const focusable = element as HTMLElement;
-      focusable.focus?.();
-
-      const text = step.value || '';
-
-      if (element instanceof HTMLInputElement) {
-        element.value = text;
-        element.dispatchEvent(new Event('input', { bubbles: true }));
-      } else {
-        // For contenteditable elements
-        element.textContent = text;
-        element.dispatchEvent(new Event('input', { bubbles: true }));
-      }
-
-      await this.waitForPageStability(500);
-
-      return {
-        action_id: step.id || uuidv4(),
-        success: true,
-        element: step.selector,
-        value: text,
-        timestamp: new Date().toISOString(),
-      };
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      return {
-        action_id: step.id || uuidv4(),
-        success: false,
-        error: errorMsg,
-        timestamp: new Date().toISOString(),
-      };
-    }
-  }
-
-  /**
-   * Execute select action
-   */
-  private async executeSelect(step: UIAction): Promise<UIActionResult> {
-    try {
-      const element = await this.waitForElement(step.selector, step.timeout);
-
-      if (!element) {
-        throw new Error(`Element not found: ${step.selector}`);
-      }
-
-      const optionEl = element as HTMLOptionElement;
-      optionEl.selected = true;
-
-      return {
-        action_id: step.id || uuidv4(),
-        success: true,
-        element: step.selector,
-        timestamp: new Date().toISOString(),
-      };
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      return {
-        action_id: step.id || uuidv4(),
-        success: false,
-        error: errorMsg,
-        timestamp: new Date().toISOString(),
-      };
-    }
-  }
-
-  /**
-   * Execute hover action
-   */
-  private async executeHover(step: UIAction): Promise<UIActionResult> {
-    try {
-      const element = await this.waitForElement(step.selector, step.timeout);
-
-      if (!element) {
-        throw new Error(`Element not found: ${step.selector}`);
-      }
-
-      // Scroll element into view
-      await this.scrollIntoView(element);
-
-      // Simulate hover
-      element.dispatchEvent(new Event('mouseover', { bubbles: true }));
-
-      // Wait for hover effects
-      await this.waitForPageStability(500);
-
-      return {
-        action_id: step.id || uuidv4(),
-        success: true,
-        element: step.selector,
-        timestamp: new Date().toISOString(),
-      };
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      return {
-        action_id: step.id || uuidv4(),
-        success: false,
-        error: errorMsg,
-        timestamp: new Date().toISOString(),
-      };
-    }
-  }
-
-  /**
-   * Execute scroll action
-   */
-  private async executeScroll(step: UIAction): Promise<UIActionResult> {
-    try {
-      const element = await this.waitForElement(step.selector, step.timeout);
-
-      if (!element) {
-        throw new Error(`Element not found: ${step.selector}`);
-      }
-
-      const scrollOptions = step.options || {};
-      const direction = (scrollOptions.direction as string) || 'down';
-      const amount = (scrollOptions.amount as number) || 500;
-
-      const scrollable = element as HTMLElement;
-
-      // Execute scroll
-      switch (direction) {
-        case 'up':
-          scrollable.scrollTop -= amount;
-          break;
-        case 'down':
-          scrollable.scrollTop += amount;
-          break;
-        case 'left':
-          scrollable.scrollLeft -= amount;
-          break;
-        case 'right':
-          scrollable.scrollLeft += amount;
-          break;
-        case 'top':
-          scrollable.scrollTop = 0;
-          break;
-        case 'bottom':
-          scrollable.scrollTop =
-            scrollable.scrollHeight - scrollable.clientHeight;
-          break;
-      }
-
-      await this.waitForPageStability(1000);
-
-      return {
-        action_id: step.id || uuidv4(),
-        success: true,
-        element: step.selector,
-        timestamp: new Date().toISOString(),
-      };
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      return {
-        action_id: step.id || uuidv4(),
-        success: false,
-        error: errorMsg,
-        timestamp: new Date().toISOString(),
-      };
-    }
-  }
-
-  /**
-   * Execute navigation action
-   */
-  private async executeNavigate(step: UIAction): Promise<UIActionResult> {
-    try {
-      const url = step.value || (step.options?.url as string);
-
-      if (!url) {
-        throw new Error('No URL provided for navigation');
-      }
-
-      // Navigate to new URL
-      if (typeof window !== 'undefined') {
-        window.location.href = url;
-      }
-
-      // Wait for page to load
-      await this.waitForPageLoad(step.timeout || 5000);
-
-      return {
-        action_id: step.id || uuidv4(),
-        success: true,
-        value: url,
-        timestamp: new Date().toISOString(),
-      };
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      return {
-        action_id: step.id || uuidv4(),
-        success: false,
-        error: errorMsg,
-        timestamp: new Date().toISOString(),
-      };
-    }
-  }
-
-  /**
-   * Execute screenshot action
-   */
-  private async executeScreenshot(step: UIAction): Promise<UIActionResult> {
-    try {
-      // Wait for page to be ready
-      await this.waitForPageStability(1000);
-
-      // Capture screenshot using canvas
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-
-      if (!ctx) {
-        throw new Error('Failed to get canvas context');
-      }
-
-      // Get device pixel ratio for high-quality screenshots
-      const dpr = window.devicePixelRatio || 1;
-
-      // Set canvas size
-      const width = window.innerWidth * dpr;
-      const height = window.innerHeight * dpr;
-
-      canvas.width = width;
-      canvas.height = height;
-
-      // Draw the page - note: drawWindow is Firefox-specific
-      // This will only work in Firefox environments
-      if ('drawWindow' in ctx) {
-        (
-          ctx as CanvasRenderingContext2D & {
-            drawWindow: (
-              win: Window,
-              x: number,
-              y: number,
-              w: number,
-              h: number,
-            ) => void;
-          }
-        ).drawWindow(window, 0, 0, width, height);
-      }
-
-      // Convert to data URL
-      const dataUrl = canvas.toDataURL('image/png');
-
-      return {
-        action_id: step.id || uuidv4(),
-        success: true,
-        screenshot: dataUrl,
-        timestamp: new Date().toISOString(),
-      };
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      return {
-        action_id: step.id || uuidv4(),
-        success: false,
-        error: errorMsg,
-        timestamp: new Date().toISOString(),
-      };
-    }
-  }
-
-  /**
-   * Execute wait action
-   */
-  private async executeWait(step: UIAction): Promise<UIActionResult> {
-    try {
-      const condition = step.wait_condition;
-      const timeout = step.timeout || 5000;
-
-      if (!condition) {
-        throw new Error('No wait condition specified');
-      }
-
-      const startTime = Date.now();
-
-      // Wait for condition to be met
-      await this.waitForCondition(condition, timeout);
-
-      const executionTime = Date.now() - startTime;
-
-      return {
-        action_id: step.id || uuidv4(),
-        success: true,
-        execution_time: executionTime,
-        timestamp: new Date().toISOString(),
-      };
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      return {
-        action_id: step.id || uuidv4(),
-        success: false,
-        error: errorMsg,
-        timestamp: new Date().toISOString(),
-      };
-    }
-  }
-
-  /**
-   * Execute extract text action
-   */
-  private async executeExtractText(step: UIAction): Promise<UIActionResult> {
-    try {
-      const element = await this.waitForElement(step.selector, step.timeout);
-
-      if (!element) {
-        throw new Error(`Element not found: ${step.selector}`);
-      }
-
-      const text =
-        element.textContent || (element as HTMLInputElement).value || '';
-
-      if (!text) {
-        throw new Error(`No text content found in element: ${step.selector}`);
-      }
-
-      return {
-        action_id: step.id || uuidv4(),
-        success: true,
-        text,
-        timestamp: new Date().toISOString(),
-      };
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      return {
-        action_id: step.id || uuidv4(),
-        success: false,
-        error: errorMsg,
-        timestamp: new Date().toISOString(),
-      };
-    }
-  }
-
-  /**
-   * Execute submit form action
-   */
-  private async executeSubmitForm(step: UIAction): Promise<UIActionResult> {
-    try {
-      const form = await this.findParentForm(step.selector);
-      const submitButton = await this.findSubmitButton(form);
-
-      if (!form || !submitButton) {
-        throw new Error('Form or submit button not found');
-      }
-
-      // Fill form fields if provided
-      if (step.value) {
-        await this.fillFormField(form, step.selector, step.value);
-      }
-
-      // Submit form
-      submitButton.click();
-
-      // Wait for form submission
-      await this.waitForPageStability(2000);
-
-      return {
-        action_id: step.id || uuidv4(),
-        success: true,
-        element: step.selector,
-        timestamp: new Date().toISOString(),
-      };
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      return {
-        action_id: step.id || uuidv4(),
-        success: false,
-        error: errorMsg,
-        timestamp: new Date().toISOString(),
-      };
-    }
-  }
-
-  /**
-   * Helper methods for element interaction
-   */
-  private async waitForElement(
-    selector: string,
-    timeout: number = 5000,
-  ): Promise<Element | null> {
-    const startTime = Date.now();
-
-    return new Promise<Element | null>((resolve, reject) => {
-      const checkInterval = setInterval(() => {
-        const element = document.querySelector(selector);
-        if (element) {
-          clearInterval(checkInterval);
-          clearTimeout(timeoutId);
-          resolve(element);
-        } else if (Date.now() - startTime >= timeout) {
-          clearInterval(checkInterval);
-          clearTimeout(timeoutId);
-          reject(
-            new Error(`Element not found within ${timeout}ms: ${selector}`),
-          );
-        }
-      }, 100);
-
-      const timeoutId = setTimeout(() => {
-        clearInterval(checkInterval);
-        reject(new Error(`Element not found within ${timeout}ms: ${selector}`));
-      }, timeout);
-
-      // Check immediately
-      const element = document.querySelector(selector);
-      if (element) {
-        clearInterval(checkInterval);
-        clearTimeout(timeoutId);
-        resolve(element);
-      }
-    });
-  }
-
-  private async scrollIntoView(element: Element): Promise<void> {
-    element.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-      inline: 'nearest',
-    });
-    await this.waitForPageStability(1000);
-  }
-
-  private async waitForPageStability(timeout: number = 1000): Promise<void> {
-    await new Promise((resolve) => setTimeout(resolve, timeout));
-  }
-
-  private async waitForPageLoad(timeout: number = 5000): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      if (document.readyState === 'complete') {
-        resolve();
-        return;
-      }
-      const checkReady = () => {
-        if (document.readyState === 'complete') {
-          document.removeEventListener('readystatechange', checkReady);
-          resolve();
-        }
-      };
-      document.addEventListener('readystatechange', checkReady);
-      setTimeout(() => {
-        document.removeEventListener('readystatechange', checkReady);
-        reject(new Error('Page load timeout'));
-      }, timeout);
-    });
-  }
-
-  private async waitForCondition(
-    condition: string,
-    timeout: number,
-  ): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      const startTime = Date.now();
-
-      const checkInterval = setInterval(() => {
-        if (this.evaluateCondition(condition)) {
-          clearInterval(checkInterval);
-          clearTimeout(timeoutId);
-          resolve();
-        } else if (Date.now() - startTime >= timeout) {
-          clearInterval(checkInterval);
-          clearTimeout(timeoutId);
-          reject(
-            new Error(`Condition not met within ${timeout}ms: ${condition}`),
-          );
-        }
-      }, 100);
-
-      const timeoutId = setTimeout(() => {
-        clearInterval(checkInterval);
-        reject(
-          new Error(`Condition not met within ${timeout}ms: ${condition}`),
-        );
-      }, timeout);
-
-      // Check immediately
-      if (this.evaluateCondition(condition)) {
-        clearInterval(checkInterval);
-        clearTimeout(timeoutId);
-        resolve();
-      }
-    });
-  }
-
-  private evaluateCondition(condition: string): boolean {
-    try {
-      // Simple condition evaluation (can be extended)
-
-      return eval(condition);
-    } catch (error) {
-      console.error('Error evaluating condition:', error);
-      return false;
-    }
-  }
-
-  private async findParentForm(
-    selector: string,
-  ): Promise<HTMLFormElement | null> {
-    let element = document.querySelector(selector);
-
-    while (element && element.tagName !== 'FORM') {
-      element = element.parentElement;
-    }
-
-    return element as HTMLFormElement | null;
-  }
-
-  private async findSubmitButton(
-    form: HTMLFormElement,
-  ): Promise<HTMLButtonElement | null> {
-    const buttons = form.querySelectorAll(
-      'button[type="submit"], input[type="submit"]',
-    );
-
-    return buttons.length > 0 ? (buttons[0] as HTMLButtonElement) : null;
-  }
-
-  private async fillFormField(
-    form: HTMLFormElement,
-    fieldName: string,
-    value: string,
-  ): Promise<void> {
-    const input = form.querySelector(
-      `input[name="${fieldName}"], textarea[name="${fieldName}"], select[name="${fieldName}"]`,
-    );
-
-    if (input) {
-      input.focus?.();
-      input.value = value;
-
-      // Trigger change events
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      input.dispatchEvent(new Event('change', { bubbles: true }));
-    }
-  }
-
-  private isElementVisible(element: Element): boolean {
-    const rect = element.getBoundingClientRect();
-    return (
-      rect.top >= 0 &&
-      rect.left >= 0 &&
-      rect.bottom <= window.innerHeight &&
-      rect.right <= window.innerWidth
-    );
-  }
-
-  /**
-   * Get description of action for logging
-   */
   private getActionDescription(action: UIAction): string {
-    const descriptions: Record<string, string> = {
+    const direction =
+      typeof action.options?.direction === 'string'
+        ? action.options.direction
+        : 'down';
+    const amount =
+      typeof action.options?.amount === 'number' ? action.options.amount : 500;
+    const targetUrl =
+      typeof action.options?.url === 'string' ? action.options.url : '';
+    const descriptions: Record<UIAction['action_type'], string> = {
       click: `Click element: ${action.selector}`,
       type: `Type text: ${action.value || ''} in ${action.selector}`,
       select: `Select element: ${action.selector}`,
       hover: `Hover over element: ${action.selector}`,
-      scroll: `Scroll ${action.options?.direction || 'down'} by ${action.options?.amount || 500}px`,
-      navigate: `Navigate to: ${action.value || action.options?.url}`,
+      scroll: `Scroll ${direction} by ${amount}px`,
+      navigate: `Navigate to: ${action.value || targetUrl}`,
       screenshot: `Take screenshot of: ${action.selector}`,
       wait: `Wait for condition: ${action.wait_condition}`,
       extract_text: `Extract text from: ${action.selector}`,
       submit_form: `Submit form: ${action.selector}`,
     };
 
-    return (
-      descriptions[action.action_type] ||
-      `Unknown action: ${action.action_type}`
-    );
+    return descriptions[action.action_type];
   }
 
   /**
    * Persist UI execution results
    */
-  private async persistUIExecution(
+  private persistUIExecution(
     sessionId: string,
     result: UIExecutionSummary,
-  ): Promise<void> {
+  ): void {
     try {
       // Store execution history (would go to database in production)
       const entry: UIExecutionHistoryEntry = {

@@ -1,4 +1,4 @@
-import { ProviderConfig, TenantConfig, VoiceProfile } from '@/types';
+import type { ProviderConfig, TenantConfig, VoiceProfile } from './SettingsTab';
 
 export interface SettingsTabProps {
     onSaveProviderCatalog?: (configs: ProviderConfig[]) => Promise<void>;

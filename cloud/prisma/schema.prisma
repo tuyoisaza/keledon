@@ -60,6 +60,7 @@ model Team {
   updatedAt DateTime @updatedAt
 
   // Provider configuration per team
+  llmProvider String   @default("openai") // openai, google, anthropic, ollama
   sttProvider String   @default("vosk")   // vosk, deepgram, webspeech
   ttsProvider String   @default("elevenlabs") // elevenlabs, webspeech
   
@@ -69,9 +70,23 @@ model Team {
   
   // Deepgram configuration
   deepgramApiKey String?
+
+  // Speaches configuration
+  speachesApiUrl String?
+  speachesApiKey String?
   
   // ElevenLabs configuration
   elevenlabsApiKey String?
+
+  // LLM API keys
+  openaiApiKey String?
+  googleAiApiKey String?
+  anthropicApiKey String?
+
+  // TTS additional configuration
+  ttsApiKey String?
+  ttsVoiceId String?
+  ttsEndpointUrl String?
 
   // Escalation triggers - keywords that trigger human escalation
   escalationTriggers String[] @default(["sue", "lawsuit", "court", "lawyer", "attorney", "complain", "manager", "supervisor", "media", "news", "journalist", "social media"])
@@ -580,6 +595,7 @@ model Vendor {
   password    String?  // encrypted
   apiKey      String?  // encrypted
   config      Json?    // additional config (encrypted JSON)
+  startGoal   String?  // startup instructions for the vendor agent
   isActive   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

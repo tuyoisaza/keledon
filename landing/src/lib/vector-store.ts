@@ -11,7 +11,7 @@ export interface PolicyDocument {
   content: string;
   category: 'safety' | 'procedure' | 'compliance' | 'knowledge';
   embedding?: number[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   company_id: string;
   brand_id?: string;
   team_id?: string;
@@ -56,7 +56,7 @@ class VectorStoreAPI {
   async getCollectionStatus(): Promise<VectorStoreStatus> {
     try {
       return await this.fetchApi('/status');
-    } catch (error) {
+    } catch {
       return {
         collectionExists: false,
         documentCount: 0,
@@ -107,18 +107,13 @@ class VectorStoreAPI {
 
   async listAllDocuments(): Promise<PolicyDocument[]> {
     const result = await this.fetchApi('/documents');
-    return (result.documents || []).map((document: any) => ({
+    return (result.documents || []).map((document: Record<string, unknown>) => ({
       ...document,
       content: document.content ?? document.text ?? '',
       title: document.title ?? document.text ?? 'Untitled document',
     }));
   }
 
-  private getRelevanceLevel(score: number): 'high' | 'medium' | 'low' {
-    if (score >= 0.8) return 'high';
-    if (score >= 0.6) return 'medium';
-    return 'low';
-  }
 }
 
 export const vectorStoreAPI = new VectorStoreAPI();

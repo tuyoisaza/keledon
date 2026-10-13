@@ -1,49 +1,9 @@
-import { useState, useEffect, createContext, useContext, type ReactNode } from 'react';
-
-export type UserRole = 'guest' | 'user' | 'agent' | 'admin' | 'coordinator' | 'superadmin';
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  avatar?: string;
-  companyId?: string;
-  teamId?: string;
-  companyName?: string;
-  brandName?: string;
-  teamName?: string;
-  createdAt?: string;
-  lastSession?: string;
-  company_id?: string;
-  team_id?: string;
-  company_name?: string;
-  brand_name?: string;
-  team_name?: string;
-  created_at?: string;
-  last_session?: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  loginWithGoogle: () => Promise<void>;
-  signInWithEmail: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  hasRole: (minRole: UserRole) => boolean;
-  isActuallySuperAdmin: boolean;
-  email: string;
-  setEmail: (email: string) => void;
-  password: string;
-  setPassword: (password: string) => void;
-  error: string | null;
-  setError: (error: string | null) => void;
-}
+import { useState, useEffect, type ReactNode } from 'react';
+import { recordAuthEvent } from '@/lib/debug-report';
+import { debugLogger } from '@/lib/debug-logger';
+import { AuthContext, type User, type UserRole } from './auth-context';
 
 const roleHierarchy: UserRole[] = ['guest', 'user', 'agent', 'admin', 'coordinator', 'superadmin'];
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const API_URL = '';
 
@@ -56,9 +16,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function checkAuth() {
+      recordAuthEvent('session-check', 'started');
       try {
         const token = sessionStorage.getItem('auth_token');
         if (!token) {
+          recordAuthEvent('session-check', 'no-session');
           setIsLoading(false);
           return;
         }
@@ -70,11 +32,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (data.success && data.user) {
           setUser(data.user);
+          recordAuthEvent('session-check', 'success');
         } else {
           sessionStorage.removeItem('auth_token');
+          recordAuthEvent('session-check', 'failure');
         }
-      } catch (e) {
-        console.error('Auth check failed:', e);
+      } catch {
+        recordAuthEvent('session-check', 'failure');
+        debugLogger.log('error', 'Authentication session check failed', { stage: 'session-check' });
       } finally {
         setIsLoading(false);
       }
@@ -84,36 +49,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loginWithGoogle = async () => {
+    recordAuthEvent('google-redirect', 'started');
     window.location.href = `${API_URL}/api/auth/google`;
   };
 
   const signInWithEmail = async (email: string, password: string) => {
     setIsLoading(true);
     setError(null);
+    recordAuthEvent('email-login', 'started');
+    try {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
-    const res = await fetch(`${API_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error('Authentication failed');
+      }
 
-    const data = await res.json();
-    setIsLoading(false);
+      if (data.token) {
+        sessionStorage.setItem('auth_token', data.token);
+      }
 
-    if (!data.success) {
-      throw new Error(data.message || 'Login failed');
+      setUser(data.user);
+      recordAuthEvent('email-login', 'success');
+    } catch (error) {
+      recordAuthEvent('email-login', 'failure');
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    if (data.token) {
-      sessionStorage.setItem('auth_token', data.token);
-    }
-
-    setUser(data.user);
+  const clearLocalSession = () => {
+    sessionStorage.removeItem('auth_token');
+    setUser(null);
+    setEmail('');
+    setPassword('');
+    setError(null);
   };
 
   const logout = async () => {
-    sessionStorage.removeItem('auth_token');
-    setUser(null);
+    clearLocalSession();
     window.location.href = '/';
   };
 
@@ -133,6 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loginWithGoogle,
         signInWithEmail,
         logout,
+        clearLocalSession,
         hasRole,
         isActuallySuperAdmin,
         email,
@@ -146,12 +126,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-  return context;
 }

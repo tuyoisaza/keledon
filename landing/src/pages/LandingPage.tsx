@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/useAuth";
 import { Navbar } from "@/components/common/Navbar";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
@@ -28,7 +28,7 @@ export default function LandingPage() {
                     navigate('/management');
                     break;
                 default:
-                    navigate('/dashboard');
+                    break;
             }
         }
     }, [isAuthenticated, isLoading, navigate, user]);
@@ -43,12 +43,16 @@ export default function LandingPage() {
 
     return (
         <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-            <Navbar />
-            <HeroSection />
-            <FeaturesSection />
-            <ArchitectureSection />
-            <UseCasesSection />
-            <CTASection />
+            <header>
+                <Navbar />
+            </header>
+            <main id="main-content">
+                <HeroSection />
+                <FeaturesSection />
+                <ArchitectureSection />
+                <UseCasesSection />
+                <CTASection />
+            </main>
             <Footer />
         </div>
     );

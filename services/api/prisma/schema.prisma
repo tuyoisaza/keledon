@@ -609,3 +609,55 @@ model Vendor {
   @@index([teamId])
   @@map("vendors")
 }
+
+// Managed AI definitions and measured usage; additive migration, no runtime schema writes.
+model AiPromptDefinition {
+  id String @id
+  name String
+  personalityPrompt String
+  executionPrompt String
+  outputSchemaJson Json
+  enabled Boolean @default(true)
+  revision Int @default(1)
+  updatedBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  revisions AiPromptRevision[]
+  usage AiCallUsage[]
+  @@map("ai_prompt_definitions")
+}
+
+model AiPromptRevision {
+  id String @id @default(uuid())
+  promptId String
+  fromRevision Int
+  toRevision Int
+  actorId String
+  changedFields Json
+  createdAt DateTime @default(now())
+  prompt AiPromptDefinition @relation(fields: [promptId], references: [id], onDelete: Restrict)
+  @@unique([promptId, toRevision])
+  @@map("ai_prompt_revisions")
+}
+
+model AiCallUsage {
+  id String @id @default(uuid())
+  promptId String
+  promptRevision Int
+  feature String
+  teamId String?
+  provider String
+  requestedModel String
+  responseModel String?
+  inputTokens Int?
+  outputTokens Int?
+  latencyMs Int
+  costUsd Float?
+  pricingMetadata Json?
+  errorCode String?
+  createdAt DateTime @default(now())
+  prompt AiPromptDefinition @relation(fields: [promptId], references: [id], onDelete: Restrict)
+  @@index([createdAt])
+  @@index([promptId, createdAt])
+  @@map("ai_call_usage")
+}

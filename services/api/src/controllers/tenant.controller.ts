@@ -6,12 +6,15 @@ import {
   Param,
   Query,
   Body,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CrudService } from '../crud/crud.service';
+import { CrudAccessGuard } from '../guards/crud-access.guard';
 
 @ApiTags('Tenant')
 @Controller('api/tenant')
+@UseGuards(CrudAccessGuard)
 export class TenantController {
   constructor(private readonly crudService: CrudService) {}
 

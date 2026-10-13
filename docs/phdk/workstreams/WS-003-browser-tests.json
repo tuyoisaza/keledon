@@ -1,0 +1,77 @@
+[
+  {
+    "file": "ai-budget.test.cjs",
+    "status": 0,
+    "summary": "PASS AI/provider controls: hard budgets, reset/kill/dedup, team-only key, SDK timeout/no retries/output cap, no missing-tenant fallback, TTS endpoint/timeouts/legacy key mapping"
+  },
+  {
+    "file": "autobrowse-scope.test.cjs",
+    "status": 0,
+    "summary": "PASS production AutoBrowse: configured origin scope, explicit credential vendor, failure preserved/no invented recovery or replans"
+  },
+  {
+    "file": "cloud-goal-execute-runtime-credentials-source.test.cjs",
+    "status": 0,
+    "summary": "PASS explicit runtime-vendor enrichment and token-safe metadata; no inferred credential attachment"
+  },
+  {
+    "file": "cloud-goal-execute-source.test.cjs",
+    "status": 0,
+    "summary": "cloud goal_execute source tests passed (verified full suite 15/15)"
+  },
+  {
+    "file": "cloud-goal-queue.test.cjs",
+    "status": 0,
+    "summary": "PASS cloud goal queue: serial goals, pending dedup, cap, failure recovery"
+  },
+  {
+    "file": "command-poller.test.cjs",
+    "status": 0,
+    "summary": "PASS command poller: full payload, serial execution, malformed/unknown boundaries, stop during fetch"
+  },
+  {
+    "file": "company-co-lifecycle.test.cjs",
+    "status": 0,
+    "summary": "PASS SYNTHETIC Company Co command lifecycle: approved answer/CRM/hangup/standby; finalization failure, no-call and wrong-surface boundaries"
+  },
+  {
+    "file": "device-pair-vendor-payload-source.test.cjs",
+    "status": 0,
+    "summary": "device pair vendor payload source tests passed"
+  },
+  {
+    "file": "goal-planner.test.cjs",
+    "status": 0,
+    "summary": "PASS Cloud-approved planner steps/local placeholders, explicit trace and no heuristic fallback"
+  },
+  {
+    "file": "launch-goal-command-source.test.cjs",
+    "status": 0,
+    "summary": "launch goal command source tests passed"
+  },
+  {
+    "file": "planner-trace.test.cjs",
+    "status": 0,
+    "summary": "PASS planner trace respects custom client URLs, command correlation and Cloud no-op plan"
+  },
+  {
+    "file": "renderer-partial-goal-source.test.cjs",
+    "status": 0,
+    "summary": "renderer partial goal source tests passed"
+  },
+  {
+    "file": "rpa-safety.test.cjs",
+    "status": 0,
+    "summary": "PASS production RPA safety: customer assertion gates writes, fail-fast flow, failed submit and non-HTTP navigation"
+  },
+  {
+    "file": "runtime-contracts.test.cjs",
+    "status": 0,
+    "summary": "PASS runtime contracts: cloud-only plans/secret placeholders, stored identity/session boundaries, bounded PCM WAV"
+  },
+  {
+    "file": "vendor-bootstrap-source.test.cjs",
+    "status": 0,
+    "summary": "PASS vendor bootstrap preserves omitted/masked local secrets only for matching explicit vendor"
+  }
+]

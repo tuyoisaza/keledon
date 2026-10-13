@@ -4,6 +4,7 @@ import { TTSService } from '../../../tts/tts.service';
 
 export interface SpeachesTtsAdapterConfig {
   voice?: string;
+  providerId?: string;
   language?: string;
   teamId?: string;
 }
@@ -21,7 +22,7 @@ export interface SpeachesTtsAdapterConfig {
  * so the KeledonRealtimePipelineProvider can use it interchangeably.
  */
 export class SpeachesTtsAdapter implements TtsAdapter {
-  readonly id = 'speaches';
+  get id(): string { return this.config?.providerId || 'unconfigured'; }
   private readonly logger = new Logger(SpeachesTtsAdapter.name);
   private config!: SpeachesTtsAdapterConfig;
   private stopped = false;
@@ -65,6 +66,7 @@ export class SpeachesTtsAdapter implements TtsAdapter {
       },
     );
 
+    if (result.error) throw new Error('Configured TTS provider failed');
     options?.onChunk?.({
       audio: Buffer.alloc(0),
       sequence: 'end',

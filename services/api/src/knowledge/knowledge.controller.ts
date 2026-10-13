@@ -1,7 +1,9 @@
+import { ResourceScopeGuard } from '../guards/resource-scope.guard';
 import {
   BadRequestException,
   Body,
   Controller,
+  UseGuards,
   Get,
   Param,
   Post,
@@ -16,6 +18,7 @@ import { SearchKnowledgeDto } from './dto/search-knowledge.dto';
 
 @ApiTags('Knowledge')
 @Controller('api')
+@UseGuards(ResourceScopeGuard)
 export class KnowledgeController {
   constructor(private readonly knowledgeService: KnowledgeService) {}
 

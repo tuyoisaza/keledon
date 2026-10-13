@@ -1,3 +1,4 @@
+import { resolveRuntimeIdentity, ownsRuntimeSession, isRuntimeIdentityCurrent } from './runtime-identity';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -58,7 +59,8 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     const validation = await this.deviceService.validateAuthToken(token);
-    if (!validation.valid || validation.deviceId !== deviceId) {
+    const identity = await resolveRuntimeIdentity(this.prisma, token, deviceId);
+    if (!identity || !validation.valid || validation.deviceId !== deviceId) {
       this.logger.warn(
         `Device connection rejected: invalid token for device ${deviceId}`,
       );
@@ -71,6 +73,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
         ? ` (reconnecting from ${validation.status})`
         : '';
     this.logger.log(`Device connected: ${deviceId}${statusLabel}`);
+    client.data.runtimeIdentity = identity;
     client.data.deviceId = deviceId;
     client.data.sessionId = null;
 
@@ -90,6 +93,11 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { session_id: string; team_id: string },
   ) {
+    const identity = client.data.runtimeIdentity;
+    if (!identity || data?.team_id !== identity.teamId || !await ownsRuntimeSession(this.prisma, identity, data?.session_id)) {
+      return { error: 'Session is outside paired device scope' };
+    }
+    if (client.data.sessionId) client.leave(`session:${client.data.sessionId}`);
     client.data.sessionId = data.session_id;
     this.logger.log(
       `[SESSION START] Device ${client.data.deviceId} started session: ${data.session_id}, team: ${data.team_id}`,
@@ -210,7 +218,8 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
       `Voice transcript from ${client.data.deviceId}: ${data.text.substring(0, 50)}...`,
     );
 
-    const sessionId = client.data.sessionId || 'default';
+    const sessionId = client.data.sessionId;
+    if (!sessionId || !await ownsRuntimeSession(this.prisma, client.data.runtimeIdentity, sessionId)) return { error: 'No active session' };
 
     if (this.decisionEngine && data.isFinal) {
       try {
@@ -294,7 +303,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     data: { text: string; confidence: number; is_final: boolean },
   ) {
     const sessionId = client.data.sessionId;
-    if (!sessionId) {
+    if (!sessionId || !await ownsRuntimeSession(this.prisma, client.data.runtimeIdentity, sessionId)) {
       return { error: 'No active session' };
     }
 
@@ -317,7 +326,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: any,
   ) {
     const sessionId = client.data.sessionId;
-    if (!sessionId) {
+    if (!sessionId || !await ownsRuntimeSession(this.prisma, client.data.runtimeIdentity, sessionId)) {
       return { error: 'No active session' };
     }
 
@@ -327,8 +336,8 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
 
     this.server.to(`session:${sessionId}`).emit('execution_result', {
-      device_id: client.data.deviceId,
       ...data,
+      device_id: client.data.deviceId,
       timestamp: new Date().toISOString(),
     });
 
@@ -341,7 +350,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: any,
   ) {
     const sessionId = client.data.sessionId;
-    if (!sessionId) {
+    if (!sessionId || !await ownsRuntimeSession(this.prisma, client.data.runtimeIdentity, sessionId)) {
       return { error: 'No active session' };
     }
 
@@ -351,8 +360,8 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
 
     this.server.to(`session:${sessionId}`).emit('goal_result', {
-      device_id: client.data.deviceId,
       ...data,
+      device_id: client.data.deviceId,
       timestamp: new Date().toISOString(),
     });
 
@@ -398,6 +407,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
       constraints?: Record<string, unknown>;
     },
   ) {
+    if (!await isRuntimeIdentityCurrent(this.prisma, client.data.runtimeIdentity)) return { error: 'Device authorization revoked' };
     // Allow goal execution with or without active session
     const sessionId = client.data.sessionId;
 
