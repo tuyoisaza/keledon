@@ -21,7 +21,7 @@ The owner approved inclusion and merge of the additive managed-AI storage migrat
 
 - The sidepanel stylesheet was split into two ordered CSS files under 600 physical lines each; original selector/declaration order is preserved after trailing-whitespace cleanup. The standalone test harness is split into HTML, CSS, core JavaScript and services JavaScript; both scripts pass `node --check`, and `agent/validate-test-harness.js` passes.
 - Web typecheck, lint and production build pass; Browser tests 19/19; web synthetic tests 10/10; API build/C13 sentinel and regression 8/8; PHDK coherence check 50/50 mappings.
-- Physical-line inventory of source files finds 23 files over PHDK's 600-line maximum. See `PHDK_LINE_LIMIT_AUDIT.md`.
+- Physical-line inventory of source files finds 21 files over PHDK's 600-line maximum. See `PHDK_LINE_LIMIT_AUDIT.md`.
 - Salesforce adapter tests are 17/19; two existing environment-sensitive cases attempt to assign read-only `window.location.hostname`. Full landing typecheck reports baseline diagnostics; full agent adapter typecheck has existing contract/type errors. Agent dependencies/config are absent locally, and its build script deletes the repository-root `dist`, so that build was not run.
 - Locale parity, private-route server indexability and broad rendered accessibility/contrast remain open. No client-specific live call/CRM, production migration, deployment, or production health was claimed.
 
