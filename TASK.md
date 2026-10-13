@@ -12,7 +12,7 @@ Run 20261012-keledon-four-fronts; owner confirms all four in order, 2026-10-12.
 - [x] T-008 deliver the downstream PHDK v2.50.10 standards sync via PR #43; merged and read back at `5443a5e7eb176a3a0e00b4c2dbb75248fc9b993d`.
 - [ ] T-009 complete authorized persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO acceptance; gaps remain open after PR #54.
 
-Latest continuation: after PR #54 merged 5.1.7 to main, the CRUD source audit found that user create/update accepted caller-supplied `passwordHash`. The 5.1.8 candidate on `fix/phdk-5.1.8-crud-password-hash` now rejects the field for all roles and removes it from the service contracts. API policy regressions (11/11 suites), typecheck, and typed ESLint (0 errors/139 warnings) pass. Candidate commit/PR/merge are pending; no deployment is claimed. Earlier 5.1.7 checks and lifecycle evidence follow.
+Latest continuation: after PR #54 merged 5.1.7, CRUD source review found user create/update accepted caller-supplied `passwordHash`. PR #56 delivered the 5.1.8 fix to main at `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6`; the field is denied for all roles and removed from service contracts. API policy regressions (11/11 suites), build/typecheck and typed ESLint (0 errors/139 warnings) pass. PR #55 was closed without merge after its stale ancestry was marked DIRTY; the replacement clean-based PR #56 is merged. No deployment is claimed. Earlier 5.1.7 checks and lifecycle evidence follow.
 No historical queue activation or parallel floor restoration. This is current task evidence, no future authority.
 
 Current decision record: vendors are per-client; source+synthetic contracts are acceptable for runtime code review.

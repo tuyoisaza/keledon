@@ -2,7 +2,7 @@
 
 ### 5.1.8 API security follow-up
 
-The subsequent code audit identified generic user CRUD accepting caller-provided password hashes. Candidate 5.1.8 removes that input and passes source regressions for admin/coordinator create/update and superadmin create attempts. This is backend regression evidence, not a second browser UAT: the local Edge journeys below remain explicitly bound to the 5.1.7 revision. The candidate is pending normal PR delivery and remote readback.
+The subsequent code audit identified generic user CRUD accepting caller-provided password hashes. PR #56 integrates 5.1.8 at `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6`, removes that input, and passes source regressions for admin/coordinator create/update and superadmin create attempts. This is backend regression evidence, not a second browser UAT: the local Edge journeys below remain explicitly bound to the 5.1.7 revision. Full database-backed CRUD acceptance remains blocked as described below.
 
 Run `20261012-keledon-four-fronts`; executed 2026-10-13 in America/Mexico_City. Test source revision: `edce7eafbe13ac16ab93274a87e12571e7b04b2e`; its Git tree exactly matches independently fetched `origin/main` `a854ca7634307538305cd9b5ad1f91f8a066b1a1` (tree `a77afde0f6142583887921fe46376b84cf3af279`). Candidate/version: 5.1.7. The production Vite bundle was rebuilt, then exercised in headless Microsoft Edge through a finite local server. External HTTP and all WebSockets were blocked; `/api` calls were intercepted with synthetic Company Co/Other Co fixtures. No deployed service, account, database, OAuth provider, vendor, customer record or metered API was contacted.
 

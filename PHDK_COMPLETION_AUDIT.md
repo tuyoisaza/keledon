@@ -2,7 +2,7 @@
 
 ## Follow-up security fix in progress — 5.1.8
 
-CMT-004 audit fix is implemented locally on `fix/phdk-5.1.8-crud-password-hash`: CRUD rejects client-provided password hashes for every role. The source regression, TypeScript check, API 11/11 regression suites and typed API ESLint pass (0 errors/139 warnings). The candidate is not yet on remote `main`; this audit therefore remains PARTIALLY DELIVERED. Previously listed persistence/runtime, native Electron/audio, broad accessibility/localization and deployed SEO/AEO evidence remains outstanding.
+CMT-004 audit fix is integrated through PR #56 at `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6`; all five app roots report 5.1.8. API regression 11/11, typecheck/build and typed ESLint (0 errors/139 warnings) pass. PR #55 was CLOSED WITHOUT MERGE because its stale branch ancestry produced a dirty merge base; the clean-based PR #56 carried the candidate. This lifecycle remains PARTIALLY DELIVERED. Persisted CRUD/runtime, native Electron/audio, broad accessibility/localization and deployed SEO/AEO evidence remain outstanding.
 
 ## Current continuation — 5.1.7 merged (2026-10-13)
 

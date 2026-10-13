@@ -1,6 +1,6 @@
 # PHDK Auto lifecycle — 20261012-keledon-four-fronts
 
-## Current continuation board — 2026-10-13, product candidate 5.1.8
+## Current terminal board — 2026-10-13, product 5.1.8; overall partial
 
 Goal: complete the four owner-confirmed KELEDON fronts under PHDK v2.50.10, keeping call/CRM providers tenant-selected and enforcing the owner-approved restrictive admin policy.
 
@@ -8,16 +8,16 @@ Preflight ............ COMPLETED — PHDK v2.50.10 / 52 mappings
 Capture .............. REUSED — four fronts confirmed
 Plan ................. REUSED — architecture, requirements, CRUD matrix
 PMO / Workstreams .... REUSED — CMT-001..004 reconciled
-Integration Review ... IN PROGRESS — CRUD credential-hash gap fixed; versioned PR pending
-UAT .................. API source regression PASS — 11/11; full acceptance incomplete
+Integration Review ... COMPLETED — PR #56 merged; PR #55 closed without merge due stale squash ancestry
+UAT .................. SCOPED PASS — prior 5.1.7 Edge journey + 5.1.8 API security regression 11/11
 UAT Fix .............. COMPLETED (SCOPED) — no new FAIL in 5.1.7 browser rerun
 SEO .................. SOURCE PASS — deployed response not observed
 AEO/GEO .............. PARTIAL — no external/deployed measurement
 Check ................ SOURCE CHECKS PASS / ACCEPTANCE PARTIAL
 Remediation .......... COMPLETED (SCOPED)
-Delivery ............. IN PROGRESS — 5.1.8 branch candidate; no merge/deployment claimed
+Delivery ............. MERGED / REMOTE VERIFIED via PR #56; no deployment claimed
 
-The last verified `origin/main` is `a854ca7634307538305cd9b5ad1f91f8a066b1a1`, product 5.1.7, PR #54 MERGED. Current candidate removes client-supplied password hashes on CRUD user create/update; API policy regression, typecheck and full lint pass. The current source change has not yet been merged. Overall lifecycle remains **PARTIALLY DELIVERED** because persisted CRUD/role database acceptance, native Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO remain unresolved. See root `UAT_REPORT.md`, `PHDK_COMPLETION_AUDIT.md`, and the current delivery snapshot after it is created.
+PR #56 merged the 5.1.8 candidate. Independent `origin/main` readback is `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6`; all five app package/lock roots are 5.1.8. PR #55 was closed without merge because its old squash ancestry produced a DIRTY merge state; the same change was rebased by cherry-pick onto verified current `main` and delivered through clean PR #56. API regression 11/11, typecheck/build, typed ESLint 0 errors/139 warnings and PHDK coherence 52/52 pass. Overall lifecycle remains **PARTIALLY DELIVERED** because persisted CRUD/role database acceptance, native Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO remain unresolved. No production DB/migration, live vendor, customer operation or deployment is claimed.
 
 Historical lifecycle checkpoints follow.
 

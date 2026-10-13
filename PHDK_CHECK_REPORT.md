@@ -1,12 +1,12 @@
-# PHDK Check — 5.1.7 integrated source; acceptance partial
+# PHDK Check — 5.1.8 integrated source; acceptance partial
 
 Date: 2026-10-13 America/Mexico_City · PHDK 2.50.10 · Auto goal `20261012-keledon-four-fronts`.
 
 ## 2026-10-13 follow-up source audit — candidate 5.1.8
 
-The role/tenant CRUD review found a credential-integrity gap: `/api/crud/users` accepted a client-provided `passwordHash` and forwarded it directly to Prisma. An in-company manager could therefore choose the bcrypt hash for a newly created user's password. The guard now rejects that field on both POST and PUT for all roles, and service input types no longer expose it. `services/api/test/regression/25-approved-management-policy.test.js` covers admin/coordinator create/update and superadmin create attempts. API typecheck and all 11 API regression suites pass; full API typed ESLint exits 0 with 0 errors/139 warnings. Candidate release 5.1.8 is under normal branch/PR delivery; do not treat it as integrated until verified on remote `main`.
+The role/tenant CRUD review found a credential-integrity gap: `/api/crud/users` accepted a client-provided `passwordHash` and forwarded it directly to Prisma. An in-company manager could therefore choose the bcrypt hash for a newly created user's password. PR #56 now integrates the fix at `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6`, version 5.1.8. The guard rejects that field on both POST and PUT for all roles, and service input types no longer expose it. `services/api/test/regression/25-approved-management-policy.test.js` covers admin/coordinator create/update and superadmin create attempts. API typecheck and all 11 API regression suites pass; full API typed ESLint exits 0 with 0 errors/139 warnings. PR #55 was closed without merge due to stale squash ancestry; PR #56 is the clean-based merged delivery.
 
-PR #54 is MERGED. Remote `origin/main` is `a854ca7634307538305cd9b5ad1f91f8a066b1a1`, version 5.1.7. Tested commit `edce7eafbe13ac16ab93274a87e12571e7b04b2e` has the identical Git tree `a77afde0f6142583887921fe46376b84cf3af279`. No open PRs or required hosted checks/reviews were reported. No deployment is claimed.
+The previous 5.1.7 baseline was PR #54 at `a854ca7634307538305cd9b5ad1f91f8a066b1a1`; the latest 5.1.8 source audit fix is PR #56 at `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6`. All five app package/lock roots report 5.1.8. PR #55 was closed without merge; no required hosted checks/review or branch protection applied to #56. No deployment is claimed.
 
 ## Current source evidence
 
