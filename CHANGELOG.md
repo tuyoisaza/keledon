@@ -1,3 +1,9 @@
+## v5.1.12 — 2026-10-13 (PHDK Auto candidate)
+
+- Apply light and corporate semantic palette variables to descendant controls, so buttons and form elements actually render their selected theme colors.
+- Extend local web UAT to assert theme-token propagation, button colors, login text contrast, and 200/400% viewport reflow.
+- Align all five app package and lock roots at 5.1.12.
+
 ## v5.1.11 — 2026-10-13 (PHDK Auto candidate)
 
 - Add protected, process-window metered provider diagnostics for LLM, speech-to-text and text-to-speech calls, with safe provider/failure/correlation summaries, explicit retry counts, request-budget caps and AI/voice kill-switch states.
