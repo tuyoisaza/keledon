@@ -1,10 +1,13 @@
 # PHDK Completion Audit — PARTIALLY DELIVERED
-PHDK2.50.8; project candidate5.0.54; run20261012-keledon-four-fronts. All four confirmed workstreams have local implementations and evidence. Specific live call platform or CRM was not required after the owner clarified it is tenant-selected.
 
-Local validation results are recorded in PHDK_CHECK_REPORT.md. Candidate is on chore/phdk-install-v2.50.8 and uncommitted. There is no current PR, commit SHA, remote target SHA, approved merge or deployment observation. Remote completion gate therefore cannot pass.
+PHDK 2.50.8; candidate 5.0.54; run 20261012-keledon-four-fronts. All four owner-confirmed workstreams have implementations and local validation evidence. Client telephony and CRM remain tenant-selected by design; no live vendor or customer data was assumed.
 
-Open owner decision: include the source-reviewed additive managed-AI storage migration in the release and follow the normal DB migration procedure. The current approval to apply the restrictive account/tenant policy did not explicitly approve durable AI prompt/usage schema. PHDK MAIN_DELIVERY_STANDARD.md requires owner approval for schema/migrations unless current owner instruction explicitly covers them.
+The owner approved including and merging the additive managed-AI storage migration through the normal database migration procedure (recorded 2026-10-13). The migration is in PR #42. No database migration was executed in this workspace.
 
-Open conformity: localization debt, oversized modules, server-side private-route indexability, broad rendered accessibility coverage. The checkout is a concrete reviewable result, not PHDK COMPLETE.
+The current PR is still draft. Local PHDK remediation has split the native browser renderer, Flows page, voice processing, and agent execution evidence into bounded modules. Tests and builds pass; exact results are in the delivery report and integration addendum.
 
-SIGUIENTE PASO: approve/reject the described AI schema rollout decision; after resolution, run remaining justified remediation and only then complete branch/PR/review/main verification.
+Completion is blocked by the PHDK hard limit of 600 lines per file. The repository inventory currently finds 32 code files above 600 lines. In the active PR/worktree diff, BrainPage.tsx remains 3,726 lines and has in-scope changes. The other touched code modules now meet the limit. The auto audit must not call the codebase PHDK-complete while this hard requirement remains unmet.
+
+Other recorded residuals remain: static locale-parity debt, server-rendered indexability for private routes, and full rendered accessibility/contrast coverage. Provider-specific live call/CRM acceptance is intentionally out of scope because each tenant selects their integrations.
+
+PR #42 is not merged. The merge and completion gate remain open until the oversized active module is split and the post-merge PHDK delivery checks can run. No production deployment is claimed.

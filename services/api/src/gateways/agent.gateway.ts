@@ -1,5 +1,7 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { resolveRuntimeIdentity, ownsRuntimeSession, isRuntimeIdentityCurrent } from './runtime-identity';
+import { AgentExecutionEvidenceProcessor } from './agent-execution-evidence.processor';
+import { AgentSocketData, CommandSocketData } from './agent-socket.types';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -35,25 +37,6 @@ import { resolveCorsOrigins } from '../config/runtime-tier';
 const gatewayCorsOrigins =
   process.env.KELEDON_ALLOW_ALL_CORS === 'true' ? true : resolveCorsOrigins();
 
-// Import from canonical contracts
-export interface AgentSocketData {
-  event_id: string;
-  session_id: string;
-  timestamp: string;
-  type: 'text_input' | 'ui_result' | 'system';
-  payload: any;
-  command_id?: string;
-  agent_id?: string;
-}
-
-export interface CommandSocketData {
-  command_id: string;
-  session_id: string;
-  timestamp: string;
-  type: 'say' | 'ui_steps' | 'mode' | 'stop';
-  payload: any;
-}
-
 @WebSocketGateway({
   cors: {
     origin: gatewayCorsOrigins,
@@ -72,6 +55,7 @@ export class AgentGateway
   private readonly connectedAgents = new Map<string, Socket>();
   private readonly agentSessions = new Map<string, string>(); // clientId -> sessionId
   private readonly tracer = trace.getTracer('keledon-cloud-agent-gateway');
+  private readonly evidenceProcessor: AgentExecutionEvidenceProcessor;
 
   constructor(
     @Inject(forwardRef(() => SessionService))
@@ -79,7 +63,12 @@ export class AgentGateway
     @Inject(forwardRef(() => DecisionEngineService))
     private readonly decisionEngine: DecisionEngineService,
     private readonly prisma: PrismaService,
-  ) {}
+  ) {
+    this.evidenceProcessor = new AgentExecutionEvidenceProcessor(
+      this.prisma, this.sessionService, this.logger, this.tracer,
+      this.extractContextFromMetadata.bind(this),
+    );
+  }
 
   afterInit(_server: Server): void {
     this.logger.log('AgentGateway: WebSocket server initialized');
@@ -261,7 +250,7 @@ export class AgentGateway
     ack: AgentExecResultAck,
   ): Promise<void> {
     const normalizedEvidence = this.normalizeAgentExecAck(ack);
-    await this.processExecutionEvidence(client, normalizedEvidence);
+    await this.evidenceProcessor.processExecutionEvidence(client, normalizedEvidence);
   }
 
   @SubscribeMessage(KELEDON_AGENT_EVENTS.EXECUTION_EVIDENCE)
@@ -269,147 +258,7 @@ export class AgentGateway
     client: Socket,
     evidence: ExecutionEvidence,
   ): Promise<void> {
-    await this.processExecutionEvidence(client, evidence);
-  }
-
-  private async processExecutionEvidence(
-    client: Socket,
-    evidence: ExecutionEvidence,
-  ): Promise<void> {
-    if (!await ownsRuntimeSession(this.prisma, client.data.runtimeIdentity, evidence?.session_id)) { client.emit('error', { message: 'Invalid session scope' }); return; }
-    const requiredFields = [
-      'event',
-      'session_id',
-      'decision_id',
-      'trace_id',
-      'command_type',
-      'tab_id',
-      'execution_result',
-    ] as const;
-
-    for (const field of requiredFields) {
-      if (!evidence?.[field]) {
-        throw new Error(`execution.evidence missing required field: ${field}`);
-      }
-    }
-
-    if (String(evidence.decision_id).trim().toLowerCase() === 'unknown') {
-      throw new Error(
-        'execution.evidence malformed: decision_id must be real and non-placeholder',
-      );
-    }
-
-    if (String(evidence.trace_id).trim().toLowerCase() === 'unknown') {
-      throw new Error(
-        'execution.evidence malformed: trace_id must be real and non-placeholder',
-      );
-    }
-
-    const executionStatus =
-      evidence.execution_status || evidence.execution_result;
-    if (!executionStatus) {
-      throw new Error(
-        'execution.evidence missing required field: execution_status',
-      );
-    }
-
-    const extractedContext = this.extractContextFromMetadata(
-      evidence?.metadata,
-    );
-
-    await context.with(extractedContext, async () => {
-      await this.tracer.startActiveSpan(
-        KELEDON_TRACE_SPANS.AGENT_EXEC,
-        async (span) => {
-          try {
-            span.setAttribute(
-              'session_id',
-              String(evidence?.session_id || 'unknown'),
-            );
-            span.setAttribute(
-              AGENT_EXEC_ATTRS.EVENT,
-              String(evidence?.event || 'unknown'),
-            );
-            span.setAttribute(
-              AGENT_EXEC_ATTRS.DECISION_ID,
-              String(evidence?.decision_id || 'unknown'),
-            );
-            span.setAttribute(
-              AGENT_EXEC_ATTRS.TRACE_ID,
-              String(evidence?.trace_id || 'unknown'),
-            );
-            span.setAttribute(
-              'command_id',
-              String(evidence?.command_id || 'unknown'),
-            );
-            span.setAttribute(
-              AGENT_EXEC_ATTRS.COMMAND_TYPE,
-              String(evidence?.command_type || 'unknown'),
-            );
-            span.setAttribute(
-              AGENT_EXEC_ATTRS.TAB_ID,
-              String(evidence?.tab_id || 'unknown'),
-            );
-            span.setAttribute(
-              AGENT_EXEC_ATTRS.EXECUTION_RESULT,
-              String(evidence?.execution_result || 'unknown'),
-            );
-            span.setAttribute(
-              AGENT_EXEC_ATTRS.EXECUTION_STATUS,
-              String(executionStatus),
-            );
-            span.setAttribute(
-              'outcome',
-              String(evidence?.outcome || 'unknown'),
-            );
-            span.setAttribute('latency_ms', Number(evidence?.latency_ms || 0));
-
-            if (executionStatus !== 'success') {
-              span.setStatus({
-                code: SpanStatusCode.ERROR,
-                message: `Extension execution reported ${executionStatus}`,
-              });
-            }
-
-            this.logger.log(
-              `[C10] execution.evidence ${evidence.event} decision_id=${evidence.decision_id} trace_id=${evidence.trace_id} command_type=${evidence.command_type} tab_id=${evidence.tab_id} result=${evidence.execution_result}`,
-            );
-
-            await this.sessionService.persistEvent(evidence.session_id, {
-              session_id: evidence.session_id,
-              event_type: 'ui_result',
-              agent_id: client.id,
-              ts: evidence.completed_at,
-              payload: {
-                kind: 'execution_evidence',
-                decision_id: evidence.decision_id,
-                trace_id: evidence.trace_id,
-                command_id: evidence.command_id,
-                event: evidence.event,
-                command_type: evidence.command_type,
-                tab_id: evidence.tab_id,
-                execution_result: evidence.execution_result,
-                execution_status: executionStatus,
-                execution_timestamp: evidence.execution_timestamp,
-                outcome: evidence.outcome,
-                started_at: evidence.started_at,
-                completed_at: evidence.completed_at,
-                latency_ms: evidence.latency_ms,
-                evidence: evidence.evidence,
-              },
-            });
-          } catch (error) {
-            span.setStatus({
-              code: SpanStatusCode.ERROR,
-              message: error instanceof Error ? error.message : String(error),
-            });
-            throw error;
-          } finally {
-            span.end();
-          }
-        },
-      );
-    });
+    await this.evidenceProcessor.processExecutionEvidence(client, evidence);
   }
 
   private normalizeAgentExecAck(ack: AgentExecResultAck): ExecutionEvidence {
@@ -740,12 +589,10 @@ export class AgentGateway
     }
   }
 
-  // Get connected agents count
   getConnectedAgentsCount(): number {
     return this.connectedAgents.size;
   }
 
-  // Get list of connected agent IDs
   getConnectedAgentIds(): string[] {
     return Array.from(this.connectedAgents.keys());
   }

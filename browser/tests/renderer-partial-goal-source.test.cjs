@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const source = fs.readFileSync(path.join(__dirname, '..', 'renderer', 'index.html'), 'utf8');
+const source = fs.readFileSync(path.join(__dirname, '..', 'renderer', 'renderer-panels.js'), 'utf8');
 
 // Regression: a goal with one failed step can still continue and return `uncertain`.
 // The UI must show that as partial progress, not as a hard failed/stopped goal.
