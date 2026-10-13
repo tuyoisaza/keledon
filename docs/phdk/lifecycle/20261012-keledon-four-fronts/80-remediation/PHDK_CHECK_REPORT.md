@@ -1,6 +1,6 @@
 # PHDK Check report — remediation update, 5.1.0
 
-Date: 2026-10-13. This handoff updates the earlier Check snapshot after source-only landing repairs. It applies to pushed branch head `4d98fcec407e3669c020fa7c1d4f9a1d94c5c8a0`; it is not a merged release.
+Date: 2026-10-13. This handoff updates the earlier Check snapshot after source-only landing repairs. It applies to source remediation commit `4d98fcec407e3669c020fa7c1d4f9a1d94c5c8a0` plus its pushed documentation follow-up; it is not a merged release.
 
 ## Remediation verified
 
