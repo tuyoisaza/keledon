@@ -1,5 +1,5 @@
--- Add Speaches configuration fields to Team
-ALTER TABLE "Team" ADD COLUMN "speachesApiUrl" TEXT;
-ALTER TABLE "Team" ADD COLUMN "speachesApiKey" TEXT;
+-- Add Speaches configuration fields to the Prisma-mapped teams table.
+ALTER TABLE "teams" ADD COLUMN IF NOT EXISTS "speachesApiUrl" TEXT;
+ALTER TABLE "teams" ADD COLUMN IF NOT EXISTS "speachesApiKey" TEXT;
 
 -- Update sttProvider comment to include speaches (documentation only)
