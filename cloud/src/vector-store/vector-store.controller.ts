@@ -7,8 +7,9 @@ import {
   Body,
   Param,
   UseGuards,
+  Req,
 } from '@nestjs/common';
-import { VectorStoreService } from './vector-store.service';
+import { VectorStoreScope, VectorStoreService } from './vector-store.service';
 import { ResourceScopeGuard } from '../guards/resource-scope.guard';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -21,8 +22,8 @@ export class VectorStoreController {
   constructor(private readonly vectorStoreService: VectorStoreService) {}
 
   @Get('status')
-  async getStatus() {
-    return this.vectorStoreService.getStatus();
+  async getStatus(@Req() req: { vectorScope?: VectorStoreScope }) {
+    return this.vectorStoreService.getStatus(req.vectorScope);
   }
 
   @Post('documents')
@@ -31,13 +32,24 @@ export class VectorStoreController {
   }
 
   @Put('documents/:id')
-  async updateDocument(@Param('id') id: string, @Body() document: unknown) {
-    return this.vectorStoreService.updateDocument(id, document);
+  async updateDocument(
+    @Param('id') id: string,
+    @Body() document: unknown,
+    @Req() req: { vectorScope?: VectorStoreScope },
+  ) {
+    return this.vectorStoreService.updateDocument(
+      id,
+      document,
+      req.vectorScope,
+    );
   }
 
   @Delete('documents/:id')
-  async deleteDocument(@Param('id') id: string) {
-    return this.vectorStoreService.deleteDocument(id);
+  async deleteDocument(
+    @Param('id') id: string,
+    @Req() req: { vectorScope?: VectorStoreScope },
+  ) {
+    return this.vectorStoreService.deleteDocument(id, req.vectorScope);
   }
 
   @Post('search')
@@ -47,7 +59,7 @@ export class VectorStoreController {
   }
 
   @Get('documents')
-  async listDocuments() {
-    return this.vectorStoreService.listDocuments();
+  async listDocuments(@Req() req: { vectorScope?: VectorStoreScope }) {
+    return this.vectorStoreService.listDocuments(req.vectorScope);
   }
 }

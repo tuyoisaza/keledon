@@ -199,8 +199,6 @@ async function main() {
     ['SubAgentController', 'getFlowRunStatus', { runId: 'run-b' }, {}],
     ['CallsController', 'getCall', { sessionId: 'session-b' }, {}],
     ['CallsController', 'createCall', {}, { deviceId: 'device-b' }],
-    ['VectorStoreController', 'listDocuments', {}, {}],
-    ['VectorStoreController', 'deleteDocument', { id: 'foreign-point' }, {}],
   ])
     await assert.rejects(
       run(scope, kind, handler, params, body).result,
@@ -231,6 +229,12 @@ async function main() {
   await vector.result;
   assert.equal(vector.req.body.company_id, 'co-a');
   assert.equal(vector.req.body.team_id, 'team-a');
+  for (const handler of ['getStatus', 'listDocuments']) {
+    const scopedRead = run(scope, 'VectorStoreController', handler);
+    await scopedRead.result;
+    assert.equal(scopedRead.req.vectorScope.companyId, 'co-a');
+    assert.equal(scopedRead.req.vectorScope.teamId, undefined);
+  }
   await assert.rejects(
     run(
       scope,
@@ -256,6 +260,21 @@ async function main() {
   await vectorCreate.result;
   assert.equal(vectorCreate.req.body.company_id, 'co-a');
   assert.equal(vectorCreate.req.body.team_id, undefined);
+  assert.equal(vectorCreate.req.body.created_by, 'u-a');
+  const vectorUpdate = run(
+    scope,
+    'VectorStoreController',
+    'updateDocument',
+    { id: 'point-a' },
+    { content: 'updated document', team_id: 'team-a', created_by: 'forged' },
+    {},
+    'PUT',
+  );
+  await vectorUpdate.result;
+  assert.equal(vectorUpdate.req.vectorScope.companyId, 'co-a');
+  assert.equal(vectorUpdate.req.body.company_id, 'co-a');
+  assert.equal(vectorUpdate.req.body.team_id, 'team-a');
+  assert.equal(vectorUpdate.req.body.created_by, 'u-a');
   const knowledge = run(
     scope,
     'KnowledgeController',
@@ -290,6 +309,11 @@ async function main() {
   assert.equal(calls.req.body.teamId, 'team-a');
   assert.equal(calls.req.body.keledonId, 'k-a');
   actor = { ...actor, role: 'user' };
+  await assert.rejects(
+    run(scope, 'VectorStoreController', 'deleteDocument', { id: 'own-point' }, {}, {}, 'DELETE').result,
+    Denied,
+    'ordinary users cannot mutate vector documents',
+  );
   const userSearch = run(
     scope,
     'VectorStoreController',
@@ -302,11 +326,20 @@ async function main() {
   await userSearch.result;
   assert.equal(userSearch.req.body.company_id, 'co-a');
   assert.equal(userSearch.req.body.team_id, 'team-a');
+  const userList = run(scope, 'VectorStoreController', 'listDocuments');
+  await userList.result;
+  assert.equal(userList.req.vectorScope.companyId, 'co-a');
+  assert.equal(userList.req.vectorScope.teamId, 'team-a');
   actor = { ...actor, teamId: null };
   await assert.rejects(
     run(scope, 'VectorStoreController', 'search', {}, { query: 'test' }, {}, 'POST').result,
     Denied,
     'users without a team cannot read company-wide vectors',
+  );
+  await assert.rejects(
+    run(scope, 'VectorStoreController', 'listDocuments').result,
+    Denied,
+    'users without a team cannot list company-wide vectors',
   );
   await assert.rejects(
     run(scope, 'FlowController', 'create', {}, { teamId: 'team-a' }, {}, 'POST')

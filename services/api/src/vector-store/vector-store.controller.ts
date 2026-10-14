@@ -9,6 +9,7 @@ import {
   Body,
   Param,
   Query,
+  Req,
 } from '@nestjs/common';
 import { VectorStoreService } from './vector-store.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
@@ -21,8 +22,8 @@ export class VectorStoreController {
 
   @Get('status')
   @ApiOperation({ summary: 'Get status for the default vector collection' })
-  async getStatus() {
-    return this.vectorStoreService.getStatus();
+  async getStatus(@Req() req: any) {
+    return this.vectorStoreService.getStatus(req.vectorScope);
   }
 
   @Get('collections')
@@ -47,16 +48,24 @@ export class VectorStoreController {
   @ApiOperation({
     summary: 'Update a document in the default vector collection',
   })
-  async updateDocument(@Param('id') id: string, @Body() document: any) {
-    return this.vectorStoreService.updateDocument(id, document);
+  async updateDocument(
+    @Param('id') id: string,
+    @Body() document: any,
+    @Req() req: any,
+  ) {
+    return this.vectorStoreService.updateDocument(
+      id,
+      document,
+      req.vectorScope,
+    );
   }
 
   @Delete('documents/:id')
   @ApiOperation({
     summary: 'Delete a document from the default vector collection',
   })
-  async deleteDocument(@Param('id') id: string) {
-    return this.vectorStoreService.deleteDocument(id);
+  async deleteDocument(@Param('id') id: string, @Req() req: any) {
+    return this.vectorStoreService.deleteDocument(id, req.vectorScope);
   }
 
   @Post('search')
@@ -78,8 +87,8 @@ export class VectorStoreController {
   @ApiOperation({
     summary: 'List documents from the default vector collection',
   })
-  async listDocuments() {
-    return this.vectorStoreService.listDocuments();
+  async listDocuments(@Req() req: any) {
+    return this.vectorStoreService.listDocuments(req.vectorScope);
   }
 
   @Post('reindex')

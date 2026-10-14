@@ -1,9 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
 import { QdrantClient } from '@qdrant/qdrant-js';
 import * as crypto from 'crypto';
 import OpenAI from 'openai';
 import { PrismaService } from '../prisma/prisma.service';
+
+export type VectorStoreScope = { companyId: string; teamId?: string };
 
 @Injectable()
 export class VectorStoreService {
@@ -72,14 +74,22 @@ export class VectorStoreService {
     );
   }
 
-  async getStatus() {
+  async getStatus(scope?: VectorStoreScope) {
     try {
       const collection = await this.qdrant.getCollection(this.collectionName);
       const result = collection as any;
+      const documentCount = scope
+        ? (
+            await this.qdrant.count(this.collectionName, {
+              filter: this.buildScopeFilter(scope),
+              exact: true,
+            })
+          ).count
+        : result.points_count || result.points || 0;
       return {
         collectionExists: true,
-        documentCount: result.points_count || result.points || 0,
-        collectionSize: `${(result.points_count || result.points || 0) * 768 * 4} B`,
+        documentCount,
+        collectionSize: `${documentCount * 768 * 4} B`,
         dimensions: result.config?.params?.vectors?.size || this.vectorSize,
         distance: result.config?.params?.vectors?.distance || 'Cosine',
       };
@@ -171,10 +181,16 @@ export class VectorStoreService {
     // Qdrant only accepts unsigned integers or UUIDs as point IDs
     const uuidRegex =
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const numericId =
+      typeof document.id === 'string' && /^\d+$/.test(document.id)
+        ? Number(document.id)
+        : NaN;
     const id =
       document.id && uuidRegex.test(document.id)
         ? document.id
-        : crypto.randomUUID();
+        : Number.isSafeInteger(numericId) && numericId >= 0
+          ? numericId
+          : crypto.randomUUID();
 
     await this.qdrant.upsert(this.collectionName, {
       points: [
@@ -197,15 +213,20 @@ export class VectorStoreService {
       ],
     });
 
-    return { id, success: true };
+    return { id: String(id), success: true };
   }
 
-  async updateDocument(id: string, document: any) {
-    await this.deleteDocument(id);
-    return this.addDocument({ ...document, id });
+  async updateDocument(id: string, document: any, scope?: VectorStoreScope) {
+    if (scope) await this.assertPointScope(id, scope);
+    return this.addDocument({
+      ...document,
+      ...(scope ? { company_id: scope.companyId } : {}),
+      id,
+    });
   }
 
-  async deleteDocument(id: string) {
+  async deleteDocument(id: string, scope?: VectorStoreScope) {
+    if (scope) await this.assertPointScope(id, scope);
     // Qdrant point IDs can be integer or UUID — match stored type
     const pointId = /^\d+$/.test(id) ? parseInt(id, 10) : id;
     await this.qdrant.delete(this.collectionName, {
@@ -292,11 +313,12 @@ export class VectorStoreService {
     }
   }
 
-  async listDocuments() {
+  async listDocuments(scope?: VectorStoreScope) {
     try {
       const results = await this.qdrant.scroll(this.collectionName, {
         limit: 1000,
         with_payload: true,
+        ...(scope ? { filter: this.buildScopeFilter(scope) } : {}),
       });
 
       return {
@@ -309,6 +331,34 @@ export class VectorStoreService {
       this.logVectorStoreUnavailable('documents list', error);
       return { documents: [] };
     }
+  }
+
+  private buildScopeFilter(scope: VectorStoreScope) {
+    const must = [
+      { key: 'company_id', match: { value: scope.companyId } },
+      ...(scope.teamId
+        ? [{ key: 'team_id', match: { value: scope.teamId } }]
+        : []),
+    ];
+    return { must };
+  }
+
+  private async assertPointScope(
+    id: string,
+    scope: VectorStoreScope,
+  ): Promise<void> {
+    const pointId = /^\d+$/.test(id) ? parseInt(id, 10) : id;
+    const points = await this.qdrant.retrieve(this.collectionName, {
+      ids: [pointId],
+      with_payload: true,
+    });
+    const payload = points[0]?.payload as Record<string, unknown> | undefined;
+    if (
+      !payload ||
+      payload.company_id !== scope.companyId ||
+      (scope.teamId && payload.team_id !== scope.teamId)
+    )
+      throw new ForbiddenException('Vector document access denied');
   }
 
   /**

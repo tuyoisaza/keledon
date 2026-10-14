@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, Upload, FileText, Database, Bot, RefreshCw, X, Building2, Tag, Users } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 import { vectorStoreAPI, type PolicyDocument, type VectorStoreStatus } from '@/lib/vector-store';
 import { getCompanies, getBrands, getTeams, type Company, type Brand, type Team } from '@/lib/crud-api';
 import { getBrandsForCompany, getTeamsForBrand, readPlainTextFile } from '@/lib/knowledge-source-utils.js';
@@ -19,6 +20,8 @@ interface KnowledgeDocument {
 }
 
 export default function KnowledgePage() {
+    const { user } = useAuth();
+    const canManageKnowledge = ['admin', 'coordinator', 'superadmin'].includes(user?.role || '');
     const [documents, setDocuments] = useState<KnowledgeDocument[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -212,14 +215,16 @@ export default function KnowledgePage() {
                         <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
                         Refresh
                     </button>
-                    <button
-                        onClick={() => setShowAddModal(true)}
-                        disabled={isUploading}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
-                    >
-                        <Upload className="w-4 h-4" />
-                        {isUploading ? 'Indexing...' : 'Add Source'}
-                    </button>
+                    {canManageKnowledge && (
+                        <button
+                            onClick={() => setShowAddModal(true)}
+                            disabled={isUploading}
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
+                        >
+                            <Upload className="w-4 h-4" />
+                            {isUploading ? 'Indexing...' : 'Add Source'}
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -399,13 +404,15 @@ export default function KnowledgePage() {
                                     </div>
                                     <div className="w-px h-8 bg-border" />
                                     <span className="text-sm font-mono text-muted-foreground">{doc.size || 'N/A'}</span>
-                                    <button
-                                        onClick={() => handleDeleteDocument(doc.id)}
-                                        className="p-2 text-muted-foreground hover:text-destructive rounded-lg hover:bg-destructive/10"
-                                        title="Delete document"
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </button>
+                                    {canManageKnowledge && (
+                                        <button
+                                            onClick={() => handleDeleteDocument(doc.id)}
+                                            className="p-2 text-muted-foreground hover:text-destructive rounded-lg hover:bg-destructive/10"
+                                            title="Delete document"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         ))
