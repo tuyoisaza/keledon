@@ -1,11 +1,11 @@
 # Commitment ledger
 ## Active run `20261014-0007-phdk-auto-completion` — refreshed Capture
 
-Four owner-confirmed commitments remain in order. PR #95 delivered KELEDON 5.1.26 to `main` at `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2`. The 5.1.27 candidate updates API/Cloud flow-step reorder integrity and is undergoing normal delivery; its focused tests and source checks pass, while PR/readback and whole-product acceptance remain open.
+Four owner-confirmed commitments remain in order. PR #96 delivered KELEDON 5.1.27 to `main` at `a0425134ba69b1feaf165cd512caad8c136ca6f8`; fresh fetch and `git ls-remote` agree. All five app roots and Browser renderer align. The slice improves API/Cloud flow-step reorder integrity, but remaining role-by-model authorization mapping and whole-product acceptance remain open.
 
 | ID | Confirmed front | Current truth | Remaining acceptance |
 |---|---|---|---|
-| CMT-001 | Baseline, versions and PR reconciliation | PR #95 is last verified delivery; current 5.1.27 candidate aligns all five roots and renderer. | Candidate PR, merge, and remote readback pending; no deployment is claimed. |
+| CMT-001 | Baseline, versions and PR reconciliation | PR #96 delivered 5.1.27; all five roots and renderer verify on remote main SHA `a0425134ba69b1feaf165cd512caad8c136ca6f8`. | Source delivery/readback pass; GitHub had no hosted checks/review decision configured; no deployment is claimed. |
 | CMT-002 | Shared visible diagnostics widget and safe diagnostics | Exact-candidate built-SPA evidence passes 1/1; diagnostics tests pass 19/19; source widget readiness is recorded. | Native Electron rendering, OS permissions, physical device/audio, and broad route/a11y acceptance remain unverified. |
 | CMT-003 | Voice → Cloud → Browser → CRM, providers chosen per client | Provider-neutral source and tenant-scoped private-origin policy are implemented and covered by API/Cloud/Browser checks. | No universal live vendor UAT; configured client acceptance remains tenant-specific. |
 | CMT-004 | Administration and permissions | Owner-approved least-privilege rules are implemented; 35-model inventory/126 core-row drift guard passes; FlowStep reorder validation is serializable. | Remaining 26 model-specific role×tenant×surface×operation mappings and persistent migration acceptance remain incomplete; UAT-009/010 remain open. |

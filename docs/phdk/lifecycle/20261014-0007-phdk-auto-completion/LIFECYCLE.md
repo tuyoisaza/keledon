@@ -20,6 +20,6 @@ Goal: complete the four owner-confirmed fronts and applicable PHDK conformity.
 | 67 AEO/GEO | COMPLETED — SOURCE REVIEW / EXTERNAL UNMEASURED | Fifteen source controls classified; no unsupported claims or schema added. |
 | 70 Check | COMPLETED — 5.1.27 SOURCE CHECK / ACCEPTANCE PARTIAL | Flow-step reorder source gap identified; full 35-model authorization map and external acceptance remain open. See current Check handoff. |
 | 80 Remediation | COMPLETED — 5.1.27 SOURCE FIX VERIFIED | API/Cloud reorder membership and updates are serializable; focused/full regressions and configured builds pass. |
-| 90 Delivery | RUNNING — 5.1.27 PR/READBACK PENDING | Source commit `996464da5c1bb0567c6e9fa7d40e0a212e6d7b48` has exact-commit Web UAT 1/1; PR/merge/readback remain. Last verified main is PR #95 at `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2`. |
+| 90 Delivery | COMPLETED — 5.1.27 MERGED / REMOTE VERIFIED | PR #96 merged at `a0425134ba69b1feaf165cd512caad8c136ca6f8`; remote readback and PR tree match. Whole-product acceptance remains partial. |
 
 Prior run `20261013-1900-phdk-auto` is retained as immutable history and evidence. Current run artifacts live in each numbered stage folder.

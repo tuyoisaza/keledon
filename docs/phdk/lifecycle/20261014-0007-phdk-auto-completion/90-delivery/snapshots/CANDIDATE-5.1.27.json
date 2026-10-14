@@ -4,11 +4,11 @@
   "base_commit": "8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2",
   "source_fingerprint": "sha256:ed0ef06ebbffbd331cbb28f1aa8bd7f15c62b3b80c9a5b6da0856541ce42e63e",
   "source_commit": "996464da5c1bb0567c6e9fa7d40e0a212e6d7b48",
-  "pull_request": null,
-  "delivery_status": "COMMITTED_UAT_VERIFIED_PR_PENDING",
+  "pull_request": "https://github.com/tuyoisaza/keledon/pull/96",
+  "delivery_status": "MERGED_REMOTE_VERIFIED",
   "acceptance_status": "PARTIALLY_DELIVERED",
-  "pull_request_state": "NOT_CREATED",
-  "merged_commit": null,
+  "pull_request_state": "MERGED",
+  "merged_commit": "a0425134ba69b1feaf165cd512caad8c136ca6f8",
   "checks": {
     "api_regression": "PASS 21 suites",
     "api_jest": "PASS 11 suites / 38 tests",
@@ -20,7 +20,7 @@
     "api_cloud_lint": "PASS, 0 errors / 138 API warnings / 25 Cloud warnings",
     "phdk_coherence": "PASS 52/52",
     "post_commit_uat": "PASS 1 suite at candidate revision 996464da5c1bb0567c6e9fa7d40e0a212e6d7b48; source fingerprint matches clean source roots",
-    "remote_main_readback": "PENDING: PR not created"
+    "remote_main_readback": "PASS: PR #96 merged; origin/main and git ls-remote resolve to a0425134ba69b1feaf165cd512caad8c136ca6f8; PR head tree matches squash tree"
   },
   "uat": {
     "result": "PASS_SCOPED; prior UAT-008 evidence retained",
@@ -39,5 +39,5 @@
   ],
   "deployment": "NOT_PERFORMED",
   "production_database_or_customer_data": "NOT_USED",
-  "merge_tree": null
+  "merge_tree": "13c1f43456b363eec37ad275b1c77838b50cdae3"
 }

@@ -2,55 +2,58 @@
   "version": "1",
   "goal": "PHDK Auto: KELEDON four confirmed fronts and maximum applicable PHDK source conformity",
   "target_branch": "main",
-  "expected_version": "5.1.26",
+  "expected_version": "5.1.27",
   "version_file": "services/web/package.json",
   "version_property": "version",
-  "source_commit_sha": "d09cd3c1bab7ec86aa56a40b6ae2295fd890b808",
-  "merged_commit_sha": "8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/95",
+  "source_commit_sha": "996464da5c1bb0567c6e9fa7d40e0a212e6d7b48",
+  "merged_commit_sha": "a0425134ba69b1feaf165cd512caad8c136ca6f8",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/96",
   "checks": {
     "version_alignment": {
       "status": "PASS",
-      "evidence": "Fetched origin/main and git ls-remote resolve to 8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2; five package/lock roots and Browser renderer identify 5.1.26."
+      "evidence": "Remote main a0425134ba69b1feaf165cd512caad8c136ca6f8 reports 5.1.27 in all five package/lock roots and Browser renderer."
     },
     "commit_prefix": {
       "status": "PASS",
-      "evidence": "PR #95 head source/docs commits use v5.1.26 prefix: 6a99281e8c74c5d40590aca146a03786324dc340 and d09cd3c1bab7ec86aa56a40b6ae2295fd890b808."
+      "evidence": "Source and evidence commits carry the v5.1.27 prefix: 996464d fix(flows) and cad2253 docs(phdk)."
     },
     "pr_merge_remote_readback": {
       "status": "PASS",
-      "evidence": "PR #95 merged at 8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2. origin/main and git ls-remote agree; merge tree matches PR head tree 4dec1d82989ed30f6b2b2eef74e4fbc845af0dea. No hosted checks/review decision configured."
+      "evidence": "PR #96 merged; origin/main and git ls-remote agree on a0425134ba69b1feaf165cd512caad8c136ca6f8; PR head and squash trees match 13c1f43456b363eec37ad275b1c77838b50cdae3. GitHub status-check and review rollups are empty."
     },
     "api_build_and_regression": {
       "status": "PASS",
-      "evidence": "API build and TypeScript check pass; API regression 20/20 suites, including audited profile policy/AuthGuard/Nest HTTP wiring; full API lint 0 errors/138 warnings."
+      "evidence": "API configured build/full TypeScript check pass; regression 21/21, Jest 11/11 suites/38 tests, FlowService 7/7; lint 0 errors/138 warnings."
+    },
+    "cloud_regression_and_build": {
+      "status": "PASS",
+      "evidence": "Cloud configured build/full TypeScript check pass; regression 11/11, FlowService 10/10; lint 0 errors/25 warnings. Full Cloud Jest E2E cannot initialize without DATABASE_URL and is not claimed as passed."
     },
     "web_and_uat": {
       "status": "PASS",
-      "evidence": "Web typecheck/build pass; post-commit built-SPA UAT 1/1 at source commit 6a99281e8c74c5d40590aca146a03786324dc340; focused ESLint 0 errors/1 Fast Refresh warning."
+      "evidence": "Web typecheck/build, diagnostics 19/19, SEO source check pass; post-commit built-SPA synthetic UAT 1/1 at source commit 996464da5c1bb0567c6e9fa7d40e0a212e6d7b48; APIs mocked and external network blocked."
     },
     "browser_landing": {
       "status": "PASS",
-      "evidence": "Browser and Landing builds pass; Landing typecheck/SEO tests pass. All five app package/lock roots and Browser renderer are 5.1.26."
+      "evidence": "Browser and Landing builds/typechecks pass; all five package/lock roots and Browser renderer are 5.1.27."
     },
     "phdk_coherence": {
       "status": "PASS",
-      "evidence": "PHDK v2.50.10 coherence 52/52."
+      "evidence": "Installed PHDK v2.50.10 coherence checker passes all 52 manifest mappings."
     },
     "scoped_uat": {
       "status": "PASS",
-      "evidence": "UAT-008 passes within approved scope: synthetic UI with mocked API plus isolated server regression for current DB superadmin, allowlist, audit, expiry and revocation. Overall product acceptance remains PARTIALLY_DELIVERED."
+      "evidence": "Exact-commit synthetic UI and isolated API/Cloud flow-service/regression tests pass. No persistent DB, live identity, customer provider or deployment used; whole-product acceptance remains partial."
     }
   },
   "acceptance_status": "PARTIALLY_DELIVERED",
   "unresolved_commitments": [
     "CMT-002: native Electron rendering, OS permission, device/audio and broad route accessibility/localization acceptance",
-    "CMT-004: exhaustive 35-model role/tenant/surface/operation matrix and disposable database persistence/vendor-secret migration acceptance",
+    "CMT-004: remaining 26 non-core model role/tenant/surface/operation mapping and disposable database persistence/migration acceptance",
     "UAT-009: safe development target and synthetic identities",
     "UAT-010: disposable database for migration/persistence matrix",
     "CHK-005/009: deployed SEO/AEO field measurements",
-    "CHK-006: public market/language decision",
-    "Customer-specific live voice/call/CRM acceptance when a client provider is configured"
+    "CHK-006: public market/language decision"
   ],
   "deployment": "NOT_PERFORMED",
   "production_database_or_customer_data": "NOT_USED",
@@ -58,23 +61,23 @@
     "expected_version": "5.1.27",
     "branch": "fix/phdk-crud-model-matrix",
     "base_commit": "8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2",
-    "delivery_status": "COMMITTED_UAT_VERIFIED_PR_PENDING",
+    "delivery_status": "MERGED_REMOTE_VERIFIED",
     "source_commit_sha": "996464da5c1bb0567c6e9fa7d40e0a212e6d7b48",
-    "pr_url": null,
+    "pr_url": "https://github.com/tuyoisaza/keledon/pull/96",
     "api_regression": "PASS 21/21 suites",
     "api_jest": "PASS 11/11 suites, 38 tests",
     "cloud_regression": "PASS 11/11 suites",
     "flow_service_tests": "PASS API 7/7, Cloud 10/10",
     "api_cloud_build_typecheck": "PASS",
     "api_cloud_lint": "PASS 0 errors; 138 API and 25 Cloud warnings",
-    "web_uat": "PASS 1/1 sequential retry on built 5.1.27 Web with mocked APIs; initial parallel attempt failed at /login",
-    "cloud_jest_full": "BLOCKED test/app.e2e-spec.ts requires DATABASE_URL",
+    "web_uat": "PASS 1/1 post-commit at source commit 996464da5c1bb0567c6e9fa7d40e0a212e6d7b48; synthetic fixtures and mocked APIs",
+    "cloud_jest_full": "BLOCKED: e2e startup requires DATABASE_URL",
     "whole_product_acceptance": "PARTIALLY_DELIVERED",
-    "note": "Candidate commit and PR publication remain pending. Outer merged_main fields above retain the last independently verified delivery.",
+    "note": "PR #96 merged and remote main readback verified; full Auto acceptance remains partial.",
     "source_fingerprint": "sha256:ed0ef06ebbffbd331cbb28f1aa8bd7f15c62b3b80c9a5b6da0856541ce42e63e",
-    "pull_request": null,
-    "merged_commit_sha": null,
-    "pull_request_state": "NOT_CREATED",
-    "merge_tree": null
+    "pull_request": "https://github.com/tuyoisaza/keledon/pull/96",
+    "merged_commit_sha": "a0425134ba69b1feaf165cd512caad8c136ca6f8",
+    "pull_request_state": "MERGED",
+    "merge_tree": "13c1f43456b363eec37ad275b1c77838b50cdae3"
   }
 }

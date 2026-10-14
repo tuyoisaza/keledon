@@ -2,7 +2,7 @@
 
 ## Active candidate 5.1.27 — delivery pending
 
-The current candidate is source commit `996464da5c1bb0567c6e9fa7d40e0a212e6d7b48` on `fix/phdk-crud-model-matrix`, based on verified `main` `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2`. API/Cloud flow reorder validates exact membership and writes in one serializable transaction; the Prisma inventory drift test verifies 35/35 model names and 126 unique core role/surface rows. API regression 21/21, Cloud regression 11/11, API Jest 11/11, focused flow tests, builds/typechecks and PHDK coherence pass. Exact-commit synthetic Web UAT passes 1/1. Candidate is committed but not pushed or published; PR/merge/readback remain pending. Cloud full Jest requires `DATABASE_URL`. Overall PHDK Auto remains PARTIALLY DELIVERED.
+PR #96 merged source commit `996464da5c1bb0567c6e9fa7d40e0a212e6d7b48` to `main` at `a0425134ba69b1feaf165cd512caad8c136ca6f8`. Fresh `origin/main` and `git ls-remote` match; PR head and squash tree both resolve to `13c1f43456b363eec37ad275b1c77838b50cdae3`. API/Cloud flow reorder validates exact membership and writes in one serializable transaction; the Prisma inventory drift test verifies 35/35 model names and 126 unique core role/surface rows. API regression 21/21, Cloud regression 11/11, API Jest 11/11, focused flow tests, builds/typechecks, exact-commit synthetic Web UAT 1/1, and PHDK coherence pass. Cloud full Jest requires `DATABASE_URL`. GitHub had no hosted checks or review decision configured; no deployment is claimed. Overall PHDK Auto remains PARTIALLY DELIVERED.
 
 Status: **SOURCE MERGED / REMOTE VERIFIED; OVERALL ACCEPTANCE PARTIAL**.
 

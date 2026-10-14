@@ -1,11 +1,11 @@
 # PMO status — current Auto continuation 5.1.27; overall PARTIALLY DELIVERED
 ## Active run `20261014-0007-phdk-auto-completion` — current portfolio
 
-PR #95 delivered 5.1.26 to `main` at `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2`. The 5.1.27 candidate closes an API/Cloud flow-step reorder gap and transaction race; API regression 21/21, Cloud regression 11/11, API Jest 11/11, focused flow tests 7/7 and 10/10, configured builds/typechecks and PHDK coherence pass. The full Cloud Jest suite requires `DATABASE_URL`; the local web UAT harness failed at `/login`. This backend fix has no UI changes. PR/readback remain pending.
+PR #96 delivered 5.1.27 at `main` SHA `a0425134ba69b1feaf165cd512caad8c136ca6f8`, verified against both fetch and `git ls-remote`; PR head and squash trees match. API/Cloud flow-step reorder now validates full unique membership within a serializable write transaction. API regressions 21/21, Cloud regressions 11/11, API Jest 11/11, focused flow tests 7/7 and 10/10, post-commit synthetic Web UAT 1/1, configured builds/typechecks and PHDK coherence pass. Full Cloud Jest still needs `DATABASE_URL`. Overall acceptance remains partial.
 
 | WS | Current state | Evidence / next gate |
 |---|---|---|
-| WS-001 / CMT-001 | BASELINE VERIFIED; 5.1.27 DELIVERY ACTIVE | PR #95 delivered 5.1.26; candidate 5.1.27 awaits normal PR/merge/readback. |
+| WS-001 / CMT-001 | SOURCE DELIVERY VERIFIED | PR #96 delivered 5.1.27 to `main` at `a0425134ba69b1feaf165cd512caad8c136ca6f8`; no hosted checks/review decision configured. |
 | WS-002 / CMT-002 | SOURCE PARTIAL; UAT OPEN | Diagnostics and UAT-008 source/UI checks pass. Native Electron permissions/device/audio and broad route accessibility/localization remain open. |
 | WS-003 / CMT-003 | SOURCE/CONTRACT PASS; CLIENT ACCEPTANCE PARAMETERIZED | Private CRM destinations require validation and per-tenant allowlist. No universal live provider; client selects CRM/telephony. |
 | WS-004 / CMT-004 | SOURCE POLICY PASS; PERSISTED ACCEPTANCE OPEN | Inventory assertion covers 35 models and 126 core rows; flow reorder is scoped/serializable. Remaining 26 model role-operation mappings and disposable DB acceptance remain open. |
