@@ -1,0 +1,42 @@
+{
+  "product_version": "5.1.27",
+  "branch": "fix/phdk-crud-model-matrix",
+  "base_commit": "8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2",
+  "source_fingerprint": "pending-final-candidate-tree",
+  "source_commit": null,
+  "pull_request": null,
+  "delivery_status": "VALIDATED_PR_PENDING",
+  "acceptance_status": "PARTIALLY_DELIVERED",
+  "pull_request_state": "NOT_CREATED",
+  "merged_commit": null,
+  "checks": {
+    "api_regression": "PASS 21 suites",
+    "api_jest": "PASS 11 suites / 38 tests",
+    "cloud_regression": "PASS 11 suites",
+    "api_cloud_build_typecheck": "PASS",
+    "flow_service_tests": "PASS API 7/7; Cloud 10/10",
+    "web_uat": "PASS 1 suite sequential retry on built 5.1.27 Web; synthetic fixtures and mocked API; initial parallel attempt failed at /login",
+    "cloud_jest_full": "BLOCKED: test/app.e2e-spec.ts requires DATABASE_URL; focused flow tests pass",
+    "api_cloud_lint": "PASS, 0 errors / 138 API warnings / 25 Cloud warnings",
+    "phdk_coherence": "PASS 52/52",
+    "remote_main_readback": "PENDING: PR not created"
+  },
+  "uat": {
+    "result": "PASS_SCOPED; prior UAT-008 evidence retained",
+    "case": "flow-step reorder contract",
+    "server_evidence": "API and Cloud isolated FlowService tests plus regression suites; no DB connection",
+    "ui_evidence": "Web 5.1.27 widget and synthetic management journeys pass 1/1 with mocked API; no live backend claim",
+    "whole_product": "NOT_ACCEPTED"
+  },
+  "limitations": [
+    "No live development identity/target",
+    "No disposable PostgreSQL DB or migration/persistence matrix",
+    "No native device/audio manual UAT",
+    "No deployed SEO/AEO measurement",
+    "No client-specific configured voice/CRM integration UAT",
+    "Remaining role/tenant/surface/operation mapping for 26 non-core Prisma models"
+  ],
+  "deployment": "NOT_PERFORMED",
+  "production_database_or_customer_data": "NOT_USED",
+  "merge_tree": null
+}

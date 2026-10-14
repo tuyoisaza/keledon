@@ -2,22 +2,22 @@
 
 ## Active run — `20261014-0007-phdk-auto-completion`
 
-Goal: finish PHDK Auto for CMT-001..004 in owner-confirmed order. PR #94 established 5.1.25 baseline on `main` at `8dfc1fca7de253a017acb6f291ff278699915beb`. The current 5.1.26 candidate commit `6a99281e8c74c5d40590aca146a03786324dc340` adds the approved audited temporary test-profile flow on `fix/audited-uat-test-profiles`; post-commit UAT passes 1/1.
+Goal: finish PHDK Auto for CMT-001..004 in owner-confirmed order. Last verified main is PR #95 at `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2` / 5.1.26. Current candidate `fix/phdk-crud-model-matrix` / 5.1.27 fixes flow reorder validation and its transaction race; PR and remote readback remain pending.
 
 | Stage | Status | Current evidence / next action |
 |---|---|---|
-| Preflight | REUSED / VERIFIED | Installed PHDK canonical release and coherence evidence from previous delivery; rerun on final candidate. |
+| Preflight | VERIFIED | PHDK v2.50.10 coherence 52/52 and remote completion gate pass for 5.1.26. |
 | Capture | COMPLETED | Four fronts and approved least-privilege policy captured; owner approved per-tenant private CRM allowlists and the UAT temporary-profile boundary. |
 | Plan | COMPLETED | Brownfield plan and canonical artifacts are archived under this run. |
-| PMO / Workstreams | COMPLETED / REFRESHED | Four confirmed workstreams tracked; current candidate 5.1.26. |
-| Integration Review | IN PROGRESS | UAT-008 API, web and versioned source changes under review; rerun applicable full gates. |
+| PMO / Workstreams | COMPLETED / REFRESHED | Four confirmed workstreams tracked; current candidate 5.1.27. |
+| Integration Review | COMPLETED — SOURCE REVIEW | Reorder is now complete-set and serializable in API/Cloud; PR review/merge still pending. |
 | UAT | RETESTED — SCOPED PASS / WHOLE-PRODUCT OPEN | UAT-008 passes via mocked UI plus isolated Nest HTTP regressions; UAT-009/010 remain blocked, UAT-006 manual. |
 | UAT Fix | COMPLETED — SOURCE DEFECT RESOLVED | Approved dev/staging-only audited switch implemented; no persistent role change; test expires within 10 minutes and return revokes it. |
 | SEO | SOURCE PASS / MEASUREMENT GAPS | Prior source review retained; deployed field measurements remain unavailable. |
 | AEO/GEO | SOURCE REVIEW / EXTERNAL UNMEASURED | Prior source review retained; no deployed evidence. |
-| Check | IN PROGRESS | API/web builds and focused checks pass; finish coherence, source-size, full app checks and candidate delivery gate. |
-| Remediation | IN PROGRESS | Rerun PHDK check after integration review; close any candidate findings. |
-| Delivery | OPEN | Commit with `v5.1.26` prefix, create/merge PR, read back exact main SHA, rerun completion gate. No deployment. |
+| Check | COMPLETED — 5.1.27 SOURCE PASS / MATRIX PARTIAL | API regression 21/21, Cloud regression 11/11, builds/typechecks and coherence pass; Cloud full Jest needs DATABASE_URL; local Web UAT harness failed at `/login`. |
+| Remediation | COMPLETED — SOURCE FIX VERIFIED | API/Cloud reorder validation and writes are within serializable transactions; inventory guard passes. Full remaining 26-model matrix and DB acceptance stay open. |
+| Delivery | RUNNING — PR/READBACK PENDING | 5.1.27 awaits versioned commit, push, PR, normal merge and exact main readback. Last verified main is PR #95. |
 
 Overall PHDK Auto remains **PARTIALLY DELIVERED**. Full acceptance requires a safe development target and identities, disposable DB/migration matrix, native device/audio, broad route accessibility/localization and deployed SEO/AEO measurement. Real call/CRM acceptance is tenant-specific after client configuration.
 

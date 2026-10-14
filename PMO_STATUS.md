@@ -1,15 +1,15 @@
-# PMO status — current Auto continuation 5.1.26; overall PARTIALLY DELIVERED
+# PMO status — current Auto continuation 5.1.27; overall PARTIALLY DELIVERED
 ## Active run `20261014-0007-phdk-auto-completion` — current portfolio
 
-UAT Fix resolved UAT-008 after the owner approved the bounded development/staging design. The 5.1.26 candidate branch passes API regression 20/20 suites and built-SPA UAT 1/1, including the audited synthetic-profile switch/return. This is scoped source/UI evidence: no real account, persistent DB, deployment, native device/audio, or customer provider was used. Delivery PR and exact remote readback remain pending.
+PR #95 delivered 5.1.26 to `main` at `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2`. The 5.1.27 candidate closes an API/Cloud flow-step reorder gap and transaction race; API regression 21/21, Cloud regression 11/11, API Jest 11/11, focused flow tests 7/7 and 10/10, configured builds/typechecks and PHDK coherence pass. The full Cloud Jest suite requires `DATABASE_URL`; the local web UAT harness failed at `/login`. This backend fix has no UI changes. PR/readback remain pending.
 
 | WS | Current state | Evidence / next gate |
 |---|---|---|
-| WS-001 / CMT-001 | BASELINE VERIFIED; DELIVERY OPEN | PR #94 main baseline 5.1.25 at `8dfc1fca7de253a017acb6f291ff278699915beb`; candidate roots are 5.1.26. Complete versioned commit, PR and remote readback. |
+| WS-001 / CMT-001 | BASELINE VERIFIED; 5.1.27 DELIVERY ACTIVE | PR #95 delivered 5.1.26; candidate 5.1.27 awaits normal PR/merge/readback. |
 | WS-002 / CMT-002 | SOURCE PARTIAL; UAT OPEN | Diagnostics and UAT-008 source/UI checks pass. Native Electron permissions/device/audio and broad route accessibility/localization remain open. |
 | WS-003 / CMT-003 | SOURCE/CONTRACT PASS; CLIENT ACCEPTANCE PARAMETERIZED | Private CRM destinations require validation and per-tenant allowlist. No universal live provider; client selects CRM/telephony. |
-| WS-004 / CMT-004 | SOURCE POLICY PASS; PERSISTED ACCEPTANCE OPEN | Approved least privilege and temporary test-profile policy implemented; exhaustive 35-model matrix and disposable DB migration/persistence remain open. |
-| WS-X | SOURCE CHECKS CONTINUE | Complete candidate integration review, PHDK coherence/delivery gates, SEO/AEO source records and remote PR delivery. Deployed measurements remain unavailable. |
+| WS-004 / CMT-004 | SOURCE POLICY PASS; PERSISTED ACCEPTANCE OPEN | Inventory assertion covers 35 models and 126 core rows; flow reorder is scoped/serializable. Remaining 26 model role-operation mappings and disposable DB acceptance remain open. |
+| WS-X | SOURCE CHECKS PASS | PHDK coherence and delivery gates pass; deployed SEO/AEO measurements remain unavailable. |
 
 Portfolio remains **PARTIALLY DELIVERED**. Current source/UI fixes do not waive environment-dependent acceptance.
 

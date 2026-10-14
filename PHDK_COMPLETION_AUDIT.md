@@ -1,19 +1,29 @@
 # PHDK Auto completion audit — 2026-10-14
 
-## UAT Fix retest — candidate 5.1.26
+## Candidate reconciliation — 5.1.27
 
-Owner-approved temporary test-profile selection is implemented on `fix/audited-uat-test-profiles`, based on `origin/main` 5.1.25 (`8dfc1fca7de253a017acb6f291ff278699915beb`). It is explicitly disabled by default and allowed only in development/staging, only for configured synthetic identities and supported roles. Current DB superadmin is rechecked, session start/end is audited, test token expires within ten minutes and return revokes it. API in-process Nest HTTP and focused regression pass; built-SPA UAT passes 1/1 with the same UI path against a mocked API. No real account, persistent database, production system, device or provider was used. Candidate delivery by versioned commit/PR and remote readback is pending.
+The last remote delivery is PR #95 / 5.1.26 at verified `main` SHA `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2`. Candidate `fix/phdk-crud-model-matrix` upgrades all five application roots and Browser renderer to 5.1.27. It closes a source-level API flow reorder gap and the read-before-write transaction race by validating full unique FlowStep membership inside a serializable transaction in API and Cloud. Regression evidence passes: API 21/21 suites, API Jest 11/11 suites/38 tests, Cloud 11/11 suites, API FlowService 7/7 and Cloud FlowService 10/10. Configured API/Cloud builds and typechecks pass; all app builds/typechecks and PHDK coherence 52/52 pass. API/Cloud lint have zero errors with 138/25 warnings. Full Cloud Jest is blocked by its E2E startup requiring `DATABASE_URL`; local web UAT failed loading `/login` and is not claimed as a pass. Branch commit, PR, merge, and remote readback are pending.
+
+Commitments remain confirmed, none deferred. CMT-001 is still awaiting this candidate's publication/readback; CMT-004 source coverage improves but remains partial because 26 non-core models lack full role×tenant×surface×operation evidence and persistence is unverified. CMT-002 still needs native/device/audio and broad accessibility/localization acceptance. CMT-003 is provider-independent in source; any live call/CRM acceptance belongs to each configured client. Deployed SEO/AEO and the public market/language decision remain open. Overall status is **PARTIALLY DELIVERED**, not complete.
+
+## Delivery recheck — PR #95 / v5.1.26
+
+PR [#95](https://github.com/tuyoisaza/keledon/pull/95) merged to `main` at `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2`. `git fetch`, `git ls-remote`, and PR metadata agree; PR head and squash merge tree both resolve to `4dec1d82989ed30f6b2b2eef74e4fbc845af0dea`. Five package/lock roots and Browser renderer are 5.1.26. PHDK v2.50.10 coherence 52/52; completion gate passes. The PR had no hosted status checks or review decision configured.
+
+## UAT Fix retest — source commit `6a99281e8c74c5d40590aca146a03786324dc340`
+
+Owner-approved temporary test-profile selection is implemented on `fix/audited-uat-test-profiles`, based on `origin/main` 5.1.25 (`8dfc1fca7de253a017acb6f291ff278699915beb`). It is explicitly disabled by default and allowed only in development/staging, only for configured synthetic identities and supported roles. Current DB superadmin is rechecked, session start/end is audited, test token expires within ten minutes and return revokes it. API in-process Nest HTTP and focused regression pass; built-SPA UAT passes 1/1 with the same UI path against a mocked API. No real account, persistent database, production system, device or provider was used. PR #95 now delivers the versioned candidate; exact remote readback passes.
 
 | Commitment | Delivery status | Remaining acceptance |
 |---|---|---|
-| CMT-001 — baseline, versions, PRs | BASELINE VERIFIED; 5.1.26 CANDIDATE OPEN | Candidate commit, PR, merge and remote readback. |
+| CMT-001 — baseline, versions, PRs | SOURCE DELIVERED / REMOTE VERIFIED | PR #95 merged 5.1.26 at `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2`; no deployment is claimed. |
 | CMT-002 — widget and safe diagnostics | SOURCE CHECKS PASS | Native Electron, OS permission, physical device/audio and broad route accessibility/localization. |
 | CMT-003 — provider-neutral call/CRM flow | SOURCE/CONTRACT PASS | Live integration is tenant-specific after each client configures providers; private destinations require validation and per-tenant allowlisting. |
 | CMT-004 — administration and permissions | SOURCE POLICY/UAT-008 PASS | Exhaustive 35-model matrix, real development identities, disposable-DB persistence and migration. |
 
 Overall result remains **PARTIALLY DELIVERED**. The scoped UAT-008 source defect is resolved; whole-product acceptance remains open for the environment-dependent and manual gates above, plus deployed SEO/AEO measurements. No deployment is claimed.
 
-**Result: PARTIALLY DELIVERED — candidate source fix validated; final source delivery and product acceptance remain open.**
+**Result: PARTIALLY DELIVERED — PR #95 is delivered and verified; product acceptance remains open.**
 
 ## Current 5.1.24 source delivery — PR #92
 

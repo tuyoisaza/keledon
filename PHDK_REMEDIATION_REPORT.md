@@ -1,5 +1,9 @@
 # PHDK remediation report — active candidate
 
+## Current source remediation — 2026-10-14, candidate 5.1.27
+
+CHK-002 source review found that API flow-step reorder accepted arbitrary subsets/foreign IDs, while Cloud required a full set but checked membership before starting writes. Both API and Cloud now reject malformed input and validate exact unique flow membership inside a serializable transaction that includes the reorder writes. API tests pass 7/7 and Cloud tests 10/10; API regression is 21/21, Cloud regression 11/11, and API Jest 11/11 (38 tests). Both configured builds and full TypeScript checks pass; full lint is 0 errors/138 warnings API and 0 errors/25 warnings Cloud. The inventory regression asserts all 35 Prisma models and 126 core role/surface rows. It is a drift guard, not authorization proof. Full Cloud Jest cannot initialize without `DATABASE_URL`. An initial parallel web UAT attempt failed at `/login`; the sequential retry passed 1/1 on the 5.1.27 build with mocked APIs. No database was connected. The exhaustive remaining 26-model role/tenant/operation map, DB-backed persistence, native/device/audio, broad route accessibility/localization and deployed SEO/AEO remain open. Overall Auto remains **PARTIALLY DELIVERED**.
+
 ## Current UAT Fix — 2026-10-14, candidate 5.1.26
 
 Implemented the owner-approved audited temporary test-profile flow. It is explicitly disabled by default, limited to development/staging and configured synthetic profile IDs, resolves actor and target from the DB, requires current superadmin on entry and each use, writes immutable session start/end events, expires within ten minutes, and revokes the test token on return. It does not mutate persisted roles. The UI uses the original admin token for a guarded return and stores it only in current-tab session storage. API regression 20/20 and synthetic Web UAT 1/1 pass; the candidate is awaiting versioned commit/PR/remote readback.

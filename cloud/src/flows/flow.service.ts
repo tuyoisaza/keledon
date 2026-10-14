@@ -332,25 +332,36 @@ export class FlowService {
   }
 
   async reorderSteps(flowId: string, stepIds: string[]): Promise<void> {
-    const existing = await this.prisma.flowStep.findMany({
-      where: { flowId },
-      select: { id: true },
-    });
-    const existingIds = new Set(existing.map((step) => step.id));
     if (
-      stepIds.length !== existing.length ||
-      new Set(stepIds).size !== stepIds.length ||
-      stepIds.some((stepId) => !existingIds.has(stepId))
+      !Array.isArray(stepIds) ||
+      stepIds.some((stepId) => typeof stepId !== 'string' || !stepId.trim())
     ) {
       throw new BadRequestException('Step order does not match flow steps');
     }
     await this.prisma.$transaction(
-      stepIds.map((stepId, index) =>
-        this.prisma.flowStep.update({
-          where: { id: stepId },
-          data: { order: index },
-        }),
-      ),
+      async (tx) => {
+        const existing = await tx.flowStep.findMany({
+          where: { flowId },
+          select: { id: true },
+        });
+        const existingIds = new Set(existing.map((step) => step.id));
+        if (
+          stepIds.length !== existing.length ||
+          new Set(stepIds).size !== stepIds.length ||
+          stepIds.some((stepId) => !existingIds.has(stepId))
+        ) {
+          throw new BadRequestException('Step order does not match flow steps');
+        }
+        await Promise.all(
+          stepIds.map((stepId, index) =>
+            tx.flowStep.update({
+              where: { id: stepId },
+              data: { order: index },
+            }),
+          ),
+        );
+      },
+      { isolationLevel: 'Serializable' },
     );
   }
 }

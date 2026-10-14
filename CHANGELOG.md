@@ -1,3 +1,8 @@
+## v5.1.27 — 2026-10-14 (CRUD scope and flow-step integrity)
+
+- Validate API and Cloud flow-step reorders against the complete, unique set of step IDs belonging to that flow inside one serializable transaction; reject malformed, partial, duplicate and foreign IDs before any update.
+- Add matching API/Cloud regression coverage and enforce the 35-model Prisma inventory plus the 126 core resource-role-surface matrix in tests.
+
 ## v5.1.26 — 2026-10-14 (audited non-production UAT profiles)
 
 - Add a superadmin-only selector for explicitly allowlisted synthetic UAT accounts in development or staging environments.

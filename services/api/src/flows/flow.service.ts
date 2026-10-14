@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as crypto from 'crypto';
 
@@ -342,13 +342,36 @@ export class FlowService {
   }
 
   async reorderSteps(flowId: string, stepIds: string[]): Promise<void> {
+    if (
+      !Array.isArray(stepIds) ||
+      stepIds.some((stepId) => typeof stepId !== 'string' || !stepId.trim())
+    ) {
+      throw new BadRequestException('Step order does not match flow steps');
+    }
     await this.prisma.$transaction(
-      stepIds.map((id, index) =>
-        this.prisma.flowStep.update({
-          where: { id },
-          data: { order: index },
-        }),
-      ),
+      async (tx) => {
+        const existing = await tx.flowStep.findMany({
+          where: { flowId },
+          select: { id: true },
+        });
+        const existingIds = new Set(existing.map((step) => step.id));
+        if (
+          stepIds.length !== existing.length ||
+          new Set(stepIds).size !== stepIds.length ||
+          stepIds.some((stepId) => !existingIds.has(stepId))
+        ) {
+          throw new BadRequestException('Step order does not match flow steps');
+        }
+        await Promise.all(
+          stepIds.map((id, index) =>
+            tx.flowStep.update({
+              where: { id },
+              data: { order: index },
+            }),
+          ),
+        );
+      },
+      { isolationLevel: 'Serializable' },
     );
   }
 }
