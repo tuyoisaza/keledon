@@ -1,5 +1,9 @@
 # PHDK Auto lifecycle status
 
+## Current continuation — 2026-10-14
+
+PR #89 merged at `b92a25428a6d25c898e3dfef7a055f754782ed57`; PR #90 removed renderer control of debug mode and merged at `48ab2023236ba5de56c046f99670a2abab866707`. Fresh `origin/main` readback matches the latter SHA; all five app package/lock roots remain 5.1.22. No PR is open. Post-commit Web UAT 1/1 is bound to code commit `05c7b8b3a5231b465579fea6f8fb39f8f47414be`; Browser focused tests 5/5 and build pass. Current lifecycle board: Preflight COMPLETED; Capture/Plan/PMO REUSED; Integration COMPLETED; Web UAT and UAT Fix COMPLETED for recorded journeys; SEO and AEO/GEO COMPLETED for source controls only; Check PARTIAL/OPEN; source remediation and PR delivery COMPLETED for these fixes. Full goal remains PARTIALLY DELIVERED pending CHK-002 exhaustive/persisted CRUD, CHK-003 broad route UX/a11y, CHK-004 migration runtime, CHK-005 deployed field data, CHK-006 public market/language decision, and CHK-007 native device/audio UAT. See `PHDK_COMPLETION_AUDIT.md`.
+
 ## Active continuation — 2026-10-13
 
 Overall result remains **PARTIALLY DELIVERED**. Product PRs #78–#83 and #86–#88 are merged; PR #88 delivered source version 5.1.21 at main commit `5b81b36c4e6534a930edc0a9f59f2ba117b01bb`. The current privacy candidate is version 5.1.22 on `fix/provider-error-redaction`. The 35-model CRUD gate remains open. `PHDK_DELIVERY_EVIDENCE.json` still points at PR #78, so the full Auto gate is not passing.

@@ -1,5 +1,13 @@
 # PHDK Lifecycle Handoff — UAT Fix
 
+## 5.1.23 candidate
+
+UAT exposed one release hygiene issue after the five-root version bump: the Electron renderer still displayed v5.1.22. `browser/scripts/sync-renderer-version.js` synchronized the source widget to v5.1.23. Browser build and renderer-boundary/version-action tests pass; exact-SHA Web UAT then passes on `0e724bfe1fec269ad6037104ad0a01e474172b93`.
+
+## 2026-10-14 integrated-source fixes
+
+The native Browser version/action row now follows package version on standard build/start/make commands, uses the runtime Electron version, assembles allowlisted diagnostics, checks reset acknowledgements and reloads only after success is visible. Packaged debug mode defaults off, the console waits for main-process authorization, and no renderer setter remains. Web/Landing now reload anonymous clients after successful owned-state reset; authenticated clients navigate to login after the success interval. Focused Browser tests 5/5, Web widget/diagnostics tests 17/17, Browser build, and Web/ Landing build/typecheck pass. Integrated main is 5.1.22 at `48ab2023236ba5de56c046f99670a2abab866707`. Native visual/runtime UAT remains BLOCKED.
+
 Run ID: `20261013-1900-phdk-auto`
 Stage: 60-uat-fix
 Status: COMPLETED

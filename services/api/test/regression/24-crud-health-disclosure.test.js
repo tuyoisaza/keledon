@@ -23,6 +23,18 @@ const output = ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
 }).outputText;
 const testModule = { exports: {} };
 const isolatedConsole = { error: (...args) => args };
+const healthFilename = path.resolve(__dirname, '../../src/crud/crud-health.ts');
+const healthOutput = ts.transpileModule(fs.readFileSync(healthFilename, 'utf8'), {
+  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+}).outputText;
+const healthModule = { exports: {} };
+vm.runInNewContext(healthOutput, {
+  module: healthModule,
+  exports: healthModule.exports,
+  URL,
+  process,
+  Date,
+}, { filename: healthFilename });
 vm.runInNewContext(output, {
   module: testModule,
   exports: testModule.exports,
@@ -31,7 +43,7 @@ vm.runInNewContext(output, {
   process,
   Date,
   console: isolatedConsole,
-  require: (name) => (name === '@nestjs/common' ? common : {}),
+  require: (name) => name === '@nestjs/common' ? common : name === './crud-health' ? healthModule.exports : {},
 }, { filename });
 
 async function main() {

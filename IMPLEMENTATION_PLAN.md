@@ -1,4 +1,19 @@
 # Implementation plan
+## Active integrated continuation — PHDK Auto run `20261013-1900-phdk-auto`, main 5.1.22
+
+PR #89 (`b92a25428a6d25c898e3dfef7a055f754782ed57`) and PR #90 (`48ab2023236ba5de56c046f99670a2abab866707`) are merged. Current main is clean, all five app manifest/lock roots are 5.1.22, and no PR remains open. CMT-001 release alignment and source portions of CMT-002/003/004 are integrated; do not reopen those slices without new evidence.
+
+| Remaining work | Commitment / Check | Next action | Acceptance / external dependency |
+|---|---|---|---|
+| Exhaustive resource policy | CMT-004 / CHK-002 | Complete model × role × tenant × API/web × list/detail/create/update/delete source mapping; add direct-ID tests for each mutable tenant resource family and reconcile duplicate/embedded routes. | Authorized disposable DB needed for persistence, delete/recovery and migration before/after checks; no production DB. |
+| Active-route UX/i18n/a11y | CMT-002/004 / CHK-003 | Continue route-by-route scan; repair confirmed literals and keyboard/name/state gaps, then add focused UAT. | Full screen-reader and exhaustive manual review remain independent acceptance. |
+| Managed AI persistence | CMT-004 / CHK-004 | Preserve server-side superadmin gate, validated schema and revision-attributed usage; add source regressions for any new issue. | Reviewed disposable database and additive migration procedure required for persisted acceptance. |
+| Tenant-selected call/CRM | CMT-003 | Maintain vendor-neutral interfaces and tenant-origin configuration; keep any private-network safety decision explicit. | No single customer platform chosen; local CRM use means blanket private-IP rejection would be incorrect. |
+| SEO/AEO and native Browser | CMT-001/002 / CHK-005/007 | Keep static source checks; make no field/runtime claim without supported environments. | Deployment/crawler measurements and supported Windows device/audio test host are required. |
+| Public locale/market | CHK-006 | Preserve English public canonical without adding guessed locale routes. | Product owner must define target market/languages before multilingual SEO changes. |
+
+Do not claim the four-front Auto goal complete while any confirmed commitment or applicable external acceptance remains open.
+
 ## Active continuation — PHDK Auto run `20261013-1900-phdk-auto`, candidate 5.1.17
 
 The four owner-confirmed workstreams remain in order CMT-001 → CMT-002 → CMT-003 → CMT-004. The current 5.1.17 convergence slice addresses CMT-004 administration usability and API-contract correctness across KELEDON and Voice Profiles while preserving the approved DB-derived role/tenant and write-only-secret policies. CMT-002 receives the app-wide notification mount and truthful inline error feedback; CMT-001 has all five app package/lock roots aligned. CMT-003 remains provider-independent because call and CRM platforms vary by client.

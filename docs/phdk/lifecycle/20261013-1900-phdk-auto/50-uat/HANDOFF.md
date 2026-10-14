@@ -1,5 +1,13 @@
 # PHDK Lifecycle Handoff — UAT
 
+## Re-run on 5.1.23 source commit `0e724bfe1fec269ad6037104ad0a01e474172b93`
+
+Built-SPA Company Co synthetic Web UAT passes 1/1 against the exact source commit. It verifies version/actions, responsive layout, diagnostics, and selected role-based UI journeys using intercepted API fixtures. Evidence and screenshots are in `docs/phdk/evidence/`; the report states that this is not real backend, database, authorization, production, Electron or device acceptance.
+
+## Current integrated-source UAT — 2026-10-14
+
+Rebuilt and reran `services/web npm run test:uat` against the 5.1.22 candidate; 1/1 suite passes and `docs/phdk/evidence/uat-local-web.json` identifies code commit `05c7b8b3a5231b465579fea6f8fb39f8f47414be`. Evidence covers synthetic Company Co UI fixtures and intercepted API calls only. Native Electron visual/device/audio, production API/database, client CRM/call-provider behavior and deployed acceptance remain unverified. This closes the stale candidate-revision issue for the Web UAT evidence, not the broader product acceptance.
+
 Run ID: `20261013-1900-phdk-auto`
 Stage: 50-uat
 Status: COMPLETED — ACCEPTANCE INCOMPLETE pending in-scope UAT Fix and external evidence

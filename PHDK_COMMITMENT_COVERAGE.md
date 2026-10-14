@@ -1,5 +1,18 @@
 # PHDK commitment coverage — KELEDON four fronts
 
+## Current integrated source — 2026-10-14, 5.1.22
+
+PR #89 merged at `b92a25428a6d25c898e3dfef7a055f754782ed57`; PR #90 merged at `48ab2023236ba5de56c046f99670a2abab866707`. Fresh `origin/main` readback matches the latter SHA, all five package/lock roots are 5.1.22, installed PHDK v2.50.10 coherence is 52/52, and no PR remains open. The merged source includes voice/provider privacy redaction, Browser version/actions and reset parity, main-process-only debug configuration, and Web/Landing anonymous reset reload.
+
+| Commitment | Current implementation/evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | PRs #89 and #90 merged; all five package/lock roots match 5.1.22 on verified `origin/main`; no open PRs. | GitHub exposes no required-check or review rollups for these PRs; no deployment is inferred. Machine completion evidence is refreshed against this SHA, but the full Auto gate remains blocked. |
+| CMT-002 | Browser report/reset/debug-mode source tests 5/5 and build pass; Web widget/diagnostics tests 17/17; post-commit synthetic Web UAT 1/1, bound to `05c7b8b3a5231b465579fea6f8fb39f8f47414be`. | Native Browser rendering, actual session/device/audio, OS permission flow and broader route/screen-reader acceptance remain unverified. |
+| CMT-003 | Provider-independent voice→Cloud→Browser contracts retained; API regression 18/18, Cloud 9/9; transcript/prompt/provider-error disclosure paths are redacted. | Client-specific CRM/call provider is chosen by each tenant; no universal live integration test applies. Private-network endpoint policy remains unresolved because clients may intentionally use local CRM endpoints. |
+| CMT-004 | Approved DB-derived role/tenant policy retained; selected CRUD role matrix, direct-ID boundaries and write-only credentials pass isolated API regressions. | Full 35-model × role × tenant × API/web × operation mapping, disposable-DB persistence/migration, and remaining route accessibility/localization remain open. |
+
+Overall status remains **PARTIALLY DELIVERED**. Machine completion evidence records unverified native UAT and lint limitations rather than claiming full Auto completion.
+
 ## Active Auto continuation — 5.1.17, run `20261013-1900-phdk-auto`
 
 | Commitment | Current implementation/evidence | Remaining acceptance |

@@ -1,76 +1,52 @@
-# PHDK Auto completion audit — PARTIALLY DELIVERED
+# PHDK Auto completion audit — 2026-10-14
 
-## Current source delivery — 5.1.19
+**Result: PARTIALLY DELIVERED — full Auto completion gate remains blocked.** This audit reconciles the four owner-confirmed fronts with source, local UAT, PR and remote-main evidence. It does not equate merged code with the unresolved operational acceptance.
 
-PR #83 merged at `48704bfd0699ff2b9b1618338962693ac7ffce07`; fresh `main` readback matches and all five app package/lock roots are 5.1.19. This delivery restricts global provider/runtime metadata to management roles, returns status-only data to admin/coordinator, reserves runtime versions/memory/dependency details for superadmin, and hides those panels in the manager UI. API/Cloud regressions (15/15 and 8/8), builds and API focused lint pass; Web typecheck/build, mocked local UAT 1/1, diagnostics 18/18, Browser/Landing builds, Landing SEO 1/1 and coherence 52/52 pass. The completion gate is blocked because `PHDK_DELIVERY_EVIDENCE.json` still names PR #78's old SHA; CHK-002 and external acceptance also remain open. Overall status is **PARTIALLY DELIVERED**; full role/resource CRUD, persisted database acceptance, native runtime, broad accessibility and deployed SEO/AEO remain unresolved.
+## Current 5.1.23 source candidate
 
-## Source delivery — 5.1.18
+On branch `fix/phdk-source-file-boundaries` based on verified main `48ab2023236ba5de56c046f99670a2abab866707`, both live files at the 600-line PHDK boundary have been split by responsibility. API health-disclosure behavior remains covered after moving its report helper to `services/api/src/crud/crud-health.ts`; CRUD API data shapes move to `services/web/src/lib/crud-api.types.ts` with public type exports preserved. All five app package/lock roots are 5.1.23. API regression passes 18/18 and its build and changed-source ESLint pass; Web typecheck/build, changed-file ESLint (0 errors, 8 existing `any` warnings), diagnostics 19/19, exact-SHA synthetic Company Co UAT 1/1 and PHDK coherence 52/52 pass. The independent whole-app lint and acceptance blockers below remain open. This candidate is local and has not been pushed or merged; remote `main` remains 5.1.22 until normal delivery is verified.
 
-PR #82 merged at `011ea0f7a9c20cd91342e880aaf6b6eec8ee0714`; remote readback matched and all five app roots were 5.1.18. This source fix closes an audit-log forgery path by removing the unused direct CRUD write endpoint and enforcing read-only audit access in the general CRUD guard; trusted interceptor/domain writes remain. It also adds denial/allowance coverage for legacy unscoped MVP handlers. API regressions 15/15, all five application builds, Web typecheck/diagnostics 18/18/mocked UAT 1/1, Landing SEO 1/1 and PHDK coherence 52/52 passed. No persisted DB, native, deployed, or client-provider acceptance was performed. CHK-002 remains open for the 35-model role/surface/operation gate and persisted evidence; broad localization/accessibility and deployed SEO/AEO remain open. Overall status is still **PARTIALLY DELIVERED**.
+## Goal and commitments
 
-## Current delivery — 5.1.16 (source slice merged; overall partial)
+The owner confirmed, in order, baseline/version/PRs (CMT-001), widget and safe diagnostics (CMT-002), provider-independent voice→Cloud→Browser→CRM (CMT-003), and administration/permissions (CMT-004). The owner clarified that CRM and call providers are chosen by each client, including local CRM systems. The restrictive authorization policy is confirmed: new accounts receive user privileges; only an existing superadmin grants elevated roles or company assignments; admin/coordinator stay within their company; API actor and tenant come from current DB state; normal responses never return secrets.
 
-Product PR [#76](https://github.com/tuyoisaza/keledon/pull/76) merged by squash at `db35f231c29fb71568666b230e912152ca0a34e2`; fetched `origin/main` and remote SHA readback independently match. All five app package/lock roots are 5.1.16. The profile, device, launcher and session-detail journeys now have en/es/pt copy; the invalid pairing-code endpoint call was replaced with protected launcher navigation. Web typecheck/build, synthetic local UAT 1/1 bound to source commit `7ce3509aeb4d53ce3a90d16153996abf35446024`, diagnostics 18/18, SEO source test 1/1, locale parity 644/644, focused ESLint (0 errors/warnings) and PHDK coherence 52/52 pass. GitHub reports no status checks or review decision; no deployment is claimed.
+## Integrated delivery
 
-This is a bounded source delivery, not full Auto completion. Persisted CRUD/migration, native Electron/device/audio, broad active-route accessibility/localization and deployed SEO/AEO remain open. Docker/PostgreSQL client/server binaries were unavailable on this host; no database or deployment was accessed.
+- PR #89 merged at `b92a25428a6d25c898e3dfef7a055f754782ed57`, version 5.1.22. It redacts transcript, agent-command, prompt, provider and decision-error content; aligns the Electron version/actions widget; adds allowlisted report/reset behavior; defaults debug mode by package environment; removes device/log paths from general device-info IPC; and completes anonymous Web/Landing reset reload.
+- PR #90 merged at `48ab2023236ba5de56c046f99670a2abab866707`. It removes the unused renderer debug-mode setter from IPC/preload/runtime state, leaving the setting under main-process startup configuration.
+- Fresh `origin/main` reads `48ab2023236ba5de56c046f99670a2abab866707`; the five app package/lock roots match 5.1.22 and no PR is open. GitHub returned empty review/check rollups; no deployment is inferred.
+- PHDK v2.50.10 coherence passes 52/52. API regression 18/18, Cloud regression 9/9, Browser focused tests 5/5, Web widget/diagnostics tests 17/17, Web/Landing typecheck and builds, configured API/Cloud builds, and Web/Landing SEO source tests pass. Synthetic local Web UAT passes 1/1 and is tied to code commit `05c7b8b3a5231b465579fea6f8fb39f8f47414be`.
 
-## Previous delivery — 5.1.15 (source slice merged; overall partial)
+## Commitment reconciliation
 
-Product PR [#74](https://github.com/tuyoisaza/keledon/pull/74) merged at `2e61f41926ab25b4d9ea9f9b73d11aba82988a63`; fetched `origin/main` independently matches. All five package/lock roots are 5.1.15. Dashboard/session/call-monitor copy, accessible tables and filters are improved. API build/regression 14/14; Cloud build/regression 8/8; Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1; Browser build/regression 24/24; Landing typecheck/build; PHDK coherence 52/52; focused ESLint 0 errors/14 warnings; and locale parity 562/562 pass. GitHub reports no required checks or review decision for #74; no deployment is claimed.
+| Commitment | Status | Evidence and unfinished acceptance |
+|---|---|---|
+| CMT-001 | SOURCE DELIVERY COMPLETE | All five app roots align at 5.1.22; PRs #89/#90 merged; main SHA independently read back. No deployment or hosted CI result is claimed. |
+| CMT-002 | PARTIAL | Web diagnostics/widget source tests and synthetic UAT pass. Native Browser rendering, actual session clearing in Electron, OS permission prompts, physical device/audio and broad screen-reader/route coverage remain unverified. |
+| CMT-003 | SOURCE/CONTRACT COMPLETE; CLIENT UAT N/A WITHOUT TENANT CONFIG | Provider-independent code and API/Cloud regressions are verified. Client-specific live call/CRM UAT is not a universal requirement. Local CRM choices make blanket private-network endpoint blocking unsafe; endpoint trust policy needs a product/security decision. |
+| CMT-004 | PARTIAL | Approved restrictive policy and selected resource/direct-ID/role regressions pass. The 35-model role × tenant × API/web × list/detail/create/update/delete source matrix and persisted isolation/delete/recovery/migration tests remain open. No disposable or production database was connected. |
 
-The full PHDK Auto result remains **PARTIALLY DELIVERED**: broad route accessibility/localization, persisted CRUD/migration, native device/audio and deployed SEO/AEO acceptance remain open. No live client provider or deployment is claimed. Current evidence is in `docs/phdk/lifecycle/20261013-keledon-auto-conformity/`.
+## PHDK stage board
 
-## Latest source delivery — 5.1.14
+| Stage | Status | Evidence / remaining condition |
+|---|---|---|
+| Preflight | COMPLETED | Installed PHDK v2.50.10; coherence 52/52. |
+| Capture | REUSED | Owner-confirmed four fronts and per-client provider decision remain current. |
+| Plan | REUSED / UPDATED | Root `IMPLEMENTATION_PLAN.md` identifies remaining source and external tasks. |
+| PMO / Workstreams | REUSED | Root `PHDK_COMMITMENT_COVERAGE.md` reconciles all four fronts. |
+| Integration Review | COMPLETED | PRs #89 and #90 merged and `origin/main` verified. |
+| UAT | COMPLETED — ACCEPTANCE INCOMPLETE | Local Web synthetic suite 1/1; native Electron, real DB and deployed journeys remain unverified. |
+| UAT Fix | COMPLETED FOR VERIFIED SOURCE FINDINGS | Browser version drift, report/reset, debug gating and anonymous Web/Landing reload repaired and tested. |
+| SEO | COMPLETED — SOURCE ONLY | Web/Landing static SEO source tests pass 1/1 each; deployed fields not measured. |
+| AEO/GEO | COMPLETED — SOURCE ONLY | Existing source audit passes; public market/language and external answer citations remain undecided/unmeasured. |
+| Check | PARTIAL / OPEN | CHK-002, CHK-003, CHK-004, CHK-005, CHK-006 and CHK-007 remain. |
+| Remediation | COMPLETED FOR CURRENT SOURCE CANDIDATES | Current authorized source fixes passed their focused checks and merged. More route-level source work is still listed in the plan. |
+| Delivery | SOURCE PRs COMPLETED; AUTO GOAL NOT COMPLETE | Main SHA `48ab2023236ba5de56c046f99670a2abab866707`; no PR open. The overall PHDK completion gate must fail closed on blocked lint/UAT and unresolved commitments. |
 
-Product PR [#72](https://github.com/tuyoisaza/keledon/pull/72) merged by squash; fresh `origin/main` is `899306fcddf7528cb3411577f8008f0c0552223a`. All five application package/lock roots are 5.1.14. Company, brand, team, user and vendor management screens now use en/es/pt catalogs; country display follows locale. Web typecheck/build pass, locale parity is 452/452, touched-page lint has 0 errors (9 warnings), synthetic local SPA UAT passes 1/1 and API regression passes 14/14. The UAT does not prove persistent writes or server authorization. PR status-check and review rollups are empty; no deployment is claimed. Overall decision remains **PARTIALLY DELIVERED** because persisted CRUD/migration, native device/audio, broad accessibility/localization and deployed SEO/AEO are unresolved. Client integrations remain customer-selected and no live vendor was contacted.
+## Mechanical completion gate
 
-## Latest source delivery — 5.1.13
+`PHDK_DELIVERY_EVIDENCE.json` records the merged SHA and expected version. `lint` is BLOCKED because focused Cloud ESLint did not return output; native whole-product `uat` is BLOCKED although the scoped synthetic Web suite passed. The full CRUD/database, route UX/accessibility, managed-AI persistence, deployed SEO/AEO, public language decision and native-device findings remain unresolved. These statuses are deliberate; do not mark the run COMPLETED until the remaining findings have evidence or an explicit owner disposition.
 
-Product PR [#70](https://github.com/tuyoisaza/keledon/pull/70) merged by squash at `45be8d82de1f402ee6199a19cd4fa5083bb9ecb1`; all five app roots report 5.1.13. Provider-management copy now uses the existing en/es/pt catalogs; its Spanish UAT verifies rendering and write-only key behavior. Web typecheck/build/UAT pass, API regression passes 14/14, AI administration contracts pass 6/6, and locale key parity passes 404/404. This narrows CF-005 for one route. It does not change the overall decision: persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO remain unverified. Client-selected CRM/telephony has no universal provider acceptance case. Final remote-main readback and mechanical gate follow this documentation reconciliation.
+## Next work
 
-## Previous verified delivery — 5.1.11
-
-PR [#66](https://github.com/tuyoisaza/keledon/pull/66) merged by squash. Fresh origin/main and GitHub readback confirm `829caf32978571ac439b8236c2cf7605a38aea4b`; five package roots are 5.1.11. The PHDK completion gate passes. Four confirmed commitments are reconciled in `docs/phdk/lifecycle/20261013-keledon-v5111/90-delivery/PHDK_COMMITMENT_COVERAGE.md`.
-
-Decision: **PARTIALLY DELIVERED**. Source delivery is complete; persisted CRUD/migration, native device/audio, broad accessibility/localization and deployed SEO/AEO acceptance remain unverified. No deployment, production DB, customer data or provider request is claimed. Current stage evidence: `docs/phdk/lifecycle/20261013-keledon-v5111/`.
-
-## 5.1.10 delivery readback — 2026-10-13
-
-Product PR [#62](https://github.com/tuyoisaza/keledon/pull/62) merged by squash at `a806617f430d084831a079b92c821a694b925467`; follow-up delivery-record PR [#63](https://github.com/tuyoisaza/keledon/pull/63) merged at `fde8a1f7b5042d333e45a77f4354a2a41f959954`. Fresh fetch/readback verifies current `origin/main` at `fde8a1f7b5042d333e45a77f4354a2a41f959954`; all five application package manifests report 5.1.10. Source commit `ca0f86a90fbb1444799bebd102fc5253218233a8` is included. GitHub showed no required checks or branch protection; both PR status-check rollups are empty. No deployment is claimed.
-
-The five workstreams remain mapped to the confirmed commitments. The source delivery is complete; overall PHDK Auto remains **PARTIALLY DELIVERED** because persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO acceptance remain open. Detailed stage records are in `docs/phdk/lifecycle/20261013-keledon-v5110/`.
-
-SIGUIENTE PASO: retomar la aceptación nativa del permiso cuando el controlador de ventanas de Windows esté disponible; CRUD persistido, accesibilidad amplia y SEO/AEO desplegados requieren sus respectivos entornos.
-PHDK v2.50.10 is installed; all 52 coherence mappings pass. Candidate branch `v5.1.10-browser-permission-consent` is based on remote `main` `f5b9e43bd272408b3b5493c6eddfd24fc2095c75`. All five application package/lock roots are 5.1.10. Integrated source checks pass: API build/regression 14/14/lint (0 errors, 135 warnings); Cloud build/regression 8/8; web typecheck/build, diagnostics 18/18, SEO 1/1, synthetic local SPA UAT 1/1; Browser build/regression 24/24; Landing build/lint; PHDK coherence 52/52. Repository source/test inventory has 1,086 files and zero at/above 600 lines.
-
-The Browser no longer approves permissions wholesale. Secure-origin media requests require a session-only user grant; all other permissions and stale-page grants are denied. Six oversized API/test files were split into focused modules, and isolated backup/TTS provider tests were added. SEO/AEO source findings for private-route headers and live primary links are closed in source/local checks; no deployed or external discovery claim is made.
-
-Source delivery is merged through product PR #62 and delivery-record PRs #63–#64; local main was verified at 0be102b8b7847bfed3441ff00e00ba4477c57a1e before this UAT evidence addendum. Overall acceptance remains **PARTIALLY DELIVERED**: persisted CRUD/migration, native Electron/device/audio, broad screen-reader/zoom/contrast/localization, and deployed SEO/AEO remain unverified. After the user authorized the runtime, `npm run dev` launched Electron 44.7; the startup log and renderer screenshot confirm KELEDON Browser v5.1.10 loaded. The native permission dialog and physical device/audio were not exercised because desktop control was unavailable on this host (no native apps in `cua.getState()`; `Trusted RPC service is not configured`). A test click on New Tab opened the app-default Google page; it was closed while loading, with no account or data entered and no page content tested. No production DB/provider/API or deployment was touched. Current run archive: `docs/phdk/lifecycle/20261013-keledon-v5110/`.
-
-SIGUIENTE PASO: retomar la aceptación nativa del permiso cuando el controlador de ventanas de Windows esté disponible; CRUD persistido, accesibilidad amplia y SEO/AEO desplegados requieren sus respectivos entornos.
-
-## Historical source delivery — 5.1.9 merged
-
-PR #58 merged at `6d0112dd940c142c20b5e4c56c766da64d000b3b`; five application package/lock roots are 5.1.9. The operational tenant-boundary/API authorization review adds escalation company/team/session scoping, current-DB superadmin gates for global analytics/dashboard/RBAC, and authenticated listening-session routes with UUID-strength expiring IDs. API regressions pass 12/12; build/typecheck pass; touched-file ESLint exits 0 with 15 existing warnings. No production database/provider/deployment operation is claimed. Overall status remains PARTIALLY DELIVERED because persistence/migration, Electron/audio, broad accessibility/localization and deployed SEO/AEO acceptance remain open.
-
-## Follow-up security fix in progress — 5.1.8
-
-CMT-004 audit fix is integrated through PR #56 at `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6`; all five app roots report 5.1.8. API regression 11/11, typecheck/build and typed ESLint (0 errors/139 warnings) pass. PR #55 was CLOSED WITHOUT MERGE because its stale branch ancestry produced a dirty merge base; the clean-based PR #56 carried the candidate. This lifecycle remains PARTIALLY DELIVERED. Persisted CRUD/runtime, native Electron/audio, broad accessibility/localization and deployed SEO/AEO evidence remain outstanding.
-
-## Current continuation — 5.1.7 merged (2026-10-13)
-
-PR #54 (https://github.com/tuyoisaza/keledon/pull/54) is MERGED. Fresh remote readback confirms `origin/main` = `a854ca7634307538305cd9b5ad1f91f8a066b1a1`, product 5.1.7; all five package/lock roots align. PHDK v2.50.10 coherence check passes 52 mappings. No GitHub required checks, branch protection or review requirement were reported, and no deployment is claimed.
-
-- CMT-001 baseline/version/PR reconciliation: delivered to main through PRs #51–54; 5.1.7 SHA/version readback passes.
-- CMT-002 diagnostics: source and selected synthetic UAT delivered; native Electron/device/audio acceptance remains unverified.
-- CMT-003 voice/cloud/browser/CRM: provider-independent source/contracts delivered; per-client vendor acceptance remains client-specific and was not claimed.
-- CMT-004 administration/permissions: owner-approved DB-derived actor/tenant and write-only-secret policy source plus selected regressions delivered; exhaustive persisted CRUD matrix remains unverified.
-- 5.1.7 remediation: migration startup fails closed instead of resolving rollback automatically; company-count/migration errors stop before seed/server. API typed lint (184 files, 0 errors/139 warnings), API typecheck/build and 11/11 regression suites pass. Cloud, web, Landing and Browser checks also pass as recorded in `PHDK_DELIVERY_EVIDENCE.json`.
-
-Fresh 5.1.7 local Edge UAT now runs against tested commit edce7eafbe13ac16ab93274a87e12571e7b04b2e, whose tree exactly matches remote main. Web diagnostics 18/18 and API regressions 11/11 were also rerun. Scoped UAT and the mechanical evidence gate do not establish production deployment or all-scope acceptance. Remaining confirmed acceptance gaps: persisted CRUD/migration ledger/runtime, native Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO. No production database/migration, customer/provider operation, application probe or deployment was performed.
-
-## Decision
-
-**PARTIALLY DELIVERED.** Delivery to remote `main` is complete, but Auto is not complete while confirmed acceptance items remain unverified. The final SHA is `a854ca7634307538305cd9b5ad1f91f8a066b1a1`, version 5.1.7, PR #54 merged. PHDK completion-gate mechanical PASS is recorded separately from the overall scope decision.
-
-Historical 5.1.5 audit follows.
+Continue CHK-002 source mapping/direct-ID coverage and CHK-003 route localization/accessibility fixes. Arrange an isolated authorized database for CMT-004 and CHK-004 acceptance, a supported Windows device/audio environment for CHK-007, and real deployment evidence for CHK-005. Keep public language/market decision CHK-006 open for its owner. Never infer client-specific CRM/call acceptance from a different tenant.

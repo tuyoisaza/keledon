@@ -5,6 +5,21 @@
 
 import { API_URL } from './config';
 
+import type {
+    Company, Brand, Team, User, Keledon, ManagedInterface,
+    ProviderCatalogEntry, TenantProviderConfig, TenantVoiceProfile,
+    Category, Session, BrainChatRequest, BrainChatResponse,
+    KeledonMutationInput, Flow, SubAgentStatus,
+    FlowExecutionResult, InitializeSessionResponse, Vendor,
+} from './crud-api.types';
+export type {
+    Company, CompanyCountry, Brand, Team, User, Keledon, ManagedInterface,
+    Workflow, ProviderCatalogEntry, TenantProviderConfig, TenantVoiceProfile,
+    Category, Session, BrainChatMessage, BrainChatRequest, BrainChatResponse,
+    KeledonMutationInput, Flow, FlowStep, SubAgentStatus, SubAgentTask,
+    FlowExecutionResult, InitializeSessionResponse, Vendor,
+} from './crud-api.types';
+
 const CRUD_API = `${API_URL}/api/crud`;
 
 async function fetchApi(endpoint: string, method = 'GET', body?: any) {
@@ -25,184 +40,6 @@ async function fetchApi(endpoint: string, method = 'GET', body?: any) {
 }
 
 // Type definitions (matching Prisma schema - camelCase)
-export interface Company {
-    id: string;
-    name: string;
-    industry?: string;
-    createdAt?: string;
-    updatedAt?: string;
-    countries?: CompanyCountry[];
-}
-
-export interface CompanyCountry {
-    id?: string;
-    companyId: string;
-    countryCode: string;
-}
-
-export interface Brand {
-    id: string;
-    companyId: string;
-    name: string;
-    color?: string;
-    createdAt?: string;
-    updatedAt?: string;
-    company?: { id: string; name: string };
-}
-
-export interface Team {
-    id: string;
-    name: string;
-    brandId?: string;
-    country?: string;
-    sttProvider?: string;
-    ttsProvider?: string;
-    llmProvider?: string;
-    createdAt?: string;
-    updatedAt?: string;
-    brand?: { id: string; name: string; color?: string; companyId?: string; company?: { id: string; name: string } };
-    company?: { id: string; name: string };
-    _count?: { users: number; keledons: number };
-}
-
-export interface User {
-    id: string;
-    email: string;
-    name?: string;
-    role: string;
-    companyId?: string;
-    teamId?: string;
-    brandId?: string;
-    isOnline?: boolean;
-    lastLogin?: string;
-    createdAt?: string;
-    updatedAt?: string;
-    company?: { id: string; name: string };
-    team?: { id: string; name: string; brandId?: string; brand?: { id: string; name: string } };
-}
-
-export interface Keledon {
-    id: string;
-    teamId: string;
-    brandId?: string;
-    countryCode?: string;
-    userId?: string;
-    name: string;
-    email?: string;
-    role?: string;
-    isActive?: boolean;
-    callsHandled?: number;
-    fcrRate?: number;
-    avgHandleTime?: number;
-    autonomyLevel?: number;
-    policies?: string;
-    uiInterfaces?: string;
-    createdAt?: string;
-    updatedAt?: string;
-    team?: { id: string; name: string; country?: string; brandId?: string; brand?: { id: string; name: string; companyId: string } };
-    user?: { id: string; name: string; email: string };
-}
-
-export interface ManagedInterface {
-    id: string;
-    name: string;
-    baseUrl: string;
-    category?: string;
-    status: string;
-    createdAt?: string;
-    updatedAt?: string;
-}
-
-export interface Workflow {
-    id: string;
-    name: string;
-    description?: string;
-    isEnabled: boolean;
-    createdAt?: string;
-    updatedAt?: string;
-}
-
-export interface ProviderCatalogEntry {
-    id: string;
-    type: string;
-    name: string;
-    status?: string;
-    isEnabled: boolean;
-}
-
-export interface TenantProviderConfig {
-    id: string;
-    companyId: string;
-    providerId: string;
-    providerType: string;
-    isEnabled: boolean;
-    isDefault: boolean;
-}
-
-export interface TenantVoiceProfile {
-    id: string;
-    companyId: string;
-    providerId: string;
-    name: string;
-    language?: string;
-    isEnabled: boolean;
-    isDefault: boolean;
-}
-
-export interface Category {
-    id: string;
-    name: string;
-    color: string;
-    description?: string;
-    companyId: string;
-}
-
-export interface Session {
-    id: string;
-    userId?: string;
-    teamId?: string;
-    status?: string;
-    metadata?: string;
-    createdAt?: string;
-    updatedAt?: string;
-    user?: { id: string; name: string };
-    team?: { id: string; name: string };
-}
-
-export interface BrainChatMessage {
-    role: 'user' | 'assistant';
-    content: string;
-}
-
-export interface BrainChatRequest {
-    message: string;
-    history?: BrainChatMessage[];
-    companyId?: string;
-    companyName?: string;
-    brandId?: string;
-    brandName?: string;
-    teamId?: string;
-    teamName?: string;
-    language?: string;
-}
-
-export interface BrainChatResponse {
-    success: boolean;
-    reply: string;
-    usage?: {
-        promptTokens: number;
-        completionTokens: number;
-        totalTokens: number;
-    };
-    context?: {
-        companyId?: string;
-        companyName?: string;
-        brandId?: string;
-        brandName?: string;
-        teamId?: string;
-        teamName?: string;
-    };
-}
 
 async function fetchBrainApi(endpoint: string, method = 'POST', body?: any) {
     const token = sessionStorage.getItem('auth_token');
@@ -304,17 +141,6 @@ export async function deleteUser(id: string): Promise<void> {
 }
 
 // KELEDONS
-export type KeledonMutationInput = {
-    name?: string;
-    teamId?: string;
-    brandId?: string;
-    countryCode?: string;
-    userId?: string;
-    email?: string;
-    role?: string;
-    autonomyLevel?: number;
-    uiInterfaces?: string[];
-};
 
 export async function getKeledons(companyId?: string): Promise<Keledon[]> {
     const keledons: Keledon[] = await fetchApi('/keledons');
@@ -426,40 +252,6 @@ export async function deleteCategory(id: string): Promise<void> {
 
 // ========== FLOWS ==========
 
-export interface Flow {
-    id: string;
-    name: string;
-    description?: string;
-    triggerKeywords?: string;
-    category?: string;
-    tool?: string;
-    teamId?: string;
-    isActive?: boolean;
-    version?: number;
-    createdBy?: string;
-    createdAt?: string;
-    updatedAt?: string;
-    steps?: FlowStep[];
-}
-
-export interface FlowStep {
-    id: string;
-    flowId: string;
-    order: number;
-    type: string;
-    selector?: string;
-    selectorType?: string;
-    value?: string;
-    extract?: string;
-    waitFor?: string;
-    condition?: string;
-    timeout?: number;
-    optional?: boolean;
-    nextStepId?: string;
-    createdAt?: string;
-    updatedAt?: string;
-}
-
 export async function getFlows(): Promise<Flow[]> {
     return fetchApi('/flows', 'GET');
 }
@@ -479,43 +271,6 @@ export async function deleteFlow(id: string): Promise<void> {
 // ========== SUBAGENTS ==========
 
 const SUBAGENTS_API = `${API_URL}/api/subagents`;
-
-export interface SubAgentStatus {
-    id: string;
-    role: string;
-    status: 'idle' | 'active' | 'waiting' | 'error';
-    currentTask?: SubAgentTask;
-    lastActivity?: string;
-}
-
-export interface SubAgentTask {
-    id: string;
-    type: 'flow' | 'read' | 'write' | 'wait';
-    flowId?: string;
-    stepIds?: string[];
-    parameters?: Record<string, any>;
-    priority?: number;
-}
-
-export interface FlowExecutionResult {
-    success: boolean;
-    flowId: string;
-    extractedData: Record<string, any>;
-    executionLog: Array<{
-        stepId: string;
-        stepType: string;
-        status: 'success' | 'failed' | 'skipped';
-        duration: number;
-        result?: any;
-        error?: string;
-    }>;
-    totalDuration: number;
-}
-
-export interface InitializeSessionResponse {
-    success: boolean;
-    agents: SubAgentStatus[];
-}
 
 export async function initializeSessionAgents(sessionId: string): Promise<InitializeSessionResponse> {
     const response = await fetch(`${SUBAGENTS_API}/session/${sessionId}/init`, { method: 'POST' });
@@ -568,20 +323,6 @@ export async function getFlowRunStatus(runId: string): Promise<any> {
 }
 
 // Vendors
-export interface Vendor {
-    id: string;
-    teamId: string;
-    name: string;
-    type: string;
-    baseUrl?: string;
-    username?: string;
-    hasPassword?: boolean;
-    hasApiKey?: boolean;
-    isActive: boolean;
-    startGoal?: string;
-    createdAt?: string;
-    updatedAt?: string;
-}
 
 export async function getVendors(teamId: string): Promise<Vendor[]> {
     return fetchApi(`/vendors/${teamId}`);
