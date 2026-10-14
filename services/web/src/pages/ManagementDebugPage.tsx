@@ -42,7 +42,7 @@ type ProbeEvidence = {
 export default function ManagementDebugPage() {
   const { t } = useTranslation();
   const text = (key: string, values: Record<string, string | number> = {}) =>
-    Object.entries(values).reduce((result, [name, value]) => result.replaceAll(`{{${name}}}`, String(value)), t(key));
+    Object.entries(values).reduce((result, [name, value]) => result.split(`{{${name}}}`).join(String(value)), t(key));
   const [debugMode, setDebugMode] = useState(() => {
     const saved = localStorage.getItem('keldon-debug-mode');
     return import.meta.env.DEV || saved === 'true';

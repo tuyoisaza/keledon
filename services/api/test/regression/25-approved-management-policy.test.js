@@ -188,6 +188,7 @@ async function main() {
     const list = run('users');
     await list.result;
     assert.equal(list.req.query.companyId, 'co-a');
+
     assert.equal(
       await run('users', 'PUT', { id: 'user-a' }, { name: 'safe' }).result,
       true,

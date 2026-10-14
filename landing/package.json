@@ -1,12 +1,13 @@
 {
   "name": "landing",
   "private": true,
-  "version": "5.1.16",
+  "version": "5.1.17",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "test:seo": "node --test test/seo-headers.test.cjs",
     "preview": "vite preview",
     "dev:vector-store": "npm run setup:qdrant && npm run dev",
     "build:vector-store": "npm run build && npm run package:vector-store",

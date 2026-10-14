@@ -1,5 +1,37 @@
 # SEO checklist —25 controls
 
+## Current candidate 5.1.17 — run `20261013-1900-phdk-auto`
+
+| ID | Status | Evidence |
+|---|---|---|
+| SEO-01 | PASS (source) | `services/web/public/robots.txt`, `landing/public/robots.txt`; HTTP status unknown. |
+| SEO-02 | PASS (source) | Both NGINX configs keep home indexable and SPA fallback noindex; deployed headers unknown. |
+| SEO-03 | PASS (source) | Both source sitemaps list the absolute canonical root only. |
+| SEO-04 | PASS (source) | Both static shells and sitemaps agree on `https://keledon.tuyoisaza.com/`. |
+| SEO-05 | BLOCKED | No HTTP/redirect probe permitted or executed. |
+| SEO-06 | PASS (source) | Matches Capture intent and client-specific configuration constraint. |
+| SEO-07 | PASS (source) | Natural, substantiated wording; no keyword-volume claims. |
+| SEO-08 | PASS (source) | Both shells identify KELEDON and purpose; generic landing title corrected. |
+| SEO-09 | PASS (source) | Both shells have truthful description; search snippet unmeasured. |
+| SEO-10 | PASS (source) | Semantic heading hierarchy present in React public-page source. |
+| SEO-11 | PASS (source) | Useful product/architecture copy and qualified example workflows. |
+| SEO-12 | PARTIAL | Brand is stated; verified contact/authorship sources were not provided. |
+| SEO-13 | BLOCKED / NOT MEASURED | No LCP field or lab data. |
+| SEO-14 | BLOCKED / NOT MEASURED | No INP field data. |
+| SEO-15 | BLOCKED / NOT MEASURED | No CLS field data. |
+| SEO-16 | PARTIAL | Existing UI UAT samples login at 390px and simulated zoom; public home/real devices are untested. |
+| SEO-17 | BLOCKED | TLS/certificate/mixed-content not probed. |
+| SEO-18 | PASS (source) | No public interstitial source identified. |
+| SEO-19 | PASS (source) | CTA links point to login and architecture section; source tests/build pass. |
+| SEO-20 | PASS (source) | Public root and private SPA route structure retained. |
+| SEO-21 | NOT_APPLICABLE | No public photographic asset SEO scope in inspected page. |
+| SEO-22 | NOT_APPLICABLE | No confirmed eligible structured-data type. |
+| SEO-23 | BLOCKED / PARTIAL | SPA content is JavaScript rendered; no crawler/rendered HTML validation. |
+| SEO-24 | BLOCKED | No authorized Search Console evidence. |
+| SEO-25 | BLOCKED | No measured reputation/backlink evidence. |
+
+Checks: `services/web npm run test:seo` PASS 1/1; `landing npm run test:seo` PASS 1/1; web/landing source builds PASS (web main-chunk advisory). No deployment or field measurements.
+
 Run: 20261012-keledon-four-fronts. Date: 2026-10-12 America/Mexico_City. PHDK2.50.8. Baseline52537140e67d0d6c05486fa13837df3eb5316fb3; local dirty candidate. Source fingerprint SHA256 `5ee8649bbab265db46f14d4ba1a83399b9fb268f04ecfde24ede6f2cd85e0dba` (ordered files below), not a commit or deployment SHA. Method: source-only inspection; no browser, HTTP/probe, Search Console, provider, paid model, crawler or database access. Latest integrated UAT not present at snapshot, so this is a prepared audit, not final accepted stage or runtime/indexation proof.
 
 PASS means the named source contract only; it never asserts served200, crawler execution or field measurements. Every retest is source review unless explicitly noted; no scans executed. Open FAIL actions are in SEO_REMEDIATION.md. BLOCKED measurements remain unmeasured, not failed product metrics.

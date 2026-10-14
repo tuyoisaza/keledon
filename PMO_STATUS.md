@@ -1,5 +1,11 @@
 # PMO status — current continuation 5.1.16; overall PARTIALLY DELIVERED
 
+## Current Auto candidate — 5.1.17, run `20261013-1900-phdk-auto`
+
+Four owner-confirmed fronts remain active in order. All five app package/lock roots align at 5.1.17. T-014 closes the KELEDON/Voice Profiles payload/tenant and accessible-feedback source slice; Voice Profiles now include safe list/detail/create/update projections and localized detail/edit UI. API regression passes 15/15, web typecheck/build, focused lint, diagnostics 18/18, 734-key locale parity, and synthetic Company Co local UAT pass. Branch `fix/phdk-keledon-voice-profile-accessibility` contains product source commit `4e874c14cde10fd5b1a0ce521ee097e67823e120` with post-commit UAT bound to it; no service/backend/DB-backed UAT is inferred from intercepted APIs.
+
+Integration, UAT, UAT Fix, SEO, AEO/GEO and Check are complete for this slice; CHK-001 is closed at source. Delivery is pending exact-SHA evidence and normal PR/main readback. Open acceptance: persisted CRUD × role × tenant × operation × surface and migration runtime, native Electron/device/audio, broad route localization/accessibility, deployed SEO/AEO. CRM/call vendors remain client-selected. Overall remains PARTIALLY DELIVERED.
+
 ## Latest candidate — profile, device and session-detail journeys
 
 Branch `fix/phdk-route-accessibility-i18n` is based on fetched `origin/main` `c8534e6f6568922d540eabfba4abe90cc93749c1`; all five app package/lock roots align at 5.1.16. Web typecheck/build, synthetic UAT 1/1, diagnostics 18/18, SEO source test 1/1 and locale parity 644/644 pass. UAT-T-005 covers session-detail navigation; UAT-T-007 covers profile role/date localization in en/es/pt and device status/empty/error/retry states and localized launcher navigation. Focused ESLint has 0 errors. Source commit `7ce3509` is recorded; product PR and fresh `main` readback remain pending. CMT-001..004 remain active. Persisted CRUD/migration, native Electron/device/audio, broad route accessibility/localization and deployed SEO/AEO remain open. No deployment is claimed.

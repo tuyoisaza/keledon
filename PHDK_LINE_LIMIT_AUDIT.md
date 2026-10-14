@@ -1,5 +1,9 @@
 # PHDK physical line limit audit
 
+## Current Auto candidate 5.1.17 — 2026-10-14
+
+Fresh `rg --files` inventory of repository TS/TSX/JS/JSX/CJS/MJS sources, excluding `node_modules` and generated `dist`: **1,068 files; 0 at or above 600 lines**. Current candidate pages and tests are included. This confirms only the physical-size rule, not other PHDK Check criteria.
+
 ## Latest integrated candidate — 5.1.10
 
 Date: 2026-10-13. Inventory covered all repository application/test files with extensions `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`; `node_modules`, generated `dist`, and `.git` were excluded. `rg --files` returned 1,086 source/test files. **0 files are at or above 600 lines.**

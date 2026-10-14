@@ -1,5 +1,40 @@
 # UAT report — KELEDON 5.1.7 (continuation)
 
+## Current Auto run `20261013-1900-phdk-auto` — candidate 5.1.17
+
+Run date: 2026-10-14 UTC / 2026-10-13 America/Mexico_City. Repository: `tuyoisaza/keledon`; branch `fix/phdk-keledon-voice-profile-accessibility`, product 5.1.17, product source commit `4e874c14cde10fd5b1a0ce521ee097e67823e120`. An initial UAT run exercised the dirty candidate; after commit, the same suite was rerun on the exact commit above. `docs/phdk/evidence/uat-local-web.json` records that SHA. All API calls remain intercepted and this is not persisted or production acceptance.
+
+Intent alignment uses `PROJECT_INTENT.md` INT-001..003 and `REQUIREMENTS_TRACEABILITY.md` FR-001..004, SEC-001..003. Stories US-007/US-008 and cases UAT-T-008/009 trace to CMT-003/004. Client-specific CRM/call vendors remain a non-goal for universal acceptance, per owner clarification.
+
+Environment: local production build served on loopback; headless Edge via existing Playwright package. Network and WebSockets are blocked outside the loopback server; all API calls are intercepted using synthetic Company Co/Other Co fixtures and synthetic browser-session tokens. This is UI/request-contract evidence only. Separate API policy regressions use isolated fake persistence. No database, production app, client platform, customer data, paid API, OS permission or deployment was touched.
+
+### Results
+
+| Result | Count | Cases |
+|---|---:|---|
+| PASS | 14 observed journey groups | Diagnostics, anonymous home/login actions, themes/reflow, selected admin/coordinator/superadmin UI, Spanish management/provider journeys, dashboard/sessions, profile/devices, UAT-T-008 (safe detail/edit and HTTP failures), UAT-T-009, diagnostic safe probes, guest redirect. Detailed case output is in `docs/phdk/evidence/uat-local-web.json`. |
+| FAIL | 0 unresolved | The first pre-fix replay failed on stale `5.1.16` synthetic-device data and on absent visible toast rendering. The fixture now derives version from package.json; the app now mounts `Toaster` and keeps inline role-alert errors. Exact rebuilt replay passed 1/1 suite. |
+| BLOCKED | 3 groups | Persisted CRUD/role/tenant/migration; broad route accessibility/localization; deployed SEO/AEO observations. |
+| MANUAL | 1 | Native Electron media permission and physical device/audio journey on supported Windows app host. |
+| NOT APPLICABLE | 1 | Universal live CRM/call integration test: owner confirms platform selection varies by client. |
+
+### Executed cases and limits
+
+- **UAT-T-008 / US-008:** PASS. Spanish retry, labels, safe Voice Profile detail, and camelCase create/edit payloads without caller `companyId`, credential or config fields. Mocked 403 create/update/delete remain visible in-dialog without false success; successful update/delete refresh the list. Detail/edit UI and API projection are source-fixed; persistence and real authorization remain unverified beyond isolated guard regression.
+- **UAT-T-009 / US-007:** PASS. Spanish KELEDON form labels and company/brand/team scoping, create payload array contract/no client `companyId`, native delete-confirmation dialog and cancel behavior.
+- **UAT-T-010:** PARTIAL. Global Toaster mount typechecks/builds; in-dialog error path was observed. Other application notification journeys were not systematically tested.
+- Diagnostics and prior selected routes pass as detailed in the evidence JSON; its screenshot outputs are local browser evidence and its API responses are mocks.
+- API approved-policy test passes for DB-derived tenant filter/body, policy/role boundaries, CRUD denials and secret handling under isolated fake persistence. It does not verify persisted state.
+
+### Action plan for incomplete acceptance
+
+- **UAT-CRUD / UAT-ROLE — BLOCKED:** Missing an owner-managed disposable PostgreSQL environment with synthetic Company Co identities. This prevents proof of CMT-004 persisted create/list/detail/update/delete, tenant isolation and migration ledger. The repository owner/admin must provide an approved isolated database and test-account lifecycle. Then map `CRUD_MATRIX.md` for each resource × role × tenant × surface × operation, record persistence before/after and migration state, run the authorized DB-backed suite, and rerun `npm run test:uat`. Until then no DB provisioning/migration is performed by this run.
+- **UAT-ELECTRON-PERMISSION / UAT-DEVICE-AUDIO — MANUAL:** A Windows native app-control host and test device are required to inspect the permission dialog, grant/deny only with current user consent, test pairing and verify audio lifecycle without a customer call. A human operator should capture redacted screenshots/logs and device-test result, then run the native acceptance suite and update this report. No mic/camera grant or live call occurred.
+- **UAT-A11Y-I18N — BLOCKED:** A broad representative-route review remains open beyond current Spanish forms and login viewport tests. Use an approved screen reader and keyboard-only test across public/login/app/admin, each role and en/es/pt; evaluate 200%/400% zoom and contrast on the actual form routes. Record route/control and browser evidence; fix defects and repeat scoped UAT.
+- **UAT-SEO-AEO — BLOCKED/NOT MEASURED:** No deployed candidate or authorized search-console/field metrics were used. The code stages now run source-only checklists; after normal delivery, the owner must provide an approved read-only measurement path if deployed headers, indexation, CWV or AI citations are required. Do not infer those from source tests.
+
+There are no code-repairable source FAILs left from the executed UAT. Overall conclusion: **ACCEPTANCE INCOMPLETE** because required persisted, native and deployed/manual evidence is unavailable. See `UAT_REMEDIATION.md` and `UAT_RETEST_REPORT.md`; per-case catalog: `UAT_CASES.md`.
+
 ## Latest local candidate — 5.1.16 (scoped UAT pass; overall acceptance incomplete)
 
 This run adds UAT-T-007 for profile roles and locale-aware dates in en/es/pt, plus Spanish device status/empty state, navigation into the localized Keledon launcher, visible API failure and retry. Code review found and removed a devices-page pairing request that omitted the required Keledon ID and did not match the server authorization contract. UAT-T-005 follows history to the localized session-detail page and verifies its return link. The latest integrated run passes web typecheck, build, UAT (1/1), diagnostics (18/18), SEO source test (1/1), and focused ESLint (0 errors). All five app package/lock roots are 5.1.16, locale keys match at 644/644, and `docs/phdk/evidence/uat-local-web.json` records candidate revision `7ce3509aeb4d53ce3a90d16153996abf35446024`. UAT uses synthetic fixtures and intercepted APIs; it does not prove persisted data, native pairing/audio or production integrations.

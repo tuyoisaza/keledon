@@ -1,4 +1,15 @@
 # Implementation plan
+## Active continuation — PHDK Auto run `20261013-1900-phdk-auto`, candidate 5.1.17
+
+The four owner-confirmed workstreams remain in order CMT-001 → CMT-002 → CMT-003 → CMT-004. The current 5.1.17 convergence slice addresses CMT-004 administration usability and API-contract correctness across KELEDON and Voice Profiles while preserving the approved DB-derived role/tenant and write-only-secret policies. CMT-002 receives the app-wide notification mount and truthful inline error feedback; CMT-001 has all five app package/lock roots aligned. CMT-003 remains provider-independent because call and CRM platforms vary by client.
+
+| Task | Commitment | Work | Acceptance / dependency |
+|---|---|---|---|
+| T-014 | CMT-004 / CMT-002 | Localize KELEDON and Voice Profiles; fix tenant and mutation payload contracts; add accessible HTTP error states and global toast renderer. | Web typecheck/build, focused lint, API policy regression, Company Co synthetic browser UAT and locale parity. |
+| T-015 | CMT-001..004 | Reconcile applicable PHDK standards, CRUD matrix, active-route i18n/a11y, debug widget, UX/UI, SEO/AEO and delivery evidence. | Integration → UAT/Fix → SEO → AEO/GEO → Check/remediation → normal PR/main readback; keep persisted/native/deployed blockers distinct. |
+
+Dependency order: T-014 → UAT Fix/retest → SEO → AEO/GEO → Check → in-scope remediation → T-015 delivery. Existing T-001..T-013 history and unresolved work remain active; this continuation does not waive persisted CRUD/migration, native device/audio, broad route audit or deployed discovery evidence.
+
 ## Current Auto continuation — 2026-10-13, candidate 5.1.16
 
 The brownfield system remains the existing React/Vite web app, Nest/Prisma API, Cloud runtime, Electron Browser and public Landing surfaces. Preserve the current en/es/pt context, tenant-specific provider contracts, server-derived authorization and additive migration policy; converge in bounded route and contract slices instead of replacing the stack.

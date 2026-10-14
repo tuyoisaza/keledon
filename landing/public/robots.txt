@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Sitemap: https://keledon.tuyoisaza.com/sitemap.xml

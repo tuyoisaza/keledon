@@ -386,8 +386,29 @@ export class CrudService {
   async getTenantVoiceProfiles(companyId: string) {
     return this.prisma.tenantVoiceProfile.findMany({
       where: { companyId },
-      include: { providerCatalog: true },
+      select: {
+        id: true,
+        name: true,
+        providerId: true,
+        language: true,
+        isEnabled: true,
+        isDefault: true,
+      },
       orderBy: { name: 'asc' },
+    });
+  }
+
+  async getTenantVoiceProfile(id: string, companyId?: string) {
+    return this.prisma.tenantVoiceProfile.findFirst({
+      where: { id, ...(companyId ? { companyId } : {}) },
+      select: {
+        id: true,
+        name: true,
+        providerId: true,
+        language: true,
+        isEnabled: true,
+        isDefault: true,
+      },
     });
   }
 
@@ -402,7 +423,14 @@ export class CrudService {
   }) {
     return this.prisma.tenantVoiceProfile.create({
       data,
-      include: { providerCatalog: true },
+      select: {
+        id: true,
+        name: true,
+        providerId: true,
+        language: true,
+        isEnabled: true,
+        isDefault: true,
+      },
     });
   }
 
@@ -420,7 +448,14 @@ export class CrudService {
     return this.prisma.tenantVoiceProfile.update({
       where: { id },
       data,
-      include: { providerCatalog: true },
+      select: {
+        id: true,
+        name: true,
+        providerId: true,
+        language: true,
+        isEnabled: true,
+        isDefault: true,
+      },
     });
   }
 
