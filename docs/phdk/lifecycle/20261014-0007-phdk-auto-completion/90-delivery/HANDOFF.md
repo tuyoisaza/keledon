@@ -11,6 +11,10 @@ SIGUIENTE PASO: provide safe development identities, disposable PostgreSQL and a
 ---
 # Delivery handoff — candidate 5.1.26
 
+## Verified delivery — candidate 5.1.32 (2026-10-14)
+
+PR [#102](https://github.com/tuyoisaza/keledon/pull/102) merged source candidate `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5` by squash at `7b2547edcf2f397e6fe1098386af226035e2613b`. `origin/main` and `git ls-remote` agree; remote tree `d4198e21b495cf15d9972cf48b5ef0c957dc4ea7` matches the candidate tree. API, Cloud, Web, Landing and Browser package/lock roots are 5.1.32. Merge title is version-prefixed. GitHub had no hosted checks or review submissions; no deployment is claimed. Whole Auto remains PARTIALLY DELIVERED for safe DB identities/persistence, native device/audio, exhaustive model-operation coverage, broad accessibility/localization and deployed SEO/AEO. CRM/call acceptance remains specific to each client's configured providers; private CRM endpoints are validated and tenant-allowlisted and are not fetched by Cloud.
+
 ## Candidate 5.1.32 — delivery pending
 
 Exact source candidate `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5` is one commit ahead of the existing PR #102 branch head. Its Knowledge UAT-030 and all listed API/Cloud/Browser/Web/Landing source checks pass; lifecycle evidence is being reconciled. The PR head still needs the source commit and candidate documentation/evidence, followed by review of actual GitHub checks/reviews, merge using the repository's permitted normal method, and exact remote-`main` source/version/tree readback. Existing branch commits will not be rewritten. Do not claim delivery before those operations. Overall PHDK Auto remains PARTIALLY DELIVERED: UAT-009/010, UAT-006, exhaustive persisted CRUD authorization, broad accessibility/localization, and deployed SEO/AEO remain external acceptance gates. CRM/call acceptance is client-specific; configured private destinations require URL validation plus tenant allowlisting, and the Cloud service must not fetch them.

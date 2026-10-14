@@ -1,18 +1,18 @@
 ## Candidate 5.1.32 — delivery gate status (2026-10-14)
 
-Repository: `tuyoisaza/keledon`. Target: `main`. Branch: `fix/retire-runtime-seed-webhook-5-1-31`. Verified base: `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`. Latest local source commit: `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`; existing PR #102 still needs this candidate pushed. Installed PHDK 2.50.10.
+Repository: `tuyoisaza/keledon`. Target: `main`. Source candidate: `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`, based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`. Installed PHDK 2.50.10. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) was squash-merged with the version-prefixed title `v5.1.32 fix(phdk): harden tenant CRUD and Knowledge diagnostics`.
 
 | Gate | Status | Evidence |
 |---|---|---|
 | VERSION_BUMP | PASS | Candidate 5.1.32, patch increment; five app package/lock roots and Browser renderer align; changelog updated. |
-| COMMIT_PREFIX | PENDING FINAL INTEGRATION | Latest source commit is `v5.1.32`-prefixed. Older PR branch history contains prior commits; reconcile the actual merge/squash commit subject with repository controls without rewriting shared history. |
-| PUSH_AND_PR | PENDING | Local branch has one source commit ahead of its current remote; PR #102 targets main but must be updated with the verified final candidate/docs. |
-| REMOTE_MAIN | PENDING | No 5.1.32 merge or post-merge remote readback has occurred. |
+| COMMIT_PREFIX | PASS | Squash commit `7b2547edcf2f397e6fe1098386af226035e2613b` has the approved `v5.1.32` prefix; shared branch history was not rewritten. |
+| PUSH_AND_PR | PASS | Candidate and lifecycle evidence were pushed; PR #102 merged to `main`. |
+| REMOTE_MAIN | PASS | `origin/main` and `git ls-remote` both resolve to `7b2547edcf2f397e6fe1098386af226035e2613b`; remote tree `d4198e21b495cf15d9972cf48b5ef0c957dc4ea7` exactly matches the candidate tree. API, Cloud, Web, Landing and Browser package/lock roots report 5.1.32. |
 | SCOPE_AND_CHECKS | SOURCE PASS / ACCEPTANCE PARTIAL | Four confirmed fronts documented; API 33/33, Cloud 14/14, Browser 33/33, Web diagnostics 19/19, UAT 1/1, SEO source checks, all builds, coherence 52/52. UAT-009/010 and UAT-006 remain documented external/manual gates. |
 
-Overall: **PARTIALLY DELIVERED — NOT MERGED**. No DB, customer provider, private CRM destination, or deployment was used. Do not describe as shipped or complete until PR controls, merge and exact remote-main version/content readback pass.
+Overall: **SOURCE MERGED / REMOTE VERIFIED; PHDK AUTO ACCEPTANCE PARTIAL**. GitHub had no hosted checks or review submissions configured at merge time. No DB, customer provider, private CRM destination, or deployment was used.
 
-SIGUIENTE PASO: finish lifecycle snapshots and Check, push/update PR #102, then re-read actual review/check controls and use the repository’s permitted merge method.
+SIGUIENTE PASO: run the remaining safe-identity/persistence UAT on a disposable development database and native device/audio UAT on a supported Windows host; retain deployed SEO/AEO as open until measurements exist.
 
 ## Candidate 5.1.31 — delivery pending
 

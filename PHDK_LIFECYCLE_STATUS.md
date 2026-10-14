@@ -11,11 +11,11 @@
 | 60 UAT Fix | COMPLETE FOR LOCAL CODE DEFECTS | Fabricated live transcript/RAG, English-only copy, raw backend errors and hand-rolled modal repaired; exact-source UAT-030 passes. DB, real identity and native-device gates remain external/manual. |
 | 65 SEO | SOURCE PASS / EXTERNAL UNMEASURED | Web SEO 1/1, Landing SEO 1/1/build pass. Application-only Knowledge page change does not alter public discovery; deployed headers/indexation/field metrics unverified. |
 | 67 AEO/GEO | SOURCE REVIEW REUSED / EXTERNAL UNMEASURED | Public claims and locale policy unchanged; prior evidence retained. No answer engine, crawler, market, or deployed visibility was tested. |
-| 70 Check | RUNNING FINAL RECONCILIATION | 35/35 Prisma model inventory and 126 core policy rows are asserted; exhaustive persisted role × tenant × operation × surface behavior remains unverified without isolated DB/identity environment. Reconcile Check report and current artifacts. |
-| 80 Remediation | LOCAL SOURCE PASS | API/Cloud vector scope and UUID point IDs plus Knowledge UI were fixed; builds and regressions pass. Source commit `93f844b`; branch update and PR synchronization pending. |
-| 90 Delivery | PENDING | Push/update PR #102, verify current target/check/review state, satisfy applicable controls, merge, and perform exact remote-main/version readback. |
+| 70 Check | SOURCE CHECK COMPLETE / ACCEPTANCE PARTIAL | 35/35 Prisma model inventory and 126 core policy rows are drift assertions only; exhaustive persisted role × tenant × operation × surface behavior remains unverified without isolated DB/identity infrastructure. |
+| 80 Remediation | LOCAL SOURCE PASS / MERGED | API/Cloud vector scope and UUID point IDs plus Knowledge UI were fixed; builds and regressions pass. Source commit `93f844b` is included in the verified 5.1.32 merge. |
+| 90 Delivery | SOURCE MERGED / REMOTE VERIFIED | PR #102 merged at `7b2547edcf2f397e6fe1098386af226035e2613b`; `origin/main` and `git ls-remote` agree and remote/candidate trees match. Five product roots align at 5.1.32. |
 
-Overall: **PARTIALLY DELIVERED**. No database, customer provider, CRM endpoint, or deployment was used. Exact remaining acceptance gates: UAT-009 safe DB-backed identities; UAT-010 disposable DB and persisted CRUD/migration; UAT-006 native Windows device/audio; deployed SEO/AEO evidence.
+Overall: **SOURCE MERGED / REMOTE VERIFIED; PHDK AUTO ACCEPTANCE PARTIAL**. No database, customer provider, CRM endpoint, or deployment was used. Exact remaining acceptance gates: UAT-009 safe DB-backed identities; UAT-010 disposable DB and persisted CRUD/migration; UAT-006 native Windows device/audio; exhaustive model/operation authorization; vector cleanup on Knowledge deletion; broad accessibility/localization; deployed SEO/AEO evidence.
 
 ## Delivery closeout — Auto 5.1.30, 2026-10-14
 
