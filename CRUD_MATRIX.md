@@ -1,5 +1,9 @@
 # CRUD matrix — verified code/policy surface
 
+## Current 5.1.24 vendor boundary
+
+Vendor create/update persists a validated, origin-only allowlist inside that vendor's tenant-owned config. API and Cloud public projections expose only the allowlisted origins and presence indicators, never raw config/password/API key. Device pairing returns only the safe allowlist for the paired team. Browser vendor login, redirects and RPA actions use those tenant origins; an explicitly configured private/local CRM is supported, while unconfigured or cross-origin navigation is blocked. API/Cloud regression tests cover private targets, invalid URLs, tenant-origin persistence and safe projections. This focused proof does not close the remaining 35-model × role × tenant × surface × operation matrix or DB persistence/migration gate.
+
 ## Current Auto candidate 5.1.22 — voice/provider error redaction
 
 The API/Cloud source audit removed transcript, agent-command and spoken-response content from logs, suppresses upstream STT/TTS/decision errors in logs and voice responses, and removed prompt echo from the Cloud fallback. This privacy hardening does not close the remaining 35-model CRUD × role × operation Check. PR #89 merged version 5.1.22 at `b92a25428a6d25c898e3dfef7a055f754782ed57`; the follow-up debug-mode boundary PR #90 merged at `48ab2023236ba5de56c046f99670a2abab866707`. All five app package/lock roots are 5.1.22.

@@ -1,5 +1,9 @@
 # Remediation handoff — `20261013-1900-phdk-auto`
 
+## Current 5.1.24 source fix
+
+Private/local CRM destinations are allowed only as normalized, tenant-configured origins; vendor flows guard initial loads and redirects, and tenant configuration/credentials do not leak through ordinary API or pairing responses. API/Cloud safe-projection and allowlist regressions, Browser security tests, builds and exact-SHA synthetic Web UAT pass. Full Cloud ESLint, native Electron/device/audio, persisted DB and client-specific live CRM/call acceptance remain unverified.
+
 ## 5.1.23 PHDK source-boundary fix
 
 Both live app files over the PHDK 600-line maximum are split into cohesive modules. Public Web data-shape exports and API health-report behavior are preserved. Focused regression/build/typecheck/lint and exact-SHA Company Co synthetic UAT pass. The Browser's renderer version is synchronized to the five 5.1.23 app roots. No change claims persisted CRUD, broad route coverage, live providers or native-device acceptance.

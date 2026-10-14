@@ -1,5 +1,9 @@
 # Check handoff — `20261013-1900-phdk-auto`
 
+## 5.1.24 source review — 2026-10-14
+
+The approved tenant-configured private-origin policy is implemented in API, Cloud, device pairing and Browser automation, with a localized manager form and safe projections. API regression 19/19, Cloud 10/10, Browser policy 6/6, configured builds, Web typecheck/build/diagnostics, Landing typecheck/build/SEO, exact-SHA synthetic UAT, locale parity, PHDK coherence and the 1,077-file line scan pass. Cloud ESLint returned no output for whole-source and focused runs; lint remains BLOCKED. Real DB/native/client-specific provider acceptance remains open.
+
 ## 5.1.23 source recheck
 
 The 1,072-file live application/test inventory now has zero files at or above 600 lines. The former 601-line API CRUD service delegates health reporting to `crud-health.ts`; the former 610-line Web CRUD client imports and re-exports shapes from `crud-api.types.ts`. API regression passes 18/18, API/Web builds and Web typecheck pass, changed TypeScript ESLint has zero errors, Web diagnostics pass 19/19, both Web/Landing SEO tests pass 1/1, Browser build/version contracts pass, PHDK coherence passes 52/52, and exact-SHA synthetic Web UAT passes 1/1 on `0e724bfe1fec269ad6037104ad0a01e474172b93`. Whole-product lint and native UAT remain BLOCKED; overall Check remains PARTIAL for the commitments recorded below.

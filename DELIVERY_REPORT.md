@@ -1,5 +1,9 @@
 # Delivery report — current status PARTIALLY DELIVERED
 
+## Current candidate 5.1.24 — source verification
+
+Source commit `c3c4c362a36db2bec142cbc8b06747961b67df26` is on `fix/phdk-tenant-vendor-origin-allowlist`, based on verified main `215df2d723f89ac5ca50ec56190984f5a4a0d4c1`. All five app roots and Browser renderer are 5.1.24. Tenant-configured private/local CRM origins are validated and scoped through API, Cloud, device pairing and Browser automation; safe vendor projections omit credentials and raw config. API 19/19, Cloud 10/10, Browser security 6/6, Web diagnostics 19/19, exact-SHA Web UAT 1/1, configured builds/typechecks, SEO 1/1 each, locale parity 103/103/103 and PHDK coherence 52/52 pass. Live source inventory: 1,077 files, 0 at/above 600 lines. Cloud ESLint did not return output and remains BLOCKED. PR delivery/readback pending; native, persisted DB, deployed SEO/AEO, broad route and client-specific live provider acceptance remain unverified.
+
 ## Current delivery — 5.1.16 (SOURCE SLICE MERGED; AUTO PARTIAL)
 
 Product PR [#76](https://github.com/tuyoisaza/keledon/pull/76) merged by squash at `db35f231c29fb71568666b230e912152ca0a34e2`; fresh fetch and remote readback confirm `origin/main` at that SHA. All five application package/lock roots are 5.1.16. Source commit `7ce3509aeb4d53ce3a90d16153996abf35446024` localizes profile, device, launcher and session-detail journeys. Web typecheck/build, synthetic local UAT 1/1 bound to the source commit, diagnostics 18/18, SEO source test 1/1, locale-key parity 644/644, focused ESLint (0 errors/warnings) and PHDK coherence 52/52 pass. GitHub reports empty status-check and review rollups; no deployment is claimed. Persisted CRUD/migration, native device/audio, broad route accessibility/localization and deployed SEO/AEO remain open.

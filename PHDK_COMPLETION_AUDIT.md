@@ -2,9 +2,9 @@
 
 **Result: PARTIALLY DELIVERED — full Auto completion gate remains blocked.** This audit reconciles the four owner-confirmed fronts with source, local UAT, PR and remote-main evidence. It does not equate merged code with the unresolved operational acceptance.
 
-## Current 5.1.23 source candidate
+## Current 5.1.24 source candidate — `c3c4c362a36db2bec142cbc8b06747961b67df26`
 
-On branch `fix/phdk-source-file-boundaries` based on verified main `48ab2023236ba5de56c046f99670a2abab866707`, both live files at the 600-line PHDK boundary have been split by responsibility. API health-disclosure behavior remains covered after moving its report helper to `services/api/src/crud/crud-health.ts`; CRUD API data shapes move to `services/web/src/lib/crud-api.types.ts` with public type exports preserved. All five app package/lock roots are 5.1.23. API regression passes 18/18 and its build and changed-source ESLint pass; Web typecheck/build, changed-file ESLint (0 errors, 8 existing `any` warnings), diagnostics 19/19, exact-SHA synthetic Company Co UAT 1/1 and PHDK coherence 52/52 pass. The independent whole-app lint and acceptance blockers below remain open. This candidate is local and has not been pushed or merged; remote `main` remains 5.1.22 until normal delivery is verified.
+Branch `fix/phdk-tenant-vendor-origin-allowlist` adds tenant-scoped, validated vendor origins across API, Cloud, device pairing, Browser automation and the localized management form. Client-configured HTTP(S) private/local CRM origins are allowed; unsafe URL forms and navigation outside that vendor's origin allowlist are rejected. Vendor config and credential values remain excluded from normal projections. All five app package/lock roots and Browser renderer report 5.1.24. API regression 19/19, Cloud regression 10/10, API/Cloud/Browser builds, Web typecheck/build and diagnostics 19/19, Browser policy tests 6/6, Landing build/typecheck and SEO tests 1/1 each, PHDK coherence 52/52, locale parity 103/103/103 and source inventory 1,077 files with zero at/above 600 lines pass. Exact-SHA synthetic Company Co UAT passes 1/1 on this source commit. Cloud ESLint did not return output in either whole-source or changed-file runs; lint remains BLOCKED. PR and remote delivery are pending; database, native Electron/device/audio, deployed SEO/AEO and broader route acceptance remain open.
 
 ## Goal and commitments
 
@@ -23,7 +23,7 @@ The owner confirmed, in order, baseline/version/PRs (CMT-001), widget and safe d
 |---|---|---|
 | CMT-001 | SOURCE DELIVERY COMPLETE | All five app roots align at 5.1.22; PRs #89/#90 merged; main SHA independently read back. No deployment or hosted CI result is claimed. |
 | CMT-002 | PARTIAL | Web diagnostics/widget source tests and synthetic UAT pass. Native Browser rendering, actual session clearing in Electron, OS permission prompts, physical device/audio and broad screen-reader/route coverage remain unverified. |
-| CMT-003 | SOURCE/CONTRACT COMPLETE; CLIENT UAT N/A WITHOUT TENANT CONFIG | Provider-independent code and API/Cloud regressions are verified. Client-specific live call/CRM UAT is not a universal requirement. Local CRM choices make blanket private-network endpoint blocking unsafe; endpoint trust policy needs a product/security decision. |
+| CMT-003 | SOURCE/CONTRACT COMPLETE; CLIENT UAT TENANT-SPECIFIC | Provider-independent API/Cloud/Browser contracts are verified. The owner approved tenant-configured, origin-only allowlists that permit private/local CRM targets while blocking unsafe schemes, credentials and cross-origin navigation. No universal live CRM/call UAT applies. |
 | CMT-004 | PARTIAL | Approved restrictive policy and selected resource/direct-ID/role regressions pass. The 35-model role × tenant × API/web × list/detail/create/update/delete source matrix and persisted isolation/delete/recovery/migration tests remain open. No disposable or production database was connected. |
 
 ## PHDK stage board
@@ -45,7 +45,7 @@ The owner confirmed, in order, baseline/version/PRs (CMT-001), widget and safe d
 
 ## Mechanical completion gate
 
-`PHDK_DELIVERY_EVIDENCE.json` records the merged SHA and expected version. `lint` is BLOCKED because focused Cloud ESLint did not return output; native whole-product `uat` is BLOCKED although the scoped synthetic Web suite passed. The full CRUD/database, route UX/accessibility, managed-AI persistence, deployed SEO/AEO, public language decision and native-device findings remain unresolved. These statuses are deliberate; do not mark the run COMPLETED until the remaining findings have evidence or an explicit owner disposition.
+`PHDK_DELIVERY_EVIDENCE.json` binds scoped UAT to the exact 5.1.24 source SHA. `lint` remains BLOCKED because changed-file Cloud ESLint also did not return output; native whole-product `uat` is BLOCKED although the scoped synthetic Web suite passed. The full CRUD/database, route UX/accessibility, managed-AI persistence, deployed SEO/AEO, public language decision and native-device findings remain unresolved. These statuses are deliberate; do not mark the run COMPLETED until remaining findings have evidence or an explicit owner disposition.
 
 ## Next work
 

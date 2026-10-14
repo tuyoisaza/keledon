@@ -1,8 +1,8 @@
 # UAT report — KELEDON 5.1.7 (continuation)
 
-## Current Auto candidate 5.1.23 — exact-SHA synthetic UAT
+## Current Auto candidate 5.1.24 — exact-SHA synthetic UAT
 
-Run: `20261013-1900-phdk-auto`; source commit `0e724bfe1fec269ad6037104ad0a01e474172b93` on `fix/phdk-source-file-boundaries`. `services/web npm run test:uat` passes 1/1 using the local production SPA, Company Co fixtures, intercepted API requests, and blocked external network. Evidence is bound to that commit in `docs/phdk/evidence/uat-local-web.json`; screenshots are stored beside it. The tested source splits the API CRUD health helper and Web CRUD public data types below the PHDK 600-line cap, and aligns all five app roots plus Browser's displayed version at 5.1.23.
+Run: `20261013-1900-phdk-auto`; source commit `c3c4c362a36db2bec142cbc8b06747961b67df26` on `fix/phdk-tenant-vendor-origin-allowlist`. `services/web npm run test:uat` passes 1/1 using the local production SPA, Company Co fixtures, intercepted API requests, and blocked external network. Evidence is bound to that commit in `docs/phdk/evidence/uat-local-web.json`; refreshed screenshots are stored beside it. The tested source configures validated per-tenant vendor origins, permits explicit private/local CRM targets, blocks out-of-allowlist Browser navigation and preserves safe credential/config projections. All five app roots and Browser's displayed version are 5.1.24.
 
 This run verifies UI/request contracts only. It does not prove persisted database behavior, production authorization, native Electron/device/audio, client-specific CRM/telephony or deployed SEO/AEO. Overall acceptance remains incomplete as detailed in the existing action plan below.
 
