@@ -4,25 +4,43 @@ import {
   Post,
   Param,
   Query,
-  Body,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { EscalationService } from '../services/escalation.service';
-import { ResourceScopeGuard } from '../guards/resource-scope.guard';
+import { EscalationAccessGuard } from '../guards/escalation-access.guard';
+
+interface EscalationRequest {
+  actor: { id: string; role: string };
+  escalationTeamId?: string;
+  escalationTeamIds?: string[];
+}
 
 @Controller('api/escalations')
-@UseGuards(ResourceScopeGuard)
+@UseGuards(EscalationAccessGuard)
 export class EscalationController {
   constructor(private readonly escalationService: EscalationService) {}
 
   @Get('stats')
-  async getStats(@Query('teamId') teamId?: string) {
-    return this.escalationService.getStats(teamId);
+  async getStats(
+    @Req() req: EscalationRequest,
+    @Query('teamId') teamId?: string,
+  ) {
+    return this.escalationService.getStats(
+      req.escalationTeamId || teamId,
+      req.escalationTeamIds,
+    );
   }
 
   @Get('active')
-  async getActive(@Query('limit') limit?: string) {
-    return this.escalationService.getActive(limit ? parseInt(limit, 10) : 100);
+  async getActive(
+    @Req() req: EscalationRequest,
+    @Query('limit') limit?: string,
+  ) {
+    return this.escalationService.getActive(
+      limit ? parseInt(limit, 10) : 100,
+      req.actor.role === 'superadmin' ? undefined : req.escalationTeamIds,
+    );
   }
 
   @Get('session/:sessionId')
@@ -42,11 +60,8 @@ export class EscalationController {
   }
 
   @Post(':id/acknowledge')
-  async acknowledge(
-    @Param('id') id: string,
-    @Body('acknowledgedBy') acknowledgedBy: string,
-  ) {
-    return this.escalationService.acknowledge(id, acknowledgedBy);
+  async acknowledge(@Param('id') id: string, @Req() req: EscalationRequest) {
+    return this.escalationService.acknowledge(id, req.actor.id);
   }
 
   @Post(':id/resolve')

@@ -113,6 +113,29 @@ async function main() {
 
   actor = { ...actor, role: 'superadmin', companyId: null, teamId: null };
   assert.equal(await run('getActive').result, true);
+
+  const controllerCalls = [];
+  const { EscalationController } = load('controllers/escalation.controller.ts');
+  const escalationController = new EscalationController({
+    acknowledge: async (...args) => controllerCalls.push(['acknowledge', ...args]),
+    getStats: async (...args) => controllerCalls.push(['stats', ...args]),
+    getActive: async (...args) => controllerCalls.push(['active', ...args]),
+  });
+  await escalationController.acknowledge('esc-a', {
+    actor: { id: 'db-actor' },
+    body: { acknowledgedBy: 'forged-actor' },
+  });
+  assert.deepEqual(controllerCalls[0], ['acknowledge', 'esc-a', 'db-actor']);
+  await escalationController.getStats(
+    { escalationTeamIds: ['team-a', 'team-aa'] },
+    undefined,
+  );
+  assert.deepEqual(controllerCalls[1], [
+    'stats',
+    undefined,
+    ['team-a', 'team-aa'],
+  ]);
+
   let currentRole = 'user';
   const roleGuard = new SuperAdminGuard({
     user: { findUnique: async () => ({ role: currentRole }) },
