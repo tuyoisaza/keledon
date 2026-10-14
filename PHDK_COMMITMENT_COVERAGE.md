@@ -1,17 +1,17 @@
-## Current Auto baseline — 2026-10-14, 5.1.35 delivered; docs reconciliation in progress
+## Current Auto baseline — 2026-10-14, 5.1.35 source and matrix delivered
 
-Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` shipped through PR #106 at `73c0fc52b37d96d283e8709e76b99c17db0b1a83`; PR #107 delivery records are merged at current `main` `465b3633e571572b540151fe9433898a61c8fc09`. All five app package/lock roots and Browser renderer align at 5.1.35; PHDK v2.50.10 coherence is 52/52. API regression 35/35, Cloud 14/14, API/Cloud builds, Web typecheck/build and focused ESLint pass; exact-commit synthetic local built-SPA UAT covers KnowledgeBase list/detail/create/edit/delete. The current matrix reconciliation expands the drift guard from 126 to 154 role×surface rows. This docs-only candidate remains pending normal PR delivery; overall Auto remains PARTIALLY DELIVERED.
+Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` shipped through PR #106; PR #107 records that delivery; PR #108 reconciles the matrix at merge SHA `056e8605097874337c6bc532c006da3a3f772d56`. All five app package/lock roots and Browser renderer align at 5.1.35; PHDK v2.50.10 coherence is 52/52. API regression 35/35, Cloud 14/14, API/Cloud builds, Web typecheck/build and focused ESLint pass; exact-commit synthetic local built-SPA UAT covers KnowledgeBase list/detail/create/edit/delete. The matrix drift guard covers 154 role×surface rows across 35 Prisma models. Overall Auto remains PARTIALLY DELIVERED.
 
 | Commitment | Candidate evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | PRs #106/#107 and current main `465b3633e571572b540151fe9433898a61c8fc09` verify delivered 5.1.35 source and delivery evidence; all app roots align. | Deliver this matrix/audit reconciliation through normal docs-only PR and verify remote main. |
+| CMT-001 | PRs #106–#108 and PR #108 merge SHA `056e8605097874337c6bc532c006da3a3f772d56` verify delivered 5.1.35 source, delivery evidence and matrix reconciliation; all app roots align. | Source/documentation delivery verified; no deployment is claimed. |
 | CMT-002 | Diagnostics and synthetic local built-SPA UAT pass; the UAT includes KnowledgeBase manager actions with fixture APIs. | Native Windows device/audio and broad route/screen-reader accessibility acceptance remain open. |
 | CMT-003 | API/Cloud/Browser tenant contracts, URL validation/private-origin allowlists and offline call lifecycle tests pass; no CRM URL was contacted. | Live call/CRM acceptance stays client-specific after tenant provider configuration. |
-| CMT-004 | Approved role policy, tenant-scoped CRUD and vector store controls; API 35/35 and Cloud 14/14. KnowledgeBase detail/update tests cover both service mirrors; matrix drift test now covers 154 rows. | Matrix docs PR/readback; real DB-backed role × tenant × surface × operation/migration proof and safe test identities remain open without disposable PostgreSQL. |
+| CMT-004 | Approved role policy, tenant-scoped CRUD and vector store controls; API 35/35 and Cloud 14/14. KnowledgeBase detail/update tests cover both service mirrors; matrix drift test covers 154 rows. | Real DB-backed role × tenant × surface × operation/migration proof and safe test identities remain open without disposable PostgreSQL. |
 
 Overall: **PARTIALLY DELIVERED**. Current UAT catalog: 28 PASS, 2 BLOCKED, 1 MANUAL. No DB/provider/customer data/deployment used.
 
-SIGUIENTE PASO: reconcile the final Check and delivery records, update PR #102, then follow actual controls and verify `main` after merge.
+SIGUIENTE PASO: continue source-level Check remediation for remaining model-family authorization gaps; keep persisted database, native-device and deployed SEO/AEO acceptance partial until their required environments are available.
 
 ## Historical candidate — 2026-10-14, 5.1.31
 

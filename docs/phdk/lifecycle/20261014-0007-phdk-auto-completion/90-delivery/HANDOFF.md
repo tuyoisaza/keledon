@@ -44,7 +44,21 @@ Branch ix/write-only-device-rpa-secrets is based on remote main 4cc6a2a6de0d3a8
 ## Candidate 5.1.29 — delivery pending
 
 Branch ix/redact-device-config-lists is based on main 22c0a407aa07552a189aa9f3b00e887397f9d03. All five package/lock roots and Browser renderer are 5.1.29. Device list responses omit raw RPA provider config and CDP URL, returning only presence flags. API regression/Jest/build/focused lint, Cloud/Web/Landing/Browser builds, and PHDK coherence pass. PR, merge and exact readback pending. Whole Auto remains partial for CRUD/DB matrix, native/audio, broad accessibility/localization and deployed SEO/AEO.
-# Delivery handoff — `20261014-0007-phdk-auto-completion`, source 5.1.33
+# Delivery handoff — `20261014-0007-phdk-auto-completion`, source and matrix 5.1.35
+
+## Verified matrix reconciliation — PR #108
+
+PR [#108](https://github.com/tuyoisaza/keledon/pull/108) updates the active CRUD matrix and Check/PMO/commitment records to match the shipped 5.1.35 KnowledgeBase and KnowledgeDocument contract. Its merge SHA, verified against `origin/main` and `git ls-remote` immediately after merge, is `056e8605097874337c6bc532c006da3a3f772d56`. The inventory regression passes 35/35 Prisma models and 154 unique role × surface rows; installed PHDK coherence passes 52/52; post-merge completion gate passes. GitHub reported no hosted checks/review requirement; no deployment is claimed. The ESLint parser excludes the JS inventory test because it is outside its TS project; direct Node execution passes.
+
+This change covers docs and matrix drift protection only. It does not prove database persistence, live Qdrant, native-device/audio, broad accessibility, deployed SEO/AEO, or remaining source CRUD families. Whole PHDK Auto remains **PARTIALLY DELIVERED**.
+
+Machine evidence is the refreshed local artifact `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.35.json`; it is not committed to avoid embedding a self-referential merge SHA.
+
+SIGUIENTE PASO: continue the current authorized Check work against remaining source-level CRUD/authorization gaps; retain external acceptance as partial until real evidence is available.
+
+---
+
+# Historical delivery handoff — source 5.1.33
 
 The four owner-confirmed KELEDON fronts remain the active Auto portfolio. PR [#104](https://github.com/tuyoisaza/keledon/pull/104) squash-merged source commit `c5bf7161f55d488508841ec6281695c0b3c93f02` to `main` at `d40a5f1e7ad92bb66a9cc06211c105ec3c708a9a`. Fresh `origin/main` and `git ls-remote` agree; the PR source and merged tree are both `447a1d1e006c8f59fb5a026a899ab7c7d4fea288`. Five app package/lock roots and Browser renderer report 5.1.33.
 

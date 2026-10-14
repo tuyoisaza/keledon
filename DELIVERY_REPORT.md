@@ -1,3 +1,19 @@
+## Verified matrix reconciliation — PHDK Auto 5.1.35 (2026-10-14)
+
+Docs-only PR [#108](https://github.com/tuyoisaza/keledon/pull/108) reconciled active PHDK records with merged 5.1.35 KnowledgeBase behavior and added KnowledgeBase/KnowledgeDocument role × surface rows. The matrix drift regression now verifies 35/35 Prisma models and 154 unique core rows. The version-prefixed commit was squash-merged at `056e8605097874337c6bc532c006da3a3f772d56`; fresh `origin/main` and `git ls-remote` agree, and the 5.1.35 version remains aligned across all app roots. `node services/api/test/regression/33-crud-model-inventory.test.js`, PHDK coherence 52/52, `git diff --check` and the post-merge completion gate pass. GitHub reported no hosted checks or review decision; `main` is unprotected. ESLint was attempted but excludes this JavaScript test file because it is outside the configured TypeScript project; direct Node execution passes. No product behavior, database, live Qdrant, customer endpoint or deployment was used.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Documentation/test-only update; app version remains 5.1.35, with no additional package version consumed. |
+| COMMIT_PREFIX | PASS | PR #108 squash title and source commit use `v5.1.35:`. |
+| PUSH_AND_PR | PASS | PR #108 targets and merged to `main`; no hosted checks/review requirements were configured. |
+| REMOTE_MAIN | PASS | PR #108 merge SHA `056e8605097874337c6bc532c006da3a3f772d56` independently matched `origin/main` and `git ls-remote`. |
+| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | Matrix regression, PHDK coherence and diff checks pass; persisted, native-device, broad a11y and deployed SEO/AEO acceptance remain open. |
+
+Scope: documentation and regression-matrix drift protection. PHDK Auto remains **PARTIALLY DELIVERED** for persisted authorization/migrations, live Qdrant/concurrency, safe DB-backed identities, native device/audio, broad accessibility/localization, deployed SEO/AEO, and remaining model-family CRUD evidence. Machine evidence is `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.35.json` (local post-merge artifact).
+
+SIGUIENTE PASO: continue source-level Check remediation for remaining role/tenant/operation gaps; do not infer database, native-device or deployed search acceptance from these source checks.
+
 ## Verified delivery — 5.1.35 (2026-10-14)
 
 Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` on `fix/phdk-knowledge-base-management-5-1-35`, based on verified main `6a8275c3d3f9813a9c3aea7a0d3121ae18cd2a1e`, shipped through PR [#106](https://github.com/tuyoisaza/keledon/pull/106). It squash-merged to main at `73c0fc52b37d96d283e8709e76b99c17db0b1a83`; `origin/main` and `git ls-remote` match, and PR head/merge trees match. All five app package/lock roots and Browser renderer are 5.1.35; PHDK 2.50.10 coherence 52/52. API regression 35/35, Cloud 14/14, API/Cloud builds, Web typecheck/build, diagnostics 19/19, Web SEO source 1/1, focused lint and exact-commit synthetic built-SPA UAT pass. The UAT uses intercepted fixture APIs and does not prove persisted authorization. The post-merge machine completion verifier passed against the recorded remote SHA.
