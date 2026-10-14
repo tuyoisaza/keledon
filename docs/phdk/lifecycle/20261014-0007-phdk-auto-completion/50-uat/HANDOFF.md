@@ -17,3 +17,8 @@ Environment-bound acceptance remains open: UAT-009 safe DB-backed development id
 Snapshots: current candidate cases/report are versioned in this folder; `snapshots/` preserves canonical root evidence for the run.
 
 SIGUIENTE PASO: continue source Check and reconcile every Prisma model, route, role, tenant scope, surface and C/R-list/R-detail/U/D operation; retain external acceptance as open.
+# UAT handoff — `20261014-0007-phdk-auto-completion`
+
+## Candidate 5.1.33 — exact-candidate UAT and source cleanup contract (2026-10-14)
+
+UAT-030 passes 1/1 on the local production Web build at version 5.1.33 using synthetic Company Co fixtures, intercepted API requests, and blocked external network/WebSockets. The updated `docs/phdk/evidence/uat-local-web.json` and screenshots record the run. UAT-031 passes 12/12 isolated mocked Prisma/Qdrant assertions across API and Cloud for document point cleanup, collection cleanup, missing collections, ordering, and failure preservation. UAT remains **28 PASS, 2 BLOCKED, 1 MANUAL**. UAT-009 needs a safe DB-backed identity target; UAT-010 needs disposable PostgreSQL for persisted CRUD/migration; UAT-006 needs native Windows device/audio. The full model×role×tenant×surface×operation matrix, broad route accessibility/localization and deployed SEO/AEO remain incomplete. No database, live Qdrant, customer provider, private CRM, customer record or deployment was used.

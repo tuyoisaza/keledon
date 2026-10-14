@@ -297,3 +297,9 @@ Standards evaluated for applicability and evidence: current PHDK manifest/cohere
 2. Preserve UAT-009/010, CHK-AUTO-005/007/009 as blocked or unverified until the required dev identity, disposable database, native hardware or deployment evidence exists.
 3. Keep CHK-AUTO-008 as an owner decision only if public language/market indexation is added; do not invent locale routes.
 4. Run applicable full-candidate checks at the final integrated boundary. Current lint is zero-error; remaining warnings are reported, not represented as blocking failures.
+
+# Current Check continuation — candidate 5.1.33 (2026-10-14)
+
+Source review found that generic API/Cloud CRUD deletion of `KnowledgeDocument` and `KnowledgeBase` removed Prisma records without cleaning Qdrant points/collections. Both services now delete a document's vectors by stored `documentId` payload, or the whole knowledge collection, before deleting the relational resource; vector-store failures preserve the database record. UAT-031 and regression 46 pass 12/12 in a mocked service harness for API/Cloud ordering, missing collections and failure behavior. API/Cloud TypeScript builds and complete regressions pass. The app roots/lockfiles and Browser renderer align at 5.1.33.
+
+This closes the concrete source cleanup gap only. `CHK-002` stays open for the exhaustive 35-model role/tenant/surface/operation matrix and persisted behavior. PostgreSQL acceptance, real Qdrant integration, concurrent delete/reindex and recovery after relational failure post-vector-delete remain unverified. Existing safe-identity, native audio/device and deployed SEO/AEO acceptance remains open. No database, provider, private CRM or deployment was used.

@@ -169,3 +169,13 @@ The API health report is extracted to `services/api/src/crud/crud-health.ts`; We
 | SCOPE_AND_CHECKS | PARTIAL | Scoped source checks pass; whole-product lint/native UAT and remaining Auto commitments remain open. |
 
 Overall PHDK Auto remains PARTIALLY DELIVERED. No deployment is claimed.
+
+# Current Auto delivery — candidate 5.1.33 (2026-10-14)
+
+Goal: deliver the four owner-confirmed KELEDON fronts through the active `20261014-0007-phdk-auto-completion` run. Candidate `fix/phdk-knowledge-vector-cleanup-5-1-33` is based on verified remote main `9908a4c6abcef0c378b9bb661ffb5b57146b27ae`; all five application package/lock roots and Browser renderer are 5.1.33. The source remediation removes KnowledgeDocument vectors or the KnowledgeBase collection before deleting the corresponding Prisma record, and preserves relational rows when Qdrant cleanup fails.
+
+Validation: API 34/34 regression suites and build pass; Cloud 14/14 and build pass; Browser build and 33/33 offline tests pass; Web typecheck/build, diagnostics 19/19, local synthetic UAT 1/1, and SEO 1/1 pass; Landing build/SEO 1/1 pass; PHDK coherence 52/52 and `git diff --check` pass. UAT-031 is a mocked service contract; no live Qdrant or PostgreSQL test was run. Review, commit, push, PR, required controls, merge, and remote-main readback are pending. No deployment is claimed.
+
+Acceptance remains partial for the exhaustive persisted 35-model role/tenant/surface/operation matrix, UAT-009/010 safe DB identities and disposable PostgreSQL, UAT-006 native device/audio, broad accessibility/localization, deployed SEO/AEO, and per-client live CRM/call testing once selected/configured. Cross-store concurrency remains unverified.
+
+SIGUIENTE PASO: finalize the outgoing source/documentation diff and PHDK completion evidence, then complete the authorized branch-to-main PR delivery.

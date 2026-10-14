@@ -14,3 +14,7 @@ Retested source remained dirty on base `60d7382f0e2003597690673103ace4e785f0c018
 ## Candidate revalidation after SEO fallback
 
 The unchanged Web UAT suite was rerun at source fingerprint sha256:aced4dfae723e0c19aa30fee2d2219eda6290007dee9cedf79ec52bd246f1b1b after adding a truthful noninteractive <noscript> summary to the retained Landing shell. Result remains PASS for the same local UI cases; DEF-UAT-001, UAT-006, UAT-009 and UAT-010 are unchanged. No role switch, database, native device or live provider test was performed.
+
+## Candidate 5.1.33 — source contract retest (2026-10-14)
+
+UAT-031 and `services/api/test/regression/46-knowledge-vector-cleanup.test.js` pass 12/12 against mocked Prisma and Qdrant services in API and Cloud. The test covers payload-filter deletion before the document row, collection deletion before the base row, missing collections, and failure-preserves-row behavior. API and Cloud builds and regressions pass. No disposable database or live Qdrant instance was available or used; concurrency and post-vector Prisma failure remain acceptance gaps. This does not change the existing UAT-030 web evidence or close UAT-009/010/006.

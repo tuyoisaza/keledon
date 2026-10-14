@@ -1,9 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { QdrantClient } from '@qdrant/qdrant-js';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class CrudSessionDataService {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly qdrant: QdrantClient;
+
+  constructor(private readonly prisma: PrismaService) {
+    this.qdrant = new QdrantClient({
+      url: process.env.QDRANT_URL || 'http://127.0.0.1:6333',
+      apiKey: process.env.QDRANT_API_KEY || undefined,
+    });
+  }
 
   async getSessions(companyId?: string, limit = 100) {
     const teams = companyId
@@ -83,6 +91,15 @@ export class CrudSessionDataService {
   }
 
   async deleteKnowledgeBase(id: string) {
+    const knowledgeBase = await this.prisma.knowledgeBase.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    if (knowledgeBase) {
+      const collectionName = this.getKnowledgeCollectionName(knowledgeBase.id);
+      const { exists } = await this.qdrant.collectionExists(collectionName);
+      if (exists) await this.qdrant.deleteCollection(collectionName);
+    }
     return this.prisma.knowledgeBase.delete({ where: { id } });
   }
 
@@ -103,6 +120,28 @@ export class CrudSessionDataService {
   }
 
   async deleteKnowledgeDocument(id: string) {
+    const document = await this.prisma.knowledgeDocument.findUnique({
+      where: { id },
+      select: { id: true, knowledgeBaseId: true },
+    });
+    if (document) {
+      const collectionName = this.getKnowledgeCollectionName(
+        document.knowledgeBaseId,
+      );
+      const { exists } = await this.qdrant.collectionExists(collectionName);
+      if (exists) {
+        await this.qdrant.delete(collectionName, {
+          filter: {
+            must: [{ key: 'documentId', match: { value: document.id } }],
+          },
+          wait: true,
+        });
+      }
+    }
     return this.prisma.knowledgeDocument.delete({ where: { id } });
+  }
+
+  private getKnowledgeCollectionName(knowledgeBaseId: string): string {
+    return `knowledge-base-${knowledgeBaseId}`;
   }
 }
