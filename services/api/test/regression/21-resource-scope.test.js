@@ -217,12 +217,25 @@ async function main() {
       run(scope, kind, handler, params, body).result,
       Denied,
     );
+  await assert.rejects(
+    run(
+      scope,
+      'VectorStoreController',
+      'search',
+      {},
+      { company_id: 'co-b', team_id: 'team-b' },
+      {},
+      'POST',
+    ).result,
+    Denied,
+    'tenant managers cannot select a team from another company',
+  );
   const vector = run(
     scope,
     'VectorStoreController',
     'search',
     {},
-    { company_id: 'co-b', team_id: 'team-b' },
+    { company_id: 'co-b', team_id: 'team-a' },
     {},
     'POST',
   );
@@ -253,7 +266,7 @@ async function main() {
   );
   await vectorCreate.result;
   assert.equal(vectorCreate.req.body.company_id, 'co-a');
-  assert.equal(vectorCreate.req.body.team_id, 'team-a');
+  assert.equal(vectorCreate.req.body.team_id, undefined);
   const knowledge = run(
     scope,
     'KnowledgeController',
@@ -288,6 +301,24 @@ async function main() {
   assert.equal(calls.req.body.teamId, 'team-a');
   assert.equal(calls.req.body.keledonId, 'k-a');
   actor = { ...actor, role: 'user' };
+  const userSearch = run(
+    scope,
+    'VectorStoreController',
+    'search',
+    {},
+    { company_id: 'co-b', team_id: 'team-b' },
+    {},
+    'POST',
+  );
+  await userSearch.result;
+  assert.equal(userSearch.req.body.company_id, 'co-a');
+  assert.equal(userSearch.req.body.team_id, 'team-a');
+  actor = { ...actor, teamId: null };
+  await assert.rejects(
+    run(scope, 'VectorStoreController', 'search', {}, { query: 'test' }, {}, 'POST').result,
+    Denied,
+    'users without a team cannot read company-wide vectors',
+  );
   await assert.rejects(
     run(scope, 'FlowController', 'create', {}, { teamId: 'team-a' }, {}, 'POST')
       .result,

@@ -110,7 +110,15 @@ export class ResourceScopeGuard implements CanActivate {
       )
         return deny();
       body.company_id = actor.companyId;
-      body.team_id = actor.teamId;
+      const requestedTeamId =
+        typeof body.team_id === 'string' ? body.team_id.trim() : '';
+      if (manager) {
+        if (requestedTeamId) await teamAllowed(requestedTeamId);
+        body.team_id = requestedTeamId || undefined;
+      } else {
+        await teamAllowed(actor.teamId);
+        body.team_id = actor.teamId;
+      }
       if (body.brand_id) {
         const brand = await this.prisma.brand.findFirst({
           where: { id: body.brand_id, companyId: actor.companyId },

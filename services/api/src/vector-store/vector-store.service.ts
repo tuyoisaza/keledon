@@ -256,6 +256,12 @@ export class VectorStoreService {
           match: { value: options.company_id },
         });
       }
+      for (const key of ['brand_id', 'team_id'] as const) {
+        const value = options[key];
+        if (value) {
+          filter.must.push({ key, match: { value } });
+        }
+      }
 
       if (filter.must.length === 0) {
         delete filter.must;
