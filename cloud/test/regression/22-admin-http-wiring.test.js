@@ -81,7 +81,7 @@ async function main() {
     },
     team: {
       findFirst: async ({ where }) =>
-        where.id === 'team-a' ? { id: 'team-a' } : null,
+        ['team-a', 'team-a2'].includes(where.id) ? { id: where.id } : null,
     },
     flow: {
       findUnique: async ({ where }) => ({
@@ -100,6 +100,7 @@ async function main() {
   let writes = 0,
     lastVectorScope,
     userListScope,
+    updatedUser,
     launchedActor;
   const module = await Test.createTestingModule({
     controllers: [
@@ -123,6 +124,10 @@ async function main() {
             return [];
           },
           getUser: async (id) => ({ id }),
+          updateUser: async (id, data) => {
+            updatedUser = { id, ...data };
+            return updatedUser;
+          },
           generateKeledonLaunchLink: async (_id, userId) => {
             launchedActor = userId;
             return { success: true };
@@ -239,6 +244,17 @@ async function main() {
       .get('/api/crud/users/member')
       .set('Authorization', token('admin'))
       .expect(200);
+    await request(http)
+      .put('/api/crud/users/member')
+      .set('Authorization', token('admin'))
+      .send({ teamId: 'team-a2' })
+      .expect(200);
+    assert.equal(updatedUser.teamId, 'team-a2');
+    await request(http)
+      .put('/api/crud/users/member')
+      .set('Authorization', token('admin'))
+      .send({ teamId: 'team-b' })
+      .expect(403);
     await request(http)
       .post('/api/crud/users')
       .set('Authorization', token('admin'))

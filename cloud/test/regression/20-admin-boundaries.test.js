@@ -187,9 +187,9 @@ async function main() {
     },
     team: {
       findFirst: async ({ where }) =>
-        where.id === 'team-a' &&
+        ['team-a', 'team-a2'].includes(where.id) &&
         (!where.brand || where.brand.companyId === 'co-a')
-          ? { id: 'team-a' }
+          ? { id: where.id }
           : null,
     },
     brand: {
@@ -282,6 +282,16 @@ async function main() {
     await assert.rejects(
       run('users', 'POST', {}, { teamId: 'team-b' }).result,
       Denied,
+    );
+    assert.equal(
+      await run('users', 'PUT', { id: 'user-a' }, { teamId: 'team-a2' }).result,
+      true,
+      'same-company team reassignment remains available to managers',
+    );
+    await assert.rejects(
+      run('users', 'PUT', { id: 'user-a' }, { teamId: 'team-b' }).result,
+      Denied,
+      'cross-company team reassignment is denied',
     );
     await assert.rejects(
       run(

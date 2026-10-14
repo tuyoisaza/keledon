@@ -322,7 +322,7 @@ export class CrudAccessGuard implements CanActivate {
         if (
           !superadmin &&
           req.method === 'PUT' &&
-          (data.companyId !== undefined || data.teamId !== undefined)
+          data.companyId !== undefined
         )
           deny();
       }
