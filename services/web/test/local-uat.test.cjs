@@ -18,12 +18,22 @@ const team={id:'team-co',name:'Company Co Service',brandId:brand.id,brand,countr
 const team2={id:'team-co-2',name:'Company Co Service 2',brandId:brand2.id,brand:brand2,country:'MX'};
 const otherTeam={id:'team-other',name:'Other Co Service',brandId:otherBrand.id,brand:otherBrand,country:'MX'};
 const person={id:'companyco-001',name:'Company Co Test User',email:'companyco.001@company-co.invalid',role:'user',companyId:company.id,teamId:team.id,brandId:brand.id,team,created_at:'2020-01-02T12:00:00Z',last_session:'2024-05-06T12:34:56Z'};
-const device={id:'device-co-001',name:'Company Co Desktop',status:'paired',platform:'Windows',lastSeen:null,version:'5.1.16'};
+const device={id:'device-co-001',name:'Company Co Desktop',status:'paired',platform:'Windows',lastSeen:null,version:appVersion};
 let deviceList=[device];
 let writes=[];
 let userWrites=[];
 let dashboardSessions=[];
 let devicesShouldFail=false;
+let voiceProfiles=[];
+let voiceProfileWrites=[];
+let voiceListShouldFail=false;
+let voiceCreateStatus=200;
+let voiceUpdateStatus=200;
+let voiceDeleteStatus=200;
+let voiceUpdateWrites=[];
+let keledonRows=[];
+let keledonWrites=[];
+let keledonCreateStatus=200;
 let deepReads=0;
 let probeCalls=[];
 const safeEndpoints=[
@@ -87,6 +97,13 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
     else if(p==='/api/devices')body=deviceList;
     else if(p==='/api/crud/companies')body=[company,otherCompany];
     else if(p==='/api/crud/brands')body=[brand,brand2,otherBrand];
+    else if(p==='/api/crud/keledons'){
+      if(route.request().method()==='POST'){
+        const payload=route.request().postDataJSON();keledonWrites.push(payload);
+        if(keledonCreateStatus!==200)return route.fulfill({status:keledonCreateStatus,contentType:'application/json',body:'{"message":"synthetic KELEDON create denied"}'});
+        const record={id:'keledon-co-001',...payload,isActive:true};keledonRows.push(record);body=record;
+      } else body=keledonRows;
+    }
     else if(p==='/api/crud/users'){
       if(route.request().method()!=='GET')userWrites.push({method:route.request().method(),path:p,body:route.request().postDataJSON()});
       body=[person];
@@ -95,6 +112,31 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
       const payload=route.request().method()==='PUT'?route.request().postDataJSON():{};
       if(route.request().method()==='PUT')userWrites.push({method:'PUT',path:p,body:payload});
       body={...person,...payload};
+    }
+    else if(p==='/api/tenant/voice-profiles'){
+      if(route.request().method()==='GET'&&voiceListShouldFail)return route.fulfill({status:503,contentType:'application/json',body:'{"message":"synthetic voice list failure"}'});
+      if(route.request().method()==='POST'){
+        const payload=route.request().postDataJSON();voiceProfileWrites.push(payload);
+        if(voiceCreateStatus!==200)return route.fulfill({status:voiceCreateStatus,contentType:'application/json',body:'{"message":"synthetic voice create denied"}'});
+        const profile={id:'voice-co-001',...payload};voiceProfiles.push(profile);body=profile;
+      } else body=voiceProfiles;
+    }
+    else if(/^\/api\/tenant\/voice-profiles\/[^/]+$/.test(p)){
+      const id=p.split('/').at(-1);
+      if(route.request().method()==='GET'){
+        const profile=voiceProfiles.find(item=>item.id===id);
+        return route.fulfill({status:profile?200:404,contentType:'application/json',body:JSON.stringify(profile||{message:'not found'})});
+      }
+      if(route.request().method()==='PUT'){
+        const payload=route.request().postDataJSON();voiceUpdateWrites.push({id,payload});
+        if(voiceUpdateStatus!==200)return route.fulfill({status:voiceUpdateStatus,contentType:'application/json',body:'{"message":"synthetic voice update denied"}'});
+        const index=voiceProfiles.findIndex(profile=>profile.id===id);
+        if(index<0)return route.fulfill({status:404,contentType:'application/json',body:'{"message":"not found"}'});
+        voiceProfiles[index]={...voiceProfiles[index],...payload};
+        return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(voiceProfiles[index])});
+      }
+      if(voiceDeleteStatus!==204)return route.fulfill({status:voiceDeleteStatus,contentType:'application/json',body:'{"message":"synthetic voice delete denied"}'});
+      voiceProfiles=voiceProfiles.filter(profile=>profile.id!==id);return route.fulfill({status:204,body:''});
     }
     else if(p.startsWith('/api/crud/vendors/'))body=[{id:'vendor-co',name:'Company Co CRM',type:'crm',teamId:team.id,isActive:true}];
     else body=[];
@@ -297,6 +339,70 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await profileDevices.page.getByText('No hay Keledons disponibles',{exact:true}).waitFor();
   await profileDevices.context.close();
   checks.push('UAT-T-007-PROFILE-DEVICES en/es/pt profile role/date formatting, Spanish device status/empty state, navigation to localized Keledon launcher and retry after visible API failure PASS (mocked API)');
+  voiceProfiles=[];voiceProfileWrites=[];voiceUpdateWrites=[];voiceListShouldFail=false;voiceCreateStatus=200;voiceUpdateStatus=200;voiceDeleteStatus=200;
+  const voiceAdmin=await pageFor('admin');voiceListShouldFail=true;await voiceAdmin.page.goto(origin+'/management/voice-profiles');
+  await voiceAdmin.page.getByRole('alert').getByText('No se pudieron cargar los perfiles de voz. Inténtalo de nuevo.',{exact:true}).waitFor();
+  voiceListShouldFail=false;await voiceAdmin.page.getByRole('button',{name:'Reintentar',exact:true}).click();
+  await voiceAdmin.page.getByText('No hay perfiles de voz configurados',{exact:true}).waitFor();
+  await voiceAdmin.page.getByRole('button',{name:'Agregar el primer perfil de voz',exact:true}).click();
+  const voiceDialog=voiceAdmin.page.getByRole('dialog');await voiceDialog.waitFor();
+  assert.equal(await voiceDialog.getByLabel('Nombre').count(),1);
+  await voiceDialog.getByLabel('Nombre').fill('Company Co synthetic voice');
+  await voiceDialog.getByLabel('Proveedor').selectOption('openai');
+  await voiceDialog.getByLabel('Idioma').selectOption('es');
+  voiceCreateStatus=403;await voiceDialog.getByRole('button',{name:'Crear perfil',exact:true}).click();
+  await voiceDialog.getByRole('alert').getByText('No se pudo crear el perfil de voz.',{exact:true}).waitFor();
+  assert.equal(voiceProfiles.length,0);
+  assert.deepEqual(voiceProfileWrites.at(-1),{name:'Company Co synthetic voice',providerId:'openai',language:'es',isEnabled:true,isDefault:false});
+  voiceCreateStatus=200;await voiceDialog.getByRole('button',{name:'Crear perfil',exact:true}).click();
+  await voiceAdmin.page.getByText('Company Co synthetic voice',{exact:true}).waitFor();
+  assert.equal(await voiceAdmin.page.getByRole('button',{name:'Eliminar perfil de voz: Company Co synthetic voice'}).count(),1);
+  await voiceAdmin.page.getByRole('button',{name:'Ver perfil de voz: Company Co synthetic voice'}).click();
+  const detailDialog=voiceAdmin.page.getByRole('dialog');await detailDialog.waitFor();
+  await detailDialog.getByText('Company Co synthetic voice',{exact:true}).waitFor();
+  assert.equal(await detailDialog.getByText('openai',{exact:true}).count(),1);
+  await detailDialog.getByRole('button',{name:'Editar',exact:true}).click();
+  const editDialog=voiceAdmin.page.getByRole('dialog');await editDialog.waitFor();
+  await editDialog.getByLabel('Nombre').fill('Company Co edited voice');
+  voiceUpdateStatus=403;await editDialog.getByRole('button',{name:'Guardar cambios',exact:true}).click();
+  await editDialog.getByRole('alert').getByText('No se pudo actualizar el perfil de voz. Inténtalo de nuevo.',{exact:true}).waitFor();
+  assert.equal(voiceProfiles[0].name,'Company Co synthetic voice');
+  voiceUpdateStatus=200;await editDialog.getByRole('button',{name:'Guardar cambios',exact:true}).click();
+  await voiceAdmin.page.getByText('Company Co edited voice',{exact:true}).waitFor();
+  assert.deepEqual(voiceUpdateWrites.at(-1),{id:'voice-co-001',payload:{name:'Company Co edited voice',providerId:'openai',language:'es',isEnabled:true,isDefault:false}});
+  assert.equal(Object.hasOwn(voiceUpdateWrites.at(-1).payload,'companyId'),false);
+  assert.equal(Object.hasOwn(voiceUpdateWrites.at(-1).payload,'apiKey'),false);
+  await voiceAdmin.page.getByRole('button',{name:'Eliminar perfil de voz: Company Co edited voice'}).click();
+  const voiceDeleteDialog=voiceAdmin.page.getByRole('dialog');await voiceDeleteDialog.waitFor();
+  voiceDeleteStatus=403;await voiceDeleteDialog.getByRole('button',{name:'Eliminar',exact:true}).click();
+  await voiceDeleteDialog.getByRole('alert').getByText('No se pudo eliminar el perfil de voz.',{exact:true}).waitFor();
+  assert.equal(voiceProfiles.length,1);
+  voiceDeleteStatus=204;await voiceDeleteDialog.getByRole('button',{name:'Eliminar',exact:true}).click();
+  await voiceAdmin.page.getByText('No hay perfiles de voz configurados',{exact:true}).waitFor();
+  await voiceAdmin.context.close();
+  checks.push('UAT-T-008 Voice Profiles: tenant-independent request, localized list/detail/edit fields, retry and accessible dialogs; mocked HTTP 403 create/update/delete do not announce success; create/update payloads omit caller tenant and credentials; valid camelCase CRUD contract PASS (synthetic UI/API)');
+  keledonRows=[];keledonWrites=[];keledonCreateStatus=200;
+  const keledonAdmin=await pageFor('admin');await keledonAdmin.page.goto(origin+'/management/keledons');
+  await keledonAdmin.page.getByRole('heading',{name:'KELEDONS',exact:true}).waitFor();
+  await keledonAdmin.page.getByRole('button',{name:'Agregar KELEDON',exact:true}).click();
+  const keledonDialog=keledonAdmin.page.getByRole('dialog');await keledonDialog.waitFor();
+  for(const name of ['Nombre','Empresa','Marca','Equipo'])assert.equal(await keledonDialog.getByLabel(name).count(),1);
+  await keledonDialog.getByLabel('Nombre').fill('Company Co synthetic KELEDON');
+  await keledonDialog.getByLabel('Empresa').selectOption(company.id);
+  await keledonDialog.getByLabel('Marca').selectOption(brand.id);
+  await keledonDialog.getByLabel('Equipo').selectOption(team.id);
+  await keledonDialog.getByRole('button',{name:'Guardar',exact:true}).click();
+  await keledonAdmin.page.getByText('Company Co synthetic KELEDON',{exact:true}).waitFor();
+  assert.deepEqual(keledonWrites.at(-1),{name:'Company Co synthetic KELEDON',email:'',role:'agent',autonomyLevel:5,teamId:team.id,brandId:brand.id});
+  assert.equal(Object.hasOwn(keledonWrites.at(-1),'companyId'),false);
+  assert.equal(Array.isArray(keledonWrites.at(-1).uiInterfaces),false);
+  await keledonAdmin.page.getByRole('button',{name:'Eliminar KELEDON: Company Co synthetic KELEDON'}).click();
+  const keledonDeleteDialog=keledonAdmin.page.getByRole('dialog');await keledonDeleteDialog.waitFor();
+  assert.equal(await keledonDeleteDialog.getByText('Esta acción no se puede deshacer.',{exact:false}).count(),1);
+  await keledonDeleteDialog.getByRole('button',{name:'Cancelar',exact:true}).click();
+  await keledonDeleteDialog.waitFor({state:'hidden'});
+  await keledonAdmin.context.close();
+  checks.push('UAT-T-009 KELEDON admin create flow: localized labeled fields, scoped company/brand/team selectors, native accessible form and delete-confirmation dialog; payload contains no caller companyId and uses server input shape PASS (synthetic UI/API)');
   const provider=await pageFor('admin');await provider.page.goto(origin+'/management/providers');
   await provider.page.getByRole('heading',{name:'Administración — Proveedores'}).waitFor();
   const key=provider.page.getByPlaceholder('sk-… (introduce tu clave de API de OpenAI)');await key.waitFor();assert.equal(await key.inputValue(),'');

@@ -1,5 +1,27 @@
 # AEO/GEO checklist —15 controls
 
+## Current run `20261013-1900-phdk-auto` — 5.1.17
+
+| ID | Status | Evidence |
+|---|---|---|
+| AG-01 | PASS (source) | Product questions mapped to INT-001..003; no demand metrics. |
+| AG-02 | PASS (source) | Canonical root and public/private NGINX route policy; no live crawl. |
+| AG-03 | PASS (source) | Root metadata, hero and architecture answer the supported questions. |
+| AG-04 | PASS (source) | KELEDON, Cloud and Browser roles explicit. |
+| AG-05 | PARTIAL | No invented provenance; no owner-supplied author/sources. |
+| AG-06 | PASS (source) | Client-selected CRM/call tools are represented accurately. |
+| AG-07 | PASS (source) | Semantic source headings; rendered crawler DOM not checked. |
+| AG-08 | PASS (source) | Direct copy; no fabricated FAQ. |
+| AG-09 | PASS (source) | Login and architecture links are real source destinations. |
+| AG-10 | NOT_APPLICABLE | No eligible structured-data target established. |
+| AG-11 | UNKNOWN / DECISION NEEDED | Public target market/language policy is absent from Capture. |
+| AG-12 | PARTIAL / BLOCKED | Noscript summary only; complete answer/crawler accessibility unverified. |
+| AG-13 | PASS (source) | Private SPA shell receives noindex/nofollow in source NGINX. |
+| AG-14 | NOT MEASURED | No answer engine/citation query executed. |
+| AG-15 | PASS (source) | `services/web` and `landing` SEO tests pass 1/1 each; builds pass. |
+
+No external engine results, citations or discovery metric are claimed.
+
 Run: 20261012-keledon-four-fronts. Date: 2026-10-12 America/Mexico_City. PHDK2.50.8. Baseline52537140e67d0d6c05486fa13837df3eb5316fb3; local dirty candidate. Source fingerprint SHA256 `5ee8649bbab265db46f14d4ba1a83399b9fb268f04ecfde24ede6f2cd85e0dba` (ordered files below), not a commit or deployment SHA. Method: source-only inspection; no browser, HTTP/probe, Search Console, provider, paid model, crawler or database access. Latest integrated UAT not present at snapshot, so this is a prepared audit, not final accepted stage or runtime/indexation proof.
 
 Source PASS is scoped evidence, not citation/ranking/traffic success. Private authenticated routes are excluded from public optimization.

@@ -1,4 +1,17 @@
 # UAT role matrix
+## Current 5.1.17 local candidate (synthetic frontend only)
+
+| Persona | Observed UI coverage | Server evidence / limitation |
+|---|---|---|
+| anonymous | Public home/login diagnostics actions, viewport/theme and safe state reset. | No authentication; API behavior intercepted. |
+| guest | Management access denial/redirect without a loop. | Synthetic session only; server guard regressions are separate. |
+| user / agent | No separate persisted identity journey in this candidate. | API regression contains low-role denies; no provisioned account or session. |
+| coordinator | Selected tenant-admin detail/navigation and mutation restriction presentation. | API guard/policy regression uses isolated fake persistence, not live DB. |
+| admin | KELEDON create/cancel and Voice Profiles create/delete/error states; other admin flows in existing UAT. | API regression covers current-DB tenant derivation and role boundaries; no persisted CRUD. |
+| superadmin | Selected company detail and privileged affordance presentation. | No role switching or impersonation was performed in the browser; DB-derived controls covered only by isolated API regression. |
+
+Each browser persona is a synthetic session value in an isolated context. It does not represent a real login, provisioned test identity or role-switching acceptance.
+
 Candidate5.0.54; Company Co fixtures only, separate fresh browser context per role; no production accounts created.
 
 | Role | Rendered local journeys | Backend evidence |

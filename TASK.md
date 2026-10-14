@@ -1,5 +1,13 @@
 # Current task
 
+## Active Auto continuation — 5.1.17 candidate (uncommitted)
+
+Run `20261013-1900-phdk-auto`, working branch `fix/phdk-keledon-voice-profile-accessibility`, base `60d7382f0e2003597690673103ace4e785f0c018`. Continue the owner's approved four fronts in order and maximize applicable PHDK conformity. This slice localizes KELEDON and Voice Profiles, implements tenant-safe Voice Profile detail/edit and response projections, fixes KELEDON serialization, mounts global Sonner notifications, and supplies accessible mutation errors. Five app package/lock roots align at 5.1.17. API regression 15/15, web typecheck/build, focused ESLint, diagnostics 18/18, locale parity 734/734/734 and synthetic Company Co browser UAT 1/1 pass. The exact working tree has not yet been committed; the current browser evidence ran against it while Git HEAD remained the base SHA.
+
+The four fronts remain active. Persisted CRUD/migration runtime, native Electron/device/audio, broad remaining route accessibility/localization and deployed SEO/AEO evidence remain open. Client CRM/call platforms are tenant-selected; there is no universal vendor requirement. Current lifecycle and exact stage status: `PHDK_LIFECYCLE_STATUS.md`; run archive: `docs/phdk/lifecycle/20261013-1900-phdk-auto/`.
+
+SIGUIENTE PASO: review the complete diff, commit version 5.1.17 and repeat UAT against that exact SHA; then open a normal PR and verify merged `main` readback. Overall remains PARTIALLY DELIVERED for persisted CRUD/migration, native acceptance, broad route accessibility/localization and deployed SEO/AEO.
+
 ## Active Auto continuation — 5.1.16 source slice merged
 
 Continue the user-authorized PHDK Auto across CMT-001..004 in order, maximizing applicable PHDK conformity. Product PR [#76](https://github.com/tuyoisaza/keledon/pull/76) merged by squash at `db35f231c29fb71568666b230e912152ca0a34e2`; remote main readback and all five app package/lock roots verify 5.1.16. Source commit `7ce3509aeb4d53ce3a90d16153996abf35446024` localizes profile, devices, protected launcher and session detail and passes web typecheck/build, synthetic UAT 1/1, diagnostics 18/18, SEO source 1/1, 644-key parity, focused ESLint and PHDK coherence 52/52. Persisted CRUD/migration, native device/audio, broad active-route i18n/a11y and deployed SEO/AEO remain open; do not mark the full Auto complete.

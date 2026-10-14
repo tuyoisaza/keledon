@@ -1,5 +1,15 @@
 # UAT cases — latest local candidate 5.1.16
 
+## Candidate 5.1.17 — current Auto continuation
+
+Candidate: `fix/phdk-keledon-voice-profile-accessibility`, base `60d7382f0e2003597690673103ace4e785f0c018`; all five app roots 5.1.17. Browser execution ran on the dirty working tree and intercepted every API response; after commit, repeat the exact suite and attach evidence to the committed product source.
+
+| Case | Story / actor | Preconditions and synthetic data | Actions / expected observable result | Channel | Result / evidence |
+|---|---|---|---|---|---|
+| UAT-T-008 | US-008 / Company administrator | Local built SPA; Company Co tenant fixture; API routes intercepted. | Voice-profile list failure shows retry; create submits only name/provider/language/enabled/default; detail shows safe display fields; edit submits no caller `companyId` or credential/config fields; synthetic 403 create/update/delete leaves records unchanged and shows visible `role=alert`; successful update/delete refreshes the list. | Local Edge/Playwright UI with synthetic API. | PASS 1/1 after rebuilt candidate. `docs/phdk/evidence/uat-local-web.json`; evidence currently records base HEAD while source is dirty; rerun after commit to bind exact SHA. |
+| UAT-T-009 | US-007 / Company administrator | Local built SPA; synthetic Company Co brand/team/company records; API routes intercepted. | Labeled selectors create a KELEDON with exact service input shape, without caller `companyId` or stringified `uiInterfaces`; delete confirmation opens and cancel preserves the record. | Local Edge/Playwright UI with synthetic API. | PASS, `docs/phdk/evidence/uat-local-web.json`, `UAT_REPORT.md`; persistence is not inferred. |
+| UAT-T-010 | US-007/US-008 / administrators and all app users | Built web SPA. | Trigger a localized failed mutation; a global Sonner notification is mounted and actionable failure feedback is also in the form dialog. | Local Edge/Playwright UI with synthetic API. | PASS for in-dialog voice-profile 403; app-wide notification renderer is source/build verified. Broader toast journeys not exercised. |
+
 ## Current continuation — 2026-10-13
 
 Candidate branch `fix/phdk-route-accessibility-i18n` at `7ce3509aeb4d53ce3a90d16153996abf35446024`, based on fetched `origin/main` `c8534e6f6568922d540eabfba4abe90cc93749c1`. Built-SPA UAT uses Company Co synthetic fixtures and intercepted API/WebSocket traffic. UAT-T-005 covers dashboard/session/detail routes; UAT-T-007 covers profile role/date formatting in en/es/pt, translated device status/empty state, valid launcher navigation and API failure recovery. Diagnostics tests, SEO source test and web typecheck/build are recorded in `UAT_REPORT.md`; locale parity is checked separately. This scoped evidence does not close broad route accessibility/localization, persisted CRUD/migration, native device/audio or deployed SEO/AEO acceptance.

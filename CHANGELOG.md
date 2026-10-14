@@ -1,3 +1,17 @@
+## v5.1.17 — 2026-10-13 (PHDK Auto continuation)
+
+- Localize KELEDON and Voice Profiles administration in English, Spanish and Portuguese; add labeled fields, accessible modal confirmation, loading/error/retry and honest HTTP failure feedback.
+- Derive Voice Profile tenant scope from the API actor and send the API's camelCase contract; test that caller company IDs cannot widen tenant scope.
+- Add localized tenant-safe Voice Profile detail/edit; API responses for list/detail/create/update expose only display fields and omit provider/config secrets.
+- Send KELEDON interface selections as arrays to avoid double-serialization, validate stored interface JSON, and test admin selectors and payload scope.
+- Align all five app package and lock roots at 5.1.17.
+
+### Verification
+- Pending integrated UAT, build, regression and Check for this candidate.
+
+### Limitations
+- Database-persisted CRUD/migration, native device/audio, broader app accessibility/localization, and deployed SEO/AEO acceptance remain open.
+
 ## v5.1.16 — 2026-10-13 (PHDK Auto continuation)
 
 - Localize profile, device and Keledon launcher/session-detail journeys in English, Spanish and Portuguese, including locale-aware profile dates and device status/empty/error copy.

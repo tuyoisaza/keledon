@@ -1,5 +1,16 @@
 # PHDK commitment coverage — KELEDON four fronts
 
+## Active Auto continuation — 5.1.17, run `20261013-1900-phdk-auto`
+
+| Commitment | Current implementation/evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | Five app package/lock roots are 5.1.17; branch/base and dirty candidate state are recorded. PHDK 2.50.10 remains installed with 52/52 coherence mappings. | Current branch/PR, merge and fresh remote-main SHA/version verification. |
+| CMT-002 | Diagnostics UAT 18/18 and local Company Co UI journey pass; global Sonner renderer now presents app notifications; voice-profile 403 feedback is inline and truthful. | Native Electron/device/audio and broader app-state/route accessibility acceptance. |
+| CMT-003 | Provider-independent voice/runtime source contracts remain the acceptance boundary; the owner confirmed call and CRM products vary by client. | No universal live provider test applies; continue source/contract audit, report any tenant-neutral gap. |
+| CMT-004 | DB-derived API tenant regression passes; Voice Profiles now have safe detail/edit and list/detail/create/update projections without config/provider relations; KELEDON UI sends service-shaped `uiInterfaces`; synthetic UAT exercises create/edit/delete and 403 states. | Persisted CRUD × resource × role × tenant × operation × surface, exhaustive 35-model resource matrix and migration/runtime evidence. |
+
+Current overall status: PARTIALLY DELIVERED. Browser UAT used the uncommitted working tree based on `60d7382f0e2003597690673103ace4e785f0c018`; rerun and bind final evidence to the committed source revision before delivery.
+
 ## Current continuation — candidate 5.1.16 (2026-10-13)
 
 | Commitment | Requirements / design | Plan / workstream | Current evidence | Open acceptance |

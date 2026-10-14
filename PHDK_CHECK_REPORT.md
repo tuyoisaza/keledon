@@ -1,4 +1,52 @@
-# PHDK Check — latest candidate 5.1.16; acceptance partial
+# PHDK Check — current Auto run `20261013-1900-phdk-auto`, candidate 5.1.17
+
+Date: 2026-10-14 UTC / 2026-10-13 America/Mexico_City. Repository: `tuyoisaza/keledon`. Branch `fix/phdk-keledon-voice-profile-accessibility`, base `60d7382f0e2003597690673103ace4e785f0c018`; audited state is an uncommitted 5.1.17 working tree, not a commit. PHDK v2.50.10 is installed; current canonical version/SHA match the previously verified upstream; static coherence passes 52/52. Source inventory: 1,068 TS/TSX/JS/JSX/CJS/MJS files, zero at/above 600 lines. English/Spanish/Portuguese web locale keys match 734/734/734. These static results do not prove current remote delivery or runtime acceptance.
+
+Project intent and applicability sources: `PROJECT_INTENT.md`, `REQUIREMENTS_TRACEABILITY.md`, `PRD.md`, `FEATURES.md`, architecture decisions, `CRUD_MATRIX.md`, current source and test evidence. Inspected applicable PHDK areas: lifecycle/commitment/main-delivery, brownfield plan/UX/design-system, CRUD, debug diagnostics, AI admin, DEVSECOPS, versioning, testing/verification, SEO/AEO, UAT, execution scope and repository instructions. Command-mode prompt/example standards are N/A to product runtime; owner and root execution controls remain applicable to this run.
+
+## Executive summary
+
+| Status | Count | Current result |
+|---|---:|---|
+| COMPLIANT | 4 | PHDK installation/coherence; five app versions; approved API policy has isolated regression coverage; shared diagnostics source/component tests and selected local UAT. |
+| GAP | 1 | CRUD matrix is not exhaustive across persisted resources × roles × surfaces × operations. |
+| PARTIAL | 4 | Full lifecycle delivery/commitments; app-wide i18n/UX; persistent AI/admin data acceptance; public SEO/AEO runtime acceptance. |
+| NOT APPLICABLE | 1 | Universal live call/CRM integration test: owner confirms clients choose systems. |
+| UNKNOWN / DECISION NEEDED | 1 | Public market/language target is not specified; current public shell is English. |
+| UNVERIFIED | 2 | Persisted CRUD/migration/database state; native Electron/device/microphone/audio behavior. |
+
+Overall: **GAPS FOUND / ALIGNMENT INCOMPLETE**. PHDK version drift: none. No current product commit, PR, merge or remote-main verification exists for this candidate. The Auto goal remains PARTIALLY DELIVERED.
+
+## Findings and authorized remediation order
+
+| ID | Severity / classification | Standard and evidence | Missing behavior / action | Validation and dependency |
+|---|---|---|---|---|
+| CHK-001 | High; AUTO-FIXABLE WITH VALIDATION — CLOSED AT SOURCE | `CRUD_STANDARD.md`, `CRUD_MATRIX.md`; previously no accessible Voice Profile detail/edit UI. | Added tenant-scoped detail response and UI detail/edit path with English/Spanish/Portuguese strings; API list/detail/create/update select only safe display fields, excluding config and provider relations. API regression verifies tenant filters and response projections; local synthetic UAT exercises detail/edit and visible 403 failures. | API regression 15/15 suites and focused ESLint pass; web typecheck/build and UAT pass 1/1 after final rebuild. Persistence is not claimed. |
+| CHK-002 | High; FIXABLE WITH VALIDATION plus EXTERNAL/MANUAL | `CRUD_STANDARD.md`: current matrix covers selected company/brand/team/user/vendor/session/provider/voice rows but itself lists 9 additional persisted resource families as GAP; includes Keledon/device/pairing, interfaces, workflow families, runs/evidence, knowledge/vector docs, provider settings, AI config, events/audit and nested resources. Recounted `schema.prisma`: 35 models. | Refresh inventory against all 35 Prisma models and API controllers, identify route-family duplicates, map role × API/web × C/list/detail/U/D, and document append-only/composite/tenant exceptions with evidence. A complete persisted test needs owner-managed disposable DB and remains blocked. | Matrix source review can continue; DB-backed role isolation, persistence, delete/recovery and migration ledger require approved isolated database. No production DB use. |
+| CHK-003 | Medium; FIXABLE WITH VALIDATION | `PHDK_UX_UI.md`, `PHDK_DESIGN_SYSTEM.md`, locale catalogs and reachable React route graph. Keys match 734/734/734; selected pages pass keyboard/labels/Spanish UAT, but parity does not prove translated route content. Prior route-literal scan is a historical snapshot and broad screen-reader, contrast and responsive form evidence remains incomplete. | Continue source audit by user journey; replace confirmed English-only/error/label literals and accessibility gaps without bulk rewrite. Record exact findings and route-specific retests. | Source/locale tests and scoped local UAT. Full screen-reader and all-route manual review remains MANUAL; no claim of WCAG certification. |
+| CHK-004 | Medium; EXTERNAL/MANUAL for runtime evidence | `AI_ADMIN_STANDARD.md`, migration policy and existing AI admin routes/models/tests. Protected Prompts and usage source contracts exist; usage may be honestly unavailable and the additive migration is present, but no DB migration/runtime was executed. | Preserve source/read-only guard, validate AI output schema and revised prompt/usage attribution in tests; obtain DB-backed migration and persisted revision evidence through approved isolated procedure. | Focused API/Cloud regressions/build; isolated DB-backed integration only when owner-managed safe DB is provided. No paid model call. |
+| CHK-005 | Medium; EXTERNAL/MANUAL | `PHDK_SEO.md` / `PHDK_AEO_GEO.md`: both app shells now have source metadata/private-route policy and static tests, but HTTP headers, crawler rendering, TLS/redirects, CWV, Search Console, backlinks and answer citations are unmeasured. | Keep source fixes; after authorized deployment provide bounded read-only metrics if they are required. No source evidence can close field measurements. | SEO tests 1/1 in web and landing; report `NOT MEASURED` until real authorized evidence. |
+| CHK-006 | Medium; DECISION REQUIRED | Capture has no public market/language definition; public shell declares `lang=en` while app locales en/es/pt. | Ask product owner to define public-language/locale-route intent before creating multilingual public SEO variants. No assumption from geographic location. | Independent code checks proceed; this product decision is not needed for code delivery. |
+| CHK-007 | Medium; EXTERNAL/MANUAL | `UAT_STANDARD.md`, `PHDK_UX_UI.md`; native Electron renderer/dialog, actual OS permissions, device pairing and physical audio have not been exercised on this host. | Human operator with supported Windows native control and test device must inspect deny/grant dialog, pairing/error recovery and audio without a customer call; capture redacted evidence. | Requires native test host/device and action-time OS media consent; no OS permission or call made here. |
+| CHK-008 | High; EXTERNAL/MANUAL | `CRUD_MATRIX.md`, `UAT_REPORT.md`, `PHDK_COMPLETION_GATE.md`, `MAIN_DELIVERY_STANDARD.md`; working tree is dirty/uncommitted and no product PR/remote main readback exists. | Complete source changes, exact-boundary tests, review outgoing diff, version-prefixed commit/PR, satisfy repository controls, merge and independently verify remote SHA/version/commitments. | Product code validation and normal git delivery remain in-scope Auto actions; required checks/review controls must be respected. |
+
+## Non-gap evidence and applicability
+
+- PHDK v2.50.10 matches known canonical release; checker reports 52/52 mappings.
+- All five app package.json, package-lock root and root lock version values align at 5.1.17.
+- Approved DB-derived actor/tenant, least-privilege role and write-only secret policy has explicit API regressions; Voice Profile current UI omits caller `companyId`.
+- Shared compact diagnostics widget has focused component/diagnostics tests, mounts public/login/app/admin through shared components and current local UAT covers selected visible paths. Do not infer native Electron rendering.
+- Existing React/Vite/Nest/Prisma/Electron stack and semantic design tokens are consistent with brownfield architecture; no framework migration or extra dependency is required by PHDK defaults.
+- User-selected CRM/call providers are per client; a universal live-vendor UAT is NOT_APPLICABLE, while tenant-neutral source contracts remain applicable.
+- API regression passes 15/15 suites; Browser and Cloud builds pass; web typecheck/build, diagnostics 18/18, focused ESLint, landing SEO source test 1/1/build, synthetic built-SPA UAT 1/1, PHDK coherence 52/52 and locale parity 734/734/734 pass. No deployed or persisted acceptance is inferred. See `PHDK_LINE_LIMIT_AUDIT.md` for current size scan.
+
+## Auto remediation authorization
+
+The audit-phase snapshot authorized in-scope AUTO-FIXABLE and FIXABLE WITH VALIDATION remediation. CHK-001 is now closed at source with exact UI/API regression evidence. CHK-002/CHK-003 remain open; database provisioning/migrations, native device consent, deployed/provider writes, third-party system changes and the CHK-006 product-language decision remain outside this source remediation. Keep external/runtime acceptance statuses open until evidence exists.
+
+## Next action
+
+PHDK Auto remediation: continue the 35-model CRUD inventory and route/role traceability; then run remaining integrated checks, commit the candidate and bind final UAT evidence to the commit before normal PR delivery. Overall result remains **PARTIALLY DELIVERED**.
 
 ## Current local Check — 5.1.16
 

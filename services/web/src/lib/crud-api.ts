@@ -304,6 +304,18 @@ export async function deleteUser(id: string): Promise<void> {
 }
 
 // KELEDONS
+export type KeledonMutationInput = {
+    name?: string;
+    teamId?: string;
+    brandId?: string;
+    countryCode?: string;
+    userId?: string;
+    email?: string;
+    role?: string;
+    autonomyLevel?: number;
+    uiInterfaces?: string[];
+};
+
 export async function getKeledons(companyId?: string): Promise<Keledon[]> {
     const keledons: Keledon[] = await fetchApi('/keledons');
     if (companyId) {
@@ -312,11 +324,11 @@ export async function getKeledons(companyId?: string): Promise<Keledon[]> {
     return keledons;
 }
 
-export async function createKeledon(data: { name: string; teamId: string; brandId?: string; countryCode?: string; userId?: string; email?: string; role?: string; autonomyLevel?: number; uiInterfaces?: string[] }): Promise<Keledon> {
+export async function createKeledon(data: KeledonMutationInput & { name: string; teamId: string }): Promise<Keledon> {
     return fetchApi('/keledons', 'POST', data);
 }
 
-export async function updateKeledon(id: string, data: Partial<Keledon>): Promise<Keledon> {
+export async function updateKeledon(id: string, data: KeledonMutationInput): Promise<Keledon> {
     return fetchApi(`/keledons/${id}`, 'PUT', data);
 }
 

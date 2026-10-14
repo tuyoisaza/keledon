@@ -70,4 +70,6 @@ module.exports = {
   CrudAccessGuard: load('guards/crud-access.guard.ts').CrudAccessGuard,
   TeamController: load('controllers/team.controller.ts').TeamController,
   CrudKeledonService: load('crud/crud-keledon.service.ts').CrudKeledonService,
+  CrudService: load('crud/crud.service.ts').CrudService,
+  TenantController: load('controllers/tenant.controller.ts').TenantController,
 };
