@@ -234,6 +234,7 @@
       border-radius: 6px;
       position: relative;
     }
+    .console-btn[hidden] { display: none; }
     .console-btn:hover { background: var(--url-bar-bg); color: var(--text-primary); }
     .console-btn.active { background: var(--url-bar-bg); color: var(--text-primary); }
     .console-badge {

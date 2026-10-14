@@ -9,7 +9,7 @@ import { mediaLayerWrapper } from './ipc-media-handlers.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
 import { eventLogger } from './media/event-logger.js';
 import { sanitizeVendorNotification } from './security-policy.js';
-import { runtimeStatus, mainWindow, setDebugMode, clearRuntimeSessionState } from './runtime-state.js';
+import { runtimeStatus, mainWindow, debugMode, setDebugMode, clearRuntimeSessionState } from './runtime-state.js';
 import { getDeviceSocket, connectWebSockets, disconnectSockets, setupCommandPolling } from './cloud-connection.js';
 import { getStartupLogPath, getMainLogPath, getLogsDir, getInstallDir } from './logger.js';
 import type { TabManager } from './tab-manager.js';
@@ -34,16 +34,16 @@ export function registerIpcHandlers(tabManager: TabManager): void {
 
   // --- Device Info ---
   ipcMain.handle('device:getInfo', async () => ({
-    deviceId: runtimeStatus.deviceId,
     version: app.getVersion(),
+    environment: app.isPackaged ? 'production' : 'development',
+    gitSha: /^[a-f0-9]{7,40}$/i.test(process.env.KELEDON_GIT_SHA || '') ? process.env.KELEDON_GIT_SHA : null,
+    buildTimestamp: /^\d{4}-\d\d-\d\dT[^\s]{1,40}Z$/.test(process.env.KELEDON_BUILD_TIMESTAMP || '') ? process.env.KELEDON_BUILD_TIMESTAMP : null,
+    authenticated: Boolean(runtimeStatus.authToken),
     platform: process.platform,
     osRelease: `${process.platform} ${process.arch}`,
     electron: process.versions.electron,
     chrome: process.versions.chrome,
     node: process.versions.node,
-    logsDir: getLogsDir(),
-    mainLogPath: getMainLogPath(),
-    startupLogPath: getStartupLogPath(),
   }));
 
   // --- Runtime Status ---
@@ -288,6 +288,7 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     setDebugMode(enabled);
     return { success: true };
   });
+  ipcMain.handle('brain:getDebugMode', async () => ({ enabled: debugMode }));
 
   // --- Escalation: Action (handle) ---
   ipcMain.handle('escalation:action', async (_event, action: 'continue' | 'fix' | 'abort', data?: any) => {

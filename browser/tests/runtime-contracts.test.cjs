@@ -111,7 +111,10 @@ function load(relative, deps = {}, globals = {}) {
  assert.equal(wavs.length, 1); assert.equal(wavs[0].toString('ascii',0,4),'RIFF');
  assert.equal(wavs[0].readUInt32LE(24),8000); assert.equal(wavs[0].readUInt32LE(40),11200);
  pcm.push(new Int16Array(800),8000,1); assert.equal(wavs.length,1);
- const runtime = load('../src/runtime-state.ts', {electron:{}});
+ const runtime = load('../src/runtime-state.ts', {
+  electron:{app:{isPackaged:false}},
+  './debug-mode.js': { resolveDebugMode: (isPackaged, override) => override === 'true' ? true : override === 'false' ? false : !isPackaged },
+ });
  Object.assign(runtime.runtimeStatus,{authToken:'synthetic-secret',sessionId:'s',teamId:'t',teamName:'Company Co',keledonId:'k',pendingPairingCode:'secret-code',vendors:[{password:'secret'}]});
  runtime.clearRuntimeSessionState();
  assert.equal(runtime.runtimeStatus.authToken,null); assert.equal(runtime.runtimeStatus.teamId,null); assert.equal(runtime.runtimeStatus.keledonId,null); assert.equal(runtime.runtimeStatus.pendingPairingCode,null); assert.equal(runtime.runtimeStatus.vendors.length,0);

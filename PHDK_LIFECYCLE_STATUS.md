@@ -4,6 +4,8 @@
 
 Overall result remains **PARTIALLY DELIVERED**. Product PRs #78–#83 and #86–#88 are merged; PR #88 delivered source version 5.1.21 at main commit `5b81b36c4e6534a930edc0a9f59f2ba117b01bb`. The current privacy candidate is version 5.1.22 on `fix/provider-error-redaction`. The 35-model CRUD gate remains open. `PHDK_DELIVERY_EVIDENCE.json` still points at PR #78, so the full Auto gate is not passing.
 
+2026-10-14 continuation: the 5.1.22 candidate now also fixes native Browser widget version drift, report/reset behavior, production debug-console visibility and unnecessary device/log-path disclosure from IPC. Browser 5/5 tests and build, Web widget/diagnostics 17/17, Landing build, API 18/18, Cloud 9/9, configured API/Cloud builds and PHDK coherence 52/52 pass. The full source matrix and persistent CRUD acceptance remain open; native Electron rendering/device/audio, deployed SEO/AEO and the public locale decision remain unverified. Current branch has uncommitted in-scope work and PR #89 still contains the earlier source commit only; delivery is pending.
+
 SIGUIENTE PASO: continue CHK-002 by completing the resource × role × API/web × operation audit and source fixes, then refresh delivery evidence after the source set stabilizes.
 
 ### Active source candidate 5.1.22 — voice and provider privacy

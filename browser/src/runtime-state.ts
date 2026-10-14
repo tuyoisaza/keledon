@@ -1,5 +1,6 @@
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import type { RuntimeStatus } from './types.js';
+import { resolveDebugMode } from './debug-mode.js';
 
 /**
  * Shared mutable state for the KELEDON browser main process.
@@ -39,7 +40,7 @@ export const runtimeStatus: RuntimeStatus = {
 export let mainWindow: BrowserWindow | null = null;
 export function setMainWindow(win: BrowserWindow | null) { mainWindow = win; }
 
-export let debugMode = false;
+export let debugMode = resolveDebugMode(app.isPackaged, process.env.KELEDON_DEBUG);
 export function setDebugMode(mode: boolean) { debugMode = mode; }
 
 /** Explicit logout clears tenant/session configuration and all cached runtime credentials. */

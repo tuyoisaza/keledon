@@ -67,6 +67,7 @@ contextBridge.exposeInMainWorld('keledon', {
     }
   },
   brain: {
+    getDebugMode: () => ipcRenderer.invoke('brain:getDebugMode'),
     onCommand: (callback: (data: CommandData) => void) => {
       ipcRenderer.on('brain:command', (_event, data) => callback(data));
       return () => ipcRenderer.removeAllListeners('brain:command');
@@ -212,16 +213,16 @@ declare global {
     keledon: {
       device: {
         getInfo: () => Promise<{
-          deviceId: string;
           version: string;
+          environment: 'development' | 'production';
+          gitSha: string | null;
+          buildTimestamp: string | null;
+          authenticated: boolean;
           platform: string;
           electron: string;
           chrome: string;
           node: string;
           osRelease?: string;
-          logsDir?: string;
-          mainLogPath?: string;
-          startupLogPath?: string;
         }>;
       };
       runtime: {
@@ -267,6 +268,7 @@ declare global {
         onCallStatus: (callback: (data: CallStatusData) => void) => () => void;
       };
       brain: {
+        getDebugMode: () => Promise<{ enabled: boolean }>;
         onCommand: (callback: (data: CommandData) => void) => () => void;
         onAudio: (callback: (data: AudioData) => void) => () => void;
         setDebugMode: (enabled: boolean) => Promise<{ success: boolean }>;

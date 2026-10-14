@@ -7,9 +7,12 @@
   "scripts": {
     "dev": "npm run build && electron-forge start",
     "build": "tsc",
+    "prebuild": "node scripts/sync-renderer-version.js",
     "start": "electron .",
+    "prestart": "node scripts/sync-renderer-version.js",
     "package": "npm run build && electron-forge make",
     "make": "electron-forge make",
+    "premake": "node scripts/sync-renderer-version.js",
     "predist": "node scripts/clean-dist.js",
     "dist": "npm run build && electron-builder --win nsis",
     "dist:dir": "npm run build && electron-builder --win --dir",
