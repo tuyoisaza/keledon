@@ -1,4 +1,12 @@
-## Verified delivery — 5.1.30, 2026-10-14
+## Verified delivery — current candidate 5.1.37, 2026-10-14
+
+PR [#111](https://github.com/tuyoisaza/keledon/pull/111) squash-merged source candidate `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` at `33cff1e345de0b735657570a6144ddeec61f7c3e`. `origin/main` and `git ls-remote` agree; PR head and merge trees match at `bfed883e8f6cf4de1f4d7d3e4b5de63f0e59a97c`; all five package/lock roots and Browser renderer are 5.1.37. API 35/35; Cloud 14/14 and full lint 0/0; exact-source Web UAT 2/2; widget/diagnostics 19/19; builds/SEO, coherence 52/52 and source line inventory pass. GitHub check/review rollups are empty and main has no branch protection. Delivery evidence is `PHDK_DELIVERY_EVIDENCE-5.1.37.json` and snapshot `snapshots/candidate-5.1.37/`. The deterministic PHDK gate records BLOCKED because whole Auto acceptance remains partial. No deployment is claimed.
+
+Overall: **SOURCE MERGED / REMOTE VERIFIED; AUTO ACCEPTANCE PARTIAL**. Continue Check against the remaining confirmed scope and environment gates.
+
+---
+
+## Previous verified delivery — 5.1.30, 2026-10-14
 
 PR [#100](https://github.com/tuyoisaza/keledon/pull/100) merged source commit `75e40a8d4f72b5c962d73c140856ada044a863e9` to `main` at `7a48b419880abea818837e4cdfc3d4d4c3f77c12`. `origin/main` and `git ls-remote` agree; source and merge trees match. API regression 22/22, Cloud 11/11, product builds and PHDK coherence 52/52 pass. All five app package/lock roots and Browser renderer are 5.1.30. GitHub check and review rollups are empty; deployment is not claimed.
 
@@ -39,11 +47,13 @@ Machine-readable candidate evidence: `CANDIDATE.json`.
 
 ## Candidate 5.1.28 — delivery pending
 
-Branch ix/write-only-device-rpa-secrets is based on remote main 4cc6a2a6de0d3a8eda6be60a45607553d2b3e80e. All five application roots/locks and Browser renderer are 5.1.28. Source change confines credential-bearing RPA config reads to the exact current paired-device identity. API regression/Jest/build/scoped lint, Cloud/Web/Landing/Browser builds and PHDK coherence pass. PR/push/merge/readback not yet performed. Full Auto acceptance is PARTIALLY DELIVERED because the 26-model matrix/DB, native/device/audio, broad a11y/localization and deployed SEO/AEO remain open.
+Branch
+ix/write-only-device-rpa-secrets is based on remote main 4cc6a2a6de0d3a8eda6be60a45607553d2b3e80e. All five application roots/locks and Browser renderer are 5.1.28. Source change confines credential-bearing RPA config reads to the exact current paired-device identity. API regression/Jest/build/scoped lint, Cloud/Web/Landing/Browser builds and PHDK coherence pass. PR/push/merge/readback not yet performed. Full Auto acceptance is PARTIALLY DELIVERED because the 26-model matrix/DB, native/device/audio, broad a11y/localization and deployed SEO/AEO remain open.
 
 ## Candidate 5.1.29 — delivery pending
 
-Branch ix/redact-device-config-lists is based on main 22c0a407aa07552a189aa9f3b00e887397f9d03. All five package/lock roots and Browser renderer are 5.1.29. Device list responses omit raw RPA provider config and CDP URL, returning only presence flags. API regression/Jest/build/focused lint, Cloud/Web/Landing/Browser builds, and PHDK coherence pass. PR, merge and exact readback pending. Whole Auto remains partial for CRUD/DB matrix, native/audio, broad accessibility/localization and deployed SEO/AEO.
+Branch
+ix/redact-device-config-lists is based on main 22c0a407aa07552a189aa9f3b00e887397f9d03. All five package/lock roots and Browser renderer are 5.1.29. Device list responses omit raw RPA provider config and CDP URL, returning only presence flags. API regression/Jest/build/focused lint, Cloud/Web/Landing/Browser builds, and PHDK coherence pass. PR, merge and exact readback pending. Whole Auto remains partial for CRUD/DB matrix, native/audio, broad accessibility/localization and deployed SEO/AEO.
 # Delivery handoff — `20261014-0007-phdk-auto-completion`, source and matrix 5.1.35
 
 ## Verified matrix reconciliation — PR #108
