@@ -13,12 +13,21 @@ import {
   Req,
 } from '@nestjs/common';
 import { MvpStoreService } from '../mvp/mvp-store.service';
+import type {
+  FlowDefinitionInput,
+  FlowVersionInput,
+  FlowVersionUpdateInput,
+  IntentFlowMappingInput,
+  KnowledgeDocumentInput,
+  ManagedInterfaceInput,
+  TenantFlowPermissionInput,
+} from '../mvp/mvp-store.types';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from '../guards/public.decorator';
 import type { TTSConfigEntry } from '../mvp/mvp-store.types';
 
 interface AuthenticatedRequest {
-  user?: { role?: string };
+  user?: { userId?: string; role?: string };
 }
 
 @ApiTags('MVP Data')
@@ -86,12 +95,15 @@ export class MvpDataController {
   }
 
   @Post('interfaces')
-  createInterface(@Body() body: Record<string, any>) {
+  createInterface(@Body() body: ManagedInterfaceInput) {
     return this.mvpStore.createInterface(body);
   }
 
   @Put('interfaces/:id')
-  updateInterface(@Param('id') id: string, @Body() body: Record<string, any>) {
+  updateInterface(
+    @Param('id') id: string,
+    @Body() body: ManagedInterfaceInput,
+  ) {
     return this.mvpStore.updateInterface(id, body);
   }
 
@@ -106,7 +118,7 @@ export class MvpDataController {
   }
 
   @Post('flow-definitions')
-  createFlowDefinition(@Body() body: Record<string, any>) {
+  createFlowDefinition(@Body() body: FlowDefinitionInput) {
     return this.mvpStore.createFlowDefinition(body);
   }
 
@@ -116,14 +128,17 @@ export class MvpDataController {
   }
 
   @Post('flow-versions')
-  createFlowVersion(@Body() body: Record<string, any>) {
-    return this.mvpStore.createFlowVersion(body);
+  createFlowVersion(
+    @Body() body: FlowVersionInput,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.mvpStore.createFlowVersion(body, req.user?.userId || '');
   }
 
   @Put('flow-versions/:id')
   updateFlowVersion(
     @Param('id') id: string,
-    @Body() body: Record<string, any>,
+    @Body() body: FlowVersionUpdateInput,
   ) {
     return this.mvpStore.updateFlowVersion(id, body);
   }
@@ -134,9 +149,8 @@ export class MvpDataController {
   }
 
   @Post('tenant-flow-permissions')
-  upsertTenantFlowPermissions(@Body() body: Array<Record<string, any>>) {
-    const entries = Array.isArray(body) ? body : [];
-    return this.mvpStore.upsertTenantFlowPermissions(entries);
+  upsertTenantFlowPermissions(@Body() body: TenantFlowPermissionInput[]) {
+    return this.mvpStore.upsertTenantFlowPermissions(body);
   }
 
   @Get('intent-flow-mappings/:companyId')
@@ -145,7 +159,7 @@ export class MvpDataController {
   }
 
   @Post('intent-flow-mappings')
-  upsertIntentFlowMapping(@Body() body: Record<string, any>) {
+  upsertIntentFlowMapping(@Body() body: IntentFlowMappingInput) {
     return this.mvpStore.upsertIntentFlowMapping(body);
   }
 
@@ -155,7 +169,7 @@ export class MvpDataController {
   }
 
   @Post('knowledge/documents')
-  createKnowledgeDocument(@Body() body: Record<string, any>) {
+  createKnowledgeDocument(@Body() body: KnowledgeDocumentInput) {
     return this.mvpStore.createKnowledgeDocument(body);
   }
 }

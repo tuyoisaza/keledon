@@ -1,3 +1,10 @@
+## v5.1.39 — 2026-10-14 (MVP store write contracts and actor attribution)
+
+- Replace untyped API/Cloud MVP configuration bodies with model-specific input contracts and runtime field/type validation.
+- Prevent interface and flow-version updates from overwriting IDs, creation times, relationships, and other server-owned fields.
+- Derive FlowVersion creator attribution from the current DB actor populated by the resource guard.
+- Add mirrored API/Cloud regressions for rejected server-owned fields, invalid values, and actor attribution. Full Auto remains partially delivered.
+
 ## v5.1.38 — 2026-10-14 (Cloud escalation actor and tenant parity)
 
 - Align Cloud escalation routes with API: resolve the actor from the current database record, restrict tenant reads/mutations to assigned company teams and sessions, and ignore client-supplied acknowledgement identities.
