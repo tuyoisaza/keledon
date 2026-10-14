@@ -1,5 +1,11 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.38 — Cloud escalation source parity and integrated UAT (2026-10-14)
+
+Cloud escalation regression 40 passes 3/3 and API regression 27 passes the DB-derived actor, tenant/team/session and caller-attribution checks. The built-Web UAT passes 2/2 against exact merged revision `45b9031b9d3261a98e928cceb6fb51e73e21421f`; `docs/phdk/evidence/uat-local-web.json` records version 5.1.38, that revision, and zero dirty/untracked source files. The companion Device UAT passes 1/1 and records the same clean revision in `uat-device-5.1.36.json` (the established evidence filename is retained). UI tests use synthetic intercepted APIs with external traffic blocked; they are not database, production-authentication, native-device or deployed acceptance. Widget/diagnostics pass 19/19; Web/Landing SEO each pass 1/1. PHDK coherence passes 52/52. Overall tally remains 29 PASS, 2 BLOCKED, 1 MANUAL; this source candidate does not close the Auto goal.
+
+---
+
 ## Candidate 5.1.36 — Device manager revoke and registration scope (2026-10-14)
 
 UAT-032 passes. `services/web npm run test:uat` passes 2/2, including the new local production-SPA Device journey: a user has no revoke control; an admin confirmation can be canceled without a DELETE; mocked failure remains visible; retry success removes the device. Redacted synthetic states are captured in `docs/phdk/evidence/uat-device-*.png`; `uat-device-5.1.36.json` binds the run to base main `f0a9633e39bbdbca416f5e1c24c32acab7276902` and source fingerprint `sha256:4170917201fbd7be6ca51d1c7d7adde6bb9bafb82010bdd1a70242b96cce3315`. `services/api npm run build` and all 35/35 regression suites pass; regression 21 proves DB-derived registration binding, company-less registration denial, same-company manager revoke, cross-company denial and ordinary-user revoke denial. Browser/API calls in the UI harness use synthetic intercepted fixtures, external traffic is blocked; no real authentication, database, device or pairing was used. PHDK coherence passes 52/52 and the 35-model/168-row drift guard passes. Current tally: 29 PASS, 2 BLOCKED, 1 MANUAL.

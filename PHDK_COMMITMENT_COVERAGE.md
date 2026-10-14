@@ -209,7 +209,15 @@ Cross-cutting tasks PLAN-AUTO-005 (full PHDK Check/remediation), PLAN-AUTO-007 (
 Overall: **PARTIALLY DELIVERED**. UAT: 28 PASS, 2 BLOCKED, 1 MANUAL. No DB/provider/customer data/deployment used.
 
 SIGUIENTE PASO: provide the isolated DB/identity and native device/audio environments; then close the remaining acceptance evidence. The current delivery proof is recorded in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.33.json`.
-# Current candidate 5.1.37 — coverage update (2026-10-14)
+# Current candidate 5.1.38 — coverage update (2026-10-14)
+
+All confirmed fronts CMT-001..004 remain active in the owner-confirmed order. The 5.1.38 source candidate closes a scoped Check finding: Cloud escalation now matches API actor derivation, approved role/company/team/session scope and tenant-filtered aggregate reads. Caller-supplied acknowledgement identity is ignored. This advances CMT-001/CMT-004 source parity only; it does not close the broader role × tenant × operation × surface matrix or persisted CRUD. CMT-002 retains prior widget/diagnostics and built-Web evidence; native device/audio and broad accessibility acceptance remain open. CMT-003 stays provider-independent; customer-configured CRM/call acceptance remains untested.
+
+Branch `fix/phdk-cloud-escalation-actor-scope-5-1-38` is based on verified `main` `746c5669ab0f9f39645ed27d99d2029dffa89ed1`. Product PR #113 merged at `45b9031b9d3261a98e928cceb6fb51e73e21421f`, independently confirmed by `origin/main` and `git ls-remote`. All five app package/lock roots and Browser renderer align at 5.1.38. API build/regressions 35/35; Cloud build/regressions 15/15; focused Cloud ESLint 0 errors/0 warnings; Browser/Web/Landing builds, Web/Landing typechecks, Web diagnostics 19/19, exact-merge-revision Web UAT 2/2, SEO 1/1 each and PHDK coherence 52/52 pass. Evidence is in the run's `90-delivery/` and `docs/phdk/evidence/`. **Overall PARTIALLY DELIVERED.**
+
+---
+
+# Prior candidate 5.1.37 — coverage update (2026-10-14)
 
 All confirmed fronts CMT-001..004 remain active in the owner-confirmed order. The source candidate closes a scoped Check finding across API and Cloud CRUD request typing, audit-write parity, duplicate Cloud session provider, and TTS chunk normalization. It supports CMT-001/CMT-004 source conformance; it does not close the broader role × tenant × operation × surface proof obligations. CMT-002's shared diagnostics widget is reviewed against source and 19 focused tests plus the built-Web UAT; native and broad accessibility acceptance remain open. CMT-003 remains provider-independent; actual CRM/call acceptance is customer-configured and untested.
 
