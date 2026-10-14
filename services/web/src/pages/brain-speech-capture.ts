@@ -160,7 +160,7 @@ async function startVoskListening(): Promise<void> {
       : "en";
     const listenUrl = `${wsBase}/listen`;
     scope.addLog(
-      `[v${appVersion}] Connecting Vosk WS → ${listenUrl} path=/listen/ws session=${sessionId}`,
+      `[v${appVersion}] Connecting Vosk WS → ${listenUrl} path=/listen/ws`,
     );
     const listenSocket = io(listenUrl, {
       path: "/listen/ws",
@@ -189,7 +189,7 @@ async function startVoskListening(): Promise<void> {
 
       listenSocket.on("connect", async () => {
         scope.addLog(
-          `[v${appVersion}] Vosk WS connected: ${listenSocket.id} | session=${sessionId} | lang=${language}`,
+          `[v${appVersion}] Vosk WS connected: ${listenSocket.id} | lang=${language}`,
         );
         try {
           const stream = await navigator.mediaDevices.getUserMedia({

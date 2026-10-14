@@ -14,11 +14,11 @@ export class ListeningSessionService {
   // In-memory storage for now, as per brief (minimal persistence)
   private sessions = new Map<string, ListeningSession>();
 
-  async createSession(data: {
+  createSession(data: {
     source: string;
     tabUrl?: string;
     tabTitle?: string;
-  }): Promise<ListeningSession> {
+  }): ListeningSession {
     const sessionId = `ls_${uuidv4()}`;
     const expiresAt = new Date(Date.now() + 3600 * 1000).toISOString(); // 1 hour expiry
 
@@ -34,7 +34,7 @@ export class ListeningSessionService {
     };
 
     this.sessions.set(sessionId, session);
-    console.log(`[ListeningService] Session created: ${sessionId}`);
+    console.log('[ListeningService] Listening session created');
 
     return session;
   }
