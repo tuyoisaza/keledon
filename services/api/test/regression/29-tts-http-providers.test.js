@@ -4,7 +4,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const ts = require(process.env.KELEDON_TEST_TYPESCRIPT || 'typescript');
 
-function load(fetch) {
+function load(fetch, logs = []) {
   const sourcePath = path.resolve(
     __dirname,
     '../../src/tts/tts-http-providers.ts',
@@ -23,7 +23,10 @@ function load(fetch) {
     Buffer,
     Date,
     AbortSignal,
-    console: { log() {}, error() {} },
+    console: {
+      log: (...args) => logs.push(args.join(' ')),
+      error: (...args) => logs.push(args.join(' ')),
+    },
     fetch,
     require: (name) => {
       if (name === './tts-language') return { detectLanguage: () => 'es' };
@@ -65,8 +68,42 @@ async function main() {
   );
   assert.equal(JSON.parse(requests[1].options.body).response_format, 'mp3');
   assert.equal(speaches.audioData.length, 3);
+
+  const providerSecret = 'synthetic provider body secret';
+  const errors = [];
+  const failingProviders = load(
+    async () => ({
+      ok: false,
+      status: 502,
+      text: async () => providerSecret,
+    }),
+    errors,
+  );
+  const failed = await failingProviders.speakWithSpeaches(
+    'Hola',
+    'https://speech.example',
+    'synthetic-key',
+    'voice-b',
+  );
+  assert.equal(failed.error, 'Speaches API returned 502');
+  assert.ok(!errors.join('\n').includes(providerSecret));
+
+  const networkErrors = [];
+  const unreachable = load(
+    async () => {
+      throw new Error('request failed https://speech.example/?token=synthetic');
+    },
+    networkErrors,
+  );
+  const unavailable = await unreachable.speakWithKokoro(
+    'Hola',
+    'https://speech.example',
+    'voice-a',
+  );
+  assert.equal(unavailable.error, 'Kokoro provider request failed');
+  assert.ok(!networkErrors.join('\n').includes('synthetic'));
   console.log(
-    'PASS TTS transport extraction: endpoint normalization, one timed mocked request, provider payload and credential header.',
+    'PASS TTS transport: endpoint normalization, one timed mocked request, credential header and redacted upstream/network failures.',
   );
 }
 

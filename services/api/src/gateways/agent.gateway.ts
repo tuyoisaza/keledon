@@ -139,8 +139,8 @@ export class AgentGateway
     try {
       await this.sessionService.updateSessionStatus(sessionId, 'ended');
       this.logger.log(`Session ended: ${sessionId}`);
-    } catch (error) {
-      this.logger.error(`Failed to end session ${sessionId}: ${error.message}`);
+    } catch {
+      this.logger.error(`Failed to end session ${sessionId}`);
     }
   }
 
@@ -200,13 +200,13 @@ export class AgentGateway
             );
 
             console.log(`[AgentGateway] Event processed: ${persistedEvent.id}`);
-          } catch (error) {
+          } catch {
             span.setStatus({
               code: SpanStatusCode.ERROR,
-              message: error instanceof Error ? error.message : String(error),
+              message: 'Agent event processing failed',
             });
 
-            console.error(`[AgentGateway] Error processing event:`, error);
+            console.error('[AgentGateway] Error processing event');
 
             // Send error command (anti-demo rule: show failure)
             const errorCommand: any = {
@@ -219,7 +219,7 @@ export class AgentGateway
               flow_id: null,
               flow_run_id: null,
               say: {
-                text: `Decision processing failed: ${error.message}`,
+                text: 'Decision processing failed. Please try again later.',
                 interruptible: true,
               },
             };
@@ -428,7 +428,7 @@ export class AgentGateway
         .emit(`command.${sessionId}`, command);
       if (command.say) {
         console.log(
-          `[AgentGateway] Command sent to session ${sessionId}: ${command.say.text}`,
+          `[AgentGateway] Command sent to session ${sessionId} (${command.say.text.length} characters)`,
         );
       }
 
@@ -485,14 +485,16 @@ export class AgentGateway
         this.logger.log(`Sent command to agent ${agentId}: ${command.type}`);
         span.end();
       });
-    } catch (error) {
-      this.logger.error(`Error sending command to agent ${agentId}`, error);
+    } catch {
+      this.logger.error(`Error sending command to agent ${agentId}`);
     }
   }
 
   // Handle text input events (STT output)
   private handleTextInput(client: Socket, event: AgentSocketData): void {
-    this.logger.log(`Processing text input: ${event.payload.text}`);
+    this.logger.log(
+      `Processing text input (${event.payload.text.length} characters)`,
+    );
 
     // TODO: Integrate with AI decision engine
     // For now, send back a simple acknowledgment command
@@ -512,7 +514,7 @@ export class AgentGateway
 
   // Handle UI result events (RPA execution results)
   private handleUIResult(client: Socket, event: AgentSocketData): void {
-    this.logger.log(`Processing UI result: ${JSON.stringify(event.payload)}`);
+    this.logger.log(`Processing UI result for session ${event.session_id}`);
 
     // Store the UI result in database
     this.storeUIResult(event).catch((err) => {

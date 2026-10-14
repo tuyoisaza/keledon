@@ -297,7 +297,7 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     )
       return { error: 'Invalid or disabled speech request' };
     this.logger.log(
-      `[v${getApiVersion()}] TTS request from ${session.deviceId}: ${data.text.substring(0, 50)}... team=${session.context?.teamId || 'none'}`,
+      `[v${getApiVersion()}] TTS request from ${session.deviceId} (${data.text.length} characters) team=${session.context?.teamId || 'none'}`,
     );
 
     if (this.ttsService) {
@@ -320,8 +320,8 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
 
         return { error: result.error || 'TTS failed' };
-      } catch (error) {
-        this.logger.error('TTS error:', error);
+      } catch {
+        this.logger.error('TTS provider request failed');
         return { error: 'TTS error' };
       }
     }

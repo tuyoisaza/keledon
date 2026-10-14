@@ -1,4 +1,14 @@
-# PHDK Check — current Auto run `20261013-1900-phdk-auto`, candidate 5.1.20
+# PHDK Check — current Auto run `20261013-1900-phdk-auto`, candidate 5.1.22
+
+## 2026-10-14 integrated-source recheck — native widget and privacy boundary
+
+The Browser app's version badge was hard-coded at `v5.1.2` while its package roots were 5.1.22, and the debug console remained visible regardless of the packaged-build default. The current candidate synchronizes renderer version metadata from `browser/package.json` during standard build/start/make commands, loads the actual installed version from Electron IPC, defaults debug mode on only for unpackaged builds, and gates the console behind the main-process debug flag. The report uses a narrow event allowlist and omits raw payloads; reset verifies owned storage/cache, runtime disconnect and diagnostic log clear before showing success and reloading. Device identifiers and local log paths have been removed from the renderer's general device-info IPC projection.
+
+Source verification: Browser tests 5/5 and build PASS; Web widget/diagnostics tests 17/17 and Landing build PASS; API regression 18/18 and Cloud regression 9/9; API/Cloud configured builds PASS; installed PHDK v2.50.10 coherence 52/52. Browser native rendering remains visual/runtime UNVERIFIED. The four owner-confirmed fronts remain active and CMT-003 is provider-independent because each tenant chooses call and CRM products. CHK-002 remains PARTIAL/BLOCKED on complete persisted-resource role/operation inventory and isolated DB persistence; CHK-003 remains PARTIAL on broad route-level localization/accessibility; CHK-004 and CHK-007 require isolated migration/native device/audio acceptance; CHK-005 requires deployed measurements; CHK-006 remains the public market/language decision. PR #89 has not yet integrated these candidate changes to `main`.
+
+## 2026-10-13 continuation — voice and provider privacy
+
+Source review found transcript/spoken-text snippets, agent command payloads, raw provider errors, and internal Decision Engine errors in API/Cloud logs or voice responses, plus a Cloud fallback that echoed prompt content. Logs now retain only lengths or generic failure labels; STT/TTS/decision failures omit internal details, and fallback speech contains no prompt text. API regression 18/18, Cloud regression 9/9, API/Cloud configured builds, Web typecheck/build, Browser build, Landing typecheck/build, and PHDK v2.50.10 coherence 52/52 pass. Focused API ESLint reports 0 errors and 17 warnings; focused Cloud ESLint did not return output and remains unverified. All five app package and lock roots are 5.1.22. Candidate branch `fix/provider-error-redaction` is based on main 5.1.21 at `5b81b36c4e6534a930edc0a9f59f2ba117b01bb`; delivery remains pending. Customer CRM/call-provider acceptance stays configurable per tenant. Private-network endpoint SSRF policy remains open. This source check does not close the wider CRUD and Auto acceptance gates.
 
 ## 2026-10-14 continuation — prevent cross-tenant Qdrant upsert by ID
 

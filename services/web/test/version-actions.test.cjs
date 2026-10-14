@@ -61,7 +61,10 @@ async function mount(t, actions = {}) {
   const Component = await compileComponent();
   const rootElement = document.getElementById('root');
   const reactRoot = createRoot(rootElement);
-  await React.act(async () => reactRoot.render(React.createElement(Component, { navigateToLogin: actions.navigateToLogin || (() => {}) })));
+  await React.act(async () => reactRoot.render(React.createElement(Component, {
+    navigateToLogin: actions.navigateToLogin || (() => {}),
+    reloadPage: actions.reloadPage || (() => {}),
+  })));
   t.after(async () => {
     await React.act(async () => reactRoot.unmount());
     dom.window.close();
@@ -147,6 +150,17 @@ test('successful clear invalidates auth state, signals success, then navigates a
   await React.act(async () => new Promise(resolve => setTimeout(resolve, 1550)));
   assert.equal(navigated, 1);
   assert.match(button.querySelector('svg').getAttribute('class'), /trash/i);
+});
+
+test('successful anonymous clear reloads after the check window', async t => {
+  let reloads = 0;
+  const { React, rootElement } = await mount(t, { reset: async () => ({ hadSession: false }), reloadPage: () => { reloads++; } });
+  const button = rootElement.querySelector('[data-action="clear"]');
+  await React.act(async () => button.dispatchEvent(new window.MouseEvent('click', { bubbles: true })));
+  assert.equal(reloads, 0);
+  assert.match(button.querySelector('svg').getAttribute('class'), /lucide-check/);
+  await React.act(async () => new Promise(resolve => setTimeout(resolve, 1550)));
+  assert.equal(reloads, 1);
 });
 
 test('clear failure never confirms success and still removes in-memory auth state', async t => {

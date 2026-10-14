@@ -438,6 +438,13 @@
 
     let consoleEntries = [];
     let consoleUnread = 0;
+    window.keledon.brain.getDebugMode().then((mode) => {
+      consoleBtn.hidden = !mode?.enabled;
+      if (consoleBtn.hidden) consoleModal.classList.remove('show');
+    }).catch(() => {
+      consoleBtn.hidden = true;
+      consoleModal.classList.remove('show');
+    });
     const MAX_CONSOLE_ENTRIES = 500;
 
     function addConsoleEntry(entry) {

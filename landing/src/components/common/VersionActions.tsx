@@ -13,12 +13,14 @@ type VersionActionsProps = {
   copyReport?: typeof copyDebugReport;
   resetState?: typeof resetApplicationState;
   navigateToLogin?: () => void;
+  reloadPage?: () => void;
 };
 export function VersionActions({
   className = '',
   copyReport = copyDebugReport,
   resetState = resetApplicationState,
   navigateToLogin = () => window.location.assign('/login'),
+  reloadPage = () => window.location.reload(),
 }: VersionActionsProps = {}) {
   const { t } = useTranslation();
   const { user, isAuthenticated, clearLocalSession } = useAuth();
@@ -67,6 +69,7 @@ export function VersionActions({
         busy.current.clear = false;
         // Wait until the real success indication is perceivable before local logout/navigation.
         if (result.hadSession) navigateToLogin();
+        else reloadPage();
       });
     } catch {
       if (!mounted.current) return;

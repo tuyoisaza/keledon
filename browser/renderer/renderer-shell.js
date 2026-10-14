@@ -40,7 +40,7 @@
     let tabs = [];
     let activeTabId = 'home';
     let panelOpen = false;
-    let deviceVersion = 'v5.1.2';
+    let deviceVersion = 'v0.0.0';
 
     // BrowserView is rendered by Electron above normal DOM, so z-index alone cannot
     // keep KELEDON controls visible over a loaded tab. Whenever a first-party
@@ -171,11 +171,10 @@
         const info = await window.keledon.device.getInfo();
         deviceVersion = `v${info.version}`;
         versionBtn.textContent = deviceVersion;
-        log('Device initialized: ' + info.deviceId, 'info');
+        log('Device initialized', 'info');
         setActivityCopyStatus(`Version ${deviceVersion} loaded`, 'info');
       } catch (e) {
-        deviceVersion = 'v5.1.2';
-        versionBtn.textContent = deviceVersion;
+        deviceVersion = versionBtn?.textContent || 'v0.0.0';
         log('Device info error: ' + e.message, 'error');
         setActivityCopyStatus('Version unavailable', 'error');
       }

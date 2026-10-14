@@ -1,5 +1,11 @@
 # CRUD matrix — verified code/policy surface
 
+## Current Auto candidate 5.1.22 — voice/provider error redaction
+
+The API/Cloud source audit removed transcript, agent-command and spoken-response content from logs, suppresses upstream STT/TTS/decision errors in logs and voice responses, and removed prompt echo from the Cloud fallback. This privacy hardening does not close the remaining 35-model CRUD × role × operation Check. Candidate branch `fix/provider-error-redaction` is based on 5.1.21 main at `5b81b36c4e6534a930edc0a9f59f2ba117b01bb`; all five app package/lock roots are 5.1.22 and delivery is pending.
+
+2026-10-14 Check revalidation: API regression `npm run test:regression` passes 18/18, including the selected six-family CRUD role-operation matrix, cross-tenant/direct-ID guards, runtime scope and audit-log integrity. Cloud regression passes 9/9; configured API and Cloud builds pass. This closes only the tested source cases. The schema inventory still has 35 models and explicitly identified relation, runtime-only, provider, AI admin, and operational-resource gaps; a complete role × tenant × API/web × list/detail/create/update/delete map and persisted before/after tests are NOT complete. No disposable database was connected, so migration/persistence remains BLOCKED for this run.
+
 ## Current Auto candidate 5.1.21 — Check addendum
 
 PR #86 (`2d021c4d41beda5b625845df446c53e353110f39`, version 5.1.20) closes a runtime capability gap in Cloud listening sessions: creation requires an assigned DB-backed actor; websocket IDs use full UUID entropy, expire after one hour, are rejected before worker startup once expired, and are redacted from server and Web diagnostics. Cloud regression covers guard behavior, valid/expired websocket capabilities and log redaction. API/Web mirrors are aligned. Source tests do not establish multi-instance persistence or physical audio acceptance.

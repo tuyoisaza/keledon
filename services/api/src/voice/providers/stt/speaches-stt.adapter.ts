@@ -27,9 +27,7 @@ export class SpeachesSttAdapter implements SttAdapter {
       model: config.model || 'whisper-1',
       language: config.language || undefined,
     };
-    this.logger.log(
-      `SpeachesSTT initialized → ${this.config.baseUrl} model=${this.config.model}`,
-    );
+    this.logger.log(`SpeachesSTT initialized model=${this.config.model}`);
   }
 
   async transcribe(
@@ -47,19 +45,20 @@ export class SpeachesSttAdapter implements SttAdapter {
     const lang = options?.language || this.config.language;
     if (lang) formData.append('language', lang);
 
-    const res = await fetch(`${this.config.baseUrl}/v1/audio/transcriptions`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${this.config.apiKey}` },
-      body: formData,
-      signal: AbortSignal.timeout(15000),
-    });
-
-    if (!res.ok) {
-      const errText = await res.text().catch(() => 'unknown error');
-      throw new Error(
-        `Speaches STT error ${res.status}: ${errText.slice(0, 200)}`,
-      );
+    let res: Response;
+    try {
+      res = await fetch(`${this.config.baseUrl}/v1/audio/transcriptions`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${this.config.apiKey}` },
+        body: formData,
+        signal: AbortSignal.timeout(15000),
+      });
+    } catch {
+      throw new Error('Speaches STT provider request failed');
     }
+
+    if (!res.ok)
+      throw new Error(`Speaches STT provider returned HTTP ${res.status}`);
 
     const data = await res.json();
     return {

@@ -150,9 +150,8 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
 
       if (!result.text || !result.isFinal) return;
 
-      // Log the transcript
       this.logger.log(
-        `[${sessionId}] STT: "${result.text.slice(0, 80)}" (conf=${result.confidence}, ${session.sttLatencyMs}ms)`,
+        `[${sessionId}] STT transcript received (${result.text.length} characters, conf=${result.confidence}, ${session.sttLatencyMs}ms)`,
       );
 
       // Add to history
@@ -164,10 +163,10 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
 
       // Process through Brain
       await this.processBrainReply(session, result.text);
-    } catch (error) {
-      this.lastError = `STT error: ${error instanceof Error ? error.message : String(error)}`;
+    } catch {
+      this.lastError = 'STT provider request failed';
       this.lastErrorAt = new Date().toISOString();
-      this.logger.error(`[${sessionId}] STT error: ${this.lastError}`);
+      this.logger.error(`[${sessionId}] STT provider request failed`);
     }
   }
 
@@ -214,10 +213,10 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
           }
         },
       });
-    } catch (error) {
-      this.lastError = `TTS error: ${error instanceof Error ? error.message : String(error)}`;
+    } catch {
+      this.lastError = 'TTS provider request failed';
       this.lastErrorAt = new Date().toISOString();
-      this.logger.error(`TTS error: ${this.lastError}`);
+      this.logger.error('TTS provider request failed');
     } finally {
       this.bargeIn.offInterrupt(interruptHandler);
       this.bargeIn.endSpeaking(sessionId || 'unknown');
@@ -386,7 +385,7 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
       }
 
       this.logger.log(
-        `[${session.sessionId}] Cloud → "${replyText.slice(0, 80)}" (${session.cloudLatencyMs}ms)`,
+        `[${session.sessionId}] Cloud reply received (${replyText.length} characters, ${session.cloudLatencyMs}ms)`,
       );
 
       // Speak the reply

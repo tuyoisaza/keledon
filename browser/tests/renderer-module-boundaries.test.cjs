@@ -10,6 +10,19 @@ const scripts = [...html.matchAll(/<script src="([^"]+)"/g)].map((match) => matc
 assert.deepEqual(stylesheets, ['./renderer-base.css', './renderer-controls.css']);
 assert.deepEqual(scripts, ['./version-actions.js', './renderer-shell.js', './renderer-panels.js']);
 
+const packageVersion = require('../package.json').version;
+assert.match(packageVersion, /^\d+\.\d+\.\d+$/);
+assert.match(html, new RegExp(`<span id="versionBtn">v${packageVersion.replaceAll('.', '\\.')}<\\/span>`));
+assert.match(fs.readFileSync(path.join(rendererDir, 'version-actions.js'), 'utf8'), /device\.getInfo\(\)\.then\(\(info/);
+assert.match(html, /id="consoleBtn"[^>]*\shidden>/, 'diagnostic console starts hidden');
+assert.match(fs.readFileSync(path.join(rendererDir, 'renderer-controls.css'), 'utf8'), /\.console-btn\[hidden\]\s*\{\s*display:\s*none\s*\}/);
+const ipcHandlers = fs.readFileSync(path.join(__dirname, '../src/ipc-handlers.ts'), 'utf8');
+const deviceInfoHandler = ipcHandlers.match(/ipcMain\.handle\('device:getInfo',[\s\S]*?\n  \}\)\);/);
+assert.ok(deviceInfoHandler, 'device info IPC handler exists');
+for (const privateField of ['deviceId:', 'logsDir:', 'mainLogPath:', 'startupLogPath:']) {
+  assert.ok(!deviceInfoHandler[0].includes(privateField), `device info does not expose ${privateField}`);
+}
+
 for (const asset of [...stylesheets, ...scripts]) {
   assert.equal(fs.existsSync(path.join(rendererDir, asset)), true, `missing renderer asset: ${asset}`);
 }

@@ -2,9 +2,15 @@
 
 ## Active continuation — 2026-10-13
 
-Overall result remains **PARTIALLY DELIVERED**. Product PRs #78–#83 and #86 are merged; PR #86 delivered source version 5.1.20 at main commit `2d021c4d41beda5b625845df446c53e353110f39`. All five app package/lock roots are 5.1.20. The 35-model CRUD gate remains open. `PHDK_DELIVERY_EVIDENCE.json` still points at PR #78, so the full Auto gate is not passing.
+Overall result remains **PARTIALLY DELIVERED**. Product PRs #78–#83 and #86–#88 are merged; PR #88 delivered source version 5.1.21 at main commit `5b81b36c4e6534a930edc0a9f59f2ba117b01bb`. The current privacy candidate is version 5.1.22 on `fix/provider-error-redaction`. The 35-model CRUD gate remains open. `PHDK_DELIVERY_EVIDENCE.json` still points at PR #78, so the full Auto gate is not passing.
+
+2026-10-14 continuation: the 5.1.22 candidate now also fixes native Browser widget version drift, report/reset behavior, production debug-console visibility and unnecessary device/log-path disclosure from IPC. Browser 5/5 tests and build, Web widget/diagnostics 17/17, Landing build, API 18/18, Cloud 9/9, configured API/Cloud builds and PHDK coherence 52/52 pass. The full source matrix and persistent CRUD acceptance remain open; native Electron rendering/device/audio, deployed SEO/AEO and the public locale decision remain unverified. Current branch has uncommitted in-scope work and PR #89 still contains the earlier source commit only; delivery is pending.
 
 SIGUIENTE PASO: continue CHK-002 by completing the resource × role × API/web × operation audit and source fixes, then refresh delivery evidence after the source set stabilizes.
+
+### Active source candidate 5.1.22 — voice and provider privacy
+
+Review of API and Cloud found transcript/spoken-text snippets, agent command payloads, and raw provider/decision errors in logs or voice responses, plus an LLM fallback that echoed prompt content. Those paths now log lengths or generic failure labels, internal errors are generic, and fallback speech contains no prompt text. API regression 18/18, Cloud regression 9/9, configured API/Cloud builds, Web typecheck/build, Browser build, Landing typecheck/build, `git diff --check`, and installed PHDK coherence 52/52 pass. All five app package/lock roots are aligned at 5.1.22. Focused API ESLint reports 0 errors and 17 warnings; focused Cloud ESLint did not return output. The current branch is `fix/provider-error-redaction`, based on main 5.1.21 at `5b81b36c4e6534a930edc0a9f59f2ba117b01bb`; delivery is pending. CRM/call providers remain per-tenant choices; private-network endpoint SSRF policy remains open. Overall Auto remains partial.
 
 ## Candidate continuation — 2026-10-14
 
