@@ -1,5 +1,16 @@
 # PHDK commitment coverage — KELEDON four fronts
 
+## Current continuation — candidate 5.1.15 (2026-10-13)
+
+| Commitment | Requirements / design | Plan / workstream | Current evidence | Open acceptance |
+|---|---|---|---|---|
+| CMT-001 | Release integrity, installed PHDK and current PR/main facts | T-001 / WS-001 | `origin/main` fetched at `ab7a6e8`; installed PHDK v2.50.10 coherence previously 52/52; five app package/lock roots are being bumped together to 5.1.15. | Current candidate delivery and fresh post-merge SHA/version readback. |
+| CMT-002 | Safe diagnosis, compact shared widget and clear recovery affordances | T-002 / WS-002 | Existing shared implementation; widget tests 18/18; UAT retained on the built SPA. | Native Electron UI and OS device/audio acceptance. |
+| CMT-003 | Provider-independent configured voice/Cloud/Browser/CRM contracts | T-003 / WS-003 | Source and synthetic contracts from previous integrated candidates; tenant-specific provider selection is explicit in the product. | No universal vendor is chosen; only code/configuration evidence is expected absent a configured client test environment. |
+| CMT-004 | Least-privilege admin, DB-derived actor/tenant, safe secrets, actionable detail and CRUD | T-004/T-007 / WS-004 | API regression 14/14; synthetic CRUD management UAT; dashboard/session locales and accessible table captions/headers are added in 5.1.15. | Persisted resource × role × tenant × operation matrix and migration/runtime evidence; broader active-route i18n/a11y remains open. |
+
+Overall status remains **PARTIALLY DELIVERED** until normal integration is verified and remaining acceptance gaps have evidence or an authorized disposition. This current map supersedes older candidate statuses below; those are historical snapshots.
+
 ## Current delivery — 5.1.14
 
 Product PR [#72](https://github.com/tuyoisaza/keledon/pull/72) merged by squash and was read back on `main` at `899306fcddf7528cb3411577f8008f0c0552223a`; all app roots are 5.1.14. Company, brand, team, user and vendor UI localization in en/es/pt passes web typecheck/build, synthetic SPA UAT 1/1, API regressions 14/14, locale parity 452/452, and PHDK coherence 52/52; touched-page ESLint has 0 errors/9 warnings. It advances CMT-004 usability but does not close persisted CRUD/migration, broad accessibility/locale acceptance, native device/audio or deployed SEO/AEO. CRM/call workflows remain per-client. Overall Auto remains PARTIALLY DELIVERED.

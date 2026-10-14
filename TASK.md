@@ -1,5 +1,9 @@
 # Current task
 
+## Active Auto continuation — candidate 5.1.15
+
+Run `20261013-keledon-auto-conformity` extends the same owner-authorized PHDK Auto goal. Current scope still covers CMT-001..004 in order and the maximum-applicable-conformity review. Dashboard localization/table accessibility is implemented and passes web typecheck/build, synthetic UAT-T-005 and diagnostics 18/18; the 5.1.15 normal PR/main delivery and integrated Check remain active. See `docs/phdk/lifecycle/20261013-keledon-auto-conformity/`. Residual acceptance is tracked, not canceled.
+
 ## PHDK Auto — current delivery 5.1.14
 
 PR [#72](https://github.com/tuyoisaza/keledon/pull/72) delivered v5.1.14 by squash; fresh `origin/main` readback is `899306fcddf7528cb3411577f8008f0c0552223a`, with all five app package/lock roots at 5.1.14. Companies, brands, teams, users and vendors now use the English/Spanish/Portuguese catalogs; country display follows the selected locale. Web typecheck/build and synthetic SPA UAT pass; API regression 14/14; catalog parity 452/452; PHDK coherence 52/52. Touched-page ESLint exits 0 with 9 warnings. Overall Auto remains PARTIALLY DELIVERED for the recorded external/persisted acceptance gaps.

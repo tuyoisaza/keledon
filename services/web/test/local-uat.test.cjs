@@ -20,6 +20,7 @@ const otherTeam={id:'team-other',name:'Other Co Service',brandId:otherBrand.id,b
 const person={id:'companyco-001',name:'Company Co Test User',email:'companyco.001@company-co.invalid',role:'user',companyId:company.id,teamId:team.id,brandId:brand.id,team};
 let writes=[];
 let userWrites=[];
+let dashboardSessions=[];
 let deepReads=0;
 let probeCalls=[];
 const safeEndpoints=[
@@ -78,6 +79,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
       body=config;
     }
     else if(p==='/api/teams'||p==='/api/crud/teams')body=[team,team2,otherTeam];
+    else if(p==='/api/crud/sessions')body=dashboardSessions;
     else if(p==='/api/crud/companies')body=[company,otherCompany];
     else if(p==='/api/crud/brands')body=[brand,brand2,otherBrand];
     else if(p==='/api/crud/users'){
@@ -103,7 +105,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
     return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({id,status:'pass',method:'GET',path:'/health',httpStatus:200,latencyMs:2,correlationId:'diag_'+'a'.repeat(32)})});
    });
    await page.addInitScript(({role})=>{
-    localStorage.setItem('keledon-locale','es');
+    if(!localStorage.getItem('keledon-locale'))localStorage.setItem('keledon-locale','es');
     if(role)sessionStorage.setItem('auth_token','SYNTHETIC-UAT-TOKEN-NOT-A-CREDENTIAL');
     Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>{if(window.__denyCopy)throw Error('fixture denial');window.__copied=value;}}});
    },{role});
@@ -206,6 +208,50 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await superDialog.getByRole('button',{name:'Cancelar',exact:true}).click();await superDialog.waitFor({state:'hidden'});
   await userSuper.context.close();
   checks.push('UAT-004 company/brand/team/user/vendor administration Spanish copy and manager user restrictions: localized routes/search and modal controls; no role/company payload fields; foreign team absent PASS (synthetic UI; API guard tested separately)');
+  const dashboard=await pageFor('user');await dashboard.page.goto(origin+'/dashboard');
+  await dashboard.page.getByRole('heading',{name:'Hola, Company',exact:true}).waitFor();
+  await dashboard.page.getByText('Esta es tu actividad de hoy',{exact:true}).waitFor();
+  await dashboard.page.getByText('Estadísticas de hoy',{exact:true}).waitFor();
+  await dashboard.page.getByRole('heading',{name:'Actividad reciente en vivo',exact:true}).waitFor();
+  await dashboard.page.getByText('No hay sesiones hoy',{exact:true}).waitFor();
+  assert.equal(await dashboard.page.getByRole('table').locator('caption').innerText(),'Sesiones recientes');
+  assert.equal(await dashboard.page.getByRole('columnheader',{name:'Usuario',exact:true}).getAttribute('scope'),'col');
+  dashboardSessions=[{id:'session-co-001',status:'completed',metadata:JSON.stringify({duration:125}),user:person,team}];
+  await dashboard.page.reload();
+  await dashboard.page.getByRole('cell',{name:'Completada',exact:true}).waitFor();
+  assert.equal(await dashboard.page.getByRole('cell',{name:'Company Co Test User',exact:true}).count(),1);
+  await dashboard.page.evaluate(()=>localStorage.setItem('keledon-locale','en'));
+  await dashboard.page.reload();
+  await dashboard.page.getByRole('heading',{name:'Hello, Company',exact:true}).waitFor();
+  await dashboard.page.getByText("Today's Stats",{exact:true}).waitFor();
+  await dashboard.page.evaluate(()=>localStorage.setItem('keledon-locale','pt'));
+  await dashboard.page.reload();
+  await dashboard.page.getByRole('heading',{name:'Olá, Company',exact:true}).waitFor();
+  await dashboard.page.getByText('Estatísticas de hoje',{exact:true}).waitFor();
+  await dashboard.context.close();
+  dashboardSessions=[];
+  checks.push('UAT-T-005-DASHBOARD Spanish empty/session states, English and Portuguese greeting/stats, and accessible table caption/column headers PASS (synthetic API)');
+  dashboardSessions=[
+    {id:'11111111-1111-4111-8111-111111111111',status:'active',metadata:JSON.stringify({duration:15}),user:person,team},
+    {id:'22222222-2222-4222-8222-222222222222',status:'completed',metadata:JSON.stringify({duration:125}),user:person,team},
+  ];
+  const sessionViews=await pageFor('superadmin');await sessionViews.page.goto(origin+'/sessions/live');
+  await sessionViews.page.getByRole('heading',{name:'Sesiones en vivo',exact:true}).waitFor();
+  await sessionViews.page.getByRole('combobox',{name:'Filtrar por empresa'}).waitFor();
+  await sessionViews.page.getByRole('combobox',{name:'Filtrar por usuario'}).waitFor();
+  await sessionViews.page.getByRole('button',{name:'Actualizar',exact:true}).waitFor();
+  await sessionViews.page.getByRole('heading',{name:'Vista previa del monitor de llamadas',exact:true}).waitFor();
+  assert.equal(await sessionViews.page.getByRole('table').locator('caption').innerText(),'Sesiones activas');
+  await sessionViews.page.getByRole('cell',{name:'Activa',exact:true}).waitFor();
+  assert.equal(await sessionViews.page.getByRole('columnheader',{name:'ID DE SESIÓN',exact:true}).getAttribute('scope'),'col');
+  await sessionViews.page.goto(origin+'/sessions/history');
+  await sessionViews.page.getByRole('heading',{name:'Historial de sesiones',exact:true}).waitFor();
+  assert.equal(await sessionViews.page.getByRole('table').locator('caption').innerText(),'Historial de sesiones');
+  await sessionViews.page.getByRole('cell',{name:'Completada',exact:true}).waitFor();
+  await sessionViews.page.getByRole('link',{name:'Ver detalles',exact:true}).waitFor();
+  await sessionViews.context.close();
+  dashboardSessions=[];
+  checks.push('UAT-T-005-SESSIONS Spanish live/history and call-monitor copy, filters, statuses, captions, scoped headers and detail action PASS (synthetic API)');
   const provider=await pageFor('admin');await provider.page.goto(origin+'/management/providers');
   await provider.page.getByRole('heading',{name:'Administración — Proveedores'}).waitFor();
   const key=provider.page.getByPlaceholder('sk-… (introduce tu clave de API de OpenAI)');await key.waitFor();assert.equal(await key.inputValue(),'');

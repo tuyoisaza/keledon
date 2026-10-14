@@ -1,4 +1,12 @@
-# PHDK Check — latest candidate 5.1.10; acceptance partial
+# PHDK Check — latest candidate 5.1.15; acceptance partial
+
+# Latest candidate — 5.1.15, integrated Check in progress
+
+Branch `fix/phdk-auto-full-conformity` is based on fetched `origin/main` `ab7a6e867508d834ccec755fc5ba9a985e3b9be4`. All five app package/lock roots align at 5.1.15. Dashboard/live/history/call-monitor copy uses en/es/pt; data tables expose captions/scoped headers and superadmin filters have programmatic labels. API build/regression 14/14; Cloud build/regression 8/8; Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1; Browser build/regression 24/24; Landing typecheck/build; locale parity 562/562; focused changed-file ESLint 0 errors/14 warnings; PHDK coherence 52/52; and whitespace checks pass. Final outgoing diff reconciliation remains before publication.
+
+This closes the dashboard's source-level copy/table naming issue only. CF-005 localization and broad WCAG/accessibility remain OPEN across the active route graph. Persisted CRUD/migration, native Electron/device/audio and deployed SEO/AEO acceptance remain open. No client-specific live CRM/call is assumed. The Auto goal remains **PARTIALLY DELIVERED** pending final Check and normal main delivery.
+
+---
 
 ## Latest continuation — candidate 5.1.14
 

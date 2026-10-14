@@ -1,4 +1,8 @@
-# PMO status — 5.1.8 merged; overall PARTIALLY DELIVERED
+# PMO status — current continuation 5.1.15; overall PARTIALLY DELIVERED
+
+## Latest candidate — dashboard localization and table semantics
+
+Branch `fix/phdk-auto-full-conformity` is based on fetched `origin/main` `ab7a6e867508d834ccec755fc5ba9a985e3b9be4`; five app package/lock roots align at 5.1.15. Web typecheck/build and synthetic UAT 1/1 pass; UAT-T-005 covers Spanish dashboard/session flows, English/Portuguese dashboard copy, and accessible table/filter names. Diagnostics tests are 18/18, catalogs match 562/562 under the current recursive inventory, and focused ESLint across changed TSX files has 0 errors/14 warnings. Normal PR delivery is pending. CMT-001..004 remain active. Persisted CRUD/migration, native Electron/device/audio, broad route accessibility/localization and deployed SEO/AEO remain acceptance gaps. No deployment is claimed.
 
 ## Latest integrated source — 5.1.9
 

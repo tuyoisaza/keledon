@@ -1,9 +1,15 @@
-# UAT cases — latest local candidate 5.1.10
+# UAT cases — latest local candidate 5.1.15
+
+## Current continuation — 2026-10-13
+
+Candidate branch `fix/phdk-auto-full-conformity`, based on fetched `origin/main` `ab7a6e867508d834ccec755fc5ba9a985e3b9be4`. The built-SPA UAT suite passes 1/1 using Company Co synthetic fixtures and intercepted API/WebSocket traffic. UAT-T-005-DASHBOARD covers Spanish dashboard content and English/Portuguese greeting/stat copy; UAT-T-005-SESSIONS covers Spanish live/history/session-monitor journeys and accessible controls. Diagnostics tests pass 18/18; the web typecheck/build pass; catalogs match at 562 recursive flattened keys. This scoped evidence does not close broad route accessibility/localization, persisted CRUD/migration, native device/audio or deployed SEO/AEO acceptance.
 
 Latest run: 2026-10-13; product PR #62 is merged at `a806617f430d084831a079b92c821a694b925467`; current local checkout is main `0be102b8b7847bfed3441ff00e00ba4477c57a1e`. `npm run test:uat` passes 1/1 suite on the 5.1.10 bundle with synthetic fixtures and intercepted API/WebSocket traffic. API regression 14/14; Browser build/regression 24/24. Native Electron 44.7 launched and renderer loaded; see startup and media-permission cases below.
 
 | Case / story | Acceptance | Latest result |
 |---|---|---|
+| UAT-T-005-DASHBOARD / J-005 | Spanish dashboard empty/completed-session states, English/Portuguese greeting and metrics, and accessible table caption/headers | PASS in local production SPA with synthetic identity and intercepted APIs; not backend or screen-reader acceptance. |
+| UAT-T-005-SESSIONS / J-006 | Spanish live/history and call-monitor copy, superadmin filter labels, statuses, accessible tables and detail action | PASS in local production SPA with synthetic identity and intercepted APIs; no live call or backend authorization inferred. |
 | UAT-001/UAT-002/UAT-004/UAT-006 | Current diagnostics widget and selected public/login/admin journeys, widget actions, themes, narrow viewport, role controls and safe diagnostics | PASS, local UI subset, synthetic fixtures; APIs intercepted. Evidence: `docs/phdk/evidence/uat-local-web.json` and screenshots. |
 | UAT-API / US-004 | Current DB-derived role/company/team/session checks, startup fail-closed behavior, and selected cross-tenant denials | PASS, API regression 14/14 with isolated doubles; not persisted acceptance. |
 | UAT-BROWSER-PERMISSION / US-002/US-003 | Per-origin HTTPS media consent; deny other permissions; remember grants only for session; reject stale navigation | PASS, unit/policy contract tests; native dialog itself not exercised. |

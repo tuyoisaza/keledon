@@ -1,5 +1,15 @@
 # PHDK conformity review — UI, engineering and evidence
 
+## Current continuation — 2026-10-13, candidate 5.1.15
+
+This revalidation supersedes stale claims below where evidence conflicts. PHDK 2.50.10 remains the installed baseline; current candidate coherence passes 52/52. The checkout is the correct KELEDON repository on `fix/phdk-auto-full-conformity`, fetched from `origin/main` `ab7a6e867508d834ccec755fc5ba9a985e3b9be4`. Five app package/lock roots are reconciled to candidate 5.1.15.
+
+The owner confirmed maximum applicable PHDK code conformity and that voice/CRM providers vary by customer. No vendor is selected as a universal dependency. Previously delivered provider-independent source/contracts remain in scope; live customer integration evidence is not inferred.
+
+At the start of this run, the AST import graph from `services/web/src/AppRouter.tsx` reached 96 local files, including 39 TSX files, with 511 non-empty static JSX text nodes and 47 literal `placeholder`/`title`/`aria-label`/`alt` attributes. These are review candidates, not an exact missing-translation count: they include domain values, product terms and conditionally visible content. The prior count of 954/102 from all `src` TSX is historical. This candidate localizes the dashboard and live/history session/call-monitor copy in en/es/pt, adds dashboard/session table captions and scoped headers, and labels superadmin filters. Synthetic UAT now covers Spanish dashboard/session flows and dashboard strings in English and Portuguese. The 511/47 figures are the pre-remediation snapshot and have not been recomputed; whole-app localization/accessibility remain OPEN. Catalogs currently match at 562 flattened keys under the recursive local check.
+
+The design-system review confirms the brownfield semantic theme/context and shared primitives remain in use; do not replace React/Vite, introduce an unverified component dependency, or treat catalog parity as evidence that every route is localized. Remaining active route candidates should be reviewed by user journey, then retested. PHDK Auto remains **PARTIALLY DELIVERED** pending persisted CRUD/migration evidence, native Electron/device/audio acceptance, broad accessibility/localization and deployed SEO/AEO evidence. See the 5.1.15 continuation in `docs/phdk/lifecycle/20261013-keledon-auto-conformity/` after integrated verification.
+
 Date: 2026-10-12 America/Mexico_City. Run: 20261012-keledon-four-fronts. Installed PHDK 2.50.8; initial SHA/integrity evidence is archived Preflight. Baseline main 52537140e67d0d6c05486fa13837df3eb5316fb3; current candidate is local and changing under PMO. This is the UI/engineering portion of root's Check, not an assertion that all application requirements have passed. Owner steering excludes client-specific live CRM acceptance and asks maximum applicable code conformance. No vendor selection, live call, browser/provider/database execution or publication occurred in this worker review.
 
 ## Manifest/routing coverage and applicability

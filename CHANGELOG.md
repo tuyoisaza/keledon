@@ -1,3 +1,10 @@
+## v5.1.15 — 2026-10-13 (PHDK Auto candidate)
+
+- Localize the authenticated dashboard's copy, known session statuses and feedback in English, Spanish and Portuguese.
+- Localize the live/history session journeys and call-monitor preview; label filter/refresh controls and translate session statuses.
+- Add accessible captions and scoped column headers to dashboard/session tables; extend synthetic local SPA UAT across all three locales and session states.
+- Align all five app package and lock roots at 5.1.15.
+
 ## v5.1.14 — 2026-10-13 (PHDK Auto delivery)
 
 - Localize company, brand, team, user and vendor management screens, including CRUD feedback and vendor type/status labels; display country names in the active locale.
