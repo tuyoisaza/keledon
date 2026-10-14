@@ -11,3 +11,7 @@ PR [#95](https://github.com/tuyoisaza/keledon/pull/95) merged to `main` at `8e2a
 Source commit `d09cd3c1bab7ec86aa56a40b6ae2295fd890b808` contains the audited temporary profile flow. Post-commit built-SPA UAT passes 1/1 on code commit `6a99281e8c74c5d40590aca146a03786324dc340`; API regression passes 20/20. UAT-008 is PASS within approved synthetic development/staging scope. Actual development identities (UAT-009), disposable DB/migration (UAT-010), native device/audio (UAT-006), broad route accessibility/localization and deployed SEO/AEO remain open. Live CRM/call tests remain client-specific after provider configuration. No production DB, customer data or provider was used.
 
 Machine-readable candidate evidence: `CANDIDATE.json`.
+
+## Candidate 5.1.28 — delivery pending
+
+Branch ix/write-only-device-rpa-secrets is based on remote main 4cc6a2a6de0d3a8eda6be60a45607553d2b3e80e. All five application roots/locks and Browser renderer are 5.1.28. Source change confines credential-bearing RPA config reads to the exact current paired-device identity. API regression/Jest/build/scoped lint, Cloud/Web/Landing/Browser builds and PHDK coherence pass. PR/push/merge/readback not yet performed. Full Auto acceptance is PARTIALLY DELIVERED because the 26-model matrix/DB, native/device/audio, broad a11y/localization and deployed SEO/AEO remain open.

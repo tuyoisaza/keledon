@@ -1,4 +1,10 @@
-# PHDK Check — current Auto run `20261014-0007-phdk-auto-completion`, candidate 5.1.27
+# PHDK Check — current Auto run `20261014-0007-phdk-auto-completion`, candidate 5.1.28
+
+## 2026-10-14 security remediation candidate 5.1.28
+
+Source review found that `GET /api/devices/:id/rpa-config` returned raw RPA settings, including provider credentials, to human user/admin/coordinator/superadmin bearer sessions when their device scope matched. The paired Browser requires this data, so `DeviceAccessGuard` now allows the response only when the current paired-device token resolves from the database to the exact requested device ID; human tokens, missing/invalid credentials and token/device mismatches are denied. Regression `22-admin-http-wiring.test.js` verifies anonymous and human denials, wrong-device denial, and successful config delivery to the matching paired runtime. API build, all 21 API regression suites, all 11 Jest suites/38 tests, changed-file TypeScript ESLint, Cloud build, Web/Landing/Browser builds and PHDK coherence 52/52 pass. This closes the source-level RPA config disclosure row only; exhaustive model-role-operation mapping and disposable database persistence remain open. The local host has no PostgreSQL/container client and `DATABASE_URL` is absent.
+
+The remaining 26 model-specific source matrices, persisted before/after proof, native/device/audio, broad route accessibility/localization and deployed SEO/AEO are still open. No database, deployment, customer data or provider was used.
 
 ## 2026-10-14 source remediation candidate 5.1.27
 

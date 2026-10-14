@@ -1,5 +1,9 @@
 # PHDK Auto completion audit — 2026-10-14
 
+## Candidate reconciliation — 5.1.28 (source delivery in progress)
+
+Source review found a credential disclosure on `GET /api/devices/:id/rpa-config`: human bearer sessions could read raw provider settings, including admin/coordinator sessions. The API now permits only an active paired-device identity whose database-derived device ID exactly matches the path. In-process Nest HTTP regression covers anonymous/human denial, wrong-device denial, and allowed matching-device provisioning. API regressions 21/21, API Jest 11/11 (38 tests), API build, changed-file lint, Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass. No disposable database client is installed and `DATABASE_URL` is absent; persistent DB/migration acceptance remains open. Candidate branch `fix/write-only-device-rpa-secrets` is based on current remote main 5.1.27 SHA `4cc6a2a6de0d3a8eda6be60a45607553d2b3e80e`; PR/merge/readback still pending. Whole Auto remains **PARTIALLY DELIVERED**: remaining 26-model operation map, database persistence/migration, native/device/audio, broad accessibility/localization and deployed SEO/AEO are unresolved.
+
 ## Candidate reconciliation — 5.1.27
 
 PR #96 delivered 5.1.27: source commit `996464da5c1bb0567c6e9fa7d40e0a212e6d7b48` is merged at verified `main` SHA `a0425134ba69b1feaf165cd512caad8c136ca6f8`; `origin/main` and `git ls-remote` agree, and PR head/squash tree match. The fix validates full unique FlowStep membership inside a serializable transaction in API and Cloud. API 21/21 regression suites, API Jest 11/11/38 tests, Cloud 11/11 regression suites, focused flow tests 7/7 and 10/10, post-commit synthetic Web UAT 1/1, configured builds/typechecks and PHDK coherence 52/52 pass. API/Cloud lint have zero errors with 138/25 warnings. Full Cloud Jest is blocked because its E2E startup requires `DATABASE_URL`.

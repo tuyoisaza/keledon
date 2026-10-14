@@ -1,5 +1,9 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.28 — credential-bearing device configuration
+
+UAT-011 passes in an in-process Nest HTTP harness: no Authorization header and human `guest`, `user`, `agent`, `admin`, `coordinator`, or `superadmin` sessions receive 403 for `GET /api/devices/:id/rpa-config`; a valid paired-device token cannot read another device ID; the matching paired identity receives the runtime configuration. The test uses isolated Prisma/service fixtures and a synthetic credential. It proves the source guard boundary, not persisted database state, production credentials, or a live Electron device. No database or provider was contacted.
+
 ## Candidate 5.1.27 source retest
 
 The local built-Web synthetic suite passes 1/1 after a sequential retry; it exercises version display, diagnostics/widget journeys, management screens and accessibility checks using mocked APIs. The first run during parallel builds returned an HTTP error at `/login`; the sequential retry passed. This validates only the synthetic Web experience, not live API authorization or persistent data. The API/Cloud flow reorder contract is independently covered by service and regression suites. Full Cloud Jest startup still requires `DATABASE_URL`; no database was contacted.
@@ -12,7 +16,7 @@ UAT-008 now passes within its explicitly approved scope: test-profile switching 
 
 | Result | Count |
 |---|---:|
-| PASS | 7 |
+| PASS | 8 |
 | FAIL | 0 |
 | BLOCKED | 2 |
 | MANUAL | 1 |
@@ -31,6 +35,7 @@ UAT-008 now passes within its explicitly approved scope: test-profile switching 
 | UAT-008 audited test-profile selection | PASS, scoped | Mocked browser UI plus API policy/service/AuthGuard and Nest HTTP regressions. Nonproduction, synthetic allowlist, current superadmin, audit, expiry and token revocation are covered. |
 | UAT-009 development role authentication | BLOCKED | No safe development target or actual test identities configured. Production excluded. |
 | UAT-010 persisted CRUD/migration matrix | BLOCKED | No isolated disposable PostgreSQL database; no migration run. Production DB excluded. |
+| UAT-011 credential-bearing device RPA configuration | PASS, scoped API | Real Nest HTTP harness with isolated actor/device relations: all human roles and wrong-device identity denied; exact paired-device identity allowed. No persisted DB. |
 
 ## UAT-008 design and limits
 

@@ -16,3 +16,7 @@ Residual external gates: CHK-AUTO-005 disposable-DB persistence/migration; CHK-A
 
 This handoff snapshots `PHDK_CHECK_REPORT.md` and exact evidence references. Next stage is in-scope remediation; run targeted lint/tests/builds as each source group is fixed, then rerun full Check. Never suppress lint rules or infer live/persisted acceptance.
 
+
+## Candidate 5.1.28 — write-only device configuration secrets
+
+Source Check found a human-session disclosure of raw Device RPA configuration. DeviceAccessGuard now permits the credential-bearing response only when the paired-device token resolves from current database relations to the same path device ID. The in-process HTTP regression rejects anonymous/user/admin/coordinator/superadmin and wrong-device attempts, then verifies the matching paired device can retrieve its runtime configuration. API regressions 21/21; API Jest 11/11 (38 tests); API build and scoped TypeScript lint, Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass. This closes only the source-level Device RPA read boundary. The remaining 26-model operation matrix and DB persistence are open; no database was available or used. Check status: source finding fixed, whole acceptance remains PARTIAL. Next: remediation handoff and normal delivery.

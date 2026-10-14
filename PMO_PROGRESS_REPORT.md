@@ -31,3 +31,10 @@ SIGUIENTE PASO: versioned commit and normal PR delivery for 5.1.27; then continu
 ## 2026-10-14 — 5.1.27 source delivery readback
 
 PR #96 merged by squash at `a0425134ba69b1feaf165cd512caad8c136ca6f8`; remote `origin/main` and `git ls-remote` agree, and the PR head tree matches the merge tree. All five package/lock roots and Browser renderer read as 5.1.27. API/Cloud FlowStep complete-set membership and writes now share a serializable transaction. Validation: API regression 21/21, API Jest 11/11, Cloud regression 11/11, focused flow suites 7/7 and 10/10, post-commit Web synthetic UAT 1/1, builds/typechecks, PHDK coherence 52/52. GitHub showed no hosted checks/review decision. Whole-product Auto remains PARTIALLY DELIVERED: 26 model-specific authorization mappings, DB persistence, native device/audio, broad accessibility/localization, deployed SEO/AEO and owner decisions remain.
+
+## 2026-10-14 — 5.1.28 device secret boundary
+
+- CMT-004 source finding closed for one sensitive runtime read: human API sessions can no longer retrieve raw Device RPA configuration; a paired-device token must resolve from current DB relations to the same requested device ID.
+- API regression 21/21 suites and Jest 11/11/38, API build, scoped ESLint, Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass.
+- Candidate ix/write-only-device-rpa-secrets remains pre-PR on base main 4cc6a2a6de0d3a8eda6be60a45607553d2b3e80e; normal delivery pending.
+- Source/CMT-004 remains PARTIAL for 26 model-specific operation rows and DB persistence; native/device/audio, broad route a11y/localization, deployed SEO/AEO also open.

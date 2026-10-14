@@ -1,5 +1,13 @@
 # STATUS
 
+## 2026-10-14 — PHDK Auto candidate 5.1.28; overall partial
+
+- Source review found that human API sessions could retrieve raw Device RPA configuration containing provider credentials. The route now returns that payload only to the current paired-device identity whose DB-derived device ID matches the path. User, guest, agent, admin, coordinator and superadmin sessions, anonymous requests, and mismatched device tokens are denied.
+- API in-process HTTP regression passes for the positive paired-device case and all denials; API regressions 21/21, Jest 11/11/38, build and changed-file TypeScript lint pass. Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass.
+- Candidate branch `fix/write-only-device-rpa-secrets` is version 5.1.28 and based on remote main `4cc6a2a6de0d3a8eda6be60a45607553d2b3e80e`; PR and remote delivery remain pending.
+- No local disposable PostgreSQL/container is available. The 26-model CRUD operation matrix and DB persistence/migration remain open, as do native device/audio, broad accessibility/localization and deployed SEO/AEO.
+- Overall: **PARTIALLY DELIVERED**. No database, production data, live provider or deployment was used.
+
 ## 2026-10-14 — PHDK Auto 5.1.24 recheck; overall partial
 
 - PR #92 source and PR #93 evidence are merged; `origin/main` reads `6413d8aed295c18af098ca6a58c6dfbb7503930b` and all five app roots are 5.1.24. PHDK v2.50.10 coherence passes 52/52.

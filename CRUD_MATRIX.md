@@ -1,5 +1,9 @@
 # CRUD matrix — current source and authorization coverage
 
+## 5.1.28 — device RPA secret response boundary
+
+`GET /api/devices/:id/rpa-config` is a credential-bearing runtime provisioning response. Human sessions of every role are denied; access is granted only when the presented paired-device token resolves through current DB relations to the same requested device ID. A paired token for another device, an unpaired/revoked/stale identity, or an absent/invalid token is denied. The matching runtime device receives the RPA configuration it needs to execute the customer-configured chain. API regressions in `services/api/test/regression/22-admin-http-wiring.test.js` cover this distinction. This is a source/isolated HTTP exception for one sensitive read; persisted RPA configuration and the remaining Device × role × surface × operation matrix remain open.
+
 ## 5.1.27 candidate — Prisma inventory and nested flow integrity
 
 `services/api/test/regression/33-crud-model-inventory.test.js` now checks the Prisma schema against this 35-model source inventory and verifies all 126 core resource × role × API/Web combinations are represented exactly once. This is documentation-drift protection; it does not prove each model's persisted behavior. The 9 core managed CRUD resource groups have their per-role/surface rows above. The remaining model-to-surface entries below remain source classifications, with role/detail/UI gaps explicitly open where the route does not share the core CRUD contract.

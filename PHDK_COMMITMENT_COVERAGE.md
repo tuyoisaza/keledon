@@ -1,4 +1,17 @@
-# PHDK commitment coverage — current candidate 5.1.26
+# PHDK commitment coverage — current candidate 5.1.28
+
+## Active Auto run `20261014-0007-phdk-auto-completion` — candidate 5.1.28
+
+| Commitment | Verified current outcome | Still open |
+|---|---|---|
+| CMT-001 | Version roots and Browser renderer aligned at 5.1.28 on `fix/write-only-device-rpa-secrets`; base main is `4cc6a2a6de0d3a8eda6be60a45607553d2b3e80e`. | Normal PR, merge, exact remote-main readback and delivery gate. |
+| CMT-002 | Existing widget and safe-diagnostics source evidence reused; no diagnostics source changed in this slice. | Native Electron/device/audio plus broad route accessibility/localization. |
+| CMT-003 | Provider-neutral contracts and client-approved private-origin allowlist reused; no universal CRM/call provider assumed. | Live integration only for a configured customer; no such tenant was provided. |
+| CMT-004 | Human roles can no longer read credential-bearing Device RPA config; only the current paired identity for the exact device can. API HTTP regression covers every human role and a mismatched device. | Full remaining 26-model role/tenant/surface/operation matrix and disposable-DB persistence/migration acceptance. |
+
+Overall: **PARTIALLY DELIVERED** pending normal candidate delivery and the explicitly open acceptance gates.
+
+## Historical coverage — candidate 5.1.26
 
 Candidate branch `fix/audited-uat-test-profiles` is based on merged main 5.1.25 at `8dfc1fca7de253a017acb6f291ff278699915beb`. All five app package/lock roots and Browser renderer are 5.1.26. API regression 20/20, scoped Web UAT 1/1 and PHDK coherence 52/52 pass; candidate commit, PR and remote readback are pending.
 

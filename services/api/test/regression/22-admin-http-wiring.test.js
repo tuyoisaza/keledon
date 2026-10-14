@@ -67,7 +67,10 @@ async function main() {
   const actors = {
     member: { id: 'member', role: 'user', companyId: 'co-a', teamId: 'team-a' },
     'user-a': { id: 'user-a', role: 'user', companyId: 'co-a', teamId: 'team-a' },
+    guest: { id: 'guest', role: 'guest', companyId: 'co-a', teamId: 'team-a' },
+    agent: { id: 'agent', role: 'agent', companyId: 'co-a', teamId: 'team-a' },
     admin: { id: 'admin', role: 'admin', companyId: 'co-a', teamId: 'team-a' },
+    coordinator: { id: 'coordinator', role: 'coordinator', companyId: 'co-a', teamId: 'team-a' },
     'profile-admin': { id: 'profile-admin', name: 'QA Admin', email: 'qa-admin@example.invalid', role: 'admin', companyId: 'co-a', teamId: 'team-a' },
     'real-user': { id: 'real-user', name: 'Real Account', email: 'person@example.com', role: 'user', companyId: 'co-a', teamId: 'team-a' },
     superadmin: {
@@ -94,6 +97,17 @@ async function main() {
       ) || null,
     },
     device: {
+      findFirst: async ({ where }) =>
+        where.authToken === 'paired-device-token'
+          ? {
+              id: 'device-a',
+              authToken: 'paired-device-token',
+              userId: 'member',
+              keledonId: 'k-a',
+              status: 'paired',
+              user: actors.member,
+            }
+          : null,
       findUnique: async ({ where }) => ({
         id: where.id,
         organizationId: where.id === 'device-a' ? 'co-a' : 'co-b',
@@ -113,8 +127,18 @@ async function main() {
     keledon: {
       findUnique: async () => ({
         id: 'k-a',
+        isActive: true,
         userId: 'member',
         teamId: 'team-a',
+        team: {
+          id: 'team-a',
+          brand: {
+            id: 'brand-a',
+            companyId: 'co-a',
+            name: 'Brand A',
+            company: { name: 'Company A' },
+          },
+        },
       }),
     },
   };
@@ -176,6 +200,9 @@ async function main() {
         provide: DeviceService,
         useValue: {
           pairDevice: async () => ({ device_id: 'isolated-pair-fixture' }),
+          getRpaProviderConfig: async () => ({
+            providers: { crm: { apiKey: 'runtime-only-secret' } },
+          }),
           updateRpaProviderConfig: async () => {
             writes++;
             return { success: true };
@@ -388,6 +415,32 @@ async function main() {
       .put('/api/devices/device-a/rpa-config')
       .send({})
       .expect(401);
+    await request(http).get('/api/devices/device-a/rpa-config').expect(403);
+    for (const human of [
+      'guest',
+      'member',
+      'agent',
+      'admin',
+      'coordinator',
+      'superadmin',
+    ]) {
+      await request(http)
+        .get('/api/devices/device-a/rpa-config')
+        .set('Authorization', token(human))
+        .expect(403);
+    }
+    await request(http)
+      .get('/api/devices/device-b/rpa-config')
+      .set('Authorization', 'Bearer paired-device-token')
+      .expect(403);
+    const runtimeRpaConfig = await request(http)
+      .get('/api/devices/device-a/rpa-config')
+      .set('Authorization', 'Bearer paired-device-token')
+      .expect(200);
+    assert.equal(
+      runtimeRpaConfig.body.providers.crm.apiKey,
+      'runtime-only-secret',
+    );
     await request(http).get('/api/devices/debug/device/k-a').expect(401);
     await request(http)
       .post('/api/devices/pairing-code')
