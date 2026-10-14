@@ -1,3 +1,19 @@
+## v5.1.20 — 2026-10-14 (PHDK Auto listening-session security)
+
+### Changed
+- Require a DB-derived assigned runtime identity before creating Cloud listening sessions.
+- Use a full UUID capability for websocket admission and enforce the advertised one-hour expiry, removing expired entries as sessions are created.
+- Stop logging listening-session capability IDs in Cloud/API worker logs and Web diagnostics.
+- Add Cloud regression coverage for authenticated session creation contract, capability entropy and expiry.
+- Align all five app package and lock roots at 5.1.20.
+
+### Verification
+- Cloud regression 9/9 and configured build; API regression 15/15, configured build and focused ESLint; Web typecheck/build and diagnostics 18/18; Browser and Landing builds; PHDK coherence 52/52.
+- Standalone Cloud `build:typescript` still fails on 20 pre-existing errors outside this change; the configured Cloud build passes.
+
+### Migration / limitations
+- No migration required. Listening sessions remain in-memory process-local capabilities; deployed multi-instance behavior and client-specific audio acceptance remain external runtime checks.
+
 ## v5.1.19 — 2026-10-13 (PHDK Auto privacy fix)
 
 ### Changed

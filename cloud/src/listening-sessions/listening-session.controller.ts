@@ -1,7 +1,16 @@
-import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpException,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ListeningSessionService } from './listening-session.service';
+import { RuntimeActorGuard } from '../gateways/runtime-identity';
 
 @Controller('listening-sessions')
+@UseGuards(RuntimeActorGuard)
 export class ListeningSessionController {
     constructor(private readonly listeningSessionService: ListeningSessionService) { }
 

@@ -6,6 +6,10 @@ Overall result remains **PARTIALLY DELIVERED**. Product PRs #78–#83 are merged
 
 SIGUIENTE PASO: continue CHK-002 by completing the resource × role × API/web × operation audit and source fixes, then refresh delivery evidence after the source set stabilizes.
 
+## Candidate continuation — 2026-10-14
+
+Source review found Cloud listening-session websocket capabilities were only 32 bits, did not expire, and could be created without an assigned runtime identity. Candidate 5.1.20 fixes the API boundary and redacts session IDs from Cloud/API and Web logs, with a Cloud regression that rejects expired sockets before worker startup. Branch `fix/cloud-listening-session-capability` is based on current `main` at `8b8a05d379c06826cc40bc91fdd39c32d0033b1f`; candidate changes are not merged. Verification passes: Cloud regression 9/9 and configured build, API regression 15/15/build/focused ESLint, Web typecheck/build/diagnostics 18/18, Browser and Landing builds, PHDK coherence 52/52. Cloud's standalone `build:typescript` reports 20 unrelated baseline errors in router, analytics, seed types and missing modules; its configured build passes. Cloud's focused ESLint did not return output and was stopped; this check remains unverified. CHK-002 and full Auto delivery evidence remain open.
+
 ## Security follow-up — append-only audit evidence
 
 PR #82 merged at `011ea0f7a9c20cd91342e880aaf6b6eec8ee0714`; fresh local `main` readback matches. The audit-log integrity fix removes the unused `POST /api/crud/audit-logs` path, its dead service wrappers, and blocks non-GET audit-log requests; trusted interceptor and domain writes remain. All five app package and lock roots are aligned at 5.1.18. API regression 15/15, all five builds, Web typecheck/diagnostics/mocked UAT (18/18, 1/1), Landing SEO 1/1 and PHDK coherence 52/52 pass. The mocked UAT is not live API acceptance. CHK-002 remains open.

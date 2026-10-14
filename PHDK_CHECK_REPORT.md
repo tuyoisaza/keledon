@@ -1,4 +1,8 @@
-# PHDK Check — current Auto run `20261013-1900-phdk-auto`, candidate 5.1.19
+# PHDK Check — current Auto run `20261013-1900-phdk-auto`, candidate 5.1.20
+
+## 2026-10-14 continuation — Cloud listening-session capability boundary
+
+The client uses Cloud's `/listening-sessions` endpoint before opening the Vosk websocket. The source review found that Cloud generated only a 32-bit session suffix, accepted the ID as the sole websocket capability and never enforced its returned expiry. Cloud now requires the DB-derived assigned runtime identity at session creation, issues a full UUID capability, removes expired sessions and rejects expired IDs. Cloud/API gateway and service logs plus Web diagnostic events no longer print the capability. Regression `cloud/test/regression/24-listening-session-capability.test.js` verifies the high-entropy ID and expiry behavior. Candidate 5.1.20 is on `fix/cloud-listening-session-capability`; it is not yet published. The broader CHK-002 matrix and full Auto evidence gate remain open.
 
 ## 2026-10-13 continuation — limit runtime diagnostics by role
 
@@ -37,6 +41,7 @@ Overall: **GAPS FOUND / ALIGNMENT INCOMPLETE**. PHDK version drift: none. Valida
 | CHK-006 | Medium; DECISION REQUIRED | Capture has no public market/language definition; public shell declares `lang=en` while app locales en/es/pt. | Ask product owner to define public-language/locale-route intent before creating multilingual public SEO variants. No assumption from geographic location. | Independent code checks proceed; this product decision is not needed for code delivery. |
 | CHK-007 | Medium; EXTERNAL/MANUAL | `UAT_STANDARD.md`, `PHDK_UX_UI.md`; native Electron renderer/dialog, actual OS permissions, device pairing and physical audio have not been exercised on this host. | Human operator with supported Windows native control and test device must inspect deny/grant dialog, pairing/error recovery and audio without a customer call; capture redacted evidence. | Requires native test host/device and action-time OS media consent; no OS permission or call made here. |
 | CHK-008 | High; DELIVERY CLOSED | `CRUD_MATRIX.md`, `UAT_REPORT.md`, `PHDK_COMPLETION_GATE.md`, `MAIN_DELIVERY_STANDARD.md`; product source commit `4e874c14cde10fd5b1a0ce521ee097e67823e120` has exact-SHA synthetic UAT and is merged through PR #78. | No source-delivery action remains for this candidate; unrelated persisted/native/manual acceptance remains under its own findings. | PR #78 merged at `f8933a61c60655a6448a546790521665c6b81c9f`; fresh `origin/main` tree/version readback and all five package/lock roots at 5.1.17. GitHub reported no status checks/review decision. |
+| CHK-009 | High; AUTO-FIXABLE WITH VALIDATION — FIXED ON CANDIDATE | Cloud listening sessions were protected only by a 32-bit websocket bearer ID; the endpoint did not require the assigned DB-backed runtime identity and sessions did not expire despite returning `expiresAt`. | Require `RuntimeActorGuard`, use a full UUID capability, enforce one-hour expiry and remove expired map entries; redact IDs from server and Web logs. | Cloud regression added for ID/expiry; candidate 5.1.20 on `fix/cloud-listening-session-capability`. Build and full integrated checks pending; not merged. |
 
 ## Non-gap evidence and applicability
 

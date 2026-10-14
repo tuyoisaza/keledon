@@ -176,9 +176,9 @@ async function testSTTProvider() {
           }),
         });
         if (res.ok) {
-          const data = await res.json();
+          await res.json();
           scope.setSttTestStatus("pass");
-          scope.addLog(`[TEST] STT: PASS ✅ Vosk session created: ${data.sessionId}`);
+          scope.addLog('[TEST] STT: PASS ✅ Vosk session created');
         } else {
           const text = await res.text().catch(() => "");
           scope.setSttTestStatus("fail");

@@ -38,10 +38,10 @@ export class ListeningSessionGateway implements OnGatewayConnection, OnGatewayDi
 
     handleConnection(client: Socket) {
         const sessionId = client.handshake.query.session as string;
-        console.log(`[ListeningGateway] Incoming connection: ${client.id} (Session: ${sessionId})`);
+        console.log(`[ListeningGateway] Incoming connection: ${client.id}`);
 
         if (!sessionId || !this.sessionService.validateSession(sessionId)) {
-            console.log(`[ListeningGateway] Invalid session ${sessionId}, disconnecting.`);
+            console.log('[ListeningGateway] Invalid or expired session, disconnecting.');
             client.emit('session.ended', { reason: 'invalid_session' });
             client.disconnect(true);
             return;
@@ -95,20 +95,20 @@ export class ListeningSessionGateway implements OnGatewayConnection, OnGatewayDi
                 } else if (msg.type === 'FINAL') {
                     client.emit('asr.final', { text: msg.text, timestamp: new Date().toISOString() });
                 } else if (msg.type === 'ERROR') {
-                    console.error(`[Worker Error ${sessionId}]`, msg.error);
+                    console.error('[ListeningGateway] Worker error:', msg.error);
                     client.emit('session.ended', { reason: 'worker_error: ' + msg.error });
                 } else if (msg.type === 'READY') {
-                    console.log(`[ListeningGateway] Worker ready for session ${sessionId}`);
+                    console.log('[ListeningGateway] Worker ready');
                 }
             });
 
             worker.on('error', (err) => {
-                console.error(`[Worker Error ${sessionId}]`, err);
+                console.error('[ListeningGateway] Worker error:', err.message);
                 client.emit('session.ended', { reason: 'worker_error: ' + err.message });
             });
 
             worker.on('exit', (code) => {
-                console.log(`[Worker Exit ${sessionId}] Code: ${code}`);
+                console.log(`[ListeningGateway] Worker exit code: ${code}`);
                 if (code !== 0) {
                     client.emit('session.ended', { reason: 'worker_crashed' });
                 }
