@@ -1,4 +1,10 @@
-## Current delivery audit — source and CRUD matrix verified on main (2026-10-14)
+## Current Auto completion audit — candidate 5.1.37 (2026-10-14)
+
+Source candidate `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` is based on verified `origin/main` `493c6c238c6c3cac585b7a80dcff968fff6ab7b4`; PR and remote delivery verification are pending. All five package/lock roots and Browser renderer align at 5.1.37. API build/regression 35/35; Cloud build/regression 14/14/full typed lint 0 errors/0 warnings; Web UAT 2/2, widget/diagnostics 19/19, Web/Landing SEO, Browser/Landing builds, PHDK coherence 52/52 and inventory 1,161/0 >=600 pass. API full typed lint remains 0 errors/135 warnings. Exact-SHA UAT uses synthetic mocked APIs. All four commitments remain active. **Whole PHDK Auto is PARTIALLY DELIVERED**, with database/migration, identities, Qdrant, native device/audio, complete model-family proof, broad accessibility/localization, deployed discovery and client-selected live calls/CRM still open. No database, customer data, private endpoint or deployment was used.
+
+---
+
+## Prior delivery audit — source and CRUD matrix verified on main (2026-10-14)
 
 The 5.1.35 source candidate `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` shipped through PR #106 at merge SHA `73c0fc52b37d96d283e8709e76b99c17db0b1a83`; PR #107 recorded that delivery. PR #108 reconciled the KnowledgeBase/KnowledgeDocument matrix and drift regression, and merged at `056e8605097874337c6bc532c006da3a3f772d56`. API/Cloud add company-scoped KnowledgeBase detail/update and Web adds base lifecycle management. API 35/35 and Cloud 14/14 regressions, builds, Web typecheck/build and exact-commit mocked production-SPA UAT passed for the source slice. The source inventory covers 35/35 Prisma models and 154 role × surface rows; this does not establish persisted authorization.
 
@@ -38,7 +44,9 @@ Delivery status: local branch `fix/deny-unscoped-supabase-rls`, based on verifie
 Open acceptance prevents whole-product completion: real nonproduction identities, disposable PostgreSQL migration/persisted CRUD, native Electron/device/audio, broad active-route accessibility/localization, deployed SEO/AEO, and client-specific live CRM/call acceptance once a client selects/configures a provider. No database or production operation is in scope. Status: **PARTIALLY DELIVERED**.
 
 SIGUIENTE PASO: finish the final diff/check review, then perform normal versioned branch delivery and verify remote main and the PHDK completion gate.
-# PHDK Auto completion audit — 2026-10-14
+# PHDK Auto completion audit — current candidate 5.1.37 (2026-10-14)
+
+Source candidate `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` is based on verified `origin/main` `493c6c238c6c3cac585b7a80dcff968fff6ab7b4`; PR and remote delivery verification are pending. All five package/lock roots and Browser renderer align at 5.1.37. API regression 35/35, Cloud regression 14/14/full lint 0/0, Web UAT 2/2, widget/diagnostics 19/19, Web/Landing SEO, Browser/Landing builds, coherence 52/52 and inventory 1,161/0 >=600 pass. API full lint is 0 errors/135 warnings. UAT evidence binds the exact source SHA with a clean source fingerprint and synthetic mocked APIs. All four commitments remain active. **Whole PHDK Auto is PARTIALLY DELIVERED**, pending the gates named in `PHDK_LIFECYCLE_STATUS.md`; no DB, customer endpoint/data or deployment was used.
 
 Current baseline is merged 5.1.29 at `886669c7f5d3e20aec978efc3dc9a758d4a09148`; local source candidate is version-aligned at 5.1.30 and not yet delivered. Candidate validation currently includes API/Cloud regressions (22/22 and 11/11 suites), API/Cloud builds, UAT-013–017 and source mirror checks. Normal PR/remote readback and the full remaining Auto acceptance are pending.
 
@@ -144,3 +152,12 @@ PHDK evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delive
 Result: **SOURCE DELIVERY COMPLETE / PHDK AUTO PARTIALLY DELIVERED**. PR #104 and exact remote `main` readback are verified. Do not report overall Auto as complete.
 
 SIGUIENTE PASO: close the explicitly blocked UAT/Check items on isolated development infrastructure and supported device hardware; retain client-specific live integration testing until a provider is configured.
+# PHDK Auto completion audit — 5.1.37 source candidate
+
+Result: **SOURCE CANDIDATE VERIFIED; WHOLE PHDK AUTO PARTIALLY DELIVERED.** Candidate `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` is based on verified `main` `493c6c238c6c3cac585b7a80dcff968fff6ab7b4`; product PR and post-merge readback are pending. Commit prefix is `v5.1.37` and five package/lock roots plus Browser renderer align. API build/regression 35/35; Cloud build/regression 14/14/full lint 0 errors and warnings; Web UAT 2/2, Web/Landing SEO, Browser/Landing builds, diagnostics 19/19, static coherence 52/52 and source inventory 1,161/0 >=600 pass. API full lint has 0 errors/135 warnings.
+
+The four owner-confirmed commitments remain active; none is complete at product-acceptance level. CMT-001 source/version reconciliation is pending PR/merge/readback. CMT-002's diagnostics widget has source and local test evidence, while native and broad accessibility acceptance remain open. CMT-003 is provider-independent; live acceptance depends on a customer's selected telephony/CRM. CMT-004's scoped typed-boundary and Cloud parity issue is fixed, but persisted DB/migration and full role×tenant×operation×surface evidence remain open. The inventory's 35 models/168 rows do not prove persisted authorization.
+
+Open gates: safe DB-backed identities; disposable PostgreSQL/migrations/persisted CRUD; live Qdrant and delete/reindex concurrency; native Windows device/audio; remaining model-family proof; broad accessibility/localization; deployed SEO/AEO. No DB, client endpoint/data or deployment was used. Do not mark the goal complete while these gates remain unresolved.
+
+---

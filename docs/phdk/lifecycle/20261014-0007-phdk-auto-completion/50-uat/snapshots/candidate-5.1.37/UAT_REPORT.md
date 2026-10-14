@@ -1,0 +1,5 @@
+# UAT report — candidate 5.1.37
+
+Candidate `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`; the built-Web UAT JSON binds to that exact commit with no dirty/untracked source. `npm run test:uat` passes 2/2. `node --test test/diagnostics.test.cjs test/debug-mode.test.cjs test/version-actions.test.cjs` passes 19/19. API regression passes 35/35; Cloud regression passes 14/14, including the HTTP assertion that removed Cloud `/api/crud/audit-logs` returns 404 and the API/Cloud parity regression.
+
+The synthetic Web UAT covers login/public routes, diagnostics widget actions, reset/copy outcomes, protected probe behavior and Device roles. APIs are mocked/intercepted; external HTTP and WebSockets are blocked. This is not persisted auth/database or deployment acceptance. Remaining blocked/manual cases are safe DB-backed identity, disposable DB and migrations/persisted role-scope operations, native Windows device/audio, broad route accessibility/localization, deployed SEO/AEO, and client-specific CRM/call tests after configuration. Whole acceptance: **INCOMPLETE / PARTIALLY DELIVERED**.

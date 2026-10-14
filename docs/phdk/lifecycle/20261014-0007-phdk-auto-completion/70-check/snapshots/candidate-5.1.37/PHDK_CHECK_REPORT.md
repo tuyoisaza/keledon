@@ -1,0 +1,5 @@
+# PHDK Check — candidate 5.1.37
+
+Candidate source `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`. Scoped source fixes: typed API/Cloud CRUD bodies and actor context, Cloud generic audit-log route/proxy removal, duplicate provider removal, TTS stream chunk narrowing. API build/regression 35/35; Cloud build/regression 14/14/full typed ESLint 0/0; API full lint 0 errors/135 warnings; Web UAT 2/2 and SEO pass; widget/diagnostics 19/19; Browser and Landing builds pass; Landing SEO pass; coherence 52/52; active source-size inventory 1,161 files, 0 >=600. 35 Prisma models/168 rows is a drift assertion, not database acceptance.
+
+Check: **SCOPED SOURCE FINDING REMEDIATED / WHOLE PRODUCT ACCEPTANCE INCOMPLETE**. Open: real DB-backed identities, disposable PostgreSQL and persisted role×tenant CRUD/migrations, live Qdrant/concurrency, native device/audio, all model-family proof, broad route accessibility/localization, deployed SEO/AEO, and client-configured live CRM/calls. No database, customer data, private endpoint or deployment was accessed.
