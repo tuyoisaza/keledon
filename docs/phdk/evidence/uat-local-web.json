@@ -1,9 +1,9 @@
 {
   "version": "5.1.26",
-  "date": "2026-10-14T18:11:38.169Z",
-  "candidateRevision": "uncommitted-working-tree-candidate",
-  "candidateSourceFingerprint": "sha256:09cf8e3cb563e717ed40f4a210357c6e61e45fcd2a6bfbb14988f7dab127d745",
-  "dirtyUntrackedSourceFiles": 4,
+  "date": "2026-10-14T18:15:01.413Z",
+  "candidateRevision": "6a99281e8c74c5d40590aca146a03786324dc340",
+  "candidateSourceFingerprint": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "dirtyUntrackedSourceFiles": 0,
   "sourceRoots": [
     "browser",
     "cloud",
@@ -12,8 +12,8 @@
     "landing"
   ],
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:55358",
-  "provenance": "UI behavior only; test-profile UI uses mocked APIs; isolated API guard/audit tests are separate evidence; not real server/DB authentication, production, or deployed acceptance",
+  "origin": "http://127.0.0.1:50640",
+  "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-THEME dark/light/corporate tokens reach descendant controls, persistence PASS; automated login text contrast sample has no failures (not a full-app accessibility certification)",
     "UAT-002 anonymous home/login, compact sizes, awaited copy/check/revert, failure no false check, owned reset/foreign preservation, 390px layout and 200/400% zoom reflow PASS (viewport simulation)",
@@ -67,7 +67,5 @@
     "dark": []
   },
   "apiEvidence": "services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts",
-  "realVendorAudioCRM": "NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed",
-  "baseRevision": "8dfc1fca7de253a017acb6f291ff278699915beb",
-  "candidateCommitPending": true
+  "realVendorAudioCRM": "NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed"
 }

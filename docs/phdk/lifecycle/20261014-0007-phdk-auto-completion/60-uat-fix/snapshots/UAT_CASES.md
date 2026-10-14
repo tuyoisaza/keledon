@@ -1,6 +1,6 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
-Current candidate: KELEDON 5.1.26 on `fix/audited-uat-test-profiles`, based on `8dfc1fca7de253a017acb6f291ff278699915beb`. The source is being validated as an uncommitted candidate; final UAT will be rebound after source commit. All fixtures are synthetic; browser API requests are intercepted, external requests blocked, and API guard tests use isolated in-process fixtures.
+Current candidate: KELEDON 5.1.26 on `fix/audited-uat-test-profiles`, based on `8dfc1fca7de253a017acb6f291ff278699915beb`. Source commit is `6a99281e8c74c5d40590aca146a03786324dc340`; post-commit UAT is recorded in `docs/phdk/evidence/uat-local-web.json`. All fixtures are synthetic; browser API requests are intercepted, external requests blocked, and API guard tests use isolated in-process fixtures.
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
 |---|---|---|---|---|---|

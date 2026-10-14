@@ -1,0 +1,10 @@
+{
+  "version": "1",
+  "last_verified_main_version": "5.1.25",
+  "merged_commit_sha": "8dfc1fca7de253a017acb6f291ff278699915beb",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/94",
+  "candidate_version": "5.1.26",
+  "candidate_source_commit": "6a99281e8c74c5d40590aca146a03786324dc340",
+  "candidate_pr": "PENDING",
+  "acceptance_status": "PARTIALLY_DELIVERED"
+}

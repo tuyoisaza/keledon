@@ -2,7 +2,7 @@
 
 ## Active run — `20261014-0007-phdk-auto-completion`
 
-Goal: finish PHDK Auto for CMT-001..004 in owner-confirmed order. PR #94 established 5.1.25 baseline on `main` at `8dfc1fca7de253a017acb6f291ff278699915beb`. The current 5.1.26 candidate adds the approved audited temporary test-profile flow and is in source validation on `fix/audited-uat-test-profiles`.
+Goal: finish PHDK Auto for CMT-001..004 in owner-confirmed order. PR #94 established 5.1.25 baseline on `main` at `8dfc1fca7de253a017acb6f291ff278699915beb`. The current 5.1.26 candidate commit `6a99281e8c74c5d40590aca146a03786324dc340` adds the approved audited temporary test-profile flow on `fix/audited-uat-test-profiles`; post-commit UAT passes 1/1.
 
 | Stage | Status | Current evidence / next action |
 |---|---|---|

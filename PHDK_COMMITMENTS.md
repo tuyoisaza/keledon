@@ -1,7 +1,7 @@
 # Commitment ledger
 ## Active run `20261014-0007-phdk-auto-completion` — refreshed Capture
 
-Four owner-confirmed commitments remain in order. PR #94 delivered KELEDON 5.1.25 to `main` at `8dfc1fca7de253a017acb6f291ff278699915beb`. The current 5.1.26 candidate is on `fix/audited-uat-test-profiles`; PR/readback are pending. UAT-008 design is owner-approved and source/UI retest passes within scope.
+Four owner-confirmed commitments remain in order. PR #94 delivered KELEDON 5.1.25 to `main` at `8dfc1fca7de253a017acb6f291ff278699915beb`. The current 5.1.26 candidate commit `6a99281e8c74c5d40590aca146a03786324dc340` is on `fix/audited-uat-test-profiles`; post-commit UAT passes and PR/readback are pending. UAT-008 design is owner-approved and source/UI retest passes within scope.
 
 | ID | Confirmed front | Current truth | Remaining acceptance |
 |---|---|---|---|
