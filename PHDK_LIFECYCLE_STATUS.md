@@ -2,7 +2,7 @@
 
 ## Active continuation — 2026-10-13
 
-Overall result remains **PARTIALLY DELIVERED**. PRs #78–#83 are merged; current `origin/main` is `48704bfd0699ff2b9b1618338962693ac7ffce07`, with all five app package/lock roots at 5.1.19. The 35-model CRUD gate remains open. The delivery JSON still points at PR #78 and the current SHA is not verified by that record, so the full Auto gate is not passing.
+Overall result remains **PARTIALLY DELIVERED**. Product PRs #78–#83 are merged; the 5.1.19 source delivery is PR #83 at `48704bfd0699ff2b9b1618338962693ac7ffce07`. Documentation PR #84 reconciled the lifecycle at `d967589c0e818ae50cd74b74321961862f170278`; all five app package/lock roots remain at 5.1.19. The 35-model CRUD gate remains open. `PHDK_DELIVERY_EVIDENCE.json` still points at PR #78, so the full Auto gate is not passing.
 
 SIGUIENTE PASO: continue CHK-002 by completing the resource × role × API/web × operation audit and source fixes, then refresh delivery evidence after the source set stabilizes.
 
