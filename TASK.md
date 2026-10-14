@@ -2,11 +2,11 @@
 
 ## Active Auto continuation — candidate 5.1.31 based on verified main
 
-Continue the owner-authorized four-front PHDK Auto in its confirmed order. Verified base is `origin/main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`, delivered KELEDON 5.1.30 and PHDK 2.50.10 coherence 52/52. Current 5.1.31 remediation retires the shared-secret CRUD webhook and runtime seed/DDL paths from API and Cloud, removes the dormant guard bypass, rejects caller-supplied password hashes and audit-log writes, and verifies these controls in both backends. All five app package/lock roots and Browser renderer align at 5.1.31; API/Cloud builds and API 24/24, Cloud 11/11 regressions pass. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open; normal security review and merge/readback are pending.
+Continue the owner-authorized four-front PHDK Auto in its confirmed order. Verified base is `origin/main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`, delivered KELEDON 5.1.30 and PHDK 2.50.10 coherence 52/52. Current 5.1.31 remediation retires the shared-secret CRUD webhook and runtime seed/DDL paths from API and Cloud, removes the dormant guard bypass, rejects caller-supplied password hashes and audit-log writes, preserves approved same-company user reassignment, and makes TeamInterface replacement validated and transactional. API/Cloud guard tests reject foreign-company team IDs. All five app package/lock roots and Browser renderer align at 5.1.31; builds pass; API regression is 26/26 and Cloud 12/12. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open at `be8b3202470a5df2ce7fd3e9fad0400251cd1f39`; GitHub reports no review decision or hosted checks.
 
-The four owner-confirmed fronts remain active. The 26-model authorization map, persisted DB migration/CRUD proof, safe development identities, native device/audio, broad route accessibility/localization, deployed SEO/AEO and client-specific live integration acceptance remain open. No production database, customer provider, private CRM endpoint or deployment has been used.
+The four owner-confirmed fronts remain active. The 26-model authorization map remains incomplete; persisted DB migration/CRUD proof, safe development identities, native device/audio, broad route accessibility/localization, deployed SEO/AEO and client-specific live integration acceptance remain open. No production database, customer provider, private CRM endpoint or deployment has been used.
 
-SIGUIENTE PASO: finish source Check on the CRUD model/role/surface/operation coverage, then run the PHDK gates and deliver the reviewed 5.1.31 candidate.
+SIGUIENTE PASO: continue source Check on the remaining CRUD model/role/surface/operation coverage, then complete normal security review, merge and exact remote-main readback for PR #102.
 
 ## Historical task record — Auto baseline 5.1.24 (superseded)
 
