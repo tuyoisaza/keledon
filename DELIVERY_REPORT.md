@@ -1,5 +1,9 @@
 # Delivery report — current status PARTIALLY DELIVERED
 
+## Current candidate — 5.1.16 (IN PROGRESS)
+
+Remote base `main` is `c8534e6f6568922d540eabfba4abe90cc93749c1`; all five package/lock roots were verified there at 5.1.15. Local candidate branch `fix/phdk-route-accessibility-i18n` aligns all ten package roots to 5.1.16 and localizes profile, device, launcher and session-detail journeys. Web typecheck/build, synthetic UAT 1/1, diagnostics 18/18, SEO source test 1/1, catalog parity 644/644, focused ESLint (0 errors) and PHDK coherence 52/52 pass. Candidate commit, PR and remote readback are pending. Persisted/native/deployed acceptance remains open.
+
 ## Current delivery — 5.1.15 (SOURCE SLICE MERGED; AUTO PARTIAL)
 
 Target: remote `main`. Source PR [#74](https://github.com/tuyoisaza/keledon/pull/74) merged at `2e61f41926ab25b4d9ea9f9b73d11aba82988a63`; fetched `origin/main` independently resolves to that SHA, and all five app package/lock roots there report 5.1.15. The source localizes dashboard/live/history/call-monitor copy and improves table/filter semantics in en/es/pt. API build/regression 14/14, Cloud build/regression 8/8, Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1, Browser build/regression 24/24, Landing typecheck/build, focused lint (0 errors/14 warnings), catalog parity 562/562 and PHDK coherence 52/52 pass. GitHub reports no status checks or review decision for PR #74. No deployment is claimed.

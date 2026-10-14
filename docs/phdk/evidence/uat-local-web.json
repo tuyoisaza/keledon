@@ -1,9 +1,9 @@
 {
-  "version": "5.1.15",
-  "date": "2026-10-14T00:05:56.109Z",
-  "candidateRevision": "8e864df32a7310a08ccff1733b874e26dc24f87d",
+  "version": "5.1.16",
+  "date": "2026-10-14T00:39:04.477Z",
+  "candidateRevision": "c8534e6f6568922d540eabfba4abe90cc93749c1",
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:50749",
+  "origin": "http://127.0.0.1:51063",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-THEME dark/light/corporate tokens reach descendant controls, persistence PASS; automated login text contrast sample has no failures (not a full-app accessibility certification)",
@@ -13,10 +13,11 @@
     "UAT-004 coordinator frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
     "UAT-004 company/brand/team/user/vendor administration Spanish copy and manager user restrictions: localized routes/search and modal controls; no role/company payload fields; foreign team absent PASS (synthetic UI; API guard tested separately)",
     "UAT-T-005-DASHBOARD Spanish empty/session states, English and Portuguese greeting/stats, and accessible table caption/column headers PASS (synthetic API)",
-    "UAT-T-005-SESSIONS Spanish live/history and call-monitor copy, filters, statuses, captions, scoped headers and detail action PASS (synthetic API)",
+    "UAT-T-005-SESSIONS Spanish live/history/detail and call-monitor copy, filters, statuses, captions, scoped headers and detail navigation PASS (synthetic API)",
+    "UAT-T-007-PROFILE-DEVICES en/es/pt profile role/date formatting, Spanish device status/empty state, navigation to localized Keledon launcher and retry after visible API failure PASS (mocked API)",
     "UAT-004 provider settings Spanish localization and write-only key: translated screen renders; no response prefill; replacement clears after success; untouched blank omitted PASS",
     "UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)",
-    "UAT-002 5.1.15 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
+    "UAT-002 5.1.16 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
   ],
   "themeTokens": {
     "light": {

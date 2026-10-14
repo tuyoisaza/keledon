@@ -1,8 +1,12 @@
 # Current task
 
-## Active Auto continuation — candidate 5.1.15
+## Active Auto continuation — candidate 5.1.16
 
-Run `20261013-keledon-auto-conformity` extends the same owner-authorized PHDK Auto goal. Current scope still covers CMT-001..004 in order and the maximum-applicable-conformity review. Dashboard localization/table accessibility is implemented and passes web typecheck/build, synthetic UAT-T-005 and diagnostics 18/18; the 5.1.15 normal PR/main delivery and integrated Check remain active. See `docs/phdk/lifecycle/20261013-keledon-auto-conformity/`. Residual acceptance is tracked, not canceled.
+Continue the user-authorized PHDK Auto across CMT-001..004 in order. Main is `c8534e6f6568922d540eabfba4abe90cc93749c1`; branch `fix/phdk-route-accessibility-i18n` localizes profile, devices, the Keledon launcher and session detail, and passes web typecheck/build, synthetic UAT 1/1, diagnostics 18/18, SEO source 1/1, 644-key parity and PHDK coherence 52/52. Candidate PR/main readback remain pending. Persisted CRUD/migration, native device/audio, broad active-route i18n/a11y and deployed SEO/AEO remain open; do not mark the full Auto complete.
+
+## Previous Auto continuation — candidate 5.1.15 (superseded by current 5.1.16)
+
+Run `20261013-keledon-auto-conformity` extends the same owner-authorized PHDK Auto goal. Current scope still covers CMT-001..004 in order and the maximum-applicable-conformity review. Dashboard localization/table accessibility is implemented and passes web typecheck/build, synthetic UAT-T-005 and diagnostics 18/18; PR #74 and readback #75 integrated the 5.1.15 source and handoff. See `docs/phdk/lifecycle/20261013-keledon-auto-conformity/`. Residual acceptance is tracked, not canceled.
 
 ## PHDK Auto — current delivery 5.1.14
 

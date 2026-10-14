@@ -1,5 +1,11 @@
 # STATUS
 
+## 2026-10-13 — PHDK Auto 5.1.16 local candidate; overall partial
+
+- Base `origin/main` is `c8534e6f6568922d540eabfba4abe90cc93749c1`, verified after PRs #74/#75. Candidate branch `fix/phdk-route-accessibility-i18n` aligns all five app package/lock roots at 5.1.16.
+- Profile roles/dates, device list/error/retry states and session detail are localized in en/es/pt. Review also fixed the devices screen's invalid pairing-code request by linking to the existing protected Keledon launcher. Typecheck/build/UAT, diagnostics, SEO source test, focused ESLint and 644-key parity pass; PR/readback remain pending.
+- Overall Auto remains PARTIALLY DELIVERED pending broad route accessibility/localization, persisted CRUD/migration, native device/audio and deployed SEO/AEO acceptance.
+
 ## 2026-10-13 — PHDK Auto 5.1.14 merged; overall partial
 
 - Source branch `fix/phdk-admin-crud-i18n` was based on remote `main` `84bfdb901068f4fab12fa88e0b5b3cd3394b7180`; all five app package/lock roots are now merged at 5.1.14. Companies, brands, teams, users and vendors use the en/es/pt catalogs; catalog key parity is 452/452.
@@ -106,4 +112,4 @@ Commit 3af566a163024c3f2b69be7991e99437d47b0528 is on chore/phdk-install-v2.50.8
 - SIGUIENTE PASO: obtener o completar aceptación de los puntos abiertos y disponer los PR #38–40; mantener PARTIALLY DELIVERED hasta entonces.
 # Current PHDK Auto continuation — 5.1.15
 
-Candidate branch `fix/phdk-auto-full-conformity`, base `origin/main` `ab7a6e867508d834ccec755fc5ba9a985e3b9be4`. All five app version/lock roots are reconciled to 5.1.15. Dashboard Spanish UAT-T-005, web typecheck/build, diagnostics tests 18/18 and 521/521 catalog-key parity pass. Full Check/diff/delivery remain in progress. Overall PHDK Auto is **PARTIALLY DELIVERED** pending broader route accessibility/localization, persisted CRUD/migration, native device/audio and deployed SEO/AEO acceptance. No production DB, live client provider or deployment was used.
+PR #74 delivered 5.1.15 at `2e61f41926ab25b4d9ea9f9b73d11aba82988a63`; PR #75 recorded the readback at current main `c8534e6f6568922d540eabfba4abe90cc93749c1`. All five roots are 5.1.15. This slice localized dashboard/session/call-monitor; broader active-route accessibility/localization, persisted CRUD/migration, native device/audio and deployed SEO/AEO remain open.

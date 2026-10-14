@@ -1,11 +1,11 @@
 # PHDK Coherence report — KELEDON candidate
-## Current source coherence recheck — 2026-10-13, KELEDON 5.1.15
+## Current source coherence recheck — 2026-10-13, KELEDON 5.1.16
 
-- Baseline: freshly fetched remote `main` `ab7a6e867508d834ccec755fc5ba9a985e3b9be4`; candidate branch `fix/phdk-auto-full-conformity`.
+- Baseline: freshly fetched remote `main` `c8534e6f6568922d540eabfba4abe90cc93749c1`; candidate branch `fix/phdk-route-accessibility-i18n`.
 - Installed PHDK: v2.50.10. `python phdk-standards/scripts/phdk_coherence_check.py` PASS: 52 manifest mappings (static check only).
-- All five application package and lock roots match 5.1.15.
-- Current scoped checks: API build/regression 14/14; Cloud build/regression 8/8; Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1; Browser build/regression 24/24; Landing typecheck/build; recursive locale-key parity 521/521; DashboardPage lint 0 errors/6 warnings; `git diff --check` PASS.
-- Semantic review: max code conformity remains the goal; the 511 text/47 attribute route inventory is candidate-based, not an exact localization-defect count. Dashboard copy/table semantics are fixed; full active-route localization/accessibility, persisted CRUD/migration, native device/audio and deployed SEO/AEO remain open.
+- All five application package and lock roots match 5.1.16.
+- Current scoped checks: Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1; recursive locale-key parity 644/644; focused changed-page lint 0 errors; `git diff --check` PASS. API/Cloud/Browser/Landing are unchanged from the 5.1.15 main delivery.
+- Semantic review: max code conformity remains the goal; the 511 text/47 attribute route inventory is candidate-based, not an exact localization-defect count. Dashboard/session plus profile/device/launcher/session-detail slices are localized; full active-route localization/accessibility, persisted CRUD/migration, native device/audio and deployed SEO/AEO remain open.
 
 This is a targeted static standards/install coherence result plus scoped product evidence, not a full semantic certification or production acceptance.
 
