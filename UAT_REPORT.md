@@ -1,5 +1,9 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.31 — widget, diagnostics, and built-Web journey (2026-10-14)
+
+UAT-028 passes. Web diagnostics/widget tests pass 19/19; Web typecheck and production build pass. The local built-SPA UAT passes 1/1 against synthetic Company Co fixtures with all API requests intercepted and external network blocked. It covers redaction, debug-off no-read behavior, manually initiated safe probes, reset truthfulness, route coverage, admin workflows, keyboard/focus and responsive zoom. Exact candidate revision `f700fe0f9cc57c0c8e3370698724ef5660e8d8d4` and screenshots are recorded in `docs/phdk/evidence/uat-local-web.json` and adjacent PNGs. This is not live authentication, persisted data, native-device or complete accessibility acceptance.
+
 ## Candidate 5.1.31 — API/Cloud paired vendor payload parity (2026-10-14)
 
 UAT-027 passes at source/contract level. Cloud pairing now includes the same `startGoal` and active-state fields as API alongside its validated per-tenant `allowedOrigins` and encrypted credentials. Cloud regression passes 13/13, including new regression 38; Browser builds and its 21 `.cjs` tests pass, including pairing source and runtime-contract coverage. No native device or CRM request was made.
