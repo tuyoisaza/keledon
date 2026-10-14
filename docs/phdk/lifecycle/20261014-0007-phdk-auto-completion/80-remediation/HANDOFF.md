@@ -1,5 +1,9 @@
 # Remediation handoff — `20261014-0007-phdk-auto-completion`
 
+## Delivery result — candidate 5.1.33
+
+The source fix described below shipped through PR [#104](https://github.com/tuyoisaza/keledon/pull/104), source commit `c5bf7161f55d488508841ec6281695c0b3c93f02`, squash merge `d40a5f1e7ad92bb66a9cc06211c105ec3c708a9a`; remote and PR source tree SHA match. Source delivery is verified; whole Auto acceptance stays partial for the explicit DB, native device/audio, full CRUD and external SEO/AEO gates.
+
 ## Candidate 5.1.33 — source remediation (2026-10-14)
 
 Check found that generic API and Cloud CRUD deletion of KnowledgeBase/KnowledgeDocument rows left Qdrant data behind. Both mirrors now remove document points by the stored `documentId` payload or delete the whole base collection before the Prisma delete; Qdrant failures leave relational rows intact. UAT-031/regression 46 pass 12/12 in an isolated mocked service harness. API/Cloud builds and full regressions pass; Browser 33/33, Web diagnostics 19/19, Landing SEO 1/1 and both frontend builds/typechecks pass. The branch is `fix/phdk-knowledge-vector-cleanup-5-1-33`, based on verified main `9908a4c6abcef0c378b9bb661ffb5b57146b27ae`; PR delivery remains pending. The change does not establish live Qdrant or PostgreSQL behavior, concurrency, or atomic cross-store deletion. Full Auto acceptance remains partial for UAT-009/010, UAT-006, exhaustive CRUD mapping, broad accessibility/localization and deployed SEO/AEO. No deployment is claimed.

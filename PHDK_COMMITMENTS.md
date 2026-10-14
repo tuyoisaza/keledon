@@ -1,19 +1,19 @@
 # Commitment ledger
 
-## Active run `20261014-0007-phdk-auto-completion` — candidate 5.1.33
+## Active run `20261014-0007-phdk-auto-completion` — delivered source 5.1.33, acceptance partial
 
-All four owner-confirmed fronts remain active in the confirmed order. Candidate branch `fix/phdk-knowledge-vector-cleanup-5-1-33` is based on verified main `9908a4c6abcef0c378b9bb661ffb5b57146b27ae`; all five application package/lock roots and Browser renderer are aligned at 5.1.33. API regressions 34/34 and Cloud 14/14, both builds, Browser build/offline tests 33/33, Web typecheck/build/diagnostics 19/19/UAT 1/1/SEO 1/1, Landing build/SEO 1/1 and PHDK coherence 52/52 pass. UAT-031 passes 10 mocked service assertions. No commit/PR/merge for 5.1.33 yet; no deployment, live Qdrant, PostgreSQL, customer data or client provider was used.
+All four owner-confirmed fronts remain active in the confirmed order. PR #104 merged source commit `c5bf7161f55d488508841ec6281695c0b3c93f02` at exact remote-main SHA `d40a5f1e7ad92bb66a9cc06211c105ec3c708a9a`; `origin/main` and `git ls-remote` agree, the trees match at `447a1d1e006c8f59fb5a026a899ab7c7d4fea288`, and all five app package/lock roots plus Browser renderer are 5.1.33. API regression 34/34 and Cloud 14/14, both builds, Browser build/tests 33/33, Web typecheck/build/diagnostics 19/19/UAT 1/1/SEO 1/1, Landing build/SEO 1/1 and PHDK coherence 52/52 pass. UAT-031 passes 12 mocked service assertions. GitHub has no hosted checks/review submissions and main is unprotected; no deployment, live Qdrant, PostgreSQL, customer data or client provider was used.
 
 | ID | Confirmed front | Current truth | Remaining acceptance |
 |---|---|---|---|
-| CMT-001 | Baseline, versions and PR reconciliation | Candidate 5.1.33 is aligned and fully locally validated on a fix branch from verified main. | Commit/push/PR, reconcile actual controls, merge and verify remote main SHA/version. |
+| CMT-001 | Baseline, versions and PR reconciliation | PR #104 merged and remote `main` verified at `d40a5f1e7ad92bb66a9cc06211c105ec3c708a9a`; all roots align at 5.1.33. | Source delivery is complete; no deployment is claimed. |
 | CMT-002 | Shared visible diagnostics widget and safe diagnostics | Widget remains covered by diagnostics 19/19 and exact-candidate built-SPA UAT 1/1. | Native OS permission/device/audio and broad route/screen-reader accessibility remain open. |
 | CMT-003 | Voice → Cloud → Browser → CRM, providers chosen per client | Provider-neutral contracts and validated, per-tenant private CRM allowlists remain covered by offline tests. | Live call/CRM acceptance applies per tenant after provider configuration. |
 | CMT-004 | Administration and permissions | Approved least privilege and DB-derived scope retained; generic knowledge deletion now cleans Qdrant in API/Cloud before relational deletion. | Persisted DB role/tenant/operation matrix, real DB-backed identities, and Qdrant/PostgreSQL failure/concurrency acceptance remain open. |
 
 Overall: **PARTIALLY DELIVERED**. UAT remains 28 PASS, 2 BLOCKED, 1 MANUAL. No database, customer provider, private CRM endpoint, customer data or deployment was used.
 
-SIGUIENTE PASO: finish final source review, version-prefixed commit, branch/PR delivery and remote-main verification; preserve the remaining acceptance gates as open.
+SIGUIENTE PASO: provide safe DB-backed identities, disposable PostgreSQL and a supported native Windows device/audio host; then close the remaining CRUD, accessibility and deployed SEO/AEO acceptance.
 
 ## Active run `20261014-0007-phdk-auto-completion` — refreshed candidate 5.1.32
 

@@ -1,5 +1,9 @@
 # Check handoff — 20261014-0007-phdk-auto-completion
 
+## Delivery result — candidate 5.1.33
+
+The remediated source finding shipped through PR [#104](https://github.com/tuyoisaza/keledon/pull/104) and is verified on remote main at `d40a5f1e7ad92bb66a9cc06211c105ec3c708a9a`. API/Cloud mirror trees match at `447a1d1e006c8f59fb5a026a899ab7c7d4fea288`. The broader 35-model CRUD/persistence acceptance remains open; gate evidence is in `../90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.33.json`.
+
 ## Candidate 5.1.33 — source finding and remediation
 
 Check identified stale knowledge vectors after generic API/Cloud CRUD deletes. Candidate cleanup removes a document's points by stored `documentId` before row deletion and removes a knowledge-base collection before deleting the base. Failures from Qdrant preserve the Prisma record. Regression 46 passes 12/12 mocked API/Cloud service assertions; API/Cloud builds and full regressions pass. The complete 35-model role/tenant/surface/operation matrix and PostgreSQL proof remain open. Live Qdrant and delete/reindex concurrency were not tested.
