@@ -45,6 +45,8 @@ let voiceUpdateWrites=[];
 let keledonRows=[];
 let keledonWrites=[];
 let keledonCreateStatus=200;
+let knowledgeBases=[{id:'kb-co-001',companyId:company.id,name:'Company Co Support',description:'Synthetic support articles',_count:{documents:1}}];
+let knowledgeWrites=[];
 let deepReads=0;
 let probeCalls=[];
 const safeEndpoints=[
@@ -127,6 +129,25 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
     else if(p==='/api/devices')body=deviceList;
     else if(p==='/api/crud/companies')body=[company,otherCompany];
     else if(p==='/api/crud/brands')body=[brand,brand2,otherBrand];
+    else if(p==='/api/crud/knowledge'){
+      if(route.request().method()==='POST'){
+        const payload=route.request().postDataJSON();knowledgeWrites.push({method:'POST',payload});
+        const base={id:'kb-co-created',...payload,_count:{documents:0}};knowledgeBases.push(base);body=base;
+      } else body=knowledgeBases;
+    }
+    else if(/^\/api\/crud\/knowledge\/[^/]+$/.test(p)){
+      const id=decodeURIComponent(p.split('/').at(-1));
+      const index=knowledgeBases.findIndex(base=>base.id===id);
+      if(index<0)return route.fulfill({status:404,contentType:'application/json',body:'{"message":"not found"}'});
+      if(route.request().method()==='GET')body=knowledgeBases[index];
+      else if(route.request().method()==='PUT'){
+        const payload=route.request().postDataJSON();knowledgeWrites.push({method:'PUT',id,payload});
+        knowledgeBases[index]={...knowledgeBases[index],...payload};body=knowledgeBases[index];
+      } else if(route.request().method()==='DELETE'){
+        knowledgeWrites.push({method:'DELETE',id});knowledgeBases=knowledgeBases.filter(base=>base.id!==id);
+        return route.fulfill({status:200,contentType:'application/json',body:'{"success":true}'});
+      }
+    }
     else if(p==='/api/vector-store/status'&&vectorStoreShouldFail)return route.fulfill({status:503,contentType:'application/json',body:'{"message":"sensitive internal fixture detail OPENAI_API_KEY"}'});
     else if(p==='/api/vector-store/status')body={collectionExists:true,documentCount:1,collectionSize:'1 KB',dimensions:1536,distance:'Cosine'};
     else if(p==='/api/vector-store/documents')body={documents:[{id:'knowledge-co-001',title:'Synthetic Company Co knowledge article',content:'Synthetic fixture content for tenant-scoped knowledge UI acceptance.',category:'knowledge',company_id:company.id,brand_id:brand.id,team_id:team.id,created_by:'synthetic-uat',created_at:'2026-10-14T00:00:00.000Z',updated_at:'2026-10-14T00:00:00.000Z'}]};
@@ -348,6 +369,35 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await knowledgeAdmin.page.keyboard.press('Tab');assert.equal(await knowledgeAdmin.page.evaluate(()=>!!document.activeElement.closest('dialog')),true);
   await knowledgeAdmin.page.keyboard.press('Escape');await knowledgeDialog.waitFor({state:'hidden'});
   assert.equal(await knowledgeAdmin.page.getByRole('button',{name:'Agregar fuente',exact:true}).evaluate(el=>el===document.activeElement),true);
+  await knowledgeAdmin.page.getByRole('button',{name:'Ver detalles: Company Co Support'}).click();
+  const baseDetails=knowledgeAdmin.page.getByRole('dialog',{name:'Detalles de la base de conocimiento'});
+  await baseDetails.getByText('Synthetic support articles',{exact:true}).waitFor();
+  await knowledgeAdmin.page.keyboard.press('Escape');
+  await knowledgeAdmin.page.getByRole('button',{name:'Editar: Company Co Support'}).click();
+  const baseEdit=knowledgeAdmin.page.getByRole('dialog',{name:'Editar base de conocimiento'});
+  await baseEdit.getByLabel('Nombre').fill('Company Co Support Updated');
+  await baseEdit.getByLabel('Descripción').fill('Updated synthetic description');
+  await baseEdit.getByRole('button',{name:'Guardar',exact:true}).click();
+  await baseEdit.waitFor({state:'hidden'});
+  await knowledgeAdmin.page.getByText('Company Co Support Updated',{exact:true}).waitFor();
+  const updateWrite=knowledgeWrites.find(write=>write.method==='PUT');
+  assert.deepEqual(updateWrite.payload,{name:'Company Co Support Updated',description:'Updated synthetic description'});
+  assert.ok(!Object.hasOwn(updateWrite.payload,'companyId'));
+  await knowledgeAdmin.page.getByRole('button',{name:'Crear base',exact:true}).click();
+  const baseCreate=knowledgeAdmin.page.getByRole('dialog',{name:'Crear base de conocimiento'});
+  await baseCreate.getByLabel('Nombre').fill('Synthetic New Base');
+  await baseCreate.getByLabel('Descripción').fill('New synthetic description');
+  await baseCreate.getByRole('button',{name:'Guardar',exact:true}).click();
+  await baseCreate.waitFor({state:'hidden'});
+  await knowledgeAdmin.page.getByText('Synthetic New Base',{exact:true}).waitFor();
+  const createWrite=knowledgeWrites.find(write=>write.method==='POST');
+  assert.equal(createWrite.payload.companyId,company.id);
+  assert.equal(createWrite.payload.name,'Synthetic New Base');
+  assert.equal(createWrite.payload.description,'New synthetic description');
+  knowledgeAdmin.page.once('dialog',dialog=>dialog.accept());
+  await knowledgeAdmin.page.getByRole('button',{name:'Eliminar: Synthetic New Base'}).click();
+  await knowledgeAdmin.page.getByText('Synthetic New Base',{exact:true}).waitFor({state:'detached'});
+  assert.ok(knowledgeWrites.some(write=>write.method==='DELETE'&&write.id==='kb-co-created'));
   await knowledgeAdmin.page.screenshot({path:path.join(evidence,'uat-knowledge-source-dialog.png')});
   await knowledgeAdmin.context.close();
   vectorStoreShouldFail=true;
@@ -357,7 +407,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.match(knowledgeErrorText,/No se pudieron cargar los documentos de conocimiento/);
   assert.ok(!knowledgeErrorText.includes('sensitive internal fixture detail')&&!knowledgeErrorText.includes('OPENAI_API_KEY'));
   vectorStoreShouldFail=false;await knowledgeError.context.close();
-  checks.push('UAT-030 Knowledge tenant fixture is readable but read-only for users; fake live transcript/RAG claims are absent; Spanish/English/Portuguese copy and accessible manager modal pass; backend errors redact internal details (mocked API only)');
+  checks.push('UAT-030 Knowledge UI keeps users read-only and gives managers synthetic detail/create/edit/delete flows; create is tenant-bound, update omits caller tenant, fake live transcript/RAG claims are absent, localization and accessible modals pass, and backend errors are sanitized (mocked API only)');
   const dashboard=await pageFor('user');await dashboard.page.goto(origin+'/dashboard');
   await dashboard.page.getByRole('heading',{name:'Hola, Company',exact:true}).waitFor();
   await dashboard.page.getByText('Esta es tu actividad de hoy',{exact:true}).waitFor();

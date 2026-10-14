@@ -1,4 +1,25 @@
-## Current Auto stage — main 5.1.33; 5.1.34 documentation reconciliation in progress (2026-10-14)
+## Current Auto stage — source candidate 5.1.35; delivery pending (2026-10-14)
+
+The active run remains `20261014-0007-phdk-auto-completion`. Current source adds tenant-scoped KnowledgeBase detail/update APIs and administration UI under the owner-approved role policy. API regressions pass 35/35 suites, Cloud 14/14, the Web production build/typecheck and focused lint pass, synthetic local built-SPA UAT passes the KnowledgeBase list/detail/create/edit/delete journey, and PHDK coherence passes 52/52. The UAT evidence fingerprint is `sha256:184766ef2fc200a68594ee1fd9b1a9b26b754aed300ca1d4ca8a6d213d1f1655`. The source branch is `fix/phdk-knowledge-base-management-5-1-35`; PR and remote delivery are not yet complete. Overall Auto remains PARTIALLY DELIVERED.
+
+| Stage | Status | Evidence / next action |
+|---|---|---|
+| 00 Preflight | REUSED / REVALIDATED | Installed PHDK 2.50.10; static coherence passes 52/52. |
+| 10 Capture | REUSED | Four owner-confirmed fronts, role policy, and per-tenant private CRM allowlist rule remain current. |
+| 20 Plan | REUSED | Existing brownfield plan and source-first CRM scope remain current. |
+| 30 PMO / Workstreams | COMPLETE FOR THIS SLICE | Candidate closes a KnowledgeBase administrative detail/update gap; full acceptance limits stay tracked. |
+| 40 Integration Review | PASS FOR CANDIDATE | API/Cloud mirrors, manager routes and UI are implemented; coherence passes 52/52. |
+| 50 UAT | PASS FOR SYNTHETIC SOURCE | Local built-SPA UAT covers KnowledgeBase manager lifecycle; it does not prove real server authorization. |
+| 60 UAT Fix | COMPLETE FOR THIS SLICE | Candidate UAT passed after aligning the mocked delete response with the client contract. |
+| 65 SEO | REUSED / SOURCE UNCHANGED | No page discovery content changed; deployed SEO remains unverified. |
+| 67 AEO/GEO | REUSED / SOURCE UNCHANGED | No client/vendor or deployed discovery claim is made. |
+| 70 Check | PASS FOR SCOPED CHANGE | 35 API and 14 Cloud regression suites pass; tenant-boundary assertions and coherent PHDK mapping verified. |
+| 80 Remediation | SOURCE CANDIDATE | The KnowledgeBase detail/update gap is addressed; PR, review controls and main readback remain. |
+| 90 Delivery | PENDING | Open the versioned PR, reconcile actual checks/reviews, merge through allowed controls, and verify remote main. |
+
+Remaining acceptance includes safe DB-backed identities, disposable PostgreSQL/migrations, persisted CRUD authorization, live Qdrant and delete/reindex behavior, native Windows device/audio, broad accessibility/localization, and deployed SEO/AEO. CRM and voice acceptance remain client-specific. No client endpoint, customer data, production database, or deployment was used.
+
+## Previous candidate snapshot — 5.1.34
 
 | Stage | Status | Evidence / next action |
 |---|---|---|

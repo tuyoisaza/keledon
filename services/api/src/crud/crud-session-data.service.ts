@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { QdrantClient } from '@qdrant/qdrant-js';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -82,12 +86,67 @@ export class CrudSessionDataService {
     });
   }
 
+  async getKnowledgeBase(id: string, companyId?: string) {
+    const knowledgeBase = await this.prisma.knowledgeBase.findFirst({
+      where: { id, ...(companyId ? { companyId } : {}) },
+      include: { _count: { select: { documents: true } } },
+    });
+    if (!knowledgeBase) throw new NotFoundException('Knowledge base not found');
+    return knowledgeBase;
+  }
+
   async createKnowledgeBase(data: {
     companyId: string;
     name: string;
     description?: string;
   }) {
     return this.prisma.knowledgeBase.create({ data });
+  }
+
+  async updateKnowledgeBase(
+    id: string,
+    data: { name?: string; description?: string | null },
+    companyId?: string,
+  ) {
+    const updateData: { name?: string; description?: string | null } = {};
+    if (data.name !== undefined) {
+      if (
+        typeof data.name !== 'string' ||
+        !data.name.trim() ||
+        data.name.trim().length > 200
+      )
+        throw new BadRequestException(
+          'Knowledge base name must be 1–200 characters',
+        );
+      updateData.name = data.name.trim();
+    }
+    if (data.description !== undefined) {
+      if (data.description !== null && typeof data.description !== 'string')
+        throw new BadRequestException(
+          'Knowledge base description must be text',
+        );
+      if (
+        typeof data.description === 'string' &&
+        data.description.length > 4000
+      )
+        throw new BadRequestException('Knowledge base description is too long');
+      updateData.description = data.description?.trim() || null;
+    }
+    if (Object.keys(updateData).length === 0)
+      throw new BadRequestException(
+        'At least one knowledge base field is required',
+      );
+
+    const existing = await this.prisma.knowledgeBase.findFirst({
+      where: { id, ...(companyId ? { companyId } : {}) },
+      select: { id: true },
+    });
+    if (!existing) throw new NotFoundException('Knowledge base not found');
+    return this.prisma.knowledgeBase.update({
+      where: { id: existing.id },
+      data: updateData,
+      include: { _count: { select: { documents: true } } },
+    });
   }
 
   async deleteKnowledgeBase(id: string) {

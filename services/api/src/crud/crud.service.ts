@@ -507,12 +507,24 @@ export class CrudService {
     return this.sessionDataService.getKnowledgeBases(companyId);
   }
 
+  async getKnowledgeBase(id: string, companyId?: string) {
+    return this.sessionDataService.getKnowledgeBase(id, companyId);
+  }
+
   async createKnowledgeBase(data: {
     companyId: string;
     name: string;
     description?: string;
   }) {
     return this.sessionDataService.createKnowledgeBase(data);
+  }
+
+  async updateKnowledgeBase(
+    id: string,
+    data: { name?: string; description?: string | null },
+    companyId?: string,
+  ) {
+    return this.sessionDataService.updateKnowledgeBase(id, data, companyId);
   }
 
   async deleteKnowledgeBase(id: string) {

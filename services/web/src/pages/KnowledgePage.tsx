@@ -6,6 +6,7 @@ import { vectorStoreAPI, type PolicyDocument, type VectorStoreStatus } from '@/l
 import { getCompanies, getBrands, getTeams, type Company, type Brand, type Team } from '@/lib/crud-api';
 import { getBrandsForCompany, getTeamsForBrand, readPlainTextFile } from '@/lib/knowledge-source-utils.js';
 import ManagementModal from '@/components/common/ManagementModal';
+import KnowledgeBaseManager from '@/components/knowledge/KnowledgeBaseManager';
 
 interface KnowledgeDocument {
     id: string;
@@ -266,6 +267,8 @@ export default function KnowledgePage() {
                     <div className="text-2xl font-bold text-foreground">{vectorStatus?.distance || 'Cosine'}</div>
                 </div>
             </div>
+
+            {canManageKnowledge && <KnowledgeBaseManager companies={companies} />}
 
             {/* Error Message */}
             {vectorError && (

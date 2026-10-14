@@ -1,3 +1,11 @@
+## v5.1.35 — 2026-10-14 (complete Knowledge Base manager CRUD)
+
+- Add company-scoped Knowledge Base detail and update routes in API and Cloud, with input validation and an allowlist limited to name and description.
+- Add a localized administration UI for listing, inspecting, creating, editing, and deleting bases; ordinary users remain read-only.
+- Add API/Cloud tenant-isolation regressions and extend the synthetic SPA UAT across the management lifecycle.
+- API regression 35/35, Cloud 14/14, Web typecheck/build, focused lint, and synthetic SPA UAT pass. Persisted database and live Qdrant acceptance remain open.
+- Align all five application package/lock roots and the Browser renderer at 5.1.35.
+
 ## v5.1.34 — 2026-10-14 (reconcile current PHDK acceptance evidence)
 
 - Reconcile the active lifecycle, CRUD matrix, and Check report with the merged 5.1.33 Knowledge vector cleanup; distinguish mocked source verification from still-open PostgreSQL, live-Qdrant, and concurrency acceptance.

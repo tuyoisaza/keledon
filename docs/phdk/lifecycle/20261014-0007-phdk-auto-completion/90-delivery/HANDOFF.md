@@ -11,6 +11,12 @@ SIGUIENTE PASO: provide safe development identities, disposable PostgreSQL and a
 ---
 # Delivery handoff — candidate 5.1.26
 
+## Active candidate 5.1.35 — PR and remote delivery pending
+
+Branch `fix/phdk-knowledge-base-management-5-1-35` is based on the verified 5.1.34 main tip `6a8275c3d3f9813a9c3aea7a0d3121ae18cd2a1e`. API and Cloud now provide company-scoped KnowledgeBase detail/update; the Web manager adds localized detail/create/edit/delete operations. API regressions pass 35/35 suites, Cloud 14/14, Web typecheck/build and focused lint pass, and synthetic built-SPA UAT passes its KnowledgeBase lifecycle journey. Run exact-source PHDK coherence and evidence, then create the version-prefixed PR, reconcile GitHub review/check state, follow permitted merge controls, and verify remote main SHA/tree/version before claiming source delivery. No deployment is claimed.
+
+Overall PHDK Auto remains PARTIALLY DELIVERED: safe DB identities, disposable PostgreSQL/persisted CRUD, live Qdrant and concurrency, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Calls and CRM remain customer-specific; private destinations require validation and tenant allowlists, and Cloud does not fetch them.
+
 ## Verified delivery — candidate 5.1.32 (2026-10-14)
 
 PR [#102](https://github.com/tuyoisaza/keledon/pull/102) merged source candidate `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5` by squash at `7b2547edcf2f397e6fe1098386af226035e2613b`. `origin/main` and `git ls-remote` agree; remote tree `d4198e21b495cf15d9972cf48b5ef0c957dc4ea7` matches the candidate tree. API, Cloud, Web, Landing and Browser package/lock roots are 5.1.32. Merge title is version-prefixed. GitHub had no hosted checks or review submissions; no deployment is claimed. Whole Auto remains PARTIALLY DELIVERED for safe DB identities/persistence, native device/audio, exhaustive model-operation coverage, broad accessibility/localization and deployed SEO/AEO. CRM/call acceptance remains specific to each client's configured providers; private CRM endpoints are validated and tenant-allowlisted and are not fetched by Cloud.
