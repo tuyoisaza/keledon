@@ -91,7 +91,7 @@ async function main() {
     const service = Object.create(CrudService.prototype);
     service.prisma = {
       tenantVoiceProfile: Object.fromEntries(
-        ['findMany', 'create', 'update'].map((method) => [
+        ['findMany', 'findFirst', 'create', 'update'].map((method) => [
           method,
           async (args) => {
             calls.push({ method, args });
@@ -103,6 +103,7 @@ async function main() {
     };
 
     const list = await service.getTenantVoiceProfiles('company-a');
+    const detail = await service.getTenantVoiceProfile('voice-a', 'company-a');
     const callCount = calls.length;
     await assert.rejects(
       service.createTenantVoiceProfile({
@@ -127,7 +128,7 @@ async function main() {
     });
     const updated = await service.updateTenantVoiceProfile('voice-a', {});
 
-    assert.equal(calls.length, 3);
+    assert.equal(calls.length, 4);
     for (const { args } of calls) {
       assert.equal(
         JSON.stringify(Object.keys(args.select)),
@@ -138,7 +139,8 @@ async function main() {
       assert.equal(Object.hasOwn(args.select, 'providerCatalog'), false);
     }
     assert.equal(calls[0].args.where.companyId, 'company-a');
-    for (const result of [list[0], created, updated]) {
+    assert.equal(calls[1].args.where.companyId, 'company-a');
+    for (const result of [list[0], detail, created, updated]) {
       assert.equal(Object.hasOwn(result, 'config'), false);
       assert.equal(Object.hasOwn(result, 'providerCatalog'), false);
       assert.equal(
@@ -152,7 +154,7 @@ async function main() {
     }
   }
   console.log(
-    'PASS API/Cloud tenant voice-profile list/create/update responses use the same safe projection and omit profile/provider config',
+    'PASS API/Cloud tenant voice-profile list/detail/create/update responses use the same safe projection and omit profile/provider config',
   );
 }
 

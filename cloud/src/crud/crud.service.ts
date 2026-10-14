@@ -398,6 +398,20 @@ export class CrudService {
     });
   }
 
+  async getTenantVoiceProfile(id: string, companyId?: string) {
+    return this.prisma.tenantVoiceProfile.findFirst({
+      where: { id, ...(companyId ? { companyId } : {}) },
+      select: {
+        id: true,
+        name: true,
+        providerId: true,
+        language: true,
+        isEnabled: true,
+        isDefault: true,
+      },
+    });
+  }
+
   async createTenantVoiceProfile(data: {
     companyId: string;
     providerId: string;

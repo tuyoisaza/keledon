@@ -1,5 +1,9 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.31 — Cloud voice-profile detail parity (2026-10-14)
+
+UAT-029 passes in API/Cloud source harnesses. Cloud now exposes the same safe tenant detail route as API, scopes its Prisma lookup by the current DB-derived actor company, and denies a foreign profile ID in `CrudAccessGuard`. Regression 41 verifies list/detail/create/update projections match across both services and omit `config` and `providerCatalog`; Cloud regression 39 verifies its controller method and cross-company guard behavior. Cloud build and regressions pass 14/14; API build and regressions pass 29/29. No persistent profile or identity was accessed.
+
 ## Candidate 5.1.31 — widget, diagnostics, and built-Web journey (2026-10-14)
 
 UAT-028 passes. Web diagnostics/widget tests pass 19/19; Web typecheck and production build pass. The local built-SPA UAT passes 1/1 against synthetic Company Co fixtures with all API requests intercepted and external network blocked. It covers redaction, debug-off no-read behavior, manually initiated safe probes, reset truthfulness, route coverage, admin workflows, keyboard/focus and responsive zoom. Exact candidate revision `f700fe0f9cc57c0c8e3370698724ef5660e8d8d4` and screenshots are recorded in `docs/phdk/evidence/uat-local-web.json` and adjacent PNGs. This is not live authentication, persisted data, native-device or complete accessibility acceptance.
