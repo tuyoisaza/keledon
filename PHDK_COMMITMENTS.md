@@ -1,21 +1,21 @@
 # Commitment ledger
 
-## Active run `20261014-0007-phdk-auto-completion` — 5.1.35 source candidate, delivery pending
+## Active run `20261014-0007-phdk-auto-completion` — 5.1.35 delivered baseline; matrix reconciliation active
 
-All four owner-confirmed fronts remain active in the confirmed order. Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` was delivered by PR #106 at remote main `73c0fc52b37d96d283e8709e76b99c17db0b1a83`; all application roots and Browser renderer align at 5.1.35. PHDK coherence is 52/52; API regression 35/35 and Cloud 14/14 pass; API/Cloud builds, Web typecheck/build and focused lint pass; exact-commit UAT uses synthetic intercepted APIs. No deployment, live Qdrant, PostgreSQL, customer data or client provider was used.
+All four owner-confirmed fronts remain active in the confirmed order. Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` shipped in PR #106; PR #107 updated the delivery record at current remote main `465b3633e571572b540151fe9433898a61c8fc09`. All application roots and Browser renderer align at 5.1.35. PHDK coherence is 52/52; API regression 35/35 and Cloud 14/14 pass; API/Cloud builds, Web typecheck/build and focused lint pass; exact-commit UAT uses synthetic intercepted APIs. The current Check reconciliation adds KnowledgeBase/KnowledgeDocument role×surface evidence and is pending normal docs-only PR delivery. No deployment, live Qdrant, PostgreSQL, customer data or client provider was used.
 
 | ID | Confirmed front | Current truth | Remaining acceptance |
 |---|---|---|---|
-| CMT-001 | Baseline, versions and PR reconciliation | PR #106 merged; remote `main` verified at `73c0fc52b37d96d283e8709e76b99c17db0b1a83`; all five app roots and Browser renderer align at 5.1.35. | Source slice delivered; no deployment is claimed. |
+| CMT-001 | Baseline, versions and PR reconciliation | PR #106 source and PR #107 delivery records merged; current `main` `465b3633e571572b540151fe9433898a61c8fc09`; all five app roots and Browser renderer align at 5.1.35. | Source slice delivered; matrix/audit correction PR remains in progress; no deployment is claimed. |
 | CMT-002 | Shared visible diagnostics widget and safe diagnostics | Widget remains covered by diagnostics and the 5.1.35 synthetic built-SPA UAT. | Native OS permission/device/audio and broad route/screen-reader accessibility remain open. |
 | CMT-003 | Voice → Cloud → Browser → CRM, providers chosen per client | Provider-neutral contracts and validated, per-tenant private CRM allowlists remain covered by offline tests. | Live call/CRM acceptance applies per tenant after provider configuration. |
-| CMT-004 | Administration and permissions | Approved least privilege and DB-derived scope retained; KnowledgeBase detail/update and UI CRUD are delivered with company-scoped guards and tests. | Persisted DB role/tenant/operation matrix, real DB-backed identities, and Qdrant/PostgreSQL failure/concurrency acceptance remain open. |
+| CMT-004 | Administration and permissions | Approved least privilege and DB-derived scope retained; KnowledgeBase detail/update and UI CRUD are delivered with company-scoped guards and tests. Matrix source drift test now covers 154 role×surface rows including KnowledgeBase and KnowledgeDocument. | Matrix docs PR/readback; persisted DB role/tenant/operation matrix, real DB-backed identities, and Qdrant/PostgreSQL failure/concurrency acceptance remain open. |
 
 Overall: **PARTIALLY DELIVERED**. UAT remains 28 PASS, 2 BLOCKED, 1 MANUAL. No database, customer provider, private CRM endpoint, customer data or deployment was used.
 
 SIGUIENTE PASO: provide safe DB-backed identities, disposable PostgreSQL and a supported native Windows device/audio host; then close the remaining CRUD, accessibility and deployed SEO/AEO acceptance.
 
-## Active run `20261014-0007-phdk-auto-completion` — refreshed candidate 5.1.32
+## Historical checkpoint — candidate 5.1.32
 
 The four owner-confirmed commitments remain active in the confirmed order. Base: verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; source commit `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`; five package/lock roots plus Browser renderer are 5.1.32. API 33/33, Cloud 14/14, Browser 33/33; all product builds pass; Web diagnostics 19/19; exact-source synthetic UAT 1/1; Web/Landing SEO 1/1 each; PHDK coherence 52/52. Exact UAT evidence is bound to `93f844b` with empty source diff. PR #102 has not yet been updated to this commit.
 
