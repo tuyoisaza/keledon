@@ -2,7 +2,7 @@
 
 ## Current Auto run `20261013-1900-phdk-auto` — candidate 5.1.17
 
-Run date: 2026-10-14 UTC / 2026-10-13 America/Mexico_City. Repository: `tuyoisaza/keledon`; branch `fix/phdk-keledon-voice-profile-accessibility`, base HEAD `60d7382f0e2003597690673103ace4e785f0c018`, product 5.1.17. The exact dirty working tree was built before UAT and exercised locally; the evidence file's `candidateRevision` is only base HEAD, not an assertion that the uncommitted tree equals that SHA. Repeat after commit and bind the new evidence to the committed source.
+Run date: 2026-10-14 UTC / 2026-10-13 America/Mexico_City. Repository: `tuyoisaza/keledon`; branch `fix/phdk-keledon-voice-profile-accessibility`, product 5.1.17, product source commit `4e874c14cde10fd5b1a0ce521ee097e67823e120`. An initial UAT run exercised the dirty candidate; after commit, the same suite was rerun on the exact commit above. `docs/phdk/evidence/uat-local-web.json` records that SHA. All API calls remain intercepted and this is not persisted or production acceptance.
 
 Intent alignment uses `PROJECT_INTENT.md` INT-001..003 and `REQUIREMENTS_TRACEABILITY.md` FR-001..004, SEC-001..003. Stories US-007/US-008 and cases UAT-T-008/009 trace to CMT-003/004. Client-specific CRM/call vendors remain a non-goal for universal acceptance, per owner clarification.
 

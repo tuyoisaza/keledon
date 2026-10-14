@@ -15,7 +15,7 @@ Project intent and applicability sources: `PROJECT_INTENT.md`, `REQUIREMENTS_TRA
 | UNKNOWN / DECISION NEEDED | 1 | Public market/language target is not specified; current public shell is English. |
 | UNVERIFIED | 2 | Persisted CRUD/migration/database state; native Electron/device/microphone/audio behavior. |
 
-Overall: **GAPS FOUND / ALIGNMENT INCOMPLETE**. PHDK version drift: none. No current product commit, PR, merge or remote-main verification exists for this candidate. The Auto goal remains PARTIALLY DELIVERED.
+Overall: **GAPS FOUND / ALIGNMENT INCOMPLETE**. PHDK version drift: none. The audit began on a dirty worktree; validated source was committed at `4e874c14cde10fd5b1a0ce521ee097e67823e120`, and post-commit synthetic UAT is bound to that SHA. PR, merge and remote-main verification remain pending. The Auto goal remains PARTIALLY DELIVERED.
 
 ## Findings and authorized remediation order
 
@@ -28,7 +28,7 @@ Overall: **GAPS FOUND / ALIGNMENT INCOMPLETE**. PHDK version drift: none. No cur
 | CHK-005 | Medium; EXTERNAL/MANUAL | `PHDK_SEO.md` / `PHDK_AEO_GEO.md`: both app shells now have source metadata/private-route policy and static tests, but HTTP headers, crawler rendering, TLS/redirects, CWV, Search Console, backlinks and answer citations are unmeasured. | Keep source fixes; after authorized deployment provide bounded read-only metrics if they are required. No source evidence can close field measurements. | SEO tests 1/1 in web and landing; report `NOT MEASURED` until real authorized evidence. |
 | CHK-006 | Medium; DECISION REQUIRED | Capture has no public market/language definition; public shell declares `lang=en` while app locales en/es/pt. | Ask product owner to define public-language/locale-route intent before creating multilingual public SEO variants. No assumption from geographic location. | Independent code checks proceed; this product decision is not needed for code delivery. |
 | CHK-007 | Medium; EXTERNAL/MANUAL | `UAT_STANDARD.md`, `PHDK_UX_UI.md`; native Electron renderer/dialog, actual OS permissions, device pairing and physical audio have not been exercised on this host. | Human operator with supported Windows native control and test device must inspect deny/grant dialog, pairing/error recovery and audio without a customer call; capture redacted evidence. | Requires native test host/device and action-time OS media consent; no OS permission or call made here. |
-| CHK-008 | High; EXTERNAL/MANUAL | `CRUD_MATRIX.md`, `UAT_REPORT.md`, `PHDK_COMPLETION_GATE.md`, `MAIN_DELIVERY_STANDARD.md`; working tree is dirty/uncommitted and no product PR/remote main readback exists. | Complete source changes, exact-boundary tests, review outgoing diff, version-prefixed commit/PR, satisfy repository controls, merge and independently verify remote SHA/version/commitments. | Product code validation and normal git delivery remain in-scope Auto actions; required checks/review controls must be respected. |
+| CHK-008 | High; NORMAL DELIVERY IN PROGRESS | `CRUD_MATRIX.md`, `UAT_REPORT.md`, `PHDK_COMPLETION_GATE.md`, `MAIN_DELIVERY_STANDARD.md`; product source commit `4e874c14cde10fd5b1a0ce521ee097e67823e120` exists and exact-SHA synthetic UAT passes. No product PR or remote-main readback exists yet. | Push the versioned source, open a normal PR, satisfy repository controls, merge and independently verify remote SHA/version/commitments. | Product code validation is complete; PR creation/merge and remote readback remain. |
 
 ## Non-gap evidence and applicability
 

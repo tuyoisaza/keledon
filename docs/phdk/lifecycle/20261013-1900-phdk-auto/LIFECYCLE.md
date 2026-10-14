@@ -22,4 +22,4 @@ Candidate: product 5.1.17, branch `fix/phdk-keledon-voice-profile-accessibility`
 
 Confirmed scope remains CMT-001..004 in owner-approved order. CRM/call provider is client-selected. This archive records stage evidence, not background authority. No production data, database, provider writes, paid requests or deployment were used.
 
-Next: finish diff review, commit v5.1.17, bind final UAT to the commit SHA, and continue normal PR/main delivery. CHK-001 Voice Profile detail/edit is closed at source. Overall goal remains PARTIALLY DELIVERED until verified remote readback and outstanding persisted/native/accessibility/deployed acceptance are reconciled.
+Next: publish branch `fix/phdk-keledon-voice-profile-accessibility`, open the normal v5.1.17 PR, and finish merge/readback. Product source commit `4e874c14cde10fd5b1a0ce521ee097e67823e120` has exact-SHA UAT evidence; CHK-001 Voice Profile detail/edit is closed at source. Overall goal remains PARTIALLY DELIVERED until verified remote readback and outstanding persisted/native/accessibility/deployed acceptance are reconciled.
