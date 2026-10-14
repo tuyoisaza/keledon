@@ -1,6 +1,6 @@
 ## Current Auto stage — source candidate 5.1.35; delivery pending (2026-10-14)
 
-The active run remains `20261014-0007-phdk-auto-completion`. Current source adds tenant-scoped KnowledgeBase detail/update APIs and administration UI under the owner-approved role policy. API regressions pass 35/35 suites, Cloud 14/14, the Web production build/typecheck and focused lint pass, synthetic local built-SPA UAT passes the KnowledgeBase list/detail/create/edit/delete journey, and PHDK coherence passes 52/52. The UAT evidence fingerprint is `sha256:184766ef2fc200a68594ee1fd9b1a9b26b754aed300ca1d4ca8a6d213d1f1655`. The source branch is `fix/phdk-knowledge-base-management-5-1-35`; PR and remote delivery are not yet complete. Overall Auto remains PARTIALLY DELIVERED.
+The active run remains `20261014-0007-phdk-auto-completion`. Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` adds tenant-scoped KnowledgeBase detail/update APIs and administration UI under the owner-approved role policy. API regressions pass 35/35 suites, Cloud 14/14, the Web production build/typecheck and focused lint pass, exact-commit synthetic local built-SPA UAT passes the KnowledgeBase list/detail/create/edit/delete journey, and PHDK coherence passes 52/52. UAT source fingerprint: `sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`. The source branch is `fix/phdk-knowledge-base-management-5-1-35`; PR and remote delivery are not yet complete. Overall Auto remains PARTIALLY DELIVERED.
 
 | Stage | Status | Evidence / next action |
 |---|---|---|

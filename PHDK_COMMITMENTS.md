@@ -2,7 +2,7 @@
 
 ## Active run `20261014-0007-phdk-auto-completion` — 5.1.35 source candidate, delivery pending
 
-All four owner-confirmed fronts remain active in the confirmed order. Verified base is main `6a8275c3d3f9813a9c3aea7a0d3121ae18cd2a1e`; the 5.1.35 candidate aligns all five application package/lock roots and the Browser renderer, with PHDK coherence 52/52. API regression 35/35 and Cloud 14/14 pass; API/Cloud builds passed, Web typecheck/build and focused lint pass, and local built-SPA UAT passes with synthetic intercepted APIs. Source fingerprint: `sha256:184766ef2fc200a68594ee1fd9b1a9b26b754aed300ca1d4ca8a6d213d1f1655`. PR and remote delivery are pending; no deployment, live Qdrant, PostgreSQL, customer data or client provider was used.
+All four owner-confirmed fronts remain active in the confirmed order. Verified base is main `6a8275c3d3f9813a9c3aea7a0d3121ae18cd2a1e`; source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` aligns all five application package/lock roots and the Browser renderer at 5.1.35, with PHDK coherence 52/52. API regression 35/35 and Cloud 14/14 pass; API/Cloud builds passed, Web typecheck/build and focused lint pass, and exact-commit local built-SPA UAT passes with synthetic intercepted APIs. Source fingerprint: `sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`. PR and remote delivery are pending; no deployment, live Qdrant, PostgreSQL, customer data or client provider was used.
 
 | ID | Confirmed front | Current truth | Remaining acceptance |
 |---|---|---|---|

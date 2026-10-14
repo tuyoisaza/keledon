@@ -3,7 +3,8 @@
   "status": "SOURCE_CANDIDATE_DELIVERY_PENDING",
   "baseMain": "6a8275c3d3f9813a9c3aea7a0d3121ae18cd2a1e",
   "branch": "fix/phdk-knowledge-base-management-5-1-35",
-  "sourceFingerprint": "sha256:184766ef2fc200a68594ee1fd9b1a9b26b754aed300ca1d4ca8a6d213d1f1655",
+  "sourceCommit": "2f18c7d82d6a6ac1155910c4f0206da02e0e4de0",
+  "sourceFingerprint": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "phdk": {
     "version": "2.50.10",
     "coherenceMappings": "52/52"
