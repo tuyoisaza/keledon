@@ -6,9 +6,9 @@ The four owner-confirmed workstreams remain in order CMT-001 → CMT-002 → CMT
 | Task | Commitment | Work | Acceptance / dependency |
 |---|---|---|---|
 | T-014 | CMT-004 / CMT-002 | Localize KELEDON and Voice Profiles; fix tenant and mutation payload contracts; add accessible HTTP error states and global toast renderer. | Web typecheck/build, focused lint, API policy regression, Company Co synthetic browser UAT and locale parity. |
-| T-015 | CMT-001..004 | Reconcile applicable PHDK standards, CRUD matrix, active-route i18n/a11y, debug widget, UX/UI, SEO/AEO and delivery evidence. | Integration → UAT/Fix → SEO → AEO/GEO → Check/remediation → normal PR/main readback; keep persisted/native/deployed blockers distinct. |
+| T-015 | CMT-001..004 | Reconcile applicable PHDK standards, CRUD matrix, active-route i18n/a11y, debug widget, UX/UI, SEO/AEO and delivery evidence. | Source slice delivered by PR #78; continue source-audit findings and keep persisted/native/deployed blockers distinct. |
 
-Dependency order: T-014 → UAT Fix/retest → SEO → AEO/GEO → Check → in-scope remediation → T-015 delivery. Existing T-001..T-013 history and unresolved work remain active; this continuation does not waive persisted CRUD/migration, native device/audio, broad route audit or deployed discovery evidence.
+Dependency order: T-014 → UAT Fix/retest → SEO → AEO/GEO → Check → in-scope remediation → PR #78/main readback. Existing T-001..T-013 history and unresolved work remain active; this continuation does not waive persisted CRUD/migration, native device/audio, broad route audit or deployed discovery evidence.
 
 ## Current Auto continuation — 2026-10-13, candidate 5.1.16
 
