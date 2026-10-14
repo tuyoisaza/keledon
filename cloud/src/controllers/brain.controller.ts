@@ -135,8 +135,8 @@ export class BrainController {
           teamName,
         },
       };
-    } catch (error) {
-      console.error('BrainController: failed to generate chat response', error);
+    } catch {
+      console.error('BrainController: failed to generate chat response');
       throw new HttpException(
         'Failed to talk to Brain',
         HttpStatus.INTERNAL_SERVER_ERROR,

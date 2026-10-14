@@ -337,7 +337,9 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return { error: 'No active session' };
     }
 
-    this.logger.debug(`Transcript from ${client.data.deviceId}: ${data.text}`);
+    this.logger.debug(
+      `Transcript received from ${client.data.deviceId} (${data.text.length} characters)`,
+    );
 
     this.server.to(`session:${sessionId}`).emit('transcript', {
       device_id: client.data.deviceId,

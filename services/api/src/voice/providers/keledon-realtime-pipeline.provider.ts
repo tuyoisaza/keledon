@@ -150,9 +150,8 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
 
       if (!result.text || !result.isFinal) return;
 
-      // Log the transcript
       this.logger.log(
-        `[${sessionId}] STT: "${result.text.slice(0, 80)}" (conf=${result.confidence}, ${session.sttLatencyMs}ms)`,
+        `[${sessionId}] STT transcript received (${result.text.length} characters, conf=${result.confidence}, ${session.sttLatencyMs}ms)`,
       );
 
       // Add to history

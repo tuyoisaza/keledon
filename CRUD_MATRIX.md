@@ -2,7 +2,7 @@
 
 ## Current Auto candidate 5.1.22 — voice/provider error redaction
 
-The API/Cloud source audit removed transcript and spoken-response snippets from logs, suppresses raw upstream STT/TTS/OpenAI errors, and removed prompt echo from the Cloud fallback. This privacy hardening does not close the remaining 35-model CRUD × role × operation Check. Candidate branch `fix/provider-error-redaction` is based on 5.1.21 main at `5b81b36c4e6534a930edc0a9f59f2ba117b01bb`; all five app package/lock roots are 5.1.22 and delivery is pending.
+The API/Cloud source audit removed transcript, agent-command and spoken-response content from logs, suppresses upstream STT/TTS/decision errors in logs and voice responses, and removed prompt echo from the Cloud fallback. This privacy hardening does not close the remaining 35-model CRUD × role × operation Check. Candidate branch `fix/provider-error-redaction` is based on 5.1.21 main at `5b81b36c4e6534a930edc0a9f59f2ba117b01bb`; all five app package/lock roots are 5.1.22 and delivery is pending.
 
 ## Current Auto candidate 5.1.21 — Check addendum
 

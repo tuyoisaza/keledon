@@ -205,10 +205,8 @@ export class DecisionEngineService {
         processingTime,
         decisionEvidence: decisionOutcome.evidence,
       };
-    } catch (error) {
-      console.error('[DecisionEngine] Error processing text input:', error);
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+    } catch {
+      console.error('[DecisionEngine] Error processing text input');
 
       // Return error command (anti-demo rule: show failure)
       const errorCommand: CloudCommand = {
@@ -221,7 +219,7 @@ export class DecisionEngineService {
         flow_id: null,
         flow_run_id: null,
         say: {
-          text: `Decision processing failed: ${errorMessage}`,
+          text: 'Decision processing failed. Please try again later.',
           interruptible: true,
         },
       };
@@ -229,8 +227,11 @@ export class DecisionEngineService {
       return {
         command: errorCommand,
         confidence: 0,
-        reasoning: `Error: ${errorMessage}`,
-        context: { error: errorMessage, decision_id: decisionId },
+        reasoning: 'Decision processing failed',
+        context: {
+          error: 'Decision processing failed',
+          decision_id: decisionId,
+        },
         processingTime: Date.now() - startTime,
       };
     }
