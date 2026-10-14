@@ -595,10 +595,10 @@ model Vendor {
   name        String   // e.g., "Salesforce", "Genesys", "HubSpot"
   type        String   // "crm", "telephony", "helpdesk", "other"
   baseUrl     String?  // e.g., "https://login.salesforce.com"
-  username    String?  // encrypted
+  username    String?  // encrypted at rest; masked in API projections
   password    String?  // encrypted
   apiKey      String?  // encrypted
-  config      Json?    // additional config (encrypted JSON)
+  config      Json?    // non-secret config, including tenant-validated allowed origins
   startGoal   String?  // startup instructions for the vendor agent
   isActive   Boolean  @default(true)
   createdAt   DateTime @default(now())

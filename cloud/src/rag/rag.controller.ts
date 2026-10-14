@@ -1,6 +1,10 @@
 import { Controller, Post, Body, Get, Param, UseGuards } from '@nestjs/common';
-import { RAGService } from './rag.service';
+import { KnowledgePattern, RAGService } from './rag.service';
 import { ResourceScopeGuard } from '../guards/resource-scope.guard';
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : 'Unexpected RAG error';
+}
 
 interface RetrieveRequest {
   query: string;
@@ -45,13 +49,12 @@ export class RAGController {
         response:
           'Based on the retrieved knowledge, KELEDON is an AI-powered automation platform that helps users streamline their workflows.',
       };
-    } catch (error) {
-      console.error(
-        `[RAG Controller] Error retrieving knowledge: ${error.message}`,
-      );
+    } catch (error: unknown) {
+      const message = errorMessage(error);
+      console.error(`[RAG Controller] Error retrieving knowledge: ${message}`);
       return {
         success: false,
-        error: error.message,
+        error: message,
         query: request.query,
         sessionId: request.sessionId,
         companyId: request.companyId,
@@ -80,13 +83,12 @@ export class RAGController {
         feedback: result.feedback,
         analysis: result.analysis,
       };
-    } catch (error) {
-      console.error(
-        `[RAG Controller] Error evaluating response: ${error.message}`,
-      );
+    } catch (error: unknown) {
+      const message = errorMessage(error);
+      console.error(`[RAG Controller] Error evaluating response: ${message}`);
       return {
         success: false,
-        error: error.message,
+        error: message,
         sessionId: request.sessionId,
       };
     }
@@ -104,13 +106,14 @@ export class RAGController {
         sessionId,
         context,
       };
-    } catch (error) {
+    } catch (error: unknown) {
+      const message = errorMessage(error);
       console.error(
-        `[RAG Controller] Error getting session context: ${error.message}`,
+        `[RAG Controller] Error getting session context: ${message}`,
       );
       return {
         success: false,
-        error: error.message,
+        error: message,
         sessionId,
       };
     }
@@ -119,7 +122,7 @@ export class RAGController {
   @Post('session/:sessionId/context')
   async updateSessionContext(
     @Param('sessionId') sessionId: string,
-    @Body() patternData: any,
+    @Body() patternData: Partial<KnowledgePattern>,
   ) {
     try {
       console.log(`[RAG Controller] Update session context: ${sessionId}`);
@@ -134,13 +137,14 @@ export class RAGController {
         message: result.message,
         sessionId,
       };
-    } catch (error) {
+    } catch (error: unknown) {
+      const message = errorMessage(error);
       console.error(
-        `[RAG Controller] Error updating session context: ${error.message}`,
+        `[RAG Controller] Error updating session context: ${message}`,
       );
       return {
         success: false,
-        error: error.message,
+        error: message,
         sessionId,
       };
     }
@@ -158,13 +162,14 @@ export class RAGController {
         sessionId,
         gaps,
       };
-    } catch (error) {
+    } catch (error: unknown) {
+      const message = errorMessage(error);
       console.error(
-        `[RAG Controller] Error getting knowledge gaps: ${error.message}`,
+        `[RAG Controller] Error getting knowledge gaps: ${message}`,
       );
       return {
         success: false,
-        error: error.message,
+        error: message,
         sessionId,
       };
     }
@@ -182,13 +187,14 @@ export class RAGController {
         sessionId,
         suggestions,
       };
-    } catch (error) {
+    } catch (error: unknown) {
+      const message = errorMessage(error);
       console.error(
-        `[RAG Controller] Error getting query suggestions: ${error.message}`,
+        `[RAG Controller] Error getting query suggestions: ${message}`,
       );
       return {
         success: false,
-        error: error.message,
+        error: message,
         sessionId,
       };
     }

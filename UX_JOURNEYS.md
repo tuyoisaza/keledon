@@ -10,3 +10,6 @@
 | J-003 launch/call | configured operator | validate/pair/vendors/standby/voice/action/summary | invalid config/provider/disconnect explicit recovery | UAT-003/005 |
 | J-004 manage | permitted admin role | list/detail/validated edit | empty/loading/validation/403 and cross-tenant denial | UAT-004 |
 Native keyboard controls, focus, accessible names/non-color status. Public diagnostic never fetches privileged history. Browser only in UAT.
+# 2026-10-14 continuation acceptance boundary
+
+For run `20261014-0007-phdk-auto-completion`, retain the existing journey IDs as source hypotheses and carry the four owner-approved fronts into acceptance. Add explicit negative journeys for (a) tenant A attempting tenant B resource/config/credential access, (b) non-superadmin elevating a user or assigning a company, (c) secret replacement followed by a safe response/read, and (d) allowed private CRM origin versus unlisted/invalid/cross-tenant origin in Browser redirects and automation. Each needs exact current-candidate UAT evidence; focused regression tests alone do not establish end-user acceptance. Provider-specific call/CRM journeys are parameterized per customer and remain unverified without that customer's non-sensitive test configuration.

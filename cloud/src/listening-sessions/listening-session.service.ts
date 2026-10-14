@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface ListeningSession {
-    sessionId: string;
-    wsUrl: string;
-    expiresAt: string;
-    tabUrl?: string;
-    tabTitle?: string;
+  sessionId: string;
+  wsUrl: string;
+  expiresAt: string;
+  tabUrl?: string;
+  tabTitle?: string;
 }
 
 @Injectable()

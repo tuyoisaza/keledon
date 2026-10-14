@@ -102,9 +102,11 @@ export class AuthGuard implements CanActivate {
       }
 
       // Decode and parse payload
-      const payload: TokenPayload = JSON.parse(
+      const parsed: unknown = JSON.parse(
         Buffer.from(base64Payload, 'base64').toString('utf-8'),
       );
+      if (!this.isTokenPayload(parsed)) return null;
+      const payload = parsed;
 
       // Check token expiry
       if (
@@ -129,5 +131,9 @@ export class AuthGuard implements CanActivate {
     } catch {
       return null;
     }
+  }
+
+  private isTokenPayload(value: unknown): value is TokenPayload {
+    return typeof value === 'object' && value !== null;
   }
 }

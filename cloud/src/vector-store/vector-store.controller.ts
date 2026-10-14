@@ -6,11 +6,14 @@ import {
   Delete,
   Body,
   Param,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { VectorStoreService } from './vector-store.service';
 import { ResourceScopeGuard } from '../guards/resource-scope.guard';
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
 @Controller('api/vector-store')
 @UseGuards(ResourceScopeGuard)
@@ -23,12 +26,12 @@ export class VectorStoreController {
   }
 
   @Post('documents')
-  async addDocument(@Body() document: any) {
+  async addDocument(@Body() document: unknown) {
     return this.vectorStoreService.addDocument(document);
   }
 
   @Put('documents/:id')
-  async updateDocument(@Param('id') id: string, @Body() document: any) {
+  async updateDocument(@Param('id') id: string, @Body() document: unknown) {
     return this.vectorStoreService.updateDocument(id, document);
   }
 
@@ -38,17 +41,9 @@ export class VectorStoreController {
   }
 
   @Post('search')
-  async search(
-    @Body()
-    body: {
-      query: string;
-      limit?: number;
-      scoreThreshold?: number;
-      category?: string[];
-      company_id?: string;
-    },
-  ) {
-    return this.vectorStoreService.search(body.query, body);
+  async search(@Body() body: unknown) {
+    const searchBody = isRecord(body) ? body : {};
+    return this.vectorStoreService.search(searchBody.query, searchBody);
   }
 
   @Get('documents')

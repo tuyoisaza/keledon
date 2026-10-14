@@ -50,13 +50,18 @@ test('vendor CRUD persists tenant origins while projecting only safe fields', as
   const list = await service.getVendors('team-a');
   assert.deepEqual(list[0].allowedOrigins, ['http://192.168.1.20:8080', 'https://crm.customer.test']);
   assert.equal('config' in list[0], false);
+  assert.equal(list[0].username, '***');
   assert.equal('password' in list[0], false);
   assert.equal('apiKey' in list[0], false);
   assert.equal(list[0].hasPassword, true);
 
-  const created = await service.createVendor({ teamId: 'team-a', name: 'New CRM', type: 'crm', baseUrl: 'http://127.0.0.1:8080', allowedOrigins: ['http://127.0.0.1:9000'] });
+  const created = await service.createVendor({ teamId: 'team-a', name: 'New CRM', type: 'crm', baseUrl: 'http://127.0.0.1:8080', username: 'operator', password: 'private-password', apiKey: 'private-key', allowedOrigins: ['http://127.0.0.1:9000'] });
   assert.deepEqual(createData.config.allowedOrigins, ['http://127.0.0.1:8080', 'http://127.0.0.1:9000']);
   assert.equal('config' in created, false);
+  assert.match(createData.username, /^keledon:vendor:storage:v1:/);
+  assert.match(createData.password, /^keledon:vendor:storage:v1:/);
+  assert.match(createData.apiKey, /^keledon:vendor:storage:v1:/);
+  assert.equal(created.username, '***');
   await service.updateVendor('vendor-a', { allowedOrigins: ['http://127.0.0.1:8080'] });
   assert.deepEqual(updateData.config.allowedOrigins, ['http://127.0.0.1:8080', 'http://192.168.1.20:8080']);
   assert.equal('allowedOrigins' in updateData, false);

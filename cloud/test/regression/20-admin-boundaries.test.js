@@ -39,7 +39,7 @@ function load(relative, adapters = {}) {
         if (name === '@nestjs/common') return common;
         if (name === '@nestjs/swagger') return common;
         if (name.endsWith('public.decorator')) return { Public: decorator };
-        if (name === 'crypto') return crypto;
+        if (name === 'crypto' || name === 'node:crypto') return crypto;
         if (name === 'bcrypt') return { hash: async () => 'isolated-hash' };
         return adapters[name] || {};
       },
@@ -521,6 +521,24 @@ async function main() {
     0,
     'unauthorized launch must not inspect or mutate device pairing',
   );
+  const signingEnv = [
+    process.env.KELEDON_LAUNCH_SECRET,
+    process.env.KELDEON_LAUNCH_SECRET,
+    process.env.KELEDON_AUTH_SECRET,
+  ];
+  delete process.env.KELEDON_LAUNCH_SECRET;
+  delete process.env.KELDEON_LAUNCH_SECRET;
+  delete process.env.KELEDON_AUTH_SECRET;
+  const unconfiguredLaunch = new CrudKeledonService({});
+  await assert.rejects(
+    () => unconfiguredLaunch.generateKeledonLaunchLink('k-a', 'owner'),
+    /Launch signing secret is not configured/,
+  );
+  [
+    process.env.KELEDON_LAUNCH_SECRET,
+    process.env.KELDEON_LAUNCH_SECRET,
+    process.env.KELEDON_AUTH_SECRET,
+  ] = signingEnv;
   let pendingDevice;
   const authorizedLaunch = new CrudKeledonService({
     keledon: {
@@ -561,6 +579,8 @@ async function main() {
       ],
     },
   });
+  const previousLaunchSecret = process.env.KELEDON_LAUNCH_SECRET;
+  process.env.KELEDON_LAUNCH_SECRET = 'regression-test-launch-secret';
   const link = await authorizedLaunch.generateKeledonLaunchLink('k-a', 'owner');
   assert.equal(pendingDevice.userId, 'owner');
   assert.equal(pendingDevice.keledonId, 'k-a');
@@ -573,6 +593,9 @@ async function main() {
   const signingSecret = process.env.KELEDON_LAUNCH_SECRET || process.env.KELDEON_LAUNCH_SECRET || process.env.KELEDON_AUTH_SECRET || 'keledon-default-secret';
   assert.equal(launchUrl.searchParams.get('signature'), crypto.createHmac('sha256', signingSecret).update(launchPayload).digest('hex').substring(0, 16));
   assert.equal(JSON.stringify(link.vendors).includes('isolated-hidden'), false);
+  if (previousLaunchSecret === undefined)
+    delete process.env.KELEDON_LAUNCH_SECRET;
+  else process.env.KELEDON_LAUNCH_SECRET = previousLaunchSecret;
   let keledonQuery;
   await new CrudKeledonService({
     keledon: {

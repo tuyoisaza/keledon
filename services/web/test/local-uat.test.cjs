@@ -3,12 +3,22 @@ const assert = require('node:assert/strict');
 const http = require('node:http');
 const fs = require('node:fs/promises');
 const path = require('node:path');
+const crypto = require('node:crypto');
 const { execFileSync } = require('node:child_process');
 const appVersion = require('../package.json').version;
 const { chromium } = require(path.resolve(__dirname,'../../api/node_modules/playwright'));
 const root = path.resolve(__dirname,'../../..');
 const dist = path.resolve(__dirname,'../dist');
 const evidence = path.join(root,'docs/phdk/evidence');
+async function getCandidateFingerprint(){
+ const baseCommit=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();
+ const sourceRoots=['browser','cloud','services/api','services/web','landing'];
+ const trackedDiff=execFileSync('git',['diff','--binary','HEAD','--',...sourceRoots],{cwd:root,maxBuffer:64*1024*1024});
+ const untracked=execFileSync('git',['ls-files','--others','--exclude-standard'],{cwd:root,encoding:'utf8'}).split(/\r?\n/).filter(file=>sourceRoots.some(sourceRoot=>file.startsWith(sourceRoot+'/'))).sort();
+ const hash=crypto.createHash('sha256').update(trackedDiff);
+ for(const relativePath of untracked){hash.update(relativePath);hash.update(await fs.readFile(path.join(root,relativePath)));}
+ return {baseCommit,sourceFingerprint:'sha256:'+hash.digest('hex'),dirtyUntrackedSourceFiles:untracked.length,sourceRoots};
+}
 const company={id:'company-co',name:'Company Co',industry:'Synthetic UAT',countries:[{countryCode:'MX'}]};
 const otherCompany={id:'other-company',name:'Other Co',industry:'Synthetic UAT',countries:[{countryCode:'MX'}]};
 const brand={id:'brand-co',name:'Company Co Brand',companyId:company.id,company};
@@ -461,7 +471,8 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.equal(deepReads,1);
   await diagnostic.context.close();
   checks.push(`UAT-002 ${appVersion} protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)`);
-  await fs.writeFile(path.join(evidence,'uat-local-web.json'),JSON.stringify({version:appVersion,date:new Date().toISOString(),candidateRevision:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),targetEnvironment:'local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked',origin,provenance:'UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance',checks,themeTokens,loginContrastSample:contrastByTheme,apiEvidence:'services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts',realVendorAudioCRM:'NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed'},null,2));
+  const candidate=await getCandidateFingerprint();
+  await fs.writeFile(path.join(evidence,'uat-local-web.json'),JSON.stringify({version:appVersion,date:new Date().toISOString(),candidateRevision:candidate.baseCommit,candidateSourceFingerprint:candidate.sourceFingerprint,dirtyUntrackedSourceFiles:candidate.dirtyUntrackedSourceFiles,sourceRoots:candidate.sourceRoots,targetEnvironment:'local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked',origin,provenance:'UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance',checks,themeTokens,loginContrastSample:contrastByTheme,apiEvidence:'services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts',realVendorAudioCRM:'NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed'},null,2));
   console.log('PASS local web journeys:',checks.join('\n'));
  }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
 });

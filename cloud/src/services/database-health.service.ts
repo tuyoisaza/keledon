@@ -1,6 +1,10 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : 'Unknown database error';
+}
+
 @Injectable()
 export class DatabaseHealthService implements OnModuleInit {
   private readonly logger = new Logger(DatabaseHealthService.name);
@@ -18,25 +22,31 @@ export class DatabaseHealthService implements OnModuleInit {
       console.log('✅ Database connection established');
       return true;
     } catch (error) {
-      const errorMessage = `Database connection failed: ${error.message}`;
-      this.logger.error(errorMessage);
-      console.error('❌ DATABASE: CRITICAL FAILURE - Database connection required');
+      const message = `Database connection failed: ${errorMessage(error)}`;
+      this.logger.error(message);
+      console.error(
+        '❌ DATABASE: CRITICAL FAILURE - Database connection required',
+      );
       process.exit(1);
     }
   }
 
-  async checkHealth(): Promise<{ status: string; database: boolean; error?: string }> {
+  async checkHealth(): Promise<{
+    status: string;
+    database: boolean;
+    error?: string;
+  }> {
     try {
       await this.prisma.$queryRaw`SELECT 1 as test`;
       return {
         status: 'healthy',
-        database: true
+        database: true,
       };
     } catch (error) {
       return {
         status: 'unhealthy',
         database: false,
-        error: error.message
+        error: errorMessage(error),
       };
     }
   }

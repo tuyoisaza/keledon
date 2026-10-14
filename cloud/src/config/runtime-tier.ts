@@ -39,7 +39,11 @@ const LOCAL_CORS_ORIGINS = ['http://localhost:5173', 'http://localhost:3000'];
 export function getRuntimeTier(): RuntimeTier {
   const rawTier = (process.env.KELEDON_ENV_TIER || '').trim().toUpperCase();
 
-  if (rawTier === 'DEV_LOCAL' || rawTier === 'CI_PROOF' || rawTier === 'PRODUCTION_MANAGED') {
+  if (
+    rawTier === 'DEV_LOCAL' ||
+    rawTier === 'CI_PROOF' ||
+    rawTier === 'PRODUCTION_MANAGED'
+  ) {
     return rawTier;
   }
 
@@ -47,10 +51,14 @@ export function getRuntimeTier(): RuntimeTier {
     return 'CI_PROOF';
   }
 
-  return process.env.NODE_ENV === 'production' ? 'PRODUCTION_MANAGED' : 'DEV_LOCAL';
+  return process.env.NODE_ENV === 'production'
+    ? 'PRODUCTION_MANAGED'
+    : 'DEV_LOCAL';
 }
 
-export function isManagedProductionTier(tier: RuntimeTier = getRuntimeTier()): boolean {
+export function isManagedProductionTier(
+  tier: RuntimeTier = getRuntimeTier(),
+): boolean {
   return tier === 'PRODUCTION_MANAGED';
 }
 
@@ -71,14 +79,19 @@ function parseOrigins(raw: string): string[] {
     .filter(Boolean);
 }
 
-function requireCanonicalEndpoint(spec: EndpointSpec, tier: RuntimeTier): string {
+function requireCanonicalEndpoint(
+  spec: EndpointSpec,
+  tier: RuntimeTier,
+): string {
   const canonicalValue = (process.env[spec.canonicalEnv] || '').trim();
 
   if (canonicalValue) {
     return canonicalValue;
   }
 
-  const legacyHit = spec.legacyEnv.find((legacyName) => (process.env[legacyName] || '').trim());
+  const legacyHit = spec.legacyEnv.find((legacyName) =>
+    (process.env[legacyName] || '').trim(),
+  );
 
   if (isManagedProductionTier(tier) && legacyHit) {
     throw new Error(
@@ -94,10 +107,16 @@ function requireCanonicalEndpoint(spec: EndpointSpec, tier: RuntimeTier): string
     return spec.devLocalDefault;
   }
 
-  throw new Error(`[Config] Missing required ${spec.canonicalEnv} for tier ${tier}.`);
+  throw new Error(
+    `[Config] Missing required ${spec.canonicalEnv} for tier ${tier}.`,
+  );
 }
 
-function assertEndpointAllowed(spec: EndpointSpec, value: string, tier: RuntimeTier): void {
+function assertEndpointAllowed(
+  spec: EndpointSpec,
+  value: string,
+  tier: RuntimeTier,
+): void {
   if (isManagedProductionTier(tier) && hasLoopbackHost(value)) {
     throw new Error(
       `[Config] ${spec.service} in PRODUCTION_MANAGED cannot target localhost/loopback (${value}).`,
@@ -105,7 +124,9 @@ function assertEndpointAllowed(spec: EndpointSpec, value: string, tier: RuntimeT
   }
 }
 
-export function resolveServiceEndpoints(tier: RuntimeTier = getRuntimeTier()): Record<EndpointKey, string> {
+export function resolveServiceEndpoints(
+  tier: RuntimeTier = getRuntimeTier(),
+): Record<EndpointKey, string> {
   const entries = ENDPOINT_SPECS.map((spec) => {
     const value = requireCanonicalEndpoint(spec, tier);
     assertEndpointAllowed(spec, value, tier);
@@ -115,19 +136,29 @@ export function resolveServiceEndpoints(tier: RuntimeTier = getRuntimeTier()): R
   return Object.fromEntries(entries) as Record<EndpointKey, string>;
 }
 
-export function resolveCorsOrigins(tier: RuntimeTier = getRuntimeTier()): string[] {
-  const configured = (process.env.KELEDON_CLOUD_CORS_ORIGINS || process.env.CORS_ORIGINS || '').trim();
+export function resolveCorsOrigins(
+  tier: RuntimeTier = getRuntimeTier(),
+): string[] {
+  const configured = (
+    process.env.KELEDON_CLOUD_CORS_ORIGINS ||
+    process.env.CORS_ORIGINS ||
+    ''
+  ).trim();
 
   if (!configured) {
     if (tier === 'DEV_LOCAL' || tier === 'CI_PROOF') {
       return LOCAL_CORS_ORIGINS;
     }
-    throw new Error('[Config] KELEDON_CLOUD_CORS_ORIGINS is required in PRODUCTION_MANAGED.');
+    throw new Error(
+      '[Config] KELEDON_CLOUD_CORS_ORIGINS is required in PRODUCTION_MANAGED.',
+    );
   }
 
   const origins = parseOrigins(configured);
   if (!origins.length) {
-    throw new Error('[Config] KELEDON_CLOUD_CORS_ORIGINS must include at least one origin.');
+    throw new Error(
+      '[Config] KELEDON_CLOUD_CORS_ORIGINS must include at least one origin.',
+    );
   }
 
   if (isManagedProductionTier(tier)) {
@@ -143,7 +174,11 @@ export function resolveCorsOrigins(tier: RuntimeTier = getRuntimeTier()): string
   return origins;
 }
 
-async function assertReachable(label: string, url: string, init?: RequestInit): Promise<void> {
+async function assertReachable(
+  label: string,
+  url: string,
+  init?: RequestInit,
+): Promise<void> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5000);
 
@@ -155,7 +190,9 @@ async function assertReachable(label: string, url: string, init?: RequestInit): 
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`[Config] ${label} unreachable at ${url}: ${message}`);
+    throw new Error(`[Config] ${label} unreachable at ${url}: ${message}`, {
+      cause: error,
+    });
   } finally {
     clearTimeout(timeout);
   }
@@ -173,7 +210,10 @@ export async function assertManagedRuntimeDependencies(): Promise<void> {
   }
 
   const endpoints = resolveServiceEndpoints(tier);
-  await assertReachable('Managed Qdrant', `${endpoints.qdrantUrl.replace(/\/$/, '')}/collections`);
+  await assertReachable(
+    'Managed Qdrant',
+    `${endpoints.qdrantUrl.replace(/\/$/, '')}/collections`,
+  );
   await assertReachable('OTel exporter', endpoints.otelExporterUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

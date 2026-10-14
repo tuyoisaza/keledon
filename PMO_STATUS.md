@@ -1,4 +1,18 @@
 # PMO status — current continuation 5.1.16; overall PARTIALLY DELIVERED
+## Active run `20261014-0007-phdk-auto-completion` — current portfolio
+
+UAT completed with conclusion **NOT ACCEPTED**: six cases PASS, one FAIL (no audited server-side superadmin test-profile selection), two BLOCKED (safe development identities and disposable DB), and one MANUAL (native device/audio). Local SPA UAT was run against source fingerprint `sha256:b93f388303c3bf87df539facf4594d55d4961de4eb83c025513b44241ae33d3b`; its mocked role contexts are not actual authentication. UAT Fix is now active. The user has a pending material security design choice about test-profile switching.
+
+| WS | Current state | Evidence / next gate |
+|---|---|---|
+| WS-001 / CMT-001 | BASELINE VERIFIED; delivery OPEN | Main 5.1.24 at `6413d8a`; 5 roots aligned in prior evidence. Current work is uncommitted; normal PR/review and exact readback pending. |
+| WS-002 / CMT-002 | SOURCE PARTIAL; UAT OPEN | Widget/diagnostics source carried forward; re-audit all mounts and bind UAT to integrated candidate. |
+| WS-003 / CMT-003 | SOURCE PARTIAL; customer acceptance parameterized | Owner-approved private/local tenant allowlists; source builds/regressions carried forward, full integration review pending. |
+| WS-004 / CMT-004 | SOURCE PARTIAL; persisted acceptance OPEN | Approved DB-derived least privilege and encrypted secrets; exhaustive 35-model matrix and disposable DB evidence remain open. |
+| WS-X | CHECK OPEN | Cloud lint 333 errors/59 warnings; current UAT and route/SEO/AEO source stages pending. |
+
+Portfolio remains **PARTIALLY DELIVERED**. Continue current lifecycle handoffs; do not promote historical source or UAT counts into current-candidate acceptance.
+
 
 ## Current Auto candidate — 5.1.17, run `20261013-1900-phdk-auto`
 

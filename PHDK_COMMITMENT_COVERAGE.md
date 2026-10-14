@@ -2,14 +2,14 @@
 
 ## Current source delivery — 2026-10-14, 5.1.24, `c3c4c362a36db2bec142cbc8b06747961b67df26`
 
-PR #92 merged source `c3c4c362a36db2bec142cbc8b06747961b67df26` at main `fdd7f6f49bab5b8c4384ca1796321a23b4e71f42`. It adds validated tenant origin allowlists for client-selected CRM/call vendors, including owner-approved private/local HTTP(S) destinations. API and Cloud tests verify safe vendor projections and stored allowlists; Browser guards initial/redirect origins. Exact-SHA synthetic Web UAT passes 1/1, all five roots and renderer are 5.1.24, and PHDK coherence is 52/52. Native, database, deployed SEO/AEO, exhaustive matrix and broad route acceptance remain open.
+PR #92 merged source `c3c4c362a36db2bec142cbc8b06747961b67df26`; PR #93 reconciled the evidence at current main `6413d8aed295c18af098ca6a58c6dfbb7503930b`. The product change adds validated tenant origin allowlists for client-selected CRM/call vendors, including owner-approved private/local HTTP(S) destinations. Local API/Cloud/Browser builds and API/Cloud regressions pass (19/19 and 10/10); API secret/CRUD tests 4/4, Cloud secret tests 3/3, Cloud RBAC, agent/device gateway, seed, vector-store, flow, persistence and voice tests 35/35 across 11 suites and Browser regression 33/33 pass. All five roots and renderer are 5.1.24, and PHDK coherence is 52/52. Latest local Cloud ESLint reports 333 errors/59 warnings full source, down from 1,345/106; both runtime gateways, session/seed services, vector store, flow, persistence, subagent, team-controller, RAG, voice services and focused specs pass ESLint. Dependency and source fixes are unpublished and full lint remains blocked. Native, database, deployed SEO/AEO, exhaustive matrix and broad route acceptance remain open.
 
 | Commitment | Current implementation/evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | All five package and lock roots align at 5.1.24; PR #92 merged and fresh remote-main readback matches. | No deployment inferred. |
+| CMT-001 | All five package and lock roots align at 5.1.24; PRs #92/#93 merged and fresh remote-main readback matches. | No deployment inferred. |
 | CMT-002 | Browser policy tests 6/6; Web diagnostics 19/19; exact-SHA synthetic Web UAT 1/1. | Native Browser rendering, device/audio, OS permission flow and broader route/screen-reader acceptance remain unverified. |
 | CMT-003 | API 19/19 and Cloud 10/10; owner-approved private/local origins are URL-validated, tenant-scoped and applied to Browser navigation/automation. | Live provider acceptance applies to each client's configured integrations; no universal CRM/call provider test applies. |
-| CMT-004 | Approved DB-derived role/tenant policy retained; safe vendor projections and allowlist create/update behavior have isolated tests. | Full 35-model × role × tenant × API/web × operation mapping, disposable-DB persistence/migration, and remaining route accessibility/localization remain open. |
+| CMT-004 | Approved DB-derived role/tenant policy retained; safe vendor projections and tenant allowlist behavior have regression coverage. API/Cloud now encrypt credentials at rest with AES-256-GCM; Browser/server support legacy CBC reads during rollout. Owner confirmed the production key is configured. | Full 35-model × role × tenant × API/web × operation mapping, disposable-DB persistence/migration, and remaining route accessibility/localization remain open. The idempotent dry-run-first migration is implemented but has not been run; persisted acceptance remains open. |
 
 Overall status remains **PARTIALLY DELIVERED**. Machine completion evidence records unverified native UAT and Cloud lint limitations rather than claiming full Auto completion.
 
@@ -78,3 +78,15 @@ Current delivery: PR #56 merged; remote `main` is `f44f76a8bfb46e4ef60bfbe99982a
 | CMT-004 | Admin/permissions                       | Owner-approved least-privilege policy is implemented; PR #56 regression now proves generic CRUD rejects caller-supplied password hashes for admin, coordinator and superadmin. HTTP tests cover DB actor/tenant, cross-tenant denials and safe secret projection. Synthetic UI exercises manager views and write-only keys. | Full persisted resource × role × surface × CRUD and deployed migration runtime remain unverified; historical isolated synthetic persistence evidence is scoped and does not prove this full matrix. |
 
 All confirmed IDs remain mapped to code and evidence. Overall Auto remains **PARTIALLY DELIVERED** until the remaining acceptance is verified or explicitly dispositioned.
+# Current PHDK Auto run `20261014-0007-phdk-auto-completion` — plan coverage
+
+Baseline 5.1.24 / `6413d8aed295c18af098ca6a58c6dfbb7503930b`; current candidate remains local and unversioned. This supersedes status headings below only for this run.
+
+| Commitment | Owner-approved requirement | Plan task(s) | Proof required before completion |
+|---|---|---|---|
+| CMT-001 | Baseline, versions and PR lineage first | PLAN-AUTO-001, 008 | Current package/lock/renderer alignment, normal PR/review, merged remote SHA and gate evidence. |
+| CMT-002 | Widget and safe diagnostics second | PLAN-AUTO-002, 006 | Source coverage at public/login/app/admin, redaction/reset/accessibility tests and exact-candidate browser UAT. |
+| CMT-003 | Provider-neutral voice→Cloud→Browser→CRM third | PLAN-AUTO-003 | Cross-boundary contracts, per-tenant origin enforcement and tests; actual customer integration remains per-client. |
+| CMT-004 | Admin/permissions fourth | PLAN-AUTO-004, 006 | Actor/tenant from DB, least privilege, secret-safe projections, full 35-model matrix and disposable-DB migration/persistence acceptance. |
+
+Cross-cutting tasks PLAN-AUTO-005 (full PHDK Check/remediation), PLAN-AUTO-007 (source SEO/AEO), and PLAN-AUTO-008 (delivery) apply to every commitment. Current known gaps: Cloud ESLint 333 errors/59 warnings; full CRUD matrix and disposable-DB evidence; broad active-route/native UX acceptance; current candidate UAT; exact final SHA/version/gate. Status is PARTIALLY DELIVERED until these proof obligations are closed or explicitly accepted by the PHDK completion gate.

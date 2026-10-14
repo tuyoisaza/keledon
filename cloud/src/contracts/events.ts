@@ -4,7 +4,7 @@ export interface AgentEvent {
   event_id?: string;
   session_id: string;
   event_type: 'text_input' | 'ui_result' | 'system';
-  payload: Record<string, any>;
+  payload: Record<string, unknown>;
   ts: string; // ISO-8601
   agent_id: string;
 }
@@ -22,14 +22,14 @@ export interface CloudCommand {
     speed?: number;
     pitch?: number;
     volume?: number;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   };
   ui_steps?: any[];
   confidence: number;
   mode: 'normal' | 'safe' | 'silent' | 'error';
   flow_id: string | null;
   flow_run_id: string | null;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface UIStep {

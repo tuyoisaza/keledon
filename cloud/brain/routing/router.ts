@@ -5,8 +5,8 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 
 export interface RoutingConfig {
   rules: RoutingRule[];
@@ -25,7 +25,14 @@ export interface RoutingRule {
 export interface RoutingCondition {
   type: 'intent' | 'entity' | 'context' | 'user' | 'system';
   key: string;
-  operator: 'equals' | 'contains' | 'startsWith' | 'endsWith' | 'matches' | 'exists' | 'notExists';
+  operator:
+    | 'equals'
+    | 'contains'
+    | 'startsWith'
+    | 'endsWith'
+    | 'matches'
+    | 'exists'
+    | 'notExists';
   value: string | number | boolean | string[];
 }
 
@@ -74,29 +81,34 @@ export class BrainRouter {
           {
             id: 'default-intent-router',
             conditions: [
-              { type: 'intent', key: 'intent', operator: 'exists', value: true }
+              {
+                type: 'intent',
+                key: 'intent',
+                operator: 'exists',
+                value: true,
+              },
             ],
             target: 'intent-handler',
             priority: 10,
-            enabled: true
+            enabled: true,
           },
           {
             id: 'fallback-router',
             conditions: [],
             target: 'fallback-handler',
             priority: 1,
-            enabled: true
-          }
+            enabled: true,
+          },
         ],
         fallback: 'fallback-handler',
-        timeoutMs: 5000
+        timeoutMs: 5000,
       };
     } catch (error) {
       this.logger.error('Failed to load routing config', error);
       return {
         rules: [],
         fallback: 'fallback-handler',
-        timeoutMs: 5000
+        timeoutMs: 5000,
       };
     }
   }
@@ -106,17 +118,19 @@ export class BrainRouter {
    */
   route(context: RouteContext): Observable<RouteResult> {
     return of(context).pipe(
-      switchMap(ctx => this.findBestRoute(ctx)),
-      catchError(error => {
+      switchMap((ctx) => this.findBestRoute(ctx)),
+      catchError((error: unknown) => {
         this.logger.error('Routing failed', error);
+        const message =
+          error instanceof Error ? error.message : 'Unknown error';
         return of({
           routeId: 'error-route',
           target: this.config.fallback,
           matchedConditions: [],
           confidence: 0,
-          metadata: { error: error.message }
+          metadata: { error: message },
         });
-      })
+      }),
     );
   }
 
@@ -124,22 +138,29 @@ export class BrainRouter {
    * Find the best matching route
    */
   private findBestRoute(context: RouteContext): Observable<RouteResult> {
-    const enabledRules = this.config.rules.filter(rule => rule.enabled);
-    
+    const enabledRules = this.config.rules.filter((rule) => rule.enabled);
+
     if (enabledRules.length === 0) {
       return of({
         routeId: 'no-rules',
         target: this.config.fallback,
         matchedConditions: [],
-        confidence: 0
+        confidence: 0,
       });
     }
 
     // Evaluate all rules and find the best match
-    const matches: { rule: RoutingRule; confidence: number; matchedConditions: RoutingCondition[] }[] = [];
+    const matches: {
+      rule: RoutingRule;
+      confidence: number;
+      matchedConditions: RoutingCondition[];
+    }[] = [];
 
     for (const rule of enabledRules) {
-      const { confidence, matchedConditions } = this.evaluateRule(rule, context);
+      const { confidence, matchedConditions } = this.evaluateRule(
+        rule,
+        context,
+      );
       if (confidence > 0) {
         matches.push({ rule, confidence, matchedConditions });
       }
@@ -150,7 +171,7 @@ export class BrainRouter {
         routeId: 'fallback',
         target: this.config.fallback,
         matchedConditions: [],
-        confidence: 0.1
+        confidence: 0.1,
       });
     }
 
@@ -171,15 +192,18 @@ export class BrainRouter {
       metadata: {
         totalRules: enabledRules.length,
         matchedRules: matches.length,
-        rulePriority: bestMatch.rule.priority
-      }
+        rulePriority: bestMatch.rule.priority,
+      },
     });
   }
 
   /**
    * Evaluate a single rule against context
    */
-  private evaluateRule(rule: RoutingRule, context: RouteContext): { confidence: number; matchedConditions: RoutingCondition[] } {
+  private evaluateRule(
+    rule: RoutingRule,
+    context: RouteContext,
+  ): { confidence: number; matchedConditions: RoutingCondition[] } {
     let confidence = 1.0;
     const matchedConditions: RoutingCondition[] = [];
 
@@ -191,7 +215,7 @@ export class BrainRouter {
         // If any condition fails, rule doesn't match
         return { confidence: 0, matchedConditions: [] };
       }
-      
+
       // Reduce confidence for each condition (more conditions = lower confidence)
       confidence *= conditionConfidence;
     }
@@ -202,25 +226,38 @@ export class BrainRouter {
   /**
    * Evaluate a single condition against context
    */
-  private evaluateCondition(condition: RoutingCondition, context: RouteContext): number {
+  private evaluateCondition(
+    condition: RoutingCondition,
+    context: RouteContext,
+  ): number {
     try {
       const value = this.extractValue(condition.key, condition.type, context);
-      
+
       if (value === undefined || value === null) {
         return condition.operator === 'notExists' ? 1.0 : 0.0;
       }
 
       switch (condition.operator) {
         case 'equals':
-          return this.compareValues(value, condition.value, 'equals') ? 1.0 : 0.0;
+          return this.compareValues(value, condition.value, 'equals')
+            ? 1.0
+            : 0.0;
         case 'contains':
-          return this.compareValues(value, condition.value, 'contains') ? 1.0 : 0.0;
+          return this.compareValues(value, condition.value, 'contains')
+            ? 1.0
+            : 0.0;
         case 'startsWith':
-          return this.compareValues(value, condition.value, 'startsWith') ? 1.0 : 0.0;
+          return this.compareValues(value, condition.value, 'startsWith')
+            ? 1.0
+            : 0.0;
         case 'endsWith':
-          return this.compareValues(value, condition.value, 'endsWith') ? 1.0 : 0.0;
+          return this.compareValues(value, condition.value, 'endsWith')
+            ? 1.0
+            : 0.0;
         case 'matches':
-          return this.compareValues(value, condition.value, 'matches') ? 1.0 : 0.0;
+          return this.compareValues(value, condition.value, 'matches')
+            ? 1.0
+            : 0.0;
         case 'exists':
           return 1.0;
         case 'notExists':
@@ -229,7 +266,10 @@ export class BrainRouter {
           return 0.0;
       }
     } catch (error) {
-      this.logger.warn(`Condition evaluation failed: ${condition.id}`, error);
+      this.logger.warn(
+        `Condition evaluation failed for type ${condition.type}`,
+        error,
+      );
       return 0.0;
     }
   }
@@ -237,7 +277,11 @@ export class BrainRouter {
   /**
    * Extract value from context based on condition type
    */
-  private extractValue(key: string, type: RoutingCondition['type'], context: RouteContext): any {
+  private extractValue(
+    key: string,
+    type: RoutingCondition['type'],
+    context: RouteContext,
+  ): unknown {
     switch (type) {
       case 'intent':
         return context.currentIntent;
@@ -268,19 +312,27 @@ export class BrainRouter {
           return actual.includes(expected);
         }
         if (Array.isArray(actual) && typeof expected === 'string') {
-          return actual.some(item => String(item).includes(expected));
+          return actual.some((item) => String(item).includes(expected));
         }
         return false;
       case 'startsWith':
-        return typeof actual === 'string' && typeof expected === 'string' && actual.startsWith(expected);
+        return (
+          typeof actual === 'string' &&
+          typeof expected === 'string' &&
+          actual.startsWith(expected)
+        );
       case 'endsWith':
-        return typeof actual === 'string' && typeof expected === 'string' && actual.endsWith(expected);
+        return (
+          typeof actual === 'string' &&
+          typeof expected === 'string' &&
+          actual.endsWith(expected)
+        );
       case 'matches':
         if (typeof actual === 'string' && typeof expected === 'string') {
           try {
             const regex = new RegExp(expected);
             return regex.test(actual);
-          } catch (e) {
+          } catch {
             return false;
           }
         }
@@ -304,7 +356,7 @@ export class BrainRouter {
     this.config = {
       ...this.config,
       ...newConfig,
-      rules: newConfig.rules ? [...newConfig.rules] : this.config.rules
+      rules: newConfig.rules ? [...newConfig.rules] : this.config.rules,
     };
     this.logger.log(`Routing config updated: ${JSON.stringify(newConfig)}`);
   }
@@ -313,7 +365,7 @@ export class BrainRouter {
    * Get rule by ID
    */
   getRule(id: string): RoutingRule | undefined {
-    return this.config.rules.find(rule => rule.id === id);
+    return this.config.rules.find((rule) => rule.id === id);
   }
 
   /**
@@ -328,7 +380,7 @@ export class BrainRouter {
    * Remove rule by ID
    */
   removeRule(id: string): void {
-    const index = this.config.rules.findIndex(rule => rule.id === id);
+    const index = this.config.rules.findIndex((rule) => rule.id === id);
     if (index !== -1) {
       this.config.rules.splice(index, 1);
       this.logger.log(`Rule removed: ${id}`);
@@ -337,5 +389,5 @@ export class BrainRouter {
 }
 
 // Export singleton instances
-export const brainRouter = new BrainRouter(null as any);
+export const brainRouter = new BrainRouter(null);
 export const defaultRouter = brainRouter;

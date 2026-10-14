@@ -9,12 +9,7 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiConsumes,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import {
   RBACRecommendationService,
   RBACAnalysis,
@@ -38,7 +33,7 @@ export class RBACAnalysisController {
   })
   @ApiResponse({ status: 400, description: 'Invalid request parameters' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
-  async performAnalysis(@Body() request?: any): Promise<{
+  async performAnalysis(): Promise<{
     success: boolean;
     data: RBACAnalysis;
     message: string;
@@ -48,12 +43,11 @@ export class RBACAnalysisController {
         'RBACAnalysisController: Starting comprehensive RBAC analysis',
         {
           timestamp: new Date().toISOString(),
-          options: request,
         },
       );
 
       const analysis =
-        await this.rbacRecommendationService.performFullAnalysis(request);
+        await this.rbacRecommendationService.performFullAnalysis();
 
       return {
         success: true,
@@ -75,11 +69,7 @@ export class RBACAnalysisController {
     status: 200,
     description: 'Analysis history retrieved successfully',
   })
-  async getAnalysesHistory(
-    @Query('limit') limit?: number,
-    @Query('sort') sort?: 'date' | 'score' | 'risk',
-    @Query('order') order?: 'asc' | 'desc',
-  ): Promise<{
+  async getAnalysesHistory(): Promise<{
     success: boolean;
     data: {
       analyses: RBACAnalysis[];
@@ -150,12 +140,12 @@ export class RBACAnalysisController {
   @ApiOperation({ summary: 'Get specific RBAC analysis by ID' })
   @ApiResponse({ status: 200, description: 'Analysis retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Analysis not found' })
-  async getAnalysisById(@Param('id') id: string): Promise<{
+  getAnalysisById(@Param('id') id: string): {
     success: boolean;
     data: RBACAnalysis | null;
-  }> {
+  } {
     try {
-      const analysis = await this.rbacRecommendationService.getAnalysisById(id);
+      const analysis = this.rbacRecommendationService.getAnalysisById(id);
       return {
         success: true,
         data: analysis,

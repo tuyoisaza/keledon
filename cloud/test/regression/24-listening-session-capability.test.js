@@ -24,7 +24,11 @@ function loadService() {
     module,
     exports: module.exports,
     Date,
-    console: { log: (...args) => logs.push(args.join(' ')), error: (...args) => logs.push(args.join(' ')) },
+    console: {
+      log: (...args) => logs.push(args.join(' ')),
+      warn: (...args) => logs.push(args.join(' ')),
+      error: (...args) => logs.push(args.join(' ')),
+    },
     require: (name) =>
       name === '@nestjs/common'
         ? { Injectable: () => () => undefined }
@@ -54,7 +58,12 @@ function loadGateway(logs) {
     module,
     exports: module.exports,
     process,
-    console: { log: (...args) => logs.push(args.join(' ')), error: (...args) => logs.push(args.join(' ')) },
+    Buffer,
+    console: {
+      log: (...args) => logs.push(args.join(' ')),
+      warn: (...args) => logs.push(args.join(' ')),
+      error: (...args) => logs.push(args.join(' ')),
+    },
     require: (name) =>
       name === '@nestjs/websockets'
         ? new Proxy({}, { get: () => (..._args) => () => undefined })
@@ -143,6 +152,17 @@ async function main() {
   };
   gateway.handleConnection(activeClient);
   assert.equal(workerStarts, 1, 'a valid capability should start the assigned audio worker');
+  const audioMessages = [];
+  gateway.workers.set(activeClient.id, {
+    postMessage: (message) => audioMessages.push(message),
+  });
+  gateway.handleAudioChunk(activeClient, { payload: Buffer.from([0, 1, 2]) });
+  gateway.handleAudioChunk(activeClient, {
+    payload: 'A'.repeat(2 * 1024 * 1024 + 1),
+  });
+  assert.equal(audioMessages.length, 1, 'oversized audio must be dropped');
+  assert.equal(Buffer.isBuffer(audioMessages[0].data), true);
+  assert.deepEqual([...audioMessages[0].data], [0, 1, 2]);
   assert.ok(!logs.join('\n').includes(active.sessionId), 'websocket logs must not disclose capabilities');
 
   const controller = fs.readFileSync(

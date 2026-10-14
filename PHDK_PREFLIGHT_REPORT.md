@@ -1,29 +1,29 @@
-# PHDK Preflight — KELEDON
+# PHDK Preflight — current Auto run `20261014-0007-phdk-auto-completion`
 
-Run: `20261012-keledon-four-fronts` continuation · 2026-10-13 America/Mexico_City.
-Repository: `C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON`.
+Run opened: 2026-10-14 00:07 America/Mexico_City.
+Repository: `tuyoisaza/keledon`, checkout `C:\KELEDON\keledon`.
+Branch/base: `fix/cloud-eslint-prettier`, `HEAD=6413d8aed295c18af098ca6a58c6dfbb7503930b`, fetched `origin/main=6413d8aed295c18af098ca6a58c6dfbb7503930b`. Working tree is dirty from this authorized Auto continuation; no worktree reset/stash/rewrite.
 
-## Installation and integrity
+## Installation/integrity
 
-- Canonical: PHDK `main` at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`, version 2.50.10.
-- Installed: `phdk-standards/`, version 2.50.10; all 52 canonical manifest mappings match byte-for-byte.
-- Native instructions: one root `AGENTS.md` managed block, matching `PHDK_NATIVE_RULES.md` from that canonical commit.
-- The conservative sync added only the new manifest-owned `README.md` and `CHANGELOG.md` inputs and refreshed PHDK-owned mappings; no obsolete manifest paths existed. No files outside `phdk-standards/` or the marked managed block were changed by the sync.
-- `python phdk-standards/scripts/phdk_coherence_check.py` PASS: v2.50.10, 52 mappings.
-- Installed `phdk_completion_gate.py` smoke test PASS against the actual KELEDON `origin/main` SHA `e305d3d817ff20ed52ed889315e2d618127d7d9f`, reading `services/web/package.json` property `version` as 5.1.2. This isolated parser/source proof is not the complete PHDK Auto delivery gate; scoped acceptance findings remain separately recorded.
+- Installed PHDK: `phdk-standards/` v2.50.10.
+- Canonical PHDK `main` was independently read with `git ls-remote`: `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`, still v2.50.10.
+- Installed coherence: PASS, 52/52 manifest mappings; managed AGENTS block passes the coherence checker. No standards sync needed.
+- Current KELEDON target: origin/main at 5.1.24; no open pull requests were returned by repository-scoped GitHub search.
 
-## Relevant capabilities and controls
+## Relevant capabilities and constraints
 
-- Git/GitHub reader AVAILABLE and used for canonical fetch, PR checks and independent remote readback.
-- Local source review and deterministic regression tests AVAILABLE. `design:accessibility-review` was available/read in the original preflight; no new browser access was used during this Check/remediation continuation.
-- Core PHDK DEVSECOPS and CRUD standards are installed and used; no dedicated external security skill was required.
-- Owner-confirmed scope remains the four KELEDON fronts in order. Voice and CRM providers vary by client. Restrictive DB-derived roles/tenants and write-only secrets remain the approved policy.
-- `CLAUDE.md` and `.floor-restore-lock.md` were reread. No floor restoration work was started. No secret values, live database, provider write, production probe or deployment was used.
+- Local PowerShell/Git, builds, Jest and repository regression runners are available.
+- GitHub repository/PR read and PR delivery tools are available; use normal branch/PR controls.
+- Browser automation is available only in UAT/UAT Fix under PHDK execution scope.
+- Native Electron OS prompts/physical device/audio and authorized isolated database are unavailable in this environment. No live customer data, production DB, provider writes, deployment or paid vendor call.
+- PHDK Auto controls this goal and supersedes Developer Mode's direct-main exception. Sensitive auth/secret/data changes remain on a fix branch and require normal source/diff review. Existing hooks/protections remain enabled.
+- No background jobs, hosted CI dispatch, schedules or delegation.
 
-## Revalidated continuation — 2026-10-13
+## Owner decisions verified
 
-- Correct repository root: `C:/Users/tboar/OneDrive/Documentos/GitHub/KELEDON`; fetched `origin/main` is `3c6e4c71bc5672984a1fd07df62d722f95beb4e7` / product 5.1.6. The earlier 5.1.2 gate smoke above is historical evidence only.
-- PHDK remains canonical v2.50.10 at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`; installed copy and managed root block revalidate with 52/52 mappings.
-- Local candidate is 5.1.7 and remains unpublished. Current product Check is recorded separately; installation PASS does not imply product delivery PASS.
+Four commitments in order: CMT-001 baseline/versions/PRs; CMT-002 widget/safe diagnostics; CMT-003 provider-independent voice→Cloud→Browser→client CRM; CMT-004 admin/permissions. New accounts are `user`; an existing superadmin alone elevates roles/company assignments; company managers stay in-company and cannot elevate/delete companies; API derives actor/tenant from DB; normal responses never return stored/submitted secrets; credential replacement is write-only. Client-configured private/local CRM origins are allowed only after URL validation and tenant origin allowlisting.
 
-Installation preflight: **PASS**. Product acceptance/runtime gaps are not converted to passes by an installation sync.
+## Exit / limits
+
+The installation is coherent and all in-scope stages are reachable. The environment cannot prove native/device/audio, persisted DB/migration or deployed SEO/AEO acceptance; those must remain unverified unless an approved supported environment becomes available.

@@ -26,6 +26,108 @@ export type {
   ProviderCatalogEntry,
 } from './mvp-store.types';
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function hasStrings(
+  value: Record<string, unknown>,
+  ...keys: string[]
+): boolean {
+  return keys.every((key) => typeof value[key] === 'string');
+}
+
+function hasValue(value: unknown, options: readonly string[]): boolean {
+  return typeof value === 'string' && options.includes(value);
+}
+
+function readEntries<T>(
+  value: unknown,
+  isEntry: (item: unknown) => item is T,
+): T[] {
+  return Array.isArray(value) ? value.filter(isEntry) : [];
+}
+
+function isManagedInterface(value: unknown): value is ManagedInterface {
+  if (
+    !isRecord(value) ||
+    !hasStrings(
+      value,
+      'id',
+      'name',
+      'baseUrl',
+      'base_url',
+      'createdAt',
+      'updatedAt',
+    )
+  )
+    return false;
+  return (
+    hasValue(value.category, ['talk', 'case']) &&
+    hasValue(value.status, ['connected', 'disconnected', 'error'])
+  );
+}
+
+function isFlowDefinition(value: unknown): value is FlowDefinition {
+  return (
+    isRecord(value) &&
+    hasStrings(value, 'id', 'name', 'createdAt', 'updatedAt') &&
+    Array.isArray(value.intentTags) &&
+    value.intentTags.every((tag) => typeof tag === 'string')
+  );
+}
+
+function isFlowVersion(value: unknown): value is FlowVersion {
+  return (
+    isRecord(value) &&
+    hasStrings(value, 'id', 'flowDefinitionId', 'createdAt', 'updatedAt') &&
+    typeof value.version === 'number' &&
+    hasValue(value.status, ['draft', 'approved', 'deprecated']) &&
+    Array.isArray(value.steps)
+  );
+}
+
+function isTenantFlowPermission(value: unknown): value is TenantFlowPermission {
+  return (
+    isRecord(value) &&
+    hasStrings(
+      value,
+      'id',
+      'companyId',
+      'flowDefinitionId',
+      'createdAt',
+      'updatedAt',
+    ) &&
+    typeof value.isEnabled === 'boolean'
+  );
+}
+
+function isIntentFlowMapping(value: unknown): value is IntentFlowMapping {
+  return (
+    isRecord(value) &&
+    hasStrings(value, 'id', 'companyId', 'intent', 'createdAt', 'updatedAt') &&
+    Array.isArray(value.allowedFlowDefinitionIds) &&
+    value.allowedFlowDefinitionIds.every((id) => typeof id === 'string')
+  );
+}
+
+function isKnowledgeDocument(value: unknown): value is KnowledgeDocument {
+  return (
+    isRecord(value) &&
+    hasStrings(value, 'id', 'title', 'content', 'created_at', 'updated_at') &&
+    hasValue(value.type, ['pdf', 'docx', 'url', 'text']) &&
+    hasValue(value.status, ['indexed', 'indexing', 'error']) &&
+    typeof value.chunk_count === 'number' &&
+    typeof value.size_bytes === 'number'
+  );
+}
+
+function isTTSConfig(value: unknown): value is TTSConfigEntry {
+  return (
+    isRecord(value) && hasStrings(value, 'providerId', 'apiKey', 'updatedAt')
+  );
+}
+
 @Injectable()
 export class MvpStoreService {
   private readonly dataDir: string;
@@ -519,25 +621,27 @@ export class MvpStoreService {
 
     try {
       const raw = fs.readFileSync(this.storePath, 'utf8');
-      const parsed = JSON.parse(raw);
+      const parsed: unknown = JSON.parse(raw);
+      if (!isRecord(parsed)) throw new Error('Invalid MVP store structure');
       return {
-        interfaces: Array.isArray(parsed.interfaces) ? parsed.interfaces : [],
-        flowDefinitions: Array.isArray(parsed.flowDefinitions)
-          ? parsed.flowDefinitions
-          : [],
-        flowVersions: Array.isArray(parsed.flowVersions)
-          ? parsed.flowVersions
-          : [],
-        tenantFlowPermissions: Array.isArray(parsed.tenantFlowPermissions)
-          ? parsed.tenantFlowPermissions
-          : [],
-        intentFlowMappings: Array.isArray(parsed.intentFlowMappings)
-          ? parsed.intentFlowMappings
-          : [],
-        knowledgeDocuments: Array.isArray(parsed.knowledgeDocuments)
-          ? parsed.knowledgeDocuments
-          : [],
-        ttsConfig: parsed.ttsConfig || this.defaultTTSConfig(),
+        interfaces: readEntries(parsed.interfaces, isManagedInterface),
+        flowDefinitions: readEntries(parsed.flowDefinitions, isFlowDefinition),
+        flowVersions: readEntries(parsed.flowVersions, isFlowVersion),
+        tenantFlowPermissions: readEntries(
+          parsed.tenantFlowPermissions,
+          isTenantFlowPermission,
+        ),
+        intentFlowMappings: readEntries(
+          parsed.intentFlowMappings,
+          isIntentFlowMapping,
+        ),
+        knowledgeDocuments: readEntries(
+          parsed.knowledgeDocuments,
+          isKnowledgeDocument,
+        ),
+        ttsConfig: isTTSConfig(parsed.ttsConfig)
+          ? parsed.ttsConfig
+          : this.defaultTTSConfig(),
       };
     } catch {
       const initial = this.defaultStore();

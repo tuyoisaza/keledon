@@ -10,6 +10,8 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import type { User } from '@prisma/client';
 import { CrudService } from './crud.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { WebhookGuard } from '../guards/webhook.guard';
@@ -17,6 +19,17 @@ import { Public } from '../guards/public.decorator';
 import { CrudAccessGuard } from '../guards/crud-access.guard';
 import { CrudMigrationService } from './crud-migration.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+
+type CrudRequest = {
+  companyScope?: string;
+  actor?: Pick<User, 'id' | 'role' | 'companyId' | 'teamId'>;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
 @ApiTags('CRUD')
 @Controller('api/crud')
@@ -47,7 +60,7 @@ export class CrudController {
 
   @Get('companies')
   @ApiOperation({ summary: 'Get all companies' })
-  async getCompanies(@Req() req: any) {
+  async getCompanies(@Req() req: CrudRequest) {
     if (req.companyScope) {
       const company = await this.crud.getCompany(req.companyScope);
       return company ? [company] : [];
@@ -190,7 +203,7 @@ export class CrudController {
   // ========== KELEDONS ==========
 
   @Get('keledons')
-  getKeledons(@Req() req: any, @Query('companyId') companyId?: string) {
+  getKeledons(@Req() req: CrudRequest, @Query('companyId') companyId?: string) {
     const ownOnly = !['superadmin', 'admin', 'coordinator'].includes(
       req.actor.role,
     );
@@ -442,11 +455,11 @@ export class CrudController {
         message: 'Seed completed',
         ...result,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         message: 'Seed failed',
-        error: error.message,
+        error: 'Internal error',
       };
     }
   }
@@ -475,7 +488,7 @@ export class CrudController {
       password?: string;
       apiKey?: string;
       allowedOrigins?: string[];
-      config?: Record<string, unknown>;
+      config?: Prisma.InputJsonObject;
     },
   ) {
     return this.crud.createVendor(data);
@@ -493,7 +506,7 @@ export class CrudController {
       password?: string;
       apiKey?: string;
       allowedOrigins?: string[];
-      config?: Record<string, unknown>;
+      config?: Prisma.InputJsonObject;
       isActive?: boolean;
     },
   ) {
@@ -510,7 +523,10 @@ export class CrudController {
   @Public()
   @UseGuards(WebhookGuard)
   @Post('webhook')
-  async webhook(@Body() body: any) {
+  async webhook(@Body() body: unknown) {
+    if (!isRecord(body)) {
+      return { status: 'error', message: 'Invalid webhook payload.' };
+    }
     const { action, data } = body;
 
     if (action === 'seed') {
@@ -525,20 +541,18 @@ export class CrudController {
     };
   }
 
-  private async webhookSeed(seedData?: any) {
-    if (!seedData?.companies) {
+  private async webhookSeed(seedData: unknown) {
+    if (!isRecord(seedData) || !Array.isArray(seedData.companies)) {
       return {
         status: 'error',
         message: 'Seed requires data.companies array in the request body',
       };
     }
 
-    const fs = require('fs');
-    const path = require('path');
-    const dataDir = path.resolve(__dirname, '../../data');
-    fs.mkdirSync(dataDir, { recursive: true });
-    fs.writeFileSync(
-      path.join(dataDir, 'crud.json'),
+    const dataDir = resolve(__dirname, '../../data');
+    mkdirSync(dataDir, { recursive: true });
+    writeFileSync(
+      join(dataDir, 'crud.json'),
       JSON.stringify(seedData, null, 2),
     );
 
@@ -570,11 +584,11 @@ export class CrudController {
         success: true,
         message: 'Migration webhook: vendors table ensured',
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         message: 'Migration webhook failed',
-        error: error.message,
+        error: 'Internal migration error',
       };
     }
   }

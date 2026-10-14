@@ -1,12 +1,45 @@
 import { Injectable, Logger } from '@nestjs/common';
+import type { FlowStep } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : 'Flow execution failed';
+}
+
+function readPath(context: Record<string, unknown>, path: string): unknown {
+  const normalizedPath = path.replace(/^context\./, '');
+  return normalizedPath.split('.').reduce<unknown>((value, key) => {
+    if (typeof value !== 'object' || value === null || Array.isArray(value))
+      return undefined;
+    return (value as Record<string, unknown>)[key];
+  }, context);
+}
+
+function parseConditionValue(
+  value: string,
+  context: Record<string, unknown>,
+): unknown {
+  const trimmed = value.trim();
+  if (trimmed === 'true') return true;
+  if (trimmed === 'false') return false;
+  if (trimmed === 'null') return null;
+  if (/^-?(?:\d+\.?\d*|\.\d+)$/.test(trimmed)) return Number(trimmed);
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  )
+    return trimmed.slice(1, -1);
+  if (/^(?:context\.)?[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(trimmed))
+    return readPath(context, trimmed);
+  return undefined;
+}
 
 export interface SubAgentTask {
   id: string;
   type: 'flow' | 'read' | 'write' | 'wait';
   flowId?: string;
   stepIds?: string[];
-  parameters?: Record<string, any>;
+  parameters?: Record<string, unknown>;
   priority?: number;
 }
 
@@ -21,13 +54,13 @@ export interface SubAgentStatus {
 export interface FlowExecutionResult {
   success: boolean;
   flowId: string;
-  extractedData: Record<string, any>;
+  extractedData: Record<string, unknown>;
   executionLog: Array<{
     stepId: string;
     stepType: string;
     status: 'success' | 'failed' | 'skipped';
     duration: number;
-    result?: any;
+    result?: unknown;
     error?: string;
   }>;
   totalDuration: number;
@@ -36,9 +69,13 @@ export interface FlowExecutionResult {
 @Injectable()
 export class SubAgentService {
   private readonly logger = new Logger(SubAgentService.name);
-  
+
   private readonly activeSubAgents = new Map<string, SubAgentStatus>();
-  private readonly taskQueue: Array<{ task: SubAgentTask; resolve: Function; reject: Function }> = [];
+  private readonly taskQueue: Array<{
+    task: SubAgentTask;
+    resolve: (value: unknown) => void;
+    reject: (reason?: unknown) => void;
+  }> = [];
   private readonly maxConcurrentPerAgent = 3;
 
   constructor(private prisma: PrismaService) {}
@@ -79,7 +116,7 @@ export class SubAgentService {
         role: dbAgent.role,
         status: 'idle',
       };
-      
+
       this.activeSubAgents.set(dbAgent.id, status);
       agents.push(status);
     }
@@ -111,8 +148,9 @@ export class SubAgentService {
   }
 
   getAvailableAgentsByRole(role: string): SubAgentStatus[] {
-    return Array.from(this.activeSubAgents.values())
-      .filter(agent => agent.role === role && agent.status === 'idle');
+    return Array.from(this.activeSubAgents.values()).filter(
+      (agent) => agent.role === role && agent.status === 'idle',
+    );
   }
 
   async assignTask(agentId: string, task: SubAgentTask): Promise<void> {
@@ -134,7 +172,7 @@ export class SubAgentService {
     });
   }
 
-  async completeTask(agentId: string, result: any): Promise<void> {
+  async completeTask(agentId: string): Promise<void> {
     const agent = this.activeSubAgents.get(agentId);
     if (!agent) {
       throw new Error(`Agent ${agentId} not found`);
@@ -153,7 +191,7 @@ export class SubAgentService {
     });
   }
 
-  async failTask(agentId: string, error: string): Promise<void> {
+  async failTask(agentId: string): Promise<void> {
     const agent = this.activeSubAgents.get(agentId);
     if (!agent) {
       throw new Error(`Agent ${agentId} not found`);
@@ -170,7 +208,11 @@ export class SubAgentService {
     });
   }
 
-  async executeFlow(flowId: string, parameters: Record<string, any>, sessionId: string): Promise<FlowExecutionResult> {
+  async executeFlow(
+    flowId: string,
+    parameters: Record<string, unknown>,
+    sessionId: string,
+  ): Promise<FlowExecutionResult> {
     const flow = await this.prisma.flow.findUnique({
       where: { id: flowId },
       include: { steps: { orderBy: { order: 'asc' } } },
@@ -181,7 +223,7 @@ export class SubAgentService {
     }
 
     const startTime = Date.now();
-    const extractedData: Record<string, any> = { ...parameters };
+    const extractedData: Record<string, unknown> = { ...parameters };
     const executionLog: FlowExecutionResult['executionLog'] = [];
 
     const flowRun = await this.prisma.flowRun.create({
@@ -203,7 +245,7 @@ export class SubAgentService {
         id: `task-${Date.now()}`,
         type: 'flow',
         flowId,
-        stepIds: flow.steps.map(s => s.id),
+        stepIds: flow.steps.map((s) => s.id),
         parameters,
       });
 
@@ -211,7 +253,10 @@ export class SubAgentService {
         const stepStart = Date.now();
 
         if (step.type === 'decision' && step.condition) {
-          const shouldSkip = !this.evaluateCondition(step.condition, extractedData);
+          const shouldSkip = !this.evaluateCondition(
+            step.condition,
+            extractedData,
+          );
           if (shouldSkip) {
             executionLog.push({
               stepId: step.id,
@@ -223,7 +268,11 @@ export class SubAgentService {
           }
         }
 
-        const result = await this.simulateStepExecution(step, extractedData, executorAgent.id);
+        const result = await this.simulateStepExecution(
+          step,
+          extractedData,
+          executorAgent.id,
+        );
 
         executionLog.push({
           stepId: step.id,
@@ -243,10 +292,10 @@ export class SubAgentService {
         }
       }
 
-      await this.completeTask(executorAgent.id, { extractedData, executionLog });
+      await this.completeTask(executorAgent.id);
 
       const flowRunResult: FlowExecutionResult = {
-        success: executionLog.every(e => e.status !== 'failed'),
+        success: executionLog.every((e) => e.status !== 'failed'),
         flowId,
         extractedData,
         executionLog,
@@ -263,12 +312,12 @@ export class SubAgentService {
       });
 
       return flowRunResult;
-    } catch (error) {
+    } catch (error: unknown) {
       await this.prisma.flowRun.update({
         where: { id: flowRun.id },
         data: {
           status: 'failed',
-          error: error.message,
+          error: errorMessage(error),
           completedAt: new Date(),
         },
       });
@@ -276,32 +325,98 @@ export class SubAgentService {
     }
   }
 
-  private evaluateCondition(condition: string, context: Record<string, any>): boolean {
-    try {
-      const func = new Function('context', `return ${condition}`);
-      return func(context);
-    } catch {
-      return false;
+  private evaluateCondition(
+    condition: string,
+    context: Record<string, unknown>,
+  ): boolean {
+    const match = condition
+      .trim()
+      .match(
+        /^((?:context\.)?[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)\s*(===|!==|==|!=|>=|<=|>|<)\s*("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|-?(?:\d+\.?\d*|\.\d+)|true|false|null|(?:context\.)?[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)$/,
+      );
+    if (match) {
+      const left = readPath(context, match[1]);
+      const right = parseConditionValue(match[3], context);
+      switch (match[2]) {
+        case '===':
+        case '==':
+          return left === right;
+        case '!==':
+        case '!=':
+          return left !== right;
+        case '>':
+          return (
+            typeof left === 'number' &&
+            typeof right === 'number' &&
+            left > right
+          );
+        case '>=':
+          return (
+            typeof left === 'number' &&
+            typeof right === 'number' &&
+            left >= right
+          );
+        case '<':
+          return (
+            typeof left === 'number' &&
+            typeof right === 'number' &&
+            left < right
+          );
+        case '<=':
+          return (
+            typeof left === 'number' &&
+            typeof right === 'number' &&
+            left <= right
+          );
+      }
     }
+    if (
+      /^(?:context\.)?[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(
+        condition.trim(),
+      )
+    )
+      return Boolean(readPath(context, condition.trim()));
+    return false;
   }
 
-  private async simulateStepExecution(step: any, context: Record<string, any>, agentId: string): Promise<{ success: boolean; data?: any; error?: string }> {
-    this.logger.log(`[SubAgent:${agentId}] Executing step: ${step.type} - ${step.selector || step.value || ''}`);
+  private async simulateStepExecution(
+    step: FlowStep,
+    context: Record<string, unknown>,
+    agentId: string,
+  ): Promise<{ success: boolean; data?: unknown; error?: string }> {
+    this.logger.log(
+      `[SubAgent:${agentId}] Executing step: ${step.type} - ${step.selector || step.value || ''}`,
+    );
 
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     switch (step.type) {
       case 'navigate':
         return { success: true, data: { url: step.value } };
       case 'click':
         return { success: true, data: { clicked: step.selector } };
-      case 'input':
-        const inputValue = step.value?.replace(/\{\{(\w+)\}\}/g, (_, key) => context[key] || '');
+      case 'input': {
+        const inputValue = step.value?.replace(
+          /\{\{(\w+)\}\}/g,
+          (_placeholder, key: string) => {
+            const value = context[key];
+            if (typeof value === 'string') return value;
+            if (typeof value === 'number' || typeof value === 'boolean')
+              return value.toString();
+            return '';
+          },
+        );
         return { success: true, data: { input: inputValue } };
+      }
       case 'read':
-        return { success: true, data: { extracted: `Mock data for ${step.extract}` } };
+        return {
+          success: true,
+          data: { extracted: `Mock data for ${step.extract}` },
+        };
       case 'wait':
-        await new Promise(resolve => setTimeout(resolve, step.timeout || 1000));
+        await new Promise<void>((resolve) =>
+          setTimeout(resolve, step.timeout || 1000),
+        );
         return { success: true };
       case 'submit':
         return { success: true };
@@ -312,9 +427,15 @@ export class SubAgentService {
     }
   }
 
-  async executeParallelFlows(flowIds: string[], parameters: Record<string, any>, sessionId: string): Promise<FlowExecutionResult[]> {
+  async executeParallelFlows(
+    flowIds: string[],
+    parameters: Record<string, unknown>,
+    sessionId: string,
+  ): Promise<FlowExecutionResult[]> {
     const availableExecutors = this.getAvailableAgentsByRole('flow-executor');
     const maxParallel = Math.min(availableExecutors.length, flowIds.length);
+    if (flowIds.length > 0 && maxParallel === 0)
+      throw new Error('No flow executor agents available');
 
     const results: FlowExecutionResult[] = [];
     const batches: string[][] = [];
@@ -324,18 +445,20 @@ export class SubAgentService {
     }
 
     for (const batch of batches) {
-      const batchPromises = batch.map(flowId => 
-        this.executeFlow(flowId, parameters, sessionId)
-          .catch(error => ({
-            success: false,
-            flowId,
-            extractedData: {},
-            executionLog: [],
-            totalDuration: 0,
-            error: error.message,
-          } as FlowExecutionResult))
+      const batchPromises = batch.map((flowId) =>
+        this.executeFlow(flowId, parameters, sessionId).catch(
+          (error: unknown) =>
+            ({
+              success: false,
+              flowId,
+              extractedData: {},
+              executionLog: [],
+              totalDuration: 0,
+              error: errorMessage(error),
+            }) as FlowExecutionResult,
+        ),
       );
-      
+
       const batchResults = await Promise.all(batchPromises);
       results.push(...batchResults);
     }
@@ -343,7 +466,7 @@ export class SubAgentService {
     return results;
   }
 
-  async getFlowRunStatus(runId: string): Promise<any> {
+  async getFlowRunStatus(runId: string) {
     return this.prisma.flowRun.findUnique({
       where: { id: runId },
       include: { subAgentRuns: true },
@@ -355,12 +478,33 @@ export class SubAgentService {
       where: { sessionId },
     });
 
-    return dbAgents.map(agent => ({
+    return dbAgents.map((agent) => ({
       id: agent.id,
       role: agent.role,
       status: agent.status as 'idle' | 'active' | 'waiting' | 'error',
-      currentTask: agent.currentTask ? JSON.parse(agent.currentTask) : undefined,
+      currentTask: this.parseTask(agent.currentTask),
       lastActivity: agent.updatedAt,
     }));
+  }
+
+  private parseTask(value: string | null): SubAgentTask | undefined {
+    if (!value) return undefined;
+    try {
+      const parsed: unknown = JSON.parse(value);
+      if (
+        typeof parsed === 'object' &&
+        parsed !== null &&
+        'id' in parsed &&
+        typeof parsed.id === 'string' &&
+        'type' in parsed &&
+        typeof parsed.type === 'string' &&
+        ['flow', 'read', 'write', 'wait'].includes(parsed.type)
+      ) {
+        return parsed as SubAgentTask;
+      }
+    } catch {
+      return undefined;
+    }
+    return undefined;
   }
 }

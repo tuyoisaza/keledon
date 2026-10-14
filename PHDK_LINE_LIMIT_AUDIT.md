@@ -2,7 +2,7 @@
 
 ## Current candidate 5.1.24 — 2026-10-14
 
-The live source inventory covers **1,077 files; 0 are at or above 600 physical lines**. The candidate adds the API/Cloud vendor URL policy, CRUD regressions and Browser/Web configuration within the limit. Generated bundles, dependencies, JSON locale/data catalogs, lockfiles, Git metadata, lifecycle docs and vendored PHDK standards are excluded. The prior 5.1.23 boundary split remains intact.
+The current working-tree source inventory covers **1,129 files; 0 are at or above 600 physical lines**. It includes TS, TSX, JS, JSX, MJS, CJS, Vue, HTML and CSS files while excluding dependencies, generated `dist`, Git metadata, vendored PHDK standards and historical lifecycle snapshots. The Cloud formatter and focused module extractions, including agent-event, database file-store, tenant-scoped voice and RAG modules, retain the 600-line boundary.
 
 ## Current Auto candidate 5.1.23 — 2026-10-13
 

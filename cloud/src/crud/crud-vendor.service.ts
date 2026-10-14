@@ -1,10 +1,28 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma, Vendor } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { encryptVendorSecretAtRest } from '../security/vendor-secret-crypto';
 import {
   getVendorAllowedOrigins,
   normalizeVendorAllowedOrigins,
   normalizeVendorBaseUrl,
 } from '../vendor-url-policy';
+
+type VendorPublicSource = Pick<
+  Vendor,
+  | 'id'
+  | 'teamId'
+  | 'name'
+  | 'type'
+  | 'baseUrl'
+  | 'config'
+  | 'username'
+  | 'isActive'
+  | 'startGoal'
+  | 'createdAt'
+  | 'updatedAt'
+> &
+  Partial<Pick<Vendor, 'password' | 'apiKey'>>;
 
 @Injectable()
 export class CrudVendorService {
@@ -39,7 +57,7 @@ export class CrudVendorService {
     return vendors.map((vendor) => this.toPublicVendor(vendor));
   }
 
-  private toPublicVendor(vendor: any) {
+  private toPublicVendor(vendor: VendorPublicSource) {
     const config =
       vendor.config &&
       typeof vendor.config === 'object' &&
@@ -56,7 +74,7 @@ export class CrudVendorService {
         vendor.baseUrl,
         config.allowedOrigins,
       ),
-      username: vendor.username || null,
+      username: vendor.username ? '***' : null,
       hasPassword:
         vendor.password === undefined ? undefined : !!vendor.password,
       hasApiKey: vendor.apiKey === undefined ? undefined : !!vendor.apiKey,
@@ -76,7 +94,7 @@ export class CrudVendorService {
     password?: string;
     apiKey?: string;
     allowedOrigins?: string[];
-    config?: Record<string, unknown>;
+    config?: Prisma.InputJsonObject;
     startGoal?: string;
   }) {
     const baseUrl = normalizeVendorBaseUrl(data.baseUrl);
@@ -90,10 +108,16 @@ export class CrudVendorService {
         name: data.name,
         type: data.type,
         baseUrl,
-        username: data.username,
-        password: data.password,
-        apiKey: data.apiKey,
-        config: { ...(data.config || {}), allowedOrigins } as any,
+        username: data.username
+          ? encryptVendorSecretAtRest(data.username)
+          : data.username,
+        password: data.password
+          ? encryptVendorSecretAtRest(data.password)
+          : data.password,
+        apiKey: data.apiKey
+          ? encryptVendorSecretAtRest(data.apiKey)
+          : data.apiKey,
+        config: { ...(data.config || {}), allowedOrigins },
         startGoal: data.startGoal,
       },
     });
@@ -110,7 +134,7 @@ export class CrudVendorService {
       password?: string;
       apiKey?: string;
       allowedOrigins?: string[];
-      config?: Record<string, unknown>;
+      config?: Prisma.InputJsonObject;
       isActive?: boolean;
       startGoal?: string;
     },
@@ -137,17 +161,26 @@ export class CrudVendorService {
       baseUrl,
       data.allowedOrigins === undefined ? priorOrigins : data.allowedOrigins,
     );
-    const updateData: any = { ...data, baseUrl };
-    delete updateData.allowedOrigins;
-    updateData.config = {
-      ...currentConfig,
-      ...(data.config || {}),
-      allowedOrigins,
+    const { config, ...vendorFields } = data;
+    delete vendorFields.allowedOrigins;
+    const updateData: Prisma.VendorUpdateInput = {
+      ...vendorFields,
+      baseUrl,
+      config: {
+        ...currentConfig,
+        ...(config || {}),
+        allowedOrigins,
+      },
     };
     // Safety: never write masked placeholder values to the DB
     if (updateData.username === '***') delete updateData.username;
     if (updateData.password === '***') delete updateData.password;
     if (updateData.apiKey === '***') delete updateData.apiKey;
+    for (const field of ['username', 'password', 'apiKey'] as const) {
+      if (typeof updateData[field] === 'string' && updateData[field] !== '') {
+        updateData[field] = encryptVendorSecretAtRest(updateData[field]);
+      }
+    }
     const vendor = await this.prisma.vendor.update({
       where: { id },
       data: updateData,

@@ -130,7 +130,7 @@ These rules govern how KELEDON is developed and released. They are additive-only
 ### 7. Configurable by Design
 - No hard-coded Genesys/Salesforce-only truth
 - The cloud decides which vendors/providers to use; the browser executes whatever the cloud sends
-- Vendor credentials are encrypted at rest (`KELEDON_VENDOR_KEY`)
+- Vendor username/password/API-key fields are encrypted at rest in API/Cloud with versioned AES-256-GCM envelopes. CRUD projections mask usernames and omit credential values; device pairing uses a separate envelope. Legacy CBC reads remain during rollout. The owner confirmed production `KELEDON_VENDOR_KEY` provisioning; an idempotent dry-run-first migration is implemented but has not run, so persisted DB acceptance remains open.
 - Feature flags (`ENABLE_VECTOR_STORE`, `ENABLE_REAL_TTS`, etc.) control runtime behavior
 
 ---

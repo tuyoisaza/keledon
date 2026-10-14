@@ -6,7 +6,6 @@ import {
   Body,
   HttpException,
   HttpStatus,
-  Param,
   UseGuards,
 } from '@nestjs/common';
 import { VoiceAnalyticsService } from '../services/voice-analytics.service';
@@ -29,12 +28,12 @@ import { AnalyticsControllerHelpers } from './analytics.controller-helpers';
 @UseGuards(ResourceScopeGuard)
 export class AnalyticsController extends AnalyticsControllerHelpers {
   constructor(
-    private readonly voiceAnalyticsService: VoiceAnalyticsService,
-    private readonly integrationHealthService: IntegrationHealthService,
-    private readonly flowExecutionService: FlowExecutionService,
-    private readonly agentMonitoringService: AgentMonitoringService,
-    private readonly securityService: SecurityService,
-    private readonly systemMonitoringService: SystemMonitoringService,
+    voiceAnalyticsService: VoiceAnalyticsService,
+    integrationHealthService: IntegrationHealthService,
+    flowExecutionService: FlowExecutionService,
+    agentMonitoringService: AgentMonitoringService,
+    securityService: SecurityService,
+    systemMonitoringService: SystemMonitoringService,
   ) {
     super(
       voiceAnalyticsService,
@@ -66,21 +65,18 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
     try {
       const period = timeRange.period || '24h';
 
-      const [
-        voiceMetrics,
-        integrationMetrics,
-        flowMetrics,
-        agentMetrics,
-        securityMetrics,
-        systemMetrics,
-      ] = await Promise.all([
-        this.getVoiceAnalyticsData(period, filters),
-        this.getIntegrationAnalyticsData(period, filters),
-        this.getFlowAnalyticsData(period, filters),
-        this.getAgentAnalyticsData(period, filters),
-        this.getSecurityAnalyticsData(period, filters),
-        this.getSystemAnalyticsData(),
-      ]);
+      const voiceMetrics = this.getVoiceAnalyticsData(period, filters);
+      const integrationMetrics = this.getIntegrationAnalyticsData(
+        period,
+        filters,
+      );
+      const flowMetrics = this.getFlowAnalyticsData(period, filters);
+      const agentMetrics = this.getAgentAnalyticsData(period, filters);
+      const securityMetrics = await this.getSecurityAnalyticsData(
+        period,
+        filters,
+      );
+      const systemMetrics = this.getSystemAnalyticsData();
 
       const healthScore = this.calculateOverallHealthScore([
         voiceMetrics,
@@ -196,7 +192,7 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
             timeScale: true,
             responsive: true,
           },
-          data: await this.getVoiceAnalyticsChartData(period, filters),
+          data: this.getVoiceAnalyticsChartData(period, filters),
           lastUpdated: new Date(),
           refreshInterval: 60,
         },
@@ -217,7 +213,7 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
             pagination: true,
             pageSize: 10,
           },
-          data: await this.getFlowExecutionTableData(period, filters),
+          data: this.getFlowExecutionTableData(period, filters),
           lastUpdated: new Date(),
           refreshInterval: 30,
         },
@@ -234,7 +230,7 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
             colorScale: 'RdYlGn',
             responsive: true,
           },
-          data: await this.getIntegrationHeatmapData(filters),
+          data: this.getIntegrationHeatmapData(filters),
           lastUpdated: new Date(),
           refreshInterval: 120,
         },
@@ -250,7 +246,7 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
             timeScale: true,
             responsive: true,
           },
-          data: await this.getSystemTrendData(period),
+          data: this.getSystemTrendData(period),
           lastUpdated: new Date(),
           refreshInterval: 15,
         },
@@ -305,11 +301,11 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
   }
 
   @Get('dashboard/layouts')
-  async getDashboardLayouts(): Promise<{
+  getDashboardLayouts(): {
     success: boolean;
     data: DashboardLayout[];
     timestamp: string;
-  }> {
+  } {
     try {
       const layouts: DashboardLayout[] = [
         {
@@ -452,7 +448,7 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
   }
 
   @Post('dashboard/layouts')
-  async createDashboardLayout(
+  createDashboardLayout(
     @Body()
     layoutData: {
       name: string;
@@ -460,11 +456,11 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
       widgets: string[];
       layout: DashboardLayout['layout'];
     },
-  ): Promise<{
+  ): {
     success: boolean;
     data: DashboardLayout;
     timestamp: string;
-  }> {
+  } {
     try {
       const newLayout: DashboardLayout = {
         id: this.generateId(),
@@ -498,7 +494,7 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
     @Query() filters: AnalyticsFilters = {},
   ): Promise<{
     success: boolean;
-    data: any;
+    data: unknown;
     filename: string;
     mimeType: string;
     timestamp: string;
@@ -509,7 +505,7 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
 
       let filename: string;
       let mimeType: string;
-      let data: any;
+      let data: unknown;
 
       switch (format) {
         case 'csv':
@@ -548,21 +544,18 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
   }
 
   @Get('realtime')
-  async getRealTimeData(
-    @Query() types: string = 'system,voice,flows,integrations',
-  ): Promise<{
+  getRealTimeData(@Query() types: string = 'system,voice,flows,integrations'): {
     success: boolean;
-    data: {
-      system: any;
-      voice: any;
-      flows: any;
-      integrations: any;
-    };
+    data: Partial<
+      Record<'system' | 'voice' | 'flows' | 'integrations', unknown>
+    >;
     timestamp: string;
-  }> {
+  } {
     try {
       const typesArray = types.split(',');
-      const data: any = {};
+      const data: Partial<
+        Record<'system' | 'voice' | 'flows' | 'integrations', unknown>
+      > = {};
 
       if (typesArray.includes('system')) {
         data.system = this.systemMonitoringService.getCurrentMetrics();

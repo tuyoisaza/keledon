@@ -2,11 +2,9 @@ import {
   Controller,
   Get,
   Post,
-  Put,
   Delete,
   Body,
   Param,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { SubAgentService } from './subagent.service';
@@ -35,12 +33,12 @@ export class SubAgentController {
   }
 
   @Get('status')
-  async getAllStatus() {
+  getAllStatus() {
     return this.subAgentService.getAllAgentStatuses();
   }
 
   @Get(':agentId/status')
-  async getAgentStatus(@Param('agentId') agentId: string) {
+  getAgentStatus(@Param('agentId') agentId: string) {
     const status = this.subAgentService.getAgentStatus(agentId);
     if (!status) {
       return { error: 'Agent not found' };
@@ -49,7 +47,7 @@ export class SubAgentController {
   }
 
   @Get('agents/by-role/:role')
-  async getAgentsByRole(@Param('role') role: string) {
+  getAgentsByRole(@Param('role') role: string) {
     return this.subAgentService.getAvailableAgentsByRole(role);
   }
 

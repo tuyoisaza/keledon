@@ -1,0 +1,46 @@
+{
+  "product_version": "5.1.25",
+  "branch": "fix/cloud-eslint-prettier",
+  "base_commit": "6413d8aed295c18af098ca6a58c6dfbb7503930b",
+  "source_fingerprint": "sha256:def949905fe93b3026fb6805853fa6f4fc5043f208d716c6442da1fcd5c8eb31",
+  "source_commit": null,
+  "pull_request": null,
+  "delivery_status": "PREPARING_REVIEW_PR",
+  "acceptance_status": "PARTIALLY_DELIVERED",
+  "versions_aligned": true,
+  "checks": {
+    "phdk_coherence": "PASS 52/52",
+    "api_lint": "PASS 0 errors, 138 warnings",
+    "cloud_lint": "PASS 0 errors, 25 warnings",
+    "api_build": "PASS",
+    "cloud_configured_build": "PASS",
+    "cloud_full_typecheck": "PASS",
+    "api_jest": "PASS 10 suites, 31 tests",
+    "cloud_regression": "PASS 10 suites",
+    "browser_build_and_tests": "PASS 27 tests",
+    "web_build": "PASS",
+    "web_diagnostics": "PASS 19 tests",
+    "web_seo": "PASS 1 test",
+    "landing_build_and_seo": "PASS"
+  },
+  "uat": {
+    "result": "PASS_SCOPED_SYNTHETIC",
+    "suite": "1/1, 15 grouped assertions",
+    "source_fingerprint": "sha256:def949905fe93b3026fb6805853fa6f4fc5043f208d716c6442da1fcd5c8eb31",
+    "limitations": [
+      "Mocked API and synthetic fixtures; no real backend authentication or database acceptance",
+      "Native Electron/device/audio not exercised",
+      "The owner decision on a server-authorized test-profile switch remains pending"
+    ]
+  },
+  "open_acceptance": [
+    "Disposable database persistence and vendor-secret migration",
+    "Exhaustive 35-model role/tenant/surface/operation matrix",
+    "Native Electron, device, microphone and audio UAT",
+    "Broad route accessibility/localization review",
+    "Deployed SEO/AEO field measurements",
+    "Owner disposition of audited test-profile selection",
+    "Customer-specific live voice/call/CRM acceptance when configured"
+  ],
+  "deployment": "NOT_PERFORMED"
+}

@@ -1,3 +1,24 @@
+# UAT cases — run 20261014-0007-phdk-auto-completion
+
+Candidate is the integrated local worktree based on 5.1.24 / `6413d8aed295c18af098ca6a58c6dfbb7503930b`; a SHA-256 worktree fingerprint will be generated with UAT evidence. Test records are synthetic; external requests are blocked/intercepted.
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-001 | US-001 / anonymous, user | Open public/login, copy report, test denied clipboard, reset owned state, inspect 390px/200%-400% reflow and themes. | Version row remains visible; safe report and true success/failure feedback; only owned cache/state removed; no horizontal overflow. | Local production SPA/Playwright with intercepted APIs | NOT RUN — run in current UAT stage. |
+| UAT-002 | US-002 / admin, coordinator, superadmin | Exercise management view and provider replacement flow with synthetic Company Co/Other Co fixtures. | UI respects role-specific capabilities; credential fields are blank/write-only and untouched fields omitted. | Local production SPA with mocked `/auth/me`; API regression as separate source-backed evidence | NOT RUN — run in current UAT stage. |
+| UAT-003 | US-002 / cross-tenant and non-superadmin | Attempt cross-company IDs and role/company escalation through isolated API/Cloud cases. | Unauthorized direct access/mutation is denied; actor/tenant comes from DB. | API/Cloud isolated regression suites (19/19 and 10/10) | NOT RUN — bind detailed results in report. |
+| UAT-004 | US-003 / integration administrator | Supply valid private HTTP(S) origin and invalid, credentialed, query, path, malformed, unlisted or cross-tenant targets to tenant policy; inspect safe projections. | Explicit tenant-listed private origin is allowed; invalid/unlisted/cross-tenant target denied; responses expose safe metadata only. | API/Cloud policy tests with fixtures; Browser offline policy regression | NOT RUN — run in current UAT stage. |
+| UAT-005 | US-004 / operator | Run deterministic Company Co call-command lifecycle fixture through registered handlers and injected CRM adapter. | Valid synthetic sequence completes; failed finalization, missing active call and wrong surface fail safely. | Browser node tests with synthetic adapter; no live provider | NOT RUN — run in current UAT stage. |
+| UAT-006 | US-004 / desktop operator | Pair actual local Browser with a test device; exercise OS microphone/camera consent and audio/session lifecycle. | Only authorized current-origin/device session is granted; stop/error releases resources; no private data leaks. | Native manual UAT | MANUAL/BLOCKED — supported physical device/audio setup unavailable in this run. |
+| UAT-007 | US-005 / release owner | Read package/lock/renderer version and current remote/PR evidence. | Current baseline is coherent 5.1.24; no release claim until candidate PR/readback. | Local source and Git metadata | NOT RUN — final delivery stage. |
+| UAT-008 | US-002 / superadmin test operator | Inspect and exercise the UI/server path for explicit, audited test-profile switching. | Superadmin chooses permitted synthetic profile through a server-authorized, auditable path; no client-only role spoofing. | Local source/UI and isolated server tests | FAIL — no active audited server-side profile switch; only stale unused UI simulation affordance found. Route to UAT Fix; design choice pending owner response. |
+| UAT-009 | US-002 / superadmin and test users | Authenticate to a safe development target with scoped synthetic test identities and validate actual roles. | Actual DB-backed access matches role policy; no production identity/data. | Development deployment + safe test identities | BLOCKED — no verified development target/accounts configured; do not use production data. |
+| UAT-010 | US-002 / data administrator | Run vendor-secret migration and persisted before/after CRUD matrix across disposable DB. | Rows migrate idempotently; no plaintext leaks; rollback proven; 35-model role/tenant/surface/operation matrix persists. | Isolated disposable PostgreSQL DB | BLOCKED — no disposable DB supplied/configured; never use production DB. |
+
+
+
+## Historical records from earlier candidates
+
 # UAT cases — latest local candidate 5.1.16
 
 ## Candidate 5.1.17 — current Auto continuation

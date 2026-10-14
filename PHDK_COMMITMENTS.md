@@ -1,4 +1,19 @@
 # Commitment ledger
+## Active run `20261014-0007-phdk-auto-completion` — refreshed Capture
+
+Four owner-confirmed commitments remain in order. The project baseline is KELEDON 5.1.24 at `origin/main` `6413d8aed295c18af098ca6a58c6dfbb7503930b`, with PHDK v2.50.10 installed (coherence 52/52). All current continuation changes are local on `fix/cloud-eslint-prettier`; no new commit or PR exists yet.
+
+| ID | Confirmed front | Current truth | Remaining acceptance |
+|---|---|---|---|
+| CMT-001 | Baseline, versions and PR reconciliation | PR #92 product source and PR #93 evidence are merged; five app roots are 5.1.24 and remote `main` is verified. | Complete this continuation's versioned source delivery through normal branch/PR controls and verify its merge. |
+| CMT-002 | Shared visible diagnostics widget and safe diagnostics | Current source/widget work and scoped built-SPA evidence exist on the merged base; this continuation must retest its candidate. | Native Electron rendering, OS permissions, physical device/audio, full route/a11y acceptance remain unverified. |
+| CMT-003 | Voice → Cloud → Browser → CRM, providers chosen per client | Provider-neutral source and tenant-origin policy are merged; owner allows private/local targets after URL validation and tenant allowlisting. | Continue cross-layer source/contract verification. No universal live vendor UAT; configured client acceptance remains tenant-specific. |
+| CMT-004 | Administration and permissions | Owner-approved rule: new users get `user`; current existing superadmin alone elevates roles/company assignment; managers remain within company and cannot elevate/delete companies; API actor/tenant from DB; normal responses never return stored or submitted secrets; updates replace secrets. | Finish all source gaps, full resource×role×tenant×surface×operation map and tests. Database persistence/migration needs an authorized isolated DB; production DB remains excluded. |
+
+Global source gate is currently BLOCKED by 333 Cloud ESLint errors/59 warnings. API/Cloud builds and regressions last pass (19/19, 10/10); focused Cloud tests pass 35/35 across 11 suites and the mirrored API subagent tests 3/3. These results are baseline evidence only; re-run on the final candidate. Native, database-persisted, deployed SEO/AEO and public locale decision remain separately tracked. No live CRM, production DB, deployment, paid request, hosted CI, or provider write is authorized by this record.
+
+---
+
 ## Current continuation — 2026-10-14, 5.1.17 merged source slice
 
 Product PR [#78](https://github.com/tuyoisaza/keledon/pull/78) merged by squash at `f8933a61c60655a6448a546790521665c6b81c9f`; fresh `origin/main` tree readback matches the candidate and all five app package/lock roots are 5.1.17. Source commit `4e874c14cde10fd5b1a0ce521ee097e67823e120` has post-commit UAT evidence bound to its SHA. API regression 15/15, web typecheck/build, synthetic UAT 1/1, diagnostics 18/18, locale parity 734/734, landing SEO test 1/1/build, Browser/Cloud builds and PHDK coherence 52/52 pass. GitHub reports no hosted checks or review decision; no deployment is claimed.

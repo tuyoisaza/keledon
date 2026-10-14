@@ -7,7 +7,10 @@ import {
   SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
   SEMRESATTRS_SERVICE_NAME,
 } from '@opentelemetry/semantic-conventions';
-import { getRuntimeTier, resolveServiceEndpoints } from '../config/runtime-tier';
+import {
+  getRuntimeTier,
+  resolveServiceEndpoints,
+} from '../config/runtime-tier';
 
 const serviceName = 'keledon-cloud';
 const deploymentEnvironment = getRuntimeTier();
@@ -32,7 +35,7 @@ const sdk = new NodeSDK({
 
 let telemetryStarted = false;
 
-export async function startTelemetry(): Promise<void> {
+export function startTelemetry(): void {
   if (telemetryStarted) {
     return;
   }
@@ -44,7 +47,7 @@ export async function startTelemetry(): Promise<void> {
   }
 
   try {
-    await sdk.start();
+    sdk.start();
     console.log(
       `[OTEL] Tracing started for ${serviceName} -> ${resolvedEndpoints.otelExporterUrl}`,
     );

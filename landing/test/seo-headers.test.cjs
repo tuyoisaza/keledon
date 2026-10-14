@@ -15,6 +15,8 @@ test('public landing document has truthful discovery metadata and route policy',
   assert.match(html, /name="description" content="KELEDON coordinates cloud-governed voice assistance/);
   assert.match(html, /name="robots" content="index, follow"/);
   assert.match(html, /rel="canonical" href="https:\/\/keledon\.tuyoisaza\.com\/"/);
+  assert.match(html, /<noscript>KELEDON is a cloud-governed contact center runtime\./);
+  assert.match(html, /Call and CRM interfaces are configured per client\.<\/noscript>/);
 
   const home = config.match(/location = \/ \{([\s\S]*?)\n        \}/)?.[1];
   const spa = config.match(/location \/ \{([\s\S]*?)\n        \}/)?.[1];

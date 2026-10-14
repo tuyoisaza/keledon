@@ -11,6 +11,22 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ApiTags } from '@nestjs/swagger';
+import type { Prisma } from '@prisma/client';
+
+interface TeamRequest {
+  user?: unknown;
+}
+
+function getRequestUserId(user: unknown): string | undefined {
+  if (typeof user !== 'object' || user === null || Array.isArray(user))
+    return undefined;
+  const userId = (user as Record<string, unknown>).userId;
+  return typeof userId === 'string' && userId.length > 0 ? userId : undefined;
+}
+
+function errorName(error: unknown): string {
+  return error instanceof Error ? error.name : 'Error';
+}
 
 export class TeamConfigDto {
   sttProvider?: string;
@@ -41,9 +57,9 @@ export class TeamConfigDto {
 export class TeamController {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async getActorScope(req: any) {
-    const requestUser = req?.user;
-    if (!requestUser?.userId) {
+  private async getActorScope(req: TeamRequest) {
+    const userId = getRequestUserId(req.user);
+    if (!userId) {
       return {
         role: 'anonymous',
         companyId: null as string | null,
@@ -52,7 +68,7 @@ export class TeamController {
     }
 
     const dbUser = await this.prisma.user.findUnique({
-      where: { id: requestUser.userId },
+      where: { id: userId },
       select: { role: true, companyId: true, teamId: true },
     });
 
@@ -76,7 +92,11 @@ export class TeamController {
     return { id: '__NO_TEAM_ACCESS__' };
   }
 
-  private async assertTeamAccess(teamId: string, req: any, management = false) {
+  private async assertTeamAccess(
+    teamId: string,
+    req: TeamRequest,
+    management = false,
+  ) {
     const scope = await this.getActorScope(req);
     if (
       management &&
@@ -96,7 +116,7 @@ export class TeamController {
   }
 
   @Get()
-  async listTeams(@Req() req: any) {
+  async listTeams(@Req() req: TeamRequest) {
     try {
       const scope = await this.getActorScope(req);
       const teams = await this.prisma.team.findMany({
@@ -148,17 +168,14 @@ export class TeamController {
           : undefined,
         _count: { users: team.users.length, keledons: team.keledons.length },
       }));
-    } catch (error) {
-      console.error(
-        '[TeamController] Error listing teams:',
-        error?.name || 'Error',
-      );
+    } catch (error: unknown) {
+      console.error('[TeamController] Error listing teams:', errorName(error));
       throw error;
     }
   }
 
   @Get(':id/config')
-  async getTeamConfig(@Param('id') teamId: string, @Req() req: any) {
+  async getTeamConfig(@Param('id') teamId: string, @Req() req: TeamRequest) {
     try {
       await this.assertTeamAccess(teamId, req, true);
       const team = await this.prisma.team.findUnique({
@@ -230,17 +247,14 @@ export class TeamController {
         anthropicApiKeySet: !!team.anthropicApiKey,
         vendorConfig: {},
       };
-    } catch (error) {
-      console.error(
-        '[TeamController] Error getting config:',
-        error?.name || 'Error',
-      );
+    } catch (error: unknown) {
+      console.error('[TeamController] Error getting config:', errorName(error));
       throw error;
     }
   }
 
   @Get(':id/config/status')
-  async getConfigStatus(@Param('id') teamId: string, @Req() req: any) {
+  async getConfigStatus(@Param('id') teamId: string, @Req() req: TeamRequest) {
     try {
       await this.assertTeamAccess(teamId, req, true);
       const team = await this.prisma.team.findUnique({
@@ -265,10 +279,10 @@ export class TeamController {
         openaiKeySet: !!team.openaiApiKey,
         speachesKeySet: !!team.speachesApiKey,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(
         '[TeamController] Error getting config status:',
-        error?.name || 'Error',
+        errorName(error),
       );
       throw error;
     }
@@ -278,7 +292,7 @@ export class TeamController {
   async updateTeamConfig(
     @Param('id') teamId: string,
     @Body() config: TeamConfigDto,
-    @Req() req: any,
+    @Req() req: TeamRequest,
   ) {
     try {
       await this.assertTeamAccess(teamId, req, true);
@@ -305,7 +319,7 @@ export class TeamController {
           throw new BadRequestException('Unsupported provider selection');
         }
       }
-      const updateData: any = {};
+      const updateData: Prisma.TeamUpdateInput = {};
 
       if (
         config.sttProvider &&
@@ -410,17 +424,17 @@ export class TeamController {
         ttsVoiceId: team.ttsVoiceId,
         ttsEndpointUrl: team.ttsEndpointUrl,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(
         '[TeamController] Error updating config:',
-        error?.name || 'Error',
+        errorName(error),
       );
       throw error;
     }
   }
 
   @Get(':id')
-  async getTeam(@Param('id') teamId: string, @Req() req: any) {
+  async getTeam(@Param('id') teamId: string, @Req() req: TeamRequest) {
     try {
       await this.assertTeamAccess(teamId, req, true);
       const team = await this.prisma.team.findUnique({
@@ -451,17 +465,14 @@ export class TeamController {
       }
 
       return team;
-    } catch (error) {
-      console.error(
-        '[TeamController] Error getting team:',
-        error?.name || 'Error',
-      );
+    } catch (error: unknown) {
+      console.error('[TeamController] Error getting team:', errorName(error));
       throw error;
     }
   }
 
   @Post()
-  async createTeam(@Body() data: { name: string }, @Req() req: any) {
+  async createTeam(@Body() data: { name: string }, @Req() req: TeamRequest) {
     try {
       const scope = await this.getActorScope(req);
       if (scope.role !== 'superadmin')
@@ -480,11 +491,8 @@ export class TeamController {
         teamId: team.id,
         teamName: team.name,
       };
-    } catch (error) {
-      console.error(
-        '[TeamController] Error creating team:',
-        error?.name || 'Error',
-      );
+    } catch (error: unknown) {
+      console.error('[TeamController] Error creating team:', errorName(error));
       throw error;
     }
   }

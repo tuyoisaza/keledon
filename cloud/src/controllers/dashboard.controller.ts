@@ -9,11 +9,7 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
-import {
-  AgentMonitoringService,
-  AgentStatus,
-  SystemHealth,
-} from '../services/agent-monitoring.service';
+import { AgentMonitoringService } from '../services/agent-monitoring.service';
 import { AILoopService } from '../services/ai-loop.service';
 import { VoiceAnalyticsService } from '../services/voice-analytics.service';
 import { IntegrationHealthService } from '../services/integration-health.service';
@@ -45,7 +41,7 @@ export class DashboardController {
   }
 
   @Get('agents/status')
-  async getAgentStatus(@Query() filters: AgentStatusFilters) {
+  getAgentStatus(@Query() filters: AgentStatusFilters) {
     try {
       const agents = this.agentMonitoringService.getAllAgentStatuses();
 
@@ -77,7 +73,7 @@ export class DashboardController {
   }
 
   @Get('system/health')
-  async getSystemHealth() {
+  getSystemHealth() {
     try {
       const health = this.agentMonitoringService.getCurrentHealth();
 
@@ -96,7 +92,7 @@ export class DashboardController {
   }
 
   @Get('ai/loops')
-  async getAILoops(@Query() timeRange: TimeRange) {
+  getAILoops(@Query() timeRange: TimeRange) {
     try {
       const loops = this.aiLoopService.getAllLoops();
 
@@ -125,7 +121,7 @@ export class DashboardController {
   }
 
   @Post('ai/loops')
-  async createAILoop(@Body() body: { name?: string }) {
+  createAILoop(@Body() body: { name?: string }) {
     try {
       const loop = this.aiLoopService.createLoop(body.name || undefined);
 
@@ -144,7 +140,7 @@ export class DashboardController {
   }
 
   @Post('ai/loops/:loopId/start')
-  async startAILoop(@Param('loopId') loopId: string) {
+  startAILoop(@Param('loopId') loopId: string) {
     try {
       this.aiLoopService.startLoop(loopId);
 
@@ -162,7 +158,7 @@ export class DashboardController {
   }
 
   @Post('ai/loops/:loopId/reset')
-  async resetAILoop(@Param('loopId') loopId: string) {
+  resetAILoop(@Param('loopId') loopId: string) {
     try {
       this.aiLoopService.resetLoop(loopId);
 
@@ -180,10 +176,10 @@ export class DashboardController {
   }
 
   @Get('analytics/voice')
-  async getVoiceAnalytics(@Query() timeRange: TimeRange) {
+  getVoiceAnalytics(@Query() timeRange: TimeRange) {
     try {
       const analytics = this.voiceAnalyticsService.getAnalytics(
-        (timeRange.period as any) || '24h',
+        timeRange.period || '24h',
       );
 
       return {
@@ -205,7 +201,7 @@ export class DashboardController {
   }
 
   @Get('integrations/health')
-  async getIntegrationHealth() {
+  getIntegrationHealth() {
     try {
       const integrations = this.integrationHealthService.getProviders();
 
@@ -238,7 +234,7 @@ export class DashboardController {
   }
 
   @Get('flows/executions')
-  async getFlowExecutions(@Query() timeRange: TimeRange) {
+  getFlowExecutions(@Query() timeRange: TimeRange) {
     try {
       const executions = this.flowExecutionService.getExecutions({
         limit: 100,
@@ -276,7 +272,7 @@ export class DashboardController {
   }
 
   @Get('status')
-  async getDashboardStatus() {
+  getDashboardStatus() {
     try {
       const agentStatus = this.agentMonitoringService.getAllAgentStatuses();
       const aiLoops = this.aiLoopService.getAllLoops();

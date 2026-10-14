@@ -55,7 +55,7 @@ export class GoogleOAuthService {
       !payload ||
       !payload.email_verified ||
       !payload.email ||
-      (payload as any).nonce !== expectedNonce
+      payload.nonce !== expectedNonce
     ) {
       throw new Error('Invalid ID token payload');
     }

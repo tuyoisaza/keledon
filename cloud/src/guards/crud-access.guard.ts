@@ -4,7 +4,32 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+
+type CurrentActor = Pick<User, 'id' | 'role' | 'companyId' | 'teamId'>;
+type CrudGuardRequest = {
+  user?: { userId?: string };
+  actor?: CurrentActor;
+  method: string;
+  route?: { path?: string };
+  path?: string;
+  body?: unknown;
+  params?: Record<string, string | undefined>;
+  query?: Record<string, unknown>;
+  companyScope?: string;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function requireString(value: unknown): string {
+  if (typeof value !== 'string') {
+    throw new ForbiddenException('Resource access denied');
+  }
+  return value;
+}
 
 // Management permissions are derived from current records, never token role or caller filters.
 @Injectable()
@@ -12,7 +37,7 @@ export class CrudAccessGuard implements CanActivate {
   constructor(private readonly prisma: PrismaService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req = context.switchToHttp().getRequest();
+    const req = context.switchToHttp().getRequest<CrudGuardRequest>();
     const handler = context.getHandler().name;
     // Webhook retains its separate shared-secret guard, not a user-token bypass.
     if (handler === 'webhook') return true;
@@ -22,7 +47,7 @@ export class CrudAccessGuard implements CanActivate {
         where: { id: req.user.userId },
         select: { id: true, role: true, companyId: true, teamId: true },
       }));
-    const deny = () => {
+    const deny = (): never => {
       throw new ForbiddenException('Resource access denied');
     };
     if (!actor) return deny();
@@ -87,7 +112,7 @@ export class CrudAccessGuard implements CanActivate {
     )
       return deny();
 
-    const company = actor.companyId;
+    const company = actor.companyId ?? '';
     const teamScope = superadmin ? {} : { brand: { companyId: company } };
     const assertTeam = async (id: string) => {
       if (
@@ -109,7 +134,17 @@ export class CrudAccessGuard implements CanActivate {
       )
         deny();
     };
-    const entries = Array.isArray(req.body) ? req.body : [req.body || {}];
+    let entries: Record<string, unknown>[];
+    if (Array.isArray(req.body)) {
+      entries = req.body.filter(isRecord);
+      if (entries.length !== req.body.length) deny();
+    } else if (!req.body) {
+      entries = [{}];
+    } else if (isRecord(req.body)) {
+      entries = [req.body];
+    } else {
+      return deny();
+    }
     for (const data of entries) {
       if (!data || typeof data !== 'object' || Array.isArray(data)) deny();
       const fields: Record<string, string[]> = {
@@ -185,7 +220,7 @@ export class CrudAccessGuard implements CanActivate {
       if (
         data.countries !== undefined &&
         (!Array.isArray(data.countries) ||
-          data.countries.some((code: any) => typeof code !== 'string'))
+          data.countries.some((code) => typeof code !== 'string'))
       )
         deny();
       // Reject Prisma nested writes and other fields not part of the HTTP resource contract.
@@ -199,7 +234,7 @@ export class CrudAccessGuard implements CanActivate {
       ];
       if (
         Object.values(data).some(
-          (value: any) =>
+          (value) =>
             value &&
             typeof value === 'object' &&
             forbidden.some((key) => key in value),
@@ -226,19 +261,28 @@ export class CrudAccessGuard implements CanActivate {
         !launch &&
         ['teams', 'vendors', 'keledons', 'sessions'].includes(resource)
       ) {
-        if (resource === 'teams') await assertBrand(data.brandId);
-        else await assertTeam(data.teamId);
+        if (resource === 'teams') {
+          const brandId = requireString(data.brandId);
+          await assertBrand(brandId);
+        } else {
+          const teamId = requireString(data.teamId);
+          await assertTeam(teamId);
+        }
       }
-      if (data.teamId) await assertTeam(data.teamId);
-      if (data.brandId) await assertBrand(data.brandId);
-      if (resource === 'users' && data.teamId && data.companyId) {
+      if (typeof data.teamId === 'string') await assertTeam(data.teamId);
+      if (typeof data.brandId === 'string') await assertBrand(data.brandId);
+      if (
+        resource === 'users' &&
+        typeof data.teamId === 'string' &&
+        typeof data.companyId === 'string'
+      ) {
         const team = await this.prisma.team.findFirst({
           where: { id: data.teamId, brand: { companyId: data.companyId } },
           select: { id: true },
         });
         if (!team) deny();
       }
-      if (data.userId && !launch) {
+      if (typeof data.userId === 'string' && !launch) {
         const target = await this.prisma.user.findUnique({
           where: { id: data.userId },
           select: { companyId: true, teamId: true },
@@ -246,23 +290,26 @@ export class CrudAccessGuard implements CanActivate {
         if (
           !target ||
           (!superadmin && target.companyId !== company) ||
-          (data.teamId && target.teamId !== data.teamId)
+          (typeof data.teamId === 'string' && target.teamId !== data.teamId)
         )
           deny();
       }
       if (resource === 'users') {
-        if (
-          data.role !== undefined &&
-          ![
-            'guest',
-            'user',
-            'agent',
-            'admin',
-            'coordinator',
-            'superadmin',
-          ].includes(data.role)
-        )
-          deny();
+        const role = data.role;
+        if (role !== undefined) {
+          const roleString = requireString(role);
+          if (
+            ![
+              'guest',
+              'user',
+              'agent',
+              'admin',
+              'coordinator',
+              'superadmin',
+            ].includes(roleString)
+          )
+            deny();
+        }
         if (!superadmin && data.role !== undefined && data.role !== 'user')
           deny();
         if (!superadmin && req.method === 'POST') {
@@ -292,16 +339,7 @@ export class CrudAccessGuard implements CanActivate {
         resource,
       )
     ) {
-      const model = {
-        users: 'user',
-        vendors: 'vendor',
-        keledons: 'keledon',
-        'voice-profiles': 'tenantVoiceProfile',
-        sessions: 'session',
-      }[resource];
-      const record = await (this.prisma as any)[model].findUnique({
-        where: { id },
-      });
+      const record = await this.findScopedRecord(resource, id);
       if (!record) return deny();
       if (!superadmin) {
         if (['users', 'voice-profiles'].includes(resource)) {
@@ -332,5 +370,45 @@ export class CrudAccessGuard implements CanActivate {
     }
     if (launch) req.body = { userId: actor.id };
     return true;
+  }
+
+  private findScopedRecord(
+    resource: string,
+    id: string,
+  ): Promise<{
+    companyId?: string | null;
+    teamId?: string | null;
+    role?: string;
+    userId?: string | null;
+  } | null> {
+    switch (resource) {
+      case 'users':
+        return this.prisma.user.findUnique({
+          where: { id },
+          select: { companyId: true, teamId: true, role: true },
+        });
+      case 'vendors':
+        return this.prisma.vendor.findUnique({
+          where: { id },
+          select: { teamId: true },
+        });
+      case 'keledons':
+        return this.prisma.keledon.findUnique({
+          where: { id },
+          select: { teamId: true, userId: true },
+        });
+      case 'voice-profiles':
+        return this.prisma.tenantVoiceProfile.findUnique({
+          where: { id },
+          select: { companyId: true },
+        });
+      case 'sessions':
+        return this.prisma.session.findUnique({
+          where: { id },
+          select: { teamId: true },
+        });
+      default:
+        return Promise.resolve(null);
+    }
   }
 }
