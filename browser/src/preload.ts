@@ -75,8 +75,7 @@ contextBridge.exposeInMainWorld('keledon', {
     onAudio: (callback: (data: AudioData) => void) => {
       ipcRenderer.on('brain:audio', (_event, data) => callback(data));
       return () => ipcRenderer.removeAllListeners('brain:audio');
-    },
-    setDebugMode: (enabled: boolean) => ipcRenderer.invoke('brain:setDebugMode', enabled)
+    }
   },
   cmdlog: {
     onEntry: (callback: (entry: CmdLogEntry) => void) => {
@@ -271,7 +270,6 @@ declare global {
         getDebugMode: () => Promise<{ enabled: boolean }>;
         onCommand: (callback: (data: CommandData) => void) => () => void;
         onAudio: (callback: (data: AudioData) => void) => () => void;
-        setDebugMode: (enabled: boolean) => Promise<{ success: boolean }>;
       };
       cmdlog: {
         onEntry: (callback: (entry: CmdLogEntry) => void) => () => void;

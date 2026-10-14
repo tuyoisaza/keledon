@@ -9,7 +9,7 @@ import { mediaLayerWrapper } from './ipc-media-handlers.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
 import { eventLogger } from './media/event-logger.js';
 import { sanitizeVendorNotification } from './security-policy.js';
-import { runtimeStatus, mainWindow, debugMode, setDebugMode, clearRuntimeSessionState } from './runtime-state.js';
+import { runtimeStatus, mainWindow, debugMode, clearRuntimeSessionState } from './runtime-state.js';
 import { getDeviceSocket, connectWebSockets, disconnectSockets, setupCommandPolling } from './cloud-connection.js';
 import { getStartupLogPath, getMainLogPath, getLogsDir, getInstallDir } from './logger.js';
 import type { TabManager } from './tab-manager.js';
@@ -283,11 +283,6 @@ export function registerIpcHandlers(tabManager: TabManager): void {
   });
 
 
-  // --- Brain: Set Debug Mode ---
-  ipcMain.handle('brain:setDebugMode', async (_event, enabled: boolean) => {
-    setDebugMode(enabled);
-    return { success: true };
-  });
   ipcMain.handle('brain:getDebugMode', async () => ({ enabled: debugMode }));
 
   // --- Escalation: Action (handle) ---

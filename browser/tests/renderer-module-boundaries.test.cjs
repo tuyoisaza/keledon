@@ -15,13 +15,16 @@ assert.match(packageVersion, /^\d+\.\d+\.\d+$/);
 assert.match(html, new RegExp(`<span id="versionBtn">v${packageVersion.replaceAll('.', '\\.')}<\\/span>`));
 assert.match(fs.readFileSync(path.join(rendererDir, 'version-actions.js'), 'utf8'), /device\.getInfo\(\)\.then\(\(info/);
 assert.match(html, /id="consoleBtn"[^>]*\shidden>/, 'diagnostic console starts hidden');
-assert.match(fs.readFileSync(path.join(rendererDir, 'renderer-controls.css'), 'utf8'), /\.console-btn\[hidden\]\s*\{\s*display:\s*none\s*\}/);
+assert.match(fs.readFileSync(path.join(rendererDir, 'renderer-controls.css'), 'utf8'), /\.console-btn\[hidden\]\s*\{\s*display:\s*none\s*;?\s*\}/);
 const ipcHandlers = fs.readFileSync(path.join(__dirname, '../src/ipc-handlers.ts'), 'utf8');
 const deviceInfoHandler = ipcHandlers.match(/ipcMain\.handle\('device:getInfo',[\s\S]*?\n  \}\)\);/);
 assert.ok(deviceInfoHandler, 'device info IPC handler exists');
 for (const privateField of ['deviceId:', 'logsDir:', 'mainLogPath:', 'startupLogPath:']) {
   assert.ok(!deviceInfoHandler[0].includes(privateField), `device info does not expose ${privateField}`);
 }
+assert.doesNotMatch(ipcHandlers, /brain:setDebugMode|setDebugMode\(/, 'renderer IPC cannot override main-process debug configuration');
+assert.doesNotMatch(fs.readFileSync(path.join(__dirname, '../src/preload.ts'), 'utf8'), /setDebugMode/, 'preload exposes no debug-mode setter');
+assert.doesNotMatch(fs.readFileSync(path.join(__dirname, '../src/runtime-state.ts'), 'utf8'), /setDebugMode/, 'runtime debug state cannot be changed after startup');
 
 for (const asset of [...stylesheets, ...scripts]) {
   assert.equal(fs.existsSync(path.join(rendererDir, asset)), true, `missing renderer asset: ${asset}`);
