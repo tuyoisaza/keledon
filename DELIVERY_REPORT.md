@@ -92,3 +92,18 @@ KELEDON PR [#49](https://github.com/tuyoisaza/keledon/pull/49) merged at `fc1140
 The UAT intercepts API calls and does not prove persisted CRUD/migrations or production authorization. Native Electron rendering/device/audio, broad accessibility/localization, deployed SEO/AEO and customer-specific live call/CRM acceptance remain unverified. Docker/Postgres were unavailable locally for persistence UAT. No production migration, customer/provider operation or deployment was performed.
 
 Overall status remains **PARTIALLY DELIVERED** until these acceptance items and API lint are verified or explicitly dispositioned.
+# 5.1.23 source-boundary candidate — delivery in progress
+
+Goal: continue the four owner-confirmed PHDK Auto fronts and repair the two live source files at/over the 600-line cap. Branch: `fix/phdk-source-file-boundaries`, based on fetched remote `main` `48ab2023236ba5de56c046f99670a2abab866707`. Version: 5.1.23 in all five app package/lock roots and Browser renderer version widget. Source commit: `0e724bfe1fec269ad6037104ad0a01e474172b93`, subject `v5.1.23: split CRUD modules under PHDK limits`.
+
+The API health report is extracted to `services/api/src/crud/crud-health.ts`; Web CRUD types are extracted to `services/web/src/lib/crud-api.types.ts` and publicly re-exported. Exact-SHA synthetic Web UAT is 1/1, API regression 18/18, Web diagnostics 19/19, Browser renderer contracts 3/3, both SEO source tests 1/1, configured API/Web/Browser builds, Web and Landing typecheck, changed TypeScript lint (0 errors; Web has 8 `any` warnings), source-size inventory 1,072 files/zero over the cap, and PHDK coherence 52/52 pass. Vite emits its existing >500 kB advisory.
+
+| Required proof | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Remote baseline 5.1.22; candidate aligned at 5.1.23 across five app roots and Browser display. |
+| COMMIT_PREFIX | PASS | Source commit `0e724bfe1fec269ad6037104ad0a01e474172b93` has the resulting version in its subject. |
+| PUSH_AND_PR | BLOCKED / PENDING | Candidate is not yet pushed; PR not yet opened. |
+| REMOTE_MAIN | PENDING | Requires merge and fresh remote readback. |
+| SCOPE_AND_CHECKS | PARTIAL | Scoped source checks pass; whole-product lint/native UAT and remaining Auto commitments remain open. |
+
+Overall PHDK Auto remains PARTIALLY DELIVERED. No deployment is claimed.

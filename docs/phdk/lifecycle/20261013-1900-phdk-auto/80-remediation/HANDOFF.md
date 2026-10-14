@@ -1,5 +1,15 @@
 # Remediation handoff — `20261013-1900-phdk-auto`
 
+## 5.1.23 PHDK source-boundary fix
+
+Both live app files over the PHDK 600-line maximum are split into cohesive modules. Public Web data-shape exports and API health-report behavior are preserved. Focused regression/build/typecheck/lint and exact-SHA Company Co synthetic UAT pass. The Browser's renderer version is synchronized to the five 5.1.23 app roots. No change claims persisted CRUD, broad route coverage, live providers or native-device acceptance.
+
+## Current continuation — 2026-10-14
+
+Merged source remediations: PR #89 removes transcript, prompt, agent-command and raw upstream error disclosure; repairs Browser version drift, diagnostic report/reset, debug-console defaults and private IPC metadata; and makes anonymous Web/Landing reset reload after the success interval. PR #90 removes the renderer capability to change debug mode after main-process startup. Browser tests 5/5, Web widget/diagnostics 17/17, API 18/18, Cloud 9/9, configured builds, Web/Landing typecheck/build, synthetic Web UAT 1/1, SEO tests 1/1 each and PHDK coherence 52/52 pass. PR #89 and #90 are integrated on main; see the 90-delivery handoff.
+
+The full 35-model matrix and route-level UX gaps still contain source work, while persistence/migration, native device/audio and deployed SEO/AEO need external environments. This handoff closes only the current validated source candidate.
+
 Authorized source remediation for Check finding CHK-001 is implemented and validated. Voice Profiles now has localized safe detail/edit controls. API list/detail/create/update responses select only `id`, `name`, `providerId`, `language`, `isEnabled`, and `isDefault`, omitting `config` and provider relation material. The UI submits only the editable display fields and never supplies a tenant ID or credential. Regression and synthetic UAT cover tenant filters, safe projections, visible 403 handling, and successful edits.
 
 A pre-existing web typecheck error was also resolved by replacing `String.replaceAll` with equivalent ES2020-compatible `split/join` interpolation in `ManagementDebugPage.tsx`.

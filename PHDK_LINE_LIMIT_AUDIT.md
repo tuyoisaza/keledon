@@ -1,5 +1,11 @@
 # PHDK physical line limit audit
 
+## Current Auto candidate 5.1.23 — 2026-10-13
+
+The live application/test inventory covers **1,072 files; 0 are at or above 600 physical lines**. Inventory includes TS, TSX, JS, JSX, MJS, CJS and Vue files, and excludes dependencies, build output, Git metadata, vendored standards and immutable lifecycle snapshots. The historical snapshot under `docs/phdk/lifecycle/20261013-1900-phdk-auto/40-integration/snapshots/` retains the prior 610-line `crud-api.ts` exactly as evidence and is not live product source.
+
+This candidate fixes the live findings in `services/api/src/crud/crud.service.ts` (601 lines) and `services/web/src/lib/crud-api.ts` (610 lines): health-report generation now lives in `crud-health.ts`, and public CRUD/runtime data shapes live in `crud-api.types.ts`. The API health-disclosure regression loads the extracted helper and passes; API regression is 18/18, API build passes, Web typecheck/build pass, and focused lint reports zero errors. The Web build retains its existing large-chunk advisory. This audit covers the physical-size criterion only; the broader PHDK Auto remains partial.
+
 ## Current Auto candidate 5.1.17 — 2026-10-14
 
 Fresh `rg --files` inventory of repository TS/TSX/JS/JSX/CJS/MJS sources, excluding `node_modules` and generated `dist`: **1,068 files; 0 at or above 600 lines**. Current candidate pages and tests are included. This confirms only the physical-size rule, not other PHDK Check criteria.
