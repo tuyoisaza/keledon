@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
 import es from '../locales/es.json';
 import en from '../locales/en.json';
 import pt from '../locales/pt.json';
@@ -60,7 +60,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const t = (key: string): string => {
+  const t = useCallback((key: string): string => {
     const value = getNestedValue(translations[locale], key);
     if (value !== undefined) return value;
     
@@ -72,7 +72,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     
     console.warn(`[i18n] Missing translation: ${key}`);
     return key;
-  };
+  }, [locale]);
 
   const localeNames: Record<Locale, string> = {
     es: 'Español',

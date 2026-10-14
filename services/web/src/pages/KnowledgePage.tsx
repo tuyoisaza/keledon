@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Search, Upload, FileText, Database, Bot, RefreshCw, X, Building2, Tag, Users } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from '@/context/I18nContext';
 import { vectorStoreAPI, type PolicyDocument, type VectorStoreStatus } from '@/lib/vector-store';
 import { getCompanies, getBrands, getTeams, type Company, type Brand, type Team } from '@/lib/crud-api';
 import { getBrandsForCompany, getTeamsForBrand, readPlainTextFile } from '@/lib/knowledge-source-utils.js';
-import KnowledgeSourceWizard from '@/components/phase4/TrainingUploadPlaceholder';
+import ManagementModal from '@/components/common/ManagementModal';
 
 interface KnowledgeDocument {
     id: string;
@@ -21,6 +22,7 @@ interface KnowledgeDocument {
 
 export default function KnowledgePage() {
     const { user } = useAuth();
+    const { t } = useTranslation();
     const canManageKnowledge = ['admin', 'coordinator', 'superadmin'].includes(user?.role || '');
     const [documents, setDocuments] = useState<KnowledgeDocument[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -35,6 +37,8 @@ export default function KnowledgePage() {
     const [companies, setCompanies] = useState<Company[]>([]);
     const [brands, setBrands] = useState<Brand[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
+    const loadedCompanyIds = useRef(new Set<string>());
+    const loadedBrandIds = useRef(new Set<string>());
     
     // Add source modal
     const [showAddModal, setShowAddModal] = useState(false);
@@ -48,73 +52,72 @@ export default function KnowledgePage() {
         team_id: '',
     });
 
-    useEffect(() => {
-        fetchVectorStoreData();
-        fetchCompanies();
-    }, []);
-
-    useEffect(() => {
-        if (addForm.company_id) {
-            const companyBrands = brands.filter(b => b.companyId === addForm.company_id);
-            if (companyBrands.length === 0) {
-                getBrands(addForm.company_id).then(setBrands);
-            }
-        }
-    }, [addForm.company_id]);
-
-    useEffect(() => {
-        if (addForm.brand_id) {
-            const brandTeams = teams.filter(t => t.brandId === addForm.brand_id);
-            if (brandTeams.length === 0) {
-                getTeams(addForm.company_id).then(data => setTeams(data.filter(team => team.brandId === addForm.brand_id)));
-            }
-        }
-    }, [addForm.brand_id]);
-
-    const fetchCompanies = async () => {
+    const fetchCompanies = useCallback(async () => {
         try {
             const data = await getCompanies();
             setCompanies(data);
-        } catch (err) {
-            console.error('Failed to fetch companies', err);
+        } catch {
+            // Keep the page usable; the data-dependent controls remain empty.
         }
-    };
+    }, []);
 
-    const fetchVectorStoreData = async () => {
+    const fetchVectorStoreData = useCallback(async () => {
         setIsLoading(true);
         setVectorError(null);
-        
+
         try {
-            // Fetch vector store status
             const status = await vectorStoreAPI.getCollectionStatus();
             setVectorStatus(status);
-            
-            // Fetch all documents from vector store
+
             const docs = await vectorStoreAPI.listAllDocuments();
             setDocuments(docs.map((d: PolicyDocument) => ({
                 id: d.id,
                 title: d.title,
                 type: 'text' as const,
                 status: 'indexed' as const,
-                size: d.content ? `${Math.round(d.content.length / 1024)} KB` : undefined,
+                size: d.content ? `${Math.max(1, Math.ceil(d.content.length / 1024))} KB` : undefined,
                 chunks: Math.max(1, Math.ceil((d.content ?? '').length / 500)),
                 lastUpdated: new Date(d.created_at).toLocaleDateString(),
                 company_id: d.company_id,
                 brand_id: d.brand_id,
                 team_id: d.team_id,
             })));
-        } catch (err: any) {
-            console.error('Failed to fetch vector store data', err);
-            setVectorError(err?.message || 'Failed to connect to vector store. Please check configuration.');
+        } catch {
+            setVectorError(t('knowledge.loadError'));
             setDocuments([]);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [t]);
+
+    useEffect(() => {
+        fetchVectorStoreData();
+        fetchCompanies();
+    }, [fetchCompanies, fetchVectorStoreData]);
+
+    useEffect(() => {
+        if (addForm.company_id) {
+            const companyBrands = brands.filter(b => b.companyId === addForm.company_id);
+            if (companyBrands.length === 0 && !loadedCompanyIds.current.has(addForm.company_id)) {
+                loadedCompanyIds.current.add(addForm.company_id);
+                getBrands(addForm.company_id).then(setBrands);
+            }
+        }
+    }, [addForm.company_id, brands]);
+
+    useEffect(() => {
+        if (addForm.brand_id) {
+            const brandTeams = teams.filter(t => t.brandId === addForm.brand_id);
+            if (brandTeams.length === 0 && !loadedBrandIds.current.has(addForm.brand_id)) {
+                loadedBrandIds.current.add(addForm.brand_id);
+                getTeams(addForm.company_id).then(data => setTeams(data.filter(team => team.brandId === addForm.brand_id)));
+            }
+        }
+    }, [addForm.brand_id, addForm.company_id, teams]);
 
     const handleAddSource = async () => {
         if (!addForm.company_id) {
-            alert('Please select a company');
+            alert(t('knowledge.selectCompany'));
             return;
         }
 
@@ -126,7 +129,7 @@ export default function KnowledgePage() {
             title = addForm.url.trim();
         } else if (addForm.sourceType === 'file') {
             if (!addForm.file) {
-                alert('Please select a plain text file');
+                alert(t('knowledge.selectTextFile'));
                 return;
             }
             content = (await readPlainTextFile(addForm.file)).trim();
@@ -137,7 +140,7 @@ export default function KnowledgePage() {
         }
 
         if (!content) {
-            alert('Please enter content, URL, or choose a file');
+            alert(t('knowledge.enterSource'));
             return;
         }
 
@@ -158,7 +161,7 @@ export default function KnowledgePage() {
             };
 
             await vectorStoreAPI.addDocument(newDocument);
-            alert('Source added and indexed in vector store!');
+            alert(t('knowledge.sourceAdded'));
             setShowAddModal(false);
             setAddForm({
                 sourceType: 'text',
@@ -170,22 +173,21 @@ export default function KnowledgePage() {
                 team_id: '',
             });
             fetchVectorStoreData();
-        } catch (err: any) {
-            console.error(err);
-            alert('Error adding source: ' + err.message);
+        } catch {
+            alert(t('knowledge.addError'));
         } finally {
             setIsUploading(false);
         }
     };
 
     const handleDeleteDocument = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this document from the vector store?')) return;
+        if (!confirm(t('knowledge.confirmDelete'))) return;
         
         try {
             await vectorStoreAPI.deleteDocument(id);
             fetchVectorStoreData();
-        } catch (err: any) {
-            alert('Error deleting document: ' + err.message);
+        } catch {
+            alert(t('knowledge.deleteError'));
         }
     };
 
@@ -194,7 +196,7 @@ export default function KnowledgePage() {
     );
 
     const getCompanyName = (id?: string) => {
-        if (!id) return 'N/A';
+        if (!id) return t('knowledge.notAvailable');
         const company = companies.find(c => c.id === id);
         return company?.name || id;
     };
@@ -204,8 +206,8 @@ export default function KnowledgePage() {
             {/* Header */}
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl font-bold text-foreground">Knowledge Base</h1>
-                    <p className="text-muted-foreground mt-1">Manage documents and vector embeddings for Agent RAG</p>
+                    <h1 className="text-2xl font-bold text-foreground">{t('knowledge.title')}</h1>
+                    <p className="text-muted-foreground mt-1">{t('knowledge.description')}</p>
                 </div>
                 <div className="flex gap-2">
                     <button
@@ -213,7 +215,7 @@ export default function KnowledgePage() {
                         className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors"
                     >
                         <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-                        Refresh
+                        {t('knowledge.refresh')}
                     </button>
                     {canManageKnowledge && (
                         <button
@@ -222,7 +224,7 @@ export default function KnowledgePage() {
                             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
                         >
                             <Upload className="w-4 h-4" />
-                            {isUploading ? 'Indexing...' : 'Add Source'}
+                            {isUploading ? t('knowledge.indexing') : t('knowledge.addSource')}
                         </button>
                     )}
                 </div>
@@ -233,17 +235,17 @@ export default function KnowledgePage() {
                 <div className="bg-card border border-border rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
                         <Database className="w-4 h-4 text-primary" />
-                        <span className="text-sm font-medium">Vector Store</span>
+                        <span className="text-sm font-medium">{t('knowledge.vectorStore')}</span>
                     </div>
                     <div className="text-2xl font-bold text-foreground">
-                        {vectorStatus?.collectionExists ? 'Connected' : 'Disconnected'}
+                        {vectorStatus?.collectionExists ? t('knowledge.connected') : t('knowledge.disconnected')}
                     </div>
                 </div>
 
                 <div className="bg-card border border-border rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
                         <FileText className="w-4 h-4 text-primary" />
-                        <span className="text-sm font-medium">Documents</span>
+                        <span className="text-sm font-medium">{t('knowledge.documents')}</span>
                     </div>
                     <div className="text-2xl font-bold text-foreground">{vectorStatus?.documentCount || 0}</div>
                 </div>
@@ -251,7 +253,7 @@ export default function KnowledgePage() {
                 <div className="bg-card border border-border rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
                         <Database className="w-4 h-4 text-primary" />
-                        <span className="text-sm font-medium">Dimensions</span>
+                        <span className="text-sm font-medium">{t('knowledge.dimensions')}</span>
                     </div>
                     <div className="text-2xl font-bold text-foreground">{vectorStatus?.dimensions || 1536}</div>
                 </div>
@@ -259,7 +261,7 @@ export default function KnowledgePage() {
                 <div className="bg-card border border-border rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
                         <Bot className="w-4 h-4 text-primary" />
-                        <span className="text-sm font-medium">Distance</span>
+                        <span className="text-sm font-medium">{t('knowledge.distance')}</span>
                     </div>
                     <div className="text-2xl font-bold text-foreground">{vectorStatus?.distance || 'Cosine'}</div>
                 </div>
@@ -268,73 +270,9 @@ export default function KnowledgePage() {
             {/* Error Message */}
             {vectorError && (
                 <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive">
-                    <strong>Vector Store Error:</strong> {vectorError}
-                    <p className="text-sm mt-1">
-                        If this is a connection issue, check QDRANT_URL and OPENAI_API_KEY on the cloud side.
-                        If the page opened but documents failed to render, the store may contain legacy entries without content.
-                    </p>
+                    <strong>{t('knowledge.errorTitle')}</strong> {vectorError}
                 </div>
             )}
-
-            {/* Agent Context Simulator (Demo) */}
-            <div className="rounded-xl border border-border bg-card p-6">
-                <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-4">
-                        <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                            <Bot className="w-5 h-5" />
-                        </div>
-                        <div>
-                            <h2 className="font-semibold text-foreground">Live Agent Context</h2>
-                            <p className="text-xs text-muted-foreground">Real-time transcription and RAG retrieval</p>
-                        </div>
-                    </div>
-                    <span className="px-2 py-1 rounded text-xs font-mono bg-muted text-muted-foreground">session: active</span>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div className="space-y-4 p-4 rounded-lg bg-muted/50 border border-border">
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Listening</span>
-                        </div>
-                        <div className="h-16 flex items-center justify-center gap-0.5">
-                            {Array.from({ length: 40 }).map((_, i) => (
-                                <div
-                                    key={i}
-                                    className="w-1 bg-primary/50 rounded-full transition-all duration-75"
-                                    style={{
-                                        height: `${20 + (i % 5) * 15}%`,
-                                        opacity: 0.5 + (i % 3) * 0.2,
-                                    }}
-                                />
-                            ))}
-                        </div>
-                        <p className="text-lg font-medium text-foreground">"I need to check the status of my refund... it's been over 5 days."</p>
-                        <div className="flex gap-2">
-                            <span className="text-xs px-2 py-1 rounded bg-background border border-border text-muted-foreground">intent: check_refund_status</span>
-                            <span className="text-xs px-2 py-1 rounded bg-background border border-border text-muted-foreground">confidence: 0.94</span>
-                        </div>
-                    </div>
-
-                    <div className="space-y-3">
-                        <h3 className="text-sm font-medium text-muted-foreground mb-2">Relevant Knowledge</h3>
-                        <div className="p-3 rounded-lg bg-secondary/50 border border-border hover:border-primary/30 transition-colors cursor-pointer">
-                            <div className="flex items-start justify-between mb-1">
-                                <span className="text-sm font-medium text-foreground">Refund Policy - Processing Times</span>
-                                <span className="text-xs text-primary font-mono">92% match</span>
-                            </div>
-                            <p className="text-xs text-muted-foreground line-clamp-2">Standard refunds differ by payment method. Credit card refunds typically take 5-10 business days...</p>
-                        </div>
-                        <div className="p-3 rounded-lg bg-card border border-border hover:border-primary/30 transition-colors cursor-pointer">
-                            <div className="flex items-start justify-between mb-1">
-                                <span className="text-sm font-medium text-foreground">Escalating Refund Requests</span>
-                                <span className="text-xs text-muted-foreground font-mono">65% match</span>
-                            </div>
-                            <p className="text-xs text-muted-foreground line-clamp-2">If a customer has waited longer than 10 business days, open a Tier 2 ticket...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             {/* Document List */}
             <div className="space-y-4">
@@ -343,7 +281,8 @@ export default function KnowledgePage() {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <input
                             type="text"
-                            placeholder="Search knowledge documents..."
+                            placeholder={t('knowledge.search')}
+                            aria-label={t('knowledge.search')}
                             className="w-full pl-10 pr-4 py-2 rounded-lg bg-card border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -353,10 +292,10 @@ export default function KnowledgePage() {
 
                 <div className="grid grid-cols-1 gap-4">
                     {isLoading ? (
-                        <div className="text-center py-10 text-muted-foreground">Loading documents...</div>
+                        <div role="status" className="text-center py-10 text-muted-foreground">{t('knowledge.loading')}</div>
                     ) : filteredDocuments.length === 0 ? (
                         <div className="text-center py-10 text-muted-foreground">
-                            No documents found. Add a source to get started.
+                            {t('knowledge.empty')}
                         </div>
                     ) : (
                         filteredDocuments.map(doc => (
@@ -370,7 +309,7 @@ export default function KnowledgePage() {
                                         <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                                             <span className="uppercase">{doc.type}</span>
                                             <span>•</span>
-                                            <span>{doc.chunks} chunks</span>
+                                            <span>{doc.chunks} {t(doc.chunks === 1 ? 'knowledge.chunk' : 'knowledge.chunks')}</span>
                                             <span>•</span>
                                             <span>{doc.lastUpdated}</span>
                                         </div>
@@ -384,13 +323,13 @@ export default function KnowledgePage() {
                                             {doc.brand_id && (
                                                 <span className="flex items-center gap-1 text-xs text-muted-foreground">
                                                     <Tag className="w-3 h-3" />
-                                                    {doc.brand_id}
+                                                    {t('knowledge.brand')}: {doc.brand_id}
                                                 </span>
                                             )}
                                             {doc.team_id && (
                                                 <span className="flex items-center gap-1 text-xs text-muted-foreground">
                                                     <Users className="w-3 h-3" />
-                                                    {doc.team_id}
+                                                    {t('knowledge.team')}: {doc.team_id}
                                                 </span>
                                             )}
                                         </div>
@@ -400,15 +339,16 @@ export default function KnowledgePage() {
                                     <div className={`px-2.5 py-1 rounded text-xs font-medium uppercase ${doc.status === 'indexed' ? 'bg-success/10 text-success' :
                                         doc.status === 'indexing' ? 'bg-warning/10 text-warning' : 'bg-destructive/10 text-destructive'
                                         }`}>
-                                        {doc.status}
+                                        {t(`knowledge.status.${doc.status}`)}
                                     </div>
                                     <div className="w-px h-8 bg-border" />
-                                    <span className="text-sm font-mono text-muted-foreground">{doc.size || 'N/A'}</span>
+                                    <span className="text-sm font-mono text-muted-foreground">{doc.size || t('knowledge.notAvailable')}</span>
                                     {canManageKnowledge && (
                                         <button
                                             onClick={() => handleDeleteDocument(doc.id)}
                                             className="p-2 text-muted-foreground hover:text-destructive rounded-lg hover:bg-destructive/10"
-                                            title="Delete document"
+                                            title={t('knowledge.deleteDocument')}
+                                            aria-label={t('knowledge.deleteDocument')}
                                         >
                                             <X className="w-4 h-4" />
                                         </button>
@@ -422,13 +362,16 @@ export default function KnowledgePage() {
 
             {/* Add Source Modal */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-background/50 flex items-center justify-center z-50">
-                    <div className="bg-card border border-border rounded-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                <ManagementModal title={t('knowledge.addSourceTitle')} onClose={() => setShowAddModal(false)}>
+                    <div className="rounded-xl border border-border bg-card p-6">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-lg font-semibold">Add Knowledge Source</h2>
+                            <h2 id="knowledge-source-title" className="text-lg font-semibold">{t('knowledge.addSourceTitle')}</h2>
                             <button
+                                type="button"
                                 onClick={() => setShowAddModal(false)}
                                 className="p-2 hover:bg-muted rounded-lg"
+                                aria-label={t('knowledge.close')}
+                                autoFocus
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -437,20 +380,24 @@ export default function KnowledgePage() {
                         <div className="space-y-4">
                             {/* Source Type */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">Source Type</label>
+                                <label className="block text-sm font-medium mb-2">{t('knowledge.sourceType')}</label>
                                 <div className="flex gap-2">
                                     <button
+                                        type="button"
                                         onClick={() => setAddForm(prev => ({ ...prev, sourceType: 'text' }))}
+                                        aria-pressed={addForm.sourceType === 'text'}
                                         className={`flex-1 py-2 rounded-lg border ${
                                             addForm.sourceType === 'text' 
                                                 ? 'bg-primary text-primary-foreground border-primary' 
                                                 : 'border-border hover:bg-muted'
                                         }`}
                                     >
-                                        Text
+                                        {t('knowledge.text')}
                                     </button>
                                     <button
+                                        type="button"
                                         onClick={() => setAddForm(prev => ({ ...prev, sourceType: 'url' }))}
+                                        aria-pressed={addForm.sourceType === 'url'}
                                         className={`flex-1 py-2 rounded-lg border ${
                                             addForm.sourceType === 'url' 
                                                 ? 'bg-primary text-primary-foreground border-primary' 
@@ -460,24 +407,27 @@ export default function KnowledgePage() {
                                         URL
                                     </button>
                                     <button
+                                        type="button"
                                         onClick={() => setAddForm(prev => ({ ...prev, sourceType: 'file', content: '', url: '' }))}
+                                        aria-pressed={addForm.sourceType === 'file'}
                                         className={`flex-1 py-2 rounded-lg border ${
                                             addForm.sourceType === 'file'
                                                 ? 'bg-primary text-primary-foreground border-primary'
                                                 : 'border-border hover:bg-muted'
                                         }`}
                                     >
-                                        File
+                                        {t('knowledge.file')}
                                     </button>
                                 </div>
                             </div>
 
                             {/* Company */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">
-                                    Company <span className="text-destructive">*</span>
+                                <label htmlFor="knowledge-company" className="block text-sm font-medium mb-2">
+                                    {t('knowledge.company')} <span className="text-destructive">*</span>
                                 </label>
                                 <select
+                                    id="knowledge-company"
                                     value={addForm.company_id}
                                     onChange={(e) => setAddForm(prev => ({ 
                                         ...prev, 
@@ -487,7 +437,7 @@ export default function KnowledgePage() {
                                     }))}
                                     className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 outline-none"
                                 >
-                                    <option value="">Select company...</option>
+                                    <option value="">{t('knowledge.selectCompanyOption')}</option>
                                     {companies.map(company => (
                                         <option key={company.id} value={company.id}>
                                             {company.name}
@@ -498,8 +448,9 @@ export default function KnowledgePage() {
 
                             {/* Brand */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">Brand (Optional)</label>
+                                <label htmlFor="knowledge-brand" className="block text-sm font-medium mb-2">{t('knowledge.brandOptional')}</label>
                                 <select
+                                    id="knowledge-brand"
                                     value={addForm.brand_id}
                                     onChange={(e) => setAddForm(prev => ({ 
                                         ...prev, 
@@ -509,7 +460,7 @@ export default function KnowledgePage() {
                                     disabled={!addForm.company_id}
                                     className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 outline-none disabled:opacity-50"
                                 >
-                                    <option value="">Select brand...</option>
+                                    <option value="">{t('knowledge.selectBrandOption')}</option>
                                     {getBrandsForCompany(brands, addForm.company_id)
                                         .map(brand => (
                                             <option key={brand.id} value={brand.id}>
@@ -522,14 +473,15 @@ export default function KnowledgePage() {
 
                             {/* Team */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">Team (Optional)</label>
+                                <label htmlFor="knowledge-team" className="block text-sm font-medium mb-2">{t('knowledge.teamOptional')}</label>
                                 <select
+                                    id="knowledge-team"
                                     value={addForm.team_id}
                                     onChange={(e) => setAddForm(prev => ({ ...prev, team_id: e.target.value }))}
                                     disabled={!addForm.brand_id}
                                     className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 outline-none disabled:opacity-50"
                                 >
-                                    <option value="">Select team...</option>
+                                    <option value="">{t('knowledge.selectTeamOption')}</option>
                                     {getTeamsForBrand(teams, addForm.brand_id)
                                         .map(team => (
                                             <option key={team.id} value={team.id}>
@@ -542,11 +494,12 @@ export default function KnowledgePage() {
 
                             {/* Content */}
                             <div>
-                                <label className="block text-sm font-medium mb-2">
-                                    {addForm.sourceType === 'url' ? 'URL' : addForm.sourceType === 'file' ? 'Plain Text File' : 'Content'} <span className="text-destructive">*</span>
+                                <label htmlFor={addForm.sourceType === 'url' ? 'knowledge-url' : addForm.sourceType === 'file' ? 'knowledge-file' : 'knowledge-content'} className="block text-sm font-medium mb-2">
+                                    {addForm.sourceType === 'url' ? 'URL' : addForm.sourceType === 'file' ? t('knowledge.plainTextFile') : t('knowledge.content')} <span className="text-destructive">*</span>
                                 </label>
                                 {addForm.sourceType === 'url' ? (
                                     <input
+                                        id="knowledge-url"
                                         type="url"
                                         value={addForm.url}
                                         onChange={(e) => setAddForm(prev => ({ ...prev, url: e.target.value }))}
@@ -555,6 +508,7 @@ export default function KnowledgePage() {
                                     />
                                 ) : addForm.sourceType === 'file' ? (
                                     <input
+                                        id="knowledge-file"
                                         type="file"
                                         accept=".txt,text/plain"
                                         onChange={(e) => setAddForm(prev => ({ ...prev, file: e.target.files?.[0] ?? null }))}
@@ -562,9 +516,10 @@ export default function KnowledgePage() {
                                     />
                                 ) : (
                                     <textarea
+                                        id="knowledge-content"
                                         value={addForm.content}
                                         onChange={(e) => setAddForm(prev => ({ ...prev, content: e.target.value }))}
-                                        placeholder="Enter text content to add to knowledge base..."
+                                        placeholder={t('knowledge.contentPlaceholder')}
                                         rows={6}
                                         className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 outline-none resize-none"
                                     />
@@ -576,14 +531,13 @@ export default function KnowledgePage() {
                                 disabled={!addForm.company_id || (addForm.sourceType === 'url' ? !addForm.url : addForm.sourceType === 'file' ? !addForm.file : !addForm.content) || isUploading}
                                 className="w-full py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {isUploading ? 'Adding to Vector Store...' : 'Add Source'}
+                                {isUploading ? t('knowledge.adding') : t('knowledge.addSource')}
                             </button>
                         </div>
                     </div>
-                </div>
+                </ManagementModal>
             )}
 
-            <KnowledgeSourceWizard />
         </div>
     );
 }
