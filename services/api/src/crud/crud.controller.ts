@@ -469,6 +469,7 @@ export class CrudController {
       username?: string;
       password?: string;
       apiKey?: string;
+      allowedOrigins?: string[];
       config?: Record<string, unknown>;
     },
   ) {
@@ -486,6 +487,7 @@ export class CrudController {
       username?: string;
       password?: string;
       apiKey?: string;
+      allowedOrigins?: string[];
       config?: Record<string, unknown>;
       isActive?: boolean;
     },

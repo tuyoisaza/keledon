@@ -28,6 +28,65 @@ export function isAllowedVendorUrl(value: string): boolean {
   }
 }
 
+export function isAllowedConfiguredVendorUrl(
+  value: string,
+  allowedOrigins: unknown,
+): boolean {
+  try {
+    const url = new URL(value);
+    return (
+      ['http:', 'https:'].includes(url.protocol) &&
+      !url.username &&
+      !url.password &&
+      Array.isArray(allowedOrigins) &&
+      allowedOrigins.includes(url.origin)
+    );
+  } catch {
+    return false;
+  }
+}
+
+export function getAllowedVendorOrigins(vendor: {
+  baseUrl?: unknown;
+  url?: unknown;
+  allowedOrigins?: unknown;
+}): string[] {
+  const origins = new Set<string>();
+  const baseUrl = vendor.baseUrl || vendor.url;
+  if (typeof baseUrl === 'string') {
+    try {
+      const url = new URL(baseUrl);
+      if (
+        ['http:', 'https:'].includes(url.protocol) &&
+        !url.username &&
+        !url.password
+      ) {
+        origins.add(url.origin);
+      }
+    } catch { /* malformed persisted base URL is excluded */ }
+  }
+  if (Array.isArray(vendor.allowedOrigins)) {
+    for (const candidate of vendor.allowedOrigins) {
+      if (typeof candidate !== 'string') continue;
+      try {
+        const url = new URL(candidate);
+        if (
+          ['http:', 'https:'].includes(url.protocol) &&
+          !url.username &&
+          !url.password &&
+          url.pathname === '/' &&
+          !url.search &&
+          !url.hash &&
+          url.origin === candidate
+        ) {
+          origins.add(url.origin);
+        }
+      } catch { /* malformed persisted origin is excluded */ }
+    }
+  }
+  return [...origins];
+}
+
 /** The executor may create a restricted, empty tab before Cloud selects a vendor. */
 export function isAllowedVendorTabUrl(value: string): boolean {
   return value === 'about:blank' || isAllowedVendorUrl(value);

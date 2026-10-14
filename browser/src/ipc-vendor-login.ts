@@ -67,10 +67,11 @@ export async function autoLoginToVendor(vendor: any, tabManager: TabManager): Pr
     const password = vendor.password ? decrypt(vendor.password) : null;
     const apiKey = vendor.apiKey ? decrypt(vendor.apiKey) : null;
 
-    log.info('[Vendor] Auto-login to:', vendor.name, vendor.baseUrl);
+    log.info('[Vendor] Auto-login to configured vendor:', { vendorId: vendor.id, vendorName: vendor.name });
 
     // Create NEW TAB for vendor instead of replacing main window
-    tabManager.createTab(vendor.name, vendor.baseUrl);
+    const allowedOrigins = Array.isArray(vendor.allowedOrigins) ? vendor.allowedOrigins : [];
+    tabManager.createTab(vendor.name, vendor.baseUrl, allowedOrigins);
 
     const bridge = await getAutoBrowseBridge();
     if (!bridge.isAutoBrowseInitialized()) {

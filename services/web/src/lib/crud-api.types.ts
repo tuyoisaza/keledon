@@ -268,6 +268,7 @@ export interface Vendor {
     name: string;
     type: string;
     baseUrl?: string;
+    allowedOrigins?: string[];
     username?: string;
     hasPassword?: boolean;
     hasApiKey?: boolean;

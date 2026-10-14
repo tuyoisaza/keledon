@@ -13,6 +13,7 @@ import { executeRpaFlow, type RpaFlow, type RpaFlowResult } from './rpa-executor
 import { mediaLayer } from './media/media-layer.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
 import { runtimeStatus } from './runtime-state.js';
+import { getAllowedVendorOrigins } from './security-policy.js';
 
 export type CallState =
   | 'standby'
@@ -130,9 +131,7 @@ export async function executeRpaFlowFromCommand(flow: RpaFlow): Promise<RpaFlowR
     };
   }
 
-  const allowedOrigins = (runtimeStatus.vendors || []).flatMap(vendor => {
-    try { return [new URL(vendor.baseUrl || vendor.url).origin]; } catch { return []; }
-  });
+  const allowedOrigins = (runtimeStatus.vendors || []).filter(vendor => vendor.isActive !== false).flatMap(vendor => getAllowedVendorOrigins(vendor));
   if (!allowedOrigins.length) {
     const missing: RpaFlowResult = { flow_id: flow.flow_id, status: 'failed', steps: [], total_duration_ms: 0, error: 'Configured vendor surfaces required for call actions' };
     currentCall.rpaResult = missing;

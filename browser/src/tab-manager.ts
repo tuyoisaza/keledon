@@ -7,6 +7,7 @@ import {
   isAllowedVendorTabUrl,
   isAllowedVendorUrl,
   secureRendererPreferences,
+  isAllowedConfiguredVendorUrl,
 } from './security-policy.js';
 
 export interface Tab {
@@ -14,6 +15,7 @@ export interface Tab {
   name: string;
   url: string;
   view: Electron.BrowserView | null;
+  allowedOrigins?: string[];
 }
 
 const CHROME_HEIGHT = 80;
@@ -44,12 +46,16 @@ export class TabManager {
     this.mainWindow = win;
   }
 
-  createTab(name: string, url: string): Tab {
+  createTab(name: string, url: string, allowedOrigins?: string[]): Tab {
     // about:blank is used internally as the clean starting surface for a goal
     // when the user has not selected a vendor tab yet. It still receives only
     // the restricted vendor preload.
     if (!isAllowedVendorTabUrl(url)) {
       throw new Error('Vendor tabs require an HTTP(S) URL without embedded credentials.');
+    }
+    const scopedOrigins = allowedOrigins ? [...new Set(allowedOrigins)] : undefined;
+    if (scopedOrigins && !isAllowedConfiguredVendorUrl(url, scopedOrigins)) {
+      throw new Error('Vendor destination is outside the configured tenant allowlist.');
     }
     const id = `tab-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     eventLogger.info('tabs', 'tab_create', { id });
@@ -81,7 +87,7 @@ export class TabManager {
     });
 
     const guardVendorNavigation = (event: Electron.Event, targetUrl: string) => {
-      if (!isAllowedVendorTabUrl(targetUrl)) {
+      if (!isAllowedVendorTabUrl(targetUrl) || (scopedOrigins && !isAllowedConfiguredVendorUrl(targetUrl, scopedOrigins))) {
         event.preventDefault();
         log.warn(`[SECURITY] Blocked non-HTTP(S) navigation in vendor tab ${id}.`);
       }
@@ -140,7 +146,7 @@ export class TabManager {
     });
 
     view.webContents.setWindowOpenHandler(({ url }) => {
-      if (isAllowedVendorUrl(url)) this.createTab('New Tab', url);
+      if (isAllowedVendorUrl(url) && (!scopedOrigins || isAllowedConfiguredVendorUrl(url, scopedOrigins))) this.createTab('New Tab', url, scopedOrigins);
       return { action: 'deny' };
     });
 
@@ -159,7 +165,7 @@ export class TabManager {
 
     view.webContents.loadURL(url);
 
-    const tab: Tab = { id, name, url, view };
+    const tab: Tab = { id, name, url, view, allowedOrigins: scopedOrigins };
     this.tabs.push(tab);
     eventLogger.info('tabs', 'tab_created', { id });
 

@@ -31,6 +31,7 @@ export default function ManagementVendorsPage() {
         name: '',
         type: 'crm',
         baseUrl: '',
+        allowedOrigins: '',
         username: '',
         password: '',
         apiKey: '',
@@ -78,7 +79,7 @@ export default function ManagementVendorsPage() {
     };
 
     const resetForm = () => {
-        setFormData({ name: '', type: 'crm', baseUrl: '', username: '', password: '', apiKey: '', startGoal: '' });
+        setFormData({ name: '', type: 'crm', baseUrl: '', allowedOrigins: '', username: '', password: '', apiKey: '', startGoal: '' });
     };
 
     const openCreateForm = () => {
@@ -92,6 +93,7 @@ export default function ManagementVendorsPage() {
             name: vendor.name || '',
             type: vendor.type || 'crm',
             baseUrl: vendor.baseUrl || '',
+            allowedOrigins: (vendor.allowedOrigins || []).join('\n'),
             username: vendor.username || '',
             password: '',
             apiKey: '',
@@ -114,6 +116,7 @@ export default function ManagementVendorsPage() {
                 name: formData.name,
                 type: formData.type,
                 baseUrl: formData.baseUrl || undefined,
+                allowedOrigins: formData.allowedOrigins.split(/\r?\n/).map(origin => origin.trim()).filter(Boolean),
             };
             if (formData.username) submitData.username = formData.username;
             if (formData.password) submitData.password = formData.password;
@@ -354,6 +357,20 @@ export default function ManagementVendorsPage() {
                                     placeholder="https://login.example.com"
                                     className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2"
                                 />
+                            </div>
+
+                            <div>
+                                <label htmlFor="management-vendors-allowed-origins" className="block text-sm font-medium text-muted-foreground mb-1">
+                                    {t('records.allowedVendorOrigins')}
+                                </label>
+                                <textarea id="management-vendors-allowed-origins"
+                                    value={formData.allowedOrigins}
+                                    onChange={(e) => setFormData({ ...formData, allowedOrigins: e.target.value })}
+                                    placeholder={t('records.allowedVendorOriginsExample')}
+                                    rows={3}
+                                    className="w-full bg-gray-900 border border-gray-700 text-foreground rounded-lg px-4 py-2 resize-y"
+                                />
+                                <p className="mt-1 text-xs text-muted-foreground">{t('records.allowedVendorOriginsHelp')}</p>
                             </div>
 
                             <div>
