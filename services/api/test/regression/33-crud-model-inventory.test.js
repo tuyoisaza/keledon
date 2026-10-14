@@ -50,10 +50,35 @@ const expected = new Set(
   ),
 );
 const actual = coreRows.map((row) => `${row[0]}|${row[1]}|${row[2]}`);
-assert.equal(resources.length, 9, 'core matrix must list all nine scoped CRUD resources');
+assert.equal(resources.length, 11, 'core matrix must include the nine established resources plus KnowledgeBase and KnowledgeDocument');
 assert.equal(actual.length, expected.size, 'every resource-role-surface combination appears once');
 assert.equal(new Set(actual).size, actual.length, 'core matrix must not duplicate combinations');
 assert.deepEqual([...actual].sort(), [...expected].sort());
+
+const rowFor = (resource, role, surface) =>
+  coreRows.find((row) => row[0] === resource && row[1] === role && row[2] === surface);
+for (const role of ['guest', 'user', 'agent']) {
+  const base = rowFor('KnowledgeBase', role, 'API');
+  assert.ok(base, `KnowledgeBase API row is required for ${role}`);
+  assert.equal(base[4], '-', `${role} cannot create knowledge bases`);
+  assert.equal(base[5], 'yes', `${role} may list company-scoped knowledge bases`);
+  assert.equal(base[6], 'yes', `${role} may read company-scoped knowledge base details`);
+  assert.equal(base[7], '-', `${role} cannot update knowledge bases`);
+  assert.equal(base[8], '-', `${role} cannot delete knowledge bases`);
+  const document = rowFor('KnowledgeDocument', role, 'API');
+  assert.ok(document, `KnowledgeDocument API row is required for ${role}`);
+  assert.deepEqual(document.slice(4, 9), ['-', 'yes', '-', '-', '-']);
+}
+for (const role of ['admin', 'coordinator', 'superadmin']) {
+  const base = rowFor('KnowledgeBase', role, 'API');
+  assert.ok(base, `KnowledgeBase API row is required for ${role}`);
+  assert.deepEqual(base.slice(4, 9), ['yes', 'yes', 'yes', 'yes', 'yes']);
+  const document = rowFor('KnowledgeDocument', role, 'API');
+  assert.ok(document, `KnowledgeDocument API row is required for ${role}`);
+  assert.deepEqual(document.slice(4, 9), ['yes', 'yes', '-', '-', 'yes']);
+}
+assert.match(matrix, /KnowledgeBase details and updates are tenant-scoped/);
+assert.doesNotMatch(matrix, /GAP remains for KnowledgeBase detail\/update|No general detail\/update operation/);
 
 console.log(
   `PASS CRUD inventory: ${prismaModels.length}/${prismaModels.length} Prisma models and ${actual.length} unique core resource-role-surface rows.`,

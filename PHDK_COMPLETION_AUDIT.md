@@ -1,6 +1,8 @@
-## Candidate audit — 5.1.35 source slice, delivery pending (2026-10-14)
+## Current delivery audit — source 5.1.35 merged; PHDK Auto partial (2026-10-14)
 
-The 5.1.34 documentation candidate is superseded by source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0`, delivered in PR #106 at verified remote-main SHA `73c0fc52b37d96d283e8709e76b99c17db0b1a83`. API/Cloud add company-scoped KnowledgeBase detail/update and Web adds base lifecycle management. API 35/35 and Cloud 14/14 regressions, builds, Web typecheck/build and exact-commit mocked production-SPA UAT pass. No PostgreSQL, live Qdrant, customer endpoint, or deployment was used. The source slice is delivered; whole PHDK Auto remains PARTIALLY DELIVERED for database-backed authorization/persistence, live Qdrant concurrency, native Windows device/audio, broad accessibility/localization, and deployed SEO/AEO.
+The 5.1.35 source candidate `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` shipped through PR #106 at merge SHA `73c0fc52b37d96d283e8709e76b99c17db0b1a83`. The post-merge delivery record shipped through PR #107; verified current `origin/main` is `465b3633e571572b540151fe9433898a61c8fc09`. API/Cloud add company-scoped KnowledgeBase detail/update and Web adds base lifecycle management. API 35/35 and Cloud 14/14 regressions, builds, Web typecheck/build and exact-commit mocked production-SPA UAT passed for the source slice. The initial delivery left CRUD_MATRIX.md with stale KnowledgeBase gap claims and without explicit KnowledgeBase/KnowledgeDocument role × surface rows; this is being reconciled as a separate docs-only delivery.
+
+No PostgreSQL, live Qdrant, customer endpoint or deployment was used. The source slice is delivered; whole PHDK Auto remains **PARTIALLY DELIVERED** for database-backed authorization/persistence, live Qdrant concurrency, safe DB-backed identities, native Windows device/audio, broad accessibility/localization, deployed SEO/AEO and remaining source CRUD-family mappings. Local or mocked evidence does not close those gates.
 
 ## Previous delivery record — 5.1.32 source merged; Auto acceptance remained partial at that candidate
 

@@ -1,25 +1,24 @@
-# PMO status — current Auto continuation 5.1.32; overall PARTIALLY DELIVERED
+# PMO status — current Auto continuation 5.1.35; overall PARTIALLY DELIVERED
 
 ## Current portfolio and candidate — 2026-10-14
 
-All four owner-confirmed commitments remain in order. Candidate source is 5.1.32 at `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`, based on verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`. Exact-source local UAT is rebound and passes 1/1; API/Cloud/Browser regressions and all local builds pass; PHDK coherence 52/52. The source commit is local; PR #102 still needs its branch update. No live CRM call is universal: customer acceptance depends on the selected tenant provider.
+PR #106 delivered source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0`; PR #107 records delivery at current main `465b3633e571572b540151fe9433898a61c8fc09`. Five app roots and Browser renderer align at 5.1.35; PHDK coherence 52/52. API 35/35, Cloud 14/14 and exact-commit synthetic SPA UAT passed for the shipped source slice. This active docs-only matrix reconciliation is on `docs/phdk-knowledge-matrix-5-1-35` and awaits normal PR delivery. No live CRM call is universal: customer acceptance depends on the selected tenant provider.
 
 | WS | Current state | Evidence / next gate |
 |---|---|---|
-| WS-001 / CMT-001 | SOURCE VERSIONED; DELIVERY PENDING | Five app roots and Browser renderer 5.1.32; PR #102 must be updated, reviewed under actual controls, merged and read back. |
+| WS-001 / CMT-001 | 5.1.35 SOURCE + DELIVERY RECORD MERGED; DOCS RECONCILIATION ACTIVE | PR #106/#107 delivered; current main `465b3633e571572b540151fe9433898a61c8fc09`. Current matrix correction awaits PR delivery/readback. |
 | WS-002 / CMT-002 | SOURCE PASS; ACCEPTANCE PARTIAL | Widget/diagnostics 19/19; UAT-030 Knowledge UI pass. Native device/audio and broad route accessibility/manual screen-reader acceptance remain open. |
 | WS-003 / CMT-003 | PROVIDER-INDEPENDENT CONTRACT PASS | Tenant URL validation and allowlists, API/Cloud/Browser payload parity and offline lifecycle tests pass. Live call/CRM acceptance occurs per configured client. |
-| WS-004 / CMT-004 | SOURCE POLICY PASS; PERSISTED ACCEPTANCE OPEN | API 33/33, Cloud 14/14, 35-model inventory/126 policy-row drift assertions. Disposable-DB role/tenant/migration proof and safe DB-backed test identities remain unavailable. |
+| WS-004 / CMT-004 | SOURCE POLICY PASS; PERSISTED ACCEPTANCE OPEN | API 35/35, Cloud 14/14, 35-model inventory/154 role-surface drift assertions. Disposable-DB role/tenant/migration proof and safe DB-backed test identities remain unavailable. |
 | WS-X / PHDK | SOURCE CONFORMITY PASS; EXTERNAL GATES OPEN | Web/Landing SEO source checks pass; AEO/GEO source review reused. Deployment/crawler and database/native evidence remain unmeasured. |
 
 Overall: **PARTIALLY DELIVERED**. No database, provider, customer data, private CRM URL, or deployment was used.
 
-SIGUIENTE PASO: reconcile Check/handoffs, push the versioned source and evidence update to PR #102, then follow actual PR controls and verify remote `main` after integration.
+SIGUIENTE PASO: finish review of the matrix and active PHDK records, run the Check regression/coherence gates, then deliver the docs-only branch through the normal PR flow and verify remote `main`.
 
 ---
 
-# Historical PMO status — previous Auto continuation 5.1.27
-## Active run `20261014-0007-phdk-auto-completion` — current portfolio
+# Historical PMO status — Auto continuation 5.1.27
 
 PR #96 delivered 5.1.27 at `main` SHA `a0425134ba69b1feaf165cd512caad8c136ca6f8`, verified against both fetch and `git ls-remote`; PR head and squash trees match. API/Cloud flow-step reorder now validates full unique membership within a serializable write transaction. API regressions 21/21, Cloud regressions 11/11, API Jest 11/11, focused flow tests 7/7 and 10/10, post-commit synthetic Web UAT 1/1, configured builds/typechecks and PHDK coherence pass. Full Cloud Jest still needs `DATABASE_URL`. Overall acceptance remains partial.
 
