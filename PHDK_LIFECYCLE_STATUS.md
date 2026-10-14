@@ -19,7 +19,7 @@ Goal: continue the owner-confirmed four-front Auto in order and maximize applica
 | UAT Fix | COMPLETED | Fixed stale version fixture and added visible in-dialog HTTP failure feedback; retest passed. |
 | SEO | COMPLETED | Both app shells source-audited; landing metadata/private-route headers fixed; 25 controls recorded. Source tests pass; field data blocked. |
 | AEO/GEO | COMPLETED | 15 source controls recorded; public market/language remains undecided; citations not measured. |
-| Check | COMPLETED WITH OPEN ACCEPTANCE | CHK-001 Voice Profile detail/edit is closed at source; 35-model persistence matrix, broad accessibility/localization, deployed discovery, native device/audio remain open. See `PHDK_CHECK_REPORT.md`. |
+| Check | COMPLETED WITH OPEN ACCEPTANCE | CHK-001 Voice Profile detail/edit is closed at source; the 35-model source inventory is mapped; exhaustive role/operation/persistence matrix, broad accessibility/localization, deployed discovery and native device/audio remain open. See `PHDK_CHECK_REPORT.md`. |
 | Remediation | COMPLETED FOR VALIDATED SOURCE FIXES | Voice Profile safe detail/edit/projections, test coverage, locale parity and ES2020-safe interpolation are implemented and validated. Remaining items need broader bounded source work or external/manual evidence. |
 | Delivery | COMPLETED | PR #78 merged; `origin/main` readback at `f8933a61c60655a6448a546790521665c6b81c9f`, tree matches, and all five app manifest/lock roots are 5.1.17. No hosted checks/review decision reported. |
 
