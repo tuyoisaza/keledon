@@ -233,6 +233,30 @@
     "contentPlaceholder": "Escribe el texto que quieres agregar a la base de conocimiento...",
     "adding": "Agregando al almacén vectorial...",
     "selectCompany": "Selecciona una empresa.",
+    "bases": {
+      "title": "Bases de conocimiento",
+      "description": "Consulta y administra las colecciones de conocimiento de tu empresa.",
+      "refresh": "Actualizar bases",
+      "create": "Crear base",
+      "loadError": "No se pudo cargar esta base de conocimiento. Inténtalo más tarde.",
+      "loading": "Cargando bases de conocimiento...",
+      "empty": "Todavía no hay bases de conocimiento.",
+      "documents": "documentos",
+      "view": "Ver detalles:",
+      "edit": "Editar:",
+      "delete": "Eliminar:",
+      "confirmDelete": "¿Eliminar esta base de conocimiento y todos sus documentos y vectores? Esta acción no se puede deshacer.",
+      "deleteError": "No se pudo eliminar la base de conocimiento. Inténtalo más tarde.",
+      "createTitle": "Crear base de conocimiento",
+      "editTitle": "Editar base de conocimiento",
+      "name": "Nombre",
+      "descriptionLabel": "Descripción",
+      "saving": "Guardando...",
+      "save": "Guardar",
+      "saveError": "No se pudo guardar la base de conocimiento. Inténtalo más tarde.",
+      "detailsTitle": "Detalles de la base de conocimiento",
+      "editAction": "Editar detalles"
+    },
     "selectTextFile": "Selecciona un archivo de texto sin formato.",
     "enterSource": "Escribe contenido o una URL, o elige un archivo.",
     "sourceAdded": "Fuente agregada e indexada.",
@@ -242,7 +266,11 @@
     "notAvailable": "No disponible",
     "brand": "Marca",
     "team": "Equipo",
-    "status": { "indexed": "Indexado", "indexing": "Indexando", "error": "Error" }
+    "status": {
+      "indexed": "Indexado",
+      "indexing": "Indexando",
+      "error": "Error"
+    }
   },
   "flows": {
     "title": "Flujos",

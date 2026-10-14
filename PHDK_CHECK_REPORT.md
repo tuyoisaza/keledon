@@ -19,6 +19,10 @@ Status: **REMEDIATION CANDIDATE; DELIVERY PENDING**.
 ## Delivery verification — 5.1.30
 
 The candidate finding below is now delivered: [PR #100](https://github.com/tuyoisaza/keledon/pull/100) merged at `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; remote readbacks agree and source/merge trees match. API regression 22/22, Cloud 11/11, all product builds, UAT-013–017 static/source checks and PHDK coherence 52/52 pass. GitHub check and review rollups are empty. The RLS migration and Auth trigger were not executed. CMT-004 remains partially accepted until database persistence and real nonproduction identities are exercised.
+## Current source check — candidate 5.1.35 (2026-10-14)
+
+Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` addresses the KnowledgeBase administration gap in API, Cloud and Web. API/Cloud provide company-scoped detail and update operations; tenant scope comes from the authenticated DB-derived actor and only name/description can be updated. API suite: 35/35; Cloud: 14/14; mirrored service tests and the generic CRUD guard cover foreign-company access and forged company fields. Web typecheck, production build and focused ESLint pass; exact-commit synthetic production-SPA UAT covers detail, edit, create and delete using intercepted fixture APIs. PHDK v2.50.10 coherence passes 52/52. This UAT is not real backend or persisted authorization acceptance. PR delivery is pending. Overall PHDK Auto remains PARTIALLY DELIVERED; persisted database, live Qdrant/concurrency, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open.
+
 # PHDK Check — current Auto run `20261014-0007-phdk-auto-completion`, delivered source 5.1.30; acceptance partial
 
 ## Delivered Check finding — Supabase policy and seed-script defaults

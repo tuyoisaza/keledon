@@ -1,11 +1,13 @@
-## Current Auto candidate — 2026-10-14, 5.1.32
+## Current Auto candidate — 2026-10-14, 5.1.35
+
+Base main: `6a8275c3d3f9813a9c3aea7a0d3121ae18cd2a1e`; source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` on `fix/phdk-knowledge-base-management-5-1-35`. All five application package/lock roots and Browser renderer align at 5.1.35; PHDK v2.50.10 coherence is 52/52. API regression 35/35, Cloud 14/14, API/Cloud builds, Web typecheck/build and focused ESLint pass; exact-commit synthetic local built-SPA UAT covers KnowledgeBase list/detail/create/edit/delete. UAT source fingerprint: `sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`. PR/merge/main readback remain pending. Overall Auto is PARTIALLY DELIVERED.
 
 | Commitment | Candidate evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | Source commit `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`; all five app package/lock roots and Browser renderer align at 5.1.32; PHDK coherence 52/52. | PR #102 needs source/docs push, current control/review reconciliation, merge and exact remote-main readback. |
-| CMT-002 | Diagnostics 19/19; local built-SPA UAT 1/1, exact-source UAT-030 verifies Knowledge role controls, localization, truthful states, generic errors and keyboard-accessible modal. | Native Windows device/audio and broad route/screen-reader accessibility acceptance remain open. |
+| CMT-001 | 5.1.35 candidate aligns all five app roots and Browser renderer; coherence 52/52. | Version-prefixed PR, review/check reconciliation, merge and exact remote-main readback remain open. |
+| CMT-002 | Diagnostics and synthetic local built-SPA UAT pass; the UAT includes KnowledgeBase manager actions with fixture APIs. | Native Windows device/audio and broad route/screen-reader accessibility acceptance remain open. |
 | CMT-003 | API/Cloud/Browser tenant contracts, URL validation/private-origin allowlists and offline call lifecycle tests pass; no CRM URL was contacted. | Live call/CRM acceptance stays client-specific after tenant provider configuration. |
-| CMT-004 | Approved role policy, tenant-scoped CRUD and vector store controls, valid Qdrant UUIDs; API 33/33 and Cloud 14/14. 35-model/126-row inventory guard passes. | Real DB-backed role × tenant × surface × operation/migration proof and safe test identities remain open without disposable PostgreSQL. |
+| CMT-004 | Approved role policy, tenant-scoped CRUD and vector store controls; API 35/35 and Cloud 14/14. KnowledgeBase detail/update tests cover both service mirrors. | Real DB-backed role × tenant × surface × operation/migration proof and safe test identities remain open without disposable PostgreSQL. |
 
 Overall: **PARTIALLY DELIVERED**. UAT: 27 PASS, 2 BLOCKED, 1 MANUAL. No DB/provider/customer data/deployment used.
 

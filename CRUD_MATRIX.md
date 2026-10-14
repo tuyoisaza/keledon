@@ -1,5 +1,9 @@
 # CRUD matrix — current source and authorization coverage
 
+## 5.1.35 — KnowledgeBase details and updates are tenant-scoped
+
+API and Cloud now expose `GET /api/crud/knowledge/:id` and `PUT /api/crud/knowledge/:id`. Detail and update lookups apply the authenticated actor's database-derived company; updates permit only a trimmed, validated name and description. Generic CRUD guard regressions deny cross-company ID access and forged tenant fields; mirrored service tests cover the tenant scope and reject invalid payloads before writes. The Web administration surface now lists bases with document counts and supports detail, create, edit, and destructive delete confirmation for admin/coordinator/superadmin; ordinary users retain read-only access. Synthetic SPA UAT exercises those flows and payload boundaries. This is source and mocked-API evidence only; persistent authorization, PostgreSQL migrations, live vector deletion and delete/reindex concurrency remain unverified.
+
 ## 5.1.33 — Knowledge deletion cleans Qdrant data
 
 Both API and Cloud generic CRUD now resolve the stored KnowledgeDocument→KnowledgeBase relation, remove points using the immutable `documentId` payload filter with Qdrant `wait: true`, then delete the relational row. KnowledgeBase deletion removes its `knowledge-base-<id>` collection before deleting the Prisma record. If Qdrant is unavailable or deletion fails, the relational record is retained. Regression 46 verifies API/Cloud source parity and operation ordering with mocked Prisma/Qdrant clients. This does not provide a cross-store transaction: a later Prisma failure after successful vector deletion, concurrent reindex/delete, live Qdrant semantics, and persisted PostgreSQL behavior remain open for disposable-environment acceptance.

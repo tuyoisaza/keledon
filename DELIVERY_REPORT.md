@@ -1,3 +1,19 @@
+## Candidate 5.1.35 — delivery gate pending (2026-10-14)
+
+Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` on `fix/phdk-knowledge-base-management-5-1-35`, based on verified main `6a8275c3d3f9813a9c3aea7a0d3121ae18cd2a1e`. All five app package/lock roots and Browser renderer are 5.1.35; PHDK 2.50.10 coherence 52/52. API regression 35/35, Cloud 14/14, API/Cloud builds, Web typecheck/build, diagnostics 19/19, Web SEO source 1/1, focused lint and exact-commit synthetic built-SPA UAT pass. The UAT uses intercepted fixture APIs and does not prove persisted authorization. Candidate JSON: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/CANDIDATE-5.1.35.json`.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Patch version 5.1.35 aligned in all five app package/lock roots and Browser renderer; changelog updated. |
+| COMMIT_PREFIX | PASS | Source commit uses `v5.1.35:`. |
+| PUSH_AND_PR | PENDING | Push and version-prefixed PR creation remain. |
+| REMOTE_MAIN | PENDING | Merge and independent remote-main SHA/tree/version readback remain. |
+| SCOPE_AND_CHECKS | SOURCE PASS / ACCEPTANCE PARTIAL | KnowledgeBase manager CRUD and tenant guard covered; persisted DB, live Qdrant, native device/audio, broad accessibility, and deployed SEO/AEO remain open. |
+
+Overall: **SOURCE CANDIDATE / DELIVERY PENDING; PHDK AUTO PARTIALLY DELIVERED**. No client CRM endpoint, customer data, production DB or deployment was used.
+
+SIGUIENTE PASO: push the candidate branch, open the version-prefixed pull request, reconcile actual GitHub controls, then verify `main` after the permitted merge.
+
 ## Candidate 5.1.32 — delivery gate status (2026-10-14)
 
 Repository: `tuyoisaza/keledon`. Target: `main`. Source candidate: `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`, based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`. Installed PHDK 2.50.10. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) was squash-merged with the version-prefixed title `v5.1.32 fix(phdk): harden tenant CRUD and Knowledge diagnostics`.

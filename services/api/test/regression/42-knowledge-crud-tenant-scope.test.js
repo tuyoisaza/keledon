@@ -49,7 +49,7 @@ function requestContext({ role = 'admin', method = 'GET', route, params = {}, bo
     user: { userId: actor.id },
   };
   const context = {
-    getHandler: () => ({ name: route.includes('documents/:docId') ? 'deleteKnowledgeDocument' : route.includes('/documents') ? method === 'POST' ? 'createKnowledgeDocument' : 'getKnowledgeDocuments' : route.endsWith(':id') ? 'deleteKnowledgeBase' : method === 'POST' ? 'createKnowledgeBase' : 'getKnowledgeBases' }),
+    getHandler: () => ({ name: route.includes('documents/:docId') ? 'deleteKnowledgeDocument' : route.includes('/documents') ? method === 'POST' ? 'createKnowledgeDocument' : 'getKnowledgeDocuments' : route === 'knowledge/:id' ? method === 'PUT' ? 'updateKnowledgeBase' : method === 'DELETE' ? 'deleteKnowledgeBase' : 'getKnowledgeBase' : method === 'POST' ? 'createKnowledgeBase' : 'getKnowledgeBases' }),
     switchToHttp: () => ({ getRequest: () => req }),
   };
   return { actor, req, context };
@@ -87,6 +87,15 @@ for (const relativePath of guards) {
 
     const list = await run({ route: 'knowledge', query: { companyId: 'company-b' } });
     assert.equal(list.query.companyId, 'company-a');
+    const detail = await run({ route: 'knowledge/:id', params: { id: 'kb-a' }, query: { companyId: 'company-b' } });
+    assert.equal(detail.actor.companyId, 'company-a');
+    await denied({ route: 'knowledge/:id', params: { id: 'kb-b' } });
+    const update = await run({ method: 'PUT', route: 'knowledge/:id', params: { id: 'kb-a' }, body: { name: 'Updated KB', description: 'Scoped' } });
+    assert.deepEqual(update.body, { name: 'Updated KB', description: 'Scoped' });
+    await denied({ method: 'PUT', route: 'knowledge/:id', params: { id: 'kb-b' }, body: { name: 'Foreign edit' } });
+    await denied({ method: 'PUT', route: 'knowledge/:id', params: { id: 'kb-a' }, body: { name: 'Forged company', companyId: 'company-b' } });
+    const superadminDetail = await run({ role: 'superadmin', route: 'knowledge/:id', params: { id: 'kb-b' } });
+    assert.equal(superadminDetail.actor.role, 'superadmin');
     const createdBase = await run({
       method: 'POST', route: 'knowledge', body: { name: 'Support KB' },
     });

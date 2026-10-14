@@ -75,6 +75,38 @@ export async function deleteCompany(id: string): Promise<void> {
     return fetchApi(`/companies/${id}`, 'DELETE');
 }
 
+// Knowledge base model and management API
+export interface KnowledgeBase {
+    id: string;
+    companyId: string;
+    name: string;
+    description: string | null;
+    createdAt: string;
+    updatedAt: string;
+    _count?: { documents: number };
+}
+
+// Knowledge bases
+export async function getKnowledgeBases(): Promise<KnowledgeBase[]> {
+    return fetchApi('/knowledge');
+}
+
+export async function getKnowledgeBase(id: string): Promise<KnowledgeBase> {
+    return fetchApi(`/knowledge/${encodeURIComponent(id)}`);
+}
+
+export async function createKnowledgeBase(data: { companyId: string; name: string; description?: string }): Promise<KnowledgeBase> {
+    return fetchApi('/knowledge', 'POST', data);
+}
+
+export async function updateKnowledgeBase(id: string, data: { name?: string; description?: string | null }): Promise<KnowledgeBase> {
+    return fetchApi(`/knowledge/${encodeURIComponent(id)}`, 'PUT', data);
+}
+
+export async function deleteKnowledgeBase(id: string): Promise<void> {
+    return fetchApi(`/knowledge/${encodeURIComponent(id)}`, 'DELETE');
+}
+
 // Brands
 export async function getBrands(companyId?: string): Promise<Brand[]> {
     const brands: Brand[] = await fetchApi('/brands');

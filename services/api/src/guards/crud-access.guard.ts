@@ -216,7 +216,9 @@ export class CrudAccessGuard implements CanActivate {
         knowledge:
           handler === 'createKnowledgeBase'
             ? ['companyId', 'name', 'description']
-            : ['knowledgeBaseId', 'title', 'content', 'metadata'],
+            : handler === 'updateKnowledgeBase'
+              ? ['name', 'description']
+              : ['knowledgeBaseId', 'title', 'content', 'metadata'],
       };
       if (
         !launch &&

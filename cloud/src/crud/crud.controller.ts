@@ -381,9 +381,27 @@ export class CrudController {
     return this.crud.getKnowledgeBases(companyId);
   }
 
+  @Get('knowledge/:id')
+  getKnowledgeBase(@Param('id') id: string, @Req() req: CrudRequest) {
+    return this.crud.getKnowledgeBase(id, req.actor?.companyId ?? undefined);
+  }
+
   @Post('knowledge')
   createKnowledgeBase(@Body() data: any) {
     return this.crud.createKnowledgeBase(data);
+  }
+
+  @Put('knowledge/:id')
+  updateKnowledgeBase(
+    @Param('id') id: string,
+    @Body() data: { name?: string; description?: string | null },
+    @Req() req: CrudRequest,
+  ) {
+    return this.crud.updateKnowledgeBase(
+      id,
+      data,
+      req.actor?.companyId ?? undefined,
+    );
   }
 
   @Delete('knowledge/:id')
