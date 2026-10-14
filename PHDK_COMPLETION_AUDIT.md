@@ -1,12 +1,12 @@
-## Current candidate 5.1.32 — completion gate FAIL-CLOSED
+## Current delivery — 5.1.32 source merged; Auto acceptance remains partial
 
-The source candidate is `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5` on `fix/retire-runtime-seed-webhook-5-1-31`, based on verified `main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`. Version 5.1.32 is aligned across five package/lock roots and Browser renderer. API 33/33, Cloud 14/14, Browser 33/33; all builds; diagnostics 19/19; exact-source synthetic UAT 1/1; Web/Landing SEO 1/1; PHDK coherence 52/52 pass. This is scoped local/source evidence.
+Source candidate `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5` was delivered by PR [#102](https://github.com/tuyoisaza/keledon/pull/102), squash-merged to `main` at `7b2547edcf2f397e6fe1098386af226035e2613b`. `origin/main` and `git ls-remote` agree; remote tree `d4198e21b495cf15d9972cf48b5ef0c957dc4ea7` matches the candidate tree. API, Cloud, Web, Landing and Browser package/lock roots report 5.1.32. API 33/33, Cloud 14/14, Browser 33/33; all builds; diagnostics 19/19; exact-source synthetic UAT 1/1; Web/Landing SEO 1/1; PHDK coherence 52/52 pass. GitHub exposed no hosted checks or review submissions. These are scoped source/local results, not full product acceptance.
 
-Delivery fields: VERSION_BUMP=PASS; COMMIT_PREFIX=awaiting final permitted integration record; PUSH_AND_PR=PENDING (PR #102 not yet advanced to this source SHA); REMOTE_MAIN=PENDING; SCOPE_AND_CHECKS=source checks pass with explicit external acceptance pending. Whole product acceptance remains partial: UAT-009 safe DB-backed identities, UAT-010 disposable PostgreSQL and persisted CRUD/migration, UAT-006 native Windows device/audio, deployed SEO/AEO; client integrations require per-customer configuration. No migration, database, customer provider, private CRM endpoint or deployment was touched.
+Delivery fields: VERSION_BUMP=PASS; COMMIT_PREFIX=PASS (`v5.1.32` squash title); PUSH_AND_PR=PASS; REMOTE_MAIN=PASS; SCOPE_AND_CHECKS=source checks pass with explicit external acceptance pending. Whole-product acceptance remains partial: UAT-009 safe DB-backed identities, UAT-010 disposable PostgreSQL and persisted CRUD/migration, UAT-006 native Windows device/audio, exhaustive model/operation authorization, vector cleanup on Knowledge deletion, broad accessibility/localization, and deployed SEO/AEO. Client integrations require per-customer configuration. No migration, database, customer provider, private CRM endpoint or deployment was touched.
 
-Result: **NOT COMPLETE / DELIVERY PENDING**. A local commit or open PR is not verified remote-main delivery. After push, recheck actual PR controls; after integration, fetch remote `main`, verify SHA/content/version and run the vendored completion gate. Keep this report fail-closed until that evidence exists.
+Result: **SOURCE DELIVERY COMPLETE / PHDK AUTO NOT COMPLETE**. Exact remote-main SHA/content/version readback passed. Keep the overall goal partial until the stated environment-bound and broad acceptance gates have evidence.
 
-SIGUIENTE PASO: push/update PR #102 after completing lifecycle artifacts, then follow actual merge requirements and verify remote `main`.
+SIGUIENTE PASO: execute the remaining authorized acceptance on safe development infrastructure and a supported native Windows audio/device host; then update this audit with exact evidence.
 
 ## Continued Check audit — candidate 5.1.31 (2026-10-14)
 

@@ -13,11 +13,11 @@
 | 60 UAT Fix | COMPLETE FOR LOCAL FIXES | False call/RAG UI, i18n, error disclosure, modal remediation pass exact-source UAT. DB, identity and native gates remain external/manual. |
 | 65 SEO | SOURCE PASS / EXTERNAL UNMEASURED | Web/Landing SEO tests 1/1; public source unaffected; no deployed metrics. |
 | 67 AEO/GEO | SOURCE REVIEW REUSED / EXTERNAL UNMEASURED | Public content unchanged; no crawler/answer engine. |
-| 70 Check | RECONCILIATION IN PROGRESS | API/Cloud model source and UI gates revalidated; inventory 35/35 models and 126 core rows is a drift guard, not DB proof. |
-| 80 Remediation | LOCAL SOURCE PASS | No current source auto-fix remains; environment gates retained. |
-| 90 Delivery | PENDING | Push/update PR #102, verify actual controls, merge and read exact remote `main` content/version. |
+| 70 Check | SOURCE CHECK COMPLETE / ACCEPTANCE PARTIAL | API/Cloud model source and UI gates revalidated; inventory 35/35 models and 126 core rows is a drift guard, not DB proof. |
+| 80 Remediation | LOCAL SOURCE PASS / MERGED | No current source auto-fix remains; environment gates retained; source candidate is included in the verified merge. |
+| 90 Delivery | SOURCE MERGED / REMOTE VERIFIED | PR #102 squash-merged at `7b2547edcf2f397e6fe1098386af226035e2613b`; `origin/main` and `git ls-remote` agree, tree `d4198e21b495cf15d9972cf48b5ef0c957dc4ea7` matches the candidate, and five product roots are 5.1.32. |
 
-Overall: **PARTIALLY DELIVERED**; no database, customer provider, private CRM endpoint or deployment was accessed.
+Overall: **SOURCE MERGED / REMOTE VERIFIED; PHDK AUTO ACCEPTANCE PARTIAL**; no database, customer provider, private CRM endpoint or deployment was accessed.
 
 ## Continued Check remediation — candidate 5.1.31 (2026-10-14)
 
