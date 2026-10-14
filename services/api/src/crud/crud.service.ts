@@ -279,6 +279,10 @@ export class CrudService {
     });
   }
 
+  async getWorkflow(id: string) {
+    return this.prisma.workflow.findUnique({ where: { id } });
+  }
+
   async createWorkflow(data: {
     name: string;
     interfaceId?: string;
@@ -295,6 +299,7 @@ export class CrudService {
     id: string,
     data: {
       name?: string;
+      interfaceId?: string | null;
       description?: string;
       trigger?: string;
       steps?: string;

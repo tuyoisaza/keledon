@@ -1,5 +1,11 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.31 — Workflow detail and superadmin CRUD UAT (2026-10-14)
+
+UAT-022 passes within the local-source scope. API and Cloud expose `GET /api/crud/workflows/:id`; regression 39 confirms the DB-derived guard allows the superadmin and denies a tenant admin. A local browser journey at `/management/workflows` covered list, detail open/close, invalid JSON rejection before network mutation, valid create, edit, confirmed delete, and redirecting a tenant admin away from the route. All API endpoints were intercepted with in-memory synthetic fixtures (`example.test`); no real API, database or provider was contacted. Web production build, TypeScript typecheck and EN/ES/PT `records` key parity passed. This verifies the source UX and mocked request contract, not persisted CRUD, live identity enforcement or deployment.
+
+UAT-021 also passes for TeamInterface replacement at source/guard contract level: malformed/duplicate/blank/unknown IDs are rejected before transactional replacement; empty array is the explicit clear; both API and Cloud guards allow a same-company direct team ID and deny a foreign-company ID. No database was used. Overall run remains **PARTIALLY ACCEPTED** for DB migration/persistence, native device/audio, broad accessibility/localization and deployed SEO/AEO.
+
 ## Candidate 5.1.31 — API/Cloud CRUD security parity
 
 UAT-019 passes. Cloud's guard now rejects client-supplied `passwordHash` for all tested roles and denies every non-GET write to append-only `audit-logs`; the Cloud user-service contract no longer accepts hashes. Cloud's in-process Nest harness verifies HTTP denial for superadmin hash injection and forged audit POST. The Cloud direct-guard regression covers guest, user, agent, admin, coordinator and superadmin hash attempts; API regression already exercises the policy. Cross-backend test 36 asserts both guards retain the same two controls and no webhook-name bypass. Both builds pass; full API regression is 24/24 and Cloud 11/11. No database was used, so persisted audit integrity remains unverified.

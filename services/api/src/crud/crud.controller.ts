@@ -261,6 +261,11 @@ export class CrudController {
     return this.crud.getWorkflows();
   }
 
+  @Get('workflows/:id')
+  getWorkflow(@Param('id') id: string) {
+    return this.crud.getWorkflow(id);
+  }
+
   @Post('workflows')
   createWorkflow(@Body() data: any) {
     return this.crud.createWorkflow(data);
