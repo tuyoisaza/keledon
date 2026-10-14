@@ -165,8 +165,11 @@ async function main() {
       'getTechStatus',
       'getProviderCatalog',
       'getRpaProviders',
-    ])
-      await run(scope, 'MvpDataController', handler).result;
+    ]) {
+      const result = run(scope, 'MvpDataController', handler).result;
+      if (['admin', 'coordinator'].includes(role)) await result;
+      else await assert.rejects(result, Denied);
+    }
   }
   actor = null;
   await run(scope, 'MvpDataController', 'getCloudConfig').result;
@@ -354,7 +357,7 @@ async function main() {
     'PASS secondary resource scopes: cross-tenant flow/step/reorder/knowledge/session/call/device denials; trusted filters and pairing bindings; low-role mutations; removed actors; cryptographic device token.',
   );
   console.log(
-    'PASS MVP data policy: tenant roles are denied on every unscoped configuration/list/mutation handler; three safe global reads remain available; public cloud config and superadmin access remain available.',
+    'PASS MVP data policy: ordinary roles are denied on management catalogs; admin/coordinator are limited to management reads; unscoped configuration/mutations remain denied; public cloud config and superadmin access remain available.',
   );
 }
 main().catch((error) => {

@@ -2,15 +2,21 @@
 
 ## Active continuation — 2026-10-13
 
-Overall result remains **PARTIALLY DELIVERED**. The prior product slice and evidence PRs #78–#80 are on `main`; current `origin/main` before this continuation is `dbd715b16e407bd313a17541e11bb65adf153bdd`. The active Developer Mode branch is `test/phdk-mvp-guard-policy`, based on that SHA. This test/evidence-only slice closes a missing regression around deny-by-default legacy MVP configuration routes for tenant roles; it does not change the 5.1.17 product version or close the 35-model CRUD gate. API regression passes 15/15 suites, API TypeScript build passes, the test parses with Node, `git diff --check` passes, and PHDK coherence passes 52/52. No database, browser, native runtime, deployment, or client provider was exercised. Existing delivery JSON still points at PR #78 and does not verify the current main tip, so the completion gate is not reported as passing.
+Overall result remains **PARTIALLY DELIVERED**. PRs #78–#81 are merged; the MVP deny-by-default regression from #81 is now on `main` at `260d3d8c33be38b6a9c9e89ffbda5e15a780ddc8`. The 35-model CRUD gate remains open. Current source candidate is 5.1.19 on `fix/phdk-tech-status-disclosure`, based on PR #82's main SHA `011ea0f7a9c20cd91342e880aaf6b6eec8ee0714`. Existing delivery JSON still points at PR #78 and does not verify current `main`; the full Auto gate is not passing.
 
-SIGUIENTE PASO: commit and deliver this regression/evidence slice through the normal PR flow, then continue CHK-002 on the next uncovered resource family.
+SIGUIENTE PASO: deliver the 5.1.19 diagnostics-privacy fix through the normal PR flow, then continue the open resource-role audit.
 
 ## Security follow-up — append-only audit evidence
 
-PR #81 merged at `260d3d8c33be38b6a9c9e89ffbda5e15a780ddc8`; fresh local `main` readback matches. The next focused Check found that the general CRUD API let superadmins forge audit events. Candidate branch `fix/phdk-audit-log-integrity` now removes the unused public-to-superadmin `POST /api/crud/audit-logs` path, its dead service wrappers, and blocks all non-GET audit-log requests in `CrudAccessGuard`; the automatic interceptor and trusted domain services still create audit rows. All five app package and lock roots are aligned to 5.1.18. API regression passes 15/15, all five application builds pass, Web typecheck/diagnostics/UAT pass (18/18, 1/1), Landing SEO passes 1/1 and PHDK coherence passes 52/52. The mocked UAT is not live API acceptance. This is a validated source fix, not yet delivered, and CHK-002 remains open.
+PR #82 merged at `011ea0f7a9c20cd91342e880aaf6b6eec8ee0714`; fresh local `main` readback matches. The audit-log integrity fix removes the unused `POST /api/crud/audit-logs` path, its dead service wrappers, and blocks non-GET audit-log requests; trusted interceptor and domain writes remain. All five app package and lock roots are aligned at 5.1.18. API regression 15/15, all five builds, Web typecheck/diagnostics/mocked UAT (18/18, 1/1), Landing SEO 1/1 and PHDK coherence 52/52 pass. The mocked UAT is not live API acceptance. CHK-002 remains open.
 
-SIGUIENTE PASO: review and deliver the audit-log integrity fix through PR, then continue the resource-by-role CRUD Check.
+SIGUIENTE PASO: deliver the current 5.1.19 privacy fix, then continue the resource-by-role CRUD Check.
+
+## Runtime diagnostics privacy follow-up — candidate 5.1.19
+
+Current `main` readback after PR #82 is `011ea0f7a9c20cd91342e880aaf6b6eec8ee0714`. Branch `fix/phdk-tech-status-disclosure` reduces `GET /api/tech-status` to service availability for tenant managers, reserves runtime details for superadmin, and denies provider/RPA catalogs to user/agent/guest in both API roots. The management status page hides diagnostics panels for the reduced response. API/Cloud regressions 15/15 and 8/8 and builds pass; focused ESLint passes on the API copy; Web typecheck/build and mocked local UAT 1/1 pass. Browser and Landing builds, Landing SEO 1/1, diagnostics 18/18 and coherence 52/52 also pass. All five manifest/lock roots are 5.1.19. The candidate is not delivered yet; the full Auto remains partial.
+
+SIGUIENTE PASO: run integrated version-alignment checks and deliver the 5.1.19 privacy fix through the normal PR flow, then continue the open resource-role audit.
 
 Run ID: `20261013-1900-phdk-auto`
 Repository: `C:\Users\tboar\OneDrive\Documentos\GitHub\KELEDON` (`tuyoisaza/keledon`)

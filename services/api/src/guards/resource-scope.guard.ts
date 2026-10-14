@@ -86,6 +86,7 @@ export class ResourceScopeGuard implements CanActivate {
     };
     if (kind === 'MvpDataController') {
       if (
+        !manager ||
         !['getProviderCatalog', 'getRpaProviders', 'getTechStatus'].includes(
           handler,
         )

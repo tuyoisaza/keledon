@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
 } from '@nestjs/common';
 import { MvpStoreService } from '../mvp/mvp-store.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -22,8 +23,16 @@ export class MvpDataController {
   constructor(private readonly mvpStore: MvpStoreService) {}
 
   @Get('tech-status')
-  getTechStatus() {
-    return this.mvpStore.getTechStatus();
+  getTechStatus(@Req() req: any) {
+    const status = this.mvpStore.getTechStatus();
+    if (req.user?.role === 'superadmin')
+      return { ...status, detailsAvailable: true };
+    return {
+      detailsAvailable: false,
+      server: { status: status.server.status },
+      techStack: [],
+      dependencies: [],
+    };
   }
 
   @Get('provider-catalog')

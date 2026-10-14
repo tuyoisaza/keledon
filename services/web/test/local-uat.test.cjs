@@ -85,6 +85,8 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
     let body={};
     const p=url.pathname;
     if(p==='/api/auth/me')body={success:true,user:{...person,role:role||'guest'}};
+    else if(p==='/api/tech-status')body=role==='superadmin'?{detailsAvailable:true,server:{status:'online',uptime:456,nodeVersion:'node-fixture',memoryUsage:{used:10,total:20,percentage:50}},techStack:[{name:'NestJS',version:'11',category:'backend'}],dependencies:[{name:'fixture-package',hasUpdate:true}]}:{detailsAvailable:false,server:{status:'online'},techStack:[],dependencies:[]};
+    else if(p==='/api/provider-catalog'||p==='/api/rpa-providers')body=[];
     else if(p==='/api/cloud-config')body={ws_url:origin};
     else if(p.endsWith('/config/status'))body={openaiKeySet:true};
     else if(/^\/api\/teams\/[^/]+\/config$/.test(p)){
@@ -213,6 +215,22 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
    await context.close();
    checks.push('UAT-004 '+role+' frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API');
   }
+  for(const role of ['admin','superadmin']){
+   const statusPage=await pageFor(role);await statusPage.page.goto(origin+'/management/status');
+   await statusPage.page.getByText('Cloud Server',{exact:true}).waitFor();
+   await statusPage.page.getByText('online',{exact:true}).waitFor();
+   if(role==='admin'){
+    assert.equal(await statusPage.page.getByText('Tech Stack',{exact:true}).count(),0);
+    assert.equal(await statusPage.page.getByText('Dependencies',{exact:true}).count(),0);
+    assert.equal(await statusPage.page.getByText('node-fixture',{exact:true}).count(),0);
+    assert.equal(await statusPage.page.getByText('Memory Usage',{exact:true}).count(),0);
+   } else {
+    await statusPage.page.getByText('node-fixture',{exact:true}).waitFor();
+    await statusPage.page.getByText('Memory Usage',{exact:true}).waitFor();
+   }
+   await statusPage.context.close();
+  }
+  checks.push('UAT admin status page renders safe server availability only; superadmin retains detailed diagnostics (synthetic API fixture)');
   for(const [route,placeholder] of [['brands','Buscar marcas...'],['teams','Buscar equipos...']]){
    const localizedPage=await pageFor('admin');await localizedPage.page.goto(origin+'/management/'+route);
    await localizedPage.page.getByPlaceholder(placeholder).waitFor();await localizedPage.context.close();
