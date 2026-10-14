@@ -1,3 +1,12 @@
+## Current Auto completion audit — 5.1.30 delivered source (2026-10-14)
+
+All four approved commitments were carried into source delivery. PR #100 merged source commit `75e40a8d4f72b5c962d73c140856ada044a863e9` at exact `main` SHA `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; `origin/main` and `git ls-remote` agree, and merge/source trees match. Five package/lock roots and Browser renderer are 5.1.30. API regression 22/22, Cloud 11/11, all app builds, targeted RLS/fixture regression and PHDK coherence 52/52 pass. GitHub reports empty hosted-check and review rollups. No deployment is claimed.
+
+CRM origins follow the owner-approved client-specific rule: validated HTTP(S) URLs and tenant-scoped allowlists; Cloud never fetches private CRM targets. New Auth identities default to `user`; existing role/tenant assignments are preserved; unsafe privileged/customer-like seeding is retired or pinned to explicit nonproduction targets. No SQL migration, trigger or seed script ran.
+
+Whole-product acceptance remains **PARTIALLY DELIVERED**: UAT-009 safe development identities, UAT-010 disposable DB/persisted migration matrix, UAT-006 native audio/device, broad route accessibility/localization, deployed SEO/AEO, and live per-client integration checks after client provider selection remain open. These are not represented as source-test passes.
+
+SIGUIENTE PASO: continue with owner-provided safe test infrastructure and device; otherwise retain these acceptance rows as open.
 ## Current Auto completion audit — candidate 5.1.30 (2026-10-14)
 
 The four owner-confirmed commitments remain active in the agreed order. Source remediation for Supabase policies and privileged/customer-like seeding is locally integrated and statically regression-tested. API regression passes 22/22, Cloud regression 11/11, API/Cloud/Browser/Web/Landing builds passed for this candidate, UAT-013–017 pass, private CRM destinations remain validated and tenant-allowlisted, and PHDK v2.50.10 coherence is 52/52. No seed, trigger or SQL migration ran.

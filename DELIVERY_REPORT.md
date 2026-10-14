@@ -1,3 +1,12 @@
+# Delivery handoff — Auto candidate 5.1.30 merged
+
+PHDK Auto for the four owner-confirmed KELEDON fronts delivered source version 5.1.30 through [PR #100](https://github.com/tuyoisaza/keledon/pull/100). Product source commit `75e40a8d4f72b5c962d73c140856ada044a863e9` was squash-merged to `main` at `7a48b419880abea818837e4cdfc3d4d4c3f77c12` on 2026-10-14. Fresh `origin/main` and `git ls-remote` agree, and source/merge trees match. All five app package/lock roots and Browser renderer report 5.1.30.
+
+The release removes broad Supabase access policies, adds default-deny RLS migration and user-only Auth sync, retires customer-like and privileged seed paths, and gates remaining fixtures to explicit nonproduction targets. API regression passes 22/22 suites; Cloud 11/11; focused default-deny/fixture regression, Node syntax checks, all product builds, and PHDK v2.50.10 coherence 52/52 pass. GitHub reports no hosted checks or review decision. No deployment is claimed.
+
+Overall acceptance remains **PARTIALLY DELIVERED**. UAT-009 requires real synthetic identities on a safe development target; UAT-010 requires a disposable PostgreSQL database for migration and persisted CRUD proof; UAT-006 requires a supported native device/audio environment. Broad route accessibility/localization and deployed SEO/AEO evidence remain open. Client-specific CRM/call acceptance is only relevant after each client chooses and configures a provider. No migration, trigger or seed script was run; no customer data or private CRM destination was accessed.
+
+SIGUIENTE PASO: to close the remaining environment-bound UAT, provide an isolated development target with synthetic accounts and disposable PostgreSQL, plus a supported device/audio test host; then capture deployed SEO/AEO measurements through the approved read-only evidence path.
 # Delivery handoff — current Auto candidate 5.1.30
 
 This candidate continues the four owner-confirmed fronts for `tuyoisaza/keledon` in order. It is on `fix/deny-unscoped-supabase-rls`, based on verified `origin/main` 5.1.29 at `886669c7f5d3e20aec978efc3dc9a758d4a09148`. All five application package/lock roots and the Browser renderer are 5.1.30. API regression passes 22/22 suites, Cloud 11/11, the focused RLS/fixture static regression passes, API/Cloud/Browser/Web/Landing builds pass, and PHDK v2.50.10 coherence passes 52/52. UAT-013–017 pass source/static review. CRM private destinations remain URL-validated and allowlisted per tenant; Cloud does not proxy-fetch them.

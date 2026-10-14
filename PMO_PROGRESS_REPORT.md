@@ -1,3 +1,8 @@
+## 2026-10-14 — 5.1.30 source delivery readback
+
+PR #100 delivered the RLS/seed-security remediation at exact remote `main` SHA `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; Git remote readbacks and PR/source tree match. API regression 22/22, Cloud 11/11, all product builds, UAT-013–017 source checks and PHDK coherence 52/52 pass. GitHub reports no hosted checks/review decision. No migration, trigger, seed script, customer data or deployment was used. Whole-product Auto remains partial for environment-bound database, development identities, native/device/audio, broad accessibility/localization and deployed SEO/AEO.
+
+SIGUIENTE PASO: resume only when the safe test DB, synthetic accounts and native device/audio environment are available; retain deployed SEO/AEO evidence as open.
 ## 2026-10-14 — candidate 5.1.30 integrated source verification
 
 RLS/bootstrap policies no longer grant unscoped browser access; unsafe superadmin/customer/RBAC/session/CRM fixtures are retired or pinned to explicit nonproduction targets. New Auth users default to `user`, existing role/tenant assignments remain untouched, and the API/Cloud migration mirrors match. Private CRM HTTP(S) destinations stay available only when validated and tenant-allowlisted; no private endpoint was contacted and Cloud performs no private CRM fetch. API regression 22/22, Cloud 11/11, targeted default-deny regression, all five product builds, and PHDK coherence 52/52 pass. Version 5.1.30 is aligned across five package/lock roots and Browser renderer. No SQL, migration, trigger or seed script ran. Source delivery via PR and merge is pending; full Auto remains PARTIALLY DELIVERED for database, dev-identity, native, accessibility/localization and deployed discovery acceptance.
