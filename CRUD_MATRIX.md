@@ -8,6 +8,10 @@ The API and Cloud CRUD controllers no longer expose a public shared-secret webho
 
 The Cloud `CrudAccessGuard` now matches the API's user field allowlist (no caller-supplied `passwordHash`) and append-only audit rule (only GET through generic CRUD). Cloud user service signatures no longer permit hash data. Cloud direct-guard coverage rejects hash input for guest, user, agent, admin, coordinator and superadmin; the real HTTP harness rejects superadmin hash injection and forged audit POST. API/Cloud parity regression 36 protects both source mirrors. These checks establish request-boundary behavior, not persisted audit/database state.
 
+## 5.1.31 — API/Cloud CRUD guard query minimization
+
+The API guard now matches Cloud's typed request/body validation and explicitly selects only `companyId`, `teamId`, and `role` when checking a user record's scope. API/Cloud regression 40 proves the authorization role comes from the current DB actor despite a forged token role, foreign-company user details are denied, and the lookup never selects `passwordHash`. Both backend sources remain aligned. This is request-guard evidence; no user record was read from a persistent database.
+
 ## 5.1.31 — TeamInterface replacement integrity
 
 `PUT /api/crud/teams/:id/interfaces` remains limited by the current-DB `CrudAccessGuard` to the actor's company team (or a superadmin); cross-backend regression 38 checks an allowed same-company direct team ID and a denied foreign-company ID. API and Cloud services validate the complete interface ID array, reject blank/non-string/duplicate/unknown IDs before mutation, and replace assignments inside a Prisma transaction. An empty array is the explicit clear operation. Regression 37 in each backend verifies validation-before-write, transactional ordering, and clear behavior. This closes the source-level partial-delete failure; persistent DB behavior remains part of CHK-AUTO-005.

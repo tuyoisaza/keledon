@@ -5,14 +5,14 @@
 | 00 Preflight | VERIFIED / REUSED | Installed PHDK 2.50.10 and verified main 5.1.30 baseline. |
 | 10 Capture | COMPLETE / REUSED | Four owner-confirmed fronts and restrictive role/tenant policy remain current. |
 | 20 Plan | COMPLETE / REUSED | Continue in order; preserve environment-bound client/device acceptance. |
-| 30 PMO | IN PROGRESS | Re-auditing the confirmed fronts; CMT-004 found legacy webhook provisioning/DDL path. |
-| 40 Integration Review | IN PROGRESS | Removed write routes and dormant bypass reviewed; Cloud hash/audit controls aligned with API; same-company team reassignment remains allowed while cross-company moves deny; API/Cloud HTTP harnesses assert retired routes and forbidden writes. |
-| 50 UAT | PARTIAL | Source regression passes; live DB, identity, native device/audio, route a11y/localization remain open. |
+| 30 PMO | IN PROGRESS | Re-auditing the four confirmed fronts; CMT-004 security and CRUD gaps are being closed source-first. |
+| 40 Integration Review | IN PROGRESS | Retired write routes, Cloud/API hash-audit parity, transactional TeamInterface, superadmin Workflow CRUD, and API/Cloud typed guard projection parity reviewed. |
+| 50 UAT | PARTIAL | API 28/28 and Cloud 12/12 source regressions plus mocked Workflow browser flow pass; persisted DB, real identities, native device/audio, broad route accessibility/localization remain open. |
 | 60 UAT Fix | OPEN | Remediate repository-local actionable cases. |
 | 65 SEO | OPEN / PRIOR EVIDENCE | Deployed measurements still need approved read-only provider evidence. |
 | 67 AEO/GEO | OPEN / PRIOR EVIDENCE | Deployed discovery evidence remains unavailable. |
-| 70 Check | IN PROGRESS | Continue 26-model CRUD matrix review and coherence. |
-| 80 Remediation | IN PROGRESS | Candidate 5.1.31, based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open pending normal security review. |
+| 70 Check | IN PROGRESS | Regression 40 now proves API/Cloud current-DB actor lookup, cross-company user-detail denial and minimal non-secret selection; continue other model mappings and coherence. |
+| 80 Remediation | IN PROGRESS | Candidate 5.1.31 is based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open pending independent security review. |
 | 90 Delivery | PENDING | Reviewed PR #102 is open; normal security review, merge and completion-gate remote readback are required. |
 
 Overall: **PARTIALLY DELIVERED**. No database, customer provider, or deployment was used.
@@ -42,7 +42,7 @@ SIGUIENTE PASO: complete normal branch delivery; keep overall status PARTIALLY D
 
 ## Current continuation — 2026-10-14
 
-PHDK v2.50.10 remains installed and canonical coherence passes 52/52. On candidate branch `fix/retire-runtime-seed-webhook-5-1-31`, the source audit fixed TeamInterface partial-delete behavior and added superadmin-only Workflow detail and CRUD UI in API/Cloud/Web. API regression is 27/27 suites, Cloud 12/12; API, Cloud and Web builds and Web typecheck pass. The local mocked-API browser UAT covers Workflow list/detail/create/edit/delete and denial for tenant admin; it does not prove persisted behavior. Focused service lint has zero errors (Cloud retains two unrelated warnings); Web lint reports 8 existing `any` warnings in the API client/types and no errors. The broader CRUD model map and persisted-acceptance rows remain open; overall Auto remains **PARTIALLY DELIVERED**. PR #102 requires independent security review before merge. No DB, private CRM, or deployment was used.
+PHDK v2.50.10 remains installed and canonical coherence passes 52/52. On candidate branch `fix/retire-runtime-seed-webhook-5-1-31`, the source audit fixed TeamInterface partial-delete behavior, added superadmin-only Workflow detail/CRUD in API/Cloud/Web, and aligned API's CRUD guard input validation and user-record projection with Cloud. API regression is 28/28 suites and Cloud 12/12; API and Cloud builds pass. The local mocked-API browser UAT covers Workflow actions and tenant-admin denial; isolated guard UAT covers DB-derived role, cross-company user detail denial and omission of passwordHash from authorization queries. The broader CRUD model map and persisted-acceptance rows remain open; overall Auto remains **PARTIALLY DELIVERED**. PR #102 requires independent security review before merge. No DB, private CRM, or deployment was used.
 
 SIGUIENTE PASO: continue the source-backed CRUD role/surface/operation review on PR #102; independent security review, merge and exact remote-main readback remain pending.
 

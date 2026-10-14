@@ -1,5 +1,9 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.31 — API/Cloud user-scope projection (2026-10-14)
+
+UAT-023 passes in an isolated source harness for both guards. A token claiming superadmin does not elevate a DB-backed admin, a foreign-company user detail is denied, and the Prisma user lookup selects only `companyId`, `teamId`, and `role`, never `passwordHash`. Full API regression passes 28/28 and API/Cloud production builds pass. No persistent user record or database was accessed.
+
 ## Candidate 5.1.31 — Workflow detail and superadmin CRUD UAT (2026-10-14)
 
 UAT-022 passes within the local-source scope. API and Cloud expose `GET /api/crud/workflows/:id`; regression 39 confirms the controller guard is wired and superadmin alone can perform list/detail/create/update/delete across the five non-superadmin role denials. A local browser journey at `/management/workflows` covered list, detail open/close, invalid JSON rejection before network mutation, valid create, edit, confirmed delete, and redirecting a tenant admin away from the route. All API endpoints were intercepted with in-memory synthetic fixtures (`example.test`); no real API, database or provider was contacted. Web production build, TypeScript typecheck and EN/ES/PT `records` key parity passed. This verifies the source UX and mocked request contract, not persisted CRUD, live identity enforcement or deployment.
