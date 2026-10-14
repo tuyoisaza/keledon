@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { resolveRuntimeIdentity } from '../gateways/runtime-identity';
-import { LocalAuthService } from '../auth-local/auth-local.service';
 
 @Injectable()
 export class DeviceAccessGuard implements CanActivate {
@@ -26,9 +25,10 @@ export class DeviceAccessGuard implements CanActivate {
         req.deviceIdentity = device;
         return true;
       }
-      const user =
-        token && (await new LocalAuthService(this.prisma).validateToken(token));
-      if (user) req.user = { userId: user.id };
+      // This endpoint returns runtime configuration that can contain provider
+      // credentials. Human sessions can manage the configuration, but only the
+      // paired device bound to this exact ID may read the raw payload.
+      throw new ForbiddenException('Device access denied');
     }
     const actor =
       req.user?.userId &&

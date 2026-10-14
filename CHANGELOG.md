@@ -1,3 +1,9 @@
+## v5.1.28 — 2026-10-14 (write-only device configuration secrets)
+
+- Restrict raw RPA provider configuration reads to the currently paired device whose runtime token is bound to the requested device ID.
+- Deny human user, tenant-admin, coordinator, and superadmin sessions from reading device configuration that may contain provider credentials; keep authorized device provisioning functional.
+- Add in-process Nest HTTP regressions for anonymous/human denial, wrong-device denial, and paired-device access.
+
 ## v5.1.27 — 2026-10-14 (CRUD scope and flow-step integrity)
 
 - Validate API and Cloud flow-step reorders against the complete, unique set of step IDs belonging to that flow inside one serializable transaction; reject malformed, partial, duplicate and foreign IDs before any update.
