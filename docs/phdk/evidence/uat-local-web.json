@@ -1,7 +1,7 @@
 {
-  "version": "5.1.25",
-  "date": "2026-10-14T17:50:00.475Z",
-  "candidateRevision": "afd66702ba7fc216e27c0c845ceaedb1eeb40944",
+  "version": "5.1.26",
+  "date": "2026-10-14T18:15:01.413Z",
+  "candidateRevision": "6a99281e8c74c5d40590aca146a03786324dc340",
   "candidateSourceFingerprint": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "dirtyUntrackedSourceFiles": 0,
   "sourceRoots": [
@@ -12,7 +12,7 @@
     "landing"
   ],
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:54681",
+  "origin": "http://127.0.0.1:50640",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-THEME dark/light/corporate tokens reach descendant controls, persistence PASS; automated login text contrast sample has no failures (not a full-app accessibility certification)",
@@ -20,6 +20,7 @@
     "UAT-004 superadmin frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
     "UAT-004 admin frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
     "UAT-004 coordinator frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
+    "UAT-008 superadmin selects allowlisted synthetic profile, temporary banner/token and return-to-superadmin flow PASS (mocked UI API; server audit/expiry/revocation covered by API regressions)",
     "UAT admin status page renders safe server availability only; superadmin retains detailed diagnostics (synthetic API fixture)",
     "UAT-004 company/brand/team/user/vendor administration Spanish copy and manager user restrictions: localized routes/search and modal controls; no role/company payload fields; foreign team absent PASS (synthetic UI; API guard tested separately)",
     "UAT-T-005-DASHBOARD Spanish empty/session states, English and Portuguese greeting/stats, and accessible table caption/column headers PASS (synthetic API)",
@@ -29,7 +30,7 @@
     "UAT-T-009 KELEDON admin create flow: localized labeled fields, scoped company/brand/team selectors, native accessible form and delete-confirmation dialog; payload contains no caller companyId and uses server input shape PASS (synthetic UI/API)",
     "UAT-004 provider settings Spanish localization and write-only key: translated screen renders; no response prefill; replacement clears after success; untouched blank omitted PASS",
     "UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)",
-    "UAT-002 5.1.25 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
+    "UAT-002 5.1.26 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
   ],
   "themeTokens": {
     "light": {

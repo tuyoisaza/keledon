@@ -7,12 +7,23 @@ import {
 import { Reflector } from '@nestjs/core';
 import * as crypto from 'crypto';
 import { IS_PUBLIC_KEY } from './public.decorator';
+import { PrismaService } from '../prisma/prisma.service';
+import {
+  isPermittedUatTestProfile,
+  parseUatTestProfileIds,
+  UAT_TEST_PROFILE_AUDIT_ENTITY,
+  UAT_TEST_PROFILE_TTL_MS,
+  uatTestProfilesEnabled,
+} from '../auth-local/uat-test-profile.policy';
 
 interface TokenPayload {
   userId: string;
   email: string;
   role: string;
   expiresAt: number;
+  uatTestProfile?: true;
+  uatTestSessionId?: string;
+  uatActorUserId?: string;
 }
 
 interface AuthenticatedRequest {
@@ -24,7 +35,10 @@ interface AuthenticatedRequest {
 export class AuthGuard implements CanActivate {
   private readonly authSecret: string;
 
-  constructor(private reflector: Reflector) {
+  constructor(
+    private reflector: Reflector,
+    private readonly prisma?: PrismaService,
+  ) {
     if (
       process.env.NODE_ENV === 'production' &&
       !process.env.KELEDON_AUTH_SECRET
@@ -41,7 +55,7 @@ export class AuthGuard implements CanActivate {
     }
   }
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     // Allow routes marked with @Public() decorator
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
@@ -65,7 +79,7 @@ export class AuthGuard implements CanActivate {
     }
 
     const token = parts[1];
-    const user = this.validateToken(token);
+    const user = await this.validateToken(token);
 
     if (!user) {
       throw new UnauthorizedException('Invalid or expired token');
@@ -75,7 +89,7 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 
-  private validateToken(token: string): TokenPayload | null {
+  private async validateToken(token: string): Promise<TokenPayload | null> {
     try {
       const tokenParts = token.split('.');
       if (tokenParts.length !== 2) {
@@ -120,11 +134,106 @@ export class AuthGuard implements CanActivate {
         return null;
       }
 
+      if (
+        payload.uatTestProfile !== undefined &&
+        payload.uatTestProfile !== true
+      ) {
+        return null;
+      }
+      if (
+        payload.uatTestProfile !== true &&
+        (payload.uatTestSessionId !== undefined ||
+          payload.uatActorUserId !== undefined)
+      ) {
+        return null;
+      }
+      if (payload.uatTestProfile === true) {
+        return this.validateUatTestProfileToken(payload);
+      }
+
       return {
         userId: payload.userId,
         email: payload.email,
         role: payload.role,
         expiresAt: payload.expiresAt,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  private async validateUatTestProfileToken(
+    payload: TokenPayload,
+  ): Promise<TokenPayload | null> {
+    if (
+      !this.prisma ||
+      !uatTestProfilesEnabled() ||
+      !payload.uatTestSessionId ||
+      !payload.uatActorUserId ||
+      payload.expiresAt - Date.now() > UAT_TEST_PROFILE_TTL_MS
+    ) {
+      return null;
+    }
+
+    try {
+      const [session, ended, profile, actor] = await Promise.all([
+        this.prisma.auditLog.findFirst({
+          where: {
+            entity: UAT_TEST_PROFILE_AUDIT_ENTITY,
+            entityId: payload.uatTestSessionId,
+            action: 'UAT_TEST_PROFILE_START',
+          },
+          select: { userId: true, changes: true, createdAt: true },
+        }),
+        this.prisma.auditLog.findFirst({
+          where: {
+            entity: UAT_TEST_PROFILE_AUDIT_ENTITY,
+            entityId: payload.uatTestSessionId,
+            action: 'UAT_TEST_PROFILE_END',
+          },
+          select: { id: true },
+        }),
+        this.prisma.user.findUnique({
+          where: { id: payload.userId },
+          select: { id: true, name: true, email: true, role: true },
+        }),
+        this.prisma.user.findUnique({
+          where: { id: payload.uatActorUserId },
+          select: { id: true, role: true },
+        }),
+      ]);
+      const details = JSON.parse(session?.changes || 'null');
+      const allowedIds = parseUatTestProfileIds(
+        process.env.KELEDON_UAT_TEST_PROFILE_IDS,
+      );
+      if (
+        !session ||
+        ended ||
+        !details ||
+        session.userId !== payload.uatActorUserId ||
+        details.actorUserId !== payload.uatActorUserId ||
+        details.profileUserId !== payload.userId ||
+        details.profileRole !== profile?.role ||
+        details.expiresAt !== payload.expiresAt ||
+        Date.now() >= details.expiresAt ||
+        details.expiresAt - session.createdAt.getTime() >
+          UAT_TEST_PROFILE_TTL_MS ||
+        !allowedIds.includes(payload.userId) ||
+        !profile ||
+        !isPermittedUatTestProfile(profile) ||
+        actor?.role !== 'superadmin'
+      ) {
+        return null;
+      }
+
+      return {
+        userId: profile.id,
+        email: profile.email,
+        role: profile.role,
+        expiresAt: payload.expiresAt,
+        uatTestProfile: true,
+        uatTestSessionId: payload.uatTestSessionId,
+        uatActorUserId: payload.uatActorUserId,
       };
     } catch {
       return null;

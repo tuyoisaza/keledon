@@ -1,6 +1,19 @@
 # PHDK Auto completion audit — 2026-10-14
 
-**Result: PARTIALLY DELIVERED — full Auto completion gate remains blocked.** This audit reconciles the four owner-confirmed fronts with source, local UAT, PR and remote-main evidence. It does not equate merged code with the unresolved operational acceptance.
+## UAT Fix retest — candidate 5.1.26
+
+Owner-approved temporary test-profile selection is implemented on `fix/audited-uat-test-profiles`, based on `origin/main` 5.1.25 (`8dfc1fca7de253a017acb6f291ff278699915beb`). It is explicitly disabled by default and allowed only in development/staging, only for configured synthetic identities and supported roles. Current DB superadmin is rechecked, session start/end is audited, test token expires within ten minutes and return revokes it. API in-process Nest HTTP and focused regression pass; built-SPA UAT passes 1/1 with the same UI path against a mocked API. No real account, persistent database, production system, device or provider was used. Candidate delivery by versioned commit/PR and remote readback is pending.
+
+| Commitment | Delivery status | Remaining acceptance |
+|---|---|---|
+| CMT-001 — baseline, versions, PRs | BASELINE VERIFIED; 5.1.26 CANDIDATE OPEN | Candidate commit, PR, merge and remote readback. |
+| CMT-002 — widget and safe diagnostics | SOURCE CHECKS PASS | Native Electron, OS permission, physical device/audio and broad route accessibility/localization. |
+| CMT-003 — provider-neutral call/CRM flow | SOURCE/CONTRACT PASS | Live integration is tenant-specific after each client configures providers; private destinations require validation and per-tenant allowlisting. |
+| CMT-004 — administration and permissions | SOURCE POLICY/UAT-008 PASS | Exhaustive 35-model matrix, real development identities, disposable-DB persistence and migration. |
+
+Overall result remains **PARTIALLY DELIVERED**. The scoped UAT-008 source defect is resolved; whole-product acceptance remains open for the environment-dependent and manual gates above, plus deployed SEO/AEO measurements. No deployment is claimed.
+
+**Result: PARTIALLY DELIVERED — candidate source fix validated; final source delivery and product acceptance remain open.**
 
 ## Current 5.1.24 source delivery — PR #92
 

@@ -1,73 +1,44 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
-## Final candidate revalidation — 2026-10-14, v5.1.25
+## UAT Fix retest — 2026-10-14, candidate 5.1.26
 
-The rebuilt Web SPA UAT passes 1/1 suite with 15 grouped assertions on source commit `afd66702ba7fc216e27c0c845ceaedb1eeb40944`. Exact evidence is `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-local-web-continued.json`; APIs are synthetic/intercepted and external networking is blocked. The whole-product result remains **NOT ACCEPTED**: UAT-008 audited test-profile selection needs owner disposition, UAT-009 real development identities and UAT-010 disposable DB are blocked, and UAT-006 native device/audio is manual. This run did not use a deployed service, live DB, customer data or provider.
+UAT-008 now passes within its explicitly approved scope: test-profile switching is enabled only for development/staging, requires the current database-backed superadmin, uses an explicit synthetic-profile allowlist and a maximum ten-minute token, records start/end audit events, and does not alter persisted roles. Returning requires the original superadmin token and revokes the temporary token. API regression covers real Nest guard/controller HTTP wiring with isolated fixtures; the built-SPA journey covers selection and return against a mocked API. Neither is live deployment or persistent-database acceptance.
 
-Date: 2026-10-14. Candidate: `tuyoisaza/keledon`, branch `fix/cloud-eslint-prettier`, base commit `6413d8aed295c18af098ca6a58c6dfbb7503930b`, product version 5.1.24. Source candidate fingerprint: `sha256:aced4dfae723e0c19aa30fee2d2219eda6290007dee9cedf79ec52bd246f1b1b`, calculated by the UAT harness over tracked diff and untracked source/test files in `browser`, `cloud`, `services/api`, `services/web`, `landing`. Environment: local built production Web SPA, ephemeral loopback server, synthetic Company Co/Other Co fixtures, API requests intercepted and external HTTP/WebSocket blocked. API/Cloud and Browser checks use isolated test doubles. This is not deployed or database acceptance.
-
-## Intent alignment and coverage
-
-Project intent sources: `PROJECT_INTENT.md`, `REQUIREMENTS_TRACEABILITY.md`, `PROJECT_BRIEF.md`, `PRD.md`, `FEATURES.md`, current `TASK.md`. User stories US-001..005 map safe diagnostics, tenant-limited admin, customer-selected CRM, provider-independent runtime flow, and truthful release identity to CMT-001..004. No out-of-intent stories were included. Synthetic Company Co fixtures are used only where relevant; no accounts were created, no email was sent, and no real customer or provider data was used.
-
-The local SPA journey exercised anonymous diagnostics, role-shaped mock UI, localized dashboard/profile/admin journeys, write-only provider-key UI, synthetic CRUD dialogs and safe diagnostics. Current API/Cloud regressions supply isolated source-backed auth/tenant evidence; the Browser suite supplies offline runtime/credential-policy evidence. No role was authenticated against a real DB or deployment. Current JSON and screenshot references are under `docs/phdk/evidence/`.
+`services/web npm run test:uat` passes 1/1 suite with the logged synthetic journeys, including UAT-008. `services/api npm run test:regression` passes 20/20 suites, including test-profile policy/service/AuthGuard cases and audited Nest HTTP wiring. The source candidate is commit `6a99281e8c74c5d40590aca146a03786324dc340` on `fix/audited-uat-test-profiles`, based on `8dfc1fca7de253a017acb6f291ff278699915beb`. Post-commit built-SPA UAT passed 1/1 and is recorded in `docs/phdk/evidence/uat-local-web.json`; browser APIs were intercepted and external network blocked. No deployed service, live DB, customer data, production identity, or provider was used.
 
 | Result | Count |
 |---|---:|
-| PASS | 6 |
-| FAIL | 1 |
+| PASS | 7 |
+| FAIL | 0 |
 | BLOCKED | 2 |
 | MANUAL | 1 |
-| NOT APPLICABLE | 0 |
 
 ## Case results
 
 | Case | Result | Evidence |
 |---|---|---|
-| UAT-001 diagnostics widget | PASS | Local SPA suite 1/1; copy/deny/reset preservation, version row, 390px and simulated 200%/400% viewport checks, screenshot evidence. |
-| UAT-002 admin/user-facing journeys | PASS, mocked UI only | Local SPA suite: admin/coordinator/superadmin role-shaped views, manager controls, provider replacement, Voice Profiles and KELEDON payload/dialog journeys; guest management denial. No real roles/auth. |
-| UAT-003 API/Cloud permissions and tenant isolation | PASS, isolated source tests | API regression 19/19; Cloud regression 10/10. No persistent database. |
-| UAT-004 CRM destinations and safe secrets | PASS, isolated source tests | API/Cloud vendor policy tests and Browser offline suite 27/27; private/local allowed origins are tenant-configured. No actual request to a private host. |
-| UAT-005 call/Cloud/Browser synthetic path | PASS, mocked | Browser `company-co-lifecycle` included in the 27/27 offline tests; no customer provider or audio. |
-| UAT-006 native Browser/device/audio | MANUAL | Not exercised; supported physical device/audio session unavailable. |
-| UAT-007 baseline version | PASS, source only | Five app package/lock roots and Browser renderer identify 5.1.24. Final release version/PR remains pending. |
-| UAT-008 audited superadmin test-profile selection | FAIL | Source review found no active server-authorized/audited test-profile switch; a stale unreferenced front-end simulation component is not proof. Requires UAT Fix or a scoped decision. |
-| UAT-009 deployed development role authentication | BLOCKED | No safe development target/test accounts are configured or verified. Production is excluded. |
-| UAT-010 persisted CRUD/migration matrix | BLOCKED | No isolated disposable PostgreSQL database; no migration run. Production DB is excluded. |
+| UAT-001 diagnostics widget and responsive public/login paths | PASS, scoped UI | Built-SPA suite and `docs/phdk/evidence/uat-local-web.json`; mocked APIs and viewport simulation. |
+| UAT-002 administration and diagnostics | PASS, scoped UI/server | Mocked role journeys and API guard regressions; no real account. |
+| UAT-003 tenant/role boundaries | PASS, isolated server tests | API regression 20/20 suites, including in-process Nest HTTP guards; no persistent DB. |
+| UAT-004 tenant-configured CRM origins and safe secrets | PASS, source tests | Private HTTP(S) only when validated and tenant-allowlisted; no private destination request. |
+| UAT-005 synthetic call/Cloud/Browser path | PASS, offline | Browser offline tests 27/27; injected adapter, no live vendor/audio. |
+| UAT-006 native Browser/device/audio | MANUAL/BLOCKED | Requires supported device and OS permission interaction. |
+| UAT-007 version alignment | PASS, candidate only | Five app package/lock roots and Browser renderer at 5.1.26; PR/readback pending. |
+| UAT-008 audited test-profile selection | PASS, scoped | Mocked browser UI plus API policy/service/AuthGuard and Nest HTTP regressions. Nonproduction, synthetic allowlist, current superadmin, audit, expiry and token revocation are covered. |
+| UAT-009 development role authentication | BLOCKED | No safe development target or actual test identities configured. Production excluded. |
+| UAT-010 persisted CRUD/migration matrix | BLOCKED | No isolated disposable PostgreSQL database; no migration run. Production DB excluded. |
 
-## Executed checks
+## UAT-008 design and limits
 
-- `node test/local-uat.test.cjs` — PASS, local Edge/Playwright, 1/1 suite with 15 grouped journey assertions after the Landing metadata fallback; evidence records the source fingerprint above.
-- `npm run test:regression` in `services/api` — PASS, 19/19 suites.
-- `npm run test:regression` in `cloud` — PASS, 10/10 suites.
-- `node --test tests/*.test.cjs` in `browser` — PASS, 27/27 offline tests, including the synthetic call lifecycle.
-- API vendor/encryption Jest — PASS, 4/4 tests; Cloud crypto/RAG/subagent Jest — PASS, 8/8 tests.
-- API/Cloud/Browser builds, Web typecheck/build, Web diagnostics 9/9, Web debug-mode 2/2, PHDK coherence 52/52 — PASS as recorded in `INTEGRATION_REPORT.md`.
+The owner approved a temporary test-profile switch restricted to development/staging. The API refuses the feature unless explicitly enabled, validates configured synthetic IDs, accepts only reserved test email domains and supported roles, records auditable session boundaries, checks the current actor and target profile from the database on every request, and bounds the test token to ten minutes. The web app stores the original superadmin session only in the current tab and returns through a superadmin-guarded API route. No persistent role assignment or client-only authorization is used. Residual risk is operational configuration: staging must use synthetic accounts and explicit IDs, and production must keep the flag disabled.
 
-## Defects and action plan
+## Remaining acceptance
 
-**UAT-008 / DEF-UAT-001 — missing audited test-profile switch.** Observed: no active UI/API path lets a superadmin select and test a permitted profile with a server-authorized audit record. The existing `EntityTable` simulation component is not mounted and would be client-side only. Expected: explicit, auditable server-side test selection that cannot change persisted roles or bypass DB-derived actor/tenant guards. Root cause: capability is absent. Impact: role-specific acceptance cannot be proven through actual test identities under `UAT_JOURNEY_STANDARD.md`. Proposed repair: implement a test-only, server-authorized audited profile-selection flow with fail-closed non-production gating and tests; require a secure design decision on exact scope because this adds privileged impersonation behavior. Retest UAT-008/009, API guard/tenant matrix, expiry, return-to-superadmin and audit assertions. Risk: HIGH security/auth. **Can PHDK do it now? PARTIAL** — code work is within broad PHDK scope, but exact safe product boundary awaits owner answer. No local client-only role spoof will be called a pass.
+UAT-009 needs an owner-provided nonproduction target and synthetic identities. UAT-010 needs an isolated disposable PostgreSQL instance and approved rollback path. UAT-006 needs a supported Windows host and test device for native media/audio interaction. Broad route accessibility/localization and deployed SEO/AEO measurements remain open. Customer call/CRM acceptance is per tenant after that customer selects and configures providers; no provider is universal.
 
-**UAT-009 — development accounts/access.** No safe deployed development target or actual synthetic identities are configured. Owner/admin action: provide a non-secret dev URL and confirm it contains synthetic test data; authenticate in the user's secure browser if MFA is required. Then run isolated role journeys and cleanup synthetic records. **Can PHDK do it now? NO** — no target/account context is configured; production is prohibited.
+**Conclusion: NOT ACCEPTED as a whole product.** Seven cases pass within stated source/UI scope; two environment-dependent cases remain blocked and one requires native manual testing. The UAT-008 source defect is resolved, but the remaining gates prevent overall acceptance.
 
-**UAT-010 — disposable database.** No isolated PostgreSQL test DB is configured to execute the dry-run-first migration, persisted CRUD matrix or rollback. Owner/admin action: provision a disposable DB/backup and approved rollback process without sharing production credentials here. Then run API vendor migration dry-run, migration execution, before/after ciphertext/projection tests, and all role/tenant/operation checks; remove the disposable DB after evidence capture. **Can PHDK do it now? NO** — no isolated DB prerequisite is available.
-
-**UAT-006 — native desktop/manual case.** A human with a supported Windows host and test device must verify the actual OS permission dialog, same-origin grant/denial, device pairing, audio start/stop/error cleanup and visible recovery. Record redacted screen/trace and build revision; no customer call. **Can PHDK do it now? PARTIAL** — source/unit policies pass, physical interaction is unavailable.
-
-## Conclusion
-
-**NOT ACCEPTED.** Six cases passed in their stated local/source scope; one required UAT capability failed; two external/environment cases are blocked; one native case requires manual interaction. Mocked roles, API regressions and a local SPA do not establish real authentication, persisted authorization or deployment acceptance.
-
-### Recommended next actions
-
-1. Resolve the exact security boundary for server-authorized test-profile switching (the open owner question); then implement or formally defer it and update the intent/coverage if the decision changes scope.
-2. Continue UAT Fix for any in-scope local findings and re-run the local UAT against its exact candidate fingerprint.
-3. Obtain safe dev test identities and a disposable DB separately; never use production identities/database for this gate.
-4. Complete native device/audio manual UAT when supported hardware is available.
-5. Proceed with SEO → AEO/GEO → Check/remediation while external cases stay explicitly blocked; final delivery remains partial until the completion gate passes.
-
-**SIGUIENTE PASO:** inicio UAT Fix sobre la capacidad de perfiles auditables y seguiré con los frentes de código independientes mientras queda pendiente la decisión de diseño de impersonación segura.
-
+**SIGUIENTE PASO:** completar Integration Review y Delivery del candidato 5.1.26 por PR; después conseguir entorno de desarrollo sintético, base desechable y dispositivo soportado para cerrar la aceptación restante.
 
 
 ## Historical records before this candidate revalidation

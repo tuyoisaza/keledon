@@ -1,10 +1,9 @@
-# UAT retest — run `20261013-1900-phdk-auto`
+# UAT retest — run `20261014-0007-phdk-auto-completion`
 
-After the stale fixture and feedback fixes, `services/web npm run typecheck`, focused ESLint (`src/App.tsx`, both changed management pages and `test/local-uat.test.cjs`), `npm run build` and `npm run test:uat` all exited 0. The local Edge suite passed 1/1 and logged the Spanish Voice Profile retry/403/create/delete journeys and KELEDON create/cancel journey. The test harness used synthetic Company Co/Other Co fixtures, intercepted APIs and blocked external network/WebSockets.
+Date: 2026-10-14. Candidate: 5.1.26 on `fix/audited-uat-test-profiles`, based on `8dfc1fca7de253a017acb6f291ff278699915beb`.
 
-Retested source remained dirty on base `60d7382f0e2003597690673103ace4e785f0c018`. Repeat after code commit and replace `docs/phdk/evidence/uat-local-web.json` before final delivery. No persistence, DB-backed tenant role, migration, native media/audio, customer workflow or deployed measurement is inferred.
+- `services/web npm run test:uat`: PASS, one built-SPA suite; UAT-008 selects a configured synthetic profile, displays bounded temporary mode and returns to original admin session. Mocked API; no live login.
+- `services/api npm run test:regression`: PASS, 20/20 suites; includes policy/service/AuthGuard and in-process Nest HTTP tests for current-superadmin authority, allowlist/role checks, audited start/end, expiry, token revocation and return. Tests use isolated fixtures, not a persistent DB.
+- `npx eslint` on changed web files: 0 errors, 1 existing Fast Refresh warning.
 
-
-## Candidate revalidation after SEO fallback
-
-The unchanged Web UAT suite was rerun at source fingerprint sha256:aced4dfae723e0c19aa30fee2d2219eda6290007dee9cedf79ec52bd246f1b1b after adding a truthful noninteractive <noscript> summary to the retained Landing shell. Result remains PASS for the same local UI cases; DEF-UAT-001, UAT-006, UAT-009 and UAT-010 are unchanged. No role switch, database, native device or live provider test was performed.
+UAT-008 is PASS within this scope. UAT-009 and UAT-010 remain BLOCKED; UAT-006 remains MANUAL/BLOCKED. Whole-product UAT remains NOT ACCEPTED. The browser evidence uses intercepted APIs and synthetic tenants; no deployment, customer data, production DB, real identity, audio device or provider was used.

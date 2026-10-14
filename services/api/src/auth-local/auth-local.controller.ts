@@ -21,6 +21,8 @@ import { GoogleOAuthService } from './google-oauth.service';
 import { ConfigService } from '@nestjs/config';
 import { Public } from '../guards/public.decorator';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { SuperAdminGuard } from '../guards/roles.guard';
+import { UatTestProfilesService } from './uat-test-profiles.service';
 
 interface LoginDto {
   email: string;
@@ -61,6 +63,7 @@ export class LocalAuthController {
     private readonly authService: LocalAuthService,
     private readonly googleOAuthService: GoogleOAuthService,
     private readonly configService: ConfigService,
+    private readonly uatTestProfilesService: UatTestProfilesService,
   ) {}
 
   @Public()
@@ -265,6 +268,7 @@ export class LocalAuthController {
         teamName: team?.name || null,
         createdAt: company?.created_at || null,
         lastSession: user.last_session || null,
+        uatTestProfile: req.user?.uatTestProfile === true,
       };
 
       return {
@@ -277,5 +281,44 @@ export class LocalAuthController {
         message: error.message,
       };
     }
+  }
+
+  @UseGuards(SuperAdminGuard)
+  @Get('uat-test-profiles')
+  @ApiOperation({ summary: 'List explicitly allowlisted UAT test profiles' })
+  async listUatTestProfiles(@Req() req: any) {
+    return {
+      profiles: await this.uatTestProfilesService.listProfiles(req.user.userId),
+    };
+  }
+
+  @UseGuards(SuperAdminGuard)
+  @Post('uat-test-profiles/switch')
+  @ApiOperation({ summary: 'Start an audited, temporary UAT test profile' })
+  async switchToUatTestProfile(@Req() req: any, @Body() body: any) {
+    const profileId =
+      typeof body?.profileId === 'string' ? body.profileId.trim() : '';
+    return this.uatTestProfilesService.startProfile(
+      req.user.userId,
+      profileId,
+      {
+        ipAddress: req.ip,
+        userAgent: req.headers?.['user-agent'],
+      },
+    );
+  }
+
+  @UseGuards(SuperAdminGuard)
+  @Post('uat-test-profiles/return')
+  @ApiOperation({ summary: 'End the active UAT test profile session' })
+  async returnFromUatTestProfile(@Req() req: any, @Body() body: any) {
+    return this.uatTestProfilesService.endProfileSession(
+      req.user.userId,
+      body?.sessionId,
+      {
+        ipAddress: req.ip,
+        userAgent: req.headers?.['user-agent'],
+      },
+    );
   }
 }

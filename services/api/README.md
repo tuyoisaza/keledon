@@ -98,6 +98,12 @@ npm test
 npm run test:e2e
 ```
 
+### Temporary UAT test profiles
+
+Profile switching is disabled by default. To enable it on an isolated development or staging API, set `KELEDON_DEPLOYMENT_ENV` to `development` or `staging`, set `KELEDON_ENABLE_UAT_TEST_PROFILES=true`, and set `KELEDON_UAT_TEST_PROFILE_IDS` to a comma-separated allowlist of synthetic database user IDs. Allowlisted accounts must have a non-empty name, use an `@example.invalid` or `@test.invalid` email, and have the `user`, `admin`, or `coordinator` role. Production deployment labels and production-mode development labels fail closed.
+
+Only a current database superadmin can select a profile. The API records start and return events in `audit_logs`; the signed profile token expires in ten minutes, is revalidated against the audit log and current user record on every request, and is rejected immediately after return, role change, allowlist removal, feature disablement, or superadmin demotion. The Web UI keeps the original superadmin token and temporary session ID only in the current tab's session storage so the operator can return; the server authenticates that original superadmin to end only their own session. Ending the profile clears those temporary values. Use synthetic accounts and an isolated staging database only. This feature does not create accounts or change persisted roles.
+
 ## Deployment
 - Docker multi-stage build available
 - Cloud Run deployment scripts provided

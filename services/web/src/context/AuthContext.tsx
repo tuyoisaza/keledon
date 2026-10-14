@@ -24,6 +24,7 @@ export interface User {
   team_name?: string;
   created_at?: string;
   last_session?: string;
+  uatTestProfile?: boolean;
 }
 
 interface AuthContextType {
@@ -34,6 +35,8 @@ interface AuthContextType {
   signInWithEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   clearLocalSession: () => void;
+  switchToUatTestProfile: (profileId: string) => Promise<void>;
+  returnToSuperAdmin: () => Promise<void>;
   hasRole: (minRole: UserRole) => boolean;
   isActuallySuperAdmin: boolean;
   email: string;
@@ -57,6 +60,70 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
 
+  const switchToUatTestProfile = async (profileId: string) => {
+    const adminToken = sessionStorage.getItem('auth_token');
+    if (!adminToken || user?.role !== 'superadmin' || !profileId) {
+      throw new Error('A current superadmin session is required');
+    }
+
+    const response = await fetch(`${API_URL}/api/auth/uat-test-profiles/switch`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${adminToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ profileId }),
+    });
+    if (!response.ok) throw new Error('UAT test profile could not be started');
+    const data = await response.json();
+    if (
+      !data?.token ||
+      !data?.sessionId ||
+      !data?.user?.id ||
+      !['user', 'admin', 'coordinator'].includes(data.user.role)
+    ) {
+      throw new Error('UAT test profile response was invalid');
+    }
+
+    sessionStorage.setItem('uat_original_superadmin_token', adminToken);
+    sessionStorage.setItem('uat_active_profile_session_id', data.sessionId);
+    sessionStorage.setItem('auth_token', data.token);
+    setUser(data.user);
+  };
+
+  const returnToSuperAdmin = async () => {
+    const adminToken = sessionStorage.getItem('uat_original_superadmin_token');
+    const sessionId = sessionStorage.getItem('uat_active_profile_session_id');
+    if (!adminToken || !sessionId) {
+      throw new Error('The original superadmin session is unavailable');
+    }
+
+    const response = await fetch(`${API_URL}/api/auth/uat-test-profiles/return`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${adminToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ sessionId }),
+    });
+    if (!response.ok) {
+      throw new Error('UAT test profile could not be ended');
+    }
+
+    const adminResponse = await fetch(`${API_URL}/api/auth/me`, {
+      headers: { Authorization: `Bearer ${adminToken}` },
+    });
+    const data = await adminResponse.json();
+    if (!adminResponse.ok || data?.user?.role !== 'superadmin') {
+      throw new Error('The original superadmin session is no longer valid');
+    }
+
+    sessionStorage.setItem('auth_token', adminToken);
+    sessionStorage.removeItem('uat_original_superadmin_token');
+    sessionStorage.removeItem('uat_active_profile_session_id');
+    setUser(data.user);
+  };
+
   useEffect(() => {
     async function checkAuth() {
       recordAuthEvent('session-check', 'started');
@@ -78,6 +145,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           recordAuthEvent('session-check', 'success');
         } else {
           sessionStorage.removeItem('auth_token');
+          sessionStorage.removeItem('uat_original_superadmin_token');
+          sessionStorage.removeItem('uat_active_profile_session_id');
           recordAuthEvent('session-check', 'failure');
         }
       } catch {
@@ -113,6 +182,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       if (data.token) {
+        sessionStorage.removeItem('uat_original_superadmin_token');
+        sessionStorage.removeItem('uat_active_profile_session_id');
         sessionStorage.setItem('auth_token', data.token);
       }
 
@@ -128,6 +199,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const clearLocalSession = () => {
     sessionStorage.removeItem('auth_token');
+    sessionStorage.removeItem('uat_original_superadmin_token');
+    sessionStorage.removeItem('uat_active_profile_session_id');
+    sessionStorage.removeItem('uat_active_profile_session_id');
     setUser(null);
     setEmail('');
     setPassword('');
@@ -156,6 +230,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signInWithEmail,
         logout,
         clearLocalSession,
+        switchToUatTestProfile,
+        returnToSuperAdmin,
         hasRole,
         isActuallySuperAdmin,
         email,

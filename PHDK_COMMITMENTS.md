@@ -1,16 +1,16 @@
 # Commitment ledger
 ## Active run `20261014-0007-phdk-auto-completion` — refreshed Capture
 
-Four owner-confirmed commitments remain in order. The project baseline is KELEDON 5.1.24 at `origin/main` `6413d8aed295c18af098ca6a58c6dfbb7503930b`; the 5.1.25 candidate is pushed on `fix/cloud-eslint-prettier` in open PR #94, currently through source commit `afd66702ba7fc216e27c0c845ceaedb1eeb40944`. PHDK v2.50.10 coherence is 52/52.
+Four owner-confirmed commitments remain in order. PR #94 delivered KELEDON 5.1.25 to `main` at `8dfc1fca7de253a017acb6f291ff278699915beb`. The current 5.1.26 candidate commit `6a99281e8c74c5d40590aca146a03786324dc340` is on `fix/audited-uat-test-profiles`; post-commit UAT passes and PR/readback are pending. UAT-008 design is owner-approved and source/UI retest passes within scope.
 
 | ID | Confirmed front | Current truth | Remaining acceptance |
 |---|---|---|---|
-| CMT-001 | Baseline, versions and PR reconciliation | PR #92/#93 are merged at baseline; all five roots and Browser renderer are 5.1.25 on PR #94. | Merge/read back PR #94 on `main`; hosted checks and reviews are currently unconfigured/empty. |
+| CMT-001 | Baseline, versions and PR reconciliation | PR #94 merged; all five roots and Browser renderer are 5.1.25 on `main` SHA `8dfc1fca7de253a017acb6f291ff278699915beb`. | Source delivery complete. No hosted checks/review decision were configured; deployment is not claimed. |
 | CMT-002 | Shared visible diagnostics widget and safe diagnostics | Exact-candidate built-SPA evidence passes 1/1; diagnostics tests pass 19/19; source widget readiness is recorded. | Native Electron rendering, OS permissions, physical device/audio, and broad route/a11y acceptance remain unverified. |
 | CMT-003 | Voice → Cloud → Browser → CRM, providers chosen per client | Provider-neutral source and tenant-scoped private-origin policy are implemented and covered by API/Cloud/Browser checks. | No universal live vendor UAT; configured client acceptance remains tenant-specific. |
-| CMT-004 | Administration and permissions | Owner-approved least-privilege rules are implemented; API, Cloud, and synthetic UI regressions pass. | Full resource×role×tenant×surface×operation matrix and persistent migration acceptance remain incomplete; test-profile selection is pending owner disposition. |
+| CMT-004 | Administration and permissions | Owner-approved least-privilege rules are implemented; API, Cloud, and synthetic UI regressions pass. | Full resource×role×tenant×surface×operation matrix and persistent migration acceptance remain incomplete; approved temporary test-profile switch passes scoped UAT-008; real development identity and persistent DB acceptance remain open. |
 
-Source checks pass on the current candidate: API and Cloud builds/typecheck; Cloud regressions 11/11; API 31/31; Browser 27/27; Web diagnostics/SEO 19/19 and 1/1; PHDK coherence 52/52; 1,135 live source/test files with none at or above 600 lines. Whole-product acceptance remains partial for native, persisted DB/migration, deployed SEO/AEO, broad route coverage, and test-profile disposition. No live CRM, production DB, deployment, paid request, hosted CI, or provider write was used.
+Source checks pass on the current candidate: API and Cloud builds/typecheck; Cloud regressions 11/11; API 31/31; Browser 27/27; Web diagnostics/SEO 19/19 and 1/1; PHDK coherence 52/52; 1,135 live source/test files with none at or above 600 lines. Whole-product acceptance remains partial for native, persisted DB/migration, deployed SEO/AEO, broad route coverage, real development identities and customer-specific live integration. No live CRM, production DB, deployment, paid request, hosted CI, or provider write was used.
 
 ---
 

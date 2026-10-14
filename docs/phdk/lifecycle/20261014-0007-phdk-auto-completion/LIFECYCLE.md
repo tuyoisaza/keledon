@@ -20,6 +20,6 @@ Goal: complete the four owner-confirmed fronts and applicable PHDK conformity.
 | 67 AEO/GEO | COMPLETED — SOURCE REVIEW / EXTERNAL UNMEASURED | Fifteen source controls classified; no unsupported claims or schema added. |
 | 70 Check | COMPLETED — RESIDUAL ACCEPTANCE GAPS | API lint 0 errors/138 warnings; Cloud lint 0 errors/25 warnings; configured builds, full Cloud typecheck, 11 Cloud regression suites, and PHDK coherence pass. Live-source line inventory: 1,135 files, none at/above 600 lines. External acceptance limits remain. |
 | 80 Remediation | COMPLETED — SOURCE PASS, ACCEPTANCE PARTIAL | Approved security/provider remediations and Cloud line-limit splits are in PR #94; persisted/native/deployed acceptance and test-profile disposition remain open. |
-| 90 Delivery | PR OPEN — REVIEW PENDING | PR #94 is open; GitHub reports no hosted checks or review decision. No merge or release claim. |
+| 90 Delivery | COMPLETED — MERGED / REMOTE VERIFIED | PR #94 merged at `8dfc1fca7de253a017acb6f291ff278699915beb`; `origin/main` and remote readback agree. Delivery gate passes. No deployment claim. |
 
 Prior run `20261013-1900-phdk-auto` is retained as immutable history and evidence. Current run artifacts live in each numbered stage folder.

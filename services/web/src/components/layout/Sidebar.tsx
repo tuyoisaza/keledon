@@ -23,6 +23,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import { VersionActions } from '@/components/common/VersionActions';
+import { UatTestProfileControl } from './UatTestProfileControl';
 
 interface NavItem {
     icon: React.ElementType;
@@ -117,6 +118,7 @@ export function Sidebar() {
 
             {/* User section */}
             <div className="p-4 border-t border-border">
+                <UatTestProfileControl collapsed={collapsed} />
                 <div className={cn('flex items-center', collapsed ? 'justify-center' : 'gap-3')}>
                     <div className={cn(
                         "w-9 h-9 rounded-full flex items-center justify-center text-foreground font-medium text-sm",

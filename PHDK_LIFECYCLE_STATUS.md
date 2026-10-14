@@ -2,24 +2,24 @@
 
 ## Active run — `20261014-0007-phdk-auto-completion`
 
-Goal: finish PHDK Auto for CMT-001..004, in owner-confirmed order. Base `origin/main`: `6413d8aed295c18af098ca6a58c6dfbb7503930b`, version 5.1.24. Branch: `fix/cloud-eslint-prettier`; source commits through `afd66702ba7fc216e27c0c845ceaedb1eeb40944` are pushed; PR #94 is open. Previous run `20261013-1900-phdk-auto` remains immutable.
+Goal: finish PHDK Auto for CMT-001..004 in owner-confirmed order. PR #94 established 5.1.25 baseline on `main` at `8dfc1fca7de253a017acb6f291ff278699915beb`. The current 5.1.26 candidate commit `6a99281e8c74c5d40590aca146a03786324dc340` adds the approved audited temporary test-profile flow on `fix/audited-uat-test-profiles`; post-commit UAT passes 1/1.
 
 | Stage | Status | Current evidence / next action |
 |---|---|---|
-| Preflight | REUSED / VERIFIED | PHDK v2.50.10 canonical SHA verified; coherence 52/52. |
-| Capture | COMPLETED | Current owner decisions captured and snapshotted. |
-| Plan | COMPLETED | Brownfield architecture and PLAN-AUTO-001..008 reconciled; 13 canonical artifacts snapshotted. |
-| PMO / Workstreams | COMPLETED | Four approved workstreams mapped to PLAN-AUTO-001..008; six artifacts snapshotted. |
-| Integration Review | COMPLETED | Coherent 5.1.25 candidate; contracts/builds/regressions recorded, source-size remediation incorporated. |
-| UAT | REBOUND — SCOPED PASS / WHOLE-PRODUCT PARTIAL | Latest built Web SPA UAT passes 1/1 at candidate `afd66702ba7fc216e27c0c845ceaedb1eeb40944` with synthetic Company Co fixtures and external network blocked; live auth/DB, native device/audio, and the test-profile disposition remain open. |
-| UAT Fix | COMPLETED — RESIDUAL BLOCKERS | Source remediation and Cloud source-size findings verified; test-profile disposition and environment-dependent acceptance remain open. |
-| SEO | COMPLETED — SOURCE PASS / MEASUREMENT GAPS | 25 controls classified; Landing noscript fallback source fix and validation. |
-| AEO/GEO | COMPLETED — SOURCE REVIEW / EXTERNAL UNMEASURED | 15 source controls classified; no unsupported claims or schema added. |
-| Check | COMPLETED — RESIDUAL ACCEPTANCE GAPS | PHDK v2.50.10/52; API and Cloud full-source ESLint now report 0 errors (138 and 25 warnings); configured builds and Cloud regressions pass; persisted/native/deployed acceptance remains open. |
-| Remediation | COMPLETED — SOURCE CHECKS PASS, ACCEPTANCE PARTIAL | Approved policy fixes and source-size remediation are covered; Cloud build/typecheck/regressions/lint pass. |
-| Delivery | RUNNING — PR OPEN | PR #94 is mergeable and open; current head `afd66702ba7fc216e27c0c845ceaedb1eeb40944`. GitHub reports no hosted checks or review decision. |
+| Preflight | REUSED / VERIFIED | Installed PHDK canonical release and coherence evidence from previous delivery; rerun on final candidate. |
+| Capture | COMPLETED | Four fronts and approved least-privilege policy captured; owner approved per-tenant private CRM allowlists and the UAT temporary-profile boundary. |
+| Plan | COMPLETED | Brownfield plan and canonical artifacts are archived under this run. |
+| PMO / Workstreams | COMPLETED / REFRESHED | Four confirmed workstreams tracked; current candidate 5.1.26. |
+| Integration Review | IN PROGRESS | UAT-008 API, web and versioned source changes under review; rerun applicable full gates. |
+| UAT | RETESTED — SCOPED PASS / WHOLE-PRODUCT OPEN | UAT-008 passes via mocked UI plus isolated Nest HTTP regressions; UAT-009/010 remain blocked, UAT-006 manual. |
+| UAT Fix | COMPLETED — SOURCE DEFECT RESOLVED | Approved dev/staging-only audited switch implemented; no persistent role change; test expires within 10 minutes and return revokes it. |
+| SEO | SOURCE PASS / MEASUREMENT GAPS | Prior source review retained; deployed field measurements remain unavailable. |
+| AEO/GEO | SOURCE REVIEW / EXTERNAL UNMEASURED | Prior source review retained; no deployed evidence. |
+| Check | IN PROGRESS | API/web builds and focused checks pass; finish coherence, source-size, full app checks and candidate delivery gate. |
+| Remediation | IN PROGRESS | Rerun PHDK check after integration review; close any candidate findings. |
+| Delivery | OPEN | Commit with `v5.1.26` prefix, create/merge PR, read back exact main SHA, rerun completion gate. No deployment. |
 
-Current stage: Delivery for v5.1.25. All five app package/lock roots and Browser renderer are aligned at 5.1.25. Final built-SPA UAT passes 1/1 with 15 grouped assertions on source commit `afd66702ba7fc216e27c0c845ceaedb1eeb40944`, fingerprint `sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`; Cloud/API builds and full Cloud typecheck pass; API and Cloud lint report zero errors (138/25 warnings); Cloud regressions pass 11/11, API Jest 31/31, Browser 27/27, Web diagnostics 19/19, Web SEO 1/1, PHDK coherence 52/52, and source-size inventory 1,135/0 over limit. PR #94 is open; GitHub reports no review decision or hosted checks. Whole-product acceptance remains partial for real DB/migration, native device/audio, broad route accessibility, deployed SEO/AEO, test-profile disposition, and customer-specific live integration evidence.
+Overall PHDK Auto remains **PARTIALLY DELIVERED**. Full acceptance requires a safe development target and identities, disposable DB/migration matrix, native device/audio, broad route accessibility/localization and deployed SEO/AEO measurement. Real call/CRM acceptance is tenant-specific after client configuration.
 
 Historical stage archive: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/`.
 
