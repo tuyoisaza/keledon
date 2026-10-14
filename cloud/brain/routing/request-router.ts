@@ -3,18 +3,27 @@
  * High-level request routing and dispatch system for cloud brain
  */
 
-import { RouteDefinition, RouteMatchResult, RequestContext, RouteHandler, RouteMiddleware } from './types';
-import { RoutingConfig, routingConfig } from './config';
-import { createRouteMatcher, sortRoutesBySpecificity, validateRoute } from './utils';
+import {
+  RouteDefinition,
+  RouteMatchResult,
+  RequestContext,
+  RouteHandler,
+  RouteMiddleware,
+} from './types';
+import {
+  createRouteMatcher,
+  sortRoutesBySpecificity,
+  validateRoute,
+} from './utils';
 import { validateRouteConfig } from './validation';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-export interface RequestRouterConfig extends RoutingConfig {
+export interface RequestRouterConfig {
   enableCaching: boolean;
   cacheMaxAge: number;
   enableMetrics: boolean;
   middlewareTimeout: number;
-  errorHandler?: (error: Error, context: RequestContext) => any;
+  errorHandler?: (error: Error, context: RequestContext) => unknown;
 }
 
 export interface RequestMetrics {
@@ -22,12 +31,15 @@ export interface RequestMetrics {
   successfulRequests: number;
   failedRequests: number;
   averageResponseTime: number;
-  routeMetrics: Record<string, {
-    count: number;
-    success: number;
-    failure: number;
-    avgTime: number;
-  }>;
+  routeMetrics: Record<
+    string,
+    {
+      count: number;
+      success: number;
+      failure: number;
+      avgTime: number;
+    }
+  >;
 }
 
 export interface CacheEntry {
@@ -39,20 +51,22 @@ export interface CacheEntry {
 export class RequestRouter {
   private routes: Map<string, RouteDefinition> = new Map();
   private globalMiddleware: RouteMiddleware[] = [];
+  private namedMiddleware: Map<string, RouteMiddleware> = new Map();
   private config: RequestRouterConfig;
   private cache: Map<string, CacheEntry> = new Map();
   private metrics: BehaviorSubject<RequestMetrics>;
   private handlers: Map<string, RouteHandler> = new Map();
+  private cacheCleanupTimer?: ReturnType<typeof setInterval>;
 
   constructor(config?: Partial<RequestRouterConfig>) {
     this.config = {
-      ...routingConfig.getConfig(),
       enableCaching: true,
       cacheMaxAge: 300000, // 5 minutes
       enableMetrics: true,
       middlewareTimeout: 30000,
-      errorHandler: this.defaultErrorHandler.bind(this),
-      ...config
+      errorHandler: (error, context) =>
+        this.defaultErrorHandler(error, context),
+      ...config,
     };
 
     this.metrics = new BehaviorSubject<RequestMetrics>({
@@ -60,7 +74,7 @@ export class RequestRouter {
       successfulRequests: 0,
       failedRequests: 0,
       averageResponseTime: 0,
-      routeMetrics: {}
+      routeMetrics: {},
     });
 
     this.startCacheCleanup();
@@ -73,7 +87,9 @@ export class RequestRouter {
     // Validate route
     const validation = validateRoute(route);
     if (!validation.valid) {
-      throw new Error(`Invalid route ${route.id}: ${validation.errors.join(', ')}`);
+      throw new Error(
+        `Invalid route ${route.id}: ${validation.errors.join(', ')}`,
+      );
     }
 
     // Check for duplicate
@@ -84,7 +100,9 @@ export class RequestRouter {
     this.routes.set(route.id, route);
     this.clearCache(); // Clear cache when routes change
 
-    console.log(`Route added: ${route.method} ${route.path} -> ${route.handler}`);
+    console.log(
+      `Route added: ${route.method} ${route.path} -> ${route.handler}`,
+    );
   }
 
   /**
@@ -113,6 +131,10 @@ export class RequestRouter {
     this.globalMiddleware.push(middleware);
   }
 
+  registerMiddleware(name: string, middleware: RouteMiddleware): void {
+    this.namedMiddleware.set(name, middleware);
+  }
+
   /**
    * Find matching route for a request
    */
@@ -127,8 +149,9 @@ export class RequestRouter {
     }
 
     // Filter routes by method
-    const methodRoutes = Array.from(this.routes.values())
-      .filter(route => route.method === method.toUpperCase());
+    const methodRoutes = Array.from(this.routes.values()).filter(
+      (route) => route.method === method.toUpperCase(),
+    );
 
     // Sort by specificity
     const sortedRoutes = sortRoutesBySpecificity(methodRoutes);
@@ -137,17 +160,17 @@ export class RequestRouter {
     for (const route of sortedRoutes) {
       const matcher = createRouteMatcher(route);
       const match = matcher(path);
-      
+
       if (match.matched) {
         // Cache the result
         if (this.config.enableCaching) {
           this.cache.set(cacheKey, {
             match,
             timestamp: Date.now(),
-            key: cacheKey
+            key: cacheKey,
           });
         }
-        
+
         return match;
       }
     }
@@ -158,32 +181,30 @@ export class RequestRouter {
   /**
    * Route and execute a request
    */
-  async route(request: Partial<RequestContext>): Promise<any> {
+  async route(request: Partial<RequestContext>): Promise<unknown> {
     const startTime = Date.now();
-    
-    try {
-      // Build complete context
-      const context: RequestContext = {
-        method: 'GET',
-        path: '/',
-        headers: {},
-        query: {},
-        params: {},
-        ...request
-      };
+    const context: RequestContext = {
+      method: 'GET',
+      path: '/',
+      headers: {},
+      query: {},
+      params: {},
+      ...request,
+    };
 
+    try {
       // Update metrics
       if (this.config.enableMetrics) {
         const currentMetrics = this.metrics.value;
         this.metrics.next({
           ...currentMetrics,
-          totalRequests: currentMetrics.totalRequests + 1
+          totalRequests: currentMetrics.totalRequests + 1,
         });
       }
 
       // Find matching route
       const match = this.findRoute(context.method, context.path);
-      
+
       if (!match.matched || !match.route) {
         throw new Error(`No route found for ${context.method} ${context.path}`);
       }
@@ -200,14 +221,20 @@ export class RequestRouter {
       }
 
       // Build middleware chain
-      const routeMiddleware = match.route.middleware || [];
+      const routeMiddleware = (match.route.middleware || []).map((name) => {
+        const middleware = this.namedMiddleware.get(name);
+        if (!middleware) {
+          throw new Error(`Route middleware not registered: ${name}`);
+        }
+        return middleware;
+      });
       const allMiddleware = [...this.globalMiddleware, ...routeMiddleware];
 
       // Execute middleware chain
       const result = await this.executeMiddlewareChain(
         allMiddleware,
         context,
-        () => Promise.resolve(handler(context))
+        () => Promise.resolve(handler(context)),
       );
 
       // Update success metrics
@@ -216,25 +243,31 @@ export class RequestRouter {
       }
 
       return result;
-
     } catch (error) {
       // Update failure metrics
       if (this.config.enableMetrics) {
         const currentMetrics = this.metrics.value;
-        const routeMatch = this.findRoute(request.method || 'GET', request.path || '/');
+        const routeMatch = this.findRoute(
+          request.method || 'GET',
+          request.path || '/',
+        );
         if (routeMatch.matched && routeMatch.route) {
-          this.updateRouteMetrics(routeMatch.route.id, false, Date.now() - startTime);
+          this.updateRouteMetrics(
+            routeMatch.route.id,
+            false,
+            Date.now() - startTime,
+          );
         }
-        
+
         this.metrics.next({
           ...currentMetrics,
-          failedRequests: currentMetrics.failedRequests + 1
+          failedRequests: currentMetrics.failedRequests + 1,
         });
       }
 
       // Handle error
       if (this.config.errorHandler) {
-        return this.config.errorHandler(error as Error, context as RequestContext);
+        return this.config.errorHandler(error as Error, context);
       }
 
       throw error;
@@ -247,33 +280,40 @@ export class RequestRouter {
   private async executeMiddlewareChain(
     middleware: RouteMiddleware[],
     context: RequestContext,
-    finalHandler: () => Promise<any>
-  ): Promise<any> {
+    finalHandler: () => Promise<unknown>,
+  ): Promise<unknown> {
     if (middleware.length === 0) {
       return finalHandler();
     }
 
     let index = 0;
 
-    const next = async (): Promise<any> => {
+    const next = async (): Promise<unknown> => {
       if (index >= middleware.length) {
         return finalHandler();
       }
 
       const currentMiddleware = middleware[index++];
-      
+
       try {
         // Add timeout for middleware
         const result = await Promise.race([
           currentMiddleware(context, next),
-          new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Middleware timeout')), this.config.middlewareTimeout)
-          )
+          new Promise((_, reject) =>
+            setTimeout(
+              () => reject(new Error('Middleware timeout')),
+              this.config.middlewareTimeout,
+            ),
+          ),
         ]);
-        
+
         return result;
-      } catch (error) {
-        throw new Error(`Middleware error at index ${index - 1}: ${error.message}`);
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : 'Unknown error';
+        throw new Error(`Middleware error at index ${index - 1}: ${message}`, {
+          cause: error,
+        });
       }
     };
 
@@ -283,13 +323,17 @@ export class RequestRouter {
   /**
    * Update route metrics
    */
-  private updateRouteMetrics(routeId: string, success: boolean, duration: number): void {
+  private updateRouteMetrics(
+    routeId: string,
+    success: boolean,
+    duration: number,
+  ): void {
     const currentMetrics = this.metrics.value;
     const routeMetrics = currentMetrics.routeMetrics[routeId] || {
       count: 0,
       success: 0,
       failure: 0,
-      avgTime: 0
+      avgTime: 0,
     };
 
     routeMetrics.count++;
@@ -300,36 +344,40 @@ export class RequestRouter {
     }
 
     // Calculate new average time
-    routeMetrics.avgTime = ((routeMetrics.avgTime * (routeMetrics.count - 1)) + duration) / routeMetrics.count;
+    routeMetrics.avgTime =
+      (routeMetrics.avgTime * (routeMetrics.count - 1) + duration) /
+      routeMetrics.count;
 
     currentMetrics.routeMetrics[routeId] = routeMetrics;
 
     // Update overall metrics
     const totalSuccess = currentMetrics.successfulRequests + (success ? 1 : 0);
     const totalRequests = currentMetrics.totalRequests;
-    const avgTime = ((currentMetrics.averageResponseTime * (totalRequests - 1)) + duration) / totalRequests;
+    const avgTime =
+      (currentMetrics.averageResponseTime * (totalRequests - 1) + duration) /
+      totalRequests;
 
     this.metrics.next({
       ...currentMetrics,
       successfulRequests: totalSuccess,
-      averageResponseTime: avgTime
+      averageResponseTime: avgTime,
     });
   }
 
   /**
    * Default error handler
    */
-  private defaultErrorHandler(error: Error, context: RequestContext): any {
+  private defaultErrorHandler(error: Error, context: RequestContext): unknown {
     console.error(`Router error for ${context.method} ${context.path}:`, error);
-    
+
     return {
       error: {
         message: error.message,
         code: 'ROUTE_ERROR',
         path: context.path,
-        method: context.method
+        method: context.method,
       },
-      status: 500
+      status: 500,
     };
   }
 
@@ -340,13 +388,18 @@ export class RequestRouter {
     this.cache.clear();
   }
 
+  dispose(): void {
+    if (this.cacheCleanupTimer) clearInterval(this.cacheCleanupTimer);
+    this.cache.clear();
+  }
+
   /**
    * Start cache cleanup timer
    */
   private startCacheCleanup(): void {
     if (!this.config.enableCaching) return;
 
-    setInterval(() => {
+    this.cacheCleanupTimer = setInterval(() => {
       const now = Date.now();
       for (const [key, entry] of this.cache.entries()) {
         if (now - entry.timestamp > this.config.cacheMaxAge) {
@@ -354,6 +407,7 @@ export class RequestRouter {
         }
       }
     }, 60000); // Clean up every minute
+    this.cacheCleanupTimer.unref();
   }
 
   /**
@@ -389,12 +443,12 @@ export class RequestRouter {
    */
   validate(): { valid: boolean; errors: string[]; warnings: string[] } {
     const routes = Array.from(this.routes.values());
-    const validation = validateRouteConfig(routes, this.config);
-    
+    const validation = validateRouteConfig(routes);
+
     return {
       valid: validation.valid,
-      errors: validation.errors.map(e => e.message),
-      warnings: validation.warnings.map(e => e.message)
+      errors: validation.errors.map((e) => e.message),
+      warnings: validation.warnings.map((e) => e.message),
     };
   }
 
@@ -404,29 +458,32 @@ export class RequestRouter {
   exportConfig(): { routes: RouteDefinition[]; config: RequestRouterConfig } {
     return {
       routes: Array.from(this.routes.values()),
-      config: { ...this.config }
+      config: { ...this.config },
     };
   }
 
   /**
    * Import configuration
    */
-  importConfig(exportedConfig: { routes: RouteDefinition[]; config: RequestRouterConfig }): void {
+  importConfig(exportedConfig: {
+    routes: RouteDefinition[];
+    config: RequestRouterConfig;
+  }): void {
     // Clear existing routes
     this.routes.clear();
     this.handlers.clear();
-    
+
     // Import routes
     for (const route of exportedConfig.routes) {
       this.addRoute(route);
     }
-    
+
     // Update config
     this.config = { ...exportedConfig.config };
-    
+
     // Clear cache
     this.clearCache();
-    
+
     console.log('Configuration imported successfully');
   }
 }

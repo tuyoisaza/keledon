@@ -56,6 +56,15 @@ export function SocketProvider({ children }: SocketProviderProps) {
         transports: ['websocket', 'polling'],
         timeout: 20000,
         forceNew: true,
+        auth: {
+          token: (() => {
+            try {
+              return sessionStorage.getItem('auth_token') || '';
+            } catch {
+              return '';
+            }
+          })(),
+        },
       });
 
       newSocket.on('connect', () => {

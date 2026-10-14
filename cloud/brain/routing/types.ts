@@ -10,7 +10,7 @@ export interface RouteDefinition {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   handler: string;
   middleware?: string[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface RouteMatchResult {
@@ -19,7 +19,7 @@ export interface RouteMatchResult {
   params?: Record<string, string>;
   query?: Record<string, string>;
   confidence: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface RequestContext {
@@ -28,7 +28,7 @@ export interface RequestContext {
   headers: Record<string, string>;
   query: Record<string, string>;
   params: Record<string, string>;
-  body?: any;
+  body?: unknown;
   user?: {
     id: string;
     roles: string[];
@@ -36,24 +36,27 @@ export interface RequestContext {
   };
   session?: {
     id: string;
-    data: Record<string, any>;
+    data: Record<string, unknown>;
   };
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface RouteHandler {
-  (context: RequestContext): Promise<any> | any;
+  (context: RequestContext): unknown;
 }
 
 export interface RouteMiddleware {
-  (context: RequestContext, next: () => Promise<any>): Promise<any> | any;
+  (context: RequestContext, next: () => Promise<unknown>): unknown;
 }
 
 export interface RoutingEngine {
   addRoute(route: RouteDefinition): void;
   removeRoute(id: string): boolean;
   findRoute(method: string, path: string): RouteMatchResult;
-  executeRoute(match: RouteMatchResult, context: RequestContext): Promise<any>;
+  executeRoute(
+    match: RouteMatchResult,
+    context: RequestContext,
+  ): Promise<unknown>;
 }
 
 export interface RouteMetrics {
@@ -61,12 +64,15 @@ export interface RouteMetrics {
   successfulRequests: number;
   failedRequests: number;
   averageResponseTime: number;
-  routeStats: Record<string, {
-    requests: number;
-    successes: number;
-    failures: number;
-    avgResponseTime: number;
-  }>;
+  routeStats: Record<
+    string,
+    {
+      requests: number;
+      successes: number;
+      failures: number;
+      avgResponseTime: number;
+    }
+  >;
 }
 
 export interface RoutingCache {

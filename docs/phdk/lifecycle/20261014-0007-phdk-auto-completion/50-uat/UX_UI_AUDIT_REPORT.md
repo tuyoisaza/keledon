@@ -1,0 +1,6 @@
+# UX/UI UAT audit — run 20261014-0007-phdk-auto-completion
+
+Candidate source fingerprint `sha256:b93f388303c3bf87df539facf4594d55d4961de4eb83c025513b44241ae33d3b`; local production SPA and synthetic API fixtures only. Focused observations: diagnostics widget remains visible to anonymous visitors with exact 12px text, 28×28px visible controls, 14×14px glyphs and 4px gap; copy/reset success and failure state work; 390px width and simulated 200%/400% viewport layouts avoid horizontal overflow; theme persistence and automated login text contrast checks pass; keyboard/focus and localized management journeys pass in the synthetic fixture. Screenshots: `docs/phdk/evidence/uat-login-desktop.png`, `uat-login-mobile.png`, `uat-login-light.png`, `uat-login-corporate.png`, `uat-login-dark.png`, `uat-login-200-percent.png`, `uat-login-400-percent.png`.
+
+This scoped sample is not a whole-route audit, screen-reader certification, native desktop review, or deployed visual acceptance. No confirmed P0/P1 visual failure appeared in these exercised journeys. Remaining MANUAL/BLOCKED work: broader active routes/roles, screen reader, real keyboard/focus review beyond selected journeys, actual OS permission dialog and physical device/audio, plus real role authentication. Continue under UAT Fix/Check; do not close accessibility from this sample alone.
+

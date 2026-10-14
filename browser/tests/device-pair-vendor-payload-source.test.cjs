@@ -8,7 +8,7 @@ const source = fs.readFileSync(path.join(__dirname, '..', '..', 'services', 'api
 // with encrypted credentials, so the browser can start immediately without replacing
 // credentials with masked CRUD values.
 assert.match(source, /response\.vendors\s*=\s*vendors\.map/);
-assert.match(source, /username:\s*v\.username\s*\?\s*this\.encrypt\(v\.username\)/);
+assert.match(source, /username:\s*v\.username\s*\?\s*encryptVendorSecretForPairing\(v\.username\)/);
 assert.match(source, /startGoal:\s*v\.startGoal\s*\|\|\s*null/);
 assert.match(source, /isActive:\s*v\.isActive/);
 

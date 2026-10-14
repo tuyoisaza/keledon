@@ -15,6 +15,11 @@ import {
 import { MvpStoreService } from '../mvp/mvp-store.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from '../guards/public.decorator';
+import type { TTSConfigEntry } from '../mvp/mvp-store.types';
+
+interface AuthenticatedRequest {
+  user?: { role?: string };
+}
 
 @ApiTags('MVP Data')
 @Controller('api')
@@ -23,7 +28,7 @@ export class MvpDataController {
   constructor(private readonly mvpStore: MvpStoreService) {}
 
   @Get('tech-status')
-  getTechStatus(@Req() req: any) {
+  getTechStatus(@Req() req: AuthenticatedRequest) {
     const status = this.mvpStore.getTechStatus();
     if (req.user?.role === 'superadmin')
       return { ...status, detailsAvailable: true };
@@ -48,13 +53,21 @@ export class MvpDataController {
   @Get('cloud-config')
   @Public()
   getCloudConfig() {
-    const config = this.mvpStore.getCloudConfig();
-    return { api_url: config.api_url, ws_url: config.ws_url };
+    const config: unknown = this.mvpStore.getCloudConfig();
+    if (typeof config !== 'object' || config === null) {
+      return { api_url: '', ws_url: '' };
+    }
+    const values = config as Record<string, unknown>;
+    return {
+      api_url: typeof values.api_url === 'string' ? values.api_url : '',
+      ws_url: typeof values.ws_url === 'string' ? values.ws_url : '',
+    };
   }
 
   @Get('tts-config')
   getTTSConfig() {
-    const { apiKey, ...config } = this.mvpStore.getTTSConfig();
+    const ttsConfig: TTSConfigEntry = this.mvpStore.getTTSConfig();
+    const { apiKey, ...config } = ttsConfig;
     return { ...config, apiKey: '', apiKeySet: !!apiKey };
   }
 
@@ -62,7 +75,8 @@ export class MvpDataController {
   updateTTSConfig(
     @Body() body: { providerId?: string; apiKey?: string; voiceId?: string },
   ) {
-    const { apiKey, ...config } = this.mvpStore.updateTTSConfig(body);
+    const ttsConfig: TTSConfigEntry = this.mvpStore.updateTTSConfig(body);
+    const { apiKey, ...config } = ttsConfig;
     return { ...config, apiKey: '', apiKeySet: !!apiKey };
   }
 

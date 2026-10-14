@@ -27,7 +27,9 @@ export class TenantController {
   }
 
   @Get('voice-profiles/:id')
-  @ApiOperation({ summary: 'Get a tenant voice profile without provider secrets' })
+  @ApiOperation({
+    summary: 'Get a tenant voice profile without provider secrets',
+  })
   getTenantVoiceProfile(@Param('id') id: string, @Req() req: any) {
     const companyId =
       req.actor.role === 'superadmin' ? undefined : req.actor.companyId;

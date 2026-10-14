@@ -50,7 +50,7 @@ export interface DashboardLayout {
   id: string;
   name: string;
   description: string;
-  widgets: DashboardWidget[];
+  widgets: string[];
   layout: {
     columns: number;
     widgets: Array<{

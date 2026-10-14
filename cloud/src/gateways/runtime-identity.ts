@@ -10,7 +10,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 export interface RuntimeIdentity {
   tokenFingerprint?: string;
-  deviceId: string;
+  deviceId?: string;
   userId: string;
   teamId: string;
   companyId: string;
@@ -20,12 +20,37 @@ export interface RuntimeIdentity {
   teamName: string;
 }
 
+interface PairedRuntimeIdentity extends RuntimeIdentity {
+  tokenFingerprint: string;
+  deviceId: string;
+}
+
+type RuntimeRequest = {
+  headers?: { authorization?: string | string[] };
+  params?: { deviceId?: string };
+  runtimeIdentity?: RuntimeIdentity;
+  user?: {
+    userId: string;
+    companyId: string;
+    teamId: string;
+    email: string;
+    role: string;
+  };
+};
+
+function getBearerToken(request: RuntimeRequest): string | undefined {
+  const authorization = request.headers?.authorization;
+  return typeof authorization === 'string'
+    ? /^Bearer (\S+)$/.exec(authorization)?.[1]
+    : undefined;
+}
+
 /** Resolve every runtime claim from stored device/user/Keledon relations. */
 export async function resolveRuntimeIdentity(
   prisma: PrismaService,
   token: unknown,
   deviceId?: unknown,
-): Promise<RuntimeIdentity | null> {
+): Promise<PairedRuntimeIdentity | null> {
   if (
     typeof token !== 'string' ||
     !token ||
@@ -118,10 +143,10 @@ export async function ownsRuntimeSession(
 export class RuntimeDeviceGuard implements CanActivate {
   constructor(private readonly prisma: PrismaService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const match = /^Bearer (\S+)$/.exec(request.headers.authorization || '');
-    const identity = match
-      ? await resolveRuntimeIdentity(this.prisma, match[1])
+    const request = context.switchToHttp().getRequest<RuntimeRequest>();
+    const token = getBearerToken(request);
+    const identity = token
+      ? await resolveRuntimeIdentity(this.prisma, token)
       : null;
     if (!identity)
       throw new UnauthorizedException('Valid paired device required');
@@ -147,10 +172,10 @@ export class RuntimeDeviceGuard implements CanActivate {
 export class RuntimeActorGuard implements CanActivate {
   constructor(private readonly prisma: PrismaService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const match = /^Bearer (\S+)$/.exec(request.headers.authorization || '');
-    if (!match) throw new UnauthorizedException('Authentication required');
-    const device = await resolveRuntimeIdentity(this.prisma, match[1]);
+    const request = context.switchToHttp().getRequest<RuntimeRequest>();
+    const token = getBearerToken(request);
+    if (!token) throw new UnauthorizedException('Authentication required');
+    const device = await resolveRuntimeIdentity(this.prisma, token);
     if (device) {
       request.runtimeIdentity = device;
       request.user = {
@@ -162,9 +187,7 @@ export class RuntimeActorGuard implements CanActivate {
       };
       return true;
     }
-    const actor = await new LocalAuthService(this.prisma).validateToken(
-      match[1],
-    );
+    const actor = await new LocalAuthService(this.prisma).validateToken(token);
     if (!actor?.id || !actor.company_id || !actor.team_id)
       throw new UnauthorizedException('Assigned user required');
     const team = await this.prisma.team.findUnique({

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
+import { PrismaService } from '../prisma/prisma.service';
 import * as os from 'os';
 
 const errorBuffer: string[] = [];
@@ -15,7 +16,9 @@ function captureError(msg: string) {
 
 const originalConsoleError = console.error;
 console.error = (...args: any[]): void => {
-  const msg = args.map((a: any) => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+  const msg = args
+    .map((a: any) => (typeof a === 'object' ? JSON.stringify(a) : String(a)))
+    .join(' ');
   captureError(msg);
   originalConsoleError.apply(console, args);
 };
@@ -43,14 +46,17 @@ export interface SystemHealth {
 export class HealthService {
   private startTime = Date.now();
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   async getSystemHealth(): Promise<SystemHealth> {
     const services = await Promise.allSettled([
       this.checkDatabase(),
       this.checkVOSK(),
       this.checkQdrant(),
-      this.checkServices(),
+      Promise.resolve(this.checkServices()),
     ]);
 
     const healthChecks: HealthCheck[] = services.map((result, index) => {
@@ -60,12 +66,16 @@ export class HealthService {
       return {
         service: ['database', 'vosk', 'qdrant', 'services'][index],
         status: 'unhealthy',
-        message: result.reason,
+        message: 'Health check failed',
       };
     });
 
-    const allHealthy = healthChecks.every(check => check.status === 'healthy');
-    const someDegraded = healthChecks.some(check => check.status === 'degraded');
+    const allHealthy = healthChecks.every(
+      (check) => check.status === 'healthy',
+    );
+    const someDegraded = healthChecks.some(
+      (check) => check.status === 'degraded',
+    );
 
     const memUsage = process.memoryUsage();
     const totalMemory = os.totalmem();
@@ -88,17 +98,18 @@ export class HealthService {
   private async checkDatabase(): Promise<HealthCheck> {
     const startTime = Date.now();
     try {
+      await this.prisma.$queryRaw`SELECT 1`;
       return {
         service: 'database',
         status: 'healthy',
         message: 'Prisma PostgreSQL',
         responseTime: Date.now() - startTime,
       };
-    } catch (error) {
+    } catch {
       return {
         service: 'database',
         status: 'unhealthy',
-        message: error.message,
+        message: 'Database unavailable',
         responseTime: Date.now() - startTime,
       };
     }
@@ -110,7 +121,9 @@ export class HealthService {
     const voskUrl = `http://127.0.0.1:${sttConfig.voskPort}/health`;
 
     try {
-      const response = await fetch(voskUrl, { signal: AbortSignal.timeout(3000) });
+      const response = await fetch(voskUrl, {
+        signal: AbortSignal.timeout(3000),
+      });
       if (response.ok) {
         return {
           service: 'vosk',
@@ -125,7 +138,7 @@ export class HealthService {
         message: `VOSK returned ${response.status}`,
         responseTime: Date.now() - startTime,
       };
-    } catch (error) {
+    } catch {
       return {
         service: 'vosk',
         status: 'degraded',
@@ -140,7 +153,9 @@ export class HealthService {
     const vsConfig = this.configService.getVectorStoreConfig();
 
     try {
-      const response = await fetch(`${vsConfig.qdrantUrl}/collections`, { signal: AbortSignal.timeout(3000) });
+      const response = await fetch(`${vsConfig.qdrantUrl}/collections`, {
+        signal: AbortSignal.timeout(3000),
+      });
       if (response.ok) {
         return {
           service: 'qdrant',
@@ -155,7 +170,7 @@ export class HealthService {
         message: `Qdrant returned ${response.status}`,
         responseTime: Date.now() - startTime,
       };
-    } catch (error) {
+    } catch {
       return {
         service: 'qdrant',
         status: 'unhealthy',
@@ -165,7 +180,7 @@ export class HealthService {
     }
   }
 
-  private async checkServices(): Promise<HealthCheck> {
+  private checkServices(): HealthCheck {
     const startTime = Date.now();
     const flags = this.configService.getFeatureFlags();
 
@@ -184,13 +199,24 @@ export class HealthService {
     };
   }
 
-  async checkBrowserDownloadUrl(): Promise<{ url: string; reachable: boolean }> {
+  async checkBrowserDownloadUrl(): Promise<{
+    url: string;
+    reachable: boolean;
+  }> {
     // KELEDON_BROWSER_DOWNLOAD_URL env var overrides the default stable URL
-    const url = process.env.KELEDON_BROWSER_DOWNLOAD_URL ||
+    const url =
+      process.env.KELEDON_BROWSER_DOWNLOAD_URL ||
       'https://github.com/tuyoisaza/keledon/releases/latest/download/KELEDON.Browser.Setup.exe';
     try {
-      const response = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
-      return { url, reachable: response.ok || response.status === 302 || response.status === 301 };
+      const response = await fetch(url, {
+        method: 'HEAD',
+        signal: AbortSignal.timeout(5000),
+      });
+      return {
+        url,
+        reachable:
+          response.ok || response.status === 302 || response.status === 301,
+      };
     } catch {
       return { url, reachable: false };
     }
@@ -210,48 +236,56 @@ export class HealthService {
       uptime: Date.now() - this.startTime,
       versions: {
         cloud: process.env.npm_package_version || '0.1.0',
-        protocol: 'V3'
+        protocol: 'V3',
       },
       environment: {
         NODE_ENV: process.env.NODE_ENV || 'development',
         CLOUD_URL: process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
-        KELEDON_LAUNCH_SECRET: process.env.KELEDON_LAUNCH_SECRET ? 'set' : 'not set',
+        KELEDON_LAUNCH_SECRET: process.env.KELEDON_LAUNCH_SECRET
+          ? 'set'
+          : 'not set',
         RAILWAY_SERVICE_NAME: process.env.RAILWAY_SERVICE_NAME || 'local',
       },
       services: {
-        rag: { enabled: flags.vectorStore, status: flags.vectorStore ? 'active' : 'disabled' },
+        rag: {
+          enabled: flags.vectorStore,
+          status: flags.vectorStore ? 'active' : 'disabled',
+        },
         stt: {
           provider: sttConfig.provider,
           status: flags.realStt ? 'active' : 'web-speech',
-          voskPort: sttConfig.voskPort
+          voskPort: sttConfig.voskPort,
         },
         tts: {
           provider: ttsConfig?.provider || 'web-speech',
-          status: flags.realTts ? 'active' : 'web-speech'
+          status: flags.realTts ? 'active' : 'web-speech',
         },
         rpa: { enabled: flags.rpa, status: flags.rpa ? 'active' : 'disabled' },
-        otel: { enabled: flags.otel, status: flags.otel ? 'active' : 'disabled' }
+        otel: {
+          enabled: flags.otel,
+          status: flags.otel ? 'active' : 'disabled',
+        },
       },
       vectorStore: {
         provider: 'qdrant',
         url: vsConfig?.qdrantUrl || 'http://localhost:6333',
-        enabled: flags.vectorStore
+        enabled: flags.vectorStore,
       },
       capabilities: {
         voice: flags.realStt || true,
         escalation: true,
         tabs: true,
-        vendorAutoLogin: true
+        vendorAutoLogin: true,
       },
       memory: {
         heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024) + 'MB',
         heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024) + 'MB',
         rss: Math.round(memUsage.rss / 1024 / 1024) + 'MB',
-        external: Math.round(memUsage.external / 1024 / 1024) + 'MB'
+        external: Math.round(memUsage.external / 1024 / 1024) + 'MB',
       },
       browser_download_url: browserDownload.url,
       browser_download_reachable: browserDownload.reachable,
-      logs: errorBuffer.slice(-MAX_ERRORS)
+      logs: errorBuffer.slice(-MAX_ERRORS),
     };
   }
 }

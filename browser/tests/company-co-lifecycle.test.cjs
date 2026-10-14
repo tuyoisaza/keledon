@@ -19,8 +19,9 @@ function harness(failFlow) {
    const result={flow_id:flow.flow_id,status:failed?'failed':'completed',steps:flow.steps.map((step,i)=>({step_id:String(i),action:step.action,success:!failed})),total_duration_ms:1};
    evidence.push(result);return result;
  }};
- const call=load('../src/call-handler.ts',{'electron-log':logger,electron:{},'./rpa-executor.js':rpa,'./media/media-layer.js':{mediaLayer:{startCall:async()=>media.push('start'),stopCall:async()=>media.push('stop')}},'./runtime-state.js':{runtimeStatus:{vendors:Object.values(fixture.surfaces).map(baseUrl=>({baseUrl}))}},'./media/transcript-monitor.js':{}});
- const poll=load('../src/cloud-command-polling.ts',{'electron-log':logger,electron:{},'./cmdlog.js':{truncate:()=>'',log:noop},'./runtime-state.js':{runtimeStatus:{vendors:Object.values(fixture.surfaces).map(baseUrl=>({baseUrl}))}},'./call-handler.js':call,'./rpa-executor.js':rpa,'./goal-planner.js':{},'./command-poller.js':{registerCommandHandler:(name,handler)=>handlers.set(name,handler),startPolling:noop}});
+ const vendorPolicy={getAllowedVendorOrigins:vendor=>{try{return [...new Set([...(Array.isArray(vendor.allowedOrigins)?vendor.allowedOrigins:[]),new URL(vendor.baseUrl||vendor.url).origin])]}catch{return []}}};
+ const call=load('../src/call-handler.ts',{'electron-log':logger,electron:{},'./rpa-executor.js':rpa,'./media/media-layer.js':{mediaLayer:{startCall:async()=>media.push('start'),stopCall:async()=>media.push('stop')}},'./runtime-state.js':{runtimeStatus:{vendors:Object.values(fixture.surfaces).map(baseUrl=>({baseUrl}))}},'./security-policy.js':vendorPolicy,'./media/transcript-monitor.js':{}});
+ const poll=load('../src/cloud-command-polling.ts',{'electron-log':logger,electron:{},'./cmdlog.js':{truncate:()=>'',log:noop},'./runtime-state.js':{runtimeStatus:{vendors:Object.values(fixture.surfaces).map(baseUrl=>({baseUrl}))}},'./security-policy.js':vendorPolicy,'./call-handler.js':call,'./rpa-executor.js':rpa,'./goal-planner.js':{},'./command-poller.js':{registerCommandHandler:(name,handler)=>handlers.set(name,handler),startPolling:noop}});
  poll.setupCommandPolling(null);return {handlers,evidence,media,call};
 }
 (async()=>{

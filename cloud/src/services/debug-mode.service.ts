@@ -30,7 +30,9 @@ export class DebugModeService {
     return true;
   }
 
-  async activate(activatedBy: string): Promise<{ success: boolean; expiresAt: Date }> {
+  async activate(
+    activatedBy: string,
+  ): Promise<{ success: boolean; expiresAt: Date }> {
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + DEBUG_MODE_DURATION_HOURS);
 
@@ -58,7 +60,9 @@ export class DebugModeService {
       },
     });
 
-    this.logger.log(`[DebugMode] Activated by user ${activatedBy}, expires at ${expiresAt.toISOString()}`);
+    this.logger.log(
+      `[DebugMode] Activated by user ${activatedBy}, expires at ${expiresAt.toISOString()}`,
+    );
 
     return { success: true, expiresAt };
   }
@@ -79,7 +83,9 @@ export class DebugModeService {
           userId: activatedBy,
           action: 'DEBUG_MODE_DEACTIVATED',
           entity: 'debug_mode',
-          changes: JSON.stringify({ previousExpiry: debugMode.expiresAt?.toISOString() }),
+          changes: JSON.stringify({
+            previousExpiry: debugMode.expiresAt?.toISOString(),
+          }),
         },
       });
 
@@ -89,7 +95,11 @@ export class DebugModeService {
     return { success: true };
   }
 
-  async getStatus(): Promise<{ isActive: boolean; expiresAt: Date | null; activatedBy: string | null }> {
+  async getStatus(): Promise<{
+    isActive: boolean;
+    expiresAt: Date | null;
+    activatedBy: string | null;
+  }> {
     const debugMode = await this.prisma.debugMode.findFirst({
       where: { isActive: true },
     });

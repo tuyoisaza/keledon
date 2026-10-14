@@ -7,16 +7,38 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { resolveRuntimeIdentity } from '../gateways/runtime-identity';
 import { LocalAuthService } from '../auth-local/auth-local.service';
+import { User } from '@prisma/client';
+import { RuntimeIdentity } from '../gateways/runtime-identity';
+
+type DeviceRequest = {
+  headers: Record<string, string | string[] | undefined>;
+  params?: Record<string, string | undefined>;
+  body?: unknown;
+  user?: { userId?: string };
+  actor?: User;
+  deviceIdentity?: RuntimeIdentity;
+  deviceBinding?: { userId: string; companyId: string; keledonId?: string };
+};
+
+function requestRecord(value: unknown): Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
 
 @Injectable()
 export class DeviceAccessGuard implements CanActivate {
   constructor(private readonly prisma: PrismaService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req = context.switchToHttp().getRequest();
+    const req = context.switchToHttp().getRequest<DeviceRequest>();
     const handler = context.getHandler().name;
     if (handler === 'pairDevice') return true; // one-time stored pairing-code proof
     if (handler === 'getDeviceRpaConfig') {
-      const token = /^Bearer (\S+)$/.exec(req.headers.authorization || '')?.[1];
+      const authorization = req.headers.authorization;
+      const token =
+        typeof authorization === 'string'
+          ? /^Bearer (\S+)$/.exec(authorization)?.[1]
+          : undefined;
       const device = await resolveRuntimeIdentity(
         this.prisma,
         token,
@@ -50,9 +72,12 @@ export class DeviceAccessGuard implements CanActivate {
     if (['testBrowser', 'debugDevice'].includes(handler) && !superadmin)
       return deny();
     if (handler === 'createPairingCode') {
-      if (!manager || !req.body?.keledon_id) return deny();
+      const body = requestRecord(req.body);
+      const keledonId = body.keledon_id;
+      if (!manager || typeof keledonId !== 'string' || !keledonId)
+        return deny();
       const keledon = await this.prisma.keledon.findUnique({
-        where: { id: req.body.keledon_id },
+        where: { id: keledonId },
         include: { team: { include: { brand: true } } },
       });
       const companyId = keledon?.team?.brand?.companyId;

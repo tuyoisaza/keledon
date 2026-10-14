@@ -7,6 +7,45 @@ import { SecurityService } from '../services/security.service';
 import { SystemMonitoringService } from '../services/system-monitoring.service';
 import { AnalyticsFilters } from './analytics.types';
 
+type AnalyticsPeriod = '1h' | '24h' | '7d' | '30d';
+type HealthMetric = {
+  avgResponseTime?: number;
+  uptime?: number;
+  successRate?: number;
+};
+type CsvRecord = Record<string, unknown>;
+type ChartData = {
+  labels: string[];
+  datasets: Array<{ label: string; data: number[]; borderColor?: string }>;
+};
+type AnalyticsReport = {
+  reportPeriod: string;
+  generatedAt: string;
+  voiceAnalytics: unknown;
+  integrationAnalytics: unknown;
+  flowAnalytics: unknown;
+  agentAnalytics: unknown;
+  securityAnalytics: unknown;
+  systemAnalytics: unknown;
+};
+
+function normalizePeriod(period: string): AnalyticsPeriod {
+  return ['1h', '24h', '7d', '30d'].includes(period)
+    ? (period as AnalyticsPeriod)
+    : '24h';
+}
+
+function asCsvRecord(value: unknown): CsvRecord {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? (value as CsvRecord)
+    : {};
+}
+
+function csvCell(value: unknown): string {
+  const text = typeof value === 'string' ? value : JSON.stringify(value ?? '');
+  return `"${(text ?? '').replaceAll('"', '""')}"`;
+}
+
 export class AnalyticsControllerHelpers {
   constructor(
     protected readonly voiceAnalyticsService: VoiceAnalyticsService,
@@ -18,17 +57,17 @@ export class AnalyticsControllerHelpers {
   ) {}
 
   // Private helper methods
-  protected async getVoiceAnalyticsData(
-    period: string,
-    filters: AnalyticsFilters,
-  ) {
-    return this.voiceAnalyticsService.getAnalytics(period as any);
+  protected getVoiceAnalyticsData(period: string, filters: AnalyticsFilters) {
+    void filters;
+    return this.voiceAnalyticsService.getAnalytics(normalizePeriod(period));
   }
 
-  protected async getIntegrationAnalyticsData(
+  protected getIntegrationAnalyticsData(
     period: string,
     filters: AnalyticsFilters,
   ) {
+    void period;
+    void filters;
     const providers = this.integrationHealthService.getProviders();
     const connectedProviders = providers.filter(
       (p) => p.status === 'connected',
@@ -37,23 +76,24 @@ export class AnalyticsControllerHelpers {
     return {
       totalProviders: providers.length,
       connectedProviders: connectedProviders.length,
-      avgResponseTime:
-        connectedProviders.reduce(
-          (sum, p) => sum + (p.health?.responseTime || 0),
-          0,
-        ) / connectedProviders.length,
-      uptime:
-        connectedProviders.reduce(
-          (sum, p) => sum + (p.health?.uptime || 0),
-          0,
-        ) / connectedProviders.length,
+      avgResponseTime: connectedProviders.length
+        ? connectedProviders.reduce(
+            (sum, p) => sum + (p.health?.responseTime || 0),
+            0,
+          ) / connectedProviders.length
+        : 0,
+      uptime: connectedProviders.length
+        ? connectedProviders.reduce(
+            (sum, p) => sum + (p.health?.uptime || 0),
+            0,
+          ) / connectedProviders.length
+        : 0,
     };
   }
 
-  protected async getFlowAnalyticsData(
-    period: string,
-    filters: AnalyticsFilters,
-  ) {
+  protected getFlowAnalyticsData(period: string, filters: AnalyticsFilters) {
+    void period;
+    void filters;
     const executions = this.flowExecutionService.getExecutions();
     const completedFlows = executions.filter((e) => e.status === 'completed');
 
@@ -72,10 +112,9 @@ export class AnalyticsControllerHelpers {
     };
   }
 
-  protected async getAgentAnalyticsData(
-    period: string,
-    filters: AnalyticsFilters,
-  ) {
+  protected getAgentAnalyticsData(period: string, filters: AnalyticsFilters) {
+    void period;
+    void filters;
     const agents = this.agentMonitoringService.getAllAgentStatuses();
     const activeAgents = agents.filter((a) => a.status !== 'idle');
 
@@ -123,7 +162,7 @@ export class AnalyticsControllerHelpers {
     return this.systemMonitoringService.getCurrentMetrics();
   }
 
-  protected calculateOverallHealthScore(metrics: any[]): number {
+  protected calculateOverallHealthScore(metrics: HealthMetric[]): number {
     const scores = metrics.map((m) => {
       // Simple health scoring based on various metrics
       let score = 100;
@@ -153,7 +192,11 @@ export class AnalyticsControllerHelpers {
       : 0;
   }
 
-  protected getSystemHealthGauge(): any {
+  protected getSystemHealthGauge(): {
+    value: number;
+    status: 'good' | 'warning' | 'critical';
+    details: { cpu: string; memory: string; uptime: number };
+  } {
     const metrics = this.systemMonitoringService.getCurrentMetrics();
     const healthScore = 100 - (metrics.cpu.usage + metrics.memory.usage) / 2;
 
@@ -169,11 +212,11 @@ export class AnalyticsControllerHelpers {
     };
   }
 
-  protected async getVoiceAnalyticsChartData(
+  protected getVoiceAnalyticsChartData(
     period: string,
     filters: AnalyticsFilters,
-  ): Promise<any> {
-    const analytics = await this.getVoiceAnalyticsData(period, filters);
+  ): ChartData {
+    const analytics = this.getVoiceAnalyticsData(period, filters);
 
     return {
       labels: this.getTimeLabels(period),
@@ -196,13 +239,17 @@ export class AnalyticsControllerHelpers {
     };
   }
 
-  protected async getFlowExecutionTableData(
+  protected getFlowExecutionTableData(
     period: string,
     filters: AnalyticsFilters,
-  ): Promise<any[]> {
+  ): any[] {
+    void period;
+    void filters;
     const executions = this.flowExecutionService
       .getExecutions()
-      .sort((left, right) => right.updatedAt.getTime() - left.updatedAt.getTime())
+      .sort(
+        (left, right) => right.updatedAt.getTime() - left.updatedAt.getTime(),
+      )
       .slice(0, 50);
 
     return executions.map((exec) => ({
@@ -216,9 +263,8 @@ export class AnalyticsControllerHelpers {
     }));
   }
 
-  protected async getIntegrationHeatmapData(
-    filters: AnalyticsFilters,
-  ): Promise<any> {
+  protected getIntegrationHeatmapData(filters: AnalyticsFilters): any[] {
+    void filters;
     const providers = this.integrationHealthService.getProviders();
 
     return providers.map((provider) => ({
@@ -232,7 +278,7 @@ export class AnalyticsControllerHelpers {
     }));
   }
 
-  protected async getSystemTrendData(period: string): Promise<any> {
+  protected getSystemTrendData(period: string): ChartData {
     const metrics = this.systemMonitoringService.getMetricsHistory(
       this.getMinutesFromPeriod(period),
     );
@@ -281,22 +327,13 @@ export class AnalyticsControllerHelpers {
   protected async generateReportData(
     period: string,
     filters: AnalyticsFilters,
-  ): Promise<any> {
-    const [
-      voiceData,
-      integrationData,
-      flowData,
-      agentData,
-      securityData,
-      systemData,
-    ] = await Promise.all([
-      this.getVoiceAnalyticsData(period, filters),
-      this.getIntegrationAnalyticsData(period, filters),
-      this.getFlowAnalyticsData(period, filters),
-      this.getAgentAnalyticsData(period, filters),
-      this.getSecurityAnalyticsData(period, filters),
-      this.getSystemAnalyticsData(),
-    ]);
+  ): Promise<AnalyticsReport> {
+    const voiceData = this.getVoiceAnalyticsData(period, filters);
+    const integrationData = this.getIntegrationAnalyticsData(period, filters);
+    const flowData = this.getFlowAnalyticsData(period, filters);
+    const agentData = this.getAgentAnalyticsData(period, filters);
+    const securityData = await this.getSecurityAnalyticsData(period, filters);
+    const systemData = this.getSystemAnalyticsData();
 
     return {
       reportPeriod: period,
@@ -355,6 +392,7 @@ export class AnalyticsControllerHelpers {
   }
 
   protected getIntervalsForPeriod(period: string): number {
+    void period;
     return 12; // Show 12 data points for all periods
   }
 
@@ -381,27 +419,25 @@ export class AnalyticsControllerHelpers {
     }
   }
 
-  protected convertToCSV(data: any): string {
+  protected convertToCSV(data: unknown): string {
     // Simple CSV conversion
-    const headers = Object.keys(data);
+    const records = Array.isArray(data)
+      ? data.map(asCsvRecord)
+      : [asCsvRecord(data)];
+    const headers = Object.keys(records[0] ?? {});
     const rows = [headers.join(',')];
-
-    if (Array.isArray(data)) {
-      data.forEach((item) => {
-        rows.push(headers.map((header) => `"${item[header] || ''}"`).join(','));
-      });
-    } else {
-      rows.push(headers.map((header) => `"${data[header] || ''}"`).join(','));
-    }
+    records.forEach((record) =>
+      rows.push(headers.map((header) => csvCell(record[header])).join(',')),
+    );
 
     return rows.join('\n');
   }
 
-  protected async convertToPDF(data: any): Promise<Buffer> {
+  protected convertToPDF(data: unknown): Promise<Buffer> {
     // In a real implementation, this would use a PDF library
     // For now, return a simple text representation
-    const text = JSON.stringify(data, null, 2);
-    return Buffer.from(text);
+    const text = JSON.stringify(data, null, 2) ?? 'null';
+    return Promise.resolve(Buffer.from(text));
   }
 
   protected generateId(): string {

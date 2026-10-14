@@ -50,18 +50,24 @@ async function bootstrap() {
     await assertManagedRuntimeDependencies();
     console.log('[Bootstrap] Dependencies OK, starting telemetry...');
 
-    await startTelemetry();
+    startTelemetry();
     console.log('[Bootstrap] Creating NestJS application...');
 
     const app = await NestFactory.create(AppModule);
 
-    app.use((req, res, next) => {
-      const activeSpan = trace.getActiveSpan();
-      if (activeSpan) {
-        res.setHeader('x-trace-id', activeSpan.spanContext().traceId);
-      }
-      next();
-    });
+    app.use(
+      (
+        _req: unknown,
+        res: { setHeader: (name: string, value: string) => void },
+        next: () => void,
+      ) => {
+        const activeSpan = trace.getActiveSpan();
+        if (activeSpan) {
+          res.setHeader('x-trace-id', activeSpan.spanContext().traceId);
+        }
+        next();
+      },
+    );
 
     const corsOrigins = resolveCorsOrigins(runtimeTier);
     const allowAllCors = process.env.KELEDON_ALLOW_ALL_CORS === 'true';

@@ -1,5 +1,8 @@
 # KELEDON project intent
 Status: brownfield baseline, owner confirmed four fronts in order on 2026-10-12.
+
+## Owner-confirmed security and integration decisions — 2026-10-14
+New email/Google accounts receive the `user` role. Only an existing superadmin may grant elevated roles or company assignments. Admin/coordinator may administer only their own company and cannot elevate roles or delete companies. API actors and tenant scope are resolved from current database state; normal responses never return stored secrets, and configured credentials are replaced without being returned. Each client selects its own call platform and CRM. Client-configured private/local CRM origins are permitted only after URL validation and tenant-scoped origin allowlisting. The current Auto goal is source conformance and verified client-agnostic contracts; no CRM vendor is universal.
 ## Purpose / ethos
 INT-001: autonomous inbound contact-center assistance with cloud-governed policy and deterministic browser execution.
 INT-002: operators understand readiness/failures/outcomes from truthful sanitized evidence.

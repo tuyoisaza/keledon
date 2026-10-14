@@ -1,8 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import * as fs from 'fs';
 import { PrismaService } from '../prisma/prisma.service';
+import {
+  getSeedRecordId,
+  getSeedRecords,
+  getSeedString,
+} from '../prisma/seed-data';
 
 @Injectable()
 export class CrudSeedService {
+  private readonly seedDataPath = '/app/data/crud.json';
+
   constructor(private readonly prisma: PrismaService) {}
 
   async seedFromCrudJson(): Promise<{
@@ -11,124 +19,111 @@ export class CrudSeedService {
     teams: number;
     users: number;
   }> {
-    const fs = require('fs');
-    const dataPath = '/app/data/crud.json';
-
-    if (!fs.existsSync(dataPath)) {
+    if (!fs.existsSync(this.seedDataPath)) {
       throw new Error('crud.json not found');
     }
 
-    const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+    const data: unknown = JSON.parse(
+      fs.readFileSync(this.seedDataPath, 'utf8'),
+    );
     let companiesCreated = 0;
     let brandsCreated = 0;
     let teamsCreated = 0;
     let usersCreated = 0;
 
-    // Seed Companies
-    if (data.companies && Array.isArray(data.companies)) {
-      for (const company of data.companies) {
-        const existing = await this.prisma.company.findFirst({
-          where: { name: company.name },
-        });
-        if (!existing) {
-          await this.prisma.company.create({
-            data: {
-              name: company.name,
-              industry: company.industry || null,
-            },
-          });
-          companiesCreated++;
-        }
-      }
+    for (const company of getSeedRecords(data, 'companies')) {
+      const name = getSeedString(company, 'name');
+      if (!name) continue;
+      const existing = await this.prisma.company.findFirst({ where: { name } });
+      if (existing) continue;
+      await this.prisma.company.create({
+        data: {
+          name,
+          industry: getSeedString(company, 'industry') ?? null,
+        },
+      });
+      companiesCreated++;
     }
 
-    // Seed Brands
-    if (data.brands && Array.isArray(data.brands)) {
-      for (const brand of data.brands) {
-        const existing = await this.prisma.brand.findFirst({
-          where: { name: brand.name },
-        });
-        if (!existing) {
-          const company = await this.prisma.company.findFirst({
-            where: { name: brand.company_name },
-          });
-          if (company) {
-            await this.prisma.brand.create({
-              data: {
-                name: brand.name,
-                companyId: company.id,
-                color: brand.color || '#6366f1',
-              },
-            });
-            brandsCreated++;
-          }
-        }
-      }
+    for (const brand of getSeedRecords(data, 'brands')) {
+      const name = getSeedString(brand, 'name');
+      const companyName = getSeedString(brand, 'company_name');
+      if (!name || !companyName) continue;
+      const existing = await this.prisma.brand.findFirst({ where: { name } });
+      if (existing) continue;
+      const company = await this.prisma.company.findFirst({
+        where: { name: companyName },
+      });
+      const companyId = getSeedRecordId(company);
+      if (!companyId) continue;
+      await this.prisma.brand.create({
+        data: {
+          name,
+          companyId,
+          color: getSeedString(brand, 'color', 64) ?? '#6366f1',
+        },
+      });
+      brandsCreated++;
     }
 
-    // Seed Teams
-    if (data.teams && Array.isArray(data.teams)) {
-      for (const team of data.teams) {
-        const existing = await this.prisma.team.findFirst({
-          where: { name: team.name },
+    for (const team of getSeedRecords(data, 'teams')) {
+      const name = getSeedString(team, 'name');
+      if (!name) continue;
+      const existing = await this.prisma.team.findFirst({ where: { name } });
+      if (existing) continue;
+      let brandId: string | null = null;
+      const brandName = getSeedString(team, 'brand_name');
+      if (brandName) {
+        const brand = await this.prisma.brand.findFirst({
+          where: { name: brandName },
         });
-        if (!existing) {
-          let brandId = null;
-          if (team.brand_name) {
-            const brand = await this.prisma.brand.findFirst({
-              where: { name: team.brand_name },
-            });
-            brandId = brand?.id || null;
-          }
-          await this.prisma.team.create({
-            data: {
-              name: team.name,
-              brandId: brandId,
-              country: team.country || null,
-              sttProvider: team.stt_provider || 'vosk',
-              ttsProvider: team.tts_provider || 'elevenlabs',
-            },
-          });
-          teamsCreated++;
-        }
+        brandId = getSeedRecordId(brand);
       }
+      await this.prisma.team.create({
+        data: {
+          name,
+          brandId,
+          country: getSeedString(team, 'country', 128) ?? null,
+          sttProvider: getSeedString(team, 'stt_provider', 64) ?? 'vosk',
+          ttsProvider: getSeedString(team, 'tts_provider', 64) ?? 'elevenlabs',
+        },
+      });
+      teamsCreated++;
     }
 
-    // Seed Users
-    if (data.users && Array.isArray(data.users)) {
-      for (const user of data.users) {
-        const existing = await this.prisma.user.findFirst({
-          where: { email: user.email },
+    for (const user of getSeedRecords(data, 'users')) {
+      const email = getSeedString(user, 'email', 320)?.toLowerCase();
+      if (!email || !email.includes('@')) continue;
+      const existing = await this.prisma.user.findFirst({ where: { email } });
+      if (existing) continue;
+
+      let companyId: string | null = null;
+      let teamId: string | null = null;
+      const companyName = getSeedString(user, 'company_name');
+      if (companyName) {
+        const company = await this.prisma.company.findFirst({
+          where: { name: companyName },
         });
-        if (!existing) {
-          let companyId = null;
-          let teamId = null;
-
-          if (user.company_name) {
-            const company = await this.prisma.company.findFirst({
-              where: { name: user.company_name },
-            });
-            companyId = company?.id || null;
-          }
-          if (user.team_name) {
-            const team = await this.prisma.team.findFirst({
-              where: { name: user.team_name },
-            });
-            teamId = team?.id || null;
-          }
-
-          await this.prisma.user.create({
-            data: {
-              email: user.email,
-              name: user.name || user.email.split('@')[0],
-              role: user.role || 'user',
-              companyId: companyId,
-              teamId: teamId,
-            },
-          });
-          usersCreated++;
-        }
+        companyId = getSeedRecordId(company);
       }
+      const teamName = getSeedString(user, 'team_name');
+      if (teamName) {
+        const team = await this.prisma.team.findFirst({
+          where: { name: teamName },
+        });
+        teamId = getSeedRecordId(team);
+      }
+
+      await this.prisma.user.create({
+        data: {
+          email,
+          name: getSeedString(user, 'name') ?? email.split('@')[0],
+          role: 'user',
+          companyId,
+          teamId,
+        },
+      });
+      usersCreated++;
     }
 
     return {
@@ -137,19 +132,5 @@ export class CrudSeedService {
       teams: teamsCreated,
       users: usersCreated,
     };
-  }
-
-  // Helper to generate pairing code (same as device.service)
-  private generatePairingCodeString(): string {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let code = '';
-    for (let i = 0; i < 4; i++) {
-      code += chars[Math.floor(Math.random() * chars.length)];
-    }
-    code += '-';
-    for (let i = 0; i < 4; i++) {
-      code += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return code;
   }
 }

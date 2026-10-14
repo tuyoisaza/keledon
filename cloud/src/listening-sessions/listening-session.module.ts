@@ -4,8 +4,8 @@ import { ListeningSessionService } from './listening-session.service';
 import { ListeningSessionGateway } from './listening.gateway';
 
 @Module({
-    controllers: [ListeningSessionController],
-    providers: [ListeningSessionService, ListeningSessionGateway],
-    exports: [ListeningSessionService],
+  controllers: [ListeningSessionController],
+  providers: [ListeningSessionService, ListeningSessionGateway],
+  exports: [ListeningSessionService],
 })
-export class ListeningSessionModule { }
+export class ListeningSessionModule {}

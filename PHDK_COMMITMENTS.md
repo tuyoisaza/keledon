@@ -1,4 +1,19 @@
 # Commitment ledger
+## Active run `20261014-0007-phdk-auto-completion` — refreshed Capture
+
+Four owner-confirmed commitments remain in order. The project baseline is KELEDON 5.1.24 at `origin/main` `6413d8aed295c18af098ca6a58c6dfbb7503930b`; the 5.1.25 candidate is pushed on `fix/cloud-eslint-prettier` in open PR #94, currently through source commit `afd66702ba7fc216e27c0c845ceaedb1eeb40944`. PHDK v2.50.10 coherence is 52/52.
+
+| ID | Confirmed front | Current truth | Remaining acceptance |
+|---|---|---|---|
+| CMT-001 | Baseline, versions and PR reconciliation | PR #92/#93 are merged at baseline; all five roots and Browser renderer are 5.1.25 on PR #94. | Merge/read back PR #94 on `main`; hosted checks and reviews are currently unconfigured/empty. |
+| CMT-002 | Shared visible diagnostics widget and safe diagnostics | Exact-candidate built-SPA evidence passes 1/1; diagnostics tests pass 19/19; source widget readiness is recorded. | Native Electron rendering, OS permissions, physical device/audio, and broad route/a11y acceptance remain unverified. |
+| CMT-003 | Voice → Cloud → Browser → CRM, providers chosen per client | Provider-neutral source and tenant-scoped private-origin policy are implemented and covered by API/Cloud/Browser checks. | No universal live vendor UAT; configured client acceptance remains tenant-specific. |
+| CMT-004 | Administration and permissions | Owner-approved least-privilege rules are implemented; API, Cloud, and synthetic UI regressions pass. | Full resource×role×tenant×surface×operation matrix and persistent migration acceptance remain incomplete; test-profile selection is pending owner disposition. |
+
+Source checks pass on the current candidate: API and Cloud builds/typecheck; Cloud regressions 11/11; API 31/31; Browser 27/27; Web diagnostics/SEO 19/19 and 1/1; PHDK coherence 52/52; 1,135 live source/test files with none at or above 600 lines. Whole-product acceptance remains partial for native, persisted DB/migration, deployed SEO/AEO, broad route coverage, and test-profile disposition. No live CRM, production DB, deployment, paid request, hosted CI, or provider write was used.
+
+---
+
 ## Current continuation — 2026-10-14, 5.1.17 merged source slice
 
 Product PR [#78](https://github.com/tuyoisaza/keledon/pull/78) merged by squash at `f8933a61c60655a6448a546790521665c6b81c9f`; fresh `origin/main` tree readback matches the candidate and all five app package/lock roots are 5.1.17. Source commit `4e874c14cde10fd5b1a0ce521ee097e67823e120` has post-commit UAT evidence bound to its SHA. API regression 15/15, web typecheck/build, synthetic UAT 1/1, diagnostics 18/18, locale parity 734/734, landing SEO test 1/1/build, Browser/Cloud builds and PHDK coherence 52/52 pass. GitHub reports no hosted checks or review decision; no deployment is claimed.

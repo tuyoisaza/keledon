@@ -1,4 +1,7 @@
 # Features / confirmed fronts
+## Current continuation status — 2026-10-14
+The owner reconfirmed SEC-004/INT-004 behavior: least-privilege registration and role assignment, DB-derived tenant identity, write-only secret replacement, per-tenant CRM/call configuration, and validated tenant origin allowlists for private/local CRM targets. Source remediation and final delivery remain in progress; database/native/deployed acceptance remains independently tracked.
+
 | Feature | Intent/requirements | Actor/value | Acceptance | Dependencies/status |
 |---|---|---|---|---|
 | FEAT-001 baseline/versions/PRs | INT-002; FR-001,NFR-002 | owner; accurate state | actual facts, scoped PR review, single integrated version | first/IN PROGRESS |

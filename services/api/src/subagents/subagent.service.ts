@@ -1,6 +1,37 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
+function readConditionPath(
+  context: Record<string, unknown>,
+  path: string,
+): unknown {
+  const normalizedPath = path.replace(/^context\./, '');
+  return normalizedPath.split('.').reduce<unknown>((value, key) => {
+    if (typeof value !== 'object' || value === null || Array.isArray(value))
+      return undefined;
+    return (value as Record<string, unknown>)[key];
+  }, context);
+}
+
+function conditionValue(
+  value: string,
+  context: Record<string, unknown>,
+): unknown {
+  const trimmed = value.trim();
+  if (trimmed === 'true') return true;
+  if (trimmed === 'false') return false;
+  if (trimmed === 'null') return null;
+  if (/^-?(?:\d+\.?\d*|\.\d+)$/.test(trimmed)) return Number(trimmed);
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  )
+    return trimmed.slice(1, -1);
+  if (/^(?:context\.)?[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(trimmed))
+    return readConditionPath(context, trimmed);
+  return undefined;
+}
+
 export interface SubAgentTask {
   id: string;
   type: 'flow' | 'read' | 'write' | 'wait';
@@ -297,18 +328,56 @@ export class SubAgentService {
 
   private evaluateCondition(
     condition: string,
-    context: Record<string, any>,
+    context: Record<string, unknown>,
   ): boolean {
-    try {
-      // Legacy expression conditions are evaluated in a constrained helper.
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
-      const func = new Function('context', `return ${condition}`) as (
-        context: Record<string, any>,
-      ) => boolean;
-      return Boolean(func(context));
-    } catch {
-      return false;
+    const match = condition
+      .trim()
+      .match(
+        /^((?:context\.)?[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)\s*(===|!==|==|!=|>=|<=|>|<)\s*("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|-?(?:\d+\.?\d*|\.\d+)|true|false|null|(?:context\.)?[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)$/,
+      );
+    if (match) {
+      const left = readConditionPath(context, match[1]);
+      const right = conditionValue(match[3], context);
+      switch (match[2]) {
+        case '===':
+        case '==':
+          return left === right;
+        case '!==':
+        case '!=':
+          return left !== right;
+        case '>':
+          return (
+            typeof left === 'number' &&
+            typeof right === 'number' &&
+            left > right
+          );
+        case '>=':
+          return (
+            typeof left === 'number' &&
+            typeof right === 'number' &&
+            left >= right
+          );
+        case '<':
+          return (
+            typeof left === 'number' &&
+            typeof right === 'number' &&
+            left < right
+          );
+        case '<=':
+          return (
+            typeof left === 'number' &&
+            typeof right === 'number' &&
+            left <= right
+          );
+      }
     }
+    if (
+      /^(?:context\.)?[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(
+        condition.trim(),
+      )
+    )
+      return Boolean(readConditionPath(context, condition.trim()));
+    return false;
   }
 
   private async simulateStepExecution(
@@ -360,6 +429,8 @@ export class SubAgentService {
   ): Promise<FlowExecutionResult[]> {
     const availableExecutors = this.getAvailableAgentsByRole('flow-executor');
     const maxParallel = Math.min(availableExecutors.length, flowIds.length);
+    if (flowIds.length > 0 && maxParallel === 0)
+      throw new Error('No flow executor agents available');
 
     const results: FlowExecutionResult[] = [];
     const batches: string[][] = [];

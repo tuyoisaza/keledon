@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -39,7 +40,7 @@ export class CrudAuditService {
     } = params || {};
 
     // Build where clause
-    const where: any = {};
+    const where: Prisma.AuditLogWhereInput = {};
 
     if (companyId) {
       const userIds = (
@@ -64,9 +65,17 @@ export class CrudAuditService {
     }
 
     if (startDate || endDate) {
-      where.createdAt = {};
-      if (startDate) where.createdAt.gte = new Date(startDate);
-      if (endDate) where.createdAt.lte = new Date(endDate);
+      const from = startDate ? new Date(startDate) : undefined;
+      const to = endDate ? new Date(endDate) : undefined;
+      if (
+        (from && Number.isNaN(from.getTime())) ||
+        (to && Number.isNaN(to.getTime()))
+      )
+        throw new Error('Invalid audit date filter');
+      where.createdAt = {
+        ...(from ? { gte: from } : {}),
+        ...(to ? { lte: to } : {}),
+      };
     }
 
     // Fetch audit logs with pagination
@@ -82,8 +91,12 @@ export class CrudAuditService {
 
     // Enrich with user info (name + email)
     const userIdsInLogs = [
-      ...new Set(logs.map((l) => l.userId).filter(Boolean)),
-    ] as string[];
+      ...new Set(
+        logs
+          .map((log) => log.userId)
+          .filter((id): id is string => typeof id === 'string'),
+      ),
+    ];
     const users =
       userIdsInLogs.length > 0
         ? await this.prisma.user.findMany({

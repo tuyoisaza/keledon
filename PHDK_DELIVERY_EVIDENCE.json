@@ -6,11 +6,11 @@
   "version_file": "services/web/package.json",
   "version_property": "version",
   "source_commit_sha": "c3c4c362a36db2bec142cbc8b06747961b67df26",
-  "merged_commit_sha": "fdd7f6f49bab5b8c4384ca1796321a23b4e71f42",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/92",
+  "merged_commit_sha": "6413d8aed295c18af098ca6a58c6dfbb7503930b",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/93",
   "checks": {
     "lint": {
-      "evidence": "API changed-source ESLint passed and Web changed-file ESLint has zero errors (11 warnings). Cloud ESLint remains unverified: the TypeScript project service stalled after loading source files; narrowing the Cloud tsconfig and switching ESLint project resolution did not unblock it.",
+      "evidence": "Cloud omitted the Prettier 3.9.9 peer required by eslint-plugin-prettier; a local dependency/lockfile fix lets ESLint complete. Latest full Cloud typed lint reports 333 errors and 59 warnings across src/**/*.ts, down from 1,345/106. Both runtime gateways, database seed services, vector store, flow, persistence, subagent, team-controller, RAG and voice services pass typed ESLint. Runtime identities and session rooms are tenant/user scoped; seed imports force new users to role user; flow database and vector searches fail closed without a team; voice sessions use DB-resolved actors and tenant/private-room fanout. Broad Cloud lint debt remains; all continuation changes are local and unpublished.",
       "status": "BLOCKED"
     },
     "typecheck": {
@@ -22,7 +22,7 @@
       "status": "PASS"
     },
     "focused_tests": {
-      "evidence": "API regression 19/19; Cloud 10/10; Browser security 6/6; Web diagnostics 19/19; Web and Landing SEO 1/1 each; locale parity 103/103/103; source line audit 1,077 files with 0 at least 600 lines; PHDK v2.50.10 coherence 52/52.",
+      "evidence": "API regression 19/19; Cloud regression 10/10; Cloud RBAC analysis Jest 6/6; AgentGateway/DeviceGateway, seed, vector-store and flow policy Jest 18/18 across 6 suites; database persistence 1/1, voice auth/room scope 4/4 and escalation safety 3/3; API vendor-secret/CRUD tests 4/4; Cloud vendor-secret tests 3/3; isolated Cloud HealthService tests 2/2; Browser CJS suite 33/33 including pairing/enrichment and legacy CBC; Browser TypeScript build passes; Web diagnostics 19/19; Web and Landing SEO 1/1 each; locale parity 103/103/103; PHDK v2.50.10 coherence 52/52. Cloud SubAgentService safe-condition and empty-parallel-queue coverage 3/3; Cloud RAG tenant-filter coverage 2/2; API SubAgentService coverage 3/3.",
       "status": "PASS"
     },
     "uat": {
@@ -30,9 +30,16 @@
       "status": "BLOCKED"
     },
     "delivery": {
-      "evidence": "PR #92 merged by squash at fdd7f6f49bab5b8c4384ca1796321a23b4e71f42. Fresh origin/main and local main match; all five package/lock roots are 5.1.24 and extracted API/Web modules are present. GitHub has empty review/status-check rollups; no deployment claimed.",
+      "evidence": "PR #92 delivered product source and PR #93 reconciled current delivery evidence. PR #93 merged by squash at 6413d8aed295c18af098ca6a58c6dfbb7503930b; fresh origin/main matches and all five package/lock roots are 5.1.24. GitHub returned an empty review/status-check rollup; no deployment claimed.",
       "status": "PASS"
     }
+  },
+  "security_continuation": {
+    "owner_confirmed_production_key": "KELEDON_VENDOR_KEY is configured in all production installations",
+    "implementation": "API/Cloud encrypt vendor username/password/apiKey at rest with versioned AES-256-GCM; normal CRUD projections mask username and omit credential values; device pairing uses a separate envelope; Browser/server retain read-only CBC compatibility.",
+    "migration": "Idempotent dry-run-first script is implemented and syntax-checks; no database migration has been run, and persisted acceptance remains open.",
+    "focused_evidence": "API focused tests 4/4; API SubAgentService 3/3; Cloud RAG tenant filter 2/2; Cloud secret tests 3/3; Cloud RBAC analysis 6/6; flow, vector-store, gateway and seed Jest 18/18 across six suites; database persistence 1/1; voice auth and room-scope Jest 4/4; escalation safety Jest 3/3; all 35 focused Cloud tests pass across eleven suites; Cloud regression 10/10; API and Cloud configured builds pass; Browser crypto module isolated TypeScript check passes. Browser TypeScript build and Browser CJS suite 33/33 pass, including authenticated pairing and historical CBC compatibility.",
+    "status": "PARTIAL"
   },
   "acceptance_status": "PARTIALLY_DELIVERED",
   "unresolved_commitments": [
@@ -40,6 +47,7 @@
     "CMT-004: exhaustive 35-model role/tenant/surface/operation matrix and disposable DB persistence/migration",
     "CHK-005: deployed SEO/AEO field measurements",
     "CHK-006: public target market/language decision",
-    "CHK-007: supported Windows native device/audio acceptance"
+    "CHK-007: supported Windows native device/audio acceptance",
+    "CMT-004 security: source encryption and safe projections are implemented; run and verify the idempotent vendor-secret migration against an explicitly approved database before claiming persisted-row acceptance."
   ]
 }

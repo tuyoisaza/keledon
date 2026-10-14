@@ -8,11 +8,18 @@ import {
   Delete,
   UseGuards,
   Req,
+  ForbiddenException,
 } from '@nestjs/common';
 import { DeviceService } from './device.service';
 import { Public } from '../guards/public.decorator';
 import { AuthAttemptGuard } from '../guards/auth-attempt.guard';
 import { DeviceAccessGuard } from '../guards/device-access.guard';
+import type { User } from '@prisma/client';
+
+interface DeviceControllerRequest {
+  deviceBinding: { userId: string; companyId: string; keledonId?: string };
+  actor: Pick<User, 'id' | 'role' | 'companyId'>;
+}
 
 @Controller('api/devices')
 @UseGuards(DeviceAccessGuard)
@@ -52,7 +59,7 @@ export class DeviceController {
       platform: string;
       name: string;
     },
-    @Req() req: any,
+    @Req() req: DeviceControllerRequest,
   ) {
     return this.deviceService.registerPendingDevice({
       ...body,
@@ -64,18 +71,21 @@ export class DeviceController {
   @Post('pairing-code')
   async createPairingCode(
     @Body() body: { keledon_id: string },
-    @Req() req: any,
+    @Req() req: DeviceControllerRequest,
   ) {
+    const keledonId = req.deviceBinding.keledonId;
+    if (!keledonId)
+      throw new ForbiddenException('Authorized Keledon binding required');
     const code = await this.deviceService.generatePairingCode(
       req.deviceBinding.userId,
       req.deviceBinding.companyId,
-      body.keledon_id,
+      keledonId,
     );
     return { pairing_code: code };
   }
 
   @Get()
-  async getDevices(@Req() req: any) {
+  async getDevices(@Req() req: DeviceControllerRequest) {
     const actor = req.actor;
     const devices =
       actor.role === 'superadmin'
@@ -83,9 +93,14 @@ export class DeviceController {
         : ['admin', 'coordinator'].includes(actor.role)
           ? await this.deviceService.getDevicesByOrganization(actor.companyId)
           : await this.deviceService.getDevicesByUser(actor.id);
-    return devices.map(
-      ({ authToken, pairingCode, pairingCodeExpiresAt, ...device }) => device,
-    );
+    return devices.map((device) => {
+      const { authToken, pairingCode, pairingCodeExpiresAt, ...safeDevice } =
+        device;
+      void authToken;
+      void pairingCode;
+      void pairingCodeExpiresAt;
+      return safeDevice;
+    });
   }
 
   @Get(':id/rpa-config')

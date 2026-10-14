@@ -1,12 +1,18 @@
 # Current task
 
-## Active Auto continuation — 5.1.17 candidate (uncommitted)
+## Active Auto continuation — 5.1.24 main; lint remediation local
 
-Run `20261013-1900-phdk-auto`; owner-approved four fronts remain the scope. PR [#78](https://github.com/tuyoisaza/keledon/pull/78) merged 5.1.17 at `f8933a61c60655a6448a546790521665c6b81c9f`, matching the candidate tree; all five package/lock roots read 5.1.17. Product source commit `4e874c14cde10fd5b1a0ce521ee097e67823e120` is covered by exact-SHA post-commit UAT. API regression 15/15, web typecheck/build, focused ESLint, diagnostics 18/18, locale parity 734/734/734, synthetic Company Co UAT 1/1 and PHDK coherence 52/52 pass.
+Run `20261013-1900-phdk-auto`; all four owner-confirmed fronts remain in scope, in order. Product PR #92 and evidence PR #93 are merged; current `origin/main` is `6413d8aed295c18af098ca6a58c6dfbb7503930b`, all five app roots are 5.1.24, and installed PHDK v2.50.10 coherence is 52/52. Owner-approved private CRM destinations are allowed only after URL validation and tenant-scoped origin allowlisting.
 
-The four fronts remain active. Persisted CRUD/migration runtime, native Electron/device/audio, broad remaining route accessibility/localization and deployed SEO/AEO evidence remain open. Client CRM/call platforms are tenant-selected; there is no universal vendor requirement. Current lifecycle and exact stage status: `PHDK_LIFECYCLE_STATUS.md`; run archive: `docs/phdk/lifecycle/20261013-1900-phdk-auto/`.
+Fresh API and Cloud builds and regressions pass (API 19/19; Cloud 10/10). Cloud lint remediation remains local: full typed ESLint is down to 333 errors/59 warnings. Both Cloud runtime gateways resolve DB-backed identities and enforce per-user/team session ownership before processing or fanout; agent commands emit only to their session room. Auto-seed imports validate JSON and force new users to role `user`. Flow reads and vector searches fail closed without a team, malformed vector results are discarded, and voice websocket events stay scoped to DB-derived actors, teams and private session rooms. Thirty-five focused Cloud tests pass across eleven suites, including safe SubAgentService conditions; the API mirror passes the same SubAgentService suite 3/3. Focused RBAC, authorization, seed, vector-store, flow, persistence, voice, escalation and RAG tests pass across eleven suites; RBAC, gateways, session/seed, vector-store, flow, persistence, subagent, team-controller, RAG, voice and escalation files pass focused ESLint. The Cloud configured build, regression suite, source Prettier and PHDK coherence pass. Full lint and native/full acceptance still block the completion gate. Persisted CRUD/migration, native Electron/device/audio, broad route accessibility/localization, deployed SEO/AEO and the public market/language decision remain open; CRM/call acceptance is client-specific. Production `KELEDON_VENDOR_KEY` was confirmed configured by the owner.
 
-SIGUIENTE PASO: continue the model-by-model CRUD and active-route audit; persistent CRUD/migration, native/device/audio, broad accessibility/localization, and deployed SEO/AEO still require their acceptance evidence. Overall remains PARTIALLY DELIVERED.
+Cloud detailed health was also corrected: it previously reported PostgreSQL healthy without querying it and exposed rejected-check reasons. It now performs a minimal query and returns generic errors; isolated unit tests pass 2/2.
+
+Security review found API/Cloud persist vendor passwords and API keys as plaintext; only the paired-client transfer is encrypted, with a known fallback when `KELEDON_VENDOR_KEY` is absent. Production key provisioning and a backward-compatible at-rest migration are open pending owner confirmation.
+
+Current lifecycle/evidence: `PHDK_LIFECYCLE_STATUS.md`, `PHDK_COMPLETION_AUDIT.md`, and `PHDK_DELIVERY_EVIDENCE.json`.
+
+SIGUIENTE PASO: continue Cloud lint remediation by source group, then rerun Check and the full gate. Overall remains PARTIALLY DELIVERED; changes remain local and unpublished.
 
 ## Active Auto continuation — 5.1.16 source slice merged
 
@@ -60,3 +66,6 @@ Release limitations: `docs/phdk/workstreams/PHDK-CONFORMITY-REVIEW.md`; the migr
 
 
 Delivery update 2026-10-13: PR #54 is merged at `a854ca7634307538305cd9b5ad1f91f8a066b1a1`, version 5.1.7. Mechanical completion evidence is refreshed; overall goal remains PARTIALLY DELIVERED pending T-009 acceptance.
+# Active task — run `20261014-0007-phdk-auto-completion`
+
+Continue owner-authorized PHDK Auto in `C:\KELEDON\keledon`, baseline 5.1.24 / `6413d8aed295c18af098ca6a58c6dfbb7503930b`, branch `fix/cloud-eslint-prettier`. Deliver four ordered fronts: baseline/versions/PRs; widget and safe diagnostics; voice→Cloud→Browser→customer-selected CRM; administration/permissions. Enforce ADR-AUTO-008/009 (DB-derived actor/tenant, least privilege, write-only secret replacement, validated tenant-scoped private/local CRM allowlists). Do not claim completion until full applicable Check remediation, current candidate UAT, normal PR delivery/readback and the PHDK completion gate are satisfied. Track unsupported native, persisted-DB and deployed SEO/AEO requirements as explicit blockers. No production data, live provider calls or deployments.

@@ -1,5 +1,19 @@
 # STATUS
 
+## 2026-10-14 — PHDK Auto 5.1.24 recheck; overall partial
+
+- PR #92 source and PR #93 evidence are merged; `origin/main` reads `6413d8aed295c18af098ca6a58c6dfbb7503930b` and all five app roots are 5.1.24. PHDK v2.50.10 coherence passes 52/52.
+- Installed declared API dependencies and generated the local Prisma clients. API/Cloud builds pass; full API/Cloud regression suites pass 19/19 and 10/10. These checks used isolated fixtures; no live database or client CRM was contacted.
+- Cloud ESLint now completes after a local-only Prettier 3.9.9 dependency/lock fix. Full source reports 333 errors/59 warnings, down from 1,345/106. Both runtime gateways resolve DB-backed identity and enforce session ownership before processing and fanout; agent commands are room-scoped. Both JSON seed paths now reject elevated imported roles and validate record shapes. Voice websocket actors resolve from paired-device or local-user DB records; event output is scoped to private session and tenant dashboard rooms. Thirty-five focused Cloud tests pass across eleven suites, including RBAC analysis, team-scoped flows and vector-store cases; touched RBAC, gateway, session/seed, vector-store, flow, persistence, subagent, team-controller, RAG and voice services and their specs pass ESLint. No lint rules were suppressed; dependency/source changes are local and unpublished.
+- This continuation passes Cloud build, regression 10/10, focused gateway Jest 3/3, focused gateway ESLint, full-source Prettier, `git diff --check` and PHDK coherence 52/52. The latest full lint count is still blocking.
+- Detailed Cloud health now checks PostgreSQL with a minimal Prisma query; failures and rejected aggregate checks return generic messages. The focused isolated health tests pass 2/2; this corrects a previous unconditional database-health PASS.
+- Vendor credentials now use AES-256-GCM at rest and a separate pairing envelope; normal CRUD responses mask usernames and omit secrets. Owner confirmed `KELEDON_VENDOR_KEY` is configured in production. API/Cloud focused tests pass 4/4 and 3/3, and Cloud regression includes encrypted writes plus safe projections. The dry-run-first migration script syntax-checks but has not run against any database; persisted acceptance stays open.
+- API/Cloud/Browser builds pass after the local crypto changes. Browser regression suite passes 33/33, including authenticated pairing and historical CBC compatibility. Full Cloud lint remains BLOCKED at 333 errors/59 warnings; no suppression was added.
+- Current exact-SHA synthetic UAT remains 1/1 at product source `c3c4c362a36db2bec142cbc8b06747961b67df26`. Full UAT/Check stays partial for persisted CRUD/migration, native Electron/device/audio, broad route UX/accessibility, deployed SEO/AEO and public market/language acceptance. Client CRM/call UAT is per configured tenant.
+- Overall: **PARTIALLY DELIVERED**. Machine completion gate remains BLOCKED for `lint` and `uat`.
+
+SIGUIENTE PASO: continue reducing the Cloud typed-lint baseline in bounded source groups, rerun the full gate, then continue the role/resource/surface CRUD matrix and remaining acceptance.
+
 ## 2026-10-13 — PHDK Auto continuation, 5.1.17 candidate; overall partial
 
 - PR [#78](https://github.com/tuyoisaza/keledon/pull/78) merged at `f8933a61c60655a6448a546790521665c6b81c9f`; fresh `origin/main` readback matches the candidate tree and all five app package/lock roots are 5.1.17. Product source commit `4e874c14cde10fd5b1a0ce521ee097e67823e120` has exact-SHA UAT evidence.

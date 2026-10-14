@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { encryptVendorSecretAtRest } from '../security/vendor-secret-crypto';
 import {
   getVendorAllowedOrigins,
   normalizeVendorAllowedOrigins,
@@ -56,7 +57,7 @@ export class CrudVendorService {
         vendor.baseUrl,
         config.allowedOrigins,
       ),
-      username: vendor.username || null,
+      username: vendor.username ? '***' : null,
       hasPassword:
         vendor.password === undefined ? undefined : !!vendor.password,
       hasApiKey: vendor.apiKey === undefined ? undefined : !!vendor.apiKey,
@@ -90,9 +91,15 @@ export class CrudVendorService {
         name: data.name,
         type: data.type,
         baseUrl,
-        username: data.username,
-        password: data.password,
-        apiKey: data.apiKey,
+        username: data.username
+          ? encryptVendorSecretAtRest(data.username)
+          : data.username,
+        password: data.password
+          ? encryptVendorSecretAtRest(data.password)
+          : data.password,
+        apiKey: data.apiKey
+          ? encryptVendorSecretAtRest(data.apiKey)
+          : data.apiKey,
         config: { ...(data.config || {}), allowedOrigins } as any,
         startGoal: data.startGoal,
       },
@@ -148,6 +155,11 @@ export class CrudVendorService {
     if (updateData.username === '***') delete updateData.username;
     if (updateData.password === '***') delete updateData.password;
     if (updateData.apiKey === '***') delete updateData.apiKey;
+    for (const field of ['username', 'password', 'apiKey'] as const) {
+      if (typeof updateData[field] === 'string' && updateData[field] !== '') {
+        updateData[field] = encryptVendorSecretAtRest(updateData[field]);
+      }
+    }
     const vendor = await this.prisma.vendor.update({
       where: { id },
       data: updateData,

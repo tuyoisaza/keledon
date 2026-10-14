@@ -7,6 +7,16 @@ export interface OpenAICompletionOptions {
   temperature?: number;
 }
 
+function asRecord(value: unknown): Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+function asArray(value: unknown): unknown[] {
+  return Array.isArray(value) ? value : [];
+}
+
 @Injectable()
 export class OpenAIService {
   private readonly apiKey: string;
@@ -14,22 +24,26 @@ export class OpenAIService {
 
   constructor() {
     this.apiKey = process.env.OPENAI_API_KEY || '';
-    
+
     if (!this.apiKey) {
-      console.warn('[OpenAI] No API key configured. Please set OPENAI_API_KEY environment variable.');
+      console.warn(
+        '[OpenAI] No API key configured. Please set OPENAI_API_KEY environment variable.',
+      );
     }
   }
 
   /**
    * Generate text completion
    */
-  async generateCompletion(options: OpenAICompletionOptions): Promise<{ content: string; usage?: any }> {
+  async generateCompletion(
+    options: OpenAICompletionOptions,
+  ): Promise<{ content: string; usage?: unknown }> {
     try {
       const response = await fetch(`${this.baseURL}/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
           model: options.model || 'gpt-4o-mini',
@@ -40,15 +54,21 @@ export class OpenAIService {
       });
 
       if (!response.ok) {
-        throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `OpenAI API error: ${response.status} ${response.statusText}`,
+        );
       }
 
-      const data = await response.json() as any;
+      const data: unknown = await response.json();
+      const payload = asRecord(data);
+      const firstChoice = asRecord(asArray(payload.choices)[0]);
+      const message = asRecord(firstChoice.message);
+      const content =
+        typeof message.content === 'string' ? message.content : '';
       return {
-        content: data.choices?.[0]?.message?.content || '',
-        usage: data.usage
+        content,
+        usage: payload.usage,
       };
-
     } catch (error) {
       console.error('[OpenAI] Error generating completion');
       throw error;
@@ -64,7 +84,7 @@ export class OpenAIService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
           model: 'text-embedding-3-small',
@@ -73,12 +93,24 @@ export class OpenAIService {
       });
 
       if (!response.ok) {
-        throw new Error(`OpenAI embeddings error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `OpenAI embeddings error: ${response.status} ${response.statusText}`,
+        );
       }
 
-      const data = await response.json() as any;
-      return data.data?.[0]?.embedding;
-
+      const data: unknown = await response.json();
+      const payload = asRecord(data);
+      const first = asRecord(asArray(payload.data)[0]);
+      if (
+        !Array.isArray(first.embedding) ||
+        !first.embedding.every(
+          (value): value is number =>
+            typeof value === 'number' && Number.isFinite(value),
+        )
+      ) {
+        throw new Error('OpenAI returned an invalid embedding payload');
+      }
+      return first.embedding;
     } catch (error) {
       console.error('[OpenAI] Error generating embedding');
       throw error;
@@ -90,31 +122,39 @@ export class OpenAIService {
    */
   async generateStructuredResponse(
     prompt: string,
-    schema?: any
-  ): Promise<any> {
+    schema?: unknown,
+  ): Promise<unknown> {
     try {
       const response = await fetch(`${this.baseURL}/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
           model: 'gpt-4o-mini',
           messages: [{ role: 'user', content: prompt }],
-          response_format: schema ? { type: 'json_schema', json_schema: schema } : undefined,
+          response_format: schema
+            ? { type: 'json_schema', json_schema: schema }
+            : undefined,
           max_tokens: 1000,
           temperature: 0.2,
         }),
       });
 
       if (!response.ok) {
-        throw new Error(`OpenAI structured response error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `OpenAI structured response error: ${response.status} ${response.statusText}`,
+        );
       }
 
-      const data = await response.json() as any;
-      return JSON.parse(data.choices?.[0]?.message?.content || '{}');
-
+      const data: unknown = await response.json();
+      const payload = asRecord(data);
+      const firstChoice = asRecord(asArray(payload.choices)[0]);
+      const message = asRecord(firstChoice.message);
+      const content =
+        typeof message.content === 'string' ? message.content : '{}';
+      return JSON.parse(content) as unknown;
     } catch (error) {
       console.error('[OpenAI] Error generating structured response');
       throw error;
@@ -124,23 +164,28 @@ export class OpenAIService {
   /**
    * Get model info and pricing
    */
-  async getModelInfo(): Promise<{ models: string[]; pricing?: any }> {
+  async getModelInfo(): Promise<{ models: string[] }> {
     try {
       const response = await fetch(`${this.baseURL}/models`, {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apiKey}`,
         },
       });
 
       if (!response.ok) {
-        throw new Error(`OpenAI models error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `OpenAI models error: ${response.status} ${response.statusText}`,
+        );
       }
 
-      const data = await response.json() as any;
+      const data: unknown = await response.json();
+      const payload = asRecord(data);
+      const models = asArray(payload.data)
+        .map((item) => asRecord(item).id)
+        .filter((id): id is string => typeof id === 'string');
       return {
-        models: data.data?.map((model: any) => model.id) || [],
+        models,
       };
-
     } catch (error) {
       console.error('[OpenAI] Error getting model info');
       throw error;

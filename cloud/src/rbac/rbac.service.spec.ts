@@ -26,6 +26,20 @@ describe('RBACRecommendationService', () => {
     expect(analysis.riskAssessment).toBeDefined();
   });
 
+  it('detects the existing RBAC service, analysis controller, and role guard', async () => {
+    const analysis = await service.performFullAnalysis();
+    expect(analysis.maturityScore).toBe(85);
+    expect(analysis.riskAssessment.overallRisk).toBe('low');
+    expect(analysis.gaps.every((gap) => gap.severity !== 'critical')).toBe(
+      true,
+    );
+    expect(
+      analysis.recommendations.find(
+        (item) => item.id === 'implement-rbac-service',
+      )?.priority,
+    ).toBe('medium');
+  });
+
   it('should get dashboard data', async () => {
     const dashboard = await service.getDashboardData();
     expect(dashboard).toBeDefined();

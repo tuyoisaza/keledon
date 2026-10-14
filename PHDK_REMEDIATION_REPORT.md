@@ -1,5 +1,11 @@
 # PHDK remediation report — active candidate
 
+## Active continuation — 2026-10-14, candidate 5.1.25
+
+Applied the owner-approved boundaries across API/Cloud/Browser: new users stay `user`; role and tenant authority are DB-derived; sensitive vendor credentials are write-only in ordinary responses and encrypted at rest; client-private CRM destinations require validated, tenant-specific allowlists; Cloud does not proxy-fetch private CRM URLs. Removed synthetic provider “connected/synced” claims when no customer adapter exists and authenticated the legacy global dashboard stream using a DB-validated superadmin session. Added dashboard denial tests for missing tokens and tenant admins.
+
+Latest evidence: all five roots and Browser renderer at 5.1.25; PHDK v2.50.10 coherence 52/52; API lint 0 errors/138 warnings; Cloud lint 0 errors/25 warnings; Cloud configured build and full `tsc --noEmit` PASS; Cloud regression 11/11 suites; API Jest 10/10 suites, 31 tests; Browser offline suite 27/27; focused dashboard gateway Jest 2/2; Web diagnostics 19/19 and SEO 1/1; Web built-SPA local UAT 1/1 at source commit `afd66702ba7fc216e27c0c845ceaedb1eeb40944`; Web and Browser builds PASS. The source/test line inventory covers 1,135 live files with zero at or above 600 lines. Whole-product acceptance stays partial for persisted DB/migration, native device/audio, the broad CRUD/accessibility matrix, deployed SEO/AEO and audited test-profile disposition. Source commits `e7de35752dbb2ed3e9bd3d33fb59cb649cf3c157` and `afd66702ba7fc216e27c0c845ceaedb1eeb40944` are pushed in open PR #94; GitHub reports no hosted checks or review decision.
+
 ## Current remediation — v5.1.11
 
 Closed the diagnostics source gaps: measured/allowlisted LLM, STT and TTS results plus feature flags, request limits, retry and kill-switch status; current-DB-superadmin protection for global usage; Web/Landing reports aligned. Retests: API regression 14/14 and targeted Jest 9/9, Cloud 8/8, Web 16/16 and local UAT 1/1, Browser 29/29, builds/typechecks, PHDK coherence 52/52.

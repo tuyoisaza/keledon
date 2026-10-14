@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrudKeledonService } from './crud-keledon.service';
-import { generatePairingCodeString } from './crud-keledon.service';
 import { CrudAuditService } from './crud-audit.service';
 import { CrudSeedService } from './crud-seed.service';
 import { CrudVendorService } from './crud-vendor.service';
@@ -24,7 +24,7 @@ export class CrudService {
 
   // ========== HEALTH ==========
 
-  async getHealth() {
+  getHealth() {
     return this.healthService.getHealth();
   }
 
@@ -527,7 +527,7 @@ export class CrudService {
     password?: string;
     apiKey?: string;
     allowedOrigins?: string[];
-    config?: Record<string, unknown>;
+    config?: Prisma.InputJsonObject;
   }) {
     return this.vendorService.createVendor(data);
   }
@@ -543,7 +543,7 @@ export class CrudService {
       password?: string;
       apiKey?: string;
       allowedOrigins?: string[];
-      config?: Record<string, unknown>;
+      config?: Prisma.InputJsonObject;
     },
   ) {
     return this.vendorService.updateVendor(id, data);

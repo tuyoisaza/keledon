@@ -10,6 +10,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { FlowService } from './flow.service';
+import type {
+  FlowCreateInput,
+  FlowStepInput,
+  FlowStepUpdateInput,
+  FlowUpdateInput,
+} from './flow.service';
 import { ResourceScopeGuard } from '../guards/resource-scope.guard';
 
 @Controller('api/flows')
@@ -18,7 +24,7 @@ export class FlowController {
   constructor(private readonly flowService: FlowService) {}
 
   @Post()
-  async create(@Body() data: any) {
+  async create(@Body() data: FlowCreateInput) {
     return this.flowService.create(data);
   }
 
@@ -48,7 +54,7 @@ export class FlowController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() data: any) {
+  async update(@Param('id') id: string, @Body() data: FlowUpdateInput) {
     return this.flowService.update(id, data);
   }
 
@@ -64,12 +70,15 @@ export class FlowController {
   }
 
   @Post(':id/steps')
-  async createStep(@Param('id') id: string, @Body() data: any) {
+  async createStep(@Param('id') id: string, @Body() data: FlowStepInput) {
     return this.flowService.createStep(id, data);
   }
 
   @Put('steps/:stepId')
-  async updateStep(@Param('stepId') stepId: string, @Body() data: any) {
+  async updateStep(
+    @Param('stepId') stepId: string,
+    @Body() data: FlowStepUpdateInput,
+  ) {
     return this.flowService.updateStep(stepId, data);
   }
 

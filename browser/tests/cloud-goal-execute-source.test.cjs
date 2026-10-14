@@ -15,7 +15,7 @@ assert.match(cloudSource, /bridge\.executeGoal\(enrichedGoalData\)/);
 
 // Regression: the direct cloud path also skipped the renderer IPC BrowserView guard.
 assert.match(cloudSource, /ensureActiveGoalTab/);
-assert.match(helperSource, /tabManager\.createTab\('Goal Execution', 'about:blank'\)/);
+assert.match(helperSource, /tabManager\.createTab\(["']Goal Execution["'], ["']about:blank["']\)/);
 assert.match(helperSource, /bridge\.setTabs\(tabManager\.getInternalTabs\(\), tabManager\.getActiveTabId\(\)\)/);
 
 // Diagnostic regression: activity log must show enough result detail to know if the

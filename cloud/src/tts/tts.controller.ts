@@ -1,14 +1,13 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Res,
-  HttpStatus,
-  UseGuards,
-} from '@nestjs/common';
-import { Response } from 'express';
+import { Controller, Post, Body, Res, UseGuards } from '@nestjs/common';
 import { TTSService } from './tts.service';
 import { ResourceScopeGuard } from '../guards/resource-scope.guard';
+
+interface TTSResponse {
+  status(code: number): TTSResponse;
+  json(body: { error: string }): unknown;
+  set(headers: Record<string, string | number>): TTSResponse;
+  end(data?: Buffer): void;
+}
 
 @Controller('tts')
 @UseGuards(ResourceScopeGuard)
@@ -16,7 +15,7 @@ export class TTSController {
   constructor(private readonly ttsService: TTSService) {}
 
   @Post('speak')
-  async speak(@Body() body: { text: string }, @Res() res: Response) {
+  async speak(@Body() body: { text: string }, @Res() res: TTSResponse) {
     const result = await this.ttsService.speak(body.text);
 
     if (result.error) {

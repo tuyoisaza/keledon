@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { createHmac, randomInt } from 'node:crypto';
 import { PrismaService } from '../prisma/prisma.service';
 
 export function generatePairingCodeString(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let code = '';
   for (let i = 0; i < 6; i++) {
-    code += chars.charAt(require('crypto').randomInt(chars.length));
+    code += chars.charAt(randomInt(chars.length));
   }
   return code;
 }
@@ -258,6 +259,7 @@ export class CrudKeledonService {
       userId,
     );
     try {
+      this.getLaunchSigningSecret();
       const keledon = await this.prisma.keledon.findUnique({
         where: { id: keledonId },
       });
@@ -388,7 +390,13 @@ export class CrudKeledonService {
       // Generate signed launch link
       const timestamp = Date.now();
       const cloudUrl = process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com';
-      const payload = JSON.stringify([keledonId, userId, String(timestamp), String(device.pairingCode), new URL(cloudUrl).origin]);
+      const payload = JSON.stringify([
+        keledonId,
+        userId,
+        String(timestamp),
+        String(device.pairingCode),
+        new URL(cloudUrl).origin,
+      ]);
       const signature = this.signPayload(payload);
 
       const deepLink = `keledon://launch?keledonId=${keledonId}&code=${device.pairingCode}&userId=${userId}&timestamp=${timestamp}&signature=${signature}&cloudUrl=${encodeURIComponent(cloudUrl)}`;
@@ -411,8 +419,11 @@ export class CrudKeledonService {
         })),
         next_steps: nextSteps,
       };
-    } catch (error) {
-      console.error('[Launch] Failed:', error?.name || 'Error');
+    } catch (error: unknown) {
+      console.error(
+        '[Launch] Failed:',
+        error instanceof Error ? error.name : 'UnknownError',
+      );
       throw error;
     }
   }
@@ -494,22 +505,28 @@ export class CrudKeledonService {
             : [{ goal: 'return to standby', url: null }],
         timestamp: new Date().toISOString(),
       };
-    } catch (error) {
-      return { error: error.message, keledonId };
+    } catch (error: unknown) {
+      return {
+        error:
+          error instanceof Error ? error.message : 'Unable to load context',
+        keledonId,
+      };
     }
   }
 
   private signPayload(payload: string): string {
-    const crypto = require('crypto');
-    const secret =
-      process.env.KELEDON_LAUNCH_SECRET ||
-      process.env.KELDEON_LAUNCH_SECRET ||
-      process.env.KELEDON_AUTH_SECRET ||
-      'keledon-default-secret';
-    return crypto
-      .createHmac('sha256', secret)
+    return createHmac('sha256', this.getLaunchSigningSecret())
       .update(payload)
       .digest('hex')
       .substring(0, 16);
+  }
+
+  private getLaunchSigningSecret(): string {
+    const secret =
+      process.env.KELEDON_LAUNCH_SECRET ||
+      process.env.KELDEON_LAUNCH_SECRET ||
+      process.env.KELEDON_AUTH_SECRET;
+    if (!secret) throw new Error('Launch signing secret is not configured');
+    return secret;
   }
 }

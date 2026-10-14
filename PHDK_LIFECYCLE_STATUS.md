@@ -1,8 +1,32 @@
 # PHDK Auto lifecycle status
 
+## Active run — `20261014-0007-phdk-auto-completion`
+
+Goal: finish PHDK Auto for CMT-001..004, in owner-confirmed order. Base `origin/main`: `6413d8aed295c18af098ca6a58c6dfbb7503930b`, version 5.1.24. Branch: `fix/cloud-eslint-prettier`; source commits through `afd66702ba7fc216e27c0c845ceaedb1eeb40944` are pushed; PR #94 is open. Previous run `20261013-1900-phdk-auto` remains immutable.
+
+| Stage | Status | Current evidence / next action |
+|---|---|---|
+| Preflight | REUSED / VERIFIED | PHDK v2.50.10 canonical SHA verified; coherence 52/52. |
+| Capture | COMPLETED | Current owner decisions captured and snapshotted. |
+| Plan | COMPLETED | Brownfield architecture and PLAN-AUTO-001..008 reconciled; 13 canonical artifacts snapshotted. |
+| PMO / Workstreams | COMPLETED | Four approved workstreams mapped to PLAN-AUTO-001..008; six artifacts snapshotted. |
+| Integration Review | COMPLETED | Coherent 5.1.25 candidate; contracts/builds/regressions recorded, source-size remediation incorporated. |
+| UAT | REBOUND — SCOPED PASS / WHOLE-PRODUCT PARTIAL | Latest built Web SPA UAT passes 1/1 at candidate `afd66702ba7fc216e27c0c845ceaedb1eeb40944` with synthetic Company Co fixtures and external network blocked; live auth/DB, native device/audio, and the test-profile disposition remain open. |
+| UAT Fix | COMPLETED — RESIDUAL BLOCKERS | Source remediation and Cloud source-size findings verified; test-profile disposition and environment-dependent acceptance remain open. |
+| SEO | COMPLETED — SOURCE PASS / MEASUREMENT GAPS | 25 controls classified; Landing noscript fallback source fix and validation. |
+| AEO/GEO | COMPLETED — SOURCE REVIEW / EXTERNAL UNMEASURED | 15 source controls classified; no unsupported claims or schema added. |
+| Check | COMPLETED — RESIDUAL ACCEPTANCE GAPS | PHDK v2.50.10/52; API and Cloud full-source ESLint now report 0 errors (138 and 25 warnings); configured builds and Cloud regressions pass; persisted/native/deployed acceptance remains open. |
+| Remediation | COMPLETED — SOURCE CHECKS PASS, ACCEPTANCE PARTIAL | Approved policy fixes and source-size remediation are covered; Cloud build/typecheck/regressions/lint pass. |
+| Delivery | RUNNING — PR OPEN | PR #94 is mergeable and open; current head `afd66702ba7fc216e27c0c845ceaedb1eeb40944`. GitHub reports no hosted checks or review decision. |
+
+Current stage: Delivery for v5.1.25. All five app package/lock roots and Browser renderer are aligned at 5.1.25. Final built-SPA UAT passes 1/1 with 15 grouped assertions on source commit `afd66702ba7fc216e27c0c845ceaedb1eeb40944`, fingerprint `sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`; Cloud/API builds and full Cloud typecheck pass; API and Cloud lint report zero errors (138/25 warnings); Cloud regressions pass 11/11, API Jest 31/31, Browser 27/27, Web diagnostics 19/19, Web SEO 1/1, PHDK coherence 52/52, and source-size inventory 1,135/0 over limit. PR #94 is open; GitHub reports no review decision or hosted checks. Whole-product acceptance remains partial for real DB/migration, native device/audio, broad route accessibility, deployed SEO/AEO, test-profile disposition, and customer-specific live integration evidence.
+
+Historical stage archive: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/`.
+
+
 ## Current continuation — 2026-10-14
 
-PR #92 merged by squash at `fdd7f6f49bab5b8c4384ca1796321a23b4e71f42`; fresh `origin/main` matches and all five app package/lock roots are 5.1.24. Exact-source Web UAT 1/1 is bound to `c3c4c362a36db2bec142cbc8b06747961b67df26`; Browser security tests 6/6 and build pass. The owner approved validated private/local destinations configured in each tenant's vendor allowlist. Current lifecycle board: Preflight COMPLETED; Capture/Plan/PMO REUSED; source integration and PR delivery COMPLETED; scoped Web UAT COMPLETED; native UAT and full Check PARTIAL/OPEN; SEO/AEO source checks pass only. Full goal remains PARTIALLY DELIVERED: Cloud ESLint is unverified; CHK-002 exhaustive role/resource/surface/operation and persisted CRUD/migration, CHK-003 broad route UX/a11y, CHK-004 DB-backed AI configuration, CHK-005 deployed field data, CHK-006 public market/language decision, and CHK-007 native device/audio UAT remain open. See `PHDK_COMPLETION_AUDIT.md`.
+PR #92 merged by squash at `fdd7f6f49bab5b8c4384ca1796321a23b4e71f42`; PR #93 reconciled delivery records and merged at current `origin/main` `6413d8aed295c18af098ca6a58c6dfbb7503930b`. All five app package/lock roots are 5.1.24. Exact-source Web UAT 1/1 is bound to `c3c4c362a36db2bec142cbc8b06747961b67df26`; the current local Browser build and regression suite pass 33/33. The owner approved validated private/local destinations configured in each tenant's vendor allowlist. Current lifecycle board: Preflight COMPLETED; Capture/Plan/PMO REUSED; Integration Review COMPLETED; scoped Web UAT COMPLETED; whole-product UAT PARTIAL; UAT Fix COMPLETED for verified source findings; SEO/AEO COMPLETED for source checks only; Check PARTIAL; Remediation RUNNING; Delivery BLOCKED by lint and open acceptance. This continuation passes API/Cloud/Browser builds, API/Cloud regressions 19/19 and 10/10, PHDK coherence 52/52 and a 1,129-file line-limit audit. Full goal remains PARTIALLY DELIVERED: latest Cloud ESLint reports 333 errors/59 warnings, down from 1,345/106. Both Cloud runtime gateways bind sockets to DB-derived paired identity and check session ownership; agent commands emit only to the authorized room. Both seed paths validate JSON and force new users to role `user`. Flow database/vector queries are team-scoped, malformed vector results are discarded, and step reorders must exactly match one flow. Thirty-five focused Cloud Jest tests pass across eleven suites; API SubAgentService security tests pass 3/3; touched RBAC, gateways, session/seed, vector store, flow, persistence, subagent, team-controller, RAG and voice modules pass ESLint. Voice actors resolve from DB-backed local or paired-device identities and event fanout stays tenant/session scoped. Changes remain local and unpublished. CHK-002 exhaustive role/resource/surface/operation and persisted CRUD/migration, CHK-003 broad route UX/a11y, CHK-004 DB-backed AI configuration, CHK-005 deployed field data, CHK-006 public market/language decision, and CHK-007 native device/audio UAT remain open. See `PHDK_COMPLETION_AUDIT.md`.
 
 ## Historical continuation — 2026-10-13
 
@@ -10,7 +34,13 @@ Overall result remains **PARTIALLY DELIVERED**. Product PRs #78–#83 and #86–
 
 2026-10-14 continuation: the 5.1.22 candidate now also fixes native Browser widget version drift, report/reset behavior, production debug-console visibility and unnecessary device/log-path disclosure from IPC. Browser 5/5 tests and build, Web widget/diagnostics 17/17, Landing build, API 18/18, Cloud 9/9, configured API/Cloud builds and PHDK coherence 52/52 pass. The full source matrix and persistent CRUD acceptance remain open; native Electron rendering/device/audio, deployed SEO/AEO and the public locale decision remain unverified. Current branch has uncommitted in-scope work and PR #89 still contains the earlier source commit only; delivery is pending.
 
-SIGUIENTE PASO: continue CHK-002 by completing the resource × role × API/web × operation audit and source fixes, then refresh delivery evidence after the source set stabilizes.
+SIGUIENTE PASO: continue Cloud lint remediation and source-level acceptance, then refresh Check and delivery evidence after source acceptance stabilizes.
+
+### Security continuation — vendor credentials
+
+The owner confirmed the production `KELEDON_VENDOR_KEY` is provisioned. API/Cloud CRUD now use AES-256-GCM at rest and mask normal projections; device pairing has a separate versioned envelope, and Browser/server retain CBC read compatibility for already-paired clients. Focused API tests pass 4/4, Cloud tests 3/3, Cloud regression 10/10 and both configured API/Cloud builds pass. The API migration script syntax-checks, defaults to dry-run and requires `--apply` to write; it has not been run against any database. Full Cloud lint and broad UAT remain blocking, so the Auto goal is still PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: reduce the measured Cloud lint debt and complete source-level CRUD/route checks; run the vendor migration only later against an explicitly selected, approved database and record persisted acceptance separately.
 
 ### Active source candidate 5.1.22 — voice and provider privacy
 

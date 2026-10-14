@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Observable, Subject } from 'rxjs';
 
+export interface AILoop {
+  id: string;
+  name: string;
+  status: 'idle' | 'running' | 'paused' | 'completed' | 'failed';
+  startTime?: Date;
+}
+
 /**
  * AI Loop Service (Canon-enforced)
  *
@@ -16,15 +23,18 @@ export class AILoopService {
   private readonly loopUpdates = new Subject<any>();
 
   constructor() {
-    console.log('AILoopService: Initialized (deterministic, real though empty)');
+    console.log(
+      'AILoopService: Initialized (deterministic, real though empty)',
+    );
   }
 
   // Read paths: deterministic empty until backed by real persisted state.
-  getAllLoops(): any[] {
+  getAllLoops(): AILoop[] {
     return [];
   }
 
-  getLoop(_loopId: string): any | undefined {
+  getLoop(loopId: string): AILoop | undefined {
+    void loopId;
     return undefined;
   }
 
@@ -33,23 +43,32 @@ export class AILoopService {
   }
 
   // Mutations: fail-fast (no simulated success).
-  createLoop(_name: string): never {
-    throw new Error('AILoopService.createLoop not implemented (no simulated loops).');
+  createLoop(name: string): never {
+    void name;
+    throw new Error(
+      'AILoopService.createLoop not implemented (no simulated loops).',
+    );
   }
 
-  startLoop(_loopId: string): never {
-    throw new Error('AILoopService.startLoop not implemented (cloud orchestrator required).');
+  startLoop(loopId: string): never {
+    void loopId;
+    throw new Error(
+      'AILoopService.startLoop not implemented (cloud orchestrator required).',
+    );
   }
 
-  resetLoop(_loopId: string): never {
+  resetLoop(loopId: string): never {
+    void loopId;
     throw new Error('AILoopService.resetLoop not implemented.');
   }
 
-  pauseLoop(_loopId: string): never {
+  pauseLoop(loopId: string): never {
+    void loopId;
     throw new Error('AILoopService.pauseLoop not implemented.');
   }
 
-  deleteLoop(_loopId: string): never {
+  deleteLoop(loopId: string): never {
+    void loopId;
     throw new Error('AILoopService.deleteLoop not implemented.');
   }
 }

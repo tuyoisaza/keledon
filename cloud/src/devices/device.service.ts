@@ -1,37 +1,51 @@
 import { Injectable } from '@nestjs/common';
 import { getVendorAllowedOrigins } from '../vendor-url-policy';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
+import { encryptVendorSecretForPairing } from '../security/vendor-secret-crypto';
 import * as crypto from 'crypto';
 
-const ENCRYPTION_KEY =
-  process.env.KELEDON_VENDOR_KEY || 'keledon-vendor-secret-key-32!';
+type PairedDeviceResponse = {
+  device_id: string;
+  auth_token: string;
+  cloud_url: string;
+  organization_id: string | null;
+  keledon_id: string | null;
+  team?: {
+    id: string;
+    name: string;
+    country: string | null;
+    sttProvider: string | null;
+    ttsProvider: string | null;
+    escalationTriggers: Prisma.JsonValue;
+    company: { id: string; name: string } | null;
+  };
+  vendors?: Array<{
+    id: string;
+    name: string;
+    type: string;
+    baseUrl: string;
+    allowedOrigins: string[];
+    username: string | null;
+    password: string | null;
+    apiKey: string | null;
+  }>;
+};
+
+function getPersistedAllowedOrigins(config: Prisma.JsonValue): unknown {
+  if (config && typeof config === 'object' && !Array.isArray(config)) {
+    return config.allowedOrigins;
+  }
+  return undefined;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
 @Injectable()
 export class DeviceService {
   constructor(private prisma: PrismaService) {}
-
-  private encrypt(text: string): string {
-    const iv = crypto.randomBytes(16);
-    const key = crypto.scryptSync(ENCRYPTION_KEY, 'salt', 32);
-    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-    let encrypted = cipher.update(text, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return iv.toString('hex') + ':' + encrypted;
-  }
-
-  private decrypt(encryptedText: string): string {
-    try {
-      const [ivHex, encrypted] = encryptedText.split(':');
-      const iv = Buffer.from(ivHex, 'hex');
-      const key = crypto.scryptSync(ENCRYPTION_KEY, 'salt', 32);
-      const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
-      let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-      decrypted += decipher.final('utf8');
-      return decrypted;
-    } catch {
-      return '';
-    }
-  }
 
   async pairDevice(data: {
     device_id: string;
@@ -77,7 +91,7 @@ export class DeviceService {
       },
     });
 
-    const response: any = {
+    const response: PairedDeviceResponse = {
       device_id: paired.id,
       auth_token: authToken,
       cloud_url: process.env.CLOUD_URL || 'https://keledon.tuyoisaza.com',
@@ -124,11 +138,15 @@ export class DeviceService {
           baseUrl: v.baseUrl,
           allowedOrigins: getVendorAllowedOrigins(
             v.baseUrl,
-            (v.config as any)?.allowedOrigins,
+            getPersistedAllowedOrigins(v.config),
           ),
-          username: v.username ? this.encrypt(v.username) : null,
-          password: v.password ? this.encrypt(v.password) : null,
-          apiKey: v.apiKey ? this.encrypt(v.apiKey) : null,
+          username: v.username
+            ? encryptVendorSecretForPairing(v.username)
+            : null,
+          password: v.password
+            ? encryptVendorSecretForPairing(v.password)
+            : null,
+          apiKey: v.apiKey ? encryptVendorSecretForPairing(v.apiKey) : null,
         }));
       }
     }
@@ -187,7 +205,7 @@ export class DeviceService {
       }
     }
 
-    const device = await this.prisma.device.create({
+    await this.prisma.device.create({
       data: {
         userId: resolvedUserId,
         organizationId,
@@ -286,7 +304,7 @@ export class DeviceService {
       },
     } as Record<
       string,
-      { enabled: boolean; priority: number; options?: Record<string, any> }
+      { enabled: boolean; priority: number; options?: unknown }
     >,
   };
 
@@ -329,7 +347,7 @@ export class DeviceService {
       // Merge: start from browser defaults so unconfigured providers keep sane values
       const providers: Record<
         string,
-        { enabled: boolean; priority: number; options?: Record<string, any> }
+        { enabled: boolean; priority: number; options?: unknown }
       > = {
         ...this.DEFAULT_RPA_CONFIG.providers,
       };
@@ -339,9 +357,12 @@ export class DeviceService {
         const enabled =
           override !== undefined ? override.isEnabled : entry.isEnabled;
 
-        let meta: Record<string, any> = {};
+        let meta: Record<string, unknown> = {};
         try {
-          if (entry.metadata) meta = JSON.parse(entry.metadata);
+          if (entry.metadata) {
+            const parsed: unknown = JSON.parse(entry.metadata);
+            if (isRecord(parsed)) meta = parsed;
+          }
         } catch {
           /* ignore bad JSON */
         }
@@ -352,7 +373,10 @@ export class DeviceService {
             : providers[entry.id]?.options;
         providers[entry.id] = {
           enabled,
-          priority: meta.priority ?? providers[entry.id]?.priority ?? 99,
+          priority:
+            (typeof meta.priority === 'number' ? meta.priority : undefined) ??
+            providers[entry.id]?.priority ??
+            99,
           ...(resolvedOptions !== undefined
             ? { options: resolvedOptions }
             : {}),

@@ -1,34 +1,105 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { randomUUID } from 'crypto';
-import { Subject, Observable, interval } from 'rxjs';
+import { interval, Subject, Subscription } from 'rxjs';
 
-import type { BackupInfo, DatabaseConfig, QueryOptions, StoredEntity } from './database-persistence.types';
+import type {
+  BackupInfo,
+  DatabaseConfig,
+  QueryOptions,
+  StoredEntity,
+} from './database-persistence.types';
 import { applyFilters, getNestedValue } from './database-query.utils';
-export type { BackupInfo, DatabaseConfig, QueryOptions, StoredEntity } from './database-persistence.types';
+import {
+  generateDatabaseId,
+  loadDatabaseConfig,
+} from './database-persistence.config';
+import {
+  DatabasePersistenceFileStore,
+  persistenceStorageKey,
+  safePersistenceSegment,
+} from './database-persistence.file-store';
+export type {
+  BackupInfo,
+  DatabaseConfig,
+  QueryOptions,
+  StoredEntity,
+} from './database-persistence.types';
+
+function compareSortValues(left: unknown, right: unknown): number {
+  if (left === right) return 0;
+  if (left instanceof Date && right instanceof Date) {
+    return left.getTime() - right.getTime();
+  }
+  if (typeof left === 'number' && typeof right === 'number') {
+    return left - right;
+  }
+  if (typeof left === 'string' && typeof right === 'string') {
+    return left.localeCompare(right);
+  }
+  return 0;
+}
 
 @Injectable()
-export class DatabasePersistenceService implements OnModuleInit, OnModuleDestroy {
-  private storage = new Map<string, StoredEntity<any>>();
+export class DatabasePersistenceService
+  implements OnModuleInit, OnModuleDestroy
+{
+  private storage = new Map<string, StoredEntity<unknown>>();
   private config: DatabaseConfig;
+  private fileStore: DatabasePersistenceFileStore;
   private backupSubject = new Subject<BackupInfo>();
-  private backupInterval: any;
-  private cleanupInterval: any;
+  private backupInterval?: Subscription;
+  private cleanupInterval?: Subscription;
 
   public backup$ = this.backupSubject.asObservable();
 
   constructor() {
-    this.config = this.loadConfig();
-    console.log('DatabasePersistenceService: Initialized with config:', this.config);
+    this.config = loadDatabaseConfig();
+    this.fileStore = new DatabasePersistenceFileStore(
+      this.config,
+      this.storage,
+    );
+    console.log(
+      'DatabasePersistenceService: Initialized with config:',
+      this.config,
+    );
   }
 
-  onModuleInit() {
-    this.initializeStorage();
+  async onModuleInit(): Promise<void> {
+    await this.fileStore.initialize();
     this.startBackupScheduler();
     this.startCleanupScheduler();
   }
 
   onModuleDestroy() {
     this.stopSchedulers();
+  }
+
+  private startBackupScheduler(): void {
+    if (this.config.backupEnabled && this.config.backupInterval > 0) {
+      this.backupInterval = interval(
+        this.config.backupInterval * 60 * 1000,
+      ).subscribe(() => {
+        void this.createBackup('incremental').catch(() => {
+          console.error('DatabasePersistence: Scheduled backup failed');
+        });
+      });
+      console.log(
+        `DatabasePersistence: Started backup scheduler (${this.config.backupInterval} minutes)`,
+      );
+    }
+  }
+
+  private startCleanupScheduler(): void {
+    this.cleanupInterval = interval(60 * 60 * 1000).subscribe(() => {
+      void this.cleanup().catch(() => {
+        console.error('DatabasePersistence: Scheduled cleanup failed');
+      });
+    });
+    console.log('DatabasePersistence: Started cleanup scheduler (hourly)');
+  }
+
+  private stopSchedulers(): void {
+    this.backupInterval?.unsubscribe();
+    this.cleanupInterval?.unsubscribe();
   }
 
   // Store an entity
@@ -39,10 +110,10 @@ export class DatabasePersistenceService implements OnModuleInit, OnModuleDestroy
       id?: string;
       expiresAt?: Date;
       tags?: string[];
-    } = {}
+    } = {},
   ): Promise<string> {
-    const id = options.id || this.generateId();
-    const key = `${collection}:${id}`;
+    const id = options.id || generateDatabaseId();
+    const key = persistenceStorageKey(collection, id);
 
     const entity: StoredEntity<T> = {
       id,
@@ -50,27 +121,29 @@ export class DatabasePersistenceService implements OnModuleInit, OnModuleDestroy
       createdAt: new Date(),
       updatedAt: new Date(),
       expiresAt: options.expiresAt,
-      tags: options.tags
+      tags: options.tags,
     };
 
     this.storage.set(key, entity);
-    await this.persistToDisk(key, entity);
+    await this.fileStore.persist(key, entity);
 
-    console.log(`DatabasePersistence: Stored entity ${id} in collection ${collection}`);
+    console.log(
+      `DatabasePersistence: Stored entity ${id} in collection ${collection}`,
+    );
     return id;
   }
 
   // Retrieve an entity
   async retrieve<T>(
     collection: string,
-    id: string
+    id: string,
   ): Promise<StoredEntity<T> | null> {
-    const key = `${collection}:${id}`;
+    const key = persistenceStorageKey(collection, id);
     let entity = this.storage.get(key);
 
     if (!entity) {
       // Try to load from disk
-      entity = await this.loadFromDisk(key);
+      entity = await this.fileStore.load(key);
       if (entity) {
         this.storage.set(key, entity);
       }
@@ -79,18 +152,18 @@ export class DatabasePersistenceService implements OnModuleInit, OnModuleDestroy
     // Check expiration
     if (entity && entity.expiresAt && entity.expiresAt < new Date()) {
       this.storage.delete(key);
-      await this.removeFromDisk(key);
+      await this.fileStore.remove(key);
       return null;
     }
 
-    return entity || null;
+    return entity ? (entity as StoredEntity<T>) : null;
   }
 
   // Update an entity
   async update<T>(
     collection: string,
     id: string,
-    data: Partial<T>
+    data: Partial<T>,
   ): Promise<boolean> {
     const existing = await this.retrieve<T>(collection, id);
     if (!existing) {
@@ -100,41 +173,42 @@ export class DatabasePersistenceService implements OnModuleInit, OnModuleDestroy
     const updated: StoredEntity<T> = {
       ...existing,
       data: { ...existing.data, ...data },
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
-    const key = `${collection}:${id}`;
+    const key = persistenceStorageKey(collection, id);
     this.storage.set(key, updated);
-    await this.persistToDisk(key, updated);
+    await this.fileStore.persist(key, updated);
 
-    console.log(`DatabasePersistence: Updated entity ${id} in collection ${collection}`);
+    console.log(
+      `DatabasePersistence: Updated entity ${id} in collection ${collection}`,
+    );
     return true;
   }
 
   // Delete an entity
-  async delete(
-    collection: string,
-    id: string
-  ): Promise<boolean> {
-    const key = `${collection}:${id}`;
+  async delete(collection: string, id: string): Promise<boolean> {
+    const key = persistenceStorageKey(collection, id);
     const existed = this.storage.has(key);
-    
+
     this.storage.delete(key);
-    await this.removeFromDisk(key);
+    await this.fileStore.remove(key);
 
     if (existed) {
-      console.log(`DatabasePersistence: Deleted entity ${id} from collection ${collection}`);
+      console.log(
+        `DatabasePersistence: Deleted entity ${id} from collection ${collection}`,
+      );
     }
 
     return existed;
   }
 
   // Query entities in a collection
-  async query<T>(
+  query<T>(
     collection: string,
-    options: QueryOptions = {}
+    options: QueryOptions = {},
   ): Promise<StoredEntity<T>[]> {
-    const collectionPrefix = `${collection}:`;
+    const collectionPrefix = `${safePersistenceSegment(collection, 'collection')}:`;
     const entities: StoredEntity<T>[] = [];
 
     for (const [key, entity] of this.storage.entries()) {
@@ -149,13 +223,11 @@ export class DatabasePersistenceService implements OnModuleInit, OnModuleDestroy
     // Sort
     if (options.sortBy) {
       filtered.sort((a, b) => {
-        const aValue = getNestedValue(a, options.sortBy!);
-        const bValue = getNestedValue(b, options.sortBy!);
-        
-        if (options.sortOrder === 'desc') {
-          return bValue > aValue ? 1 : -1;
-        }
-        return aValue > bValue ? 1 : -1;
+        const comparison = compareSortValues(
+          getNestedValue(a, options.sortBy),
+          getNestedValue(b, options.sortBy),
+        );
+        return options.sortOrder === 'desc' ? -comparison : comparison;
       });
     }
 
@@ -167,44 +239,55 @@ export class DatabasePersistenceService implements OnModuleInit, OnModuleDestroy
       filtered = filtered.slice(0, options.limit);
     }
 
-    return filtered;
+    return Promise.resolve(filtered);
   }
 
   // Count entities in collection
   async count(
     collection: string,
-    options: Omit<QueryOptions, 'limit' | 'offset' | 'sortBy' | 'sortOrder'> = {}
+    options: Omit<
+      QueryOptions,
+      'limit' | 'offset' | 'sortBy' | 'sortOrder'
+    > = {},
   ): Promise<number> {
     const entities = await this.query(collection, options);
     return entities.length;
   }
 
   // Create backup
-  async createBackup(type: 'full' | 'incremental' = 'full'): Promise<BackupInfo> {
-    const backupId = this.generateId();
+  async createBackup(
+    type: 'full' | 'incremental' = 'full',
+  ): Promise<BackupInfo> {
+    const backupId = generateDatabaseId();
     const backup: BackupInfo = {
       id: backupId,
       timestamp: new Date(),
       size: 0,
       type,
-      status: 'in_progress'
+      status: 'in_progress',
     };
 
     this.backupSubject.next(backup);
 
     try {
-      const backupData = await this.prepareBackupData(type);
-      const filePath = await this.writeBackupFile(backupId, backupData, type);
-      
+      const backupData = this.fileStore.prepareBackupData(type);
+      const filePath = await this.fileStore.writeBackup(
+        backupId,
+        backupData,
+        type,
+      );
+
       backup.status = 'completed';
       backup.size = backupData.length;
       backup.filePath = filePath;
-      
-      console.log(`DatabasePersistence: Created ${type} backup ${backupId} (${backup.size} bytes)`);
+
+      console.log(
+        `DatabasePersistence: Created ${type} backup ${backupId} (${backup.size} bytes)`,
+      );
     } catch (error) {
       backup.status = 'failed';
-      backup.error = error.message;
-      console.error(`DatabasePersistence: Backup ${backupId} failed:`, error);
+      backup.error = error instanceof Error ? error.message : 'Backup failed';
+      console.error(`DatabasePersistence: Backup ${backupId} failed`);
     }
 
     this.backupSubject.next(backup);
@@ -214,24 +297,26 @@ export class DatabasePersistenceService implements OnModuleInit, OnModuleDestroy
   // Restore from backup
   async restoreFromBackup(backupId: string): Promise<boolean> {
     try {
-      const backupData = await this.readBackupFile(backupId);
-      const restored = await this.parseBackupData(backupData);
-      
+      const backupData = await this.fileStore.readBackup(backupId);
+      const restored = this.fileStore.parseBackup(backupData);
+
       if (restored) {
         this.storage.clear();
-        this.storage = new Map(restored);
+        for (const [key, entity] of restored) this.storage.set(key, entity);
         console.log(`DatabasePersistence: Restored from backup ${backupId}`);
         return true;
       }
-    } catch (error) {
-      console.error(`DatabasePersistence: Restore from backup ${backupId} failed:`, error);
+    } catch {
+      console.error(
+        `DatabasePersistence: Restore from backup ${backupId} failed`,
+      );
     }
     return false;
   }
 
   // Get backup history
-  async getBackupHistory(): Promise<BackupInfo[]> {
-    return await this.listBackupFiles();
+  getBackupHistory(): Promise<BackupInfo[]> {
+    return this.fileStore.listBackups();
   }
 
   // Cleanup expired entities
@@ -242,17 +327,19 @@ export class DatabasePersistenceService implements OnModuleInit, OnModuleDestroy
     for (const [key, entity] of this.storage.entries()) {
       if (entity.expiresAt && entity.expiresAt < now) {
         this.storage.delete(key);
-        await this.removeFromDisk(key);
+        await this.fileStore.remove(key);
         cleanedCount++;
       }
     }
 
     // Also cleanup old backups based on retention policy
-    const backupCleanup = await this.cleanupOldBackups();
+    const backupCleanup = await this.fileStore.cleanupOldBackups();
     cleanedCount += backupCleanup;
 
     if (cleanedCount > 0) {
-      console.log(`DatabasePersistence: Cleaned up ${cleanedCount} expired entities/backups`);
+      console.log(
+        `DatabasePersistence: Cleaned up ${cleanedCount} expired entities/backups`,
+      );
     }
 
     return cleanedCount;
@@ -275,7 +362,7 @@ export class DatabasePersistenceService implements OnModuleInit, OnModuleDestroy
       if (!collections[collection]) {
         collections[collection] = { count: 0, size: 0 };
       }
-      
+
       collections[collection].count++;
       collections[collection].size += size;
       totalSize += size;
@@ -287,261 +374,7 @@ export class DatabasePersistenceService implements OnModuleInit, OnModuleDestroy
       totalEntities: this.storage.size,
       totalSize,
       collections,
-      backups
+      backups,
     };
-  }
-
-  // Private helper methods
-  private loadConfig(): DatabaseConfig {
-    return {
-      type: process.env.DB_TYPE as any || 'memory',
-      connectionString: process.env.DB_CONNECTION_STRING,
-      backupEnabled: process.env.DB_BACKUP_ENABLED === 'true',
-      backupInterval: parseInt(process.env.DB_BACKUP_INTERVAL || '60'),
-      retentionDays: parseInt(process.env.DB_RETENTION_DAYS || '30')
-    };
-  }
-
-  private initializeStorage(): void {
-    if (this.config.type === 'memory') {
-      console.log('DatabasePersistence: Using in-memory storage');
-    } else {
-      console.log(`DatabasePersistence: Using ${this.config.type} storage`);
-      this.loadFromDiskStorage();
-    }
-  }
-
-  private generateId(): string {
-    return randomUUID();
-  }
-
-  private startBackupScheduler(): void {
-    if (this.config.backupEnabled && this.config.backupInterval > 0) {
-      this.backupInterval = interval(this.config.backupInterval * 60 * 1000).subscribe(async () => {
-        await this.createBackup('incremental');
-      });
-      console.log(`DatabasePersistence: Started backup scheduler (${this.config.backupInterval} minutes)`);
-    }
-  }
-
-  private startCleanupScheduler(): void {
-    // Run cleanup every hour
-    this.cleanupInterval = interval(60 * 60 * 1000).subscribe(async () => {
-      await this.cleanup();
-    });
-    console.log('DatabasePersistence: Started cleanup scheduler (hourly)');
-  }
-
-  private stopSchedulers(): void {
-    if (this.backupInterval) {
-      this.backupInterval.unsubscribe();
-    }
-    if (this.cleanupInterval) {
-      this.cleanupInterval.unsubscribe();
-    }
-  }
-
-  // Disk persistence methods (simplified for demo)
-  private async persistToDisk(key: string, entity: StoredEntity<any>): Promise<void> {
-    if (this.config.type === 'memory') return;
-    
-    try {
-      const fs = require('fs').promises;
-      const path = require('path');
-      const filePath = path.join(process.cwd(), 'data', `${key}.json`);
-      
-      await fs.mkdir(path.dirname(filePath), { recursive: true });
-      await fs.writeFile(filePath, JSON.stringify(entity, null, 2));
-    } catch (error) {
-      console.error('DatabasePersistence: Failed to persist to disk:', error);
-    }
-  }
-
-  private async loadFromDisk(key: string): Promise<StoredEntity<any> | null> {
-    if (this.config.type === 'memory') return null;
-    
-    try {
-      const fs = require('fs').promises;
-      const path = require('path');
-      const filePath = path.join(process.cwd(), 'data', `${key}.json`);
-      
-      const data = await fs.readFile(filePath, 'utf8');
-      return JSON.parse(data);
-    } catch (error) {
-      return null;
-    }
-  }
-
-  private async removeFromDisk(key: string): Promise<void> {
-    if (this.config.type === 'memory') return;
-    
-    try {
-      const fs = require('fs').promises;
-      const path = require('path');
-      const filePath = path.join(process.cwd(), 'data', `${key}.json`);
-      
-      await fs.unlink(filePath);
-    } catch (error) {
-      // Ignore file not found errors
-    }
-  }
-
-  private async loadFromDiskStorage(): Promise<void> {
-    if (this.config.type === 'memory') return;
-    
-    try {
-      const fs = require('fs').promises;
-      const path = require('path');
-      const dataDir = path.join(process.cwd(), 'data');
-      
-      const files = await fs.readdir(dataDir);
-      const jsonFiles = files.filter(file => file.endsWith('.json') && !file.includes('backup_'));
-      
-      for (const file of jsonFiles) {
-        const filePath = path.join(dataDir, file);
-        const data = await fs.readFile(filePath, 'utf8');
-        const entity = JSON.parse(data);
-        const key = file.replace('.json', '');
-        this.storage.set(key, entity);
-      }
-      
-      console.log(`DatabasePersistence: Loaded ${jsonFiles.length} entities from disk`);
-    } catch (error) {
-      console.error('DatabasePersistence: Failed to load from disk:', error);
-    }
-  }
-
-  private async prepareBackupData(type: 'full' | 'incremental'): Promise<string> {
-    const data: any = {
-      timestamp: new Date().toISOString(),
-      type,
-      entities: {}
-    };
-
-    if (type === 'full') {
-      for (const [key, entity] of this.storage.entries()) {
-        const collection = key.split(':')[0];
-        if (!data.entities[collection]) {
-          data.entities[collection] = [];
-        }
-        data.entities[collection].push(entity);
-      }
-    } else {
-      // Incremental backup - only entities changed in last hour
-      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-      for (const [key, entity] of this.storage.entries()) {
-        if (entity.updatedAt >= oneHourAgo) {
-          const collection = key.split(':')[0];
-          if (!data.entities[collection]) {
-            data.entities[collection] = [];
-          }
-          data.entities[collection].push(entity);
-        }
-      }
-    }
-
-    return JSON.stringify(data, null, 2);
-  }
-
-  private async writeBackupFile(backupId: string, data: string, type: 'full' | 'incremental'): Promise<string> {
-    const fs = require('fs').promises;
-    const path = require('path');
-    const backupDir = path.join(process.cwd(), 'backups');
-    
-    await fs.mkdir(backupDir, { recursive: true });
-    
-    const fileName = `backup_${type}_${backupId}_${Date.now()}.json`;
-    const filePath = path.join(backupDir, fileName);
-    
-    await fs.writeFile(filePath, data, 'utf8');
-    return filePath;
-  }
-
-  private async readBackupFile(backupId: string): Promise<string> {
-    const fs = require('fs').promises;
-    const path = require('path');
-    const backupDir = path.join(process.cwd(), 'backups');
-    
-    const files = await fs.readdir(backupDir);
-    const backupFile = files.find(file => file.includes(backupId));
-    
-    if (!backupFile) {
-      throw new Error(`Backup file not found: ${backupId}`);
-    }
-    
-    const filePath = path.join(backupDir, backupFile);
-    return await fs.readFile(filePath, 'utf8');
-  }
-
-  private async parseBackupData(data: string): Promise<Array<[string, StoredEntity<any>]> | null> {
-    try {
-      const backup = JSON.parse(data);
-      const entities: Array<[string, StoredEntity<any>]> = [];
-      
-      for (const [collection, collectionEntities] of Object.entries(backup.entities)) {
-        for (const entity of collectionEntities as StoredEntity<any>[]) {
-          entities.push([`${collection}:${entity.id}`, entity]);
-        }
-      }
-      
-      return entities;
-    } catch (error) {
-      console.error('DatabasePersistence: Failed to parse backup data:', error);
-      return null;
-    }
-  }
-
-  private async listBackupFiles(): Promise<BackupInfo[]> {
-    try {
-      const fs = require('fs').promises;
-      const path = require('path');
-      const backupDir = path.join(process.cwd(), 'backups');
-      
-      const files = await fs.readdir(backupDir);
-      const backupFiles = files.filter(file => file.startsWith('backup_') && file.endsWith('.json'));
-      
-      const backups: BackupInfo[] = [];
-      
-      for (const file of backupFiles) {
-        const filePath = path.join(backupDir, file);
-        const stats = await fs.stat(filePath);
-        
-        const parts = file.replace('.json', '').split('_');
-        backups.push({
-          id: parts[2],
-          timestamp: new Date(parseInt(parts[3])),
-          size: stats.size,
-          type: parts[1] as 'full' | 'incremental',
-          status: 'completed',
-          filePath
-        });
-      }
-      
-      return backups.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-    } catch (error) {
-      return [];
-    }
-  }
-
-  private async cleanupOldBackups(): Promise<number> {
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - this.config.retentionDays);
-    
-    const backups = await this.listBackupFiles();
-    const oldBackups = backups.filter(backup => backup.timestamp < cutoffDate);
-    
-    let cleanedCount = 0;
-    
-    for (const backup of oldBackups) {
-      try {
-        const fs = require('fs').promises;
-        await fs.unlink(backup.filePath!);
-        cleanedCount++;
-      } catch (error) {
-        console.error(`DatabasePersistence: Failed to delete old backup ${backup.id}:`, error);
-      }
-    }
-    
-    return cleanedCount;
   }
 }

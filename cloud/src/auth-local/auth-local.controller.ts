@@ -22,6 +22,27 @@ import { ConfigService } from '@nestjs/config';
 import { Public } from '../guards/public.decorator';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+interface AuthRequest {
+  headers?: { cookie?: string };
+}
+
+interface AuthResponseWriter {
+  json(value: unknown): unknown;
+  status(code: number): AuthResponseWriter;
+  cookie(
+    name: string,
+    value: string,
+    options: typeof oauthCookie & { secure: boolean },
+  ): void;
+  clearCookie(
+    name: string,
+    options: Pick<typeof oauthCookie, 'path' | 'httpOnly' | 'sameSite'> & {
+      secure: boolean;
+    },
+  ): void;
+  redirect(url: string): unknown;
+}
+
 interface LoginDto {
   email: string;
   password: string;
@@ -65,23 +86,23 @@ export class LocalAuthController {
 
   @Public()
   @Get('debug')
-  debug(@Res() res: any) {
+  debug(@Res() res: AuthResponseWriter) {
     return res.json({
-      googleClientId: this.configService.get('GOOGLE_CLIENT_ID')
+      googleClientId: this.configService.get<string>('GOOGLE_CLIENT_ID')
         ? 'set'
         : 'not set',
-      googleClientSecret: this.configService.get('GOOGLE_CLIENT_SECRET')
+      googleClientSecret: this.configService.get<string>('GOOGLE_CLIENT_SECRET')
         ? 'set'
         : 'not set',
-      googleRedirectUri: this.configService.get('GOOGLE_REDIRECT_URI'),
-      nodeEnv: this.configService.get('NODE_ENV'),
+      googleRedirectUri: this.configService.get<string>('GOOGLE_REDIRECT_URI'),
+      nodeEnv: this.configService.get<string>('NODE_ENV'),
     });
   }
 
   @Public()
   @Get('google')
-  googleLogin(@Res() res: any) {
-    const clientId = this.configService.get('GOOGLE_CLIENT_ID');
+  googleLogin(@Res() res: AuthResponseWriter) {
+    const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
 
     if (!clientId) {
       return res.status(500).json({ message: 'Google OAuth not configured' });
@@ -104,8 +125,8 @@ export class LocalAuthController {
   async googleCallback(
     @Query('code') code: string,
     @Query('state') state: string,
-    @Req() req: any,
-    @Res() res: any,
+    @Req() req: AuthRequest,
+    @Res() res: AuthResponseWriter,
   ) {
     const nonce = validateOAuthChallenge(req.headers?.cookie, state);
     res.clearCookie(oauthCookie.name, {
@@ -144,8 +165,11 @@ export class LocalAuthController {
       return res.redirect(
         `/login?token=${token}&email=${encodeURIComponent(user.email)}&name=${encodeURIComponent(user.name || '')}`,
       );
-    } catch (error) {
-      console.error('[Auth] Google login failed:', error?.name || 'Error');
+    } catch (error: unknown) {
+      console.error(
+        '[Auth] Google login failed:',
+        error instanceof Error ? error.name : 'Error',
+      );
       return res.status(500).json({ message: 'Google login failed' });
     }
   }
@@ -171,10 +195,10 @@ export class LocalAuthController {
         },
         token: result.token,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : 'Registration failed',
       };
     }
   }
@@ -216,10 +240,10 @@ export class LocalAuthController {
         user: fullUser,
         token: result.token,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : 'Login failed',
       };
     }
   }
@@ -227,7 +251,6 @@ export class LocalAuthController {
   @Get('me')
   @ApiOperation({ summary: 'Get current authenticated user profile' })
   async getCurrentUser(
-    @Req() req: any,
     @Headers('authorization') authHeader: string,
   ): Promise<AuthResponse> {
     try {
@@ -271,10 +294,13 @@ export class LocalAuthController {
         success: true,
         user: fullUser,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         success: false,
-        message: error.message,
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Unable to load user profile',
       };
     }
   }

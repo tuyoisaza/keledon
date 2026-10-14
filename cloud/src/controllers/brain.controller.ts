@@ -11,6 +11,10 @@ import { LLMService } from '../llm/llm.service';
 import type { LLMResponse } from '../llm/llm.types';
 import { PrismaService } from '../prisma/prisma.service';
 
+interface AuthenticatedRequest {
+  user?: { userId?: string };
+}
+
 interface BrainChatMessage {
   role: 'user' | 'assistant';
   content: string;
@@ -36,7 +40,7 @@ export class BrainController {
   ) {}
 
   @Post('chat')
-  async chat(@Body() body: BrainChatRequest, @Req() req: any) {
+  async chat(@Body() body: BrainChatRequest, @Req() req: AuthenticatedRequest) {
     const message = body?.message?.trim();
     if (!message || message.length > 8000) {
       throw new HttpException('Message is required', HttpStatus.BAD_REQUEST);

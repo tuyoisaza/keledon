@@ -6,12 +6,48 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
+type RequestRecord = Record<string, unknown>;
+
+interface ResourceScopeRequest {
+  user?: RequestRecord;
+  body?: unknown;
+  query?: RequestRecord;
+  params?: RequestRecord;
+  method?: string;
+}
+
+function asRecord(value: unknown): RequestRecord {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? (value as RequestRecord)
+    : {};
+}
+
+function stringField(record: RequestRecord, field: string): string | undefined {
+  const value = record[field];
+  return typeof value === 'string' && value.length > 0 ? value : undefined;
+}
+
+function stringArrayField(record: RequestRecord, field: string): string[] {
+  const value = record[field];
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === 'string')
+    : [];
+}
+
+function recordArrayField(
+  record: RequestRecord,
+  field: string,
+): RequestRecord[] {
+  const value = record[field];
+  return Array.isArray(value) ? value.map(asRecord) : [];
+}
+
 /** Deny unscoped entrypoints; intersect every caller filter/record with current DB scope. */
 @Injectable()
 export class ResourceScopeGuard implements CanActivate {
   constructor(private readonly prisma: PrismaService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req = context.switchToHttp().getRequest();
+    const req = context.switchToHttp().getRequest<ResourceScopeRequest>();
     const kind = context.getClass().name;
     const handler = context.getHandler().name;
     if (kind === 'MvpDataController' && handler === 'getCloudConfig')
@@ -19,9 +55,14 @@ export class ResourceScopeGuard implements CanActivate {
     const deny = () => {
       throw new ForbiddenException('Resource access denied');
     };
-    const actor =
-      req.user?.userId &&
-      (await this.prisma.user.findUnique({ where: { id: req.user.userId } }));
+    const requestedActorId = req.user
+      ? stringField(req.user, 'userId')
+      : undefined;
+    const actor = requestedActorId
+      ? await this.prisma.user.findUnique({
+          where: { id: requestedActorId },
+        })
+      : null;
     if (
       !actor ||
       ![
@@ -35,7 +76,7 @@ export class ResourceScopeGuard implements CanActivate {
     )
       return deny();
     req.user = {
-      ...req.user,
+      ...asRecord(req.user),
       userId: actor.id,
       companyId: actor.companyId,
       teamId: actor.teamId,
@@ -44,10 +85,11 @@ export class ResourceScopeGuard implements CanActivate {
     if (actor.role === 'superadmin') return true;
     if (!actor.companyId) return deny();
     const manager = ['admin', 'coordinator'].includes(actor.role);
-    const body = req.body || {};
+    const body = asRecord(req.body);
     const query = { ...req.query };
-    const params = req.params || {};
-    const teamAllowed = async (id: string) => {
+    const params = asRecord(req.params);
+    const teamAllowed = async (id: unknown): Promise<void> => {
+      if (typeof id !== 'string') return deny();
       if (
         !id ||
         !(await this.prisma.team.findFirst({
@@ -61,7 +103,8 @@ export class ResourceScopeGuard implements CanActivate {
       )
         deny();
     };
-    const flowAllowed = async (id: string) => {
+    const flowAllowed = async (id: unknown) => {
+      if (typeof id !== 'string') return deny();
       const flow =
         id &&
         (await this.prisma.flow.findUnique({
@@ -72,7 +115,8 @@ export class ResourceScopeGuard implements CanActivate {
       await teamAllowed(flow.teamId);
       return flow;
     };
-    const sessionAllowed = async (id: string) => {
+    const sessionAllowed = async (id: unknown) => {
+      if (typeof id !== 'string') return deny();
       const session =
         id &&
         (await this.prisma.session.findUnique({
@@ -96,7 +140,9 @@ export class ResourceScopeGuard implements CanActivate {
       await teamAllowed(actor.teamId);
       body.teamId = actor.teamId;
     } else if (kind === 'RAGController') {
-      await sessionAllowed(params.sessionId || body.sessionId);
+      await sessionAllowed(
+        stringField(params, 'sessionId') || stringField(body, 'sessionId'),
+      );
       body.companyId = actor.companyId;
     } else if (kind === 'VectorStoreController') {
       if (handler !== 'search' && !(handler === 'addDocument' && manager))
@@ -111,9 +157,10 @@ export class ResourceScopeGuard implements CanActivate {
         return deny();
       body.company_id = actor.companyId;
       body.team_id = actor.teamId;
-      if (body.brand_id) {
+      const brandId = stringField(body, 'brand_id');
+      if (brandId) {
         const brand = await this.prisma.brand.findFirst({
-          where: { id: body.brand_id, companyId: actor.companyId },
+          where: { id: brandId, companyId: actor.companyId },
           select: { id: true },
         });
         if (!brand) return deny();
@@ -125,8 +172,11 @@ export class ResourceScopeGuard implements CanActivate {
       body.companyId = actor.companyId;
       query.companyId = actor.companyId;
       if (!manager) body.teamId = actor.teamId || '__DENY__';
-      else if (body.teamId) await teamAllowed(body.teamId);
-      const id = params.id || body.knowledgeBaseId;
+      else if (stringField(body, 'teamId')) {
+        await teamAllowed(stringField(body, 'teamId'));
+      }
+      const id =
+        stringField(params, 'id') || stringField(body, 'knowledgeBaseId');
       if (id) {
         const kb = await this.prisma.knowledgeBase.findUnique({
           where: { id },
@@ -136,43 +186,52 @@ export class ResourceScopeGuard implements CanActivate {
       }
     } else if (kind === 'FlowController') {
       if (req.method !== 'GET' && !manager) return deny();
-      if (params.id) await flowAllowed(params.id);
-      if (params.stepId) {
+      const flowIdParam = stringField(params, 'id');
+      const stepIdParam = stringField(params, 'stepId');
+      if (flowIdParam) await flowAllowed(flowIdParam);
+      if (stepIdParam) {
         const step = await this.prisma.flowStep.findUnique({
-          where: { id: params.stepId },
+          where: { id: stepIdParam },
           select: { flowId: true },
         });
         if (!step) return deny();
         await flowAllowed(step.flowId);
-        if (body.flowId !== undefined && body.flowId !== step.flowId)
+        if (
+          body.flowId !== undefined &&
+          stringField(body, 'flowId') !== step.flowId
+        )
           return deny();
-        if (body.nextStepId) {
+        const nextStepId = stringField(body, 'nextStepId');
+        if (nextStepId) {
           const next = await this.prisma.flowStep.findUnique({
-            where: { id: body.nextStepId },
+            where: { id: nextStepId },
             select: { flowId: true },
           });
           if (!next || next.flowId !== step.flowId) return deny();
         }
       }
-      for (const item of body.steps || []) {
-        if (item.nextStepId) {
+      for (const item of recordArrayField(body, 'steps')) {
+        const nextStepId = stringField(item, 'nextStepId');
+        if (nextStepId) {
           const next = await this.prisma.flowStep.findUnique({
-            where: { id: item.nextStepId },
+            where: { id: nextStepId },
             select: { flowId: true },
           });
-          if (!next || next.flowId !== params.id) return deny();
+          if (!next || next.flowId !== flowIdParam) return deny();
         }
       }
-      for (const stepId of body.stepIds || []) {
+      for (const stepId of stringArrayField(body, 'stepIds')) {
         const step = await this.prisma.flowStep.findUnique({
           where: { id: stepId },
           select: { flowId: true },
         });
-        if (!step || step.flowId !== params.id) return deny();
+        if (!step || step.flowId !== flowIdParam) return deny();
       }
-      if (body.teamId) await teamAllowed(body.teamId);
-      if (!params.id && !params.stepId) {
-        const teamId = query.teamId || body.teamId || actor.teamId;
+      const bodyTeamId = stringField(body, 'teamId');
+      if (bodyTeamId) await teamAllowed(bodyTeamId);
+      if (!flowIdParam && !stepIdParam) {
+        const teamId =
+          stringField(query, 'teamId') || bodyTeamId || actor.teamId;
         await teamAllowed(teamId);
         query.teamId = teamId;
         if (req.method === 'POST') {
@@ -182,7 +241,7 @@ export class ResourceScopeGuard implements CanActivate {
       }
       // Never pass Prisma relation writes through the single-step legacy update service.
       if (
-        params.stepId &&
+        stepIdParam &&
         Object.keys(body).some(
           (key) =>
             ![
@@ -202,32 +261,34 @@ export class ResourceScopeGuard implements CanActivate {
       )
         return deny();
     } else if (kind === 'SubAgentController') {
-      let sessionId = params.sessionId || body.sessionId;
-      if (params.runId) {
+      let sessionId =
+        stringField(params, 'sessionId') || stringField(body, 'sessionId');
+      const runId = stringField(params, 'runId');
+      if (runId) {
         const run = await this.prisma.flowRun.findUnique({
-          where: { id: params.runId },
+          where: { id: runId },
           select: { sessionId: true },
         });
         sessionId = run?.sessionId;
       }
       if (!sessionId) return deny(); // aggregate/agent-memory lookups are global, superadmin only
       const session = await sessionAllowed(sessionId);
-      for (const flowId of [
-        ...(body.flowIds || []),
-        ...(body.flowId ? [body.flowId] : []),
-      ]) {
+      const flowIds = stringArrayField(body, 'flowIds');
+      const flowId = stringField(body, 'flowId');
+      if (flowId) flowIds.push(flowId);
+      for (const flowId of flowIds) {
         const flow = await flowAllowed(flowId);
         if (flow.teamId !== session.teamId) return deny();
       }
     } else if (kind === 'CallsController') {
-      const session = params.sessionId
-        ? await sessionAllowed(params.sessionId)
-        : null;
+      const sessionId = stringField(params, 'sessionId');
+      const session = sessionId ? await sessionAllowed(sessionId) : null;
       if (handler === 'createCall') {
+        const deviceId = stringField(body, 'deviceId');
         const device =
-          body.deviceId &&
+          deviceId &&
           (await this.prisma.device.findUnique({
-            where: { id: body.deviceId },
+            where: { id: deviceId },
           }));
         if (
           !device ||
@@ -240,16 +301,18 @@ export class ResourceScopeGuard implements CanActivate {
         body.keledonId = device.keledonId;
         await teamAllowed(body.teamId);
       }
-      const teamId = session?.teamId || body.teamId;
-      if (body.activeVendorId) {
+      const teamId = session?.teamId || stringField(body, 'teamId');
+      const activeVendorId = stringField(body, 'activeVendorId');
+      if (activeVendorId) {
         const vendor = await this.prisma.vendor.findUnique({
-          where: { id: body.activeVendorId },
+          where: { id: activeVendorId },
           select: { teamId: true },
         });
         if (!vendor || vendor.teamId !== teamId) return deny();
       }
-      if (body.activeFlowId) {
-        const flow = await flowAllowed(body.activeFlowId);
+      const activeFlowId = stringField(body, 'activeFlowId');
+      if (activeFlowId) {
+        const flow = await flowAllowed(activeFlowId);
         if (flow.teamId !== teamId) return deny();
       }
     } else return deny();

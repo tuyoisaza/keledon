@@ -9,3 +9,9 @@ D-UI-007 dashboard data tables include a programmatic caption and explicit colum
 D-UI-008 display profile dates in the selected locale; keep device list states and launcher copy in shared catalogs, announce loading/errors, and use semantic theme tokens so light/dark modes remain legible. Device pairing remains within its existing role/tenant-controlled Keledon flow.
 D-UI-009 session-detail return navigation uses the app router and remains a keyboard-operable link; the recording/transcript region stays an explicit localized placeholder until that capability is implemented.
 Rejected: page-specific widgets (drift), colliding invisible targets, destructive broad reset.
+# 2026-10-14 continuation owner decisions
+
+D-UI-008: Preserve the four ordered PHDK Auto fronts and focus on source conformity across the repository.
+D-UI-009: Role elevation and company assignment are performed only by an existing superadmin; ordinary account creation yields `user`; admin/coordinator administration stays tenant-local.
+D-UI-010: Secret replacement values are write-only and never included in normal API projections.
+D-UI-011: Private/local CRM destinations are supported only with URL validation and tenant-specific allowlisting; client/provider configuration is per tenant.

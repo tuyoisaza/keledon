@@ -7,6 +7,42 @@ import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 
+interface CrudDirectoryItem {
+  id: string;
+  name?: string;
+  brand_id?: string;
+  created_at?: string;
+}
+
+interface CrudDirectoryData {
+  companies: CrudDirectoryItem[];
+  brands: CrudDirectoryItem[];
+  teams: CrudDirectoryItem[];
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function directoryItems(value: unknown): CrudDirectoryItem[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry) => {
+    if (!isRecord(entry) || typeof entry.id !== 'string') return [];
+    return [
+      {
+        id: entry.id,
+        ...(typeof entry.name === 'string' ? { name: entry.name } : {}),
+        ...(typeof entry.brand_id === 'string'
+          ? { brand_id: entry.brand_id }
+          : {}),
+        ...(typeof entry.created_at === 'string'
+          ? { created_at: entry.created_at }
+          : {}),
+      },
+    ];
+  });
+}
+
 @Injectable()
 export class LocalAuthService {
   private readonly authSecret: string;
@@ -181,9 +217,11 @@ export class LocalAuthService {
         return null;
       }
 
-      const payload = JSON.parse(
+      const parsedPayload: unknown = JSON.parse(
         Buffer.from(base64Payload, 'base64').toString('utf-8'),
       );
+      if (!isRecord(parsedPayload)) return null;
+      const payload = parsedPayload;
 
       // Check token expiry
       if (
@@ -217,15 +255,22 @@ export class LocalAuthService {
   }
 
   // Keep for backward compatibility — used by controller to enrich user data
-  async getCrudData() {
+  async getCrudData(): Promise<CrudDirectoryData> {
     try {
       const fs = await import('fs');
       const dataFile = '/app/data/crud.json';
       if (fs.existsSync(dataFile)) {
-        return JSON.parse(fs.readFileSync(dataFile, 'utf-8'));
+        const value: unknown = JSON.parse(fs.readFileSync(dataFile, 'utf-8'));
+        if (isRecord(value)) {
+          return {
+            companies: directoryItems(value.companies),
+            brands: directoryItems(value.brands),
+            teams: directoryItems(value.teams),
+          };
+        }
       }
-    } catch (e) {
-      console.error('Failed to load CRUD data:', e);
+    } catch {
+      console.error('Failed to load CRUD directory metadata');
     }
     return { companies: [], brands: [], teams: [] };
   }

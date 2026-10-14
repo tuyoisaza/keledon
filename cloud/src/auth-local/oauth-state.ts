@@ -1,6 +1,12 @@
 import * as crypto from 'crypto';
 
 const cookieName = 'keledon_oauth';
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
 export const oauthCookie = {
   name: cookieName,
   path: '/api/auth/google',
@@ -55,8 +61,8 @@ export function validateOAuthChallenge(
     const [payload, signature, extra] = token.split('.');
     if (!payload || !signature || extra || !equal(sign(payload), signature))
       return null;
-    const challenge = JSON.parse(
-      Buffer.from(payload, 'base64url').toString('utf8'),
+    const challenge = asRecord(
+      JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')),
     );
     if (
       !challenge ||

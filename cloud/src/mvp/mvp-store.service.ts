@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { getProviderCatalog } from './provider-catalog';
 import { randomUUID } from 'crypto';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -25,6 +26,108 @@ export type {
   TTSConfigEntry,
   ProviderCatalogEntry,
 } from './mvp-store.types';
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function hasStrings(
+  value: Record<string, unknown>,
+  ...keys: string[]
+): boolean {
+  return keys.every((key) => typeof value[key] === 'string');
+}
+
+function hasValue(value: unknown, options: readonly string[]): boolean {
+  return typeof value === 'string' && options.includes(value);
+}
+
+function readEntries<T>(
+  value: unknown,
+  isEntry: (item: unknown) => item is T,
+): T[] {
+  return Array.isArray(value) ? value.filter(isEntry) : [];
+}
+
+function isManagedInterface(value: unknown): value is ManagedInterface {
+  if (
+    !isRecord(value) ||
+    !hasStrings(
+      value,
+      'id',
+      'name',
+      'baseUrl',
+      'base_url',
+      'createdAt',
+      'updatedAt',
+    )
+  )
+    return false;
+  return (
+    hasValue(value.category, ['talk', 'case']) &&
+    hasValue(value.status, ['connected', 'disconnected', 'error'])
+  );
+}
+
+function isFlowDefinition(value: unknown): value is FlowDefinition {
+  return (
+    isRecord(value) &&
+    hasStrings(value, 'id', 'name', 'createdAt', 'updatedAt') &&
+    Array.isArray(value.intentTags) &&
+    value.intentTags.every((tag) => typeof tag === 'string')
+  );
+}
+
+function isFlowVersion(value: unknown): value is FlowVersion {
+  return (
+    isRecord(value) &&
+    hasStrings(value, 'id', 'flowDefinitionId', 'createdAt', 'updatedAt') &&
+    typeof value.version === 'number' &&
+    hasValue(value.status, ['draft', 'approved', 'deprecated']) &&
+    Array.isArray(value.steps)
+  );
+}
+
+function isTenantFlowPermission(value: unknown): value is TenantFlowPermission {
+  return (
+    isRecord(value) &&
+    hasStrings(
+      value,
+      'id',
+      'companyId',
+      'flowDefinitionId',
+      'createdAt',
+      'updatedAt',
+    ) &&
+    typeof value.isEnabled === 'boolean'
+  );
+}
+
+function isIntentFlowMapping(value: unknown): value is IntentFlowMapping {
+  return (
+    isRecord(value) &&
+    hasStrings(value, 'id', 'companyId', 'intent', 'createdAt', 'updatedAt') &&
+    Array.isArray(value.allowedFlowDefinitionIds) &&
+    value.allowedFlowDefinitionIds.every((id) => typeof id === 'string')
+  );
+}
+
+function isKnowledgeDocument(value: unknown): value is KnowledgeDocument {
+  return (
+    isRecord(value) &&
+    hasStrings(value, 'id', 'title', 'content', 'created_at', 'updated_at') &&
+    hasValue(value.type, ['pdf', 'docx', 'url', 'text']) &&
+    hasValue(value.status, ['indexed', 'indexing', 'error']) &&
+    typeof value.chunk_count === 'number' &&
+    typeof value.size_bytes === 'number'
+  );
+}
+
+function isTTSConfig(value: unknown): value is TTSConfigEntry {
+  return (
+    isRecord(value) && hasStrings(value, 'providerId', 'apiKey', 'updatedAt')
+  );
+}
 
 @Injectable()
 export class MvpStoreService {
@@ -68,144 +171,7 @@ export class MvpStoreService {
   }
 
   getProviderCatalog(localOnly = false): ProviderCatalogEntry[] {
-    const providers: ProviderCatalogEntry[] = [
-      {
-        id: 'vosk',
-        type: 'stt',
-        name: 'VOSK',
-        description: 'Local speech-to-text runtime',
-        status: 'production',
-        is_enabled: true,
-        metadata: {
-          endpoint:
-            process.env.VOSK_SERVER_URL ||
-            'wss://keledon.tuyoisaza.com/listen/ws',
-          requires_api_key: false,
-          auto_start: true,
-        },
-      },
-      {
-        id: 'deepgram',
-        type: 'stt',
-        name: 'Deepgram',
-        description: 'Cloud speech-to-text provider',
-        status: 'production',
-        is_enabled: true,
-        metadata: {
-          requires_api_key: true,
-          required_env: ['DEEPGRAM_API_KEY'],
-        },
-      },
-      {
-        id: 'elevenlabs',
-        type: 'tts',
-        name: 'ElevenLabs',
-        description: 'Cloud text-to-speech provider',
-        status: 'production',
-        is_enabled: true,
-        metadata: {
-          requires_api_key: true,
-          required_env: ['ELEVENLABS_API_KEY'],
-        },
-      },
-      {
-        id: 'webspeech',
-        type: 'tts',
-        name: 'Web Speech API',
-        description: 'Browser-native TTS fallback',
-        status: 'production',
-        is_enabled: true,
-        metadata: {
-          requires_api_key: false,
-        },
-      },
-      {
-        id: 'kokoro',
-        type: 'tts',
-        name: 'Kokoro TTS',
-        description: 'Open-weight TTS on Railway (Spanish/English/JP)',
-        status: 'experimental',
-        is_enabled: true,
-        metadata: {
-          requires_api_key: false,
-          requires_url: true,
-        },
-      },
-      {
-        id: 'speaches-tts',
-        type: 'tts',
-        name: 'Speaches',
-        description:
-          'Self-hosted OpenAI-compatible text-to-speech via /v1/audio/speech',
-        status: 'production',
-        is_enabled: true,
-        metadata: {
-          endpoint:
-            process.env.SPEACHES_API_URL ||
-            'https://speaches-production-c63f.up.railway.app/v1/audio/speech',
-          voices_endpoint:
-            process.env.SPEACHES_API_URL ||
-            'https://speaches-production-c63f.up.railway.app/v1/audio/voices',
-          requires_api_key: false,
-          openai_compatible: true,
-          configured_per_team: true,
-        },
-      },
-      {
-        id: 'native-dom',
-        type: 'rpa',
-        name: 'Native DOM Automation',
-        description: 'Browser API deterministic actions',
-        status: 'production',
-        is_enabled: true,
-        metadata: {
-          requires_api_key: false,
-          auto_start: true,
-        },
-      },
-      {
-        id: 'playwright',
-        type: 'rpa',
-        name: 'Playwright',
-        description: 'Server-side browser automation',
-        status: 'experimental',
-        is_enabled: true,
-        metadata: {
-          requires_api_key: false,
-        },
-      },
-      {
-        id: 'cloud-brain',
-        type: 'cloud',
-        name: 'Cloud Brain',
-        description:
-          'KELEDON Brain API endpoint — URL del servicio cloud que procesa las solicitudes del Brain',
-        status: 'production',
-        is_enabled: true,
-        metadata: {
-          api_url:
-            process.env.CLOUD_API_URL || 'https://keledonapi.tuyoisaza.com',
-          ws_url: process.env.CLOUD_WS_URL || 'wss://keledonapi.tuyoisaza.com',
-          requires_api_key: true,
-          required_env: ['CLOUD_API_URL'],
-        },
-      },
-    ];
-
-    if (!localOnly) {
-      return providers;
-    }
-
-    return providers.filter((provider) => {
-      const metadata = provider.metadata || {};
-      if (!metadata.requires_api_key) return true;
-      const requiredEnv = Array.isArray(metadata.required_env)
-        ? metadata.required_env
-        : [];
-      return requiredEnv.every((envName: string) =>
-        Boolean(process.env[envName]),
-      );
-    });
+    return getProviderCatalog(localOnly);
   }
 
   getRpaProviders() {
@@ -519,25 +485,27 @@ export class MvpStoreService {
 
     try {
       const raw = fs.readFileSync(this.storePath, 'utf8');
-      const parsed = JSON.parse(raw);
+      const parsed: unknown = JSON.parse(raw);
+      if (!isRecord(parsed)) throw new Error('Invalid MVP store structure');
       return {
-        interfaces: Array.isArray(parsed.interfaces) ? parsed.interfaces : [],
-        flowDefinitions: Array.isArray(parsed.flowDefinitions)
-          ? parsed.flowDefinitions
-          : [],
-        flowVersions: Array.isArray(parsed.flowVersions)
-          ? parsed.flowVersions
-          : [],
-        tenantFlowPermissions: Array.isArray(parsed.tenantFlowPermissions)
-          ? parsed.tenantFlowPermissions
-          : [],
-        intentFlowMappings: Array.isArray(parsed.intentFlowMappings)
-          ? parsed.intentFlowMappings
-          : [],
-        knowledgeDocuments: Array.isArray(parsed.knowledgeDocuments)
-          ? parsed.knowledgeDocuments
-          : [],
-        ttsConfig: parsed.ttsConfig || this.defaultTTSConfig(),
+        interfaces: readEntries(parsed.interfaces, isManagedInterface),
+        flowDefinitions: readEntries(parsed.flowDefinitions, isFlowDefinition),
+        flowVersions: readEntries(parsed.flowVersions, isFlowVersion),
+        tenantFlowPermissions: readEntries(
+          parsed.tenantFlowPermissions,
+          isTenantFlowPermission,
+        ),
+        intentFlowMappings: readEntries(
+          parsed.intentFlowMappings,
+          isIntentFlowMapping,
+        ),
+        knowledgeDocuments: readEntries(
+          parsed.knowledgeDocuments,
+          isKnowledgeDocument,
+        ),
+        ttsConfig: isTTSConfig(parsed.ttsConfig)
+          ? parsed.ttsConfig
+          : this.defaultTTSConfig(),
       };
     } catch {
       const initial = this.defaultStore();

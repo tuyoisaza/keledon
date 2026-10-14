@@ -7,8 +7,24 @@ export interface FeatureFlag {
   enabled: boolean;
   scope: 'global' | 'tenant' | 'user';
   scopeId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   expiresAt?: Date;
+}
+
+function parseMetadata(
+  value: string | null,
+): Record<string, unknown> | undefined {
+  if (!value) return undefined;
+  try {
+    const parsed: unknown = JSON.parse(value);
+    return typeof parsed === 'object' &&
+      parsed !== null &&
+      !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 @Injectable()
@@ -17,15 +33,19 @@ export class FeatureFlagService {
 
   constructor(private prisma: PrismaService) {}
 
-  async isEnabled(name: string, scope?: string, scopeId?: string): Promise<boolean> {
+  async isEnabled(
+    name: string,
+    scope?: string,
+    scopeId?: string,
+  ): Promise<boolean> {
     const flag = await this.prisma.featureFlag.findFirst({
       where: {
         name,
         enabled: true,
         OR: [
           { scope: 'global' },
-          scope && scopeId ? { scope, scopeId } : {},
-        ].filter(Boolean) as any,
+          ...(scope && scopeId ? [{ scope, scopeId }] : []),
+        ],
       },
     });
 
@@ -51,7 +71,7 @@ export class FeatureFlagService {
       enabled: f.enabled,
       scope: f.scope as 'global' | 'tenant' | 'user',
       scopeId: f.scopeId || undefined,
-      metadata: f.metadata ? JSON.parse(f.metadata) : undefined,
+      metadata: parseMetadata(f.metadata),
       expiresAt: f.expiresAt || undefined,
     }));
   }
@@ -61,7 +81,7 @@ export class FeatureFlagService {
     enabled?: boolean;
     scope?: 'global' | 'tenant' | 'user';
     scopeId?: string;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
     expiresAt?: Date;
   }): Promise<FeatureFlag> {
     const flag = await this.prisma.featureFlag.create({
@@ -83,7 +103,7 @@ export class FeatureFlagService {
       enabled: flag.enabled,
       scope: flag.scope as 'global' | 'tenant' | 'user',
       scopeId: flag.scopeId || undefined,
-      metadata: flag.metadata ? JSON.parse(flag.metadata) : undefined,
+      metadata: parseMetadata(flag.metadata),
       expiresAt: flag.expiresAt || undefined,
     };
   }
@@ -95,7 +115,9 @@ export class FeatureFlagService {
         ...(data.enabled !== undefined && { enabled: data.enabled }),
         ...(data.scope !== undefined && { scope: data.scope }),
         ...(data.scopeId !== undefined && { scopeId: data.scopeId }),
-        ...(data.metadata !== undefined && { metadata: JSON.stringify(data.metadata) }),
+        ...(data.metadata !== undefined && {
+          metadata: JSON.stringify(data.metadata),
+        }),
         ...(data.expiresAt !== undefined && { expiresAt: data.expiresAt }),
       },
     });
@@ -108,7 +130,7 @@ export class FeatureFlagService {
       enabled: flag.enabled,
       scope: flag.scope as 'global' | 'tenant' | 'user',
       scopeId: flag.scopeId || undefined,
-      metadata: flag.metadata ? JSON.parse(flag.metadata) : undefined,
+      metadata: parseMetadata(flag.metadata),
       expiresAt: flag.expiresAt || undefined,
     };
   }

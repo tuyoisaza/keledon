@@ -27,7 +27,7 @@ export class ListeningSessionController {
     }
 
     try {
-      const session = await this.listeningSessionService.createSession(body);
+      const session = this.listeningSessionService.createSession(body);
       return session;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
