@@ -8,14 +8,5 @@ CREATE TABLE IF NOT EXISTS team_interfaces (
 -- RLS Policies
 ALTER TABLE team_interfaces ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Enable read access for authenticated users" ON team_interfaces
-    FOR SELECT USING (auth.role() = 'authenticated');
-
-CREATE POLICY "Enable all access for superadmins" ON team_interfaces
-    FOR ALL USING (
-        EXISTS (
-            SELECT 1 FROM users
-            WHERE users.id = auth.uid() 
-            AND users.role = 'superadmin'
-        )
-    );
+DROP POLICY IF EXISTS "Enable read access for authenticated users" ON team_interfaces;
+DROP POLICY IF EXISTS "Enable all access for superadmins" ON team_interfaces;

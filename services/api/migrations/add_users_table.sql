@@ -42,17 +42,9 @@ ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 -- Drop old policy if exists
 DROP POLICY IF EXISTS "Allow all for users" ON users;
 
--- Development policy (replace with proper auth for production)
-CREATE POLICY "Allow all for users" ON users FOR ALL USING (true) WITH CHECK (true);
+-- No direct client policy is defined; RLS denies access by default.
 
--- ========================================
--- SEED DATA (Sample Users)
--- ========================================
-INSERT INTO users (email, name, role, is_online) VALUES 
-    ('admin@keledon.ai', 'System Admin', 'superadmin', false),
-    ('john.doe@acme.com', 'John Doe', 'admin', false),
-    ('jane.smith@acme.com', 'Jane Smith', 'user', false)
-ON CONFLICT (email) DO NOTHING;
+-- No sample accounts or elevated roles are provisioned by schema setup.
 
 -- Verification
 SELECT 'Users table created successfully!' as message;

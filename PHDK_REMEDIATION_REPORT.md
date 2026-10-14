@@ -1,8 +1,10 @@
 # PHDK remediation report — active candidate
 
-## Current source remediation — 2026-10-14, candidate 5.1.29
+## Current source remediation — 2026-10-14, candidate 5.1.30
 
-Follow-up review after PR #98 found `GET /api/devices` returned raw `rpaProviderConfig` and `cdpUrl`, even though it removed device tokens and pairing proofs. Normal list responses now omit both and return only presence flags; the paired-device-only runtime endpoint still delivers RPA config to the exact DB-derived device identity. UAT-012 covers list redaction and UAT-011 covers paired runtime authorization. API regression 21/21, Jest 11/11/38, API build and focused ESLint (0 errors/1 pre-existing warning), Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass. Candidate delivery is pending; Auto remains PARTIALLY DELIVERED for the broader CRUD and environment-dependent acceptance.
+Follow-up CMT-004 review removed permissive Supabase policies, sample superadmin/customer rows, and an email-based Auth elevation path. Legacy RBAC/customer/session/CRM seed scripts now fail closed; Auth sync preserves current role/tenant on conflict and assigns new users only `user`. The hardcoded-password admin fixture is replaced with an exact-target-pinned, opt-in `@example.test` user-only tool, while global provider-catalog seeding requires an exact nonproduction target. The API/Cloud RLS migration is idempotent and skips extension-owned public tables. UAT-013–017 and API/Cloud mirror checks pass; API/Cloud regressions are 22/22 and 11/11 with builds passing. No provisioning, seed, trigger or migration was executed. Full CRUD and persisted DB evidence remain open.
+
+Follow-up review after PR #98 found `GET /api/devices` returned raw `rpaProviderConfig` and `cdpUrl`, even though it removed device tokens and pairing proofs. PR #99 merged the fix at remote `main` `886669c7f5d3e20aec978efc3dc9a758d4a09148`; normal list responses omit both fields and return presence flags, while the paired-device-only runtime endpoint still delivers RPA config to the exact DB-derived device identity. UAT-012 covers list redaction and UAT-011 covers paired runtime authorization. API regression 21/21, Jest 11/11/38, API build, Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass. Current full lint reports API 0 errors/135 warnings and Cloud 0 errors/25 warnings. Auto remains PARTIALLY DELIVERED for the broader CRUD and environment-dependent acceptance.
 
 ## Current source remediation — 2026-10-14, candidate 5.1.28
 

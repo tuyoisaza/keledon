@@ -4,9 +4,16 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+const allowedSupabaseUrl = process.env.KELEDON_SEED_ALLOWED_SUPABASE_URL;
 
-if (!supabaseUrl || !supabaseKey) {
-    console.error('Error: Missing SUPABASE_URL or SUPABASE_SERVICE_KEY in .env');
+if (process.env.NODE_ENV === 'production') {
+    throw new Error('Provider catalog fixture seeding is disabled in production.');
+}
+if (process.env.KELEDON_ALLOW_PROVIDER_CATALOG_SEED !== 'true') {
+    throw new Error('Set KELEDON_ALLOW_PROVIDER_CATALOG_SEED=true to opt in to catalog seeding.');
+}
+if (!supabaseUrl || supabaseUrl !== allowedSupabaseUrl || !supabaseKey) {
+    console.error('SUPABASE_URL must exactly match KELEDON_SEED_ALLOWED_SUPABASE_URL and a service key must be configured.');
     process.exit(1);
 }
 
