@@ -1,4 +1,22 @@
-# PMO status history — 5.1.36; superseded by the 5.1.37 candidate entry below
+# PMO status history — prior candidates 5.1.36–5.1.37
+
+## Current status — candidate 5.1.38, source and evidence merged (2026-10-14)
+
+Product PR [#113](https://github.com/tuyoisaza/keledon/pull/113) delivered Cloud escalation actor/tenant parity at `45b9031b9d3261a98e928cceb6fb51e73e21421f`. Evidence PR [#114](https://github.com/tuyoisaza/keledon/pull/114) merged at `3222021e4e800ca1079d9752b18849f62165dd73`, independently confirmed by `origin/main` and `git ls-remote`. Five package/lock roots and Browser renderer are 5.1.38; API 35/35 and Cloud 15/15 regressions, all scoped builds/typechecks, Web diagnostics 19/19, exact-main synthetic UAT 2/2, Web/Landing SEO 1/1 each, PHDK coherence 52/52, and 1,163-file/zero-over-600 inventory pass. GitHub has no hosted status checks or review decision configured. Four commitments remain active; whole Auto remains **PARTIALLY DELIVERED** for persisted DB/migration/identities, live Qdrant/concurrency, native device/audio, full model-operation matrix, broad accessibility/localization, deployed SEO/AEO and client-configured live calls/CRM.
+
+| WS | Candidate state | Evidence / next gate |
+|---|---|---|
+| WS-001 / CMT-001 | 5.1.38 SOURCE + EVIDENCE MERGED | PRs #113/#114 merged and remote main verified; no deployment claimed. |
+| WS-002 / CMT-002 | SOURCE PASS; ACCEPTANCE PARTIAL | Widget/diagnostics 19/19 and UAT 2/2; native media and broad screen-reader/route acceptance remain open. |
+| WS-003 / CMT-003 | PROVIDER-INDEPENDENT CONTRACT RETAINED | Private origins are validated and tenant-allowlisted; client-specific live calls/CRM require each tenant's provider setup. |
+| WS-004 / CMT-004 | ACTOR/TENANT PARITY PASS; PERSISTED ACCEPTANCE OPEN | API/Cloud escalation actor and team filters tested; DB persistence and complete model-family operation matrix remain open. |
+| WS-X / PHDK | SOURCE CHECKS PASS; EXTERNAL GATES OPEN | PHDK coherence 52/52; DB/native/deployed observations remain unmeasured. |
+
+Overall: **PARTIALLY DELIVERED**. No database, provider, customer data, private CRM endpoint or deployment was used.
+
+---
+
+## Prior status — candidate 5.1.37 (2026-10-14)
 
 ## Current status — candidate 5.1.37 (2026-10-14)
 
