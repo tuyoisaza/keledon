@@ -2,6 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { Readable } from 'stream';
 
+function toAudioBuffer(chunk: unknown): Buffer {
+  if (typeof chunk === 'string') return Buffer.from(chunk);
+  if (chunk instanceof Uint8Array) return Buffer.from(chunk);
+  throw new TypeError('Unexpected audio stream chunk');
+}
+
 export interface TTSResult {
   audioData?: Buffer;
   duration?: number;
@@ -89,7 +95,7 @@ export class TTSService {
           console.log('[TTS] Interrupted');
           break;
         }
-        chunks.push(Buffer.from(chunk));
+        chunks.push(toAudioBuffer(chunk));
       }
 
       const audioData = Buffer.concat(chunks);

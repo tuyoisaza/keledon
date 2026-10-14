@@ -13,6 +13,7 @@ import {
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CrudService } from '../crud/crud.service';
 import { CrudAccessGuard } from '../guards/crud-access.guard';
+import type { CrudRequestContext } from '../crud/crud-request.types';
 
 @ApiTags('Tenant')
 @Controller('api/tenant')
@@ -30,21 +31,31 @@ export class TenantController {
   @ApiOperation({
     summary: 'Get a tenant voice profile without provider secrets',
   })
-  getTenantVoiceProfile(@Param('id') id: string, @Req() req: any) {
+  getTenantVoiceProfile(
+    @Param('id') id: string,
+    @Req() req: CrudRequestContext,
+  ) {
     const companyId =
-      req.actor.role === 'superadmin' ? undefined : req.actor.companyId;
+      req.actor.role === 'superadmin'
+        ? undefined
+        : (req.actor.companyId ?? undefined);
     return this.crudService.getTenantVoiceProfile(id, companyId);
   }
 
   @Post('voice-profiles')
   @ApiOperation({ summary: 'Create tenant voice profile' })
-  createTenantVoiceProfile(@Body() data: any) {
+  createTenantVoiceProfile(
+    @Body() data: Parameters<CrudService['createTenantVoiceProfile']>[0],
+  ) {
     return this.crudService.createTenantVoiceProfile(data);
   }
 
   @Put('voice-profiles/:id')
   @ApiOperation({ summary: 'Update a tenant voice profile' })
-  updateTenantVoiceProfile(@Param('id') id: string, @Body() data: any) {
+  updateTenantVoiceProfile(
+    @Param('id') id: string,
+    @Body() data: Parameters<CrudService['updateTenantVoiceProfile']>[1],
+  ) {
     return this.crudService.updateTenantVoiceProfile(id, data);
   }
 
