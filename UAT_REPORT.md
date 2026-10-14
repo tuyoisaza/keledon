@@ -1,5 +1,9 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.31 — voice-profile config write rejection (2026-10-14)
+
+UAT-026 passes for both backend source implementations. The guards no longer allow `config` in voice-profile bodies, and each service throws before Prisma create/update if a direct caller supplies the field. Valid create/update calls use the safe six-field projection; regression 41 also confirms the `config` and `providerCatalog` values are absent. Full API/Cloud regressions pass 29/29 and 12/12; builds pass. This is isolated source evidence and does not inspect existing persisted `TenantVoiceProfile.config` values.
+
 ## Candidate 5.1.31 — vendor config credential rejection (2026-10-14)
 
 UAT-025 passes in API and Cloud regression harnesses. Create rejects arbitrary config fields and non-object config; update rejects arbitrary config and, after confirming a legacy current config has an unsupported field, a normal edit is rejected before the Prisma update. The explicit `allowedOrigins` schema still accepts validated private tenant origins. Encrypted password/API-key storage and safe projections remain covered. API/Cloud builds, full regressions (29/29 and 12/12) and changed-source ESLint pass. This is source-level evidence only; no persisted rows were inspected or changed.

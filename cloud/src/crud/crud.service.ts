@@ -405,8 +405,12 @@ export class CrudService {
     language?: string;
     isEnabled?: boolean;
     isDefault?: boolean;
-    config?: string;
   }) {
+    if (Object.prototype.hasOwnProperty.call(data, 'config')) {
+      throw new BadRequestException(
+        'Voice profile config is not supported through CRUD.',
+      );
+    }
     return this.prisma.tenantVoiceProfile.create({
       data,
       select: {
@@ -428,9 +432,13 @@ export class CrudService {
       language?: string;
       isEnabled?: boolean;
       isDefault?: boolean;
-      config?: string;
     },
   ) {
+    if (Object.prototype.hasOwnProperty.call(data, 'config')) {
+      throw new BadRequestException(
+        'Voice profile config is not supported through CRUD.',
+      );
+    }
     return this.prisma.tenantVoiceProfile.update({
       where: { id },
       data,

@@ -6,12 +6,12 @@
 | 10 Capture | COMPLETE / REUSED | Four owner-confirmed fronts and restrictive role/tenant policy remain current. |
 | 20 Plan | COMPLETE / REUSED | Continue in order; preserve environment-bound client/device acceptance. |
 | 30 PMO | IN PROGRESS | Re-auditing the four confirmed fronts; CMT-004 security and CRUD gaps are being closed source-first. |
-| 40 Integration Review | IN PROGRESS | Retired write routes, Cloud/API hash-audit parity, transactional TeamInterface, superadmin Workflow CRUD, typed guard and voice-profile parity, and strict vendor config schema reviewed. |
-| 50 UAT | PARTIAL | API 29/29 and Cloud 12/12 source regressions plus mocked Workflow, safe voice-profile projection and strict vendor config cases pass; persisted DB, real identities, native device/audio, broad route accessibility/localization remain open. |
+| 40 Integration Review | IN PROGRESS | Retired write routes, Cloud/API hash-audit parity, transactional TeamInterface, superadmin Workflow CRUD, typed guard/voice-profile parity, strict vendor config schema and voice-profile config disablement reviewed. |
+| 50 UAT | PARTIAL | API 29/29 and Cloud 12/12 source regressions plus mocked Workflow, safe voice-profile projection and both config boundaries pass; persisted DB, real identities, native device/audio, broad route accessibility/localization remain open. |
 | 60 UAT Fix | OPEN | Remediate repository-local actionable cases. |
 | 65 SEO | OPEN / PRIOR EVIDENCE | Deployed measurements still need approved read-only provider evidence. |
 | 67 AEO/GEO | OPEN / PRIOR EVIDENCE | Deployed discovery evidence remains unavailable. |
-| 70 Check | IN PROGRESS | Regressions 40/41 and vendor UAT-025 prove DB-derived actor scope, minimal user selection, safe voice-profile responses and vendor config schema enforcement; continue other model mappings and coherence. |
+| 70 Check | IN PROGRESS | Regressions 40/41 and UAT-025/026 prove DB-derived actor scope, minimal user selection, safe voice-profile responses and vendor/voice-profile config boundaries; continue other model mappings and coherence. |
 | 80 Remediation | IN PROGRESS | Candidate 5.1.31 is based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; strict vendor config validation is published on PR #102 head `cf5e6b5be4905f122b82a2ff5c4cc2b8a1b2ed5b`. |
 | 90 Delivery | PENDING | Reviewed PR #102 is open; normal security review, merge and completion-gate remote readback are required. |
 

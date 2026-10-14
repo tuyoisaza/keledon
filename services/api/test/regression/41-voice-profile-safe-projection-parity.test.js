@@ -50,8 +50,12 @@ function loadCrudService(backend) {
     require: (name) => {
       if (name === '@prisma/client')
         return { Prisma: new Proxy({}, { get: () => ({}) }) };
-      if (name === '@nestjs/common')
-        return { BadRequestException: class {}, Injectable: () => () => {} };
+      if (name === '@nestjs/common') {
+        return {
+          BadRequestException: class BadRequestException extends Error {},
+          Injectable: () => () => {},
+        };
+      }
       return new Proxy({}, { get: () => class {} });
     },
   });
@@ -69,6 +73,19 @@ function projectedResult(args) {
 
 async function main() {
   for (const backend of ['services/api', 'cloud']) {
+    const guardSource = fs.readFileSync(
+      path.join(root, `${backend}/src/guards/crud-access.guard.ts`),
+      'utf8',
+    );
+    const voiceProfileFields = guardSource.match(
+      /'voice-profiles':\s*\[([^\]]+)\]/,
+    )?.[1];
+    assert.ok(
+      voiceProfileFields,
+      `${backend} must define voice-profile fields`,
+    );
+    assert.doesNotMatch(voiceProfileFields, /\bconfig\b/);
+
     const calls = [];
     const CrudService = loadCrudService(backend);
     const service = Object.create(CrudService.prototype);
@@ -86,15 +103,29 @@ async function main() {
     };
 
     const list = await service.getTenantVoiceProfiles('company-a');
+    const callCount = calls.length;
+    await assert.rejects(
+      service.createTenantVoiceProfile({
+        companyId: 'company-a',
+        providerId: 'provider-a',
+        name: row.name,
+        config: sensitiveConfig,
+      }),
+      /config is not supported/,
+    );
+    await assert.rejects(
+      service.updateTenantVoiceProfile('voice-a', {
+        config: sensitiveConfig,
+      }),
+      /config is not supported/,
+    );
+    assert.equal(calls.length, callCount);
     const created = await service.createTenantVoiceProfile({
       companyId: 'company-a',
       providerId: 'provider-a',
       name: row.name,
-      config: sensitiveConfig,
     });
-    const updated = await service.updateTenantVoiceProfile('voice-a', {
-      config: sensitiveConfig,
-    });
+    const updated = await service.updateTenantVoiceProfile('voice-a', {});
 
     assert.equal(calls.length, 3);
     for (const { args } of calls) {
