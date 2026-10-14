@@ -101,6 +101,14 @@ export class ResourceScopeGuard implements CanActivate {
     } else if (kind === 'VectorStoreController') {
       if (handler !== 'search' && !(handler === 'addDocument' && manager))
         return deny();
+      // addDocument uses Qdrant upsert, so accepting a caller ID would let a
+      // tenant manager overwrite an existing point from another tenant.
+      if (
+        handler === 'addDocument' &&
+        body.id !== undefined &&
+        actor.role !== 'superadmin'
+      )
+        return deny();
       body.company_id = actor.companyId;
       body.team_id = actor.teamId;
       if (body.brand_id) {

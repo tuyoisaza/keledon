@@ -1,3 +1,18 @@
+## v5.1.21 — 2026-10-14 (PHDK Auto tenant-scoped vector writes)
+
+### Changed
+- Reject caller-supplied Qdrant point IDs for admin/coordinator vector document creation, preventing an `upsert` from overwriting another tenant's point.
+- Preserve server-generated IDs and DB-derived company/team metadata for tenant-scoped document creation; retain superadmin cross-tenant maintenance.
+- Add API and Cloud regression coverage for denied direct-ID overwrites and allowed tenant-scoped creation.
+- Align all five app package and lock roots at 5.1.21.
+
+### Verification
+- API and Cloud resource-scope regressions; full API 15/15 and Cloud 9/9 regressions and configured builds; Web typecheck/build; Browser/Landing builds; PHDK coherence 52/52.
+- Focused API ESLint produced no output and was stopped; this check remains unverified.
+
+### Migration / limitations
+- No migration required. Qdrant persisted ownership cannot be verified without an owner-managed disposable vector store; no live vector service was contacted.
+
 ## v5.1.20 — 2026-10-14 (PHDK Auto listening-session security)
 
 ### Changed
