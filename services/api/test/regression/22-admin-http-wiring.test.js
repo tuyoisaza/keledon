@@ -274,6 +274,14 @@ async function main() {
   };
   try {
     const http = app.getHttpServer();
+    await request(http)
+      .post('/api/crud/migrate')
+      .set('Authorization', token('superadmin'))
+      .expect(410);
+    await request(http)
+      .post('/api/crud/seed')
+      .set('Authorization', token('superadmin'))
+      .expect(410);
     const testProfiles = await request(http)
       .get('/api/auth/uat-test-profiles')
       .set('Authorization', token('superadmin'))

@@ -1,0 +1,9 @@
+# WS-004 Admin security follow-up — 2026-10-14
+
+The owner-approved policy continues to govern: new identities start as `user`; current DB state supplies actor and tenant; only an existing superadmin can assign elevated roles or companies; admins/coordinators stay within their company; normal API responses never return stored secrets.
+
+Review of the 5.1.30 baseline found that API and Cloud retained a public shared-secret CRUD webhook for file-based company/user seed and direct DDL, plus `/api/crud/seed` and `/api/crud/migrate`. The API seed input could supply a role. Candidate 5.1.31 removes those paths and their seed/migration services/guards. Review then found a dormant `handler === 'webhook'` bypass in both `CrudAccessGuard` mirrors; it is removed as well.
+
+Both API and Cloud in-process Nest HTTP wiring suites now authenticate a synthetic superadmin and verify that the retained seed/migrate endpoints return HTTP 410. Cross-backend static regression verifies there is no public webhook, service/module dependency, DDL/file-write path or guard bypass. API and Cloud builds pass; complete regressions pass 23/23 and 11/11. API lint has zero errors; Cloud lint has zero errors. No database, customer/provider endpoint, seed script or deployment was used.
+
+PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open. GitHub shows no independent review or hosted checks, so the security change remains pending normal review and merge. The 26-model CRUD map, persisted DB acceptance, safe development identities, native device/audio, broad route accessibility/localization and deployed SEO/AEO remain open in Auto.

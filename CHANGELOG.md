@@ -1,8 +1,8 @@
 ## v5.1.31 — 2026-10-14 (retire shared-secret runtime seed and migration endpoints)
 
 - Retire the shared-secret CRUD webhook and runtime `/api/crud/seed` and `/api/crud/migrate` mutation paths from API and Cloud; legacy routes now return HTTP 410 and direct operators to reviewed Prisma migrations or isolated synthetic regression fixtures.
-- Remove seed/migration services and webhook guards that allowed file-driven provisioning or ad hoc DDL outside DB-derived actor and tenant authorization.
-- Update real HTTP wiring regressions and add cross-backend coverage for retired routes and deleted alternate write paths.
+- Remove seed/migration services, webhook guards and a dormant handler-name bypass in `CrudAccessGuard` that could circumvent DB-derived actor and tenant authorization.
+- Add API and Cloud in-process HTTP assertions that retired endpoints return 410, plus cross-backend coverage for deleted alternate write paths.
 - Align all five application package/lock roots and the Browser renderer at 5.1.31.
 - API and Cloud builds pass; API regression 23/23 and Cloud regression 11/11 pass.
 

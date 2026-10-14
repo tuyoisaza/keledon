@@ -39,8 +39,6 @@ export class CrudAccessGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest<CrudGuardRequest>();
     const handler = context.getHandler().name;
-    // Webhook retains its separate shared-secret guard, not a user-token bypass.
-    if (handler === 'webhook') return true;
     const actor =
       req.user?.userId &&
       (await this.prisma.user.findUnique({

@@ -1,6 +1,6 @@
 ## Current Auto remediation — candidate 5.1.31 (2026-10-14)
 
-The shared-secret webhook, file-seed services and runtime DDL routes were removed from API and Cloud; legacy seed/migrate endpoints return 410. API and Cloud builds and regressions pass; all five app roots and Browser renderer align at 5.1.31. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open for normal security review; merge and main readback are pending. Overall Auto remains PARTIALLY DELIVERED for the remaining source CRUD matrix and environment-bound acceptance.
+The shared-secret webhook, file-seed services, runtime DDL routes and dormant CrudAccessGuard handler-name bypass were removed from API and Cloud; authenticated superadmin requests to legacy seed/migrate endpoints return 410 in both real Nest HTTP harnesses. API and Cloud builds/regressions pass; all five app roots and Browser renderer align at 5.1.31. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open for normal security review; merge and main readback are pending. Overall Auto remains PARTIALLY DELIVERED for the remaining source CRUD matrix and environment-bound acceptance.
 
 ## Historical remediation delivery — candidate 5.1.30
 
@@ -104,6 +104,6 @@ Closed the in-scope PHDK diagnostics findings: replaced stale feature-flag/provi
 Residual items require separate acceptance environments: persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO. No source-only evidence closes these. Details: `docs/phdk/lifecycle/20261013-keledon-v5111/80-remediation/`. Overall: PARTIALLY DELIVERED.
 ## Auto remediation candidate — 5.1.31 (2026-10-14)
 
-Check found that API and Cloud still had shared-secret webhook actions that loaded file-controlled seed input and ran direct DDL; API seed input could assign a submitted role. Both backends now retire the webhook, seed and runtime migration routes (HTTP 410 on retained legacy routes), and remove their seed/migration services and guards. The real HTTP wiring regressions no longer depend on the deleted migration provider. Cross-backend regression and both TypeScript builds pass. No database, seed file, migration or external provider was accessed.
+Check found that API and Cloud still had shared-secret webhook actions that loaded file-controlled seed input and ran direct DDL; API seed input could assign a submitted role. Both backends now retire the webhook, seed and runtime migration routes (HTTP 410 on authenticated superadmin requests), remove the seed/migration services and guards, and delete the dormant handler-name bypass from CrudAccessGuard. Real HTTP wiring regressions assert 410 in both backends; cross-backend static regression checks both guards. API/Cloud regression and builds pass. No database, seed file, migration or external provider was accessed.
 
 Remaining Check scope includes the model-specific CRUD matrix and environment-dependent persistence/UAT. Candidate delivery is pending.

@@ -202,6 +202,14 @@ async function main() {
   };
   try {
     const http = app.getHttpServer();
+    await request(http)
+      .post('/api/crud/migrate')
+      .set('Authorization', token('superadmin'))
+      .expect(410);
+    await request(http)
+      .post('/api/crud/seed')
+      .set('Authorization', token('superadmin'))
+      .expect(410);
     for (let attempt = 0; attempt < 20; attempt++) {
       await request(http).post('/api/devices/pair').send({ pairing_code: 'isolated-proof' }).expect(201);
     }

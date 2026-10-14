@@ -2,7 +2,7 @@
 
 ## 5.1.31 — close shared-secret seed and runtime-DDL bypass
 
-The API and Cloud CRUD controllers no longer expose a public shared-secret webhook. Legacy `/api/crud/seed` and `/api/crud/migrate` routes immediately return HTTP 410; the file-based seed services, direct-DDL migration services and webhook guards were removed. This prevents user-controlled seed roles or company/user provisioning from bypassing the DB-derived actor and tenant policy. Regression `services/api/test/regression/35-retire-runtime-seed-webhook.test.js` verifies both backend mirrors and route retirement. Versioned Prisma migrations and isolated synthetic fixtures remain separate reviewed workflows. This closes the webhook provisioning bypass only; the 26 non-core Prisma model role/surface/operation mappings and persisted CRUD acceptance remain open.
+The API and Cloud CRUD controllers no longer expose a public shared-secret webhook. Legacy `/api/crud/seed` and `/api/crud/migrate` routes return HTTP 410; file-based seed services, direct-DDL migration services, webhook guards and the old handler-name bypass in `CrudAccessGuard` were removed. In-process Nest HTTP regressions assert 410 for both endpoints in both backends. Cross-backend regression `services/api/test/regression/35-retire-runtime-seed-webhook.test.js` verifies controller, guard, module and service mirrors. Versioned Prisma migrations and isolated synthetic fixtures remain separate reviewed workflows. This closes the webhook provisioning bypass only; the 26 non-core Prisma model role/surface/operation mappings and persisted CRUD acceptance remain open.
 
 ## Current Auto source revalidation — fail-closed Supabase RLS
 

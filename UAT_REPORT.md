@@ -2,7 +2,7 @@
 
 ## Candidate 5.1.31 — runtime seed/webhook retirement
 
-UAT-018 passes the cross-backend source regression. Both CRUD controllers retain the DB-derived CRUD guard, have no public shared-secret webhook, and immediately return HTTP 410 from legacy seed/migrate endpoints. The file-based seed services, runtime DDL services and webhook guards are deleted and no module/service references remain. The real in-process HTTP wiring regression was updated to stop injecting the deleted migration provider. API build passes and its full regression suite passes 23/23; Cloud build and regression pass (11/11). No DB, filesystem seed fixture, migration, customer record or private CRM origin was used. This is source behavior evidence; it does not prove persisted database state.
+UAT-018 passes both real in-process Nest HTTP wiring harnesses: authenticated superadmin POSTs to `/api/crud/seed` and `/api/crud/migrate` return HTTP 410 in API and Cloud. Cross-backend static regression confirms both controllers retain the DB-derived CRUD guard, have no public shared-secret webhook, and both CrudAccessGuard mirrors lack a handler-name bypass. File-based seed services, runtime DDL services and webhook guards are deleted with no remaining module/service references. API build and full regression pass (23/23); Cloud build and regression pass (11/11). No DB, seed fixture, migration, customer record or private CRM origin was used. This source evidence does not prove persisted database state.
 
 ## Current Auto source delta — deny unscoped Supabase RLS
 

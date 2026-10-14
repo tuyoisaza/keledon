@@ -8,12 +8,14 @@ const backends = [
   {
     name: 'API',
     controller: 'services/api/src/crud/crud.controller.ts',
+    guard: 'services/api/src/guards/crud-access.guard.ts',
     service: 'services/api/src/crud/crud.service.ts',
     module: 'services/api/src/crud/crud.module.ts',
   },
   {
     name: 'Cloud',
     controller: 'cloud/src/crud/crud.controller.ts',
+    guard: 'cloud/src/guards/crud-access.guard.ts',
     service: 'cloud/src/crud/crud.service.ts',
     module: 'cloud/src/crud/crud.module.ts',
   },
@@ -25,6 +27,7 @@ test('legacy runtime seed and migration endpoints fail closed in API and Cloud',
       path.join(repoRoot, backend.controller),
       'utf8',
     );
+    const guard = fs.readFileSync(path.join(repoRoot, backend.guard), 'utf8');
     const service = fs.readFileSync(path.join(repoRoot, backend.service), 'utf8');
     const module = fs.readFileSync(path.join(repoRoot, backend.module), 'utf8');
 
@@ -41,6 +44,7 @@ test('legacy runtime seed and migration endpoints fail closed in API and Cloud',
     );
     assert.doesNotMatch(controller, /@Post\('webhook'\)|WebhookGuard|@Public\(\)/);
     assert.doesNotMatch(controller, /writeFileSync|readFileSync|CREATE TABLE IF NOT EXISTS|\$executeRaw|seedFromCrudJson/);
+    assert.doesNotMatch(guard, /handler\s*===\s*['"]webhook['"]|webhook.*bypass|shared-secret.*guard/i);
     assert.doesNotMatch(service, /CrudSeedService|seedFromCrudJson/);
     assert.doesNotMatch(module, /CrudSeedService|CrudMigrationService|WebhookGuard/);
   }
