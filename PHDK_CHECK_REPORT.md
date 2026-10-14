@@ -2,7 +2,7 @@
 
 Review of the merged 5.1.30 baseline found a remaining CMT-004 gap: API and Cloud exposed shared-secret CRUD webhook actions for file-based seed data and runtime DDL. The API seeder trusted role values from `crud.json`; Cloud could create companies and users from the same file. Both also exposed `/api/crud/seed` and `/api/crud/migrate`, bypassing the approved versioned Prisma-migration and DB-derived-actor policy. Candidate 5.1.31 removes the webhook, seed/migration services and guards; retained legacy routes fail closed with HTTP 410. Regression checks cover both backends. API/Cloud builds pass, API regression 23/23 and Cloud 11/11 pass. Full Check continues across the remaining source CRUD matrix and acceptance items; no DB, seed, migration or client endpoint was touched.
 
-Finding CHK-AUTO-012 is **CLOSED — LOCAL SOURCE FIX / DELIVERY PENDING**. The candidate closes this route bypass, while versioned PR/merge/readback remain required for release.
+Finding CHK-AUTO-012 is **CLOSED — LOCAL SOURCE FIX / DELIVERY PENDING**. The candidate closes this route bypass; PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open and awaits normal security review, merge and remote readback.
 
 Status: **REMEDIATION CANDIDATE; DELIVERY PENDING**.
 

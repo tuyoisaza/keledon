@@ -1,4 +1,8 @@
-## Auto remediation delivery — candidate 5.1.30
+## Current Auto remediation — candidate 5.1.31 (2026-10-14)
+
+The shared-secret webhook, file-seed services and runtime DDL routes were removed from API and Cloud; legacy seed/migrate endpoints return 410. API and Cloud builds and regressions pass; all five app roots and Browser renderer align at 5.1.31. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open for normal security review; merge and main readback are pending. Overall Auto remains PARTIALLY DELIVERED for the remaining source CRUD matrix and environment-bound acceptance.
+
+## Historical remediation delivery — candidate 5.1.30
 
 PR #100 merged the default-deny RLS/bootstrap policy and seed-account remediation on 2026-10-14. Main is verified at `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; API regression 22/22 and Cloud 11/11 pass, API/Cloud mirrors match, all product builds pass, and PHDK coherence is 52/52. Unsafe legacy Auth elevation and customer-like RBAC/session/CRM fixture paths are retired. New Auth users remain `user`; a synthetic-user fixture is opt-in, exact-target-pinned, nonproduction and role-fixed. Existing per-tenant CRM origin enforcement permits only validated allowlisted targets; no private fetch or customer integration test occurred.
 

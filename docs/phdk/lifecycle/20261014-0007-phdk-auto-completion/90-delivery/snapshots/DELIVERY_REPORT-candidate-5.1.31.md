@@ -1,6 +1,6 @@
 ## Candidate 5.1.31 — delivery pending
 
-Based on verified `main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`, candidate 5.1.31 removes the shared-secret CRUD webhook, file-based seed services and runtime DDL paths from API and Cloud. Retained seed/migrate routes return HTTP 410; reviewed Prisma migrations and isolated synthetic regression fixtures are the supported paths. API/Cloud builds pass, API regression 23/23 and Cloud regression 11/11 pass. All five app package/lock roots and Browser renderer align at 5.1.31. PR, merge and readback are pending; no deployment, database, seed or client endpoint was used.
+Based on verified `main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`, candidate 5.1.31 removes the shared-secret CRUD webhook, file-based seed services and runtime DDL paths from API and Cloud. Retained seed/migrate routes return HTTP 410; reviewed Prisma migrations and isolated synthetic regression fixtures are the supported paths. API/Cloud builds pass, API regression 23/23 and Cloud regression 11/11 pass. All five app package/lock roots and Browser renderer align at 5.1.31. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open; normal security review, merge and readback are pending; no deployment, database, seed or client endpoint was used.
 
 Overall Auto remains **PARTIALLY DELIVERED** because the model-specific CRUD matrix, persisted DB behavior, safe development identities, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-client integration acceptance remain open.
 

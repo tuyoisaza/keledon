@@ -2,7 +2,7 @@
 
 | Commitment | Candidate evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | Candidate is based on verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; five app package/lock roots and Browser renderer align at 5.1.31. | Versioned PR, merge and remote readback pending. |
+| CMT-001 | Candidate is based on verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; five app package/lock roots and Browser renderer align at 5.1.31. | PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open; normal security review, merge and remote readback pending. |
 | CMT-002 | Existing widget/diagnostics coverage retained; API and Cloud builds and regressions pass. | Native device/audio and broad route accessibility/localization remain open. |
 | CMT-003 | Provider-independent call/Cloud/Browser contracts and tenant URL validation remain intact. | Live call/CRM acceptance remains client-specific after provider selection. |
 | CMT-004 | Retires shared-secret webhook seed/migration and direct runtime seed/DDL routes from both backends; API regression 23/23, Cloud 11/11. | 26-model authorization mapping, database persistence/migration and safe synthetic identities remain open. |
@@ -41,7 +41,7 @@ Overall: **PARTIALLY DELIVERED**. The baseline is verified; 5.1.30 source delive
 
 ## Historical coverage — candidate 5.1.26
 
-Candidate branch `fix/audited-uat-test-profiles` is based on merged main 5.1.25 at `8dfc1fca7de253a017acb6f291ff278699915beb`. All five app package/lock roots and Browser renderer are 5.1.26. API regression 20/20, scoped Web UAT 1/1 and PHDK coherence 52/52 pass; candidate commit, PR and remote readback are pending.
+Candidate branch `fix/audited-uat-test-profiles` is based on merged main 5.1.25 at `8dfc1fca7de253a017acb6f291ff278699915beb`. All five app package/lock roots and Browser renderer are 5.1.26. API regression 20/20, scoped Web UAT 1/1 and PHDK coherence 52/52 pass; candidate commit and PR were pending in that historical record.
 
 | Commitment | Current coverage | Remaining acceptance |
 |---|---|---|

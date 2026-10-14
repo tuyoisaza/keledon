@@ -12,8 +12,8 @@
 | 65 SEO | OPEN / PRIOR EVIDENCE | Deployed measurements still need approved read-only provider evidence. |
 | 67 AEO/GEO | OPEN / PRIOR EVIDENCE | Deployed discovery evidence remains unavailable. |
 | 70 Check | IN PROGRESS | Continue 26-model CRUD matrix review and coherence. |
-| 80 Remediation | IN PROGRESS | Candidate 5.1.31, based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; PR pending. |
-| 90 Delivery | PENDING | Reviewed PR, merge and completion-gate remote readback required. |
+| 80 Remediation | IN PROGRESS | Candidate 5.1.31, based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open pending normal security review. |
+| 90 Delivery | PENDING | Reviewed PR #102 is open; normal security review, merge and completion-gate remote readback are required. |
 
 Overall: **PARTIALLY DELIVERED**. No database, customer provider, or deployment was used.
 

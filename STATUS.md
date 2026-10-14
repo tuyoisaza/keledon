@@ -2,7 +2,7 @@
 
 - Based on verified `main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; all five package/lock roots and Browser renderer align at 5.1.31.
 - Retires shared-secret webhook provisioning/DDL and runtime seed/migration services in API and Cloud; retained `/api/crud/seed` and `/api/crud/migrate` endpoints return 410.
-- API/Cloud builds pass; API regression 23/23 and Cloud regression 11/11 pass. PR and remote readback are pending.
+- API/Cloud builds pass; API regression 23/23 and Cloud regression 11/11 pass. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open; normal security review and merge/readback are pending.
 - Auto remains **PARTIALLY DELIVERED** while the 26-model CRUD matrix, database persistence, safe synthetic identities, native device/audio, broad route accessibility/localization and deployed SEO/AEO remain open. No DB or deployment was used.
 
 ## 2026-10-14 — PHDK Auto source delivery 5.1.30
