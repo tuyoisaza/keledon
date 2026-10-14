@@ -2,14 +2,14 @@
 
 ## Active run `20261014-0007-phdk-auto-completion` — 5.1.35 source candidate, delivery pending
 
-All four owner-confirmed fronts remain active in the confirmed order. Verified base is main `6a8275c3d3f9813a9c3aea7a0d3121ae18cd2a1e`; source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` aligns all five application package/lock roots and the Browser renderer at 5.1.35, with PHDK coherence 52/52. API regression 35/35 and Cloud 14/14 pass; API/Cloud builds passed, Web typecheck/build and focused lint pass, and exact-commit local built-SPA UAT passes with synthetic intercepted APIs. Source fingerprint: `sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`. PR and remote delivery are pending; no deployment, live Qdrant, PostgreSQL, customer data or client provider was used.
+All four owner-confirmed fronts remain active in the confirmed order. Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` was delivered by PR #106 at remote main `73c0fc52b37d96d283e8709e76b99c17db0b1a83`; all application roots and Browser renderer align at 5.1.35. PHDK coherence is 52/52; API regression 35/35 and Cloud 14/14 pass; API/Cloud builds, Web typecheck/build and focused lint pass; exact-commit UAT uses synthetic intercepted APIs. No deployment, live Qdrant, PostgreSQL, customer data or client provider was used.
 
 | ID | Confirmed front | Current truth | Remaining acceptance |
 |---|---|---|---|
-| CMT-001 | Baseline, versions and PR reconciliation | Base main is verified; all five package/lock roots and Browser renderer align at 5.1.35. | Version-prefixed PR, merge and exact remote-main readback remain pending. |
+| CMT-001 | Baseline, versions and PR reconciliation | PR #106 merged; remote `main` verified at `73c0fc52b37d96d283e8709e76b99c17db0b1a83`; all five app roots and Browser renderer align at 5.1.35. | Source slice delivered; no deployment is claimed. |
 | CMT-002 | Shared visible diagnostics widget and safe diagnostics | Widget remains covered by diagnostics and the 5.1.35 synthetic built-SPA UAT. | Native OS permission/device/audio and broad route/screen-reader accessibility remain open. |
 | CMT-003 | Voice → Cloud → Browser → CRM, providers chosen per client | Provider-neutral contracts and validated, per-tenant private CRM allowlists remain covered by offline tests. | Live call/CRM acceptance applies per tenant after provider configuration. |
-| CMT-004 | Administration and permissions | Approved least privilege and DB-derived scope retained; KnowledgeBase detail/update and UI CRUD are added with company-scoped guards and tests. | Persisted DB role/tenant/operation matrix, real DB-backed identities, and Qdrant/PostgreSQL failure/concurrency acceptance remain open. |
+| CMT-004 | Administration and permissions | Approved least privilege and DB-derived scope retained; KnowledgeBase detail/update and UI CRUD are delivered with company-scoped guards and tests. | Persisted DB role/tenant/operation matrix, real DB-backed identities, and Qdrant/PostgreSQL failure/concurrency acceptance remain open. |
 
 Overall: **PARTIALLY DELIVERED**. UAT remains 28 PASS, 2 BLOCKED, 1 MANUAL. No database, customer provider, private CRM endpoint, customer data or deployment was used.
 

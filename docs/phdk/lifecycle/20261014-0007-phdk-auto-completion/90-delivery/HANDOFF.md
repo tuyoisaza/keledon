@@ -11,9 +11,9 @@ SIGUIENTE PASO: provide safe development identities, disposable PostgreSQL and a
 ---
 # Delivery handoff — candidate 5.1.26
 
-## Active candidate 5.1.35 — PR and remote delivery pending
+## Verified delivery — candidate 5.1.35 (2026-10-14)
 
-Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` on `fix/phdk-knowledge-base-management-5-1-35` is based on verified main `6a8275c3d3f9813a9c3aea7a0d3121ae18cd2a1e`. API and Cloud now provide company-scoped KnowledgeBase detail/update; the Web manager adds localized detail/create/edit/delete operations. API regressions pass 35/35 suites, Cloud 14/14, Web typecheck/build and focused lint pass, PHDK coherence passes 52/52, and exact-commit synthetic built-SPA UAT passes its KnowledgeBase lifecycle journey. Candidate evidence and tests are committed; create the version-prefixed PR, reconcile GitHub review/check state, follow permitted merge controls, and verify remote main SHA/tree/version before claiming source delivery. No deployment is claimed.
+PR [#106](https://github.com/tuyoisaza/keledon/pull/106) delivered source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` by squash at `73c0fc52b37d96d283e8709e76b99c17db0b1a83`. `origin/main` and `git ls-remote` agree; the PR head/merge trees match; all five app package/lock roots and the Browser renderer are 5.1.35. API regressions pass 35/35 suites, Cloud 14/14, both builds and scoped lint pass, PHDK coherence passes 52/52, and exact-commit synthetic built-SPA UAT passes the KnowledgeBase lifecycle journey. The completion verifier passes against the recorded remote SHA. GitHub reported no hosted checks/review decision and no main branch protection. No deployment is claimed.
 
 Overall PHDK Auto remains PARTIALLY DELIVERED: safe DB identities, disposable PostgreSQL/persisted CRUD, live Qdrant and concurrency, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Calls and CRM remain customer-specific; private destinations require validation and tenant allowlists, and Cloud does not fetch them.
 

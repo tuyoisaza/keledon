@@ -1,6 +1,6 @@
 ## Current Auto candidate — 2026-10-14, 5.1.35
 
-Base main: `6a8275c3d3f9813a9c3aea7a0d3121ae18cd2a1e`; source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` on `fix/phdk-knowledge-base-management-5-1-35`. All five application package/lock roots and Browser renderer align at 5.1.35; PHDK v2.50.10 coherence is 52/52. API regression 35/35, Cloud 14/14, API/Cloud builds, Web typecheck/build and focused ESLint pass; exact-commit synthetic local built-SPA UAT covers KnowledgeBase list/detail/create/edit/delete. UAT source fingerprint: `sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`. PR/merge/main readback remain pending. Overall Auto is PARTIALLY DELIVERED.
+Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` on `fix/phdk-knowledge-base-management-5-1-35` shipped through PR #106, merged at `73c0fc52b37d96d283e8709e76b99c17db0b1a83`. All five app package/lock roots and Browser renderer align at 5.1.35; PHDK v2.50.10 coherence is 52/52. API regression 35/35, Cloud 14/14, API/Cloud builds, Web typecheck/build and focused ESLint pass; exact-commit synthetic local built-SPA UAT covers KnowledgeBase list/detail/create/edit/delete. UAT source fingerprint: `sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`. This source slice is delivered; overall Auto remains PARTIALLY DELIVERED.
 
 | Commitment | Candidate evidence | Remaining acceptance |
 |---|---|---|

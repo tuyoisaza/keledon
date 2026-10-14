@@ -1,6 +1,6 @@
 {
   "candidateVersion": "5.1.35",
-  "status": "SOURCE_CANDIDATE_DELIVERY_PENDING",
+  "status": "SOURCE_MERGED_REMOTE_VERIFIED",
   "baseMain": "6a8275c3d3f9813a9c3aea7a0d3121ae18cd2a1e",
   "branch": "fix/phdk-knowledge-base-management-5-1-35",
   "sourceCommit": "2f18c7d82d6a6ac1155910c4f0206da02e0e4de0",
@@ -31,9 +31,9 @@
     "No client CRM endpoint, customer data, production database, or deployment was used."
   ],
   "delivery": {
-    "pullRequest": "PENDING",
-    "merge": "PENDING",
-    "remoteMainReadback": "PENDING",
+    "pullRequest": "https://github.com/tuyoisaza/keledon/pull/106",
+    "merge": "73c0fc52b37d96d283e8709e76b99c17db0b1a83",
+    "remoteMainReadback": "PASS",
     "deployment": "NOT_CLAIMED",
     "overallPhdkAuto": "PARTIALLY_DELIVERED"
   }
