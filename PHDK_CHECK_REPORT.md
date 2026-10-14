@@ -276,6 +276,8 @@ Standards evaluated for applicability and evidence: current PHDK manifest/cohere
 
 | CHK-AUTO-014 | CLOSED — LOCAL SOURCE FIX / DELIVERY PENDING | `CRUD_STANDARD`, CMT-004; Cloud had denied all user `teamId` changes while API and the approved UI flow permit reassignment within the actor’s company. | Cross-company destinations must remain denied; persisted team/user relation behavior remains unverified. | Allow manager team reassignment only after resolving the target team against the DB-derived actor company; retain company/role restrictions. | API/Cloud direct guard regressions and Cloud in-process HTTP positive same-company and negative cross-company cases pass. |
 
+| CHK-AUTO-015 | CLOSED — LOCAL SOURCE FIX / DELIVERY PENDING | `CRUD_STANDARD`, `TeamInterface`; API and Cloud relation replacement previously deleted current assignments before validating the requested array and creating replacements. | Malformed, duplicate, blank, or unknown interface IDs could fail after the delete, leaving a partial persisted result. | Validate every ID and existence before writes; perform replacement in one Prisma transaction; keep team ownership enforced by current-DB `CrudAccessGuard`. | API and Cloud regression 37 pass validation-before-write, transaction ordering, and explicit empty-array clearing; both backend builds pass. Persisted DB behavior remains CHK-AUTO-005. |
+
 ## Auto remediation order
 
 1. Continue source-backed CRUD model/route/role traceability and add only missing in-process negative tests that can be proven safely; keep persistence as an external gate.

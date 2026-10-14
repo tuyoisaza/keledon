@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { getCrudHealthReport } from './crud-health';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrudKeledonService } from './crud-keledon.service';
@@ -242,9 +242,32 @@ export class CrudService {
   }
 
   async setTeamInterfaces(teamId: string, interfaceIds: string[]) {
-    await this.prisma.teamInterface.deleteMany({ where: { teamId } });
-    return this.prisma.teamInterface.createMany({
-      data: interfaceIds.map((interfaceId) => ({ teamId, interfaceId })),
+    if (
+      !Array.isArray(interfaceIds) ||
+      interfaceIds.some(
+        (interfaceId) =>
+          typeof interfaceId !== 'string' || interfaceId.trim().length === 0,
+      )
+    ) {
+      throw new BadRequestException('interfaceIds must be an array of IDs');
+    }
+    const uniqueIds = [...new Set(interfaceIds)];
+    if (uniqueIds.length !== interfaceIds.length) {
+      throw new BadRequestException('interfaceIds must not contain duplicates');
+    }
+    const existing = await this.prisma.managedInterface.findMany({
+      where: { id: { in: uniqueIds } },
+      select: { id: true },
+    });
+    if (existing.length !== uniqueIds.length) {
+      throw new BadRequestException('One or more interfaces do not exist');
+    }
+    return this.prisma.$transaction(async (tx) => {
+      await tx.teamInterface.deleteMany({ where: { teamId } });
+      if (uniqueIds.length === 0) return { count: 0 };
+      return tx.teamInterface.createMany({
+        data: uniqueIds.map((interfaceId) => ({ teamId, interfaceId })),
+      });
     });
   }
 
