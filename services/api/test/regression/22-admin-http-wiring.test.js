@@ -98,6 +98,7 @@ async function main() {
     lastVectorScope,
     userListScope,
     updatedUser,
+    auditReads = 0,
     launchedActor;
   const module = await Test.createTestingModule({
     controllers: [
@@ -121,6 +122,10 @@ async function main() {
           getUsers: async (companyId) => {
             userListScope = companyId;
             return [];
+          },
+          getAuditLogs: async () => {
+            auditReads++;
+            return { data: [], pagination: { total: 0 } };
           },
           getUser: async (id) => ({ id }),
           updateUser: async (id, data) => {
@@ -206,6 +211,21 @@ async function main() {
     assert.equal(crudHealth.body.status, 'ok');
     assert.equal(crudHealth.body.env.CLOUD_HOST, 'cloud.example.invalid');
     assert.equal('errors' in crudHealth.body, false);
+    await request(http)
+      .get('/api/crud/audit-logs')
+      .set('Authorization', token('admin'))
+      .expect(403);
+    const auditLogs = await request(http)
+      .get('/api/crud/audit-logs')
+      .set('Authorization', token('superadmin'))
+      .expect(200);
+    assert.deepEqual(auditLogs.body.data, []);
+    assert.equal(auditReads, 1);
+    await request(http)
+      .post('/api/crud/audit-logs')
+      .set('Authorization', token('superadmin'))
+      .send({ userId: 'member', action: 'FORGED', entity: 'company' })
+      .expect(404);
     await request(http)
       .put('/api/crud/users/user-a')
       .set('Authorization', token('admin'))

@@ -167,7 +167,7 @@ These resources are present in `services/api/prisma/schema.prisma` or feature co
 | KnowledgeBase, KnowledgeDocument, vector documents | CRUD, Knowledge and VectorStore controllers | Tenant content; vector API uses legacy default collection for some operations | Reconcile route families, enforce tenant scope for list/detail/mutations, document delete/retention | GAP |
 | ProviderCatalog, TenantProviderConfig, TenantVoiceProfile, team provider settings | CRUD, tenant, team and MVP controllers | Global catalog vs tenant configuration; secret values write-only | Complete role/surface operations, safe detail, secret redaction and audit evidence | GAP |
 | AiPromptDefinition, AiPromptRevision, FeatureFlag, DebugMode | AI admin and configuration paths | Privileged mutable configuration; revision history should be append-only | Verify persisted actor/role guard, detail/version policy, scope and UI actions | GAP |
-| AuditLog, Event, EscalationLog, AiCallUsage | Prisma schema and audit/analytics controllers | Likely append-only/security or usage records | Confirm immutable/read-only exception, field visibility, detail/export and retention | DECISION NEEDED |
+| AuditLog, Event, EscalationLog, AiCallUsage | Prisma schema and audit/analytics controllers | Append-only/security or operational usage records | AuditLog write path is restricted to interceptor/internal services; superadmin-only list; no direct CRUD create/update/delete | Source exception implemented; read visibility and retention acceptance remain open |
 | CompanyCountry, TeamInterface, KnowledgeDocument | Prisma relations and nested APIs | Embedded/relationship resources | Confirm whether independent management is intentionally represented by parent forms/APIs | GAP |
 
 ## Model-to-surface inventory — schema reconciliation, 35/35
@@ -207,7 +207,7 @@ The following inventory was reconciled against every `model` declaration in `ser
 | Event | Call/browser session lifecycle and usage events | Operational/event surface; determine read visibility and retention; no general CRUD UI. |
 | KnowledgeBase | CRUD knowledge list/create/delete; Knowledge service | Tenant content parent; direct detail/update behavior and isolated ownership tests remain open. |
 | KnowledgeDocument | CRUD nested docs and Knowledge/VectorStore services | Tenant content/document relation; reconcile duplicate APIs, detail, vector scope and deletion. |
-| AuditLog | Audit interceptor/service and audit-log API | Security record; define append-only/read/export matrix and retention. |
+| AuditLog | Audit interceptor/internal service and superadmin-only list API | Append-only security record; direct general CRUD writes are removed. Regression verifies superadmin list is allowed and forged POST is denied. Export/detail and retention policy still need owner-backed acceptance. |
 | FeatureFlag | Feature flag service | No direct CRUD controller surface identified in route scan; confirm operational consumers and admin ownership. |
 | EscalationLog | Escalation service/controller and access guard | Operational state transitions; role/scope and resolution persistence require exact acceptance. |
 | DebugMode | Debug mode service and diagnostics controls | Privileged toggle/config; current actor, UI/API route scope and persistence require targeted review. |

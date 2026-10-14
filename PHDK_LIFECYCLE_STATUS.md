@@ -6,6 +6,12 @@ Overall result remains **PARTIALLY DELIVERED**. The prior product slice and evid
 
 SIGUIENTE PASO: commit and deliver this regression/evidence slice through the normal PR flow, then continue CHK-002 on the next uncovered resource family.
 
+## Security follow-up — append-only audit evidence
+
+PR #81 merged at `260d3d8c33be38b6a9c9e89ffbda5e15a780ddc8`; fresh local `main` readback matches. The next focused Check found that the general CRUD API let superadmins forge audit events. Candidate branch `fix/phdk-audit-log-integrity` now removes the unused public-to-superadmin `POST /api/crud/audit-logs` path, its dead service wrappers, and blocks all non-GET audit-log requests in `CrudAccessGuard`; the automatic interceptor and trusted domain services still create audit rows. All five app package and lock roots are aligned to 5.1.18. API regression passes 15/15, all five application builds pass, Web typecheck/diagnostics/UAT pass (18/18, 1/1), Landing SEO passes 1/1 and PHDK coherence passes 52/52. The mocked UAT is not live API acceptance. This is a validated source fix, not yet delivered, and CHK-002 remains open.
+
+SIGUIENTE PASO: review and deliver the audit-log integrity fix through PR, then continue the resource-by-role CRUD Check.
+
 Run ID: `20261013-1900-phdk-auto`
 Repository: `C:\Users\tboar\OneDrive\Documentos\GitHub\KELEDON` (`tuyoisaza/keledon`)
 Branch: `fix/phdk-keledon-voice-profile-accessibility`

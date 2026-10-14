@@ -5,18 +5,6 @@ import { PrismaService } from '../prisma/prisma.service';
 export class CrudAuditService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createAuditLog(data: {
-    userId?: string;
-    action: string;
-    entity: string;
-    entityId?: string;
-    changes?: string;
-    ipAddress?: string;
-    userAgent?: string;
-  }) {
-    return this.prisma.auditLog.create({ data });
-  }
-
   async getAuditLogs(params?: {
     companyId?: string;
     limit?: number;

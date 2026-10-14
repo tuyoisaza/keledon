@@ -49,6 +49,9 @@ export class CrudAccessGuard implements CanActivate {
     );
     const resource =
       path.split('/')[0] === 'vendor' ? 'vendors' : path.split('/')[0];
+    // Audit records are append-only security evidence. The interceptor and
+    // trusted domain services create them; the general CRUD API is read-only.
+    if (resource === 'audit-logs' && req.method !== 'GET') return deny();
     const scoped = [
       'companies',
       'brands',
