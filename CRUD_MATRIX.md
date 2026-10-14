@@ -12,6 +12,8 @@ API and Cloud tenant voice-profile list/create/update operations now select only
 
 `TenantVoiceProfile.config` is an unencrypted JSON-text column with no current UI or runtime consumer. The API and Cloud CRUD services reject attempts to set it during profile create/update, and both `CrudAccessGuard` allowlists exclude it. The display-only profile operations remain available; an approved per-provider config/secret storage contract is required before re-enabling this field. Regression 41 verifies service-level rejection before writes and guard-source parity.
 
+API and Cloud device-pairing responses now expose the same runtime vendor contract: base URL, tenant-validated allowed origins, encrypted credentials, `startGoal`, and active status. Regression 38 verifies source parity; Browser's existing device-pair source check and runtime contract suite pass. No client call or local CRM endpoint was contacted.
+
 ## 5.1.31 — close shared-secret seed and runtime-DDL bypass
 
 The API and Cloud CRUD controllers no longer expose a public shared-secret webhook. Legacy `/api/crud/seed` and `/api/crud/migrate` routes return HTTP 410; file-based seed services, direct-DDL migration services, webhook guards and the old handler-name bypass in `CrudAccessGuard` were removed. In-process Nest HTTP regressions assert 410 for both endpoints in both backends. Cross-backend regression `services/api/test/regression/35-retire-runtime-seed-webhook.test.js` verifies controller, guard, module and service mirrors. Versioned Prisma migrations and isolated synthetic fixtures remain separate reviewed workflows. This closes the webhook provisioning bypass only; the 26 non-core Prisma model role/surface/operation mappings and persisted CRUD acceptance remain open.

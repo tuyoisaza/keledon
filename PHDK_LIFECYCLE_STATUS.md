@@ -6,13 +6,13 @@
 | 10 Capture | COMPLETE / REUSED | Four owner-confirmed fronts and restrictive role/tenant policy remain current. |
 | 20 Plan | COMPLETE / REUSED | Continue in order; preserve environment-bound client/device acceptance. |
 | 30 PMO | IN PROGRESS | Re-auditing the four confirmed fronts; CMT-004 security and CRUD gaps are being closed source-first. |
-| 40 Integration Review | IN PROGRESS | Retired write routes, Cloud/API hash-audit parity, transactional TeamInterface, superadmin Workflow CRUD, typed guard/voice-profile parity, strict vendor config schema and voice-profile config disablement reviewed. |
-| 50 UAT | PARTIAL | API 29/29 and Cloud 12/12 source regressions plus mocked Workflow, safe voice-profile projection and both config boundaries pass; persisted DB, real identities, native device/audio, broad route accessibility/localization remain open. |
+| 40 Integration Review | IN PROGRESS | Retired write routes, Cloud/API hash-audit parity, transactional TeamInterface, superadmin Workflow CRUD, typed guard/voice-profile parity, strict vendor config schema, voice-profile config disablement and paired vendor payload parity reviewed. |
+| 50 UAT | PARTIAL | API 29/29 and Cloud 13/13 source regressions, Browser build/21 source tests plus mocked Workflow, safe profile projections, config boundaries and paired payload contract pass; persisted DB, real identities, native device/audio, broad route accessibility/localization remain open. |
 | 60 UAT Fix | OPEN | Remediate repository-local actionable cases. |
 | 65 SEO | OPEN / PRIOR EVIDENCE | Deployed measurements still need approved read-only provider evidence. |
 | 67 AEO/GEO | OPEN / PRIOR EVIDENCE | Deployed discovery evidence remains unavailable. |
-| 70 Check | IN PROGRESS | Regressions 40/41 and UAT-025/026 prove DB-derived actor scope, minimal user selection, safe voice-profile responses and vendor/voice-profile config boundaries; continue other model mappings and coherence. |
-| 80 Remediation | IN PROGRESS | Candidate 5.1.31 is based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; strict vendor config validation and voice-profile config write rejection pass API/Cloud builds and regressions. Latest local commit `7df23ce` is ready to publish to PR #102. |
+| 70 Check | IN PROGRESS | Regressions 38/40/41 and UAT-025–027 prove paired vendor parity, DB-derived actor scope, minimal user selection, safe voice-profile responses and both config boundaries; continue other model mappings and coherence. |
+| 80 Remediation | IN PROGRESS | Candidate 5.1.31 is based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; strict vendor config validation, voice-profile config write rejection and API/Cloud pairing parity pass builds/regressions. PR #102 is open; latest published head before this pairing follow-up is `09abd8fa97e85506714685fcadd296bb7de1554f`. |
 | 90 Delivery | PENDING | Reviewed PR #102 is open; normal security review, merge and completion-gate remote readback are required. |
 
 Overall: **PARTIALLY DELIVERED**. No database, customer provider, or deployment was used.

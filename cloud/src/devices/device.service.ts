@@ -29,6 +29,8 @@ type PairedDeviceResponse = {
     username: string | null;
     password: string | null;
     apiKey: string | null;
+    startGoal: string | null;
+    isActive: boolean;
   }>;
 };
 
@@ -147,6 +149,8 @@ export class DeviceService {
             ? encryptVendorSecretForPairing(v.password)
             : null,
           apiKey: v.apiKey ? encryptVendorSecretForPairing(v.apiKey) : null,
+          startGoal: v.startGoal || null,
+          isActive: v.isActive,
         }));
       }
     }

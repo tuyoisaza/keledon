@@ -1,5 +1,9 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.31 — API/Cloud paired vendor payload parity (2026-10-14)
+
+UAT-027 passes at source/contract level. Cloud pairing now includes the same `startGoal` and active-state fields as API alongside its validated per-tenant `allowedOrigins` and encrypted credentials. Cloud regression passes 13/13, including new regression 38; Browser builds and its 21 `.cjs` tests pass, including pairing source and runtime-contract coverage. No native device or CRM request was made.
+
 ## Candidate 5.1.31 — voice-profile config write rejection (2026-10-14)
 
 UAT-026 passes for both backend source implementations. The guards no longer allow `config` in voice-profile bodies, and each service throws before Prisma create/update if a direct caller supplies the field. Valid create/update calls use the safe six-field projection; regression 41 also confirms the `config` and `providerCatalog` values are absent. Full API/Cloud regressions pass 29/29 and 12/12; builds pass. This is isolated source evidence and does not inspect existing persisted `TenantVoiceProfile.config` values.
