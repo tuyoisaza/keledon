@@ -1,10 +1,10 @@
 # STATUS
 
-## 2026-10-14 — PHDK Auto candidate 5.1.28; overall partial
+## 2026-10-14 — PHDK Auto candidate 5.1.29; overall partial
 
 - Source review found that human API sessions could retrieve raw Device RPA configuration containing provider credentials. The route now returns that payload only to the current paired-device identity whose DB-derived device ID matches the path. User, guest, agent, admin, coordinator and superadmin sessions, anonymous requests, and mismatched device tokens are denied.
 - API in-process HTTP regression passes for the positive paired-device case and all denials; API regressions 21/21, Jest 11/11/38, build and changed-file TypeScript lint pass. Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass.
-- Candidate branch `fix/write-only-device-rpa-secrets` is version 5.1.28 and based on remote main `4cc6a2a6de0d3a8eda6be60a45607553d2b3e80e`; PR and remote delivery remain pending.
+- PR [#98](https://github.com/tuyoisaza/keledon/pull/98) delivered source 5.1.28; `origin/main` and `git ls-remote` match at `a22c0a407aa07552a189aa9f3b00e887397f9d03`, and merge/head trees match. Candidate 5.1.29 removes raw RPA config and CDP URLs from normal device-list responses; PR delivery is pending.
 - No local disposable PostgreSQL/container is available. The 26-model CRUD operation matrix and DB persistence/migration remain open, as do native device/audio, broad accessibility/localization and deployed SEO/AEO.
 - Overall: **PARTIALLY DELIVERED**. No database, production data, live provider or deployment was used.
 

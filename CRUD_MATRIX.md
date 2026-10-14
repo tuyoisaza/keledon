@@ -1,5 +1,9 @@
 # CRUD matrix — current source and authorization coverage
 
+## 5.1.29 — device list safe projection
+
+`GET /api/devices` omits `authToken`, pairing proof/expiry, raw `rpaProviderConfig`, and `cdpUrl` for every human role. It returns boolean presence indicators for RPA config and CDP binding. Raw RPA configuration remains available only through the paired-device identity route recorded below. The in-process HTTP regression covers the safe projection; persisted data and the remainder of Device × role × surface × operation coverage remain open.
+
 ## 5.1.28 — device RPA secret response boundary
 
 `GET /api/devices/:id/rpa-config` is a credential-bearing runtime provisioning response. Human sessions of every role are denied; access is granted only when the presented paired-device token resolves through current DB relations to the same requested device ID. A paired token for another device, an unpaired/revoked/stale identity, or an absent/invalid token is denied. The matching runtime device receives the RPA configuration it needs to execute the customer-configured chain. API regressions in `services/api/test/regression/22-admin-http-wiring.test.js` cover this distinction. This is a source/isolated HTTP exception for one sensitive read; persisted RPA configuration and the remaining Device × role × surface × operation matrix remain open.

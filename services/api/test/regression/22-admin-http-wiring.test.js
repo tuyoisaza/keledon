@@ -212,6 +212,10 @@ async function main() {
               id: 'device-a',
               authToken: 'hidden-token',
               pairingCode: 'hidden-code',
+              pairingCodeExpiresAt: new Date(),
+              rpaProviderConfig:
+                '{"providers":{"crm":{"apiKey":"list-only-secret"}}}',
+              cdpUrl: 'ws://127.0.0.1:9222/devtools/browser/list-only',
               status: 'paired',
             },
           ],
@@ -515,6 +519,12 @@ async function main() {
       .set('x-user-id', 'victim')
       .expect(200);
     assert.equal(JSON.stringify(devices.body).includes('hidden-'), false);
+    assert.equal(JSON.stringify(devices.body).includes('list-only-secret'), false);
+    assert.equal(JSON.stringify(devices.body).includes('devtools/browser'), false);
+    assert.equal(devices.body[0].rpaProviderConfig, undefined);
+    assert.equal(devices.body[0].cdpUrl, undefined);
+    assert.equal(devices.body[0].hasRpaProviderConfig, true);
+    assert.equal(devices.body[0].hasCdpUrl, true);
     const cloud = await request(http).get('/api/cloud-config').expect(200);
     assert.equal(cloud.body.secret, undefined);
     await request(http)

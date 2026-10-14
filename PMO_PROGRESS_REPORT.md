@@ -38,3 +38,10 @@ PR #96 merged by squash at `a0425134ba69b1feaf165cd512caad8c136ca6f8`; remote `o
 - API regression 21/21 suites and Jest 11/11/38, API build, scoped ESLint, Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass.
 - Candidate ix/write-only-device-rpa-secrets remains pre-PR on base main 4cc6a2a6de0d3a8eda6be60a45607553d2b3e80e; normal delivery pending.
 - Source/CMT-004 remains PARTIAL for 26 model-specific operation rows and DB persistence; native/device/audio, broad route a11y/localization, deployed SEO/AEO also open.
+
+## 2026-10-14 — 5.1.29 device-list projection
+
+- Follow-up source audit found that `GET /api/devices` returned raw `rpaProviderConfig` and `cdpUrl`; the controller now returns presence flags only. Paired-device-only provisioning remains intact.
+- UAT-012 exercises secret and remote-control URL redaction through real Nest HTTP wiring; UAT-011 continues to exercise exact paired-device authorization.
+- Candidate `fix/redact-device-config-lists` is based on main 5.1.28 `a22c0a407aa07552a189aa9f3b00e887397f9d03`; source validation and delivery remain in progress.
+- Overall Auto remains partial for 26-model CRUD/DB persistence, native/audio, broad accessibility/localization and deployed SEO/AEO.

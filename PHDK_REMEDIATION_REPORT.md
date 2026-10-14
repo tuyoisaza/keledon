@@ -1,5 +1,9 @@
 # PHDK remediation report — active candidate
 
+## Current source remediation — 2026-10-14, candidate 5.1.29
+
+Follow-up review after PR #98 found `GET /api/devices` returned raw `rpaProviderConfig` and `cdpUrl`, even though it removed device tokens and pairing proofs. Normal list responses now omit both and return only presence flags; the paired-device-only runtime endpoint still delivers RPA config to the exact DB-derived device identity. UAT-012 covers list redaction and UAT-011 covers paired runtime authorization. API regression 21/21, Jest 11/11/38, API build and focused ESLint (0 errors/1 pre-existing warning), Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass. Candidate delivery is pending; Auto remains PARTIALLY DELIVERED for the broader CRUD and environment-dependent acceptance.
+
 ## Current source remediation — 2026-10-14, candidate 5.1.28
 
 CHK-002 found that human bearer sessions could read raw `Device.rpaProviderConfig` through `GET /api/devices/:id/rpa-config`, despite the normal-response write-only secret policy. The Browser still needs this configuration at runtime, so access now requires a current paired-device token whose database-derived identity matches the requested device ID exactly. Anonymous, user, admin, coordinator, superadmin, invalid, and mismatched-device callers are denied; a matching paired device remains allowed. Real Nest HTTP regression passes with isolated fixtures. API build/regressions/Jest/scoped TypeScript lint, Cloud/Web/Landing/Browser builds, and PHDK coherence pass. No database URL or local PostgreSQL/container client is available; persisted acceptance remains open. Source change is on `fix/write-only-device-rpa-secrets`, with PR delivery pending; overall Auto remains PARTIALLY DELIVERED for the outstanding model matrix and external/manual acceptance.

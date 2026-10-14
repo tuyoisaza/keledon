@@ -1,5 +1,9 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.29 — safe device-list projection
+
+UAT-012 passes through the real Nest controller wiring with isolated fixtures. A device list containing an RPA API-key fixture, remote CDP URL, device token, and pairing code returns none of those raw values; it returns only `hasRpaProviderConfig`/`hasCdpUrl` flags. UAT-011 remains the paired-device-only positive path for fetching runtime RPA config. The complete API regression suite passes 21/21, API Jest 11/11/38, API build and focused lint pass (0 errors, 1 pre-existing warning). No persistent database or live device was used.
+
 ## Candidate 5.1.28 — credential-bearing device configuration
 
 UAT-011 passes in an in-process Nest HTTP harness: no Authorization header and human `guest`, `user`, `agent`, `admin`, `coordinator`, or `superadmin` sessions receive 403 for `GET /api/devices/:id/rpa-config`; a valid paired-device token cannot read another device ID; the matching paired identity receives the runtime configuration. The test uses isolated Prisma/service fixtures and a synthetic credential. It proves the source guard boundary, not persisted database state, production credentials, or a live Electron device. No database or provider was contacted.
@@ -16,7 +20,7 @@ UAT-008 now passes within its explicitly approved scope: test-profile switching 
 
 | Result | Count |
 |---|---:|
-| PASS | 8 |
+| PASS | 9 |
 | FAIL | 0 |
 | BLOCKED | 2 |
 | MANUAL | 1 |
@@ -36,6 +40,7 @@ UAT-008 now passes within its explicitly approved scope: test-profile switching 
 | UAT-009 development role authentication | BLOCKED | No safe development target or actual test identities configured. Production excluded. |
 | UAT-010 persisted CRUD/migration matrix | BLOCKED | No isolated disposable PostgreSQL database; no migration run. Production DB excluded. |
 | UAT-011 credential-bearing device RPA configuration | PASS, scoped API | Real Nest HTTP harness with isolated actor/device relations: all human roles and wrong-device identity denied; exact paired-device identity allowed. No persisted DB. |
+| UAT-012 safe device-list projection | PASS, scoped API | Real Nest HTTP harness confirms RPA config, CDP URL, auth token and pairing proof are omitted; presence flags remain. No persisted DB. |
 
 ## UAT-008 design and limits
 
