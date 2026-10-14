@@ -44,9 +44,9 @@ async function main() {
     },
     team: {
       findFirst: async ({ where }) =>
-        where.id === 'team-a' &&
+        ['team-a', 'team-a2'].includes(where.id) &&
         (!where.brand || where.brand.companyId === 'co-a')
-          ? { id: 'team-a' }
+          ? { id: where.id }
           : null,
     },
     brand: {
@@ -239,6 +239,11 @@ async function main() {
     await allow('users', 'GET');
     await allow('users', 'GET', { id: 'user-a' });
     await allow('users', 'PUT', { id: 'user-a' }, { name: 'Updated user' });
+      await allow('users', 'PUT', { id: 'user-a' }, { teamId: 'team-a2' });
+      await assert.rejects(
+        run('users', 'PUT', { id: 'user-a' }, { teamId: 'team-b' }).result,
+        Denied,
+      );
     await allow('users', 'DELETE', { id: 'user-a' });
 
     const createdVendor = await allow(

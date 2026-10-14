@@ -1,5 +1,9 @@
 # Integration Review — admin/auth/provider candidate
 
+## Continued security review — 2026-10-14, candidate 5.1.31
+
+PR #102 retires the API/Cloud shared-secret CRUD webhook, runtime file seed and DDL paths, and removes the dormant `handler === 'webhook'` bypass from both `CrudAccessGuard` mirrors. Review also strengthened `22-admin-http-wiring.test.js` in both backends to exercise authenticated superadmin requests and assert HTTP 410 for `/api/crud/seed` and `/api/crud/migrate`; regression 35 verifies no bypass remains. API and Cloud builds pass, as do complete API 24/24 and Cloud 11/11 regression suites. The mirror review also verifies every role is denied caller-supplied password hashes and that generic CRUD cannot append audit events; tenant-allowlisted private CRM destination tests pass without network contact. This addendum supersedes the earlier note that a distinct shared-secret webhook guard remained active. PR #102 is open; independent normal security review and merge are still pending. No database or provider was used.
+
 Run 20261012-keledon-four-fronts; bounded independent source review, no edits outside this report, no browser/live/database/provider execution. Reviewed current CrudAccessGuard, CrudController/TenantController/CrudModule, global PrismaModule/AuthGuard, TeamController, auth-local signup/Google paths, management user/company/provider UI and API wrappers. This review is source evidence, not exercised HTTP/DI acceptance.
 
 ## Findings requiring integration repair

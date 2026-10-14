@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrudKeledonService } from './crud-keledon.service';
 import { CrudAuditService } from './crud-audit.service';
-import { CrudSeedService } from './crud-seed.service';
 import { CrudVendorService } from './crud-vendor.service';
 import { CrudCompanyService } from './crud-company.service';
 import { CrudHealthService } from './crud-health.service';
@@ -15,7 +14,6 @@ export class CrudService {
     private readonly prisma: PrismaService,
     private readonly keledonService: CrudKeledonService,
     private readonly auditService: CrudAuditService,
-    private readonly seedService: CrudSeedService,
     private readonly vendorService: CrudVendorService,
     private readonly companyService: CrudCompanyService,
     private readonly healthService: CrudHealthService,
@@ -130,7 +128,6 @@ export class CrudService {
     companyId?: string;
     teamId?: string;
     role?: string;
-    passwordHash?: string;
   }) {
     return this.companyService.createUser(data);
   }
@@ -247,9 +244,32 @@ export class CrudService {
   }
 
   async setTeamInterfaces(teamId: string, interfaceIds: string[]) {
-    await this.prisma.teamInterface.deleteMany({ where: { teamId } });
-    return this.prisma.teamInterface.createMany({
-      data: interfaceIds.map((interfaceId) => ({ teamId, interfaceId })),
+    if (
+      !Array.isArray(interfaceIds) ||
+      interfaceIds.some(
+        (interfaceId) =>
+          typeof interfaceId !== 'string' || interfaceId.trim().length === 0,
+      )
+    ) {
+      throw new BadRequestException('interfaceIds must be an array of IDs');
+    }
+    const uniqueIds = [...new Set(interfaceIds)];
+    if (uniqueIds.length !== interfaceIds.length) {
+      throw new BadRequestException('interfaceIds must not contain duplicates');
+    }
+    const existing = await this.prisma.managedInterface.findMany({
+      where: { id: { in: uniqueIds } },
+      select: { id: true },
+    });
+    if (existing.length !== uniqueIds.length) {
+      throw new BadRequestException('One or more interfaces do not exist');
+    }
+    return this.prisma.$transaction(async (tx) => {
+      await tx.teamInterface.deleteMany({ where: { teamId } });
+      if (uniqueIds.length === 0) return { count: 0 };
+      return tx.teamInterface.createMany({
+        data: uniqueIds.map((interfaceId) => ({ teamId, interfaceId })),
+      });
     });
   }
 
@@ -259,6 +279,10 @@ export class CrudService {
     return this.prisma.workflow.findMany({
       orderBy: { name: 'asc' },
     });
+  }
+
+  async getWorkflow(id: string) {
+    return this.prisma.workflow.findUnique({ where: { id } });
   }
 
   async createWorkflow(data: {
@@ -277,6 +301,7 @@ export class CrudService {
     id: string,
     data: {
       name?: string;
+      interfaceId?: string | null;
       description?: string;
       trigger?: string;
       steps?: string;
@@ -361,8 +386,29 @@ export class CrudService {
   async getTenantVoiceProfiles(companyId: string) {
     return this.prisma.tenantVoiceProfile.findMany({
       where: { companyId },
-      include: { providerCatalog: true },
+      select: {
+        id: true,
+        name: true,
+        providerId: true,
+        language: true,
+        isEnabled: true,
+        isDefault: true,
+      },
       orderBy: { name: 'asc' },
+    });
+  }
+
+  async getTenantVoiceProfile(id: string, companyId?: string) {
+    return this.prisma.tenantVoiceProfile.findFirst({
+      where: { id, ...(companyId ? { companyId } : {}) },
+      select: {
+        id: true,
+        name: true,
+        providerId: true,
+        language: true,
+        isEnabled: true,
+        isDefault: true,
+      },
     });
   }
 
@@ -373,11 +419,22 @@ export class CrudService {
     language?: string;
     isEnabled?: boolean;
     isDefault?: boolean;
-    config?: string;
   }) {
+    if (Object.prototype.hasOwnProperty.call(data, 'config')) {
+      throw new BadRequestException(
+        'Voice profile config is not supported through CRUD.',
+      );
+    }
     return this.prisma.tenantVoiceProfile.create({
       data,
-      include: { providerCatalog: true },
+      select: {
+        id: true,
+        name: true,
+        providerId: true,
+        language: true,
+        isEnabled: true,
+        isDefault: true,
+      },
     });
   }
 
@@ -389,13 +446,24 @@ export class CrudService {
       language?: string;
       isEnabled?: boolean;
       isDefault?: boolean;
-      config?: string;
     },
   ) {
+    if (Object.prototype.hasOwnProperty.call(data, 'config')) {
+      throw new BadRequestException(
+        'Voice profile config is not supported through CRUD.',
+      );
+    }
     return this.prisma.tenantVoiceProfile.update({
       where: { id },
       data,
-      include: { providerCatalog: true },
+      select: {
+        id: true,
+        name: true,
+        providerId: true,
+        language: true,
+        isEnabled: true,
+        isDefault: true,
+      },
     });
   }
 
@@ -496,18 +564,6 @@ export class CrudService {
     endDate?: string;
   }) {
     return this.auditService.getAuditLogs(params);
-  }
-
-  // ========== ========== SEED FROM CRUD.JSON ========== ==========
-  // Delegated to CrudSeedService (crud-seed.service.ts)
-
-  async seedFromCrudJson(): Promise<{
-    companies: number;
-    brands: number;
-    teams: number;
-    users: number;
-  }> {
-    return this.seedService.seedFromCrudJson();
   }
 
   // ========== ========== VENDORS ========== ==========

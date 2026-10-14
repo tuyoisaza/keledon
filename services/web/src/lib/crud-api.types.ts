@@ -90,8 +90,12 @@ export interface ManagedInterface {
 
 export interface Workflow {
     id: string;
+    interfaceId?: string | null;
     name: string;
     description?: string;
+    trigger: string;
+    steps: string;
+    variables: string;
     isEnabled: boolean;
     createdAt?: string;
     updatedAt?: string;

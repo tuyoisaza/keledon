@@ -40,11 +40,14 @@ test('vendor CRUD persists tenant origins while projecting only safe fields', as
   };
   let createData;
   let updateData;
+  let createCalls = 0;
+  let updateCalls = 0;
+  let currentConfig = { allowedOrigins: ['https://crm.customer.test'] };
   const prisma = { vendor: {
     findMany: async () => [stored],
-    findUnique: async () => stored,
-    create: async ({ data }) => { createData = data; return { ...stored, ...data }; },
-    update: async ({ data }) => { updateData = data; return { ...stored, ...data }; },
+    findUnique: async () => ({ ...stored, config: currentConfig }),
+    create: async ({ data }) => { createCalls++; createData = data; return { ...stored, ...data }; },
+    update: async ({ data }) => { updateCalls++; updateData = data; return { ...stored, ...data }; },
   } };
   const service = new CrudVendorService(prisma);
   const list = await service.getVendors('team-a');
@@ -57,7 +60,16 @@ test('vendor CRUD persists tenant origins while projecting only safe fields', as
   const created = await service.createVendor({ teamId: 'team-a', name: 'New CRM', type: 'crm', baseUrl: 'http://127.0.0.1:8080', allowedOrigins: ['http://127.0.0.1:9000'] });
   assert.deepEqual(createData.config.allowedOrigins, ['http://127.0.0.1:8080', 'http://127.0.0.1:9000']);
   assert.equal('config' in created, false);
+  await assert.rejects(service.createVendor({ teamId: 'team-a', name: 'Unsafe CRM', type: 'crm', config: { auth: { client_secret: 'synthetic-secret' } } }), /not supported/);
+  await assert.rejects(service.createVendor({ teamId: 'team-a', name: 'Unsafe CRM', type: 'crm', config: ['not', 'an', 'object'] }), /JSON object/);
+  await assert.rejects(service.updateVendor('vendor-a', { config: { provider: { refreshToken: 'synthetic-token' } } }), /not supported/);
+  await service.createVendor({ teamId: 'team-a', name: 'Configured CRM', type: 'crm', baseUrl: 'http://127.0.0.1:8080', config: { allowedOrigins: ['http://127.0.0.1:9000'] } });
+  assert.deepEqual(createData.config.allowedOrigins, ['http://127.0.0.1:8080', 'http://127.0.0.1:9000']);
   await service.updateVendor('vendor-a', { allowedOrigins: ['http://127.0.0.1:8080'] });
   assert.deepEqual(updateData.config.allowedOrigins, ['http://127.0.0.1:8080', 'http://192.168.1.20:8080']);
   assert.equal('allowedOrigins' in updateData, false);
+  currentConfig = { integrationSecret: 'legacy-plaintext' };
+  await assert.rejects(service.updateVendor('vendor-a', { name: 'Changed vendor' }), /not supported/);
+  assert.equal(createCalls, 2, 'unsafe config must be rejected before create');
+  assert.equal(updateCalls, 1, 'unsafe and legacy config must be rejected before update');
 });

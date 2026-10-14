@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma, Vendor } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { encryptVendorSecretAtRest } from '../security/vendor-secret-crypto';
+import { assertNonSecretVendorConfig } from '../security/vendor-config-policy';
 import {
   getVendorAllowedOrigins,
   normalizeVendorAllowedOrigins,
@@ -97,10 +98,11 @@ export class CrudVendorService {
     config?: Prisma.InputJsonObject;
     startGoal?: string;
   }) {
+    const safeConfig = assertNonSecretVendorConfig(data.config);
     const baseUrl = normalizeVendorBaseUrl(data.baseUrl);
     const allowedOrigins = normalizeVendorAllowedOrigins(
       baseUrl,
-      data.allowedOrigins,
+      data.allowedOrigins ?? safeConfig?.allowedOrigins,
     );
     const vendor = await this.prisma.vendor.create({
       data: {
@@ -117,7 +119,7 @@ export class CrudVendorService {
         apiKey: data.apiKey
           ? encryptVendorSecretAtRest(data.apiKey)
           : data.apiKey,
-        config: { ...(data.config || {}), allowedOrigins },
+        config: { ...(safeConfig || {}), allowedOrigins },
         startGoal: data.startGoal,
       },
     });
@@ -139,6 +141,7 @@ export class CrudVendorService {
       startGoal?: string;
     },
   ) {
+    const safeConfig = assertNonSecretVendorConfig(data.config);
     const current = await this.prisma.vendor.findUnique({
       where: { id },
       select: { baseUrl: true, config: true },
@@ -150,6 +153,7 @@ export class CrudVendorService {
       !Array.isArray(current.config)
         ? (current.config as Record<string, unknown>)
         : {};
+    assertNonSecretVendorConfig(currentConfig);
     const baseUrl =
       data.baseUrl === undefined
         ? normalizeVendorBaseUrl(current.baseUrl)
@@ -159,16 +163,17 @@ export class CrudVendorService {
       : [];
     const allowedOrigins = normalizeVendorAllowedOrigins(
       baseUrl,
-      data.allowedOrigins === undefined ? priorOrigins : data.allowedOrigins,
+      data.allowedOrigins ?? safeConfig?.allowedOrigins ?? priorOrigins,
     );
-    const { config, ...vendorFields } = data;
+    const vendorFields = { ...data };
+    delete vendorFields.config;
     delete vendorFields.allowedOrigins;
     const updateData: Prisma.VendorUpdateInput = {
       ...vendorFields,
       baseUrl,
       config: {
         ...currentConfig,
-        ...(config || {}),
+        ...(safeConfig || {}),
         allowedOrigins,
       },
     };

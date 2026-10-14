@@ -1,4 +1,8 @@
-## Auto remediation delivery — candidate 5.1.30
+## Current Auto remediation — candidate 5.1.31 (2026-10-14)
+
+The shared-secret webhook, file-seed services, runtime DDL routes and dormant CrudAccessGuard handler-name bypass were removed from API and Cloud; authenticated superadmin requests to legacy seed/migrate endpoints return 410 in both real Nest HTTP harnesses. Mirror review also found and fixed Cloud acceptance of user password hashes and direct audit-log writes, bringing those controls in line with API. Manager user team reassignment is limited to the actor company. Cloud's missing tenant voice-profile detail endpoint is now present, uses the same safe projection as API and is guarded against foreign-company IDs (UAT-029). API/Cloud builds and regressions pass; API 29/29, Cloud 14/14. All five app roots and Browser renderer align at 5.1.31. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open for normal security review; merge and main readback are pending. Overall Auto remains PARTIALLY DELIVERED for the remaining source CRUD matrix and environment-bound acceptance.
+
+## Historical remediation delivery — candidate 5.1.30
 
 PR #100 merged the default-deny RLS/bootstrap policy and seed-account remediation on 2026-10-14. Main is verified at `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; API regression 22/22 and Cloud 11/11 pass, API/Cloud mirrors match, all product builds pass, and PHDK coherence is 52/52. Unsafe legacy Auth elevation and customer-like RBAC/session/CRM fixture paths are retired. New Auth users remain `user`; a synthetic-user fixture is opt-in, exact-target-pinned, nonproduction and role-fixed. Existing per-tenant CRM origin enforcement permits only validated allowlisted targets; no private fetch or customer integration test occurred.
 
@@ -98,3 +102,15 @@ Product PR #42 is merged and independently read back. PHDK central tool defects 
 Closed the in-scope PHDK diagnostics findings: replaced stale feature-flag/provider-metric claims with measured, allowlisted LLM/STT/TTS outcomes and process limits/switch states; protected global usage with the current database superadmin role; updated the shared Web/Landing report; added privacy, role-gating and regression tests. Retests pass: API 14/14 + focused Jest 9/9, Cloud 8/8, Web 16/16 + UAT 1/1, Browser 29/29, all five builds, and PHDK coherence 52/52.
 
 Residual items require separate acceptance environments: persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO. No source-only evidence closes these. Details: `docs/phdk/lifecycle/20261013-keledon-v5111/80-remediation/`. Overall: PARTIALLY DELIVERED.
+## Auto remediation candidate — 5.1.31 (2026-10-14)
+
+Check found that API and Cloud still had shared-secret webhook actions that loaded file-controlled seed input and ran direct DDL; API seed input could assign a submitted role. Both backends now retire the webhook, seed and runtime migration routes (HTTP 410 on authenticated superadmin requests), remove the seed/migration services and guards, and delete the dormant handler-name bypass from CrudAccessGuard. Real HTTP wiring regressions assert 410 in both backends; cross-backend static regression checks both guards. API/Cloud regression and builds pass. No database, seed file, migration or external provider was accessed.
+
+Remaining Check scope includes the model-specific CRUD matrix and environment-dependent persistence/UAT. Candidate delivery is pending.
+## Current remediation recheck — candidate 5.1.32 (2026-10-14)
+
+Completed in-scope source fixes now include tenant-scoped Knowledge/vector operations with Qdrant-compatible deterministic UUID point IDs; the Knowledge page no longer presents fabricated active-call/transcript/RAG values, is localized in three supported locales, masks backend errors and uses the shared accessible modal. Exact-source UAT-030 passes at `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`. API/Cloud/Browser regressions pass 33/33, 14/14 and 33/33; builds pass; Web diagnostics 19/19; Web/Landing SEO 1/1 each; PHDK coherence 52/52.
+
+No auto-fixable defect remains in the current source slice. Unresolved work is environment/manual or delivery: real DB-backed identities, disposable PostgreSQL persistence/migration, native Windows device/audio, deployed SEO/AEO, and PR #102 integration/readback. Whole Auto is **PARTIALLY DELIVERED**, not complete. No database, customer provider, private CRM endpoint or deployment was accessed.
+
+SIGUIENTE PASO: deliver the tested candidate through the existing PR controls; keep database/native/deployed acceptance gates open until evidence is available.

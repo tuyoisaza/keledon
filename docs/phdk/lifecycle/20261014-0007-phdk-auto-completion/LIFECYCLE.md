@@ -1,5 +1,33 @@
 # PHDK Auto lifecycle — `20261014-0007-phdk-auto-completion`
 
+## Current Auto continuation — candidate 5.1.32 (2026-10-14)
+
+| Stage | Status | Evidence / handoff |
+|---|---|---|
+| 00 Preflight | VERIFIED / REUSED | PHDK 2.50.10; coherence 52/52. |
+| 10 Capture | COMPLETE / REUSED | Owner-confirmed CMT-001..004 and approved role/tenant/private-CRM policy retained. |
+| 20 Plan | COMPLETE / REUSED | Brownfield plan remains aligned; no new vendor or market assumptions. |
+| 30 PMO | COMPLETE FOR CURRENT SOURCE SLICE | Four owner-confirmed fronts integrated and reconciled. |
+| 40 Integration | COMPLETE FOR UAT | SHA `93f844b`; API/Cloud/Browser/Web contracts and versions align; builds and full API 33/33, Cloud 14/14, Browser 33/33 pass. |
+| 50 UAT | SCOPED PASS / WHOLE PRODUCT INCOMPLETE | Exact-source local browser suite 1/1; UAT-030 pass. 27 PASS, 2 BLOCKED, 1 MANUAL. See `50-uat/HANDOFF.md` and r4 snapshot. |
+| 60 UAT Fix | COMPLETE FOR LOCAL FIXES | False call/RAG UI, i18n, error disclosure, modal remediation pass exact-source UAT. DB, identity and native gates remain external/manual. |
+| 65 SEO | SOURCE PASS / EXTERNAL UNMEASURED | Web/Landing SEO tests 1/1; public source unaffected; no deployed metrics. |
+| 67 AEO/GEO | SOURCE REVIEW REUSED / EXTERNAL UNMEASURED | Public content unchanged; no crawler/answer engine. |
+| 70 Check | RECONCILIATION IN PROGRESS | API/Cloud model source and UI gates revalidated; inventory 35/35 models and 126 core rows is a drift guard, not DB proof. |
+| 80 Remediation | LOCAL SOURCE PASS | No current source auto-fix remains; environment gates retained. |
+| 90 Delivery | PENDING | Push/update PR #102, verify actual controls, merge and read exact remote `main` content/version. |
+
+Overall: **PARTIALLY DELIVERED**; no database, customer provider, private CRM endpoint or deployment was accessed.
+
+## Continued Check remediation — candidate 5.1.31 (2026-10-14)
+
+Review found a shared-secret API/Cloud webhook path for user/file-controlled provisioning and direct runtime DDL that bypassed the approved DB-derived actor and versioned migration policy. Candidate 5.1.31 removes the webhook, seed/migration services and guards; legacy seed/migrate routes now return 410. Cloud guard parity also rejects password-hash injection and generic audit-log writes; tenant-allowlisted private CRM target policy passes offline tests. API and Cloud builds and regressions (29/29 and 12/12) pass. UAT-024 verifies both backends omit tenant voice-profile config/provider catalog on list/create/update; UAT-025 verifies Vendor.config accepts only the explicit allowedOrigins field and edits fail closed on unsupported legacy fields. Changed-source ESLint and PHDK coherence 52/52 pass. The candidate is based on verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; PR [#102](https://github.com/tuyoisaza/keledon/pull/102) head `cf5e6b5be4905f122b82a2ff5c4cc2b8a1b2ed5b` remains open pending independent review and merge/readback. Full Auto remains partial with the 26-model CRUD map and environment-bound acceptance still open.
+
+
+## Continued Check remediation — candidate 5.1.31 (2026-10-14)
+
+Review found a shared-secret API/Cloud webhook path for file-controlled provisioning and direct runtime DDL that bypassed the approved DB-derived actor and versioned migration policy. Candidate 5.1.31 removes the webhook, seed/migration services and guards; legacy seed/migrate routes now return 410. Cloud guard parity also rejects password-hash injection and generic audit-log writes; tenant-allowlisted private CRM target policy passes offline tests. API and Cloud builds and regressions (29/29 and 12/12) pass. UAT-024 verifies both backends omit tenant voice-profile config/provider catalog on list/create/update; UAT-025 verifies Vendor.config accepts only the explicit allowedOrigins field and edits fail closed on unsupported legacy fields. Changed-source ESLint and PHDK coherence 52/52 pass. The candidate is based on verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; PR [#102](https://github.com/tuyoisaza/keledon/pull/102) remains open pending independent review and merge/readback. Full Auto remains partial with the 26-model CRUD map and environment-bound acceptance still open.
+
 ## Final delivery status — 2026-10-14
 
 Latest source delivery: KELEDON 5.1.30, PR [#100](https://github.com/tuyoisaza/keledon/pull/100), merge SHA `7a48b419880abea818837e4cdfc3d4d4c3f77c12`. Remote readbacks agree and source/merge trees match. API regression 22/22, Cloud 11/11, all builds and PHDK v2.50.10 coherence 52/52 pass. No deployment claimed.

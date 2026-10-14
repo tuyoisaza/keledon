@@ -27,6 +27,7 @@ import ManagementKeledonsPage from '@/pages/ManagementKeledonsPage';
 import ManagementVoiceProfilesPage from '@/pages/ManagementVoiceProfilesPage';
 import ManagementProvidersPage from '@/pages/ManagementProvidersPage';
 import ManagementVendorsPage from '@/pages/ManagementVendorsPage';
+import ManagementWorkflowsPage from '@/pages/ManagementWorkflowsPage';
 import ManagementDebugPage from '@/pages/ManagementDebugPage';
 import ManagementStatusPage from '@/pages/ManagementStatusPage';
 import FlowsPage from '@/pages/FlowsPage';
@@ -318,6 +319,18 @@ export function AppRouter() {
                             <AppLayout>
                                 <ManagementLayout>
                                     <ManagementVendorsPage />
+                                </ManagementLayout>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/workflows"
+                    element={
+                        <ProtectedRoute minRole="superadmin">
+                            <AppLayout>
+                                <ManagementLayout>
+                                    <ManagementWorkflowsPage />
                                 </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>

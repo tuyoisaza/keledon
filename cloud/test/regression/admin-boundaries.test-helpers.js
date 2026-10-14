@@ -71,6 +71,7 @@ module.exports = {
   crypto,
   Denied,
   context,
+  load,
   AuthGuard,
   LocalAuthService,
   RolesGuard,

@@ -1,5 +1,55 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.32 — tenant Knowledge page repair (2026-10-14)
+
+UAT-030 passes against source commit `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`. `services/web npm run test:uat` passes 1/1. The browser used a local production build, synthetic Company Co fixtures, intercepted API requests, and blocked external network/WebSockets. It verifies user read-only controls, the admin source dialog’s labels/Escape/focus restoration, Spanish/English/Portuguese copy, removal of fabricated transcript/RAG results, and generic error text that omits backend details and secret variable names. `docs/phdk/evidence/uat-local-web.json` records the exact source SHA with an empty source fingerprint and no dirty untracked source files. This does not prove live auth, DB persistence, real RAG/call data, or deployment.
+
+The current catalog has 27 PASS, 2 BLOCKED, and 1 MANUAL. UAT-009 needs safe DB-backed development identities; UAT-010 needs a disposable PostgreSQL environment for persisted CRUD/migration; UAT-006 needs native Windows device/audio interaction. Whole-product acceptance remains **ACCEPTANCE INCOMPLETE**. Client-specific call/CRM acceptance remains tenant-specific by owner decision.
+
+## Candidate 5.1.31 — Cloud voice-profile detail parity (2026-10-14)
+
+UAT-029 passes in API/Cloud source harnesses. Cloud now exposes the same safe tenant detail route as API, scopes its Prisma lookup by the current DB-derived actor company, and denies a foreign profile ID in `CrudAccessGuard`. Regression 41 verifies list/detail/create/update projections match across both services and omit `config` and `providerCatalog`; Cloud regression 39 verifies its controller method and cross-company guard behavior. Cloud build and regressions pass 14/14; API build and regressions pass 29/29. No persistent profile or identity was accessed.
+
+## Candidate 5.1.31 — widget, diagnostics, and built-Web journey (2026-10-14)
+
+UAT-028 passes. Web diagnostics/widget tests pass 19/19; Web typecheck and production build pass. The local built-SPA UAT passes 1/1 against synthetic Company Co fixtures with all API requests intercepted and external network blocked. It covers redaction, debug-off no-read behavior, manually initiated safe probes, reset truthfulness, route coverage, admin workflows, keyboard/focus and responsive zoom. Exact candidate revision `f700fe0f9cc57c0c8e3370698724ef5660e8d8d4` and screenshots are recorded in `docs/phdk/evidence/uat-local-web.json` and adjacent PNGs. This is not live authentication, persisted data, native-device or complete accessibility acceptance.
+
+## Candidate 5.1.31 — API/Cloud paired vendor payload parity (2026-10-14)
+
+UAT-027 passes at source/contract level. Cloud pairing now includes the same `startGoal` and active-state fields as API alongside its validated per-tenant `allowedOrigins` and encrypted credentials. Cloud regression passes 13/13, including new regression 38; Browser builds and its 21 `.cjs` tests pass, including pairing source and runtime-contract coverage. No native device or CRM request was made.
+
+## Candidate 5.1.31 — voice-profile config write rejection (2026-10-14)
+
+UAT-026 passes for both backend source implementations. The guards no longer allow `config` in voice-profile bodies, and each service throws before Prisma create/update if a direct caller supplies the field. Valid create/update calls use the safe six-field projection; regression 41 also confirms the `config` and `providerCatalog` values are absent. Full API/Cloud regressions pass 29/29 and 12/12; builds pass. This is isolated source evidence and does not inspect existing persisted `TenantVoiceProfile.config` values.
+
+## Candidate 5.1.31 — vendor config credential rejection (2026-10-14)
+
+UAT-025 passes in API and Cloud regression harnesses. Create rejects arbitrary config fields and non-object config; update rejects arbitrary config and, after confirming a legacy current config has an unsupported field, a normal edit is rejected before the Prisma update. The explicit `allowedOrigins` schema still accepts validated private tenant origins. Encrypted password/API-key storage and safe projections remain covered. API/Cloud builds, full regressions (29/29 and 12/12) and changed-source ESLint pass. This is source-level evidence only; no persisted rows were inspected or changed.
+
+## Candidate 5.1.31 — API/Cloud voice-profile secret projection (2026-10-14)
+
+UAT-024 passes in a source harness that loads both `CrudService` implementations. Tenant voice-profile list, create, and update each select the same six display fields and omit both `config` and `providerCatalog`; synthetic secrets are absent from returned results. Cloud build and full API regression pass (29/29, including regression 41). No database or real credential was used; persisted behavior remains part of blocked DB acceptance.
+
+## Candidate 5.1.31 — API/Cloud user-scope projection (2026-10-14)
+
+UAT-023 passes in an isolated source harness for both guards. A token claiming superadmin does not elevate a DB-backed admin, a foreign-company user detail is denied, and the Prisma user lookup selects only `companyId`, `teamId`, and `role`, never `passwordHash`. Full API regression passes 28/28 and API/Cloud production builds pass. No persistent user record or database was accessed.
+
+## Candidate 5.1.31 — Workflow detail and superadmin CRUD UAT (2026-10-14)
+
+UAT-022 passes within the local-source scope. API and Cloud expose `GET /api/crud/workflows/:id`; regression 39 confirms the controller guard is wired and superadmin alone can perform list/detail/create/update/delete across the five non-superadmin role denials. A local browser journey at `/management/workflows` covered list, detail open/close, invalid JSON rejection before network mutation, valid create, edit, confirmed delete, and redirecting a tenant admin away from the route. All API endpoints were intercepted with in-memory synthetic fixtures (`example.test`); no real API, database or provider was contacted. Web production build, TypeScript typecheck and EN/ES/PT `records` key parity passed. This verifies the source UX and mocked request contract, not persisted CRUD, live identity enforcement or deployment.
+
+UAT-021 also passes for TeamInterface replacement at source/guard contract level: malformed/duplicate/blank/unknown IDs are rejected before transactional replacement; empty array is the explicit clear; both API and Cloud guards allow a same-company direct team ID and deny a foreign-company ID. No database was used. Overall run remains **PARTIALLY ACCEPTED** for DB migration/persistence, native device/audio, broad accessibility/localization and deployed SEO/AEO.
+
+## Candidate 5.1.31 — API/Cloud CRUD security parity
+
+UAT-019 passes. Cloud's guard now rejects client-supplied `passwordHash` for all tested roles and denies every non-GET write to append-only `audit-logs`; the Cloud user-service contract no longer accepts hashes. Cloud's in-process Nest harness verifies HTTP denial for superadmin hash injection and forged audit POST. The Cloud direct-guard regression covers guest, user, agent, admin, coordinator and superadmin hash attempts; API regression already exercises the policy. Cross-backend test 36 asserts both guards retain the same two controls and no webhook-name bypass. Both builds pass; full API regression is 24/24 and Cloud 11/11. No database was used, so persisted audit integrity remains unverified.
+
+UAT-020 passes API and Cloud direct guard regressions, with Cloud HTTP wiring confirming an admin can assign a user to another team within the same company and receives 403 for a foreign-company team. This preserves approved CMT-004 behavior while company reassignment and elevated roles remain unavailable to managers. Fixtures are in-memory; persistence is unverified.
+
+## Candidate 5.1.31 — runtime seed/webhook retirement
+
+UAT-018 passes both real in-process Nest HTTP wiring harnesses: authenticated superadmin POSTs to `/api/crud/seed` and `/api/crud/migrate` return HTTP 410 in API and Cloud. Cross-backend static regression confirms both controllers retain the DB-derived CRUD guard, have no public shared-secret webhook, and both CrudAccessGuard mirrors lack a handler-name bypass. File-based seed services, runtime DDL services and webhook guards are deleted with no remaining module/service references. API build and full regression pass (24/24); Cloud build and regression pass (11/11). No DB, seed fixture, migration, customer record or private CRM origin was used. This source evidence does not prove persisted database state.
+
 ## Current Auto source delta — deny unscoped Supabase RLS
 
 UAT-013 passes its static regression: reviewed API/Cloud setup and bootstrap SQL contain no broad authenticated or true-valued row policy, the idempotent migration enables RLS on non-extension-owned public application tables and drops legacy broad policies, and mirrored SQL files are identical. UAT-014 passes: the legacy user-provisioning script refuses production, requires an explicit exact target URL and opt-in, accepts only `@example.test`, takes its password from the environment and fixes the assigned role to `user`; API/Cloud copies match and pass Node syntax checks. UAT-015 passes: user-table SQL no longer inserts sample accounts, obsolete customer/RBAC seed scripts fail closed, and no SQL setup path seeds elevated accounts. UAT-016 confirms the Auth trigger always creates ordinary users and preserves existing roles without email-based elevation. UAT-017 confirms legacy customer/RBAC/session/CRM seeders fail closed and global provider-catalog seeding requires a nonproduction opt-in plus exact allowed URL. No migration, trigger or provisioning/seed script ran, so no database was connected and no account or demo data was created. Existing policy/grant state and application connection-role behavior remain unverified. CRM destinations remain tenant-configured, URL-validated, and origin-allowlisted as separately covered by UAT-004.
@@ -83,21 +133,6 @@ The local SPA journey exercised anonymous diagnostics, role-shaped mock UI, loca
 | BLOCKED | 2 |
 | MANUAL | 1 |
 | NOT APPLICABLE | 0 |
-
-## Case results
-
-| Case | Result | Evidence |
-|---|---|---|
-| UAT-001 diagnostics widget | PASS | Local SPA suite 1/1; copy/deny/reset preservation, version row, 390px and simulated 200%/400% viewport checks, screenshot evidence. |
-| UAT-002 admin/user-facing journeys | PASS, mocked UI only | Local SPA suite: admin/coordinator/superadmin role-shaped views, manager controls, provider replacement, Voice Profiles and KELEDON payload/dialog journeys; guest management denial. No real roles/auth. |
-| UAT-003 API/Cloud permissions and tenant isolation | PASS, isolated source tests | API regression 19/19; Cloud regression 10/10. No persistent database. |
-| UAT-004 CRM destinations and safe secrets | PASS, isolated source tests | API/Cloud vendor policy tests and Browser offline suite 27/27; private/local allowed origins are tenant-configured. No actual request to a private host. |
-| UAT-005 call/Cloud/Browser synthetic path | PASS, mocked | Browser `company-co-lifecycle` included in the 27/27 offline tests; no customer provider or audio. |
-| UAT-006 native Browser/device/audio | MANUAL | Not exercised; supported physical device/audio session unavailable. |
-| UAT-007 baseline version | PASS, source only | Five app package/lock roots and Browser renderer identify 5.1.24. Final release version/PR remains pending. |
-| UAT-008 audited superadmin test-profile selection | FAIL | Source review found no active server-authorized/audited test-profile switch; a stale unreferenced front-end simulation component is not proof. Requires UAT Fix or a scoped decision. |
-| UAT-009 deployed development role authentication | BLOCKED | No safe development target/test accounts are configured or verified. Production is excluded. |
-| UAT-010 persisted CRUD/migration matrix | BLOCKED | No isolated disposable PostgreSQL database; no migration run. Production DB is excluded. |
 
 ## Executed checks
 

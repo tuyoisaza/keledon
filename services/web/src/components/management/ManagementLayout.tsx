@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 import { Building2, Tag, Users as UsersIcon, UserCircle, Mic, Settings, Bug, Activity, Database, LayoutGrid, Bot, Store } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -12,6 +13,7 @@ const managementTabs = [
     { id: 'voice-profiles', label: 'Voice Profiles', href: '/management/voice-profiles', icon: Mic },
     { id: 'providers', label: 'Providers', href: '/management/providers', icon: Settings },
     { id: 'vendors', label: 'Vendors', href: '/management/vendors', icon: Store },
+    { id: 'workflows', label: 'Workflows', href: '/management/workflows', icon: LayoutGrid, superadminOnly: true },
     { id: 'vector-store', label: 'Vector Store', href: '/management/vector-store', icon: Database },
     { id: 'debug', label: 'Debug', href: '/management/debug', icon: Bug },
     { id: 'status', label: 'Status', href: '/management/status', icon: Activity },
@@ -23,6 +25,7 @@ interface ManagementLayoutProps {
 
 export function ManagementLayout({ children }: ManagementLayoutProps) {
     const location = useLocation();
+    const { user } = useAuth();
 
     const isActive = (href: string) => {
         if (href === '/management/companies' && location.pathname === '/management/companies') {
@@ -35,7 +38,7 @@ export function ManagementLayout({ children }: ManagementLayoutProps) {
         <div className="space-y-6">
             <div className="border-b border-border">
                 <nav className="flex flex-wrap gap-1 p-2 -mb-px">
-                    {managementTabs.map((tab) => (
+                    {managementTabs.filter((tab) => !('superadminOnly' in tab) || user?.role === 'superadmin').map((tab) => (
                         <Link
                             key={tab.id}
                             to={tab.href}

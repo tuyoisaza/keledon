@@ -4,6 +4,7 @@ import {
   Post,
   Put,
   Delete,
+  GoneException,
   Body,
   Param,
   Query,
@@ -11,22 +12,14 @@ import {
   Req,
 } from '@nestjs/common';
 import { CrudService } from './crud.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { WebhookGuard } from '../guards/webhook.guard';
-import { Public } from '../guards/public.decorator';
 import { CrudAccessGuard } from '../guards/crud-access.guard';
-import { CrudMigrationService } from './crud-migration.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('CRUD')
 @Controller('api/crud')
 @UseGuards(CrudAccessGuard)
 export class CrudController {
-  constructor(
-    private readonly crud: CrudService,
-    private readonly prisma: PrismaService,
-    private readonly migrationService: CrudMigrationService,
-  ) {}
+  constructor(private readonly crud: CrudService) {}
 
   // ========== HEALTH ==========
 
@@ -39,8 +32,10 @@ export class CrudController {
   // ========== MIGRATE ==========
 
   @Post('migrate')
-  async migrate() {
-    return this.migrationService.ensureVendorsSchema();
+  migrate() {
+    throw new GoneException(
+      'Runtime schema mutation is retired; use reviewed versioned Prisma migrations.',
+    );
   }
 
   // ========== COMPANIES ==========
@@ -266,6 +261,11 @@ export class CrudController {
     return this.crud.getWorkflows();
   }
 
+  @Get('workflows/:id')
+  getWorkflow(@Param('id') id: string) {
+    return this.crud.getWorkflow(id);
+  }
+
   @Post('workflows')
   createWorkflow(@Body() data: any) {
     return this.crud.createWorkflow(data);
@@ -429,21 +429,10 @@ export class CrudController {
   // ========== SEED ==========
 
   @Post('seed')
-  async seedFromCrudJson() {
-    try {
-      const result = await this.crud.seedFromCrudJson();
-      return {
-        success: true,
-        message: 'Seed completed',
-        ...result,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: 'Seed failed',
-        error: error.message,
-      };
-    }
+  seed() {
+    throw new GoneException(
+      'Application data seeding is retired; use isolated synthetic regression fixtures.',
+    );
   }
 
   // ========== VENDORS ==========
@@ -498,79 +487,5 @@ export class CrudController {
   @Delete('vendors/:id')
   deleteVendor(@Param('id') id: string) {
     return this.crud.deleteVendor(id);
-  }
-
-  // ========== WEBHOOK ==========
-
-  @Public()
-  @UseGuards(WebhookGuard)
-  @Post('webhook')
-  async webhook(@Body() body: any) {
-    const { action, data } = body;
-
-    if (action === 'seed') {
-      return this.webhookSeed(data);
-    }
-    if (action === 'migrate') {
-      return this.webhookMigrate();
-    }
-    return {
-      status: 'error',
-      message: 'Unknown action. Use "seed" or "migrate".',
-    };
-  }
-
-  private async webhookSeed(seedData?: any) {
-    if (!seedData?.companies) {
-      return {
-        status: 'error',
-        message: 'Seed requires data.companies array in the request body',
-      };
-    }
-
-    const fs = require('fs');
-    const path = require('path');
-    const dataDir = path.resolve(__dirname, '../../data');
-    fs.mkdirSync(dataDir, { recursive: true });
-    fs.writeFileSync(
-      path.join(dataDir, 'crud.json'),
-      JSON.stringify(seedData, null, 2),
-    );
-
-    return this.crud.seedFromCrudJson();
-  }
-
-  private async webhookMigrate() {
-    try {
-      await this.prisma.$executeRaw`
-        CREATE TABLE IF NOT EXISTS "vendors" (
-          "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-          "teamId" UUID NOT NULL REFERENCES "teams"("id") ON DELETE CASCADE,
-          "name" VARCHAR(255) NOT NULL,
-          "type" VARCHAR(50) NOT NULL DEFAULT 'other',
-          "baseUrl" TEXT,
-          "username" TEXT,
-          "password" TEXT,
-          "apiKey" TEXT,
-          "config" JSONB,
-          "isActive" BOOLEAN DEFAULT true,
-          "startGoal" TEXT,
-          "createdAt" TIMESTAMP DEFAULT now(),
-          "updatedAt" TIMESTAMP DEFAULT now()
-        )
-      `;
-      await this.prisma
-        .$executeRaw`CREATE INDEX IF NOT EXISTS "vendors_teamId_idx" ON "vendors"("teamId")`;
-      return {
-        success: true,
-        message: 'Migration webhook: vendors table ensured',
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: 'Migration webhook failed',
-        error: error.message,
-      };
-    }
   }
 }

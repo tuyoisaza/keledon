@@ -1,3 +1,7 @@
+## 2026-10-14 — candidate 5.1.31 security finding and remediation
+
+Continuing the four owner-confirmed workstreams uncovered API/Cloud shared-secret seed and runtime DDL paths; candidate 5.1.31 retires them and aligns Cloud password-hash/audit-write controls with API. TeamInterface replacement validates IDs before transactional updates. Workflow detail and superadmin CRUD are implemented across API, Cloud and Web. API's CRUD guard matches Cloud's typed input handling and minimal user scope. API/Cloud voice-profile list/detail/create/update now share safe projections, and config writes are disabled because that JSON column is unencrypted and unused. Vendor config accepts only validated `allowedOrigins`, closing arbitrary plaintext JSON storage. Pairing payloads now match between API/Cloud for tenant origins and runtime start settings. API/Cloud regressions pass 29/29 and 14/14; Browser build/21 tests, Web diagnostics 19/19, built-SPA UAT 1/1, Web typecheck/build, Landing SEO 1/1/build and PHDK coherence 52/52 pass. UAT-024–029 cover profile response/detail parity, vendor schema, profile-config rejection, pairing parity and widget diagnostics. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open; no DB or seed operation was run. Remaining model-family mapping and environment-bound Auto acceptance remain open.
+
 ## 2026-10-14 — 5.1.30 source delivery readback
 
 PR #100 delivered the RLS/seed-security remediation at exact remote `main` SHA `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; Git remote readbacks and PR/source tree match. API regression 22/22, Cloud 11/11, all product builds, UAT-013–017 source checks and PHDK coherence 52/52 pass. GitHub reports no hosted checks/review decision. No migration, trigger, seed script, customer data or deployment was used. Whole-product Auto remains partial for environment-bound database, development identities, native/device/audio, broad accessibility/localization and deployed SEO/AEO.
@@ -9,6 +13,12 @@ RLS/bootstrap policies no longer grant unscoped browser access; unsafe superadmi
 
 SIGUIENTE PASO: complete the final diff review and normal PR delivery from `fix/deny-unscoped-supabase-rls`.
 # PMO milestone history
+## 2026-10-14 — Knowledge UAT remediation integrated in candidate 5.1.32
+
+The fourth-front permissions review led to a Knowledge-page UAT finding: the UI showed a fabricated active-call/RAG example and English-only copy. Candidate 5.1.32 removes that false panel and unused placeholder intake block from the route, localizes the page and safe errors in Spanish/English/Portuguese, uses the shared accessible source modal, and adds exact-source UAT-030. API 33/33, Cloud 14/14, Browser 33/33, Web diagnostics 19/19, exact-source UAT 1/1, Web/Landing SEO 1/1 each, builds and PHDK coherence 52/52 pass. Source SHA is `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`; PR #102 still awaits push/update. The 35-model/126-row inventory test is a drift check, not persisted DB proof. UAT remains partial for safe identities, disposable DB, native device/audio and deployed SEO/AEO. No database, private CRM, live client call or deployment was used.
+
+SIGUIENTE PASO: finish Check and delivery artifacts, update PR #102, and complete actual merge/readback controls.
+
 ## 2026-10-14 — CMT-004 Supabase RLS and seed-account policy
 
 Current source review caught permissive Supabase setup policies, auto-seeded `superadmin` and customer accounts, an email-based Auth elevation trigger, and service-key fixtures that wrote demo sessions/CRM flows into customer data. API/Cloud SQL now uses default-deny RLS with an idempotent cleanup migration; Auth sync grants only `user`, unsafe legacy fixtures and setup guidance are retired, the remaining user fixture is pinned to a nonproduction target, and provider-catalog seeding is similarly gated. UAT-013–017, mirror checks and Node syntax checks pass. No migration, trigger or seed/provisioning script was run. Full model-operation mapping and disposable-DB evidence remain open; candidate delivery is pending.

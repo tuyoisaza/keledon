@@ -52,7 +52,6 @@ const {
 const { MvpStoreService } = require('../../src/mvp/mvp-store.service.ts');
 const { CrudController } = require('../../src/crud/crud.controller.ts');
 const { CrudService } = require('../../src/crud/crud.service.ts');
-const { CrudMigrationService } = require('../../src/crud/crud-migration.service.ts');
 const { LocalAuthController } = require('../../src/auth-local/auth-local.controller.ts');
 const { LocalAuthService } = require('../../src/auth-local/auth-local.service.ts');
 const { AuthAttemptGuard } = require('../../src/guards/auth-attempt.guard.ts');
@@ -168,7 +167,6 @@ async function main() {
       { provide: AuthAttemptGuard, useClass: AuthAttemptGuard },
       { provide: SuperAdminGuard, useValue: new SuperAdminGuard(prisma) },
       { provide: require('../../src/auth-local/google-oauth.service.ts').GoogleOAuthService, useValue: {} },
-      { provide: CrudMigrationService, useValue: { ensureVendorsSchema: async () => ({ status: 'ok' }) } },
       { provide: ConfigService, useValue: { get: () => undefined } },
       {
         provide: CrudService,
@@ -276,6 +274,14 @@ async function main() {
   };
   try {
     const http = app.getHttpServer();
+    await request(http)
+      .post('/api/crud/migrate')
+      .set('Authorization', token('superadmin'))
+      .expect(410);
+    await request(http)
+      .post('/api/crud/seed')
+      .set('Authorization', token('superadmin'))
+      .expect(410);
     const testProfiles = await request(http)
       .get('/api/auth/uat-test-profiles')
       .set('Authorization', token('superadmin'))

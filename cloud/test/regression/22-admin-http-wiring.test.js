@@ -53,7 +53,6 @@ const {
 const { MvpStoreService } = require('../../src/mvp/mvp-store.service.ts');
 const { CrudController } = require('../../src/crud/crud.controller.ts');
 const { CrudService } = require('../../src/crud/crud.service.ts');
-const { CrudMigrationService } = require('../../src/crud/crud-migration.service.ts');
 const { BrainController } = require('../../src/controllers/brain.controller.ts');
 const { LLMService } = require('../../src/llm/llm.service.ts');
 
@@ -82,7 +81,7 @@ async function main() {
     },
     team: {
       findFirst: async ({ where }) =>
-        where.id === 'team-a' ? { id: 'team-a' } : null,
+        ['team-a', 'team-a2'].includes(where.id) ? { id: where.id } : null,
     },
     flow: {
       findUnique: async ({ where }) => ({
@@ -101,6 +100,7 @@ async function main() {
   let writes = 0,
     lastVectorScope,
     userListScope,
+    updatedUser,
     launchedActor;
   const module = await Test.createTestingModule({
     controllers: [
@@ -113,7 +113,6 @@ async function main() {
     ],
     providers: [
       { provide: PrismaService, useValue: prisma },
-      { provide: CrudMigrationService, useValue: { ensureVendorsSchema: async () => ({ status: 'ok' }) } },
       { provide: ResourceScopeGuard, useFactory: () => new ResourceScopeGuard(prisma) },
       { provide: LLMService, useValue: { generate: async () => ({ text: 'hello', usage: {} }) } },
       { provide: ConfigService, useValue: { get: () => undefined } },
@@ -125,6 +124,10 @@ async function main() {
             return [];
           },
           getUser: async (id) => ({ id }),
+          updateUser: async (id, data) => {
+            updatedUser = { id, ...data };
+            return updatedUser;
+          },
           generateKeledonLaunchLink: async (_id, userId) => {
             launchedActor = userId;
             return { success: true };
@@ -204,6 +207,14 @@ async function main() {
   };
   try {
     const http = app.getHttpServer();
+    await request(http)
+      .post('/api/crud/migrate')
+      .set('Authorization', token('superadmin'))
+      .expect(410);
+    await request(http)
+      .post('/api/crud/seed')
+      .set('Authorization', token('superadmin'))
+      .expect(410);
     for (let attempt = 0; attempt < 20; attempt++) {
       await request(http).post('/api/devices/pair').send({ pairing_code: 'isolated-proof' }).expect(201);
     }
@@ -234,9 +245,30 @@ async function main() {
       .set('Authorization', token('admin'))
       .expect(200);
     await request(http)
+      .put('/api/crud/users/member')
+      .set('Authorization', token('admin'))
+      .send({ teamId: 'team-a2' })
+      .expect(200);
+    assert.equal(updatedUser.teamId, 'team-a2');
+    await request(http)
+      .put('/api/crud/users/member')
+      .set('Authorization', token('admin'))
+      .send({ teamId: 'team-b' })
+      .expect(403);
+    await request(http)
       .post('/api/crud/users')
       .set('Authorization', token('admin'))
       .send({ email: 'fixture@example.invalid', role: 'superadmin' })
+      .expect(403);
+    await request(http)
+      .post('/api/crud/users')
+      .set('Authorization', token('superadmin'))
+      .send({ email: 'hash@example.invalid', passwordHash: 'attacker-controlled-hash' })
+      .expect(403);
+    await request(http)
+      .post('/api/crud/audit-logs')
+      .set('Authorization', token('superadmin'))
+      .send({ userId: 'member', action: 'FORGED', entity: 'company' })
       .expect(403);
     await request(http)
       .post('/api/crud/keledons/k-a/launch')

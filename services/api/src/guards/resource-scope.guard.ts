@@ -99,8 +99,13 @@ export class ResourceScopeGuard implements CanActivate {
       await sessionAllowed(params.sessionId || body.sessionId);
       body.companyId = actor.companyId;
     } else if (kind === 'VectorStoreController') {
-      if (handler !== 'search' && !(handler === 'addDocument' && manager))
-        return deny();
+      const scopedRead = ['search', 'getStatus', 'listDocuments'].includes(
+        handler,
+      );
+      const scopedWrite =
+        manager &&
+        ['addDocument', 'updateDocument', 'deleteDocument'].includes(handler);
+      if (!scopedRead && !scopedWrite) return deny();
       // addDocument uses Qdrant upsert, so accepting a caller ID would let a
       // tenant manager overwrite an existing point from another tenant.
       if (
@@ -110,7 +115,15 @@ export class ResourceScopeGuard implements CanActivate {
       )
         return deny();
       body.company_id = actor.companyId;
-      body.team_id = actor.teamId;
+      const requestedTeamId =
+        typeof body.team_id === 'string' ? body.team_id.trim() : '';
+      if (manager) {
+        if (requestedTeamId) await teamAllowed(requestedTeamId);
+        body.team_id = requestedTeamId || undefined;
+      } else {
+        await teamAllowed(actor.teamId);
+        body.team_id = actor.teamId;
+      }
       if (body.brand_id) {
         const brand = await this.prisma.brand.findFirst({
           where: { id: body.brand_id, companyId: actor.companyId },
@@ -118,8 +131,16 @@ export class ResourceScopeGuard implements CanActivate {
         });
         if (!brand) return deny();
       }
-      // Cross-scope point mutation cannot be proved through the legacy default collection API.
-      // Keep update/delete/reindex/collection administration superadmin-only.
+      if (['addDocument', 'updateDocument'].includes(handler))
+        body.created_by = actor.id;
+      if (['getStatus', 'listDocuments'].includes(handler)) {
+        req.vectorScope = {
+          companyId: actor.companyId,
+          ...(!manager ? { teamId: actor.teamId } : {}),
+        };
+      } else if (['updateDocument', 'deleteDocument'].includes(handler)) {
+        req.vectorScope = { companyId: actor.companyId };
+      }
     } else if (kind === 'KnowledgeController') {
       if (!manager && handler !== 'searchKnowledge') return deny();
       body.companyId = actor.companyId;

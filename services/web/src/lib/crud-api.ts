@@ -10,7 +10,7 @@ import type {
     ProviderCatalogEntry, TenantProviderConfig, TenantVoiceProfile,
     Category, Session, BrainChatRequest, BrainChatResponse,
     KeledonMutationInput, Flow, SubAgentStatus,
-    FlowExecutionResult, InitializeSessionResponse, Vendor,
+    FlowExecutionResult, InitializeSessionResponse, Vendor, Workflow,
 } from './crud-api.types';
 export type {
     Company, CompanyCountry, Brand, Team, User, Keledon, ManagedInterface,
@@ -320,6 +320,27 @@ export async function getFlowRunStatus(runId: string): Promise<any> {
     const response = await fetch(`${SUBAGENTS_API}/flow-runs/${runId}`);
     if (!response.ok) throw new Error(`Failed to get flow run status: ${response.statusText}`);
     return response.json();
+}
+
+// Workflows (global configuration; superadmin only)
+export async function getWorkflows(): Promise<Workflow[]> {
+    return fetchApi('/workflows');
+}
+
+export async function getWorkflow(id: string): Promise<Workflow> {
+    return fetchApi(`/workflows/${id}`);
+}
+
+export async function createWorkflow(data: Omit<Workflow, 'id' | 'createdAt' | 'updatedAt'>): Promise<Workflow> {
+    return fetchApi('/workflows', 'POST', data);
+}
+
+export async function updateWorkflow(id: string, data: Partial<Omit<Workflow, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Workflow> {
+    return fetchApi(`/workflows/${id}`, 'PUT', data);
+}
+
+export async function deleteWorkflow(id: string): Promise<void> {
+    return fetchApi(`/workflows/${id}`, 'DELETE');
 }
 
 // Vendors

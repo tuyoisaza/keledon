@@ -1,3 +1,19 @@
+## v5.1.32 — 2026-10-14 (truthful and localized tenant knowledge view)
+
+- Remove the fabricated live call transcript, intent/confidence values, and sample RAG matches from the Knowledge page; the screen now shows only API-backed tenant document/status data.
+- Localize the Knowledge page and its safe user-facing errors across Spanish, English, and Portuguese; accessible source dialogs use the shared native modal with labeled controls and focus restoration.
+- Keep regular users read-only and add synthetic browser acceptance for tenant document visibility, role controls, all three locales, and the dialog keyboard flow.
+- Align all five application package/lock roots and the Browser renderer at 5.1.32.
+
+## v5.1.31 — 2026-10-14 (retire shared-secret runtime seed and migration endpoints)
+
+- Retire the shared-secret CRUD webhook and runtime `/api/crud/seed` and `/api/crud/migrate` mutation paths from API and Cloud; legacy routes now return HTTP 410 and direct operators to reviewed Prisma migrations or isolated synthetic regression fixtures.
+- Remove seed/migration services, webhook guards and a dormant handler-name bypass in `CrudAccessGuard` that could circumvent DB-derived actor and tenant authorization.
+- Add API and Cloud in-process HTTP assertions that retired endpoints return 410, plus cross-backend coverage for deleted alternate write paths.
+- Align Cloud CRUD with API policy: reject client-provided user password hashes and deny generic audit-log writes; remove `passwordHash` from Cloud service contracts.
+- Align all five application package/lock roots and the Browser renderer at 5.1.31.
+- API and Cloud builds pass; API regression 24/24 and Cloud regression 11/11 pass.
+
 ## v5.1.30 — 2026-10-14 (default-deny Supabase access and safe fixture provisioning)
 
 - Remove permissive Supabase row policies and auto-seeded sample/superadmin accounts from setup/bootstrap SQL; retire unsafe customer/RBAC/session/CRM fixtures and their guide, make Auth synchronization assign only `user`, gate provider-catalog seeding to an exact nonproduction target, and add an idempotent API/Cloud migration that enables RLS on application-owned public tables and removes legacy broad policies.

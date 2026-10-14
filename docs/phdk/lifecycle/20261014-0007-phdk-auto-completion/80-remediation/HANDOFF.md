@@ -1,5 +1,9 @@
 # Remediation handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.32 — scoped source remediation complete
+
+UAT-030 exposed a fabricated “live agent context” and UI-only source wizard on the knowledge page, with incomplete localization and errors echoing internal server details. Candidate `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5` removes the false live-call/RAG presentation, makes the source dialog keyboard/focus accessible, localizes en/es/pt copy, sanitizes errors, and preserves regular-user read-only behavior. Exact-source built-SPA UAT passes 1/1; Web and Landing SEO source tests pass 1/1. API/Cloud/Browser regressions and PHDK coherence pass. No further in-scope source remediation was found in this slice. Whole acceptance remains partial: secure DB-backed identities, disposable DB persistence/migration, native device/audio, exhaustive model/operation authorization and deployed SEO/AEO need their stated environments. No client adapter or private CRM endpoint was exercised.
+
 ## Candidate 5.1.27 — CHK-002 source remediation
 
 Resolved the source-level flow-step reorder divergence and transaction race: API and Cloud validate malformed inputs and exact unique step membership, then apply all order updates in the same serializable transaction. Focused tests: API 7/7, Cloud 10/10. Full API/Cloud configured builds and typechecks pass; regressions pass API 21/21 and Cloud 11/11. The 35-model/126-core-row assertion is drift protection only. Cloud full Jest needs a disposable DB URL; sequential synthetic Web UAT passes 1/1. PR #96 merged 5.1.27 at `a0425134ba69b1feaf165cd512caad8c136ca6f8` and exact remote readback passes. Remaining role×tenant×surface×operation coverage for 26 models and persisted DB acceptance stay open.

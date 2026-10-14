@@ -1,3 +1,19 @@
+## Current candidate 5.1.32 — completion gate FAIL-CLOSED
+
+The source candidate is `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5` on `fix/retire-runtime-seed-webhook-5-1-31`, based on verified `main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`. Version 5.1.32 is aligned across five package/lock roots and Browser renderer. API 33/33, Cloud 14/14, Browser 33/33; all builds; diagnostics 19/19; exact-source synthetic UAT 1/1; Web/Landing SEO 1/1; PHDK coherence 52/52 pass. This is scoped local/source evidence.
+
+Delivery fields: VERSION_BUMP=PASS; COMMIT_PREFIX=awaiting final permitted integration record; PUSH_AND_PR=PENDING (PR #102 not yet advanced to this source SHA); REMOTE_MAIN=PENDING; SCOPE_AND_CHECKS=source checks pass with explicit external acceptance pending. Whole product acceptance remains partial: UAT-009 safe DB-backed identities, UAT-010 disposable PostgreSQL and persisted CRUD/migration, UAT-006 native Windows device/audio, deployed SEO/AEO; client integrations require per-customer configuration. No migration, database, customer provider, private CRM endpoint or deployment was touched.
+
+Result: **NOT COMPLETE / DELIVERY PENDING**. A local commit or open PR is not verified remote-main delivery. After push, recheck actual PR controls; after integration, fetch remote `main`, verify SHA/content/version and run the vendored completion gate. Keep this report fail-closed until that evidence exists.
+
+SIGUIENTE PASO: push/update PR #102 after completing lifecycle artifacts, then follow actual merge requirements and verify remote `main`.
+
+## Continued Check audit — candidate 5.1.31 (2026-10-14)
+
+The source review after PR #100 identified a leftover shared-secret CRUD webhook and runtime seed/DDL routes in both API and Cloud. Candidate 5.1.31 retires those routes and the dormant handler-name bypass; legacy routes return HTTP 410. Cloud password-hash/audit-write controls match API. TeamInterface replacement validates before transactional updates. Workflow detail and superadmin CRUD are in API, Cloud and Web; UAT-022 covers the mocked browser flow. API's CRUD guard now matches Cloud's typed body handling and minimal user authorization projection; UAT-023 covers current-DB role and foreign-company denial without selecting password hashes. API/Cloud regressions pass 28/28 and 12/12; API and Cloud builds pass; PHDK coherence is 52/52. All five package/lock roots and Browser renderer are 5.1.31. Candidate base is verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; PR [#102](https://github.com/tuyoisaza/keledon/pull/102) carries the verified continuation and awaits independent review, merge and readback.
+
+Overall remains **PARTIALLY DELIVERED**. The source CRUD matrix still lacks 26 non-core Prisma model mappings; persisted DB migration/CRUD, safe development identities, native device/audio, broad route accessibility/localization, deployed SEO/AEO and client-selected live integration evidence remain open. No database, seed, migration, production service or customer endpoint was accessed.
+
 ## Current Auto completion audit — 5.1.30 delivered source (2026-10-14)
 
 All four approved commitments were carried into source delivery. PR #100 merged source commit `75e40a8d4f72b5c962d73c140856ada044a863e9` at exact `main` SHA `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; `origin/main` and `git ls-remote` agree, and merge/source trees match. Five package/lock roots and Browser renderer are 5.1.30. API regression 22/22, Cloud 11/11, all app builds, targeted RLS/fixture regression and PHDK coherence 52/52 pass. GitHub reports empty hosted-check and review rollups. No deployment is claimed.

@@ -1,3 +1,25 @@
+## Candidate 5.1.32 — delivery gate status (2026-10-14)
+
+Repository: `tuyoisaza/keledon`. Target: `main`. Branch: `fix/retire-runtime-seed-webhook-5-1-31`. Verified base: `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`. Latest local source commit: `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`; existing PR #102 still needs this candidate pushed. Installed PHDK 2.50.10.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Candidate 5.1.32, patch increment; five app package/lock roots and Browser renderer align; changelog updated. |
+| COMMIT_PREFIX | PENDING FINAL INTEGRATION | Latest source commit is `v5.1.32`-prefixed. Older PR branch history contains prior commits; reconcile the actual merge/squash commit subject with repository controls without rewriting shared history. |
+| PUSH_AND_PR | PENDING | Local branch has one source commit ahead of its current remote; PR #102 targets main but must be updated with the verified final candidate/docs. |
+| REMOTE_MAIN | PENDING | No 5.1.32 merge or post-merge remote readback has occurred. |
+| SCOPE_AND_CHECKS | SOURCE PASS / ACCEPTANCE PARTIAL | Four confirmed fronts documented; API 33/33, Cloud 14/14, Browser 33/33, Web diagnostics 19/19, UAT 1/1, SEO source checks, all builds, coherence 52/52. UAT-009/010 and UAT-006 remain documented external/manual gates. |
+
+Overall: **PARTIALLY DELIVERED — NOT MERGED**. No DB, customer provider, private CRM destination, or deployment was used. Do not describe as shipped or complete until PR controls, merge and exact remote-main version/content readback pass.
+
+SIGUIENTE PASO: finish lifecycle snapshots and Check, push/update PR #102, then re-read actual review/check controls and use the repository’s permitted merge method.
+
+## Candidate 5.1.31 — delivery pending
+
+Based on verified `main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`, candidate 5.1.31 removes the shared-secret CRUD webhook, file-based seed services, runtime DDL paths and dormant guard bypass from API and Cloud. Both real HTTP harnesses assert HTTP 410 for legacy seed/migrate routes. Cloud rejects password hashes and generic audit-log writes like API. TeamInterface replacement validates IDs before writes and uses a Prisma transaction, with tenant-guard coverage in both backends. Workflow has superadmin-only detail and CRUD in API, Cloud, and Web. API's typed CRUD guard and minimal user scope lookup now mirror Cloud. API/Cloud regressions pass 28/28 and 12/12; API and Cloud builds pass. Local mocked-API browser UAT covers Workflow CRUD and tenant-admin denial; isolated guard UAT covers DB-derived role, cross-company user denial and no password-hash selection. All five app roots and Browser renderer align at 5.1.31. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) remains open pending independent security review, merge and readback. No deployment, database, seed or client endpoint was used.
+
+Overall Auto remains **PARTIALLY DELIVERED** because the model-specific CRUD matrix, persisted DB behavior, safe development identities, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-client integration acceptance remain open.
+
 # Delivery handoff — Auto candidate 5.1.30 merged
 
 PHDK Auto for the four owner-confirmed KELEDON fronts delivered source version 5.1.30 through [PR #100](https://github.com/tuyoisaza/keledon/pull/100). Product source commit `75e40a8d4f72b5c962d73c140856ada044a863e9` was squash-merged to `main` at `7a48b419880abea818837e4cdfc3d4d4c3f77c12` on 2026-10-14. Fresh `origin/main` and `git ls-remote` agree, and source/merge trees match. All five app package/lock roots and Browser renderer report 5.1.30.

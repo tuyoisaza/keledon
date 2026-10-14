@@ -1,9 +1,26 @@
+## 2026-10-14 — PHDK Auto candidate 5.1.31
+
+- Based on verified `main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; all five package/lock roots and Browser renderer align at 5.1.31.
+- Retires shared-secret webhook provisioning/DDL and runtime seed/migration services in API and Cloud, removes the dormant CrudAccessGuard handler bypass, aligns Cloud password-hash/audit-write restrictions with API, and verifies denied writes plus HTTP 410 in both backends.
+- API/Cloud builds pass; API regression 24/24 and Cloud regression 11/11 pass. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open; normal security review and merge/readback are pending.
+- Auto remains **PARTIALLY DELIVERED** while the 26-model CRUD matrix, database persistence, safe synthetic identities, native device/audio, broad route accessibility/localization and deployed SEO/AEO remain open. No DB or deployment was used.
+
 ## 2026-10-14 — PHDK Auto source delivery 5.1.30
 
 - PR [#100](https://github.com/tuyoisaza/keledon/pull/100) merged; exact `origin/main` and `git ls-remote` SHA: `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; source and merge trees match.
 - API regression 22/22; Cloud 11/11; product builds and PHDK coherence 52/52 pass. All five package/lock roots and Browser renderer are 5.1.30.
 - Whole-product Auto remains **PARTIALLY DELIVERED** pending database-backed migration/CRUD, safe development identities, native device/audio, broad route accessibility/localization and deployed SEO/AEO evidence. No migration or deployment was performed.
 # STATUS
+
+## 2026-10-14 — PHDK Auto candidate 5.1.32; source pass, delivery partial
+
+- Candidate source SHA `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5` is based on verified `main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; all five package/lock roots and Browser renderer align at 5.1.32.
+- API 33/33, Cloud 14/14, Browser 33/33; API/Cloud/Browser/Web/Landing builds pass. Web diagnostics 19/19, exact-source synthetic UAT 1/1 (UAT-030), Web/Landing SEO 1/1 each, PHDK coherence 52/52.
+- Knowledge UI no longer invents a live transcript/RAG response, now supports es/en/pt, hides raw backend errors, and uses the shared accessible modal. UAT evidence binds to `93f844b` with empty source fingerprint.
+- PR #102 still needs source/docs push and current review/control readback. Whole Auto remains **PARTIALLY DELIVERED**: safe DB-backed identities, disposable-DB persistence/migration, native device/audio, broad route accessibility/screen-reader acceptance and deployed SEO/AEO remain open. Live CRM/call acceptance is customer-specific.
+- No database, provider, customer data, private CRM endpoint, or deployment was used.
+
+SIGUIENTE PASO: finish the Check/lifecycle artifacts and update PR #102 with the authorized candidate, then complete normal review/merge/remote verification.
 
 ## 2026-10-14 — PHDK Auto delivered source 5.1.30; overall partial
 

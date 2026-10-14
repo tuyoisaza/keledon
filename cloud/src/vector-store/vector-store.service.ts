@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { QdrantClient } from '@qdrant/qdrant-js';
 import * as crypto from 'crypto';
 
@@ -28,6 +32,7 @@ type FilterCondition = {
   key: string;
   match: { any?: string[]; value?: string };
 };
+export type VectorStoreScope = { companyId: string; teamId?: string };
 
 function isRecord(value: unknown): value is JsonRecord {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -145,7 +150,7 @@ export class VectorStoreService {
     return vector.map((value) => value / norm);
   }
 
-  async getStatus(): Promise<{
+  async getStatus(scope?: VectorStoreScope): Promise<{
     collectionExists: boolean;
     documentCount: number;
     collectionSize: string;
@@ -160,8 +165,14 @@ export class VectorStoreService {
       const config = readPayload(collection.config);
       const params = readPayload(config.params);
       const vectors = readPayload(params.vectors);
-      const documentCount =
-        typeof collection.points_count === 'number'
+      const documentCount = scope
+        ? (
+            await this.qdrant.count(this.collectionName, {
+              filter: this.buildScopeFilter(scope),
+              exact: true,
+            })
+          ).count
+        : typeof collection.points_count === 'number'
           ? collection.points_count
           : typeof collection.points === 'number'
             ? collection.points
@@ -189,7 +200,17 @@ export class VectorStoreService {
   async addDocument(input: unknown): Promise<{ id: string; success: true }> {
     const document = parseDocument(input);
     const vector = this.deterministicHash(document.content);
-    const id = document.id ?? `doc-${crypto.randomUUID()}`;
+    const numericId =
+      document.id && /^\d+$/.test(document.id) ? Number(document.id) : NaN;
+    const id =
+      document.id &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        document.id,
+      )
+        ? document.id
+        : Number.isSafeInteger(numericId) && numericId >= 0
+          ? numericId
+          : crypto.randomUUID();
     const timestamp = new Date().toISOString();
 
     await this.qdrant.upsert(this.collectionName, {
@@ -213,21 +234,31 @@ export class VectorStoreService {
       ],
     });
 
-    return { id, success: true };
+    return { id: String(id), success: true };
   }
 
   async updateDocument(
     id: string,
     input: unknown,
+    scope?: VectorStoreScope,
   ): Promise<{ id: string; success: true }> {
     if (!id.trim()) throw new BadRequestException('Document id is required');
+    if (scope) await this.assertPointScope(id, scope);
     const document = parseDocument(input, id);
-    return this.addDocument(document);
+    return this.addDocument({
+      ...document,
+      ...(scope ? { company_id: scope.companyId } : {}),
+    });
   }
 
-  async deleteDocument(id: string): Promise<{ success: true }> {
+  async deleteDocument(
+    id: string,
+    scope?: VectorStoreScope,
+  ): Promise<{ success: true }> {
     if (!id.trim()) throw new BadRequestException('Document id is required');
-    await this.qdrant.delete(this.collectionName, { points: [id] });
+    if (scope) await this.assertPointScope(id, scope);
+    const pointId = /^\d+$/.test(id) ? parseInt(id, 10) : id;
+    await this.qdrant.delete(this.collectionName, { points: [pointId] });
     return { success: true };
   }
 
@@ -281,11 +312,14 @@ export class VectorStoreService {
     };
   }
 
-  async listDocuments(): Promise<{ documents: JsonRecord[] }> {
+  async listDocuments(
+    scope?: VectorStoreScope,
+  ): Promise<{ documents: JsonRecord[] }> {
     try {
       const rawResult: unknown = await this.qdrant.scroll(this.collectionName, {
         limit: 1000,
         with_payload: true,
+        ...(scope ? { filter: this.buildScopeFilter(scope) } : {}),
       });
       const result = readPayload(rawResult);
       const points = Array.isArray(result.points) ? result.points : [];
@@ -299,5 +333,33 @@ export class VectorStoreService {
     } catch {
       return { documents: [] };
     }
+  }
+
+  private buildScopeFilter(scope: VectorStoreScope) {
+    const must: FilterCondition[] = [
+      { key: 'company_id', match: { value: scope.companyId } },
+      ...(scope.teamId
+        ? [{ key: 'team_id', match: { value: scope.teamId } }]
+        : []),
+    ];
+    return { must };
+  }
+
+  private async assertPointScope(
+    id: string,
+    scope: VectorStoreScope,
+  ): Promise<void> {
+    const pointId = /^\d+$/.test(id) ? parseInt(id, 10) : id;
+    const points = await this.qdrant.retrieve(this.collectionName, {
+      ids: [pointId],
+      with_payload: true,
+    });
+    const payload = readPayload(points[0]?.payload);
+    if (
+      !points.length ||
+      payload.company_id !== scope.companyId ||
+      (scope.teamId && payload.team_id !== scope.teamId)
+    )
+      throw new ForbiddenException('Vector document access denied');
   }
 }
