@@ -2,12 +2,12 @@
 
 ## 2026-10-13 — PHDK Auto continuation, 5.1.17 candidate; overall partial
 
-- Current branch `fix/phdk-keledon-voice-profile-accessibility` is based on `60d7382f0e2003597690673103ace4e785f0c018`; all five app package/lock roots are 5.1.17. Product source commit `4e874c14cde10fd5b1a0ce521ee097e67823e120` is committed; PR publication/readback is pending.
+- PR [#78](https://github.com/tuyoisaza/keledon/pull/78) merged at `f8933a61c60655a6448a546790521665c6b81c9f`; fresh `origin/main` readback matches the candidate tree and all five app package/lock roots are 5.1.17. Product source commit `4e874c14cde10fd5b1a0ce521ee097e67823e120` has exact-SHA UAT evidence.
 - KELEDON and Voice Profiles are localized in en/es/pt with labeled controls, semantic dialogs, retry/loading/error states and allowlisted payloads. Voice Profiles now have tenant-safe detail/edit; list/detail/create/update responses omit configuration/provider relations. KELEDON sends `uiInterfaces` as an array. Global Sonner notifications render, with mutation HTTP errors visible inline.
 - API regression passes 15/15; web typecheck/build and focused ESLint pass; diagnostics 18/18; locale key parity 734/734/734; local Edge UAT passes 1/1 with Company Co/Other Co synthetic fixtures and intercepted APIs. Evidence is bound to the committed source SHA. Check closes the Voice Profile source gap; full 35-model persisted CRUD, broad accessibility/localization and external runtime evidence remain open.
 - Open: persisted CRUD/migration, broad route accessibility/localization, native Electron/device/audio, deployed SEO/AEO. Client CRM/call integration remains tenant-specific.
-- Current gate: Check and validated source remediation complete; exact-SHA evidence is attached, normal PR/main delivery remains. Overall remains PARTIALLY DELIVERED.
-- SIGUIENTE PASO: publish the branch, open the normal versioned PR and verify merged `main` readback.
+- Current gate: source delivery and exact-SHA evidence are complete; persisted CRUD/migration, native/device/audio, broad active-route accessibility/localization and deployed SEO/AEO acceptance remain. Overall remains PARTIALLY DELIVERED.
+- SIGUIENTE PASO: continue the source-wide CRUD and route audit; complete runtime/manual items only against approved isolated environments.
 
 ## 2026-10-14 — PHDK Auto 5.1.16 source slice merged; overall partial
 

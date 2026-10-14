@@ -5,6 +5,7 @@ Repository: `C:\Users\tboar\OneDrive\Documentos\GitHub\KELEDON` (`tuyoisaza/kele
 Branch: `fix/phdk-keledon-voice-profile-accessibility`
 Base revision: `60d7382f0e2003597690673103ace4e785f0c018`
 Product source commit: `4e874c14cde10fd5b1a0ce521ee097e67823e120` (`5.1.17`)
+Delivery: [PR #78](https://github.com/tuyoisaza/keledon/pull/78), merged `f8933a61c60655a6448a546790521665c6b81c9f`; remote tree readback matches.
 Goal: continue the owner-confirmed four-front Auto in order and maximize applicable PHDK conformity.
 
 | Stage | Status | Evidence / next gate |
@@ -20,11 +21,11 @@ Goal: continue the owner-confirmed four-front Auto in order and maximize applica
 | AEO/GEO | COMPLETED | 15 source controls recorded; public market/language remains undecided; citations not measured. |
 | Check | COMPLETED WITH OPEN ACCEPTANCE | CHK-001 Voice Profile detail/edit is closed at source; 35-model persistence matrix, broad accessibility/localization, deployed discovery, native device/audio remain open. See `PHDK_CHECK_REPORT.md`. |
 | Remediation | COMPLETED FOR VALIDATED SOURCE FIXES | Voice Profile safe detail/edit/projections, test coverage, locale parity and ES2020-safe interpolation are implemented and validated. Remaining items need broader bounded source work or external/manual evidence. |
-| Delivery | IN PROGRESS | Source committed and post-commit UAT bound to exact SHA; push, PR, merge and remote-main readback remain. |
+| Delivery | COMPLETED | PR #78 merged; `origin/main` readback at `f8933a61c60655a6448a546790521665c6b81c9f`, tree matches, and all five app manifest/lock roots are 5.1.17. No hosted checks/review decision reported. |
 
 Canonical artifacts: `IMPLEMENTATION_PLAN.md`, `PHDK_COMMITMENTS.md`, `PHDK_COMMITMENT_COVERAGE.md`, `UAT_CASES.md`, `UAT_REPORT.md`, `SEO_AUDIT_REPORT.md`, `PHDK_CHECK_REPORT.md`.
 Historical archive: `docs/phdk/lifecycle/20261013-1900-phdk-auto/`.
 
 Open acceptance: persisted CRUD × role × tenant × operation × surface and migration runtime, native Electron/device/audio, broad route localization/accessibility and deployed SEO/AEO measurements. No customer CRM/call platform was selected; source acceptance remains provider-independent. No production database, credentials, customer data, paid API or deployment was used.
 
-SIGUIENTE PASO: publicar la rama en GitHub, abrir PR de 5.1.17, seguir los controles normales del repositorio y verificar merge/readback de `main`.
+SIGUIENTE PASO: continuar el Check pendiente sobre los recursos persistidos y rutas activas cuando haya un entorno aislado para aceptar CRUD/migraciones; mantener nativa, accesibilidad amplia y SEO/AEO desplegado como aceptación abierta.

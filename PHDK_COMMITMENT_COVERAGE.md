@@ -4,12 +4,12 @@
 
 | Commitment | Current implementation/evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | Five app package/lock roots are 5.1.17; branch/base and dirty candidate state are recorded. PHDK 2.50.10 remains installed with 52/52 coherence mappings. | Current branch/PR, merge and fresh remote-main SHA/version verification. |
+| CMT-001 | PR [#78](https://github.com/tuyoisaza/keledon/pull/78) merged at `f8933a61c60655a6448a546790521665c6b81c9f`; remote tree matches the candidate and all five package/lock roots are 5.1.17. PHDK 2.50.10 coherence is 52/52. | No release-integrity task for this candidate remains; hosted checks/review rollup is empty and no deployment is claimed. |
 | CMT-002 | Diagnostics UAT 18/18 and local Company Co UI journey pass; global Sonner renderer now presents app notifications; voice-profile 403 feedback is inline and truthful. | Native Electron/device/audio and broader app-state/route accessibility acceptance. |
 | CMT-003 | Provider-independent voice/runtime source contracts remain the acceptance boundary; the owner confirmed call and CRM products vary by client. | No universal live provider test applies; continue source/contract audit, report any tenant-neutral gap. |
 | CMT-004 | DB-derived API tenant regression passes; Voice Profiles now have safe detail/edit and list/detail/create/update projections without config/provider relations; KELEDON UI sends service-shaped `uiInterfaces`; synthetic UAT exercises create/edit/delete and 403 states. | Persisted CRUD × resource × role × tenant × operation × surface, exhaustive 35-model resource matrix and migration/runtime evidence. |
 
-Current overall status: PARTIALLY DELIVERED. Browser UAT used the uncommitted working tree based on `60d7382f0e2003597690673103ace4e785f0c018`; rerun and bind final evidence to the committed source revision before delivery.
+Current overall status: PARTIALLY DELIVERED. Post-commit built-SPA UAT is bound to source `4e874c14cde10fd5b1a0ce521ee097e67823e120`; the suite intercepts APIs and does not prove persistence, production auth or native behavior.
 
 ## Current continuation — candidate 5.1.16 (2026-10-13)
 

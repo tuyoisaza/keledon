@@ -2,11 +2,11 @@
 
 ## Active Auto continuation — 5.1.17 candidate (uncommitted)
 
-Run `20261013-1900-phdk-auto`, working branch `fix/phdk-keledon-voice-profile-accessibility`, base `60d7382f0e2003597690673103ace4e785f0c018`. Continue the owner's approved four fronts in order and maximize applicable PHDK conformity. This slice localizes KELEDON and Voice Profiles, implements tenant-safe Voice Profile detail/edit and response projections, fixes KELEDON serialization, mounts global Sonner notifications, and supplies accessible mutation errors. Five app package/lock roots align at 5.1.17. API regression 15/15, web typecheck/build, focused ESLint, diagnostics 18/18, locale parity 734/734/734 and synthetic Company Co browser UAT 1/1 pass. Product source commit `4e874c14cde10fd5b1a0ce521ee097e67823e120` now has post-commit UAT evidence bound to its exact SHA; PR and remote readback remain pending.
+Run `20261013-1900-phdk-auto`; owner-approved four fronts remain the scope. PR [#78](https://github.com/tuyoisaza/keledon/pull/78) merged 5.1.17 at `f8933a61c60655a6448a546790521665c6b81c9f`, matching the candidate tree; all five package/lock roots read 5.1.17. Product source commit `4e874c14cde10fd5b1a0ce521ee097e67823e120` is covered by exact-SHA post-commit UAT. API regression 15/15, web typecheck/build, focused ESLint, diagnostics 18/18, locale parity 734/734/734, synthetic Company Co UAT 1/1 and PHDK coherence 52/52 pass.
 
 The four fronts remain active. Persisted CRUD/migration runtime, native Electron/device/audio, broad remaining route accessibility/localization and deployed SEO/AEO evidence remain open. Client CRM/call platforms are tenant-selected; there is no universal vendor requirement. Current lifecycle and exact stage status: `PHDK_LIFECYCLE_STATUS.md`; run archive: `docs/phdk/lifecycle/20261013-1900-phdk-auto/`.
 
-SIGUIENTE PASO: publish the branch, open the normal versioned PR, and verify merged `main` readback. Overall remains PARTIALLY DELIVERED for persisted CRUD/migration, native acceptance, broad route accessibility/localization and deployed SEO/AEO.
+SIGUIENTE PASO: continue the model-by-model CRUD and active-route audit; persistent CRUD/migration, native/device/audio, broad accessibility/localization, and deployed SEO/AEO still require their acceptance evidence. Overall remains PARTIALLY DELIVERED.
 
 ## Active Auto continuation — 5.1.16 source slice merged
 
