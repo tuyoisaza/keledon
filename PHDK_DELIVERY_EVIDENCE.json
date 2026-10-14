@@ -1,36 +1,36 @@
 {
   "version": "1",
-  "goal": "PHDK Auto: four confirmed KELEDON fronts, maximum applicable code conformity",
+  "goal": "PHDK Auto: KELEDON 5.1.16 profile, device, launcher and session-detail delivery within the four confirmed fronts",
   "target_branch": "main",
-  "expected_version": "5.1.15",
+  "expected_version": "5.1.16",
   "version_file": "services/web/package.json",
   "version_property": "version",
-  "merged_commit_sha": "2e61f41926ab25b4d9ea9f9b73d11aba82988a63",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/74",
+  "merged_commit_sha": "db35f231c29fb71568666b230e912152ca0a34e2",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/76",
   "checks": {
     "lint": {
       "status": "PASS",
-      "evidence": "Focused ESLint on DashboardPage.tsx, SessionsLivePage.tsx, SessionsHistoryPage.tsx and CallMonitorPlaceholder.tsx: 0 errors and 14 warnings."
+      "evidence": "Focused ESLint on DevicesPage.tsx, ProfilePage.tsx, SessionDetailPage.tsx, LaunchKeledonPage.tsx and test/local-uat.test.cjs exits 0 with no errors or warnings."
     },
     "typecheck": {
       "status": "PASS",
-      "evidence": "services/web npm run typecheck passes on the v5.1.15 candidate."
+      "evidence": "services/web npm run typecheck passes on the 5.1.16 candidate."
     },
     "build": {
       "status": "PASS",
-      "evidence": "Production builds pass for API, Cloud, Web, Browser and Landing; Landing/Web typechecks pass; existing large-chunk advisory remains."
+      "evidence": "services/web npm run build passes; Vite reports the existing large-chunk advisory."
     },
     "focused_tests": {
       "status": "PASS",
-      "evidence": "API regression 14/14; Cloud regression 8/8; Browser regression 24/24; Web diagnostics 18/18; Web SEO source regression 1/1; en/es/pt recursive locale parity 562/562; PHDK coherence 52/52."
+      "evidence": "Web diagnostics 18/18; SEO source test 1/1; en/es/pt locale-key parity 644/644; PHDK coherence 52/52."
     },
     "uat": {
       "status": "PASS",
-      "evidence": "services/web npm run test:uat passes 1/1 on source commit 8e864df32a7310a08ccff1733b874e26dc24f87d. Synthetic built-SPA Company Co fixtures and intercepted APIs verify management/provider journeys plus UAT-T-005-DASHBOARD and UAT-T-005-SESSIONS; no backend, production, native, live CRM/telephony or deployed acceptance inferred."
+      "evidence": "services/web npm run test:uat passes 1/1 after source commit 7ce3509aeb4d53ce3a90d16153996abf35446024; local built SPA uses synthetic Company Co fixtures and intercepted APIs. Not persisted, production, native, or deployed acceptance."
     },
     "delivery": {
       "status": "PASS",
-      "evidence": "Product PR #74 is MERGED. Fresh fetch and git ls-remote independently read origin/main 2e61f41926ab25b4d9ea9f9b73d11aba82988a63; all five package/lock roots read directly from remote main are 5.1.15. GitHub reports empty status-check and review rollups; no deployment claimed."
+      "evidence": "Product PR #76 merged by squash at db35f231c29fb71568666b230e912152ca0a34e2. Fresh origin/main readback matches; all five app package/lock roots are 5.1.16. GitHub reports empty review and check rollups; no deployment claimed."
     }
   }
 }

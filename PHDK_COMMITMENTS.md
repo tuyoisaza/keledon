@@ -1,16 +1,16 @@
 # Commitment ledger
-## Current continuation — 2026-10-13, candidate 5.1.16 (local source verification)
+## Current continuation — 2026-10-14, 5.1.16 merged source slice
 
-Remote baseline: `origin/main` `c8534e6f6568922d540eabfba4abe90cc93749c1`, verified after PRs #74/#75; PHDK 2.50.10 coherence passes 52/52. Current branch `fix/phdk-route-accessibility-i18n` bumps all five package/lock roots to 5.1.16. It adds en/es/pt profile/date copy, localized device list/error states, retry, protected navigation and launcher localization, plus localized session detail. Review found the prior pairing-code call omitted the required Keledon identity and did not match its authorization contract; that invalid direct call was removed. Web typecheck/build, synthetic UAT bound to `7ce3509aeb4d53ce3a90d16153996abf35446024`, diagnostics, SEO source test, focused ESLint, 644-key parity and PHDK coherence pass after this repair. Source commit `7ce3509` exists; PR and main delivery remain pending.
+Product PR [#76](https://github.com/tuyoisaza/keledon/pull/76) merged by squash at `db35f231c29fb71568666b230e912152ca0a34e2`; fresh `origin/main` and remote SHA readback match. All five app package/lock roots are 5.1.16. The profile/device/launcher/session-detail changes include en/es/pt copy; review removed the invalid pairing-code call that omitted the required Keledon identity and routes to the protected launcher. Web typecheck/build, synthetic UAT bound to source commit `7ce3509aeb4d53ce3a90d16153996abf35446024`, diagnostics 18/18, SEO source test 1/1, focused ESLint (0 errors/warnings), locale parity 644/644 and PHDK coherence 52/52 pass. GitHub reports empty hosted checks and review rollups; no deployment is claimed.
 
 | ID | Owner-confirmed front | Current source/evidence | Remaining acceptance / disposition |
 |---|---|---|---|
-| CMT-001 | Baseline, versions, PRs | PRs #74/#75 integrated 5.1.15; current 5.1.16 candidate is based on remote main c8534e6, with five app roots aligned. | Deliver candidate 5.1.16 through normal PR and read back main; no deployment is inferred. |
+| CMT-001 | Baseline, versions, PRs | PRs #74/#75 and product PR #76 integrated; 5.1.16 verified in all five app roots at remote main `db35f231c29fb71568666b230e912152ca0a34e2`. | Source-slice delivery and remote readback PASS; no deployment is inferred. |
 | CMT-002 | Widget and safe diagnostics | Diagnostics 18/18; synthetic UAT covers safe probes, profile/device journeys and visible API recovery. | Native Electron permission, device and physical audio acceptance remains unverified. |
 | CMT-003 | Voice → Cloud → Browser → CRM | Provider-independent contracts and configured-origin tenant flow remain; providers are selected per client. No vendor was hard-coded or contacted. | Continue code/contract review; no live-client acceptance is assumed without that client's environment. |
 | CMT-004 | Administration and permissions | Approved DB-derived actor/tenant, restrictive role elevation and write-only secret policy remain; API regression 14/14 and synthetic management UAT remain current. | Persisted CRUD × role × tenant × operation acceptance and migration/runtime evidence remain incomplete; broad route i18n/a11y continues. |
 
-Overall PHDK Auto remains **PARTIALLY DELIVERED**. Open acceptance is not waived by the 5.1.16 source slice.
+CMT-001 is delivered for this source slice. CMT-002/003/004 retain the acceptance limits shown above. Overall PHDK Auto remains **PARTIALLY DELIVERED**; open acceptance is not waived by the merge.
 
 ## Integrated continuation — 5.1.15 (PRs #74/#75)
 

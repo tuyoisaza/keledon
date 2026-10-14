@@ -1,8 +1,8 @@
 # Current task
 
-## Active Auto continuation — candidate 5.1.16
+## Active Auto continuation — 5.1.16 source slice merged
 
-Continue the user-authorized PHDK Auto across CMT-001..004 in order. Main is `c8534e6f6568922d540eabfba4abe90cc93749c1`; branch `fix/phdk-route-accessibility-i18n` localizes profile, devices, the Keledon launcher and session detail, and passes web typecheck/build, synthetic UAT 1/1, diagnostics 18/18, SEO source 1/1, 644-key parity and PHDK coherence 52/52. Candidate commit `7ce3509aeb4d53ce3a90d16153996abf35446024` is verified; PR/main readback remain pending. Persisted CRUD/migration, native device/audio, broad active-route i18n/a11y and deployed SEO/AEO remain open; do not mark the full Auto complete.
+Continue the user-authorized PHDK Auto across CMT-001..004 in order, maximizing applicable PHDK conformity. Product PR [#76](https://github.com/tuyoisaza/keledon/pull/76) merged by squash at `db35f231c29fb71568666b230e912152ca0a34e2`; remote main readback and all five app package/lock roots verify 5.1.16. Source commit `7ce3509aeb4d53ce3a90d16153996abf35446024` localizes profile, devices, protected launcher and session detail and passes web typecheck/build, synthetic UAT 1/1, diagnostics 18/18, SEO source 1/1, 644-key parity, focused ESLint and PHDK coherence 52/52. Persisted CRUD/migration, native device/audio, broad active-route i18n/a11y and deployed SEO/AEO remain open; do not mark the full Auto complete.
 
 ## Previous Auto continuation — candidate 5.1.15 (superseded by current 5.1.16)
 
