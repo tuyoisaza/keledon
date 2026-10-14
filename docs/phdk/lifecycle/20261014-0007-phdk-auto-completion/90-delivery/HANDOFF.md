@@ -1,3 +1,14 @@
+## Verified delivery — 5.1.30, 2026-10-14
+
+PR [#100](https://github.com/tuyoisaza/keledon/pull/100) merged source commit `75e40a8d4f72b5c962d73c140856ada044a863e9` to `main` at `7a48b419880abea818837e4cdfc3d4d4c3f77c12`. `origin/main` and `git ls-remote` agree; source and merge trees match. API regression 22/22, Cloud 11/11, product builds and PHDK coherence 52/52 pass. All five app package/lock roots and Browser renderer are 5.1.30. GitHub check and review rollups are empty; deployment is not claimed.
+
+No database migration, Auth trigger or seed/provisioning script ran. UAT-009/010 need safe development identities and disposable PostgreSQL; UAT-006 needs native device/audio. Broad active-route accessibility/localization and deployed SEO/AEO remain open. CRM/call tests are client-specific after provider selection; private CRM destinations remain tenant-allowlisted and Cloud never fetches them.
+
+Overall: **SOURCE MERGED / REMOTE VERIFIED; AUTO ACCEPTANCE PARTIAL**.
+
+SIGUIENTE PASO: provide safe development identities, disposable PostgreSQL and a supported device/audio test host; obtain deployed SEO/AEO evidence through the approved read-only path.
+
+---
 # Delivery handoff — candidate 5.1.26
 
 ## Active candidate 5.1.27 — delivery pending

@@ -1,8 +1,13 @@
-# PHDK Check — current Auto run `20261014-0007-phdk-auto-completion`, local candidate 5.1.30
+## Delivery verification — 5.1.30
 
-## Current local Check finding — Supabase policy and seed-script defaults
+The candidate finding below is now delivered: [PR #100](https://github.com/tuyoisaza/keledon/pull/100) merged at `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; remote readbacks agree and source/merge trees match. API regression 22/22, Cloud 11/11, all product builds, UAT-013–017 static/source checks and PHDK coherence 52/52 pass. GitHub check and review rollups are empty. The RLS migration and Auth trigger were not executed. CMT-004 remains partially accepted until database persistence and real nonproduction identities are exercised.
+# PHDK Check — current Auto run `20261014-0007-phdk-auto-completion`, delivered source 5.1.30; acceptance partial
 
-Source review found broad Supabase row policies, an automatically seeded `superadmin`, an email-based Auth elevation trigger, and legacy customer/RBAC/session/CRM scripts with hardcoded tenants, privileged users, and writes to the first available tenant. Current local source removes those grants and seeds, keeps Auth sync at role `user`, retires unsafe legacy scripts and their setup guide, adds an idempotent default-deny RLS migration for application-owned public tables, hardens the remaining user fixture to require a nonproduction opt-in/exact allowed URL/`@example.test` identity/environment password, and gates global provider-catalog seeding to an exact nonproduction target. UAT-013–017 and API/Cloud mirror checks pass. These are unreleased source changes; no migration, trigger or seed/provisioning script was executed. The database state and connection-role behavior remain open.
+## Delivered Check finding — Supabase policy and seed-script defaults
+
+Source review found broad Supabase row policies, an automatically seeded `superadmin`, an email-based Auth elevation trigger, and legacy customer/RBAC/session/CRM scripts with hardcoded tenants, privileged users, and writes to the first available tenant. PR #100 merged removal of those grants/seeds, role-`user` Auth sync, retired legacy scripts, a default-deny RLS migration, exact-target-pinned nonproduction fixtures, and gated provider-catalog seeding. UAT-013–017 and API/Cloud mirror checks pass. No migration, trigger or seed/provisioning script was executed. The database state and connection-role behavior remain open.
+
+Delivery readback: PR #100 merged at `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; remote-main readbacks and source/merge trees match. API regression 22/22, Cloud 11/11, app builds and PHDK coherence 52/52 pass. Whole-product acceptance remains partial.
 
 ## 2026-10-14 security remediation candidate 5.1.29
 

@@ -1,0 +1,86 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto: KELEDON four confirmed fronts and maximum applicable PHDK source conformity",
+  "target_branch": "main",
+  "expected_version": "5.1.30",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "source_commit_sha": "75e40a8d4f72b5c962d73c140856ada044a863e9",
+  "merged_commit_sha": "7a48b419880abea818837e4cdfc3d4d4c3f77c12",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/100",
+  "checks": {
+    "version_alignment": {
+      "status": "PASS",
+      "evidence": "Remote main 7a48b419880abea818837e4cdfc3d4d4c3f77c12 reports 5.1.30 in all five app package/lock roots and Browser renderer."
+    },
+    "commit_prefix": {
+      "status": "PASS",
+      "evidence": "Source commit 75e40a8 starts with v5.1.30."
+    },
+    "pr_merge_remote_readback": {
+      "status": "PASS",
+      "evidence": "PR #100 merged; origin/main and git ls-remote agree at 7a48b419880abea818837e4cdfc3d4d4c3f77c12; source tree 0aa8d5bf47a8002f9f027342a339a9a276a67998 and merge tree 0aa8d5bf47a8002f9f027342a339a9a276a67998 match. GitHub check and review rollups are empty."
+    },
+    "api_build_and_regression": {
+      "status": "PASS",
+      "evidence": "API configured build passes; final API regression 22/22 suites; focused RLS/fixture regression passes."
+    },
+    "cloud_regression_and_build": {
+      "status": "PASS",
+      "evidence": "Cloud configured build passes; final Cloud regression 11/11 suites; no database-backed E2E claim."
+    },
+    "web_and_uat": {
+      "status": "PASS",
+      "evidence": "Web production build passes; UAT-013–017 pass static/source checks. No persisted DB acceptance."
+    },
+    "browser_landing": {
+      "status": "PASS",
+      "evidence": "Browser and Landing builds pass; all five app package/lock roots and renderer are 5.1.30."
+    },
+    "phdk_coherence": {
+      "status": "PASS",
+      "evidence": "Installed PHDK v2.50.10 coherence checker passes all 52 mappings."
+    },
+    "scoped_uat": {
+      "status": "PASS",
+      "evidence": "UAT-013–017 pass static/source scope; API regression 22/22 and Cloud 11/11. No migration or seed script executed."
+    }
+  },
+  "acceptance_status": "PARTIALLY_DELIVERED",
+  "unresolved_commitments": [
+    "CMT-002: native Electron rendering, OS permission, device/audio and broad route accessibility/localization acceptance",
+    "CMT-004: remaining 26 non-core model role/tenant/surface/operation mapping and disposable database persistence/migration acceptance",
+    "UAT-009: safe development target and synthetic identities",
+    "UAT-010: disposable database for migration/persistence matrix",
+    "CHK-005/009: deployed SEO/AEO field measurements",
+    "CHK-006: public market/language decision"
+  ],
+  "deployment": "NOT_PERFORMED",
+  "production_database_or_customer_data": "NOT_USED",
+  "candidate": {
+    "expected_version": "5.1.30",
+    "branch": "fix/deny-unscoped-supabase-rls",
+    "base_commit": "886669c7f5d3e20aec978efc3dc9a758d4a09148",
+    "source_commit_sha": "75e40a8d4f72b5c962d73c140856ada044a863e9",
+    "merged_commit_sha": "7a48b419880abea818837e4cdfc3d4d4c3f77c12",
+    "pr_url": "https://github.com/tuyoisaza/keledon/pull/100",
+    "delivery_status": "MERGED_REMOTE_VERIFIED",
+    "acceptance_status": "PARTIALLY_DELIVERED",
+    "api_regression": "PASS 22/22 suites",
+    "api_jest": "PASS 11/11 suites, 38 tests",
+    "cloud_build": "PASS; cloud source unchanged",
+    "api_build": "PASS",
+    "api_lint": "PASS 0 errors, 1 pre-existing warning",
+    "web_build": "PASS",
+    "landing_build": "PASS",
+    "browser_build": "PASS",
+    "phdk_coherence": "PASS 52/52",
+    "uat_011": "PASS paired-device-only RPA configuration access",
+    "uat_012": "PASS device-list secret/CDP URL redaction",
+    "whole_product_acceptance": "PARTIALLY_DELIVERED",
+    "note": "PR #100 merged and remote main readback verified. RLS migration and DB persistence, real development identities, native audio/device, broad route accessibility/localization, and deployed SEO/AEO remain open.",
+    "source_tree_sha": "0aa8d5bf47a8002f9f027342a339a9a276a67998",
+    "pull_request": "https://github.com/tuyoisaza/keledon/pull/100",
+    "cloud_regression": "PASS 11/11 suites"
+  }
+}

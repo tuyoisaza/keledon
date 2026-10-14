@@ -1,10 +1,15 @@
+## 2026-10-14 — PHDK Auto source delivery 5.1.30
+
+- PR [#100](https://github.com/tuyoisaza/keledon/pull/100) merged; exact `origin/main` and `git ls-remote` SHA: `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; source and merge trees match.
+- API regression 22/22; Cloud 11/11; product builds and PHDK coherence 52/52 pass. All five package/lock roots and Browser renderer are 5.1.30.
+- Whole-product Auto remains **PARTIALLY DELIVERED** pending database-backed migration/CRUD, safe development identities, native device/audio, broad route accessibility/localization and deployed SEO/AEO evidence. No migration or deployment was performed.
 # STATUS
 
-## 2026-10-14 — PHDK Auto local candidate 5.1.30; overall partial
+## 2026-10-14 — PHDK Auto delivered source 5.1.30; overall partial
 
-- Baseline is merged 5.1.29 on `main` at `886669c7f5d3e20aec978efc3dc9a758d4a09148`; all five package/lock roots and Browser renderer now align at local candidate 5.1.30.
+- PR #100 merged source 5.1.30 on `main` at `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; all five package/lock roots and Browser renderer align.
 - Local CMT-004 remediation removes permissive Supabase policies and adds an idempotent default-deny RLS migration. Auth sync now assigns only `user`; unsafe legacy customer/RBAC/session/CRM seeds and setup guidance fail closed. Provider-catalog seeding is target-pinned; the remaining synthetic user fixture is explicit nonproduction-only and always assigns `user`.
-- API regressions 22/22 and build pass; Cloud regressions 11/11 and build pass; UAT-013–017 pass. No migration, trigger or account provisioning was run. Candidate commit, PR and remote readback remain pending.
+- API regressions 22/22 and build pass; Cloud regressions 11/11 and build pass; UAT-013–017 pass. No migration, trigger or account provisioning was run. PR and remote readback are complete.
 - The 26-model CRUD map, disposable-DB persistence/migration, native audio/device, broad accessibility/localization and deployed SEO/AEO remain open. Overall: **PARTIALLY DELIVERED**.
 
 ## 2026-10-14 — PHDK Auto candidate 5.1.29; overall partial

@@ -1,3 +1,15 @@
+## Current Auto delivery — 2026-10-14, 5.1.30, PR #100
+
+| Commitment | Delivered evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | PR #100 merged at exact `main` SHA `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; five app package/lock roots and Browser renderer at 5.1.30; v2.50.10 coherence 52/52. | No deployment is claimed. |
+| CMT-002 | Widget/diagnostics and scoped local UI evidence retained; current source suite passes. | UAT-006 native device/audio and broad route accessibility/localization. |
+| CMT-003 | Provider-independent voice/Cloud/Browser architecture retained; configured private HTTP(S) CRM origins are URL-validated and allowlisted by tenant. Cloud does not proxy-fetch them. | Live calls/CRM must be validated per client after its provider is selected/configured; none was selected for this universal source run. |
+| CMT-004 | New Auth users receive `user`; actor/tenant scope remains DB-derived; broad RLS policies and privileged/customer-like seeding removed; API/Cloud regressions pass. | UAT-009 real synthetic identities; UAT-010 disposable DB, migration and persisted role/tenant/operation matrix. |
+
+API regression 22/22, Cloud 11/11, API/Cloud/Browser/Web/Landing builds and targeted default-deny/fixture regression pass. No migration, trigger or seed script was run. Overall: **PARTIALLY DELIVERED**.
+
+SIGUIENTE PASO: provide safe development identities and disposable PostgreSQL/device environments to close blocked UAT.
 ## Current Auto candidate — 2026-10-14, 5.1.30
 
 All four confirmed commitments remain in scope. CMT-001 is on a version-aligned 5.1.30 local candidate based exactly on verified remote main `886669c7f5d3e20aec978efc3dc9a758d4a09148`; source delivery is pending PR and remote readback. CMT-002 retains local widget/diagnostics coverage; native device/audio and broad route accessibility/localization remain open. CMT-003 retains provider-independent call/Cloud/Browser contracts and the owner-approved private CRM rule: validated client URLs, allowlisted per tenant; Cloud does not fetch private CRM URLs. No client provider was selected for live tests. CMT-004 includes DB-derived tenant/role safeguards and this candidate's default-deny RLS, ordinary-user Auth trigger and fail-closed fixture changes. API regression is 22/22, Cloud 11/11, both builds pass, and UAT-013–017 pass static source checks. RLS migration/persistence and actual development identities remain open; no database, trigger or fixture script was run. Overall Auto remains **PARTIALLY DELIVERED**.

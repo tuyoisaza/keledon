@@ -39,7 +39,7 @@ UAT-008 now passes within its explicitly approved scope: test-profile switching 
 | UAT-004 tenant-configured CRM origins and safe secrets | PASS, source tests | Private HTTP(S) only when validated and tenant-allowlisted; no private destination request. |
 | UAT-005 synthetic call/Cloud/Browser path | PASS, offline | Browser offline tests 27/27; injected adapter, no live vendor/audio. |
 | UAT-006 native Browser/device/audio | MANUAL/BLOCKED | Requires supported device and OS permission interaction. |
-| UAT-007 version alignment | PASS, source delivered | Five package/lock roots and Browser renderer at 5.1.26; PR #95 and exact remote readback verified at `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2`. |
+| UAT-007 version alignment | PASS, source delivered | Five package/lock roots and Browser renderer at 5.1.30; PR #100 and exact remote readback verified at `7a48b419880abea818837e4cdfc3d4d4c3f77c12`. |
 | UAT-008 audited test-profile selection | PASS, scoped | Mocked browser UI plus API policy/service/AuthGuard and Nest HTTP regressions. Nonproduction, synthetic allowlist, current superadmin, audit, expiry and token revocation are covered. |
 | UAT-009 development role authentication | BLOCKED | No safe development target or actual test identities configured. Production excluded. |
 | UAT-010 persisted CRUD/migration matrix | BLOCKED | No isolated disposable PostgreSQL database; no migration run. Production DB excluded. |
@@ -61,7 +61,7 @@ UAT-009 needs an owner-provided nonproduction target and synthetic identities. U
 
 **Conclusion: NOT ACCEPTED as a whole product.** Fourteen cases pass within their stated source/UI scope; UAT-009/010 remain blocked by missing safe environments, and UAT-006 requires native manual testing. The current 5.1.30 source remediation adds UAT-013–017; no database operation was performed.
 
-**SIGUIENTE PASO:** completar Integration Review y Delivery del candidato 5.1.30 por PR; después conseguir entorno de desarrollo sintético, base desechable y dispositivo soportado para cerrar la aceptación restante.
+**SIGUIENTE PASO:** conseguir entorno de desarrollo sintético, base PostgreSQL desechable y dispositivo soportado para cerrar la aceptación restante.
 
 
 ## Historical records before this candidate revalidation
