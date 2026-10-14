@@ -3,8 +3,9 @@
 - Retire the shared-secret CRUD webhook and runtime `/api/crud/seed` and `/api/crud/migrate` mutation paths from API and Cloud; legacy routes now return HTTP 410 and direct operators to reviewed Prisma migrations or isolated synthetic regression fixtures.
 - Remove seed/migration services, webhook guards and a dormant handler-name bypass in `CrudAccessGuard` that could circumvent DB-derived actor and tenant authorization.
 - Add API and Cloud in-process HTTP assertions that retired endpoints return 410, plus cross-backend coverage for deleted alternate write paths.
+- Align Cloud CRUD with API policy: reject client-provided user password hashes and deny generic audit-log writes; remove `passwordHash` from Cloud service contracts.
 - Align all five application package/lock roots and the Browser renderer at 5.1.31.
-- API and Cloud builds pass; API regression 23/23 and Cloud regression 11/11 pass.
+- API and Cloud builds pass; API regression 24/24 and Cloud regression 11/11 pass.
 
 ## v5.1.30 — 2026-10-14 (default-deny Supabase access and safe fixture provisioning)
 

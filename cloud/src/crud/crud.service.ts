@@ -128,7 +128,6 @@ export class CrudService {
     companyId?: string;
     teamId?: string;
     role?: string;
-    passwordHash?: string;
   }) {
     return this.companyService.createUser(data);
   }

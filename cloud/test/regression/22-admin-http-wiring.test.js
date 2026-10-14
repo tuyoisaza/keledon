@@ -245,6 +245,16 @@ async function main() {
       .send({ email: 'fixture@example.invalid', role: 'superadmin' })
       .expect(403);
     await request(http)
+      .post('/api/crud/users')
+      .set('Authorization', token('superadmin'))
+      .send({ email: 'hash@example.invalid', passwordHash: 'attacker-controlled-hash' })
+      .expect(403);
+    await request(http)
+      .post('/api/crud/audit-logs')
+      .set('Authorization', token('superadmin'))
+      .send({ userId: 'member', action: 'FORGED', entity: 'company' })
+      .expect(403);
+    await request(http)
       .post('/api/crud/keledons/k-a/launch')
       .set('Authorization', token('member'))
       .send({ userId: 'superadmin' })

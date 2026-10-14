@@ -6,7 +6,7 @@
 | 10 Capture | COMPLETE / REUSED | Four owner-confirmed fronts and restrictive role/tenant policy remain current. |
 | 20 Plan | COMPLETE / REUSED | Continue in order; preserve environment-bound client/device acceptance. |
 | 30 PMO | IN PROGRESS | Re-auditing the confirmed fronts; CMT-004 found legacy webhook provisioning/DDL path. |
-| 40 Integration Review | IN PROGRESS | Removed write routes and dormant guard bypass reviewed; API/Cloud HTTP harnesses assert 410; builds/regressions pass. |
+| 40 Integration Review | IN PROGRESS | Removed write routes and dormant bypass reviewed; Cloud hash/audit controls aligned with API; API/Cloud HTTP harnesses assert 410 and forged-write denial. |
 | 50 UAT | PARTIAL | Source regression passes; live DB, identity, native device/audio, route a11y/localization remain open. |
 | 60 UAT Fix | OPEN | Remediate repository-local actionable cases. |
 | 65 SEO | OPEN / PRIOR EVIDENCE | Deployed measurements still need approved read-only provider evidence. |

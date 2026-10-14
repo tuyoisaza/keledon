@@ -335,6 +335,19 @@ async function main() {
     teamId: null,
   };
   assert.equal(await run('companies', 'DELETE', { id: 'co-b' }).result, true);
+  for (const role of ['guest', 'user', 'agent', 'admin', 'coordinator', 'superadmin']) {
+    rows.user.role = role;
+    await assert.rejects(
+      run('users', 'POST', {}, { email: 'hash@example.invalid', passwordHash: 'attacker-controlled-hash' }).result,
+      Denied,
+      `passwordHash must be rejected for ${role}`,
+    );
+  }
+  rows.user.role = 'superadmin';
+  await assert.rejects(
+    run('audit-logs', 'POST', {}, { userId: 'forged-user', action: 'FORGED', entity: 'company' }).result,
+    Denied,
+  );
 
   let configWrites = 0;
   const teamController = new TeamController({

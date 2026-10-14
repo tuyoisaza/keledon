@@ -1,6 +1,6 @@
 ## Current Auto remediation — candidate 5.1.31 (2026-10-14)
 
-The shared-secret webhook, file-seed services, runtime DDL routes and dormant CrudAccessGuard handler-name bypass were removed from API and Cloud; authenticated superadmin requests to legacy seed/migrate endpoints return 410 in both real Nest HTTP harnesses. API and Cloud builds/regressions pass; all five app roots and Browser renderer align at 5.1.31. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open for normal security review; merge and main readback are pending. Overall Auto remains PARTIALLY DELIVERED for the remaining source CRUD matrix and environment-bound acceptance.
+The shared-secret webhook, file-seed services, runtime DDL routes and dormant CrudAccessGuard handler-name bypass were removed from API and Cloud; authenticated superadmin requests to legacy seed/migrate endpoints return 410 in both real Nest HTTP harnesses. Mirror review also found and fixed Cloud acceptance of user password hashes and direct audit-log writes, bringing those controls in line with API. API/Cloud builds and regressions pass; API 24/24, Cloud 11/11. All five app roots and Browser renderer align at 5.1.31. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open for normal security review; merge and main readback are pending. Overall Auto remains PARTIALLY DELIVERED for the remaining source CRUD matrix and environment-bound acceptance.
 
 ## Historical remediation delivery — candidate 5.1.30
 
