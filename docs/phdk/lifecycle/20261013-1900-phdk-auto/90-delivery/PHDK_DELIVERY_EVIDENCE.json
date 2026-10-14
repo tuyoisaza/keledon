@@ -2,43 +2,43 @@
   "version": "1",
   "goal": "PHDK Auto: KELEDON four confirmed fronts and maximum applicable PHDK source conformity",
   "target_branch": "main",
-  "expected_version": "5.1.22",
+  "expected_version": "5.1.24",
   "version_file": "services/web/package.json",
   "version_property": "version",
-  "source_commit_sha": "05c7b8b3a5231b465579fea6f8fb39f8f47414be",
-  "merged_commit_sha": "48ab2023236ba5de56c046f99670a2abab866707",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/89",
+  "source_commit_sha": "c3c4c362a36db2bec142cbc8b06747961b67df26",
+  "merged_commit_sha": "215df2d723f89ac5ca50ec56190984f5a4a0d4c1",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/92",
   "checks": {
     "lint": {
-      "status": "BLOCKED",
-      "evidence": "Focused Web and Landing ESLint pass. Focused API ESLint reports zero errors and 17 warnings. Focused Cloud ESLint did not return output and remains unverified; this required check is not marked PASS."
+      "evidence": "API changed-source ESLint exits 0; Web changed-file ESLint exits 0 with 11 warnings. Whole-source and changed-file Cloud ESLint produced no output and were interrupted; whole-product lint is not verified PASS.",
+      "status": "BLOCKED"
     },
     "typecheck": {
-      "status": "PASS",
-      "evidence": "Web typecheck and Landing typecheck pass; Browser TypeScript build, configured API build and configured Cloud build pass on the 5.1.22 candidate."
+      "evidence": "API and Cloud TypeScript builds pass; Browser build/typecheck, Web and Landing typechecks pass at 5.1.24.",
+      "status": "PASS"
     },
     "build": {
-      "status": "PASS",
-      "evidence": "Configured API, Cloud and Browser builds plus Web and Landing production builds pass. Vite reports its existing greater-than-500-kB chunk advisory."
+      "evidence": "API, Cloud, Web, Landing and Browser builds pass at 5.1.24. Web/Landing retain existing Vite >500 kB chunk advisories.",
+      "status": "PASS"
     },
     "focused_tests": {
-      "status": "PASS",
-      "evidence": "API regression 18/18; Cloud regression 9/9; Browser focused renderer/runtime 5/5; Web widget/diagnostics 17/17; Landing and Web SEO source tests 1/1 each; PHDK v2.50.10 coherence 52/52; all five package/lock roots match 5.1.22."
+      "evidence": "API regression 19/19; Cloud 10/10; Browser vendor security 6/6; Web diagnostics 19/19; Web and Landing SEO 1/1 each; locale parity 103/103/103; source line audit 1,077 files/0 at least 600 lines; PHDK v2.50.10 coherence 52/52.",
+      "status": "PASS"
     },
     "uat": {
-      "status": "BLOCKED",
-      "evidence": "Synthetic local production Web UAT passes 1/1 and is bound to source commit 05c7b8b3a5231b465579fea6f8fb39f8f47414be. Native Electron visual/runtime, OS permission, device and physical audio UAT remains unverified; no whole-product UAT PASS is claimed."
+      "evidence": "Synthetic built-SPA Company Co UAT passes 1/1 on exact source commit c3c4c362a36db2bec142cbc8b06747961b67df26 with intercepted APIs and blocked external network. Native Electron/device/audio, real DB/auth and client-specific CRM/call acceptance remain unverified.",
+      "status": "BLOCKED"
     },
     "delivery": {
-      "status": "PASS",
-      "evidence": "PR #89 merged at b92a25428a6d25c898e3dfef7a055f754782ed57 and PR #90 merged at 48ab2023236ba5de56c046f99670a2abab866707. Fresh origin/main readback equals 48ab2023236ba5de56c046f99670a2abab866707; GitHub returned no review decision or status-check rollup; no PR remains open."
+      "evidence": "PR #92 is open and merge/readback are pending. Candidate source commit is c3c4c362a36db2bec142cbc8b06747961b67df26; prior verified origin/main is 215df2d723f89ac5ca50ec56190984f5a4a0d4c1.",
+      "status": "BLOCKED"
     }
   },
   "acceptance_status": "PARTIALLY_DELIVERED",
   "unresolved_commitments": [
-    "CMT-002: native Electron/device/audio runtime and broad route accessibility/localization acceptance",
-    "CMT-003: customer-specific call/CRM has no universal live test; provider-independent source contract is the applicable scope",
-    "CMT-004: exhaustive 35-model role/tenant/surface/operation matrix and disposable-DB persistence/migration",
+    "CMT-002: native Electron/device/audio and broad route accessibility/localization",
+    "CMT-003: client-specific live CRM/call acceptance has no universal tenant-independent test",
+    "CMT-004: exhaustive 35-model role/tenant/surface/operation matrix and disposable DB persistence/migration",
     "CHK-005: deployed SEO/AEO field measurements",
     "CHK-006: public target market/language decision",
     "CHK-007: supported Windows native device/audio acceptance"
