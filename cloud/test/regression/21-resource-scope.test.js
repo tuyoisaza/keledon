@@ -218,6 +218,31 @@ async function main() {
   await vector.result;
   assert.equal(vector.req.body.company_id, 'co-a');
   assert.equal(vector.req.body.team_id, 'team-a');
+  await assert.rejects(
+    run(
+      scope,
+      'VectorStoreController',
+      'addDocument',
+      {},
+      { id: 'foreign-point', content: 'overwrite attempt' },
+      {},
+      'POST',
+    ).result,
+    Denied,
+    'tenant managers must not supply a Qdrant upsert ID',
+  );
+  const vectorCreate = run(
+    scope,
+    'VectorStoreController',
+    'addDocument',
+    {},
+    { content: 'new scoped document' },
+    {},
+    'POST',
+  );
+  await vectorCreate.result;
+  assert.equal(vectorCreate.req.body.company_id, 'co-a');
+  assert.equal(vectorCreate.req.body.team_id, 'team-a');
   const knowledge = run(
     scope,
     'KnowledgeController',
