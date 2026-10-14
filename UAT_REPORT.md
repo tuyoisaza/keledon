@@ -1,5 +1,9 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.31 — runtime seed/webhook retirement
+
+UAT-018 passes the cross-backend source regression. Both CRUD controllers retain the DB-derived CRUD guard, have no public shared-secret webhook, and immediately return HTTP 410 from legacy seed/migrate endpoints. The file-based seed services, runtime DDL services and webhook guards are deleted and no module/service references remain. The real in-process HTTP wiring regression was updated to stop injecting the deleted migration provider. API build passes and its full regression suite passes 23/23; Cloud build and regression pass (11/11). No DB, filesystem seed fixture, migration, customer record or private CRM origin was used. This is source behavior evidence; it does not prove persisted database state.
+
 ## Current Auto source delta — deny unscoped Supabase RLS
 
 UAT-013 passes its static regression: reviewed API/Cloud setup and bootstrap SQL contain no broad authenticated or true-valued row policy, the idempotent migration enables RLS on non-extension-owned public application tables and drops legacy broad policies, and mirrored SQL files are identical. UAT-014 passes: the legacy user-provisioning script refuses production, requires an explicit exact target URL and opt-in, accepts only `@example.test`, takes its password from the environment and fixes the assigned role to `user`; API/Cloud copies match and pass Node syntax checks. UAT-015 passes: user-table SQL no longer inserts sample accounts, obsolete customer/RBAC seed scripts fail closed, and no SQL setup path seeds elevated accounts. UAT-016 confirms the Auth trigger always creates ordinary users and preserves existing roles without email-based elevation. UAT-017 confirms legacy customer/RBAC/session/CRM seeders fail closed and global provider-catalog seeding requires a nonproduction opt-in plus exact allowed URL. No migration, trigger or provisioning/seed script ran, so no database was connected and no account or demo data was created. Existing policy/grant state and application connection-role behavior remain unverified. CRM destinations remain tenant-configured, URL-validated, and origin-allowlisted as separately covered by UAT-004.
@@ -83,21 +87,6 @@ The local SPA journey exercised anonymous diagnostics, role-shaped mock UI, loca
 | BLOCKED | 2 |
 | MANUAL | 1 |
 | NOT APPLICABLE | 0 |
-
-## Case results
-
-| Case | Result | Evidence |
-|---|---|---|
-| UAT-001 diagnostics widget | PASS | Local SPA suite 1/1; copy/deny/reset preservation, version row, 390px and simulated 200%/400% viewport checks, screenshot evidence. |
-| UAT-002 admin/user-facing journeys | PASS, mocked UI only | Local SPA suite: admin/coordinator/superadmin role-shaped views, manager controls, provider replacement, Voice Profiles and KELEDON payload/dialog journeys; guest management denial. No real roles/auth. |
-| UAT-003 API/Cloud permissions and tenant isolation | PASS, isolated source tests | API regression 19/19; Cloud regression 10/10. No persistent database. |
-| UAT-004 CRM destinations and safe secrets | PASS, isolated source tests | API/Cloud vendor policy tests and Browser offline suite 27/27; private/local allowed origins are tenant-configured. No actual request to a private host. |
-| UAT-005 call/Cloud/Browser synthetic path | PASS, mocked | Browser `company-co-lifecycle` included in the 27/27 offline tests; no customer provider or audio. |
-| UAT-006 native Browser/device/audio | MANUAL | Not exercised; supported physical device/audio session unavailable. |
-| UAT-007 baseline version | PASS, source only | Five app package/lock roots and Browser renderer identify 5.1.24. Final release version/PR remains pending. |
-| UAT-008 audited superadmin test-profile selection | FAIL | Source review found no active server-authorized/audited test-profile switch; a stale unreferenced front-end simulation component is not proof. Requires UAT Fix or a scoped decision. |
-| UAT-009 deployed development role authentication | BLOCKED | No safe development target/test accounts are configured or verified. Production is excluded. |
-| UAT-010 persisted CRUD/migration matrix | BLOCKED | No isolated disposable PostgreSQL database; no migration run. Production DB is excluded. |
 
 ## Executed checks
 

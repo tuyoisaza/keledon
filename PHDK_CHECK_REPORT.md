@@ -1,3 +1,11 @@
+## Current Check — candidate 5.1.31 (2026-10-14)
+
+Review of the merged 5.1.30 baseline found a remaining CMT-004 gap: API and Cloud exposed shared-secret CRUD webhook actions for file-based seed data and runtime DDL. The API seeder trusted role values from `crud.json`; Cloud could create companies and users from the same file. Both also exposed `/api/crud/seed` and `/api/crud/migrate`, bypassing the approved versioned Prisma-migration and DB-derived-actor policy. Candidate 5.1.31 removes the webhook, seed/migration services and guards; retained legacy routes fail closed with HTTP 410. Regression checks cover both backends. API/Cloud builds pass, API regression 23/23 and Cloud 11/11 pass. Full Check continues across the remaining source CRUD matrix and acceptance items; no DB, seed, migration or client endpoint was touched.
+
+Finding CHK-AUTO-012 is **CLOSED — LOCAL SOURCE FIX / DELIVERY PENDING**. The candidate closes this route bypass, while versioned PR/merge/readback remain required for release.
+
+Status: **REMEDIATION CANDIDATE; DELIVERY PENDING**.
+
 ## Delivery verification — 5.1.30
 
 The candidate finding below is now delivered: [PR #100](https://github.com/tuyoisaza/keledon/pull/100) merged at `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; remote readbacks agree and source/merge trees match. API regression 22/22, Cloud 11/11, all product builds, UAT-013–017 static/source checks and PHDK coherence 52/52 pass. GitHub check and review rollups are empty. The RLS migration and Auth trigger were not executed. CMT-004 remains partially accepted until database persistence and real nonproduction identities are exercised.
@@ -248,19 +256,6 @@ Audit date: 2026-10-14. Repository `tuyoisaza/keledon`; branch `fix/cloud-eslint
 
 Standards evaluated for applicability and evidence: current PHDK manifest/coherence, `PHDK_AUTO`, `PHDK_LIFECYCLE`, `PHDK_CHECK`, `CRUD_STANDARD`, `AI_ADMIN_STANDARD`, `DEBUG_DIAGNOSTICS_STANDARD`, `PHDK_UX_UI`, `UAT_STANDARD`/`UAT_JOURNEY_STANDARD`, `PHDK_SEO`, `PHDK_AEO_GEO`, `DEVSECOPS`, `DEVELOPMENT_RULES`, `TESTING_STANDARD`, `VERSIONING`, `MAIN_DELIVERY_STANDARD`, `EXECUTION_SCOPE`, repository instructions, plus the project/UX/security/CRUD artifacts and source. PHDK coherence establishes 52 mapped standard files, not that all product requirements pass.
 
-## Executive summary
-
-| Status | Count | Result |
-|---|---:|---|
-| COMPLIANT | 7 | PHDK installation/coherence; exact current version roots; source/isolated coverage for approved role/tenant policy, write-only encrypted vendor secrets, tenant-scoped private CRM origins, debug-widget actions and audited synthetic UAT profile switching. |
-| GAP | 0 | Current full API and Cloud ESLint have no errors. |
-| PARTIAL | 2 | Exhaustive 35-model CRUD role/tenant/surface/operation matrix; broad route i18n/accessibility. |
-| NOT APPLICABLE | 1 | One universal live CRM/call provider acceptance, because owner confirmed provider choice is per customer. |
-| UNKNOWN / DECISION NEEDED | 1 | Public market/language/locale-route scope. |
-| UNVERIFIED | 3 | Persisted CRUD and secret migration in an isolated DB; native Electron/OS/device/audio; deployed SEO/AEO, HTTP/crawler/Search Console/field metrics. |
-
-Overall: **SOURCE LINT GATES PASS; ALIGNMENT PARTIAL**. Revalidation on current remote `main` 5.1.29 found API ESLint 0 errors/135 warnings and Cloud ESLint 0 errors/25 warnings; the previously recorded lint errors are stale and closed. The local 5.1.30 candidate also passes API/Cloud builds and regressions. PHDK remains 2.50.10 with 52/52 coherence. PR #95's audited synthetic profile selector resolves CHK-AUTO-004 within scoped UAT, and PR #99 resolves current merged source-delivery finding CHK-AUTO-010. Local candidate remediation for broad SQL policies and privileged sample account paths resolves CHK-AUTO-011 at source level; delivery and DB behavior remain pending. Remaining findings cover CRUD traceability, UI acceptance, and environment-dependent proof.
-
 ## Findings
 
 | ID | Severity / status | Standard and evidence | Missing behavior or evidence | Remediation class / proposed action | Validation and dependency |
@@ -276,16 +271,7 @@ Overall: **SOURCE LINT GATES PASS; ALIGNMENT PARTIAL**. Revalidation on current 
 | CHK-AUTO-009 | Medium — UNVERIFIED | SEO/AEO source stages pass their current-source tests, while field data is explicitly NOT MEASURED. | Deployed HTTP/redirect/TLS/crawler, Core Web Vitals, Search Console, backlink and answer/citation observations. | EXTERNAL / MANUAL; no current source-code defect identified. | Authorized read-only deployed evidence after delivery; no deployment or provider writes. |
 | CHK-AUTO-010 | CLOSED — SOURCE DELIVERY VERIFIED | `PHDK_AUTO`, `MAIN_DELIVERY_STANDARD`; PR #99 delivered 5.1.29 at `886669c7f5d3e20aec978efc3dc9a758d4a09148`. `origin/main` and `git ls-remote` agree; PR head and merge trees match; completion gate passes. | Whole Auto remains partial for CHK-AUTO-003/005/006/007/008/009; no deployment is claimed. | CLOSED for current source delivery; acceptance is not complete. | PR #99 merged. GitHub reports no hosted checks or review decision and no branch protection. |
 | CHK-AUTO-011 | CLOSED — LOCAL SOURCE FIX / DELIVERY PENDING | `DEVSECOPS`, `CRUD_STANDARD`; SQL setup no longer grants broad RLS access or seeds customer/elevated accounts; Auth sync assigns `user` only; retired scripts fail closed; exact-target fixture is synthetic-only. API/Cloud mirror regression and UAT-013–017 pass. | Database policy/grant state and connection-role behavior remain unverified; local candidate not yet merged. | Source fix complete in 5.1.30 candidate; preserve DB acceptance as external. | API 22/22 regression/build, Cloud 11/11/build, static RLS/provisioning test and 52/52 PHDK coherence pass. |
-
-## Non-gap evidence and applicability
-
-- Canonical PHDK v2.50.10; static coherence passes 52/52 mappings.
-- Current remote `main`/HEAD is `886669c7f5d3e20aec978efc3dc9a758d4a09148`, version 5.1.29; all five application package/lock roots and Browser renderer align.
-- Owner-approved role/tenant/credential boundary remains reflected in API/Cloud tests: new account default user, DB-derived actor/tenant, existing superadmin-only elevation, write-only secret replacement, safe projections and AES-GCM at-rest envelopes.
-- Owner-approved private/local CRM behavior is constrained by normalized tenant-owned origin allowlists, with no Cloud-side private fetch; API/Cloud policy tests and Browser source tests pass.
-- Mandatory debug version/actions source and local widget UAT pass their exercised Web scope; native view remains separate.
-- A fresh current-candidate source/test line inventory has not been run in this revalidation; the historical 5.1.25 count is not treated as current proof.
-- SEO/AEO apply to public `/`; protected application and customer CRM data remain excluded. Universal live vendor proof is NOT APPLICABLE, not a waived source integration contract.
+| CHK-AUTO-012 | CLOSED — LOCAL SOURCE FIX / DELIVERY PENDING | `DEVSECOPS`, `CRUD_STANDARD`, approved role/tenant policy; API/Cloud public shared-secret webhook could file-seed users/companies and execute DDL; API seed input could supply roles. Cross-backend regression verifies route retirement. | Candidate is not merged; 26-model operation matrix and DB acceptance remain separate open findings. | Remove webhook, seed/migration services and guards; legacy routes fail with HTTP 410; use reviewed Prisma migrations and isolated fixtures. | API build/regression 23/23; Cloud build/regression 11/11; candidate 5.1.31 based on verified main 5.1.30. |
 
 ## Auto remediation order
 

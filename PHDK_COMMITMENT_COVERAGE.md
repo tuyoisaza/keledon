@@ -1,3 +1,14 @@
+## Current Auto candidate — 2026-10-14, 5.1.31
+
+| Commitment | Candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | Candidate is based on verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; five app package/lock roots and Browser renderer align at 5.1.31. | Versioned PR, merge and remote readback pending. |
+| CMT-002 | Existing widget/diagnostics coverage retained; API and Cloud builds and regressions pass. | Native device/audio and broad route accessibility/localization remain open. |
+| CMT-003 | Provider-independent call/Cloud/Browser contracts and tenant URL validation remain intact. | Live call/CRM acceptance remains client-specific after provider selection. |
+| CMT-004 | Retires shared-secret webhook seed/migration and direct runtime seed/DDL routes from both backends; API regression 23/23, Cloud 11/11. | 26-model authorization mapping, database persistence/migration and safe synthetic identities remain open. |
+
+Overall: **PARTIALLY DELIVERED; CANDIDATE DELIVERY PENDING**. No migration, seed, DB connection, customer data or private CRM endpoint was used.
+
 ## Current Auto delivery — 2026-10-14, 5.1.30, PR #100
 
 | Commitment | Delivered evidence | Remaining acceptance |

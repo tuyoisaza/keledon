@@ -1,5 +1,15 @@
 # Current task
 
+## Active Auto continuation — candidate 5.1.31 based on verified main
+
+Continue the owner-authorized four-front PHDK Auto in its confirmed order. Verified base is `origin/main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`, delivered KELEDON 5.1.30 and PHDK 2.50.10 coherence 52/52. Current 5.1.31 remediation retires the remaining shared-secret CRUD webhook plus runtime seed/DDL paths from API and Cloud. All five app package/lock roots and Browser renderer align at 5.1.31; API/Cloud builds and API 23/23, Cloud 11/11 regressions pass. PR and remote candidate delivery remain pending.
+
+The four owner-confirmed fronts remain active. The 26-model authorization map, persisted DB migration/CRUD proof, safe development identities, native device/audio, broad route accessibility/localization, deployed SEO/AEO and client-specific live integration acceptance remain open. No production database, customer provider, private CRM endpoint or deployment has been used.
+
+SIGUIENTE PASO: finish source Check on the CRUD model/role/surface/operation coverage, then run the PHDK gates and deliver the reviewed 5.1.31 candidate.
+
+## Historical task record — Auto baseline 5.1.24 (superseded)
+
 ## Active Auto continuation — 5.1.24 main; lint remediation local
 
 Run `20261013-1900-phdk-auto`; all four owner-confirmed fronts remain in scope, in order. Product PR #92 and evidence PR #93 are merged; current `origin/main` is `6413d8aed295c18af098ca6a58c6dfbb7503930b`, all five app roots are 5.1.24, and installed PHDK v2.50.10 coherence is 52/52. Owner-approved private CRM destinations are allowed only after URL validation and tenant-scoped origin allowlisting.

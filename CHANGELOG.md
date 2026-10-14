@@ -1,3 +1,11 @@
+## v5.1.31 — 2026-10-14 (retire shared-secret runtime seed and migration endpoints)
+
+- Retire the shared-secret CRUD webhook and runtime `/api/crud/seed` and `/api/crud/migrate` mutation paths from API and Cloud; legacy routes now return HTTP 410 and direct operators to reviewed Prisma migrations or isolated synthetic regression fixtures.
+- Remove seed/migration services and webhook guards that allowed file-driven provisioning or ad hoc DDL outside DB-derived actor and tenant authorization.
+- Update real HTTP wiring regressions and add cross-backend coverage for retired routes and deleted alternate write paths.
+- Align all five application package/lock roots and the Browser renderer at 5.1.31.
+- API and Cloud builds pass; API regression 23/23 and Cloud regression 11/11 pass.
+
 ## v5.1.30 — 2026-10-14 (default-deny Supabase access and safe fixture provisioning)
 
 - Remove permissive Supabase row policies and auto-seeded sample/superadmin accounts from setup/bootstrap SQL; retire unsafe customer/RBAC/session/CRM fixtures and their guide, make Auth synchronization assign only `user`, gate provider-catalog seeding to an exact nonproduction target, and add an idempotent API/Cloud migration that enables RLS on application-owned public tables and removes legacy broad policies.

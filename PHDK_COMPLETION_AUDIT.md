@@ -1,3 +1,9 @@
+## Continued Check audit — candidate 5.1.31 (2026-10-14)
+
+The source review after PR #100 identified a leftover shared-secret CRUD webhook and runtime seed/DDL routes in both API and Cloud. The API seed service trusted role values in `crud.json`; Cloud also accepted file-driven company/user provisioning. Candidate 5.1.31 deletes the webhook, associated seed/migration services and guards, and makes legacy `/api/crud/seed` and `/api/crud/migrate` routes fail with HTTP 410. The updated cross-backend regression passes, as do API/Cloud builds, API regression 23/23 and Cloud regression 11/11. All five application package/lock roots and Browser renderer are 5.1.31. Candidate base is verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; PR and remote readback are pending.
+
+Overall remains **PARTIALLY DELIVERED**. The source CRUD matrix still lacks 26 non-core Prisma model mappings; persisted DB migration/CRUD, safe development identities, native device/audio, broad route accessibility/localization, deployed SEO/AEO and client-selected live integration evidence remain open. No database, seed, migration, production service or customer endpoint was accessed.
+
 ## Current Auto completion audit — 5.1.30 delivered source (2026-10-14)
 
 All four approved commitments were carried into source delivery. PR #100 merged source commit `75e40a8d4f72b5c962d73c140856ada044a863e9` at exact `main` SHA `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; `origin/main` and `git ls-remote` agree, and merge/source trees match. Five package/lock roots and Browser renderer are 5.1.30. API regression 22/22, Cloud 11/11, all app builds, targeted RLS/fixture regression and PHDK coherence 52/52 pass. GitHub reports empty hosted-check and review rollups. No deployment is claimed.

@@ -1,5 +1,14 @@
 # PHDK Auto lifecycle — `20261014-0007-phdk-auto-completion`
 
+## Continued Check remediation — candidate 5.1.31 (2026-10-14)
+
+Review found a shared-secret API/Cloud webhook path for user/file-controlled provisioning and direct runtime DDL that bypassed the approved DB-derived actor and versioned migration policy. Candidate 5.1.31 removes the webhook, seed/migration services and guards; legacy seed/migrate routes now return 410. API build and 23/23 API regression suites pass; Cloud build and 11/11 regression suites pass. The candidate is based on verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; PR and merge are pending. Full Auto remains partial with the 26-model CRUD map and environment-bound acceptance still open.
+
+
+## Continued Check remediation — candidate 5.1.31 (2026-10-14)
+
+Review found a shared-secret API/Cloud webhook path for file-controlled provisioning and direct runtime DDL that bypassed the approved DB-derived actor and versioned migration policy. Candidate 5.1.31 removes the webhook, seed/migration services and guards; legacy seed/migrate routes now return 410. API build and 23/23 API regression suites pass; Cloud build and 11/11 regression suites pass. The candidate is based on verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; PR and merge are pending. Full Auto remains partial with the 26-model CRUD map and environment-bound acceptance still open.
+
 ## Final delivery status — 2026-10-14
 
 Latest source delivery: KELEDON 5.1.30, PR [#100](https://github.com/tuyoisaza/keledon/pull/100), merge SHA `7a48b419880abea818837e4cdfc3d4d4c3f77c12`. Remote readbacks agree and source/merge trees match. API regression 22/22, Cloud 11/11, all builds and PHDK v2.50.10 coherence 52/52 pass. No deployment claimed.

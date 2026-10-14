@@ -98,3 +98,8 @@ Product PR #42 is merged and independently read back. PHDK central tool defects 
 Closed the in-scope PHDK diagnostics findings: replaced stale feature-flag/provider-metric claims with measured, allowlisted LLM/STT/TTS outcomes and process limits/switch states; protected global usage with the current database superadmin role; updated the shared Web/Landing report; added privacy, role-gating and regression tests. Retests pass: API 14/14 + focused Jest 9/9, Cloud 8/8, Web 16/16 + UAT 1/1, Browser 29/29, all five builds, and PHDK coherence 52/52.
 
 Residual items require separate acceptance environments: persisted CRUD/migration, native Electron/device/audio, broad accessibility/localization and deployed SEO/AEO. No source-only evidence closes these. Details: `docs/phdk/lifecycle/20261013-keledon-v5111/80-remediation/`. Overall: PARTIALLY DELIVERED.
+## Auto remediation candidate — 5.1.31 (2026-10-14)
+
+Check found that API and Cloud still had shared-secret webhook actions that loaded file-controlled seed input and ran direct DDL; API seed input could assign a submitted role. Both backends now retire the webhook, seed and runtime migration routes (HTTP 410 on retained legacy routes), and remove their seed/migration services and guards. The real HTTP wiring regressions no longer depend on the deleted migration provider. Cross-backend regression and both TypeScript builds pass. No database, seed file, migration or external provider was accessed.
+
+Remaining Check scope includes the model-specific CRUD matrix and environment-dependent persistence/UAT. Candidate delivery is pending.

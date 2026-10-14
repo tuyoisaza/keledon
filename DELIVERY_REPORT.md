@@ -1,3 +1,9 @@
+## Candidate 5.1.31 — delivery pending
+
+Based on verified `main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`, candidate 5.1.31 removes the shared-secret CRUD webhook, file-based seed services and runtime DDL paths from API and Cloud. Retained seed/migrate routes return HTTP 410; reviewed Prisma migrations and isolated synthetic regression fixtures are the supported paths. API/Cloud builds pass, API regression 23/23 and Cloud regression 11/11 pass. All five app package/lock roots and Browser renderer align at 5.1.31. PR, merge and readback are pending; no deployment, database, seed or client endpoint was used.
+
+Overall Auto remains **PARTIALLY DELIVERED** because the model-specific CRUD matrix, persisted DB behavior, safe development identities, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-client integration acceptance remain open.
+
 # Delivery handoff — Auto candidate 5.1.30 merged
 
 PHDK Auto for the four owner-confirmed KELEDON fronts delivered source version 5.1.30 through [PR #100](https://github.com/tuyoisaza/keledon/pull/100). Product source commit `75e40a8d4f72b5c962d73c140856ada044a863e9` was squash-merged to `main` at `7a48b419880abea818837e4cdfc3d4d4c3f77c12` on 2026-10-14. Fresh `origin/main` and `git ls-remote` agree, and source/merge trees match. All five app package/lock roots and Browser renderer report 5.1.30.

@@ -1,3 +1,7 @@
+## 2026-10-14 — candidate 5.1.31 security finding and remediation
+
+Continuing the four owner-confirmed workstreams uncovered that API/Cloud CRUD still exposed a shared-secret webhook capable of file-based provisioning and runtime DDL, plus `/api/crud/seed` and `/api/crud/migrate`. API seeding trusted a role from `crud.json`; Cloud could provision companies and users. Candidate 5.1.31 removes the webhook and its seed/migration services/guards and makes legacy routes return 410. All five app package/lock roots and Browser renderer align. API/Cloud builds pass; API regression 23/23 and Cloud 11/11 pass. Candidate starts at verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; PR pending. No DB or seed operation was run. The 26-model permission mapping and environment-bound Auto acceptance remain open.
+
 ## 2026-10-14 — 5.1.30 source delivery readback
 
 PR #100 delivered the RLS/seed-security remediation at exact remote `main` SHA `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; Git remote readbacks and PR/source tree match. API regression 22/22, Cloud 11/11, all product builds, UAT-013–017 source checks and PHDK coherence 52/52 pass. GitHub reports no hosted checks/review decision. No migration, trigger, seed script, customer data or deployment was used. Whole-product Auto remains partial for environment-bound database, development identities, native/device/audio, broad accessibility/localization and deployed SEO/AEO.

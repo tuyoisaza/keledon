@@ -3,7 +3,6 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrudKeledonService } from './crud-keledon.service';
 import { CrudAuditService } from './crud-audit.service';
-import { CrudSeedService } from './crud-seed.service';
 import { CrudVendorService } from './crud-vendor.service';
 import { CrudCompanyService } from './crud-company.service';
 import { CrudHealthService } from './crud-health.service';
@@ -15,7 +14,6 @@ export class CrudService {
     private readonly prisma: PrismaService,
     private readonly keledonService: CrudKeledonService,
     private readonly auditService: CrudAuditService,
-    private readonly seedService: CrudSeedService,
     private readonly vendorService: CrudVendorService,
     private readonly companyService: CrudCompanyService,
     private readonly healthService: CrudHealthService,
@@ -496,18 +494,6 @@ export class CrudService {
     endDate?: string;
   }) {
     return this.auditService.getAuditLogs(params);
-  }
-
-  // ========== ========== SEED FROM CRUD.JSON ========== ==========
-  // Delegated to CrudSeedService (crud-seed.service.ts)
-
-  async seedFromCrudJson(): Promise<{
-    companies: number;
-    brands: number;
-    teams: number;
-    users: number;
-  }> {
-    return this.seedService.seedFromCrudJson();
   }
 
   // ========== ========== VENDORS ========== ==========

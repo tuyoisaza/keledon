@@ -1,26 +1,25 @@
-## Delivery closeout — Auto 5.1.30, 2026-10-14
-
-PR #100 merged at exact `main` SHA `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; origin and remote SHA readback agree, source and merge trees match. Overall status remains **PARTIALLY DELIVERED** because database-backed persistence, safe synthetic identities, native device/audio, broad route accessibility/localization and deployed SEO/AEO remain unverified.
-## Delivery closeout — Auto 5.1.30, 2026-10-14
+## Current Auto stage — Check remediation candidate 5.1.31 (2026-10-14)
 
 | Stage | Status | Evidence / next action |
 |---|---|---|
-| 00 Preflight | VERIFIED | Installed PHDK v2.50.10; coherence 52/52. |
-| 10 Capture | COMPLETE / REUSED | Four fronts, restrictive account/tenant policy and client-selected CRM scope confirmed by owner. |
-| 20 Plan | COMPLETE / REUSED | Brownfield plan and eight Auto plan items retained. |
-| 30 PMO | COMPLETE / REUSED | Four owner-confirmed fronts delivered in order. |
-| 40 Integration Review | COMPLETE | Final source and API/Cloud mirror diff reviewed; private CRM destinations are validated and tenant-allowlisted; no CRM destination accessed. |
-| 50 UAT | SOURCE PASS / WHOLE PRODUCT PARTIAL | UAT-013–017 pass static/source checks; total 14 pass, two blocked, one manual/native. |
-| 60 UAT Fix | SOURCE COMPLETE / ENVIRONMENT OPEN | No remaining local seed-policy fix; DB-backed identities/persistence and native device are unavailable. |
-| 65 SEO | SOURCE PASS / MEASUREMENT OPEN | Deployed measurements remain unverified. |
-| 67 AEO/GEO | SOURCE REVIEW / EXTERNAL OPEN | No deployed indexing evidence. |
-| 70 Check | SOURCE PASS / ACCEPTANCE PARTIAL | CHK-AUTO-011 source finding resolved; 26-model persistence, native, route-wide and deployed acceptance remain open. |
-| 80 Remediation | MERGED | Version 5.1.30; API 22/22, Cloud 11/11, builds pass. |
-| 90 Delivery | MERGED / REMOTE VERIFIED | PR #100 merged at `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; exact remote readback and matching tree verified. |
+| 00 Preflight | VERIFIED / REUSED | Installed PHDK 2.50.10 and verified main 5.1.30 baseline. |
+| 10 Capture | COMPLETE / REUSED | Four owner-confirmed fronts and restrictive role/tenant policy remain current. |
+| 20 Plan | COMPLETE / REUSED | Continue in order; preserve environment-bound client/device acceptance. |
+| 30 PMO | IN PROGRESS | Re-auditing the confirmed fronts; CMT-004 found legacy webhook provisioning/DDL path. |
+| 40 Integration Review | IN PROGRESS | API/Cloud parity and removed write routes reviewed; builds/regressions pass. |
+| 50 UAT | PARTIAL | Source regression passes; live DB, identity, native device/audio, route a11y/localization remain open. |
+| 60 UAT Fix | OPEN | Remediate repository-local actionable cases. |
+| 65 SEO | OPEN / PRIOR EVIDENCE | Deployed measurements still need approved read-only provider evidence. |
+| 67 AEO/GEO | OPEN / PRIOR EVIDENCE | Deployed discovery evidence remains unavailable. |
+| 70 Check | IN PROGRESS | Continue 26-model CRUD matrix review and coherence. |
+| 80 Remediation | IN PROGRESS | Candidate 5.1.31, based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; PR pending. |
+| 90 Delivery | PENDING | Reviewed PR, merge and completion-gate remote readback required. |
 
-Overall Auto status: **PARTIALLY DELIVERED**. Deployment was not performed.
+Overall: **PARTIALLY DELIVERED**. No database, customer provider, or deployment was used.
 
-SIGUIENTE PASO: obtain the explicitly safe development/database/device environments for the outstanding UAT; perform no production migration.
+## Delivery closeout — Auto 5.1.30, 2026-10-14
+
+PR #100 merged at exact `main` SHA `7a48b419880abea818837e4cdfc3d4d4c3f77c12`; origin and remote SHA readback agree, source and merge trees match. Overall status remains **PARTIALLY DELIVERED** because database-backed persistence, safe synthetic identities, native device/audio, broad route accessibility/localization and deployed SEO/AEO remain unverified.
 ## Active Auto continuation — candidate 5.1.30, 2026-10-14
 
 | Stage | Status | Evidence / next action |
