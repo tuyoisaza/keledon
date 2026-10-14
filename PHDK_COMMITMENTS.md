@@ -1,6 +1,14 @@
 # Commitment ledger
 
-## Active run update — 5.1.37 source candidate (2026-10-14)
+## Active run update — 5.1.38 source delivery (2026-10-14)
+
+Verified base is `main` `746c5669ab0f9f39645ed27d99d2029dffa89ed1` / 5.1.37; Cloud escalation parity candidate `5d1b585e8b3a96865bd50494db7315de7281916b` is merged by PR #113 at `45b9031b9d3261a98e928cceb6fb51e73e21421f`. PHDK evidence PR #114 merged at `3222021e4e800ca1079d9752b18849f62165dd73`; remote main agrees. All five app package/lock roots and Browser renderer are 5.1.38. API build/regression 35/35; Cloud build/regression 15/15 and focused changed-file ESLint 0/0; Browser/Web/Landing builds, Web/Landing typechecks, Web diagnostics 19/19, exact-source Web UAT 2/2, Web/Landing SEO 1/1 each and PHDK coherence 52/52 pass. Active source inventory: 1,163 files, zero at/above 600 lines.
+
+The Cloud escalation guard now derives actor and tenant from current DB records, scopes manager operations to company teams, limits ordinary users to their own session/team scope, and filters aggregate reads. The four owner-approved fronts remain active in order. CMT-001 source delivery/readback passes. CMT-002 native device/audio and broad screen-reader/accessibility acceptance remain open. CMT-003 stays provider-neutral with client-configured private origins validated and allowlisted; no customer endpoint was contacted. CMT-004 source policy/parity is covered, while disposable-DB persistence and the complete model-family operation matrix remain open. Overall: **PARTIALLY DELIVERED**. No database, customer data, private endpoint or deployment was used.
+
+---
+
+## Prior active run update — 5.1.37 source candidate (2026-10-14)
 
 Verified base is `main` `493c6c238c6c3cac585b7a80dcff968fff6ab7b4` / 5.1.36; candidate commit `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`. All five app package/lock roots and Browser renderer align at 5.1.37. API build/regression pass; regressions are 35/35. Cloud build/regression pass 14/14 and full typed ESLint is 0 errors/0 warnings. Web build/typecheck/UAT 2/2/SEO pass; Browser and Landing builds pass; Landing SEO passes. Widget and diagnostics suite passes 19/19; PHDK coherence is 52/52; line inventory is 1,161 files with none at/above 600. Exact-SHA synthetic UAT is recorded in `docs/phdk/evidence/uat-local-web.json` and `uat-device-5.1.36.json` (the latter retains its historical case filename).
 
