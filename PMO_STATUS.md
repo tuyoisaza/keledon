@@ -2,7 +2,7 @@
 
 ## Current status — candidate 5.1.37 (2026-10-14)
 
-Branch `fix/phdk-cloud-typed-request-boundaries-5-1-37`; source commit `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`; base `493c6c238c6c3cac585b7a80dcff968fff6ab7b4`. Scoped Cloud typed-lint and API/Cloud CRUD parity remediation is implemented and verified. Five product roots plus renderer are 5.1.37; API regression 35/35, Cloud regression 14/14/full lint clean; Web UAT 2/2; diagnostic tests 19/19; SEO source checks pass; coherence 52/52. Normal PR delivery is pending. CMT-001..004 remain active; whole Auto remains **PARTIALLY DELIVERED** for external/persistence/native/broad-coverage gates.
+Source commit `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` shipped through PR [#111](https://github.com/tuyoisaza/keledon/pull/111), merged at `33cff1e345de0b735657570a6144ddeec61f7c3e`; remote readback passes. Scoped Cloud typed-lint and API/Cloud CRUD parity remediation is implemented and verified. Five product roots plus renderer are 5.1.37; API regression 35/35, Cloud regression 14/14/full lint clean; Web UAT 2/2; diagnostic tests 19/19; SEO source checks pass; coherence 52/52. CMT-001..004 remain active; whole Auto remains **PARTIALLY DELIVERED** for external/persistence/native/broad-coverage gates.
 
 ## Previous merged baseline — 5.1.35 (2026-10-14)
 

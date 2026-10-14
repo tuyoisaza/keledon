@@ -1,0 +1,86 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto: KELEDON four confirmed fronts and maximum applicable PHDK source conformity",
+  "target_branch": "main",
+  "expected_version": "5.1.37",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "source_commit_sha": "ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d",
+  "merged_commit_sha": "33cff1e345de0b735657570a6144ddeec61f7c3e",
+  "merge_tree_sha": "bfed883e8f6cf4de1f4d7d3e4b5de63f0e59a97c",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/111",
+  "checks": {
+    "version_alignment": {
+      "status": "PASS",
+      "evidence": "Independent remote-main readback: all five app package/lock roots and Browser renderer are 5.1.37."
+    },
+    "commit_prefix": {
+      "status": "PASS",
+      "evidence": "Source and documentation commits use v5.1.37 prefixes; squash merge title is v5.1.37 fix(api): type CRUD request boundaries and align audit routes."
+    },
+    "pr_merge_remote_readback": {
+      "status": "PASS",
+      "evidence": "PR #111 merged at 33cff1e345de0b735657570a6144ddeec61f7c3e; origin/main and git ls-remote agree; PR head and merge trees both equal bfed883e8f6cf4de1f4d7d3e4b5de63f0e59a97c. GitHub checks/review rollups are empty and main is not protected."
+    },
+    "api_build_and_regression": {
+      "status": "PASS",
+      "evidence": "API build and full regression suite pass; 35/35 suites."
+    },
+    "cloud_build_regression_and_lint": {
+      "status": "PASS",
+      "evidence": "Cloud build and 14/14 regression suites pass; full typed ESLint reports 0 errors and 0 warnings."
+    },
+    "api_full_lint": {
+      "status": "PASS",
+      "evidence": "Full API typed ESLint reports 0 errors and 135 warnings; this is not warning-free."
+    },
+    "web_uat_and_seo": {
+      "status": "PASS",
+      "evidence": "Web typecheck/build and exact-source synthetic UAT pass; UAT 2/2 with candidate SHA ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d and clean source fingerprint. Web SEO passes 1/1."
+    },
+    "browser_landing_and_seo": {
+      "status": "PASS",
+      "evidence": "Browser build passes; Landing typecheck/build and SEO pass 1/1."
+    },
+    "widget_and_diagnostics": {
+      "status": "PASS",
+      "evidence": "Focused widget, debug-mode and diagnostics tests pass 19/19; built-Web UAT uses intercepted synthetic API fixtures."
+    },
+    "phdk_coherence_and_line_limit": {
+      "status": "PASS",
+      "evidence": "PHDK v2.50.10 static coherence passes 52/52; active source inventory is 1,161 files with 0 at or above 600 lines."
+    },
+    "whole_auto_acceptance": {
+      "status": "BLOCKED",
+      "evidence": "Overall PHDK Auto remains PARTIALLY DELIVERED: persisted PostgreSQL/migration and safe identities, live Qdrant/concurrency, native Windows device/audio, exhaustive CRUD-family operations, broad accessibility/localization, deployed SEO/AEO and configured-client live CRM/call acceptance are not verified. No database, customer endpoint/data or deployment was used."
+    }
+  },
+  "acceptance_status": "PARTIALLY_DELIVERED",
+  "mechanical_completion_gate": {
+    "status": "BLOCKED",
+    "command": "python phdk-standards/scripts/phdk_completion_gate.py --evidence docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.37.json",
+    "evidence": "The gate verified remote main SHA/version and correctly rejected COMPLETED because whole_auto_acceptance is BLOCKED: required product acceptance remains open. This run does not claim goal completion."
+  },
+  "deployment": "NOT_PERFORMED",
+  "production_database_or_customer_data": "NOT_USED",
+  "candidate": {
+    "expected_version": "5.1.37",
+    "branch": "fix/phdk-cloud-typed-request-boundaries-5-1-37",
+    "base_commit": "493c6c238c6c3cac585b7a80dcff968fff6ab7b4",
+    "source_commit_sha": "ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d",
+    "merged_commit_sha": "33cff1e345de0b735657570a6144ddeec61f7c3e",
+    "pull_request": "https://github.com/tuyoisaza/keledon/pull/111",
+    "pull_request_state": "MERGED",
+    "merge_tree_sha": "bfed883e8f6cf4de1f4d7d3e4b5de63f0e59a97c",
+    "final_remote_main_sha": "33cff1e345de0b735657570a6144ddeec61f7c3e",
+    "api_regression": "PASS 35/35 suites",
+    "cloud_regression": "PASS 14/14 suites",
+    "cloud_full_typed_eslint": "PASS 0 errors, 0 warnings",
+    "api_full_typed_eslint": "PASS 0 errors, 135 warnings",
+    "web_uat": "PASS 2/2 exact-source synthetic tests",
+    "diagnostics": "PASS 19/19",
+    "phdk_coherence": "PASS 52/52 static mappings",
+    "whole_product_acceptance": "PARTIALLY_DELIVERED",
+    "note": "Scoped source delivery is merged and remote-verified; the four-front PHDK Auto goal remains active with the acceptance gaps above."
+  }
+}
