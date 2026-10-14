@@ -180,7 +180,7 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect, O
 
     if (data.is_final) {
       session.transcript.push(data.text);
-      this.logger.log(`Transcript (final) from ${session.deviceId}: ${data.text.substring(0, 50)}...`);
+      this.logger.log(`Final transcript received from ${session.deviceId} (${data.text.length} characters)`);
       
       // Broadcast to session room
       this.server.to(`voice:${session.sessionId}`).emit('transcript', {
@@ -215,7 +215,7 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect, O
       return { error: 'No active voice session' };
     }
 
-    this.logger.log(`TTS request from ${session.deviceId}: ${data.text.substring(0, 50)}...`);
+    this.logger.log(`TTS request from ${session.deviceId} (${data.text.length} characters)`);
 
     if (this.ttsService) {
       try {
@@ -235,8 +235,8 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect, O
         }
         
         return { error: result.error || 'TTS failed' };
-      } catch (error) {
-        this.logger.error('TTS error:', error);
+      } catch {
+        this.logger.error('TTS provider request failed');
         return { error: 'TTS error' };
       }
     }

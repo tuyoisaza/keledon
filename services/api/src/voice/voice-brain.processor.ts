@@ -35,7 +35,7 @@ export class VoiceBrainProcessor {
     });
 
     this.logger.log(
-      `[v${getApiVersion()}] Voice speech source=${source} text="${replyText.substring(0, 80)}..." spokenChars=${spokenReplyText.length}`,
+      `[v${getApiVersion()}] Voice speech source=${source} fullChars=${replyText.length} spokenChars=${spokenReplyText.length}`,
     );
 
     session.isSpeaking = true;
@@ -175,7 +175,7 @@ export class VoiceBrainProcessor {
       });
 
       this.logger.log(
-        `[v${getApiVersion()}] Brain reply: "${replyText.substring(0, 50)}..." spoken="${spokenReplyText.substring(0, 80)}..." fullChars=${replyText.length} spokenChars=${spokenReplyText.length}`,
+        `[v${getApiVersion()}] Brain reply generated fullChars=${replyText.length} spokenChars=${spokenReplyText.length}`,
       );
 
       if (
@@ -241,14 +241,14 @@ export class VoiceBrainProcessor {
       const totalMs =
         ts.ttsComplete && ts.brainStart ? ts.ttsComplete - ts.brainStart : -1;
       this.logger.log(
-        `[v${getApiVersion()}] Latency — brain=${brainMs}ms ttsFirst=${ttsFirstMs}ms total=${totalMs}ms ttsElapsed=${streamResult.elapsedMs ?? -1}ms voice=${streamResult.voice || '?'} lang=${streamResult.language || '?'} fullChars=${replyText.length} spokenChars=${spokenReplyText.length} | "${(spokenReplyText || replyText).substring(0, 40)}..."`,
+        `[v${getApiVersion()}] Latency — brain=${brainMs}ms ttsFirst=${ttsFirstMs}ms total=${totalMs}ms ttsElapsed=${streamResult.elapsedMs ?? -1}ms voice=${streamResult.voice || '?'} lang=${streamResult.language || '?'} fullChars=${replyText.length} spokenChars=${spokenReplyText.length}`,
       );
 
       this.logger.log(
-        `[v${getApiVersion()}] Brain reply streamed: ${replyText.substring(0, 50)}... (${streamResult.audioData?.length || 0} bytes)`,
+        `[v${getApiVersion()}] Brain reply streamed: ${replyText.length} characters (${streamResult.audioData?.length || 0} bytes)`,
       );
-    } catch (error) {
-      this.logger.error('Brain reply error:', error);
+    } catch {
+      this.logger.error('Brain provider request failed');
       session.isSpeaking = false;
       session.abortTTS = () => {};
       client.emit('voice:error', { error: 'Failed to generate brain reply' });

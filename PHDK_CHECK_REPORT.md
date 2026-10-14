@@ -1,4 +1,8 @@
-# PHDK Check — current Auto run `20261013-1900-phdk-auto`, candidate 5.1.20
+# PHDK Check — current Auto run `20261013-1900-phdk-auto`, candidate 5.1.22
+
+## 2026-10-13 continuation — voice and provider privacy
+
+Source review found transcript/spoken-text snippets and raw provider error details in API/Cloud logs and errors, plus an LLM fallback that echoed prompt content. Logs now retain only lengths or generic failure labels; STT/TTS failures omit upstream details, and fallback speech contains no prompt text. API regression 17/17, Cloud regression 9/9, API/Cloud configured builds, Web typecheck/build, Browser build, Landing typecheck/build, and PHDK v2.50.10 coherence 52/52 pass. Changed-file API ESLint passes with 0 errors and 2 pre-existing warnings; focused Cloud ESLint did not return output and remains unverified. All five app package and lock roots are 5.1.22. Candidate branch `fix/provider-error-redaction` is based on main 5.1.21 at `5b81b36c4e6534a930edc0a9f59f2ba117b01bb`; delivery remains pending. Customer CRM/call-provider acceptance stays configurable per tenant. Private-network endpoint SSRF policy remains open. This source check does not close the wider CRUD and Auto acceptance gates.
 
 ## 2026-10-14 continuation — prevent cross-tenant Qdrant upsert by ID
 

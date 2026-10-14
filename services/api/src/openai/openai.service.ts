@@ -55,7 +55,7 @@ export class OpenAIService {
         usage: data.usage,
       };
     } catch (error) {
-      console.error('[OpenAI] Error generating completion:', error.message);
+      console.error('[OpenAI] Error generating completion');
       throw error;
     }
   }
@@ -86,7 +86,7 @@ export class OpenAIService {
       const data = await response.json();
       return data.data?.[0]?.embedding;
     } catch (error) {
-      console.error('[OpenAI] Error generating embedding:', error.message);
+      console.error('[OpenAI] Error generating embedding');
       throw error;
     }
   }
@@ -122,10 +122,7 @@ export class OpenAIService {
       const data = await response.json();
       return JSON.parse(data.choices?.[0]?.message?.content || '{}');
     } catch (error) {
-      console.error(
-        '[OpenAI] Error generating structured response:',
-        error.message,
-      );
+      console.error('[OpenAI] Error generating structured response');
       throw error;
     }
   }
@@ -152,7 +149,7 @@ export class OpenAIService {
         models: data.data?.map((model: any) => model.id) || [],
       };
     } catch (error) {
-      console.error('[OpenAI] Error getting model info:', error.message);
+      console.error('[OpenAI] Error getting model info');
       throw error;
     }
   }

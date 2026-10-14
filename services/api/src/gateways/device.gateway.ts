@@ -230,7 +230,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { text: string; isFinal: boolean; timestamp: string },
   ) {
     this.logger.log(
-      `Voice transcript from ${client.data.deviceId}: ${data.text.substring(0, 50)}...`,
+      `Voice transcript accepted from ${client.data.deviceId} (${data.text.length} characters)`,
     );
 
     const sessionId = client.data.sessionId;

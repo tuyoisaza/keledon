@@ -35,7 +35,7 @@ export class TTSService {
       provider = 'mock';
     }
 
-    console.log(`[TTS] Speaking with ${provider}: "${text.substring(0, 50)}..."`);
+    console.log(`[TTS] Speaking with ${provider} (${text.length} characters)`);
 
     try {
       if (provider === 'elevenlabs') {
@@ -89,9 +89,9 @@ export class TTSService {
       console.log(`[TTS] Generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio`);
       
       return { audioData, duration };
-    } catch (error: any) {
-      console.error('[TTS] ElevenLabs error:', error.message);
-      return { error: error.message };
+    } catch {
+      console.error('[TTS] ElevenLabs request failed');
+      return { error: 'ElevenLabs TTS request failed' };
     }
   }
 
@@ -122,9 +122,9 @@ export class TTSService {
 
       console.log(`[TTS] OpenAI generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio (voice: ${voice})`);
       return { audioData, duration };
-    } catch (error: any) {
-      console.error('[TTS] OpenAI TTS error:', error.message);
-      return { error: error.message };
+    } catch {
+      console.error('[TTS] OpenAI TTS request failed');
+      return { error: 'OpenAI TTS request failed' };
     }
   }
 

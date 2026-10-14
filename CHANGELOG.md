@@ -1,3 +1,10 @@
+## v5.1.22 — 2026-10-13 (PHDK Auto voice and provider privacy)
+
+- Redact voice transcripts, spoken text, LLM prompt snippets, and provider error details from API/Cloud logs and errors.
+- Keep diagnostic value with character counts and generic provider failure messages; use a content-free LLM fallback.
+- Align all five app package and lock roots at 5.1.22.
+- API regression 17/17; Cloud regression 9/9; API/Cloud configured builds; Web typecheck/build; Browser build; Landing typecheck/build; PHDK coherence 52/52.
+
 ## v5.1.21 — 2026-10-14 (PHDK Auto tenant-scoped vector writes)
 
 ### Changed

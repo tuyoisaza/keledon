@@ -402,9 +402,9 @@ export class TTSService {
       );
 
       return { audioData, duration };
-    } catch (error: any) {
-      console.error('[TTS] ElevenLabs streaming error:', error.message);
-      return { error: error.message };
+    } catch {
+      console.error('[TTS] ElevenLabs streaming request failed');
+      return { error: 'ElevenLabs provider request failed' };
     }
   }
 
@@ -467,9 +467,9 @@ export class TTSService {
       );
 
       return { audioData, duration };
-    } catch (error: any) {
-      console.error('[TTS] ElevenLabs error:', error.message);
-      return { error: error.message };
+    } catch {
+      console.error('[TTS] ElevenLabs provider request failed');
+      return { error: 'ElevenLabs provider request failed' };
     }
   }
 
@@ -519,9 +519,9 @@ export class TTSService {
         `[TTS] OpenAI generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio (voice: ${voice})`,
       );
       return { audioData, duration };
-    } catch (error: any) {
-      console.error('[TTS] OpenAI TTS error:', error.message);
-      return { error: error.message };
+    } catch {
+      console.error('[TTS] OpenAI TTS provider request failed');
+      return { error: 'OpenAI TTS provider request failed' };
     }
   }
 

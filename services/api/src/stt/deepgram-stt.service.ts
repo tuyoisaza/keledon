@@ -39,11 +39,8 @@ export class DeepgramSTTService {
       this.clientInitialized = true;
       this.logger.log('[DeepgramSTT] Client initialized');
       return true;
-    } catch (error: any) {
-      this.logger.error(
-        '[DeepgramSTT] Failed to initialize Deepgram SDK:',
-        error.message,
-      );
+    } catch {
+      this.logger.error('[DeepgramSTT] Failed to initialize Deepgram SDK');
       return false;
     }
   }
@@ -75,7 +72,7 @@ export class DeepgramSTTService {
         });
 
       if (error) {
-        this.logger.error('[DeepgramSTT] Transcription error:', error.message);
+        this.logger.error('[DeepgramSTT] Transcription request failed');
         return null;
       }
 
@@ -87,11 +84,11 @@ export class DeepgramSTTService {
       }
 
       this.logger.log(
-        `[DeepgramSTT] Transcript: "${transcript.substring(0, 100)}..."`,
+        `[DeepgramSTT] Transcript received (${transcript.length} characters)`,
       );
       return transcript;
-    } catch (error: any) {
-      this.logger.error('[DeepgramSTT] Transcription failed:', error.message);
+    } catch {
+      this.logger.error('[DeepgramSTT] Transcription request failed');
       return null;
     }
   }
@@ -121,11 +118,8 @@ export class DeepgramSTTService {
         this.logger.log('[DeepgramSTT] Live connection opened');
       });
 
-      connection.on('error', (err: any) => {
-        this.logger.error(
-          '[DeepgramSTT] Live connection error:',
-          err?.message || err,
-        );
+      connection.on('error', (_err: any) => {
+        this.logger.error('[DeepgramSTT] Live connection failed');
       });
 
       connection.on('close', () => {
@@ -133,11 +127,8 @@ export class DeepgramSTTService {
       });
 
       return connection;
-    } catch (error: any) {
-      this.logger.error(
-        '[DeepgramSTT] Failed to create live stream:',
-        error.message,
-      );
+    } catch {
+      this.logger.error('[DeepgramSTT] Failed to create live stream');
       return null;
     }
   }

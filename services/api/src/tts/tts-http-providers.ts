@@ -20,8 +20,7 @@ export async function speakWithKokoro(
       }),
     });
     if (!response.ok) {
-      const errText = await response.text();
-      console.error(`[TTS] Kokoro error (${response.status}): ${errText}`);
+      console.error(`[TTS] Kokoro provider returned HTTP ${response.status}`);
       return { error: `Kokoro API returned ${response.status}` };
     }
     const audioData = Buffer.from(await response.arrayBuffer());
@@ -31,9 +30,9 @@ export async function speakWithKokoro(
       `[TTS] Kokoro generated ${audioData.length} bytes, ~${duration.toFixed(1)}s audio (voice: ${voice})`,
     );
     return { audioData, duration: duration || estimatedDuration };
-  } catch (error: any) {
-    console.error('[TTS] Kokoro error:', error.message);
-    return { error: error.message };
+  } catch {
+    console.error('[TTS] Kokoro provider request failed');
+    return { error: 'Kokoro provider request failed' };
   }
 }
 
@@ -69,11 +68,8 @@ export async function speakWithSpeaches(
       },
     );
     if (!response.ok) {
-      const errText = await response.text();
-      console.error(`[TTS] Speaches error (${response.status}): ${errText}`);
-      return {
-        error: `Speaches API returned ${response.status}: ${errText.substring(0, 200)}`,
-      };
+      console.error(`[TTS] Speaches provider returned HTTP ${response.status}`);
+      return { error: `Speaches API returned ${response.status}` };
     }
     const audioData = Buffer.from(await response.arrayBuffer());
     const elapsedMs = Date.now() - startedAt;
@@ -84,8 +80,8 @@ export async function speakWithSpeaches(
     if (audioData.length === 0)
       return { error: 'Speaches returned empty audio' };
     return { audioData, duration, voice, language: lang, elapsedMs };
-  } catch (error: any) {
-    console.error('[TTS] Speaches error:', error.message);
-    return { error: error.message };
+  } catch {
+    console.error('[TTS] Speaches provider request failed');
+    return { error: 'Speaches provider request failed' };
   }
 }

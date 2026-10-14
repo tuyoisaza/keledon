@@ -1,4 +1,12 @@
 # PHDK Coherence report — KELEDON candidate
+## Current installed-standard recheck — 2026-10-13, KELEDON 5.1.22 candidate
+
+- Baseline: main 5.1.21 at `5b81b36c4e6534a930edc0a9f59f2ba117b01bb`; candidate branch `fix/provider-error-redaction`.
+- Installed PHDK v2.50.10 coherence checker PASS: 52 manifest mappings (static install check only).
+- All five application package and lock roots align at 5.1.22.
+- API regression 17/17, Cloud regression 9/9, configured API/Cloud builds, Web typecheck/build, Browser build, Landing typecheck/build and `git diff --check` pass.
+- This focused source/privacy recheck does not certify the full Auto acceptance gate; persisted CRUD, native runtime, broad accessibility/localization, deployed SEO/AEO, and live provider/CRM behavior remain separate acceptance areas.
+
 ## Current source coherence recheck — 2026-10-13, KELEDON 5.1.16
 
 - Baseline: freshly fetched remote `main` `c8534e6f6568922d540eabfba4abe90cc93749c1`; candidate branch `fix/phdk-route-accessibility-i18n` at `7ce3509aeb4d53ce3a90d16153996abf35446024`.

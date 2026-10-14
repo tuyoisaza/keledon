@@ -276,9 +276,8 @@ Guidelines:
 Always respond in a way that can be spoken aloud.`;
   }
 
-  private generateFallback(prompt: string): string {
-    const truncated = prompt.length > 50 ? prompt.substring(0, 50) + '...' : prompt;
-    return `I understand you're asking about "${truncated}". Let me help you with that. Could you provide more details?`;
+  private generateFallback(_prompt: string): string {
+    return `I understand you're asking for help. Let me help you with that. Could you provide more details?`;
   }
 
   private fallbackCommand(transcript: string): CommandDecision {
