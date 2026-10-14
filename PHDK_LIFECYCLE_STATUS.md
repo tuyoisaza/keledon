@@ -2,11 +2,11 @@
 
 ## Current Auto continuation — candidate 5.1.15
 
-Run handoffs: `docs/phdk/lifecycle/20261013-keledon-auto-conformity/`. Preflight/Capture reused, Plan/PMO updated, integration source review complete, synthetic UAT and UAT Fix pass, SEO/AEO source reviews reused, scoped Check/remediation complete. Normal delivery is pending. Web typecheck/build, local production-SPA UAT 1/1, diagnostics 18/18, API regression 14/14, Cloud regression 8/8, Browser regression 24/24, SEO source regression 1/1, PHDK coherence 52/52, focused changed-file lint 0 errors/14 warnings, and locale parity 562/562 pass.
+Run handoffs: `docs/phdk/lifecycle/20261013-keledon-auto-conformity/`. Preflight/Capture reused, Plan/PMO updated, integration source review complete, synthetic UAT and UAT Fix pass, SEO/AEO source reviews reused, scoped Check/remediation complete. Product PR [#74](https://github.com/tuyoisaza/keledon/pull/74) merged and fresh `origin/main` readback is `2e61f41926ab25b4d9ea9f9b73d11aba82988a63`. Web typecheck/build, local production-SPA UAT 1/1, diagnostics 18/18, API regression 14/14, Cloud regression 8/8, Browser regression 24/24, SEO source regression 1/1, PHDK coherence 52/52, focused changed-file lint 0 errors/14 warnings, and locale parity 562/562 pass.
 
 The candidate adds en/es/pt dashboard/session/call-monitor copy, semantic tables and named filters under 5.1.15. Overall status remains **PARTIALLY DELIVERED** because broad localization/accessibility, persisted CRUD/migration, native Electron/device/audio and deployed SEO/AEO remain open. No production database, live provider or deployment was used.
 
-SIGUIENTE PASO: finish final diff/whitespace review, bind UAT evidence to the versioned source commit, then publish via normal PR and verify remote `main`.
+SIGUIENTE PASO: persist the post-merge evidence readback. Overall PHDK Auto remains partial because the broader route and environment-dependent acceptance listed above is still open.
 
 # Historical lifecycle status — 20261013-keledon-v5114
 

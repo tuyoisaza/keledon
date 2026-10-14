@@ -2,35 +2,35 @@
   "version": "1",
   "goal": "PHDK Auto: four confirmed KELEDON fronts, maximum applicable code conformity",
   "target_branch": "main",
-  "expected_version": "5.1.7",
+  "expected_version": "5.1.15",
   "version_file": "services/web/package.json",
   "version_property": "version",
-  "merged_commit_sha": "a854ca7634307538305cd9b5ad1f91f8a066b1a1",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/54",
+  "merged_commit_sha": "2e61f41926ab25b4d9ea9f9b73d11aba82988a63",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/74",
   "checks": {
     "lint": {
       "status": "PASS",
-      "evidence": "services/api npm run lint: 184 TypeScript source files, 0 errors and 139 warnings; services/web 0 errors/134 warnings; Landing lint passed. API lint is non-mutating and typed rules remain enabled."
+      "evidence": "Focused ESLint on DashboardPage.tsx, SessionsLivePage.tsx, SessionsHistoryPage.tsx and CallMonitorPlaceholder.tsx: 0 errors and 14 warnings."
     },
     "typecheck": {
       "status": "PASS",
-      "evidence": "API tsc --noEmit passed; API production build and Cloud, web and Landing typechecks/builds passed on the integrated 5.1.7 candidate."
+      "evidence": "services/web npm run typecheck passes on the v5.1.15 candidate."
     },
     "build": {
       "status": "PASS",
-      "evidence": "API C13/production build, Cloud, web, and Landing production builds passed; Browser package/build regression validation passed. No deploy is implied."
+      "evidence": "Production builds pass for API, Cloud, Web, Browser and Landing; Landing/Web typechecks pass; existing large-chunk advisory remains."
     },
     "focused_tests": {
       "status": "PASS",
-      "evidence": "Freshly rerun: API regression 11/11; web diagnostics 18/18; web local Edge UAT 1 suite / 1 test with nine journey groups. Existing Cloud 8/8, Browser 19/19, SEO 1/1 and Landing build/typecheck/lint records remain from integrated candidate verification."
+      "evidence": "API regression 14/14; Cloud regression 8/8; Browser regression 24/24; Web diagnostics 18/18; Web SEO source regression 1/1; en/es/pt recursive locale parity 562/562; PHDK coherence 52/52."
     },
     "uat": {
       "status": "PASS",
-      "evidence": "Current local built-SPA UAT executed against source revision edce7eafbe13ac16ab93274a87e12571e7b04b2e; its Git tree a77afde0f6142583887921fe46376b84cf3af279 matches verified origin/main a854ca7634307538305cd9b5ad1f91f8a066b1a1. Headless Edge, local loopback server, external HTTP/WebSockets blocked, APIs intercepted with synthetic Company Co fixtures. services/web npm run test:uat: 1/1 suite; click-tested anonymous login copy/reset success/failure, 390px layout and theme; public home mount and selected admin/coordinator/superadmin/user/provider/diagnostics journeys. services/web npm run test:diagnostics: 18/18; API regression: 11/11. No DB-backed identity/persistence, Electron/device/audio, broad accessibility/localization, production or deployed SEO/AEO acceptance; see UAT_REPORT.md."
+      "evidence": "services/web npm run test:uat passes 1/1 on source commit 8e864df32a7310a08ccff1733b874e26dc24f87d. Synthetic built-SPA Company Co fixtures and intercepted APIs verify management/provider journeys plus UAT-T-005-DASHBOARD and UAT-T-005-SESSIONS; no backend, production, native, live CRM/telephony or deployed acceptance inferred."
     },
     "delivery": {
       "status": "PASS",
-      "evidence": "PR #54 https://github.com/tuyoisaza/keledon/pull/54 is MERGED; independently read origin/main SHA a854ca7634307538305cd9b5ad1f91f8a066b1a1; all five app package/lock roots are 5.1.7. GitHub reported no required checks, branch protection or review requirement; none are claimed. No deployment/production health is claimed."
+      "evidence": "Product PR #74 is MERGED. Fresh fetch and git ls-remote independently read origin/main 2e61f41926ab25b4d9ea9f9b73d11aba82988a63; all five package/lock roots read directly from remote main are 5.1.15. GitHub reports empty status-check and review rollups; no deployment claimed."
     }
   }
 }

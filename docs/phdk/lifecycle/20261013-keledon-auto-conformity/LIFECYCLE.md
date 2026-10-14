@@ -1,8 +1,8 @@
 # PHDK Auto lifecycle — KELEDON 5.1.15
 
-Run ID: `20261013-keledon-auto-conformity`  
-PHDK: 2.50.10 (installed; current candidate coherence recheck pending)  
-Goal: finish the owner-confirmed four-front Auto and maximize applicable source conformity.  
+Run ID: `20261013-keledon-auto-conformity`
+PHDK: 2.50.10 (installed; coherence 52/52)
+Goal: finish the owner-confirmed four-front Auto and maximize applicable source conformity.
 Branch: `fix/phdk-auto-full-conformity`, based on fetched `origin/main` `ab7a6e867508d834ccec755fc5ba9a985e3b9be4`.
 
 | Stage | Status | Evidence / handoff |
@@ -16,9 +16,9 @@ Branch: `fix/phdk-auto-full-conformity`, based on fetched `origin/main` `ab7a6e8
 | UAT Fix | COMPLETED (SCOPED) | Initial selector case mismatch fixed; rerun passes. Widget tests 18/18; see `60-uat-fix/HANDOFF.md`. |
 | SEO | REUSED / SOURCE-SCOPE REVIEW | No public page or metadata behavior changed; deployed headers remain unverified; see `65-seo/HANDOFF.md`. |
 | AEO/GEO | REUSED / SOURCE-SCOPE REVIEW | No public answer/discovery content changed; external visibility remains unmeasured; see `67-aeo-geo/HANDOFF.md`. |
-| Check | COMPLETED — SOURCE PASS / ACCEPTANCE PARTIAL | API 14/14; Cloud 8/8; Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1; Browser 24/24; Landing typecheck/build; locales 562/562; PHDK coherence 52/52; final diff review remains; see `70-check/HANDOFF.md`. |
+| Check | COMPLETED — SOURCE PASS / ACCEPTANCE PARTIAL | API 14/14; Cloud 8/8; Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1; Browser 24/24; Landing typecheck/build; locales 562/562; PHDK coherence 52/52; outgoing diff reviewed and PR #74 merged; see `70-check/HANDOFF.md`. |
 | Remediation | COMPLETED — SCOPED SOURCE FIX | Dashboard/session/call-monitor localization, semantic tables and filter labels repaired and UAT-tested; broad route and external acceptance remain open; see `80-remediation/HANDOFF.md`. |
-| Delivery | PENDING | One 5.1.15 version reconciliation and scoped source tests complete; version-prefixed commit, normal PR, merge, fresh main readback and final evidence gate remain; see `90-delivery/HANDOFF.md`. |
+| Delivery | COMPLETED — SOURCE SLICE | Versioned commit `8e864df32a7310a08ccff1733b874e26dc24f87d`; product PR [#74](https://github.com/tuyoisaza/keledon/pull/74) merged; fresh main SHA `2e61f41926ab25b4d9ea9f9b73d11aba82988a63` and version 5.1.15 independently read; GitHub check/review rollups empty; see `90-delivery/HANDOFF.md`. |
 
 ## Current result
 

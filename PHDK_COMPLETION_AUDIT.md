@@ -1,8 +1,8 @@
 # PHDK Auto completion audit — PARTIALLY DELIVERED
 
-## Current candidate — 5.1.15 (delivery in progress)
+## Current delivery — 5.1.15 (source slice merged; overall partial)
 
-Branch `fix/phdk-auto-full-conformity` is based on fetched `origin/main` `ab7a6e867508d834ccec755fc5ba9a985e3b9be4`; all five package/lock roots are 5.1.15. Dashboard/session/call-monitor copy, accessible tables and filters are improved. API build/regression 14/14; Cloud build/regression 8/8; Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1; Browser build/regression 24/24; Landing typecheck/build; PHDK coherence 52/52; focused ESLint 0 errors/14 warnings; and locale parity 562/562 pass. Versioned commit and PR/main readback remain pending.
+Product PR [#74](https://github.com/tuyoisaza/keledon/pull/74) merged at `2e61f41926ab25b4d9ea9f9b73d11aba82988a63`; fetched `origin/main` independently matches. All five package/lock roots are 5.1.15. Dashboard/session/call-monitor copy, accessible tables and filters are improved. API build/regression 14/14; Cloud build/regression 8/8; Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1; Browser build/regression 24/24; Landing typecheck/build; PHDK coherence 52/52; focused ESLint 0 errors/14 warnings; and locale parity 562/562 pass. GitHub reports no required checks or review decision for #74; no deployment is claimed.
 
 The full PHDK Auto result remains **PARTIALLY DELIVERED**: broad route accessibility/localization, persisted CRUD/migration, native device/audio and deployed SEO/AEO acceptance remain open. No live client provider or deployment is claimed. Current evidence is in `docs/phdk/lifecycle/20261013-keledon-auto-conformity/`.
 
