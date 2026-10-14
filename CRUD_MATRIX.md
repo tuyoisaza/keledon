@@ -10,7 +10,7 @@ The Cloud `CrudAccessGuard` now matches the API's user field allowlist (no calle
 
 ## 5.1.31 — TeamInterface replacement integrity
 
-`PUT /api/crud/teams/:id/interfaces` remains limited by the current-DB `CrudAccessGuard` to the actor's company team (or a superadmin). API and Cloud services now validate the complete interface ID array, reject blank/non-string/duplicate/unknown IDs before mutation, and replace assignments inside a Prisma transaction. An empty array is the explicit clear operation. Regression 37 in each backend verifies validation-before-write, transactional ordering, and clear behavior. This closes the source-level partial-delete failure; persistent DB behavior remains part of CHK-AUTO-005.
+`PUT /api/crud/teams/:id/interfaces` remains limited by the current-DB `CrudAccessGuard` to the actor's company team (or a superadmin); cross-backend regression 38 checks an allowed same-company direct team ID and a denied foreign-company ID. API and Cloud services validate the complete interface ID array, reject blank/non-string/duplicate/unknown IDs before mutation, and replace assignments inside a Prisma transaction. An empty array is the explicit clear operation. Regression 37 in each backend verifies validation-before-write, transactional ordering, and clear behavior. This closes the source-level partial-delete failure; persistent DB behavior remains part of CHK-AUTO-005.
 
 ## Current Auto source revalidation — fail-closed Supabase RLS
 
@@ -236,7 +236,7 @@ The following inventory was reconciled against every `model` declaration in `ser
 | Device | Device registration, pairing and runtime access services/guards | Operational resource; direct administrative CRUD matrix and device persistence remain open. |
 | Keledon | `CrudController` list/create/update/delete, pairing/launch; device runtime binding | Matrixed management surface plus separate capability endpoints; persistence and lifecycle operations remain open. |
 | ManagedInterface | CRUD `interfaces` routes and duplicate MVP data interface routes | Duplicate mutable configuration surfaces; reconcile route and role policy. |
-| TeamInterface | `GET/PUT /api/crud/teams/:id/interfaces`; nested relation | Relationship is managed through a team already scoped to the actor's company; list projection omits credentials; replacement validates IDs before transactional delete/create. API/Cloud regression 37 verifies the transaction contract; DB persistence and role-session acceptance remain open. |
+| TeamInterface | `GET/PUT /api/crud/teams/:id/interfaces`; nested relation | Relationship is managed through a team already scoped to the actor's company; list projection omits credentials; replacement validates IDs before transactional delete/create. API/Cloud regression 37 verifies the transaction contract and regression 38 the direct-ID tenant guard; DB persistence and role-session acceptance remain open. |
 | Workflow | CRUD list/create/update/delete | Mutable workflow definition; route-level operation tests and persisted behavior remain open. |
 | FlowDefinition | MVP data list/create routes | No full update/delete/detail surface identified; define lifecycle and authorization. |
 | FlowDefinitionVersion | MVP data list/create/update routes | Versioned configuration; define immutability and deletion exception. |
