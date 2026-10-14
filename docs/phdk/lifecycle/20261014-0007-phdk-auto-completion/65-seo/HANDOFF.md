@@ -1,5 +1,9 @@
 # SEO handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.36 source revalidation — 2026-10-14
+
+Web SEO and Landing SEO source tests both pass 1/1; Landing production build passes. Candidate change is an authenticated `/devices` management page, with no public route, metadata or claim change. Public root remains the only intended indexable entry and private app routes stay excluded. No crawler, deployed host, Search Console or field measurement was accessed. **Source controls revalidated; deployed SEO remains PARTIAL/UNMEASURED.** AEO/GEO review remains applicable to the unchanged public `/` page and is reused; next lifecycle gate is Check/delivery.
+
 ## Candidate 5.1.32 source recheck — 2026-10-14
 
 Status: **SOURCE PASS / DEPLOYED MEASUREMENTS UNVERIFIED**. Candidate `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5` changes only the authenticated Knowledge page and locale catalogs; it adds no public route or claim. Web SEO 1/1 and Landing/nginx SEO 1/1 pass; Landing build and both application builds pass. Public root remains the only indexable product entry; private app/API/CRM routes stay excluded. No crawler, live page, host metadata, Search Console or field metric was accessed. UAT is bound to the exact source SHA; whole-product acceptance is still incomplete.

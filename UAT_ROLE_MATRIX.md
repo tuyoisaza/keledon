@@ -6,9 +6,11 @@ All browser personas are synthetic fixture data. UI role selection is not treate
 |---|---|---|---|
 | Anonymous/guest | Public/login and public-safe diagnostics; no management | Local production SPA, mocked endpoints | UI journey passes; live auth not verified. |
 | user | Own profile/devices and permitted operator flows; no management/elevation | Synthetic Company Co operator | Mocked UI; server denials covered by isolated regressions. |
+| agent | Own safe device summaries/status, no manager revoke or secret read | Synthetic Company Co role in API/UI fixtures | API source guard denies revoke; Web Device page stays read-only. |
 | coordinator | Company-bounded administration; cannot elevate roles or delete companies | Synthetic tenant role | UI fixture plus isolated API/Cloud tenant and privilege regressions. |
 | admin | Company-bounded administration; cannot elevate roles or delete companies | Synthetic tenant role | UI fixture plus isolated API/Cloud tenant and privilege regressions. |
 | superadmin | Global administration and role/company assignment from current DB authority | Synthetic elevated response | Current-DB superadmin checks covered in API guard/controller tests. |
+| Device manager action | Admin/coordinator/superadmin revoke within authorized scope; user/agent cannot revoke; raw RPA config remains paired-device-only | UAT-032 separate synthetic role contexts | API regression 21 and local browser UAT; no persisted database acceptance. |
 | Temporary UAT profile | Synthetic allowlisted profile in development/staging, max 10 min; no persisted role change | Visible temporary-mode banner and return control | PASS scoped: server-authorized start/end audit, allowlist, expiry, current-actor checks, revocation and original-admin return tested with isolated fixtures. |
 | Native Browser/device | Paired tenant runtime and explicitly permitted media/vendor origin | Not exercised through OS/Electron | MANUAL/BLOCKED pending supported desktop/device/audio setup. |
 

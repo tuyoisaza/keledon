@@ -1,3 +1,11 @@
+## v5.1.36 — 2026-10-14 (tenant-scoped device revoke and registration binding)
+
+- Bind pending device registration to the authenticated database actor and require an assigned company; reject client-supplied identity binding and orphan registrations.
+- Add a localized, accessible, confirmed device revoke action for tenant managers; keep user and agent pages read-only and preserve safe device summaries.
+- Add Device role/API/Web matrix rows, guard assertions, and isolated browser UAT for role visibility, cancel, failure, and successful revoke.
+- API DB persistence and live pairing remain unverified; PHDK Auto remains partially delivered.
+- Align all five application package/lock roots and the Browser renderer at 5.1.36.
+
 ## v5.1.35 — 2026-10-14 (complete Knowledge Base manager CRUD)
 
 - Add company-scoped Knowledge Base detail and update routes in API and Cloud, with input validation and an allowlist limited to name and description.

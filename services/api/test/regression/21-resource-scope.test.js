@@ -363,6 +363,26 @@ async function main() {
     Denied,
   );
   const devices = new DeviceAccessGuard(prisma);
+  const registration = run(
+    devices,
+    'DeviceController',
+    'registerDevice',
+    {},
+    { userId: 'forged', organizationId: 'co-b' },
+    {},
+    'POST',
+  );
+  await registration.result;
+  assert.equal(registration.req.deviceBinding.userId, 'u-a');
+  assert.equal(registration.req.deviceBinding.companyId, 'co-a');
+  const unscopedActor = actor;
+  actor = { ...actor, companyId: null };
+  await assert.rejects(
+    run(devices, 'DeviceController', 'registerDevice', {}, {}, {}, 'POST').result,
+    Denied,
+    'device registration must not create an unscoped pending device',
+  );
+  actor = unscopedActor;
   await assert.rejects(
     run(
       devices,
@@ -400,6 +420,16 @@ async function main() {
     ).result,
     Denied,
   );
+  const sameTenantDeviceRevoke = run(
+    devices,
+    'DeviceController',
+    'revokeDevice',
+    { id: 'device-a' },
+    {},
+    {},
+    'DELETE',
+  );
+  assert.equal(await sameTenantDeviceRevoke.result, true);
   await assert.rejects(
     run(
       devices,
@@ -436,6 +466,20 @@ async function main() {
   assert.equal(pairedData.organizationId, 'co-a');
   assert.equal(pairedData.keledonId, 'stored-k');
   assert.match(pairedData.authToken, /^keledon_[a-f0-9]{64}$/);
+  actor = { ...actor, id: 'u-a', role: 'user' };
+  await assert.rejects(
+    run(
+      devices,
+      'DeviceController',
+      'revokeDevice',
+      { id: 'device-a' },
+      {},
+      {},
+      'DELETE',
+    ).result,
+    Denied,
+    'ordinary users cannot revoke a device even when it belongs to them',
+  );
   actor = null;
   await assert.rejects(run(scope, 'FlowController', 'findAll').result, Denied);
   await assert.rejects(

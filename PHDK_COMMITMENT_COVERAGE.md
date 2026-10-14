@@ -1,4 +1,17 @@
-## Current Auto baseline — 2026-10-14, 5.1.35 source and matrix delivered
+## Current Auto candidate — 2026-10-14, 5.1.36 Device slice
+
+Branch `fix/phdk-device-revoke-ui-5-1-36`, based on verified `main` `f0a9633e39bbdbca416f5e1c24c32acab7276902`. Five package/lock roots plus Browser renderer are 5.1.36. API regression/build 35/35; Web typecheck/build and synthetic UAT 2/2; touched-source ESLint; locale parity; the 35-model/168-row inventory and PHDK coherence 52/52 pass. Device rows now describe proof-based pairing, DB-derived tenant registration, safe lists, role-scoped status, manager revoke and paired-device-only RPA-secret reads. Whole Auto remains PARTIALLY DELIVERED; DB, live device/audio, Qdrant/concurrency, broad accessibility/localization and deployed SEO/AEO are open.
+
+| Commitment | Candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | Prior source/matrix verified on main; 5.1.36 roots are aligned. | Product PR/merge/readback pending. |
+| CMT-002 | Shared modal, localized manager action, read-only lower roles; full Web synthetic UAT passes. | Native device/audio and broader route accessibility remain open. |
+| CMT-003 | Client-selected vendor boundaries retained; validated tenant allowlists for private origins remain covered by regression 26. | Per-client live CRM/call tests remain unrun. |
+| CMT-004 | Registration binding, no-company denial, same-tenant revoke and cross-tenant/low-role denials; inventory 168 rows. | Persisted DB role/tenant/migration matrix and remaining resource families are open. |
+
+No database, private endpoint, customer data or deployment was used. SIGUIENTE PASO: complete exact-source UAT binding and deliver through the normal PR route.
+
+## Previous Auto baseline — 2026-10-14, 5.1.35 source and matrix delivered
 
 Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` shipped through PR #106; PR #107 records that delivery; PR #108 reconciles the matrix at merge SHA `056e8605097874337c6bc532c006da3a3f772d56`. All five app package/lock roots and Browser renderer align at 5.1.35; PHDK v2.50.10 coherence is 52/52. API regression 35/35, Cloud 14/14, API/Cloud builds, Web typecheck/build and focused ESLint pass; exact-commit synthetic local built-SPA UAT covers KnowledgeBase list/detail/create/edit/delete. The matrix drift guard covers 154 role×surface rows across 35 Prisma models. Overall Auto remains PARTIALLY DELIVERED.
 

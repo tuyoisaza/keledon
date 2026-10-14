@@ -1,6 +1,23 @@
 # Commitment ledger
 
-## Active run `20261014-0007-phdk-auto-completion` — 5.1.35 source and matrix delivered
+## Active run `20261014-0007-phdk-auto-completion` — 5.1.36 Device candidate
+
+This candidate continues the four owner-confirmed fronts in order. It is based on verified `main` `f0a9633e39bbdbca416f5e1c24c32acab7276902` / 5.1.35. Five app package/lock roots and Browser renderer are aligned at 5.1.36. API build/regression 35/35; Web typecheck/build and synthetic SPA UAT 2/2; PHDK coherence 52/52; Device × role × API/Web rows bring the drift assertion to 168. Source delivery is pending; persistence/native/device audio/deployed evidence remain partial.
+
+| ID | Confirmed front | Candidate truth | Remaining acceptance |
+|---|---|---|---|
+| CMT-001 | Baseline, versions and PR reconciliation | Prior 5.1.35 source and matrix are verified on main; candidate 5.1.36 versions align. | Current product PR, merge and exact remote readback pending. |
+| CMT-002 | Shared visible diagnostics widget and safe diagnostics | Prior diagnostics and current full Web UAT pass; Device revoke uses the shared accessible modal and EN/ES/PT copy. | Native OS permission/device/audio and broad route/screen-reader accessibility remain open. |
+| CMT-003 | Voice → Cloud → Browser → customer-selected CRM | Client-selected integrations remain provider-neutral; private destinations require validation and tenant-origin allowlists (regression 26). | Live call/CRM acceptance only after each client's provider configuration; no private host was contacted. |
+| CMT-004 | Administration and permissions | Device registration binds current DB actor/company and denies an unscoped actor; manager revoke enforces same tenant and has a confirmed localized UI. Matrix/drift coverage is 35 models/168 rows. | DB persistence, all model-specific operation matrices, disposable migration/identity proof, live pairing and Qdrant failure/concurrency remain open. |
+
+Overall: **PARTIALLY DELIVERED; CANDIDATE DELIVERY PENDING**. No database, provider, customer data, private endpoint or deployment used.
+
+SIGUIENTE PASO: complete exact-candidate UAT evidence, publish the 5.1.36 PR, and verify its merge and remote-main tree.
+
+---
+
+## Previous checkpoint — 5.1.35 source and matrix delivered
 
 All four owner-confirmed fronts remain active in the confirmed order. Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` shipped in PR #106; PR #107 records that delivery; PR #108 delivered the matrix reconciliation at merge SHA `056e8605097874337c6bc532c006da3a3f772d56`. All application roots and Browser renderer align at 5.1.35. PHDK coherence is 52/52; API regression 35/35 and Cloud 14/14 pass; API/Cloud builds, Web typecheck/build and focused lint pass; exact-commit UAT uses synthetic intercepted APIs. The matrix drift regression now covers KnowledgeBase/KnowledgeDocument across role and API/Web surfaces. No deployment, live Qdrant, PostgreSQL, customer data or client provider was used.
 

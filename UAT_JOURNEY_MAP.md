@@ -1,5 +1,12 @@
 # UAT journey map — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.36
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| Tenant user / admin fixture | US-009 | UAT-032 / Device management | Read-only user opens `/devices`; admin opens confirmation, cancels, retries after a mocked error, then confirms success. | PASS, screenshots and source-bound JSON `docs/phdk/evidence/uat-device-5.1.36.json`; no live auth/device or persistence. |
+| Tenant admin / unscoped actor fixture | US-009 / CMT-004 | UAT-032 / API binding and revoke | Registration submits forged IDs; guard uses DB actor/company; missing company and cross-tenant or user revoke are denied. | PASS in API regression 21, isolated guard fixture; persistence remains unverified. |
+
 | Persona | Story | Case / journey | Steps exercised | Result / evidence |
 |---|---|---|---|---|
 | Visitor | US-001 | UAT-001 / debug-widget | Public home → login → copy/deny/reset → responsive/theme/zoom | PASS; synthetic built-SPA evidence in `docs/phdk/evidence/uat-local-web.json`. |

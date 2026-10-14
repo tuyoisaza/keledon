@@ -25,6 +25,14 @@ RLS/bootstrap policies no longer grant unscoped browser access; unsafe superadmi
 
 SIGUIENTE PASO: complete the final diff review and normal PR delivery from `fix/deny-unscoped-supabase-rls`.
 # PMO milestone history
+## 2026-10-14 — Device tenant-scope source candidate 5.1.36
+
+Check of the remaining Device × role/surface contract found no manager revoke action in `/devices` and allowed a company-less actor to create a pending device that cannot later pair. The API guard now binds registration to the current DB actor/company and rejects missing company; the Web page exposes localized, confirmed revoke only to admin/coordinator/superadmin, while user/agent remain read-only. Added 14 Device role/API/Web rows and expanded the inventory drift test from 154 to 168 rows (12 resource groups / 35 Prisma models). API build/regression 35/35; Web typecheck/build and local UAT 2/2; focused lint, locale parity and PHDK coherence 52/52 pass. The API vendor destination regression also passes for explicitly configured private URLs under per-tenant allowlists; no private host was contacted. Candidate branch `fix/phdk-device-revoke-ui-5-1-36` is based on verified main `f0a9633e39bbdbca416f5e1c24c32acab7276902`, with all app roots and renderer at 5.1.36. No DB/pairing persistence or deployment was exercised; overall Auto remains partial.
+
+SIGUIENTE PASO: bind UAT to the staged candidate diff, review it, and complete normal PR/merge/remote verification.
+
+---
+
 ## 2026-10-14 — Knowledge UAT remediation integrated in candidate 5.1.32
 
 The fourth-front permissions review led to a Knowledge-page UAT finding: the UI showed a fabricated active-call/RAG example and English-only copy. Candidate 5.1.32 removes that false panel and unused placeholder intake block from the route, localizes the page and safe errors in Spanish/English/Portuguese, uses the shared accessible source modal, and adds exact-source UAT-030. API 33/33, Cloud 14/14, Browser 33/33, Web diagnostics 19/19, exact-source UAT 1/1, Web/Landing SEO 1/1 each, builds and PHDK coherence 52/52 pass. Source SHA is `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`; PR #102 still awaits push/update. The 35-model/126-row inventory test is a drift check, not persisted DB proof. UAT remains partial for safe identities, disposable DB, native device/audio and deployed SEO/AEO. No database, private CRM, live client call or deployment was used.

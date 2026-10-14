@@ -1,5 +1,9 @@
 # UAT retest — run `20261013-1900-phdk-auto`
 
+## Candidate 5.1.36 — UAT-032 source-candidate retest
+
+Local production Web build and device-page UAT pass on source fingerprint `sha256:4170917201fbd7be6ca51d1c7d7adde6bb9bafb82010bdd1a70242b96cce3315`, based on `f0a9633e39bbdbca416f5e1c24c32acab7276902`. User role renders no revoke button; admin cancel produces no DELETE; a synthetic 500 remains visible with modal open; a subsequent 200 removes the device from the page. Four UI states are captured in `docs/phdk/evidence/uat-device-*.png`; the JSON includes timestamp, target, revision/fingerprint and provenance. API regression 21 separately passes actor-derived registration binding and manager/owner/tenant denials; all API regression suites are 35/35 and build passes. Web typecheck/build, targeted ESLint, locale parity and installed PHDK coherence pass. The UAT run uses synthetic intercepted API fixtures and is not DB, live auth, device pairing or production acceptance.
+
 ## Candidate 5.1.32 exact-source retest — 2026-10-14
 
 `services/web npm run test:uat` passes 1/1 after source commit `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`; `docs/phdk/evidence/uat-local-web.json` records that SHA, an empty tracked source fingerprint, and zero dirty untracked source files. UAT-030 covers the Knowledge page’s tenant fixture read, user read-only buttons, English/Spanish/Portuguese copy, shared accessible source modal keyboard/focus flow, no fabricated live-agent/RAG panel, and sanitized backend errors. All requests used synthetic fixtures and interception with external network/WebSockets blocked. This is UI behavior only, not live auth, persisted DB, real call/RAG, or deployment evidence.

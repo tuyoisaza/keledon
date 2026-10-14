@@ -1,0 +1,22 @@
+# UX/UI audit — scoped candidate
+
+## Candidate 5.1.36 — Device revoke affordance
+
+The `/devices` list now exposes an accessible revoke action to admin/coordinator/superadmin only, with no revoke control for user/agent. The shared `ManagementModal` communicates credential invalidation and pairing recovery before the destructive action; action failure remains in the dialog with `role=alert`, cancellation sends no request, and success removes the revoked entry. EN/ES/PT strings are present and key parity passes. Browser UAT captures user, confirmation, failure and success states in `docs/phdk/evidence/uat-device-*.png`; selected UI/role behavior passes under synthetic fixtures. Focused evidence does not certify all app routes, screen-reader behavior, color contrast, or persisted authorization.
+## Candidate 5.1.17 — KELEDON and Voice Profiles
+
+Local Edge UAT on the dirty 5.1.17 worktree confirms the tested Spanish forms use visible labels and native accessible dialogs; list loading/retry and synthetic create/delete HTTP failures are visible; Voice Profiles submit the server schema without caller tenant data; KELEDON's confirmation can be canceled. The app-wide Sonner `Toaster` is mounted. This follows the established shared modal/tokens and preserves the admin flows.
+
+| Dimension | Result | Evidence / gap |
+|---|---|---|
+| Primary tasks and navigation | PASS (selected) | UAT-T-008/T-009 create flows reach their management screens and return to lists. |
+| Feedback and recovery | PASS (selected) | Voice-profile list retry and create/delete 403 alerts; global Toaster mount. Other 59 routes not fully exercised. |
+| Labels, semantics, keyboard | PASS (selected) | Named fields/buttons, `role=alert`, `role=status`, native dialog behavior, KELEDON table captions/headers. Screen reader not tested. |
+| Responsive/reflow | PARTIAL | Existing UAT covers login at 390px/200%/400% simulation; these admin forms were not viewport-tested. |
+| Localization | PARTIAL | KELEDON/Voice Profiles en/es/pt strings and catalog-key parity; only Spanish path was observed in the browser. |
+| Visual system/contrast | PARTIAL | Existing three-theme login contrast sample passes; new admin screens were not contrast-scanned. |
+| Trust/data control | PASS (selected) | Voice-profile requests omit companyId and 403 does not announce success; no live credential or customer data. |
+
+No P0/P1 failure remains in the executed journeys. Whole-app UX acceptance remains INCOMPLETE due untested routes, persisted behavior, broad a11y/localization and native UI.
+Confirmed local desktop/mobile diagnostic sizing, role navigation, dialog keyboard containment/Escape/focus restoration, mutation-form label, provider secret replacement and guest redirect. Three semantic palettes and reduced-motion rule exist; local theme shell selection/persistence observed. Hardcoded white/gray/background utility usage was converted to semantic tokens across current web sources. Legacy landing shares diagnostic/theme implementations.
+Limits: full-page contrast matrix,200%/400% zoom, screen-reader session, all locales, all complex legacy flows and full Electron rendering NOT EXECUTED. Static localization inventory remains substantial; equal catalog keys do not prove translated pages. Large Brain/Flows components and duplicated legacy surfaces remain conformance debt. Native browser modal/select equivalence is documented; Radix is not installed. No quantitative accessibility score or certification.

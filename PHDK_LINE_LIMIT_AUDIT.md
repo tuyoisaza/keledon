@@ -1,5 +1,9 @@
 # PHDK physical line limit audit
 
+## Current candidate 5.1.36 — 2026-10-14
+
+Fresh inventory covers **1,159 live application and test files** with extensions `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`; it excludes dependencies, generated output, Git metadata, vendored standards, and immutable lifecycle snapshots. **0 files are at or above 600 physical lines.** This run reduced API and Cloud CRUD services by moving tenant voice-profile persistence into mirrored focused services, and shared the candidate fingerprint helper between browser UATs. API and Cloud builds pass, API regression passes 35/35, Cloud tenant voice-profile regression passes, Web typecheck/build pass, and local Web UAT passes 2/2. The physical-size criterion passes; broader database-backed and external acceptance remains partial.
+
 ## Current candidate 5.1.25 — 2026-10-14
 
 Candidate source commit `afd66702ba7fc216e27c0c845ceaedb1eeb40944` completes the Cloud module/test splits. A fresh inventory covers **1,135 live application/test files; 0 are at or above 600 physical lines**. It includes TS, TSX, JS, JSX, MJS, CJS, Vue, HTML and CSS files while excluding dependencies, generated output, Git metadata, vendored PHDK standards and historical lifecycle snapshots. The dashboard socket contract/auth, MVP provider catalog and account-provisioning harness now live in focused modules; API contracts and regression assertions are preserved.

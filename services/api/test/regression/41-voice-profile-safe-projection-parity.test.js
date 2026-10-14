@@ -29,11 +29,11 @@ const row = {
   },
 };
 
-function loadCrudService(backend) {
+function loadVoiceProfileService(backend) {
   const module = { exports: {} };
   const code = ts.transpileModule(
     fs.readFileSync(
-      path.join(root, `${backend}/src/crud/crud.service.ts`),
+      path.join(root, `${backend}/src/crud/crud-tenant-voice-profile.service.ts`),
       'utf8',
     ),
     {
@@ -59,7 +59,7 @@ function loadCrudService(backend) {
       return new Proxy({}, { get: () => class {} });
     },
   });
-  return module.exports.CrudService;
+  return module.exports.CrudTenantVoiceProfileService;
 }
 
 function projectedResult(args) {
@@ -87,9 +87,8 @@ async function main() {
     assert.doesNotMatch(voiceProfileFields, /\bconfig\b/);
 
     const calls = [];
-    const CrudService = loadCrudService(backend);
-    const service = Object.create(CrudService.prototype);
-    service.prisma = {
+    const VoiceProfileService = loadVoiceProfileService(backend);
+    const service = new VoiceProfileService({
       tenantVoiceProfile: Object.fromEntries(
         ['findMany', 'findFirst', 'create', 'update'].map((method) => [
           method,
@@ -100,7 +99,7 @@ async function main() {
           },
         ]),
       ),
-    };
+    });
 
     const list = await service.getTenantVoiceProfiles('company-a');
     const detail = await service.getTenantVoiceProfile('voice-a', 'company-a');

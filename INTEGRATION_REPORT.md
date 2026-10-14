@@ -1,4 +1,25 @@
-# PHDK Auto Integration Review — candidate 5.1.32 (2026-10-14)
+# PHDK Auto Integration Review — candidate 5.1.36 (2026-10-14)
+
+Branch `fix/phdk-device-revoke-ui-5-1-36`, based on verified `main` `f0a9633e39bbdbca416f5e1c24c32acab7276902` / 5.1.35. All five application package/lock roots and Browser renderer align at 5.1.36. The cross-surface Device contract now includes DB-derived company registration, safe owner/tenant list/status, tenant manager revoke, proof-based pairing and paired-device-only raw RPA configuration. Web presents the manager revoke action with explicit credential-loss confirmation and read-only user/agent controls; EN/ES/PT keys remain in parity. Customer-selected CRM remains separate: private targets use normalized tenant origin allowlists and no Cloud-side fetch. API and Cloud voice-profile projections are mirrored in a focused service to satisfy the 600-line rule; no schema or ORM model changed.
+
+| Check | Result |
+|---|---|
+| API build / full regression | PASS / 35 of 35 suites |
+| Cloud build / tenant voice-profile regression | PASS / PASS |
+| Web typecheck / production build | PASS / PASS |
+| Web synthetic local SPA UAT | PASS / 2 of 2 tests; UAT-032 evidence bound to base `f0a9633` plus source fingerprint `41709172…b96cce3315` |
+| Browser version sync / TypeScript build | PASS / renderer v5.1.36 |
+| Web SEO / Landing SEO + build | PASS 1/1 / PASS 1/1 and build |
+| EN/ES/PT Device locale parity | PASS |
+| CRUD drift check | PASS / 35 Prisma models and 168 role/surface rows |
+| PHDK coherence | PASS / 52 of 52 mappings (static) |
+| Focused ESLint | API/Web pass without diagnostics; Cloud pass with 0 errors and 2 existing unsafe-argument warnings in `crud.service.ts` |
+| `git diff --check` | PASS for candidate source; pre-existing root evidence file remains outside the candidate |
+| PHDK file-size inventory | PASS / 1,159 active application/test files; 0 at or above 600 lines |
+
+UAT screenshots and run metadata are in `docs/phdk/evidence/uat-device-5.1.36.json` and adjacent PNGs. Browser requests are synthetic/intercepted; no real authentication, persistence, physical device, private CRM endpoint or deployment was exercised. AEO/GEO content is unchanged from the reviewed public-source audit; external search/answer-engine visibility remains unmeasured. Overall Auto remains PARTIALLY DELIVERED.
+
+## Previous Integration Review — candidate 5.1.32
 
 Run: `20261014-0007-phdk-auto-completion`. Repository: `tuyoisaza/keledon`. Verified base/main: `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7` (KELEDON 5.1.30); source candidate: `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5` (5.1.32). Branch: `fix/retire-runtime-seed-webhook-5-1-31`; PR #102 targets `main`. The source commit is local and not pushed yet; PR still reflects its previous head until delivery sync. All five application package/lock roots and Browser renderer are 5.1.32.
 

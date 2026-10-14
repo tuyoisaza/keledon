@@ -8,6 +8,7 @@
 | US-004 | As an operator, I want the selected call/Cloud/Browser/CRM flow to preserve explicit customer configuration and fail safely. | `PROJECT_INTENT.md`, PRD INT-004; CMT-003 | UAT-005, UAT-006 |
 | US-005 | As a release owner, I want a coherent version and verified delivery so operators can identify what runs. | `PROJECT_INTENT.md`, NFR-001; CMT-001 | UAT-007 |
 | US-006 | As a tenant user or manager, I want the knowledge page to show only real tenant-scoped documents and truthful system state, with controls matching my role, so I can use operational knowledge without mistaking a demo for a live call or RAG result. | `PROJECT_INTENT.md`, INT-002/003; `REQUIREMENTS_TRACEABILITY.md`, CMT-002/004 | UAT-030 |
+| US-009 | As a tenant administrator, I want to revoke a device with a clear confirmation while ordinary operators can only inspect their own safe device summary, so lost device credentials can be disabled without crossing company boundaries. | `PROJECT_INTENT.md`, SEC-001/004; ADR-AUTO-008; CMT-004 | UAT-032 |
 
 All cases remain inside the owner-approved intent: provider choice is per customer; no universal live CRM/call behavior is assumed.
 
