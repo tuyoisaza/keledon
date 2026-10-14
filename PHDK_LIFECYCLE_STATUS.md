@@ -1,5 +1,11 @@
 # PHDK Auto lifecycle status
 
+## Active continuation — 2026-10-13
+
+Overall result remains **PARTIALLY DELIVERED**. The prior product slice and evidence PRs #78–#80 are on `main`; current `origin/main` before this continuation is `dbd715b16e407bd313a17541e11bb65adf153bdd`. The active Developer Mode branch is `test/phdk-mvp-guard-policy`, based on that SHA. This test/evidence-only slice closes a missing regression around deny-by-default legacy MVP configuration routes for tenant roles; it does not change the 5.1.17 product version or close the 35-model CRUD gate. API regression passes 15/15 suites, API TypeScript build passes, the test parses with Node, `git diff --check` passes, and PHDK coherence passes 52/52. No database, browser, native runtime, deployment, or client provider was exercised. Existing delivery JSON still points at PR #78 and does not verify the current main tip, so the completion gate is not reported as passing.
+
+SIGUIENTE PASO: commit and deliver this regression/evidence slice through the normal PR flow, then continue CHK-002 on the next uncovered resource family.
+
 Run ID: `20261013-1900-phdk-auto`
 Repository: `C:\Users\tboar\OneDrive\Documentos\GitHub\KELEDON` (`tuyoisaza/keledon`)
 Branch: `fix/phdk-keledon-voice-profile-accessibility`

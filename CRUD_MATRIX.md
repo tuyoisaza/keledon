@@ -172,6 +172,10 @@ These resources are present in `services/api/prisma/schema.prisma` or feature co
 
 ## Model-to-surface inventory — schema reconciliation, 35/35
 
+### MVP data controller authorization contract
+
+`ResourceScopeGuard` currently allows tenant roles (guest, user, agent, admin and coordinator) to read only `getTechStatus`, `getProviderCatalog` and `getRpaProviders`. `getCloudConfig` is the explicitly public, safe URL-only response. All other MVP data handlers that lack a proven company-scoped contract are denied to tenant roles, including TTS configuration, interfaces, flow definitions/versions, tenant-flow permissions, intent mappings and knowledge-document management. The current DB superadmin can reach these legacy handlers. Regression `services/api/test/regression/21-resource-scope.test.js` exercises all listed denials and retained allowances. This is authorization source evidence only; it does not establish the legacy handlers' persistence, safe detail projections, or future tenant-admin product requirements. The complete resource/role/operation gate remains open.
+
 The following inventory was reconciled against every `model` declaration in `services/api/prisma/schema.prisma` and the controller/service Prisma delegate usage. “Source surface” records where current code touches the model; it is not proof that all operations exist or are safe. Exact role × tenant × API/web × C/R-list/R-detail/U/D evidence and persisted tests remain open for the GAP/DECISION rows above.
 
 | Prisma model | Current source surface / operation shape | Classification / evidence state |
