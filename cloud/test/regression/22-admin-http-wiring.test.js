@@ -163,6 +163,18 @@ async function main() {
       {
         provide: MvpStoreService,
         useValue: {
+          getTechStatus: () => ({
+            server: {
+              status: 'online',
+              uptime: 456,
+              nodeVersion: 'node-fixture',
+              memoryUsage: { used: 10, total: 20, percentage: 50 },
+            },
+            techStack: [{ name: 'NestJS', version: '11', category: 'backend' }],
+            dependencies: [{ name: 'fixture-package', hasUpdate: true }],
+          }),
+          getProviderCatalog: () => [],
+          getRpaProviders: () => [],
           getTTSConfig: () => ({
             apiKey: 'hidden-provider-key',
             providerId: 'test',
@@ -260,6 +272,26 @@ async function main() {
       .get('/api/tts-config')
       .set('Authorization', token('member'))
       .expect(403);
+    await request(http)
+      .get('/api/tech-status')
+      .set('Authorization', token('member'))
+      .expect(403);
+    const safeTechStatus = await request(http)
+      .get('/api/tech-status')
+      .set('Authorization', token('admin'))
+      .expect(200);
+    assert.deepEqual(safeTechStatus.body, {
+      detailsAvailable: false,
+      server: { status: 'online' },
+      techStack: [],
+      dependencies: [],
+    });
+    const detailedTechStatus = await request(http)
+      .get('/api/tech-status')
+      .set('Authorization', token('superadmin'))
+      .expect(200);
+    assert.equal(detailedTechStatus.body.detailsAvailable, true);
+    assert.equal(detailedTechStatus.body.server.nodeVersion, 'node-fixture');
     const config = await request(http)
       .get('/api/tts-config')
       .set('Authorization', token('superadmin'))

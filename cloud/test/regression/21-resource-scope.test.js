@@ -130,6 +130,43 @@ async function main() {
     return { req, result: guard.canActivate(context) };
   };
   const scope = new ResourceScopeGuard(prisma);
+  const unscopedMvpHandlers = [
+    'getTTSConfig',
+    'updateTTSConfig',
+    'getInterfaces',
+    'createInterface',
+    'updateInterface',
+    'deleteInterface',
+    'getFlowDefinitions',
+    'createFlowDefinition',
+    'getFlowVersions',
+    'createFlowVersion',
+    'updateFlowVersion',
+    'getTenantFlowPermissions',
+    'upsertTenantFlowPermissions',
+    'getIntentFlowMappings',
+    'upsertIntentFlowMapping',
+    'getKnowledgeDocuments',
+    'createKnowledgeDocument',
+  ];
+  for (const role of ['guest', 'user', 'agent', 'admin', 'coordinator']) {
+    actor = { ...actor, role };
+    for (const handler of unscopedMvpHandlers)
+      await assert.rejects(
+        run(scope, 'MvpDataController', handler).result,
+        Denied,
+        `${role} must not access unscoped MVP handler ${handler}`,
+      );
+    for (const handler of ['getTechStatus', 'getProviderCatalog', 'getRpaProviders']) {
+      const result = run(scope, 'MvpDataController', handler).result;
+      if (['admin', 'coordinator'].includes(role)) await result;
+      else await assert.rejects(result, Denied);
+    }
+  }
+  actor = { ...actor, role: 'superadmin', companyId: null, teamId: null };
+  for (const handler of unscopedMvpHandlers)
+    await run(scope, 'MvpDataController', handler).result;
+  actor = { id: 'u-a', companyId: 'co-a', teamId: 'team-a', role: 'admin' };
   for (const [kind, handler, params, body] of [
     ['FlowController', 'findOne', { id: 'flow-b' }, {}],
     ['FlowController', 'updateStep', { stepId: 'step-b' }, {}],
@@ -307,6 +344,9 @@ async function main() {
   );
   console.log(
     'PASS secondary resource scopes: cross-tenant flow/step/reorder/knowledge/session/call/device denials; trusted filters and pairing bindings; low-role mutations; removed actors; cryptographic device token.',
+  );
+  console.log(
+    'PASS MVP data policy: only management roles can access provider/runtime catalogs; tenant configuration routes remain denied unless superadmin.',
   );
 }
 main().catch((error) => {

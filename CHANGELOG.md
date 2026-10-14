@@ -1,3 +1,17 @@
+## v5.1.19 — 2026-10-13 (PHDK Auto privacy fix)
+
+### Changed
+- Restrict provider/RPA catalogs and detailed runtime diagnostics to company managers and superadmins; ordinary user, agent and guest roles are denied.
+- Return only service availability to admin/coordinator; reserve uptime, Node version, memory, stack and dependency details for superadmin.
+- Hide detailed diagnostics panels in the management UI when the API reports the reduced projection; add HTTP and synthetic UI role regressions.
+- Align all five app package and lock roots at 5.1.19.
+
+### Verification
+- API and Cloud regression (15/15 and 8/8) and builds; Web typecheck/build, diagnostics 18/18 and mocked local UAT 1/1; Browser and Landing builds, Landing SEO 1/1; PHDK coherence 52/52. Focused ESLint passes on the API source copy.
+
+### Migration / limitations
+- No migration required. UAT uses mocked APIs; live persistence, native acceptance, broad accessibility and deployed SEO/AEO remain open.
+
 ## v5.1.18 — 2026-10-13 (PHDK Auto security fix)
 
 ### Changed

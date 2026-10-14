@@ -21,9 +21,9 @@ interface DependencyInfo {
 
 interface ServerStatus {
     status: 'online' | 'offline' | 'degraded';
-    uptime: number;
-    nodeVersion: string;
-    memoryUsage: {
+    uptime?: number;
+    nodeVersion?: string;
+    memoryUsage?: {
         used: number;
         total: number;
         percentage: number;
@@ -31,6 +31,7 @@ interface ServerStatus {
 }
 
 interface TechStatusResponse {
+    detailsAvailable?: boolean;
     server: ServerStatus;
     techStack: TechStackItem[];
     dependencies: DependencyInfo[];
@@ -324,72 +325,80 @@ export default function ManagementPage() {
                                 {techStatus.server.status}
                             </span>
                         </div>
-                        <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <p className="text-muted-foreground">Uptime</p>
-                                <p className="font-medium text-foreground">{formatUptime(techStatus.server.uptime)}</p>
-                            </div>
-                            <div>
-                                <p className="text-muted-foreground">Node</p>
-                                <p className="font-medium text-foreground">{techStatus.server.nodeVersion}</p>
-                            </div>
-                        </div>
-                        <div className="mt-4">
-                            <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                <span>Memory Usage</span>
-                                <span>{techStatus.server.memoryUsage.percentage}%</span>
-                            </div>
-                            <div className="w-full h-2 rounded-full bg-muted mt-2">
-                                <div
-                                    className="h-2 rounded-full bg-primary"
-                                    style={{ width: `${techStatus.server.memoryUsage.percentage}%` }}
-                                />
-                            </div>
-                            <div className="mt-2 text-xs text-muted-foreground">
-                                {formatBytes(techStatus.server.memoryUsage.used)} / {formatBytes(techStatus.server.memoryUsage.total)}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="p-6 rounded-xl border border-border bg-card shadow-sm">
-                        <div className="flex items-center gap-2">
-                            <Cpu className="w-4 h-4 text-muted-foreground" />
-                            <p className="text-sm text-muted-foreground">Tech Stack</p>
-                        </div>
-                        <div className="mt-4 space-y-3">
-                            {techStatus.techStack.map((item) => (
-                                <div key={item.name} className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-sm text-foreground">
-                                        <span>{item.icon || '⚙️'}</span>
-                                        <span>{item.name}</span>
+                        {techStatus.detailsAvailable !== false && techStatus.server.memoryUsage && (
+                            <>
+                                <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <p className="text-muted-foreground">Uptime</p>
+                                        <p className="font-medium text-foreground">{formatUptime(techStatus.server.uptime || 0)}</p>
                                     </div>
-                                    <span className="text-xs text-muted-foreground font-mono">v{item.version}</span>
+                                    <div>
+                                        <p className="text-muted-foreground">Node</p>
+                                        <p className="font-medium text-foreground">{techStatus.server.nodeVersion}</p>
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
+                                <div className="mt-4">
+                                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                        <span>Memory Usage</span>
+                                        <span>{techStatus.server.memoryUsage.percentage}%</span>
+                                    </div>
+                                    <div className="w-full h-2 rounded-full bg-muted mt-2">
+                                        <div
+                                            className="h-2 rounded-full bg-primary"
+                                            style={{ width: `${techStatus.server.memoryUsage.percentage}%` }}
+                                        />
+                                    </div>
+                                    <div className="mt-2 text-xs text-muted-foreground">
+                                        {formatBytes(techStatus.server.memoryUsage.used)} / {formatBytes(techStatus.server.memoryUsage.total)}
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </div>
 
-                    <div className="p-6 rounded-xl border border-border bg-card shadow-sm">
-                        <div className="flex items-center gap-2">
-                            <Database className="w-4 h-4 text-muted-foreground" />
-                            <p className="text-sm text-muted-foreground">Dependencies</p>
-                        </div>
-                        <div className="mt-4 space-y-3 text-sm">
-                            <div className="flex items-center justify-between">
-                                <span className="text-foreground">Packages tracked</span>
-                                <span className="font-medium text-foreground">{techStatus.dependencies.length}</span>
+                    {techStatus.detailsAvailable !== false && (
+                        <>
+                            <div className="p-6 rounded-xl border border-border bg-card shadow-sm">
+                                <div className="flex items-center gap-2">
+                                    <Cpu className="w-4 h-4 text-muted-foreground" />
+                                    <p className="text-sm text-muted-foreground">Tech Stack</p>
+                                </div>
+                                <div className="mt-4 space-y-3">
+                                    {techStatus.techStack.map((item) => (
+                                        <div key={item.name} className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2 text-sm text-foreground">
+                                                <span>{item.icon || '⚙️'}</span>
+                                                <span>{item.name}</span>
+                                            </div>
+                                            <span className="text-xs text-muted-foreground font-mono">v{item.version}</span>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="flex items-center justify-between">
-                                <span className="text-foreground">Updates flagged</span>
-                                <span className="font-medium text-foreground">
-                                    {techStatus.dependencies.filter(dep => dep.hasUpdate).length}
-                                </span>
+
+                            <div className="p-6 rounded-xl border border-border bg-card shadow-sm">
+                                <div className="flex items-center gap-2">
+                                    <Database className="w-4 h-4 text-muted-foreground" />
+                                    <p className="text-sm text-muted-foreground">Dependencies</p>
+                                </div>
+                                <div className="mt-4 space-y-3 text-sm">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-foreground">Packages tracked</span>
+                                        <span className="font-medium text-foreground">{techStatus.dependencies.length}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-foreground">Updates flagged</span>
+                                        <span className="font-medium text-foreground">
+                                            {techStatus.dependencies.filter(dep => dep.hasUpdate).length}
+                                        </span>
+                                    </div>
+                                    <div className="text-xs text-muted-foreground">
+                                        Run with <span className="font-mono">?checkUpdates=true</span> to refresh npm versions.
+                                    </div>
+                                </div>
                             </div>
-                            <div className="text-xs text-muted-foreground">
-                                Run with <span className="font-mono">?checkUpdates=true</span> to refresh npm versions.
-                            </div>
-                        </div>
-                    </div>
+                        </>
+                    )}
                 </div>
             )}
 
