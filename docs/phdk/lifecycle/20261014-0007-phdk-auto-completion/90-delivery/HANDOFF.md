@@ -2,7 +2,7 @@
 
 ## Active candidate 5.1.27 — delivery pending
 
-The current candidate is on `fix/phdk-crud-model-matrix`, based on verified `main` `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2`. API/Cloud flow reorder now validates exact membership and writes in one serializable transaction; the Prisma inventory drift test verifies 35/35 model names and 126 unique core role/surface rows. API regression 21/21, Cloud regression 11/11, API Jest 11/11, focused flow tests, builds/typechecks and PHDK coherence pass. Candidate is not committed or published yet. Cloud full Jest requires `DATABASE_URL`; local Web UAT failed at `/login` and is not applicable evidence for the backend-only fix. The existing merged 5.1.26 record below remains the last verified remote delivery. Overall PHDK Auto remains PARTIALLY DELIVERED.
+The current candidate is source commit `996464da5c1bb0567c6e9fa7d40e0a212e6d7b48` on `fix/phdk-crud-model-matrix`, based on verified `main` `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2`. API/Cloud flow reorder validates exact membership and writes in one serializable transaction; the Prisma inventory drift test verifies 35/35 model names and 126 unique core role/surface rows. API regression 21/21, Cloud regression 11/11, API Jest 11/11, focused flow tests, builds/typechecks and PHDK coherence pass. Exact-commit synthetic Web UAT passes 1/1. Candidate is committed but not pushed or published; PR/merge/readback remain pending. Cloud full Jest requires `DATABASE_URL`. Overall PHDK Auto remains PARTIALLY DELIVERED.
 
 Status: **SOURCE MERGED / REMOTE VERIFIED; OVERALL ACCEPTANCE PARTIAL**.
 

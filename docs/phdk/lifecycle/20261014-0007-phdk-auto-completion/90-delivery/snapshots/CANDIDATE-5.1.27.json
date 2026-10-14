@@ -2,10 +2,10 @@
   "product_version": "5.1.27",
   "branch": "fix/phdk-crud-model-matrix",
   "base_commit": "8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2",
-  "source_fingerprint": "pending-final-candidate-tree",
-  "source_commit": null,
+  "source_fingerprint": "sha256:ed0ef06ebbffbd331cbb28f1aa8bd7f15c62b3b80c9a5b6da0856541ce42e63e",
+  "source_commit": "996464da5c1bb0567c6e9fa7d40e0a212e6d7b48",
   "pull_request": null,
-  "delivery_status": "VALIDATED_PR_PENDING",
+  "delivery_status": "COMMITTED_UAT_VERIFIED_PR_PENDING",
   "acceptance_status": "PARTIALLY_DELIVERED",
   "pull_request_state": "NOT_CREATED",
   "merged_commit": null,
@@ -19,6 +19,7 @@
     "cloud_jest_full": "BLOCKED: test/app.e2e-spec.ts requires DATABASE_URL; focused flow tests pass",
     "api_cloud_lint": "PASS, 0 errors / 138 API warnings / 25 Cloud warnings",
     "phdk_coherence": "PASS 52/52",
+    "post_commit_uat": "PASS 1 suite at candidate revision 996464da5c1bb0567c6e9fa7d40e0a212e6d7b48; source fingerprint matches clean source roots",
     "remote_main_readback": "PENDING: PR not created"
   },
   "uat": {

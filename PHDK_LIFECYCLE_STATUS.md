@@ -17,7 +17,7 @@ Goal: finish PHDK Auto for CMT-001..004 in owner-confirmed order. Last verified 
 | AEO/GEO | SOURCE REVIEW / EXTERNAL UNMEASURED | Prior source review retained; no deployed evidence. |
 | Check | COMPLETED — 5.1.27 SOURCE PASS / MATRIX PARTIAL | API regression 21/21, Cloud regression 11/11, builds/typechecks and coherence pass; Cloud full Jest needs DATABASE_URL; local Web UAT harness failed at `/login`. |
 | Remediation | COMPLETED — SOURCE FIX VERIFIED | API/Cloud reorder validation and writes are within serializable transactions; inventory guard passes. Full remaining 26-model matrix and DB acceptance stay open. |
-| Delivery | RUNNING — PR/READBACK PENDING | 5.1.27 awaits versioned commit, push, PR, normal merge and exact main readback. Last verified main is PR #95. |
+| Delivery | RUNNING — PR/READBACK PENDING | Source commit `996464da5c1bb0567c6e9fa7d40e0a212e6d7b48` is post-commit UAT-verified; push, PR, normal merge and exact main readback remain. Last verified main is PR #95. |
 
 Overall PHDK Auto remains **PARTIALLY DELIVERED**. Full acceptance requires a safe development target and identities, disposable DB/migration matrix, native device/audio, broad route accessibility/localization and deployed SEO/AEO measurement. Real call/CRM acceptance is tenant-specific after client configuration.
 
