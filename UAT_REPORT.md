@@ -1,5 +1,9 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Final candidate revalidation — 2026-10-14, v5.1.25
+
+The rebuilt Web SPA UAT passes 1/1 suite with 15 grouped assertions on source commit `afd66702ba7fc216e27c0c845ceaedb1eeb40944`. Exact evidence is `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-local-web-continued.json`; APIs are synthetic/intercepted and external networking is blocked. The whole-product result remains **NOT ACCEPTED**: UAT-008 audited test-profile selection needs owner disposition, UAT-009 real development identities and UAT-010 disposable DB are blocked, and UAT-006 native device/audio is manual. This run did not use a deployed service, live DB, customer data or provider.
+
 Date: 2026-10-14. Candidate: `tuyoisaza/keledon`, branch `fix/cloud-eslint-prettier`, base commit `6413d8aed295c18af098ca6a58c6dfbb7503930b`, product version 5.1.24. Source candidate fingerprint: `sha256:aced4dfae723e0c19aa30fee2d2219eda6290007dee9cedf79ec52bd246f1b1b`, calculated by the UAT harness over tracked diff and untracked source/test files in `browser`, `cloud`, `services/api`, `services/web`, `landing`. Environment: local built production Web SPA, ephemeral loopback server, synthetic Company Co/Other Co fixtures, API requests intercepted and external HTTP/WebSocket blocked. API/Cloud and Browser checks use isolated test doubles. This is not deployed or database acceptance.
 
 ## Intent alignment and coverage

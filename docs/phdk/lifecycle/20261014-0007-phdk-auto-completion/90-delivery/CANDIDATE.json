@@ -3,7 +3,7 @@
   "branch": "fix/cloud-eslint-prettier",
   "base_commit": "6413d8aed295c18af098ca6a58c6dfbb7503930b",
   "source_fingerprint": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "source_commit": "e7de35752dbb2ed3e9bd3d33fb59cb649cf3c157",
+  "source_commit": "afd66702ba7fc216e27c0c845ceaedb1eeb40944",
   "pull_request": "https://github.com/tuyoisaza/keledon/pull/94",
   "delivery_status": "PR_OPEN",
   "pull_request_state": "OPEN",
@@ -18,7 +18,7 @@
     "cloud_configured_build": "PASS",
     "cloud_full_typecheck": "PASS",
     "api_jest": "PASS 10 suites, 31 tests",
-    "cloud_regression": "PASS 10 suites",
+    "cloud_regression": "PASS 11 suites",
     "browser_build_and_tests": "PASS 27 tests",
     "web_build": "PASS",
     "web_diagnostics": "PASS 19 tests",
@@ -28,7 +28,7 @@
   "uat": {
     "result": "PASS_SCOPED_SYNTHETIC",
     "suite": "1/1, 15 grouped assertions",
-    "candidate_revision": "e7de35752dbb2ed3e9bd3d33fb59cb649cf3c157",
+    "candidate_revision": "afd66702ba7fc216e27c0c845ceaedb1eeb40944",
     "source_fingerprint": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "limitations": [
       "Mocked API and synthetic fixtures; no real backend authentication or database acceptance",

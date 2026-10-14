@@ -1,8 +1,8 @@
 # PHDK physical line limit audit
 
-## Current candidate 5.1.24 — 2026-10-14
+## Current candidate 5.1.25 — 2026-10-14
 
-The current working-tree source inventory covers **1,129 files; 0 are at or above 600 physical lines**. It includes TS, TSX, JS, JSX, MJS, CJS, Vue, HTML and CSS files while excluding dependencies, generated `dist`, Git metadata, vendored PHDK standards and historical lifecycle snapshots. The Cloud formatter and focused module extractions, including agent-event, database file-store, tenant-scoped voice and RAG modules, retain the 600-line boundary.
+Candidate source commit `afd66702ba7fc216e27c0c845ceaedb1eeb40944` completes the Cloud module/test splits. A fresh inventory covers **1,135 live application/test files; 0 are at or above 600 physical lines**. It includes TS, TSX, JS, JSX, MJS, CJS, Vue, HTML and CSS files while excluding dependencies, generated output, Git metadata, vendored PHDK standards and historical lifecycle snapshots. The dashboard socket contract/auth, MVP provider catalog and account-provisioning harness now live in focused modules; API contracts and regression assertions are preserved.
 
 ## Current Auto candidate 5.1.23 — 2026-10-13
 

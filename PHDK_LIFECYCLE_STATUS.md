@@ -2,7 +2,7 @@
 
 ## Active run — `20261014-0007-phdk-auto-completion`
 
-Goal: finish PHDK Auto for CMT-001..004, in owner-confirmed order. Base `origin/main`/`HEAD`: `6413d8aed295c18af098ca6a58c6dfbb7503930b`, version 5.1.24. Branch: `fix/cloud-eslint-prettier`; source commit `e7de35752dbb2ed3e9bd3d33fb59cb649cf3c157` pushed; PR #94 is open. Previous run `20261013-1900-phdk-auto` remains immutable.
+Goal: finish PHDK Auto for CMT-001..004, in owner-confirmed order. Base `origin/main`: `6413d8aed295c18af098ca6a58c6dfbb7503930b`, version 5.1.24. Branch: `fix/cloud-eslint-prettier`; source commits through `afd66702ba7fc216e27c0c845ceaedb1eeb40944` are pushed; PR #94 is open. Previous run `20261013-1900-phdk-auto` remains immutable.
 
 | Stage | Status | Current evidence / next action |
 |---|---|---|
@@ -10,16 +10,16 @@ Goal: finish PHDK Auto for CMT-001..004, in owner-confirmed order. Base `origin/
 | Capture | COMPLETED | Current owner decisions captured and snapshotted. |
 | Plan | COMPLETED | Brownfield architecture and PLAN-AUTO-001..008 reconciled; 13 canonical artifacts snapshotted. |
 | PMO / Workstreams | COMPLETED | Four approved workstreams mapped to PLAN-AUTO-001..008; six artifacts snapshotted. |
-| Integration Review | COMPLETED | Coherent 5.1.24 worktree candidate; contracts/builds/regressions recorded, lint/matrix gaps assigned. |
-| UAT | REBOUND — SCOPED PASS / WHOLE-PRODUCT PARTIAL | Revalidated built Web SPA passes 1/1 with synthetic Company Co fixtures and external network blocked; live auth/DB, native device/audio, and the pending security-profile decision remain open. |
-| UAT Fix | COMPLETED — RESIDUAL BLOCKERS | No safe independent repair; current UAT revalidated and profile switch awaits owner choice. |
+| Integration Review | COMPLETED | Coherent 5.1.25 candidate; contracts/builds/regressions recorded, source-size remediation incorporated. |
+| UAT | REBOUND — SCOPED PASS / WHOLE-PRODUCT PARTIAL | Latest built Web SPA UAT passes 1/1 at candidate `afd66702ba7fc216e27c0c845ceaedb1eeb40944` with synthetic Company Co fixtures and external network blocked; live auth/DB, native device/audio, and the test-profile disposition remain open. |
+| UAT Fix | COMPLETED — RESIDUAL BLOCKERS | Source remediation and Cloud source-size findings verified; test-profile disposition and environment-dependent acceptance remain open. |
 | SEO | COMPLETED — SOURCE PASS / MEASUREMENT GAPS | 25 controls classified; Landing noscript fallback source fix and validation. |
 | AEO/GEO | COMPLETED — SOURCE REVIEW / EXTERNAL UNMEASURED | 15 source controls classified; no unsupported claims or schema added. |
 | Check | COMPLETED — RESIDUAL ACCEPTANCE GAPS | PHDK v2.50.10/52; API and Cloud full-source ESLint now report 0 errors (138 and 25 warnings); configured builds and Cloud regressions pass; persisted/native/deployed acceptance remains open. |
-| Remediation | COMPLETED — SOURCE CHECKS PASS, ACCEPTANCE PARTIAL | Approved policy/source fixes and tenant private-origin allowlist are covered; Cloud full `tsc --noEmit` passes after the legacy routing and seed type fixes. |
-| Delivery | PR OPEN — REVIEW PENDING | PR #94 is open; GitHub reports no hosted checks or review decision. No merge or main delivery is claimed. |
+| Remediation | COMPLETED — SOURCE CHECKS PASS, ACCEPTANCE PARTIAL | Approved policy fixes and source-size remediation are covered; Cloud build/typecheck/regressions/lint pass. |
+| Delivery | RUNNING — PR OPEN | PR #94 is mergeable and open; current head `afd66702ba7fc216e27c0c845ceaedb1eeb40944`. GitHub reports no hosted checks or review decision. |
 
-Current stage: Delivery preparation for v5.1.25. All five app package/lock roots and Browser renderer are aligned at 5.1.25. Final built-SPA UAT passes 1/1 with 15 grouped assertions on fingerprint `candidateRevision=e7de35752dbb2ed3e9bd3d33fb59cb649cf3c157; working-tree fingerprint sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 (clean)`; Cloud/API builds and full Cloud typecheck pass; API and Cloud lint report zero errors (138/25 warnings); Cloud regressions pass 10/10, API Jest 31/31, Browser 27/27, Web diagnostics 19/19, Web SEO 1/1, and PHDK coherence 52/52. Source commit `e7de35752dbb2ed3e9bd3d33fb59cb649cf3c157` is on PR #94, now OPEN; GitHub reports no review decision or hosted checks. Whole-product acceptance remains partial for real DB/migration, native device/audio, broad route accessibility, deployed SEO/AEO, owner profile-switch disposition, and customer-specific live integration evidence.
+Current stage: Delivery for v5.1.25. All five app package/lock roots and Browser renderer are aligned at 5.1.25. Final built-SPA UAT passes 1/1 with 15 grouped assertions on source commit `afd66702ba7fc216e27c0c845ceaedb1eeb40944`, fingerprint `sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`; Cloud/API builds and full Cloud typecheck pass; API and Cloud lint report zero errors (138/25 warnings); Cloud regressions pass 11/11, API Jest 31/31, Browser 27/27, Web diagnostics 19/19, Web SEO 1/1, PHDK coherence 52/52, and source-size inventory 1,135/0 over limit. PR #94 is open; GitHub reports no review decision or hosted checks. Whole-product acceptance remains partial for real DB/migration, native device/audio, broad route accessibility, deployed SEO/AEO, test-profile disposition, and customer-specific live integration evidence.
 
 Historical stage archive: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/`.
 
