@@ -319,11 +319,7 @@ export class CrudAccessGuard implements CanActivate {
           data.role = 'user';
           data.companyId = company;
         }
-        if (
-          !superadmin &&
-          req.method === 'PUT' &&
-          data.companyId !== undefined
-        )
+        if (!superadmin && req.method === 'PUT' && data.companyId !== undefined)
           deny();
       }
     }
