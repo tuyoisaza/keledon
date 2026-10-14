@@ -3,22 +3,12 @@ const assert = require('node:assert/strict');
 const http = require('node:http');
 const fs = require('node:fs/promises');
 const path = require('node:path');
-const crypto = require('node:crypto');
-const { execFileSync } = require('node:child_process');
+const { getCandidateFingerprint } = require('./uat-candidate-evidence.cjs');
 const appVersion = require('../package.json').version;
 const { chromium } = require(path.resolve(__dirname,'../../api/node_modules/playwright'));
 const root = path.resolve(__dirname,'../../..');
 const dist = path.resolve(__dirname,'../dist');
 const evidence = path.join(root,'docs/phdk/evidence');
-async function getCandidateFingerprint(){
- const baseCommit=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();
- const sourceRoots=['browser','cloud','services/api','services/web','landing'];
- const trackedDiff=execFileSync('git',['diff','--binary','HEAD','--',...sourceRoots],{cwd:root,maxBuffer:64*1024*1024});
- const untracked=execFileSync('git',['ls-files','--others','--exclude-standard'],{cwd:root,encoding:'utf8'}).split(/\r?\n/).filter(file=>sourceRoots.some(sourceRoot=>file.startsWith(sourceRoot+'/'))).sort();
- const hash=crypto.createHash('sha256').update(trackedDiff);
- for(const relativePath of untracked){hash.update(relativePath);hash.update(await fs.readFile(path.join(root,relativePath)));}
- return {baseCommit,sourceFingerprint:'sha256:'+hash.digest('hex'),dirtyUntrackedSourceFiles:untracked.length,sourceRoots};
-}
 const company={id:'company-co',name:'Company Co',industry:'Synthetic UAT',countries:[{countryCode:'MX'}]};
 const otherCompany={id:'other-company',name:'Other Co',industry:'Synthetic UAT',countries:[{countryCode:'MX'}]};
 const brand={id:'brand-co',name:'Company Co Brand',companyId:company.id,company};

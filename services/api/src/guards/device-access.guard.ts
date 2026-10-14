@@ -87,8 +87,12 @@ export class DeviceAccessGuard implements CanActivate {
       )
         return deny();
     }
-    if (handler === 'registerDevice')
+    if (handler === 'registerDevice') {
+      // Device records require a tenant so later pairing can bind them to an
+      // authorized Keledon and company. Do not create orphan pending devices.
+      if (!actor.companyId) return deny();
       req.deviceBinding = { userId: actor.id, companyId: actor.companyId };
+    }
     return true;
   }
 }

@@ -1,4 +1,8 @@
 # UX/UI audit — scoped candidate
+
+## Candidate 5.1.36 — Device revoke affordance
+
+The `/devices` list now exposes an accessible revoke action to admin/coordinator/superadmin only, with no revoke control for user/agent. The shared `ManagementModal` communicates credential invalidation and pairing recovery before the destructive action; action failure remains in the dialog with `role=alert`, cancellation sends no request, and success removes the revoked entry. EN/ES/PT strings are present and key parity passes. Browser UAT captures user, confirmation, failure and success states in `docs/phdk/evidence/uat-device-*.png`; selected UI/role behavior passes under synthetic fixtures. Focused evidence does not certify all app routes, screen-reader behavior, color contrast, or persisted authorization.
 ## Candidate 5.1.17 — KELEDON and Voice Profiles
 
 Local Edge UAT on the dirty 5.1.17 worktree confirms the tested Spanish forms use visible labels and native accessible dialogs; list loading/retry and synthetic create/delete HTTP failures are visible; Voice Profiles submit the server schema without caller tenant data; KELEDON's confirmation can be canceled. The app-wide Sonner `Toaster` is mounted. This follows the established shared modal/tokens and preserves the admin flows.

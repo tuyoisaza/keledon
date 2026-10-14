@@ -1,4 +1,12 @@
-## Current Check — delivered source 5.1.35; Auto acceptance partial (2026-10-14)
+## Current Check — candidate 5.1.36; Auto acceptance partial (2026-10-14)
+
+Branch: `fix/phdk-device-revoke-ui-5-1-36`, based on verified remote `main` `f0a9633e39bbdbca416f5e1c24c32acab7276902` (5.1.35). Installed PHDK 2.50.10 coherence passes 52/52. This candidate closes a source-level Device administration gap: managers lacked a revoke action despite a tenant-scoped API; pending registration also accepted a company-less actor and could create an unpairable row. The guard now binds registration to the current DB actor/company and fails closed without a company; the Web page exposes localized confirmed revoke to managers only, with safe list projection retained.
+
+API build and all 35/35 regression suites pass; Cloud build and tenant voice-profile regression pass. Tenant voice-profile Prisma operations now live in mirrored focused services, keeping both CRUD facades below PHDK's 600-line maximum. Web typecheck/build and full synthetic local-SPA UAT pass (2/2 tests); the dedicated device journey covers read-only user visibility and admin cancel/failure/success. API/Web focused ESLint pass. The source drift assertion now covers 35/35 Prisma models and 168 unique rows across 12 role × surface resource groups; the application/test line audit covers 1,159 files with zero at or above 600 lines. Locale keys match EN/ES/PT. Private/local CRM origins remain validated and tenant-allowlisted; regression 26 passes without contacting a private host.
+
+This is local candidate evidence pending normal PR/remote readback. Whole Auto remains PARTIALLY DELIVERED: real DB-backed identities, disposable PostgreSQL and persisted authorization/migrations, live Qdrant/concurrency, native Windows device/audio, broad route accessibility/localization, deployed SEO/AEO, and remaining model-family mappings are open. No DB, provider, customer data, private CRM endpoint or deployment was used.
+
+## Delivered source checkpoint — 5.1.35 (2026-10-14)
 
 Repository: `tuyoisaza/keledon`; source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0`, delivered by PR #106; PR #107 recorded delivery; PR #108 reconciled the active CRUD matrix and merged at `056e8605097874337c6bc532c006da3a3f772d56`. Installed PHDK is 2.50.10 and canonical coherence passes 52/52. Current standards and owner-approved scope cover DEVSECOPS, RBAC, CRUD, DATA, diagnostics, UAT, SEO/AEO and delivery.
 

@@ -5,18 +5,22 @@ const {
   CrudAccessGuard,
   CrudService,
   TenantController,
+  load,
 } = require('./approved-management-policy.harness');
 
 async function main() {
   const queries = [];
   const profile = { id: 'vp-a', name: 'Company A voice', providerId: 'tts-openai', language: 'es', isEnabled: true, isDefault: false };
   const service = Object.create(CrudService.prototype);
-  service.prisma = { tenantVoiceProfile: {
+  const VoiceProfileService = load(
+    'crud/crud-tenant-voice-profile.service.ts',
+  ).CrudTenantVoiceProfileService;
+  service.tenantVoiceProfileService = new VoiceProfileService({ tenantVoiceProfile: {
     findFirst: async (query) => { queries.push(query); return profile; },
     findMany: async (query) => { queries.push(query); return [profile]; },
     create: async (query) => { queries.push(query); return profile; },
     update: async (query) => { queries.push(query); return profile; },
-  } };
+  } });
 
   const controller = new TenantController(service);
   const detail = await controller.getTenantVoiceProfile('vp-a', { actor: { role: 'admin', companyId: 'co-a' } });

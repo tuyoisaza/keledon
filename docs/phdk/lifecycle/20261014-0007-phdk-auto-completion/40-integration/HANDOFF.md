@@ -1,5 +1,13 @@
 # Integration Review handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.36 — Device source integration
+
+The source candidate is `fix/phdk-device-revoke-ui-5-1-36`, based on verified main `f0a9633e39bbdbca416f5e1c24c32acab7276902`. Five package/lock roots plus Browser renderer align at 5.1.36. Device registration binds the authenticated DB actor/company and rejects a missing company; manager revoke is tenant-scoped in API and confirmed in the localized Web page. The safe device list and paired-device-only RPA secret read remain intact. Validated customer-selected private CRM origins remain governed by tenant allowlists. API 35/35 plus build, Web typecheck/build/UAT 2/2, Browser build, Web/Landing SEO 1/1, 35-model/168-row drift assertions and PHDK coherence 52/52 pass. No shared API/Cloud contract conflict is introduced; there are no API/Cloud mirrored changes. UAT metadata and screenshots are recorded in `docs/phdk/evidence/uat-device-5.1.36.json` and `uat-device-*.png`. No live DB, device, provider, private target or deployment was used. Delivery remains pending; whole Auto remains partial.
+
+SIGUIENTE PASO: finish Check and normal product PR/merge/readback.
+
+---
+
 ## Candidate 5.1.32 integration exit (2026-10-14)
 
 Status: **CANDIDATE COHERENT; DELIVERY SYNC PENDING**. Source SHA `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`, base main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`, all five roots/Browser renderer 5.1.32. API 33/33, Cloud 14/14, Browser 33/33, Web diagnostics 19/19, exact-source UAT 1/1, Web/Landing SEO 1/1 each, all builds and PHDK coherence 52/52 pass. `INTEGRATION_REPORT.md` records shared contracts and scoped validation.

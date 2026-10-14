@@ -1,5 +1,13 @@
 # Check handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.36 — Device role/surface closure (2026-10-14)
+
+Source review found `/devices` had no manager revoke affordance and `registerDevice` could bind a company-less actor to a pending row. The API now stamps the current DB actor/company and rejects missing company; Web adds manager-only revoke with accessible confirmation, retryable error and successful list update. The Device role/API/Web matrix adds 14 rows, expanding drift validation to 35 Prisma models and 168 rows. API build and 35/35 regression suites, targeted API/Web ESLint, Web typecheck/build, synthetic UAT-032 and PHDK coherence pass. UAT screenshots/fingerprint are recorded in `docs/phdk/evidence/uat-device-5.1.36.json`; full local SPA UAT passes 2/2. Web/Landing SEO source tests pass 1/1; no public route or content changed, so prior AEO/GEO review is reused. The matrix covers source shape only: disposable DB, persisted role × tenant operations, live pairing/Qdrant, broad accessibility/localization and deployed search evidence remain open. CRM is client-selected and private destinations remain URL-validated/tenant-allowlisted; no private host was contacted. No database, customer data or deployment was used.
+
+Status: **SCOPED SOURCE CHECK PASS / WHOLE ACCEPTANCE PARTIAL**. Product PR delivery/readback remains next.
+
+---
+
 ## Delivery result — candidate 5.1.33
 
 The remediated source finding shipped through PR [#104](https://github.com/tuyoisaza/keledon/pull/104) and is verified on remote main at `d40a5f1e7ad92bb66a9cc06211c105ec3c708a9a`. API/Cloud mirror trees match at `447a1d1e006c8f59fb5a026a899ab7c7d4fea288`. The broader 35-model CRUD/persistence acceptance remains open; gate evidence is in `../90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.33.json`.

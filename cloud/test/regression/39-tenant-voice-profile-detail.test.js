@@ -50,11 +50,14 @@ async function main() {
     },
   };
   const CrudService = load('crud/crud.service.ts').CrudService;
+  const VoiceProfileService = load(
+    'crud/crud-tenant-voice-profile.service.ts',
+  ).CrudTenantVoiceProfileService;
   const TenantController = load(
     'controllers/tenant.controller.ts',
   ).TenantController;
   const service = Object.create(CrudService.prototype);
-  service.prisma = rows;
+  service.tenantVoiceProfileService = new VoiceProfileService(rows);
   const controller = new TenantController(service);
   const detail = await controller.getTenantVoiceProfile('vp-a', {
     actor: { role: 'admin', companyId: 'co-a' },

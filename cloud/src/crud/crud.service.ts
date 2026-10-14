@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { CrudTenantVoiceProfileService } from './crud-tenant-voice-profile.service';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrudKeledonService } from './crud-keledon.service';
@@ -18,6 +19,7 @@ export class CrudService {
     private readonly companyService: CrudCompanyService,
     private readonly healthService: CrudHealthService,
     private readonly sessionDataService: CrudSessionDataService,
+    private readonly tenantVoiceProfileService: CrudTenantVoiceProfileService,
   ) {}
 
   // ========== HEALTH ==========
@@ -384,32 +386,11 @@ export class CrudService {
   // ========== TENANT VOICE PROFILES ==========
 
   async getTenantVoiceProfiles(companyId: string) {
-    return this.prisma.tenantVoiceProfile.findMany({
-      where: { companyId },
-      select: {
-        id: true,
-        name: true,
-        providerId: true,
-        language: true,
-        isEnabled: true,
-        isDefault: true,
-      },
-      orderBy: { name: 'asc' },
-    });
+    return this.tenantVoiceProfileService.getTenantVoiceProfiles(companyId);
   }
 
   async getTenantVoiceProfile(id: string, companyId?: string) {
-    return this.prisma.tenantVoiceProfile.findFirst({
-      where: { id, ...(companyId ? { companyId } : {}) },
-      select: {
-        id: true,
-        name: true,
-        providerId: true,
-        language: true,
-        isEnabled: true,
-        isDefault: true,
-      },
-    });
+    return this.tenantVoiceProfileService.getTenantVoiceProfile(id, companyId);
   }
 
   async createTenantVoiceProfile(data: {
@@ -420,22 +401,7 @@ export class CrudService {
     isEnabled?: boolean;
     isDefault?: boolean;
   }) {
-    if (Object.prototype.hasOwnProperty.call(data, 'config')) {
-      throw new BadRequestException(
-        'Voice profile config is not supported through CRUD.',
-      );
-    }
-    return this.prisma.tenantVoiceProfile.create({
-      data,
-      select: {
-        id: true,
-        name: true,
-        providerId: true,
-        language: true,
-        isEnabled: true,
-        isDefault: true,
-      },
-    });
+    return this.tenantVoiceProfileService.createTenantVoiceProfile(data);
   }
 
   async updateTenantVoiceProfile(
@@ -448,27 +414,11 @@ export class CrudService {
       isDefault?: boolean;
     },
   ) {
-    if (Object.prototype.hasOwnProperty.call(data, 'config')) {
-      throw new BadRequestException(
-        'Voice profile config is not supported through CRUD.',
-      );
-    }
-    return this.prisma.tenantVoiceProfile.update({
-      where: { id },
-      data,
-      select: {
-        id: true,
-        name: true,
-        providerId: true,
-        language: true,
-        isEnabled: true,
-        isDefault: true,
-      },
-    });
+    return this.tenantVoiceProfileService.updateTenantVoiceProfile(id, data);
   }
 
   async deleteTenantVoiceProfile(id: string) {
-    return this.prisma.tenantVoiceProfile.delete({ where: { id } });
+    return this.tenantVoiceProfileService.deleteTenantVoiceProfile(id);
   }
 
   // ========== SESSIONS AND KNOWLEDGE ==========

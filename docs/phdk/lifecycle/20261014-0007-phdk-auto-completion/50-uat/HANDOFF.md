@@ -19,6 +19,12 @@ Snapshots: current candidate cases/report are versioned in this folder; `snapsho
 SIGUIENTE PASO: continue source Check and reconcile every Prisma model, route, role, tenant scope, surface and C/R-list/R-detail/U/D operation; retain external acceptance as open.
 # UAT handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.36 — Device manager lifecycle (2026-10-14)
+
+UAT-032 passes on the staged candidate source diff based on `f0a9633e39bbdbca416f5e1c24c32acab7276902`; its SHA-256 source fingerprint is `4170917201fbd7be6ca51d1c7d7adde6bb9bafb82010bdd1a70242b96cce3315`. Local built-SPA UAT passes 2/2 with synthetic API intercepts. The Device journey verifies user read-only view, cancel-without-delete, visible synthetic failure and successful removal. Screenshots and JSON provenance are under `docs/phdk/evidence/uat-device-*`. API regression 21 and full suite 35/35 separately verify company binding and scope. UAT remains 29 PASS, 2 BLOCKED, 1 MANUAL; DB-backed identity/migration, physical device/audio and whole product acceptance remain open. No live account, persistence, device pairing, customer provider or deployment was used.
+
+Snapshots for this candidate are under `snapshots/candidate-5.1.36/`. Next: UAT Fix is complete for this finding; SEO source tests were revalidated, AEO/GEO was reused because public content is unchanged; proceed to Check and delivery.
+
 ## Candidate 5.1.33 — exact-candidate UAT and source cleanup contract (2026-10-14)
 
 UAT-030 passes 1/1 on the local production Web build at version 5.1.33 using synthetic Company Co fixtures, intercepted API requests, and blocked external network/WebSockets. The updated `docs/phdk/evidence/uat-local-web.json` and screenshots record the run. UAT-031 passes 12/12 isolated mocked Prisma/Qdrant assertions across API and Cloud for document point cleanup, collection cleanup, missing collections, ordering, and failure preservation. UAT remains **28 PASS, 2 BLOCKED, 1 MANUAL**. UAT-009 needs a safe DB-backed identity target; UAT-010 needs disposable PostgreSQL for persisted CRUD/migration; UAT-006 needs native Windows device/audio. The full model×role×tenant×surface×operation matrix, broad route accessibility/localization and deployed SEO/AEO remain incomplete. No database, live Qdrant, customer provider, private CRM, customer record or deployment was used.

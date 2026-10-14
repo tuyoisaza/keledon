@@ -1,6 +1,18 @@
-# PMO status — current Auto continuation 5.1.35; overall PARTIALLY DELIVERED
+# PMO status — current Auto candidate 5.1.36; overall PARTIALLY DELIVERED
 
-## Current portfolio and candidate — 2026-10-14
+## Previous merged baseline — 5.1.35 (2026-10-14)
+
+Verified `origin/main` is `f0a9633e39bbdbca416f5e1c24c32acab7276902` / 5.1.35. The active candidate `fix/phdk-device-revoke-ui-5-1-36` aligns all app package/lock roots and Browser renderer at 5.1.36. It adds tenant-bound, company-required device registration and confirmed manager revoke UI. API build/regression pass 35/35; Web typecheck/build and synthetic UAT 2/2; focused ESLint, locale parity, matrix 35 models/168 rows, and coherence 52/52 pass. PR delivery remains pending.
+
+| WS | Candidate state | Evidence / next gate |
+|---|---|---|
+| WS-001 / CMT-001 | 5.1.35 MAIN VERIFIED; 5.1.36 CANDIDATE | Complete current PR and exact remote readback; no deployment claimed. |
+| WS-002 / CMT-002 | SOURCE PASS; ACCEPTANCE PARTIAL | Device action uses shared modal and EN/ES/PT; UAT pass; native media and broad a11y remain open. |
+| WS-003 / CMT-003 | PROVIDER-INDEPENDENT CONTRACT RETAINED | Tenant URL validation/private-origin allowlist remains covered; client-specific live acceptance unrun. |
+| WS-004 / CMT-004 | DEVICE SOURCE GAP FIXED; PERSISTED ACCEPTANCE OPEN | Registration/revoke scope covered by API regressions and synthetic Web UAT; 168 source rows; DB/migration/remaining model families open. |
+| WS-X / PHDK | CANDIDATE CHECKS PASS; EXTERNAL GATES OPEN | SEO source recheck pending/reused; AEO content unchanged; deployment/crawler and DB/native evidence remain unmeasured. |
+
+Overall remains **PARTIALLY DELIVERED**. No database, provider, customer data, private CRM endpoint or deployment was used.
 
 PR #106 delivered source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0`; PR #107 records that source delivery; PR #108 reconciles the CRUD matrix at merge SHA `056e8605097874337c6bc532c006da3a3f772d56`. Five app roots and Browser renderer align at 5.1.35; PHDK coherence 52/52. API 35/35, Cloud 14/14, matrix regression 35 models/154 rows and exact-commit synthetic SPA UAT pass. No live CRM call is universal: customer acceptance depends on the selected tenant provider.
 

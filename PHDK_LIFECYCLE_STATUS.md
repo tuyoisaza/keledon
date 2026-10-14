@@ -1,4 +1,29 @@
-## Current Auto stage — 5.1.35 source merged; overall acceptance partial (2026-10-14)
+## Current Auto stage — 5.1.36 Device source candidate; delivery pending; overall acceptance partial (2026-10-14)
+
+Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; branch `fix/phdk-device-revoke-ui-5-1-36`, base verified `main` `f0a9633e39bbdbca416f5e1c24c32acab7276902` / 5.1.35. The current scoped source delta is Device manager revoke UI, DB-bound tenant registration with no-company denial, 14 Device matrix rows, mirrored voice-profile service split to meet PHDK file size, and release 5.1.36. API regression/build pass 35/35; Cloud build and focused parity regression pass; Web typecheck/build and synthetic UAT pass 2/2; touched-source ESLint, 168-row/35-model drift check, 1,159-file size audit (0 at/above 600), and PHDK coherence 52/52 pass. Product PR, merge and exact remote readback remain pending.
+
+| Stage | Status | Evidence / next action |
+|---|---|---|
+| 00 Preflight | REUSED / REVALIDATED | PHDK 2.50.10; coherence 52/52. |
+| 10 Capture | REUSED | Four owner-confirmed fronts and approved role/tenant/private CRM allowlist policies remain current. |
+| 20 Plan | REUSED | Brownfield dependency plan reused; no client-specific CRM assumed. |
+| 30 PMO / Workstreams | COMPLETE FOR THIS SLICE | Device manager access is the current CMT-004 source issue; other fronts remain tracked. |
+| 40 Integration Review | PASS FOR CANDIDATE | Device API guards, safe projections, Web action, localization, tests, matrix and 5.1.36 roots reviewed. |
+| 50 UAT | PASS, SCOPED SYNTHETIC | Built SPA with intercepted APIs; user read-only and admin cancel/failure/success. No DB persistence claim. |
+| 60 UAT Fix | COMPLETE FOR THIS SLICE | No in-scope UAT defect remains; final candidate evidence must be rebound after staging/commit. |
+| 65 SEO | REVALIDATE / SOURCE UNCHANGED | Run Web and Landing source checks; protected `/devices` page does not change public route content. |
+| 67 AEO/GEO | REUSE / PUBLIC CONTENT UNCHANGED | No public claims/pages or crawler policy changed; external discovery remains unmeasured. |
+| 70 Check | PASS FOR SCOPED CHANGE / ACCEPTANCE PARTIAL | API 35/35; 168 matrix rows; selected Device authorization evidence; persistent DB and remaining families open. |
+| 80 Remediation | SOURCE FIX CANDIDATE | Manager-confirmed revoke and fail-closed device registration are ready for PR delivery. |
+| 90 Delivery | PENDING | Finish exact-candidate evidence and diff review, push PR, merge via normal controls, verify remote main. |
+
+Overall Auto remains PARTIALLY DELIVERED. Safe DB-backed identities, disposable PostgreSQL/migrations, live Qdrant/concurrency, native Windows device/audio, broad accessibility/localization, deployed SEO/AEO, and all remaining model-specific operations are open. No database, customer provider/data, private CRM endpoint or deployment was used.
+
+SIGUIENTE PASO: rebind UAT to the staged 5.1.36 source diff, finish diff review and normal PR delivery with exact remote-main verification.
+
+---
+
+## Previous candidate snapshot — 5.1.35
 
 The active run remains `20261014-0007-phdk-auto-completion`. Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` adds tenant-scoped KnowledgeBase detail/update APIs and administration UI under the owner-approved role policy. PR [#106](https://github.com/tuyoisaza/keledon/pull/106) merged at `73c0fc52b37d96d283e8709e76b99c17db0b1a83`; `origin/main` and `git ls-remote` match, PR source and merge trees match, and remote package/lock roots plus the renderer show 5.1.35. API regressions pass 35/35 suites, Cloud 14/14, Web production build/typecheck and focused lint pass, exact-commit synthetic built-SPA UAT covers the KnowledgeBase manager journey, and PHDK coherence passes 52/52. UAT source fingerprint: `sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`. Overall Auto remains PARTIALLY DELIVERED.
 

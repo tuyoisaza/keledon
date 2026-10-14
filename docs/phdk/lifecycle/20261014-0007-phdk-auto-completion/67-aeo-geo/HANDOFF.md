@@ -1,5 +1,9 @@
 # AEO/GEO handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.36 applicability reuse — 2026-10-14
+
+No public route, canonical content, product claim, author/source metadata, locale-market policy or crawler directive changed in 5.1.36. The existing grounded source audit for public `/` remains applicable; authenticated Device and CRM destinations remain excluded. No answer engine, external search page or crawler was accessed. Citations, indexation and deployed visibility remain **NOT MEASURED**. Reuse is limited to AEO/GEO source review; it does not certify current external discoverability. Next: Check and normal delivery.
+
 ## Candidate 5.1.32 source recheck — 2026-10-14
 
 Status: **SOURCE REVIEW REUSED / EXTERNAL DISCOVERY UNMEASURED**. This candidate changes only authenticated Knowledge UI and locale catalogs. Public product answers, indexable page content, locale-market decision and AEO metadata are unchanged, so the prior public-source review remains valid. Landing SEO test 1/1/build pass; no answer engine, crawler, live page, browser, or deployed discovery endpoint was used. No user proof, citations or market preference was invented. Private tenant and CRM content stays excluded.

@@ -1,5 +1,13 @@
 # UAT remediation — run `20261013-1900-phdk-auto`
 
+## Candidate 5.1.36 — Device management source finding
+
+- Finding: Check source review found no manager revoke affordance on `/devices` although a tenant-scoped API operation existed; the registration guard could also bind an actor with no company, creating an unpairable pending row.
+- Expected: tenant managers can deliberately revoke their company's device; users/agents remain read-only; registration requires a database-derived company binding and cannot use caller-supplied IDs.
+- Repair: added an EN/ES/PT accessible confirmation modal using `ManagementModal`, exposes the action only to admin/coordinator/superadmin, removes the device after success, and keeps retryable visible errors. API guard now denies company-less registration and derives identity from the current DB actor.
+- Retest: API regression 21 and all 35 API regression suites pass; local production-SPA UAT 2/2 covers user denial, admin cancel, failed request and successful revoke. API build, Web typecheck/build, focused lint and PHDK coherence 52/52 pass.
+- Limits: synthetic UI and isolated guard evidence only; persistent DB, real device and pairing lifecycle remain untested. No original UAT failure was overwritten; this is a Check-discovered source issue.
+
 ## Defect 1 — stale candidate version in synthetic device fixture
 
 - Expected: local UAT candidate at 5.1.17 reports device fixture version in sync with package.

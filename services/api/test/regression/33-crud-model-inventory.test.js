@@ -50,7 +50,7 @@ const expected = new Set(
   ),
 );
 const actual = coreRows.map((row) => `${row[0]}|${row[1]}|${row[2]}`);
-assert.equal(resources.length, 11, 'core matrix must include the nine established resources plus KnowledgeBase and KnowledgeDocument');
+assert.equal(resources.length, 12, 'core matrix includes the established resource groups plus Device, KnowledgeBase and KnowledgeDocument');
 assert.equal(actual.length, expected.size, 'every resource-role-surface combination appears once');
 assert.equal(new Set(actual).size, actual.length, 'core matrix must not duplicate combinations');
 assert.deepEqual([...actual].sort(), [...expected].sort());
@@ -77,6 +77,30 @@ for (const role of ['admin', 'coordinator', 'superadmin']) {
   assert.ok(document, `KnowledgeDocument API row is required for ${role}`);
   assert.deepEqual(document.slice(4, 9), ['yes', 'yes', '-', '-', 'yes']);
 }
+for (const role of ['anonymous', 'guest']) {
+  const device = rowFor('Device', role, 'API');
+  assert.ok(device, `Device API row is required for ${role}`);
+  assert.equal(device[4], 'pair-only', `${role} may only pair with a valid one-time proof`);
+  assert.deepEqual(device.slice(5, 9), ['-', '-', '-', '-']);
+}
+for (const role of ['user', 'agent']) {
+  const device = rowFor('Device', role, 'API');
+  assert.ok(device, `Device API row is required for ${role}`);
+  assert.deepEqual(device.slice(4, 9), ['yes', 'yes', 'own status', '-', '-']);
+  const web = rowFor('Device', role, 'web');
+  assert.ok(web, `Device Web row is required for ${role}`);
+  assert.deepEqual(web.slice(4, 9), ['-', 'yes', '-', '-', '-']);
+}
+for (const role of ['admin', 'coordinator', 'superadmin']) {
+  const device = rowFor('Device', role, 'API');
+  assert.ok(device, `Device API row is required for ${role}`);
+  assert.deepEqual(device.slice(4, 9), ['yes', 'yes', role === 'superadmin' ? 'cross-tenant status' : 'tenant status', 'RPA write', 'yes']);
+  const web = rowFor('Device', role, 'web');
+  assert.ok(web, `Device Web row is required for ${role}`);
+  assert.equal(web[8], 'yes', `${role} can revoke only through confirmed Web action`);
+}
+assert.match(matrix, /registration now requires a database-backed actor with a company/i);
+assert.match(matrix, /raw RPA configuration remains available only to the exact currently paired device/);
 assert.match(matrix, /KnowledgeBase details and updates are tenant-scoped/);
 assert.doesNotMatch(matrix, /GAP remains for KnowledgeBase detail\/update|No general detail\/update operation/);
 

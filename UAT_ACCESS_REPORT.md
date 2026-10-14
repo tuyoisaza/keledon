@@ -1,5 +1,9 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.36 Device UAT access and scope
+
+`services/web npm run test:uat` served the local production Web build on ephemeral loopback with Playwright and installed Edge. Browser contexts used synthetic `user`/`admin` session responses and in-memory devices; all API requests were intercepted, non-local HTTP and WebSockets were blocked, and server/browser were closed in `finally`. API registration/revocation checks used isolated guard fixtures; no credentials, database or device token were used. No live device pairing, CRM target or deployed account was accessed.
+
 Target exercised: local built production SPA served at loopback with Company Co synthetic fixture and intercepted API; outbound HTTP/WebSocket is blocked by the harness. This does not verify a deployed development URL or authenticate a real account.
 
 | Access target | Method | Identity/data | Result / cleanup |

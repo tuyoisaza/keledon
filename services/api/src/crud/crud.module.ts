@@ -8,6 +8,7 @@ import { CrudVendorService } from './crud-vendor.service';
 import { TenantController } from '../controllers/tenant.controller';
 import { CrudAccessGuard } from '../guards/crud-access.guard';
 import { CrudSessionDataService } from './crud-session-data.service';
+import { CrudTenantVoiceProfileService } from './crud-tenant-voice-profile.service';
 
 @Module({
   controllers: [CrudController, TenantController],
@@ -18,6 +19,7 @@ import { CrudSessionDataService } from './crud-session-data.service';
     CrudCompanyService,
     CrudVendorService,
     CrudSessionDataService,
+    CrudTenantVoiceProfileService,
     CrudAccessGuard,
   ],
   exports: [
@@ -27,6 +29,7 @@ import { CrudSessionDataService } from './crud-session-data.service';
     CrudCompanyService,
     CrudVendorService,
     CrudSessionDataService,
+    CrudTenantVoiceProfileService,
   ],
 })
 export class CrudModule {}

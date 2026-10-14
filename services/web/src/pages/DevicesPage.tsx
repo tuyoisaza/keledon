@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { Trash2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from '@/context/I18nContext';
 import { apiJson } from '@/lib/api-fetch';
+import ManagementModal from '@/components/common/ManagementModal';
 
 interface DeviceSummary {
   id: string;
@@ -25,6 +27,10 @@ export default function DevicesPage() {
   const [devices, setDevices] = useState<DeviceSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [deviceToRevoke, setDeviceToRevoke] = useState<DeviceSummary | null>(null);
+  const [revoking, setRevoking] = useState(false);
+  const canManageDevices = ['admin', 'coordinator', 'superadmin'].includes(user?.role || '');
 
   const loadDevices = useCallback(async () => {
     setLoading(true);
@@ -41,6 +47,23 @@ export default function DevicesPage() {
       setLoading(false);
     }
   }, [user?.id, t]);
+
+  const revokeDevice = async () => {
+    if (!deviceToRevoke) return;
+    setRevoking(true);
+    setActionError(null);
+    try {
+      await apiJson(`/api/devices/${encodeURIComponent(deviceToRevoke.id)}`, {
+        method: 'DELETE',
+      });
+      setDevices(current => current.filter(device => device.id !== deviceToRevoke.id));
+      setDeviceToRevoke(null);
+    } catch {
+      setActionError(t('devices.revokeFailed'));
+    } finally {
+      setRevoking(false);
+    }
+  };
 
   useEffect(() => {
     void loadDevices();
@@ -114,9 +137,53 @@ export default function DevicesPage() {
                 <p><span className="font-medium text-foreground">{t('devices.lastSeen')}:</span> {device.lastSeen ? new Date(device.lastSeen).toLocaleString(locale) : t('devices.never')}</p>
                 <p><span className="font-medium text-foreground">{t('devices.version')}:</span> {device.version || t('devices.unknown')}</p>
               </div>
+              {canManageDevices && (
+                <div className="mt-4 flex justify-end border-t border-border pt-3">
+                  <button
+                    type="button"
+                    onClick={() => { setActionError(null); setDeviceToRevoke(device); }}
+                    aria-label={`${t('devices.revoke')} ${device.name}`}
+                    className="inline-flex min-h-10 items-center gap-2 rounded-md px-3 py-2 text-sm text-destructive hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <Trash2 className="h-4 w-4" aria-hidden="true" />
+                    {t('devices.revoke')}
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
+      )}
+      {deviceToRevoke && (
+        <ManagementModal
+          title={t('devices.revokeTitle')}
+          onClose={() => { if (!revoking) setDeviceToRevoke(null); }}
+        >
+          <div className="space-y-4 rounded-xl border border-border bg-card p-6">
+            <h2 className="text-lg font-semibold">{t('devices.revokeTitle')}</h2>
+            <p>{t('devices.revokePrompt')} <strong>{deviceToRevoke.name}</strong></p>
+            <p className="text-sm text-muted-foreground">{t('devices.revokeEffect')}</p>
+            {actionError && <p role="alert" className="text-sm text-destructive">{actionError}</p>}
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                disabled={revoking}
+                onClick={() => setDeviceToRevoke(null)}
+                className="rounded-md border border-border px-4 py-2 disabled:opacity-50"
+              >
+                {t('devices.cancel')}
+              </button>
+              <button
+                type="button"
+                disabled={revoking}
+                onClick={() => void revokeDevice()}
+                className="rounded-md bg-destructive px-4 py-2 text-destructive-foreground disabled:opacity-50"
+              >
+                {revoking ? t('devices.revoking') : t('devices.confirmRevoke')}
+              </button>
+            </div>
+          </div>
+        </ManagementModal>
       )}
     </div>
   );
