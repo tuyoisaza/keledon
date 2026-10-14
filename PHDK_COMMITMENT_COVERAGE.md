@@ -1,17 +1,17 @@
 # PHDK commitment coverage — KELEDON four fronts
 
-## Current integrated source — 2026-10-14, 5.1.22
+## Current source candidate — 2026-10-14, 5.1.24, `c3c4c362a36db2bec142cbc8b06747961b67df26`
 
-PR #89 merged at `b92a25428a6d25c898e3dfef7a055f754782ed57`; PR #90 merged at `48ab2023236ba5de56c046f99670a2abab866707`. Fresh `origin/main` readback matches the latter SHA, all five package/lock roots are 5.1.22, installed PHDK v2.50.10 coherence is 52/52, and no PR remains open. The merged source includes voice/provider privacy redaction, Browser version/actions and reset parity, main-process-only debug configuration, and Web/Landing anonymous reset reload.
+Candidate branch `fix/phdk-tenant-vendor-origin-allowlist` adds validated tenant origin allowlists for client-selected CRM/call vendors, including private/local HTTP(S) destinations. API and Cloud tests verify safe vendor projections and stored allowlists; Browser guards initial/redirect origins. Exact-SHA synthetic Web UAT passes 1/1, all five roots and renderer are 5.1.24, and PHDK coherence is 52/52. PR delivery remains pending; native, database, deployed SEO/AEO, exhaustive matrix and broad route acceptance remain open.
 
 | Commitment | Current implementation/evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | PRs #89 and #90 merged; all five package/lock roots match 5.1.22 on verified `origin/main`; no open PRs. | GitHub exposes no required-check or review rollups for these PRs; no deployment is inferred. Machine completion evidence is refreshed against this SHA, but the full Auto gate remains blocked. |
-| CMT-002 | Browser report/reset/debug-mode source tests 5/5 and build pass; Web widget/diagnostics tests 17/17; post-commit synthetic Web UAT 1/1, bound to `05c7b8b3a5231b465579fea6f8fb39f8f47414be`. | Native Browser rendering, actual session/device/audio, OS permission flow and broader route/screen-reader acceptance remain unverified. |
-| CMT-003 | Provider-independent voice→Cloud→Browser contracts retained; API regression 18/18, Cloud 9/9; transcript/prompt/provider-error disclosure paths are redacted. | Client-specific CRM/call provider is chosen by each tenant; no universal live integration test applies. Private-network endpoint policy remains unresolved because clients may intentionally use local CRM endpoints. |
-| CMT-004 | Approved DB-derived role/tenant policy retained; selected CRUD role matrix, direct-ID boundaries and write-only credentials pass isolated API regressions. | Full 35-model × role × tenant × API/web × operation mapping, disposable-DB persistence/migration, and remaining route accessibility/localization remain open. |
+| CMT-001 | Candidate package and lock roots align at 5.1.24; source commit is on the authorized continuation branch. | PR merge and fresh remote-main readback pending; no deployment inferred. |
+| CMT-002 | Browser policy tests 6/6; Web diagnostics 19/19; exact-SHA synthetic Web UAT 1/1. | Native Browser rendering, device/audio, OS permission flow and broader route/screen-reader acceptance remain unverified. |
+| CMT-003 | API 19/19 and Cloud 10/10; configured private origins are tenant-scoped, URL validated and applied to Browser navigation/automation. | Live CRM/call acceptance stays client-specific; no universal vendor test applies. |
+| CMT-004 | Approved DB-derived role/tenant policy retained; safe vendor projections and allowlist create/update behavior have isolated tests. | Full 35-model × role × tenant × API/web × operation mapping, disposable-DB persistence/migration, and remaining route accessibility/localization remain open. |
 
-Overall status remains **PARTIALLY DELIVERED**. Machine completion evidence records unverified native UAT and lint limitations rather than claiming full Auto completion.
+Overall status remains **PARTIALLY DELIVERED**. Machine completion evidence records unverified native UAT and Cloud lint limitations rather than claiming full Auto completion.
 
 ## Active Auto continuation — 5.1.17, run `20261013-1900-phdk-auto`
 

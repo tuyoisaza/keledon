@@ -526,6 +526,7 @@ export class CrudService {
     username?: string;
     password?: string;
     apiKey?: string;
+    allowedOrigins?: string[];
     config?: Record<string, unknown>;
   }) {
     return this.vendorService.createVendor(data);
@@ -541,6 +542,7 @@ export class CrudService {
       username?: string;
       password?: string;
       apiKey?: string;
+      allowedOrigins?: string[];
       config?: Record<string, unknown>;
     },
   ) {

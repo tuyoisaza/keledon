@@ -1,5 +1,9 @@
 # PHDK physical line limit audit
 
+## Current candidate 5.1.24 — 2026-10-14
+
+The live source inventory covers **1,077 files; 0 are at or above 600 physical lines**. The candidate adds the API/Cloud vendor URL policy, CRUD regressions and Browser/Web configuration within the limit. Generated bundles, dependencies, JSON locale/data catalogs, lockfiles, Git metadata, lifecycle docs and vendored PHDK standards are excluded. The prior 5.1.23 boundary split remains intact.
+
 ## Current Auto candidate 5.1.23 — 2026-10-13
 
 The live application/test inventory covers **1,072 files; 0 are at or above 600 physical lines**. Inventory includes TS, TSX, JS, JSX, MJS, CJS and Vue files, and excludes dependencies, build output, Git metadata, vendored standards and immutable lifecycle snapshots. The historical snapshot under `docs/phdk/lifecycle/20261013-1900-phdk-auto/40-integration/snapshots/` retains the prior 610-line `crud-api.ts` exactly as evidence and is not live product source.

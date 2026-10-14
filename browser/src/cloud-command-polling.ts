@@ -2,6 +2,7 @@ import { BrowserWindow } from 'electron';
 import log from 'electron-log';
 import * as cmdlog from './cmdlog.js';
 import { runtimeStatus } from './runtime-state.js';
+import { getAllowedVendorOrigins } from './security-policy.js';
 import { setMainWindow as setCallMainWindow, startCall, appendTranscript, processDecision, executeRpaFlowFromCommand, closeCall, getCurrentCall } from './call-handler.js';
 import { setMainWindow as setRpaMainWindow, executeRpaFlow } from './rpa-executor.js';
 import { startPolling, registerCommandHandler, type BrowserCommand, type CommandResult } from './command-poller.js';
@@ -141,7 +142,7 @@ export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
       name: `Goal: ${goal.substring(0, 60)}`,
       steps: rpaSteps,
       is_cancelled: () => runtimeStatus.authToken !== tokenAtStart,
-      allowed_origins: (runtimeStatus.vendors || []).filter(vendor => vendor.isActive !== false && (!inputs || !Object.keys(inputs).some(key => /^(password|apiKey|token|secret|username|email|login)$/.test(key)) || vendor.id === (inputs.vendor_id || inputs.vendorId || command.payload.vendor_id))).flatMap(vendor => { try { return [new URL(vendor.baseUrl || vendor.url).origin]; } catch { return []; } }),
+      allowed_origins: (runtimeStatus.vendors || []).filter(vendor => vendor.isActive !== false && (!inputs || !Object.keys(inputs).some(key => /^(password|apiKey|token|secret|username|email|login)$/.test(key)) || vendor.id === (inputs.vendor_id || inputs.vendorId || command.payload.vendor_id))).flatMap(vendor => getAllowedVendorOrigins(vendor)),
     });
 
     cmdlog.log('CMD', `goal_execute (${command.id}) → status=${result.status} | steps=${result.steps?.length ?? 0} | duration=${result.total_duration_ms}ms${result.error ? ` error=${result.error}` : ''}`);
@@ -189,7 +190,7 @@ export function setupCommandPolling(mainWindow: BrowserWindow | null): void {
       name: `RPA: ${goal.substring(0, 60)}`,
       steps: rpaSteps,
       is_cancelled: () => runtimeStatus.authToken !== tokenAtStart,
-      allowed_origins: (runtimeStatus.vendors || []).filter(vendor => vendor.isActive !== false && (!inputs || !Object.keys(inputs).some(key => /^(password|apiKey|token|secret|username|email|login)$/.test(key)) || vendor.id === (inputs.vendor_id || inputs.vendorId || command.payload.vendor_id))).flatMap(vendor => { try { return [new URL(vendor.baseUrl || vendor.url).origin]; } catch { return []; } }),
+      allowed_origins: (runtimeStatus.vendors || []).filter(vendor => vendor.isActive !== false && (!inputs || !Object.keys(inputs).some(key => /^(password|apiKey|token|secret|username|email|login)$/.test(key)) || vendor.id === (inputs.vendor_id || inputs.vendorId || command.payload.vendor_id))).flatMap(vendor => getAllowedVendorOrigins(vendor)),
     });
 
     cmdlog.log('CMD', `rpa_execute (${command.id}) → status=${result.status} | duration=${result.total_duration_ms}ms`);

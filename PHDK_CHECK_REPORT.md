@@ -1,5 +1,9 @@
 # PHDK Check — current Auto run `20261013-1900-phdk-auto`, candidate 5.1.22
 
+## 2026-10-14 candidate 5.1.24 — tenant-configured private CRM origins
+
+The owner resolved the private CRM destination decision: allow client-configured private destinations after URL validation and tenant-scoped origin allowlisting. API and Cloud store normalized origins in the tenant-owned vendor config, return the safe origin list without raw config or secrets, and pass it to paired clients without config disclosure. Browser checks initial vendor URLs, redirects, popup tabs and automated call/CRM navigation against configured origins; credentials remain pinned to the vendor base origin. Private targets run in the client's Browser, not through Cloud-side HTTP fetches. API regression 19/19, Cloud 10/10, Browser security 6/6, all configured builds, Web diagnostics 19/19, exact-SHA synthetic Web UAT 1/1, PHDK coherence 52/52 and source line audit 1,077/0 pass. Changed-source Cloud ESLint did not return output and remains BLOCKED; native, real DB and client-specific live CRM/call acceptance are not claimed.
+
 ## 2026-10-14 integrated-source recheck — native widget and privacy boundary
 
 The Browser app's version badge was hard-coded at `v5.1.2` while its package roots were 5.1.22, and the debug console remained visible regardless of the packaged-build default. The current candidate synchronizes renderer version metadata from `browser/package.json` during standard build/start/make commands, loads the actual installed version from Electron IPC, defaults debug mode on only for unpackaged builds, and gates the console behind the main-process debug flag. The report uses a narrow event allowlist and omits raw payloads; reset verifies owned storage/cache, runtime disconnect and diagnostic log clear before showing success and reloading. Device identifiers and local log paths have been removed from the renderer's general device-info IPC projection.

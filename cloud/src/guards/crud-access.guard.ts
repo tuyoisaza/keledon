@@ -128,6 +128,7 @@ export class CrudAccessGuard implements CanActivate {
           'name',
           'type',
           'baseUrl',
+          'allowedOrigins',
           'username',
           'password',
           'apiKey',

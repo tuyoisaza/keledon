@@ -1,5 +1,9 @@
 # PHDK Lifecycle Handoff — UAT
 
+## Exact-SHA 5.1.24 rerun — `c3c4c362a36db2bec142cbc8b06747961b67df26`
+
+The built production SPA UAT passes 1/1 with Company Co fixtures, intercepted API calls and external network blocked. `docs/phdk/evidence/uat-local-web.json` and its screenshots identify this exact source revision. The run exercises the existing diagnostics/admin/profile/device journeys and does not verify the new local CRM against a client system, real API/DB authorization, Electron or physical audio. Cloud lint and full native acceptance remain BLOCKED.
+
 ## Re-run on 5.1.23 source commit `0e724bfe1fec269ad6037104ad0a01e474172b93`
 
 Built-SPA Company Co synthetic Web UAT passes 1/1 against the exact source commit. It verifies version/actions, responsive layout, diagnostics, and selected role-based UI journeys using intercepted API fixtures. Evidence and screenshots are in `docs/phdk/evidence/`; the report states that this is not real backend, database, authorization, production, Electron or device acceptance.

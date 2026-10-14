@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { getVendorAllowedOrigins } from '../vendor-url-policy';
 import { PrismaService } from '../prisma/prisma.service';
 import * as crypto from 'crypto';
 
@@ -121,10 +122,13 @@ export class DeviceService {
           name: v.name,
           type: v.type,
           baseUrl: v.baseUrl,
+          allowedOrigins: getVendorAllowedOrigins(
+            v.baseUrl,
+            (v.config as any)?.allowedOrigins,
+          ),
           username: v.username ? this.encrypt(v.username) : null,
           password: v.password ? this.encrypt(v.password) : null,
           apiKey: v.apiKey ? this.encrypt(v.apiKey) : null,
-          config: v.config,
         }));
       }
     }

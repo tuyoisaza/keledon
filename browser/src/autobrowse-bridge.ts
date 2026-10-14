@@ -9,6 +9,7 @@ import { planGoalActions, planGoalActionsWithAI } from './goal-planner';
 import type { GoalPlannerAction as GoalAction } from './goal-planner';
 import type { RpaStep } from './rpa-executor';
 import { runtimeStatus } from './runtime-state';
+import { getAllowedVendorOrigins } from './security-policy.js';
 import { executeAction } from './autobrowse-actions';
 import type { StepResult } from './autobrowse-actions';
 import { connectCDP, disconnectCDP, getCdpBrowser, getCdpContext, getCdpPort } from './autobrowse-cdp';
@@ -133,7 +134,7 @@ async function extractPageState(view: BrowserView): Promise<{ url: string; title
 }
 
 async function executeScopedAction(view: BrowserView, action: GoalAction, credentialOrigin?: string): Promise<StepResult> {
-  const allowed = (runtimeStatus.vendors || []).filter(vendor => vendor.isActive !== false).flatMap(vendor => { try { return [new URL(vendor.baseUrl || vendor.url).origin]; } catch { return []; } });
+  const allowed = (runtimeStatus.vendors || []).filter(vendor => vendor.isActive !== false).flatMap(vendor => getAllowedVendorOrigins(vendor));
   let origin = '';
   try { origin = new URL(action.type === 'navigate' ? action.url : view.webContents.getURL()).origin; } catch { /* reject unknown surface */ }
   if (!allowed.includes(origin) || (credentialOrigin && credentialOrigin !== origin)) throw new Error('Action target is outside configured vendor scope');
@@ -172,7 +173,7 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
 
   const view = activeTab.view;
   const configuredVendors = (runtimeStatus.vendors || []).filter(vendor => vendor.isActive !== false);
-  const allowedOrigins = configuredVendors.flatMap(vendor => { try { return [new URL(vendor.baseUrl || vendor.url).origin]; } catch { return []; } });
+  const allowedOrigins = [...new Set(configuredVendors.flatMap(vendor => getAllowedVendorOrigins(vendor)))];
   const selectedId = input.inputs?.vendor_id || input.inputs?.vendorId;
   const selectedVendor = configuredVendors.find(vendor => vendor.id === selectedId);
   const hasCredentials = Object.keys(input.inputs || {}).some(key => /^(password|apiKey|token|secret|username|email|login)$/.test(key));

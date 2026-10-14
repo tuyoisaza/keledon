@@ -1,5 +1,9 @@
 # Delivery handoff — `20261013-1900-phdk-auto`
 
+## Current 5.1.24 candidate
+
+Source `c3c4c362a36db2bec142cbc8b06747961b67df26` is on `fix/phdk-tenant-vendor-origin-allowlist`, based on verified main `215df2d723f89ac5ca50ec56190984f5a4a0d4c1`. All five app roots and Browser renderer are 5.1.24. API regression 19/19, Cloud 10/10, Browser policy 6/6, Web diagnostics/UAT 19/19 and 1/1, source SEO 1/1 each, configured builds/typechecks, locale parity, line audit and coherence pass. Cloud ESLint did not return output; overall Auto stays PARTIALLY DELIVERED. Product PR and remote readback are pending; native, persisted DB, deployed SEO/AEO, broad route and client-specific live provider evidence are open.
+
 ## Current continuation — 5.1.23 source candidate
 
 Candidate commit `0e724bfe1fec269ad6037104ad0a01e474172b93` is on `fix/phdk-source-file-boundaries`, based on independently fetched `origin/main` `48ab2023236ba5de56c046f99670a2abab866707`. All five app manifest/lock roots and the Browser renderer widget are 5.1.23. Exact-SHA synthetic Company Co Web UAT is 1/1; API regression 18/18, changed-source lint, Web diagnostics 19/19, configured builds/typecheck, Browser renderer contracts, SEO source checks and PHDK coherence 52/52 pass. Web's existing >500 kB bundle advisory remains. PR/push/merge/readback for this candidate are pending. Whole-product lint/UAT and the remaining external/database acceptance remain blocked, so overall Auto is PARTIALLY DELIVERED.

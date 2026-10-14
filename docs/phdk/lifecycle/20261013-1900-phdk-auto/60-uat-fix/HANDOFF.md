@@ -1,5 +1,9 @@
 # PHDK Lifecycle Handoff — UAT Fix
 
+## Current 5.1.24 source retest
+
+The vendor-management UI now captures additional tenant-specific HTTP(S) origins in all three locales. Exact-SHA production-SPA UAT passes 1/1 at `c3c4c362a36db2bec142cbc8b06747961b67df26`; API/Cloud projection tests and Browser navigation-policy tests cover private/local allowlisted origins and cross-origin rejection. No actual customer CRM/call system was available or contacted.
+
 ## 5.1.23 candidate
 
 UAT exposed one release hygiene issue after the five-root version bump: the Electron renderer still displayed v5.1.22. `browser/scripts/sync-renderer-version.js` synchronized the source widget to v5.1.23. Browser build and renderer-boundary/version-action tests pass; exact-SHA Web UAT then passes on `0e724bfe1fec269ad6037104ad0a01e474172b93`.

@@ -3,8 +3,10 @@ const path = require('node:path');
 const test = require('node:test');
 const {
   isAllowedVendorTabUrl,
+  isAllowedConfiguredVendorUrl,
   isAllowedVendorUrl,
   isTrustedAppRendererUrl,
+  getAllowedVendorOrigins,
   sanitizeVendorNotification,
   secureRendererPreferences,
 } = require('../dist/security-policy.js');
@@ -41,6 +43,19 @@ test('vendor tabs reject non-web schemes and credentials in URLs', () => {
   assert.equal(isAllowedVendorUrl('file:///etc/passwd'), false);
   assert.equal(isAllowedVendorUrl('javascript:alert(1)'), false);
   assert.equal(isAllowedVendorUrl('not a URL'), false);
+});
+
+test('tenant vendor allowlists permit configured private CRM origins and block redirects elsewhere', () => {
+  const allowed = ['http://127.0.0.1:8080', 'https://crm.example.test'];
+  assert.equal(isAllowedConfiguredVendorUrl('http://127.0.0.1:8080/calls', allowed), true);
+  assert.equal(isAllowedConfiguredVendorUrl('https://crm.example.test/record/1', allowed), true);
+  assert.equal(isAllowedConfiguredVendorUrl('http://127.0.0.1:8081/', allowed), false);
+  assert.equal(isAllowedConfiguredVendorUrl('http://169.254.169.254/latest/meta-data', allowed), false);
+  assert.equal(isAllowedConfiguredVendorUrl('https://user:pass@crm.example.test/', allowed), false);
+  assert.deepEqual(
+    getAllowedVendorOrigins({ baseUrl: 'https://crm.example.test/login', allowedOrigins: ['http://127.0.0.1:8080', 'javascript:alert(1)', 'https://evil.example.test/path'] }),
+    ['https://crm.example.test', 'http://127.0.0.1:8080'],
+  );
 });
 
 test('the executor can create an empty, restricted tab before vendor selection', () => {

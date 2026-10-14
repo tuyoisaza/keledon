@@ -333,6 +333,7 @@ export async function createVendor(data: {
     name: string;
     type: string;
     baseUrl?: string;
+    allowedOrigins?: string[];
     username?: string;
     password?: string;
     apiKey?: string;
