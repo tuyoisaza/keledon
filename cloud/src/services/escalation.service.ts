@@ -87,10 +87,16 @@ export class EscalationService {
     }
   }
 
-  async getActive(limit = 100): Promise<EscalationRecord[]> {
+  async getActive(
+    limit = 100,
+    teamIds?: string[],
+  ): Promise<EscalationRecord[]> {
     try {
       return await this.prisma.escalationLog.findMany({
-        where: { status: 'triggered' },
+        where: {
+          status: 'triggered',
+          ...(teamIds ? { teamId: { in: teamIds } } : {}),
+        },
         orderBy: { createdAt: 'desc' },
         take: this.boundedLimit(limit),
       });
@@ -169,7 +175,10 @@ export class EscalationService {
     }
   }
 
-  async getStats(teamId?: string): Promise<{
+  async getStats(
+    teamId?: string,
+    teamIds?: string[],
+  ): Promise<{
     total: number;
     triggered: number;
     acknowledged: number;
@@ -177,7 +186,11 @@ export class EscalationService {
     aborted: number;
   }> {
     try {
-      const where = teamId ? { teamId } : {};
+      const where = teamId
+        ? { teamId }
+        : teamIds
+          ? { teamId: { in: teamIds } }
+          : {};
 
       const [total, triggered, acknowledged, resolved, aborted] =
         await Promise.all([

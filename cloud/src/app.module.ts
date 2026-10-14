@@ -31,6 +31,7 @@ import { EscalationController } from './controllers/escalation.controller';
 import { BrainController } from './controllers/brain.controller';
 import { VoiceModule } from './voice/voice.module';
 import { ResourceScopeGuard } from './guards/resource-scope.guard';
+import { EscalationAccessGuard } from './guards/escalation-access.guard';
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import { ResourceScopeGuard } from './guards/resource-scope.guard';
     TeamController,
     MvpStoreService,
     ResourceScopeGuard,
+    EscalationAccessGuard,
   ],
   exports: [
     SessionService,

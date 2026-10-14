@@ -1,3 +1,11 @@
+## v5.1.38 — 2026-10-14 (Cloud escalation actor and tenant parity)
+
+- Align Cloud escalation routes with API: resolve the actor from the current database record, restrict tenant reads/mutations to assigned company teams and sessions, and ignore client-supplied acknowledgement identities.
+- Pass the authorized team set into aggregate escalation queries so tenant stats and active lists cannot become global reads.
+- Add mirrored API/Cloud regressions for current-DB actor attribution, foreign-tenant denial, role restrictions, and aggregate filtering.
+- Cloud build and regressions, API operational tenant regression, and focused Cloud ESLint pass. Persisted database acceptance remains open; PHDK Auto remains partially delivered.
+- Align all five application package/lock roots and the Browser renderer at 5.1.38.
+
 ## v5.1.37 — 2026-10-14 (typed CRUD request boundaries and Cloud parity)
 
 - Replace untyped CRUD request bodies and actor context with service-derived contracts across API and Cloud.
