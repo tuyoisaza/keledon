@@ -1,5 +1,11 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.32 — tenant Knowledge page repair (2026-10-14)
+
+UAT-030 passes against source commit `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`. `services/web npm run test:uat` passes 1/1. The browser used a local production build, synthetic Company Co fixtures, intercepted API requests, and blocked external network/WebSockets. It verifies user read-only controls, the admin source dialog’s labels/Escape/focus restoration, Spanish/English/Portuguese copy, removal of fabricated transcript/RAG results, and generic error text that omits backend details and secret variable names. `docs/phdk/evidence/uat-local-web.json` records the exact source SHA with an empty source fingerprint and no dirty untracked source files. This does not prove live auth, DB persistence, real RAG/call data, or deployment.
+
+The current catalog has 27 PASS, 2 BLOCKED, and 1 MANUAL. UAT-009 needs safe DB-backed development identities; UAT-010 needs a disposable PostgreSQL environment for persisted CRUD/migration; UAT-006 needs native Windows device/audio interaction. Whole-product acceptance remains **ACCEPTANCE INCOMPLETE**. Client-specific call/CRM acceptance remains tenant-specific by owner decision.
+
 ## Candidate 5.1.31 — Cloud voice-profile detail parity (2026-10-14)
 
 UAT-029 passes in API/Cloud source harnesses. Cloud now exposes the same safe tenant detail route as API, scopes its Prisma lookup by the current DB-derived actor company, and denies a foreign profile ID in `CrudAccessGuard`. Regression 41 verifies list/detail/create/update projections match across both services and omit `config` and `providerCatalog`; Cloud regression 39 verifies its controller method and cross-company guard behavior. Cloud build and regressions pass 14/14; API build and regressions pass 29/29. No persistent profile or identity was accessed.

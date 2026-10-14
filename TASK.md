@@ -1,5 +1,15 @@
 # Current task
 
+## Active Auto continuation — candidate 5.1.32 based on verified main
+
+Continue the owner-authorized four-front PHDK Auto in order. Verified base: `origin/main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`. Current source commit: `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`, KELEDON 5.1.32. Candidate includes API/Cloud/Browser role and tenant hardening, tenant-allowlisted client CRM origins, tenant-safe Knowledge/vector operations with Qdrant-compatible UUID IDs, and the repaired Knowledge UX: truthful API-backed data, no fake call/RAG panel, es/en/pt localization, safe errors, and the shared accessible modal. API regression 33/33, Cloud 14/14, Browser 33/33; all configured builds pass; Web diagnostics 19/19; exact-source UAT 1/1; Web/Landing SEO 1/1 each; PHDK coherence 52/52. All five package/lock roots and Browser renderer align at 5.1.32. PR #102 exists but still needs the current source/docs push.
+
+The four owner-confirmed fronts remain active. UAT is 27 PASS, 2 BLOCKED, 1 MANUAL; UAT-009 safe DB-backed identities, UAT-010 disposable PostgreSQL persistence/migration, and UAT-006 native device/audio remain open. Deployed SEO/AEO is unmeasured; client live call/CRM acceptance is tenant-specific. No database, customer provider/data, private CRM endpoint, or deployment was used.
+
+SIGUIENTE PASO: complete Check and handoff reconciliation, push/update PR #102, then meet applicable PR controls and verify remote `main` after integration.
+
+## Historical active candidate — 5.1.31
+
 ## Active Auto continuation — candidate 5.1.31 based on verified main
 
 Continue the owner-authorized four-front PHDK Auto in its confirmed order. Verified base is `origin/main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`, delivered KELEDON 5.1.30 and PHDK 2.50.10 coherence 52/52. Candidate 5.1.31 retires the shared-secret CRUD webhook and runtime seed/DDL paths from API and Cloud, removes the dormant guard bypass, rejects caller-supplied password hashes and audit-log writes, preserves approved same-company user reassignment, and makes TeamInterface replacement validated and transactional. It adds superadmin-only Workflow detail/CRUD in API, Cloud, and Web; aligns API's typed CRUD guard with Cloud; and gives API/Cloud tenant voice-profile operations the same safe projection. A new source finding closes plaintext credential storage in arbitrary `Vendor.config`: API and Cloud now accept only `allowedOrigins` in config, reject non-object and unsupported config fields, and refuse edits when legacy config contains unsupported fields. API regression is 29/29; Cloud regression is 12/12; both builds, changed-source lint, Prettier and PHDK coherence 52/52 pass. UAT-024/025 cover voice-profile projection parity and vendor config schema enforcement. All five app roots and Browser renderer align at 5.1.31. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open at `cf5e6b5be4905f122b82a2ff5c4cc2b8a1b2ed5b`; independent security review remains pending.

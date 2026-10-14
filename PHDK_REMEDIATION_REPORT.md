@@ -107,3 +107,10 @@ Residual items require separate acceptance environments: persisted CRUD/migratio
 Check found that API and Cloud still had shared-secret webhook actions that loaded file-controlled seed input and ran direct DDL; API seed input could assign a submitted role. Both backends now retire the webhook, seed and runtime migration routes (HTTP 410 on authenticated superadmin requests), remove the seed/migration services and guards, and delete the dormant handler-name bypass from CrudAccessGuard. Real HTTP wiring regressions assert 410 in both backends; cross-backend static regression checks both guards. API/Cloud regression and builds pass. No database, seed file, migration or external provider was accessed.
 
 Remaining Check scope includes the model-specific CRUD matrix and environment-dependent persistence/UAT. Candidate delivery is pending.
+## Current remediation recheck — candidate 5.1.32 (2026-10-14)
+
+Completed in-scope source fixes now include tenant-scoped Knowledge/vector operations with Qdrant-compatible deterministic UUID point IDs; the Knowledge page no longer presents fabricated active-call/transcript/RAG values, is localized in three supported locales, masks backend errors and uses the shared accessible modal. Exact-source UAT-030 passes at `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`. API/Cloud/Browser regressions pass 33/33, 14/14 and 33/33; builds pass; Web diagnostics 19/19; Web/Landing SEO 1/1 each; PHDK coherence 52/52.
+
+No auto-fixable defect remains in the current source slice. Unresolved work is environment/manual or delivery: real DB-backed identities, disposable PostgreSQL persistence/migration, native Windows device/audio, deployed SEO/AEO, and PR #102 integration/readback. Whole Auto is **PARTIALLY DELIVERED**, not complete. No database, customer provider, private CRM endpoint or deployment was accessed.
+
+SIGUIENTE PASO: deliver the tested candidate through the existing PR controls; keep database/native/deployed acceptance gates open until evidence is available.

@@ -1,7 +1,7 @@
 {
-  "version": "5.1.31",
-  "date": "2026-10-14T20:56:45.044Z",
-  "candidateRevision": "f700fe0f9cc57c0c8e3370698724ef5660e8d8d4",
+  "version": "5.1.32",
+  "date": "2026-10-14T21:41:14.799Z",
+  "candidateRevision": "93f844bfe47f3b17e3c16f94adb76bab2c0d04b5",
   "candidateSourceFingerprint": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "dirtyUntrackedSourceFiles": 0,
   "sourceRoots": [
@@ -12,7 +12,7 @@
     "landing"
   ],
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:53921",
+  "origin": "http://127.0.0.1:51744",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-THEME dark/light/corporate tokens reach descendant controls, persistence PASS; automated login text contrast sample has no failures (not a full-app accessibility certification)",
@@ -23,6 +23,7 @@
     "UAT-008 superadmin selects allowlisted synthetic profile, temporary banner/token and return-to-superadmin flow PASS (mocked UI API; server audit/expiry/revocation covered by API regressions)",
     "UAT admin status page renders safe server availability only; superadmin retains detailed diagnostics (synthetic API fixture)",
     "UAT-004 company/brand/team/user/vendor administration Spanish copy and manager user restrictions: localized routes/search and modal controls; no role/company payload fields; foreign team absent PASS (synthetic UI; API guard tested separately)",
+    "UAT-030 Knowledge tenant fixture is readable but read-only for users; fake live transcript/RAG claims are absent; Spanish/English/Portuguese copy and accessible manager modal pass; backend errors redact internal details (mocked API only)",
     "UAT-T-005-DASHBOARD Spanish empty/session states, English and Portuguese greeting/stats, and accessible table caption/column headers PASS (synthetic API)",
     "UAT-T-005-SESSIONS Spanish live/history/detail and call-monitor copy, filters, statuses, captions, scoped headers and detail navigation PASS (synthetic API)",
     "UAT-T-007-PROFILE-DEVICES en/es/pt profile role/date formatting, Spanish device status/empty state, navigation to localized Keledon launcher and retry after visible API failure PASS (mocked API)",
@@ -30,7 +31,7 @@
     "UAT-T-009 KELEDON admin create flow: localized labeled fields, scoped company/brand/team selectors, native accessible form and delete-confirmation dialog; payload contains no caller companyId and uses server input shape PASS (synthetic UI/API)",
     "UAT-004 provider settings Spanish localization and write-only key: translated screen renders; no response prefill; replacement clears after success; untouched blank omitted PASS",
     "UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)",
-    "UAT-002 5.1.31 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
+    "UAT-002 5.1.32 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
   ],
   "themeTokens": {
     "light": {

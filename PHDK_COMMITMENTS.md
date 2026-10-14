@@ -1,5 +1,23 @@
 # Commitment ledger
-## Active run `20261014-0007-phdk-auto-completion` — refreshed Capture
+
+## Active run `20261014-0007-phdk-auto-completion` — refreshed candidate 5.1.32
+
+The four owner-confirmed commitments remain active in the confirmed order. Base: verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; source commit `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`; five package/lock roots plus Browser renderer are 5.1.32. API 33/33, Cloud 14/14, Browser 33/33; all product builds pass; Web diagnostics 19/19; exact-source synthetic UAT 1/1; Web/Landing SEO 1/1 each; PHDK coherence 52/52. Exact UAT evidence is bound to `93f844b` with empty source diff. PR #102 has not yet been updated to this commit.
+
+| ID | Confirmed front | Current truth | Remaining acceptance |
+|---|---|---|---|
+| CMT-001 | Baseline, versions and PR reconciliation | Candidate 5.1.32 is version-aligned and tested on the existing fix branch. | Push/update PR #102; satisfy actual checks/reviews; merge and verify exact remote main. |
+| CMT-002 | Shared visible diagnostics widget and safe diagnostics | Widget and diagnostics pass 19/19; UAT-030 closes the in-scope Knowledge page fake-state/i18n/error/modal defect. | Native OS permission/device/audio, broad route and screen-reader accessibility remain open. |
+| CMT-003 | Voice → Cloud → Browser → CRM, providers chosen per client | API/Cloud/Browser contracts, tenant private-origin validation and offline synthetic flow pass. | Live call/CRM acceptance is per tenant after a customer configures a provider. |
+| CMT-004 | Administration and permissions | Owner-approved least privilege, current-DB actor/tenant scopes, tenant-safe knowledge/vector APIs and safe UI role gating pass source regressions. | Disposable-DB persisted CRUD/migration and safe DB-backed test identities remain open; static 35-model/126-row inventory is not runtime proof. |
+
+Overall: **PARTIALLY DELIVERED**. UAT: 27 PASS, 2 BLOCKED, 1 MANUAL. No database, customer provider, private CRM endpoint, customer data or deployment was used.
+
+SIGUIENTE PASO: finalize Check/lifecycle records, update PR #102 with the candidate, then use actual PR controls for merge and remote-main verification.
+
+---
+
+## Historical Capture snapshot — prior baseline refresh
 
 Four owner-confirmed commitments remain in order. PR #96 delivered KELEDON 5.1.27 to `main` at `a0425134ba69b1feaf165cd512caad8c136ca6f8`; fresh fetch and `git ls-remote` agree. All five app roots and Browser renderer align. The slice improves API/Cloud flow-step reorder integrity, but remaining role-by-model authorization mapping and whole-product acceptance remain open.
 

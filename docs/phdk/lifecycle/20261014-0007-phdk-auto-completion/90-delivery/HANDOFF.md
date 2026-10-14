@@ -11,6 +11,10 @@ SIGUIENTE PASO: provide safe development identities, disposable PostgreSQL and a
 ---
 # Delivery handoff — candidate 5.1.26
 
+## Candidate 5.1.32 — delivery pending
+
+Exact source candidate `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5` is one commit ahead of the existing PR #102 branch head. Its Knowledge UAT-030 and all listed API/Cloud/Browser/Web/Landing source checks pass; lifecycle evidence is being reconciled. The PR head still needs the source commit and candidate documentation/evidence, followed by review of actual GitHub checks/reviews, merge using the repository's permitted normal method, and exact remote-`main` source/version/tree readback. Existing branch commits will not be rewritten. Do not claim delivery before those operations. Overall PHDK Auto remains PARTIALLY DELIVERED: UAT-009/010, UAT-006, exhaustive persisted CRUD authorization, broad accessibility/localization, and deployed SEO/AEO remain external acceptance gates. CRM/call acceptance is client-specific; configured private destinations require URL validation plus tenant allowlisting, and the Cloud service must not fetch them.
+
 ## Active candidate 5.1.27 — delivery pending
 
 PR #96 merged source commit `996464da5c1bb0567c6e9fa7d40e0a212e6d7b48` to `main` at `a0425134ba69b1feaf165cd512caad8c136ca6f8`. Fresh `origin/main` and `git ls-remote` match; PR head and squash tree both resolve to `13c1f43456b363eec37ad275b1c77838b50cdae3`. API/Cloud flow reorder validates exact membership and writes in one serializable transaction; the Prisma inventory drift test verifies 35/35 model names and 126 unique core role/surface rows. API regression 21/21, Cloud regression 11/11, API Jest 11/11, focused flow tests, builds/typechecks, exact-commit synthetic Web UAT 1/1, and PHDK coherence pass. Cloud full Jest requires `DATABASE_URL`. GitHub had no hosted checks or review decision configured; no deployment is claimed. Overall PHDK Auto remains PARTIALLY DELIVERED.

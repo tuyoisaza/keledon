@@ -1,4 +1,17 @@
-## Current Auto candidate — 2026-10-14, 5.1.31
+## Current Auto candidate — 2026-10-14, 5.1.32
+
+| Commitment | Candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | Source commit `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`; all five app package/lock roots and Browser renderer align at 5.1.32; PHDK coherence 52/52. | PR #102 needs source/docs push, current control/review reconciliation, merge and exact remote-main readback. |
+| CMT-002 | Diagnostics 19/19; local built-SPA UAT 1/1, exact-source UAT-030 verifies Knowledge role controls, localization, truthful states, generic errors and keyboard-accessible modal. | Native Windows device/audio and broad route/screen-reader accessibility acceptance remain open. |
+| CMT-003 | API/Cloud/Browser tenant contracts, URL validation/private-origin allowlists and offline call lifecycle tests pass; no CRM URL was contacted. | Live call/CRM acceptance stays client-specific after tenant provider configuration. |
+| CMT-004 | Approved role policy, tenant-scoped CRUD and vector store controls, valid Qdrant UUIDs; API 33/33 and Cloud 14/14. 35-model/126-row inventory guard passes. | Real DB-backed role × tenant × surface × operation/migration proof and safe test identities remain open without disposable PostgreSQL. |
+
+Overall: **PARTIALLY DELIVERED**. UAT: 27 PASS, 2 BLOCKED, 1 MANUAL. No DB/provider/customer data/deployment used.
+
+SIGUIENTE PASO: reconcile the final Check and delivery records, update PR #102, then follow actual controls and verify `main` after merge.
+
+## Historical candidate — 2026-10-14, 5.1.31
 
 | Commitment | Candidate evidence | Remaining acceptance |
 |---|---|---|

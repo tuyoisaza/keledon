@@ -13,6 +13,12 @@ RLS/bootstrap policies no longer grant unscoped browser access; unsafe superadmi
 
 SIGUIENTE PASO: complete the final diff review and normal PR delivery from `fix/deny-unscoped-supabase-rls`.
 # PMO milestone history
+## 2026-10-14 — Knowledge UAT remediation integrated in candidate 5.1.32
+
+The fourth-front permissions review led to a Knowledge-page UAT finding: the UI showed a fabricated active-call/RAG example and English-only copy. Candidate 5.1.32 removes that false panel and unused placeholder intake block from the route, localizes the page and safe errors in Spanish/English/Portuguese, uses the shared accessible source modal, and adds exact-source UAT-030. API 33/33, Cloud 14/14, Browser 33/33, Web diagnostics 19/19, exact-source UAT 1/1, Web/Landing SEO 1/1 each, builds and PHDK coherence 52/52 pass. Source SHA is `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`; PR #102 still awaits push/update. The 35-model/126-row inventory test is a drift check, not persisted DB proof. UAT remains partial for safe identities, disposable DB, native device/audio and deployed SEO/AEO. No database, private CRM, live client call or deployment was used.
+
+SIGUIENTE PASO: finish Check and delivery artifacts, update PR #102, and complete actual merge/readback controls.
+
 ## 2026-10-14 — CMT-004 Supabase RLS and seed-account policy
 
 Current source review caught permissive Supabase setup policies, auto-seeded `superadmin` and customer accounts, an email-based Auth elevation trigger, and service-key fixtures that wrote demo sessions/CRM flows into customer data. API/Cloud SQL now uses default-deny RLS with an idempotent cleanup migration; Auth sync grants only `user`, unsafe legacy fixtures and setup guidance are retired, the remaining user fixture is pinned to a nonproduction target, and provider-catalog seeding is similarly gated. UAT-013–017, mirror checks and Node syntax checks pass. No migration, trigger or seed/provisioning script was run. Full model-operation mapping and disposable-DB evidence remain open; candidate delivery is pending.

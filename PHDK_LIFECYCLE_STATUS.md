@@ -1,21 +1,21 @@
-## Current Auto stage — Check remediation candidate 5.1.31 (2026-10-14)
+## Current Auto stage — candidate 5.1.32 (2026-10-14)
 
 | Stage | Status | Evidence / next action |
 |---|---|---|
-| 00 Preflight | VERIFIED / REUSED | Installed PHDK 2.50.10 and verified main 5.1.30 baseline. |
-| 10 Capture | COMPLETE / REUSED | Four owner-confirmed fronts and restrictive role/tenant policy remain current. |
-| 20 Plan | COMPLETE / REUSED | Continue in order; preserve environment-bound client/device acceptance. |
-| 30 PMO | IN PROGRESS | Re-auditing the four confirmed fronts; CMT-004 security and CRUD gaps are being closed source-first. |
-| 40 Integration Review | IN PROGRESS | Retired write routes, Cloud/API hash-audit parity, transactional TeamInterface, superadmin Workflow CRUD, typed guard/voice-profile parity and tenant-scoped detail, strict vendor config schema, voice-profile config disablement, paired vendor payload parity, tenant-scoped Knowledge CRUD, and Qdrant list/status/point-ownership behavior reviewed. |
-| 50 UAT | PARTIAL | API 33/33 and Cloud 14/14 source regression suites; both builds pass; regressions cover Knowledge CRUD and API/Cloud Qdrant search/status/list filters, tenant point mutation ownership, numeric point IDs and deterministic UUID chunk IDs. Web typecheck/build pass; browser build/21 tests; widget/diagnostics 19/19 and exact-candidate built-SPA UAT 1/1; Landing SEO source 1/1/build. Persisted DB, real identities, native device/audio, broad route accessibility/localization and deployed SEO/AEO remain open. |
-| 60 UAT Fix | OPEN | Remediate repository-local actionable cases. |
-| 65 SEO | OPEN / PRIOR EVIDENCE | Deployed measurements still need approved read-only provider evidence. |
-| 67 AEO/GEO | OPEN / PRIOR EVIDENCE | Deployed discovery evidence remains unavailable. |
-| 70 Check | IN PROGRESS | Regressions 38–45 and UAT-025–029 prove paired vendor parity, DB-derived actor scope, minimal user selection, safe voice-profile responses and detail scope, both config boundaries, widget/diagnostics behavior, API/Cloud Knowledge direct-ID checks, Qdrant search/status/list scope, point ownership and valid deterministic chunk IDs; continue other model mappings and coherence. |
-| 80 Remediation | IN PROGRESS | Candidate 5.1.31 is based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; strict vendor config validation, voice-profile config write rejection, API/Cloud pairing and tenant detail parity, tenant-scoped Knowledge CRUD/vector operations and Qdrant-compatible chunk IDs pass builds/regressions. PR #102 is open; independent security review and merge remain pending. |
-| 90 Delivery | PENDING | Reviewed PR #102 is open; normal security review, merge and completion-gate remote readback are required. |
+| 00 Preflight | VERIFIED / REUSED | Installed PHDK 2.50.10; static coherence 52/52. |
+| 10 Capture | COMPLETE / REUSED | Four owner-confirmed fronts in order; restrictive role policy and tenant-selected CRM/private-origin rule remain current. |
+| 20 Plan | COMPLETE / REUSED | Brownfield convergence plan remains applicable. |
+| 30 PMO / Workstreams | COMPLETE FOR CURRENT SOURCE SLICE | Four confirmed workstreams integrated; real client call/CRM acceptance is per customer configuration. |
+| 40 Integration Review | COMPLETE FOR CANDIDATE | API/Cloud/Browser/Web contracts and version 5.1.32 align; API 33/33, Cloud 14/14, Browser 33/33; all builds pass. See `INTEGRATION_REPORT.md`. |
+| 50 UAT | SCOPED PASS / WHOLE-PRODUCT INCOMPLETE | Exact source SHA `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`, empty source fingerprint; local synthetic UAT 1/1, diagnostics 19/19, UAT-030 pass. Whole tally: 27 PASS, 2 BLOCKED, 1 MANUAL. |
+| 60 UAT Fix | COMPLETE FOR LOCAL CODE DEFECTS | Fabricated live transcript/RAG, English-only copy, raw backend errors and hand-rolled modal repaired; exact-source UAT-030 passes. DB, real identity and native-device gates remain external/manual. |
+| 65 SEO | SOURCE PASS / EXTERNAL UNMEASURED | Web SEO 1/1, Landing SEO 1/1/build pass. Application-only Knowledge page change does not alter public discovery; deployed headers/indexation/field metrics unverified. |
+| 67 AEO/GEO | SOURCE REVIEW REUSED / EXTERNAL UNMEASURED | Public claims and locale policy unchanged; prior evidence retained. No answer engine, crawler, market, or deployed visibility was tested. |
+| 70 Check | RUNNING FINAL RECONCILIATION | 35/35 Prisma model inventory and 126 core policy rows are asserted; exhaustive persisted role × tenant × operation × surface behavior remains unverified without isolated DB/identity environment. Reconcile Check report and current artifacts. |
+| 80 Remediation | LOCAL SOURCE PASS | API/Cloud vector scope and UUID point IDs plus Knowledge UI were fixed; builds and regressions pass. Source commit `93f844b`; branch update and PR synchronization pending. |
+| 90 Delivery | PENDING | Push/update PR #102, verify current target/check/review state, satisfy applicable controls, merge, and perform exact remote-main/version readback. |
 
-Overall: **PARTIALLY DELIVERED**. No database, customer provider, or deployment was used.
+Overall: **PARTIALLY DELIVERED**. No database, customer provider, CRM endpoint, or deployment was used. Exact remaining acceptance gates: UAT-009 safe DB-backed identities; UAT-010 disposable DB and persisted CRUD/migration; UAT-006 native Windows device/audio; deployed SEO/AEO evidence.
 
 ## Delivery closeout — Auto 5.1.30, 2026-10-14
 
