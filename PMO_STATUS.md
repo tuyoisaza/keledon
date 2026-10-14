@@ -2,11 +2,11 @@
 
 ## Current portfolio and candidate — 2026-10-14
 
-PR #106 delivered source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0`; PR #107 records delivery at current main `465b3633e571572b540151fe9433898a61c8fc09`. Five app roots and Browser renderer align at 5.1.35; PHDK coherence 52/52. API 35/35, Cloud 14/14 and exact-commit synthetic SPA UAT passed for the shipped source slice. This active docs-only matrix reconciliation is on `docs/phdk-knowledge-matrix-5-1-35` and awaits normal PR delivery. No live CRM call is universal: customer acceptance depends on the selected tenant provider.
+PR #106 delivered source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0`; PR #107 records that source delivery; PR #108 reconciles the CRUD matrix at merge SHA `056e8605097874337c6bc532c006da3a3f772d56`. Five app roots and Browser renderer align at 5.1.35; PHDK coherence 52/52. API 35/35, Cloud 14/14, matrix regression 35 models/154 rows and exact-commit synthetic SPA UAT pass. No live CRM call is universal: customer acceptance depends on the selected tenant provider.
 
 | WS | Current state | Evidence / next gate |
 |---|---|---|
-| WS-001 / CMT-001 | 5.1.35 SOURCE + DELIVERY RECORD MERGED; DOCS RECONCILIATION ACTIVE | PR #106/#107 delivered; current main `465b3633e571572b540151fe9433898a61c8fc09`. Current matrix correction awaits PR delivery/readback. |
+| WS-001 / CMT-001 | 5.1.35 SOURCE + MATRIX DELIVERED | PR #106–#108 delivered; PR #108 merge SHA `056e8605097874337c6bc532c006da3a3f772d56`. No deployment is claimed. |
 | WS-002 / CMT-002 | SOURCE PASS; ACCEPTANCE PARTIAL | Widget/diagnostics 19/19; UAT-030 Knowledge UI pass. Native device/audio and broad route accessibility/manual screen-reader acceptance remain open. |
 | WS-003 / CMT-003 | PROVIDER-INDEPENDENT CONTRACT PASS | Tenant URL validation and allowlists, API/Cloud/Browser payload parity and offline lifecycle tests pass. Live call/CRM acceptance occurs per configured client. |
 | WS-004 / CMT-004 | SOURCE POLICY PASS; PERSISTED ACCEPTANCE OPEN | API 35/35, Cloud 14/14, 35-model inventory/154 role-surface drift assertions. Disposable-DB role/tenant/migration proof and safe DB-backed test identities remain unavailable. |
