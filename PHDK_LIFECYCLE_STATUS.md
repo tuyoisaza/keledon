@@ -12,7 +12,7 @@
 | 65 SEO | OPEN / PRIOR EVIDENCE | Deployed measurements still need approved read-only provider evidence. |
 | 67 AEO/GEO | OPEN / PRIOR EVIDENCE | Deployed discovery evidence remains unavailable. |
 | 70 Check | IN PROGRESS | Regressions 40/41 and vendor UAT-025 prove DB-derived actor scope, minimal user selection, safe voice-profile responses and vendor config schema enforcement; continue other model mappings and coherence. |
-| 80 Remediation | IN PROGRESS | Candidate 5.1.31 is based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; strict vendor config validation is locally verified and will be published on PR #102 after commit. |
+| 80 Remediation | IN PROGRESS | Candidate 5.1.31 is based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; strict vendor config validation is published on PR #102 head `cf5e6b5be4905f122b82a2ff5c4cc2b8a1b2ed5b`. |
 | 90 Delivery | PENDING | Reviewed PR #102 is open; normal security review, merge and completion-gate remote readback are required. |
 
 Overall: **PARTIALLY DELIVERED**. No database, customer provider, or deployment was used.
