@@ -1,4 +1,4 @@
-## Current delivery — 5.1.32 source merged; Auto acceptance remains partial
+## Previous delivery record — 5.1.32 source merged; Auto acceptance remained partial at that candidate
 
 Source candidate `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5` was delivered by PR [#102](https://github.com/tuyoisaza/keledon/pull/102), squash-merged to `main` at `7b2547edcf2f397e6fe1098386af226035e2613b`. `origin/main` and `git ls-remote` agree; remote tree `d4198e21b495cf15d9972cf48b5ef0c957dc4ea7` matches the candidate tree. API, Cloud, Web, Landing and Browser package/lock roots report 5.1.32. API 33/33, Cloud 14/14, Browser 33/33; all builds; diagnostics 19/19; exact-source synthetic UAT 1/1; Web/Landing SEO 1/1; PHDK coherence 52/52 pass. GitHub exposed no hosted checks or review submissions. These are scoped source/local results, not full product acceptance.
 
@@ -127,3 +127,14 @@ Local security continuation: the owner confirmed `KELEDON_VENDOR_KEY` is configu
 ## Next work
 
 Continue CHK-002 source mapping/direct-ID coverage and CHK-003 route localization/accessibility fixes. Arrange an isolated authorized database for CMT-004 and CHK-004 acceptance, a supported Windows device/audio environment for CHK-007, and real deployment evidence for CHK-005. Keep public language/market decision CHK-006 open for its owner. Never infer client-specific CRM/call acceptance from a different tenant.
+## Current Auto completion audit — 5.1.33 source merged (2026-10-14)
+
+All four owner-confirmed fronts remain active in order. Candidate branch `fix/phdk-knowledge-vector-cleanup-5-1-33` was based on verified `main` `9908a4c6abcef0c378b9bb661ffb5b57146b27ae`. Product commit `c5bf7161f55d488508841ec6281695c0b3c93f02` in PR [#104](https://github.com/tuyoisaza/keledon/pull/104) was squash-merged at `d40a5f1e7ad92bb66a9cc06211c105ec3c708a9a`. Fresh `origin/main` and `git ls-remote` agree; remote main and PR source trees both equal `447a1d1e006c8f59fb5a026a899ab7c7d4fea288`. Five app package/lock roots and the Browser renderer report 5.1.33.
+
+The source review found that generic API/Cloud KnowledgeBase and KnowledgeDocument deletion left Qdrant data behind. Both backends now remove document points by stored `documentId` or remove the base collection before the Prisma record; Qdrant errors preserve the relational record. The 12/12 isolated service assertions use mocked Qdrant/Prisma. API build/regression 34/34, Cloud build/regression 14/14, Browser build/tests 33/33, Web typecheck/build/diagnostics 19/19/synthetic UAT 1/1/SEO 1/1, Landing build/SEO 1/1, and PHDK coherence 52/52 pass. `git diff --check` passed. GitHub showed no checks or review submissions; `main` is unprotected. Current-conversation owner approval covered the Auto goal and restrictive policy; this is not represented as independent human code review.
+
+PHDK evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.33.json`. The completion gate correctly returns **BLOCKED** for the incomplete overall acceptance, not for source delivery: UAT-009/010 lack safe DB-backed identities/disposable PostgreSQL; UAT-006 lacks native Windows device/audio; full persisted model × role × tenant × surface × operation proof, live Qdrant and delete/reindex concurrency, broad route accessibility/localization and deployed SEO/AEO remain open. Customer-specific call/CRM acceptance applies after each customer configures its provider. No production DB, customer record, private CRM endpoint or deployment was used.
+
+Result: **SOURCE DELIVERY COMPLETE / PHDK AUTO PARTIALLY DELIVERED**. PR #104 and exact remote `main` readback are verified. Do not report overall Auto as complete.
+
+SIGUIENTE PASO: close the explicitly blocked UAT/Check items on isolated development infrastructure and supported device hardware; retain client-specific live integration testing until a provider is configured.

@@ -1,3 +1,9 @@
+## v5.1.34 — 2026-10-14 (reconcile current PHDK acceptance evidence)
+
+- Reconcile the active lifecycle, CRUD matrix, and Check report with the merged 5.1.33 Knowledge vector cleanup; distinguish mocked source verification from still-open PostgreSQL, live-Qdrant, and concurrency acceptance.
+- Keep the overall PHDK Auto status partial and preserve earlier candidate records as history.
+- Align all five application package/lock roots and the Browser renderer at 5.1.34.
+
 ## v5.1.33 — 2026-10-14 (remove stale knowledge vectors on CRUD deletion)
 
 - Clean Qdrant vectors by document payload before deleting KnowledgeDocument rows, and remove a knowledge-base collection before deleting its relational record, in both API and Cloud. Qdrant failures preserve the database record.

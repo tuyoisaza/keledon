@@ -14,10 +14,10 @@
 | 65 SEO | SOURCE PASS / EXTERNAL UNMEASURED | Web and Landing source SEO checks pass; deployed evidence remains unavailable. |
 | 67 AEO/GEO | SOURCE REVIEW REUSED / EXTERNAL UNMEASURED | No public discovery-content change; remote crawler evidence remains open. |
 | 70 Check | SOURCE FINDING REMEDIATED / ACCEPTANCE PARTIAL | Stale Qdrant data on generic Knowledge deletion fixed in API/Cloud. Broader CRUD and environment-bound gates stay open. |
-| 80 Remediation | SOURCE PASS / DELIVERY PENDING | Candidate `fix/phdk-knowledge-vector-cleanup-5-1-33` is based on verified main `9908a4c6abcef0c378b9bb661ffb5b57146b27ae`; normal PR flow pending. |
-| 90 Delivery | RUNNING | Final source/diff review and delivery proof next; no PR or merge yet; no deployment claimed. |
+| 80 Remediation | SOURCE FIX DELIVERED | The Knowledge vector cleanup source fix is included in PR #104 and verified on `main`; PostgreSQL/Qdrant runtime and concurrency remain open. |
+| 90 Delivery | SOURCE MERGED / REMOTE VERIFIED | PR #104 squash-merged at `d40a5f1e7ad92bb66a9cc06211c105ec3c708a9a`; fresh `origin/main` and `git ls-remote` match; source/main trees match at `447a1d1e006c8f59fb5a026a899ab7c7d4fea288`; five roots/renderer are 5.1.33. Completion gate remains blocked by partial acceptance. |
 
-Overall: **PHDK Auto PARTIALLY DELIVERED until merge/readback and remaining acceptance evidence**. Integration/UAT evidence cannot prove database persistence, live CRM/call connectivity, deployed SEO/AEO, or native audio behavior.
+Overall: **SOURCE DELIVERED / PHDK Auto PARTIALLY DELIVERED**. `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.33.json` records PASS for version, commit, PR and remote readback and BLOCKED for whole-product acceptance. UAT-009/010/006, full persisted CRUD mapping, live Qdrant/concurrency, broad accessibility/localization and deployed SEO/AEO remain open. No production database, client endpoint or deployment was used.
 
 ## Current Auto continuation — candidate 5.1.32 (2026-10-14)
 

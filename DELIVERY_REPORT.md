@@ -179,3 +179,14 @@ Validation: API 34/34 regression suites and build pass; Cloud 14/14 and build pa
 Acceptance remains partial for the exhaustive persisted 35-model role/tenant/surface/operation matrix, UAT-009/010 safe DB identities and disposable PostgreSQL, UAT-006 native device/audio, broad accessibility/localization, deployed SEO/AEO, and per-client live CRM/call testing once selected/configured. Cross-store concurrency remains unverified.
 
 SIGUIENTE PASO: finalize the outgoing source/documentation diff and PHDK completion evidence, then complete the authorized branch-to-main PR delivery.
+# Current Auto delivery — 5.1.33 merged; whole acceptance partial (2026-10-14)
+
+KELEDON's four owner-confirmed Auto fronts remain in scope. The current source fix removes Qdrant points on generic KnowledgeDocument deletion and the collection on KnowledgeBase deletion in API and Cloud, before relational deletion; Qdrant failures preserve relational records. Source commit `c5bf7161f55d488508841ec6281695c0b3c93f02` was squash-merged by [PR #104](https://github.com/tuyoisaza/keledon/pull/104) to `main` at `d40a5f1e7ad92bb66a9cc06211c105ec3c708a9a`. Fresh `origin/main` and `git ls-remote` match. The merge tree and PR source tree are both `447a1d1e006c8f59fb5a026a899ab7c7d4fea288`. All five app package/lock roots and Browser renderer read 5.1.33.
+
+The source diff and scoped checks passed: API build/regressions 34/34; Cloud build/regressions 14/14; focused vector-cleanup regression 12/12; Browser build/tests 33/33; Web typecheck/build, diagnostics 19/19, local synthetic UAT 1/1 and SEO 1/1; Landing build/SEO 1/1; PHDK coherence 52/52; whitespace check. GitHub reported no hosted checks or review submissions; main is not branch-protected. Current owner authorization was given in the Auto conversation; no human GitHub review is claimed. No deployment is claimed.
+
+PHDK completion evidence is recorded in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.33.json`. The mechanical gate is **BLOCKED** only by `whole_product_acceptance`: UAT-009/010 need safe DB-backed identities and disposable PostgreSQL; UAT-006 needs native Windows device/audio; the complete persisted CRUD operation matrix, live Qdrant and concurrent delete/reindex, broad accessibility/localization, and deployed SEO/AEO remain open. Live CRM/call verification remains specific to each client's configured provider. The evidence gate therefore does not certify Auto completion.
+
+Status: **SOURCE DELIVERED / PHDK AUTO PARTIALLY DELIVERED**. No production database, customer data, private CRM endpoint, or deployment was used.
+
+SIGUIENTE PASO: provide the isolated database/identity target and supported Windows device/audio host to close UAT-009/010/006; then continue the remaining CRUD and external SEO/AEO acceptance without production or customer data.

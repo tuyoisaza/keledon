@@ -1,0 +1,38 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto: KELEDON four owner-confirmed fronts and maximum applicable PHDK source conformance",
+  "target_branch": "main",
+  "expected_version": "5.1.33",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "source_commit_sha": "c5bf7161f55d488508841ec6281695c0b3c93f02",
+  "merged_commit_sha": "d40a5f1e7ad92bb66a9cc06211c105ec3c708a9a",
+  "source_tree_sha": "447a1d1e006c8f59fb5a026a899ab7c7d4fea288",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/104",
+  "branch": "fix/phdk-knowledge-vector-cleanup-5-1-33",
+  "merge_method": "squash",
+  "checks": {
+    "version_bump": {"status": "PASS", "evidence": "Remote main package/lock metadata in services/api, cloud, services/web, landing, and browser all report 5.1.33; Browser renderer is v5.1.33; CHANGELOG.md contains v5.1.33."},
+    "commit_prefix": {"status": "PASS", "evidence": "Source commit c5bf7161f55d488508841ec6281695c0b3c93f02 begins with v5.1.33; squash merge title retains that prefix."},
+    "push_pr_merge_remote_main": {"status": "PASS", "evidence": "Branch pushed and PR #104 merged at d40a5f1e7ad92bb66a9cc06211c105ec3c708a9a; fresh origin/main and git ls-remote agree. PR source and main tree SHA both equal 447a1d1e006c8f59fb5a026a899ab7c7d4fea288."},
+    "api": {"status": "PASS", "evidence": "API production build passes; test:regression 34/34 suites, including regression 46 with 12/12 mocked API/Cloud assertions; changed-source ESLint and Prettier pass."},
+    "cloud": {"status": "PASS", "evidence": "Cloud production build passes; full regression 14/14 suites; changed-source ESLint and Prettier pass."},
+    "browser": {"status": "PASS", "evidence": "Browser TypeScript build and offline test suite 33/33 pass."},
+    "web": {"status": "PASS", "evidence": "Web typecheck/build pass; diagnostics 19/19; exact candidate local production SPA UAT 1/1 with synthetic APIs intercepted; Web SEO source test 1/1."},
+    "landing": {"status": "PASS", "evidence": "Landing build and SEO source test 1/1 pass."},
+    "phdk_coherence": {"status": "PASS", "evidence": "PHDK v2.50.10 coherence checker passes all 52 manifest mappings."},
+    "pr_review_and_checks": {"status": "NOT_APPLICABLE", "evidence": "GitHub reports no status checks or review submissions; GET branch protection returned 404 Branch not protected. No formal platform review/check requirement was present. Owner approved the active PHDK Auto scope in this conversation; this is not represented as human diff review."},
+    "whole_product_acceptance": {"status": "BLOCKED", "evidence": "UAT remains 28 PASS, 2 BLOCKED, 1 MANUAL. UAT-009/010 require safe DB-backed identities and disposable PostgreSQL; UAT-006 requires native Windows device/audio. The complete 35-model persisted role×tenant×surface×operation matrix, live Qdrant/delete-reindex concurrency, broad accessibility/localization, and deployed SEO/AEO remain unverified. Live call/CRM acceptance is client-specific after provider configuration."}
+  },
+  "acceptance_status": "PARTIALLY_DELIVERED",
+  "unresolved_commitments": [
+    "CMT-002: native Windows device/audio and broad route/screen-reader accessibility acceptance",
+    "CMT-003: live call/CRM acceptance for each client after that tenant selects/configures its provider",
+    "CMT-004: disposable-PostgreSQL persisted CRUD/migration proof, safe DB-backed test identities, and complete role×tenant×surface×operation matrix",
+    "UAT-031 limitation: real Qdrant behavior and concurrent delete/reindex or cross-store recovery after Prisma failure remain unverified",
+    "CHK-AUTO-005/009: deployed SEO/AEO field measurements"
+  ],
+  "deployment": "NOT_PERFORMED_OR_VERIFIED",
+  "production_database_customer_data_or_private_crm": "NOT_USED",
+  "owner_approval": "PHDK Auto and restrictive permission policy approved in the active conversation; no GitHub review submission is claimed"
+}

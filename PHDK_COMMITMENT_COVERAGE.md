@@ -173,11 +173,11 @@ Cross-cutting tasks PLAN-AUTO-005 (full PHDK Check/remediation), PLAN-AUTO-007 (
 
 | Commitment | Candidate evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | Candidate branch `fix/phdk-knowledge-vector-cleanup-5-1-33` is based on verified main `9908a4c6abcef0c378b9bb661ffb5b57146b27ae`; five app roots/locks and Browser renderer align at 5.1.33; full local candidate checks pass. | Commit, push/PR, actual control reconciliation, merge and exact remote-main readback remain pending. |
+| CMT-001 | PR #104 squash-merged at `d40a5f1e7ad92bb66a9cc06211c105ec3c708a9a`; remote readbacks and source/merge trees agree; five app roots/locks and Browser renderer align at 5.1.33. | Source delivery verified; no deployment is claimed. |
 | CMT-002 | Diagnostics 19/19; exact-candidate synthetic built-SPA UAT 1/1 covers the widget and selected journeys. | Native Windows device/audio and broad route/screen-reader accessibility remain open. |
 | CMT-003 | Provider-neutral API/Cloud/Browser contracts; validated tenant-allowlisted private CRM origins; no private destination contacted. | Live voice/CRM acceptance remains customer-specific once each tenant chooses/configures a provider. |
-| CMT-004 | Restrictive role policy and actor/tenant DB scope retained; UAT-031/regression 46 verifies vector cleanup-before-row deletion and failure-preserves-row behavior in both services. | Disposable PostgreSQL persistence, real Qdrant and concurrent reindex/delete remain unverified; full 35-model operation matrix remains open. |
+| CMT-004 | Restrictive role policy and actor/tenant DB scope retained; UAT-031/regression 46 verifies vector cleanup-before-row deletion and failure-preserves-row behavior in both services (12/12 mocked assertions). | Disposable PostgreSQL persistence, real Qdrant and concurrent reindex/delete remain unverified; full 35-model operation matrix remains open. |
 
 Overall: **PARTIALLY DELIVERED**. UAT: 28 PASS, 2 BLOCKED, 1 MANUAL. No DB/provider/customer data/deployment used.
 
-SIGUIENTE PASO: complete the authorized remote-main PR flow, then update the mechanical evidence with the observed merge SHA and actual controls.
+SIGUIENTE PASO: provide the isolated DB/identity and native device/audio environments; then close the remaining acceptance evidence. The current delivery proof is recorded in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.33.json`.
