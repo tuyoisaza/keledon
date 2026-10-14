@@ -2,7 +2,7 @@
 
 ## Candidate 5.1.27 — CHK-002 source remediation
 
-Resolved the source-level flow-step reorder divergence and transaction race: API and Cloud validate malformed inputs and exact unique step membership, then apply all order updates in the same serializable transaction. Focused tests: API 7/7, Cloud 10/10. Full API/Cloud configured builds and typechecks pass; regressions pass API 21/21 and Cloud 11/11. The 35-model/126-core-row assertion is drift protection only. Cloud full Jest needs a disposable DB URL; Web local UAT failed to load `/login`; these are recorded without false PASS. Remaining role×tenant×surface×operation coverage for 26 models and persisted DB acceptance stay open. Candidate delivery follows through the normal PR path.
+Resolved the source-level flow-step reorder divergence and transaction race: API and Cloud validate malformed inputs and exact unique step membership, then apply all order updates in the same serializable transaction. Focused tests: API 7/7, Cloud 10/10. Full API/Cloud configured builds and typechecks pass; regressions pass API 21/21 and Cloud 11/11. The 35-model/126-core-row assertion is drift protection only. Cloud full Jest needs a disposable DB URL; sequential synthetic Web UAT passes 1/1. PR #96 merged 5.1.27 at `a0425134ba69b1feaf165cd512caad8c136ca6f8` and exact remote readback passes. Remaining role×tenant×surface×operation coverage for 26 models and persisted DB acceptance stay open.
 
 Status: UAT Fix source remediation completed for candidate 5.1.26. UAT-008 now passes with an approved development/staging-only audited flow; see 60-uat-fix. The candidate branch and final delivery remain open. Previous remediation record follows.
 
