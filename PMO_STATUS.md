@@ -1,8 +1,8 @@
-# PMO status — current continuation 5.1.15; overall PARTIALLY DELIVERED
+# PMO status — current continuation 5.1.16; overall PARTIALLY DELIVERED
 
-## Latest candidate — dashboard localization and table semantics
+## Latest candidate — profile, device and session-detail journeys
 
-Branch `fix/phdk-auto-full-conformity` is based on fetched `origin/main` `ab7a6e867508d834ccec755fc5ba9a985e3b9be4`; five app package/lock roots align at 5.1.15. Web typecheck/build and synthetic UAT 1/1 pass; UAT-T-005 covers Spanish dashboard/session flows, English/Portuguese dashboard copy, and accessible table/filter names. Diagnostics tests are 18/18, catalogs match 562/562 under the current recursive inventory, and focused ESLint across changed TSX files has 0 errors/14 warnings. Normal PR delivery is pending. CMT-001..004 remain active. Persisted CRUD/migration, native Electron/device/audio, broad route accessibility/localization and deployed SEO/AEO remain acceptance gaps. No deployment is claimed.
+Branch `fix/phdk-route-accessibility-i18n` is based on fetched `origin/main` `c8534e6f6568922d540eabfba4abe90cc93749c1`; all five app package/lock roots align at 5.1.16. Web typecheck/build, synthetic UAT 1/1, diagnostics 18/18, SEO source test 1/1 and locale parity 644/644 pass. UAT-T-005 covers session-detail navigation; UAT-T-007 covers profile role/date localization in en/es/pt and device status/empty/error/retry states and localized launcher navigation. Focused ESLint has 0 errors. Source commit `7ce3509` is recorded; product PR and fresh `main` readback remain pending. CMT-001..004 remain active. Persisted CRUD/migration, native Electron/device/audio, broad route accessibility/localization and deployed SEO/AEO remain open. No deployment is claimed.
 
 ## Latest integrated source — 5.1.9
 

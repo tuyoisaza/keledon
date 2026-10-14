@@ -1,12 +1,17 @@
 import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from '@/context/I18nContext';
 import { User, Building2, Tag, Users, Calendar, Clock, Shield } from 'lucide-react';
 
 export default function ProfilePage() {
   const { user } = useAuth();
+  const { t, locale } = useTranslation();
+  const role = user?.role;
+  const knownRoles = ['user', 'agent', 'coordinator', 'admin', 'superadmin'];
+  const roleKey = role && knownRoles.includes(role) ? role : 'unknown';
 
   const formatDate = (dateString?: string) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
+    if (!dateString) return t('profile.unavailable');
+    return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -14,8 +19,8 @@ export default function ProfilePage() {
   };
 
   const formatDateTime = (dateString?: string) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleString('en-US', {
+    if (!dateString) return t('profile.unavailable');
+    return new Date(dateString).toLocaleString(locale, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -26,7 +31,7 @@ export default function ProfilePage() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">My Profile</h1>
+      <h1 className="text-2xl font-bold mb-6">{t('profile.title')}</h1>
 
       <div className="bg-card rounded-xl border border-border p-6 space-y-6">
         {/* Profile Picture & Basic Info */}
@@ -35,7 +40,7 @@ export default function ProfilePage() {
             {user?.avatar ? (
               <img
                 src={user.avatar}
-                alt={user.name}
+                alt={user.name || t('profile.avatar')}
                 className="w-24 h-24 rounded-full object-cover"
               />
             ) : (
@@ -43,11 +48,11 @@ export default function ProfilePage() {
             )}
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-semibold">{user?.name || 'Unknown User'}</h2>
-            <p className="text-muted-foreground">{user?.email || 'No email'}</p>
+            <h2 className="text-xl font-semibold">{user?.name || t('profile.unknownUser')}</h2>
+            <p className="text-muted-foreground">{user?.email || t('profile.noEmail')}</p>
             <div className="flex items-center gap-2 mt-2">
               <Shield className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-medium capitalize">{user?.role || 'user'}</span>
+              <span className="text-sm font-medium">{t(`profile.role.${roleKey}`)}</span>
             </div>
           </div>
         </div>
@@ -58,8 +63,8 @@ export default function ProfilePage() {
           <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
             <Building2 className="w-5 h-5 text-muted-foreground mt-0.5" />
             <div>
-              <p className="text-sm text-muted-foreground">Company</p>
-              <p className="font-medium">{user?.company_name || 'Not assigned'}</p>
+              <p className="text-sm text-muted-foreground">{t('profile.company')}</p>
+              <p className="font-medium">{user?.company_name || t('profile.notAssigned')}</p>
             </div>
           </div>
 
@@ -67,8 +72,8 @@ export default function ProfilePage() {
           <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
             <Tag className="w-5 h-5 text-muted-foreground mt-0.5" />
             <div>
-              <p className="text-sm text-muted-foreground">Brand</p>
-              <p className="font-medium">{user?.brand_name || 'Not assigned'}</p>
+              <p className="text-sm text-muted-foreground">{t('profile.brand')}</p>
+              <p className="font-medium">{user?.brand_name || t('profile.notAssigned')}</p>
             </div>
           </div>
 
@@ -76,8 +81,8 @@ export default function ProfilePage() {
           <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
             <Users className="w-5 h-5 text-muted-foreground mt-0.5" />
             <div>
-              <p className="text-sm text-muted-foreground">Team</p>
-              <p className="font-medium">{user?.team_name || 'Not assigned'}</p>
+              <p className="text-sm text-muted-foreground">{t('profile.team')}</p>
+              <p className="font-medium">{user?.team_name || t('profile.notAssigned')}</p>
             </div>
           </div>
 
@@ -85,7 +90,7 @@ export default function ProfilePage() {
           <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
             <Calendar className="w-5 h-5 text-muted-foreground mt-0.5" />
             <div>
-              <p className="text-sm text-muted-foreground">Member Since</p>
+              <p className="text-sm text-muted-foreground">{t('profile.memberSince')}</p>
               <p className="font-medium">{formatDate(user?.created_at)}</p>
             </div>
           </div>
@@ -94,7 +99,7 @@ export default function ProfilePage() {
           <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 md:col-span-2">
             <Clock className="w-5 h-5 text-muted-foreground mt-0.5" />
             <div>
-              <p className="text-sm text-muted-foreground">Last Active</p>
+              <p className="text-sm text-muted-foreground">{t('profile.lastActive')}</p>
               <p className="font-medium">{formatDateTime(user?.last_session)}</p>
             </div>
           </div>

@@ -1,6 +1,10 @@
 # UAT report — KELEDON 5.1.7 (continuation)
 
-## Latest local candidate — 5.1.15 (scoped UAT pass; overall acceptance incomplete)
+## Latest local candidate — 5.1.16 (scoped UAT pass; overall acceptance incomplete)
+
+This run adds UAT-T-007 for profile roles and locale-aware dates in en/es/pt, plus Spanish device status/empty state, navigation into the localized Keledon launcher, visible API failure and retry. Code review found and removed a devices-page pairing request that omitted the required Keledon ID and did not match the server authorization contract. UAT-T-005 follows history to the localized session-detail page and verifies its return link. The latest integrated run passes web typecheck, build, UAT (1/1), diagnostics (18/18), SEO source test (1/1), and focused ESLint (0 errors). All five app package/lock roots are 5.1.16, locale keys match at 644/644, and `docs/phdk/evidence/uat-local-web.json` records candidate revision `7ce3509aeb4d53ce3a90d16153996abf35446024`. UAT uses synthetic fixtures and intercepted APIs; it does not prove persisted data, native pairing/audio or production integrations.
+
+## Previous local candidate — 5.1.15 (scoped UAT pass; overall acceptance incomplete)
 
 Run `20261013-keledon-auto-conformity`, 2026-10-13. After bumping all five app roots to 5.1.15, `services/web npm run build` and `npm run test:uat` pass. The one-suite/one-test local production SPA run uses synthetic Company Co identities, intercepts APIs, and blocks external requests. UAT-T-005-DASHBOARD verifies Spanish greeting/activity/stats and empty/completed-session states, English/Portuguese greeting/stats, and accessible table caption/column scope. UAT-T-005-SESSIONS verifies Spanish live/history/call-monitor copy, superadmin filters, translated status, table names and detail action. Existing diagnostics/admin/provider fixture cases in the same suite also pass. `npm run test:diagnostics` passes 18/18; web typecheck passes; focused ESLint across four changed TSX files has 0 errors and 14 warnings. The three catalogs match at 562 recursive flattened string keys. This is local UI evidence only: it does not establish production auth, persistence, broad screen-reader coverage, client-specific CRM/telephony or deployment.
 

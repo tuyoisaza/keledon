@@ -2,6 +2,6 @@
 
 Run `20261013-keledon-auto-conformity`; local integration review completed 2026-10-13.
 
-`DashboardPage.tsx`, `SessionsLivePage.tsx`, `SessionsHistoryPage.tsx` and `CallMonitorPlaceholder.tsx` now read user-visible copy/status from the shared catalogs. en/es/pt include matching keys. Dashboard/session tables expose captions and `scope="col"` headers; superadmin filters and refresh have programmatic names. No role, tenant, payload, provider, persistence, theme-token or routing behavior changed. Focused lint reports 0 errors and 14 existing warnings across the four pages.
+The v5.1.16 local candidate localizes `ProfilePage.tsx`, `DevicesPage.tsx`, `LaunchKeledonPage.tsx` and `SessionDetailPage.tsx` in the shared en/es/pt catalogs, including role labels and locale-aware dates. Devices use semantic theme colors, expose loading/errors to assistive technology, validate list entries before rendering, and translate known status values with an unknown fallback. Session detail uses an SPA `Link` instead of full-page navigation. No API authorization, tenant, persistence or provider contract changed. Focused lint on these four pages plus the UAT harness passes with 0 errors.
 
-The diff also updates the current Plan, UX decisions, UAT case, conformity record and lifecycle evidence. No unrelated source module was modified. Next: run local production-SPA UAT on the integrated candidate.
+Source review found the devices page generated pairing codes through a route without the required Keledon identifier; the route also enforces manager authorization. The page now points to the established protected launcher and supports list-error retry. UAT, typecheck, build and focused suites pass; UAT remains synthetic and delivery is pending.

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Play, Loader2, Monitor, Shield, AlertCircle, RefreshCw, Copy, Check, Download, Building2, ArrowRightCircle, ListChecks } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getKeledons, getVendors, type Keledon, type Vendor } from '@/lib/crud-api';
@@ -10,7 +10,7 @@ import { apiFetch, apiJson } from '@/lib/api-fetch';
 
 export default function LaunchKeledonPage() {
     const { user } = useAuth();
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
     const [keledons, setKeledons] = useState<Keledon[]>([]);
     const [vendorsMap, setVendorsMap] = useState<Record<string, Vendor[]>>({});
     const [loading, setLoading] = useState(true);
@@ -28,10 +28,6 @@ export default function LaunchKeledonPage() {
     const [pairingCodes, setPairingCodes] = useState<Record<string, { code: string | null; expiresAt: string } | null>>({});
     const [resettingCode, setResettingCode] = useState<string | null>(null);
     const [loadingPairingCodes, setLoadingPairingCodes] = useState<Record<string, boolean>>({});
-
-    useEffect(() => {
-        loadKeledons();
-    }, [user]);
 
     // Load pairing codes for superadmin when keledons change
     useEffect(() => {
@@ -51,37 +47,40 @@ export default function LaunchKeledonPage() {
         return () => controller.abort();
     }, []);
 
-    const loadKeledons = async () => {
+    const loadKeledons = useCallback(async () => {
         setLoading(true);
         try {
             const data = await getKeledons();
             setKeledons(data);
             
             const vendorsByTeam: Record<string, Vendor[]> = {};
-            for (const keledon of data) {
-                if (keledon.teamId && !vendorsMap[keledon.teamId]) {
+            const teamIds = new Set(data.map(keledon => keledon.teamId).filter((id): id is string => Boolean(id)));
+            for (const teamId of teamIds) {
                     try {
-                        const vendors = await getVendors(keledon.teamId);
-                        vendorsByTeam[keledon.teamId] = vendors;
+                        const vendors = await getVendors(teamId);
+                        vendorsByTeam[teamId] = vendors;
                     } catch (_e) {
-                        console.error('Failed to load vendors for team:', keledon.teamId);
+                        console.error('Failed to load vendors for team:', teamId);
                     }
-                }
             }
             if (Object.keys(vendorsByTeam).length > 0) {
                 setVendorsMap(prev => ({ ...prev, ...vendorsByTeam }));
             }
         } catch (error) {
             console.error('Failed to load keledons:', error);
-            toast.error('Failed to load Keledons');
+            toast.error(t('launch.loadFailed'));
         } finally {
             setLoading(false);
         }
-    };
+    }, [t]);
+
+    useEffect(() => {
+        void loadKeledons();
+    }, [loadKeledons]);
 
     const handleLaunch = async (keledonId: string) => {
         if (!user) {
-            toast.error('Please log in to launch');
+            toast.error(t('launch.loginRequired'));
             return;
         }
         
@@ -114,7 +113,7 @@ export default function LaunchKeledonPage() {
                 return;
             }
             toast.info(t('launch.requested'));
-        } catch (_error: any) {
+        } catch {
             console.error('[Launch] Request failed');
             toast.error(t('launch.failed'));
         } finally {
@@ -146,9 +145,9 @@ export default function LaunchKeledonPage() {
                 ...prev,
                 [keledonId]: { code: data.pairing_code, expiresAt: data.expires_at }
             }));
-            toast.success('New pairing code generated');
-        } catch (e: any) {
-            toast.error(e.message || 'Failed to reset pairing code');
+            toast.success(t('launch.pairingCodeGenerated'));
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : t('launch.pairingCodeFailed'));
         } finally {
             setResettingCode(null);
         }
@@ -159,15 +158,15 @@ export default function LaunchKeledonPage() {
             await navigator.clipboard.writeText(code);
             setCopiedId(keledonId);
             setTimeout(() => setCopiedId(null), 2000);
-            toast.success('Pairing code copied!');
+            toast.success(t('launch.pairingCodeCopied'));
         } catch {
-            toast.error('Failed to copy');
+            toast.error(t('launch.copyFailed'));
         }
     };
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
+                <div role="status" aria-label={t('launch.loading')} className="flex items-center justify-center min-h-[400px]">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
         );
@@ -181,9 +180,9 @@ export default function LaunchKeledonPage() {
                 <div className="flex items-center gap-3">
                     <Monitor className="w-8 h-8 text-primary" />
                     <div>
-                        <h1 className="text-2xl font-bold">Launch Keledon</h1>
+                        <h1 className="text-2xl font-bold">{t('launch.title')}</h1>
                         <p className="text-muted-foreground">
-                            Select a Keledon to launch as a desktop agent
+                            {t('launch.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -196,7 +195,7 @@ export default function LaunchKeledonPage() {
                         className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                     >
                         <Download className="w-4 h-4" />
-                        Download App
+                        {t('launch.downloadApp')}
                         {browserVersion && (
                             <span className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-primary-foreground/15 rounded">
                                 v{browserVersion}
@@ -211,18 +210,19 @@ export default function LaunchKeledonPage() {
                             // Try to trigger protocol registration by opening deep link
                             window.location.href = 'keledon://register';
                             setTimeout(() => {
-                                toast.info('If browser opened, protocol is registered. Restart app if not.');
+                                toast.info(t('launch.protocolResult'));
                             }, 1000);
                         }}
                         className="px-3 py-2 text-sm bg-muted hover:bg-muted/80 rounded-lg transition-colors"
-                        title="Test protocol registration"
+                        title={t('launch.testProtocolTitle')}
                     >
-                        Test Protocol
+                        {t('launch.testProtocol')}
                     </button>
                     <button 
                         onClick={loadKeledons}
                         className="p-2 hover:bg-muted rounded-lg transition-colors"
-                        title="Refresh"
+                        title={t('launch.refresh')}
+                        aria-label={t('launch.refresh')}
                     >
                         <RefreshCw className="w-5 h-5" />
                     </button>
@@ -232,8 +232,8 @@ export default function LaunchKeledonPage() {
             {keledons.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                     <AlertCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>No Keledons available</p>
-                    <p className="text-sm mt-2">Create a Keledon in Management → Keledons</p>
+                    <p>{t('launch.noKeledons')}</p>
+                    <p className="text-sm mt-2">{t('launch.createKeledon')}</p>
                 </div>
             ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -250,7 +250,7 @@ export default function LaunchKeledonPage() {
                                     <div>
                                         <h3 className="font-semibold">{keledon.name}</h3>
                                         <p className="text-xs text-muted-foreground">
-                                            {keledon.team?.name || 'No team'}
+                                            {keledon.team?.name || t('launch.noTeam')}
                                         </p>
                                     </div>
                                 </div>
@@ -259,39 +259,39 @@ export default function LaunchKeledonPage() {
                                         ? 'bg-green-500/20 text-green-400' 
                                         : 'bg-muted text-muted-foreground'
                                 }`}>
-                                    {keledon.isActive ? 'Active' : 'Inactive'}
+                                    {keledon.isActive ? t('launch.active') : t('launch.inactive')}
                                 </span>
                             </div>
 
                             <div className="space-y-2 mb-4">
                                 <div className="text-sm flex items-center gap-2">
                                     <Building2 className="w-4 h-4 text-muted-foreground" />
-                                    <span className="text-muted-foreground">Company:</span>
-                                    <span className="font-medium">{keledon.team?.brand?.companyId || 'N/A'}</span>
+                                    <span className="text-muted-foreground">{t('launch.company')}:</span>
+                                    <span className="font-medium">{keledon.team?.brand?.companyId || t('launch.notAvailable')}</span>
                                 </div>
                                 <div className="text-sm">
-                                    <span className="text-muted-foreground">Team:</span>{' '}
-                                    <span className="font-medium">{keledon.team?.name || 'No team'}</span>
+                                    <span className="text-muted-foreground">{t('launch.team')}:</span>{' '}
+                                    <span className="font-medium">{keledon.team?.name || t('launch.noTeam')}</span>
                                 </div>
                                 {vendorsMap[keledon.teamId]?.length > 0 && (
                                     <div className="text-sm">
-                                        <span className="text-muted-foreground">Vendors:</span>{' '}
+                                        <span className="text-muted-foreground">{t('launch.vendors')}:</span>{' '}
                                         <span className="font-medium">
                                             {vendorsMap[keledon.teamId].map(v => v.name).join(', ')}
                                         </span>
                                     </div>
                                 )}
                                 <div className="text-sm">
-                                    <span className="text-muted-foreground">Autonomy:</span>{' '}
+                                    <span className="text-muted-foreground">{t('launch.autonomy')}:</span>{' '}
                                     <span className="font-medium">{keledon.autonomyLevel}/5</span>
                                 </div>
                                 <div className="text-sm">
-                                    <span className="text-muted-foreground">Role:</span>{' '}
-                                    <span className="font-medium">{keledon.role || 'agent'}</span>
+                                    <span className="text-muted-foreground">{t('launch.role')}:</span>{' '}
+                                    <span className="font-medium">{keledon.role || t('launch.agent')}</span>
                                 </div>
                                 {keledon.callsHandled !== undefined && (
                                     <div className="text-sm">
-                                        <span className="text-muted-foreground">Calls:</span>{' '}
+                                        <span className="text-muted-foreground">{t('launch.calls')}:</span>{' '}
                                         <span className="font-medium">{keledon.callsHandled}</span>
                                     </div>
                                 )}
@@ -302,21 +302,21 @@ export default function LaunchKeledonPage() {
                                     <div className="flex items-center justify-between gap-2 mb-3">
                                         <div className="flex items-center gap-2">
                                             <ListChecks className="w-4 h-4 text-primary" />
-                                            <p className="text-sm font-semibold">Next Steps</p>
+                                            <p className="text-sm font-semibold">{t('launch.nextSteps')}</p>
                                         </div>
                                         <ArrowRightCircle className="w-4 h-4 text-muted-foreground" />
                                     </div>
                                     <div className="space-y-3 text-sm">
                                         <div>
-                                            <p className="text-xs text-muted-foreground mb-1">From Keledon Site</p>
+                                            <p className="text-xs text-muted-foreground mb-1">{t('launch.fromKeledon')}</p>
                                             <p className="font-medium">{launchDetails.keledonName}</p>
                                         </div>
                                         <div>
-                                            <p className="text-xs text-muted-foreground mb-1">Vendors to open</p>
+                                            <p className="text-xs text-muted-foreground mb-1">{t('launch.vendorsToOpen')}</p>
                                             <p className="font-medium">
                                                 {launchDetails.vendors.length > 0
                                                     ? launchDetails.vendors.map(v => v.name).join(', ')
-                                                    : 'No vendors returned yet'}
+                                                    : t('launch.noVendorsReturned')}
                                             </p>
                                         </div>
                                         <ol className="space-y-2 list-decimal list-inside text-muted-foreground">
@@ -334,29 +334,30 @@ export default function LaunchKeledonPage() {
                             {isSuperAdmin && (
                                 <div className="mb-4 p-3 bg-muted rounded-lg">
                                     <div className="flex items-center justify-between mb-2">
-                                        <p className="text-xs text-muted-foreground">Pairing Code</p>
+                                        <p className="text-xs text-muted-foreground">{t('launch.pairingCode')}</p>
                                         <button
                                             onClick={() => resetPairingCode(keledon.id)}
                                             disabled={resettingCode === keledon.id}
                                             className="text-xs px-2 py-1 bg-primary/10 hover:bg-primary/20 text-primary rounded transition-colors disabled:opacity-50"
-                                            title="Generate new pairing code"
+                                            title={t('launch.generatePairingCode')}
                                         >
                                             {resettingCode === keledon.id ? (
                                                 <Loader2 className="w-3 h-3 animate-spin" />
-                                            ) : 'Reset'}
+                                            ) : t('launch.reset')}
                                         </button>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <code className="flex-1 font-mono text-sm break-all">
                                             {loadingPairingCodes[keledon.id]
-                                                ? 'Loading...'
-                                                : pairingCodes[keledon.id]?.code || 'No code'}
+                                                ? t('launch.loading')
+                                                : pairingCodes[keledon.id]?.code || t('launch.noCode')}
                                         </code>
                                         {pairingCodes[keledon.id]?.code && (
                                             <button
                                                 onClick={() => copyPairingCode(pairingCodes[keledon.id]!.code!, keledon.id)}
                                                 className="p-1 hover:bg-background rounded shrink-0"
-                                                title="Copy code"
+                                                title={t('launch.copyCode')}
+                                                aria-label={t('launch.copyCode')}
                                             >
                                                 {copiedId === keledon.id ? (
                                                     <Check className="w-4 h-4 text-green-500" />
@@ -368,7 +369,7 @@ export default function LaunchKeledonPage() {
                                     </div>
                                     {pairingCodes[keledon.id]?.expiresAt && (
                                         <p className="text-[10px] text-muted-foreground mt-1">
-                                            Expires: {new Date(pairingCodes[keledon.id]!.expiresAt).toLocaleString()}
+                                            {t('launch.expires')}: {new Date(pairingCodes[keledon.id]!.expiresAt).toLocaleString(locale)}
                                         </p>
                                     )}
                                 </div>
@@ -384,7 +385,7 @@ export default function LaunchKeledonPage() {
                                 ) : (
                                     <Play className="w-4 h-4" />
                                 )}
-                                {launching === keledon.id ? 'Launching...' : 'Launch'}
+                                {launching === keledon.id ? t('launch.launching') : t('launch.launch')}
                             </button>
                         </div>
                     ))}
@@ -392,12 +393,12 @@ export default function LaunchKeledonPage() {
             )}
 
             <div className="mt-8 p-4 bg-muted/50 rounded-lg">
-                <h3 className="font-medium mb-2">How it works</h3>
+                <h3 className="font-medium mb-2">{t('launch.howItWorks')}</h3>
                 <ol className="text-sm text-muted-foreground space-y-1">
-                    <li>1. Click Launch on a Keledon</li>
-                    <li>2. The Keledon desktop app will open</li>
-                    <li>3. It will automatically pair and connect</li>
-                    <li>4. The Keledon is now live and ready to receive tasks</li>
+                    <li>{t('launch.step1')}</li>
+                    <li>{t('launch.step2')}</li>
+                    <li>{t('launch.step3')}</li>
+                    <li>{t('launch.step4')}</li>
                 </ol>
             </div>
         </div>

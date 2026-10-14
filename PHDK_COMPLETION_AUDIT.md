@@ -1,6 +1,12 @@
 # PHDK Auto completion audit — PARTIALLY DELIVERED
 
-## Current delivery — 5.1.15 (source slice merged; overall partial)
+## Current candidate — 5.1.16 (local source slice; overall partial)
+
+Branch `fix/phdk-route-accessibility-i18n` is based on freshly fetched `origin/main` `c8534e6f6568922d540eabfba4abe90cc93749c1`. All five app package/lock roots are 5.1.16. Profile roles/dates, device list/error/retry states, valid launcher navigation and session detail are localized. Source review corrected the devices page's invalid pairing-code endpoint use. Web typecheck/build, local synthetic UAT 1/1, diagnostics 18/18, SEO source test 1/1, locale parity 644/644, focused ESLint 0 errors and PHDK coherence 52/52 pass. Source commit `7ce3509aeb4d53ce3a90d16153996abf35446024` and its UAT evidence are verified; PR and remote readback are pending.
+
+The 5.1.16 result is a bounded route fix, not full Auto completion. Persisted CRUD/migration, native Electron/device/audio, broad active-route accessibility/localization and deployed SEO/AEO remain open. Docker/PostgreSQL client/server binaries are absent on this host; no production database or deployment was accessed.
+
+## Previous delivery — 5.1.15 (source slice merged; overall partial)
 
 Product PR [#74](https://github.com/tuyoisaza/keledon/pull/74) merged at `2e61f41926ab25b4d9ea9f9b73d11aba82988a63`; fetched `origin/main` independently matches. All five package/lock roots are 5.1.15. Dashboard/session/call-monitor copy, accessible tables and filters are improved. API build/regression 14/14; Cloud build/regression 8/8; Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1; Browser build/regression 24/24; Landing typecheck/build; PHDK coherence 52/52; focused ESLint 0 errors/14 warnings; and locale parity 562/562 pass. GitHub reports no required checks or review decision for #74; no deployment is claimed.
 

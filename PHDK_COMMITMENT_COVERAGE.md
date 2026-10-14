@@ -1,15 +1,15 @@
 # PHDK commitment coverage — KELEDON four fronts
 
-## Current continuation — candidate 5.1.15 (2026-10-13)
+## Current continuation — candidate 5.1.16 (2026-10-13)
 
 | Commitment | Requirements / design | Plan / workstream | Current evidence | Open acceptance |
 |---|---|---|---|---|
-| CMT-001 | Release integrity, installed PHDK and current PR/main facts | T-001 / WS-001 | `origin/main` fetched at `ab7a6e8`; installed PHDK v2.50.10 coherence previously 52/52; five app package/lock roots are being bumped together to 5.1.15. | Current candidate delivery and fresh post-merge SHA/version readback. |
-| CMT-002 | Safe diagnosis, compact shared widget and clear recovery affordances | T-002 / WS-002 | Existing shared implementation; widget tests 18/18; UAT retained on the built SPA. | Native Electron UI and OS device/audio acceptance. |
+| CMT-001 | Release integrity, installed PHDK and current PR/main facts | T-001 / WS-001 | PRs #74/#75 integrated 5.1.15 at `c8534e6`; PHDK v2.50.10 coherence 52/52. Local 5.1.16 candidate keeps all five package/lock roots aligned. | Candidate 5.1.16 PR and fresh post-merge SHA/version readback. |
+| CMT-002 | Safe diagnosis, compact shared widget and clear recovery affordances | T-002 / WS-002 | Diagnostics 18/18; synthetic UAT covers device state, valid launcher navigation and API-load retry. | Native Electron UI and OS device/audio acceptance. |
 | CMT-003 | Provider-independent configured voice/Cloud/Browser/CRM contracts | T-003 / WS-003 | Source and synthetic contracts from previous integrated candidates; tenant-specific provider selection is explicit in the product. | No universal vendor is chosen; only code/configuration evidence is expected absent a configured client test environment. |
-| CMT-004 | Least-privilege admin, DB-derived actor/tenant, safe secrets, actionable detail and CRUD | T-004/T-007 / WS-004 | API regression 14/14; synthetic CRUD management UAT; dashboard/session locales and accessible table captions/headers are added in 5.1.15. | Persisted resource × role × tenant × operation matrix and migration/runtime evidence; broader active-route i18n/a11y remains open. |
+| CMT-004 | Least-privilege admin, DB-derived actor/tenant, safe secrets, actionable detail and CRUD | T-004/T-007/T-013 / WS-004 | API regression 14/14; synthetic CRUD management UAT; dashboard/session, profile, devices and session-detail journeys localized across en/es/pt. | Persisted resource × role × tenant × operation matrix and migration/runtime evidence; broader active-route i18n/a11y remains open. |
 
-Overall status remains **PARTIALLY DELIVERED** until normal integration is verified and remaining acceptance gaps have evidence or an authorized disposition. This current map supersedes older candidate statuses below; those are historical snapshots.
+Overall status remains **PARTIALLY DELIVERED**. The current map supersedes older candidate statuses below; those are historical snapshots.
 
 ## Current delivery — 5.1.14
 

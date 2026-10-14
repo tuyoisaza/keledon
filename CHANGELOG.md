@@ -1,3 +1,9 @@
+## v5.1.16 — 2026-10-13 (PHDK Auto continuation)
+
+- Localize profile, device and Keledon launcher/session-detail journeys in English, Spanish and Portuguese, including locale-aware profile dates and device status/empty/error copy.
+- Use semantic theme colors and announce device loading and request failures; validate device response shapes before rendering.
+- Route device users into the existing authorized launcher instead of issuing an incomplete pairing request; add list-error retry and synthetic navigation coverage.
+
 ## v5.1.15 — 2026-10-13 (PHDK Auto candidate)
 
 - Localize the authenticated dashboard's copy, known session statuses and feedback in English, Spanish and Portuguese.

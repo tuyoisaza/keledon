@@ -1,12 +1,18 @@
 # Lifecycle status — active run 20261013-keledon-auto-conformity
 
-## Current Auto continuation — candidate 5.1.15
+## Current Auto continuation — candidate 5.1.16
+
+Branch `fix/phdk-route-accessibility-i18n` is based on remote main `c8534e6f6568922d540eabfba4abe90cc93749c1`; all five app package/lock roots are 5.1.16. Profile/date/role, device status/empty/error/retry, localized launcher navigation and session-detail journeys are localized in en/es/pt. Web typecheck/build, UAT 1/1, diagnostics 18/18, SEO source 1/1, locale parity 644/644, focused ESLint and PHDK coherence 52/52 pass. Source commit `7ce3509aeb4d53ce3a90d16153996abf35446024` is verified; PR and main readback remain pending.
+
+Overall PHDK Auto remains **PARTIALLY DELIVERED**: persisted CRUD/migration, native Electron/device/audio, broad active-route i18n/a11y and deployed SEO/AEO remain open.
+
+## Previous continuation — 5.1.15, source slice merged
 
 Run handoffs: `docs/phdk/lifecycle/20261013-keledon-auto-conformity/`. Preflight/Capture reused, Plan/PMO updated, integration source review complete, synthetic UAT and UAT Fix pass, SEO/AEO source reviews reused, scoped Check/remediation complete. Product PR [#74](https://github.com/tuyoisaza/keledon/pull/74) merged and fresh `origin/main` readback is `2e61f41926ab25b4d9ea9f9b73d11aba82988a63`. Web typecheck/build, local production-SPA UAT 1/1, diagnostics 18/18, API regression 14/14, Cloud regression 8/8, Browser regression 24/24, SEO source regression 1/1, PHDK coherence 52/52, focused changed-file lint 0 errors/14 warnings, and locale parity 562/562 pass.
 
 The candidate adds en/es/pt dashboard/session/call-monitor copy, semantic tables and named filters under 5.1.15. Overall status remains **PARTIALLY DELIVERED** because broad localization/accessibility, persisted CRUD/migration, native Electron/device/audio and deployed SEO/AEO remain open. No production database, live provider or deployment was used.
 
-SIGUIENTE PASO: persist the post-merge evidence readback. Overall PHDK Auto remains partial because the broader route and environment-dependent acceptance listed above is still open.
+This was the prior 5.1.15 readback. Current work and next delivery state are recorded above.
 
 # Historical lifecycle status — 20261013-keledon-v5114
 
