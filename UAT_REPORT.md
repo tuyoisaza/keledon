@@ -1,5 +1,9 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.31 — API/Cloud voice-profile secret projection (2026-10-14)
+
+UAT-024 passes in a source harness that loads both `CrudService` implementations. Tenant voice-profile list, create, and update each select the same six display fields and omit both `config` and `providerCatalog`; synthetic secrets are absent from returned results. Cloud build and full API regression pass (29/29, including regression 41). No database or real credential was used; persisted behavior remains part of blocked DB acceptance.
+
 ## Candidate 5.1.31 — API/Cloud user-scope projection (2026-10-14)
 
 UAT-023 passes in an isolated source harness for both guards. A token claiming superadmin does not elevate a DB-backed admin, a foreign-company user detail is denied, and the Prisma user lookup selects only `companyId`, `teamId`, and `role`, never `passwordHash`. Full API regression passes 28/28 and API/Cloud production builds pass. No persistent user record or database was accessed.
