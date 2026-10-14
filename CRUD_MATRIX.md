@@ -143,7 +143,7 @@ Exceptions: provider catalog/config have no separate delete/detail endpoint; emb
 
 The operational `/api/crud/health` route is an explicit read-only diagnostic surface, not a persisted CRUD resource. It is denied to anonymous and ordinary users and available only to a current DB-backed superadmin. Its response omits raw process logs and returns only the configured cloud hostname; tests: `services/api/test/regression/22-admin-http-wiring.test.js` and `24-crud-health-disclosure.test.js`. It grants no create/update/delete capability and does not close the persisted-resource matrix.
 
-Check result: PARTIAL/BLOCKED. The nine listed resource families have role × API/web rows, but this matrix is not yet exhaustive against all first-party persisted entities and controllers. The new role/operation regression closes selected authorization cases for six route families but not handler persistence or complete route coverage. Full UI record-detail UAT, persistence, and tenant-A-to-B direct-ID cases remain open. No row is a PASS solely because a route or button exists.
+Check result: PARTIAL/BLOCKED. The source inventory below reconciles all 35 Prisma model declarations with current route/service usage; this is a model list, not an exhaustive role × API/web × operation matrix. The role/operation regression closes selected authorization cases for six route families but not handler persistence or complete route coverage. Full UI record-detail UAT, persistence, and tenant-A-to-B direct-ID cases remain open. No row is a PASS solely because a route or button exists.
 
 
 ## Explicitly scoped exceptions
@@ -170,4 +170,48 @@ These resources are present in `services/api/prisma/schema.prisma` or feature co
 | AuditLog, Event, EscalationLog, AiCallUsage | Prisma schema and audit/analytics controllers | Likely append-only/security or usage records | Confirm immutable/read-only exception, field visibility, detail/export and retention | DECISION NEEDED |
 | CompanyCountry, TeamInterface, KnowledgeDocument | Prisma relations and nested APIs | Embedded/relationship resources | Confirm whether independent management is intentionally represented by parent forms/APIs | GAP |
 
-The landing `typecheck` now passes after the source repairs in this worktree. That does not close CRUD/UAT evidence or make the above inventory complete. No production database was connected.
+## Model-to-surface inventory — schema reconciliation, 35/35
+
+The following inventory was reconciled against every `model` declaration in `services/api/prisma/schema.prisma` and the controller/service Prisma delegate usage. “Source surface” records where current code touches the model; it is not proof that all operations exist or are safe. Exact role × tenant × API/web × C/R-list/R-detail/U/D evidence and persisted tests remain open for the GAP/DECISION rows above.
+
+| Prisma model | Current source surface / operation shape | Classification / evidence state |
+|---|---|---|
+| Company | `CrudController` companies list/detail/create/update/delete; `CompanyCountry` nested country add/remove | Parent CRUD is matrixed; nested country role and persistence tests remain open. |
+| CompanyCountry | Company country nested routes and company service | Embedded relation; confirm allowed countries and delete semantics per role. |
+| Brand | `CrudController` list/detail/create/update/delete | Matrixed source and guard tests; DB persistence not exercised. |
+| Team | `CrudController` list/detail/create/update/delete, team interface assignment, provider config | Multiple route families; complete per-operation tenant tests remain open. |
+| User | `CrudController` list/detail/create/update/delete and authentication/actor lookup | Matrixed source and guard tests; credential and role boundaries covered in isolated regressions. |
+| Device | Device registration, pairing and runtime access services/guards | Operational resource; direct administrative CRUD matrix and device persistence remain open. |
+| Keledon | `CrudController` list/create/update/delete, pairing/launch; device runtime binding | Matrixed management surface plus separate capability endpoints; persistence and lifecycle operations remain open. |
+| ManagedInterface | CRUD `interfaces` routes and duplicate MVP data interface routes | Duplicate mutable configuration surfaces; reconcile route and role policy. |
+| TeamInterface | Nested team/interface assignment service routes | Relationship updates only; test cross-company assignment and persistence. |
+| Workflow | CRUD list/create/update/delete | Mutable workflow definition; route-level operation tests and persisted behavior remain open. |
+| FlowDefinition | MVP data list/create routes | No full update/delete/detail surface identified; define lifecycle and authorization. |
+| FlowDefinitionVersion | MVP data list/create/update routes | Versioned configuration; define immutability and deletion exception. |
+| TenantFlowPermission | MVP data list/create routes | Tenant permission relation; caller-company and role binding require exact tests. |
+| IntentFlowMapping | MVP data list/create routes | Tenant mapping; caller-company and operation rules require exact tests. |
+| FlowRun | Calls/browser runtime and scoped resource routes | Operational execution record; confirm read/detail and retention policy. |
+| FlowRunEvidence | Agent execution evidence processor/runtime | Append-only evidence path; visibility, tenant scope, retention and delete exception need review. |
+| Flow | Flow service and resource-scope guard | Runtime/configuration access exists; no equivalent full CRUD contract identified here. |
+| FlowStep | Flow service and nested reorder/update paths | Nested mutable resource; cross-flow/team ownership tests remain open. |
+| SubAgent | Subagent service and flow bindings | Runtime configuration; role and tenant operation matrix not established. |
+| SubAgentRun | No direct Prisma delegate found in API source scan; runtime/raw-query ownership requires follow-up | Storage path and lifecycle need confirmation before assigning CRUD exceptions. |
+| ProviderCatalog | CRUD provider catalog read/update and public catalog read path | Global catalog; distinguish public fields from administrative writes and prove output redaction. |
+| TenantProviderConfig | CRUD composite read/upsert and team provider settings | Tenant-scoped configuration; secrets must stay write-only; persisted scope tests remain open. |
+| TenantVoiceProfile | CRUD and tenant list/detail/create/update/delete | Safe detail/edit source fixed in 5.1.17; isolated guard and synthetic UI pass; persistence remains open. |
+| Session | CRUD list/detail/create/update plus call/listening runtime | Matrixed source subset; deletion is limited to orphan cleanup, and retention/audit policy needs DB evidence. |
+| Event | Call/browser session lifecycle and usage events | Operational/event surface; determine read visibility and retention; no general CRUD UI. |
+| KnowledgeBase | CRUD knowledge list/create/delete; Knowledge service | Tenant content parent; direct detail/update behavior and isolated ownership tests remain open. |
+| KnowledgeDocument | CRUD nested docs and Knowledge/VectorStore services | Tenant content/document relation; reconcile duplicate APIs, detail, vector scope and deletion. |
+| AuditLog | Audit interceptor/service and audit-log API | Security record; define append-only/read/export matrix and retention. |
+| FeatureFlag | Feature flag service | No direct CRUD controller surface identified in route scan; confirm operational consumers and admin ownership. |
+| EscalationLog | Escalation service/controller and access guard | Operational state transitions; role/scope and resolution persistence require exact acceptance. |
+| DebugMode | Debug mode service and diagnostics controls | Privileged toggle/config; current actor, UI/API route scope and persistence require targeted review. |
+| Vendor | CRUD vendor routes and device/runtime provider resolution | Matrixed source subset; credentials are write-only; persisted scope tests remain open. |
+| AiPromptDefinition | AI admin service/controller | Superadmin-only versioned configuration; isolated guard and migration/persistence acceptance remain open. |
+| AiPromptRevision | AI admin revision service | Append-only/versioned record; verify direct detail/version authorization and persistence. |
+| AiCallUsage | AI admin usage and analytics reads | Read-only usage evidence; attribution and tenant visibility need DB-backed proof. |
+
+The schema inventory is now complete as a source list, but CHK-002 remains OPEN: per-model role/tenant/operation mapping, direct-ID negative cases, migration acceptance and persisted before/after evidence have not been completed. No database was provisioned or connected.
+
+The landing build and static SEO test pass on 5.1.17. The model inventory is complete as a source list but does not close CRUD/UAT evidence. No production database was connected.
