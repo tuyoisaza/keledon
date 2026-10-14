@@ -7,37 +7,16 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { Socket } from 'socket.io';
-import {
-  AgentMonitoringService,
-  AgentStatus,
-  SystemHealth,
-} from '../services/agent-monitoring.service';
+import { AgentMonitoringService } from '../services/agent-monitoring.service';
 import { AILoopService } from '../services/ai-loop.service';
 import { VoiceAnalyticsService } from '../services/voice-analytics.service';
 import { IntegrationHealthService } from '../services/integration-health.service';
 import { FlowExecutionService } from '../services/flow-execution.service';
-import type { FlowExecution, FlowStep } from '../services/flow-execution.types';
 import { PrismaService } from '../prisma/prisma.service';
-import { LocalAuthService } from '../auth-local/auth-local.service';
+import { authorizeDashboardSocket } from './dashboard.gateway.auth';
 
-export interface DashboardSocketData {
-  type: string;
-  agentId?: string;
-  loopId?: string;
-  executionId?: string;
-  providerId?: string;
-  status?: AgentStatus['status'];
-  audioLevel?: number;
-  performance?: AgentStatus['performance'];
-  health?: SystemHealth;
-  step?: FlowStep;
-  stepIndex?: number;
-  progress?: number;
-  config?: Record<string, unknown>;
-  timeRange?: '1h' | '24h' | '7d' | '30d';
-  loopData?: { name?: string };
-  flowData?: { name?: string; priority?: FlowExecution['priority'] };
-}
+export type { DashboardSocketData } from './dashboard.gateway.types';
+import type { DashboardSocketData } from './dashboard.gateway.types';
 
 @WebSocketGateway({
   cors: {
@@ -66,46 +45,9 @@ export class DashboardGateway
   }
 
   async handleConnection(client: Socket): Promise<void> {
-    const auth: unknown = client.handshake.auth;
-    const token =
-      typeof auth === 'object' && auth !== null && 'token' in auth
-        ? auth.token
-        : undefined;
-    if (typeof token !== 'string' || !token) {
-      client.emit('error', { message: 'Dashboard authentication required' });
-      client.disconnect(true);
-      return;
-    }
-
-    try {
-      const sessionActor = await new LocalAuthService(
-        this.prisma,
-      ).validateToken(token);
-      if (!sessionActor?.id) {
-        client.emit('error', { message: 'Dashboard authentication required' });
-        client.disconnect(true);
-        return;
-      }
-      const actor = await this.prisma.user.findUnique({
-        where: { id: sessionActor.id },
-        select: { id: true, role: true },
-      });
-      if (!actor || actor.role !== 'superadmin') {
-        client.emit('error', {
-          message: 'Superadmin dashboard access required',
-        });
-        client.disconnect(true);
-        return;
-      }
-      Object.assign(client.data, { dashboardActorId: actor.id });
-      console.log(`Dashboard client connected: ${client.id}`);
-
-      // Send initial platform-wide data only after DB role validation.
-      this.sendInitialData(client);
-    } catch {
-      client.emit('error', { message: 'Dashboard authentication failed' });
-      client.disconnect(true);
-    }
+    await authorizeDashboardSocket(client, this.prisma, (authorizedClient) =>
+      this.sendInitialData(authorizedClient),
+    );
   }
 
   handleDisconnect(client: Socket): void {

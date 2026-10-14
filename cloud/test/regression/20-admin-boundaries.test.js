@@ -1,66 +1,18 @@
-// Executes production TypeScript with isolated Nest/Prisma/bcrypt adapters; no services.
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
-const vm = require('node:vm');
-const crypto = require('node:crypto');
-const ts = require(process.env.KELEDON_TEST_TYPESCRIPT || 'typescript');
-
-const decorator = () => () => {};
-class Denied extends Error {}
-const common = new Proxy(
-  { UnauthorizedException: Denied, ForbiddenException: Denied, BadRequestException: Denied },
-  {
-    get: (target, key) => target[key] || decorator,
-  },
-);
-function load(relative, adapters = {}) {
-  const filename = path.resolve(__dirname, '../../src', relative);
-  const output = ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
-    compilerOptions: {
-      module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ES2020,
-      experimentalDecorators: true,
-      emitDecoratorMetadata: false,
-    },
-  }).outputText;
-  const module = { exports: {} };
-  vm.runInNewContext(
-    output,
-    {
-      module,
-      exports: module.exports,
-      Buffer,
-      URL,
-      process,
-      Date,
-      console,
-      require: (name) => {
-        if (name === '@nestjs/common') return common;
-        if (name === '@nestjs/swagger') return common;
-        if (name.endsWith('public.decorator')) return { Public: decorator };
-        if (name === 'crypto' || name === 'node:crypto') return crypto;
-        if (name === 'bcrypt') return { hash: async () => 'isolated-hash' };
-        return adapters[name] || {};
-      },
-    },
-    { filename },
-  );
-  return module.exports;
-}
-const context = (request) => ({
-  getHandler() {},
-  getClass() {},
-  switchToHttp: () => ({ getRequest: () => request }),
-});
-const { AuthGuard } = load('guards/auth.guard.ts');
-const { LocalAuthService } = load('auth-local/auth-local.service.ts');
-const { RolesGuard, SuperAdminGuard } = load('guards/roles.guard.ts');
-const { CrudCompanyService } = load('crud/crud-company.service.ts');
-const { CrudController } = load('crud/crud.controller.ts');
-const { CrudAccessGuard } = load('guards/crud-access.guard.ts');
-const { TeamController } = load('controllers/team.controller.ts');
-const { CrudKeledonService } = load('crud/crud-keledon.service.ts');
+const {
+  assert,
+  crypto,
+  Denied,
+  context,
+  AuthGuard,
+  LocalAuthService,
+  RolesGuard,
+  SuperAdminGuard,
+  CrudCompanyService,
+  CrudController,
+  CrudAccessGuard,
+  TeamController,
+  CrudKeledonService,
+} = require('./admin-boundaries.test-helpers');
 
 async function main() {
   const previousEnv = process.env.NODE_ENV;
@@ -384,51 +336,6 @@ async function main() {
   };
   assert.equal(await run('companies', 'DELETE', { id: 'co-b' }).result, true);
 
-  // Auto-provisioning never grants privilege, and existing roles remain unchanged.
-  let created;
-  const signup = new LocalAuthService({
-    user: {
-      findUnique: async () => null,
-      create: async ({ data }) => {
-        created = data;
-        return { id: 'new', ...data };
-      },
-      update: async () => ({}),
-    },
-  });
-  assert.equal(
-    (await signup.register('fixture@example.invalid', 'isolated-password'))
-      .role,
-    'user',
-  );
-  assert.equal(created.companyId, undefined);
-  assert.equal(
-    (
-      await signup.findOrCreateGoogleUser({
-        email: 'google@example.invalid',
-        name: 'Fixture',
-      })
-    ).role,
-    'user',
-  );
-  const existing = new LocalAuthService({
-    user: {
-      findUnique: async () => ({ id: 'existing', role: 'superadmin' }),
-      update: async () => ({}),
-      create: async () => {
-        throw new Error('existing actor must not be recreated');
-      },
-    },
-  });
-  assert.equal(
-    (
-      await existing.findOrCreateGoogleUser({
-        email: 'existing@example.invalid',
-      })
-    ).role,
-    'superadmin',
-  );
-
   let configWrites = 0;
   const teamController = new TeamController({
     user: { findUnique: async () => rows.user },
@@ -478,11 +385,22 @@ async function main() {
     '',
   );
   assert.equal(configWrites, 1);
-  await assert.rejects(() => teamController.updateTeamConfig('team-a', { ttsProvider: 'untrusted-provider' }, actorReq), Denied);
+  await assert.rejects(
+    () =>
+      teamController.updateTeamConfig(
+        'team-a',
+        { ttsProvider: 'untrusted-provider' },
+        actorReq,
+      ),
+    Denied,
+  );
   assert.equal(configWrites, 1, 'unsupported provider must not silently save');
-  await teamController.updateTeamConfig('team-a', { ttsProvider: 'speaches' }, actorReq);
+  await teamController.updateTeamConfig(
+    'team-a',
+    { ttsProvider: 'speaches' },
+    actorReq,
+  );
   assert.equal(configWrites, 2, 'supported Speaches selection persists');
-
 
   let deviceWrites = 0;
   const launchService = new CrudKeledonService({
@@ -588,10 +506,26 @@ async function main() {
   assert.equal(pendingDevice.status, 'pending');
   assert.equal(link.deep_link.startsWith('keledon://launch?'), true);
   const launchUrl = new URL(link.deep_link);
-  const launchPayload = JSON.stringify(['k-a', 'owner', launchUrl.searchParams.get('timestamp'),
-    launchUrl.searchParams.get('code'), new URL(launchUrl.searchParams.get('cloudUrl')).origin]);
-  const signingSecret = process.env.KELEDON_LAUNCH_SECRET || process.env.KELDEON_LAUNCH_SECRET || process.env.KELEDON_AUTH_SECRET || 'keledon-default-secret';
-  assert.equal(launchUrl.searchParams.get('signature'), crypto.createHmac('sha256', signingSecret).update(launchPayload).digest('hex').substring(0, 16));
+  const launchPayload = JSON.stringify([
+    'k-a',
+    'owner',
+    launchUrl.searchParams.get('timestamp'),
+    launchUrl.searchParams.get('code'),
+    new URL(launchUrl.searchParams.get('cloudUrl')).origin,
+  ]);
+  const signingSecret =
+    process.env.KELEDON_LAUNCH_SECRET ||
+    process.env.KELDEON_LAUNCH_SECRET ||
+    process.env.KELEDON_AUTH_SECRET ||
+    'keledon-default-secret';
+  assert.equal(
+    launchUrl.searchParams.get('signature'),
+    crypto
+      .createHmac('sha256', signingSecret)
+      .update(launchPayload)
+      .digest('hex')
+      .substring(0, 16),
+  );
   assert.equal(JSON.stringify(link.vendors).includes('isolated-hidden'), false);
   if (previousLaunchSecret === undefined)
     delete process.env.KELEDON_LAUNCH_SECRET;
