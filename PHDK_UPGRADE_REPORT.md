@@ -1,5 +1,9 @@
 # PHDK upgrade report — 2.50.8 → 2.50.10
 
+## Current workspace verification — 2026-10-14
+
+The repository was freshly cloned to `C:\KELEDON\keledon`; `git pull --ff-only` reported `Already up to date` at KELEDON main `fdd7f6f49bab5b8c4384ca1796321a23b4e71f42`. The vendored `phdk-standards/` installation is v2.50.10 and matches all 52 manifest files in canonical PHDK main at `e3958702d30ae6f9cd18e35b82c7a75a0f11e116` byte-for-byte at the Git-blob level. The managed PHDK block in `AGENTS.md` matches canonical `PHDK_NATIVE_RULES.md`; coherence passes 52/52. The workspace already contained the current installation, so no standards files needed changing.
+
 Date: 2026-10-13 America/Mexico_City. Project: KELEDON. Canonical repository: `https://github.com/tuyoisaza/PHDK.git`.
 
 - Canonical pull: PHDK `main` v2.50.10, SHA `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`.
