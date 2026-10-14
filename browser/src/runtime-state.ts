@@ -41,7 +41,6 @@ export let mainWindow: BrowserWindow | null = null;
 export function setMainWindow(win: BrowserWindow | null) { mainWindow = win; }
 
 export let debugMode = resolveDebugMode(app.isPackaged, process.env.KELEDON_DEBUG);
-export function setDebugMode(mode: boolean) { debugMode = mode; }
 
 /** Explicit logout clears tenant/session configuration and all cached runtime credentials. */
 export function clearRuntimeSessionState(): void {
