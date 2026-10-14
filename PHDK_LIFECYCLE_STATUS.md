@@ -2,9 +2,9 @@
 
 ## Current continuation — 2026-10-14
 
-PR #89 merged at `b92a25428a6d25c898e3dfef7a055f754782ed57`; PR #90 removed renderer control of debug mode and merged at `48ab2023236ba5de56c046f99670a2abab866707`. Fresh `origin/main` readback matches the latter SHA; all five app package/lock roots remain 5.1.22. No PR is open. Post-commit Web UAT 1/1 is bound to code commit `05c7b8b3a5231b465579fea6f8fb39f8f47414be`; Browser focused tests 5/5 and build pass. Current lifecycle board: Preflight COMPLETED; Capture/Plan/PMO REUSED; Integration COMPLETED; Web UAT and UAT Fix COMPLETED for recorded journeys; SEO and AEO/GEO COMPLETED for source controls only; Check PARTIAL/OPEN; source remediation and PR delivery COMPLETED for these fixes. Full goal remains PARTIALLY DELIVERED pending CHK-002 exhaustive/persisted CRUD, CHK-003 broad route UX/a11y, CHK-004 migration runtime, CHK-005 deployed field data, CHK-006 public market/language decision, and CHK-007 native device/audio UAT. See `PHDK_COMPLETION_AUDIT.md`.
+PR #92 merged by squash at `fdd7f6f49bab5b8c4384ca1796321a23b4e71f42`; fresh `origin/main` matches and all five app package/lock roots are 5.1.24. Exact-source Web UAT 1/1 is bound to `c3c4c362a36db2bec142cbc8b06747961b67df26`; Browser security tests 6/6 and build pass. The owner approved validated private/local destinations configured in each tenant's vendor allowlist. Current lifecycle board: Preflight COMPLETED; Capture/Plan/PMO REUSED; source integration and PR delivery COMPLETED; scoped Web UAT COMPLETED; native UAT and full Check PARTIAL/OPEN; SEO/AEO source checks pass only. Full goal remains PARTIALLY DELIVERED: Cloud ESLint is unverified; CHK-002 exhaustive role/resource/surface/operation and persisted CRUD/migration, CHK-003 broad route UX/a11y, CHK-004 DB-backed AI configuration, CHK-005 deployed field data, CHK-006 public market/language decision, and CHK-007 native device/audio UAT remain open. See `PHDK_COMPLETION_AUDIT.md`.
 
-## Active continuation — 2026-10-13
+## Historical continuation — 2026-10-13
 
 Overall result remains **PARTIALLY DELIVERED**. Product PRs #78–#83 and #86–#88 are merged; PR #88 delivered source version 5.1.21 at main commit `5b81b36c4e6534a930edc0a9f59f2ba117b01bb`. The current privacy candidate is version 5.1.22 on `fix/provider-error-redaction`. The 35-model CRUD gate remains open. `PHDK_DELIVERY_EVIDENCE.json` still points at PR #78, so the full Auto gate is not passing.
 
@@ -37,7 +37,7 @@ PR #83 delivered this fix at `48704bfd0699ff2b9b1618338962693ac7ffce07`. `GET /a
 SIGUIENTE PASO: continue CHK-002 on the remaining persisted resources, route duplicates and direct-ID cases; retain database/native/deployed acceptance as open until evidence exists.
 
 Run ID: `20261013-1900-phdk-auto`
-Repository: `C:\Users\tboar\OneDrive\Documentos\GitHub\KELEDON` (`tuyoisaza/keledon`)
+Repository: `C:\KELEDON\keledon` (`tuyoisaza/keledon`)
 Branch: `fix/phdk-keledon-voice-profile-accessibility`
 Base revision: `60d7382f0e2003597690673103ace4e785f0c018`
 Product source commit: `4e874c14cde10fd5b1a0ce521ee097e67823e120` (`5.1.17`)

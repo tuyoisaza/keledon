@@ -1,14 +1,14 @@
 # PHDK commitment coverage — KELEDON four fronts
 
-## Current source candidate — 2026-10-14, 5.1.24, `c3c4c362a36db2bec142cbc8b06747961b67df26`
+## Current source delivery — 2026-10-14, 5.1.24, `c3c4c362a36db2bec142cbc8b06747961b67df26`
 
-Candidate branch `fix/phdk-tenant-vendor-origin-allowlist` adds validated tenant origin allowlists for client-selected CRM/call vendors, including private/local HTTP(S) destinations. API and Cloud tests verify safe vendor projections and stored allowlists; Browser guards initial/redirect origins. Exact-SHA synthetic Web UAT passes 1/1, all five roots and renderer are 5.1.24, and PHDK coherence is 52/52. PR delivery remains pending; native, database, deployed SEO/AEO, exhaustive matrix and broad route acceptance remain open.
+PR #92 merged source `c3c4c362a36db2bec142cbc8b06747961b67df26` at main `fdd7f6f49bab5b8c4384ca1796321a23b4e71f42`. It adds validated tenant origin allowlists for client-selected CRM/call vendors, including owner-approved private/local HTTP(S) destinations. API and Cloud tests verify safe vendor projections and stored allowlists; Browser guards initial/redirect origins. Exact-SHA synthetic Web UAT passes 1/1, all five roots and renderer are 5.1.24, and PHDK coherence is 52/52. Native, database, deployed SEO/AEO, exhaustive matrix and broad route acceptance remain open.
 
 | Commitment | Current implementation/evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | Candidate package and lock roots align at 5.1.24; source commit is on the authorized continuation branch. | PR merge and fresh remote-main readback pending; no deployment inferred. |
+| CMT-001 | All five package and lock roots align at 5.1.24; PR #92 merged and fresh remote-main readback matches. | No deployment inferred. |
 | CMT-002 | Browser policy tests 6/6; Web diagnostics 19/19; exact-SHA synthetic Web UAT 1/1. | Native Browser rendering, device/audio, OS permission flow and broader route/screen-reader acceptance remain unverified. |
-| CMT-003 | API 19/19 and Cloud 10/10; configured private origins are tenant-scoped, URL validated and applied to Browser navigation/automation. | Live CRM/call acceptance stays client-specific; no universal vendor test applies. |
+| CMT-003 | API 19/19 and Cloud 10/10; owner-approved private/local origins are URL-validated, tenant-scoped and applied to Browser navigation/automation. | Live provider acceptance applies to each client's configured integrations; no universal CRM/call provider test applies. |
 | CMT-004 | Approved DB-derived role/tenant policy retained; safe vendor projections and allowlist create/update behavior have isolated tests. | Full 35-model × role × tenant × API/web × operation mapping, disposable-DB persistence/migration, and remaining route accessibility/localization remain open. |
 
 Overall status remains **PARTIALLY DELIVERED**. Machine completion evidence records unverified native UAT and Cloud lint limitations rather than claiming full Auto completion.
