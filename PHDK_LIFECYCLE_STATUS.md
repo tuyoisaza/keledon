@@ -2,13 +2,13 @@
 
 ## Active continuation — 2026-10-13
 
-Overall result remains **PARTIALLY DELIVERED**. Product PRs #78–#83 are merged; the 5.1.19 source delivery is PR #83 at `48704bfd0699ff2b9b1618338962693ac7ffce07`. Documentation PR #84 reconciled the lifecycle at `d967589c0e818ae50cd74b74321961862f170278`; all five app package/lock roots remain at 5.1.19. The 35-model CRUD gate remains open. `PHDK_DELIVERY_EVIDENCE.json` still points at PR #78, so the full Auto gate is not passing.
+Overall result remains **PARTIALLY DELIVERED**. Product PRs #78–#83 and #86 are merged; PR #86 delivered source version 5.1.20 at main commit `2d021c4d41beda5b625845df446c53e353110f39`. All five app package/lock roots are 5.1.20. The 35-model CRUD gate remains open. `PHDK_DELIVERY_EVIDENCE.json` still points at PR #78, so the full Auto gate is not passing.
 
 SIGUIENTE PASO: continue CHK-002 by completing the resource × role × API/web × operation audit and source fixes, then refresh delivery evidence after the source set stabilizes.
 
 ## Candidate continuation — 2026-10-14
 
-Source review found Cloud listening-session websocket capabilities were only 32 bits, did not expire, and could be created without an assigned runtime identity. Candidate 5.1.20 fixes the API boundary and redacts session IDs from Cloud/API and Web logs, with a Cloud regression that rejects expired sockets before worker startup. Branch `fix/cloud-listening-session-capability` is based on current `main` at `8b8a05d379c06826cc40bc91fdd39c32d0033b1f`; candidate changes are not merged. Verification passes: Cloud regression 9/9 and configured build, API regression 15/15/build/focused ESLint, Web typecheck/build/diagnostics 18/18, Browser and Landing builds, PHDK coherence 52/52. Cloud's standalone `build:typescript` reports 20 unrelated baseline errors in router, analytics, seed types and missing modules; its configured build passes. Cloud's focused ESLint did not return output and was stopped; this check remains unverified. CHK-002 and full Auto delivery evidence remain open.
+Source review found Cloud listening-session websocket capabilities were only 32 bits, did not expire, and could be created without an assigned runtime identity. PR #86 merged this fix at main `2d021c4d41beda5b625845df446c53e353110f39`, version 5.1.20: creation requires DB-derived assigned runtime identity, IDs use a full UUID, expiry is enforced, expired sockets are rejected before worker startup and Cloud/API/Web logs redact the capability. Verification passes: Cloud regression 9/9 and configured build, API regression 15/15/build/focused ESLint, Web typecheck/build/diagnostics 18/18, Browser and Landing builds, PHDK coherence 52/52. Cloud's standalone `build:typescript` reports 20 unrelated baseline errors in router, analytics, seed types and missing modules; its configured build passes. Cloud's focused ESLint did not return output and was stopped; this check remains unverified. CHK-002 and full Auto delivery evidence remain open.
 
 ## Security follow-up — append-only audit evidence
 
