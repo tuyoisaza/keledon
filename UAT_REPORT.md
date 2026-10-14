@@ -1,5 +1,9 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.27 source retest
+
+The local built-Web synthetic suite passes 1/1 after a sequential retry; it exercises version display, diagnostics/widget journeys, management screens and accessibility checks using mocked APIs. The first run during parallel builds returned an HTTP error at `/login`; the sequential retry passed. This validates only the synthetic Web experience, not live API authorization or persistent data. The API/Cloud flow reorder contract is independently covered by service and regression suites. Full Cloud Jest startup still requires `DATABASE_URL`; no database was contacted.
+
 ## UAT Fix retest — 2026-10-14, candidate 5.1.26
 
 UAT-008 now passes within its explicitly approved scope: test-profile switching is enabled only for development/staging, requires the current database-backed superadmin, uses an explicit synthetic-profile allowlist and a maximum ten-minute token, records start/end audit events, and does not alter persisted roles. Returning requires the original superadmin token and revokes the temporary token. API regression covers real Nest guard/controller HTTP wiring with isolated fixtures; the built-SPA journey covers selection and return against a mocked API. Neither is live deployment or persistent-database acceptance.
@@ -23,7 +27,7 @@ UAT-008 now passes within its explicitly approved scope: test-profile switching 
 | UAT-004 tenant-configured CRM origins and safe secrets | PASS, source tests | Private HTTP(S) only when validated and tenant-allowlisted; no private destination request. |
 | UAT-005 synthetic call/Cloud/Browser path | PASS, offline | Browser offline tests 27/27; injected adapter, no live vendor/audio. |
 | UAT-006 native Browser/device/audio | MANUAL/BLOCKED | Requires supported device and OS permission interaction. |
-| UAT-007 version alignment | PASS, candidate only | Five app package/lock roots and Browser renderer at 5.1.26; PR/readback pending. |
+| UAT-007 version alignment | PASS, source delivered | Five package/lock roots and Browser renderer at 5.1.26; PR #95 and exact remote readback verified at `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2`. |
 | UAT-008 audited test-profile selection | PASS, scoped | Mocked browser UI plus API policy/service/AuthGuard and Nest HTTP regressions. Nonproduction, synthetic allowlist, current superadmin, audit, expiry and token revocation are covered. |
 | UAT-009 development role authentication | BLOCKED | No safe development target or actual test identities configured. Production excluded. |
 | UAT-010 persisted CRUD/migration matrix | BLOCKED | No isolated disposable PostgreSQL database; no migration run. Production DB excluded. |

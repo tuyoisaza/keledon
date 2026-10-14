@@ -1,8 +1,12 @@
 # Delivery report — current status PARTIALLY DELIVERED
 
+## Active source candidate 5.1.27 — flow-step integrity
+
+Branch `fix/phdk-crud-model-matrix` is based on verified `origin/main` `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2` / 5.1.26. Source commit `996464da5c1bb0567c6e9fa7d40e0a212e6d7b48` validates API/Cloud flow-step reorder membership and performs validation plus writes in a serializable transaction. The 35-model/126-row inventory test, API 21/21 and Cloud 11/11 regression suites, API Jest 11/11 (38 tests), focused flow tests 7/7 and 10/10, configured API/Cloud builds and TypeScript checks, Browser/Web/Landing builds, Web diagnostics 19/19, SEO checks and PHDK coherence 52/52 pass. API/Cloud lint report 0 errors (138/25 warnings). Full Cloud Jest requires an absent `DATABASE_URL`. Post-commit local Web UAT passes 1/1 at `996464da5c1bb0567c6e9fa7d40e0a212e6d7b48` using synthetic fixtures and mocked APIs. Remote delivery is pending; whole-product acceptance remains partial for the unfinished 26-model operation map and environment-dependent gates.
+
 ## Candidate 5.1.26 — PHDK Auto UAT Fix
 
-Branch `fix/audited-uat-test-profiles` is based on main 5.1.25 at `8dfc1fca7de253a017acb6f291ff278699915beb`. All five product package/lock roots and Browser renderer are 5.1.26. The approved nonproduction test-profile switch is covered by API regression 20/20 and synthetic built-SPA UAT 1/1; PHDK coherence 52/52 passes. Candidate commit, PR and remote readback remain pending. UAT-009 development identities, UAT-010 disposable database, UAT-006 native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Client CRM/call acceptance is specific to each customer configuration. No deployment is claimed.
+Branch `fix/audited-uat-test-profiles` is based on main 5.1.25 at `8dfc1fca7de253a017acb6f291ff278699915beb`. All five product package/lock roots and Browser renderer are 5.1.26. The approved nonproduction test-profile switch is covered by API regression 20/20 and synthetic built-SPA UAT 1/1; PHDK coherence 52/52 passes. PR #95 merged at `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2`; fetched `origin/main` and `git ls-remote` agree. Merge tree matches the PR head. GitHub reported no hosted checks or review decision. UAT-009 development identities, UAT-010 disposable database, UAT-006 native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Client CRM/call acceptance is specific to each customer configuration. No deployment is claimed.
 
 ## Current candidate 5.1.24 — source verification
 

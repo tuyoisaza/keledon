@@ -1,3 +1,13 @@
+# CRUD matrix — current source and authorization coverage
+
+## 5.1.27 candidate — Prisma inventory and nested flow integrity
+
+`services/api/test/regression/33-crud-model-inventory.test.js` now checks the Prisma schema against this 35-model source inventory and verifies all 126 core resource × role × API/Web combinations are represented exactly once. This is documentation-drift protection; it does not prove each model's persisted behavior. The 9 core managed CRUD resource groups have their per-role/surface rows above. The remaining model-to-surface entries below remain source classifications, with role/detail/UI gaps explicitly open where the route does not share the core CRUD contract.
+
+The API and Cloud `FlowService.reorderSteps` paths now reject non-array/malformed IDs, duplicates, subsets, and IDs outside the selected flow before writes. The full membership read, validation, and reorder writes execute in one serializable transaction. Focused API service tests pass 7/7; Cloud service tests pass 10/10. API/Cloud regression suites also retain cross-flow and low-role denials. No database was connected; persisted ordering and runtime serialization-conflict handling remain unverified.
+
+---
+
 # CRUD matrix — verified code/policy surface
 
 ## Current 5.1.24 vendor boundary
@@ -175,7 +185,7 @@ These resources are present in `services/api/prisma/schema.prisma` or feature co
 |---|---|---|---|---|
 | Keledon, Device, pairing state and RPA config | CRUD and device controllers/guards | Mutable business/runtime resources; secrets and pairing proofs restricted | Matrix each role/surface and per-operation plus safe detail/rotation behavior | GAP |
 | Interface, team-interface assignment | CRUD and MVP data controllers | Mutable configuration | Reconcile duplicate route families, scope, detail and deletion behavior | GAP |
-| Workflow, Flow, FlowStep | CRUD and flow controllers | Mutable workflow definitions | Separate flow/step operations, detail, reorder and cross-team denials | GAP |
+| Workflow, Flow, FlowStep | CRUD and flow controllers | Workflow remains superadmin-only through generic CRUD; Flow/FlowStep routes use ResourceScopeGuard and team ownership. Flow-step reorder now requires every unique step ID from the owning flow, with invalid orders rejected before updates. | Source-backed role-operation rows for Workflow and persisted read/write/detail/delete remain open; full DB persistence evidence is external. | PARTIAL: API 7/7 and Cloud 10/10 service tests plus scoped guard regressions; DB persistence unverified |
 | FlowDefinition, FlowDefinitionVersion, TenantFlowPermission, IntentFlowMapping | MVP data controller | Mutable/versioned tenant configuration | Define owner, immutable-version policy, tenant/company scope and operation-specific access | GAP |
 | Session, FlowRun, FlowRunEvidence, SubAgentRun | CRUD/runtime controllers | Operational data with user/team scope; some append-only | Decide immutable fields, authorized detail, retention and deletion/archive policy | GAP |
 | KnowledgeBase, KnowledgeDocument, vector documents | CRUD, Knowledge and VectorStore controllers | Tenant content; vector API uses legacy default collection for some operations | Reconcile route families, enforce tenant scope for list/detail/mutations, document delete/retention | GAP |
@@ -210,8 +220,8 @@ The following inventory was reconciled against every `model` declaration in `ser
 | IntentFlowMapping | MVP data list/create routes | Tenant mapping; caller-company and operation rules require exact tests. |
 | FlowRun | Calls/browser runtime and scoped resource routes | Operational execution record; confirm read/detail and retention policy. |
 | FlowRunEvidence | Agent execution evidence processor/runtime | Append-only evidence path; visibility, tenant scope, retention and delete exception need review. |
-| Flow | Flow service and resource-scope guard | Runtime/configuration access exists; no equivalent full CRUD contract identified here. |
-| FlowStep | Flow service and nested reorder/update paths | Nested mutable resource; cross-flow/team ownership tests remain open. |
+| Flow | `GET/POST /api/flows`, `GET/PUT/DELETE /api/flows/:id`; Flow service and `ResourceScopeGuard` | Managers create/update/delete and users read only within their assigned team; direct IDs are team-checked. |
+| FlowStep | `GET/POST /api/flows/:id/steps`, `PUT/DELETE /api/flows/steps/:stepId`, `PUT /api/flows/:id/steps/reorder`; Flow service and `ResourceScopeGuard` | Managers mutate only steps belonging to an authorized team flow; ordinary roles read scoped flow data only. Reorder requires exact unique membership of the flow step set. |
 | SubAgent | Subagent service and flow bindings | Runtime configuration; role and tenant operation matrix not established. |
 | SubAgentRun | No direct Prisma delegate found in API source scan; runtime/raw-query ownership requires follow-up | Storage path and lifecycle need confirmation before assigning CRUD exceptions. |
 | ProviderCatalog | CRUD provider catalog read/update and public catalog read path | Global catalog; distinguish public fields from administrative writes and prove output redaction. |
@@ -230,6 +240,6 @@ The following inventory was reconciled against every `model` declaration in `ser
 | AiPromptRevision | AI admin revision service | Append-only/versioned record; verify direct detail/version authorization and persistence. |
 | AiCallUsage | AI admin usage and analytics reads | Read-only usage evidence; attribution and tenant visibility need DB-backed proof. |
 
-The schema inventory is now complete as a source list, but CHK-002 remains OPEN: per-model role/tenant/operation mapping, direct-ID negative cases, migration acceptance and persisted before/after evidence have not been completed. No database was provisioned or connected.
+The automated source inventory now asserts 35/35 Prisma models and 126/126 core role/surface rows. CHK-002 remains PARTIAL: the remaining 26 non-core models still need route-specific role × tenant × operation and Web affordance mapping; internal/append-only exceptions need explicit route-level evidence; direct-ID coverage is selected rather than exhaustive. Migration and persisted before/after evidence require an isolated disposable DB. No database was provisioned or connected.
 
 The landing build and static SEO test pass on 5.1.17. The model inventory is complete as a source list but does not close CRUD/UAT evidence. No production database was connected.

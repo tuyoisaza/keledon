@@ -3,8 +3,15 @@ import { PrismaService } from '../prisma/prisma.service';
 
 describe('FlowService tenant boundaries', () => {
   const flowFindMany = jest.fn();
+  const flowStepFindMany = jest.fn();
+  const flowStepUpdate = jest.fn();
+  const transaction = jest.fn((work: (tx: any) => Promise<void>) =>
+    work({ flowStep: { findMany: flowStepFindMany, update: flowStepUpdate } }),
+  );
   const prisma = {
     flow: { findMany: flowFindMany },
+    flowStep: { findMany: flowStepFindMany, update: flowStepUpdate },
+    $transaction: transaction,
   } as unknown as PrismaService;
   const service = new FlowService(prisma);
   const fetchMock: jest.MockedFunction<typeof fetch> = jest.fn();
@@ -13,6 +20,9 @@ describe('FlowService tenant boundaries', () => {
   beforeEach(() => {
     fetchMock.mockReset();
     flowFindMany.mockReset();
+    flowStepFindMany.mockReset();
+    flowStepUpdate.mockReset();
+    transaction.mockClear();
     global.fetch = fetchMock;
   });
 
@@ -98,5 +108,49 @@ describe('FlowService tenant boundaries', () => {
         where: { teamId: 'team-a', category: 'support' },
       }),
     );
+  });
+
+  it('reorders only a complete, unique set of steps belonging to one flow', async () => {
+    flowStepFindMany.mockResolvedValue([
+      { id: 'step-a' },
+      { id: 'step-b' },
+      { id: 'step-c' },
+    ]);
+    flowStepUpdate.mockResolvedValue({ count: 1 });
+
+    await service.reorderSteps('flow-a', ['step-c', 'step-a', 'step-b']);
+
+    expect(flowStepFindMany).toHaveBeenCalledWith({
+      where: { flowId: 'flow-a' },
+      select: { id: true },
+    });
+    expect(flowStepUpdate.mock.calls).toEqual([
+      [{ where: { id: 'step-c' }, data: { order: 0 } }],
+      [{ where: { id: 'step-a' }, data: { order: 1 } }],
+      [{ where: { id: 'step-b' }, data: { order: 2 } }],
+    ]);
+    expect(transaction).toHaveBeenCalledTimes(1);
+    expect(transaction).toHaveBeenCalledWith(expect.any(Function), {
+      isolationLevel: 'Serializable',
+    });
+  });
+
+  it.each([
+    ['subset', ['step-a']],
+    ['duplicate', ['step-a', 'step-a', 'step-c']],
+    ['foreign or unknown ID', ['step-a', 'step-b', 'step-other']],
+    ['malformed value', ['step-a', 'step-b', null]],
+    ['missing list', undefined],
+  ])('rejects a %s reorder without writes', async (_case, stepIds) => {
+    flowStepFindMany.mockResolvedValue([
+      { id: 'step-a' },
+      { id: 'step-b' },
+      { id: 'step-c' },
+    ]);
+
+    await expect(service.reorderSteps('flow-a', stepIds)).rejects.toThrow(
+      'Step order does not match flow steps',
+    );
+    expect(flowStepUpdate).not.toHaveBeenCalled();
   });
 });

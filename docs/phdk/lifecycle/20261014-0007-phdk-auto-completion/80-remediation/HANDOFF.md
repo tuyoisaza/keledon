@@ -1,5 +1,9 @@
 # Remediation handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.27 — CHK-002 source remediation
+
+Resolved the source-level flow-step reorder divergence and transaction race: API and Cloud validate malformed inputs and exact unique step membership, then apply all order updates in the same serializable transaction. Focused tests: API 7/7, Cloud 10/10. Full API/Cloud configured builds and typechecks pass; regressions pass API 21/21 and Cloud 11/11. The 35-model/126-core-row assertion is drift protection only. Cloud full Jest needs a disposable DB URL; Web local UAT failed to load `/login`; these are recorded without false PASS. Remaining role×tenant×surface×operation coverage for 26 models and persisted DB acceptance stay open. Candidate delivery follows through the normal PR path.
+
 Status: UAT Fix source remediation completed for candidate 5.1.26. UAT-008 now passes with an approved development/staging-only audited flow; see 60-uat-fix. The candidate branch and final delivery remain open. Previous remediation record follows.
 
 Status: source remediation completed for candidate `afd66702ba7fc216e27c0c845ceaedb1eeb40944`, merged via PR #94 at `8dfc1fca7de253a017acb6f291ff278699915beb`; whole-product acceptance remains partial.
@@ -8,4 +12,4 @@ The approved least-privilege rules are enforced in API/Cloud: actor and tenant a
 
 Validation: PHDK v2.50.10 coherence 52/52; API ESLint 0 errors/138 warnings; Cloud full-source ESLint 0 errors/25 warnings; Cloud configured build and full `tsc --noEmit` PASS; Cloud regression 11/11 suites; API Jest 10/10 suites and 31 tests; focused dashboard gateway Jest 2/2; Browser offline suite 27/27; Web diagnostics 19/19; Web SEO 1/1; latest exact-candidate built-SPA synthetic UAT 1/1. Web production build passes with the existing ~779 kB main-chunk warning. The source/test inventory covers 1,135 live files with none at/above 600 lines.
 
-Still open: audited test-profile disposition; exhaustive 35-model role/tenant/surface/operation acceptance; an authorized disposable DB migration/persistence run; native Electron/device/audio; broad route accessibility/localization; deployed SEO/AEO; and customer-selected live voice/CRM acceptance when those providers are configured. No production DB, credentials, customer records, provider network, deployment or customer call was used. Source is merged; no deployment is claimed.
+At PR #94 close, the remaining items were: audited test-profile disposition; exhaustive 35-model role/tenant/surface/operation acceptance; an authorized disposable DB migration/persistence run; native Electron/device/audio; broad route accessibility/localization; deployed SEO/AEO; and customer-selected live voice/CRM acceptance when those providers are configured. No production DB, credentials, customer records, provider network, deployment or customer call was used. Source is merged; no deployment is claimed.

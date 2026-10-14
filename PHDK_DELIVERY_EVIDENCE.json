@@ -2,44 +2,44 @@
   "version": "1",
   "goal": "PHDK Auto: KELEDON four confirmed fronts and maximum applicable PHDK source conformity",
   "target_branch": "main",
-  "expected_version": "5.1.25",
+  "expected_version": "5.1.26",
   "version_file": "services/web/package.json",
   "version_property": "version",
-  "source_commit_sha": "afd66702ba7fc216e27c0c845ceaedb1eeb40944",
-  "merged_commit_sha": "8dfc1fca7de253a017acb6f291ff278699915beb",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/94",
+  "source_commit_sha": "d09cd3c1bab7ec86aa56a40b6ae2295fd890b808",
+  "merged_commit_sha": "8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/95",
   "checks": {
     "version_alignment": {
       "status": "PASS",
-      "evidence": "Verified merged main source: all five package/lock roots and Browser renderer are 5.1.25 on 8dfc1fca7de253a017acb6f291ff278699915beb."
+      "evidence": "Fetched origin/main and git ls-remote resolve to 8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2; five package/lock roots and Browser renderer identify 5.1.26."
     },
     "commit_prefix": {
       "status": "PASS",
-      "evidence": "Source commits use the v5.1.25 prefix; PR #94 squash commit is v5.1.25 fix(security): align KELEDON runtime with PHDK."
+      "evidence": "PR #95 head source/docs commits use v5.1.26 prefix: 6a99281e8c74c5d40590aca146a03786324dc340 and d09cd3c1bab7ec86aa56a40b6ae2295fd890b808."
     },
     "pr_merge_remote_readback": {
       "status": "PASS",
-      "evidence": "PR #94 merged; fetched origin/main and git ls-remote agree on 8dfc1fca7de253a017acb6f291ff278699915beb. Squashed tree matches PR head. No hosted checks/review decision configured."
+      "evidence": "PR #95 merged at 8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2. origin/main and git ls-remote agree; merge tree matches PR head tree 4dec1d82989ed30f6b2b2eef74e4fbc845af0dea. No hosted checks/review decision configured."
     },
-    "api_build_and_tests": {
+    "api_build_and_regression": {
       "status": "PASS",
-      "evidence": "Previously delivered API build, Jest 10 suites/31 tests, and lint with 0 errors/138 warnings."
+      "evidence": "API build and TypeScript check pass; API regression 20/20 suites, including audited profile policy/AuthGuard/Nest HTTP wiring; full API lint 0 errors/138 warnings."
     },
-    "cloud_build_typecheck_regression_lint": {
+    "web_and_uat": {
       "status": "PASS",
-      "evidence": "Previously delivered configured/full typecheck builds; Cloud regression 11 suites; lint 0 errors/25 warnings."
+      "evidence": "Web typecheck/build pass; post-commit built-SPA UAT 1/1 at source commit 6a99281e8c74c5d40590aca146a03786324dc340; focused ESLint 0 errors/1 Fast Refresh warning."
     },
-    "browser_build_and_tests": {
+    "browser_landing": {
       "status": "PASS",
-      "evidence": "Previously delivered Browser build and offline suite 27/27."
-    },
-    "web_landing": {
-      "status": "PASS",
-      "evidence": "Previously delivered Web build, diagnostics 19/19, Web SEO 1/1, Landing build/SEO 1/1."
+      "evidence": "Browser and Landing builds pass; Landing typecheck/SEO tests pass. All five app package/lock roots and Browser renderer are 5.1.26."
     },
     "phdk_coherence": {
       "status": "PASS",
-      "evidence": "PHDK v2.50.10 coherence passed 52/52 for delivered PR #94."
+      "evidence": "PHDK v2.50.10 coherence 52/52."
+    },
+    "scoped_uat": {
+      "status": "PASS",
+      "evidence": "UAT-008 passes within approved scope: synthetic UI with mocked API plus isolated server regression for current DB superadmin, allowlist, audit, expiry and revocation. Overall product acceptance remains PARTIALLY_DELIVERED."
     }
   },
   "acceptance_status": "PARTIALLY_DELIVERED",
@@ -55,18 +55,26 @@
   "deployment": "NOT_PERFORMED",
   "production_database_or_customer_data": "NOT_USED",
   "candidate": {
-    "expected_version": "5.1.26",
-    "branch": "fix/audited-uat-test-profiles",
-    "base_commit": "8dfc1fca7de253a017acb6f291ff278699915beb",
-    "delivery_status": "COMMIT_UAT_PASS_PR_PENDING",
-    "source_commit_sha": "6a99281e8c74c5d40590aca146a03786324dc340",
+    "expected_version": "5.1.27",
+    "branch": "fix/phdk-crud-model-matrix",
+    "base_commit": "8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2",
+    "delivery_status": "COMMITTED_UAT_VERIFIED_PR_PENDING",
+    "source_commit_sha": "996464da5c1bb0567c6e9fa7d40e0a212e6d7b48",
     "pr_url": null,
-    "uat_008": "PASS_SCOPED",
-    "api_regression": "PASS 20/20 suites",
-    "web_uat": "PASS 1/1 post-commit built-SPA suite; candidate revision 6a99281e8c74c5d40590aca146a03786324dc340",
+    "api_regression": "PASS 21/21 suites",
+    "api_jest": "PASS 11/11 suites, 38 tests",
+    "cloud_regression": "PASS 11/11 suites",
+    "flow_service_tests": "PASS API 7/7, Cloud 10/10",
+    "api_cloud_build_typecheck": "PASS",
+    "api_cloud_lint": "PASS 0 errors; 138 API and 25 Cloud warnings",
+    "web_uat": "PASS 1/1 sequential retry on built 5.1.27 Web with mocked APIs; initial parallel attempt failed at /login",
+    "cloud_jest_full": "BLOCKED test/app.e2e-spec.ts requires DATABASE_URL",
     "whole_product_acceptance": "PARTIALLY_DELIVERED",
-    "note": "Candidate source commit, PR, and remote readback are pending; the merged_main fields above remain the last verified delivery.",
-    "source_fingerprint": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "pull_request": null
+    "note": "Candidate commit and PR publication remain pending. Outer merged_main fields above retain the last independently verified delivery.",
+    "source_fingerprint": "sha256:ed0ef06ebbffbd331cbb28f1aa8bd7f15c62b3b80c9a5b6da0856541ce42e63e",
+    "pull_request": null,
+    "merged_commit_sha": null,
+    "pull_request_state": "NOT_CREATED",
+    "merge_tree": null
   }
 }
