@@ -37,7 +37,12 @@ export function getChunkPointId(
     .update(`${documentId}:chunk:${chunkIndex + 1}`)
     .digest('hex')
     .slice(0, 32);
-  return `kbdoc-${digest}`;
+  const uuid = digest.split('');
+  uuid[12] = '8'; // RFC 9562 custom UUID version
+  uuid[16] = ((parseInt(uuid[16], 16) & 0x3) | 0x8).toString(16);
+  return `${uuid.slice(0, 8).join('')}-${uuid.slice(8, 12).join('')}-${uuid
+    .slice(12, 16)
+    .join('')}-${uuid.slice(16, 20).join('')}-${uuid.slice(20).join('')}`;
 }
 
 export function normalizeChunkSize(chunkSize?: number): number {
