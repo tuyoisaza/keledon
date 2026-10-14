@@ -5,6 +5,7 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const { chromium } = require(path.resolve(__dirname, '../../api/node_modules/playwright'));
 const { getCandidateFingerprint } = require('./uat-candidate-evidence.cjs');
+const appVersion = require('../package.json').version;
 
 const dist = path.resolve(__dirname, '../dist');
 const repoRoot = path.resolve(__dirname, '../../..');
@@ -15,7 +16,7 @@ const device = {
   status: 'paired',
   platform: 'Windows',
   lastSeen: null,
-  version: '5.1.36',
+  version: appVersion,
 };
 
 test('device management UAT: read-only role cannot revoke; tenant manager confirms and handles failure', { timeout: 90000 }, async () => {

@@ -1,4 +1,8 @@
-## Current Check — candidate 5.1.36; Auto acceptance partial (2026-10-14)
+## Prior Check — candidate 5.1.36; superseded by the 5.1.37 candidate entry below
+
+## Current Check — 5.1.37 source candidate (2026-10-14)
+
+Branch `fix/phdk-cloud-typed-request-boundaries-5-1-37`, source commit `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`, based on verified `main` `493c6c238c6c3cac585b7a80dcff968fff6ab7b4`. API build/regression pass (35/35); Cloud build/regression pass (14/14), full typed ESLint 0 errors/0 warnings; API full typed ESLint remains 0 errors/135 warnings. Web UAT 2/2, Web/Landing SEO 1/1 each, widget/diagnostics 19/19, coherence 52/52, and line inventory 1,161/0 >=600 pass. Scoped fixes: service-derived request types in API/Cloud, Cloud audit route/proxy removal, duplicate provider removal, and safe TTS stream chunk narrowing. Source Check: **REMEDIATED FOR THIS SLICE**. Whole Auto acceptance remains incomplete for database persistence/migrations, safe identities, live Qdrant/concurrency, native device/audio, complete CRUD-family proof, broad accessibility/localization and deployed discovery. PR not yet created.
 
 Branch: `fix/phdk-device-revoke-ui-5-1-36`, based on verified remote `main` `f0a9633e39bbdbca416f5e1c24c32acab7276902` (5.1.35). Installed PHDK 2.50.10 coherence passes 52/52. This candidate closes a source-level Device administration gap: managers lacked a revoke action despite a tenant-scoped API; pending registration also accepted a company-less actor and could create an unpairable row. The guard now binds registration to the current DB actor/company and fails closed without a company; the Web page exposes localized confirmed revoke to managers only, with safe list projection retained.
 
@@ -315,3 +319,10 @@ Source review found that generic API/Cloud CRUD deletion of `KnowledgeDocument` 
 This closes the concrete source cleanup gap only. `CHK-002` stays open for the exhaustive 35-model role/tenant/surface/operation matrix and persisted behavior. PostgreSQL acceptance, real Qdrant integration, concurrent delete/reindex and recovery after relational failure post-vector-delete remain unverified. Existing safe-identity, native audio/device and deployed SEO/AEO acceptance remains open. No database, provider, private CRM or deployment was used.
 
 Source delivery: PR [#104](https://github.com/tuyoisaza/keledon/pull/104) squash-merged at `d40a5f1e7ad92bb66a9cc06211c105ec3c708a9a`; remote main and PR source trees match at `447a1d1e006c8f59fb5a026a899ab7c7d4fea288`. Five roots/renderer read 5.1.33. The PHDK completion gate is BLOCKED on whole-product acceptance only; source delivery is verified.
+# PHDK Check — 5.1.37 source candidate; whole Auto acceptance partial
+
+Candidate source commit `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` is based on verified main `493c6c238c6c3cac585b7a80dcff968fff6ab7b4`. The current scoped source finding is remediated: API/Cloud CRUD request bodies and actor context are service-derived typed contracts; Cloud no longer exposes a generic audit-log write route or proxy; the duplicate provider is gone; TTS stream chunks are normalized. API 35/35, Cloud 14/14, Cloud full typed ESLint 0/0, API full lint 0 errors/135 warnings, Web UAT 2/2, widget/diagnostics 19/19, PHDK coherence 52/52, and source line inventory 1,161/0 >=600 pass. See `INTEGRATION_REPORT.md` for exact gate details.
+
+Check result: **SCOPED SOURCE FINDING REMEDIATED / ALIGNMENT INCOMPLETE FOR WHOLE AUTO**. The 35-model/168-row inventory is a drift assertion only. Open: disposable PostgreSQL and persisted authorization/migration, safe DB-backed identities, live Qdrant/delete-reindex concurrency, native Windows device/audio, complete model-specific CRUD proof, broad accessibility/localization, deployed SEO/AEO and client-configured live calls/CRM. No database, private customer endpoint, customer data or deployment was accessed.
+
+---

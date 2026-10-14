@@ -1,4 +1,8 @@
-# PMO status — current Auto candidate 5.1.36; overall PARTIALLY DELIVERED
+# PMO status history — 5.1.36; superseded by the 5.1.37 candidate entry below
+
+## Current status — candidate 5.1.37 (2026-10-14)
+
+Branch `fix/phdk-cloud-typed-request-boundaries-5-1-37`; source commit `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`; base `493c6c238c6c3cac585b7a80dcff968fff6ab7b4`. Scoped Cloud typed-lint and API/Cloud CRUD parity remediation is implemented and verified. Five product roots plus renderer are 5.1.37; API regression 35/35, Cloud regression 14/14/full lint clean; Web UAT 2/2; diagnostic tests 19/19; SEO source checks pass; coherence 52/52. Normal PR delivery is pending. CMT-001..004 remain active; whole Auto remains **PARTIALLY DELIVERED** for external/persistence/native/broad-coverage gates.
 
 ## Previous merged baseline — 5.1.35 (2026-10-14)
 
@@ -86,3 +90,10 @@ Open conformity debt: localization inventory, very large Brain/Flows modules, st
 PR #42 is OPEN/DRAFT against `main`; remediation and lifecycle evidence updates are pushed to that PR. The owner approved inclusion/merge of the additive managed-AI migration using the normal DB procedure. No database connection or migration execution occurred. Four workstreams remain implemented/reviewed in the PR; no remote delivery to `main` is complete.
 
 Current Check is PARTIAL: 4 physical source files remain over 600 lines; landing/agent type/test limitations and locale/indexability/rendered accessibility findings remain. This candidate update also splits the extension background, Phase 5 integration server, CallsService, and mirrored RPA executors; their existing method sets are preserved and focused build/smoke/validator evidence passes. The API and Cloud analytics controllers were split into route roots, helper classes and type modules; production/C13 builds and regression suites pass in both packages. API and Cloud DecisionEngineService were then split into sub-600-line service, context/flow/policy helper and type modules while retaining public entry points. API and Cloud FlowExecutionService were then divided into service, step/performance, default-template and public-type modules; public methods remain present, both builds and regressions pass 8/8, and template/default-step smoke checks pass. Continue reducing the four remaining oversized modules, rerun final UAT/Check and then satisfy normal PR controls.
+# PMO status — 5.1.37 source candidate; overall PARTIALLY DELIVERED
+
+Candidate `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` is based on verified main `493c6c238c6c3cac585b7a80dcff968fff6ab7b4` / 5.1.36. It closes the current scoped typed-CRUD/API-Cloud parity Check finding; all five app package/lock roots and Browser renderer align at 5.1.37. API regression 35/35, Cloud regression 14/14 and full Cloud typed ESLint 0/0; Web UAT 2/2 and source SEO pass; Browser/Landing builds, Landing SEO, diagnostics 19/19, coherence 52/52 and line inventory pass. API global lint remains 0 errors/135 warnings. PR delivery pending.
+
+All CMT-001..004 remain active. Overall remains **PARTIALLY DELIVERED** for persisted database authorization/migrations, safe DB-backed identities, live Qdrant/concurrency, native device/audio, broader accessibility/localization, deployed SEO/AEO and client-configured live integration acceptance. No DB, customer endpoint, customer data or deployment was used.
+
+---

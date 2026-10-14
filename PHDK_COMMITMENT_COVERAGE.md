@@ -1,4 +1,17 @@
-## Current Auto candidate — 2026-10-14, 5.1.36 Device slice
+## Current candidate 5.1.37 — confirmed commitment coverage (2026-10-14)
+
+| Commitment | 5.1.37 evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | All five app roots/locks and Browser renderer align at 5.1.37; candidate `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` is based on verified main `493c6c238c6c3cac585b7a80dcff968fff6ab7b4`. | PR, merge and exact remote readback pending. |
+| CMT-002 | Shared version/actions widget source and 19 focused tests; exact-SHA Web UAT passes 2/2. | Native Windows device/audio, full visual/runtime verification and broad route/screen-reader acceptance remain open. |
+| CMT-003 | Client-selected integration model remains unchanged; private CRM origins are validated and tenant-allowlisted by existing implementation. | No specific customer provider configured; live CRM/call verification is pending per customer setup. |
+| CMT-004 | Typed API/Cloud CRUD request and actor boundaries, audit write parity, API 35/35, Cloud 14/14, Cloud lint 0/0; inventory 35 models/168 rows. | Persisted DB/migration and full model × role × tenant × surface operation evidence remain open; inventory is drift detection only. |
+
+Overall: **PARTIALLY DELIVERED**. See 5.1.37 Check and UAT snapshots. No DB, private endpoint, customer data or deployment used.
+
+---
+
+## Prior Auto candidate — 2026-10-14, 5.1.36 Device slice
 
 Branch `fix/phdk-device-revoke-ui-5-1-36`, based on verified `main` `f0a9633e39bbdbca416f5e1c24c32acab7276902`. Five package/lock roots plus Browser renderer are 5.1.36. API regression/build 35/35; Web typecheck/build and synthetic UAT 2/2; touched-source ESLint; locale parity; the 35-model/168-row inventory and PHDK coherence 52/52 pass. Device rows now describe proof-based pairing, DB-derived tenant registration, safe lists, role-scoped status, manager revoke and paired-device-only RPA-secret reads. Whole Auto remains PARTIALLY DELIVERED; DB, live device/audio, Qdrant/concurrency, broad accessibility/localization and deployed SEO/AEO are open.
 
@@ -196,3 +209,10 @@ Cross-cutting tasks PLAN-AUTO-005 (full PHDK Check/remediation), PLAN-AUTO-007 (
 Overall: **PARTIALLY DELIVERED**. UAT: 28 PASS, 2 BLOCKED, 1 MANUAL. No DB/provider/customer data/deployment used.
 
 SIGUIENTE PASO: provide the isolated DB/identity and native device/audio environments; then close the remaining acceptance evidence. The current delivery proof is recorded in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.33.json`.
+# Current candidate 5.1.37 — coverage update (2026-10-14)
+
+All confirmed fronts CMT-001..004 remain active in the owner-confirmed order. The source candidate closes a scoped Check finding across API and Cloud CRUD request typing, audit-write parity, duplicate Cloud session provider, and TTS chunk normalization. It supports CMT-001/CMT-004 source conformance; it does not close the broader role × tenant × operation × surface proof obligations. CMT-002's shared diagnostics widget is reviewed against source and 19 focused tests plus the built-Web UAT; native and broad accessibility acceptance remain open. CMT-003 remains provider-independent; actual CRM/call acceptance is customer-configured and untested.
+
+Source commit `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`, based on verified `main` `493c6c238c6c3cac585b7a80dcff968fff6ab7b4`; all five roots/locks and Browser renderer are 5.1.37. API regression 35/35; Cloud 14/14 and full typed ESLint 0/0; exact-source Web UAT 2/2; PHDK coherence 52/52; source inventory 1,161 files with zero at/above 600. Delivery is pending. **Overall PARTIALLY DELIVERED.**
+
+---

@@ -1,4 +1,8 @@
-# PHDK Auto Integration Review — candidate 5.1.36 (2026-10-14)
+# Previous Integration Review — candidate 5.1.36 (2026-10-14)
+
+## Current Integration Review — candidate 5.1.37 (2026-10-14)
+
+The source candidate is `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`, based on verified main `493c6c238c6c3cac585b7a80dcff968fff6ab7b4`; all five app roots/locks and Browser renderer align at 5.1.37. API and Cloud CRUD request/actor contracts derive from service signatures. Cloud's generic audit-log route/proxy and duplicate provider are removed; TTS stream chunks are normalized. No schema or integration provider changed. API/Cloud regressions pass 35/35 and 14/14; Cloud full typed lint 0/0; Web exact-SHA UAT 2/2; Browser/Landing builds, Web/Landing SEO, widget diagnostics 19/19 and PHDK coherence 52/52 pass. Candidate is source-ready for normal PR delivery. The 35-model/168-row matrix is a drift assertion only. No DB, client endpoint or deployment was accessed; full Auto remains partial.
 
 Branch `fix/phdk-device-revoke-ui-5-1-36`, based on verified `main` `f0a9633e39bbdbca416f5e1c24c32acab7276902` / 5.1.35. All five application package/lock roots and Browser renderer align at 5.1.36. The cross-surface Device contract now includes DB-derived company registration, safe owner/tenant list/status, tenant manager revoke, proof-based pairing and paired-device-only raw RPA configuration. Web presents the manager revoke action with explicit credential-loss confirmation and read-only user/agent controls; EN/ES/PT keys remain in parity. Customer-selected CRM remains separate: private targets use normalized tenant origin allowlists and no Cloud-side fetch. API and Cloud voice-profile projections are mirrored in a focused service to satisfy the 600-line rule; no schema or ORM model changed.
 
@@ -83,6 +87,30 @@ The owner-approved DB-derived role/tenant policy and write-only credential repla
 
 Validation was local and synthetic. No browser UI was opened during Integration Review, and no provider, OAuth, database, production setting, live CRM or call endpoint was exercised.
 
-## Residual risks / conclusion
+## Residual risks / conclusion — previous candidate 5.1.36
 
 The explicit disposable-database migration/persistence gate and exhaustive 35-model × role × tenant × surface × operation matrix remain open. Native Electron, OS permission, device/audio, and broad route accessibility/localization acceptance remain open. Cloud full lint remains a known source gap; it is assigned to PLAN-AUTO-005 / WS-X for Check remediation. SEO/AEO source stages and exact-candidate UAT still follow in order. Therefore this is **READY FOR SCOPED UAT WITH OPEN CHECK REMEDIATION**, not release-ready and not full Auto completion. Preserve 5.1.24 while UAT/Fix/Check converge; use a single patch release candidate during final Delivery.
+# PHDK Auto Integration Review — candidate 5.1.37
+
+Date: 2026-10-14
+Branch: `fix/phdk-cloud-typed-request-boundaries-5-1-37`
+Base: verified `main` `493c6c238c6c3cac585b7a80dcff968fff6ab7b4` / 5.1.36
+Source commit: `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`
+Candidate version: 5.1.37 across all five application package/lock roots and Browser renderer.
+
+API and Cloud CRUD controllers now use service-derived input contracts and a mirrored actor/scope request type. The general audit-log mutation surface was already retired in API but remained exposed through Cloud; Cloud route/proxy are removed, keeping audit appends in trusted domain services. Duplicate Cloud session-data provider is removed. Cloud TTS accepts only string/Uint8Array chunks and normalizes them before concatenation. Tenant controller request actor contracts are aligned. No database schema or provider integration changed; private per-tenant targets remain configured/validated only and were not contacted.
+
+| Gate | Result |
+|---|---|
+| API build / regressions | PASS; 35/35 suites |
+| Cloud build / regressions / full typed ESLint | PASS; 14/14; 0 errors, 0 warnings |
+| API full typed ESLint | 0 errors, 135 warnings (existing broad baseline; not claimed warning-free) |
+| Web typecheck/build/UAT/SEO | PASS / PASS / 2 of 2 / PASS |
+| Diagnostics/widget focused tests | PASS, 19/19 |
+| Browser build; Landing typecheck/build/SEO | PASS; PASS/PASS/PASS |
+| CRUD drift inventory | PASS, 35 models/168 rows; not persisted authorization evidence |
+| PHDK coherence and file-size inventory | PASS, 52/52 static; 1,161 files, zero >=600 lines |
+
+Exact-source synthetic UAT binds to `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`, fingerprint `sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`, no dirty/untracked source. UAT uses mocked/intercepted APIs. Candidate is ready for scoped acceptance and normal PR delivery. Whole Auto remains **PARTIALLY DELIVERED**: persisted DB/migrations, real identities, Qdrant/concurrency, native device/audio, broad accessibility/localization and deployed SEO/AEO are open. Live CRM/call acceptance is per client.
+
+---

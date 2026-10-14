@@ -158,11 +158,16 @@ export class CrudService {
     return this.keledonService.getKeledons(companyId, userId);
   }
 
-  async createKeledon(data: any) {
+  async createKeledon(
+    data: Parameters<CrudKeledonService['createKeledon']>[0],
+  ) {
     return this.keledonService.createKeledon(data);
   }
 
-  async updateKeledon(id: string, data: any) {
+  async updateKeledon(
+    id: string,
+    data: Parameters<CrudKeledonService['updateKeledon']>[1],
+  ) {
     return this.keledonService.updateKeledon(id, data);
   }
 
@@ -502,18 +507,6 @@ export class CrudService {
 
   // ========== ========== AUDIT LOGS ========== ==========  ========== ==========
   // Delegated to CrudAuditService (crud-audit.service.ts)
-
-  async createAuditLog(data: {
-    userId?: string;
-    action: string;
-    entity: string;
-    entityId?: string;
-    changes?: string;
-    ipAddress?: string;
-    userAgent?: string;
-  }) {
-    return this.auditService.createAuditLog(data);
-  }
 
   async getAuditLogs(params?: {
     companyId?: string;

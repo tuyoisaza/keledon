@@ -8,6 +8,10 @@ const guards = [
   'services/api/src/guards/crud-access.guard.ts',
   'cloud/src/guards/crud-access.guard.ts',
 ];
+const controllers = [
+  'services/api/src/crud/crud.controller.ts',
+  'cloud/src/crud/crud.controller.ts',
+];
 
 test('API and Cloud CRUD guards protect audit integrity and password hashes', () => {
   for (const relativePath of guards) {
@@ -22,5 +26,18 @@ test('API and Cloud CRUD guards protect audit integrity and password hashes', ()
       `${relativePath} must keep audit logs append-only through general CRUD`,
     );
     assert.doesNotMatch(source, /handler\s*===\s*['"]webhook['"]/);
+  }
+  for (const relativePath of controllers) {
+    const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+    assert.doesNotMatch(
+      source,
+      /@Post\(['"]audit-logs['"]\)/,
+      `${relativePath} must not expose a general audit-log write route`,
+    );
+    assert.doesNotMatch(
+      source,
+      /createAuditLog\s*\(/,
+      `${relativePath} must leave audit writes to trusted domain services`,
+    );
   }
 });

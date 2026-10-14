@@ -1,6 +1,10 @@
 # PHDK physical line limit audit
 
-## Current candidate 5.1.36 — 2026-10-14
+## Current candidate 5.1.37 — 2026-10-14
+
+Fresh inventory: **1,161 active application/test files**, extensions `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, `.vue`; dependencies, generated output, `.git`, vendored standards and lifecycle snapshots excluded. **0 files are at or above 600 physical lines.** This count includes two new mirrored CRUD request-type contracts. Candidate source commit: `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`. This closes the line-size gate only; whole-product acceptance remains partial.
+
+## Prior candidate 5.1.36 — superseded by the 5.1.37 audit below
 
 Fresh inventory covers **1,159 live application and test files** with extensions `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`; it excludes dependencies, generated output, Git metadata, vendored standards, and immutable lifecycle snapshots. **0 files are at or above 600 physical lines.** This run reduced API and Cloud CRUD services by moving tenant voice-profile persistence into mirrored focused services, and shared the candidate fingerprint helper between browser UATs. API and Cloud builds pass, API regression passes 35/35, Cloud tenant voice-profile regression passes, Web typecheck/build pass, and local Web UAT passes 2/2. The physical-size criterion passes; broader database-backed and external acceptance remains partial.
 

@@ -1,6 +1,14 @@
 # Commitment ledger
 
-## Active run `20261014-0007-phdk-auto-completion` — 5.1.36 Device candidate
+## Active run update — 5.1.37 source candidate (2026-10-14)
+
+Verified base is `main` `493c6c238c6c3cac585b7a80dcff968fff6ab7b4` / 5.1.36; candidate commit `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`. All five app package/lock roots and Browser renderer align at 5.1.37. API build/regression pass; regressions are 35/35. Cloud build/regression pass 14/14 and full typed ESLint is 0 errors/0 warnings. Web build/typecheck/UAT 2/2/SEO pass; Browser and Landing builds pass; Landing SEO passes. Widget and diagnostics suite passes 19/19; PHDK coherence is 52/52; line inventory is 1,161 files with none at/above 600. Exact-SHA synthetic UAT is recorded in `docs/phdk/evidence/uat-local-web.json` and `uat-device-5.1.36.json` (the latter retains its historical case filename).
+
+The scoped Check remediation replaces request-body/actor `any` types in the API and Cloud CRUD controllers with service-derived contracts, removes Cloud's general audit-log write route to match API, removes a duplicate provider, and validates Cloud TTS stream chunks. API full lint remains 0 errors/135 existing warnings; do not call it warning-free. The 35-model/168-row inventory is a source drift assertion, not persisted DB proof. PR/merge/readback for 5.1.37 are still pending. Overall: **PARTIALLY DELIVERED**; DB/migration, live Qdrant, native device/audio, broad accessibility/localization and deployed discovery remain open. No client provider or private URL was contacted.
+
+---
+
+## Prior checkpoint — 5.1.36 Device candidate
 
 This candidate continues the four owner-confirmed fronts in order. It is based on verified `main` `f0a9633e39bbdbca416f5e1c24c32acab7276902` / 5.1.35. Five app package/lock roots and Browser renderer are aligned at 5.1.36. API build/regression 35/35; Web typecheck/build and synthetic SPA UAT 2/2; PHDK coherence 52/52; Device × role × API/Web rows bring the drift assertion to 168. Source delivery is pending; persistence/native/device audio/deployed evidence remain partial.
 

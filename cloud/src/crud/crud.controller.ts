@@ -12,15 +12,11 @@ import {
   Req,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import type { User } from '@prisma/client';
 import { CrudService } from './crud.service';
 import { CrudAccessGuard } from '../guards/crud-access.guard';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
-type CrudRequest = {
-  companyScope?: string;
-  actor?: Pick<User, 'id' | 'role' | 'companyId' | 'teamId'>;
-};
+import type { CrudRequestContext } from './crud-request.types';
 
 @ApiTags('CRUD')
 @Controller('api/crud')
@@ -49,7 +45,7 @@ export class CrudController {
 
   @Get('companies')
   @ApiOperation({ summary: 'Get all companies' })
-  async getCompanies(@Req() req: CrudRequest) {
+  async getCompanies(@Req() req: CrudRequestContext) {
     if (req.companyScope) {
       const company = await this.crud.getCompany(req.companyScope);
       return company ? [company] : [];
@@ -64,12 +60,15 @@ export class CrudController {
 
   @Post('companies')
   @ApiOperation({ summary: 'Create a new company' })
-  createCompany(@Body() data: any) {
+  createCompany(@Body() data: Parameters<CrudService['createCompany']>[0]) {
     return this.crud.createCompany(data);
   }
 
   @Put('companies/:id')
-  updateCompany(@Param('id') id: string, @Body() data: any) {
+  updateCompany(
+    @Param('id') id: string,
+    @Body() data: Parameters<CrudService['updateCompany']>[1],
+  ) {
     return this.crud.updateCompany(id, data);
   }
 
@@ -100,7 +99,7 @@ export class CrudController {
   }
 
   @Post('brands')
-  createBrand(@Body() data: any) {
+  createBrand(@Body() data: Parameters<CrudService['createBrand']>[0]) {
     return this.crud.createBrand(data);
   }
 
@@ -110,7 +109,10 @@ export class CrudController {
   }
 
   @Put('brands/:id')
-  updateBrand(@Param('id') id: string, @Body() data: any) {
+  updateBrand(
+    @Param('id') id: string,
+    @Body() data: Parameters<CrudService['updateBrand']>[1],
+  ) {
     return this.crud.updateBrand(id, data);
   }
 
@@ -133,12 +135,15 @@ export class CrudController {
   }
 
   @Post('teams')
-  createTeam(@Body() data: any) {
+  createTeam(@Body() data: Parameters<CrudService['createTeam']>[0]) {
     return this.crud.createTeam(data);
   }
 
   @Put('teams/:id')
-  updateTeam(@Param('id') id: string, @Body() data: any) {
+  updateTeam(
+    @Param('id') id: string,
+    @Body() data: Parameters<CrudService['updateTeam']>[1],
+  ) {
     return this.crud.updateTeam(id, data);
   }
 
@@ -169,7 +174,7 @@ export class CrudController {
   }
 
   @Post('users')
-  createUser(@Body() data: any) {
+  createUser(@Body() data: Parameters<CrudService['createUser']>[0]) {
     return this.crud.createUser(data);
   }
 
@@ -179,7 +184,10 @@ export class CrudController {
   }
 
   @Put('users/:id')
-  updateUser(@Param('id') id: string, @Body() data: any) {
+  updateUser(
+    @Param('id') id: string,
+    @Body() data: Parameters<CrudService['updateUser']>[1],
+  ) {
     return this.crud.updateUser(id, data);
   }
 
@@ -192,7 +200,10 @@ export class CrudController {
   // ========== KELEDONS ==========
 
   @Get('keledons')
-  getKeledons(@Req() req: CrudRequest, @Query('companyId') companyId?: string) {
+  getKeledons(
+    @Req() req: CrudRequestContext,
+    @Query('companyId') companyId?: string,
+  ) {
     const ownOnly = !['superadmin', 'admin', 'coordinator'].includes(
       req.actor.role,
     );
@@ -200,12 +211,15 @@ export class CrudController {
   }
 
   @Post('keledons')
-  createKeledon(@Body() data: any) {
+  createKeledon(@Body() data: Parameters<CrudService['createKeledon']>[0]) {
     return this.crud.createKeledon(data);
   }
 
   @Put('keledons/:id')
-  updateKeledon(@Param('id') id: string, @Body() data: any) {
+  updateKeledon(
+    @Param('id') id: string,
+    @Body() data: Parameters<CrudService['updateKeledon']>[1],
+  ) {
     return this.crud.updateKeledon(id, data);
   }
 
@@ -246,12 +260,17 @@ export class CrudController {
   }
 
   @Post('interfaces')
-  createManagedInterface(@Body() data: any) {
+  createManagedInterface(
+    @Body() data: Parameters<CrudService['createManagedInterface']>[0],
+  ) {
     return this.crud.createManagedInterface(data);
   }
 
   @Put('interfaces/:id')
-  updateManagedInterface(@Param('id') id: string, @Body() data: any) {
+  updateManagedInterface(
+    @Param('id') id: string,
+    @Body() data: Parameters<CrudService['updateManagedInterface']>[1],
+  ) {
     return this.crud.updateManagedInterface(id, data);
   }
 
@@ -274,12 +293,15 @@ export class CrudController {
   }
 
   @Post('workflows')
-  createWorkflow(@Body() data: any) {
+  createWorkflow(@Body() data: Parameters<CrudService['createWorkflow']>[0]) {
     return this.crud.createWorkflow(data);
   }
 
   @Put('workflows/:id')
-  updateWorkflow(@Param('id') id: string, @Body() data: any) {
+  updateWorkflow(
+    @Param('id') id: string,
+    @Body() data: Parameters<CrudService['updateWorkflow']>[1],
+  ) {
     return this.crud.updateWorkflow(id, data);
   }
 
@@ -297,7 +319,9 @@ export class CrudController {
   }
 
   @Put('provider-catalog')
-  upsertProviderCatalog(@Body() data: any[]) {
+  upsertProviderCatalog(
+    @Body() data: Parameters<CrudService['upsertProviderCatalog']>[0],
+  ) {
     return this.crud.upsertProviderCatalog(data);
   }
 
@@ -309,7 +333,9 @@ export class CrudController {
   }
 
   @Put('tenant-provider-config')
-  upsertTenantProviderConfig(@Body() data: any[]) {
+  upsertTenantProviderConfig(
+    @Body() data: Parameters<CrudService['upsertTenantProviderConfig']>[0],
+  ) {
     return this.crud.upsertTenantProviderConfig(data);
   }
 
@@ -321,12 +347,17 @@ export class CrudController {
   }
 
   @Post('voice-profiles')
-  createTenantVoiceProfile(@Body() data: any) {
+  createTenantVoiceProfile(
+    @Body() data: Parameters<CrudService['createTenantVoiceProfile']>[0],
+  ) {
     return this.crud.createTenantVoiceProfile(data);
   }
 
   @Put('voice-profiles/:id')
-  updateTenantVoiceProfile(@Param('id') id: string, @Body() data: any) {
+  updateTenantVoiceProfile(
+    @Param('id') id: string,
+    @Body() data: Parameters<CrudService['updateTenantVoiceProfile']>[1],
+  ) {
     return this.crud.updateTenantVoiceProfile(id, data);
   }
 
@@ -355,12 +386,15 @@ export class CrudController {
   }
 
   @Post('sessions')
-  createSession(@Body() data: any) {
+  createSession(@Body() data: Parameters<CrudService['createSession']>[0]) {
     return this.crud.createSession(data);
   }
 
   @Put('sessions/:id')
-  updateSession(@Param('id') id: string, @Body() data: any) {
+  updateSession(
+    @Param('id') id: string,
+    @Body() data: Parameters<CrudService['updateSession']>[1],
+  ) {
     return this.crud.updateSession(id, data);
   }
 
@@ -382,12 +416,14 @@ export class CrudController {
   }
 
   @Get('knowledge/:id')
-  getKnowledgeBase(@Param('id') id: string, @Req() req: CrudRequest) {
+  getKnowledgeBase(@Param('id') id: string, @Req() req: CrudRequestContext) {
     return this.crud.getKnowledgeBase(id, req.actor?.companyId ?? undefined);
   }
 
   @Post('knowledge')
-  createKnowledgeBase(@Body() data: any) {
+  createKnowledgeBase(
+    @Body() data: Parameters<CrudService['createKnowledgeBase']>[0],
+  ) {
     return this.crud.createKnowledgeBase(data);
   }
 
@@ -395,7 +431,7 @@ export class CrudController {
   updateKnowledgeBase(
     @Param('id') id: string,
     @Body() data: { name?: string; description?: string | null },
-    @Req() req: CrudRequest,
+    @Req() req: CrudRequestContext,
   ) {
     return this.crud.updateKnowledgeBase(
       id,
@@ -416,7 +452,14 @@ export class CrudController {
   }
 
   @Post('knowledge/:id/documents')
-  createKnowledgeDocument(@Param('id') id: string, @Body() data: any) {
+  createKnowledgeDocument(
+    @Param('id') id: string,
+    @Body()
+    data: Omit<
+      Parameters<CrudService['createKnowledgeDocument']>[0],
+      'knowledgeBaseId'
+    >,
+  ) {
     return this.crud.createKnowledgeDocument({ ...data, knowledgeBaseId: id });
   }
 
@@ -449,11 +492,6 @@ export class CrudController {
       startDate,
       endDate,
     });
-  }
-
-  @Post('audit-logs')
-  createAuditLog(@Body() data: any) {
-    return this.crud.createAuditLog(data);
   }
 
   // ========== SEED ==========

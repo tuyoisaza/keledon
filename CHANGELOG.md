@@ -1,3 +1,11 @@
+## v5.1.37 — 2026-10-14 (typed CRUD request boundaries and Cloud parity)
+
+- Replace untyped CRUD request bodies and actor context with service-derived contracts across API and Cloud.
+- Remove Cloud's unused duplicate session-data provider and retire its general audit-log write route to match API's append-only surface.
+- Normalize Cloud TTS stream chunks before concatenation; full Cloud lint is clean.
+- API build/regressions pass 35/35; Cloud build/regressions pass 14/14. Persistent database acceptance remains open; PHDK Auto remains partially delivered.
+- Align all five application package/lock roots and the Browser renderer at 5.1.37.
+
 ## v5.1.36 — 2026-10-14 (tenant-scoped device revoke and registration binding)
 
 - Bind pending device registration to the authenticated database actor and require an assigned company; reject client-supplied identity binding and orphan registrations.

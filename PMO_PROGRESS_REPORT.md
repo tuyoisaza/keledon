@@ -1,4 +1,4 @@
-## 2026-10-14 — PHDK Auto source and CRUD matrix delivery verified
+## Prior milestone — 2026-10-14, source and CRUD matrix delivery verified
 
 The KnowledgeBase source slice (PR #106), its delivery record (PR #107), and the matrix reconciliation (PR #108) are merged. Current `origin/main` and `git ls-remote` agree at `056e8605097874337c6bc532c006da3a3f772d56`, with application version 5.1.35. The Check matrix now includes KnowledgeBase/KnowledgeDocument role × API/Web rows and its drift regression covers 35/35 Prisma models and 154 unique combinations. Post-merge test, static PHDK coherence 52/52 and completion gate pass. GitHub exposes no hosted checks/review requirement; no deployment is claimed. Overall PHDK Auto remains PARTIALLY DELIVERED for database-backed authorization, live Qdrant/concurrency, safe identities, native device/audio, broad accessibility/localization, deployed SEO/AEO and remaining model-family mapping. No DB, CRM, customer data or deployment was used.
 
@@ -25,6 +25,10 @@ RLS/bootstrap policies no longer grant unscoped browser access; unsafe superadmi
 
 SIGUIENTE PASO: complete the final diff review and normal PR delivery from `fix/deny-unscoped-supabase-rls`.
 # PMO milestone history
+
+## Current candidate progress — 5.1.37 (2026-10-14)
+
+Integration closed one typed CRUD/Cloud parity Check finding. Exact source `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`; API build and regressions 35/35; Cloud build/regressions 14/14 and full typed ESLint 0 errors/0 warnings. Web typecheck/build/UAT 2/2/SEO pass; Browser build; Landing typecheck/build/SEO pass; widget/diagnostics 19/19; PHDK coherence 52/52; size inventory 1,161 active files, none >=600 lines. API full lint has 135 warnings and is not described as warning-free. Delivery PR/merge/readback are pending. Overall Auto remains **PARTIALLY DELIVERED**.
 ## 2026-10-14 — Device tenant-scope source candidate 5.1.36
 
 Check of the remaining Device × role/surface contract found no manager revoke action in `/devices` and allowed a company-less actor to create a pending device that cannot later pair. The API guard now binds registration to the current DB actor/company and rejects missing company; the Web page exposes localized, confirmed revoke only to admin/coordinator/superadmin, while user/agent remain read-only. Added 14 Device role/API/Web rows and expanded the inventory drift test from 154 to 168 rows (12 resource groups / 35 Prisma models). API build/regression 35/35; Web typecheck/build and local UAT 2/2; focused lint, locale parity and PHDK coherence 52/52 pass. The API vendor destination regression also passes for explicitly configured private URLs under per-tenant allowlists; no private host was contacted. Candidate branch `fix/phdk-device-revoke-ui-5-1-36` is based on verified main `f0a9633e39bbdbca416f5e1c24c32acab7276902`, with all app roots and renderer at 5.1.36. No DB/pairing persistence or deployment was exercised; overall Auto remains partial.
@@ -86,7 +90,7 @@ PR #96 merged by squash at `a0425134ba69b1feaf165cd512caad8c136ca6f8`; remote `o
 
 - CMT-004 source finding closed for one sensitive runtime read: human API sessions can no longer retrieve raw Device RPA configuration; a paired-device token must resolve from current DB relations to the same requested device ID.
 - API regression 21/21 suites and Jest 11/11/38, API build, scoped ESLint, Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass.
-- Candidate ix/write-only-device-rpa-secrets remains pre-PR on base main 4cc6a2a6de0d3a8eda6be60a45607553d2b3e80e; normal delivery pending.
+- Candidate `fix/write-only-device-rpa-secrets` remains pre-PR on base main `4cc6a2a6de0d3a8eda6be60a45607553d2b3e80e`; normal delivery pending.
 - Source/CMT-004 remains PARTIAL for 26 model-specific operation rows and DB persistence; native/device/audio, broad route a11y/localization, deployed SEO/AEO also open.
 
 ## 2026-10-14 — 5.1.29 device-list projection
@@ -95,3 +99,8 @@ PR #96 merged by squash at `a0425134ba69b1feaf165cd512caad8c136ca6f8`; remote `o
 - UAT-012 exercises secret and remote-control URL redaction through real Nest HTTP wiring; UAT-011 continues to exercise exact paired-device authorization.
 - Candidate `fix/redact-device-config-lists` is based on main 5.1.28 `a22c0a407aa07552a189aa9f3b00e887397f9d03`; source validation and delivery remain in progress.
 - Overall Auto remains partial for 26-model CRUD/DB persistence, native/audio, broad accessibility/localization and deployed SEO/AEO.
+# 2026-10-14 — 5.1.37 PHDK Auto progress
+
+Source candidate `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` advances CMT-001/CMT-004 by replacing untyped API/Cloud CRUD request boundaries with service-derived types, removing the unused Cloud audit-log mutation proxy/route, deleting a duplicate provider, and narrowing Cloud TTS chunks. Five roots and Browser renderer are 5.1.37. API build and 35/35 regressions pass; Cloud build and 14/14 regressions pass; Cloud typed ESLint is clean (0 errors, 0 warnings). Web typecheck/build/UAT 2/2/SEO pass, Browser build passes, Landing typecheck/build/SEO pass, diagnostics 19/19, coherence 52/52, and active file-size audit is 1,161 files / zero >=600 lines. API global lint has 0 errors/135 warnings. Branch PR delivery and remote reconciliation remain pending; whole Auto remains partial for recorded environment and breadth gates.
+
+---

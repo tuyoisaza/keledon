@@ -269,7 +269,7 @@ async function main() {
       .post('/api/crud/audit-logs')
       .set('Authorization', token('superadmin'))
       .send({ userId: 'member', action: 'FORGED', entity: 'company' })
-      .expect(403);
+      .expect(404);
     await request(http)
       .post('/api/crud/keledons/k-a/launch')
       .set('Authorization', token('member'))

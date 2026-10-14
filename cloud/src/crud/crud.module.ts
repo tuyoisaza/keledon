@@ -22,7 +22,6 @@ import { CrudTenantVoiceProfileService } from './crud-tenant-voice-profile.servi
     CrudAuditService,
     CrudCompanyService,
     CrudVendorService,
-    CrudSessionDataService,
     CrudAccessGuard,
   ],
   exports: [
