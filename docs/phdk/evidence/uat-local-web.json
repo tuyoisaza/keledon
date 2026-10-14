@@ -1,9 +1,9 @@
 {
-  "version": "5.1.12",
-  "date": "2026-10-13T23:09:05.080Z",
-  "candidateRevision": "ca347928518c9bb959aa3f01037753c382de3ac1",
+  "version": "5.1.15",
+  "date": "2026-10-14T00:05:56.109Z",
+  "candidateRevision": "8e864df32a7310a08ccff1733b874e26dc24f87d",
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:51183",
+  "origin": "http://127.0.0.1:50749",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-THEME dark/light/corporate tokens reach descendant controls, persistence PASS; automated login text contrast sample has no failures (not a full-app accessibility certification)",
@@ -11,10 +11,12 @@
     "UAT-004 superadmin frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
     "UAT-004 admin frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
     "UAT-004 coordinator frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
-    "UAT-004 admin user create and same-company team reassignment: no role/company controls or payload fields; foreign company team absent PASS (synthetic UI; API guard tested separately)",
-    "UAT-004 provider write-only key: no response prefill; replacement cleared after success; untouched blank omitted PASS",
+    "UAT-004 company/brand/team/user/vendor administration Spanish copy and manager user restrictions: localized routes/search and modal controls; no role/company payload fields; foreign team absent PASS (synthetic UI; API guard tested separately)",
+    "UAT-T-005-DASHBOARD Spanish empty/session states, English and Portuguese greeting/stats, and accessible table caption/column headers PASS (synthetic API)",
+    "UAT-T-005-SESSIONS Spanish live/history and call-monitor copy, filters, statuses, captions, scoped headers and detail action PASS (synthetic API)",
+    "UAT-004 provider settings Spanish localization and write-only key: translated screen renders; no response prefill; replacement clears after success; untouched blank omitted PASS",
     "UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)",
-    "UAT-002 5.1.12 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
+    "UAT-002 5.1.15 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
   ],
   "themeTokens": {
     "light": {

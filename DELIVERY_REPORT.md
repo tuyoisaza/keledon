@@ -1,16 +1,16 @@
 # Delivery report — current status PARTIALLY DELIVERED
 
-## Current delivery — 5.1.15 (IN PROGRESS)
+## Current delivery — 5.1.15 (SOURCE SLICE MERGED; AUTO PARTIAL)
 
-Target: remote `main`. Candidate branch: `fix/phdk-auto-full-conformity`, based on fetched `origin/main` `ab7a6e867508d834ccec755fc5ba9a985e3b9be4`. Five app package/lock roots are versioned 5.1.15. Source change localizes dashboard/live/history/call-monitor copy and improves table/filter semantics in en/es/pt. API build/regression 14/14, Cloud build/regression 8/8, Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1, Browser build/regression 24/24, Landing typecheck/build, focused lint (0 errors/14 warnings), catalog parity 562/562 and PHDK coherence 52/52 pass. Versioned commit, PR and independent main readback are pending.
+Target: remote `main`. Source PR [#74](https://github.com/tuyoisaza/keledon/pull/74) merged at `2e61f41926ab25b4d9ea9f9b73d11aba82988a63`; fetched `origin/main` independently resolves to that SHA, and all five app package/lock roots there report 5.1.15. The source localizes dashboard/live/history/call-monitor copy and improves table/filter semantics in en/es/pt. API build/regression 14/14, Cloud build/regression 8/8, Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1, Browser build/regression 24/24, Landing typecheck/build, focused lint (0 errors/14 warnings), catalog parity 562/562 and PHDK coherence 52/52 pass. GitHub reports no status checks or review decision for PR #74. No deployment is claimed.
 
 | Required proof | Status | Evidence |
 |---|---|---|
 | VERSION_BUMP | PASS | Remote baseline 5.1.14; candidate 5.1.15 across five package and lock roots. |
-| COMMIT_PREFIX | PENDING | Version-prefixed source commit not yet created. |
-| PUSH_AND_PR | PENDING | Candidate branch is local; no PR yet. |
-| REMOTE_MAIN | PENDING | No merge/readback for this candidate. |
-| SCOPE_AND_CHECKS | IN PROGRESS | Scoped checks pass; final diff/evidence reconciliation and outstanding CMT/open acceptance remain. |
+| COMMIT_PREFIX | PASS | `8e864df32a7310a08ccff1733b874e26dc24f87d`, titled `v5.1.15 fix(web): localize dashboard and session journeys`. |
+| PUSH_AND_PR | PASS | Branch `fix/phdk-auto-full-conformity` pushed; PR #74 merged. |
+| REMOTE_MAIN | PASS | Fresh `git ls-remote` and fetch both read `2e61f41926ab25b4d9ea9f9b73d11aba82988a63`; all five package/lock roots in remote `main` are 5.1.15. |
+| SCOPE_AND_CHECKS | PASS (SOURCE SLICE) | All scoped checks pass. Broader CMT/open acceptance remains and the overall Auto stays partial. |
 
 Overall Auto remains **PARTIALLY DELIVERED**. No deployment is claimed.
 
