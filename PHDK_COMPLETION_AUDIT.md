@@ -1,5 +1,11 @@
 # PHDK Auto completion audit — PARTIALLY DELIVERED
 
+## Current candidate — 5.1.15 (delivery in progress)
+
+Branch `fix/phdk-auto-full-conformity` is based on fetched `origin/main` `ab7a6e867508d834ccec755fc5ba9a985e3b9be4`; all five package/lock roots are 5.1.15. Dashboard/session/call-monitor copy, accessible tables and filters are improved. API build/regression 14/14; Cloud build/regression 8/8; Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1; Browser build/regression 24/24; Landing typecheck/build; PHDK coherence 52/52; focused ESLint 0 errors/14 warnings; and locale parity 562/562 pass. Versioned commit and PR/main readback remain pending.
+
+The full PHDK Auto result remains **PARTIALLY DELIVERED**: broad route accessibility/localization, persisted CRUD/migration, native device/audio and deployed SEO/AEO acceptance remain open. No live client provider or deployment is claimed. Current evidence is in `docs/phdk/lifecycle/20261013-keledon-auto-conformity/`.
+
 ## Latest source delivery — 5.1.14
 
 Product PR [#72](https://github.com/tuyoisaza/keledon/pull/72) merged by squash; fresh `origin/main` is `899306fcddf7528cb3411577f8008f0c0552223a`. All five application package/lock roots are 5.1.14. Company, brand, team, user and vendor management screens now use en/es/pt catalogs; country display follows locale. Web typecheck/build pass, locale parity is 452/452, touched-page lint has 0 errors (9 warnings), synthetic local SPA UAT passes 1/1 and API regression passes 14/14. The UAT does not prove persistent writes or server authorization. PR status-check and review rollups are empty; no deployment is claimed. Overall decision remains **PARTIALLY DELIVERED** because persisted CRUD/migration, native device/audio, broad accessibility/localization and deployed SEO/AEO are unresolved. Client integrations remain customer-selected and no live vendor was contacted.

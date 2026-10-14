@@ -1,5 +1,19 @@
 # Delivery report — current status PARTIALLY DELIVERED
 
+## Current delivery — 5.1.15 (IN PROGRESS)
+
+Target: remote `main`. Candidate branch: `fix/phdk-auto-full-conformity`, based on fetched `origin/main` `ab7a6e867508d834ccec755fc5ba9a985e3b9be4`. Five app package/lock roots are versioned 5.1.15. Source change localizes dashboard/live/history/call-monitor copy and improves table/filter semantics in en/es/pt. API build/regression 14/14, Cloud build/regression 8/8, Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1, Browser build/regression 24/24, Landing typecheck/build, focused lint (0 errors/14 warnings), catalog parity 562/562 and PHDK coherence 52/52 pass. Versioned commit, PR and independent main readback are pending.
+
+| Required proof | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Remote baseline 5.1.14; candidate 5.1.15 across five package and lock roots. |
+| COMMIT_PREFIX | PENDING | Version-prefixed source commit not yet created. |
+| PUSH_AND_PR | PENDING | Candidate branch is local; no PR yet. |
+| REMOTE_MAIN | PENDING | No merge/readback for this candidate. |
+| SCOPE_AND_CHECKS | IN PROGRESS | Scoped checks pass; final diff/evidence reconciliation and outstanding CMT/open acceptance remain. |
+
+Overall Auto remains **PARTIALLY DELIVERED**. No deployment is claimed.
+
 ## 5.1.14 delivery — PARTIALLY DELIVERED
 
 Product PR [#72](https://github.com/tuyoisaza/keledon/pull/72) merged by squash; source commit `f0452dce52e2402083d4c1fa77ef2b6ceba90814` is integrated at remote `main` SHA `899306fcddf7528cb3411577f8008f0c0552223a`. All five app package/lock roots are 5.1.14. Local web typecheck/build, API regression 14/14, synthetic UAT 1/1, locale parity 452/452, touched-page ESLint (0 errors/9 warnings), and PHDK coherence 52/52 pass. PR #72 has no hosted status checks or review decision; no deployment is claimed. Persisted CRUD/migration, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open, so the Auto result is PARTIALLY DELIVERED.

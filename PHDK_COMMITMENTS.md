@@ -1,4 +1,17 @@
 # Commitment ledger
+## Latest continuation — 2026-10-13, candidate 5.1.15 (source verification in progress)
+
+The current Auto continuation is on `fix/phdk-auto-full-conformity`, based on freshly fetched `origin/main` `ab7a6e867508d834ccec755fc5ba9a985e3b9be4`. The installed PHDK is 2.50.10 and candidate coherence passes 52/52; this candidate localizes dashboard and live/history session flows and call-monitor preview, with semantic table labels and named filters. API/Cloud/Web/Browser/Landing builds and relevant regression suites pass; synthetic UAT passes, diagnostics tests are 18/18, and catalogs have 562/562 flattened keys by the same local recursive inventory. Normal delivery is pending.
+
+| ID | Owner-confirmed front | Current source/evidence | Remaining acceptance / disposition |
+|---|---|---|---|
+| CMT-001 | Baseline, versions, PRs | Current remote baseline and prior product/readback PRs #72/#73 plus docs PR #69 are fetched; candidate version is reconciled to 5.1.15 across five app roots. | Complete this candidate's normal PR, merge and remote-main readback; no deployment is inferred. |
+| CMT-002 | Widget and safe diagnostics | Shared compact diagnostics are retained; focused tests pass 18/18 and synthetic UAT exercises consented safe probes and the Spanish dashboard. | Native Electron rendering, device permissions and physical audio remain unverified on this host. |
+| CMT-003 | Voice → Cloud → Browser → CRM | Provider-independent contracts and configured-origin tenant flow remain the intended source design; vendors are selected per client as the owner directed. | No universal vendor or live customer acceptance is assumed. Code/contract review is in scope; a specific live CRM/call test is not a portfolio blocker without client configuration. |
+| CMT-004 | Administration and permissions | Approved DB-derived identity/tenant, restrictive role elevation and write-only secret policy remain; API regression is 14/14 and synthetic manager screens cover five CRUD routes. Dashboard and accessible table semantics are now localized. | Persisted CRUD × role × tenant × operation acceptance and approved migration/runtime evidence remain incomplete; no live DB was touched. |
+
+Overall PHDK Auto remains **PARTIALLY DELIVERED** while the explicitly recorded native, persisted-data, broad active-route localization/accessibility, and deployed SEO/AEO evidence gaps remain. Continue the current candidate through full Check and normal delivery; do not use historical status rows below as current facts.
+
 ## Latest continuation — 2026-10-13, 5.1.13 merged
 
 Product PR [#70](https://github.com/tuyoisaza/keledon/pull/70) delivered provider-settings localization to `main` at `45be8d82de1f402ee6199a19cd4fa5083bb9ecb1`; all five app roots align at 5.1.13. The owner-confirmed four fronts remain active. The provider route uses the existing en/es/pt catalogs; Spanish UAT and 404-key parity pass. CRM/telephony remains tenant-selected. Overall Auto is PARTIALLY DELIVERED pending the recorded persisted CRUD/migration, native device/audio, whole-app accessibility/localization and deployed SEO/AEO acceptance.

@@ -1,6 +1,14 @@
 # UAT report — KELEDON 5.1.7 (continuation)
 
-## Latest local candidate — 5.1.14 (scoped UAT pass; overall acceptance incomplete)
+## Latest local candidate — 5.1.15 (scoped UAT pass; overall acceptance incomplete)
+
+Run `20261013-keledon-auto-conformity`, 2026-10-13. After bumping all five app roots to 5.1.15, `services/web npm run build` and `npm run test:uat` pass. The one-suite/one-test local production SPA run uses synthetic Company Co identities, intercepts APIs, and blocks external requests. UAT-T-005-DASHBOARD verifies Spanish greeting/activity/stats and empty/completed-session states, English/Portuguese greeting/stats, and accessible table caption/column scope. UAT-T-005-SESSIONS verifies Spanish live/history/call-monitor copy, superadmin filters, translated status, table names and detail action. Existing diagnostics/admin/provider fixture cases in the same suite also pass. `npm run test:diagnostics` passes 18/18; web typecheck passes; focused ESLint across four changed TSX files has 0 errors and 14 warnings. The three catalogs match at 562 recursive flattened string keys. This is local UI evidence only: it does not establish production auth, persistence, broad screen-reader coverage, client-specific CRM/telephony or deployment.
+
+Overall UAT remains **ACCEPTANCE INCOMPLETE**: broad route localization/accessibility, persisted CRUD/migration, native Electron/device/audio and deployed SEO/AEO evidence remain open. See the current Auto lifecycle handoffs under `docs/phdk/lifecycle/20261013-keledon-auto-conformity/`.
+
+---
+
+## Historical local candidate — 5.1.14 (scoped UAT pass; overall acceptance incomplete)
 
 Run: local production web UAT on the 5.1.14 Vite build, 2026-10-13. The existing synthetic Company Co fixture intercepted every API route and external requests/WebSockets were blocked. The 1/1 UAT suite passes for Spanish companies, brands, teams, users and vendors search/screens; manager user creation/update still omits role/company controls and payload fields and excludes foreign-company teams. Spanish provider settings and write-only key behavior also pass: saved keys are not prefilled, replacement clears after save, and untouched keys are omitted. Theme/widget, role-fixture and safe-diagnostics cases in the same suite also pass; these are UI-only results. This does not establish persistence, backend auth (covered by separate API regression 14/14), whole-app localization/accessibility or client-specific live CRM/telephony behavior.
 

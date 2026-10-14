@@ -1,4 +1,14 @@
-# Lifecycle status — 20261013-keledon-v5114
+# Lifecycle status — active run 20261013-keledon-auto-conformity
+
+## Current Auto continuation — candidate 5.1.15
+
+Run handoffs: `docs/phdk/lifecycle/20261013-keledon-auto-conformity/`. Preflight/Capture reused, Plan/PMO updated, integration source review complete, synthetic UAT and UAT Fix pass, SEO/AEO source reviews reused, scoped Check/remediation complete. Normal delivery is pending. Web typecheck/build, local production-SPA UAT 1/1, diagnostics 18/18, API regression 14/14, Cloud regression 8/8, Browser regression 24/24, SEO source regression 1/1, PHDK coherence 52/52, focused changed-file lint 0 errors/14 warnings, and locale parity 562/562 pass.
+
+The candidate adds en/es/pt dashboard/session/call-monitor copy, semantic tables and named filters under 5.1.15. Overall status remains **PARTIALLY DELIVERED** because broad localization/accessibility, persisted CRUD/migration, native Electron/device/audio and deployed SEO/AEO remain open. No production database, live provider or deployment was used.
+
+SIGUIENTE PASO: finish final diff/whitespace review, bind UAT evidence to the versioned source commit, then publish via normal PR and verify remote `main`.
+
+# Historical lifecycle status — 20261013-keledon-v5114
 
 ## Current Auto continuation — 5.1.14 merged (2026-10-13)
 

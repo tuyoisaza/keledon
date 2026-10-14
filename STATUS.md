@@ -104,3 +104,6 @@ Commit 3af566a163024c3f2b69be7991e99437d47b0528 is on chore/phdk-install-v2.50.8
 - Installed coherence gate passes v2.50.10 / 52 mappings. Full completion gate was run and remains BLOCKED solely on recorded unverified product acceptance: persistence/migration, Electron/device/audio, broad accessibility/localization, and deployed SEO/AEO.
 - Open PRs #38–40 were reviewed against current architecture and contain stale prior-layout changes; no cherry-picks were made. They remain open for owner disposition.
 - SIGUIENTE PASO: obtener o completar aceptación de los puntos abiertos y disponer los PR #38–40; mantener PARTIALLY DELIVERED hasta entonces.
+# Current PHDK Auto continuation — 5.1.15
+
+Candidate branch `fix/phdk-auto-full-conformity`, base `origin/main` `ab7a6e867508d834ccec755fc5ba9a985e3b9be4`. All five app version/lock roots are reconciled to 5.1.15. Dashboard Spanish UAT-T-005, web typecheck/build, diagnostics tests 18/18 and 521/521 catalog-key parity pass. Full Check/diff/delivery remain in progress. Overall PHDK Auto is **PARTIALLY DELIVERED** pending broader route accessibility/localization, persisted CRUD/migration, native device/audio and deployed SEO/AEO acceptance. No production DB, live client provider or deployment was used.

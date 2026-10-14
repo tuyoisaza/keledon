@@ -3,9 +3,11 @@ import { getCompanies, getUsers, getSessions } from '@/lib/crud-api';
 import { Filter, RefreshCw, Radio } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import CallMonitorPlaceholder from '@/components/phase4/CallMonitorPlaceholder';
+import { useTranslation } from '@/context/I18nContext';
 
 export default function SessionsLivePage() {
     const { user } = useAuth();
+    const { t } = useTranslation();
     const [sessions, setSessions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedCompany, setSelectedCompany] = useState<string>('');
@@ -78,9 +80,9 @@ export default function SessionsLivePage() {
         <div className="space-y-6">
             <div className="flex items-center gap-2">
                 <Radio className="w-5 h-5 text-green-500 animate-pulse" />
-                <h1 className="text-2xl font-bold text-foreground">Live Sessions</h1>
+                <h1 className="text-2xl font-bold text-foreground">{t('sessions.liveTitle')}</h1>
                 <span className="px-2 py-1 bg-green-500/10 text-green-500 text-xs rounded-full">
-                    {filteredSessions.length} active
+                    {t('sessions.activeCount').replace('{count}', String(filteredSessions.length))}
                 </span>
             </div>
 
@@ -88,25 +90,27 @@ export default function SessionsLivePage() {
                 <div className="flex flex-wrap gap-4 p-4 bg-card border border-border rounded-xl">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Filter className="w-4 h-4" />
-                        <span>Filters:</span>
+                        <span>{t('sessions.filters')}</span>
                     </div>
                     <select
                         className="bg-background border border-border rounded-md px-3 py-1.5 text-sm"
+                        aria-label={t('sessions.filterCompany')}
                         value={selectedCompany}
                         onChange={(e) => setSelectedCompany(e.target.value)}
                     >
-                        <option value="">All Companies</option>
+                        <option value="">{t('sessions.allCompanies')}</option>
                         {companies.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
                     <select
                         className="bg-background border border-border rounded-md px-3 py-1.5 text-sm"
+                        aria-label={t('sessions.filterUser')}
                         value={selectedUser}
                         onChange={(e) => setSelectedUser(e.target.value)}
                     >
-                        <option value="">All Users</option>
+                        <option value="">{t('sessions.allUsers')}</option>
                         {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
                     </select>
-                    <button onClick={fetchSessions} className="ml-auto p-2 hover:bg-muted rounded-full" title="Refresh">
+                    <button onClick={fetchSessions} className="ml-auto p-2 hover:bg-muted rounded-full" title={t('sessions.refresh')} aria-label={t('sessions.refresh')}>
                         <RefreshCw className="w-4 h-4" />
                     </button>
                 </div>
@@ -116,23 +120,24 @@ export default function SessionsLivePage() {
 
             <div className="rounded-xl border border-border bg-card overflow-hidden">
                 <table className="w-full">
+                    <caption className="sr-only">{t('sessions.liveTable')}</caption>
                     <thead>
                         <tr className="border-b border-border text-left text-sm text-muted-foreground">
-                            <th className="px-4 py-3 font-medium">SESSION ID</th>
-                            <th className="px-4 py-3 font-medium">USER</th>
-                            <th className="px-4 py-3 font-medium">STATUS</th>
-                            <th className="px-4 py-3 font-medium">DURATION</th>
-                            <th className="px-4 py-3 font-medium">ACTIONS</th>
+                            <th scope="col" className="px-4 py-3 font-medium">{t('sessions.sessionId')}</th>
+                            <th scope="col" className="px-4 py-3 font-medium">{t('sessions.user')}</th>
+                            <th scope="col" className="px-4 py-3 font-medium">{t('sessions.statusLabel')}</th>
+                            <th scope="col" className="px-4 py-3 font-medium">{t('sessions.duration')}</th>
+                            <th scope="col" className="px-4 py-3 font-medium">{t('sessions.actions')}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading ? (
-                            <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">Loading sessions...</td></tr>
+                            <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">{t('sessions.loadingSessions')}</td></tr>
                         ) : filteredSessions.length === 0 ? (
-                            <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">No active sessions</td></tr>
+                            <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">{t('sessions.noActiveSessions')}</td></tr>
                         ) : filteredSessions.map(session => {
                             const sessionUser = session.user;
-                            const userName = sessionUser?.name || 'Unknown';
+                            const userName = sessionUser?.name || t('sessions.unknownUser');
                             const metadata = session.metadata ? JSON.parse(session.metadata) : {};
                             return (
                                 <tr key={session.id} className="border-b border-border hover:bg-muted/50">
@@ -140,12 +145,12 @@ export default function SessionsLivePage() {
                                     <td className="px-4 py-3 text-sm">{userName}</td>
                                     <td className="px-4 py-3 text-sm">
                                         <span className="px-2 py-0.5 bg-green-500/10 text-green-500 text-xs rounded-full">
-                                            {session.status || 'active'}
+                                            {t(`sessions.status.${session.status || 'active'}`)}
                                         </span>
                                     </td>
-                                    <td className="px-4 py-3 text-sm text-muted-foreground">{metadata.duration || 0}s</td>
+                                    <td className="px-4 py-3 text-sm text-muted-foreground">{metadata.duration || 0}{t('sessions.secondsShort')}</td>
                                     <td className="px-4 py-3">
-                                        <a href={`/sessions/${session.id}`} className="text-primary hover:underline text-sm">View Details</a>
+                                        <a href={`/sessions/${session.id}`} className="text-primary hover:underline text-sm">{t('sessions.viewDetails')}</a>
                                     </td>
                                 </tr>
                             );

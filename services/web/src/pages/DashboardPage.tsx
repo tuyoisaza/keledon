@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { getSessions, getOrphanedSessionCount, deleteOrphanedSessions } from '@/lib/crud-api';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
+import { useTranslation } from '@/context/I18nContext';
 
 const statusStyles: Record<string, string> = {
     active: 'bg-green-500/10 text-green-500 border-green-500/20',
@@ -13,14 +14,15 @@ const statusStyles: Record<string, string> = {
 
 export default function DashboardPage() {
     const { user } = useAuth();
+    const { t } = useTranslation();
     const [sessions, setSessions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [orphanedCount, setOrphanedCount] = useState(0);
     const [cleaning, setCleaning] = useState(false);
     const [stats, setStats] = useState([
-        { label: 'Active Now', value: 0, icon: Phone, color: 'text-green-500' },
-        { label: 'Completed Today', value: 0, icon: CheckCircle, color: 'text-blue-500' },
-        { label: 'Escalated', value: 0, icon: AlertTriangle, color: 'text-yellow-500' },
+        { labelKey: 'dashboard.activeNow', value: 0, icon: Phone, color: 'text-green-500' },
+        { labelKey: 'dashboard.completedToday', value: 0, icon: CheckCircle, color: 'text-blue-500' },
+        { labelKey: 'dashboard.escalated', value: 0, icon: AlertTriangle, color: 'text-yellow-500' },
     ]);
     const [aggregatedData, setAggregatedData] = useState<any[]>([]);
 
@@ -44,16 +46,16 @@ export default function DashboardPage() {
 
     async function handleCleanOrphanedSessions() {
         if (orphanedCount === 0) return;
-        if (!confirm(`Delete ${orphanedCount} orphaned session(s)?`)) return;
+        if (!confirm(t('dashboard.confirmDeleteOrphaned').replace('{count}', String(orphanedCount)))) return;
         
         setCleaning(true);
         try {
             const result = await deleteOrphanedSessions();
-            toast.success(`Deleted ${result.deleted} orphaned session(s)`);
+            toast.success(t('dashboard.deletedOrphaned').replace('{count}', String(result.deleted)));
             setOrphanedCount(0);
             fetchData();
         } catch (_e) {
-            toast.error('Failed to delete orphaned sessions');
+            toast.error(t('dashboard.deleteOrphanedFailed'));
         } finally {
             setCleaning(false);
         }
@@ -81,9 +83,9 @@ export default function DashboardPage() {
             const escalated = fetchedSessions.filter(s => s.status === 'escalated').length;
 
             setStats([
-                { label: 'Active Now', value: active, icon: Phone, color: 'text-green-500' },
-                { label: 'Completed Today', value: completed, icon: CheckCircle, color: 'text-blue-500' },
-                { label: 'Escalated', value: escalated, icon: AlertTriangle, color: 'text-yellow-500' },
+                { labelKey: 'dashboard.activeNow', value: active, icon: Phone, color: 'text-green-500' },
+                { labelKey: 'dashboard.completedToday', value: completed, icon: CheckCircle, color: 'text-blue-500' },
+                { labelKey: 'dashboard.escalated', value: escalated, icon: AlertTriangle, color: 'text-yellow-500' },
             ]);
 
             calculateAggregation(fetchedSessions, user.role);
@@ -100,7 +102,7 @@ export default function DashboardPage() {
             const groups: Record<string, any> = {};
 
             data.forEach(s => {
-                const companyName = s.team?.brand?.company?.name || 'Unknown Client';
+                const companyName = s.team?.brand?.company?.name || t('dashboard.unknownClient');
                 if (!groups[companyName]) {
                     groups[companyName] = {
                         name: companyName,
@@ -125,8 +127,8 @@ export default function DashboardPage() {
             const groups: Record<string, any> = {};
 
             data.forEach(s => {
-                const brandName = s.team?.brand?.name || 'Unknown Brand';
-                const teamName = s.team?.name || 'Unknown Team';
+                const brandName = s.team?.brand?.name || t('dashboard.unknownBrand');
+                const teamName = s.team?.name || t('dashboard.unknownTeam');
                 const key = `${brandName} - ${teamName}`;
 
                 if (!groups[key]) {
@@ -160,24 +162,24 @@ export default function DashboardPage() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-foreground">
-                        {user?.role === 'user' ? `Hello, ${user.name?.split(' ')[0] || 'User'}` : 'Dashboard'}
+                        {user?.role === 'user' ? t('dashboard.greeting').replace('{name}', user.name?.split(' ')[0] || t('dashboard.user')) : t('dashboard.title')}
                     </h1>
                     <p className="text-muted-foreground mt-1">
                         {user?.role === 'user'
-                            ? "Here's your activity for today"
-                            : "System configuration and real-time monitoring"}
+                            ? t('dashboard.userActivityToday')
+                            : t('dashboard.systemMonitoring')}
                     </p>
                 </div>
                 <div className="flex gap-2 text-sm text-muted-foreground bg-muted/50 px-3 py-1 rounded-md border border-border">
                     <Clock className="w-4 h-4" />
-                    Today's Stats
+                    {t('dashboard.todayStats')}
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {stats.map((stat) => (
                     <div
-                        key={stat.label}
+                        key={stat.labelKey}
                         className="p-6 rounded-xl bg-card border border-border hover:border-primary/20 transition-all shadow-sm"
                     >
                         <div className="flex items-center gap-4">
@@ -186,7 +188,7 @@ export default function DashboardPage() {
                             </div>
                             <div>
                                 <p className="text-3xl font-bold text-foreground">{stat.value}</p>
-                                <p className="text-sm text-muted-foreground">{stat.label}</p>
+                                <p className="text-sm text-muted-foreground">{t(stat.labelKey)}</p>
                             </div>
                         </div>
                     </div>
@@ -197,19 +199,20 @@ export default function DashboardPage() {
                 <div className="space-y-4">
                     <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                         {user?.role === 'superadmin' ? <Building2 className="w-5 h-5" /> : <LayoutGrid className="w-5 h-5" />}
-                        {user?.role === 'superadmin' ? 'Client Overview' : 'Campaign Performance'}
+                        {user?.role === 'superadmin' ? t('dashboard.clientOverview') : t('dashboard.campaignPerformance')}
                     </h2>
                     <div className="rounded-xl border border-border bg-card overflow-hidden">
                         <table className="w-full">
+                            <caption className="sr-only">{t('dashboard.campaignSummary')}</caption>
                             <thead>
                                 <tr className="border-b border-border text-left text-sm text-muted-foreground bg-muted/30">
-                                    <th className="px-5 py-3 font-medium">
-                                        {user?.role === 'superadmin' ? 'CLIENT' : 'BRAND / TEAM'}
+                                    <th scope="col" className="px-5 py-3 font-medium">
+                                        {user?.role === 'superadmin' ? t('dashboard.client') : t('dashboard.brandTeam')}
                                     </th>
-                                    <th className="px-5 py-3 font-medium text-center">ACTIVE</th>
-                                    <th className="px-5 py-3 font-medium text-center">COMPLETED</th>
-                                    <th className="px-5 py-3 font-medium text-center">ESCALATED</th>
-                                    <th className="px-5 py-3 font-medium text-right">AVG DURATION</th>
+                                    <th scope="col" className="px-5 py-3 font-medium text-center">{t('dashboard.active')}</th>
+                                    <th scope="col" className="px-5 py-3 font-medium text-center">{t('dashboard.completed')}</th>
+                                    <th scope="col" className="px-5 py-3 font-medium text-center">{t('dashboard.escalated')}</th>
+                                    <th scope="col" className="px-5 py-3 font-medium text-right">{t('dashboard.averageDuration')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -233,7 +236,7 @@ export default function DashboardPage() {
                                         </td>
                                         <td className="px-5 py-3 text-right text-muted-foreground font-mono">
                                             {row.completed > 0
-                                                ? `${Math.floor((row.totalDuration / row.count) / 60)}m ${Math.floor((row.totalDuration / row.count) % 60)}s`
+                                                ? `${Math.floor((row.totalDuration / row.count) / 60)}${t('dashboard.minutesShort')} ${Math.floor((row.totalDuration / row.count) % 60)}${t('dashboard.secondsShort')}`
                                                 : '-'}
                                         </td>
                                     </tr>
@@ -247,7 +250,7 @@ export default function DashboardPage() {
             <div className="space-y-4">
                 <div className="flex justify-between items-center">
                     <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                        Recent Live Activity
+                        {t('dashboard.recentLiveActivity')}
                     </h2>
                     <div className="flex items-center gap-3">
                         {orphanedCount > 0 && (
@@ -257,41 +260,42 @@ export default function DashboardPage() {
                                 className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-red-500/10 text-red-500 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors disabled:opacity-50"
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
-                                {cleaning ? 'Cleaning...' : `Clean ${orphanedCount} Orphaned`}
+                                {cleaning ? t('dashboard.cleaning') : t('dashboard.cleanOrphaned').replace('{count}', String(orphanedCount))}
                             </button>
                         )}
                         <button
                             onClick={() => window.location.href = '/sessions'}
                             className="text-sm text-primary hover:underline font-medium"
                         >
-                            View All History &rarr;
+                            {t('dashboard.viewAllHistory')} &rarr;
                         </button>
                     </div>
                 </div>
 
                 <div className="rounded-xl border border-border bg-card overflow-hidden">
                     <table className="w-full">
+                        <caption className="sr-only">{t('dashboard.recentSessionsTable')}</caption>
                         <thead>
                             <tr className="border-b border-border text-left text-sm text-muted-foreground">
-                                <th className="px-4 py-3 font-medium">USER</th>
-                                <th className="px-4 py-3 font-medium">TEAM</th>
-                                <th className="px-4 py-3 font-medium">SESSION</th>
-                                <th className="px-4 py-3 font-medium">STATUS</th>
-                                <th className="px-4 py-3 font-medium">DURATION</th>
-                                <th className="px-4 py-3 font-medium text-right">ACTIONS</th>
+                                <th scope="col" className="px-4 py-3 font-medium">{t('dashboard.user')}</th>
+                                <th scope="col" className="px-4 py-3 font-medium">{t('dashboard.team')}</th>
+                                <th scope="col" className="px-4 py-3 font-medium">{t('dashboard.session')}</th>
+                                <th scope="col" className="px-4 py-3 font-medium">{t('dashboard.status')}</th>
+                                <th scope="col" className="px-4 py-3 font-medium">{t('dashboard.duration')}</th>
+                                <th scope="col" className="px-4 py-3 font-medium text-right">{t('dashboard.actions')}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
-                                <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">Loading...</td></tr>
+                                <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">{t('dashboard.loading')}</td></tr>
                             ) : sessions.length === 0 ? (
-                                <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">No sessions today</td></tr>
+                                <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">{t('dashboard.noSessionsToday')}</td></tr>
                             ) : sessions.slice(0, 5).map((session) => {
                                 const metadata = session.metadata ? JSON.parse(session.metadata) : {};
                                 return (
                                     <tr key={session.id} className="border-b border-border hover:bg-muted/50 transition-colors">
                                         <td className="px-4 py-3 text-sm font-medium">
-                                            {session.user?.name || 'Anonymous'}
+                                            {session.user?.name || t('dashboard.anonymous')}
                                         </td>
                                         <td className="px-4 py-3 text-sm text-muted-foreground">
                                             {session.team?.name || '—'}
@@ -302,7 +306,9 @@ export default function DashboardPage() {
                                         </td>
                                         <td className="px-4 py-3">
                                             <span className={cn('px-2 py-0.5 rounded-full text-xs border uppercase', statusStyles[session.status || 'completed'])}>
-                                                {session.status || 'completed'}
+                                                {session.status && ['active', 'completed', 'escalated'].includes(session.status)
+                                                    ? t(`dashboard.sessionStatuses.${session.status}`)
+                                                    : session.status || t('dashboard.sessionStatuses.completed')}
                                             </span>
                                         </td>
                                         <td className="px-4 py-3 text-sm text-muted-foreground font-mono">
@@ -313,7 +319,7 @@ export default function DashboardPage() {
                                                 onClick={() => window.location.href = `/sessions/${session.id}`}
                                                 className="text-primary hover:underline text-sm"
                                             >
-                                                View
+                                                {t('dashboard.view')}
                                             </button>
                                         </td>
                                     </tr>
