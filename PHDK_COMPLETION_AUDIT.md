@@ -1,5 +1,9 @@
 # PHDK Auto completion audit — PARTIALLY DELIVERED
 
+## Current continuation — 5.1.18 source candidate
+
+PR #81 is merged at `260d3d8c33be38b6a9c9e89ffbda5e15a780ddc8`. The 5.1.18 candidate on `fix/phdk-audit-log-integrity` closes a source-level audit-log forgery path by removing the unused direct CRUD write endpoint and enforcing read-only audit access in the general CRUD guard; trusted interceptor/domain writes remain. It also adds full denial/allowance coverage for legacy unscoped MVP data handlers. API regressions 15/15, all five application builds, Web typecheck/diagnostics 18/18/mocked UAT 1/1, Landing SEO 1/1 and PHDK coherence 52/52 pass. No persisted DB, native, deployed, or client-provider acceptance was performed. CHK-002 remains open for the 35-model role/surface/operation gate and persisted evidence; broad localization/accessibility and deployed SEO/AEO remain open. Overall status is still **PARTIALLY DELIVERED**. The candidate PR and current remote readback are pending.
+
 ## Current delivery — 5.1.16 (source slice merged; overall partial)
 
 Product PR [#76](https://github.com/tuyoisaza/keledon/pull/76) merged by squash at `db35f231c29fb71568666b230e912152ca0a34e2`; fetched `origin/main` and remote SHA readback independently match. All five app package/lock roots are 5.1.16. The profile, device, launcher and session-detail journeys now have en/es/pt copy; the invalid pairing-code endpoint call was replaced with protected launcher navigation. Web typecheck/build, synthetic local UAT 1/1 bound to source commit `7ce3509aeb4d53ce3a90d16153996abf35446024`, diagnostics 18/18, SEO source test 1/1, locale parity 644/644, focused ESLint (0 errors/warnings) and PHDK coherence 52/52 pass. GitHub reports no status checks or review decision; no deployment is claimed.

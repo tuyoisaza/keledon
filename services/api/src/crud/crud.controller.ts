@@ -426,11 +426,6 @@ export class CrudController {
     });
   }
 
-  @Post('audit-logs')
-  createAuditLog(@Body() data: any) {
-    return this.crud.createAuditLog(data);
-  }
-
   // ========== SEED ==========
 
   @Post('seed')

@@ -533,18 +533,6 @@ export class CrudService {
   // ========== ========== AUDIT LOGS ========== ==========  ========== ==========
   // Delegated to CrudAuditService (crud-audit.service.ts)
 
-  async createAuditLog(data: {
-    userId?: string;
-    action: string;
-    entity: string;
-    entityId?: string;
-    changes?: string;
-    ipAddress?: string;
-    userAgent?: string;
-  }) {
-    return this.auditService.createAuditLog(data);
-  }
-
   async getAuditLogs(params?: {
     companyId?: string;
     limit?: number;

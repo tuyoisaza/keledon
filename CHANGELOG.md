@@ -1,3 +1,17 @@
+## v5.1.18 — 2026-10-13 (PHDK Auto security fix)
+
+### Changed
+- Make audit logs append-only through the CRUD surface: remove the unused general-purpose POST endpoint and reject every non-GET audit-log request in the API guard.
+- Preserve trusted audit writes from the request interceptor and internal domain services; keep audit-log listing superadmin-only.
+- Add regression coverage for the forged-write denial and document the source exception in the PHDK CRUD matrix.
+- Align all five app package and lock roots at 5.1.18.
+
+### Verification
+- API regression 15/15 suites and build; Cloud, Web, Browser and Landing builds; Web typecheck, diagnostics 18/18 and mocked local UAT 1/1; Landing SEO 1/1; PHDK coherence 52/52.
+
+### Migration / limitations
+- No migration required. Full persisted CRUD, native runtime, broad accessibility and deployed SEO/AEO acceptance remain open.
+
 ## v5.1.17 — 2026-10-13 (PHDK Auto continuation)
 
 - Localize KELEDON and Voice Profiles administration in English, Spanish and Portuguese; add labeled fields, accessible modal confirmation, loading/error/retry and honest HTTP failure feedback.

@@ -306,6 +306,16 @@ async function main() {
     teamId: null,
   };
   assert.equal(await run('companies', 'DELETE', { id: 'co-b' }).result, true);
+  assert.equal(await run('audit-logs', 'GET').result, true);
+  await assert.rejects(
+    run(
+      'audit-logs',
+      'POST',
+      {},
+      { userId: 'forged-user', action: 'FORGED', entity: 'company' },
+    ).result,
+    Denied,
+  );
   const elevatedUser = run(
     'users',
     'POST',
@@ -566,6 +576,9 @@ async function main() {
   );
   console.log(
     'PASS CRUD operation matrix: low-role denials across list/create/update/delete; admin/coordinator company, brand, team, user, vendor and session operations; DB-derived scope; only superadmin role assignment; client-supplied credential hashes rejected for every role.',
+  );
+  console.log(
+    'PASS audit log integrity: superadmin can read logs but the general CRUD API cannot forge append-only security events.',
   );
 }
 main().catch((error) => {
