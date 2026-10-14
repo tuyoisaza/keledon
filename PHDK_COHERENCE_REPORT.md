@@ -1,7 +1,7 @@
 # PHDK Coherence report — KELEDON candidate
 ## Current source coherence recheck — 2026-10-13, KELEDON 5.1.16
 
-- Baseline: freshly fetched remote `main` `c8534e6f6568922d540eabfba4abe90cc93749c1`; candidate branch `fix/phdk-route-accessibility-i18n`.
+- Baseline: freshly fetched remote `main` `c8534e6f6568922d540eabfba4abe90cc93749c1`; candidate branch `fix/phdk-route-accessibility-i18n` at `7ce3509aeb4d53ce3a90d16153996abf35446024`.
 - Installed PHDK: v2.50.10. `python phdk-standards/scripts/phdk_coherence_check.py` PASS: 52 manifest mappings (static check only).
 - All five application package and lock roots match 5.1.16.
 - Current scoped checks: Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1; recursive locale-key parity 644/644; focused changed-page lint 0 errors; `git diff --check` PASS. API/Cloud/Browser/Landing are unchanged from the 5.1.15 main delivery.

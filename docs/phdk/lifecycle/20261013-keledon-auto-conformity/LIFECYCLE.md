@@ -18,7 +18,7 @@ Branch: `fix/phdk-route-accessibility-i18n`, based on fetched `origin/main` `c85
 | AEO/GEO | REUSED / SOURCE-SCOPE REVIEW | No public answer/discovery content changed; external visibility remains unmeasured; see `67-aeo-geo/HANDOFF.md`. |
 | Check | COMPLETED — LOCAL SOURCE PASS / ACCEPTANCE PARTIAL | Web typecheck/build/UAT 1/1/diagnostics 18/18/SEO 1/1; locales 644/644; focused lint 0 errors; PHDK coherence 52/52; API/Cloud/Browser/Landing unchanged from verified 5.1.15 main; see `70-check/HANDOFF.md`. |
 | Remediation | COMPLETED — SCOPED SOURCE FIX | Profile, devices, launcher and session-detail localization; semantic theme states, announced loading/errors and device-response validation; broad route/environment acceptance remains open; see `80-remediation/HANDOFF.md`. |
-| Delivery | PENDING — 5.1.16 | Version roots and scoped checks are complete; commit, product PR, merge and independent main readback remain; see `90-delivery/HANDOFF.md`. |
+| Delivery | PENDING — 5.1.16 | Version roots and scoped checks are complete; source commit `7ce3509` and post-commit UAT readback are verified; product PR, merge and independent main readback remain; see `90-delivery/HANDOFF.md`. |
 
 ## Current result
 

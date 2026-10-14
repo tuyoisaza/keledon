@@ -2,7 +2,7 @@
 
 ## Current local Check — 5.1.16
 
-Branch `fix/phdk-route-accessibility-i18n` is based on `origin/main` `c8534e6f6568922d540eabfba4abe90cc93749c1`; all five app package/lock roots are 5.1.16. Profile/device/launcher/session-detail changes pass web typecheck/build, built-SPA UAT 1/1, diagnostics 18/18, SEO source test 1/1, recursive locale parity 644/644 and focused ESLint (0 errors). PHDK coherence passes 52/52. The UAT intercepts API calls and is not persisted/native acceptance. Delivery is pending; overall Auto remains partial.
+Branch `fix/phdk-route-accessibility-i18n` is based on `origin/main` `c8534e6f6568922d540eabfba4abe90cc93749c1`; all five app package/lock roots are 5.1.16. Profile/device/launcher/session-detail changes pass web typecheck/build, built-SPA UAT 1/1, diagnostics 18/18, SEO source test 1/1, recursive locale parity 644/644 and focused ESLint (0 errors). PHDK coherence passes 52/52. Candidate commit `7ce3509aeb4d53ce3a90d16153996abf35446024` has a fresh UAT readback at that exact revision. The UAT intercepts API calls and is not persisted/native acceptance. PR delivery is pending; overall Auto remains partial.
 
 # Previous integrated delivery — 5.1.15, source Check passed; Auto acceptance partial
 

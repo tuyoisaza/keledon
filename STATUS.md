@@ -3,7 +3,7 @@
 ## 2026-10-13 — PHDK Auto 5.1.16 local candidate; overall partial
 
 - Base `origin/main` is `c8534e6f6568922d540eabfba4abe90cc93749c1`, verified after PRs #74/#75. Candidate branch `fix/phdk-route-accessibility-i18n` aligns all five app package/lock roots at 5.1.16.
-- Profile roles/dates, device list/error/retry states and session detail are localized in en/es/pt. Review also fixed the devices screen's invalid pairing-code request by linking to the existing protected Keledon launcher. Typecheck/build/UAT, diagnostics, SEO source test, focused ESLint and 644-key parity pass; PR/readback remain pending.
+- Profile roles/dates, device list/error/retry states and session detail are localized in en/es/pt. Review also fixed the devices screen's invalid pairing-code request by linking to the existing protected Keledon launcher. Commit `7ce3509aeb4d53ce3a90d16153996abf35446024` is recorded; typecheck/build/UAT, diagnostics, SEO source test, focused ESLint and 644-key parity pass. PR/readback remain pending.
 - Overall Auto remains PARTIALLY DELIVERED pending broad route accessibility/localization, persisted CRUD/migration, native device/audio and deployed SEO/AEO acceptance.
 
 ## 2026-10-13 — PHDK Auto 5.1.14 merged; overall partial

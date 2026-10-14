@@ -2,7 +2,7 @@
 
 ## Current candidate — 5.1.16 (local source slice; overall partial)
 
-Branch `fix/phdk-route-accessibility-i18n` is based on freshly fetched `origin/main` `c8534e6f6568922d540eabfba4abe90cc93749c1`. All five app package/lock roots are 5.1.16. Profile roles/dates, device list/error/retry states, valid launcher navigation and session detail are localized. Source review corrected the devices page's invalid pairing-code endpoint use. Web typecheck/build, local synthetic UAT 1/1, diagnostics 18/18, SEO source test 1/1, locale parity 644/644, focused ESLint 0 errors and PHDK coherence 52/52 pass. Product commit/PR and remote readback are pending.
+Branch `fix/phdk-route-accessibility-i18n` is based on freshly fetched `origin/main` `c8534e6f6568922d540eabfba4abe90cc93749c1`. All five app package/lock roots are 5.1.16. Profile roles/dates, device list/error/retry states, valid launcher navigation and session detail are localized. Source review corrected the devices page's invalid pairing-code endpoint use. Web typecheck/build, local synthetic UAT 1/1, diagnostics 18/18, SEO source test 1/1, locale parity 644/644, focused ESLint 0 errors and PHDK coherence 52/52 pass. Source commit `7ce3509aeb4d53ce3a90d16153996abf35446024` and its UAT evidence are verified; PR and remote readback are pending.
 
 The 5.1.16 result is a bounded route fix, not full Auto completion. Persisted CRUD/migration, native Electron/device/audio, broad active-route accessibility/localization and deployed SEO/AEO remain open. Docker/PostgreSQL client/server binaries are absent on this host; no production database or deployment was accessed.
 

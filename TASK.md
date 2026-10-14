@@ -2,7 +2,7 @@
 
 ## Active Auto continuation — candidate 5.1.16
 
-Continue the user-authorized PHDK Auto across CMT-001..004 in order. Main is `c8534e6f6568922d540eabfba4abe90cc93749c1`; branch `fix/phdk-route-accessibility-i18n` localizes profile, devices, the Keledon launcher and session detail, and passes web typecheck/build, synthetic UAT 1/1, diagnostics 18/18, SEO source 1/1, 644-key parity and PHDK coherence 52/52. Candidate PR/main readback remain pending. Persisted CRUD/migration, native device/audio, broad active-route i18n/a11y and deployed SEO/AEO remain open; do not mark the full Auto complete.
+Continue the user-authorized PHDK Auto across CMT-001..004 in order. Main is `c8534e6f6568922d540eabfba4abe90cc93749c1`; branch `fix/phdk-route-accessibility-i18n` localizes profile, devices, the Keledon launcher and session detail, and passes web typecheck/build, synthetic UAT 1/1, diagnostics 18/18, SEO source 1/1, 644-key parity and PHDK coherence 52/52. Candidate commit `7ce3509aeb4d53ce3a90d16153996abf35446024` is verified; PR/main readback remain pending. Persisted CRUD/migration, native device/audio, broad active-route i18n/a11y and deployed SEO/AEO remain open; do not mark the full Auto complete.
 
 ## Previous Auto continuation — candidate 5.1.15 (superseded by current 5.1.16)
 

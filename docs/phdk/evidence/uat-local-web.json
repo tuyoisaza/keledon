@@ -1,9 +1,9 @@
 {
   "version": "5.1.16",
-  "date": "2026-10-14T00:39:04.477Z",
-  "candidateRevision": "c8534e6f6568922d540eabfba4abe90cc93749c1",
+  "date": "2026-10-14T00:39:53.517Z",
+  "candidateRevision": "7ce3509aeb4d53ce3a90d16153996abf35446024",
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:51063",
+  "origin": "http://127.0.0.1:54029",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-THEME dark/light/corporate tokens reach descendant controls, persistence PASS; automated login text contrast sample has no failures (not a full-app accessibility certification)",

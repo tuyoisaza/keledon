@@ -2,7 +2,7 @@
 
 ## Current Auto continuation — candidate 5.1.16
 
-Branch `fix/phdk-route-accessibility-i18n` is based on remote main `c8534e6f6568922d540eabfba4abe90cc93749c1`; all five app package/lock roots are 5.1.16. Profile/date/role, device status/empty/error/retry, localized launcher navigation and session-detail journeys are localized in en/es/pt. Web typecheck/build, UAT 1/1, diagnostics 18/18, SEO source 1/1, locale parity 644/644, focused ESLint and PHDK coherence 52/52 pass. Candidate commit/PR/main readback remain pending.
+Branch `fix/phdk-route-accessibility-i18n` is based on remote main `c8534e6f6568922d540eabfba4abe90cc93749c1`; all five app package/lock roots are 5.1.16. Profile/date/role, device status/empty/error/retry, localized launcher navigation and session-detail journeys are localized in en/es/pt. Web typecheck/build, UAT 1/1, diagnostics 18/18, SEO source 1/1, locale parity 644/644, focused ESLint and PHDK coherence 52/52 pass. Source commit `7ce3509aeb4d53ce3a90d16153996abf35446024` is verified; PR and main readback remain pending.
 
 Overall PHDK Auto remains **PARTIALLY DELIVERED**: persisted CRUD/migration, native Electron/device/audio, broad active-route i18n/a11y and deployed SEO/AEO remain open.
 
