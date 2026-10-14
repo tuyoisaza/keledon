@@ -1,5 +1,9 @@
 # CRUD matrix — current source and authorization coverage
 
+## 5.1.31 — vendor config is non-secret by enforcement
+
+`Vendor.config` is documented in the Prisma schema as non-secret JSON, while vendor credentials have dedicated encrypted columns. API and Cloud now enforce the actual supported config schema: only `allowedOrigins` is accepted, as an array of origin strings; any other field or non-object config is rejected. This prevents a secret from being hidden under an arbitrary property name. Updates also fail closed if existing config contains unsupported legacy fields, preventing a routine edit from preserving possible plaintext credentials. Tenant-validated private/local origins remain supported through either the dedicated field or the config allowlist; public CRUD projections continue to omit raw config. Mirrored regression coverage is in API and Cloud `26-vendor-destination-policy.test.js`. Persistent legacy-data remediation remains unverified without a disposable database.
+
 ## 5.1.31 — tenant voice-profile response parity
 
 API and Cloud tenant voice-profile list/create/update operations now select only `id`, `name`, `providerId`, `language`, `isEnabled`, and `isDefault`. This prevents `TenantVoiceProfile.config` and the related `providerCatalog` record from appearing in normal responses. Cross-backend regression `services/api/test/regression/41-voice-profile-safe-projection-parity.test.js` verifies the exact selection and synthetic-secret absence for all three operations. Credentials remain write-only; this source harness does not establish database persistence.

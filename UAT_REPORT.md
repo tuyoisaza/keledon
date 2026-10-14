@@ -1,5 +1,9 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.31 — vendor config credential rejection (2026-10-14)
+
+UAT-025 passes in API and Cloud regression harnesses. Create rejects arbitrary config fields and non-object config; update rejects arbitrary config and, after confirming a legacy current config has an unsupported field, a normal edit is rejected before the Prisma update. The explicit `allowedOrigins` schema still accepts validated private tenant origins. Encrypted password/API-key storage and safe projections remain covered. API/Cloud builds, full regressions (29/29 and 12/12) and changed-source ESLint pass. This is source-level evidence only; no persisted rows were inspected or changed.
+
 ## Candidate 5.1.31 — API/Cloud voice-profile secret projection (2026-10-14)
 
 UAT-024 passes in a source harness that loads both `CrudService` implementations. Tenant voice-profile list, create, and update each select the same six display fields and omit both `config` and `providerCatalog`; synthetic secrets are absent from returned results. Cloud build and full API regression pass (29/29, including regression 41). No database or real credential was used; persisted behavior remains part of blocked DB acceptance.
