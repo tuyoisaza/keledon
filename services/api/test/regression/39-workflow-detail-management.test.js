@@ -40,6 +40,11 @@ async function main() {
       path.join(root, `${backend}/src/crud/crud.controller.ts`),
       'utf8',
     );
+    assert.match(
+      controllerSource,
+      /@Controller\('api\/crud'\)\s+@UseGuards\(CrudAccessGuard\)/,
+      `${backend} CRUD controller must enforce the database-derived guard`,
+    );
     assert.match(controllerSource, /@Get\('workflows\/:id'\)\s+getWorkflow/);
 
     const workflow = {
@@ -88,10 +93,10 @@ async function main() {
         }),
       },
     });
-    const canRead = () => {
+    const canAccess = (method, route, handler) => {
       const req = {
-        method: 'GET',
-        route: { path: '/api/crud/workflows/:id' },
+        method,
+        route: { path: route },
         params: { id: 'wf-a' },
         body: {},
         query: {},
@@ -99,15 +104,35 @@ async function main() {
       };
       return guard.canActivate({
         switchToHttp: () => ({ getRequest: () => req }),
-        getHandler: () => ({ name: 'getWorkflow' }),
+        getHandler: () => ({ name: handler }),
       });
     };
-    await assert.doesNotReject(canRead());
-    role = 'admin';
-    await assert.rejects(canRead(), Forbidden);
+    const workflowRoutes = [
+      ['GET', '/api/crud/workflows', 'getWorkflows'],
+      ['GET', '/api/crud/workflows/:id', 'getWorkflow'],
+      ['POST', '/api/crud/workflows', 'createWorkflow'],
+      ['PUT', '/api/crud/workflows/:id', 'updateWorkflow'],
+      ['DELETE', '/api/crud/workflows/:id', 'deleteWorkflow'],
+    ];
+    for (const [method, route, handler] of workflowRoutes)
+      await assert.doesNotReject(canAccess(method, route, handler));
+    for (role of [
+      'guest',
+      'user',
+      'agent',
+      'admin',
+      'coordinator',
+    ]) {
+      for (const [method, route, handler] of workflowRoutes)
+        await assert.rejects(
+          canAccess(method, route, handler),
+          Forbidden,
+          `${backend} ${role} must be denied ${method} ${route}`,
+        );
+    }
   }
   console.log(
-    'PASS API/Cloud workflow detail endpoints return the selected record and remain superadmin-only',
+    'PASS API/Cloud CRUD controller guard wiring and Workflow list/detail/create/update/delete: superadmin allowed; every other role denied',
   );
 }
 
