@@ -1,5 +1,20 @@
 # Commitment ledger
 
+## Active run `20261014-0007-phdk-auto-completion` — candidate 5.1.33
+
+All four owner-confirmed fronts remain active in the confirmed order. Candidate branch `fix/phdk-knowledge-vector-cleanup-5-1-33` is based on verified main `9908a4c6abcef0c378b9bb661ffb5b57146b27ae`; all five application package/lock roots and Browser renderer are aligned at 5.1.33. API regressions 34/34 and Cloud 14/14, both builds, Browser build/offline tests 33/33, Web typecheck/build/diagnostics 19/19/UAT 1/1/SEO 1/1, Landing build/SEO 1/1 and PHDK coherence 52/52 pass. UAT-031 passes 10 mocked service assertions. No commit/PR/merge for 5.1.33 yet; no deployment, live Qdrant, PostgreSQL, customer data or client provider was used.
+
+| ID | Confirmed front | Current truth | Remaining acceptance |
+|---|---|---|---|
+| CMT-001 | Baseline, versions and PR reconciliation | Candidate 5.1.33 is aligned and fully locally validated on a fix branch from verified main. | Commit/push/PR, reconcile actual controls, merge and verify remote main SHA/version. |
+| CMT-002 | Shared visible diagnostics widget and safe diagnostics | Widget remains covered by diagnostics 19/19 and exact-candidate built-SPA UAT 1/1. | Native OS permission/device/audio and broad route/screen-reader accessibility remain open. |
+| CMT-003 | Voice → Cloud → Browser → CRM, providers chosen per client | Provider-neutral contracts and validated, per-tenant private CRM allowlists remain covered by offline tests. | Live call/CRM acceptance applies per tenant after provider configuration. |
+| CMT-004 | Administration and permissions | Approved least privilege and DB-derived scope retained; generic knowledge deletion now cleans Qdrant in API/Cloud before relational deletion. | Persisted DB role/tenant/operation matrix, real DB-backed identities, and Qdrant/PostgreSQL failure/concurrency acceptance remain open. |
+
+Overall: **PARTIALLY DELIVERED**. UAT remains 28 PASS, 2 BLOCKED, 1 MANUAL. No database, customer provider, private CRM endpoint, customer data or deployment was used.
+
+SIGUIENTE PASO: finish final source review, version-prefixed commit, branch/PR delivery and remote-main verification; preserve the remaining acceptance gates as open.
+
 ## Active run `20261014-0007-phdk-auto-completion` — refreshed candidate 5.1.32
 
 The four owner-confirmed commitments remain active in the confirmed order. Base: verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; source commit `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`; five package/lock roots plus Browser renderer are 5.1.32. API 33/33, Cloud 14/14, Browser 33/33; all product builds pass; Web diagnostics 19/19; exact-source synthetic UAT 1/1; Web/Landing SEO 1/1 each; PHDK coherence 52/52. Exact UAT evidence is bound to `93f844b` with empty source diff. PR #102 has not yet been updated to this commit.

@@ -1,5 +1,9 @@
 # Check handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.33 — source finding and remediation
+
+Check identified stale knowledge vectors after generic API/Cloud CRUD deletes. Candidate cleanup removes a document's points by stored `documentId` before row deletion and removes a knowledge-base collection before deleting the base. Failures from Qdrant preserve the Prisma record. Regression 46 passes 12/12 mocked API/Cloud service assertions; API/Cloud builds and full regressions pass. The complete 35-model role/tenant/surface/operation matrix and PostgreSQL proof remain open. Live Qdrant and delete/reindex concurrency were not tested.
+
 ## Delivered Check — candidate 5.1.32 (2026-10-14)
 
 Status: **SOURCE CHECK PASS / WHOLE ACCEPTANCE PARTIAL / REMOTE SOURCE VERIFIED**. Candidate `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5` passed the scoped source checks and was delivered in PR #102, squash commit `7b2547edcf2f397e6fe1098386af226035e2613b`. Remote `main` tree `d4198e21b495cf15d9972cf48b5ef0c957dc4ea7` matches the candidate; five app package/lock roots are 5.1.32. GitHub had no configured hosted checks or review submissions. UAT-009/010, UAT-006, the exhaustive persisted model-operation matrix, broad accessibility/localization, and deployed SEO/AEO remain open; static model/row inventory is not DB proof. No database, client provider, private CRM endpoint or deployment was exercised.

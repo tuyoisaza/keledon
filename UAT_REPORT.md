@@ -1,5 +1,11 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.33 — Knowledge vector deletion contract (2026-10-14)
+
+UAT-031 passes 12 mocked service assertions across API and Cloud. Document deletion filters Qdrant points by the stored `documentId` payload and waits for vector deletion before removing the Prisma row. Base deletion removes the associated collection first. Qdrant failure keeps the relational record; a missing collection is handled without a vector call. API/Cloud production TypeScript builds and complete source regressions pass. UAT-030 was also rerun on the exact 5.1.33 built Web candidate and passes 1/1 with intercepted synthetic APIs; Web diagnostics pass 19/19. This is not database-backed or live-Qdrant acceptance; concurrent reindex/delete and a Prisma failure after successful Qdrant cleanup remain unverified. No database, client endpoint or customer data was used.
+
+The total remains 28 PASS, 2 BLOCKED, 1 MANUAL. UAT-009/010 still need safe DB-backed identities and disposable PostgreSQL; UAT-006 needs a native Windows device/audio environment. The full model-operation matrix and external SEO/AEO acceptance remain incomplete.
+
 ## Candidate 5.1.32 — tenant Knowledge page repair (2026-10-14)
 
 UAT-030 passes against source commit `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`. `services/web npm run test:uat` passes 1/1. The browser used a local production build, synthetic Company Co fixtures, intercepted API requests, and blocked external network/WebSockets. It verifies user read-only controls, the admin source dialog’s labels/Escape/focus restoration, Spanish/English/Portuguese copy, removal of fabricated transcript/RAG results, and generic error text that omits backend details and secret variable names. `docs/phdk/evidence/uat-local-web.json` records the exact source SHA with an empty source fingerprint and no dirty untracked source files. This does not prove live auth, DB persistence, real RAG/call data, or deployment.

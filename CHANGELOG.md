@@ -1,3 +1,9 @@
+## v5.1.33 — 2026-10-14 (remove stale knowledge vectors on CRUD deletion)
+
+- Clean Qdrant vectors by document payload before deleting KnowledgeDocument rows, and remove a knowledge-base collection before deleting its relational record, in both API and Cloud. Qdrant failures preserve the database record.
+- Add API/Cloud mirror regression coverage for deletion ordering, missing collections, and Qdrant failure behavior.
+- API and Cloud regressions/builds, changed-source lint, and focused tests pass; PostgreSQL persistence and delete/reindex concurrency remain unverified.
+
 ## v5.1.32 — 2026-10-14 (truthful and localized tenant knowledge view)
 
 - Remove the fabricated live call transcript, intent/confidence values, and sample RAG matches from the Knowledge page; the screen now shows only API-backed tenant document/status data.

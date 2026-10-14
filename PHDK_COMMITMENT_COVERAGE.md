@@ -169,3 +169,15 @@ Baseline 5.1.24 / `6413d8aed295c18af098ca6a58c6dfbb7503930b`; current candidate 
 | CMT-004 | Admin/permissions fourth | PLAN-AUTO-004, 006 | Actor/tenant from DB, least privilege, secret-safe projections, full 35-model matrix and disposable-DB migration/persistence acceptance. |
 
 Cross-cutting tasks PLAN-AUTO-005 (full PHDK Check/remediation), PLAN-AUTO-007 (source SEO/AEO), and PLAN-AUTO-008 (delivery) apply to every commitment. Current known gaps: Cloud ESLint 333 errors/59 warnings; full CRUD matrix and disposable-DB evidence; broad active-route/native UX acceptance; current candidate UAT; exact final SHA/version/gate. Status is PARTIALLY DELIVERED until these proof obligations are closed or explicitly accepted by the PHDK completion gate.
+## Current Auto candidate — 2026-10-14, 5.1.33
+
+| Commitment | Candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | Candidate branch `fix/phdk-knowledge-vector-cleanup-5-1-33` is based on verified main `9908a4c6abcef0c378b9bb661ffb5b57146b27ae`; five app roots/locks and Browser renderer align at 5.1.33; full local candidate checks pass. | Commit, push/PR, actual control reconciliation, merge and exact remote-main readback remain pending. |
+| CMT-002 | Diagnostics 19/19; exact-candidate synthetic built-SPA UAT 1/1 covers the widget and selected journeys. | Native Windows device/audio and broad route/screen-reader accessibility remain open. |
+| CMT-003 | Provider-neutral API/Cloud/Browser contracts; validated tenant-allowlisted private CRM origins; no private destination contacted. | Live voice/CRM acceptance remains customer-specific once each tenant chooses/configures a provider. |
+| CMT-004 | Restrictive role policy and actor/tenant DB scope retained; UAT-031/regression 46 verifies vector cleanup-before-row deletion and failure-preserves-row behavior in both services. | Disposable PostgreSQL persistence, real Qdrant and concurrent reindex/delete remain unverified; full 35-model operation matrix remains open. |
+
+Overall: **PARTIALLY DELIVERED**. UAT: 28 PASS, 2 BLOCKED, 1 MANUAL. No DB/provider/customer data/deployment used.
+
+SIGUIENTE PASO: complete the authorized remote-main PR flow, then update the mechanical evidence with the observed merge SHA and actual controls.

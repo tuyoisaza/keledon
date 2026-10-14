@@ -1,5 +1,9 @@
 # CRUD matrix — current source and authorization coverage
 
+## 5.1.33 — Knowledge deletion cleans Qdrant data
+
+Both API and Cloud generic CRUD now resolve the stored KnowledgeDocument→KnowledgeBase relation, remove points using the immutable `documentId` payload filter with Qdrant `wait: true`, then delete the relational row. KnowledgeBase deletion removes its `knowledge-base-<id>` collection before deleting the Prisma record. If Qdrant is unavailable or deletion fails, the relational record is retained. Regression 46 verifies API/Cloud source parity and operation ordering with mocked Prisma/Qdrant clients. This does not provide a cross-store transaction: a later Prisma failure after successful vector deletion, concurrent reindex/delete, live Qdrant semantics, and persisted PostgreSQL behavior remain open for disposable-environment acceptance.
+
 ## 5.1.31 — vendor config is non-secret by enforcement
 
 `Vendor.config` is documented in the Prisma schema as non-secret JSON, while vendor credentials have dedicated encrypted columns. API and Cloud now enforce the actual supported config schema: only `allowedOrigins` is accepted, as an array of origin strings; any other field or non-object config is rejected. This prevents a secret from being hidden under an arbitrary property name. Updates also fail closed if existing config contains unsupported legacy fields, preventing a routine edit from preserving possible plaintext credentials. Tenant-validated private/local origins remain supported through either the dedicated field or the config allowlist; public CRUD projections continue to omit raw config. Mirrored regression coverage is in API and Cloud `26-vendor-destination-policy.test.js`. Persistent legacy-data remediation remains unverified without a disposable database.
