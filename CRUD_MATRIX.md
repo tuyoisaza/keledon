@@ -2,9 +2,9 @@
 
 ## Current Auto candidate 5.1.20 — Check addendum
 
-Candidate `fix/cloud-listening-session-capability` closes a runtime capability gap in Cloud listening sessions: creation requires an assigned DB-backed actor; websocket IDs use full UUID entropy, expire after one hour, are rejected before worker startup once expired, and are redacted from server and Web diagnostics. Cloud regression covers guard behavior, valid/expired websocket capabilities and log redaction. API/Web mirrors are aligned. Source tests do not establish multi-instance persistence or physical audio acceptance.
+PR #86 (`2d021c4d41beda5b625845df446c53e353110f39`, version 5.1.20) closes a runtime capability gap in Cloud listening sessions: creation requires an assigned DB-backed actor; websocket IDs use full UUID entropy, expire after one hour, are rejected before worker startup once expired, and are redacted from server and Web diagnostics. Cloud regression covers guard behavior, valid/expired websocket capabilities and log redaction. API/Web mirrors are aligned. Source tests do not establish multi-instance persistence or physical audio acceptance.
 
-The earlier 5.1.17 voice-profile evidence below remains applicable to its source paths, but version and publication statements in that checkpoint are historical. The current main remains 5.1.19 until this candidate is reviewed and merged.
+The earlier 5.1.17 voice-profile evidence below remains applicable to its source paths, but version and publication statements in that checkpoint are historical. Current `main` is 5.1.20.
 
 The current `ManagementVoiceProfilesPage` offers tenant-scoped list, safe-field detail, create, edit and delete. The API guard resolves actor and tenant from the current database record and checks direct record IDs; API projections for list/detail/create/update exclude `config` and provider relations. Regression tests cover same-tenant and foreign-tenant detail, and UAT-T-008 exercises synthetic detail/edit plus failed writes. UI/API evidence is source/contract-level; persisted role × tenant × operation acceptance remains open.
 
