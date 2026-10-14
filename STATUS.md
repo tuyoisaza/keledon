@@ -1,9 +1,9 @@
 # STATUS
 
-## 2026-10-13 — PHDK Auto 5.1.16 local candidate; overall partial
+## 2026-10-14 — PHDK Auto 5.1.16 source slice merged; overall partial
 
-- Base `origin/main` is `c8534e6f6568922d540eabfba4abe90cc93749c1`, verified after PRs #74/#75. Candidate branch `fix/phdk-route-accessibility-i18n` aligns all five app package/lock roots at 5.1.16.
-- Profile roles/dates, device list/error/retry states and session detail are localized in en/es/pt. Review also fixed the devices screen's invalid pairing-code request by linking to the existing protected Keledon launcher. Commit `7ce3509aeb4d53ce3a90d16153996abf35446024` is recorded; typecheck/build/UAT, diagnostics, SEO source test, focused ESLint and 644-key parity pass. PR/readback remain pending.
+- Product PR [#76](https://github.com/tuyoisaza/keledon/pull/76) merged by squash at `db35f231c29fb71568666b230e912152ca0a34e2`; fetched `origin/main` and remote SHA readback match. All five app package/lock roots are 5.1.16.
+- Profile, device, protected launcher and session-detail journeys are localized in en/es/pt; the invalid pairing-code request was replaced with protected launcher navigation. Web typecheck/build, synthetic UAT 1/1, diagnostics 18/18, SEO source 1/1, focused ESLint, locale parity 644/644 and PHDK coherence 52/52 pass. GitHub reports no status checks or review decision; no deployment is claimed.
 - Overall Auto remains PARTIALLY DELIVERED pending broad route accessibility/localization, persisted CRUD/migration, native device/audio and deployed SEO/AEO acceptance.
 
 ## 2026-10-13 — PHDK Auto 5.1.14 merged; overall partial

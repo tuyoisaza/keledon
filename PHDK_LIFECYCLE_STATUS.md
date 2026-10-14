@@ -1,8 +1,8 @@
 # Lifecycle status — active run 20261013-keledon-auto-conformity
 
-## Current Auto continuation — candidate 5.1.16
+## Current Auto delivery — 5.1.16 merged; overall partial
 
-Branch `fix/phdk-route-accessibility-i18n` is based on remote main `c8534e6f6568922d540eabfba4abe90cc93749c1`; all five app package/lock roots are 5.1.16. Profile/date/role, device status/empty/error/retry, localized launcher navigation and session-detail journeys are localized in en/es/pt. Web typecheck/build, UAT 1/1, diagnostics 18/18, SEO source 1/1, locale parity 644/644, focused ESLint and PHDK coherence 52/52 pass. Source commit `7ce3509aeb4d53ce3a90d16153996abf35446024` is verified; PR and main readback remain pending.
+Product PR [#76](https://github.com/tuyoisaza/keledon/pull/76) merged by squash at `db35f231c29fb71568666b230e912152ca0a34e2`; fresh `origin/main` and remote SHA readback match. All five app package/lock roots are 5.1.16. Profile, device, protected launcher and session-detail journeys are localized in en/es/pt. Web typecheck/build, synthetic UAT 1/1, diagnostics 18/18, SEO source test 1/1, locale parity 644/644, focused ESLint and PHDK coherence 52/52 pass. GitHub reports no status checks or review decision; no deployment is claimed.
 
 Overall PHDK Auto remains **PARTIALLY DELIVERED**: persisted CRUD/migration, native Electron/device/audio, broad active-route i18n/a11y and deployed SEO/AEO remain open.
 

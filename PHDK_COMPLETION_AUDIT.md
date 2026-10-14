@@ -1,10 +1,10 @@
 # PHDK Auto completion audit — PARTIALLY DELIVERED
 
-## Current candidate — 5.1.16 (local source slice; overall partial)
+## Current delivery — 5.1.16 (source slice merged; overall partial)
 
-Branch `fix/phdk-route-accessibility-i18n` is based on freshly fetched `origin/main` `c8534e6f6568922d540eabfba4abe90cc93749c1`. All five app package/lock roots are 5.1.16. Profile roles/dates, device list/error/retry states, valid launcher navigation and session detail are localized. Source review corrected the devices page's invalid pairing-code endpoint use. Web typecheck/build, local synthetic UAT 1/1, diagnostics 18/18, SEO source test 1/1, locale parity 644/644, focused ESLint 0 errors and PHDK coherence 52/52 pass. Source commit `7ce3509aeb4d53ce3a90d16153996abf35446024` and its UAT evidence are verified; PR and remote readback are pending.
+Product PR [#76](https://github.com/tuyoisaza/keledon/pull/76) merged by squash at `db35f231c29fb71568666b230e912152ca0a34e2`; fetched `origin/main` and remote SHA readback independently match. All five app package/lock roots are 5.1.16. The profile, device, launcher and session-detail journeys now have en/es/pt copy; the invalid pairing-code endpoint call was replaced with protected launcher navigation. Web typecheck/build, synthetic local UAT 1/1 bound to source commit `7ce3509aeb4d53ce3a90d16153996abf35446024`, diagnostics 18/18, SEO source test 1/1, locale parity 644/644, focused ESLint (0 errors/warnings) and PHDK coherence 52/52 pass. GitHub reports no status checks or review decision; no deployment is claimed.
 
-The 5.1.16 result is a bounded route fix, not full Auto completion. Persisted CRUD/migration, native Electron/device/audio, broad active-route accessibility/localization and deployed SEO/AEO remain open. Docker/PostgreSQL client/server binaries are absent on this host; no production database or deployment was accessed.
+This is a bounded source delivery, not full Auto completion. Persisted CRUD/migration, native Electron/device/audio, broad active-route accessibility/localization and deployed SEO/AEO remain open. Docker/PostgreSQL client/server binaries were unavailable on this host; no database or deployment was accessed.
 
 ## Previous delivery — 5.1.15 (source slice merged; overall partial)
 

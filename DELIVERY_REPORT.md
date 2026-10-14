@@ -1,8 +1,10 @@
 # Delivery report — current status PARTIALLY DELIVERED
 
-## Current candidate — 5.1.16 (IN PROGRESS)
+## Current delivery — 5.1.16 (SOURCE SLICE MERGED; AUTO PARTIAL)
 
-Remote base `main` is `c8534e6f6568922d540eabfba4abe90cc93749c1`; all five package/lock roots were verified there at 5.1.15. Candidate commit `7ce3509aeb4d53ce3a90d16153996abf35446024` on `fix/phdk-route-accessibility-i18n` aligns all ten package roots to 5.1.16 and localizes profile, device, launcher and session-detail journeys. Web typecheck/build, synthetic UAT 1/1 (bound to this SHA), diagnostics 18/18, SEO source test 1/1, catalog parity 644/644, focused ESLint (0 errors) and PHDK coherence 52/52 pass. PR and remote readback are pending. Persisted/native/deployed acceptance remains open.
+Product PR [#76](https://github.com/tuyoisaza/keledon/pull/76) merged by squash at `db35f231c29fb71568666b230e912152ca0a34e2`; fresh fetch and remote readback confirm `origin/main` at that SHA. All five application package/lock roots are 5.1.16. Source commit `7ce3509aeb4d53ce3a90d16153996abf35446024` localizes profile, device, launcher and session-detail journeys. Web typecheck/build, synthetic local UAT 1/1 bound to the source commit, diagnostics 18/18, SEO source test 1/1, locale-key parity 644/644, focused ESLint (0 errors/warnings) and PHDK coherence 52/52 pass. GitHub reports empty status-check and review rollups; no deployment is claimed. Persisted CRUD/migration, native device/audio, broad route accessibility/localization and deployed SEO/AEO remain open.
+
+Overall PHDK Auto remains **PARTIALLY DELIVERED**.
 
 ## Current delivery — 5.1.15 (SOURCE SLICE MERGED; AUTO PARTIAL)
 
