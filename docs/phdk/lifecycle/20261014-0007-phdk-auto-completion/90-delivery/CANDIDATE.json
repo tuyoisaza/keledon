@@ -4,8 +4,10 @@
   "base_commit": "6413d8aed295c18af098ca6a58c6dfbb7503930b",
   "source_fingerprint": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "source_commit": "e7de35752dbb2ed3e9bd3d33fb59cb649cf3c157",
-  "pull_request": null,
-  "delivery_status": "PR_PENDING",
+  "pull_request": "https://github.com/tuyoisaza/keledon/pull/94",
+  "delivery_status": "PR_OPEN",
+  "pull_request_state": "OPEN",
+  "pull_request_checks": [],
   "acceptance_status": "PARTIALLY_DELIVERED",
   "versions_aligned": true,
   "checks": {

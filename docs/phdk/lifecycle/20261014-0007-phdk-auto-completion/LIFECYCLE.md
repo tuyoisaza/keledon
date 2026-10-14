@@ -4,7 +4,7 @@ Repository: `tuyoisaza/keledon`
 Run opened: 2026-10-14 00:07 America/Mexico_City
 Target: `main`
 Base: `6413d8aed295c18af098ca6a58c6dfbb7503930b` / 5.1.24
-Working branch: `fix/cloud-eslint-prettier` (dirty, in-scope continuation)
+Working branch: `fix/cloud-eslint-prettier` (source delivered in PR #94)
 Goal: complete the four owner-confirmed fronts and applicable PHDK conformity.
 
 | Stage | Status | Evidence / next action |
@@ -18,8 +18,8 @@ Goal: complete the four owner-confirmed fronts and applicable PHDK conformity.
 | 60 UAT Fix | COMPLETED — RESIDUAL DECISION/ENVIRONMENT BLOCKERS | Source fixes are being verified; profile-switch behavior still awaits the owner's security choice. |
 | 65 SEO | COMPLETED — SOURCE PASS / MEASUREMENT GAPS | 25 source controls classified; Landing noscript fallback added and statically validated. |
 | 67 AEO/GEO | COMPLETED — SOURCE REVIEW / EXTERNAL UNMEASURED | Fifteen source controls classified; no unsupported claims or schema added. |
-| 70 Check | COMPLETED — RESIDUAL ACCEPTANCE GAPS | API lint 0 errors/138 warnings; Cloud lint 0 errors/25 warnings; configured builds/regressions and PHDK coherence pass. Full Cloud source typecheck and external acceptance limits are documented. |
+| 70 Check | COMPLETED — RESIDUAL ACCEPTANCE GAPS | API lint 0 errors/138 warnings; Cloud lint 0 errors/25 warnings; configured builds, full Cloud typecheck, regressions and PHDK coherence pass. External acceptance limits remain. |
 | 80 Remediation | COMPLETED — SOURCE PASS, ACCEPTANCE PARTIAL | Approved source remediations and tenant-scoped private CRM allowlist implemented; persisted/native/deployed acceptance and profile-switch design remain open. |
-| 90 Delivery | PENDING — LOCAL, UNPUBLISHED | Candidate remains dirty/uncommitted on `fix/cloud-eslint-prettier`; no PR, merge, or release claim. |
+| 90 Delivery | PR OPEN — REVIEW PENDING | PR #94 is open; GitHub reports no hosted checks or review decision. No merge or release claim. |
 
 Prior run `20261013-1900-phdk-auto` is retained as immutable history and evidence. Current run artifacts live in each numbered stage folder.
