@@ -11,6 +11,7 @@ import {
 } from './config/runtime-tier';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AuthGuard } from './guards/auth.guard';
+import { PrismaService } from './prisma/prisma.service';
 import {
   ApiCorrelationExceptionFilter,
   ApiCorrelationMiddleware,
@@ -92,7 +93,7 @@ async function bootstrap() {
     // Register AuthGuard as a global guard — applies to all routes
     // Routes with @Public() decorator are skipped
     const reflector = app.get(Reflector);
-    app.useGlobalGuards(new AuthGuard(reflector));
+    app.useGlobalGuards(new AuthGuard(reflector, app.get(PrismaService)));
 
     const port = process.env.PORT || 9999;
     const host = process.env.HOST || '0.0.0.0';

@@ -2,7 +2,11 @@
 
 Run opened: 2026-10-14 00:07 America/Mexico_City.
 Repository: `tuyoisaza/keledon`, checkout `C:\KELEDON\keledon`.
-Branch/base: `fix/cloud-eslint-prettier`, current head `afd66702ba7fc216e27c0c845ceaedb1eeb40944`, target `origin/main=6413d8aed295c18af098ca6a58c6dfbb7503930b`. PR #94 is open against `main`; the source tree is clean, with only revalidated UAT evidence artifacts changed locally. No worktree reset/stash/rewrite.
+Branch/base at pre-merge capture: `fix/cloud-eslint-prettier`, candidate source `afd66702ba7fc216e27c0c845ceaedb1eeb40944`, target then `origin/main=6413d8aed295c18af098ca6a58c6dfbb7503930b`. PR #94 was open at that capture; see post-merge readback below. No worktree reset/stash/rewrite.
+
+## Post-merge delivery readback
+
+PR #94 is merged at `8dfc1fca7de253a017acb6f291ff278699915beb`; a fresh fetch and `git ls-remote` agree. The squashed main tree matches the PR head, all five app roots/lockfiles and Browser renderer are 5.1.25, and `python phdk-standards/scripts/phdk_completion_gate.py` passes. PHDK v2.50.10 coherence remains 52/52. No hosted checks or review decision were configured, and no deployment is claimed. Current local post-merge lifecycle records and gate evidence are tracked separately from the immutable preflight capture.
 
 ## Installation/integrity
 

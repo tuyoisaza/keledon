@@ -774,6 +774,17 @@
     "getStarted": "Get started",
     "exploreWorkflow": "Explore the workflow"
   },
+  "uatTestProfiles": {
+    "label": "UAT test profiles",
+    "shortLabel": "UAT profiles",
+    "choose": "Select a test account",
+    "switch": "Enter profile",
+    "switchFailed": "Could not start the test profile.",
+    "active": "Temporary test session active",
+    "return": "Return to superadmin",
+    "returnFailed": "Could not end the test profile.",
+    "working": "Working…"
+  },
   "voiceProfiles": {
     "title": "Voice profiles",
     "description": "Configure text-to-speech voice settings",

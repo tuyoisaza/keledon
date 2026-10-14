@@ -1,12 +1,24 @@
-# PHDK commitment coverage — KELEDON four fronts
+# PHDK commitment coverage — current candidate 5.1.26
+
+Candidate branch `fix/audited-uat-test-profiles` is based on merged main 5.1.25 at `8dfc1fca7de253a017acb6f291ff278699915beb`. All five app package/lock roots and Browser renderer are 5.1.26. API regression 20/20, scoped Web UAT 1/1 and PHDK coherence 52/52 pass; candidate commit, PR and remote readback are pending.
+
+| Commitment | Current coverage | Remaining acceptance |
+|---|---|---|
+| CMT-001 | Verified 5.1.25 main baseline; 5.1.26 candidate versions align. | Candidate commit, PR, merge and exact remote readback. |
+| CMT-002 | Diagnostics widget source and local UAT remain; UAT-008 return control is tested. | Native Electron/device/audio and broad route accessibility/localization. |
+| CMT-003 | Provider-neutral voice/Cloud/Browser flow; tenant-configured private CRM origins are validated and allowlisted. | Each client’s configured integration acceptance when their provider is known. |
+| CMT-004 | DB-derived actor/tenant rules, least privilege, write-only encrypted secrets and approved temporary UAT profile are regression-covered. | Real dev identities, full 35-model matrix, disposable-DB migration/persistence. |
+
+Overall Auto remains **PARTIALLY DELIVERED**. No production DB, deployment or customer call was used.
+
 
 ## Current candidate — 2026-10-14, 5.1.25, PR #94
 
-Source commit `e7de35752dbb2ed3e9bd3d33fb59cb649cf3c157` applies the owner-approved PHDK/security remediations across all five app roots and Browser renderer; `afd66702ba7fc216e27c0c845ceaedb1eeb40944` splits three over-limit Cloud source/test files. PR #94 is open on `fix/cloud-eslint-prettier`, based on verified `origin/main` `6413d8aed295c18af098ca6a58c6dfbb7503930b`. API/Cloud builds and typechecks, Cloud regression 11/11, API 31/31, Browser 27/27, Web diagnostics 19/19 and SEO 1/1, Landing build/SEO, PHDK coherence 52/52, source-size inventory 1,135 files/0 at or above 600, and exact-candidate synthetic Web UAT 1/1 pass. GitHub reports no hosted checks or review decision; the PR is mergeable. Overall Auto remains **PARTIALLY DELIVERED** because persistence/migration, native device/audio, broad route accessibility, deployed SEO/AEO, and audited test-profile disposition are not proven.
+Source commit `e7de35752dbb2ed3e9bd3d33fb59cb649cf3c157` applies the owner-approved PHDK/security remediations across all five app roots and Browser renderer; `afd66702ba7fc216e27c0c845ceaedb1eeb40944` splits three over-limit Cloud source/test files. PR #94 merged to `main` at `8dfc1fca7de253a017acb6f291ff278699915beb`; fetched `origin/main` and `git ls-remote` agree, and the squashed tree matches PR head `c3a0fd010d12cdf80ee2ac55bb449537d9b9c08b`. API/Cloud builds and typechecks, Cloud regression 11/11, API 31/31, Browser 27/27, Web diagnostics 19/19 and SEO 1/1, Landing build/SEO, PHDK coherence 52/52, source-size inventory 1,135 files/0 at or above 600, and exact-candidate synthetic Web UAT 1/1 pass. GitHub reports no hosted checks or review decision. Overall Auto remains **PARTIALLY DELIVERED** because persistence/migration, native device/audio, broad route accessibility, deployed SEO/AEO, and audited test-profile disposition are not proven.
 
 | Commitment | Current implementation/evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | All five roots/renderer align at 5.1.25; versioned commits are pushed in PR #94. | Merge/read back `main`; no hosted checks/review requests are configured. |
+| CMT-001 | PR #94 merged and independently read back at `main` SHA `8dfc1fca7de253a017acb6f291ff278699915beb`; all five roots/renderer align at 5.1.25. | Source delivery complete; no hosted checks/review decision configured, deployment not claimed. |
 | CMT-002 | Shared widget source and diagnostics 19/19; exact-candidate synthetic UAT 1/1. | Native Electron/OS/device/audio and broad route accessibility remain unverified. |
 | CMT-003 | Provider-neutral contracts and validated tenant-scoped private CRM origins pass source/regression checks. | Live call/CRM acceptance remains per configured client; no universal provider applies. |
 | CMT-004 | DB-derived actor/tenant rules, least privilege and write-only encrypted vendor secrets have API/Cloud/UI regression coverage. | Full 35-model matrix, disposable-DB migration/persistence and test-profile disposition remain open. |

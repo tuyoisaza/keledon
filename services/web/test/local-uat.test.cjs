@@ -87,6 +87,9 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   async function pageFor(role,viewport={width:1280,height:900}){
    const context=await browser.newContext({viewport,locale:'es-MX'});
    const page=await context.newPage();
+   let activeRole=role;
+   let activeUatProfile=false;
+   const profileAudit=[];
    await page.routeWebSocket('**/*',socket=>socket.close());
    await page.route('**/*',async route=>{
     const url=new URL(route.request().url());
@@ -94,7 +97,21 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
     if(!url.pathname.startsWith('/api/'))return route.continue();
     let body={};
     const p=url.pathname;
-    if(p==='/api/auth/me')body={success:true,user:{...person,role:role||'guest'}};
+    if(p==='/api/auth/me')body={success:true,user:{...person,role:activeRole||'guest',uatTestProfile:activeUatProfile}};
+    else if(p==='/api/auth/uat-test-profiles'&&route.request().method()==='GET')body=activeRole==='superadmin'?{profiles:[{id:'uat-admin',name:'Company Co QA Admin',role:'admin'}]}:{profiles:[]};
+    else if(p==='/api/auth/uat-test-profiles/switch'&&route.request().method()==='POST'){
+      const payload=route.request().postDataJSON();
+      if(activeRole!=='superadmin'||payload.profileId!=='uat-admin')return route.fulfill({status:404,contentType:'application/json',body:'{"message":"not found"}'});
+      profileAudit.push({action:'UAT_TEST_PROFILE_START',actor:'synthetic-superadmin',profile:payload.profileId});
+      activeRole='admin';activeUatProfile=true;
+      return route.fulfill({status:201,contentType:'application/json',body:JSON.stringify({token:'SYNTHETIC-UAT-TEST-PROFILE-TOKEN-NOT-A-CREDENTIAL',sessionId:'synthetic-uat-session',expiresAt:Date.now()+600000,user:{id:'companyco-qa-admin',name:'Company Co QA Admin',role:'admin',uatTestProfile:true}})});
+    }
+    else if(p==='/api/auth/uat-test-profiles/return'&&route.request().method()==='POST'){
+      if(!activeUatProfile||route.request().postDataJSON().sessionId!=='synthetic-uat-session')return route.fulfill({status:401,contentType:'application/json',body:'{"message":"no active profile"}'});
+      profileAudit.push({action:'UAT_TEST_PROFILE_END',actor:'synthetic-superadmin',profile:'uat-admin'});
+      activeRole='superadmin';activeUatProfile=false;
+      return route.fulfill({status:201,contentType:'application/json',body:'{"success":true}'});
+    }
     else if(p==='/api/tech-status')body=role==='superadmin'?{detailsAvailable:true,server:{status:'online',uptime:456,nodeVersion:'node-fixture',memoryUsage:{used:10,total:20,percentage:50}},techStack:[{name:'NestJS',version:'11',category:'backend'}],dependencies:[{name:'fixture-package',hasUpdate:true}]}:{detailsAvailable:false,server:{status:'online'},techStack:[],dependencies:[]};
     else if(p==='/api/provider-catalog'||p==='/api/rpa-providers')body=[];
     else if(p==='/api/cloud-config')body={ws_url:origin};
@@ -168,7 +185,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
     if(role)sessionStorage.setItem('auth_token','SYNTHETIC-UAT-TOKEN-NOT-A-CREDENTIAL');
     Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>{if(window.__denyCopy)throw Error('fixture denial');window.__copied=value;}}});
    },{role});
-   return {page,context};
+   return {page,context,profileAudit};
   }
   const anonymous=await pageFor(null);
   const page=anonymous.page;
@@ -225,6 +242,29 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
    await context.close();
    checks.push('UAT-004 '+role+' frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API');
   }
+  const testProfileOperator=await pageFor('superadmin');
+  await testProfileOperator.page.goto(origin+'/management/companies');
+  const profileSelect=testProfileOperator.page.getByRole('combobox',{name:'Perfiles UAT de prueba',exact:true});
+  await profileSelect.waitFor();
+  await profileSelect.selectOption('uat-admin');
+  await testProfileOperator.page.getByRole('button',{name:'Entrar al perfil',exact:true}).click();
+  await testProfileOperator.page.getByText('Sesión temporal de prueba activa',{exact:true}).waitFor();
+  assert.equal(await testProfileOperator.page.getByRole('button',{name:'Volver a superadmin',exact:true}).count(),1);
+  await testProfileOperator.page.screenshot({path:path.join(evidence,'uat-test-profile-active.png')});
+  const switchedTokens=await testProfileOperator.page.evaluate(()=>({active:sessionStorage.getItem('auth_token'),original:sessionStorage.getItem('uat_original_superadmin_token'),sessionId:sessionStorage.getItem('uat_active_profile_session_id')}));
+  assert.equal(switchedTokens.active,'SYNTHETIC-UAT-TEST-PROFILE-TOKEN-NOT-A-CREDENTIAL');
+  assert.equal(switchedTokens.original,'SYNTHETIC-UAT-TOKEN-NOT-A-CREDENTIAL');
+  assert.equal(switchedTokens.sessionId,'synthetic-uat-session');
+  await testProfileOperator.page.getByRole('button',{name:'Volver a superadmin',exact:true}).click();
+  await testProfileOperator.page.getByRole('combobox',{name:'Perfiles UAT de prueba',exact:true}).waitFor();
+  const returnedTokens=await testProfileOperator.page.evaluate(()=>({active:sessionStorage.getItem('auth_token'),original:sessionStorage.getItem('uat_original_superadmin_token'),sessionId:sessionStorage.getItem('uat_active_profile_session_id')}));
+  assert.equal(returnedTokens.active,'SYNTHETIC-UAT-TOKEN-NOT-A-CREDENTIAL');
+  assert.equal(returnedTokens.original,null);
+  assert.equal(returnedTokens.sessionId,null);
+  assert.deepEqual(testProfileOperator.profileAudit.map(item=>item.action),['UAT_TEST_PROFILE_START','UAT_TEST_PROFILE_END']);
+  await testProfileOperator.page.screenshot({path:path.join(evidence,'uat-test-profile-returned.png')});
+  await testProfileOperator.context.close();
+  checks.push('UAT-008 superadmin selects allowlisted synthetic profile, temporary banner/token and return-to-superadmin flow PASS (mocked UI API; server audit/expiry/revocation covered by API regressions)');
   for(const role of ['admin','superadmin']){
    const statusPage=await pageFor(role);await statusPage.page.goto(origin+'/management/status');
    await statusPage.page.getByText('Cloud Server',{exact:true}).waitFor();

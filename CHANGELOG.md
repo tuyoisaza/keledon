@@ -1,3 +1,10 @@
+## v5.1.26 — 2026-10-14 (audited non-production UAT profiles)
+
+- Add a superadmin-only selector for explicitly allowlisted synthetic UAT accounts in development or staging environments.
+- Issue 10-minute profile tokens backed by database audit records; profile changes are revocable, role-limited, and rejected when the operator or profile no longer meets policy.
+- Keep test profiles disabled by default and fail closed outside explicit development/staging configuration.
+- Add localized Web controls to switch profiles and return to the original superadmin session.
+
 ## v5.1.25 — 2026-10-14 (PHDK Auto runtime and tenant security)
 
 - Enforce least-privilege identity and tenant scoping across API, Cloud, Browser, and realtime runtimes; new users default to `user`, with elevated roles derived from the database.

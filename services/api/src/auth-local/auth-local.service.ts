@@ -154,6 +154,31 @@ export class LocalAuthService {
     return `${base64Payload}.${signature}`;
   }
 
+  generateUatTestProfileToken(input: {
+    userId: string;
+    email: string;
+    role: string;
+    sessionId: string;
+    actorUserId: string;
+    expiresAt: number;
+  }): string {
+    const payload = {
+      userId: input.userId,
+      email: input.email,
+      role: input.role,
+      expiresAt: input.expiresAt,
+      uatTestProfile: true,
+      uatTestSessionId: input.sessionId,
+      uatActorUserId: input.actorUserId,
+    };
+    const encoded = Buffer.from(JSON.stringify(payload)).toString('base64');
+    const signature = crypto
+      .createHmac('sha256', this.authSecret)
+      .update(encoded)
+      .digest('hex');
+    return `${encoded}.${signature}`;
+  }
+
   /**
    * Validate a token by checking HMAC signature and expiry.
    * Returns user data from DB if valid, null otherwise.

@@ -1,17 +1,17 @@
-# PMO status — current continuation 5.1.16; overall PARTIALLY DELIVERED
+# PMO status — current Auto continuation 5.1.26; overall PARTIALLY DELIVERED
 ## Active run `20261014-0007-phdk-auto-completion` — current portfolio
 
-UAT completed with conclusion **NOT ACCEPTED**: six cases PASS, one FAIL (no audited server-side superadmin test-profile selection), two BLOCKED (safe development identities and disposable DB), and one MANUAL (native device/audio). Local SPA UAT was run against source fingerprint `sha256:b93f388303c3bf87df539facf4594d55d4961de4eb83c025513b44241ae33d3b`; its mocked role contexts are not actual authentication. UAT Fix is now active. The user has a pending material security design choice about test-profile switching.
+UAT Fix resolved UAT-008 after the owner approved the bounded development/staging design. The 5.1.26 candidate branch passes API regression 20/20 suites and built-SPA UAT 1/1, including the audited synthetic-profile switch/return. This is scoped source/UI evidence: no real account, persistent DB, deployment, native device/audio, or customer provider was used. Delivery PR and exact remote readback remain pending.
 
 | WS | Current state | Evidence / next gate |
 |---|---|---|
-| WS-001 / CMT-001 | BASELINE VERIFIED; delivery OPEN | Main 5.1.24 at `6413d8a`; 5 roots aligned in prior evidence. Current work is uncommitted; normal PR/review and exact readback pending. |
-| WS-002 / CMT-002 | SOURCE PARTIAL; UAT OPEN | Widget/diagnostics source carried forward; re-audit all mounts and bind UAT to integrated candidate. |
-| WS-003 / CMT-003 | SOURCE PARTIAL; customer acceptance parameterized | Owner-approved private/local tenant allowlists; source builds/regressions carried forward, full integration review pending. |
-| WS-004 / CMT-004 | SOURCE PARTIAL; persisted acceptance OPEN | Approved DB-derived least privilege and encrypted secrets; exhaustive 35-model matrix and disposable DB evidence remain open. |
-| WS-X | CHECK OPEN | Cloud lint 333 errors/59 warnings; current UAT and route/SEO/AEO source stages pending. |
+| WS-001 / CMT-001 | BASELINE VERIFIED; DELIVERY OPEN | PR #94 main baseline 5.1.25 at `8dfc1fca7de253a017acb6f291ff278699915beb`; candidate roots are 5.1.26. Complete versioned commit, PR and remote readback. |
+| WS-002 / CMT-002 | SOURCE PARTIAL; UAT OPEN | Diagnostics and UAT-008 source/UI checks pass. Native Electron permissions/device/audio and broad route accessibility/localization remain open. |
+| WS-003 / CMT-003 | SOURCE/CONTRACT PASS; CLIENT ACCEPTANCE PARAMETERIZED | Private CRM destinations require validation and per-tenant allowlist. No universal live provider; client selects CRM/telephony. |
+| WS-004 / CMT-004 | SOURCE POLICY PASS; PERSISTED ACCEPTANCE OPEN | Approved least privilege and temporary test-profile policy implemented; exhaustive 35-model matrix and disposable DB migration/persistence remain open. |
+| WS-X | SOURCE CHECKS CONTINUE | Complete candidate integration review, PHDK coherence/delivery gates, SEO/AEO source records and remote PR delivery. Deployed measurements remain unavailable. |
 
-Portfolio remains **PARTIALLY DELIVERED**. Continue current lifecycle handoffs; do not promote historical source or UAT counts into current-candidate acceptance.
+Portfolio remains **PARTIALLY DELIVERED**. Current source/UI fixes do not waive environment-dependent acceptance.
 
 
 ## Current Auto candidate — 5.1.17, run `20261013-1900-phdk-auto`

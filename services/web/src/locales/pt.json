@@ -774,6 +774,17 @@
     "getStarted": "Começar",
     "exploreWorkflow": "Explorar o fluxo"
   },
+  "uatTestProfiles": {
+    "label": "Perfis UAT de teste",
+    "shortLabel": "Perfis UAT",
+    "choose": "Selecione uma conta de teste",
+    "switch": "Entrar no perfil",
+    "switchFailed": "Não foi possível iniciar o perfil de teste.",
+    "active": "Sessão temporária de teste ativa",
+    "return": "Voltar ao superadmin",
+    "returnFailed": "Não foi possível encerrar o perfil de teste.",
+    "working": "Processando…"
+  },
   "voiceProfiles": {
     "title": "Perfis de voz",
     "description": "Configure vozes para conversão de texto em fala",

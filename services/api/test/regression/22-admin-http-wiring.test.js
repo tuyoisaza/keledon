@@ -53,13 +53,23 @@ const { MvpStoreService } = require('../../src/mvp/mvp-store.service.ts');
 const { CrudController } = require('../../src/crud/crud.controller.ts');
 const { CrudService } = require('../../src/crud/crud.service.ts');
 const { CrudMigrationService } = require('../../src/crud/crud-migration.service.ts');
+const { LocalAuthController } = require('../../src/auth-local/auth-local.controller.ts');
+const { LocalAuthService } = require('../../src/auth-local/auth-local.service.ts');
+const { AuthAttemptGuard } = require('../../src/guards/auth-attempt.guard.ts');
+const { SuperAdminGuard } = require('../../src/guards/roles.guard.ts');
+const { UatTestProfilesService } = require('../../src/auth-local/uat-test-profiles.service.ts');
 
 async function main() {
   process.env.KELEDON_AUTH_SECRET = 'isolated-http-wiring-secret';
+  process.env.KELEDON_DEPLOYMENT_ENV = 'staging';
+  process.env.KELEDON_ENABLE_UAT_TEST_PROFILES = 'true';
+  process.env.KELEDON_UAT_TEST_PROFILE_IDS = 'profile-admin,real-user';
   const actors = {
     member: { id: 'member', role: 'user', companyId: 'co-a', teamId: 'team-a' },
     'user-a': { id: 'user-a', role: 'user', companyId: 'co-a', teamId: 'team-a' },
     admin: { id: 'admin', role: 'admin', companyId: 'co-a', teamId: 'team-a' },
+    'profile-admin': { id: 'profile-admin', name: 'QA Admin', email: 'qa-admin@example.invalid', role: 'admin', companyId: 'co-a', teamId: 'team-a' },
+    'real-user': { id: 'real-user', name: 'Real Account', email: 'person@example.com', role: 'user', companyId: 'co-a', teamId: 'team-a' },
     superadmin: {
       id: 'superadmin',
       role: 'superadmin',
@@ -67,8 +77,22 @@ async function main() {
       teamId: 'team-a',
     },
   };
+  const auditEntries = [];
   const prisma = {
-    user: { findUnique: async ({ where }) => actors[where.id] || null },
+    user: {
+      findUnique: async ({ where }) => actors[where.id] || null,
+      findMany: async ({ where }) => where.id.in.map((id) => actors[id]).filter(Boolean),
+    },
+    auditLog: {
+      create: async ({ data }) => {
+        const row = { id: crypto.randomUUID(), createdAt: new Date(), ...data };
+        auditEntries.push(row);
+        return row;
+      },
+      findFirst: async ({ where }) => auditEntries.find((row) =>
+        row.entity === where.entity && row.entityId === where.entityId && row.action === where.action,
+      ) || null,
+    },
     device: {
       findUnique: async ({ where }) => ({
         id: where.id,
@@ -107,9 +131,19 @@ async function main() {
       VectorStoreController,
       MvpDataController,
       CrudController,
+      LocalAuthController,
     ],
     providers: [
       { provide: PrismaService, useValue: prisma },
+      { provide: LocalAuthService, useFactory: () => {
+        const service = new LocalAuthService(prisma);
+        service.getCrudData = async () => ({ companies: [], brands: [], teams: [] });
+        return service;
+      } },
+      { provide: UatTestProfilesService, useClass: UatTestProfilesService },
+      { provide: AuthAttemptGuard, useClass: AuthAttemptGuard },
+      { provide: SuperAdminGuard, useValue: new SuperAdminGuard(prisma) },
+      { provide: require('../../src/auth-local/google-oauth.service.ts').GoogleOAuthService, useValue: {} },
       { provide: CrudMigrationService, useValue: { ensureVendorsSchema: async () => ({ status: 'ok' }) } },
       { provide: ConfigService, useValue: { get: () => undefined } },
       {
@@ -196,7 +230,7 @@ async function main() {
     ],
   }).compile();
   const app = module.createNestApplication({ logger: false });
-  app.useGlobalGuards(new AuthGuard(app.get(Reflector)));
+  app.useGlobalGuards(new AuthGuard(app.get(Reflector), prisma));
   await app.init();
   const token = (userId) => {
     const encoded = Buffer.from(
@@ -211,6 +245,63 @@ async function main() {
   };
   try {
     const http = app.getHttpServer();
+    const testProfiles = await request(http)
+      .get('/api/auth/uat-test-profiles')
+      .set('Authorization', token('superadmin'))
+      .expect(200);
+    assert.deepEqual(testProfiles.body.profiles, [
+      { id: 'profile-admin', name: 'QA Admin', role: 'admin' },
+    ]);
+    await request(http)
+      .get('/api/auth/uat-test-profiles')
+      .set('Authorization', token('admin'))
+      .expect(403);
+    await request(http)
+      .post('/api/auth/uat-test-profiles/switch')
+      .set('Authorization', token('admin'))
+      .send({ profileId: 'profile-admin' })
+      .expect(403);
+    await request(http)
+      .post('/api/auth/uat-test-profiles/switch')
+      .set('Authorization', token('superadmin'))
+      .send({ profileId: 'real-user' })
+      .expect(404);
+    const switched = await request(http)
+      .post('/api/auth/uat-test-profiles/switch')
+      .set('Authorization', token('superadmin'))
+      .send({ profileId: 'profile-admin' })
+      .expect(201);
+    assert.equal(switched.body.user.id, 'profile-admin');
+    assert.equal(switched.body.user.role, 'admin');
+    assert.equal(switched.body.user.uatTestProfile, true);
+    assert.equal(auditEntries[0].userId, 'superadmin');
+    assert.equal(auditEntries[0].action, 'UAT_TEST_PROFILE_START');
+    const profileMe = await request(http)
+      .get('/api/auth/me')
+      .set('Authorization', `Bearer ${switched.body.token}`)
+      .expect(200);
+    assert.equal(profileMe.body.user.id, 'profile-admin');
+    assert.equal(profileMe.body.user.uatTestProfile, true);
+    await request(http)
+      .post('/api/auth/uat-test-profiles/return')
+      .set('Authorization', token('superadmin'))
+      .send({ sessionId: switched.body.sessionId })
+      .expect(201);
+    assert.equal(auditEntries[1].userId, 'superadmin');
+    assert.equal(auditEntries[1].action, 'UAT_TEST_PROFILE_END');
+    await request(http)
+      .get('/api/auth/me')
+      .set('Authorization', `Bearer ${switched.body.token}`)
+      .expect(401);
+    await request(http)
+      .get('/api/auth/me')
+      .set('Authorization', token('superadmin'))
+      .expect(200);
+    process.env.KELEDON_ENABLE_UAT_TEST_PROFILES = 'false';
+    await request(http)
+      .get('/api/auth/uat-test-profiles')
+      .set('Authorization', token('superadmin'))
+      .expect(404);
     await request(http).get('/api/crud/health').expect(401);
     await request(http)
       .get('/api/crud/health')
@@ -381,7 +472,7 @@ async function main() {
     assert.equal(lastVectorScope.company_id, 'co-a');
     assert.equal(lastVectorScope.team_id, 'team-a');
     console.log(
-      'PASS real Nest HTTP guard wiring: anonymous/role/tenant/removed-actor denials, legitimate controls, trusted search filters, safe device/provider/public-config responses.',
+      'PASS real Nest HTTP guard wiring: anonymous/role/tenant denials, audited UAT profile selection/return, token revocation and safe API projections.',
     );
   } finally {
     await app.close();

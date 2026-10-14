@@ -109,11 +109,10 @@ async function main() {
   ];
   for (const payload of malformed) {
     const token = sign(payload);
-    assert.throws(
-      () =>
-        auth.canActivate(
-          context({ headers: { authorization: `Bearer ${token}` } }),
-        ),
+    await assert.rejects(
+      () => auth.canActivate(
+        context({ headers: { authorization: `Bearer ${token}` } }),
+      ),
       Denied,
     );
     assert.equal(await local.validateToken(token), null);
@@ -125,13 +124,13 @@ async function main() {
     'Bearer bad',
     `Bearer ${sign(valid)}tampered`,
   ]) {
-    assert.throws(
+    await assert.rejects(
       () => auth.canActivate(context({ headers: { authorization: header } })),
       Denied,
     );
   }
   const request = { headers: { authorization: `Bearer ${sign(valid)}` } };
-  assert.equal(auth.canActivate(context(request)), true);
+  assert.equal(await auth.canActivate(context(request)), true);
   assert.equal(request.user.userId, 'u1');
   assert.equal((await local.validateToken(sign(valid))).id, 'u1');
 

@@ -1,8 +1,8 @@
 # Delivery report — current status PARTIALLY DELIVERED
 
-## Current candidate 5.1.25 — PHDK Auto continuation
+## Candidate 5.1.26 — PHDK Auto UAT Fix
 
-Baseline is verified `main`/`origin/main` `6413d8aed295c18af098ca6a58c6dfbb7503930b` (5.1.24). Source commit `e7de35752dbb2ed3e9bd3d33fb59cb649cf3c157` aligns all five package/lock roots and Browser renderer at 5.1.25; commit `afd66702ba7fc216e27c0c845ceaedb1eeb40944` splits the three over-limit Cloud source/test files without changing contracts or assertions. API/Cloud builds, Cloud full typecheck and 11 regression suites, API Jest 10/10 suites (31 tests), Browser build/tests 27/27, Web build/diagnostics 19/19/SEO 1/1, Landing build/SEO 1/1, and PHDK coherence 52/52 pass. Full API/Cloud lint has 0 errors (138/25 warnings). Exact-candidate synthetic Web UAT passes 1/1; it is not real backend/DB acceptance. PR [#94](https://github.com/tuyoisaza/keledon/pull/94) is open; GitHub reports no hosted checks or review decision. No merge or deployment is claimed. Overall Auto remains PARTIALLY DELIVERED while persisted DB/migration, native device/audio, broad accessibility/localization, deployed SEO/AEO and audited test-profile disposition remain open.
+Branch `fix/audited-uat-test-profiles` is based on main 5.1.25 at `8dfc1fca7de253a017acb6f291ff278699915beb`. All five product package/lock roots and Browser renderer are 5.1.26. The approved nonproduction test-profile switch is covered by API regression 20/20 and synthetic built-SPA UAT 1/1; PHDK coherence 52/52 passes. Candidate commit, PR and remote readback remain pending. UAT-009 development identities, UAT-010 disposable database, UAT-006 native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Client CRM/call acceptance is specific to each customer configuration. No deployment is claimed.
 
 ## Current candidate 5.1.24 — source verification
 
