@@ -6,13 +6,13 @@
 | 10 Capture | COMPLETE / REUSED | Four owner-confirmed fronts and restrictive role/tenant policy remain current. |
 | 20 Plan | COMPLETE / REUSED | Continue in order; preserve environment-bound client/device acceptance. |
 | 30 PMO | IN PROGRESS | Re-auditing the four confirmed fronts; CMT-004 security and CRUD gaps are being closed source-first. |
-| 40 Integration Review | IN PROGRESS | Retired write routes, Cloud/API hash-audit parity, transactional TeamInterface, superadmin Workflow CRUD, typed guard/voice-profile parity and tenant-scoped detail, strict vendor config schema, voice-profile config disablement and paired vendor payload parity reviewed. |
-| 50 UAT | PARTIAL | API 29/29 and Cloud 14/14 source regressions; Browser build/21 tests; Web widget/diagnostics 19/19 and exact-candidate built-SPA UAT 1/1; Landing SEO source 1/1/build. Persisted DB, real identities, native device/audio, broad route accessibility/localization and deployed SEO/AEO remain open. |
+| 40 Integration Review | IN PROGRESS | Retired write routes, Cloud/API hash-audit parity, transactional TeamInterface, superadmin Workflow CRUD, typed guard/voice-profile parity and tenant-scoped detail, strict vendor config schema, voice-profile config disablement, paired vendor payload parity, and API/Cloud tenant-scoped Knowledge CRUD reviewed. |
+| 50 UAT | PARTIAL | API 30/30 and Cloud 14/14 source regression suites; both builds pass; focused Knowledge tenant-scope regression passes for both API and Cloud guards. Browser build/21 tests; Web widget/diagnostics 19/19 and exact-candidate built-SPA UAT 1/1; Landing SEO source 1/1/build. Persisted DB, real identities, native device/audio, broad route accessibility/localization and deployed SEO/AEO remain open. |
 | 60 UAT Fix | OPEN | Remediate repository-local actionable cases. |
 | 65 SEO | OPEN / PRIOR EVIDENCE | Deployed measurements still need approved read-only provider evidence. |
 | 67 AEO/GEO | OPEN / PRIOR EVIDENCE | Deployed discovery evidence remains unavailable. |
-| 70 Check | IN PROGRESS | Regressions 38–41 and UAT-025–029 prove paired vendor parity, DB-derived actor scope, minimal user selection, safe voice-profile responses and detail scope, both config boundaries and widget/diagnostics behavior; continue other model mappings and coherence. |
-| 80 Remediation | IN PROGRESS | Candidate 5.1.31 is based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; strict vendor config validation, voice-profile config write rejection, API/Cloud pairing parity and tenant detail parity pass builds/regressions. PR #102 is open at `b5f0d70`; independent security review and merge remain pending. |
+| 70 Check | IN PROGRESS | Regressions 38–42 and UAT-025–029 prove paired vendor parity, DB-derived actor scope, minimal user selection, safe voice-profile responses and detail scope, both config boundaries, widget/diagnostics behavior, and API/Cloud knowledge direct-ID tenant checks; continue other model mappings and coherence. |
+| 80 Remediation | IN PROGRESS | Candidate 5.1.31 is based on `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; strict vendor config validation, voice-profile config write rejection, API/Cloud pairing and tenant detail parity, and tenant-scoped Knowledge CRUD pass builds/regressions. PR #102 is open; independent security review and merge remain pending. |
 | 90 Delivery | PENDING | Reviewed PR #102 is open; normal security review, merge and completion-gate remote readback are required. |
 
 Overall: **PARTIALLY DELIVERED**. No database, customer provider, or deployment was used.

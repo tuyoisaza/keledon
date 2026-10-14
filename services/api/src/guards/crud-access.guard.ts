@@ -85,6 +85,7 @@ export class CrudAccessGuard implements CanActivate {
       'tenant-provider-config',
       'voice-profiles',
       'sessions',
+      'knowledge',
     ];
     if (!superadmin && !scoped.includes(resource)) return deny();
     if (
@@ -212,6 +213,10 @@ export class CrudAccessGuard implements CanActivate {
           'transcript',
           'summary',
         ],
+        knowledge:
+          handler === 'createKnowledgeBase'
+            ? ['companyId', 'name', 'description']
+            : ['knowledgeBaseId', 'title', 'content', 'metadata'],
       };
       if (
         !launch &&
@@ -257,6 +262,14 @@ export class CrudAccessGuard implements CanActivate {
         data.companyId = company;
       if (!superadmin && resource === 'tenant-provider-config')
         data.companyId = company;
+      if (!superadmin && resource === 'knowledge') {
+        if (handler === 'createKnowledgeBase') data.companyId = company;
+        if (handler === 'createKnowledgeDocument') {
+          const knowledgeBaseId = requireString(req.params?.id);
+          await this.assertKnowledgeBaseCompany(knowledgeBaseId, company, deny);
+          data.knowledgeBaseId = knowledgeBaseId;
+        }
+      }
       if (
         req.method === 'POST' &&
         !req.params?.id &&
@@ -327,6 +340,16 @@ export class CrudAccessGuard implements CanActivate {
       return deny();
     if (resource === 'brands' && id) await assertBrand(id);
     if (resource === 'teams' && id) await assertTeam(id);
+    if (!superadmin && resource === 'knowledge' && id) {
+      await this.assertKnowledgeBaseCompany(id, company, deny);
+    }
+    if (!superadmin && resource === 'knowledge' && req.params?.docId) {
+      const document = await this.prisma.knowledgeDocument.findUnique({
+        where: { id: req.params.docId },
+        select: { knowledgeBase: { select: { companyId: true } } },
+      });
+      if (document?.knowledgeBase?.companyId !== company) return deny();
+    }
     if (resource === 'vendors' && req.params?.teamId) {
       await assertTeam(req.params.teamId);
       if (!management && req.params.teamId !== actor.teamId) return deny();
@@ -408,5 +431,17 @@ export class CrudAccessGuard implements CanActivate {
       default:
         return Promise.resolve(null);
     }
+  }
+
+  private async assertKnowledgeBaseCompany(
+    id: string,
+    companyId: string,
+    deny: () => never,
+  ): Promise<void> {
+    const knowledgeBase = await this.prisma.knowledgeBase.findUnique({
+      where: { id },
+      select: { companyId: true },
+    });
+    if (knowledgeBase?.companyId !== companyId) deny();
   }
 }
