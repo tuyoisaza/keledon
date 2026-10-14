@@ -1,3 +1,16 @@
+## v5.1.25 — 2026-10-14 (PHDK Auto runtime and tenant security)
+
+- Enforce least-privilege identity and tenant scoping across API, Cloud, Browser, and realtime runtimes; new users default to `user`, with elevated roles derived from the database.
+- Encrypt vendor credentials at rest and keep normal responses write-only for secrets; allow private CRM origins only when URL-validated and explicitly allowlisted for the tenant.
+- Require authenticated database-backed superadmin access for the global dashboard stream; validate socket/session ownership and fail closed for unregistered named route middleware.
+- Remove simulated live-provider success, unsafe synthetic administrator defaults, and an unused schema script that did not apply migrations.
+- Align all five application package/lock roots and the Browser renderer at 5.1.25.
+
+### Verification and acceptance
+- API/Cloud configured builds and Cloud full typecheck pass; Cloud regression 10/10, API Jest 10/10 suites (31 tests), Browser tests 27/27, Web diagnostics 19/19, SEO source tests 1/1 per app, PHDK v2.50.10 coherence 52/52.
+- API/Cloud ESLint: 0 errors (138/25 warnings). Synthetic Web UAT: 1/1 suite, 15 grouped assertions, bound to commit `e7de35752dbb2ed3e9bd3d33fb59cb649cf3c157`.
+- Whole-product acceptance remains partial: no disposable DB/migration, native device/audio, broad route accessibility review, deployed SEO/AEO measurement, or owner disposition for audited test-profile selection.
+
 ## v5.1.22 — 2026-10-13 (PHDK Auto voice and provider privacy)
 
 - Redact voice transcripts, agent commands, LLM prompt snippets, and provider/decision error details from API/Cloud logs and voice responses.

@@ -1,9 +1,9 @@
 {
   "version": "5.1.25",
-  "date": "2026-10-14T09:03:46.813Z",
-  "candidateRevision": "6413d8aed295c18af098ca6a58c6dfbb7503930b",
-  "candidateSourceFingerprint": "sha256:def949905fe93b3026fb6805853fa6f4fc5043f208d716c6442da1fcd5c8eb31",
-  "dirtyUntrackedSourceFiles": 30,
+  "date": "2026-10-14T09:05:53.285Z",
+  "candidateRevision": "e7de35752dbb2ed3e9bd3d33fb59cb649cf3c157",
+  "candidateSourceFingerprint": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "dirtyUntrackedSourceFiles": 0,
   "sourceRoots": [
     "browser",
     "cloud",
@@ -12,7 +12,7 @@
     "landing"
   ],
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:65510",
+  "origin": "http://127.0.0.1:51902",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-THEME dark/light/corporate tokens reach descendant controls, persistence PASS; automated login text contrast sample has no failures (not a full-app accessibility certification)",
