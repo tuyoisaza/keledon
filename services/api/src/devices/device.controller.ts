@@ -90,9 +90,17 @@ export class DeviceController {
         : ['admin', 'coordinator'].includes(actor.role)
           ? await this.deviceService.getDevicesByOrganization(actor.companyId)
           : await this.deviceService.getDevicesByUser(actor.id);
-    return rows.map(
-      ({ authToken, pairingCode, pairingCodeExpiresAt, ...device }) => device,
-    );
+    return rows.map((row) => {
+      const device: Record<string, unknown> = { ...row };
+      const hasRpaProviderConfig = !!device.rpaProviderConfig;
+      const hasCdpUrl = !!device.cdpUrl;
+      delete device.authToken;
+      delete device.pairingCode;
+      delete device.pairingCodeExpiresAt;
+      delete device.rpaProviderConfig;
+      delete device.cdpUrl;
+      return { ...device, hasRpaProviderConfig, hasCdpUrl };
+    });
   }
 
   @Get(':id/status')

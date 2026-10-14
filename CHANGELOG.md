@@ -1,3 +1,8 @@
+## v5.1.29 — 2026-10-14 (redact device configuration from lists)
+
+- Strip provider-bearing RPA configuration and remote Chrome DevTools URLs from normal device-list responses; return presence flags only.
+- Extend the in-process Nest HTTP regression to verify safe device projections while preserving the paired-device-only RPA configuration endpoint.
+
 ## v5.1.28 — 2026-10-14 (write-only device configuration secrets)
 
 - Restrict raw RPA provider configuration reads to the currently paired device whose runtime token is bound to the requested device ID.

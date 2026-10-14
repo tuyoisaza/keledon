@@ -15,3 +15,7 @@ Machine-readable candidate evidence: `CANDIDATE.json`.
 ## Candidate 5.1.28 — delivery pending
 
 Branch ix/write-only-device-rpa-secrets is based on remote main 4cc6a2a6de0d3a8eda6be60a45607553d2b3e80e. All five application roots/locks and Browser renderer are 5.1.28. Source change confines credential-bearing RPA config reads to the exact current paired-device identity. API regression/Jest/build/scoped lint, Cloud/Web/Landing/Browser builds and PHDK coherence pass. PR/push/merge/readback not yet performed. Full Auto acceptance is PARTIALLY DELIVERED because the 26-model matrix/DB, native/device/audio, broad a11y/localization and deployed SEO/AEO remain open.
+
+## Candidate 5.1.29 — delivery pending
+
+Branch ix/redact-device-config-lists is based on main 22c0a407aa07552a189aa9f3b00e887397f9d03. All five package/lock roots and Browser renderer are 5.1.29. Device list responses omit raw RPA provider config and CDP URL, returning only presence flags. API regression/Jest/build/focused lint, Cloud/Web/Landing/Browser builds, and PHDK coherence pass. PR, merge and exact readback pending. Whole Auto remains partial for CRUD/DB matrix, native/audio, broad accessibility/localization and deployed SEO/AEO.

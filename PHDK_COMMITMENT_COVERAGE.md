@@ -1,13 +1,13 @@
-# PHDK commitment coverage — current candidate 5.1.28
+# PHDK commitment coverage — current candidate 5.1.29
 
-## Active Auto run `20261014-0007-phdk-auto-completion` — candidate 5.1.28
+## Active Auto run `20261014-0007-phdk-auto-completion` — candidate 5.1.29
 
 | Commitment | Verified current outcome | Still open |
 |---|---|---|
-| CMT-001 | Version roots and Browser renderer aligned at 5.1.28 on `fix/write-only-device-rpa-secrets`; base main is `4cc6a2a6de0d3a8eda6be60a45607553d2b3e80e`. | Normal PR, merge, exact remote-main readback and delivery gate. |
+| CMT-001 | PR #98 delivered 5.1.28 at remote `main` SHA `a22c0a407aa07552a189aa9f3b00e887397f9d03`; the PR head and merge tree match and all five roots/renderer align. | Deliver current 5.1.29 source through normal PR and read back its resulting remote SHA. |
 | CMT-002 | Existing widget and safe-diagnostics source evidence reused; no diagnostics source changed in this slice. | Native Electron/device/audio plus broad route accessibility/localization. |
 | CMT-003 | Provider-neutral contracts and client-approved private-origin allowlist reused; no universal CRM/call provider assumed. | Live integration only for a configured customer; no such tenant was provided. |
-| CMT-004 | Human roles can no longer read credential-bearing Device RPA config; only the current paired identity for the exact device can. API HTTP regression covers every human role and a mismatched device. | Full remaining 26-model role/tenant/surface/operation matrix and disposable-DB persistence/migration acceptance. |
+| CMT-004 | Human roles can no longer read credential-bearing Device RPA config; only the current paired identity for the exact device can. Device list projections omit raw RPA config and CDP URLs. API HTTP regressions cover every human role, wrong-device access and safe list projections. | Full remaining 26-model role/tenant/surface/operation matrix and disposable-DB persistence/migration acceptance. |
 
 Overall: **PARTIALLY DELIVERED** pending normal candidate delivery and the explicitly open acceptance gates.
 

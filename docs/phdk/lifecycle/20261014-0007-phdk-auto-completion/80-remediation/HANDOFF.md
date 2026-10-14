@@ -17,3 +17,7 @@ At PR #94 close, the remaining items were: audited test-profile disposition; exh
 ## Candidate 5.1.28 — UAT Fix and source Check remediation
 
 UAT-011 passes in the isolated Nest HTTP harness: human roles are denied; a valid paired-device token cannot read another device; the matching identity receives runtime configuration. The fix removes human-token fallback from getDeviceRpaConfig while preserving the authenticated paired-device path. API 21/21 regressions, Jest 11/11/38, build, scoped lint, Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass. Disposable PostgreSQL is unavailable (DATABASE_URL, Docker/Podman and psql absent). Remediation for this source finding is complete; exhaustive CRUD mapping and other external acceptance stay open. Next: versioned PR delivery.
+
+## Candidate 5.1.29 — UAT Fix and source Check remediation
+
+UAT-012 PASS: device list responses contain no raw RPA config or CDP URL, and retain only presence flags. UAT-011 PASS: paired-device-only RPA configuration delivery still requires the exact database-derived identity. API regression 21/21, Jest 11/11/38, API build/focused lint, Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass. Persistent DB and full role × surface × operation coverage remain open. Source remediation is complete; delivery is next.
