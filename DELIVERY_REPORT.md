@@ -1,18 +1,18 @@
-## Candidate 5.1.35 — delivery gate pending (2026-10-14)
+## Verified delivery — 5.1.35 (2026-10-14)
 
-Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` on `fix/phdk-knowledge-base-management-5-1-35`, based on verified main `6a8275c3d3f9813a9c3aea7a0d3121ae18cd2a1e`. All five app package/lock roots and Browser renderer are 5.1.35; PHDK 2.50.10 coherence 52/52. API regression 35/35, Cloud 14/14, API/Cloud builds, Web typecheck/build, diagnostics 19/19, Web SEO source 1/1, focused lint and exact-commit synthetic built-SPA UAT pass. The UAT uses intercepted fixture APIs and does not prove persisted authorization. Candidate JSON: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/CANDIDATE-5.1.35.json`.
+Source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` on `fix/phdk-knowledge-base-management-5-1-35`, based on verified main `6a8275c3d3f9813a9c3aea7a0d3121ae18cd2a1e`, shipped through PR [#106](https://github.com/tuyoisaza/keledon/pull/106). It squash-merged to main at `73c0fc52b37d96d283e8709e76b99c17db0b1a83`; `origin/main` and `git ls-remote` match, and PR head/merge trees match. All five app package/lock roots and Browser renderer are 5.1.35; PHDK 2.50.10 coherence 52/52. API regression 35/35, Cloud 14/14, API/Cloud builds, Web typecheck/build, diagnostics 19/19, Web SEO source 1/1, focused lint and exact-commit synthetic built-SPA UAT pass. The UAT uses intercepted fixture APIs and does not prove persisted authorization. The post-merge machine completion verifier passed against the recorded remote SHA.
 
 | Gate | Status | Evidence |
 |---|---|---|
 | VERSION_BUMP | PASS | Patch version 5.1.35 aligned in all five app package/lock roots and Browser renderer; changelog updated. |
 | COMMIT_PREFIX | PASS | Source commit uses `v5.1.35:`. |
-| PUSH_AND_PR | PENDING | Push and version-prefixed PR creation remain. |
-| REMOTE_MAIN | PENDING | Merge and independent remote-main SHA/tree/version readback remain. |
+| PUSH_AND_PR | PASS | Branch pushed; PR #106 merged with version-prefixed title; GitHub reported no hosted checks/review decision and `main` is unprotected. |
+| REMOTE_MAIN | PASS | `origin/main` and `git ls-remote` match `73c0fc52b37d96d283e8709e76b99c17db0b1a83`; PR head and merge tree match; remote version is 5.1.35. |
 | SCOPE_AND_CHECKS | SOURCE PASS / ACCEPTANCE PARTIAL | KnowledgeBase manager CRUD and tenant guard covered; persisted DB, live Qdrant, native device/audio, broad accessibility, and deployed SEO/AEO remain open. |
 
-Overall: **SOURCE CANDIDATE / DELIVERY PENDING; PHDK AUTO PARTIALLY DELIVERED**. No client CRM endpoint, customer data, production DB or deployment was used.
+Overall: **SOURCE MERGED / REMOTE VERIFIED; PHDK AUTO PARTIALLY DELIVERED**. No client CRM endpoint, customer data, production DB or deployment was used.
 
-SIGUIENTE PASO: push the candidate branch, open the version-prefixed pull request, reconcile actual GitHub controls, then verify `main` after the permitted merge.
+SIGUIENTE PASO: provide safe DB-backed identities, disposable PostgreSQL and a supported native device/audio environment; then close the remaining persisted authorization, live Qdrant/concurrency, accessibility and deployed SEO/AEO gates.
 
 ## Candidate 5.1.32 — delivery gate status (2026-10-14)
 
