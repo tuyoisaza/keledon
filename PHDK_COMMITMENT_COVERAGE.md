@@ -1,15 +1,20 @@
-# PHDK commitment coverage — current candidate 5.1.29
+## Current Auto candidate — 2026-10-14, 5.1.30
 
-## Active Auto run `20261014-0007-phdk-auto-completion` — candidate 5.1.29
+All four confirmed commitments remain in scope. CMT-001 is on a version-aligned 5.1.30 local candidate based exactly on verified remote main `886669c7f5d3e20aec978efc3dc9a758d4a09148`; source delivery is pending PR and remote readback. CMT-002 retains local widget/diagnostics coverage; native device/audio and broad route accessibility/localization remain open. CMT-003 retains provider-independent call/Cloud/Browser contracts and the owner-approved private CRM rule: validated client URLs, allowlisted per tenant; Cloud does not fetch private CRM URLs. No client provider was selected for live tests. CMT-004 includes DB-derived tenant/role safeguards and this candidate's default-deny RLS, ordinary-user Auth trigger and fail-closed fixture changes. API regression is 22/22, Cloud 11/11, both builds pass, and UAT-013–017 pass static source checks. RLS migration/persistence and actual development identities remain open; no database, trigger or fixture script was run. Overall Auto remains **PARTIALLY DELIVERED**.
+
+SIGUIENTE PASO: complete the candidate source review, publish the versioned branch/PR and follow normal review/merge/readback controls; preserve environment-bound gates as open.
+# PHDK commitment coverage — current local candidate 5.1.30
+
+## Active Auto run `20261014-0007-phdk-auto-completion` — local candidate 5.1.30, based on merged 5.1.29
 
 | Commitment | Verified current outcome | Still open |
 |---|---|---|
-| CMT-001 | PR #98 delivered 5.1.28 at remote `main` SHA `a22c0a407aa07552a189aa9f3b00e887397f9d03`; the PR head and merge tree match and all five roots/renderer align. | Deliver current 5.1.29 source through normal PR and read back its resulting remote SHA. |
+| CMT-001 | PR #99 delivered baseline 5.1.29 at remote `main` SHA `886669c7f5d3e20aec978efc3dc9a758d4a09148`. Local candidate versions are aligned at 5.1.30. | Candidate commit, PR, merge and remote readback remain pending; no deployment is claimed. |
 | CMT-002 | Existing widget and safe-diagnostics source evidence reused; no diagnostics source changed in this slice. | Native Electron/device/audio plus broad route accessibility/localization. |
 | CMT-003 | Provider-neutral contracts and client-approved private-origin allowlist reused; no universal CRM/call provider assumed. | Live integration only for a configured customer; no such tenant was provided. |
-| CMT-004 | Human roles can no longer read credential-bearing Device RPA config; only the current paired identity for the exact device can. Device list projections omit raw RPA config and CDP URLs. API HTTP regressions cover every human role, wrong-device access and safe list projections. | Full remaining 26-model role/tenant/surface/operation matrix and disposable-DB persistence/migration acceptance. |
+| CMT-004 | Human roles can no longer read credential-bearing Device RPA config; only the current paired identity for the exact device can. Device list projections omit raw RPA config and CDP URLs. The current source candidate removes broad Supabase policies and sample/elevated account seeds, makes Auth sync default to `user`, retires unsafe RBAC/customer/session/CRM fixtures, gates provider catalog seeds, and enables default-deny RLS through an idempotent API/Cloud migration (UAT-013/015/016/017). The remaining synthetic user fixture is explicitly gated and user-only (UAT-014). | Full remaining 26-model role/tenant/surface/operation matrix and disposable-DB persistence/migration acceptance. RLS migration has not run; existing policy/grant state and Prisma connection-role behavior are unverified. |
 
-Overall: **PARTIALLY DELIVERED** pending normal candidate delivery and the explicitly open acceptance gates.
+Overall: **PARTIALLY DELIVERED**. The baseline is verified; 5.1.30 source delivery and the remaining acceptance gates are open.
 
 ## Historical coverage — candidate 5.1.26
 

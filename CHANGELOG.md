@@ -1,3 +1,11 @@
+## v5.1.30 — 2026-10-14 (default-deny Supabase access and safe fixture provisioning)
+
+- Remove permissive Supabase row policies and auto-seeded sample/superadmin accounts from setup/bootstrap SQL; retire unsafe customer/RBAC/session/CRM fixtures and their guide, make Auth synchronization assign only `user`, gate provider-catalog seeding to an exact nonproduction target, and add an idempotent API/Cloud migration that enables RLS on application-owned public tables and removes legacy broad policies.
+- Replace fixed-password synthetic account setup with an explicit nonproduction-only, exact-target-pinned fixture that accepts `@example.test` identities and always assigns role `user`.
+- Add static regression coverage for policy absence, API/Cloud mirror parity, and least-privilege fixture configuration.
+- Align all five application package/lock roots and the Browser renderer at 5.1.30.
+- API regression 22/22 and build pass; Cloud regression 11/11 and build pass; Browser build, Web typecheck/build/diagnostics 19/19, Landing typecheck/build/SEO 1/1, PHDK coherence 52/52, and PHDK remote-baseline gate pass.
+
 ## v5.1.29 — 2026-10-14 (redact device configuration from lists)
 
 - Strip provider-bearing RPA configuration and remote Chrome DevTools URLs from normal device-list responses; return presence flags only.

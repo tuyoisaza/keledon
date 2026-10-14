@@ -1,5 +1,9 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Current Auto source delta — deny unscoped Supabase RLS
+
+UAT-013 passes its static regression: reviewed API/Cloud setup and bootstrap SQL contain no broad authenticated or true-valued row policy, the idempotent migration enables RLS on non-extension-owned public application tables and drops legacy broad policies, and mirrored SQL files are identical. UAT-014 passes: the legacy user-provisioning script refuses production, requires an explicit exact target URL and opt-in, accepts only `@example.test`, takes its password from the environment and fixes the assigned role to `user`; API/Cloud copies match and pass Node syntax checks. UAT-015 passes: user-table SQL no longer inserts sample accounts, obsolete customer/RBAC seed scripts fail closed, and no SQL setup path seeds elevated accounts. UAT-016 confirms the Auth trigger always creates ordinary users and preserves existing roles without email-based elevation. UAT-017 confirms legacy customer/RBAC/session/CRM seeders fail closed and global provider-catalog seeding requires a nonproduction opt-in plus exact allowed URL. No migration, trigger or provisioning/seed script ran, so no database was connected and no account or demo data was created. Existing policy/grant state and application connection-role behavior remain unverified. CRM destinations remain tenant-configured, URL-validated, and origin-allowlisted as separately covered by UAT-004.
+
 ## Candidate 5.1.29 — safe device-list projection
 
 UAT-012 passes through the real Nest controller wiring with isolated fixtures. A device list containing an RPA API-key fixture, remote CDP URL, device token, and pairing code returns none of those raw values; it returns only `hasRpaProviderConfig`/`hasCdpUrl` flags. UAT-011 remains the paired-device-only positive path for fetching runtime RPA config. The complete API regression suite passes 21/21, API Jest 11/11/38, API build and focused lint pass (0 errors, 1 pre-existing warning). No persistent database or live device was used.
@@ -20,7 +24,7 @@ UAT-008 now passes within its explicitly approved scope: test-profile switching 
 
 | Result | Count |
 |---|---:|
-| PASS | 9 |
+| PASS | 14 |
 | FAIL | 0 |
 | BLOCKED | 2 |
 | MANUAL | 1 |
@@ -41,6 +45,11 @@ UAT-008 now passes within its explicitly approved scope: test-profile switching 
 | UAT-010 persisted CRUD/migration matrix | BLOCKED | No isolated disposable PostgreSQL database; no migration run. Production DB excluded. |
 | UAT-011 credential-bearing device RPA configuration | PASS, scoped API | Real Nest HTTP harness with isolated actor/device relations: all human roles and wrong-device identity denied; exact paired-device identity allowed. No persisted DB. |
 | UAT-012 safe device-list projection | PASS, scoped API | Real Nest HTTP harness confirms RPA config, CDP URL, auth token and pairing proof are omitted; presence flags remain. No persisted DB. |
+| UAT-013 default-deny Supabase SQL policy | PASS, static source | No permissive policies; RLS migration and API/Cloud mirror parity verified. Migration not run. |
+| UAT-014 synthetic account fixture | PASS, static source | Explicit opt-in, exact target URL, `@example.test`, environment password, role fixed to `user`; Node syntax checks pass. Script not run. |
+| UAT-015 legacy SQL user/RBAC seeds | PASS, static source | No sample/elevated user seeds; retired customer/RBAC scripts fail closed. |
+| UAT-016 Auth user trigger | PASS, static source | New Auth users get `user`; conflict updates preserve existing roles and tenant assignments; no email elevation. Trigger not installed or executed. |
+| UAT-017 retired setup guidance | PASS, documentation | The legacy RBAC guide now warns against customer-like fixtures and retired SQL scripts. |
 
 ## UAT-008 design and limits
 
@@ -50,9 +59,9 @@ The owner approved a temporary test-profile switch restricted to development/sta
 
 UAT-009 needs an owner-provided nonproduction target and synthetic identities. UAT-010 needs an isolated disposable PostgreSQL instance and approved rollback path. UAT-006 needs a supported Windows host and test device for native media/audio interaction. Broad route accessibility/localization and deployed SEO/AEO measurements remain open. Customer call/CRM acceptance is per tenant after that customer selects and configures providers; no provider is universal.
 
-**Conclusion: NOT ACCEPTED as a whole product.** Seven cases pass within stated source/UI scope; two environment-dependent cases remain blocked and one requires native manual testing. The UAT-008 source defect is resolved, but the remaining gates prevent overall acceptance.
+**Conclusion: NOT ACCEPTED as a whole product.** Fourteen cases pass within their stated source/UI scope; UAT-009/010 remain blocked by missing safe environments, and UAT-006 requires native manual testing. The current 5.1.30 source remediation adds UAT-013–017; no database operation was performed.
 
-**SIGUIENTE PASO:** completar Integration Review y Delivery del candidato 5.1.26 por PR; después conseguir entorno de desarrollo sintético, base desechable y dispositivo soportado para cerrar la aceptación restante.
+**SIGUIENTE PASO:** completar Integration Review y Delivery del candidato 5.1.30 por PR; después conseguir entorno de desarrollo sintético, base desechable y dispositivo soportado para cerrar la aceptación restante.
 
 
 ## Historical records before this candidate revalidation

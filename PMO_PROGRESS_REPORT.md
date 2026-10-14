@@ -1,4 +1,19 @@
+## 2026-10-14 — candidate 5.1.30 integrated source verification
+
+RLS/bootstrap policies no longer grant unscoped browser access; unsafe superadmin/customer/RBAC/session/CRM fixtures are retired or pinned to explicit nonproduction targets. New Auth users default to `user`, existing role/tenant assignments remain untouched, and the API/Cloud migration mirrors match. Private CRM HTTP(S) destinations stay available only when validated and tenant-allowlisted; no private endpoint was contacted and Cloud performs no private CRM fetch. API regression 22/22, Cloud 11/11, targeted default-deny regression, all five product builds, and PHDK coherence 52/52 pass. Version 5.1.30 is aligned across five package/lock roots and Browser renderer. No SQL, migration, trigger or seed script ran. Source delivery via PR and merge is pending; full Auto remains PARTIALLY DELIVERED for database, dev-identity, native, accessibility/localization and deployed discovery acceptance.
+
+SIGUIENTE PASO: complete the final diff review and normal PR delivery from `fix/deny-unscoped-supabase-rls`.
 # PMO milestone history
+## 2026-10-14 — CMT-004 Supabase RLS and seed-account policy
+
+Current source review caught permissive Supabase setup policies, auto-seeded `superadmin` and customer accounts, an email-based Auth elevation trigger, and service-key fixtures that wrote demo sessions/CRM flows into customer data. API/Cloud SQL now uses default-deny RLS with an idempotent cleanup migration; Auth sync grants only `user`, unsafe legacy fixtures and setup guidance are retired, the remaining user fixture is pinned to a nonproduction target, and provider-catalog seeding is similarly gated. UAT-013–017, mirror checks and Node syntax checks pass. No migration, trigger or seed/provisioning script was run. Full model-operation mapping and disposable-DB evidence remain open; candidate delivery is pending.
+
+## 2026-10-14 — Auto source delivery and Check revalidation
+
+PR #99 delivered 5.1.29 at verified remote `main` `886669c7f5d3e20aec978efc3dc9a758d4a09148`; PR head and merge trees match and all app roots/Browser renderer align. The completion gate passes. A fresh full lint revalidation on this main reports API 0 errors/135 warnings and Cloud 0 errors/25 warnings; old Check entries showing 2 API and 333 Cloud errors were stale. UAT-008's temporary, audited synthetic profile path is implemented and scoped PASS; UAT-009/010 remain blocked on development identities and disposable PostgreSQL. The CRM private-origin policy and Browser enforcement were rechecked; no tenant destination was contacted. Full Auto remains PARTIALLY DELIVERED for the source-backed 26-model permission map, persisted CRUD/migration, native audio/device, broad accessibility/localization and deployed SEO/AEO evidence.
+
+SIGUIENTE PASO: continue the source-backed model/route/role matrix; preserve DB, native and deployment evidence as open until their required environments are available.
+
 ## 2026-10-14 — active integrated run `20261014-0007-phdk-auto-completion`
 
 Plan stage completed with current brownfield architecture, PLAN-AUTO-001..008, explicit rollback/security/UAT acceptance and 13 canonical snapshots. PMO now tracks the four approved fronts in order. Exact base is 5.1.24 / `6413d8aed295c18af098ca6a58c6dfbb7503930b`; 130 changed/untracked paths are preserved on `fix/cloud-eslint-prettier`. Known source gate: Cloud typed ESLint 333 errors/59 warnings. Existing API/Cloud builds and regressions, Browser regression and PHDK coherence are inherited evidence only until rebound to the integrated candidate. Next: full Integration Review, with source contract/security review before current-candidate UAT. Persisted DB, native device/audio and deployed discovery remain environment-bound acceptance.

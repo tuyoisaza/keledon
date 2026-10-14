@@ -299,9 +299,39 @@ ALTER TABLE provider_catalog ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tenant_provider_config ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tenant_voice_profiles ENABLE ROW LEVEL SECURITY;
 
+-- Include legacy and newly added application tables; no browser-facing row policy
+-- is granted from this setup script.
+DO $$
+DECLARE
+  table_row record;
+BEGIN
+  FOR table_row IN
+    SELECT n.nspname AS schemaname, c.relname AS tablename
+    FROM pg_class c
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public'
+      AND c.relkind IN ('r', 'p')
+      AND c.relname <> '_prisma_migrations'
+      AND NOT EXISTS (
+        SELECT 1
+        FROM pg_depend d
+        JOIN pg_extension e ON e.oid = d.refobjid
+        WHERE d.classid = 'pg_class'::regclass
+          AND d.objid = c.oid
+          AND d.refclassid = 'pg_extension'::regclass
+          AND d.deptype = 'e'
+      )
+  LOOP
+    EXECUTE format('ALTER TABLE %I.%I ENABLE ROW LEVEL SECURITY', table_row.schemaname, table_row.tablename);
+  END LOOP;
+END;
+$$;
+
 -- ========================================
--- POLICIES (Allow all for development)
--- Replace these with proper auth policies for production
+-- POLICIES (deny direct client access by default)
+-- The application API authenticates and scopes requests before using its server-side
+-- database role. Direct Supabase API roles receive no row policies until equivalent
+-- DB-derived tenant policies exist; RLS therefore remains default-deny here.
 -- ========================================
 -- Drop old policies to ensure idempotency
 DROP POLICY IF EXISTS "Allow all for companies" ON companies;
@@ -321,24 +351,6 @@ DROP POLICY IF EXISTS "Allow all for flow_run_evidence" ON flow_run_evidence;
 DROP POLICY IF EXISTS "Allow all for provider_catalog" ON provider_catalog;
 DROP POLICY IF EXISTS "Allow all for tenant_provider_config" ON tenant_provider_config;
 DROP POLICY IF EXISTS "Allow all for tenant_voice_profiles" ON tenant_voice_profiles;
-
-CREATE POLICY "Allow all for companies" ON companies FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for brands" ON brands FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for teams" ON teams FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for users" ON users FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for agents" ON agents FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for managed_interfaces" ON managed_interfaces FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for workflows" ON workflows FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for sessions" ON sessions FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for flow_definitions" ON flow_definitions FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for flow_versions" ON flow_versions FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for tenant_flow_permissions" ON tenant_flow_permissions FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for intent_flow_mappings" ON intent_flow_mappings FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for flow_runs" ON flow_runs FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for flow_run_evidence" ON flow_run_evidence FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for provider_catalog" ON provider_catalog FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for tenant_provider_config" ON tenant_provider_config FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for tenant_voice_profiles" ON tenant_voice_profiles FOR ALL USING (true) WITH CHECK (true);
 
 -- ========================================
 -- SEED DATA (Optional - Migrate existing data)
@@ -399,9 +411,6 @@ ALTER TABLE document_chunks ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Allow all for documents" ON documents;
 DROP POLICY IF EXISTS "Allow all for document_chunks" ON document_chunks;
-
-CREATE POLICY "Allow all for documents" ON documents FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for document_chunks" ON document_chunks FOR ALL USING (true) WITH CHECK (true);
 
 -- ========================================
 -- RPC: Vector Search Function

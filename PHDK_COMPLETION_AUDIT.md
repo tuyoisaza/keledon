@@ -1,8 +1,25 @@
+## Current Auto completion audit — candidate 5.1.30 (2026-10-14)
+
+The four owner-confirmed commitments remain active in the agreed order. Source remediation for Supabase policies and privileged/customer-like seeding is locally integrated and statically regression-tested. API regression passes 22/22, Cloud regression 11/11, API/Cloud/Browser/Web/Landing builds passed for this candidate, UAT-013–017 pass, private CRM destinations remain validated and tenant-allowlisted, and PHDK v2.50.10 coherence is 52/52. No seed, trigger or SQL migration ran.
+
+Delivery status: local branch `fix/deny-unscoped-supabase-rls`, based on verified remote `main` at `886669c7f5d3e20aec978efc3dc9a758d4a09148`; candidate 5.1.30. Commit, push, PR, formal review gates and remote-main readback are pending. Do not report source delivery as merged.
+
+Open acceptance prevents whole-product completion: real nonproduction identities, disposable PostgreSQL migration/persisted CRUD, native Electron/device/audio, broad active-route accessibility/localization, deployed SEO/AEO, and client-specific live CRM/call acceptance once a client selects/configures a provider. No database or production operation is in scope. Status: **PARTIALLY DELIVERED**.
+
+SIGUIENTE PASO: finish the final diff/check review, then perform normal versioned branch delivery and verify remote main and the PHDK completion gate.
 # PHDK Auto completion audit — 2026-10-14
 
-## Candidate reconciliation — 5.1.29 (source delivery in progress)
+Current baseline is merged 5.1.29 at `886669c7f5d3e20aec978efc3dc9a758d4a09148`; local source candidate is version-aligned at 5.1.30 and not yet delivered. Candidate validation currently includes API/Cloud regressions (22/22 and 11/11 suites), API/Cloud builds, UAT-013–017 and source mirror checks. Normal PR/remote readback and the full remaining Auto acceptance are pending.
 
-After PR #98, source re-review found that normal `GET /api/devices` projections omitted bearer tokens and pairing proofs but retained raw `rpaProviderConfig` and `cdpUrl`. The current candidate removes both and returns presence flags; the paired-device-only config route remains the only raw RPA read path. UAT-012 covers safe lists and UAT-011 covers exact paired-device provisioning. API regression 21/21, Jest 11/11/38, API build and focused lint pass; Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass. Base is verified main `a22c0a407aa07552a189aa9f3b00e887397f9d03`; branch `fix/redact-device-config-lists`; delivery pending. Whole Auto remains PARTIALLY DELIVERED for full CRUD/DB and external acceptance.
+## Current local source finding — default-deny RLS and least-privilege fixture creation
+
+Source re-review found broad Supabase policies, auto-seeded superadmin/customer accounts, an email-based Auth elevation trigger, and service-key fixtures that wrote demo sessions/CRM flows into customer data. The current local source removes broad policies and sample accounts, makes Auth synchronization default to `user`, retires unsafe RBAC/customer/session/CRM fixtures and setup guidance, gates global provider-catalog seeding to an exact nonproduction target, enables RLS through setup and an idempotent migration, and keeps the remaining user fixture explicit, nonproduction-only, exact-target-pinned and fixed to role `user`. UAT-013–017 static checks pass and API/Cloud mirrors match. No migration, trigger or seed/provisioning script was executed; DB policy/grant state, Prisma connection-role compatibility, and full CRUD persistence remain unverified. Delivery is pending.
+
+## Candidate reconciliation — 5.1.29 (source delivery verified)
+
+After PR #98, source re-review found that normal `GET /api/devices` projections omitted bearer tokens and pairing proofs but retained raw `rpaProviderConfig` and `cdpUrl`. PR #99 removes both and returns presence flags; the paired-device-only config route remains the only raw RPA read path. UAT-012 covers safe lists and UAT-011 covers exact paired-device provisioning. API regression 21/21, Jest 11/11/38, API build and focused lint pass; Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass. PR #99 merged source commit `479c23acad031ce0a07cbfbf54b1b3fd89fd6638` at verified main SHA `886669c7f5d3e20aec978efc3dc9a758d4a09148`; origin/ls-remote and PR/merge trees match. Whole Auto remains PARTIALLY DELIVERED for full CRUD/DB and external acceptance.
+
+Current-main revalidation: API ESLint 0 errors/135 warnings and Cloud ESLint 0 errors/25 warnings; older Check entries claiming 2 API and 333 Cloud lint errors are closed as stale. UAT-008's owner-approved synthetic profile selector is implemented and passes within its mocked-UI/isolated-server scope; real identities and persistence remain UAT-009/010. The tenant vendor policy still accepts only validated HTTP(S) origins in the current team's allowlist, including configured private/local origins; Browser applies that scope and no CRM destination was contacted. PHDK completion gate passes for remote main 5.1.29. These results do not close the 26-model matrix, DB/native/deployed gates, or the whole Auto goal.
 
 ## Candidate reconciliation — 5.1.28 (source delivery in progress)
 
@@ -12,7 +29,7 @@ Source review found a credential disclosure on `GET /api/devices/:id/rpa-config`
 
 PR #96 delivered 5.1.27: source commit `996464da5c1bb0567c6e9fa7d40e0a212e6d7b48` is merged at verified `main` SHA `a0425134ba69b1feaf165cd512caad8c136ca6f8`; `origin/main` and `git ls-remote` agree, and PR head/squash tree match. The fix validates full unique FlowStep membership inside a serializable transaction in API and Cloud. API 21/21 regression suites, API Jest 11/11/38 tests, Cloud 11/11 regression suites, focused flow tests 7/7 and 10/10, post-commit synthetic Web UAT 1/1, configured builds/typechecks and PHDK coherence 52/52 pass. API/Cloud lint have zero errors with 138/25 warnings. Full Cloud Jest is blocked because its E2E startup requires `DATABASE_URL`.
 
-Commitments remain confirmed, none deferred. CMT-001 is still awaiting this candidate's publication/readback; CMT-004 source coverage improves but remains partial because 26 non-core models lack full role×tenant×surface×operation evidence and persistence is unverified. CMT-002 still needs native/device/audio and broad accessibility/localization acceptance. CMT-003 is provider-independent in source; any live call/CRM acceptance belongs to each configured client. Deployed SEO/AEO and the public market/language decision remain open. Overall status is **PARTIALLY DELIVERED**, not complete.
+Commitments remain confirmed, none deferred. CMT-001 source delivery is verified on 5.1.29; CMT-004 source coverage improves but remains partial because 26 non-core models lack full role×tenant×surface×operation evidence and persistence is unverified. CMT-002 still needs native/device/audio and broad accessibility/localization acceptance. CMT-003 is provider-independent in source; any live call/CRM acceptance belongs to each configured client. Deployed SEO/AEO and the public market/language decision remain open. Overall status is **PARTIALLY DELIVERED**, not complete.
 
 ## Delivery recheck — PR #95 / v5.1.26
 
@@ -24,7 +41,7 @@ Owner-approved temporary test-profile selection is implemented on `fix/audited-u
 
 | Commitment | Delivery status | Remaining acceptance |
 |---|---|---|
-| CMT-001 — baseline, versions, PRs | SOURCE DELIVERED / REMOTE VERIFIED | PR #95 merged 5.1.26 at `8e2a3d1c2fcc77b7161871e9b1151a03a22fc5b2`; no deployment is claimed. |
+| CMT-001 — baseline, versions, PRs | SOURCE DELIVERED / REMOTE VERIFIED | PR #99 merged 5.1.29 at `886669c7f5d3e20aec978efc3dc9a758d4a09148`; exact remote readback and completion gate pass; no deployment is claimed. |
 | CMT-002 — widget and safe diagnostics | SOURCE CHECKS PASS | Native Electron, OS permission, physical device/audio and broad route accessibility/localization. |
 | CMT-003 — provider-neutral call/CRM flow | SOURCE/CONTRACT PASS | Live integration is tenant-specific after each client configures providers; private destinations require validation and per-tenant allowlisting. |
 | CMT-004 — administration and permissions | SOURCE POLICY/UAT-008 PASS | Exhaustive 35-model matrix, real development identities, disposable-DB persistence and migration. |

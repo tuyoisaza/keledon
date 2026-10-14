@@ -33,8 +33,9 @@ CREATE INDEX IF NOT EXISTS idx_document_chunks_embedding ON document_chunks USIN
 ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE document_chunks ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Allow all for documents" ON documents FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for document_chunks" ON document_chunks FOR ALL USING (true) WITH CHECK (true);
+-- Keep direct Supabase roles denied until document tenant policies exist.
+DROP POLICY IF EXISTS "Allow all for documents" ON documents;
+DROP POLICY IF EXISTS "Allow all for document_chunks" ON document_chunks;
 
 -- RPC for RAG
 CREATE OR REPLACE FUNCTION match_documents (

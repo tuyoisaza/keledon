@@ -83,12 +83,12 @@ ALTER TABLE flows ENABLE ROW LEVEL SECURITY;
 ALTER TABLE flow_runs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ui_executions ENABLE ROW LEVEL SECURITY;
 
--- 9. Create RLS policies (allow all for development, adjust for production)
-CREATE POLICY "Allow all for sessions" ON sessions FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for events" ON events FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for flows" ON flows FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for flow_runs" ON flow_runs FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all for ui_executions" ON ui_executions FOR ALL USING (true) WITH CHECK (true);
+-- 9. Keep RLS default-deny until DB-derived tenant policies are implemented.
+DROP POLICY IF EXISTS "Allow all for sessions" ON sessions;
+DROP POLICY IF EXISTS "Allow all for events" ON events;
+DROP POLICY IF EXISTS "Allow all for flows" ON flows;
+DROP POLICY IF EXISTS "Allow all for flow_runs" ON flow_runs;
+DROP POLICY IF EXISTS "Allow all for ui_executions" ON ui_executions;
 
 -- 10. Verification queries
 SELECT 'sessions' as table_name, column_name, data_type 
