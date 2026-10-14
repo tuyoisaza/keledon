@@ -1,5 +1,11 @@
 # PHDK physical line limit audit
 
+## Current candidate 5.1.38 — 2026-10-14
+
+Fresh inventory: **1,163 active application/test files**, extensions `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, `.vue`; dependencies, generated output, `.git`, vendored standards and lifecycle snapshots excluded. **0 files are at or above 600 physical lines.** The Cloud escalation guard and parity regression are split into focused files. Candidate source commit `5d1b585e8b3a96865bd50494db7315de7281916b`; product PR #113 is merged on main. This closes the line-size gate only; whole-product acceptance remains partial.
+
+## Prior candidate 5.1.37 — superseded by the 5.1.38 audit below
+
 ## Current candidate 5.1.37 — 2026-10-14
 
 Fresh inventory: **1,161 active application/test files**, extensions `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, `.vue`; dependencies, generated output, `.git`, vendored standards and lifecycle snapshots excluded. **0 files are at or above 600 physical lines.** This count includes two new mirrored CRUD request-type contracts. Candidate source commit: `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`. This closes the line-size gate only; whole-product acceptance remains partial.

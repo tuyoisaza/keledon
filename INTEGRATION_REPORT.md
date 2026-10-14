@@ -1,5 +1,11 @@
 # Previous Integration Review — candidate 5.1.36 (2026-10-14)
 
+## Current Integration Review — candidate 5.1.38 (2026-10-14)
+
+The source candidate `5d1b585e8b3a96865bd50494db7315de7281916b` shipped through PR [#113](https://github.com/tuyoisaza/keledon/pull/113), squash-merged at `45b9031b9d3261a98e928cceb6fb51e73e21421f`. `origin/main` and `git ls-remote` independently read the same merge SHA; the merge tree matches PR source tree `bfed883e8f6cf4de1f4d7d3e4b5de63f0e59a97c`. All five app package/lock roots and Browser renderer are 5.1.38. Cloud escalation now matches API's current-DB actor and tenant scope, ignores caller-supplied acknowledgement identity and passes guard-derived team filters to aggregate queries. API regressions pass 35/35, Cloud 15/15, Cloud changed-file ESLint is clean, Web diagnostics 19/19, exact-merge-revision synthetic Web UAT 2/2, Web/Landing SEO 1/1 each and PHDK coherence 52/52. Browser/Web/Landing builds and Web/Landing typechecks pass. GitHub reports no hosted checks or review decision. Whole Auto stays partial: database/persistence, live Qdrant/concurrency, native device/audio, complete CRUD model mapping, broad accessibility/localization, deployed discovery and per-client live CRM/call acceptance remain open. No database, customer endpoint/data or deployment was used.
+
+---
+
 ## Current Integration Review — candidate 5.1.37 (2026-10-14)
 
 The source candidate `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` is merged in PR [#111](https://github.com/tuyoisaza/keledon/pull/111) at `33cff1e345de0b735657570a6144ddeec61f7c3e`, based on verified main `493c6c238c6c3cac585b7a80dcff968fff6ab7b4`; all five app roots/locks and Browser renderer align at 5.1.37. API and Cloud CRUD request/actor contracts derive from service signatures. Cloud's generic audit-log route/proxy and duplicate provider are removed; TTS stream chunks are normalized. No schema or integration provider changed. API/Cloud regressions pass 35/35 and 14/14; Cloud full typed lint 0/0; Web exact-SHA UAT 2/2; Browser/Landing builds, Web/Landing SEO, widget diagnostics 19/19 and PHDK coherence 52/52 pass. Remote `main` and `git ls-remote` agree; PR head/merge trees match at `bfed883e8f6cf4de1f4d7d3e4b5de63f0e59a97c`. The 35-model/168-row matrix is a drift assertion only. No DB, client endpoint or deployment was accessed; full Auto remains partial.

@@ -1,0 +1,73 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto: KELEDON four confirmed fronts and maximum applicable PHDK source conformity",
+  "target_branch": "main",
+  "expected_version": "5.1.38",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "source_commit_sha": "5d1b585e8b3a96865bd50494db7315de7281916b",
+  "merged_commit_sha": "45b9031b9d3261a98e928cceb6fb51e73e21421f",
+  "merge_tree_sha": "bfed883e8f6cf4de1f4d7d3e4b5de63f0e59a97c",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/113",
+  "checks": {
+    "version_alignment": {
+      "status": "PASS",
+      "evidence": "Independent origin/main and git ls-remote readback at merge SHA confirms all five package/lock roots and Browser renderer are 5.1.38."
+    },
+    "commit_prefix": {
+      "status": "PASS",
+      "evidence": "Product source commit subject is v5.1.38 Cloud escalation actor and tenant parity; PR #113 squash merge is version-prefixed."
+    },
+    "pr_merge_remote_readback": {
+      "status": "PASS",
+      "evidence": "PR #113 merged at 45b9031b9d3261a98e928cceb6fb51e73e21421f; origin/main and git ls-remote agree. GitHub reports no hosted checks or review decision."
+    },
+    "api_build_and_regression": {
+      "status": "PASS",
+      "evidence": "API TypeScript build passes; full API regression suite passes 35/35, including DB-derived escalation actor and tenant boundaries."
+    },
+    "cloud_build_regression_and_lint": {
+      "status": "PASS",
+      "evidence": "Cloud TypeScript build passes; full regression suite passes 15/15; focused ESLint on changed Cloud files reports zero errors and warnings."
+    },
+    "web_browser_landing": {
+      "status": "PASS",
+      "evidence": "Browser/Web/Landing builds, Web/Landing typechecks, Web diagnostics 19/19, built-SPA synthetic UAT 2/2, Web/Landing SEO 1/1 each pass."
+    },
+    "phdk_coherence_and_line_limit": {
+      "status": "PASS",
+      "evidence": "Installed PHDK v2.50.10 static coherence passes 52/52; active source inventory is 1,163 files with zero at or above 600 lines."
+    },
+    "whole_auto_acceptance": {
+      "status": "BLOCKED",
+      "evidence": "Whole PHDK Auto remains PARTIALLY DELIVERED: disposable PostgreSQL and persisted CRUD/migration, safe real DB-backed identities, live Qdrant/concurrency, native device/audio, complete model-family authorization matrix, broad accessibility/localization, deployed SEO/AEO and per-client live calls/CRM remain unverified. No database, customer endpoint/data or deployment was used."
+    }
+  },
+  "acceptance_status": "PARTIALLY_DELIVERED",
+  "mechanical_completion_gate": {
+    "status": "BLOCKED",
+    "command": "python phdk-standards/scripts/phdk_completion_gate.py --evidence docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.38.json",
+    "evidence": "Source delivery and remote version/SHA are verified. The completion gate is expected to reject whole-goal completion because environment-dependent PHDK Auto acceptance remains open."
+  },
+  "deployment": "NOT_PERFORMED",
+  "production_database_or_customer_data": "NOT_USED",
+  "candidate": {
+    "expected_version": "5.1.38",
+    "branch": "fix/phdk-cloud-escalation-actor-scope-5-1-38",
+    "base_commit": "746c5669ab0f9f39645ed27d99d2029dffa89ed1",
+    "source_commit_sha": "5d1b585e8b3a96865bd50494db7315de7281916b",
+    "merged_commit_sha": "45b9031b9d3261a98e928cceb6fb51e73e21421f",
+    "pull_request": "https://github.com/tuyoisaza/keledon/pull/113",
+    "pull_request_state": "MERGED",
+    "merge_tree_sha": "bfed883e8f6cf4de1f4d7d3e4b5de63f0e59a97c",
+    "final_remote_main_sha": "45b9031b9d3261a98e928cceb6fb51e73e21421f",
+    "api_regression": "PASS 35/35 suites",
+    "cloud_regression": "PASS 15/15 suites",
+    "cloud_focused_eslint": "PASS 0 errors, 0 warnings",
+    "web_uat": "PASS 2/2 synthetic tests",
+    "diagnostics": "PASS 19/19",
+    "phdk_coherence": "PASS 52/52 static mappings",
+    "whole_product_acceptance": "PARTIALLY_DELIVERED",
+    "note": "Scoped source delivery is merged and remote-verified; the four-front PHDK Auto goal remains active with the acceptance gates above."
+  }
+}
