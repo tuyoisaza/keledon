@@ -1,3 +1,16 @@
+## Active Auto milestone — Qdrant delete UAT (5.1.52)
+
+| Commitment | Status | Candidate evidence | Open acceptance |
+|---|---|---|---|
+| CMT-001 baseline/version/PR | SOURCE DELIVERED / VERIFIED | PR #142 and evidence PR #143 merged; main SHA `efc2ae47bd8be5cecbcc4cabd607a379704e4856`; six version reads remain 5.1.52. | Continue normal PR/version/SHA reconciliation for this evidence update. |
+| CMT-002 widget/safe diagnostics | PARTIAL | Diagnostics 19/19; synthetic UI UAT 4/4. | Native Windows device/audio and broad a11y/localization. |
+| CMT-003 per-client voice→Cloud→Browser→CRM | PARTIAL | Synthetic contracts and tenant-origin policy remain verified; customer-configured private target is tenant-allowlisted. | Client live call/CRM acceptance follows each tenant's selected stack. |
+| CMT-004 administration/permissions | PARTIAL | Persisted session CRUD plus Knowledge document/base delete and Qdrant cleanup pass on disposable loopback services. | Complete 35-model × role × tenant × operation matrix, delete/reindex concurrency and broad accessibility/localization. |
+
+Whole acceptance: **40 PASS, 0 BLOCKED, 1 MANUAL**; status remains **PARTIALLY DELIVERED**.
+
+---
+
 ## Candidate 5.1.51 coverage — delivery pending
 
 | Commitment | Status | Candidate evidence | Open acceptance |

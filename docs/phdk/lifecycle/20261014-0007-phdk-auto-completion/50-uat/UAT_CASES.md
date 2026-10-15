@@ -1,5 +1,9 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Latest acceptance delta — 5.1.52 Qdrant-backed cleanup
+
+UAT-010 Knowledge deletion, formerly BLOCKED, now **PASS** for document and base cleanup using disposable PostgreSQL 16.15 and loopback Qdrant 1.19.2 with synthetic data. Document delete removes its DB row and matching vector points; base delete removes its collection and cascades DB rows. Exact evidence: `evidence/uat-qdrant-delete-5.1.52.json`. Delete/reindex concurrency remains open. Whole acceptance is **40 PASS, 0 BLOCKED, 1 MANUAL**; native Electron/device/audio remains MANUAL, with the broader acceptance limits recorded in `UAT_REPORT.md`.
+
 ## Latest candidate 5.1.52 — session CRUD guard regression (2026-10-14 local / 2026-10-15 UTC)
 
 On exact source commit `03ea78968103aa6bc6290ed0681b1c1ea345872a`, the API authenticated a synthetic tenant admin against disposable PostgreSQL 16.15. Session creation and `metadata`/status updates persisted and read back. Legacy `summary` and team reassignment writes returned 403. API/Cloud parity and regression suites passed. Evidence: `evidence/uat-postgres-roles-5.1.52-03ea7896.json`. The built Web UAT passed 4/4 with mocked APIs and blocked external traffic.

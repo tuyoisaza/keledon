@@ -1,5 +1,13 @@
 # UAT Fix handoff — 20261014-0007-phdk-auto-completion
 
+## Active remediation continuation — Knowledge vector cleanup, 5.1.52
+
+The earlier UAT-010 Qdrant dependency is resolved for sequential deletion: the exact 5.1.52 API deleted the synthetic document's persisted record and vectors, then deleted a synthetic base's Qdrant collection and cascading PostgreSQL rows. No source code repair was required after live verification. Evidence: `../50-uat/evidence/uat-qdrant-delete-5.1.52.json`; historical snapshot: `../50-uat/snapshots/qdrant-delete-uat-5.1.52/`. Delete/reindex concurrency remains outside this pass and stays open in Check. Native device/audio remains manual.
+
+SIGUIENTE PASO: continue Check on unresolved scope and preserve PARTIALLY DELIVERED.
+
+---
+
 ## Candidate 5.1.51 — source findings repaired
 
 Removed false API SubAgent Browser/CRM/voice success, made unsupported tenant adapter steps fail closed and persisted flow-run status/results. Integration health no longer reports simulated connection or sync success; process monitoring returns only the actual Node process. API ESLint is 0 warnings/errors. API focused tests, full regressions and exact-source synthetic Web UAT pass. No customer endpoint/database/native device was exercised. Candidate report: `../90-delivery/snapshots/candidate-5.1.51/PHDK_CHECK_REPORT.md`.

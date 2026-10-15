@@ -1,0 +1,32 @@
+{
+  "case": "UAT-010 Knowledge document/base delete and vector cleanup",
+  "status": "PASS",
+  "productVersion": "5.1.52",
+  "productTree": "0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e",
+  "runDateLocal": "2026-10-14",
+  "database": {
+    "engine": "PostgreSQL",
+    "version": "16.15",
+    "scope": "disposable local database, loopback only"
+  },
+  "vectorStore": {
+    "engine": "Qdrant",
+    "version": "1.19.2",
+    "scope": "official Windows release binary, REST bound to 127.0.0.1"
+  },
+  "identityAndData": "Existing synthetic .invalid admin and synthetic tenant; generated test-only knowledge base, documents and vectors.",
+  "checks": {
+    "documentDeleteApi": "PASS",
+    "documentRowAbsent": "PASS (API list readback returned empty)",
+    "matchingQdrantPointsAbsent": "PASS (scroll filter by documentId returned zero points)",
+    "baseDeleteApi": "PASS",
+    "baseAndCascadeDocumentRowsAbsent": "PASS (read-only SQL returned zero rows)",
+    "qdrantCollectionAbsent": "PASS (collection GET returned 404)",
+    "deleteReindexConcurrency": "NOT TESTED"
+  },
+  "scopeNotes": [
+    "Individual base GET returned 403 for the test role; database absence was verified through read-only SQL rather than treating the authorization response as proof.",
+    "No production database, customer data, tenant-private endpoint, deployed service, or real provider was used.",
+    "Disposable API, PostgreSQL and Qdrant processes were stopped after the run."
+  ]
+}

@@ -1,3 +1,13 @@
+## Active delivery continuation — 5.1.52 live Qdrant UAT evidence
+
+Source PR [#142](https://github.com/tuyoisaza/keledon/pull/142) merged at `838931bd0d63f63f4a574ec9b660a12cc4ba5777`; evidence PR [#143](https://github.com/tuyoisaza/keledon/pull/143) merged at current `origin/main` `efc2ae47bd8be5cecbcc4cabd607a379704e4856` (tree `7ba62f8cec5a344f4749c2ae3925ce6db5dfaf1e`). All six version reads remain 5.1.52. Exact-source live synthetic UAT now passes Knowledge document/base DB and Qdrant cleanup on isolated loopback services; tally is 40 PASS, 0 BLOCKED, 1 MANUAL. Machine evidence: `../../../../../PHDK_DELIVERY_EVIDENCE.json`; detailed UAT: `../50-uat/evidence/uat-qdrant-delete-5.1.52.json`.
+
+This documentation/evidence continuation is being delivered in a normal PR. Whole Auto remains PARTIALLY DELIVERED pending delete/reindex concurrency, exhaustive model-role-operation coverage, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected live call/CRM evidence. No deployment is claimed.
+
+SIGUIENTE PASO: validate this evidence diff, commit with the 5.1.52 prefix, push the PR and verify it on `main`; then continue open acceptance gates.
+
+---
+
 ## PHDK Auto 5.1.50 delivered; continue four fronts
 
 PR [#137](https://github.com/tuyoisaza/keledon/pull/137) merged v5.1.49 at `537ce1567c13f74512a23ef9b9cba3412a7510fd`. Candidate v5.1.50 source `dd07302829270bbbf8499784b8c3f3d36c1af080` on `fix/phdk-web-lint-zero-5-1-50` was squash-merged by [PR #138](https://github.com/tuyoisaza/keledon/pull/138) at verified main `b92e1fa91bfa9b9f53c8a6513ca580f403cda1d5`; remote tree `5828601db800875da01c459a8ed3e8412474e8d5` matches candidate. All five package/lock roots and Browser renderer are 5.1.50. Full Web lint: 0 warnings/0 errors; Web typecheck, five builds, diagnostics 19/19, SEO 1/1, exact-source synthetic UAT 4/4 and PHDK coherence 52/52 pass. Exact UAT evidence: `../50-uat/evidence/uat-web-5.1.50/uat-local-web.json` (mocked Company Co API; external traffic blocked). GitHub reports no hosted checks or review decision; no deployment is claimed.

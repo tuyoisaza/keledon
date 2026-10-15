@@ -1,5 +1,9 @@
 # CRUD matrix — current source and authorization coverage
 
+## Latest 5.1.52 persisted deletion acceptance — 2026-10-14
+
+On disposable loopback PostgreSQL 16.15 and Qdrant 1.19.2, the synthetic admin document delete removed its row and all Qdrant points filtered by immutable `documentId`; base delete removed the collection and cascaded relational rows. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-qdrant-delete-5.1.52.json`. This passes sequential cleanup only. The full 35-model × role × tenant × API/Web × operation matrix, migrations across all resource families, and delete/reindex concurrency remain open.
+
 ## Post-merge Check continuation — ManagedInterface and TeamInterface remain unmapped
 
 The 12-resource/168-row role × surface table omits two Prisma models from `services/api/prisma/schema.prisma`: `ManagedInterface` and its `TeamInterface` assignment relation. `CrudController` exposes global managed-interface list/create/update/delete, but `CrudAccessGuard` reserves that resource to the DB-derived superadmin. Team assignment list/replacement is separately company-scoped through `ResourceScopeGuard`, and team-interface projections omit stored credentials. The legacy Web `InterfacesManager` had no import or mounted route; the owner confirmed keeping the global catalog hidden, so v5.1.46 removes that orphaned UI. `ManagedInterface` remains a dormant global-catalog exception; `TeamInterface` is a company-scoped nested Team relation. API/Cloud regressions 37/38 plus the management-policy and schema-inventory checks verify those source boundaries. Persisted role/tenant testing remains blocked. Do not grant tenant roles access to global base URLs or credentials by analogy with tenant allowlists.

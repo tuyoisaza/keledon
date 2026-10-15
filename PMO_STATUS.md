@@ -1,4 +1,20 @@
-# PMO status history — prior candidates 5.1.36–5.1.37
+# PMO status history — prior candidates through 5.1.38
+
+## Active four-front portfolio — 5.1.52, source and Qdrant UAT verified (2026-10-14)
+
+PR #142 merged the 5.1.52 session CRUD guard fix; evidence PR #143 is merged at current main `efc2ae47bd8be5cecbcc4cabd607a379704e4856`. Live synthetic loopback UAT now passes Knowledge document/base PostgreSQL and Qdrant cleanup. Latest tally is 40 PASS, 0 BLOCKED, 1 MANUAL. Installed PHDK coherence is 52/52. Whole Auto remains **PARTIALLY DELIVERED** because exhaustive model-role-operation coverage, delete/reindex concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live call/CRM acceptance remain open.
+
+| WS | Current state | Evidence / next gate |
+|---|---|---|
+| WS-001 / CMT-001 baseline/version/PR | SOURCE DELIVERED; normal evidence PR in progress | 5.1.52; current `origin/main` SHA and six version reads verified; reconcile the live UAT evidence delivery. |
+| WS-002 / CMT-002 widget/diagnostics | SOURCE PASS; acceptance partial | Diagnostics 19/19 and synthetic Web UAT 4/4; native media, full route and assistive-tech acceptance remain open. |
+| WS-003 / CMT-003 voice→Cloud→Browser→CRM per client | Provider-independent contracts PASS; tenant acceptance parameterized | Private targets require tenant allowlisting; execute live calls only after each customer selects its stack. |
+| WS-004 / CMT-004 administration/permissions | Scoped persisted CRUD and Qdrant cleanup PASS | Complete 35-model × role × tenant × operation validation and delete/reindex concurrency remain open. |
+| WS-X / PHDK | Coherence PASS; whole acceptance partial | PHDK 2.50.10 coherence 52/52; broad accessibility/localization, deployed SEO/AEO, DB and native evidence remain. |
+
+No production/customer data, external provider, private CRM endpoint, native device or deployment was used for this milestone.
+
+---
 
 ## Current status — candidate 5.1.38, source and evidence merged (2026-10-14)
 
