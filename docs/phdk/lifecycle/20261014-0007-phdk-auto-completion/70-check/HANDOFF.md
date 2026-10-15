@@ -1,5 +1,13 @@
 # Check handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.40 — full local Web UAT revalidation (UAT-036)
+
+The combined Web UAT command passes 4/4 browser test files at exact test commit `c9ff85f4094f60491def1bc3680b8758ac11dde6` (tree `c788d3e3323215a39e977f9a39a237b35dc05536`), including 17 logged baseline production-SPA journeys, Device, diagnostics and Knowledge manager roles. An evidence-directory override prevented writes to the pre-existing shared root; 21 generated artifacts were copied into `../50-uat/evidence/uat-web-suite-5.1.40-source-c9ff85f4/`. All API fixtures are synthetic and external traffic is blocked. This does not prove database-backed authorization, native device/audio, deployed behavior or broad a11y conformance.
+
+Status: **LOCAL WEB UAT PASS / TEST DELIVERY PENDING / WHOLE ACCEPTANCE PARTIAL**.
+
+---
+
 ## Candidate 5.1.40 — Knowledge manager role UAT-035
 
 The source-level matrix previously marked coordinator and superadmin browser journeys for KnowledgeBase as unverified. Exact-built-SPA test commit `2edc20cdc524f39718c486395677e0532af5a972` now verifies coordinator company-a-only selection/create, superadmin company-b selection/create, and no Knowledge manager controls for a user. UAT is synthetic with all external traffic blocked; it closes only these UI affordance rows. Cloud full ESLint now exits successfully; previous historical lint-debt notes are stale for the current tree. Persistent API/DB authorization and the rest of CHK-AUTO-003 remain open. UAT evidence: `../50-uat/evidence/uat-knowledge-manager-roles-5.1.40.json`.

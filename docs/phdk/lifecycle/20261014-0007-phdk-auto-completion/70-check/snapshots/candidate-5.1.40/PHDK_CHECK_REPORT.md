@@ -10,6 +10,8 @@ Repository `tuyoisaza/keledon`; candidate branch `fix/diagnostics-route-roles-5-
 
 PR [#120](https://github.com/tuyoisaza/keledon/pull/120) delivered this test/evidence slice at remote `main` `2e06b7c3b55244078953838ecab35290629fde65`. The merge tree matches tested PR head; exact readback is recorded in `PHDK_DELIVERY_EVIDENCE-UAT035-post-merge-120.json`.
 
+**UAT-036:** the combined local production-SPA suite passes 4/4 test files at commit `c9ff85f4094f60491def1bc3680b8758ac11dde6` (tree `c788d3e3323215a39e977f9a39a237b35dc05536`) with 17 logged baseline journey checks. `KELEDON_UAT_EVIDENCE_DIR` directed 21 generated screenshots/JSON into an isolated lifecycle folder; the shared root evidence files were not used. This confirms local synthetic browser behavior only; CHK-AUTO-003 remains partial and database/device/deployed acceptance remains open.
+
 | Finding | Current status | Evidence / remaining proof |
 |---|---|---|
 | CHK-AUTO-018 — diagnostics UI role mismatch | CLOSED — SOURCE | Exact commit/tree above; dedicated built-SPA UAT 1/1. Backend remains authoritative and unchanged. |
