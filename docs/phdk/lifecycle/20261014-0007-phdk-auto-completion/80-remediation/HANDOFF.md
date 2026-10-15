@@ -1,3 +1,11 @@
+## Candidate 5.1.50 Web lint remediation
+
+Typed the final `any` usages in the unmounted AI-loop, entity form and entity table components, including form values and impersonation roles; only valid `UserRole` values enable impersonation. Added targeted explanations for the three context files that intentionally export both provider and hook. Full Web lint is now 0 warnings/0 errors, down from 14 on 5.1.49. Web typecheck/build and exact-source UAT 4/4 pass. The candidate is versioned 5.1.50 and awaiting PR/merge. Whole PHDK Auto remains PARTIALLY DELIVERED on persisted DB, native device/audio, broader accessibility/localization, deployed SEO/AEO and customer-specific live call/CRM acceptance.
+
+SIGUIENTE PASO: entregar por PR y verificar el remoto; no inferir aceptación del producto completo desde la limpieza de lint.
+
+---
+
 ## Candidate 5.1.47 remediation
 
 Changed seven API files to handle rejected promises explicitly: room membership and provider/flow work are awaited through handler error paths; scheduled cleanup, disk initialization and TTS stop failures are logged. API build and regression 36/36 pass; no floating promises remain in API lint.

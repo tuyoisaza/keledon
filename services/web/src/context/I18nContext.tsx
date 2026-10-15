@@ -87,6 +87,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// Context modules intentionally export their provider and paired hook from one file.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useTranslation() {
   const context = useContext(I18nContext);
   if (!context) {

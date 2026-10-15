@@ -1,3 +1,11 @@
+## Candidate 5.1.50 exact-source retest — 2026-10-14 local
+
+Status: **SCOPED UI ACCEPTANCE PASS / WHOLE-PRODUCT ACCEPTANCE INCOMPLETE**. Exact source commit `dd07302829270bbbf8499784b8c3f3d36c1af080`; local production Web suite passes 4/4 with isolated Company Co fixtures, intercepted API, and external traffic blocked. UAT confirms the diagnostic toggle/probe flow and manual-only CRM route have no automatic probe, and retains the existing admin, manager, device, Knowledge, session, localization and accessibility fixture checks. Evidence and screenshots are under `evidence/uat-web-5.1.50/`; JSON source fingerprint is clean. This is UI/mock API evidence, not DB/server/customer integration acceptance. Overall UAT remains partial (37 PASS, 2 BLOCKED, 1 MANUAL); UAT-009/010 and UAT-006 still need safe database identities/persistence and supported native device/audio.
+
+SIGUIENTE PASO: entregar el candidato versionado; mantener las pruebas de BD, dispositivo nativo y mediciones desplegadas como bloqueadas hasta contar con sus ambientes aislados.
+
+---
+
 # UAT handoff — 20261014-0007-phdk-auto-completion
 
 ## Candidate 5.1.32 exact-source UAT — 2026-10-14

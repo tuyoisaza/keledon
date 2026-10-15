@@ -1,10 +1,33 @@
 import React from 'react';
 import { Trash2, Loader2 } from 'lucide-react';
-import { type Company, type Brand, type Team } from '@/lib/crud-api';
+import { type Company, type Brand, type Team, type CompanyCountry } from '@/lib/crud-api';
+
+type EntityFormData = Record<string, unknown> & {
+    name?: string;
+    industry?: string;
+    color?: string;
+    brand_id?: string;
+    team_id?: string;
+    role?: string;
+    email?: string;
+    countries?: Array<string | CompanyCountry | { country_code: string }>;
+};
+
+interface EntityFormField {
+    name: string;
+    label: string;
+    type: 'text' | 'select' | 'color' | 'textarea';
+    required?: boolean;
+    options?: Array<{ value: string; label: string }>;
+}
+
+function formValue(value: unknown, fallback = ''): string | number {
+    return typeof value === 'string' || typeof value === 'number' ? value : fallback;
+}
 
 interface EntityFormProps {
     activeTab: string;
-    editingEntity: any | null;
+    editingEntity: EntityFormData | null;
     handleSave: (e: React.FormEvent<HTMLFormElement>) => void;
     saving?: boolean;
     onClose: () => void;
@@ -18,7 +41,7 @@ interface EntityFormProps {
     setSelectedCompanyId: (id: string) => void;
     selectedCountryCode: string;
     setSelectedCountryCode: (code: string) => void;
-    formFields: any[];
+    formFields: EntityFormField[];
     isSuperAdmin: boolean;
 }
 
@@ -198,8 +221,8 @@ export const EntityForm: React.FC<EntityFormProps> = ({
                                     disabled={!selectedCompanyId}
                                 >
                                     <option value="">Select Country...</option>
-                                    {companies.find(c => c.id === selectedCompanyId)?.countries?.map((c: any) => {
-                                        const countryCode = typeof c === 'string' ? c : c.country_code;
+                                    {companies.find(c => c.id === selectedCompanyId)?.countries?.map((country) => {
+                                        const countryCode = country.countryCode;
                                         const fullCountry = availableCountries.find(ac => ac.code === countryCode);
                                         return (
                                             <option key={countryCode} value={countryCode}>
@@ -335,12 +358,12 @@ export const EntityForm: React.FC<EntityFormProps> = ({
                                 {field.type === 'select' ? (
                                     <select
                                         name={field.name}
-                                        defaultValue={editingEntity ? editingEntity[field.name] : ''}
+                                        defaultValue={formValue(editingEntity?.[field.name])}
                                         required={field.required}
                                         className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer"
                                     >
                                         <option value="">Select...</option>
-                                        {field.options?.map((opt: any) => (
+                                        {field.options?.map((opt) => (
                                             <option key={opt.value} value={opt.value}>{opt.label}</option>
                                         ))}
                                     </select>
@@ -348,13 +371,13 @@ export const EntityForm: React.FC<EntityFormProps> = ({
                                     <input
                                         type="color"
                                         name={field.name}
-                                        defaultValue={editingEntity ? editingEntity[field.name] : '#000000'}
+                                        defaultValue={formValue(editingEntity?.[field.name], '#000000')}
                                         className="w-full h-10 p-1 rounded bg-muted border border-border cursor-pointer"
                                     />
                                 ) : field.type === 'textarea' ? (
                                     <textarea
                                         name={field.name}
-                                        defaultValue={editingEntity ? editingEntity[field.name] : ''}
+                                        defaultValue={formValue(editingEntity?.[field.name])}
                                         required={field.required}
                                         className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                                     />
@@ -362,7 +385,7 @@ export const EntityForm: React.FC<EntityFormProps> = ({
                                     <input
                                         type={field.type}
                                         name={field.name}
-                                        defaultValue={editingEntity ? editingEntity[field.name] : ''}
+                                        defaultValue={formValue(editingEntity?.[field.name])}
                                         required={field.required}
                                         className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                                     />
