@@ -1,4 +1,11 @@
-# Check handoff — candidate 5.1.69
+# Check handoff — candidate 5.1.70
+
+Owner-approved FeatureFlag dormancy is reconciled in the 39-model/546-row matrix and guarded by regression 33: retain schema/service with no registered module, route, UI, consumer or role grant. API/Cloud regressions pass 39/39 and 18/18; five builds/lint checks, four package typechecks, Browser TypeScript build, version alignment, PHDK coherence 56/56 and diff check pass. UAT-064 is decision/source evidence only. UAT tally: 62 PASS, 1 BLOCKED, 1 MANUAL; whole portfolio remains partial. Exact checks: `PHDK_CHECK_REPORT-5.1.70.md`.
+
+SIGUIENTE PASO: deliver the exact candidate through normal versioned PR controls and verify remote `main`.
+
+---
+
 
 Candidate source checks pass: API/Cloud regressions 39/39 and 18/18; all five builds and lint checks; API/Cloud/Web/Landing dedicated typechecks, with Browser build running `tsc`; all five app versions/locks and Browser renderer aligned at 5.1.69; PHDK v2.51.2 coherence 56/56; and exact diff checks recorded in `PHDK_CHECK_REPORT-5.1.69.md`. The nested CompanyCountry and TeamInterface contracts remain partial pending persistence/audit evidence and a Web TeamInterface selector decision.
 

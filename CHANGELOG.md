@@ -1,3 +1,14 @@
+## v5.1.70 — 2026-10-15 (record owner-approved dormant feature flags)
+
+- Keep the FeatureFlag schema and unregistered service dormant by owner decision; grant no roles and expose no route, module, UI, or caller.
+- Reclassify its 14 model-role-surface rows as NOT APPLICABLE to active product surfaces; add an inventory regression to prevent accidental exposure.
+- CRUD inventory remains 39 Prisma models / 546 model-role-surface rows; decision-needed count falls from 31 to 17.
+
+### Verification
+- API regression 39/39; Cloud regression 18/18; CRUD inventory 39 models / 546 model-role-surface rows / 168 core rows.
+- Five builds, five lint checks, four dedicated typechecks, Browser TypeScript build, and PHDK v2.51.2 coherence 56/56 pass.
+- UAT-064 is owner-decision and source-inventory evidence only; no migration or persisted database behavior was exercised. UAT tally: 62 PASS, 1 BLOCKED, 1 MANUAL; whole PHDK Auto remains partial.
+
 ## v5.1.69 — 2026-10-15 (reconcile nested CRUD scope evidence)
 
 - Add API/Cloud regression cases for tenant company country updates, direct nested route denial, and foreign-company country updates.

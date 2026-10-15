@@ -1,4 +1,11 @@
-# Integration handoff — candidate 5.1.69
+# Integration handoff — candidate 5.1.70
+
+The owner approved keeping FeatureFlag dormant: retain the schema/service without module registration, route, UI, consumer or role grants. The 14 model-role-surface rows are NOT APPLICABLE to current product surfaces, asserted by the CRUD inventory regression. API/Cloud full regressions pass 39/39 and 18/18; all five builds, lint checks and version roots pass, as do four typechecks, Browser TypeScript build and PHDK coherence 56/56. UAT-064 closes the owner decision only; no migration or persistence acceptance is claimed. Portfolio tally is 62 PASS, 1 BLOCKED, 1 MANUAL. See `INTEGRATION_REPORT-5.1.70.md`.
+
+SIGUIENTE PASO: deliver through the versioned PR and verify remote `main`; retain partial portfolio status.
+
+---
+
 
 The candidate reconciles CompanyCountry and TeamInterface as nested relations in CRUD_MATRIX.md. API/Cloud guard tests cover own-company country updates, deny direct nested country writes for tenant managers, and reject foreign-company updates; existing TeamInterface regressions cover tenant guard and atomic replacement. Provider/profile checks from 5.1.68 remain in the full regressions. API/Cloud regressions pass 39/39 and 18/18, and all five package/lock roots plus Browser renderer align at 5.1.69. Five builds, five lint checks, four dedicated typechecks, Browser's TypeScript build, PHDK coherence 56/56, and `git diff --check` pass. See `INTEGRATION_REPORT-5.1.69.md` for the exact check inventory. Persistence and a Web TeamInterface selector decision remain open. No live database, customer CRM, call provider, or deployment was used. Whole PHDK Auto remains partial.
 

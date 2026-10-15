@@ -1,5 +1,11 @@
 # UAT handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.70 — UAT-064 PASS; portfolio acceptance incomplete
+
+The owner approved keeping FeatureFlag dormant. Its schema/service remain; app-module, controller, API route, UI and caller exposure stay absent. The 14 model-role-surface rows are NOT APPLICABLE to current product surfaces, asserted by the API inventory regression. This closes the owner-decision row only; it does not claim persistence/migration acceptance. Tally: **62 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 still needs the owner-provided disposable PostgreSQL target; native device/audio remains MANUAL.
+
+SIGUIENTE PASO: continue the remaining source and customer acceptance gates; do not wire or retire FeatureFlag without a new owner decision and migration plan.
+
 ## Candidate 5.1.69 — UAT-063 PASS; portfolio acceptance incomplete
 
 API and Cloud regressions now reconcile nested company-country management with database-derived company scope and preserve TeamInterface's team-scoped atomic replacement. Provider configuration and voice-profile scope assertions from UAT-062 remain in the full suite. API regression passes 39/39 and Cloud 18/18. This is source guard evidence, not live database identity/persistence or browser selector acceptance. Tally advances to **61 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 still needs the owner-provided disposable PostgreSQL target; native device/audio remains MANUAL.
