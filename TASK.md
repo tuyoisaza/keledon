@@ -2,9 +2,9 @@
 
 The 5.1.55 source now has exact disposable-PostgreSQL evidence: API build and regression 36/36 pass; eight migrations are idempotent/up to date; DB-backed synthetic registration defaults to user; superadmin assigns tenant admin/company through API; same-tenant access passes and cross-tenant access, self-elevation, and company delete are denied. The run cleaned all fixtures and stopped local services. UAT-044/045 evidence is `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`.
 
-This candidate aligns package/lock/renderer versions at 5.1.56 and corrects stale current UAT-009/010 blocker text. It does not claim exhaustive persisted CRUD across 35 models, native device/audio, broad accessibility/localization, deployed SEO/AEO or tenant-specific live CRM/call completion. Whole Auto remains **PARTIALLY DELIVERED**.
+PR [#150](https://github.com/tuyoisaza/keledon/pull/150) is squash-merged at `7b535964b91815b964fd7c1ddc121a994883ebb8`; remote main tree matches the tested candidate and the completion gate passes. All five package/lock roots and Browser renderer read 5.1.56. This delivery does not claim exhaustive persisted CRUD across 35 models, native device/audio, broad accessibility/localization, deployed SEO/AEO or tenant-specific live CRM/call completion. Whole Auto remains **PARTIALLY DELIVERED**.
 
-SIGUIENTE PASO: verify all app roots, current source/test contracts and builds, then deliver the evidence/documentation update through the normal PR path; continue the four-front goal.
+SIGUIENTE PASO: continue the four-front goal by extending persisted acceptance for mapped operations and completing the remaining native, accessibility and deployed-evidence gates when their environments are available.
 
 ---
 
@@ -187,3 +187,10 @@ Delivery update 2026-10-13: PR #54 is merged at `a854ca7634307538305cd9b5ad1f91f
 # Active task — run `20261014-0007-phdk-auto-completion`
 
 Continue owner-authorized PHDK Auto in `C:\KELEDON\keledon`, baseline 5.1.24 / `6413d8aed295c18af098ca6a58c6dfbb7503930b`, branch `fix/cloud-eslint-prettier`. Deliver four ordered fronts: baseline/versions/PRs; widget and safe diagnostics; voice→Cloud→Browser→customer-selected CRM; administration/permissions. Enforce ADR-AUTO-008/009 (DB-derived actor/tenant, least privilege, write-only secret replacement, validated tenant-scoped private/local CRM allowlists). Do not claim completion until full applicable Check remediation, current candidate UAT, normal PR delivery/readback and the PHDK completion gate are satisfied. Track unsupported native, persisted-DB and deployed SEO/AEO requirements as explicit blockers. No production data, live provider calls or deployments.
+## PHDK Auto — 5.1.57 CRUD evidence reconciliation; four fronts continue
+
+UAT-046 ties the four exercised Company/User API role rows to UAT-045's exact persisted outcomes. Regression 33 enforces the evidence references and keeps all four rows BLOCKED until exhaustive operation coverage is done. No runtime behavior or new persistence acceptance changed. Candidate 5.1.57 aligns all five package/lock roots and Browser renderer; checks and PR delivery are in progress. Whole Auto remains **PARTIALLY DELIVERED**.
+
+SIGUIENTE PASO: complete candidate checks and PR delivery, then extend persisted acceptance to the next mapped resource operations.
+
+---

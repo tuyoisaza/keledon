@@ -1,3 +1,15 @@
+## v5.1.57 — 2026-10-14 (trace persisted UAT in the CRUD matrix)
+
+- Link the four exercised Company/User API role rows to UAT-045 without claiming exhaustive persistence coverage.
+- Extend regression 33 to require the evidence citations and retain BLOCKED until full model-role-operation acceptance.
+- Record UAT-046 as documentation/evidence integrity only; runtime behavior is unchanged.
+- Align all five application package/lock roots and the Browser renderer at 5.1.57.
+
+### Verification
+- API regression 33 verifies the 35-model inventory, 490 role/surface rows and scoped UAT evidence mapping.
+- Full API regression, five product builds, PHDK coherence and exact version alignment are recorded in the candidate check report.
+- PHDK Auto remains partial; exhaustive persisted operations and native/deployed acceptance gates remain open.
+
 ## v5.1.56 — 2026-10-15 (persisted role and migration acceptance)
 
 - Record exact-source PostgreSQL UAT for identity defaults, superadmin role assignment, tenant boundaries and migration idempotency.

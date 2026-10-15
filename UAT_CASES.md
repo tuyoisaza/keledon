@@ -1,5 +1,13 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.57 addition — link persisted evidence to CRUD rows (2026-10-14)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-046 | US-002 / release owner | Run regression 33 and reconcile Company/admin, Company/superadmin, User/admin and User/superadmin API evidence against UAT-045. | Each row cites the persisted evidence actually exercised, while every row stays BLOCKED until the full model-role-operation matrix is accepted. | API source regression and CRUD matrix. | PASS: regression 33 asserts all four UAT-045 citations and preserves BLOCKED status; no runtime behavior or new persistence acceptance is claimed. |
+
+Candidate total: **46 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-046 is a source/evidence mapping check; exhaustive model/operation persistence, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live call/CRM acceptance remain open.
+
 ## Candidate 5.1.56 addition — exact-source PostgreSQL role and migration acceptance (2026-10-15)
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

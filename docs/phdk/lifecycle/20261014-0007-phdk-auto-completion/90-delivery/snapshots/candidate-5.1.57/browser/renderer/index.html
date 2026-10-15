@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https: wss: ws:;">
+  <title>KELEDON Browser</title>
+  <link rel="stylesheet" href="./renderer-base.css">
+  <link rel="stylesheet" href="./renderer-controls.css">
+</head>
+<body>
+  <!-- Loading bar -->
+  <div class="loading-bar" id="loadingBar"></div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar" id="tabBar">
+    <span class="diagnostic-brand">KELEDON</span>
+    <div class="tab active" data-tab-id="home">
+      <span class="tab-icon">🏠</span>
+      <span class="tab-name">New Tab</span>
+    </div>
+    <button class="tab-add" id="tabAddBtn" title="New tab">+</button>
+  </div>
+
+  <!-- Navigation Bar -->
+  <div class="nav-bar">
+    <div class="diagnostic-actions"><span id="versionBtn">v5.1.57</span><button type="button" id="diagnosticCopy"></button><button type="button" id="diagnosticClear"></button><span class="diagnostic-status" id="diagnosticStatus" role="status" aria-live="polite"></span></div>
+    <div class="nav-actions">
+      <button class="nav-btn" id="navBack" disabled title="Back">&#x2190;</button>
+      <button class="nav-btn" id="navForward" disabled title="Forward">&#x2192;</button>
+      <button class="nav-btn" id="navRefresh" disabled title="Reload">&#x21BB;</button>
+      <button class="nav-btn" id="navHome" title="Home">&#x1F3E0;</button>
+    </div>
+    <div class="nav-url-container">
+      <input type="text" class="nav-url" id="navUrl" placeholder="Search or enter URL" readonly>
+      <div class="nav-loading" id="navLoading"></div>
+    </div>
+    <div class="conn-dot" id="connDot" title="Disconnected"></div>
+    <button class="rpa-stop-btn" id="rpaStopBtn" title="Stop RPA (Esc)">&#x1F6D1;</button>
+    <button class="nav-panel-btn" id="panelBtn" title="KELEDON Controls">&#x2699;</button>
+    <button class="cmdlog-btn" id="devtoolsBtn" title="Toggle DevTools (F12)">&#x1F6E0;</button>
+    <button class="console-btn" id="consoleBtn" title="Console Logs" hidden>&#x1F4DD;<span class="console-badge" id="consoleBadge">0</span></button>
+    <button class="cmdlog-btn" id="cmdlogBtn" title="Command Activity Log">&#x1F4CB;</button>
+  </div>
+
+  <!-- Content Area (New Tab Page — hidden when BrowserView active) -->
+  <div class="content-area" id="contentArea">
+    <div class="new-tab-logo">K</div>
+    <div class="new-tab-title">KELEDON Browser</div>
+    <div class="new-tab-search">
+      <input type="text" id="newTabUrl" placeholder="Search or enter URL" autocomplete="off">
+    </div>
+    <div class="shortcuts">
+      <div class="shortcut" data-url="https://www.google.com">
+        <div class="shortcut-icon google">G</div>
+        <span class="shortcut-name">Google</span>
+      </div>
+      <div class="shortcut" data-url="https://keledon.tuyoisaza.com">
+        <div class="shortcut-icon keledon">K</div>
+        <span class="shortcut-name">KELEDON</span>
+      </div>
+      <div class="shortcut" id="shortcutConnect">
+        <div class="shortcut-icon connect">&#x1F517;</div>
+        <span class="shortcut-name">Connect</span>
+      </div>
+      <div class="shortcut" id="shortcutExecute">
+        <div class="shortcut-icon execute">&#x25B6;</div>
+        <span class="shortcut-name">Execute</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Side Panel Overlay -->
+  <div class="side-panel-overlay" id="panelOverlay"></div>
+
+  <!-- Side Panel (KELEDON Controls) -->
+  <div class="side-panel" id="sidePanel">
+    <div class="side-panel-header">
+      <h2>&#x2699; KELEDON</h2>
+      <button class="side-panel-close" id="panelClose">&#x2715;</button>
+    </div>
+    <div class="side-panel-content">
+      <!-- Connection Status -->
+      <div class="panel-section">
+        <div class="panel-section-title">Connection</div>
+        <div class="conn-status disconnected" id="panelConnStatus">
+          <div class="conn-dot-lg"></div>
+          <span>Disconnected</span>
+        </div>
+        <div class="conn-form">
+          <input type="text" id="cloudUrl" value="https://keledon.tuyoisaza.com" placeholder="Cloud URL">
+          <input type="text" id="pairingCode" placeholder="Pairing Code (XXXX-XXXX)">
+          <input type="text" id="keledonId" placeholder="Keledon ID (optional)">
+          <button id="connectBtn" class="btn-connect">Connect</button>
+        </div>
+      </div>
+
+      <!-- Pending Instructions -->
+      <div class="panel-section pending-instructions">
+        <div class="activity-header">
+          <div class="panel-section-title">Pending Instructions</div>
+          <div class="activity-header-actions">
+            <button id="clearPendingBtn" class="activity-copy-btn" title="Clear all">Clear</button>
+          </div>
+        </div>
+        <div class="pending-list" id="pendingList">
+          <div class="pending-empty">No instructions pending</div>
+        </div>
+      </div>
+
+      <!-- Execute -->
+      <div class="panel-section">
+        <div class="panel-section-title">Execute Goal</div>
+        <input type="text" id="goalInput" class="execute-input" placeholder="Enter automation goal...">
+        <button id="executeBtn" class="btn-execute" disabled>&#x25B6; Execute</button>
+        <div id="execute-progress" style="display:none; margin-top:8px; padding:8px; background:#f1f3f4; border-radius:4px; font-size:12px;">
+          <div id="progress-text" style="color:#5f6368;">Ready</div>
+          <div style="margin-top:4px; height:4px; background:#e8eaed; border-radius:2px;">
+            <div id="progress-bar" style="height:4px; background:#1a73e8; border-radius:2px; width:0%; transition:width 0.2s;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Call Controls -->
+      <div class="panel-section" id="callSection" style="display:none;">
+        <div class="panel-section-title">Call Controls</div>
+        <div class="call-controls">
+          <button id="startCallBtn" class="call-btn start">&#x1F4DE; Start Call</button>
+          <button id="muteBtn" class="call-btn" disabled>&#x1F507; Mute</button>
+          <button id="holdBtn" class="call-btn" disabled>&#x23F8; Hold</button>
+          <button id="hangupBtn" class="call-btn end" disabled>&#x1F4F7; End</button>
+        </div>
+      </div>
+
+      <!-- Agent Participation (WebRTC Injection) -->
+      <!-- cite: docs/specs/v1_keledon_webrtc_agent_participation.md -->
+      <div class="panel-section" id="agentInjectionSection" style="display:none;">
+        <div class="panel-section-title">Agent Voice Injection</div>
+        <div style="font-size:11px;color:#aaa;margin-bottom:6px;">
+          Arms KELEDON agent audio into the active tab's WebRTC call.
+          Other participants will hear the agent through the meeting's audio pipeline.
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <input type="checkbox" id="consentCheckbox" />
+          <label for="consentCheckbox" style="font-size:12px;cursor:pointer;">
+            I consent to KELEDON agent audio joining this call
+          </label>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:6px;">
+          <button id="armInjectionBtn" class="call-btn start" disabled>&#x1F399; Arm Agent</button>
+          <button id="disarmInjectionBtn" class="call-btn end" disabled>&#x26D4; Disarm</button>
+        </div>
+        <div id="injectionStatus" style="font-size:11px;padding:4px 6px;border-radius:3px;background:#222;color:#888;">
+          DISARMED
+        </div>
+      </div>
+
+      <!-- Activity Log -->
+      <div class="panel-section">
+        <div class="activity-header">
+          <div class="panel-section-title">Activity</div>
+          <div class="activity-header-actions">
+            <button id="copyActivityBtn" class="activity-copy-btn" title="Copy all activity logs">Copy</button>
+          </div>
+        </div>
+        <div class="activity-copy-status" id="activityCopyStatus">Ready</div>
+        <div class="activity-log" id="activityLog"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Escalation Modal -->
+  <div class="escalation-modal" id="escalationModal">
+    <div class="escalation-content">
+      <div class="escalation-header">
+        <span class="escalation-icon">&#x26A0;&#xFE0F;</span>
+        <span class="escalation-title">Human Assistance Required</span>
+        <span class="escalation-type" id="escalationType">trigger</span>
+      </div>
+      <div class="escalation-message" id="escalationMessage"></div>
+      <div class="escalation-detail" id="escalationDetail"></div>
+      <div class="escalation-buttons">
+        <button class="escalation-btn abort" id="escalationAbort">Abort</button>
+        <button class="escalation-btn fix" id="escalationFix">Fix</button>
+        <button class="escalation-btn continue" id="escalationContinue">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Command Log Modal -->
+  <div class="cmdlog-modal" id="cmdlogModal">
+    <div class="cmdlog-content">
+      <div class="cmdlog-header">
+        <h3>&#x1F4CB; Command Activity Log</h3>
+        <button class="cmdlog-close" id="cmdlogClose">&#x2715;</button>
+      </div>
+      <div class="cmdlog-status" id="cmdlogStatus">Listening...</div>
+      <div class="cmdlog-body" id="cmdlogBody">
+        <div class="cmdlog-empty" id="cmdlogEmpty">No command activity yet.<br>Connect and poll to see entries.</div>
+      </div>
+      <div class="cmdlog-footer">
+        <button id="cmdlogClearBtn">Clear</button>
+        <button class="primary" id="cmdlogCopyBtn">&#x1F4CB; Copy Log</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Console Log Modal -->
+  <div class="console-modal" id="consoleModal">
+    <div class="console-content">
+      <div class="console-header">
+        <h3>&#x1F4DD; Page Console Logs</h3>
+        <button class="console-close" id="consoleClose">&#x2715;</button>
+      </div>
+      <div class="console-body" id="consoleBody">
+        <div class="console-empty" id="consoleEmpty">No console logs yet.<br>Open a page and it will appear here.</div>
+      </div>
+      <div class="console-footer">
+        <button id="consoleClearBtn">Clear</button>
+        <button class="primary" id="consoleCopyBtn">&#x1F4CB; Copy All</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./version-actions.js"></script>
+  <script src="./renderer-shell.js"></script>
+  <script src="./renderer-panels.js"></script>
+</body>
+</html>

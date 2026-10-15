@@ -111,6 +111,24 @@ const modelRowFor = (model, role, surface) =>
   detailedRows.find(
     (row) => row[0] === model && row[1] === role && row[2] === surface,
   );
+for (const [model, role] of [
+  ['Company', 'admin'],
+  ['Company', 'superadmin'],
+  ['User', 'admin'],
+  ['User', 'superadmin'],
+]) {
+  const row = modelRowFor(model, role, 'API');
+  assert.match(
+    row[13],
+    /UAT-045/,
+    `${model}/${role}/API evidence must reference persisted UAT-045`,
+  );
+  assert.equal(
+    row[14],
+    'BLOCKED',
+    `${model}/${role}/API must remain blocked until the complete operation matrix is tested`,
+  );
+}
 assert.equal(
   modelRowFor('ManagedInterface', 'admin', 'API')[4],
   '-',

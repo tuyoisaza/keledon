@@ -121,3 +121,12 @@ The current UAT-009/010 entries still claimed that no disposable PostgreSQL envi
 Updated current UAT rows and access report with the scoped PASS and explicit exhaustive-matrix limitation. No product authorization behavior changed. Whole Auto remains PARTIALLY DELIVERED for the open model/operation matrix and external/manual acceptance. API build and 36/36 regressions, all five application builds, PHDK coherence 52/52, and diff whitespace checks pass.
 
 ---
+## Current source remediation — candidate 5.1.57 (2026-10-14)
+
+The four Company/User API matrix rows for admin and superadmin incorrectly said no persistence execution, despite scoped exact-source evidence in UAT-045. Updated only their evidence descriptions to the outcomes actually exercised and retained BLOCKED status for exhaustive operation coverage. Regression 33 enforces both the citations and the continued blocked state; UAT-046 records this as evidence-integrity acceptance only.
+
+Regression 33 passes with 35/35 models and 490 unique model-role-surface tuples; full API regression passes 36/36; all five product builds pass; coherence is 52/52; all five package/lock roots and Browser renderer are 5.1.57. No runtime behavior changed. Whole Auto remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: deliver this source correction through the normal PR workflow, then exercise the next mapped persistence operations.
+
+---

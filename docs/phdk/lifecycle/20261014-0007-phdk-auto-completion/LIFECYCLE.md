@@ -12,7 +12,7 @@ Based on verified remote 5.1.55 `main` SHA `85d7ebbbdc0d834e28b9ce1c0fdeb50ce745
 | 60 UAT Fix | PASS FOR UAT STATUS RECONCILIATION | Current UAT-009/010 claims now match the available DB evidence. |
 | 65 SEO / 67 AEO-GEO | REUSED / NOT AFFECTED | Public claims unchanged; deployed measurements remain open. |
 | 70 Check / 80 Remediation | SCOPED PASS | Five builds, API regression, version alignment, coherence and local checks pass. |
-| 90 Delivery | PENDING | Version-prefixed commit, PR, merge and exact remote-main readback remain. |
+| 90 Delivery | PASS / REMOTE VERIFIED | PR #150 squash-merged at `7b535964b91815b964fd7c1ddc121a994883ebb8`; remote tree matches candidate and the completion gate passes. |
 
 Whole Auto remains **PARTIALLY DELIVERED**. Open: exhaustive mapped persisted operations/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected live integration evidence.
 
@@ -230,3 +230,20 @@ Goal: complete the four owner-confirmed fronts and applicable PHDK conformity.
 | 90 Delivery | COMPLETED — 5.1.27 MERGED / REMOTE VERIFIED | PR #96 merged at `a0425134ba69b1feaf165cd512caad8c136ca6f8`; remote readback and PR tree match. Whole-product acceptance remains partial. |
 
 Prior run `20261013-1900-phdk-auto` is retained as immutable history and evidence. Current run artifacts live in each numbered stage folder.
+## Current Auto continuation — candidate 5.1.57 CRUD evidence reconciliation (2026-10-14)
+
+Based on verified remote 5.1.56 `main` SHA `7b535964b91815b964fd7c1ddc121a994883ebb8`, tree `02c4ce60ad04c66847f747ace268cb2d2a0eaeb0`. Candidate 5.1.57 aligns five application package/lock roots and Browser renderer. UAT-046 and regression 33 map four Company/User API rows to UAT-045 evidence while preserving BLOCKED for incomplete operation coverage. No runtime behavior changed. Candidate checks and delivery are pending; whole Auto remains partial.
+
+| Stage | Status | Current evidence |
+|---|---|---|
+| 00 Preflight | REUSED | PHDK 2.50.10; coherence 52/52. |
+| 10 Capture / 20 Plan | REUSED | Four fronts and approved role/tenant/private URL policy. |
+| 30 PMO | CONTINUED | CRUD evidence traceability. |
+| 40 Integration Review | PASS FOR SOURCE SLICE | Four matrix rows now point to scoped persisted UAT. |
+| 50 UAT | PASS FOR UAT-046 / ACCEPTANCE INCOMPLETE | 46 PASS, 0 BLOCKED, 1 MANUAL. |
+| 60 UAT Fix | PASS FOR FINDING | Stale evidence wording corrected; full CRUD remains open. |
+| 65 SEO / 67 AEO-GEO | REUSED / NOT AFFECTED | Deployed measures remain open. |
+| 70 Check / 80 Remediation | IN PROGRESS | Regression, five builds, version alignment, coherence and diff check. |
+| 90 Delivery | IN PROGRESS | PR and remote readback pending. |
+
+---
