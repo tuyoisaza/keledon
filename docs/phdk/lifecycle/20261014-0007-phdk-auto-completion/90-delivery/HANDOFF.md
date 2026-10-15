@@ -1,6 +1,6 @@
 ## Current source candidate — 5.1.43
 
-Candidate `fix/phdk-rpa-tab-navigation-scope-5-1-43` is based on verified `origin/main` `e04418217e1ebb18acda9728a799041fd3bc3c19`. Product fix commit `29d18efbbabe159e5279a01ba767f70e54d8afdc`; exact tested candidate `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`). Five package/lock roots and Browser renderer align at 5.1.43. UAT-039 and CHK-AUTO-021 source remediation pass; Browser suite 27/27, security-policy/wiring 9/9, Browser build and PHDK coherence 52/52 pass. Source delivery is pending; whole PHDK Auto remains partial.
+Candidate `fix/phdk-rpa-tab-navigation-scope-5-1-43` is based on verified `origin/main` `e04418217e1ebb18acda9728a799041fd3bc3c19`. Product fix commit `29d18efbbabe159e5279a01ba767f70e54d8afdc`; exact tested candidate `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`). PR #127 squash-merged at `c2b918c734ea7b2c54d99902afae62615d05e2eb`; `origin/main` and `git ls-remote` agree and remote tree is `fa26e5e6857b1be8b9d803fadd4be8ccfb20b96c`. Five package/lock roots and Browser renderer align at 5.1.43. UAT-039 and CHK-AUTO-021 source remediation pass; Browser suite 27/27, security-policy/wiring 9/9, Browser build and PHDK coherence 52/52 pass. Post-merge evidence: `PHDK_DELIVERY_EVIDENCE-5.1.43-post-merge-127.json`. Whole PHDK Auto remains partial.
 
 ## Current source candidate — 5.1.42
 

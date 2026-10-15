@@ -6,7 +6,7 @@ The four owner-confirmed fronts remain active in order. Product fix `29d18efbbab
 
 | Commitment | Current candidate evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 — baseline, versions, PRs | Version alignment and verified base are confirmed. | Candidate push/PR, merge and exact remote readback pending. |
+| CMT-001 — baseline, versions, PRs | PR #127 merged; `origin/main` and `git ls-remote` agree at `c2b918c734ea7b2c54d99902afae62615d05e2eb`; remote tree `fa26e5e6857b1be8b9d803fadd4be8ccfb20b96c`; all roots 5.1.43. | Continue baseline/PR surveillance on subsequent changes. |
 | CMT-002 — widget and safe diagnostics | No diagnostics UI changes; prior local diagnostics evidence remains applicable. | Native Windows device/audio and broad accessibility/localization remain open. |
 | CMT-003 — voice → Cloud → Browser → CRM per client | RPA navigation guards share the tenant-origin scope; configured private CRM origins remain supported. | Packaged Electron and client-specific live provider/CRM acceptance, plus subresource behavior, remain open. |
 | CMT-004 — administration and permissions | Approved actor/tenant policy remains; this candidate closes Browser navigation scope defense-in-depth. | Safe DB identities, disposable PostgreSQL, persisted migrations/CRUD and exhaustive model × role × tenant × surface × operation acceptance remain open. |

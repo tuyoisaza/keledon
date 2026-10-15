@@ -11,7 +11,7 @@ Goal: four owner-confirmed KELEDON fronts in agreed order, aligned to applicable
 | 00 Preflight | REUSED / REVALIDATED | Installed PHDK 2.50.10; coherence 52/52. |
 | 10 Capture | REUSED | Four confirmed fronts, least-privilege policy and tenant-private CRM allowlist retained. |
 | 20 Plan | REUSED | Existing brownfield plan and dependency order remain applicable. |
-| 30 PMO / Workstreams | CONTINUED | Four fronts remain active; PRs #125/#126 delivery readbacks reconciled. |
+| 30 PMO / Workstreams | CONTINUED | Four fronts remain active; PRs #125/#126/#127 delivery readbacks reconciled. |
 | 40 Integration Review | COMPLETED FOR 5.1.43 SOURCE | RPA tenant scope reaches Electron BrowserView navigation, frames, redirects, popups and IPC. |
 | 50 UAT | COMPLETED FOR CANDIDATE / WHOLE PARTIAL | UAT-039 passes; whole acceptance 36 PASS, 2 BLOCKED, 1 MANUAL. |
 | 60 UAT Fix | COMPLETED FOR CHK-AUTO-021 | Runtime WebContents scope is applied and restored around each RPA flow. |
@@ -19,7 +19,7 @@ Goal: four owner-confirmed KELEDON fronts in agreed order, aligned to applicable
 | 67 AEO/GEO | REUSED / SOURCE REVIEW | No public claim changed; live answer-engine/crawler measurement unavailable. |
 | 70 Check | SOURCE CHECK PASS / ACCEPTANCE PARTIAL | Snapshot `70-check/snapshots/candidate-5.1.43/PHDK_CHECK_REPORT.md`. |
 | 80 Remediation | COMPLETED FOR CANDIDATE | Browser suite 27/27, security-policy/wiring 9/9, Browser build, coherence 52/52. Browser ESLint remains blocked by configuration. |
-| 90 Delivery | PENDING | Local versioned source commit only; push/PR/merge/readback/gate remain. |
+| 90 Delivery | SOURCE MERGED / VERIFIED | PR #127; `origin/main` and `git ls-remote` agree at `c2b918c734ea7b2c54d99902afae62615d05e2eb`; tree `fa26e5e6857b1be8b9d803fadd4be8ccfb20b96c`; five app roots and renderer 5.1.43. Evidence: `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.43-post-merge-127.json`. |
 
 Overall status: **PARTIALLY DELIVERED**. No database, production identity, customer endpoint, private destination, device or deployment was used.
 

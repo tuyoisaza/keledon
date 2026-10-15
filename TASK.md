@@ -4,9 +4,9 @@
 
 Continue the owner-confirmed four-front portfolio in order. Verified base is `origin/main` `e04418217e1ebb18acda9728a799041fd3bc3c19`; product fix commit `29d18efbbabe159e5279a01ba767f70e54d8afdc` on `fix/phdk-rpa-tab-navigation-scope-5-1-43` is version 5.1.43 across all five app package/lock roots and Browser renderer. Exact tested candidate is `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`). CHK-AUTO-021 applies the trusted RPA tenant allowlist to active BrowserView navigation, frame, redirect, popup and IPC guards during execution; previous scope is restored on completion/cancellation. UAT-039 passes: Browser tests 27/27, security-policy/wiring 9/9, Browser build and PHDK coherence 52/52. Evidence is under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/`.
 
-Delivery is pending. Browser ESLint remains unavailable because ESLint 10 requires a flat config that this package lacks. Whole UAT is 36 PASS, 2 BLOCKED, 1 MANUAL. Persisted PostgreSQL/identity/CRUD, native Windows device/audio, broad accessibility/localization, deployed SEO/AEO and per-client live call/CRM acceptance remain open. No real CRM, DB, customer data, device or deployment was used.
+PR #127 merged by squash at `c2b918c734ea7b2c54d99902afae62615d05e2eb`. `origin/main` and `git ls-remote` agree; remote tree is `fa26e5e6857b1be8b9d803fadd4be8ccfb20b96c`, and all package/lock roots plus Browser renderer are 5.1.43. Browser ESLint remains unavailable because ESLint 10 requires a flat config that this package lacks. Whole UAT is 36 PASS, 2 BLOCKED, 1 MANUAL. Persisted PostgreSQL/identity/CRUD, native Windows device/audio, broad accessibility/localization, deployed SEO/AEO and per-client live call/CRM acceptance remain open. No real CRM, DB, customer data, device or deployment was used.
 
-SIGUIENTE PASO: complete the candidate's Check/Remediation handoffs, publish the versioned PR, verify normal review/check controls and remote `main`, then continue the outstanding owner-confirmed Auto acceptance.
+SIGUIENTE PASO: continue the outstanding owner-confirmed Auto acceptance, prioritizing safe DB-backed identities/persisted CRUD, then native device/audio and the remaining accessibility/localization and deployed SEO/AEO gates.
 
 ---
 
