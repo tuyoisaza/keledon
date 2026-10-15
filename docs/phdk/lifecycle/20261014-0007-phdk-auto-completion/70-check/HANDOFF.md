@@ -1,5 +1,13 @@
 # Check handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.40 — diagnostics route role alignment (2026-10-14)
+
+Check found `/management/debug` used hierarchical `minRole="admin"`, which admitted coordinators even though the existing diagnostics API guard denies them. `ProtectedRoute` now supports an explicit allowlist; the route permits only admin/superadmin and API authorization remains unchanged. Exact-source built-SPA UAT-034 passes 1/1: coordinator is redirected before protected deep-health access; admin receives a mocked response; external traffic is blocked. Source commit `8d000a5d4aa95dc361d19a5eca02fe4544be0417`, tree `cc41a3b3d030d72db006809553983abb2368d54b`, version 5.1.40. Web diagnostics 19/19, SEO source 1/1, Web/Landing builds and typechecks, API/Cloud builds, Browser build, focused Web ESLint, and PHDK coherence 52/52 pass. Evidence: `../50-uat/evidence/uat-management-debug-role-5.1.40.json`.
+
+Status: **SCOPED SOURCE CHECK PASS / WHOLE ACCEPTANCE PARTIAL**. CHK-AUTO-018 is closed for source; exhaustive persisted CRUD/role/tenant operations, disposable PostgreSQL and identities, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Customer call/CRM acceptance is per tenant; no client runtime was exercised. Normal PR delivery and remote-main readback remain next.
+
+---
+
 ## Candidate 5.1.36 — Device role/surface closure (2026-10-14)
 
 Source review found `/devices` had no manager revoke affordance and `registerDevice` could bind a company-less actor to a pending row. The API now stamps the current DB actor/company and rejects missing company; Web adds manager-only revoke with accessible confirmation, retryable error and successful list update. The Device role/API/Web matrix adds 14 rows, expanding drift validation to 35 Prisma models and 168 rows. API build and 35/35 regression suites, targeted API/Web ESLint, Web typecheck/build, synthetic UAT-032 and PHDK coherence pass. UAT screenshots/fingerprint are recorded in `docs/phdk/evidence/uat-device-5.1.36.json`; full local SPA UAT passes 2/2. Web/Landing SEO source tests pass 1/1; no public route or content changed, so prior AEO/GEO review is reused. The matrix covers source shape only: disposable DB, persisted role × tenant operations, live pairing/Qdrant, broad accessibility/localization and deployed search evidence remain open. CRM is client-selected and private destinations remain URL-validated/tenant-allowlisted; no private host was contacted. No database, customer data or deployment was used.

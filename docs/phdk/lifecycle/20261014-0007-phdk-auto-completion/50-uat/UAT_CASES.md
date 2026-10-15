@@ -1,5 +1,15 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Current candidate 5.1.40 — debug diagnostics role alignment
+
+| Case | Story / actor | Acceptance / steps | Result and evidence |
+|---|---|---|---|
+| UAT-034 | US-002 / coordinator and admin using diagnostics | Open `/management/debug` as a synthetic coordinator and admin; verify coordinator is redirected before any protected deep-health request, while admin can enable the local diagnostics panel and receive the mocked deep-health response. | PASS on source `8d000a5d4aa95dc361d19a5eca02fe4544be0417` (tree `cc41a3b3d030d72db006809553983abb2368d54b`), dedicated production-SPA test `services/web/test/management-debug-role-uat.test.cjs`; coordinator redirect, admin access, every response synthetic and all other external traffic blocked. Evidence: `50-uat/evidence/uat-management-debug-role-5.1.40.json`; no database or live service used. |
+
+Overall UAT remains **ACCEPTANCE INCOMPLETE — 31 PASS, 2 BLOCKED, 1 MANUAL**. UAT-009/010 PostgreSQL/identities and UAT-006 native device/audio remain open; full CRUD operation-role-surface coverage, broad accessibility/localization and deployed SEO/AEO remain partial or unverified. UAT-034 closes one local role-route mismatch only.
+
+---
+
 ## Current candidate 5.1.39 — exact-SHA write-contract case
 
 | Case | Story / actor | Acceptance / steps | Result and evidence |

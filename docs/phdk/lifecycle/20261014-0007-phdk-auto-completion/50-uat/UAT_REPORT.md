@@ -1,5 +1,15 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Latest candidate 5.1.40 — debug diagnostics role alignment (2026-10-14)
+
+UAT-034 passes against the built Web SPA at source commit `8d000a5d4aa95dc361d19a5eca02fe4544be0417` (tree `cc41a3b3d030d72db006809553983abb2368d54b`). As a synthetic coordinator, opening `/management/debug` redirects to `/dashboard` before the browser requests protected `/health/deep`; as a synthetic admin, the route loads and enabling the diagnostics control receives the mocked health response. The dedicated Playwright test is `services/web/test/management-debug-role-uat.test.cjs`; it blocks all external traffic except the synthetic deep-health fixture and never writes to the shared screenshot/evidence directory. Machine-readable evidence is `50-uat/evidence/uat-management-debug-role-5.1.40.json`. This closes the source/UI mismatch with the existing server `RolesGuard` (`admin`, `developer`, `superadmin`) without changing backend authorization.
+
+Web build/typecheck and changed-file ESLint pass; Web diagnostics are 19/19, Web SEO source test 1/1, Browser build synchronizes renderer `v5.1.40`, and API, Cloud, Landing builds/typechecks pass. All five application package/lock roots and the Browser renderer are 5.1.40. UAT-034 adds one scoped PASS; whole acceptance remains **ACCEPTANCE INCOMPLETE: 31 PASS, 2 BLOCKED, 1 MANUAL**. Disposable PostgreSQL/identities, native Windows device/audio, exhaustive persisted CRUD, broad accessibility/localization and deployed SEO/AEO remain open. No database, real identity, CRM, provider or deployment was used.
+
+UAT-034 and CHK-AUTO-018 are bound to the exact source commit and tree. Normal PR delivery and remote-main readback are the remaining source-delivery steps; whole Auto acceptance remains partial.
+
+---
+
 ## Latest candidate 5.1.39 — exact-revision regression (2026-10-14)
 
 Branch `fix/phdk-mvp-store-write-contracts-5-1-39`, revision `a8a89f928312db2fef5142a0e07ac18a197b6c19`, based on verified local/remote main `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`. The API and Cloud production builds pass; all API regression suites pass 36/36 and all Cloud suites pass 16/16. UAT-033 passes: each backend's three-case contract test rejects forbidden and unsupported input, binds `createdBy` to the server actor, and verifies controller attribution. Web diagnostics pass 19/19 and synthetic built-SPA UAT passes 2/2; Web/Landing typecheck/build and SEO source tests pass; Browser build passes. Source inventory is 1,167 files and zero at/above 600 lines. PHDK v2.50.10 coherence is 52/52. Exact-candidate evidence is in `evidence/uat-local-web-5.1.39.json`.

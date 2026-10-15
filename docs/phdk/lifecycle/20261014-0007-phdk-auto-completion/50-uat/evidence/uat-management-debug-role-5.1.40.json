@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-034",
+  "candidateVersion": "5.1.40",
+  "branch": "fix/diagnostics-route-roles-5-1-40",
+  "sourceCommit": "8d000a5d4aa95dc361d19a5eca02fe4544be0417",
+  "sourceTree": "cc41a3b3d030d72db006809553983abb2368d54b",
+  "command": "node --test test/management-debug-role-uat.test.cjs",
+  "result": {
+    "status": "PASS",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0
+  },
+  "assertions": [
+    "Synthetic coordinator is redirected from /management/debug before /health/deep is requested.",
+    "Synthetic admin can open diagnostics and receive the mocked deep-health response."
+  ],
+  "isolation": {
+    "apiResponses": "synthetic fixtures only",
+    "externalNetwork": "blocked except the mocked deep-health fixture",
+    "database": "not used",
+    "customerData": "not used",
+    "sharedScreenshotsOrEvidence": "not written"
+  },
+  "scope": "Closes the diagnostics UI/backend role mismatch at source level only; it does not certify database persistence, live identity, native device/audio, deployment, or whole-product PHDK Auto acceptance.",
+  "executedAtLocalDate": "2026-10-14"
+}
