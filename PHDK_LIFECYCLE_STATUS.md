@@ -11,7 +11,7 @@ Goal: four owner-confirmed KELEDON fronts in agreed order, aligned to applicable
 | 00 Preflight | REUSED / REVALIDATED | Installed PHDK 2.50.10; coherence 52/52. |
 | 10 Capture | REUSED | Four fronts, least-privilege policy and tenant-private CRM allowlist remain confirmed. |
 | 20 Plan | REUSED | Existing brownfield plan and dependency order remain applicable. |
-| 30 PMO / Workstreams | CONTINUED | PRs #125–#128 readbacks reconciled; four fronts remain active. |
+| 30 PMO / Workstreams | CONTINUED | PRs #125–#129 readbacks reconciled; four fronts remain active. |
 | 40 Integration Review | COMPLETED FOR 5.1.44 SOURCE | Active RPA tenant scope now covers navigation and HTTP(S)/WebSocket requests, including unattributed service-worker traffic. |
 | 50 UAT | COMPLETED FOR CANDIDATE / WHOLE PARTIAL | UAT-040 passes offline; whole acceptance 37 PASS, 2 BLOCKED, 1 MANUAL. |
 | 60 UAT Fix | COMPLETED FOR CHK-AUTO-022 | Resource requests are checked against tenant origins; ambiguous worker requests deny conservatively. |
@@ -19,7 +19,7 @@ Goal: four owner-confirmed KELEDON fronts in agreed order, aligned to applicable
 | 67 AEO/GEO | REUSED / SOURCE REVIEW | No public claims changed; live measurements remain unavailable. |
 | 70 Check | SOURCE CHECK PASS / ACCEPTANCE PARTIAL | Snapshot `70-check/snapshots/candidate-5.1.44/PHDK_CHECK_REPORT.md`. |
 | 80 Remediation | COMPLETED FOR CANDIDATE | Browser 27/27; security-policy/wiring 11/11; Browser build; coherence 52/52; lint blocked. |
-| 90 Delivery | PENDING | Versioned candidate committed; push/PR/merge/readback remain. |
+| 90 Delivery | SOURCE MERGED / VERIFIED; GATE BLOCKED | PR #129; `origin/main` and `git ls-remote` agree at `02d6d730f6713299bce627c1fdd7c8a2ff7538ca`; tree `823887e5096f9c9a4736f75983623138d88d86d4`; all roots 5.1.44. Deterministic completion gate is BLOCKED by lint and partial Auto acceptance. Evidence: `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.44-post-merge-129.json`. |
 
 Overall status: **PARTIALLY DELIVERED**. No packaged Electron runtime, customer endpoint/data, database, device or deployment was used.
 

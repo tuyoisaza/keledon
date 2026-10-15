@@ -12,14 +12,14 @@
 - Whole-product Auto remains **PARTIALLY DELIVERED** pending database-backed migration/CRUD, safe development identities, native device/audio, broad route accessibility/localization and deployed SEO/AEO evidence. No migration or deployment was performed.
 # STATUS
 
-## 2026-10-15 — PHDK Auto candidate 5.1.44; RPA resource-scope source pass
+## 2026-10-15 — PHDK Auto 5.1.44 source merged; acceptance partial
 
 - CHK-AUTO-022 fixes unscoped HTTP(S)/WebSocket resource requests during RPA. BrowserView requests use their Cloud-derived tenant origin scope; unattributed service-worker requests resolve by initiator and active-scope intersection, otherwise deny.
-- Source commit `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`) is based on verified `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041`; all five package/lock roots and Browser renderer report 5.1.44.
+- Source commit `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`) is based on verified `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041`; PR #129 merged at `02d6d730f6713299bce627c1fdd7c8a2ff7538ca`; remote tree `823887e5096f9c9a4736f75983623138d88d86d4`; all five package/lock roots and Browser renderer report 5.1.44.
 - Browser suite 27/27, security-policy/wiring 11/11, Browser TypeScript build, PHDK coherence 52/52 pass. UAT-040 is offline/source-contract evidence only; no packaged runtime or live customer system was used. Browser ESLint remains blocked by absent flat config.
 - Whole acceptance is **PARTIALLY DELIVERED**: 37 PASS, 2 BLOCKED, 1 MANUAL. Persisted DB/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-client live call/CRM remain open.
 
-SIGUIENTE PASO: finalize exact-candidate Check/Remediation handoffs and deliver the source through PR, then read back remote `main`.
+SIGUIENTE PASO: continue persisted authorization/CRUD verification with safe identities and disposable PostgreSQL.
 
 ## 2026-10-14 — PHDK Auto 5.1.43 source merged; acceptance partial
 

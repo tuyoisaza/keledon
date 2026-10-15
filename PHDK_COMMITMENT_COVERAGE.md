@@ -1,13 +1,13 @@
-## Current Auto candidate — 2026-10-15, 5.1.44 (source delivery pending)
+## Current Auto candidate — 2026-10-15, 5.1.44 (source merged / verified)
 
 | Commitment | Current candidate evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | Product candidate `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`), based on verified `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041`; all five app roots and Browser renderer are 5.1.44. | Push/PR, merge and exact remote readback pending. |
+| CMT-001 | Product candidate `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`), PR #129 merged at `02d6d730f6713299bce627c1fdd7c8a2ff7538ca`; `origin/main` and `git ls-remote` agree, tree `823887e5096f9c9a4736f75983623138d88d86d4`; all five app roots and renderer 5.1.44. | Completion gate remains BLOCKED by lint and unfinished Auto acceptance. |
 | CMT-002 | Diagnostics behavior unchanged. | Native device/audio and broad accessibility/localization remain open. |
 | CMT-003 | HTTP(S)/WebSocket resource requests and navigations share active tenant RPA scope; service-worker ambiguity is handled conservatively. | Packaged Electron, customer CDN/origin setup, and client-specific live provider acceptance remain open. |
 | CMT-004 | CHK-AUTO-022 closes a Browser request-scope gap; PHDK coherence 52/52. | Persistence, safe DB identities and exhaustive authorization matrix remain open. |
 
-UAT is **37 PASS, 2 BLOCKED, 1 MANUAL**. **Source delivery pending; overall PHDK Auto remains PARTIALLY DELIVERED.**
+UAT is **37 PASS, 2 BLOCKED, 1 MANUAL**. **Source merged / remote verified; overall PHDK Auto remains PARTIALLY DELIVERED.**
 
 ---
 

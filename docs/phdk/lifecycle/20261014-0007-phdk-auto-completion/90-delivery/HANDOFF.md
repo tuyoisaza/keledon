@@ -1,4 +1,12 @@
-## Current source candidate — 5.1.43
+## Current source delivery — 5.1.44 verified
+
+PR [#129](https://github.com/tuyoisaza/keledon/pull/129) squash-merged product candidate `0cbf038ed8ce7f27b1459c3a922a93f04165da46` at `02d6d730f6713299bce627c1fdd7c8a2ff7538ca`. `origin/main` and `git ls-remote` agree; remote tree `823887e5096f9c9a4736f75983623138d88d86d4`. All five application package/lock roots and Browser renderer report 5.1.44. UAT-040, Browser suite 27/27, security-policy/wiring tests 11/11, Browser build and PHDK coherence 52/52 pass. GitHub reported no hosted checks or review decision. The deterministic PHDK completion gate is BLOCKED by Browser lint and incomplete whole-Auto acceptance. Evidence: `PHDK_DELIVERY_EVIDENCE-5.1.44-post-merge-129.json`. No deployment is claimed.
+
+Whole PHDK Auto remains **PARTIALLY DELIVERED**: 37 PASS, 2 BLOCKED, 1 MANUAL. Persisted DB/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO, and per-client live call/CRM acceptance remain open.
+
+---
+
+## Previous verified source delivery — 5.1.43
 
 Candidate `fix/phdk-rpa-tab-navigation-scope-5-1-43` is based on verified `origin/main` `e04418217e1ebb18acda9728a799041fd3bc3c19`. Product fix commit `29d18efbbabe159e5279a01ba767f70e54d8afdc`; exact tested candidate `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`). PR #127 squash-merged at `c2b918c734ea7b2c54d99902afae62615d05e2eb`; `origin/main` and `git ls-remote` agree and remote tree is `fa26e5e6857b1be8b9d803fadd4be8ccfb20b96c`. Five package/lock roots and Browser renderer align at 5.1.43. UAT-039 and CHK-AUTO-021 source remediation pass; Browser suite 27/27, security-policy/wiring 9/9, Browser build and PHDK coherence 52/52 pass. Post-merge evidence: `PHDK_DELIVERY_EVIDENCE-5.1.43-post-merge-127.json`. Whole PHDK Auto remains partial.
 
