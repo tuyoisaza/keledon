@@ -1,0 +1,79 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "candidate_version": "5.1.52",
+  "tested_source_commit": "03ea78968103aa6bc6290ed0681b1c1ea345872a",
+  "tested_source_tree": "5bf455943353754355f0a0f3d95e5f576d9dda6a",
+  "environment": {
+    "target": "disposable local UAT",
+    "database": "PostgreSQL 16.15",
+    "database_host": "127.0.0.1",
+    "database_port": 55432,
+    "database_name": "keledon_phdk_uat",
+    "synthetic_identities_only": true,
+    "customer_data": false,
+    "external_provider_requests": false
+  },
+  "uat_009_identity": {
+    "status": "PASS",
+    "checks": [
+      "Public registration persisted users with role=user.",
+      "Password login returned the DB-backed role and identity.",
+      "A synthetic existing superadmin assigned a tenant admin through the API.",
+      "The persisted tenant admin logged in with the assigned company and role.",
+      "A coordinator and ordinary user were authenticated from persisted records."
+    ]
+  },
+  "uat_010_migrations_and_persistence": {
+    "status": "PASS",
+    "prisma_migrations_found": 8,
+    "first_deploy": "PASS; all eight migrations applied",
+    "second_deploy": "PASS; no pending migrations",
+    "schema_status": "up to date",
+    "vendor_secret_migration": {
+      "dry_run_rows_pending": 1,
+      "first_apply_rows_encrypted": 1,
+      "repeat_apply_rows_encrypted": 0,
+      "synthetic_secrets_printed": false
+    },
+    "role_tenant_crud": [
+      "Superadmin company create and tenant role assignment persisted.",
+      "Admin and coordinator read their own company only.",
+      "Admin and coordinator could not create/delete companies, elevate roles, or move users to another company.",
+      "Cross-tenant company read was denied; same-tenant read was allowed.",
+      "Admin-created users were forced to role=user in the actor company.",
+      "Ordinary users were denied company-management data."
+    ],
+    "session_crud": {
+      "status": "PASS",
+      "source_commit": "03ea78968103aa6bc6290ed0681b1c1ea345872a",
+      "authenticated_role": "admin",
+      "tenant": "synthetic tenant A",
+      "checks": [
+        "POST /api/crud/sessions persisted an allowed session for the tenant team.",
+        "PUT /api/crud/sessions/:id updated metadata and status; GET returned metadata revision 2.",
+        "Legacy summary update was denied with HTTP 403.",
+        "Team reassignment update was denied with HTTP 403."
+      ]
+    },
+    "knowledge_base_delete": {
+      "status": "BLOCKED",
+      "reason": "Qdrant was unavailable on loopback; knowledge-base/document deletion depends on vector cleanup. No vector data was changed."
+    }
+  },
+  "vendor_secret_and_private_origin": {
+    "status": "PASS",
+    "private_loopback_origin": "http://127.0.0.1:9876",
+    "tenant_allowlisted": true,
+    "destination_contacted": false,
+    "create_read_secret_projection": "PASS; username masked and password/apiKey omitted; presence flags only"
+  },
+  "limitations": [
+    "This run covers core persisted role and tenant paths, not every operation for all 26 Prisma models.",
+    "The initial synthetic superadmin fixture was elevated directly inside the empty disposable database; application role assignment from that fixture was exercised through the API.",
+    "Native Electron pairing, physical-device audio, exhaustive accessibility/localization, deployed SEO/AEO, Qdrant concurrency, and customer-specific call/CRM acceptance remain open.",
+    "This continuation reuses the 5.1.51 DB-backed identity, migration, tenant-role, secret-migration and vendor projection evidence; only session CRUD was rerun against 5.1.52. It does not claim exhaustive 35-model operation coverage.",
+    "Knowledge-base/document deletion remains blocked until an isolated Qdrant fixture is available; CRUD create/update/read paths passed, and no vector records were changed."
+  ],
+  "cleanup": "API and PostgreSQL stopped after loopback-only tests. Isolated synthetic PostgreSQL cluster retained in task temp for reproducibility; no production/customer service was contacted.",
+  "baseline_db_evidence_reused": "docs\\phdk\\lifecycle\\20261014-0007-phdk-auto-completion\\50-uat\\evidence\\uat-postgres-roles-5.1.51-5b7e2551.json"
+}

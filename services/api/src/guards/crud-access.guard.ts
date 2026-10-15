@@ -204,15 +204,12 @@ export class CrudAccessGuard implements CanActivate {
           'isEnabled',
           'isDefault',
         ],
-        sessions: [
-          'teamId',
-          'userId',
-          'status',
-          'startedAt',
-          'endedAt',
-          'transcript',
-          'summary',
-        ],
+        sessions:
+          handler === 'createSession'
+            ? ['teamId', 'userId', 'status', 'metadata']
+            : handler === 'updateSession'
+              ? ['status', 'metadata']
+              : ['teamId', 'userId', 'status', 'metadata'],
         knowledge:
           handler === 'createKnowledgeBase'
             ? ['companyId', 'name', 'description']

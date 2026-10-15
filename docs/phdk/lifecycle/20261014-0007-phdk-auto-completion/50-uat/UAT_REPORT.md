@@ -1,3 +1,11 @@
+## Latest candidate 5.1.52 — session CRUD guard fix (2026-10-14 local / 2026-10-15 UTC)
+
+The API/Cloud CRUD guards had a stale `sessions` field allowlist: the Prisma service accepts `metadata`, while the guard exposed older `startedAt`, `endedAt`, `transcript` and `summary` fields. Candidate `03ea78968103aa6bc6290ed0681b1c1ea345872a` corrects the create/update allowlists in both backends. Unit regressions assert API/Cloud parity, allow metadata and status, and reject old or tenant-changing fields.
+
+Exact-candidate PostgreSQL UAT passes: synthetic admin login, session creation, metadata/status update and GET readback passed; legacy `summary` and team reassignment returned HTTP 403. Evidence: `evidence/uat-postgres-roles-5.1.52-03ea7896.json`. The isolated API and PostgreSQL services were stopped after the test. Baseline identity, migration, tenant and secret-projection UAT is reused from `uat-postgres-roles-5.1.51-5b7e2551.json`.
+
+Built Web UAT on exact commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` passes 4/4. It uses mocked Company Co APIs and blocked external requests; this does not certify deployed login or full-app accessibility. Current tally is **39 PASS, 1 BLOCKED, 1 MANUAL**: Knowledge deletion remains blocked because no isolated Qdrant is running, and native device/audio remains manual. Exhaustive 35-model operation coverage, broad accessibility/localization, deployed SEO/AEO and customer-specific call/CRM acceptance remain open. No customer data, provider destination, physical microphone or deployment was used.
+
 ## Latest candidate 5.1.47 — API async failure handling (2026-10-15)
 
 Built-SPA synthetic UAT passes 4/4 suites against package version 5.1.47. Evidence: `docs/phdk/evidence/uat-local-web.json`; it records source fingerprint `sha256:4e38486c48fde20990659479e80f6f76b5365f83f1052ed4d82cdb2728d3f5e3` on base revision `10c57ff44a9d3d09e55023c466d72adefd6d3e66`, with synthetic APIs and external traffic blocked. The current product slice is API-only; UAT confirms version alignment and existing mocked Web journeys, not API room/provider behavior or real authorization. API/Cloud regressions pass 36/36 and 16/16, Browser tests 40/40. Whole product UAT remains 37 PASS, 2 BLOCKED, 1 MANUAL. No DB, customer endpoint, device or deployment was used.

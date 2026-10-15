@@ -1,25 +1,25 @@
-## PHDK Auto 5.1.51 — candidate validated; delivery in progress
+## PHDK Auto 5.1.52 — source fix validated; delivery in progress
 
-Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; target `main`. Installed PHDK 2.50.10; coherence 52/52. Candidate `09ef2497957c381a3af7428af393b65b811c2fe6` (tree `fdb14b554ad46b1908b2041bfa781bb15bd0a716`) on `fix/phdk-api-lint-zero-5-1-51` is based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`. Five app package/lock roots and Browser renderer are 5.1.51.
+Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; target `main`. Installed PHDK 2.50.10; last verified coherence 52/52. Candidate `03ea78968103aa6bc6290ed0681b1c1ea345872a` (tree `5bf455943353754355f0a0f3d95e5f576d9dda6a`) on `docs/phdk-auto-db-uat-evidence` is based on verified main `5b7e25512c95737688beea43b2d7172199dfa231` / 5.1.51. All five app roots/locks and Browser renderer are 5.1.52; PR #142 is open and delivery is not yet verified on main.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
 | 00 Preflight | REUSED / REVALIDATED | PHDK 2.50.10; coherence 52/52. |
 | 10 Capture | REUSED | Four owner-confirmed fronts; least privilege and tenant private-origin allowlists retained. |
 | 20 Plan | REUSED | Brownfield plan and dependency order retained. |
-| 30 PMO / Workstreams | CONTINUED | Four-front source audit and PR reconciliation; no prior open PR. |
-| 40 Integration Review | COMPLETED | Truthful tenant runtime, persistent subagent run state, zero-warning API lint, versions aligned. |
-| 50 UAT | COMPLETED FOR SOURCE / WHOLE PARTIAL | Exact-source synthetic SPA 4/4; external traffic blocked. |
-| 60 UAT Fix | COMPLETED FOR SOURCE FINDINGS | Unsupported tenant execution steps fail closed; no mock connection/sync or process results. |
+| 30 PMO / Workstreams | CONTINUED | Four confirmed fronts retained in order; PR #142 now carries the scoped session-guard fix. |
+| 40 Integration Review | COMPLETED FOR 5.1.52 SLICE | API/Cloud session field allowlists aligned with the Prisma service contract; stale fields and tenant reassignment remain denied. |
+| 50 UAT | 39 PASS / 1 BLOCKED / 1 MANUAL | Exact-candidate Web UAT 4/4; persisted session metadata create/update/readback and 403 negatives pass. Qdrant-dependent delete and native device/audio remain blocked/manual. |
+| 60 UAT Fix | SOURCE COMPLETE / QDRANT REMAINS OPEN | Session guard mismatch fixed. Knowledge delete depends on an isolated Qdrant service not available in this run. |
 | 65 SEO | SOURCE PASS | Web/Landing source tests 1/1 each; deployed measurement remains open. |
 | 67 AEO/GEO | REUSED / EXTERNAL MEASUREMENT OPEN | Public claims unchanged; no crawler or answer-engine measurement. |
-| 70 Check | COMPLETED FOR SOURCE / WHOLE PARTIAL | API lint 0/0; regressions, builds, typechecks, Browser, UAT, diagnostics and coherence pass. |
-| 80 Remediation | COMPLETED FOR 5.1.51 SOURCE SLICE | Source findings repaired and exact-source UAT rerun. |
-| 90 Delivery | SOURCE SLICE COMPLETED / VERIFIED | PR #140 merged; remote SHA `156ae2467c9ed6f73311ec45cae933417b1e5f32`, tree/version verified. |
+| 70 Check | SOURCE PASS / WHOLE PARTIAL | API/Cloud 36/16 regressions, builds/lint, Browser build/lint, Web/Landing builds/typechecks/lint, Web UAT/diagnostics and SEO source checks pass. |
+| 80 Remediation | COMPLETED FOR 5.1.52 SOURCE FINDING | Session metadata now persists through the scoped API and Cloud CRUD guards; exact-candidate DB test passed. |
+| 90 Delivery | IN PROGRESS | PR #142 is open; source commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` is not on remote main yet. |
 
-Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL). Persistent DB identities/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live call/CRM remain open. No live CRM/private endpoint, DB, customer data, device or deployment was used.
+Whole Auto remains **PARTIALLY DELIVERED**. The latest formal UAT tally is 39 PASS, 1 BLOCKED (Qdrant-dependent Knowledge delete) and 1 MANUAL (native device/audio). Exhaustive 35-model operation coverage, Qdrant concurrency, broad accessibility/localization, deployed SEO/AEO and customer-specific call/CRM acceptance remain open. Only synthetic data in disposable loopback services was used; no customer endpoint or deployment was accessed.
 
-SIGUIENTE PASO: continuar solo los compromisos pendientes de Auto; obtener evidencia aislada de DB/nativo y mediciones SEO/AEO desplegadas, y conservar el estado PARTIALLY DELIVERED hasta cerrar la aceptación total.
+SIGUIENTE PASO: push and merge the verified 5.1.52 candidate through PR #142, read back remote `main`, record post-merge evidence, and keep PHDK Auto PARTIALLY DELIVERED while remaining acceptance gates are open.
 
 ---
 

@@ -1,3 +1,24 @@
+## Current Auto continuation — 5.1.52 session guard and DB-backed UAT (2026-10-14 local)
+
+Candidate source `03ea78968103aa6bc6290ed0681b1c1ea345872a` / 5.1.52 is based on verified remote `main` commit `5b7e25512c95737688beea43b2d7172199dfa231` (tree `ccbcf9a5151e574282e89f214fc8bdaafbae6cac`). This continuation reuses the scoped 5.1.51 DB evidence for all eight migrations, persisted registration/login, roles, tenant boundaries, secret migration and safe vendor projections. The exact 5.1.52 candidate was tested against the disposable PostgreSQL 16.15 instance on `127.0.0.1`: session create and metadata/status update persisted and read back; legacy `summary` and team reassignment returned 403. Full evidence: `50-uat/evidence/uat-postgres-roles-5.1.52-03ea7896.json`.
+
+| Stage | Current status | Evidence / remaining work |
+|---|---|---|
+| 00 Preflight | VERIFIED | PHDK 2.50.10 coherence 52/52. |
+| 10 Capture / 20 Plan / 30 PMO | CONTINUED | Four owner-approved fronts and tenant-specific integrations remain in scope. |
+| 40 Integration Review | SOURCE PASS — 5.1.52 | API/Cloud session allowlists match the Prisma service contract; all five app roots and Browser renderer are 5.1.52. PR #142 is open. |
+| 50 UAT | 39 PASS / 1 BLOCKED / 1 MANUAL | Exact 5.1.52 session CRUD passes; Qdrant-dependent Knowledge deletion is blocked, native device/audio remains manual. |
+| 60 UAT Fix | SOURCE COMPLETE / QDRANT BLOCKED | The session allowlist mismatch is fixed in both backends; live vector cleanup requires an isolated Qdrant fixture. |
+| 65 SEO / 67 AEO-GEO | SOURCE PASS / DEPLOYED MEASUREMENT OPEN | Published crawler, Search Console and answer-engine measurements unavailable. |
+| 70 Check | SOURCE PASS / WHOLE ACCEPTANCE PARTIAL | API/Cloud 36/16 regressions, five builds, scoped lint/typecheck, Web UAT 4/4, diagnostics 19/19, SEO 1/1 and last coherence 52/52 pass. |
+| 90 Delivery | IN PROGRESS | Versioned source commit `03ea7896`; PR #142 awaits push/update, merge and remote-main readback. |
+
+Whole Auto remains **PARTIALLY DELIVERED**. Open evidence includes Qdrant-dependent Knowledge deletion and concurrency, native Electron pairing/audio, full operation coverage across 35 Prisma models, broader accessibility/localization, deployed SEO/AEO, and customer-specific call/CRM acceptance. No customer system or production database was contacted.
+
+SIGUIENTE PASO: publish and merge PR #142 through the normal review path, read back remote `main`, then continue the open environment and coverage acceptance gates.
+
+---
+
 ## Current Auto continuation — 5.1.50 source delivered (2026-10-14 local)
 
 Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. Four owner-confirmed fronts remain active in their agreed order. PR #137 merged 5.1.49 at verified main `537ce1567c13f74512a23ef9b9cba3412a7510fd`. PR #138 delivered source commit `dd07302829270bbbf8499784b8c3f3d36c1af080` (head `375a0a4d603e14adab4c4b63d0837c87047ed18a`) at main `b92e1fa91bfa9b9f53c8a6513ca580f403cda1d5`; tree `5828601db800875da01c459a8ed3e8412474e8d5` matches candidate. PHDK 2.50.10 coherence passes 52/52. All five app roots/locks and Browser renderer report 5.1.50.
