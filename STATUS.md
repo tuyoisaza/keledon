@@ -1,6 +1,6 @@
-## PHDK Auto candidate 5.1.49; whole Auto remains partial
+## PHDK Auto candidate 5.1.50; whole Auto remains partial
 
-Candidate branch `fix/phdk-web-typed-contracts-5-1-49` is based on verified main `208b15a24e8bb0ff4263f2b88281c361a8e3994f`; source commit `a4c92c65ff7b040206dd98567b5d7765c7f5b258`. All five app package/lock roots and Browser renderer are 5.1.49. Web lint is 14 warnings/0 errors (baseline 119); active paths now have no explicit-any warnings. All five builds, Web typecheck, exact-source synthetic Web UAT 4/4, diagnostics 19/19, Web SEO 1/1 and PHDK coherence 52/52 pass. PR and remote delivery are pending.
+PR #137 merged v5.1.49; `origin/main` and `git ls-remote` both read `537ce1567c13f74512a23ef9b9cba3412a7510fd`. Current branch `fix/phdk-web-lint-zero-5-1-50` is based on that SHA; exact source commit `dd07302829270bbbf8499784b8c3f3d36c1af080`. Five app package/lock roots and Browser renderer are 5.1.50. The full Web lint has 0 warnings/0 errors. All five builds, Web typecheck, diagnostics 19/19, SEO 1/1, exact-source synthetic UAT 4/4 and PHDK coherence 52/52 pass. PR delivery is in progress.
 
 Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL); PostgreSQL/identity/persisted CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain. No live provider, private CRM endpoint, database, device or deployment was used. Deterministic gate blocks solely on overall acceptance.
 

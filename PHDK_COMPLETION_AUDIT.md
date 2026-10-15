@@ -1,8 +1,8 @@
-## Current Auto completion audit — 5.1.49 candidate; whole Auto partial (2026-10-14 local)
+## Current Auto completion audit — candidate 5.1.50; whole Auto partial (2026-10-14 local)
 
-Candidate branch `fix/phdk-web-typed-contracts-5-1-49` is based on verified main `208b15a24e8bb0ff4263f2b88281c361a8e3994f`; source commit `a4c92c65ff7b040206dd98567b5d7765c7f5b258`. Five app package/lock roots and Browser renderer align at 5.1.49. Web lint is 14 warnings/0 errors, down from 95; active source paths have no explicit-any warnings, with 11 isolated to three unmounted legacy components and 3 Fast Refresh warnings. All five builds, Web typecheck, exact-source synthetic UAT 4/4, diagnostics 19/19, Web SEO 1/1 and PHDK coherence 52/52 pass. The candidate branch/PR has not yet been published or merged.
+PR #137 delivered v5.1.49 at verified main `537ce1567c13f74512a23ef9b9cba3412a7510fd`. Candidate `dd07302829270bbbf8499784b8c3f3d36c1af080`, branch `fix/phdk-web-lint-zero-5-1-50`, is based on that SHA. All five app roots/locks and Browser renderer align at 5.1.50. Full Web lint is 0 warnings/0 errors; all five builds, Web typecheck, exact-source synthetic UAT 4/4, diagnostics 19/19, SEO 1/1 and PHDK coherence 52/52 pass. PR/merge/remote readback for v5.1.50 are pending.
 
-This slice improves typed Web API/session/flow/provider contracts, rejects non-finite session duration metadata, uses safe API error text and handles company-country fallbacks. It does not close whole Auto: persisted database/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live integrations remain incomplete. The ledger retains all four owner-confirmed fronts; none is marked DONE by this source slice. Current delivery state is PARTIALLY DELIVERED.
+This source slice types the final legacy UI `any` uses, guards impersonation roles, and records intentional provider/hook exports. The four-front Auto remains PARTIALLY DELIVERED: persisted database/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live integrations remain incomplete. The commitment ledger retains the four owner-confirmed fronts; no front is marked complete by this slice.
 
 ---
 
