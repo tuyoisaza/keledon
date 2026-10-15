@@ -520,3 +520,12 @@ Candidate 5.1.58 aligns all five application package/lock roots and Browser rend
 UAT-047 and UAT-048 are source-level only. Live persisted device pairing, native device/audio and the exhaustive model-operation matrix remain open; whole PHDK Auto remains PARTIALLY DELIVERED.
 
 ---
+## Current Check — candidate 5.1.63 public diagnostics placement (2026-10-15)
+
+CHK-AUTO-023 found both public Web navbars placed the required compact version/copy/reset widget inline beside the KELEDON brand. Installed PHDK requires the widget directly below the product name at the top-left. Web and Landing now stack the brand and widget with a compact gap; component regression enforces both mirrors.
+
+UAT-055 passes against production-built Landing at desktop (1280×900) and mobile (390×844): the widget starts directly below and aligns with the brand, leaves public hero copy clear, and preserves visible mobile theme/language access. Full Web diagnostics/debug-mode/version-actions tests pass 19/19. All five app production builds, package/lock roots and Browser renderer are 5.1.63. The static installed PHDK check passes 52/52 manifest mappings. This is local source/browser evidence only. Effective 44px hit targets, packaged Electron visual runtime, screen reader, device/audio, database/migrations, full CRUD matrix, broad accessibility/localization and deployed SEO/AEO remain unverified. Whole PHDK Auto remains PARTIALLY DELIVERED.
+
+Candidate branch: `fix/phdk-widget-position-5-1-63`, based on verified `origin/main` 5.1.62 `0886fbd6a06d7519158ae5f6bbd9873e44477c8b`. Delivery and remote verification are pending.
+
+---

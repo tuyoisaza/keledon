@@ -1,5 +1,11 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.63 — public diagnostics row placement
+
+UAT-055 passes on the exact 5.1.63 candidate source, based on verified main 5.1.62. Production-built Landing browser UAT confirms the widget below and left-aligned with the brand (brand at x=32,y=16–48; widget at x=32,y=52–80) at 1280×900, two visible theme/language controls, no hero overlap, and a usable 390×844 mobile menu. Browser test exits cleanly (1/1); external requests are blocked. Mirrored Web diagnostics/debug-mode/version-actions tests pass 19/19. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-055/`.
+
+The preceding 5.1.62 combined revalidation attempt was inconclusive: Web's device case passed, while Knowledge, Landing, full local Web and management-debug test processes timed out during browser cleanup. Their logs show widget assertions ran, but the runner did not exit successfully; these results are not counted as new passes. Isolated widget and diagnostic tests passed 17/17 afterward.
+
 ## Candidate 5.1.62 — required AI administration acceptance
 
 UAT-053 passes on the candidate source. The API regression runner now includes the managed AI contract suite (6/6), and the full API runner passes 38/38 suites. The built Web UI UAT passes 5/5; the standalone synthetic AI-admin journey covers superadmin save/revision, stale-write preservation, invalid schemas, usage unknowns, 403/503 errors, and admin route denial. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/AI-ADMIN-UAT-5.1.62.json` with the prompt/usage screenshots.

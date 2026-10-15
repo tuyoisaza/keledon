@@ -142,3 +142,10 @@ Cloud device registration and pairing now enforce the same DB-derived actor/comp
 ## Auto remediation continuation — 5.1.58 dormant DebugMode model (2026-10-15)
 
 Removed unreachable API/Cloud `DebugModeService` classes and stale compiled outputs; neither service had a module binding. The active Web diagnostics switch remains local to the browser and does not mutate the Prisma model. All DebugMode model-role-surface rows are NOT APPLICABLE pending an approved schema retirement or explicitly designed server feature. The Prisma table remains. Regression 49 verifies source/dist absence and the local-only boundary. API 37/37, Cloud 17/17, both backend builds and PHDK coherence 52/52 pass. Overall Auto remains PARTIALLY DELIVERED.
+## Current remediation — 2026-10-15, candidate 5.1.63
+
+CHK-AUTO-023 found the mandatory diagnostics widget next to the brand in both public navigation bars. It now appears directly below and aligned to the left of the product name in Web and Landing. Regression covers both source mirrors; UAT-055 verifies actual production-built Landing geometry, hero clearance and mobile preference controls with outbound requests blocked. Web diagnostics/debug-mode/version-actions 19/19; all five production builds pass. Five package/lock roots and Browser renderer are aligned at 5.1.63. Exact UAT evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-055/`.
+
+Packaged Electron visuals, effective 44px hit targets, broad accessibility/localization, native device/audio, persisted CRUD/migrations and deployed SEO/AEO remain open. Overall Auto remains **PARTIALLY DELIVERED**. Candidate branch `fix/phdk-widget-position-5-1-63` awaits versioned delivery and remote verification.
+
+---

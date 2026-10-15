@@ -1,5 +1,15 @@
 # UAT handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.63 — UAT-055 PASS; portfolio acceptance incomplete
+
+CHK-AUTO-023 fixes the public Web/Landing diagnostics row position: it now sits directly below and left-aligned with the product name. UAT-055 passes on production-built Landing with outbound traffic blocked. At 1280×900, brand bounds are x=32/y=16–48 and widget bounds x=32/y=52–80; the row does not overlap hero copy and both preference controls remain visible. At 390×844, the widget remains visible and the mobile menu exposes theme and language. Browser UAT exits 1/1; Web diagnostics/version-actions tests pass 17/17. Evidence: `evidence/uat-055/` with exact-source fingerprint, desktop/mobile screenshots and geometry JSON.
+
+Web diagnostics/debug-mode/version-actions pass 19/19. UAT Fix is complete for this placement finding. Native Browser visual/audio, exhaustive database-backed CRUD/migrations, broad route/screen-reader/localization, deployed SEO/AEO and client-selected live CRM/call journeys remain open. Whole Auto remains **PARTIALLY DELIVERED**.
+
+SIGUIENTE PASO: finish the scoped 70 Check review for 5.1.63, then version and deliver the source fix through PR and remote readback.
+
+---
+
 ## Candidate 5.1.61 — UAT-052 PASS; full acceptance incomplete
 
 The production-built Landing UAT with external requests blocked verifies the accessible-name nav, two desktop preference controls without overlap at 1280×900, and both labeled selectors in the 390×844 mobile menu. The full focused Web UAT command passes 5/5; Web diagnostics/version-actions 19/19; standalone Landing UAT 1/1. Evidence is `docs/phdk/evidence/uat-landing-navbar-5.1.61.json` and its two screenshots; stage snapshot is `snapshots/candidate-5.1.61/`. UAT tally: **52 PASS, 0 BLOCKED, 1 MANUAL**. UAT-006 native device/audio remains MANUAL; exhaustive persisted model operations/concurrency, broad accessibility/localization and deployed SEO/AEO remain incomplete. No client endpoint or deployment was used.

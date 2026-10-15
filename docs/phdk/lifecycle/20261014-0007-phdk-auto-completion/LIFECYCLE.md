@@ -1,3 +1,13 @@
+## Current Auto delivery — 5.1.62 source merged and verified; portfolio partial (2026-10-15)
+
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. PR [#156](https://github.com/tuyoisaza/keledon/pull/156) delivered candidate commit `bc59be8cbf22c6d78d29fc7dc0cf0ed89199b64d` by squash at verified remote SHA `0886fbd6a06d7519158ae5f6bbd9873e44477c8b`, tree `b476e79938e5fc20eb5192aac44a6311c6c954e6`. `origin/main` matches `git ls-remote`, all six version roots are 5.1.62, and the PHDK completion gate passes against `PHDK_DELIVERY_EVIDENCE.json`.
+
+API/Cloud regressions pass 38/38 and 17/17; Browser lint/build/offline tests pass; Web UAT 5/5 plus AI-admin 12 journeys, diagnostics 19/19; Web/Landing SEO 1/1 each; all five builds and PHDK coherence 52/52 pass. No hosted checks/review decision were reported, main is unprotected, and no deployment is claimed. Whole Auto remains PARTIALLY DELIVERED for persisted CRUD/migrations, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-selected live integration acceptance.
+
+SIGUIENTE PASO: continue the four active fronts; do not infer whole-Auto completion from this merged slice.
+
+---
+
 ## Current Auto continuation — candidate 5.1.59 BrowserView teardown scope (2026-10-15)
 
 Run: `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. PR #152 delivered v5.1.58 at verified main `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`, tree `12fed244a537fd40f784bda18a2c973514e5c8fe`; six version reads align. Candidate branch `fix/phdk-browser-close-scope-5-1-59` is based on that source and fixes the tenant allowlist teardown gap. UAT-050 source contract passes; API/Cloud regressions 37/17, Browser 15/15, five builds, Browser lint and PHDK coherence 52/52 pass.
@@ -292,3 +302,23 @@ Follow-up review closed the allowlist lifetime gap: configured vendor BrowserVie
 ## Candidate 5.1.58 — DebugMode model boundary and remote delivery state
 
 UAT-049 removes the ambiguity between the dormant Prisma DebugMode model and `/management/debug`'s browser-local capture switch. Unbound API/Cloud service classes and stale dist outputs are removed; the table remains until an approved migration. Regression 49 asserts all 14 role/surface rows are NOT APPLICABLE. API 37/37, Cloud 17/17, Browser 15/15, five builds, PHDK coherence 52/52 and diff check pass. Candidate PR #152 now includes this CMT-004 fix; latest head/readback will be recorded after push. Whole Auto remains partial.
+## Current Auto continuation — 5.1.63 public diagnostics placement (2026-10-15)
+
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. Candidate branch `fix/phdk-widget-position-5-1-63` starts from verified main 5.1.62 SHA `0886fbd6a06d7519158ae5f6bbd9873e44477c8b`. Check CHK-AUTO-023 found the shared public diagnostics widget beside the product name in Web and Landing. Both navbars now place it below and left-aligned with the name.
+
+UAT-055 passes in the production-built Landing app with external requests blocked: at 1280×900 the brand is x=32/y=16–48 and widget x=32/y=52–80, with no hero overlap and both preference controls visible; at 390×844, the widget remains visible and mobile theme/language controls work. Web diagnostics/version-actions tests pass 17/17. All five app builds, package/lock versions and Browser renderer synchronization are being checked for candidate delivery. Evidence: `50-uat/evidence/uat-055/`.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight / Capture / Plan | REUSED / REVALIDATED | Correct repository, installed PHDK 2.50.10, four owner-confirmed fronts and decisions. |
+| PMO / Integration | COMPLETE FOR SLICE | `40-integration/INTEGRATION_REPORT-5.1.63-widget-position.md`. |
+| UAT / UAT Fix | PASS FOR UAT-055 | Production-built browser UAT 1/1; component tests 17/17; see `50-uat/evidence/uat-055/`. |
+| SEO / AEO-GEO | REUSED / NOT AFFECTED | Nav layout only; deployed discovery unmeasured. |
+| Check / Remediation | PASS FOR SCOPED SLICE | Five production builds, 19/19 Web diagnostic tests, 52/52 static PHDK coherence, synchronized versions, `git diff --check`, and UAT-055 pass. |
+| Delivery | PENDING | Versioned commit, PR, merge if checks permit, and remote SHA/tree/version readback. |
+
+Whole Auto remains **PARTIALLY DELIVERED** for exhaustive persisted CRUD/migrations, native device/audio, broad accessibility/localization, deployed SEO/AEO and client-selected runtime acceptance. This slice makes no customer integration or deployment claim.
+
+SIGUIENTE PASO: complete Check for the exact 5.1.63 tree, deliver the scoped fix through PR, and verify its remote main SHA; keep the whole portfolio partial while other acceptance gates remain open.
+
+---

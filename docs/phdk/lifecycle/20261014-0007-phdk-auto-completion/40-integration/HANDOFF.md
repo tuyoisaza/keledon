@@ -1,3 +1,22 @@
+# Integration Review handoff — 5.1.63 public diagnostics placement
+
+Run ID: `20261014-0007-phdk-auto-completion`
+Stage: 40 Integration Review
+Status: COMPLETED FOR BOUNDED REVALIDATION
+Candidate source base / verified main SHA: `0886fbd6a06d7519158ae5f6bbd9873e44477c8b`
+Candidate version: `5.1.63`
+Date: 2026-10-15
+
+Scope: CHK-AUTO-023 moves the shared diagnostics widget below and left-aligned with the product name in both Web and Landing public navigation. The fix changes no runtime API, Cloud, tenant URL, database or CRM contract.
+
+Evidence inspected: both `Navbar.tsx` implementations, widget component/CSS and Web source regressions. UAT-055 passes on exact production-built Landing: brand x=32,y=16–48 and widget x=32,y=52–80 at 1280×900; no hero overlap; mobile menu and preferences pass at 390×844. Web diagnostics/version-actions: 17/17. Browser evidence: `../50-uat/evidence/uat-055/`; outbound requests were blocked.
+
+Exit: Web/Landing implementation and responsive expectations reconciled; bounded browser replay passes. This integration review makes no claim about packaged Electron, screen readers, physical device/audio, database, CRM customer runtime or deployment.
+
+SIGUIENTE PASO: proceed to 50 UAT result review, then 60 UAT Fix / 70 Check for exact candidate verification.
+
+---
+
 # Integration Review handoff — 20261014-0007-phdk-auto-completion
 
 ## 5.1.61 — responsive public navigation integrated
