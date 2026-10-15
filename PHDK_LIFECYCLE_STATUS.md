@@ -1,6 +1,6 @@
-## PHDK Auto 5.1.52 — source fix validated; delivery in progress
+## PHDK Auto 5.1.52 — source fix merged; whole acceptance partial
 
-Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; target `main`. Installed PHDK 2.50.10; last verified coherence 52/52. Candidate `03ea78968103aa6bc6290ed0681b1c1ea345872a` (tree `5bf455943353754355f0a0f3d95e5f576d9dda6a`) on `docs/phdk-auto-db-uat-evidence` is based on verified main `5b7e25512c95737688beea43b2d7172199dfa231` / 5.1.51. All five app roots/locks and Browser renderer are 5.1.52; PR #142 is open and delivery is not yet verified on main.
+Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; target `main`. Installed PHDK 2.50.10; coherence 52/52. Candidate source commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` was delivered through PR #142 (head `880eb10ffb9d0cd94946ab62b5d5554ab29158ce`), squash-merged at `838931bd0d63f63f4a574ec9b660a12cc4ba5777`. Verified remote tree is `0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e`; all six version reads are 5.1.52.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -15,11 +15,11 @@ Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; target `main
 | 67 AEO/GEO | REUSED / EXTERNAL MEASUREMENT OPEN | Public claims unchanged; no crawler or answer-engine measurement. |
 | 70 Check | SOURCE PASS / WHOLE PARTIAL | API/Cloud 36/16 regressions, builds/lint, Browser build/lint, Web/Landing builds/typechecks/lint, Web UAT/diagnostics and SEO source checks pass. |
 | 80 Remediation | COMPLETED FOR 5.1.52 SOURCE FINDING | Session metadata now persists through the scoped API and Cloud CRUD guards; exact-candidate DB test passed. |
-| 90 Delivery | IN PROGRESS | PR #142 is open; source commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` is not on remote main yet. |
+| 90 Delivery | PASS — SOURCE MERGED / REMOTE VERIFIED | PR #142 squash-merged at `838931bd0d63f63f4a574ec9b660a12cc4ba5777`; `origin/main` equals `git ls-remote` and its tree matches the PR head. |
 
 Whole Auto remains **PARTIALLY DELIVERED**. The latest formal UAT tally is 39 PASS, 1 BLOCKED (Qdrant-dependent Knowledge delete) and 1 MANUAL (native device/audio). Exhaustive 35-model operation coverage, Qdrant concurrency, broad accessibility/localization, deployed SEO/AEO and customer-specific call/CRM acceptance remain open. Only synthetic data in disposable loopback services was used; no customer endpoint or deployment was accessed.
 
-SIGUIENTE PASO: push and merge the verified 5.1.52 candidate through PR #142, read back remote `main`, record post-merge evidence, and keep PHDK Auto PARTIALLY DELIVERED while remaining acceptance gates are open.
+SIGUIENTE PASO: continue the blocked Qdrant delete and remaining whole-Auto acceptance gates; keep PHDK Auto PARTIALLY DELIVERED until they pass.
 
 ---
 
