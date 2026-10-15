@@ -1,3 +1,25 @@
+## PHDK Auto continuation — candidate 5.1.56 exact-source persistence UAT (2026-10-15)
+
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`; branch `fix/phdk-persisted-uat-5-1-56`, based on verified 5.1.55 `origin/main` commit `85d7ebbbdc0d834e28b9ce1c0fdeb50ce7454fcf` / tree `955bcea225dcd8cdeca971e98f3c7cc3fd764ec2`. PHDK 2.50.10 is installed and candidate coherence passes 52/52. Five application roots/locks and Browser renderer align at 5.1.56.
+
+| Stage | Status | Current evidence / next gate |
+|---|---|---|
+| 00 Preflight | REUSED / REVALIDATED | PHDK 2.50.10; coherence 52/52 on prior candidate. |
+| 10 Capture / 20 Plan | REUSED | Four confirmed fronts and approved tenant/role/private-URL policy remain current. |
+| 30 PMO | CONTINUED | CMT-004 exact-source DB identity, role, tenant and migration evidence. |
+| 40 Integration | IN PROGRESS | UAT-044/045 report persisted role assignment and migration idempotency on 5.1.55 source. |
+| 50 UAT | PASS FOR SCOPED CASES / WHOLE INCOMPLETE | API build; 36/36 API regressions; 8 migrations idempotent/current; DB-backed user/superadmin/admin scope and denial paths pass; synthetic fixture cleanup verified. Whole tally 45 PASS, 0 BLOCKED, 1 MANUAL. |
+| 60 UAT Fix | COMPLETE FOR STALE STATUS | Current UAT-009/010 rows no longer claim the disposable DB is absent; exhaustive 35-model operations remain open. |
+| 65 SEO / 67 AEO | REUSED / NOT AFFECTED | Public source unchanged; deployed measures remain open. |
+| 70 Check / 80 Remediation | SCOPED PASS | Five builds, API 36/36 regression, coherence 52/52, `git diff --check`, and exact-source DB evidence pass; full Auto remains partial. |
+| 90 Delivery | PENDING | Candidate 5.1.56 has not been committed or opened as a PR. |
+
+The exact-source evidence is `50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`. Only a synthetic loopback database was used; API/PostgreSQL were stopped and test fixtures removed. Whole Auto remains **PARTIALLY DELIVERED** pending the exhaustive model/operation matrix, native device/audio, broad accessibility/localization, deployed SEO/AEO, and any future tenant-selected live integrations.
+
+SIGUIENTE PASO: run candidate coherence/version and affected build checks, then continue the persisted matrix where routes are declared implemented.
+
+---
+
 ## PHDK Auto continuation — candidate 5.1.55 matrix schema repair (2026-10-15)
 
 Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; target `main`; branch `fix/phdk-crud-matrix-schema-5-1-55`, based on verified `origin/main` 5.1.54 at `b89bc7a63f55e6f5ef1be3195fc22a49fe70c1b7`. PHDK 2.50.10 is installed; coherence 52/52. Five package/lock roots and Browser renderer align at 5.1.55.
@@ -15,11 +37,11 @@ Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; target `main
 | 67 AEO/GEO | REUSED / NOT AFFECTED | Public claims unchanged; external visibility remains unmeasured. |
 | 70 Check | COMPLETED FOR SOURCE SLICE / WHOLE PARTIAL | Candidate report preserves persistence and decision gaps. |
 | 80 Remediation | COMPLETED FOR SOURCE FINDING | Matrix artifact restored and regression strengthened. |
-| 90 Delivery | RUNNING | Versioned branch; PR, merge and exact remote readback pending. |
+| 90 Delivery | COMPLETED FOR SOURCE SLICE / WHOLE AUTO PARTIAL | PR #149 merged; `origin/main` and `git ls-remote` agree at `85d7ebbbdc0d834e28b9ce1c0fdeb50ce7454fcf`; remote tree matches the tested candidate, roots/renderer are 5.1.55, and the mechanical delivery gate passes. |
 
 The 5.1.54 matrix remains authoritative but had a separate narrative table width defect; this candidate restores it. Whole PHDK Auto remains **PARTIALLY DELIVERED** because persisted DB authorization/migration, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-specific live integrations remain open.
 
-SIGUIENTE PASO: complete candidate verification, deliver by PR, and read back the exact merge SHA/version; continue external/manual gates afterward.
+SIGUIENTE PASO: continue the confirmed Auto portfolio; use isolated PostgreSQL/identities and supported native hardware for open gates, and keep PHDK Auto PARTIALLY DELIVERED until all acceptance requirements pass.
 
 ---
 

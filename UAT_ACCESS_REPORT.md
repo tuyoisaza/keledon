@@ -1,5 +1,11 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.56 — exact-source disposable PostgreSQL access
+
+The API UAT used the retained disposable PostgreSQL 16.15 cluster and DB `keledon_phdk_uat`, bound only to `127.0.0.1:55432`; the API was bound to `127.0.0.1:3041`. The database contained prior synthetic `.invalid` UAT fixtures. New accounts and tenant companies used for this case were synthetic, and all were deleted through the API afterward. Verification returned to the pretest counts (two companies; one admin, one superadmin and two users; no PHDK-created test users). API and PostgreSQL stopped after testing. No production credentials, customer data, provider requests, private CRM endpoints or external services were used. Exact redacted results: `evidence/uat-postgres-roles-5.1.55-8999dfd9.json`.
+
+Earlier sections below document the environment status at their historical candidate dates; this continuation supersedes their “disposable DB not configured” result for UAT-009/010 only. Exhaustive persisted CRUD remains open.
+
 ## Candidate 5.1.36 Device UAT access and scope
 
 `services/web npm run test:uat` served the local production Web build on ephemeral loopback with Playwright and installed Edge. Browser contexts used synthetic `user`/`admin` session responses and in-memory devices; all API requests were intercepted, non-local HTTP and WebSockets were blocked, and server/browser were closed in `finally`. API registration/revocation checks used isolated guard fixtures; no credentials, database or device token were used. No live device pairing, CRM target or deployed account was accessed.

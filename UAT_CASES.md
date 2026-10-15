@@ -1,5 +1,14 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.56 addition — exact-source PostgreSQL role and migration acceptance (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-044 | US-002 / release owner | Against exact 5.1.55 source, build API, run all API regressions, apply migrations twice to the retained disposable PostgreSQL database, and check migration status. | Build/regressions pass; the migration set is idempotent and schema is current. | API build/regression plus loopback PostgreSQL 16.15. | PASS: API build; 36/36 regression suites; eight migrations found, both deploy attempts report no pending migrations, and schema is up to date. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`. |
+| UAT-045 | US-002 / synthetic superadmin and tenant admin | Register synthetic `.invalid` identities; bootstrap only the disposable DB's initial test superadmin; assign tenant admin through the API; read same/foreign tenant records and attempt privilege/company deletion. | Registration defaults to user; only superadmin assigns admin/company; tenant and role checks use persisted DB state. | API 5.1.55 over loopback PostgreSQL 16.15. | PASS, scoped: registration/login and superadmin assignment persisted; same-company read 200, foreign-company read 403, self-elevation 403, company deletion 403. Fixtures deleted; evidence as UAT-044. Exhaustive 35-model coverage remains open. |
+
+Candidate total: **45 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-044/045 advance UAT-009/010 on exact 5.1.55 source; they do not close exhaustive model/operation persistence, native device/audio, broad accessibility/localization, deployed SEO/AEO or tenant-specific live call/CRM acceptance.
+
 ## Candidate 5.1.55 addition — preserve both inventory table contracts (2026-10-15)
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

@@ -1,5 +1,15 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.56 — exact-source PostgreSQL roles and migration acceptance (2026-10-15)
+
+UAT-044/045 pass on exact 5.1.55 source commit `8999dfd9519c62746c42ff84064306361b9b629a` (tree `955bcea225dcd8cdeca971e98f3c7cc3fd764ec2`). The API build and 36/36 regression suites pass. Against the retained disposable PostgreSQL 16.15 database on `127.0.0.1:55432`, eight migrations were found; two consecutive deploy attempts both reported no pending migrations, and `migrate status` reported the schema up to date.
+
+Synthetic `.invalid` registration returned role `user`. A test-only superadmin fixture was prepared directly in that disposable DB; the superadmin then assigned a tenant admin and company through the API. A fresh login reflected the persisted role/company. Same-company detail returned 200; cross-company detail, admin self-elevation and company deletion each returned 403. All created accounts and companies were deleted through the API; post-cleanup counts match the pretest fixture (two companies, roles admin=1/superadmin=1/user=2, no PHDK UAT-created users). Both API and PostgreSQL processes stopped. No provider, customer endpoint or external network request was made. Full redacted evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`.
+
+Candidate acceptance is now **45 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-009 and UAT-010 pass for the exercised identity, migration, role assignment and tenant-boundary scope; exhaustive 35-model CRUD/operation coverage and delete/reindex concurrency remain open. Native device/audio remains MANUAL; broad accessibility/localization and deployed SEO/AEO remain unverified. Client call/CRM acceptance stays per customer as directed by the owner. No deployment is claimed.
+
+SIGUIENTE PASO: ampliar la cobertura persistida por recurso/operación donde la matriz declara rutas implementadas y mantener abiertos los gates nativos, de accesibilidad y medición desplegada.
+
 ## Candidate 5.1.55 — inventory schema integrity (2026-10-15)
 
 UAT-043 passes. Regression 33 separately validates the capability matrix at 490 unique model-role-surface rows and the narrative model inventory at 35 rows with exactly three columns each. It also retains the existing source assertions for ManagedInterface, team Flow, nested TeamInterface, operational runs, FeatureFlag, and AI prompts. PHDK coherence passes 52/52. The 5.1.54 merge remains the authoritative current release while this 5.1.55 correction is under delivery.

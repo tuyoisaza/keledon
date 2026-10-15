@@ -1,80 +1,69 @@
 {
   "version": "1",
-  "goal": "Continue the owner-confirmed four-front KELEDON PHDK Auto; deliver the 5.1.53 public initial-HTML remediation while preserving remaining acceptance work",
+  "goal": "Continue the owner-confirmed four-front KELEDON PHDK Auto; deliver source-backed CRUD model-role-surface coverage while preserving remaining acceptance work",
   "target_branch": "main",
-  "expected_version": "5.1.53",
+  "expected_version": "5.1.55",
   "version_file": "services/web/package.json",
   "version_property": "version",
-  "tested_source_commit_sha": "39cfd9dca87cbda148155b6d91d318cabcd0b681",
-  "tested_candidate_sha": "39cfd9dca87cbda148155b6d91d318cabcd0b681",
-  "tested_candidate_tree": "88b5bb924cf458694bea41c743b6c6fb5beec9a3",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/146",
-  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/146",
-  "pr_head_sha": "39cfd9dca87cbda148155b6d91d318cabcd0b681",
-  "product_source_merge_sha": "dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245",
-  "merged_commit_sha": "dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245",
-  "remote_main_sha": "dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245",
-  "remote_main_tree": "88b5bb924cf458694bea41c743b6c6fb5beec9a3",
-  "remote_main_verified_at": "2026-10-15T04:31:39Z",
+  "tested_source_commit_sha": "8999dfd9519c62746c42ff84064306361b9b629a",
+  "tested_candidate_sha": "8999dfd9519c62746c42ff84064306361b9b629a",
+  "tested_candidate_tree": "955bcea225dcd8cdeca971e98f3c7cc3fd764ec2",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/149",
+  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/149",
+  "pr_head_sha": "8999dfd9519c62746c42ff84064306361b9b629a",
+  "product_source_merge_sha": "85d7ebbbdc0d834e28b9ce1c0fdeb50ce7454fcf",
+  "merged_commit_sha": "85d7ebbbdc0d834e28b9ce1c0fdeb50ce7454fcf",
+  "remote_main_sha": "85d7ebbbdc0d834e28b9ce1c0fdeb50ce7454fcf",
+  "remote_main_tree": "955bcea225dcd8cdeca971e98f3c7cc3fd764ec2",
+  "remote_main_verified_at": "2026-10-15T04:56:26.262Z",
   "git_ls_remote_matches": true,
   "versions": {
-    "services_api": "5.1.53",
-    "cloud": "5.1.53",
-    "browser": "5.1.53",
-    "services_web": "5.1.53",
-    "landing": "5.1.53",
-    "browser_renderer": "5.1.53"
+    "services_api": "5.1.55",
+    "cloud": "5.1.55",
+    "browser": "5.1.55",
+    "services_web": "5.1.55",
+    "landing": "5.1.55",
+    "browser_renderer": "5.1.55"
   },
   "github": {
     "state": "MERGED",
-    "product_pr": "#146 merged by squash",
+    "product_pr": "#149 merged by squash",
     "merge_method": "squash",
     "merge_state": "CLEAN",
     "hosted_checks": [],
     "review_decision": "none reported",
-    "main_protection": "branch not protected"
+    "main_protection": false
   },
   "checks": {
-    "landing_seo_contract": {
+    "crud_model_inventory_regression": {
       "status": "PASS",
-      "evidence": "Landing npm run test:seo passes 1/1; asserts semantic initial-document content and React startup fallback transition."
-    },
-    "landing_lint": {
-      "status": "PASS",
-      "evidence": "Landing npm run lint completed successfully."
-    },
-    "landing_typecheck": {
-      "status": "PASS",
-      "evidence": "Landing npm run typecheck completed both app and node TypeScript projects successfully."
-    },
-    "landing_build": {
-      "status": "PASS",
-      "evidence": "Landing Vite production build passed; existing 580.27 kB main-chunk advisory remains. Built dist/index.html contains the semantic H1 and substantive overview before JavaScript."
-    },
-    "version_alignment": {
-      "status": "PASS",
-      "evidence": "Verified on remote main: all five package roots and lockfile roots plus Browser renderer label are 5.1.53."
+      "evidence": "API regression 33 passes: 35/35 Prisma models, 490 unique role/surface rows, 168 core rows, and 35 narrative inventory rows with exactly three columns."
     },
     "phdk_coherence": {
       "status": "PASS",
       "evidence": "Installed PHDK 2.50.10 coherence checker passes 52/52 manifest mappings."
     },
-    "focused_uat_041": {
+    "version_alignment": {
       "status": "PASS",
-      "evidence": "Built static HTML acceptance passes for the public overview; evidence docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-landing-5.1.53.json. Whole-product UAT remains incomplete as stated in scope_limitations."
+      "evidence": "Fresh origin/main reads confirm all five package/lock roots and Browser renderer at 5.1.55."
+    },
+    "focused_uat_043": {
+      "status": "PASS",
+      "evidence": "UAT-043 passes for both inventory table schemas; evidence docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-inventory-shape-5.1.55.json."
     },
     "source_delivery": {
       "status": "PASS",
-      "evidence": "PR #146 squash-merged at dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245; origin/main and git ls-remote agree; merged tree 88b5bb924cf458694bea41c743b6c6fb5beec9a3 matches the tested PR head tree."
+      "evidence": "PR #149 squash-merged at 85d7ebbbdc0d834e28b9ce1c0fdeb50ce7454fcf; origin/main and git ls-remote agree; remote tree 955bcea225dcd8cdeca971e98f3c7cc3fd764ec2 matches tested candidate tree."
     }
   },
   "scope_limitations": [
-    "This evidence records the 5.1.53 source-slice delivery, not completion of the four-front PHDK Auto goal.",
-    "Whole UAT remains acceptance incomplete: 41 PASS, 0 BLOCKED, 1 MANUAL; supported native device/audio acceptance remains manual.",
-    "Exhaustive persisted CRUD/role/tenant/surface/operation coverage and delete/reindex concurrency remain open.",
-    "Broad accessibility/localization and deployed SEO/AEO measurements remain open or unverified.",
-    "No customer-specific call/CRM endpoint was selected or contacted; integrations and private-origin allowlists are tenant-configured.",
-    "No deployment is claimed; only the source merge and remote-main readback are verified."
+    "This is the 5.1.55 matrix integrity source slice, not completion of the four-front PHDK Auto goal.",
+    "Whole UAT remains acceptance incomplete: 43 PASS, 0 BLOCKED, 1 MANUAL; native device/audio remains manual.",
+    "Persisted authorization, safe DB identities, migrations and before/after evidence remain open.",
+    "Unresolved lifecycle decisions, route/UI gaps and delete/reindex concurrency remain open.",
+    "Broad accessibility/localization and deployed SEO/AEO remain open or unverified.",
+    "No customer call/CRM endpoint was selected or contacted; integration acceptance remains tenant-specific.",
+    "No deployment is claimed; GitHub reported no hosted checks or review decision."
   ],
-  "overall_status": "5.1.53 SOURCE MERGED AND REMOTE VERIFIED; PHDK AUTO PARTIALLY DELIVERED"
+  "overall_status": "5.1.55 SOURCE MERGED AND REMOTE VERIFIED; PHDK AUTO PARTIALLY DELIVERED"
 }

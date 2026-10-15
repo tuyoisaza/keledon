@@ -1,3 +1,13 @@
+## Candidate 5.1.56 — exact-source persisted role/migration UAT
+
+UAT-044/045 pass against exact 5.1.55 source and disposable PostgreSQL 16.15: API regression 36/36; migrations deploy twice with no pending items; schema up to date; synthetic user defaults, superadmin assignment via API, tenant-bound access and escalation/delete denials persist. All created fixtures were removed and both local processes stopped. Evidence: `evidence/uat-postgres-roles-5.1.55-8999dfd9.json`.
+
+Latest tally: **45 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Exhaustive 35-model CRUD, delete/reindex concurrency, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open; client-specific call/CRM remains per tenant. Snapshot: `../90-delivery/snapshots/candidate-5.1.56/`.
+
+SIGUIENTE PASO: continue mapped persisted CRUD operations; retain external/manual acceptance boundaries.
+
+---
+
 ## Active UAT continuation — live Qdrant cleanup, 5.1.52
 
 Status: **SCOPED PERSISTED CLEANUP PASS / WHOLE-PRODUCT ACCEPTANCE INCOMPLETE**. Disposable PostgreSQL 16.15 and official Qdrant 1.19.2 ran on loopback; synthetic document deletion removed the DB record and matching Qdrant points, while base deletion removed its collection and cascaded rows. Evidence: `evidence/uat-qdrant-delete-5.1.52.json`. The UAT tally advances to 40 PASS, 0 BLOCKED, 1 MANUAL. Delete/reindex concurrency, exhaustive role/model CRUD, native device/audio and broad/deployed acceptance remain open. Snapshot: `snapshots/qdrant-delete-uat-5.1.52/`.

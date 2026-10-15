@@ -1,5 +1,21 @@
 # PMO handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.56 — persisted role/migration continuation
+
+CMT-004 now has exact-source local DB evidence on candidate 5.1.55: migrations are idempotent/current; registration defaults to user; a synthetic superadmin assigns a tenant admin/company via API; tenant scope and privilege-denial paths are verified against persisted records. UAT-044/045 pass and cleanup is verified. Candidate 5.1.56 carries this evidence, reconciles UAT-009/010 text, and keeps exhaustive model-operation coverage open. CMT-001 delivery is pending; native/deployed gates remain open.
+
+| Workstream | Status | Next proof gate |
+|---|---|---|
+| WS-001 baseline/version/PR | Candidate 5.1.56 checks in progress | Version roots, complete diff, PR, remote merge/readback and completion gate. |
+| WS-002 diagnostics/widget | Source carried forward | Remaining broad accessibility and exact-candidate UI acceptance. |
+| WS-003 runtime integrations | Provider-independent policy source checked | No live CRM/call target until selected by a customer; private destinations require tenant allowlists. |
+| WS-004 administration/permissions | Persisted core paths PASS | Expand mapped model/operation coverage; retain the 35-model gaps/decisions. |
+| WS-X PHDK conformity | 52/52 prior; candidate recheck recorded | Current coherence and completion gates. |
+
+Root retains integrated review; no workers are assigned. Portfolio remains PARTIALLY DELIVERED. No native device, customer endpoint, production data or deployment was used.
+
+---
+
 ## Candidate 5.1.55 source integrity follow-up
 
 CMT-004 source-map coverage remains present. This candidate corrects the separate narrative inventory's column shape and adds a regression against future table corruption; it does not alter access behavior. UAT-043 passes. CMT-001 delivery is in progress for 5.1.55; database/migration and other acceptance commitments remain open.

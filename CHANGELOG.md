@@ -1,3 +1,14 @@
+## v5.1.56 — 2026-10-15 (persisted role and migration acceptance)
+
+- Record exact-source PostgreSQL UAT for identity defaults, superadmin role assignment, tenant boundaries and migration idempotency.
+- Reconcile current UAT-009/010 status with disposable PostgreSQL evidence and retain the exhaustive 35-model matrix as open.
+- Align all five application package/lock roots and the Browser renderer at 5.1.56.
+
+### Verification
+- API build and regression pass 36/36; eight migrations are current after repeated deploy.
+- Exact 5.1.55 API UAT: same-tenant read allowed; cross-tenant read, admin role escalation and company deletion denied; synthetic fixtures cleaned.
+- Whole PHDK Auto remains partial for exhaustive persisted operations, native device/audio, broad accessibility/localization and deployed SEO/AEO.
+
 ## v5.1.55 — 2026-10-15 (preserve the model inventory table schema)
 
 - Restore the separate 35-row model-to-surface inventory to its documented three-column shape after the CRUD capability matrix expansion.
