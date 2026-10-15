@@ -10,6 +10,7 @@ import { transcriptMonitor } from './media/transcript-monitor.js';
 import { eventLogger } from './media/event-logger.js';
 import {
   isAllowedVendorNavigation,
+  getRuntimeVendorNavigationScope,
   sanitizeVendorNotification,
 } from './security-policy.js';
 import { runtimeStatus, mainWindow, debugMode, clearRuntimeSessionState } from './runtime-state.js';
@@ -361,7 +362,10 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     const activeTabId = tabManager.getActiveTabId();
     const tabs = tabManager.getInternalTabs();
     const tab = tabs.find(t => t.id === activeTabId);
-    if (tab?.view && isAllowedVendorNavigation(url, tab.allowedOrigins)) {
+    const allowedOrigins = tab?.view
+      ? getRuntimeVendorNavigationScope(tab.view.webContents) ?? tab.allowedOrigins
+      : undefined;
+    if (tab?.view && isAllowedVendorNavigation(url, allowedOrigins)) {
       tab.url = url;
       tab.view.webContents.loadURL(url);
       tabManager.broadcastTabs();

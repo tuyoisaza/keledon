@@ -7,6 +7,27 @@ export interface VendorNotification {
   silent: boolean;
 }
 
+const runtimeVendorScopes = new WeakMap<object, readonly string[]>();
+
+/** Temporarily attach the trusted Cloud-derived vendor scope to an active BrowserView. */
+export function setRuntimeVendorNavigationScope(
+  webContents: object,
+  allowedOrigins?: readonly string[],
+): void {
+  if (!allowedOrigins) {
+    runtimeVendorScopes.delete(webContents);
+    return;
+  }
+  runtimeVendorScopes.set(webContents, [...new Set(allowedOrigins)]);
+}
+
+export function getRuntimeVendorNavigationScope(
+  webContents: object,
+): string[] | undefined {
+  const scope = runtimeVendorScopes.get(webContents);
+  return scope ? [...scope] : undefined;
+}
+
 /** Keep app and vendor renderers isolated from Node and enforce Chromium origin checks. */
 export function secureRendererPreferences(preload: string) {
   return {

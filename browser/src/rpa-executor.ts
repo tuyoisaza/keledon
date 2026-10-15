@@ -9,6 +9,7 @@
 import log from 'electron-log';
 import { BrowserWindow, BrowserView } from 'electron';
 import { findElement, getAccessibilityTree, setRpaProviderConfig } from './rpa-provider';
+import { getRuntimeVendorNavigationScope, setRuntimeVendorNavigationScope } from './security-policy';
 
 export interface RpaStep {
   step_id?: string;
@@ -402,31 +403,37 @@ export async function executeRpaFlow(flow: RpaFlow): Promise<RpaFlowResult> {
   // Log which provider chain is active
   log.info(`[RpaExecutor] Provider chain active`);
 
-  for (let i = 0; i < flow.steps.length; i++) {
-    const step = flow.steps[i];
-    if (flow.is_cancelled?.()) {
-      results.push({ step_id: step.step_id || `step-${i}`, action: step.action, success: false, duration_ms: 0, error: 'Flow cancelled after runtime disconnect' });
-      hasFailure = true; break;
-    }
-    log.info(
-      `[RpaExecutor] Step ${i + 1}/${flow.steps.length}: ${step.action} (${step.description || step.target || step.selector || ''})`,
-    );
+  const priorRuntimeScope = getRuntimeVendorNavigationScope(view.webContents);
+  setRuntimeVendorNavigationScope(view.webContents, flow.allowed_origins);
+  try {
+    for (let i = 0; i < flow.steps.length; i++) {
+      const step = flow.steps[i];
+      if (flow.is_cancelled?.()) {
+        results.push({ step_id: step.step_id || `step-${i}`, action: step.action, success: false, duration_ms: 0, error: 'Flow cancelled after runtime disconnect' });
+        hasFailure = true; break;
+      }
+      log.info(
+        `[RpaExecutor] Step ${i + 1}/${flow.steps.length}: ${step.action} (${step.description || step.target || step.selector || ''})`,
+      );
 
-    let origin = '';
-    try { origin = new URL(step.action === 'navigate' ? step.url : view.webContents.getURL()).origin; } catch { /* reject unknown surface */ }
-    if (!flow.allowed_origins.includes(origin)) {
-      results.push({ step_id: step.step_id || `step-${i}`, action: step.action, success: false, duration_ms: 0, error: 'Action target is outside configured vendor surfaces' });
-      hasFailure = true;
-      break;
-    }
-    const result = await executeStep(view, step);
-    results.push(result);
+      let origin = '';
+      try { origin = new URL(step.action === 'navigate' ? step.url : view.webContents.getURL()).origin; } catch { /* reject unknown surface */ }
+      if (!flow.allowed_origins.includes(origin)) {
+        results.push({ step_id: step.step_id || `step-${i}`, action: step.action, success: false, duration_ms: 0, error: 'Action target is outside configured vendor surfaces' });
+        hasFailure = true;
+        break;
+      }
+      const result = await executeStep(view, step);
+      results.push(result);
 
-    if (!result.success) {
-      hasFailure = true;
-      log.warn(`[RpaExecutor] Step failed: ${result.error}`);
-      break; // A failed guard/navigation must not permit later writes.
+      if (!result.success) {
+        hasFailure = true;
+        log.warn(`[RpaExecutor] Step failed: ${result.error}`);
+        break; // A failed guard/navigation must not permit later writes.
+      }
     }
+  } finally {
+    setRuntimeVendorNavigationScope(view.webContents, priorRuntimeScope);
   }
 
   const status = hasFailure ? (results.some(r => r.success) ? 'partial' : 'failed') : 'completed';
