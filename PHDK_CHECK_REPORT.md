@@ -1,10 +1,10 @@
-## Current Check — candidate 5.1.48, Brain credential status and Web hook alignment (2026-10-14)
+## Current Check — 5.1.48 Brain credential status and Web hook alignment, merged (2026-10-14)
 
-Repository `tuyoisaza/keledon`; branch `fix/phdk-web-hooks-5-1-48`, based on verified `origin/main` `00b1b523e020df9fb5c388d61cbbb1cda8ba9080` / 5.1.47. PHDK 2.50.10 coherence is 52/52; all five application package/lock roots and Browser renderer are 5.1.48.
+Repository `tuyoisaza/keledon`; PR [#134](https://github.com/tuyoisaza/keledon/pull/134) merged PR head `40943b822e47b5c443b607eb5d6e74625333d71b` at verified remote `main` `a3dcd93a5d7fb3a374894436379301290cc12bfe`, tree `9353ed3c29c8ba6540143e9b49c7c26650e2ee53`. Exact source/UAT commit is `f93758c4b2e52a452ff35b8b43f99adef4cfcd1f`. PHDK 2.50.10 coherence is 52/52; all five application package/lock roots and Browser renderer are 5.1.48.
 
 Brain now uses only the selected LLM/TTS/STT provider's safe `*Set`/`hasApiKey` status flags. Secret placeholders remain blank. Request-key scoping and effect cleanup discard stale responses after team changes or refresh. A synthetic UAT verifies the visible key status with blank secret fields. Web hooks use complete callback dependencies; socket loading derives from socket request resolution; Admin AI consumption starts refresh state from its user action; the browser-launch page initializes its own opening status; and active-loop duration uses effect-updated time instead of calling `Date.now()` during render.
 
-Web full lint is 95 warnings/0 errors, down from 119, with zero `react-hooks/*` and purity warnings (all 12 exhaustive-deps warnings closed). Typecheck/build pass; synthetic Web UAT 4/4; diagnostics 19/19; Web/Landing SEO 1/1 each; API/Cloud regressions 36/16; Browser tests 27/27; all five builds and PHDK coherence pass. Whole Auto remains partial for persisted database/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live call/CRM acceptance.
+Web full lint is 95 warnings/0 errors, down from 119, with zero `react-hooks/*` and purity warnings (all 12 exhaustive-deps warnings closed). Typecheck/build pass; synthetic Web UAT 4/4; diagnostics 19/19; Web/Landing SEO 1/1 each; API/Cloud regressions 36/16; Browser tests 27/27; all five builds and PHDK coherence pass. PR #134 is merged and remote verified; GitHub reported no hosted checks or review. The deterministic gate blocks solely on whole Auto acceptance: persisted database/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live call/CRM remain incomplete.
 
 ---
 

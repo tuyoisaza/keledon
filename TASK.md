@@ -1,6 +1,6 @@
-## Active PHDK Auto continuation — candidate 5.1.48
+## PHDK Auto source 5.1.48 merged; continue four fronts
 
-Continue the four owner-confirmed KELEDON fronts in order: baseline/version/PRs; widget and safe diagnostics; tenant-selected voice→Cloud→Browser→CRM flow; administration and permissions. Candidate branch `fix/phdk-web-hooks-5-1-48` is based on merged 5.1.47 `00b1b523e020df9fb5c388d61cbbb1cda8ba9080`. The 5.1.48 slice corrects provider-specific safe credential indicators in Brain, prevents stale tenant config responses, and closes React Hooks/purity warnings across Web. All source checks pass; commit/PR/readback pending. Whole Auto stays partial pending database, native device/audio, broad accessibility/localization and deployed SEO/AEO proof. Customer-specific live integrations remain per tenant.
+Continue the four owner-confirmed KELEDON fronts in order: baseline/version/PRs; widget and safe diagnostics; tenant-selected voice→Cloud→Browser→CRM flow; administration and permissions. PR #134 delivered 5.1.48 to remote `main` at `a3dcd93a5d7fb3a374894436379301290cc12bfe`, with tested PR-head tree verified. The slice corrects provider-specific safe credential indicators in Brain, prevents stale tenant config responses, and closes React Hooks/purity warnings across Web. Source checks pass. Whole Auto stays partial pending database, native device/audio, broad accessibility/localization and deployed SEO/AEO proof. Customer-specific live integrations remain per tenant.
 
 ---
 

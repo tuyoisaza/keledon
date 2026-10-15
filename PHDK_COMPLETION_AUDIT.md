@@ -1,8 +1,8 @@
-## Current Auto completion audit — candidate 5.1.48; whole Auto partial (2026-10-14)
+## Current Auto completion audit — 5.1.48 source merged; whole Auto partial (2026-10-14)
 
-Candidate `fix/phdk-web-hooks-5-1-48` is based on verified remote `main` `00b1b523e020df9fb5c388d61cbbb1cda8ba9080` / 5.1.47. All five app roots and Browser renderer are 5.1.48. Web full lint falls from 119 to 95 warnings/0 errors; React Hooks and render-purity findings are zero. Brain credential status now honors provider-specific safe flags and ignores stale tenant responses.
+PR #134 merged candidate head `40943b822e47b5c443b607eb5d6e74625333d71b` at remote `main` `a3dcd93a5d7fb3a374894436379301290cc12bfe`; source/UAT SHA `f93758c4b2e52a452ff35b8b43f99adef4cfcd1f`; remote tree matches the PR head. All five app roots and Browser renderer are 5.1.48. Web full lint falls from 119 to 95 warnings/0 errors; React Hooks and render-purity findings are zero. Brain credential status now honors provider-specific safe flags and ignores stale tenant responses.
 
-All five builds, Web typecheck, API/Cloud regressions (36/16), Browser tests (27/27), synthetic Web UAT (4/4), diagnostics (19/19), SEO source tests (1/1 each) and PHDK coherence (52/52) pass. This source slice does not close whole Auto: persisted database/migrations and full CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-tenant live call/CRM remain incomplete. Commit, PR and remote readback are pending.
+All five builds, Web typecheck, API/Cloud regressions (36/16), Browser tests (27/27), synthetic Web UAT (4/4), diagnostics (19/19), SEO source tests (1/1 each), production dependency audit and PHDK coherence (52/52) pass. This source slice does not close whole Auto: persisted database/migrations and full CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-tenant live call/CRM remain incomplete. PR #134 is merged and SHA/tree/version readback passes; GitHub reported no hosted checks or review. The deterministic gate blocks solely on whole Auto acceptance.
 
 ---
 

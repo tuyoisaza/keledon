@@ -1,10 +1,10 @@
-## Active PHDK Auto continuation — candidate 5.1.48
+## PHDK Auto source 5.1.48 merged; whole Auto remains partial
 
-Branch `fix/phdk-web-hooks-5-1-48`, based on verified `origin/main` `00b1b523e020df9fb5c388d61cbbb1cda8ba9080`. All five app roots/locks and Browser renderer align at 5.1.48. Brain now reports only provider-specific key presence from safe boolean fields, never secret placeholders, and ignores delayed responses from prior teams. Web closes all React Hooks/purity warnings; total lint is 95 warnings/0 errors versus 119. All five builds, Web typecheck, API/Cloud regression 36/16, Browser 27/27, synthetic Web UAT 4/4, diagnostics 19/19, SEO and coherence 52/52 pass.
+PR #134 merged at `a3dcd93a5d7fb3a374894436379301290cc12bfe`; remote tree matches PR-head `40943b822e47b5c443b607eb5d6e74625333d71b`. All five app roots/locks and Browser renderer align at 5.1.48. Brain reports only selected-provider key presence from safe boolean fields, never secret placeholders, and ignores delayed responses from prior teams. Web closes all React Hooks/purity warnings; total lint is 95 warnings/0 errors versus 119. All five builds, Web typecheck, API/Cloud regression 36/16, Browser 27/27, synthetic Web UAT 4/4, diagnostics 19/19, SEO and coherence 52/52 pass. GitHub reported no hosted checks or review.
 
-Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL); PostgreSQL/identity/persisted CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain. No live provider, private CRM endpoint, database, device or deployment was used. Commit/PR/readback are pending.
+Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL); PostgreSQL/identity/persisted CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain. No live provider, private CRM endpoint, database, device or deployment was used. Deterministic gate blocks solely on overall acceptance.
 
-SIGUIENTE PASO: deliver via version-prefixed PR; continue persisted/native/deployed gates only in their isolated acceptance environments.
+SIGUIENTE PASO: continue persisted/native/deployed gates only in their isolated acceptance environments.
 
 ---
 
