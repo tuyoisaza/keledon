@@ -1,16 +1,18 @@
-## Current delivery — candidate 5.1.42 (2026-10-14, pending)
+## Current delivery — candidate 5.1.42 (2026-10-14)
 
-Candidate `fix/phdk-rpa-required-tenant-scope-5-1-42` is based on verified `origin/main` `8075890cb9a112e948403491eb7bf7c8f44337b2`. Source commit `07f979b610b069d675183a7a4ad112b2466c20d2` (tree `a3664bdc9402c7b943e49b2a585b68de741f9f65`) bumps all five application package/lock roots and Browser renderer to 5.1.42. It requires tenant-origin scope before RPA execution and applies the allowlist to each navigation. UAT-038 passes; Browser suite 27/27, security-policy tests 8/8, Browser build and PHDK coherence 52/52 pass. Full Auto acceptance is 35 PASS, 2 BLOCKED, 1 MANUAL.
+PR [#125](https://github.com/tuyoisaza/keledon/pull/125) merged by squash at `6deaa910a37a9bb579eef5e82ae9dda1983c94ea`. A fresh fetch and `git ls-remote` agree on `main`; remote tree `7f76bff35694121be03af672f9e8e68522def291` matches the tested PR-head tree. Remote Browser package and renderer report 5.1.42. GitHub reports no hosted checks or review decision; no deployment is claimed. The source candidate `07f979b610b069d675183a7a4ad112b2466c20d2` is recorded in `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.42-post-merge-125.json`.
+
+The source requires tenant-origin scope before RPA execution and applies the allowlist to each navigation. UAT-038 passes; Browser suite 27/27, security-policy tests 8/8, Browser build and PHDK coherence 52/52 pass. Full Auto acceptance is 35 PASS, 2 BLOCKED, 1 MANUAL.
 
 | Gate | Status | Evidence |
 |---|---|---|
 | VERSION_BUMP | PASS | Five app package/lock roots and Browser renderer at 5.1.42; changelog updated. |
 | COMMIT_PREFIX | PASS | Source commit `v5.1.42 fix(browser): require tenant scope for RPA`. |
-| PUSH_AND_PR | PENDING | Candidate not yet pushed and no PR exists. |
-| REMOTE_MAIN | PENDING | Merge/readback not performed. |
+| PUSH_AND_PR | PASS | PR #125 merged to `main`; GitHub reports no hosted checks or review decision. |
+| REMOTE_MAIN | PASS | `origin/main` and `git ls-remote` agree at `6deaa910a37a9bb579eef5e82ae9dda1983c94ea`; remote tree matches PR head at `7f76bff35694121be03af672f9e8e68522def291`; Browser version is 5.1.42. |
 | SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | UAT-038; Browser tests/build and coherence pass; external/persisted gates remain open. |
 
-No database, real CRM/private host, customer data, device, or deployment was used. Browser ESLint is unavailable because installed ESLint 10 requires an absent flat config. Overall: **PARTIALLY DELIVERED; SOURCE DELIVERY PENDING**.
+No database, real CRM/private host, customer data, device, or deployment was used. Browser ESLint is unavailable because installed ESLint 10 requires an absent flat config; the machine completion gate therefore records lint BLOCKED. Overall: **SOURCE SLICE MERGED / WHOLE AUTO PARTIALLY DELIVERED**.
 
 ---
 

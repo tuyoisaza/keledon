@@ -6,7 +6,7 @@ All four owner-confirmed fronts remain active in their approved order. Candidate
 
 | Commitment | Current candidate evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 — baseline, versions, PRs | Version alignment and verified base are confirmed. | Candidate push/PR, merge and exact remote readback pending. |
+| CMT-001 — baseline, versions, PRs | PR #125 merged at `6deaa910a37a9bb579eef5e82ae9dda1983c94ea`; remote SHA/tree and Browser version 5.1.42 are verified. | GitHub reports no hosted checks or review decision; no deployment is claimed. |
 | CMT-002 — widget and safe diagnostics | Existing local diagnostics evidence remains unchanged. | Native Windows device/audio and broad accessibility/localization remain open. |
 | CMT-003 — voice → Cloud → Browser → CRM per client | Tenant RPA scope now fails closed; configured private CRM origin is permitted. | Per-client provider/CRM operation and subresource behavior need client-specific acceptance. |
 | CMT-004 — administration and permissions | Current actor/tenant policy remains; scoped Browser RPA finding fixed. | Safe DB identities, disposable PostgreSQL, persisted migrations/CRUD and exhaustive matrix remain open. |

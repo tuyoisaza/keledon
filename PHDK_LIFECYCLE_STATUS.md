@@ -19,7 +19,7 @@ Goal: four owner-confirmed KELEDON fronts in agreed order, aligned to applicable
 | 67 AEO/GEO | REUSED / SOURCE REVIEW | No public claim changed; live answer-engine/crawler measurement unavailable. |
 | 70 Check | SOURCE CHECK PASS / ACCEPTANCE PARTIAL | Snapshot `70-check/snapshots/candidate-5.1.42/PHDK_CHECK_REPORT.md`. |
 | 80 Remediation | COMPLETED FOR CANDIDATE | Browser suite 27/27, security policy 8/8, Browser build, coherence 52/52. Browser ESLint unavailable under ESLint 10 configuration requirement. |
-| 90 Delivery | PENDING | Local versioned commit only; push/PR/merge/readback/gate remain. |
+| 90 Delivery | SOURCE SLICE VERIFIED | PR #125 merged at `6deaa910a37a9bb579eef5e82ae9dda1983c94ea`; `origin/main` and `git ls-remote` agree, remote tree matches PR head at `7f76bff35694121be03af672f9e8e68522def291`, Browser version is 5.1.42. Evidence: `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.42-post-merge-125.json`. Machine gate records lint BLOCKED because Browser ESLint configuration is unavailable. |
 
 Overall status: **PARTIALLY DELIVERED**. No PostgreSQL, production identity, customer endpoint, private destination, device or deployment was used.
 

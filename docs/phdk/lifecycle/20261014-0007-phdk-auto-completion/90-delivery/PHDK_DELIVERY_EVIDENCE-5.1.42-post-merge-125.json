@@ -1,0 +1,32 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto source slice 5.1.42: require tenant origin scope for Browser RPA",
+  "target_branch": "main",
+  "expected_version": "5.1.42",
+  "version_file": "browser/package.json",
+  "version_property": "version",
+  "merged_commit_sha": "6deaa910a37a9bb579eef5e82ae9dda1983c94ea",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/125",
+  "checks": {
+    "lint": {
+      "status": "BLOCKED",
+      "evidence": "Browser ESLint 10 requires eslint.config.*; this package has no flat config. No lint PASS is claimed."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "npm run build in browser; TypeScript tsc completed successfully."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "npm run build in browser completed successfully."
+    },
+    "focused_tests": {
+      "status": "PASS",
+      "evidence": "node --test browser/tests/*.test.cjs: 27/27; from browser/, node --test test/security-policy.test.cjs: 8/8."
+    },
+    "uat": {
+      "status": "PASS",
+      "evidence": "UAT-038 exact-source synthetic Electron WebContents run: missing/empty/unlisted scope denied before loadURL or page JavaScript; tenant-allowlisted private CRM origin remains usable."
+    }
+  }
+}
