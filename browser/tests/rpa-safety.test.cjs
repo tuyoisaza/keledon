@@ -137,6 +137,7 @@ rpa.setMainWindow({ getBrowserViews: () => [{ webContents }] });
   });
   assert.equal(result.status, 'failed');
   assert.equal(result.steps[0].error, 'Flow cancelled after runtime disconnect');
+  assert.equal(runtimeScope, undefined, 'runtime disconnect must restore the prior tab scope');
 
   console.log('PASS production RPA safety: required tenant scope, configured private origin, unscoped/unlisted navigation denied, fail-fast writes');
 })().catch((error) => {
