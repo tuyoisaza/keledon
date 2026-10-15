@@ -9,7 +9,9 @@ const appVersion = require('../package.json').version;
 
 const dist = path.resolve(__dirname, '../dist');
 const repoRoot = path.resolve(__dirname, '../../..');
-const evidenceDir = path.join(repoRoot, 'docs/phdk/evidence');
+const evidenceDir = process.env.KELEDON_UAT_EVIDENCE_DIR
+  ? path.resolve(process.env.KELEDON_UAT_EVIDENCE_DIR)
+  : path.join(repoRoot, 'docs/phdk/evidence');
 const device = {
   id: 'device-co-001',
   name: 'Company Co Desktop',
@@ -20,6 +22,7 @@ const device = {
 };
 
 test('device management UAT: read-only role cannot revoke; tenant manager confirms and handles failure', { timeout: 90000 }, async () => {
+  await fs.mkdir(evidenceDir, { recursive: true });
   let deviceList = [device];
   let deleteStatus = 500;
   const deletes = [];

@@ -8,7 +8,9 @@ const appVersion = require('../package.json').version;
 const { chromium } = require(path.resolve(__dirname,'../../api/node_modules/playwright'));
 const root = path.resolve(__dirname,'../../..');
 const dist = path.resolve(__dirname,'../dist');
-const evidence = path.join(root,'docs/phdk/evidence');
+const evidence = process.env.KELEDON_UAT_EVIDENCE_DIR
+ ? path.resolve(process.env.KELEDON_UAT_EVIDENCE_DIR)
+ : path.join(root,'docs/phdk/evidence');
 const company={id:'company-co',name:'Company Co',industry:'Synthetic UAT',countries:[{countryCode:'MX'}]};
 const otherCompany={id:'other-company',name:'Other Co',industry:'Synthetic UAT',countries:[{countryCode:'MX'}]};
 const brand={id:'brand-co',name:'Company Co Brand',companyId:company.id,company};
