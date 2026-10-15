@@ -117,7 +117,7 @@ export class TTSService {
     await runtimeAiBudget.run(
       `tts:${options.teamId || 'system'}`,
       undefined,
-      async () => undefined,
+      () => Promise.resolve(),
     );
     // Provider selection: DB > file config > env vars > default
     const teamConfig = options.teamId
@@ -231,7 +231,7 @@ export class TTSService {
     await runtimeAiBudget.run(
       `tts:${options.teamId || 'system'}`,
       undefined,
-      async () => undefined,
+      () => Promise.resolve(),
     );
     const teamConfig = options.teamId
       ? await this.resolveTTSConfig(options.teamId)
@@ -550,10 +550,8 @@ export class TTSService {
     if (this.speachesWarmups.has(warmupKey)) return;
     if (this.speachesWarmups.size >= 5000)
       throw new Error('Voice warmup identity limit reached');
-    await runtimeAiBudget.run(
-      `tts:${teamId || 'system'}`,
-      undefined,
-      async () => undefined,
+    await runtimeAiBudget.run(`tts:${teamId || 'system'}`, undefined, () =>
+      Promise.resolve(),
     );
     this.speachesWarmups.add(warmupKey);
     const startedAt = Date.now();
@@ -581,9 +579,10 @@ export class TTSService {
     );
   }
 
-  async stop(): Promise<void> {
+  stop(): Promise<void> {
     console.log('[TTS] Stop requested');
     this.eventEmitter.emit('stop');
+    return Promise.resolve();
   }
 
   on(event: string, listener: (...args: any[]) => void): void {

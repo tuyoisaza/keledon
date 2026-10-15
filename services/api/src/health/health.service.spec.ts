@@ -44,7 +44,7 @@ describe('HealthService diagnostics', () => {
     const guardedPrisma = {
       $queryRaw: jest.fn().mockResolvedValue([{ migration_name: 'initial' }]),
       user: {
-        findUnique: jest.fn().mockImplementation(async () => ({ role })),
+        findUnique: jest.fn().mockImplementation(() => ({ role })),
       },
     };
     const guardedService = new HealthService(

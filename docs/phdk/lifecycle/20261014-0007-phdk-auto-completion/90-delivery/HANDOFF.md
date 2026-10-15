@@ -191,3 +191,10 @@ PR [#116](https://github.com/tuyoisaza/keledon/pull/116) squash-merged the MVP s
 Whole PHDK Auto is **PARTIALLY DELIVERED**: full UAT remains 30 PASS, 2 BLOCKED, 1 MANUAL. Disposable PostgreSQL, persisted migrations/CRUD, safe DB identities, native Windows device/audio, live Qdrant concurrency, exhaustive model-operation proof, broad accessibility/localization, deployed SEO/AEO and per-customer call/CRM acceptance remain open. No database, customer endpoint/data, private CRM or deployment was used.
 
 SIGUIENTE PASO: reconcile this handoff and the Auto lifecycle board in the evidence PR, verify its merge on main, and preserve PARTIALLY DELIVERED for the remaining acceptance gates.
+# Current source candidate 5.1.51 — publication pending
+
+Source commit `09ef2497957c381a3af7428af393b65b811c2fe6` is versioned 5.1.51 and passes the scoped code/build/UAT checks. Exact candidate summary and stage records are under `snapshots/candidate-5.1.51/`. Delivery remains pending branch push, PR, merge and remote readback. The full Auto goal remains partially delivered.
+
+SIGUIENTE PASO: publicar la rama de candidato y completar el flujo PR→main con controles reales y lectura independiente de SHA/árbol/versión; conservar como abiertos los compromisos de DB, nativo, accesibilidad y medición desplegada.
+
+---

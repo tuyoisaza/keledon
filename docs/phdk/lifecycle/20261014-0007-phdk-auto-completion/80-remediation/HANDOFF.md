@@ -1,3 +1,9 @@
+## Candidate 5.1.51 API lint/runtime remediation
+
+Closed all API ESLint warnings without disabling rules. Mocked tenant integration actions were removed; unsupported execution fails closed, run outcomes persist, and synthetic health/process data was removed. API build/regressions/lint pass, and exact-source Web UAT 4/4 passes. Remaining whole-Auto blockers depend on isolated database/native targets and deployed measurements. Candidate Check/UAT evidence is in `../90-delivery/snapshots/candidate-5.1.51/`.
+
+---
+
 ## Candidate 5.1.50 Web lint remediation
 
 Typed the final `any` usages in the unmounted AI-loop, entity form and entity table components, including form values and impersonation roles; only valid `UserRole` values enable impersonation. Added targeted explanations for the three context files that intentionally export both provider and hook. Full Web lint is now 0 warnings/0 errors, down from 14 on 5.1.49. Web typecheck/build and exact-source UAT 4/4 pass. The candidate is versioned 5.1.50 and awaiting PR/merge. Whole PHDK Auto remains PARTIALLY DELIVERED on persisted DB, native device/audio, broader accessibility/localization, deployed SEO/AEO and customer-specific live call/CRM acceptance.

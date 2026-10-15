@@ -3,7 +3,6 @@ import {
   VoiceProvider,
   VoiceProviderConfig,
   VoicePipelineStatus,
-  ProviderHealth,
 } from './voice-provider.interface';
 import { KeledonRealtimePipelineProvider } from './keledon-realtime-pipeline.provider';
 import { TTSService } from '../../tts/tts.service';

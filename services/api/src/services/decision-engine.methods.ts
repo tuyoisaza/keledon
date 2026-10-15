@@ -411,7 +411,7 @@ export class DecisionPolicyMethods {
   ): Promise<{ policyIds: string[]; playbookId: string }> {
     return this.tracer.startActiveSpan(
       KELEDON_TRACE_SPANS.POLICY_CHECK,
-      async (span) => {
+      (span) => {
         span.setAttribute(DECISION_EVIDENCE_ATTRS.DECISION_ID, decisionId);
         span.setAttribute(POLICY_CHECK_ATTRS.DECISION_ID, decisionId);
 
@@ -455,17 +455,19 @@ export class DecisionPolicyMethods {
           span.setAttribute(POLICY_CHECK_ATTRS.PLAYBOOK_ID, playbookId);
           span.setAttribute(POLICY_CHECK_ATTRS.APPLIED, true);
 
-          return {
+          return Promise.resolve({
             policyIds,
             playbookId,
-          };
+          });
         } catch (error) {
           span.setAttribute(POLICY_CHECK_ATTRS.APPLIED, false);
           span.setStatus({
             code: SpanStatusCode.ERROR,
             message: error instanceof Error ? error.message : String(error),
           });
-          throw error;
+          return Promise.reject(
+            error instanceof Error ? error : new Error(String(error)),
+          );
         } finally {
           span.end();
         }

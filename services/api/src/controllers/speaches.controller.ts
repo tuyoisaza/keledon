@@ -147,7 +147,7 @@ export class SpeachesController {
     await runtimeAiBudget.run(
       `stt:${req.runtimeIdentity.userId}`,
       undefined,
-      async () => undefined,
+      () => Promise.resolve(),
     );
 
     const form = new FormData();

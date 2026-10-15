@@ -47,9 +47,7 @@ describe('DecisionContextMethods.makeDecision without a working LLM', () => {
   it('does not convert an LLM failure into a fabricated intent', async () => {
     const llm = {
       isEnabled: () => true,
-      generateCommand: async () => {
-        throw new Error('provider unavailable');
-      },
+      generateCommand: () => Promise.reject(new Error('provider unavailable')),
     };
     const methods = new DecisionContextMethods(
       {} as any,

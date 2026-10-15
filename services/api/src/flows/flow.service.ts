@@ -168,7 +168,7 @@ export class FlowService {
     });
   }
 
-  async findOne(id: string): Promise<any | null> {
+  async findOne(id: string): Promise<any> {
     return this.prisma.flow.findUnique({
       where: { id },
       include: { steps: { orderBy: { order: 'asc' } } },

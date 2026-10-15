@@ -290,7 +290,7 @@ export class DecisionEngineService {
   /**
    * Generate canonical brain command from decision
    */
-  async generateCommand(
+  generateCommand(
     decision: any,
     sessionId: string,
     evidence?: DecisionEvidence,
@@ -307,106 +307,108 @@ export class DecisionEngineService {
         }
       : undefined;
 
-    switch (decision.type) {
-      case 'say':
-        return {
-          command_id: commandId,
-          session_id: sessionId,
-          timestamp,
-          type: 'say',
-          confidence: decision.confidence || 0.8,
-          mode: decision.mode || 'normal',
-          flow_id: null,
-          flow_run_id: null,
-          metadata: commandMetadata,
-          say: {
-            text: decision.text,
-            interruptible: decision.interruptible || true,
-            voice: decision.voice,
-            language: decision.language,
-            speed: decision.speed,
-            pitch: decision.pitch,
-            volume: decision.volume,
+    return Promise.resolve().then(() => {
+      switch (decision.type) {
+        case 'say':
+          return {
+            command_id: commandId,
+            session_id: sessionId,
+            timestamp,
+            type: 'say',
+            confidence: decision.confidence || 0.8,
+            mode: decision.mode || 'normal',
+            flow_id: null,
+            flow_run_id: null,
             metadata: commandMetadata,
-          },
-        };
+            say: {
+              text: decision.text,
+              interruptible: decision.interruptible || true,
+              voice: decision.voice,
+              language: decision.language,
+              speed: decision.speed,
+              pitch: decision.pitch,
+              volume: decision.volume,
+              metadata: commandMetadata,
+            },
+          };
 
-      case 'ui_steps':
-        return {
-          command_id: commandId,
-          session_id: sessionId,
-          timestamp,
-          type: 'ui_steps',
-          confidence: decision.confidence || 0.8,
-          mode: decision.mode || 'normal',
-          flow_id: decision.flow_id || null,
-          flow_run_id: decision.flow_run_id || null,
-          metadata: commandMetadata,
-          ui_steps: (decision.steps || []).map((s: any) => ({
-            step_id: uuidv4(),
-            ...s,
-          })),
-        };
-
-      case 'ask':
-        return {
-          command_id: commandId,
-          session_id: sessionId,
-          timestamp,
-          type: 'say',
-          confidence: decision.confidence || 0.7,
-          mode: 'normal',
-          flow_id: null,
-          flow_run_id: null,
-          metadata: commandMetadata,
-          say: {
-            text: decision.text || 'Could you clarify what you need?',
-            interruptible: true,
+        case 'ui_steps':
+          return {
+            command_id: commandId,
+            session_id: sessionId,
+            timestamp,
+            type: 'ui_steps',
+            confidence: decision.confidence || 0.8,
+            mode: decision.mode || 'normal',
+            flow_id: decision.flow_id || null,
+            flow_run_id: decision.flow_run_id || null,
             metadata: commandMetadata,
-          },
-        };
+            ui_steps: (decision.steps || []).map((s: any) => ({
+              step_id: uuidv4(),
+              ...s,
+            })),
+          };
 
-      case 'mode':
-        return {
-          command_id: commandId,
-          session_id: sessionId,
-          timestamp,
-          type: 'mode',
-          confidence: decision.confidence || 0.8,
-          mode: decision.mode,
-          flow_id: null,
-          flow_run_id: null,
-          metadata: commandMetadata,
-        };
+        case 'ask':
+          return {
+            command_id: commandId,
+            session_id: sessionId,
+            timestamp,
+            type: 'say',
+            confidence: decision.confidence || 0.7,
+            mode: 'normal',
+            flow_id: null,
+            flow_run_id: null,
+            metadata: commandMetadata,
+            say: {
+              text: decision.text || 'Could you clarify what you need?',
+              interruptible: true,
+              metadata: commandMetadata,
+            },
+          };
 
-      case 'stop':
-        return {
-          command_id: commandId,
-          session_id: sessionId,
-          timestamp,
-          type: 'stop',
-          confidence: decision.confidence || 1.0,
-          mode: decision.mode || 'normal',
-          flow_id: null,
-          flow_run_id: null,
-          metadata: commandMetadata,
-        };
+        case 'mode':
+          return {
+            command_id: commandId,
+            session_id: sessionId,
+            timestamp,
+            type: 'mode',
+            confidence: decision.confidence || 0.8,
+            mode: decision.mode,
+            flow_id: null,
+            flow_run_id: null,
+            metadata: commandMetadata,
+          };
 
-      default:
-        // Unknown decisions must surface as an error, never as a fabricated
-        // acknowledgement that could be mistaken for a completed action.
-        return {
-          command_id: commandId,
-          session_id: sessionId,
-          timestamp,
-          type: 'error',
-          confidence: 0,
-          mode: 'error',
-          flow_id: null,
-          flow_run_id: null,
-          metadata: commandMetadata,
-        };
-    }
+        case 'stop':
+          return {
+            command_id: commandId,
+            session_id: sessionId,
+            timestamp,
+            type: 'stop',
+            confidence: decision.confidence || 1.0,
+            mode: decision.mode || 'normal',
+            flow_id: null,
+            flow_run_id: null,
+            metadata: commandMetadata,
+          };
+
+        default:
+          // Unknown decisions must surface as an error, never as a fabricated
+          // acknowledgement that could be mistaken for a completed action.
+          return {
+            command_id: commandId,
+            session_id: sessionId,
+            timestamp,
+            type: 'error',
+            confidence: 0,
+            mode: 'error',
+            flow_id: null,
+            flow_run_id: null,
+            metadata: commandMetadata,
+          };
+      }
+    });
   }
 
   private buildDecisionContext(

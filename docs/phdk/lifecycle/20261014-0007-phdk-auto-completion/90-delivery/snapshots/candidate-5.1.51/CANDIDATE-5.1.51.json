@@ -1,0 +1,9 @@
+{
+  "version": "5.1.51",
+  "branch": "fix/phdk-api-lint-zero-5-1-51",
+  "base_main": "1061a0a6541c7ffb41184c11f1e2f3c3b86c050b",
+  "source_commit": "09ef2497957c381a3af7428af393b65b811c2fe6",
+  "source_tree": "fdb14b554ad46b1908b2041bfa781bb15bd0a716",
+  "uat_evidence": "docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-5.1.51-09ef2497/uat-local-web.json",
+  "status": "source candidate validated; push, PR, merge, and remote main readback pending"
+}

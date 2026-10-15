@@ -1,3 +1,13 @@
+## Current PHDK Auto — 5.1.51 candidate validated, delivery pending
+
+PHDK 2.50.10 coherence passes 52/52. Candidate `09ef2497957c381a3af7428af393b65b811c2fe6` on `fix/phdk-api-lint-zero-5-1-51` is based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`; all app package/lock roots and Browser renderer are 5.1.51. API lint is 0 warnings/0 errors; API/Cloud regressions 36/36 and 16/16; Browser offline 27/27; all five builds; Web/Landing typecheck/lint; exact-source synthetic UAT 4/4; diagnostics 19/19; Web/Landing SEO 1/1 each; coherence 52/52 pass. Web/Landing builds retain the existing large-chunk warning.
+
+Source cleanup removes fabricated tenant flow/integration success and records subagent run outcomes. No customer endpoint, DB, device or deployment was used. Whole Auto remains PARTIALLY DELIVERED (37 PASS, 2 BLOCKED, 1 MANUAL). Push/PR/merge/readback are still required for this candidate.
+
+SIGUIENTE PASO: push the 5.1.51 candidate, open its `main` PR, and verify remote SHA/tree/version after merge; preserve the open DB, native, accessibility and deployed-measurement commitments.
+
+---
+
 ## PHDK Auto 5.1.50 delivered; whole Auto remains partial
 
 PR #138 squash-merged source commit `375a0a4d603e14adab4c4b63d0837c87047ed18a` at verified `main` `b92e1fa91bfa9b9f53c8a6513ca580f403cda1d5`; remote tree `5828601db800875da01c459a8ed3e8412474e8d5` matches the tested candidate. All five app package/lock roots and Browser renderer are 5.1.50. Full Web lint has 0 warnings/0 errors. All five builds, Web typecheck, diagnostics 19/19, SEO 1/1, exact-source synthetic UAT 4/4 and PHDK coherence 52/52 pass. GitHub reports no hosted checks or review decision; no deployment is claimed.

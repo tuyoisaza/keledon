@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Subject, Observable, interval } from 'rxjs';
-import { randomUUID } from 'crypto';
+import { Subject } from 'rxjs';
 
 export interface IntegrationProvider {
   id: string;
@@ -57,13 +56,9 @@ export class IntegrationHealthService {
   public providers$ = this.healthUpdate.asObservable();
   public connections$ = this.connectionUpdate.asObservable();
 
-  // Health check intervals per provider
-  private healthCheckIntervals = new Map<string, any>();
-
   constructor() {
     console.log('IntegrationHealthService: Initialized');
     this.initializeDefaultProviders();
-    this.startHealthChecks();
   }
 
   // Register a new integration provider
@@ -82,7 +77,6 @@ export class IntegrationHealthService {
     };
 
     this.providers.set(provider.id, fullProvider);
-    this.scheduleHealthCheck(provider.id);
     this.broadcastUpdate();
 
     console.log(
@@ -109,7 +103,7 @@ export class IntegrationHealthService {
   // Connect to a provider
   async connectProvider(
     providerId: string,
-    credentials?: any,
+    _credentials?: unknown,
   ): Promise<boolean> {
     const provider = this.providers.get(providerId);
     if (!provider) {
@@ -120,8 +114,7 @@ export class IntegrationHealthService {
     this.broadcastUpdate();
 
     try {
-      // Simulate connection process
-      const isConnected = await this.testConnection(provider, credentials);
+      const isConnected = await this.testConnection(provider);
 
       if (isConnected) {
         provider.status = 'connected';
@@ -163,13 +156,6 @@ export class IntegrationHealthService {
       provider.status = 'disconnected';
       this.broadcastUpdate();
 
-      // Stop health checks
-      const interval = this.healthCheckIntervals.get(providerId);
-      if (interval) {
-        clearInterval(interval);
-        this.healthCheckIntervals.delete(providerId);
-      }
-
       console.log(
         `IntegrationHealth: Disconnected from provider ${providerId}`,
       );
@@ -187,7 +173,6 @@ export class IntegrationHealthService {
     let success = false;
 
     try {
-      // Simulate different connection methods based on provider
       success = await this.testConnection(provider);
 
       const responseTime = Date.now() - startTime;
@@ -206,27 +191,9 @@ export class IntegrationHealthService {
   }
 
   // Sync provider data
-  async syncProvider(providerId: string): Promise<boolean> {
-    const provider = this.providers.get(providerId);
-    if (!provider || provider.status !== 'connected') {
-      return false;
-    }
-
-    try {
-      // Deterministic sync
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      provider.lastSync = new Date();
-      this.broadcastUpdate();
-      console.log(`IntegrationHealth: Synced provider ${providerId}`);
-      return true;
-    } catch (error) {
-      console.error(
-        `IntegrationHealth: Sync failed for provider ${providerId}:`,
-        error,
-      );
-      return false;
-    }
+  syncProvider(_providerId: string): Promise<boolean> {
+    // This in-memory catalog has no provider-specific sync adapter.
+    return Promise.resolve(false);
   }
 
   // Get all providers
@@ -386,71 +353,9 @@ export class IntegrationHealthService {
     });
   }
 
-  private async testConnection(
-    provider: IntegrationProvider,
-    credentials?: any,
-  ): Promise<boolean> {
-    // Simulate connection testing with different methods per provider
-    const testMethods = {
-      crm: () => this.testCrmConnection(provider),
-      helpdesk: () => this.testHelpdeskConnection(provider),
-      communication: () => this.testCommunicationConnection(provider),
-      payment: () => this.testPaymentConnection(provider),
-      storage: () => this.testStorageConnection(provider),
-      analytics: () => this.testAnalyticsConnection(provider),
-    };
-
-    const testMethod = testMethods[provider.category];
-    return testMethod ? testMethod() : this.testGenericConnection(provider);
-  }
-
-  private async testCrmConnection(
-    provider: IntegrationProvider,
-  ): Promise<boolean> {
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    return false;
-  }
-
-  private async testHelpdeskConnection(
-    provider: IntegrationProvider,
-  ): Promise<boolean> {
-    await new Promise((resolve) => setTimeout(resolve, 150));
-    return false;
-  }
-
-  private async testCommunicationConnection(
-    provider: IntegrationProvider,
-  ): Promise<boolean> {
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    return false;
-  }
-
-  private async testPaymentConnection(
-    provider: IntegrationProvider,
-  ): Promise<boolean> {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    return false;
-  }
-
-  private async testStorageConnection(
-    provider: IntegrationProvider,
-  ): Promise<boolean> {
-    await new Promise((resolve) => setTimeout(resolve, 250));
-    return false;
-  }
-
-  private async testAnalyticsConnection(
-    provider: IntegrationProvider,
-  ): Promise<boolean> {
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    return false;
-  }
-
-  private async testGenericConnection(
-    provider: IntegrationProvider,
-  ): Promise<boolean> {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return false;
+  private testConnection(_provider: IntegrationProvider): Promise<boolean> {
+    // Provider-specific credentials and tenant adapters are not configured here.
+    return Promise.resolve(false);
   }
 
   private updateHealthMetrics(
@@ -494,52 +399,7 @@ export class IntegrationHealthService {
     return 0;
   }
 
-  private scheduleHealthCheck(providerId: string): void {
-    // Clear existing interval
-    const existingInterval = this.healthCheckIntervals.get(providerId);
-    if (existingInterval) {
-      clearInterval(existingInterval);
-    }
-
-    // Schedule health checks every 30 seconds
-    const interval = setInterval(() => {
-      const provider = this.providers.get(providerId);
-      if (provider && provider.status === 'connected') {
-        void this.testProviderConnection(providerId);
-      }
-    }, 30000);
-
-    this.healthCheckIntervals.set(providerId, interval);
-  }
-
-  private startHealthChecks(): void {
-    // Start periodic health checks for all connected providers
-    interval(60000).subscribe(() => {
-      void (async () => {
-        const connectedProviders = Array.from(this.providers.values()).filter(
-          (provider) => provider.status === 'connected',
-        );
-
-        for (const provider of connectedProviders) {
-          await this.testProviderConnection(provider.id);
-        }
-      })();
-
-      // Broadcast connection metrics
-      this.connectionUpdate.next(this.getConnectionMetrics());
-    });
-  }
-
   private broadcastUpdate(): void {
     this.healthUpdate.next(this.getProviders());
-  }
-
-  // Cleanup
-  onModuleDestroy(): void {
-    // Clear all health check intervals
-    for (const interval of this.healthCheckIntervals.values()) {
-      clearInterval(interval);
-    }
-    this.healthCheckIntervals.clear();
   }
 }

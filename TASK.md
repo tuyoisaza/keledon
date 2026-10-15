@@ -1,3 +1,13 @@
+## PHDK Auto — source candidate 5.1.51 validated; delivery in progress
+
+Current branch `fix/phdk-api-lint-zero-5-1-51`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`. Source commit `09ef2497957c381a3af7428af393b65b811c2fe6` is version 5.1.51 across five package/lock roots and Browser renderer. Full API lint passes 0 warnings/0 errors. API/Cloud regressions 36/36 and 16/16, Browser offline 27/27, five builds, Web/Landing typecheck/lint, exact-source synthetic UAT 4/4, diagnostics 19/19, Web/Landing SEO 1/1 each, and PHDK coherence 52/52 pass. Branch push, PR, merge and remote readback are pending.
+
+Source changes remove false Browser/CRM/voice execution successes, fail closed without a tenant adapter, persist subagent run outcomes, and remove simulated integration/process health results. Whole Auto remains PARTIALLY DELIVERED (37 PASS, 2 BLOCKED, 1 MANUAL); database identities/persistence, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. No live CRM/private endpoint, DB, customer data, device or deployment was used.
+
+SIGUIENTE PASO: push the validated 5.1.51 source branch and open its PR to `main`; complete integration and independent remote readback, then retain PARTIALLY DELIVERED for the remaining environment-gated acceptance.
+
+---
+
 ## PHDK Auto 5.1.50 delivered; four fronts continue
 
 Continue the four owner-confirmed KELEDON fronts in order: baseline/version/PRs; widget and safe diagnostics; tenant-selected voice→Cloud→Browser→CRM flow; administration and permissions. PR #137 delivered v5.1.49 at `537ce1567c13f74512a23ef9b9cba3412a7510fd`; PR #138 delivered v5.1.50 at verified `main` `b92e1fa91bfa9b9f53c8a6513ca580f403cda1d5`, tree `5828601db800875da01c459a8ed3e8412474e8d5`, matching the tested candidate. It closes the final 14 Web ESLint warnings. All five builds, Web lint/typecheck, diagnostics 19/19, SEO 1/1, exact-source synthetic UAT 4/4 and PHDK coherence 52/52 pass. Whole Auto remains partial pending database, native device/audio, broad accessibility/localization and deployed SEO/AEO proof. Customer-specific live integrations remain per tenant.

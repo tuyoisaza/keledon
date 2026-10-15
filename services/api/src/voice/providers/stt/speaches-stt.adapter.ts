@@ -20,7 +20,7 @@ export class SpeachesSttAdapter implements SttAdapter {
   private readonly logger = new Logger(SpeachesSttAdapter.name);
   private config!: SpeachesSttAdapterConfig;
 
-  async initialize(config: SpeachesSttAdapterConfig): Promise<void> {
+  initialize(config: SpeachesSttAdapterConfig): Promise<void> {
     this.config = {
       baseUrl: config.baseUrl.replace(/\/+$/, ''),
       apiKey: config.apiKey,
@@ -28,6 +28,7 @@ export class SpeachesSttAdapter implements SttAdapter {
       language: config.language || undefined,
     };
     this.logger.log(`SpeachesSTT initialized model=${this.config.model}`);
+    return Promise.resolve();
   }
 
   async transcribe(

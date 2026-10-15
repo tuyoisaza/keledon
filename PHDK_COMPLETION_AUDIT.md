@@ -1,4 +1,12 @@
-## Current Auto completion audit — 5.1.50 source delivered; whole Auto partial (2026-10-14 local)
+## Current Auto completion audit — 5.1.51 candidate; delivery pending
+
+Source commit `09ef2497957c381a3af7428af393b65b811c2fe6` on `fix/phdk-api-lint-zero-5-1-51`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`; candidate tree `fdb14b554ad46b1908b2041bfa781bb15bd0a716`. All five application package/lock roots and Browser renderer are 5.1.51. Candidate report and exact-source UAT evidence are under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/snapshots/candidate-5.1.51/` and `50-uat/evidence/uat-web-5.1.51-09ef2497/`.
+
+Source acceptance: API lint 0 warnings/0 errors; API/Cloud regression 36/36 and 16/16; Browser offline 27/27; all five builds; Web/Landing typecheck/lint; exact-source synthetic UAT 4/4; diagnostics 19/19; Web/Landing SEO 1/1; PHDK coherence 52/52. Hosted check/review status and deployment have not been observed. Source delivery is pending push, PR, merge and remote-main readback. Whole Auto remains PARTIALLY DELIVERED (37 PASS, 2 BLOCKED, 1 MANUAL), with persistent DB, native, broad accessibility/localization and deployed SEO/AEO acceptance open. No customer integration or production was contacted.
+
+---
+
+## Previous Auto completion audit — 5.1.50 source delivered; whole Auto partial (2026-10-14 local)
 
 PR #137 delivered v5.1.49 at verified main `537ce1567c13f74512a23ef9b9cba3412a7510fd`. PR #138 delivered source candidate `dd07302829270bbbf8499784b8c3f3d36c1af080` at main `b92e1fa91bfa9b9f53c8a6513ca580f403cda1d5`; the remote tree `5828601db800875da01c459a8ed3e8412474e8d5` matches the tested candidate. All five app roots/locks and Browser renderer align at 5.1.50. Full Web lint is 0 warnings/0 errors; all five builds, Web typecheck, exact-source synthetic UAT 4/4, diagnostics 19/19, SEO 1/1 and PHDK coherence 52/52 pass. GitHub reports no hosted checks or review decision; no deployment is claimed.
 

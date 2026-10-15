@@ -40,7 +40,7 @@ export class DeviceController {
         ...body,
       });
       return result;
-    } catch (error) {
+    } catch {
       return { error: 'Invalid pairing request or expired proof' };
     }
   }

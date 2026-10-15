@@ -33,7 +33,6 @@ import {
   KELEDON_AGENT_EVENTS,
   KELEDON_TRACE_SPANS,
 } from '../telemetry/trace-model';
-import { AGENT_EXEC_ATTRS } from '../telemetry/decision-evidence';
 import { resolveCorsOrigins } from '../config/runtime-tier';
 import {
   extractAgentTraceContext,
@@ -390,7 +389,7 @@ export class AgentGateway
           this.handleSystemEvent(client, data);
           break;
         default:
-          this.logger.warn(`Unknown event type: ${data.type}`);
+          this.logger.warn(`Unknown event type: ${String(data.type)}`);
       }
     } catch (error) {
       this.logger.error(

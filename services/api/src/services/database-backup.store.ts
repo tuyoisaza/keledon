@@ -122,7 +122,7 @@ export class DatabaseBackupStore {
       data.entities[collection] ||= [];
       data.entities[collection].push(entity);
     }
-    return JSON.stringify(data, null, 2);
+    return Promise.resolve(JSON.stringify(data, null, 2));
   }
 
   private async writeFile(

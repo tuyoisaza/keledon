@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { Subject, Observable, interval } from 'rxjs';
+import { Subject, interval } from 'rxjs';
 
 import type {
   BackupInfo,
@@ -187,7 +187,7 @@ export class DatabasePersistenceService
       filtered = filtered.slice(0, options.limit);
     }
 
-    return filtered;
+    return Promise.resolve(filtered);
   }
 
   // Count entities in collection
@@ -372,7 +372,7 @@ export class DatabasePersistenceService
 
       const data = await fs.readFile(filePath, 'utf8');
       return JSON.parse(data);
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -386,7 +386,7 @@ export class DatabasePersistenceService
       const filePath = path.join(process.cwd(), 'data', `${key}.json`);
 
       await fs.unlink(filePath);
-    } catch (error) {
+    } catch {
       // Ignore file not found errors
     }
   }

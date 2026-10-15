@@ -1,5 +1,11 @@
 # Integration Review handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.51 — API runtime truthfulness and lint
+
+Reviewed source `09ef2497957c381a3af7428af393b65b811c2fe6` / tree `fdb14b554ad46b1908b2041bfa781bb15bd0a716`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`. Tenant runtime no longer fabricates Browser/CRM/voice successes or integration health; unsupported adapter steps fail closed and subagent results persist. All five roots and Browser renderer are 5.1.51. API lint is 0 warnings/errors. Review details: `90-delivery/snapshots/candidate-5.1.51/INTEGRATION_REPORT.md`. No private endpoint was contacted.
+
+---
+
 ## Candidate 5.1.36 — Device source integration
 
 The source candidate is `fix/phdk-device-revoke-ui-5-1-36`, based on verified main `f0a9633e39bbdbca416f5e1c24c32acab7276902`. Five package/lock roots plus Browser renderer align at 5.1.36. Device registration binds the authenticated DB actor/company and rejects a missing company; manager revoke is tenant-scoped in API and confirmed in the localized Web page. The safe device list and paired-device-only RPA secret read remain intact. Validated customer-selected private CRM origins remain governed by tenant allowlists. API 35/35 plus build, Web typecheck/build/UAT 2/2, Browser build, Web/Landing SEO 1/1, 35-model/168-row drift assertions and PHDK coherence 52/52 pass. No shared API/Cloud contract conflict is introduced; there are no API/Cloud mirrored changes. UAT metadata and screenshots are recorded in `docs/phdk/evidence/uat-device-5.1.36.json` and `uat-device-*.png`. No live DB, device, provider, private target or deployment was used. Delivery remains pending; whole Auto remains partial.

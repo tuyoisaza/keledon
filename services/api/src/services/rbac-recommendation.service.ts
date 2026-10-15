@@ -41,7 +41,7 @@ export interface RBACAnalysisFilter {
 
 @Injectable()
 export class RBACRecommendationService {
-  async performFullAnalysis(options?: any): Promise<RBACAnalysis> {
+  async performFullAnalysis(_options?: unknown): Promise<RBACAnalysis> {
     console.log('[RBAC] Starting comprehensive RBAC analysis');
 
     // Basic RBAC maturity calculation
@@ -154,14 +154,14 @@ export class RBACRecommendationService {
     };
   }
 
-  async getAnalysisHistory(options?: any): Promise<RBACAnalysis[]> {
+  getAnalysisHistory(_options?: unknown): Promise<RBACAnalysis[]> {
     console.log('[RBAC] Getting analysis history');
-    return [];
+    return Promise.resolve([]);
   }
 
-  async getAnalysisById(id: string): Promise<RBACAnalysis | null> {
+  getAnalysisById(id: string): Promise<RBACAnalysis | null> {
     console.log(`[RBAC] Getting analysis by ID: ${id}`);
-    return null;
+    return Promise.resolve(null);
   }
 
   async getRecommendations(
@@ -185,9 +185,9 @@ export class RBACRecommendationService {
     return recommendations;
   }
 
-  async getImplementationPlan(): Promise<any> {
+  getImplementationPlan(): Promise<any> {
     console.log('[RBAC] Getting implementation plan');
-    return {
+    return Promise.resolve({
       phases: [
         {
           id: 'phase-1',
@@ -229,7 +229,7 @@ export class RBACRecommendationService {
       totalDuration: '5-7 weeks',
       totalEffort: 'high',
       successProbability: 85,
-    };
+    });
   }
 
   async getAnalysisGaps(filters?: RBACAnalysisFilter): Promise<RBACGap[]> {
@@ -315,37 +315,37 @@ export class RBACRecommendationService {
   }
 
   // Helper methods for checking RBAC components
-  private async checkRBACService(): Promise<boolean> {
+  private checkRBACService(): Promise<boolean> {
     try {
       // Check if RBAC service file exists
       const fs = require('fs');
       const path = require('path');
       const servicePath = path.join(__dirname, '../rbac/rbac.service.ts');
-      return fs.existsSync(servicePath);
+      return Promise.resolve(fs.existsSync(servicePath));
     } catch {
-      return false;
+      return Promise.resolve(false);
     }
   }
 
-  private async checkRBACControllers(): Promise<boolean> {
+  private checkRBACControllers(): Promise<boolean> {
     try {
       const fs = require('fs');
       const path = require('path');
       const controllerPath = path.join(__dirname, '../rbac/rbac.controller.ts');
-      return fs.existsSync(controllerPath);
+      return Promise.resolve(fs.existsSync(controllerPath));
     } catch {
-      return false;
+      return Promise.resolve(false);
     }
   }
 
-  private async checkRBACMiddleware(): Promise<boolean> {
+  private checkRBACMiddleware(): Promise<boolean> {
     try {
       const fs = require('fs');
       const path = require('path');
       const middlewarePath = path.join(__dirname, '../rbac/rbac.middleware.ts');
-      return fs.existsSync(middlewarePath);
+      return Promise.resolve(fs.existsSync(middlewarePath));
     } catch {
-      return false;
+      return Promise.resolve(false);
     }
   }
 }

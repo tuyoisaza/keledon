@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as os from 'os';
 import * as process from 'process';
-import { randomUUID } from 'crypto';
 
 export interface SystemMetrics {
   cpu: {
@@ -85,8 +84,8 @@ export class SystemMonitoringService {
 
   // Get process-specific metrics
   getProcessMetrics(pid?: number): ProcessMetrics[] {
-    // In a real implementation, this would use system APIs like psutil
-    // For now, return mock process data based on current Node.js process
+    if (pid !== undefined && pid !== process.pid) return [];
+
     const currentProcess = {
       pid: process.pid,
       name: 'keledon-backend',
@@ -96,28 +95,7 @@ export class SystemMonitoringService {
       status: 'running' as const,
     };
 
-    const processes: ProcessMetrics[] = [currentProcess];
-
-    // Add some common system processes (mock data for demonstration)
-    const commonProcesses = [
-      { name: 'chrome', cpu: 0, memory: 0 },
-      { name: 'node', cpu: 0, memory: 0 },
-      { name: 'systemd', cpu: 0, memory: 0 },
-      { name: 'docker', cpu: 0, memory: 0 },
-    ];
-
-    commonProcesses.forEach((proc, index) => {
-      processes.push({
-        pid: 1000 + index,
-        name: proc.name,
-        cpu: proc.cpu,
-        memory: proc.memory,
-        uptime: 0,
-        status: 'running' as const,
-      });
-    });
-
-    return processes.sort((a, b) => b.cpu - a.cpu);
+    return [currentProcess];
   }
 
   // Get performance alerts

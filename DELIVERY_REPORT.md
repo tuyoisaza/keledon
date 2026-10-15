@@ -1,4 +1,22 @@
-## Current delivery — 5.1.50 close Web ESLint debt (source merged)
+## Current delivery — candidate 5.1.51 (source validated; publication pending)
+
+Repository `tuyoisaza/keledon`; target `main`; branch `fix/phdk-api-lint-zero-5-1-51`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`. Source commit `09ef2497957c381a3af7428af393b65b811c2fe6`, tree `fdb14b554ad46b1908b2041bfa781bb15bd0a716`; subject has the required `v5.1.51:` prefix. Five app package/lock roots and Browser renderer align at 5.1.51. Candidate report: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/snapshots/candidate-5.1.51/DELIVERY_REPORT.md`.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Fresh 5.1.51 roots and renderer; changelog updated. |
+| COMMIT_PREFIX | PASS | `v5.1.51: close API lint and fail closed on unsupported integrations`. |
+| PUSH_AND_PR | PENDING | No branch push or PR yet. |
+| REMOTE_MAIN | PENDING | Merge and fresh SHA/tree/version readback required. |
+| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | API 0-warning lint; API/Cloud 36/16; Browser 27; all builds/typechecks, exact-source UAT, diagnostics, SEO and PHDK coherence pass. Whole Auto remains 37 PASS, 2 BLOCKED, 1 MANUAL. |
+
+No deployment, database, customer endpoint/data, private CRM or native device/audio was used. GitHub showed no open PR before publication; no hosted check/review decision is claimed. Live client integrations remain customer-specific. Web/Landing builds show the existing chunk-size warning.
+
+SIGUIENTE PASO: push the candidate branch, open its PR to `main`, then complete merge controls and verify the exact remote SHA/tree/version. Preserve PARTIALLY DELIVERED for the open environment-gated commitments.
+
+---
+
+## Previous delivery — 5.1.50 close Web ESLint debt (source merged)
 
 Repository `tuyoisaza/keledon`; target remote `main`. PR #137 delivered v5.1.49 at `537ce1567c13f74512a23ef9b9cba3412a7510fd`. Candidate source `dd07302829270bbbf8499784b8c3f3d36c1af080` on `fix/phdk-web-lint-zero-5-1-50` was squash-merged by [PR #138](https://github.com/tuyoisaza/keledon/pull/138) at verified `main` `b92e1fa91bfa9b9f53c8a6513ca580f403cda1d5`. `origin/main` and `git ls-remote` agree; remote tree `5828601db800875da01c459a8ed3e8412474e8d5` matches the tested candidate. All five package/lock roots and Browser renderer align at 5.1.50. Web lint is 0 warnings/0 errors; exact-source synthetic UAT passes 4/4, diagnostics 19/19, SEO 1/1, typecheck and all five builds pass; PHDK coherence is 52/52. UAT evidence is `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-5.1.50/uat-local-web.json`, with a clean source fingerprint at the exact source commit. GitHub reports no hosted checks or review decision. No deployment is claimed. Whole Auto remains partially delivered for persistence, native, accessibility/localization, deployed SEO/AEO and customer-specific live integration acceptance.
 
