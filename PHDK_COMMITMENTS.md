@@ -1,5 +1,20 @@
 # Commitment ledger
 
+## Active run update — candidate 5.1.51 (2026-10-15)
+
+Candidate source `09ef2497957c381a3af7428af393b65b811c2fe6`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`, aligns all five product package/lock roots and Browser renderer at 5.1.51. API full ESLint is now 0 warnings/0 errors. API/Cloud regressions 36/16; Browser offline 27/27; all five builds; Web/Landing typecheck/lint; exact-source synthetic UAT 4/4; diagnostics 19/19; SEO 1/1 each; PHDK coherence 52/52 pass. Source changes remove simulated execution/integration success and retain only explicit tenant adapter behavior.
+
+| Commitment | Current delivery evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 — baseline, versions, PRs | Candidate 5.1.51 is versioned and source-tested; branch `fix/phdk-api-lint-zero-5-1-51`. | Push, PR, merge and verified remote-main readback pending. |
+| CMT-002 — widget and safe diagnostics | Diagnostics 19/19; exact-source synthetic Web UAT 4/4. | Native Windows device/audio and broad route/assistive-tech acceptance remain open. |
+| CMT-003 — voice → Cloud → Browser → CRM per client | Mock successes removed; absent tenant execution adapter fails closed; validated private-origin allowlists remain. | Per-client live call/CRM acceptance and native audio remain open; no private endpoint was contacted. |
+| CMT-004 — administration and permissions | Approved restrictive actor/tenant policy unchanged; five builds, API/Cloud regressions, coherence and synthetic role UAT pass. | Safe DB identities, disposable PostgreSQL and persisted migrations/CRUD/full authorization matrix remain open. |
+
+Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL). Deployed SEO/AEO and broad accessibility/localization acceptance remain open. No DB, customer data, private endpoint, device or deployment was used. See candidate evidence under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/snapshots/candidate-5.1.51/`.
+
+---
+
 ## Active run update — 5.1.50 Web lint remediation delivered (2026-10-14 local)
 
 PR #137 delivered 5.1.49 at verified main `537ce1567c13f74512a23ef9b9cba3412a7510fd`. PR #138 delivered source `dd07302829270bbbf8499784b8c3f3d36c1af080` at verified main `b92e1fa91bfa9b9f53c8a6513ca580f403cda1d5`, with matching tree `5828601db800875da01c459a8ed3e8412474e8d5`. All five roots/locks and Browser renderer are 5.1.50. Full Web ESLint is 0 warnings/0 errors; all five builds, Web typecheck, clean exact-source UAT 4/4, diagnostics 19/19, Web SEO 1/1 and PHDK coherence 52/52 pass. PR #138 is merged; GitHub reports no hosted checks or review decision.

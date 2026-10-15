@@ -1,4 +1,17 @@
-## Current Auto candidate — 2026-10-14, 5.1.50 Web lint remediation
+## Candidate 5.1.51 coverage — delivery pending
+
+| Commitment | Status | Candidate evidence | Open acceptance |
+|---|---|---|---|
+| CMT-001 baseline/version/PR | SOURCE PASS / DELIVERY PENDING | 5.1.51 aligned; source commit `09ef2497957c381a3af7428af393b65b811c2fe6`; all scoped checks pass. | Push, PR, merge and remote readback. |
+| CMT-002 widget/safe diagnostics | PARTIAL | Diagnostics 19/19; synthetic UI UAT 4/4. | Native Windows device/audio and broad a11y/localization. |
+| CMT-003 per-client voice→Cloud→Browser→CRM | PARTIAL | Mock successes removed; absent tenant execution adapter fails closed; validated private-origin allowlists remain. | Client-configured live acceptance and native audio; no customer target was exercised. |
+| CMT-004 administration/permissions | PARTIAL | API/Cloud regressions and 52/52 PHDK coherence pass; approved restrictive policy retained. | DB-backed identities, disposable PostgreSQL, persisted migrations/CRUD and complete matrix. |
+
+Whole UAT is 37 PASS, 2 BLOCKED, 1 MANUAL. Deployed SEO/AEO remains unmeasured. The candidate status is **PARTIALLY DELIVERED** until source delivery and outstanding acceptance are evidenced.
+
+---
+
+## Previous Auto candidate — 2026-10-14, 5.1.50 Web lint remediation
 
 | Commitment | Current candidate evidence | Remaining acceptance |
 |---|---|---|

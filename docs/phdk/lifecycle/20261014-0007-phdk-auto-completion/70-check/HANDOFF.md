@@ -1,3 +1,9 @@
+## Candidate 5.1.51 — zero-warning API lint and truthful tenant runtime
+
+API lint passes 0 warnings/0 errors. API/Cloud regression 36/16, Browser offline 27/27, all five builds, Web/Landing lint/typecheck, exact-source UAT 4/4, diagnostics 19/19, SEO 1/1 each and PHDK coherence 52/52 pass. Full Auto remains partial (37 PASS, 2 BLOCKED, 1 MANUAL); persisted DB, native device/audio, broad accessibility/localization and deployed SEO/AEO are not closed. Detailed candidate results are in `../90-delivery/snapshots/candidate-5.1.51/PHDK_CHECK_REPORT.md`.
+
+---
+
 ## Candidate 5.1.50 — zero-warning Web lint
 
 Source commit `dd07302829270bbbf8499784b8c3f3d36c1af080` on `fix/phdk-web-lint-zero-5-1-50`; based on verified main `537ce1567c13f74512a23ef9b9cba3412a7510fd`. Web full ESLint is 0 warnings/0 errors (14 warnings removed); Web TypeScript, all five builds, diagnostic tests 19/19, SEO test 1/1 and PHDK 2.50.10 coherence 52/52 pass. Scope is lint/type contracts for legacy unmounted UI and intentional React provider/hook exports. No broad API/Cloud lint or whole-product acceptance is implied. Whole Auto remains 37 PASS, 2 BLOCKED, 1 MANUAL; DB/persistence, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open.

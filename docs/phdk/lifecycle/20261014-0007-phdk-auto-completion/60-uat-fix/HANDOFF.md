@@ -1,5 +1,11 @@
 # UAT Fix handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.51 — source findings repaired
+
+Removed false API SubAgent Browser/CRM/voice success, made unsupported tenant adapter steps fail closed and persisted flow-run status/results. Integration health no longer reports simulated connection or sync success; process monitoring returns only the actual Node process. API ESLint is 0 warnings/errors. API focused tests, full regressions and exact-source synthetic Web UAT pass. No customer endpoint/database/native device was exercised. Candidate report: `../90-delivery/snapshots/candidate-5.1.51/PHDK_CHECK_REPORT.md`.
+
+---
+
 ## Candidate 5.1.46 — remove unmounted legacy catalog UI
 
 The owner confirmed the global ManagedInterface catalog must stay hidden. Its unmounted Web component was removed; active tenant integration journeys remain on Vendor configuration. Exact built-SPA UAT passes 4/4 suites with mocked API/external traffic blocked; Browser suite 40/40, API/Cloud regressions 36/36 and 16/16. No new active-path UAT defect was found. Persisted DB, native-device and broad accessibility gates remain open.
