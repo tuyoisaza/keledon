@@ -302,6 +302,29 @@ async function main() {
       ).result,
       Denied,
     );
+    const companyCountryUpdate = run(
+      'companies',
+      'PUT',
+      { id: 'co-a' },
+      { countries: ['MX', 'US'] },
+    );
+    await companyCountryUpdate.result;
+    assert.deepEqual(companyCountryUpdate.req.body.countries, ['MX', 'US']);
+    await assert.rejects(
+      run(
+        'companies/:id/countries',
+        'POST',
+        { id: 'co-a' },
+        { countryCode: 'MX' },
+      ).result,
+      Denied,
+      'tenant managers update nested countries through their own company route',
+    );
+    await assert.rejects(
+      run('companies', 'PUT', { id: 'co-b' }, { countries: ['US'] }).result,
+      Denied,
+      'tenant managers cannot update another company country set',
+    );
     await assert.rejects(
       run('tenant-provider-config', 'PUT', {}, [
         { companyId: 'co-a' },

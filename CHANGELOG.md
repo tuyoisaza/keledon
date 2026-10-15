@@ -1,3 +1,13 @@
+## v5.1.69 — 2026-10-15 (reconcile nested CRUD scope evidence)
+
+- Add API/Cloud regression cases for tenant company country updates, direct nested route denial, and foreign-company country updates.
+- Reconcile the CRUD matrix: CompanyCountry and TeamInterface are nested relations; provider/voice scope is source-tested but remains partial pending persistence and audit acceptance.
+- Align all five app package/lock roots and Browser renderer at 5.1.69.
+
+### Verification
+- API regression passes 39/39; Cloud passes 18/18; CRUD model inventory checks all 39 models and 546 role/surface rows.
+- UAT-063 is source/guard evidence only. No live database or customer identity was used; whole PHDK Auto remains partial.
+
 ## v5.1.68 — 2026-10-15 (verify actor-derived provider tenant scope)
 
 - Extend API/Cloud authorization regressions to verify tenant-provider-config and voice-profile reads and writes derive `companyId` from the current database actor.

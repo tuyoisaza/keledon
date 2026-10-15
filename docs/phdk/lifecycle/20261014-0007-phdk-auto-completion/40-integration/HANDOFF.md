@@ -1,6 +1,6 @@
-# Integration handoff — candidate 5.1.68
+# Integration handoff — candidate 5.1.69
 
-The API and Cloud provider configuration and voice-profile guards now have positive coverage for deriving tenant company scope from the database actor, in addition to the existing cross-company rejection cases. Full API and Cloud regressions pass 39/39 and 18/18. All five package/lock roots and the Browser renderer are aligned at 5.1.68. Five production builds and five lint checks pass; API/Cloud/Web/Landing dedicated typechecks pass, and Browser build runs `tsc` and passes. See `INTEGRATION_REPORT-5.1.68.md` for the exact check inventory. No live database, customer CRM, call provider, or deployment was used. Whole PHDK Auto remains partial.
+The candidate reconciles CompanyCountry and TeamInterface as nested relations in CRUD_MATRIX.md. API/Cloud guard tests cover own-company country updates, deny direct nested country writes for tenant managers, and reject foreign-company updates; existing TeamInterface regressions cover tenant guard and atomic replacement. Provider/profile checks from 5.1.68 remain in the full regressions. API/Cloud regressions pass 39/39 and 18/18, and all five package/lock roots plus Browser renderer align at 5.1.69. Five builds, five lint checks, four dedicated typechecks, Browser's TypeScript build, PHDK coherence 56/56, and `git diff --check` pass. See `INTEGRATION_REPORT-5.1.69.md` for the exact check inventory. Persistence and a Web TeamInterface selector decision remain open. No live database, customer CRM, call provider, or deployment was used. Whole PHDK Auto remains partial.
 
 SIGUIENTE PASO: finish exact-candidate Check, then deliver through the normal versioned PR and verify remote `main`.
 
@@ -88,5 +88,12 @@ The 5.1.55 source was exercised against the retained synthetic disposable Postgr
 This update advances UAT-009/010 only for the exercised scope; it does not claim full persisted CRUD across the 35-model map. Candidate delivery version is 5.1.56. Whole Auto remains partial.
 
 SIGUIENTE PASO: complete candidate-wide source/build/coherence checks and deliver through the normal PR path.
+
+---
+# Integration handoff — candidate 5.1.69
+
+The candidate reconciles CompanyCountry and TeamInterface as nested relations in CRUD_MATRIX.md. API/Cloud guard tests now cover own-company country updates, deny direct nested country writes for tenant managers, and reject foreign-company updates; existing TeamInterface regressions cover tenant guard and atomic replacement. Provider/profile checks from 5.1.68 remain in the full regressions. API/Cloud pass 39/39 and 18/18; see `INTEGRATION_REPORT-5.1.69.md`. Persistence and a Web TeamInterface selector decision remain open. Whole PHDK Auto remains partial.
+
+SIGUIENTE PASO: complete exact-candidate Check, then deliver through the versioned PR and verify remote `main`.
 
 ---

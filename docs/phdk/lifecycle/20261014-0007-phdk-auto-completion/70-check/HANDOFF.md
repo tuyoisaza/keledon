@@ -1,6 +1,6 @@
-# Check handoff — candidate 5.1.68
+# Check handoff — candidate 5.1.69
 
-Candidate source checks pass: API/Cloud regressions 39/39 and 18/18; all five builds and lint checks; API/Cloud/Web/Landing dedicated typechecks, with Browser build running `tsc`; all five app versions/locks and Browser renderer aligned; PHDK v2.51.2 coherence 56/56; and final exact diff review recorded in `PHDK_CHECK_REPORT-5.1.68.md`. The focused authorization assertions verify tenant company derivation, while the source slice does not establish live database identity or persistence.
+Candidate source checks pass: API/Cloud regressions 39/39 and 18/18; all five builds and lint checks; API/Cloud/Web/Landing dedicated typechecks, with Browser build running `tsc`; all five app versions/locks and Browser renderer aligned at 5.1.69; PHDK v2.51.2 coherence 56/56; and exact diff checks recorded in `PHDK_CHECK_REPORT-5.1.69.md`. The nested CompanyCountry and TeamInterface contracts remain partial pending persistence/audit evidence and a Web TeamInterface selector decision.
 
 No new P0/P1 source finding was identified in this candidate's provider/profile guard paths. Portfolio acceptance remains **PARTIAL**: disposable PostgreSQL UAT-060 is blocked pending the owner-provided target; native device/audio is manual; broad accessibility/localization, deployed SEO/AEO and live per-client call/CRM acceptance remain open.
 
@@ -185,5 +185,12 @@ PR [#116](https://github.com/tuyoisaza/keledon/pull/116) delivered the scoped wr
 PHDK 2.50.10 coherence 52/52; all five package/lock roots and Browser renderer are 5.1.53. Landing SEO test 1/1, lint, typecheck, build, built-HTML assertion and diff check pass. The public initial-document content gap is closed on this source candidate. Exact scope findings and retained external/portfolio gaps are recorded in the root Check report and `snapshots/candidate-5.1.53/PHDK_CHECK_REPORT.md`. This scoped pass does not certify full CRUD persistence, broad accessibility/localization, native device/audio, deployed discovery or customer-specific calls/CRM.
 
 Exit: scoped source check passes; whole Auto remains **PARTIALLY DELIVERED**. Next: normal versioned PR delivery and remote-main readback.
+
+---
+# Check handoff — candidate 5.1.69
+
+The exact candidate adds API/Cloud regression coverage for nested CompanyCountry behavior and keeps TeamInterface classified as a nested relation, with the absent Web selector and persisted behavior called out as open. API/Cloud full regressions pass 39/39 and 18/18; CRUD inventory checks 39 models / 546 model-role-surface rows / 168 core rows. Remaining candidate builds, lint/typechecks, version sync and coherence will be recorded in `PHDK_CHECK_REPORT-5.1.69.md`. Whole Auto remains partial.
+
+SIGUIENTE PASO: finish exact-candidate checks and review, then deliver through normal PR and verify remote `main`.
 
 ---
