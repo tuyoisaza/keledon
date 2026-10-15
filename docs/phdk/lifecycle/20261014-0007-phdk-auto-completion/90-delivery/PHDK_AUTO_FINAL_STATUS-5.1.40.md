@@ -1,0 +1,9 @@
+# PHDK Auto — status at candidate 5.1.40
+
+PR [#118](https://github.com/tuyoisaza/keledon/pull/118) merged the diagnostics-route role alignment. Remote `main` is `38cb5b76df9b6b8779a12200cf16ee4b50b3fea0`; `git ls-remote` agrees, and the merged tree matches the tested PR-head tree. UAT-034 passes against source commit `8d000a5d4aa95dc361d19a5eca02fe4544be0417`. The coordinator is redirected before the protected diagnostics request; admin use remains available; API authorization is unchanged. No hosted checks/review decisions or deployment are claimed.
+
+The agreed four fronts remain in the previously selected order. Baseline/version/PR tracking is current through 5.1.40; widget and diagnostics source checks cover this role mismatch only; the voice→Cloud→Browser→CRM path is synthetic/source-verified and live provider acceptance is tenant-specific; least-privilege administration remains enforced by server-derived actor/tenant policy and still needs persistent DB acceptance.
+
+**Overall result: PARTIALLY DELIVERED.** Acceptance still needs disposable PostgreSQL with safe DB-backed identities and persisted migration/authorization proof; exhaustive CRUD role × tenant × surface × operation validation; native Windows device/audio; broad accessibility/localization; and deployed SEO/AEO measurements. Client-specific calls/CRM are tested after each customer's provider selection. Private CRM targets are allowed only when validated and tenant-allowlisted. No database, client service, private destination, customer data or deployment was used for this candidate.
+
+Evidence: `PHDK_DELIVERY_EVIDENCE-5.1.40-post-merge-118.json`; exact-source UAT: `../50-uat/evidence/uat-management-debug-role-5.1.40.json`.

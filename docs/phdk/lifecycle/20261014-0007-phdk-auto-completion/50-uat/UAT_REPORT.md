@@ -6,7 +6,7 @@ UAT-034 passes against the built Web SPA at source commit `8d000a5d4aa95dc361d19
 
 Web build/typecheck and changed-file ESLint pass; Web diagnostics are 19/19, Web SEO source test 1/1, Browser build synchronizes renderer `v5.1.40`, and API, Cloud, Landing builds/typechecks pass. All five application package/lock roots and the Browser renderer are 5.1.40. UAT-034 adds one scoped PASS; whole acceptance remains **ACCEPTANCE INCOMPLETE: 31 PASS, 2 BLOCKED, 1 MANUAL**. Disposable PostgreSQL/identities, native Windows device/audio, exhaustive persisted CRUD, broad accessibility/localization and deployed SEO/AEO remain open. No database, real identity, CRM, provider or deployment was used.
 
-UAT-034 and CHK-AUTO-018 are bound to the exact source commit and tree. Normal PR delivery and remote-main readback are the remaining source-delivery steps; whole Auto acceptance remains partial.
+UAT-034 and CHK-AUTO-018 are bound to the exact source commit and tree. PR [#118](https://github.com/tuyoisaza/keledon/pull/118) merged at `38cb5b76df9b6b8779a12200cf16ee4b50b3fea0`; fetched `origin/main` and `git ls-remote` agree, and the merged tree matches the tested PR-head tree `340682673f2e4cb1aaf8befb0267107515a1e6a2`. This completes source delivery only; whole Auto acceptance remains partial. Delivery readback: `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.40-post-merge-118.json`.
 
 ---
 

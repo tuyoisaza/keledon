@@ -4,7 +4,9 @@
 
 Check found `/management/debug` used hierarchical `minRole="admin"`, which admitted coordinators even though the existing diagnostics API guard denies them. `ProtectedRoute` now supports an explicit allowlist; the route permits only admin/superadmin and API authorization remains unchanged. Exact-source built-SPA UAT-034 passes 1/1: coordinator is redirected before protected deep-health access; admin receives a mocked response; external traffic is blocked. Source commit `8d000a5d4aa95dc361d19a5eca02fe4544be0417`, tree `cc41a3b3d030d72db006809553983abb2368d54b`, version 5.1.40. Web diagnostics 19/19, SEO source 1/1, Web/Landing builds and typechecks, API/Cloud builds, Browser build, focused Web ESLint, and PHDK coherence 52/52 pass. Evidence: `../50-uat/evidence/uat-management-debug-role-5.1.40.json`.
 
-Status: **SCOPED SOURCE CHECK PASS / WHOLE ACCEPTANCE PARTIAL**. CHK-AUTO-018 is closed for source; exhaustive persisted CRUD/role/tenant operations, disposable PostgreSQL and identities, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Customer call/CRM acceptance is per tenant; no client runtime was exercised. Normal PR delivery and remote-main readback remain next.
+PR [#118](https://github.com/tuyoisaza/keledon/pull/118) delivered candidate source `8d000a5d4aa95dc361d19a5eca02fe4544be0417` at verified remote `main` `38cb5b76df9b6b8779a12200cf16ee4b50b3fea0`. `git ls-remote` matches and the merge tree equals the tested PR-head tree. GitHub reported no hosted checks or review decision; deployment is not claimed. Delivery evidence: `../90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.40-post-merge-118.json`.
+
+Status: **SCOPED SOURCE CHECK PASS / SOURCE MERGED / WHOLE ACCEPTANCE PARTIAL**. CHK-AUTO-018 is closed for source; exhaustive persisted CRUD/role/tenant operations, disposable PostgreSQL and identities, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Customer call/CRM acceptance is per tenant; no client runtime was exercised.
 
 ---
 
