@@ -1,0 +1,97 @@
+{
+  "version": "1",
+  "goal": "Continue the owner-confirmed four-front KELEDON PHDK Auto; exact-source persisted authorization and migration acceptance",
+  "target_branch": "main",
+  "expected_version": "5.1.57",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "tested_source_commit_sha": "1e0b622fe125f2fd56dcd3dc8f784a3f9eb7eacb",
+  "tested_candidate_sha": "1e0b622fe125f2fd56dcd3dc8f784a3f9eb7eacb",
+  "tested_candidate_tree": "1d29055e660d7e37bf600344ac98afd3d7e9b098",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/151",
+  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/151",
+  "pr_head_sha": "1e0b622fe125f2fd56dcd3dc8f784a3f9eb7eacb",
+  "product_source_merge_sha": "12bef77c2aaaa16e9c607a003abcc41b4f5c2d22",
+  "merged_commit_sha": "12bef77c2aaaa16e9c607a003abcc41b4f5c2d22",
+  "remote_main_sha": "12bef77c2aaaa16e9c607a003abcc41b4f5c2d22",
+  "remote_main_tree": "1d29055e660d7e37bf600344ac98afd3d7e9b098",
+  "remote_main_verified_at": "2026-10-15T05:22:02Z",
+  "git_ls_remote_matches": true,
+  "versions": {
+    "services_api": "5.1.57",
+    "cloud": "5.1.57",
+    "browser": "5.1.57",
+    "services_web": "5.1.57",
+    "landing": "5.1.57",
+    "browser_renderer": "5.1.57"
+  },
+  "github": {
+    "state": "MERGED",
+    "product_pr": "#151 merged by squash",
+    "merge_method": "squash",
+    "merge_state": "CLEAN",
+    "hosted_checks": [],
+    "review_decision": "none reported",
+    "main_protection": false
+  },
+  "checks": {
+    "api_build": {
+      "evidence": "services/api npm run build on candidate 5.1.57.",
+      "status": "PASS"
+    },
+    "api_regression": {
+      "evidence": "services/api npm run test:regression: 36/36 suites.",
+      "status": "PASS"
+    },
+    "cloud_build": {
+      "evidence": "cloud npm run build on candidate 5.1.57.",
+      "status": "PASS"
+    },
+    "browser_build": {
+      "evidence": "browser npm run build on candidate 5.1.57; renderer synchronization ran.",
+      "status": "PASS"
+    },
+    "web_build": {
+      "evidence": "services/web npm run build on candidate 5.1.57.",
+      "status": "PASS"
+    },
+    "landing_build": {
+      "evidence": "landing npm run build on candidate 5.1.57; existing >500 kB bundle advisory.",
+      "status": "PASS"
+    },
+    "phdk_coherence": {
+      "evidence": "PHDK 2.50.10 coherence checker: 52/52 manifest mappings.",
+      "status": "PASS"
+    },
+    "version_alignment": {
+      "evidence": "Fresh origin/main package and lock reads: all five roots and Browser renderer at 5.1.57.",
+      "status": "PASS"
+    },
+    "persisted_postgres_uat": {
+      "evidence": "UAT-044/045 pass within scoped evidence on exact 5.1.55 source: migrations current/idempotent; DB-backed identity, superadmin assignment, same-tenant access and cross-tenant/role/company denial checks; synthetic fixtures cleaned and services stopped. Evidence docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json. This candidate adds no new persistence execution.",
+      "status": "PASS"
+    },
+    "crud_evidence_mapping": {
+      "evidence": "UAT-046 and regression 33 link four Company/User API rows to UAT-045 and assert each remains BLOCKED pending complete operation coverage.",
+      "status": "PASS"
+    },
+    "git_diff_check": {
+      "evidence": "git diff --check and staged diff checks pass.",
+      "status": "PASS"
+    },
+    "source_delivery": {
+      "evidence": "PR #151 merged by squash at 12bef77c2aaaa16e9c607a003abcc41b4f5c2d22; origin/main and git ls-remote agree; remote tree 1d29055e660d7e37bf600344ac98afd3d7e9b098 matches tested candidate tree.",
+      "status": "PASS"
+    }
+  },
+  "scope_limitations": [
+    "This is the 5.1.57 scoped CRUD evidence-mapping continuation, not completion of the four-front PHDK Auto goal.",
+    "Whole UAT remains acceptance incomplete: 46 PASS, 0 BLOCKED, 1 MANUAL; native device/audio remains manual.",
+    "Exhaustive persisted CRUD across the mapped 35 models, role/operation/surface combinations and delete/reindex concurrency remain open.",
+    "Broad accessibility/localization and deployed SEO/AEO remain open or unverified.",
+    "No customer call/CRM endpoint was selected or contacted; integration acceptance remains tenant-specific.",
+    "No deployment is claimed; GitHub reported no hosted checks or review decision."
+  ],
+  "overall_status": "5.1.57 SOURCE MERGED AND REMOTE VERIFIED; PHDK AUTO PARTIALLY DELIVERED",
+  "candidate_branch": "fix/phdk-crud-evidence-5-1-57"
+}

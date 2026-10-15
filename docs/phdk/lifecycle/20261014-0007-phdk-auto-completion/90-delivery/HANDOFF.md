@@ -1,4 +1,8 @@
-# Delivery result — candidate 5.1.54
+# Delivery status — candidate 5.1.59 pending; prior 5.1.58 merged
+
+PR #152 is squash-merged at `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`; `origin/main` and `git ls-remote` agree, merged tree `12fed244a537fd40f784bda18a2c973514e5c8fe` matches the tested candidate and all six versions are 5.1.58. GitHub reported no hosted checks/review decision; main is unprotected. The current branch is `fix/phdk-browser-close-scope-5-1-59`, based on that verified main. Source commit `fb047dff` is version-prefixed; push, PR and remote-main proof for 5.1.59 remain. No deployment is claimed. Whole Auto remains partial.
+
+## Historical delivery result — candidate 5.1.54
 
 ## Delivery candidate 5.1.56 — exact-source persistence acceptance
 

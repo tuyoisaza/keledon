@@ -1,5 +1,9 @@
 # SEO handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.59 applicability reuse — public surface unchanged
+
+The BrowserView lifecycle fix changes no public route, product copy, metadata or crawl policy. Existing source review remains applicable. No public host, crawler, Search Console or field measurement was accessed; deployed SEO stays unmeasured. Next: preserve this limitation in Check and delivery.
+
 ## Candidate 5.1.53 — source rendering gap closed; deployed evidence open (2026-10-14)
 
 Entry validation: latest available UAT and UAT Fix evidence from 5.1.52 remains current for unaffected application behavior; candidate-specific UAT-041 is recorded at `../50-uat/evidence/uat-landing-5.1.53.json`. The initial public Landing HTML now includes semantic H1, useful product/architecture overview and the existing disclaimer, backed by Landing SEO test, lint, typecheck, production build and output inspection. Candidate checklist marks SEO-10 and SEO-23 PASS at source/build level. All 25 technical controls retain explicit classifications; live HTTP/TLS, crawler/indexation, CWV, Search Console, backlink and trust provenance measures remain open. No live site or provider was probed here.

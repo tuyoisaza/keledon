@@ -1,4 +1,23 @@
-## Current Auto continuation — candidate 5.1.56 exact-source persistence UAT (2026-10-15)
+## Current Auto continuation — candidate 5.1.59 BrowserView teardown scope (2026-10-15)
+
+Run: `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. PR #152 delivered v5.1.58 at verified main `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`, tree `12fed244a537fd40f784bda18a2c973514e5c8fe`; six version reads align. Candidate branch `fix/phdk-browser-close-scope-5-1-59` is based on that source and fixes the tenant allowlist teardown gap. UAT-050 source contract passes; API/Cloud regressions 37/17, Browser 15/15, five builds, Browser lint and PHDK coherence 52/52 pass.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight / Capture / Plan | REUSED / REVALIDATED | PHDK 2.50.10; four fronts and current owner decisions retained. |
+| PMO / Integration | COMPLETED FOR SLICE | CMT-003 teardown finding corrected; report in `40-integration/INTEGRATION_REPORT-5.1.59.md`. |
+| UAT / UAT Fix | PASS FOR UAT-050 / WHOLE INCOMPLETE | Source contract passes; packaged Electron and live CRM remain untested. |
+| SEO / AEO-GEO | REUSED / NOT AFFECTED | Public surface unchanged; deployed discovery unmeasured. |
+| Check / Remediation | PASS FOR SCOPED SOURCE | Applicable builds, regressions, Browser lint, coherence and diff check pass. |
+| Delivery | RUNNING | Version-prefixed source commit `fb047dff` exists; push, PR and remote-main readback remain. |
+
+UAT tally: 50 PASS, 0 BLOCKED, 1 MANUAL. PHDK Auto remains PARTIALLY DELIVERED for exhaustive persisted operations/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-selected integrations.
+
+SIGUIENTE PASO: finish the final diff, commit with the version prefix, push/update the PR, meet actual controls and verify remote `main`.
+
+---
+
+## Previous Auto continuation — candidate 5.1.56 exact-source persistence UAT (2026-10-15)
 
 Based on verified remote 5.1.55 `main` SHA `85d7ebbbdc0d834e28b9ce1c0fdeb50ce7454fcf`, tree `955bcea225dcd8cdeca971e98f3c7cc3fd764ec2`. Candidate version 5.1.56 aligns all five package/lock roots and Browser renderer. Exact source 5.1.55 API build/regression pass (36/36); disposable PostgreSQL 16.15 migration deploy is idempotent and schema is up to date; DB-backed synthetic registration, role assignment and tenant denial UAT-044/045 pass. Evidence: `50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`. API and DB stopped and synthetic fixtures removed. PHDK coherence 52/52; five product builds pass. New PR and remote completion verification are pending.
 

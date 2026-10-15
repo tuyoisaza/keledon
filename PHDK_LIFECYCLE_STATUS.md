@@ -1,3 +1,26 @@
+## PHDK Auto continuation — candidate 5.1.59 BrowserView teardown security (2026-10-15)
+
+PHDK 2.50.10 remains installed/coherent at 52/52. PR [#152](https://github.com/tuyoisaza/keledon/pull/152) delivered 5.1.58 at verified `origin/main` `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`; remote tree `12fed244a537fd40f784bda18a2c973514e5c8fe` matches the tested candidate and all six product/renderer version reads are 5.1.58. The follow-up candidate is based on that main and advances all six roots to 5.1.59.
+
+Source review found that closing a configured vendor tab cleared its tenant request scope before a pending page load was stopped or its `WebContents` destroyed. `closeTab()` now stops and destroys the view while the origin scope stays active; the `destroyed` event performs cleanup. UAT-050 is source-contract evidence only.
+
+| Stage | Status | Evidence / remaining gate |
+|---|---|---|
+| Preflight | REUSED / REVALIDATED | PHDK 2.50.10; coherence 52/52. |
+| Capture / Plan | REUSED | Four owner-confirmed fronts and approved tenant-private URL policy remain current. |
+| PMO / Workstreams | CONTINUED | CMT-003 tenant Browser security; CMT-001 #152 merged and remotely verified. |
+| Integration Review | PASS FOR SOURCE SLICE | Close order now preserves tenant policy through BrowserView teardown. |
+| UAT / UAT Fix | PASS FOR UAT-050 / WHOLE INCOMPLETE | Source regression pass; packaged Electron and live CRM remain untested. Tally 50 PASS, 0 BLOCKED, 1 MANUAL. |
+| SEO / AEO-GEO | REUSED / NOT AFFECTED | No public route, copy, metadata or claims changed; external visibility remains unmeasured. |
+| Check / Remediation | RUNNING / FIXED FINDING | Final integrated checks and outgoing diff review remain before PR. |
+| Delivery | RUNNING | Source commit `fb047dff` is version-prefixed; branch push, PR and main readback remain. |
+
+Whole PHDK Auto remains **PARTIALLY DELIVERED**: exhaustive persisted model-operation coverage, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected live integrations remain open.
+
+SIGUIENTE PASO: finish integrated checks, create/update the scoped PR, and verify remote `main`; retain PARTIALLY DELIVERED for the whole portfolio.
+
+---
+
 ## PHDK Auto continuation — candidate 5.1.56 exact-source persistence UAT (2026-10-15)
 
 Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`; branch `fix/phdk-persisted-uat-5-1-56`, based on verified 5.1.55 `origin/main` commit `85d7ebbbdc0d834e28b9ce1c0fdeb50ce7454fcf` / tree `955bcea225dcd8cdeca971e98f3c7cc3fd764ec2`. PHDK 2.50.10 is installed and candidate coherence passes 52/52. Five application roots/locks and Browser renderer align at 5.1.56.

@@ -1,0 +1,61 @@
+{
+  "version": "1",
+  "goal": "Continue the owner-confirmed four-front KELEDON PHDK Auto; tenant-bound Browser and Cloud security slice",
+  "target_branch": "main",
+  "expected_version": "5.1.58",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "tested_source_commit_sha": "43d7c1d72473764e385e075315275ee4d629b937",
+  "tested_candidate_sha": "43d7c1d72473764e385e075315275ee4d629b937",
+  "tested_candidate_tree": "12fed244a537fd40f784bda18a2c973514e5c8fe",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/152",
+  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/152",
+  "pr_head_sha": "43d7c1d72473764e385e075315275ee4d629b937",
+  "product_source_merge_sha": "56991c0bec203f507d04090f0b3bbdf11a6cdf4d",
+  "merged_commit_sha": "56991c0bec203f507d04090f0b3bbdf11a6cdf4d",
+  "remote_main_sha": "56991c0bec203f507d04090f0b3bbdf11a6cdf4d",
+  "remote_main_tree": "12fed244a537fd40f784bda18a2c973514e5c8fe",
+  "remote_main_verified_at": "2026-10-15T05:45:38Z",
+  "git_ls_remote_matches": true,
+  "versions": {
+    "services_api": "5.1.58",
+    "cloud": "5.1.58",
+    "browser": "5.1.58",
+    "services_web": "5.1.58",
+    "landing": "5.1.58",
+    "browser_renderer": "5.1.58"
+  },
+  "github": {
+    "state": "MERGED",
+    "product_pr": "#152 merged by squash",
+    "merge_method": "squash",
+    "merge_state": "CLEAN",
+    "hosted_checks": [],
+    "review_decision": "none reported",
+    "main_protection": false
+  },
+  "checks": {
+    "api_build": {"evidence": "API production build on candidate v5.1.58 passed.", "status": "PASS"},
+    "api_regression": {"evidence": "API regression runner: 37/37 suites passed.", "status": "PASS"},
+    "cloud_build": {"evidence": "Cloud production build on candidate v5.1.58 passed.", "status": "PASS"},
+    "cloud_regression": {"evidence": "Cloud regression runner: 17/17 suites passed.", "status": "PASS"},
+    "browser_build": {"evidence": "Browser TypeScript production build passed.", "status": "PASS"},
+    "browser_lint": {"evidence": "Browser ESLint passed with zero warnings/errors.", "status": "PASS"},
+    "browser_regression": {"evidence": "Browser security/call/event suite: 15/15 passed.", "status": "PASS"},
+    "web_build": {"evidence": "Web production build passed; existing bundle-size advisory recorded.", "status": "PASS"},
+    "landing_build": {"evidence": "Landing production build passed; existing bundle-size advisory recorded.", "status": "PASS"},
+    "phdk_coherence": {"evidence": "Installed PHDK 2.50.10 coherence checker: 52/52 manifest mappings pass.", "status": "PASS"},
+    "version_alignment": {"evidence": "Fresh remote reads: all five app roots and Browser renderer are 5.1.58.", "status": "PASS"},
+    "git_diff_check": {"evidence": "Complete candidate diff passes git diff --check.", "status": "PASS"},
+    "source_delivery": {"evidence": "PR #152 squash-merged CLEAN; origin/main and git ls-remote match at 56991c0bec203f507d04090f0b3bbdf11a6cdf4d and the remote tree equals the tested candidate tree.", "status": "PASS"}
+  },
+  "scope_limitations": [
+    "UAT-047, UAT-048 and UAT-049 are source-level evidence; live persisted device pairing and native device/audio remain open.",
+    "Exhaustive persisted CRUD across 35 models and role/tenant/operation/surface combinations, plus delete/reindex concurrency, remain incomplete.",
+    "Broad accessibility/localization and deployed SEO/AEO remain unverified.",
+    "Customer call/CRM acceptance remains tenant-selected; no customer/private endpoint was contacted.",
+    "No deployment or live application health is claimed; whole PHDK Auto remains PARTIALLY DELIVERED."
+  ],
+  "overall_status": "5.1.58 SOURCE MERGED AND REMOTE VERIFIED; PHDK AUTO PARTIALLY DELIVERED",
+  "candidate_branch": "fix/phdk-next-model-operations-5-1-58"
+}

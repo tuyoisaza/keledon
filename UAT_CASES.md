@@ -1,5 +1,13 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.59 addition — retain CRM origin scope through tab destruction (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-050 | US-003 / tenant-configured CRM operator | Exercise the tenant scope helper with a synthetic WebContents and inspect the Browser tab-close policy. | Closing stops pending loads without clearing tenant scope; the `destroyed` event is the cleanup boundary, and the session request registry does not retain WebContents strongly. | Browser source-contract regression. | PASS for source contract: Browser regression verifies stopped views remain tenant-scoped until cleanup, close does not clear the scope early, and session entries contain no WebContents reference. No live BrowserView/network was run. |
+
+Candidate total: **50 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-050 is source-level only. Client CRM/device behavior, exhaustive persisted model operations, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open.
+
 ## Candidate 5.1.58 addition — Cloud device tenant binding (2026-10-15)
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

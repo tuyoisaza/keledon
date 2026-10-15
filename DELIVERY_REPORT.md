@@ -1,4 +1,26 @@
-## Current delivery — 5.1.53 source merged and remotely verified; Auto partial
+## Current delivery — 5.1.59 candidate; 5.1.58 source merged; Auto partial
+
+PR [#152](https://github.com/tuyoisaza/keledon/pull/152) delivered 5.1.58 by squash at verified remote `main` `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`; tree `12fed244a537fd40f784bda18a2c973514e5c8fe` matches the tested candidate. GitHub reports the PR merged CLEAN, with no hosted checks or review decision and no main protection. All six product/renderer versions are 5.1.58. No deployment is claimed.
+
+The mechanical PHDK completion verifier passes against `PHDK_DELIVERY_EVIDENCE.json` for this 5.1.58 slice and the verified remote SHA. It does not certify completion of the whole Auto portfolio.
+
+The follow-up 5.1.59 candidate fixes Browser teardown policy: a configured CRM view keeps its tenant-origin request allowlist while closing stops pending navigation, and the `destroyed` event releases the scope. The registry does not strongly retain WebContents. Source commit `fb047dff` (`v5.1.59: fix(browser): retain tenant scope through tab close`) is version-prefixed. API/Cloud regressions (37/37, 17/17), Browser security/call/event suite 15/15, Browser lint/build, all five production builds, Web/Landing SEO tests 1/1 each, PHDK coherence 52/52, version alignment and `git diff --check` pass. UAT-050 is source-level only. The candidate branch is `fix/phdk-browser-close-scope-5-1-59`; push, PR and remote readback are pending.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Candidate five application roots/lockfiles and renderer are 5.1.59. |
+| COMMIT_PREFIX | PASS | Source commit `fb047dff` begins `v5.1.59:`. |
+| PUSH_AND_PR | PENDING | Branch push and PR for this candidate are pending. |
+| REMOTE_MAIN | PENDING | Candidate is based on 5.1.58 but is not merged. |
+| SCOPE_AND_CHECKS | PASS FOR THIS SOURCE SLICE / WHOLE AUTO PARTIAL | UAT-050 source contract, five builds, relevant regressions, lint and PHDK coherence pass. Full persisted CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-specific live integration acceptance remain open. |
+
+Whole Auto remains **PARTIALLY DELIVERED**. No customer endpoint or deployment was used.
+
+SIGUIENTE PASO: commit and publish the reviewed 5.1.59 candidate through a PR, then verify the resulting `main` revision.
+
+---
+
+## Previous delivery — 5.1.53 source merged and remotely verified; Auto partial
 
 Candidate `39cfd9dca87cbda148155b6d91d318cabcd0b681` on `fix/phdk-public-home-nojs-5-1-53` was based on verified `main` `962adfc349fcaacde61e0635c13952166b78d7c9`. PR [#146](https://github.com/tuyoisaza/keledon/pull/146) squash-merged at `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`; `origin/main` and `git ls-remote` agree and the merged tree `88b5bb924cf458694bea41c743b6c6fb5beec9a3` matches the tested PR-head tree. All five app package/lock roots and Browser renderer read 5.1.53. The squash subject is version-prefixed.
 

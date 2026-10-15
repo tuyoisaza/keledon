@@ -1,4 +1,8 @@
-# Check continuation — candidate 5.1.54 CRUD model-role-surface coverage
+# Check continuation — candidate 5.1.59 BrowserView teardown scope
+
+Base is verified main 5.1.58 (`56991c0bec203f507d04090f0b3bbdf11a6cdf4d`, tree `12fed244a537fd40f784bda18a2c973514e5c8fe`); candidate roots align at 5.1.59. Source review found `closeTab()` cleared tenant request scope before stopping a configured CRM view. It now stops the detached WebContents and retains the tenant scope until the `destroyed` event; the active service-worker registry holds only session/origin data. UAT-050 and Browser tests pass 15/15; API/Cloud regressions 37/37 and 17/17, five builds, Browser lint, PHDK coherence 52/52 and `git diff --check` pass. No live or packaged Electron/CRM acceptance was run. Whole Auto remains partial; candidate delivery is pending.
+
+## Previous Check continuation — candidate 5.1.54 CRUD model-role-surface coverage
 
 The current source check adds a complete 35-model × 7-role × API/Web matrix (490 rows) to `CRUD_MATRIX.md`, while retaining the 168-row first-party resource table. API regression 33 validates the inventory, uniqueness, required fields/statuses, and explicit guard boundaries for global interfaces, team flows, feature flags, and AI prompts. PHDK 2.50.10 coherence passes 52/52; all five app package/lock roots and Browser renderer align at 5.1.54. UAT-042 passes for source/documentation coverage only.
 
