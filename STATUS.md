@@ -1,10 +1,10 @@
-## Current PHDK Auto — candidate 5.1.60 diagnostics coverage; whole Auto partial
+## Current PHDK Auto — 5.1.60 delivered; whole Auto partial
 
-5.1.59 remains the latest verified release on `main` at `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`. Candidate branch `fix/phdk-landing-widget-mount-5-1-60` adds source assertions for Landing public, login, shell and admin diagnostics-widget mounts; all six candidate version reads are 5.1.60. Web diagnostics 19/19, Browser version-actions/security-policy 15/15, API/Cloud regressions 37/37 and 17/17, Landing SEO 1/1, five builds, applicable lint/typechecks and PHDK coherence 52/52 pass. UAT-051 is source-only; no visual/runtime or screen-reader acceptance is claimed.
+PR [#154](https://github.com/tuyoisaza/keledon/pull/154) delivered 5.1.60 at verified `main` `4bc6d437ddfbd5139617da62370ec4de92f820cb`; remote tree matches and all six version reads align. UAT-051 is source-only; no visual/runtime or screen-reader acceptance is claimed. Web diagnostics 19/19, Browser version-actions/security-policy 15/15, API/Cloud regressions 37/37 and 17/17, Landing SEO 1/1, five builds, applicable lint/typechecks and PHDK coherence 52/52 pass.
 
-Current candidate PR and remote delivery are pending. The full Auto remains **PARTIALLY DELIVERED** (51 PASS, 0 BLOCKED, 1 MANUAL). Exhaustive persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected call/CRM acceptance remain open or customer-scoped. No deployment is claimed.
+PR #154 is merged and remote delivery verified. The full Auto remains **PARTIALLY DELIVERED** (51 PASS, 0 BLOCKED, 1 MANUAL). Exhaustive persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected call/CRM acceptance remain open or customer-scoped. No deployment is claimed.
 
-SIGUIENTE PASO: finish candidate Check/diff review and deliver 5.1.60 via the normal PR path; continue the four confirmed fronts and keep unresolved gates open.
+SIGUIENTE PASO: continue the four confirmed fronts and keep unresolved gates open.
 
 ---
 
@@ -255,3 +255,8 @@ Commit 3af566a163024c3f2b69be7991e99437d47b0528 is on chore/phdk-install-v2.50.8
 # Current PHDK Auto continuation — 5.1.15
 
 PR #74 delivered 5.1.15 at `2e61f41926ab25b4d9ea9f9b73d11aba82988a63`; PR #75 recorded the readback at current main `c8534e6f6568922d540eabfba4abe90cc93749c1`. All five roots are 5.1.15. This slice localized dashboard/session/call-monitor; broader active-route accessibility/localization, persisted CRUD/migration, native device/audio and deployed SEO/AEO remain open.
+## Current PHDK Auto — 5.1.61 candidate; PR delivery pending
+
+Candidate `fix/phdk-navbar-overlap-5-1-61` fixes a verified public navigation overlap in both Web apps. Exact local UAT passes 5/5 Web plus standalone Landing 1/1, with both desktop/mobile evidence and external requests blocked. API/Cloud regressions 37/37 and 17/17; Browser security/version 15/15; Web diagnostics 19/19; both SEO source tests 1/1; all five builds, applicable lint/typechecks and PHDK coherence 52/52 pass. All six version surfaces align at 5.1.61. The product PR is pending; whole Auto remains **PARTIALLY DELIVERED** (52 PASS, 0 BLOCKED, 1 MANUAL).
+
+## Current PHDK Auto — 5.1.60 delivered; whole Auto partial

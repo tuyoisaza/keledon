@@ -1,3 +1,9 @@
+## Candidate 5.1.61 — public navigation overlap fixed; UAT-052 PASS
+
+Both Web app navigation bars now keep theme/language preferences clear of the desktop hero content and reachable from the mobile menu. The exact production-built Landing journey passes at 1280×900 and 390×844 with external traffic blocked; focused Web UAT passes 5/5 and Landing-only UAT 1/1. UAT-052 evidence: `docs/phdk/evidence/uat-landing-navbar-5.1.61.json` and paired screenshots. Web diagnostics/version-actions is 19/19, Browser version-actions/security-policy 15/15, API and Cloud regressions 37/37 and 17/17. All five builds, applicable lint/typechecks, both SEO source tests, and PHDK coherence 52/52 pass.
+
+The candidate closes only the observed navigation defect. Whole acceptance is **52 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Exhaustive persisted model operations/concurrency, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open; live call/CRM acceptance is selected per customer. No deployment or customer endpoint is claimed.
+
 ## Live Qdrant delete continuation — 5.1.52 (2026-10-14 local)
 
 UAT-010's previously blocked Knowledge cleanup now passes against the exact 5.1.52 product tree (`0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e`), disposable PostgreSQL 16.15 and official Qdrant 1.19.2 bound to loopback. Synthetic document deletion removed the PostgreSQL row and all matching Qdrant points; synthetic base deletion removed its Qdrant collection and cascaded its PostgreSQL document/base rows. Evidence: `evidence/uat-qdrant-delete-5.1.52.json`. The API denies this role's individual base readback (403), so the row check used direct read-only SQL.

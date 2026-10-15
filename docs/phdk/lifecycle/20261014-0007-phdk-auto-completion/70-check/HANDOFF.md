@@ -1,5 +1,11 @@
 # Check continuation — candidate 5.1.59 BrowserView teardown scope
 
+## Candidate 5.1.61 — integrated source checks pass; PR pending
+
+See `PHDK_CHECK_REPORT-5.1.61.md` for command-level evidence. Five app builds, API/Cloud regressions (37/37, 17/17), Browser security/version suite (15/15), Web diagnostics (19/19), Web UAT (5/5), Landing responsive UAT (1/1), both SEO source tests, applicable lint/typechecks, package/renderer versions and PHDK coherence 52/52 pass. `git diff --check` is clean. The only in-scope P1, public navigation overlap, is repaired and retested. No source remediation remains for this candidate.
+
+Delivery is pending product PR merge and remote readback. Whole Auto stays **PARTIALLY DELIVERED** even after this scoped source change because persisted operation coverage/concurrency, native device/audio, broad accessibility/localization, deployed discovery and customer-selected acceptance remain open.
+
 Base is verified main 5.1.58 (`56991c0bec203f507d04090f0b3bbdf11a6cdf4d`, tree `12fed244a537fd40f784bda18a2c973514e5c8fe`); candidate roots align at 5.1.59. Source review found `closeTab()` cleared tenant request scope before stopping a configured CRM view. It now stops the detached WebContents and retains the tenant scope until the `destroyed` event; the active service-worker registry holds only session/origin data. UAT-050 and Browser tests pass 15/15; API/Cloud regressions 37/37 and 17/17, five builds, Browser lint, PHDK coherence 52/52 and `git diff --check` pass. No live or packaged Electron/CRM acceptance was run. Whole Auto remains partial; candidate delivery is pending.
 
 ## Previous Check continuation — candidate 5.1.54 CRUD model-role-surface coverage

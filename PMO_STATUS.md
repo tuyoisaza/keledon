@@ -1,16 +1,16 @@
 ## Active four-front portfolio — candidate 5.1.60 (2026-10-15)
 
-Portfolio accounting: **4 confirmed / 0 fully DONE / 4 active / 0 deferred / 0 cancelled**. UAT is **51 PASS, 0 BLOCKED, 1 MANUAL**; that count does not close the whole portfolio. Verified target is `main` SHA `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5` (5.1.59). Candidate branch `fix/phdk-landing-widget-mount-5-1-60` aligns six version roots at 5.1.60. No candidate PR is open yet; PR #153 is merged. Candidate has no deployment claim.
+Portfolio accounting: **4 confirmed / 0 fully DONE / 4 active / 0 deferred / 0 cancelled**. UAT is **51 PASS, 0 BLOCKED, 1 MANUAL**; that count does not close the whole portfolio. Verified target is `main` SHA `4bc6d437ddfbd5139617da62370ec4de92f820cb` (5.1.60, PR #154); remote tree matches candidate and six version roots align. No deployment is claimed.
 
 | WS | Current state | Evidence / next gate |
 |---|---|---|
-| WS-001 / CMT-001 baseline/version/PR | SOURCE 5.1.59 verified; 5.1.60 candidate in progress | Current branch is based on exact verified main; complete commit, PR, merge and remote-main readback. |
+| WS-001 / CMT-001 baseline/version/PR | SOURCE 5.1.60 delivered | PR #154 merged; exact remote-main SHA/tree and six version roots verified. Broader release baseline work continues. |
 | WS-002 / CMT-002 widget/diagnostics | SOURCE TEST PASS; ACCEPTANCE PARTIAL | UAT-051 and Web diagnostics 19/19 assert public/login/shell/admin mounts in Web and Landing. Native UI and broad assistive-tech acceptance remain. |
 | WS-003 / CMT-003 voice→Cloud→Browser→client CRM | SOURCE CONTRACT PASS; CUSTOMER-SCOPED | UAT-050 covers tenant scope through BrowserView close; packaged runtime and per-tenant integration evidence remain. |
 | WS-004 / CMT-004 administration/permissions | SOURCE MATRIX PASS; PERSISTED ACCEPTANCE OPEN | API/Cloud regressions 37/37 and 17/17; CRUD crosswalk 35 models/490 tuples. Full DB-backed role/tenant/operation matrix and concurrency remain. |
 | WS-X / PHDK | COHERENCE PASS; WHOLE ACCEPTANCE PARTIAL | PHDK 2.50.10 coherence 52/52; persisted DB, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. |
 
-Next action: finish candidate Check/diff review and normal PR delivery; then continue the four fronts. No worker delegation is used.
+Next action: continue the four fronts and their open acceptance gates. No worker delegation is used.
 
 ---
 
@@ -160,3 +160,13 @@ Candidate `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` is based on verified main `
 All CMT-001..004 remain active. Overall remains **PARTIALLY DELIVERED** for persisted database authorization/migrations, safe DB-backed identities, live Qdrant/concurrency, native device/audio, broader accessibility/localization, deployed SEO/AEO and client-configured live integration acceptance. No DB, customer endpoint, customer data or deployment was used.
 
 ---
+## Active four-front portfolio — candidate 5.1.61
+
+Portfolio accounting: **4 confirmed / 0 fully DONE / 4 active / 0 deferred / 0 cancelled**. UAT is **52 PASS, 0 BLOCKED, 1 MANUAL**; whole Auto remains **PARTIALLY DELIVERED**. Candidate `fix/phdk-navbar-overlap-5-1-61` fixes and verifies the public navigation overlap in both Web applications. All five builds, API/Cloud regressions, Browser safety/version, Web diagnostics, local Web/Landing UAT, both source SEO tests, applicable lint/typechecks, versions and PHDK coherence pass. Product PR and remote verification are pending.
+
+| WS | State | Open gate |
+|---|---|---|
+| WS-001 / CMT-001 | Source checks PASS / PR pending | Merge and verify remote main. |
+| WS-002 / CMT-002 | UAT-052 PASS / acceptance partial | Native device/audio and broad a11y/localization. |
+| WS-003 / CMT-003 | Tenant security source PASS / customer-scoped | Per-customer live call/CRM acceptance when provider selected. |
+| WS-004 / CMT-004 | Regressions and model crosswalk PASS / persistence partial | Exhaustive model-operation coverage and concurrency. |

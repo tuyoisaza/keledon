@@ -1,8 +1,18 @@
-## Candidate 5.1.60 — UAT-051 PASS / whole acceptance incomplete
+# UAT handoff — `20261014-0007-phdk-auto-completion`
+
+## Candidate 5.1.61 — UAT-052 PASS; full acceptance incomplete
+
+The production-built Landing UAT with external requests blocked verifies the accessible-name nav, two desktop preference controls without overlap at 1280×900, and both labeled selectors in the 390×844 mobile menu. The full focused Web UAT command passes 5/5; Web diagnostics/version-actions 19/19; standalone Landing UAT 1/1. Evidence is `docs/phdk/evidence/uat-landing-navbar-5.1.61.json` and its two screenshots; stage snapshot is `snapshots/candidate-5.1.61/`. UAT tally: **52 PASS, 0 BLOCKED, 1 MANUAL**. UAT-006 native device/audio remains MANUAL; exhaustive persisted model operations/concurrency, broad accessibility/localization and deployed SEO/AEO remain incomplete. No client endpoint or deployment was used.
+
+UAT Fix: **COMPLETED FOR OBSERVED P1** — moved theme/language controls from the stacked fixed-header area to the desktop nav row and expandable mobile menu in both apps; repeated the integrated UAT successfully. No P0/P1 remains in this tested journey.
+
+SEO entry validates that only navigation structure/layout and test/version metadata changed; public copy, route metadata and indexability sources did not. Web and Landing SEO source tests pass 1/1 each. Next: finalize SEO handoff, reuse current AEO/GEO source review with deployed visibility unmeasured, then Check.
+
+## Candidate 5.1.60 — UAT-051 PASS; PR #154 merged; whole acceptance incomplete
 
 UAT-051 strengthens the shared diagnostics widget contract by asserting Landing's own public page/Navbar, login, app shell/Sidebar and admin route mounts in addition to Web. Web diagnostics/version-actions passes 19/19; Browser version-actions/security-policy 15/15; Landing SEO source test 1/1. API/Cloud regressions pass 37/37 and 17/17. All five app builds and applicable lint/typechecks pass; PHDK coherence is 52/52. This proves source and isolated component contracts only, not browser visual/runtime or assistive-technology behavior. Candidate tally is **51 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The native device/audio gate remains MANUAL; exhaustive persisted CRUD/concurrency, broad accessibility/localization, deployed SEO/AEO and per-tenant live integration acceptance remain open.
 
-SIGUIENTE PASO: finalize Check for the integrated candidate and continue through normal 5.1.60 branch/PR delivery; preserve whole Auto as partial.
+SIGUIENTE PASO: continue persisted, native, accessibility/localization and deployed-discovery acceptance; preserve whole Auto as partial.
 
 ---
 

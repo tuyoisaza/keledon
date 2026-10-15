@@ -1,18 +1,24 @@
-## Current delivery — candidate 5.1.60; Auto partial
+## Current candidate — 5.1.61 source checks pass; delivery pending
 
-Verified base: PR [#153](https://github.com/tuyoisaza/keledon/pull/153) delivered 5.1.59 at `main` SHA `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`; remote tree `ac8da535f457ab0b48afd37856d00c779e2067c9` matches. Current branch `fix/phdk-landing-widget-mount-5-1-60` adds source assertions for the Landing application's public, login, shell and admin widget mounts and aligns 5.1.60. The current candidate is not yet pushed or merged.
+UAT-052 fixes the public desktop navigation overlap in Landing and Web; controls remain reachable in the mobile menu. Web UAT passes 5/5; Landing-specific UAT 1/1; source SEO 1/1 each; five app builds and applicable lint/typechecks pass; API/Cloud regressions are 37/37 and 17/17; Browser security/version 15/15; Web diagnostics 19/19; PHDK coherence 52/52. All app package/lock roots and the Browser renderer align at 5.1.61. Candidate branch is `fix/phdk-navbar-overlap-5-1-61`; PR creation, merge and remote readback remain pending. No deployment is claimed.
 
-UAT-051 and applicable source checks pass: Web diagnostics 19/19, Browser version-actions/security-policy 15/15, API/Cloud regressions 37/37 and 17/17, Landing SEO 1/1, five builds, applicable lint/typechecks, CRUD inventory 35 models/490 role-surface rows, and PHDK coherence 52/52. Whole Auto remains partial; no deployment or live customer system is claimed.
+Whole Auto remains **PARTIALLY DELIVERED** (52 PASS, 0 BLOCKED, 1 MANUAL). Exhaustive persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live call/CRM acceptance remain open or customer-scoped.
+
+## Current delivery — 5.1.60 merged and verified; Auto partial
+
+PR [#154](https://github.com/tuyoisaza/keledon/pull/154) is squash-merged at remote `main` `4bc6d437ddfbd5139617da62370ec4de92f820cb`. `origin/main` and `git ls-remote` agree; merged tree `cf9dba9b17d1de91db2206ea3bdb12e0841b89b3` equals tested candidate tree. All five package/lock roots and Browser renderer read 5.1.60. The mechanical completion gate passes against root evidence. The PR had no hosted checks or review decision reported; `main` was unprotected. No deployment is claimed. Post-merge evidence is `PHDK_DELIVERY_EVIDENCE-5.1.60-post-merge-154.json`.
+
+UAT-051 strengthens source assertions for Landing public, login, shell and admin widget mounts. Web diagnostics 19/19, Browser version-actions/security-policy 15/15, API/Cloud regressions 37/37 and 17/17, Landing SEO 1/1, five builds, applicable lint/typechecks and PHDK coherence 52/52 pass. Whole Auto remains partial; visual/native accessibility, persisted CRUD/concurrency, deployed discovery and per-customer live integration acceptance remain open.
 
 | Gate | Status | Evidence |
 |---|---|---|
 | VERSION_BUMP | PASS | Five application package/lock roots and Browser renderer at 5.1.60. |
-| COMMIT_PREFIX | PENDING | Commit not created yet. |
-| PUSH_AND_PR | PENDING | Candidate validation is complete; remote branch/PR not yet created. |
-| REMOTE_MAIN | PENDING | Candidate is based on verified 5.1.59 main; source delivery remains. |
+| COMMIT_PREFIX | PASS | Source commit `fdcb1ab4` begins `v5.1.60:`. |
+| PUSH_AND_PR | PASS | PR #154 was pushed and squash-merged. |
+| REMOTE_MAIN | PASS | Merge SHA `4bc6d437ddfbd5139617da62370ec4de92f820cb`; remote tree matches tested candidate; completion verifier passes. |
 | SCOPE_AND_CHECKS | PASS FOR SOURCE TEST / WHOLE AUTO PARTIAL | UAT-051 closes Landing route assertion gap; visual/runtime and global acceptance remain open. |
 
-SIGUIENTE PASO: complete final diff review, create the version-prefixed commit and normal PR, then verify the merge and remote main.
+SIGUIENTE PASO: continue the four confirmed fronts and preserve all open persistence/concurrency, native device/audio, accessibility/localization, deployed discovery and tenant-specific integration gates.
 
 ---
 

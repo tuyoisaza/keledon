@@ -1,3 +1,14 @@
+## v5.1.61 — 2026-10-15 (keep public navigation preferences clear and responsive)
+
+- Move theme and language controls into the desktop navigation row and expandable mobile menu in both Web apps, eliminating the Landing hero overlap at 1280px.
+- Add exact local browser UAT for Landing desktop geometry and mobile preference access, plus matching Web layout assertions.
+- Align all five application package/lock roots and Browser renderer at 5.1.61.
+
+### Verification
+- Web UAT suite 5/5, Web diagnostics/version-actions 19/19, Browser version-actions/security policy 15/15, API regression 37/37, Cloud regression 17/17, all five builds, applicable lint/typecheck, Web/Landing SEO 1/1 each, and PHDK coherence 52/52 pass.
+- UAT-052 uses a local production build with external requests blocked; no deployment or customer system is claimed.
+- Whole PHDK Auto remains partial for exhaustive persisted operations/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-selected call/CRM acceptance.
+
 ## v5.1.60 — 2026-10-15 (verify diagnostics mounts in both Web apps)
 
 - Extend the shared version/actions route regression to verify the public Landing page, login, app shell and admin mounts as well as the authenticated Web app.

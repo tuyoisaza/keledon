@@ -1,4 +1,12 @@
-# Delivery status — 5.1.59 merged and verified; Auto remains partial
+# Delivery status — 5.1.60 merged and verified; Auto remains partial
+
+PR [#154](https://github.com/tuyoisaza/keledon/pull/154) is squash-merged at verified remote `main` `4bc6d437ddfbd5139617da62370ec4de92f820cb`; `origin/main` and `git ls-remote` agree, merged tree `cf9dba9b17d1de91db2206ea3bdb12e0841b89b3` matches the tested candidate, and all six versions are 5.1.60. The mechanical completion gate passes against root evidence. GitHub reported no hosted checks/review decision; `main` was unprotected. No deployment is claimed. Whole Auto remains partial. Post-merge evidence is `PHDK_DELIVERY_EVIDENCE-5.1.60-post-merge-154.json`.
+
+UAT-051 extends the shared widget source regression to Landing's public, login, shell and admin mounts. Visual/native accessibility, persisted CRUD/concurrency, deployed SEO/AEO and customer-selected integration acceptance remain open.
+
+---
+
+## Previous delivery — 5.1.59 merged and verified; Auto remains partial
 
 PR [#153](https://github.com/tuyoisaza/keledon/pull/153) is squash-merged at verified remote `main` `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`; `origin/main` and `git ls-remote` agree, merged tree `ac8da535f457ab0b48afd37856d00c779e2067c9` matches the tested candidate and all six versions are 5.1.59. The mechanical completion gate passes against root evidence. GitHub reported no hosted checks/review decision; `main` is unprotected. No deployment is claimed. Whole Auto remains partial. Post-merge evidence is `PHDK_DELIVERY_EVIDENCE-5.1.59-post-merge-153.json`.
 
@@ -282,3 +290,10 @@ The 5.1.58 branch now also fixes the AutoBrowse gap found during tenant-private 
 ## PR #152 update — DebugMode lifecycle clarity
 
 The candidate now removes duplicate API/Cloud DebugMode service classes that were never bound to runtime modules. The active diagnostics page remains a local capture toggle; matrix rows for the dormant persisted model are NOT APPLICABLE, and the Prisma table remains until a reviewed migration. API 37/37, Cloud 17/17, both backend builds and UAT-049 pass. Push/readback and PR review state are the delivery gates; overall Auto remains partial.
+# Delivery handoff — 20261014-0007-phdk-auto-completion
+
+## Candidate 5.1.61 — source Check passed; GitHub delivery pending
+
+Version-prefixed candidate source is prepared on `fix/phdk-navbar-overlap-5-1-61`, based on verified `origin/main` `4bc6d437ddfbd5139617da62370ec4de92f820cb`. UAT-052 and the full focused Web suite pass; all five app builds, API/Cloud regressions 37/37 and 17/17, Browser 15/15, Web diagnostics 19/19, both SEO source checks, applicable lint/typechecks, exact 5.1.61 alignment and PHDK coherence 52/52 pass. Check report: `../70-check/PHDK_CHECK_REPORT-5.1.61.md`; evidence snapshot: `../50-uat/snapshots/candidate-5.1.61/`.
+
+Delivery actions remaining: create PR from the verified candidate diff, merge through normal PR flow, fetch and independently compare merge SHA/tree/package versions, update post-merge evidence and run `phdk_completion_gate.py`. Until these are verified, report **PARTIALLY DELIVERED**. Whole Auto remains partial after the scoped delivery for exhaustive persisted operations/concurrency, native device/audio, broad accessibility/localization, deployed discovery and tenant-selected live call/CRM acceptance.

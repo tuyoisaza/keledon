@@ -7,6 +7,7 @@
 | US-003 | As an integration administrator, I want to configure a private/local CRM safely so my client can use its own provider without cross-tenant navigation. | `PROJECT_INTENT.md`, INT-004, ADR-AUTO-009; CMT-003 | UAT-004 |
 | US-004 | As an operator, I want the selected call/Cloud/Browser/CRM flow to preserve explicit customer configuration and fail safely. | `PROJECT_INTENT.md`, PRD INT-004; CMT-003 | UAT-005, UAT-006 |
 | US-005 | As a release owner, I want a coherent version and verified delivery so operators can identify what runs. | `PROJECT_INTENT.md`, NFR-001; CMT-001 | UAT-007 |
+| US-010 | As a visitor, I want public navigation and display preferences to stay clear of the page content and remain reachable on mobile. | `PROJECT_INTENT.md`, INT-002; `PRD.md`, NFR-001; CMT-002 | UAT-052 |
 
 All cases remain inside the owner-approved intent: provider choice is per customer; no universal live CRM/call behavior is assumed.
 

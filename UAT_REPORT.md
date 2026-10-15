@@ -1,12 +1,12 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
-## Candidate 5.1.60 — both Web apps expose the diagnostics widget
+## Candidate 5.1.61 — public navigation layout and mobile preferences
 
-UAT-051 closes a test-coverage gap: the previous shared-widget route regression asserted Web mounts while only comparing Landing component source byte-for-byte. It now independently asserts the public Landing page/Navbar, login, shared app shell/Sidebar and admin route mounts, alongside the existing Web assertions. Web diagnostics/version-actions passes 19/19; Browser version-actions and security-policy passes 15/15; Landing SEO source test passes 1/1. API and Cloud regressions pass 37/37 and 17/17, their builds and lint pass, Browser lint/build pass, Web/Landing lint/typecheck/build pass, and PHDK coherence passes 52/52. The version is aligned at 5.1.60.
+UAT-052 fixes the observed overlap between Landing’s fixed navigation preferences and the hero disclaimer at 1280px. Theme and language controls now sit beside the desktop navigation and remain reachable inside the expandable mobile menu. Web and Landing share the same layout change. Local production-built Landing UAT with outbound requests blocked verifies the navigation’s accessible name, zero desktop overlap, and both mobile controls at 390px. The focused Web UAT suite passes 5/5; standalone Landing UAT passes 1/1. Web diagnostics/version-actions passes 19/19; Web and Landing SEO source tests pass 1/1 each; Web typecheck and Web/Landing lint pass.
 
-This is source-contract acceptance only: no browser runtime, screen reader, packaged Electron, database, customer system or deployed endpoint was exercised. Candidate tally: **51 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Broad accessibility/localization, persisted CRUD/concurrency, native device/audio, deployed SEO/AEO and per-customer live call/CRM acceptance remain open.
+This is local browser/UI acceptance for the observed public navigation only; it does not certify screen-reader behavior, all routes, packaged Electron, database persistence, customer systems or deployed discovery. Candidate tally: **52 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Exhaustive persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-customer live call/CRM acceptance remain open or customer-scoped.
 
-SIGUIENTE PASO: finish the integrated Check and deliver 5.1.60 through the normal PR path; keep the whole Auto partial until all remaining gates are evidenced.
+SIGUIENTE PASO: complete the exact-candidate suite/build/version/coherence checks and deliver 5.1.61 through the normal PR path; keep whole Auto partial until remaining gates are evidenced.
 
 ## Candidate 5.1.59 — preserve tenant scope until BrowserView destruction
 

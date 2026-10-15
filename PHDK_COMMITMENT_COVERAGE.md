@@ -2,7 +2,7 @@
 
 | Commitment | Status | Current candidate evidence | Open acceptance |
 |---|---|---|---|
-| CMT-001 baseline/version/PR | PARTIAL | PR #153 delivered 5.1.59 at verified main `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`; candidate 5.1.60 aligns six version roots. | Deliver candidate through normal PR and continue baseline/release reconciliation. |
+| CMT-001 baseline/version/PR | SOURCE DELIVERY PASS / PARTIAL | PR #154 delivered 5.1.60 at verified main `4bc6d437ddfbd5139617da62370ec4de92f820cb`; remote tree matches candidate, six version roots align. | Continue baseline/release reconciliation. |
 | CMT-002 widget/safe diagnostics | PARTIAL | UAT-051 and Web diagnostics 19/19 now assert public, login, shell and admin mounts in both Web applications; Browser contract 15/15. | Native device/audio, broad accessibility/localization and runtime visual acceptance. |
 | CMT-003 per-client voice→Cloud→Browser→CRM | PARTIAL | UAT-050 remains source-pass; tenant-origin scope survives BrowserView stop; private destinations require validated tenant allowlisting. | Packaged Electron and each customer's selected call/CRM integration acceptance. |
 | CMT-004 administration/permissions | PARTIAL | API/Cloud source regressions 37/37 and 17/17; 35-model/490-row crosswalk remains current. | Exhaustive persisted operations and delete/reindex concurrency against a disposable DB. |
@@ -380,3 +380,13 @@ All confirmed fronts CMT-001..004 remain active in the owner-confirmed order. Th
 Source commit `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d`, based on verified `main` `493c6c238c6c3cac585b7a80dcff968fff6ab7b4`, shipped in PR [#111](https://github.com/tuyoisaza/keledon/pull/111) at `33cff1e345de0b735657570a6144ddeec61f7c3e`; remote SHA/tree/version readback pass. All five roots/locks and Browser renderer are 5.1.37. API regression 35/35; Cloud 14/14 and full typed ESLint 0/0; exact-source Web UAT 2/2; PHDK coherence 52/52; source inventory 1,161 files with zero at/above 600. **Overall PARTIALLY DELIVERED.**
 
 ---
+## Candidate 5.1.61 — four-front reconciliation
+
+| Commitment | Candidate status | Exact evidence / next action |
+|---|---|---|
+| CMT-001 baseline/version/PR | Source Check PASS / PR pending | Five app roots/locks and renderer 5.1.61; all builds, targeted regressions and coherence pass. Create/merge version-prefixed PR and read back remote main. |
+| CMT-002 widget/safe diagnostics | UAT-052 PASS / broader acceptance partial | Landing desktop/mobile journey and Web parallel layout pass; screenshot/JSON in `docs/phdk/evidence/`. Native/screen-reader/all-route work remains. |
+| CMT-003 voice→Cloud→Browser→client CRM | Security source PASS / customer-scoped | Tenant-private destinations remain validated and tenant-allowlisted. No universal CRM selected; each live integration remains per customer. |
+| CMT-004 administration/permissions | Source + selected persisted evidence PASS / matrix partial | API/Cloud 37/37 and 17/17; 35-model/490-row crosswalk; selected persisted identity/session/Knowledge evidence. Exhaustive model-operation/concurrency coverage remains open. |
+
+Portfolio: **4 confirmed / 0 fully DONE / 4 active / 0 deferred / 0 cancelled**. Current acceptance is **52 PASS, 0 BLOCKED, 1 MANUAL**. Whole PHDK Auto remains **PARTIALLY DELIVERED**.

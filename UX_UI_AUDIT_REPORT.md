@@ -1,5 +1,9 @@
 # UX/UI audit — scoped candidate
 
+## Candidate 5.1.61 — public navigation and responsive preferences
+
+The public Landing page had theme and language selectors stacked below the fixed desktop header, where they overlapped the hero disclaimer at 1280×700. The shared navigation in Landing and Web now keeps desktop preferences in the navigation row and places them in the expandable mobile menu below the `lg` breakpoint. Exact local Landing evidence at 1280×900 shows two visible controls and no overlap; at 390×844, the expanded menu exposes both labeled selectors. UAT-052 captures desktop/mobile screenshots and blocks all external requests. Web local UAT confirms the parallel Web home layout. No P1/P2 defect remains in this focused path. Screen-reader, all-route responsive and broad localization/contrast acceptance remain incomplete.
+
 ## Candidate 5.1.36 — Device revoke affordance
 
 The `/devices` list now exposes an accessible revoke action to admin/coordinator/superadmin only, with no revoke control for user/agent. The shared `ManagementModal` communicates credential invalidation and pairing recovery before the destructive action; action failure remains in the dialog with `role=alert`, cancellation sends no request, and success removes the revoked entry. EN/ES/PT strings are present and key parity passes. Browser UAT captures user, confirmation, failure and success states in `docs/phdk/evidence/uat-device-*.png`; selected UI/role behavior passes under synthetic fixtures. Focused evidence does not certify all app routes, screen-reader behavior, color contrast, or persisted authorization.

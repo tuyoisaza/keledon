@@ -238,6 +238,26 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   }
   await page.setViewportSize({width:1280,height:900});
   await page.goto(origin+'/');await page.locator('[data-testid="version-actions"]').waitFor();assert.equal(await page.locator('[data-testid="version-actions"]').count(),1);
+  const publicNavLayout=await page.evaluate(()=>{
+   const nav=document.querySelector('nav[aria-label]');
+   const disclaimer=document.querySelector('section[aria-labelledby="landing-title"] p');
+   const controls=[...nav.querySelectorAll('select')].filter(control=>control.getBoundingClientRect().width>0);
+   const target=disclaimer.getBoundingClientRect();
+   return {viewport:innerWidth,controlCount:controls.length,disclaimer:{top:target.top,bottom:target.bottom},controls:controls.map(control=>{const rect=control.getBoundingClientRect();return {top:rect.top,bottom:rect.bottom};})};
+  });
+  assert.equal(publicNavLayout.controlCount,2,`public desktop navigation keeps theme and language controls visible: ${JSON.stringify(publicNavLayout)}`);
+  assert.ok(publicNavLayout.controls.every(control=>control.bottom<=publicNavLayout.disclaimer.top||control.top>=publicNavLayout.disclaimer.bottom),`navigation controls overlap the public hero disclaimer: ${JSON.stringify(publicNavLayout)}`);
+  await page.screenshot({path:path.join(evidence,'uat-home-desktop.png')});
+  await page.setViewportSize({width:390,height:844});
+  const mobileMenu=page.locator('#public-mobile-menu');
+  assert.equal(await mobileMenu.isVisible(),false);
+  await page.locator('button[aria-controls="public-mobile-menu"]').click();
+  assert.equal(await mobileMenu.isVisible(),true);
+  assert.equal(await mobileMenu.getByLabel('Tema de color').count(),1);
+  assert.equal(await mobileMenu.getByLabel('Idioma').count(),1);
+  await page.screenshot({path:path.join(evidence,'uat-home-mobile-menu.png')});
+  checks.push('UAT-002 public homepage navigation controls avoid hero overlap at 1280px and remain reachable from the 390px mobile menu PASS');
+  await page.setViewportSize({width:1280,height:900});
   checks.push('UAT-002 anonymous home/login, compact sizes, awaited copy/check/revert, failure no false check, owned reset/foreign preservation, 390px layout and 200/400% zoom reflow PASS (viewport simulation)');
   await anonymous.context.close();
   for(const role of ['superadmin','admin','coordinator']){
