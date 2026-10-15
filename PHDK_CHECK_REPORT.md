@@ -1,3 +1,13 @@
+## Current Check — candidate 5.1.59 BrowserView teardown scope (2026-10-15)
+
+Base: verified `origin/main` 5.1.58 SHA `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`, tree `12fed244a537fd40f784bda18a2c973514e5c8fe`; all six version reads are 5.1.58. Candidate 5.1.59 changes only Browser teardown request-scope handling and version metadata. All five production builds, API 37/37, Cloud 17/17, Browser 15/15, Browser lint, `git diff --check`, and PHDK coherence 52/52 pass. Candidate version roots align at 5.1.59.
+
+CHK-AUTO-022 follow-up: `TabManager.closeTab()` previously removed the tenant allowlist before stopping pending loads. It now stops the detached `WebContents` and leaves its request scope intact until the `destroyed` event. The session registry stores only the session and origins; the `WebContents` association is weak. Browser regression and UAT-050 assert this source contract. No packaged Electron, live CRM, private endpoint, database or customer data was exercised. Deployed SEO/AEO and broad accessibility remain unmeasured; full persisted model-operation acceptance remains incomplete. Whole Auto remains PARTIALLY DELIVERED.
+
+Source commit `fb047dff` begins `v5.1.59:`. Branch push/PR/remote-main integration remain pending; PR #152 (5.1.58) is merged and independently verified.
+
+---
+
 ## Current Check — candidate 5.1.56 exact-source persistence acceptance (2026-10-15)
 
 The candidate is based on verified `origin/main` 5.1.55 SHA `85d7ebbbdc0d834e28b9ce1c0fdeb50ce7454fcf`, tree `955bcea225dcd8cdeca971e98f3c7cc3fd764ec2`. All five package/lock roots and the Browser renderer align at 5.1.56. API, Cloud, Browser, Web and Landing production builds pass; API regression passes 36/36; PHDK coherence is 52/52; `git diff --check` passes.

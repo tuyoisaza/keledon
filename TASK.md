@@ -1,4 +1,14 @@
-## PHDK Auto — 5.1.56 exact-source persistence UAT; four fronts continue
+## Active PHDK Auto — 5.1.59 BrowserView teardown scope; four fronts continue
+
+PR [#152](https://github.com/tuyoisaza/keledon/pull/152) is squash-merged at verified `origin/main` `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`; remote tree `12fed244a537fd40f784bda18a2c973514e5c8fe` matches the tested 5.1.58 candidate. All six application/renderer reads are 5.1.58. The new 5.1.59 candidate is based on that main. Code review found that closing a configured CRM tab cleared tenant request scope before pending loads stopped. The fix stops the detached WebContents and retains scope until destruction; a weak per-view association and session/origin-only registry avoid retaining the view. UAT-050 covers source behavior; API/Cloud regressions, Browser 15/15, five production builds, Browser lint and PHDK coherence 52/52 pass. The 5.1.59 PR and remote verification remain pending.
+
+Source commit `fb047dff` is version-prefixed; branch push/PR/remote readback remain pending. Whole Auto remains **PARTIALLY DELIVERED**. Exhaustive persisted model-operation coverage/concurrency, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open; live call/CRM acceptance stays customer-selected. No live CRM or private endpoint was contacted.
+
+SIGUIENTE PASO: finish the candidate handoff and normal PR delivery; continue the four confirmed fronts and retain the incomplete acceptance gates.
+
+---
+
+## Previous PHDK Auto — 5.1.56 exact-source persistence UAT; four fronts continue
 
 The 5.1.55 source now has exact disposable-PostgreSQL evidence: API build and regression 36/36 pass; eight migrations are idempotent/up to date; DB-backed synthetic registration defaults to user; superadmin assigns tenant admin/company through API; same-tenant access passes and cross-tenant access, self-elevation, and company delete are denied. The run cleaned all fixtures and stopped local services. UAT-044/045 evidence is `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`.
 

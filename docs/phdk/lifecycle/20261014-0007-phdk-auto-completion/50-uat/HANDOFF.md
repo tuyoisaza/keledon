@@ -32,6 +32,10 @@ SIGUIENTE PASO: entregar el candidato versionado; mantener las pruebas de BD, di
 
 # UAT handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.59 — UAT-050 PASS / whole acceptance incomplete
+
+UAT-050 passes the source-contract regression: closing a configured vendor tab stops pending navigation while retaining its tenant request scope, and only the `destroyed` event clears that scope. The service-worker registry holds no WebContents reference. Browser suite passes 15/15, API/Cloud regressions 37/37 and 17/17, all five production builds, Browser lint and PHDK coherence 52/52. This does not exercise a packaged Electron runtime or a live CRM. Candidate tally is 50 PASS, 0 BLOCKED, 1 MANUAL; native device/audio is MANUAL, and exhaustive persisted CRUD/concurrency, broad accessibility/localization and deployed SEO/AEO remain open. No customer endpoint or data was used.
+
 ## Candidate 5.1.53 — UAT-041 PASS / whole acceptance incomplete
 
 Verified branch `fix/phdk-public-home-nojs-5-1-53`, based on main `962adfc349fcaacde61e0635c13952166b78d7c9`. Built Landing initial HTML contains the semantic H1 and truthful public overview before JavaScript; SEO contract 1/1, lint, typecheck and build pass. Evidence: `evidence/uat-landing-5.1.53.json`. No browser, live deployment, customer endpoint, database or device was exercised. Focused candidate tally is 41 PASS, 0 BLOCKED, 1 MANUAL; whole UAT is **ACCEPTANCE INCOMPLETE** for previously recorded native/device and broader acceptance gates. The changed page's local acceptance is sufficient for source-stage SEO/AEO review; it does not close deployed discovery.

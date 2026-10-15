@@ -7,36 +7,37 @@ export interface VendorNotification {
   silent: boolean;
 }
 
-const runtimeVendorScopes = new WeakMap<object, readonly string[]>();
-const activeRuntimeVendorScopes = new Set<{
-  webContents: object;
-  session: object;
+type RuntimeVendorScope = {
+  session?: object;
   origins: readonly string[];
-}>();
+};
+
+const runtimeVendorScopes = new WeakMap<object, RuntimeVendorScope>();
+const activeRuntimeVendorScopes = new Set<RuntimeVendorScope>();
 
 /** Attach the trusted Cloud-derived vendor scope for a BrowserView's active lifetime. */
 export function setRuntimeVendorNavigationScope(
   webContents: object,
   allowedOrigins?: readonly string[],
 ): void {
-  for (const active of activeRuntimeVendorScopes) {
-    if (active.webContents === webContents) activeRuntimeVendorScopes.delete(active);
-  }
+  const previous = runtimeVendorScopes.get(webContents);
+  if (previous) activeRuntimeVendorScopes.delete(previous);
   if (!allowedOrigins) {
     runtimeVendorScopes.delete(webContents);
     return;
   }
   const origins = [...new Set(allowedOrigins)];
-  runtimeVendorScopes.set(webContents, origins);
   const session = (webContents as { session?: object }).session;
-  if (session) activeRuntimeVendorScopes.add({ webContents, session, origins });
+  const scope = { session, origins };
+  runtimeVendorScopes.set(webContents, scope);
+  if (session) activeRuntimeVendorScopes.add(scope);
 }
 
 export function getRuntimeVendorNavigationScope(
   webContents: object,
 ): string[] | undefined {
   const scope = runtimeVendorScopes.get(webContents);
-  return scope ? [...scope] : undefined;
+  return scope ? [...scope.origins] : undefined;
 }
 
 /** Resolve requests without a WebContents ID conservatively, including service-worker traffic. */

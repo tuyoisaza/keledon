@@ -1,5 +1,9 @@
 # PMO handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.59 — preserve tenant allowlist during Browser tab close
+
+CMT-001: PR #152 delivered 5.1.58 at verified main `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`; six version roots match and remote tree matches the candidate. CMT-003: follow-up review found a teardown gap in the tenant Browser request guard. Candidate 5.1.59 stops pending loads without clearing scope; the destroyed event cleans up, and session tracking does not retain WebContents. UAT-050 and integrated source checks pass. CMT-002 native accessibility/device gates and CMT-004 exhaustive persisted CRUD/concurrency remain open. Customer call/CRM proof remains customer-selected.
+
 ## Candidate 5.1.56 — persisted role/migration continuation
 
 CMT-004 now has exact-source local DB evidence on candidate 5.1.55: migrations are idempotent/current; registration defaults to user; a synthetic superadmin assigns a tenant admin/company via API; tenant scope and privilege-denial paths are verified against persisted records. UAT-044/045 pass and cleanup is verified. Candidate 5.1.56 carries this evidence, reconciles UAT-009/010 text, and keeps exhaustive model-operation coverage open. CMT-001 delivery is pending; native/deployed gates remain open.

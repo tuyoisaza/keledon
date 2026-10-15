@@ -1,4 +1,8 @@
-## Current Auto remediation — candidate 5.1.31 (2026-10-14)
+## Current Auto remediation — candidate 5.1.59 BrowserView scope teardown (2026-10-15)
+
+Fixed CHK-AUTO-023: closing a tenant-configured CRM tab previously cleared its Browser request scope before stopping pending navigation. `closeTab()` now stops the detached WebContents and leaves its tenant-origin scope active until Electron emits `destroyed`. A WeakMap associates the view with its scope, and the session-level worker registry keeps only session/origin metadata. UAT-050 source-contract regression passes; Browser build/lint and 15 tests pass, API/Cloud regressions 37/17, all five builds and PHDK coherence 52/52 pass. No live CRM/private endpoint or packaged Electron was used. Overall Auto remains PARTIALLY DELIVERED.
+
+## Historical Auto remediation — candidate 5.1.31 (2026-10-14)
 
 The shared-secret webhook, file-seed services, runtime DDL routes and dormant CrudAccessGuard handler-name bypass were removed from API and Cloud; authenticated superadmin requests to legacy seed/migrate endpoints return 410 in both real Nest HTTP harnesses. Mirror review also found and fixed Cloud acceptance of user password hashes and direct audit-log writes, bringing those controls in line with API. Manager user team reassignment is limited to the actor company. Cloud's missing tenant voice-profile detail endpoint is now present, uses the same safe projection as API and is guarded against foreign-company IDs (UAT-029). API/Cloud builds and regressions pass; API 29/29, Cloud 14/14. All five app roots and Browser renderer align at 5.1.31. PR [#102](https://github.com/tuyoisaza/keledon/pull/102) is open for normal security review; merge and main readback are pending. Overall Auto remains PARTIALLY DELIVERED for the remaining source CRUD matrix and environment-bound acceptance.
 

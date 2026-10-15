@@ -1,5 +1,15 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.59 — preserve tenant scope until BrowserView destruction
+
+UAT-050 passes its source-contract regression. `closeTab()` stops a configured CRM `WebContents` without removing its tenant-origin scope first; the existing `destroyed` handler releases the scope. The session registry holds only the session and allowed origins, so it preserves service-worker filtering without strongly retaining the closing view. This prevents pending requests from becoming unscoped during teardown.
+
+The case does not exercise a packaged Electron BrowserView, DNS/network behavior, or a customer's CRM. Browser security/call/event tests pass 15/15, Browser lint/build pass, API regression 37/37, Cloud regression 17/17, all five production builds and PHDK coherence 52/52 pass. Candidate version roots align at 5.1.59.
+
+Candidate tally: **50 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Whole Auto remains partial for exhaustive persisted model operations/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO, and future tenant-selected live call/CRM acceptance.
+
+SIGUIENTE PASO: complete Check and branch delivery for 5.1.59; keep packaged CRM/native acceptance and whole Auto status open.
+
 ## Candidate 5.1.58 — Cloud device tenant-binding parity (2026-10-15)
 
 UAT-047 passes in source regressions. Cloud now checks that a reused machine registration belongs to the same DB-derived user and company, refuses registration for an actor without a company, requires the stored user/company/Keledon binding before pairing, and updates only a still-pending row with the same pairing code and unexpired deadline. Public pairing responses suppress internal exception details. API regression 21 verifies the existing stricter counterpart; Cloud regressions 21 and 42 exercise the Cloud contract.

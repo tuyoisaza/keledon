@@ -1,4 +1,20 @@
-## Current Auto completion audit — 5.1.53 source delivered; whole portfolio partial
+## Current Auto completion audit — 5.1.59 candidate; whole portfolio partial
+
+PR [#152](https://github.com/tuyoisaza/keledon/pull/152) delivered source 5.1.58 at verified `main` `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`; tree `12fed244a537fd40f784bda18a2c973514e5c8fe` matches the tested PR head and six version roots. The next candidate is 5.1.59 on `fix/phdk-browser-close-scope-5-1-59`; its Browser teardown fix passes UAT-050 source checks, five builds, API/Cloud regressions 37/37 and 17/17, Browser 15/15 plus lint, and PHDK coherence 52/52. Branch push/PR/remote delivery for 5.1.59 is not complete yet.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Candidate five app roots/lockfiles plus Browser renderer are 5.1.59 over verified 5.1.58 main. |
+| COMMIT_PREFIX | PASS | Source commit `fb047dff` begins `v5.1.59:` and carries the six aligned version roots. |
+| PUSH_AND_PR | PENDING | Candidate branch has not yet been pushed; PR #152 covers the prior 5.1.58 slice. |
+| REMOTE_MAIN | PENDING | Candidate 5.1.59 is not on remote main. |
+| SCOPE_AND_CHECKS | PASS FOR SCOPED SOURCE / WHOLE AUTO PARTIAL | UAT-050 source contract and applicable builds/regressions pass; native, exhaustive persisted CRUD, broad accessibility/localization and deployed SEO/AEO remain open. |
+
+Whole Auto remains **PARTIALLY DELIVERED**; the current candidate is not reported as shipped.
+
+---
+
+## Previous Auto completion audit — 5.1.53 source delivered; whole portfolio partial
 
 PR [#146](https://github.com/tuyoisaza/keledon/pull/146) delivered candidate `39cfd9dca87cbda148155b6d91d318cabcd0b681`, squash-merged at verified remote `main` `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`. Fresh `origin/main` and `git ls-remote` agree; remote tree `88b5bb924cf458694bea41c743b6c6fb5beec9a3` matches candidate and six app/renderer versions are 5.1.53. Landing SEO test 1/1, lint, typecheck, build and UAT-041 pass; PHDK coherence is 52/52. No deployment is claimed.
 

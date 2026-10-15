@@ -1,4 +1,17 @@
-## Active Auto milestone — Qdrant delete UAT (5.1.52)
+## Active Auto continuation — 5.1.59 BrowserView scope lifecycle
+
+| Commitment | Status | Current candidate evidence | Open acceptance |
+|---|---|---|---|
+| CMT-001 baseline/version/PR | PARTIAL | PR #152 delivered 5.1.58 at verified main `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`; 5.1.59 candidate is in progress. | Finish scoped PR delivery/readback and continue baseline/version reconciliation. |
+| CMT-002 widget/safe diagnostics | PARTIAL | Existing diagnostics source/UAT remain; new change is Browser scope teardown only. | Native device/audio and broad accessibility/localization. |
+| CMT-003 per-client voice→Cloud→Browser→CRM | PARTIAL | UAT-050 verifies source contract keeps tenant allowlist through BrowserView stop; private origins remain configured and tenant-allowlisted. | Packaged Electron and per-customer live call/CRM acceptance. |
+| CMT-004 administration/permissions | PARTIAL | Prior exact-source role/migration evidence and 35-model matrix retained. | Exhaustive persisted operations and delete/reindex concurrency. |
+
+Whole acceptance: **50 PASS, 0 BLOCKED, 1 MANUAL**; status remains **PARTIALLY DELIVERED**.
+
+---
+
+## Previous Auto milestone — Qdrant delete UAT (5.1.52)
 
 | Commitment | Status | Candidate evidence | Open acceptance |
 |---|---|---|---|
