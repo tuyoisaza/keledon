@@ -1,5 +1,13 @@
 # UAT Fix handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.55 — restore narrative inventory schema
+
+The post-merge artifact defect is fixed: `CRUD_MATRIX.md` again has a distinct three-column source inventory after the 490-row CRUD table. Regression 33 now checks the model inventory row width as well as matrix tuple coverage and selected policy boundaries. UAT-043 passes. No runtime or database behavior changed.
+
+SIGUIENTE PASO: deliver the integrity correction through the versioned PR; continue persisted CRUD and external/manual acceptance afterward.
+
+---
+
 ## Candidate 5.1.54 — source matrix completeness
 
 UAT-042 found no test failure; the missing deliverable was a model-level expansion beyond the established 168 resource rows. The matrix now enumerates every one of 490 model-role-surface combinations, marks operation evidence and exceptions, and includes regression assertions for catalog, flow and AI role boundaries. UAT-042 passes source/documentation scope. No runtime or persistent behavior was changed; CHK-AUTO-005, exact database acceptance, native device/audio and external measurements remain open.

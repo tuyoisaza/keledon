@@ -1,5 +1,13 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.55 addition — preserve both inventory table contracts (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-043 | CMT-004 / reviewer of persisted-model inventory | Run API regression 33 against the current Prisma schema and matrix; independently assert the 35-row narrative inventory retains its three-column header/rows and the capability table has 490 unique model/role/surface rows. | The expanded capability map remains complete without corrupting the separate model-source inventory or its schema. | API source regression 33 plus PHDK coherence. | PASS for documentation/test integrity; persistence is not inferred. Regression 33 asserts both table contracts and selected role boundaries. |
+
+Candidate total: **43 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-043 corrects the documentation integrity issue found after the 5.1.54 merge; existing database, native, accessibility and deployed measurement gates remain open.
+
 ## Candidate 5.1.54 addition — model-level CRUD authorization map (2026-10-14)
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

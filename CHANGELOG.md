@@ -1,3 +1,13 @@
+## v5.1.55 — 2026-10-15 (preserve the model inventory table schema)
+
+- Restore the separate 35-row model-to-surface inventory to its documented three-column shape after the CRUD capability matrix expansion.
+- Strengthen regression 33 to validate the narrative inventory header and every row, in addition to all 490 model-role-surface tuples.
+- Record a post-merge integrity correction for 5.1.54 and align all five application package/lock roots plus the Browser renderer at 5.1.55.
+
+### Verification
+- API regression 33 passes: 35/35 Prisma models, 490 unique model-role-surface rows, 168 established resource rows, and 35 correctly shaped inventory rows. PHDK coherence passes 52/52.
+- This correction repairs documentation/test integrity; persisted role/tenant authorization, product decisions and external/manual Auto acceptance remain open.
+
 ## v5.1.54 — 2026-10-14 (map every persisted model by role and surface)
 
 - Expand the CRUD crosswalk from the core resource groups to every Prisma model × role × API/Web surface, preserving explicit blocked, gap, not-applicable, and decision-needed states.

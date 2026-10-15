@@ -1,0 +1,26 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-043",
+  "candidateVersion": "5.1.55",
+  "scope": "integrity of the narrative model inventory and detailed CRUD capability matrix",
+  "result": "PASS",
+  "command": "node services/api/test/regression/33-crud-model-inventory.test.js",
+  "observedOutput": "PASS CRUD inventory: 35/35 Prisma models, 490 model-role-surface rows, 168 established resource-role-surface rows, and 35 three-column inventory rows.",
+  "assertions": [
+    "The narrative inventory header and each of 35 rows have exactly three columns.",
+    "Every Prisma model appears exactly once in the narrative inventory.",
+    "Every Prisma model has one row for each of seven roles on API and Web surfaces.",
+    "The 490 capability rows have complete columns and recognized evidence states.",
+    "Global interface, team flow, nested relationship, operational run, feature-flag, and AI prompt boundaries remain asserted."
+  ],
+  "additionalChecks": {
+    "phdkCoherence": "PASS 52/52",
+    "gitDiffCheck": "PASS",
+    "packageRootsAndBrowserRenderer": "5.1.55"
+  },
+  "limitations": [
+    "No persisted database authorization or migration was exercised.",
+    "This correction does not close CHK-AUTO-005 or whole-product UAT.",
+    "No customer endpoint, provider, customer data, device, or deployment was used."
+  ]
+}

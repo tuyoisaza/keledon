@@ -44,6 +44,11 @@ assert.notEqual(modelTableStart, -1, 'CRUD matrix must include model-to-surface 
 const inventoryRows = tableRows(modelSection.slice(modelTableStart));
 const documentedModels = inventoryRows.slice(1).map((row) => row[0]);
 
+assert.equal(inventoryRows[0].length, 3, 'model inventory retains its three-column schema');
+assert.ok(
+  inventoryRows.slice(1).every((row) => row.length === 3),
+  'every model inventory row must match the three-column header',
+);
 assert.equal(new Set(prismaModels).size, prismaModels.length, 'Prisma schema model names must be unique');
 assert.equal(new Set(documentedModels).size, documentedModels.length, 'CRUD inventory model rows must be unique');
 assert.deepEqual(
@@ -264,5 +269,5 @@ assert.equal(
 );
 
 console.log(
-  `PASS CRUD inventory: ${prismaModels.length}/${prismaModels.length} Prisma models, ${actualModelTuples.length} model-role-surface rows, and ${actual.length} established resource-role-surface rows.`,
+  `PASS CRUD inventory: ${prismaModels.length}/${prismaModels.length} Prisma models, ${actualModelTuples.length} model-role-surface rows, ${actual.length} established resource-role-surface rows, and ${documentedModels.length} three-column inventory rows.`,
 );

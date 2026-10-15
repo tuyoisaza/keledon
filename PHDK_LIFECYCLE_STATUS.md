@@ -1,3 +1,28 @@
+## PHDK Auto continuation — candidate 5.1.55 matrix schema repair (2026-10-15)
+
+Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; target `main`; branch `fix/phdk-crud-matrix-schema-5-1-55`, based on verified `origin/main` 5.1.54 at `b89bc7a63f55e6f5ef1be3195fc22a49fe70c1b7`. PHDK 2.50.10 is installed; coherence 52/52. Five package/lock roots and Browser renderer align at 5.1.55.
+
+| Stage | Status | Current evidence / next gate |
+|---|---|---|
+| 00 Preflight | REUSED / REVALIDATED | PHDK 2.50.10; 52/52 coherence. |
+| 10 Capture | REUSED | Four confirmed fronts and tenant-configured private CRM policy remain current. |
+| 20 Plan | REUSED | Brownfield plan and dependency order remain current. |
+| 30 PMO / Workstreams | CONTINUED | CMT-004 matrix-integrity correction; broader persistence remains open. |
+| 40 Integration | COMPLETED FOR DOC FIX | Three-column narrative inventory restored; separate 490-row table retained. |
+| 50 UAT | COMPLETED FOR CASE / ACCEPTANCE INCOMPLETE | UAT-043 passes both table schemas; tally 43 PASS, 0 BLOCKED, 1 MANUAL. |
+| 60 UAT Fix | COMPLETED FOR DOCUMENT INTEGRITY | Regression now catches inventory-width drift. |
+| 65 SEO | REUSED / NOT AFFECTED | Public content unchanged; deployed measurement remains open. |
+| 67 AEO/GEO | REUSED / NOT AFFECTED | Public claims unchanged; external visibility remains unmeasured. |
+| 70 Check | COMPLETED FOR SOURCE SLICE / WHOLE PARTIAL | Candidate report preserves persistence and decision gaps. |
+| 80 Remediation | COMPLETED FOR SOURCE FINDING | Matrix artifact restored and regression strengthened. |
+| 90 Delivery | RUNNING | Versioned branch; PR, merge and exact remote readback pending. |
+
+The 5.1.54 matrix remains authoritative but had a separate narrative table width defect; this candidate restores it. Whole PHDK Auto remains **PARTIALLY DELIVERED** because persisted DB authorization/migration, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-specific live integrations remain open.
+
+SIGUIENTE PASO: complete candidate verification, deliver by PR, and read back the exact merge SHA/version; continue external/manual gates afterward.
+
+---
+
 ## PHDK Auto continuation — candidate 5.1.54 CRUD matrix expansion (2026-10-14)
 
 Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; target `main`; branch `fix/phdk-crud-matrix-5-1-54`, based on verified `origin/main` `4a2d4f46e29d79e62d2548f2a931a50de8625b65`. Installed PHDK 2.50.10; coherence 52/52. Five package/lock roots and Browser renderer align at 5.1.54.
@@ -15,11 +40,11 @@ Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; target `main
 | 67 AEO/GEO | REUSED / NOT AFFECTED | Public claims unchanged; external measurement remains open. |
 | 70 Check | COMPLETED FOR SOURCE SLICE / WHOLE PARTIAL | Updated candidate report; persisted CRUD stays BLOCKED, other policy/UI decisions remain explicit. |
 | 80 Remediation | COMPLETED FOR MATRIX FINDING | Regression 33 locks row count and key authorization boundaries. |
-| 90 Delivery | RUNNING | Versioned branch; normal PR, merge, and exact remote readback are next. |
+| 90 Delivery | COMPLETED FOR SOURCE SLICE / WHOLE AUTO PARTIAL | PR #148 merged; `origin/main` and `git ls-remote` agree at `b89bc7a63f55e6f5ef1be3195fc22a49fe70c1b7`; remote tree matches the tested candidate, roots/renderer are 5.1.54, and the mechanical delivery gate passes. |
 
 Whole PHDK Auto remains **PARTIALLY DELIVERED**. Persistent DB identities/CRUD, delete/reindex concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO, and tenant-specific live call/CRM remain open or customer-scoped. No database, customer endpoint, native device or deployment was used.
 
-SIGUIENTE PASO: finish final candidate checks, deliver through a PR and verify remote `main`; preserve the external/manual acceptance gates.
+SIGUIENTE PASO: continue the confirmed Auto portfolio; use isolated PostgreSQL/identities and supported native hardware for the open gates, and maintain PARTIALLY DELIVERED until the full acceptance gate passes.
 
 ---
 

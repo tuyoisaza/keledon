@@ -1,5 +1,11 @@
 # PMO handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.55 source integrity follow-up
+
+CMT-004 source-map coverage remains present. This candidate corrects the separate narrative inventory's column shape and adds a regression against future table corruption; it does not alter access behavior. UAT-043 passes. CMT-001 delivery is in progress for 5.1.55; database/migration and other acceptance commitments remain open.
+
+---
+
 ## Candidate 5.1.54 source update
 
 CMT-004 source traceability advances: the candidate now maps all 35 persisted Prisma models across seven roles and both API/Web surfaces (490 rows), backed by regression 33. `CMT-004` remains open for disposable-DB identities, persisted migration/CRUD acceptance, remaining UI gaps and explicit owner decisions. CMT-001 delivery is in progress for version 5.1.54; CMT-002/003 remain open for native acceptance and tenant-selected live integrations. No customer endpoint was accessed.
