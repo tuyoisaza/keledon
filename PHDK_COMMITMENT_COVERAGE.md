@@ -2,7 +2,7 @@
 
 | Commitment | Current candidate evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | PR #137 delivered 5.1.49 at verified main `537ce156`; candidate `dd073028` aligns five package/lock roots and renderer at 5.1.50; all five builds, Web lint/typecheck, PHDK coherence 52/52 pass. | Candidate PR/merge/remote verification pending. |
+| CMT-001 | PR #138 delivered 5.1.50 at verified main `b92e1fa9`; matching tree `5828601d`; all five builds, Web lint/typecheck, PHDK coherence 52/52 pass. | Continue baseline/version/PR surveillance across the four fronts. |
 | CMT-002 | Exact-source Web synthetic journeys 4/4; diagnostics 19/19; diagnostic widget rendering and safe copy/reset are covered. | Native Windows device/audio and broad assistive-technology/localization remain. |
 | CMT-003 | Existing provider-neutral per-tenant integration policy unchanged; no live endpoint was accessed. | Packaged runtime/native audio and live client-specific call/CRM acceptance remain. |
 | CMT-004 | Exact-source synthetic admin/session journeys 4/4; typed UI contracts and role guard. Owner-approved identity/tenant policy unchanged. | Safe DB identities, disposable PostgreSQL/migrations and exhaustive persisted CRUD/resource matrix remain. |

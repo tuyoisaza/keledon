@@ -1,6 +1,6 @@
-## PHDK Auto candidate 5.1.50; delivery in progress
+## PHDK Auto 5.1.50 delivered; four fronts continue
 
-Continue the four owner-confirmed KELEDON fronts in order: baseline/version/PRs; widget and safe diagnostics; tenant-selected voice→Cloud→Browser→CRM flow; administration and permissions. PR #137 delivered v5.1.49 at verified `main` `537ce1567c13f74512a23ef9b9cba3412a7510fd`. Current candidate `dd07302829270bbbf8499784b8c3f3d36c1af080` is on `fix/phdk-web-lint-zero-5-1-50`, based on that main. It closes the last 14 Web ESLint warnings using explicit legacy UI types and documented provider/hook exports. All five builds, Web lint/typecheck, diagnostics 19/19, SEO 1/1, exact-candidate synthetic UAT 4/4 and PHDK coherence 52/52 pass. PR/remote delivery is pending. Whole Auto remains partial pending database, native device/audio, broad accessibility/localization and deployed SEO/AEO proof. Customer-specific live integrations remain per tenant.
+Continue the four owner-confirmed KELEDON fronts in order: baseline/version/PRs; widget and safe diagnostics; tenant-selected voice→Cloud→Browser→CRM flow; administration and permissions. PR #137 delivered v5.1.49 at `537ce1567c13f74512a23ef9b9cba3412a7510fd`; PR #138 delivered v5.1.50 at verified `main` `b92e1fa91bfa9b9f53c8a6513ca580f403cda1d5`, tree `5828601db800875da01c459a8ed3e8412474e8d5`, matching the tested candidate. It closes the final 14 Web ESLint warnings. All five builds, Web lint/typecheck, diagnostics 19/19, SEO 1/1, exact-source synthetic UAT 4/4 and PHDK coherence 52/52 pass. Whole Auto remains partial pending database, native device/audio, broad accessibility/localization and deployed SEO/AEO proof. Customer-specific live integrations remain per tenant.
 
 ---
 

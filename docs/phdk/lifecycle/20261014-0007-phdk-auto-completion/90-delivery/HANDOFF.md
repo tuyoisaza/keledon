@@ -1,10 +1,12 @@
-## PHDK Auto 5.1.50 candidate; delivery in progress
+## PHDK Auto 5.1.50 delivered; continue four fronts
 
-PR [#137](https://github.com/tuyoisaza/keledon/pull/137) merged v5.1.49 at `537ce1567c13f74512a23ef9b9cba3412a7510fd`; `origin/main` and `git ls-remote` agreed. Candidate v5.1.50 is source commit `dd07302829270bbbf8499784b8c3f3d36c1af080` on `fix/phdk-web-lint-zero-5-1-50`, based on that verified main. All five package/lock roots and Browser renderer are 5.1.50. Full Web lint: 0 warnings/0 errors; Web typecheck, five builds, diagnostics 19/19, SEO 1/1, exact-source synthetic UAT 4/4 and PHDK coherence 52/52 pass. Exact UAT evidence: `../50-uat/evidence/uat-web-5.1.50/uat-local-web.json` (mocked Company Co API; external traffic blocked). PR/merge/readback for v5.1.50 remain pending.
+PR [#137](https://github.com/tuyoisaza/keledon/pull/137) merged v5.1.49 at `537ce1567c13f74512a23ef9b9cba3412a7510fd`. Candidate v5.1.50 source `dd07302829270bbbf8499784b8c3f3d36c1af080` on `fix/phdk-web-lint-zero-5-1-50` was squash-merged by [PR #138](https://github.com/tuyoisaza/keledon/pull/138) at verified main `b92e1fa91bfa9b9f53c8a6513ca580f403cda1d5`; remote tree `5828601db800875da01c459a8ed3e8412474e8d5` matches candidate. All five package/lock roots and Browser renderer are 5.1.50. Full Web lint: 0 warnings/0 errors; Web typecheck, five builds, diagnostics 19/19, SEO 1/1, exact-source synthetic UAT 4/4 and PHDK coherence 52/52 pass. Exact UAT evidence: `../50-uat/evidence/uat-web-5.1.50/uat-local-web.json` (mocked Company Co API; external traffic blocked). GitHub reports no hosted checks or review decision; no deployment is claimed.
+
+The completion gate returns BLOCKED solely for whole-product acceptance (DB/persistence, native hardware and deployed measurements). The source-delivery observation is recorded in `PHDK_DELIVERY_EVIDENCE-5.1.50-post-merge-138.json`; it is post-merge evidence and does not claim the Auto portfolio complete.
 
 Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL). Database/identity/persisted CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-specific live call/CRM acceptance remain open. No live DB, private CRM, customer data, native device or deployment was used.
 
-SIGUIENTE PASO: abrir el PR de 5.1.50, revisar sus controles disponibles, integrar y confirmar el SHA de `main`; luego continuar solo con las barreras pendientes del Auto.
+SIGUIENTE PASO: continuar la revisión de fuente en las cuatro líneas; obtener aceptación de BD, nativo y despliegue solo en sus ambientes aislados.
 
 ---
 

@@ -1,6 +1,6 @@
-## PHDK Auto candidate 5.1.50; whole Auto remains partial
+## PHDK Auto 5.1.50 delivered; whole Auto remains partial
 
-PR #137 merged v5.1.49; `origin/main` and `git ls-remote` both read `537ce1567c13f74512a23ef9b9cba3412a7510fd`. Current branch `fix/phdk-web-lint-zero-5-1-50` is based on that SHA; exact source commit `dd07302829270bbbf8499784b8c3f3d36c1af080`. Five app package/lock roots and Browser renderer are 5.1.50. The full Web lint has 0 warnings/0 errors. All five builds, Web typecheck, diagnostics 19/19, SEO 1/1, exact-source synthetic UAT 4/4 and PHDK coherence 52/52 pass. PR delivery is in progress.
+PR #138 squash-merged source commit `375a0a4d603e14adab4c4b63d0837c87047ed18a` at verified `main` `b92e1fa91bfa9b9f53c8a6513ca580f403cda1d5`; remote tree `5828601db800875da01c459a8ed3e8412474e8d5` matches the tested candidate. All five app package/lock roots and Browser renderer are 5.1.50. Full Web lint has 0 warnings/0 errors. All five builds, Web typecheck, diagnostics 19/19, SEO 1/1, exact-source synthetic UAT 4/4 and PHDK coherence 52/52 pass. GitHub reports no hosted checks or review decision; no deployment is claimed.
 
 Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL); PostgreSQL/identity/persisted CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain. No live provider, private CRM endpoint, database, device or deployment was used. Deterministic gate blocks solely on overall acceptance.
 
