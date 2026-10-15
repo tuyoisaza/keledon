@@ -1,4 +1,24 @@
-## Current Auto completion audit — source candidate 5.1.44; whole Auto partial (2026-10-15)
+## Current Auto completion audit — candidate 5.1.46; whole Auto partial (2026-10-15)
+
+Candidate `fix/phdk-crud-matrix-5-1-46` is based on verified main `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf` / 5.1.45. All five application package/lock roots and Browser renderer are 5.1.46. The owner confirmed the global ManagedInterface catalog remains hidden; this candidate removes the orphaned unmounted Web component, keeps legacy catalog CRUD superadmin-only, and documents tenant Vendor configuration as the customer integration path. Regression 25/33 verifies the role/matrix exception; regressions 37/38 verify team assignment ownership/atomic replacement.
+
+Validation: API/Cloud builds and regressions 36/36 and 16/16; Browser build/lint/40/40; Web build/UAT 4/4; Landing build; Web/Landing SEO 1/1 each; coherence 52/52; production audit clean for API/Cloud/Browser. API full-source lint still has 135 warnings and Web 122, both with zero errors. Web/Landing retain known bundle warnings. Whole UAT remains 37 PASS, 2 BLOCKED, 1 MANUAL.
+
+This candidate does not close whole Auto: disposable PostgreSQL and safe DB identities/persisted CRUD, native Windows device/audio, broad accessibility/localization and deployed SEO/AEO remain. Client-specific call/CRM acceptance is external by design. No DB, customer data, private endpoint, device, or deployment was used. PR/merge/remote readback for 5.1.46 are pending.
+
+---
+
+## Previous Auto completion audit — source candidate 5.1.45 (2026-10-15)
+
+PR #131 merged candidate `10ebd82d39c6264f965f0fbdc5628bf66c585b80` (tree `5ac72b7869f55b37b33f8a579c9f6fa7b2860964`) at remote `main` `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf`; remote tree equals candidate. Browser ESLint 10 flat config closes the previous Browser lint block; Browser lint/build and 40/40 offline suite pass. API/Cloud regression 36/36 and 16/16; five builds pass; Web synthetic UAT 4/4 suites; SEO source tests 1/1 each; PHDK coherence 52/52. Production-only dependency audits pass with zero API, Cloud and Browser vulnerabilities.
+
+The source slice is delivered; the full four-front Auto remains partial. API full-source ESLint has 135 warnings and Web has 122 warnings (no errors), including floating promises, unused symbols and React Hooks diagnostics. Database-backed identities, disposable PostgreSQL, migrations and exhaustive persisted CRUD authorization remain unverified; native Windows device/audio requires manual equipment; broad accessibility/localization and deployed SEO/AEO remain unmeasured; live call/CRM acceptance is per customer. The last item remains external by confirmed product design. No database, customer data, private endpoint, device or deployment was used. Machine evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.45-post-merge-131.json`.
+
+The post-merge CRUD trace also found that Prisma `ManagedInterface` and `TeamInterface` are absent from the 12-resource/168-row capability table. The owner confirmed the global catalog remains hidden: API catalog writes stay superadmin-only, no Web manager is mounted, and tenant Vendor configuration remains the supported per-customer CRM path. Team assignments are documented as a nested, company-scoped Team relation and covered by API/Cloud guard and atomic-replacement tests. The source exception is now explicit; persisted DB acceptance and broader remaining model-family coverage remain open. No cross-tenant API exposure was found.
+
+---
+
+## Previous Auto completion audit — source candidate 5.1.44 (2026-10-15)
 
 The four confirmed fronts remain active. CHK-AUTO-022 closed the gap where an allowed CRM page could issue HTTP(S)/WebSocket resource requests outside the tenant origin set while RPA was active. BrowserView requests now resolve their owner WebContents where possible; requests without an owner use the service-worker initiator against active scopes on that Electron session, intersect overlapping scopes and deny when they cannot be attributed. Explicit tenant-configured private HTTP(S) origins remain supported. Product commit `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`) is based on verified `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041`; all five app package/lock roots and Browser renderer align at 5.1.44. PHDK 2.50.10 coherence is 52/52; Browser suite 27/27, security-policy/wiring 11/11 and Browser build pass.
 

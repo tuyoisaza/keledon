@@ -110,6 +110,7 @@ async function main() {
       'brands',
       'teams',
       'users',
+      'interfaces',
       'tenant-provider-config',
       'voice-profiles',
       'sessions',
@@ -121,6 +122,13 @@ async function main() {
   }
   for (const role of ['admin', 'coordinator']) {
     rows.user.role = role;
+    for (const method of ['GET', 'POST', 'PUT', 'DELETE']) {
+      await assert.rejects(
+        run('interfaces', method).result,
+        Denied,
+        `${role} must not manage the global ManagedInterface catalog`,
+      );
+    }
     for (const [resource, params] of [
       ['companies', { id: 'co-b' }],
       ['brands', { id: 'brand-b' }],
@@ -310,6 +318,13 @@ async function main() {
     companyId: null,
     teamId: null,
   };
+  for (const method of ['GET', 'POST', 'PUT', 'DELETE']) {
+    assert.equal(
+      await run('interfaces', method).result,
+      true,
+      `superadmin retains the legacy global ManagedInterface ${method} contract`,
+    );
+  }
   assert.equal(await run('companies', 'DELETE', { id: 'co-b' }).result, true);
   assert.equal(await run('audit-logs', 'GET').result, true);
   await assert.rejects(

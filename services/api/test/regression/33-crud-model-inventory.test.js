@@ -8,6 +8,22 @@ const schema = fs.readFileSync(
   'utf8',
 );
 const matrix = fs.readFileSync(path.join(repoRoot, 'CRUD_MATRIX.md'), 'utf8');
+const crudGuard = fs.readFileSync(
+  path.join(repoRoot, 'services/api/src/guards/crud-access.guard.ts'),
+  'utf8',
+);
+const mvpScopeGuard = fs.readFileSync(
+  path.join(repoRoot, 'services/api/src/guards/resource-scope.guard.ts'),
+  'utf8',
+);
+const webRouter = fs.readFileSync(
+  path.join(repoRoot, 'services/web/src/AppRouter.tsx'),
+  'utf8',
+);
+const legacyInterfacesManager = path.join(
+  repoRoot,
+  'services/web/src/components/flows/InterfacesManager.tsx',
+);
 
 function tableRows(section) {
   return section
@@ -103,6 +119,26 @@ assert.match(matrix, /registration now requires a database-backed actor with a c
 assert.match(matrix, /raw RPA configuration remains available only to the exact currently paired device/);
 assert.match(matrix, /KnowledgeBase details and updates are tenant-scoped/);
 assert.doesNotMatch(matrix, /GAP remains for KnowledgeBase detail\/update|No general detail\/update operation/);
+assert.match(matrix, /ManagedInterface — owner-approved dormant global catalog/i);
+assert.match(matrix, /TeamInterface — nested team relation/i);
+assert.ok(!resources.includes('ManagedInterface'));
+assert.ok(!resources.includes('TeamInterface'));
+assert.match(crudGuard, /if \(!superadmin && !scoped\.includes\(resource\)\) return deny\(\)/);
+assert.match(
+  mvpScopeGuard,
+  /!\['getProviderCatalog', 'getRpaProviders', 'getTechStatus'\]\.includes\(/,
+  'tenant roles must not reach legacy global MVP interface handlers',
+);
+assert.doesNotMatch(
+  webRouter,
+  /InterfacesManager/,
+  'the owner-approved dormant global catalog must remain unmounted in Web routes',
+);
+assert.equal(
+  fs.existsSync(legacyInterfacesManager),
+  false,
+  'the owner-approved dormant global catalog manager must not remain as orphaned UI code',
+);
 
 console.log(
   `PASS CRUD inventory: ${prismaModels.length}/${prismaModels.length} Prisma models and ${actual.length} unique core resource-role-surface rows.`,

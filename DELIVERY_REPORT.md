@@ -1,4 +1,40 @@
-## Current delivery — candidate 5.1.44 (2026-10-15, source merged / verified)
+## Current candidate — 5.1.46 source validation complete; delivery pending
+
+Repository: `tuyoisaza/keledon`; branch `fix/phdk-crud-matrix-5-1-46`; base verified `origin/main` `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf`. This candidate removes the unmounted legacy global ManagedInterface UI after the owner confirmed that the catalog stays hidden and actual client configuration remains tenant-scoped.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | All five application package/lock roots and Browser renderer at 5.1.46; changelog updated. |
+| COMMIT_PREFIX | PENDING | Commit not created yet. |
+| PUSH_AND_PR | PENDING | Candidate not yet pushed; PR not created. |
+| REMOTE_MAIN | PENDING | This candidate has not been merged. |
+| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | API/Cloud builds + regressions 36/36 and 16/16; Browser lint/build/40/40; Web UAT 4/4; all builds, SEO 1/1 each, coherence 52/52. Broader CRUD/persistence, native and deployed acceptance remain open. |
+
+Do not call 5.1.46 delivered until PR/merge/remote readback. Whole Auto remains partially delivered. No DB, customer data, private CRM endpoint or deployment was used.
+
+---
+
+## Previous delivery — 5.1.45 (2026-10-15, source merged / verified)
+
+Repository: `tuyoisaza/keledon`; target `main`; version 5.1.45. Tested candidate/source commit `10ebd82d39c6264f965f0fbdc5628bf66c585b80`, tree `5ac72b7869f55b37b33f8a579c9f6fa7b2860964`, based on verified `origin/main` `77a975d8a5dc37cebf884a3c5b2bc35b3ac67002`. PR [#131](https://github.com/tuyoisaza/keledon/pull/131) squash-merged at `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf`. `git fetch`, `git ls-remote`, GitHub PR metadata and remote `main` agree. Remote main tree matches candidate tree. No hosted checks or review decision were reported; no deployment is claimed.
+
+The candidate adds ESLint 10 Browser configuration/lint command and source cleanup for listener disposal, media event duration and replanning context privacy. All five app package/lock roots and Browser renderer are 5.1.45.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Five package/lock roots and Browser renderer 5.1.45; changelog updated. |
+| COMMIT_PREFIX | PASS | `v5.1.45: fix(browser): add lint gate and clean runtime warnings`. |
+| PUSH_AND_PR | PASS | Branch pushed; PR #131 merged by squash. |
+| REMOTE_MAIN | PASS | `origin/main` and `git ls-remote` agree at `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf`; remote tree `5ac72b7869f55b37b33f8a579c9f6fa7b2860964` equals tested tree. |
+| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | Browser lint/build and tests 40/40; API/Cloud regressions 36/36 and 16/16; builds all pass; Web UAT 4/4; SEO 1/1 each; coherence 52/52. DB/identity/persisted CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open; API/Web lint warnings are tracked. |
+
+**Status: SOURCE SLICE DELIVERED / PHDK AUTO PARTIALLY DELIVERED.** Machine record: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.45-post-merge-131.json`. No production DB, customer data, private CRM or deployment was used.
+
+`python phdk-standards/scripts/phdk_completion_gate.py --evidence docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.45-post-merge-131.json` returns **BLOCKED** solely because `whole_auto_acceptance` is BLOCKED; source merge/version/remote readback and scoped checks pass.
+
+---
+
+## Previous delivery — 5.1.44 (2026-10-15, source merged / verified)
 
 Candidate `fix/phdk-rpa-subresource-allowlist-5-1-44` is based on verified `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041`. Product commit `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`) applies active tenant-origin scope to BrowserView HTTP(S)/WebSocket resource requests during RPA, using the initiator and conservative scope intersection when no WebContents owner is available. It retains explicitly configured private CRM origins. All five app package/lock roots and Browser renderer are 5.1.44. UAT-040 passes offline; Browser tests 27/27, security-policy/wiring tests 11/11, Browser build and PHDK coherence 52/52 pass. Whole acceptance is 37 PASS, 2 BLOCKED, 1 MANUAL.
 

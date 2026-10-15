@@ -1,4 +1,60 @@
-# PHDK Auto lifecycle — current candidate 5.1.44
+# PHDK Auto lifecycle — current candidate 5.1.46 (delivery pending)
+
+Run: `20261014-0007-phdk-auto-completion`
+Repository: `tuyoisaza/keledon`
+Branch: `fix/phdk-crud-matrix-5-1-46`
+Base: verified `origin/main` `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf` / 5.1.45.
+Candidate: all five app package/lock roots and Browser renderer at 5.1.46.
+Goal: four owner-confirmed KELEDON fronts, aligned to PHDK; customer call/CRM configuration remains tenant-specific.
+
+| Stage | Status | Evidence / current state |
+|---|---|---|
+| 00 Preflight | REUSED / REVALIDATED | PHDK 2.50.10 equals canonical main; coherence 52/52. |
+| 10 Capture | REUSED | Four fronts, least privilege and per-tenant private-origin allowlists confirmed; owner confirmed the legacy global interface UI stays hidden. |
+| 20 Plan | REUSED | Existing brownfield plan and dependency order remain applicable. |
+| 30 PMO / Workstreams | CONTINUED | PR #131 reconciled; four fronts active. |
+| 40 Integration Review | COMPLETED FOR CANDIDATE SOURCE | Removed orphaned, unmounted `InterfacesManager`; kept global legacy API superadmin-only, customer Vendor configuration tenant-scoped. |
+| 50 UAT | COMPLETED FOR CANDIDATE / WHOLE PARTIAL | Synthetic Web UAT 4/4; Browser suite 40/40; overall acceptance 37 PASS, 2 BLOCKED, 1 MANUAL. |
+| 60 UAT Fix | COMPLETED FOR CANDIDATE | No active-path UAT failures; retired unused UI matches owner direction. |
+| 65 SEO | SOURCE PASS | No public page/metadata changes; deployed measurements unavailable. |
+| 67 AEO/GEO | SOURCE REVIEW REUSED | Public claims unchanged; live discovery unmeasured. |
+| 70 Check | SOURCE SLICE PASS / AUTO PARTIAL | Snapshot `70-check/snapshots/candidate-5.1.46/PHDK_CHECK_REPORT.md`; role boundaries tested; broader model matrix/persistence remains. |
+| 80 Remediation | COMPLETED LOCALLY | API/Cloud 36/36 and 16/16, Browser 40/40, Web UAT 4/4, builds pass, Browser/Cloud lint pass, coherence 52/52. |
+| 90 Delivery | PENDING | Candidate branch/commit/PR/merge/readback not yet done. |
+
+Overall: **PARTIALLY DELIVERED**. DB identities/persisted CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open; API/Web lint warnings remain tracked; live call/CRM is per tenant.
+
+SIGUIENTE PASO: freeze the exact candidate Check/UAT evidence, review the diff, then version-prefixed commit, push, PR, merge and verify remote main.
+
+---
+
+## Previous candidate 5.1.45 — source merged / verified
+
+Run: `20261014-0007-phdk-auto-completion`
+Repository: `tuyoisaza/keledon`
+Source commit: `10ebd82d39c6264f965f0fbdc5628bf66c585b80` (tree `5ac72b7869f55b37b33f8a579c9f6fa7b2860964`), based on verified `origin/main` `77a975d8a5dc37cebf884a3c5b2bc35b3ac67002` / 5.1.44. PR #131 squash-merged to remote `main` at `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf`; remote tree exactly matches candidate. All app package/lock roots and Browser renderer are 5.1.45.
+Goal: four owner-confirmed KELEDON fronts, aligned to applicable PHDK standards.
+
+| Stage | Status | Evidence / current state |
+|---|---|---|
+| 00 Preflight | REUSED / REVALIDATED | PHDK 2.50.10; coherence 52/52. |
+| 10 Capture | REUSED | Four fronts, least-privilege policy and tenant-private CRM allowlist remain confirmed. |
+| 20 Plan | REUSED | Existing brownfield plan and dependency order remain applicable. |
+| 30 PMO / Workstreams | CONTINUED | PR #131 delivery reconciled; four fronts remain active. |
+| 40 Integration Review | COMPLETED FOR 5.1.45 SOURCE | Browser lint gate added; transcript listener, event timer and planner context safety fixes tested. |
+| 50 UAT | COMPLETED FOR CANDIDATE / WHOLE PARTIAL | Synthetic Web UAT 4/4 suites; whole product 37 PASS, 2 BLOCKED, 1 MANUAL. |
+| 60 UAT Fix | COMPLETED FOR CANDIDATE | No new repairable Web UAT defect. |
+| 65 SEO | SOURCE PASS | Web/Landing source tests 1/1 each; deployed measures unavailable. |
+| 67 AEO/GEO | SOURCE REVIEW REUSED | Public claims unchanged; live discovery unmeasured. |
+| 70 Check | SOURCE SLICE PASS / AUTO PARTIAL | `70-check/snapshots/candidate-5.1.45/PHDK_CHECK_REPORT.md`; owner-approved hidden legacy catalog exception is tested; API/Web lint debt and environment gates remain. |
+| 80 Remediation | COMPLETED FOR BROWSER SLICE | Browser lint/build and 40/40 tests; API/Cloud 36/36 and 16/16; coherence 52/52. |
+| 90 Delivery | SOURCE MERGED / VERIFIED; WHOLE AUTO PARTIAL | PR #131; `origin/main`/`git ls-remote` agree at `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf`; tree `5ac72b7869f55b37b33f8a579c9f6fa7b2860964`; versions 5.1.45. Evidence: `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.45-post-merge-131.json`. |
+
+Overall status: **PARTIALLY DELIVERED**. Database/persistence/identity/CRUD proof, native device/audio, broad accessibility/localization and deployed SEO/AEO remain unverified; customer call/CRM validation is per tenant. No customer endpoint, database, device or deployment was used.
+
+---
+
+## Previous candidate 5.1.44
 
 Run: `20261014-0007-phdk-auto-completion`
 Repository: `tuyoisaza/keledon`

@@ -1,9 +1,9 @@
 {
-  "version": "5.1.45",
-  "date": "2026-10-15T01:31:28.496Z",
-  "candidateRevision": "77a975d8a5dc37cebf884a3c5b2bc35b3ac67002",
-  "candidateSourceFingerprint": "sha256:961c245267092faa8f6bc2cd74a95c940cbfdae649292569e8d77ce1d8786e9c",
-  "dirtyUntrackedSourceFiles": 3,
+  "version": "5.1.46",
+  "date": "2026-10-15T01:45:09.746Z",
+  "candidateRevision": "d2d4265d0dcf6a9524f1861240d0ce0f387c09bf",
+  "candidateSourceFingerprint": "sha256:bd6edb67ad0bf4d4f52b25d20625fe945208a4d47efc38c7d1659ad0f0b9d22c",
+  "dirtyUntrackedSourceFiles": 0,
   "sourceRoots": [
     "browser",
     "cloud",
@@ -12,7 +12,7 @@
     "landing"
   ],
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:49835",
+  "origin": "http://127.0.0.1:57432",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-THEME dark/light/corporate tokens reach descendant controls, persistence PASS; automated login text contrast sample has no failures (not a full-app accessibility certification)",
@@ -31,7 +31,7 @@
     "UAT-T-009 KELEDON admin create flow: localized labeled fields, scoped company/brand/team selectors, native accessible form and delete-confirmation dialog; payload contains no caller companyId and uses server input shape PASS (synthetic UI/API)",
     "UAT-004 provider settings Spanish localization and write-only key: translated screen renders; no response prefill; replacement clears after success; untouched blank omitted PASS",
     "UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)",
-    "UAT-002 5.1.45 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
+    "UAT-002 5.1.46 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
   ],
   "themeTokens": {
     "light": {

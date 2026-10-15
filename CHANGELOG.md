@@ -1,3 +1,13 @@
+## v5.1.46 — 2026-10-15 (keep global interface catalog hidden)
+
+- Remove the unmounted legacy InterfacesManager UI; customer-selected CRM/call configuration remains in tenant-scoped Vendor settings with validated origin allowlists.
+- Preserve the global ManagedInterface APIs as superadmin-only legacy paths; document TeamInterface as a company-scoped nested Team relation and strengthen policy/inventory regressions.
+- Align all five application package/lock roots and Browser renderer at 5.1.46.
+
+### Verification
+- API/Cloud policy, team-interface, and matrix regressions pass; full API/Cloud/browser/Web/Landing verification is recorded in the active PHDK Auto lifecycle.
+- This source change does not certify persisted PostgreSQL, native device/audio, or deployed SEO/AEO; whole PHDK Auto remains partial.
+
 ## v5.1.45 — 2026-10-15 (enable Browser lint and close source issues)
 
 - Add an ESLint 10 flat configuration and a zero-warning lint command for Browser TypeScript; remove unused source and correct empty best-effort handlers.

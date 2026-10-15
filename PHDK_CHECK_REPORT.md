@@ -1,4 +1,28 @@
-## Current Check — candidate 5.1.39, source merged (2026-10-14)
+## Current Check — candidate 5.1.46, remove the dormant global catalog UI (2026-10-15)
+
+Repository `tuyoisaza/keledon`; branch `fix/phdk-crud-matrix-5-1-46`, based on verified `origin/main` `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf` / 5.1.45. Installed PHDK 2.50.10 matches canonical main `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`; coherence is 52/52. All five package/lock roots and Browser renderer are 5.1.46.
+
+**Scoped finding: RESOLVED ON CANDIDATE, DELIVERY PENDING.** The unused `InterfacesManager.tsx` was unmounted and called global legacy routes, contrary to the owner-confirmed decision to keep that catalog hidden and configure customer integrations through tenant-scoped Vendor settings. The dead component is removed. Existing API global catalog endpoints remain DB-derived superadmin-only; nested TeamInterface assignment remains company-checked and credential-redacted. Tests assert the exception and role boundaries.
+
+Validation on this candidate: API build/regression 36/36, Cloud build/regression 16/16, Browser build/lint (0 warnings)/suite 40/40, Web build and synthetic UAT 4/4 suites, Landing build; Web/Landing SEO source tests 1/1 each; PHDK coherence 52/52. API/Cloud/Browser production dependency audits report zero vulnerabilities. Web/Landing builds retain the known empty Supabase chunk and >500 kB chunk warnings.
+
+| Finding | Current status | Evidence / remaining proof |
+|---|---|---|
+| ManagedInterface global catalog Web surface | CLOSED ON CANDIDATE | Owner confirmed hidden catalog; orphan component removed; legacy APIs remain superadmin-only; tenant Vendor remains the customer integration path. API guard and inventory regression pass. |
+| TeamInterface role/tenant boundary | SOURCE PASS / PERSISTENCE UNVERIFIED | Nested team route, same-company authorization and atomic replacement tests pass in API/Cloud fixtures. |
+| API full-source lint | EXISTING FOLLOW-UP | 135 warnings, 0 errors; not changed or suppressed in this UI-removal slice. |
+| Web full-source lint | EXISTING FOLLOW-UP | 122 warnings, 0 errors; not changed or suppressed in this slice. |
+| Broader model CRUD matrix and persistence | PARTIAL / BLOCKED | 35-model inventory and 168 core rows remain a drift assertion; safe identities, disposable PostgreSQL and exhaustive persisted role × tenant × surface × operation tests are still missing. |
+| Native device/audio; broad accessibility/localization; deployed SEO/AEO | MANUAL / UNVERIFIED | Needs supported native device, broad assistive-tech testing, and deployed read-only measurements. |
+| Customer call/CRM | PER TENANT | Vendor/provider is customer-selected; no universal live provider test was run. |
+
+UAT evidence is `docs/phdk/evidence/uat-local-web.json` (5.1.46; mocked APIs, blocked external traffic). Browser dev dependency audit still reports seven moderate Electron Builder transitive findings. No DB, customer data, private CRM, device or deployment was used. Source delivery/remote readback are pending for this candidate; whole PHDK Auto remains **PARTIAL**.
+
+---
+
+---
+
+## Historical Check — candidate 5.1.39, source merged (2026-10-14)
 
 Repository `tuyoisaza/keledon`; candidate branch `fix/phdk-mvp-store-write-contracts-5-1-39`; tested source `a8a89f928312db2fef5142a0e07ac18a197b6c19`; tested base `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`; integrated by PR [#116](https://github.com/tuyoisaza/keledon/pull/116) at `615770d6e769008299a4228da758fc455941c6c5`. Remote `main` and `git ls-remote` agree; remote and tested candidate trees match at `f3c45a2d80bf065db27236a48ae4b7dcafead240`. Installed PHDK 2.50.10 equals canonical main `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`; coherence is 52/52. Five app package/lock roots and Browser renderer align at 5.1.39. Source inventory: 1,168 active TS/JS/UI files, zero at or above 600 physical lines; `MvpStoreService` is 487 lines.
 
@@ -356,6 +380,10 @@ Check result: **SCOPED SOURCE FINDING REMEDIATED / ALIGNMENT INCOMPLETE FOR WHOL
 
 ---
 ## Current Check — candidate 5.1.45, Browser runtime lint and event/replan safety (2026-10-14)
+
+### Post-merge CRUD audit continuation — unresolved model/UI scope
+
+After PR #131, a focused route/schema trace confirmed `ManagedInterface` and `TeamInterface` are two Prisma models omitted from the 12-resource/168-row capability matrix. The API has a global managed-interface list/create/update/delete surface that `CrudAccessGuard` reserves to superadmin, plus company-scoped team/interface assignment endpoints; team credential projections are redacted. `services/web/src/components/flows/InterfacesManager.tsx` calls legacy `/api/interfaces` paths but is not imported or mounted anywhere in `AppRouter` or another Web component. Tenant integrations are instead configured with Vendor records and tenant origin allowlists. The owner confirmed the global catalog stays hidden. It is now documented as a dormant global-catalog exception; TeamInterface is a nested Team relation. Targeted regression 5/5 passes, including low-role denial, superadmin preservation, and tenant ownership/atomic replacement. Persisted operation acceptance remains database-blocked; no route authorization defect or user-facing tenant flow was established by this source check.
 
 Repository `tuyoisaza/keledon`; branch `fix/phdk-browser-lint-5-1-45`, based on verified `origin/main` `77a975d8a5dc37cebf884a3c5b2bc35b3ac67002`. The working candidate is version 5.1.45 across API, Cloud, Browser, Web and Landing package/lock roots; Browser renderer is synchronized to 5.1.45. Installed PHDK 2.50.10; coherence check passes 52/52 static mappings.
 

@@ -1,5 +1,27 @@
 # Current task
 
+## Active PHDK Auto continuation — candidate 5.1.46
+
+Verified base is `origin/main` `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf` / 5.1.45. Branch `fix/phdk-crud-matrix-5-1-46` aligns all five app package/lock roots and Browser renderer at 5.1.46. The owner confirmed that the dormant global ManagedInterface catalog UI must remain hidden; integrations are configured through tenant-scoped Vendor records. The unmounted `InterfacesManager` was removed; superadmin-only legacy endpoints remain and TeamInterface assignment stays company-scoped.
+
+Validation: API/Cloud builds and regressions 36/36 and 16/16; Browser build/lint/40 tests; Web build/UAT 4/4; Landing build; Web/Landing SEO tests 1/1 each; PHDK coherence 52/52; API/Cloud/Browser production audits zero. Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL): persisted CRUD/identities, native device/audio, broad accessibility/localization and deployed SEO/AEO remain; customer call/CRM acceptance is per tenant.
+
+SIGUIENTE PASO: finish Check, review the complete diff, and deliver this source candidate by version-prefixed commit/PR with verified main readback.
+
+---
+
+## Active PHDK Auto continuation — source merged at 5.1.45; four fronts remain open
+
+Latest verified source is PR #131, candidate `10ebd82d39c6264f965f0fbdc5628bf66c585b80` (tree `5ac72b7869f55b37b33f8a579c9f6fa7b2860964`), merged at `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf`. `git ls-remote` and `origin/main` agree. PHDK 2.50.10 coherence is 52/52. Browser ESLint 10 gate and runtime cleanup are delivered; Browser tests 40/40, API/Cloud regressions 36/36 and 16/16, synthetic Web UAT 4/4, SEO source tests 1/1 each.
+
+The owner confirmed the legacy global ManagedInterface catalog remains hidden; per-customer integrations use tenant Vendor records and origin allowlists. Regression 21/25/33 and team-interface regressions 37/38 cover the explicit scope. Current working branch `fix/phdk-crud-matrix-5-1-46` is based on the merged v5.1.45 main and contains only PHDK status/check/test updates so far.
+
+Whole Auto remains **PARTIALLY DELIVERED**: safe DB identities, disposable PostgreSQL, complete persisted CRUD/role/tenant/surface operations, native Windows device/audio, broad accessibility/localization and deployed SEO/AEO remain. Client-selected call/CRM acceptance is per tenant. No DB, customer data, private endpoint, device or deployment was used.
+
+SIGUIENTE PASO: continue the source-side CRUD matrix and policy audit; then run remaining acceptance only against an isolated DB/identity target and supported native host.
+
+---
+
 ## Active PHDK Auto continuation — candidate 5.1.44
 
 Continue the owner-confirmed four-front portfolio. Verified base is `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041`; CHK-AUTO-022 fixes BrowserView resource requests bypassing the tenant allowlist while an RPA flow was active. All HTTP(S) and WebSocket requests are now scoped to the Cloud-derived origins; requests without a resolvable WebContents use the service-worker initiator and active-session scope intersection, failing closed when they cannot be associated. Product commit `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`), version 5.1.44.

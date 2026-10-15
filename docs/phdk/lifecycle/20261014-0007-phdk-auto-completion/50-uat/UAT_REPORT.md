@@ -1,5 +1,13 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Latest candidate 5.1.46 — remove dormant global interface UI (2026-10-15)
+
+Built-SPA synthetic UAT passes 4/4 suites against package version 5.1.46; exact JSON evidence is `docs/phdk/evidence/uat-local-web.json`. The candidate removes only an unmounted legacy component, so active synthetic journeys and the protected diagnostics behavior remain intact. APIs are mocked, external traffic is blocked, and no real role authentication/DB authorization is claimed. API full regression is 36/36 and Cloud is 16/16; Browser offline suite 40/40.
+
+The owner-confirmed global catalog remains hidden, while client integrations use tenant Vendor settings. The focused matrix/guard tests prove superadmin-only global CRUD, no mounted tenant manager, and company-scoped team assignments. Overall product UAT remains **37 PASS, 2 BLOCKED, 1 MANUAL**: DB-backed identities/persisted CRUD, native device/audio, broad accessibility/localization, and deployed SEO/AEO remain unverified. Client call/CRM acceptance is per tenant. No DB, customer data, private endpoint, device or deployment was used.
+
+---
+
 ## Latest candidate 5.1.45 — Browser lint gate and runtime test coverage (2026-10-14 local)
 
 The built-SPA UAT ran against Browser/Web/Landing package version 5.1.45 and passed 4/4 suites (0 failed). It exercised synthetic role-shaped management journeys, write-only provider configuration, protected diagnostics behavior and the refreshed 5.1.45 UI. Exact run evidence is `docs/phdk/evidence/uat-local-web.json`, generated at 2026-10-15T01:31:28Z from candidate revision `77a975d8a5dc37cebf884a3c5b2bc35b3ac67002` plus the recorded source fingerprint. API calls were intercepted with synthetic fixtures and external requests blocked; this is UI evidence, not real-server authorization or deployed acceptance.

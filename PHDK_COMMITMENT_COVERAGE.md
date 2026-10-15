@@ -1,4 +1,30 @@
-## Current Auto candidate — 2026-10-15, 5.1.44 (source merged / verified)
+## Current Auto candidate — 2026-10-15, 5.1.46 (source candidate; delivery pending)
+
+| Commitment | Current candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | Base `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf`; candidate aligns all five app roots and renderer at 5.1.46. | Candidate PR/merge/readback pending; API/Web lint warnings remain. |
+| CMT-002 | Web UAT rerun 4/4; diagnostics UI unchanged; global interface catalog UI removed under owner direction. | Native device/audio and broad accessibility/localization remain. |
+| CMT-003 | Tenant Vendor/private-origin policy retained; global catalog not presented as customer CRM configuration. | Per-client call/CRM live acceptance remains customer-selected. |
+| CMT-004 | API/Cloud regressions 36/36, 16/16; ManagedInterface/TeamInterface decision and guard boundary tests; coherence 52/52. | Safe DB identities, disposable PostgreSQL/migrations, full persisted CRUD/resource matrix remain. |
+
+UAT remains **37 PASS, 2 BLOCKED, 1 MANUAL**. **Source candidate validated locally; PHDK Auto remains PARTIALLY DELIVERED.**
+
+---
+
+## Previous Auto candidate — 2026-10-15, 5.1.45 (source merged / verified)
+
+| Commitment | Current candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | Candidate `10ebd82d39c6264f965f0fbdc5628bf66c585b80` (tree `5ac72b7869f55b37b33f8a579c9f6fa7b2860964`), PR #131 merged at `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf`; remote readbacks agree; five app roots/locks and renderer are 5.1.45. | Continue baseline/version/PR reconciliation; API (135) and Web (122) lint warnings remain follow-up debt. |
+| CMT-002 | Diagnostics UI synthetic acceptance rerun for v5.1.45; protected probe behavior and write-only settings pass. | Native device/audio and broad accessibility/localization remain open. |
+| CMT-003 | Browser runtime cleans transcript listeners/media timers and redacts replan context; tenant-origin HTTP(S)/WebSocket enforcement remains present. | Packaged Electron and client-selected live call/CRM acceptance remain open. |
+| CMT-004 | PHDK 2.50.10 coherence 52/52; API/Cloud regression 36/36 and 16/16; owner-approved dormant global ManagedInterface catalog and nested TeamInterface scope are covered by targeted policy/inventory tests. | Safe DB identities, disposable PostgreSQL/migrations, exhaustive persisted CRUD/tenant matrix remain open. |
+
+UAT remains **37 PASS, 2 BLOCKED, 1 MANUAL**. **Source slice merged / remote verified; overall PHDK Auto remains PARTIALLY DELIVERED.** See `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.45-post-merge-131.json`.
+
+---
+
+## Previous Auto candidate — 2026-10-15, 5.1.44 (source merged / verified)
 
 | Commitment | Current candidate evidence | Remaining acceptance |
 |---|---|---|
