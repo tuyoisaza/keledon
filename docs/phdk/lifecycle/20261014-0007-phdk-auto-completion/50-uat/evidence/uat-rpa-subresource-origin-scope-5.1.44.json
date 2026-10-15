@@ -1,0 +1,29 @@
+{
+  "case": "UAT-040",
+  "candidate_version": "5.1.44",
+  "product_commit": "0cbf038ed8ce7f27b1459c3a922a93f04165da46",
+  "candidate_tree": "9580bf410a52c2ecce0824e52fdf3ab30b322440",
+  "base_commit": "11d773e6d41d21625302ab63fef31cf43d521041",
+  "status": "PASS",
+  "validation": {
+    "browser_offline_suite": "27/27 PASS",
+    "security_policy_and_wiring": "11/11 PASS",
+    "browser_typescript_build": "PASS",
+    "phdk_coherence": "52/52 PASS",
+    "package_versions": "Five application package/lock roots and Browser renderer at 5.1.44"
+  },
+  "assertions": [
+    "Tenant-configured HTTPS CRM resources are allowed.",
+    "Tenant-configured private HTTP CRM resources are allowed.",
+    "Unlisted resource origins and unlisted ports are denied.",
+    "Credential-bearing URLs and non-HTTP(S)/WebSocket schemes are denied.",
+    "Tenant-configured WSS origins are allowed and unlisted WSS origins are denied.",
+    "Service-worker requests use active-session scopes; overlapping tenant scopes intersect and unattributed requests deny.",
+    "Electron onBeforeRequest source wiring uses WebContents/request initiator scope before allowing a request."
+  ],
+  "limitations": [
+    "Offline policy and source-wiring tests only; no packaged Electron or real service-worker runtime was exercised.",
+    "No private CRM endpoint, customer data, database, device or deployment was used.",
+    "Customer deployments must configure every required CDN/API/WebSocket origin in the tenant allowlist."
+  ]
+}

@@ -1,5 +1,15 @@
 # Current task
 
+## Active PHDK Auto continuation — candidate 5.1.44
+
+Continue the owner-confirmed four-front portfolio. Verified base is `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041`; CHK-AUTO-022 fixes BrowserView resource requests bypassing the tenant allowlist while an RPA flow was active. All HTTP(S) and WebSocket requests are now scoped to the Cloud-derived origins; requests without a resolvable WebContents use the service-worker initiator and active-session scope intersection, failing closed when they cannot be associated. Product commit `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`), version 5.1.44.
+
+UAT-040 passes offline: Browser suite 27/27, Electron security-policy/wiring 11/11, Browser TypeScript build, PHDK coherence 52/52; all five app package/lock roots and Browser renderer align at 5.1.44. No packaged Electron runtime, live CRM, database, customer data, device or deployment was tested. Browser ESLint remains unavailable due the absent flat config. Whole acceptance advances to 37 PASS, 2 BLOCKED, 1 MANUAL and remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: finalize Check/Remediation evidence, publish the version-prefixed source PR, then verify normal PR controls and exact remote `main` readback.
+
+---
+
 ## Active PHDK Auto continuation — candidate 5.1.43
 
 Continue the owner-confirmed four-front portfolio in order. Verified base is `origin/main` `e04418217e1ebb18acda9728a799041fd3bc3c19`; product fix commit `29d18efbbabe159e5279a01ba767f70e54d8afdc` on `fix/phdk-rpa-tab-navigation-scope-5-1-43` is version 5.1.43 across all five app package/lock roots and Browser renderer. Exact tested candidate is `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`). CHK-AUTO-021 applies the trusted RPA tenant allowlist to active BrowserView navigation, frame, redirect, popup and IPC guards during execution; previous scope is restored on completion/cancellation. UAT-039 passes: Browser tests 27/27, security-policy/wiring 9/9, Browser build and PHDK coherence 52/52. Evidence is under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/`.

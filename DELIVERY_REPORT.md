@@ -1,3 +1,19 @@
+## Current delivery — candidate 5.1.44 (2026-10-15, pending)
+
+Candidate `fix/phdk-rpa-subresource-allowlist-5-1-44` is based on verified `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041`. Product commit `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`) applies active tenant-origin scope to BrowserView HTTP(S)/WebSocket resource requests during RPA, using the initiator and conservative scope intersection when no WebContents owner is available. It retains explicitly configured private CRM origins. All five app package/lock roots and Browser renderer are 5.1.44. UAT-040 passes offline; Browser tests 27/27, security-policy/wiring tests 11/11, Browser build and PHDK coherence 52/52 pass. Whole acceptance is 37 PASS, 2 BLOCKED, 1 MANUAL.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | All five app package/lock roots and Browser renderer at 5.1.44; changelog updated. |
+| COMMIT_PREFIX | PASS | `v5.1.44 fix(browser): scope RPA resource requests to tenant origins`. |
+| PUSH_AND_PR | PENDING | Candidate has not been pushed; PR not yet opened. |
+| REMOTE_MAIN | PENDING | Merge/readback not performed. |
+| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | UAT-040; Browser suites/build/coherence pass; packaged runtime, persisted/native/deployed/per-client gates remain. |
+
+Browser ESLint remains blocked by missing flat config. No packaged Electron or service-worker runtime, live CRM/private host, customer data, database, device or deployment was used. Overall: **SOURCE DELIVERY PENDING; PHDK AUTO PARTIALLY DELIVERED**.
+
+---
+
 ## Current delivery — candidate 5.1.43 (2026-10-14, verified)
 
 Candidate `fix/phdk-rpa-tab-navigation-scope-5-1-43` is based on verified `origin/main` `e04418217e1ebb18acda9728a799041fd3bc3c19`. Product fix commit `29d18efbbabe159e5279a01ba767f70e54d8afdc` (tree `abeac0dd0b858016434d02e63d19eb943039c25f`), followed by test commit `076bce49bead0029fd8fc9ea7f79389538f526e5` (candidate tree `7c2cdffbac9887d974f886d8144cff330029c691`), bumps all five application package/lock roots and Browser renderer to 5.1.43. It shares the trusted RPA tenant-origin scope with active BrowserView navigation, frame, redirect, popup and IPC guards for the flow duration. UAT-039 passes; Browser tests 27/27, security-policy/wiring tests 9/9, Browser build and PHDK coherence 52/52 pass. Whole acceptance is 36 PASS, 2 BLOCKED, 1 MANUAL.

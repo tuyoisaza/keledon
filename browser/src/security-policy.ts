@@ -8,17 +8,28 @@ export interface VendorNotification {
 }
 
 const runtimeVendorScopes = new WeakMap<object, readonly string[]>();
+const activeRuntimeVendorScopes = new Set<{
+  webContents: object;
+  session: object;
+  origins: readonly string[];
+}>();
 
 /** Temporarily attach the trusted Cloud-derived vendor scope to an active BrowserView. */
 export function setRuntimeVendorNavigationScope(
   webContents: object,
   allowedOrigins?: readonly string[],
 ): void {
+  for (const active of activeRuntimeVendorScopes) {
+    if (active.webContents === webContents) activeRuntimeVendorScopes.delete(active);
+  }
   if (!allowedOrigins) {
     runtimeVendorScopes.delete(webContents);
     return;
   }
-  runtimeVendorScopes.set(webContents, [...new Set(allowedOrigins)]);
+  const origins = [...new Set(allowedOrigins)];
+  runtimeVendorScopes.set(webContents, origins);
+  const session = (webContents as { session?: object }).session;
+  if (session) activeRuntimeVendorScopes.add({ webContents, session, origins });
 }
 
 export function getRuntimeVendorNavigationScope(
@@ -26,6 +37,25 @@ export function getRuntimeVendorNavigationScope(
 ): string[] | undefined {
   const scope = runtimeVendorScopes.get(webContents);
   return scope ? [...scope] : undefined;
+}
+
+/** Resolve requests without a WebContents ID conservatively, including service-worker traffic. */
+export function getRuntimeVendorRequestScope(
+  session: object,
+  source?: object | null,
+  initiatorOrigin?: string,
+): string[] | undefined {
+  if (source) return getRuntimeVendorNavigationScope(source);
+  const active = [...activeRuntimeVendorScopes].filter((scope) => scope.session === session);
+  if (!active.length) return undefined;
+  const matching = active.filter((scope) =>
+    typeof initiatorOrigin === 'string' && scope.origins.includes(initiatorOrigin),
+  );
+  if (!matching.length) return [];
+  return matching.reduce(
+    (intersection, scope) => intersection.filter((origin) => scope.origins.includes(origin)),
+    [...matching[0].origins],
+  );
 }
 
 /** Keep app and vendor renderers isolated from Node and enforce Chromium origin checks. */
@@ -65,6 +95,28 @@ export function isAllowedConfiguredVendorUrl(
   } catch {
     return false;
   }
+}
+
+/** Gate every HTTP(S) resource request against the active tenant RPA scope. */
+export function isAllowedVendorRequest(
+  value: string,
+  allowedOrigins: unknown,
+): boolean {
+  try {
+    const url = new URL(value);
+    if (url.protocol === 'ws:' || url.protocol === 'wss:') {
+      const protocol = url.protocol === 'wss:' ? 'https:' : 'http:';
+      return (
+        !url.username &&
+        !url.password &&
+        Array.isArray(allowedOrigins) &&
+        allowedOrigins.includes(`${protocol}//${url.host}`)
+      );
+    }
+  } catch {
+    return false;
+  }
+  return isAllowedConfiguredVendorUrl(value, allowedOrigins);
 }
 
 /** Keep every frame navigation inside the configured tenant scope; blank documents inherit their parent origin. */

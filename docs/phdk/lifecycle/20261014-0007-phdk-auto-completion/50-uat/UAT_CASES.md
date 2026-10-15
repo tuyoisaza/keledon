@@ -1,5 +1,11 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Current candidate 5.1.44 — tenant scope on BrowserView resource requests
+
+| Case | Story / actor | Acceptance / steps | Result and evidence |
+|---|---|---|---|
+| UAT-040 | US-003 / configured CRM loaded in a BrowserView during RPA | Allow HTTP(S)/WebSocket resources on tenant-configured origins, including an explicitly allowlisted private CRM; block unlisted CDN/host/port requests. Resolve requests without a WebContents using the service-worker initiator, intersect scopes for overlapping active tenants, and deny unattributed requests while RPA scopes are active. | PASS offline on exact candidate `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`): Browser suite 27/27; security-policy/source-wiring tests 11/11; Browser build; PHDK coherence 52/52. Evidence: `50-uat/evidence/uat-rpa-subresource-origin-scope-5.1.44.json`. No packaged Electron runtime or live endpoint. |
+
 ## Current candidate 5.1.43 — RPA scope at BrowserView navigation boundaries
 
 | Case | Story / actor | Acceptance / steps | Result and evidence |

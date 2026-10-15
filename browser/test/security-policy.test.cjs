@@ -6,12 +6,14 @@ const {
   isAllowedVendorTabUrl,
   isAllowedVendorNavigation,
   isAllowedConfiguredVendorUrl,
+  isAllowedVendorRequest,
   isAllowedVendorUrl,
   isTrustedAppRendererUrl,
   getAllowedVendorOrigins,
   sanitizeVendorNotification,
   secureRendererPreferences,
   getRuntimeVendorNavigationScope,
+  getRuntimeVendorRequestScope,
   setRuntimeVendorNavigationScope,
 } = require('../dist/security-policy.js');
 
@@ -62,6 +64,18 @@ test('tenant vendor allowlists permit configured private CRM origins and block r
   );
 });
 
+test('active RPA resource requests allow only tenant-configured origins', () => {
+  const allowed = ['http://192.168.10.20:8080', 'https://crm.example.test'];
+  assert.equal(isAllowedVendorRequest('https://crm.example.test/assets/app.js', allowed), true);
+  assert.equal(isAllowedVendorRequest('http://192.168.10.20:8080/api/calls', allowed), true);
+  assert.equal(isAllowedVendorRequest('wss://crm.example.test/socket', allowed), true);
+  assert.equal(isAllowedVendorRequest('wss://socket.example.test/events', allowed), false);
+  assert.equal(isAllowedVendorRequest('https://cdn.example.test/tracker.js', allowed), false);
+  assert.equal(isAllowedVendorRequest('http://192.168.10.20:8081/api', allowed), false);
+  assert.equal(isAllowedVendorRequest('https://user:pass@crm.example.test/private', allowed), false);
+  assert.equal(isAllowedVendorRequest('file:///etc/passwd', allowed), false);
+});
+
 test('tenant vendor frame navigation permits only configured origins and inherited blank frames', () => {
   const allowed = ['http://192.168.10.20:8080', 'https://crm.example.test'];
   assert.equal(isAllowedVendorNavigation('http://192.168.10.20:8080/calls', allowed), true);
@@ -83,6 +97,32 @@ test('runtime RPA navigation scope is copied, isolated per WebContents, and clea
   assert.equal(getRuntimeVendorNavigationScope(first), undefined);
 });
 
+test('service-worker requests resolve the active tenant scope conservatively', () => {
+  const session = {};
+  const first = { session };
+  const second = { session };
+  setRuntimeVendorNavigationScope(first, ['https://crm.example.test', 'https://api.example.test']);
+  setRuntimeVendorNavigationScope(second, ['https://crm.example.test', 'https://portal.example.test']);
+  assert.deepEqual(
+    getRuntimeVendorRequestScope(session, undefined, 'https://crm.example.test'),
+    ['https://crm.example.test'],
+    'overlapping tenants use the intersection, never the union, for an unattributed worker request',
+  );
+  assert.deepEqual(
+    getRuntimeVendorRequestScope(session, undefined, 'https://unknown.example.test'),
+    [],
+    'an unrecognized worker initiator is denied while RPA scopes are active',
+  );
+  assert.deepEqual(
+    getRuntimeVendorRequestScope(session, first, 'https://unknown.example.test'),
+    ['https://crm.example.test', 'https://api.example.test'],
+    'a known WebContents remains bound to its own tenant scope',
+  );
+  setRuntimeVendorNavigationScope(first, undefined);
+  setRuntimeVendorNavigationScope(second, undefined);
+  assert.equal(getRuntimeVendorRequestScope(session, undefined, 'https://crm.example.test'), undefined);
+});
+
 test('frame, popup, and IPC navigation entry points use the active RPA tenant scope', () => {
   const tabManager = fs.readFileSync(path.resolve('src/tab-manager.ts'), 'utf8');
   const ipcHandlers = fs.readFileSync(path.resolve('src/ipc-handlers.ts'), 'utf8');
@@ -90,6 +130,7 @@ test('frame, popup, and IPC navigation entry points use the active RPA tenant sc
   assert.match(tabManager, /getRuntimeVendorNavigationScope\(view\.webContents\) \?\? scopedOrigins/);
   assert.match(tabManager, /on\('will-frame-navigate',[\s\S]*guardVendorNavigation\(event, event\.url\)/);
   assert.match(tabManager, /setWindowOpenHandler\([\s\S]*const allowedOrigins = getNavigationScope\(\)/);
+  assert.match(tabManager, /webRequest\.onBeforeRequest\([\s\S]*details\.webContentsId[\s\S]*webContents\.fromId\(details\.webContentsId\)[\s\S]*getRuntimeVendorRequestScope\([\s\S]*details\.initiatorOrigin[\s\S]*isAllowedVendorRequest\(details\.url, allowedOrigins\)/);
   assert.match(ipcHandlers, /getRuntimeVendorNavigationScope\(tab\.view\.webContents\) \?\? tab\.allowedOrigins/);
   assert.match(executor, /setRuntimeVendorNavigationScope\(view\.webContents, flow\.allowed_origins\)/);
   assert.match(executor, /finally \{\s*setRuntimeVendorNavigationScope\(view\.webContents, priorRuntimeScope\)/);

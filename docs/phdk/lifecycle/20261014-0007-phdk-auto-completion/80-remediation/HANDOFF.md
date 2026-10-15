@@ -1,5 +1,9 @@
 # Remediation handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.44 — tenant-scoped BrowserView resource requests
+
+CHK-AUTO-022 is fixed: active RPA tenant origins now constrain HTTP(S) subresources and WS/WSS handshakes. Requests without a WebContents resolve through service-worker initiator and active-session scope intersection, otherwise deny. UAT-040 and the 27/27 Browser, 11/11 policy/wiring, Browser build and 52/52 coherence checks pass. Delivery is pending; whole Auto remains partial. Evidence is in `snapshots/candidate-5.1.44/PHDK_REMEDIATION_REPORT.md`.
+
 ## Candidate 5.1.43 — active RPA scope for Electron navigation
 
 CHK-AUTO-021 is fixed: exact candidate `29d18efbbabe159e5279a01ba767f70e54d8afdc` shares the Cloud-derived tenant allowlist with BrowserView navigation, frame, redirect, popup and IPC guards for the lifetime of RPA execution, restoring prior scope afterward. UAT-039 and the Browser/security suites pass; Browser build and PHDK coherence pass. Delivery is pending; full Auto remains partial. Details: `snapshots/candidate-5.1.43/PHDK_REMEDIATION_REPORT.md`.
