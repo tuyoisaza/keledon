@@ -1,18 +1,10 @@
 import { ResourceScopeGuard } from '../guards/resource-scope.guard';
 import { RuntimeActorGuard } from '../gateways/runtime-identity';
 import { Public } from '../guards/public.decorator';
-import {
-  Controller,
-  Post,
-  Body,
-  Req,
-  Res,
-  HttpStatus,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Post, Body, Req, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { TTSService } from './tts.service';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('TTS')
 @Controller('tts')

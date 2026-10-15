@@ -96,7 +96,7 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
     );
   }
 
-  async startSession(sessionId: string): Promise<void> {
+  startSession(sessionId: string): Promise<void> {
     const session: SessionState = {
       sessionId,
       startedAt: new Date(),
@@ -106,16 +106,16 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
     };
     this.sessions.set(sessionId, session);
     this.logger.log(`Session started: ${sessionId}`);
+    return Promise.resolve();
   }
 
-  async stopSession(sessionId: string): Promise<void> {
+  stopSession(sessionId: string): Promise<void> {
     // Stop any active TTS
-    if (this.ttsAdapter) {
-      this.ttsAdapter.stop();
-    }
+    if (this.ttsAdapter) this.ttsAdapter.stop();
     this.bargeIn.reset();
     this.sessions.delete(sessionId);
     this.logger.log(`Session stopped: ${sessionId}`);
+    return Promise.resolve();
   }
 
   /**
@@ -226,18 +226,20 @@ export class KeledonRealtimePipelineProvider implements VoiceProvider {
   /**
    * Interrupt current operation (barge-in or system interrupt).
    */
-  async interrupt(reason: string): Promise<void> {
+  interrupt(reason: string): Promise<void> {
     const sessionId = this.getCurrentSessionId();
     this.bargeIn.triggerInterrupt(reason, sessionId || undefined);
     if (this.ttsAdapter) this.ttsAdapter.stop();
     this.logger.log(`Interrupted: ${reason}`);
+    return Promise.resolve();
   }
 
-  async destroy(): Promise<void> {
+  destroy(): Promise<void> {
     this.destroyed = true;
     this.bargeIn.reset();
     this.sessions.clear();
     this.logger.log('Provider destroyed');
+    return Promise.resolve();
   }
 
   /**

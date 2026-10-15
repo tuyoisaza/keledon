@@ -175,9 +175,9 @@ export class WebRtcService {
   /**
    * Destroy and clean up a peer connection.
    */
-  async destroyPeer(sessionId: string): Promise<void> {
+  destroyPeer(sessionId: string): Promise<void> {
     const peer = this.peers.get(sessionId);
-    if (!peer) return;
+    if (!peer) return Promise.resolve();
     try {
       peer.stopAudio?.();
       peer.pc.close();
@@ -186,6 +186,7 @@ export class WebRtcService {
     }
     this.peers.delete(sessionId);
     this.logger.log(`[WebRTC/${sessionId}] peer destroyed`);
+    return Promise.resolve();
   }
 
   /**

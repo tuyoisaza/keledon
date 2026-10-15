@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Subject, Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 import { randomUUID } from 'crypto';
 
 import type {
@@ -82,7 +82,7 @@ export class VoiceAnalyticsService {
     console.log(
       `VoiceAnalytics: Processed conversation ${conversationId}, sentiment: ${metrics.sentiment}`,
     );
-    return metrics;
+    return Promise.resolve(metrics);
   }
 
   // Get real-time analytics

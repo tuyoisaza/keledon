@@ -415,3 +415,16 @@
 - Repair deterministic cloud/runtime queue transport, authenticated session isolation, bounded WebRTC/STT wiring and failure reporting.
 - Repair existing web typecheck/runtime contracts without relaxing strict checks.
 - Client-specific integrations are configured per tenant; live vendor/call/CRM acceptance is outside this code-review scope. Final remote delivery is not yet performed; no production success claim.
+# v5.1.51 — remove false API integration and execution success
+
+- Remove mock Browser/CRM/voice step successes from the API SubAgent flow runner; only supported local decision/wait steps execute, unsupported tenant adapter steps fail closed, and each run records its completed/failed result.
+- Make the in-memory integration health catalog report failure when no tenant provider adapter is configured; remove synthetic connection/sync success and background health timers.
+- Report only the current Node process from API process monitoring rather than fabricated system processes.
+- Close the remaining API ESLint baseline: full `services/api` lint passes with 0 warnings and 0 errors, including unused-variable and redundant-union cleanup.
+- Align API, Cloud, Browser, Web, Landing package/lock versions and Browser renderer to 5.1.51.
+
+### Verification
+
+- API and Cloud builds and regressions pass (API 36/36, Cloud 16/16); all five product builds pass.
+- API full lint, Web and Landing typecheck/lint, Browser lint, Browser offline tests 27/27, diagnostics 19/19, synthetic Web UAT 4/4, Web/Landing SEO 1/1 each, and PHDK coherence 52/52 pass.
+- Web/Landing production builds complete with the existing large-chunk warning. No customer endpoint, private CRM, database, native device, or deployment was used; whole Auto remains partially delivered.

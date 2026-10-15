@@ -26,7 +26,7 @@ export class AILoopService {
     return [];
   }
 
-  getLoop(_loopId: string): any | undefined {
+  getLoop(_loopId: string): any {
     return undefined;
   }
 

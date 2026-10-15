@@ -35,9 +35,9 @@ const sdk = new NodeSDK({
 
 let telemetryStarted = false;
 
-export async function startTelemetry(): Promise<void> {
+export function startTelemetry(): Promise<void> {
   if (telemetryStarted) {
-    return;
+    return Promise.resolve();
   }
 
   telemetryStarted = true;
@@ -55,6 +55,7 @@ export async function startTelemetry(): Promise<void> {
     telemetryStarted = false;
     console.warn('[OTEL] Failed to start telemetry SDK (non-fatal):', error);
   }
+  return Promise.resolve();
 }
 
 async function shutdownTelemetry(signal: string): Promise<void> {

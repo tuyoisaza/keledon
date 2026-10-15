@@ -14,7 +14,9 @@ describe('RuntimeAiBudget metered diagnostics', () => {
   it('reports aggregate provider outcomes, retry policy, caps and kill switches without actor identifiers', async () => {
     process.env.KELEDON_VOICE_DISABLED = 'false';
     const budget = new RuntimeAiBudget();
-    await budget.run('private-actor-id', undefined, async () => 'ok');
+    await budget.run('private-actor-id', undefined, () =>
+      Promise.resolve('ok'),
+    );
     process.env.KELEDON_AI_DISABLED = 'true';
     budget.recordMeteredOutcome({
       provider: 'OpenAI',
@@ -60,9 +62,9 @@ describe('RuntimeAiBudget metered diagnostics', () => {
     const budget = new RuntimeAiBudget();
     const original = new Error('private provider URL and credential');
     await expect(
-      budget.trackProviderCall('deepgram', undefined, async () => {
-        throw original;
-      }),
+      budget.trackProviderCall('deepgram', undefined, () =>
+        Promise.reject(original),
+      ),
     ).rejects.toBe(original);
     expect(budget.getDiagnostics()).toMatchObject({
       calls: 1,

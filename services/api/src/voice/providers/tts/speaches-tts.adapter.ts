@@ -31,12 +31,13 @@ export class SpeachesTtsAdapter implements TtsAdapter {
 
   constructor(private readonly ttsService: TTSService) {}
 
-  async initialize(config: SpeachesTtsAdapterConfig): Promise<void> {
+  initialize(config: SpeachesTtsAdapterConfig): Promise<void> {
     this.config = config;
     this.stopped = false;
     this.logger.log(
       `SpeachesTTS adapter initialized voice=${config.voice || 'auto'} lang=${config.language || 'auto'}`,
     );
+    return Promise.resolve();
   }
 
   async speak(

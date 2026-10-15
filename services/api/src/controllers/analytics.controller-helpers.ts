@@ -18,14 +18,13 @@ export class AnalyticsControllerHelpers {
   ) {}
 
   // Private helper methods
-  protected async getVoiceAnalyticsData(
-    period: string,
-    _filters: AnalyticsFilters,
-  ) {
-    return this.voiceAnalyticsService.getAnalytics(period as any);
+  protected getVoiceAnalyticsData(period: string, _filters: AnalyticsFilters) {
+    return Promise.resolve(
+      this.voiceAnalyticsService.getAnalytics(period as any),
+    );
   }
 
-  protected async getIntegrationAnalyticsData(
+  protected getIntegrationAnalyticsData(
     _period: string,
     _filters: AnalyticsFilters,
   ) {
@@ -34,7 +33,7 @@ export class AnalyticsControllerHelpers {
       (p) => p.status === 'connected',
     );
 
-    return {
+    return Promise.resolve({
       totalProviders: providers.length,
       connectedProviders: connectedProviders.length,
       avgResponseTime:
@@ -47,17 +46,14 @@ export class AnalyticsControllerHelpers {
           (sum, p) => sum + (p.health?.uptime || 0),
           0,
         ) / connectedProviders.length,
-    };
+    });
   }
 
-  protected async getFlowAnalyticsData(
-    _period: string,
-    _filters: AnalyticsFilters,
-  ) {
+  protected getFlowAnalyticsData(_period: string, _filters: AnalyticsFilters) {
     const executions = this.flowExecutionService.getExecutions();
     const completedFlows = executions.filter((e) => e.status === 'completed');
 
-    return {
+    return Promise.resolve({
       totalExecutions: executions.length,
       completedExecutions: completedFlows.length,
       successRate:
@@ -69,17 +65,14 @@ export class AnalyticsControllerHelpers {
           ? completedFlows.reduce((sum, e) => sum + (e.duration || 0), 0) /
             completedFlows.length
           : 0,
-    };
+    });
   }
 
-  protected async getAgentAnalyticsData(
-    _period: string,
-    _filters: AnalyticsFilters,
-  ) {
+  protected getAgentAnalyticsData(_period: string, _filters: AnalyticsFilters) {
     const agents = this.agentMonitoringService.getAllAgentStatuses();
     const activeAgents = agents.filter((a) => a.status !== 'idle');
 
-    return {
+    return Promise.resolve({
       totalAgents: agents.length,
       activeAgents: activeAgents.length,
       avgCpuUsage:
@@ -92,7 +85,7 @@ export class AnalyticsControllerHelpers {
           ? agents.reduce((sum, a) => sum + a.performance.memory, 0) /
             agents.length
           : 0,
-    };
+    });
   }
 
   protected async getSecurityAnalyticsData(
@@ -194,7 +187,7 @@ export class AnalyticsControllerHelpers {
     };
   }
 
-  protected async getFlowExecutionTableData(
+  protected getFlowExecutionTableData(
     _period: string,
     _filters: AnalyticsFilters,
   ): Promise<any[]> {
@@ -203,39 +196,43 @@ export class AnalyticsControllerHelpers {
       .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
       .slice(0, 50);
 
-    return executions.map((exec) => ({
-      id: exec.id,
-      name: exec.name,
-      status: exec.status,
-      duration: exec.duration ? Math.round(exec.duration / 1000) : null,
-      progress: exec.progress,
-      steps: `${exec.currentStepIndex}/${exec.totalSteps}`,
-      lastUpdated: exec.updatedAt,
-    }));
+    return Promise.resolve(
+      executions.map((exec) => ({
+        id: exec.id,
+        name: exec.name,
+        status: exec.status,
+        duration: exec.duration ? Math.round(exec.duration / 1000) : null,
+        progress: exec.progress,
+        steps: `${exec.currentStepIndex}/${exec.totalSteps}`,
+        lastUpdated: exec.updatedAt,
+      })),
+    );
   }
 
-  protected async getIntegrationHeatmapData(
+  protected getIntegrationHeatmapData(
     _filters: AnalyticsFilters,
   ): Promise<any> {
     const providers = this.integrationHealthService.getProviders();
 
-    return providers.map((provider) => ({
-      x: provider.name,
-      y: this.getHealthValue(provider.status),
-      v: {
-        status: provider.status,
-        responseTime: provider.health?.responseTime || 0,
-        uptime: provider.health?.uptime || 0,
-      },
-    }));
+    return Promise.resolve(
+      providers.map((provider) => ({
+        x: provider.name,
+        y: this.getHealthValue(provider.status),
+        v: {
+          status: provider.status,
+          responseTime: provider.health?.responseTime || 0,
+          uptime: provider.health?.uptime || 0,
+        },
+      })),
+    );
   }
 
-  protected async getSystemTrendData(period: string): Promise<any> {
+  protected getSystemTrendData(period: string): any {
     const metrics = this.systemMonitoringService.getMetricsHistory(
       this.getMinutesFromPeriod(period),
     );
 
-    return {
+    return Promise.resolve({
       labels: this.getTimeLabels(period),
       datasets: [
         {
@@ -254,7 +251,7 @@ export class AnalyticsControllerHelpers {
           borderColor: '#10b981',
         },
       ],
-    };
+    });
   }
 
   protected async getSecurityEventsTableData(
@@ -395,11 +392,11 @@ export class AnalyticsControllerHelpers {
     return rows.join('\n');
   }
 
-  protected async convertToPDF(data: any): Promise<Buffer> {
+  protected convertToPDF(data: any): Promise<Buffer> {
     // In a real implementation, this would use a PDF library
     // For now, return a simple text representation
     const text = JSON.stringify(data, null, 2);
-    return Buffer.from(text);
+    return Promise.resolve(Buffer.from(text));
   }
 
   protected generateId(): string {

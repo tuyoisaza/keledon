@@ -46,7 +46,7 @@ export class SessionService {
     }
   }
 
-  async getSession(sessionId: string): Promise<any | null> {
+  async getSession(sessionId: string): Promise<any> {
     try {
       const session = await this.prisma.session.findUnique({
         where: { id: sessionId },

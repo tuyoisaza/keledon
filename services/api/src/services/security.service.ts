@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { Subject, Observable, interval } from 'rxjs';
+import { Subject, interval } from 'rxjs';
 import * as crypto from 'crypto';
 
 export interface SecurityConfig {
@@ -312,7 +312,7 @@ export class SecurityService implements OnModuleInit {
     return true;
   }
 
-  async getSecurityEvents(
+  getSecurityEvents(
     filters: {
       type?: SecurityEventType[];
       severity?: string[];
@@ -353,7 +353,7 @@ export class SecurityService implements OnModuleInit {
       events = events.slice(0, filters.limit);
     }
 
-    return events;
+    return Promise.resolve(events);
   }
 
   private loadSecurityConfig(): SecurityConfig {
@@ -418,7 +418,7 @@ export class SecurityService implements OnModuleInit {
     });
   }
 
-  private async cleanupExpiredSessions(): Promise<void> {
+  private cleanupExpiredSessions(): Promise<void> {
     const now = new Date();
     let cleanedCount = 0;
 
@@ -434,9 +434,10 @@ export class SecurityService implements OnModuleInit {
         `SecurityService: Cleaned up ${cleanedCount} expired sessions`,
       );
     }
+    return Promise.resolve();
   }
 
-  private async archiveOldSecurityEvents(): Promise<void> {
+  private archiveOldSecurityEvents(): Promise<void> {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - 30); // Keep 30 days
 
@@ -453,9 +454,10 @@ export class SecurityService implements OnModuleInit {
         `SecurityService: Archived ${archivedCount} old security events`,
       );
     }
+    return Promise.resolve();
   }
 
-  private async logSecurityEvent(
+  private logSecurityEvent(
     type: SecurityEventType,
     severity: SecurityEvent['severity'],
     ipAddress: string,
@@ -477,17 +479,18 @@ export class SecurityService implements OnModuleInit {
 
     this.securityEvents.set(event.id, event);
     this.securityEventSubject.next(event);
+    return Promise.resolve();
   }
 
-  private async hashPassword(password: string): Promise<string> {
+  private hashPassword(password: string): Promise<string> {
     const salt = crypto.randomBytes(16).toString('hex');
     const hash = crypto
       .pbkdf2Sync(password, salt, 10000, 64, 'sha512')
       .toString('hex');
-    return `${salt}:${hash}`;
+    return Promise.resolve(`${salt}:${hash}`);
   }
 
-  private async verifyPassword(
+  private verifyPassword(
     password: string,
     hashedPassword: string,
   ): Promise<boolean> {
@@ -495,10 +498,10 @@ export class SecurityService implements OnModuleInit {
     const verifyHash = crypto
       .pbkdf2Sync(password, salt, 10000, 64, 'sha512')
       .toString('hex');
-    return hash === verifyHash;
+    return Promise.resolve(hash === verifyHash);
   }
 
-  private async generateJWT(userId: string): Promise<string> {
+  private generateJWT(userId: string): Promise<string> {
     const payload = {
       userId,
       iat: Math.floor(Date.now() / 1000),
@@ -507,7 +510,9 @@ export class SecurityService implements OnModuleInit {
         this.parseExpiration(this.config.jwtExpiration),
     };
 
-    return Buffer.from(JSON.stringify(payload)).toString('base64');
+    return Promise.resolve(
+      Buffer.from(JSON.stringify(payload)).toString('base64'),
+    );
   }
 
   private parseExpiration(expiration: string): number {
@@ -528,16 +533,19 @@ export class SecurityService implements OnModuleInit {
     }
   }
 
-  private async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find((user) => user.email === email);
+  private getUserByEmail(email: string): Promise<User | undefined> {
+    return Promise.resolve(
+      Array.from(this.users.values()).find((user) => user.email === email),
+    );
   }
 
-  private async getUserById(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  private getUserById(id: string): Promise<User | undefined> {
+    return Promise.resolve(this.users.get(id));
   }
 
-  private async updateUser(user: User): Promise<void> {
+  private updateUser(user: User): Promise<void> {
     this.users.set(user.id, user);
+    return Promise.resolve();
   }
 
   private sanitizeUser(user: User): User {

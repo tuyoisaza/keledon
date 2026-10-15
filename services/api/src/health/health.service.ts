@@ -296,25 +296,25 @@ export class HealthService {
     }
   }
 
-  private async checkDeepgram(): Promise<HealthCheck> {
+  private checkDeepgram(): Promise<HealthCheck> {
     const startTime = Date.now();
     const sttConfig = this.configService.getSttConfig();
 
     if (!sttConfig.deepgramApiKey) {
-      return {
+      return Promise.resolve({
         service: 'deepgram',
         status: 'degraded',
         message: 'Deepgram API key not configured',
         responseTime: Date.now() - startTime,
-      };
+      });
     }
 
-    return {
+    return Promise.resolve({
       service: 'deepgram',
       status: 'healthy',
       message: `Deepgram STT available (model: ${sttConfig.deepgramModel || 'nova-2'})`,
       responseTime: Date.now() - startTime,
-    };
+    });
   }
 
   private async checkQdrant(): Promise<HealthCheck> {
@@ -355,7 +355,7 @@ export class HealthService {
     }
   }
 
-  private async checkServices(): Promise<HealthCheck> {
+  private checkServices(): Promise<HealthCheck> {
     const startTime = Date.now();
     const flags = this.configService.getFeatureFlags();
 
@@ -366,11 +366,11 @@ export class HealthService {
     if (flags.rpa) availableServices.push('RPA');
     if (flags.otel) availableServices.push('OTEL');
 
-    return {
+    return Promise.resolve({
       service: 'services',
       status: 'healthy',
       message: `Available: ${availableServices.join(', ')}`,
       responseTime: Date.now() - startTime,
-    };
+    });
   }
 }

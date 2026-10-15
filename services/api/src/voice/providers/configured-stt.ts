@@ -1,5 +1,5 @@
 import { VoiceProviderConfig } from './voice-provider.interface';
-import { SttAdapter, SttResult } from './stt/stt-adapter.interface';
+import { SttResult } from './stt/stt-adapter.interface';
 import { SpeachesSttAdapter } from './stt/speaches-stt.adapter';
 import { runtimeAiBudget } from '../../llm/runtime-ai-budget';
 

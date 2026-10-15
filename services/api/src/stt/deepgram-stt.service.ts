@@ -97,7 +97,7 @@ export class DeepgramSTTService {
    * Create a live transcription connection to Deepgram.
    * Returns a LiveTranscription connection object or null on failure.
    */
-  async createLiveStream(): Promise<any | null> {
+  async createLiveStream(): Promise<any> {
     const ready = await this.ensureClient();
     if (!ready) return null;
 

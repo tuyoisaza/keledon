@@ -209,59 +209,59 @@ export class RAGService {
    * Evaluate RAG response quality.
    * MVP: deterministic empty (no simulated scoring).
    */
-  async evaluateResponse(
-    sessionId: string,
-    originalQuery: string,
-    response: string,
-    usedContext?: string[],
+  evaluateResponse(
+    _sessionId: string,
+    _originalQuery: string,
+    _response: string,
+    _usedContext?: string[],
   ): Promise<{ success: boolean; feedback: string; analysis: any }> {
-    return {
+    return Promise.resolve({
       success: false,
       feedback: 'RAG response evaluation not implemented (real though empty)',
       analysis: null,
-    };
+    });
   }
 
   /**
    * Get session context.
    * MVP: deterministic empty state.
    */
-  async getSessionContext(sessionId: string): Promise<SessionContext> {
-    return {
+  getSessionContext(sessionId: string): Promise<SessionContext> {
+    return Promise.resolve({
       sessionId,
       companyId: '',
       context: [],
       lastUpdated: '',
-    };
+    });
   }
 
   /**
    * Update session context.
    * MVP: not implemented (no simulated success).
    */
-  async updateSessionContext(
-    sessionId: string,
-    pattern: Partial<KnowledgePattern>,
+  updateSessionContext(
+    _sessionId: string,
+    _pattern: Partial<KnowledgePattern>,
   ): Promise<{ success: boolean; message: string }> {
-    return {
+    return Promise.resolve({
       success: false,
       message: 'Session context update not implemented (real though empty)',
-    };
+    });
   }
 
   /**
    * Get knowledge gaps.
    * MVP: deterministic empty.
    */
-  async getKnowledgeGaps(sessionId: string): Promise<string[]> {
-    return [];
+  getKnowledgeGaps(_sessionId: string): Promise<string[]> {
+    return Promise.resolve([]);
   }
 
   /**
    * Get query suggestions.
    * MVP: deterministic empty.
    */
-  async getQuerySuggestions(sessionId: string): Promise<string[]> {
-    return [];
+  getQuerySuggestions(_sessionId: string): Promise<string[]> {
+    return Promise.resolve([]);
   }
 }

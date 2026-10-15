@@ -19,7 +19,7 @@ export class ListeningSessionController {
   ) {}
 
   @Post()
-  async createSession(
+  createSession(
     @Body() body: { source: string; tabUrl?: string; tabTitle?: string },
   ) {
     if (!body.source) {
@@ -28,9 +28,11 @@ export class ListeningSessionController {
 
     try {
       const session = this.listeningSessionService.createSession(body);
-      return session;
+      return Promise.resolve(session);
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      return Promise.reject(
+        new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR),
+      );
     }
   }
 }

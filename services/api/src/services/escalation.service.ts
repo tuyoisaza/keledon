@@ -50,7 +50,7 @@ export class EscalationService {
     }
   }
 
-  async getById(id: string): Promise<any | null> {
+  async getById(id: string): Promise<any> {
     try {
       return await this.prisma.escalationLog.findUnique({
         where: { id },

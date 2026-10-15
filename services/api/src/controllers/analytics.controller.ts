@@ -307,7 +307,7 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
   }
 
   @Get('dashboard/layouts')
-  async getDashboardLayouts(): Promise<{
+  getDashboardLayouts(): Promise<{
     success: boolean;
     data: DashboardLayout[];
     timestamp: string;
@@ -436,25 +436,27 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
         },
       ];
 
-      return {
+      return Promise.resolve({
         success: true,
         data: layouts,
         timestamp: new Date().toISOString(),
-      };
+      });
     } catch (error) {
       console.error(
         'AnalyticsController: Error getting dashboard layouts',
         error,
       );
-      throw new HttpException(
-        'Failed to get dashboard layouts',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+      return Promise.reject(
+        new HttpException(
+          'Failed to get dashboard layouts',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
       );
     }
   }
 
   @Post('dashboard/layouts')
-  async createDashboardLayout(
+  createDashboardLayout(
     @Body()
     layoutData: {
       name: string;
@@ -476,19 +478,21 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
         layout: layoutData.layout,
       };
 
-      return {
+      return Promise.resolve({
         success: true,
         data: newLayout,
         timestamp: new Date().toISOString(),
-      };
+      });
     } catch (error) {
       console.error(
         'AnalyticsController: Error creating dashboard layout',
         error,
       );
-      throw new HttpException(
-        'Failed to create dashboard layout',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+      return Promise.reject(
+        new HttpException(
+          'Failed to create dashboard layout',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
       );
     }
   }
@@ -550,7 +554,7 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
   }
 
   @Get('realtime')
-  async getRealTimeData(
+  getRealTimeData(
     @Query() types: string = 'system,voice,flows,integrations',
   ): Promise<{
     success: boolean;
@@ -582,16 +586,18 @@ export class AnalyticsController extends AnalyticsControllerHelpers {
         data.integrations = this.integrationHealthService.getProviders();
       }
 
-      return {
+      return Promise.resolve({
         success: true,
         data,
         timestamp: new Date().toISOString(),
-      };
+      });
     } catch (error) {
       console.error('AnalyticsController: Error getting real-time data', error);
-      throw new HttpException(
-        'Failed to get real-time data',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+      return Promise.reject(
+        new HttpException(
+          'Failed to get real-time data',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
       );
     }
   }

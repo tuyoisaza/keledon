@@ -64,6 +64,20 @@ export interface FlowExecutionResult {
   totalDuration: number;
 }
 
+interface FlowStepExecutionInput {
+  id: string;
+  type: string;
+  selector?: string | null;
+  value?: string | null;
+  timeout?: number | null;
+}
+
+interface FlowStepExecutionResult {
+  success: boolean;
+  data?: unknown;
+  error?: string;
+}
+
 @Injectable()
 export class SubAgentService {
   private readonly logger = new Logger(SubAgentService.name);
@@ -170,7 +184,11 @@ export class SubAgentService {
     });
   }
 
-  async completeTask(agentId: string, result: any): Promise<void> {
+  async completeTask(
+    agentId: string,
+    result: FlowExecutionResult,
+    runId: string,
+  ): Promise<void> {
     const agent = this.activeSubAgents.get(agentId);
     if (!agent) {
       throw new Error(`Agent ${agentId} not found`);
@@ -187,9 +205,22 @@ export class SubAgentService {
         currentTask: null,
       },
     });
+    await this.prisma.subAgentRun.update({
+      where: { id: runId },
+      data: {
+        status: 'completed',
+        result: JSON.stringify(result),
+        completedAt: new Date(),
+      },
+    });
   }
 
-  async failTask(agentId: string, error: string): Promise<void> {
+  async failTask(
+    agentId: string,
+    error: string,
+    runId: string,
+    result?: FlowExecutionResult,
+  ): Promise<void> {
     const agent = this.activeSubAgents.get(agentId);
     if (!agent) {
       throw new Error(`Agent ${agentId} not found`);
@@ -202,6 +233,14 @@ export class SubAgentService {
       where: { id: agentId },
       data: {
         status: 'error',
+      },
+    });
+    await this.prisma.subAgentRun.update({
+      where: { id: runId },
+      data: {
+        status: 'failed',
+        result: JSON.stringify(result ?? { error }),
+        completedAt: new Date(),
       },
     });
   }
@@ -232,6 +271,8 @@ export class SubAgentService {
       },
     });
 
+    let executorAgentId: string | undefined;
+    let subAgentRunId: string | undefined;
     try {
       const availableAgents = this.getAvailableAgentsByRole('flow-executor');
       if (availableAgents.length === 0) {
@@ -239,6 +280,17 @@ export class SubAgentService {
       }
 
       const executorAgent = availableAgents[0];
+      executorAgentId = executorAgent.id;
+      const subAgentRun = await this.prisma.subAgentRun.create({
+        data: {
+          subAgentId: executorAgent.id,
+          flowRunId: flowRun.id,
+          flowId,
+          flowStepIds: JSON.stringify(flow.steps.map((step) => step.id)),
+          status: 'running',
+        },
+      });
+      subAgentRunId = subAgentRun.id;
       await this.assignTask(executorAgent.id, {
         id: `task-${Date.now()}`,
         type: 'flow',
@@ -266,7 +318,7 @@ export class SubAgentService {
           }
         }
 
-        const result = await this.simulateStepExecution(
+        const result = await this.executeStep(
           step,
           extractedData,
           executorAgent.id,
@@ -290,11 +342,6 @@ export class SubAgentService {
         }
       }
 
-      await this.completeTask(executorAgent.id, {
-        extractedData,
-        executionLog,
-      });
-
       const flowRunResult: FlowExecutionResult = {
         success: executionLog.every((e) => e.status !== 'failed'),
         flowId,
@@ -312,6 +359,22 @@ export class SubAgentService {
         },
       });
 
+      if (flowRunResult.success) {
+        await this.completeTask(
+          executorAgent.id,
+          flowRunResult,
+          subAgentRun.id,
+        );
+      } else {
+        const failure = executionLog.find((entry) => entry.status === 'failed');
+        await this.failTask(
+          executorAgent.id,
+          failure?.error ?? 'Flow execution failed',
+          subAgentRun.id,
+          flowRunResult,
+        );
+      }
+
       return flowRunResult;
     } catch (error) {
       await this.prisma.flowRun.update({
@@ -322,6 +385,20 @@ export class SubAgentService {
           completedAt: new Date(),
         },
       });
+      if (executorAgentId && subAgentRunId) {
+        try {
+          await this.failTask(
+            executorAgentId,
+            error instanceof Error ? error.message : 'Flow execution failed',
+            subAgentRunId,
+          );
+        } catch (trackingError) {
+          this.logger.error(
+            'Failed to persist subagent flow failure state',
+            trackingError instanceof Error ? trackingError.stack : undefined,
+          );
+        }
+      }
       throw error;
     }
   }
@@ -380,45 +457,30 @@ export class SubAgentService {
     return false;
   }
 
-  private async simulateStepExecution(
-    step: any,
-    context: Record<string, any>,
+  private async executeStep(
+    step: FlowStepExecutionInput,
+    _context: Record<string, unknown>,
     agentId: string,
-  ): Promise<{ success: boolean; data?: any; error?: string }> {
-    this.logger.log(
-      `[SubAgent:${agentId}] Executing step: ${step.type} - ${step.selector || step.value || ''}`,
-    );
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
+  ): Promise<FlowStepExecutionResult> {
     switch (step.type) {
-      case 'navigate':
-        return { success: true, data: { url: step.value } };
-      case 'click':
-        return { success: true, data: { clicked: step.selector } };
-      case 'input': {
-        const inputValue = step.value?.replace(
-          /\{\{(\w+)\}\}/g,
-          (_, key) => context[key] || '',
-        );
-        return { success: true, data: { input: inputValue } };
+      case 'decision':
+        return { success: true };
+      case 'wait': {
+        const requestedMs = step.timeout ?? 1000;
+        const delayMs = Number.isFinite(requestedMs)
+          ? Math.min(Math.max(requestedMs, 0), 30_000)
+          : 1000;
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+        return { success: true };
       }
-      case 'read':
-        return {
-          success: true,
-          data: { extracted: `Mock data for ${step.extract}` },
-        };
-      case 'wait':
-        await new Promise((resolve) =>
-          setTimeout(resolve, step.timeout || 1000),
-        );
-        return { success: true };
-      case 'submit':
-        return { success: true };
-      case 'speak':
-        return { success: true, data: { spoken: step.value } };
       default:
-        return { success: true };
+        this.logger.warn(
+          `[SubAgent:${agentId}] No tenant execution adapter is configured for step type "${step.type}"`,
+        );
+        return {
+          success: false,
+          error: `No tenant execution adapter is configured for step type "${step.type}"`,
+        };
     }
   }
 

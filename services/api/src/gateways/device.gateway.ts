@@ -416,7 +416,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('call:status')
-  async handleCallStatus(
+  handleCallStatus(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { status: string; duration?: number },
   ) {
@@ -496,7 +496,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('goal:result')
-  async handleGoalResult(
+  handleGoalResult(
     @ConnectedSocket() client: Socket,
     @MessageBody()
     data: {
@@ -527,7 +527,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('error')
-  async handleError(
+  handleError(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { code: string; message: string },
   ) {
