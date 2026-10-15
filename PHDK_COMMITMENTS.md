@@ -1,12 +1,12 @@
 # Commitment ledger
 
-## Active run update — 5.1.50 Web lint remediation (2026-10-14 local)
+## Active run update — 5.1.50 Web lint remediation delivered (2026-10-14 local)
 
-PR #137 delivered 5.1.49 at verified main `537ce1567c13f74512a23ef9b9cba3412a7510fd`. Candidate source `dd07302829270bbbf8499784b8c3f3d36c1af080` on `fix/phdk-web-lint-zero-5-1-50` is based on that SHA. All five roots/locks and Browser renderer are 5.1.50. Full Web ESLint is 0 warnings/0 errors; all five builds, Web typecheck, clean exact-source UAT 4/4, diagnostics 19/19, Web SEO 1/1 and PHDK coherence 52/52 pass. Candidate PR/merge/remote readback remains pending.
+PR #137 delivered 5.1.49 at verified main `537ce1567c13f74512a23ef9b9cba3412a7510fd`. PR #138 delivered source `dd07302829270bbbf8499784b8c3f3d36c1af080` at verified main `b92e1fa91bfa9b9f53c8a6513ca580f403cda1d5`, with matching tree `5828601db800875da01c459a8ed3e8412474e8d5`. All five roots/locks and Browser renderer are 5.1.50. Full Web ESLint is 0 warnings/0 errors; all five builds, Web typecheck, clean exact-source UAT 4/4, diagnostics 19/19, Web SEO 1/1 and PHDK coherence 52/52 pass. PR #138 is merged; GitHub reports no hosted checks or review decision.
 
 | Commitment | Current delivery evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 — baseline, versions, PRs | PR #137 merged 5.1.49; 5.1.50 aligns five roots; all builds and PHDK coherence pass. | 5.1.50 PR/merge and remote readback pending. |
+| CMT-001 — baseline, versions, PRs | PR #138 merged 5.1.50; remote SHA/tree, five roots and renderer verified. | Continue current baseline/version/PR review across remaining fronts. |
 | CMT-002 — widget and safe diagnostics | Diagnostics 19/19; exact-source synthetic UAT 4/4; write-only diagnostic widget journeys pass. | Native Windows device/audio and broad route/assistive-tech acceptance remain open. |
 | CMT-003 — voice → Cloud → Browser → CRM per client | Provider-neutral flow remains tenant-selected; no live connector was exercised in this Web slice. | Packaged runtime/native audio and each customer's live provider/CRM acceptance remain open. |
 | CMT-004 — administration and permissions | Explicit UI data contracts; synthetic role/tenant journeys 4/4; impersonation role is narrowed to approved roles. Previously approved DB-derived actor/tenant policy unchanged. | Safe DB identities, disposable PostgreSQL, persisted migrations/CRUD and exhaustive authorization matrix remain open. |
