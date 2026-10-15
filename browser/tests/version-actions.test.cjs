@@ -128,6 +128,18 @@ test('always-visible row reports the installed version and copies a sanitized co
   assert.ok(timers.length > 0);
 });
 
+test('native Browser diagnostics actions keep 44x44 hit targets and compact visual tiles', () => {
+  const html = fs.readFileSync(path.join(__dirname, '../renderer/index.html'), 'utf8');
+  const styles = fs.readFileSync(path.join(__dirname, '../renderer/renderer-controls.css'), 'utf8');
+  assert.match(html, /class="diagnostic-actions"[\s\S]*id="diagnosticCopy"[\s\S]*id="diagnosticClear"/);
+  assert.match(styles, /\.diagnostic-actions\s*\{[^}]*gap:\s*4px/);
+  assert.match(styles, /\.diagnostic-actions button\s*\{[^}]*width:\s*44px;[^}]*height:\s*44px;[^}]*min-width:\s*44px/);
+  assert.match(styles, /\.diagnostic-actions button::before\s*\{[^}]*inset:\s*8px/);
+  assert.match(styles, /\.diagnostic-actions button:focus-visible\s*\{[^}]*outline:/);
+  assert.match(styles, /\.diagnostic-actions svg\s*\{[^}]*width:\s*14px;[^}]*height:\s*14px/);
+  assert.match(source, /button\.setAttribute\('aria-label', label\)/);
+});
+
 test('cache action clears only owned caches and reloads after confirming success', async () => {
   const { elements, timers, local, session, caches, didDisconnect, didClearLogs, didReload } = harness();
   await elements.diagnosticClear.click();

@@ -1,4 +1,10 @@
-## Current Check — candidate 5.1.60 diagnostics route coverage (2026-10-15)
+## Current Check — candidate 5.1.64 diagnostics hit targets (2026-10-15)
+
+CHK-AUTO-024 closes the recorded effective-pointer-target gap. Web/Landing now give each diagnostics action a distinct 44×44px hitbox with a centered 28×28px visual tile, 4px separation, accessible name and visible focus outline. UAT-056 passes on exact production-built Landing at 1280×900 and 390×844 with external requests blocked. Web diagnostics/debug-mode/version-actions tests pass 19/19; Browser offline suite passes 28/28 including the native widget CSS contract. All five production builds, Web/Landing lint and typechecks pass; PHDK static coherence is 52/52. Base is verified main 5.1.63 `2c1c8e58f749746253f0ff76f9c691e7ffb15644`; candidate `fix/phdk-diagnostics-hit-target-5-1-64`; delivery is pending. Packaged Browser/Electron remains unverified; whole Auto remains partial.
+
+---
+
+## Previous Check — candidate 5.1.60 diagnostics route coverage (2026-10-15)
 
 Check identified a test-coverage gap in the mandatory version/debug-actions widget: `services/web/test/version-actions.test.cjs` asserted public, login, app-shell and admin mounts only for Web. Landing mirrored the component implementation, but its own LandingPage/Navbar, login, Sidebar/AppLayout and admin route were not asserted. Regression now verifies both apps' source mounts independently. This closes the source-test gap; it does not establish browser rendering, broad accessibility, screen-reader, or visual runtime acceptance.
 

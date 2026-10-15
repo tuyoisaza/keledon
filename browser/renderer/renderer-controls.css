@@ -464,9 +464,10 @@
     .diagnostic-brand { width: 120px; flex-shrink: 0; align-self: center; font-size: 12px; font-weight: 600; }
     .diagnostic-actions { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; flex-shrink: 0; }
     .diagnostic-actions #versionBtn { font-size: 12px; font-weight: 400; }
-    .diagnostic-actions button { width: 28px; height: 28px; min-width: 28px; flex-shrink: 0; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 4px; background: transparent; color: var(--text-primary); cursor: pointer; }
-    .diagnostic-actions button:hover { background: var(--border); }
+    .diagnostic-actions button { position: relative; width: 44px; height: 44px; min-width: 44px; flex-shrink: 0; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 0; background: transparent; color: var(--text-primary); cursor: pointer; }
+    .diagnostic-actions button::before { content: ''; position: absolute; inset: 8px; border-radius: 4px; background: transparent; pointer-events: none; }
+    .diagnostic-actions button:hover::before { background: var(--border); }
     .diagnostic-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-    .diagnostic-actions svg { width: 14px; height: 14px; }
+    .diagnostic-actions svg { position: relative; z-index: 1; width: 14px; height: 14px; }
     .diagnostic-actions .diagnostic-success { color: #15803d; }
     .diagnostic-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }

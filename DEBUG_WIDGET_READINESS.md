@@ -1,4 +1,10 @@
-## 2026-10-15 current source revalidation — 5.1.60 candidate
+## 2026-10-15 current source revalidation — 5.1.64 candidate
+
+CHK-AUTO-024 resolves the 44×44px target gap for Web/Landing diagnostics. Each button measures 44×44px, with a centered 28×28px visual tile and 4px separation. UAT-056 passes on production-built Landing at 1280×900 and 390×844; evidence with candidate fingerprint and screenshots is `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-056/`. Web diagnostics pass 19/19, Browser offline source suite 28/28, five app builds, Web/Landing lint/typecheck and PHDK coherence 52/52. The native Browser/Electron implementation has a matching source contract but no packaged runtime measurement.
+
+---
+
+## Previous source revalidation — 5.1.60 candidate
 
 Candidate: `fix/phdk-landing-widget-mount-5-1-60`, based on verified `main` `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`. The mandatory PHDK widget is present in the current app sources. The focused recheck found one test gap: Landing route mounts were not independently asserted. UAT-051 extends the Web test to assert Landing's own public `LandingPage`→`Navbar`, login, `AppLayout`→`Sidebar`, and superadmin admin route, as well as existing Web mounts.
 

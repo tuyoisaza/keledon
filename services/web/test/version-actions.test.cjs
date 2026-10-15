@@ -91,9 +91,12 @@ test('anonymous and debug-off render the exact compact version → clipboard →
   assert.equal(globalThis.__diagnosticAuth.isAuthenticated, false);
 
   const styles = fs.readFileSync(path.join(__dirname, '../src/components/common/version-actions.css'), 'utf8');
+  const legacyStyles = fs.readFileSync(path.resolve(__dirname, '../../../landing/src/components/common/version-actions.css'), 'utf8');
+  assert.equal(styles.replace(/\s+/g, ' ').trim(), legacyStyles.replace(/\s+/g, ' ').trim());
   assert.match(styles, /gap:\s*4px/);
   assert.match(styles, /font-size:\s*12px/);
-  assert.match(styles, /width:\s*28px;\s*height:\s*28px;\s*min-width:\s*28px/);
+  assert.match(styles, /width:\s*44px;\s*height:\s*44px;\s*min-width:\s*44px/);
+  assert.match(styles, /button::before[\s\S]*?inset:\s*8px/);
   assert.match(styles, /width:\s*14px;\s*height:\s*14px/);
   assert.match(styles, /clip:\s*rect\(0,\s*0,\s*0,\s*0\)/);
 });

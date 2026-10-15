@@ -1,5 +1,15 @@
 # UAT handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.64 — UAT-056 PASS; portfolio acceptance incomplete
+
+CHK-AUTO-024 closes the 44×44 hit-target gap for Web/Landing. UAT-056 passes against production-built Landing with external requests blocked. At 1280×900 both action boxes measure 44×44px, each visual tile measures 28×28px, and there is 4px between hitboxes; accessible names and hero clearance pass. At 390×844 both action boxes remain 44×44px and theme/language controls remain reachable. Evidence: `evidence/uat-056/` contains exact-source fingerprint, geometry JSON and screenshots. Web diagnostics/debug-mode/version-actions passes 19/19.
+
+UAT Fix is complete for this target geometry. Packaged native Browser/Electron visuals, OS touch/device/audio, broad route/screen-reader/localization, persisted DB/migrations and deployed SEO/AEO remain open. Whole Auto remains **PARTIALLY DELIVERED**.
+
+SIGUIENTE PASO: finish Check on exact 5.1.64 source, then deliver the versioned fix by PR and verify remote main.
+
+---
+
 ## Candidate 5.1.63 — UAT-055 PASS; portfolio acceptance incomplete
 
 CHK-AUTO-023 fixes the public Web/Landing diagnostics row position: it now sits directly below and left-aligned with the product name. UAT-055 passes on production-built Landing with outbound traffic blocked. At 1280×900, brand bounds are x=32/y=16–48 and widget bounds x=32/y=52–80; the row does not overlap hero copy and both preference controls remain visible. At 390×844, the widget remains visible and the mobile menu exposes theme and language. Browser UAT exits 1/1; Web diagnostics/version-actions tests pass 17/17. Evidence: `evidence/uat-055/` with exact-source fingerprint, desktop/mobile screenshots and geometry JSON.
