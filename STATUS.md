@@ -12,6 +12,15 @@
 - Whole-product Auto remains **PARTIALLY DELIVERED** pending database-backed migration/CRUD, safe development identities, native device/audio, broad route accessibility/localization and deployed SEO/AEO evidence. No migration or deployment was performed.
 # STATUS
 
+## 2026-10-14 — PHDK Auto candidate 5.1.43; scoped source pass, delivery pending
+
+- Product fix commit `29d18efbbabe159e5279a01ba767f70e54d8afdc`; exact tested candidate `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`), based on verified `origin/main` `e04418217e1ebb18acda9728a799041fd3bc3c19`. All five app package/lock roots and Browser renderer are 5.1.43.
+- CHK-AUTO-021 applies the trusted RPA tenant allowlist to active WebContents navigation, frame, redirect, popup and `tabs:navigate` guards, restoring prior scope on success/cancellation. Browser suite 27/27, security-policy/wiring 9/9, Browser TypeScript build, and PHDK coherence 52/52 pass. UAT-039 is exact-source and offline.
+- Whole acceptance is **PARTIALLY DELIVERED**: 36 PASS, 2 BLOCKED, 1 MANUAL. Safe DB identities/persisted CRUD/migrations, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-client live CRM/call acceptance remain. Cross-origin subresource behavior is not established.
+- Candidate delivery and remote readback are pending. Browser ESLint is blocked by the installed ESLint 10 flat-config requirement. No database, customer endpoint/data, device or deployment was used.
+
+SIGUIENTE PASO: finalize source Check/Remediation evidence, publish the versioned PR, then verify merge and exact `main` readback.
+
 ## 2026-10-14 — PHDK Auto candidate 5.1.32; source pass, delivery partial
 
 - Candidate source SHA `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5` is based on verified `main` `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; all five package/lock roots and Browser renderer align at 5.1.32.

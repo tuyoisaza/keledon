@@ -11,6 +11,8 @@ const {
   getAllowedVendorOrigins,
   sanitizeVendorNotification,
   secureRendererPreferences,
+  getRuntimeVendorNavigationScope,
+  setRuntimeVendorNavigationScope,
 } = require('../dist/security-policy.js');
 
 test('Electron renderers stay sandboxed, isolated and web-secured', () => {
@@ -69,11 +71,28 @@ test('tenant vendor frame navigation permits only configured origins and inherit
   assert.equal(isAllowedVendorNavigation('file:///etc/passwd', allowed), false);
 });
 
-test('frame and IPC navigation entry points both enforce the tenant scope', () => {
+test('runtime RPA navigation scope is copied, isolated per WebContents, and cleared after the flow', () => {
+  const first = {};
+  const second = {};
+  const configured = ['https://crm.example.test'];
+  setRuntimeVendorNavigationScope(first, configured);
+  configured.push('https://untrusted.example.test');
+  assert.deepEqual(getRuntimeVendorNavigationScope(first), ['https://crm.example.test']);
+  assert.equal(getRuntimeVendorNavigationScope(second), undefined);
+  setRuntimeVendorNavigationScope(first, undefined);
+  assert.equal(getRuntimeVendorNavigationScope(first), undefined);
+});
+
+test('frame, popup, and IPC navigation entry points use the active RPA tenant scope', () => {
   const tabManager = fs.readFileSync(path.resolve('src/tab-manager.ts'), 'utf8');
   const ipcHandlers = fs.readFileSync(path.resolve('src/ipc-handlers.ts'), 'utf8');
+  const executor = fs.readFileSync(path.resolve('src/rpa-executor.ts'), 'utf8');
+  assert.match(tabManager, /getRuntimeVendorNavigationScope\(view\.webContents\) \?\? scopedOrigins/);
   assert.match(tabManager, /on\('will-frame-navigate',[\s\S]*guardVendorNavigation\(event, event\.url\)/);
-  assert.match(ipcHandlers, /isAllowedVendorNavigation\(url, tab\.allowedOrigins\)/);
+  assert.match(tabManager, /setWindowOpenHandler\([\s\S]*const allowedOrigins = getNavigationScope\(\)/);
+  assert.match(ipcHandlers, /getRuntimeVendorNavigationScope\(tab\.view\.webContents\) \?\? tab\.allowedOrigins/);
+  assert.match(executor, /setRuntimeVendorNavigationScope\(view\.webContents, flow\.allowed_origins\)/);
+  assert.match(executor, /finally \{\s*setRuntimeVendorNavigationScope\(view\.webContents, priorRuntimeScope\)/);
 });
 
 test('the executor can create an empty, restricted tab before vendor selection', () => {

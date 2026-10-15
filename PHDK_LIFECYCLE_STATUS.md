@@ -1,4 +1,29 @@
-# PHDK Auto lifecycle — current candidate 5.1.42
+# PHDK Auto lifecycle — current candidate 5.1.43
+
+Run: `20261014-0007-phdk-auto-completion`
+Repository: `tuyoisaza/keledon`
+Branch: `fix/phdk-rpa-tab-navigation-scope-5-1-43`
+Product fix: `29d18efbbabe159e5279a01ba767f70e54d8afdc`; exact tested candidate: `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`); base: verified `origin/main` `e04418217e1ebb18acda9728a799041fd3bc3c19` / 5.1.42.
+Goal: four owner-confirmed KELEDON fronts in agreed order, aligned to applicable PHDK standards.
+
+| Stage | Status | Evidence / current state |
+|---|---|---|
+| 00 Preflight | REUSED / REVALIDATED | Installed PHDK 2.50.10; coherence 52/52. |
+| 10 Capture | REUSED | Four confirmed fronts, least-privilege policy and tenant-private CRM allowlist retained. |
+| 20 Plan | REUSED | Existing brownfield plan and dependency order remain applicable. |
+| 30 PMO / Workstreams | CONTINUED | Four fronts remain active; PRs #125/#126 delivery readbacks reconciled. |
+| 40 Integration Review | COMPLETED FOR 5.1.43 SOURCE | RPA tenant scope reaches Electron BrowserView navigation, frames, redirects, popups and IPC. |
+| 50 UAT | COMPLETED FOR CANDIDATE / WHOLE PARTIAL | UAT-039 passes; whole acceptance 36 PASS, 2 BLOCKED, 1 MANUAL. |
+| 60 UAT Fix | COMPLETED FOR CHK-AUTO-021 | Runtime WebContents scope is applied and restored around each RPA flow. |
+| 65 SEO | REUSED / SOURCE PASS | No SEO content change; deployed measurements remain unavailable. |
+| 67 AEO/GEO | REUSED / SOURCE REVIEW | No public claim changed; live answer-engine/crawler measurement unavailable. |
+| 70 Check | SOURCE CHECK PASS / ACCEPTANCE PARTIAL | Snapshot `70-check/snapshots/candidate-5.1.43/PHDK_CHECK_REPORT.md`. |
+| 80 Remediation | COMPLETED FOR CANDIDATE | Browser suite 27/27, security-policy/wiring 9/9, Browser build, coherence 52/52. Browser ESLint remains blocked by configuration. |
+| 90 Delivery | PENDING | Local versioned source commit only; push/PR/merge/readback/gate remain. |
+
+Overall status: **PARTIALLY DELIVERED**. No database, production identity, customer endpoint, private destination, device or deployment was used.
+
+---
 
 Run: `20261014-0007-phdk-auto-completion`
 Repository: `tuyoisaza/keledon`

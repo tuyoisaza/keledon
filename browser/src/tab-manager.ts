@@ -9,6 +9,7 @@ import {
   isAllowedVendorNavigation,
   secureRendererPreferences,
   isAllowedConfiguredVendorUrl,
+  getRuntimeVendorNavigationScope,
 } from './security-policy.js';
 
 export interface Tab {
@@ -87,8 +88,10 @@ export class TabManager {
       log.info(`[Tabs] did-navigate: ${id}`);
     });
 
+    const getNavigationScope = () =>
+      getRuntimeVendorNavigationScope(view.webContents) ?? scopedOrigins;
     const guardVendorNavigation = (event: Electron.Event, targetUrl: string) => {
-      if (!isAllowedVendorNavigation(targetUrl, scopedOrigins)) {
+      if (!isAllowedVendorNavigation(targetUrl, getNavigationScope())) {
         event.preventDefault();
         log.warn(`[SECURITY] Blocked navigation outside the vendor scope in tab ${id}.`);
       }
@@ -150,7 +153,10 @@ export class TabManager {
     });
 
     view.webContents.setWindowOpenHandler(({ url }) => {
-      if (isAllowedVendorUrl(url) && (!scopedOrigins || isAllowedConfiguredVendorUrl(url, scopedOrigins))) this.createTab('New Tab', url, scopedOrigins);
+      const allowedOrigins = getNavigationScope();
+      if (isAllowedVendorUrl(url) && (!allowedOrigins || isAllowedConfiguredVendorUrl(url, allowedOrigins))) {
+        this.createTab('New Tab', url, allowedOrigins);
+      }
       return { action: 'deny' };
     });
 

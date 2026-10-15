@@ -19,6 +19,8 @@ let scripts = 0;
 let matched = false;
 let currentUrl = 'https://configured.invalid/call';
 const loadUrls = [];
+let runtimeScope;
+const scopesDuringNavigation = [];
 const box = {
   exports: {},
   URL,
@@ -32,6 +34,14 @@ const box = {
         findElement: async () => ({ found: true, method: 'synthetic' }),
         getAccessibilityTree: noop,
         setRpaProviderConfig: noop,
+      };
+    }
+    if (name === './security-policy') {
+      return {
+        getRuntimeVendorNavigationScope: () => runtimeScope && [...runtimeScope],
+        setRuntimeVendorNavigationScope: (_webContents, origins) => {
+          runtimeScope = origins && [...origins];
+        },
       };
     }
     throw new Error(name);
@@ -48,6 +58,7 @@ const webContents = Object.assign(new EventEmitter(), {
   },
   loadURL: async function loadURL(url) {
     loadUrls.push(url);
+    scopesDuringNavigation.push(runtimeScope && [...runtimeScope]);
     currentUrl = url;
     this.emit('did-finish-load');
   },
@@ -115,6 +126,8 @@ rpa.setMainWindow({ getBrowserViews: () => [{ webContents }] });
   });
   assert.equal(result.status, 'completed', `an explicitly configured private CRM origin remains usable: ${JSON.stringify(result)}`);
   assert.equal(loadUrls.at(-1), privateCrm);
+  assert.deepEqual(scopesDuringNavigation.at(-1), ['http://192.168.10.20:8080']);
+  assert.equal(runtimeScope, undefined, 'temporary navigation scope must be restored after the flow');
 
   currentUrl = 'https://configured.invalid/call';
   result = await rpa.executeRpaFlow({
@@ -124,6 +137,7 @@ rpa.setMainWindow({ getBrowserViews: () => [{ webContents }] });
   });
   assert.equal(result.status, 'failed');
   assert.equal(result.steps[0].error, 'Flow cancelled after runtime disconnect');
+  assert.equal(runtimeScope, undefined, 'runtime disconnect must restore the prior tab scope');
 
   console.log('PASS production RPA safety: required tenant scope, configured private origin, unscoped/unlisted navigation denied, fail-fast writes');
 })().catch((error) => {

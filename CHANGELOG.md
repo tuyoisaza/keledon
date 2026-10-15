@@ -1,3 +1,12 @@
+## v5.1.43 — 2026-10-15 (apply active tenant scope to BrowserView navigation)
+
+- Apply the trusted Cloud-derived RPA tenant-origin allowlist to Electron navigation, frame, redirect, popup, and `tabs:navigate` guards for the duration of each flow; restore the prior tab scope afterward.
+- Keep explicitly configured private CRM origins available and reject destinations outside the flow scope at both the executor and BrowserView boundary.
+- Align all five application package/lock roots and the Browser renderer at 5.1.43.
+
+### Verification
+- Browser offline tests, TypeScript build, PHDK coherence and exact-source tenant-scope UAT are recorded in the active PHDK Auto lifecycle.
+
 ## v5.1.42 — 2026-10-14 (require tenant scope for Browser RPA)
 
 - Fail closed when a Browser RPA flow lacks its configured tenant origin allowlist.
