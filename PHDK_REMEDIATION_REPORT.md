@@ -1,4 +1,10 @@
-## Current Auto remediation — candidate 5.1.59 BrowserView scope teardown (2026-10-15)
+## Current Auto remediation — candidate 5.1.64 diagnostics hit targets (2026-10-15)
+
+CHK-AUTO-024 repairs the 44×44 effective pointer target in Web/Landing. Each actual button box measures 44×44px; the centered `::before` visual tile remains 28×28px, and the boxes have 4px separation. Labels, 14px icons and visible focus state remain. Native Browser CSS has the same source contract. UAT-056 passes on production-built Landing at desktop/mobile with outbound traffic blocked. Web tests pass 19/19; Browser offline tests 28/28; all five production builds, Web/Landing lint/typechecks, and PHDK coherence 52/52 pass. Base is verified main 5.1.63 `2c1c8e58f749746253f0ff76f9c691e7ffb15644`. PR delivery is pending. Packaged Electron visuals, persisted CRUD/migrations, native device/audio, broad accessibility/localization, deployed SEO/AEO and client-specific live integration acceptance remain open. Whole Auto stays **PARTIALLY DELIVERED**.
+
+---
+
+## Previous Auto remediation — candidate 5.1.59 BrowserView scope teardown (2026-10-15)
 
 Fixed CHK-AUTO-023: closing a tenant-configured CRM tab previously cleared its Browser request scope before stopping pending navigation. `closeTab()` now stops the detached WebContents and leaves its tenant-origin scope active until Electron emits `destroyed`. A WeakMap associates the view with its scope, and the session-level worker registry keeps only session/origin metadata. UAT-050 source-contract regression passes; Browser build/lint and 15 tests pass, API/Cloud regressions 37/17, all five builds and PHDK coherence 52/52 pass. No live CRM/private endpoint or packaged Electron was used. Overall Auto remains PARTIALLY DELIVERED.
 

@@ -8,3 +8,11 @@ Candidate source fingerprint `sha256:b93f388303c3bf87df539facf4594d55d4961de4eb8
 
 This scoped sample is not a whole-route audit, screen-reader certification, native desktop review, or deployed visual acceptance. No confirmed P0/P1 visual failure appeared in these exercised journeys. Remaining MANUAL/BLOCKED work: broader active routes/roles, screen reader, real keyboard/focus review beyond selected journeys, actual OS permission dialog and physical device/audio, plus real role authentication. Continue under UAT Fix/Check; do not close accessibility from this sample alone.
 
+## Candidate 5.1.64 — public diagnostics hit-target correction
+
+The existing 28×28px visible controls did not prove the PHDK-required 44×44px effective target. UAT Fix replaces the small hit boxes with 44×44px buttons and draws the same compact 28×28px tile inside each. The hit boxes have 4px separation, so they remain distinct. UAT-056 measures the browser geometry at desktop and mobile sizes and confirms accessible names and the unchanged navigation preferences. Pass evidence and screenshots are in `evidence/uat-056/`.
+
+This closes the target-size finding for Web/Landing only. Native packaged Browser/Electron controls and broader screen-reader and route coverage remain unverified.
+
+---
+

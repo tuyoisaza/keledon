@@ -1,3 +1,14 @@
+## v5.1.64 — 2026-10-15 (meet diagnostics touch-target minimum)
+
+- Give the two icon-only diagnostics actions 44×44px interactive hit targets while keeping their visible tiles 28×28px and separating targets by 4px.
+- Extend Web component and production-browser UAT to verify pointer target geometry, non-overlap, accessible names, and desktop/mobile retention.
+- Align all five application package/lock roots and Browser renderer at 5.1.64.
+
+### Verification
+- Web diagnostics/debug-mode/version-actions pass 19/19; Browser offline suite passes 28/28 including native widget geometry contract.
+- Production-built Landing UAT-056 passes 1/1 at desktop and mobile with external traffic blocked; five builds, Web/Landing lint/typechecks and PHDK coherence 52/52 pass.
+- Native Browser CSS is source-tested only; packaged Electron remains unverified and whole PHDK Auto remains partial.
+
 ## v5.1.63 — 2026-10-15 (place public diagnostics directly below the product name)
 
 - Stack the version/copy/reset row below the KELEDON brand in both public navigation bars, matching the mandatory PHDK top-left placement while preserving the compact 12px/28px/14px/4px geometry.
@@ -551,4 +562,4 @@
 
 - API and Cloud builds and regressions pass (API 36/36, Cloud 16/16); all five product builds pass.
 - API full lint, Web and Landing typecheck/lint, Browser lint, Browser offline tests 27/27, diagnostics 19/19, synthetic Web UAT 4/4, Web/Landing SEO 1/1 each, and PHDK coherence 52/52 pass.
-- Web/Landing production builds complete with the existing large-chunk warning. No customer endpoint, private CRM, database, native device, or deployment was used; whole Auto remains partially delivered.
+- Web/Landing production builds complete with the existing large-chunk warning. No customer endpoint, private CRM, database, native device, or deployment was used; whole Auto remains partially delivered.\n

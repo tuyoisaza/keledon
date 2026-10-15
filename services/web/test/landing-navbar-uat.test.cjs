@@ -69,12 +69,21 @@ test('Landing public navigation keeps preferences clear of hero and available on
       const row = document.querySelector('nav[aria-label] [data-testid="version-actions"]');
       const brandRect = brand.getBoundingClientRect();
       const rowRect = row.getBoundingClientRect();
-      return { brand: { left: brandRect.left, top: brandRect.top, bottom: brandRect.bottom }, widget: { left: rowRect.left, top: rowRect.top, bottom: rowRect.bottom } };
+      const buttons = [...row.querySelectorAll('button')].map(button => {
+        const rect = button.getBoundingClientRect();
+        const visual = getComputedStyle(button, '::before');
+        return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height, visualWidth: parseFloat(visual.width), visualHeight: parseFloat(visual.height), label: button.getAttribute('aria-label') };
+      });
+      return { brand: { left: brandRect.left, top: brandRect.top, bottom: brandRect.bottom }, widget: { left: rowRect.left, top: rowRect.top, bottom: rowRect.bottom }, buttons };
     });
     assert.ok(geometry.widget.top >= geometry.brand.bottom, `diagnostics row must sit directly below the product brand: ${JSON.stringify(geometry)}`);
     assert.ok(Math.abs(geometry.widget.left - geometry.brand.left) <= 2, `diagnostics row must align to the top-left product brand: ${JSON.stringify(geometry)}`);
     assert.ok(geometry.widget.bottom <= layout.disclaimer.top || geometry.widget.top >= layout.disclaimer.bottom, `diagnostics row overlaps public hero copy: ${JSON.stringify({ geometry, disclaimer: layout.disclaimer })}`);
     assert.equal(await page.locator('nav[aria-label] [data-testid="version-actions"] button').count(), 2);
+    assert.ok(geometry.buttons.every(button => button.width === 44 && button.height === 44), `diagnostics actions must provide 44x44 hit targets: ${JSON.stringify(geometry.buttons)}`);
+    assert.ok(geometry.buttons.every(button => button.visualWidth === 28 && button.visualHeight === 28), `visible action tiles must remain compact at 28x28: ${JSON.stringify(geometry.buttons)}`);
+    assert.ok(geometry.buttons[1].left >= geometry.buttons[0].right, `diagnostics hit targets must not overlap: ${JSON.stringify(geometry.buttons)}`);
+    assert.ok(geometry.buttons.every(button => button.label), 'both icon-only hit targets retain accessible names');
     await fs.mkdir(evidence, { recursive: true });
     await page.screenshot({ path: path.join(evidence, `${evidencePrefix}-home-desktop.png`) });
 
@@ -86,6 +95,11 @@ test('Landing public navigation keeps preferences clear of hero and available on
     assert.equal(await menu.getByLabel('Tema de color').count(), 1);
     assert.equal(await menu.getByLabel('Idioma').count(), 1);
     assert.equal(await page.locator('nav[aria-label] [data-testid="version-actions"]').isVisible(), true);
+    const mobileHitTargets = await page.locator('nav[aria-label] [data-testid="version-actions"] button').evaluateAll(buttons => buttons.map(button => {
+      const rect = button.getBoundingClientRect();
+      return { width: rect.width, height: rect.height };
+    }));
+    assert.ok(mobileHitTargets.every(target => target.width === 44 && target.height === 44), `mobile diagnostics actions must retain 44x44 hit targets: ${JSON.stringify(mobileHitTargets)}`);
     await page.screenshot({ path: path.join(evidence, `${evidencePrefix}-home-mobile-menu.png`) });
     const candidate = await getCandidateFingerprint();
     await fs.writeFile(path.join(evidence, `${evidencePrefix}-navbar.json`), JSON.stringify({
@@ -96,8 +110,8 @@ test('Landing public navigation keeps preferences clear of hero and available on
       sourceRoots: candidate.sourceRoots,
       targetEnvironment: 'local production-built Landing SPA with all external requests blocked',
       result: 'PASS',
-      desktop: { viewport: '1280x900', navLabel: layout.navLabel, visiblePreferenceControls: layout.controlCount, widgetBelowBrand: true, widgetTopLeftAligned: true, widgetNoHeroOverlap: true, geometry, noOverlap: true, controls: layout.controls, heroDisclaimer: layout.disclaimer },
-      mobile: { viewport: '390x844', menuExpanded: true, themeControlVisible: await menu.getByLabel('Tema de color').isVisible(), languageControlVisible: await menu.getByLabel('Idioma').isVisible() },
+      desktop: { viewport: '1280x900', navLabel: layout.navLabel, visiblePreferenceControls: layout.controlCount, widgetBelowBrand: true, widgetTopLeftAligned: true, widgetNoHeroOverlap: true, geometry, hitTargets44x44: true, visibleActionTiles28x28: true, hitTargetsDoNotOverlap: true, actionsNamed: true, noOverlap: true, controls: layout.controls, heroDisclaimer: layout.disclaimer },
+      mobile: { viewport: '390x844', menuExpanded: true, themeControlVisible: await menu.getByLabel('Tema de color').isVisible(), languageControlVisible: await menu.getByLabel('Idioma').isVisible(), diagnosticsHitTargets: mobileHitTargets },
       evidence: [`${evidencePrefix}-home-desktop.png`, `${evidencePrefix}-home-mobile-menu.png`],
     }, null, 2));
     await context.close();

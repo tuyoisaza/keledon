@@ -1,17 +1,17 @@
-# Integration Review handoff — 5.1.63 public diagnostics placement
+# Integration Review handoff — 5.1.64 diagnostics hit targets
 
 Run ID: `20261014-0007-phdk-auto-completion`
 Stage: 40 Integration Review
 Status: COMPLETED FOR BOUNDED REVALIDATION
-Candidate source base / verified main SHA: `0886fbd6a06d7519158ae5f6bbd9873e44477c8b`
-Candidate version: `5.1.63`
+Candidate source base / verified main SHA: `2c1c8e58f749746253f0ff76f9c691e7ffb15644`
+Candidate version: `5.1.64`
 Date: 2026-10-15
 
-Scope: CHK-AUTO-023 moves the shared diagnostics widget below and left-aligned with the product name in both Web and Landing public navigation. The fix changes no runtime API, Cloud, tenant URL, database or CRM contract.
+Scope: CHK-AUTO-024 gives the shared Web/Landing diagnostics action buttons 44×44px hit targets, with centered 28×28px visual tiles and separated target bounds. No API, Cloud, tenant URL, database or CRM contract changes.
 
-Evidence inspected: both `Navbar.tsx` implementations, widget component/CSS and Web source regressions. UAT-055 passes on exact production-built Landing: brand x=32,y=16–48 and widget x=32,y=52–80 at 1280×900; no hero overlap; mobile menu and preferences pass at 390×844. Web diagnostics/version-actions: 17/17. Browser evidence: `../50-uat/evidence/uat-055/`; outbound requests were blocked.
+Evidence inspected: mirrored `version-actions.css`, native `renderer-controls.css`, Web/Browser source regressions and `landing-navbar-uat.test.cjs`. UAT-056 passes on exact production-built Landing: each 44×44 button contains a 28×28 visual tile; hitboxes have 4px separation; names, hero clearance and mobile preferences pass. Web tests: 19/19; Browser offline suite: 28/28. Browser evidence: `../50-uat/evidence/uat-056/`; outbound requests were blocked.
 
-Exit: Web/Landing implementation and responsive expectations reconciled; bounded browser replay passes. This integration review makes no claim about packaged Electron, screen readers, physical device/audio, database, CRM customer runtime or deployment.
+Exit: Web/Landing implementation and pointer target geometry reconciled; bounded browser replay passes. Packaged Electron visuals and real OS touch behavior remain unverified; no claim about screen readers, physical device/audio, database, CRM customer runtime or deployment.
 
 SIGUIENTE PASO: proceed to 50 UAT result review, then 60 UAT Fix / 70 Check for exact candidate verification.
 

@@ -1,5 +1,11 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.64 — UAT-056 verify accessible diagnostics hit targets
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-056 | US-001 / visitor with touch or motor accessibility needs | Build both public Web surfaces; inspect both diagnostics button boxes and visual pseudo-elements; exercise production-built Landing desktop and mobile viewport. | Each icon-only action has a distinct, non-overlapping 44×44px hit target with a centered 28×28px visual tile, accessible name and no loss of mobile nav preferences. | Web/Landing source contract and local production Landing browser UAT, external requests blocked. | PASS on exact 5.1.64 candidate source. At 1280×900 both actions measure 44×44px with 28×28px visual tiles and 4px clear separation; names are present and hero remains clear. At 390×844 both targets remain 44×44px and theme/language stay available. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-056/`. |
+
 ## Candidate 5.1.63 — public diagnostics placement under product name
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
@@ -12,7 +18,7 @@
 |---|---|---|---|---|---|
 | UAT-053 | US-011 / provisioned superadmin and tenant admin | Build the Web app and run the isolated AI administration UI journey with synthetic API routes; run the managed AI API contract suite through the required API regression runner. | Only a superadmin reaches prompt/usage administration; invalid schemas and stale revisions do not write; successful edits create audited revisions; missing usage/cost stays Unknown; no provider request or model payload is fabricated. | Local production SPA UAT and API regression. | PASS for exact 5.1.62 source: API contract 6/6 is included in regression 38/38; synthetic AI administration UAT passes all 12 cases. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/AI-ADMIN-UAT-5.1.62.json` and adjacent screenshots. Persistence/migration remains open. |
 
-Candidate tally: **54 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. This includes UAT-055, which adds the public diagnostics placement and mobile preference check. The synthetic AI-admin cases prove the built Web UI and fixture contract only; they do not close persisted AI prompt migrations, production authorization or the full administration matrix.
+Candidate tally: **56 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. This includes UAT-055 public diagnostics placement and UAT-056 accessible hit targets. The synthetic AI-admin cases prove the built Web UI and fixture contract only; they do not close persisted AI prompt migrations, production authorization or the full administration matrix.
 
 ## Candidate 5.1.60 addition — verify Landing diagnostics mounts (2026-10-15)
 

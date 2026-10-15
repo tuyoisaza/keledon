@@ -1,4 +1,25 @@
-## Current Auto delivery — 5.1.62 source merged and verified; portfolio partial (2026-10-15)
+## Current Auto continuation — candidate 5.1.64 diagnostics hit targets (2026-10-15)
+
+Run `20261014-0007-phdk-auto-completion`; target repository `tuyoisaza/keledon`, branch `main`. Candidate `fix/phdk-diagnostics-hit-target-5-1-64` is based on verified main 5.1.63 SHA `2c1c8e58f749746253f0ff76f9c691e7ffb15644`. CHK-AUTO-024 gives Web/Landing diagnostics actions distinct 44×44px hitboxes while keeping the centered visual tiles at 28×28px and spacing targets by 4px. The native Browser stylesheet now has the matching source contract.
+
+UAT-056 passes on production-built Landing at 1280×900 and 390×844 with external traffic blocked. Web tests are 19/19; Browser offline tests 28/28. Five production builds, Web/Landing lint and typechecks, and PHDK coherence 52/52 pass. The portfolio tally is 56 PASS, 0 BLOCKED, 1 MANUAL; the full goal remains partial.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight / Capture / Plan | REUSED / REVALIDATED | Correct repo, PHDK 2.50.10, four owner-confirmed fronts and approved policies. |
+| PMO / Integration | COMPLETE FOR SLICE | `40-integration/INTEGRATION_REPORT-5.1.64-hit-targets.md`. |
+| UAT / UAT Fix | PASS FOR UAT-056 | Browser 1/1, Web 19/19, Browser offline 28/28; see `50-uat/evidence/uat-056/`. |
+| SEO / AEO-GEO | REUSED / NOT AFFECTED | Accessibility target geometry only; deployed discovery remains unmeasured. |
+| Check / Remediation | PASS FOR SCOPED CANDIDATE | Five builds, Web/Landing lint/typecheck, source test suites, PHDK coherence and diff check pass. |
+| Delivery | PENDING | Versioned commit, PR, merge and exact remote readback. |
+
+Packaged Electron, OS touch behavior, persisted CRUD/migrations, device/audio, broad screen-reader/localization, deployed SEO/AEO and client-selected live acceptance remain open.
+
+SIGUIENTE PASO: deliver the exact 5.1.64 fix through PR and verify remote main; keep the four Auto fronts active while their remaining acceptance gates stay open.
+
+---
+
+## Previous Auto delivery — 5.1.62 merged and verified; portfolio partial (2026-10-15)
 
 Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. PR [#156](https://github.com/tuyoisaza/keledon/pull/156) delivered candidate commit `bc59be8cbf22c6d78d29fc7dc0cf0ed89199b64d` by squash at verified remote SHA `0886fbd6a06d7519158ae5f6bbd9873e44477c8b`, tree `b476e79938e5fc20eb5192aac44a6311c6c954e6`. `origin/main` matches `git ls-remote`, all six version roots are 5.1.62, and the PHDK completion gate passes against `PHDK_DELIVERY_EVIDENCE.json`.
 
@@ -302,9 +323,30 @@ Follow-up review closed the allowlist lifetime gap: configured vendor BrowserVie
 ## Candidate 5.1.58 — DebugMode model boundary and remote delivery state
 
 UAT-049 removes the ambiguity between the dormant Prisma DebugMode model and `/management/debug`'s browser-local capture switch. Unbound API/Cloud service classes and stale dist outputs are removed; the table remains until an approved migration. Regression 49 asserts all 14 role/surface rows are NOT APPLICABLE. API 37/37, Cloud 17/17, Browser 15/15, five builds, PHDK coherence 52/52 and diff check pass. Candidate PR #152 now includes this CMT-004 fix; latest head/readback will be recorded after push. Whole Auto remains partial.
-## Current Auto continuation — 5.1.63 public diagnostics placement (2026-10-15)
+## Current Auto continuation — candidate 5.1.64 diagnostics hit targets (2026-10-15)
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. Candidate branch `fix/phdk-widget-position-5-1-63` starts from verified main 5.1.62 SHA `0886fbd6a06d7519158ae5f6bbd9873e44477c8b`. Check CHK-AUTO-023 found the shared public diagnostics widget beside the product name in Web and Landing. Both navbars now place it below and left-aligned with the name.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. Candidate `fix/phdk-diagnostics-hit-target-5-1-64` is based on verified 5.1.63 main `2c1c8e58f749746253f0ff76f9c691e7ffb15644`. CHK-AUTO-024 replaces undersized Web/Landing action boxes with 44×44px hit targets, preserves 28×28px visible tiles, and separates each target by 4px.
+
+UAT-056 passes on production-built Landing with outbound requests blocked. At 1280×900 both actions measure 44×44px, tiles 28×28px, with 4px clearance and accessible names; at 390×844 targets remain 44×44px and mobile theme/language controls work. Web diagnostics pass 19/19; all five builds pass. Web/Landing lint and typechecks are finishing. Evidence: `50-uat/evidence/uat-056/`.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight / Capture / Plan | REUSED / REVALIDATED | Correct repository; installed PHDK 2.50.10; four owner-confirmed fronts and decisions retained. |
+| PMO / Integration | COMPLETE FOR SLICE | `40-integration/INTEGRATION_REPORT-5.1.64-hit-targets.md`. |
+| UAT / UAT Fix | PASS FOR UAT-056 | Exact built browser UAT 1/1; widget component suite 19/19. |
+| SEO / AEO-GEO | REUSED / NOT AFFECTED | Layout and hitbox only; no discovery claims changed. |
+| Check / Remediation | RUNNING | Finish Web/Landing lint/typechecks, version/static PHDK, and complete diff review. |
+| Delivery | PENDING | Versioned commit, PR, merge/readback and machine completion gate. |
+
+Whole Auto remains **PARTIALLY DELIVERED** for persisted CRUD/migrations, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-selected runtime acceptance.
+
+SIGUIENTE PASO: complete Check for exact 5.1.64, then version and deliver the bounded fix through PR; continue the other open acceptance criteria.
+
+---
+
+## Previous Auto delivery — 5.1.63 merged and verified (2026-10-15)
+
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. Candidate branch `fix/phdk-widget-position-5-1-63` started from verified main 5.1.62 SHA `0886fbd6a06d7519158ae5f6bbd9873e44477c8b`, and PR #157 squash-merged at `2c1c8e58f749746253f0ff76f9c691e7ffb15644`, tree `241999550b4f184a3c09fbfde03400005be4bfaf`, matching the tested candidate tree. Check CHK-AUTO-023 found the shared public diagnostics widget beside the product name in Web and Landing. Both navbars now place it below and left-aligned with the name.
 
 UAT-055 passes in the production-built Landing app with external requests blocked: at 1280×900 the brand is x=32/y=16–48 and widget x=32/y=52–80, with no hero overlap and both preference controls visible; at 390×844, the widget remains visible and mobile theme/language controls work. Web diagnostics/version-actions tests pass 17/17. All five app builds, package/lock versions and Browser renderer synchronization are being checked for candidate delivery. Evidence: `50-uat/evidence/uat-055/`.
 
@@ -314,11 +356,11 @@ UAT-055 passes in the production-built Landing app with external requests blocke
 | PMO / Integration | COMPLETE FOR SLICE | `40-integration/INTEGRATION_REPORT-5.1.63-widget-position.md`. |
 | UAT / UAT Fix | PASS FOR UAT-055 | Production-built browser UAT 1/1; component tests 17/17; see `50-uat/evidence/uat-055/`. |
 | SEO / AEO-GEO | REUSED / NOT AFFECTED | Nav layout only; deployed discovery unmeasured. |
-| Check / Remediation | PASS FOR SCOPED SLICE | Five production builds, 19/19 Web diagnostic tests, 52/52 static PHDK coherence, synchronized versions, `git diff --check`, and UAT-055 pass. |
-| Delivery | PENDING | Versioned commit, PR, merge if checks permit, and remote SHA/tree/version readback. |
+| Check / Remediation | PASS FOR SCOPED SLICE | Five production builds, Web/Landing lint and typechecks, 19/19 Web diagnostic tests, 52/52 static PHDK coherence, synchronized versions, `git diff --check`, and UAT-055 pass. |
+| Delivery | COMPLETED FOR SLICE | PR #157 squash-merged; remote `main` equals `git ls-remote` at `2c1c8e58f749746253f0ff76f9c691e7ffb15644`; remote tree equals candidate, all six version reads are 5.1.63, and mechanical completion gate passes. |
 
 Whole Auto remains **PARTIALLY DELIVERED** for exhaustive persisted CRUD/migrations, native device/audio, broad accessibility/localization, deployed SEO/AEO and client-selected runtime acceptance. This slice makes no customer integration or deployment claim.
 
-SIGUIENTE PASO: complete Check for the exact 5.1.63 tree, deliver the scoped fix through PR, and verify its remote main SHA; keep the whole portfolio partial while other acceptance gates remain open.
+SIGUIENTE PASO: continue the remaining four-front acceptance gates against verified main 5.1.63; preserve partial whole-Auto status until persisted, native, accessibility, deployed-discovery and customer-specific evidence closes.
 
 ---
