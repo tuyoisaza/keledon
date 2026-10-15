@@ -2,9 +2,9 @@
 
 Check found that the shared version/actions widget regression asserted all required routes only for the Web app; Landing's parallel source was compared byte-for-byte but its own route mounts were not asserted. UAT-051 adds explicit Landing public page/Navbar, login, app shell/Sidebar and admin route assertions. API/Cloud regressions pass 37/37 and 17/17, Web diagnostics/version-actions 19/19, Browser version-actions/security-policy 15/15, Landing SEO 1/1, five builds, applicable lint/typechecks, CRUD inventory 35/35 models and 490 role/surface rows, and PHDK coherence 52/52. All six candidate versions align at 5.1.60.
 
-Portfolio remains 4 confirmed, 0 fully done, 4 active, 0 deferred/cancelled; UAT is 51 PASS, 0 BLOCKED, 1 MANUAL. Candidate branch `fix/phdk-landing-widget-mount-5-1-60` is based on verified main `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`. No candidate PR exists yet. No database listener, browser runtime, screen reader, live provider/customer endpoint or deployment was exercised. Whole Auto remains PARTIALLY DELIVERED.
+PR [#154](https://github.com/tuyoisaza/keledon/pull/154) is squash-merged at `4bc6d437ddfbd5139617da62370ec4de92f820cb`; `origin/main` and `git ls-remote` agree, and remote tree `cf9dba9b17d1de91db2206ea3bdb12e0841b89b3` matches the candidate. All six version roots align at 5.1.60. Portfolio remains 4 confirmed, 0 fully done, 4 active, 0 deferred/cancelled; UAT is 51 PASS, 0 BLOCKED, 1 MANUAL. No database listener, browser runtime, screen reader, live provider/customer endpoint or deployment was exercised. Whole Auto remains PARTIALLY DELIVERED.
 
-SIGUIENTE PASO: complete final Check/diff review, deliver 5.1.60 through the normal PR flow and verify remote `main`; continue the remaining persisted, native, accessibility/localization and deployed-discovery gates.
+SIGUIENTE PASO: continue the remaining persisted, native, accessibility/localization and deployed-discovery gates.
 
 ---
 
@@ -130,3 +130,15 @@ PR #96 merged by squash at `a0425134ba69b1feaf165cd512caad8c136ca6f8`; remote `o
 Source candidate `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` advances CMT-001/CMT-004 by replacing untyped API/Cloud CRUD request boundaries with service-derived types, removing the unused Cloud audit-log mutation proxy/route, deleting a duplicate provider, and narrowing Cloud TTS chunks. PR #111 merged at `33cff1e345de0b735657570a6144ddeec61f7c3e`; remote readback verifies the merge. Five roots and Browser renderer are 5.1.37. API build and 35/35 regressions pass; Cloud build and 14/14 regressions pass; Cloud typed ESLint is clean (0 errors, 0 warnings). Web typecheck/build/UAT 2/2/SEO pass, Browser build passes, Landing typecheck/build/SEO pass, diagnostics 19/19, coherence 52/52, and active file-size audit is 1,161 files / zero >=600 lines. API global lint has 0 errors/135 warnings. Whole Auto remains partial for recorded environment and breadth gates.
 
 ---
+## Active Auto milestone — 5.1.61 public navigation correction
+
+Four confirmed / zero DONE / four active / zero deferred or cancelled. Candidate `fix/phdk-navbar-overlap-5-1-61`, based on verified main `4bc6d437ddfbd5139617da62370ec4de92f820cb`, repairs a P1 desktop navigation overlap and makes theme/language controls reachable in the mobile menu. UAT-052 and the focused Web suite pass; all five builds, API/Cloud regressions 37/37 and 17/17, Browser 15/15, Web diagnostics 19/19, SEO source 1/1 each, applicable lint/typechecks, and PHDK coherence 52/52 pass. Version surfaces align at 5.1.61. PR/delivery are pending; whole Auto is 52 PASS, 0 BLOCKED, 1 MANUAL and PARTIALLY DELIVERED.
+
+| WS | State | Next gate |
+|---|---|---|
+| WS-001 / CMT-001 baseline/version/PR | Check PASS / delivery pending | Create version-prefixed product PR, merge, then verify remote main and version evidence. |
+| WS-002 / CMT-002 widget/diagnostics | Scoped UAT PASS | Native UI, broad screen-reader/a11y and all-route acceptance remain. |
+| WS-003 / CMT-003 voice→Cloud→Browser→client CRM | Source contract retained | Keep client-specific live call/CRM acceptance scoped to each chosen tenant. |
+| WS-004 / CMT-004 administration/permissions | Source matrix + selected persisted acceptance | Complete remaining persisted operation coverage and delete/reindex concurrency. |
+
+## Active Auto milestone — 5.1.60 diagnostics route coverage (2026-10-15)

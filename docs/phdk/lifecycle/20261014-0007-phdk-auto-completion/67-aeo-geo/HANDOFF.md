@@ -1,5 +1,9 @@
 # AEO/GEO handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.61 applicability reuse — no public answer/content changes
+
+The responsive navigation update changes only layout and control placement. Public overview copy, headings, claims, structured metadata and routes are unchanged, so the existing source answerability review remains applicable. No public host, crawler or answer engine was queried; deployed citations/visibility remain unmeasured. Entry for Check validates UAT-052, both SEO source tests and the unchanged public-content boundary.
+
 ## Candidate 5.1.59 applicability reuse — no public claim changes
 
 The BrowserView teardown fix changes no public product claim, landing content or metadata. Prior public-source answerability review is reused; no answer engine, public host or crawler was contacted. Citation visibility and deployed discovery remain unmeasured. Next: exact-candidate Check and scoped delivery.

@@ -1,0 +1,45 @@
+{
+  "version": "5.1.61",
+  "candidateRevision": "4bc6d437ddfbd5139617da62370ec4de92f820cb",
+  "candidateSourceFingerprint": "sha256:8f8e7b96c8a06e04342aae7e077d25adea8f931e2852e0f297d749251238dc3b",
+  "dirtyUntrackedSourceFiles": 1,
+  "sourceRoots": [
+    "browser",
+    "cloud",
+    "services/api",
+    "services/web",
+    "landing"
+  ],
+  "targetEnvironment": "local production-built Landing SPA with all external requests blocked",
+  "result": "PASS",
+  "desktop": {
+    "viewport": "1280x900",
+    "navLabel": "Navegación principal",
+    "visiblePreferenceControls": 2,
+    "noOverlap": true,
+    "controls": [
+      {
+        "top": 36,
+        "bottom": 60
+      },
+      {
+        "top": 31.5,
+        "bottom": 64.5
+      }
+    ],
+    "heroDisclaimer": {
+      "top": 186.5,
+      "bottom": 202.5
+    }
+  },
+  "mobile": {
+    "viewport": "390x844",
+    "menuExpanded": true,
+    "themeControlVisible": true,
+    "languageControlVisible": true
+  },
+  "evidence": [
+    "uat-landing-home-desktop.png",
+    "uat-landing-home-mobile-menu.png"
+  ]
+}

@@ -1,6 +1,10 @@
 # Integration Review handoff — 20261014-0007-phdk-auto-completion
 
-## Candidate 5.1.60 — Landing diagnostics mount contract
+## 5.1.61 — responsive public navigation integrated
+
+Integration Review confirms `landing/src/components/common/Navbar.tsx` and `services/web/src/components/common/Navbar.tsx` now share desktop-inline preferences and mobile-menu selectors; the UAT selectors and target route match both shipped implementations. All five app package/lock roots and Browser renderer are 5.1.61. No API, Cloud, Browser tenant policy, database schema, copy, route metadata or customer CRM behavior changes. Focused Web/Landing UAT, regressions, builds, lint/typechecks and PHDK coherence pass. Handoff to UAT is complete; UAT-052 then passes after a hydration wait was added to make the visual test deterministic.
+
+## 5.1.60 — Landing diagnostics mount contract delivered
 
 UAT-051 asserts that Landing independently mounts the version/actions widget in its public page, login, app shell and admin route; Web coverage remains in place. No product runtime behavior, API, Cloud, Browser integration, tenant security policy, database schema or customer-specific connector changed. Web diagnostics 19/19, Browser selected tests 15/15, API/Cloud regressions 37/37 and 17/17, Landing SEO 1/1, builds, applicable lint/typechecks and PHDK coherence 52/52 pass. This is integrated source-contract evidence only; visual/native accessibility and customer runtime acceptance remain open. Whole Auto remains partial.
 

@@ -1,6 +1,6 @@
-## PHDK Auto continuation — candidate 5.1.60 diagnostics coverage (2026-10-15)
+## PHDK Auto continuation — 5.1.60 diagnostics coverage merged (2026-10-15)
 
-PHDK 2.50.10 remains installed/coherent at 52/52. PR [#153](https://github.com/tuyoisaza/keledon/pull/153) delivered 5.1.59 at verified `origin/main` `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`. Candidate `fix/phdk-landing-widget-mount-5-1-60` aligns all six product/renderer version reads at 5.1.60. It adds UAT-051 assertions for Landing's public, login, app shell and admin diagnostics-widget mounts. All five builds, API/Cloud regressions 37/37 and 17/17, Web diagnostics 19/19, Browser version-actions/security-policy 15/15, Landing SEO 1/1, applicable lint/typechecks and coherence 52/52 pass. Candidate delivery is in progress; the whole Auto remains partial.
+PHDK 2.50.10 remains installed/coherent at 52/52. PR [#154](https://github.com/tuyoisaza/keledon/pull/154) delivered 5.1.60 at verified `origin/main` `4bc6d437ddfbd5139617da62370ec4de92f820cb`; remote tree `cf9dba9b17d1de91db2206ea3bdb12e0841b89b3` matches tested source. All five builds, API/Cloud regressions 37/37 and 17/17, Web diagnostics 19/19, Browser version-actions/security-policy 15/15, Landing SEO 1/1, applicable lint/typechecks and coherence 52/52 pass. UAT-051 adds Landing's public, login, app shell and admin widget source assertions. Delivery is verified; the whole Auto remains partial.
 
 UAT-050 continues to cover Browser tenant scope through tab teardown. UAT-051 closes a source-test gap for Landing route mounts, while packaged Electron and assistive-technology acceptance remain unverified.
 
@@ -8,16 +8,16 @@ UAT-050 continues to cover Browser tenant scope through tab teardown. UAT-051 cl
 |---|---|---|
 | Preflight | REUSED / REVALIDATED | PHDK 2.50.10; coherence 52/52. |
 | Capture / Plan | REUSED | Four owner-confirmed fronts and approved tenant-private URL policy remain current. |
-| PMO / Workstreams | CONTINUED | Four confirmed fronts remain active; #153 is merged and candidate 5.1.60 is in progress. |
+| PMO / Workstreams | CONTINUED | Four confirmed fronts remain active; #154 delivered 5.1.60. |
 | Integration Review | PASS FOR CANDIDATE SOURCE TEST | Landing's own public/login/shell/admin widget mounts are independently asserted. |
 | UAT / UAT Fix | PASS FOR UAT-051 / WHOLE INCOMPLETE | Source contract pass; no browser runtime, packaged Electron or screen-reader session. Tally 51 PASS, 0 BLOCKED, 1 MANUAL. |
 | SEO / AEO-GEO | REUSED / NOT AFFECTED | No public route, copy, metadata or claims changed; external visibility remains unmeasured. |
 | Check / Remediation | PASS FOR 5.1.60 SOURCE SLICE | Five builds, applicable lint/typechecks, regressions, source SEO and coherence pass; candidate completion gate waits for merge. |
-| Delivery | IN PROGRESS | Branch is based on verified main; commit, PR, merge and exact remote readback remain. |
+| Delivery | PASS | #154 squash-merged, remote readback/tree and all six versions verified; completion gate passes. |
 
 Whole PHDK Auto remains **PARTIALLY DELIVERED**: exhaustive persisted model-operation coverage, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected live integrations remain open.
 
-SIGUIENTE PASO: complete final candidate diff review and normal PR delivery; then continue the confirmed fronts, preserving environment/customer gates and PARTIALLY DELIVERED status.
+SIGUIENTE PASO: continue the confirmed fronts, preserving environment/customer gates and PARTIALLY DELIVERED status.
 
 ---
 
@@ -457,3 +457,23 @@ Whole PHDK Auto remains PARTIALLY DELIVERED; persisted operations, live device/a
 ## PHDK Auto continuation — candidate 5.1.58 DebugMode classification (2026-10-15)
 
 The 35-model crosswalk included a global `DebugMode` Prisma model with no API/Cloud module binding, while duplicate service classes implemented global activation/audit writes and the Web page only toggled client-local diagnostic capture. Removed the disconnected service code and stale built JS outputs. The Prisma table remains untouched; no database migration is claimed. The matrix now classifies all 14 DebugMode role/surface rows NOT APPLICABLE until a server-wide feature or approved schema retirement exists. Regression 49 confirms source and dist state. API 37/37, Cloud 17/17, both builds, five application builds, Browser 15/15, and PHDK coherence 52/52 pass. UAT-049 is source-only; overall Auto remains partial.
+## PHDK Auto — 2026-10-15, candidate 5.1.61
+
+Goal: continue the owner-confirmed KELEDON four-front portfolio in order. Candidate branch `fix/phdk-navbar-overlap-5-1-61`, based on `origin/main` `4bc6d437ddfbd5139617da62370ec4de92f820cb`. PHDK 2.50.10 is installed; coherence 52/52.
+
+| Stage | Status | Evidence / handoff |
+|---|---|---|
+| Preflight | REUSED / REVALIDATED | Current repository instructions and PHDK 2.50.10 coherence. |
+| Capture | REUSED | Intent/requirements and four confirmed commitments remain current. |
+| Plan | REUSED | Brownfield architecture/workstream plan remains current. |
+| PMO / workstreams | COMPLETED FOR CANDIDATE | Four fronts reconciled; PMO handoff records candidate and remaining gates. |
+| Integration Review | COMPLETED | Both Navbars aligned; version roots, localized/public behavior and tests reconciled. |
+| UAT | COMPLETED FOR UAT-052 | Web UAT 5/5, Landing 1/1; local/synthetic, outbound network blocked. Whole acceptance 52 PASS, 0 BLOCKED, 1 MANUAL. |
+| UAT Fix | COMPLETED FOR OBSERVED P1 | Desktop overlap fixed; full relevant UAT repeated. |
+| SEO | COMPLETED FOR SOURCE | Web/Landing SEO 1/1 each; crawl/content metadata unchanged. Deployed discovery remains unmeasured. |
+| AEO/GEO | REUSED | No public claims/content changes; remote citation visibility remains unmeasured. |
+| Check | COMPLETED FOR SOURCE | Five builds; API/Cloud 37/37 and 17/17; Browser 15/15; diagnostics 19/19; lint/typechecks, version alignment, diff and coherence pass. |
+| Remediation | COMPLETED FOR LOCAL FINDING | No in-scope P0/P1 remains in the tested navigation path. |
+| Delivery | RUNNING | Create and merge product PR, verify remote SHA/tree/version, archive evidence, run completion gate. |
+
+Current status: **PARTIALLY DELIVERED** pending PR/remote evidence and broader owner-confirmed acceptance. Open scope: exhaustive persisted CRUD/model-operation/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO, and each customer's configured call/CRM workflow. No deployment or customer endpoint is claimed.

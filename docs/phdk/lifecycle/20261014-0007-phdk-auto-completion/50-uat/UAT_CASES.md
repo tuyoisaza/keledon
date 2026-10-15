@@ -1,5 +1,13 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Latest acceptance delta — 5.1.61 public navigation
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-052 | US-010 / anonymous visitor | Open production-built Landing with outbound requests blocked at 1280×900; inspect navigation and hero. At 390×844, open mobile navigation and inspect theme/language controls. | Desktop navigation/preferences do not overlap hero disclaimer; mobile menu exposes reachable theme and language controls. | Local built Landing SPA / headless Edge | PASS, `docs/phdk/evidence/uat-landing-navbar-5.1.61.json`, `uat-landing-home-desktop.png`, `uat-landing-home-mobile-menu.png`. |
+
+Exact-candidate UAT-052 confirms the public navigation path only. Focused Web UAT passes 5/5 and the standalone Landing test 1/1. Portfolio tally is **52 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Exhaustive persisted model operations/concurrency, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open; client CRM/call acceptance is selected per tenant.
+
 ## Latest acceptance delta — 5.1.52 Qdrant-backed cleanup
 
 UAT-010 Knowledge deletion, formerly BLOCKED, now **PASS** for document and base cleanup using disposable PostgreSQL 16.15 and loopback Qdrant 1.19.2 with synthetic data. Document delete removes its DB row and matching vector points; base delete removes its collection and cascades DB rows. Exact evidence: `evidence/uat-qdrant-delete-5.1.52.json`. Delete/reindex concurrency remains open. Whole acceptance is **40 PASS, 0 BLOCKED, 1 MANUAL**; native Electron/device/audio remains MANUAL, with the broader acceptance limits recorded in `UAT_REPORT.md`.
@@ -69,8 +77,6 @@ Overall UAT remains **ACCEPTANCE INCOMPLETE — 33 PASS, 2 BLOCKED, 1 MANUAL**. 
 | Case | Story / actor | Acceptance / steps | Result and evidence |
 |---|---|---|---|
 | UAT-033 | US-002 / US-004, API and Cloud management caller | Send server-owned fields, unsupported types and spoofed FlowVersion creator fields; verify the controller forwards the authenticated actor; compare mirrored backends. | PASS, regression 48/API and 41/Cloud, three assertions each; API 36/36 and Cloud 16/16 suites; exact source `a8a89f928312db2fef5142a0e07ac18a197b6c19`. Synthetic Web UAT is 2/2 and diagnostics 19/19. Evidence: `evidence/uat-local-web-5.1.39.json`; no DB/provider/client system used. |
-
-Overall UAT remains **ACCEPTANCE INCOMPLETE — 30 PASS, 2 BLOCKED, 1 MANUAL**. Persistent database/identities, native device/audio, full accessibility/localization and deployed SEO/AEO remain open; client CRM/call acceptance is selected per tenant.
 
 ---
 

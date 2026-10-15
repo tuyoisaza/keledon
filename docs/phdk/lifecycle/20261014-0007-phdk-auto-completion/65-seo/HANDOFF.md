@@ -1,5 +1,9 @@
 # SEO handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.61 — SEO source gate PASS; deployed discovery unmeasured
+
+The layout correction preserves public text, routes, metadata, indexability and response policy. Web and Landing source SEO tests pass 1/1 each on the candidate; public copy, structured claims and crawl controls are unchanged. Existing SEO review is reused for unchanged content. No deployed host, crawler or Search Console was contacted. Next: AEO/GEO applicability reuse and then integrated Check.
+
 ## Candidate 5.1.59 applicability reuse — public surface unchanged
 
 The BrowserView lifecycle fix changes no public route, product copy, metadata or crawl policy. Existing source review remains applicable. No public host, crawler, Search Console or field measurement was accessed; deployed SEO stays unmeasured. Next: preserve this limitation in Check and delivery.

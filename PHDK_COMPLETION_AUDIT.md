@@ -1,14 +1,30 @@
-## Current Auto completion audit — 5.1.60 candidate; whole portfolio partial
+## Current Auto completion audit — candidate 5.1.61; source delivery pending
 
-Candidate branch `fix/phdk-landing-widget-mount-5-1-60` is based on verified `origin/main` `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5` (5.1.59). The only runtime repository changes are aligned version metadata; the source delta adds UAT-051 assertions for Landing public, login, shell and admin widget mounts. Candidate version is 5.1.60 across five app package/lock roots and Browser renderer. Web diagnostics/version-actions 19/19, Browser version-actions/security-policy 15/15, API/Cloud regression 37/37 and 17/17, Landing SEO 1/1, all five builds, applicable lint/typechecks, CRUD inventory 35/35 models and 490 role/surface tuples, and PHDK coherence 52/52 pass. `git diff --check` passes. UAT-051 is source-contract evidence only.
+Candidate `fix/phdk-navbar-overlap-5-1-61` is based on verified main `4bc6d437ddfbd5139617da62370ec4de92f820cb`. UAT-052 observed/fixed the Landing desktop preference overlap and validates mobile access in local production builds; the change is mirrored in Web. API/Cloud regressions pass 37/37 and 17/17; Browser safety/version tests 15/15; Web diagnostics 19/19; Web UAT 5/5; Landing local UAT 1/1; Web/Landing SEO 1/1 each; all five builds, applicable lint/typechecks and PHDK coherence 52/52 pass. All five package/lock roots and Browser renderer align at 5.1.61. The product PR is not yet merged, so remote delivery and the mechanical completion gate remain pending.
 
 | Gate | Candidate status | Evidence / remaining |
 |---|---|---|
-| CMT-001 baseline/version/PR | IN PROGRESS | Exact base verified; candidate versions aligned; normal branch/PR/merge/readback not yet complete. |
+| CMT-001 baseline/version/PR | CHECK PASS / DELIVERY PENDING | Candidate versions and source checks pass; open PR merge/readback is next. |
+| CMT-002 widget/diagnostics | UAT PASS / BROADER ACCEPTANCE PARTIAL | Public desktop/mobile nav and existing widget routes verified in local UAT; native/screen-reader/all-route accessibility remain open. |
+| CMT-003 voice→Cloud→Browser→client CRM | SOURCE PASS / CUSTOMER-SCOPED | Existing tenant origin policy remains validated; no client-specific stack selected for live UAT. |
+| CMT-004 administration/permissions | SOURCE PASS / PERSISTED MATRIX PARTIAL | API/Cloud regressions and model crosswalk pass; full persisted model-operation/concurrency coverage remains open. |
+| PUSH_AND_PR / REMOTE_MAIN | PENDING | Candidate PR has not yet been created/merged; do not claim completion. |
+
+Whole Auto remains **PARTIALLY DELIVERED** (52 PASS, 0 BLOCKED, 1 MANUAL). Exhaustive persisted model operations/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected live integrations remain unresolved or customer-scoped. No deployment or customer endpoint is claimed.
+
+---
+
+## Current Auto completion audit — 5.1.60 merged; whole portfolio partial
+
+PR [#154](https://github.com/tuyoisaza/keledon/pull/154) delivered 5.1.60 by squash at verified `origin/main` `4bc6d437ddfbd5139617da62370ec4de92f820cb`; remote tree `cf9dba9b17d1de91db2206ea3bdb12e0841b89b3` matches the tested candidate. All six app/renderer reads are 5.1.60. The only runtime repository changes are aligned version metadata; the source delta adds UAT-051 assertions for Landing public, login, shell and admin widget mounts. Web diagnostics/version-actions 19/19, Browser version-actions/security-policy 15/15, API/Cloud regression 37/37 and 17/17, Landing SEO 1/1, all five builds, applicable lint/typechecks, CRUD inventory 35/35 models and 490 role/surface tuples, and PHDK coherence 52/52 pass. The completion verifier passes. UAT-051 is source-contract evidence only.
+
+| Gate | Candidate status | Evidence / remaining |
+|---|---|---|
+| CMT-001 baseline/version/PR | SOURCE DELIVERY PASS / BASELINE ACTIVE | #154 is merged and remote-verified; continue the ongoing baseline/release reconciliation. |
 | CMT-002 diagnostics widget | SOURCE TEST PASS / ACCEPTANCE PARTIAL | Both Web apps' required mounts now have explicit source assertions; native/rendered/screen-reader and broad route acceptance remain. |
 | CMT-003 per-tenant runtime/CRM | PARTIAL | UAT-050 source check retains tenant scope through BrowserView teardown; packaged Electron and per-customer acceptance remain. |
 | CMT-004 administration/permissions | PARTIAL | API/Cloud source regressions and 35-model crosswalk pass; no disposable PostgreSQL listener is available for additional persistence acceptance. |
-| PUSH_AND_PR / REMOTE_MAIN | PENDING | No current candidate PR; only #153 is merged on `main`. |
+| PUSH_AND_PR / REMOTE_MAIN | PASS | #154 merged; `origin/main` and `git ls-remote` agree, remote tree matches candidate, and mechanical verifier passes. |
 
 Whole Auto remains **PARTIALLY DELIVERED** (51 PASS, 0 BLOCKED, 1 MANUAL). Exhaustive persisted model operations/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected live integrations remain unresolved or environment/customer-scoped. No deployment or customer endpoint is claimed.
 

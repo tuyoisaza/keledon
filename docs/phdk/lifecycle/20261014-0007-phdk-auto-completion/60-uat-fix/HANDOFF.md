@@ -1,5 +1,9 @@
 # UAT Fix handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.61 — close observed public-header overlap
+
+UAT-052 found theme/language controls overlapping the Landing hero disclaimer at desktop width. Both Web Navbar implementations now place preferences inline with desktop navigation and inside the mobile menu below the large breakpoint. The full focused Web UAT suite passes 5/5, including no-overlap and mobile-access checks. The Landing-only repeat passes 1/1 with screenshots. No P0/P1 remains in this specific journey. The change does not certify all-route responsive/accessibility behavior.
+
 ## Candidate 5.1.55 — restore narrative inventory schema
 
 The post-merge artifact defect is fixed: `CRUD_MATRIX.md` again has a distinct three-column source inventory after the 490-row CRUD table. Regression 33 now checks the model inventory row width as well as matrix tuple coverage and selected policy boundaries. UAT-043 passes. No runtime or database behavior changed.

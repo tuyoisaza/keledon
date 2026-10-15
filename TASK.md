@@ -1,10 +1,10 @@
-## Active PHDK Auto — candidate 5.1.60 diagnostics coverage; four fronts continue
+## Active PHDK Auto — 5.1.60 diagnostics coverage delivered; four fronts continue
 
-PR [#153](https://github.com/tuyoisaza/keledon/pull/153) delivered 5.1.59 at verified `origin/main` `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`. The current 5.1.60 candidate adds UAT-051 assertions for Landing's public, login, shell and admin diagnostics mounts, closing a test-coverage gap without changing runtime behavior. Web diagnostics/version-actions passes 19/19; Browser version-actions/security-policy 15/15; API/Cloud regressions 37/37 and 17/17; Landing SEO 1/1; five builds, applicable lint/typechecks and PHDK coherence 52/52 pass. Candidate branch is `fix/phdk-landing-widget-mount-5-1-60`; PR delivery remains pending. Whole Auto remains **PARTIALLY DELIVERED**.
+PR [#154](https://github.com/tuyoisaza/keledon/pull/154) delivered 5.1.60 at verified `origin/main` `4bc6d437ddfbd5139617da62370ec4de92f820cb`; remote tree matches the candidate and all six version reads align. UAT-051 adds Landing public, login, shell and admin diagnostics-mount assertions. Web diagnostics/version-actions passes 19/19; Browser version-actions/security-policy 15/15; API/Cloud regressions 37/37 and 17/17; Landing SEO 1/1; five builds, applicable lint/typechecks and PHDK coherence 52/52 pass. Whole Auto remains **PARTIALLY DELIVERED**.
 
-Source commit `fb047dff` is version-prefixed and included in merged PR #153. The current diagnostics coverage change is test-only apart from synchronized 5.1.60 metadata. Whole Auto remains **PARTIALLY DELIVERED**. Exhaustive persisted model-operation coverage/concurrency, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open; live call/CRM acceptance stays customer-selected. No live CRM, private endpoint or disposable database was contacted. The current lifecycle/evidence reconciliation is local and uncommitted.
+Source commit `fdcb1ab4` is version-prefixed and included in merged PR #154. The diagnostics coverage change is test-only apart from synchronized 5.1.60 metadata. Whole Auto remains **PARTIALLY DELIVERED**. Exhaustive persisted model-operation coverage/concurrency, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open; live call/CRM acceptance stays customer-selected. No live CRM, private endpoint or disposable database was contacted. Post-merge evidence is in `PHDK_DELIVERY_EVIDENCE-5.1.60-post-merge-154.json`.
 
-SIGUIENTE PASO: finish Check and normal PR delivery of 5.1.60, then continue the four confirmed fronts; keep persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific integration gates open until evidenced.
+SIGUIENTE PASO: continue the four confirmed fronts; keep persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific integration gates open until evidenced.
 
 ---
 
@@ -216,3 +216,6 @@ Source audit found AutoBrowse executed allowlisted actions without applying that
 
 ### 5.1.58 continuation — dormant DebugMode cleanup
 Removed unbound API/Cloud global DebugMode services; the active Web diagnostics switch is localStorage-backed local capture only. The schema table remains pending an approved migration. CRUD_MATRIX reclassifies its 14 role/surface combinations as NOT APPLICABLE, and API regression 49 locks that boundary. API 37/37, Cloud 17/17 and both backend builds pass. UAT-049 is source-only; persisted CRUD and external acceptance remain open.
+## Active PHDK Auto — candidate 5.1.61
+
+The four owner-confirmed fronts remain active. Candidate `fix/phdk-navbar-overlap-5-1-61` repairs the public Landing/Web desktop preference overlap and keeps theme/language reachable on mobile. Web UAT passes 5/5, Landing visual UAT 1/1; API/Cloud regressions 37/37 and 17/17, Browser safety/version 15/15, diagnostics 19/19, SEO source tests 1/1 each, five builds, applicable lint/typechecks and PHDK coherence 52/52 pass. PR and remote delivery are next. Whole Auto remains **PARTIALLY DELIVERED** (52 PASS, 0 BLOCKED, 1 MANUAL); persisted operations/concurrency, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open; client call/CRM validation remains per tenant.
