@@ -130,3 +130,7 @@ Regression 33 passes with 35/35 models and 490 unique model-role-surface tuples;
 SIGUIENTE PASO: deliver this source correction through the normal PR workflow, then exercise the next mapped persistence operations.
 
 ---
+
+## Auto remediation candidate — 5.1.58 Cloud device tenant binding (2026-10-15)
+
+Cloud device registration and pairing now enforce the same DB-derived actor/company binding as API, require stored user/company/Keledon device bindings, and conditionally consume only the matching pending unexpired pairing proof. Registration retries cannot disclose another user's device ID, and public pairing errors no longer expose exception details. Cloud regression 21 and regression 42 cover these boundaries; UAT-047 is source-level only and the six Device API role rows remain BLOCKED for live persistence acceptance. API/Cloud regressions (36/36 and 17/17), five production builds, version alignment, PHDK coherence (52/52) and `git diff --check` pass. No database, physical device or customer integration was used. Whole PHDK Auto remains **PARTIALLY DELIVERED**.

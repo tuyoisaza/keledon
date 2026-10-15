@@ -488,8 +488,15 @@ Overall: **SOURCE SLICE REMEDIATED LOCALLY / WHOLE PHDK AUTO PARTIAL**.
 
 Based on verified `origin/main` 5.1.56 SHA `7b535964b91815b964fd7c1ddc121a994883ebb8`, tree `02c4ce60ad04c66847f747ace268cb2d2a0eaeb0`. All five application package/lock roots and Browser renderer align at 5.1.57. API, Cloud, Browser, Web and Landing production builds pass; API regression passes 36/36; regression 33 verifies 35/35 Prisma models, 490 unique role/surface rows, four scoped UAT-045 citations and retained BLOCKED statuses. PHDK coherence is 52/52.
 
-UAT-046 passes as a source/evidence mapping check. It records no new persistence behavior and does not expand exact-source UAT-045. `git diff --check` passes. PR #151 is open with a clean merge state, based on the verified main commit above. GitHub reports no hosted checks or review decision; main is unprotected. The prior-delivery completion gate passes against verified main 5.1.56. The Landing build has its existing >500 kB main-chunk advisory; both browser-facing builds complete successfully.
+UAT-046 passes as a source/evidence mapping check. It records no new persistence behavior and does not expand exact-source UAT-045. `git diff --check` passes. PR [#151](https://github.com/tuyoisaza/keledon/pull/151) merged by squash at `12bef77c2aaaa16e9c607a003abcc41b4f5c2d22`. The remote main SHA and tree match the tested candidate; all five package/lock roots and Browser renderer read 5.1.57. The post-merge PHDK completion gate passes. GitHub reported no hosted checks or review decision; main is unprotected. The Landing build has its existing >500 kB main-chunk advisory; both browser-facing builds complete successfully.
 
 **Scoped result: PASS for source integrity and candidate builds; whole Auto remains PARTIALLY DELIVERED.** Exhaustive persisted CRUD and delete/reindex concurrency, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Customer integration acceptance remains tenant-specific. No deployment is claimed.
+
+---
+## Current Check — candidate 5.1.58 Cloud device tenant binding (2026-10-15)
+
+Candidate 5.1.58 aligns all five application package/lock roots and Browser renderer. Cloud device registration and pairing now match the API's stored-binding and proof-consumption contract; public pair errors are generic. Full checks pass: API regression 36/36, Cloud regression 17/17, API/Cloud/Browser/Web/Landing production builds, PHDK coherence 52/52, 5.1.58 version alignment across all five package/lock roots and Browser renderer, and `git diff --check`. Cloud regression 42 covers generic public pairing errors. The existing Landing bundle-size advisory remains. The prior-delivery completion gate passed after PR #151 merged, verifying main 5.1.57 before this candidate version bump. Candidate PR and remote readback are pending.
+
+UAT-047 is source-level only. Live persisted device pairing, native device/audio and the exhaustive model-operation matrix remain open; whole PHDK Auto remains PARTIALLY DELIVERED.
 
 ---

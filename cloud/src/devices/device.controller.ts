@@ -45,8 +45,8 @@ export class DeviceController {
         ...body,
       });
       return result;
-    } catch (error) {
-      return { error: error instanceof Error ? error.message : String(error) };
+    } catch {
+      return { error: 'Invalid pairing request or expired proof' };
     }
   }
 

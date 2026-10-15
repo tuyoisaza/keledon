@@ -1,0 +1,95 @@
+{
+  "name": "keledon-desktop-agent",
+  "version": "5.1.58",
+  "description": "KELEDON Desktop Agent - Electron runtime with AutoBrowse",
+  "author": "Keledon Team <team@keledon.com>",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "npm run build && electron-forge start",
+    "build": "tsc",
+    "lint": "eslint \"src/**/*.ts\" --max-warnings=0",
+    "prebuild": "node scripts/sync-renderer-version.js",
+    "start": "electron .",
+    "prestart": "node scripts/sync-renderer-version.js",
+    "package": "npm run build && electron-forge make",
+    "make": "electron-forge make",
+    "premake": "node scripts/sync-renderer-version.js",
+    "predist": "node scripts/clean-dist.js",
+    "dist": "npm run build && electron-builder --win nsis",
+    "dist:dir": "npm run build && electron-builder --win --dir",
+    "dist:zip": "npm run build && electron-builder --win zip"
+  },
+  "dependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "electron-log": "^5.1.0",
+    "electron-updater": "^6.1.7",
+    "playwright-core": "^1.41.0",
+    "socket.io-client": "^4.8.3"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^8.0.1",
+    "@electron-forge/maker-squirrel": "^8.0.1",
+    "@electron-forge/maker-zip": "^8.0.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^8.0.1",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^20.11.0",
+    "electron": "^44.7.0",
+    "electron-builder": "^26.15.3",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^8.71.2"
+  },
+  "config": {
+    "forge": "./forge.config.js"
+  },
+  "build": {
+    "appId": "com.keledon.browser",
+    "productName": "KELEDON Browser",
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets"
+    },
+    "files": [
+      "dist/**/*",
+      "!dist/*.exe",
+      "!dist/*.blockmap",
+      "!dist/*.yml",
+      "!dist/win-unpacked/**",
+      "!dist/packaged/**",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "win": {
+      "executableName": "keledon-browser",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "artifactName": "KELEDON.Browser.Setup.exe",
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "KELEDON Browser",
+      "include": "nsis/installer.nsh",
+      "uninstallDisplayName": "KELEDON Browser"
+    },
+    "protocols": [
+      {
+        "name": "KELEDON Protocol",
+        "schemes": [
+          "keledon"
+        ]
+      }
+    ]
+  }
+}

@@ -232,7 +232,7 @@ Goal: complete the four owner-confirmed fronts and applicable PHDK conformity.
 Prior run `20261013-1900-phdk-auto` is retained as immutable history and evidence. Current run artifacts live in each numbered stage folder.
 ## Current Auto continuation — candidate 5.1.57 CRUD evidence reconciliation (2026-10-14)
 
-Based on verified remote 5.1.56 `main` SHA `7b535964b91815b964fd7c1ddc121a994883ebb8`, tree `02c4ce60ad04c66847f747ace268cb2d2a0eaeb0`. Candidate 5.1.57 aligns five application package/lock roots and Browser renderer. UAT-046 and regression 33 map four Company/User API rows to UAT-045 evidence while preserving BLOCKED for incomplete operation coverage. No runtime behavior changed. API 36/36, five builds, coherence 52/52 and diff check pass. PR #151 is clean and open; merge is pending. Whole Auto remains partial.
+Based on verified remote 5.1.56 `main` SHA `7b535964b91815b964fd7c1ddc121a994883ebb8`, tree `02c4ce60ad04c66847f747ace268cb2d2a0eaeb0`. Candidate 5.1.57 aligns five application package/lock roots and Browser renderer. UAT-046 and regression 33 map four Company/User API rows to UAT-045 evidence while preserving BLOCKED for incomplete operation coverage. No runtime behavior changed. API 36/36, five builds, coherence 52/52 and diff check pass. PR #151 squash-merged at `12bef77c2aaaa16e9c607a003abcc41b4f5c2d22`; remote tree/version and completion gate pass. Whole Auto remains partial.
 
 | Stage | Status | Current evidence |
 |---|---|---|
@@ -244,6 +244,24 @@ Based on verified remote 5.1.56 `main` SHA `7b535964b91815b964fd7c1ddc121a994883
 | 60 UAT Fix | PASS FOR FINDING | Stale evidence wording corrected; full CRUD remains open. |
 | 65 SEO / 67 AEO-GEO | REUSED / NOT AFFECTED | Deployed measures remain open. |
 | 70 Check / 80 Remediation | PASS FOR SOURCE SLICE | API 36/36, five builds, version alignment, coherence and diff check. |
-| 90 Delivery | PR OPEN / MERGE PENDING | PR #151 is clean; exact head/tree and base main recorded in the check report. No hosted checks/review; main unprotected. |
+| 90 Delivery | PASS / REMOTE VERIFIED | PR #151 merged; remote tree/version match; completion gate passes. No hosted checks/review; main unprotected. |
 
 ---
+
+## Current Auto continuation — candidate 5.1.58 Cloud device tenant binding (2026-10-15)
+
+Based on verified main after PR #151 merge `12bef77c2aaaa16e9c607a003abcc41b4f5c2d22`. Candidate 5.1.58 aligns five package/lock roots and Browser renderer. Cloud now matches API's DB actor/company registration binding, complete stored pairing prerequisites and conditional single-use proof update; public errors are generic. UAT-047 passes source regressions only; live DB/device acceptance remains open.
+
+| Stage | Status | Current evidence |
+|---|---|---|
+| 00 Preflight | PASS | PHDK 2.50.10; coherence 52/52. |
+| 10 Capture / 20 Plan | REUSED | Four fronts and approved owner policy. |
+| 30 PMO | CONTINUED | Cloud/API device boundary parity. |
+| 40 Integration | PASS FOR SOURCE SLICE | Candidate integration review complete. |
+| 50 UAT | PASS FOR UAT-047 / ACCEPTANCE INCOMPLETE | 47 PASS, 0 BLOCKED, 1 MANUAL. |
+| 60 UAT Fix | PASS FOR FINDING | Registration/pairing parity and public error redaction. |
+| 65 SEO / 67 AEO | REUSED | Deployed public acceptance remains open. |
+| 70 Check / 80 Remediation | PASS FOR SOURCE SLICE | API/Cloud tests, five builds, alignment, coherence and diff check. |
+| 90 Delivery | IN PROGRESS | PR and exact remote readback pending. |
+
+Whole Auto remains PARTIALLY DELIVERED pending live persisted CRUD/device, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific integrations.

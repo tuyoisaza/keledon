@@ -112,8 +112,10 @@ export class DeviceAccessGuard implements CanActivate {
       )
         return deny();
     }
-    if (handler === 'registerDevice')
+    if (handler === 'registerDevice') {
+      if (!actor.companyId) return deny();
       req.deviceBinding = { userId: actor.id, companyId: actor.companyId };
+    }
     return true;
   }
 }

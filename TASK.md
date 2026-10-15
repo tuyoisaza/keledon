@@ -189,8 +189,14 @@ Delivery update 2026-10-13: PR #54 is merged at `a854ca7634307538305cd9b5ad1f91f
 Continue owner-authorized PHDK Auto in `C:\KELEDON\keledon`, baseline 5.1.24 / `6413d8aed295c18af098ca6a58c6dfbb7503930b`, branch `fix/cloud-eslint-prettier`. Deliver four ordered fronts: baseline/versions/PRs; widget and safe diagnostics; voice→Cloud→Browser→customer-selected CRM; administration/permissions. Enforce ADR-AUTO-008/009 (DB-derived actor/tenant, least privilege, write-only secret replacement, validated tenant-scoped private/local CRM allowlists). Do not claim completion until full applicable Check remediation, current candidate UAT, normal PR delivery/readback and the PHDK completion gate are satisfied. Track unsupported native, persisted-DB and deployed SEO/AEO requirements as explicit blockers. No production data, live provider calls or deployments.
 ## PHDK Auto — 5.1.57 CRUD evidence reconciliation; four fronts continue
 
-UAT-046 ties the four exercised Company/User API role rows to UAT-045's exact persisted outcomes. Regression 33 enforces the evidence references and keeps all four rows BLOCKED until exhaustive operation coverage is done. No runtime behavior or new persistence acceptance changed. Candidate 5.1.57 aligns all five package/lock roots and Browser renderer; API regression 36/36, five builds, PHDK coherence 52/52, and diff check pass. PR [#151](https://github.com/tuyoisaza/keledon/pull/151) is open and clean, based on verified main; no hosted checks/review are configured and main is unprotected. Whole Auto remains **PARTIALLY DELIVERED**.
+UAT-046 ties the four exercised Company/User API role rows to UAT-045's exact persisted outcomes. Regression 33 enforces the evidence references and keeps all four rows BLOCKED until exhaustive operation coverage is done. No runtime behavior or new persistence acceptance changed. Candidate 5.1.57 aligns all five package/lock roots and Browser renderer; API regression 36/36, five builds, PHDK coherence 52/52, and diff check pass. PR [#151](https://github.com/tuyoisaza/keledon/pull/151) squash-merged at `12bef77c2aaaa16e9c607a003abcc41b4f5c2d22`; remote main tree and all versions match the tested candidate; completion gate passes. No hosted checks/review were configured and main is unprotected. Whole Auto remains **PARTIALLY DELIVERED**.
 
-SIGUIENTE PASO: review/merge PR #151 and verify exact remote delivery, then extend persisted acceptance to the next mapped resource operations.
+SIGUIENTE PASO: continue persisted acceptance for the next mapped resource operations from verified main.
 
 ---
+
+## PHDK Auto — candidate 5.1.58 Cloud device tenant binding
+
+Source audit found Cloud registration/pairing weaker than API: it allowed cross-actor machine-ID retries, missing-company registration, unbound pairing and a non-conditional consume of the one-time proof. Cloud now aligns to API and public errors are generic. UAT-047 passes at source level; live DB/device acceptance remains blocked. API regression 36/36, Cloud 17/17, five builds, PHDK 52/52 and diff check pass. Five roots plus Browser renderer are 5.1.58. Candidate PR is pending; whole Auto remains **PARTIALLY DELIVERED**.
+
+SIGUIENTE PASO: deliver the source fix and continue isolated persisted/native acceptance plus the outstanding CRUD/UI/SEO/AEO gates.

@@ -44,7 +44,20 @@ const { DeviceService } = load('devices/device.service.ts');
 async function main() {
   let actor = { id: 'u-a', companyId: 'co-a', teamId: 'team-a', role: 'admin' };
   let pairs = 0,
-    pairedData;
+    pairedData,
+    pairedWhere,
+    registeredDevice = {
+      id: 'device-a',
+      userId: 'u-a',
+      organizationId: 'co-a',
+    },
+    pendingPairDevice = {
+      id: 'pending',
+      userId: 'stored-owner',
+      organizationId: 'co-a',
+      keledonId: 'stored-k',
+      status: 'pending',
+    };
   const prisma = {
     user: { findUnique: async () => actor },
     team: {
@@ -77,23 +90,22 @@ async function main() {
       }),
     },
     device: {
-      findUnique: async ({ where }) => ({
-        id: where.id,
-        userId: where.id === 'device-a' ? 'u-a' : 'u-b',
-        organizationId: where.id === 'device-a' ? 'co-a' : 'co-b',
-        keledonId: 'k-a',
-      }),
-      findFirst: async () => ({
-        id: 'pending',
-        userId: 'stored-owner',
-        organizationId: 'co-a',
-        keledonId: 'stored-k',
-        status: 'pending',
-      }),
-      update: async ({ data }) => {
+      findUnique: async ({ where }) =>
+        where.machineId
+          ? registeredDevice
+          : {
+              id: where.id,
+              userId: where.id === 'device-a' ? 'u-a' : 'u-b',
+              organizationId: where.id === 'device-a' ? 'co-a' : 'co-b',
+              keledonId: 'k-a',
+            },
+      findFirst: async () => pendingPairDevice,
+      create: async ({ data }) => ({ id: data.id, ...data }),
+      update: async ({ where, data }) => {
         pairs++;
         pairedData = data;
-        return { id: 'pending', ...data };
+        pairedWhere = where;
+        return { id: 'pending', ...pendingPairDevice, ...data };
       },
     },
     keledon: {
@@ -414,6 +426,36 @@ async function main() {
   assert.equal(binding.req.deviceBinding.userId, 'stored-owner');
   assert.equal(binding.req.deviceBinding.companyId, 'co-a');
   const service = new DeviceService(prisma);
+  const sameRegistration = await service.registerPendingDevice({
+      device_id: 'untrusted-new-id',
+      machine_id: 'existing-machine',
+      platform: 'windows',
+      name: 'Synthetic device',
+      userId: 'u-a',
+      organizationId: 'co-a',
+    });
+  assert.equal(sameRegistration.device_id, 'device-a');
+  assert.equal(sameRegistration.already_registered, true);
+  await assert.rejects(
+    service.registerPendingDevice({
+      device_id: 'untrusted-new-id',
+      machine_id: 'existing-machine',
+      platform: 'windows',
+      name: 'Synthetic device',
+      userId: 'u-b',
+      organizationId: 'co-b',
+    }),
+    /Device access denied/,
+    'a different tenant or actor cannot claim an existing machine registration',
+  );
+  const registeredActor = actor;
+  actor = { ...actor, companyId: null };
+  await assert.rejects(
+    run(devices, 'DeviceController', 'registerDevice', {}, {}, {}, 'POST').result,
+    Denied,
+    'an actor without a company cannot register a pending device',
+  );
+  actor = registeredActor;
   await service.pairDevice({
     pairing_code: 'proof',
     userId: 'forged',
@@ -425,6 +467,23 @@ async function main() {
   assert.equal(pairedData.organizationId, 'co-a');
   assert.equal(pairedData.keledonId, 'stored-k');
   assert.match(pairedData.authToken, /^keledon_[a-f0-9]{64}$/);
+  assert.equal(pairedWhere.status, 'pending');
+  assert.equal(pairedWhere.pairingCode, 'PROOF');
+  assert.ok(pairedWhere.pairingCodeExpiresAt.gte instanceof Date);
+  const pairCount = pairs;
+  pendingPairDevice = { ...pendingPairDevice, organizationId: null };
+  await assert.rejects(
+    service.pairDevice({ pairing_code: 'proof' }),
+    /authorized stored binding/,
+    'an unbound pending device cannot be paired',
+  );
+  pendingPairDevice = null;
+  await assert.rejects(
+    service.pairDevice({ pairing_code: 'proof' }),
+    /Invalid or expired pairing code/,
+    'an expired or consumed pairing proof cannot be reused',
+  );
+  assert.equal(pairs, pairCount, 'denied pair attempts do not mutate the device');
   actor = null;
   await assert.rejects(run(scope, 'FlowController', 'findAll').result, Denied);
   await assert.rejects(

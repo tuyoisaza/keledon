@@ -1,5 +1,13 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.58 — Cloud device tenant-binding parity (2026-10-15)
+
+UAT-047 passes in source regressions. Cloud now checks that a reused machine registration belongs to the same DB-derived user and company, refuses registration for an actor without a company, requires the stored user/company/Keledon binding before pairing, and updates only a still-pending row with the same pairing code and unexpired deadline. Public pairing responses suppress internal exception details. API regression 21 verifies the existing stricter counterpart; Cloud regressions 21 and 42 exercise the Cloud contract.
+
+This does not prove persisted behavior on a live database or device, and does not claim an observed concurrency run. Live pairing and persistence remain BLOCKED. Candidate tally is **47 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**; native device/audio remains MANUAL.
+
+SIGUIENTE PASO: retest a synthetic Cloud pairing against disposable PostgreSQL and a supported native device host when available.
+
 ## Candidate 5.1.57 — map persisted evidence without overstating coverage (2026-10-14)
 
 UAT-046 passes in regression 33. The four Company/User API rows for admin and superadmin now cite only the outcomes actually exercised by UAT-045; regression enforces those citations and confirms all four rows remain BLOCKED until exhaustive model-role-operation testing is complete. This is a documentation/test-integrity acceptance only: it adds no runtime or new database behavior.

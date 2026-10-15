@@ -1,5 +1,13 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.58 addition — Cloud device tenant binding (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-047 | US-002 / device owner and Cloud API | Exercise the paired-device service, public controller error projection and authenticated registration guard with isolated synthetic fixtures. | A machine registration is reusable only by its persisted actor/company; actor-less tenant registrations and unbound devices cannot pair; pairing consumes only the still-pending matching unexpired proof; public errors reveal no internal detail. | Cloud/API source regressions. | PASS, source scope: Cloud regression 21 and 42 verify binding, expiry/status/code predicates and redaction; API regression 21 retains the reference binding behavior. Live DB/device pairing remains BLOCKED. |
+
+Candidate total: **47 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-047 is source-level only; persisted pairing, live device behavior and native device/audio remain open, alongside broad accessibility/localization and deployed SEO/AEO.
+
 ## Candidate 5.1.57 addition — link persisted evidence to CRUD rows (2026-10-14)
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

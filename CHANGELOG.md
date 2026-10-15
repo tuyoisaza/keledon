@@ -1,3 +1,17 @@
+## v5.1.58 — 2026-10-15 (align Cloud device pairing with tenant binding)
+
+- Require Cloud device registration retries to match the DB-derived user and company already bound to the machine.
+- Deny device registration when the current DB actor has no company.
+- Require complete stored tenant/device bindings before Cloud pairing; atomically consume only a still-pending, matching, unexpired code.
+- Return a generic public pairing error so database/internal exception details are not disclosed.
+- Add focused Cloud regressions and map their scoped source evidence while keeping live device/persistence acceptance BLOCKED.
+- Align all five application package/lock roots and Browser renderer at 5.1.58.
+
+### Verification
+- Cloud device binding/registration/pairing regressions and API counterpart regressions pass; full suite/build/coherence results are recorded in the candidate check report.
+- No live DB, device, pairing code, vendor or customer endpoint is used by UAT-047.
+- PHDK Auto remains partial; live persisted device acceptance and native device/audio remain open.
+
 ## v5.1.57 — 2026-10-14 (trace persisted UAT in the CRUD matrix)
 
 - Link the four exercised Company/User API role rows to UAT-045 without claiming exhaustive persistence coverage.
