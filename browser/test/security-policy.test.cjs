@@ -1,8 +1,10 @@
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const {
   isAllowedVendorTabUrl,
+  isAllowedVendorNavigation,
   isAllowedConfiguredVendorUrl,
   isAllowedVendorUrl,
   isTrustedAppRendererUrl,
@@ -56,6 +58,22 @@ test('tenant vendor allowlists permit configured private CRM origins and block r
     getAllowedVendorOrigins({ baseUrl: 'https://crm.example.test/login', allowedOrigins: ['http://127.0.0.1:8080', 'javascript:alert(1)', 'https://evil.example.test/path'] }),
     ['https://crm.example.test', 'http://127.0.0.1:8080'],
   );
+});
+
+test('tenant vendor frame navigation permits only configured origins and inherited blank frames', () => {
+  const allowed = ['http://192.168.10.20:8080', 'https://crm.example.test'];
+  assert.equal(isAllowedVendorNavigation('http://192.168.10.20:8080/calls', allowed), true);
+  assert.equal(isAllowedVendorNavigation('about:blank', allowed), true);
+  assert.equal(isAllowedVendorNavigation('http://169.254.169.254/latest/meta-data', allowed), false);
+  assert.equal(isAllowedVendorNavigation('https://external.example.test/frame', allowed), false);
+  assert.equal(isAllowedVendorNavigation('file:///etc/passwd', allowed), false);
+});
+
+test('frame and IPC navigation entry points both enforce the tenant scope', () => {
+  const tabManager = fs.readFileSync(path.resolve('src/tab-manager.ts'), 'utf8');
+  const ipcHandlers = fs.readFileSync(path.resolve('src/ipc-handlers.ts'), 'utf8');
+  assert.match(tabManager, /on\('will-frame-navigate',[\s\S]*guardVendorNavigation\(event, event\.url\)/);
+  assert.match(ipcHandlers, /isAllowedVendorNavigation\(url, tab\.allowedOrigins\)/);
 });
 
 test('the executor can create an empty, restricted tab before vendor selection', () => {

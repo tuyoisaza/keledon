@@ -1,5 +1,13 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Current candidate 5.1.41 — tenant-scoped CRM frame navigation
+
+| Case | Story / actor | Acceptance / steps | Result and evidence |
+|---|---|---|---|
+| UAT-037 | US-003 / tenant administrator configuring a private CRM | Verify a configured private HTTP(S) origin remains usable; an unconfigured origin including a metadata-service address, file URL, or embedded credentials is denied; frame redirects and the trusted navigation IPC use the same tenant allowlist; `about:blank` inherits its parent origin. | PASS on exact candidate `718ce3d4cf9c4e51b71ec163e9749307997d85d2` (tree `14e5c085771a1e556692991fd1724e747b164ee7`), offline Browser policy/wiring tests 8/8 and TypeScript build; no real CRM, network request, DB, or device used. Evidence: `50-uat/evidence/uat-vendor-frame-scope-5.1.41.json`; test `browser/test/security-policy.test.cjs`; code `browser/src/security-policy.ts`, `browser/src/tab-manager.ts`, `browser/src/ipc-handlers.ts`. |
+
+The selected per-customer CRM policy is private destinations only when explicitly configured, URL-validated, and allowlisted within that tenant. Whole Auto remains partial: disposable PostgreSQL/identities, persisted CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO, and live customer-specific acceptance remain open.
+
 ## Current candidate 5.1.40 — diagnostics and Knowledge role acceptance
 
 | Case | Story / actor | Acceptance / steps | Result and evidence |

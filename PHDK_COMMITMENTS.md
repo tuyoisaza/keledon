@@ -1,5 +1,22 @@
 # Commitment ledger
 
+## Active run update — 5.1.41 vendor-origin navigation (2026-10-14)
+
+The owner-confirmed four-front KELEDON portfolio remains active in this order: CMT-001 baseline/version/PR reconciliation; CMT-002 diagnostics widget and diagnostics; CMT-003 voice→Cloud→Browser→customer-selected CRM; CMT-004 administration and permissions. Owner-approved policy allows client-configured private HTTP(S) CRM origins only after URL validation and per-tenant allowlisting. It does not establish live client connectivity.
+
+Source base is verified `main` `aed26d6641950fb3d4f40e64fee459fb013c544a` / 5.1.40. Candidate source `718ce3d4cf9c4e51b71ec163e9749307997d85d2` / tree `14e5c085771a1e556692991fd1724e747b164ee7` is 5.1.41 across all five package/lock roots and Browser renderer. It applies allowlisting to Electron frame navigations and the trusted navigation IPC. API/Cloud regressions 36/36 and 16/16; Browser full offline suite 35/35, Web UAT 4/4, diagnostics 19/19; all five builds and PHDK coherence 52/52 pass. PR #122 delivered the preceding UAT candidate and is remotely verified.
+
+| Commitment | Current candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 — baseline, versions, PRs | PR #122 merge/readback verified; source candidate 5.1.41 version-aligned. | Candidate source PR, merge and exact remote readback are pending. |
+| CMT-002 — widget and safe diagnostics | Web diagnostics 19/19 and exact-source UAT-036 pass on 5.1.41; responsive/localized baseline journeys pass in local fixtures. | Native Windows device/audio and broad active-route/accessibility acceptance remain open. |
+| CMT-003 — voice → Cloud → Browser → CRM per client | Client-selected providers preserved; private origins are validated and per-tenant allowlisted in API/Cloud/Browser. Frame, redirect and IPC navigation scope now shares that allowlist. | No CRM is universal or configured here; live acceptance is per client after its own provider setup. No private destination was contacted. |
+| CMT-004 — administration and permissions | Approved least-privilege and server-derived tenant policy retained; API/Cloud regression 36/36 and 16/16; 35-model drift and 168 core-row checks remain source-level only. | Safe DB identities, disposable PostgreSQL migrations/persistence, exhaustive model×role×tenant×surface×operation acceptance remain open. |
+
+Overall PHDK Auto remains **PARTIALLY DELIVERED**. No database, customer data, provider endpoint, private network destination, or deployment was used.
+
+---
+
 ## Active run update — 5.1.38 source delivery (2026-10-14)
 
 Verified base is `main` `746c5669ab0f9f39645ed27d99d2029dffa89ed1` / 5.1.37; Cloud escalation parity candidate `5d1b585e8b3a96865bd50494db7315de7281916b` is merged by PR #113 at `45b9031b9d3261a98e928cceb6fb51e73e21421f`. PHDK evidence PR #114 merged at `3222021e4e800ca1079d9752b18849f62165dd73`; remote main agrees. All five app package/lock roots and Browser renderer are 5.1.38. API build/regression 35/35; Cloud build/regression 15/15 and focused changed-file ESLint 0/0; Browser/Web/Landing builds, Web/Landing typechecks, Web diagnostics 19/19, exact-source Web UAT 2/2, Web/Landing SEO 1/1 each and PHDK coherence 52/52 pass. Active source inventory: 1,163 files, zero at/above 600 lines.

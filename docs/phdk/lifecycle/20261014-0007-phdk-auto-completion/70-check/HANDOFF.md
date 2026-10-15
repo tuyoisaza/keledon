@@ -1,10 +1,16 @@
 # Check handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.41 — tenant vendor navigation scope (UAT-037)
+
+The prior vendor scope covered top-level UI navigation and redirects, but missed child-frame navigation and the trusted programmatic `tabs:navigate` IPC. Candidate source `718ce3d4cf9c4e51b71ec163e9749307997d85d2` applies the validated tenant-origin allowlist to both paths while preserving configured private HTTP(S) destinations and inherited `about:blank`. Browser build and policy/wiring tests pass; API/Cloud vendor policy and guard regressions pass. Full integrated checks pass as recorded in the candidate Check snapshot. No private network request was made. Overall Auto acceptance remains partial.
+
 ## Candidate 5.1.40 — full local Web UAT revalidation (UAT-036)
 
 The combined Web UAT command passes 4/4 browser test files at exact test commit `c9ff85f4094f60491def1bc3680b8758ac11dde6` (tree `c788d3e3323215a39e977f9a39a237b35dc05536`), including 17 logged baseline production-SPA journeys, Device, diagnostics and Knowledge manager roles. An evidence-directory override prevented writes to the pre-existing shared root; 21 generated artifacts were copied into `../50-uat/evidence/uat-web-suite-5.1.40-source-c9ff85f4/`. All API fixtures are synthetic and external traffic is blocked. This does not prove database-backed authorization, native device/audio, deployed behavior or broad a11y conformance.
 
-Status: **LOCAL WEB UAT PASS / TEST DELIVERY PENDING / WHOLE ACCEPTANCE PARTIAL**.
+PR [#122](https://github.com/tuyoisaza/keledon/pull/122) delivered this suite at verified remote `main` `aed26d6641950fb3d4f40e64fee459fb013c544a`; fetched `origin/main` and `git ls-remote` agree, and PR-head/merge trees match. GitHub reported no hosted checks or review decision. Readback: `../90-delivery/PHDK_DELIVERY_EVIDENCE-UAT036-post-merge-122.json`.
+
+Status: **LOCAL WEB UAT PASS / TEST DELIVERED / WHOLE ACCEPTANCE PARTIAL**.
 
 ---
 

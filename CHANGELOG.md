@@ -1,3 +1,18 @@
+## v5.1.41 — 2026-10-14 (scope vendor frame navigation by tenant)
+
+### Changed
+- Enforce the configured tenant vendor-origin allowlist for Electron frame navigations, redirects, and the trusted `tabs:navigate` IPC; allow `about:blank` frames to inherit the already-scoped parent origin.
+- Keep explicitly configured private HTTP(S) CRM origins available to that tenant while rejecting unconfigured origins, metadata-service addresses, credentials, and non-web schemes from frame navigation.
+- Record the owner-approved client-specific private-destination policy and the PR #122 UAT-036 remote readback in the active PHDK Auto artifacts.
+- Align all five application package/lock roots and the Browser renderer at 5.1.41.
+
+### Verification
+- API/Cloud regressions pass 36/36 and 16/16; all five product builds pass; Web typecheck, UAT (4/4 files), diagnostics (19/19) and SEO pass; Browser build and offline suite pass 35/35; Landing SEO passes; PHDK coherence is 52/52.
+- Browser ESLint could not start: the installed ESLint 10 requires `eslint.config.*`, while this package has no flat config. No lint result is claimed.
+
+### Migration / limitations
+- No database migration is required. Real private CRM reachability remains tenant/customer-specific and was not exercised; PostgreSQL identities/persistence, native device/audio, broad accessibility/localization, deployed SEO/AEO, and full CRUD matrix acceptance remain open.
+
 ## v5.1.40 — 2026-10-14 (align protected diagnostics route roles)
 
 - Make protected routes support explicit role allowlists in addition to minimum-role checks.

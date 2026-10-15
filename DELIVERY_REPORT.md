@@ -1,3 +1,19 @@
+## Current delivery — candidate 5.1.41 (2026-10-14)
+
+Repository `tuyoisaza/keledon`; target `main`; source candidate `718ce3d4cf9c4e51b71ec163e9749307997d85d2`, based on verified main `aed26d6641950fb3d4f40e64fee459fb013c544a`. Product version 5.1.41. PHDK 2.50.10 coherence 52/52. Source commit `v5.1.41 fix(browser): enforce tenant vendor navigation scope` adds tenant-origin enforcement to Electron frame navigation and trusted programmatic navigation IPC. Exact-source UAT-036 passes 4/4 browser test files; UAT-037 policy/wiring tests pass 8/8; Browser full offline suite 35/35; API/Cloud regressions 36/36 and 16/16; all builds, Web diagnostics, Web/Landing SEO pass.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | All five app package/lock roots and Browser renderer are 5.1.41; changelog updated. |
+| COMMIT_PREFIX | PASS | Source commit begins `v5.1.41`; candidate SHA `718ce3d4cf9c4e51b71ec163e9749307997d85d2`. |
+| PUSH_AND_PR | BLOCKED / PENDING | Branch has not yet been pushed and PR has not yet been opened. |
+| REMOTE_MAIN | BLOCKED / PENDING | No merge/readback for candidate 5.1.41 exists yet. |
+| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | Confirmed four-front scope remains; database/native/deployed/client-specific gates remain open. |
+
+No hosted checks/reviews or deployment are claimed for this candidate. Overall PHDK Auto remains **PARTIALLY DELIVERED**. Latest lifecycle evidence is in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/`.
+
+---
+
 ## Verified matrix reconciliation — PHDK Auto 5.1.35 (2026-10-14)
 
 Docs-only PR [#108](https://github.com/tuyoisaza/keledon/pull/108) reconciled active PHDK records with merged 5.1.35 KnowledgeBase behavior and added KnowledgeBase/KnowledgeDocument role × surface rows. The matrix drift regression now verifies 35/35 Prisma models and 154 unique core rows. The version-prefixed commit was squash-merged at `056e8605097874337c6bc532c006da3a3f772d56`; fresh `origin/main` and `git ls-remote` agree, and the 5.1.35 version remains aligned across all app roots. `node services/api/test/regression/33-crud-model-inventory.test.js`, PHDK coherence 52/52, `git diff --check` and the post-merge completion gate pass. GitHub reported no hosted checks or review decision; `main` is unprotected. ESLint was attempted but excludes this JavaScript test file because it is outside the configured TypeScript project; direct Node execution passes. No product behavior, database, live Qdrant, customer endpoint or deployment was used.
