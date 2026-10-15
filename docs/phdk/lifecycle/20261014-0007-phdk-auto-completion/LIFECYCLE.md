@@ -11,11 +11,11 @@ Candidate source `03ea78968103aa6bc6290ed0681b1c1ea345872a` / 5.1.52 is based on
 | 60 UAT Fix | SOURCE COMPLETE / QDRANT BLOCKED | The session allowlist mismatch is fixed in both backends; live vector cleanup requires an isolated Qdrant fixture. |
 | 65 SEO / 67 AEO-GEO | SOURCE PASS / DEPLOYED MEASUREMENT OPEN | Published crawler, Search Console and answer-engine measurements unavailable. |
 | 70 Check | SOURCE PASS / WHOLE ACCEPTANCE PARTIAL | API/Cloud 36/16 regressions, five builds, scoped lint/typecheck, Web UAT 4/4, diagnostics 19/19, SEO 1/1 and last coherence 52/52 pass. |
-| 90 Delivery | IN PROGRESS | Versioned source commit `03ea7896`; PR #142 awaits push/update, merge and remote-main readback. |
+| 90 Delivery | PASS — SOURCE MERGED / REMOTE VERIFIED | PR #142 squash-merged at `838931bd0d63f63f4a574ec9b660a12cc4ba5777`; remote tree matches the PR head and all six version reads are 5.1.52. |
 
 Whole Auto remains **PARTIALLY DELIVERED**. Open evidence includes Qdrant-dependent Knowledge deletion and concurrency, native Electron pairing/audio, full operation coverage across 35 Prisma models, broader accessibility/localization, deployed SEO/AEO, and customer-specific call/CRM acceptance. No customer system or production database was contacted.
 
-SIGUIENTE PASO: publish and merge PR #142 through the normal review path, read back remote `main`, then continue the open environment and coverage acceptance gates.
+SIGUIENTE PASO: continue the Qdrant-dependent delete, full model coverage, native and deployed-measurement gates; keep PHDK Auto PARTIALLY DELIVERED until they pass.
 
 ---
 

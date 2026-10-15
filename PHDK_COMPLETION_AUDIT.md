@@ -1,6 +1,6 @@
-## Current Auto completion audit — 5.1.52 candidate; PR delivery in progress
+## Current Auto completion audit — 5.1.52 source merged; whole acceptance partial
 
-Source commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` on `docs/phdk-auto-db-uat-evidence`, based on verified main `5b7e25512c95737688beea43b2d7172199dfa231`; candidate tree `5bf455943353754355f0a0f3d95e5f576d9dda6a`. All five application package/lock roots and Browser renderer are 5.1.52. PR #142 is being updated with the source and exact-candidate UAT; remote `main` remains 5.1.51, so source delivery is not complete.
+Source commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` was delivered in PR [#142](https://github.com/tuyoisaza/keledon/pull/142), head `880eb10ffb9d0cd94946ab62b5d5554ab29158ce`, squash-merged at verified remote main `838931bd0d63f63f4a574ec9b660a12cc4ba5777`. Remote tree `0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e` matches the PR head tree; fresh `origin/main` and `git ls-remote` agree. All five application roots/locks and Browser renderer are 5.1.52.
 
 Source acceptance: API/Cloud regressions 36/36 and 16/16, all five builds, Browser/Web/Landing lint, Web/Landing typecheck, exact-source synthetic Web UAT 4/4, diagnostics 19/19, and Web/Landing SEO 1/1 pass. Exact-candidate PostgreSQL session create/update/readback passes; obsolete and tenant-changing fields return 403. Current tally is 39 PASS, 1 BLOCKED (Qdrant-dependent Knowledge deletion), 1 MANUAL (native device/audio). Whole Auto acceptance remains partial for exhaustive 35-model coverage, Qdrant/concurrency, broad accessibility/localization, deployed SEO/AEO and tenant-specific call/CRM acceptance. No customer integration or production was contacted.
 
@@ -8,9 +8,11 @@ Source acceptance: API/Cloud regressions 36/36 and 16/16, all five builds, Brows
 |---|---|---|
 | VERSION_BUMP | PASS | All five app roots/locks and Browser renderer are 5.1.52, fresh over verified 5.1.51 main. |
 | COMMIT_PREFIX | PASS | Source commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` begins `v5.1.52:`. |
-| PUSH_AND_PR | IN PROGRESS | PR #142 is open; 5.1.52 candidate publication and merge are pending. |
-| REMOTE_MAIN | BLOCKED / PENDING | Remote main remains `5b7e25512c95737688beea43b2d7172199dfa231` / 5.1.51. |
-| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | Source checks pass; whole-product/environment gates remain open. |
+| PUSH_AND_PR | PASS | PR #142 was pushed and squash-merged CLEAN. GitHub reported no hosted checks or review decision; main is not protected. |
+| REMOTE_MAIN | PASS | Remote SHA `838931bd0d63f63f4a574ec9b660a12cc4ba5777`; matching PR tree and all six version reads are 5.1.52. |
+| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | Source checks and scoped UAT pass; Qdrant, full model, native and deployed acceptance remain open. |
+
+The mechanical completion gate returns **BLOCKED** for the Qdrant-dependent Knowledge deletion and whole Auto acceptance. The current formal UAT tally is 39 PASS, 1 BLOCKED, 1 MANUAL. No deployment is claimed.
 
 ---
 

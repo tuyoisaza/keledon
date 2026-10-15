@@ -1,10 +1,10 @@
-## Current PHDK Auto — 5.1.51 source delivered; whole Auto partial
+## Current PHDK Auto — 5.1.52 source delivered; whole Auto partial
 
-PHDK 2.50.10 coherence passes 52/52. Candidate `09ef2497957c381a3af7428af393b65b811c2fe6` on `fix/phdk-api-lint-zero-5-1-51` is based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`; all app package/lock roots and Browser renderer are 5.1.51. API lint is 0 warnings/0 errors; API/Cloud regressions 36/36 and 16/16; Browser offline 27/27; all five builds; Web/Landing typecheck/lint; exact-source synthetic UAT 4/4; diagnostics 19/19; Web/Landing SEO 1/1 each; coherence 52/52 pass. Web/Landing builds retain the existing large-chunk warning.
+PHDK 2.50.10 coherence passes 52/52. Session metadata CRUD guards are aligned across API and Cloud in 5.1.52. API/Cloud regressions 36/36 and 16/16; all five builds; Browser/Web/Landing lint; Web/Landing typecheck; exact-source synthetic Web UAT 4/4; diagnostics 19/19; Web/Landing SEO 1/1 each pass. Web/Landing builds retain the existing large-chunk warning.
 
-Source cleanup removes fabricated tenant flow/integration success and records subagent run outcomes. PR #140 merged by squash at verified remote SHA `156ae2467c9ed6f73311ec45cae933417b1e5f32`; remote tree and versions match. No customer endpoint, DB, device or deployment was used. Whole Auto remains PARTIALLY DELIVERED (37 PASS, 2 BLOCKED, 1 MANUAL).
+Candidate source commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` was delivered by [PR #142](https://github.com/tuyoisaza/keledon/pull/142), squash-merged at `838931bd0d63f63f4a574ec9b660a12cc4ba5777`. Fresh remote `main` matches `git ls-remote`; tree `0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e` matches the PR head, and all six version reads are 5.1.52. Exact-candidate loopback PostgreSQL session metadata update/readback passed; legacy `summary` and team reassignment returned 403. Whole Auto remains PARTIALLY DELIVERED (39 PASS, 1 BLOCKED, 1 MANUAL): Qdrant-dependent Knowledge deletion, native device/audio, full model/operation coverage, broader accessibility/localization, deployed SEO/AEO and tenant-specific call/CRM acceptance remain open.
 
-SIGUIENTE PASO: continuar la aceptación pendiente de Auto contra objetivos aislados de DB/nativo y evidencia SEO/AEO desplegada; mantener PARTIALLY DELIVERED hasta pasar el gate completo.
+SIGUIENTE PASO: provide an isolated Qdrant fixture and continue the remaining model, native, accessibility, deployed-discovery and tenant-specific acceptance; keep PARTIALLY DELIVERED until all confirmed gates pass.
 
 ---
 

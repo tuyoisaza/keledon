@@ -1,18 +1,18 @@
-## Current delivery — 5.1.51 source merged and remotely verified; Auto partial
+## Current delivery — 5.1.52 source merged and remotely verified; Auto partial
 
-Repository `tuyoisaza/keledon`; target `main`; source branch `fix/phdk-api-lint-zero-5-1-51`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`. Source commit `09ef2497957c381a3af7428af393b65b811c2fe6`, tree `fdb14b554ad46b1908b2041bfa781bb15bd0a716`; subject has the required `v5.1.51:` prefix. PR [#140](https://github.com/tuyoisaza/keledon/pull/140) squash-merged at `156ae2467c9ed6f73311ec45cae933417b1e5f32`; remote main tree `caaf5c0270f638113528c95ce50fb37173c5efe6` matches the PR candidate. `origin/main` and `git ls-remote` agree. Five app package/lock roots and Browser renderer read back as 5.1.51. Post-merge evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.51-post-merge-140.json`.
+Repository `tuyoisaza/keledon`; target `main`; candidate source commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` on `docs/phdk-auto-db-uat-evidence`, based on verified main `5b7e25512c95737688beea43b2d7172199dfa231`. PR [#142](https://github.com/tuyoisaza/keledon/pull/142), head `880eb10ffb9d0cd94946ab62b5d5554ab29158ce`, squash-merged at `838931bd0d63f63f4a574ec9b660a12cc4ba5777`; remote tree `0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e` matches the PR head tree. Fresh `origin/main` and `git ls-remote` agree; five app roots/locks and Browser renderer read 5.1.52. The squash subject carries the required `v5.1.52:` prefix.
 
 | Gate | Status | Evidence |
 |---|---|---|
-| VERSION_BUMP | PASS | Fresh 5.1.51 roots and renderer; changelog updated. |
-| COMMIT_PREFIX | PASS | `v5.1.51: close API lint and fail closed on unsupported integrations`. |
-| PUSH_AND_PR | PASS | Branch pushed; PR #140 squash-merged CLEAN. No hosted checks or review decision reported; main is not protected. |
-| REMOTE_MAIN | PASS | `origin/main` and `git ls-remote` agree at `156ae2467c9ed6f73311ec45cae933417b1e5f32`; tree `caaf5c0270f638113528c95ce50fb37173c5efe6` and all six version reads match 5.1.51. |
-| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | API 0-warning lint; API/Cloud 36/16; Browser 27; all builds/typechecks, exact-source UAT, diagnostics, SEO and PHDK coherence pass. Whole Auto remains 37 PASS, 2 BLOCKED, 1 MANUAL. |
+| VERSION_BUMP | PASS | All five app roots/locks and Browser renderer are 5.1.52 over verified 5.1.51 main. |
+| COMMIT_PREFIX | PASS | PR squash subject `v5.1.52: fix session metadata CRUD and record DB UAT`. |
+| PUSH_AND_PR | PASS | PR #142 pushed and squash-merged CLEAN. GitHub reported no hosted checks or review decision; main is not protected. |
+| REMOTE_MAIN | PASS | `origin/main` and `git ls-remote` agree at `838931bd0d63f63f4a574ec9b660a12cc4ba5777`; tree `0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e` matches PR head and all six version reads are 5.1.52. |
+| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | API/Cloud 36/16, five builds, Browser/Web/Landing lint, Web/Landing typecheck, Web UAT 4/4, diagnostics 19/19, SEO 1/1 each, PHDK coherence 52/52, and exact-candidate DB session CRUD pass. Whole Auto remains 39 PASS, 1 BLOCKED, 1 MANUAL. |
 
-No deployment, database, customer endpoint/data, private CRM or native device/audio was used. GitHub showed no open PR before publication; no hosted check/review decision is claimed. Live client integrations remain customer-specific. Web/Landing builds show the existing chunk-size warning.
+No deployment or customer system was used. PostgreSQL evidence used disposable synthetic data on loopback. Live client integrations remain customer-specific. Web/Landing builds show the existing chunk-size warning.
 
-The deterministic completion gate returns BLOCKED solely because whole Auto acceptance remains open. No deployment, database, customer endpoint/data, private CRM or native device/audio was used.
+The deterministic completion gate remains BLOCKED by whole Auto acceptance and the Qdrant-dependent Knowledge deletion case. No deployment is claimed.
 
 SIGUIENTE PASO: continue only the outstanding PHDK Auto acceptance; obtain isolated DB/native evidence and deployed SEO/AEO measurements, then re-run the full completion audit. Keep client call/CRM acceptance specific to each tenant.
 

@@ -6,15 +6,15 @@
   "version_file": "services/web/package.json",
   "version_property": "version",
   "tested_source_commit_sha": "03ea78968103aa6bc6290ed0681b1c1ea345872a",
-  "tested_candidate_sha": "03ea78968103aa6bc6290ed0681b1c1ea345872a",
-  "tested_candidate_tree": "5bf455943353754355f0a0f3d95e5f576d9dda6a",
+  "tested_candidate_sha": "880eb10ffb9d0cd94946ab62b5d5554ab29158ce",
+  "tested_candidate_tree": "0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e",
   "pr_url": "https://github.com/tuyoisaza/keledon/pull/142",
   "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/142",
-  "pr_head_sha": "a847a5b5b34b0553d00e3277fe38ce9735b49186",
-  "product_source_merge_sha": "156ae2467c9ed6f73311ec45cae933417b1e5f32",
-  "merged_commit_sha": "5b7e25512c95737688beea43b2d7172199dfa231",
-  "remote_main_sha": "5b7e25512c95737688beea43b2d7172199dfa231",
-  "remote_main_tree": "ccbcf9a5151e574282e89f214fc8bdaafbae6cac",
+  "pr_head_sha": "880eb10ffb9d0cd94946ab62b5d5554ab29158ce",
+  "product_source_merge_sha": "838931bd0d63f63f4a574ec9b660a12cc4ba5777",
+  "merged_commit_sha": "838931bd0d63f63f4a574ec9b660a12cc4ba5777",
+  "remote_main_sha": "838931bd0d63f63f4a574ec9b660a12cc4ba5777",
+  "remote_main_tree": "0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e",
   "git_ls_remote_matches": true,
   "versions": {
     "services_api": "5.1.52",
@@ -25,10 +25,10 @@
     "browser_renderer": "5.1.52"
   },
   "github": {
-    "state": "OPEN",
-    "product_pr_142": "OPEN; 5.1.52 candidate pending merge",
+    "state": "MERGED",
+    "product_pr_142": "MERGED at 838931bd0d63f63f4a574ec9b660a12cc4ba5777",
     "merge_method": "squash",
-    "merge_state": "CLEAN before candidate update",
+    "merge_state": "CLEAN",
     "hosted_checks": [],
     "review_decision": "none reported",
     "main_protection": "branch not protected"
@@ -59,8 +59,8 @@
       "evidence": "Exact candidate commit 03ea78968103aa6bc6290ed0681b1c1ea345872a; built SPA 4/4 with synthetic Company Co APIs and blocked external traffic. Scoped loopback PostgreSQL session create/update/readback passed; legacy summary and team reassignment returned 403."
     },
     "database_uat": {
-      "status": "PASS_SCOPED_WITH_BLOCKED_OPERATION",
-      "evidence": "Disposable PostgreSQL 16.15 loopback evidence reuses 5.1.51 migration/registration/role/tenant/secret results and reruns 5.1.52 session CRUD. KnowledgeBase/Document delete remains blocked because isolated Qdrant is unavailable. No production/customer data."
+      "status": "PASS",
+      "evidence": "Scoped disposable PostgreSQL 16.15 UAT: 5.1.51 baseline migrations, persisted identity, tenant, and secret-projection checks; exact 5.1.52 session create/update/readback and 403 negatives passed. Qdrant-dependent Knowledge delete is tracked separately as blocked."
     },
     "seo": {
       "status": "PASS",
@@ -71,12 +71,16 @@
       "evidence": "Installed PHDK 2.50.10 coherence check: 52/52 static manifest mappings."
     },
     "source_delivery": {
-      "status": "IN_PROGRESS",
-      "evidence": "Versioned candidate commit 03ea7896 is in open PR #142; target main still 5.1.51. Normal merge and remote-main readback remain pending."
+      "status": "PASS",
+      "evidence": "PR #142 squash-merged at 838931bd0d63f63f4a574ec9b660a12cc4ba5777. Fresh origin/main and git ls-remote match; remote tree 0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e matches the PR head tree; all six version reads are 5.1.52."
     },
     "whole_auto_acceptance": {
       "status": "BLOCKED",
       "evidence": "Latest formal tally 39 PASS, 1 BLOCKED (Qdrant-dependent Knowledge delete), 1 MANUAL (native Electron/device/audio). Exhaustive 35-model operation coverage, Qdrant/concurrency, broad accessibility/localization, deployed SEO/AEO and tenant-specific call/CRM acceptance remain open."
+    },
+    "qdrant_delete": {
+      "status": "BLOCKED",
+      "evidence": "KnowledgeBase/KnowledgeDocument deletion could not be exercised because isolated Qdrant was unavailable; no vector data was changed."
     }
   },
   "scope_limitations": [
@@ -88,5 +92,5 @@
     "No customer-specific call/CRM endpoint was selected or contacted; acceptance is per tenant.",
     "Source PR #142 is open and remote main remains 5.1.51; no deployment is claimed."
   ],
-  "overall_status": "SOURCE FIX VALIDATED; DELIVERY IN PROGRESS; PHDK AUTO PARTIALLY DELIVERED"
+  "overall_status": "5.1.52 SOURCE MERGED AND REMOTE VERIFIED; PHDK AUTO PARTIALLY DELIVERED"
 }
