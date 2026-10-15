@@ -221,8 +221,13 @@ assert.equal(
 );
 assert.equal(
   modelRowFor('FeatureFlag', 'superadmin', 'API')[14],
-  'DECISION NEEDED',
-  'unwired feature-flag CRUD is not inferred as an authorized route',
+  'NOT APPLICABLE',
+  'owner-approved dormant feature flags have no active product surface or role grant',
+);
+assert.match(
+  matrix,
+  /FeatureFlag \|.*owner approved dormancy; schema\/service retained without reachable app surface/,
+  'the approved FeatureFlag decision must keep its schema while leaving it unreachable',
 );
 assert.equal(
   modelRowFor('AiPromptDefinition', 'superadmin', 'API')[7],

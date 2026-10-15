@@ -1,5 +1,11 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.70 — UAT-064 owner-approved FeatureFlag dormancy
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-064 | Owner / CMT-004 | Confirm FeatureFlag stays dormant; inspect API/Cloud app-module wiring, route/controller consumers, Web surfaces and the 39-model/546-row CRUD inventory. | Schema/service remain retained; no module, route, UI, caller or role grant is added; 14 model/surface rows are NOT APPLICABLE to the active product; retirement or activation waits for a future owner-approved capability and migration review. | Owner decision plus source inventory regression | PASS for decision and source classification only. No database migration, persistence or runtime activation was tested. |
+
 ## Candidate 5.1.69 — UAT-063 nested relation and tenant company contract
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
