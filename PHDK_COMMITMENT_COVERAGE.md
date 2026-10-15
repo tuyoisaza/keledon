@@ -1,8 +1,21 @@
-## Current Auto candidate — 2026-10-15, 5.1.47 (source validation in progress)
+## Current Auto candidate — 2026-10-14, 5.1.48 (Web alignment)
 
 | Commitment | Current candidate evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | Based on merged 5.1.46 main at `10c57ff44a9d3d09e55023c466d72adefd6d3e66`; five app roots and renderer at 5.1.47. API lint warning debt reduced 135→117. | Commit/PR/readback pending; Web lint and remaining source alignment continue. |
+| CMT-001 | Based on merged 5.1.47 main; five app roots/locks and Browser renderer at 5.1.48. Web full lint falls 119→95 with 0 React Hooks/purity findings. | Commit/PR/readback pending; remaining typed-`any` and Fast Refresh warnings remain visible. |
+| CMT-002 | Browser version/action tests 27/27; Web synthetic journeys 4/4; safe Brain provider indicators and team-switch request guard. | Native Windows device/audio and broad assistive-technology/localization remain. |
+| CMT-003 | Tenant-selected provider status is per-provider and secret-safe; tenant Vendor/private-origin policy unchanged. | Live call/CRM acceptance is client-specific; no private endpoint was accessed. |
+| CMT-004 | API/Cloud regression 36/16; build/typecheck and PHDK coherence 52/52. | Safe DB identities, disposable PostgreSQL/migrations and exhaustive persisted CRUD/resource matrix remain. |
+
+Whole Auto remains **PARTIALLY DELIVERED**. Candidate is not yet committed or merged.
+
+---
+
+## Current Auto delivery — 2026-10-15, 5.1.47 source merged
+
+| Commitment | Current candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | PR #133 merged at `00b1b523e020df9fb5c388d61cbbb1cda8ba9080`; tested tree matches remote. Five app roots and renderer at 5.1.47. API lint warning debt reduced 135→117. | Source delivery verified; Web lint and remaining source alignment continue. |
 | CMT-002 | Browser diagnostics UI/version preserved; API async task failures are now logged. | Native device/audio and broad accessibility/localization remain. |
 | CMT-003 | Tenant Vendor/private-origin policy unchanged; no universal CRM/call provider added. | Live acceptance remains customer-selected. |
 | CMT-004 | API regression 36/36 and build pass; 17 floating promises removed. | Safe DB identities, disposable PostgreSQL/migrations, full persisted CRUD/resource matrix remain. |

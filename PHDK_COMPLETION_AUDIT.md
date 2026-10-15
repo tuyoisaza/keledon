@@ -1,8 +1,16 @@
-## Current Auto completion audit — candidate 5.1.47; whole Auto partial (2026-10-15)
+## Current Auto completion audit — candidate 5.1.48; whole Auto partial (2026-10-14)
+
+Candidate `fix/phdk-web-hooks-5-1-48` is based on verified remote `main` `00b1b523e020df9fb5c388d61cbbb1cda8ba9080` / 5.1.47. All five app roots and Browser renderer are 5.1.48. Web full lint falls from 119 to 95 warnings/0 errors; React Hooks and render-purity findings are zero. Brain credential status now honors provider-specific safe flags and ignores stale tenant responses.
+
+All five builds, Web typecheck, API/Cloud regressions (36/16), Browser tests (27/27), synthetic Web UAT (4/4), diagnostics (19/19), SEO source tests (1/1 each) and PHDK coherence (52/52) pass. This source slice does not close whole Auto: persisted database/migrations and full CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-tenant live call/CRM remain incomplete. Commit, PR and remote readback are pending.
+
+---
+
+## Current Auto completion audit — merged 5.1.47 source; whole Auto partial (2026-10-15)
 
 Candidate branch `fix/phdk-lint-cleanup-5-1-47` is based on verified remote `main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66` / 5.1.46. All five app roots and Browser renderer are 5.1.47. API gateway and background-task promise handling closes 17 floating-promise warnings; full API lint is now 117 warnings/0 errors. API build and regression 36/36 pass.
 
-This source slice does not close whole Auto: Web has 119 existing lint warnings; disposable PostgreSQL and safe DB identities/persisted CRUD, native Windows device/audio, broad accessibility/localization and deployed SEO/AEO remain. Client-specific call/CRM acceptance remains per tenant. Candidate commit, PR and remote readback are pending.
+This source slice does not close whole Auto: Web has 119 existing lint warnings; disposable PostgreSQL and safe DB identities/persisted CRUD, native Windows device/audio, broad accessibility/localization and deployed SEO/AEO remain. Client-specific call/CRM acceptance remains per tenant. PR #133 merged at `00b1b523e020df9fb5c388d61cbbb1cda8ba9080`; `origin/main` and `git ls-remote` agree and its tree matches tested candidate `4825419265d7046079bfd7d40f9b2ccf54e6b52a`. The deterministic gate is blocked only on whole Auto acceptance.
 
 ---
 

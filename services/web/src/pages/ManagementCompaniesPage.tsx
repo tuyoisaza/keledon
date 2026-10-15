@@ -2,7 +2,7 @@ import ManagementModal from '@/components/common/ManagementModal';
 import { useAuth } from '@/context/AuthContext';
 import RecordDetails from '@/components/common/RecordDetails';
 import { useTranslation } from '@/context/I18nContext';
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { Building2, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -43,11 +43,7 @@ export default function ManagementCompaniesPage() {
         industry: ''
     });
 
-    useEffect(() => {
-        fetchCompanies();
-    }, []);
-
-    const fetchCompanies = async () => {
+    const fetchCompanies = useCallback(async () => {
         try {
             setLoading(true);
             const data = await getCompanies();
@@ -58,7 +54,11 @@ export default function ManagementCompaniesPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [t]);
+
+    useEffect(() => {
+        void fetchCompanies();
+    }, [fetchCompanies]);
 
     const resetForm = () => {
         setFormData({ name: '', industry: '' });

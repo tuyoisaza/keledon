@@ -34,8 +34,6 @@ export default function AdminAiConsumptionPage() {
   const [refresh, setRefresh] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
-    setLoading(true);
-    setError("");
     aiAdminRequest<Consumption>("/consumption?limit=100", {
       signal: controller.signal,
     })
@@ -79,7 +77,11 @@ export default function AdminAiConsumptionPage() {
         <button
           type="button"
           disabled={loading}
-          onClick={() => setRefresh((value) => value + 1)}
+          onClick={() => {
+            setError("");
+            setLoading(true);
+            setRefresh((value) => value + 1);
+          }}
           className="inline-flex gap-2 items-center rounded-md border border-border px-4 py-2"
         >
           <RefreshCw className="w-4 h-4" aria-hidden="true" />

@@ -28,17 +28,14 @@ export function useAILoops(socket?: Socket | null) {
   const actualSocket = socket || contextSocket;
   
   const [loops, setLoops] = useState<AgentLoop[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [resolvedSocket, setResolvedSocket] = useState<Socket | null>(null);
   const [selectedLoop, setSelectedLoop] = useState<string | null>(null);
 
   useEffect(() => {
     if (!actualSocket) {
       console.warn('useAILoops: No socket connection available');
-      setLoading(false);
       return;
     }
-
-    setLoading(true);
 
     // Request initial data
     actualSocket.emit('dashboard:get-ai-loops');
@@ -46,7 +43,7 @@ export function useAILoops(socket?: Socket | null) {
     // Listen for AI loop updates
     const handleAILoopsUpdate = (data: AgentLoop[]) => {
       setLoops(data);
-      setLoading(false);
+      setResolvedSocket(actualSocket);
     };
 
     const handleAILoopUpdate = (loop: AgentLoop) => {
@@ -129,7 +126,7 @@ export function useAILoops(socket?: Socket | null) {
   return {
     loops,
     selectedLoop,
-    loading,
+    loading: Boolean(actualSocket) && resolvedSocket !== actualSocket,
     selectLoop,
     clearSelection,
     createLoop,

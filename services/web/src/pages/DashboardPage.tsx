@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { Phone, CheckCircle, AlertTriangle, Clock, Building2, LayoutGrid, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSessions, getOrphanedSessionCount, deleteOrphanedSessions } from '@/lib/crud-api';
@@ -26,23 +26,14 @@ export default function DashboardPage() {
     ]);
     const [aggregatedData, setAggregatedData] = useState<any[]>([]);
 
-    useEffect(() => {
-        if (user) {
-            fetchData();
-            checkOrphanedSessions();
-            const interval = setInterval(fetchData, 10000);
-            return () => clearInterval(interval);
-        }
-    }, [user]);
-
-    async function checkOrphanedSessions() {
+    const checkOrphanedSessions = useCallback(async () => {
         try {
             const count = await getOrphanedSessionCount();
             setOrphanedCount(count);
         } catch (e) {
             console.error('Failed to check orphaned sessions:', e);
         }
-    }
+    }, []);
 
     async function handleCleanOrphanedSessions() {
         if (orphanedCount === 0) return;
@@ -53,7 +44,7 @@ export default function DashboardPage() {
             const result = await deleteOrphanedSessions();
             toast.success(t('dashboard.deletedOrphaned').replace('{count}', String(result.deleted)));
             setOrphanedCount(0);
-            fetchData();
+            void fetchData();
         } catch (_e) {
             toast.error(t('dashboard.deleteOrphanedFailed'));
         } finally {
@@ -61,43 +52,7 @@ export default function DashboardPage() {
         }
     }
 
-    async function fetchData() {
-        try {
-            if (!user) return;
-
-            let companyId: string | undefined;
-            
-            if (user.role === 'superadmin') {
-                companyId = undefined;
-            } else if (user.role === 'admin' || user.role === 'coordinator') {
-                companyId = user.companyId;
-            } else if (user.role === 'user' || user.role === 'agent') {
-                companyId = undefined;
-            }
-
-            const fetchedSessions = await getSessions(companyId, 100);
-            setSessions(fetchedSessions);
-
-            const active = fetchedSessions.filter(s => s.status === 'active').length;
-            const completed = fetchedSessions.filter(s => s.status === 'completed').length;
-            const escalated = fetchedSessions.filter(s => s.status === 'escalated').length;
-
-            setStats([
-                { labelKey: 'dashboard.activeNow', value: active, icon: Phone, color: 'text-green-500' },
-                { labelKey: 'dashboard.completedToday', value: completed, icon: CheckCircle, color: 'text-blue-500' },
-                { labelKey: 'dashboard.escalated', value: escalated, icon: AlertTriangle, color: 'text-yellow-500' },
-            ]);
-
-            calculateAggregation(fetchedSessions, user.role);
-
-        } catch (err) {
-            console.error('Error fetching dashboard data:', err);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    function calculateAggregation(data: any[], role: string) {
+    const calculateAggregation = useCallback((data: any[], role: string) => {
         if (role === 'superadmin') {
             const groups: Record<string, any> = {};
 
@@ -155,7 +110,51 @@ export default function DashboardPage() {
         } else {
             setAggregatedData([]);
         }
-    }
+    }, [t]);
+
+    const fetchData = useCallback(async () => {
+        try {
+            if (!user) return;
+
+            let companyId: string | undefined;
+
+            if (user.role === 'superadmin') {
+                companyId = undefined;
+            } else if (user.role === 'admin' || user.role === 'coordinator') {
+                companyId = user.companyId;
+            } else if (user.role === 'user' || user.role === 'agent') {
+                companyId = undefined;
+            }
+
+            const fetchedSessions = await getSessions(companyId, 100);
+            setSessions(fetchedSessions);
+
+            const active = fetchedSessions.filter(s => s.status === 'active').length;
+            const completed = fetchedSessions.filter(s => s.status === 'completed').length;
+            const escalated = fetchedSessions.filter(s => s.status === 'escalated').length;
+
+            setStats([
+                { labelKey: 'dashboard.activeNow', value: active, icon: Phone, color: 'text-green-500' },
+                { labelKey: 'dashboard.completedToday', value: completed, icon: CheckCircle, color: 'text-blue-500' },
+                { labelKey: 'dashboard.escalated', value: escalated, icon: AlertTriangle, color: 'text-yellow-500' },
+            ]);
+
+            calculateAggregation(fetchedSessions, user.role);
+
+        } catch (err) {
+            console.error('Error fetching dashboard data:', err);
+        } finally {
+            setLoading(false);
+        }
+    }, [calculateAggregation, user]);
+
+    useEffect(() => {
+        if (!user) return;
+        void fetchData();
+        void checkOrphanedSessions();
+        const interval = setInterval(() => void fetchData(), 10000);
+        return () => clearInterval(interval);
+    }, [checkOrphanedSessions, fetchData, user]);
 
     return (
         <div className="space-y-8">

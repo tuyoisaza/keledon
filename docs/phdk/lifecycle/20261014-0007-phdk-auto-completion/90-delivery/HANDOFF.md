@@ -1,3 +1,27 @@
+## Candidate 5.1.48 — Brain credential status and Web hook alignment
+
+Branch `fix/phdk-web-hooks-5-1-48`, based on verified `origin/main` `00b1b523e020df9fb5c388d61cbbb1cda8ba9080`. Brain consumes provider-specific safe key-presence booleans, keeps secret fields blank and prevents stale team responses from updating the selected tenant's UI. Web closes all React Hooks/purity lint findings; total Web lint is 95 warnings/0 errors versus 119.
+
+All five package/lock roots and Browser renderer report 5.1.48. All five builds, Web typecheck, API/Cloud regressions 36/16, Browser 27/27, synthetic Web UAT 4/4, diagnostics 19/19, Web/Landing SEO and PHDK coherence 52/52 pass. UAT evidence: `../50-uat/evidence/uat-web-5.1.48/uat-local-web.json` (synthetic UI/API fixtures; no backend/production acceptance).
+
+Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL). Database/identity/persisted CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-customer live call/CRM remain open. No DB, customer data, private CRM endpoint, device or deployment was used. Source delivery pending.
+
+SIGUIENTE PASO: create the version-prefixed source PR, verify remote main, then continue the four-front Auto.
+
+---
+
+## PHDK Auto source 5.1.47 merged; continue four fronts
+
+Candidate commit `02e93742deff22cc09597e0d68d02befa616f958` on `fix/phdk-lint-cleanup-5-1-47` was squash-merged by [PR #133](https://github.com/tuyoisaza/keledon/pull/133) at remote `main` `00b1b523e020df9fb5c388d61cbbb1cda8ba9080`. The merge tree `4825419265d7046079bfd7d40f9b2ccf54e6b52a` matches the tested candidate; `origin/main` and `git ls-remote` agree. All five app roots/locks and Browser renderer are 5.1.47.
+
+The source slice awaits API room/provider/flow operations and logs generic failures from scheduled security cleanup, disk storage loading, and TTS shutdown. It closes all 17 API floating-promise warnings; API full lint is 117 warnings/0 errors, Cloud/Browser lint are clean, and Web remains at 119 warnings. All five builds, API/Cloud regression (36/16), Browser (40/40), synthetic UAT (4/4), SEO tests and PHDK coherence (52/52) pass. Delivery evidence: `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.47-post-merge-133.json`.
+
+Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL): persisted DB/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-customer live call/CRM acceptance remain open.
+
+SIGUIENTE PASO: continue source audit; close database/native/deployed gates only with their isolated acceptance targets.
+
+---
+
 ## Candidate 5.1.47 — API async failure handling; delivery pending
 
 Based on `origin/main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66` / 5.1.46. All app package/lock roots and Browser renderer are 5.1.47. Seven API files remove 17 floating-promise warnings by awaiting socket/provider/flow operations and logging background/shutdown failures. API build and regression 36/36 pass. Candidate is not yet committed or delivered. Whole Auto remains partial.

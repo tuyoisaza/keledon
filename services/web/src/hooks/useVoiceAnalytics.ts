@@ -49,19 +49,16 @@ export function useVoiceAnalytics(socket?: Socket | null) {
   const actualSocket = socket || contextSocket;
   
   const [analytics, setAnalytics] = useState<VoiceAnalytics | null>(null);
-  const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<'1h' | '24h' | '7d' | '30d'>('24h');
+  const [resolvedRequest, setResolvedRequest] = useState<{ socket: Socket; timeRange: typeof timeRange } | null>(null);
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [realtime, setRealtime] = useState(true);
 
   useEffect(() => {
     if (!actualSocket) {
       console.warn('useVoiceAnalytics: No socket connection available');
-      setLoading(false);
       return;
     }
-
-    setLoading(true);
 
     // Request initial data
     actualSocket.emit('dashboard:get-voice-analytics', { timeRange });
@@ -69,7 +66,7 @@ export function useVoiceAnalytics(socket?: Socket | null) {
     // Listen for voice analytics updates
     const handleVoiceAnalyticsUpdate = (data: VoiceAnalytics) => {
       setAnalytics(data);
-      setLoading(false);
+      setResolvedRequest({ socket: actualSocket, timeRange });
     };
 
     const handleRealtimeUpdate = (data: Partial<VoiceAnalytics>) => {
@@ -162,7 +159,7 @@ export function useVoiceAnalytics(socket?: Socket | null) {
 
   return {
     analytics,
-    loading,
+    loading: Boolean(actualSocket) && (resolvedRequest?.socket !== actualSocket || resolvedRequest.timeRange !== timeRange),
     timeRange,
     selectedConversation,
     realtime,

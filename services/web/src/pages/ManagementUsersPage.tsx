@@ -1,7 +1,7 @@
 import ManagementModal from '@/components/common/ManagementModal';
 import RecordDetails from '@/components/common/RecordDetails';
 import { useTranslation } from '@/context/I18nContext';
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { User, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -33,11 +33,7 @@ export default function ManagementUsersPage() {
         teamId: ''
     });
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             const [usersData, companiesData, brandsData, teamsData] = await Promise.all([
@@ -56,7 +52,11 @@ export default function ManagementUsersPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [t]);
+
+    useEffect(() => {
+        void fetchData();
+    }, [fetchData]);
 
     const resetForm = () => {
         setFormData({ name: '', email: '', role: 'user', companyId: isSuperAdmin ? '' : currentUser?.companyId || '', brandId: '', teamId: '' });

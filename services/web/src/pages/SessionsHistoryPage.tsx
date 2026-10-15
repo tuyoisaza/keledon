@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { getCompanies, getUsers, getSessions } from '@/lib/crud-api';
 import { Filter, RefreshCw, History } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -15,16 +15,7 @@ export default function SessionsHistoryPage() {
     const [companies, setCompanies] = useState<any[]>([]);
     const [users, setUsers] = useState<any[]>([]);
 
-    useEffect(() => {
-        if (user) {
-            fetchSessions();
-            if (user.role === 'superadmin') {
-                fetchFilterOptions();
-            }
-        }
-    }, [user]);
-
-    async function fetchFilterOptions() {
+    const fetchFilterOptions = useCallback(async () => {
         try {
             const [c, u] = await Promise.all([
                 getCompanies(),
@@ -35,9 +26,9 @@ export default function SessionsHistoryPage() {
         } catch (error) {
             console.error('Error fetching filter options:', error);
         }
-    }
+    }, []);
 
-    async function fetchSessions() {
+    const fetchSessions = useCallback(async () => {
         setLoading(true);
         try {
             if (!user) return;
@@ -65,7 +56,16 @@ export default function SessionsHistoryPage() {
         } finally {
             setLoading(false);
         }
-    }
+    }, [user]);
+
+    useEffect(() => {
+        if (user) {
+            void fetchSessions();
+            if (user.role === 'superadmin') {
+                void fetchFilterOptions();
+            }
+        }
+    }, [fetchFilterOptions, fetchSessions, user]);
 
     const filteredSessions = sessions.filter(session => {
         if (user?.role !== 'superadmin') return true;

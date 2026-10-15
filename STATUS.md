@@ -1,10 +1,20 @@
-## Active PHDK Auto continuation — candidate 5.1.47, API async failure handling
+## Active PHDK Auto continuation — candidate 5.1.48
 
-Based on verified `origin/main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66` / 5.1.46. Branch: `fix/phdk-lint-cleanup-5-1-47`. All five application package/lock roots and Browser renderer are aligned at 5.1.47. This slice awaits Socket.IO session-room and dashboard provider/flow operations, and explicitly logs failures from scheduled security cleanup, disk storage loading, and TTS shutdown. It eliminates the 17 API `no-floating-promises` warnings and lowers full API lint to 117 warnings with zero errors.
+Branch `fix/phdk-web-hooks-5-1-48`, based on verified `origin/main` `00b1b523e020df9fb5c388d61cbbb1cda8ba9080`. All five app roots/locks and Browser renderer align at 5.1.48. Brain now reports only provider-specific key presence from safe boolean fields, never secret placeholders, and ignores delayed responses from prior teams. Web closes all React Hooks/purity warnings; total lint is 95 warnings/0 errors versus 119. All five builds, Web typecheck, API/Cloud regression 36/16, Browser 27/27, synthetic Web UAT 4/4, diagnostics 19/19, SEO and coherence 52/52 pass.
+
+Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL); PostgreSQL/identity/persisted CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain. No live provider, private CRM endpoint, database, device or deployment was used. Commit/PR/readback are pending.
+
+SIGUIENTE PASO: deliver via version-prefixed PR; continue persisted/native/deployed gates only in their isolated acceptance environments.
+
+---
+
+## PHDK Auto source 5.1.47 merged; whole Auto remains partial
+
+PR #133 merged candidate `02e93742deff22cc09597e0d68d02befa616f958` at remote `main` `00b1b523e020df9fb5c388d61cbbb1cda8ba9080`; remote tree `4825419265d7046079bfd7d40f9b2ccf54e6b52a` matches. All five application package/lock roots and Browser renderer are 5.1.47. This slice awaits Socket.IO session-room and dashboard provider/flow operations, and explicitly logs failures from scheduled security cleanup, disk storage loading, and TTS shutdown. It eliminates the 17 API `no-floating-promises` warnings and lowers full API lint to 117 warnings with zero errors.
 
 API build and regression pass 36/36. Formatting was applied to touched files. Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL); Web lint debt, persisted DB/identity/CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. No live provider, private CRM endpoint, database or deployment was used.
 
-SIGUIENTE PASO: finish exact-candidate checks and deliver via version-prefixed PR; then continue the remaining PHDK Auto fronts.
+SIGUIENTE PASO: continue source audit; close database/native/deployed gates only with their isolated acceptance targets.
 
 ---
 
@@ -15,7 +25,7 @@ SIGUIENTE PASO: finish exact-candidate checks and deliver via version-prefixed P
 - API/Cloud builds and regressions pass 36/36 and 16/16; Browser build/lint/suite 40/40; Web build/UAT 4/4; Landing build; SEO source tests 1/1 each; PHDK coherence 52/52. Production dependency audits for API/Cloud/Browser report zero advisories.
 - Auto remains **PARTIALLY DELIVERED**: UAT 37 PASS, 2 BLOCKED, 1 MANUAL; PostgreSQL/identity/persisted CRUD, native audio/device, broad accessibility/localization, deployed SEO/AEO remain. API/Web lint warnings remain visible.
 
-SIGUIENTE PASO: continue the source audit in 5.1.47; close remaining persisted/native/deployed gates only against their isolated acceptance environments.
+SIGUIENTE PASO: continue source audit; close database/native/deployed gates only with their isolated acceptance targets.
 
 ---
 

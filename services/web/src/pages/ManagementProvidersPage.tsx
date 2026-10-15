@@ -1,5 +1,5 @@
 import { useTranslation } from '@/context/I18nContext';
-import { useState, useEffect, useRef } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { Settings, Save, Cpu as _Cpu, Brain, Eye, EyeOff, Mic, Volume2, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -34,11 +34,7 @@ export default function ManagementProvidersPage() {
     const [teamId, setTeamId] = useState<string>('');
     const [teams, setTeams] = useState<Team[]>([]);
 
-    useEffect(() => {
-        loadTeamId();
-    }, [user]);
-
-    const loadTeamId = async () => {
+    const loadTeamId = useCallback(async () => {
         // Fetch teams for the dropdown first so users with an auth-context team still see/select all teams
         let allTeams: Array<Team & { _id?: string }> = [];
         try {
@@ -79,7 +75,7 @@ export default function ManagementProvidersPage() {
         }
 
         setTeamId('');
-    };
+    }, [user]);
 
     // ── STT ──
     const [sttProvider, setSttProvider] = useState('vosk');
@@ -108,16 +104,7 @@ export default function ManagementProvidersPage() {
     const selectedTeam = useRef(teamId);
     const [storedKeys, setStoredKeys] = useState<Record<string, boolean>>({});
 
-    useEffect(() => {
-        selectedTeam.current = teamId;
-        if (!teamId) {
-            setLoading(false);
-            return;
-        }
-        loadConfigs();
-    }, [teamId]);
-
-    const loadConfigs = async () => {
+    const loadConfigs = useCallback(async () => {
         if (selectedTeam.current !== teamId) return;
         const request = ++configRequest.current;
         setLoading(true);
@@ -146,7 +133,20 @@ export default function ManagementProvidersPage() {
         } finally {
             if (request === configRequest.current && selectedTeam.current === teamId) setLoading(false);
         }
-    };
+    }, [t, teamId]);
+
+    useEffect(() => {
+        void loadTeamId();
+    }, [loadTeamId]);
+
+    useEffect(() => {
+        selectedTeam.current = teamId;
+        if (!teamId) {
+            setLoading(false);
+            return;
+        }
+        void loadConfigs();
+    }, [loadConfigs, teamId]);
 
     const saveSTT = async () => {
         if (!teamId) return toast.error(t('providers.noTeamSelected'));

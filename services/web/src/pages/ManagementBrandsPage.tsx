@@ -1,7 +1,7 @@
 import ManagementModal from '@/components/common/ManagementModal';
 import RecordDetails from '@/components/common/RecordDetails';
 import { useTranslation } from '@/context/I18nContext';
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { Tag, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -23,11 +23,7 @@ export default function ManagementBrandsPage() {
         color: '#6366f1'
     });
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             const [brandsData, companiesData] = await Promise.all([
@@ -42,7 +38,11 @@ export default function ManagementBrandsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [t]);
+
+    useEffect(() => {
+        void fetchData();
+    }, [fetchData]);
 
     const resetForm = () => {
         setFormData({ name: '', companyId: '', color: '#6366f1' });

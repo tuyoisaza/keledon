@@ -43,17 +43,14 @@ export function useFlowExecution(socket?: Socket | null) {
   const actualSocket = socket || contextSocket;
   
   const [executions, setExecutions] = useState<FlowExecution[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [resolvedSocket, setResolvedSocket] = useState<Socket | null>(null);
   const [selectedExecution, setSelectedExecution] = useState<string | null>(null);
 
   useEffect(() => {
     if (!actualSocket) {
       console.warn('useFlowExecution: No socket connection available');
-      setLoading(false);
       return;
     }
-
-    setLoading(true);
 
     // Request initial data
     actualSocket.emit('dashboard:get-flow-executions');
@@ -61,7 +58,7 @@ export function useFlowExecution(socket?: Socket | null) {
     // Listen for flow execution updates
     const handleFlowExecutionsUpdate = (data: FlowExecution[]) => {
       setExecutions(data);
-      setLoading(false);
+      setResolvedSocket(actualSocket);
     };
 
     const handleFlowExecutionUpdate = (execution: FlowExecution) => {
@@ -166,7 +163,7 @@ export function useFlowExecution(socket?: Socket | null) {
   return {
     executions,
     selectedExecution,
-    loading,
+    loading: Boolean(actualSocket) && resolvedSocket !== actualSocket,
     selectExecution,
     clearSelection,
     createExecution,
