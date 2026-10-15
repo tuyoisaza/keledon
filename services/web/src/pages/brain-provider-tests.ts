@@ -1,5 +1,6 @@
 import { apiFetch } from '@/lib/api-fetch';
 import { brainChat, type Brand, type Company, type Team } from '@/lib/crud-api';
+import { getSpeechRecognitionConstructor } from './speech-recognition';
 import type { Dispatch, SetStateAction } from 'react';
 type ProviderTestStatus = 'idle' | 'running' | 'pass' | 'fail' | 'warn';
 
@@ -144,8 +145,8 @@ async function testTTSProvider() {
           `[TEST] TTS: FAIL ❌ HTTP ${res.status}: ${text.substring(0, 300)}`,
         );
       }
-    } catch (err: any) {
-      if (err?.name === "AbortError") {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === "AbortError") {
         scope.setTtsTestStatus("fail");
         scope.addLog(`[TEST] TTS: FAIL ❌ timeout (30s) - server did not respond`);
       } else {
@@ -187,9 +188,7 @@ async function testSTTProvider() {
           );
         }
       } else if (scope.sttProvider === "webspeech") {
-        const SR =
-          (window as any).SpeechRecognition ||
-          (window as any).webkitSpeechRecognition;
+        const SR = getSpeechRecognitionConstructor();
         if (SR) {
           scope.setSttTestStatus("pass");
           scope.addLog(`[TEST] STT: PASS ✅ Web Speech API available`);

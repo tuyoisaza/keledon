@@ -34,7 +34,7 @@ export default function FlowFormModal({ flow, onClose, onSuccess }: { flow?: Flo
     setShowAddStep(false);
   };
 
-  const updateStep = (index: number, field: string, value: any) => {
+  const updateStep = (index: number, field: keyof FlowStep, value: string | number | boolean) => {
     const newSteps = [...steps];
     newSteps[index] = { ...newSteps[index], [field]: value };
     setSteps(newSteps);

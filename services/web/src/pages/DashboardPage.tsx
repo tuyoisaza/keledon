@@ -5,6 +5,30 @@ import { getSessions, getOrphanedSessionCount, deleteOrphanedSessions } from '@/
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { useTranslation } from '@/context/I18nContext';
+import type { Session } from '@/lib/crud-api';
+
+interface DashboardAggregate {
+    name: string;
+    brand?: string;
+    team?: string;
+    active: number;
+    completed: number;
+    escalated: number;
+    totalDuration: number;
+    count: number;
+}
+
+function sessionDuration(metadata?: string): number {
+    if (!metadata) return 0;
+    try {
+        const parsed: unknown = JSON.parse(metadata);
+        if (typeof parsed !== 'object' || parsed === null || !('duration' in parsed)) return 0;
+        const duration = parsed.duration;
+        return typeof duration === 'number' && Number.isFinite(duration) && duration > 0 ? duration : 0;
+    } catch {
+        return 0;
+    }
+}
 
 const statusStyles: Record<string, string> = {
     active: 'bg-green-500/10 text-green-500 border-green-500/20',
@@ -15,7 +39,7 @@ const statusStyles: Record<string, string> = {
 export default function DashboardPage() {
     const { user } = useAuth();
     const { t } = useTranslation();
-    const [sessions, setSessions] = useState<any[]>([]);
+    const [sessions, setSessions] = useState<Session[]>([]);
     const [loading, setLoading] = useState(true);
     const [orphanedCount, setOrphanedCount] = useState(0);
     const [cleaning, setCleaning] = useState(false);
@@ -24,7 +48,7 @@ export default function DashboardPage() {
         { labelKey: 'dashboard.completedToday', value: 0, icon: CheckCircle, color: 'text-blue-500' },
         { labelKey: 'dashboard.escalated', value: 0, icon: AlertTriangle, color: 'text-yellow-500' },
     ]);
-    const [aggregatedData, setAggregatedData] = useState<any[]>([]);
+    const [aggregatedData, setAggregatedData] = useState<DashboardAggregate[]>([]);
 
     const checkOrphanedSessions = useCallback(async () => {
         try {
@@ -52,9 +76,9 @@ export default function DashboardPage() {
         }
     }
 
-    const calculateAggregation = useCallback((data: any[], role: string) => {
+    const calculateAggregation = useCallback((data: Session[], role: string) => {
         if (role === 'superadmin') {
-            const groups: Record<string, any> = {};
+            const groups: Record<string, DashboardAggregate> = {};
 
             data.forEach(s => {
                 const companyName = s.team?.brand?.company?.name || t('dashboard.unknownClient');
@@ -72,14 +96,13 @@ export default function DashboardPage() {
                 if (s.status === 'active') groups[companyName].active++;
                 if (s.status === 'completed') groups[companyName].completed++;
                 if (s.status === 'escalated') groups[companyName].escalated++;
-                const metadata = s.metadata ? JSON.parse(s.metadata) : {};
-                groups[companyName].totalDuration += (metadata.duration || 0);
+                groups[companyName].totalDuration += sessionDuration(s.metadata);
             });
 
             setAggregatedData(Object.values(groups));
 
         } else if (role === 'admin' || role === 'coordinator') {
-            const groups: Record<string, any> = {};
+            const groups: Record<string, DashboardAggregate> = {};
 
             data.forEach(s => {
                 const brandName = s.team?.brand?.name || t('dashboard.unknownBrand');
@@ -102,8 +125,7 @@ export default function DashboardPage() {
                 if (s.status === 'active') groups[key].active++;
                 if (s.status === 'completed') groups[key].completed++;
                 if (s.status === 'escalated') groups[key].escalated++;
-                const metadata = s.metadata ? JSON.parse(s.metadata) : {};
-                groups[key].totalDuration += (metadata.duration || 0);
+                groups[key].totalDuration += sessionDuration(s.metadata);
             });
 
             setAggregatedData(Object.values(groups));

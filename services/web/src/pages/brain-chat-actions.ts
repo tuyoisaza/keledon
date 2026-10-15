@@ -4,6 +4,7 @@ import type { ChatLine } from './brain-types';
 import type { User } from '@/context/AuthContext';
 import type { Dispatch, RefObject, SetStateAction } from 'react';
 import type { Brand, Company, Team } from '@/lib/crud-api';
+import type { SpeechRecognitionLike } from './speech-recognition';
 
 type CreateBrainChatActionsScope = {
   draft: string;
@@ -11,7 +12,7 @@ type CreateBrainChatActionsScope = {
   sending: boolean;
   configReady: boolean;
   isListening: boolean;
-  recognitionRef: RefObject<any>;
+  recognitionRef: RefObject<SpeechRecognitionLike | null>;
   setIsListening: Dispatch<SetStateAction<boolean>>;
   messages: ChatLine[];
   setMessages: Dispatch<SetStateAction<ChatLine[]>>;

@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { cn } from '../../lib/utils';
-import { useAILoops } from '../../hooks/useAILoops';
+import { useAILoops, type AgentLoopResult, type AgentStepData } from '../../hooks/useAILoops';
 
 interface AgentStep {
   id: string;
@@ -22,7 +22,7 @@ interface AgentStep {
   icon: string;
   status: 'idle' | 'active' | 'completed' | 'error';
   duration?: number;
-  data?: any;
+  data?: AgentStepData;
   error?: string;
 }
 
@@ -34,7 +34,7 @@ interface AgentLoop {
   startTime?: Date;
   endTime?: Date;
   confidence?: number;
-  result?: any;
+  result?: AgentLoopResult;
 }
 
 interface AIAgentLoopProps {

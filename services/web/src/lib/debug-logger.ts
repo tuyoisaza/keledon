@@ -10,7 +10,7 @@ interface LogEntry {
     timestamp: number;
     level: LogLevel;
     message: string;
-    details?: any;
+    details?: unknown;
 }
 
 class DebugLogger {
@@ -33,7 +33,7 @@ class DebugLogger {
         }
     }
 
-    log(level: LogLevel, message: string, details?: any) {
+    log(level: LogLevel, message: string, details?: unknown) {
         if (!this.enabled) return;
 
         const entry: LogEntry = {

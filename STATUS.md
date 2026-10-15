@@ -1,10 +1,10 @@
-## PHDK Auto source 5.1.48 merged; whole Auto remains partial
+## PHDK Auto candidate 5.1.49; whole Auto remains partial
 
-PR #134 merged at `a3dcd93a5d7fb3a374894436379301290cc12bfe`; remote tree matches PR-head `40943b822e47b5c443b607eb5d6e74625333d71b`. All five app roots/locks and Browser renderer align at 5.1.48. Brain reports only selected-provider key presence from safe boolean fields, never secret placeholders, and ignores delayed responses from prior teams. Web closes all React Hooks/purity warnings; total lint is 95 warnings/0 errors versus 119. All five builds, Web typecheck, API/Cloud regression 36/16, Browser 27/27, synthetic Web UAT 4/4, diagnostics 19/19, SEO and coherence 52/52 pass. GitHub reported no hosted checks or review.
+Candidate branch `fix/phdk-web-typed-contracts-5-1-49` is based on verified main `208b15a24e8bb0ff4263f2b88281c361a8e3994f`; source commit `a4c92c65ff7b040206dd98567b5d7765c7f5b258`. All five app package/lock roots and Browser renderer are 5.1.49. Web lint is 14 warnings/0 errors (baseline 119); active paths now have no explicit-any warnings. All five builds, Web typecheck, exact-source synthetic Web UAT 4/4, diagnostics 19/19, Web SEO 1/1 and PHDK coherence 52/52 pass. PR and remote delivery are pending.
 
 Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL); PostgreSQL/identity/persisted CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain. No live provider, private CRM endpoint, database, device or deployment was used. Deterministic gate blocks solely on overall acceptance.
 
-SIGUIENTE PASO: continue persisted/native/deployed gates only in their isolated acceptance environments.
+SIGUIENTE PASO: publicar el candidato 5.1.49 por PR y verificar la integración en `main`; después, continuar con las barreras de persistencia, nativo y despliegue en sus ambientes de aceptación.
 
 ---
 

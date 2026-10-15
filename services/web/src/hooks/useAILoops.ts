@@ -2,13 +2,24 @@ import { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
 import { useSocket } from '../context/SocketContext';
 
+export interface AgentStepData {
+  transcript?: string;
+  intent?: string;
+  confidence?: number;
+  steps_executed?: number;
+}
+
+export interface AgentLoopResult {
+  action?: string;
+}
+
 interface AgentStep {
   id: string;
   name: string;
   icon: string;
   status: 'idle' | 'active' | 'completed' | 'error';
   duration?: number;
-  data?: any;
+  data?: AgentStepData;
   error?: string;
 }
 
@@ -20,7 +31,7 @@ interface AgentLoop {
   startTime?: Date;
   endTime?: Date;
   confidence?: number;
-  result?: any;
+  result?: AgentLoopResult;
 }
 
 export function useAILoops(socket?: Socket | null) {

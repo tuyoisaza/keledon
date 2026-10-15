@@ -111,7 +111,17 @@ export default function ManagementVendorsPage() {
         }
         setSaving(true);
         try {
-            const submitData: any = {
+            const submitData: {
+                teamId: string;
+                name: string;
+                type: string;
+                baseUrl?: string;
+                allowedOrigins: string[];
+                username?: string;
+                password?: string;
+                apiKey?: string;
+                startGoal?: string;
+            } = {
                 teamId: selectedTeamId,
                 name: formData.name,
                 type: formData.type,
@@ -132,7 +142,7 @@ export default function ManagementVendorsPage() {
             }
             setShowForm(false);
             fetchVendors(selectedTeamId);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Failed to save vendor:', error);
             toast.error(t('records.saveFailedEntity').replace('{entity}', t('records.vendor')));
         } finally {

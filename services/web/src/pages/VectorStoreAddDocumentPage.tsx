@@ -151,9 +151,9 @@ export default function VectorStoreAddDocumentPage() {
       }
 
       navigate('/management/vector-store');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to save document:', err);
-      setError(err.message || 'Failed to save document. Please check your vector store configuration.');
+      setError(err instanceof Error ? err.message : 'Failed to save document. Please check your vector store configuration.');
       toast.error('Failed to save document');
     } finally {
       setSaving(false);

@@ -5,6 +5,7 @@ import type { Dispatch, RefObject, SetStateAction } from 'react';
 import type { User } from '@/context/AuthContext';
 import type { Brand, Company, Team } from '@/lib/crud-api';
 import type { ChatLine } from './brain-types';
+import type { SpeechRecognitionLike } from './speech-recognition';
 
 type CreateBrainVoiceSocketScope = {
   voiceSocketRef: RefObject<Socket | null>;
@@ -24,7 +25,7 @@ type CreateBrainVoiceSocketScope = {
   pipelinePollRef: RefObject<ReturnType<typeof setInterval> | null>;
   setSending: Dispatch<SetStateAction<boolean>>;
   listeningRef: RefObject<boolean>;
-  recognitionRef: RefObject<any>;
+  recognitionRef: RefObject<SpeechRecognitionLike | null>;
   setMessages: Dispatch<SetStateAction<ChatLine[]>>;
   lastBrainReplyRef: RefObject<string>;
   ttsFallbackTimerRef: RefObject<ReturnType<typeof setTimeout> | null>;
@@ -124,15 +125,15 @@ async function connectVoiceSocket() {
         if (sid) void scope.fetchPipelineStatus(sid);
       }, 10_000);
     });
-    socket.on("voice:call_started", (data: any) => {
+    socket.on("voice:call_started", (data: { session_id: string }) => {
       scope.addLog(`[v${__APP_VERSION__ || "?"}] Call started: ${data.session_id}`);
     });
-    socket.on("voice:brain:thinking", (data: any) => {
+    socket.on("voice:brain:thinking", (data: { text?: string }) => {
       scope.addLog(
         `[v${__APP_VERSION__ || "?"}] Brain thinking "${data.text?.slice(0, 60)}"`,
       );
     });
-    socket.on("voice:brain:reply", (data: any) => {
+    socket.on("voice:brain:reply", (data: { text?: string; apiVersion?: string; source?: string; audio?: string; sequence?: string; format?: string }) => {
       scope.addLog(
         `[v${__APP_VERSION__ || "?"}] Brain reply: ${data.text?.slice(0, 120)} | API v${data.apiVersion || "?"}`,
       );
@@ -278,7 +279,7 @@ async function connectVoiceSocket() {
         scope.lastChunkPlayedRef.current = true;
         // Queue the chunk
         scope.audioQueueRef.current.push({
-          data: data.audio,
+          data: data.audio || "",
           seq: data.sequence || "chunk",
           format: data.format,
         });
@@ -287,7 +288,7 @@ async function connectVoiceSocket() {
         }
       },
     );
-    socket.on("voice:error", (data: any) => {
+    socket.on("voice:error", (data: { error?: string }) => {
       scope.addLog(
         `[v${__APP_VERSION__ || "?"}] WS ERROR: ${data.error || "unknown"}`,
       );
@@ -301,7 +302,7 @@ async function connectVoiceSocket() {
       scope.audioPlayingRef.current = false;
       scope.setSending(false);
     });
-    socket.on("voice:call_ended", (data: any) => {
+    socket.on("voice:call_ended", (data: { reason?: string; session_id?: string }) => {
       scope.addLog(
         `[v${__APP_VERSION__ || "?"}] Call ended: ${data.reason || "unknown reason"} | session=${data.session_id || "?"}`,
       );

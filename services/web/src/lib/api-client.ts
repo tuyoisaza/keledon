@@ -20,7 +20,7 @@ class ApiClient {
         return envUrl;
     }
 
-    async request<T = any>(endpoint: string, options: Omit<RequestInit, 'body'> & { body?: unknown } = {}): Promise<T> {
+    async request<T = unknown>(endpoint: string, options: Omit<RequestInit, 'body'> & { body?: unknown } = {}): Promise<T> {
         const url = `${this.baseUrl}${endpoint}`;
         console.log('Making API request to:', url);
 
@@ -36,12 +36,15 @@ class ApiClient {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Request failed');
+                const errorData: unknown = await response.json();
+                const message = typeof errorData === 'object' && errorData !== null && 'message' in errorData && typeof errorData.message === 'string'
+                    ? errorData.message
+                    : 'Request failed';
+                throw new Error(message);
             }
 
-            const data = await response.json();
-            return data;
+            const data: unknown = await response.json();
+            return data as T;
         } catch (error) {
             console.error('Network Error:', error);
             throw error;
@@ -56,7 +59,7 @@ class ApiClient {
         });
     }
 
-    async register(userData: any) {
+    async register(userData: { email: string; password: string; name?: string }) {
         console.log('Attempting registration');
         return this.request('/api/auth/register', {
             body: userData

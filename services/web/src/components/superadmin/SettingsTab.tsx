@@ -8,7 +8,7 @@ export interface ProviderConfig {
   name: string;
   status: string;
   is_enabled: boolean;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface VoiceProfile {

@@ -117,7 +117,7 @@ export function useIntegrationHub(socket?: Socket | null) {
   }, [actualSocket]);
 
   // Control functions
-  const connectProvider = (providerId: string, config?: any) => {
+  const connectProvider = (providerId: string, config?: Record<string, unknown>) => {
     if (actualSocket) {
       actualSocket.emit('dashboard:provider-connect', { providerId, config });
     }

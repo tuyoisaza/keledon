@@ -1,4 +1,10 @@
-## Current Check — 5.1.48 Brain credential status and Web hook alignment, merged (2026-10-14)
+## Current Check — 5.1.49 Web typed contracts (candidate branch, 2026-10-14 local)
+
+Candidate source commit `a4c92c65ff7b040206dd98567b5d7765c7f5b258` is on `fix/phdk-web-typed-contracts-5-1-49`, based on verified main `208b15a24e8bb0ff4263f2b88281c361a8e3994f`. All five application roots/locks and Browser renderer are 5.1.49. Full Web lint is 14 warnings/0 errors (11 explicit-any warnings in three unmounted legacy components and 3 Fast Refresh), down from 95 at the previous candidate; active Web paths have no explicit-any warnings. Web typecheck and all five builds pass; exact-source synthetic Web UAT passes 4/4, diagnostics 19/19, Web SEO 1/1, and PHDK 2.50.10 coherence is 52/52. API/Cloud/Browser source is unchanged except version metadata. Browser/device, persistence, deployment and whole-product acceptance remain open. Candidate is not yet delivered to remote `main`.
+
+---
+
+## Prior Check — 5.1.48 Brain credential status and Web hook alignment, merged (2026-10-14)
 
 Repository `tuyoisaza/keledon`; PR [#134](https://github.com/tuyoisaza/keledon/pull/134) merged PR head `40943b822e47b5c443b607eb5d6e74625333d71b` at verified remote `main` `a3dcd93a5d7fb3a374894436379301290cc12bfe`, tree `9353ed3c29c8ba6540143e9b49c7c26650e2ee53`. Exact source/UAT commit is `f93758c4b2e52a452ff35b8b43f99adef4cfcd1f`. PHDK 2.50.10 coherence is 52/52; all five application package/lock roots and Browser renderer are 5.1.48.
 

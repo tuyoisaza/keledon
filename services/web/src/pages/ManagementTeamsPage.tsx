@@ -5,7 +5,7 @@ import { useCallback, useState, useEffect } from 'react';
 import { Users, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { getTeams, getCompanies, getBrands, createTeam, updateTeam, deleteTeam, type Team, type Company, type Brand } from '@/lib/crud-api';
+import { getTeams, getCompanies, getBrands, createTeam, updateTeam, deleteTeam, type Team, type Company, type CompanyCountry, type Brand } from '@/lib/crud-api';
 
 const availableCountries = [
     { code: 'US', name: 'United States' },
@@ -105,7 +105,7 @@ export default function ManagementTeamsPage() {
             }
             setShowForm(false);
             fetchData();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Failed to save team:', error);
             toast.error(t('records.saveFailedEntity').replace('{entity}', t('records.team')));
         } finally {
@@ -153,7 +153,7 @@ export default function ManagementTeamsPage() {
     };
 
     const selectedCompany = companies.find(c => c.id === formData.companyId);
-    const companyCountries = (selectedCompany?.countries?.length ?? 0) > 0
+    const companyCountries: Array<CompanyCountry | typeof availableCountries[number]> = (selectedCompany?.countries?.length ?? 0) > 0
         ? selectedCompany!.countries!
         : availableCountries;
 
@@ -298,8 +298,8 @@ export default function ManagementTeamsPage() {
                                     className="w-full px-4 py-2 rounded-lg bg-muted border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                                 >
                                     <option value="">{t('records.selectCountry')}</option>
-                                    {companyCountries.map((c: any) => {
-                                        const code = typeof c === 'string' ? c : c.countryCode;
+                                    {companyCountries.map((country) => {
+                                        const code = 'countryCode' in country ? country.countryCode : country.code;
                                         return <option key={code} value={code}>{getCountryLabel(code, locale)}</option>;
                                     })}
                                 </select>

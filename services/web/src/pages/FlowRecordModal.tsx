@@ -19,7 +19,7 @@ export default function FlowRecordModal({ onClose, onSuccess }: { onClose: () =>
     setRecordingSteps([...recordingSteps, { type: 'navigate', order: recordingSteps.length, value: '', timeout: 10000 }]);
   };
 
-  const updateRecordingStep = (index: number, field: string, value: any) => {
+  const updateRecordingStep = (index: number, field: keyof FlowStep, value: string | number | boolean) => {
     const newSteps = [...recordingSteps];
     newSteps[index] = { ...newSteps[index], [field]: value };
     setRecordingSteps(newSteps);

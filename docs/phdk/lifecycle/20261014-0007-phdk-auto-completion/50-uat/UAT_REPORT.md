@@ -6,6 +6,12 @@ Built-SPA synthetic UAT passes 4/4 suites against package version 5.1.47. Eviden
 
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Latest candidate 5.1.49 — Web API and administration type contracts (2026-10-14 local)
+
+Built-SPA synthetic Web UAT passes 4/4 suites on exact clean source candidate `a4c92c65ff7b040206dd98567b5d7765c7f5b258`; evidence and screenshots are in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-5.1.49/`. Candidate fingerprint is clean (`sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`). The run exercises synthetic role/tenant administration, sessions, vendor and provider settings, protected diagnostics and responsive UI; APIs are mocked and external traffic blocked. This is UI behavior only, not real DB/API authorization or deployed acceptance.
+
+Web typecheck/build and API, Cloud, Browser, Web and Landing builds pass. Full Web lint is 14 warnings/0 errors, down from 95; the 11 remaining explicit-any warnings are isolated to three unmounted legacy components, with 3 Fast Refresh context warnings. The overall acceptance tally remains **37 PASS, 2 BLOCKED, 1 MANUAL**; persisted DB/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live integrations remain incomplete. No DB, customer data, private endpoint, device or deployment was used.
+
 ## Latest candidate 5.1.48 — safe provider indicators and Web hook cleanup (2026-10-14)
 
 Built-SPA synthetic Web UAT passes 4/4 suites on exact source candidate `f93758c4b2e52a452ff35b8b43f99adef4cfcd1f`; JSON and screenshots are in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-5.1.48/`. The Brain fixture proves selected-provider-only status: OpenAI and TTS have safe key flags, while a stored but unused Deepgram flag does not mark selected Vosk as configured. Every secret placeholder stays blank. The evidence records the exact source revision and clean source fingerprint; APIs are mocked and external traffic is blocked.

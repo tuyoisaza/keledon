@@ -1,4 +1,12 @@
-## Current Auto completion audit — 5.1.48 source merged; whole Auto partial (2026-10-14)
+## Current Auto completion audit — 5.1.49 candidate; whole Auto partial (2026-10-14 local)
+
+Candidate branch `fix/phdk-web-typed-contracts-5-1-49` is based on verified main `208b15a24e8bb0ff4263f2b88281c361a8e3994f`; source commit `a4c92c65ff7b040206dd98567b5d7765c7f5b258`. Five app package/lock roots and Browser renderer align at 5.1.49. Web lint is 14 warnings/0 errors, down from 95; active source paths have no explicit-any warnings, with 11 isolated to three unmounted legacy components and 3 Fast Refresh warnings. All five builds, Web typecheck, exact-source synthetic UAT 4/4, diagnostics 19/19, Web SEO 1/1 and PHDK coherence 52/52 pass. The candidate branch/PR has not yet been published or merged.
+
+This slice improves typed Web API/session/flow/provider contracts, rejects non-finite session duration metadata, uses safe API error text and handles company-country fallbacks. It does not close whole Auto: persisted database/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live integrations remain incomplete. The ledger retains all four owner-confirmed fronts; none is marked DONE by this source slice. Current delivery state is PARTIALLY DELIVERED.
+
+---
+
+## Prior Auto completion audit — 5.1.48 source merged; whole Auto partial (2026-10-14)
 
 PR #134 merged candidate head `40943b822e47b5c443b607eb5d6e74625333d71b` at remote `main` `a3dcd93a5d7fb3a374894436379301290cc12bfe`; source/UAT SHA `f93758c4b2e52a452ff35b8b43f99adef4cfcd1f`; remote tree matches the PR head. All five app roots and Browser renderer are 5.1.48. Web full lint falls from 119 to 95 warnings/0 errors; React Hooks and render-purity findings are zero. Brain credential status now honors provider-specific safe flags and ignores stale tenant responses.
 

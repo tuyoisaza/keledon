@@ -6,7 +6,7 @@ export interface PolicyDocument {
   content: string;
   category: 'safety' | 'procedure' | 'compliance' | 'knowledge';
   embedding?: number[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   company_id: string;
   brand_id?: string;
   team_id?: string;
@@ -31,7 +31,7 @@ export interface VectorStoreStatus {
 
 class VectorStoreAPI {
 
-  private async fetchApi(endpoint: string, options: RequestInit = {}) {
+  private async fetchApi<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const response = await apiFetch(`/api/vector-store${endpoint}`, options);
     
     if (!response.ok) {
@@ -39,12 +39,13 @@ class VectorStoreAPI {
       throw new Error(error || `API error: ${response.status}`);
     }
     
-    return response.json();
+    const data: unknown = await response.json();
+    return data as T;
   }
 
   async getCollectionStatus(): Promise<VectorStoreStatus> {
     // Unavailable/unauthorized is an error, never an invented empty collection.
-    return this.fetchApi('/status');
+    return this.fetchApi<VectorStoreStatus>('/status');
   }
 
   async addDocument(document: PolicyDocument): Promise<void> {
@@ -75,19 +76,19 @@ class VectorStoreAPI {
     brand_id?: string;
     team_id?: string;
   } = {}): Promise<RetrievalResult[]> {
-    const result = await this.fetchApi('/search', {
+    const result = await this.fetchApi<{ results?: RetrievalResult[] }>('/search', {
       method: 'POST',
       body: JSON.stringify({
         query,
         ...options,
       }),
     });
-    return result.results || [];
+    return result.results ?? [];
   }
 
   async listAllDocuments(): Promise<PolicyDocument[]> {
-    const result = await this.fetchApi('/documents');
-    return (result.documents || []).map((document: any) => ({
+    const result = await this.fetchApi<{ documents?: Array<PolicyDocument & { text?: string }> }>('/documents');
+    return (result.documents ?? []).map((document) => ({
       ...document,
       content: document.content ?? document.text ?? '',
       title: document.title ?? document.text ?? 'Untitled document',

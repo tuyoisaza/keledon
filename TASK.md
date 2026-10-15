@@ -1,6 +1,6 @@
-## PHDK Auto source 5.1.48 merged; continue four fronts
+## PHDK Auto candidate 5.1.49; four fronts continue
 
-Continue the four owner-confirmed KELEDON fronts in order: baseline/version/PRs; widget and safe diagnostics; tenant-selected voice→Cloud→Browser→CRM flow; administration and permissions. PR #134 delivered 5.1.48 to remote `main` at `a3dcd93a5d7fb3a374894436379301290cc12bfe`, with tested PR-head tree verified. The slice corrects provider-specific safe credential indicators in Brain, prevents stale tenant config responses, and closes React Hooks/purity warnings across Web. Source checks pass. Whole Auto stays partial pending database, native device/audio, broad accessibility/localization and deployed SEO/AEO proof. Customer-specific live integrations remain per tenant.
+Continue the four owner-confirmed KELEDON fronts in order: baseline/version/PRs; widget and safe diagnostics; tenant-selected voice→Cloud→Browser→CRM flow; administration and permissions. Candidate 5.1.49 source commit `a4c92c65ff7b040206dd98567b5d7765c7f5b258` is on `fix/phdk-web-typed-contracts-5-1-49`, based on verified `main` `208b15a24e8bb0ff4263f2b88281c361a8e3994f`. It replaces implicit `any` across active Web API/session/admin/flow/vector/Brain voice paths, safely parses session duration and API errors, and fixes country-code fallback handling. Web lint is 14 warnings/0 errors; all five builds, Web typecheck, exact-source synthetic UAT 4/4, diagnostics 19/19, SEO 1/1 and PHDK coherence 52/52 pass. PR/remote delivery is pending. Whole Auto remains partial pending database, native device/audio, broad accessibility/localization and deployed SEO/AEO proof. Customer-specific live integrations remain per tenant.
 
 ---
 

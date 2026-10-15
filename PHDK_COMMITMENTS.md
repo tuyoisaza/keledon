@@ -1,15 +1,15 @@
 # Commitment ledger
 
-## Active run update — 5.1.48 Brain provider status and Web hook alignment (2026-10-14)
+## Active run update — 5.1.49 Web contracts and Check remediation (2026-10-14 local)
 
-PR #134 merged the 5.1.48 candidate on verified `main` `a3dcd93a5d7fb3a374894436379301290cc12bfe`; the post-merge evidence reconciliation is PR #135. The tested source SHA is `f93758c4b2e52a452ff35b8b43f99adef4cfcd1f`, and the PR-head tree matches the source delivery. All five app package/lock roots and Browser renderer are 5.1.48. Brain now uses selected-provider safe credential flags and ignores stale team responses. Web lint is 95 warnings/0 errors with no React Hooks/purity findings. Exact-source Web UAT 4/4, Browser offline tests 27/27, API/Cloud regression 36/16, all five builds, diagnostics 19/19, SEO tests and PHDK coherence 52/52 pass.
+Candidate branch `fix/phdk-web-typed-contracts-5-1-49` is based on verified `main` `208b15a24e8bb0ff4263f2b88281c361a8e3994f`, source commit `a4c92c65ff7b040206dd98567b5d7765c7f5b258`. All five roots/locks and renderer are 5.1.49. Web lint is 14 warnings/0 errors, down from 95; active paths have no explicit-any warnings, while 11 remain in three unmounted legacy components and 3 Fast Refresh context warnings. All five builds, Web typecheck, clean exact-source Web UAT 4/4, diagnostics 19/19, Web SEO 1/1 and PHDK coherence 52/52 pass. Branch push/PR/merge remains in progress.
 
 | Commitment | Current delivery evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 — baseline, versions, PRs | PR #134 merged; PR #135 reconciled delivery evidence; remote SHA/tree/version checks passed at merge. | Continue remote/version surveillance; 95 Web warnings remain (92 `any`, 3 Fast Refresh). |
-| CMT-002 — widget and safe diagnostics | Diagnostics 19/19; synthetic Web UAT 4/4; credential-status rendering remains write-only and uses selected-provider safe flags. | Native Windows device/audio and broad route/assistive-tech acceptance remain open. |
-| CMT-003 — voice → Cloud → Browser → CRM per client | Tenant-selected integrations and private-origin allowlists remain provider-neutral; Browser suite 27/27. | Packaged runtime/native audio and each customer's live provider/CRM acceptance remain open. |
-| CMT-004 — administration and permissions | Approved DB-derived actor/tenant and least-privilege policy unchanged; API/Cloud 36/16 and 35-model/168-row source drift guard pass. | Safe DB identities, disposable PostgreSQL, persisted migrations/CRUD and exhaustive authorization matrix remain open. |
+| CMT-001 — baseline, versions, PRs | Candidate 5.1.49 source commit is versioned; all five builds and PHDK coherence pass. | Candidate branch/PR/merge and remote readback pending; 14 Web warnings remain (11 in unmounted legacy components, 3 Fast Refresh). |
+| CMT-002 — widget and safe diagnostics | Diagnostics 19/19; exact-source synthetic Web UAT 4/4; write-only diagnostic widget journeys pass. | Native Windows device/audio and broad route/assistive-tech acceptance remain open. |
+| CMT-003 — voice → Cloud → Browser → CRM per client | Provider-neutral flow remains tenant-selected; no live connector was exercised in this Web slice. | Packaged runtime/native audio and each customer's live provider/CRM acceptance remain open. |
+| CMT-004 — administration and permissions | Typed session/admin/flow contracts; synthetic role/tenant journeys 4/4. Previously approved DB-derived actor/tenant policy unchanged. | Safe DB identities, disposable PostgreSQL, persisted migrations/CRUD and exhaustive authorization matrix remain open. |
 
 Overall PHDK Auto remains **PARTIALLY DELIVERED**. UAT is 37 PASS, 2 BLOCKED, 1 MANUAL. No live endpoint, database, customer data, device or deployment was used.
 

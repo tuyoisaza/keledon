@@ -194,7 +194,7 @@ export default function VectorStoreTab() {
             <label className="block text-sm font-medium mb-2">Category</label>
             <select
               value={formData.category}
-              onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as any }))}
+              onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as PolicyDocument['category'] }))}
               className="w-full px-3 py-2 border border-border rounded-lg bg-muted/50 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none"
             >
               <option value="safety">Safety</option>

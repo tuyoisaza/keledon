@@ -2,6 +2,7 @@ import { apiFetch } from '@/lib/api-fetch';
 import { toast } from 'sonner';
 import type { Dispatch, RefObject, SetStateAction } from 'react';
 import type { Socket } from 'socket.io-client';
+import { getSpeechRecognitionConstructor, type SpeechRecognitionLike } from './speech-recognition';
 
 type CreateBrainSpeechFlowScope = {
   addLog: (msg: string) => void;
@@ -39,7 +40,7 @@ type CreateBrainSpeechFlowScope = {
   reListenTimerRef: RefObject<ReturnType<typeof setTimeout> | null>;
   listenSocketRef: RefObject<Socket | null>;
   stopVoskListening: () => void;
-  recognitionRef: RefObject<any>;
+  recognitionRef: RefObject<SpeechRecognitionLike | null>;
   sttProvider: string | null;
   startVoskListening: () => Promise<void>;
   sttLangRef: RefObject<string>;
@@ -347,9 +348,7 @@ async function toggleListening() {
       }
     }
 
-    const SR =
-      (window as any).SpeechRecognition ||
-      (window as any).webkitSpeechRecognition;
+    const SR = getSpeechRecognitionConstructor();
     if (!SR) {
       toast.error(
         "Speech recognition not supported in this browser (try Chrome or Edge)",
@@ -378,7 +377,7 @@ async function toggleListening() {
       scope.setIsListening(true);
     };
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event) => {
       let interim = "";
       let final = "";
       for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -437,7 +436,7 @@ async function toggleListening() {
       }
     };
 
-    recognition.onerror = (event: any) => {
+    recognition.onerror = (event) => {
       scope.addLog("recognition error: " + event.error);
       scope.reconErrorCountRef.current++;
       scope.listeningRef.current = false;
