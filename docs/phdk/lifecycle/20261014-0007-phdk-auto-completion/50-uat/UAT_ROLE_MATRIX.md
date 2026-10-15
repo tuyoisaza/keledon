@@ -18,6 +18,10 @@ No real accounts or hosted development targets were used. UAT-009 passes for the
 ## Historical records from earlier candidates
 
 # UAT role matrix
+
+## Latest 5.1.52 persisted acceptance delta
+
+On the synthetic DB-backed admin identity, sequential Knowledge document/base deletion passes on disposable loopback PostgreSQL 16.15 and Qdrant 1.19.2, including relational rows and vector/collection cleanup. The API's direct base GET is denied to this role, so SQL read-only verification was used. Evidence: `evidence/uat-qdrant-delete-5.1.52.json`. This does not complete the role × model × tenant × operation matrix; native Browser/device remains manual.
 ## Current 5.1.17 local candidate (synthetic frontend only)
 
 | Persona | Observed UI coverage | Server evidence / limitation |

@@ -34,7 +34,15 @@ All five builds, Web typecheck, API/Cloud regressions (36/16), Browser tests (27
 
 ---
 
-## Current Auto completion audit — merged 5.1.47 source; whole Auto partial (2026-10-15)
+## Current Auto completion audit — 5.1.52 source and live Qdrant UAT (2026-10-14)
+
+Source PR #142 merged at `838931bd0d63f63f4a574ec9b660a12cc4ba5777`; evidence PR #143 merged at current `origin/main` `efc2ae47bd8be5cecbcc4cabd607a379704e4856` (tree `7ba62f8cec5a344f4749c2ae3925ce6db5dfaf1e`). All app roots and Browser renderer remain 5.1.52. Live loopback UAT against disposable PostgreSQL 16.15 and Qdrant 1.19.2 confirms Knowledge document/base deletes remove their DB rows, vectors and collection. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-qdrant-delete-5.1.52.json`.
+
+Whole acceptance is **40 PASS, 0 BLOCKED, 1 MANUAL**, and remains PARTIALLY DELIVERED. Delete/reindex concurrency, exhaustive 35-model role/tenant/operation coverage, broad accessibility/localization, deployed SEO/AEO, native Electron/device/audio and tenant-specific live call/CRM acceptance remain unresolved. No production/customer data, endpoint or deployment was used. A normal documentation/evidence PR will carry this record.
+
+---
+
+## Previous Auto completion audit — merged 5.1.47 source; whole Auto partial (2026-10-15)
 
 Candidate branch `fix/phdk-lint-cleanup-5-1-47` is based on verified remote `main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66` / 5.1.46. All five app roots and Browser renderer are 5.1.47. API gateway and background-task promise handling closes 17 floating-promise warnings; full API lint is now 117 warnings/0 errors. API build and regression 36/36 pass.
 

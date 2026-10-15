@@ -1,5 +1,9 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## Latest continuation — live Qdrant delete (2026-10-14 local)
+
+Isolated Qdrant 1.19.2 and PostgreSQL 16.15 ran on loopback with synthetic `.invalid` identity and tenant data. API document delete removed the persisted document and matching Qdrant points; API base delete removed the collection and database rows (verified with read-only SQL because individual base GET returns 403 for this role). Exact-source evidence: `evidence/uat-qdrant-delete-5.1.52.json`. No production/customer endpoint, data, device or deployment was used. Delete/reindex concurrency was not exercised.
+
 ## Latest continuation — 2026-10-14 local / 2026-10-15 UTC, candidate 5.1.52
 
 The 5.1.51 DB-backed UAT remains the baseline for migrations, persisted registration/login, roles, tenant boundaries, secret migration and safe vendor projections. On exact candidate `03ea78968103aa6bc6290ed0681b1c1ea345872a` / 5.1.52, an admin authenticated against the same disposable PostgreSQL 16.15 database; allowed session create and metadata/status update persisted and read back, while legacy `summary` writes and team reassignment returned HTTP 403. Detailed combined evidence: `evidence/uat-postgres-roles-5.1.52-03ea7896.json`; baseline evidence: `evidence/uat-postgres-roles-5.1.51-5b7e2551.json`.

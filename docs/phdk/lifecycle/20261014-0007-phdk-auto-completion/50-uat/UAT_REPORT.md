@@ -1,10 +1,16 @@
+## Live Qdrant delete continuation — 5.1.52 (2026-10-14 local)
+
+UAT-010's previously blocked Knowledge cleanup now passes against the exact 5.1.52 product tree (`0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e`), disposable PostgreSQL 16.15 and official Qdrant 1.19.2 bound to loopback. Synthetic document deletion removed the PostgreSQL row and all matching Qdrant points; synthetic base deletion removed its Qdrant collection and cascaded its PostgreSQL document/base rows. Evidence: `evidence/uat-qdrant-delete-5.1.52.json`. The API denies this role's individual base readback (403), so the row check used direct read-only SQL.
+
+Whole acceptance advances to **40 PASS, 0 BLOCKED, 1 MANUAL**. Delete/reindex concurrency remains untested, as do exhaustive 35-model operations, broad accessibility/localization, deployed SEO/AEO and per-tenant live call/CRM workflows. Native Electron/device/audio remains MANUAL. No deployment is claimed.
+
 ## Latest candidate 5.1.52 — session CRUD guard fix (2026-10-14 local / 2026-10-15 UTC)
 
 The API/Cloud CRUD guards had a stale `sessions` field allowlist: the Prisma service accepts `metadata`, while the guard exposed older `startedAt`, `endedAt`, `transcript` and `summary` fields. Candidate `03ea78968103aa6bc6290ed0681b1c1ea345872a` corrects the create/update allowlists in both backends. Unit regressions assert API/Cloud parity, allow metadata and status, and reject old or tenant-changing fields.
 
-Exact-candidate PostgreSQL UAT passes: synthetic admin login, session creation, metadata/status update and GET readback passed; legacy `summary` and team reassignment returned HTTP 403. Evidence: `evidence/uat-postgres-roles-5.1.52-03ea7896.json`. The isolated API and PostgreSQL services were stopped after the test. Baseline identity, migration, tenant and secret-projection UAT is reused from `uat-postgres-roles-5.1.51-5b7e2551.json`.
+Exact-candidate PostgreSQL UAT passes: synthetic admin login, session creation, metadata/status update and GET readback passed; legacy `summary` and team reassignment returned HTTP 403. Evidence: `evidence/uat-postgres-roles-5.1.52-03ea7896.json`. The isolated API, PostgreSQL and Qdrant services are now stopped after their tests. Baseline identity, migration, tenant and secret-projection UAT is reused from `uat-postgres-roles-5.1.51-5b7e2551.json`.
 
-Built Web UAT on exact commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` passes 4/4. It uses mocked Company Co APIs and blocked external requests; this does not certify deployed login or full-app accessibility. Current tally is **39 PASS, 1 BLOCKED, 1 MANUAL**: Knowledge deletion remains blocked because no isolated Qdrant is running, and native device/audio remains manual. Exhaustive 35-model operation coverage, broad accessibility/localization, deployed SEO/AEO and customer-specific call/CRM acceptance remain open. No customer data, provider destination, physical microphone or deployment was used.
+Built Web UAT on exact commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` passes 4/4. It uses mocked Company Co APIs and blocked external requests; this does not certify deployed login or full-app accessibility. At the time of that candidate report, tally was **39 PASS, 1 BLOCKED, 1 MANUAL**; the Qdrant continuation above closes that delete case. Remaining operations, broad accessibility/localization, deployed SEO/AEO and customer-specific call/CRM acceptance remain open. No customer data, provider destination, physical microphone or deployment was used.
 
 ## Latest candidate 5.1.47 — API async failure handling (2026-10-15)
 

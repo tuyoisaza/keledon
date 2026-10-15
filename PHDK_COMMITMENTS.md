@@ -1,5 +1,9 @@
 # Commitment ledger
 
+## Active run update — 5.1.52 live Qdrant acceptance
+
+The loopback Knowledge document/base cleanup UAT now passes with disposable PostgreSQL 16.15 and isolated Qdrant 1.19.2. This closes the single Qdrant-dependent BLOCKED case and advances the tally to 40 PASS, 0 BLOCKED, 1 MANUAL; delete/reindex concurrency remains open. The four confirmed workstreams and their order remain unchanged. The source fix is merged through PR #142 and evidence PR #143; a follow-up docs/evidence delivery is in progress. Current remote main: `efc2ae47bd8be5cecbcc4cabd607a379704e4856`, product version 5.1.52. Whole Auto remains PARTIALLY DELIVERED.
+
 ## Active run update — candidate 5.1.51 (2026-10-15)
 
 Candidate source `09ef2497957c381a3af7428af393b65b811c2fe6`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`, aligns all five product package/lock roots and Browser renderer at 5.1.51. PR #140 squash-merged at verified main `156ae2467c9ed6f73311ec45cae933417b1e5f32`; remote tree matches candidate. API full ESLint is 0 warnings/0 errors. API/Cloud regressions 36/16; Browser offline 27/27; all five builds; Web/Landing typecheck/lint; exact-source synthetic UAT 4/4; diagnostics 19/19; SEO 1/1 each; PHDK coherence 52/52 pass. Source changes remove simulated execution/integration success and retain only explicit tenant adapter behavior.

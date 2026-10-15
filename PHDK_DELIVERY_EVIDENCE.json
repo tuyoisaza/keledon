@@ -13,8 +13,8 @@
   "pr_head_sha": "880eb10ffb9d0cd94946ab62b5d5554ab29158ce",
   "product_source_merge_sha": "838931bd0d63f63f4a574ec9b660a12cc4ba5777",
   "merged_commit_sha": "838931bd0d63f63f4a574ec9b660a12cc4ba5777",
-  "remote_main_sha": "838931bd0d63f63f4a574ec9b660a12cc4ba5777",
-  "remote_main_tree": "0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e",
+  "remote_main_sha": "efc2ae47bd8be5cecbcc4cabd607a379704e4856",
+  "remote_main_tree": "7ba62f8cec5a344f4749c2ae3925ce6db5dfaf1e",
   "git_ls_remote_matches": true,
   "versions": {
     "services_api": "5.1.52",
@@ -48,7 +48,7 @@
     },
     "regression": {
       "status": "PASS",
-      "evidence": "API regression 36/36 and Cloud regression 16/16 pass; session CRUD guard targeted tests pass 2/2."
+      "evidence": "API regression 36/36 and Cloud regression 16/16 rerun on 5.1.52; session CRUD guard targeted tests pass 2/2. Browser media permission policy 5/5, production RPA tenant-origin safety and device-pair vendor payload parity checks pass."
     },
     "focused_tests": {
       "status": "PASS",
@@ -60,7 +60,7 @@
     },
     "database_uat": {
       "status": "PASS",
-      "evidence": "Scoped disposable PostgreSQL 16.15 UAT: 5.1.51 baseline migrations, persisted identity, tenant, and secret-projection checks; exact 5.1.52 session create/update/readback and 403 negatives passed. Qdrant-dependent Knowledge delete is tracked separately as blocked."
+      "evidence": "Scoped disposable PostgreSQL 16.15 UAT: 5.1.51 baseline migrations, persisted identity, tenant, and secret-projection checks; exact 5.1.52 session create/update/readback and 403 negatives passed. Additional exact-source loopback UAT created and deleted Knowledge documents/bases; SQL readback confirmed cascade deletion, and Qdrant point/collection checks confirmed vector cleanup."
     },
     "seo": {
       "status": "PASS",
@@ -72,25 +72,25 @@
     },
     "source_delivery": {
       "status": "PASS",
-      "evidence": "PR #142 squash-merged at 838931bd0d63f63f4a574ec9b660a12cc4ba5777. Fresh origin/main and git ls-remote match; remote tree 0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e matches the PR head tree; all six version reads are 5.1.52."
+      "evidence": "PR #142 squash-merged at 838931bd0d63f63f4a574ec9b660a12cc4ba5777; its merge-time tree 0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e matched the tested PR-head tree. Evidence-only PR #143 then merged at current origin/main efc2ae47bd8be5cecbcc4cabd607a379704e4856, tree 7ba62f8cec5a344f4749c2ae3925ce6db5dfaf1e; fresh git ls-remote agrees and all six version reads remain 5.1.52."
     },
     "whole_auto_acceptance": {
       "status": "BLOCKED",
-      "evidence": "Latest formal tally 39 PASS, 1 BLOCKED (Qdrant-dependent Knowledge delete), 1 MANUAL (native Electron/device/audio). Exhaustive 35-model operation coverage, Qdrant/concurrency, broad accessibility/localization, deployed SEO/AEO and tenant-specific call/CRM acceptance remain open."
+      "evidence": "Latest formal tally 40 PASS, 0 BLOCKED, 1 MANUAL (native Electron/device/audio). Qdrant document/base deletion passes in scoped live loopback UAT; delete/reindex concurrency, exhaustive 35-model operation coverage, broad accessibility/localization, deployed SEO/AEO and tenant-specific call/CRM acceptance remain open."
     },
     "qdrant_delete": {
-      "status": "BLOCKED",
-      "evidence": "KnowledgeBase/KnowledgeDocument deletion could not be exercised because isolated Qdrant was unavailable; no vector data was changed."
+      "status": "PASS",
+      "evidence": "Exact 5.1.52 API against disposable PostgreSQL 16.15 and isolated Qdrant 1.19.2 on loopback: document DELETE removed the DB document and all matching synthetic points; base DELETE removed the Qdrant collection and PostgreSQL base/document rows. Evidence: docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-qdrant-delete-5.1.52.json. Delete/reindex concurrency remains open."
     }
   },
   "scope_limitations": [
     "Database UAT used a disposable PostgreSQL 16.15 instance on loopback. Baseline role/migration/secret evidence is reused from 5.1.51; exact 5.1.52 session CRUD was rerun.",
-    "Knowledge-base/document deletion needs an isolated Qdrant service; no vector records were changed.",
+    "Knowledge document/base delete cleanup passed against isolated loopback Qdrant with synthetic data; concurrent delete/reindex races remain untested.",
     "No packaged Electron media-consent/device/audio journey was completed.",
     "Exhaustive 35-model operation coverage and broad accessibility/localization remain open.",
     "No deployed crawler, Search Console, answer-engine or SEO measurement is claimed.",
     "No customer-specific call/CRM endpoint was selected or contacted; acceptance is per tenant.",
-    "Source PR #142 is open and remote main remains 5.1.51; no deployment is claimed."
+    "Source PR #142 merged at 838931bd0d63f63f4a574ec9b660a12cc4ba5777; current origin/main is efc2ae47bd8be5cecbcc4cabd607a379704e4856 after evidence-only PR #143. No deployment is claimed."
   ],
   "overall_status": "5.1.52 SOURCE MERGED AND REMOTE VERIFIED; PHDK AUTO PARTIALLY DELIVERED"
 }

@@ -1,3 +1,11 @@
+## Active Auto milestone — 2026-10-14, live Qdrant deletion verified
+
+The 5.1.52 source fix is delivered by PR #142; evidence reconciliation PR #143 is merged at current `origin/main` `efc2ae47bd8be5cecbcc4cabd607a379704e4856`. On the exact product tree, synthetic Knowledge document and base deletion passed against disposable PostgreSQL 16.15 and isolated Qdrant 1.19.2 on loopback. Document row and matching vector points were absent; base and cascaded document rows and the Qdrant collection were absent. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-qdrant-delete-5.1.52.json`. Whole acceptance advances to 40 PASS, 0 BLOCKED, 1 MANUAL; delete/reindex concurrency, the complete model-role-operation matrix, broad accessibility/localization, deployed SEO/AEO, native device/audio and per-tenant call/CRM acceptance remain open. No production/customer endpoint or deployment was used.
+
+SIGUIENTE PASO: deliver this evidence update through a normal PR and continue the confirmed four fronts; retain PARTIALLY DELIVERED until all acceptance gates close.
+
+---
+
 ## Prior milestone — 2026-10-14, source and CRUD matrix delivery verified
 
 The KnowledgeBase source slice (PR #106), its delivery record (PR #107), and the matrix reconciliation (PR #108) are merged. Current `origin/main` and `git ls-remote` agree at `056e8605097874337c6bc532c006da3a3f772d56`, with application version 5.1.35. The Check matrix now includes KnowledgeBase/KnowledgeDocument role × API/Web rows and its drift regression covers 35/35 Prisma models and 154 unique combinations. Post-merge test, static PHDK coherence 52/52 and completion gate pass. GitHub exposes no hosted checks/review requirement; no deployment is claimed. Overall PHDK Auto remains PARTIALLY DELIVERED for database-backed authorization, live Qdrant/concurrency, safe identities, native device/audio, broad accessibility/localization, deployed SEO/AEO and remaining model-family mapping. No DB, CRM, customer data or deployment was used.

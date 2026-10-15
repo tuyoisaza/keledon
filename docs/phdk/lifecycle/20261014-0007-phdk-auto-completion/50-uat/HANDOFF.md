@@ -1,3 +1,11 @@
+## Active UAT continuation — live Qdrant cleanup, 5.1.52
+
+Status: **SCOPED PERSISTED CLEANUP PASS / WHOLE-PRODUCT ACCEPTANCE INCOMPLETE**. Disposable PostgreSQL 16.15 and official Qdrant 1.19.2 ran on loopback; synthetic document deletion removed the DB record and matching Qdrant points, while base deletion removed its collection and cascaded rows. Evidence: `evidence/uat-qdrant-delete-5.1.52.json`. The UAT tally advances to 40 PASS, 0 BLOCKED, 1 MANUAL. Delete/reindex concurrency, exhaustive role/model CRUD, native device/audio and broad/deployed acceptance remain open. Snapshot: `snapshots/qdrant-delete-uat-5.1.52/`.
+
+SIGUIENTE PASO: hand off the closed Qdrant deletion case and remaining concurrency/role coverage to Check; keep the total verdict partial.
+
+---
+
 ## Candidate 5.1.51 exact-source retest — 2026-10-15
 
 Status: **SCOPED UI ACCEPTANCE PASS / WHOLE-PRODUCT ACCEPTANCE INCOMPLETE**. Exact source commit `09ef2497957c381a3af7428af393b65b811c2fe6`; production-built local Web UAT passes 4/4 with Company Co fixtures, intercepted APIs and external traffic blocked. Candidate evidence and screenshots are in `evidence/uat-web-5.1.51-09ef2497/`; JSON records clean source fingerprint and zero untracked source files. UI/mock evidence does not establish DB/server/customer integration acceptance. Whole UAT remains 37 PASS, 2 BLOCKED, 1 MANUAL; safe DB identities/persistence and native device/audio remain open, as do broad accessibility/localization and deployed discoverability measures.

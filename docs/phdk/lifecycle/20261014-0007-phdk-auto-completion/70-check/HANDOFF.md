@@ -1,3 +1,9 @@
+## Active Check continuation — live Knowledge delete verified on 5.1.52
+
+The 5.1.52 source tree and installed PHDK 2.50.10 coherence (52/52) were revalidated. Live synthetic UAT against loopback PostgreSQL 16.15 and Qdrant 1.19.2 verifies document point cleanup and base collection/cascade cleanup; exact evidence is `../50-uat/evidence/uat-qdrant-delete-5.1.52.json`. No source failure was found in these paths. Check remains partial for exhaustive 35-model operations, delete/reindex concurrency, broad accessibility/localization, deployed SEO/AEO and per-tenant live CRM/call acceptance; UAT total is 40 PASS, 0 BLOCKED, 1 MANUAL.
+
+---
+
 ## Candidate 5.1.51 — zero-warning API lint and truthful tenant runtime
 
 API lint passes 0 warnings/0 errors. API/Cloud regression 36/16, Browser offline 27/27, all five builds, Web/Landing lint/typecheck, exact-source UAT 4/4, diagnostics 19/19, SEO 1/1 each and PHDK coherence 52/52 pass. Full Auto remains partial (37 PASS, 2 BLOCKED, 1 MANUAL); persisted DB, native device/audio, broad accessibility/localization and deployed SEO/AEO are not closed. Detailed candidate results are in `../90-delivery/snapshots/candidate-5.1.51/PHDK_CHECK_REPORT.md`.
