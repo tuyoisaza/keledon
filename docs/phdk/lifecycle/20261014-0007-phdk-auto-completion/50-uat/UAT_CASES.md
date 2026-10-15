@@ -1,5 +1,13 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Current candidate 5.1.43 — RPA scope at BrowserView navigation boundaries
+
+| Case | Story / actor | Acceptance / steps | Result and evidence |
+|---|---|---|---|
+| UAT-039 | US-003 / tenant-configured CRM flow executing in an empty BrowserView | Confirm RPA's trusted tenant allowlist is applied to BrowserView main/frame/redirect/popup and `tabs:navigate` boundaries during execution; restore the prior tab scope on completion or failure; retain a tenant-allowlisted private CRM origin. | PASS on exact tested candidate `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`), containing fix commit `29d18efbbabe159e5279a01ba767f70e54d8afdc`: Browser 27/27; Electron security-policy/wiring 9/9; TypeScript build; PHDK coherence 52/52. Evidence: `50-uat/evidence/uat-rpa-active-tab-navigation-scope-5.1.43.json`. Wiring assertions and mock WebContents only; no packaged Electron runtime or network endpoint. |
+
+The tenant-origin list is derived from paired vendor configuration by the existing Browser command handlers; the new runtime scope shares it with Electron navigation guards during the flow and restores previous WebContents state in `finally`. Private destinations remain valid only when configured and allowlisted for the tenant.
+
 ## Current candidate 5.1.42 — fail-closed RPA tenant scope
 
 | Case | Story / actor | Acceptance / steps | Result and evidence |

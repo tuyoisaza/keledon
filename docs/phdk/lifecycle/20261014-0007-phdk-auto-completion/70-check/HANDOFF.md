@@ -1,5 +1,9 @@
 # Check handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.43 — trusted RPA scope at BrowserView boundaries (UAT-039)
+
+CHK-AUTO-021 found that RPA used the correct tenant allowlist internally while an empty BrowserView's frame/redirect/popup/IPC callbacks could see no fixed tab scope. The executor now shares its trusted allowlist with that WebContents during the flow and restores prior state in `finally`; each boundary handler uses the active runtime scope. Product fix `29d18efbbabe159e5279a01ba767f70e54d8afdc`; exact tested candidate `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`) passes Browser tests 27/27, security-policy/wiring 9/9, Browser build and PHDK coherence 52/52. Source-level offline evidence only; delivery pending and whole acceptance remains partial. See `snapshots/candidate-5.1.43/PHDK_CHECK_REPORT.md`.
+
 ## Candidate 5.1.42 — required RPA tenant scope (UAT-038)
 
 CHK-AUTO-020 found that an omitted `allowed_origins` bypassed the RPA executor's origin check. Exact candidate `07f979b610b069d675183a7a4ad112b2466c20d2` fails before flow actions without a non-empty tenant scope and applies the scope to every navigation. The production executor test proves unscoped and unlisted paths never call `loadURL` or page JavaScript, while a configured private CRM origin remains usable. Browser tests pass 27/27, security-policy tests 8/8, Browser build and PHDK coherence 52/52 pass. No network destination was contacted.

@@ -1,0 +1,32 @@
+{
+  "case": "UAT-039",
+  "candidate_version": "5.1.43",
+  "source_commit": "29d18efbbabe159e5279a01ba767f70e54d8afdc",
+  "candidate_commit": "076bce49bead0029fd8fc9ea7f79389538f526e5",
+  "candidate_tree": "7c2cdffbac9887d974f886d8144cff330029c691",
+  "commands": [
+    "node --test browser/tests/*.test.cjs",
+    "(from browser/) node --test test/security-policy.test.cjs",
+    "(from browser/) npm run build",
+    "python phdk-standards/scripts/phdk_coherence_check.py"
+  ],
+  "results": {
+    "browser_tests": "PASS 27/27",
+    "security_policy_tests": "PASS 9/9",
+    "browser_build": "PASS",
+    "phdk_coherence": "PASS 52/52",
+    "version_alignment": "PASS all five package/lock roots and Browser renderer at 5.1.43"
+  },
+  "coverage": [
+    "RPA attaches its trusted tenant-origin scope to the active WebContents for the flow duration and restores the previous scope in finally.",
+    "TabManager navigation/frame/redirect and popup guards read the active runtime scope.",
+    "tabs:navigate IPC reads the active runtime scope before loadURL.",
+    "Scope helper copies origin arrays, isolates WebContents, and clears/restores the previous state.",
+    "A tenant-allowlisted private CRM origin remains usable; missing, empty, or unlisted RPA scope fails closed."
+  ],
+  "limitations": [
+    "Wiring assertions inspect source contracts; no packaged Electron window or native Windows runtime was exercised.",
+    "No real CRM, private endpoint, database, customer data, device, or deployment was used.",
+    "Cross-origin subresource behavior from an allowed page remains unverified."
+  ]
+}

@@ -1,5 +1,9 @@
 # Remediation handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.43 — active RPA scope for Electron navigation
+
+CHK-AUTO-021 is fixed: exact candidate `29d18efbbabe159e5279a01ba767f70e54d8afdc` shares the Cloud-derived tenant allowlist with BrowserView navigation, frame, redirect, popup and IPC guards for the lifetime of RPA execution, restoring prior scope afterward. UAT-039 and the Browser/security suites pass; Browser build and PHDK coherence pass. Delivery is pending; full Auto remains partial. Details: `snapshots/candidate-5.1.43/PHDK_REMEDIATION_REPORT.md`.
+
 ## Candidate 5.1.42 — RPA tenant-scope fail-closed fix
 
 CHK-AUTO-020 is fixed on candidate `07f979b610b069d675183a7a4ad112b2466c20d2`. Browser RPA now requires a non-empty origin allowlist before any step and checks each navigation against that set. Exact-source UAT-038 and Browser suite pass; security policy, Browser build and PHDK coherence pass. See `snapshots/candidate-5.1.42/PHDK_REMEDIATION_REPORT.md` and the Check snapshot. Delivery is pending; full Auto remains partial.

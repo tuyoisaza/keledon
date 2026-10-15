@@ -1,3 +1,7 @@
+## Current source candidate — 5.1.43
+
+Candidate `fix/phdk-rpa-tab-navigation-scope-5-1-43` is based on verified `origin/main` `e04418217e1ebb18acda9728a799041fd3bc3c19`. Product fix commit `29d18efbbabe159e5279a01ba767f70e54d8afdc`; exact tested candidate `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`). Five package/lock roots and Browser renderer align at 5.1.43. UAT-039 and CHK-AUTO-021 source remediation pass; Browser suite 27/27, security-policy/wiring 9/9, Browser build and PHDK coherence 52/52 pass. Source delivery is pending; whole PHDK Auto remains partial.
+
 ## Current source candidate — 5.1.42
 
 PR [#125](https://github.com/tuyoisaza/keledon/pull/125) merged source candidate `07f979b610b069d675183a7a4ad112b2466c20d2` at `6deaa910a37a9bb579eef5e82ae9dda1983c94ea`. Fresh `origin/main` and `git ls-remote` agree; remote tree `7f76bff35694121be03af672f9e8e68522def291` matches PR-head tree and Browser version is 5.1.42. UAT-038 and CHK-AUTO-020 pass; Browser suite 27/27, security-policy tests 8/8, Browser build and PHDK coherence 52/52 pass. GitHub reported no hosted checks or review decision; no deployment is claimed. Machine evidence is `PHDK_DELIVERY_EVIDENCE-5.1.42-post-merge-125.json`; its gate reports lint BLOCKED due missing Browser ESLint flat config. Whole Auto remains partial.

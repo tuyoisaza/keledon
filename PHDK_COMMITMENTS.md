@@ -1,5 +1,20 @@
 # Commitment ledger
 
+## Active run update — 5.1.43 RPA navigation scope (2026-10-14)
+
+The four owner-confirmed fronts remain active in order. Product fix `29d18efbbabe159e5279a01ba767f70e54d8afdc` plus exact tested candidate `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`) are based on verified `main` `e04418217e1ebb18acda9728a799041fd3bc3c19` and align the five application roots and Browser renderer at 5.1.43. CHK-AUTO-021 is fixed: Electron navigation, frame/redirect/popup and `tabs:navigate` guards share the trusted RPA tenant-origin scope during flow execution. UAT-039 passes; Browser suite 27/27, security-policy/wiring tests 9/9, Browser build and PHDK coherence 52/52 pass.
+
+| Commitment | Current candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 — baseline, versions, PRs | Version alignment and verified base are confirmed. | Candidate push/PR, merge and exact remote readback pending. |
+| CMT-002 — widget and safe diagnostics | No diagnostics UI changes; prior local diagnostics evidence remains applicable. | Native Windows device/audio and broad accessibility/localization remain open. |
+| CMT-003 — voice → Cloud → Browser → CRM per client | RPA navigation guards share the tenant-origin scope; configured private CRM origins remain supported. | Packaged Electron and client-specific live provider/CRM acceptance, plus subresource behavior, remain open. |
+| CMT-004 — administration and permissions | Approved actor/tenant policy remains; this candidate closes Browser navigation scope defense-in-depth. | Safe DB identities, disposable PostgreSQL, persisted migrations/CRUD and exhaustive model × role × tenant × surface × operation acceptance remain open. |
+
+Overall PHDK Auto remains **PARTIALLY DELIVERED**. UAT is 36 PASS, 2 BLOCKED, 1 MANUAL. No live endpoint, database, customer data, device, or deployment was used.
+
+---
+
 ## Active run update — 5.1.42 RPA tenant scope (2026-10-14)
 
 All four owner-confirmed fronts remain active in their approved order. Candidate `07f979b610b069d675183a7a4ad112b2466c20d2` (tree `a3664bdc9402c7b943e49b2a585b68de741f9f65`) is based on verified main `8075890cb9a112e948403491eb7bf7c8f44337b2` and aligns all five application roots and Browser renderer at 5.1.42. CHK-AUTO-020 is fixed: Browser RPA requires a non-empty tenant-origin scope and applies it to every navigation. UAT-038 passes; Browser suite 27/27, security-policy tests 8/8, Browser build and PHDK coherence 52/52 pass. No private destination or database was contacted.

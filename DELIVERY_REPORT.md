@@ -1,3 +1,19 @@
+## Current delivery — candidate 5.1.43 (2026-10-14, pending)
+
+Candidate `fix/phdk-rpa-tab-navigation-scope-5-1-43` is based on verified `origin/main` `e04418217e1ebb18acda9728a799041fd3bc3c19`. Product fix commit `29d18efbbabe159e5279a01ba767f70e54d8afdc` (tree `abeac0dd0b858016434d02e63d19eb943039c25f`), followed by test commit `076bce49bead0029fd8fc9ea7f79389538f526e5` (candidate tree `7c2cdffbac9887d974f886d8144cff330029c691`), bumps all five application package/lock roots and Browser renderer to 5.1.43. It shares the trusted RPA tenant-origin scope with active BrowserView navigation, frame, redirect, popup and IPC guards for the flow duration. UAT-039 passes; Browser tests 27/27, security-policy/wiring tests 9/9, Browser build and PHDK coherence 52/52 pass. Whole acceptance is 36 PASS, 2 BLOCKED, 1 MANUAL.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Five app package/lock roots and Browser renderer at 5.1.43; changelog updated. |
+| COMMIT_PREFIX | PASS | Source commit `v5.1.43 fix(browser): apply RPA tenant scope to BrowserView navigation`. |
+| PUSH_AND_PR | PENDING | Candidate not yet pushed; no PR exists. |
+| REMOTE_MAIN | PENDING | Merge/readback not performed. |
+| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | UAT-039; Browser tests/build and coherence pass; persisted/native/deployed/per-client gates remain. |
+
+No database, live CRM/private host, customer data, device or deployment was used. Browser ESLint remains unavailable because installed ESLint 10 requires an absent flat config. Overall: **PARTIALLY DELIVERED; SOURCE DELIVERY PENDING**.
+
+---
+
 ## Current delivery — candidate 5.1.42 (2026-10-14)
 
 PR [#125](https://github.com/tuyoisaza/keledon/pull/125) merged by squash at `6deaa910a37a9bb579eef5e82ae9dda1983c94ea`. A fresh fetch and `git ls-remote` agree on `main`; remote tree `7f76bff35694121be03af672f9e8e68522def291` matches the tested PR-head tree. Remote Browser package and renderer report 5.1.42. GitHub reports no hosted checks or review decision; no deployment is claimed. The source candidate `07f979b610b069d675183a7a4ad112b2466c20d2` is recorded in `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.42-post-merge-125.json`.

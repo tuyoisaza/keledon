@@ -1,3 +1,16 @@
+## Current Auto candidate — 2026-10-14, 5.1.43 (source delivery pending)
+
+| Commitment | Current candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | Product fix `29d18efbbabe159e5279a01ba767f70e54d8afdc`; exact tested candidate `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`), based on verified `origin/main` `e04418217e1ebb18acda9728a799041fd3bc3c19`; five application roots and Browser renderer align at 5.1.43. | Push/PR, merge and exact remote readback are pending. |
+| CMT-002 | Diagnostics behavior is unchanged; prior local Web UAT evidence remains. | Native device/audio and broad accessibility/localization remain open. |
+| CMT-003 | RPA allowlist now reaches Electron navigation, frame, redirect, popup and IPC guards during execution. | Packaged Electron, cross-origin subresources and customer-selected live provider acceptance remain open. |
+| CMT-004 | CHK-AUTO-021 source gap closes; PHDK coherence 52/52. | Persisted CRUD, safe DB identities, disposable PostgreSQL/migrations and complete role × tenant × surface × operation proof remain open. |
+
+UAT is **36 PASS, 2 BLOCKED, 1 MANUAL**. **Overall PARTIALLY DELIVERED; candidate delivery pending.** No database, customer data, private endpoint, device or deployment was used.
+
+---
+
 ## Current Auto candidate — 2026-10-14, 5.1.42 (source slice delivered)
 
 | Commitment | Current candidate evidence | Remaining acceptance |

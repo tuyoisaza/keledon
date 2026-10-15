@@ -211,3 +211,19 @@ The four owner-confirmed commitments remain active; none is complete at product-
 Open gates: safe DB-backed identities; disposable PostgreSQL/migrations/persisted CRUD; live Qdrant and delete/reindex concurrency; native Windows device/audio; remaining model-family proof; broad accessibility/localization; deployed SEO/AEO. No DB, client endpoint/data or deployment was used. Do not mark the goal complete while these gates remain unresolved.
 
 ---
+## Current Auto completion audit — source candidate 5.1.43; whole Auto partial (2026-10-14)
+
+The four confirmed fronts remain active in order. Product fix `29d18efbbabe159e5279a01ba767f70e54d8afdc`; exact tested candidate `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`), based on verified `origin/main` `e04418217e1ebb18acda9728a799041fd3bc3c19`, aligns all five application package/lock roots and Browser renderer at 5.1.43. PHDK 2.50.10 coherence is 52/52; Browser offline tests 27/27, security-policy/wiring tests 9/9, and Browser build pass.
+
+CHK-AUTO-021 found that RPA's tenant allowlist was not visible to Electron BrowserView navigation handlers when automation used an empty tab. The flow's trusted scope now guards navigation, frames, redirects, popups and `tabs:navigate` until execution completes; previous scope is restored in `finally`. UAT-039 passes with offline tests and source wiring assertions. No packaged Electron runtime, private endpoint, database, customer data, device or deployment was used. Browser ESLint cannot start because installed ESLint 10 requires an absent flat config.
+
+| Commitment | Status | Remaining in-scope proof |
+|---|---|---|
+| CMT-001 — baseline/versions/PR | VERSIONED CANDIDATE / DELIVERY PENDING | Push/PR, merge and exact remote SHA/tree/version readback. |
+| CMT-002 — widget/diagnostics | PRIOR LOCAL SOURCE/UAT PASS / ACCEPTANCE PARTIAL | Native Windows device/audio and broad route/assistive-tech verification. |
+| CMT-003 — voice/Cloud/Browser/customer CRM | OFFLINE TENANT SCOPE PASS / LIVE PER CLIENT | Packaged Electron, subresource behavior, and client-configured live provider acceptance. |
+| CMT-004 — administration/permissions | SOURCE REGRESSIONS PASS / PERSISTENCE UNVERIFIED | Full CRUD matrix, safe DB identities, disposable PostgreSQL/migrations and persisted authorization evidence. |
+
+Whole UAT is **36 PASS, 2 BLOCKED, 1 MANUAL**. Broad accessibility/localization and deployed SEO/AEO remain unverified. **Overall PHDK Auto is PARTIALLY DELIVERED**; no full completion claim is valid.
+
+---
