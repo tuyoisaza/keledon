@@ -1,35 +1,33 @@
 {
   "version": "1",
-  "goal": "PHDK Auto four confirmed KELEDON fronts; v5.1.52 session CRUD guard fix plus scoped DB-backed UAT; remaining Auto acceptance open",
+  "goal": "Continue the owner-confirmed four-front KELEDON PHDK Auto; deliver the 5.1.53 public initial-HTML remediation while preserving remaining acceptance work",
   "target_branch": "main",
-  "expected_version": "5.1.52",
+  "expected_version": "5.1.53",
   "version_file": "services/web/package.json",
   "version_property": "version",
-  "tested_source_commit_sha": "03ea78968103aa6bc6290ed0681b1c1ea345872a",
-  "tested_candidate_sha": "880eb10ffb9d0cd94946ab62b5d5554ab29158ce",
-  "tested_candidate_tree": "0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/144",
-  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/142",
-  "pr_head_sha": "3637b267a9ccafbb5cfc16fde83ffc2c403abe66",
-  "tested_evidence_candidate_sha": "3637b267a9ccafbb5cfc16fde83ffc2c403abe66",
-  "tested_evidence_candidate_tree": "7ba62f8cec5a344f4749c2ae3925ce6db5dfaf1e",
-  "product_source_merge_sha": "838931bd0d63f63f4a574ec9b660a12cc4ba5777",
-  "merged_commit_sha": "aaa99f19e35d6e6172c24a764d27abf087a39e85",
-  "remote_main_sha": "aaa99f19e35d6e6172c24a764d27abf087a39e85",
-  "remote_main_tree": "4b11d88e2e9ca35a0568761543a9e926f04f1895",
+  "tested_source_commit_sha": "39cfd9dca87cbda148155b6d91d318cabcd0b681",
+  "tested_candidate_sha": "39cfd9dca87cbda148155b6d91d318cabcd0b681",
+  "tested_candidate_tree": "88b5bb924cf458694bea41c743b6c6fb5beec9a3",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/146",
+  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/146",
+  "pr_head_sha": "39cfd9dca87cbda148155b6d91d318cabcd0b681",
+  "product_source_merge_sha": "dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245",
+  "merged_commit_sha": "dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245",
+  "remote_main_sha": "dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245",
+  "remote_main_tree": "88b5bb924cf458694bea41c743b6c6fb5beec9a3",
+  "remote_main_verified_at": "2026-10-15T04:31:39Z",
   "git_ls_remote_matches": true,
   "versions": {
-    "services_api": "5.1.52",
-    "cloud": "5.1.52",
-    "browser": "5.1.52",
-    "services_web": "5.1.52",
-    "landing": "5.1.52",
-    "browser_renderer": "5.1.52"
+    "services_api": "5.1.53",
+    "cloud": "5.1.53",
+    "browser": "5.1.53",
+    "services_web": "5.1.53",
+    "landing": "5.1.53",
+    "browser_renderer": "5.1.53"
   },
   "github": {
     "state": "MERGED",
-    "product_pr_142": "MERGED at 838931bd0d63f63f4a574ec9b660a12cc4ba5777",
-    "evidence_pr_144": "MERGED at aaa99f19e35d6e6172c24a764d27abf087a39e85",
+    "product_pr": "#146 merged by squash",
     "merge_method": "squash",
     "merge_state": "CLEAN",
     "hosted_checks": [],
@@ -37,63 +35,46 @@
     "main_protection": "branch not protected"
   },
   "checks": {
-    "api_lint": {
+    "landing_seo_contract": {
       "status": "PASS",
-      "evidence": "API ESLint completed with 0 warnings and 0 errors."
+      "evidence": "Landing npm run test:seo passes 1/1; asserts semantic initial-document content and React startup fallback transition."
     },
-    "web_landing_lint_typecheck": {
+    "landing_lint": {
       "status": "PASS",
-      "evidence": "Web/Landing lint and typecheck pass; Browser lint also passes with max warnings 0."
+      "evidence": "Landing npm run lint completed successfully."
     },
-    "build": {
+    "landing_typecheck": {
       "status": "PASS",
-      "evidence": "API, Cloud, Browser, Web and Landing production builds pass at 5.1.52; Web/Landing retain the existing bundle-size advisory."
+      "evidence": "Landing npm run typecheck completed both app and node TypeScript projects successfully."
     },
-    "regression": {
+    "landing_build": {
       "status": "PASS",
-      "evidence": "API regression 36/36 and Cloud regression 16/16 rerun on 5.1.52; session CRUD guard targeted tests pass 2/2. Browser media permission policy 5/5, production RPA tenant-origin safety and device-pair vendor payload parity checks pass."
+      "evidence": "Landing Vite production build passed; existing 580.27 kB main-chunk advisory remains. Built dist/index.html contains the semantic H1 and substantive overview before JavaScript."
     },
-    "focused_tests": {
+    "version_alignment": {
       "status": "PASS",
-      "evidence": "Web diagnostics 19/19; Web SEO 1/1; Landing SEO 1/1; exact-candidate Web UAT 4/4."
-    },
-    "uat": {
-      "status": "PASS",
-      "evidence": "Exact candidate commit 03ea78968103aa6bc6290ed0681b1c1ea345872a; built SPA 4/4 with synthetic Company Co APIs and blocked external traffic. Scoped loopback PostgreSQL session create/update/readback passed; legacy summary and team reassignment returned 403."
-    },
-    "database_uat": {
-      "status": "PASS",
-      "evidence": "Scoped disposable PostgreSQL 16.15 UAT: 5.1.51 baseline migrations, persisted identity, tenant, and secret-projection checks; exact 5.1.52 session create/update/readback and 403 negatives passed. Additional exact-source loopback UAT created and deleted Knowledge documents/bases; SQL readback confirmed cascade deletion, and Qdrant point/collection checks confirmed vector cleanup."
-    },
-    "seo": {
-      "status": "PASS",
-      "evidence": "Web SEO 1/1 and Landing SEO 1/1 source checks. Deployed crawler/Search Console/AEO measures remain open."
+      "evidence": "Verified on remote main: all five package roots and lockfile roots plus Browser renderer label are 5.1.53."
     },
     "phdk_coherence": {
       "status": "PASS",
-      "evidence": "Installed PHDK 2.50.10 coherence check: 52/52 static manifest mappings."
+      "evidence": "Installed PHDK 2.50.10 coherence checker passes 52/52 manifest mappings."
+    },
+    "focused_uat_041": {
+      "status": "PASS",
+      "evidence": "Built static HTML acceptance passes for the public overview; evidence docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-landing-5.1.53.json. Whole-product UAT remains incomplete as stated in scope_limitations."
     },
     "source_delivery": {
       "status": "PASS",
-      "evidence": "Product PR #142 squash-merged at 838931bd0d63f63f4a574ec9b660a12cc4ba5777; its merge-time tree 0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e matched the tested product candidate. Evidence PR #143 merged at efc2ae47bd8be5cecbcc4cabd607a379704e4856. The live-Qdrant UAT and reconciliation then merged in PR #144 at current origin/main aaa99f19e35d6e6172c24a764d27abf087a39e85, tree 4b11d88e2e9ca35a0568761543a9e926f04f1895; fresh git ls-remote agrees and all six version reads remain 5.1.52."
-    },
-    "whole_auto_acceptance": {
-      "status": "BLOCKED",
-      "evidence": "Latest formal tally 40 PASS, 0 BLOCKED, 1 MANUAL (native Electron/device/audio). Qdrant document/base deletion passes in scoped live loopback UAT; delete/reindex concurrency, exhaustive 35-model operation coverage, broad accessibility/localization, deployed SEO/AEO and tenant-specific call/CRM acceptance remain open."
-    },
-    "qdrant_delete": {
-      "status": "PASS",
-      "evidence": "Exact 5.1.52 API against disposable PostgreSQL 16.15 and isolated Qdrant 1.19.2 on loopback: document DELETE removed the DB document and all matching synthetic points; base DELETE removed the Qdrant collection and PostgreSQL base/document rows. Evidence: docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-qdrant-delete-5.1.52.json. Delete/reindex concurrency remains open."
+      "evidence": "PR #146 squash-merged at dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245; origin/main and git ls-remote agree; merged tree 88b5bb924cf458694bea41c743b6c6fb5beec9a3 matches the tested PR head tree."
     }
   },
   "scope_limitations": [
-    "Database UAT used a disposable PostgreSQL 16.15 instance on loopback. Baseline role/migration/secret evidence is reused from 5.1.51; exact 5.1.52 session CRUD was rerun.",
-    "Knowledge document/base delete cleanup passed against isolated loopback Qdrant with synthetic data; concurrent delete/reindex races remain untested.",
-    "No packaged Electron media-consent/device/audio journey was completed.",
-    "Exhaustive 35-model operation coverage and broad accessibility/localization remain open.",
-    "No deployed crawler, Search Console, answer-engine or SEO measurement is claimed.",
-    "No customer-specific call/CRM endpoint was selected or contacted; acceptance is per tenant.",
-    "Source PR #142 merged at 838931bd0d63f63f4a574ec9b660a12cc4ba5777; current origin/main is efc2ae47bd8be5cecbcc4cabd607a379704e4856 after evidence-only PR #143. No deployment is claimed."
+    "This evidence records the 5.1.53 source-slice delivery, not completion of the four-front PHDK Auto goal.",
+    "Whole UAT remains acceptance incomplete: 41 PASS, 0 BLOCKED, 1 MANUAL; supported native device/audio acceptance remains manual.",
+    "Exhaustive persisted CRUD/role/tenant/surface/operation coverage and delete/reindex concurrency remain open.",
+    "Broad accessibility/localization and deployed SEO/AEO measurements remain open or unverified.",
+    "No customer-specific call/CRM endpoint was selected or contacted; integrations and private-origin allowlists are tenant-configured.",
+    "No deployment is claimed; only the source merge and remote-main readback are verified."
   ],
-  "overall_status": "5.1.52 SOURCE MERGED AND REMOTE VERIFIED; PHDK AUTO PARTIALLY DELIVERED"
+  "overall_status": "5.1.53 SOURCE MERGED AND REMOTE VERIFIED; PHDK AUTO PARTIALLY DELIVERED"
 }

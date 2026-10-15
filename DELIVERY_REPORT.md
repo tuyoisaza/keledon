@@ -1,4 +1,22 @@
-## Current delivery — 5.1.52 source merged and remotely verified; Auto partial
+## Current delivery — 5.1.53 source merged and remotely verified; Auto partial
+
+Candidate `39cfd9dca87cbda148155b6d91d318cabcd0b681` on `fix/phdk-public-home-nojs-5-1-53` was based on verified `main` `962adfc349fcaacde61e0635c13952166b78d7c9`. PR [#146](https://github.com/tuyoisaza/keledon/pull/146) squash-merged at `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`; `origin/main` and `git ls-remote` agree and the merged tree `88b5bb924cf458694bea41c743b6c6fb5beec9a3` matches the tested PR-head tree. All five app package/lock roots and Browser renderer read 5.1.53. The squash subject is version-prefixed.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | All five roots/locks plus Browser renderer are 5.1.53 over verified 5.1.52 main. |
+| COMMIT_PREFIX | PASS | Source commit `39cfd9dca87cbda148155b6d91d318cabcd0b681` and squash title begin `v5.1.53:`. |
+| PUSH_AND_PR | PASS | PR #146 pushed and squash-merged CLEAN. No hosted checks/review decision reported; main was not protected. |
+| REMOTE_MAIN | PASS | `origin/main` and `git ls-remote` match `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`; tree matches tested PR head. |
+| SCOPE_AND_CHECKS | SLICE PASS / WHOLE AUTO PARTIAL | Landing SEO 1/1, lint, typecheck, build, built HTML contract, PHDK coherence 52/52, and UAT-041 pass. Auto remains 41 PASS, 0 BLOCKED, 1 MANUAL plus the recorded open CRUD/concurrency, broad a11y/localization, deployed discovery and tenant-specific acceptance. |
+
+The source PR is delivered; the whole Auto goal is not complete. No deployment is claimed. The machine evidence file records this source-slice readback, not whole-portfolio completion.
+
+SIGUIENTE PASO: continuar los gates de aceptación PHDK Auto que siguen abiertos; mantener configurada y aceptada cada integración de llamada/CRM por tenant.
+
+---
+
+## Previous delivery — 5.1.52 source merged and remotely verified; Auto partial
 
 Repository `tuyoisaza/keledon`; target `main`; candidate source commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` on `docs/phdk-auto-db-uat-evidence`, based on verified main `5b7e25512c95737688beea43b2d7172199dfa231`. PR [#142](https://github.com/tuyoisaza/keledon/pull/142), head `880eb10ffb9d0cd94946ab62b5d5554ab29158ce`, squash-merged at `838931bd0d63f63f4a574ec9b660a12cc4ba5777`; remote tree `0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e` matches the PR head tree. Fresh `origin/main` and `git ls-remote` agree; five app roots/locks and Browser renderer read 5.1.52. The squash subject carries the required `v5.1.52:` prefix.
 

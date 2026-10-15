@@ -1,3 +1,16 @@
+## Active four-front portfolio — 5.1.53 public HTML source slice delivered (2026-10-14)
+
+PR [#146](https://github.com/tuyoisaza/keledon/pull/146) closes the newly found public-root machine-readable content gap and is verified on remote main `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`; `git ls-remote` agrees, candidate tree matches, and six version reads are 5.1.53. UAT-041 passes; total acceptance is now 41 PASS, 0 BLOCKED, 1 MANUAL. PHDK 2.50.10 coherence passes 52/52. Whole Auto remains **PARTIALLY DELIVERED**: exhaustive persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed discovery and customer-specific call/CRM acceptance remain open. Per-tenant private CRM destinations remain validated and allowlisted; no customer target was contacted.
+
+| WS | Current state | Evidence / next gate |
+|---|---|---|
+| 1 Baseline/version/PR | 5.1.53 source slice delivered by PR #146 | Continue full cross-package/CRUD conformance; do not infer whole-front completion from this release. |
+| 2 Widget/safe diagnostics | Existing 5.1.52 evidence reused; no widget code changed in this slice | Continue broader native/a11y acceptance. |
+| 3 Voice→Cloud→Browser→CRM | Source behavior unchanged; CRM remains tenant-selected | Verify customer-configured systems only when scoped and available. |
+| 4 Administration/permissions | Owner-approved restrictive role/tenant policy unchanged | Persisted full model×role×operation matrix remains open. |
+
+---
+
 # PMO status history — prior candidates through 5.1.38
 
 ## Active four-front portfolio — 5.1.52, source and Qdrant UAT verified (2026-10-14)

@@ -1,5 +1,9 @@
 # Commitment ledger
 
+## Active run update — 5.1.53 public initial HTML (2026-10-14)
+
+The scoped public-source finding is fixed and delivered by product PR [#146](https://github.com/tuyoisaza/keledon/pull/146), squash-merged at remote `main` `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`; six version reads are 5.1.53. UAT-041 passes. The four confirmed workstreams remain active; this SEO/AEO source slice does not close them. Whole Auto remains PARTIALLY DELIVERED for full persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed discovery and customer-specific call/CRM acceptance.
+
 ## Active run update — 5.1.52 live Qdrant acceptance
 
 The loopback Knowledge document/base cleanup UAT now passes with disposable PostgreSQL 16.15 and isolated Qdrant 1.19.2. This closes the single Qdrant-dependent BLOCKED case and advances the tally to 40 PASS, 0 BLOCKED, 1 MANUAL; delete/reindex concurrency remains open. The four confirmed workstreams and their order remain unchanged. Source PR #142 and evidence PRs #143/#144 are merged. Current remote main: `aaa99f19e35d6e6172c24a764d27abf087a39e85`, product version 5.1.52. Whole Auto remains PARTIALLY DELIVERED.
