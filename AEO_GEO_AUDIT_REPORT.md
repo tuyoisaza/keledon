@@ -1,5 +1,9 @@
 # AEO/GEO source audit — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.39 source revalidation — 2026-10-14
+
+Source `a8a89f928312db2fef5142a0e07ac18a197b6c19`; AEO/GEO remains **APPLICABLE** to public `/`. No public content, claims, routes or crawl directives changed in this API/Cloud-only candidate. Reused the current grounded questions and 15-control audit. Web and Landing SEO tests pass 1/1 each. No answer engine, live page, crawler, Search Console, production or paid query was used. AG-14 remains NOT MEASURED; locale/market and verified author/contact provenance remain unresolved decisions/evidence, not code failures. This is a source revalidation, not a citation/indexation result.
+
 Date: 2026-10-14. Candidate version 5.1.24, base `6413d8aed295c18af098ca6a58c6dfbb7503930b`, source fingerprint `sha256:aced4dfae723e0c19aa30fee2d2219eda6290007dee9cedf79ec52bd246f1b1b`. Entry checks verified current SEO handoff and UAT/UAT Fix reports. UAT remains NOT ACCEPTED for an independent server-audited profile-switch gap; source AEO work is safe and independent, so no answer-engine or user-data behavior was exercised.
 
 Applicability: **APPLICABLE** to the public homepage intended for discovery. Authenticated tenant/customer/admin data is excluded. Public market and multilingual route policy are not defined; do not infer them from the UI's en/es/pt catalogs. No external answer engine, paid query, browser, crawler, Search Console, provider or deployed page was accessed.

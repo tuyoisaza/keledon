@@ -1,5 +1,9 @@
 # SEO checklist — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.39 revalidation
+
+Candidate `a8a89f928312db2fef5142a0e07ac18a197b6c19`; public source is unchanged. Reuse the 25 evidenced source controls below; Web/Landing SEO tests pass 1/1 each. No live HTTP, crawler, Search Console, TLS or Core Web Vitals measurement was made. External controls remain BLOCKED/NOT MEASURED as listed.
+
 Candidate: 5.1.24 base `6413d8aed295c18af098ca6a58c6dfbb7503930b`; source fingerprint `sha256:aced4dfae723e0c19aa30fee2d2219eda6290007dee9cedf79ec52bd246f1b1b`. Method: source inspection and local static tests/build only. Candidate UAT remains NOT ACCEPTED. The 25 controls are engineering checks, not a ranking formula.
 
 | ID | Status | Evidence, action, retest |
@@ -31,4 +35,3 @@ Candidate: 5.1.24 base `6413d8aed295c18af098ca6a58c6dfbb7503930b`; source finger
 | SEO-25 Links/reputation | BLOCKED | No measured backlink/mention evidence. |
 
 Commands: Web and Landing `npm run test:seo` PASS 1/1 each. Landing `npm run build`, `typecheck`, and `lint` PASS. No browser, HTTP, crawler, Search Console, deployment or provider access.
-

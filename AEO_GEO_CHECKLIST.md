@@ -1,6 +1,6 @@
 # AEO/GEO checklist — run `20261014-0007-phdk-auto-completion`
 
-Candidate 5.1.24 / base `6413d8aed295c18af098ca6a58c6dfbb7503930b`; worktree source fingerprint `sha256:aced4dfae723e0c19aa30fee2d2219eda6290007dee9cedf79ec52bd246f1b1b`. Method is source review and local SEO regression/build evidence. No answer engines were queried; no claim of ranking/citation is made.
+Candidate 5.1.39 `a8a89f928312db2fef5142a0e07ac18a197b6c19`, based on main `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`; public sources unchanged. The 15 controls below are reused and revalidated by source review plus Web/Landing SEO tests (1/1 each). No answer engines were queried; no ranking, citation or deployed-discovery claim is made.
 
 | ID | Status | Evidence / retest |
 |---|---|---|

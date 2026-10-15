@@ -48,3 +48,15 @@ Source Check found a human-session disclosure of raw Device RPA configuration. D
 ## Candidate 5.1.29 — safe device-list projection
 
 Post-PR #98 source recheck found raw RPA config and Chrome DevTools URL values in human device-list output. The controller now omits both values, along with tokens and pairing proofs, and returns presence flags. Regression UAT-012 exercises the real Nest HTTP controller; UAT-011 preserves exact paired-device runtime access. API regression 21/21 suites, Jest 11/11/38, build, focused lint 0 errors/1 pre-existing warning, Cloud/Web/Landing/Browser builds and coherence 52/52 pass. This closes the current Device list disclosure only; complete Device and remaining model operation maps/persistence remain open. Candidate base is main a22c0a407aa07552a189aa9f3b00e887397f9d03; normal delivery pending.
+
+## Candidate 5.1.39 — MVP store write contracts and role recheck (2026-10-14)
+
+The scoped source finding was untyped MVP JSON-store write input: API and Cloud now mirror strict field/type validation, and FlowVersion creation records the guard-derived actor. API regression 48 and Cloud regression 41 pass the three contract assertions; API 36/36 and Cloud 16/16 full regressions and builds pass. Changed-source lint passes. The source candidate is `a8a89f928312db2fef5142a0e07ac18a197b6c19`, based on verified refreshed main `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`; five package/lock roots and Browser renderer align at 5.1.39; PHDK v2.50.10 coherence is 52/52; 1,168 active source files have zero at/above 600 lines.
+
+A focused recheck of `MvpDataController` and both `ResourceScopeGuard` mirrors found no admin/coordinator cross-tenant configuration path: actor role is loaded from the database; managers may call only the safe provider catalogs and redacted tech status; all other MVP configuration handlers are denied to them. No new source gap was confirmed. CHK-AUTO-003 remains PARTIAL for the exhaustive model-family operation/role/tenant/surface matrix, while disposable PostgreSQL, persisted migrations/authorization, DB-backed test identities, native device/audio, deployed discovery, broad accessibility/localization, and client-configured live calls/CRM remain unverified or external. The 35-model/168-row source inventory does not prove persistence. No external runtime/customer resource was accessed.
+
+Status: **SOURCE CHECK PASS / WHOLE ACCEPTANCE PARTIAL / DELIVERY PENDING**.
+
+## Delivery readback — candidate 5.1.39
+
+PR [#116](https://github.com/tuyoisaza/keledon/pull/116) delivered the scoped write-contract source slice by squash merge at `615770d6e769008299a4228da758fc455941c6c5`. `origin/main` and `git ls-remote` independently agree. The remote main tree equals the tested candidate tree `f3c45a2d80bf065db27236a48ae4b7dcafead240`; all five app roots and Browser renderer are 5.1.39. The source-slice machine gate passes; whole acceptance remains partial. The PHDK evidence/docs PR is pending. No deployment is claimed.

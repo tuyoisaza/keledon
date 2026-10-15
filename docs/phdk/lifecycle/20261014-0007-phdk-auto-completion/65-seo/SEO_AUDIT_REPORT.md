@@ -1,5 +1,9 @@
 # SEO source audit — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.39 revalidation — 2026-10-14
+
+Source `a8a89f928312db2fef5142a0e07ac18a197b6c19`, based on `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`. Public Web/Landing source, URLs, metadata and indexation policy are unchanged; only API/Cloud write contracts and API module organization changed. The 25-control checklist remains applicable and is revalidated by Web/Landing SEO tests 1/1 each, builds and typechecks. No HTTP/crawler/field/Search Console/deployed measurement was performed. Source check passes; external SEO acceptance remains partial/unmeasured.
+
 Date: 2026-10-14. Candidate base: `6413d8aed295c18af098ca6a58c6dfbb7503930b`, product baseline 5.1.24, active worktree source fingerprint `sha256:aced4dfae723e0c19aa30fee2d2219eda6290007dee9cedf79ec52bd246f1b1b`. UAT was revalidated on this fingerprint and remains **NOT ACCEPTED** for the separate profile-switch requirement. The SEO work is independent: it only adds truthful static fallback copy to the retained `landing/index.html`; current `services/web` user journeys and routes are unchanged.
 
 Applicability: **APPLICABLE**. The public marketing/entry route `/` is intended for discovery. Authenticated SPA routes, API, dashboard, administration and customer CRM destinations remain private/nonindexable and are excluded from the sitemap. Product intent says client call/CRM platforms are individually configured. No target market or public multilingual route decision is established; the public document remains English as currently authored.
@@ -19,4 +23,3 @@ See `SEO_CHECKLIST.md` for every control. Source outcomes: SEO-01..04, 06..11, 1
 - Source change: `landing/index.html` adds a noninteractive, intent-accurate noscript summary; `landing/test/seo-headers.test.cjs` guards its presence. No URL, redirect, claim, market, or production setting changed.
 
 Conclusion: **SOURCE CHECKS PASS; SEO ACCEPTANCE PARTIAL/BLOCKED**. No critical accidental indexation defect was found in the inspected source. UAT remains NOT ACCEPTED, and external server/crawler/field evidence is unavailable; therefore this stage does not assert a final SEO pass. See `SEO_REMEDIATION_REPORT.md` for the exact remaining actions.
-

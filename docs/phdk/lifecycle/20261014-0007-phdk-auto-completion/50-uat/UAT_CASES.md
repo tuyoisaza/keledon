@@ -1,5 +1,15 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Current candidate 5.1.39 — exact-SHA write-contract case
+
+| Case | Story / actor | Acceptance / steps | Result and evidence |
+|---|---|---|---|
+| UAT-033 | US-002 / US-004, API and Cloud management caller | Send server-owned fields, unsupported types and spoofed FlowVersion creator fields; verify the controller forwards the authenticated actor; compare mirrored backends. | PASS, regression 48/API and 41/Cloud, three assertions each; API 36/36 and Cloud 16/16 suites; exact source `a8a89f928312db2fef5142a0e07ac18a197b6c19`. Synthetic Web UAT is 2/2 and diagnostics 19/19. Evidence: `evidence/uat-local-web-5.1.39.json`; no DB/provider/client system used. |
+
+Overall UAT remains **ACCEPTANCE INCOMPLETE — 30 PASS, 2 BLOCKED, 1 MANUAL**. Persistent database/identities, native device/audio, full accessibility/localization and deployed SEO/AEO remain open; client CRM/call acceptance is selected per tenant.
+
+---
+
 Current candidate: KELEDON 5.1.26 on `fix/audited-uat-test-profiles`, based on `8dfc1fca7de253a017acb6f291ff278699915beb`. Source commit is `6a99281e8c74c5d40590aca146a03786324dc340`; post-commit UAT is recorded in `docs/phdk/evidence/uat-local-web.json`. All fixtures are synthetic; browser API requests are intercepted, external requests blocked, and API guard tests use isolated in-process fixtures.
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

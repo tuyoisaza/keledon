@@ -1,3 +1,24 @@
+## Current Check — candidate 5.1.39, source merged (2026-10-14)
+
+Repository `tuyoisaza/keledon`; candidate branch `fix/phdk-mvp-store-write-contracts-5-1-39`; tested source `a8a89f928312db2fef5142a0e07ac18a197b6c19`; tested base `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`; integrated by PR [#116](https://github.com/tuyoisaza/keledon/pull/116) at `615770d6e769008299a4228da758fc455941c6c5`. Remote `main` and `git ls-remote` agree; remote and tested candidate trees match at `f3c45a2d80bf065db27236a48ae4b7dcafead240`. Installed PHDK 2.50.10 equals canonical main `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`; coherence is 52/52. Five app package/lock roots and Browser renderer align at 5.1.39. Source inventory: 1,168 active TS/JS/UI files, zero at or above 600 physical lines; `MvpStoreService` is 487 lines.
+
+**Executive result: ALIGNMENT INCOMPLETE FOR WHOLE AUTO; CURRENT SOURCE FINDING CLOSED AND DELIVERED.** This Check continuation revalidates the candidate's in-scope change and carries forward known product acceptance findings; it does not claim persisted or environment-wide certification.
+
+| Finding | Current status | Evidence / remaining proof |
+|---|---|---|
+| MVP store request boundaries | CLOSED — SOURCE DELIVERED | API/Cloud reject unsupported/server-owned fields and invalid primitive, enum and object-array values before JSON writes. FlowVersion creator is guard-actor-derived; updates cannot replace caller-owned fields. API regression 48, Cloud regression 41; API 36/36, Cloud 16/16. |
+| CHK-AUTO-003 — model-family CRUD/authorization map | PARTIAL | 35-model/168-row inventory is a source drift assertion only; exhaustive role × tenant × surface × operation mapping and per-record proof remain incomplete. |
+| CHK-AUTO-005 / UAT-009/010 — persistence, migrations and safe identities | BLOCKED / UNVERIFIED | Requires safe DB-backed identities and disposable PostgreSQL; no database or migration was used. |
+| CHK-AUTO-007 / UAT-006 — native device/audio | MANUAL | Requires a supported Windows device/audio host. |
+| Deployed SEO/AEO; broad accessibility/localization | UNVERIFIED | Local source checks pass; deployment, crawler/search measurements and broad screen/assistive-tech acceptance were not performed. |
+| Client-specific call/CRM acceptance | EXTERNAL / PER CLIENT | Provider is customer-selected; no live provider or private endpoint was contacted. |
+
+The source finding's validation passes: API/Cloud builds and full regression suites (36/36, 16/16), changed-source ESLint, Browser build, Web/Landing typechecks and builds, diagnostics 19/19, exact-candidate synthetic Web UAT 2/2, Web/Landing SEO source tests 1/1 each, PHDK coherence 52/52 and `git diff --check`. A focused trace of both `MvpDataController` guards confirmed that admin/coordinator may call only safe provider catalogs and redacted tech status; the global configuration handlers are denied unless the DB-derived role is superadmin. No new tenant-scope gap was established. GitHub exposes no hosted checks/reviews and `main` is unprotected; this is not human source review.
+
+No database, customer data, private CRM endpoint, provider write or deployment was used. See the current Auto lifecycle and commitment coverage for the terminal partial status.
+
+---
+
 ## Prior Check — candidate 5.1.36; superseded by the 5.1.37 candidate entry below
 
 ## Current Check — 5.1.37 source candidate (2026-10-14)

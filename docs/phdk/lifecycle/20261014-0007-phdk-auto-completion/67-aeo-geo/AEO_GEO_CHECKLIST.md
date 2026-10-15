@@ -1,5 +1,9 @@
 # AEO/GEO checklist — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.39 revalidation
+
+Candidate `a8a89f928312db2fef5142a0e07ac18a197b6c19`; public source unchanged. The 15 controls below are reused. Web/Landing SEO source tests pass 1/1; no answer engine, crawler, live target or paid query was contacted. External citations remain NOT MEASURED.
+
 Candidate 5.1.24 / base `6413d8aed295c18af098ca6a58c6dfbb7503930b`; worktree source fingerprint `sha256:aced4dfae723e0c19aa30fee2d2219eda6290007dee9cedf79ec52bd246f1b1b`. Method is source review and local SEO regression/build evidence. No answer engines were queried; no claim of ranking/citation is made.
 
 | ID | Status | Evidence / retest |
@@ -19,4 +23,3 @@ Candidate 5.1.24 / base `6413d8aed295c18af098ca6a58c6dfbb7503930b`; worktree sou
 | AG-13 Privacy/crawler policy | PASS (source) | Public root only; private SPA surfaces excluded in NGINX source and sitemap. Deployed headers not measured. |
 | AG-14 Answer/citation observation | NOT MEASURED | No authorized AI/search engine query. No citations, recommendations or percentages asserted. |
 | AG-15 Revalidation/regression | PASS (source/local) | Web/Landing SEO tests 1/1 each; Landing build/typecheck/lint and same-candidate UAT revalidation passed. Overall UAT remains NOT ACCEPTED for profile-switch policy. |
-

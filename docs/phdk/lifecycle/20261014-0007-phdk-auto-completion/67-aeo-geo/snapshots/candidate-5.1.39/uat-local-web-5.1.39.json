@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "runId": "20261014-0007-phdk-auto-completion",
+  "candidateVersion": "5.1.39",
+  "candidateBranch": "fix/phdk-mvp-store-write-contracts-5-1-39",
+  "sourceCommit": "a8a89f928312db2fef5142a0e07ac18a197b6c19",
+  "baseCommit": "b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844",
+  "recordedAt": "2026-10-14T17:56:41-06:00",
+  "environment": "local production Web SPA with synthetic Company Co fixtures; API calls intercepted; external network blocked",
+  "cases": [
+    {
+      "id": "UAT-033",
+      "result": "PASS",
+      "evidence": {
+        "apiRegression": "services/api/test/regression/48-mvp-store-write-contracts.test.js: 3/3 assertions; full API regression suite 36/36",
+        "cloudRegression": "cloud/test/regression/41-mvp-store-write-contracts.test.js: 3/3 assertions; full Cloud regression suite 16/16",
+        "webUat": "services/web npm run test:uat: 2/2",
+        "webDiagnostics": "services/web npm run test:diagnostics: 19/19",
+        "webSeo": "services/web npm run test:seo: 1/1",
+        "landingSeo": "landing npm run test:seo: 1/1"
+      },
+      "expectations": [
+        "MVP writes reject caller-supplied server-owned fields and unsupported value types",
+        "FlowVersion creator is derived from the authenticated actor passed by the controller",
+        "API and Cloud enforce the same input contract"
+      ]
+    }
+  ],
+  "candidateChecks": {
+    "apiBuild": "PASS",
+    "cloudBuild": "PASS",
+    "webTypecheckBuild": "PASS",
+    "landingTypecheckBuild": "PASS",
+    "browserBuild": "PASS",
+    "changedSourceEslint": "PASS",
+    "phdkCoherence": "PASS 52/52",
+    "physicalLineInventory": "PASS 1168 active files; 0 at or above 600 lines",
+    "allTenApplicationPackageAndLockRoots": "PASS 5.1.39",
+    "browserRendererVersion": "PASS v5.1.39"
+  },
+  "acceptance": {
+    "wholeRunStatus": "ACCEPTANCE INCOMPLETE",
+    "counts": {
+      "pass": 30,
+      "blocked": 2,
+      "manual": 1,
+      "fail": 0
+    },
+    "remaining": [
+      "UAT-009: safe DB-backed development identities",
+      "UAT-010: disposable PostgreSQL migration and persisted CRUD evidence",
+      "UAT-006: native Windows device/audio acceptance",
+      "broad accessibility/localization",
+      "deployed SEO/AEO measurements",
+      "client-specific call/CRM acceptance when a client configuration is selected"
+    ]
+  },
+  "externalActions": {
+    "database": false,
+    "privateCrmEndpoint": false,
+    "customerProvider": false,
+    "nativeDeviceAudio": false,
+    "deployment": false
+  }
+}

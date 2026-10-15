@@ -1,5 +1,9 @@
 # CRUD matrix — current source and authorization coverage
 
+## Current 5.1.39 — API/Cloud MVP store write contracts
+
+The parallel API and Cloud `MvpDataController` paths now accept explicit input types and service-level validation for ManagedInterface, FlowDefinition, FlowVersion create/update, TenantFlowPermission, IntentFlowMapping and KnowledgeDocument writes. Unknown fields are rejected; primitive/enumeration and nested object-array values are checked before the JSON store is modified. FlowVersion creator attribution is supplied from the request actor populated by the DB-backed `ResourceScopeGuard`; update inputs cannot overwrite identity or timestamps. Mirrored regression 48/41 asserts the contract behavior. A focused guard trace confirms admin/coordinator are limited to safe catalog/status handlers and cannot access superadmin global config. This complements, but does not replace, the 35-model/168-row CRUD drift inventory or prove persisted DB authorization. Those broad operation and persistence gates remain open.
+
 ## 5.1.35 — KnowledgeBase details and updates are tenant-scoped
 
 API and Cloud now expose `GET /api/crud/knowledge/:id` and `PUT /api/crud/knowledge/:id`. Detail and update lookups apply the authenticated actor's database-derived company; updates permit only a trimmed, validated name and description. Generic CRUD guard regressions deny cross-company ID access and forged tenant fields; mirrored service tests cover the tenant scope and reject invalid payloads before writes. The Web administration surface now lists bases with document counts and supports detail, create, edit, and destructive delete confirmation for admin/coordinator/superadmin; ordinary users retain read-only access. Synthetic SPA UAT exercises those flows and payload boundaries. This is source and mocked-API evidence only; persistent authorization, PostgreSQL migrations, live vector deletion and delete/reindex concurrency remain unverified.

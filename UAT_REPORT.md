@@ -1,5 +1,17 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.39 — MVP write-contract regression (2026-10-14)
+
+Candidate branch `fix/phdk-mvp-store-write-contracts-5-1-39`, exact source revision `a8a89f928312db2fef5142a0e07ac18a197b6c19`, based on `origin/main` `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`. UAT-033 passes: API and Cloud regressions each include three assertions that reject server-owned/unsupported MVP fields, require authenticated server attribution for a FlowVersion creator, and prove the controller passes the guard-populated actor rather than caller-body attribution. API regression passes 36/36; Cloud passes 16/16. Web diagnostics pass 19/19 and built-SPA UAT passes 2/2 against local synthetic API fixtures with external traffic blocked. Web/Landing typecheck and production builds pass; Web and Landing SEO source tests pass 1/1 each; Browser TypeScript build passes. Evidence is `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-local-web-5.1.39.json`; the suite outputs and exact SHA are recorded there. No database, private CRM endpoint, client identity, call provider, or deployment was used.
+
+The current UAT catalog is 30 PASS, 2 BLOCKED, 1 MANUAL. UAT-009 real DB-backed identities, UAT-010 disposable PostgreSQL persistence/migrations, and UAT-006 native Windows device/audio remain open. Full model × role × tenant × operation × surface acceptance, broad accessibility/localization, and deployed SEO/AEO are also incomplete. Client call/CRM acceptance remains tenant-specific and cannot be generalized without a selected client's configuration.
+
+**Conclusion: ACCEPTANCE INCOMPLETE.** No FAIL was found in executed candidate checks; the environment-bound and manual cases above still prevent whole-product acceptance. See earlier case action plans in this report for the exact owner/runtime prerequisites. No production or client system was accessed.
+
+SIGUIENTE PASO: finalize the UAT handoff/snapshot, then run/reuse candidate SEO and AEO/GEO evidence before the source Check.
+
+---
+
 ## Candidate 5.1.38 — Cloud escalation source parity and integrated UAT (2026-10-14)
 
 Cloud escalation regression 40 passes 3/3 and API regression 27 passes the DB-derived actor, tenant/team/session and caller-attribution checks. The built-Web UAT passes 2/2 against exact merged revision `45b9031b9d3261a98e928cceb6fb51e73e21421f`; `docs/phdk/evidence/uat-local-web.json` records version 5.1.38, that revision, and zero dirty/untracked source files. The companion Device UAT passes 1/1 and records the same clean revision in `uat-device-5.1.36.json` (the established evidence filename is retained). UI tests use synthetic intercepted APIs with external traffic blocked; they are not database, production-authentication, native-device or deployed acceptance. Widget/diagnostics pass 19/19; Web/Landing SEO each pass 1/1. PHDK coherence passes 52/52. Overall tally remains 29 PASS, 2 BLOCKED, 1 MANUAL; this source candidate does not close the Auto goal.
