@@ -1,5 +1,15 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.55 — inventory schema integrity (2026-10-15)
+
+UAT-043 passes. Regression 33 separately validates the capability matrix at 490 unique model-role-surface rows and the narrative model inventory at 35 rows with exactly three columns each. It also retains the existing source assertions for ManagedInterface, team Flow, nested TeamInterface, operational runs, FeatureFlag, and AI prompts. PHDK coherence passes 52/52. The 5.1.54 merge remains the authoritative current release while this 5.1.55 correction is under delivery.
+
+Focused result: **PASS for documentation/test integrity**. Overall remains **ACCEPTANCE INCOMPLETE: 43 PASS, 0 BLOCKED, 1 MANUAL**. Persisted role/tenant authorization and migrations, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific integrations remain open or customer-scoped. No database, CRM/provider endpoint, customer data, device or deployment was used.
+
+SIGUIENTE PASO: complete the candidate integrity checks and deliver the correction through the normal PR flow; retain all external acceptance gates.
+
+---
+
 ## Candidate 5.1.54 — model-role-surface authorization map (2026-10-14)
 
 UAT-042 passes source/documentation acceptance. The regression reads the current Prisma schema and requires exactly one detailed row for every model × role × API/Web tuple, all required CRUD/scope/enforcement/UI/deletion/evidence/status fields, valid lifecycle states, and source-grounded assertions for global ManagedInterface, team Flow, FeatureFlag and superadmin AI prompt boundaries. Output: `35/35 Prisma models, 490 unique model-role-surface rows, 168 established core resource-role-surface rows`. PHDK coherence 52/52 and `git diff --check` also pass. This does not validate persisted role, tenant or migration behavior.

@@ -1,5 +1,20 @@
 # PHDK commitment coverage — KELEDON four fronts
 
+## Active run update — candidate 5.1.55 inventory integrity (2026-10-15)
+
+Post-merge audit of PR #148 found that the capability matrix expansion had changed the separate narrative model inventory's table width. Candidate 5.1.55 restores the three-column shape and extends regression 33; this is a CMT-004 documentation/test integrity fix only. UAT-043 passes. Five app package/lock roots and Browser renderer align at 5.1.55; versioned PR delivery remains in progress from verified main 5.1.54 `b89bc7a63f55e6f5ef1be3195fc22a49fe70c1b7`.
+
+| Commitment | Candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 — baseline, versions, PRs | Base main/PR #148 reverified; this candidate is versioned 5.1.55. | PR, merge and exact remote SHA/tree/version readback. |
+| CMT-002 — diagnostics/widget | No widget behavior changed. | Native device/audio and broad accessibility acceptance. |
+| CMT-003 — voice → Cloud → Browser → CRM per tenant | Runtime/vendor behavior unchanged; client-specific private origins remain tenant-configured. | Native runtime and each configured customer integration acceptance. |
+| CMT-004 — administration and permissions | 490 capability rows remain; 35-row narrative inventory width is now regression-checked. | Persistent authorization/migrations, remaining GAP/DECISION NEEDED items and broader route UI acceptance. |
+
+Whole Auto remains **PARTIALLY DELIVERED**; UAT-043 is documentation/test integrity only. No database, CRM/provider endpoint, customer data, device or deployment was used.
+
+---
+
 ## Active run update — candidate 5.1.54 CRUD model map (2026-10-14)
 
 Candidate 5.1.54 advances CMT-004 source traceability with the 490-row Prisma model × role × API/Web matrix; regression 33 and PHDK coherence validate its structure and selected policy boundaries. It does not close persistent database authorization/migration, remaining route/UI gaps, or unresolved owner decisions. Candidate is on `fix/phdk-crud-matrix-5-1-54`, based on verified `main` `4a2d4f46e29d79e62d2548f2a931a50de8625b65`; versioned PR delivery remains in progress.

@@ -1,3 +1,13 @@
+# Current Check — candidate 5.1.55 matrix artifact integrity (2026-10-15)
+
+Candidate branch `fix/phdk-crud-matrix-schema-5-1-55` is based on verified `origin/main` 5.1.54 at `b89bc7a63f55e6f5ef1be3195fc22a49fe70c1b7`. The 5.1.54 expansion correctly contains 490 model × role × API/Web rows, but a later document edit also changed the separate model-to-surface narrative table from three columns to the matrix width. Regression 33 did not detect that shape mismatch.
+
+**Scoped result: source integrity restored.** The narrative inventory has been restored to one row per model and its original three-column schema. Regression 33 now checks both tables independently: 35/35 schema models and exactly 490 unique role/surface tuples, plus selected authorization boundaries. Candidate 5.1.55 adds an explicit assertion that every narrative inventory row has exactly three columns.
+
+CHK-AUTO-003 remains **PARTIAL**. The correction improves documentation and test integrity only. Persisted tenant/role acceptance, unresolved lifecycle decisions, route/UI gaps, migration evidence, native acceptance and deployed measurements remain open. PHDK coherence is 52/52; full source regression 33 passes. No database, provider, customer endpoint or deployment was used.
+
+---
+
 # Current Check — candidate 5.1.54 CRUD model × role × surface map (2026-10-14)
 
 Repository `tuyoisaza/keledon`; candidate branch `fix/phdk-crud-matrix-5-1-54`, based on verified `origin/main` `4a2d4f46e29d79e62d2548f2a931a50de8625b65`. PHDK 2.50.10 coherence is 52/52. All five application package/lock roots and the Browser renderer are 5.1.54.

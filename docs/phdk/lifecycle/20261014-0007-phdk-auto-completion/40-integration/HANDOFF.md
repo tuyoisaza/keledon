@@ -1,5 +1,13 @@
 # Integration Review handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.55 — restore model inventory table contract
+
+Post-merge review found the 5.1.54 markdown edit had expanded the separate model-to-surface narrative table to the capability matrix width. It is restored to the original three-column schema. Regression 33 now validates both tables independently and keeps all role policy assertions. No runtime behavior changed; detailed review: `INTEGRATION_REPORT-5.1.55.md`.
+
+PHDK 2.50.10 coherence is 52/52. UAT-043 passes source/documentation integrity. Persisted role/tenant authorization, migrations and the other external/manual acceptance gates remain open. Candidate 5.1.55 proceeds to Check and normal PR delivery; whole Auto stays PARTIALLY DELIVERED.
+
+---
+
 ## Candidate 5.1.54 — CRUD model-role-surface crosswalk
 
 Review finds the candidate coherent: no product runtime or API contract changed; the 168 core rows stay separately scoped; the added 490 tuples match the Prisma schema and approved role list; direct, nested, global, operational and append-only models remain distinguished. Guard-source spot checks and regression assertions protect team Flow read/write boundaries, hidden superadmin-only ManagedInterface, nested TeamInterface, unwired FeatureFlag and superadmin-only AI prompt updates. Version roots align at 5.1.54. Detailed review: `INTEGRATION_REPORT-5.1.54.md`.

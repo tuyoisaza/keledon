@@ -1,10 +1,20 @@
-## PHDK Auto — 5.1.54 CRUD model matrix candidate; delivery in progress
+## PHDK Auto — 5.1.55 matrix integrity correction; delivery in progress
+
+Post-merge revalidation of 5.1.54 found that the expanded CRUD table had also widened rows in a separate three-column model narrative inventory. The inventory is restored, and regression 33 now enforces both the 490-row model-role-surface matrix and the 35-row three-column inventory. UAT-043 passes; all five version roots and Browser renderer are 5.1.55; PHDK coherence remains 52/52. This candidate corrects documentation/test integrity without changing runtime authorization.
+
+Whole Auto remains **PARTIALLY DELIVERED** (43 PASS, 0 BLOCKED, 1 MANUAL). Persisted authorization/migrations, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live integrations remain open or customer-scoped. No DB, provider, customer endpoint/data, device or deployment was used.
+
+SIGUIENTE PASO: normal PR delivery and exact remote readback; then continue the confirmed portfolio and external acceptance gates.
+
+---
+
+## PHDK Auto — 5.1.54 CRUD model matrix delivered; four fronts continue
 
 The Check gap CHK-AUTO-003 lacked explicit model × role × surface rows beyond the 168 core resource rows. Candidate 5.1.54 adds 490 rows for all 35 Prisma models × seven roles × API/Web, preserving source-grounded denial, nested/append-only exceptions, gaps, blockers and decisions. Regression 33 passes with key ManagedInterface, team Flow, TeamInterface, FeatureFlag and AI prompt policy assertions; PHDK coherence is 52/52. All five package/lock roots and Browser renderer align at 5.1.54. UAT-042 passes for source/documentation coverage only.
 
-Whole Auto remains **PARTIALLY DELIVERED** (42 PASS, 0 BLOCKED, 1 MANUAL in the formal UAT tally). Persisted authorization/migrations, delete/reindex concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live integrations remain open or customer-scoped. No DB, private endpoint, provider, customer data, device or deployment was used.
+PR [#148](https://github.com/tuyoisaza/keledon/pull/148) merged by squash at `b89bc7a63f55e6f5ef1be3195fc22a49fe70c1b7`; `origin/main` and `git ls-remote` agree, the remote tree equals the tested candidate, and PHDK's mechanical source-delivery gate passes. Whole Auto remains **PARTIALLY DELIVERED** (42 PASS, 0 BLOCKED, 1 MANUAL in the formal UAT tally). Persisted authorization/migrations, delete/reindex concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live integrations remain open or customer-scoped. No DB, private endpoint, provider, customer data, device or deployment was used.
 
-SIGUIENTE PASO: complete the final candidate checks, then normal PR delivery and exact remote readback. Keep the project goal partial while external/manual gates remain.
+SIGUIENTE PASO: continue the confirmed Auto portfolio; use isolated PostgreSQL/identities and supported native hardware for open gates. Keep the project goal partial until all acceptance gates pass.
 
 ---
 
