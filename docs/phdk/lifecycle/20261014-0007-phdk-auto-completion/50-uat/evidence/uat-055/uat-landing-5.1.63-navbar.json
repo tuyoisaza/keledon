@@ -1,0 +1,60 @@
+{
+  "version": "5.1.63",
+  "candidateRevision": "0886fbd6a06d7519158ae5f6bbd9873e44477c8b",
+  "candidateSourceFingerprint": "sha256:c13da8c8e4f45f3fb33fc1333eaa187d174b95e15bee550132ba8f6d9c6a6da6",
+  "dirtyUntrackedSourceFiles": 0,
+  "sourceRoots": [
+    "browser",
+    "cloud",
+    "services/api",
+    "services/web",
+    "landing"
+  ],
+  "targetEnvironment": "local production-built Landing SPA with all external requests blocked",
+  "result": "PASS",
+  "desktop": {
+    "viewport": "1280x900",
+    "navLabel": "Navegación principal",
+    "visiblePreferenceControls": 2,
+    "widgetBelowBrand": true,
+    "widgetTopLeftAligned": true,
+    "widgetNoHeroOverlap": true,
+    "geometry": {
+      "brand": {
+        "left": 32,
+        "top": 16,
+        "bottom": 48
+      },
+      "widget": {
+        "left": 32,
+        "top": 52,
+        "bottom": 80
+      }
+    },
+    "noOverlap": true,
+    "controls": [
+      {
+        "top": 36,
+        "bottom": 60
+      },
+      {
+        "top": 31.5,
+        "bottom": 64.5
+      }
+    ],
+    "heroDisclaimer": {
+      "top": 186.5,
+      "bottom": 202.5
+    }
+  },
+  "mobile": {
+    "viewport": "390x844",
+    "menuExpanded": true,
+    "themeControlVisible": true,
+    "languageControlVisible": true
+  },
+  "evidence": [
+    "uat-landing-5.1.63-home-desktop.png",
+    "uat-landing-5.1.63-home-mobile-menu.png"
+  ]
+}

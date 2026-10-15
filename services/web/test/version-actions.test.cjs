@@ -191,7 +191,7 @@ test('the shared widget covers public, login, app shell, and admin routes in bot
 
   for (const app of ['services/web', 'landing']) {
     const navbar = read(`${app}/src/components/common/Navbar.tsx`);
-    assert.match(navbar, /flex-shrink-0 flex items-center gap-3/);
+    assert.match(navbar, /flex-shrink-0 flex flex-col items-start gap-1/);
     assert.match(navbar, /hidden lg:block/);
     assert.match(navbar, /lg:hidden/);
     assert.match(navbar, /<ThemeControls\s*\/>/);

@@ -5,9 +5,13 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const { chromium } = require(path.resolve(__dirname, '../../api/node_modules/playwright'));
 const { getCandidateFingerprint } = require('./uat-candidate-evidence.cjs');
+const appVersion = require('../package.json').version;
 
 const dist = path.resolve(__dirname, '../../../landing/dist');
-const evidence = path.resolve(__dirname, '../../../docs/phdk/evidence');
+const evidence = process.env.KELEDON_UAT_EVIDENCE_DIR
+  ? path.resolve(process.env.KELEDON_UAT_EVIDENCE_DIR)
+  : path.resolve(__dirname, '../../../docs/phdk/evidence');
+const evidencePrefix = `uat-landing-${appVersion}`;
 
 test('Landing public navigation keeps preferences clear of hero and available on mobile', { timeout: 60000 }, async () => {
   const server = http.createServer(async (request, response) => {
@@ -60,7 +64,19 @@ test('Landing public navigation keeps preferences clear of hero and available on
     assert.equal(layout.controlCount, 2, `Landing desktop theme/language controls are visible: ${JSON.stringify(layout)}`);
     assert.ok(layout.controls.every(control => control.bottom <= layout.disclaimer.top || control.top >= layout.disclaimer.bottom), `Landing navigation overlaps hero copy: ${JSON.stringify(layout)}`);
     await fs.mkdir(evidence, { recursive: true });
-    await page.screenshot({ path: path.join(evidence, 'uat-landing-home-desktop.png') });
+    const geometry = await page.evaluate(() => {
+      const brand = document.querySelector('nav[aria-label] a[aria-label="KELEDON"]');
+      const row = document.querySelector('nav[aria-label] [data-testid="version-actions"]');
+      const brandRect = brand.getBoundingClientRect();
+      const rowRect = row.getBoundingClientRect();
+      return { brand: { left: brandRect.left, top: brandRect.top, bottom: brandRect.bottom }, widget: { left: rowRect.left, top: rowRect.top, bottom: rowRect.bottom } };
+    });
+    assert.ok(geometry.widget.top >= geometry.brand.bottom, `diagnostics row must sit directly below the product brand: ${JSON.stringify(geometry)}`);
+    assert.ok(Math.abs(geometry.widget.left - geometry.brand.left) <= 2, `diagnostics row must align to the top-left product brand: ${JSON.stringify(geometry)}`);
+    assert.ok(geometry.widget.bottom <= layout.disclaimer.top || geometry.widget.top >= layout.disclaimer.bottom, `diagnostics row overlaps public hero copy: ${JSON.stringify({ geometry, disclaimer: layout.disclaimer })}`);
+    assert.equal(await page.locator('nav[aria-label] [data-testid="version-actions"] button').count(), 2);
+    await fs.mkdir(evidence, { recursive: true });
+    await page.screenshot({ path: path.join(evidence, `${evidencePrefix}-home-desktop.png`) });
 
     await page.setViewportSize({ width: 390, height: 844 });
     const menu = page.locator('#public-mobile-menu');
@@ -69,22 +85,23 @@ test('Landing public navigation keeps preferences clear of hero and available on
     assert.equal(await menu.isVisible(), true);
     assert.equal(await menu.getByLabel('Tema de color').count(), 1);
     assert.equal(await menu.getByLabel('Idioma').count(), 1);
-    await page.screenshot({ path: path.join(evidence, 'uat-landing-home-mobile-menu.png') });
+    assert.equal(await page.locator('nav[aria-label] [data-testid="version-actions"]').isVisible(), true);
+    await page.screenshot({ path: path.join(evidence, `${evidencePrefix}-home-mobile-menu.png`) });
     const candidate = await getCandidateFingerprint();
-    await fs.writeFile(path.join(evidence, 'uat-landing-navbar-5.1.61.json'), JSON.stringify({
-      version: '5.1.61',
+    await fs.writeFile(path.join(evidence, `${evidencePrefix}-navbar.json`), JSON.stringify({
+      version: appVersion,
       candidateRevision: candidate.baseCommit,
       candidateSourceFingerprint: candidate.sourceFingerprint,
       dirtyUntrackedSourceFiles: candidate.dirtyUntrackedSourceFiles,
       sourceRoots: candidate.sourceRoots,
       targetEnvironment: 'local production-built Landing SPA with all external requests blocked',
       result: 'PASS',
-      desktop: { viewport: '1280x900', navLabel: layout.navLabel, visiblePreferenceControls: layout.controlCount, noOverlap: true, controls: layout.controls, heroDisclaimer: layout.disclaimer },
+      desktop: { viewport: '1280x900', navLabel: layout.navLabel, visiblePreferenceControls: layout.controlCount, widgetBelowBrand: true, widgetTopLeftAligned: true, widgetNoHeroOverlap: true, geometry, noOverlap: true, controls: layout.controls, heroDisclaimer: layout.disclaimer },
       mobile: { viewport: '390x844', menuExpanded: true, themeControlVisible: await menu.getByLabel('Tema de color').isVisible(), languageControlVisible: await menu.getByLabel('Idioma').isVisible() },
-      evidence: ['uat-landing-home-desktop.png', 'uat-landing-home-mobile-menu.png'],
+      evidence: [`${evidencePrefix}-home-desktop.png`, `${evidencePrefix}-home-mobile-menu.png`],
     }, null, 2));
     await context.close();
-    console.log('PASS Landing nav controls: no public hero overlap at 1280px; both theme and language remain reachable at 390px; external requests blocked');
+    console.log('PASS Landing brand/widget geometry, no hero overlap at 1280px, and mobile preferences at 390px; external requests blocked');
   } finally {
     await browser?.close();
     await new Promise(resolve => server.close(resolve));

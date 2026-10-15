@@ -1,3 +1,12 @@
+## v5.1.63 — 2026-10-15 (place public diagnostics directly below the product name)
+
+- Stack the version/copy/reset row below the KELEDON brand in both public navigation bars, matching the mandatory PHDK top-left placement while preserving the compact 12px/28px/14px/4px geometry.
+- Add exact-browser geometry assertions for the brand-to-widget position, hero clearance and mobile visibility; make Landing UAT evidence versioned and optionally isolated.
+- Align all five application package/lock roots and Browser renderer at 5.1.63.
+
+### Verification
+- Web component/diagnostic handler tests, Landing/Web builds and targeted local browser UAT are required for this positioning change; full portfolio acceptance remains partial.
+
 ## v5.1.62 — 2026-10-15 (require AI administration acceptance in release gates)
 
 - Add the AI prompt/usage contract suite to the mandatory API regression runner and the existing synthetic AI-admin journey to Web UAT.

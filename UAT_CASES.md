@@ -1,12 +1,18 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.63 — public diagnostics placement under product name
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-055 | US-001 / anonymous visitor and operator | Build both Web applications; open public Landing at desktop/mobile sizes; inspect brand/widget bounding boxes and hero clearance; open the mobile preferences menu. | The compact version/copy/reset row is top-left directly below the KELEDON name, has exactly two named icon-only actions, stays visible without overlapping hero copy, and preserves mobile theme/language access. | Local production Landing browser UAT with outbound traffic blocked; mirrored Web component/source regression. | PASS on exact 5.1.63 candidate source. At 1280×900 brand (32,16–48), widget (32,52–80), two visible preferences, zero hero overlap; at 390×844 mobile theme/language controls remain visible. Browser evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-055/`; full Web diagnostics/debug-mode/version-actions 19/19. |
+
 ## Candidate 5.1.62 — protected AI administration acceptance
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
 |---|---|---|---|---|---|
 | UAT-053 | US-011 / provisioned superadmin and tenant admin | Build the Web app and run the isolated AI administration UI journey with synthetic API routes; run the managed AI API contract suite through the required API regression runner. | Only a superadmin reaches prompt/usage administration; invalid schemas and stale revisions do not write; successful edits create audited revisions; missing usage/cost stays Unknown; no provider request or model payload is fabricated. | Local production SPA UAT and API regression. | PASS for exact 5.1.62 source: API contract 6/6 is included in regression 38/38; synthetic AI administration UAT passes all 12 cases. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/AI-ADMIN-UAT-5.1.62.json` and adjacent screenshots. Persistence/migration remains open. |
 
-Candidate tally: **53 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. This synthetic UAT proves the built Web UI and fixture contract only; it does not close persisted AI prompt migrations, production authorization or the full administration matrix.
+Candidate tally: **54 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. This includes UAT-055, which adds the public diagnostics placement and mobile preference check. The synthetic AI-admin cases prove the built Web UI and fixture contract only; they do not close persisted AI prompt migrations, production authorization or the full administration matrix.
 
 ## Candidate 5.1.60 addition — verify Landing diagnostics mounts (2026-10-15)
 

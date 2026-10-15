@@ -46,7 +46,7 @@ export const Navbar = () => {
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-24">
-                    <div className="flex-shrink-0 flex items-center gap-3">
+                    <div className="flex-shrink-0 flex flex-col items-start gap-1">
                         <Link to="/" className="flex items-center gap-2" aria-label="KELEDON">
                             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                                 <Bot className="w-5 h-5 text-primary-foreground" />
