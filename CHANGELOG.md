@@ -1,3 +1,8 @@
+## v5.1.42 — 2026-10-14 (require tenant scope for Browser RPA)
+
+- Fail closed when a Browser RPA flow lacks its configured tenant origin allowlist.
+- Keep validated, explicitly allowlisted private CRM origins available to RPA navigation.
+
 ## v5.1.41 — 2026-10-14 (scope vendor frame navigation by tenant)
 
 ### Changed
