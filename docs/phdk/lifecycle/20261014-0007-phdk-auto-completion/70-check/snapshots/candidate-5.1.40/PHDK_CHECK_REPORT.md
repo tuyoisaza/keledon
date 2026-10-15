@@ -6,6 +6,8 @@ Repository `tuyoisaza/keledon`; candidate branch `fix/diagnostics-route-roles-5-
 
 **Executive result: SCOPED SOURCE CHECK PASS / SOURCE MERGED / WHOLE AUTO ACCEPTANCE PARTIAL.** Check found that hierarchical `minRole="admin"` admitted coordinators to `/management/debug`, while the existing backend diagnostics `RolesGuard` denies coordinators. `ProtectedRoute` now accepts an optional explicit allowlist, and this route permits only `admin` and `superadmin`; API enforcement is unchanged. UAT-034 proves coordinator redirect before `/health/deep` and admin use against synthetic fixtures, with all non-fixture external traffic blocked.
 
+**UAT-035 revalidation:** test commit `2edc20cdc524f39718c486395677e0532af5a972` (tree `dbd5dd8a2e02dfbea38ae72a4c74e3c50d5c21bc`) adds built-SPA Knowledge management journeys for coordinator, superadmin and ordinary user. Coordinator receives only company-a and submits that tenant; superadmin selects company-b; user receives no manager controls. The API is synthetic and external traffic is blocked. Cloud full ESLint exits successfully (`npm run lint`); no code auto-fix changes were produced. UAT-035 closes the two scoped Web-affordance evidence gaps in the matrix, but CHK-AUTO-003 remains partial for other resources/operations and persisted proof.
+
 | Finding | Current status | Evidence / remaining proof |
 |---|---|---|
 | CHK-AUTO-018 — diagnostics UI role mismatch | CLOSED — SOURCE | Exact commit/tree above; dedicated built-SPA UAT 1/1. Backend remains authoritative and unchanged. |
