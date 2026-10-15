@@ -1,16 +1,20 @@
 ## Current delivery — candidate 5.1.41 (2026-10-14)
 
+### Post-merge verification — PR #123
+
+PR [#123](https://github.com/tuyoisaza/keledon/pull/123) is MERGED at `7ac039f217f0328a9f25d6fbe9e7f85107c13ca1`. Fresh `git fetch origin`, `git ls-remote origin refs/heads/main`, and GitHub PR metadata agree. PR head and remote-main trees match at `7c70cdbe01841fec5e1d4259a84cf9f1c792f177`; remote Browser version is 5.1.41. GitHub reports no hosted checks or review decision; `main` has no configured protection. The source-slice completion gate passes using `PHDK_DELIVERY_EVIDENCE-5.1.41-post-merge-123.json`. Overall PHDK Auto remains PARTIALLY DELIVERED.
+
 Repository `tuyoisaza/keledon`; target `main`; source candidate `718ce3d4cf9c4e51b71ec163e9749307997d85d2`, based on verified main `aed26d6641950fb3d4f40e64fee459fb013c544a`. Product version 5.1.41. PHDK 2.50.10 coherence 52/52. Source commit `v5.1.41 fix(browser): enforce tenant vendor navigation scope` adds tenant-origin enforcement to Electron frame navigation and trusted programmatic navigation IPC. Exact-source UAT-036 passes 4/4 browser test files; UAT-037 policy/wiring tests pass 8/8; Browser full offline suite 35/35; API/Cloud regressions 36/36 and 16/16; all builds, Web diagnostics, Web/Landing SEO pass.
 
 | Gate | Status | Evidence |
 |---|---|---|
 | VERSION_BUMP | PASS | All five app package/lock roots and Browser renderer are 5.1.41; changelog updated. |
 | COMMIT_PREFIX | PASS | Source commit begins `v5.1.41`; candidate SHA `718ce3d4cf9c4e51b71ec163e9749307997d85d2`. |
-| PUSH_AND_PR | BLOCKED / PENDING | Branch has not yet been pushed and PR has not yet been opened. |
-| REMOTE_MAIN | BLOCKED / PENDING | No merge/readback for candidate 5.1.41 exists yet. |
+| PUSH_AND_PR | PASS | PR #123 merged to `main`; GitHub reports no hosted checks or review decision, and `main` has no configured protection. |
+| REMOTE_MAIN | PASS | `origin/main` and `git ls-remote` agree at `7ac039f217f0328a9f25d6fbe9e7f85107c13ca1`; remote tree matches PR head at `7c70cdbe01841fec5e1d4259a84cf9f1c792f177`; Browser package version is 5.1.41. |
 | SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | Confirmed four-front scope remains; database/native/deployed/client-specific gates remain open. |
 
-No hosted checks/reviews or deployment are claimed for this candidate. Overall PHDK Auto remains **PARTIALLY DELIVERED**. Latest lifecycle evidence is in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/`.
+No hosted checks/reviews or deployment are claimed for this candidate. Overall PHDK Auto remains **PARTIALLY DELIVERED**. Machine evidence is `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.41-post-merge-123.json`; the gate passes for PR #123's verified merge SHA. Latest lifecycle evidence is in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/`.
 
 ---
 

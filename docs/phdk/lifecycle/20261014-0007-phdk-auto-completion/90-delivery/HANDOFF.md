@@ -72,7 +72,11 @@ ix/redact-device-config-lists is based on main 22c0a407aa07552a189aa9f3b00e8873
 
 ## Current source candidate — 5.1.41
 
-Candidate `718ce3d4cf9c4e51b71ec163e9749307997d85d2` on `fix/phdk-vendor-frame-scope-5-1-41` is based on verified main `aed26d6641950fb3d4f40e64fee459fb013c544a`. Five app package/lock roots and Browser renderer align at 5.1.41. Candidate UAT-036/037 and integrated source checks pass as recorded in `PHDK_AUTO_FINAL_STATUS-5.1.41.md` and `DELIVERY_REPORT.md`. Source commit is version-prefixed. Branch push, PR, merge and remote-main verification are still pending; no deployment is claimed. Whole Auto remains partial for the external/persisted gates in the status file.
+### Verified source delivery — PR #123
+
+PR [#123](https://github.com/tuyoisaza/keledon/pull/123) merged at `7ac039f217f0328a9f25d6fbe9e7f85107c13ca1`. Fresh `origin/main` and `git ls-remote` agree; PR-head and merge trees match at `7c70cdbe01841fec5e1d4259a84cf9f1c792f177`, and remote Browser package version is 5.1.41. The source-slice completion gate passes using `PHDK_DELIVERY_EVIDENCE-5.1.41-post-merge-123.json`. GitHub reported no hosted checks/review decision; no deployment or whole-Auto completion is claimed. Whole PHDK Auto remains PARTIALLY DELIVERED.
+
+Candidate `718ce3d4cf9c4e51b71ec163e9749307997d85d2` on `fix/phdk-vendor-frame-scope-5-1-41` is based on verified main `aed26d6641950fb3d4f40e64fee459fb013c544a`. Five app package/lock roots and Browser renderer align at 5.1.41. Candidate UAT-036/037 and integrated source checks pass as recorded in `PHDK_AUTO_FINAL_STATUS-5.1.41.md` and `DELIVERY_REPORT.md`. Source commit is version-prefixed and delivered via PR #123 as recorded above. No deployment is claimed. Whole Auto remains partial for the external/persisted gates in the status file.
 
 ## Verified Web UAT delivery — PR #122
 

@@ -1,0 +1,32 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto: four owner-authorized KELEDON fronts; verified Browser tenant navigation-scope source slice",
+  "target_branch": "main",
+  "expected_version": "5.1.41",
+  "version_file": "browser/package.json",
+  "version_property": "version",
+  "merged_commit_sha": "7ac039f217f0328a9f25d6fbe9e7f85107c13ca1",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/123",
+  "checks": {
+    "lint": {
+      "status": "NOT_APPLICABLE",
+      "evidence": "The delivered source slice changes only Browser TypeScript. Browser has no lint script or eslint configuration; invoking installed ESLint 10 against Browser files fails before analysis because no eslint.config.* exists. API/Cloud/Web package-wide lint is outside this slice; Cloud and Landing lint pass, while the separate legacy rbac-backend Nest CLI is unavailable in its checkout."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "Exact candidate checks: API and Cloud production builds pass; Web typecheck passes; Browser build passes; Landing typecheck passes."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "Exact candidate production builds pass for API, Cloud, Web, Browser, and Landing."
+    },
+    "focused_tests": {
+      "status": "PASS",
+      "evidence": "API regressions 36/36; Cloud regressions 16/16; Browser offline suite 35/35; focused Browser tenant-scope policy/wiring tests 8/8; Web diagnostics 19/19; Web SEO 1/1; Landing SEO 1/1; PHDK coherence 52/52."
+    },
+    "uat": {
+      "status": "PASS",
+      "evidence": "Exact-source Web UAT-036 on 718ce3d4/tree 14e5c085 passes 4/4 browser files and 17 journeys using synthetic fixtures/intercepted APIs; UAT-037 policy/wiring 8/8. It does not establish persisted DB authorization, cross-origin subresource/network behavior, native hardware, or customer CRM acceptance."
+    }
+  }
+}
