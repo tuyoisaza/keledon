@@ -1,4 +1,4 @@
-import { BrowserWindow, BrowserView } from 'electron';
+import { BrowserWindow, BrowserView, webContents } from 'electron';
 import * as path from 'path';
 import log from 'electron-log';
 import { eventLogger } from './media/event-logger.js';
@@ -9,8 +9,41 @@ import {
   isAllowedVendorNavigation,
   secureRendererPreferences,
   isAllowedConfiguredVendorUrl,
+  isAllowedVendorRequest,
   getRuntimeVendorNavigationScope,
+  getRuntimeVendorRequestScope,
 } from './security-policy.js';
+
+const guardedRequestSessions = new WeakSet<object>();
+
+function installRpaRequestGuard(session: Electron.Session): void {
+  if (guardedRequestSessions.has(session)) return;
+  session.webRequest.onBeforeRequest(
+    { urls: ['http://*/*', 'https://*/*', 'ws://*/*', 'wss://*/*'] },
+    (details, callback) => {
+      const source = details.webContents ?? (
+        typeof details.webContentsId === 'number'
+          ? webContents.fromId(details.webContentsId)
+          : undefined
+      );
+      const allowedOrigins = getRuntimeVendorRequestScope(
+        session,
+        source,
+        details.initiatorOrigin,
+      );
+      if (
+        allowedOrigins === undefined ||
+        isAllowedVendorRequest(details.url, allowedOrigins)
+      ) {
+        callback({});
+        return;
+      }
+      log.warn('[SECURITY] Blocked an RPA resource request outside the tenant origin scope.');
+      callback({ cancel: true });
+    },
+  );
+  guardedRequestSessions.add(session);
+}
 
 export interface Tab {
   id: string;
@@ -71,6 +104,7 @@ export class TabManager {
         ...secureRendererPreferences(path.join(__dirname, 'vendor-preload.js')),
       }
     });
+    installRpaRequestGuard(view.webContents.session);
 
     // Use a modern Chrome UA so Google Meet & other web apps don't reject us.
     // Our engine is Chromium v120 but the version string is just a server-side check.

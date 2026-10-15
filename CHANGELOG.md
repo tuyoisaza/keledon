@@ -1,3 +1,12 @@
+## v5.1.44 — 2026-10-15 (scope BrowserView resource requests to tenant origins)
+
+- Enforce the active Cloud-derived RPA tenant-origin allowlist on BrowserView HTTP(S)/WebSocket resource requests as well as navigation.
+- Preserve configured private CRM origins while denying requests to unlisted origins during RPA.
+- Align all five application package/lock roots and the Browser renderer at 5.1.44.
+
+### Verification
+- Offline policy, Browser RPA, Electron wiring, build and PHDK evidence are recorded in the active lifecycle.
+
 ## v5.1.43 — 2026-10-15 (apply active tenant scope to BrowserView navigation)
 
 - Apply the trusted Cloud-derived RPA tenant-origin allowlist to Electron navigation, frame, redirect, popup, and `tabs:navigate` guards for the duration of each flow; restore the prior tab scope afterward.
