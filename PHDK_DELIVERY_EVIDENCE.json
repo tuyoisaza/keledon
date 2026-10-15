@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "goal": "PHDK Auto four confirmed KELEDON fronts; 5.1.51 API lint and truthful tenant-runtime source slice",
+  "goal": "PHDK Auto four confirmed KELEDON fronts; 5.1.51 source delivery plus DB-backed synthetic UAT and remaining environment acceptance",
   "target_branch": "main",
   "expected_version": "5.1.51",
   "version_file": "services/web/package.json",
@@ -8,11 +8,13 @@
   "tested_source_commit_sha": "09ef2497957c381a3af7428af393b65b811c2fe6",
   "tested_candidate_sha": "99f3787333c6cc07b7f5a19cd2639764f61b2c67",
   "tested_candidate_tree": "caaf5c0270f638113528c95ce50fb37173c5efe6",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/140",
-  "pr_head_sha": "99f3787333c6cc07b7f5a19cd2639764f61b2c67",
-  "merged_commit_sha": "156ae2467c9ed6f73311ec45cae933417b1e5f32",
-  "remote_main_sha": "156ae2467c9ed6f73311ec45cae933417b1e5f32",
-  "remote_main_tree": "caaf5c0270f638113528c95ce50fb37173c5efe6",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/141",
+  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/140",
+  "pr_head_sha": "9b514b879f868a0556f3df1702b141af5e78fdd7",
+  "product_source_merge_sha": "156ae2467c9ed6f73311ec45cae933417b1e5f32",
+  "merged_commit_sha": "5b7e25512c95737688beea43b2d7172199dfa231",
+  "remote_main_sha": "5b7e25512c95737688beea43b2d7172199dfa231",
+  "remote_main_tree": "ccbcf9a5151e574282e89f214fc8bdaafbae6cac",
   "git_ls_remote_matches": true,
   "versions": {
     "services_api": "5.1.51",
@@ -24,6 +26,8 @@
   },
   "github": {
     "state": "MERGED",
+    "product_pr_140": "MERGED at 156ae2467c9ed6f73311ec45cae933417b1e5f32",
+    "evidence_pr_141": "MERGED at 5b7e25512c95737688beea43b2d7172199dfa231",
     "merge_method": "squash",
     "merge_state": "CLEAN",
     "hosted_checks": [],
@@ -55,6 +59,10 @@
       "status": "PASS",
       "evidence": "Exact source commit 09ef2497; clean SHA-256 fingerprint, zero untracked source files; synthetic built-SPA UAT 4/4 with Company Co fixtures, intercepted API and blocked external traffic. Evidence: docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-5.1.51-09ef2497/uat-local-web.json."
     },
+    "database_uat": {
+      "status": "PASS",
+      "evidence": "Exact remote main commit 5b7e25512c95737688beea43b2d7172199dfa231; disposable PostgreSQL 16.15 on loopback. All 8 Prisma migrations applied and second deploy was clean. DB-backed synthetic registration/auth, superadmin role assignment, admin/coordinator/user tenant boundaries, core persisted CRUD, idempotent vendor-secret migration, masked credential projections and tenant-allowlisted private URL storage passed. No provider destination was contacted. Full evidence: docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-postgres-roles-5.1.51-5b7e2551.json."
+    },
     "seo": {
       "status": "PASS",
       "evidence": "Web SEO 1/1; Landing SEO 1/1. Deployed crawler/Search Console and AEO/GEO measures remain open."
@@ -65,15 +73,15 @@
     },
     "source_delivery": {
       "status": "PASS",
-      "evidence": "PR #140 squash-merged CLEAN; origin/main and git ls-remote agree at 156ae2467c9ed6f73311ec45cae933417b1e5f32; remote tree caaf5c0270f638113528c95ce50fb37173c5efe6 matches PR candidate."
+      "evidence": "Product source PR #140 squash-merged CLEAN at 156ae2467c9ed6f73311ec45cae933417b1e5f32; evidence/docs PR #141 merged at 5b7e25512c95737688beea43b2d7172199dfa231. origin/main and git ls-remote agree at 5b7e25512c95737688beea43b2d7172199dfa231; remote tree ccbcf9a5151e574282e89f214fc8bdaafbae6cac matches PR #141 candidate."
     },
     "whole_auto_acceptance": {
       "status": "BLOCKED",
-      "evidence": "Overall Auto remains 37 PASS, 2 BLOCKED, 1 MANUAL. Safe DB identities/persisted CRUD, native Windows device/audio, broad accessibility/localization, deployed SEO/AEO and per-customer live call/CRM acceptance remain open. No DB, customer endpoint, device or deployment was used."
+      "evidence": "Overall UAT is 39 PASS, 0 BLOCKED, 1 MANUAL after scoped DB-backed UAT-009/010. Whole Auto remains partial pending native Electron device/audio, exhaustive 26-model operation coverage, live Qdrant/concurrency, broad accessibility/localization, deployed SEO/AEO and customer-specific call/CRM acceptance. No production DB, customer endpoint, provider destination, physical microphone or deployment was used."
     }
   },
   "scope_limitations": [
-    "No production database or DB-backed identity/persisted CRUD acceptance was run.",
+    "DB-backed UAT used only a disposable loopback PostgreSQL instance; full 26-model operation coverage remains open.",
     "No packaged Electron runtime or native Windows device/audio was tested.",
     "No customer CRM/provider endpoint was contacted; live integration acceptance remains tenant-specific.",
     "No deployed crawler, Search Console, field performance or deployment result is claimed.",
