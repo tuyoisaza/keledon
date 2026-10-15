@@ -1,8 +1,16 @@
-## Current Auto completion audit — 5.1.51 candidate; delivery pending
+## Current Auto completion audit — 5.1.52 candidate; PR delivery in progress
 
-Source commit `09ef2497957c381a3af7428af393b65b811c2fe6` on `fix/phdk-api-lint-zero-5-1-51`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`; candidate tree `fdb14b554ad46b1908b2041bfa781bb15bd0a716`. All five application package/lock roots and Browser renderer are 5.1.51. Candidate report and exact-source UAT evidence are under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/snapshots/candidate-5.1.51/` and `50-uat/evidence/uat-web-5.1.51-09ef2497/`.
+Source commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` on `docs/phdk-auto-db-uat-evidence`, based on verified main `5b7e25512c95737688beea43b2d7172199dfa231`; candidate tree `5bf455943353754355f0a0f3d95e5f576d9dda6a`. All five application package/lock roots and Browser renderer are 5.1.52. PR #142 is being updated with the source and exact-candidate UAT; remote `main` remains 5.1.51, so source delivery is not complete.
 
-Source acceptance: API lint 0 warnings/0 errors; API/Cloud regression 36/36 and 16/16; Browser offline 27/27; all five builds; Web/Landing typecheck/lint; exact-source synthetic UAT 4/4; diagnostics 19/19; Web/Landing SEO 1/1; PHDK coherence 52/52. PR #140 is squash-merged at verified remote main `156ae2467c9ed6f73311ec45cae933417b1e5f32`; remote tree `caaf5c0270f638113528c95ce50fb37173c5efe6` matches the candidate and all six version reads are 5.1.51. GitHub reported no hosted checks or review decision; main is not protected. The completion gate blocks solely on whole Auto acceptance (37 PASS, 2 BLOCKED, 1 MANUAL), with persistent DB, native, broad accessibility/localization and deployed SEO/AEO acceptance open. No customer integration or production was contacted.
+Source acceptance: API/Cloud regressions 36/36 and 16/16, all five builds, Browser/Web/Landing lint, Web/Landing typecheck, exact-source synthetic Web UAT 4/4, diagnostics 19/19, and Web/Landing SEO 1/1 pass. Exact-candidate PostgreSQL session create/update/readback passes; obsolete and tenant-changing fields return 403. Current tally is 39 PASS, 1 BLOCKED (Qdrant-dependent Knowledge deletion), 1 MANUAL (native device/audio). Whole Auto acceptance remains partial for exhaustive 35-model coverage, Qdrant/concurrency, broad accessibility/localization, deployed SEO/AEO and tenant-specific call/CRM acceptance. No customer integration or production was contacted.
+
+| Required proof | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | All five app roots/locks and Browser renderer are 5.1.52, fresh over verified 5.1.51 main. |
+| COMMIT_PREFIX | PASS | Source commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` begins `v5.1.52:`. |
+| PUSH_AND_PR | IN PROGRESS | PR #142 is open; 5.1.52 candidate publication and merge are pending. |
+| REMOTE_MAIN | BLOCKED / PENDING | Remote main remains `5b7e25512c95737688beea43b2d7172199dfa231` / 5.1.51. |
+| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | Source checks pass; whole-product/environment gates remain open. |
 
 ---
 

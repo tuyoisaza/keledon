@@ -1,18 +1,18 @@
 # UAT role matrix — run 20261014-0007-phdk-auto-completion
 
-All browser personas are synthetic fixture data. UI role selection is not treated as authentication evidence. Isolated Nest HTTP/API regression verifies server-side role and tenant guards; persistent DB-backed acceptance remains open.
+All browser personas are synthetic fixture data. UI role selection is not treated as authentication evidence. The 2026-10-14 continuation added DB-backed login and role/tenant checks on a disposable loopback PostgreSQL instance. This proves the exercised local API paths only; it is not a deployed development target or exhaustive model/operation acceptance.
 
 | Persona | Source-backed intended access | Local UI fixture | Access verification |
 |---|---|---|---|
 | Anonymous/guest | Public/login and public-safe diagnostics; no management | Local production SPA, mocked endpoints | UI journey passes; live auth not verified. |
-| user | Own profile/devices and permitted operator flows; no management/elevation | Synthetic Company Co operator | Mocked UI; server denials covered by isolated regressions. |
-| coordinator | Company-bounded administration; cannot elevate roles or delete companies | Synthetic tenant role | UI fixture plus isolated API/Cloud tenant and privilege regressions. |
-| admin | Company-bounded administration; cannot elevate roles or delete companies | Synthetic tenant role | UI fixture plus isolated API/Cloud tenant and privilege regressions. |
-| superadmin | Global administration and role/company assignment from current DB authority | Synthetic elevated response | Current-DB superadmin checks covered in API guard/controller tests. |
+| user | Own profile/devices and permitted operator flows; no management/elevation | Synthetic DB-backed ordinary user | Registration and login returned persisted role=user; company-management request denied. |
+| coordinator | Company-bounded administration; cannot elevate roles or delete companies | Synthetic persisted coordinator in tenant A | Login and same-tenant company list passed; attempted role elevation denied. |
+| admin | Company-bounded administration; cannot elevate roles or delete companies | Synthetic persisted admin in tenant A | API showed tenant A only; same-tenant read allowed; cross-tenant read, company create/delete, role elevation and company reassignment denied. New user forced to role=user in tenant A. Candidate 5.1.52 also persisted session `metadata` updates; legacy `summary` and session team reassignment were denied with 403. |
+| superadmin | Global administration and role/company assignment from current DB authority | Synthetic persisted root fixture | Login used the test database; company creation and role/company assignment to tenant admin succeeded through the API. Initial fixture role was set directly in the empty disposable database. |
 | Temporary UAT profile | Synthetic allowlisted profile in development/staging, max 10 min; no persisted role change | Visible temporary-mode banner and return control | PASS scoped: server-authorized start/end audit, allowlist, expiry, current-actor checks, revocation and original-admin return tested with isolated fixtures. |
 | Native Browser/device | Paired tenant runtime and explicitly permitted media/vendor origin | Not exercised through OS/Electron | MANUAL/BLOCKED pending supported desktop/device/audio setup. |
 
-No real accounts were authenticated and no hosted development target was used. UAT-009 real development login and UAT-010 persistent DB/migration acceptance remain blocked.
+No real accounts or hosted development targets were used. UAT-009 passes for the local synthetic development target; UAT-010 passes for migrations, secret migration, and the core persisted role/tenant/session operations exercised. Knowledge deletion remains blocked without a local Qdrant fixture. The complete 35-model/operation map and native Browser/device acceptance remain open.
 
 
 ## Historical records from earlier candidates

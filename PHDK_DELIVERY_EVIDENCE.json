@@ -1,35 +1,34 @@
 {
   "version": "1",
-  "goal": "PHDK Auto four confirmed KELEDON fronts; 5.1.51 source delivery plus DB-backed synthetic UAT and remaining environment acceptance",
+  "goal": "PHDK Auto four confirmed KELEDON fronts; v5.1.52 session CRUD guard fix plus scoped DB-backed UAT; remaining Auto acceptance open",
   "target_branch": "main",
-  "expected_version": "5.1.51",
+  "expected_version": "5.1.52",
   "version_file": "services/web/package.json",
   "version_property": "version",
-  "tested_source_commit_sha": "09ef2497957c381a3af7428af393b65b811c2fe6",
-  "tested_candidate_sha": "99f3787333c6cc07b7f5a19cd2639764f61b2c67",
-  "tested_candidate_tree": "caaf5c0270f638113528c95ce50fb37173c5efe6",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/141",
-  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/140",
-  "pr_head_sha": "9b514b879f868a0556f3df1702b141af5e78fdd7",
+  "tested_source_commit_sha": "03ea78968103aa6bc6290ed0681b1c1ea345872a",
+  "tested_candidate_sha": "03ea78968103aa6bc6290ed0681b1c1ea345872a",
+  "tested_candidate_tree": "5bf455943353754355f0a0f3d95e5f576d9dda6a",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/142",
+  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/142",
+  "pr_head_sha": "a847a5b5b34b0553d00e3277fe38ce9735b49186",
   "product_source_merge_sha": "156ae2467c9ed6f73311ec45cae933417b1e5f32",
   "merged_commit_sha": "5b7e25512c95737688beea43b2d7172199dfa231",
   "remote_main_sha": "5b7e25512c95737688beea43b2d7172199dfa231",
   "remote_main_tree": "ccbcf9a5151e574282e89f214fc8bdaafbae6cac",
   "git_ls_remote_matches": true,
   "versions": {
-    "services_api": "5.1.51",
-    "cloud": "5.1.51",
-    "browser": "5.1.51",
-    "services_web": "5.1.51",
-    "landing": "5.1.51",
-    "browser_renderer": "5.1.51"
+    "services_api": "5.1.52",
+    "cloud": "5.1.52",
+    "browser": "5.1.52",
+    "services_web": "5.1.52",
+    "landing": "5.1.52",
+    "browser_renderer": "5.1.52"
   },
   "github": {
-    "state": "MERGED",
-    "product_pr_140": "MERGED at 156ae2467c9ed6f73311ec45cae933417b1e5f32",
-    "evidence_pr_141": "MERGED at 5b7e25512c95737688beea43b2d7172199dfa231",
+    "state": "OPEN",
+    "product_pr_142": "OPEN; 5.1.52 candidate pending merge",
     "merge_method": "squash",
-    "merge_state": "CLEAN",
+    "merge_state": "CLEAN before candidate update",
     "hosted_checks": [],
     "review_decision": "none reported",
     "main_protection": "branch not protected"
@@ -37,55 +36,57 @@
   "checks": {
     "api_lint": {
       "status": "PASS",
-      "evidence": "Full services/api ESLint: 0 warnings/0 errors, without suppressions."
+      "evidence": "API ESLint completed with 0 warnings and 0 errors."
     },
     "web_landing_lint_typecheck": {
       "status": "PASS",
-      "evidence": "Web and Landing lint/typecheck pass with max warnings 0."
+      "evidence": "Web/Landing lint and typecheck pass; Browser lint also passes with max warnings 0."
     },
     "build": {
       "status": "PASS",
-      "evidence": "API, Cloud, Browser, Web and Landing builds pass at 5.1.51; Web/Landing include the existing bundle-size warning."
+      "evidence": "API, Cloud, Browser, Web and Landing production builds pass at 5.1.52; Web/Landing retain the existing bundle-size advisory."
     },
     "regression": {
       "status": "PASS",
-      "evidence": "API regression 36/36; Cloud regression 16/16; Browser offline 27/27."
+      "evidence": "API regression 36/36 and Cloud regression 16/16 pass; session CRUD guard targeted tests pass 2/2."
     },
     "focused_tests": {
       "status": "PASS",
-      "evidence": "API targeted SubAgent, integration-health and process-monitoring tests pass; Web diagnostics 19/19."
+      "evidence": "Web diagnostics 19/19; Web SEO 1/1; Landing SEO 1/1; exact-candidate Web UAT 4/4."
     },
     "uat": {
       "status": "PASS",
-      "evidence": "Exact source commit 09ef2497; clean SHA-256 fingerprint, zero untracked source files; synthetic built-SPA UAT 4/4 with Company Co fixtures, intercepted API and blocked external traffic. Evidence: docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-5.1.51-09ef2497/uat-local-web.json."
+      "evidence": "Exact candidate commit 03ea78968103aa6bc6290ed0681b1c1ea345872a; built SPA 4/4 with synthetic Company Co APIs and blocked external traffic. Scoped loopback PostgreSQL session create/update/readback passed; legacy summary and team reassignment returned 403."
     },
     "database_uat": {
-      "status": "PASS",
-      "evidence": "Exact remote main commit 5b7e25512c95737688beea43b2d7172199dfa231; disposable PostgreSQL 16.15 on loopback. All 8 Prisma migrations applied and second deploy was clean. DB-backed synthetic registration/auth, superadmin role assignment, admin/coordinator/user tenant boundaries, core persisted CRUD, idempotent vendor-secret migration, masked credential projections and tenant-allowlisted private URL storage passed. No provider destination was contacted. Full evidence: docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-postgres-roles-5.1.51-5b7e2551.json."
+      "status": "PASS_SCOPED_WITH_BLOCKED_OPERATION",
+      "evidence": "Disposable PostgreSQL 16.15 loopback evidence reuses 5.1.51 migration/registration/role/tenant/secret results and reruns 5.1.52 session CRUD. KnowledgeBase/Document delete remains blocked because isolated Qdrant is unavailable. No production/customer data."
     },
     "seo": {
       "status": "PASS",
-      "evidence": "Web SEO 1/1; Landing SEO 1/1. Deployed crawler/Search Console and AEO/GEO measures remain open."
+      "evidence": "Web SEO 1/1 and Landing SEO 1/1 source checks. Deployed crawler/Search Console/AEO measures remain open."
     },
     "phdk_coherence": {
       "status": "PASS",
-      "evidence": "Installed PHDK 2.50.10 coherence: 52/52 static manifest mappings."
+      "evidence": "Installed PHDK 2.50.10 coherence check: 52/52 static manifest mappings."
     },
     "source_delivery": {
-      "status": "PASS",
-      "evidence": "Product source PR #140 squash-merged CLEAN at 156ae2467c9ed6f73311ec45cae933417b1e5f32; evidence/docs PR #141 merged at 5b7e25512c95737688beea43b2d7172199dfa231. origin/main and git ls-remote agree at 5b7e25512c95737688beea43b2d7172199dfa231; remote tree ccbcf9a5151e574282e89f214fc8bdaafbae6cac matches PR #141 candidate."
+      "status": "IN_PROGRESS",
+      "evidence": "Versioned candidate commit 03ea7896 is in open PR #142; target main still 5.1.51. Normal merge and remote-main readback remain pending."
     },
     "whole_auto_acceptance": {
       "status": "BLOCKED",
-      "evidence": "Overall UAT is 39 PASS, 0 BLOCKED, 1 MANUAL after scoped DB-backed UAT-009/010. Whole Auto remains partial pending native Electron device/audio, exhaustive 26-model operation coverage, live Qdrant/concurrency, broad accessibility/localization, deployed SEO/AEO and customer-specific call/CRM acceptance. No production DB, customer endpoint, provider destination, physical microphone or deployment was used."
+      "evidence": "Latest formal tally 39 PASS, 1 BLOCKED (Qdrant-dependent Knowledge delete), 1 MANUAL (native Electron/device/audio). Exhaustive 35-model operation coverage, Qdrant/concurrency, broad accessibility/localization, deployed SEO/AEO and tenant-specific call/CRM acceptance remain open."
     }
   },
   "scope_limitations": [
-    "DB-backed UAT used only a disposable loopback PostgreSQL instance; full 26-model operation coverage remains open.",
-    "No packaged Electron runtime or native Windows device/audio was tested.",
-    "No customer CRM/provider endpoint was contacted; live integration acceptance remains tenant-specific.",
-    "No deployed crawler, Search Console, field performance or deployment result is claimed.",
-    "GitHub reported no hosted checks or review decision for PR #140."
+    "Database UAT used a disposable PostgreSQL 16.15 instance on loopback. Baseline role/migration/secret evidence is reused from 5.1.51; exact 5.1.52 session CRUD was rerun.",
+    "Knowledge-base/document deletion needs an isolated Qdrant service; no vector records were changed.",
+    "No packaged Electron media-consent/device/audio journey was completed.",
+    "Exhaustive 35-model operation coverage and broad accessibility/localization remain open.",
+    "No deployed crawler, Search Console, answer-engine or SEO measurement is claimed.",
+    "No customer-specific call/CRM endpoint was selected or contacted; acceptance is per tenant.",
+    "Source PR #142 is open and remote main remains 5.1.51; no deployment is claimed."
   ],
-  "overall_status": "SOURCE SLICE MERGED AND REMOTE VERIFIED; PHDK AUTO PARTIALLY DELIVERED"
+  "overall_status": "SOURCE FIX VALIDATED; DELIVERY IN PROGRESS; PHDK AUTO PARTIALLY DELIVERED"
 }

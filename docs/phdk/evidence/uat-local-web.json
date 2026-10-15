@@ -1,8 +1,8 @@
 {
-  "version": "5.1.47",
-  "date": "2026-10-15T01:56:09.017Z",
-  "candidateRevision": "10c57ff44a9d3d09e55023c466d72adefd6d3e66",
-  "candidateSourceFingerprint": "sha256:4e38486c48fde20990659479e80f6f76b5365f83f1052ed4d82cdb2728d3f5e3",
+  "version": "5.1.52",
+  "date": "2026-10-15T04:02:57.957Z",
+  "candidateRevision": "03ea78968103aa6bc6290ed0681b1c1ea345872a",
+  "candidateSourceFingerprint": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "dirtyUntrackedSourceFiles": 0,
   "sourceRoots": [
     "browser",
@@ -12,7 +12,7 @@
     "landing"
   ],
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:50691",
+  "origin": "http://127.0.0.1:61633",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-THEME dark/light/corporate tokens reach descendant controls, persistence PASS; automated login text contrast sample has no failures (not a full-app accessibility certification)",
@@ -30,8 +30,9 @@
     "UAT-T-008 Voice Profiles: tenant-independent request, localized list/detail/edit fields, retry and accessible dialogs; mocked HTTP 403 create/update/delete do not announce success; create/update payloads omit caller tenant and credentials; valid camelCase CRUD contract PASS (synthetic UI/API)",
     "UAT-T-009 KELEDON admin create flow: localized labeled fields, scoped company/brand/team selectors, native accessible form and delete-confirmation dialog; payload contains no caller companyId and uses server input shape PASS (synthetic UI/API)",
     "UAT-004 provider settings Spanish localization and write-only key: translated screen renders; no response prefill; replacement clears after success; untouched blank omitted PASS",
+    "UAT-005 Brain provider indicators use selected-provider safe booleans only; an unused Deepgram key does not mark Vosk configured, and write-only secret placeholders remain blank PASS (synthetic UI/API fixture)",
     "UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)",
-    "UAT-002 5.1.47 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
+    "UAT-002 5.1.52 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
   ],
   "themeTokens": {
     "light": {

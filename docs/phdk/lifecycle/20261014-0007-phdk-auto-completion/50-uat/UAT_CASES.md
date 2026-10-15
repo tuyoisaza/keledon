@@ -1,5 +1,11 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Latest candidate 5.1.52 — session CRUD guard regression (2026-10-14 local / 2026-10-15 UTC)
+
+On exact source commit `03ea78968103aa6bc6290ed0681b1c1ea345872a`, the API authenticated a synthetic tenant admin against disposable PostgreSQL 16.15. Session creation and `metadata`/status updates persisted and read back. Legacy `summary` and team reassignment writes returned 403. API/Cloud parity and regression suites passed. Evidence: `evidence/uat-postgres-roles-5.1.52-03ea7896.json`. The built Web UAT passed 4/4 with mocked APIs and blocked external traffic.
+
+The latest formal tally is **39 PASS, 1 BLOCKED, 1 MANUAL**. The new BLOCKED operation is KnowledgeBase/KnowledgeDocument deletion while isolated Qdrant is unavailable; native device/audio remains MANUAL. Whole Auto remains partial pending exhaustive 35-model operation coverage, live Qdrant/concurrency, broad accessibility/localization, deployed SEO/AEO and each customer's configured call/CRM acceptance.
+
 ## Latest UAT continuation — 5.1.51 DB-backed identity and tenant checks (2026-10-14)
 
 Tested the exact delivered source commit `5b7e25512c95737688beea43b2d7172199dfa231` on a disposable PostgreSQL 16.15 database bound to `127.0.0.1`. All eight migrations applied and a second deploy found no pending migration. Synthetic public registration defaulted to `user`; an existing synthetic superadmin assigned admin access through the API. Persisted admin/coordinator scope, cross-company denials, low-role denial, safe user creation, and write-only vendor secret projections passed. The legacy vendor-secret migration dry run found one synthetic row, encrypted it on apply, and was idempotent on the second apply. A tenant-allowlisted private loopback URL was accepted for storage; it was never contacted. Full evidence: `50-uat/evidence/uat-postgres-roles-5.1.51-5b7e2551.json`.
