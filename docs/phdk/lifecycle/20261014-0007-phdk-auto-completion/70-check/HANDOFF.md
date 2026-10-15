@@ -1,5 +1,11 @@
 # Check handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.42 — required RPA tenant scope (UAT-038)
+
+CHK-AUTO-020 found that an omitted `allowed_origins` bypassed the RPA executor's origin check. Exact candidate `07f979b610b069d675183a7a4ad112b2466c20d2` fails before flow actions without a non-empty tenant scope and applies the scope to every navigation. The production executor test proves unscoped and unlisted paths never call `loadURL` or page JavaScript, while a configured private CRM origin remains usable. Browser tests pass 27/27, security-policy tests 8/8, Browser build and PHDK coherence 52/52 pass. No network destination was contacted.
+
+Candidate Check snapshot: `snapshots/candidate-5.1.42/PHDK_CHECK_REPORT.md`. Source delivery is pending. UAT totals 35 PASS, 2 BLOCKED, 1 MANUAL; persisted DB/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-customer live integration acceptance remain open.
+
 ## Candidate 5.1.41 — tenant vendor navigation scope (UAT-037)
 
 The prior vendor scope covered top-level UI navigation and redirects, but missed child-frame navigation and the trusted programmatic `tabs:navigate` IPC. Candidate source `718ce3d4cf9c4e51b71ec163e9749307997d85d2` applies the validated tenant-origin allowlist to both paths while preserving configured private HTTP(S) destinations and inherited `about:blank`. Browser build and policy/wiring tests pass; API/Cloud vendor policy and guard regressions pass. Full integrated checks pass as recorded in the candidate Check snapshot. No private network request was made. Overall Auto acceptance remains partial.

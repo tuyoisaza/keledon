@@ -1,5 +1,20 @@
 # Commitment ledger
 
+## Active run update — 5.1.42 RPA tenant scope (2026-10-14)
+
+All four owner-confirmed fronts remain active in their approved order. Candidate `07f979b610b069d675183a7a4ad112b2466c20d2` (tree `a3664bdc9402c7b943e49b2a585b68de741f9f65`) is based on verified main `8075890cb9a112e948403491eb7bf7c8f44337b2` and aligns all five application roots and Browser renderer at 5.1.42. CHK-AUTO-020 is fixed: Browser RPA requires a non-empty tenant-origin scope and applies it to every navigation. UAT-038 passes; Browser suite 27/27, security-policy tests 8/8, Browser build and PHDK coherence 52/52 pass. No private destination or database was contacted.
+
+| Commitment | Current candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 — baseline, versions, PRs | Version alignment and verified base are confirmed. | Candidate push/PR, merge and exact remote readback pending. |
+| CMT-002 — widget and safe diagnostics | Existing local diagnostics evidence remains unchanged. | Native Windows device/audio and broad accessibility/localization remain open. |
+| CMT-003 — voice → Cloud → Browser → CRM per client | Tenant RPA scope now fails closed; configured private CRM origin is permitted. | Per-client provider/CRM operation and subresource behavior need client-specific acceptance. |
+| CMT-004 — administration and permissions | Current actor/tenant policy remains; scoped Browser RPA finding fixed. | Safe DB identities, disposable PostgreSQL, persisted migrations/CRUD and exhaustive matrix remain open. |
+
+Overall PHDK Auto remains **PARTIALLY DELIVERED**. UAT is 35 PASS, 2 BLOCKED, 1 MANUAL. No database, customer data, private endpoint, device or deployment was used.
+
+---
+
 ## Active run update — 5.1.41 vendor-origin navigation (2026-10-14)
 
 The owner-confirmed four-front KELEDON portfolio remains active in this order: CMT-001 baseline/version/PR reconciliation; CMT-002 diagnostics widget and diagnostics; CMT-003 voice→Cloud→Browser→customer-selected CRM; CMT-004 administration and permissions. Owner-approved policy allows client-configured private HTTP(S) CRM origins only after URL validation and per-tenant allowlisting. It does not establish live client connectivity.

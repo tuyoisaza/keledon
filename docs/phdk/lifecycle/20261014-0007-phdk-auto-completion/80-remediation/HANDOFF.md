@@ -1,5 +1,9 @@
 # Remediation handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.42 — RPA tenant-scope fail-closed fix
+
+CHK-AUTO-020 is fixed on candidate `07f979b610b069d675183a7a4ad112b2466c20d2`. Browser RPA now requires a non-empty origin allowlist before any step and checks each navigation against that set. Exact-source UAT-038 and Browser suite pass; security policy, Browser build and PHDK coherence pass. See `snapshots/candidate-5.1.42/PHDK_REMEDIATION_REPORT.md` and the Check snapshot. Delivery is pending; full Auto remains partial.
+
 ## Delivery result — candidate 5.1.33
 
 The source fix described below shipped through PR [#104](https://github.com/tuyoisaza/keledon/pull/104), source commit `c5bf7161f55d488508841ec6281695c0b3c93f02`, squash merge `d40a5f1e7ad92bb66a9cc06211c105ec3c708a9a`; remote and PR source tree SHA match. Source delivery is verified; whole Auto acceptance stays partial for the explicit DB, native device/audio, full CRUD and external SEO/AEO gates.

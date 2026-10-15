@@ -1,5 +1,13 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Current candidate 5.1.42 — fail-closed RPA tenant scope
+
+| Case | Story / actor | Acceptance / steps | Result and evidence |
+|---|---|---|---|
+| UAT-038 | US-003 / tenant-configured CRM flow | Execute production RPA code with absent scope, empty scope, an unlisted origin, and a private CRM origin explicitly configured for the tenant. Confirm denied paths do not call `loadURL` or page JavaScript, while the configured private destination remains available. | PASS at exact source `07f979b610b069d675183a7a4ad112b2466c20d2` (tree `a3664bdc9402c7b943e49b2a585b68de741f9f65`), `node browser/tests/rpa-safety.test.cjs`. Uses synthetic Electron WebContents; no real network/private endpoint. Evidence: `50-uat/evidence/uat-rpa-required-tenant-scope-5.1.42.json`. |
+
+The approved policy is enforced in the RPA executor: an omitted or empty tenant-origin allowlist now fails before any flow step; every navigation must match the configured tenant origin. Customer-configured private HTTP(S) CRM destinations remain supported. This is source-level offline evidence only; persisted configuration, subresource behavior, and live customer acceptance remain open.
+
 ## Current candidate 5.1.41 — tenant-scoped CRM frame navigation
 
 | Case | Story / actor | Acceptance / steps | Result and evidence |

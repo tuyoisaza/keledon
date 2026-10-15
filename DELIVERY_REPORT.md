@@ -1,3 +1,19 @@
+## Current delivery — candidate 5.1.42 (2026-10-14, pending)
+
+Candidate `fix/phdk-rpa-required-tenant-scope-5-1-42` is based on verified `origin/main` `8075890cb9a112e948403491eb7bf7c8f44337b2`. Source commit `07f979b610b069d675183a7a4ad112b2466c20d2` (tree `a3664bdc9402c7b943e49b2a585b68de741f9f65`) bumps all five application package/lock roots and Browser renderer to 5.1.42. It requires tenant-origin scope before RPA execution and applies the allowlist to each navigation. UAT-038 passes; Browser suite 27/27, security-policy tests 8/8, Browser build and PHDK coherence 52/52 pass. Full Auto acceptance is 35 PASS, 2 BLOCKED, 1 MANUAL.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Five app package/lock roots and Browser renderer at 5.1.42; changelog updated. |
+| COMMIT_PREFIX | PASS | Source commit `v5.1.42 fix(browser): require tenant scope for RPA`. |
+| PUSH_AND_PR | PENDING | Candidate not yet pushed and no PR exists. |
+| REMOTE_MAIN | PENDING | Merge/readback not performed. |
+| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | UAT-038; Browser tests/build and coherence pass; external/persisted gates remain open. |
+
+No database, real CRM/private host, customer data, device, or deployment was used. Browser ESLint is unavailable because installed ESLint 10 requires an absent flat config. Overall: **PARTIALLY DELIVERED; SOURCE DELIVERY PENDING**.
+
+---
+
 ## Current delivery — candidate 5.1.41 (2026-10-14)
 
 ### Post-merge verification — PR #123

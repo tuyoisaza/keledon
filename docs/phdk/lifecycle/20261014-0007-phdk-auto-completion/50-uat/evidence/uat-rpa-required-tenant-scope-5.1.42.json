@@ -1,0 +1,20 @@
+{
+  "case": "UAT-038",
+  "candidate_version": "5.1.42",
+  "source_commit": "07f979b610b069d675183a7a4ad112b2466c20d2",
+  "source_tree": "a3664bdc9402c7b943e49b2a585b68de741f9f65",
+  "command": "node browser/tests/rpa-safety.test.cjs",
+  "result": "PASS",
+  "assertions": [
+    "Missing and empty tenant origin scope fail closed before navigation or page script execution.",
+    "Unlisted origins fail before loadURL.",
+    "A private HTTP CRM origin explicitly configured for the tenant remains usable.",
+    "Existing fail-fast assertion, unsupported submit, and cancellation behavior remain covered."
+  ],
+  "fixture": "Synthetic Electron WebContents mock; no real network or private endpoint contacted.",
+  "limitations": [
+    "Does not prove persisted configuration or database tenant isolation.",
+    "Does not prove cross-origin subresource behavior from an allowed CRM page.",
+    "Does not prove live customer CRM or call-provider acceptance."
+  ]
+}
