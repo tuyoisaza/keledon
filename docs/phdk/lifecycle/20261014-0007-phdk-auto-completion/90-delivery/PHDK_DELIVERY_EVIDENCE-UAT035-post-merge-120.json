@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "runId": "20261014-0007-phdk-auto-completion",
+  "candidateVersion": "5.1.40",
+  "repository": "tuyoisaza/keledon",
+  "pullRequest": {
+    "number": 120,
+    "url": "https://github.com/tuyoisaza/keledon/pull/120",
+    "state": "MERGED",
+    "mergedAt": "2026-10-15T00:27:42Z",
+    "reviewDecision": "",
+    "hostedChecks": []
+  },
+  "testSourceCommit": "2edc20cdc524f39718c486395677e0532af5a972",
+  "pullRequestHead": "04e8ca2764bf44faa6ad3571d8defe823f9757de",
+  "mergeCommit": "2e06b7c3b55244078953838ecab35290629fde65",
+  "remoteMain": "2e06b7c3b55244078953838ecab35290629fde65",
+  "remoteMainReadback": "git fetch origin; git ls-remote origin refs/heads/main",
+  "tree": "11d37fe054ab47fdd3bdacf0590bb297fc51fc80",
+  "testAndMergeTreesMatch": true,
+  "uat": {
+    "caseId": "UAT-035",
+    "result": "PASS",
+    "tests": 1,
+    "evidence": "docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-knowledge-manager-roles-5.1.40.json"
+  },
+  "completion": "TEST AND EVIDENCE MERGED / REMOTE VERIFIED; WHOLE PHDK AUTO ACCEPTANCE PARTIAL",
+  "databaseOrDeploymentClaimed": false
+}

@@ -4,7 +4,9 @@
 
 The source-level matrix previously marked coordinator and superadmin browser journeys for KnowledgeBase as unverified. Exact-built-SPA test commit `2edc20cdc524f39718c486395677e0532af5a972` now verifies coordinator company-a-only selection/create, superadmin company-b selection/create, and no Knowledge manager controls for a user. UAT is synthetic with all external traffic blocked; it closes only these UI affordance rows. Cloud full ESLint now exits successfully; previous historical lint-debt notes are stale for the current tree. Persistent API/DB authorization and the rest of CHK-AUTO-003 remain open. UAT evidence: `../50-uat/evidence/uat-knowledge-manager-roles-5.1.40.json`.
 
-Status: **SCOPED UI UAT PASS / SOURCE DELIVERY PENDING / WHOLE ACCEPTANCE PARTIAL**.
+PR [#120](https://github.com/tuyoisaza/keledon/pull/120) delivered UAT-035 and its harness at verified remote `main` `2e06b7c3b55244078953838ecab35290629fde65`. `git ls-remote` matches, and the merge tree equals the tested PR-head tree. GitHub reported no hosted checks or review decision; no deployment is claimed. Evidence: `../90-delivery/PHDK_DELIVERY_EVIDENCE-UAT035-post-merge-120.json`.
+
+Status: **SCOPED UI UAT PASS / TEST DELIVERED / WHOLE ACCEPTANCE PARTIAL**.
 
 ---
 
