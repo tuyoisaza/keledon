@@ -1,3 +1,13 @@
+# Check continuation — candidate 5.1.66 tenant flow persistence
+
+The exact 5.1.66 candidate passes PHDK coherence 56/56; API regressions 39/39 and Cloud 18/18; API/Cloud Prisma validation and builds; Web lint/typecheck/build and UAT 6/6 plus AI-admin; Browser lint/build/offline suite 43/43; Landing lint/typecheck/build; Web diagnostics 19/19; Web SEO 1/1 and Landing SEO 1/1. `git diff --check` is clean. The API and Cloud migration SQL and Prisma models are paired and source-tested. Command-level evidence remains in `PHDK_CHECK_REPORT.md` and `40-integration/INTEGRATION_REPORT-5.1.66.md`.
+
+UAT-060 remains BLOCKED: the environment has no disposable PostgreSQL target, so migration deploy, restart and multi-instance persistence have not been tested. This does not invalidate source/schema checks. Native device/audio is MANUAL; broad accessibility/localization and deployed SEO/AEO remain open. No customer target or deployment was used.
+
+SIGUIENTE PASO: finish exact-diff/security review, commit and deliver through a version-prefixed PR; verify merged SHA/tree/version before marking the source slice delivered.
+
+---
+
 # Check continuation — candidate 5.1.59 BrowserView teardown scope
 
 ## Candidate 5.1.61 — integrated source checks pass; PR pending

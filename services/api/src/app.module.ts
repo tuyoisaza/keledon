@@ -13,6 +13,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { TeamController } from './controllers/team.controller';
 import { MvpDataController } from './controllers/mvp-data.controller';
 import { MvpStoreService } from './mvp/mvp-store.service';
+import { TenantFlowConfigService } from './mvp/tenant-flow-config.service';
 import { AuthLocalModule } from './auth-local/auth-local.module';
 import { CrudModule } from './crud/crud.module';
 import { CrudController } from './crud/crud.controller';
@@ -88,6 +89,7 @@ import { SuperAdminGuard } from './guards/roles.guard';
     DeviceGateway,
     TeamController,
     MvpStoreService,
+    TenantFlowConfigService,
     {
       provide: APP_INTERCEPTOR,
       useClass: AuditInterceptor,

@@ -6,7 +6,10 @@ const path = require('node:path');
 const { chromium } = require(path.resolve(__dirname, '../../api/node_modules/playwright'));
 
 const dist = path.resolve(__dirname, '../dist');
-const company = { id: 'tenant-a', name: 'Synthetic Tenant A' };
+const evidence = process.env.KELEDON_UAT_EVIDENCE_DIR
+  ? path.resolve(process.env.KELEDON_UAT_EVIDENCE_DIR)
+  : path.resolve(__dirname, '../../../docs/phdk/evidence');
+const company = { id: 'company-co', name: 'Company Co S.A.S.' };
 
 test('tenant flow definition editor uses company-scoped API contracts', { timeout: 90000 }, async () => {
   let flows = [];
@@ -39,6 +42,7 @@ test('tenant flow definition editor uses company-scoped API contracts', { timeou
   try {
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, locale: 'en-US' });
     const page = await context.newPage();
+    await fs.mkdir(evidence, { recursive: true });
     const apiRequests = [];
     await page.routeWebSocket('**/*', (socket) => socket.close());
     await page.route('**/*', async (route) => {
@@ -87,31 +91,52 @@ test('tenant flow definition editor uses company-scoped API contracts', { timeou
     await page.goto(`${origin}/management/flow-definitions`);
     await page.getByRole('heading', { name: 'Tenant flow definitions' }).waitFor();
     assert.equal(await page.getByLabel('Company scope').count(), 0, 'tenant admin cannot choose a company in the editor');
-    await page.getByRole('button', { name: 'New flow' }).click();
+    const newFlowButton = page.getByRole('button', { name: 'New flow' });
+    await newFlowButton.focus();
+    await page.keyboard.press('Enter');
     await page.getByRole('textbox', { name: 'Name' }).fill('Claims intake');
     await page.getByRole('textbox', { name: 'Description' }).fill('Tenant-specific claims call flow');
     await page.getByRole('textbox', { name: 'Intent tags, comma separated' }).fill('claim, claim-status');
-    await page.getByRole('button', { name: 'Save definition' }).click();
+    const saveDefinitionButton = page.getByRole('button', { name: 'Save definition' });
+    await saveDefinitionButton.focus();
+    await page.keyboard.press('Enter');
     await page.getByRole('heading', { name: 'Claims intake' }).waitFor();
     const definitionWrite = apiRequests.find((request) => request.method === 'POST' && request.pathname === '/api/flow-definitions');
     assert.equal(definitionWrite.payload.companyId, company.id);
 
     await page.getByRole('textbox', { name: 'Steps (JSON array)' }).fill('[{"type":"navigate","value":"https://example.invalid"}]');
-    await page.getByRole('button', { name: 'Save version' }).click();
+    const saveVersionButton = page.getByRole('button', { name: 'Save version' });
+    await saveVersionButton.focus();
+    await page.keyboard.press('Enter');
     await page.getByText('v1 · draft · 1 steps').waitFor();
     const versionWrite = apiRequests.find((request) => request.method === 'POST' && request.pathname === '/api/flow-versions');
     assert.equal(versionWrite.payload.flowDefinitionId, 'flow-def-a');
     await page.getByRole('button', { name: 'Edit draft' }).click();
     await page.getByLabel('Status').selectOption('approved');
-    await page.getByRole('button', { name: 'Save version' }).click();
+    await page.getByRole('button', { name: 'Save version' }).focus();
+    await page.keyboard.press('Enter');
     await page.getByText('v1 · approved · 1 steps').waitFor();
 
-    await page.getByLabel('Available to this company').check();
+    const availability = page.getByLabel('Available to this company');
+    await availability.focus();
+    await page.keyboard.press('Space');
+    assert.equal(await availability.isChecked(), true, 'availability can be enabled from the keyboard');
     await page.getByRole('textbox', { name: 'Intent' }).fill('claim');
-    await page.getByRole('button', { name: 'Toggle mapping' }).click();
+    const toggleMapping = page.getByRole('button', { name: 'Toggle mapping' });
+    await toggleMapping.focus();
+    await page.keyboard.press('Enter');
     assert.ok(writes.some((write) => write.pathname === '/api/tenant-flow-permissions' && write.payload[0].companyId === company.id));
     assert.ok(writes.some((write) => write.pathname === '/api/intent-flow-mappings' && write.payload.companyId === company.id));
     assert.ok(apiRequests.filter((request) => request.pathname === '/api/flow-definitions').every((request) => request.search.includes(`companyId=${company.id}`) || request.method === 'POST'));
+    await page.waitForTimeout(5000);
+    await page.screenshot({ path: path.join(evidence, 'flow-editor-desktop.png') });
+    await page.setViewportSize({ width: 390, height: 844 });
+    const mobileWidth = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));
+    assert.ok(mobileWidth.content <= mobileWidth.viewport, `flow editor has no horizontal overflow at 390px: ${JSON.stringify(mobileWidth)}`);
+    await page.getByRole('main').first().evaluate((element) => { element.scrollTop = 0; });
+    await page.getByRole('heading', { name: 'Tenant flow definitions' }).waitFor({ state: 'visible' });
+    await page.screenshot({ path: path.join(evidence, 'flow-editor-mobile.png') });
+    await fs.writeFile(path.join(evidence, 'flow-editor-uat.json'), JSON.stringify({ date: new Date().toISOString(), candidateVersion: require('../package.json').version, target: 'local production SPA on loopback', persona: 'synthetic Company Co admin', actions: ['keyboard-create-definition', 'keyboard-save-version', 'keyboard-enable-availability', 'keyboard-map-intent', 'mobile-390px-overflow-check'], network: 'external HTTP and WebSockets blocked; APIs intercepted', mobileWidth }, null, 2));
     await context.close();
     console.log('PASS tenant flow definition UAT: create, draft/approved versions, company availability and intent routing use synthetic API fixtures; tenant company picker is absent and external requests are blocked.');
   } finally {

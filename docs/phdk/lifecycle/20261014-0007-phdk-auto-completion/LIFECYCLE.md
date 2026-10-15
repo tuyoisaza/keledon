@@ -2,9 +2,9 @@
 
 Run `20261014-0007-phdk-auto-completion`; target repository `tuyoisaza/keledon`; branch `chore/phdk-upgrade-2.51.2`; base `origin/main` 5.1.64 at `e53339e81eb972f7941c2b59dd824ad75111d54a`. Canonical PHDK v2.51.2 is installed and coherent 56/56; all five product roots and Browser renderer are 5.1.65. The FlowDefinition editor converts legacy definitions into company-owned configuration with draft/version lifecycle, company availability and intent routing. Both API and Cloud derive tenant scope from the DB actor and reject cross-company flow references.
 
-API regression 38/38, Cloud regression 17/17, all five builds, targeted Cloud/Web lint, Web typecheck, and full Web UAT (6/6 browser cases plus AI-admin UAT) pass. Browser APIs are synthetic and external requests are blocked. UAT total is 56 PASS, 0 BLOCKED, 1 MANUAL. Delivery is pending PR creation and remote verification; this source slice does not close the four Auto commitments. Shared JSON-store persistence/concurrency, live DB, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-selected live integration remain open.
+API regression 38/38, Cloud regression 17/17, all five builds, targeted Cloud/Web lint, Web typecheck, and full Web UAT (6/6 browser cases plus AI-admin UAT) pass. Browser APIs are synthetic and external requests are blocked. UAT total is 56 PASS, 0 BLOCKED, 1 MANUAL. PR [#159](https://github.com/tuyoisaza/keledon/pull/159) is squash-merged at remote `main` `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`; its tree matches the candidate, all six version reads are 5.1.65, and the PHDK completion gate passes. This source slice does not close the four Auto commitments. Shared JSON-store persistence/concurrency, live DB, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-selected live integration remain open.
 
-SIGUIENTE PASO: review and deliver 5.1.65 by normal PR, then continue remaining Auto acceptance without claiming full completion.
+SIGUIENTE PASO: continue remaining Auto acceptance without claiming full completion.
 
 ---
 

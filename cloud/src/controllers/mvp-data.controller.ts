@@ -13,6 +13,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { MvpStoreService } from '../mvp/mvp-store.service';
+import { TenantFlowConfigService } from '../mvp/tenant-flow-config.service';
 import type {
   FlowDefinitionInput,
   FlowVersionInput,
@@ -34,7 +35,10 @@ interface AuthenticatedRequest {
 @Controller('api')
 @UseGuards(ResourceScopeGuard)
 export class MvpDataController {
-  constructor(private readonly mvpStore: MvpStoreService) {}
+  constructor(
+    private readonly mvpStore: MvpStoreService,
+    private readonly tenantFlowConfig: TenantFlowConfigService,
+  ) {}
 
   @Get('tech-status')
   getTechStatus(@Req() req: AuthenticatedRequest) {
@@ -114,12 +118,12 @@ export class MvpDataController {
 
   @Get('flow-definitions')
   getFlowDefinitions(@Query('companyId') companyId?: string) {
-    return this.mvpStore.getFlowDefinitions(companyId);
+    return this.tenantFlowConfig.getFlowDefinitions(companyId);
   }
 
   @Post('flow-definitions')
   createFlowDefinition(@Body() body: FlowDefinitionInput) {
-    return this.mvpStore.createFlowDefinition(body);
+    return this.tenantFlowConfig.createFlowDefinition(body);
   }
 
   @Put('flow-definitions/:id')
@@ -128,7 +132,11 @@ export class MvpDataController {
     @Body() body: FlowDefinitionInput,
     @Req() req: AuthenticatedRequest,
   ) {
-    return this.mvpStore.updateFlowDefinition(id, body, req.user?.companyId);
+    return this.tenantFlowConfig.updateFlowDefinition(
+      id,
+      body,
+      req.user?.companyId,
+    );
   }
 
   @Delete('flow-definitions/:id')
@@ -136,7 +144,7 @@ export class MvpDataController {
     @Param('id') id: string,
     @Req() req: AuthenticatedRequest,
   ) {
-    return this.mvpStore.updateFlowDefinition(
+    return this.tenantFlowConfig.updateFlowDefinition(
       id,
       { status: 'inactive' },
       req.user?.companyId,
@@ -145,7 +153,7 @@ export class MvpDataController {
 
   @Get('flow-versions')
   getFlowVersions(@Query('companyId') companyId?: string) {
-    return this.mvpStore.getFlowVersions(companyId);
+    return this.tenantFlowConfig.getFlowVersions(companyId);
   }
 
   @Post('flow-versions')
@@ -153,7 +161,7 @@ export class MvpDataController {
     @Body() body: FlowVersionInput,
     @Req() req: AuthenticatedRequest,
   ) {
-    return this.mvpStore.createFlowVersion(
+    return this.tenantFlowConfig.createFlowVersion(
       body,
       req.user?.userId || '',
       req.user?.companyId,
@@ -166,7 +174,11 @@ export class MvpDataController {
     @Body() body: FlowVersionUpdateInput,
     @Req() req: AuthenticatedRequest,
   ) {
-    return this.mvpStore.updateFlowVersion(id, body, req.user?.companyId);
+    return this.tenantFlowConfig.updateFlowVersion(
+      id,
+      body,
+      req.user?.companyId,
+    );
   }
 
   @Get('tenant-flow-permissions/:companyId')
@@ -174,7 +186,7 @@ export class MvpDataController {
     @Param('companyId') companyId: string,
     @Req() req: AuthenticatedRequest,
   ) {
-    return this.mvpStore.getTenantFlowPermissions(
+    return this.tenantFlowConfig.getTenantFlowPermissions(
       req.user?.companyId || companyId,
     );
   }
@@ -184,7 +196,10 @@ export class MvpDataController {
     @Body() body: TenantFlowPermissionInput[],
     @Req() req: AuthenticatedRequest,
   ) {
-    return this.mvpStore.upsertTenantFlowPermissions(body, req.user?.companyId);
+    return this.tenantFlowConfig.upsertTenantFlowPermissions(
+      body,
+      req.user?.companyId,
+    );
   }
 
   @Get('intent-flow-mappings/:companyId')
@@ -192,7 +207,7 @@ export class MvpDataController {
     @Param('companyId') companyId: string,
     @Req() req: AuthenticatedRequest,
   ) {
-    return this.mvpStore.getIntentFlowMappings(
+    return this.tenantFlowConfig.getIntentFlowMappings(
       req.user?.companyId || companyId,
     );
   }
@@ -202,7 +217,10 @@ export class MvpDataController {
     @Body() body: IntentFlowMappingInput,
     @Req() req: AuthenticatedRequest,
   ) {
-    return this.mvpStore.upsertIntentFlowMapping(body, req.user?.companyId);
+    return this.tenantFlowConfig.upsertIntentFlowMapping(
+      body,
+      req.user?.companyId,
+    );
   }
 
   @Get('knowledge/documents')

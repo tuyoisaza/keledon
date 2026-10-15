@@ -1,5 +1,11 @@
 # UX/UI audit — scoped candidate
 
+## Candidate 5.1.66 — tenant flow editor and mobile shell
+
+The editor uses visible/native form labels, semantic buttons/checkboxes, 44px minimum-height primary controls, and the focused production-built browser test can create and approve a version, enable company availability and map an intent using Enter/Space. At 390×844, the first screenshot exposed the fixed desktop sidebar squeezing the form; UAT Fix replaced it on mobile with a compact brand/version/actions header and scrollable primary navigation, while retaining the desktop sidebar at `md` and above. The retest has no page-level horizontal overflow and shows the flow definition card at full phone width. Desktop and mobile evidence is recorded under `50-uat/evidence/uat-web-5.1.66/`.
+
+No P0/P1 finding remains in this tested management journey. The app-wide widget is retained in the mobile header; logout and navigation remain keyboard accessible. Contrast is inherited from the existing semantic theme tokens; this pass did not measure a complete contrast matrix. NVDA/screen-reader behavior, all-route mobile layouts and full locale coverage remain PARTIAL/MANUAL. This is scoped WCAG 2.1 AA-oriented source and browser evidence, not a whole-app accessibility certification.
+
 ## Candidate 5.1.61 — public navigation and responsive preferences
 
 The public Landing page had theme and language selectors stacked below the fixed desktop header, where they overlapped the hero disclaimer at 1280×700. The shared navigation in Landing and Web now keeps desktop preferences in the navigation row and places them in the expandable mobile menu below the `lg` breakpoint. Exact local Landing evidence at 1280×900 shows two visible controls and no overlap; at 390×844, the expanded menu exposes both labeled selectors. UAT-052 captures desktop/mobile screenshots and blocks all external requests. Web local UAT confirms the parallel Web home layout. No P1/P2 defect remains in this focused path. Screen-reader, all-route responsive and broad localization/contrast acceptance remain incomplete.

@@ -1,5 +1,15 @@
 # UAT journey map — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.66 — tenant flow configuration
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| Company Co tenant admin fixture | US-012 | UAT-059 / Flow editor | Open flow management → create definition → save/approve draft version → enable company availability → map intent → confirm no company picker | PASS in local production SPA with intercepted fixture APIs and blocked external traffic; evidence `50-uat/evidence/uat-web-5.1.66/`. |
+| Tenant admin across API and Cloud | US-012 | UAT-058 / persistence boundaries | Run tenant flow service tests; validate Prisma schema and both migration contracts; assert composite permission FK and legacy import behavior | PASS for source/schema contracts only (API 7/7, Cloud 6/6). No DB connected. |
+| Release owner / synthetic tenant admin | US-012 | UAT-060 / migration and restart persistence | Apply API/Cloud migrations to a disposable PostgreSQL instance; test two-tenant flow CRUD/import and restart readback | BLOCKED: PostgreSQL service, `psql`, and Docker unavailable in this workstation. |
+
+The UI role is a synthetic session, not real authentication. The separate native Browser/device journey remains MANUAL because no physical test device/audio session was available.
+
 ## Candidate 5.1.36
 
 | Persona | Story | Case / journey | Steps exercised | Result / evidence |

@@ -1,5 +1,9 @@
 # UAT role matrix — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.66 — flow configuration roles
+
+The local production SPA uses isolated mock sessions: synthetic Company Co `admin` and synthetic superadmin. Admin/coordinator flow configuration requests are scoped to the authenticated fixture company; the company selector is absent to tenant roles. Superadmin legacy assignment is source/API-contract covered but was not exercised as a real login. API/Cloud regressions verify DB-derived source guards using isolated fixtures; persisted tenant roles remain unverified until UAT-060 runs against disposable PostgreSQL.
+
 All browser personas are synthetic fixture data. UI role selection is not treated as authentication evidence. Isolated Nest HTTP/API regression verifies server-side role and tenant guards; persistent DB-backed acceptance remains open.
 
 | Persona | Source-backed intended access | Local UI fixture | Access verification |

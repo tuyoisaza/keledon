@@ -4,11 +4,11 @@
 
 KELEDON `main` was verified at `e53339e81eb972f7941c2b59dd824ad75111d54a` / product 5.1.64. Canonical PHDK `main` was freshly fetched at `a2d2508b59c2546d939fb3843f232ea7bfea2cc1` / v2.51.2. The official conservative `phdk_update.py` ran on clean manifest-owned paths and reported `UPDATED`, 56 files. Every mapped file matches canonical bytes; the root AGENTS managed block also matches `PHDK_NATIVE_RULES.md` exactly. PHDK coherence passes 56/56; no non-PHDK owner block content was replaced. This preflight sync is folded into the active Auto candidate and has not been committed, pushed or independently merged; Auto continues through the four confirmed KELEDON fronts. No build, database, customer endpoint or deployment was used for this standards-only sync.
 
-SIGUIENTE PASO: complete in-scope source remediation and whole-candidate verification before normal PR delivery; retain external/manual acceptance as open until its real prerequisites exist.
+SIGUIENTE PASO: continue the remaining Auto acceptance; retain external/manual acceptance as open until its real prerequisites exist.
 
 ## Candidate validation update — product 5.1.65 — 2026-10-15
 
-Candidate 5.1.65 adds tenant-owned legacy flow configuration in both API and Cloud plus the Web management editor. API regression 38/38 and Cloud regression 17/17 pass; API, Cloud, Web, Landing and Browser builds pass; Cloud/Web targeted lint and Web typecheck pass. Full Web UAT exits 0 with six browser cases and the AI-admin UAT. Browser tests use synthetic APIs with outbound traffic blocked. PHDK 2.51.2 coherence passes 56/56. Durable JSON-store concurrency and live DB/customer acceptance remain open; the candidate is not yet committed or delivered as a PR.
+Candidate 5.1.65 adds tenant-owned legacy flow configuration in both API and Cloud plus the Web management editor. API regression 38/38 and Cloud regression 17/17 pass; API, Cloud, Web, Landing and Browser builds pass; Cloud/Web targeted lint and Web typecheck pass. Full Web UAT exits 0 with six browser cases and the AI-admin UAT. Browser tests use synthetic APIs with outbound traffic blocked. PHDK 2.51.2 coherence passes 56/56. PR #159 is squash-merged at verified remote main `fbeec0eafe72cc73e8a92c9105076d8174ce98dd` and the completion gate passes. Durable JSON-store concurrency and live DB/customer acceptance remain open.
 
 ## Current workspace verification — 2026-10-14
 

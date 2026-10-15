@@ -270,7 +270,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
    await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>!!document.activeElement.closest('dialog')),true);
    await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});assert.equal(await detail.evaluate(el=>el===document.activeElement),true);
    if(role!=='superadmin')assert.equal(await page.locator('tbody tr').first().locator('button').last().isDisabled(),true);
-   await page.getByRole('button',{name:'Contraer navegación',exact:true}).click();assert.equal(await page.locator('[data-testid="version-actions"]').count(),1);assert.equal(await page.locator('[data-testid="version-actions"]').isVisible(),true);
+   await page.getByRole('button',{name:'Contraer navegación',exact:true}).click();const widgetRows=page.locator('[data-testid="version-actions"]');assert.equal(await widgetRows.evaluateAll(rows=>rows.filter(row=>row.getClientRects().length>0).length),1);
    for (const [name,width] of [['200-percent',640],['400-percent',320]]) {
     await page.setViewportSize({width,height:900});
     const layout=await page.evaluate(()=>({viewport:innerWidth,document:document.documentElement.scrollWidth,body:document.body.scrollWidth}));

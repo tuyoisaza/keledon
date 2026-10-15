@@ -22,6 +22,8 @@ model Company {
   users     User[]
   tenantProviderConfigs TenantProviderConfig[]
   tenantVoiceProfiles   TenantVoiceProfile[]
+  tenantFlowDefinitions TenantFlowConfigDefinition[]
+  tenantIntentMappings TenantIntentFlowConfigMapping[]
 
   @@map("companies")
 }
@@ -278,6 +280,73 @@ model IntentFlowMapping {
   createdAt  DateTime @default(now())
 
   @@map("intent_flow_mappings")
+}
+
+// Tenant-owned MVP flow editor records, separate from legacy global workflows.
+model TenantFlowConfigDefinition {
+  id          String   @id @default(uuid())
+  companyId   String?
+  interfaceId String?
+  name        String
+  description String?
+  category    String   @default("case")
+  status      String   @default("active")
+  intentTags  String[] @default([])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+    company     Company?                       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  versions    TenantFlowConfigVersion[]
+  permissions TenantFlowConfigPermission[]
+
+  @@index([companyId])
+    @@unique([id, companyId])
+  @@map("tenant_flow_config_definitions")
+}
+
+model TenantFlowConfigVersion {
+  id               String   @id @default(uuid())
+  flowDefinitionId String
+  version          Int
+  status           String   @default("draft")
+  steps            Json     @default("[]")
+  createdBy        String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  flowDefinition TenantFlowConfigDefinition @relation(fields: [flowDefinitionId], references: [id], onDelete: Cascade)
+
+  @@unique([flowDefinitionId, version])
+  @@map("tenant_flow_config_versions")
+}
+
+model TenantFlowConfigPermission {
+  id               String   @id @default(uuid())
+  companyId        String
+  flowDefinitionId String
+  isEnabled        Boolean  @default(true)
+  defaultForIntent String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+    flowDefinition TenantFlowConfigDefinition @relation(fields: [flowDefinitionId, companyId], references: [id, companyId], onDelete: Cascade)
+
+  @@unique([companyId, flowDefinitionId])
+  @@map("tenant_flow_config_permissions")
+}
+
+model TenantIntentFlowConfigMapping {
+  id                       String   @id @default(uuid())
+  companyId                String
+  intent                   String
+  allowedFlowDefinitionIds String[] @default([])
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, intent])
+  @@map("tenant_intent_flow_config_mappings")
 }
 
 model FlowRun {

@@ -103,13 +103,21 @@ export class ResourceScopeGuard implements CanActivate {
         'getRpaProviders',
         'getTechStatus',
       ];
-      if (!manager || (!safeReadHandlers.includes(handler) && !tenantFlowHandlers.includes(handler)))
+      if (
+        !manager ||
+        (!safeReadHandlers.includes(handler) &&
+          !tenantFlowHandlers.includes(handler))
+      )
         return deny();
       if (tenantFlowHandlers.includes(handler)) {
         query.companyId = actor.companyId;
         params.companyId = actor.companyId;
         if (
-          ['createFlowDefinition', 'updateFlowDefinition', 'upsertIntentFlowMapping'].includes(handler)
+          [
+            'createFlowDefinition',
+            'updateFlowDefinition',
+            'upsertIntentFlowMapping',
+          ].includes(handler)
         )
           body.companyId = actor.companyId;
         if (handler === 'upsertTenantFlowPermissions' && Array.isArray(body)) {

@@ -1,5 +1,11 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.66 — local synthetic UAT target
+
+Target: local production-built `services/web` SPA served by its finite Playwright test harness on loopback. Company Co is the synthetic demo tenant; actors and API responses are in-memory fixtures, and all outbound HTTP/WebSocket requests are blocked. The tenant-flow case uses company ID `company-co`, role `admin`, and an `.invalid` email alias. No account, email, customer record, credential or database was created. Browser contexts and the ephemeral HTTP server close in the test's `finally` block. Full `services/web npm run test:uat` passes 6/6 plus the separate AI-admin journey; UAT-058 source contracts pass in API/Cloud.
+
+No deployed development URL or real login was configured or verified. No test-role switch was performed in this execution; prior server-side test-profile policy evidence remains separate from this browser fixture. The new UAT-060 persisted migration test is BLOCKED because this workstation has no PostgreSQL service, `psql`, or Docker. No database or migration was run. No native device/audio target, customer-selected provider/CRM endpoint, production user data, or deployment was used.
+
 ## Candidate 5.1.56 — exact-source disposable PostgreSQL access
 
 The API UAT used the retained disposable PostgreSQL 16.15 cluster and DB `keledon_phdk_uat`, bound only to `127.0.0.1:55432`; the API was bound to `127.0.0.1:3041`. The database contained prior synthetic `.invalid` UAT fixtures. New accounts and tenant companies used for this case were synthetic, and all were deleted through the API afterward. Verification returned to the pretest counts (two companies; one admin, one superadmin and two users; no PHDK-created test users). API and PostgreSQL stopped after testing. No production credentials, customer data, provider requests, private CRM endpoints or external services were used. Exact redacted results: `evidence/uat-postgres-roles-5.1.55-8999dfd9.json`.

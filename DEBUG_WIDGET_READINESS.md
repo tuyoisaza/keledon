@@ -1,3 +1,20 @@
+## 2026-10-15 current source revalidation — 5.1.66 candidate
+
+The shared Web `VersionActions` remains mounted on public, login, shell and admin routes; Landing mirrors that contract. API diagnostics require debug enabled and an authenticated admin/developer/superadmin, and the report projection redacts credentials, private URLs, user content and unbounded event details. Reset clears only KELEDON-owned browser state, confirms errors honestly, and routes an authenticated session back through login. Browser renderer continues to mirror version/copy/reset source behavior and is synchronized by its prebuild script.
+
+Candidate checks: Web diagnostics/version actions 19/19; Browser offline suite 43/43 including icon geometry and owned-cache/reset policies; full production-built Web UAT 6/6 plus AI-admin journey, including anonymous/debug-off copy/reset and 390px UAT; Landing route metadata/indexability 1/1. Accessibility review found the fixed desktop sidebar squeezed the editor on mobile; the responsive shell now preserves the widget in a compact mobile header. No native packaged Electron/device/audio or screen-reader acceptance is claimed. See exact candidate screenshots/JSON in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-5.1.66/`.
+
+| Surface/control | Evidence | Result |
+|---|---|---|
+| Public and login | Shared route/widget regressions; Web UAT exercises anonymous debug-off behavior. | PASS source/component and local UAT |
+| Authenticated shell and admin | Sidebar and mobile shell retain the shared widget; diagnostics role gating stays server-derived. | PASS source; persisted auth acceptance remains open |
+| Compact widget | 12px version, 28×28 visual tiles, 14px icons and 4px gap; 44×44 pointer boxes verified in UAT-056 on Landing. | PASS for Web/Landing tested geometry |
+| Copy/reset/redaction | Web 19-test diagnostics suite and Browser owned-state test suite. | PASS for tested source/component behavior |
+| Native Electron | Renderer source and 43 offline tests; no packaged application run. | PARTIAL; visual/media runtime unverified |
+| Broad assistive technology | Keyboard operation covers the flow editor; full-screen-reader and all-route audit is not available. | PARTIAL / MANUAL |
+
+---
+
 ## 2026-10-15 current source revalidation — 5.1.64 candidate
 
 CHK-AUTO-024 resolves the 44×44px target gap for Web/Landing diagnostics. Each button measures 44×44px, with a centered 28×28px visual tile and 4px separation. UAT-056 passes on production-built Landing at 1280×900 and 390×844; evidence with candidate fingerprint and screenshots is `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-056/`. Web diagnostics pass 19/19, Browser offline source suite 28/28, five app builds, Web/Landing lint/typecheck and PHDK coherence 52/52. The native Browser/Electron implementation has a matching source contract but no packaged runtime measurement.

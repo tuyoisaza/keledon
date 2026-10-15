@@ -142,7 +142,7 @@ export default function ManagementFlowDefinitionsPage() {
     } finally {
       setLoading(false);
     }
-  }, [companyId]);
+  }, [companyId, isSuperadmin]);
 
   useEffect(() => {
     void load();

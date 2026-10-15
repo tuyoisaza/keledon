@@ -50,6 +50,7 @@ const {
   MvpDataController,
 } = require('../../src/controllers/mvp-data.controller.ts');
 const { MvpStoreService } = require('../../src/mvp/mvp-store.service.ts');
+const { TenantFlowConfigService } = require('../../src/mvp/tenant-flow-config.service.ts');
 const { CrudController } = require('../../src/crud/crud.controller.ts');
 const { CrudService } = require('../../src/crud/crud.service.ts');
 const { LocalAuthController } = require('../../src/auth-local/auth-local.controller.ts');
@@ -159,6 +160,7 @@ async function main() {
     ],
     providers: [
       { provide: PrismaService, useValue: prisma },
+      { provide: TenantFlowConfigService, useValue: {} },
       { provide: LocalAuthService, useFactory: () => {
         const service = new LocalAuthService(prisma);
         service.getCrudData = async () => ({ companies: [], brands: [], teams: [] });

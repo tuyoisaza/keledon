@@ -312,7 +312,7 @@ assert.match(
 );
 assert.match(
   mvpScopeGuard,
-  /if \(!manager \|\| \(!safeReadHandlers\.includes\(handler\) && !tenantFlowHandlers\.includes\(handler\)\)\)/,
+  /if \(\s*!manager\s*\|\|\s*\(!safeReadHandlers\.includes\(handler\)\s*&&\s*!tenantFlowHandlers\.includes\(handler\)\)\s*\)/,
   'only tenant managers can use tenant configuration routes',
 );
 assert.match(

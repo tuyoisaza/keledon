@@ -1,5 +1,17 @@
 # UAT handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.66 — UAT-058/059 PASS; UAT-060 BLOCKED
+
+The tenant flow editor passes keyboard and 390px responsive journeys using synthetic Company Co fixtures; full Web UAT is 6/6 plus AI-admin UAT. API/Cloud persistence-contract tests pass 8/8 and 7/7, with full regressions at 39/39 and 18/18. Browser offline tests pass 43/43 and Web diagnostics 19/19. Candidate tally: **58 PASS, 1 BLOCKED, 1 MANUAL**. Evidence and screenshots are under `evidence/uat-web-5.1.66/`.
+
+UAT-060 is blocked because no disposable PostgreSQL target is available. The mirrored migrations have not run; database-backed restart, multi-instance and constraint acceptance remain open. No customer database or endpoint was used. Whole Auto remains partial.
+
+SIGUIENTE PASO: provide a disposable loopback PostgreSQL environment for migration and two-tenant restart acceptance; keep native audio/device as MANUAL.
+
+---
+
+# UAT handoff — `20261014-0007-phdk-auto-completion`
+
 ## Candidate 5.1.64 — UAT-056 PASS; portfolio acceptance incomplete
 
 CHK-AUTO-024 closes the 44×44 hit-target gap for Web/Landing. UAT-056 passes against production-built Landing with external requests blocked. At 1280×900 both action boxes measure 44×44px, each visual tile measures 28×28px, and there is 4px between hitboxes; accessible names and hero clearance pass. At 390×844 both action boxes remain 44×44px and theme/language controls remain reachable. Evidence: `evidence/uat-056/` contains exact-source fingerprint, geometry JSON and screenshots. Web diagnostics/debug-mode/version-actions passes 19/19.

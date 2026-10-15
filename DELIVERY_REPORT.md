@@ -1,18 +1,10 @@
-## Current candidate — 5.1.65 delivery pending; Auto remains partial
+## Current delivery — 5.1.66 candidate; whole portfolio partial
 
-Branch `chore/phdk-upgrade-2.51.2` is based on verified `origin/main` 5.1.64 at `e53339e81eb972f7941c2b59dd824ad75111d54a`. Five app package/lock roots and Browser renderer align at 5.1.65. PHDK 2.51.2 coherence passes 56/56. The candidate adds company-owned legacy flow configuration and a Web editor, with matching DB-actor tenant enforcement in API and Cloud.
+Run `20261014-0007-phdk-auto-completion` continues on `fix/phdk-flow-db-persistence-5-1-66`, based on verified `origin/main` 5.1.65 at `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`. All five application package/lock roots and the Browser renderer align at 5.1.66. Installed PHDK v2.51.2 passes coherence 56/56. API regressions pass 39/39 and Cloud regressions 18/18; five builds, Web lint/typecheck, full Web UAT 6/6 plus AI-admin UAT, Browser offline suite 43/43, Web diagnostics 19/19, and Web/Landing source SEO checks pass. UAT evidence uses synthetic fixtures and blocks outbound traffic.
 
-API regression 38/38 and Cloud regression 17/17 pass; all five product builds pass; Cloud/Web targeted lint and Web typecheck pass; full Web UAT exits 0 with 6/6 browser cases plus AI-admin UAT. Browser traffic is local, synthetic and externally blocked. Durable JSON-store concurrency/database acceptance remains open, as do native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-specific live integration acceptance. No customer endpoint, physical device or deployment was used.
+This slice moves legacy flow definitions, versions, permissions and intent mappings into matching API/Cloud Prisma-backed tenant configuration, with a company-scoped editor and database-level composite ownership constraint. Candidate UAT tally is **58 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 remains blocked because no disposable PostgreSQL service is available, so migrations and restart persistence were not exercised. Native device/audio remains manual; broad accessibility/localization, deployed SEO/AEO, and client-specific live integrations remain open. All four owner-confirmed commitments remain active. No deployment or live customer acceptance is claimed.
 
-| Gate | Status | Evidence |
-|---|---|---|
-| VERSION_BUMP | PASS | Five app package/lock roots and Browser renderer read 5.1.65. |
-| COMMIT_PREFIX | PENDING | Candidate has not yet been committed. |
-| PUSH_AND_PR | PENDING | Branch push and PR creation are pending. |
-| REMOTE_MAIN | PENDING | Candidate is not merged; base `main` is 5.1.64. |
-| SCOPE_AND_CHECKS | PASS FOR THIS SLICE / WHOLE AUTO PARTIAL | API/Cloud flow scope regressions and synthetic Web UAT pass; durable storage and broader commitments remain open. |
-
-SIGUIENTE PASO: commit, open the PR, then verify the remote result; keep whole Auto partial.
+SIGUIENTE PASO: complete the final PHDK Check, then deliver 5.1.66 through the normal PR path and verify remote `main`; keep whole-Auto status partial until every acceptance gate closes.
 
 ---
 

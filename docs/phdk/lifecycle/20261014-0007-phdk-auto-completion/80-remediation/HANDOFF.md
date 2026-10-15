@@ -1,3 +1,11 @@
+# Remediation handoff — candidate 5.1.66
+
+The source findings from UAT are resolved: mobile management uses full-width responsive content, responsive navigation mounts one UAT profile control, and the legacy importer uses the persisted database company owner before child records are created. API/Cloud now persist flow definitions, versions, tenant permissions and intent mappings in Prisma with mirrored migrations and a composite tenant ownership foreign key. Regression coverage and Web UAT pass.
+
+No further in-scope source defect was found in the tested flows. Actual PostgreSQL migration/restart acceptance, native device/audio, full screen-reader coverage, deployed SEO/AEO and client-selected live integration journeys remain open. Whole Auto remains partial.
+
+---
+
 ## Candidate 5.1.51 API lint/runtime remediation
 
 Closed all API ESLint warnings without disabling rules. Mocked tenant integration actions were removed; unsupported execution fails closed, run outcomes persist, and synthetic health/process data was removed. API build/regressions/lint pass, and exact-source Web UAT 4/4 passes. Remaining whole-Auto blockers depend on isolated database/native targets and deployed measurements. Candidate Check/UAT evidence is in `../90-delivery/snapshots/candidate-5.1.51/`.
