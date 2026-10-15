@@ -6,6 +6,7 @@ Status: COMPLETED FOR THE 5.1.66 SOURCE SLICE; PORTFOLIO PARTIALLY DELIVERED
 Base: verified remote `main` 5.1.65 `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`
 Candidate source commit: `dc8bd6d24471e64b438e3ca7803c13a950b7a95b`
 Merged remote revision: `bf00262649fb281f40979a867a2bdb09099f3074` / tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589`
+Current `main` after documentation follow-up PR [#161](https://github.com/tuyoisaza/keledon/pull/161): `3364b3e43a1b10d550f253f1e2f8f3a1fe962fb6` / tree `685597b9f333d51c9e1254936074d9c6cbbcceb5`; product version remains 5.1.66.
 PR: [#160](https://github.com/tuyoisaza/keledon/pull/160), squash merged
 Date: 2026-10-15
 

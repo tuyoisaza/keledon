@@ -7,14 +7,15 @@
   "version_property": "version",
   "tested_source_commit_sha": "dc8bd6d24471e64b438e3ca7803c13a950b7a95b",
   "tested_candidate_tree": "593b0f890f321fdfe7b4049aad2defc6dd5b6589",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/160",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/161",
   "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/160",
-  "pr_head_sha": "dc8bd6d24471e64b438e3ca7803c13a950b7a95b",
+  "pr_head_sha": "bb105430fc9860e2ef4dfbbb2372d3d7b66b97f1",
   "product_source_merge_sha": "bf00262649fb281f40979a867a2bdb09099f3074",
-  "merged_commit_sha": "bf00262649fb281f40979a867a2bdb09099f3074",
-  "remote_main_sha": "bf00262649fb281f40979a867a2bdb09099f3074",
-  "remote_main_tree": "593b0f890f321fdfe7b4049aad2defc6dd5b6589",
-  "remote_main_verified_at": "2026-10-15T23:00:17Z",
+  "docs_reconciliation_merge_sha": "3364b3e43a1b10d550f253f1e2f8f3a1fe962fb6",
+  "merged_commit_sha": "3364b3e43a1b10d550f253f1e2f8f3a1fe962fb6",
+  "remote_main_sha": "3364b3e43a1b10d550f253f1e2f8f3a1fe962fb6",
+  "remote_main_tree": "685597b9f333d51c9e1254936074d9c6cbbcceb5",
+  "remote_main_verified_at": "2026-10-15T23:10:21Z",
   "git_ls_remote_matches": true,
   "versions": {
     "services_api": "5.1.66",
@@ -26,7 +27,7 @@
   },
   "github": {
     "state": "MERGED",
-    "product_pr": "#160 merged by squash",
+    "product_pr": "#160 merged by squash; documentation reconciliation #161 also merged by squash",
     "merge_method": "squash",
     "merge_state": "CLEAN at merge",
     "hosted_checks": [],
@@ -87,7 +88,7 @@
       "status": "PASS"
     },
     "source_delivery": {
-      "evidence": "PR #160 squash-merged; origin/main and git ls-remote both report bf00262649fb281f40979a867a2bdb09099f3074; remote tree 593b0f890f321fdfe7b4049aad2defc6dd5b6589 equals tested candidate tree.",
+      "evidence": "Product PR #160 merged at bf00262649fb281f40979a867a2bdb09099f3074 with tested source tree 593b0f890f321fdfe7b4049aad2defc6dd5b6589. Documentation reconciliation PR #161 merged at current origin/main and git ls-remote SHA 3364b3e43a1b10d550f253f1e2f8f3a1fe962fb6; docs tree 685597b9f333d51c9e1254936074d9c6cbbcceb5; version remains 5.1.66.",
       "status": "PASS"
     }
   },
@@ -110,5 +111,6 @@
     ]
   },
   "overall_status": "5.1.66 SOURCE MERGED AND REMOTE VERIFIED; SCOPED CHECKS PASS; PHDK AUTO PARTIALLY DELIVERED",
-  "candidate_branch": "fix/phdk-flow-db-persistence-5-1-66"
+  "product_source_branch": "fix/phdk-flow-db-persistence-5-1-66",
+  "candidate_branch": "docs/phdk-auto-reconcile-5-1-66"
 }

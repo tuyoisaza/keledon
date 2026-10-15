@@ -1,7 +1,7 @@
 # Implementation plan
 ## Active integrated continuation — PHDK Auto run `20261014-0007-phdk-auto-completion`, main 5.1.66
 
-Plan revalidated on 2026-10-15 after PR [#160](https://github.com/tuyoisaza/keledon/pull/160) merged at `bf00262649fb281f40979a867a2bdb09099f3074` (tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589`). PHDK v2.51.2 is installed and coherent 56/56. The previous active plan was stale at 5.1.22; this section replaces it as the current dependency plan. All four owner-confirmed commitments remain active; the 5.1.66 flow-configuration slice is delivered, not the whole Auto goal.
+Plan revalidated on 2026-10-15 after Product PR [#160](https://github.com/tuyoisaza/keledon/pull/160) merged at `bf00262649fb281f40979a867a2bdb09099f3074` (tested source tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589`); documentation follow-up PR [#161](https://github.com/tuyoisaza/keledon/pull/161) is current main `3364b3e43a1b10d550f253f1e2f8f3a1fe962fb6` / tree `685597b9f333d51c9e1254936074d9c6cbbcceb5`. PHDK v2.51.2 is installed and coherent 56/56. The previous active plan was stale at 5.1.22; this section replaces it as the current dependency plan. All four owner-confirmed commitments remain active; the 5.1.66 flow-configuration slice is delivered, not the whole Auto goal.
 
 | Remaining work | Commitment / Check | Next action | Acceptance / external dependency |
 |---|---|---|---|
