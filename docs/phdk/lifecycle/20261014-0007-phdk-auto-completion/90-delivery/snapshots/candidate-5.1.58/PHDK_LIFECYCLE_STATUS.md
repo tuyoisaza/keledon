@@ -415,3 +415,18 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch
 No live database/device or customer integration was used. Whole PHDK Auto remains PARTIALLY DELIVERED.
 
 SIGUIENTE PASO: deliver candidate 5.1.58 through the normal PR flow; then continue persisted device acceptance and remaining Auto gates.
+
+## PHDK Auto continuation — candidate 5.1.58 Browser allowlist audit (2026-10-15)
+
+Follow-up source review confirmed that the active RPA executor scoped BrowserView requests, while AutoBrowse goal actions relied on per-action navigation checks without holding the request allowlist through AI planning and page subresource loads. `executeGoal` now applies the tenant's configured vendor origins for the full goal and restores the prior scope in `finally`. Browser policy tests 14/14, Browser build, API/Cloud regressions, five builds and PHDK coherence 52/52 pass. UAT-048 is source-only; no external or private CRM endpoint was contacted.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| 30 PMO / Workstreams | CONTINUED | CMT-003 tenant-origin allowlist now covers the AutoBrowse request lifecycle. |
+| 40 Integration Review | PASS FOR SOURCE SLICE | Browser and Cloud/API tenant-boundary contracts are mapped in `INTEGRATION_REPORT-5.1.58.md`. |
+| 50 UAT | PASS FOR UAT-048 / WHOLE INCOMPLETE | 48 PASS, 0 BLOCKED, 1 MANUAL; no live network run. |
+| 60 UAT Fix | PASS FOR FINDING | AutoBrowse full-goal request scope restored reliably after execution. |
+| 70 Check | PASS FOR SOURCE SLICE | Browser tests/build and previously passing API/Cloud/full builds, alignment, coherence and diff check. |
+| 90 Delivery | PR #152 UPDATED | Push/readback pending. |
+
+Whole PHDK Auto remains PARTIALLY DELIVERED; persisted operations, live device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected call/CRM acceptance remain open.

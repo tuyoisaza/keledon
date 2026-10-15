@@ -200,3 +200,6 @@ SIGUIENTE PASO: continue persisted acceptance for the next mapped resource opera
 Source audit found Cloud registration/pairing weaker than API: it allowed cross-actor machine-ID retries, missing-company registration, unbound pairing and a non-conditional consume of the one-time proof. Cloud now aligns to API and public errors are generic. UAT-047 passes at source level; live DB/device acceptance remains blocked. API regression 36/36, Cloud 17/17, five builds, PHDK 52/52 and diff check pass. Five roots plus Browser renderer are 5.1.58. Candidate PR is pending; whole Auto remains **PARTIALLY DELIVERED**.
 
 SIGUIENTE PASO: deliver the source fix and continue isolated persisted/native acceptance plus the outstanding CRUD/UI/SEO/AEO gates.
+
+### 5.1.58 continuation — Browser request allowlist
+Source audit found AutoBrowse executed allowlisted actions without applying that tenant scope to BrowserView subresource requests for the duration of the goal. The goal now holds the configured scope through planning/execution and restores prior state in `finally`. UAT-048 and 14/14 Browser focused tests cover the source contract; live CRM/DNS/network behavior is untested. PR #152 update is pending push/readback. Whole Auto remains PARTIALLY DELIVERED.

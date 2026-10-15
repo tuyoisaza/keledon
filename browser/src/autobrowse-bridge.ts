@@ -9,7 +9,11 @@ import { planGoalActionsWithAI } from './goal-planner';
 import type { GoalPlannerAction as GoalAction } from './goal-planner';
 import type { RpaStep } from './rpa-executor';
 import { runtimeStatus } from './runtime-state';
-import { getAllowedVendorOrigins } from './security-policy.js';
+import {
+  getAllowedVendorOrigins,
+  getRuntimeVendorNavigationScope,
+  setRuntimeVendorNavigationScope,
+} from './security-policy.js';
 import { executeAction } from './autobrowse-actions';
 import type { StepResult } from './autobrowse-actions';
 import { connectCDP, disconnectCDP, getCdpBrowser, getCdpPort } from './autobrowse-cdp';
@@ -202,6 +206,10 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
   delete plannerInputs.url;
   delete plannerInputs.targetUrl;
 
+  // Apply the tenant origin scope to all BrowserView resource requests for the
+  // full AutoBrowse goal, including AI-planned clicks and page subresources.
+  const priorRuntimeScope = getRuntimeVendorNavigationScope(view.webContents);
+  setRuntimeVendorNavigationScope(view.webContents, allowedOrigins);
   try {
     // Map goal to actions FIRST so we can check if the planner will handle navigation.
     // v0.3.51: avoids duplicate navigation when vendor URL matches planner's first step.
@@ -383,6 +391,8 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
       artifacts: { screenshots, logs },
       error: String(error)
     };
+  } finally {
+    setRuntimeVendorNavigationScope(view.webContents, priorRuntimeScope);
   }
 }
 

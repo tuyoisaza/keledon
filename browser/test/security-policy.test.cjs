@@ -136,6 +136,13 @@ test('frame, popup, and IPC navigation entry points use the active RPA tenant sc
   assert.match(executor, /finally \{\s*setRuntimeVendorNavigationScope\(view\.webContents, priorRuntimeScope\)/);
 });
 
+test('AutoBrowse goals bind BrowserView resource requests to tenant origins and restore the prior scope', () => {
+  const bridge = fs.readFileSync(path.resolve('src/autobrowse-bridge.ts'), 'utf8');
+  assert.match(bridge, /const priorRuntimeScope = getRuntimeVendorNavigationScope\(view\.webContents\);\s*setRuntimeVendorNavigationScope\(view\.webContents, allowedOrigins\);\s*try \{/);
+  assert.match(bridge, /finally \{\s*setRuntimeVendorNavigationScope\(view\.webContents, priorRuntimeScope\);\s*\}\s*\n\}/);
+  assert.match(bridge, /async function executeConfiguredAction\(action: GoalAction\)/);
+});
+
 test('the executor can create an empty, restricted tab before vendor selection', () => {
   assert.equal(isAllowedVendorTabUrl('about:blank'), true);
   assert.equal(isAllowedVendorTabUrl('file:///C:/secret.txt'), false);

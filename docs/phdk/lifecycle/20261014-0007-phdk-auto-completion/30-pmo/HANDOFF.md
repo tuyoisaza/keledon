@@ -61,3 +61,7 @@ The UAT-045 outcomes are now traceable from Company/admin, Company/superadmin, U
 ## Candidate 5.1.58 — Cloud device boundary parity
 
 Cloud device registration now rejects foreign-actor/tenant reuse of an existing machine ID and requires a DB-derived company; Cloud pairing requires a stored user/company/Keledon binding and conditionally consumes a matching unexpired proof. The public pair endpoint returns generic errors. API/Cloud regressions, builds and PHDK checks pass. UAT-047 source only; live persistence is open. Candidate delivery remains pending.
+
+## Candidate 5.1.58 follow-up — CMT-003 Browser request scope
+
+The AutoBrowse goal path now carries the tenant's configured vendor-origin allowlist through the full BrowserView lifecycle, including resource requests made by page scripts, AI-planned clicks, and retries. Previous scope is restored after success or failure. Browser tests/build pass; UAT-048 is source-only. Per-client integration remains untested until the customer selects its provider and target.

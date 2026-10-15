@@ -402,3 +402,9 @@ After the owner authorized the Electron runtime, `browser/npm run dev` launched 
 A safe local New Tab UI action created the second tab. KELEDON automatically navigated it to its default `https://www.google.com` page; the tab was closed while loading. No content was reviewed, no account or data was entered, and no client service was accessed. Evidence of the transition: `docs/phdk/evidence/uat-browser-native-new-tab.png`.
 
 The native renderer startup is **PASS**. Native media-consent dialog, OS microphone/camera permission, physical device/audio and call lifecycle remain **NOT TESTED**. CUA inventory returned no native apps, its app-list API was unavailable, and Sky reported `Trusted RPC service is not configured`; therefore no Windows app UI input was possible. The local permission-policy unit tests remain the only consent-dialog behavior verification. No permission was granted and no customer call occurred.
+
+## Candidate 5.1.58 — AutoBrowse request scope (2026-10-15)
+
+Source review found that AutoBrowse checked each planned action against configured vendor origins but did not hold the BrowserView request scope while a goal ran. `executeGoal` now installs the selected tenant's allowlist before planning/executing actions and restores the previous scope in `finally`, so Electron's request, redirect and frame guards also cover page subresources throughout the flow. Browser security-policy/call/event tests pass 14/14 and Browser TypeScript build passes. UAT-048 is source-only; no live CRM or external/private target was contacted.
+
+Candidate tally: **48 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Live persisted device pairing, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open; per-client call/CRM acceptance awaits each tenant's chosen stack.

@@ -11,3 +11,7 @@ Aligned Cloud registration and pairing with the API contract and kept the pairin
 ## Verification
 
 Cloud/API targeted tests pass. Full suite and builds are in the candidate check report. No live database or device was used. Whole PHDK Auto remains **PARTIALLY DELIVERED**.
+
+## Follow-up finding — AutoBrowse request scope
+
+AutoBrowse goal execution validated planned action URLs, but did not set the tenant allowlist on the BrowserView request guard. This left page subresources outside the intended tenant-origin control while a goal was active. `executeGoal` now applies the current tenant vendor origins before its planner/action try block and restores the prior runtime scope with `finally`, covering action requests and failure/abort return paths. Browser policy tests assert the request scope is installed and restored; focused Browser tests pass 14/14 and build passes. UAT-048 is source-only; live private CRM behavior remains per-customer acceptance.

@@ -176,3 +176,11 @@ Current evidence revision: `edce7eafbe13ac16ab93274a87e12571e7b04b2e`; verified 
 | UAT-A11Y-I18N / US-006 | Broad active-route locale/copy, WCAG keyboard/zoom/contrast/screen-reader acceptance | BLOCKED: only selected UI subset was exercised. |
 | UAT-SEO-AEO / US-001/US-006 | Deployed headers and public discovery evidence | BLOCKED: no deployed target/measurement. |
 | UAT-CLIENT-CRM / US-003 | Tenant-selected real call/CRM integration | NOT APPLICABLE to universal source gate; validate only when a client/provider is selected. |
+
+## Candidate 5.1.58 addition — Browser tenant-origin request enforcement (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-048 | US-003 / configured tenant CRM | Inspect the AutoBrowse goal execution path and exercise the Browser origin policy tests for navigation, redirects, frames, popups and resource requests. | The tenant allowlist remains active through the entire goal, so planned clicks and CRM subresources cannot request an unconfigured origin; prior runtime scope is restored after success or failure. | Browser security-policy tests and build. | PASS, source scope: Browser security-policy/call/event tests 14/14 and TypeScript build. No live CRM, DNS or network request was used. |
+
+Candidate total: **48 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-048 does not claim runtime network observation; live client integrations remain tenant-specific.

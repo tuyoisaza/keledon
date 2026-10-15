@@ -260,3 +260,7 @@ SIGUIENTE PASO: finish checks, deliver via PR and verify the exact remote tree/v
 ## Delivery candidate 5.1.58 — Cloud device tenant binding
 
 Candidate branch `fix/phdk-next-model-operations-5-1-58` is based on verified main after PR #151 merge `12bef77c2aaaa16e9c607a003abcc41b4f5c2d22`. API regression 36/36, Cloud regression 17/17, five builds, version alignment and PHDK coherence 52/52 pass. UAT-047 is source-only. Candidate PR and remote readback are pending; whole Auto remains PARTIALLY DELIVERED.
+
+## PR #152 update — AutoBrowse tenant request scope
+
+The 5.1.58 branch now also fixes the AutoBrowse gap found during tenant-private CRM policy review: the configured allowlist remains active for the entire goal, including page subresource requests, and prior scope is restored after all exit paths. Browser focused tests 14/14 and build pass. UAT-048 is source-only. PR #152 is open; the latest commit must be pushed and its remote head verified before delivery. No live CRM/network acceptance or merge is claimed. Whole Auto remains partial.
