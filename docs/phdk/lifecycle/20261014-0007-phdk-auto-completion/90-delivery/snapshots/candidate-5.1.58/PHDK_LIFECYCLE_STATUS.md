@@ -427,6 +427,6 @@ Follow-up source review confirmed that the active RPA executor scoped BrowserVie
 | 50 UAT | PASS FOR UAT-048 / WHOLE INCOMPLETE | 48 PASS, 0 BLOCKED, 1 MANUAL; no live network run. |
 | 60 UAT Fix | PASS FOR FINDING | AutoBrowse full-goal request scope restored reliably after execution. |
 | 70 Check | PASS FOR SOURCE SLICE | Browser tests/build and previously passing API/Cloud/full builds, alignment, coherence and diff check. |
-| 90 Delivery | PR #152 UPDATED | Push/readback pending. |
+| 90 Delivery | PR #152 UPDATED / REMOTE VERIFIED | Branch head `9dce6748d3af4426f4f9de1ca99295103a5bd553` matches `git ls-remote`; PR remains open, merge/main readback pending. |
 
 Whole PHDK Auto remains PARTIALLY DELIVERED; persisted operations, live device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected call/CRM acceptance remain open.
