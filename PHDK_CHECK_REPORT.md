@@ -1,3 +1,9 @@
+## Current PHDK Auto Check — 5.1.68 source slice merged; whole portfolio partial
+
+PR [#167](https://github.com/tuyoisaza/keledon/pull/167) squash-merged source `62c979b299301066ef5187fada9041017ae2bc8f` at verified remote `main` `f974ab5984a20cd1b4ad742ddffe5921ad2bf823`, tree `96d7ce832332b3c991269432bcaacc083c2abb68`, equal to the tested source tree. All five app package/lock roots and Browser renderer read 5.1.68. PHDK v2.51.2 coherence passes 56/56; the mechanical completion gate passes against the post-merge record. GitHub reported no hosted checks or review decision; `main` is unprotected. No deployment is claimed. API/Cloud regressions pass 39/39 and 18/18; all five builds and lint checks pass; API/Cloud/Web/Landing typechecks pass, and Browser build (`tsc`) passes. Focused checks confirm tenant-provider-config and voice-profile reads/writes derive company scope from the database actor. UAT-062 is source-only evidence.
+
+UAT tally: 60 PASS, 1 BLOCKED (UAT-060 disposable PostgreSQL), 1 MANUAL (native device/audio). Broad accessibility/localization, deployed SEO/AEO and customer-selected live call/CRM acceptance remain open. Exact candidate check: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.1.68.md`. Whole Auto remains PARTIALLY DELIVERED.
+
 ## Current PHDK Auto — 5.1.67 merged; whole portfolio partial
 
 The scoped API flow-read correction is merged by PR [#163](https://github.com/tuyoisaza/keledon/pull/163) at remote source SHA `dbdd64f16048ac01ff1ec34e39ec33e6c4255175`, tree `932a278c510cbdff8ace021dab2e364a9744b0d1`, matching tested source. Evidence PR [#164](https://github.com/tuyoisaza/keledon/pull/164) is also merged; current `main` is `44a1038c2a8d8d2659bde741a0cbd13b8485cfca`, tree `1b5cabbc4bb8192ab70771c62476ed2eb069fc99`. All five app roots and Browser renderer read 5.1.67. PHDK v2.51.2 coherence passes 56/56; completion gate passes.

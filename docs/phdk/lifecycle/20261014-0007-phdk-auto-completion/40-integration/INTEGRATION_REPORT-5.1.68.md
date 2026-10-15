@@ -13,7 +13,7 @@ This slice adds positive API and Cloud regression assertions that provider confi
 | Cloud full regression | PASS, 18/18 |
 | API / Cloud / Web / Landing / Browser production builds | PASS, all five |
 | API / Cloud / Web / Landing / Browser lint | PASS, all five |
-| API / Cloud / Web / Landing / Browser typecheck | PASS, all five |
+| API / Cloud / Web / Landing typecheck; Browser build uses `tsc` | PASS |
 | Package, lock and renderer version alignment | PASS, 5.1.68 |
 | `git diff --check` | PASS |
 

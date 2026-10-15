@@ -13,7 +13,7 @@ Candidate: 5.1.68
 | Cloud full regression | PASS, 18/18 |
 | API / Cloud / Web / Landing / Browser builds | PASS, all five |
 | API / Cloud / Web / Landing / Browser lint | PASS, all five |
-| API / Cloud / Web / Landing / Browser typecheck | PASS, all five |
+| API / Cloud / Web / Landing typecheck; Browser build uses `tsc` | PASS |
 | Five package/lock roots and Browser renderer | PASS, aligned at 5.1.68 |
 | PHDK coherence | PASS, v2.51.2 / 56 manifest mappings (static only) |
 | `git diff --check` | PASS |

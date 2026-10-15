@@ -1,6 +1,6 @@
 # Integration handoff — candidate 5.1.68
 
-The API and Cloud provider configuration and voice-profile guards now have positive coverage for deriving tenant company scope from the database actor, in addition to the existing cross-company rejection cases. Full API and Cloud regressions pass 39/39 and 18/18. All five package/lock roots and the Browser renderer are aligned at 5.1.68. Five production builds, five lint checks, and five typechecks pass. See `INTEGRATION_REPORT-5.1.68.md` for the exact check inventory. No live database, customer CRM, call provider, or deployment was used. Whole PHDK Auto remains partial.
+The API and Cloud provider configuration and voice-profile guards now have positive coverage for deriving tenant company scope from the database actor, in addition to the existing cross-company rejection cases. Full API and Cloud regressions pass 39/39 and 18/18. All five package/lock roots and the Browser renderer are aligned at 5.1.68. Five production builds and five lint checks pass; API/Cloud/Web/Landing dedicated typechecks pass, and Browser build runs `tsc` and passes. See `INTEGRATION_REPORT-5.1.68.md` for the exact check inventory. No live database, customer CRM, call provider, or deployment was used. Whole PHDK Auto remains partial.
 
 SIGUIENTE PASO: finish exact-candidate Check, then deliver through the normal versioned PR and verify remote `main`.
 

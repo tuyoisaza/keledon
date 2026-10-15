@@ -1,4 +1,19 @@
 # Implementation plan
+## Active integrated continuation — PHDK Auto run `20261014-0007-phdk-auto-completion`, main 5.1.68
+
+Plan revalidated after source PR #167. PR [#167](https://github.com/tuyoisaza/keledon/pull/167) squash-merged source `62c979b299301066ef5187fada9041017ae2bc8f` at verified remote `main` `f974ab5984a20cd1b4ad742ddffe5921ad2bf823`, tree `96d7ce832332b3c991269432bcaacc083c2abb68`, equal to the tested source tree. All five app package/lock roots and Browser renderer read 5.1.68. PHDK v2.51.2 coherence passes 56/56; the mechanical completion gate passes against the post-merge record. GitHub reported no hosted checks or review decision; `main` is unprotected. No deployment is claimed. This incremental evidence slice strengthens positive actor-derived company scope assertions for provider configuration and voice profiles in API and Cloud. All four confirmed commitments remain active; the source slice does not close PostgreSQL persistence, native device/audio, accessibility/localization, deployed SEO/AEO or per-client live call/CRM acceptance.
+
+| Remaining work | Commitment / gate | Next action | Acceptance / dependency |
+|---|---|---|---|
+| Baseline and evidence | CMT-001 | Keep main SHA/tree/version, PR and checks reconciled; refresh post-merge evidence for each source delivery. | #167 merged; remote SHA/tree and version independently match. |
+| Widget, diagnostics and accessibility | CMT-002 | Continue route-level keyboard, accessibility and locale review. | Native device/audio MANUAL; broad screen-reader/localization remains open. |
+| Voice → Cloud → Browser → CRM | CMT-003 | Keep provider-neutral contracts and tenant origin allowlists; validate private destinations per tenant. | Live calls/CRM depend on each customer's chosen environment and remain open. |
+| Tenant administration and permissions | CMT-004 | Continue CRUD role/surface/operation reconciliation and source guards. | 546 CRUD rows: 410 BLOCKED, 104 N/A, 31 DECISION NEEDED, 1 PASS; persisted behavior remains open. |
+| Flow persistence | CMT-004 / UAT-060 | Run migrations, restart and two-tenant persistence on the disposable PostgreSQL target. | BLOCKED until owner-provided target is available. |
+| SEO/AEO and discovery | CMT-001/002 | Preserve source checks; record deployed measurements only when observable. | Deployed SEO/AEO remains unverified. |
+
+Do not mark whole Auto complete while any confirmed commitment or acceptance gate remains open.
+
 ## Active integrated continuation — PHDK Auto run `20261014-0007-phdk-auto-completion`, main 5.1.67
 
 Plan revalidated on 2026-10-15 after source PR [#163](https://github.com/tuyoisaza/keledon/pull/163) merged at `dbdd64f16048ac01ff1ec34e39ec33e6c4255175` (tested source tree `932a278c510cbdff8ace021dab2e364a9744b0d1`) and post-merge evidence PR [#164](https://github.com/tuyoisaza/keledon/pull/164) advanced current main to `44a1038c2a8d8d2659bde741a0cbd13b8485cfca` / tree `1b5cabbc4bb8192ab70771c62476ed2eb069fc99`. Product version remains 5.1.67. PHDK v2.51.2 coherence passes 56/56. The 5.1.67 API flow-read scope slice is delivered; all four owner-confirmed commitments remain active.

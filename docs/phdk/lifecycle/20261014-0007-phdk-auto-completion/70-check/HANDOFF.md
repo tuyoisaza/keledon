@@ -1,6 +1,6 @@
 # Check handoff — candidate 5.1.68
 
-Candidate source checks pass: API/Cloud regressions 39/39 and 18/18; all five builds, lint checks and typechecks; all five app versions/locks and Browser renderer aligned; PHDK v2.51.2 coherence 56/56; and final exact diff review recorded in `PHDK_CHECK_REPORT-5.1.68.md`. The focused authorization assertions verify tenant company derivation, while the source slice does not establish live database identity or persistence.
+Candidate source checks pass: API/Cloud regressions 39/39 and 18/18; all five builds and lint checks; API/Cloud/Web/Landing dedicated typechecks, with Browser build running `tsc`; all five app versions/locks and Browser renderer aligned; PHDK v2.51.2 coherence 56/56; and final exact diff review recorded in `PHDK_CHECK_REPORT-5.1.68.md`. The focused authorization assertions verify tenant company derivation, while the source slice does not establish live database identity or persistence.
 
 No new P0/P1 source finding was identified in this candidate's provider/profile guard paths. Portfolio acceptance remains **PARTIAL**: disposable PostgreSQL UAT-060 is blocked pending the owner-provided target; native device/audio is manual; broad accessibility/localization, deployed SEO/AEO and live per-client call/CRM acceptance remain open.
 
