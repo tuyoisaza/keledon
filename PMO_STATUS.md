@@ -1,3 +1,9 @@
+## Current PMO board — 5.1.69 merged; whole Auto remains partial
+
+Run `20261014-0007-phdk-auto-completion`; PR #170 is squash-merged and remote SHA/tree/version readback matches the tested source. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled. Current UAT tally is 61 PASS, 1 BLOCKED, 1 MANUAL. The 5.1.69 source slice does not close portfolio acceptance.
+
+---
+
 ## Current PMO board — 5.1.68 merged; whole Auto remains partial (2026-10-15)
 
 Run `20261014-0007-phdk-auto-completion`; remote `main` `f974ab5984a20cd1b4ad742ddffe5921ad2bf823` / tree `96d7ce832332b3c991269432bcaacc083c2abb68`. PR #167 is squash-merged; all six version reads are 5.1.68. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled. Mechanical completion gate passes; source delivery does not close portfolio acceptance.
