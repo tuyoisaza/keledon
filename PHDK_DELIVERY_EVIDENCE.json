@@ -1,79 +1,114 @@
 {
   "version": "1",
-  "goal": "Scoped PHDK Auto slice: PHDK 2.51.2 sync and tenant-owned legacy flow configuration; full four-front Auto remains partial",
+  "goal": "PHDK Auto source slice: persist tenant-owned legacy flow configuration and complete UAT/check delivery; whole four-front portfolio remains partial",
   "target_branch": "main",
-  "expected_version": "5.1.65",
+  "expected_version": "5.1.66",
   "version_file": "services/web/package.json",
   "version_property": "version",
-  "tested_source_commit_sha": "73c0b50e6a6f35b730893ec03463583b42c64e9c",
-  "tested_candidate_tree": "0224460d38e388f0e43ffd0fa1f89287abe575f4",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/159",
-  "pr_head_sha": "73c0b50e6a6f35b730893ec03463583b42c64e9c",
-  "merged_commit_sha": "fbeec0eafe72cc73e8a92c9105076d8174ce98dd",
-  "remote_main_tree": "0224460d38e388f0e43ffd0fa1f89287abe575f4",
-  "remote_main_verified_at": "2026-10-15T22:21:53Z",
+  "tested_source_commit_sha": "dc8bd6d24471e64b438e3ca7803c13a950b7a95b",
+  "tested_candidate_tree": "593b0f890f321fdfe7b4049aad2defc6dd5b6589",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/160",
+  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/160",
+  "pr_head_sha": "dc8bd6d24471e64b438e3ca7803c13a950b7a95b",
+  "product_source_merge_sha": "bf00262649fb281f40979a867a2bdb09099f3074",
+  "merged_commit_sha": "bf00262649fb281f40979a867a2bdb09099f3074",
+  "remote_main_sha": "bf00262649fb281f40979a867a2bdb09099f3074",
+  "remote_main_tree": "593b0f890f321fdfe7b4049aad2defc6dd5b6589",
+  "remote_main_verified_at": "2026-10-15T23:00:17Z",
   "git_ls_remote_matches": true,
   "versions": {
-    "cloud": "5.1.65",
-    "landing": "5.1.65",
-    "browser": "5.1.65",
-    "services_web": "5.1.65",
-    "browser_renderer": "5.1.65",
-    "services_api": "5.1.65"
+    "services_api": "5.1.66",
+    "cloud": "5.1.66",
+    "browser": "5.1.66",
+    "services_web": "5.1.66",
+    "landing": "5.1.66",
+    "browser_renderer": "5.1.66"
   },
   "github": {
-    "review_decision": "none reported",
-    "merge_method": "squash",
-    "main_protection": false,
-    "product_pr": "#159 merged by squash",
     "state": "MERGED",
-    "merge_state": "CLEAN",
-    "hosted_checks": []
+    "product_pr": "#160 merged by squash",
+    "merge_method": "squash",
+    "merge_state": "CLEAN at merge",
+    "hosted_checks": [],
+    "review_decision": "none reported",
+    "main_protection": false
   },
   "checks": {
     "lint": {
-      "evidence": "Targeted Cloud and Web ESLint passed on candidate 5.1.65.",
+      "evidence": "API/Cloud applicable lint and Web/Browser/Landing lint passed; Web lint has 0 warnings.",
       "status": "PASS"
     },
     "typecheck": {
-      "evidence": "services/web npm run typecheck passed on candidate 5.1.65.",
+      "evidence": "Web and Landing typechecks passed; API and Cloud production TypeScript builds passed.",
       "status": "PASS"
     },
     "build": {
-      "evidence": "npm run build passed in services/api, cloud, services/web, landing and browser on candidate 5.1.65.",
+      "evidence": "Production builds passed for API, Cloud, Web, Landing and Browser on 5.1.66.",
       "status": "PASS"
     },
-    "focused_tests": {
-      "evidence": "API regression 38/38 and Cloud regression 17/17 passed.",
+    "api_regression": {
+      "evidence": "API regression runner passed 39/39 suites, including 8/8 tenant-flow persistence contract tests.",
       "status": "PASS"
     },
-    "uat": {
-      "evidence": "Full services/web npm run test:uat exited 0: 6/6 browser cases plus AI-admin UAT; synthetic APIs and blocked external traffic.",
+    "cloud_regression": {
+      "evidence": "Cloud regression runner passed 18/18 suites, including 7/7 tenant-flow persistence contract tests.",
+      "status": "PASS"
+    },
+    "web_uat": {
+      "evidence": "Full Web UAT exited 0: six browser cases plus AI-admin UAT; synthetic API fixtures and outbound network blocked. Keyboard flow editor and 390px reflow pass.",
+      "status": "PASS"
+    },
+    "browser_regression": {
+      "evidence": "Browser lint/build and offline regression suite passed 43/43.",
+      "status": "PASS"
+    },
+    "web_diagnostics": {
+      "evidence": "Web diagnostics/debug/version-actions suite passed 19/19.",
+      "status": "PASS"
+    },
+    "seo_source": {
+      "evidence": "Web SEO source test 1/1 and Landing SEO source test 1/1 passed; deployed metrics were not queried.",
+      "status": "PASS"
+    },
+    "prisma_schema": {
+      "evidence": "API and Cloud Prisma schemas validate; generated clients and paired migration/source contract checks pass. No database migration was executed.",
       "status": "PASS"
     },
     "phdk_coherence": {
-      "evidence": "PHDK v2.51.2 coherence checker passed 56/56 manifest mappings.",
+      "evidence": "Installed PHDK v2.51.2 coherence checker passed 56/56 mappings.",
       "status": "PASS"
     },
     "version_alignment": {
-      "evidence": "Remote main reports 5.1.65 in five package.json roots and Browser renderer; remote main tree matches tested candidate tree.",
+      "evidence": "Remote main tree matches tested candidate tree; all five package roots and Browser renderer read 5.1.66.",
       "status": "PASS"
     },
     "git_diff_check": {
-      "evidence": "git diff --cached --check passed before version-prefixed commit.",
+      "evidence": "Candidate commit passed git diff --cached --check before commit.",
       "status": "PASS"
     },
     "source_delivery": {
-      "evidence": "PR #159 squash-merged; origin/main and git ls-remote agree at fbeec0eafe72cc73e8a92c9105076d8174ce98dd; tree 0224460d38e388f0e43ffd0fa1f89287abe575f4 matches tested candidate.",
+      "evidence": "PR #160 squash-merged; origin/main and git ls-remote both report bf00262649fb281f40979a867a2bdb09099f3074; remote tree 593b0f890f321fdfe7b4049aad2defc6dd5b6589 equals tested candidate tree.",
       "status": "PASS"
     }
   },
   "scope_limitations": [
-    "All four owner-confirmed PHDK Auto commitments remain active; this scoped slice does not complete the portfolio.",
-    "Flow configuration still uses shared mvp-store.json; locking, multi-instance durability, migrations and persisted database acceptance remain open.",
-    "Packaged Electron/OS touch, physical device/audio, broad accessibility/localization, deployed SEO/AEO and client-selected live voice/CRM acceptance remain open.",
-    "UAT used a local production build with synthetic API fixtures and blocked outbound traffic; no customer database, private endpoint, provider write or deployment was used."
+    "Whole PHDK Auto remains PARTIALLY DELIVERED; all four confirmed commitments remain active.",
+    "UAT-060 remains BLOCKED because no disposable PostgreSQL target was available; migrations, restart persistence and multi-instance behavior were not executed.",
+    "Native device/audio remains MANUAL; full screen-reader/localization, deployed SEO/AEO and per-client live voice/CRM acceptance remain open.",
+    "UAT used synthetic fixtures and blocked outbound traffic; no customer database, private endpoint, provider write or deployment was used."
   ],
-  "overall_status": "5.1.65 SOURCE MERGED AND REMOTE VERIFIED; SCOPED CHECKS PASS; PHDK AUTO PARTIALLY DELIVERED",
-  "candidate_branch": "chore/phdk-upgrade-2.51.2"
+  "whole_auto_acceptance": {
+    "status": "PARTIAL",
+    "summary": "The source slice is merged and verified; the four-front PHDK Auto portfolio is not complete.",
+    "uat_tally": {"pass": 58, "blocked": 1, "manual": 1},
+    "open_gates": [
+      "UAT-060 disposable PostgreSQL migration, restart, tenant isolation and multi-instance acceptance",
+      "Native device/audio acceptance",
+      "Broad screen-reader and localization acceptance",
+      "Deployed SEO/AEO measurements",
+      "Customer-selected live voice/CRM acceptance per tenant"
+    ]
+  },
+  "overall_status": "5.1.66 SOURCE MERGED AND REMOTE VERIFIED; SCOPED CHECKS PASS; PHDK AUTO PARTIALLY DELIVERED",
+  "candidate_branch": "fix/phdk-flow-db-persistence-5-1-66"
 }

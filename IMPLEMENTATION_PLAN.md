@@ -1,18 +1,18 @@
 # Implementation plan
-## Active integrated continuation — PHDK Auto run `20261013-1900-phdk-auto`, main 5.1.22
+## Active integrated continuation — PHDK Auto run `20261014-0007-phdk-auto-completion`, main 5.1.66
 
-PR #89 (`b92a25428a6d25c898e3dfef7a055f754782ed57`) and PR #90 (`48ab2023236ba5de56c046f99670a2abab866707`) are merged. Current main is clean, all five app manifest/lock roots are 5.1.22, and no PR remains open. CMT-001 release alignment and source portions of CMT-002/003/004 are integrated; do not reopen those slices without new evidence.
+Plan revalidated on 2026-10-15 after PR [#160](https://github.com/tuyoisaza/keledon/pull/160) merged at `bf00262649fb281f40979a867a2bdb09099f3074` (tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589`). PHDK v2.51.2 is installed and coherent 56/56. The previous active plan was stale at 5.1.22; this section replaces it as the current dependency plan. All four owner-confirmed commitments remain active; the 5.1.66 flow-configuration slice is delivered, not the whole Auto goal.
 
 | Remaining work | Commitment / Check | Next action | Acceptance / external dependency |
 |---|---|---|---|
-| Exhaustive resource policy | CMT-004 / CHK-002 | Complete model × role × tenant × API/web × list/detail/create/update/delete source mapping; add direct-ID tests for each mutable tenant resource family and reconcile duplicate/embedded routes. | Authorized disposable DB needed for persistence, delete/recovery and migration before/after checks; no production DB. |
-| Active-route UX/i18n/a11y | CMT-002/004 / CHK-003 | Continue route-by-route scan; repair confirmed literals and keyboard/name/state gaps, then add focused UAT. | Full screen-reader and exhaustive manual review remain independent acceptance. |
-| Managed AI persistence | CMT-004 / CHK-004 | Preserve server-side superadmin gate, validated schema and revision-attributed usage; add source regressions for any new issue. | Reviewed disposable database and additive migration procedure required for persisted acceptance. |
-| Tenant-selected call/CRM | CMT-003 | Maintain vendor-neutral interfaces and per-tenant origin-only URL validation; allow explicitly configured private/local targets and block other origins. | Source implemented in 5.1.24; live CRM/call validation remains client-specific because no universal platform is selected. |
-| SEO/AEO and native Browser | CMT-001/002 / CHK-005/007 | Keep static source checks; make no field/runtime claim without supported environments. | Deployment/crawler measurements and supported Windows device/audio test host are required. |
-| Public locale/market | CHK-006 | Preserve English public canonical without adding guessed locale routes. | Product owner must define target market/languages before multilingual SEO changes. |
+| Current baseline and evidence | CMT-001 | Keep version roots, remote SHA/tree, PR state, hosted checks, branch policy and deployment observations distinct. Refresh delivery evidence and PMO after each merged slice. | Current source delivery is verified; GitHub reported no hosted checks/review decision and no branch protection. Deployment metadata is not live health proof. |
+| Widget, diagnostics and accessibility | CMT-002 | Preserve the passing widget/diagnostics suite; continue route-level keyboard, accessible-name, focus, responsive and locale review. | Native device/audio is MANUAL; broad screen-reader and localization acceptance needs a supported device/manual run. |
+| Voice → Cloud → Browser → CRM | CMT-003 | Maintain provider-neutral contracts, per-tenant validated URL allowlists and private/local destinations only when explicitly configured for that tenant. | No universal provider exists. Live call/CRM and private-network acceptance require the respective customer-selected environment and remain open. |
+| Tenant administration and permissions | CMT-004 / CHK-AUTO-002 | Continue the model × role × tenant × operation × surface review; correct source-map inaccuracies, add focused API/Cloud denial tests, and keep dormant schemas out of reachable routes. | CRUD map currently records 546 role/surface rows (410 BLOCKED, 104 NOT APPLICABLE, 31 DECISION NEEDED, 1 PASS). Persisted operations and unresolved retention decisions remain open. |
+| Flow config persistence | CMT-004 / UAT-060 | Run mirrored API/Cloud migrations, two-tenant persistence, restart and composite-ownership acceptance on a disposable PostgreSQL target. | BLOCKED: no disposable PostgreSQL is available here; PHDK execution scope forbids provisioning/administering DBs through CLI/API/IaC. Use an owner-provided isolated target. |
+| SEO/AEO and discovery | CMT-001/002 | Keep source checks and claims accurate; record crawl/index/answer-engine evidence only when externally observable. | Web/Landing source tests pass; deployed SEO/AEO measurements remain unverified. |
 
-Do not claim the four-front Auto goal complete while any confirmed commitment or applicable external acceptance remains open.
+Do not mark whole Auto complete while any confirmed commitment or required acceptance remains open. The source-delivery gate proves remote merge/version only; it is not the portfolio acceptance gate.
 
 ## Active continuation — PHDK Auto run `20261013-1900-phdk-auto`, candidate 5.1.17
 

@@ -1,10 +1,10 @@
-## Current PHDK Auto — 5.1.66 candidate; whole portfolio partial
+## Current PHDK Auto — 5.1.66 merged; whole portfolio partial
 
-Run `20261014-0007-phdk-auto-completion` continues on `fix/phdk-flow-db-persistence-5-1-66`, based on verified `origin/main` 5.1.65 at `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`. All five application package/lock roots and the Browser renderer align at 5.1.66. Installed PHDK v2.51.2 passes coherence 56/56. API regressions pass 39/39 and Cloud regressions 18/18; five builds, Web lint/typecheck, full Web UAT 6/6 plus AI-admin UAT, Browser offline suite 43/43, Web diagnostics 19/19, and Web/Landing source SEO checks pass. UAT evidence uses synthetic fixtures and blocks outbound traffic.
+Run `20261014-0007-phdk-auto-completion` delivered from `fix/phdk-flow-db-persistence-5-1-66`, based on verified `origin/main` 5.1.65 at `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`. PR [#160](https://github.com/tuyoisaza/keledon/pull/160) squash-merged source commit `dc8bd6d24471e64b438e3ca7803c13a950b7a95b` at verified `main` SHA `bf00262649fb281f40979a867a2bdb09099f3074`; remote tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589` matches the tested candidate. All five application package/lock roots and Browser renderer read 5.1.66. Installed PHDK v2.51.2 passes coherence 56/56. API regressions pass 39/39 and Cloud regressions 18/18; all five builds, applicable lint/typechecks, Web UAT 6/6 plus AI-admin, Browser offline suite 43/43, Web diagnostics 19/19, and Web/Landing source SEO tests pass. UAT uses synthetic fixtures and blocks outbound traffic. GitHub reported no hosted checks, review decision, or main branch protection.
 
-This slice moves legacy flow definitions, versions, permissions and intent mappings into matching API/Cloud Prisma-backed tenant configuration, with a company-scoped editor and database-level composite ownership constraint. Candidate UAT tally is **58 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 remains blocked because no disposable PostgreSQL service is available, so migrations and restart persistence were not exercised. Native device/audio remains manual; broad accessibility/localization, deployed SEO/AEO, and client-specific live integrations remain open. All four owner-confirmed commitments remain active. No deployment or live customer acceptance is claimed.
+This slice moves legacy flow definitions, versions, permissions and intent mappings to matching API/Cloud Prisma-backed tenant configuration, with a company-scoped editor and database-level composite ownership constraint. Candidate tally is **58 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 remains blocked because no disposable PostgreSQL service was available, so migrations and restart persistence were not exercised. Native device/audio remains manual; broad accessibility/localization, deployed SEO/AEO and client-specific live integrations remain open. All four owner-confirmed commitments remain active. No deployment or live customer acceptance is claimed.
 
-SIGUIENTE PASO: complete the final PHDK Check, then deliver 5.1.66 through the normal PR path and verify remote `main`; keep whole-Auto status partial until every acceptance gate closes.
+SIGUIENTE PASO: continue the four ordered acceptance fronts; keep whole-Auto status partial until their remaining database, native, deployed and per-client gates pass.
 
 ---
 
@@ -17,20 +17,20 @@ All four owner-confirmed commitments remain active: baseline/version/PR maintena
 SIGUIENTE PASO: continue the remaining four-front acceptance gates against verified main 5.1.64; do not mark whole Auto complete until they pass.
 
 ---
-## Candidate 5.1.62 — current PMO board (2026-10-15)
+## Current PMO board — 5.1.66 merged; whole Auto remains partial (2026-10-15)
 
-Run `20261014-0007-phdk-auto-completion`; target `main`; base `e12527e83a6f534892512288bad9c7f4cf134ca4`; branch `fix/phdk-auto-5-1-62`. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 blocked, 0 deferred, 0 cancelled.
+Run `20261014-0007-phdk-auto-completion`; target `main`; verified merge `bf00262649fb281f40979a867a2bdb09099f3074`; PR [#160](https://github.com/tuyoisaza/keledon/pull/160). Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled. The older 5.1.62 board below is historical.
 
 | Workstream | Status | Evidence / next milestone | Open acceptance |
 |---|---|---|---|
-| WS-001 baseline, versions, PRs | RUNNING | #155 merge and current main tree verified; candidate 5.1.62 aligned. | Commit, PR, merge/readback, then update machine delivery evidence. |
-| WS-002 widget and safe diagnostics | PARTIAL | Web diagnostics 19/19; exact local UAT 5/5 includes nav coverage. | Native device/audio and broad screen-reader/localization. |
-| WS-003 tenant runtime and CRM | PARTIAL | API/Cloud private URL tenant allowlist and Browser 42/42 scope tests pass. | Customer-selected live call/CRM acceptance and native audio. |
-| WS-004 administration/permissions | PARTIAL | API 38/38 includes AI contract; Web AI-admin UAT 12 journeys; matrix statuses corrected. | Persisted DB, migrations and complete model/role/operation acceptance. |
+| WS-001 baseline, versions, PRs | SOURCE DELIVERY PASS / PORTFOLIO ACTIVE | PR #160 merged; `origin/main` equals `git ls-remote`, tree equals tested candidate, six roots are 5.1.66; PHDK 2.51.2 coherence 56/56. | GitHub reported no hosted checks/review decision; verify each new candidate normally. GitHub production deployment metadata `success` is not a live health check. |
+| WS-002 widget and safe diagnostics | PARTIAL | Web diagnostics 19/19; Web UAT 6/6 plus AI-admin; responsive and keyboard flow-editor coverage passes. | Native device/audio MANUAL; broad screen-reader and localization acceptance. |
+| WS-003 tenant runtime and CRM | PARTIAL | API/Cloud tenant URL validation/allowlist and Browser offline 43/43; tenant-owned flow definition/editor shipped. | Customer-selected live voice/CRM acceptance and private-network target testing per tenant. |
+| WS-004 administration/permissions | PARTIAL | API 39/39, Cloud 18/18; restrictive actor/tenant policies and company-owned flow schema/editor shipped. | CRUD map 546 rows: 406 BLOCKED, 97 N/A, 42 DECISION NEEDED, 1 PASS; UAT-060 PostgreSQL migration/restart remains blocked. |
 
-Current activity: source Check and delivery for the scoped 5.1.62 acceptance slice. Whole Auto: **PARTIALLY DELIVERED**.
+Current activity: refresh the stale Plan/PMO records, reconcile role/CRUD mapping, and continue all independent source acceptance. Whole Auto is **PARTIALLY DELIVERED**, not complete.
 
-SIGUIENTE PASO: finalize source review and candidate artifacts, then deliver via PR under repository controls.
+SIGUIENTE PASO: close source-resolvable permission/matrix gaps; obtain an owner-provided disposable database for UAT-060 and customer-selected environments for external acceptance.
 
 ---
 

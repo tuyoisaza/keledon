@@ -123,8 +123,14 @@ def main():
         for error in errors:
             print(" - " + error)
         return 1
-    print(f"PASS: remote {args.remote}/{branch} SHA={sha} VERSION={data['expected_version']}")
-    print("Note: PR merge/reviews and product acceptance must also be independently verified.")
+    print(f"PASS: source-delivery proof for {args.remote}/{branch} SHA={sha} VERSION={data['expected_version']}")
+    acceptance = data.get("whole_auto_acceptance")
+    if isinstance(acceptance, dict) and acceptance.get("status") in ("PARTIAL", "BLOCKED"):
+        summary = acceptance.get("summary", "").strip()
+        suffix = f" - {summary}" if isinstance(summary, str) and summary else ""
+        print(f"WHOLE GOAL: {acceptance['status']}{suffix}")
+    else:
+        print("Note: PR merge/reviews and product acceptance must also be independently verified.")
     return 0
 
 if __name__ == "__main__":

@@ -1,10 +1,10 @@
-## Current PHDK Auto — 5.1.66 candidate; whole portfolio partial
+## Current PHDK Auto — 5.1.66 merged; whole portfolio partial
 
-Run `20261014-0007-phdk-auto-completion` continues on `fix/phdk-flow-db-persistence-5-1-66`, based on verified `origin/main` 5.1.65 at `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`. All five application package/lock roots and the Browser renderer align at 5.1.66. Installed PHDK v2.51.2 passes coherence 56/56. API regressions pass 39/39 and Cloud regressions 18/18; five builds, Web lint/typecheck, full Web UAT 6/6 plus AI-admin UAT, Browser offline suite 43/43, Web diagnostics 19/19, and Web/Landing source SEO checks pass. UAT evidence uses synthetic fixtures and blocks outbound traffic.
+Run `20261014-0007-phdk-auto-completion` delivered from `fix/phdk-flow-db-persistence-5-1-66`, based on verified `origin/main` 5.1.65 at `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`. PR [#160](https://github.com/tuyoisaza/keledon/pull/160) squash-merged source commit `dc8bd6d24471e64b438e3ca7803c13a950b7a95b` at verified `main` SHA `bf00262649fb281f40979a867a2bdb09099f3074`; remote tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589` matches the tested candidate. All five application package/lock roots and Browser renderer read 5.1.66. Installed PHDK v2.51.2 passes coherence 56/56. API regressions pass 39/39 and Cloud regressions 18/18; all five builds, applicable lint/typechecks, Web UAT 6/6 plus AI-admin, Browser offline suite 43/43, Web diagnostics 19/19, and Web/Landing source SEO tests pass. UAT uses synthetic fixtures and blocks outbound traffic. GitHub reported no hosted checks, review decision, or main branch protection.
 
-This slice moves legacy flow definitions, versions, permissions and intent mappings into matching API/Cloud Prisma-backed tenant configuration, with a company-scoped editor and database-level composite ownership constraint. Candidate UAT tally is **58 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 remains blocked because no disposable PostgreSQL service is available, so migrations and restart persistence were not exercised. Native device/audio remains manual; broad accessibility/localization, deployed SEO/AEO, and client-specific live integrations remain open. All four owner-confirmed commitments remain active. No deployment or live customer acceptance is claimed.
+This slice moves legacy flow definitions, versions, permissions and intent mappings to matching API/Cloud Prisma-backed tenant configuration, with a company-scoped editor and database-level composite ownership constraint. Candidate tally is **58 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 remains blocked because no disposable PostgreSQL service was available, so migrations and restart persistence were not exercised. Native device/audio remains manual; broad accessibility/localization, deployed SEO/AEO and client-specific live integrations remain open. All four owner-confirmed commitments remain active. No deployment or live customer acceptance is claimed.
 
-SIGUIENTE PASO: complete the final PHDK Check, then deliver 5.1.66 through the normal PR path and verify remote `main`; keep whole-Auto status partial until every acceptance gate closes.
+SIGUIENTE PASO: continue the four ordered acceptance fronts; keep whole-Auto status partial until their remaining database, native, deployed and per-client gates pass.
 
 ---
 
@@ -17,11 +17,13 @@ All four owner-confirmed commitments remain active: baseline/version/PR maintena
 SIGUIENTE PASO: continue the remaining four-front acceptance gates against verified main 5.1.64; do not mark whole Auto complete until they pass.
 
 ---
-## 2026-10-15 — 5.1.62 candidate Check milestone
+## 2026-10-15 — post-merge 5.1.66 reconciliation and plan refresh
 
-Verified base `origin/main`/`git ls-remote` `e12527e83a6f534892512288bad9c7f4cf134ca4`, tree `267b2db659d1daf03ab39b7fa34728a36bb3dc2e`; no open PRs at baseline. Candidate branch `fix/phdk-auto-5-1-62`, six version roots 5.1.62. UAT-053 closes a test-runner gap for superadmin-only AI administration: API contract suite 6/6 now runs inside API regression 38/38, synthetic UI journey covers 12 behaviors. CRUD matrix separates active AI prompts, unreachable FeatureFlag and browser-local DebugMode. Browser request-scope fixture now matches current production APIs; Browser suite 42/42 passes.
+PR #160 is squash-merged at verified `main` SHA `bf00262649fb281f40979a867a2bdb09099f3074`, tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589`; six versions match 5.1.66. PHDK v2.51.2 coherence is 56/56; API 39/39, Cloud 18/18, Browser offline 43/43, Web diagnostics 19/19, Web UAT 6/6 plus AI-admin and all five builds pass. GitHub reported no hosted checks, review decision or main protection. Production deployment status metadata is `success`, with no direct live-health assertion.
 
-Check results: API/Cloud/Web/Landing builds pass; Web/Landing typecheck and lint pass; API/Cloud lint pass; regressions API 38/38 and Cloud 17/17; Web diagnostics 19/19, Web UAT 5/5 plus AI admin 12 journeys, Web/Landing SEO 1/1 each; Landing build/typecheck/lint pass; Browser build and suite 42/42; PHDK coherence 52/52; `git diff --check` pass. Browser ESLint is unavailable because no ESLint executable is installed under the Browser package. Whole UAT: 53 PASS, 0 BLOCKED, 1 MANUAL.
+Current UAT total is 58 PASS, 1 BLOCKED (UAT-060 disposable PostgreSQL migration/restart acceptance), 1 MANUAL (native device/audio). The four commitments remain active/partial. Plan and PMO were stale at 5.1.22/5.1.62 and have been refreshed. Source reconciliation corrected the Session API/web role matrix: guarded API routes exist; Web has no separate generic CRUD screen; persisted operation and retention evidence are still open. Matrix tally is 546 rows: 410 BLOCKED, 104 NOT APPLICABLE, 31 DECISION NEEDED, 1 PASS.
+
+SIGUIENTE PASO: continue source-resolvable permission/CRUD coverage; UAT-060 requires an owner-provided disposable PostgreSQL target under execution scope.
 
 | Workstream | Change / status | Next proof |
 |---|---|---|

@@ -1,5 +1,11 @@
 # Plan handoff — 20261014-0007-phdk-auto-completion
 
+## Reopened and refreshed — 2026-10-15, post-merge 5.1.66
+
+The former top-level plan described baseline 5.1.24 and is historical. Current base is verified `main` `bf00262649fb281f40979a867a2bdb09099f3074`, PR #160. The four owner-approved commitments and role/private-CRM policies remain unchanged. The refreshed root plan is `IMPLEMENTATION_PLAN.md`; dependencies are: (1) source-resolvable matrix/permission gaps, (2) isolated PostgreSQL flow migration/restart acceptance, (3) native/accessibility/deployed-discovery gates, and (4) client-selected live call/CRM acceptance. CMT-001's 5.1.66 source slice is complete; CMT-001..004 remain open as portfolio commitments. Current matrix has 546 rows: 410 BLOCKED, 104 NOT APPLICABLE, 31 DECISION NEEDED, 1 PASS. No unapproved database provisioning will be done; UAT-060 needs an owner-provided disposable target under execution scope.
+
+SIGUIENTE PASO: continue PMO against this refreshed dependency order and preserve external gates as open until evidence exists.
+
 Status: COMPLETED. Source: `6413d8aed295c18af098ca6a58c6dfbb7503930b`, release baseline 5.1.24. The brownfield architecture and current security/integration boundaries are reconciled in root canonical artifacts; 13 canonical plan artifacts are snapshotted in this stage.
 
 ## Decisions and scope
