@@ -28,11 +28,13 @@ export type ManagedInterfaceInput = Partial<
 
 export interface FlowDefinition {
   id: string;
+  // Optional only for legacy records that predate tenant ownership.
   companyId?: string;
   interfaceId?: string;
   name: string;
   description?: string;
   category?: 'talk' | 'case';
+  status?: 'active' | 'inactive';
   intentTags: string[];
   createdAt: string;
   updatedAt: string;
@@ -47,6 +49,7 @@ export type FlowDefinitionInput = Partial<
     | 'description'
     | 'category'
     | 'intentTags'
+    | 'status'
   >
 >;
 

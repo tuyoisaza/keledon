@@ -28,6 +28,7 @@ import ManagementVoiceProfilesPage from '@/pages/ManagementVoiceProfilesPage';
 import ManagementProvidersPage from '@/pages/ManagementProvidersPage';
 import ManagementVendorsPage from '@/pages/ManagementVendorsPage';
 import ManagementWorkflowsPage from '@/pages/ManagementWorkflowsPage';
+import ManagementFlowDefinitionsPage from '@/pages/ManagementFlowDefinitionsPage';
 import ManagementDebugPage from '@/pages/ManagementDebugPage';
 import ManagementStatusPage from '@/pages/ManagementStatusPage';
 import FlowsPage from '@/pages/FlowsPage';
@@ -279,6 +280,18 @@ export function AppRouter() {
                             <AppLayout>
                                 <ManagementLayout>
                                     <ManagementKeledonsPage />
+                                </ManagementLayout>
+                            </AppLayout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/management/flow-definitions"
+                    element={
+                        <ProtectedRoute minRole="admin" allowedRoles={['admin', 'coordinator', 'superadmin']}>
+                            <AppLayout>
+                                <ManagementLayout>
+                                    <ManagementFlowDefinitionsPage />
                                 </ManagementLayout>
                             </AppLayout>
                         </ProtectedRoute>

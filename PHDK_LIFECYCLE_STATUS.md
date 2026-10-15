@@ -1,3 +1,12 @@
+## Current PHDK Auto — 5.1.65 candidate; whole portfolio partial
+
+Working branch `chore/phdk-upgrade-2.51.2`, based on verified `origin/main` 5.1.64 at `e53339e81eb972f7941c2b59dd824ad75111d54a`. Five app package/lock roots and Browser renderer are 5.1.65. Installed PHDK is canonical v2.51.2, coherent across 56/56 mapped files. API regressions pass 38/38; Cloud regressions 17/17; API, Cloud, Web, Landing and Browser builds pass; Cloud and Web targeted lint, Web typecheck, targeted flow-editor UAT, and full Web UAT pass (6/6 browser cases plus AI-admin UAT). UAT uses synthetic APIs and blocks external traffic. Candidate tally is 56 PASS, 0 BLOCKED, 1 MANUAL.
+
+The flow editor now converts legacy definitions into tenant-owned configuration with draft/version lifecycle, company availability and intent routing. API guards bind admin/coordinator operations to the DB-derived company, validate cross-company references, and limit secrets in normal responses. Durable multi-instance persistence and live DB acceptance remain open. All four commitments remain active; device/audio, broad accessibility/localization, deployed SEO/AEO, and client-selected live voice/CRM acceptance also remain open. No deployment is claimed, and this candidate has not been committed or delivered as a PR.
+
+SIGUIENTE PASO: inspect final diff and delivery requirements, then prepare normal PR delivery for 5.1.65 while retaining whole-Auto acceptance as partial.
+
+---
 ## Current Auto continuation — 5.1.62 candidate (2026-10-15)
 
 Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; checkout `C:\KELEDON\keledon`; target `main`; branch `fix/phdk-auto-5-1-62`; verified base `origin/main` `e12527e83a6f534892512288bad9c7f4cf134ca4` / tree `267b2db659d1daf03ab39b7fa34728a36bb3dc2e`. PHDK 2.50.10 is current and coherent (52/52 manifest entries). Six version roots align at 5.1.62.

@@ -1,3 +1,21 @@
+## Current candidate — 5.1.65 delivery pending; Auto remains partial
+
+Branch `chore/phdk-upgrade-2.51.2` is based on verified `origin/main` 5.1.64 at `e53339e81eb972f7941c2b59dd824ad75111d54a`. Five app package/lock roots and Browser renderer align at 5.1.65. PHDK 2.51.2 coherence passes 56/56. The candidate adds company-owned legacy flow configuration and a Web editor, with matching DB-actor tenant enforcement in API and Cloud.
+
+API regression 38/38 and Cloud regression 17/17 pass; all five product builds pass; Cloud/Web targeted lint and Web typecheck pass; full Web UAT exits 0 with 6/6 browser cases plus AI-admin UAT. Browser traffic is local, synthetic and externally blocked. Durable JSON-store concurrency/database acceptance remains open, as do native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-specific live integration acceptance. No customer endpoint, physical device or deployment was used.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Five app package/lock roots and Browser renderer read 5.1.65. |
+| COMMIT_PREFIX | PENDING | Candidate has not yet been committed. |
+| PUSH_AND_PR | PENDING | Branch push and PR creation are pending. |
+| REMOTE_MAIN | PENDING | Candidate is not merged; base `main` is 5.1.64. |
+| SCOPE_AND_CHECKS | PASS FOR THIS SLICE / WHOLE AUTO PARTIAL | API/Cloud flow scope regressions and synthetic Web UAT pass; durable storage and broader commitments remain open. |
+
+SIGUIENTE PASO: commit, open the PR, then verify the remote result; keep whole Auto partial.
+
+---
+
 ## Current candidate — 5.1.61 source checks pass; delivery pending
 
 UAT-052 fixes the public desktop navigation overlap in Landing and Web; controls remain reachable in the mobile menu. Web UAT passes 5/5; Landing-specific UAT 1/1; source SEO 1/1 each; five app builds and applicable lint/typechecks pass; API/Cloud regressions are 37/37 and 17/17; Browser security/version 15/15; Web diagnostics 19/19; PHDK coherence 52/52. All app package/lock roots and the Browser renderer align at 5.1.61. Candidate branch is `fix/phdk-navbar-overlap-5-1-61`; PR creation, merge and remote readback remain pending. No deployment is claimed.

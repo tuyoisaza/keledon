@@ -91,22 +91,48 @@ test('MVP write routes reject server-owned fields and unsupported input types', 
 
 test('MVP flow-version creator is supplied by the authenticated server context', () => {
   const store = new MvpStoreService();
+  const flow = store.createFlowDefinition({ companyId: 'company-a', name: 'Main' });
+  const foreignFlow = store.createFlowDefinition({ companyId: 'company-b', name: 'Foreign' });
   const version = store.createFlowVersion(
-    { flowDefinitionId: 'flow-a', version: 1, steps: [] },
+    { flowDefinitionId: flow.id, version: 1, steps: [] },
     'db-actor',
+    'company-a',
   );
   assert.equal(version.createdBy, 'db-actor');
+  assert.deepEqual(store.getFlowDefinitions('company-a').map(({ id }) => id), [flow.id]);
+  assert.deepEqual(store.getFlowVersions('company-a').map(({ id }) => id), [version.id]);
+  assert.throws(
+    () => store.createFlowVersion({ flowDefinitionId: foreignFlow.id }, 'db-actor', 'company-a'),
+    /Flow definition is unavailable/,
+  );
+  assert.equal(store.updateFlowVersion(version.id, { steps: [] }, 'company-a').status, 'draft');
+  assert.equal(store.updateFlowVersion(version.id, { status: 'approved' }, 'company-a').status, 'approved');
+  assert.throws(
+    () => store.updateFlowVersion(version.id, { steps: [] }, 'company-a'),
+    /Only draft flow versions can be edited/,
+  );
   assert.throws(
     () =>
       store.createFlowVersion(
-        { flowDefinitionId: 'flow-a', createdBy: 'forged-actor' },
+        { flowDefinitionId: flow.id, createdBy: 'forged-actor' },
         'db-actor',
+        'company-a',
       ),
     /Unsupported request field/,
   );
   assert.throws(
-    () => store.createFlowVersion({ flowDefinitionId: 'flow-a' }, ''),
+    () => store.createFlowVersion({ flowDefinitionId: flow.id }, ''),
     /Current actor is required/,
+  );
+  assert.throws(
+    () => store.upsertTenantFlowPermissions([
+      { companyId: 'company-a', flowDefinitionId: foreignFlow.id, isEnabled: true },
+    ], 'company-a'),
+    /Flow definition is unavailable for this company/,
+  );
+  assert.throws(
+    () => store.upsertIntentFlowMapping({ companyId: 'company-a', intent: 'claim', allowedFlowDefinitionIds: [foreignFlow.id] }, 'company-a'),
+    /outside this company/,
   );
 });
 
@@ -117,12 +143,13 @@ test('MVP controller passes the guard-populated actor, not body attribution', ()
   });
   controller.createFlowVersion(
     { flowDefinitionId: 'flow-a', createdBy: 'forged-actor' },
-    { user: { userId: 'current-db-actor' } },
+    { user: { userId: 'current-db-actor', companyId: 'company-a' } },
   );
   assert.deepEqual(calls, [
     [
       { flowDefinitionId: 'flow-a', createdBy: 'forged-actor' },
       'current-db-actor',
+      'company-a',
     ],
   ]);
 });

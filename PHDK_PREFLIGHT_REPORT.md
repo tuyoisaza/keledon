@@ -1,33 +1,35 @@
-# PHDK Preflight — current Auto run `20261014-0007-phdk-auto-completion`
+# PHDK Preflight — active Auto run `20261014-0007-phdk-auto-completion`
 
-Run opened: 2026-10-14 00:07 America/Mexico_City.
+Run revalidated: 2026-10-15 15:06 America/Mexico_City.
 Repository: `tuyoisaza/keledon`, checkout `C:\KELEDON\keledon`.
-Branch/base at pre-merge capture: `fix/cloud-eslint-prettier`, candidate source `afd66702ba7fc216e27c0c845ceaedb1eeb40944`, target then `origin/main=6413d8aed295c18af098ca6a58c6dfbb7503930b`. PR #94 was open at that capture; see post-merge readback below. No worktree reset/stash/rewrite.
+Target: `main` at verified remote SHA `e53339e81eb972f7941c2b59dd824ad75111d54a`, product version 5.1.64.
+Working branch: `chore/phdk-upgrade-2.51.2`, based on the verified target. Previous local post-merge evidence was restored from a retained stash; unrelated evidence remains preserved.
 
-## Post-merge delivery readback
+## Installation and integrity
 
-PR #94 is merged at `8dfc1fca7de253a017acb6f291ff278699915beb`; a fresh fetch and `git ls-remote` agree. The squashed main tree matches the PR head, all five app roots/lockfiles and Browser renderer are 5.1.25, and `python phdk-standards/scripts/phdk_completion_gate.py` passes. PHDK v2.50.10 coherence remains 52/52. No hosted checks or review decision were configured, and no deployment is claimed. Current local post-merge lifecycle records and gate evidence are tracked separately from the immutable preflight capture.
+- Installed PHDK: `phdk-standards/` v2.51.2.
+- Canonical PHDK `main`: `a2d2508b59c2546d939fb3843f232ea7bfea2cc1`, version 2.51.2.
+- Preflight detected installed 2.50.10 was behind canonical 2.51.2. The official conservative `scripts/phdk_update.py` ran once and reported `UPDATED`, 56 files, upstream SHA above.
+- All 56 installed manifest destinations match the fetched canonical files byte-for-byte; no destination is missing. The `AGENTS.md` managed block matches canonical `PHDK_NATIVE_RULES.md` exactly, and owner text outside the markers was preserved.
+- `py phdk-standards/scripts/phdk_coherence_check.py`: PASS, v2.51.2, 56 manifest mappings (static only).
+- `git diff --check`: PASS; Git reports expected CRLF-to-LF normalization warnings for vendored Markdown files.
 
-## Installation/integrity
+## Relevant capabilities and limits
 
-- Installed PHDK: `phdk-standards/` v2.50.10.
-- Canonical PHDK `main` was independently read with `git ls-remote`: `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`, still v2.50.10.
-- Installed coherence: PASS, 52/52 manifest mappings; managed AGENTS block passes the coherence checker. No standards sync needed.
-- Current KELEDON target: `origin/main` at 5.1.24; PR #94 carries the 5.1.25 source candidate. No required branch protection, review requests, or hosted checks were found for this PR.
+- Git/GitHub repository read and PR inspection: AVAILABLE through local Git/GitHub tools.
+- Local source, build and regression checks: AVAILABLE.
+- Accessibility skill `design:accessibility-review`: AVAILABLE for the scoped UAT/UAT Fix stage; not yet used in this preflight.
+- Separate external security/code-review skill: NOT FOUND in the active skill inventory; use PHDK security standards, source review and applicable tests. This does not imply human or independent review.
+- Browser automation: AVAILABLE only during Auto's UAT/UAT Fix stages.
+- No user-disabled capabilities were identified. No workers/delegation were used.
+- Device/audio, a safe owner-managed disposable database and deployed SEO/AEO measurements are not available here. Execution scope prohibits provisioning/administering those resources or using production/customer data.
 
-## Relevant capabilities and constraints
+## Confirmed owner decisions retained
 
-- Local PowerShell/Git, builds, Jest and repository regression runners are available.
-- GitHub repository/PR read and PR delivery tools are available; use normal branch/PR controls.
-- Browser automation is available only in UAT/UAT Fix under PHDK execution scope.
-- Native Electron OS prompts/physical device/audio and authorized isolated database are unavailable in this environment. No live customer data, production DB, provider writes, deployment or paid vendor call.
-- PHDK Auto controls this goal and supersedes Developer Mode's direct-main exception. Sensitive auth/secret/data changes remain on a fix branch and require normal source/diff review. Existing hooks/protections remain enabled.
-- No background jobs, hosted CI dispatch, schedules or delegation.
+Four ordered commitments remain active: baseline/version/PRs; diagnostics/widget; client-specific voice/Cloud/Browser/CRM; administration/permissions. New accounts receive `user`; only an existing superadmin elevates roles or assigns companies; admin/coordinator remain within their company and cannot elevate roles or delete companies; API derives actor and tenant from the database; normal responses do not return stored secrets. Client-configured private CRM origins remain permitted only after URL validation and tenant-scoped allowlisting.
 
-## Owner decisions verified
+## Exit and current stage
 
-Four commitments in order: CMT-001 baseline/versions/PRs; CMT-002 widget/safe diagnostics; CMT-003 provider-independent voice→Cloud→Browser→client CRM; CMT-004 admin/permissions. New accounts are `user`; an existing superadmin alone elevates roles/company assignments; company managers stay in-company and cannot elevate/delete companies; API derives actor/tenant from DB; normal responses never return stored/submitted secrets; credential replacement is write-only. Client-configured private/local CRM origins are allowed only after URL validation and tenant origin allowlisting.
+The standards installation is current and coherent. This synchronization is a PHDK Auto foundation update, not product acceptance or a standalone release. Capture/Plan and owner-confirmed PMO portfolio are reused; PMO/workstream revalidation is active before the next integrated candidate. Native device/audio, persisted DB/migrations, broad accessibility/localization, deployed SEO/AEO and customer-selected live integrations remain open.
 
-## Exit / limits
-
-The installation is coherent and all in-scope stages are reachable. The environment cannot prove native/device/audio, persisted DB/migration or deployed SEO/AEO acceptance; those must remain unverified unless an approved supported environment becomes available.
+SIGUIENTE PASO: reconcile the current 35-model CRUD/authorization gaps against the approved role policy, resolve source-fixable findings, and preserve external acceptance gates as open.

@@ -33,6 +33,7 @@ export interface FlowDefinition {
   name: string;
   description?: string;
   category?: 'talk' | 'case';
+  status?: 'active' | 'inactive';
   intentTags: string[];
   createdAt: string;
   updatedAt: string;
@@ -46,6 +47,7 @@ export type FlowDefinitionInput = Partial<
     | 'name'
     | 'description'
     | 'category'
+    | 'status'
     | 'intentTags'
   >
 >;

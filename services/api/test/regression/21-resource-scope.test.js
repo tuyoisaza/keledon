@@ -130,9 +130,8 @@ async function main() {
     return { req, result: guard.canActivate(context) };
   };
   const scope = new ResourceScopeGuard(prisma);
-  // Legacy MVP configuration endpoints have no complete company-scoped contract
-  // yet. Keep them unavailable to tenant actors while preserving the three safe
-  // read-only catalogs/status handlers and the explicitly public cloud endpoint.
+  // Legacy provider catalogs stay restricted; tenant flow configuration is
+  // available only to company managers and gets its scope from the DB actor.
   const tenantMvpHandlers = [
     'getTTSConfig',
     'updateTTSConfig',
@@ -140,15 +139,6 @@ async function main() {
     'createInterface',
     'updateInterface',
     'deleteInterface',
-    'getFlowDefinitions',
-    'createFlowDefinition',
-    'getFlowVersions',
-    'createFlowVersion',
-    'updateFlowVersion',
-    'getTenantFlowPermissions',
-    'upsertTenantFlowPermissions',
-    'getIntentFlowMappings',
-    'upsertIntentFlowMapping',
     'getKnowledgeDocuments',
     'createKnowledgeDocument',
   ];
@@ -171,10 +161,122 @@ async function main() {
       else await assert.rejects(result, Denied);
     }
   }
+  const tenantFlowHandlers = [
+    'getFlowDefinitions',
+    'createFlowDefinition',
+    'updateFlowDefinition',
+    'archiveFlowDefinition',
+    'getFlowVersions',
+    'createFlowVersion',
+    'updateFlowVersion',
+    'getTenantFlowPermissions',
+    'upsertTenantFlowPermissions',
+    'getIntentFlowMappings',
+    'upsertIntentFlowMapping',
+  ];
+  for (const role of ['guest', 'user', 'agent']) {
+    actor = { id: 'u-a', companyId: 'co-a', teamId: 'team-a', role };
+    for (const handler of tenantFlowHandlers)
+      await assert.rejects(
+        run(scope, 'MvpDataController', handler).result,
+        Denied,
+        `${role} cannot manage tenant flow configuration`,
+      );
+  }
+  for (const role of ['admin', 'coordinator']) {
+    actor = { id: 'u-a', companyId: 'co-a', teamId: 'team-a', role };
+    const list = run(
+      scope,
+      'MvpDataController',
+      'getFlowDefinitions',
+      {},
+      {},
+      { companyId: 'co-b' },
+    );
+    await list.result;
+    assert.equal(list.req.query.companyId, 'co-a');
+    const flowVersions = run(
+      scope,
+      'MvpDataController',
+      'getFlowVersions',
+      {},
+      {},
+      { companyId: 'co-b' },
+    );
+    await flowVersions.result;
+    assert.equal(flowVersions.req.query.companyId, 'co-a');
+    const create = run(
+      scope,
+      'MvpDataController',
+      'createFlowDefinition',
+      {},
+      { companyId: 'co-b', name: 'Tenant flow' },
+      {},
+      'POST',
+    );
+    await create.result;
+    assert.equal(create.req.body.companyId, 'co-a');
+    const createVersion = run(
+      scope,
+      'MvpDataController',
+      'createFlowVersion',
+      {},
+      { flowDefinitionId: 'f-a', version: 1 },
+      {},
+      'POST',
+    );
+    await createVersion.result;
+    assert.equal(createVersion.req.user.companyId, 'co-a');
+    assert.equal('companyId' in createVersion.req.body, false);
+    const updateVersion = run(
+      scope,
+      'MvpDataController',
+      'updateFlowVersion',
+      { id: 'v-a' },
+      { steps: [] },
+      {},
+      'PUT',
+    );
+    await updateVersion.result;
+    assert.equal(updateVersion.req.user.companyId, 'co-a');
+    assert.equal('companyId' in updateVersion.req.body, false);
+    const versions = run(
+      scope,
+      'MvpDataController',
+      'getTenantFlowPermissions',
+      { companyId: 'co-b' },
+    );
+    await versions.result;
+    assert.equal(versions.req.params.companyId, 'co-a');
+    const permissions = run(
+      scope,
+      'MvpDataController',
+      'upsertTenantFlowPermissions',
+      {},
+      [{ companyId: 'co-b', flowDefinitionId: 'f-a' }],
+      {},
+      'POST',
+    );
+    await permissions.result;
+    assert.equal(permissions.req.body[0].companyId, 'co-a');
+    const mapping = run(
+      scope,
+      'MvpDataController',
+      'upsertIntentFlowMapping',
+      {},
+      { companyId: 'co-b', intent: 'claim', allowedFlowDefinitionIds: [] },
+      {},
+      'POST',
+    );
+    await mapping.result;
+    assert.equal(mapping.req.body.companyId, 'co-a');
+  }
   actor = null;
   await run(scope, 'MvpDataController', 'getCloudConfig').result;
   actor = { id: 'root', companyId: null, teamId: null, role: 'superadmin' };
   for (const handler of tenantMvpHandlers)
+    await run(scope, 'MvpDataController', handler).result;
+  for (const handler of tenantFlowHandlers)
     await run(scope, 'MvpDataController', handler).result;
 
   actor = { id: 'u-a', companyId: 'co-a', teamId: 'team-a', role: 'admin' };
@@ -490,7 +592,7 @@ async function main() {
     'PASS secondary resource scopes: cross-tenant flow/step/reorder/knowledge/session/call/device denials; trusted filters and pairing bindings; low-role mutations; removed actors; cryptographic device token.',
   );
   console.log(
-    'PASS MVP data policy: ordinary roles are denied on management catalogs; admin/coordinator are limited to management reads; unscoped configuration/mutations remain denied; public cloud config and superadmin access remain available.',
+    'PASS MVP data policy: tenant flow management is limited to admin/coordinator and DB-derived company scope; global catalogs remain restricted; public cloud config and superadmin access remain available.',
   );
 }
 main().catch((error) => {

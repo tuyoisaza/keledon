@@ -85,13 +85,37 @@ export class ResourceScopeGuard implements CanActivate {
       return session;
     };
     if (kind === 'MvpDataController') {
-      if (
-        !manager ||
-        !['getProviderCatalog', 'getRpaProviders', 'getTechStatus'].includes(
-          handler,
-        )
-      )
+      const tenantFlowHandlers = [
+        'getFlowDefinitions',
+        'createFlowDefinition',
+        'updateFlowDefinition',
+        'archiveFlowDefinition',
+        'getFlowVersions',
+        'createFlowVersion',
+        'updateFlowVersion',
+        'getTenantFlowPermissions',
+        'upsertTenantFlowPermissions',
+        'getIntentFlowMappings',
+        'upsertIntentFlowMapping',
+      ];
+      const safeReadHandlers = [
+        'getProviderCatalog',
+        'getRpaProviders',
+        'getTechStatus',
+      ];
+      if (!manager || (!safeReadHandlers.includes(handler) && !tenantFlowHandlers.includes(handler)))
         return deny();
+      if (tenantFlowHandlers.includes(handler)) {
+        query.companyId = actor.companyId;
+        params.companyId = actor.companyId;
+        if (
+          ['createFlowDefinition', 'updateFlowDefinition', 'upsertIntentFlowMapping'].includes(handler)
+        )
+          body.companyId = actor.companyId;
+        if (handler === 'upsertTenantFlowPermissions' && Array.isArray(body)) {
+          body.forEach((entry) => (entry.companyId = actor.companyId));
+        }
+      }
     } else if (kind === 'TTSController') {
       await teamAllowed(actor.teamId);
       body.teamId = actor.teamId;

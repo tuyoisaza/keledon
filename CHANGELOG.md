@@ -1,3 +1,15 @@
+## v5.1.65 — 2026-10-15 (scope legacy flow definitions by company)
+
+- Convert legacy flow definitions into company-owned configuration with a tenant management editor, draft/version lifecycle, company availability and intent routing.
+- Derive admin/coordinator tenant scope from the current database actor; prevent cross-company flow references; retain approved versions and deactivate definitions without hard deletion.
+- Add superadmin assignment for legacy definitions without company ownership and a synthetic browser UAT for the editor.
+- Upgrade installed PHDK standards from 2.50.10 to canonical 2.51.2 using the official updater.
+- Align all five application package/lock roots and Browser renderer at 5.1.65.
+
+### Verification
+- API regression suite passes 38/38; Cloud regressions pass 17/17; API, Cloud, Web, Landing and Browser builds pass; Cloud/Web targeted lint and Web typecheck pass; PHDK 2.51.2 coherence 56/56; targeted flow editor UAT and full Web `test:uat` pass (6/6 browser cases plus AI-admin UAT). Browser traffic is local with synthetic API fixtures and external requests blocked.
+- Durable JSON-store concurrency/multi-instance behavior, live database acceptance, and the broader Auto portfolio remain open.
+
 ## v5.1.64 — 2026-10-15 (meet diagnostics touch-target minimum)
 
 - Give the two icon-only diagnostics actions 44×44px interactive hit targets while keeping their visible tiles 28×28px and separating targets by 4px.

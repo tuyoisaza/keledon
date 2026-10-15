@@ -1,0 +1,121 @@
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const http = require('node:http');
+const fs = require('node:fs/promises');
+const path = require('node:path');
+const { chromium } = require(path.resolve(__dirname, '../../api/node_modules/playwright'));
+
+const dist = path.resolve(__dirname, '../dist');
+const company = { id: 'tenant-a', name: 'Synthetic Tenant A' };
+
+test('tenant flow definition editor uses company-scoped API contracts', { timeout: 90000 }, async () => {
+  let flows = [];
+  let versions = [];
+  let permissions = [];
+  let mappings = [];
+  const writes = [];
+  const server = http.createServer(async (req, res) => {
+    const pathname = new URL(req.url, 'http://localhost').pathname;
+    let file = path.resolve(dist, `.${pathname}`);
+    if (!file.startsWith(`${dist}${path.sep}`) && file !== dist) {
+      res.writeHead(403).end();
+      return;
+    }
+    try {
+      if (pathname === '/' || !path.extname(pathname)) file = path.join(dist, 'index.html');
+      res.setHeader('Content-Type', file.endsWith('.js') ? 'text/javascript' : file.endsWith('.css') ? 'text/css' : 'text/html');
+      res.end(await fs.readFile(file));
+    } catch {
+      res.writeHead(404).end();
+    }
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const origin = `http://127.0.0.1:${server.address().port}`;
+  const browser = await chromium.launch({
+    headless: true,
+    executablePath: process.env.KELEDON_UAT_BROWSER || 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
+    args: ['--no-proxy-server'],
+  });
+  try {
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, locale: 'en-US' });
+    const page = await context.newPage();
+    const apiRequests = [];
+    await page.routeWebSocket('**/*', (socket) => socket.close());
+    await page.route('**/*', async (route) => {
+      const url = new URL(route.request().url());
+      if (url.origin !== origin) return route.abort();
+      if (!url.pathname.startsWith('/api/')) return route.continue();
+      const method = route.request().method();
+      const payload = method === 'GET' ? undefined : route.request().postDataJSON();
+      apiRequests.push({ method, pathname: url.pathname, search: url.search, payload });
+      let body = [];
+      let status = 200;
+      if (url.pathname === '/api/auth/me') body = { success: true, user: { id: 'synthetic-admin', name: 'Synthetic Admin', email: 'admin@tenant-a.invalid', role: 'admin', companyId: company.id } };
+      else if (url.pathname === '/api/crud/companies') body = [company];
+      else if (url.pathname === '/api/flow-definitions' && method === 'GET') body = flows;
+      else if (url.pathname === '/api/flow-definitions' && method === 'POST') {
+        const record = { id: 'flow-def-a', status: 'active', intentTags: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), ...payload };
+        flows.push(record); body = record; status = 201;
+      } else if (url.pathname === '/api/flow-definitions/flow-def-a' && method === 'PUT') {
+        flows = flows.map((flow) => flow.id === 'flow-def-a' ? { ...flow, ...payload } : flow);
+        body = flows.find((flow) => flow.id === 'flow-def-a');
+      } else if (url.pathname === '/api/flow-definitions/flow-def-a' && method === 'DELETE') {
+        flows = flows.map((flow) => flow.id === 'flow-def-a' ? { ...flow, status: 'inactive' } : flow);
+        body = flows.find((flow) => flow.id === 'flow-def-a');
+      } else if (url.pathname === '/api/flow-versions' && method === 'GET') body = versions;
+      else if (url.pathname === '/api/flow-versions' && method === 'POST') {
+        const record = { id: 'flow-version-a', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), ...payload };
+        versions.push(record); body = record; status = 201;
+      } else if (url.pathname === '/api/flow-versions/flow-version-a' && method === 'PUT') {
+        versions = versions.map((version) => version.id === 'flow-version-a' ? { ...version, ...payload } : version);
+        body = versions.find((version) => version.id === 'flow-version-a');
+      } else if (url.pathname === `/api/tenant-flow-permissions/${company.id}` && method === 'GET') body = permissions;
+      else if (url.pathname === '/api/tenant-flow-permissions' && method === 'POST') {
+        writes.push({ method, pathname: url.pathname, payload });
+        permissions = payload;
+        body = permissions;
+      } else if (url.pathname === `/api/intent-flow-mappings/${company.id}` && method === 'GET') body = mappings;
+      else if (url.pathname === '/api/intent-flow-mappings' && method === 'POST') {
+        writes.push({ method, pathname: url.pathname, payload });
+        const index = mappings.findIndex((entry) => entry.intent === payload.intent);
+        if (index < 0) mappings.push(payload); else mappings[index] = payload;
+        body = payload;
+      }
+      return route.fulfill({ status, contentType: 'application/json', body: JSON.stringify(body) });
+    });
+    await page.addInitScript(() => sessionStorage.setItem('auth_token', 'SYNTHETIC-UAT-TOKEN-NOT-A-CREDENTIAL'));
+    await page.goto(`${origin}/management/flow-definitions`);
+    await page.getByRole('heading', { name: 'Tenant flow definitions' }).waitFor();
+    assert.equal(await page.getByLabel('Company scope').count(), 0, 'tenant admin cannot choose a company in the editor');
+    await page.getByRole('button', { name: 'New flow' }).click();
+    await page.getByRole('textbox', { name: 'Name' }).fill('Claims intake');
+    await page.getByRole('textbox', { name: 'Description' }).fill('Tenant-specific claims call flow');
+    await page.getByRole('textbox', { name: 'Intent tags, comma separated' }).fill('claim, claim-status');
+    await page.getByRole('button', { name: 'Save definition' }).click();
+    await page.getByRole('heading', { name: 'Claims intake' }).waitFor();
+    const definitionWrite = apiRequests.find((request) => request.method === 'POST' && request.pathname === '/api/flow-definitions');
+    assert.equal(definitionWrite.payload.companyId, company.id);
+
+    await page.getByRole('textbox', { name: 'Steps (JSON array)' }).fill('[{"type":"navigate","value":"https://example.invalid"}]');
+    await page.getByRole('button', { name: 'Save version' }).click();
+    await page.getByText('v1 · draft · 1 steps').waitFor();
+    const versionWrite = apiRequests.find((request) => request.method === 'POST' && request.pathname === '/api/flow-versions');
+    assert.equal(versionWrite.payload.flowDefinitionId, 'flow-def-a');
+    await page.getByRole('button', { name: 'Edit draft' }).click();
+    await page.getByLabel('Status').selectOption('approved');
+    await page.getByRole('button', { name: 'Save version' }).click();
+    await page.getByText('v1 · approved · 1 steps').waitFor();
+
+    await page.getByLabel('Available to this company').check();
+    await page.getByRole('textbox', { name: 'Intent' }).fill('claim');
+    await page.getByRole('button', { name: 'Toggle mapping' }).click();
+    assert.ok(writes.some((write) => write.pathname === '/api/tenant-flow-permissions' && write.payload[0].companyId === company.id));
+    assert.ok(writes.some((write) => write.pathname === '/api/intent-flow-mappings' && write.payload.companyId === company.id));
+    assert.ok(apiRequests.filter((request) => request.pathname === '/api/flow-definitions').every((request) => request.search.includes(`companyId=${company.id}`) || request.method === 'POST'));
+    await context.close();
+    console.log('PASS tenant flow definition UAT: create, draft/approved versions, company availability and intent routing use synthetic API fixtures; tenant company picker is absent and external requests are blocked.');
+  } finally {
+    await browser.close();
+    await new Promise((resolve) => server.close(resolve));
+  }
+});

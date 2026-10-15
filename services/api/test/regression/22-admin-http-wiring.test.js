@@ -144,6 +144,7 @@ async function main() {
   let writes = 0,
     lastVectorScope,
     userListScope,
+    managedInterfaceReads = 0,
     updatedUser,
     auditReads = 0,
     launchedActor;
@@ -184,6 +185,10 @@ async function main() {
             return { data: [], pagination: { total: 0 } };
           },
           getUser: async (id) => ({ id }),
+          getManagedInterface: async (id) => {
+            managedInterfaceReads++;
+            return { id, name: 'CRM fixture', hasCredentials: true };
+          },
           updateUser: async (id, data) => {
             updatedUser = { id, ...data };
             return updatedUser;
@@ -272,6 +277,40 @@ async function main() {
     ).toString('base64');
     return `Bearer ${encoded}.${crypto.createHmac('sha256', process.env.KELEDON_AUTH_SECRET).update(encoded).digest('hex')}`;
   };
+  let interfaceLookup;
+  const interfaceService = new CrudService(
+    {
+      managedInterface: {
+        findUnique: async (query) => {
+          interfaceLookup = query;
+          return {
+            id: 'interface-a',
+            name: 'CRM fixture',
+            baseUrl: 'https://crm.example.invalid',
+            category: 'case',
+            providerKey: 'fixture',
+            capabilities: null,
+            icon: null,
+            status: 'connected',
+            credentials: '{"apiKey":"must-not-leak"}',
+            createdAt: new Date('2026-01-01T00:00:00.000Z'),
+            updatedAt: new Date('2026-01-02T00:00:00.000Z'),
+          };
+        },
+      },
+    },
+    {}, {}, {}, {}, {}, {},
+  );
+  const safeInterface = await interfaceService.getManagedInterface('interface-a');
+  assert.equal(interfaceLookup.where.id, 'interface-a');
+  assert.equal(interfaceLookup.select.credentials, true);
+  assert.equal(safeInterface.hasCredentials, true);
+  assert.equal('credentials' in safeInterface, false);
+  const missingInterfaceService = new CrudService(
+    { managedInterface: { findUnique: async () => null } },
+    {}, {}, {}, {}, {}, {},
+  );
+  assert.equal(await missingInterfaceService.getManagedInterface('missing'), null);
   try {
     const http = app.getHttpServer();
     await request(http)
@@ -351,6 +390,20 @@ async function main() {
     assert.equal(crudHealth.body.status, 'ok');
     assert.equal(crudHealth.body.env.CLOUD_HOST, 'cloud.example.invalid');
     assert.equal('errors' in crudHealth.body, false);
+    await request(http)
+      .get('/api/crud/interfaces/interface-a')
+      .set('Authorization', token('admin'))
+      .expect(403);
+    const managedInterface = await request(http)
+      .get('/api/crud/interfaces/interface-a')
+      .set('Authorization', token('superadmin'))
+      .expect(200);
+    assert.deepEqual(managedInterface.body, {
+      id: 'interface-a',
+      name: 'CRM fixture',
+      hasCredentials: true,
+    });
+    assert.equal(managedInterfaceReads, 1);
     await request(http)
       .get('/api/crud/audit-logs')
       .set('Authorization', token('admin'))

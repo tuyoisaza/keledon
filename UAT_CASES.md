@@ -1,5 +1,15 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.65 — UAT-057 tenant-owned legacy flow configuration
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-057 | Company admin/coordinator manages call-flow configuration; superadmin assigns legacy unowned definitions | Open Flow Definitions; create/edit/deactivate a definition; create and approve a version; enable company availability; map an intent; repeat with company-scoped admin and verify company selector is absent. API fixtures are synthetic and outbound requests blocked. | Flow configuration is company-scoped end-to-end; tenant roles cannot access another company; versions and mappings are linked to same-company definitions; legacy unowned assignment is superadmin-only. | API/Cloud source regressions and production-built Web browser UAT; persisted DB acceptance is a separate open gate. | PASS for API/Cloud source contracts and mocked browser UI. Full `npm run test:uat`: 6/6, AI-admin UAT passes; API regression 38/38; Cloud regression 17/17. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-5.1.65/`. |
+
+Current candidate tally: **56 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The manual device/audio gate and durable persistence, deployed discovery and customer-specific live integrations remain open.
+
+---
+
 ## Candidate 5.1.64 — UAT-056 verify accessible diagnostics hit targets
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
@@ -18,7 +28,7 @@
 |---|---|---|---|---|---|
 | UAT-053 | US-011 / provisioned superadmin and tenant admin | Build the Web app and run the isolated AI administration UI journey with synthetic API routes; run the managed AI API contract suite through the required API regression runner. | Only a superadmin reaches prompt/usage administration; invalid schemas and stale revisions do not write; successful edits create audited revisions; missing usage/cost stays Unknown; no provider request or model payload is fabricated. | Local production SPA UAT and API regression. | PASS for exact 5.1.62 source: API contract 6/6 is included in regression 38/38; synthetic AI administration UAT passes all 12 cases. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/AI-ADMIN-UAT-5.1.62.json` and adjacent screenshots. Persistence/migration remains open. |
 
-Candidate tally: **56 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. This includes UAT-055 public diagnostics placement and UAT-056 accessible hit targets. The synthetic AI-admin cases prove the built Web UI and fixture contract only; they do not close persisted AI prompt migrations, production authorization or the full administration matrix.
+Candidate tally: **55 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. This includes UAT-055 public diagnostics placement and UAT-056 accessible hit targets. The synthetic AI-admin cases prove the built Web UI and fixture contract only; they do not close persisted AI prompt migrations, production authorization or the full administration matrix.
 
 ## Candidate 5.1.60 addition — verify Landing diagnostics mounts (2026-10-15)
 
