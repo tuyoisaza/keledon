@@ -1,3 +1,14 @@
+## v5.1.54 — 2026-10-14 (map every persisted model by role and surface)
+
+- Expand the CRUD crosswalk from the core resource groups to every Prisma model × role × API/Web surface, preserving explicit blocked, gap, not-applicable, and decision-needed states.
+- Map legacy flow, AI administration, runtime, audit, and nested relation behavior from current route and guard sources; keep the unresolved feature-flag/debug-mode and persistence cases visible.
+- Extend the regression so it requires all 490 model-role-surface combinations and asserts sensitive catalog, flow, and AI policy boundaries.
+- Align all five application package/lock roots and the Browser renderer version at 5.1.54.
+
+### Verification
+- API standalone regression 33 passes: 35/35 Prisma models, 490 unique model-role-surface rows, and 168 established resource rows. PHDK coherence passes 52/52; git diff check passes.
+- Persisted DB authorization, the Flow/legacy/API-Web gaps, and remaining decisions are explicitly open; no database, CRM, provider, customer data, or deployment was used.
+
 ## v5.1.53 — 2026-10-14 (serve the public overview without JavaScript)
 
 - Render the public landing page's existing, client-configured product overview into the initial HTML so crawlers and non-JavaScript users receive a semantic H1 and direct architecture context.

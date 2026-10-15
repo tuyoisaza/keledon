@@ -1,3 +1,20 @@
+# Current Check — candidate 5.1.54 CRUD model × role × surface map (2026-10-14)
+
+Repository `tuyoisaza/keledon`; candidate branch `fix/phdk-crud-matrix-5-1-54`, based on verified `origin/main` `4a2d4f46e29d79e62d2548f2a931a50de8625b65`. PHDK 2.50.10 coherence is 52/52. All five application package/lock roots and the Browser renderer are 5.1.54.
+
+**Scoped result: PASS for source/documentation coverage; CHK-AUTO-003 remains PARTIAL overall.** `CRUD_MATRIX.md` now has 490 rows: every one of the 35 Prisma models × seven roles × API/Web. The existing 168-row first-party resource matrix remains separately checked. Regression 33 verifies uniqueness, complete row fields/statuses and sensitive boundaries for ManagedInterface, team Flow access, FeatureFlag and AI prompt administration. Source mapping explicitly separates nested/append-only exceptions from direct CRUD and marks route gaps and decisions rather than granting inferred access.
+
+| Finding | Status | Evidence / remaining work |
+|---|---|---|
+| Source inventory and role/surface rows | CLOSED — SOURCE PASS | API regression 33: 35/35 models, 490 unique model-role-surface rows, 168 established resource rows; key policy assertions pass. |
+| Persisted authorization, migration and before/after behavior | BLOCKED / CHK-AUTO-005 | Requires safe identities and disposable PostgreSQL; no DB was connected in this candidate. |
+| Flow/legacy details, unwired FeatureFlag and DebugMode paths, operational retention, and absent UI actions | GAP / DECISION NEEDED | Explicitly identified in the model rows. Product behavior and owner policy remain unresolved where source evidence is insufficient. |
+| Native device/audio, broad accessibility/localization, deployed SEO/AEO | OPEN / MANUAL / EXTERNAL | Carried from the active Auto ledger; this source-only candidate does not claim those gates. |
+
+Validation on this source change: API regression 33 passes; PHDK coherence passes 52/52; version readback and `git diff --check` pass. Whole PHDK Auto remains **PARTIALLY DELIVERED**. No database, customer endpoint, provider or deployment was used.
+
+---
+
 ## Current Check — candidate 5.1.53 public landing overview (2026-10-14)
 
 Repository `tuyoisaza/keledon`; branch `fix/phdk-public-home-nojs-5-1-53`, based on verified remote `main` `962adfc349fcaacde61e0635c13952166b78d7c9`; installed PHDK 2.50.10 coherence check passes 52/52. Exact candidate package versions are 5.1.53 across all five application package/lock roots and Browser renderer.

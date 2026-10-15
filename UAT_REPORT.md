@@ -1,5 +1,15 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.54 — model-role-surface authorization map (2026-10-14)
+
+UAT-042 passes source/documentation acceptance. The regression reads the current Prisma schema and requires exactly one detailed row for every model × role × API/Web tuple, all required CRUD/scope/enforcement/UI/deletion/evidence/status fields, valid lifecycle states, and source-grounded assertions for global ManagedInterface, team Flow, FeatureFlag and superadmin AI prompt boundaries. Output: `35/35 Prisma models, 490 unique model-role-surface rows, 168 established core resource-role-surface rows`. PHDK coherence 52/52 and `git diff --check` also pass. This does not validate persisted role, tenant or migration behavior.
+
+Focused result: **PASS for source-map completeness**. Overall remains **ACCEPTANCE INCOMPLETE: 42 PASS, 0 BLOCKED, 1 MANUAL**; persisted CRUD/identities, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live call/CRM acceptance remain open or customer-scoped. No database, CRM, provider, customer data, device or deployment was used.
+
+SIGUIENTE PASO: finish the integrated diff and applicable local checks, then deliver candidate 5.1.54 through the normal PR path with exact remote readback.
+
+---
+
 ## Candidate 5.1.53 — public landing no-JavaScript acceptance (2026-10-14)
 
 Candidate branch `fix/phdk-public-home-nojs-5-1-53`, based on verified `origin/main` `962adfc349fcaacde61e0635c13952166b78d7c9`. Intent sources: current owner-confirmed four-front Auto goal, existing Capture/PRD public-copy intent, and client-specific call/CRM configuration decision. UAT-041 exercises the built public HTML contract: Landing SEO test passes 1/1; Landing lint and TypeScript projects pass; production build passes and its `dist/index.html` contains the semantic H1 and full accurate overview before JavaScript. The no-JS class is removed by the app entrypoint. This did not exercise a browser, live crawler, deployment or client system.

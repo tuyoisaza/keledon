@@ -1,5 +1,13 @@
 # Integration Review handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.54 — CRUD model-role-surface crosswalk
+
+Review finds the candidate coherent: no product runtime or API contract changed; the 168 core rows stay separately scoped; the added 490 tuples match the Prisma schema and approved role list; direct, nested, global, operational and append-only models remain distinguished. Guard-source spot checks and regression assertions protect team Flow read/write boundaries, hidden superadmin-only ManagedInterface, nested TeamInterface, unwired FeatureFlag and superadmin-only AI prompt updates. Version roots align at 5.1.54. Detailed review: `INTEGRATION_REPORT-5.1.54.md`.
+
+UAT-042 passes the source-map contract. Persistent database proof, unresolved legacy lifecycle decisions, DebugMode persistence mismatch, native acceptance, and external SEO/AEO remain open. Candidate should proceed to scoped Check and normal delivery; full PHDK Auto remains PARTIALLY DELIVERED.
+
+---
+
 ## Candidate 5.1.51 — API runtime truthfulness and lint
 
 Reviewed source `09ef2497957c381a3af7428af393b65b811c2fe6` / tree `fdb14b554ad46b1908b2041bfa781bb15bd0a716`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`. Tenant runtime no longer fabricates Browser/CRM/voice successes or integration health; unsupported adapter steps fail closed and subagent results persist. All five roots and Browser renderer are 5.1.51. API lint is 0 warnings/errors. Review details: `90-delivery/snapshots/candidate-5.1.51/INTEGRATION_REPORT.md`. No private endpoint was contacted.

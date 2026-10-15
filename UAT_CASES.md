@@ -1,5 +1,13 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.54 addition — model-level CRUD authorization map (2026-10-14)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-042 | CMT-004 / reviewer of administrative permissions | Reconcile every Prisma model against all seven roles and API/Web surfaces; assert one row per combination, complete operation/evidence columns, valid states, and explicit cases for the dormant global catalog, team flows, unwired feature flags, and superadmin AI prompts. | All 35 models have exactly 14 explicit role/surface rows (490 total); sensitive permissions follow current guard evidence; unresolved persistence, product decisions and absent surfaces remain visibly blocked/open. | API source regression 33 plus PHDK coherence. | PASS for source/documentation coverage: 490 unique rows, 168 core rows, policy boundary assertions; no persistent DB behavior inferred. `services/api/test/regression/33-crud-model-inventory.test.js`. |
+
+Candidate total: **42 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-042 closes source-matrix completeness only; it does not close CHK-AUTO-005 or the persisted CRUD, native device/audio, accessibility, or deployed SEO/AEO gates.
+
 ## Candidate 5.1.53 addition — crawler-readable public landing overview (2026-10-14)
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
