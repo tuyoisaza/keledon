@@ -1,5 +1,10 @@
 # PHDK Preflight Standard
 
+## Centralized updater
+
+At authorized PHDK command entry, after installation detection, invoke the vendored `scripts/phdk_update.py` once to refresh manifest-owned standards from canonical main when safe. Re-read updated instructions before continuing. Report connectivity, version or local edit conflicts without force-overwriting. This foreground action does not run on dormant repositories or activate old work.
+
+
 ## Purpose
 
 Every PHDK command must begin with a fast, bounded preflight before doing substantive work.
@@ -12,6 +17,7 @@ Preflight verifies that:
 4. The current tool's managed PHDK instruction block is present and recognizable.
 5. Relevant recommended skills/capabilities for the requested command are available.
 6. The user has not explicitly disabled use of recommended skills.
+7. The current tool-native managed block resolves the vendored PHDK communication personality and autonomous PR delivery policy; report absent/stale entrypoints and do not claim to have refreshed other sessions.
 
 Preflight is not a separate user command requirement. It is an automatic first step of PHDK commands. Run universal Preflight ONCE per command entry. Internal Auto/PMO stages validate handoffs and newly relevant capabilities; repeat universal Preflight only for a detected installation/version/manifest/managed-rule change or integrity failure. See `PHDK_COHERENCE_STANDARD.md`.
 

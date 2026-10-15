@@ -26,7 +26,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Public } from '../guards/public.decorator';
 
 interface AuthenticatedRequest {
-  user?: { userId?: string; role?: string };
+  user?: { userId?: string; role?: string; companyId?: string };
 }
 
 @ApiTags('MVP Data')
@@ -103,8 +103,8 @@ export class MvpDataController {
   }
 
   @Get('flow-definitions')
-  getFlowDefinitions() {
-    return this.mvpStore.getFlowDefinitions();
+  getFlowDefinitions(@Query('companyId') companyId?: string) {
+    return this.mvpStore.getFlowDefinitions(companyId);
   }
 
   @Post('flow-definitions')
@@ -112,9 +112,30 @@ export class MvpDataController {
     return this.mvpStore.createFlowDefinition(body);
   }
 
+  @Put('flow-definitions/:id')
+  updateFlowDefinition(
+    @Param('id') id: string,
+    @Body() body: FlowDefinitionInput,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.mvpStore.updateFlowDefinition(id, body, req.user?.companyId);
+  }
+
+  @Delete('flow-definitions/:id')
+  archiveFlowDefinition(
+    @Param('id') id: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.mvpStore.updateFlowDefinition(
+      id,
+      { status: 'inactive' },
+      req.user?.companyId,
+    );
+  }
+
   @Get('flow-versions')
-  getFlowVersions() {
-    return this.mvpStore.getFlowVersions();
+  getFlowVersions(@Query('companyId') companyId?: string) {
+    return this.mvpStore.getFlowVersions(companyId);
   }
 
   @Post('flow-versions')
@@ -122,35 +143,57 @@ export class MvpDataController {
     @Body() body: FlowVersionInput,
     @Req() req: AuthenticatedRequest,
   ) {
-    return this.mvpStore.createFlowVersion(body, req.user?.userId || '');
+    return this.mvpStore.createFlowVersion(
+      body,
+      req.user?.userId || '',
+      req.user?.companyId,
+    );
   }
 
   @Put('flow-versions/:id')
   updateFlowVersion(
     @Param('id') id: string,
     @Body() body: FlowVersionUpdateInput,
+    @Req() req: AuthenticatedRequest,
   ) {
-    return this.mvpStore.updateFlowVersion(id, body);
+    return this.mvpStore.updateFlowVersion(id, body, req.user?.companyId);
   }
 
   @Get('tenant-flow-permissions/:companyId')
-  getTenantFlowPermissions(@Param('companyId') companyId: string) {
-    return this.mvpStore.getTenantFlowPermissions(companyId);
+  getTenantFlowPermissions(
+    @Param('companyId') companyId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.mvpStore.getTenantFlowPermissions(
+      req.user?.companyId || companyId,
+    );
   }
 
   @Post('tenant-flow-permissions')
-  upsertTenantFlowPermissions(@Body() body: TenantFlowPermissionInput[]) {
-    return this.mvpStore.upsertTenantFlowPermissions(body);
+  upsertTenantFlowPermissions(
+    @Body() body: TenantFlowPermissionInput[],
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.mvpStore.upsertTenantFlowPermissions(
+      body,
+      req.user?.companyId,
+    );
   }
 
   @Get('intent-flow-mappings/:companyId')
-  getIntentFlowMappings(@Param('companyId') companyId: string) {
-    return this.mvpStore.getIntentFlowMappings(companyId);
+  getIntentFlowMappings(
+    @Param('companyId') companyId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.mvpStore.getIntentFlowMappings(req.user?.companyId || companyId);
   }
 
   @Post('intent-flow-mappings')
-  upsertIntentFlowMapping(@Body() body: IntentFlowMappingInput) {
-    return this.mvpStore.upsertIntentFlowMapping(body);
+  upsertIntentFlowMapping(
+    @Body() body: IntentFlowMappingInput,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.mvpStore.upsertIntentFlowMapping(body, req.user?.companyId);
   }
 
   @Get('knowledge/documents')

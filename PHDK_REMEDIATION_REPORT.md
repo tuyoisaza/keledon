@@ -1,6 +1,16 @@
-## Current Auto remediation — candidate 5.1.64 diagnostics hit targets (2026-10-15)
+## Current PHDK Auto — 5.1.65 candidate; whole portfolio partial
 
-CHK-AUTO-024 repairs the 44×44 effective pointer target in Web/Landing. Each actual button box measures 44×44px; the centered `::before` visual tile remains 28×28px, and the boxes have 4px separation. Labels, 14px icons and visible focus state remain. Native Browser CSS has the same source contract. UAT-056 passes on production-built Landing at desktop/mobile with outbound traffic blocked. Web tests pass 19/19; Browser offline tests 28/28; all five production builds, Web/Landing lint/typechecks, and PHDK coherence 52/52 pass. Base is verified main 5.1.63 `2c1c8e58f749746253f0ff76f9c691e7ffb15644`. PR delivery is pending. Packaged Electron visuals, persisted CRUD/migrations, native device/audio, broad accessibility/localization, deployed SEO/AEO and client-specific live integration acceptance remain open. Whole Auto stays **PARTIALLY DELIVERED**.
+Working branch `chore/phdk-upgrade-2.51.2` is based on verified `origin/main` 5.1.64 (`e53339e81eb972f7941c2b59dd824ad75111d54a`). PHDK 2.51.2 passes coherence 56/56. Five product roots and Browser renderer align at 5.1.65. API regressions 38/38 and Cloud regressions 17/17 pass; all five product builds pass; Cloud/Web targeted lint and Web typecheck pass; full Web UAT passes 6/6 browser cases plus AI-admin UAT with synthetic APIs and external requests blocked. Tenant-owned FlowDefinition configuration now has matching API/Cloud enforcement and a Web editor.
+
+Delivery of this candidate is pending PR creation and remote verification. The shared JSON store still needs durable multi-instance and database acceptance; device/audio, broad accessibility/localization, deployed SEO/AEO, and customer-selected live voice/CRM acceptance remain open. The four owner-confirmed commitments are still active. No deployment is claimed.
+
+SIGUIENTE PASO: review, commit and deliver candidate 5.1.65 through the normal PR path; retain whole-Auto status as partial.
+
+---
+
+## Historical remediation — candidate 5.1.64 diagnostics hit targets (2026-10-15)
+
+CHK-AUTO-024 repairs the 44×44 effective pointer target in Web/Landing. Each actual button box measures 44×44px; the centered `::before` visual tile remains 28×28px, and the boxes have 4px separation. Labels, 14px icons and visible focus state remain. Native Browser CSS has the same source contract. UAT-056 passes on production-built Landing at desktop/mobile with outbound traffic blocked. Web tests pass 19/19; Browser offline tests 28/28; all five production builds, Web/Landing lint/typechecks, and PHDK coherence 52/52 pass. PR #158 is merged at verified `main` `e53339e81eb972f7941c2b59dd824ad75111d54a`, with the tested tree. Packaged Electron visuals, persisted CRUD/migrations, native device/audio, broad accessibility/localization, deployed SEO/AEO and client-specific live integration acceptance remain open. Whole Auto stays **PARTIALLY DELIVERED**.
 
 ---
 

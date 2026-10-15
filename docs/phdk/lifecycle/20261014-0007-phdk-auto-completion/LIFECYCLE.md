@@ -1,8 +1,18 @@
-## Current Auto continuation — candidate 5.1.64 diagnostics hit targets (2026-10-15)
+## Current Auto candidate — 5.1.65 tenant-owned flow configuration (2026-10-15)
 
-Run `20261014-0007-phdk-auto-completion`; target repository `tuyoisaza/keledon`, branch `main`. Candidate `fix/phdk-diagnostics-hit-target-5-1-64` is based on verified main 5.1.63 SHA `2c1c8e58f749746253f0ff76f9c691e7ffb15644`. CHK-AUTO-024 gives Web/Landing diagnostics actions distinct 44×44px hitboxes while keeping the centered visual tiles at 28×28px and spacing targets by 4px. The native Browser stylesheet now has the matching source contract.
+Run `20261014-0007-phdk-auto-completion`; target repository `tuyoisaza/keledon`; branch `chore/phdk-upgrade-2.51.2`; base `origin/main` 5.1.64 at `e53339e81eb972f7941c2b59dd824ad75111d54a`. Canonical PHDK v2.51.2 is installed and coherent 56/56; all five product roots and Browser renderer are 5.1.65. The FlowDefinition editor converts legacy definitions into company-owned configuration with draft/version lifecycle, company availability and intent routing. Both API and Cloud derive tenant scope from the DB actor and reject cross-company flow references.
 
-UAT-056 passes on production-built Landing at 1280×900 and 390×844 with external traffic blocked. Web tests are 19/19; Browser offline tests 28/28. Five production builds, Web/Landing lint and typechecks, and PHDK coherence 52/52 pass. The portfolio tally is 56 PASS, 0 BLOCKED, 1 MANUAL; the full goal remains partial.
+API regression 38/38, Cloud regression 17/17, all five builds, targeted Cloud/Web lint, Web typecheck, and full Web UAT (6/6 browser cases plus AI-admin UAT) pass. Browser APIs are synthetic and external requests are blocked. UAT total is 56 PASS, 0 BLOCKED, 1 MANUAL. Delivery is pending PR creation and remote verification; this source slice does not close the four Auto commitments. Shared JSON-store persistence/concurrency, live DB, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-selected live integration remain open.
+
+SIGUIENTE PASO: review and deliver 5.1.65 by normal PR, then continue remaining Auto acceptance without claiming full completion.
+
+---
+
+## Historical Auto delivery — 5.1.64 diagnostics hit targets merged (2026-10-15)
+
+Run `20261014-0007-phdk-auto-completion`; target repository `tuyoisaza/keledon`, branch `main`. Candidate `fix/phdk-diagnostics-hit-target-5-1-64` from verified main 5.1.63 SHA `2c1c8e58f749746253f0ff76f9c691e7ffb15644` was squash-merged as PR #158 at SHA `e53339e81eb972f7941c2b59dd824ad75111d54a`, tree `e9f0d497267e78fd497186b7d2de797e43173289` (exact tested candidate tree). CHK-AUTO-024 gives Web/Landing diagnostics actions distinct 44×44px hitboxes while keeping centered visual tiles at 28×28px and spacing targets by 4px. Native Browser CSS now has the matching source contract.
+
+UAT-056 passes on production-built Landing at 1280×900 and 390×844 with external traffic blocked. Web tests are 19/19; Browser offline tests 28/28. Five production builds, Web/Landing lint and typechecks, and PHDK coherence 52/52 pass. The portfolio tally is 55 PASS, 0 BLOCKED, 1 MANUAL; the full goal remains partial.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -11,11 +21,11 @@ UAT-056 passes on production-built Landing at 1280×900 and 390×844 with extern
 | UAT / UAT Fix | PASS FOR UAT-056 | Browser 1/1, Web 19/19, Browser offline 28/28; see `50-uat/evidence/uat-056/`. |
 | SEO / AEO-GEO | REUSED / NOT AFFECTED | Accessibility target geometry only; deployed discovery remains unmeasured. |
 | Check / Remediation | PASS FOR SCOPED CANDIDATE | Five builds, Web/Landing lint/typecheck, source test suites, PHDK coherence and diff check pass. |
-| Delivery | PENDING | Versioned commit, PR, merge and exact remote readback. |
+| Delivery | COMPLETED FOR SLICE | PR #158 squash-merged; remote `main` equals `git ls-remote`, tested tree and six 5.1.64 version reads match; completion gate passes. |
 
 Packaged Electron, OS touch behavior, persisted CRUD/migrations, device/audio, broad screen-reader/localization, deployed SEO/AEO and client-selected live acceptance remain open.
 
-SIGUIENTE PASO: deliver the exact 5.1.64 fix through PR and verify remote main; keep the four Auto fronts active while their remaining acceptance gates stay open.
+SIGUIENTE PASO: continue the four Auto fronts against verified 5.1.64 main; keep whole-Auto status partial while persisted, native, accessibility, deployed-discovery and client-specific acceptance remains open.
 
 ---
 

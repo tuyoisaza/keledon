@@ -113,10 +113,12 @@ export function validateFlowDefinitionInput(
     'name',
     'description',
     'category',
+    'status',
     'intentTags',
   ]);
   optionalStrings(fields, ['companyId', 'interfaceId', 'name', 'description']);
   enumField(fields.category, ['talk', 'case'], 'Invalid flow category');
+  enumField(fields.status, ['active', 'inactive'], 'Invalid flow status');
   if (fields.intentTags !== undefined)
     stringArray(fields.intentTags, 'intentTags');
   return value;

@@ -219,20 +219,25 @@ export class MvpStoreService {
     return changed;
   }
 
-  getFlowDefinitions(): FlowDefinition[] {
-    return this.store.flowDefinitions;
+  getFlowDefinitions(companyId?: string): FlowDefinition[] {
+    return this.store.flowDefinitions.filter((flow) =>
+      companyId ? flow.companyId === companyId : true,
+    );
   }
 
   createFlowDefinition(input: FlowDefinitionInput): FlowDefinition {
     validateFlowDefinitionInput(input);
+    const companyId = String(input.companyId || '').trim();
+    if (!companyId) throw new BadRequestException('Company scope is required');
     const now = new Date().toISOString();
     const flow: FlowDefinition = {
       id: randomUUID(),
-      companyId: input.companyId,
+      companyId,
       interfaceId: input.interfaceId,
       name: String(input.name || 'New Flow'),
       description: input.description,
       category: input.category || 'case',
+      status: input.status || 'active',
       intentTags: Array.isArray(input.intentTags) ? input.intentTags : [],
       createdAt: now,
       updatedAt: now,
@@ -242,19 +247,71 @@ export class MvpStoreService {
     return flow;
   }
 
-  getFlowVersions(): FlowVersion[] {
-    return this.store.flowVersions;
+  updateFlowDefinition(
+    id: string,
+    input: FlowDefinitionInput,
+    companyId?: string,
+  ): FlowDefinition | null {
+    validateFlowDefinitionInput(input);
+    const index = this.store.flowDefinitions.findIndex(
+      (flow) => flow.id === id && (!companyId || flow.companyId === companyId),
+    );
+    if (index < 0) return null;
+    const current = this.store.flowDefinitions[index];
+    const updated: FlowDefinition = {
+      ...current,
+      companyId: input.companyId ?? current.companyId,
+      interfaceId: input.interfaceId ?? current.interfaceId,
+      name: input.name ?? current.name,
+      description: input.description ?? current.description,
+      category: input.category ?? current.category,
+      intentTags: input.intentTags ?? current.intentTags,
+      status: input.status ?? current.status,
+      updatedAt: new Date().toISOString(),
+    };
+    this.store.flowDefinitions[index] = updated;
+    this.saveStore();
+    return updated;
   }
 
-  createFlowVersion(input: FlowVersionInput, actorId: string): FlowVersion {
+  getFlowVersions(companyId?: string): FlowVersion[] {
+    if (!companyId) return this.store.flowVersions;
+    const ownedIds = new Set(
+      this.store.flowDefinitions
+        .filter((flow) => flow.companyId === companyId)
+        .map((flow) => flow.id),
+    );
+    return this.store.flowVersions.filter((version) =>
+      ownedIds.has(version.flowDefinitionId),
+    );
+  }
+
+  createFlowVersion(
+    input: FlowVersionInput,
+    actorId: string,
+    companyId?: string,
+  ): FlowVersion {
     validateFlowVersionInput(input);
     if (typeof actorId !== 'string' || actorId.length === 0)
       throw new BadRequestException('Current actor is required');
+    const definition = this.store.flowDefinitions.find(
+      (flow) =>
+        flow.id === input.flowDefinitionId &&
+        (!companyId || flow.companyId === companyId),
+    );
+    if (!definition) throw new BadRequestException('Flow definition is unavailable');
+    const version = Number(input.version || 1);
+    if (
+      this.store.flowVersions.some(
+        (item) => item.flowDefinitionId === definition.id && item.version === version,
+      )
+    )
+      throw new BadRequestException('Flow version already exists');
     const now = new Date().toISOString();
     const flowVersion: FlowVersion = {
       id: randomUUID(),
       flowDefinitionId: String(input.flowDefinitionId || ''),
-      version: Number(input.version || 1),
+      version,
       status: input.status || 'draft',
       steps: Array.isArray(input.steps) ? input.steps : [],
       createdBy: actorId,
@@ -269,10 +326,30 @@ export class MvpStoreService {
   updateFlowVersion(
     id: string,
     input: FlowVersionUpdateInput,
+    companyId?: string,
   ): FlowVersion | null {
     validateFlowVersionUpdateInput(input);
     const index = this.store.flowVersions.findIndex((item) => item.id === id);
     if (index < 0) return null;
+    const current = this.store.flowVersions[index];
+    const definition = this.store.flowDefinitions.find(
+      (flow) =>
+        flow.id === current.flowDefinitionId &&
+        (!companyId || flow.companyId === companyId),
+    );
+    if (!definition) return null;
+    if (current.status !== 'draft')
+      throw new BadRequestException('Only draft flow versions can be edited');
+    if (
+      input.version !== undefined &&
+      this.store.flowVersions.some(
+        (item) =>
+          item.id !== id &&
+          item.flowDefinitionId === current.flowDefinitionId &&
+          item.version === input.version,
+      )
+    )
+      throw new BadRequestException('Flow version already exists');
     const updated: FlowVersion = {
       ...this.store.flowVersions[index],
       version: input.version ?? this.store.flowVersions[index].version,
@@ -293,10 +370,22 @@ export class MvpStoreService {
 
   upsertTenantFlowPermissions(
     entries: TenantFlowPermissionInput[],
+    scopeCompanyId?: string,
   ): TenantFlowPermission[] {
     entries = validateTenantFlowPermissionInputs(entries);
+    const companyIdForScope = scopeCompanyId;
+    if (
+      entries.some((entry) => {
+        const companyId = companyIdForScope || String(entry.companyId || '');
+        const flowDefinitionId = String(entry.flowDefinitionId || '');
+        return !this.store.flowDefinitions.some(
+          (flow) => flow.id === flowDefinitionId && flow.companyId === companyId,
+        );
+      })
+    )
+      throw new BadRequestException('Flow definition is unavailable for this company');
     for (const entry of entries) {
-      const companyId = String(entry.companyId || '');
+      const companyId = scopeCompanyId || String(entry.companyId || '');
       const flowDefinitionId = String(entry.flowDefinitionId || '');
 
       const existing = this.store.tenantFlowPermissions.find(
@@ -324,7 +413,9 @@ export class MvpStoreService {
     }
 
     this.saveStore();
-    return this.store.tenantFlowPermissions;
+    return this.store.tenantFlowPermissions.filter((item) =>
+      scopeCompanyId ? item.companyId === scopeCompanyId : true,
+    );
   }
 
   getIntentFlowMappings(companyId: string): IntentFlowMapping[] {
@@ -333,15 +424,27 @@ export class MvpStoreService {
     );
   }
 
-  upsertIntentFlowMapping(entry: IntentFlowMappingInput): IntentFlowMapping {
+  upsertIntentFlowMapping(
+    entry: IntentFlowMappingInput,
+    scopeCompanyId?: string,
+  ): IntentFlowMapping {
     validateIntentFlowMappingInput(entry);
-    const companyId = String(entry.companyId || '');
+    const companyId = scopeCompanyId || String(entry.companyId || '');
     const intent = String(entry.intent || '').trim();
     const allowedFlowDefinitionIds = Array.isArray(
       entry.allowedFlowDefinitionIds,
     )
       ? entry.allowedFlowDefinitionIds
       : [];
+    if (
+      allowedFlowDefinitionIds.some(
+        (id) =>
+          !this.store.flowDefinitions.some(
+            (flow) => flow.id === id && flow.companyId === companyId,
+          ),
+      )
+    )
+      throw new BadRequestException('Intent mapping contains a flow outside this company');
 
     const existing = this.store.intentFlowMappings.find(
       (item) => item.companyId === companyId && item.intent === intent,

@@ -1,3 +1,32 @@
+## Current PHDK Auto — 5.1.65 candidate; whole portfolio partial
+
+Working branch `chore/phdk-upgrade-2.51.2` is based on verified `origin/main` 5.1.64 (`e53339e81eb972f7941c2b59dd824ad75111d54a`). PHDK 2.51.2 passes coherence 56/56. Five product roots and Browser renderer align at 5.1.65. API regressions 38/38 and Cloud regressions 17/17 pass; all five product builds pass; Cloud/Web targeted lint and Web typecheck pass; full Web UAT passes 6/6 browser cases plus AI-admin UAT with synthetic APIs and external requests blocked. Tenant-owned FlowDefinition configuration now has matching API/Cloud enforcement and a Web editor.
+
+Delivery of this candidate is pending PR creation and remote verification. The shared JSON store still needs durable multi-instance and database acceptance; device/audio, broad accessibility/localization, deployed SEO/AEO, and customer-selected live voice/CRM acceptance remain open. The four owner-confirmed commitments are still active. No deployment is claimed.
+
+SIGUIENTE PASO: review, commit and deliver candidate 5.1.65 through the normal PR path; retain whole-Auto status as partial.
+
+---
+
+## Historical delivery snapshot — 5.1.64 merged; whole portfolio partial
+
+PR [#158](https://github.com/tuyoisaza/keledon/pull/158) delivered source commit `95c51e5adeb637e41526b03c73be1da22a0cf2c8` by squash at verified remote `main` `e53339e81eb972f7941c2b59dd824ad75111d54a`; merged tree `e9f0d497267e78fd497186b7d2de797e43173289` matches the tested candidate tree. `git ls-remote` matches. Six package/renderer version reads are 5.1.64. The local mechanical completion gate passes; no hosted checks/review decision were reported and `main` is unprotected.
+
+| Gate | Status | Evidence / remaining |
+|---|---|---|
+| CMT-001 baseline/version/PR | SLICE DELIVERED / COMMITMENT ACTIVE | #158 merged and read back; further version/PR maintenance continues. |
+| CMT-002 widget/diagnostics | PARTIAL | UAT-056 target-size browser 1/1, Web diagnostics 19/19 and Browser source suite 28/28; packaged native, screen-reader and broad localization/accessibility remain open. |
+| CMT-003 voice→Cloud→Browser→client CRM | PARTIAL / CUSTOMER-SCOPED | Existing tenant private-origin allowlist and Browser request-scope contracts pass; no live customer endpoint or native audio acceptance. |
+| CMT-004 administration/permissions | PARTIAL | AI-admin API contract 6/6 is in API 38/38; synthetic UAT-053 covers 12 journeys. Persisted migrations and exhaustive authorization matrix remain open. |
+| PUSH_AND_PR / REMOTE_MAIN | PASS FOR 5.1.64 | PR #158 squash merge and exact remote SHA/tree verified. |
+| SCOPE_AND_CHECKS | PASS FOR SLICE / AUTO PARTIAL | Builds, relevant tests, Browser lint after lockfile install and coherence pass; whole portfolio is not complete. |
+
+UAT-056 passes; current portfolio tally is 55 PASS, 0 BLOCKED, 1 MANUAL. The four commitments are not all closed. No customer database, private destination, physical device or deployment was used.
+
+SIGUIENTE PASO: continue the remaining acceptance on the four active fronts; do not mark PHDK Auto complete.
+
+---
+
 ## Current Auto completion audit — candidate 5.1.61; source delivery pending
 
 Candidate `fix/phdk-navbar-overlap-5-1-61` is based on verified main `4bc6d437ddfbd5139617da62370ec4de92f820cb`. UAT-052 observed/fixed the Landing desktop preference overlap and validates mobile access in local production builds; the change is mirrored in Web. API/Cloud regressions pass 37/37 and 17/17; Browser safety/version tests 15/15; Web diagnostics 19/19; Web UAT 5/5; Landing local UAT 1/1; Web/Landing SEO 1/1 each; all five builds, applicable lint/typechecks and PHDK coherence 52/52 pass. All five package/lock roots and Browser renderer align at 5.1.61. The product PR is not yet merged, so remote delivery and the mechanical completion gate remain pending.

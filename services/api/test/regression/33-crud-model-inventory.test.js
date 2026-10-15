@@ -194,6 +194,21 @@ assert.equal(
   'NOT APPLICABLE',
   'operational events have no standalone CRUD surface',
 );
+for (const role of roles) {
+  for (const surface of surfaces) {
+    const row = modelRowFor('SubAgent', role, surface);
+    assert.equal(
+      row[14],
+      'NOT APPLICABLE',
+      `SubAgent ${role}/${surface} is session-bound runtime state, not standalone CRUD`,
+    );
+    assert.match(
+      row[13],
+      /persisted lifecycle and retention acceptance remain open/,
+      `SubAgent ${role}/${surface} N/A must not imply persisted acceptance`,
+    );
+  }
+}
 assert.equal(
   modelRowFor('SubAgentRun', 'user', 'API')[4],
   'yes',
@@ -292,8 +307,23 @@ assert.ok(!resources.includes('TeamInterface'));
 assert.match(crudGuard, /if \(!superadmin && !scoped\.includes\(resource\)\) return deny\(\)/);
 assert.match(
   mvpScopeGuard,
-  /!\['getProviderCatalog', 'getRpaProviders', 'getTechStatus'\]\.includes\(/,
-  'tenant roles must not reach legacy global MVP interface handlers',
+  /tenantFlowHandlers[\s\S]*'getFlowDefinitions'[\s\S]*'upsertIntentFlowMapping'/,
+  'tenant flow configuration routes must be explicitly enumerated',
+);
+assert.match(
+  mvpScopeGuard,
+  /if \(!manager \|\| \(!safeReadHandlers\.includes\(handler\) && !tenantFlowHandlers\.includes\(handler\)\)\)/,
+  'only tenant managers can use tenant configuration routes',
+);
+assert.match(
+  mvpScopeGuard,
+  /query\.companyId = actor\.companyId/,
+  'tenant configuration filters must come from the DB-derived actor',
+);
+assert.match(
+  webRouter,
+  /path="\/management\/flow-definitions"[\s\S]*allowedRoles=\{\['admin', 'coordinator', 'superadmin'\]\}/,
+  'tenant flow editor route must be restricted to approved management roles',
 );
 assert.doesNotMatch(
   webRouter,

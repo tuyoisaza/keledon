@@ -130,13 +130,51 @@ export class ResourceScopeGuard implements CanActivate {
       return session;
     };
     if (kind === 'MvpDataController') {
+      const tenantFlowHandlers = [
+        'getFlowDefinitions',
+        'createFlowDefinition',
+        'updateFlowDefinition',
+        'archiveFlowDefinition',
+        'getFlowVersions',
+        'createFlowVersion',
+        'updateFlowVersion',
+        'getTenantFlowPermissions',
+        'upsertTenantFlowPermissions',
+        'getIntentFlowMappings',
+        'upsertIntentFlowMapping',
+      ];
+      const safeReadHandlers = [
+        'getProviderCatalog',
+        'getRpaProviders',
+        'getTechStatus',
+      ];
       if (
         !manager ||
-        !['getProviderCatalog', 'getRpaProviders', 'getTechStatus'].includes(
-          handler,
-        )
+        (!safeReadHandlers.includes(handler) &&
+          !tenantFlowHandlers.includes(handler))
       )
         return deny();
+      if (tenantFlowHandlers.includes(handler)) {
+        query.companyId = actor.companyId;
+        params.companyId = actor.companyId;
+        if (
+          [
+            'createFlowDefinition',
+            'updateFlowDefinition',
+            'upsertIntentFlowMapping',
+          ].includes(handler)
+        )
+          body.companyId = actor.companyId;
+        if (
+          handler === 'upsertTenantFlowPermissions' &&
+          Array.isArray(req.body)
+        ) {
+          req.body = req.body.map((entry) => ({
+            ...asRecord(entry),
+            companyId: actor.companyId,
+          }));
+        }
+      }
     } else if (kind === 'TTSController') {
       await teamAllowed(actor.teamId);
       body.teamId = actor.teamId;
@@ -337,7 +375,10 @@ export class ResourceScopeGuard implements CanActivate {
         if (flow.teamId !== teamId) return deny();
       }
     } else return deny();
-    req.body = body;
+    if (!(
+      kind === 'MvpDataController' && handler === 'upsertTenantFlowPermissions'
+    ))
+      req.body = body;
     Object.defineProperty(req, 'query', { value: query, configurable: true });
     return true;
   }

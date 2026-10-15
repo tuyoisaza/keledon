@@ -1,3 +1,22 @@
+## Current PHDK Auto — 5.1.65 candidate; whole portfolio partial
+
+Working branch `chore/phdk-upgrade-2.51.2` is based on verified `origin/main` 5.1.64 (`e53339e81eb972f7941c2b59dd824ad75111d54a`). PHDK 2.51.2 passes coherence 56/56. Five product roots and Browser renderer align at 5.1.65. API regressions 38/38 and Cloud regressions 17/17 pass; all five product builds pass; Cloud/Web targeted lint and Web typecheck pass; full Web UAT passes 6/6 browser cases plus AI-admin UAT with synthetic APIs and external requests blocked. Tenant-owned FlowDefinition configuration now has matching API/Cloud enforcement and a Web editor.
+
+Delivery of this candidate is pending PR creation and remote verification. The shared JSON store still needs durable multi-instance and database acceptance; device/audio, broad accessibility/localization, deployed SEO/AEO, and customer-selected live voice/CRM acceptance remain open. The four owner-confirmed commitments are still active. No deployment is claimed.
+
+SIGUIENTE PASO: review, commit and deliver candidate 5.1.65 through the normal PR path; retain whole-Auto status as partial.
+
+---
+
+## Historical delivery snapshot — 5.1.64 merged; whole portfolio partial
+
+PR [#158](https://github.com/tuyoisaza/keledon/pull/158) is squash-merged at verified remote `main` `e53339e81eb972f7941c2b59dd824ad75111d54a`; remote tree `e9f0d497267e78fd497186b7d2de797e43173289` equals the tested candidate tree. Five app package/lock roots and Browser renderer are 5.1.64. UAT-056 passes 1/1; Web diagnostics 19/19; Browser offline suite 28/28; five builds, Web/Landing lint and typechecks, and PHDK 2.50.10 coherence 52/52 pass. Candidate UAT tally is 55 PASS, 0 BLOCKED, 1 MANUAL; whole acceptance remains incomplete.
+
+All four owner-confirmed commitments remain active: baseline/version/PR maintenance; widget/diagnostics; client-specific voice/Cloud/Browser/CRM; administration/permissions. Persisted CRUD/migrations, native device/audio, broad accessibility/localization, deployed SEO/AEO, and customer-selected live integration acceptance remain open. No deployment is claimed.
+
+SIGUIENTE PASO: continue the remaining four-front acceptance gates against verified main 5.1.64; do not mark whole Auto complete until they pass.
+
+---
 # Commitment ledger
 
 ## Active Auto update — candidate 5.1.62 (2026-10-15)

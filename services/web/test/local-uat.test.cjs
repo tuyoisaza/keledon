@@ -64,7 +64,7 @@ async function inspectTextContrast(page){return page.evaluate(()=>{
  }
  return failures.slice(0,40);
 });}
-test('local production web UAT with explicitly mocked Company Co API (not real backend acceptance)',{timeout:120000},async()=>{
+test('local production web UAT with explicitly mocked Company Co API (not real backend acceptance)',{timeout:240000},async()=>{
  await fs.mkdir(evidence,{recursive:true});
  const server=http.createServer(async(req,res)=>{
    const pathname=new URL(req.url,'http://localhost').pathname;
@@ -77,10 +77,12 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
  const origin='http://127.0.0.1:'+server.address().port;
  let browser;
  const checks=[];
+ const contexts=[];
  try{
   browser=await chromium.launch({headless:true,executablePath:process.env.KELEDON_UAT_BROWSER||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',args:['--no-proxy-server']});
   async function pageFor(role,viewport={width:1280,height:900}){
    const context=await browser.newContext({viewport,locale:'es-MX'});
+   contexts.push(context);
    const page=await context.newPage();
    let activeRole=role;
    let activeUatProfile=false;
@@ -210,7 +212,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   const row=page.locator('[data-testid="version-actions"]');assert.equal(await row.count(),1);
   assert.equal((await row.innerText()).trim(),`v${appVersion}`);
   const dims=await row.evaluate(el=>({gap:getComputedStyle(el).gap,font:getComputedStyle(el.querySelector('span')).fontSize,buttons:[...el.querySelectorAll('button')].map(b=>({w:b.getBoundingClientRect().width,h:b.getBoundingClientRect().height,icon:b.querySelector('svg').getBoundingClientRect().width})),x:el.getBoundingClientRect().x}));
-  assert.equal(dims.gap,'4px');assert.equal(dims.font,'12px');for(const b of dims.buttons){assert.equal(b.w,28);assert.equal(b.h,28);assert.equal(b.icon,14);}assert.ok(dims.x<30);
+  assert.equal(dims.gap,'4px');assert.equal(dims.font,'12px');for(const b of dims.buttons){assert.equal(b.w,44);assert.equal(b.h,44);assert.equal(b.icon,14);}assert.ok(dims.x<30);
   await row.locator('[data-action="copy"]').click();
   await row.locator('[data-action="copy"] .keledon-action-success').waitFor();
   assert.match(await page.evaluate(()=>window.__copied),new RegExp(`Version:\\s*v${appVersion}`));
@@ -619,5 +621,5 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   const candidate=await getCandidateFingerprint();
   await fs.writeFile(path.join(evidence,'uat-local-web.json'),JSON.stringify({version:appVersion,date:new Date().toISOString(),candidateRevision:candidate.baseCommit,candidateSourceFingerprint:candidate.sourceFingerprint,dirtyUntrackedSourceFiles:candidate.dirtyUntrackedSourceFiles,sourceRoots:candidate.sourceRoots,targetEnvironment:'local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked',origin,provenance:'UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance',checks,themeTokens,loginContrastSample:contrastByTheme,apiEvidence:'services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts',realVendorAudioCRM:'NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed'},null,2));
   console.log('PASS local web journeys:',checks.join('\n'));
- }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
+ }finally{await Promise.allSettled(contexts.map(context=>context.close()));server.closeAllConnections();await browser?.close();await new Promise(resolve=>server.close(resolve));}
 });

@@ -201,6 +201,28 @@ export class CrudService {
     }));
   }
 
+  async getManagedInterface(id: string) {
+    const row = await this.prisma.managedInterface.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        baseUrl: true,
+        category: true,
+        providerKey: true,
+        capabilities: true,
+        icon: true,
+        status: true,
+        credentials: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    if (!row) return null;
+    const { credentials, ...record } = row;
+    return { ...record, hasCredentials: !!credentials };
+  }
+
   async createManagedInterface(data: {
     name: string;
     baseUrl: string;

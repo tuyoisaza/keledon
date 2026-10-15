@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { Building2, Tag, Users as UsersIcon, UserCircle, Mic, Settings, Bug, Activity, Database, LayoutGrid, Bot, Store } from 'lucide-react';
+import { Building2, Tag, Users as UsersIcon, UserCircle, Mic, Settings, Bug, Activity, Database, LayoutGrid, Bot, Store, GitBranch } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const managementTabs = [
@@ -10,6 +10,7 @@ const managementTabs = [
     { id: 'users', label: 'Users', href: '/management/users', icon: UserCircle },
     { id: 'keledons', label: 'KELEDONS', href: '/management/keledons', icon: Bot },
     { id: 'flows', label: 'Flows', href: '/management/flows', icon: LayoutGrid },
+    { id: 'flow-definitions', label: 'Flow Definitions', href: '/management/flow-definitions', icon: GitBranch },
     { id: 'voice-profiles', label: 'Voice Profiles', href: '/management/voice-profiles', icon: Mic },
     { id: 'providers', label: 'Providers', href: '/management/providers', icon: Settings },
     { id: 'vendors', label: 'Vendors', href: '/management/vendors', icon: Store },

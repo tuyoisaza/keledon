@@ -257,6 +257,11 @@ export class CrudController {
     return this.crud.getManagedInterfaces();
   }
 
+  @Get('interfaces/:id')
+  getManagedInterface(@Param('id') id: string) {
+    return this.crud.getManagedInterface(id);
+  }
+
   @Post('interfaces')
   createManagedInterface(
     @Body() data: Parameters<CrudService['createManagedInterface']>[0],

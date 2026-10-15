@@ -1,12 +1,20 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.65 — tenant-owned flow configuration
+
+UAT-057 passes on candidate 5.1.65 for the API and Cloud source contracts and local production-built Web UI. The synthetic browser flow covers definition creation, version draft/approval, tenant availability, intent routing, and absence of a company picker for a tenant admin. API regression suite passes 38/38; Cloud regression 17/17, build and targeted lint pass; Web typecheck/build pass; full `npm run test:uat` exits 0 with 6/6 browser cases plus the AI-admin UAT. Browser requests to external hosts are blocked and all APIs are fixtures. This does not establish durable database behavior or multi-instance concurrency; those remain open acceptance gates. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-5.1.65/`.
+
+Current candidate tally: **56 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Whole Auto remains partial.
+
+---
+
 ## Candidate 5.1.64 — public diagnostics hit targets
 
 UAT-056 passes against production-built Landing on exact candidate 5.1.64, based on verified main 5.1.63. At 1280×900 each action measures 44×44px, each centered visual tile measures 28×28px, and the hitboxes have 4px separation. Accessible names remain present, hero clearance passes, and mobile theme/language controls remain available at 390×844 with both hit targets still 44×44px. Browser UAT exits cleanly (1/1); external requests are blocked. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-056/`.
 
 Web diagnostics/debug-mode/version-actions tests pass 19/19; Browser offline tests pass 28/28 including the native widget CSS contract. All five production builds, Web/Landing lint and typechecks pass. The installed PHDK static coherence check passes 52/52. Whole Auto remains partial; this is a bounded accessibility correction.
 
-Current candidate tally: **56 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The manual device/audio gate and broader persistence, route accessibility, deployed discovery and client-specific integrations remain open.
+Current candidate tally: **55 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The manual device/audio gate and broader persistence, route accessibility, deployed discovery and client-specific integrations remain open.
 
 ## Candidate 5.1.63 — public diagnostics row placement
 
