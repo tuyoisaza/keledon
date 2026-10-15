@@ -1,3 +1,7 @@
+## Candidate 5.1.47 remediation
+
+Changed seven API files to handle rejected promises explicitly: room membership and provider/flow work are awaited through handler error paths; scheduled cleanup, disk initialization and TTS stop failures are logged. API build and regression 36/36 pass; no floating promises remain in API lint.
+
 # Remediation handoff — `20261014-0007-phdk-auto-completion`
 
 ## Candidate 5.1.46 — legacy global UI retirement

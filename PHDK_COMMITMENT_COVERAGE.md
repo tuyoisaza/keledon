@@ -1,13 +1,26 @@
-## Current Auto candidate — 2026-10-15, 5.1.46 (source candidate; delivery pending)
+## Current Auto candidate — 2026-10-15, 5.1.47 (source validation in progress)
 
 | Commitment | Current candidate evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | Base `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf`; candidate aligns all five app roots and renderer at 5.1.46. | Candidate PR/merge/readback pending; API/Web lint warnings remain. |
+| CMT-001 | Based on merged 5.1.46 main at `10c57ff44a9d3d09e55023c466d72adefd6d3e66`; five app roots and renderer at 5.1.47. API lint warning debt reduced 135→117. | Commit/PR/readback pending; Web lint and remaining source alignment continue. |
+| CMT-002 | Browser diagnostics UI/version preserved; API async task failures are now logged. | Native device/audio and broad accessibility/localization remain. |
+| CMT-003 | Tenant Vendor/private-origin policy unchanged; no universal CRM/call provider added. | Live acceptance remains customer-selected. |
+| CMT-004 | API regression 36/36 and build pass; 17 floating promises removed. | Safe DB identities, disposable PostgreSQL/migrations, full persisted CRUD/resource matrix remain. |
+
+UAT remains **37 PASS, 2 BLOCKED, 1 MANUAL**. **Whole PHDK Auto remains PARTIALLY DELIVERED.**
+
+---
+
+## Current Auto delivery — 2026-10-15, 5.1.46 source merged
+
+| Commitment | Current candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | Base `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf`; candidate aligns all five app roots and renderer at 5.1.46. | Source delivery verified; API/Web lint warnings remain. |
 | CMT-002 | Web UAT rerun 4/4; diagnostics UI unchanged; global interface catalog UI removed under owner direction. | Native device/audio and broad accessibility/localization remain. |
 | CMT-003 | Tenant Vendor/private-origin policy retained; global catalog not presented as customer CRM configuration. | Per-client call/CRM live acceptance remains customer-selected. |
 | CMT-004 | API/Cloud regressions 36/36, 16/16; ManagedInterface/TeamInterface decision and guard boundary tests; coherence 52/52. | Safe DB identities, disposable PostgreSQL/migrations, full persisted CRUD/resource matrix remain. |
 
-UAT remains **37 PASS, 2 BLOCKED, 1 MANUAL**. **Source candidate validated locally; PHDK Auto remains PARTIALLY DELIVERED.**
+UAT remains **37 PASS, 2 BLOCKED, 1 MANUAL**. **Source slice merged and remotely verified; PHDK Auto remains PARTIALLY DELIVERED.**
 
 ---
 

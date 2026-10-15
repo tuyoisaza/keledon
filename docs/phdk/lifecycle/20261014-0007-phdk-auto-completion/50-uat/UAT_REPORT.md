@@ -1,3 +1,9 @@
+## Latest candidate 5.1.47 — API async failure handling (2026-10-15)
+
+Built-SPA synthetic UAT passes 4/4 suites against package version 5.1.47. Evidence: `docs/phdk/evidence/uat-local-web.json`; it records source fingerprint `sha256:4e38486c48fde20990659479e80f6f76b5365f83f1052ed4d82cdb2728d3f5e3` on base revision `10c57ff44a9d3d09e55023c466d72adefd6d3e66`, with synthetic APIs and external traffic blocked. The current product slice is API-only; UAT confirms version alignment and existing mocked Web journeys, not API room/provider behavior or real authorization. API/Cloud regressions pass 36/36 and 16/16, Browser tests 40/40. Whole product UAT remains 37 PASS, 2 BLOCKED, 1 MANUAL. No DB, customer endpoint, device or deployment was used.
+
+---
+
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
 ## Latest candidate 5.1.46 — remove dormant global interface UI (2026-10-15)

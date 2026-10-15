@@ -112,13 +112,14 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     ) {
       return { error: 'Session is outside paired device scope' };
     }
-    if (client.data.sessionId) client.leave(`session:${client.data.sessionId}`);
+    if (client.data.sessionId)
+      await client.leave(`session:${client.data.sessionId}`);
     client.data.sessionId = data.session_id;
     this.logger.log(
       `[SESSION START] Device ${client.data.deviceId} started session: ${data.session_id}, team: ${data.team_id}`,
     );
 
-    client.join(`session:${data.session_id}`);
+    await client.join(`session:${data.session_id}`);
 
     // --- DEBUG: lookup vendors for this team and auto-send navigation goal ---
     try {
@@ -214,7 +215,7 @@ export class DeviceGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleSessionEnd(@ConnectedSocket() client: Socket) {
     const sessionId = client.data.sessionId;
     if (sessionId) {
-      client.leave(`session:${sessionId}`);
+      await client.leave(`session:${sessionId}`);
       this.logger.log(
         `Device ${client.data.deviceId} ended session: ${sessionId}`,
       );

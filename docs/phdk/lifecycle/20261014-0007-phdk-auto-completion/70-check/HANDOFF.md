@@ -1,3 +1,7 @@
+## Candidate 5.1.47 Check — API asynchronous failure paths
+
+API full-source lint had 17 floating-promise warnings in Socket.IO handlers, security schedules, disk loading and TTS shutdown. The candidate now awaits gateway operations and records failures for intentional background work. All 17 are removed; API total drops 135→117 warnings, with 0 errors. API build and regression 36/36 pass. Web lint remains 119 warnings. Full CRUD/persistence and external acceptance remain open.
+
 # Check handoff — 20261014-0007-phdk-auto-completion
 
 ## Candidate 5.1.46 source recheck — 2026-10-15

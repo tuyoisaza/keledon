@@ -303,7 +303,9 @@ export class DatabasePersistenceService
       console.log('DatabasePersistence: Using in-memory storage');
     } else {
       console.log(`DatabasePersistence: Using ${this.config.type} storage`);
-      this.loadFromDiskStorage();
+      void this.loadFromDiskStorage().catch(() => {
+        console.error('DatabasePersistence: Failed to load disk storage');
+      });
     }
   }
 

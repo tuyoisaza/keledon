@@ -1,8 +1,18 @@
+## Current Check — candidate 5.1.47, API async failure handling (2026-10-15)
+
+Repository `tuyoisaza/keledon`; branch `fix/phdk-lint-cleanup-5-1-47`, based on verified `origin/main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66` / 5.1.46. PHDK 2.50.10 coherence remains 52/52; all five application package/lock roots and Browser renderer are 5.1.47.
+
+API full-source lint baseline had 17 `@typescript-eslint/no-floating-promises` warnings. Gateway handlers now await room join/leave and provider/flow operations so existing error paths catch rejections. Security maintenance tasks, disk-storage load during initialization, and TTS shutdown handle/log asynchronous errors explicitly. The same seven-file scope now has zero floating-promise warnings; full API lint is 117 warnings/0 errors.
+
+API build and all 36 regression suites pass. Prettier check passes for touched files after formatting. No role/tenant contract or provider configuration changed. Remaining lint debt (API 117, Web 119), full CRUD/persistence, native device/audio, broad accessibility/localization and deployed SEO/AEO still keep whole Auto partial. Delivery is pending.
+
+---
+
 ## Current Check — candidate 5.1.46, remove the dormant global catalog UI (2026-10-15)
 
 Repository `tuyoisaza/keledon`; branch `fix/phdk-crud-matrix-5-1-46`, based on verified `origin/main` `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf` / 5.1.45. Installed PHDK 2.50.10 matches canonical main `e3958702d30ae6f9cd18e35b82c7a75a0f11e116`; coherence is 52/52. All five package/lock roots and Browser renderer are 5.1.46.
 
-**Scoped finding: RESOLVED ON CANDIDATE, DELIVERY PENDING.** The unused `InterfacesManager.tsx` was unmounted and called global legacy routes, contrary to the owner-confirmed decision to keep that catalog hidden and configure customer integrations through tenant-scoped Vendor settings. The dead component is removed. Existing API global catalog endpoints remain DB-derived superadmin-only; nested TeamInterface assignment remains company-checked and credential-redacted. Tests assert the exception and role boundaries.
+**Scoped finding: RESOLVED, PR #132 MERGED AND REMOTE VERIFIED.** The unused `InterfacesManager.tsx` was unmounted and called global legacy routes, contrary to the owner-confirmed decision to keep that catalog hidden and configure customer integrations through tenant-scoped Vendor settings. The dead component is removed. Existing API global catalog endpoints remain DB-derived superadmin-only; nested TeamInterface assignment remains company-checked and credential-redacted. Tests assert the exception and role boundaries.
 
 Validation on this candidate: API build/regression 36/36, Cloud build/regression 16/16, Browser build/lint (0 warnings)/suite 40/40, Web build and synthetic UAT 4/4 suites, Landing build; Web/Landing SEO source tests 1/1 each; PHDK coherence 52/52. API/Cloud/Browser production dependency audits report zero vulnerabilities. Web/Landing builds retain the known empty Supabase chunk and >500 kB chunk warnings.
 
@@ -16,7 +26,7 @@ Validation on this candidate: API build/regression 36/36, Cloud build/regression
 | Native device/audio; broad accessibility/localization; deployed SEO/AEO | MANUAL / UNVERIFIED | Needs supported native device, broad assistive-tech testing, and deployed read-only measurements. |
 | Customer call/CRM | PER TENANT | Vendor/provider is customer-selected; no universal live provider test was run. |
 
-UAT evidence is `docs/phdk/evidence/uat-local-web.json` (5.1.46; mocked APIs, blocked external traffic). Browser dev dependency audit still reports seven moderate Electron Builder transitive findings. No DB, customer data, private CRM, device or deployment was used. Source delivery/remote readback are pending for this candidate; whole PHDK Auto remains **PARTIAL**.
+UAT evidence is `docs/phdk/evidence/uat-local-web.json` (5.1.46; mocked APIs, blocked external traffic). Browser dev dependency audit still reports seven moderate Electron Builder transitive findings. No DB, customer data, private CRM, device or deployment was used. PR #132 merged at `10c57ff44a9d3d09e55023c466d72adefd6d3e66`; remote `main` and `git ls-remote` agree and its tree matches the tested candidate. Whole PHDK Auto remains **PARTIAL**.
 
 ---
 

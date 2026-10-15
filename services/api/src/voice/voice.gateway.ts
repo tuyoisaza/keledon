@@ -439,7 +439,7 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect {
         !(await ownsRuntimeSession(this.prisma, identity, data.session_id)))
     )
       return { error: 'Invalid call session' };
-    client.leave(`voice:${session.sessionId}`);
+    await client.leave(`voice:${session.sessionId}`);
     const previousSessionId = session.sessionId;
     if (data.session_id && data.session_id !== previousSessionId) {
       await this.registry?.endSession(previousSessionId);
@@ -496,7 +496,7 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
     }
 
-    client.join(`voice:${session.sessionId}`);
+    await client.join(`voice:${session.sessionId}`);
 
     client.emit('voice:call_started', {
       device_id: session.deviceId,
@@ -552,7 +552,7 @@ export class VoiceGateway implements OnGatewayConnection, OnGatewayDisconnect {
     session.callGeneration = (session.callGeneration || 0) + 1;
     const transcript = [...session.transcript];
 
-    client.leave(`voice:${session.sessionId}`);
+    await client.leave(`voice:${session.sessionId}`);
     await this.webrtcService?.destroyPeer(session.sessionId);
 
     client.emit('voice:call_ended', {

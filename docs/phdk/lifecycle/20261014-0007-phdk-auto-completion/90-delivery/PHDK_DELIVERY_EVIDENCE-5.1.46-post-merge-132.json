@@ -1,0 +1,81 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto four confirmed KELEDON fronts; 5.1.46 dormant global catalog UI removal",
+  "target_branch": "main",
+  "expected_version": "5.1.46",
+  "version_file": "browser/package.json",
+  "version_property": "version",
+  "tested_candidate_sha": "1867eb8f61c7d4d3b1d6a8ab1b4b396c5d84365a",
+  "tested_candidate_tree": "27cdad0ceebd95768cb3fc5a16b41011ea64b4eb",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/132",
+  "pr_head_sha": "1867eb8f61c7d4d3b1d6a8ab1b4b396c5d84365a",
+  "merged_commit_sha": "10c57ff44a9d3d09e55023c466d72adefd6d3e66",
+  "remote_main_sha": "10c57ff44a9d3d09e55023c466d72adefd6d3e66",
+  "remote_main_tree": "27cdad0ceebd95768cb3fc5a16b41011ea64b4eb",
+  "git_ls_remote_matches": true,
+  "versions": {
+    "services/api": "5.1.46",
+    "cloud": "5.1.46",
+    "browser": "5.1.46",
+    "services/web": "5.1.46",
+    "landing": "5.1.46",
+    "browser_renderer": "5.1.46"
+  },
+  "github": {
+    "state": "MERGED",
+    "merge_method": "squash",
+    "merge_state": "CLEAN",
+    "hosted_checks": [],
+    "review_decision": "none reported",
+    "main_protection": "no configured protection reported in repository inspection"
+  },
+  "checks": {
+    "lint": {
+      "status": "PASS",
+      "evidence": "Browser ESLint and Cloud full-source ESLint report zero warnings. API full-source lint retains 135 warnings/0 errors and Web retains 122 warnings/0 errors; tracked follow-up debt."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "API/Cloud builds and Web/Landing typechecks completed successfully."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "Browser, API, Cloud, Web and Landing production builds pass at 5.1.46."
+    },
+    "focused_tests": {
+      "status": "PASS",
+      "evidence": "API regression 36/36 and Cloud 16/16; Browser offline suite 40/40; synthetic built-SPA Web UAT 4/4. New regressions verify owner-approved global catalog policy, tenant team assignment and CRUD inventory exception."
+    },
+    "uat": {
+      "status": "PASS",
+      "evidence": "Built-SPA synthetic Web UAT 4/4 suites with mocked APIs and external traffic blocked; evidence is docs/phdk/evidence/uat-local-web.json. Not deployed/server/database acceptance."
+    },
+    "seo": {
+      "status": "PASS",
+      "evidence": "Web and Landing SEO source tests 1/1 each; no live crawler, Search Console or deployed measurements."
+    },
+    "phdk_coherence": {
+      "status": "PASS",
+      "evidence": "PHDK 2.50.10 coherence check: 52/52 static mappings."
+    },
+    "production_dependency_audit": {
+      "status": "PASS",
+      "evidence": "npm audit --omit=dev reports zero vulnerabilities in API, Cloud and Browser. Browser dev tree has seven moderate Electron Builder transitive advisories."
+    },
+    "source_delivery": {
+      "status": "PASS",
+      "evidence": "PR #132 squash-merged; remote main and git ls-remote agree at 10c57ff44a9d3d09e55023c466d72adefd6d3e66; remote tree exactly matches tested candidate tree 27cdad0ceebd95768cb3fc5a16b41011ea64b4eb."
+    },
+    "whole_auto_acceptance": {
+      "status": "BLOCKED",
+      "evidence": "Overall UAT remains 37 PASS, 2 BLOCKED, 1 MANUAL. Requires safe DB-backed identities and disposable PostgreSQL for persistence/migrations and exhaustive persisted CRUD authorization; native Windows device/audio; broad assistive-technology/localization acceptance; deployed SEO/AEO evidence. Customer-selected live call/CRM acceptance is per tenant. No DB, customer data, private CRM, device or deployment was used."
+    }
+  },
+  "scope_limitations": [
+    "No production database, migration, customer identity or customer data was accessed.",
+    "No packaged Electron runtime, native audio/device, live private CRM origin or provider was exercised.",
+    "No deployment, crawler, Search Console or field performance measurement was performed.",
+    "API and Web full-source ESLint warning debt remains visible in PHDK_CHECK_REPORT.md."
+  ],
+  "overall_status": "SOURCE SLICE MERGED AND REMOTE VERIFIED; PHDK AUTO PARTIALLY DELIVERED"
+}

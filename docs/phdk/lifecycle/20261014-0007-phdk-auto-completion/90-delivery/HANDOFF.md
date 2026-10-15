@@ -1,3 +1,17 @@
+## Candidate 5.1.47 — API async failure handling; delivery pending
+
+Based on `origin/main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66` / 5.1.46. All app package/lock roots and Browser renderer are 5.1.47. Seven API files remove 17 floating-promise warnings by awaiting socket/provider/flow operations and logging background/shutdown failures. API build and regression 36/36 pass. Candidate is not yet committed or delivered. Whole Auto remains partial.
+
+---
+
+## 5.1.46 delivery verified — PR #132
+
+Candidate `1867eb8f61c7d4d3b1d6a8ab1b4b396c5d84365a` (tree `27cdad0ceebd95768cb3fc5a16b41011ea64b4eb`) was squash-merged by [PR #132](https://github.com/tuyoisaza/keledon/pull/132) at `10c57ff44a9d3d09e55023c466d72adefd6d3e66`. Fresh `origin/main` and `git ls-remote` agree; remote tree equals the candidate. Five app roots/locks and Browser renderer are 5.1.46. Machine evidence is `PHDK_DELIVERY_EVIDENCE-5.1.46-post-merge-132.json`; the deterministic gate blocks only on whole Auto acceptance.
+
+The source slice removes the unmounted global catalog UI under the owner-approved hidden-catalog decision; tenant-scoped Vendor is the customer integration path. API/Cloud tests, Browser 40/40, Web UAT 4/4, builds, SEO source tests and coherence 52/52 pass. Whole Auto remains partial for persisted DB/identity/CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO. No production DB, customer data, private endpoint, device or deployment was used.
+
+---
+
 ## Current source delivery — 5.1.45 verified
 
 PR [#131](https://github.com/tuyoisaza/keledon/pull/131) squash-merged source candidate `10ebd82d39c6264f965f0fbdc5628bf66c585b80` at `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf`. A fresh fetch and `git ls-remote` agree; remote main tree `5ac72b7869f55b37b33f8a579c9f6fa7b2860964` matches the tested candidate. All five app roots/locks and Browser renderer report 5.1.45. GitHub returned CLEAN with no hosted checks or review decision; no deployment is claimed.

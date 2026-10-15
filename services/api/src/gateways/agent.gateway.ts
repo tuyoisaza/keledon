@@ -108,7 +108,7 @@ export class AgentGateway
     });
   }
 
-  handleDisconnect(client: Socket): void {
+  async handleDisconnect(client: Socket): Promise<void> {
     this.logger.log(`Agent disconnected: ${client.id}`);
     this.connectedAgents.delete(client.id);
 
@@ -116,7 +116,7 @@ export class AgentGateway
     const sessionId = this.agentSessions.get(client.id);
     if (sessionId) {
       this.agentSessions.delete(client.id);
-      this.endSession(sessionId);
+      await this.endSession(sessionId);
     }
 
     // Broadcast agent disconnection to dashboard if needed
@@ -156,7 +156,7 @@ export class AgentGateway
       client.emit('error', { message: 'Invalid session scope' });
       return;
     }
-    client.join(`session:${event.session_id}`);
+    await client.join(`session:${event.session_id}`);
     const extractedContext = extractAgentTraceContext(event?.payload?.metadata);
 
     await context.with(extractedContext, async () => {
@@ -266,7 +266,7 @@ export class AgentGateway
 
       // Track this session for the client
       this.agentSessions.set(client.id, session.id);
-      client.join(`session:${session.id}`);
+      await client.join(`session:${session.id}`);
 
       console.log(
         `[AgentGateway] Session created: ${session.id} for agent ${data.agent_id}`,
