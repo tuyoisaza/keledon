@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 
 export default function TestBrowserPage() {
-    const [status, setStatus] = useState('Initializing...');
+    const [status, setStatus] = useState('Opening keledon://test deep link...');
 
     useEffect(() => {
         const testInstructions = 'TEST_BROWSER: This is a test to verify the deep link protocol works. Please log all received parameters.';
-        
-        setStatus('Opening keledon://test deep link...');
         
         const deepLink = `keledon://test?instructions=${encodeURIComponent(testInstructions)}&timestamp=${Date.now()}`;
         

@@ -1,10 +1,20 @@
-## Current Check — candidate 5.1.47, API async failure handling (2026-10-15)
+## Current Check — candidate 5.1.48, Brain credential status and Web hook alignment (2026-10-14)
+
+Repository `tuyoisaza/keledon`; branch `fix/phdk-web-hooks-5-1-48`, based on verified `origin/main` `00b1b523e020df9fb5c388d61cbbb1cda8ba9080` / 5.1.47. PHDK 2.50.10 coherence is 52/52; all five application package/lock roots and Browser renderer are 5.1.48.
+
+Brain now uses only the selected LLM/TTS/STT provider's safe `*Set`/`hasApiKey` status flags. Secret placeholders remain blank. Request-key scoping and effect cleanup discard stale responses after team changes or refresh. A synthetic UAT verifies the visible key status with blank secret fields. Web hooks use complete callback dependencies; socket loading derives from socket request resolution; Admin AI consumption starts refresh state from its user action; the browser-launch page initializes its own opening status; and active-loop duration uses effect-updated time instead of calling `Date.now()` during render.
+
+Web full lint is 95 warnings/0 errors, down from 119, with zero `react-hooks/*` and purity warnings (all 12 exhaustive-deps warnings closed). Typecheck/build pass; synthetic Web UAT 4/4; diagnostics 19/19; Web/Landing SEO 1/1 each; API/Cloud regressions 36/16; Browser tests 27/27; all five builds and PHDK coherence pass. Whole Auto remains partial for persisted database/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live call/CRM acceptance.
+
+---
+
+## Current Check — 5.1.47 API async failure handling, merged (2026-10-15)
 
 Repository `tuyoisaza/keledon`; branch `fix/phdk-lint-cleanup-5-1-47`, based on verified `origin/main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66` / 5.1.46. PHDK 2.50.10 coherence remains 52/52; all five application package/lock roots and Browser renderer are 5.1.47.
 
 API full-source lint baseline had 17 `@typescript-eslint/no-floating-promises` warnings. Gateway handlers now await room join/leave and provider/flow operations so existing error paths catch rejections. Security maintenance tasks, disk-storage load during initialization, and TTS shutdown handle/log asynchronous errors explicitly. The same seven-file scope now has zero floating-promise warnings; full API lint is 117 warnings/0 errors.
 
-API build and all 36 regression suites pass. Prettier check passes for touched files after formatting. No role/tenant contract or provider configuration changed. Remaining lint debt (API 117, Web 119), full CRUD/persistence, native device/audio, broad accessibility/localization and deployed SEO/AEO still keep whole Auto partial. Delivery is pending.
+API build and all 36 regression suites pass. Prettier check passes for touched files after formatting. No role/tenant contract or provider configuration changed. Remaining lint debt (API 117, Web 119), full CRUD/persistence, native device/audio, broad accessibility/localization and deployed SEO/AEO still keep whole Auto partial. PR #133 merged candidate `02e93742deff22cc09597e0d68d02befa616f958` at remote `main` `00b1b523e020df9fb5c388d61cbbb1cda8ba9080`; remote tree matches `4825419265d7046079bfd7d40f9b2ccf54e6b52a`. Whole Auto remains partial.
 
 ---
 

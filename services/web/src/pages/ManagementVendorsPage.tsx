@@ -1,7 +1,7 @@
 import ManagementModal from '@/components/common/ManagementModal';
 import RecordDetails from '@/components/common/RecordDetails';
 import { useTranslation } from '@/context/I18nContext';
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { Store, Plus, Loader2, Pencil, Trash2, Search, X, Key, Lock, ScrollText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -38,17 +38,7 @@ export default function ManagementVendorsPage() {
         startGoal: '',
     });
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        if (selectedTeamId) {
-            fetchVendors(selectedTeamId);
-        }
-    }, [selectedTeamId]);
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             const [teamsData, brandsData] = await Promise.all([
@@ -66,9 +56,9 @@ export default function ManagementVendorsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [t]);
 
-    const fetchVendors = async (teamId: string) => {
+    const fetchVendors = useCallback(async (teamId: string) => {
         try {
             const vendorsData = await getVendors(teamId);
             setVendors(vendorsData);
@@ -76,7 +66,17 @@ export default function ManagementVendorsPage() {
             console.error('Failed to fetch vendors:', error);
             setVendors([]);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        void fetchData();
+    }, [fetchData]);
+
+    useEffect(() => {
+        if (selectedTeamId) {
+            void fetchVendors(selectedTeamId);
+        }
+    }, [fetchVendors, selectedTeamId]);
 
     const resetForm = () => {
         setFormData({ name: '', type: 'crm', baseUrl: '', allowedOrigins: '', username: '', password: '', apiKey: '', startGoal: '' });

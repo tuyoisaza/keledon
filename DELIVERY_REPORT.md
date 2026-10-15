@@ -1,16 +1,32 @@
-## Current candidate — 5.1.47 source validation in progress; delivery pending
+## Current candidate — 5.1.48 Brain provider status and Web hook alignment
 
-Repository `tuyoisaza/keledon`; branch `fix/phdk-lint-cleanup-5-1-47`; base verified `origin/main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66`. The candidate awaits API room/provider/flow promises and logs asynchronous failures in scheduled and shutdown paths.
+Repository `tuyoisaza/keledon`; branch `fix/phdk-web-hooks-5-1-48`, based on verified remote `main` `00b1b523e020df9fb5c388d61cbbb1cda8ba9080` / 5.1.47. Brain now reads only provider-specific key-presence booleans and masks stale team responses. Web hook callbacks have complete dependencies; socket loading is derived from resolved socket requests and impure render-time clock reads are removed. Five app package/lock roots and Browser renderer are 5.1.48.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | All five application package/lock roots and Browser renderer at 5.1.48; changelog updated. |
+| COMMIT_PREFIX | PENDING | Candidate checks complete; commit/PR delivery follows. |
+| PUSH_AND_PR | PENDING | Candidate not yet pushed. |
+| REMOTE_MAIN | PENDING | Candidate not yet delivered. |
+| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | All builds and typecheck pass; API/Cloud regressions 36/16; Browser 27/27; synthetic Web UAT 4/4; diagnostics 19/19; SEO 1/1; PHDK coherence 52/52. Web full lint now has 95 warnings/0 errors and zero React Hooks/purity warnings (baseline 119). |
+
+Whole Auto remains partially delivered. No database, customer data, private CRM endpoint, native device/audio, or deployment was used.
+
+---
+
+## Current delivery — 5.1.47 source merged and remotely verified
+
+Repository `tuyoisaza/keledon`; [PR #133](https://github.com/tuyoisaza/keledon/pull/133) squash-merged candidate `02e93742deff22cc09597e0d68d02befa616f958` at remote `main` `00b1b523e020df9fb5c388d61cbbb1cda8ba9080`. Remote tree `4825419265d7046079bfd7d40f9b2ccf54e6b52a` matches the candidate; `origin/main` and `git ls-remote` agree. Machine evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.47-post-merge-133.json`. The change awaits API room/provider/flow promises and logs generic background/shutdown failures.
 
 | Gate | Status | Evidence |
 |---|---|---|
 | VERSION_BUMP | PASS | All five application package/lock roots and Browser renderer at 5.1.47; changelog updated. |
-| COMMIT_PREFIX | PENDING | Candidate source checks in progress. |
-| PUSH_AND_PR | PENDING | Candidate not yet pushed. |
-| REMOTE_MAIN | PENDING | Candidate not yet merged. |
-| SCOPE_AND_CHECKS | SOURCE PARTIAL / AUTO PARTIAL | API build and regression 36/36 pass; floating-promise warnings reduced 17 to 0 and total API lint 135 to 118. Final full check pending. |
+| COMMIT_PREFIX | PASS | `v5.1.47: handle async API failures explicitly`. |
+| PUSH_AND_PR | PASS | Branch pushed; PR #133 merged with CLEAN merge state; no hosted checks/review reported. |
+| REMOTE_MAIN | PASS | PR #133 merge SHA and remote `main`/`git ls-remote` agree; remote tree matches candidate. |
+| SCOPE_AND_CHECKS | SOURCE PARTIAL / AUTO PARTIAL | API build and regression 36/36 pass; floating-promise warnings reduced 17 to 0; API full lint 117 warnings/0 errors. All builds, focused tests, UAT, SEO and coherence checks pass. |
 
-Whole Auto remains partially delivered. No database, customer data, private CRM endpoint or deployment was used.
+Whole Auto remains partially delivered; the deterministic gate blocks only on whole Auto acceptance. No database, customer data, private CRM endpoint or deployment was used.
 
 ---
 

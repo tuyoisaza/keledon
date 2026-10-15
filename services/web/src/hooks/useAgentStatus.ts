@@ -39,16 +39,13 @@ export function useAgentStatus(socket?: Socket | null) {
     stt: 'ready',
     ai: 'ready'
   });
-  const [loading, setLoading] = useState(true);
+  const [resolvedSocket, setResolvedSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
     if (!actualSocket) {
       console.warn('useAgentStatus: No socket connection available');
-      setLoading(false);
       return;
     }
-
-    setLoading(true);
 
     // Request initial data
     actualSocket.emit('dashboard:get-agent-status');
@@ -57,7 +54,7 @@ export function useAgentStatus(socket?: Socket | null) {
     // Listen for agent status updates
     const handleAgentStatusUpdate = (data: AgentStatus[]) => {
       setAgents(data);
-      setLoading(false);
+      setResolvedSocket(actualSocket);
     };
 
     const handleSystemHealthUpdate = (data: SystemHealth) => {
@@ -122,7 +119,7 @@ export function useAgentStatus(socket?: Socket | null) {
     agents,
     selectedAgent,
     systemHealth,
-    loading,
+    loading: Boolean(actualSocket) && resolvedSocket !== actualSocket,
     selectAgent,
     clearSelection,
     // Control functions for backend communication

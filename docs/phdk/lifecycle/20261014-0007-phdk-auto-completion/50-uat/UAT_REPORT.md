@@ -6,6 +6,14 @@ Built-SPA synthetic UAT passes 4/4 suites against package version 5.1.47. Eviden
 
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Latest candidate 5.1.48 — safe provider indicators and Web hook cleanup (2026-10-14)
+
+Built-SPA synthetic Web UAT passes 4/4 suites on exact source candidate `f93758c4b2e52a452ff35b8b43f99adef4cfcd1f`; JSON and screenshots are in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-5.1.48/`. The Brain fixture proves selected-provider-only status: OpenAI and TTS have safe key flags, while a stored but unused Deepgram flag does not mark selected Vosk as configured. Every secret placeholder stays blank. The evidence records the exact source revision and clean source fingerprint; APIs are mocked and external traffic is blocked.
+
+This verifies UI rendering only, not real database/API authorization or deployed acceptance. The Browser runtime/device/audio journey remains separately constrained: its 27 offline tests pass, but no native device or audio was exercised. Overall UAT remains **37 PASS, 2 BLOCKED, 1 MANUAL** for persisted DB/identity/CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO. Customer call/CRM acceptance is tenant-specific. No database, customer data, private endpoint, device or deployment was used.
+
+---
+
 ## Latest candidate 5.1.46 — remove dormant global interface UI (2026-10-15)
 
 Built-SPA synthetic UAT passes 4/4 suites against package version 5.1.46; exact JSON evidence is `docs/phdk/evidence/uat-local-web.json`. The candidate removes only an unmounted legacy component, so active synthetic journeys and the protected diagnostics behavior remain intact. APIs are mocked, external traffic is blocked, and no real role authentication/DB authorization is claimed. API full regression is 36/36 and Cloud is 16/16; Browser offline suite 40/40.

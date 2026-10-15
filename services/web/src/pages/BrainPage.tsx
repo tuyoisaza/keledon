@@ -26,7 +26,7 @@ import { AUTOSPEAK_KEY } from "./brain-storage";
 export default function BrainPage() {
   const { user } = useAuth();
   const { audioInputDevices, audioOutputDevices, selectedMicId, setSelectedMicId, selectedSpeakerId, setSelectedSpeakerId, showDeviceSettings, setShowDeviceSettings } = useBrainAudioDevices();
-  const { companies, teams, selectedCompanyId, selectedBrandId, selectedTeamId, setSelectedTeamId, selectedCompany, selectedBrand, selectedTeam, brandsForCompany, teamsForBrand, configReady, loading, handleCompanyChange, handleBrandChange } = useBrainContextData(user);
+  const { companies, selectedCompanyId, selectedBrandId, selectedTeamId, setSelectedTeamId, selectedCompany, selectedBrand, selectedTeam, brandsForCompany, teamsForBrand, configReady, loading, handleCompanyChange, handleBrandChange } = useBrainContextData(user);
   const [messages, setMessages] = useState<ChatLine[]>([
     {
       id: "brain-welcome",
@@ -91,7 +91,7 @@ export default function BrainPage() {
   const { resolveBrainCloudConfig, fetchPipelineStatus } = useBrainCloudStatus(addLog, setPipelineStatus);
 
   const { llmProvider, ttsProvider, sttProvider, teamConfigLoading, setConfigRefreshKey, llmApiKeySet, ttsApiKeySet, sttKeySet, ttsVoiceId } = useBrainProviderConfig({
-    selectedTeamId, teams, addLog,
+    selectedTeamId, addLog,
   });
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -181,7 +181,7 @@ export default function BrainPage() {
       if (window.speechSynthesis) window.speechSynthesis.cancel();
       disconnectVoiceSocketRef.current();
     };
-  }, []);
+  }, [addLog]);
 
   // ── TTS ─────────────────────────────────────────────────────────────
 

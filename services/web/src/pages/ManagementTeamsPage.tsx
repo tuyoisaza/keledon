@@ -1,7 +1,7 @@
 import ManagementModal from '@/components/common/ManagementModal';
 import RecordDetails from '@/components/common/RecordDetails';
 import { useTranslation } from '@/context/I18nContext';
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { Users, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -39,11 +39,7 @@ export default function ManagementTeamsPage() {
         country: ''
     });
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             const [teamsData, companiesData, brandsData] = await Promise.all([
@@ -60,7 +56,11 @@ export default function ManagementTeamsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [t]);
+
+    useEffect(() => {
+        void fetchData();
+    }, [fetchData]);
 
     const resetForm = () => {
         setFormData({ name: '', companyId: '', brandId: '', country: '' });

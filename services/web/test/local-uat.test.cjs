@@ -558,6 +558,14 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.ok(!Object.hasOwn(writes.at(-1),'openaiApiKey'));
   await provider.context.close();
   checks.push('UAT-004 provider settings Spanish localization and write-only key: translated screen renders; no response prefill; replacement clears after success; untouched blank omitted PASS');
+  const brain=await pageFor('admin');await brain.page.goto(origin+'/brain');
+  await brain.page.getByRole('heading',{name:'Brain',exact:true}).waitFor();
+  await brain.page.locator('[title="key configured"]').first().waitFor();
+  assert.equal(await brain.page.locator('[title="key configured"]').count(),2,'safe provider-key flags show only the selected LLM and TTS credentials configured');
+  assert.equal(await brain.page.locator('[title="key not configured"]').count(),1,'an unused Deepgram key does not mark the selected Vosk provider as credentialed');
+  assert.equal(config.openaiApiKey,'');assert.equal(config.ttsApiKey,'');assert.equal(config.deepgramConfig.apiKey,'');
+  checks.push('UAT-005 Brain provider indicators use selected-provider safe booleans only; an unused Deepgram key does not mark Vosk configured, and write-only secret placeholders remain blank PASS (synthetic UI/API fixture)');
+  await brain.context.close();
   const guest=await pageFor('guest');await guest.page.goto(origin+'/management/companies');await guest.page.waitForURL(origin+'/');const guestVersionActions=guest.page.locator('[data-testid="version-actions"]');await guestVersionActions.waitFor();assert.equal(await guestVersionActions.count(),1);await guest.context.close();
   checks.push('UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)');
   const diagnostic=await pageFor('admin');

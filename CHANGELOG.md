@@ -1,3 +1,13 @@
+## v5.1.48 — 2026-10-14 (make provider status safe and close Web hook warnings)
+
+- Read provider-key presence only from the API's safe `*Set`/`hasApiKey` flags; secret placeholders stay blank in Brain's write-only credential flow.
+- Ignore stale provider-config responses after switching teams or refreshing, so one tenant's configuration cannot overwrite another team's visible status.
+- Close all 12 Web `react-hooks/exhaustive-deps` warnings, remove the remaining 5 synchronous-effect state warnings, and make active-loop duration rendering pure. Full Web lint falls from 119 to 95 warnings with 0 errors; no React Hooks/purity warnings remain.
+- Align all five application package/lock roots and the Browser diagnostics version at 5.1.48.
+
+### Verification
+- All five builds, Web typecheck, API/Cloud regression (36/16 suites), Browser offline tests (27/27), Web synthetic UAT (4/4), Web/Landing SEO (1/1 each), diagnostics (19/19), and PHDK coherence (52/52) pass. Whole Auto remains partial for persistence/native/deployed gates.
+
 ## v5.1.47 — 2026-10-15 (handle asynchronous API failures explicitly)
 
 - Await session-room membership and dashboard flow/provider operations so gateway handlers catch asynchronous failures.

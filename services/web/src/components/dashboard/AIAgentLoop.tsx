@@ -12,6 +12,7 @@ import {
   Settings,
   XCircle
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { cn } from '../../lib/utils';
 import { useAILoops } from '../../hooks/useAILoops';
 
@@ -41,6 +42,14 @@ interface AIAgentLoopProps {
 }
 
 export default function AIAgentLoop({ className }: AIAgentLoopProps) {
+  const [now, setNow] = useState(0);
+  useEffect(() => {
+    const updateTime = () => setNow(Date.now());
+    updateTime();
+    const timer = window.setInterval(updateTime, 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
   const { 
     loops, 
     selectedLoop, 
@@ -178,7 +187,7 @@ export default function AIAgentLoop({ className }: AIAgentLoopProps) {
                     )}
                     {loop.startTime && (
                       <span className="text-xs text-muted-foreground">
-                        {Math.round((loop.endTime?.getTime() || Date.now()) - loop.startTime.getTime())}ms
+                        {Math.round((loop.endTime?.getTime() || now) - loop.startTime.getTime())}ms
                       </span>
                     )}
                   </div>
