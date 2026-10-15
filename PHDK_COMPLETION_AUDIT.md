@@ -6,7 +6,7 @@ UAT-040 passes offline with pure policy tests and source-wiring assertions. No p
 
 | Commitment | Status | Remaining proof |
 |---|---|---|
-| CMT-001 — baseline/versions/PR | VERSIONED CANDIDATE / DELIVERY PENDING | Push/PR, merge and exact remote SHA/tree/version readback. |
+| CMT-001 — baseline/versions/PR | SOURCE MERGED / REMOTE VERIFIED | PR #129; main SHA `02d6d730f6713299bce627c1fdd7c8a2ff7538ca`, tree `823887e5096f9c9a4736f75983623138d88d86d4`; exact remote readback and 5.1.44 versions confirmed. |
 | CMT-002 — widget/diagnostics | PRIOR LOCAL SOURCE/UAT PASS / ACCEPTANCE PARTIAL | Native Windows device/audio and broad route/assistive-tech verification. |
 | CMT-003 — voice/Cloud/Browser/customer CRM | OFFLINE TENANT REQUEST SCOPE PASS / LIVE PER CLIENT | Packaged Electron/service-worker behavior, configured extra CDN origins, and live provider acceptance per customer. |
 | CMT-004 — administration/permissions | SOURCE REGRESSIONS PASS / PERSISTENCE UNVERIFIED | Safe DB identities, disposable PostgreSQL/migrations, persisted CRUD and full model/role/tenant/surface/operation proof. |

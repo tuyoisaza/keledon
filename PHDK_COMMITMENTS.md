@@ -6,7 +6,7 @@ CHK-AUTO-022 applies the Cloud-derived tenant origin set to BrowserView HTTP(S)/
 
 | Commitment | Current candidate evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 — baseline, versions, PRs | Versioned candidate based on verified main; all roots 5.1.44. | Push/PR, merge, checks/review readback and exact remote-main SHA/tree/version confirmation. |
+| CMT-001 — baseline, versions, PRs | PR #129 merged; main SHA `02d6d730f6713299bce627c1fdd7c8a2ff7538ca`, tree `823887e5096f9c9a4736f75983623138d88d86d4`; remote readback and 5.1.44 roots confirmed. | Continue baseline/PR surveillance; completion gate remains BLOCKED by lint and whole acceptance. |
 | CMT-002 — widget and safe diagnostics | Diagnostics UI unchanged; prior local evidence remains applicable. | Native Windows device/audio and broad route/assistive-tech coverage remain open. |
 | CMT-003 — voice → Cloud → Browser → CRM per client | Active RPA scope now covers HTTP(S)/WebSocket resources as well as navigation; private configured origins remain supported. | Packaged Electron/service-worker behavior, CDN multi-origin configuration, and customer-specific live provider/CRM acceptance remain open. |
 | CMT-004 — administration and permissions | Approved identity/tenant policy unchanged; coherence 52/52. | Safe DB identities, disposable PostgreSQL, persisted migrations/CRUD, exhaustive authorization matrix remain open. |

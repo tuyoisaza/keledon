@@ -1,4 +1,4 @@
-## Current delivery — candidate 5.1.44 (2026-10-15, pending)
+## Current delivery — candidate 5.1.44 (2026-10-15, source merged / verified)
 
 Candidate `fix/phdk-rpa-subresource-allowlist-5-1-44` is based on verified `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041`. Product commit `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`) applies active tenant-origin scope to BrowserView HTTP(S)/WebSocket resource requests during RPA, using the initiator and conservative scope intersection when no WebContents owner is available. It retains explicitly configured private CRM origins. All five app package/lock roots and Browser renderer are 5.1.44. UAT-040 passes offline; Browser tests 27/27, security-policy/wiring tests 11/11, Browser build and PHDK coherence 52/52 pass. Whole acceptance is 37 PASS, 2 BLOCKED, 1 MANUAL.
 
@@ -6,11 +6,11 @@ Candidate `fix/phdk-rpa-subresource-allowlist-5-1-44` is based on verified `orig
 |---|---|---|
 | VERSION_BUMP | PASS | All five app package/lock roots and Browser renderer at 5.1.44; changelog updated. |
 | COMMIT_PREFIX | PASS | `v5.1.44 fix(browser): scope RPA resource requests to tenant origins`. |
-| PUSH_AND_PR | PENDING | Candidate has not been pushed; PR not yet opened. |
-| REMOTE_MAIN | PENDING | Merge/readback not performed. |
+| PUSH_AND_PR | PASS | PR [#129](https://github.com/tuyoisaza/keledon/pull/129) squash-merged at `02d6d730f6713299bce627c1fdd7c8a2ff7538ca`. |
+| REMOTE_MAIN | PASS | `origin/main` and `git ls-remote` agree at `02d6d730f6713299bce627c1fdd7c8a2ff7538ca`; tree `823887e5096f9c9a4736f75983623138d88d86d4`; all roots 5.1.44. |
 | SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | UAT-040; Browser suites/build/coherence pass; packaged runtime, persisted/native/deployed/per-client gates remain. |
 
-Browser ESLint remains blocked by missing flat config. No packaged Electron or service-worker runtime, live CRM/private host, customer data, database, device or deployment was used. Overall: **SOURCE DELIVERY PENDING; PHDK AUTO PARTIALLY DELIVERED**.
+Post-merge evidence: `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.44-post-merge-129.json`. The deterministic PHDK completion gate returns BLOCKED because lint and whole Auto acceptance are incomplete. No packaged Electron or service-worker runtime, live CRM/private host, customer data, database, device or deployment was used. Overall: **SOURCE MERGED / REMOTE VERIFIED; PHDK AUTO PARTIALLY DELIVERED**.
 
 ---
 

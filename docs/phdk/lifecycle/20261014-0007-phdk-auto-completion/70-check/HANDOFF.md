@@ -2,7 +2,7 @@
 
 ## Candidate 5.1.44 — tenant scope on BrowserView HTTP(S)/WebSocket requests (UAT-040)
 
-CHK-AUTO-022 closes the gap for cross-origin HTTP(S) resources and WS/WSS handshakes initiated by a tenant-allowlisted CRM page during RPA. The Electron session guard resolves a known WebContents directly; without one, it matches the service-worker initiator to active session scopes, intersects overlaps and denies unknown origins. Exact candidate `0cbf038ed8ce7f27b1459c3a922a93f04165da46` passes Browser suite 27/27, security-policy/wiring 11/11, Browser build and PHDK coherence 52/52. Offline evidence only; delivery pending and overall acceptance remains partial. See `snapshots/candidate-5.1.44/PHDK_CHECK_REPORT.md`.
+CHK-AUTO-022 closes the gap for cross-origin HTTP(S) resources and WS/WSS handshakes initiated by a tenant-allowlisted CRM page during RPA. The Electron session guard resolves a known WebContents directly; without one, it matches the service-worker initiator to active session scopes, intersects overlaps and denies unknown origins. Exact candidate `0cbf038ed8ce7f27b1459c3a922a93f04165da46` passes Browser suite 27/27, security-policy/wiring 11/11, Browser build and PHDK coherence 52/52. PR #129 is merged and remote `main` is verified; offline evidence only and overall acceptance remains partial. See `snapshots/candidate-5.1.44/PHDK_CHECK_REPORT.md`.
 
 ## Candidate 5.1.43 — trusted RPA scope at BrowserView boundaries (UAT-039)
 

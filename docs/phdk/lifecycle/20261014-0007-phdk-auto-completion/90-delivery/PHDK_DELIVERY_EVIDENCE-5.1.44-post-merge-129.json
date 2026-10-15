@@ -1,0 +1,63 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto source slice 5.1.44: scope BrowserView RPA resource requests to tenant origins",
+  "target_branch": "main",
+  "expected_version": "5.1.44",
+  "version_file": "browser/package.json",
+  "version_property": "version",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/129",
+  "pr_head_sha": "f667f5db7b1b75ee81144d5ff55faffc783e5117",
+  "tested_candidate_sha": "0cbf038ed8ce7f27b1459c3a922a93f04165da46",
+  "tested_candidate_tree": "9580bf410a52c2ecce0824e52fdf3ab30b322440",
+  "merged_commit_sha": "02d6d730f6713299bce627c1fdd7c8a2ff7538ca",
+  "remote_main_sha": "02d6d730f6713299bce627c1fdd7c8a2ff7538ca",
+  "remote_main_tree": "823887e5096f9c9a4736f75983623138d88d86d4",
+  "git_ls_remote_matches": true,
+  "versions": {
+    "services/api": "5.1.44",
+    "cloud": "5.1.44",
+    "browser": "5.1.44",
+    "services/web": "5.1.44",
+    "landing": "5.1.44",
+    "browser_renderer": "5.1.44"
+  },
+  "checks": {
+    "lint": {
+      "status": "BLOCKED",
+      "evidence": "Browser ESLint could not run because the package has no flat config required by ESLint 10. No lint PASS is claimed."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "Browser npm run build completed TypeScript compilation successfully on the exact tested candidate."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "Browser npm run build passed on product candidate 0cbf038ed8ce7f27b1459c3a922a93f04165da46."
+    },
+    "focused_tests": {
+      "status": "PASS",
+      "evidence": "Browser offline suite 27/27; Electron security-policy/resource-scope/source-wiring tests 11/11."
+    },
+    "uat": {
+      "status": "PASS",
+      "evidence": "UAT-040 passed with offline policy and source-wiring tests on exact candidate 0cbf038ed8ce7f27b1459c3a922a93f04165da46; no packaged Electron or live service-worker runtime."
+    },
+    "phdk_coherence": {
+      "status": "PASS",
+      "evidence": "python phdk-standards/scripts/phdk_coherence_check.py: PHDK 2.50.10, 52/52 static manifest mappings."
+    },
+    "source_delivery": {
+      "status": "PASS",
+      "evidence": "PR #129 squash-merged at 02d6d730f6713299bce627c1fdd7c8a2ff7538ca; origin/main and git ls-remote agree and remote version is 5.1.44."
+    },
+    "whole_auto_acceptance": {
+      "status": "PARTIAL",
+      "evidence": "UAT total 37 PASS, 2 BLOCKED, 1 MANUAL. Persisted DB/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-client live call/CRM remain open."
+    }
+  },
+  "scope_limitations": [
+    "No packaged Electron or actual service-worker/network runtime was tested.",
+    "No live CRM/private endpoint, customer data, database, device or deployment was used.",
+    "Tenant allowlists must include every required CDN/API/WebSocket origin."
+  ]
+}

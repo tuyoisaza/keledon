@@ -4,9 +4,9 @@
 
 Continue the owner-confirmed four-front portfolio. Verified base is `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041`; CHK-AUTO-022 fixes BrowserView resource requests bypassing the tenant allowlist while an RPA flow was active. All HTTP(S) and WebSocket requests are now scoped to the Cloud-derived origins; requests without a resolvable WebContents use the service-worker initiator and active-session scope intersection, failing closed when they cannot be associated. Product commit `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`), version 5.1.44.
 
-UAT-040 passes offline: Browser suite 27/27, Electron security-policy/wiring 11/11, Browser TypeScript build, PHDK coherence 52/52; all five app package/lock roots and Browser renderer align at 5.1.44. No packaged Electron runtime, live CRM, database, customer data, device or deployment was tested. Browser ESLint remains unavailable due the absent flat config. Whole acceptance advances to 37 PASS, 2 BLOCKED, 1 MANUAL and remains PARTIALLY DELIVERED.
+UAT-040 passes offline: Browser suite 27/27, Electron security-policy/wiring 11/11, Browser TypeScript build, PHDK coherence 52/52; all five app package/lock roots and Browser renderer align at 5.1.44. PR #129 merged at `02d6d730f6713299bce627c1fdd7c8a2ff7538ca`; `origin/main` and `git ls-remote` match, remote tree `823887e5096f9c9a4736f75983623138d88d86d4`. No packaged Electron runtime, live CRM, database, customer data, device or deployment was tested. Browser ESLint remains unavailable due the absent flat config. Whole acceptance is 37 PASS, 2 BLOCKED, 1 MANUAL and remains PARTIALLY DELIVERED; the deterministic PHDK completion gate is BLOCKED by lint and remaining acceptance.
 
-SIGUIENTE PASO: finalize Check/Remediation evidence, publish the version-prefixed source PR, then verify normal PR controls and exact remote `main` readback.
+SIGUIENTE PASO: continue the remaining Auto commitments, beginning with safe DB-backed identities and persisted CRUD; retain the lint-config and runtime acceptance blockers accurately.
 
 ---
 

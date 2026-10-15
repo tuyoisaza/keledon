@@ -2,7 +2,7 @@
 
 ## Candidate 5.1.44 — tenant-scoped BrowserView resource requests
 
-CHK-AUTO-022 is fixed: active RPA tenant origins now constrain HTTP(S) subresources and WS/WSS handshakes. Requests without a WebContents resolve through service-worker initiator and active-session scope intersection, otherwise deny. UAT-040 and the 27/27 Browser, 11/11 policy/wiring, Browser build and 52/52 coherence checks pass. Delivery is pending; whole Auto remains partial. Evidence is in `snapshots/candidate-5.1.44/PHDK_REMEDIATION_REPORT.md`.
+CHK-AUTO-022 is fixed: active RPA tenant origins now constrain HTTP(S) subresources and WS/WSS handshakes. Requests without a WebContents resolve through service-worker initiator and active-session scope intersection, otherwise deny. UAT-040 and the 27/27 Browser, 11/11 policy/wiring, Browser build and 52/52 coherence checks pass. PR #129 merged at `02d6d730f6713299bce627c1fdd7c8a2ff7538ca`; remote readback confirms all 5.1.44 versions. Whole Auto remains partial; the completion gate is blocked by lint and other acceptance gaps. Evidence is in `snapshots/candidate-5.1.44/PHDK_REMEDIATION_REPORT.md` and `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.44-post-merge-129.json`.
 
 ## Candidate 5.1.43 — active RPA scope for Electron navigation
 
