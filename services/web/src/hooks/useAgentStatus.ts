@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
 import { useSocket } from '../context/SocketContext';
 
+interface AgentPerformance {
+  cpu: number;
+  memory: number;
+  network: number;
+}
+
 interface AgentStatus {
   id: string;
   name: string;
@@ -10,11 +16,7 @@ interface AgentStatus {
   lastActivity: Date;
   capabilities: string[];
   currentSession?: string;
-  performance: {
-    cpu: number;
-    memory: number;
-    network: number;
-  };
+  performance: AgentPerformance;
   errors: string[];
 }
 
@@ -81,7 +83,7 @@ export function useAgentStatus(socket?: Socket | null) {
       ));
     };
 
-    const handlePerformanceMetrics = (data: { agentId: string; performance: any }) => {
+    const handlePerformanceMetrics = (data: { agentId: string; performance: AgentPerformance }) => {
       setAgents(prev => prev.map(agent => 
         agent.id === data.agentId 
           ? { ...agent, performance: data.performance, lastActivity: new Date() }

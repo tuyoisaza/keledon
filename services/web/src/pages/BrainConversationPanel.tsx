@@ -2,6 +2,7 @@ import { Volume2, VolumeX, RotateCcw, PhoneOff, Phone, Mic, Loader2, PhoneIncomi
 import { cn } from '@/lib/utils';
 import type { ChatLine } from './brain-types';
 import type { Dispatch, RefObject, SetStateAction } from 'react';
+import type { SpeechRecognitionLike } from './speech-recognition';
 
 
 type BrainConversationPanelProps = {
@@ -30,9 +31,7 @@ type BrainConversationPanelProps = {
   messagesEndRef: RefObject<HTMLDivElement | null>;
   isListening: boolean;
   draft: string;
-  // Web Speech API is not included in the project's DOM type definitions.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  recognitionRef: RefObject<any>;
+  recognitionRef: RefObject<SpeechRecognitionLike | null>;
   setIsListening: Dispatch<SetStateAction<boolean>>;
   setDraft: Dispatch<SetStateAction<string>>;
   handleSend: (overrideText?: string) => Promise<void>;

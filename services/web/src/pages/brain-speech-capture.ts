@@ -2,6 +2,7 @@ import { apiFetch } from '@/lib/api-fetch';
 import { io, type Socket } from 'socket.io-client';
 import type { Dispatch, RefObject, SetStateAction } from 'react';
 import type { Team } from '@/lib/crud-api';
+import { getSpeechRecognitionConstructor, type SpeechRecognitionLike } from './speech-recognition';
 
 type CreateBrainSpeechCaptureScope = {
   sttLangRef: RefObject<string>;
@@ -20,7 +21,7 @@ type CreateBrainSpeechCaptureScope = {
   draftRef: RefObject<string>;
   conversationModeRef: RefObject<boolean>;
   sendVoiceTranscript: (text: string) => void;
-  provisionalRecognitionRef: RefObject<any>;
+  provisionalRecognitionRef: RefObject<SpeechRecognitionLike | null>;
   provisionalTextRef: RefObject<string>;
   speachesStopTimerRef: RefObject<ReturnType<typeof setTimeout> | null>;
   speachesVadProcessorRef: RefObject<ScriptProcessorNode | null>;
@@ -247,7 +248,7 @@ async function startVoskListening(): Promise<void> {
           scope.sendVoiceTranscript(text);
         }
       });
-      listenSocket.on("session.ended", (data: any) => {
+      listenSocket.on("session.ended", (data: { reason?: string } = {}) => {
         const reason = data?.reason || "unknown";
         scope.addLog(`[v${appVersion}] Vosk session ended: ${reason}`);
         clearTimeout(failSafe);
@@ -311,9 +312,7 @@ function stopSpeachesProvisionalRecognition() {
   }
 
 function startSpeachesProvisionalRecognition() {
-    const SR =
-      (window as any).SpeechRecognition ||
-      (window as any).webkitSpeechRecognition;
+    const SR = getSpeechRecognitionConstructor();
     if (!SR) {
       scope.addLog("[STT] Provisional transcript unavailable in this browser");
       return;
@@ -323,7 +322,7 @@ function startSpeachesProvisionalRecognition() {
       provisional.continuous = true;
       provisional.interimResults = true;
       provisional.lang = scope.sttLangRef.current || navigator.language || "en-US";
-      provisional.onresult = (event: any) => {
+      provisional.onresult = (event) => {
         let interim = "";
         let final = "";
         for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -338,7 +337,7 @@ function startSpeachesProvisionalRecognition() {
           scope.draftRef.current = text;
         }
       };
-      provisional.onerror = (event: any) =>
+      provisional.onerror = (event) =>
         scope.addLog(
           "[STT] Provisional transcript ended: " + (event?.error || "unknown"),
         );

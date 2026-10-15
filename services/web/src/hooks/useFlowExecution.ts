@@ -9,14 +9,14 @@ interface FlowStep {
   status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
   selector?: string;
   value?: string;
-  result?: any;
+  result?: unknown;
   duration?: number;
   error?: string;
   metadata?: {
     element_text?: string;
     element_position?: { x: number; y: number };
     screenshot_url?: string;
-    extracted_data?: any;
+    extracted_data?: unknown;
   };
 }
 

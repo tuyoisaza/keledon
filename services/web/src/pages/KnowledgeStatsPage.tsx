@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Brain, Target, AlertTriangle, TrendingUp, Zap, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getSessions } from '@/lib/crud-api';
+import { getSessions, type Session } from '@/lib/crud-api';
 import { useAuth } from '@/context/AuthContext';
 
 interface IntentStat {
@@ -22,7 +22,7 @@ export default function KnowledgeStatsPage() {
     const [containmentRate, setContainmentRate] = useState(0);
     const [fallbackRate, setFallbackRate] = useState(0);
     const [intentStats, setIntentStats] = useState<IntentStat[]>([]);
-    const [gaps, setGaps] = useState<any[]>([]);
+    const [gaps, setGaps] = useState<Session[]>([]);
 
     useEffect(() => {
         let isMounted = true;

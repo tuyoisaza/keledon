@@ -23,6 +23,13 @@ type BrainAudioScope = {
   selectedSpeakerId: string;
 };
 
+type WindowWithWebkitAudioContext = Window & { webkitAudioContext?: typeof AudioContext };
+
+function getAudioContextConstructor(): typeof AudioContext | undefined {
+  const audioWindow = window as WindowWithWebkitAudioContext;
+  return window.AudioContext ?? audioWindow.webkitAudioContext;
+}
+
 export function createBrainAudioController(scope: BrainAudioScope) {
 function stopBargeInMonitor() {
     scope.bargeInActiveRef.current = false;
@@ -51,8 +58,7 @@ async function startBargeInMonitor(label: string) {
       return;
     scope.bargeInActiveRef.current = true;
     try {
-      const AudioContextCtor =
-        window.AudioContext || (window as any).webkitAudioContext;
+      const AudioContextCtor = getAudioContextConstructor();
       if (!AudioContextCtor) throw new Error("AudioContext unavailable");
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: scope.selectedMicId ? { deviceId: { exact: scope.selectedMicId } } : true,
@@ -209,8 +215,7 @@ async function playWavPcmViaWebAudio(
         return false;
       }
       const sampleCount = Math.floor(dataSize / 2 / channels);
-      const AudioContextCtor =
-        window.AudioContext || (window as any).webkitAudioContext;
+      const AudioContextCtor = getAudioContextConstructor();
       if (!AudioContextCtor) return false;
       const ctx = scope.webAudioContextRef.current || new AudioContextCtor();
       scope.webAudioContextRef.current = ctx;
@@ -255,8 +260,7 @@ async function playMp3ViaWebAudio(
     onEnded: () => void,
   ): Promise<boolean> {
     try {
-      const AudioContextCtor =
-        window.AudioContext || (window as any).webkitAudioContext;
+      const AudioContextCtor = getAudioContextConstructor();
       if (!AudioContextCtor) return false;
       const ctx = scope.webAudioContextRef.current || new AudioContextCtor();
       scope.webAudioContextRef.current = ctx;

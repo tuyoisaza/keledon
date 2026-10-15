@@ -9,6 +9,7 @@ import { WEBSOCKET_URL } from "@/lib/config";
 import { useBrainCloudStatus, type BrainPipelineStatus } from "./useBrainCloudStatus";
 
 import type { ChatLine } from "./brain-types";
+import type { SpeechRecognitionLike } from './speech-recognition';
 import { createBrainChatActions } from "./brain-chat-actions";
 import { createBrainProviderTests } from "./brain-provider-tests";
 import { createBrainVoiceOutput } from "./brain-voice-output";
@@ -95,9 +96,7 @@ export default function BrainPage() {
   });
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  // Web Speech API is not part of the project's DOM type definitions.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const ttsAbortRef = useRef<AbortController | null>(null);
   const conversationModeRef = useRef(false);
@@ -135,9 +134,7 @@ export default function BrainPage() {
   const speachesStopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
-  // The provisional Web Speech recognizer is supplied by the browser at runtime.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const provisionalRecognitionRef = useRef<any>(null);
+  const provisionalRecognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const provisionalTextRef = useRef("");
   const speachesHeardSpeechRef = useRef(false);
   const speachesFastSentRef = useRef(false);

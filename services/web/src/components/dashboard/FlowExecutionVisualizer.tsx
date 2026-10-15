@@ -27,32 +27,14 @@ interface FlowStep {
   status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
   selector?: string;
   value?: string;
-  result?: any;
+  result?: unknown;
   duration?: number;
   error?: string;
   metadata?: {
     element_text?: string;
     element_position?: { x: number; y: number };
     screenshot_url?: string;
-    extracted_data?: any;
-  };
-}
-
-interface FlowExecution {
-  id: string;
-  name: string;
-  status: 'idle' | 'running' | 'completed' | 'failed' | 'paused';
-  steps: FlowStep[];
-  startTime?: Date;
-  endTime?: Date;
-  currentStepIndex: number;
-  totalSteps: number;
-  progress: number;
-  performance: {
-    totalDuration: number;
-    averageStepTime: number;
-    successRate: number;
-    errorRate: number;
+    extracted_data?: unknown;
   };
 }
 
@@ -87,12 +69,12 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
   };
 
 
-  const getStatusIcon = (status: FlowExecution['status']) => {
+  const getStatusIcon = (status: FlowStep['status']) => {
     switch (status) {
       case 'running': return <Activity className="w-4 h-4 animate-pulse" />;
       case 'completed': return <CheckCircle className="w-4 h-4" />;
       case 'failed': return <XCircle className="w-4 h-4" />;
-      case 'paused': return <Pause className="w-4 h-4" />;
+      case 'skipped': return <Pause className="w-4 h-4" />;
       default: return <Clock className="w-4 h-4" />;
     }
   };
@@ -293,7 +275,7 @@ export default function FlowExecutionVisualizer({ className }: FlowVisualizerPro
                       <div key={step.id} className="flex items-center gap-2 text-sm">
                         <Icon className="w-4 h-4 text-muted-foreground" />
                         <span className="flex-1">{step.name}</span>
-                        {getStatusIcon(step.status as any)}
+                        {getStatusIcon(step.status)}
                         {step.duration && (
                           <span className="text-xs text-muted-foreground">
                             {step.duration}ms

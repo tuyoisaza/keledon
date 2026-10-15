@@ -164,9 +164,9 @@ async function speakReply(text: string, messageId: string) {
         );
         fallbackSpeak(text, messageId);
       }
-    } catch (err: any) {
-      if (err?.name !== "AbortError") {
-        scope.addLog("speakReply catch: " + (err?.message ?? String(err)));
+    } catch (err: unknown) {
+      if (!(err instanceof Error && err.name === "AbortError")) {
+        scope.addLog("speakReply catch: " + (err instanceof Error ? err.message : String(err)));
         fallbackSpeak(text, messageId);
       }
     }

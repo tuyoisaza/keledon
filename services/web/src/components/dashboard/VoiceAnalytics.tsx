@@ -44,7 +44,7 @@ export default function VoiceAnalyticsDashboard({ className }: VoiceAnalyticsPro
     { value: '24h', label: '24 Hours' },
     { value: '7d', label: '7 Days' },
     { value: '30d', label: '30 Days' }
-  ];
+  ] as const;
 
   const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
     switch (trend) {
@@ -128,7 +128,7 @@ export default function VoiceAnalyticsDashboard({ className }: VoiceAnalyticsPro
             {timeRanges.map((range) => (
               <button
                 key={range.value}
-                onClick={() => setTimeRangeValue(range.value as any)}
+                onClick={() => setTimeRangeValue(range.value)}
                 className={cn(
                   "px-3 py-1 rounded-md text-sm font-medium transition-all",
                   timeRange === range.value 
