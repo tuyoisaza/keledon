@@ -71,3 +71,8 @@ UAT-011 passes in the isolated Nest HTTP harness: human roles are denied; a vali
 ## Candidate 5.1.29 — UAT Fix and source Check remediation
 
 UAT-012 PASS: device list responses contain no raw RPA config or CDP URL, and retain only presence flags. UAT-011 PASS: paired-device-only RPA configuration delivery still requires the exact database-derived identity. API regression 21/21, Jest 11/11/38, API build/focused lint, Cloud/Web/Landing/Browser builds and PHDK coherence 52/52 pass. Persistent DB and full role × surface × operation coverage remain open. Source remediation is complete; delivery is next.
+## Candidate 5.1.53 remediation exit — initial HTML finding closed
+
+Remediated the sole new fixable finding in this source slice: the public Landing root lacked a semantic H1 and substantive overview in the initial document. Static responsive fallback content and a tested React startup handoff resolve it. Landing SEO contract 1/1, lint, TypeScript, production build and generated HTML inspection pass. No residual fixable issue for this finding remains. Broader acceptance and deployed measurements are not remediated by this slice; see candidate Check/SEO/AEO handoffs. Next: delivery through the normal PR path; whole Auto remains partial.
+
+---

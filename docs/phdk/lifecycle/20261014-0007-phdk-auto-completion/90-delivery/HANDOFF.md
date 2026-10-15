@@ -208,3 +208,8 @@ PR [#140](https://github.com/tuyoisaza/keledon/pull/140) squash-merged source co
 SIGUIENTE PASO: continuar los compromisos pendientes de Auto con evidencia aislada de DB/nativo y mediciones SEO/AEO desplegadas; conservar PARTIALLY DELIVERED hasta cerrar la aceptación total.
 
 ---
+## Candidate 5.1.53 — source verified; normal delivery in progress
+
+Pre-delivery checkpoint: based on fetched remote `main` `962adfc349fcaacde61e0635c13952166b78d7c9`, branch `fix/phdk-public-home-nojs-5-1-53`. Version roots align at 5.1.53; focused checks and PHDK coherence 52/52 pass. PR and remote-main readback are pending, so `REMOTE_MAIN` is not PASS and no release/deployment is claimed. Whole Auto acceptance also remains partial. See the root `DELIVERY_REPORT.md` and run lifecycle handoffs.
+
+---

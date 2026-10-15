@@ -1,3 +1,19 @@
+## Current Check — candidate 5.1.53 public landing overview (2026-10-14)
+
+Repository `tuyoisaza/keledon`; branch `fix/phdk-public-home-nojs-5-1-53`, based on verified remote `main` `962adfc349fcaacde61e0635c13952166b78d7c9`; installed PHDK 2.50.10 coherence check passes 52/52. Exact candidate package versions are 5.1.53 across all five application package/lock roots and Browser renderer.
+
+**Scoped result: PASS.** The prior deployed public-root observation found an empty initial React root despite correct metadata. The candidate supplies a semantic, accurate initial overview and no-JavaScript style fallback; React removes the fallback marker at startup. Landing SEO contract 1/1, lint, typecheck, build, built-output H1/content inspection, version checks and `git diff --check` pass. The ~580.27 kB Landing main chunk advisory is unchanged. No auth, tenant, CRM-origin, API, Cloud, Browser runtime, database, secret or deployment behavior changed.
+
+| Finding | Status | Remediation / evidence |
+|---|---|---|
+| Public root missing semantic/content HTML before JS | CLOSED ON SOURCE CANDIDATE | `landing/index.html`, entrypoint regression and production `dist/index.html`; UAT-041 PASS. SEO-10/23 and AEO AG-03/07/12 source checks pass. |
+| Deployed crawler/HTTP/TLS/CWV/Search Console/link evidence | EXTERNAL / NOT MEASURED | No live/deployed probe was performed; retain the action in SEO/AEO reports. |
+| Existing whole-product CRUD/persistence, native, broad a11y/localization and client-specific acceptance | PARTIAL / MANUAL / CUSTOMER-SCOPED | Reuse the active commitment/UAT ledger; this landing-only change cannot close these criteria. |
+
+No additional fixable finding was identified in this landing-only slice. This is not a full Auto Check pass or whole-product acceptance; exact remote delivery and remaining portfolio gates are still open.
+
+---
+
 ## Current Check — 5.1.49 Web typed contracts (candidate branch, 2026-10-14 local)
 
 Candidate source commit `a4c92c65ff7b040206dd98567b5d7765c7f5b258` is on `fix/phdk-web-typed-contracts-5-1-49`, based on verified main `208b15a24e8bb0ff4263f2b88281c361a8e3994f`. All five application roots/locks and Browser renderer are 5.1.49. Full Web lint is 14 warnings/0 errors (11 explicit-any warnings in three unmounted legacy components and 3 Fast Refresh), down from 95 at the previous candidate; active Web paths have no explicit-any warnings. Web typecheck and all five builds pass; exact-source synthetic Web UAT passes 4/4, diagnostics 19/19, Web SEO 1/1, and PHDK 2.50.10 coherence is 52/52. API/Cloud/Browser source is unchanged except version metadata. Browser/device, persistence, deployment and whole-product acceptance remain open. Candidate is not yet delivered to remote `main`.

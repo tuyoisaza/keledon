@@ -1,5 +1,13 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.53 addition — crawler-readable public landing overview (2026-10-14)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-041 | US-001 / public visitor or search crawler | Build Landing production output and inspect the initial `dist/index.html` without running JavaScript; verify a semantic H1, accurate overview, client-specific call/CRM statement, disclaimer, and accessible no-JS fallback. | The public root serves useful, truthful HTML immediately; React removes the fallback styling marker when the interactive app starts. | Landing HTML contract test and production build artifact inspection. | PASS. `npm run test:seo` 1/1, lint, typecheck, and build pass; built HTML retains the overview and H1. No browser/crawler/deployment or customer endpoint was contacted. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-landing-5.1.53.json`. |
+
+Candidate total: **41 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Existing broad CRUD/persistence, delete/reindex concurrency, native device/audio, accessibility/localization and deployed discovery measurements remain outside this focused regression; tenant-specific call/CRM remains configured and accepted per customer.
+
 ## Current candidate 5.1.39 — exact-SHA revalidation
 
 Candidate: `fix/phdk-mvp-store-write-contracts-5-1-39`, source `a8a89f928312db2fef5142a0e07ac18a197b6c19`, base `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`. Owner-approved intent is safe tenant administration with current DB-derived actor attribution; the candidate rejects caller-controlled metadata on MVP writes. All Web API traffic in local SPA UAT is intercepted with synthetic fixtures; external traffic is blocked.

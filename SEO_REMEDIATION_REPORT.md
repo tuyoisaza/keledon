@@ -1,5 +1,15 @@
 # SEO remediation report — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.53 — render the truthful overview in initial HTML (2026-10-14)
+
+The active landing source previously returned an empty React root plus a short noscript line. The user-approved Auto goal includes public discoverability; this left the live public home without a machine-readable H1 or substantive architecture context. `landing/index.html` now contains a semantic, responsive overview using existing verified product copy and a no-JavaScript style fallback. The Landing entrypoint removes the `no-js` class before rendering React, which then replaces the static overview. Regression assertions cover the source contract and fallback handoff.
+
+Retest: Landing SEO contract 1/1; ESLint PASS; TypeScript app/node checks PASS; Vite production build PASS; built `dist/index.html` contains the semantic H1 and overview. PHDK coherence 52/52. Existing main-chunk size advisory remains. This closes the source-rendering defect only; deployment, crawler rendering, field metrics and Search Console observations remain unmeasured. No live/customer endpoint was contacted.
+
+**Status: SOURCE REMEDIATION PASS / PUBLIC DEPLOYMENT MEASUREMENT OPEN.**
+
+---
+
 ## Candidate 5.1.39 — zero public-source changes
 
 No SEO source remediation was needed: the candidate changes only API/Cloud MVP write contracts and API module boundaries. Public Web/Landing content, routes, canonical, sitemap, robots and NGINX policy were rechecked as unchanged. Web and Landing SEO source tests pass 1/1 each; Web/Landing builds and typechecks pass. Deployed HTTP/TLS/indexation, rendered crawler output, Core Web Vitals, Search Console and reputation remain BLOCKED/NOT MEASURED. No external or provider action was taken.

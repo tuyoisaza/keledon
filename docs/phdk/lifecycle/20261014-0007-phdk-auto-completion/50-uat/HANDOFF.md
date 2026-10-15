@@ -22,6 +22,12 @@ SIGUIENTE PASO: entregar el candidato versionado; mantener las pruebas de BD, di
 
 # UAT handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.53 — UAT-041 PASS / whole acceptance incomplete
+
+Verified branch `fix/phdk-public-home-nojs-5-1-53`, based on main `962adfc349fcaacde61e0635c13952166b78d7c9`. Built Landing initial HTML contains the semantic H1 and truthful public overview before JavaScript; SEO contract 1/1, lint, typecheck and build pass. Evidence: `evidence/uat-landing-5.1.53.json`. No browser, live deployment, customer endpoint, database or device was exercised. Focused candidate tally is 41 PASS, 0 BLOCKED, 1 MANUAL; whole UAT is **ACCEPTANCE INCOMPLETE** for previously recorded native/device and broader acceptance gates. The changed page's local acceptance is sufficient for source-stage SEO/AEO review; it does not close deployed discovery.
+
+---
+
 ## Candidate 5.1.32 exact-source UAT — 2026-10-14
 
 Status: **SCOPED UI ACCEPTANCE PASS / WHOLE-PRODUCT ACCEPTANCE INCOMPLETE**. UAT-030 passes on source commit `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`, recorded in `docs/phdk/evidence/uat-local-web.json` with an empty source fingerprint. Local built Web + synthetic Company Co/Other Co fixtures; every API request was intercepted and external HTTP/WebSocket traffic was blocked. The page now exposes no simulated live call transcript/RAG content; tenant user vs admin controls, all three locales, safe error text, labeled source controls, native modal Escape/focus restoration pass. Web typecheck/build, diagnostics 19/19, web SEO 1/1, Landing SEO 1/1, Browser offline 33/33, API regression 33/33 and Cloud 14/14 pass; API/Cloud/Browser/Web/Landing builds pass. PHDK coherence 52/52.
