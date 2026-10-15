@@ -2,10 +2,15 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const output=ts.transpileModule(fs.readFileSync(path.join(__dirname,'../src/autobrowse-bridge.ts'),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020,esModuleInterop:true}}).outputText;
 const noop=()=>{};const runtimeStatus={cloudUrl:'https://cloud.invalid',authToken:'synthetic',vendors:[{id:'v',baseUrl:'https://configured.invalid'}]};
 let calls=0,currentUrl='https://configured.invalid/call',actions=[];
+let runtimeScope;
 const deps={
  'electron-log':{info:noop,warn:noop,error:noop},electron:{ipcRenderer:{send:noop}},
  './runtime-state':{runtimeStatus},'./goal-planner':{planGoalActionsWithAI:async()=>({steps:calls++===0?[{type:'submit',description:'submit password'},{type:'click',selector:'#next',description:'next'}]:[],source:'ai'})},
- './security-policy.js':{getAllowedVendorOrigins:vendor=>{try{return [...new Set([...(Array.isArray(vendor.allowedOrigins)?vendor.allowedOrigins:[]),new URL(vendor.baseUrl||vendor.url).origin])]}catch{return []}}},
+ './security-policy.js':{
+  getAllowedVendorOrigins:vendor=>{try{return [...new Set([...(Array.isArray(vendor.allowedOrigins)?vendor.allowedOrigins:[]),new URL(vendor.baseUrl||vendor.url).origin])]}catch{return []}},
+  getRuntimeVendorNavigationScope:()=>runtimeScope,
+  setRuntimeVendorNavigationScope:(_webContents,origins)=>{runtimeScope=origins;},
+ },
  './autobrowse-actions':{executeAction:async(_view,action)=>{actions.push(action);return {id:'step',type:action.type,description:action.description,success:action.type!=='click',duration:1,error:action.type==='click'?'synthetic failure':undefined}}},
  './autobrowse-cdp':{connectCDP:async()=>null,getCdpPort:()=>0},'./autobrowse-planner':{},
 };

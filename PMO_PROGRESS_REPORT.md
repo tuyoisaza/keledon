@@ -1,3 +1,22 @@
+## 2026-10-15 — 5.1.62 candidate Check milestone
+
+Verified base `origin/main`/`git ls-remote` `e12527e83a6f534892512288bad9c7f4cf134ca4`, tree `267b2db659d1daf03ab39b7fa34728a36bb3dc2e`; no open PRs at baseline. Candidate branch `fix/phdk-auto-5-1-62`, six version roots 5.1.62. UAT-053 closes a test-runner gap for superadmin-only AI administration: API contract suite 6/6 now runs inside API regression 38/38, synthetic UI journey covers 12 behaviors. CRUD matrix separates active AI prompts, unreachable FeatureFlag and browser-local DebugMode. Browser request-scope fixture now matches current production APIs; Browser suite 42/42 passes.
+
+Check results: API/Cloud/Web/Landing builds pass; Web/Landing typecheck and lint pass; API/Cloud lint pass; regressions API 38/38 and Cloud 17/17; Web diagnostics 19/19, Web UAT 5/5 plus AI admin 12 journeys, Web/Landing SEO 1/1 each; Landing build/typecheck/lint pass; Browser build and suite 42/42; PHDK coherence 52/52; `git diff --check` pass. Browser ESLint is unavailable because no ESLint executable is installed under the Browser package. Whole UAT: 53 PASS, 0 BLOCKED, 1 MANUAL.
+
+| Workstream | Change / status | Next proof |
+|---|---|---|
+| CMT-001 | #155 remote baseline verified; candidate source checks pass. | Version-prefixed commit, PR, merge/readback. |
+| CMT-002 | Widget/nav checks reused and exact Web UAT re-run. | Native/screen-reader routes remain external/manual. |
+| CMT-003 | Tenant-private allowlist path rechecked; no policy change. | Per-client live acceptance remains customer-scoped. |
+| CMT-004 | AI contract and UI UAT are now mandatory gates; matrix statuses corrected. | Persisted database/migration/full matrix remain open. |
+
+Decision: preserve the approved role policy and private-CRM rule. No commitment was deferred or cancelled. No DB, customer endpoint, private network, device or deployment used.
+
+SIGUIENTE PASO: deliver 5.1.62 through the normal PR path; update machine evidence from the actual remote result.
+
+---
+
 ## Active Auto milestone — 5.1.60 diagnostics route coverage (2026-10-15)
 
 Check found that the shared version/actions widget regression asserted all required routes only for the Web app; Landing's parallel source was compared byte-for-byte but its own route mounts were not asserted. UAT-051 adds explicit Landing public page/Navbar, login, app shell/Sidebar and admin route assertions. API/Cloud regressions pass 37/37 and 17/17, Web diagnostics/version-actions 19/19, Browser version-actions/security-policy 15/15, Landing SEO 1/1, five builds, applicable lint/typechecks, CRUD inventory 35/35 models and 490 role/surface rows, and PHDK coherence 52/52. All six candidate versions align at 5.1.60.

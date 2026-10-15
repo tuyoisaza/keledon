@@ -1,9 +1,9 @@
 {
-  "version": "5.1.61",
-  "date": "2026-10-15T13:49:10.871Z",
-  "candidateRevision": "4bc6d437ddfbd5139617da62370ec4de92f820cb",
-  "candidateSourceFingerprint": "sha256:8f8e7b96c8a06e04342aae7e077d25adea8f931e2852e0f297d749251238dc3b",
-  "dirtyUntrackedSourceFiles": 1,
+  "version": "5.1.62",
+  "date": "2026-10-15T14:35:07.729Z",
+  "candidateRevision": "e12527e83a6f534892512288bad9c7f4cf134ca4",
+  "candidateSourceFingerprint": "sha256:cb62ee3a7fb8e81e43e730e61873b64abfef1302411f65de6e3b34366af02ed0",
+  "dirtyUntrackedSourceFiles": 0,
   "sourceRoots": [
     "browser",
     "cloud",
@@ -12,7 +12,7 @@
     "landing"
   ],
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:57958",
+  "origin": "http://127.0.0.1:52269",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-THEME dark/light/corporate tokens reach descendant controls, persistence PASS; automated login text contrast sample has no failures (not a full-app accessibility certification)",
@@ -33,7 +33,7 @@
     "UAT-004 provider settings Spanish localization and write-only key: translated screen renders; no response prefill; replacement clears after success; untouched blank omitted PASS",
     "UAT-005 Brain provider indicators use selected-provider safe booleans only; an unused Deepgram key does not mark Vosk configured, and write-only secret placeholders remain blank PASS (synthetic UI/API fixture)",
     "UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)",
-    "UAT-002 5.1.61 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
+    "UAT-002 5.1.62 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
   ],
   "themeTokens": {
     "light": {

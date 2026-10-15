@@ -3,12 +3,13 @@
 | Story | Persona / intent-linked value | Source intent | Acceptance cases |
 |---|---|---|---|
 | US-001 | As a visitor or operator, I want a safe report and owned-state reset so I can share useful troubleshooting context without exposing private data or deleting business records. | `PROJECT_INTENT.md`, FR-002, SEC-001; CMT-002 | UAT-001, UAT-051 |
-| US-002 | As a tenant manager, I want to administer only my company's resources so customer data and privileged actions stay isolated. | `PROJECT_INTENT.md`, SEC-004; ADR-AUTO-008; CMT-004 | UAT-002, UAT-003 |
+| US-002 | As a tenant manager, I want to administer only my company's resources so customer data and privileged actions stay isolated. | `PROJECT_INTENT.md`, SEC-004; ADR-AUTO-008; CMT-004 | UAT-002, UAT-003, UAT-053 |
 | US-003 | As an integration administrator, I want to configure a private/local CRM safely so my client can use its own provider without cross-tenant navigation. | `PROJECT_INTENT.md`, INT-004, ADR-AUTO-009; CMT-003 | UAT-004 |
 | US-004 | As an operator, I want the selected call/Cloud/Browser/CRM flow to preserve explicit customer configuration and fail safely. | `PROJECT_INTENT.md`, PRD INT-004; CMT-003 | UAT-005, UAT-006 |
 | US-005 | As a release owner, I want a coherent version and verified delivery so operators can identify what runs. | `PROJECT_INTENT.md`, NFR-001; CMT-001 | UAT-007 |
 | US-006 | As a tenant user or manager, I want the knowledge page to show only real tenant-scoped documents and truthful system state, with controls matching my role, so I can use operational knowledge without mistaking a demo for a live call or RAG result. | `PROJECT_INTENT.md`, INT-002/003; `REQUIREMENTS_TRACEABILITY.md`, CMT-002/004 | UAT-030 |
 | US-009 | As a tenant administrator, I want to revoke a device with a clear confirmation while ordinary operators can only inspect their own safe device summary, so lost device credentials can be disabled without crossing company boundaries. | `PROJECT_INTENT.md`, SEC-001/004; ADR-AUTO-008; CMT-004 | UAT-032 |
+| US-011 | As the provisioned superadmin, I want AI prompt changes to be role-gated, revisioned and safely reported so configuration edits are auditable without overstating usage or cost. | `PROJECT_INTENT.md`, SEC-004; `PRD.md`, SEC-004; CMT-004 | UAT-053 |
 
 All cases remain inside the owner-approved intent: provider choice is per customer; no universal live CRM/call behavior is assumed.
 

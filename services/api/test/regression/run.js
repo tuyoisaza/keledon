@@ -14,6 +14,10 @@ const testFiles = fs
   .filter((f) => f.endsWith('.test.js') && f !== 'run.js')
   .sort();
 
+// Keep the managed AI administration contract in the mandatory regression
+// gate; it lives beside the runner because it exercises the service directly.
+testFiles.push('../ai-admin-contract.test.cjs');
+
 let totalPassed = 0;
 let totalFailed = 0;
 

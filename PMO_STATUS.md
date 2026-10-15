@@ -1,3 +1,20 @@
+## Candidate 5.1.62 — current PMO board (2026-10-15)
+
+Run `20261014-0007-phdk-auto-completion`; target `main`; base `e12527e83a6f534892512288bad9c7f4cf134ca4`; branch `fix/phdk-auto-5-1-62`. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 blocked, 0 deferred, 0 cancelled.
+
+| Workstream | Status | Evidence / next milestone | Open acceptance |
+|---|---|---|---|
+| WS-001 baseline, versions, PRs | RUNNING | #155 merge and current main tree verified; candidate 5.1.62 aligned. | Commit, PR, merge/readback, then update machine delivery evidence. |
+| WS-002 widget and safe diagnostics | PARTIAL | Web diagnostics 19/19; exact local UAT 5/5 includes nav coverage. | Native device/audio and broad screen-reader/localization. |
+| WS-003 tenant runtime and CRM | PARTIAL | API/Cloud private URL tenant allowlist and Browser 42/42 scope tests pass. | Customer-selected live call/CRM acceptance and native audio. |
+| WS-004 administration/permissions | PARTIAL | API 38/38 includes AI contract; Web AI-admin UAT 12 journeys; matrix statuses corrected. | Persisted DB, migrations and complete model/role/operation acceptance. |
+
+Current activity: source Check and delivery for the scoped 5.1.62 acceptance slice. Whole Auto: **PARTIALLY DELIVERED**.
+
+SIGUIENTE PASO: finalize source review and candidate artifacts, then deliver via PR under repository controls.
+
+---
+
 ## Active four-front portfolio — candidate 5.1.60 (2026-10-15)
 
 Portfolio accounting: **4 confirmed / 0 fully DONE / 4 active / 0 deferred / 0 cancelled**. UAT is **51 PASS, 0 BLOCKED, 1 MANUAL**; that count does not close the whole portfolio. Verified target is `main` SHA `4bc6d437ddfbd5139617da62370ec4de92f820cb` (5.1.60, PR #154); remote tree matches candidate and six version roots align. No deployment is claimed.

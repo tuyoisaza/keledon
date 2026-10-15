@@ -1,3 +1,16 @@
+## Candidate 5.1.62 coverage — four confirmed commitments remain active
+
+| Commitment | Plan / workstream | Candidate implementation and UAT | Delivery / remaining gate |
+|---|---|---|---|
+| CMT-001 baseline/version/PR | WS-001 | Base `e12527e8` verified against `origin/main` and `git ls-remote`; six candidate version roots at 5.1.62; no open PR at baseline. | Candidate branch `fix/phdk-auto-5-1-62`; delivery not DONE until PR merge/readback. |
+| CMT-002 widget/safe diagnostics | WS-002 | Reused source route coverage and UAT-052; Web diagnostics 19/19; Web UAT 5/5. | Broad accessibility/localization and native device/audio remain open. |
+| CMT-003 tenant-selected voice/Cloud/Browser/CRM | WS-003 | Revalidated API/Cloud vendor URL validation and Browser tenant-origin request scope; private destinations remain tenant-configured and allowlisted; Browser suite 42/42. | No private network or customer integration contacted; native audio and per-client live acceptance remain open. |
+| CMT-004 administration/permissions | WS-004 | API contract 6/6 integrated into 38/38 regression; synthetic UI UAT-053 (12 journeys); FeatureFlag and DebugMode statuses reconciled. | Persisted migration/CRUD and exhaustive role/tenant/surface/operation evidence remain open. |
+
+Portfolio: **0/4 fully delivered; 4/4 active/partial; 0 deferred; 0 cancelled.** Candidate UAT tally: 53 PASS, 0 BLOCKED, 1 MANUAL. This is not whole-Auto completion.
+
+---
+
 ## Active Auto continuation — 5.1.60 diagnostics coverage candidate; four fronts continue
 
 | Commitment | Status | Current candidate evidence | Open acceptance |
