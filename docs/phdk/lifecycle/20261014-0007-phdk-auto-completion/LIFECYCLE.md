@@ -232,7 +232,7 @@ Goal: complete the four owner-confirmed fronts and applicable PHDK conformity.
 Prior run `20261013-1900-phdk-auto` is retained as immutable history and evidence. Current run artifacts live in each numbered stage folder.
 ## Current Auto continuation — candidate 5.1.57 CRUD evidence reconciliation (2026-10-14)
 
-Based on verified remote 5.1.56 `main` SHA `7b535964b91815b964fd7c1ddc121a994883ebb8`, tree `02c4ce60ad04c66847f747ace268cb2d2a0eaeb0`. Candidate 5.1.57 aligns five application package/lock roots and Browser renderer. UAT-046 and regression 33 map four Company/User API rows to UAT-045 evidence while preserving BLOCKED for incomplete operation coverage. No runtime behavior changed. Candidate checks and delivery are pending; whole Auto remains partial.
+Based on verified remote 5.1.56 `main` SHA `7b535964b91815b964fd7c1ddc121a994883ebb8`, tree `02c4ce60ad04c66847f747ace268cb2d2a0eaeb0`. Candidate 5.1.57 aligns five application package/lock roots and Browser renderer. UAT-046 and regression 33 map four Company/User API rows to UAT-045 evidence while preserving BLOCKED for incomplete operation coverage. No runtime behavior changed. API 36/36, five builds, coherence 52/52 and diff check pass. PR #151 is clean and open; merge is pending. Whole Auto remains partial.
 
 | Stage | Status | Current evidence |
 |---|---|---|
@@ -243,7 +243,7 @@ Based on verified remote 5.1.56 `main` SHA `7b535964b91815b964fd7c1ddc121a994883
 | 50 UAT | PASS FOR UAT-046 / ACCEPTANCE INCOMPLETE | 46 PASS, 0 BLOCKED, 1 MANUAL. |
 | 60 UAT Fix | PASS FOR FINDING | Stale evidence wording corrected; full CRUD remains open. |
 | 65 SEO / 67 AEO-GEO | REUSED / NOT AFFECTED | Deployed measures remain open. |
-| 70 Check / 80 Remediation | IN PROGRESS | Regression, five builds, version alignment, coherence and diff check. |
-| 90 Delivery | IN PROGRESS | PR and remote readback pending. |
+| 70 Check / 80 Remediation | PASS FOR SOURCE SLICE | API 36/36, five builds, version alignment, coherence and diff check. |
+| 90 Delivery | PR OPEN / MERGE PENDING | PR #151 is clean; exact head/tree and base main recorded in the check report. No hosted checks/review; main unprotected. |
 
 ---

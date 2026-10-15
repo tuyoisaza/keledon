@@ -387,11 +387,11 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target
 | 50 UAT | PASS FOR UAT-046 / ACCEPTANCE INCOMPLETE | Evidence-mapping assertions pass; 46 PASS, 0 BLOCKED, 1 MANUAL. |
 | 60 UAT Fix | PASS FOR FINDING | Corrected stale wording; full operation coverage remains BLOCKED. |
 | 65 SEO / 67 AEO | REUSED / NOT AFFECTED | Public claims unchanged; deployed measures remain open. |
-| 70 Check / 80 Remediation | IN PROGRESS | Candidate regression/build/coherence/diff checks and PR delivery. |
-| 90 Delivery | IN PROGRESS | PR and exact remote verification pending. |
+| 70 Check / 80 Remediation | PASS FOR SOURCE SLICE | API 36/36; five builds; alignment; coherence 52/52; diff check. |
+| 90 Delivery | PR OPEN / MERGE PENDING | PR #151 is clean at head `44f303a4da211de03243118f3da3ddc18f3baf91`, based on verified main `7b535964b91815b964fd7c1ddc121a994883ebb8`; no hosted checks/review, main unprotected. |
 
 UAT-046 is source/documentation integrity only; it uses the already recorded `50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json` and no new database or external service. Whole Auto remains **PARTIALLY DELIVERED** pending exhaustive operations, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected live integrations.
 
-SIGUIENTE PASO: finish candidate checks, deliver through the normal PR flow, then continue the next persisted model operations.
+SIGUIENTE PASO: review and merge PR #151, verify exact remote tree/version and refresh post-merge delivery evidence; then continue the next persisted model operations.
 
 ---
