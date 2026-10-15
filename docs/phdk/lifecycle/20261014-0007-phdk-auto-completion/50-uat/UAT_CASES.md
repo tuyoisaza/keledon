@@ -1,5 +1,11 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.69 — UAT-063 nested relation and tenant company contract
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-063 | CMT-004 / admin or coordinator | Update countries on the actor's own company, attempt foreign-company update and direct nested country write; inspect CompanyCountry/TeamInterface model rows and existing guarded API contracts. | Own-company country set may be edited through Company; foreign company and standalone nested write are denied; CompanyCountry/TeamInterface remain explicitly nested; TeamInterface assignment stays team-scoped and atomic. CRUD matrix records missing Web selector/persistence gates. | API/Cloud source regression and CRUD inventory | PASS for source guards and classification only: API regression 39/39, Cloud 18/18, including nested relation and matrix assertions. No live DB or browser UI acceptance. |
+
 ## Candidate 5.1.68 — provider and voice-profile CRUD derive tenant scope
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

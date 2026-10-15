@@ -1,5 +1,11 @@
 # UAT handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.69 — UAT-063 PASS; portfolio acceptance incomplete
+
+API and Cloud regressions now reconcile nested company-country management with database-derived company scope and preserve TeamInterface's team-scoped atomic replacement. Provider configuration and voice-profile scope assertions from UAT-062 remain in the full suite. API regression passes 39/39 and Cloud 18/18. This is source guard evidence, not live database identity/persistence or browser selector acceptance. Tally advances to **61 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 still needs the owner-provided disposable PostgreSQL target; native device/audio remains MANUAL.
+
+SIGUIENTE PASO: run UAT-060 once the owner-provided database is available; retain the broad matrix and other external acceptance gates.
+
 ## Candidate 5.1.68 — UAT-062 PASS; portfolio acceptance incomplete
 
 API and Cloud regression guards now assert positive as well as negative tenant company scope for provider configuration and voice profiles: list queries use the current DB actor company, writes without `companyId` receive that company, mixed-company batches fail, foreign direct IDs fail, and lower roles remain denied. API full regression passes 39/39 and Cloud 18/18. This is source guard evidence, not live database identity or persistence acceptance. Tally advances to **60 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 still needs the owner-provided disposable PostgreSQL target; native device/audio remains MANUAL.

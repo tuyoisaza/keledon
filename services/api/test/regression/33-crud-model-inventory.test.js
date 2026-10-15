@@ -304,6 +304,16 @@ assert.match(matrix, /ManagedInterface — owner-approved dormant global catalog
 assert.match(matrix, /TeamInterface — nested team relation/i);
 assert.ok(!resources.includes('ManagedInterface'));
 assert.ok(!resources.includes('TeamInterface'));
+assert.match(
+  matrix,
+  /CompanyCountry, TeamInterface[\s\S]*?\| PARTIAL: nested-source mapping and selected guard contracts pass/,
+  'nested CompanyCountry and TeamInterface rows must report source evidence and remaining gates',
+);
+assert.match(
+  matrix,
+  /ProviderCatalog, TenantProviderConfig, TenantVoiceProfile[\s\S]*?\| PARTIAL: API\/Cloud regressions/,
+  'provider source contracts must remain partial until persistence and audit acceptance',
+);
 assert.match(crudGuard, /if \(!superadmin && !scoped\.includes\(resource\)\) return deny\(\)/);
 assert.match(
   mvpScopeGuard,

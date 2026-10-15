@@ -217,6 +217,29 @@ async function main() {
     await allow('companies', 'GET');
     await allow('companies', 'GET', { id: 'co-a' });
     await allow('companies', 'PUT', { id: 'co-a' }, { name: 'Scoped company' });
+    const companyCountriesUpdate = await allow(
+      'companies',
+      'PUT',
+      { id: 'co-a' },
+      { countries: ['MX', 'US'] },
+    );
+    assert.deepEqual(companyCountriesUpdate.body.countries, ['MX', 'US']);
+    await assert.rejects(
+      run(
+        'companies/:id/countries',
+        'POST',
+        { id: 'co-a' },
+        { countryCode: 'MX' },
+        'addCompanyCountry',
+      ).result,
+      Denied,
+      'tenant managers update nested countries through their own company form',
+    );
+    await assert.rejects(
+      run('companies', 'PUT', { id: 'co-b' }, { countries: ['US'] }).result,
+      Denied,
+      'tenant managers cannot update another company country set',
+    );
     await assert.rejects(
       allow('companies', 'POST', {}, { name: 'New company' }),
       Denied,
