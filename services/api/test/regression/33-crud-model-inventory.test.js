@@ -129,6 +129,26 @@ for (const [model, role] of [
     `${model}/${role}/API must remain blocked until the complete operation matrix is tested`,
   );
 }
+for (const role of [
+  'admin',
+  'agent',
+  'anonymous',
+  'coordinator',
+  'superadmin',
+  'user',
+]) {
+  const row = modelRowFor('Device', role, 'API');
+  assert.match(
+    row[13],
+    /UAT-047/,
+    `Device/${role}/API evidence must cite Cloud/API pairing regression UAT-047`,
+  );
+  assert.equal(
+    row[14],
+    'BLOCKED',
+    `Device/${role}/API remains blocked until live persistence/pairing acceptance`,
+  );
+}
 assert.equal(
   modelRowFor('ManagedInterface', 'admin', 'API')[4],
   '-',

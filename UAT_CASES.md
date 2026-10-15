@@ -1,5 +1,13 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.58 addition — Cloud device tenant binding (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-047 | US-002 / device owner and Cloud API | Exercise the paired-device service, public controller error projection and authenticated registration guard with isolated synthetic fixtures. | A machine registration is reusable only by its persisted actor/company; actor-less tenant registrations and unbound devices cannot pair; pairing consumes only the still-pending matching unexpired proof; public errors reveal no internal detail. | Cloud/API source regressions. | PASS, source scope: Cloud regression 21 and 42 verify binding, expiry/status/code predicates and redaction; API regression 21 retains the reference binding behavior. Live DB/device pairing remains BLOCKED. |
+
+Candidate total: **47 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-047 is source-level only; persisted pairing, live device behavior and native device/audio remain open, alongside broad accessibility/localization and deployed SEO/AEO.
+
 ## Candidate 5.1.57 addition — link persisted evidence to CRUD rows (2026-10-14)
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
@@ -168,3 +176,19 @@ Current evidence revision: `edce7eafbe13ac16ab93274a87e12571e7b04b2e`; verified 
 | UAT-A11Y-I18N / US-006 | Broad active-route locale/copy, WCAG keyboard/zoom/contrast/screen-reader acceptance | BLOCKED: only selected UI subset was exercised. |
 | UAT-SEO-AEO / US-001/US-006 | Deployed headers and public discovery evidence | BLOCKED: no deployed target/measurement. |
 | UAT-CLIENT-CRM / US-003 | Tenant-selected real call/CRM integration | NOT APPLICABLE to universal source gate; validate only when a client/provider is selected. |
+
+## Candidate 5.1.58 addition — Browser tenant-origin request enforcement (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-048 | US-003 / configured tenant CRM | Inspect the AutoBrowse goal execution path and exercise the Browser origin policy tests for navigation, redirects, frames, popups and resource requests. | The tenant allowlist remains active for the configured vendor view and throughout each goal, so planned clicks and CRM subresources cannot request an unconfigured origin; prior scope is restored after goal exit and cleared when the view closes. | Browser security-policy tests and build. | PASS, source scope: Browser security-policy/call/event tests 15/15 and TypeScript build. No live CRM, DNS or network request was used. |
+
+Candidate total: **48 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-048 does not claim runtime network observation; live client integrations remain tenant-specific.
+
+## Candidate 5.1.58 addition — dormant DebugMode classification (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-049 | US-004 / diagnostics owner | Trace the DebugMode Prisma model, API/Cloud modules/services and `/management/debug` toggle; run regression 49. | No disconnected server-wide debug service remains. The Web switch is clearly client-local capture only, and all role/surface rows for the dormant persisted model are NOT APPLICABLE until an approved schema retirement or server feature is defined. | API source regression and CRUD matrix. | PASS, source-only: regression 49 confirms the API/Cloud services and built artifacts are absent, local UI behavior is explicit, and all 14 model-role-surface rows are NOT APPLICABLE. |
+
+Candidate total: **49 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The Prisma schema table is retained; no migration or database change is claimed.

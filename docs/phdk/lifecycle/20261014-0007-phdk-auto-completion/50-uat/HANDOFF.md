@@ -83,3 +83,15 @@ UAT-046 passes as a source-level integrity case: regression 33 requires the four
 Tally: **46 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 35-model operation matrix and delete/reindex concurrency remain open; native device/audio remains MANUAL; broad accessibility/localization and deployed SEO/AEO remain unverified; live CRM/call acceptance stays tenant-specific.
 
 ---
+
+## Candidate 5.1.58 — device pairing source acceptance
+
+UAT-047 passes: Cloud regression 21 covers actor/company registration retries, unbound devices and the conditional status/code/expiry update; regression 42 checks public error redaction; API regression 21 retains the existing counterpart. No DB or live device was exercised. Tally: **47 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Live pairing/persistence and native device/audio remain open.
+
+## Candidate 5.1.58 — UAT-048 AutoBrowse request scope
+
+UAT-048 passes as source acceptance: Browser policy/call/event tests 14/14 and TypeScript build pass. The tenant-origin scope is installed across AutoBrowse goal planning and actions and restored in `finally`; the existing Electron request guard uses that scope for HTTP(S)/WebSocket resource requests. No live CRM, DNS or outbound target was contacted. Tally: **48 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**.
+
+## Candidate 5.1.58 — UAT-049 DebugMode classification
+
+UAT-049 passes source-only: API regression 49 confirms unbound DebugMode services and stale dist outputs are absent, the Web toggle remains local-only, and all 14 persisted-model role/surface rows are NOT APPLICABLE. The Prisma table was retained; no migration or persisted behavior was tested. API 37/37, Cloud 17/17, and backend builds pass. Tally: **49 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**.

@@ -249,10 +249,22 @@ The deterministic source-delivery evidence is recorded in `PHDK_DELIVERY_EVIDENC
 ---
 ## Delivery candidate 5.1.57 — CRUD evidence mapping
 
-Candidate branch `fix/phdk-crud-evidence-5-1-57` is based on verified `origin/main` 5.1.56 commit `7b535964b91815b964fd7c1ddc121a994883ebb8` / tree `02c4ce60ad04c66847f747ace268cb2d2a0eaeb0`. It updates the four Company/User API evidence cells to reflect only UAT-045 outcomes, adds regression assertions that preserve each row's BLOCKED status, records UAT-046, and aligns all five package/lock roots plus Browser renderer at 5.1.57. No runtime behavior changed. API regression 36/36, five builds, PHDK coherence 52/52 and `git diff --check` pass. PR [#151](https://github.com/tuyoisaza/keledon/pull/151) is open and clean, based on verified main `7b535964b91815b964fd7c1ddc121a994883ebb8`. GitHub reports no hosted checks or review decision; main is unprotected. Merge and post-merge remote verification are pending.
+Candidate branch `fix/phdk-crud-evidence-5-1-57` is based on verified `origin/main` 5.1.56 commit `7b535964b91815b964fd7c1ddc121a994883ebb8` / tree `02c4ce60ad04c66847f747ace268cb2d2a0eaeb0`. It updates the four Company/User API evidence cells to reflect only UAT-045 outcomes, adds regression assertions that preserve each row's BLOCKED status, records UAT-046, and aligns all five package/lock roots plus Browser renderer at 5.1.57. No runtime behavior changed. API regression 36/36, five builds, PHDK coherence 52/52 and `git diff --check` pass. PR [#151](https://github.com/tuyoisaza/keledon/pull/151) squash-merged at `12bef77c2aaaa16e9c607a003abcc41b4f5c2d22`. Remote main tree `1d29055e660d7e37bf600344ac98afd3d7e9b098` matches the tested candidate; all roots and renderer are 5.1.57 and the PHDK completion gate passes. GitHub reported no hosted checks or review decision; main is unprotected.
 
 Whole Auto remains **PARTIALLY DELIVERED**: exhaustive persisted model operations, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-specific live integration evidence remain open. UAT-046 adds no new database execution.
 
 SIGUIENTE PASO: finish checks, deliver via PR and verify the exact remote tree/version; continue persisted UAT afterward.
 
 ---
+
+## Delivery candidate 5.1.58 — Cloud device tenant binding
+
+Candidate branch `fix/phdk-next-model-operations-5-1-58` is based on verified main after PR #151 merge `12bef77c2aaaa16e9c607a003abcc41b4f5c2d22`. API regression 36/36, Cloud regression 17/17, five builds, version alignment and PHDK coherence 52/52 pass. UAT-047 is source-only. Candidate PR and remote readback are pending; whole Auto remains PARTIALLY DELIVERED.
+
+## PR #152 update — AutoBrowse tenant request scope
+
+The 5.1.58 branch now also fixes the AutoBrowse gap found during tenant-private CRM policy review: the configured allowlist remains active for the vendor view and the entire goal, including page subresource requests; prior scope is restored after goal exit and cleared when the view closes. Browser focused tests 15/15 and build pass. UAT-048 is source-only. PR #152 is open at head `9dce6748d3af4426f4f9de1ca99295103a5bd553`; local and remote branch heads match. GitHub reports no hosted checks or review decision; merge/main readback remain pending. No live CRM/network acceptance or merge is claimed. Whole Auto remains partial.
+
+## PR #152 update — DebugMode lifecycle clarity
+
+The candidate now removes duplicate API/Cloud DebugMode service classes that were never bound to runtime modules. The active diagnostics page remains a local capture toggle; matrix rows for the dormant persisted model are NOT APPLICABLE, and the Prisma table remains until a reviewed migration. API 37/37, Cloud 17/17, both backend builds and UAT-049 pass. Push/readback and PR review state are the delivery gates; overall Auto remains partial.

@@ -1,0 +1,32 @@
+# Integration review — candidate 5.1.58
+
+## Scope
+
+The Cloud device path was weaker than the API counterpart in three places: a repeated machine registration returned an existing device across actor/tenant boundaries; actors without a company could register a pending device; and pairing did not recheck stored binding or atomically consume the still-valid proof. Its public controller also exposed exception text. This slice aligns those Cloud paths to the established API contract.
+
+## Contract changes
+
+- Registration retries succeed only when persisted user and company match the authenticated DB actor and tenant.
+- The guard denies registration when the authenticated actor has no company.
+- Pairing requires stored user, company and Keledon bindings.
+- The update predicate requires the same device, `pending` status, matching code and unexpired deadline, preventing stale/concurrent proof reuse.
+- Public pairing failures return a generic error.
+
+## Validation
+
+- Cloud regression 21 covers registration binding, missing tenant, pairing prerequisites and conditional single-use proof.
+- Cloud regression 42 covers public error redaction.
+- API regression 21 retains the established binding behavior; regression 33 maps UAT-047 to the Device API rows while retaining BLOCKED status.
+- Full API/Cloud regressions, five builds, PHDK coherence, version alignment and diff check are recorded in the candidate check report.
+
+UAT-047 is source-level only. No DB, physical device or live pairing was used. Persisted and native acceptance remain open; whole Auto is still PARTIALLY DELIVERED.
+
+## AutoBrowse request lifecycle follow-up
+
+Source review found that Browser's RPA step executor installed a tenant-origin request scope, but the separate AutoBrowse goal path only checked the URL for each action. Requests made by CRM page scripts and subresources therefore did not inherit the goal's allowlist while AutoBrowse was running. `TabManager` now attaches the tenant vendor origins to each configured BrowserView before its first load and clears that scope on close/destruction. `executeGoal` temporarily narrows/applies the active tenant scope before invoking the planner and action loop, then restores the previous scope in `finally`. The Electron request guard consequently covers navigation/redirect/frame and HTTP(S)/WebSocket subresource requests for the full configured view lifetime and goal.
+
+Browser security-policy/call/event tests pass 15/15 and Browser TypeScript build passes. This is source-contract verification; no DNS resolution, live request or customer CRM access was performed. UAT-048 and the test evidence are recorded in the root UAT report/check report.
+
+## DebugMode model reconciliation
+
+Both backends contained duplicate `DebugModeService` classes with methods for global activate/deactivate/status and audit writes, but neither service was registered or called. The Web `/management/debug` switch independently toggles this browser's local diagnostics capture. Removed the unreachable API/Cloud service classes; the Prisma model remains in schema and storage pending a reviewed migration. The matrix now marks all seven roles × API/Web for this dormant model NOT APPLICABLE and distinguishes local UI state from server persistence. Regression 49 verifies the service files and stale dist outputs are absent, confirms the UI stays local, and asserts the 14 matrix rows. API 37/37 and Cloud 17/17 regressions and builds pass. This adds no database or server-debug behavior.

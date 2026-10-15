@@ -1,5 +1,13 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.58 — Cloud device tenant-binding parity (2026-10-15)
+
+UAT-047 passes in source regressions. Cloud now checks that a reused machine registration belongs to the same DB-derived user and company, refuses registration for an actor without a company, requires the stored user/company/Keledon binding before pairing, and updates only a still-pending row with the same pairing code and unexpired deadline. Public pairing responses suppress internal exception details. API regression 21 verifies the existing stricter counterpart; Cloud regressions 21 and 42 exercise the Cloud contract.
+
+This does not prove persisted behavior on a live database or device, and does not claim an observed concurrency run. Live pairing and persistence remain BLOCKED. Candidate tally is **47 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**; native device/audio remains MANUAL.
+
+SIGUIENTE PASO: retest a synthetic Cloud pairing against disposable PostgreSQL and a supported native device host when available.
+
 ## Candidate 5.1.57 — map persisted evidence without overstating coverage (2026-10-14)
 
 UAT-046 passes in regression 33. The four Company/User API rows for admin and superadmin now cite only the outcomes actually exercised by UAT-045; regression enforces those citations and confirms all four rows remain BLOCKED until exhaustive model-role-operation testing is complete. This is a documentation/test-integrity acceptance only: it adds no runtime or new database behavior.
@@ -394,3 +402,15 @@ After the owner authorized the Electron runtime, `browser/npm run dev` launched 
 A safe local New Tab UI action created the second tab. KELEDON automatically navigated it to its default `https://www.google.com` page; the tab was closed while loading. No content was reviewed, no account or data was entered, and no client service was accessed. Evidence of the transition: `docs/phdk/evidence/uat-browser-native-new-tab.png`.
 
 The native renderer startup is **PASS**. Native media-consent dialog, OS microphone/camera permission, physical device/audio and call lifecycle remain **NOT TESTED**. CUA inventory returned no native apps, its app-list API was unavailable, and Sky reported `Trusted RPC service is not configured`; therefore no Windows app UI input was possible. The local permission-policy unit tests remain the only consent-dialog behavior verification. No permission was granted and no customer call occurred.
+
+## Candidate 5.1.58 — AutoBrowse request scope (2026-10-15)
+
+Source review found that AutoBrowse checked each planned action against configured vendor origins but did not hold the BrowserView request scope while a goal ran. `executeGoal` now installs the selected tenant's allowlist before planning/executing actions and restores the previous scope in `finally`; configured vendor tabs stay bound for their full lifetime and clear the scope on close. Electron's request, redirect and frame guards therefore cover CRM page subresources while the vendor view is open. Browser security-policy/call/event tests pass 15/15 and Browser TypeScript build passes. UAT-048 is source-only; no live CRM or external/private target was contacted.
+
+Candidate tally: **48 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Live persisted device pairing, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open; per-client call/CRM acceptance awaits each tenant's chosen stack.
+
+## Candidate 5.1.58 — DebugMode lifecycle reconciliation (2026-10-15)
+
+Source audit found duplicate API/Cloud `DebugModeService` classes that performed global persisted toggles and audit writes but were not bound to any module. The active `/management/debug` toggle only controls browser-local diagnostic capture in localStorage. Removed the unreachable service classes and stale compiled JS outputs; retained the Prisma table pending an explicitly approved migration. Regression 49 locks this boundary and marks all 14 DebugMode role/surface rows NOT APPLICABLE. API regression is 37/37; Cloud regression remains 17/17; both builds pass. UAT-049 is source-only and does not claim server-wide debug mode or database migration.
+
+Tally: **49 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Persisted CRUD breadth, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open.

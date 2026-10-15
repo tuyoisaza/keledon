@@ -388,10 +388,49 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target
 | 60 UAT Fix | PASS FOR FINDING | Corrected stale wording; full operation coverage remains BLOCKED. |
 | 65 SEO / 67 AEO | REUSED / NOT AFFECTED | Public claims unchanged; deployed measures remain open. |
 | 70 Check / 80 Remediation | PASS FOR SOURCE SLICE | API 36/36; five builds; alignment; coherence 52/52; diff check. |
-| 90 Delivery | PR OPEN / MERGE PENDING | PR #151 is clean and open, based on verified main `7b535964b91815b964fd7c1ddc121a994883ebb8`; no hosted checks/review, main unprotected. |
+| 90 Delivery | PASS / REMOTE VERIFIED | PR #151 squash-merged at `12bef77c2aaaa16e9c607a003abcc41b4f5c2d22`; remote tree matches candidate; all roots/renderer 5.1.57; completion gate passes. No hosted checks/review; main unprotected. |
 
 UAT-046 is source/documentation integrity only; it uses the already recorded `50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json` and no new database or external service. Whole Auto remains **PARTIALLY DELIVERED** pending exhaustive operations, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected live integrations.
 
-SIGUIENTE PASO: review and merge PR #151, verify exact remote tree/version and refresh post-merge delivery evidence; then continue the next persisted model operations.
+SIGUIENTE PASO: continue persisted model-operation acceptance on a new branch from verified main; retain the open native and deployed gates.
 
 ---
+
+## PHDK Auto continuation — candidate 5.1.58 Cloud device binding (2026-10-15)
+
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch `fix/phdk-next-model-operations-5-1-58`; based on verified main after PR #151, merge `12bef77c2aaaa16e9c607a003abcc41b4f5c2d22`, tree `1d29055e660d7e37bf600344ac98afd3d7e9b098`. UAT-047 fixes Cloud device registration/pairing parity. All five roots and Browser renderer are 5.1.58; API 36/36, Cloud 17/17, five builds, coherence 52/52 and diff check pass.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| 00 Preflight | REUSED / REVALIDATED | Installed PHDK 2.50.10; coherence 52/52. |
+| 10 Capture / 20 Plan | REUSED | Four confirmed fronts and private destination/role policies remain current. |
+| 30 PMO | CONTINUED | CMT-004 device-to-tenant boundary and Cloud/API parity. |
+| 40 Integration | PASS FOR SOURCE SLICE | UAT-047 and `INTEGRATION_REPORT-5.1.58.md`. |
+| 50 UAT | PASS FOR UAT-047 / WHOLE INCOMPLETE | 47 PASS, 0 BLOCKED, 1 MANUAL; source-only device contract. |
+| 60 UAT Fix | PASS FOR FINDING | Cloud actor/company registration, stored pairing binding, atomic proof predicate, generic error. |
+| 65 SEO / 67 AEO | REUSED / NOT AFFECTED | Deployed acceptance remains open. |
+| 70 Check / 80 Remediation | PASS FOR SOURCE SLICE | API/Cloud regressions, five builds, coherence, version alignment, diff check. |
+| 90 Delivery | IN PROGRESS | Candidate PR and remote readback pending. |
+
+No live database/device or customer integration was used. Whole PHDK Auto remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: deliver candidate 5.1.58 through the normal PR flow; then continue persisted device acceptance and remaining Auto gates.
+
+## PHDK Auto continuation — candidate 5.1.58 Browser allowlist audit (2026-10-15)
+
+Follow-up source review confirmed that the active RPA executor scoped BrowserView requests, while AutoBrowse goal actions relied on per-action navigation checks without holding the request allowlist through AI planning and page subresource loads. `executeGoal` now applies the tenant's configured vendor origins for the full goal and restores the prior scope in `finally`; configured vendor views stay scoped until close and clear their entry on destruction. Browser policy tests 15/15, Browser build, API/Cloud regressions, five builds and PHDK coherence 52/52 pass. UAT-048 is source-only; no external or private CRM endpoint was contacted.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| 30 PMO / Workstreams | CONTINUED | CMT-003 tenant-origin allowlist now covers the AutoBrowse request lifecycle. |
+| 40 Integration Review | PASS FOR SOURCE SLICE | Browser and Cloud/API tenant-boundary contracts are mapped in `INTEGRATION_REPORT-5.1.58.md`. |
+| 50 UAT | PASS FOR UAT-048 / WHOLE INCOMPLETE | 48 PASS, 0 BLOCKED, 1 MANUAL; no live network run. |
+| 60 UAT Fix | PASS FOR FINDING | AutoBrowse full-goal request scope restored reliably after execution. |
+| 70 Check | PASS FOR SOURCE SLICE | Browser tests/build and previously passing API/Cloud/full builds, alignment, coherence and diff check. |
+| 90 Delivery | PR #152 UPDATED / REMOTE VERIFIED | Branch head `9dce6748d3af4426f4f9de1ca99295103a5bd553` matches `git ls-remote`; PR remains open, merge/main readback pending. |
+
+Whole PHDK Auto remains PARTIALLY DELIVERED; persisted operations, live device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected call/CRM acceptance remain open.
+
+## PHDK Auto continuation — candidate 5.1.58 DebugMode classification (2026-10-15)
+
+The 35-model crosswalk included a global `DebugMode` Prisma model with no API/Cloud module binding, while duplicate service classes implemented global activation/audit writes and the Web page only toggled client-local diagnostic capture. Removed the disconnected service code and stale built JS outputs. The Prisma table remains untouched; no database migration is claimed. The matrix now classifies all 14 DebugMode role/surface rows NOT APPLICABLE until a server-wide feature or approved schema retirement exists. Regression 49 confirms source and dist state. API 37/37, Cloud 17/17, both builds, five application builds, Browser 15/15, and PHDK coherence 52/52 pass. UAT-049 is source-only; overall Auto remains partial.

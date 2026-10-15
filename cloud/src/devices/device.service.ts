@@ -75,10 +75,19 @@ export class DeviceService {
       throw new Error('Invalid or expired pairing code');
     }
 
+    if (!device.userId || !device.keledonId || !device.organizationId) {
+      throw new Error('Device requires an authorized stored binding');
+    }
+
     const authToken = this.generateAuthToken();
 
     const paired = await this.prisma.device.update({
-      where: { id: device.id },
+      where: {
+        id: device.id,
+        status: 'pending',
+        pairingCode: code,
+        pairingCodeExpiresAt: { gte: new Date() },
+      },
       data: {
         userId: device.userId,
         organizationId: device.organizationId,
@@ -171,6 +180,12 @@ export class DeviceService {
     });
 
     if (existing) {
+      if (
+        existing.userId !== data.userId ||
+        existing.organizationId !== data.organizationId
+      ) {
+        throw new Error('Device access denied');
+      }
       return { device_id: existing.id, already_registered: true };
     }
 

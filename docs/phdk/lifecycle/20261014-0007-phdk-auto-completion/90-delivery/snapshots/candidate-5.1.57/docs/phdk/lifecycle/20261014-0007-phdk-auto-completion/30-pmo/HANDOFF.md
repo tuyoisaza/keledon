@@ -46,7 +46,7 @@ Next stage: Integration Review. Inspect all changed source and test changes, foc
 
 ## Candidate 5.1.57 — map scoped persisted evidence
 
-The UAT-045 outcomes are now traceable from Company/admin, Company/superadmin, User/admin and User/superadmin API rows in `CRUD_MATRIX.md`. Regression 33 locks the four citations and BLOCKED status. UAT-046 is an evidence-mapping check only; it does not expand persisted CRUD acceptance. Candidate 5.1.57 checks pass: API 36/36, five builds, version alignment and PHDK coherence 52/52. PR/readback are pending. Whole Auto remains partial.
+The UAT-045 outcomes are now traceable from Company/admin, Company/superadmin, User/admin and User/superadmin API rows in `CRUD_MATRIX.md`. Regression 33 locks the four citations and BLOCKED status. UAT-046 is an evidence-mapping check only; it does not expand persisted CRUD acceptance. Candidate 5.1.57 checks pass: API 36/36, five builds, version alignment and PHDK coherence 52/52. PR #151 is merged and remotely verified; whole Auto remains partial.
 
 | Workstream | Status | Next proof gate |
 |---|---|---|

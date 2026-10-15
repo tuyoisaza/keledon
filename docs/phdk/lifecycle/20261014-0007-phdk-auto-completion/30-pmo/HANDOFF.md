@@ -46,7 +46,7 @@ Next stage: Integration Review. Inspect all changed source and test changes, foc
 
 ## Candidate 5.1.57 — map scoped persisted evidence
 
-The UAT-045 outcomes are now traceable from Company/admin, Company/superadmin, User/admin and User/superadmin API rows in `CRUD_MATRIX.md`. Regression 33 locks the four citations and BLOCKED status. UAT-046 is an evidence-mapping check only; it does not expand persisted CRUD acceptance. Candidate 5.1.57 checks pass: API 36/36, five builds, version alignment and PHDK coherence 52/52. PR/readback are pending. Whole Auto remains partial.
+The UAT-045 outcomes are now traceable from Company/admin, Company/superadmin, User/admin and User/superadmin API rows in `CRUD_MATRIX.md`. Regression 33 locks the four citations and BLOCKED status. UAT-046 is an evidence-mapping check only; it does not expand persisted CRUD acceptance. Candidate 5.1.57 checks pass: API 36/36, five builds, version alignment and PHDK coherence 52/52. PR #151 is merged and remotely verified; whole Auto remains partial.
 
 | Workstream | Status | Next proof gate |
 |---|---|---|
@@ -58,3 +58,14 @@ The UAT-045 outcomes are now traceable from Company/admin, Company/superadmin, U
 
 ---
 
+## Candidate 5.1.58 — Cloud device boundary parity
+
+Cloud device registration now rejects foreign-actor/tenant reuse of an existing machine ID and requires a DB-derived company; Cloud pairing requires a stored user/company/Keledon binding and conditionally consumes a matching unexpired proof. The public pair endpoint returns generic errors. API/Cloud regressions, builds and PHDK checks pass. UAT-047 source only; live persistence is open. Candidate delivery remains pending.
+
+## Candidate 5.1.58 follow-up — CMT-003 Browser request scope
+
+The AutoBrowse goal path now carries the tenant's configured vendor-origin allowlist through the full BrowserView lifecycle, including resource requests made by page scripts, AI-planned clicks, and retries. Previous scope is restored after success or failure. Browser tests/build pass; UAT-048 is source-only. Per-client integration remains untested until the customer selects its provider and target.
+
+## Candidate 5.1.58 follow-up — CMT-004 DebugMode boundary
+
+The crosswalk no longer implies that `/management/debug` controls a global server toggle. The API/Cloud DebugMode service classes were unreachable; the Web switch is local debug capture only. Dead services and stale dist outputs were removed, the schema is retained, and all DebugMode role/surface rows now read NOT APPLICABLE pending an approved migration or server feature. Regression 49 and API/Cloud builds pass. UAT-049 is source-only.

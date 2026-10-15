@@ -1,3 +1,19 @@
+## v5.1.58 — 2026-10-15 (enforce tenant-bound integrations and device pairing)
+
+- Require Cloud device registration retries to match the DB-derived user and company already bound to the machine.
+- Deny device registration when the current DB actor has no company.
+- Require complete stored tenant/device bindings before Cloud pairing; atomically consume only a still-pending, matching, unexpired code.
+- Return a generic public pairing error so database/internal exception details are not disclosed.
+- Bind configured vendor BrowserViews to the tenant origin allowlist for their lifetime and through AutoBrowse goals, including AI-planned actions and subresources; restore the prior scope after execution and clear it when the view closes.
+- Remove unreachable API/Cloud DebugMode services; keep the active Web debug capture explicitly local-only and classify the dormant persisted model as NOT APPLICABLE pending an approved schema migration.
+- Add focused Cloud/Browser/API regressions and map scoped source evidence while keeping live device/persistence acceptance BLOCKED.
+- Align all five application package/lock roots and Browser renderer at 5.1.58.
+
+### Verification
+- API regression 37/37, Cloud regression 17/17, Browser security/call/event tests 15/15, five production builds and PHDK coherence 52/52 pass; all six version roots align at 5.1.58.
+- UAT-047 and UAT-048 are source-level only; no live DB, device, pairing code, vendor or customer endpoint was used.
+- PHDK Auto remains partial; live persisted device acceptance and native device/audio remain open.
+
 ## v5.1.57 — 2026-10-14 (trace persisted UAT in the CRUD matrix)
 
 - Link the four exercised Company/User API role rows to UAT-045 without claiming exhaustive persistence coverage.
