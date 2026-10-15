@@ -1,0 +1,60 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto source slice 5.1.43: apply tenant RPA origin scope to BrowserView navigation",
+  "target_branch": "main",
+  "expected_version": "5.1.43",
+  "version_file": "browser/package.json",
+  "version_property": "version",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/127",
+  "pr_head_sha": "d440572abaa2103885d4c85606d8cb1a03597e63",
+  "tested_candidate_sha": "076bce49bead0029fd8fc9ea7f79389538f526e5",
+  "tested_candidate_tree": "7c2cdffbac9887d974f886d8144cff330029c691",
+  "product_fix_sha": "29d18efbbabe159e5279a01ba767f70e54d8afdc",
+  "merged_commit_sha": "c2b918c734ea7b2c54d99902afae62615d05e2eb",
+  "remote_main_sha": "c2b918c734ea7b2c54d99902afae62615d05e2eb",
+  "remote_main_tree": "fa26e5e6857b1be8b9d803fadd4be8ccfb20b96c",
+  "git_ls_remote_matches": true,
+  "versions": {
+    "services/api": "5.1.43",
+    "cloud": "5.1.43",
+    "browser": "5.1.43",
+    "services/web": "5.1.43",
+    "landing": "5.1.43",
+    "browser_renderer": "5.1.43"
+  },
+  "checks": {
+    "lint": {
+      "status": "BLOCKED",
+      "evidence": "Browser ESLint 10 requires eslint.config.*; this package has no flat config. No lint PASS is claimed."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "npm run build in browser; TypeScript tsc completed successfully."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "npm run build in browser completed successfully on the exact tested candidate."
+    },
+    "focused_tests": {
+      "status": "PASS",
+      "evidence": "Browser offline suite 27/27; Browser security-policy/source-wiring tests 9/9."
+    },
+    "uat": {
+      "status": "PASS",
+      "evidence": "UAT-039 passed on exact tested candidate 076bce49bead0029fd8fc9ea7f79389538f526e5; offline fixtures and mock WebContents only."
+    },
+    "source_delivery": {
+      "status": "PASS",
+      "evidence": "PR #127 squash-merged; origin/main and git ls-remote agree at c2b918c734ea7b2c54d99902afae62615d05e2eb and tree fa26e5e6857b1be8b9d803fadd4be8ccfb20b96c."
+    },
+    "whole_auto_acceptance": {
+      "status": "PARTIAL",
+      "evidence": "UAT total 36 PASS, 2 BLOCKED, 1 MANUAL. Persisted DB/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO, and per-client live call/CRM acceptance remain open."
+    }
+  },
+  "scope_limitations": [
+    "No packaged Electron runtime tested.",
+    "Cross-origin subresource behavior remains unverified.",
+    "No live CRM/private endpoint, database, customer data, device or deployment used."
+  ]
+}

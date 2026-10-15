@@ -1,6 +1,6 @@
 # PHDK Auto status — candidate 5.1.43 (2026-10-14)
 
-**Status: SOURCE CANDIDATE CHECK PASS; DELIVERY PENDING; WHOLE PHDK AUTO PARTIALLY DELIVERED.**
+**Status: SOURCE MERGED AND REMOTE VERIFIED; WHOLE PHDK AUTO PARTIALLY DELIVERED.**
 
 All four owner-confirmed KELEDON fronts remain in order. Product fix commit `29d18efbbabe159e5279a01ba767f70e54d8afdc` on `fix/phdk-rpa-tab-navigation-scope-5-1-43` is based on verified `origin/main` `e04418217e1ebb18acda9728a799041fd3bc3c19`. Exact tested candidate including the final cancellation-cleanup assertion is `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`). Five application package/lock roots and Browser renderer align at 5.1.43. Installed PHDK 2.50.10 coherence passes 52/52.
 
@@ -8,4 +8,4 @@ CHK-AUTO-021 closes a defense-in-depth gap: the RPA executor's trusted tenant or
 
 UAT totals **36 PASS, 2 BLOCKED, 1 MANUAL**. Open acceptance includes safe DB-backed identities and disposable PostgreSQL/migrations/persisted CRUD, native Windows device/audio, broad accessibility/localization, deployed SEO/AEO, and customer-specific live call/CRM acceptance. Browser ESLint is blocked because installed ESLint 10 requires a flat config absent from this package.
 
-The exact source commit is local on the candidate branch; PR, merge, remote-main readback and final delivery gate are pending. No whole-product completion is claimed.
+PR [#127](https://github.com/tuyoisaza/keledon/pull/127) squash-merged at `c2b918c734ea7b2c54d99902afae62615d05e2eb`. Fresh `origin/main` and `git ls-remote` agree; remote tree is `fa26e5e6857b1be8b9d803fadd4be8ccfb20b96c`, and all five package/lock roots plus Browser renderer report 5.1.43. Post-merge evidence is `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.43-post-merge-127.json`. No whole-product completion is claimed.

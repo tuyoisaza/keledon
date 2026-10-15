@@ -219,7 +219,7 @@ CHK-AUTO-021 found that RPA's tenant allowlist was not visible to Electron Brows
 
 | Commitment | Status | Remaining in-scope proof |
 |---|---|---|
-| CMT-001 — baseline/versions/PR | VERSIONED CANDIDATE / DELIVERY PENDING | Push/PR, merge and exact remote SHA/tree/version readback. |
+| CMT-001 — baseline/versions/PR | SOURCE MERGED / REMOTE VERIFIED | PR #127; main SHA `c2b918c734ea7b2c54d99902afae62615d05e2eb`, tree `fa26e5e6857b1be8b9d803fadd4be8ccfb20b96c`; exact remote readback and 5.1.43 versions confirmed. |
 | CMT-002 — widget/diagnostics | PRIOR LOCAL SOURCE/UAT PASS / ACCEPTANCE PARTIAL | Native Windows device/audio and broad route/assistive-tech verification. |
 | CMT-003 — voice/Cloud/Browser/customer CRM | OFFLINE TENANT SCOPE PASS / LIVE PER CLIENT | Packaged Electron, subresource behavior, and client-configured live provider acceptance. |
 | CMT-004 — administration/permissions | SOURCE REGRESSIONS PASS / PERSISTENCE UNVERIFIED | Full CRUD matrix, safe DB identities, disposable PostgreSQL/migrations and persisted authorization evidence. |
