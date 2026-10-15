@@ -12,6 +12,8 @@ CMT-004 now has exact-source local DB evidence on candidate 5.1.55: migrations a
 | WS-004 administration/permissions | Persisted core paths PASS | Expand mapped model/operation coverage; retain the 35-model gaps/decisions. |
 | WS-X PHDK conformity | 52/52 prior; candidate recheck recorded | Current coherence and completion gates. |
 
+---
+
 Root retains integrated review; no workers are assigned. Portfolio remains PARTIALLY DELIVERED. No native device, customer endpoint, production data or deployment was used.
 
 ---
@@ -41,4 +43,18 @@ Status: COMPLETED. The already-confirmed four-front portfolio has been reconcile
 Root owns integrated source review and delivery. No workers are assigned; preserve all current uncommitted changes. Portfolio remains PARTIALLY DELIVERED. Native Browser/device/audio, persisted DB and deployed SEO/AEO require their stated external environments and must remain unverified until then.
 
 Next stage: Integration Review. Inspect all changed source and test changes, focus on cross-boundary contracts, tenant isolation, secret handling, public diagnostics and manifest parity. Do not start UAT before resolving review findings into a single candidate.
+
+## Candidate 5.1.57 — map scoped persisted evidence
+
+The UAT-045 outcomes are now traceable from Company/admin, Company/superadmin, User/admin and User/superadmin API rows in `CRUD_MATRIX.md`. Regression 33 locks the four citations and BLOCKED status. UAT-046 is an evidence-mapping check only; it does not expand persisted CRUD acceptance. Candidate 5.1.57 checks pass: API 36/36, five builds, version alignment and PHDK coherence 52/52. PR/readback are pending. Whole Auto remains partial.
+
+| Workstream | Status | Next proof gate |
+|---|---|---|
+| WS-001 baseline/version/PR | Candidate 5.1.57 checks pass | Diff, PR, remote merge/readback and completion gate. |
+| WS-002 diagnostics/widget | Source carried forward | Broad accessibility and exact-candidate UI acceptance. |
+| WS-003 runtime integrations | Provider-independent policy source checked | Per-client call/CRM target remains tenant-selected; private destinations stay tenant-allowlisted. |
+| WS-004 administration/permissions | Scoped DB UAT retained; evidence map repaired | Expand persisted model/operation coverage. |
+| WS-X PHDK conformity | 52/52 | Current mechanical delivery gate. |
+
+---
 

@@ -1,5 +1,13 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.57 — map persisted evidence without overstating coverage (2026-10-14)
+
+UAT-046 passes in regression 33. The four Company/User API rows for admin and superadmin now cite only the outcomes actually exercised by UAT-045; regression enforces those citations and confirms all four rows remain BLOCKED until exhaustive model-role-operation testing is complete. This is a documentation/test-integrity acceptance only: it adds no runtime or new database behavior.
+
+Candidate acceptance is now **46 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-045 remains the exact-source persistence evidence; its limited outcomes are not generalized to all CRUD operations. Native device/audio remains MANUAL; broad accessibility/localization and deployed SEO/AEO remain unverified. Client call/CRM acceptance stays per customer. No deployment is claimed.
+
+SIGUIENTE PASO: extend persisted acceptance to the next mapped resource operations while retaining BLOCKED wherever full coverage is missing.
+
 ## Candidate 5.1.56 — exact-source PostgreSQL roles and migration acceptance (2026-10-15)
 
 UAT-044/045 pass on exact 5.1.55 source commit `8999dfd9519c62746c42ff84064306361b9b629a` (tree `955bcea225dcd8cdeca971e98f3c7cc3fd764ec2`). The API build and 36/36 regression suites pass. Against the retained disposable PostgreSQL 16.15 database on `127.0.0.1:55432`, eight migrations were found; two consecutive deploy attempts both reported no pending migrations, and `migrate status` reported the schema up to date.

@@ -76,3 +76,10 @@ Snapshots for this candidate are under `snapshots/candidate-5.1.36/`. Next: UAT 
 ## Candidate 5.1.33 — exact-candidate UAT and source cleanup contract (2026-10-14)
 
 UAT-030 passes 1/1 on the local production Web build at version 5.1.33 using synthetic Company Co fixtures, intercepted API requests, and blocked external network/WebSockets. The updated `docs/phdk/evidence/uat-local-web.json` and screenshots record the run. UAT-031 passes 12/12 isolated mocked Prisma/Qdrant assertions across API and Cloud for document point cleanup, collection cleanup, missing collections, ordering, and failure preservation. UAT remains **28 PASS, 2 BLOCKED, 1 MANUAL**. UAT-009 needs a safe DB-backed identity target; UAT-010 needs disposable PostgreSQL for persisted CRUD/migration; UAT-006 needs native Windows device/audio. The full model×role×tenant×surface×operation matrix, broad route accessibility/localization and deployed SEO/AEO remain incomplete. No database, live Qdrant, customer provider, private CRM, customer record or deployment was used.
+## Candidate 5.1.57 — CRUD evidence traceability
+
+UAT-046 passes as a source-level integrity case: regression 33 requires the four Company/User API rows for admin and superadmin to cite UAT-045 and remain BLOCKED until exhaustive model-operation testing is complete. This case performs no DB or service execution and adds no persistence acceptance.
+
+Tally: **46 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 35-model operation matrix and delete/reindex concurrency remain open; native device/audio remains MANUAL; broad accessibility/localization and deployed SEO/AEO remain unverified; live CRM/call acceptance stays tenant-specific.
+
+---

@@ -4,9 +4,9 @@
 
 Candidate branch `fix/phdk-persisted-uat-5-1-56` is based on verified `origin/main` 5.1.55 commit `85d7ebbbdc0d834e28b9ce1c0fdeb50ce7454fcf` / tree `955bcea225dcd8cdeca971e98f3c7cc3fd764ec2`. UAT-044/045 bind exact-source tests to 5.1.55 commit `8999dfd9519c62746c42ff84064306361b9b629a`: API build and regression 36/36 pass; eight PostgreSQL migrations are current/idempotent; DB-backed synthetic registration, superadmin assignment, tenant access and denial checks pass. Evidence is `../50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`.
 
-All synthetic accounts and companies created for the live API test were deleted; post-cleanup user/company counts match the starting fixtures. The API and PostgreSQL processes were stopped. Candidate package/lock roots and Browser renderer are 5.1.56; source/build/coherence and delivery verification remain pending. Whole Auto is still PARTIALLY DELIVERED because the exhaustive 35-model operation matrix, native device/audio, broad accessibility/localization and deployed SEO/AEO remain incomplete; live integration UAT remains tenant-specific.
+All synthetic accounts and companies created for the live API test were deleted; post-cleanup user/company counts match the starting fixtures. The API and PostgreSQL processes were stopped. Candidate package/lock roots and Browser renderer are 5.1.56. PR [#150](https://github.com/tuyoisaza/keledon/pull/150) squash-merged at `7b535964b91815b964fd7c1ddc121a994883ebb8`; remote `main` and `git ls-remote` agree, tree `02c4ce60ad04c66847f747ace268cb2d2a0eaeb0` matches the tested candidate, and `phdk_completion_gate.py` passes. GitHub reported no hosted checks or review decision and main is unprotected. Whole Auto is still PARTIALLY DELIVERED because the exhaustive 35-model operation matrix, native device/audio, broad accessibility/localization and deployed SEO/AEO remain incomplete; live integration UAT remains tenant-specific. Post-merge machine evidence is in repository-root `PHDK_DELIVERY_EVIDENCE.json`.
 
-SIGUIENTE PASO: finish candidate 5.1.56 source checks and deliver it through a PR, then continue the four confirmed Auto fronts.
+SIGUIENTE PASO: continue the four confirmed Auto fronts; extend persisted coverage for mapped operations and obtain the remaining native/deployed evidence when those environments are available.
 
 ---
 
@@ -245,5 +245,14 @@ SIGUIENTE PASO: continuar los compromisos pendientes de Auto con evidencia aisla
 PR [#146](https://github.com/tuyoisaza/keledon/pull/146) squash-merged tested source `39cfd9dca87cbda148155b6d91d318cabcd0b681` at `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`. `origin/main` and `git ls-remote` agree; merged tree `88b5bb924cf458694bea41c743b6c6fb5beec9a3` matches candidate and six version reads are 5.1.53. Landing checks, focused UAT and PHDK coherence pass. GitHub reported no hosted checks or review decision; branch was unprotected. No deployment is claimed. Whole Auto remains partial for the acceptance gaps in `DELIVERY_REPORT.md` and `PHDK_COMPLETION_AUDIT.md`.
 
 The deterministic source-delivery evidence is recorded in `PHDK_DELIVERY_EVIDENCE.json`; its scope is this source slice only, not whole Auto completion.
+
+---
+## Delivery candidate 5.1.57 — CRUD evidence mapping
+
+Candidate branch `fix/phdk-crud-evidence-5-1-57` is based on verified `origin/main` 5.1.56 commit `7b535964b91815b964fd7c1ddc121a994883ebb8` / tree `02c4ce60ad04c66847f747ace268cb2d2a0eaeb0`. It updates the four Company/User API evidence cells to reflect only UAT-045 outcomes, adds regression assertions that preserve each row's BLOCKED status, records UAT-046, and aligns all five package/lock roots plus Browser renderer at 5.1.57. No runtime behavior changed. API regression 36/36, five builds, PHDK coherence 52/52 and `git diff --check` pass. PR [#151](https://github.com/tuyoisaza/keledon/pull/151) is open and clean, based on verified main `7b535964b91815b964fd7c1ddc121a994883ebb8`. GitHub reports no hosted checks or review decision; main is unprotected. Merge and post-merge remote verification are pending.
+
+Whole Auto remains **PARTIALLY DELIVERED**: exhaustive persisted model operations, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-specific live integration evidence remain open. UAT-046 adds no new database execution.
+
+SIGUIENTE PASO: finish checks, deliver via PR and verify the exact remote tree/version; continue persisted UAT afterward.
 
 ---

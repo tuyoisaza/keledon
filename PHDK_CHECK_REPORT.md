@@ -484,3 +484,12 @@ Current synthetic Web UAT evidence is `docs/phdk/evidence/uat-local-web.json` (v
 Overall: **SOURCE SLICE REMEDIATED LOCALLY / WHOLE PHDK AUTO PARTIAL**.
 
 ---
+## Current Check — candidate 5.1.57 CRUD evidence reconciliation (2026-10-14)
+
+Based on verified `origin/main` 5.1.56 SHA `7b535964b91815b964fd7c1ddc121a994883ebb8`, tree `02c4ce60ad04c66847f747ace268cb2d2a0eaeb0`. All five application package/lock roots and Browser renderer align at 5.1.57. API, Cloud, Browser, Web and Landing production builds pass; API regression passes 36/36; regression 33 verifies 35/35 Prisma models, 490 unique role/surface rows, four scoped UAT-045 citations and retained BLOCKED statuses. PHDK coherence is 52/52.
+
+UAT-046 passes as a source/evidence mapping check. It records no new persistence behavior and does not expand exact-source UAT-045. `git diff --check` passes. PR #151 is open with a clean merge state, based on the verified main commit above. GitHub reports no hosted checks or review decision; main is unprotected. The prior-delivery completion gate passes against verified main 5.1.56. The Landing build has its existing >500 kB main-chunk advisory; both browser-facing builds complete successfully.
+
+**Scoped result: PASS for source integrity and candidate builds; whole Auto remains PARTIALLY DELIVERED.** Exhaustive persisted CRUD and delete/reindex concurrency, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Customer integration acceptance remains tenant-specific. No deployment is claimed.
+
+---

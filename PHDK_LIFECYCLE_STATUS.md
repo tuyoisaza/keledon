@@ -7,16 +7,16 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target
 | 00 Preflight | REUSED / REVALIDATED | PHDK 2.50.10; coherence 52/52 on prior candidate. |
 | 10 Capture / 20 Plan | REUSED | Four confirmed fronts and approved tenant/role/private-URL policy remain current. |
 | 30 PMO | CONTINUED | CMT-004 exact-source DB identity, role, tenant and migration evidence. |
-| 40 Integration | IN PROGRESS | UAT-044/045 report persisted role assignment and migration idempotency on 5.1.55 source. |
+| 40 Integration | COMPLETED FOR SCOPED CANDIDATE | UAT-044/045 report persisted role assignment and migration idempotency on 5.1.55 source; candidate 5.1.56 merged. |
 | 50 UAT | PASS FOR SCOPED CASES / WHOLE INCOMPLETE | API build; 36/36 API regressions; 8 migrations idempotent/current; DB-backed user/superadmin/admin scope and denial paths pass; synthetic fixture cleanup verified. Whole tally 45 PASS, 0 BLOCKED, 1 MANUAL. |
 | 60 UAT Fix | COMPLETE FOR STALE STATUS | Current UAT-009/010 rows no longer claim the disposable DB is absent; exhaustive 35-model operations remain open. |
 | 65 SEO / 67 AEO | REUSED / NOT AFFECTED | Public source unchanged; deployed measures remain open. |
 | 70 Check / 80 Remediation | SCOPED PASS | Five builds, API 36/36 regression, coherence 52/52, `git diff --check`, and exact-source DB evidence pass; full Auto remains partial. |
-| 90 Delivery | PENDING | Candidate 5.1.56 has not been committed or opened as a PR. |
+| 90 Delivery | PASS / REMOTE VERIFIED | PR [#150](https://github.com/tuyoisaza/keledon/pull/150) squash-merged at `7b535964b91815b964fd7c1ddc121a994883ebb8`; remote tree `02c4ce60ad04c66847f747ace268cb2d2a0eaeb0` matches tested tree; five roots and renderer are 5.1.56; completion gate passes. |
 
-The exact-source evidence is `50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`. Only a synthetic loopback database was used; API/PostgreSQL were stopped and test fixtures removed. Whole Auto remains **PARTIALLY DELIVERED** pending the exhaustive model/operation matrix, native device/audio, broad accessibility/localization, deployed SEO/AEO, and any future tenant-selected live integrations.
+The exact-source evidence is `50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`; post-merge delivery evidence is in repository-root `PHDK_DELIVERY_EVIDENCE.json`. Only a synthetic loopback database was used; API/PostgreSQL were stopped and test fixtures removed. Whole Auto remains **PARTIALLY DELIVERED** pending the exhaustive model/operation matrix, native device/audio, broad accessibility/localization, deployed SEO/AEO, and any future tenant-selected live integrations.
 
-SIGUIENTE PASO: run candidate coherence/version and affected build checks, then continue the persisted matrix where routes are declared implemented.
+SIGUIENTE PASO: continue the persisted matrix where routes are declared implemented; use supported native hardware and permitted deployed evidence for the remaining gates.
 
 ---
 
@@ -374,3 +374,24 @@ Canonical artifacts: `PHDK_COMMITMENTS.md`, `PHDK_COMMITMENT_COVERAGE.md`, `PMO_
 Overall: **SOURCE CANDIDATE / PHDK AUTO PARTIALLY DELIVERED**. Open: safe DB-backed identities; disposable PostgreSQL, migrations and persisted role/tenant CRUD; live Qdrant/concurrency; native Windows device/audio; remaining CRUD families; broad accessibility/localization; deployed SEO/AEO. Voice/CRM live acceptance depends on each client's configured stack. No database, customer endpoint/data or deployment was used.
 
 Current work is at evidence delivery for the 5.1.38 source slice; PR #113 is merged and remotely verified. The four-front PHDK Auto goal remains active and partial while the listed acceptance gates remain open.
+## PHDK Auto continuation — candidate 5.1.57 CRUD evidence reconciliation (2026-10-14)
+
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`; branch `fix/phdk-crud-evidence-5-1-57`, based on verified 5.1.56 `origin/main` commit `7b535964b91815b964fd7c1ddc121a994883ebb8` / tree `02c4ce60ad04c66847f747ace268cb2d2a0eaeb0`. PHDK 2.50.10 is installed; coherence passes 52/52. Five application roots/locks and Browser renderer align at 5.1.57.
+
+| Stage | Status | Current evidence / next gate |
+|---|---|---|
+| 00 Preflight | REUSED / REVALIDATED | PHDK 2.50.10; coherence 52/52. |
+| 10 Capture / 20 Plan | REUSED | Four confirmed fronts and approved tenant/role/private-URL policy remain current. |
+| 30 PMO | CONTINUED | CMT-004 exact-source DB evidence is now linked to four model-role API rows. |
+| 40 Integration | PASS FOR SOURCE SLICE | Four matrix citations align to UAT-045 without expanding the tested scope. |
+| 50 UAT | PASS FOR UAT-046 / ACCEPTANCE INCOMPLETE | Evidence-mapping assertions pass; 46 PASS, 0 BLOCKED, 1 MANUAL. |
+| 60 UAT Fix | PASS FOR FINDING | Corrected stale wording; full operation coverage remains BLOCKED. |
+| 65 SEO / 67 AEO | REUSED / NOT AFFECTED | Public claims unchanged; deployed measures remain open. |
+| 70 Check / 80 Remediation | PASS FOR SOURCE SLICE | API 36/36; five builds; alignment; coherence 52/52; diff check. |
+| 90 Delivery | PR OPEN / MERGE PENDING | PR #151 is clean and open, based on verified main `7b535964b91815b964fd7c1ddc121a994883ebb8`; no hosted checks/review, main unprotected. |
+
+UAT-046 is source/documentation integrity only; it uses the already recorded `50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json` and no new database or external service. Whole Auto remains **PARTIALLY DELIVERED** pending exhaustive operations, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected live integrations.
+
+SIGUIENTE PASO: review and merge PR #151, verify exact remote tree/version and refresh post-merge delivery evidence; then continue the next persisted model operations.
+
+---
