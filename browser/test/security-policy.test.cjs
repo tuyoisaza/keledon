@@ -97,15 +97,19 @@ test('runtime RPA navigation scope is copied, isolated per WebContents, and clea
   assert.equal(getRuntimeVendorNavigationScope(first), undefined);
 });
 
-test('a configured tenant view blocks unallowlisted resource requests while idle', () => {
+test('a configured tenant view stays scoped after stop until destruction cleanup', () => {
   const session = {};
-  const vendorView = { session };
+  const vendorView = { session, stop() { this.stopped = true; } };
   const allowed = ['http://192.168.10.20:8080'];
   setRuntimeVendorNavigationScope(vendorView, allowed);
   const requestScope = getRuntimeVendorRequestScope(session, vendorView);
   assert.deepEqual(requestScope, allowed);
   assert.equal(isAllowedVendorRequest('http://192.168.10.20:8080/api/calls', requestScope), true);
   assert.equal(isAllowedVendorRequest('http://169.254.169.254/latest/meta-data', requestScope), false);
+  vendorView.stop();
+  assert.equal(vendorView.stopped, true);
+  assert.deepEqual(getRuntimeVendorNavigationScope(vendorView), allowed);
+  assert.deepEqual(getRuntimeVendorRequestScope(session, vendorView), allowed);
   setRuntimeVendorNavigationScope(vendorView, undefined);
   assert.equal(getRuntimeVendorRequestScope(session, vendorView), undefined);
 });
@@ -145,7 +149,18 @@ test('vendor view lifetime and frame, popup, and IPC navigation use tenant scope
   assert.match(tabManager, /setWindowOpenHandler\([\s\S]*const allowedOrigins = getNavigationScope\(\)/);
   assert.match(tabManager, /if \(scopedOrigins\) \{\s*setRuntimeVendorNavigationScope\(view\.webContents, scopedOrigins\)/);
   assert.match(tabManager, /once\('destroyed',[\s\S]*setRuntimeVendorNavigationScope\(view\.webContents, undefined\)/);
-  assert.match(tabManager, /closeTab\(tabId: string\) \{[\s\S]*setRuntimeVendorNavigationScope\(tab\.view\.webContents, undefined\)/);
+  const closeTabStart = tabManager.indexOf('  closeTab(tabId: string) {');
+  const closeTabEnd = tabManager.indexOf('\n  openDevTools()', closeTabStart);
+  assert.ok(closeTabStart >= 0 && closeTabEnd > closeTabStart);
+  const closeTab = tabManager.slice(closeTabStart, closeTabEnd);
+  assert.match(closeTab, /webContents\.stop\(\)/);
+  assert.doesNotMatch(closeTab, /setRuntimeVendorNavigationScope\(tab\.view\.webContents, undefined\)/);
+  const securityPolicy = fs.readFileSync(path.resolve('src/security-policy.ts'), 'utf8');
+  assert.match(securityPolicy, /runtimeVendorScopes = new WeakMap<object, RuntimeVendorScope>/);
+  assert.match(securityPolicy, /activeRuntimeVendorScopes = new Set<RuntimeVendorScope>/);
+  assert.match(securityPolicy, /const previous = runtimeVendorScopes\.get\(webContents\);\s*if \(previous\) activeRuntimeVendorScopes\.delete\(previous\)/);
+  assert.match(securityPolicy, /type RuntimeVendorScope = \{\s*session\?: object;\s*origins: readonly string\[\];\s*\}/);
+  assert.doesNotMatch(securityPolicy, /type RuntimeVendorScope = \{[^}]*webContents/s);
   assert.match(tabManager, /webRequest\.onBeforeRequest\([\s\S]*details\.webContentsId[\s\S]*webContents\.fromId\(details\.webContentsId\)[\s\S]*getRuntimeVendorRequestScope\([\s\S]*details\.initiatorOrigin[\s\S]*isAllowedVendorRequest\(details\.url, allowedOrigins\)/);
   assert.match(ipcHandlers, /getRuntimeVendorNavigationScope\(tab\.view\.webContents\) \?\? tab\.allowedOrigins/);
   assert.match(executor, /setRuntimeVendorNavigationScope\(view\.webContents, flow\.allowed_origins\)/);

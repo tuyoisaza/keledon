@@ -272,8 +272,11 @@ export class TabManager {
     if (tab.view && this.mainWindow) {
       try { this.mainWindow.removeBrowserView(tab.view); } catch (error) { log.debug('[Tabs] BrowserView was already detached:', error); }
     }
-    if (tab.view) {
-      setRuntimeVendorNavigationScope(tab.view.webContents, undefined);
+    if (tab.view && !tab.view.webContents.isDestroyed()) {
+      // Keep the tenant request scope active after detaching the view. Electron
+      // exposes stop(), but not destroy(), for this BrowserView WebContents; the
+      // destroyed event releases scope when Electron actually tears it down.
+      tab.view.webContents.stop();
     }
 
     this.tabs = this.tabs.filter(t => t.id !== tabId);

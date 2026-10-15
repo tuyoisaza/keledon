@@ -1,3 +1,15 @@
+## v5.1.59 — 2026-10-15 (preserve tenant request scope while closing CRM tabs)
+
+- Stop pending navigation on a closing vendor BrowserView while its tenant origin allowlist remains active; release that scope only from the WebContents `destroyed` event.
+- Keep the active request-scope registry from strongly retaining closed WebContents while preserving the per-session service-worker allowlist.
+- Add a regression that ensures pending page requests cannot lose tenant enforcement during tab close.
+- Align all five application package/lock roots and Browser renderer at 5.1.59.
+
+### Verification
+- Browser security/call/event tests, lint and build pass; API/Cloud regression suites and all five production builds pass; PHDK coherence is 52/52.
+- UAT-050 is source-contract evidence only. No live CRM, private endpoint, database or packaged Electron UI was exercised.
+- PHDK Auto remains partial; tenant-specific integrations, broad persisted CRUD acceptance, native device/audio, accessibility/localization, and deployed SEO/AEO remain open.
+
 ## v5.1.58 — 2026-10-15 (enforce tenant-bound integrations and device pairing)
 
 - Require Cloud device registration retries to match the DB-derived user and company already bound to the machine.
