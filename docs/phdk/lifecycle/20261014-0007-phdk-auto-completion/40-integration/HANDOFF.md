@@ -1,3 +1,11 @@
+# Integration handoff — candidate 5.1.68
+
+The API and Cloud provider configuration and voice-profile guards now have positive coverage for deriving tenant company scope from the database actor, in addition to the existing cross-company rejection cases. Full API and Cloud regressions pass 39/39 and 18/18. All five package/lock roots and the Browser renderer are aligned at 5.1.68. Five production builds, five lint checks, and five typechecks pass. See `INTEGRATION_REPORT-5.1.68.md` for the exact check inventory. No live database, customer CRM, call provider, or deployment was used. Whole PHDK Auto remains partial.
+
+SIGUIENTE PASO: finish exact-candidate Check, then deliver through the normal versioned PR and verify remote `main`.
+
+---
+
 # Integration Review handoff — 5.1.64 diagnostics hit targets
 
 Run ID: `20261014-0007-phdk-auto-completion`
@@ -82,4 +90,3 @@ This update advances UAT-009/010 only for the exercised scope; it does not claim
 SIGUIENTE PASO: complete candidate-wide source/build/coherence checks and deliver through the normal PR path.
 
 ---
-

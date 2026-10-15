@@ -1,5 +1,11 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.68 — provider and voice-profile CRUD derive tenant scope
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-062 | CMT-004 / authorized company admin or coordinator | Exercise API and Cloud guard paths for tenant-provider-config and voice-profiles: list without caller company, write without companyId, attempt a mixed-company provider batch and access a foreign profile ID. | Reads are filtered to the current DB actor company; accepted writes have actor-derived companyId; mixed-company batches and foreign direct IDs are denied; ordinary low roles cannot mutate tenant provider/profile resources. | API/Cloud source regression | PASS: API regression 39/39 and Cloud regression 18/18 include positive actor-derived scope plus negative cross-company cases. Unit guard evidence only; no live DB identity was used. |
+
 ## Candidate 5.1.67 — API flow reads enforce team scope
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

@@ -309,6 +309,39 @@ async function main() {
       ]).result,
       Denied,
     );
+    const providerConfigRead = run('tenant-provider-config', 'GET');
+    await providerConfigRead.result;
+    assert.equal(
+      providerConfigRead.req.query.companyId,
+      'co-a',
+      'provider config reads must use the current DB actor company',
+    );
+    const providerConfigWrite = run('tenant-provider-config', 'PUT', {}, [
+      { providerId: 'provider-a', providerType: 'tts', isEnabled: true },
+    ]);
+    await providerConfigWrite.result;
+    assert.equal(
+      providerConfigWrite.req.body[0].companyId,
+      'co-a',
+      'provider config writes must derive companyId from the current DB actor',
+    );
+    const voiceProfileRead = run('voice-profiles', 'GET');
+    await voiceProfileRead.result;
+    assert.equal(
+      voiceProfileRead.req.query.companyId,
+      'co-a',
+      'voice profile reads must use the current DB actor company',
+    );
+    const voiceProfileCreate = run('voice-profiles', 'POST', {}, {
+      providerId: 'provider-a',
+      name: 'Support voice',
+    });
+    await voiceProfileCreate.result;
+    assert.equal(
+      voiceProfileCreate.req.body.companyId,
+      'co-a',
+      'voice profile writes must derive companyId from the current DB actor',
+    );
     const list = run('users');
     await list.result;
     assert.equal(list.req.query.companyId, 'co-a');
