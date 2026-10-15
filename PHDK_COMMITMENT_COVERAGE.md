@@ -2,7 +2,7 @@
 
 | Commitment | Status | Candidate evidence | Open acceptance |
 |---|---|---|---|
-| CMT-001 baseline/version/PR | SOURCE DELIVERED / VERIFIED | PR #142 and evidence PR #143 merged; main SHA `efc2ae47bd8be5cecbcc4cabd607a379704e4856`; six version reads remain 5.1.52. | Continue normal PR/version/SHA reconciliation for this evidence update. |
+| CMT-001 baseline/version/PR | SOURCE + EVIDENCE DELIVERED / VERIFIED | PRs #142–#144 merged; main SHA `aaa99f19e35d6e6172c24a764d27abf087a39e85`; six version reads remain 5.1.52. | Continue Auto against remaining confirmed acceptance gates. |
 | CMT-002 widget/safe diagnostics | PARTIAL | Diagnostics 19/19; synthetic UI UAT 4/4. | Native Windows device/audio and broad a11y/localization. |
 | CMT-003 per-client voice→Cloud→Browser→CRM | PARTIAL | Synthetic contracts and tenant-origin policy remain verified; customer-configured private target is tenant-allowlisted. | Client live call/CRM acceptance follows each tenant's selected stack. |
 | CMT-004 administration/permissions | PARTIAL | Persisted session CRUD plus Knowledge document/base delete and Qdrant cleanup pass on disposable loopback services. | Complete 35-model × role × tenant × operation matrix, delete/reindex concurrency and broad accessibility/localization. |

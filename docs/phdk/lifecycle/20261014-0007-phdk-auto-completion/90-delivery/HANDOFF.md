@@ -1,10 +1,10 @@
 ## Active delivery continuation — 5.1.52 live Qdrant UAT evidence
 
-Source PR [#142](https://github.com/tuyoisaza/keledon/pull/142) merged at `838931bd0d63f63f4a574ec9b660a12cc4ba5777`; evidence PR [#143](https://github.com/tuyoisaza/keledon/pull/143) merged at current `origin/main` `efc2ae47bd8be5cecbcc4cabd607a379704e4856` (tree `7ba62f8cec5a344f4749c2ae3925ce6db5dfaf1e`). All six version reads remain 5.1.52. Exact-source live synthetic UAT now passes Knowledge document/base DB and Qdrant cleanup on isolated loopback services; tally is 40 PASS, 0 BLOCKED, 1 MANUAL. Machine evidence: `../../../../../PHDK_DELIVERY_EVIDENCE.json`; detailed UAT: `../50-uat/evidence/uat-qdrant-delete-5.1.52.json`.
+Source PR [#142](https://github.com/tuyoisaza/keledon/pull/142), evidence PR [#143](https://github.com/tuyoisaza/keledon/pull/143) and live-Qdrant UAT PR [#144](https://github.com/tuyoisaza/keledon/pull/144) are merged. Current `origin/main` is `aaa99f19e35d6e6172c24a764d27abf087a39e85`, tree `4b11d88e2e9ca35a0568761543a9e926f04f1895`; all six version reads remain 5.1.52. Exact-source live synthetic UAT passes Knowledge document/base DB and Qdrant cleanup on isolated loopback services; tally is 40 PASS, 0 BLOCKED, 1 MANUAL. Machine evidence: `../../../../../PHDK_DELIVERY_EVIDENCE.json`; detailed UAT: `../50-uat/evidence/uat-qdrant-delete-5.1.52.json`.
 
-This documentation/evidence continuation is being delivered in a normal PR. Whole Auto remains PARTIALLY DELIVERED pending delete/reindex concurrency, exhaustive model-role-operation coverage, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected live call/CRM evidence. No deployment is claimed.
+The post-merge readback and current completion gate are recorded in the machine evidence and `snapshots/post-merge-144/`. Whole Auto remains PARTIALLY DELIVERED pending delete/reindex concurrency, exhaustive model-role-operation coverage, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected live call/CRM evidence. No deployment is claimed.
 
-SIGUIENTE PASO: validate this evidence diff, commit with the 5.1.52 prefix, push the PR and verify it on `main`; then continue open acceptance gates.
+SIGUIENTE PASO: continue the confirmed Check/acceptance work; do not claim Auto complete until the remaining gates pass.
 
 ---
 
