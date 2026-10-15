@@ -1,5 +1,9 @@
 # Remediation handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.46 — legacy global UI retirement
+
+The owner confirmed the ManagedInterface catalog remains hidden. Removed its unmounted orphan Web component; global APIs remain superadmin-only and customer integrations remain tenant-scoped. Strengthened regression 25/33 to check low-role denial, superadmin preservation, and the matrix exception. API regression 36/36; Cloud 16/16; Browser 40/40; Web UAT 4/4; builds and PHDK coherence 52/52 pass. Source remediation is complete locally; delivery/remote readback are pending. Whole Auto remains partial.
+
 ## Candidate 5.1.45 — Browser source remediation complete locally
 
 Added the required ESLint 10 config/lint script and corrected dead paths, transcript listener unsubscription, media duration timers and planner context redaction. Browser 40/40 offline tests, build and zero-warning lint pass. No blanket API/Web lint suppression was introduced; their existing 135 and 122 warnings remain recorded follow-ups. Check confirms the Browser source finding is remediated on the candidate; delivery is pending and whole-Auto external/database/native gates remain open.

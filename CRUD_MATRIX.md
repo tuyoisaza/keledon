@@ -1,5 +1,9 @@
 # CRUD matrix — current source and authorization coverage
 
+## Post-merge Check continuation — ManagedInterface and TeamInterface remain unmapped
+
+The 12-resource/168-row role × surface table omits two Prisma models from `services/api/prisma/schema.prisma`: `ManagedInterface` and its `TeamInterface` assignment relation. `CrudController` exposes global managed-interface list/create/update/delete, but `CrudAccessGuard` reserves that resource to the DB-derived superadmin. Team assignment list/replacement is separately company-scoped through `ResourceScopeGuard`, and team-interface projections omit stored credentials. The legacy Web `InterfacesManager` had no import or mounted route; the owner confirmed keeping the global catalog hidden, so v5.1.46 removes that orphaned UI. `ManagedInterface` remains a dormant global-catalog exception; `TeamInterface` is a company-scoped nested Team relation. API/Cloud regressions 37/38 plus the management-policy and schema-inventory checks verify those source boundaries. Persisted role/tenant testing remains blocked. Do not grant tenant roles access to global base URLs or credentials by analogy with tenant allowlists.
+
 ## Current 5.1.39 — API/Cloud MVP store write contracts
 
 The parallel API and Cloud `MvpDataController` paths now accept explicit input types and service-level validation for ManagedInterface, FlowDefinition, FlowVersion create/update, TenantFlowPermission, IntentFlowMapping and KnowledgeDocument writes. Unknown fields are rejected; primitive/enumeration and nested object-array values are checked before the JSON store is modified. FlowVersion creator attribution is supplied from the request actor populated by the DB-backed `ResourceScopeGuard`; update inputs cannot overwrite identity or timestamps. Mirrored regression 48/41 asserts the contract behavior. A focused guard trace confirms admin/coordinator are limited to safe catalog/status handlers and cannot access superadmin global config. This complements, but does not replace, the 35-model/168-row CRUD drift inventory or prove persisted DB authorization. Those broad operation and persistence gates remain open.
@@ -281,6 +285,8 @@ Check result: PARTIAL/BLOCKED. The source inventory below reconciles all 35 Pris
 - Managed AI is available only to a DB-backed superadmin; persistence needs the unapplied additive migration.
 - Client-selected call/CRM surfaces use tenant-configured vendor/origin metadata. No vendor is treated as universal.
 - Source and isolated HTTP tests prove candidate code behavior in their harness, not production database state.
+- **ManagedInterface — owner-approved dormant global catalog:** the owner chose to keep the legacy global catalog hidden; it is not a tenant CRM configuration surface. Generic CRUD and legacy MVP routes remain superadmin-only, credential values are omitted from normal projections, and there is no mounted Web manager. Customer integrations use tenant-scoped Vendor records and validated origin allowlists. This is an explicit product-scope exception for the Web surface, not persisted-DB acceptance. Guard/source evidence: `services/api/test/regression/21-resource-scope.test.js` and `25-approved-management-policy.test.js`.
+- **TeamInterface — nested team relation:** treat it under the existing Team capability rows, not as an independent catalog. List/replacement routes validate the current database actor's team company, reject missing/duplicate interface IDs before the transaction, and atomically replace assignments. No active Web selector exists; do not expose global catalog URLs as customer integrations. Evidence: API/Cloud regression 37/38. Persisted DB execution remains blocked.
 
 
 ## Additional persisted-resource inventory — coverage not yet closed

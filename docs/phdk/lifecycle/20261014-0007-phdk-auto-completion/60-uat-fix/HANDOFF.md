@@ -1,5 +1,9 @@
 # UAT Fix handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.46 — remove unmounted legacy catalog UI
+
+The owner confirmed the global ManagedInterface catalog must stay hidden. Its unmounted Web component was removed; active tenant integration journeys remain on Vendor configuration. Exact built-SPA UAT passes 4/4 suites with mocked API/external traffic blocked; Browser suite 40/40, API/Cloud regressions 36/36 and 16/16. No new active-path UAT defect was found. Persisted DB, native-device and broad accessibility gates remain open.
+
 ## Candidate 5.1.45 — no new Web UAT defect
 
 Exact built-SPA UAT rerun passes 4/4 suites with external traffic blocked and synthetic APIs. The protected diagnostics controls and role-shaped UI behave as expected. No repairable Web UAT failure remains for this slice; database-backed identity/persistence and native media are still environment-bound acceptance gates. Browser runtime fixes are covered by its 40/40 offline suite. Proceed through SEO/AEO and Check.

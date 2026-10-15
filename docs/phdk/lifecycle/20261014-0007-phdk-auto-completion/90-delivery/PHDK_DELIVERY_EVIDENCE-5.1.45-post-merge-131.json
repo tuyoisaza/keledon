@@ -1,0 +1,81 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto four confirmed KELEDON fronts; 5.1.45 Browser lint/runtime source slice",
+  "target_branch": "main",
+  "expected_version": "5.1.45",
+  "version_file": "browser/package.json",
+  "version_property": "version",
+  "tested_candidate_sha": "10ebd82d39c6264f965f0fbdc5628bf66c585b80",
+  "tested_candidate_tree": "5ac72b7869f55b37b33f8a579c9f6fa7b2860964",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/131",
+  "pr_head_sha": "10ebd82d39c6264f965f0fbdc5628bf66c585b80",
+  "merged_commit_sha": "d2d4265d0dcf6a9524f1861240d0ce0f387c09bf",
+  "remote_main_sha": "d2d4265d0dcf6a9524f1861240d0ce0f387c09bf",
+  "remote_main_tree": "5ac72b7869f55b37b33f8a579c9f6fa7b2860964",
+  "git_ls_remote_matches": true,
+  "versions": {
+    "services/api": "5.1.45",
+    "cloud": "5.1.45",
+    "browser": "5.1.45",
+    "services/web": "5.1.45",
+    "landing": "5.1.45",
+    "browser_renderer": "5.1.45"
+  },
+  "github": {
+    "state": "MERGED",
+    "merge_method": "squash",
+    "merge_state": "CLEAN",
+    "hosted_checks": [],
+    "review_decision": "none reported",
+    "main_protection": "no configured protection reported in repository inspection"
+  },
+  "checks": {
+    "lint": {
+      "status": "PASS",
+      "evidence": "Browser npm run lint: ESLint 10 flat config, zero errors and zero warnings. Existing full API lint has 135 warnings/0 errors and Web has 122 warnings/0 errors; those remain explicitly tracked follow-up debt and were not suppressed."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "Browser TypeScript build, API/Cloud builds, Web and Landing typechecks completed successfully."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "Browser, API, Cloud, Web and Landing production builds pass at 5.1.45."
+    },
+    "focused_tests": {
+      "status": "PASS",
+      "evidence": "Browser offline suite 40/40; API regression 36/36; Cloud regression 16/16."
+    },
+    "uat": {
+      "status": "PASS",
+      "evidence": "Built-SPA synthetic Web UAT 4/4 suites with mocked APIs and external traffic blocked; not deployed/server/database acceptance."
+    },
+    "seo": {
+      "status": "PASS",
+      "evidence": "Web and Landing SEO source tests 1/1 each; no live crawler, Search Console or deployed measurements."
+    },
+    "phdk_coherence": {
+      "status": "PASS",
+      "evidence": "PHDK 2.50.10 coherence check: 52/52 static mappings."
+    },
+    "production_dependency_audit": {
+      "status": "PASS",
+      "evidence": "npm audit --omit=dev reports zero vulnerabilities in API, Cloud and Browser. Browser dev tree has seven moderate Electron Builder transitive advisories."
+    },
+    "source_delivery": {
+      "status": "PASS",
+      "evidence": "PR #131 merged by squash; remote main and git ls-remote agree at d2d4265d0dcf6a9524f1861240d0ce0f387c09bf; remote tree exactly matches tested candidate tree."
+    },
+    "whole_auto_acceptance": {
+      "status": "BLOCKED",
+      "evidence": "Overall UAT remains 37 PASS, 2 BLOCKED, 1 MANUAL. Requires safe DB-backed identities and disposable PostgreSQL for persistence/migrations and exhaustive persisted CRUD authorization; native Windows device/audio; broad assistive-technology/localization acceptance; deployed SEO/AEO evidence. Customer-selected live call/CRM acceptance is per tenant. No DB, customer data, private CRM, device or deployment was used."
+    }
+  },
+  "scope_limitations": [
+    "No production database, migration, customer identity or customer data was accessed.",
+    "No packaged Electron runtime, native audio/device, live private CRM origin or provider was exercised.",
+    "No deployment, crawler, Search Console or field performance measurement was performed.",
+    "API and Web full-source ESLint warning debt remains visible in PHDK_CHECK_REPORT.md."
+  ],
+  "overall_status": "SOURCE SLICE MERGED AND REMOTE VERIFIED; PHDK AUTO PARTIALLY DELIVERED"
+}

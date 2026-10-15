@@ -1,4 +1,16 @@
-## Current source delivery — 5.1.44 verified
+## Current source delivery — 5.1.45 verified
+
+PR [#131](https://github.com/tuyoisaza/keledon/pull/131) squash-merged source candidate `10ebd82d39c6264f965f0fbdc5628bf66c585b80` at `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf`. A fresh fetch and `git ls-remote` agree; remote main tree `5ac72b7869f55b37b33f8a579c9f6fa7b2860964` matches the tested candidate. All five app roots/locks and Browser renderer report 5.1.45. GitHub returned CLEAN with no hosted checks or review decision; no deployment is claimed.
+
+Browser ESLint 10 config/lint, build and offline tests 40/40 pass. API/Cloud regressions pass 36/36 and 16/16; all builds, Web synthetic UAT 4/4 suites, Web/Landing SEO source tests 1/1 each, and PHDK coherence 52/52 pass. API/Web lint warnings remain listed in Check; production dependency audits are clean for API/Cloud/Browser. Evidence: `PHDK_DELIVERY_EVIDENCE-5.1.45-post-merge-131.json`.
+
+Whole PHDK Auto remains **PARTIALLY DELIVERED**: 37 PASS, 2 BLOCKED, 1 MANUAL. Persisted DB/identity/CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Client-specific call/CRM acceptance is per tenant. No database, customer data, private endpoint, device or deployment was used.
+
+The deterministic completion gate is BLOCKED solely by `whole_auto_acceptance`; it makes no whole-Auto completion claim. See `PHDK_DELIVERY_EVIDENCE-5.1.45-post-merge-131.json`.
+
+---
+
+## Previous source delivery — 5.1.44 verified
 
 PR [#129](https://github.com/tuyoisaza/keledon/pull/129) squash-merged product candidate `0cbf038ed8ce7f27b1459c3a922a93f04165da46` at `02d6d730f6713299bce627c1fdd7c8a2ff7538ca`. `origin/main` and `git ls-remote` agree; remote tree `823887e5096f9c9a4736f75983623138d88d86d4`. All five application package/lock roots and Browser renderer report 5.1.44. UAT-040, Browser suite 27/27, security-policy/wiring tests 11/11, Browser build and PHDK coherence 52/52 pass. GitHub reported no hosted checks or review decision. The deterministic PHDK completion gate is BLOCKED by Browser lint and incomplete whole-Auto acceptance. Evidence: `PHDK_DELIVERY_EVIDENCE-5.1.44-post-merge-129.json`. No deployment is claimed.
 
