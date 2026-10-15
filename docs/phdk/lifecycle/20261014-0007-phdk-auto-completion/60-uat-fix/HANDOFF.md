@@ -1,5 +1,13 @@
 # UAT Fix handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.54 — source matrix completeness
+
+UAT-042 found no test failure; the missing deliverable was a model-level expansion beyond the established 168 resource rows. The matrix now enumerates every one of 490 model-role-surface combinations, marks operation evidence and exceptions, and includes regression assertions for catalog, flow and AI role boundaries. UAT-042 passes source/documentation scope. No runtime or persistent behavior was changed; CHK-AUTO-005, exact database acceptance, native device/audio and external measurements remain open.
+
+SIGUIENTE PASO: preserve this UAT Fix record and finish the Check/delivery handoffs for candidate 5.1.54.
+
+---
+
 ## Active remediation continuation — Knowledge vector cleanup, 5.1.52
 
 The earlier UAT-010 Qdrant dependency is resolved for sequential deletion: the exact 5.1.52 API deleted the synthetic document's persisted record and vectors, then deleted a synthetic base's Qdrant collection and cascading PostgreSQL rows. No source code repair was required after live verification. Evidence: `../50-uat/evidence/uat-qdrant-delete-5.1.52.json`; historical snapshot: `../50-uat/snapshots/qdrant-delete-uat-5.1.52/`. Delete/reindex concurrency remains outside this pass and stays open in Check. Native device/audio remains manual.

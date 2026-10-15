@@ -1,3 +1,13 @@
+# Check continuation — candidate 5.1.54 CRUD model-role-surface coverage
+
+The current source check adds a complete 35-model × 7-role × API/Web matrix (490 rows) to `CRUD_MATRIX.md`, while retaining the 168-row first-party resource table. API regression 33 validates the inventory, uniqueness, required fields/statuses, and explicit guard boundaries for global interfaces, team flows, feature flags, and AI prompts. PHDK 2.50.10 coherence passes 52/52; all five app package/lock roots and Browser renderer align at 5.1.54. UAT-042 passes for source/documentation coverage only.
+
+CHK-AUTO-003 is **PARTIAL**, with source mapping closed for this slice. Persisted role/tenant authorization and migration acceptance remain CHK-AUTO-005/BLOCKED. Flow/legacy detail, unwired FeatureFlag/DebugMode, operational retention and missing UI affordances remain explicitly GAP or DECISION NEEDED. Full Auto remains PARTIALLY DELIVERED; the current check report is `../../../../../PHDK_CHECK_REPORT.md` and the exact candidate snapshot will be saved under `../90-delivery/snapshots/candidate-5.1.54/`.
+
+SIGUIENTE PASO: completar la revisión integrada y los checks de versión/código; después entregar la rama por PR y verificar el SHA remoto. Mantener abiertos los gates que requieren PostgreSQL, dispositivo nativo y medición externa.
+
+---
+
 ## Active Check continuation — live Knowledge delete verified on 5.1.52
 
 The 5.1.52 source tree and installed PHDK 2.50.10 coherence (52/52) were revalidated. Live synthetic UAT against loopback PostgreSQL 16.15 and Qdrant 1.19.2 verifies document point cleanup and base collection/cascade cleanup; exact evidence is `../50-uat/evidence/uat-qdrant-delete-5.1.52.json`. No source failure was found in these paths. Check remains partial for exhaustive 35-model operations, delete/reindex concurrency, broad accessibility/localization, deployed SEO/AEO and per-tenant live CRM/call acceptance; UAT total is 40 PASS, 0 BLOCKED, 1 MANUAL.

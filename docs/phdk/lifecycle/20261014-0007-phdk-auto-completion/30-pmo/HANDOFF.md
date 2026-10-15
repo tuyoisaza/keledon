@@ -1,5 +1,11 @@
 # PMO handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.54 source update
+
+CMT-004 source traceability advances: the candidate now maps all 35 persisted Prisma models across seven roles and both API/Web surfaces (490 rows), backed by regression 33. `CMT-004` remains open for disposable-DB identities, persisted migration/CRUD acceptance, remaining UI gaps and explicit owner decisions. CMT-001 delivery is in progress for version 5.1.54; CMT-002/003 remain open for native acceptance and tenant-selected live integrations. No customer endpoint was accessed.
+
+---
+
 Status: COMPLETED. The already-confirmed four-front portfolio has been reconciled against PLAN-AUTO-001..008; no portfolio reapproval or delegation is needed. Current root PMO artifacts are snapshotted in this stage.
 
 | Workstream | Status | Next proof gate |

@@ -1,0 +1,29 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-042",
+  "candidateVersion": "5.1.54",
+  "scope": "source and documentation completeness for persisted-model CRUD role/surface inventory",
+  "result": "PASS",
+  "command": "node services/api/test/regression/33-crud-model-inventory.test.js",
+  "observedOutput": "PASS CRUD inventory: 35/35 Prisma models, 490 model-role-surface rows, and 168 established resource-role-surface rows.",
+  "assertions": [
+    "Every Prisma schema model appears exactly once in the model inventory.",
+    "Every model has exactly one row for each of seven roles on API and Web surfaces.",
+    "Each row includes C, R-list, R-detail, U, D, scope, enforcement, UI, deletion/exception, evidence, and a recognized status.",
+    "ManagedInterface tenant writes remain denied and superadmin API capability remains visible.",
+    "Ordinary users can read team-scoped flows but cannot mutate them or access the management editor.",
+    "TeamInterface is documented as a nested Team relation.",
+    "Unwired FeatureFlag CRUD remains decision-needed rather than implicitly authorized.",
+    "Managed AI prompt updates remain superadmin-only."
+  ],
+  "additionalChecks": {
+    "phdkCoherence": "PASS 52/52",
+    "gitDiffCheck": "PASS",
+    "packageRootsAndBrowserRenderer": "5.1.54"
+  },
+  "limitations": [
+    "No persisted database authorization or migration was exercised.",
+    "The result does not close CHK-AUTO-005 or whole-product UAT.",
+    "No customer endpoint, CRM, provider, customer data, native device, or deployment was used."
+  ]
+}

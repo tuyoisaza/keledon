@@ -1,5 +1,20 @@
 # PHDK commitment coverage — KELEDON four fronts
 
+## Active run update — candidate 5.1.54 CRUD model map (2026-10-14)
+
+Candidate 5.1.54 advances CMT-004 source traceability with the 490-row Prisma model × role × API/Web matrix; regression 33 and PHDK coherence validate its structure and selected policy boundaries. It does not close persistent database authorization/migration, remaining route/UI gaps, or unresolved owner decisions. Candidate is on `fix/phdk-crud-matrix-5-1-54`, based on verified `main` `4a2d4f46e29d79e62d2548f2a931a50de8625b65`; versioned PR delivery remains in progress.
+
+| Commitment | Current candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 — baseline, versions, PRs | Correct repo main reconciled; five package/lock roots and Browser renderer at 5.1.54. | PR, merge, fresh remote SHA/tree/version and completion-gate readback. |
+| CMT-002 — diagnostics/widget | No widget behavior changed; existing diagnostics evidence is reused. | Native Windows device/audio and broader route/assistive-tech acceptance. |
+| CMT-003 — voice → Cloud → Browser → CRM per tenant | No runtime/vendor behavior changed; tenant-configured private origins remain the only allowed path. | Native runtime and each customer's configured integration acceptance. |
+| CMT-004 — administration and permissions | Source matrix now covers all 35 models × 7 roles × API/Web; key boundaries are regression-checked. | Disposable-DB role/tenant CRUD, migrations, remaining UI gaps and unresolved lifecycle/ownership decisions. |
+
+Whole PHDK Auto remains **PARTIALLY DELIVERED**. UAT-042 is PASS for source/documentation coverage only; no database, provider, customer data, private endpoint, device or deployment was used.
+
+---
+
 ## Current source delivery — 2026-10-14, 5.1.24, `c3c4c362a36db2bec142cbc8b06747961b67df26`
 
 PR #92 merged source `c3c4c362a36db2bec142cbc8b06747961b67df26`; PR #93 reconciled the evidence at current main `6413d8aed295c18af098ca6a58c6dfbb7503930b`. The product change adds validated tenant origin allowlists for client-selected CRM/call vendors, including owner-approved private/local HTTP(S) destinations. Local API/Cloud/Browser builds and API/Cloud regressions pass (19/19 and 10/10); API secret/CRUD tests 4/4, Cloud secret tests 3/3, Cloud RBAC, agent/device gateway, seed, vector-store, flow, persistence and voice tests 35/35 across 11 suites and Browser regression 33/33 pass. All five roots and renderer are 5.1.24, and PHDK coherence is 52/52. Latest local Cloud ESLint reports 333 errors/59 warnings full source, down from 1,345/106; both runtime gateways, session/seed services, vector store, flow, persistence, subagent, team-controller, RAG, voice services and focused specs pass ESLint. Dependency and source fixes are unpublished and full lint remains blocked. Native, database, deployed SEO/AEO, exhaustive matrix and broad route acceptance remain open.

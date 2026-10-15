@@ -52,14 +52,137 @@ assert.deepEqual(
   'CRUD_MATRIX.md must account for every Prisma model exactly once',
 );
 
+const detailedStart = matrix.indexOf('## Model-role-surface capability matrix');
+assert.notEqual(
+  detailedStart,
+  -1,
+  'CRUD matrix must include the complete model-role-surface matrix',
+);
+const detailedEnd = matrix.indexOf('## Explicitly scoped exceptions', detailedStart);
+assert.ok(
+  detailedEnd > detailedStart,
+  'model capability matrix must end before scoped exceptions',
+);
+const detailedSection = matrix.slice(detailedStart, detailedEnd);
+const detailedTableStart = detailedSection.indexOf('| Prisma model | Role | Surface |');
+assert.notEqual(
+  detailedTableStart,
+  -1,
+  'CRUD matrix must include detailed model capability rows',
+);
+const detailedRows = tableRows(detailedSection.slice(detailedTableStart)).slice(1);
+const roles = ['admin', 'agent', 'anonymous', 'coordinator', 'guest', 'superadmin', 'user'];
+const surfaces = ['API', 'web'];
+const expectedModelTuples = new Set(
+  prismaModels.flatMap((model) =>
+    roles.flatMap((role) => surfaces.map((surface) => `${model}|${role}|${surface}`)),
+  ),
+);
+const actualModelTuples = detailedRows.map((row) => `${row[0]}|${row[1]}|${row[2]}`);
+assert.equal(
+  actualModelTuples.length,
+  expectedModelTuples.size,
+  'every Prisma-model/role/surface combination must appear once',
+);
+assert.equal(
+  new Set(actualModelTuples).size,
+  actualModelTuples.length,
+  'model-role-surface rows must be unique',
+);
+assert.deepEqual([...actualModelTuples].sort(), [...expectedModelTuples].sort());
+assert.ok(
+  detailedRows.every((row) => row.length >= 15),
+  'detailed rows must include operation, scope, enforcement, UI, deletion, evidence and status fields',
+);
+assert.ok(
+  detailedRows.every((row) =>
+    ['PASS', 'GAP', 'BLOCKED', 'NOT APPLICABLE', 'DECISION NEEDED'].includes(
+      row[14],
+    ),
+  ),
+  'each detailed row must have a recognized status',
+);
+const modelRowFor = (model, role, surface) =>
+  detailedRows.find(
+    (row) => row[0] === model && row[1] === role && row[2] === surface,
+  );
+assert.equal(
+  modelRowFor('ManagedInterface', 'admin', 'API')[4],
+  '-',
+  'tenant managers cannot mutate the owner-hidden global interface catalog',
+);
+assert.equal(
+  modelRowFor('ManagedInterface', 'superadmin', 'API')[4],
+  'yes',
+  'superadmin retains the legacy global catalog API',
+);
+assert.equal(
+  modelRowFor('Flow', 'user', 'API')[4],
+  '-',
+  'ordinary users cannot mutate team flows',
+);
+assert.equal(
+  modelRowFor('Flow', 'user', 'API')[6],
+  'yes',
+  'ordinary users can read team-scoped flows',
+);
+assert.equal(
+  modelRowFor('Flow', 'admin', 'web')[4],
+  'yes',
+  'tenant managers have a Flow creation affordance',
+);
+assert.equal(
+  modelRowFor('Flow', 'user', 'web')[4],
+  '-',
+  'ordinary users cannot access the manager Flow editor',
+);
+assert.equal(
+  modelRowFor('TeamInterface', 'admin', 'API')[14],
+  'NOT APPLICABLE',
+  'team interfaces are a nested Team relation, not independent CRUD',
+);
+assert.equal(
+  modelRowFor('CompanyCountry', 'superadmin', 'API')[14],
+  'NOT APPLICABLE',
+  'country membership is managed as a nested Company relation',
+);
+assert.equal(
+  modelRowFor('Event', 'superadmin', 'API')[14],
+  'NOT APPLICABLE',
+  'operational events have no standalone CRUD surface',
+);
+assert.equal(
+  modelRowFor('SubAgentRun', 'user', 'API')[4],
+  'yes',
+  'session-scoped flow execution may create operational runs',
+);
+assert.equal(
+  modelRowFor('SubAgentRun', 'user', 'API')[7],
+  'yes',
+  'authorized flow execution may update its run outcome',
+);
+assert.equal(
+  modelRowFor('FeatureFlag', 'superadmin', 'API')[14],
+  'DECISION NEEDED',
+  'unwired feature-flag CRUD is not inferred as an authorized route',
+);
+assert.equal(
+  modelRowFor('AiPromptDefinition', 'superadmin', 'API')[7],
+  'yes',
+  'managed prompt updates remain superadmin-only',
+);
+
 const coreStart = matrix.indexOf('| Resource | Role | Surface |');
 const exceptionsStart = matrix.indexOf('## Explicitly scoped exceptions');
 assert.notEqual(coreStart, -1, 'CRUD matrix must include the capability matrix');
 assert.ok(exceptionsStart > coreStart, 'capability matrix must precede scoped exceptions');
-const coreRows = tableRows(matrix.slice(coreStart, exceptionsStart)).slice(1);
+const coreEnd = matrix.indexOf('## Model-role-surface capability matrix', coreStart);
+assert.ok(
+  coreEnd > coreStart && coreEnd < exceptionsStart,
+  'core matrix must precede model-level expansion',
+);
+const coreRows = tableRows(matrix.slice(coreStart, coreEnd)).slice(1);
 const resources = [...new Set(coreRows.map((row) => row[0]))].sort();
-const roles = ['admin', 'agent', 'anonymous', 'coordinator', 'guest', 'superadmin', 'user'];
-const surfaces = ['API', 'web'];
 const expected = new Set(
   resources.flatMap((resource) =>
     roles.flatMap((role) => surfaces.map((surface) => `${resource}|${role}|${surface}`)),
@@ -141,5 +264,5 @@ assert.equal(
 );
 
 console.log(
-  `PASS CRUD inventory: ${prismaModels.length}/${prismaModels.length} Prisma models and ${actual.length} unique core resource-role-surface rows.`,
+  `PASS CRUD inventory: ${prismaModels.length}/${prismaModels.length} Prisma models, ${actualModelTuples.length} model-role-surface rows, and ${actual.length} established resource-role-surface rows.`,
 );
