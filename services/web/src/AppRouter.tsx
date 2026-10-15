@@ -46,10 +46,15 @@ import DevicesPage from '@/pages/DevicesPage';
 interface ProtectedRouteProps {
     children: React.ReactNode;
     minRole: UserRole;
+    allowedRoles?: UserRole[];
 }
 
-function ProtectedRoute({ children, minRole }: ProtectedRouteProps) {
-    const { isAuthenticated, hasRole, isLoading } = useAuth();
+function ProtectedRoute({
+    children,
+    minRole,
+    allowedRoles,
+}: ProtectedRouteProps) {
+    const { isAuthenticated, hasRole, isLoading, user } = useAuth();
 
     if (isLoading) {
         return (
@@ -63,7 +68,10 @@ function ProtectedRoute({ children, minRole }: ProtectedRouteProps) {
         return <Navigate to="/login" replace />;
     }
 
-    if (!hasRole(minRole)) {
+    if (
+        !hasRole(minRole) ||
+        (allowedRoles && (!user || !allowedRoles.includes(user.role)))
+    ) {
         return <Navigate to={hasRole('user') ? '/dashboard' : '/'} replace />;
     }
 
@@ -387,7 +395,10 @@ export function AppRouter() {
                 <Route
                     path="/management/debug"
                     element={
-                        <ProtectedRoute minRole="admin">
+                        <ProtectedRoute
+                            minRole="admin"
+                            allowedRoles={['admin', 'superadmin']}
+                        >
                             <AppLayout>
                                 <ManagementLayout>
                                     <ManagementDebugPage />

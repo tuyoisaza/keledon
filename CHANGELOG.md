@@ -1,3 +1,10 @@
+## v5.1.40 — 2026-10-14 (align protected diagnostics route roles)
+
+- Make protected routes support explicit role allowlists in addition to minimum-role checks.
+- Restrict `/management/debug` to the roles already authorized by the diagnostics API (`admin`, `superadmin`), so coordinators no longer enter a page whose backend requests are forbidden.
+- Add isolated built-SPA UAT for coordinator redirection and administrator access; API responses are synthetic and external requests are blocked.
+- Keep API role enforcement unchanged; all five application package/lock roots and Browser renderer align at 5.1.40.
+
 ## v5.1.39 — 2026-10-14 (MVP store write contracts and actor attribution)
 
 - Replace untyped API/Cloud MVP configuration bodies with model-specific input contracts and runtime field/type validation.
