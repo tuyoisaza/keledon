@@ -1,3 +1,13 @@
+## Current Check — candidate 5.1.56 exact-source persistence acceptance (2026-10-15)
+
+The candidate is based on verified `origin/main` 5.1.55 SHA `85d7ebbbdc0d834e28b9ce1c0fdeb50ce7454fcf`, tree `955bcea225dcd8cdeca971e98f3c7cc3fd764ec2`. All five package/lock roots and the Browser renderer align at 5.1.56. API, Cloud, Browser, Web and Landing production builds pass; API regression passes 36/36; PHDK coherence is 52/52; `git diff --check` passes.
+
+UAT-044/045 verify the exact previous source 5.1.55 commit on disposable PostgreSQL 16.15: eight migrations are current/idempotent; synthetic registration/login and superadmin tenant-role assignment persist; same-tenant access succeeds, while cross-tenant read, admin elevation and company deletion are denied. All created test fixtures were deleted and both services stopped. Exact evidence is `50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`.
+
+**Scoped result: PASS for candidate build/version and database role/migration evidence; whole Auto remains PARTIALLY DELIVERED.** The 35-model × role × operation/surface matrix, delete/reindex concurrency, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. No provider, customer endpoint/data or deployment was used. Delivery and post-merge remote verification are pending.
+
+---
+
 # Current Check — candidate 5.1.55 matrix artifact integrity (2026-10-15)
 
 Candidate branch `fix/phdk-crud-matrix-schema-5-1-55` is based on verified `origin/main` 5.1.54 at `b89bc7a63f55e6f5ef1be3195fc22a49fe70c1b7`. The 5.1.54 expansion correctly contains 490 model × role × API/Web rows, but a later document edit also changed the separate model-to-surface narrative table from three columns to the matrix width. Regression 33 did not detect that shape mismatch.

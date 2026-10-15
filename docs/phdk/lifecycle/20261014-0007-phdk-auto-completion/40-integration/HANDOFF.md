@@ -46,3 +46,13 @@ Residual gaps are assigned: Cloud typed lint 333 errors/59 warnings → PLAN-AUT
 
 Exit gate: a coherent candidate is ready for **scoped synthetic UAT**. This does not close Check or Delivery. Next stage: UAT against this exact integrated working tree, then repair and rebind evidence to the post-fix candidate.
 
+## Candidate 5.1.56 — exact-source persistence evidence integrated
+
+The 5.1.55 source was exercised against the retained synthetic disposable PostgreSQL 16.15 cluster. API build and regression pass; migration deploy is idempotent; real DB-backed registration, superadmin assignment and tenant denial paths pass. All test-created records were removed and the services stopped. Evidence: `../50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`.
+
+This update advances UAT-009/010 only for the exercised scope; it does not claim full persisted CRUD across the 35-model map. Candidate delivery version is 5.1.56. Whole Auto remains partial.
+
+SIGUIENTE PASO: complete candidate-wide source/build/coherence checks and deliver through the normal PR path.
+
+---
+

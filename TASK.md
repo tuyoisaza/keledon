@@ -1,10 +1,20 @@
-## PHDK Auto — 5.1.55 matrix integrity correction; delivery in progress
+## PHDK Auto — 5.1.56 exact-source persistence UAT; four fronts continue
+
+The 5.1.55 source now has exact disposable-PostgreSQL evidence: API build and regression 36/36 pass; eight migrations are idempotent/up to date; DB-backed synthetic registration defaults to user; superadmin assigns tenant admin/company through API; same-tenant access passes and cross-tenant access, self-elevation, and company delete are denied. The run cleaned all fixtures and stopped local services. UAT-044/045 evidence is `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`.
+
+This candidate aligns package/lock/renderer versions at 5.1.56 and corrects stale current UAT-009/010 blocker text. It does not claim exhaustive persisted CRUD across 35 models, native device/audio, broad accessibility/localization, deployed SEO/AEO or tenant-specific live CRM/call completion. Whole Auto remains **PARTIALLY DELIVERED**.
+
+SIGUIENTE PASO: verify all app roots, current source/test contracts and builds, then deliver the evidence/documentation update through the normal PR path; continue the four-front goal.
+
+---
+
+## PHDK Auto — 5.1.55 matrix integrity correction delivered; four fronts continue
 
 Post-merge revalidation of 5.1.54 found that the expanded CRUD table had also widened rows in a separate three-column model narrative inventory. The inventory is restored, and regression 33 now enforces both the 490-row model-role-surface matrix and the 35-row three-column inventory. UAT-043 passes; all five version roots and Browser renderer are 5.1.55; PHDK coherence remains 52/52. This candidate corrects documentation/test integrity without changing runtime authorization.
 
-Whole Auto remains **PARTIALLY DELIVERED** (43 PASS, 0 BLOCKED, 1 MANUAL). Persisted authorization/migrations, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live integrations remain open or customer-scoped. No DB, provider, customer endpoint/data, device or deployment was used.
+PR [#149](https://github.com/tuyoisaza/keledon/pull/149) merged by squash at `85d7ebbbdc0d834e28b9ce1c0fdeb50ce7454fcf`; `origin/main` and `git ls-remote` agree, the remote tree matches the tested candidate, and PHDK's mechanical source-delivery gate passes. Whole Auto remains **PARTIALLY DELIVERED** (43 PASS, 0 BLOCKED, 1 MANUAL). Persisted authorization/migrations, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live integrations remain open or customer-scoped. No DB, provider, customer endpoint/data, device or deployment was used.
 
-SIGUIENTE PASO: normal PR delivery and exact remote readback; then continue the confirmed portfolio and external acceptance gates.
+SIGUIENTE PASO: continue the confirmed portfolio; complete database and native acceptance only with isolated identities/targets, plus deployed SEO/AEO evidence. Keep the goal partial until all requirements pass.
 
 ---
 

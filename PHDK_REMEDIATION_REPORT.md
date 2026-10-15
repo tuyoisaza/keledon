@@ -114,3 +114,10 @@ Completed in-scope source fixes now include tenant-scoped Knowledge/vector opera
 No auto-fixable defect remains in the current source slice. Unresolved work is environment/manual or delivery: real DB-backed identities, disposable PostgreSQL persistence/migration, native Windows device/audio, deployed SEO/AEO, and PR #102 integration/readback. Whole Auto is **PARTIALLY DELIVERED**, not complete. No database, customer provider, private CRM endpoint or deployment was accessed.
 
 SIGUIENTE PASO: deliver the tested candidate through the existing PR controls; keep database/native/deployed acceptance gates open until evidence is available.
+## Candidate 5.1.56 — reconcile persisted-UAT status with exact evidence (2026-10-15)
+
+The current UAT-009/010 entries still claimed that no disposable PostgreSQL environment was configured, despite earlier scoped DB evidence. The retained cluster and its synthetic-only provenance were revalidated. Exact 5.1.55 API UAT now proves migrations are idempotent/current and exercises persisted registration, superadmin assignment, same-tenant access, and denial of foreign-tenant access, admin elevation and company deletion. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`.
+
+Updated current UAT rows and access report with the scoped PASS and explicit exhaustive-matrix limitation. No product authorization behavior changed. Whole Auto remains PARTIALLY DELIVERED for the open model/operation matrix and external/manual acceptance. API build and 36/36 regressions, all five application builds, PHDK coherence 52/52, and diff whitespace checks pass.
+
+---

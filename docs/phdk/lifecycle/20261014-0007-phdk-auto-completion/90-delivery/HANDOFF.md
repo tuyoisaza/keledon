@@ -1,5 +1,25 @@
 # Delivery result — candidate 5.1.54
 
+## Delivery candidate 5.1.56 — exact-source persistence acceptance
+
+Candidate branch `fix/phdk-persisted-uat-5-1-56` is based on verified `origin/main` 5.1.55 commit `85d7ebbbdc0d834e28b9ce1c0fdeb50ce7454fcf` / tree `955bcea225dcd8cdeca971e98f3c7cc3fd764ec2`. UAT-044/045 bind exact-source tests to 5.1.55 commit `8999dfd9519c62746c42ff84064306361b9b629a`: API build and regression 36/36 pass; eight PostgreSQL migrations are current/idempotent; DB-backed synthetic registration, superadmin assignment, tenant access and denial checks pass. Evidence is `../50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`.
+
+All synthetic accounts and companies created for the live API test were deleted; post-cleanup user/company counts match the starting fixtures. The API and PostgreSQL processes were stopped. Candidate package/lock roots and Browser renderer are 5.1.56; source/build/coherence and delivery verification remain pending. Whole Auto is still PARTIALLY DELIVERED because the exhaustive 35-model operation matrix, native device/audio, broad accessibility/localization and deployed SEO/AEO remain incomplete; live integration UAT remains tenant-specific.
+
+SIGUIENTE PASO: finish candidate 5.1.56 source checks and deliver it through a PR, then continue the four confirmed Auto fronts.
+
+---
+
+## Delivery result — candidate 5.1.55
+
+Follow-up PR [#149](https://github.com/tuyoisaza/keledon/pull/149) corrected the 5.1.54 narrative-inventory table width and added a regression for both table schemas. It was squash-merged at `85d7ebbbdc0d834e28b9ce1c0fdeb50ce7454fcf`. Tested source `8999dfd9519c62746c42ff84064306361b9b629a`, candidate tree and remote `main` tree `955bcea225dcd8cdeca971e98f3c7cc3fd764ec2` match. Fresh `origin/main` and `git ls-remote` agree; all five application roots/locks plus Browser renderer are 5.1.55. PHDK coherence is 52/52 and the mechanical delivery verifier passes.
+
+GitHub reported no hosted checks or review decision; main is unprotected. UAT-043 passes table integrity only. Whole Auto remains **PARTIALLY DELIVERED** (43 PASS, 0 BLOCKED, 1 MANUAL) pending persisted CRUD/migrations, native device/audio, broader accessibility/localization, deployed SEO/AEO and tenant-specific live integrations. The post-merge machine record is repository-root `PHDK_DELIVERY_EVIDENCE.json`; 5.1.54 evidence is preserved in `PHDK_DELIVERY_EVIDENCE-5.1.54-post-148.json`.
+
+SIGUIENTE PASO: continue the confirmed PHDK Auto portfolio; keep the unresolved external/manual acceptance gates open.
+
+---
+
 Product/source PR [#148](https://github.com/tuyoisaza/keledon/pull/148) was squash-merged at `b89bc7a63f55e6f5ef1be3195fc22a49fe70c1b7`. The tested candidate commit was `a0dfd5c0e7fdcd9ae1c2331e34ff768feaa565c1` with tree `ba112dec7357f21a2b3d81671c0bc9384b3afa06`; remote `main` has the same tree. Fresh `origin/main` and `git ls-remote` agree at the merge SHA. All five application package/lock roots and the Browser renderer are 5.1.54. PHDK 2.50.10 coherence passes 52/52 and the mechanical delivery verifier passes.
 
 GitHub reports no hosted checks, no review decision, and no branch protection. No deployment is claimed. UAT-042 is PASS for source-map coverage; the formal total is 42 PASS, 0 BLOCKED, 1 MANUAL. Whole PHDK Auto remains **PARTIALLY DELIVERED** because database authorization/migrations, delete/reindex concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO, and customer-specific live call/CRM acceptance remain open or customer-scoped.

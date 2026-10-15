@@ -1,0 +1,71 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "run_date_utc": "2026-10-15T05:05:28Z",
+  "candidate_version": "5.1.55",
+  "tested_source_commit": "8999dfd9519c62746c42ff84064306361b9b629a",
+  "tested_source_tree": "955bcea225dcd8cdeca971e98f3c7cc3fd764ec2",
+  "environment": {
+    "target": "retained disposable local UAT",
+    "database": "PostgreSQL 16.15",
+    "database_host": "127.0.0.1",
+    "database_port": 55432,
+    "database_name": "keledon_phdk_uat",
+    "synthetic_identities_only": true,
+    "customer_data": false,
+    "external_provider_requests": false
+  },
+  "build_and_regression": {
+    "api_build": "PASS",
+    "api_regression_suites": "36/36 PASS",
+    "test_prerequisite": "API build ran before the regression runner because one suite imports compiled dist output."
+  },
+  "migrations": {
+    "migration_count": 8,
+    "first_deploy": "PASS; no pending migrations",
+    "second_deploy": "PASS; no pending migrations",
+    "status": "PASS; database schema is up to date"
+  },
+  "uat_009_db_backed_identity": {
+    "status": "PASS",
+    "checks": [
+      "Public registration persisted a new synthetic account with role=user.",
+      "A test-only fixture was promoted directly inside the disposable database to bootstrap an existing synthetic superadmin.",
+      "The superadmin login reflected the current database role.",
+      "The superadmin assigned a new synthetic user admin role and company through the API.",
+      "The tenant admin login reflected the persisted role and company."
+    ]
+  },
+  "uat_010_persisted_role_tenant_operations": {
+    "status": "PASS_SCOPED",
+    "checks": {
+      "superadmin_create_two_synthetic_companies": "PASS",
+      "same_tenant_company_read": "HTTP 200",
+      "cross_tenant_company_read": "HTTP 403",
+      "admin_self_elevation_to_superadmin": "HTTP 403",
+      "admin_company_delete": "HTTP 403"
+    },
+    "limitations": [
+      "This proves selected real-PostgreSQL identity, role-assignment, company-scope and denial paths; it is not exhaustive persisted CRUD for all 35 Prisma models, seven roles, operations and surfaces.",
+      "The tenant administrator's role and company were assigned only by the synthetic superadmin through the product API."
+    ]
+  },
+  "cleanup": {
+    "api_process": "stopped",
+    "postgres_process": "stopped",
+    "created_test_users_and_companies": "deleted through the API",
+    "remaining_phdk_uat_fixture_users": 0,
+    "remaining_companies": 2,
+    "remaining_user_roles": {
+      "admin": 1,
+      "superadmin": 1,
+      "user": 2
+    },
+    "temporary_auth_secret_or_tokens_recorded": false
+  },
+  "remaining_acceptance": [
+    "Exhaustive persisted CRUD role/tenant/operation/surface matrix and delete/reindex concurrency.",
+    "Native Electron device/audio remains MANUAL.",
+    "Broad route accessibility/localization and deployed SEO/AEO remain unverified.",
+    "Live call/CRM acceptance remains client-specific, per owner direction."
+  ]
+}

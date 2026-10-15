@@ -51,3 +51,10 @@ The owner approved a temporary audited profile switch restricted to development/
 Validation: API full regression passes 20/20 suites, including focused fail-closed policy/service/AuthGuard tests and in-process Nest HTTP guard/controller coverage. Web built-SPA UAT passes 1/1 and covers selection/return against mocked APIs. This is isolated source/UI evidence, not live staging authentication or DB persistence. `UAT_RETEST_REPORT.md` records the scoped result.
 
 Remaining: UAT-009 safe development target and real synthetic identities; UAT-010 disposable database and migration/persistence matrix; UAT-006 native device/audio. Overall acceptance remains **NOT ACCEPTED** until applicable gates close.
+## Candidate 5.1.56 — UAT-009/010 reconciliation
+
+Corrected current status text that said no disposable database existed. Exact-source API/PostgreSQL evidence now passes UAT-044/045 for migration status, synthetic DB-backed identities, superadmin role assignment, tenant scope and privilege boundaries. This does not close the exhaustive 35-model operation matrix; it remains an open Auto action. No product code behavior changed.
+
+SIGUIENTE PASO: continue only with mapped/implemented database operations; keep native and deployed gates explicit.
+
+---
