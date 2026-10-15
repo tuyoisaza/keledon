@@ -1,4 +1,29 @@
-# PHDK Auto lifecycle — current candidate 5.1.41
+# PHDK Auto lifecycle — current candidate 5.1.42
+
+Run: `20261014-0007-phdk-auto-completion`
+Repository: `tuyoisaza/keledon`
+Branch: `fix/phdk-rpa-required-tenant-scope-5-1-42`
+Candidate source: `07f979b610b069d675183a7a4ad112b2466c20d2` (tree `a3664bdc9402c7b943e49b2a585b68de741f9f65`); base: verified `origin/main` `8075890cb9a112e948403491eb7bf7c8f44337b2` / 5.1.41.
+Goal: four owner-confirmed KELEDON fronts in agreed order, aligned to applicable PHDK standards.
+
+| Stage | Status | Evidence / current state |
+|---|---|---|
+| 00 Preflight | REUSED / REVALIDATED | Installed PHDK 2.50.10; coherence 52/52. |
+| 10 Capture | REUSED | Four fronts, approved least-privilege policy and per-tenant private CRM allowlist confirmed. |
+| 20 Plan | REUSED | Brownfield plan and dependency order continue. |
+| 30 PMO / Workstreams | CONTINUED | All four fronts retained; prior source deliveries reconciled. |
+| 40 Integration Review | COMPLETED FOR 5.1.42 SOURCE | RPA origin scope now required; configured private CRM origin remains supported. |
+| 50 UAT | COMPLETED FOR CANDIDATE / WHOLE PARTIAL | UAT-038 passes; whole acceptance 35 PASS, 2 BLOCKED, 1 MANUAL. |
+| 60 UAT Fix | COMPLETED FOR CHK-AUTO-020 | Missing/empty tenant origin scope fails before RPA actions. |
+| 65 SEO | REUSED / SOURCE PASS | No SEO source change; deployed measurements remain unavailable. |
+| 67 AEO/GEO | REUSED / SOURCE REVIEW | No public claim changed; live answer-engine/crawler measurement unavailable. |
+| 70 Check | SOURCE CHECK PASS / ACCEPTANCE PARTIAL | Snapshot `70-check/snapshots/candidate-5.1.42/PHDK_CHECK_REPORT.md`. |
+| 80 Remediation | COMPLETED FOR CANDIDATE | Browser suite 27/27, security policy 8/8, Browser build, coherence 52/52. Browser ESLint unavailable under ESLint 10 configuration requirement. |
+| 90 Delivery | PENDING | Local versioned commit only; push/PR/merge/readback/gate remain. |
+
+Overall status: **PARTIALLY DELIVERED**. No PostgreSQL, production identity, customer endpoint, private destination, device or deployment was used.
+
+---
 
 Run: `20261014-0007-phdk-auto-completion`
 Repository: `tuyoisaza/keledon`

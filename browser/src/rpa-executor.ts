@@ -389,6 +389,16 @@ export async function executeRpaFlow(flow: RpaFlow): Promise<RpaFlowResult> {
     };
   }
 
+  if (!Array.isArray(flow.allowed_origins) || flow.allowed_origins.length === 0) {
+    return {
+      flow_id: flowId,
+      status: 'failed',
+      steps: [],
+      total_duration_ms: Date.now() - startTime,
+      error: 'No configured vendor origin scope',
+    };
+  }
+
   // Log which provider chain is active
   log.info(`[RpaExecutor] Provider chain active`);
 
@@ -402,14 +412,12 @@ export async function executeRpaFlow(flow: RpaFlow): Promise<RpaFlowResult> {
       `[RpaExecutor] Step ${i + 1}/${flow.steps.length}: ${step.action} (${step.description || step.target || step.selector || ''})`,
     );
 
-    if (flow.allowed_origins) {
-      let origin = '';
-      try { origin = new URL(step.action === 'navigate' ? step.url : view.webContents.getURL()).origin; } catch { /* reject unknown surface */ }
-      if (!flow.allowed_origins.includes(origin)) {
-        results.push({ step_id: step.step_id || `step-${i}`, action: step.action, success: false, duration_ms: 0, error: 'Action target is outside configured vendor surfaces' });
-        hasFailure = true;
-        break;
-      }
+    let origin = '';
+    try { origin = new URL(step.action === 'navigate' ? step.url : view.webContents.getURL()).origin; } catch { /* reject unknown surface */ }
+    if (!flow.allowed_origins.includes(origin)) {
+      results.push({ step_id: step.step_id || `step-${i}`, action: step.action, success: false, duration_ms: 0, error: 'Action target is outside configured vendor surfaces' });
+      hasFailure = true;
+      break;
     }
     const result = await executeStep(view, step);
     results.push(result);
@@ -434,6 +442,6 @@ export async function executeRpaFlow(flow: RpaFlow): Promise<RpaFlowResult> {
   };
 }
 
-export async function executeRpaSteps(steps: RpaStep[], flowId?: string): Promise<RpaFlowResult> {
-  return executeRpaFlow({ flow_id: flowId, steps });
+export async function executeRpaSteps(steps: RpaStep[], allowedOrigins: string[], flowId?: string): Promise<RpaFlowResult> {
+  return executeRpaFlow({ flow_id: flowId, steps, allowed_origins: allowedOrigins });
 }

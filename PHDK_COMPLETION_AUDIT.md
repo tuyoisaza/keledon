@@ -1,3 +1,20 @@
+## Current Auto completion audit — source candidate 5.1.42; whole Auto partial (2026-10-14)
+
+The four owner-confirmed fronts remain active in order. Candidate `07f979b610b069d675183a7a4ad112b2466c20d2` (tree `a3664bdc9402c7b943e49b2a585b68de741f9f65`), based on verified remote main `8075890cb9a112e948403491eb7bf7c8f44337b2`, aligns the five application package/lock roots and Browser renderer at 5.1.42. Installed PHDK 2.50.10 coherence passes 52/52. Browser offline tests pass 27/27, security-policy tests 8/8, and Browser TypeScript build passes.
+
+CHK-AUTO-020 found a fail-open path when Browser RPA callers omitted the tenant-origin allowlist. The candidate now fails before any RPA step without a non-empty scope and applies that scope to all navigation; configured private CRM destinations remain supported. UAT-038 passes on a synthetic Electron WebContents. No real CRM/private host, database, device, customer data or deployment was used. Source delivery is pending; Browser ESLint could not start because installed ESLint 10 requires an absent flat config.
+
+| Commitment | Status | Remaining in-scope proof |
+|---|---|---|
+| CMT-001 — baseline/versions/PR | VERSIONED CANDIDATE / DELIVERY PENDING | Push/PR, merge and exact remote SHA/tree/version readback. |
+| CMT-002 — widget/diagnostics | PRIOR LOCAL SOURCE/UAT PASS / ACCEPTANCE PARTIAL | Native Windows device/audio and broad route/assistive-tech verification. |
+| CMT-003 — voice/Cloud/Browser/customer CRM | OFFLINE TENANT SCOPE PASS / LIVE PER CLIENT | Persisted tenant configuration, cross-origin subresource behavior and client-configured live provider acceptance. |
+| CMT-004 — administration/permissions | SOURCE REGRESSIONS PASS / PERSISTENCE UNVERIFIED | CHK-AUTO-003 full matrix, safe DB identities, disposable PostgreSQL/migrations and persisted CRUD evidence. |
+
+Whole UAT is **35 PASS, 2 BLOCKED, 1 MANUAL**. Broad accessibility/localization and deployed SEO/AEO remain unverified. **Overall PHDK Auto is PARTIALLY DELIVERED**; no whole-product completion claim is valid.
+
+---
+
 ## Current Auto completion audit — source slice 5.1.41 merged; whole Auto partial (2026-10-14)
 
 The four confirmed fronts remain active and none is deferred. Candidate source `718ce3d4cf9c4e51b71ec163e9749307997d85d2` (tree `14e5c085771a1e556692991fd1724e747b164ee7`), based on verified remote main `aed26d6641950fb3d4f40e64fee459fb013c544a`, aligns all five app package/lock roots and Browser renderer at 5.1.41. PHDK 2.50.10 coherence passes 52/52. API/Cloud regressions pass 36/36 and 16/16; all five builds pass; Browser offline suite 35/35; Web UAT passes 4/4 files with 17 local journey checks; Web diagnostics 19/19; Web/Landing SEO 1/1 each.

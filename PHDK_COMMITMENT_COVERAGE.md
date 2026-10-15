@@ -1,3 +1,16 @@
+## Current Auto candidate — 2026-10-14, 5.1.42 (source delivery pending)
+
+| Commitment | Current candidate evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | Candidate `07f979b610b069d675183a7a4ad112b2466c20d2` is based on verified `origin/main` `8075890cb9a112e948403491eb7bf7c8f44337b2`; all five application roots and Browser renderer align at 5.1.42. | Push/PR, merge and exact remote readback are still pending. |
+| CMT-002 | Browser changes do not alter diagnostics UI; prior synthetic Web diagnostics and local journey evidence remain valid. | Native device/audio and broad accessibility/localization remain open. |
+| CMT-003 | RPA now requires tenant-origin scope; unscoped and unlisted navigation is rejected, while an explicitly configured private CRM origin remains usable. Browser tests 27/27. | Live voice/CRM and subresource/network acceptance remains per client; no endpoint was contacted. |
+| CMT-004 | CHK-AUTO-020 closes the RPA missing-scope source path; PHDK coherence is 52/52. | Exhaustive persisted CRUD, safe DB identities, disposable PostgreSQL/migrations and the full role×tenant×surface×operation matrix remain open. |
+
+UAT is **35 PASS, 2 BLOCKED, 1 MANUAL**. **Overall PARTIALLY DELIVERED; source delivery pending.** No database, customer data, private endpoint, device or deployment was used.
+
+---
+
 ## Current Auto delivery — 2026-10-14, 5.1.41
 
 | Commitment | Delivered source evidence | Remaining acceptance |

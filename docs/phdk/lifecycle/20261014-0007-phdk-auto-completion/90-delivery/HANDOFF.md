@@ -1,3 +1,7 @@
+## Current source candidate — 5.1.42
+
+Candidate branch `fix/phdk-rpa-required-tenant-scope-5-1-42` is based on verified `origin/main` `8075890cb9a112e948403491eb7bf7c8f44337b2`. Source commit `07f979b610b069d675183a7a4ad112b2466c20d2` (tree `a3664bdc9402c7b943e49b2a585b68de741f9f65`) aligns the five application package/lock roots and Browser renderer at 5.1.42. UAT-038 and CHK-AUTO-020 source remediation pass; Browser suite 27/27, security-policy tests 8/8, Browser build and PHDK coherence 52/52 pass. The candidate is not yet pushed or in a PR; remote delivery is pending. Whole Auto remains partial.
+
 ## Verified delivery — current candidate 5.1.37, 2026-10-14
 
 PR [#111](https://github.com/tuyoisaza/keledon/pull/111) squash-merged source candidate `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` at `33cff1e345de0b735657570a6144ddeec61f7c3e`. `origin/main` and `git ls-remote` agree; PR head and merge trees match at `bfed883e8f6cf4de1f4d7d3e4b5de63f0e59a97c`; all five package/lock roots and Browser renderer are 5.1.37. API 35/35; Cloud 14/14 and full lint 0/0; exact-source Web UAT 2/2; widget/diagnostics 19/19; builds/SEO, coherence 52/52 and source line inventory pass. GitHub check/review rollups are empty and main has no branch protection. Delivery evidence is `PHDK_DELIVERY_EVIDENCE-5.1.37.json` and snapshot `snapshots/candidate-5.1.37/`. The deterministic PHDK gate records BLOCKED because whole Auto acceptance remains partial. No deployment is claimed.
