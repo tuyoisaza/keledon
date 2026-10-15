@@ -1,10 +1,20 @@
+## Current Check — candidate 5.1.60 diagnostics route coverage (2026-10-15)
+
+Check identified a test-coverage gap in the mandatory version/debug-actions widget: `services/web/test/version-actions.test.cjs` asserted public, login, app-shell and admin mounts only for Web. Landing mirrored the component implementation, but its own LandingPage/Navbar, login, Sidebar/AppLayout and admin route were not asserted. Regression now verifies both apps' source mounts independently. This closes the source-test gap; it does not establish browser rendering, broad accessibility, screen-reader, or visual runtime acceptance.
+
+Candidate 5.1.60 passes Web diagnostics/version-actions 19/19, Browser version-actions/security-policy 15/15, API and Cloud regressions 37/37 and 17/17, Landing SEO 1/1, five production builds, applicable lint/typechecks and PHDK coherence 52/52. No live endpoint, database, customer data, packaged Electron UI or deployment was used. Whole Auto remains PARTIALLY DELIVERED; UAT-051 source result is 51 PASS, 0 BLOCKED, 1 MANUAL.
+
+Delivery from `fix/phdk-landing-widget-mount-5-1-60` is pending final diff review and normal PR/remote verification. No additional runtime gap was found in this scoped diagnostics-mount review.
+
+---
+
 ## Current Check — candidate 5.1.59 BrowserView teardown scope (2026-10-15)
 
 Base: verified `origin/main` 5.1.58 SHA `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`, tree `12fed244a537fd40f784bda18a2c973514e5c8fe`; all six version reads are 5.1.58. Candidate 5.1.59 changes only Browser teardown request-scope handling and version metadata. All five production builds, API 37/37, Cloud 17/17, Browser 15/15, Browser lint, `git diff --check`, and PHDK coherence 52/52 pass. Candidate version roots align at 5.1.59.
 
 CHK-AUTO-022 follow-up: `TabManager.closeTab()` previously removed the tenant allowlist before stopping pending loads. It now stops the detached `WebContents` and leaves its request scope intact until the `destroyed` event. The session registry stores only the session and origins; the `WebContents` association is weak. Browser regression and UAT-050 assert this source contract. No packaged Electron, live CRM, private endpoint, database or customer data was exercised. Deployed SEO/AEO and broad accessibility remain unmeasured; full persisted model-operation acceptance remains incomplete. Whole Auto remains PARTIALLY DELIVERED.
 
-Source commit `fb047dff` begins `v5.1.59:`. Branch push/PR/remote-main integration remain pending; PR #152 (5.1.58) is merged and independently verified.
+Source commit `fb047dff` begins `v5.1.59:`. PR #153 is merged at verified main `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`; the remote tree and six version reads match the candidate and the mechanical completion gate passes. PR #152 delivered the previous 5.1.58 slice.
 
 ---
 

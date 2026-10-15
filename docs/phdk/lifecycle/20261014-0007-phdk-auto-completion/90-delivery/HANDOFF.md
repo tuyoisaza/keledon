@@ -1,6 +1,16 @@
-# Delivery status — candidate 5.1.59 pending; prior 5.1.58 merged
+# Delivery status — 5.1.59 merged and verified; Auto remains partial
 
-PR #152 is squash-merged at `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`; `origin/main` and `git ls-remote` agree, merged tree `12fed244a537fd40f784bda18a2c973514e5c8fe` matches the tested candidate and all six versions are 5.1.58. GitHub reported no hosted checks/review decision; main is unprotected. The current branch is `fix/phdk-browser-close-scope-5-1-59`, based on that verified main. Source commit `fb047dff` is version-prefixed; push, PR and remote-main proof for 5.1.59 remain. No deployment is claimed. Whole Auto remains partial.
+PR [#153](https://github.com/tuyoisaza/keledon/pull/153) is squash-merged at verified remote `main` `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`; `origin/main` and `git ls-remote` agree, merged tree `ac8da535f457ab0b48afd37856d00c779e2067c9` matches the tested candidate and all six versions are 5.1.59. The mechanical completion gate passes against root evidence. GitHub reported no hosted checks/review decision; `main` is unprotected. No deployment is claimed. Whole Auto remains partial. Post-merge evidence is `PHDK_DELIVERY_EVIDENCE-5.1.59-post-merge-153.json`.
+
+PR #152 delivered the prior 5.1.58 slice. The Browser change retains tenant origin scope during pending-load cancellation until Electron destroys the detached WebContents. UAT-050 is source-level only; packaged Electron, customer CRM and private endpoints were not exercised.
+
+SIGUIENTE PASO: continue the four confirmed Auto fronts and preserve the open persistence/concurrency, native device/audio, accessibility/localization, deployed SEO/AEO and tenant-specific integration gates.
+
+---
+
+## Historical pre-merge checkpoint — 5.1.59 candidate
+
+The following record captures the candidate handoff before PR #153 was merged; its pending-delivery language is historical.
 
 ## Historical delivery result — candidate 5.1.54
 

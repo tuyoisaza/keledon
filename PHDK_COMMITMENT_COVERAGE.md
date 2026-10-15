@@ -1,13 +1,13 @@
-## Active Auto continuation — 5.1.59 BrowserView scope lifecycle
+## Active Auto continuation — 5.1.60 diagnostics coverage candidate; four fronts continue
 
 | Commitment | Status | Current candidate evidence | Open acceptance |
 |---|---|---|---|
-| CMT-001 baseline/version/PR | PARTIAL | PR #152 delivered 5.1.58 at verified main `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`; 5.1.59 candidate is in progress. | Finish scoped PR delivery/readback and continue baseline/version reconciliation. |
-| CMT-002 widget/safe diagnostics | PARTIAL | Existing diagnostics source/UAT remain; new change is Browser scope teardown only. | Native device/audio and broad accessibility/localization. |
-| CMT-003 per-client voice→Cloud→Browser→CRM | PARTIAL | UAT-050 verifies source contract keeps tenant allowlist through BrowserView stop; private origins remain configured and tenant-allowlisted. | Packaged Electron and per-customer live call/CRM acceptance. |
-| CMT-004 administration/permissions | PARTIAL | Prior exact-source role/migration evidence and 35-model matrix retained. | Exhaustive persisted operations and delete/reindex concurrency. |
+| CMT-001 baseline/version/PR | PARTIAL | PR #153 delivered 5.1.59 at verified main `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`; candidate 5.1.60 aligns six version roots. | Deliver candidate through normal PR and continue baseline/release reconciliation. |
+| CMT-002 widget/safe diagnostics | PARTIAL | UAT-051 and Web diagnostics 19/19 now assert public, login, shell and admin mounts in both Web applications; Browser contract 15/15. | Native device/audio, broad accessibility/localization and runtime visual acceptance. |
+| CMT-003 per-client voice→Cloud→Browser→CRM | PARTIAL | UAT-050 remains source-pass; tenant-origin scope survives BrowserView stop; private destinations require validated tenant allowlisting. | Packaged Electron and each customer's selected call/CRM integration acceptance. |
+| CMT-004 administration/permissions | PARTIAL | API/Cloud source regressions 37/37 and 17/17; 35-model/490-row crosswalk remains current. | Exhaustive persisted operations and delete/reindex concurrency against a disposable DB. |
 
-Whole acceptance: **50 PASS, 0 BLOCKED, 1 MANUAL**; status remains **PARTIALLY DELIVERED**.
+Whole acceptance: **51 PASS, 0 BLOCKED, 1 MANUAL**; status remains **PARTIALLY DELIVERED**. UAT-050/051 are source-level; packaged Electron was not exercised.
 
 ---
 

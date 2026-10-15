@@ -1,23 +1,23 @@
-## PHDK Auto continuation — candidate 5.1.59 BrowserView teardown security (2026-10-15)
+## PHDK Auto continuation — candidate 5.1.60 diagnostics coverage (2026-10-15)
 
-PHDK 2.50.10 remains installed/coherent at 52/52. PR [#152](https://github.com/tuyoisaza/keledon/pull/152) delivered 5.1.58 at verified `origin/main` `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`; remote tree `12fed244a537fd40f784bda18a2c973514e5c8fe` matches the tested candidate and all six product/renderer version reads are 5.1.58. The follow-up candidate is based on that main and advances all six roots to 5.1.59.
+PHDK 2.50.10 remains installed/coherent at 52/52. PR [#153](https://github.com/tuyoisaza/keledon/pull/153) delivered 5.1.59 at verified `origin/main` `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`. Candidate `fix/phdk-landing-widget-mount-5-1-60` aligns all six product/renderer version reads at 5.1.60. It adds UAT-051 assertions for Landing's public, login, app shell and admin diagnostics-widget mounts. All five builds, API/Cloud regressions 37/37 and 17/17, Web diagnostics 19/19, Browser version-actions/security-policy 15/15, Landing SEO 1/1, applicable lint/typechecks and coherence 52/52 pass. Candidate delivery is in progress; the whole Auto remains partial.
 
-Source review found that closing a configured vendor tab cleared its tenant request scope before a pending page load was stopped or its `WebContents` destroyed. `closeTab()` now stops and destroys the view while the origin scope stays active; the `destroyed` event performs cleanup. UAT-050 is source-contract evidence only.
+UAT-050 continues to cover Browser tenant scope through tab teardown. UAT-051 closes a source-test gap for Landing route mounts, while packaged Electron and assistive-technology acceptance remain unverified.
 
 | Stage | Status | Evidence / remaining gate |
 |---|---|---|
 | Preflight | REUSED / REVALIDATED | PHDK 2.50.10; coherence 52/52. |
 | Capture / Plan | REUSED | Four owner-confirmed fronts and approved tenant-private URL policy remain current. |
-| PMO / Workstreams | CONTINUED | CMT-003 tenant Browser security; CMT-001 #152 merged and remotely verified. |
-| Integration Review | PASS FOR SOURCE SLICE | Close order now preserves tenant policy through BrowserView teardown. |
-| UAT / UAT Fix | PASS FOR UAT-050 / WHOLE INCOMPLETE | Source regression pass; packaged Electron and live CRM remain untested. Tally 50 PASS, 0 BLOCKED, 1 MANUAL. |
+| PMO / Workstreams | CONTINUED | Four confirmed fronts remain active; #153 is merged and candidate 5.1.60 is in progress. |
+| Integration Review | PASS FOR CANDIDATE SOURCE TEST | Landing's own public/login/shell/admin widget mounts are independently asserted. |
+| UAT / UAT Fix | PASS FOR UAT-051 / WHOLE INCOMPLETE | Source contract pass; no browser runtime, packaged Electron or screen-reader session. Tally 51 PASS, 0 BLOCKED, 1 MANUAL. |
 | SEO / AEO-GEO | REUSED / NOT AFFECTED | No public route, copy, metadata or claims changed; external visibility remains unmeasured. |
-| Check / Remediation | RUNNING / FIXED FINDING | Final integrated checks and outgoing diff review remain before PR. |
-| Delivery | RUNNING | Source commit `fb047dff` is version-prefixed; branch push, PR and main readback remain. |
+| Check / Remediation | PASS FOR 5.1.60 SOURCE SLICE | Five builds, applicable lint/typechecks, regressions, source SEO and coherence pass; candidate completion gate waits for merge. |
+| Delivery | IN PROGRESS | Branch is based on verified main; commit, PR, merge and exact remote readback remain. |
 
 Whole PHDK Auto remains **PARTIALLY DELIVERED**: exhaustive persisted model-operation coverage, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected live integrations remain open.
 
-SIGUIENTE PASO: finish integrated checks, create/update the scoped PR, and verify remote `main`; retain PARTIALLY DELIVERED for the whole portfolio.
+SIGUIENTE PASO: complete final candidate diff review and normal PR delivery; then continue the confirmed fronts, preserving environment/customer gates and PARTIALLY DELIVERED status.
 
 ---
 

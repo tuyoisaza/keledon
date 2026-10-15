@@ -1,5 +1,9 @@
 # Integration Review handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.60 — Landing diagnostics mount contract
+
+UAT-051 asserts that Landing independently mounts the version/actions widget in its public page, login, app shell and admin route; Web coverage remains in place. No product runtime behavior, API, Cloud, Browser integration, tenant security policy, database schema or customer-specific connector changed. Web diagnostics 19/19, Browser selected tests 15/15, API/Cloud regressions 37/37 and 17/17, Landing SEO 1/1, builds, applicable lint/typechecks and PHDK coherence 52/52 pass. This is integrated source-contract evidence only; visual/native accessibility and customer runtime acceptance remain open. Whole Auto remains partial.
+
 ## Candidate 5.1.55 — restore model inventory table contract
 
 Post-merge review found the 5.1.54 markdown edit had expanded the separate model-to-surface narrative table to the capability matrix width. It is restored to the original three-column schema. Regression 33 now validates both tables independently and keeps all role policy assertions. No runtime behavior changed; detailed review: `INTEGRATION_REPORT-5.1.55.md`.

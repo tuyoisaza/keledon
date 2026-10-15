@@ -1,3 +1,13 @@
+## 2026-10-15 current source revalidation — 5.1.60 candidate
+
+Candidate: `fix/phdk-landing-widget-mount-5-1-60`, based on verified `main` `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`. The mandatory PHDK widget is present in the current app sources. The focused recheck found one test gap: Landing route mounts were not independently asserted. UAT-051 extends the Web test to assert Landing's own public `LandingPage`→`Navbar`, login, `AppLayout`→`Sidebar`, and superadmin admin route, as well as existing Web mounts.
+
+Current verification: Web diagnostics/version-actions 19/19, Browser version-actions/security-policy 15/15, Landing SEO source test 1/1, API/Cloud regressions 37/37 and 17/17, all five application builds, applicable lint/typechecks and PHDK coherence 52/52 pass. Browser `index.html` renderer version synchronizes to 5.1.60. This is source/component testing only; no browser session, screen reader, native Electron visual run, physical device/audio, database, customer endpoint or deployment was exercised.
+
+The visible controls remain 12px version, 28×28 buttons, 14×14 icons and 4px gap. A non-overlapping effective 44×44 hit target is not currently evidenced under the mandated compact row geometry, so it remains **UNVERIFIED / geometry-limited**. Broad route/locale/screen-reader accessibility and native rendering remain open. No new runtime defect was found in this scoped review.
+
+---
+
 # Debug widget readiness — current source revalidation
 
 Run: `20261012-keledon-four-fronts`, revalidated 2026-10-13. Product source: merged KELEDON `main` 5.1.2 at `e305d3d817ff20ed52ed889315e2d618127d7d9f`. Current Check is source/test based; browser UAT evidence below is from the previously recorded isolated local UAT, not a new runtime claim.

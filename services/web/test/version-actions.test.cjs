@@ -173,7 +173,7 @@ test('clear failure never confirms success and still removes in-memory auth stat
   assert.equal(rootElement.textContent.includes('private failure detail'), false);
 });
 
-test('the shared widget covers public, login, app shell, and admin routes', () => {
+test('the shared widget covers public, login, app shell, and admin routes in both Web apps', () => {
   const read = file => fs.readFileSync(path.join(root, file), 'utf8');
   assert.match(read('services/web/src/components/common/Navbar.tsx'), /<VersionActions\s*\/>/);
   assert.match(read('services/web/src/pages/LoginPage.tsx'), /<VersionActions\s*\/>/);
@@ -181,4 +181,11 @@ test('the shared widget covers public, login, app shell, and admin routes', () =
   assert.match(read('services/web/src/components/layout/AppLayout.tsx'), /<Sidebar\s*\/>/);
   assert.match(read('services/web/src/AppRouter.tsx'), /<AppLayout>\s*<ManagementLayout>/);
   assert.match(read('services/web/src/AppRouter.tsx'), /path="\/admin\/prompts"[^\n]*<AppLayout>/);
+  assert.match(read('landing/src/pages/LandingPage.tsx'), /<Navbar\s*\/>/);
+  assert.match(read('landing/src/components/common/Navbar.tsx'), /<VersionActions\s*\/>/);
+  assert.match(read('landing/src/pages/LoginPage.tsx'), /<VersionActions\s*\/>/);
+  assert.match(read('landing/src/components/layout/Sidebar.tsx'), /<VersionActions\s*\/>/);
+  assert.match(read('landing/src/components/layout/AppLayout.tsx'), /<Sidebar\s*\/>/);
+  assert.match(read('landing/src/AppRouter.tsx'), /<AppLayout>\s*<ManagementLayout>/);
+  assert.match(read('landing/src/AppRouter.tsx'), /path="\/admin\/prompts"[^\n]*<AppLayout>/);
 });

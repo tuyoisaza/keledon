@@ -1,3 +1,19 @@
+## Active four-front portfolio — candidate 5.1.60 (2026-10-15)
+
+Portfolio accounting: **4 confirmed / 0 fully DONE / 4 active / 0 deferred / 0 cancelled**. UAT is **51 PASS, 0 BLOCKED, 1 MANUAL**; that count does not close the whole portfolio. Verified target is `main` SHA `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5` (5.1.59). Candidate branch `fix/phdk-landing-widget-mount-5-1-60` aligns six version roots at 5.1.60. No candidate PR is open yet; PR #153 is merged. Candidate has no deployment claim.
+
+| WS | Current state | Evidence / next gate |
+|---|---|---|
+| WS-001 / CMT-001 baseline/version/PR | SOURCE 5.1.59 verified; 5.1.60 candidate in progress | Current branch is based on exact verified main; complete commit, PR, merge and remote-main readback. |
+| WS-002 / CMT-002 widget/diagnostics | SOURCE TEST PASS; ACCEPTANCE PARTIAL | UAT-051 and Web diagnostics 19/19 assert public/login/shell/admin mounts in Web and Landing. Native UI and broad assistive-tech acceptance remain. |
+| WS-003 / CMT-003 voice→Cloud→Browser→client CRM | SOURCE CONTRACT PASS; CUSTOMER-SCOPED | UAT-050 covers tenant scope through BrowserView close; packaged runtime and per-tenant integration evidence remain. |
+| WS-004 / CMT-004 administration/permissions | SOURCE MATRIX PASS; PERSISTED ACCEPTANCE OPEN | API/Cloud regressions 37/37 and 17/17; CRUD crosswalk 35 models/490 tuples. Full DB-backed role/tenant/operation matrix and concurrency remain. |
+| WS-X / PHDK | COHERENCE PASS; WHOLE ACCEPTANCE PARTIAL | PHDK 2.50.10 coherence 52/52; persisted DB, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. |
+
+Next action: finish candidate Check/diff review and normal PR delivery; then continue the four fronts. No worker delegation is used.
+
+---
+
 ## Active four-front portfolio — 5.1.53 public HTML source slice delivered (2026-10-14)
 
 PR [#146](https://github.com/tuyoisaza/keledon/pull/146) closes the newly found public-root machine-readable content gap and is verified on remote main `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`; `git ls-remote` agrees, candidate tree matches, and six version reads are 5.1.53. UAT-041 passes; total acceptance is now 41 PASS, 0 BLOCKED, 1 MANUAL. PHDK 2.50.10 coherence passes 52/52. Whole Auto remains **PARTIALLY DELIVERED**: exhaustive persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed discovery and customer-specific call/CRM acceptance remain open. Per-tenant private CRM destinations remain validated and allowlisted; no customer target was contacted.

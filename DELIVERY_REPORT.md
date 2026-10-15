@@ -1,22 +1,42 @@
-## Current delivery — 5.1.59 candidate; 5.1.58 source merged; Auto partial
+## Current delivery — candidate 5.1.60; Auto partial
+
+Verified base: PR [#153](https://github.com/tuyoisaza/keledon/pull/153) delivered 5.1.59 at `main` SHA `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`; remote tree `ac8da535f457ab0b48afd37856d00c779e2067c9` matches. Current branch `fix/phdk-landing-widget-mount-5-1-60` adds source assertions for the Landing application's public, login, shell and admin widget mounts and aligns 5.1.60. The current candidate is not yet pushed or merged.
+
+UAT-051 and applicable source checks pass: Web diagnostics 19/19, Browser version-actions/security-policy 15/15, API/Cloud regressions 37/37 and 17/17, Landing SEO 1/1, five builds, applicable lint/typechecks, CRUD inventory 35 models/490 role-surface rows, and PHDK coherence 52/52. Whole Auto remains partial; no deployment or live customer system is claimed.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Five application package/lock roots and Browser renderer at 5.1.60. |
+| COMMIT_PREFIX | PENDING | Commit not created yet. |
+| PUSH_AND_PR | PENDING | Candidate validation is complete; remote branch/PR not yet created. |
+| REMOTE_MAIN | PENDING | Candidate is based on verified 5.1.59 main; source delivery remains. |
+| SCOPE_AND_CHECKS | PASS FOR SOURCE TEST / WHOLE AUTO PARTIAL | UAT-051 closes Landing route assertion gap; visual/runtime and global acceptance remain open. |
+
+SIGUIENTE PASO: complete final diff review, create the version-prefixed commit and normal PR, then verify the merge and remote main.
+
+---
+
+## Previous delivery — 5.1.59 source merged and verified; Auto partial
 
 PR [#152](https://github.com/tuyoisaza/keledon/pull/152) delivered 5.1.58 by squash at verified remote `main` `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`; tree `12fed244a537fd40f784bda18a2c973514e5c8fe` matches the tested candidate. GitHub reports the PR merged CLEAN, with no hosted checks or review decision and no main protection. All six product/renderer versions are 5.1.58. No deployment is claimed.
 
-The mechanical PHDK completion verifier passes against `PHDK_DELIVERY_EVIDENCE.json` for this 5.1.58 slice and the verified remote SHA. It does not certify completion of the whole Auto portfolio.
+The prior 5.1.58 slice's post-merge evidence is preserved in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.58-post-merge-152.json`. The root `PHDK_DELIVERY_EVIDENCE.json` now records the 5.1.59 merge and passes the mechanical verifier; neither record certifies completion of the whole Auto portfolio.
 
-The follow-up 5.1.59 candidate fixes Browser teardown policy: a configured CRM view keeps its tenant-origin request allowlist while closing stops pending navigation, and the `destroyed` event releases the scope. The registry does not strongly retain WebContents. Source commit `fb047dff` (`v5.1.59: fix(browser): retain tenant scope through tab close`) is version-prefixed. API/Cloud regressions (37/37, 17/17), Browser security/call/event suite 15/15, Browser lint/build, all five production builds, Web/Landing SEO tests 1/1 each, PHDK coherence 52/52, version alignment and `git diff --check` pass. UAT-050 is source-level only. The candidate branch is `fix/phdk-browser-close-scope-5-1-59`; push, PR and remote readback are pending.
+PR [#153](https://github.com/tuyoisaza/keledon/pull/153) delivered 5.1.59 by squash at verified remote `main` `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`; tree `ac8da535f457ab0b48afd37856d00c779e2067c9` matches the tested candidate. All six version reads are 5.1.59. Source commit `fb047dff` (`v5.1.59: fix(browser): retain tenant scope through tab close`) is version-prefixed. The completion gate passes against `PHDK_DELIVERY_EVIDENCE.json` and remote `main`.
+
+The change retains each tenant's origin allowlist after a configured CRM tab is detached and pending navigation stopped. Electron's `destroyed` event releases the per-view scope; the session registry contains only session/origin metadata. API/Cloud regressions 37/37 and 17/17, Browser security/call/event suite 15/15, all five builds, full lint across API/Cloud/Browser/Web/Landing, Web/Landing typechecks and SEO tests 1/1 each, PHDK coherence 52/52, version alignment and `git diff --check` pass. UAT-050 is source-level only; no packaged Electron runtime, live CRM/private endpoint or deployment was used.
 
 | Gate | Status | Evidence |
 |---|---|---|
 | VERSION_BUMP | PASS | Candidate five application roots/lockfiles and renderer are 5.1.59. |
 | COMMIT_PREFIX | PASS | Source commit `fb047dff` begins `v5.1.59:`. |
-| PUSH_AND_PR | PENDING | Branch push and PR for this candidate are pending. |
-| REMOTE_MAIN | PENDING | Candidate is based on 5.1.58 but is not merged. |
+| PUSH_AND_PR | PASS | PR #153 squash-merged CLEAN. |
+| REMOTE_MAIN | PASS | SHA `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`; remote tree matches the candidate and the completion gate passes. |
 | SCOPE_AND_CHECKS | PASS FOR THIS SOURCE SLICE / WHOLE AUTO PARTIAL | UAT-050 source contract, five builds, relevant regressions, lint and PHDK coherence pass. Full persisted CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-specific live integration acceptance remain open. |
 
 Whole Auto remains **PARTIALLY DELIVERED**. No customer endpoint or deployment was used.
 
-SIGUIENTE PASO: commit and publish the reviewed 5.1.59 candidate through a PR, then verify the resulting `main` revision.
+SIGUIENTE PASO: continue the confirmed Auto fronts; keep the goal partial until the remaining persisted, native and deployed acceptance gates pass.
 
 ---
 

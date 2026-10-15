@@ -1,3 +1,13 @@
+## Active Auto milestone — 5.1.60 diagnostics route coverage (2026-10-15)
+
+Check found that the shared version/actions widget regression asserted all required routes only for the Web app; Landing's parallel source was compared byte-for-byte but its own route mounts were not asserted. UAT-051 adds explicit Landing public page/Navbar, login, app shell/Sidebar and admin route assertions. API/Cloud regressions pass 37/37 and 17/17, Web diagnostics/version-actions 19/19, Browser version-actions/security-policy 15/15, Landing SEO 1/1, five builds, applicable lint/typechecks, CRUD inventory 35/35 models and 490 role/surface rows, and PHDK coherence 52/52. All six candidate versions align at 5.1.60.
+
+Portfolio remains 4 confirmed, 0 fully done, 4 active, 0 deferred/cancelled; UAT is 51 PASS, 0 BLOCKED, 1 MANUAL. Candidate branch `fix/phdk-landing-widget-mount-5-1-60` is based on verified main `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`. No candidate PR exists yet. No database listener, browser runtime, screen reader, live provider/customer endpoint or deployment was exercised. Whole Auto remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: complete final Check/diff review, deliver 5.1.60 through the normal PR flow and verify remote `main`; continue the remaining persisted, native, accessibility/localization and deployed-discovery gates.
+
+---
+
 ## Active Auto milestone — 5.1.53 public discovery source delivered (2026-10-14)
 
 The public `/` initial HTML now contains the machine-readable KELEDON overview; product PR [#146](https://github.com/tuyoisaza/keledon/pull/146) merged at verified main `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`, with matching `git ls-remote` and candidate tree. Landing SEO test/lint/typecheck/build and PHDK coherence pass; UAT-041 passes. The previous loopback PostgreSQL/Qdrant evidence remains applicable only to unchanged behavior. Acceptance is 41 PASS, 0 BLOCKED, 1 MANUAL, but whole Auto remains partial for full CRUD/concurrency, native device/audio, broad a11y/localization, deployed SEO/AEO and customer-selected call/CRM. No deployment or client system is claimed.

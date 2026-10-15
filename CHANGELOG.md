@@ -1,3 +1,14 @@
+## v5.1.60 — 2026-10-15 (verify diagnostics mounts in both Web apps)
+
+- Extend the shared version/actions route regression to verify the public Landing page, login, app shell and admin mounts as well as the authenticated Web app.
+- Keep runtime behavior unchanged; record that the mounted-component source checks apply independently to both Vite applications.
+- Align all five application package/lock roots and Browser renderer at 5.1.60.
+
+### Verification
+- Web diagnostics/version-actions tests, Browser version-actions tests, applicable builds/lints, version alignment and PHDK coherence are required before delivery.
+- No browser session, live endpoint, customer data, database or physical device is used by this source-only acceptance slice.
+- Whole PHDK Auto remains partial for exhaustive persisted operations/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-customer call/CRM acceptance.
+
 ## v5.1.59 — 2026-10-15 (preserve tenant request scope while closing CRM tabs)
 
 - Stop pending navigation on a closing vendor BrowserView while its tenant origin allowlist remains active; release that scope only from the WebContents `destroyed` event.
