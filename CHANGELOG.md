@@ -1,3 +1,14 @@
+## v5.1.62 — 2026-10-15 (require AI administration acceptance in release gates)
+
+- Add the AI prompt/usage contract suite to the mandatory API regression runner and the existing synthetic AI-admin journey to Web UAT.
+- Reconcile AI prompt, FeatureFlag, and DebugMode CRUD coverage so active, unreachable, and browser-local surfaces are described accurately.
+- Synchronize the Browser request-scope test fixture with the current bridge API and align all five application package/lock roots and Browser renderer at 5.1.62.
+
+### Verification
+- API/Cloud regression suites pass 38/38 and 17/17; Browser offline suite passes 42/42; Web diagnostics 19/19 and UAT 5/5 plus 12 synthetic AI-admin journeys pass.
+- All five production builds and applicable API/Cloud/Web/Landing lint, Web/Landing typecheck and SEO checks pass; PHDK coherence passes 52/52.
+- Browser ESLint was unavailable in the checkout. UAT is synthetic for AI administration; persisted permissions and whole Auto remain incomplete.
+
 ## v5.1.61 — 2026-10-15 (keep public navigation preferences clear and responsive)
 
 - Move theme and language controls into the desktop navigation row and expandable mobile menu in both Web apps, eliminating the Landing hero overlap at 1280px.

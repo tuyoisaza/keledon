@@ -1,3 +1,13 @@
+## Current Auto candidate — 5.1.62 source checks pass; delivery pending
+
+Goal remains the four owner-confirmed fronts in order. Candidate `fix/phdk-auto-5-1-62` is based on verified main `e12527e83a6f534892512288bad9c7f4cf134ca4`. It integrates AI-admin API/UAT coverage and reconciles the model inventory; six version roots align at 5.1.62. API/Cloud regressions 38/17, Browser offline suite 42/42, Web UAT 5/5 plus 12 AI-admin journeys, Web diagnostics 19/19, Web/Landing SEO 1/1 each, five builds, applicable lint/typechecks and PHDK coherence 52/52 pass. Browser lint is unavailable because its local package does not have ESLint installed.
+
+The candidate is not delivered until PR merge and exact remote-main readback. Whole Auto remains **PARTIALLY DELIVERED** (53 PASS, 0 BLOCKED, 1 MANUAL); persisted CRUD/migrations, native device/audio, broad accessibility/localization, deployed SEO/AEO and client-selected live integration acceptance remain open. No deployment/customer system is claimed.
+
+SIGUIENTE PASO: finish exact diff review and deliver 5.1.62 through the standard PR path.
+
+---
+
 ## Active PHDK Auto — 5.1.60 diagnostics coverage delivered; four fronts continue
 
 PR [#154](https://github.com/tuyoisaza/keledon/pull/154) delivered 5.1.60 at verified `origin/main` `4bc6d437ddfbd5139617da62370ec4de92f820cb`; remote tree matches the candidate and all six version reads align. UAT-051 adds Landing public, login, shell and admin diagnostics-mount assertions. Web diagnostics/version-actions passes 19/19; Browser version-actions/security-policy 15/15; API/Cloud regressions 37/37 and 17/17; Landing SEO 1/1; five builds, applicable lint/typechecks and PHDK coherence 52/52 pass. Whole Auto remains **PARTIALLY DELIVERED**.

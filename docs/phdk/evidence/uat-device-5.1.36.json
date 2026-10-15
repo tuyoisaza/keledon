@@ -1,10 +1,10 @@
 {
   "case": "UAT-032",
-  "version": "5.1.61",
-  "date": "2026-10-15T13:47:17.737Z",
-  "candidateRevision": "4bc6d437ddfbd5139617da62370ec4de92f820cb",
-  "candidateSourceFingerprint": "sha256:8f8e7b96c8a06e04342aae7e077d25adea8f931e2852e0f297d749251238dc3b",
-  "dirtyUntrackedSourceFiles": 1,
+  "version": "5.1.62",
+  "date": "2026-10-15T14:32:56.037Z",
+  "candidateRevision": "e12527e83a6f534892512288bad9c7f4cf134ca4",
+  "candidateSourceFingerprint": "sha256:cb62ee3a7fb8e81e43e730e61873b64abfef1302411f65de6e3b34366af02ed0",
+  "dirtyUntrackedSourceFiles": 0,
   "targetEnvironment": "local production SPA with intercepted synthetic APIs; external HTTP and WebSockets blocked",
   "personas": [
     "user",

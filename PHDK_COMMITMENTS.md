@@ -1,5 +1,24 @@
 # Commitment ledger
 
+## Active Auto update — candidate 5.1.62 (2026-10-15)
+
+The four owner-confirmed fronts remain active in order. Baseline `origin/main`/`git ls-remote` is `e12527e83a6f534892512288bad9c7f4cf134ca4`, tree `267b2db659d1daf03ab39b7fa34728a36bb3dc2e`; PR #155 delivered 5.1.61 and no open PRs were found. Candidate `fix/phdk-auto-5-1-62` aligns all five package/lock roots and Browser renderer at 5.1.62. This slice makes the six-test AI-admin API contract suite part of the required 38-suite API runner, adds the existing 12-journey synthetic AI-admin Web UAT to `test:uat`, corrects the AI/FeatureFlag/DebugMode CRUD classification and repairs a Browser regression fixture for request-scope APIs. No runtime behavior or tenant URL policy changed.
+
+Check evidence: API build/lint/regression 38/38 pass; Cloud build/lint/regression 17/17 pass; Web build/typecheck/lint/diagnostics 19/19/SEO 1/1/UAT 5/5 and AI-admin 12 journeys pass; Landing build/typecheck/lint/SEO 1/1 pass; Browser build and offline suite 42/42 pass. Browser ESLint cannot run because its package has no installed ESLint executable in this checkout. PHDK coherence 52/52 and `git diff --check` pass. UAT-053 advances the portfolio tally to 53 PASS, 0 BLOCKED, 1 MANUAL.
+
+| Commitment | Current evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 — baseline, versions, PRs | #155 is merged; latest main SHA/tree and no-open-PR baseline read; candidate versions align. | Deliver 5.1.62 and verify the resulting remote main SHA/tree/version. |
+| CMT-002 — widget and safe diagnostics | Diagnostics 19/19; Web UAT 5/5 includes public navigation; Browser suite 42/42. | Native Windows device/audio and broad route/screen-reader/localization acceptance. |
+| CMT-003 — voice → Cloud → Browser → CRM per client | API/Cloud URL validation and Browser 42/42 verify tenant-origin allowlists, private configured destinations, redirect/resource boundaries and scope lifetime. | Per-customer live provider/CRM acceptance when configured; native audio; no private destination was contacted. |
+| CMT-004 — administration and permissions | API runner 38/38 includes AI contract 6/6; synthetic UI UAT passes 12 journeys; matrix distinguishes active prompts, unreachable FeatureFlag and local-only DebugMode. | Disposable DB migrations/persistence and exhaustive model × role × operation acceptance remain open. |
+
+Overall Auto remains **PARTIALLY DELIVERED**. Candidate PR and remote merge/readback are pending; CMT-001 delivery is not complete before verifying `main`.
+
+SIGUIENTE PASO: finish the final diff/check and deliver 5.1.62 through the normal PR path.
+
+---
+
 ## Active run update — 5.1.60 diagnostics route coverage (2026-10-15)
 
 The four owner-confirmed commitments remain active and ordered. UAT-051 adds explicit source assertions for the diagnostics widget on Landing's own public, login, authenticated shell and admin routes; Web already had the corresponding assertions. Candidate `fix/phdk-landing-widget-mount-5-1-60`, based on verified main `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`, aligns five app package/lock roots and Browser renderer at 5.1.60. Web diagnostics 19/19, Browser version-actions/security-policy 15/15, API/Cloud regressions 37/37 and 17/17, Landing SEO 1/1, all five builds and applicable lint/typechecks, CRUD inventory 35 models/490 role-surface rows, and PHDK coherence 52/52 pass. UAT total: 51 PASS, 0 BLOCKED, 1 MANUAL.
