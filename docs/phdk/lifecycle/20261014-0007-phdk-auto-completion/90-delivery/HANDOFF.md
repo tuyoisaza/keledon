@@ -19,6 +19,12 @@ SIGUIENTE PASO: provide safe development identities, disposable PostgreSQL and a
 ---
 # Delivery handoff — candidate 5.1.26
 
+## Verified UAT coverage delivery — 2026-10-14
+
+PR [#120](https://github.com/tuyoisaza/keledon/pull/120) delivered the Knowledge role UAT-035 and its test harness at verified remote `main` `2e06b7c3b55244078953838ecab35290629fde65`. `git ls-remote` agrees; merge tree `11d37fe054ab47fdd3bdacf0590bb297fc51fc80` matches tested PR-head tree. Web typecheck and targeted ESLint pass; the exact-source built-SPA UAT passes 1/1. GitHub reported no hosted checks or review decision. This closes two scoped browser-affordance rows only; no persistent API or database result is claimed. Evidence: `PHDK_DELIVERY_EVIDENCE-UAT035-post-merge-120.json`.
+
+---
+
 ## Verified delivery — candidate 5.1.40 (2026-10-14)
 
 PR [#118](https://github.com/tuyoisaza/keledon/pull/118) delivered the diagnostics UI role alignment and exact-source UAT/Check records. Source commit `8d000a5d4aa95dc361d19a5eca02fe4544be0417` was squash-merged at `38cb5b76df9b6b8779a12200cf16ee4b50b3fea0`; `origin/main` and `git ls-remote` agree, and the merge tree equals the tested PR-head tree. The five application package/lock roots and Browser renderer are 5.1.40. UAT-034 passes 1/1; API roles remain unchanged. GitHub reported no hosted checks or review decision. No deployment is claimed. Evidence: `PHDK_DELIVERY_EVIDENCE-5.1.40-post-merge-118.json`.

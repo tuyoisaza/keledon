@@ -8,6 +8,8 @@ Repository `tuyoisaza/keledon`; candidate branch `fix/diagnostics-route-roles-5-
 
 **UAT-035 revalidation:** test commit `2edc20cdc524f39718c486395677e0532af5a972` (tree `dbd5dd8a2e02dfbea38ae72a4c74e3c50d5c21bc`) adds built-SPA Knowledge management journeys for coordinator, superadmin and ordinary user. Coordinator receives only company-a and submits that tenant; superadmin selects company-b; user receives no manager controls. The API is synthetic and external traffic is blocked. Cloud full ESLint exits successfully (`npm run lint`); no code auto-fix changes were produced. UAT-035 closes the two scoped Web-affordance evidence gaps in the matrix, but CHK-AUTO-003 remains partial for other resources/operations and persisted proof.
 
+PR [#120](https://github.com/tuyoisaza/keledon/pull/120) delivered this test/evidence slice at remote `main` `2e06b7c3b55244078953838ecab35290629fde65`. The merge tree matches tested PR head; exact readback is recorded in `PHDK_DELIVERY_EVIDENCE-UAT035-post-merge-120.json`.
+
 | Finding | Current status | Evidence / remaining proof |
 |---|---|---|
 | CHK-AUTO-018 — diagnostics UI role mismatch | CLOSED — SOURCE | Exact commit/tree above; dedicated built-SPA UAT 1/1. Backend remains authoritative and unchanged. |
