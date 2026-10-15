@@ -1,4 +1,4 @@
-## PHDK Auto 5.1.53 continuation — public initial HTML source fixed; delivery pending
+## PHDK Auto 5.1.53 continuation — public initial HTML source delivered; whole Auto partial
 
 Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`; branch `fix/phdk-public-home-nojs-5-1-53`, based on verified main `962adfc349fcaacde61e0635c13952166b78d7c9`. PHDK 2.50.10 is installed and coherence passes 52/52. Five application roots/locks and Browser diagnostic label align at 5.1.53.
 
@@ -15,11 +15,11 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target
 | 67 AEO/GEO | SOURCE PASS / VISIBILITY UNMEASURED | AG-03/07/12 revalidated; author/locale/citation evidence remains open. |
 | 70 Check | SCOPED SOURCE PASS / WHOLE PARTIAL | Current Check artifact records fixed finding and all applicable local checks. |
 | 80 Remediation | COMPLETED FOR THIS FINDING | No further source change needed for initial HTML defect. |
-| 90 Delivery | RUNNING | Versioned PR and remote-main verification still required. No PR/merge/deployment claim yet. |
+| 90 Delivery | COMPLETED FOR SOURCE SLICE | PR #146 squash-merged; remote `main` and `git ls-remote` agree at `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`; tested tree matches and six version reads are 5.1.53. No deployment claim. |
 
 Whole PHDK Auto remains **PARTIALLY DELIVERED**. Broad persisted CRUD/role/tenant coverage and concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO, and customer-specific live call/CRM acceptance remain open or customer-scoped. No deployment is claimed.
 
-SIGUIENTE PASO: completar los controles del PR y verificar el merge de v5.1.53 en `origin/main`; después continuar los gates de aceptación aún abiertos sin marcar PHDK Auto como completo.
+SIGUIENTE PASO: continuar la aceptación del portfolio; la entrega de esta corrección de fuente está verificada, pero PHDK Auto sigue parcial hasta cerrar los gates restantes.
 
 ---
 

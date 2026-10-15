@@ -1,3 +1,11 @@
+## Active Auto milestone — 5.1.53 public discovery source delivered (2026-10-14)
+
+The public `/` initial HTML now contains the machine-readable KELEDON overview; product PR [#146](https://github.com/tuyoisaza/keledon/pull/146) merged at verified main `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`, with matching `git ls-remote` and candidate tree. Landing SEO test/lint/typecheck/build and PHDK coherence pass; UAT-041 passes. The previous loopback PostgreSQL/Qdrant evidence remains applicable only to unchanged behavior. Acceptance is 41 PASS, 0 BLOCKED, 1 MANUAL, but whole Auto remains partial for full CRUD/concurrency, native device/audio, broad a11y/localization, deployed SEO/AEO and customer-selected call/CRM. No deployment or client system is claimed.
+
+SIGUIENTE PASO: continue source and acceptance closure across the four confirmed fronts; keep live CRM/call tests tenant-specific and use only validated tenant allowlists.
+
+---
+
 ## Active Auto milestone — 2026-10-14, live Qdrant deletion verified and delivered
 
 The 5.1.52 source fix is delivered by PR #142; evidence-only PR #143 and live-Qdrant UAT PR #144 are merged at current `origin/main` `aaa99f19e35d6e6172c24a764d27abf087a39e85` (tree `4b11d88e2e9ca35a0568761543a9e926f04f1895`). On the exact product tree, synthetic Knowledge document and base deletion passed against disposable PostgreSQL 16.15 and isolated Qdrant 1.19.2 on loopback. Document row and matching vector points were absent; base and cascaded document rows and the Qdrant collection were absent. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-qdrant-delete-5.1.52.json`. Whole acceptance advances to 40 PASS, 0 BLOCKED, 1 MANUAL; delete/reindex concurrency, the complete model-role-operation matrix, broad accessibility/localization, deployed SEO/AEO, native device/audio and per-tenant call/CRM acceptance remain open. No production/customer endpoint or deployment was used.

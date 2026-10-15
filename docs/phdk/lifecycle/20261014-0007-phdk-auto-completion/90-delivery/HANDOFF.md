@@ -208,8 +208,10 @@ PR [#140](https://github.com/tuyoisaza/keledon/pull/140) squash-merged source co
 SIGUIENTE PASO: continuar los compromisos pendientes de Auto con evidencia aislada de DB/nativo y mediciones SEO/AEO desplegadas; conservar PARTIALLY DELIVERED hasta cerrar la aceptación total.
 
 ---
-## Candidate 5.1.53 — source verified; normal delivery in progress
+## Candidate 5.1.53 — source slice merged and remote verified; Auto remains partial
 
-Pre-delivery checkpoint: based on fetched remote `main` `962adfc349fcaacde61e0635c13952166b78d7c9`, branch `fix/phdk-public-home-nojs-5-1-53`. Version roots align at 5.1.53; focused checks and PHDK coherence 52/52 pass. PR and remote-main readback are pending, so `REMOTE_MAIN` is not PASS and no release/deployment is claimed. Whole Auto acceptance also remains partial. See the root `DELIVERY_REPORT.md` and run lifecycle handoffs.
+PR [#146](https://github.com/tuyoisaza/keledon/pull/146) squash-merged tested source `39cfd9dca87cbda148155b6d91d318cabcd0b681` at `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`. `origin/main` and `git ls-remote` agree; merged tree `88b5bb924cf458694bea41c743b6c6fb5beec9a3` matches candidate and six version reads are 5.1.53. Landing checks, focused UAT and PHDK coherence pass. GitHub reported no hosted checks or review decision; branch was unprotected. No deployment is claimed. Whole Auto remains partial for the acceptance gaps in `DELIVERY_REPORT.md` and `PHDK_COMPLETION_AUDIT.md`.
+
+The deterministic source-delivery evidence is recorded in `PHDK_DELIVERY_EVIDENCE.json`; its scope is this source slice only, not whole Auto completion.
 
 ---

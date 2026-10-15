@@ -1,3 +1,13 @@
+## Current PHDK Auto — 5.1.53 public discovery slice delivered; whole Auto partial
+
+Landing now serves the truthful product overview and semantic H1 in the initial no-JavaScript HTML, while React replaces it at startup. Landing SEO 1/1, lint, typecheck and build pass; UAT-041 passes; PHDK 2.50.10 coherence is 52/52. All six application/renderer version reads are 5.1.53.
+
+Product PR [#146](https://github.com/tuyoisaza/keledon/pull/146) merged at verified remote `main` `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`; `git ls-remote` agrees and the merge tree matches the tested PR head. No deployment is claimed. Whole Auto remains **PARTIALLY DELIVERED** (41 PASS, 0 BLOCKED, 1 MANUAL) with persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed discovery and customer-specific acceptance still open.
+
+SIGUIENTE PASO: continuar el portfolio PHDK Auto; conservar la evidencia de integración por tenant y cerrar solo con aceptación verificable de todos los frentes.
+
+---
+
 ## Current PHDK Auto — 5.1.52 source delivered; whole Auto partial
 
 PHDK 2.50.10 coherence passes 52/52. Session metadata CRUD guards are aligned across API and Cloud in 5.1.52. API/Cloud regressions 36/36 and 16/16; all five builds; Browser/Web/Landing lint; Web/Landing typecheck; exact-source synthetic Web UAT 4/4; diagnostics 19/19; Web/Landing SEO 1/1 each pass. Web/Landing builds retain the existing large-chunk warning.

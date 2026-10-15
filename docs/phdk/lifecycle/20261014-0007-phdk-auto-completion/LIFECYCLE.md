@@ -15,11 +15,11 @@ Source candidate is based on verified remote `main` `962adfc349fcaacde61e0635c13
 | 67 AEO/GEO | SOURCE PASS / EXTERNAL VISIBILITY OPEN | Accurate answer content present; no citation or indexation claim. |
 | 70 Check | SCOPED PASS / WHOLE PARTIAL | Finding closed on candidate; broader Auto Check/acceptance not closed. |
 | 80 Remediation | COMPLETE FOR THIS SLICE | No residual source fix in scope. |
-| 90 Delivery | RUNNING | PR/merge/readback pending. |
+| 90 Delivery | COMPLETED FOR SOURCE SLICE | PR #146 squash-merged at `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`; fresh `origin/main` equals `git ls-remote`, merged tree matches candidate, and six version reads are 5.1.53. No deployment claim. |
 
 Prior 5.1.52 DB and live synthetic Qdrant evidence is reused only for unchanged flows. Full model-operation persistence, delete/reindex concurrency, native device/audio, broad accessibility/localization, deployed discovery and customer-specific call/CRM remain unresolved. Whole Auto remains **PARTIALLY DELIVERED**.
 
-SIGUIENTE PASO: complete the authorized 5.1.53 branch/PR delivery and verify remote `main`; keep the Auto portfolio active for its remaining acceptance gates.
+SIGUIENTE PASO: continue the remaining whole-Auto acceptance gates; keep delivery marked partial until those commitments are closed.
 
 ---
 
