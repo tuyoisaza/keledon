@@ -1,3 +1,16 @@
+## Current commitment coverage — 5.1.69 source slice merged
+
+PR [#170](https://github.com/tuyoisaza/keledon/pull/170) is verified at remote `main` `2c021fe30de453bb95212a442e9a8c93eabfbce1`; tested tree and all six version reads match. PHDK coherence and the completion gate pass. Portfolio remains **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally: **61 PASS, 1 BLOCKED, 1 MANUAL**.
+
+| Commitment | Current result | Remaining gate |
+|---|---|---|
+| CMT-001 baseline/version/PR | #170 merged; exact main SHA/tree, six version reads and coherence verified. | Continue evidence and PR reconciliation. |
+| CMT-002 widget/diagnostics | Existing source/synthetic route and widget checks remain green. | Native device/audio; broad assistive-technology and localization acceptance. |
+| CMT-003 voice→Cloud→Browser→CRM | Client-specific integration contracts remain tenant-selected; UAT-063 has no live CRM/call scope. | Per-client acceptance after connectors/configuration are provided. |
+| CMT-004 administration/permissions | Nested company-country tenant guard and relation classification are source-tested. | PostgreSQL persistence/audit, TeamInterface selector decision, and complete role/surface acceptance. |
+
+---
+
 ## Current commitment coverage — 5.1.68 source slice merged
 
 PR [#167](https://github.com/tuyoisaza/keledon/pull/167) squash-merged source `62c979b299301066ef5187fada9041017ae2bc8f` at verified remote `main` `f974ab5984a20cd1b4ad742ddffe5921ad2bf823`, tree `96d7ce832332b3c991269432bcaacc083c2abb68`, equal to the tested source tree. All five app package/lock roots and Browser renderer read 5.1.68. PHDK v2.51.2 coherence passes 56/56; the mechanical completion gate passes against the post-merge record. GitHub reported no hosted checks or review decision; `main` is unprotected. No deployment is claimed. Portfolio: **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally: **60 PASS, 1 BLOCKED, 1 MANUAL**.

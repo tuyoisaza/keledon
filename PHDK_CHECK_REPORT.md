@@ -1,3 +1,9 @@
+## Current PHDK Auto Check — 5.1.69 merged; whole portfolio partial
+
+PR #170 is merged at verified remote `main` `2c021fe30de453bb95212a442e9a8c93eabfbce1`; tree matches the tested source. All six version reads are 5.1.69. API/Cloud regressions 39/39 and 18/18, CRUD inventory 39 models / 546 model-role-surface rows / 168 core rows, five builds, five lint checks, four package typechecks and Browser TypeScript build pass. PHDK coherence 56/56 and completion gate pass. Web and Landing retain the existing large-chunk advisory. UAT-063 is source-only; 61 PASS, 1 BLOCKED, 1 MANUAL. Whole Auto remains **PARTIAL**.
+
+---
+
 ## Current PHDK Auto Check — 5.1.68 source slice merged; whole portfolio partial
 
 PR [#167](https://github.com/tuyoisaza/keledon/pull/167) squash-merged source `62c979b299301066ef5187fada9041017ae2bc8f` at verified remote `main` `f974ab5984a20cd1b4ad742ddffe5921ad2bf823`, tree `96d7ce832332b3c991269432bcaacc083c2abb68`, equal to the tested source tree. All five app package/lock roots and Browser renderer read 5.1.68. PHDK v2.51.2 coherence passes 56/56; the mechanical completion gate passes against the post-merge record. GitHub reported no hosted checks or review decision; `main` is unprotected. No deployment is claimed. API/Cloud regressions pass 39/39 and 18/18; all five builds and lint checks pass; API/Cloud/Web/Landing typechecks pass, and Browser build (`tsc`) passes. Focused checks confirm tenant-provider-config and voice-profile reads/writes derive company scope from the database actor. UAT-062 is source-only evidence.

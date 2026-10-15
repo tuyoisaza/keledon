@@ -1,3 +1,7 @@
+## Current PMO — 5.1.69 source delivered; portfolio partial (2026-10-15)
+
+PR #170 squash-merged; `origin/main`, `git ls-remote` and tested tree agree at `2c021fe30de453bb95212a442e9a8c93eabfbce1` / `e00c32ddec107d05cdf102d4523c80fb6a6097ae`. All six version reads are 5.1.69. API/Cloud regressions, five builds/lint, typechecks, PHDK coherence and delivery gate pass. UAT tally: 61 PASS, 1 BLOCKED, 1 MANUAL. All four commitments remain active and acceptance partial.
+
 # PMO handoff — 20261014-0007-phdk-auto-completion
 
 ## Current PMO — 5.1.66 source delivered; portfolio partial (2026-10-15)

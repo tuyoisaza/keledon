@@ -1,3 +1,13 @@
+## Current delivery — 5.1.69 source slice merged and verified; Auto partial
+
+PR [#170](https://github.com/tuyoisaza/keledon/pull/170) squash-merged tested source `549e79235215394242be1068da2c9fd65a866763` at verified remote `main` `2c021fe30de453bb95212a442e9a8c93eabfbce1`, tree `e00c32ddec107d05cdf102d4523c80fb6a6097ae`, equal to the tested candidate tree. All five app package/lock roots and Browser renderer read 5.1.69. API/Cloud regressions pass 39/39 and 18/18; five production builds and lint checks pass; four dedicated typechecks and Browser's TypeScript build pass; PHDK v2.51.2 coherence is 56/56. The completion gate passes against the immutable post-merge evidence. GitHub reported no hosted checks or review decision; no deployment is claimed.
+
+UAT-063 closes only nested-relation source classification and guard evidence. The portfolio is 61 PASS, 1 BLOCKED (UAT-060 PostgreSQL), 1 MANUAL (native device/audio). Persistence/audit and a Web TeamInterface selector decision remain open, as do accessibility/localization, deployed SEO/AEO and customer-specific live call/CRM acceptance. Full evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/snapshots/post-merge-170/PHDK_DELIVERY_EVIDENCE-5.1.69-post-merge-170.json`.
+
+SIGUIENTE PASO: continue the four active fronts; run UAT-060 when the owner-provided disposable PostgreSQL target is available; retain PARTIAL portfolio status.
+
+---
+
 ## Current delivery — 5.1.68 source slice merged and verified; Auto partial
 
 PR [#167](https://github.com/tuyoisaza/keledon/pull/167) squash-merged source `62c979b299301066ef5187fada9041017ae2bc8f` at verified remote `main` `f974ab5984a20cd1b4ad742ddffe5921ad2bf823`, tree `96d7ce832332b3c991269432bcaacc083c2abb68`, equal to the tested source tree. All five app package/lock roots and Browser renderer read 5.1.68. PHDK v2.51.2 coherence passes 56/56; the mechanical completion gate passes against the post-merge record. GitHub reported no hosted checks or review decision; `main` is unprotected. No deployment is claimed. The product source commit is version-prefixed (`5.1.68: verify provider tenant scope contracts`). The candidate adds API/Cloud regression assertions for database-actor-derived company scope on provider configuration and voice-profile reads/writes. All five production builds and lint checks; API/Cloud/Web/Landing dedicated typechecks, with Browser build running `tsc` pass; API/Cloud regressions are 39/39 and 18/18. PHDK coherence passes 56/56.

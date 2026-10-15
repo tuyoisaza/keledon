@@ -1,3 +1,9 @@
+## Current PMO progress — PR #170 merged; whole portfolio partial
+
+PR #170 is squash-merged at remote `main` `2c021fe30de453bb95212a442e9a8c93eabfbce1`; its tree equals the tested candidate. All six version reads are 5.1.69. API/Cloud regressions 39/39 and 18/18; all five builds and lint checks; API/Cloud/Web/Landing typechecks plus Browser TypeScript build; PHDK coherence 56/56; completion gate PASS. UAT-063 is source-only. Tally: 61 PASS, 1 BLOCKED (owner-provided PostgreSQL UAT-060), 1 MANUAL (native device/audio). All four commitments remain active; persistence/audit, TeamInterface selector, accessibility/localization, deployed SEO/AEO and per-client live voice/CRM acceptance remain open.
+
+---
+
 ## Current PMO progress — PR #167 merged; whole portfolio partial
 
 PR [#167](https://github.com/tuyoisaza/keledon/pull/167) squash-merged source `62c979b299301066ef5187fada9041017ae2bc8f` at verified remote `main` `f974ab5984a20cd1b4ad742ddffe5921ad2bf823`, tree `96d7ce832332b3c991269432bcaacc083c2abb68`, equal to the tested source tree. All five app package/lock roots and Browser renderer read 5.1.68. PHDK v2.51.2 coherence passes 56/56; the mechanical completion gate passes against the post-merge record. GitHub reported no hosted checks or review decision; `main` is unprotected. No deployment is claimed. Current UAT tally is **60 PASS, 1 BLOCKED, 1 MANUAL**. All four owner-confirmed commitments remain active; none is fully closed. API/Cloud provider and voice-profile guard regressions now verify positive database-actor-derived tenant scope. UAT-060 still awaits the agreed disposable PostgreSQL service; native device/audio is manual; broad accessibility/localization, deployed SEO/AEO and customer-specific live calls/CRM remain open.
