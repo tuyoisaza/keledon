@@ -140,3 +140,10 @@ Status: **SOURCE CHECK PASS / WHOLE ACCEPTANCE PARTIAL / DELIVERY PENDING**.
 ## Delivery readback — candidate 5.1.39
 
 PR [#116](https://github.com/tuyoisaza/keledon/pull/116) delivered the scoped write-contract source slice by squash merge at `615770d6e769008299a4228da758fc455941c6c5`. `origin/main` and `git ls-remote` independently agree. The remote main tree equals the tested candidate tree `f3c45a2d80bf065db27236a48ae4b7dcafead240`; all five app roots and Browser renderer are 5.1.39. The source-slice machine gate passes; whole acceptance remains partial. The PHDK evidence/docs PR is pending. No deployment is claimed.
+## Candidate 5.1.53 scoped Check — source finding closed; whole Auto partial
+
+PHDK 2.50.10 coherence 52/52; all five package/lock roots and Browser renderer are 5.1.53. Landing SEO test 1/1, lint, typecheck, build, built-HTML assertion and diff check pass. The public initial-document content gap is closed on this source candidate. Exact scope findings and retained external/portfolio gaps are recorded in the root Check report and `snapshots/candidate-5.1.53/PHDK_CHECK_REPORT.md`. This scoped pass does not certify full CRUD persistence, broad accessibility/localization, native device/audio, deployed discovery or customer-specific calls/CRM.
+
+Exit: scoped source check passes; whole Auto remains **PARTIALLY DELIVERED**. Next: normal versioned PR delivery and remote-main readback.
+
+---

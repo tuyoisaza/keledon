@@ -1,0 +1,23 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case_id": "UAT-041",
+  "candidate_version": "5.1.53",
+  "branch": "fix/phdk-public-home-nojs-5-1-53",
+  "base_commit": "962adfc349fcaacde61e0635c13952166b78d7c9",
+  "environment": "local clean Git worktree; production static build",
+  "target": "Landing public root HTML artifact",
+  "result": "PASS",
+  "steps": [
+    "Run npm run test:seo (1/1).",
+    "Run npm run lint and npm run typecheck (both pass).",
+    "Run npm run build (pass; existing large main-chunk advisory).",
+    "Inspect landing/dist/index.html without executing JavaScript and verify semantic H1, overview copy, disclaimer, and client-configured interface context.",
+    "Inspect source app entrypoint to confirm the no-js class is removed before the React root replaces the static overview."
+  ],
+  "observed": "Initial HTML contains the semantic heading and truthful overview before JavaScript; the React entrypoint removes fallback styling when interactive startup begins.",
+  "limits": [
+    "No browser or live crawler session was performed.",
+    "No deployed URL, customer CRM, database, device, or provider was accessed.",
+    "This case does not close whole-product acceptance; native device/audio remains MANUAL and broader CRUD/accessibility/localization/deployed discovery remain open."
+  ]
+}

@@ -1,5 +1,21 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.53 — public landing no-JavaScript acceptance (2026-10-14)
+
+Candidate branch `fix/phdk-public-home-nojs-5-1-53`, based on verified `origin/main` `962adfc349fcaacde61e0635c13952166b78d7c9`. Intent sources: current owner-confirmed four-front Auto goal, existing Capture/PRD public-copy intent, and client-specific call/CRM configuration decision. UAT-041 exercises the built public HTML contract: Landing SEO test passes 1/1; Landing lint and TypeScript projects pass; production build passes and its `dist/index.html` contains the semantic H1 and full accurate overview before JavaScript. The no-JS class is removed by the app entrypoint. This did not exercise a browser, live crawler, deployment or client system.
+
+Outcome for this focused case: PASS. Whole candidate acceptance remains **ACCEPTANCE INCOMPLETE** at **41 PASS, 0 BLOCKED, 1 MANUAL**: native device/audio is still manual; the full persisted CRUD/tenant matrix and concurrency are incomplete; broader accessibility/localization and deployed SEO/AEO measurements remain unresolved. No new product acceptance blocker was found. Exact evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-landing-5.1.53.json`.
+
+### Action plan for remaining incomplete acceptance
+
+- **UAT-006 / native device and audio — MANUAL.** An owner with a supported Windows device must exercise real pairing, revoke, microphone/speaker, active call and reconnect flows on the supported machine, capture timestamped redacted traces, then update `UAT_REPORT.md` and rerun the applicable UAT suite. This cannot be done in the current source-only worktree.
+- **CRUD persistence and delete/reindex concurrency — PARTIAL.** Continue the disposable-PostgreSQL/Qdrant matrix for role × tenant × surface × operation and race tests; preserve loopback-only synthetic identities/data; attach database/vector assertions and rerun related API/Cloud regressions.
+- **Broad accessibility/localization and deployed search measurements — UNVERIFIED.** Run the full keyboard/screen-reader/locale audit and authorized post-release read-only crawler/CWV/Search Console measurements when evidence access and public-language intent are available. Do not infer these from current source tests.
+
+This focused change only validates the discovery behavior directly affected by the static overview. No production probe, customer CRM, native device or database mutation occurred.
+
+---
+
 ## Candidate 5.1.39 — MVP write-contract regression (2026-10-14)
 
 Candidate branch `fix/phdk-mvp-store-write-contracts-5-1-39`, exact source revision `a8a89f928312db2fef5142a0e07ac18a197b6c19`, based on `origin/main` `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`. UAT-033 passes: API and Cloud regressions each include three assertions that reject server-owned/unsupported MVP fields, require authenticated server attribution for a FlowVersion creator, and prove the controller passes the guard-populated actor rather than caller-body attribution. API regression passes 36/36; Cloud passes 16/16. Web diagnostics pass 19/19 and built-SPA UAT passes 2/2 against local synthetic API fixtures with external traffic blocked. Web/Landing typecheck and production builds pass; Web and Landing SEO source tests pass 1/1 each; Browser TypeScript build passes. Evidence is `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-local-web-5.1.39.json`; the suite outputs and exact SHA are recorded there. No database, private CRM endpoint, client identity, call provider, or deployment was used.

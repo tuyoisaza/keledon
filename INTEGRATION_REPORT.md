@@ -1,3 +1,15 @@
+# Current Integration Review — candidate 5.1.53 (2026-10-14)
+
+## Public initial-document source slice
+
+Candidate base: verified remote main `962adfc349fcaacde61e0635c13952166b78d7c9` / 5.1.52. This slice changes only the Landing initial HTML and entrypoint, its SEO contract regression, the five app version/lock roots and Browser diagnostics display, changelog, and PHDK lifecycle evidence. No API, Cloud, Browser runtime behavior, database schema, tenant policy, customer integration contract or public route changed. Existing per-tenant call/CRM configuration remains the requirement and private-origin allowlist policy is untouched.
+
+Cross-package review: all five application roots/lock roots and Browser renderer string align at 5.1.53. Landing `test:seo` 1/1, lint, typecheck and build pass; built HTML retains the static semantic overview. PHDK standards coherence passes 52/52; `git diff --check` passes. Existing build advisory: ~580.27 kB minified Landing main chunk. No cross-workstream API contract change.
+
+Status: **INTEGRATED SOURCE SLICE PASS**. This does not close broader Auto workstream acceptance. Check remains responsible for the exact final candidate.
+
+---
+
 # Previous Integration Review — candidate 5.1.36 (2026-10-14)
 
 ## Current Integration Review — candidate 5.1.38 (2026-10-14)

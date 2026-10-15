@@ -1,5 +1,15 @@
 # SEO checklist — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.53 delta — 2026-10-14
+
+| Control | Current candidate status | Evidence / limitation |
+|---|---|---|
+| SEO-10 Headings | PASS (source/build) | Initial HTML includes one meaningful public H1 and a hierarchy of architecture H2s; `landing/test/seo-headers.test.cjs` and built `landing/dist/index.html` verify the contract. No crawler rendering claim. |
+| SEO-23 Rendering | PASS (source/build); deployed rendering BLOCKED | Static initial HTML now carries an accurate substantive overview without JS; app removes the fallback class on boot. Local test/build only; deployed HTTP and crawler observation remain unavailable in this stage. |
+| All other controls | REUSED FROM PRIOR SOURCE AUDIT | Public route policy/metadata remains unchanged. Field CWV, live headers/TLS/redirects, Search Console, backlinks, broad mobile measurement and verified authorship remain blocked, partial or not measured as recorded below. |
+
+---
+
 Candidate: 5.1.39, `fix/phdk-mvp-store-write-contracts-5-1-39`, source `a8a89f928312db2fef5142a0e07ac18a197b6c19`, based on verified `main` `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`. The public source is unchanged; the 25 controls below are reused and revalidated with Web/Landing `npm run test:seo` 1/1 each and both builds/typechecks. Method remains source review/local tests only. UAT is ACCEPTANCE INCOMPLETE; no deployed search or field metric is claimed. The 25 controls are engineering checks, not a ranking formula.
 
 | ID | Status | Evidence, action, retest |

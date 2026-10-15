@@ -1,3 +1,13 @@
+## v5.1.53 — 2026-10-14 (serve the public overview without JavaScript)
+
+- Render the public landing page's existing, client-configured product overview into the initial HTML so crawlers and non-JavaScript users receive a semantic H1 and direct architecture context.
+- Keep the static overview visually styled only while the no-JavaScript fallback is active; the React application replaces it after startup.
+- Align all five application package/lock roots and the Browser diagnostics version at 5.1.53.
+
+### Verification
+- Landing `test:seo` passes 1/1; Landing lint and both TypeScript projects pass; production build passes with the existing 580.27 kB main-chunk advisory; PHDK coherence passes 52/52.
+- The built `landing/dist/index.html` retains the semantic H1 and substantive client-configured overview in its initial HTML. No deployed recrawl, customer CRM or hosting-provider action was performed.
+
 ## v5.1.50 — 2026-10-14 (close Web ESLint warnings)
 
 - Replace the remaining `any` annotations in legacy dashboard and administration components with explicit UI/data contracts; validate role values before invoking user impersonation.

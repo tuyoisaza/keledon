@@ -402,3 +402,18 @@ Gate evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delive
 Whole PHDK Auto remains **PARTIALLY DELIVERED**: disposable PostgreSQL and persisted migrations/CRUD, safe DB-backed identities, live Qdrant concurrency, native Windows device/audio, complete model-family proof, broad accessibility/localization, deployed SEO/AEO, and configured customer-specific live call/CRM acceptance remain open. No database, customer endpoint/data, private CRM host or deployment was used.
 
 SIGUIENTE PASO: merge the evidence-only lifecycle PR, independently reread remote `main`, and retain PARTIALLY DELIVERED until remaining external/manual acceptance is provided.
+## Current delivery candidate — 5.1.53 pending PR/remote verification
+
+Goal: continue the owner-confirmed four-front PHDK Auto for KELEDON. Repository `tuyoisaza/keledon`, target `main`; branch `fix/phdk-public-home-nojs-5-1-53`, based on verified remote main `962adfc349fcaacde61e0635c13952166b78d7c9`. Candidate changes the Landing initial HTML/React fallback, a focused regression, all five app version/lock roots, Browser diagnostics label, changelog and PHDK lifecycle evidence. Local source checks pass: Landing SEO 1/1, lint, typecheck, build, built HTML contract, package/lock version alignment, PHDK coherence 52/52 and diff check. Build shows its existing ~580.27 kB chunk advisory.
+
+| Delivery gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Five application package/lock roots and Browser renderer are 5.1.53 over verified 5.1.52 remote main. |
+| COMMIT_PREFIX | PENDING | Candidate commit not yet created. |
+| PUSH_AND_PR | PENDING | Branch not yet pushed; PR not yet opened. |
+| REMOTE_MAIN | PENDING | Candidate not yet integrated; no deployment claimed. |
+| SCOPE_AND_CHECKS | SOURCE PASS / WHOLE AUTO PARTIAL | UAT-041 PASS, 41 PASS/0 BLOCKED/1 MANUAL overall; scoped Landing checks pass. Portfolio acceptance remains open for persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-tenant live integrations. |
+
+No live host/provider/customer system was accessed in this source stage. This is a dated delivery checkpoint, not a completion claim. Update after each actual GitHub action and remote-main readback.
+
+---

@@ -1,5 +1,15 @@
 # AEO/GEO remediation report — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.53 — machine-readable public overview (2026-10-14)
+
+Addressed the public root's empty initial HTML by adding an accessible semantic product overview already supported by current UI claims. The overview explains cloud policy decisions, approved browser execution and per-client interface configuration. A visible illustrative disclaimer remains adjacent. It is included in the built initial document, and JavaScript removes its no-JS presentation class as the React app starts.
+
+Retest: SEO HTML contract 1/1, Landing lint/typecheck/build pass, generated HTML check passes, PHDK coherence 52/52. AG-07/12 source-level concern is resolved for the overview. No answer engines/crawlers or deployed page were probed. Authorship, public locale/market, independent citations and customer-specific live integrations remain unverified or require customer configuration.
+
+**Status: SOURCE FIX PASS / NO VISIBILITY OR CITATION CLAIM.**
+
+---
+
 ## Candidate 5.1.39 — no AEO/GEO source change
 
 No public copy, route or metadata changed; the existing truthful product explanation and client-selected CRM language remain accurate. No unsupported FAQ, schema, `llms.txt`, citation or claim was added. Revalidated the existing 15 controls for the current API/Cloud-only candidate; Web/Landing SEO source tests pass. Market/language policy and public trust provenance remain owner/editor inputs; deployed/answer-engine discovery remains NOT MEASURED.

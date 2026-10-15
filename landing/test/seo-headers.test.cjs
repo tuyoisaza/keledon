@@ -15,8 +15,13 @@ test('public landing document has truthful discovery metadata and route policy',
   assert.match(html, /name="description" content="KELEDON coordinates cloud-governed voice assistance/);
   assert.match(html, /name="robots" content="index, follow"/);
   assert.match(html, /rel="canonical" href="https:\/\/keledon\.tuyoisaza\.com\/"/);
-  assert.match(html, /<noscript>KELEDON is a cloud-governed contact center runtime\./);
-  assert.match(html, /Call and CRM interfaces are configured per client\.<\/noscript>/);
+  assert.match(html, /<html lang="en" class="no-js">/);
+  assert.match(html, /<main class="seo-fallback" aria-labelledby="landing-title">[\s\S]*?<h1 id="landing-title">The Cloud Decides\. The Agent Executes\.<\/h1>/);
+  assert.match(html, /KELEDON coordinates voice, cloud decisions and browser execution through workflows configured for each client\./);
+  assert.match(html, /The browser executes approved actions in the interfaces configured by each client\./);
+  assert.match(html, /Call and CRM interfaces are configured per client\./);
+  assert.match(html, /JavaScript is required for interactive application flows; this product overview remains available above\.<\/p><\/noscript>/);
+  assert.match(read('src/main.tsx'), /document\.documentElement\.classList\.remove\('no-js'\)/);
 
   const home = config.match(/location = \/ \{([\s\S]*?)\n        \}/)?.[1];
   const spa = config.match(/location \/ \{([\s\S]*?)\n        \}/)?.[1];

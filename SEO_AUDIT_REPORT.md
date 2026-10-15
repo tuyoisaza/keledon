@@ -1,5 +1,15 @@
 # SEO source audit — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.53 revalidation — public root initial HTML (2026-10-14)
+
+SEO is **APPLICABLE** to the intended public `/` landing route. The prior public observation in this Auto run found a successful home response with title/description/canonical but no semantic H1 or substantive overview in raw HTML; the React/Vite root was empty until client execution. This candidate repairs the source gap by placing existing verified landing claims in initial HTML, including the existing headline, a client-configured voice/cloud/browser explanation, architecture roles, and the existing illustrative-interface disclaimer. Authenticated routes, customer systems and CRM endpoints remain private and excluded from public indexing. No claims, market, vendor, URL, robots policy or provider configuration were added.
+
+Source evidence: `landing/index.html`, `landing/src/main.tsx`, `landing/test/seo-headers.test.cjs`; production output `landing/dist/index.html`. `npm run test:seo` passes 1/1, ESLint and both TypeScript configurations pass, and the Vite production build passes. The generated initial HTML includes the H1 and body copy. PHDK coherence is 52/52. The build retains the existing ~580.27 kB entry-chunk advisory.
+
+Source-stage exit: **SEO SOURCE PASS / DEPLOYED DISCOVERY PARTIAL**. SEO-10 and SEO-23 now pass at the source/build-output level. SEO-05, SEO-13–17 and SEO-24–25 remain BLOCKED/NOT MEASURED; SEO-12 and SEO-16 remain partial; no deployed HTTP/TLS/crawler, field CWV, Search Console, backlinks or snippet selection is claimed. See candidate checklist and handoff snapshots. No production probe was made in this stage.
+
+---
+
 ## Candidate 5.1.39 revalidation — 2026-10-14
 
 Candidate branch `fix/phdk-mvp-store-write-contracts-5-1-39`, source `a8a89f928312db2fef5142a0e07ac18a197b6c19`. SEO is **APPLICABLE** to public `/`; authenticated routes, APIs, tenant data and client CRM endpoints remain private. This candidate changes only API/Cloud MVP write contracts and internal API module organization; public content, templates, URL policy, robots, sitemap and metadata are unchanged. Reused the 25-control source checklist below and reran Web and Landing `npm run test:seo` (1/1 each). Builds and typechecks pass. No HTTP, crawler, Search Console, field CWV, backlink, TLS or deployed observation was performed. SEO source status remains pass with explicitly partial/blocked external measurements; no claim of deployed indexing or performance.
