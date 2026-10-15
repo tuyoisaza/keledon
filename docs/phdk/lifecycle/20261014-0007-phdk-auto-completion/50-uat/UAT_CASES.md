@@ -1,5 +1,11 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.67 — API flow reads enforce team scope
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-061 | CMT-003/004 / authorized team runtime | Exercise API and Cloud FlowService search with no team, blank query, an oversized result limit, a rejected Qdrant response and malformed rows; call API flow listing with and without a team. | Missing scope returns no results without database/network calls; valid search/list always carries the requesting `teamId`, search limits are 1–50, failed upstream responses fail closed, and malformed rows are discarded. | API/Cloud unit regression | PASS for the 5.1.67 source contract: API FlowService 12/12 and Cloud parity 10/10. No live Qdrant or customer tenant was used. |
+
 ## Candidate 5.1.62 — protected AI administration acceptance
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
