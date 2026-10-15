@@ -1,6 +1,6 @@
 # SEO checklist — run `20261014-0007-phdk-auto-completion`
 
-Candidate: 5.1.24 base `6413d8aed295c18af098ca6a58c6dfbb7503930b`; source fingerprint `sha256:aced4dfae723e0c19aa30fee2d2219eda6290007dee9cedf79ec52bd246f1b1b`. Method: source inspection and local static tests/build only. Candidate UAT remains NOT ACCEPTED. The 25 controls are engineering checks, not a ranking formula.
+Candidate: 5.1.39, `fix/phdk-mvp-store-write-contracts-5-1-39`, source `a8a89f928312db2fef5142a0e07ac18a197b6c19`, based on verified `main` `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`. The public source is unchanged; the 25 controls below are reused and revalidated with Web/Landing `npm run test:seo` 1/1 each and both builds/typechecks. Method remains source review/local tests only. UAT is ACCEPTANCE INCOMPLETE; no deployed search or field metric is claimed. The 25 controls are engineering checks, not a ranking formula.
 
 | ID | Status | Evidence, action, retest |
 |---|---|---|

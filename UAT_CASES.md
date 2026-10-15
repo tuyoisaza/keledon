@@ -1,5 +1,17 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Current candidate 5.1.39 — exact-SHA revalidation
+
+Candidate: `fix/phdk-mvp-store-write-contracts-5-1-39`, source `a8a89f928312db2fef5142a0e07ac18a197b6c19`, base `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`. Owner-approved intent is safe tenant administration with current DB-derived actor attribution; the candidate rejects caller-controlled metadata on MVP writes. All Web API traffic in local SPA UAT is intercepted with synthetic fixtures; external traffic is blocked.
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-033 | US-002 / US-004, API or Cloud management caller | Submit MVP create/update payloads containing server-owned identifiers, timestamps, relations or unsupported types; submit a FlowVersion create with spoofed `createdBy`; compare actor forwarded by the controller. | Unsupported/server-owned fields fail before persistence; creator attribution comes only from authenticated request context; API and Cloud behavior match. | API/Cloud isolated regression suites, plus exact-candidate built-SPA UAT for unaffected shared journeys. | PASS, 3 assertions each in API regression 48 and Cloud regression 41; Web UAT 2/2, diagnostics 19/19, exact SHA and synthetic-only limits recorded in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-local-web-5.1.39.json`. |
+
+Overall catalog: **30 PASS, 2 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Existing UAT-009/010 (real development identities and disposable PostgreSQL persistence/migration), UAT-006 (native device/audio), broad accessibility/localization and deployed SEO/AEO remain unresolved. Client-specific call/CRM remains per-tenant and is not a universal acceptance case.
+
+---
+
 ## Candidate 5.1.36 additions
 
 UAT-032 covers Device manager revocation and registration safety. In an isolated local built-SPA session, a user cannot see the revoke control; an admin's confirmation cancel sends no DELETE; a failed request is visible and retryable; a successful request removes the device from the tenant list. API regression 21 separately verifies registration ignores caller-supplied identity, denies actors without a company, permits same-company manager revoke and denies cross-company/ordinary-user revoke. PASS within synthetic UI and guard-fixture scope only; no DB/device pairing persistence is claimed. Current catalog after this addition: 29 PASS, 2 BLOCKED, 1 MANUAL.

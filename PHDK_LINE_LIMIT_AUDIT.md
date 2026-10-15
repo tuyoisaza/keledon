@@ -1,5 +1,9 @@
 # PHDK physical line limit audit
 
+## Current candidate 5.1.39 — 2026-10-14
+
+Fresh physical-line inventory: **1,168 active application/test files** across `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, and `.vue`; dependencies, generated output, `.git`, `phdk-standards/`, and lifecycle snapshots are excluded. **0 files are at or above 600 physical lines.** The API MVP store moved provider catalog data to `services/api/src/mvp/provider-catalog.ts` and write-contract validation to its focused module; API service now has 487 physical lines. Candidate `a8a89f928312db2fef5142a0e07ac18a197b6c19`. This closes the physical-size gate only; whole Auto remains partial.
+
 ## Current candidate 5.1.38 — 2026-10-14
 
 Fresh inventory: **1,163 active application/test files**, extensions `.ts`, `.tsx`, `.js`, `.jsx`, `.html`, `.css`, `.mjs`, `.cjs`, `.vue`; dependencies, generated output, `.git`, vendored standards and lifecycle snapshots excluded. **0 files are at or above 600 physical lines.** The Cloud escalation guard and parity regression are split into focused files. Candidate source commit `5d1b585e8b3a96865bd50494db7315de7281916b`; product PR #113 is merged on main. This closes the line-size gate only; whole-product acceptance remains partial.

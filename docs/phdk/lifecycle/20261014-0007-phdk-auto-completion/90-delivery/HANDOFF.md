@@ -79,3 +79,11 @@ Mechanical evidence is `PHDK_DELIVERY_EVIDENCE-5.1.33.json`; the completion scri
 Status: **SOURCE DELIVERY COMPLETE / PHDK AUTO PARTIALLY DELIVERED**.
 
 SIGUIENTE PASO: provide isolated PostgreSQL and safe DB-backed identities, plus a supported native Windows audio/device host; then continue the remaining CRUD and external SEO/AEO checks.
+
+## Verified source delivery — candidate 5.1.39 (2026-10-14)
+
+PR [#116](https://github.com/tuyoisaza/keledon/pull/116) squash-merged the MVP store write-contract candidate at `615770d6e769008299a4228da758fc455941c6c5`. `origin/main` and `git ls-remote` match; candidate and remote trees match at `f3c45a2d80bf065db27236a48ae4b7dcafead240`; all five app package/lock roots and Browser renderer report 5.1.39. API 36/36 and Cloud 16/16 full regression suites, focused lint, API/Cloud builds, Browser/Web/Landing builds, Web/Landing typechecks, diagnostics 19/19, exact-candidate synthetic Web UAT 2/2, Web/Landing SEO source tests 1/1 each, PHDK coherence 52/52 and zero-at-or-above-600 source inventory pass. Completion evidence passes for this source slice only. GitHub has no hosted checks/review submissions and `main` is unprotected; no human review or deployment is claimed.
+
+Whole PHDK Auto is **PARTIALLY DELIVERED**: full UAT remains 30 PASS, 2 BLOCKED, 1 MANUAL. Disposable PostgreSQL, persisted migrations/CRUD, safe DB identities, native Windows device/audio, live Qdrant concurrency, exhaustive model-operation proof, broad accessibility/localization, deployed SEO/AEO and per-customer call/CRM acceptance remain open. No database, customer endpoint/data, private CRM or deployment was used.
+
+SIGUIENTE PASO: reconcile this handoff and the Auto lifecycle board in the evidence PR, verify its merge on main, and preserve PARTIALLY DELIVERED for the remaining acceptance gates.

@@ -19,6 +19,16 @@ Snapshots: current candidate cases/report are versioned in this folder; `snapsho
 SIGUIENTE PASO: continue source Check and reconcile every Prisma model, route, role, tenant scope, surface and C/R-list/R-detail/U/D operation; retain external acceptance as open.
 # UAT handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.39 — exact-revision write-contract UAT (2026-10-14)
+
+Status: **UAT-033 PASS / ACCEPTANCE INCOMPLETE**. Candidate `fix/phdk-mvp-store-write-contracts-5-1-39`, source `a8a89f928312db2fef5142a0e07ac18a197b6c19`, base `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`. API/Cloud builds and regressions pass (36/36 and 16/16); Web local synthetic UAT passes 2/2; diagnostics 19/19; Web/Landing SEO 1/1 each; Browser build; coherence 52/52; line inventory 1,168 files / 0 at or above 600. The UAT verifies API/Cloud reject server-owned/unsupported MVP write fields and use guard-derived creator attribution. Evidence: `evidence/uat-local-web-5.1.39.json` plus exact-run test outputs.
+
+The Web UAT intercepts API traffic and blocks external traffic. API/Cloud regressions use isolated fixtures. No database, private CRM endpoint, customer provider/account, native device/audio session or deployment was accessed. Whole-run tally is **30 PASS, 2 BLOCKED, 1 MANUAL**: UAT-009 development identities and UAT-010 disposable database/persistence remain blocked; UAT-006 native Windows device/audio remains manual. Broad accessibility/localization and deployed SEO/AEO also remain open; CRM/call acceptance is per tenant.
+
+Entry to SEO/AEO is valid: public marketing and indexation sources were unchanged; current candidate source tests pass. Reuse the existing AEO/GEO source review, record external visibility as unmeasured, then advance to Check.
+
+---
+
 ## Candidate 5.1.36 — Device manager lifecycle (2026-10-14)
 
 UAT-032 passes on the staged candidate source diff based on `f0a9633e39bbdbca416f5e1c24c32acab7276902`; its SHA-256 source fingerprint is `4170917201fbd7be6ca51d1c7d7adde6bb9bafb82010bdd1a70242b96cce3315`. Local built-SPA UAT passes 2/2 with synthetic API intercepts. The Device journey verifies user read-only view, cancel-without-delete, visible synthetic failure and successful removal. Screenshots and JSON provenance are under `docs/phdk/evidence/uat-device-*`. API regression 21 and full suite 35/35 separately verify company binding and scope. UAT remains 29 PASS, 2 BLOCKED, 1 MANUAL; DB-backed identity/migration, physical device/audio and whole product acceptance remain open. No live account, persistence, device pairing, customer provider or deployment was used.

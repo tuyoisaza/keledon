@@ -222,3 +222,21 @@ PHDK completion evidence is recorded in `docs/phdk/lifecycle/20261014-0007-phdk-
 Status: **SOURCE DELIVERED / PHDK AUTO PARTIALLY DELIVERED**. No production database, customer data, private CRM endpoint, or deployment was used.
 
 SIGUIENTE PASO: provide the isolated database/identity target and supported Windows device/audio host to close UAT-009/010/006; then continue the remaining CRUD and external SEO/AEO acceptance without production or customer data.
+
+## PHDK Auto source delivery — 5.1.39 (2026-10-14)
+
+Scope: deliver the API/Cloud MVP-store write-contract remediation under the four confirmed fronts. Version: 5.1.39. Source branch: `fix/phdk-mvp-store-write-contracts-5-1-39`. Source commit: `a8a89f928312db2fef5142a0e07ac18a197b6c19`. PR: [#116](https://github.com/tuyoisaza/keledon/pull/116), squash-merged to `main`. Verified remote merge SHA: `615770d6e769008299a4228da758fc455941c6c5`; fresh `origin/main` and `git ls-remote` agree, and the remote tree matches tested candidate tree `f3c45a2d80bf065db27236a48ae4b7dcafead240`. Five app package/lock roots and Browser renderer are 5.1.39.
+
+| Delivery proof | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | All five package/lock roots and Browser renderer align at 5.1.39; changelog updated. |
+| COMMIT_PREFIX | PASS | Source commit and PR squash title begin with v5.1.39. |
+| PUSH_AND_PR | PASS | Branch pushed; PR #116 targets main and merged. No required hosted check/review or branch protection was configured. |
+| REMOTE_MAIN | PASS | `origin/main` and `git ls-remote` both report `615770d6e769008299a4228da758fc455941c6c5`; source/main trees match. |
+| SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | API 36/36, Cloud 16/16, focused lint/build/typechecks, diagnostics, synthetic UAT, SEO, PHDK coherence 52/52 and source inventory pass. Whole UAT is 30 PASS, 2 BLOCKED, 1 MANUAL; four-front Auto remains partial. |
+
+Gate evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.39.json`; `phdk_completion_gate.py` returns PASS for this explicitly scoped source slice. It does not certify the whole Auto goal. Upstream stage records are in `40-integration/`, `50-uat/`, `65-seo/`, `67-aeo-geo/` and `70-check/`. GitHub had no check/review submissions; owner authorization is the active Auto request and no human diff review is claimed.
+
+Whole PHDK Auto remains **PARTIALLY DELIVERED**: disposable PostgreSQL and persisted migrations/CRUD, safe DB-backed identities, live Qdrant concurrency, native Windows device/audio, complete model-family proof, broad accessibility/localization, deployed SEO/AEO, and configured customer-specific live call/CRM acceptance remain open. No database, customer endpoint/data, private CRM host or deployment was used.
+
+SIGUIENTE PASO: merge the evidence-only lifecycle PR, independently reread remote `main`, and retain PARTIALLY DELIVERED until remaining external/manual acceptance is provided.

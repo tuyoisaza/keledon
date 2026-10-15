@@ -1,5 +1,15 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Latest candidate 5.1.39 — exact-revision regression (2026-10-14)
+
+Branch `fix/phdk-mvp-store-write-contracts-5-1-39`, revision `a8a89f928312db2fef5142a0e07ac18a197b6c19`, based on verified local/remote main `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`. The API and Cloud production builds pass; all API regression suites pass 36/36 and all Cloud suites pass 16/16. UAT-033 passes: each backend's three-case contract test rejects forbidden and unsupported input, binds `createdBy` to the server actor, and verifies controller attribution. Web diagnostics pass 19/19 and synthetic built-SPA UAT passes 2/2; Web/Landing typecheck/build and SEO source tests pass; Browser build passes. Source inventory is 1,167 files and zero at/above 600 lines. PHDK v2.50.10 coherence is 52/52. Exact-candidate evidence is in `evidence/uat-local-web-5.1.39.json`.
+
+The UI suite uses local synthetic fixtures, intercepts API calls and blocks external traffic. API/Cloud tests use isolated fixtures; no DB, private destination, client provider, account, device/audio session or deployment was used. The 5.1.39 case adds one PASS; whole run acceptance remains **ACCEPTANCE INCOMPLETE: 30 PASS, 2 BLOCKED, 1 MANUAL**. UAT-009/010 require safe DB-backed identities and disposable PostgreSQL persistence/migration evidence; UAT-006 requires native Windows device/audio. Broad accessibility/localization and deployed SEO/AEO are not established. Customer CRM/call validation remains per-client.
+
+SIGUIENTE PASO: freeze this UAT snapshot, reuse/revalidate SEO/AEO source evidence, then continue to Check.
+
+---
+
 ## UAT Fix retest — 2026-10-14, candidate 5.1.26
 
 UAT-008 now passes within its explicitly approved scope: test-profile switching is enabled only for development/staging, requires the current database-backed superadmin, uses an explicit synthetic-profile allowlist and a maximum ten-minute token, records start/end audit events, and does not alter persisted roles. Returning requires the original superadmin token and revokes the temporary token. API regression covers real Nest guard/controller HTTP wiring with isolated fixtures; the built-SPA journey covers selection and return against a mocked API. Neither is live deployment or persistent-database acceptance.

@@ -1,3 +1,16 @@
+## Current Auto candidate — 2026-10-14, 5.1.39 source delivered
+
+| Commitment | Delivered source evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 | PR #116 merged at `615770d6e769008299a4228da758fc455941c6c5`; remote SHA/tree readback and five roots/renderer at 5.1.39 pass. | Whole Auto continues; source delivery does not certify environment-bound acceptance. |
+| CMT-002 | Diagnostics 19/19 and exact-candidate built-SPA UAT 2/2. | Native Windows device/audio and broad accessibility/localization remain open. |
+| CMT-003 | Provider-neutral tenant-configured integrations and validated per-tenant private CRM allowlists remain in source. | Live call/CRM acceptance remains per client after its provider/environment is configured. |
+| CMT-004 | API/Cloud typed writes and guard-derived FlowVersion attribution; regressions 48/41 and full suites 36/36, 16/16 pass. | CHK-AUTO-003 exhaustive model proof, safe DB identities, disposable PostgreSQL, persisted migrations/CRUD, live Qdrant concurrency remain open. |
+
+Source candidate `a8a89f928312db2fef5142a0e07ac18a197b6c19` was based on verified main `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`. Its squash merge `615770d6e769008299a4228da758fc455941c6c5` is independently confirmed by `origin/main` and `git ls-remote`; trees match. PHDK 2.50.10 matches canonical and coherence is 52/52. Whole UAT remains 30 PASS, 2 BLOCKED, 1 MANUAL. **Overall PARTIALLY DELIVERED.**
+
+---
+
 ## Current candidate 5.1.37 — confirmed commitment coverage (2026-10-14)
 
 | Commitment | 5.1.37 evidence | Remaining acceptance |

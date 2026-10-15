@@ -1,5 +1,9 @@
 # SEO source audit — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.39 revalidation — 2026-10-14
+
+Candidate branch `fix/phdk-mvp-store-write-contracts-5-1-39`, source `a8a89f928312db2fef5142a0e07ac18a197b6c19`. SEO is **APPLICABLE** to public `/`; authenticated routes, APIs, tenant data and client CRM endpoints remain private. This candidate changes only API/Cloud MVP write contracts and internal API module organization; public content, templates, URL policy, robots, sitemap and metadata are unchanged. Reused the 25-control source checklist below and reran Web and Landing `npm run test:seo` (1/1 each). Builds and typechecks pass. No HTTP, crawler, Search Console, field CWV, backlink, TLS or deployed observation was performed. SEO source status remains pass with explicitly partial/blocked external measurements; no claim of deployed indexing or performance.
+
 Date: 2026-10-14. Candidate base: `6413d8aed295c18af098ca6a58c6dfbb7503930b`, product baseline 5.1.24, active worktree source fingerprint `sha256:aced4dfae723e0c19aa30fee2d2219eda6290007dee9cedf79ec52bd246f1b1b`. UAT was revalidated on this fingerprint and remains **NOT ACCEPTED** for the separate profile-switch requirement. The SEO work is independent: it only adds truthful static fallback copy to the retained `landing/index.html`; current `services/web` user journeys and routes are unchanged.
 
 Applicability: **APPLICABLE**. The public marketing/entry route `/` is intended for discovery. Authenticated SPA routes, API, dashboard, administration and customer CRM destinations remain private/nonindexable and are excluded from the sitemap. Product intent says client call/CRM platforms are individually configured. No target market or public multilingual route decision is established; the public document remains English as currently authored.
