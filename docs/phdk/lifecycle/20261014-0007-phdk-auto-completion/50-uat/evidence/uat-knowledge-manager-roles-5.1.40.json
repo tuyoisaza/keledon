@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-035",
+  "candidateVersion": "5.1.40",
+  "branch": "test/knowledge-manager-role-uat-5-1-40",
+  "sourceCommit": "2edc20cdc524f39718c486395677e0532af5a972",
+  "sourceTree": "dbd5dd8a2e02dfbea38ae72a4c74e3c50d5c21bc",
+  "command": "node --test test/knowledge-manager-role-uat.test.cjs",
+  "result": {
+    "status": "PASS",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0
+  },
+  "assertions": [
+    "A synthetic coordinator is offered only company-a and creates a Knowledge base for company-a.",
+    "A synthetic superadmin can select company-b and creates a Knowledge base for company-b.",
+    "A synthetic user does not receive the manager component or create control."
+  ],
+  "isolation": {
+    "apiResponses": "synthetic fixtures only",
+    "externalNetwork": "blocked except a synthetic deep-health fixture",
+    "database": "not used",
+    "customerData": "not used",
+    "sharedScreenshotsOrEvidence": "not written"
+  },
+  "scope": "Browser/UI role and tenant affordance acceptance only; no persistent API authorization or PostgreSQL proof.",
+  "executedAtLocalDate": "2026-10-14"
+}

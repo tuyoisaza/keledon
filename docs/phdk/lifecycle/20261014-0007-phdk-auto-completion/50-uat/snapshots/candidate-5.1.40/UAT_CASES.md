@@ -1,14 +1,15 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
-## Current candidate 5.1.40 — exact-source debug diagnostics roles
+## Current candidate 5.1.40 — diagnostics and Knowledge role acceptance
 
 Candidate branch `fix/diagnostics-route-roles-5-1-40`, source `8d000a5d4aa95dc361d19a5eca02fe4544be0417`, tree `cc41a3b3d030d72db006809553983abb2368d54b`, product version 5.1.40. UAT-034 checks the UI route against existing server roles without changing API permissions.
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
 |---|---|---|---|---|---|
 | UAT-034 | US-002 / coordinator and admin | Open `/management/debug` as each synthetic role. As coordinator, confirm redirect before `/health/deep`; as admin, enable the diagnostics toggle and confirm a mocked deep-health response. | Coordinator cannot enter a page whose backend role guard rejects diagnostics; admin remains authorized. | Built Web SPA; Playwright; all API responses synthetic and external network blocked. | PASS, `services/web/test/management-debug-role-uat.test.cjs`; exact-source evidence `50-uat/evidence/uat-management-debug-role-5.1.40.json`; no shared evidence files overwritten. |
+| UAT-035 | US-002 / coordinator, superadmin and user on Knowledge management | Create a Knowledge base as coordinator, verify only the actor company is offered; as superadmin choose another company; verify user has no management controls. | Coordinator create remains tenant-bound in the UI; superadmin can choose a company; ordinary user is read-only. | Built Web SPA; synthetic auth/API responses; all other external traffic blocked. | PASS, source `2edc20cdc524f39718c486395677e0532af5a972`, `services/web/test/knowledge-manager-role-uat.test.cjs`; evidence `50-uat/evidence/uat-knowledge-manager-roles-5.1.40.json`. |
 
-Overall catalog after UAT-034: **31 PASS, 2 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. PostgreSQL/identities, native device/audio, exhaustive persisted CRUD, broad accessibility/localization and deployed SEO/AEO remain open.
+Overall catalog after UAT-035: **32 PASS, 2 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. PostgreSQL/identities, native device/audio, exhaustive persisted CRUD, broad accessibility/localization and deployed SEO/AEO remain open.
 
 ---
 

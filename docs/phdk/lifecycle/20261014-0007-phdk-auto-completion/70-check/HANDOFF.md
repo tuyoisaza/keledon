@@ -1,5 +1,13 @@
 # Check handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.40 — Knowledge manager role UAT-035
+
+The source-level matrix previously marked coordinator and superadmin browser journeys for KnowledgeBase as unverified. Exact-built-SPA test commit `2edc20cdc524f39718c486395677e0532af5a972` now verifies coordinator company-a-only selection/create, superadmin company-b selection/create, and no Knowledge manager controls for a user. UAT is synthetic with all external traffic blocked; it closes only these UI affordance rows. Cloud full ESLint now exits successfully; previous historical lint-debt notes are stale for the current tree. Persistent API/DB authorization and the rest of CHK-AUTO-003 remain open. UAT evidence: `../50-uat/evidence/uat-knowledge-manager-roles-5.1.40.json`.
+
+Status: **SCOPED UI UAT PASS / SOURCE DELIVERY PENDING / WHOLE ACCEPTANCE PARTIAL**.
+
+---
+
 ## Candidate 5.1.40 — diagnostics route role alignment (2026-10-14)
 
 Check found `/management/debug` used hierarchical `minRole="admin"`, which admitted coordinators even though the existing diagnostics API guard denies them. `ProtectedRoute` now supports an explicit allowlist; the route permits only admin/superadmin and API authorization remains unchanged. Exact-source built-SPA UAT-034 passes 1/1: coordinator is redirected before protected deep-health access; admin receives a mocked response; external traffic is blocked. Source commit `8d000a5d4aa95dc361d19a5eca02fe4544be0417`, tree `cc41a3b3d030d72db006809553983abb2368d54b`, version 5.1.40. Web diagnostics 19/19, SEO source 1/1, Web/Landing builds and typechecks, API/Cloud builds, Browser build, focused Web ESLint, and PHDK coherence 52/52 pass. Evidence: `../50-uat/evidence/uat-management-debug-role-5.1.40.json`.
