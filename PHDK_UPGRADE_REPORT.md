@@ -2,7 +2,7 @@
 
 ## Current Auto preflight sync — 2.50.10 → 2.51.2 — 2026-10-15
 
-KELEDON `main` was verified at `e53339e81eb972f7941c2b59dd824ad75111d54a` / product 5.1.64. Canonical PHDK `main` was freshly fetched at `a2d2508b59c2546d939fb3843f232ea7bfea2cc1` / v2.51.2. The official conservative `phdk_update.py` ran on clean manifest-owned paths and reported `UPDATED`, 56 files. Every mapped file matches canonical bytes; the root AGENTS managed block also matches `PHDK_NATIVE_RULES.md` exactly. PHDK coherence passes 56/56; no non-PHDK owner block content was replaced. This preflight sync is folded into the active Auto candidate and has not been committed, pushed or independently merged; Auto continues through the four confirmed KELEDON fronts. No build, database, customer endpoint or deployment was used for this standards-only sync.
+KELEDON `main` was verified at `e53339e81eb972f7941c2b59dd824ad75111d54a` / product 5.1.64. Canonical PHDK `main` was freshly fetched at `a2d2508b59c2546d939fb3843f232ea7bfea2cc1` / v2.51.2. The official conservative `phdk_update.py` ran on clean manifest-owned paths and reported `UPDATED`, 56 files. Every mapped file matches canonical bytes; the root AGENTS managed block also matches `PHDK_NATIVE_RULES.md` exactly. PHDK coherence passes 56/56; no non-PHDK owner block content was replaced. The PHDK sync is included in the 5.1.66 Auto source slice, delivered by PR #160; Auto continues through the four confirmed KELEDON fronts. No build, database, customer endpoint or deployment was used for this standards-only sync.
 
 SIGUIENTE PASO: continue the remaining Auto acceptance; retain external/manual acceptance as open until its real prerequisites exist.
 

@@ -1,5 +1,20 @@
 # PMO handoff — 20261014-0007-phdk-auto-completion
 
+## Current PMO — 5.1.66 source delivered; portfolio partial (2026-10-15)
+
+PR #160 is merged and remote `main`/tree/version readback matches the tested source. API 39/39, Cloud 18/18, Browser offline 43/43, Web diagnostics 19/19, Web UAT 6/6 plus AI-admin, all five builds and PHDK coherence 56/56 pass. GitHub reported no hosted checks, review decision or branch protection. A production deployment record reports status `success`, which is metadata and not direct live-health evidence.
+
+| Workstream | Status | Next proof gate |
+|---|---|---|
+| WS-001 / CMT-001 | 5.1.66 source slice delivered; commitment active | Continue remote baseline/version/PR reconciliation. |
+| WS-002 / CMT-002 | Source/widget/diagnostics partial | Native device/audio and broad screen-reader/localization evidence. |
+| WS-003 / CMT-003 | Provider-neutral tenant scope source pass | Live tests for each customer-selected voice/CRM and private allowlisted destination. |
+| WS-004 / CMT-004 | Policy and tenant-owned flow source pass | UAT-060 migrations/restart/tenant isolation on disposable PostgreSQL; continue 546-row CRUD map. |
+
+Portfolio: 0/4 DONE, 4/4 ACTIVE/PARTIAL, 0 deferred, 0 cancelled. UAT total is 58 PASS, 1 BLOCKED, 1 MANUAL. Overall PHDK Auto remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: reconcile source-level role/CRUD gaps, then continue only with available isolated acceptance environments.
+
 ## 5.1.61 — public navigation overlap correction
 
 Portfolio remains **4 confirmed / 0 DONE / 4 active / 0 deferred / 0 cancelled**. The baseline/version workstream found a real desktop overlap in the public preferences; the widget/diagnostics workstream corrected the shared behavior in both Web apps and UAT-052 verifies desktop/mobile access. Integration, UAT Fix, SEO source checks and Check are complete for this candidate. Product PR and remote delivery remain pending. The four commitments continue beyond this scoped improvement; whole Auto remains partial.

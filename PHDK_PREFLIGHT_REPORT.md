@@ -32,4 +32,4 @@ Four ordered commitments remain active: baseline/version/PRs; diagnostics/widget
 
 The standards installation is current and coherent. The integrated 5.1.66 candidate now includes durable Prisma-backed tenant flow configuration and mirrored API/Cloud migrations; source/schema acceptance passes, while actual migration/restart acceptance remains blocked without a disposable PostgreSQL target. The four owner-confirmed fronts remain active. Native device/audio, broad accessibility/localization, deployed SEO/AEO and client-selected live integrations remain open.
 
-SIGUIENTE PASO: complete PHDK Check, then deliver the 5.1.66 candidate through PR and verify remote `main`; preserve database, native, deployed and per-client gates as open.
+SIGUIENTE PASO: continue the four ordered Auto fronts; preserve database, native, deployed and per-client gates as open until owner acceptance.

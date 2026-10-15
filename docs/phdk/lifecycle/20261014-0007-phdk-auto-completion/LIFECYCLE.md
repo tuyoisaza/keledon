@@ -1,10 +1,12 @@
-## Current Auto candidate — 5.1.65 tenant-owned flow configuration (2026-10-15)
+## Current Auto continuation — 5.1.66 source merged; whole portfolio partial (2026-10-15)
 
-Run `20261014-0007-phdk-auto-completion`; target repository `tuyoisaza/keledon`; branch `chore/phdk-upgrade-2.51.2`; base `origin/main` 5.1.64 at `e53339e81eb972f7941c2b59dd824ad75111d54a`. Canonical PHDK v2.51.2 is installed and coherent 56/56; all five product roots and Browser renderer are 5.1.65. The FlowDefinition editor converts legacy definitions into company-owned configuration with draft/version lifecycle, company availability and intent routing. Both API and Cloud derive tenant scope from the DB actor and reject cross-company flow references.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. PR [#160](https://github.com/tuyoisaza/keledon/pull/160) squash-merged at `bf00262649fb281f40979a867a2bdb09099f3074`, tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589`, matching tested source. Six package/renderer versions are 5.1.66. PHDK v2.51.2 coherence is 56/56. API 39/39, Cloud 18/18, Browser offline 43/43, Web diagnostics 19/19, Web UAT 6/6 plus AI-admin, five builds and applicable checks pass.
 
-API regression 38/38, Cloud regression 17/17, all five builds, targeted Cloud/Web lint, Web typecheck, and full Web UAT (6/6 browser cases plus AI-admin UAT) pass. Browser APIs are synthetic and external requests are blocked. UAT total is 56 PASS, 0 BLOCKED, 1 MANUAL. PR [#159](https://github.com/tuyoisaza/keledon/pull/159) is squash-merged at remote `main` `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`; its tree matches the candidate, all six version reads are 5.1.65, and the PHDK completion gate passes. This source slice does not close the four Auto commitments. Shared JSON-store persistence/concurrency, live DB, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-selected live integration remain open.
+PR #160 moves legacy flow definitions into tenant-owned, versioned configuration and a company-scoped editor. UAT tally is 58 PASS, 1 BLOCKED (UAT-060: no disposable PostgreSQL available for migration/restart acceptance), 1 MANUAL (native device/audio). The deployment API has a production-environment record with status `success`; that metadata is not direct live health verification. GitHub reported no hosted checks, review decision or main protection. Broad screen-reader/localization, deployed SEO/AEO and customer-selected live integration acceptance remain open. All four commitments remain active.
 
-SIGUIENTE PASO: continue remaining Auto acceptance without claiming full completion.
+Plan and PMO were reopened because their current sections were stale at 5.1.22/5.1.62 and are now refreshed at the top of the canonical records. See root `IMPLEMENTATION_PLAN.md` and `PMO_STATUS.md`; lifecycle evidence remains historical below this current entry.
+
+SIGUIENTE PASO: continue source-resolvable CRUD/permission reconciliation, then obtain an owner-provided disposable database for UAT-060 and the selected customer environment for per-tenant voice/CRM acceptance.
 
 ---
 

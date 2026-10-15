@@ -1,15 +1,25 @@
-# Delivery handoff — candidate 5.1.66 pending; whole Auto partial
+# Delivery handoff — 5.1.66 merged and verified; Auto remains partial
 
 Run ID: `20261014-0007-phdk-auto-completion`
 Stage: 90 Delivery
-Status: CANDIDATE CHECKS PASS; SOURCE PR/MERGE/REMOTE READBACK PENDING
-Base: verified `origin/main` 5.1.65 `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`
-Candidate branch: `fix/phdk-flow-db-persistence-5-1-66`
-Candidate version: 5.1.66 across five package/lock roots and Browser renderer
+Status: COMPLETED FOR THE 5.1.66 SOURCE SLICE; PORTFOLIO PARTIALLY DELIVERED
+Base: verified remote `main` 5.1.65 `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`
+Candidate source commit: `dc8bd6d24471e64b438e3ca7803c13a950b7a95b`
+Merged remote revision: `bf00262649fb281f40979a867a2bdb09099f3074` / tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589`
+PR: [#160](https://github.com/tuyoisaza/keledon/pull/160), squash merged
+Date: 2026-10-15
 
-The candidate has Prisma-backed tenant flow configuration, API/Cloud schema and migration parity, a tenant-scoped Web editor, and responsive shell fixes. API 39/39, Cloud 18/18, Browser 43/43, Web diagnostics 19/19, full Web UAT 6/6 plus AI-admin, applicable SEO checks and all five builds pass. PHDK v2.51.2 coherence is 56/56. Exact commit and remote main evidence will be recorded after PR merge and readback.
+## Delivered slice
 
-Candidate UAT tally is 58 PASS, 1 BLOCKED, 1 MANUAL. UAT-060 awaits a disposable PostgreSQL migration/restart test; native device/audio remains manual. Broad accessibility/localization, deployed SEO/AEO and client-specific live call/CRM journeys remain open. No deployment or customer acceptance is claimed.
+Tenant flow definitions, versions, company permissions and intent mappings are persisted through Prisma-backed API/Cloud services with mirrored migrations, DB-derived actor/company scope, and a composite foreign key that prevents cross-company permission references. Legacy import is idempotent and uses persisted owner data. The management editor uses scoped APIs; the app shell is responsive at 390px and mounts one active navigation profile control.
+
+## Validation and limits
+
+API regressions 39/39; Cloud 18/18; Browser offline suite 43/43; Web diagnostics 19/19; Web UAT 6/6 plus AI-admin; all five builds and applicable typechecks/lint pass. PHDK v2.51.2 coherence passes 56/56. Remote `main` equals `git ls-remote`; tree matches the tested source and all six version reads are 5.1.66. GitHub reported no hosted checks, review decision or main protection.
+
+UAT tally: 58 PASS, 1 BLOCKED, 1 MANUAL. PostgreSQL migration/restart acceptance remains blocked because no disposable DB was available. Native device/audio is manual; broad screen-reader/localization, deployed SEO/AEO and client-specific live voice/CRM acceptance remain open. No deployment or customer endpoint was used. Whole Auto remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: continue the remaining owner-confirmed acceptance gates; no new universal CRM/provider target is assumed.
 
 ---
 
