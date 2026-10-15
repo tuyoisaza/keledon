@@ -4,12 +4,12 @@
 - Deny device registration when the current DB actor has no company.
 - Require complete stored tenant/device bindings before Cloud pairing; atomically consume only a still-pending, matching, unexpired code.
 - Return a generic public pairing error so database/internal exception details are not disclosed.
-- Bind AutoBrowse navigation and resource requests to the tenant vendor-origin allowlist for the complete goal, including AI-planned actions; restore the previous scope after completion or failure.
+- Bind configured vendor BrowserViews to the tenant origin allowlist for their lifetime and through AutoBrowse goals, including AI-planned actions and subresources; restore the prior scope after execution and clear it when the view closes.
 - Add focused Cloud/Browser regressions and map scoped source evidence while keeping live device/persistence acceptance BLOCKED.
 - Align all five application package/lock roots and Browser renderer at 5.1.58.
 
 ### Verification
-- API regression 36/36, Cloud regression 17/17, Browser security/call/event tests 14/14, five production builds and PHDK coherence 52/52 pass; all six version roots align at 5.1.58.
+- API regression 36/36, Cloud regression 17/17, Browser security/call/event tests 15/15, five production builds and PHDK coherence 52/52 pass; all six version roots align at 5.1.58.
 - UAT-047 and UAT-048 are source-level only; no live DB, device, pairing code, vendor or customer endpoint was used.
 - PHDK Auto remains partial; live persisted device acceptance and native device/audio remain open.
 

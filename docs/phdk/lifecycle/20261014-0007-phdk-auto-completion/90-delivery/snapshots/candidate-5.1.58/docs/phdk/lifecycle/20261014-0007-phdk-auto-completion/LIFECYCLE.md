@@ -265,3 +265,7 @@ Based on verified main after PR #151 merge `12bef77c2aaaa16e9c607a003abcc41b4f5c
 | 90 Delivery | IN PROGRESS | PR and exact remote readback pending. |
 
 Whole Auto remains PARTIALLY DELIVERED pending live persisted CRUD/device, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific integrations.
+
+## Candidate 5.1.58 — tenant request scope for configured BrowserViews
+
+Follow-up review closed the allowlist lifetime gap: configured vendor BrowserViews attach their Cloud-derived tenant origins before loading and clear the registration on close/destruction. AutoBrowse holds the scope while AI planning/actions run and restores its prior scope in `finally`; navigation, frame and resource-request guards now share the tenant boundary throughout the configured view lifetime. Browser focused tests pass 15/15; build/lint pass; PHDK coherence is 52/52. UAT-048 is source-only with no live CRM request. Whole Auto remains partial. PR #152 latest commit `6013be56b0dd54a64400f2c67586e50a51f689fc` is verified on the remote feature branch; merge and main readback remain pending.

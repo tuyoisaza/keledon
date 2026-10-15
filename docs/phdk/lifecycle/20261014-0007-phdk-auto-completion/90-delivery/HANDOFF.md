@@ -263,4 +263,4 @@ Candidate branch `fix/phdk-next-model-operations-5-1-58` is based on verified ma
 
 ## PR #152 update — AutoBrowse tenant request scope
 
-The 5.1.58 branch now also fixes the AutoBrowse gap found during tenant-private CRM policy review: the configured allowlist remains active for the entire goal, including page subresource requests, and prior scope is restored after all exit paths. Browser focused tests 14/14 and build pass. UAT-048 is source-only. PR #152 is open; the latest commit must be pushed and its remote head verified before delivery. No live CRM/network acceptance or merge is claimed. Whole Auto remains partial.
+The 5.1.58 branch now also fixes the AutoBrowse gap found during tenant-private CRM policy review: the configured allowlist remains active for the vendor view and the entire goal, including page subresource requests; prior scope is restored after goal exit and cleared when the view closes. Browser focused tests 15/15 and build pass. UAT-048 is source-only. PR #152 is open; the latest commit must be pushed and its remote head verified before delivery. No live CRM/network acceptance or merge is claimed. Whole Auto remains partial.

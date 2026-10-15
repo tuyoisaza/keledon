@@ -14,7 +14,7 @@ const activeRuntimeVendorScopes = new Set<{
   origins: readonly string[];
 }>();
 
-/** Temporarily attach the trusted Cloud-derived vendor scope to an active BrowserView. */
+/** Attach the trusted Cloud-derived vendor scope for a BrowserView's active lifetime. */
 export function setRuntimeVendorNavigationScope(
   webContents: object,
   allowedOrigins?: readonly string[],

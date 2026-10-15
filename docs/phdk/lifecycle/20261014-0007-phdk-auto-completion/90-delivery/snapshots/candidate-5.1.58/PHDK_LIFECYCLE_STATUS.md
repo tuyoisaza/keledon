@@ -418,7 +418,7 @@ SIGUIENTE PASO: deliver candidate 5.1.58 through the normal PR flow; then contin
 
 ## PHDK Auto continuation — candidate 5.1.58 Browser allowlist audit (2026-10-15)
 
-Follow-up source review confirmed that the active RPA executor scoped BrowserView requests, while AutoBrowse goal actions relied on per-action navigation checks without holding the request allowlist through AI planning and page subresource loads. `executeGoal` now applies the tenant's configured vendor origins for the full goal and restores the prior scope in `finally`. Browser policy tests 14/14, Browser build, API/Cloud regressions, five builds and PHDK coherence 52/52 pass. UAT-048 is source-only; no external or private CRM endpoint was contacted.
+Follow-up source review confirmed that the active RPA executor scoped BrowserView requests, while AutoBrowse goal actions relied on per-action navigation checks without holding the request allowlist through AI planning and page subresource loads. `executeGoal` now applies the tenant's configured vendor origins for the full goal and restores the prior scope in `finally`; configured vendor views stay scoped until close and clear their entry on destruction. Browser policy tests 15/15, Browser build, API/Cloud regressions, five builds and PHDK coherence 52/52 pass. UAT-048 is source-only; no external or private CRM endpoint was contacted.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|

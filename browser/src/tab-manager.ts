@@ -12,6 +12,7 @@ import {
   isAllowedVendorRequest,
   getRuntimeVendorNavigationScope,
   getRuntimeVendorRequestScope,
+  setRuntimeVendorNavigationScope,
 } from './security-policy.js';
 
 const guardedRequestSessions = new WeakSet<object>();
@@ -103,6 +104,12 @@ export class TabManager {
       webPreferences: {
         ...secureRendererPreferences(path.join(__dirname, 'vendor-preload.js')),
       }
+    });
+    if (scopedOrigins) {
+      setRuntimeVendorNavigationScope(view.webContents, scopedOrigins);
+    }
+    view.webContents.once('destroyed', () => {
+      setRuntimeVendorNavigationScope(view.webContents, undefined);
     });
     installRpaRequestGuard(view.webContents.session);
 
@@ -264,6 +271,9 @@ export class TabManager {
 
     if (tab.view && this.mainWindow) {
       try { this.mainWindow.removeBrowserView(tab.view); } catch (error) { log.debug('[Tabs] BrowserView was already detached:', error); }
+    }
+    if (tab.view) {
+      setRuntimeVendorNavigationScope(tab.view.webContents, undefined);
     }
 
     this.tabs = this.tabs.filter(t => t.id !== tabId);
