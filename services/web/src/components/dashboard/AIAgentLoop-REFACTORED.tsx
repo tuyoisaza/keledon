@@ -7,7 +7,13 @@ import {
   Clock,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { useAILoops } from '../../hooks/useAILoops';
+import { useAILoops, type AgentLoopResult, type AgentStepData } from '../../hooks/useAILoops';
+
+interface AgentPerformance {
+  avgStepTime?: number;
+  successRate?: number;
+  totalDuration?: number;
+}
 
 interface AgentStep {
   id: string;
@@ -15,7 +21,7 @@ interface AgentStep {
   type?: string;
   status: string;
   duration?: number;
-  data?: any;
+  data?: AgentStepData;
   error?: string;
 }
 
@@ -27,7 +33,8 @@ interface AgentLoop {
   currentStepIndex?: number;
   totalSteps?: number;
   progress?: number;
-  performance?: any;
+  performance?: AgentPerformance;
+  result?: AgentLoopResult;
   error?: string;
   confidence?: number;
 }
@@ -144,7 +151,7 @@ export default function AIAgentLoop() {
                     <h4 className="text-sm font-medium text-foreground">{step.name}</h4>
                     <p className="text-xs text-muted-foreground">{step.type}</p>
                     {step.status === 'completed' && (
-                      <div className="text-xs text-green-600">✓ {step.data || 'Completed'}</div>
+                      <div className="text-xs text-green-600">✓ {step.data?.transcript || step.data?.intent || 'Completed'}</div>
                     )}
                     {step.status === 'failed' && (
                       <div className="text-xs text-red-600">✗ {step.error || 'Failed'}</div>

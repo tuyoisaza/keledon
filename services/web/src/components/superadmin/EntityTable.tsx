@@ -1,13 +1,32 @@
 import { Pencil, Trash2, Loader2, UserCircle } from 'lucide-react';
 import React from 'react';
+import type { User, UserRole } from '@/context/AuthContext';
+
+interface EntityRow extends Record<string, unknown> {
+    id: string;
+    name?: string;
+    email?: string;
+    role?: string;
+    avatar?: string;
+}
+
+const userRoles: UserRole[] = ['guest', 'user', 'agent', 'admin', 'coordinator', 'superadmin'];
+
+function isUserRole(role: string | undefined): role is UserRole {
+    return role !== undefined && userRoles.includes(role as UserRole);
+}
+
+function renderCellValue(value: unknown): React.ReactNode {
+    return typeof value === 'string' || typeof value === 'number' ? value : null;
+}
 
 interface EntityTableProps {
     loading: boolean;
-    columns: { key: string; label: string; render?: (row: any) => React.ReactNode }[];
-    filteredData: any[];
+    columns: { key: string; label: string; render?: (row: EntityRow) => React.ReactNode }[];
+    filteredData: EntityRow[];
     activeTab: string;
-    impersonateUser: (user: any) => void;
-    onEdit: (row: any) => void;
+    impersonateUser: (user: User) => void;
+    onEdit: (row: EntityRow) => void;
     onDelete: (id: string, name: string) => void;
     isSuperAdmin?: boolean;
 }
@@ -50,19 +69,20 @@ export const EntityTable: React.FC<EntityTableProps> = ({
                                 <tr key={row.id} className="border-b border-border hover:bg-muted/50 transition-colors">
                                     {columns.map((col) => (
                                         <td key={col.key} className="px-4 py-4">
-                                            {col.render ? col.render(row) : <span className="text-foreground">{row[col.key]}</span>}
+                                            {col.render ? col.render(row) : <span className="text-foreground">{renderCellValue(row[col.key])}</span>}
                                         </td>
                                     ))}
                                     <td className="px-4 py-4">
                                         <div className="flex items-center justify-end gap-2">
-                                            {activeTab === 'users' && isSuperAdmin && (
+                                            {activeTab === 'users' && isSuperAdmin && isUserRole(row.role) && row.name && row.email && (
                                                 <button
                                                     onClick={() => {
+                                                        if (!isUserRole(row.role)) return;
                                                         const userToImpersonate = {
                                                             id: row.id,
-                                                            name: row.name,
-                                                            email: row.email,
-                                                            role: row.role as any,
+                                                            name: row.name ?? '',
+                                                            email: row.email ?? '',
+                                                            role: row.role,
                                                             avatar: row.avatar
                                                         };
                                                         impersonateUser(userToImpersonate);

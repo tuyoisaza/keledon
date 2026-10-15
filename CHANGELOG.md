@@ -1,3 +1,13 @@
+## v5.1.50 — 2026-10-14 (close Web ESLint warnings)
+
+- Replace the remaining `any` annotations in legacy dashboard and administration components with explicit UI/data contracts; validate role values before invoking user impersonation.
+- Record intentional provider-plus-hook exports so the Fast Refresh lint rule does not report false positives.
+- Bring full Web ESLint to 0 warnings and 0 errors; align all five package/lock roots and Browser diagnostics at 5.1.50.
+
+### Verification
+- All five production builds pass; Web lint/typecheck pass; Web diagnostics 19/19, SEO 1/1 and synthetic production-SPA UAT 4/4 pass; PHDK coherence 52/52.
+- UAT uses isolated Company Co fixtures, mocked API and blocked external traffic; no live DB, customer integration, native device/audio or deployment was tested.
+
 ## v5.1.49 — 2026-10-14 (tighten Web data contracts)
 
 - Replace implicit `any` types with explicit API, session, administration, flow, Vector Store, agent, and Brain speech/audio contracts across active Web paths.
