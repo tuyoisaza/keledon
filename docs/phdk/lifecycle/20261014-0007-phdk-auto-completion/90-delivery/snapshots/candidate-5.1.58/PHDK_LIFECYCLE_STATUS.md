@@ -430,3 +430,7 @@ Follow-up source review confirmed that the active RPA executor scoped BrowserVie
 | 90 Delivery | PR #152 UPDATED / REMOTE VERIFIED | Branch head `9dce6748d3af4426f4f9de1ca99295103a5bd553` matches `git ls-remote`; PR remains open, merge/main readback pending. |
 
 Whole PHDK Auto remains PARTIALLY DELIVERED; persisted operations, live device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected call/CRM acceptance remain open.
+
+## PHDK Auto continuation — candidate 5.1.58 DebugMode classification (2026-10-15)
+
+The 35-model crosswalk included a global `DebugMode` Prisma model with no API/Cloud module binding, while duplicate service classes implemented global activation/audit writes and the Web page only toggled client-local diagnostic capture. Removed the disconnected service code and stale built JS outputs. The Prisma table remains untouched; no database migration is claimed. The matrix now classifies all 14 DebugMode role/surface rows NOT APPLICABLE until a server-wide feature or approved schema retirement exists. Regression 49 confirms source and dist state. API 37/37, Cloud 17/17, both builds, five application builds, Browser 15/15, and PHDK coherence 52/52 pass. UAT-049 is source-only; overall Auto remains partial.

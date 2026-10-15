@@ -264,3 +264,7 @@ Candidate branch `fix/phdk-next-model-operations-5-1-58` is based on verified ma
 ## PR #152 update — AutoBrowse tenant request scope
 
 The 5.1.58 branch now also fixes the AutoBrowse gap found during tenant-private CRM policy review: the configured allowlist remains active for the vendor view and the entire goal, including page subresource requests; prior scope is restored after goal exit and cleared when the view closes. Browser focused tests 15/15 and build pass. UAT-048 is source-only. PR #152 is open at head `9dce6748d3af4426f4f9de1ca99295103a5bd553`; local and remote branch heads match. GitHub reports no hosted checks or review decision; merge/main readback remain pending. No live CRM/network acceptance or merge is claimed. Whole Auto remains partial.
+
+## PR #152 update — DebugMode lifecycle clarity
+
+The candidate now removes duplicate API/Cloud DebugMode service classes that were never bound to runtime modules. The active diagnostics page remains a local capture toggle; matrix rows for the dormant persisted model are NOT APPLICABLE, and the Prisma table remains until a reviewed migration. API 37/37, Cloud 17/17, both backend builds and UAT-049 pass. Push/readback and PR review state are the delivery gates; overall Auto remains partial.

@@ -91,3 +91,7 @@ UAT-047 passes: Cloud regression 21 covers actor/company registration retries, u
 ## Candidate 5.1.58 — UAT-048 AutoBrowse request scope
 
 UAT-048 passes as source acceptance: Browser policy/call/event tests 14/14 and TypeScript build pass. The tenant-origin scope is installed across AutoBrowse goal planning and actions and restored in `finally`; the existing Electron request guard uses that scope for HTTP(S)/WebSocket resource requests. No live CRM, DNS or outbound target was contacted. Tally: **48 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**.
+
+## Candidate 5.1.58 — UAT-049 DebugMode classification
+
+UAT-049 passes source-only: API regression 49 confirms unbound DebugMode services and stale dist outputs are absent, the Web toggle remains local-only, and all 14 persisted-model role/surface rows are NOT APPLICABLE. The Prisma table was retained; no migration or persisted behavior was tested. API 37/37, Cloud 17/17, and backend builds pass. Tally: **49 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**.

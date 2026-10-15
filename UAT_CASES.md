@@ -184,3 +184,11 @@ Current evidence revision: `edce7eafbe13ac16ab93274a87e12571e7b04b2e`; verified 
 | UAT-048 | US-003 / configured tenant CRM | Inspect the AutoBrowse goal execution path and exercise the Browser origin policy tests for navigation, redirects, frames, popups and resource requests. | The tenant allowlist remains active for the configured vendor view and throughout each goal, so planned clicks and CRM subresources cannot request an unconfigured origin; prior scope is restored after goal exit and cleared when the view closes. | Browser security-policy tests and build. | PASS, source scope: Browser security-policy/call/event tests 15/15 and TypeScript build. No live CRM, DNS or network request was used. |
 
 Candidate total: **48 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-048 does not claim runtime network observation; live client integrations remain tenant-specific.
+
+## Candidate 5.1.58 addition — dormant DebugMode classification (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-049 | US-004 / diagnostics owner | Trace the DebugMode Prisma model, API/Cloud modules/services and `/management/debug` toggle; run regression 49. | No disconnected server-wide debug service remains. The Web switch is clearly client-local capture only, and all role/surface rows for the dormant persisted model are NOT APPLICABLE until an approved schema retirement or server feature is defined. | API source regression and CRUD matrix. | PASS, source-only: regression 49 confirms the API/Cloud services and built artifacts are absent, local UI behavior is explicit, and all 14 model-role-surface rows are NOT APPLICABLE. |
+
+Candidate total: **49 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The Prisma schema table is retained; no migration or database change is claimed.

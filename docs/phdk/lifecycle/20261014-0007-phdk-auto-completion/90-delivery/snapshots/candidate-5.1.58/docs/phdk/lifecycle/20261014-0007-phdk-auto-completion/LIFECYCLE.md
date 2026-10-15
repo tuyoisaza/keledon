@@ -269,3 +269,7 @@ Whole Auto remains PARTIALLY DELIVERED pending live persisted CRUD/device, nativ
 ## Candidate 5.1.58 — tenant request scope for configured BrowserViews
 
 Follow-up review closed the allowlist lifetime gap: configured vendor BrowserViews attach their Cloud-derived tenant origins before loading and clear the registration on close/destruction. AutoBrowse holds the scope while AI planning/actions run and restores its prior scope in `finally`; navigation, frame and resource-request guards now share the tenant boundary throughout the configured view lifetime. Browser focused tests pass 15/15; build/lint pass; PHDK coherence is 52/52. UAT-048 is source-only with no live CRM request. Whole Auto remains partial. PR #152 latest commit `6013be56b0dd54a64400f2c67586e50a51f689fc` is verified on the remote feature branch; merge and main readback remain pending.
+
+## Candidate 5.1.58 — DebugMode model boundary and remote delivery state
+
+UAT-049 removes the ambiguity between the dormant Prisma DebugMode model and `/management/debug`'s browser-local capture switch. Unbound API/Cloud service classes and stale dist outputs are removed; the table remains until an approved migration. Regression 49 asserts all 14 role/surface rows are NOT APPLICABLE. API 37/37, Cloud 17/17, Browser 15/15, five builds, PHDK coherence 52/52 and diff check pass. Candidate PR #152 now includes this CMT-004 fix; latest head/readback will be recorded after push. Whole Auto remains partial.

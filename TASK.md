@@ -203,3 +203,6 @@ SIGUIENTE PASO: deliver the source fix and continue isolated persisted/native ac
 
 ### 5.1.58 continuation — Browser request allowlist
 Source audit found AutoBrowse executed allowlisted actions without applying that tenant scope to BrowserView subresource requests for the duration of the goal. The goal now holds the configured scope for the vendor view and through planning/execution, restores prior state in `finally`, and clears it when the view closes. UAT-048 and 15/15 Browser focused tests cover the source contract; live CRM/DNS/network behavior is untested. PR #152 head `9dce6748d3af4426f4f9de1ca99295103a5bd553` is pushed and matches `git ls-remote`; merge/main readback are pending. Whole Auto remains PARTIALLY DELIVERED.
+
+### 5.1.58 continuation — dormant DebugMode cleanup
+Removed unbound API/Cloud global DebugMode services; the active Web diagnostics switch is localStorage-backed local capture only. The schema table remains pending an approved migration. CRUD_MATRIX reclassifies its 14 role/surface combinations as NOT APPLICABLE, and API regression 49 locks that boundary. API 37/37, Cloud 17/17 and both backend builds pass. UAT-049 is source-only; persisted CRUD and external acceptance remain open.

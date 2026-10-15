@@ -408,3 +408,9 @@ The native renderer startup is **PASS**. Native media-consent dialog, OS microph
 Source review found that AutoBrowse checked each planned action against configured vendor origins but did not hold the BrowserView request scope while a goal ran. `executeGoal` now installs the selected tenant's allowlist before planning/executing actions and restores the previous scope in `finally`; configured vendor tabs stay bound for their full lifetime and clear the scope on close. Electron's request, redirect and frame guards therefore cover CRM page subresources while the vendor view is open. Browser security-policy/call/event tests pass 15/15 and Browser TypeScript build passes. UAT-048 is source-only; no live CRM or external/private target was contacted.
 
 Candidate tally: **48 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Live persisted device pairing, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open; per-client call/CRM acceptance awaits each tenant's chosen stack.
+
+## Candidate 5.1.58 — DebugMode lifecycle reconciliation (2026-10-15)
+
+Source audit found duplicate API/Cloud `DebugModeService` classes that performed global persisted toggles and audit writes but were not bound to any module. The active `/management/debug` toggle only controls browser-local diagnostic capture in localStorage. Removed the unreachable service classes and stale compiled JS outputs; retained the Prisma table pending an explicitly approved migration. Regression 49 locks this boundary and marks all 14 DebugMode role/surface rows NOT APPLICABLE. API regression is 37/37; Cloud regression remains 17/17; both builds pass. UAT-049 is source-only and does not claim server-wide debug mode or database migration.
+
+Tally: **49 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Persisted CRUD breadth, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open.

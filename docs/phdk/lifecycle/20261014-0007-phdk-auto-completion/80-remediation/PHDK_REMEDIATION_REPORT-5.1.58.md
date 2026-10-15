@@ -15,3 +15,7 @@ Cloud/API targeted tests pass. Full suite and builds are in the candidate check 
 ## Follow-up finding — AutoBrowse request scope
 
 AutoBrowse goal execution validated planned action URLs, but did not set the tenant allowlist on the BrowserView request guard. This left page subresources outside the intended tenant-origin control while a goal was active. `TabManager` binds configured vendor views to the tenant origin allowlist before their first load and clears scope on close/destruction. `executeGoal` installs the current tenant scope before planning/actions and restores prior runtime state with `finally`, covering action requests and failure/abort paths. Browser policy tests assert view lifecycle, idle resource filtering, and goal-scope restoration; focused Browser tests pass 15/15, build and lint pass. UAT-048 is source-only; live private CRM behavior remains per-customer acceptance.
+
+## Finding — disconnected global DebugMode persistence
+
+The API and Cloud each retained an unbound service capable of toggling a global Prisma DebugMode row and writing audit entries. The active Web debug toggle only changes local diagnostic capture, so the model crosswalk's GAP implied a supported server function that did not exist. Removed both unreachable services and stale build outputs, retained the Prisma schema/table, and marked all 14 role/surface rows NOT APPLICABLE until an approved server feature or schema-retirement migration is defined. Regression 49 covers the distinction. API 37/37, Cloud 17/17 and both backend builds pass; UAT-049 is source-only.

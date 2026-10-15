@@ -65,3 +65,7 @@ Cloud device registration now rejects foreign-actor/tenant reuse of an existing 
 ## Candidate 5.1.58 follow-up — CMT-003 Browser request scope
 
 The AutoBrowse goal path now carries the tenant's configured vendor-origin allowlist through the full BrowserView lifecycle, including resource requests made by page scripts, AI-planned clicks, and retries. Previous scope is restored after success or failure. Browser tests/build pass; UAT-048 is source-only. Per-client integration remains untested until the customer selects its provider and target.
+
+## Candidate 5.1.58 follow-up — CMT-004 DebugMode boundary
+
+The crosswalk no longer implies that `/management/debug` controls a global server toggle. The API/Cloud DebugMode service classes were unreachable; the Web switch is local debug capture only. Dead services and stale dist outputs were removed, the schema is retained, and all DebugMode role/surface rows now read NOT APPLICABLE pending an approved migration or server feature. Regression 49 and API/Cloud builds pass. UAT-049 is source-only.
