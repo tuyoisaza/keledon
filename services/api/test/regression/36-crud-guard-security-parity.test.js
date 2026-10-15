@@ -20,6 +20,16 @@ test('API and Cloud CRUD guards protect audit integrity and password hashes', ()
 
     assert.ok(userFields, `${relativePath} must define a user field allowlist`);
     assert.doesNotMatch(userFields, /passwordHash/);
+    const sessionPolicy = source.match(/sessions:\s*([\s\S]*?)\s*knowledge:/)?.[1];
+    assert.ok(sessionPolicy, `${relativePath} must define the Session request contract`);
+    assert.match(sessionPolicy, /createSession/);
+    assert.match(sessionPolicy, /updateSession/);
+    assert.match(sessionPolicy, /metadata/);
+    assert.doesNotMatch(
+      sessionPolicy,
+      /startedAt|endedAt|transcript|summary/,
+      `${relativePath} must reject fields outside the Prisma Session contract`,
+    );
     assert.match(
       source,
       /resource\s*===\s*['"]audit-logs['"]\s*&&\s*req\.method\s*!==\s*['"]GET['"]\s*\)\s*return\s+deny\(\)/,

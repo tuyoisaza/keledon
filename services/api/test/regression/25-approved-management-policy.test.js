@@ -277,12 +277,54 @@ async function main() {
 
     await allow('sessions', 'GET');
     await allow('sessions/:id', 'GET', { id: 'session-a' });
-    await allow('sessions', 'POST', {}, { teamId: 'team-a', userId: 'user-a' });
+    await allow(
+      'sessions',
+      'POST',
+      {},
+      {
+        teamId: 'team-a',
+        userId: 'user-a',
+        status: 'active',
+        metadata: '{"source":"synthetic"}',
+      },
+      'createSession',
+    );
+    await assert.rejects(
+      run(
+        'sessions',
+        'POST',
+        {},
+        { teamId: 'team-a', summary: 'unsupported legacy field' },
+        'createSession',
+      ).result,
+      Denied,
+    );
     await allow(
       'sessions/:id',
       'PUT',
       { id: 'session-a' },
-      { summary: 'Updated summary' },
+      { metadata: '{"result":"completed"}' },
+      'updateSession',
+    );
+    await assert.rejects(
+      run(
+        'sessions/:id',
+        'PUT',
+        { id: 'session-a' },
+        { summary: 'unsupported legacy field' },
+        'updateSession',
+      ).result,
+      Denied,
+    );
+    await assert.rejects(
+      run(
+        'sessions/:id',
+        'PUT',
+        { id: 'session-a' },
+        { teamId: 'team-a' },
+        'updateSession',
+      ).result,
+      Denied,
     );
     await assert.rejects(
       run('sessions/orphaned', 'DELETE', {}, {}, 'deleteOrphanedSessions')
