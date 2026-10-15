@@ -1,6 +1,6 @@
 ## Current source candidate — 5.1.42
 
-Candidate branch `fix/phdk-rpa-required-tenant-scope-5-1-42` is based on verified `origin/main` `8075890cb9a112e948403491eb7bf7c8f44337b2`. Source commit `07f979b610b069d675183a7a4ad112b2466c20d2` (tree `a3664bdc9402c7b943e49b2a585b68de741f9f65`) aligns the five application package/lock roots and Browser renderer at 5.1.42. UAT-038 and CHK-AUTO-020 source remediation pass; Browser suite 27/27, security-policy tests 8/8, Browser build and PHDK coherence 52/52 pass. The candidate is not yet pushed or in a PR; remote delivery is pending. Whole Auto remains partial.
+PR [#125](https://github.com/tuyoisaza/keledon/pull/125) merged source candidate `07f979b610b069d675183a7a4ad112b2466c20d2` at `6deaa910a37a9bb579eef5e82ae9dda1983c94ea`. Fresh `origin/main` and `git ls-remote` agree; remote tree `7f76bff35694121be03af672f9e8e68522def291` matches PR-head tree and Browser version is 5.1.42. UAT-038 and CHK-AUTO-020 pass; Browser suite 27/27, security-policy tests 8/8, Browser build and PHDK coherence 52/52 pass. GitHub reported no hosted checks or review decision; no deployment is claimed. Machine evidence is `PHDK_DELIVERY_EVIDENCE-5.1.42-post-merge-125.json`; its gate reports lint BLOCKED due missing Browser ESLint flat config. Whole Auto remains partial.
 
 ## Verified delivery — current candidate 5.1.37, 2026-10-14
 
