@@ -1,5 +1,15 @@
 # Commitment ledger
 
+## Active run update — 5.1.60 diagnostics route coverage (2026-10-15)
+
+The four owner-confirmed commitments remain active and ordered. UAT-051 adds explicit source assertions for the diagnostics widget on Landing's own public, login, authenticated shell and admin routes; Web already had the corresponding assertions. Candidate `fix/phdk-landing-widget-mount-5-1-60`, based on verified main `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`, aligns five app package/lock roots and Browser renderer at 5.1.60. Web diagnostics 19/19, Browser version-actions/security-policy 15/15, API/Cloud regressions 37/37 and 17/17, Landing SEO 1/1, all five builds and applicable lint/typechecks, CRUD inventory 35 models/490 role-surface rows, and PHDK coherence 52/52 pass. UAT total: 51 PASS, 0 BLOCKED, 1 MANUAL.
+
+This is test-source acceptance only; it does not establish visual/runtime behavior, assistive-technology acceptance, persisted database coverage, native audio/device behavior, deployed discovery or client-specific live integration. Candidate PR/delivery is pending; PR #153 is the latest merged in-scope product slice. Whole Auto remains **PARTIALLY DELIVERED**. No live customer system or deployment was used.
+
+SIGUIENTE PASO: finish Check and normal PR delivery for 5.1.60; continue outstanding acceptance without closing any commitment from this slice alone.
+
+---
+
 ## Active run update — 5.1.53 public initial HTML (2026-10-14)
 
 The scoped public-source finding is fixed and delivered by product PR [#146](https://github.com/tuyoisaza/keledon/pull/146), squash-merged at remote `main` `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`; six version reads are 5.1.53. UAT-041 passes. The four confirmed workstreams remain active; this SEO/AEO source slice does not close them. Whole Auto remains PARTIALLY DELIVERED for full persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed discovery and customer-specific call/CRM acceptance.

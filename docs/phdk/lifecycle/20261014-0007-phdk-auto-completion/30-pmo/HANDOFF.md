@@ -1,5 +1,9 @@
 # PMO handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.60 — Landing diagnostics mount contract
+
+Portfolio remains **4 confirmed / 0 DONE / 4 active / 0 deferred / 0 cancelled**. Candidate 5.1.60 closes a source-test gap by asserting version/actions widget mounts across Landing's public page, login, app shell and admin route, in addition to Web. UAT-051 passes; acceptance is 51 PASS, 0 BLOCKED, 1 MANUAL. The source-only change does not close native UI/accessibility, persisted CRUD/concurrency, deployed discovery or customer-selected integration gates. Verified main base is `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`; normal PR delivery is pending. Whole PHDK Auto remains PARTIALLY DELIVERED.
+
 ## Candidate 5.1.59 — preserve tenant allowlist during Browser tab close
 
 CMT-001: PR #152 delivered 5.1.58 at verified main `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`; six version roots match and remote tree matches the candidate. CMT-003: follow-up review found a teardown gap in the tenant Browser request guard. Candidate 5.1.59 stops pending loads without clearing scope; the destroyed event cleans up, and session tracking does not retain WebContents. UAT-050 and integrated source checks pass. CMT-002 native accessibility/device gates and CMT-004 exhaustive persisted CRUD/concurrency remain open. Customer call/CRM proof remains customer-selected.

@@ -1,5 +1,13 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.60 addition — verify Landing diagnostics mounts (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-051 | CMT-002 / public visitor and app administrator | Run the shared version/actions route-contract test against both Web applications and the isolated widget tests. | Public Landing, login, authenticated shell and admin source routes mount the widget; the anonymous/debug-off widget behavior, safe copy/reset and native Browser contract remain green. | Web diagnostics source suite, Browser source suite, Landing SEO test. | PASS for source contract: Web diagnostics 19/19, Browser version-actions/security-policy 15/15, Landing SEO 1/1. No browser runtime or assistive technology was exercised. |
+
+Candidate total: **51 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-051 verifies source mounts and safe widget contracts only; broad visual, route, screen-reader and device/audio acceptance remains open.
+
 ## Candidate 5.1.59 addition — retain CRM origin scope through tab destruction (2026-10-15)
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

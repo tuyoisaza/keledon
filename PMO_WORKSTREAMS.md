@@ -3,11 +3,11 @@
 
 | WS | Commitment / outcome | Scope | Owner/status | Acceptance / dependency |
 |---|---|---|---|---|
-| WS-001 | CMT-001 baseline, versions and reviewed delivery | Manifests/locks, PHDK evidence, PR lineage and release gate | Root / IN PROGRESS | Exact candidate and current SHA, full validation, normal reviewed PR and completion gate. |
-| WS-002 | CMT-002 widget and safe diagnostics | Shared Web/Landing/Browser component, all mounts, redaction/reset/accessibility | Root / SOURCE IN PROGRESS; UAT PENDING | Focused tests plus exact candidate browser journeys; native Browser acceptance separately gated. |
-| WS-003 | CMT-003 voice→Cloud→Browser→customer-selected CRM | API/Cloud contracts, per-tenant adapter and Browser origin enforcement | Root / SOURCE IN PROGRESS | Cross-boundary regression/build, tenant isolation and safe failure; real CRM/call tests require each customer's setup. |
-| WS-004 | CMT-004 administration and permissions | API/Cloud/Browser RBAC, secret projection, all Prisma resources, migrations | Root / SOURCE IN PROGRESS; DB ACCEPTANCE OPEN | Full model/role/tenant/surface/operation matrix and disposable-DB before/after proof. |
-| WS-X | Cross-cutting PHDK conformance | Cloud lint, UX/UI, route coverage, SEO/AEO and lifecycle evidence | Root / IN PROGRESS | Check/remediation and source checks; no deployed/native acceptance inferred. |
+| WS-001 | CMT-001 baseline, versions and reviewed delivery | Manifests/locks, PHDK evidence, PR lineage and release gate | Root / CANDIDATE 5.1.60 IN PROGRESS | Current branch and exact base are verified; complete normal PR, merge and main readback. |
+| WS-002 | CMT-002 widget and safe diagnostics | Shared Web/Landing/Browser component, all mounts, redaction/reset/accessibility | Root / SOURCE TEST PASS; UAT-051 PASS | Both Web apps' public/login/shell/admin route mounts have explicit source assertions; native Browser and broad a11y remain. |
+| WS-003 | CMT-003 voice→Cloud→Browser→customer-selected CRM | API/Cloud contracts, per-tenant adapter and Browser origin enforcement | Root / SOURCE CONTRACTS PASS; CUSTOMER ACCEPTANCE OPEN | Tenant origin enforcement and UAT-050 source lifecycle pass; packaged/runtime and each customer's selected stack remain. |
+| WS-004 | CMT-004 administration and permissions | API/Cloud/Browser RBAC, secret projection, all Prisma resources, migrations | Root / SOURCE MATRIX PASS; DB ACCEPTANCE OPEN | API/Cloud regressions 37/37 and 17/17, 35-model/490-row crosswalk; full disposable-DB role/operation proof remains. |
+| WS-X | Cross-cutting PHDK conformance | Cloud lint, UX/UI, route coverage, SEO/AEO and lifecycle evidence | Root / CHECK IN PROGRESS | PHDK coherence 52/52; deployed/native evidence remains unverified; finish candidate diff/check. |
 
 No workers are assigned in this run. Execution order follows the owner-confirmed sequence; cross-cutting Check and delivery gates apply to all four workstreams.
 

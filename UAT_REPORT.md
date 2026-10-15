@@ -1,5 +1,13 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.60 — both Web apps expose the diagnostics widget
+
+UAT-051 closes a test-coverage gap: the previous shared-widget route regression asserted Web mounts while only comparing Landing component source byte-for-byte. It now independently asserts the public Landing page/Navbar, login, shared app shell/Sidebar and admin route mounts, alongside the existing Web assertions. Web diagnostics/version-actions passes 19/19; Browser version-actions and security-policy passes 15/15; Landing SEO source test passes 1/1. API and Cloud regressions pass 37/37 and 17/17, their builds and lint pass, Browser lint/build pass, Web/Landing lint/typecheck/build pass, and PHDK coherence passes 52/52. The version is aligned at 5.1.60.
+
+This is source-contract acceptance only: no browser runtime, screen reader, packaged Electron, database, customer system or deployed endpoint was exercised. Candidate tally: **51 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Broad accessibility/localization, persisted CRUD/concurrency, native device/audio, deployed SEO/AEO and per-customer live call/CRM acceptance remain open.
+
+SIGUIENTE PASO: finish the integrated Check and deliver 5.1.60 through the normal PR path; keep the whole Auto partial until all remaining gates are evidenced.
+
 ## Candidate 5.1.59 — preserve tenant scope until BrowserView destruction
 
 UAT-050 passes its source-contract regression. `closeTab()` stops a configured CRM `WebContents` without removing its tenant-origin scope first; the existing `destroyed` handler releases the scope. The session registry holds only the session and allowed origins, so it preserves service-worker filtering without strongly retaining the closing view. This prevents pending requests from becoming unscoped during teardown.

@@ -1,16 +1,32 @@
-## Current Auto completion audit — 5.1.59 candidate; whole portfolio partial
+## Current Auto completion audit — 5.1.60 candidate; whole portfolio partial
 
-PR [#152](https://github.com/tuyoisaza/keledon/pull/152) delivered source 5.1.58 at verified `main` `56991c0bec203f507d04090f0b3bbdf11a6cdf4d`; tree `12fed244a537fd40f784bda18a2c973514e5c8fe` matches the tested PR head and six version roots. The next candidate is 5.1.59 on `fix/phdk-browser-close-scope-5-1-59`; its Browser teardown fix passes UAT-050 source checks, five builds, API/Cloud regressions 37/37 and 17/17, Browser 15/15 plus lint, and PHDK coherence 52/52. Branch push/PR/remote delivery for 5.1.59 is not complete yet.
+Candidate branch `fix/phdk-landing-widget-mount-5-1-60` is based on verified `origin/main` `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5` (5.1.59). The only runtime repository changes are aligned version metadata; the source delta adds UAT-051 assertions for Landing public, login, shell and admin widget mounts. Candidate version is 5.1.60 across five app package/lock roots and Browser renderer. Web diagnostics/version-actions 19/19, Browser version-actions/security-policy 15/15, API/Cloud regression 37/37 and 17/17, Landing SEO 1/1, all five builds, applicable lint/typechecks, CRUD inventory 35/35 models and 490 role/surface tuples, and PHDK coherence 52/52 pass. `git diff --check` passes. UAT-051 is source-contract evidence only.
+
+| Gate | Candidate status | Evidence / remaining |
+|---|---|---|
+| CMT-001 baseline/version/PR | IN PROGRESS | Exact base verified; candidate versions aligned; normal branch/PR/merge/readback not yet complete. |
+| CMT-002 diagnostics widget | SOURCE TEST PASS / ACCEPTANCE PARTIAL | Both Web apps' required mounts now have explicit source assertions; native/rendered/screen-reader and broad route acceptance remain. |
+| CMT-003 per-tenant runtime/CRM | PARTIAL | UAT-050 source check retains tenant scope through BrowserView teardown; packaged Electron and per-customer acceptance remain. |
+| CMT-004 administration/permissions | PARTIAL | API/Cloud source regressions and 35-model crosswalk pass; no disposable PostgreSQL listener is available for additional persistence acceptance. |
+| PUSH_AND_PR / REMOTE_MAIN | PENDING | No current candidate PR; only #153 is merged on `main`. |
+
+Whole Auto remains **PARTIALLY DELIVERED** (51 PASS, 0 BLOCKED, 1 MANUAL). Exhaustive persisted model operations/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected live integrations remain unresolved or environment/customer-scoped. No deployment or customer endpoint is claimed.
+
+---
+
+## Current Auto completion audit — 5.1.59 source delivered; whole portfolio partial
+
+PR [#153](https://github.com/tuyoisaza/keledon/pull/153) delivered source 5.1.59. Its squash commit is `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`; `origin/main` and `git ls-remote` agree, and remote tree `ac8da535f457ab0b48afd37856d00c779e2067c9` equals the tested candidate. The completion gate passes against root evidence. All six app/renderer version reads are 5.1.59. Full API/Cloud/Web/Landing lint, Web/Landing typechecks, five builds, API/Cloud regressions 37/17, Browser 15/15, SEO source tests and PHDK coherence pass. UAT-050 is source-level only.
 
 | Gate | Status | Evidence |
 |---|---|---|
 | VERSION_BUMP | PASS | Candidate five app roots/lockfiles plus Browser renderer are 5.1.59 over verified 5.1.58 main. |
 | COMMIT_PREFIX | PASS | Source commit `fb047dff` begins `v5.1.59:` and carries the six aligned version roots. |
-| PUSH_AND_PR | PENDING | Candidate branch has not yet been pushed; PR #152 covers the prior 5.1.58 slice. |
-| REMOTE_MAIN | PENDING | Candidate 5.1.59 is not on remote main. |
+| PUSH_AND_PR | PASS | PR #153 was pushed and squash-merged CLEAN. GitHub reported no hosted checks/review decision; `main` was unprotected. |
+| REMOTE_MAIN | PASS | Merge SHA `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`; remote tree matches tested candidate; completion verifier passes. |
 | SCOPE_AND_CHECKS | PASS FOR SCOPED SOURCE / WHOLE AUTO PARTIAL | UAT-050 source contract and applicable builds/regressions pass; native, exhaustive persisted CRUD, broad accessibility/localization and deployed SEO/AEO remain open. |
 
-Whole Auto remains **PARTIALLY DELIVERED**; the current candidate is not reported as shipped.
+Whole Auto remains **PARTIALLY DELIVERED** for exhaustive persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected integrations.
 
 ---
 

@@ -1,3 +1,11 @@
+## Candidate 5.1.60 — UAT-051 PASS / whole acceptance incomplete
+
+UAT-051 strengthens the shared diagnostics widget contract by asserting Landing's own public page/Navbar, login, app shell/Sidebar and admin route mounts in addition to Web. Web diagnostics/version-actions passes 19/19; Browser version-actions/security-policy 15/15; Landing SEO source test 1/1. API/Cloud regressions pass 37/37 and 17/17. All five app builds and applicable lint/typechecks pass; PHDK coherence is 52/52. This proves source and isolated component contracts only, not browser visual/runtime or assistive-technology behavior. Candidate tally is **51 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The native device/audio gate remains MANUAL; exhaustive persisted CRUD/concurrency, broad accessibility/localization, deployed SEO/AEO and per-tenant live integration acceptance remain open.
+
+SIGUIENTE PASO: finalize Check for the integrated candidate and continue through normal 5.1.60 branch/PR delivery; preserve whole Auto as partial.
+
+---
+
 ## Candidate 5.1.56 — exact-source persisted role/migration UAT
 
 UAT-044/045 pass against exact 5.1.55 source and disposable PostgreSQL 16.15: API regression 36/36; migrations deploy twice with no pending items; schema up to date; synthetic user defaults, superadmin assignment via API, tenant-bound access and escalation/delete denials persist. All created fixtures were removed and both local processes stopped. Evidence: `evidence/uat-postgres-roles-5.1.55-8999dfd9.json`.

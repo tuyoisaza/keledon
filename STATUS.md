@@ -1,10 +1,10 @@
-## Current PHDK Auto — 5.1.53 public discovery slice delivered; whole Auto partial
+## Current PHDK Auto — candidate 5.1.60 diagnostics coverage; whole Auto partial
 
-Landing now serves the truthful product overview and semantic H1 in the initial no-JavaScript HTML, while React replaces it at startup. Landing SEO 1/1, lint, typecheck and build pass; UAT-041 passes; PHDK 2.50.10 coherence is 52/52. All six application/renderer version reads are 5.1.53.
+5.1.59 remains the latest verified release on `main` at `e41f1530a5ec4b56fdccc5d2ca12eb88bc589cd5`. Candidate branch `fix/phdk-landing-widget-mount-5-1-60` adds source assertions for Landing public, login, shell and admin diagnostics-widget mounts; all six candidate version reads are 5.1.60. Web diagnostics 19/19, Browser version-actions/security-policy 15/15, API/Cloud regressions 37/37 and 17/17, Landing SEO 1/1, five builds, applicable lint/typechecks and PHDK coherence 52/52 pass. UAT-051 is source-only; no visual/runtime or screen-reader acceptance is claimed.
 
-Product PR [#146](https://github.com/tuyoisaza/keledon/pull/146) merged at verified remote `main` `dd5472b2a7a41d4ae17d6d3df049a5b13d2bd245`; `git ls-remote` agrees and the merge tree matches the tested PR head. No deployment is claimed. Whole Auto remains **PARTIALLY DELIVERED** (41 PASS, 0 BLOCKED, 1 MANUAL) with persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed discovery and customer-specific acceptance still open.
+Current candidate PR and remote delivery are pending. The full Auto remains **PARTIALLY DELIVERED** (51 PASS, 0 BLOCKED, 1 MANUAL). Exhaustive persisted CRUD/concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected call/CRM acceptance remain open or customer-scoped. No deployment is claimed.
 
-SIGUIENTE PASO: continuar el portfolio PHDK Auto; conservar la evidencia de integración por tenant y cerrar solo con aceptación verificable de todos los frentes.
+SIGUIENTE PASO: finish candidate Check/diff review and deliver 5.1.60 via the normal PR path; continue the four confirmed fronts and keep unresolved gates open.
 
 ---
 
