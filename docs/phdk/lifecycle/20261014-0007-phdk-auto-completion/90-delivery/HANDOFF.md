@@ -1,29 +1,28 @@
-# Delivery handoff — 5.1.66 merged and verified; Auto remains partial
+# Delivery handoff — 5.1.67 merged and verified; Auto remains partial
 
 Run ID: `20261014-0007-phdk-auto-completion`
 Stage: 90 Delivery
-Status: COMPLETED FOR THE 5.1.66 SOURCE SLICE; PORTFOLIO PARTIALLY DELIVERED
-Base: verified remote `main` 5.1.65 `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`
-Candidate source commit: `dc8bd6d24471e64b438e3ca7803c13a950b7a95b`
-Merged remote revision: `bf00262649fb281f40979a867a2bdb09099f3074` / tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589`
-Current `main` after documentation follow-up PR [#161](https://github.com/tuyoisaza/keledon/pull/161): `3364b3e43a1b10d550f253f1e2f8f3a1fe962fb6` / tree `685597b9f333d51c9e1254936074d9c6cbbcceb5`; product version remains 5.1.66.
-PR: [#160](https://github.com/tuyoisaza/keledon/pull/160), squash merged
+Status: COMPLETED FOR THE 5.1.67 SOURCE SLICE; PORTFOLIO PARTIALLY DELIVERED
+Source branch: `fix/phdk-api-flow-search-scope-5-1-67`
+Candidate source commit: `387b0f097c7600397c62e007ac2a118b5380df4f`
+Merged remote revision: `dbdd64f16048ac01ff1ec34e39ec33e6c4255175` / tree `932a278c510cbdff8ace021dab2e364a9744b0d1`
+PR: [#163](https://github.com/tuyoisaza/keledon/pull/163), squash merged
+Version: 5.1.67 across five app roots and Browser renderer
 Date: 2026-10-15
 
 ## Delivered slice
 
-Tenant flow definitions, versions, company permissions and intent mappings are persisted through Prisma-backed API/Cloud services with mirrored migrations, DB-derived actor/company scope, and a composite foreign key that prevents cross-company permission references. Legacy import is idempotent and uses persisted owner data. The management editor uses scoped APIs; the app shell is responsive at 390px and mounts one active navigation profile control.
+API flow listing and vector search fail closed without a team scope and constrain valid reads to the requesting team. Search bounds results, rejects non-OK Qdrant responses and omits malformed rows. The Cloud implementation has matching search behavior. Tenant-owned flow configuration remains available from PR #160.
 
 ## Validation and limits
 
-API regressions 39/39; Cloud 18/18; Browser offline suite 43/43; Web diagnostics 19/19; Web UAT 6/6 plus AI-admin; all five builds and applicable typechecks/lint pass. PHDK v2.51.2 coherence passes 56/56. Remote `main` equals `git ls-remote`; tree matches the tested source and all six version reads are 5.1.66. GitHub reported no hosted checks, review decision or main protection.
+API FlowService 12/12, API regression 39/39, Cloud parity 10/10; final API build, full TypeScript check and lint pass. All five package builds, candidate UAT and other checks are recorded in `PHDK_DELIVERY_EVIDENCE-5.1.67-post-merge-163.json`. PHDK v2.51.2 coherence passes 56/56. GitHub reported no hosted checks/review decision and no main protection. The root mechanical completion gate passes against verified remote SHA/tree/version.
 
-UAT tally: 58 PASS, 1 BLOCKED, 1 MANUAL. PostgreSQL migration/restart acceptance remains blocked because no disposable DB was available. Native device/audio is manual; broad screen-reader/localization, deployed SEO/AEO and client-specific live voice/CRM acceptance remain open. No deployment or customer endpoint was used. Whole Auto remains PARTIALLY DELIVERED.
+UAT tally: 59 PASS, 1 BLOCKED, 1 MANUAL. UAT-060 still needs the owner-provided disposable PostgreSQL target, so migrations/restart/multi-instance behavior were not exercised. Native device/audio remains MANUAL; broad screen-reader/localization, deployed SEO/AEO and customer-specific live voice/CRM acceptance remain open. No deployment or customer endpoint was used. All four confirmed commitments remain active; whole Auto remains PARTIALLY DELIVERED.
 
-SIGUIENTE PASO: continue the remaining owner-confirmed acceptance gates; no new universal CRM/provider target is assumed.
+SIGUIENTE PASO: run UAT-060 once the agreed PostgreSQL service is reachable; continue the remaining acceptance gates.
 
 ---
-
 # Delivery handoff — 5.1.64 merged and verified; Auto remains partial
 
 Run ID: `20261014-0007-phdk-auto-completion`
