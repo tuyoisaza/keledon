@@ -1,4 +1,31 @@
-# PHDK Auto lifecycle — current candidate 5.1.43
+# PHDK Auto lifecycle — current candidate 5.1.44
+
+Run: `20261014-0007-phdk-auto-completion`
+Repository: `tuyoisaza/keledon`
+Branch: `fix/phdk-rpa-subresource-allowlist-5-1-44`
+Product candidate: `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`); base: verified `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041` / 5.1.43.
+Goal: four owner-confirmed KELEDON fronts in agreed order, aligned to applicable PHDK standards.
+
+| Stage | Status | Evidence / current state |
+|---|---|---|
+| 00 Preflight | REUSED / REVALIDATED | Installed PHDK 2.50.10; coherence 52/52. |
+| 10 Capture | REUSED | Four fronts, least-privilege policy and tenant-private CRM allowlist remain confirmed. |
+| 20 Plan | REUSED | Existing brownfield plan and dependency order remain applicable. |
+| 30 PMO / Workstreams | CONTINUED | PRs #125–#128 readbacks reconciled; four fronts remain active. |
+| 40 Integration Review | COMPLETED FOR 5.1.44 SOURCE | Active RPA tenant scope now covers navigation and HTTP(S)/WebSocket requests, including unattributed service-worker traffic. |
+| 50 UAT | COMPLETED FOR CANDIDATE / WHOLE PARTIAL | UAT-040 passes offline; whole acceptance 37 PASS, 2 BLOCKED, 1 MANUAL. |
+| 60 UAT Fix | COMPLETED FOR CHK-AUTO-022 | Resource requests are checked against tenant origins; ambiguous worker requests deny conservatively. |
+| 65 SEO | REUSED / SOURCE PASS | No public SEO content change; deployed measurements remain unavailable. |
+| 67 AEO/GEO | REUSED / SOURCE REVIEW | No public claims changed; live measurements remain unavailable. |
+| 70 Check | SOURCE CHECK PASS / ACCEPTANCE PARTIAL | Snapshot `70-check/snapshots/candidate-5.1.44/PHDK_CHECK_REPORT.md`. |
+| 80 Remediation | COMPLETED FOR CANDIDATE | Browser 27/27; security-policy/wiring 11/11; Browser build; coherence 52/52; lint blocked. |
+| 90 Delivery | PENDING | Versioned candidate committed; push/PR/merge/readback remain. |
+
+Overall status: **PARTIALLY DELIVERED**. No packaged Electron runtime, customer endpoint/data, database, device or deployment was used.
+
+---
+
+## Previous candidate 5.1.43 — source merged / verified
 
 Run: `20261014-0007-phdk-auto-completion`
 Repository: `tuyoisaza/keledon`

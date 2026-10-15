@@ -12,6 +12,15 @@
 - Whole-product Auto remains **PARTIALLY DELIVERED** pending database-backed migration/CRUD, safe development identities, native device/audio, broad route accessibility/localization and deployed SEO/AEO evidence. No migration or deployment was performed.
 # STATUS
 
+## 2026-10-15 — PHDK Auto candidate 5.1.44; RPA resource-scope source pass
+
+- CHK-AUTO-022 fixes unscoped HTTP(S)/WebSocket resource requests during RPA. BrowserView requests use their Cloud-derived tenant origin scope; unattributed service-worker requests resolve by initiator and active-scope intersection, otherwise deny.
+- Source commit `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`) is based on verified `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041`; all five package/lock roots and Browser renderer report 5.1.44.
+- Browser suite 27/27, security-policy/wiring 11/11, Browser TypeScript build, PHDK coherence 52/52 pass. UAT-040 is offline/source-contract evidence only; no packaged runtime or live customer system was used. Browser ESLint remains blocked by absent flat config.
+- Whole acceptance is **PARTIALLY DELIVERED**: 37 PASS, 2 BLOCKED, 1 MANUAL. Persisted DB/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-client live call/CRM remain open.
+
+SIGUIENTE PASO: finalize exact-candidate Check/Remediation handoffs and deliver the source through PR, then read back remote `main`.
+
 ## 2026-10-14 — PHDK Auto 5.1.43 source merged; acceptance partial
 
 - Product fix commit `29d18efbbabe159e5279a01ba767f70e54d8afdc`; exact tested candidate `076bce49bead0029fd8fc9ea7f79389538f526e5` (tree `7c2cdffbac9887d974f886d8144cff330029c691`), based on verified `origin/main` `e04418217e1ebb18acda9728a799041fd3bc3c19`. All five app package/lock roots and Browser renderer are 5.1.43.

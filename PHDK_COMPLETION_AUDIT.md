@@ -1,4 +1,21 @@
-## Current Auto completion audit — source candidate 5.1.42; whole Auto partial (2026-10-14)
+## Current Auto completion audit — source candidate 5.1.44; whole Auto partial (2026-10-15)
+
+The four confirmed fronts remain active. CHK-AUTO-022 closed the gap where an allowed CRM page could issue HTTP(S)/WebSocket resource requests outside the tenant origin set while RPA was active. BrowserView requests now resolve their owner WebContents where possible; requests without an owner use the service-worker initiator against active scopes on that Electron session, intersect overlapping scopes and deny when they cannot be attributed. Explicit tenant-configured private HTTP(S) origins remain supported. Product commit `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`) is based on verified `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041`; all five app package/lock roots and Browser renderer align at 5.1.44. PHDK 2.50.10 coherence is 52/52; Browser suite 27/27, security-policy/wiring 11/11 and Browser build pass.
+
+UAT-040 passes offline with pure policy tests and source-wiring assertions. No packaged Electron or actual service-worker runtime, private endpoint, database, customer data, device or deployment was exercised. Browser ESLint remains blocked because the package lacks the ESLint 10 flat config.
+
+| Commitment | Status | Remaining proof |
+|---|---|---|
+| CMT-001 — baseline/versions/PR | VERSIONED CANDIDATE / DELIVERY PENDING | Push/PR, merge and exact remote SHA/tree/version readback. |
+| CMT-002 — widget/diagnostics | PRIOR LOCAL SOURCE/UAT PASS / ACCEPTANCE PARTIAL | Native Windows device/audio and broad route/assistive-tech verification. |
+| CMT-003 — voice/Cloud/Browser/customer CRM | OFFLINE TENANT REQUEST SCOPE PASS / LIVE PER CLIENT | Packaged Electron/service-worker behavior, configured extra CDN origins, and live provider acceptance per customer. |
+| CMT-004 — administration/permissions | SOURCE REGRESSIONS PASS / PERSISTENCE UNVERIFIED | Safe DB identities, disposable PostgreSQL/migrations, persisted CRUD and full model/role/tenant/surface/operation proof. |
+
+Whole UAT is **37 PASS, 2 BLOCKED, 1 MANUAL**. Broad accessibility/localization and deployed SEO/AEO remain unverified. **Overall PHDK Auto is PARTIALLY DELIVERED**; no whole-product completion claim is valid.
+
+---
+
+## Previous Auto completion audit — source candidate 5.1.42; whole Auto partial (2026-10-14)
 
 The four owner-confirmed fronts remain active in order. Candidate `07f979b610b069d675183a7a4ad112b2466c20d2` (tree `a3664bdc9402c7b943e49b2a585b68de741f9f65`), based on verified remote main `8075890cb9a112e948403491eb7bf7c8f44337b2`, aligns the five application package/lock roots and Browser renderer at 5.1.42. Installed PHDK 2.50.10 coherence passes 52/52. Browser offline tests pass 27/27, security-policy tests 8/8, and Browser TypeScript build passes.
 
@@ -225,5 +242,21 @@ CHK-AUTO-021 found that RPA's tenant allowlist was not visible to Electron Brows
 | CMT-004 — administration/permissions | SOURCE REGRESSIONS PASS / PERSISTENCE UNVERIFIED | Full CRUD matrix, safe DB identities, disposable PostgreSQL/migrations and persisted authorization evidence. |
 
 Whole UAT is **36 PASS, 2 BLOCKED, 1 MANUAL**. Broad accessibility/localization and deployed SEO/AEO remain unverified. **Overall PHDK Auto is PARTIALLY DELIVERED**; no full completion claim is valid.
+
+---
+## Current Auto completion audit — source candidate 5.1.44; whole Auto partial (2026-10-15)
+
+The four confirmed fronts remain active. CHK-AUTO-022 closed the gap where an allowed CRM page could issue HTTP(S)/WebSocket resource requests outside the tenant origin set while RPA was active. BrowserView requests now resolve their owner WebContents where possible; requests without an owner use the service-worker initiator against active scopes on that Electron session, intersect overlapping scopes and deny when they cannot be attributed. Explicit tenant-configured private HTTP(S) origins remain supported. Product commit `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`) is based on verified `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041`; all five app package/lock roots and Browser renderer align at 5.1.44. PHDK 2.50.10 coherence is 52/52; Browser suite 27/27, security-policy/wiring 11/11 and Browser build pass.
+
+UAT-040 passes offline with pure policy tests and source-wiring assertions. No packaged Electron or actual service-worker runtime, private endpoint, database, customer data, device or deployment was exercised. Browser ESLint remains blocked because the package lacks the ESLint 10 flat config.
+
+| Commitment | Status | Remaining proof |
+|---|---|---|
+| CMT-001 — baseline/versions/PR | VERSIONED CANDIDATE / DELIVERY PENDING | Push/PR, merge and exact remote SHA/tree/version readback. |
+| CMT-002 — widget/diagnostics | PRIOR LOCAL SOURCE/UAT PASS / ACCEPTANCE PARTIAL | Native Windows device/audio and broad route/assistive-tech verification. |
+| CMT-003 — voice/Cloud/Browser/customer CRM | OFFLINE TENANT REQUEST SCOPE PASS / LIVE PER CLIENT | Packaged Electron/service-worker behavior, configured extra CDN origins, and live provider acceptance per customer. |
+| CMT-004 — administration/permissions | SOURCE REGRESSIONS PASS / PERSISTENCE UNVERIFIED | Safe DB identities, disposable PostgreSQL/migrations, persisted CRUD and full model/role/tenant/surface/operation proof. |
+
+Whole UAT is **37 PASS, 2 BLOCKED, 1 MANUAL**. Broad accessibility/localization and deployed SEO/AEO remain unverified. **Overall PHDK Auto is PARTIALLY DELIVERED**; no whole-product completion claim is valid.
 
 ---

@@ -1,0 +1,9 @@
+## Current Check — candidate 5.1.44, tenant-scoped BrowserView resource requests (2026-10-15)
+
+Repository `tuyoisaza/keledon`; branch `fix/phdk-rpa-subresource-allowlist-5-1-44`; product candidate `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`), based on verified `origin/main` `11d773e6d41d21625302ab63fef31cf43d521041`; version 5.1.44. Installed PHDK 2.50.10; coherence passes 52/52. All five application package/lock roots and Browser renderer align at 5.1.44.
+
+**CHK-AUTO-022 — FIXED ON CANDIDATE:** RPA navigation guards did not cover cross-origin HTTP(S) resource loads or WebSocket handshakes initiated by an allowed CRM page. The BrowserView session now checks HTTP(S), WS and WSS requests against the active Cloud-derived tenant scope. It identifies the request owner through Electron's WebContents fields when available. If no owner is available, the Electron session's active runtime scopes are matched by initiator origin; overlapping tenant scopes use their intersection, and unattributed requests are blocked. An explicitly configured private CRM origin remains supported.
+
+Browser offline suite passes 27/27; security-policy/resource-scope and source-wiring tests pass 11/11; Browser TypeScript build passes; PHDK coherence is 52/52. UAT-040 evidence is `50-uat/evidence/uat-rpa-subresource-origin-scope-5.1.44.json`. Browser ESLint is BLOCKED because the package lacks the flat config required by installed ESLint 10.
+
+Evidence is offline policy and source wiring only. No packaged Electron, real service worker, live CRM/private endpoint, customer data, database, device or deployment was tested. Customers using third-party CDNs/APIs/WebSockets must add those origins to their tenant allowlist. Whole acceptance is 37 PASS, 2 BLOCKED, 1 MANUAL; PHDK Auto remains partial.
