@@ -33,112 +33,19 @@ after(() => {
   fs.rmSync(dataDir, { recursive: true, force: true });
 });
 
-test('MVP write routes reject server-owned fields and unsupported input types', () => {
+test('MVP non-flow write routes reject server-owned fields and unsupported types', () => {
   const store = new MvpStoreService();
   const iface = store.createInterface({ name: 'Primary' });
-  assert.throws(
-    () => store.updateInterface(iface.id, { id: 'forged-id' }),
-    /Unsupported request field/,
-  );
-  assert.throws(
-    () => store.createInterface({ capabilities: { rpa: 'yes' } }),
-    /Invalid interface capabilities/,
-  );
-  assert.throws(
-    () => store.createFlowDefinition({ id: 'forged-id' }),
-    /Unsupported request field/,
-  );
-  assert.throws(
-    () => store.updateFlowVersion('flow-version', { createdBy: 'forged-user' }),
-    /Unsupported request field/,
-  );
-  assert.throws(
-    () =>
-      store.upsertTenantFlowPermissions([
-        {
-          companyId: 'company-a',
-          flowDefinitionId: 'flow-a',
-          createdAt: 'forged',
-        },
-      ]),
-    /Unsupported request field/,
-  );
-  assert.throws(
-    () =>
-      store.upsertTenantFlowPermissions([
-        {
-          companyId: 'company-a',
-          flowDefinitionId: 'flow-a',
-          isEnabled: 'true',
-        },
-      ]),
-    /Invalid permission state/,
-  );
-  assert.throws(
-    () =>
-      store.upsertIntentFlowMapping({
-        companyId: 'company-a',
-        intent: 'claim',
-        allowedFlowDefinitionIds: [42],
-      }),
-    /Invalid allowedFlowDefinitionIds/,
-  );
-  assert.throws(
-    () => store.createKnowledgeDocument({ id: 'forged-id', content: 'x' }),
-    /Unsupported request field/,
-  );
-});
-
-test('MVP flow-version creator is supplied by the authenticated server context', () => {
-  const store = new MvpStoreService();
-  const flow = store.createFlowDefinition({ companyId: 'company-a', name: 'Main' });
-  const foreignFlow = store.createFlowDefinition({ companyId: 'company-b', name: 'Foreign' });
-  const version = store.createFlowVersion(
-    { flowDefinitionId: flow.id, version: 1, steps: [] },
-    'db-actor',
-    'company-a',
-  );
-  assert.equal(version.createdBy, 'db-actor');
-  assert.deepEqual(store.getFlowDefinitions('company-a').map(({ id }) => id), [flow.id]);
-  assert.deepEqual(store.getFlowVersions('company-a').map(({ id }) => id), [version.id]);
-  assert.throws(
-    () => store.createFlowVersion({ flowDefinitionId: foreignFlow.id }, 'db-actor', 'company-a'),
-    /Flow definition is unavailable/,
-  );
-  assert.equal(store.updateFlowVersion(version.id, { steps: [] }, 'company-a').status, 'draft');
-  assert.equal(store.updateFlowVersion(version.id, { status: 'approved' }, 'company-a').status, 'approved');
-  assert.throws(
-    () => store.updateFlowVersion(version.id, { steps: [] }, 'company-a'),
-    /Only draft flow versions can be edited/,
-  );
-  assert.throws(
-    () =>
-      store.createFlowVersion(
-        { flowDefinitionId: flow.id, createdBy: 'forged-actor' },
-        'db-actor',
-        'company-a',
-      ),
-    /Unsupported request field/,
-  );
-  assert.throws(
-    () => store.createFlowVersion({ flowDefinitionId: flow.id }, ''),
-    /Current actor is required/,
-  );
-  assert.throws(
-    () => store.upsertTenantFlowPermissions([
-      { companyId: 'company-a', flowDefinitionId: foreignFlow.id, isEnabled: true },
-    ], 'company-a'),
-    /Flow definition is unavailable for this company/,
-  );
-  assert.throws(
-    () => store.upsertIntentFlowMapping({ companyId: 'company-a', intent: 'claim', allowedFlowDefinitionIds: [foreignFlow.id] }, 'company-a'),
-    /outside this company/,
-  );
+  assert.throws(() => store.updateInterface(iface.id, { id: 'forged-id' }), /Unsupported request field/);
+  assert.throws(() => store.createInterface({ capabilities: { rpa: 'yes' } }), /Invalid interface capabilities/);
+  assert.throws(() => store.createKnowledgeDocument({ id: 'forged-id', content: 'x' }), /Unsupported request field/);
 });
 
 test('MVP controller passes the guard-populated actor, not body attribution', () => {
   const calls = [];
   const controller = new MvpDataController({
+    createFlowVersion: () => { throw new Error('Flow writes must use durable storage'); },
+  }, {
     createFlowVersion: (...args) => calls.push(args),
   });
   controller.createFlowVersion(

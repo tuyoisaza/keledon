@@ -2,7 +2,7 @@
 
 Run ID: `20261014-0007-phdk-auto-completion`
 Stage: 90 Delivery
-Status: CANDIDATE VERIFIED; PR DELIVERY PENDING
+Status: SOURCE SLICE MERGED AND VERIFIED; PORTFOLIO PARTIALLY DELIVERED
 Repository: `tuyoisaza/keledon`
 Branch: `chore/phdk-upgrade-2.51.2`
 Base: verified `origin/main` 5.1.64, `e53339e81eb972f7941c2b59dd824ad75111d54a`
@@ -28,4 +28,4 @@ The store remains shared `mvp-store.json`; locking, multi-instance durability, m
 
 ## Delivery state
 
-Commit, branch push, PR creation and remote verification are pending. After delivery, record the actual PR/merge SHA and remote package versions; do not mark the full Auto complete from this source slice.
+PR [#159](https://github.com/tuyoisaza/keledon/pull/159) squash-merged source commit `73c0b50e6a6f35b730893ec03463583b42c64e9c` at verified remote `main` `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`; remote tree `0224460d38e388f0e43ffd0fa1f89287abe575f4` matches the tested candidate. `git ls-remote` agrees, the PHDK completion gate passes, and all six version reads align at 5.1.65. Do not mark the full Auto complete from this source slice.

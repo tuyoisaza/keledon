@@ -1,5 +1,23 @@
 # UAT remediation — run `20261013-1900-phdk-auto`
 
+## Candidate 5.1.66 — mobile flow editor shell (RESOLVED)
+
+- Finding: UAT screenshot at 390×844 showed the desktop sidebar held a 224px column beside the content, leaving the management flow editor too narrow.
+- Expected: the tenant manager can reach navigation and edit flow configuration on a narrow phone viewport without losing actions or horizontal page overflow.
+- Root cause: `AppLayout` was permanently a horizontal split and `Sidebar` never switched to a mobile layout.
+- Repair: use a compact mobile header with the same diagnostics/version controls, horizontally scrollable primary navigation, visible user/role and logout control; keep the desktop sidebar at the medium breakpoint and above. App content uses the full viewport width with mobile padding.
+- Retest: the production-built flow editor UAT runs creation/version/availability/mapping actions by keyboard, verifies no document overflow at 390px, and captures desktop/mobile screenshots; Web lint, typecheck, build and full `npm run test:uat` pass.
+- Status: RESOLVED for the tested editor journey. Screen-reader and all-route mobile acceptance remain open.
+
+## Candidate 5.1.66 — legacy importer company ownership (RESOLVED)
+
+- Finding: deriving tenant permissions from stale company IDs in the legacy JSON could conflict with the actual database owner of a definition skipped during idempotent import.
+- Expected: import must use the persisted definition's company before writing versions, availability or intent mappings.
+- Root cause: the importer built its flow-to-company map from file contents after `createMany(skipDuplicates)`.
+- Repair: read persisted definition IDs/company IDs back from Prisma after import, then use that map to filter versions, permissions and intent mappings. Add API/Cloud regression cases for a stale foreign company hint.
+- Retest: API flow persistence tests 8/8 and Cloud 7/7; full API/Cloud regression suites pass. No database execution is claimed.
+- Status: RESOLVED in source; isolated migration/import acceptance remains BLOCKED under UAT-060.
+
 ## Candidate 5.1.36 — Device management source finding
 
 - Finding: Check source review found no manager revoke affordance on `/devices` although a tenant-scoped API operation existed; the registration guard could also bind an actor with no company, creating an unpairable pending row.

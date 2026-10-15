@@ -33,121 +33,19 @@ after(() => {
   fs.rmSync(dataDir, { recursive: true, force: true });
 });
 
-test('MVP write routes reject server-owned fields and unsupported input types', () => {
+test('MVP non-flow write routes reject server-owned fields and unsupported types', () => {
   const store = new MvpStoreService();
   const iface = store.createInterface({ name: 'Primary' });
-  assert.throws(
-    () => store.updateInterface(iface.id, { id: 'forged-id' }),
-    /Unsupported request field/,
-  );
-  assert.throws(
-    () => store.createInterface({ capabilities: { rpa: 'yes' } }),
-    /Invalid interface capabilities/,
-  );
-  assert.throws(
-    () => store.createFlowDefinition({ id: 'forged-id' }),
-    /Unsupported request field/,
-  );
-  assert.throws(
-    () => store.createFlowDefinition({ name: 'Unscoped flow' }),
-    /Company scope is required/,
-  );
-  assert.throws(
-    () => store.updateFlowVersion('flow-version', { createdBy: 'forged-user' }),
-    /Unsupported request field/,
-  );
-  assert.throws(
-    () =>
-      store.upsertTenantFlowPermissions([
-        {
-          companyId: 'company-a',
-          flowDefinitionId: 'flow-a',
-          createdAt: 'forged',
-        },
-      ]),
-    /Unsupported request field/,
-  );
-  assert.throws(
-    () =>
-      store.upsertTenantFlowPermissions([
-        {
-          companyId: 'company-a',
-          flowDefinitionId: 'flow-a',
-          isEnabled: 'true',
-        },
-      ]),
-    /Invalid permission state/,
-  );
-  assert.throws(
-    () =>
-      store.upsertIntentFlowMapping({
-        companyId: 'company-a',
-        intent: 'claim',
-        allowedFlowDefinitionIds: [42],
-      }),
-    /Invalid allowedFlowDefinitionIds/,
-  );
-  assert.throws(
-    () => store.createKnowledgeDocument({ id: 'forged-id', content: 'x' }),
-    /Unsupported request field/,
-  );
-});
-
-test('MVP flow-version creator is supplied by the authenticated server context', () => {
-  const store = new MvpStoreService();
-  const definition = store.createFlowDefinition({
-    companyId: 'company-a',
-    name: 'Tenant flow',
-  });
-  const version = store.createFlowVersion(
-    { flowDefinitionId: definition.id, version: 1, steps: [] },
-    'db-actor',
-    'company-a',
-  );
-  assert.equal(version.createdBy, 'db-actor');
-  assert.throws(
-    () =>
-      store.createFlowVersion(
-        { flowDefinitionId: definition.id, createdBy: 'forged-actor' },
-        'db-actor',
-        'company-a',
-      ),
-    /Unsupported request field/,
-  );
-  assert.throws(
-    () => store.createFlowVersion({ flowDefinitionId: definition.id }, ''),
-    /Current actor is required/,
-  );
-  assert.throws(
-    () =>
-      store.createFlowVersion(
-        { flowDefinitionId: definition.id, version: 1 },
-        'db-actor',
-        'company-a',
-      ),
-    /Flow version already exists/,
-  );
-  assert.throws(
-    () =>
-      store.createFlowVersion(
-        { flowDefinitionId: definition.id },
-        'other-actor',
-        'company-b',
-      ),
-    /Flow definition is unavailable/,
-  );
-  store.updateFlowVersion(version.id, { status: 'approved' }, 'company-a');
-  assert.throws(
-    () => store.updateFlowVersion(version.id, { steps: [{ type: 'submit' }] }, 'company-a'),
-    /Only draft flow versions can be edited/,
-  );
-  assert.deepEqual(store.getFlowDefinitions('company-b'), []);
-  assert.deepEqual(store.getFlowVersions('company-b'), []);
+  assert.throws(() => store.updateInterface(iface.id, { id: 'forged-id' }), /Unsupported request field/);
+  assert.throws(() => store.createInterface({ capabilities: { rpa: 'yes' } }), /Invalid interface capabilities/);
+  assert.throws(() => store.createKnowledgeDocument({ id: 'forged-id', content: 'x' }), /Unsupported request field/);
 });
 
 test('MVP controller passes the guard-populated actor, not body attribution', () => {
   const calls = [];
   const controller = new MvpDataController({
+    createFlowVersion: () => { throw new Error('Flow writes must use durable storage'); },
+  }, {
     createFlowVersion: (...args) => calls.push(args),
   });
   controller.createFlowVersion(

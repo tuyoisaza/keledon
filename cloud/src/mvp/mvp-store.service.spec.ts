@@ -50,7 +50,6 @@ describe('MvpStoreService persisted data validation', () => {
     const store = new MvpStoreService();
 
     expect(store.getInterfaces().map(({ id }) => id)).toEqual(['if-1']);
-    expect(store.getFlowDefinitions().map(({ id }) => id)).toEqual(['flow-1']);
     expect(store.getTTSConfig().providerId).toBe('webspeech');
   });
 });

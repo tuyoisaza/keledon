@@ -1,5 +1,9 @@
 # UAT retest — run `20261013-1900-phdk-auto`
 
+## Candidate 5.1.66 — responsive flow editor and tenant import retest
+
+The first focused flow-editor browser capture exposed an unusably narrow 390px management layout; UAT Fix moved the shell navigation to a compact mobile header and kept the editor full width. The retest exercises definition/version/availability/intent actions through Enter/Space, confirms `document.scrollWidth <= clientWidth` at 390px, and saves desktop/mobile screenshots plus a redacted journey JSON. API importer tests also retest the stale company-hint finding and confirm persisted DB ownership controls imported permissions. API/Cloud regression, Web lint/typecheck/build and the full Web UAT pass. Remaining screen-reader/all-route acceptance is open; disposable-DB migration/restart remains BLOCKED under UAT-060.
+
 ## Candidate 5.1.36 — UAT-032 source-candidate retest
 
 Local production Web build and device-page UAT pass on source fingerprint `sha256:4170917201fbd7be6ca51d1c7d7adde6bb9bafb82010bdd1a70242b96cce3315`, based on `f0a9633e39bbdbca416f5e1c24c32acab7276902`. User role renders no revoke button; admin cancel produces no DELETE; a synthetic 500 remains visible with modal open; a subsequent 200 removes the device from the page. Four UI states are captured in `docs/phdk/evidence/uat-device-*.png`; the JSON includes timestamp, target, revision/fingerprint and provenance. API regression 21 separately passes actor-derived registration binding and manager/owner/tenant denials; all API regression suites are 35/35 and build passes. Web typecheck/build, targeted ESLint, locale parity and installed PHDK coherence pass. The UAT run uses synthetic intercepted API fixtures and is not DB, live auth, device pairing or production acceptance.

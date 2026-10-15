@@ -1,3 +1,14 @@
+## v5.1.66 — 2026-10-15 (persist tenant flow configuration)
+
+- Replace the shared JSON flow editor store with PostgreSQL-backed tenant definitions, version history, company permissions and intent mappings in API and Cloud.
+- Add idempotent legacy JSON import, immutable company ownership after assignment, draft-only version updates and a composite foreign key that rejects cross-company flow permissions.
+- Keep the management flow editor tenant-scoped and improve its mobile shell with a compact top navigation and full-width form; cover keyboard and 390px layouts in local UAT.
+- Upgrade PHDK standards to canonical v2.51.2; align all five product package/lock roots and the Browser renderer at 5.1.66.
+
+### Verification
+- API regression 39/39 and Cloud regression 18/18; Prisma validation, both backend builds and applicable lint pass; Web UAT 6/6 plus AI-admin journey, diagnostics 19/19 and Browser offline suite 43/43 pass. Five-product build/lint/typecheck and public SEO source tests are revalidated at the final candidate.
+- Isolated PostgreSQL migration execution and restart-persistence UAT remain blocked because this workstation has no PostgreSQL service, `psql` or Docker. Whole Auto remains partial for database execution, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-selected live integration acceptance.
+
 ## v5.1.65 — 2026-10-15 (scope legacy flow definitions by company)
 
 - Convert legacy flow definitions into company-owned configuration with a tenant management editor, draft/version lifecycle, company availability and intent routing.

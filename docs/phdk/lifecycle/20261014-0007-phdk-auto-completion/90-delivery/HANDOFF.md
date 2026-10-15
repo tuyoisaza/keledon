@@ -1,3 +1,66 @@
+# Delivery handoff — candidate 5.1.66 pending; whole Auto partial
+
+Run ID: `20261014-0007-phdk-auto-completion`
+Stage: 90 Delivery
+Status: CANDIDATE CHECKS PASS; SOURCE PR/MERGE/REMOTE READBACK PENDING
+Base: verified `origin/main` 5.1.65 `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`
+Candidate branch: `fix/phdk-flow-db-persistence-5-1-66`
+Candidate version: 5.1.66 across five package/lock roots and Browser renderer
+
+The candidate has Prisma-backed tenant flow configuration, API/Cloud schema and migration parity, a tenant-scoped Web editor, and responsive shell fixes. API 39/39, Cloud 18/18, Browser 43/43, Web diagnostics 19/19, full Web UAT 6/6 plus AI-admin, applicable SEO checks and all five builds pass. PHDK v2.51.2 coherence is 56/56. Exact commit and remote main evidence will be recorded after PR merge and readback.
+
+Candidate UAT tally is 58 PASS, 1 BLOCKED, 1 MANUAL. UAT-060 awaits a disposable PostgreSQL migration/restart test; native device/audio remains manual. Broad accessibility/localization, deployed SEO/AEO and client-specific live call/CRM journeys remain open. No deployment or customer acceptance is claimed.
+
+---
+
+# Delivery handoff — 5.1.64 merged and verified; Auto remains partial
+
+Run ID: `20261014-0007-phdk-auto-completion`
+Stage: 90 Delivery
+Status: COMPLETED FOR THE 5.1.64 SOURCE SLICE; PORTFOLIO PARTIALLY DELIVERED
+Started from: verified `origin/main` 5.1.63 `2c1c8e58f749746253f0ff76f9c691e7ffb15644`
+Candidate commit: `95c51e5adeb637e41526b03c73be1da22a0cf2c8`
+Merged remote revision: `e53339e81eb972f7941c2b59dd824ad75111d54a` / tree `e9f0d497267e78fd497186b7d2de797e43173289`
+PR: [#158](https://github.com/tuyoisaza/keledon/pull/158), squash merged
+Date: 2026-10-15
+
+## Goal / scope
+
+Continue the four owner-confirmed KELEDON fronts in order. This slice fixes CHK-AUTO-024: Web/Landing diagnostics actions now have separate 44×44px hit targets with centered 28×28px visible tiles, and the native Browser stylesheet has the same source contract. UAT-056 records production-built Landing desktop/mobile geometry.
+
+## Inputs verified
+
+- PHDK 2.50.10 installed and coherent: 52/52 mappings.
+- Four approved commitments, restrictive role policy and tenant-configured private CRM allowlist policy remain active.
+- PR #158 targets `main`; GitHub reported MERGED by squash, no hosted checks/review decision, and no branch protection.
+
+## Work performed / deliverables
+
+- Candidate source and release notes are in PR #158; source commit `95c51e5a` is version-prefixed.
+- Current canonical results: `PHDK_DELIVERY_EVIDENCE.json`, `DELIVERY_REPORT.md`, and `PHDK_COMPLETION_AUDIT.md`.
+- UAT-056 evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-056/`.
+- Five production builds, Web/Landing lint and typechecks, Web diagnostics 19/19, Browser offline 28/28, browser UAT 1/1 and PHDK coherence 52/52 pass.
+
+## Exit gate
+
+- [x] PR #158 merged to `main`; fresh `origin/main` equals `git ls-remote` at `e53339e81eb972f7941c2b59dd824ad75111d54a`.
+- [x] Remote merge tree equals the tested candidate tree; six version roots read 5.1.64.
+- [x] PHDK completion gate passes against root machine evidence.
+- [x] No deployment is claimed; hosted checks and review decision were absent, and `main` was unprotected.
+- [x] Whole Auto remains PARTIALLY DELIVERED; CMT-001 through CMT-004 retain open acceptance.
+
+## Risks / limitations
+
+Persisted CRUD/migrations and the exhaustive authorization matrix, native device/audio, broad accessibility/localization, deployed SEO/AEO and client-selected live call/CRM acceptance remain open. AI-admin UI evidence is synthetic. No customer database, private destination, device or deployment was used.
+
+## Next stage
+
+Stage: continue the active PHDK Auto goal. Preserve all four owner-confirmed fronts and their remaining acceptance gates.
+
+SIGUIENTE PASO: continue the four active commitments without treating this slice as full Auto completion.
+
+---
+
 # Delivery status — 5.1.60 merged and verified; Auto remains partial
 
 PR [#154](https://github.com/tuyoisaza/keledon/pull/154) is squash-merged at verified remote `main` `4bc6d437ddfbd5139617da62370ec4de92f820cb`; `origin/main` and `git ls-remote` agree, merged tree `cf9dba9b17d1de91db2206ea3bdb12e0841b89b3` matches the tested candidate, and all six versions are 5.1.60. The mechanical completion gate passes against root evidence. GitHub reported no hosted checks/review decision; `main` was unprotected. No deployment is claimed. Whole Auto remains partial. Post-merge evidence is `PHDK_DELIVERY_EVIDENCE-5.1.60-post-merge-154.json`.

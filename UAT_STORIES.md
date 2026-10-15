@@ -10,6 +10,7 @@
 | US-006 | As a tenant user or manager, I want the knowledge page to show only real tenant-scoped documents and truthful system state, with controls matching my role, so I can use operational knowledge without mistaking a demo for a live call or RAG result. | `PROJECT_INTENT.md`, INT-002/003; `REQUIREMENTS_TRACEABILITY.md`, CMT-002/004 | UAT-030 |
 | US-009 | As a tenant administrator, I want to revoke a device with a clear confirmation while ordinary operators can only inspect their own safe device summary, so lost device credentials can be disabled without crossing company boundaries. | `PROJECT_INTENT.md`, SEC-001/004; ADR-AUTO-008; CMT-004 | UAT-032 |
 | US-011 | As the provisioned superadmin, I want AI prompt changes to be role-gated, revisioned and safely reported so configuration edits are auditable without overstating usage or cost. | `PROJECT_INTENT.md`, SEC-004; `PRD.md`, SEC-004; CMT-004 | UAT-053 |
+| US-012 | As a tenant administrator, I want flow definitions, versions, availability and intent routing to persist only inside my company so that client-specific call workflows survive restarts without crossing tenant boundaries. | `PROJECT_INTENT.md`, SEC-004; `REQUIREMENTS_TRACEABILITY.md`, CMT-004; owner-confirmed tenant flow editor decision | UAT-057, UAT-058, UAT-059, UAT-060 |
 
 All cases remain inside the owner-approved intent: provider choice is per customer; no universal live CRM/call behavior is assumed.
 

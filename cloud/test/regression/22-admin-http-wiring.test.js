@@ -51,6 +51,7 @@ const {
   MvpDataController,
 } = require('../../src/controllers/mvp-data.controller.ts');
 const { MvpStoreService } = require('../../src/mvp/mvp-store.service.ts');
+const { TenantFlowConfigService } = require('../../src/mvp/tenant-flow-config.service.ts');
 const { CrudController } = require('../../src/crud/crud.controller.ts');
 const { CrudService } = require('../../src/crud/crud.service.ts');
 const { BrainController } = require('../../src/controllers/brain.controller.ts');
@@ -113,6 +114,7 @@ async function main() {
     ],
     providers: [
       { provide: PrismaService, useValue: prisma },
+      { provide: TenantFlowConfigService, useValue: {} },
       { provide: ResourceScopeGuard, useFactory: () => new ResourceScopeGuard(prisma) },
       { provide: LLMService, useValue: { generate: async () => ({ text: 'hello', usage: {} }) } },
       { provide: ConfigService, useValue: { get: () => undefined } },

@@ -1,0 +1,74 @@
+{
+  "version": "5.1.66",
+  "date": "2026-10-15T22:55:21.635Z",
+  "candidateRevision": "fbeec0eafe72cc73e8a92c9105076d8174ce98dd",
+  "candidateSourceFingerprint": "sha256:54740e3435d825e6aa75c93b5668907cfcc467e46421db8a5b1a72cb93f6ebbb",
+  "dirtyUntrackedSourceFiles": 6,
+  "sourceRoots": [
+    "browser",
+    "cloud",
+    "services/api",
+    "services/web",
+    "landing"
+  ],
+  "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
+  "origin": "http://127.0.0.1:52306",
+  "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
+  "checks": [
+    "UAT-THEME dark/light/corporate tokens reach descendant controls, persistence PASS; automated login text contrast sample has no failures (not a full-app accessibility certification)",
+    "UAT-002 public homepage navigation controls avoid hero overlap at 1280px and remain reachable from the 390px mobile menu PASS",
+    "UAT-002 anonymous home/login, compact sizes, awaited copy/check/revert, failure no false check, owned reset/foreign preservation, 390px layout and 200/400% zoom reflow PASS (viewport simulation)",
+    "UAT-004 superadmin frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
+    "UAT-004 admin frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
+    "UAT-004 coordinator frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API",
+    "UAT-008 superadmin selects allowlisted synthetic profile, temporary banner/token and return-to-superadmin flow PASS (mocked UI API; server audit/expiry/revocation covered by API regressions)",
+    "UAT admin status page renders safe server availability only; superadmin retains detailed diagnostics (synthetic API fixture)",
+    "UAT-004 company/brand/team/user/vendor administration Spanish copy and manager user restrictions: localized routes/search and modal controls; no role/company payload fields; foreign team absent PASS (synthetic UI; API guard tested separately)",
+    "UAT-030 Knowledge UI keeps users read-only and gives managers synthetic detail/create/edit/delete flows; create is tenant-bound, update omits caller tenant, fake live transcript/RAG claims are absent, localization and accessible modals pass, and backend errors are sanitized (mocked API only)",
+    "UAT-T-005-DASHBOARD Spanish empty/session states, English and Portuguese greeting/stats, and accessible table caption/column headers PASS (synthetic API)",
+    "UAT-T-005-SESSIONS Spanish live/history/detail and call-monitor copy, filters, statuses, captions, scoped headers and detail navigation PASS (synthetic API)",
+    "UAT-T-007-PROFILE-DEVICES en/es/pt profile role/date formatting, Spanish device status/empty state, navigation to localized Keledon launcher and retry after visible API failure PASS (mocked API)",
+    "UAT-T-008 Voice Profiles: tenant-independent request, localized list/detail/edit fields, retry and accessible dialogs; mocked HTTP 403 create/update/delete do not announce success; create/update payloads omit caller tenant and credentials; valid camelCase CRUD contract PASS (synthetic UI/API)",
+    "UAT-T-009 KELEDON admin create flow: localized labeled fields, scoped company/brand/team selectors, native accessible form and delete-confirmation dialog; payload contains no caller companyId and uses server input shape PASS (synthetic UI/API)",
+    "UAT-004 provider settings Spanish localization and write-only key: translated screen renders; no response prefill; replacement clears after success; untouched blank omitted PASS",
+    "UAT-005 Brain provider indicators use selected-provider safe booleans only; an unused Deepgram key does not mark Vosk configured, and write-only secret placeholders remain blank PASS (synthetic UI/API fixture)",
+    "UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)",
+    "UAT-002 5.1.66 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
+  ],
+  "themeTokens": {
+    "light": {
+      "theme": "light",
+      "primary": "#0f766e",
+      "primaryForeground": "#fff",
+      "buttonPrimary": "#0f766e",
+      "buttonForeground": "#fff",
+      "buttonBg": "rgb(15, 118, 110)",
+      "buttonFg": "rgb(255, 255, 255)"
+    },
+    "corporate": {
+      "theme": "corporate",
+      "primary": "#194185",
+      "primaryForeground": "#fff",
+      "buttonPrimary": "#194185",
+      "buttonForeground": "#fff",
+      "buttonBg": "rgb(25, 65, 133)",
+      "buttonFg": "rgb(255, 255, 255)"
+    },
+    "dark": {
+      "theme": "dark",
+      "primary": "#14b8a5",
+      "primaryForeground": "#080c16",
+      "buttonPrimary": "#14b8a5",
+      "buttonForeground": "#080c16",
+      "buttonBg": "rgb(20, 184, 165)",
+      "buttonFg": "rgb(8, 12, 22)"
+    }
+  },
+  "loginContrastSample": {
+    "light": [],
+    "corporate": [],
+    "dark": []
+  },
+  "apiEvidence": "services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts",
+  "realVendorAudioCRM": "NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed"
+}

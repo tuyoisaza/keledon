@@ -1,3 +1,11 @@
+## Candidate 5.1.66 — applicability reuse; deployed visibility unmeasured
+
+This candidate changes tenant flow administration and mobile app-shell layout; it does not change public answer content, claims, routes or structured metadata. Existing source answerability review remains applicable. No public host, crawler or answer engine was queried; deployed citations and visibility remain unmeasured.
+
+SIGUIENTE PASO: carry these limits into integrated Check and delivery.
+
+---
+
 # AEO/GEO handoff — 20261014-0007-phdk-auto-completion
 
 ## Candidate 5.1.61 applicability reuse — no public answer/content changes

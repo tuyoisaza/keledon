@@ -1,3 +1,11 @@
+# UAT Fix handoff — candidate 5.1.66
+
+The final Web UAT exposed two source issues and both are fixed: the mobile app shell no longer constrains the flow editor to desktop sidebar width, and only the active responsive navigation mounts the temporary UAT profile control. Full Web UAT passes 6/6 plus AI-admin UAT; keyboard editor and 390px reflow retest pass. Evidence: `../50-uat/evidence/uat-web-5.1.66/`.
+
+No observed P0/P1 remains in the tested flow-editor journey. Full screen-reader and all-route accessibility/localization acceptance remains open. The database migration gate is blocked on the missing disposable PostgreSQL service.
+
+---
+
 # UAT Fix handoff — 20261014-0007-phdk-auto-completion
 
 ## Candidate 5.1.61 — close observed public-header overlap
