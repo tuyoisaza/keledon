@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { getProviderCatalog } from './provider-catalog';
 import { randomUUID } from 'crypto';
 import * as fs from 'fs';
@@ -15,7 +15,23 @@ import type {
   KnowledgeDocument,
   TTSConfigEntry,
   ProviderCatalogEntry,
+  ManagedInterfaceInput,
+  FlowDefinitionInput,
+  FlowVersionInput,
+  FlowVersionUpdateInput,
+  TenantFlowPermissionInput,
+  IntentFlowMappingInput,
+  KnowledgeDocumentInput,
 } from './mvp-store.types';
+import {
+  validateFlowDefinitionInput,
+  validateFlowVersionInput,
+  validateFlowVersionUpdateInput,
+  validateIntentFlowMappingInput,
+  validateKnowledgeDocumentInput,
+  validateManagedInterfaceInput,
+  validateTenantFlowPermissionInputs,
+} from './mvp-store-write-validation';
 export type {
   ManagedInterface,
   FlowDefinition,
@@ -166,7 +182,7 @@ export class MvpStoreService {
         { name: 'SQLite', version: '3', category: 'backend' as const },
         { name: 'Qdrant', version: 'latest', category: 'other' as const },
       ],
-      dependencies: [] as Array<Record<string, any>>,
+      dependencies: [] as Array<Record<string, unknown>>,
     };
   }
 
@@ -248,7 +264,8 @@ export class MvpStoreService {
     return this.store.interfaces;
   }
 
-  createInterface(input: Partial<ManagedInterface>): ManagedInterface {
+  createInterface(input: ManagedInterfaceInput): ManagedInterface {
+    validateManagedInterfaceInput(input);
     const now = new Date().toISOString();
     const iface: ManagedInterface = {
       id: randomUUID(),
@@ -270,17 +287,23 @@ export class MvpStoreService {
 
   updateInterface(
     id: string,
-    input: Partial<ManagedInterface>,
+    input: ManagedInterfaceInput,
   ): ManagedInterface | null {
+    validateManagedInterfaceInput(input);
     const index = this.store.interfaces.findIndex((item) => item.id === id);
     if (index < 0) return null;
     const current = this.store.interfaces[index];
     const baseUrl = String(input.baseUrl || input.base_url || current.baseUrl);
     const updated: ManagedInterface = {
       ...current,
-      ...input,
+      name: input.name ?? current.name,
       baseUrl,
       base_url: baseUrl,
+      category: input.category ?? current.category,
+      providerKey: input.providerKey ?? current.providerKey,
+      capabilities: input.capabilities ?? current.capabilities,
+      status: input.status ?? current.status,
+      icon: input.icon ?? current.icon,
       updatedAt: new Date().toISOString(),
     };
     this.store.interfaces[index] = updated;
@@ -302,7 +325,8 @@ export class MvpStoreService {
     return this.store.flowDefinitions;
   }
 
-  createFlowDefinition(input: Partial<FlowDefinition>): FlowDefinition {
+  createFlowDefinition(input: FlowDefinitionInput): FlowDefinition {
+    validateFlowDefinitionInput(input);
     const now = new Date().toISOString();
     const flow: FlowDefinition = {
       id: randomUUID(),
@@ -324,7 +348,10 @@ export class MvpStoreService {
     return this.store.flowVersions;
   }
 
-  createFlowVersion(input: Partial<FlowVersion>): FlowVersion {
+  createFlowVersion(input: FlowVersionInput, actorId: string): FlowVersion {
+    validateFlowVersionInput(input);
+    if (typeof actorId !== 'string' || actorId.length === 0)
+      throw new BadRequestException('Current actor is required');
     const now = new Date().toISOString();
     const flowVersion: FlowVersion = {
       id: randomUUID(),
@@ -332,7 +359,7 @@ export class MvpStoreService {
       version: Number(input.version || 1),
       status: input.status || 'draft',
       steps: Array.isArray(input.steps) ? input.steps : [],
-      createdBy: input.createdBy,
+      createdBy: actorId,
       createdAt: now,
       updatedAt: now,
     };
@@ -343,13 +370,16 @@ export class MvpStoreService {
 
   updateFlowVersion(
     id: string,
-    input: Partial<FlowVersion>,
+    input: FlowVersionUpdateInput,
   ): FlowVersion | null {
+    validateFlowVersionUpdateInput(input);
     const index = this.store.flowVersions.findIndex((item) => item.id === id);
     if (index < 0) return null;
     const updated: FlowVersion = {
       ...this.store.flowVersions[index],
-      ...input,
+      version: input.version ?? this.store.flowVersions[index].version,
+      status: input.status ?? this.store.flowVersions[index].status,
+      steps: input.steps ?? this.store.flowVersions[index].steps,
       updatedAt: new Date().toISOString(),
     };
     this.store.flowVersions[index] = updated;
@@ -364,12 +394,12 @@ export class MvpStoreService {
   }
 
   upsertTenantFlowPermissions(
-    entries: Array<Partial<TenantFlowPermission>>,
+    entries: TenantFlowPermissionInput[],
   ): TenantFlowPermission[] {
+    entries = validateTenantFlowPermissionInputs(entries);
     for (const entry of entries) {
       const companyId = String(entry.companyId || '');
       const flowDefinitionId = String(entry.flowDefinitionId || '');
-      if (!companyId || !flowDefinitionId) continue;
 
       const existing = this.store.tenantFlowPermissions.find(
         (item) =>
@@ -405,9 +435,8 @@ export class MvpStoreService {
     );
   }
 
-  upsertIntentFlowMapping(
-    entry: Partial<IntentFlowMapping>,
-  ): IntentFlowMapping {
+  upsertIntentFlowMapping(entry: IntentFlowMappingInput): IntentFlowMapping {
+    validateIntentFlowMappingInput(entry);
     const companyId = String(entry.companyId || '');
     const intent = String(entry.intent || '').trim();
     const allowedFlowDefinitionIds = Array.isArray(
@@ -445,9 +474,8 @@ export class MvpStoreService {
     return this.store.knowledgeDocuments;
   }
 
-  createKnowledgeDocument(
-    input: Partial<KnowledgeDocument>,
-  ): KnowledgeDocument {
+  createKnowledgeDocument(input: KnowledgeDocumentInput): KnowledgeDocument {
+    validateKnowledgeDocumentInput(input);
     const now = new Date().toISOString();
     const content = String(input.content || '');
     const doc: KnowledgeDocument = {

@@ -12,6 +12,20 @@ export interface ManagedInterface {
   updatedAt: string;
 }
 
+export type ManagedInterfaceInput = Partial<
+  Pick<
+    ManagedInterface,
+    | 'name'
+    | 'baseUrl'
+    | 'base_url'
+    | 'category'
+    | 'providerKey'
+    | 'capabilities'
+    | 'status'
+    | 'icon'
+  >
+>;
+
 export interface FlowDefinition {
   id: string;
   companyId?: string;
@@ -24,16 +38,35 @@ export interface FlowDefinition {
   updatedAt: string;
 }
 
+export type FlowDefinitionInput = Partial<
+  Pick<
+    FlowDefinition,
+    | 'companyId'
+    | 'interfaceId'
+    | 'name'
+    | 'description'
+    | 'category'
+    | 'intentTags'
+  >
+>;
+
 export interface FlowVersion {
   id: string;
   flowDefinitionId: string;
   version: number;
   status: 'draft' | 'approved' | 'deprecated';
-  steps: Array<Record<string, any>>;
+  steps: Array<Record<string, unknown>>;
   createdBy?: string;
   createdAt: string;
   updatedAt: string;
 }
+
+export type FlowVersionInput = Partial<
+  Pick<FlowVersion, 'flowDefinitionId' | 'version' | 'status' | 'steps'>
+>;
+export type FlowVersionUpdateInput = Partial<
+  Pick<FlowVersion, 'version' | 'status' | 'steps'>
+>;
 
 export interface TenantFlowPermission {
   id: string;
@@ -45,6 +78,13 @@ export interface TenantFlowPermission {
   updatedAt: string;
 }
 
+export type TenantFlowPermissionInput = Partial<
+  Pick<
+    TenantFlowPermission,
+    'companyId' | 'flowDefinitionId' | 'isEnabled' | 'defaultForIntent'
+  >
+>;
+
 export interface IntentFlowMapping {
   id: string;
   companyId: string;
@@ -53,6 +93,10 @@ export interface IntentFlowMapping {
   createdAt: string;
   updatedAt: string;
 }
+
+export type IntentFlowMappingInput = Partial<
+  Pick<IntentFlowMapping, 'companyId' | 'intent' | 'allowedFlowDefinitionIds'>
+>;
 
 export interface KnowledgeDocument {
   id: string;
@@ -65,6 +109,10 @@ export interface KnowledgeDocument {
   created_at: string;
   updated_at: string;
 }
+
+export type KnowledgeDocumentInput = Partial<
+  Pick<KnowledgeDocument, 'title' | 'content' | 'type'>
+>;
 
 export interface StoreData {
   interfaces: ManagedInterface[];
@@ -91,5 +139,5 @@ export interface ProviderCatalogEntry {
   description: string;
   status: 'production' | 'experimental' | 'deprecated';
   is_enabled: boolean;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }

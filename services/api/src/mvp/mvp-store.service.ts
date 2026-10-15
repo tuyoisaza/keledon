@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { getProviderCatalog as buildProviderCatalog } from './provider-catalog';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -14,7 +15,23 @@ import type {
   KnowledgeDocument,
   TTSConfigEntry,
   ProviderCatalogEntry,
+  ManagedInterfaceInput,
+  FlowDefinitionInput,
+  FlowVersionInput,
+  FlowVersionUpdateInput,
+  TenantFlowPermissionInput,
+  IntentFlowMappingInput,
+  KnowledgeDocumentInput,
 } from './mvp-store.types';
+import {
+  validateFlowDefinitionInput,
+  validateFlowVersionInput,
+  validateFlowVersionUpdateInput,
+  validateIntentFlowMappingInput,
+  validateKnowledgeDocumentInput,
+  validateManagedInterfaceInput,
+  validateTenantFlowPermissionInputs,
+} from './mvp-store-write-validation';
 export type {
   ManagedInterface,
   FlowDefinition,
@@ -63,149 +80,12 @@ export class MvpStoreService {
         { name: 'SQLite', version: '3', category: 'backend' as const },
         { name: 'Qdrant', version: 'latest', category: 'other' as const },
       ],
-      dependencies: [] as Array<Record<string, any>>,
+      dependencies: [] as Array<Record<string, unknown>>,
     };
   }
 
   getProviderCatalog(localOnly = false): ProviderCatalogEntry[] {
-    const providers: ProviderCatalogEntry[] = [
-      {
-        id: 'vosk',
-        type: 'stt',
-        name: 'VOSK',
-        description: 'Local speech-to-text runtime',
-        status: 'production',
-        is_enabled: true,
-        metadata: {
-          endpoint:
-            process.env.VOSK_SERVER_URL ||
-            'wss://keledon.tuyoisaza.com/listen/ws',
-          requires_api_key: false,
-          auto_start: true,
-        },
-      },
-      {
-        id: 'deepgram',
-        type: 'stt',
-        name: 'Deepgram',
-        description: 'Cloud speech-to-text provider',
-        status: 'production',
-        is_enabled: true,
-        metadata: {
-          requires_api_key: true,
-          required_env: ['DEEPGRAM_API_KEY'],
-        },
-      },
-      {
-        id: 'elevenlabs',
-        type: 'tts',
-        name: 'ElevenLabs',
-        description: 'Cloud text-to-speech provider',
-        status: 'production',
-        is_enabled: true,
-        metadata: {
-          requires_api_key: true,
-          required_env: ['ELEVENLABS_API_KEY'],
-        },
-      },
-      {
-        id: 'webspeech',
-        type: 'tts',
-        name: 'Web Speech API',
-        description: 'Browser-native TTS fallback',
-        status: 'production',
-        is_enabled: true,
-        metadata: {
-          requires_api_key: false,
-        },
-      },
-      {
-        id: 'kokoro',
-        type: 'tts',
-        name: 'Kokoro TTS',
-        description: 'Open-weight TTS on Railway (Spanish/English/JP)',
-        status: 'experimental',
-        is_enabled: true,
-        metadata: {
-          requires_api_key: false,
-          requires_url: true,
-        },
-      },
-      {
-        id: 'speaches-tts',
-        type: 'tts',
-        name: 'Speaches',
-        description:
-          'Self-hosted OpenAI-compatible text-to-speech via /v1/audio/speech',
-        status: 'production',
-        is_enabled: true,
-        metadata: {
-          endpoint:
-            process.env.SPEACHES_API_URL ||
-            'https://speaches-production-c63f.up.railway.app/v1/audio/speech',
-          voices_endpoint:
-            process.env.SPEACHES_API_URL ||
-            'https://speaches-production-c63f.up.railway.app/v1/audio/voices',
-          requires_api_key: false,
-          openai_compatible: true,
-          configured_per_team: true,
-        },
-      },
-      {
-        id: 'native-dom',
-        type: 'rpa',
-        name: 'Native DOM Automation',
-        description: 'Browser API deterministic actions',
-        status: 'production',
-        is_enabled: true,
-        metadata: {
-          requires_api_key: false,
-          auto_start: true,
-        },
-      },
-      {
-        id: 'playwright',
-        type: 'rpa',
-        name: 'Playwright',
-        description: 'Server-side browser automation',
-        status: 'experimental',
-        is_enabled: true,
-        metadata: {
-          requires_api_key: false,
-        },
-      },
-      {
-        id: 'cloud-brain',
-        type: 'cloud',
-        name: 'Cloud Brain',
-        description:
-          'KELEDON Brain API endpoint — URL del servicio cloud que procesa las solicitudes del Brain',
-        status: 'production',
-        is_enabled: true,
-        metadata: {
-          api_url:
-            process.env.CLOUD_API_URL || 'https://keledonapi.tuyoisaza.com',
-          ws_url: process.env.CLOUD_WS_URL || 'wss://keledonapi.tuyoisaza.com',
-          requires_api_key: true,
-          required_env: ['CLOUD_API_URL'],
-        },
-      },
-    ];
-
-    if (!localOnly) {
-      return providers;
-    }
-
-    return providers.filter((provider) => {
-      const metadata = provider.metadata || {};
-      if (!metadata.requires_api_key) return true;
-      const requiredEnv = Array.isArray(metadata.required_env)
-        ? metadata.required_env
-        : [];
-      return requiredEnv.every((envName: string) =>
-        Boolean(process.env[envName]),
-      );
-    });
+    return buildProviderCatalog(localOnly);
   }
 
   getRpaProviders() {
@@ -282,7 +162,8 @@ export class MvpStoreService {
     return this.store.interfaces;
   }
 
-  createInterface(input: Partial<ManagedInterface>): ManagedInterface {
+  createInterface(input: ManagedInterfaceInput): ManagedInterface {
+    validateManagedInterfaceInput(input);
     const now = new Date().toISOString();
     const iface: ManagedInterface = {
       id: randomUUID(),
@@ -304,17 +185,23 @@ export class MvpStoreService {
 
   updateInterface(
     id: string,
-    input: Partial<ManagedInterface>,
+    input: ManagedInterfaceInput,
   ): ManagedInterface | null {
+    validateManagedInterfaceInput(input);
     const index = this.store.interfaces.findIndex((item) => item.id === id);
     if (index < 0) return null;
     const current = this.store.interfaces[index];
     const baseUrl = String(input.baseUrl || input.base_url || current.baseUrl);
     const updated: ManagedInterface = {
       ...current,
-      ...input,
+      name: input.name ?? current.name,
       baseUrl,
       base_url: baseUrl,
+      category: input.category ?? current.category,
+      providerKey: input.providerKey ?? current.providerKey,
+      capabilities: input.capabilities ?? current.capabilities,
+      status: input.status ?? current.status,
+      icon: input.icon ?? current.icon,
       updatedAt: new Date().toISOString(),
     };
     this.store.interfaces[index] = updated;
@@ -336,7 +223,8 @@ export class MvpStoreService {
     return this.store.flowDefinitions;
   }
 
-  createFlowDefinition(input: Partial<FlowDefinition>): FlowDefinition {
+  createFlowDefinition(input: FlowDefinitionInput): FlowDefinition {
+    validateFlowDefinitionInput(input);
     const now = new Date().toISOString();
     const flow: FlowDefinition = {
       id: randomUUID(),
@@ -358,7 +246,10 @@ export class MvpStoreService {
     return this.store.flowVersions;
   }
 
-  createFlowVersion(input: Partial<FlowVersion>): FlowVersion {
+  createFlowVersion(input: FlowVersionInput, actorId: string): FlowVersion {
+    validateFlowVersionInput(input);
+    if (typeof actorId !== 'string' || actorId.length === 0)
+      throw new BadRequestException('Current actor is required');
     const now = new Date().toISOString();
     const flowVersion: FlowVersion = {
       id: randomUUID(),
@@ -366,7 +257,7 @@ export class MvpStoreService {
       version: Number(input.version || 1),
       status: input.status || 'draft',
       steps: Array.isArray(input.steps) ? input.steps : [],
-      createdBy: input.createdBy,
+      createdBy: actorId,
       createdAt: now,
       updatedAt: now,
     };
@@ -377,13 +268,16 @@ export class MvpStoreService {
 
   updateFlowVersion(
     id: string,
-    input: Partial<FlowVersion>,
+    input: FlowVersionUpdateInput,
   ): FlowVersion | null {
+    validateFlowVersionUpdateInput(input);
     const index = this.store.flowVersions.findIndex((item) => item.id === id);
     if (index < 0) return null;
     const updated: FlowVersion = {
       ...this.store.flowVersions[index],
-      ...input,
+      version: input.version ?? this.store.flowVersions[index].version,
+      status: input.status ?? this.store.flowVersions[index].status,
+      steps: input.steps ?? this.store.flowVersions[index].steps,
       updatedAt: new Date().toISOString(),
     };
     this.store.flowVersions[index] = updated;
@@ -398,12 +292,12 @@ export class MvpStoreService {
   }
 
   upsertTenantFlowPermissions(
-    entries: Array<Partial<TenantFlowPermission>>,
+    entries: TenantFlowPermissionInput[],
   ): TenantFlowPermission[] {
+    entries = validateTenantFlowPermissionInputs(entries);
     for (const entry of entries) {
       const companyId = String(entry.companyId || '');
       const flowDefinitionId = String(entry.flowDefinitionId || '');
-      if (!companyId || !flowDefinitionId) continue;
 
       const existing = this.store.tenantFlowPermissions.find(
         (item) =>
@@ -439,9 +333,8 @@ export class MvpStoreService {
     );
   }
 
-  upsertIntentFlowMapping(
-    entry: Partial<IntentFlowMapping>,
-  ): IntentFlowMapping {
+  upsertIntentFlowMapping(entry: IntentFlowMappingInput): IntentFlowMapping {
+    validateIntentFlowMappingInput(entry);
     const companyId = String(entry.companyId || '');
     const intent = String(entry.intent || '').trim();
     const allowedFlowDefinitionIds = Array.isArray(
@@ -479,9 +372,8 @@ export class MvpStoreService {
     return this.store.knowledgeDocuments;
   }
 
-  createKnowledgeDocument(
-    input: Partial<KnowledgeDocument>,
-  ): KnowledgeDocument {
+  createKnowledgeDocument(input: KnowledgeDocumentInput): KnowledgeDocument {
+    validateKnowledgeDocumentInput(input);
     const now = new Date().toISOString();
     const content = String(input.content || '');
     const doc: KnowledgeDocument = {
