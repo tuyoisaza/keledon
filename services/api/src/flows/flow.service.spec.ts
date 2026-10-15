@@ -61,3 +61,105 @@ describe('FlowService.reorderSteps', () => {
     });
   });
 });
+
+describe('FlowService.searchFlows', () => {
+  let service: FlowService;
+  let fetchMock: jest.MockedFunction<typeof fetch>;
+  const originalFetch = global.fetch;
+
+  beforeEach(() => {
+    fetchMock = jest.fn();
+    global.fetch = fetchMock;
+    service = new FlowService({} as any);
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  it('fails closed without a team or non-empty query', async () => {
+    await expect(service.searchFlows('refund')).resolves.toEqual([]);
+    await expect(service.searchFlows('  ', 'team-a')).resolves.toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('always filters by team, bounds results, and rejects malformed rows', async () => {
+    fetchMock
+      .mockResolvedValueOnce(new Response(null, { status: 200 }))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            result: [
+              { id: 'flow-a', score: 0.8, payload: { teamId: 'team-a' } },
+              { id: 'flow-b', score: 'high', payload: { teamId: 'team-a' } },
+              { id: 'flow-c', score: 0.4, payload: 'invalid' },
+            ],
+          }),
+          { status: 200 },
+        ),
+      );
+
+    await expect(
+      service.searchFlows(' refund ', 'team-a', 1000),
+    ).resolves.toEqual([
+      { id: 'flow-a', score: 0.8, payload: { teamId: 'team-a' } },
+      { id: 'flow-c', score: 0.4 },
+    ]);
+
+    const request = fetchMock.mock.calls[1]?.[1];
+    expect(typeof request?.body).toBe('string');
+    if (typeof request?.body !== 'string')
+      throw new Error('Expected JSON request');
+    const body = JSON.parse(request.body);
+    expect(body.limit).toBe(50);
+    expect(body.filter.must).toContainEqual({
+      key: 'teamId',
+      match: { value: 'team-a' },
+    });
+    expect(body.vector).toHaveLength(768);
+  });
+
+  it('uses a bounded default for non-finite limits', async () => {
+    fetchMock
+      .mockResolvedValueOnce(new Response(null, { status: 200 }))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ result: [] }), { status: 200 }),
+      );
+
+    await service.searchFlows('refund', 'team-a', Number.POSITIVE_INFINITY);
+
+    const request = fetchMock.mock.calls[1]?.[1];
+    expect(typeof request?.body).toBe('string');
+    if (typeof request?.body !== 'string')
+      throw new Error('Expected JSON request');
+    const body = JSON.parse(request.body);
+    expect(body.limit).toBe(5);
+  });
+
+  it('fails closed when Qdrant rejects a scoped search', async () => {
+    fetchMock
+      .mockResolvedValueOnce(new Response(null, { status: 200 }))
+      .mockResolvedValueOnce(new Response(null, { status: 503 }));
+
+    await expect(service.searchFlows('refund', 'team-a')).rejects.toThrow(
+      'Flow search failed',
+    );
+  });
+});
+
+describe('FlowService.findAll', () => {
+  it('fails closed without a team and scopes listings to the requested team', async () => {
+    const findMany = jest.fn().mockResolvedValue([]);
+    const service = new FlowService({ flow: { findMany } } as any);
+
+    await expect(service.findAll()).resolves.toEqual([]);
+    expect(findMany).not.toHaveBeenCalled();
+
+    await expect(service.findAll('team-a', 'support')).resolves.toEqual([]);
+    expect(findMany).toHaveBeenCalledWith({
+      where: { teamId: 'team-a', category: 'support' },
+      include: { steps: { orderBy: { order: 'asc' } } },
+      orderBy: { updatedAt: 'desc' },
+    });
+  });
+});

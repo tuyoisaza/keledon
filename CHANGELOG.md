@@ -1,3 +1,13 @@
+## v5.1.67 — 2026-10-15 (fail closed on API flow-search scope)
+
+- Require a tenant team and non-empty query before API flow-vector searches or listings; always constrain results to the requesting team.
+- Bound API flow-search result limits to 1–50, reject failed Qdrant responses, and discard malformed result rows to match Cloud behavior.
+- Add API unit coverage for missing-team denial, scoped listings, result bounds and malformed responses; align all five app package/lock roots and the Browser renderer at 5.1.67.
+
+### Verification
+- API FlowService Jest 12/12; Cloud FlowService parity Jest 10/10; API regression 39/39; all five production builds pass.
+- API/Cloud full TypeScript checks, Web/Landing typechecks, and all five package lints pass. The 5.1.67 change is source-level; live Qdrant/tenant DB acceptance remains external.
+
 ## v5.1.66 — 2026-10-15 (persist tenant flow configuration)
 
 - Replace the shared JSON flow editor store with PostgreSQL-backed tenant definitions, version history, company permissions and intent mappings in API and Cloud.

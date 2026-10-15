@@ -2,6 +2,38 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as crypto from 'crypto';
 
+type QdrantFlowResult = {
+  id: string | number;
+  score: number;
+  payload?: Record<string, unknown>;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function safeQdrantResults(value: unknown): QdrantFlowResult[] {
+  if (!isRecord(value) || !Array.isArray(value.result)) return [];
+  return value.result.flatMap((entry): QdrantFlowResult[] => {
+    if (!isRecord(entry)) return [];
+    const { id, score, payload } = entry;
+    if (
+      (typeof id !== 'string' && typeof id !== 'number') ||
+      typeof score !== 'number' ||
+      !Number.isFinite(score)
+    ) {
+      return [];
+    }
+    return [
+      {
+        id,
+        score,
+        ...(isRecord(payload) ? { payload } : {}),
+      },
+    ];
+  });
+}
+
 @Injectable()
 export class FlowService {
   private readonly qdrantUrl =
@@ -66,16 +98,18 @@ export class FlowService {
     });
   }
 
-  async searchFlows(query: string, teamId?: string, limit = 5): Promise<any[]> {
+  async searchFlows(
+    query: string,
+    teamId?: string,
+    limit = 5,
+  ): Promise<QdrantFlowResult[]> {
+    if (!teamId || !query.trim()) return [];
+    const boundedLimit = Number.isFinite(limit)
+      ? Math.min(50, Math.max(1, Math.floor(limit)))
+      : 5;
     await this.ensureCollection();
 
-    const queryVector = this.deterministicHash(query);
-
-    const filter: any = { must: [] };
-    if (teamId) {
-      filter.must.push({ key: 'teamId', match: { value: teamId } });
-    }
-    filter.must.push({ key: 'isActive', match: { value: true } });
+    const queryVector = this.deterministicHash(query.trim());
 
     const response = await fetch(
       `${this.qdrantUrl}/collections/${this.collectionName}/points/search`,
@@ -84,16 +118,22 @@ export class FlowService {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           vector: queryVector,
-          limit,
+          limit: boundedLimit,
           score_threshold: 0.3,
-          filter: filter.must.length > 0 ? filter : undefined,
+          filter: {
+            must: [
+              { key: 'teamId', match: { value: teamId } },
+              { key: 'isActive', match: { value: true } },
+            ],
+          },
           with_payload: true,
         }),
       },
     );
 
-    const data = await response.json();
-    return data.result || [];
+    if (!response.ok) throw new Error('Flow search failed');
+    const data: unknown = await response.json();
+    return safeQdrantResults(data);
   }
 
   async create(data: {
@@ -158,9 +198,11 @@ export class FlowService {
   }
 
   async findAll(teamId?: string, category?: string): Promise<any[]> {
+    if (!teamId) return [];
+
     return this.prisma.flow.findMany({
       where: {
-        ...(teamId && { teamId }),
+        teamId,
         ...(category && { category }),
       },
       include: { steps: { orderBy: { order: 'asc' } } },

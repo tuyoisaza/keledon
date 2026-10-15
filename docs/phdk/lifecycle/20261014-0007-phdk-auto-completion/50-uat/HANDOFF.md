@@ -1,5 +1,11 @@
 # UAT handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.67 — UAT-061 PASS; portfolio acceptance incomplete
+
+API flow reads now match Cloud's fail-closed tenant policy: absent team/blank query makes no outbound request; unscoped listings return no rows without a database call; every valid read carries the team filter; result limits are bounded at 50; non-OK responses fail closed; malformed rows are omitted. API FlowService Jest passes 12/12 and Cloud parity Jest 10/10; API regression is 39/39. This is source-unit evidence, not live Qdrant, tenant DB, CRM or customer acceptance. Tally advances to **59 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 still needs a disposable PostgreSQL target; native device/audio remains MANUAL.
+
+SIGUIENTE PASO: run UAT-060 when the owner-provided disposable PostgreSQL environment is available; continue broad accessibility/localization, deployed SEO/AEO and customer-selected integration acceptance.
+
 ## Candidate 5.1.66 — UAT-058/059 PASS; UAT-060 BLOCKED
 
 The tenant flow editor passes keyboard and 390px responsive journeys using synthetic Company Co fixtures; full Web UAT is 6/6 plus AI-admin UAT. API/Cloud persistence-contract tests pass 8/8 and 7/7, with full regressions at 39/39 and 18/18. Browser offline tests pass 43/43 and Web diagnostics 19/19. Candidate tally: **58 PASS, 1 BLOCKED, 1 MANUAL**. Evidence and screenshots are under `evidence/uat-web-5.1.66/`.
