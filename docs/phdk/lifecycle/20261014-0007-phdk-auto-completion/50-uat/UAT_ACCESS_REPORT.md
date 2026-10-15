@@ -1,5 +1,9 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## Latest continuation — 2026-10-14
+
+UAT-009/010 used only a newly initialized PostgreSQL 16.15 database and an API process bound to loopback. Identities, tenants, credentials and vendor records were synthetic `.invalid`/loopback fixtures. All migrations, authentication, tenant checks and safe vendor projections ran against that database. The API and database are stopped; the isolated synthetic test directory remains in the task temp folder for reproducibility. No production DB, customer endpoint, external provider, email, or physical microphone was used. Detailed results: `evidence/uat-postgres-roles-5.1.51-5b7e2551.json`.
+
 Target exercised: local built production SPA served at loopback with Company Co synthetic fixture and intercepted API; outbound HTTP/WebSocket is blocked by the harness. This does not verify a deployed development URL or authenticate a real account.
 
 | Access target | Method | Identity/data | Result / cleanup |

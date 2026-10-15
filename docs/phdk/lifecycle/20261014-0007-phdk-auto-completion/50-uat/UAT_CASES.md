@@ -1,5 +1,17 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Latest UAT continuation — 5.1.51 DB-backed identity and tenant checks (2026-10-14)
+
+Tested the exact delivered source commit `5b7e25512c95737688beea43b2d7172199dfa231` on a disposable PostgreSQL 16.15 database bound to `127.0.0.1`. All eight migrations applied and a second deploy found no pending migration. Synthetic public registration defaulted to `user`; an existing synthetic superadmin assigned admin access through the API. Persisted admin/coordinator scope, cross-company denials, low-role denial, safe user creation, and write-only vendor secret projections passed. The legacy vendor-secret migration dry run found one synthetic row, encrypted it on apply, and was idempotent on the second apply. A tenant-allowlisted private loopback URL was accepted for storage; it was never contacted. Full evidence: `50-uat/evidence/uat-postgres-roles-5.1.51-5b7e2551.json`.
+
+| Case | Updated result | Evidence boundary |
+|---|---|---|
+| UAT-009 | PASS — local DB-backed synthetic users authenticated and current DB roles/company scopes were verified. | Disposable local target; no production or customer identities. |
+| UAT-010 | PASS — migrations, secret-migration idempotency, and persisted core role/tenant CRUD checks passed. | Full 26-model operation coverage remains an additional open gate. |
+| UAT-006 | MANUAL — not exercised with a native Electron device/audio session. | No microphone capture or customer device use. |
+
+Overall UAT is **39 PASS, 0 BLOCKED, 1 MANUAL**. Whole PHDK Auto remains partial pending native device/audio, exhaustive model/operation coverage, broad accessibility/localization, deployed SEO/AEO, live Qdrant/concurrency and each customer's configured call/CRM acceptance.
+
 ## Current candidate 5.1.44 — tenant scope on BrowserView resource requests
 
 | Case | Story / actor | Acceptance / steps | Result and evidence |

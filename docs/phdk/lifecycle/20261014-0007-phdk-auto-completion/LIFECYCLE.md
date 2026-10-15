@@ -1,3 +1,24 @@
+## Current Auto continuation — 5.1.51 DB-backed UAT (2026-10-14 local)
+
+The source and delivery candidate remains 5.1.51 at verified remote `main` commit `5b7e25512c95737688beea43b2d7172199dfa231` (tree `ccbcf9a5151e574282e89f214fc8bdaafbae6cac`). This continuation closes UAT-009 and scoped UAT-010 using a disposable PostgreSQL 16.15 instance bound only to `127.0.0.1`; all eight Prisma migrations applied, a second deploy was clean, and `prisma migrate status` reported the schema up to date. Synthetic user registration, superadmin role assignment, admin/coordinator tenant boundaries, ordinary-user denial, persisted company/user CRUD, idempotent vendor-secret encryption, and safe vendor projections passed.
+
+| Stage | Current status | Evidence / remaining work |
+|---|---|---|
+| 00 Preflight | VERIFIED | PHDK 2.50.10 coherence 52/52. |
+| 10 Capture / 20 Plan / 30 PMO | CONTINUED | Four owner-approved fronts and tenant-specific integrations remain in scope. |
+| 40 Integration Review | SOURCE PASS | Five application roots and Browser renderer are 5.1.51; PR #140 product source and PR #141 evidence docs merged. |
+| 50 UAT | 39 PASS / 0 BLOCKED / 1 MANUAL | UAT-009 PASS and UAT-010 PASS scoped to core persisted roles/tenant CRUD. UAT-006 remains manual for native device/audio. |
+| 60 UAT Fix | SOURCE COMPLETE | No source defect found in these DB-backed policy checks. |
+| 65 SEO / 67 AEO-GEO | SOURCE PASS / DEPLOYED MEASUREMENT OPEN | Published crawler, Search Console and answer-engine measurements unavailable. |
+| 70 Check | SOURCE PASS / WHOLE ACCEPTANCE PARTIAL | API/Cloud/Browser regressions, five builds, lint/typecheck, diagnostics and coherence remain passing from the exact source delivery. |
+| 90 Delivery | SOURCE VERIFIED | PR #140/#141 merged and remote main readback matches. No new product commit in this continuation. |
+
+Whole Auto remains **PARTIALLY DELIVERED**. Open evidence includes native Electron pairing/audio, full operation coverage across the 26 Prisma models, live Qdrant concurrency, broader accessibility/localization, deployed SEO/AEO, and customer-specific call/CRM acceptance. No customer system or production database was contacted. Detailed DB evidence: `50-uat/evidence/uat-postgres-roles-5.1.51-5b7e2551.json`.
+
+SIGUIENTE PASO: complete native-device UAT on the supported Electron host and finish the remaining model/accessibility and deployed measurement gates.
+
+---
+
 ## Current Auto continuation — 5.1.50 source delivered (2026-10-14 local)
 
 Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. Four owner-confirmed fronts remain active in their agreed order. PR #137 merged 5.1.49 at verified main `537ce1567c13f74512a23ef9b9cba3412a7510fd`. PR #138 delivered source commit `dd07302829270bbbf8499784b8c3f3d36c1af080` (head `375a0a4d603e14adab4c4b63d0837c87047ed18a`) at main `b92e1fa91bfa9b9f53c8a6513ca580f403cda1d5`; tree `5828601db800875da01c459a8ed3e8412474e8d5` matches candidate. PHDK 2.50.10 coherence passes 52/52. All five app roots/locks and Browser renderer report 5.1.50.
