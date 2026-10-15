@@ -8,7 +8,10 @@ import { webrtcInjector } from './webrtc-injector.js';
 import { mediaLayerWrapper } from './ipc-media-handlers.js';
 import { transcriptMonitor } from './media/transcript-monitor.js';
 import { eventLogger } from './media/event-logger.js';
-import { sanitizeVendorNotification } from './security-policy.js';
+import {
+  isAllowedVendorNavigation,
+  sanitizeVendorNotification,
+} from './security-policy.js';
 import { runtimeStatus, mainWindow, debugMode, clearRuntimeSessionState } from './runtime-state.js';
 import { getDeviceSocket, connectWebSockets, disconnectSockets, setupCommandPolling } from './cloud-connection.js';
 import { getStartupLogPath, getMainLogPath, getLogsDir, getInstallDir } from './logger.js';
@@ -358,12 +361,13 @@ export function registerIpcHandlers(tabManager: TabManager): void {
     const activeTabId = tabManager.getActiveTabId();
     const tabs = tabManager.getInternalTabs();
     const tab = tabs.find(t => t.id === activeTabId);
-    if (tab?.view) {
+    if (tab?.view && isAllowedVendorNavigation(url, tab.allowedOrigins)) {
       tab.url = url;
       tab.view.webContents.loadURL(url);
       tabManager.broadcastTabs();
       return { success: true };
     }
+    log.warn('[SECURITY] Rejected tab navigation outside the configured vendor scope.');
     return { success: false };
   });
 

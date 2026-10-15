@@ -46,6 +46,19 @@ export function isAllowedConfiguredVendorUrl(
   }
 }
 
+/** Keep every frame navigation inside the configured tenant scope; blank documents inherit their parent origin. */
+export function isAllowedVendorNavigation(
+  value: string,
+  allowedOrigins?: unknown,
+): boolean {
+  if (value === 'about:blank') return true;
+  if (!isAllowedVendorTabUrl(value)) return false;
+  return (
+    allowedOrigins === undefined ||
+    isAllowedConfiguredVendorUrl(value, allowedOrigins)
+  );
+}
+
 export function getAllowedVendorOrigins(vendor: {
   baseUrl?: unknown;
   url?: unknown;

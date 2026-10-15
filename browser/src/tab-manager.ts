@@ -6,6 +6,7 @@ import type { TabInfo } from './types.js';
 import {
   isAllowedVendorTabUrl,
   isAllowedVendorUrl,
+  isAllowedVendorNavigation,
   secureRendererPreferences,
   isAllowedConfiguredVendorUrl,
 } from './security-policy.js';
@@ -87,13 +88,16 @@ export class TabManager {
     });
 
     const guardVendorNavigation = (event: Electron.Event, targetUrl: string) => {
-      if (!isAllowedVendorTabUrl(targetUrl) || (scopedOrigins && !isAllowedConfiguredVendorUrl(targetUrl, scopedOrigins))) {
+      if (!isAllowedVendorNavigation(targetUrl, scopedOrigins)) {
         event.preventDefault();
-        log.warn(`[SECURITY] Blocked non-HTTP(S) navigation in vendor tab ${id}.`);
+        log.warn(`[SECURITY] Blocked navigation outside the vendor scope in tab ${id}.`);
       }
     };
     view.webContents.on('will-navigate', guardVendorNavigation);
     view.webContents.on('will-redirect', guardVendorNavigation);
+    view.webContents.on('will-frame-navigate', (event) => {
+      guardVendorNavigation(event, event.url);
+    });
 
     view.webContents.on('page-title-updated', (_event: Electron.Event, title: string) => {
       const tab = this.tabs.find(t => t.id === id);
