@@ -3,20 +3,17 @@ import { abortCurrentExecution } from './autobrowse-bridge.js';
 import { CloudGoalQueue } from './cloud-goal-queue.js';
 import { io, Socket } from 'socket.io-client';
 import log from 'electron-log';
-import crypto from 'crypto';
 import { webrtcInjector } from './webrtc-injector.js';
-import { startPolling, stopPolling, registerCommandHandler, type BrowserCommand, type CommandResult } from './command-poller.js';
+import { stopPolling } from './command-poller.js';
 import * as cmdlog from './cmdlog.js';
-import { startCall, appendTranscript, processDecision, executeRpaFlowFromCommand, closeCall, setMainWindow as setCallMainWindow, getCurrentCall } from './call-handler.js';
-import { setMainWindow as setRpaMainWindow } from './rpa-executor.js';
+import { closeCall } from './call-handler.js';
 import { setRpaProviderConfig } from './rpa-provider.js';
 import { mediaLayer } from './media/media-layer.js';
-import { transcriptMonitor } from './media/transcript-monitor.js';
 import { eventLogger } from './media/event-logger.js';
 import { runtimeStatus } from './runtime-state.js';
 import type { RuntimeStatus } from './types.js';
-import type { TabManager, Tab } from './tab-manager.js';
-import { sendStatusToRenderer, buildWsCtx, deriveWsUrl, decryptRuntimeVendorValue, enrichGoalExecuteDataFromRuntimeVendor, summarizeGoalExecuteData, ensureBrowserViewForGoalExecution, ensureActiveGoalTab, findMatchingVendorFromGoal, getReconnectDelay, decryptRuntimeVendorSecret, enrichCloudGoalInputsFromRuntimeVendor } from './cloud-helpers.js';
+import type { TabManager } from './tab-manager.js';
+import { sendStatusToRenderer, buildWsCtx, deriveWsUrl, enrichGoalExecuteDataFromRuntimeVendor, summarizeGoalExecuteData, ensureActiveGoalTab, getReconnectDelay, enrichCloudGoalInputsFromRuntimeVendor } from './cloud-helpers.js';
 import { initVoiceClient, getVoiceClient } from './media/voice-ws-client.js';
 
 

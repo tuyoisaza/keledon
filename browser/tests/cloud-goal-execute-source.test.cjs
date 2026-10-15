@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const cloudSource = fs.readFileSync(path.join(__dirname, '..', 'src', 'cloud-connection.ts'), 'utf8');
+const bridgeSource = fs.readFileSync(path.join(__dirname, '..', 'src', 'autobrowse-bridge.ts'), 'utf8');
 const helperSource = fs.readFileSync(path.join(__dirname, '..', 'src', 'cloud-helpers.ts'), 'utf8');
 const plannerSource = fs.readFileSync(path.join(__dirname, '..', 'src', 'goal-planner.ts'), 'utf8');
 
@@ -27,5 +28,11 @@ assert.match(cloudSource, /steps=\$\{result\.steps\?\.length \?\? 0\}/);
 assert.match(plannerSource, /sanitizeInputs\(goal\)/, 'known private inputs must be removed from the Cloud goal text');
 assert.match(plannerSource, /description: `\$\{step.type\} step`/, 'model text cannot expose credential progress descriptions');
 assert.doesNotMatch(plannerSource, /Fill \$\{field\} with \$\{value\}/, 'fill descriptions must not blindly print credential values');
+
+// Replanning receives the completed action types without forwarding sensitive step descriptions.
+assert.match(bridgeSource, /delete plannerInputs\.url/);
+assert.match(bridgeSource, /delete plannerInputs\.targetUrl/);
+assert.match(bridgeSource, /Previously completed action types:/);
+assert.doesNotMatch(bridgeSource, /previousActionTypes[\s\S]{0,120}\.map\(s\s*=>\s*s\.description\)/);
 
 console.log('cloud goal_execute source tests passed');

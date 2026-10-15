@@ -1,6 +1,5 @@
-import { app, BrowserWindow, dialog, screen, session } from 'electron';
+import { app, BrowserWindow, dialog, session } from 'electron';
 import * as path from 'path';
-import * as fs from 'fs';
 import * as os from 'os';
 import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
@@ -154,7 +153,6 @@ async function autoConnect(): Promise<void> {
 }
 
 function createWindow(): void {
-  const displays = screen.getAllDisplays();
   earlyLog(`[WINDOW] Creating main window...`);
 
   const win = new BrowserWindow({
@@ -217,7 +215,7 @@ function createWindow(): void {
     autoConnect();
   });
 
-  win.webContents.on('did-fail-load', (_event, ec, desc, url) => {
+  win.webContents.on('did-fail-load', (_event, ec, desc, _url) => {
     earlyLog(`[WINDOW] did-fail-load — errorCode=${ec} desc="${desc}"`);
     writeCrashLog(new Error(`Renderer failed to load: ${ec} ${desc}`));
   });

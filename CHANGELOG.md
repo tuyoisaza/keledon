@@ -1,3 +1,13 @@
+## v5.1.45 — 2026-10-15 (enable Browser lint and close source issues)
+
+- Add an ESLint 10 flat configuration and a zero-warning lint command for Browser TypeScript; remove unused source and correct empty best-effort handlers.
+- Unsubscribe call transcript listeners when stopped, measure event timers, and provide only completed action types to planner replanning context.
+- Align all five application package/lock roots and the Browser diagnostics version at 5.1.45.
+
+### Verification
+- Browser lint/build and offline suite (40/40), API/Cloud regressions (36/36, 16/16), all five app builds, synthetic Web UAT (4/4 suites), Web/Landing SEO (1/1 each) and PHDK coherence (52/52) pass; evidence is recorded in the active PHDK Auto lifecycle.
+- Delivery is pending PR and remote readback; whole Auto acceptance remains partial.
+
 ## v5.1.44 — 2026-10-15 (scope BrowserView resource requests to tenant origins)
 
 - Enforce the active Cloud-derived RPA tenant-origin allowlist on BrowserView HTTP(S)/WebSocket resource requests as well as navigation.

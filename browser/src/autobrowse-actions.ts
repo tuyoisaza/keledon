@@ -8,7 +8,6 @@
  */
 
 import type { BrowserView } from 'electron';
-import log from 'electron-log';
 import type { GoalPlannerAction as GoalAction } from './goal-planner';
 
 // ==================== Types ====================

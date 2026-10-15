@@ -17,7 +17,6 @@
  * Selectors that don't match any prefix are tried as CSS, then text.
  */
 
-import log from 'electron-log';
 import type { FindResult, RpaProvider, ElementInfo } from './rpa-provider';
 
 // ─── Playwright-Style Selector Parser ──────────────────────────────
@@ -97,7 +96,7 @@ function parseSelector(input: string): ParsedSelector {
  * Build injected JS that runs a parsed selector in the page context.
  * Returns { found: boolean, method?: string } or throws.
  */
-function buildQueryJs(parsed: ParsedSelector, fullTarget: string): string {
+function buildQueryJs(parsed: ParsedSelector): string {
   switch (parsed.type) {
     case 'text': {
       const val = JSON.stringify(parsed.value);
@@ -274,7 +273,7 @@ async function resolveSingle(
   parsed: ParsedSelector,
 ): Promise<FindResult> {
   try {
-    const js = buildQueryJs(parsed, '');
+    const js = buildQueryJs(parsed);
     const result = await webContents.executeJavaScript(js);
     if (result?.found) {
       return { found: true, method: result.method || 'playwright-style' };

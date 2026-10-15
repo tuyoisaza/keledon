@@ -89,16 +89,6 @@ function goalLooksGoogleLike(goal: string): boolean {
   return /google|gmail|youtube|google\s+sign/i.test(goal);
 }
 
-/** Check if the goal mentions email creation or submission. */
-function goalWantsEmailStep(goal: string): boolean {
-  return /email|e-mail|mail/i.test(goal) && !goal.toLowerCase().includes('password');
-}
-
-/** Check if the goal mentions password creation (not just generic password entry). */
-function goalWantsPasswordStep(goal: string): boolean {
-  return /password/i.test(goal) && /creat|set|new|choose|pick/i.test(goal);
-}
-
 /**
  * Extract a likely URL from a goal text.
  * Looks for patterns like "go to x.com", "navigate to example.com/path", or raw URLs.
@@ -121,18 +111,6 @@ function extractUrlFromText(text: string): string | null {
   const wordMatch = text.match(/\b([a-zA-Z0-9-]+\.(?:com|org|net|io|ai|app|dev|gov|edu))\b/);
   if (wordMatch) return `https://${wordMatch[1]}`;
   return null;
-}
-
-/**
- * Extract a quoted string or the entire trailing text after a keyword.
- * Used to parse natural-language targets from goal clauses.
- */
-function quotedOrTrailingText(clause: string, keyword: string): string {
-  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const regex = new RegExp(`${escaped}\\s+'([^']+)'|${escaped}\\s+"([^"]+)"|${escaped}\\s+(.+)`, 'i');
-  const match = clause.match(regex);
-  if (!match) return '';
-  return (match[1] || match[2] || match[3] || '').replace(/['"]/g, '').trim();
 }
 
 /**
@@ -198,15 +176,6 @@ function fillAction(selector: string, target: string, value: string): GoalPlanne
 }
 
 /**
- * Normalize text by collapsing whitespace and removing zero-width characters.
- * Useful when comparing extracted page text against expected values.
- */
-function normalizeContiguousText(text: string): string {
-  // v0.3.79: Added zero-width space removal + extended whitespace normalization
-  return text.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\s+/g, ' ').trim();
-}
-
-/**
  * Split a multi-clause goal string into individual action clauses.
  * Supports delimiters: |, ., ;, newlines, and numbered/emoji lists.
  * v0.3.80: Added support for numbered lists (1., 2.) and emoji list markers.
@@ -220,7 +189,7 @@ function splitGoalIntoClauses(goal: string): string[] {
   if (numbered.length > 2) return numbered;
 
   // Try emoji/symbol list markers (e.g., "👉 Navigate... ⚡ Click...")
-  const emojiSplit = text.split(/\s+[👉⚡🔍📌📝✅🔗]\s+/).filter(Boolean);
+  const emojiSplit = text.split(/\s+[👉⚡🔍📌📝✅🔗]\s+/u).filter(Boolean);
   if (emojiSplit.length > 2) return emojiSplit;
 
   // Fall back to sentence/pipe splitting

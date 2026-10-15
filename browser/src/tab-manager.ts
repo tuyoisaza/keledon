@@ -229,7 +229,7 @@ export class TabManager {
 
     const currentView = this.mainWindow.getBrowserView();
     if (currentView) {
-      try { this.mainWindow.removeBrowserView(currentView); } catch (e) {}
+      try { this.mainWindow.removeBrowserView(currentView); } catch (error) { log.debug('[Tabs] BrowserView was already detached:', error); }
     }
 
     if (tabId === 'home') {
@@ -263,7 +263,7 @@ export class TabManager {
     if (!tab) return;
 
     if (tab.view && this.mainWindow) {
-      try { this.mainWindow.removeBrowserView(tab.view); } catch (e) {}
+      try { this.mainWindow.removeBrowserView(tab.view); } catch (error) { log.debug('[Tabs] BrowserView was already detached:', error); }
     }
 
     this.tabs = this.tabs.filter(t => t.id !== tabId);
@@ -350,14 +350,14 @@ export class TabManager {
     const currentView = this.mainWindow.getBrowserView();
     if (this.chromeOverlayState.hideContent) {
       if (currentView === activeTab.view) {
-        try { this.mainWindow.removeBrowserView(activeTab.view); } catch (e) {}
+        try { this.mainWindow.removeBrowserView(activeTab.view); } catch (error) { log.debug('[Tabs] BrowserView was already detached:', error); }
       }
       return;
     }
 
     if (currentView !== activeTab.view) {
       if (currentView) {
-        try { this.mainWindow.removeBrowserView(currentView); } catch (e) {}
+        try { this.mainWindow.removeBrowserView(currentView); } catch (error) { log.debug('[Tabs] BrowserView was already detached:', error); }
       }
       this.mainWindow.addBrowserView(activeTab.view);
     }

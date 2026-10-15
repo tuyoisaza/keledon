@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { VoiceWSClient, getVoiceClient } from './voice-ws-client';
+import { getVoiceClient } from './voice-ws-client';
 
 // TypeScript declarations for Web Speech API
 interface SpeechRecognitionEvent extends Event {
@@ -41,11 +41,6 @@ interface SpeechRecognition extends EventTarget {
   abort(): void;
 }
 
-declare var SpeechRecognition: {
-  new (): SpeechRecognition;
-  prototype: SpeechRecognition;
-};
-
 interface SpeechSynthesisUtterance extends EventTarget {
   text: string;
   rate: number;
@@ -61,7 +56,7 @@ interface SpeechSynthesis {
   cancel(): void;
 }
 
-declare var speechSynthesis: SpeechSynthesis;
+declare let speechSynthesis: SpeechSynthesis;
 
 export interface MediaLayerEvents {
   'transcript': (text: string, isFinal: boolean) => void;
@@ -139,7 +134,7 @@ export class MediaLayer extends EventEmitter {
     this.synthesis = speechSynthesis;
   }
 
-  async startCall(sessionId?: string): Promise<void> {
+  async startCall(_sessionId?: string): Promise<void> {
     try {
       this.currentStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       this.callStatus = 'in-call';

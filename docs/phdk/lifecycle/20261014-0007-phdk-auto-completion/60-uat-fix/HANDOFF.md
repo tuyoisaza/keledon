@@ -1,5 +1,9 @@
 # UAT Fix handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.45 — no new Web UAT defect
+
+Exact built-SPA UAT rerun passes 4/4 suites with external traffic blocked and synthetic APIs. The protected diagnostics controls and role-shaped UI behave as expected. No repairable Web UAT failure remains for this slice; database-backed identity/persistence and native media are still environment-bound acceptance gates. Browser runtime fixes are covered by its 40/40 offline suite. Proceed through SEO/AEO and Check.
+
 ## Candidate 5.1.32 — Knowledge page UAT remediation (2026-10-14)
 
 UAT source defects fixed: the page had hardcoded English and presented a fabricated active-call transcript, intent/confidence, and example RAG matches as if live; it also exposed backend error text and used a hand-rolled nonmodal source dialog. `v5.1.32 fix(web): make knowledge page truthful and localized` removes the false panel and placeholder intake block from this page, localizes all visible copy/errors in es/en/pt, uses the shared native modal with labeled controls and focus restoration, and leaves regular users read-only. Exact-candidate synthetic UAT-030 passes at `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`; Web typecheck/build pass and the focused page lint has zero page warnings/errors (the shared i18n context has one pre-existing React Fast Refresh warning). No live backend, provider, or customer data was used.

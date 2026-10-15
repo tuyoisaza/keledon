@@ -8,7 +8,7 @@
 
 import log from 'electron-log';
 import { BrowserWindow, BrowserView } from 'electron';
-import { findElement, getAccessibilityTree, setRpaProviderConfig } from './rpa-provider';
+import { findElement } from './rpa-provider';
 import { getRuntimeVendorNavigationScope, setRuntimeVendorNavigationScope } from './security-policy';
 
 export interface RpaStep {
@@ -68,25 +68,6 @@ function getActiveView(): BrowserView | null {
  */
 function getTarget(step: RpaStep): string | null {
   return step.target || step.selector || null;
-}
-
-// ─── Scroll element into view before interaction ─────────────────────
-
-async function scrollIntoView(wc: Electron.WebContents, target: string): Promise<boolean> {
-  // Already done inside the provider's findElement — but ensure it's visible
-  try {
-    return await wc.executeJavaScript(`
-      (function() {
-        var sel = ${JSON.stringify(target)};
-        var el = document.querySelector(sel);
-        if (!el) return false;
-        el.scrollIntoView({ behavior: 'instant', block: 'center' });
-        return true;
-      })()
-    `);
-  } catch {
-    return false;
-  }
 }
 
 // ─── Step Executor ──────────────────────────────────────────────────
