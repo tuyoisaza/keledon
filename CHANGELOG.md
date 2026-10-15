@@ -1,3 +1,13 @@
+## v5.1.49 — 2026-10-14 (tighten Web data contracts)
+
+- Replace implicit `any` types with explicit API, session, flow, and provider shapes in the changed Web administration and dashboard paths.
+- Safely extract API error messages, normalize optional session status, and correct country-code handling for company country fallbacks.
+- Reduce Web ESLint warnings from 95 to 62 with zero errors; remaining warnings are tracked as existing typed-any and Fast Refresh debt.
+- Align all five application package/lock roots and the Browser diagnostics widget at 5.1.49.
+
+### Verification
+- API, Cloud, Browser, Web, and Landing builds pass; Web typecheck passes; full Web UAT passes 4/4 with synthetic APIs and external traffic blocked.
+
 ## v5.1.48 — 2026-10-14 (make provider status safe and close Web hook warnings)
 
 - Read provider-key presence only from the API's safe `*Set`/`hasApiKey` flags; secret placeholders stay blank in Brain's write-only credential flow.

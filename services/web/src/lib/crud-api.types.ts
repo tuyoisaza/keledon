@@ -144,8 +144,8 @@ export interface Session {
     metadata?: string;
     createdAt?: string;
     updatedAt?: string;
-    user?: { id: string; name: string };
-    team?: { id: string; name: string };
+    user?: { id: string; name?: string; companyId?: string };
+    team?: { id: string; name: string; brand?: { name: string; company?: { name: string } } };
 }
 
 export interface BrainChatMessage {
@@ -242,20 +242,20 @@ export interface SubAgentTask {
     type: 'flow' | 'read' | 'write' | 'wait';
     flowId?: string;
     stepIds?: string[];
-    parameters?: Record<string, any>;
+    parameters?: Record<string, unknown>;
     priority?: number;
 }
 
 export interface FlowExecutionResult {
     success: boolean;
     flowId: string;
-    extractedData: Record<string, any>;
+    extractedData: Record<string, unknown>;
     executionLog: Array<{
         stepId: string;
         stepType: string;
         status: 'success' | 'failed' | 'skipped';
         duration: number;
-        result?: any;
+        result?: unknown;
         error?: string;
     }>;
     totalDuration: number;

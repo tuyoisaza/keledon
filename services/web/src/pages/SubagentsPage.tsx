@@ -8,6 +8,7 @@ import {
     getFlows,
     type SubAgentStatus,
     type FlowExecutionResult,
+    type Flow,
 } from '@/lib/crud-api';
 import {
     Bot,
@@ -21,11 +22,15 @@ import {
     Loader2,
 } from 'lucide-react';
 
+function errorMessage(error: unknown, fallback: string): string {
+    return error instanceof Error ? error.message : fallback;
+}
+
 export default function SubagentsPage() {
     const { t } = useTranslation();
     const [sessionId, setSessionId] = useState('');
     const [agents, setAgents] = useState<SubAgentStatus[]>([]);
-    const [flows, setFlows] = useState<any[]>([]);
+    const [flows, setFlows] = useState<Flow[]>([]);
     const [selectedFlowId, setSelectedFlowId] = useState('');
     const [loading, setLoading] = useState(false);
     const [executing, setExecuting] = useState(false);
@@ -58,8 +63,8 @@ export default function SubagentsPage() {
         try {
             const response = await initializeSessionAgents(sessionId);
             setAgents(response.agents);
-        } catch (err: any) {
-            setError(err.message || 'Failed to initialize agents');
+        } catch (err: unknown) {
+            setError(errorMessage(err, 'Failed to initialize agents'));
         } finally {
             setLoading(false);
         }
@@ -73,8 +78,8 @@ export default function SubagentsPage() {
             await cleanupSessionAgents(sessionId);
             setAgents([]);
             setResult(null);
-        } catch (err: any) {
-            setError(err.message || 'Failed to cleanup agents');
+        } catch (err: unknown) {
+            setError(errorMessage(err, 'Failed to cleanup agents'));
         } finally {
             setLoading(false);
         }
@@ -86,8 +91,8 @@ export default function SubagentsPage() {
         try {
             const data = await getSessionAgents(sessionId);
             setAgents(data);
-        } catch (err: any) {
-            setError(err.message || 'Failed to refresh agents');
+        } catch (err: unknown) {
+            setError(errorMessage(err, 'Failed to refresh agents'));
         } finally {
             setLoading(false);
         }
@@ -101,8 +106,8 @@ export default function SubagentsPage() {
         try {
             const data = await executeFlow(selectedFlowId, sessionId);
             setResult(data);
-        } catch (err: any) {
-            setError(err.message || 'Failed to execute flow');
+        } catch (err: unknown) {
+            setError(errorMessage(err, 'Failed to execute flow'));
         } finally {
             setExecuting(false);
         }

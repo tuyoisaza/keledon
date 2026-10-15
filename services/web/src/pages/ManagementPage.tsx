@@ -46,7 +46,7 @@ interface ProviderCatalogEntry {
     description?: string;
     status?: string;
     is_enabled?: boolean;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }
 
 import { apiFetch } from '@/lib/api-fetch';
@@ -102,11 +102,16 @@ const resolveProviderState = (provider: ProviderCatalogEntry, readyIds: Set<stri
     return readyIds.has(provider.id) ? 'ready' : 'needs-config';
 };
 
+const firstString = (...values: unknown[]): string | undefined =>
+    values.find((value): value is string => typeof value === 'string');
+
+const hasTruthyValue = (...values: unknown[]): boolean => values.some(Boolean);
+
 const getProviderMeta = (provider: ProviderCatalogEntry) => {
     const metadata = provider.metadata || {};
-    const endpoint = metadata.endpoint || metadata.url;
-    const requiresEnv = metadata.required_env || metadata.requiredEnv || metadata.api_key_env;
-    const requiresApiKey = metadata.requires_api_key || metadata.requiresApiKey;
+    const endpoint = firstString(metadata.endpoint, metadata.url);
+    const requiresEnv = hasTruthyValue(metadata.required_env, metadata.requiredEnv, metadata.api_key_env);
+    const requiresApiKey = hasTruthyValue(metadata.requires_api_key, metadata.requiresApiKey);
     return { endpoint, requiresEnv, requiresApiKey };
 };
 
@@ -204,10 +209,10 @@ export default function ManagementPage() {
             }
             setStartState('started');
             setTimeout(() => setStartState('idle'), 2000);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Failed to start cloud:', err);
             setStartState('error');
-            setStartError(err?.message || 'Launcher unreachable');
+            setStartError(err instanceof Error ? err.message : 'Launcher unreachable');
             setTimeout(() => setStartState('idle'), 2500);
         }
     };
@@ -223,10 +228,10 @@ export default function ManagementPage() {
             }
             setStartState('started');
             setTimeout(() => setStartState('idle'), 2000);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Failed to start all services:', err);
             setStartState('error');
-            setStartError(err?.message || 'Launcher unreachable');
+            setStartError(err instanceof Error ? err.message : 'Launcher unreachable');
             setTimeout(() => setStartState('idle'), 2500);
         }
     };

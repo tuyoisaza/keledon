@@ -4,16 +4,17 @@ import { Filter, RefreshCw, Radio } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import CallMonitorPlaceholder from '@/components/phase4/CallMonitorPlaceholder';
 import { useTranslation } from '@/context/I18nContext';
+import type { Company, Session, User as SessionUser } from '@/lib/crud-api';
 
 export default function SessionsLivePage() {
     const { user } = useAuth();
     const { t } = useTranslation();
-    const [sessions, setSessions] = useState<any[]>([]);
+    const [sessions, setSessions] = useState<Session[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedCompany, setSelectedCompany] = useState<string>('');
     const [selectedUser, setSelectedUser] = useState<string>('');
-    const [companies, setCompanies] = useState<any[]>([]);
-    const [users, setUsers] = useState<any[]>([]);
+    const [companies, setCompanies] = useState<Company[]>([]);
+    const [users, setUsers] = useState<SessionUser[]>([]);
 
     const fetchFilterOptions = useCallback(async () => {
         try {

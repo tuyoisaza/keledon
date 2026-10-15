@@ -22,7 +22,7 @@ export type {
 
 const CRUD_API = `${API_URL}/api/crud`;
 
-async function fetchApi(endpoint: string, method = 'GET', body?: any) {
+async function fetchApi<T = unknown>(endpoint: string, method = 'GET', body?: unknown): Promise<T> {
     const token = sessionStorage.getItem('auth_token');
     const response = await fetch(`${CRUD_API}${endpoint}`, {
         method,
@@ -36,12 +36,13 @@ async function fetchApi(endpoint: string, method = 'GET', body?: any) {
         const text = await response.text();
         throw new Error(`API Error ${response.status}: ${text || response.statusText}`);
     }
-    return response.json();
+    const data: unknown = await response.json();
+    return data as T;
 }
 
 // Type definitions (matching Prisma schema - camelCase)
 
-async function fetchBrainApi(endpoint: string, method = 'POST', body?: any) {
+async function fetchBrainApi<T = unknown>(endpoint: string, method = 'POST', body?: unknown): Promise<T> {
     const token = sessionStorage.getItem('auth_token');
     const response = await fetch(`${API_URL}${endpoint}`, {
         method,
@@ -55,7 +56,8 @@ async function fetchBrainApi(endpoint: string, method = 'POST', body?: any) {
         const text = await response.text();
         throw new Error(`API Error ${response.status}: ${text || response.statusText}`);
     }
-    return response.json();
+    const data: unknown = await response.json();
+    return data as T;
 }
 
 // Companies
@@ -328,7 +330,7 @@ export async function getAllAgentStatuses(): Promise<SubAgentStatus[]> {
     return response.json();
 }
 
-export async function executeFlow(flowId: string, sessionId: string, parameters?: Record<string, any>): Promise<FlowExecutionResult> {
+export async function executeFlow(flowId: string, sessionId: string, parameters?: Record<string, unknown>): Promise<FlowExecutionResult> {
     const response = await fetch(`${SUBAGENTS_API}/execute/flow`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -338,7 +340,7 @@ export async function executeFlow(flowId: string, sessionId: string, parameters?
     return response.json();
 }
 
-export async function executeParallelFlows(flowIds: string[], sessionId: string, parameters?: Record<string, any>): Promise<FlowExecutionResult[]> {
+export async function executeParallelFlows(flowIds: string[], sessionId: string, parameters?: Record<string, unknown>): Promise<FlowExecutionResult[]> {
     const response = await fetch(`${SUBAGENTS_API}/execute/parallel`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -348,7 +350,7 @@ export async function executeParallelFlows(flowIds: string[], sessionId: string,
     return response.json();
 }
 
-export async function getFlowRunStatus(runId: string): Promise<any> {
+export async function getFlowRunStatus(runId: string): Promise<unknown> {
     const response = await fetch(`${SUBAGENTS_API}/flow-runs/${runId}`);
     if (!response.ok) throw new Error(`Failed to get flow run status: ${response.statusText}`);
     return response.json();

@@ -4,16 +4,17 @@ import { Filter, RefreshCw, History } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from '@/context/I18nContext';
+import type { Company, Session, User as SessionUser } from '@/lib/crud-api';
 
 export default function SessionsHistoryPage() {
     const { user } = useAuth();
     const { t } = useTranslation();
-    const [sessions, setSessions] = useState<any[]>([]);
+    const [sessions, setSessions] = useState<Session[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedCompany, setSelectedCompany] = useState<string>('');
     const [selectedUser, setSelectedUser] = useState<string>('');
-    const [companies, setCompanies] = useState<any[]>([]);
-    const [users, setUsers] = useState<any[]>([]);
+    const [companies, setCompanies] = useState<Company[]>([]);
+    const [users, setUsers] = useState<SessionUser[]>([]);
 
     const fetchFilterOptions = useCallback(async () => {
         try {
@@ -133,17 +134,18 @@ export default function SessionsHistoryPage() {
                         ) : filteredSessions.map(session => {
                             const sessionUser = session.user;
                             const userName = sessionUser?.name || t('sessions.unknownUser');
+                            const status = session.status || 'unknown';
                             const metadata = session.metadata ? JSON.parse(session.metadata) : {};
                             return (
                                 <tr key={session.id} className="border-b border-border hover:bg-muted/50">
                                     <td className="px-4 py-3 font-mono text-sm">{session.id.slice(0, 8)}</td>
                                     <td className="px-4 py-3">
                                         <span className={cn('px-2 py-1 rounded-full text-xs capitalize',
-                                            session.status === 'completed' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
+                                            status === 'completed' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
                                                 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20')}>
-                                            {['completed', 'escalated', 'ended', 'orphaned'].includes(session.status)
-                                                ? t(`sessions.status.${session.status}`)
-                                                : session.status}
+                                            {['completed', 'escalated', 'ended', 'orphaned'].includes(status)
+                                                ? t(`sessions.status.${status}`)
+                                                : status}
                                         </span>
                                     </td>
                                     <td className="px-4 py-3 text-sm">{userName}</td>
