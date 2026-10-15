@@ -15,9 +15,9 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target
 | 67 AEO/GEO | SOURCE REVIEW / EXTERNAL MEASUREMENT OPEN | Public claims unchanged; no crawler/answer-engine measurement. |
 | 70 Check | SCOPED SOURCE PASS / WHOLE ACCEPTANCE PARTIAL | Web lint is 95 warnings/0 errors with zero hooks/purity; remaining typed-any and Fast Refresh warnings remain. |
 | 80 Remediation | COMPLETED FOR 5.1.48 SOURCE SLICE | All five builds/typecheck, API/Cloud, Browser, diagnostics, UAT/SEO and PHDK coherence pass. |
-| 90 Delivery | SOURCE CANDIDATE | Commit/PR/readback pending; machine post-merge evidence will follow remote verification. |
+| 90 Delivery | SOURCE MERGED / REMOTE VERIFIED | PR #134 merged; remote SHA/tree/version readback passes; machine evidence is `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.48-post-merge-134.json`. |
 
-Whole Auto remains **PARTIALLY DELIVERED**. Persisted PostgreSQL/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-customer live call/CRM are not certified by this source slice.
+Whole Auto remains **PARTIALLY DELIVERED**. Persisted PostgreSQL/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-customer live call/CRM are not certified by this source slice. Deterministic gate blocks solely on whole-Auto acceptance.
 
 ---
 

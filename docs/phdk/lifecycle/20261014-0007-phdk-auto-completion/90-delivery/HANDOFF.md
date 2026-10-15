@@ -1,12 +1,12 @@
-## Candidate 5.1.48 — Brain credential status and Web hook alignment
+## PHDK Auto 5.1.48 source merged; continue four fronts
 
-Branch `fix/phdk-web-hooks-5-1-48`, based on verified `origin/main` `00b1b523e020df9fb5c388d61cbbb1cda8ba9080`. Brain consumes provider-specific safe key-presence booleans, keeps secret fields blank and prevents stale team responses from updating the selected tenant's UI. Web closes all React Hooks/purity lint findings; total Web lint is 95 warnings/0 errors versus 119.
+PR #134 merged PR-head `40943b822e47b5c443b607eb5d6e74625333d71b` at remote `main` `a3dcd93a5d7fb3a374894436379301290cc12bfe`; its tree `9353ed3c29c8ba6540143e9b49c7c26650e2ee53` matches; source/UAT commit `f93758c4b2e52a452ff35b8b43f99adef4cfcd1f`. Brain consumes provider-specific safe key-presence booleans, keeps secret fields blank and prevents stale team responses from updating the selected tenant's UI. Web closes all React Hooks/purity lint findings; total Web lint is 95 warnings/0 errors versus 119.
 
 All five package/lock roots and Browser renderer report 5.1.48. All five builds, Web typecheck, API/Cloud regressions 36/16, Browser 27/27, synthetic Web UAT 4/4, diagnostics 19/19, Web/Landing SEO and PHDK coherence 52/52 pass. UAT evidence: `../50-uat/evidence/uat-web-5.1.48/uat-local-web.json` (synthetic UI/API fixtures; no backend/production acceptance).
 
-Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL). Database/identity/persisted CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-customer live call/CRM remain open. No DB, customer data, private CRM endpoint, device or deployment was used. Source delivery pending.
+Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL). Database/identity/persisted CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and per-customer live call/CRM remain open. No DB, customer data, private CRM endpoint, device or deployment was used. Machine delivery evidence: `PHDK_DELIVERY_EVIDENCE-5.1.48-post-merge-134.json`; the deterministic gate blocks only on whole Auto acceptance.
 
-SIGUIENTE PASO: create the version-prefixed source PR, verify remote main, then continue the four-front Auto.
+SIGUIENTE PASO: continue the four-front Auto; obtain missing persisted/native/deployed evidence in its isolated acceptance environments.
 
 ---
 

@@ -1,13 +1,13 @@
-## Current Auto candidate — 2026-10-14, 5.1.48 (Web alignment)
+## Current Auto delivery — 2026-10-14, 5.1.48 merged (Web alignment)
 
 | Commitment | Current candidate evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | Based on merged 5.1.47 main; five app roots/locks and Browser renderer at 5.1.48. Web full lint falls 119→95 with 0 React Hooks/purity findings. | Commit/PR/readback pending; remaining typed-`any` and Fast Refresh warnings remain visible. |
+| CMT-001 | PR #134 merged at `a3dcd93a5d7fb3a374894436379301290cc12bfe`, exact tree verified. Five app roots/locks and renderer at 5.1.48. Web full lint falls 119→95 with 0 React Hooks/purity findings. | Source delivery verified; remaining typed-`any` and Fast Refresh warnings remain visible. |
 | CMT-002 | Browser version/action tests 27/27; Web synthetic journeys 4/4; safe Brain provider indicators and team-switch request guard. | Native Windows device/audio and broad assistive-technology/localization remain. |
 | CMT-003 | Tenant-selected provider status is per-provider and secret-safe; tenant Vendor/private-origin policy unchanged. | Live call/CRM acceptance is client-specific; no private endpoint was accessed. |
 | CMT-004 | API/Cloud regression 36/16; build/typecheck and PHDK coherence 52/52. | Safe DB identities, disposable PostgreSQL/migrations and exhaustive persisted CRUD/resource matrix remain. |
 
-Whole Auto remains **PARTIALLY DELIVERED**. Candidate is not yet committed or merged.
+Whole Auto remains **PARTIALLY DELIVERED**. Evidence gate blocks only on overall acceptance.
 
 ---
 
