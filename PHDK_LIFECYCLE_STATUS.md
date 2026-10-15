@@ -19,7 +19,7 @@ Goal: four owner-confirmed KELEDON fronts in their agreed order, aligned to appl
 | 67 AEO/GEO | REUSED / SOURCE REVIEW | No public claim changed; live answer-engine/crawler measurement remains unavailable. |
 | 70 Check | SOURCE CHECK PASS / ACCEPTANCE PARTIAL | Candidate snapshot `70-check/snapshots/candidate-5.1.41/PHDK_CHECK_REPORT.md`; CHK-AUTO-019 fixed. |
 | 80 Remediation | COMPLETED FOR CANDIDATE | API/Cloud regressions 36/36 and 16/16, Browser offline 35/35, all builds, Web UAT/diagnostics/SEO, Landing SEO, coherence 52/52. Browser ESLint could not start; documented. |
-| 90 Delivery | RUNNING | Versioned source commit exists; lifecycle evidence and exact-source UAT prepared. Branch push, PR, merge and remote-main verification remain. |
+| 90 Delivery | SOURCE SLICE VERIFIED | PR #123 merged at `7ac039f217f0328a9f25d6fbe9e7f85107c13ca1`; `origin/main` and `git ls-remote` agree, PR/main trees match, Browser version 5.1.41. Source-slice completion gate passes; lifecycle evidence is `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.41-post-merge-123.json`. |
 
 Overall status: **PARTIALLY DELIVERED**. No PostgreSQL, production identity, customer endpoint, private destination, or deployment was used.
 

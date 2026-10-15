@@ -1,12 +1,12 @@
-## Current Auto completion audit — candidate 5.1.41 (2026-10-14)
+## Current Auto completion audit — source slice 5.1.41 merged; whole Auto partial (2026-10-14)
 
 The four confirmed fronts remain active and none is deferred. Candidate source `718ce3d4cf9c4e51b71ec163e9749307997d85d2` (tree `14e5c085771a1e556692991fd1724e747b164ee7`), based on verified remote main `aed26d6641950fb3d4f40e64fee459fb013c544a`, aligns all five app package/lock roots and Browser renderer at 5.1.41. PHDK 2.50.10 coherence passes 52/52. API/Cloud regressions pass 36/36 and 16/16; all five builds pass; Browser offline suite 35/35; Web UAT passes 4/4 files with 17 local journey checks; Web diagnostics 19/19; Web/Landing SEO 1/1 each.
 
-CHK-AUTO-019 found missing tenant-scope enforcement on Browser frame navigation and the trusted programmatic `tabs:navigate` IPC. Both now use the normalized tenant origin allowlist; configured private destinations remain supported. UAT-037 passes offline policy/wiring tests. No private destination, customer provider, database, live device, production identity or deployment was contacted. Browser ESLint could not start because installed ESLint 10 requires an absent flat config.
+CHK-AUTO-019 found missing tenant-scope enforcement on Browser frame navigation and the trusted programmatic `tabs:navigate` IPC. Both now use the normalized tenant origin allowlist; configured private destinations remain supported. UAT-037 passes offline policy/wiring tests. PR #123 merged at `7ac039f217f0328a9f25d6fbe9e7f85107c13ca1`; `origin/main` and `git ls-remote` agree, and its tree matches the PR head. The source-slice completion gate passes. No private destination, customer provider, database, live device, production identity or deployment was contacted. Browser ESLint could not start because installed ESLint 10 requires an absent flat config.
 
 | Commitment | Status | Remaining in-scope proof |
 |---|---|---|
-| CMT-001 — baseline/versions/PR | SOURCE CANDIDATE PASS / DELIVERY PENDING | Version alignment and source prefix pass; push, PR, merge and remote-main readback pending. PR #122 for the preceding UAT slice is independently verified. |
+| CMT-001 — baseline/versions/PR | SOURCE SLICE DELIVERY VERIFIED | PR #123 merged; remote SHA/tree and version independently verified. GitHub reports no hosted checks or review decision; `main` has no configured protection. |
 | CMT-002 — widget/diagnostics | LOCAL SOURCE/UAT PASS / ACCEPTANCE PARTIAL | Physical Windows device/audio, broad route and assistive-tech verification. |
 | CMT-003 — voice/Cloud/Browser/customer CRM | OFFLINE SOURCE POLICY PASS / LIVE PER CLIENT | Customer adapter/provider selection and endpoint are intentionally customer-owned; no live call/CRM test can be inferred. Configured private origins require tenant validation/allowlisting; no DB-level persisted configuration was run. |
 | CMT-004 — administration/permissions | SOURCE REGRESSIONS PASS / PERSISTENCE UNVERIFIED | Safe DB identities, disposable PostgreSQL/migrations, exhaustive model×role×tenant×surface×operation persistence proof. |

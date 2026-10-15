@@ -1,8 +1,8 @@
-## Current Auto candidate — 2026-10-14, 5.1.41 source candidate
+## Current Auto delivery — 2026-10-14, 5.1.41
 
 | Commitment | Delivered source evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 | PR #122 is merged/read back; all five app package/lock roots and Browser renderer are versioned 5.1.41 on candidate source `718ce3d4cf9c4e51b71ec163e9749307997d85d2`. | Candidate PR, merge and remote-main readback are pending. |
+| CMT-001 | PR #123 is merged/read back at `7ac039f217f0328a9f25d6fbe9e7f85107c13ca1`; PR/main trees match; all five app package/lock roots and Browser renderer are versioned 5.1.41. | Continue baseline reconciliation in subsequent source slices; this delivery is closed. |
 | CMT-002 | Web diagnostics 19/19; exact candidate UAT 4/4 browser files and 17 journey checks. | Native device/audio and broad accessibility/localization remain open. |
 | CMT-003 | Configured private CRM origins remain supported after URL validation and per-tenant allowlisting; frame, redirect and IPC navigation use tenant scope; Browser offline suite passes 35/35. | Live voice/CRM acceptance remains customer-specific; subresource/network behavior and real customer endpoint were not tested. |
 | CMT-004 | API/Cloud role and tenant regressions 36/36 and 16/16; source inventory 35 models/168 rows. | Exhaustive persisted CRUD, safe DB identities, disposable PostgreSQL/migrations and full runtime matrix remain open. |
