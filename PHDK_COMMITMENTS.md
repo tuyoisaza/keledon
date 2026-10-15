@@ -1,5 +1,20 @@
 # Commitment ledger
 
+## Active run update — 5.1.48 Brain provider status and Web hook alignment (2026-10-14)
+
+PR #134 merged the 5.1.48 candidate on verified `main` `a3dcd93a5d7fb3a374894436379301290cc12bfe`; the post-merge evidence reconciliation is PR #135. The tested source SHA is `f93758c4b2e52a452ff35b8b43f99adef4cfcd1f`, and the PR-head tree matches the source delivery. All five app package/lock roots and Browser renderer are 5.1.48. Brain now uses selected-provider safe credential flags and ignores stale team responses. Web lint is 95 warnings/0 errors with no React Hooks/purity findings. Exact-source Web UAT 4/4, Browser offline tests 27/27, API/Cloud regression 36/16, all five builds, diagnostics 19/19, SEO tests and PHDK coherence 52/52 pass.
+
+| Commitment | Current delivery evidence | Remaining acceptance |
+|---|---|---|
+| CMT-001 — baseline, versions, PRs | PR #134 merged; PR #135 reconciled delivery evidence; remote SHA/tree/version checks passed at merge. | Continue remote/version surveillance; 95 Web warnings remain (92 `any`, 3 Fast Refresh). |
+| CMT-002 — widget and safe diagnostics | Diagnostics 19/19; synthetic Web UAT 4/4; credential-status rendering remains write-only and uses selected-provider safe flags. | Native Windows device/audio and broad route/assistive-tech acceptance remain open. |
+| CMT-003 — voice → Cloud → Browser → CRM per client | Tenant-selected integrations and private-origin allowlists remain provider-neutral; Browser suite 27/27. | Packaged runtime/native audio and each customer's live provider/CRM acceptance remain open. |
+| CMT-004 — administration and permissions | Approved DB-derived actor/tenant and least-privilege policy unchanged; API/Cloud 36/16 and 35-model/168-row source drift guard pass. | Safe DB identities, disposable PostgreSQL, persisted migrations/CRUD and exhaustive authorization matrix remain open. |
+
+Overall PHDK Auto remains **PARTIALLY DELIVERED**. UAT is 37 PASS, 2 BLOCKED, 1 MANUAL. No live endpoint, database, customer data, device or deployment was used.
+
+---
+
 ## Active run update — 5.1.44 RPA resource scope (2026-10-15)
 
 CHK-AUTO-022 applies the Cloud-derived tenant origin set to BrowserView HTTP(S)/WebSocket requests during RPA, including conservative handling for requests without a resolvable WebContents. Private CRM origins remain available when configured by the tenant. Candidate `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`) is based on verified `main` `11d773e6d41d21625302ab63fef31cf43d521041` and aligns all five app package/lock roots and Browser renderer at 5.1.44. UAT-040 passes offline; Browser tests 27/27, security-policy/wiring 11/11, Browser build and PHDK coherence 52/52 pass.
