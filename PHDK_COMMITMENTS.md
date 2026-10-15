@@ -2,11 +2,11 @@
 
 ## Active run update — candidate 5.1.51 (2026-10-15)
 
-Candidate source `09ef2497957c381a3af7428af393b65b811c2fe6`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`, aligns all five product package/lock roots and Browser renderer at 5.1.51. API full ESLint is now 0 warnings/0 errors. API/Cloud regressions 36/16; Browser offline 27/27; all five builds; Web/Landing typecheck/lint; exact-source synthetic UAT 4/4; diagnostics 19/19; SEO 1/1 each; PHDK coherence 52/52 pass. Source changes remove simulated execution/integration success and retain only explicit tenant adapter behavior.
+Candidate source `09ef2497957c381a3af7428af393b65b811c2fe6`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`, aligns all five product package/lock roots and Browser renderer at 5.1.51. PR #140 squash-merged at verified main `156ae2467c9ed6f73311ec45cae933417b1e5f32`; remote tree matches candidate. API full ESLint is 0 warnings/0 errors. API/Cloud regressions 36/16; Browser offline 27/27; all five builds; Web/Landing typecheck/lint; exact-source synthetic UAT 4/4; diagnostics 19/19; SEO 1/1 each; PHDK coherence 52/52 pass. Source changes remove simulated execution/integration success and retain only explicit tenant adapter behavior.
 
 | Commitment | Current delivery evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 — baseline, versions, PRs | Candidate 5.1.51 is versioned and source-tested; branch `fix/phdk-api-lint-zero-5-1-51`. | Push, PR, merge and verified remote-main readback pending. |
+| CMT-001 — baseline, versions, PRs | PR #140 merged; remote SHA/tree/version verified on `main`. | Continue baseline/version/PR reconciliation. |
 | CMT-002 — widget and safe diagnostics | Diagnostics 19/19; exact-source synthetic Web UAT 4/4. | Native Windows device/audio and broad route/assistive-tech acceptance remain open. |
 | CMT-003 — voice → Cloud → Browser → CRM per client | Mock successes removed; absent tenant execution adapter fails closed; validated private-origin allowlists remain. | Per-client live call/CRM acceptance and native audio remain open; no private endpoint was contacted. |
 | CMT-004 — administration and permissions | Approved restrictive actor/tenant policy unchanged; five builds, API/Cloud regressions, coherence and synthetic role UAT pass. | Safe DB identities, disposable PostgreSQL and persisted migrations/CRUD/full authorization matrix remain open. |
