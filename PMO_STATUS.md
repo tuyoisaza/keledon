@@ -1,3 +1,18 @@
+## Current PMO board — 5.1.68 merged; whole Auto remains partial (2026-10-15)
+
+Run `20261014-0007-phdk-auto-completion`; remote `main` `f974ab5984a20cd1b4ad742ddffe5921ad2bf823` / tree `96d7ce832332b3c991269432bcaacc083c2abb68`. PR #167 is squash-merged; all six version reads are 5.1.68. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled. Mechanical completion gate passes; source delivery does not close portfolio acceptance.
+
+| Workstream | Status | Evidence / next milestone | Open acceptance |
+|---|---|---|---|
+| WS-001 baseline, versions, PRs | SOURCE DELIVERY PASS / PORTFOLIO ACTIVE | #167 merged; SHA/tree/version readback and PHDK 56/56 verified. | Continue baseline and release reconciliation; no hosted checks/review or main protection reported. |
+| WS-002 widget and safe diagnostics | PARTIAL | Web diagnostics 19/19; synthetic Web UAT and responsive flow-editor evidence remain current. | Native device/audio MANUAL; broad accessibility/localization. |
+| WS-003 tenant runtime and CRM | PARTIAL | Tenant URL validation/allowlist, Browser offline suite, company-owned flows and scoped API reads. | Customer-selected live voice/CRM and private-network acceptance per tenant. |
+| WS-004 administration/permissions | PARTIAL | Restrictive actor/tenant policy; API 39/39, Cloud 18/18; positive provider/profile scope assertions. | CRUD map 546 rows: 410 BLOCKED, 104 N/A, 31 DECISION NEEDED, 1 PASS; UAT-060 awaits PostgreSQL. |
+
+Current activity: continue source-resolvable role/tenant mapping and external acceptance when environments are available. Whole Auto remains **PARTIALLY DELIVERED**.
+
+SIGUIENTE PASO: run UAT-060 with the owner-provided disposable PostgreSQL target when available; continue native, accessibility, deployed discovery and per-tenant integration gates.
+
 ## Current PMO board — 5.1.67 merged; whole Auto remains partial (2026-10-15)
 
 Run `20261014-0007-phdk-auto-completion`; target `main` at `44a1038c2a8d8d2659bde741a0cbd13b8485cfca` / tree `1b5cabbc4bb8192ab70771c62476ed2eb069fc99`. Product PR [#163](https://github.com/tuyoisaza/keledon/pull/163) and post-merge evidence PR [#164](https://github.com/tuyoisaza/keledon/pull/164) are squash-merged; version 5.1.67 is aligned across all five app roots and Browser renderer. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled. The mechanical completion gate passes; source delivery does not close portfolio acceptance.

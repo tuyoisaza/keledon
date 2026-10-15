@@ -1,3 +1,20 @@
+## Current PHDK Auto completion audit — 5.1.68 source slice merged; whole portfolio partial
+
+PR [#167](https://github.com/tuyoisaza/keledon/pull/167) squash-merged source `62c979b299301066ef5187fada9041017ae2bc8f` at verified remote `main` `f974ab5984a20cd1b4ad742ddffe5921ad2bf823`, tree `96d7ce832332b3c991269432bcaacc083c2abb68`, equal to the tested source tree. All five app package/lock roots and Browser renderer read 5.1.68. PHDK v2.51.2 coherence passes 56/56; the mechanical completion gate passes against the post-merge record. GitHub reported no hosted checks or review decision; `main` is unprotected. No deployment is claimed. The exact-candidate source checks pass: API/Cloud regressions 39/39 and 18/18; all five production builds and lint checks; API/Cloud/Web/Landing dedicated typechecks, with Browser build running `tsc`; PHDK coherence 56/56. UAT-062 is source guard evidence only.
+
+| Gate | Status | Evidence / remaining |
+|---|---|---|
+| CMT-001 baseline/version/PR | SOURCE SLICE DELIVERED / ACTIVE | PR #167 merged; current main SHA/tree and six version reads verified. Continue baseline reconciliation. |
+| CMT-002 widget/diagnostics | PARTIAL | Existing source and synthetic checks remain; native device/audio and broad accessibility/localization open. |
+| CMT-003 per-tenant voice/CRM | PARTIAL / CUSTOMER-SCOPED | Tenant allowlist/source contracts remain; live customer-selected integration is unverified. |
+| CMT-004 administration/permissions | PARTIAL | Positive actor-derived tenant scope assertions pass; database persistence and CRUD operation matrix remain incomplete. |
+| PostgreSQL acceptance | BLOCKED | UAT-060 awaits owner-provided disposable target. |
+| Native device/audio | MANUAL | Requires supported physical/native test environment. |
+
+Whole Auto remains **PARTIALLY DELIVERED**: 60 PASS, 1 BLOCKED and 1 MANUAL; 0/4 commitments are fully closed. No production deployment or customer endpoint is claimed.
+
+SIGUIENTE PASO: continue the confirmed four-front portfolio and resume UAT-060 when the test database is available.
+
 ## Current PHDK Auto — 5.1.67 source slice merged; whole portfolio partial
 
 Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. Source PR [#163](https://github.com/tuyoisaza/keledon/pull/163) squash-merged at `dbdd64f16048ac01ff1ec34e39ec33e6c4255175`, tree `932a278c510cbdff8ace021dab2e364a9744b0d1`, matching the tested candidate. All five application version roots and the Browser renderer read 5.1.67. The mechanical completion verifier passes using the post-merge record at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.67-post-merge-163.json` (also synchronized to root `PHDK_DELIVERY_EVIDENCE.json`). PHDK v2.51.2 coherence passes 56/56.

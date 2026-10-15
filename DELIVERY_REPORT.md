@@ -1,3 +1,19 @@
+## Current delivery — 5.1.68 source slice merged and verified; Auto partial
+
+PR [#167](https://github.com/tuyoisaza/keledon/pull/167) squash-merged source `62c979b299301066ef5187fada9041017ae2bc8f` at verified remote `main` `f974ab5984a20cd1b4ad742ddffe5921ad2bf823`, tree `96d7ce832332b3c991269432bcaacc083c2abb68`, equal to the tested source tree. All five app package/lock roots and Browser renderer read 5.1.68. PHDK v2.51.2 coherence passes 56/56; the mechanical completion gate passes against the post-merge record. GitHub reported no hosted checks or review decision; `main` is unprotected. No deployment is claimed. The product source commit is version-prefixed (`5.1.68: verify provider tenant scope contracts`). The candidate adds API/Cloud regression assertions for database-actor-derived company scope on provider configuration and voice-profile reads/writes. All five production builds and lint checks; API/Cloud/Web/Landing dedicated typechecks, with Browser build running `tsc` pass; API/Cloud regressions are 39/39 and 18/18. PHDK coherence passes 56/56.
+
+| Delivery proof | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Five package/lock roots and Browser renderer read 5.1.68. |
+| COMMIT_PREFIX | PASS | Source commit `62c979b2` begins `5.1.68:`. |
+| PUSH_AND_PR | PASS | PR #167 was pushed and squash-merged. |
+| REMOTE_MAIN | PASS | `origin/main` and `git ls-remote` both read `f974ab5984a20cd1b4ad742ddffe5921ad2bf823`; remote tree `96d7ce832332b3c991269432bcaacc083c2abb68` equals tested source. Completion gate passes. |
+| SCOPE_AND_CHECKS | PASS FOR SOURCE SLICE / WHOLE AUTO PARTIAL | UAT-062 source guards plus applicable checks pass; DB persistence and other external/manual acceptance remain open. |
+
+GitHub reported no hosted checks or review decision and no main protection. No deployment is claimed. The portfolio remains 60 PASS, 1 BLOCKED, 1 MANUAL with all four commitments active. Full evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.68-post-merge-167.json`.
+
+SIGUIENTE PASO: continue the remaining database, native, accessibility, discovery and customer-specific acceptance gates; do not mark the whole Auto complete.
+
 ## Current delivery — 5.1.67 merged; whole portfolio partial
 
 Run `20261014-0007-phdk-auto-completion`; source branch `fix/phdk-api-flow-search-scope-5-1-67`; version 5.1.67. PR [#163](https://github.com/tuyoisaza/keledon/pull/163) squash-merged from head `387b0f097c7600397c62e007ac2a118b5380df4f` at remote `main` SHA `dbdd64f16048ac01ff1ec34e39ec33e6c4255175`, tree `932a278c510cbdff8ace021dab2e364a9744b0d1`, identical to the tested candidate tree. The mechanical verifier passes from `PHDK_DELIVERY_EVIDENCE.json`; a dated copy is in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.67-post-merge-163.json`. All five app roots and Browser renderer read 5.1.67. PHDK v2.51.2 coherence is 56/56.

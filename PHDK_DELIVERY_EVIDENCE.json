@@ -1,33 +1,32 @@
 {
   "version": "1",
-  "goal": "PHDK Auto four-front portfolio continuation: tenant flow configuration and scoped API flow reads; whole portfolio remains partial",
+  "goal": "PHDK Auto four-front portfolio continuation: positive API/Cloud tenant scope guards for provider and voice profile contracts; whole portfolio remains partial",
   "target_branch": "main",
-  "expected_version": "5.1.67",
+  "expected_version": "5.1.68",
   "version_file": "services/web/package.json",
   "version_property": "version",
-  "tested_source_commit_sha": "387b0f097c7600397c62e007ac2a118b5380df4f",
-  "tested_candidate_tree": "932a278c510cbdff8ace021dab2e364a9744b0d1",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/163",
-  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/163",
-  "pr_head_sha": "387b0f097c7600397c62e007ac2a118b5380df4f",
-  "product_source_merge_sha": "dbdd64f16048ac01ff1ec34e39ec33e6c4255175",
-  "docs_reconciliation_merge_sha": "13f19d8d3e7a7630bcce77bfabd360204e698e3f",
-  "merged_commit_sha": "dbdd64f16048ac01ff1ec34e39ec33e6c4255175",
-  "remote_main_sha": "dbdd64f16048ac01ff1ec34e39ec33e6c4255175",
-  "remote_main_tree": "932a278c510cbdff8ace021dab2e364a9744b0d1",
-  "remote_main_verified_at": "2026-10-15T23:25:01Z",
+  "tested_source_commit_sha": "62c979b299301066ef5187fada9041017ae2bc8f",
+  "tested_candidate_tree": "96d7ce832332b3c991269432bcaacc083c2abb68",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/167",
+  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/167",
+  "pr_head_sha": "62c979b299301066ef5187fada9041017ae2bc8f",
+  "product_source_merge_sha": "f974ab5984a20cd1b4ad742ddffe5921ad2bf823",
+  "merged_commit_sha": "f974ab5984a20cd1b4ad742ddffe5921ad2bf823",
+  "remote_main_sha": "f974ab5984a20cd1b4ad742ddffe5921ad2bf823",
+  "remote_main_tree": "96d7ce832332b3c991269432bcaacc083c2abb68",
+  "remote_main_verified_at": "2026-10-15T23:37:19Z",
   "git_ls_remote_matches": true,
   "versions": {
-    "services_api": "5.1.67",
-    "cloud": "5.1.67",
-    "browser": "5.1.67",
-    "services_web": "5.1.67",
-    "landing": "5.1.67",
-    "browser_renderer": "5.1.67"
+    "services_api": "5.1.68",
+    "cloud": "5.1.68",
+    "browser": "5.1.68",
+    "services_web": "5.1.68",
+    "landing": "5.1.68",
+    "browser_renderer": "5.1.68"
   },
   "github": {
     "state": "MERGED",
-    "product_pr": "#163 squash-merged; prior tenant flow configuration PR #160 and documentation reconciliation #162 remain ancestors",
+    "product_pr": "#167 squash-merged; no open PRs at candidate start",
     "merge_method": "squash",
     "merge_state": "CLEAN at merge",
     "hosted_checks": [],
@@ -35,78 +34,58 @@
     "main_protection": false
   },
   "checks": {
-    "lint": {
-      "evidence": "API lint passed after the final tenant listing guard; other package lints passed on the 5.1.67 candidate.",
-      "status": "PASS"
-    },
-    "typecheck": {
-      "evidence": "API full TypeScript no-emit check passed after the final tenant listing guard; Cloud full TypeScript, Web and Landing typechecks pass.",
-      "status": "PASS"
-    },
-    "build": {
-      "evidence": "API production build passed after the final tenant listing guard; Cloud, Web, Landing and Browser production builds passed on the 5.1.67 candidate.",
-      "status": "PASS"
-    },
     "api_regression": {
-      "evidence": "API regression runner passed 39/39 suites after the final scope change.",
-      "status": "PASS"
+      "status": "PASS",
+      "evidence": "API full regression 39/39, including positive actor-derived company assertions for provider config and voice-profile GET/PUT/POST paths."
     },
     "cloud_regression": {
-      "evidence": "Cloud regression runner passed 18/18 suites on the candidate.",
-      "status": "PASS"
+      "status": "PASS",
+      "evidence": "Cloud full regression 18/18, including positive actor-derived company assertions for provider config and voice-profile GET/PUT/POST paths."
     },
-    "flow_read_scope": {
-      "evidence": "API FlowService Jest 12/12 covers missing-team fail-closed listing/search, exact team filtering, bounded Qdrant limits, malformed rows and upstream errors; Cloud parity 10/10.",
-      "status": "PASS"
+    "build": {
+      "status": "PASS",
+      "evidence": "Production builds passed for API, Cloud, Web, Landing and Browser."
     },
-    "web_uat": {
-      "evidence": "Web UAT passes 6/6 plus AI-admin using synthetic fixtures with outbound requests blocked; UAT-061 is source-unit evidence.",
-      "status": "PASS"
+    "lint": {
+      "status": "PASS",
+      "evidence": "Lint passed for API, Cloud, Web, Landing and Browser; no autofix changes outside the reviewed candidate."
     },
-    "browser_regression": {
-      "evidence": "Browser offline suite passes 43/43; Browser lint/build pass on 5.1.67 candidate.",
-      "status": "PASS"
-    },
-    "web_diagnostics": {
-      "evidence": "Web diagnostics/debug/version-actions suite passes 19/19.",
-      "status": "PASS"
-    },
-    "seo_source": {
-      "evidence": "Web SEO source 1/1 and Landing SEO source 1/1 pass; deployed metrics were not queried.",
-      "status": "PASS"
-    },
-    "prisma_schema": {
-      "evidence": "API and Cloud schemas validate and paired migration/source checks pass; live PostgreSQL migration/restart was not run.",
-      "status": "PASS"
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "API, Cloud, Web and Landing dedicated typechecks passed; Browser production build runs tsc and passed."
     },
     "phdk_coherence": {
-      "evidence": "Installed PHDK v2.51.2 coherence checker passes 56/56 manifest mappings.",
-      "status": "PASS"
+      "status": "PASS",
+      "evidence": "PHDK v2.51.2 static coherence check passed 56/56 manifest mappings."
     },
     "version_alignment": {
-      "evidence": "Merged remote main tree equals tested candidate tree; all five app version roots and Browser renderer read 5.1.67.",
-      "status": "PASS"
+      "status": "PASS",
+      "evidence": "Verified merged remote main tree equals the tested source candidate tree; five app package/lock roots and Browser renderer read 5.1.68."
     },
     "git_diff_check": {
-      "evidence": "Scoped source candidate passed git diff --cached --check before commit.",
-      "status": "PASS"
+      "status": "PASS",
+      "evidence": "Reviewed scoped candidate diff passed git diff --cached --check before commit."
     },
     "source_delivery": {
-      "evidence": "PR #163 merged by squash at dbdd64f16048ac01ff1ec34e39ec33e6c4255175; remote main SHA/tree readback matches tested source tree 932a278c510cbdff8ace021dab2e364a9744b0d1; version 5.1.67.",
-      "status": "PASS"
+      "status": "PASS",
+      "evidence": "PR #167 squash-merged at f974ab5984a20cd1b4ad742ddffe5921ad2bf823; independent remote main SHA/tree and all six version reads match."
+    },
+    "scope_and_checks": {
+      "status": "PASS",
+      "evidence": "UAT-062 closes only source-guard evidence for actor-derived tenant scope; portfolio limitations remain listed separately and whole_auto_acceptance is PARTIAL."
     }
   },
   "scope_limitations": [
     "Whole PHDK Auto remains PARTIALLY DELIVERED; all four confirmed commitments remain active.",
-    "UAT-060 remains BLOCKED: no owner-provided disposable PostgreSQL target is listening; live migrations, restart persistence, tenant isolation and multi-instance behavior were not executed.",
-    "Native device/audio remains MANUAL; broad screen-reader/localization, deployed SEO/AEO and customer-selected live voice/CRM acceptance remain open.",
-    "Tests use synthetic fixtures or mocked Qdrant; no customer database, private endpoint, provider write or deployment was used."
+    "UAT-060 remains BLOCKED pending the owner-provided disposable PostgreSQL target; live migrations, restart persistence, tenant isolation and multi-instance behavior were not exercised.",
+    "Native device/audio remains MANUAL; broad accessibility/localization, deployed SEO/AEO and customer-selected live voice/CRM acceptance remain open.",
+    "No customer data, customer endpoint, database or deployment was used; UAT-062 is source-guard evidence only."
   ],
   "whole_auto_acceptance": {
     "status": "PARTIAL",
-    "summary": "The 5.1.67 source slice is merged and verified; the four-front PHDK Auto portfolio is not complete.",
+    "summary": "The 5.1.68 source slice is merged and verified; the four-front PHDK Auto portfolio is not complete.",
     "uat_tally": {
-      "pass": 59,
+      "pass": 60,
       "blocked": 1,
       "manual": 1
     },

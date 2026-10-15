@@ -1,3 +1,14 @@
+## Current commitment coverage — 5.1.68 source slice merged
+
+PR [#167](https://github.com/tuyoisaza/keledon/pull/167) squash-merged source `62c979b299301066ef5187fada9041017ae2bc8f` at verified remote `main` `f974ab5984a20cd1b4ad742ddffe5921ad2bf823`, tree `96d7ce832332b3c991269432bcaacc083c2abb68`, equal to the tested source tree. All five app package/lock roots and Browser renderer read 5.1.68. PHDK v2.51.2 coherence passes 56/56; the mechanical completion gate passes against the post-merge record. GitHub reported no hosted checks or review decision; `main` is unprotected. No deployment is claimed. Portfolio: **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally: **60 PASS, 1 BLOCKED, 1 MANUAL**.
+
+| Commitment | Current result | Remaining gate |
+|---|---|---|
+| CMT-001 baseline/version/PR | #167 merged; exact main SHA/tree and six version reads verified; coherence 56/56. | Ongoing evidence and PR reconciliation. |
+| CMT-002 widget/diagnostics | Source and synthetic route/widget checks continue to pass. | Native device/audio; broad assistive-technology and localization acceptance. |
+| CMT-003 voice/Cloud/Browser/CRM | Tenant configuration, validation/allowlist and source contracts are in place. | Per-customer live call/CRM and explicitly configured private-network acceptance. |
+| CMT-004 administration/permissions | API 39/39, Cloud 18/18; actor-derived provider/profile scope assertions pass. | UAT-060 DB persistence and 546-row CRUD matrix gaps. |
+
 ## Current PHDK Auto — 5.1.67 source merged; whole portfolio partial
 
 Run `20261014-0007-phdk-auto-completion`; latest remote `main` is `44a1038c2a8d8d2659bde741a0cbd13b8485cfca` / tree `1b5cabbc4bb8192ab70771c62476ed2eb069fc99`. Product PR #163 delivered the fail-closed API flow listing/search contract at source merge `dbdd64f16048ac01ff1ec34e39ec33e6c4255175`; evidence reconciliation PR #164 is merged. Version 5.1.67 is aligned; PHDK v2.51.2 coherence is 56/56. Source tally is **59 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 still awaits an owner-provided disposable PostgreSQL target; no live tenant migration/restart test occurred.

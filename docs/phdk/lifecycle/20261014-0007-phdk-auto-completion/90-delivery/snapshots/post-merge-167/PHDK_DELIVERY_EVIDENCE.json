@@ -1,0 +1,103 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto four-front portfolio continuation: positive API/Cloud tenant scope guards for provider and voice profile contracts; whole portfolio remains partial",
+  "target_branch": "main",
+  "expected_version": "5.1.68",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "tested_source_commit_sha": "62c979b299301066ef5187fada9041017ae2bc8f",
+  "tested_candidate_tree": "96d7ce832332b3c991269432bcaacc083c2abb68",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/167",
+  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/167",
+  "pr_head_sha": "62c979b299301066ef5187fada9041017ae2bc8f",
+  "product_source_merge_sha": "f974ab5984a20cd1b4ad742ddffe5921ad2bf823",
+  "merged_commit_sha": "f974ab5984a20cd1b4ad742ddffe5921ad2bf823",
+  "remote_main_sha": "f974ab5984a20cd1b4ad742ddffe5921ad2bf823",
+  "remote_main_tree": "96d7ce832332b3c991269432bcaacc083c2abb68",
+  "remote_main_verified_at": "2026-10-15T23:37:19Z",
+  "git_ls_remote_matches": true,
+  "versions": {
+    "services_api": "5.1.68",
+    "cloud": "5.1.68",
+    "browser": "5.1.68",
+    "services_web": "5.1.68",
+    "landing": "5.1.68",
+    "browser_renderer": "5.1.68"
+  },
+  "github": {
+    "state": "MERGED",
+    "product_pr": "#167 squash-merged; no open PRs at candidate start",
+    "merge_method": "squash",
+    "merge_state": "CLEAN at merge",
+    "hosted_checks": [],
+    "review_decision": "none reported",
+    "main_protection": false
+  },
+  "checks": {
+    "api_regression": {
+      "status": "PASS",
+      "evidence": "API full regression 39/39, including positive actor-derived company assertions for provider config and voice-profile GET/PUT/POST paths."
+    },
+    "cloud_regression": {
+      "status": "PASS",
+      "evidence": "Cloud full regression 18/18, including positive actor-derived company assertions for provider config and voice-profile GET/PUT/POST paths."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "Production builds passed for API, Cloud, Web, Landing and Browser."
+    },
+    "lint": {
+      "status": "PASS",
+      "evidence": "Lint passed for API, Cloud, Web, Landing and Browser; no autofix changes outside the reviewed candidate."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "API, Cloud, Web and Landing dedicated typechecks passed; Browser production build runs tsc and passed."
+    },
+    "phdk_coherence": {
+      "status": "PASS",
+      "evidence": "PHDK v2.51.2 static coherence check passed 56/56 manifest mappings."
+    },
+    "version_alignment": {
+      "status": "PASS",
+      "evidence": "Verified merged remote main tree equals the tested source candidate tree; five app package/lock roots and Browser renderer read 5.1.68."
+    },
+    "git_diff_check": {
+      "status": "PASS",
+      "evidence": "Reviewed scoped candidate diff passed git diff --cached --check before commit."
+    },
+    "source_delivery": {
+      "status": "PASS",
+      "evidence": "PR #167 squash-merged at f974ab5984a20cd1b4ad742ddffe5921ad2bf823; independent remote main SHA/tree and all six version reads match."
+    },
+    "scope_and_checks": {
+      "status": "PASS",
+      "evidence": "UAT-062 closes only source-guard evidence for actor-derived tenant scope; portfolio limitations remain listed separately and whole_auto_acceptance is PARTIAL."
+    }
+  },
+  "scope_limitations": [
+    "Whole PHDK Auto remains PARTIALLY DELIVERED; all four confirmed commitments remain active.",
+    "UAT-060 remains BLOCKED pending the owner-provided disposable PostgreSQL target; live migrations, restart persistence, tenant isolation and multi-instance behavior were not exercised.",
+    "Native device/audio remains MANUAL; broad accessibility/localization, deployed SEO/AEO and customer-selected live voice/CRM acceptance remain open.",
+    "No customer data, customer endpoint, database or deployment was used; UAT-062 is source-guard evidence only."
+  ],
+  "whole_auto_acceptance": {
+    "status": "PARTIAL",
+    "summary": "The 5.1.68 source slice is merged and verified; the four-front PHDK Auto portfolio is not complete.",
+    "uat_tally": {
+      "pass": 60,
+      "blocked": 1,
+      "manual": 1
+    },
+    "open_gates": [
+      "UAT-060 owner-provided disposable PostgreSQL migration, restart, tenant isolation and multi-instance acceptance",
+      "Native device/audio acceptance",
+      "Broad screen-reader and localization acceptance",
+      "Deployed SEO/AEO measurements",
+      "Customer-selected live voice/CRM acceptance per tenant"
+    ]
+  },
+  "overall_status": "5.1.67 SOURCE MERGED AND REMOTE VERIFIED; SCOPED CHECKS PASS; PHDK AUTO PARTIALLY DELIVERED",
+  "product_source_branch": "fix/phdk-api-flow-search-scope-5-1-67",
+  "candidate_branch": "docs/phdk-auto-postmerge-5-1-67"
+}

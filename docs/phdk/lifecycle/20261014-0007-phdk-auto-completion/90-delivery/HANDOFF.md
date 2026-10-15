@@ -1,3 +1,25 @@
+# Delivery handoff — 5.1.68 merged and verified; Auto remains partial
+
+Run ID: `20261014-0007-phdk-auto-completion`
+Stage: 90 Delivery
+Status: COMPLETED FOR THE 5.1.68 SOURCE SLICE; PORTFOLIO PARTIALLY DELIVERED
+Source branch: `fix/phdk-provider-scope-contracts-5-1-68`
+Candidate source commit: `62c979b299301066ef5187fada9041017ae2bc8f`
+Merged remote revision: `f974ab5984a20cd1b4ad742ddffe5921ad2bf823` / tree `96d7ce832332b3c991269432bcaacc083c2abb68`
+PR: [#167](https://github.com/tuyoisaza/keledon/pull/167), squash merged
+Version: 5.1.68 across five app roots and Browser renderer
+Date: 2026-10-15
+
+PR [#167](https://github.com/tuyoisaza/keledon/pull/167) squash-merged source `62c979b299301066ef5187fada9041017ae2bc8f` at verified remote `main` `f974ab5984a20cd1b4ad742ddffe5921ad2bf823`, tree `96d7ce832332b3c991269432bcaacc083c2abb68`, equal to the tested source tree. All five app package/lock roots and Browser renderer read 5.1.68. PHDK v2.51.2 coherence passes 56/56; the mechanical completion gate passes against the post-merge record. GitHub reported no hosted checks or review decision; `main` is unprotected. No deployment is claimed.
+
+API and Cloud regression guards now positively assert that provider configuration and voice-profile reads and writes use the current database actor's company. API/Cloud regressions pass 39/39 and 18/18; all five builds and lint checks pass; API/Cloud/Web/Landing typechecks pass, and Browser build (`tsc`) passes. PHDK coherence passes 56/56. The mechanical completion gate passes against `PHDK_DELIVERY_EVIDENCE-5.1.68-post-merge-167.json`.
+
+UAT tally: 60 PASS, 1 BLOCKED, 1 MANUAL. UAT-060 still needs the owner-provided disposable PostgreSQL target; native device/audio remains MANUAL. Broad accessibility/localization, deployed SEO/AEO and customer-selected live call/CRM acceptance remain open. No deployment or customer endpoint was used.
+
+SIGUIENTE PASO: continue the four confirmed acceptance fronts; do not mark whole PHDK Auto complete while these gates remain open.
+
+---
+
 # Delivery handoff — 5.1.67 merged and verified; Auto remains partial
 
 Run ID: `20261014-0007-phdk-auto-completion`
