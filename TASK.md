@@ -1,10 +1,10 @@
-## PHDK Auto — source candidate 5.1.51 validated; delivery in progress
+## PHDK Auto — 5.1.51 source delivered; four fronts continue
 
-Current branch `fix/phdk-api-lint-zero-5-1-51`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`. Source commit `09ef2497957c381a3af7428af393b65b811c2fe6` is version 5.1.51 across five package/lock roots and Browser renderer. Full API lint passes 0 warnings/0 errors. API/Cloud regressions 36/36 and 16/16, Browser offline 27/27, five builds, Web/Landing typecheck/lint, exact-source synthetic UAT 4/4, diagnostics 19/19, Web/Landing SEO 1/1 each, and PHDK coherence 52/52 pass. Branch push, PR, merge and remote readback are pending.
+Source branch `fix/phdk-api-lint-zero-5-1-51` was based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`. PR #140 merged at `156ae2467c9ed6f73311ec45cae933417b1e5f32`; remote tree and version reads verified at 5.1.51. Full API lint passes 0 warnings/0 errors. API/Cloud regressions 36/36 and 16/16, Browser offline 27/27, five builds, Web/Landing typecheck/lint, exact-source synthetic UAT 4/4, diagnostics 19/19, Web/Landing SEO 1/1 each, and PHDK coherence 52/52 pass.
 
 Source changes remove false Browser/CRM/voice execution successes, fail closed without a tenant adapter, persist subagent run outcomes, and remove simulated integration/process health results. Whole Auto remains PARTIALLY DELIVERED (37 PASS, 2 BLOCKED, 1 MANUAL); database identities/persistence, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. No live CRM/private endpoint, DB, customer data, device or deployment was used.
 
-SIGUIENTE PASO: push the validated 5.1.51 source branch and open its PR to `main`; complete integration and independent remote readback, then retain PARTIALLY DELIVERED for the remaining environment-gated acceptance.
+SIGUIENTE PASO: continuar la aceptación pendiente de Auto en entornos aislados (DB/identidades y dispositivo nativo) y con medición SEO/AEO desplegada; mantener PARTIALLY DELIVERED hasta pasar el gate completo.
 
 ---
 

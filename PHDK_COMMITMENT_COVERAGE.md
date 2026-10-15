@@ -2,7 +2,7 @@
 
 | Commitment | Status | Candidate evidence | Open acceptance |
 |---|---|---|---|
-| CMT-001 baseline/version/PR | SOURCE PASS / DELIVERY PENDING | 5.1.51 aligned; source commit `09ef2497957c381a3af7428af393b65b811c2fe6`; all scoped checks pass. | Push, PR, merge and remote readback. |
+| CMT-001 baseline/version/PR | SOURCE DELIVERED / VERIFIED | PR #140 merged; main SHA/tree and 5.1.51 reads verified. | Continue baseline/version/PR reconciliation. |
 | CMT-002 widget/safe diagnostics | PARTIAL | Diagnostics 19/19; synthetic UI UAT 4/4. | Native Windows device/audio and broad a11y/localization. |
 | CMT-003 per-client voice→Cloud→Browser→CRM | PARTIAL | Mock successes removed; absent tenant execution adapter fails closed; validated private-origin allowlists remain. | Client-configured live acceptance and native audio; no customer target was exercised. |
 | CMT-004 administration/permissions | PARTIAL | API/Cloud regressions and 52/52 PHDK coherence pass; approved restrictive policy retained. | DB-backed identities, disposable PostgreSQL, persisted migrations/CRUD and complete matrix. |

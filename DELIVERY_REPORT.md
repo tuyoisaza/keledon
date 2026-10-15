@@ -1,18 +1,20 @@
-## Current delivery — candidate 5.1.51 (source validated; publication pending)
+## Current delivery — 5.1.51 source merged and remotely verified; Auto partial
 
-Repository `tuyoisaza/keledon`; target `main`; branch `fix/phdk-api-lint-zero-5-1-51`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`. Source commit `09ef2497957c381a3af7428af393b65b811c2fe6`, tree `fdb14b554ad46b1908b2041bfa781bb15bd0a716`; subject has the required `v5.1.51:` prefix. Five app package/lock roots and Browser renderer align at 5.1.51. Candidate report: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/snapshots/candidate-5.1.51/DELIVERY_REPORT.md`.
+Repository `tuyoisaza/keledon`; target `main`; source branch `fix/phdk-api-lint-zero-5-1-51`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`. Source commit `09ef2497957c381a3af7428af393b65b811c2fe6`, tree `fdb14b554ad46b1908b2041bfa781bb15bd0a716`; subject has the required `v5.1.51:` prefix. PR [#140](https://github.com/tuyoisaza/keledon/pull/140) squash-merged at `156ae2467c9ed6f73311ec45cae933417b1e5f32`; remote main tree `caaf5c0270f638113528c95ce50fb37173c5efe6` matches the PR candidate. `origin/main` and `git ls-remote` agree. Five app package/lock roots and Browser renderer read back as 5.1.51. Post-merge evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.51-post-merge-140.json`.
 
 | Gate | Status | Evidence |
 |---|---|---|
 | VERSION_BUMP | PASS | Fresh 5.1.51 roots and renderer; changelog updated. |
 | COMMIT_PREFIX | PASS | `v5.1.51: close API lint and fail closed on unsupported integrations`. |
-| PUSH_AND_PR | PENDING | No branch push or PR yet. |
-| REMOTE_MAIN | PENDING | Merge and fresh SHA/tree/version readback required. |
+| PUSH_AND_PR | PASS | Branch pushed; PR #140 squash-merged CLEAN. No hosted checks or review decision reported; main is not protected. |
+| REMOTE_MAIN | PASS | `origin/main` and `git ls-remote` agree at `156ae2467c9ed6f73311ec45cae933417b1e5f32`; tree `caaf5c0270f638113528c95ce50fb37173c5efe6` and all six version reads match 5.1.51. |
 | SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | API 0-warning lint; API/Cloud 36/16; Browser 27; all builds/typechecks, exact-source UAT, diagnostics, SEO and PHDK coherence pass. Whole Auto remains 37 PASS, 2 BLOCKED, 1 MANUAL. |
 
 No deployment, database, customer endpoint/data, private CRM or native device/audio was used. GitHub showed no open PR before publication; no hosted check/review decision is claimed. Live client integrations remain customer-specific. Web/Landing builds show the existing chunk-size warning.
 
-SIGUIENTE PASO: push the candidate branch, open its PR to `main`, then complete merge controls and verify the exact remote SHA/tree/version. Preserve PARTIALLY DELIVERED for the open environment-gated commitments.
+The deterministic completion gate returns BLOCKED solely because whole Auto acceptance remains open. No deployment, database, customer endpoint/data, private CRM or native device/audio was used.
+
+SIGUIENTE PASO: continue only the outstanding PHDK Auto acceptance; obtain isolated DB/native evidence and deployed SEO/AEO measurements, then re-run the full completion audit. Keep client call/CRM acceptance specific to each tenant.
 
 ---
 

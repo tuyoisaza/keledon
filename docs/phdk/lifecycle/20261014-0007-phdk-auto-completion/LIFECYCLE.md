@@ -53,7 +53,7 @@ SIGUIENTE PASO: merge the evidence-only lifecycle PR and independently reread re
 
 Four owner-confirmed fronts remain active in their agreed order. Source candidate `09ef2497957c381a3af7428af393b65b811c2fe6` on `fix/phdk-api-lint-zero-5-1-51` is based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`; all five application roots and Browser renderer are 5.1.51. API full lint is 0 warnings/errors. API/Cloud regressions, Browser tests, five builds, Web/Landing typecheck/lint, exact-source synthetic UAT, diagnostics, SEO source tests and PHDK coherence pass. Candidate artifacts are in `90-delivery/snapshots/candidate-5.1.51/`; exact-source UAT is under `50-uat/evidence/uat-web-5.1.51-09ef2497/`.
 
-Delivery is in progress: branch push, PR, merge and remote-main readback are pending. Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL); persisted DB/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO, and each tenant's live call/CRM acceptance remain unverified. No customer endpoint, database, device or deployment was used.
+Source delivery is verified: PR #140 merged at remote main `156ae2467c9ed6f73311ec45cae933417b1e5f32`; remote tree and 5.1.51 versions match. Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL); persisted DB/identity/CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO, and each tenant's live call/CRM acceptance remain unverified. No customer endpoint, database, device or deployment was used.
 
 ---
 
