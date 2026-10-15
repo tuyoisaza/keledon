@@ -8,13 +8,15 @@
   "tested_source_commit_sha": "03ea78968103aa6bc6290ed0681b1c1ea345872a",
   "tested_candidate_sha": "880eb10ffb9d0cd94946ab62b5d5554ab29158ce",
   "tested_candidate_tree": "0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/142",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/144",
   "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/142",
-  "pr_head_sha": "880eb10ffb9d0cd94946ab62b5d5554ab29158ce",
+  "pr_head_sha": "3637b267a9ccafbb5cfc16fde83ffc2c403abe66",
+  "tested_evidence_candidate_sha": "3637b267a9ccafbb5cfc16fde83ffc2c403abe66",
+  "tested_evidence_candidate_tree": "7ba62f8cec5a344f4749c2ae3925ce6db5dfaf1e",
   "product_source_merge_sha": "838931bd0d63f63f4a574ec9b660a12cc4ba5777",
-  "merged_commit_sha": "838931bd0d63f63f4a574ec9b660a12cc4ba5777",
-  "remote_main_sha": "efc2ae47bd8be5cecbcc4cabd607a379704e4856",
-  "remote_main_tree": "7ba62f8cec5a344f4749c2ae3925ce6db5dfaf1e",
+  "merged_commit_sha": "aaa99f19e35d6e6172c24a764d27abf087a39e85",
+  "remote_main_sha": "aaa99f19e35d6e6172c24a764d27abf087a39e85",
+  "remote_main_tree": "4b11d88e2e9ca35a0568761543a9e926f04f1895",
   "git_ls_remote_matches": true,
   "versions": {
     "services_api": "5.1.52",
@@ -27,6 +29,7 @@
   "github": {
     "state": "MERGED",
     "product_pr_142": "MERGED at 838931bd0d63f63f4a574ec9b660a12cc4ba5777",
+    "evidence_pr_144": "MERGED at aaa99f19e35d6e6172c24a764d27abf087a39e85",
     "merge_method": "squash",
     "merge_state": "CLEAN",
     "hosted_checks": [],
@@ -72,7 +75,7 @@
     },
     "source_delivery": {
       "status": "PASS",
-      "evidence": "PR #142 squash-merged at 838931bd0d63f63f4a574ec9b660a12cc4ba5777; its merge-time tree 0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e matched the tested PR-head tree. Evidence-only PR #143 then merged at current origin/main efc2ae47bd8be5cecbcc4cabd607a379704e4856, tree 7ba62f8cec5a344f4749c2ae3925ce6db5dfaf1e; fresh git ls-remote agrees and all six version reads remain 5.1.52."
+      "evidence": "Product PR #142 squash-merged at 838931bd0d63f63f4a574ec9b660a12cc4ba5777; its merge-time tree 0cafb8a75fdf1f6cdc95a1c5fca2ad948379983e matched the tested product candidate. Evidence PR #143 merged at efc2ae47bd8be5cecbcc4cabd607a379704e4856. The live-Qdrant UAT and reconciliation then merged in PR #144 at current origin/main aaa99f19e35d6e6172c24a764d27abf087a39e85, tree 4b11d88e2e9ca35a0568761543a9e926f04f1895; fresh git ls-remote agrees and all six version reads remain 5.1.52."
     },
     "whole_auto_acceptance": {
       "status": "BLOCKED",

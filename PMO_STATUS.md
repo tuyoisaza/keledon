@@ -2,11 +2,11 @@
 
 ## Active four-front portfolio — 5.1.52, source and Qdrant UAT verified (2026-10-14)
 
-PR #142 merged the 5.1.52 session CRUD guard fix; evidence PR #143 is merged at current main `efc2ae47bd8be5cecbcc4cabd607a379704e4856`. Live synthetic loopback UAT now passes Knowledge document/base PostgreSQL and Qdrant cleanup. Latest tally is 40 PASS, 0 BLOCKED, 1 MANUAL. Installed PHDK coherence is 52/52. Whole Auto remains **PARTIALLY DELIVERED** because exhaustive model-role-operation coverage, delete/reindex concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live call/CRM acceptance remain open.
+PR #142 merged the 5.1.52 session CRUD guard fix; evidence PR #143 and live-Qdrant UAT PR #144 are merged at current main `aaa99f19e35d6e6172c24a764d27abf087a39e85` (tree `4b11d88e2e9ca35a0568761543a9e926f04f1895`). Live synthetic loopback UAT passes Knowledge document/base PostgreSQL and Qdrant cleanup. Latest tally is 40 PASS, 0 BLOCKED, 1 MANUAL. Installed PHDK coherence is 52/52. Whole Auto remains **PARTIALLY DELIVERED** because exhaustive model-role-operation coverage, delete/reindex concurrency, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live call/CRM acceptance remain open.
 
 | WS | Current state | Evidence / next gate |
 |---|---|---|
-| WS-001 / CMT-001 baseline/version/PR | SOURCE DELIVERED; normal evidence PR in progress | 5.1.52; current `origin/main` SHA and six version reads verified; reconcile the live UAT evidence delivery. |
+| WS-001 / CMT-001 baseline/version/PR | SOURCE + EVIDENCE DELIVERED | PRs #142–#144 merged; current `origin/main` SHA and six version reads verified. |
 | WS-002 / CMT-002 widget/diagnostics | SOURCE PASS; acceptance partial | Diagnostics 19/19 and synthetic Web UAT 4/4; native media, full route and assistive-tech acceptance remain open. |
 | WS-003 / CMT-003 voice→Cloud→Browser→CRM per client | Provider-independent contracts PASS; tenant acceptance parameterized | Private targets require tenant allowlisting; execute live calls only after each customer selects its stack. |
 | WS-004 / CMT-004 administration/permissions | Scoped persisted CRUD and Qdrant cleanup PASS | Complete 35-model × role × tenant × operation validation and delete/reindex concurrency remain open. |

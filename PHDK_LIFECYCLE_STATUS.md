@@ -15,7 +15,7 @@ Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; target `main
 | 67 AEO/GEO | REUSED / EXTERNAL MEASUREMENT OPEN | Public claims unchanged; no crawler or answer-engine measurement. |
 | 70 Check | SOURCE PASS / WHOLE PARTIAL | API/Cloud 36/16 regressions, builds/lint, Browser build/lint, Web/Landing builds/typechecks/lint, Web UAT/diagnostics and SEO source checks pass. |
 | 80 Remediation | COMPLETED FOR 5.1.52 SOURCE FINDING | Session metadata now persists through the scoped API and Cloud CRUD guards; exact-candidate DB test passed. |
-| 90 Delivery | SOURCE MERGED / EVIDENCE UPDATE IN PROGRESS | PR #142 and evidence PR #143 are merged; new exact-source Qdrant evidence is being reconciled and delivered. |
+| 90 Delivery | EVIDENCE PR MERGED / REMOTE VERIFIED | PR #144 merged at `aaa99f19e35d6e6172c24a764d27abf087a39e85`; `origin/main` and `git ls-remote` agree at the same SHA/tree; six version reads remain 5.1.52. |
 
 Whole Auto remains **PARTIALLY DELIVERED**. The latest formal UAT tally is 40 PASS, 0 BLOCKED and 1 MANUAL (native device/audio). Delete/reindex concurrency, exhaustive 35-model operation coverage, broad accessibility/localization, deployed SEO/AEO and customer-specific call/CRM acceptance remain open. Only synthetic data in disposable loopback services was used; no customer endpoint or deployment was accessed.
 

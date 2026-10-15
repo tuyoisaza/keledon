@@ -2,7 +2,7 @@
 
 ## Active run update — 5.1.52 live Qdrant acceptance
 
-The loopback Knowledge document/base cleanup UAT now passes with disposable PostgreSQL 16.15 and isolated Qdrant 1.19.2. This closes the single Qdrant-dependent BLOCKED case and advances the tally to 40 PASS, 0 BLOCKED, 1 MANUAL; delete/reindex concurrency remains open. The four confirmed workstreams and their order remain unchanged. The source fix is merged through PR #142 and evidence PR #143; a follow-up docs/evidence delivery is in progress. Current remote main: `efc2ae47bd8be5cecbcc4cabd607a379704e4856`, product version 5.1.52. Whole Auto remains PARTIALLY DELIVERED.
+The loopback Knowledge document/base cleanup UAT now passes with disposable PostgreSQL 16.15 and isolated Qdrant 1.19.2. This closes the single Qdrant-dependent BLOCKED case and advances the tally to 40 PASS, 0 BLOCKED, 1 MANUAL; delete/reindex concurrency remains open. The four confirmed workstreams and their order remain unchanged. Source PR #142 and evidence PRs #143/#144 are merged. Current remote main: `aaa99f19e35d6e6172c24a764d27abf087a39e85`, product version 5.1.52. Whole Auto remains PARTIALLY DELIVERED.
 
 ## Active run update — candidate 5.1.51 (2026-10-15)
 
