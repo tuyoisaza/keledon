@@ -1,15 +1,20 @@
-## Current Auto continuation — 5.1.66 source merged; whole portfolio partial (2026-10-15)
+## Current Auto continuation — 5.1.67 source merged; whole portfolio partial (2026-10-15)
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. Product PR [#160](https://github.com/tuyoisaza/keledon/pull/160) squash-merged at `bf00262649fb281f40979a867a2bdb09099f3074`, tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589`, matching tested source. Documentation reconciliation PR [#161](https://github.com/tuyoisaza/keledon/pull/161) then squash-merged at current `main` SHA `3364b3e43a1b10d550f253f1e2f8f3a1fe962fb6`, tree `685597b9f333d51c9e1254936074d9c6cbbcceb5`; six package/renderer versions remain 5.1.66. PHDK v2.51.2 coherence is 56/56. API 39/39, Cloud 18/18, Browser offline 43/43, Web diagnostics 19/19, Web UAT 6/6 plus AI-admin, five builds and applicable checks pass.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. PR [#163](https://github.com/tuyoisaza/keledon/pull/163) squash-merged at `dbdd64f16048ac01ff1ec34e39ec33e6c4255175`, tree `932a278c510cbdff8ace021dab2e364a9744b0d1`, matching tested source. All five application version roots and the Browser renderer read 5.1.67. PHDK v2.51.2 coherence passes 56/56. API FlowService tests 12/12; API regression 39/39; Cloud parity 10/10; final API build/typecheck/lint pass. The other candidate package builds, UAT and checks are recorded in post-merge evidence.
 
-PR #160 moves legacy flow definitions into tenant-owned, versioned configuration and a company-scoped editor. UAT tally is 58 PASS, 1 BLOCKED (UAT-060: no disposable PostgreSQL available for migration/restart acceptance), 1 MANUAL (native device/audio). The deployment API has a production-environment record with status `success`; that metadata is not direct live health verification. GitHub reported no hosted checks, review decision or main protection. Broad screen-reader/localization, deployed SEO/AEO and customer-selected live integration acceptance remain open. All four commitments remain active.
+The scoped repair closes an API flow-read tenant boundary: unscoped listing/search fail closed, scoped reads filter by team, and Qdrant responses/limits are validated. UAT-061 passes on unit evidence. Portfolio tally: 59 PASS, 1 BLOCKED (UAT-060: no owner-provided disposable PostgreSQL target available), 1 MANUAL (native device/audio). Deployed SEO/AEO, broad screen-reader/localization and per-tenant live voice/CRM acceptance remain open. GitHub reported no hosted checks, review decision or main protection. No deployment or live customer endpoint was used. All four commitments remain active; Auto stays partial.
 
-Plan and PMO were reopened because their current sections were stale at 5.1.22/5.1.62 and are now refreshed at the top of the canonical records. See root `IMPLEMENTATION_PLAN.md` and `PMO_STATUS.md`; lifecycle evidence remains historical below this current entry.
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight / Capture / Plan | REUSED / REVALIDATED | PHDK v2.51.2; confirmed portfolio and policies remain current. |
+| PMO / Integration | COMPLETED FOR SLICE | Tenant flow configuration PR #160 is followed by API flow scope PR #163. |
+| UAT / UAT Fix | PASS FOR UAT-061; ACCEPTANCE INCOMPLETE | See `50-uat/UAT_CASES.md`; UAT-060 still requires owner-provided database. |
+| SEO / AEO-GEO | REUSED / NOT AFFECTED | Deployed measurement remains open. |
+| Check / Remediation | PASS FOR SOURCE SLICE | API 39/39, focused 12/12, Cloud parity 10/10, candidate checks, coherence and gate pass. |
+| Delivery | COMPLETED FOR 5.1.67 SLICE | PR #163 merged; remote main readback and version verified. See `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.67-post-merge-163.json`. |
 
-SIGUIENTE PASO: continue source-resolvable CRUD/permission reconciliation, then obtain an owner-provided disposable database for UAT-060 and the selected customer environment for per-tenant voice/CRM acceptance.
-
+SIGUIENTE PASO: execute UAT-060 once the agreed PostgreSQL service is available; continue the remaining portfolio acceptance gates.
 ---
-
 ## Historical Auto delivery — 5.1.64 diagnostics hit targets merged (2026-10-15)
 
 Run `20261014-0007-phdk-auto-completion`; target repository `tuyoisaza/keledon`, branch `main`. Candidate `fix/phdk-diagnostics-hit-target-5-1-64` from verified main 5.1.63 SHA `2c1c8e58f749746253f0ff76f9c691e7ffb15644` was squash-merged as PR #158 at SHA `e53339e81eb972f7941c2b59dd824ad75111d54a`, tree `e9f0d497267e78fd497186b7d2de797e43173289` (exact tested candidate tree). CHK-AUTO-024 gives Web/Landing diagnostics actions distinct 44×44px hitboxes while keeping centered visual tiles at 28×28px and spacing targets by 4px. Native Browser CSS now has the matching source contract.

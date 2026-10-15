@@ -1,13 +1,19 @@
-## Current PHDK Auto — 5.1.66 merged; whole portfolio partial
+## Current PHDK Auto — 5.1.67 source slice merged; whole portfolio partial
 
-Run `20261014-0007-phdk-auto-completion` delivered from `fix/phdk-flow-db-persistence-5-1-66`, based on verified `origin/main` 5.1.65 at `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`. PR [#160](https://github.com/tuyoisaza/keledon/pull/160) squash-merged source commit `dc8bd6d24471e64b438e3ca7803c13a950b7a95b` at verified source merge SHA `bf00262649fb281f40979a867a2bdb09099f3074`; its tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589` matched the tested source. Documentation reconciliation PR [#161](https://github.com/tuyoisaza/keledon/pull/161) then squash-merged at current `main` SHA `3364b3e43a1b10d550f253f1e2f8f3a1fe962fb6`, tree `685597b9f333d51c9e1254936074d9c6cbbcceb5`; product version remains 5.1.66. All five application package/lock roots and Browser renderer read 5.1.66. Installed PHDK v2.51.2 passes coherence 56/56. API regressions pass 39/39 and Cloud regressions 18/18; all five builds, applicable lint/typechecks, Web UAT 6/6 plus AI-admin, Browser offline suite 43/43, Web diagnostics 19/19, and Web/Landing source SEO tests pass. UAT uses synthetic fixtures and blocks outbound traffic. GitHub reported no hosted checks, review decision, or main branch protection.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. Source PR [#163](https://github.com/tuyoisaza/keledon/pull/163) squash-merged at `dbdd64f16048ac01ff1ec34e39ec33e6c4255175`, tree `932a278c510cbdff8ace021dab2e364a9744b0d1`, matching the tested candidate. All five application version roots and the Browser renderer read 5.1.67. The mechanical completion verifier passes using the post-merge record at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.67-post-merge-163.json` (also synchronized to root `PHDK_DELIVERY_EVIDENCE.json`). PHDK v2.51.2 coherence passes 56/56.
 
-This slice moves legacy flow definitions, versions, permissions and intent mappings to matching API/Cloud Prisma-backed tenant configuration, with a company-scoped editor and database-level composite ownership constraint. Candidate tally is **58 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 remains blocked because no disposable PostgreSQL service was available, so migrations and restart persistence were not exercised. Native device/audio remains manual; broad accessibility/localization, deployed SEO/AEO and client-specific live integrations remain open. All four owner-confirmed commitments remain active. No deployment or live customer acceptance is claimed.
+| Gate | Status | Evidence |
+|---|---|---|
+| Source scope | PASS | API flow searches and listings require tenant team scope; UAT-061 and focused tests cover fail-closed and scoped behavior. |
+| API tests | PASS | FlowService 12/12; API regression 39/39 after final guard. |
+| Build, typecheck, lint | PASS | API production build, full TypeScript check and lint after the final guard; remaining candidate package builds/checks are recorded in post-merge evidence. |
+| GitHub delivery | PASS FOR SLICE | PR #163 squash-merged; GitHub reported no hosted checks/review decision and no main protection. Remote main SHA/tree and 5.1.67 verified. |
+| UAT portfolio | PARTIAL | 59 PASS, 1 BLOCKED (UAT-060 PostgreSQL), 1 MANUAL (native device/audio). |
 
-SIGUIENTE PASO: continue the four ordered acceptance fronts; keep whole-Auto status partial until their remaining database, native, deployed and per-client gates pass.
+All four owner-confirmed commitments remain active. Screen-reader/localization, deployed SEO/AEO, and customer-selected voice/CRM acceptance remain open. No live customer endpoint or deployment was used. Whole PHDK Auto remains **PARTIALLY DELIVERED**.
 
+SIGUIENTE PASO: run UAT-060 after the owner-provided disposable PostgreSQL target becomes available; continue the remaining native, accessibility, deployed discovery and per-tenant integration gates.
 ---
-
 ## Historical delivery snapshot — 5.1.64 merged; whole portfolio partial
 
 PR [#158](https://github.com/tuyoisaza/keledon/pull/158) delivered source commit `95c51e5adeb637e41526b03c73be1da22a0cf2c8` by squash at verified remote `main` `e53339e81eb972f7941c2b59dd824ad75111d54a`; merged tree `e9f0d497267e78fd497186b7d2de797e43173289` matches the tested candidate tree. `git ls-remote` matches. Six package/renderer version reads are 5.1.64. The local mechanical completion gate passes; no hosted checks/review decision were reported and `main` is unprotected.

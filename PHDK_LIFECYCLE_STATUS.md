@@ -1,11 +1,19 @@
-## Current PHDK Auto — 5.1.66 merged; whole portfolio partial
+## Current PHDK Auto — 5.1.67 source slice delivered; portfolio partial
 
-Run `20261014-0007-phdk-auto-completion` delivered from `fix/phdk-flow-db-persistence-5-1-66`, based on verified `origin/main` 5.1.65 at `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`. PR [#160](https://github.com/tuyoisaza/keledon/pull/160) squash-merged source commit `dc8bd6d24471e64b438e3ca7803c13a950b7a95b` at verified source merge SHA `bf00262649fb281f40979a867a2bdb09099f3074`; its tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589` matched the tested source. Documentation reconciliation PR [#161](https://github.com/tuyoisaza/keledon/pull/161) then squash-merged at current `main` SHA `3364b3e43a1b10d550f253f1e2f8f3a1fe962fb6`, tree `685597b9f333d51c9e1254936074d9c6cbbcceb5`; product version remains 5.1.66. All five application package/lock roots and Browser renderer read 5.1.66. Installed PHDK v2.51.2 passes coherence 56/56. API regressions pass 39/39 and Cloud regressions 18/18; all five builds, applicable lint/typechecks, Web UAT 6/6 plus AI-admin, Browser offline suite 43/43, Web diagnostics 19/19, and Web/Landing source SEO tests pass. UAT uses synthetic fixtures and blocks outbound traffic. GitHub reported no hosted checks, review decision, or main branch protection.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; checkout `C:\KELEDON\keledon`; target `main`. PR [#163](https://github.com/tuyoisaza/keledon/pull/163) is squash-merged at `dbdd64f16048ac01ff1ec34e39ec33e6c4255175`; remote tree `932a278c510cbdff8ace021dab2e364a9744b0d1` matches tested source. Version 5.1.67 is aligned across all five applications and Browser renderer. PHDK v2.51.2 coherence passes 56/56.
 
-This slice moves legacy flow definitions, versions, permissions and intent mappings to matching API/Cloud Prisma-backed tenant configuration, with a company-scoped editor and database-level composite ownership constraint. Candidate tally is **58 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 remains blocked because no disposable PostgreSQL service was available, so migrations and restart persistence were not exercised. Native device/audio remains manual; broad accessibility/localization, deployed SEO/AEO and client-specific live integrations remain open. All four owner-confirmed commitments remain active. No deployment or live customer acceptance is claimed.
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | COMPLETED / REUSED | Installed PHDK v2.51.2; coherence 56/56. |
+| Capture / Plan | REUSED | Four owner-confirmed fronts, restrictive roles and tenant-allowlisted private CRM destinations remain active. |
+| PMO / Workstreams | CONTINUED | Candidate closes API tenant-scope finding; all four portfolio fronts remain open. |
+| Integration review | COMPLETED FOR SLICE | API flow reads align with Cloud fail-closed tenant policy; scoped tests and regression pass. |
+| UAT / UAT Fix | SOURCE CASE PASS; PORTFOLIO ACCEPTANCE INCOMPLETE | UAT-061 PASS; tally 59 PASS, 1 BLOCKED, 1 MANUAL. UAT-060 needs owner-provided PostgreSQL. |
+| SEO / AEO-GEO | REUSED / NOT AFFECTED | No public-facing content or metadata changed; deployed measurement remains open. |
+| Check / Remediation | PASS FOR SLICE | API regression 39/39; focused FlowService 12/12; API build/typecheck/lint; five candidate builds/checks; coherence 56/56. |
+| Delivery | COMPLETED FOR 5.1.67 SLICE | PR #163 merged; SHA/tree/version read back; mechanical completion gate passes. |
 
-SIGUIENTE PASO: continue the four ordered acceptance fronts; keep whole-Auto status partial until their remaining database, native, deployed and per-client gates pass.
-
+Whole Auto remains **PARTIALLY DELIVERED**. Next: execute UAT-060 when the owner-provided disposable database is reachable; continue native device/audio, screen-reader/localization, deployed SEO/AEO and customer-specific voice/CRM acceptance. No deployment or live customer endpoint was used.
 ---
 ## Current Auto continuation — 5.1.62 candidate (2026-10-15)
 
