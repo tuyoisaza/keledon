@@ -1,22 +1,19 @@
-## Current PHDK Auto — 5.1.66 merged; whole portfolio partial
+## Current PHDK Auto — 5.1.67 source merged; whole portfolio partial
 
-Run `20261014-0007-phdk-auto-completion` delivered from `fix/phdk-flow-db-persistence-5-1-66`, based on verified `origin/main` 5.1.65 at `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`. PR [#160](https://github.com/tuyoisaza/keledon/pull/160) squash-merged source commit `dc8bd6d24471e64b438e3ca7803c13a950b7a95b` at verified source merge SHA `bf00262649fb281f40979a867a2bdb09099f3074`; its tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589` matched the tested source. Documentation reconciliation PR [#161](https://github.com/tuyoisaza/keledon/pull/161) then squash-merged at current `main` SHA `3364b3e43a1b10d550f253f1e2f8f3a1fe962fb6`, tree `685597b9f333d51c9e1254936074d9c6cbbcceb5`; product version remains 5.1.66. All five application package/lock roots and Browser renderer read 5.1.66. Installed PHDK v2.51.2 passes coherence 56/56. API regressions pass 39/39 and Cloud regressions 18/18; all five builds, applicable lint/typechecks, Web UAT 6/6 plus AI-admin, Browser offline suite 43/43, Web diagnostics 19/19, and Web/Landing source SEO tests pass. UAT uses synthetic fixtures and blocks outbound traffic. GitHub reported no hosted checks, review decision, or main branch protection.
-
-This slice moves legacy flow definitions, versions, permissions and intent mappings to matching API/Cloud Prisma-backed tenant configuration, with a company-scoped editor and database-level composite ownership constraint. Candidate tally is **58 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 remains blocked because no disposable PostgreSQL service was available, so migrations and restart persistence were not exercised. Native device/audio remains manual; broad accessibility/localization, deployed SEO/AEO and client-specific live integrations remain open. All four owner-confirmed commitments remain active. No deployment or live customer acceptance is claimed.
+Run `20261014-0007-phdk-auto-completion`; latest remote `main` is `44a1038c2a8d8d2659bde741a0cbd13b8485cfca` / tree `1b5cabbc4bb8192ab70771c62476ed2eb069fc99`. Product PR #163 delivered the fail-closed API flow listing/search contract at source merge `dbdd64f16048ac01ff1ec34e39ec33e6c4255175`; evidence reconciliation PR #164 is merged. Version 5.1.67 is aligned; PHDK v2.51.2 coherence is 56/56. Source tally is **59 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 still awaits an owner-provided disposable PostgreSQL target; no live tenant migration/restart test occurred.
 
 | Commitment | Current evidence | Remaining acceptance |
 |---|---|---|
-| CMT-001 baseline/version/PR | PR #160 merged and remote SHA/tree/version readback match; PHDK v2.51.2 56/56. | Ongoing baseline and release reconciliation; no hosted checks/review decision or main protection reported. |
-| CMT-002 widget/safe diagnostics | Diagnostics 19/19; Web UAT 6/6 plus AI-admin; flow editor keyboard/reflow evidence. | Native device/audio, broad screen-reader and localization acceptance. |
-| CMT-003 per-client voice/Cloud/Browser/CRM | Tenant URL validation/allowlist and Browser offline tests 43/43; company flow config/editor. | Live provider/CRM and private-network acceptance for each configured customer. |
-| CMT-004 administration/permissions | API 39/39, Cloud 18/18; DB-derived policy and tenant-owned flow source shipped. | CRUD matrix 410 BLOCKED / 104 N/A / 31 DECISION NEEDED / 1 PASS; UAT-060 blocked on disposable PostgreSQL. |
+| CMT-001 baseline/version/PR | #163/#164 merged; main SHA/tree/version readback match; PHDK coherence 56/56. | Ongoing baseline/release reconciliation; hosted checks/review decision and main protection are absent. |
+| CMT-002 widget/safe diagnostics | Diagnostics 19/19; Web UAT 6/6 plus AI-admin; responsive/keyboard flow-editor evidence. | Native device/audio; broad screen-reader and localization acceptance. |
+| CMT-003 per-client voice/Cloud/Browser/CRM | Tenant URL validation/allowlist, Browser offline 43/43, company flow configuration and tenant-scoped flow reads. | Live provider/CRM and private-network acceptance for each configured customer. |
+| CMT-004 administration/permissions | Restrictive DB-derived actor/tenant policy; company-owned flow configuration; API 39/39 and Cloud 18/18. | CRUD matrix 410 BLOCKED / 104 N/A / 31 DECISION NEEDED / 1 PASS; UAT-060 blocked on disposable PostgreSQL. |
 
 Whole goal: **0/4 commitments fully closed; 4/4 active/partial.**
 
-SIGUIENTE PASO: continue the four ordered acceptance fronts; keep whole-Auto status partial until their remaining database, native, deployed and per-client gates pass.
+SIGUIENTE PASO: continue source-resolvable permission mapping and the remaining independent acceptance gates; keep whole Auto partial until completion.
 
 ---
-
 ## Historical delivery snapshot — 5.1.64 merged; whole portfolio partial
 
 PR [#158](https://github.com/tuyoisaza/keledon/pull/158) is squash-merged at verified remote `main` `e53339e81eb972f7941c2b59dd824ad75111d54a`; remote tree `e9f0d497267e78fd497186b7d2de797e43173289` equals the tested candidate tree. Five app package/lock roots and Browser renderer are 5.1.64. UAT-056 passes 1/1; Web diagnostics 19/19; Browser offline suite 28/28; five builds, Web/Landing lint and typechecks, and PHDK 2.50.10 coherence 52/52 pass. Candidate UAT tally is 55 PASS, 0 BLOCKED, 1 MANUAL; whole acceptance remains incomplete.

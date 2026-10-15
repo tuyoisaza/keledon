@@ -1,6 +1,10 @@
 # CRUD matrix — current source and authorization coverage
 
-## Candidate 5.1.66 — durable tenant-owned legacy flow configuration
+## Candidate 5.1.67 — fail-closed tenant flow reads
+
+API flow listings now return no rows without a team and include an exact `teamId` predicate when scoped. Vector search also fails closed without team/query, always sends the tenant filter, caps results at 50, rejects non-OK Qdrant responses and filters malformed rows. API FlowService tests pass 12/12; Cloud search parity passes 10/10; API regression is 39/39. This is source-level coverage. The 546-row matrix remains 410 BLOCKED, 104 NOT APPLICABLE, 31 DECISION NEEDED and 1 PASS until its individual persistence/decision gates are resolved.
+
+## Flow configuration persistence — candidate 5.1.66
 
 The FlowDefinition editor is wired through both API and Cloud. Both resource guards resolve the actor from the database and allow only admin/coordinator tenant-flow handlers, forcing company scope into query, params and writes. Tenant Prisma tables now persist definitions, versions, availability and intent mappings; same-company permissions are enforced by a composite database foreign key. Draft-only edits, unique versions, immutable tenant ownership and idempotent legacy JSON import are covered by API/Cloud source regressions. Web has the tenant editor plus superadmin-only assignment of unscoped legacy records. Live migration, restart durability and database-backed acceptance still remain BLOCKED.
 

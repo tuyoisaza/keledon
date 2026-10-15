@@ -1,13 +1,23 @@
-## Current PHDK Auto — 5.1.66 merged; whole portfolio partial
+## Current PMO board — 5.1.67 merged; whole Auto remains partial (2026-10-15)
 
-Run `20261014-0007-phdk-auto-completion` delivered from `fix/phdk-flow-db-persistence-5-1-66`, based on verified `origin/main` 5.1.65 at `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`. PR [#160](https://github.com/tuyoisaza/keledon/pull/160) squash-merged source commit `dc8bd6d24471e64b438e3ca7803c13a950b7a95b` at verified source merge SHA `bf00262649fb281f40979a867a2bdb09099f3074`; its tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589` matched the tested source. Documentation reconciliation PR [#161](https://github.com/tuyoisaza/keledon/pull/161) then squash-merged at current `main` SHA `3364b3e43a1b10d550f253f1e2f8f3a1fe962fb6`, tree `685597b9f333d51c9e1254936074d9c6cbbcceb5`; product version remains 5.1.66. All five application package/lock roots and Browser renderer read 5.1.66. Installed PHDK v2.51.2 passes coherence 56/56. API regressions pass 39/39 and Cloud regressions 18/18; all five builds, applicable lint/typechecks, Web UAT 6/6 plus AI-admin, Browser offline suite 43/43, Web diagnostics 19/19, and Web/Landing source SEO tests pass. UAT uses synthetic fixtures and blocks outbound traffic. GitHub reported no hosted checks, review decision, or main branch protection.
+Run `20261014-0007-phdk-auto-completion`; target `main` at `44a1038c2a8d8d2659bde741a0cbd13b8485cfca` / tree `1b5cabbc4bb8192ab70771c62476ed2eb069fc99`. Product PR [#163](https://github.com/tuyoisaza/keledon/pull/163) and post-merge evidence PR [#164](https://github.com/tuyoisaza/keledon/pull/164) are squash-merged; version 5.1.67 is aligned across all five app roots and Browser renderer. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled. The mechanical completion gate passes; source delivery does not close portfolio acceptance.
 
-This slice moves legacy flow definitions, versions, permissions and intent mappings to matching API/Cloud Prisma-backed tenant configuration, with a company-scoped editor and database-level composite ownership constraint. Candidate tally is **58 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 remains blocked because no disposable PostgreSQL service was available, so migrations and restart persistence were not exercised. Native device/audio remains manual; broad accessibility/localization, deployed SEO/AEO and client-specific live integrations remain open. All four owner-confirmed commitments remain active. No deployment or live customer acceptance is claimed.
+| Workstream | Status | Evidence / next milestone | Open acceptance |
+|---|---|---|---|
+| WS-001 baseline, versions, PRs | SOURCE DELIVERY PASS / PORTFOLIO ACTIVE | #163 source and #164 evidence merged; latest main SHA/tree and six version reads verified; PHDK 2.51.2 coherence 56/56. | Continue normal checks per candidate; no hosted checks/review decision or main protection reported. |
+| WS-002 widget and safe diagnostics | PARTIAL | Web diagnostics 19/19; Web UAT 6/6 plus AI-admin; responsive/keyboard flow-editor journey passes. | Native device/audio MANUAL; broad screen-reader and localization acceptance. |
+| WS-003 tenant runtime and CRM | PARTIAL | Tenant URL validation/allowlist, Browser offline 43/43, company-owned flow configuration and fail-closed API reads. | Customer-selected live voice/CRM and explicitly configured private-network acceptance per tenant. |
+| WS-004 administration/permissions | PARTIAL | Restrictive actor/tenant policy, tenant flow editor, API 39/39 and Cloud 18/18. | CRUD map 546 rows: 410 BLOCKED, 104 N/A, 31 DECISION NEEDED, 1 PASS; UAT-060 PostgreSQL migration/restart remains blocked. |
 
-SIGUIENTE PASO: continue the four ordered acceptance fronts; keep whole-Auto status partial until their remaining database, native, deployed and per-client gates pass.
+Current activity: continue source-verifiable role/tenant mapping remediation while preserving the four ordered fronts. Whole Auto is **PARTIALLY DELIVERED**, not complete.
+
+SIGUIENTE PASO: reconcile the next source-resolvable administration/permission gap; run UAT-060 when the owner-provided disposable PostgreSQL target is available; retain customer-specific live acceptance as tenant-scoped.
 
 ---
 
+## Historical delivery snapshot — 5.1.66 merged; whole portfolio partial
+
+PR [#160](https://github.com/tuyoisaza/keledon/pull/160) shipped tenant-owned flow definitions, versions, permissions and intent mappings with a company-scoped editor and composite ownership constraint. It was followed by API search/list tenant-scope PR #163. At the 5.1.66 checkpoint, tally was 58 PASS, 1 BLOCKED and 1 MANUAL; PostgreSQL persistence, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-specific live integrations remained open.
 ## Historical delivery snapshot — 5.1.64 merged; whole portfolio partial
 
 PR [#158](https://github.com/tuyoisaza/keledon/pull/158) is squash-merged at verified remote `main` `e53339e81eb972f7941c2b59dd824ad75111d54a`; remote tree `e9f0d497267e78fd497186b7d2de797e43173289` equals the tested candidate tree. Five app package/lock roots and Browser renderer are 5.1.64. UAT-056 passes 1/1; Web diagnostics 19/19; Browser offline suite 28/28; five builds, Web/Landing lint and typechecks, and PHDK 2.50.10 coherence 52/52 pass. Candidate UAT tally is 55 PASS, 0 BLOCKED, 1 MANUAL; whole acceptance remains incomplete.
@@ -17,23 +27,11 @@ All four owner-confirmed commitments remain active: baseline/version/PR maintena
 SIGUIENTE PASO: continue the remaining four-front acceptance gates against verified main 5.1.64; do not mark whole Auto complete until they pass.
 
 ---
-## Current PMO board — 5.1.66 merged; whole Auto remains partial (2026-10-15)
+## Historical PMO board — 5.1.66 baseline
 
-Run `20261014-0007-phdk-auto-completion`; target `main`; verified merge `bf00262649fb281f40979a867a2bdb09099f3074`; PR [#160](https://github.com/tuyoisaza/keledon/pull/160). Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled. The older 5.1.62 board below is historical.
-
-| Workstream | Status | Evidence / next milestone | Open acceptance |
-|---|---|---|---|
-| WS-001 baseline, versions, PRs | SOURCE DELIVERY PASS / PORTFOLIO ACTIVE | PR #160 merged; `origin/main` equals `git ls-remote`, tree equals tested candidate, six roots are 5.1.66; PHDK 2.51.2 coherence 56/56. | GitHub reported no hosted checks/review decision; verify each new candidate normally. GitHub production deployment metadata `success` is not a live health check. |
-| WS-002 widget and safe diagnostics | PARTIAL | Web diagnostics 19/19; Web UAT 6/6 plus AI-admin; responsive and keyboard flow-editor coverage passes. | Native device/audio MANUAL; broad screen-reader and localization acceptance. |
-| WS-003 tenant runtime and CRM | PARTIAL | API/Cloud tenant URL validation/allowlist and Browser offline 43/43; tenant-owned flow definition/editor shipped. | Customer-selected live voice/CRM acceptance and private-network target testing per tenant. |
-| WS-004 administration/permissions | PARTIAL | API 39/39, Cloud 18/18; restrictive actor/tenant policies and company-owned flow schema/editor shipped. | CRUD map 546 rows: 406 BLOCKED, 97 N/A, 42 DECISION NEEDED, 1 PASS; UAT-060 PostgreSQL migration/restart remains blocked. |
-
-Current activity: refresh the stale Plan/PMO records, reconcile role/CRUD mapping, and continue all independent source acceptance. Whole Auto is **PARTIALLY DELIVERED**, not complete.
-
-SIGUIENTE PASO: close source-resolvable permission/matrix gaps; obtain an owner-provided disposable database for UAT-060 and customer-selected environments for external acceptance.
+Superseded by the current 5.1.67 portfolio board above. The older snapshot records 58 PASS, 1 BLOCKED and 1 MANUAL; subsequent UAT-061 advances the tally to 59 PASS, 1 BLOCKED and 1 MANUAL.
 
 ---
-
 ## Active four-front portfolio — candidate 5.1.60 (2026-10-15)
 
 Portfolio accounting: **4 confirmed / 0 fully DONE / 4 active / 0 deferred / 0 cancelled**. UAT is **51 PASS, 0 BLOCKED, 1 MANUAL**; that count does not close the whole portfolio. Verified target is `main` SHA `4bc6d437ddfbd5139617da62370ec4de92f820cb` (5.1.60, PR #154); remote tree matches candidate and six version roots align. No deployment is claimed.
