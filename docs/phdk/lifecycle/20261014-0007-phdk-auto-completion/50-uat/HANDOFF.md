@@ -1,5 +1,11 @@
 # UAT handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.68 — UAT-062 PASS; portfolio acceptance incomplete
+
+API and Cloud regression guards now assert positive as well as negative tenant company scope for provider configuration and voice profiles: list queries use the current DB actor company, writes without `companyId` receive that company, mixed-company batches fail, foreign direct IDs fail, and lower roles remain denied. API full regression passes 39/39 and Cloud 18/18. This is source guard evidence, not live database identity or persistence acceptance. Tally advances to **60 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 still needs the owner-provided disposable PostgreSQL target; native device/audio remains MANUAL.
+
+SIGUIENTE PASO: execute UAT-060 once the owner-provided database is available; retain the broad matrix and other external acceptance gates.
+
 ## Candidate 5.1.67 — UAT-061 PASS; portfolio acceptance incomplete
 
 API flow reads now match Cloud's fail-closed tenant policy: absent team/blank query makes no outbound request; unscoped listings return no rows without a database call; every valid read carries the team filter; result limits are bounded at 50; non-OK responses fail closed; malformed rows are omitted. API FlowService Jest passes 12/12 and Cloud parity Jest 10/10; API regression is 39/39. This is source-unit evidence, not live Qdrant, tenant DB, CRM or customer acceptance. Tally advances to **59 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 still needs a disposable PostgreSQL target; native device/audio remains MANUAL.

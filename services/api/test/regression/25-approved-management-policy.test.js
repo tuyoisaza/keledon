@@ -236,6 +236,37 @@ async function main() {
     await allow('teams', 'PUT', { id: 'team-a' }, { name: 'Updated team' });
     await allow('teams', 'DELETE', { id: 'team-a' });
 
+    const providerConfigRead = await allow('tenant-provider-config', 'GET');
+    assert.equal(
+      providerConfigRead.query.companyId,
+      'co-a',
+      'provider config reads must use the current DB actor company',
+    );
+    const providerConfigWrite = await allow('tenant-provider-config', 'PUT', {}, [
+      { providerId: 'provider-a', providerType: 'tts', isEnabled: true },
+    ]);
+    assert.equal(
+      providerConfigWrite.body[0].companyId,
+      'co-a',
+      'provider config writes must derive companyId from the current DB actor',
+    );
+
+    const voiceProfileRead = await allow('voice-profiles', 'GET');
+    assert.equal(
+      voiceProfileRead.query.companyId,
+      'co-a',
+      'voice profile reads must use the current DB actor company',
+    );
+    const voiceProfileCreate = await allow('voice-profiles', 'POST', {}, {
+      providerId: 'provider-a',
+      name: 'Support voice',
+    });
+    assert.equal(
+      voiceProfileCreate.body.companyId,
+      'co-a',
+      'voice profile writes must derive companyId from the current DB actor',
+    );
+
     const createdUser = await allow(
       'users',
       'POST',
