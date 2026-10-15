@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "test:diagnostics": "node --test test/diagnostics.test.cjs test/debug-mode.test.cjs test/version-actions.test.cjs",
     "test:seo": "node --test test/seo-headers.test.cjs",
-    "test:uat": "node --test test/local-uat.test.cjs test/devices-page-uat.test.cjs test/management-debug-role-uat.test.cjs",
+    "test:uat": "node --test test/local-uat.test.cjs test/devices-page-uat.test.cjs test/management-debug-role-uat.test.cjs test/knowledge-manager-role-uat.test.cjs",
     "preview": "vite preview",
     "dev:vector-store": "npm run setup:qdrant && npm run dev",
     "build:vector-store": "npm run build && npm run package:vector-store",
