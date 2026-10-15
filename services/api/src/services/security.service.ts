@@ -405,12 +405,16 @@ export class SecurityService implements OnModuleInit {
   private startSecurityMonitoring(): void {
     // Clean up expired sessions every hour
     interval(60 * 60 * 1000).subscribe(() => {
-      this.cleanupExpiredSessions();
+      void this.cleanupExpiredSessions().catch(() =>
+        console.error('SecurityService: Failed to clean expired sessions'),
+      );
     });
 
     // Archive old security events every 24 hours
     interval(24 * 60 * 60 * 1000).subscribe(() => {
-      this.archiveOldSecurityEvents();
+      void this.archiveOldSecurityEvents().catch(() =>
+        console.error('SecurityService: Failed to archive security events'),
+      );
     });
   }
 

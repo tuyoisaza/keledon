@@ -1,12 +1,22 @@
+## Active PHDK Auto continuation — candidate 5.1.47, API async failure handling
+
+Based on verified `origin/main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66` / 5.1.46. Branch: `fix/phdk-lint-cleanup-5-1-47`. All five application package/lock roots and Browser renderer are aligned at 5.1.47. This slice awaits Socket.IO session-room and dashboard provider/flow operations, and explicitly logs failures from scheduled security cleanup, disk storage loading, and TTS shutdown. It eliminates the 17 API `no-floating-promises` warnings and lowers full API lint to 117 warnings with zero errors.
+
+API build and regression pass 36/36. Formatting was applied to touched files. Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL); Web lint debt, persisted DB/identity/CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. No live provider, private CRM endpoint, database or deployment was used.
+
+SIGUIENTE PASO: finish exact-candidate checks and deliver via version-prefixed PR; then continue the remaining PHDK Auto fronts.
+
+---
+
 # Current task
 
-## Active PHDK Auto continuation — candidate 5.1.46
+## Previous PHDK Auto continuation — 5.1.46 source merged; continue four fronts
 
-Verified base is `origin/main` `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf` / 5.1.45. Branch `fix/phdk-crud-matrix-5-1-46` aligns all five app package/lock roots and Browser renderer at 5.1.46. The owner confirmed that the dormant global ManagedInterface catalog UI must remain hidden; integrations are configured through tenant-scoped Vendor records. The unmounted `InterfacesManager` was removed; superadmin-only legacy endpoints remain and TeamInterface assignment stays company-scoped.
+PR #132 merged candidate `1867eb8f61c7d4d3b1d6a8ab1b4b396c5d84365a` at verified remote `main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66`; all five app roots and Browser renderer are 5.1.46. The owner confirmed that the dormant global ManagedInterface catalog UI must remain hidden; integrations are configured through tenant-scoped Vendor records. The unmounted `InterfacesManager` was removed; superadmin-only legacy endpoints remain and TeamInterface assignment stays company-scoped.
 
 Validation: API/Cloud builds and regressions 36/36 and 16/16; Browser build/lint/40 tests; Web build/UAT 4/4; Landing build; Web/Landing SEO tests 1/1 each; PHDK coherence 52/52; API/Cloud/Browser production audits zero. Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL): persisted CRUD/identities, native device/audio, broad accessibility/localization and deployed SEO/AEO remain; customer call/CRM acceptance is per tenant.
 
-SIGUIENTE PASO: finish Check, review the complete diff, and deliver this source candidate by version-prefixed commit/PR with verified main readback.
+SIGUIENTE PASO: continue the PHDK source audit and close remaining environment-gated acceptance when isolated targets are available.
 
 ---
 

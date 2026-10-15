@@ -1,10 +1,18 @@
-## Current Auto completion audit — candidate 5.1.46; whole Auto partial (2026-10-15)
+## Current Auto completion audit — candidate 5.1.47; whole Auto partial (2026-10-15)
+
+Candidate branch `fix/phdk-lint-cleanup-5-1-47` is based on verified remote `main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66` / 5.1.46. All five app roots and Browser renderer are 5.1.47. API gateway and background-task promise handling closes 17 floating-promise warnings; full API lint is now 117 warnings/0 errors. API build and regression 36/36 pass.
+
+This source slice does not close whole Auto: Web has 119 existing lint warnings; disposable PostgreSQL and safe DB identities/persisted CRUD, native Windows device/audio, broad accessibility/localization and deployed SEO/AEO remain. Client-specific call/CRM acceptance remains per tenant. Candidate commit, PR and remote readback are pending.
+
+---
+
+## Current Auto completion audit — merged 5.1.46 source; whole Auto partial (2026-10-15)
 
 Candidate `fix/phdk-crud-matrix-5-1-46` is based on verified main `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf` / 5.1.45. All five application package/lock roots and Browser renderer are 5.1.46. The owner confirmed the global ManagedInterface catalog remains hidden; this candidate removes the orphaned unmounted Web component, keeps legacy catalog CRUD superadmin-only, and documents tenant Vendor configuration as the customer integration path. Regression 25/33 verifies the role/matrix exception; regressions 37/38 verify team assignment ownership/atomic replacement.
 
 Validation: API/Cloud builds and regressions 36/36 and 16/16; Browser build/lint/40/40; Web build/UAT 4/4; Landing build; Web/Landing SEO 1/1 each; coherence 52/52; production audit clean for API/Cloud/Browser. API full-source lint still has 135 warnings and Web 122, both with zero errors. Web/Landing retain known bundle warnings. Whole UAT remains 37 PASS, 2 BLOCKED, 1 MANUAL.
 
-This candidate does not close whole Auto: disposable PostgreSQL and safe DB identities/persisted CRUD, native Windows device/audio, broad accessibility/localization and deployed SEO/AEO remain. Client-specific call/CRM acceptance is external by design. No DB, customer data, private endpoint, device, or deployment was used. PR/merge/remote readback for 5.1.46 are pending.
+This candidate does not close whole Auto: disposable PostgreSQL and safe DB identities/persisted CRUD, native Windows device/audio, broad accessibility/localization and deployed SEO/AEO remain. Client-specific call/CRM acceptance is external by design. No DB, customer data, private endpoint, device, or deployment was used. PR #132 merged at `10c57ff44a9d3d09e55023c466d72adefd6d3e66`; remote tree matches candidate `27cdad0ceebd95768cb3fc5a16b41011ea64b4eb`. The deterministic completion gate remains BLOCKED solely on `whole_auto_acceptance`.
 
 ---
 

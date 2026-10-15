@@ -1,10 +1,20 @@
-# PHDK Auto lifecycle — current candidate 5.1.46 (delivery pending)
+## Active PHDK Auto continuation — candidate 5.1.47, API async failure handling
+
+Based on verified `origin/main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66` / 5.1.46. Branch: `fix/phdk-lint-cleanup-5-1-47`. All five application package/lock roots and Browser renderer are aligned at 5.1.47. This slice awaits Socket.IO session-room and dashboard provider/flow operations, and explicitly logs failures from scheduled security cleanup, disk storage loading, and TTS shutdown. It eliminates the 17 API `no-floating-promises` warnings and lowers full API lint to 117 warnings with zero errors.
+
+API build and regression pass 36/36. Formatting was applied to touched files. Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL); Web lint debt, persisted DB/identity/CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. No live provider, private CRM endpoint, database or deployment was used.
+
+SIGUIENTE PASO: finish exact-candidate checks and deliver via version-prefixed PR; then continue the remaining PHDK Auto fronts.
+
+---
+
+# Previous delivery — PHDK Auto 5.1.46 source merged and verified; whole Auto partial
 
 Run: `20261014-0007-phdk-auto-completion`
 Repository: `tuyoisaza/keledon`
 Branch: `fix/phdk-crud-matrix-5-1-46`
 Base: verified `origin/main` `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf` / 5.1.45.
-Candidate: all five app package/lock roots and Browser renderer at 5.1.46.
+Delivered source: PR #132 candidate `1867eb8f61c7d4d3b1d6a8ab1b4b396c5d84365a`, merged as `10c57ff44a9d3d09e55023c466d72adefd6d3e66`; all five app package/lock roots and Browser renderer are 5.1.46. Remote main and ls-remote match; remote tree equals tested tree `27cdad0ceebd95768cb3fc5a16b41011ea64b4eb`. Evidence: `90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.46-post-merge-132.json`.
 Goal: four owner-confirmed KELEDON fronts, aligned to PHDK; customer call/CRM configuration remains tenant-specific.
 
 | Stage | Status | Evidence / current state |
@@ -13,18 +23,18 @@ Goal: four owner-confirmed KELEDON fronts, aligned to PHDK; customer call/CRM co
 | 10 Capture | REUSED | Four fronts, least privilege and per-tenant private-origin allowlists confirmed; owner confirmed the legacy global interface UI stays hidden. |
 | 20 Plan | REUSED | Existing brownfield plan and dependency order remain applicable. |
 | 30 PMO / Workstreams | CONTINUED | PR #131 reconciled; four fronts active. |
-| 40 Integration Review | COMPLETED FOR CANDIDATE SOURCE | Removed orphaned, unmounted `InterfacesManager`; kept global legacy API superadmin-only, customer Vendor configuration tenant-scoped. |
+| 40 Integration Review | SOURCE DELIVERED / VERIFIED | Removed orphaned, unmounted `InterfacesManager`; kept global legacy API superadmin-only, customer Vendor configuration tenant-scoped. |
 | 50 UAT | COMPLETED FOR CANDIDATE / WHOLE PARTIAL | Synthetic Web UAT 4/4; Browser suite 40/40; overall acceptance 37 PASS, 2 BLOCKED, 1 MANUAL. |
 | 60 UAT Fix | COMPLETED FOR CANDIDATE | No active-path UAT failures; retired unused UI matches owner direction. |
 | 65 SEO | SOURCE PASS | No public page/metadata changes; deployed measurements unavailable. |
 | 67 AEO/GEO | SOURCE REVIEW REUSED | Public claims unchanged; live discovery unmeasured. |
 | 70 Check | SOURCE SLICE PASS / AUTO PARTIAL | Snapshot `70-check/snapshots/candidate-5.1.46/PHDK_CHECK_REPORT.md`; role boundaries tested; broader model matrix/persistence remains. |
 | 80 Remediation | COMPLETED LOCALLY | API/Cloud 36/36 and 16/16, Browser 40/40, Web UAT 4/4, builds pass, Browser/Cloud lint pass, coherence 52/52. |
-| 90 Delivery | PENDING | Candidate branch/commit/PR/merge/readback not yet done. |
+| 90 Delivery | SOURCE MERGED / REMOTE VERIFIED; AUTO PARTIAL | PR #132; exact source/merge tree verified remotely. Machine gate blocks only on whole Auto acceptance. |
 
 Overall: **PARTIALLY DELIVERED**. DB identities/persisted CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open; API/Web lint warnings remain tracked; live call/CRM is per tenant.
 
-SIGUIENTE PASO: freeze the exact candidate Check/UAT evidence, review the diff, then version-prefixed commit, push, PR, merge and verify remote main.
+SIGUIENTE PASO: continue source audit in 5.1.47, then close PostgreSQL/native/deployed gates only with their isolated test targets.
 
 ---
 

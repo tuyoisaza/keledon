@@ -1,16 +1,32 @@
-## Current candidate — 5.1.46 source validation complete; delivery pending
+## Current candidate — 5.1.47 source validation in progress; delivery pending
 
-Repository: `tuyoisaza/keledon`; branch `fix/phdk-crud-matrix-5-1-46`; base verified `origin/main` `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf`. This candidate removes the unmounted legacy global ManagedInterface UI after the owner confirmed that the catalog stays hidden and actual client configuration remains tenant-scoped.
+Repository `tuyoisaza/keledon`; branch `fix/phdk-lint-cleanup-5-1-47`; base verified `origin/main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66`. The candidate awaits API room/provider/flow promises and logs asynchronous failures in scheduled and shutdown paths.
+
+| Gate | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | All five application package/lock roots and Browser renderer at 5.1.47; changelog updated. |
+| COMMIT_PREFIX | PENDING | Candidate source checks in progress. |
+| PUSH_AND_PR | PENDING | Candidate not yet pushed. |
+| REMOTE_MAIN | PENDING | Candidate not yet merged. |
+| SCOPE_AND_CHECKS | SOURCE PARTIAL / AUTO PARTIAL | API build and regression 36/36 pass; floating-promise warnings reduced 17 to 0 and total API lint 135 to 118. Final full check pending. |
+
+Whole Auto remains partially delivered. No database, customer data, private CRM endpoint or deployment was used.
+
+---
+
+## Current delivery — 5.1.46 source merged and remotely verified
+
+Repository: `tuyoisaza/keledon`; PR [#132](https://github.com/tuyoisaza/keledon/pull/132) squash-merged candidate `1867eb8f61c7d4d3b1d6a8ab1b4b396c5d84365a` at remote `main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66`. The remote tree equals the tested candidate tree `27cdad0ceebd95768cb3fc5a16b41011ea64b4eb`; `origin/main` and `git ls-remote` agree. The change removes the unmounted global ManagedInterface UI after the owner confirmed the catalog stays hidden and actual client configuration remains tenant-scoped. Machine evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.46-post-merge-132.json`.
 
 | Gate | Status | Evidence |
 |---|---|---|
 | VERSION_BUMP | PASS | All five application package/lock roots and Browser renderer at 5.1.46; changelog updated. |
-| COMMIT_PREFIX | PENDING | Commit not created yet. |
-| PUSH_AND_PR | PENDING | Candidate not yet pushed; PR not created. |
-| REMOTE_MAIN | PENDING | This candidate has not been merged. |
+| COMMIT_PREFIX | PASS | `v5.1.46: remove dormant global interface catalog UI`. |
+| PUSH_AND_PR | PASS | Branch pushed; PR #132 merged with CLEAN merge state; no hosted checks/review reported. |
+| REMOTE_MAIN | PASS | PR #132 merge SHA and remote `main`/`git ls-remote` agree; remote source tree matches tested tree. |
 | SCOPE_AND_CHECKS | SOURCE PASS / AUTO PARTIAL | API/Cloud builds + regressions 36/36 and 16/16; Browser lint/build/40/40; Web UAT 4/4; all builds, SEO 1/1 each, coherence 52/52. Broader CRUD/persistence, native and deployed acceptance remain open. |
 
-Do not call 5.1.46 delivered until PR/merge/remote readback. Whole Auto remains partially delivered. No DB, customer data, private CRM endpoint or deployment was used.
+5.1.46 source slice is delivered. Whole Auto remains partially delivered; deterministic gate is BLOCKED solely on whole Auto acceptance. No DB, customer data, private CRM endpoint or deployment was used.
 
 ---
 

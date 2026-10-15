@@ -1,3 +1,13 @@
+## v5.1.47 — 2026-10-15 (handle asynchronous API failures explicitly)
+
+- Await session-room membership and dashboard flow/provider operations so gateway handlers catch asynchronous failures.
+- Log failures from scheduled security cleanup, disk storage initialization, and the Speaches TTS stop path instead of leaving rejected promises unhandled.
+- Remove all 17 API `no-floating-promises` warnings; API full lint debt falls from 135 to 118 warnings, with no errors.
+- Align all five application package/lock roots and the Browser diagnostics version at 5.1.47.
+
+### Verification
+- API build and regression suites pass; full API ESLint has 118 warnings/0 errors, including 0 floating promises. PHDK coherence is recorded after source checks. Whole Auto remains partial for its database/native/deployed acceptance gates.
+
 ## v5.1.46 — 2026-10-15 (keep global interface catalog hidden)
 
 - Remove the unmounted legacy InterfacesManager UI; customer-selected CRM/call configuration remains in tenant-scoped Vendor settings with validated origin allowlists.

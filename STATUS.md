@@ -1,11 +1,21 @@
-## 2026-10-15 — PHDK Auto candidate 5.1.46; source checks pass, delivery pending
+## Active PHDK Auto continuation — candidate 5.1.47, API async failure handling
 
-- Base is verified `origin/main` `d2d4265d0dcf6a9524f1861240d0ce0f387c09bf` / 5.1.45. All five app package/lock roots and Browser renderer are 5.1.46 on `fix/phdk-crud-matrix-5-1-46`.
+Based on verified `origin/main` `10c57ff44a9d3d09e55023c466d72adefd6d3e66` / 5.1.46. Branch: `fix/phdk-lint-cleanup-5-1-47`. All five application package/lock roots and Browser renderer are aligned at 5.1.47. This slice awaits Socket.IO session-room and dashboard provider/flow operations, and explicitly logs failures from scheduled security cleanup, disk storage loading, and TTS shutdown. It eliminates the 17 API `no-floating-promises` warnings and lowers full API lint to 117 warnings with zero errors.
+
+API build and regression pass 36/36. Formatting was applied to touched files. Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL); Web lint debt, persisted DB/identity/CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. No live provider, private CRM endpoint, database or deployment was used.
+
+SIGUIENTE PASO: finish exact-candidate checks and deliver via version-prefixed PR; then continue the remaining PHDK Auto fronts.
+
+---
+
+## Previous delivery — PHDK Auto 5.1.46 source merged; whole Auto remains partial
+
+- PR #132 merged candidate `1867eb8f61c7d4d3b1d6a8ab1b4b396c5d84365a` at `10c57ff44a9d3d09e55023c466d72adefd6d3e66`; remote `main`/`git ls-remote` agree and tree `27cdad0ceebd95768cb3fc5a16b41011ea64b4` matches the tested candidate. All five roots and Browser renderer are 5.1.46.
 - Owner confirmed the global ManagedInterface catalog stays hidden. Removed its unmounted Web component and strengthened tests for superadmin-only global catalog access, tenant-scoped team assignment and the inventory exception.
 - API/Cloud builds and regressions pass 36/36 and 16/16; Browser build/lint/suite 40/40; Web build/UAT 4/4; Landing build; SEO source tests 1/1 each; PHDK coherence 52/52. Production dependency audits for API/Cloud/Browser report zero advisories.
 - Auto remains **PARTIALLY DELIVERED**: UAT 37 PASS, 2 BLOCKED, 1 MANUAL; PostgreSQL/identity/persisted CRUD, native audio/device, broad accessibility/localization, deployed SEO/AEO remain. API/Web lint warnings remain visible.
 
-SIGUIENTE PASO: finish PHDK Check and normal PR delivery for this candidate; then continue remaining persisted/native/deployed acceptance.
+SIGUIENTE PASO: continue the source audit in 5.1.47; close remaining persisted/native/deployed gates only against their isolated acceptance environments.
 
 ---
 

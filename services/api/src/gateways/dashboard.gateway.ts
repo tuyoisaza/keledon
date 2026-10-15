@@ -260,10 +260,13 @@ export class DashboardGateway
   }
 
   @SubscribeMessage('dashboard:flow-start')
-  handleStartFlow(client: Socket, data: DashboardSocketData): void {
+  async handleStartFlow(
+    client: Socket,
+    data: DashboardSocketData,
+  ): Promise<void> {
     try {
       if (data.executionId) {
-        this.flowExecutionService.startExecution(data.executionId);
+        await this.flowExecutionService.startExecution(data.executionId);
         this.broadcastFlowExecutions();
         console.log(`DashboardGateway: Started flow ${data.executionId}`);
       }
@@ -357,10 +360,13 @@ export class DashboardGateway
   }
 
   @SubscribeMessage('dashboard:provider-connect')
-  handleProviderConnect(client: Socket, data: DashboardSocketData): void {
+  async handleProviderConnect(
+    client: Socket,
+    data: DashboardSocketData,
+  ): Promise<void> {
     try {
       if (data.providerId) {
-        this.integrationHealthService.connectProvider(data.providerId);
+        await this.integrationHealthService.connectProvider(data.providerId);
         console.log(`DashboardGateway: Connected provider ${data.providerId}`);
       }
     } catch (error) {
@@ -385,10 +391,15 @@ export class DashboardGateway
   }
 
   @SubscribeMessage('dashboard:provider-test')
-  handleProviderTest(client: Socket, data: DashboardSocketData): void {
+  async handleProviderTest(
+    client: Socket,
+    data: DashboardSocketData,
+  ): Promise<void> {
     try {
       if (data.providerId) {
-        this.integrationHealthService.testProviderConnection(data.providerId);
+        await this.integrationHealthService.testProviderConnection(
+          data.providerId,
+        );
         console.log(`DashboardGateway: Testing provider ${data.providerId}`);
       }
     } catch (error) {
@@ -398,10 +409,13 @@ export class DashboardGateway
   }
 
   @SubscribeMessage('dashboard:provider-sync')
-  handleProviderSync(client: Socket, data: DashboardSocketData): void {
+  async handleProviderSync(
+    client: Socket,
+    data: DashboardSocketData,
+  ): Promise<void> {
     try {
       if (data.providerId) {
-        this.integrationHealthService.syncProvider(data.providerId);
+        await this.integrationHealthService.syncProvider(data.providerId);
         console.log(`DashboardGateway: Synced provider ${data.providerId}`);
       }
     } catch (error) {

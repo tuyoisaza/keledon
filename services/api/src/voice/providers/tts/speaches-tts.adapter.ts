@@ -81,6 +81,8 @@ export class SpeachesTtsAdapter implements TtsAdapter {
 
   stop(): void {
     this.stopped = true;
-    this.ttsService.stop();
+    void Promise.resolve(this.ttsService.stop()).catch(() =>
+      this.logger.warn('Failed to stop TTS service'),
+    );
   }
 }
