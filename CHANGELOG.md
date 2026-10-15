@@ -4,7 +4,7 @@
 - Preserve negative coverage for cross-company batches, direct IDs and low-role mutations; align all five app package/lock roots and Browser renderer at 5.1.68.
 
 ### Verification
-- API policy and full regression pass 39/39; Cloud policy and full regression pass 18/18. All five production builds, lint checks and typechecks pass; PHDK v2.51.2 coherence passes 56/56.
+- API policy and full regression pass 39/39; Cloud policy and full regression pass 18/18. All five production builds and lint checks pass; API/Cloud/Web/Landing typechecks and Browser `tsc` build pass; PHDK v2.51.2 coherence passes 56/56.
 - UAT-062 is source-guard evidence only; no live database or customer identity was used. Whole PHDK Auto remains partial.
 
 ## v5.1.67 — 2026-10-15 (fail closed on API flow-search scope)
