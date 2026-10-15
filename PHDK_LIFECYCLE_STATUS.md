@@ -1,8 +1,8 @@
-## PHDK Auto source 5.1.48 merged; continue four fronts
+## PHDK Auto candidate 5.1.49; continue four fronts
 
-PR #134 merged head `40943b822e47b5c443b607eb5d6e74625333d71b` at remote main `a3dcd93a5d7fb3a374894436379301290cc12bfe`; tree `9353ed3c29c8ba6540143e9b49c7c26650e2ee53` matches; source/UAT commit is `f93758c4b2e52a452ff35b8b43f99adef4cfcd1f`. Brain provider key status is provider-specific, consumes only safe key-presence flags and ignores stale team responses. Web hook dependencies are aligned; all React Hooks/purity lint warnings are closed. Full Web lint is 95 warnings/0 errors, down from 119. All five package/lock roots and Browser renderer are 5.1.48.
+Candidate `fix/phdk-web-typed-contracts-5-1-49` is based on verified main `208b15a24e8bb0ff4263f2b88281c361a8e3994f`, with source commit `a4c92c65ff7b040206dd98567b5d7765c7f5b258`. All five package/lock roots and Browser renderer are 5.1.49. Web typed contracts reduce lint from 95 to 14 warnings/0 errors; remaining explicit-any warnings are confined to three unmounted legacy components. All five builds, Web typecheck, exact-source synthetic UAT 4/4, diagnostics 19/19, Web SEO 1/1 and PHDK coherence 52/52 pass. Candidate is not yet pushed or merged.
 
-All five builds, Web typecheck, API/Cloud regression 36/16, Browser tests 27/27, synthetic UAT 4/4, diagnostics 19/19, Web/Landing SEO and PHDK coherence 52/52 pass. Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL); persistence/identity/CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open.
+Whole Auto remains **PARTIALLY DELIVERED** (37 PASS, 2 BLOCKED, 1 MANUAL); persistence/identity/CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. No live CRM/private endpoint, database, customer data, device or deployment was used.
 
 SIGUIENTE PASO: continuar el Auto; cerrar las barreras de persistencia, nativo y despliegue solo con evidencia de sus ambientes de aceptación.
 
