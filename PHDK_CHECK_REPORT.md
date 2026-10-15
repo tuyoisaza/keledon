@@ -355,3 +355,25 @@ Candidate source commit `ccd74293bbb36ebf1fbb08bdcdbc1f43c3c4233d` is based on v
 Check result: **SCOPED SOURCE FINDING REMEDIATED / ALIGNMENT INCOMPLETE FOR WHOLE AUTO**. PR [#111](https://github.com/tuyoisaza/keledon/pull/111) is merged and independently verified on remote main. The 35-model/168-row inventory is a drift assertion only. Open: disposable PostgreSQL and persisted authorization/migration, safe DB-backed identities, live Qdrant/delete-reindex concurrency, native Windows device/audio, complete model-specific CRUD proof, broad accessibility/localization, deployed SEO/AEO and client-configured live calls/CRM. No database, private customer endpoint, customer data or deployment was accessed.
 
 ---
+## Current Check — candidate 5.1.45, Browser runtime lint and event/replan safety (2026-10-14)
+
+Repository `tuyoisaza/keledon`; branch `fix/phdk-browser-lint-5-1-45`, based on verified `origin/main` `77a975d8a5dc37cebf884a3c5b2bc35b3ac67002`. The working candidate is version 5.1.45 across API, Cloud, Browser, Web and Landing package/lock roots; Browser renderer is synchronized to 5.1.45. Installed PHDK 2.50.10; coherence check passes 52/52 static mappings.
+
+**Scoped source finding: REMEDIATED LOCALLY, DELIVERY PENDING.** Browser now has ESLint 10 flat configuration and a zero-warning lint gate. Removed unused/dead paths and corrected event listener cleanup, media timer duration/cleanup, and planner context so raw URLs and completed step descriptions are not sent to replanning. Browser offline tests pass 40/40, Browser build/lint pass, API regression 36/36, Cloud regression 16/16, API/Cloud builds pass, Web UAT suites 4/4, Web/Landing SEO tests 1/1 each, all five builds pass, and PHDK coherence is 52/52. API and Cloud production dependency audits each report zero vulnerabilities; Browser production-only audit reports zero.
+
+| Finding | Status | Evidence / remaining proof |
+|---|---|---|
+| Browser lint gate and runtime cleanup | REMEDIATED ON CANDIDATE | ESLint 10 flat config; Browser lint 0 errors/0 warnings, build PASS, offline suite 40/40. PR/remote readback pending. |
+| API full lint | EXISTING FOLLOW-UP | 135 warnings, 0 errors, chiefly `require-await`, with unused-symbol and floating-promise findings. This Browser-scoped candidate does not suppress or silently alter them. |
+| Web full lint | EXISTING FOLLOW-UP | 122 warnings, 0 errors, chiefly `no-explicit-any` and React Hooks diagnostics. The candidate does not suppress or silently alter them. |
+| CHK-AUTO-003 — model-family CRUD/authorization map | PARTIAL | Existing 35-model/168-row inventory is a source drift assertion, not exhaustive role × tenant × surface × operation and persisted per-record proof. |
+| Persistence, migrations and safe identities | BLOCKED / UNVERIFIED | Requires isolated disposable PostgreSQL and synthetic DB-backed identities. No DB or migration was used. |
+| Native device/audio | MANUAL | Requires a supported Windows device/audio host. |
+| Broad accessibility/localization; deployed SEO/AEO | PARTIAL / UNVERIFIED | Synthetic/local source checks pass; full assistive-technology, live crawler, Search Console and deployed measurements were not performed. |
+| Client-specific call/CRM acceptance | EXTERNAL / PER CLIENT | Providers are customer-selected; no live provider or private endpoint was contacted. Tenant-configured private origins remain validation- and allowlist-bound. |
+
+Current synthetic Web UAT evidence is `docs/phdk/evidence/uat-local-web.json` (version 5.1.45; four suites pass; mocked API and blocked external traffic). `npm audit --omit=dev` reports zero vulnerabilities in API, Cloud and Browser. Browser's development dependency audit reports seven moderate Electron Builder transitive findings; no production dependency is affected, and the suggested major downgrade was not applied. GitHub PR and remote readback are pending; no human review, hosted check, or deployment is claimed.
+
+Overall: **SOURCE SLICE REMEDIATED LOCALLY / WHOLE PHDK AUTO PARTIAL**.
+
+---

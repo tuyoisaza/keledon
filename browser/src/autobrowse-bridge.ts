@@ -5,15 +5,14 @@
 
 import log from 'electron-log';
 import { BrowserWindow, BrowserView, ipcRenderer } from 'electron';
-import { planGoalActions, planGoalActionsWithAI } from './goal-planner';
+import { planGoalActionsWithAI } from './goal-planner';
 import type { GoalPlannerAction as GoalAction } from './goal-planner';
 import type { RpaStep } from './rpa-executor';
 import { runtimeStatus } from './runtime-state';
 import { getAllowedVendorOrigins } from './security-policy.js';
 import { executeAction } from './autobrowse-actions';
 import type { StepResult } from './autobrowse-actions';
-import { connectCDP, disconnectCDP, getCdpBrowser, getCdpContext, getCdpPort } from './autobrowse-cdp';
-import { mapGoalToActions, callPlannerAPI } from './autobrowse-planner';
+import { connectCDP, disconnectCDP, getCdpBrowser, getCdpPort } from './autobrowse-cdp';
 import type { BridgeGoalInput, BridgeExecutionResult, BrowserState } from './autobrowse-types';
 
 let isInitialized = false;
@@ -69,7 +68,7 @@ export function setTabs(tabList: typeof electronTabs, activeId: string) {
 
 // ==================== Public API ====================
 
-export async function initializeAutoBrowse(electronSession: any): Promise<void> {
+export async function initializeAutoBrowse(_electronSession: any): Promise<void> {
   if (isInitialized) {
     log.info('[AutoBrowse] Already initialized');
     return;
@@ -193,14 +192,15 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
   const steps: StepResult[] = [];
   const screenshots: string[] = [];
   const logs: string[] = [];
-  let credentialSubmitted = false;
 
   logs.push(`[Goal] length=${input.goal.length}`);
   if (input.inputs) logs.push(`[Inputs] ${JSON.stringify(Object.keys(input.inputs))}`);
 
   // v0.3.51: extract URL before planning so we can check if planner will handle navigation.
   const url = (input.inputs?.url as string) || (input.inputs?.targetUrl as string);
-  const plannerInputs = url ? { ...(input.inputs || {}), url: undefined, targetUrl: undefined } : input.inputs;
+  const plannerInputs = { ...(input.inputs || {}) };
+  delete plannerInputs.url;
+  delete plannerInputs.targetUrl;
 
   try {
     // Map goal to actions FIRST so we can check if the planner will handle navigation.
@@ -211,7 +211,7 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
       JSON.stringify({ url: url || '', title: '', content: '' }),
       runtimeStatus.cloudUrl,
       runtimeStatus.authToken || '',
-      input.inputs,
+      plannerInputs,
       input.execution_id,
     );
     const actions = plannerResult.steps;
@@ -300,13 +300,17 @@ export async function executeGoal(input: BridgeGoalInput): Promise<BridgeExecuti
 
       // Extract current page state
       const state = await extractPageState(view);
-      const previousDescription = steps
+      const previousActionTypes = steps
         .filter(s => s.success)
         .slice(-10)
-        .map(s => s.description);
+        .map(s => s.type);
+      const replanningContext = [
+        state.content,
+        previousActionTypes.length ? `Previously completed action types: ${previousActionTypes.join(', ')}` : '',
+      ].filter(Boolean).join('\n');
 
       // Call the AI planner to determine next steps
-      const plan = { ...await planGoalActionsWithAI(input.goal, state.url, state.content, runtimeStatus.cloudUrl, runtimeStatus.authToken || '', input.inputs, `${executionId}-replan-${iteration}`), explanation: undefined, reasoning: undefined };
+      const plan = { ...await planGoalActionsWithAI(input.goal, state.url, replanningContext, runtimeStatus.cloudUrl, runtimeStatus.authToken || '', plannerInputs, `${executionId}-replan-${iteration}`), explanation: undefined, reasoning: undefined };
 
       if (!plan.steps || plan.steps.length === 0) {
         // AI says no more steps needed — goal is complete

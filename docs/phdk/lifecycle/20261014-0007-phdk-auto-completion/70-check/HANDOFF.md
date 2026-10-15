@@ -1,5 +1,9 @@
 # Check handoff — 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.45 source recheck — 2026-10-14 local
+
+Browser ESLint 10 flat config and source cleanup close the prior Browser lint block. Browser build/lint and offline tests pass (40/40); API/Cloud builds and regressions pass (36/36, 16/16); Web synthetic UAT passes 4/4; Web/Landing SEO tests pass 1/1 each; PHDK coherence is 52/52. Candidate details and residual findings are at repository root `PHDK_CHECK_REPORT.md` and `snapshots/candidate-5.1.45/PHDK_CHECK_REPORT.md`. API (135) and Web (122) full-lint warnings remain visible follow-up debt; production audits show no API/Cloud vulnerabilities. This is local candidate evidence pending PR and remote readback. Whole Auto is partial because DB/identity/persisted CRUD, native device/audio, broad accessibility/localization and deployed SEO/AEO are not established; live call/CRM remains per customer.
+
 ## Candidate 5.1.44 — tenant scope on BrowserView HTTP(S)/WebSocket requests (UAT-040)
 
 CHK-AUTO-022 closes the gap for cross-origin HTTP(S) resources and WS/WSS handshakes initiated by a tenant-allowlisted CRM page during RPA. The Electron session guard resolves a known WebContents directly; without one, it matches the service-worker initiator to active session scopes, intersects overlaps and denies unknown origins. Exact candidate `0cbf038ed8ce7f27b1459c3a922a93f04165da46` passes Browser suite 27/27, security-policy/wiring 11/11, Browser build and PHDK coherence 52/52. PR #129 is merged and remote `main` is verified; offline evidence only and overall acceptance remains partial. See `snapshots/candidate-5.1.44/PHDK_CHECK_REPORT.md`.

@@ -1,4 +1,3 @@
-import log from "electron-log";
 import * as cmdlog from "./cmdlog.js";
 import type { TabManager } from "./tab-manager.js";
 import { runtimeStatus } from "./runtime-state.js";

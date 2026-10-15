@@ -15,6 +15,7 @@ export class EventLogger extends EventEmitter {
   private logs: LogEntry[] = [];
   private maxLogs = 1000;
   private categories: Set<string> = new Set();
+  private timers = new Map<string, { startTime: number; category: string; event: string }>();
 
   constructor() {
     super();
@@ -67,14 +68,18 @@ export class EventLogger extends EventEmitter {
 
   startTimer(category: string, event: string): string {
     const timerId = `timer-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    const startTime = Date.now();
-    
+    this.timers.set(timerId, { startTime: Date.now(), category, event });
     return timerId;
   }
 
   endTimer(timerId: string, category: string, event: string): void {
-    // For now, just log the event completion
-    this.info(category, `${event}_complete`, { timerId });
+    const timer = this.timers.get(timerId);
+    if (!timer) return;
+    this.timers.delete(timerId);
+    this.info(category || timer.category, `${event || timer.event}_complete`, {
+      timerId,
+      durationMs: Date.now() - timer.startTime,
+    });
   }
 
   getLogs(filter?: {
@@ -137,6 +142,7 @@ export class EventLogger extends EventEmitter {
   clear(): void {
     this.logs = [];
     this.categories.clear();
+    this.timers.clear();
   }
 
   export(): string {

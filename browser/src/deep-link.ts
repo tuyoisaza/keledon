@@ -48,7 +48,7 @@ export function getDeepLinkDiagnostics() {
   return { ...runtimeStatus.diagnostics };
 }
 
-export function handleDeepLink(url: string, tabManager: TabManager): void {
+export function handleDeepLink(url: string, _tabManager: TabManager): void {
   log.info('[DeepLink] Launch protocol received');
   runtimeStatus.diagnostics.lastDeepLinkReceivedAt = nowIso();
   runtimeStatus.diagnostics.lastAutoConnectStatus = 'not_attempted';

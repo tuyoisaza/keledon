@@ -40,7 +40,7 @@ export const runtimeStatus: RuntimeStatus = {
 export let mainWindow: BrowserWindow | null = null;
 export function setMainWindow(win: BrowserWindow | null) { mainWindow = win; }
 
-export let debugMode = resolveDebugMode(app.isPackaged, process.env.KELEDON_DEBUG);
+export const debugMode = resolveDebugMode(app.isPackaged, process.env.KELEDON_DEBUG);
 
 /** Explicit logout clears tenant/session configuration and all cached runtime credentials. */
 export function clearRuntimeSessionState(): void {

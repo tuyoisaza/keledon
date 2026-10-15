@@ -11,7 +11,6 @@ import log from 'electron-log';
 import { BrowserWindow } from 'electron';
 import { executeRpaFlow, type RpaFlow, type RpaFlowResult } from './rpa-executor.js';
 import { mediaLayer } from './media/media-layer.js';
-import { transcriptMonitor } from './media/transcript-monitor.js';
 import { runtimeStatus } from './runtime-state.js';
 import { getAllowedVendorOrigins } from './security-policy.js';
 
@@ -183,24 +182,19 @@ let transcriptListener: (() => void) | null = null;
 export function startTranscriptListener(callback: (text: string, isFinal: boolean) => void): void {
   stopTranscriptListener();
 
-  transcriptListener = () => {
-    if (currentCall?.state === 'listening') {
-      // Transcript is being captured by mediaLayer and sent to cloud
-      // This is a local listener for call state tracking
-    }
-  };
-
-  // Hook into media layer transcript events
-  mediaLayer.on('transcript', (text: string, isFinal: boolean) => {
+  const listener = (text: string, isFinal: boolean) => {
     if (currentCall) {
       callback(text, isFinal);
     }
-  });
+  };
+  mediaLayer.on('transcript', listener);
+  transcriptListener = () => mediaLayer.off('transcript', listener);
 
   log.info('[CallHandler] Transcript listener started');
 }
 
 export function stopTranscriptListener(): void {
+  transcriptListener?.();
   transcriptListener = null;
   log.info('[CallHandler] Transcript listener stopped');
 }

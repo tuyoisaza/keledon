@@ -205,7 +205,7 @@ export class VoiceWSClient extends EventEmitter {
   /**
    * Play a base64-encoded audio chunk using AudioContext.
    */
-  private async playAudioChunk(base64Data: string, format: string): Promise<void> {
+  private async playAudioChunk(base64Data: string, _format: string): Promise<void> {
     try {
       // Lazy-init AudioContext (must be after user gesture)
       if (!this.audioContext) {

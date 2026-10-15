@@ -1,8 +1,6 @@
 import { normalizeTrustedCloudUrl } from './cloud-trust.js';
 import { clearVendorSessionState } from './ipc-vendor-state.js';
-import { ipcMain, app, session, BrowserWindow, Notification as ElectronNotification } from 'electron';
-import * as fs from 'fs';
-import * as path from 'path';
+import { ipcMain, app, session, Notification as ElectronNotification } from 'electron';
 import log from 'electron-log';
 import { webrtcInjector } from './webrtc-injector.js';
 import { mediaLayerWrapper } from './ipc-media-handlers.js';
@@ -17,17 +15,8 @@ import { runtimeStatus, mainWindow, debugMode, clearRuntimeSessionState } from '
 import { getDeviceSocket, connectWebSockets, disconnectSockets, setupCommandPolling } from './cloud-connection.js';
 import { getStartupLogPath, getMainLogPath, getLogsDir, getInstallDir } from './logger.js';
 import type { TabManager } from './tab-manager.js';
-import {
-  vendorLoginState,
-  bootstrappedVendorIds,
-  bootstrappedTeamId,
-  setBootstrappedTeamId,
-  mergeRuntimeVendorCredentials,
-  logVendorLogin,
-} from './ipc-vendor-state.js';
-import { enrichGoalInputsFromRuntimeVendor, autoLoginToVendor, bootstrapTeamVendors } from './ipc-vendor-login.js';
-import { showEscalation, checkEscalationTriggers } from './ipc-escalation.js';
-import { getAutoBrowseBridge, initializeAutoBrowseEngine } from './ipc-bridge.js';
+import { enrichGoalInputsFromRuntimeVendor, bootstrapTeamVendors } from './ipc-vendor-login.js';
+import { getAutoBrowseBridge } from './ipc-bridge.js';
 import { registerEvidenceIpcHandlers } from './ipc-evidence-handlers.js';
 import { registerMediaIpcHandlers } from './ipc-media-handlers.js';
 

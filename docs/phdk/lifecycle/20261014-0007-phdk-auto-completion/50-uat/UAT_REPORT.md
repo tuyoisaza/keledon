@@ -1,5 +1,13 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Latest candidate 5.1.45 — Browser lint gate and runtime test coverage (2026-10-14 local)
+
+The built-SPA UAT ran against Browser/Web/Landing package version 5.1.45 and passed 4/4 suites (0 failed). It exercised synthetic role-shaped management journeys, write-only provider configuration, protected diagnostics behavior and the refreshed 5.1.45 UI. Exact run evidence is `docs/phdk/evidence/uat-local-web.json`, generated at 2026-10-15T01:31:28Z from candidate revision `77a975d8a5dc37cebf884a3c5b2bc35b3ac67002` plus the recorded source fingerprint. API calls were intercepted with synthetic fixtures and external requests blocked; this is UI evidence, not real-server authorization or deployed acceptance.
+
+Browser offline tests pass 40/40, including listener/timer behavior and planner-context redaction; Browser build and zero-warning lint pass. API/Cloud regression suites pass 36/36 and 16/16. The full Auto acceptance tally remains **37 PASS, 2 BLOCKED, 1 MANUAL**; the new Browser tooling/runtime checks close no database, native-device or deployed-discovery gate. PostgreSQL and safe test identities, exhaustive persisted CRUD authorization, supported native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-selected live call/CRM remain unverified or external. No customer data, live private CRM, database, device or deployment was used.
+
+---
+
 ## Latest candidate 5.1.44 — enforce tenant scope on remote resource requests (2026-10-15)
 
 UAT-040 passes on exact product candidate `0cbf038ed8ce7f27b1459c3a922a93f04165da46` (tree `9580bf410a52c2ecce0824e52fdf3ab30b322440`). The BrowserView's session guard now applies the active Cloud-derived tenant allowlist to HTTP(S) and WebSocket requests. Known WebContents resolve their own runtime scope; requests lacking an owner are matched by service-worker initiator against active scopes on that session, with intersection semantics for overlapping tenants and denial when unattributed. Explicit tenant-configured private HTTP(S) origins remain usable. Evidence includes offline policy tests for same-origin, private-origin, unlisted-origin, credentials, and websocket cases; source wiring asserts Electron's `onBeforeRequest` callback uses that policy. Results: Browser suite 27/27, security-policy/wiring 11/11, Browser TypeScript build, PHDK coherence 52/52, five package/lock roots and renderer 5.1.44.

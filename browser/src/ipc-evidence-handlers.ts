@@ -1,7 +1,6 @@
-import { app, ipcMain, dialog, shell } from 'electron';
+import { app, ipcMain } from 'electron';
 import fs from 'fs';
 import path from 'path';
-import * as cmdlog from './cmdlog.js';
 import type { EventLogger } from './media/event-logger.js';
 
 export function registerEvidenceIpcHandlers(
@@ -54,7 +53,9 @@ export function registerEvidenceIpcHandlers(
         parts.push(`\n=== ${cf} ===\n`);
         parts.push(fs.readFileSync(path.join(logsDir, cf), 'utf-8'));
       }
-    } catch (_) {}
+    } catch {
+      eventLogger.warn('diagnostics', 'crash_logs_unavailable');
+    }
     return { logs: parts.join('') };
   });
 
