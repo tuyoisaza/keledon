@@ -70,6 +70,14 @@ Branch
 ix/redact-device-config-lists is based on main 22c0a407aa07552a189aa9f3b00e887397f9d03. All five package/lock roots and Browser renderer are 5.1.29. Device list responses omit raw RPA provider config and CDP URL, returning only presence flags. API regression/Jest/build/focused lint, Cloud/Web/Landing/Browser builds, and PHDK coherence pass. PR, merge and exact readback pending. Whole Auto remains partial for CRUD/DB matrix, native/audio, broad accessibility/localization and deployed SEO/AEO.
 # Delivery handoff — `20261014-0007-phdk-auto-completion`, source and matrix 5.1.35
 
+## Current source candidate — 5.1.41
+
+Candidate `718ce3d4cf9c4e51b71ec163e9749307997d85d2` on `fix/phdk-vendor-frame-scope-5-1-41` is based on verified main `aed26d6641950fb3d4f40e64fee459fb013c544a`. Five app package/lock roots and Browser renderer align at 5.1.41. Candidate UAT-036/037 and integrated source checks pass as recorded in `PHDK_AUTO_FINAL_STATUS-5.1.41.md` and `DELIVERY_REPORT.md`. Source commit is version-prefixed. Branch push, PR, merge and remote-main verification are still pending; no deployment is claimed. Whole Auto remains partial for the external/persisted gates in the status file.
+
+## Verified Web UAT delivery — PR #122
+
+PR [#122](https://github.com/tuyoisaza/keledon/pull/122) delivered the isolated-output combined Web UAT runner and UAT-036. The exact-source run passed 4/4 browser test files and produced 21 evidence artifacts. It merged at `aed26d6641950fb3d4f40e64fee459fb013c544a`; `git fetch origin` and `git ls-remote origin refs/heads/main` agree, and PR-head/merge trees match at `6897e2d9b8f2bf2b85ecccf9700d6dfb17c24328`. GitHub reported no hosted checks or review decision. This is synthetic built-SPA evidence only; database, native device/audio, deployment and customer-provider acceptance remain open. Machine evidence: `PHDK_DELIVERY_EVIDENCE-UAT036-post-merge-122.json`.
+
 ## Verified matrix reconciliation — PR #108
 
 PR [#108](https://github.com/tuyoisaza/keledon/pull/108) updates the active CRUD matrix and Check/PMO/commitment records to match the shipped 5.1.35 KnowledgeBase and KnowledgeDocument contract. Its merge SHA, verified against `origin/main` and `git ls-remote` immediately after merge, is `056e8605097874337c6bc532c006da3a3f772d56`. The inventory regression passes 35/35 Prisma models and 154 unique role × surface rows; installed PHDK coherence passes 52/52; post-merge completion gate passes. GitHub reported no hosted checks/review requirement; no deployment is claimed. The ESLint parser excludes the JS inventory test because it is outside its TS project; direct Node execution passes.

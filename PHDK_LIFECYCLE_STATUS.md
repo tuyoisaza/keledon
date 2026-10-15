@@ -1,3 +1,30 @@
+# PHDK Auto lifecycle — current candidate 5.1.41
+
+Run: `20261014-0007-phdk-auto-completion`
+Repository: `tuyoisaza/keledon`
+Branch: `fix/phdk-vendor-frame-scope-5-1-41`
+Candidate source: `718ce3d4cf9c4e51b71ec163e9749307997d85d2` (tree `14e5c085771a1e556692991fd1724e747b164ee7`); base: verified `origin/main` `aed26d6641950fb3d4f40e64fee459fb013c544a` / 5.1.40.
+Goal: four owner-confirmed KELEDON fronts in their agreed order, aligned to applicable PHDK standards.
+
+| Stage | Status | Evidence / current state |
+|---|---|---|
+| 00 Preflight | REUSED / REVALIDATED | Installed PHDK 2.50.10, canonical source verified earlier in this Auto run; coherence 52/52. |
+| 10 Capture | REUSED | Four fronts, least-privilege policy and customer-selected CRM model are confirmed. Private destinations are customer-configured, URL-validated and tenant-allowlisted. |
+| 20 Plan | REUSED | Existing brownfield plan and dependency order remain applicable; no architecture reset. |
+| 30 PMO / Workstreams | REUSED / CONTINUED | Four confirmed fronts remain in order; earlier product PRs #118–#122 and readbacks reconciled. |
+| 40 Integration Review | COMPLETED FOR 5.1.41 SOURCE | Browser main/frame/redirect and IPC navigation paths reviewed; all five roots are 5.1.41; API/Cloud tenant gates remain authoritative. |
+| 50 UAT | COMPLETED FOR CANDIDATE / WHOLE PARTIAL | UAT-036 exact-source Web suite 4/4 and 17 checks; UAT-037 policy/wiring; total acceptance 34 PASS, 2 BLOCKED, 1 MANUAL. |
+| 60 UAT Fix | COMPLETED FOR CHK-AUTO-019 | Fixed missing frame navigation and trusted IPC URL scope; no live endpoint used. |
+| 65 SEO | REUSED / SOURCE PASS | Web and Landing source SEO tests pass 1/1 each; deployed measurements unavailable. |
+| 67 AEO/GEO | REUSED / SOURCE REVIEW | No public claim changed; live answer-engine/crawler measurement remains unavailable. |
+| 70 Check | SOURCE CHECK PASS / ACCEPTANCE PARTIAL | Candidate snapshot `70-check/snapshots/candidate-5.1.41/PHDK_CHECK_REPORT.md`; CHK-AUTO-019 fixed. |
+| 80 Remediation | COMPLETED FOR CANDIDATE | API/Cloud regressions 36/36 and 16/16, Browser offline 35/35, all builds, Web UAT/diagnostics/SEO, Landing SEO, coherence 52/52. Browser ESLint could not start; documented. |
+| 90 Delivery | RUNNING | Versioned source commit exists; lifecycle evidence and exact-source UAT prepared. Branch push, PR, merge and remote-main verification remain. |
+
+Overall status: **PARTIALLY DELIVERED**. No PostgreSQL, production identity, customer endpoint, private destination, or deployment was used.
+
+---
+
 # PHDK Auto lifecycle — current candidate 5.1.39
 
 Run: `20261014-0007-phdk-auto-completion`

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "runId": "20261014-0007-phdk-auto-completion",
+  "candidateVersion": "5.1.40",
+  "repository": "tuyoisaza/keledon",
+  "pullRequest": {
+    "number": 122,
+    "url": "https://github.com/tuyoisaza/keledon/pull/122",
+    "state": "MERGED",
+    "mergedAt": "2026-10-15T00:32:05Z",
+    "reviewDecision": "",
+    "hostedChecks": []
+  },
+  "testSourceCommit": "c9ff85f4094f60491def1bc3680b8758ac11dde6",
+  "testSourceTree": "c788d3e3323215a39e977f9a39a237b35dc05536",
+  "pullRequestHead": "a3ac3fa7df4eef79ba5ac1e8a7418035dba7bb7a",
+  "mergeCommit": "aed26d6641950fb3d4f40e64fee459fb013c544a",
+  "remoteMain": "aed26d6641950fb3d4f40e64fee459fb013c544a",
+  "remoteMainReadback": "git fetch origin; git ls-remote origin refs/heads/main",
+  "tree": "6897e2d9b8f2bf2b85ecccf9700d6dfb17c24328",
+  "testAndMergeTreesMatch": true,
+  "uat": {
+    "caseId": "UAT-036",
+    "result": "PASS",
+    "browserTestFiles": 4,
+    "baselineJourneys": 17,
+    "evidenceArtifacts": 21,
+    "evidence": "docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-suite-5.1.40-source-c9ff85f4.json"
+  },
+  "completion": "TEST AND EVIDENCE MERGED / REMOTE VERIFIED; WHOLE PHDK AUTO ACCEPTANCE PARTIAL",
+  "databaseOrDeploymentClaimed": false
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-036",
+  "candidateVersion": "5.1.41",
+  "sourceCommit": "718ce3d4cf9c4e51b71ec163e9749307997d85d2",
+  "sourceTree": "14e5c085771a1e556692991fd1724e747b164ee7",
+  "command": "npm run test:uat",
+  "result": {
+    "status": "PASS",
+    "testFiles": 4,
+    "passed": 4,
+    "failed": 0,
+    "baselineJourneyChecks": 17
+  },
+  "includedTests": [
+    "test/local-uat.test.cjs",
+    "test/devices-page-uat.test.cjs",
+    "test/management-debug-role-uat.test.cjs",
+    "test/knowledge-manager-role-uat.test.cjs"
+  ],
+  "isolation": {
+    "apiResponses": "synthetic fixtures only",
+    "externalNetwork": "blocked by the browser tests",
+    "database": "not used",
+    "customerData": "not used",
+    "evidenceOutput": "isolated through KELEDON_UAT_EVIDENCE_DIR; shared root evidence was not a test output target"
+  },
+  "evidenceDirectory": "docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-suite-5.1.41-source-718ce3d4/",
+  "scope": "Local production-SPA acceptance only; no real API authentication, persistent authorization, PostgreSQL, native device/audio, or deployed acceptance.",
+  "executedAtUtc": "2026-10-15T00:40:00Z"
+}

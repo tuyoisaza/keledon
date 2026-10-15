@@ -12,6 +12,8 @@ PR [#120](https://github.com/tuyoisaza/keledon/pull/120) delivered this test/evi
 
 **UAT-036:** the combined local production-SPA suite passes 4/4 test files at commit `c9ff85f4094f60491def1bc3680b8758ac11dde6` (tree `c788d3e3323215a39e977f9a39a237b35dc05536`) with 17 logged baseline journey checks. `KELEDON_UAT_EVIDENCE_DIR` directed 21 generated screenshots/JSON into an isolated lifecycle folder; the shared root evidence files were not used. This confirms local synthetic browser behavior only; CHK-AUTO-003 remains partial and database/device/deployed acceptance remains open.
 
+PR [#122](https://github.com/tuyoisaza/keledon/pull/122) delivered the suite and UAT-036 at remote `main` `aed26d6641950fb3d4f40e64fee459fb013c544a`. Fresh fetch and `git ls-remote` agree; PR-head/merge trees match at `6897e2d9b8f2bf2b85ecccf9700d6dfb17c24328`. GitHub reported no hosted checks or review decision. Readback: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-UAT036-post-merge-122.json`.
+
 | Finding | Current status | Evidence / remaining proof |
 |---|---|---|
 | CHK-AUTO-018 — diagnostics UI role mismatch | CLOSED — SOURCE | Exact commit/tree above; dedicated built-SPA UAT 1/1. Backend remains authoritative and unchanged. |

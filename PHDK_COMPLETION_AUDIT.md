@@ -1,3 +1,20 @@
+## Current Auto completion audit — candidate 5.1.41 (2026-10-14)
+
+The four confirmed fronts remain active and none is deferred. Candidate source `718ce3d4cf9c4e51b71ec163e9749307997d85d2` (tree `14e5c085771a1e556692991fd1724e747b164ee7`), based on verified remote main `aed26d6641950fb3d4f40e64fee459fb013c544a`, aligns all five app package/lock roots and Browser renderer at 5.1.41. PHDK 2.50.10 coherence passes 52/52. API/Cloud regressions pass 36/36 and 16/16; all five builds pass; Browser offline suite 35/35; Web UAT passes 4/4 files with 17 local journey checks; Web diagnostics 19/19; Web/Landing SEO 1/1 each.
+
+CHK-AUTO-019 found missing tenant-scope enforcement on Browser frame navigation and the trusted programmatic `tabs:navigate` IPC. Both now use the normalized tenant origin allowlist; configured private destinations remain supported. UAT-037 passes offline policy/wiring tests. No private destination, customer provider, database, live device, production identity or deployment was contacted. Browser ESLint could not start because installed ESLint 10 requires an absent flat config.
+
+| Commitment | Status | Remaining in-scope proof |
+|---|---|---|
+| CMT-001 — baseline/versions/PR | SOURCE CANDIDATE PASS / DELIVERY PENDING | Version alignment and source prefix pass; push, PR, merge and remote-main readback pending. PR #122 for the preceding UAT slice is independently verified. |
+| CMT-002 — widget/diagnostics | LOCAL SOURCE/UAT PASS / ACCEPTANCE PARTIAL | Physical Windows device/audio, broad route and assistive-tech verification. |
+| CMT-003 — voice/Cloud/Browser/customer CRM | OFFLINE SOURCE POLICY PASS / LIVE PER CLIENT | Customer adapter/provider selection and endpoint are intentionally customer-owned; no live call/CRM test can be inferred. Configured private origins require tenant validation/allowlisting; no DB-level persisted configuration was run. |
+| CMT-004 — administration/permissions | SOURCE REGRESSIONS PASS / PERSISTENCE UNVERIFIED | Safe DB identities, disposable PostgreSQL/migrations, exhaustive model×role×tenant×surface×operation persistence proof. |
+
+Whole acceptance remains **PARTIALLY DELIVERED**: UAT is 34 PASS, 2 BLOCKED, 1 MANUAL; live Qdrant concurrency, native audio/device, broad accessibility/localization and deployed SEO/AEO are not complete. The source candidate is not yet delivered to main. No whole-product completion claim is valid.
+
+---
+
 ## Current Auto completion audit — candidate 5.1.39 (2026-10-14)
 
 The four owner-confirmed fronts remain active in order. Source commit `a8a89f928312db2fef5142a0e07ac18a197b6c19`, based on verified main `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`, shipped in PR [#116](https://github.com/tuyoisaza/keledon/pull/116) at remote main SHA `615770d6e769008299a4228da758fc455941c6c5`. Fresh `origin/main` and `git ls-remote` agree; merge and tested-candidate trees match at `f3c45a2d80bf065db27236a48ae4b7dcafead240`. Five app package/lock roots and Browser renderer are 5.1.39. API/Cloud regressions 36/36 and 16/16, API/Cloud builds, changed-source lint, Browser/Web/Landing builds and typechecks, diagnostics 19/19, built-SPA UAT 2/2, Web/Landing SEO 1/1 each, PHDK coherence 52/52, and the 1,168-file/zero-at-limit source inventory pass. The scoped source-slice completion gate passes.

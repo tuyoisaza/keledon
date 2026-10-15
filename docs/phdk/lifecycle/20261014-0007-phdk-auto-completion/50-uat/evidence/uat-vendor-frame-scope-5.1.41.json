@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-037",
+  "candidateVersion": "5.1.41",
+  "sourceCommit": "718ce3d4cf9c4e51b71ec163e9749307997d85d2",
+  "sourceTree": "14e5c085771a1e556692991fd1724e747b164ee7",
+  "targetEnvironment": "offline Node security-policy and TypeScript checks",
+  "command": "node --test test/*.test.cjs tests/*.test.cjs",
+  "result": {
+    "status": "PASS",
+    "browserTests": 35,
+    "securityPolicyTests": 8,
+    "failed": 0,
+    "typescriptBuild": "PASS"
+  },
+  "policy": {
+    "configuredPrivateHttpOrigins": "allowed for that tenant",
+    "unconfiguredOrigins": "blocked for frames and trusted tabs:navigate IPC",
+    "redirects": "scope checked",
+    "aboutBlank": "allowed to inherit the parent origin",
+    "externalNetwork": "not accessed"
+  },
+  "databaseOrDeploymentClaimed": false
+}
