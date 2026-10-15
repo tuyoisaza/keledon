@@ -1,8 +1,10 @@
-## Current Check — candidate 5.1.40, source finding closed (2026-10-14)
+## Current Check — candidate 5.1.40, source merged (2026-10-14)
+
+PR [#118](https://github.com/tuyoisaza/keledon/pull/118) merged tested source `8d000a5d4aa95dc361d19a5eca02fe4544be0417` at remote `main` `38cb5b76df9b6b8779a12200cf16ee4b50b3fea0`. `git ls-remote` agrees; merge tree `340682673f2e4cb1aaf8befb0267107515a1e6a2` equals the tested PR-head tree. GitHub had no hosted checks or review decision; no deployment is claimed. Machine-readable readback: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.40-post-merge-118.json`.
 
 Repository `tuyoisaza/keledon`; candidate branch `fix/diagnostics-route-roles-5-1-40`; exact source `8d000a5d4aa95dc361d19a5eca02fe4544be0417`; source tree `cc41a3b3d030d72db006809553983abb2368d54b`; based on local/remote-main baseline `5eace2e3095a829a81575792c3e2d46f07c5f007` as verified before the branch was created. All five application package/lock roots and Browser renderer are 5.1.40. PHDK v2.50.10 coherence is 52/52. Web production build/typecheck, focused ESLint, diagnostics 19/19, SEO source test 1/1, Landing build/typecheck, API and Cloud builds, Browser build, and exact-source synthetic UAT-034 pass. UAT evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-management-debug-role-5.1.40.json`.
 
-**Executive result: SCOPED SOURCE CHECK PASS / WHOLE AUTO ACCEPTANCE PARTIAL / DELIVERY PENDING.** Check found that hierarchical `minRole="admin"` admitted coordinators to `/management/debug`, while the existing backend diagnostics `RolesGuard` denies coordinators. `ProtectedRoute` now accepts an optional explicit allowlist, and this route permits only `admin` and `superadmin`; API enforcement is unchanged. UAT-034 proves coordinator redirect before `/health/deep` and admin use against synthetic fixtures, with all non-fixture external traffic blocked.
+**Executive result: SCOPED SOURCE CHECK PASS / SOURCE MERGED / WHOLE AUTO ACCEPTANCE PARTIAL.** Check found that hierarchical `minRole="admin"` admitted coordinators to `/management/debug`, while the existing backend diagnostics `RolesGuard` denies coordinators. `ProtectedRoute` now accepts an optional explicit allowlist, and this route permits only `admin` and `superadmin`; API enforcement is unchanged. UAT-034 proves coordinator redirect before `/health/deep` and admin use against synthetic fixtures, with all non-fixture external traffic blocked.
 
 | Finding | Current status | Evidence / remaining proof |
 |---|---|---|
@@ -13,7 +15,7 @@ Repository `tuyoisaza/keledon`; candidate branch `fix/diagnostics-route-roles-5-
 | Deployed SEO/AEO; broad accessibility/localization | UNVERIFIED | Local source checks pass; deployment, crawler/search measurements and broad screen/assistive-tech acceptance were not performed. |
 | Client-specific call/CRM acceptance | EXTERNAL / PER CLIENT | Providers and CRM are selected by each tenant; configured private destinations remain validation- and tenant-allowlist-bound. No client system was contacted. |
 
-No whole-product certification or deployment is claimed. Normal PR delivery, controls and remote-main readback remain pending.
+No whole-product certification or deployment is claimed. See the delivery readback above; the remaining rows are acceptance work.
 
 ---
 

@@ -19,6 +19,14 @@ SIGUIENTE PASO: provide safe development identities, disposable PostgreSQL and a
 ---
 # Delivery handoff — candidate 5.1.26
 
+## Verified delivery — candidate 5.1.40 (2026-10-14)
+
+PR [#118](https://github.com/tuyoisaza/keledon/pull/118) delivered the diagnostics UI role alignment and exact-source UAT/Check records. Source commit `8d000a5d4aa95dc361d19a5eca02fe4544be0417` was squash-merged at `38cb5b76df9b6b8779a12200cf16ee4b50b3fea0`; `origin/main` and `git ls-remote` agree, and the merge tree equals the tested PR-head tree. The five application package/lock roots and Browser renderer are 5.1.40. UAT-034 passes 1/1; API roles remain unchanged. GitHub reported no hosted checks or review decision. No deployment is claimed. Evidence: `PHDK_DELIVERY_EVIDENCE-5.1.40-post-merge-118.json`.
+
+Overall PHDK Auto remains **PARTIALLY DELIVERED**. Disposable PostgreSQL, DB-backed identities, exhaustive persisted CRUD authorization, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open. Call/CRM acceptance is per customer; configured private destinations remain validated and tenant-allowlisted.
+
+---
+
 ## Verified delivery — candidate 5.1.35 (2026-10-14)
 
 PR [#106](https://github.com/tuyoisaza/keledon/pull/106) delivered source commit `2f18c7d82d6a6ac1155910c4f0206da02e0e4de0` by squash at `73c0fc52b37d96d283e8709e76b99c17db0b1a83`. `origin/main` and `git ls-remote` agree; the PR head/merge trees match; all five app package/lock roots and the Browser renderer are 5.1.35. API regressions pass 35/35 suites, Cloud 14/14, both builds and scoped lint pass, PHDK coherence passes 52/52, and exact-commit synthetic built-SPA UAT passes the KnowledgeBase lifecycle journey. The completion verifier passes against the recorded remote SHA. GitHub reported no hosted checks/review decision and no main branch protection. No deployment is claimed.
