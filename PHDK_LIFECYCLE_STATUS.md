@@ -1,6 +1,6 @@
 ## Current PHDK Auto continuation — 5.1.73 orphan-session safeguard merged; whole goal partial
 
-Run `20261014-0007-phdk-auto-completion`; PHDK v2.51.2 coherence is 56/56. PR [#180](https://github.com/tuyoisaza/keledon/pull/180) merged tested source `cee3cc10a5568766001fbdbeccfa9b77fa5b4181`; docs PR [#181](https://github.com/tuyoisaza/keledon/pull/181) advanced current `main` to `7dca7bf3369d20735dfe25150948ccf6612cd3fb`. All six version reads are 5.1.73. UAT-068 verifies orphan cleanup; UAT-069/070 admin/coordinator CRUD; UAT-071 superadmin Company API CRUD in both backends on disposable PostgreSQL; UAT-072 Web Company UI/request; UAT-073 tenant Flow Definitions UI/request with synthetic APIs. FlowRunEvidence remains dormant. No production data or deployment is claimed.
+Run `20261014-0007-phdk-auto-completion`; PHDK v2.51.2 coherence is 56/56. PR [#180](https://github.com/tuyoisaza/keledon/pull/180) merged tested source `cee3cc10a5568766001fbdbeccfa9b77fa5b4181`; docs PRs [#181](https://github.com/tuyoisaza/keledon/pull/181) and [#182](https://github.com/tuyoisaza/keledon/pull/182) advanced `main`, with #182 at `4807eb582a22f7bd3c311cc69caf7c9ccecc711d`. All six version reads are 5.1.73. UAT-068 through UAT-071 cover persisted API/Cloud slices; UAT-072/073 cover Web UI/request; UAT-074 covers private-origin source-policy parity across API/Cloud/Browser. FlowRunEvidence remains dormant. No production data or deployment is claimed.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -13,7 +13,7 @@ Run `20261014-0007-phdk-auto-completion`; PHDK v2.51.2 coherence is 56/56. PR [#
 | Check / Remediation | PASS FOR SOURCE SLICE | API/Cloud builds, UAT-068/069/070/071 and PHDK coherence 56/56 pass; no further source fix identified for the exercised slice. |
 | Delivery | COMPLETED FOR 5.1.73 SOURCE SLICE | PR #180 merged; version, remote SHA/tree and content read back; mechanical gate recorded. |
 
-Whole Auto remains **PARTIALLY DELIVERED** (71 PASS, 0 BLOCKED, 1 MANUAL). Native device/audio, complete resource-operation coverage and superadmin breadth beyond Company, backend-backed Web authorization/persistence, persisted tenant flow runtime, remaining Session lifecycle/retention decisions, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and per-client live call/CRM remain open.
+Whole Auto remains **PARTIALLY DELIVERED** (72 PASS, 0 BLOCKED, 1 MANUAL). Native device/audio, complete resource-operation coverage and superadmin breadth beyond Company, backend-backed Web authorization/persistence, persisted tenant flow runtime, remaining Session lifecycle/retention decisions, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and per-client live call/CRM remain open. UAT-074 reconfirms private-origin policy source parity across API/Cloud/Browser but is not live customer acceptance.
 
 SIGUIENTE PASO: continue the four owner-confirmed fronts; keep the overall portfolio partial while manual, customer-specific and deployed acceptance remains open.
 

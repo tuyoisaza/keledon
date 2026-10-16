@@ -10,7 +10,15 @@
 |---|---|---|---|---|---|
 | UAT-073 | CMT-003 / synthetic Company Co tenant admin | On the production-built SPA, create a flow, save draft and approved versions, enable company availability, add intent mapping, and test 390px reflow. | Tenant scope is derived into flow create and permission/mapping writes; reads include the company filter; no company picker appears; 390px view has no horizontal overflow. | Local Web SPA / headless Edge with intercepted API; external network blocked | PASS: flow editor browser suite 1/1. UI/request contract only; no API/Cloud auth or database persistence claim. Evidence: `evidence/uat-073-flow-editor-5.1.73.json` and screenshots. |
 
-Portfolio tally: **71 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The full resource × role × surface × operation matrix, remaining resource families, native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer live call/CRM remain open.
+## Candidate 5.1.73 — UAT-074 private CRM origin policy parity
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-074 | CMT-003 / source policy contract | Build API/Cloud/Browser and run mirrored vendor URL and Browser security-policy regression suites using synthetic private/public origins. | API/Cloud accept only explicit normalized tenant origins and safe projections; Browser allows configured private endpoints and blocks credentials, unsafe schemes, unconfigured redirects, metadata IP, foreign resources and ambiguous worker scope. | Source tests/builds only; no network calls | PASS: API 3/3, Cloud 3/3, Browser 13/13. No live CRM acceptance. Evidence: `evidence/uat-074-private-origin-policy-5.1.73.json`. |
+
+Portfolio tally: **72 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The full resource × role × surface × operation matrix, remaining resource families, native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer live call/CRM remain open.
+
+Portfolio tally before UAT-074: **71 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The full resource × role × surface × operation matrix, remaining resource families, native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer live call/CRM remain open.
 
 Portfolio tally before UAT-073: **70 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The full resource × role × surface × operation matrix, remaining resource families, native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer call/CRM remain open.
 

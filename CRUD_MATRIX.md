@@ -1,5 +1,9 @@
 # CRUD matrix — current source and authorization coverage
 
+## 5.1.73 — tenant CRM origin allowlist security parity
+
+UAT-074 reconfirmed API/Cloud vendor URL regression 26 and Browser security-policy suite on the 5.1.73 source. Private and loopback destinations work only when explicitly listed for the tenant; malformed entries, unsafe schemes/credentials, off-list redirects/resources, metadata IP and ambiguous worker scope are denied. API/Cloud projections omit secrets and invalid legacy config fails closed. Builds and source suites pass; no live host was contacted. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-074-private-origin-policy-5.1.73.json`. Customer-specific integration acceptance remains open.
+
 ## 5.1.73 — tenant flow editor browser acceptance
 
 UAT-073 exercises the production-built tenant Flow Definitions editor with a synthetic tenant admin and intercepted API. The browser flow creates a company-scoped definition, persists draft and approved version payloads to the fixture, enables company availability, creates intent routing, verifies tenant-filtered reads and checks 390px reflow. This is Web/request-contract evidence; it does not close API/Cloud authorization or database persistence for the flow configuration. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-073-flow-editor-5.1.73.json`.

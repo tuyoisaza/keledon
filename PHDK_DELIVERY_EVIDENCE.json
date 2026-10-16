@@ -68,6 +68,10 @@
       "evidence": "UAT-073: production-built Web Flow Definitions editor browser suite passed 1/1 for company-scoped definition create, draft/approved versions, keyboard availability, company intent mapping, tenant-filtered reads, no company picker, and 390px reflow. API/Cloud are mocked/intercepted; no persistence or live CRM claim.",
       "status": "PASS"
     },
+    "private_vendor_origin_policy": {
+      "evidence": "UAT-074 source checks: API and Cloud vendor destination policy builds and suites 3/3 each; Browser security policy build and suite 13/13. Explicit tenant origins allow configured private CRM destinations while blocking malformed/unsafe inputs and out-of-scope Browser requests. Synthetic-only; no live customer endpoint.",
+      "status": "PASS"
+    },
     "remote_delivery": {
       "evidence": "PR #180 squash-merged; origin/main and git ls-remote both read 2bb4a7dc84075d4b43be43e88aa19334c21d0f2c; remote tree matches tested source tree.",
       "status": "PASS"
@@ -88,7 +92,7 @@
   "whole_auto_acceptance": {
     "status": "PARTIAL",
     "uat_tally": {
-      "pass": 71,
+      "pass": 72,
       "blocked": 0,
       "manual": 1
     },

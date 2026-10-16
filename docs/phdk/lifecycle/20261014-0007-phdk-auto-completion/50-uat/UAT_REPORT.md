@@ -10,6 +10,12 @@ The production-built Flow Definitions page passed its focused browser suite in h
 
 Portfolio: **71 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The full 39-model × role × surface × operation matrix, superadmin breadth beyond Company, tenant flow database persistence/auth, native device/audio, broad route/screen-reader/localization acceptance, remaining Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and customer-specific call/CRM acceptance remain open.
 
+## Candidate 5.1.73 — UAT-074 private origin policy parity PASS
+
+The API and Cloud vendor URL policy suites each pass 3/3 after successful builds; Browser security policy passes 13/13 after a successful build. The verified source contracts allow only explicitly configured HTTP(S) tenant origins, including client-configured RFC1918/loopback destinations, reject unsafe URL forms and secret-bearing config, preserve safe origin projections, and block out-of-scope Browser navigation/resources/redirects with conservative service-worker scope. All fixtures are synthetic. No customer destination or network endpoint was contacted. Evidence: `evidence/uat-074-private-origin-policy-5.1.73.json`.
+
+Portfolio: **72 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. A real customer sandbox and live voice/CRM remain client-defined; database-backed flow authorization, full CRUD coverage, native device/audio and other manual/deployed gates remain open.
+
 ## Candidate 5.1.73 — UAT-071 persisted superadmin Company CRUD PASS
 
 UAT-071 exercised superadmin Company list/detail/create/update/delete through authenticated API and Cloud HTTP against separate disposable PostgreSQL 16.15 databases. Each backend passed 12 assertions: registration starts at role=user, the isolated superadmin fixture authenticates with DB-derived role, the global list and direct detail work, a new Company and country relations persist, Company fields/countries update and read back, superadmin assigns admin then coordinator to a user in that Company, and the test user/Company are deleted with relation absence verified. The temporary superadmin fixture was removed. Evidence: `evidence/uat-071-superadmin-company-crud-5.1.73.json`. UAT-072 separately covers the Web UI/request slice; other superadmin resources remain open.

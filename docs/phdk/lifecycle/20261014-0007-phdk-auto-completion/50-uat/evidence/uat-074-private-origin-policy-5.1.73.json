@@ -1,0 +1,43 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-074",
+  "candidate_version": "5.1.73",
+  "tested_source_commit": "cee3cc10a5568766001fbdbeccfa9b77fa5b4181",
+  "scope": "Source-level validation of the owner-approved per-tenant private CRM origin allowlist across API, Cloud and Browser.",
+  "commands": [
+    {
+      "component": "API",
+      "build": "PASS",
+      "suite": "test/regression/26-vendor-destination-policy.test.js",
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "component": "Cloud",
+      "build": "PASS",
+      "suite": "test/regression/26-vendor-destination-policy.test.js",
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "component": "Browser",
+      "build": "PASS",
+      "suite": "test/security-policy.test.cjs",
+      "passed": 13,
+      "failed": 0
+    }
+  ],
+  "verified_contracts": [
+    "Explicit RFC1918 and loopback HTTP(S) origins are accepted; unconfigured ports/origins are denied.",
+    "URL credentials, non-HTTP schemes, query strings/fragments in configured endpoints, path-bearing allowlist entries, malformed persisted entries, and over-limit destination sets are rejected or excluded.",
+    "API and Cloud normalize and persist the same tenant vendor origins, preserve valid stored origin entries during edits, fail closed on unsafe legacy config, and omit credential/config secrets from public projections.",
+    "Browser enforces tenant scope for destinations, frames, popups, IPC navigation and network requests, including redirects and websocket requests; link-local metadata and other tenant origins are blocked.",
+    "Service-worker requests without a unique tenant scope use intersection/deny behavior rather than combining tenant allowlists."
+  ],
+  "network": "No CRM, private host or customer endpoint was contacted; tests used synthetic IPs and domains only.",
+  "limitations": [
+    "Source policy regression and build evidence only; no live private CRM, DNS rebinding, customer sandbox, OS network policy, or deployed runtime was tested.",
+    "Customer-specific call/CRM acceptance remains pending each customer's chosen providers and configuration."
+  ],
+  "result": "PASS"
+}
