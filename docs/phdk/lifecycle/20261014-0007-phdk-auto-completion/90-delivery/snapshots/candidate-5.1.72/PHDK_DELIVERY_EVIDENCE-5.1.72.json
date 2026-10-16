@@ -6,6 +6,8 @@
   "expected_version": "5.1.72",
   "tested_source_commit_sha": "9f5139a4da8ff8695a6f68930d434a97128307ef",
   "tested_candidate_tree": "2f7c57bf9816af8428db5e3c06886be845ee15bd",
+  "pr_head_sha": "0ae10fbff68266d37da36e5f292c87d6f39bd79b",
+  "pull_request_url": "https://github.com/tuyoisaza/keledon/pull/176",
   "versions": {
     "services_api": "5.1.72",
     "cloud": "5.1.72",
@@ -40,9 +42,11 @@
       "file": "../50-uat/evidence/uat-postgres-core-5.1.72.json"
     },
     "delivery": {
-      "status": "CANDIDATE_READY",
-      "pull_request": null,
-      "notes": "Branch is one commit ahead of origin/main; PR not yet opened."
+      "status": "OPEN",
+      "pull_request": "https://github.com/tuyoisaza/keledon/pull/176",
+      "merge_state": "CLEAN",
+      "hosted_checks": [],
+      "notes": "PR #176 is open against main; no hosted checks are reported."
     }
   },
   "whole_auto_acceptance": {
