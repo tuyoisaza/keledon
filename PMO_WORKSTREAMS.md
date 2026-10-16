@@ -3,11 +3,11 @@
 
 | WS | Commitment / outcome | Scope | Owner/status | Acceptance / dependency |
 |---|---|---|---|---|
-| WS-001 | CMT-001 baseline, versions and reviewed delivery | Manifests/locks, PHDK evidence, PR lineage and release gate | Root / 5.1.72 PR #176 OPEN | Remote `main` 5.1.71 and six candidate version reads are verified; complete final review/checks, normal merge and exact remote readback. |
-| WS-002 | CMT-002 widget and safe diagnostics | Shared Web/Landing/Browser component, mounts, redaction/reset/accessibility | Root / SELECTED UAT PASS; PORTFOLIO PARTIAL | Web widget and protected diagnostics UAT pass; five contrast fixes pass selected route/role/locale/theme scan; native device/audio and exhaustive screen-reader/route acceptance remain. |
+| WS-001 | CMT-001 baseline, versions and reviewed delivery | Manifests/locks, PHDK evidence, PR lineage and release gate | Root / source commit 5.1.72 READY; final PR PENDING | Remote `main` 5.1.71 and six candidate version reads are verified; create final PR, inspect normal controls, merge, and read back exact remote version/tree. |
+| WS-002 | CMT-002 widget and safe diagnostics | Shared Web/Landing/Browser component, mounts, redaction/reset/accessibility | Root / SELECTED UAT PASS; PORTFOLIO PARTIAL | Web widget/protected diagnostics pass and six contrast fixes pass the selected route/role/locale/theme scan; native device/audio and exhaustive screen-reader/route acceptance remain. |
 | WS-003 | CMT-003 voice→Cloud→Browser→customer-selected CRM | API/Cloud flow configuration, per-tenant adapters and Browser origin enforcement | Root / PROVIDER-INDEPENDENT SOURCE PASS; CUSTOMER ACCEPTANCE OPEN | Tenant-owned flow editor and validated private-origin allowlist are present; run live call/CRM acceptance only after the tenant selects/configures its stack. |
 | WS-004 | CMT-004 administration and permissions | API/Cloud RBAC, secret projection, Prisma resources, migrations | Root / CORE PERSISTED UAT PASS; MATRIX PARTIAL | UAT-066 validates core migrations, actor/tenant scope, Session persistence/restart and multi-instance; full 39-model/role/surface/operation matrix and three Session lifecycle decisions remain. FlowRunEvidence is dormant/N/A. |
-| WS-X | Cross-cutting PHDK conformance | Plan/Integration, UAT, SEO/AEO, Check and lifecycle evidence | Root / IN PROGRESS | PHDK v2.51.2 sync/coherence 56/56 and UAT-067 pass; current-candidate SEO/AEO and full Check/remediation remain. |
+| WS-X | Cross-cutting PHDK conformance | Plan/Integration, UAT, SEO/AEO, Check and lifecycle evidence | Root / SOURCE CHECK PASS; DELIVERY OPEN | PHDK v2.51.2 coherence 56/56, UAT, source SEO/AEO and Check pass; final PR/merge/readback remains. |
 
 No workers are assigned. Execution order follows the owner-confirmed sequence; cross-cutting Integration Review, UAT/Fix, SEO/AEO, Check and delivery gates apply to all four workstreams.
 

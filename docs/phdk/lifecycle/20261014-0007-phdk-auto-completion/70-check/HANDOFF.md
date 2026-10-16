@@ -1,3 +1,13 @@
+## Candidate 5.1.72 Check exit — source PASS; delivery open
+
+Audited source commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c`; the versioned candidate builds and tests pass: API 40/40, Cloud 18/18, five builds/lints, four app typechecks, Browser TypeScript build, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3, and Web/Landing SEO tests 1/1. PHDK v2.51.2 coherence passes 56/56. No new P0/P1 or auto-fixable source gap was found.
+
+Four portfolio requirements remain partial, decision-needed, or external/manual: exhaustive CRUD, three Session lifecycle decisions, broad accessibility, native device/audio, deployed discovery, Qdrant concurrency and per-client live call/CRM. `FlowRunEvidence` remains dormant and unnecessary for current runtime. See `PHDK_CHECK_REPORT-5.1.72.md`.
+
+SIGUIENTE PASO: verify GitHub PR/review controls and deliver the candidate through the ordinary merge/readback process; whole Auto stays partial.
+
+---
+
 PR #174 is squash-merged at verified remote `main` `f97ad0469830e2cadfeb7379800c74e89dd1d67d`; tested tree matches. Candidate 5.1.71 classifies FlowRunEvidence as dormant/N/A across 14 rows while retaining schema. UAT-065 is source-only; portfolio is 63 PASS, 1 BLOCKED, 1 MANUAL. Full proof: `PHDK_DELIVERY_EVIDENCE-5.1.71-post-merge-174.json`.
 
 Candidate 5.1.71 closes the current-necessity question for FlowRunEvidence by preserving the dormant schema and marking its 14 rows N/A; no app use or retention lifecycle was found. API/Cloud regressions 39/39 and 18/18; five builds/lint checks, typechecks and coherence 56/56 pass. Inventory: 410 BLOCKED / 132 N/A / 3 DECISION NEEDED / 1 PASS. UAT-065 is source-level only. Whole Auto: 63 PASS, 1 BLOCKED, 1 MANUAL. Exact report: `PHDK_CHECK_REPORT-5.1.71.md`.

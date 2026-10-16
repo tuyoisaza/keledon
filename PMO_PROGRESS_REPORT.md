@@ -1,8 +1,8 @@
-## Current PMO progress — candidate 5.1.72; PR #176 open
+## Current PMO progress — candidate 5.1.72; final PR pending
 
-Latest pushed product candidate is branch `fix/phdk-auto-next-front-5-1-72`, PR #176. UAT-066 passes core PostgreSQL migration, actor/tenant scope and persistence acceptance. UAT-067 passes Web widget keyboard/accessibility and the expanded WCAG 2.2 AA contrast sample across selected management, Knowledge, dashboard, session, profile and device routes/locales/themes after five measured contrast defects were fixed. API/Cloud regressions 40/40 and 18/18, five builds, diagnostics 19/19, Browser widget 3/3/build and PHDK coherence 56/56 pass. PR #176 is open/clean; hosted checks and review are absent; merge and deployment are not claimed. Whole acceptance remains partial at **65 PASS, 0 BLOCKED, 1 MANUAL**.
+Versioned candidate source commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` is prepared on `fix/phdk-auto-delivery-5-1-72` in `C:\KELEDON\keledon`, based on verified remote `main` 5.1.71. API/Cloud regressions 40/40 and 18/18, all five builds/lint checks, four app typechecks, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3/build, SEO 1/1 each and PHDK coherence 56/56 pass. Six measured text-contrast defects are fixed. Check reports no new source remediation. Intermediate PR #176 remains open and does not contain this final versioned commit; final PR creation, normal controls and merge/readback remain open. No deployment is claimed. Whole acceptance remains partial at **65 PASS, 0 BLOCKED, 1 MANUAL**.
 
-Next: complete Plan/PMO/Integration Review, refresh UAT→SEO→AEO/GEO→Check for the integrated candidate, remediate scoped gaps, then reconcile and deliver through normal PR controls. Three Session API ownership/retention decisions remain open; the separate FlowRunEvidence question is settled as dormant/not needed.
+Next: create the final PR, inspect actual review/protection controls, merge normally, and verify remote `main`. Three Session API ownership/retention decisions remain open; FlowRunEvidence is dormant and not needed by current runtime.
 
 ---
 

@@ -2,12 +2,12 @@
   "version": "1",
   "goal": "PHDK Auto continuation: resolve core PostgreSQL UAT blocker and repair backend local proof command manifests",
   "target_branch": "main",
-  "candidate_branch": "fix/phdk-auto-next-front-5-1-72",
+  "candidate_branch": "fix/phdk-auto-delivery-5-1-72",
   "expected_version": "5.1.72",
-  "tested_source_commit_sha": "87c1fddb8d965a7e01649330b7f74f6252628b40",
-  "tested_candidate_tree": "074b9fdc6dd4d1b85e207f6b3b34402cbc1fad44",
-  "uat_test_commit_sha": "d4b001087e4b0076b29f31d9a0a3795dc9b1fd9e",
-  "pull_request_url": "https://github.com/tuyoisaza/keledon/pull/176",
+  "tested_source_commit_sha": "9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c",
+  "tested_candidate_tree": "edb37b4fbee07725e2908f9aecee5ffe43809083",
+  "uat_test_commit_sha": "9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c",
+  "pull_request_url": null,
   "versions": {
     "services_api": "5.1.72",
     "cloud": "5.1.72",
@@ -33,7 +33,7 @@
     },
     "web_diagnostics_uat": {
       "status": "PASS_SCOPED",
-      "evidence": "Production-built Web UAT 6/6 plus AI-admin; focused diagnostics 19/19; UAT-067 selected WCAG 2.2 AA route/locale/theme contrast sample passes after five text-color fixes. Synthetic API fixture and external network blocked.",
+      "evidence": "Production-built Web UAT 6/6 plus AI-admin; focused diagnostics 19/19; UAT-067 selected WCAG 2.2 AA route/locale/theme contrast sample passes after six text-color fixes. Synthetic API fixture and external network blocked.",
       "file": "../50-uat/evidence/uat-067-web-accessibility-5.1.72.json"
     },
     "browser_widget": {
@@ -56,15 +56,16 @@
     },
     "uat_067_web_widget_accessibility": {
       "status": "PASS_SCOPED",
-      "evidence": "Production-built Web UAT 6/6 plus AI-admin; focused diagnostics 19/19; Browser widget checks 3/3/build pass; keyboard names/order/44x44/focus/live status pass. Selected WCAG 2.2 AA route/locale/theme contrast scan passes after five fixes: 4.17:1 Providers sublabel, 2.38:1 primary action, 4.06:1 muted text, 4.22:1 completed badge, 2.12:1 paired-device label. Synthetic API, outbound traffic blocked.",
+      "evidence": "Production-built Web UAT 6/6 plus AI-admin; focused diagnostics 19/19; Browser widget checks 3/3/build pass; keyboard names/order/44x44/focus/live status pass. Selected WCAG 2.2 AA route/locale/theme contrast scan passes after six fixes, including dark-theme missing-provider-key copy at 3.30:1. Synthetic API, outbound traffic blocked.",
       "file": "../50-uat/evidence/uat-067-web-accessibility-5.1.72.json"
     },
     "delivery": {
       "status": "OPEN",
-      "pull_request": "https://github.com/tuyoisaza/keledon/pull/176",
-      "merge_state": "CLEAN",
+      "pull_request": null,
+      "superseded_intermediate_pull_request": "https://github.com/tuyoisaza/keledon/pull/176",
+      "merge_state": "PENDING_FINAL_PR",
       "hosted_checks": [],
-      "notes": "PR #176 is open against main; no hosted checks are reported."
+      "notes": "The versioned candidate commit is prepared locally; final PR has not yet been created. Intermediate PR #176 remains open and must be closed once the final PR is safely created."
     }
   },
   "whole_auto_acceptance": {

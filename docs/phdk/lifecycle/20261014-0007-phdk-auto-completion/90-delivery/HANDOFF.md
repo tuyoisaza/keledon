@@ -1,10 +1,10 @@
-## Current candidate 5.1.72 — UAT-066/067 passed for scoped acceptance; PR open
+## Current candidate 5.1.72 — source Check passed; final PR pending
 
-The candidate closes the isolated PostgreSQL blocker for core migrations, actor/tenant scope, Session status/metadata restart persistence, two API instances and schema constraints. Web UAT-067 passes the widget keyboard/target/live-status checks and a selected contrast scan after correcting a 4.17:1 Providers sublabel. Production-built Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3, API/Cloud regressions 40/40 and 18/18, builds, and PHDK coherence 56/56 pass. Evidence is in `../50-uat/evidence/`.
+Versioned commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` is prepared on `fix/phdk-auto-delivery-5-1-72` from the refreshed main checkout. It includes core PostgreSQL UAT-066, API/Cloud proof-manifest validation, six Web contrast fixes, refreshed PHDK v2.51.2 evidence and completed source Check. API/Cloud regressions 40/40 and 18/18, five builds/lints, four typechecks, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3/build, both SEO source tests 1/1 and PHDK coherence 56/56 pass.
 
-Branch `fix/phdk-auto-next-front-5-1-72`, PR #176 open against `main`; merge state is CLEAN; GitHub reports no hosted checks or review decision. Whole Auto remains PARTIALLY DELIVERED (65 PASS, 0 BLOCKED, 1 MANUAL). Native device/audio, full operation matrix, broad assistive technology/routes/localization, Session retention decisions, deployed SEO/AEO, Qdrant concurrency and per-client live call/CRM acceptance remain open. No deployment is claimed.
+Intermediate PR #176 is OPEN/CLEAN but does not contain this final candidate. No final PR has been created and no merge is claimed. Whole Auto remains PARTIALLY DELIVERED (65 PASS, 0 BLOCKED, 1 MANUAL). Native device/audio, full operation matrix, broad assistive technology/routes/localization, three Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-client live call/CRM acceptance remain open. No deployment is claimed.
 
-SIGUIENTE PASO: push the latest candidate/evidence commit and verify the PR's final head, review and merge status.
+SIGUIENTE PASO: create the final PR, inspect actual review/protection controls, merge normally, and verify the exact remote `main` commit/tree/version.
 
 ---
 

@@ -1,10 +1,10 @@
-## Current candidate 5.1.72 — PHDK Auto partial; PR #176 open
+## Current candidate 5.1.72 — source ready; final PR pending
 
-The candidate includes verified disposable-PostgreSQL UAT-066, API/Cloud migration and proof-script corrections, and UAT-067 production-built Web evidence. UAT-067 covers diagnostics widget accessible names, keyboard order, visible 2px focus, 44×44px targets and polite live feedback. A selected WCAG AA contrast scan found a Providers label at 4.17:1; the UI was corrected and the same route sample passed across company details for three roles, Providers, Brain and protected Diagnostics. Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3, API/Cloud 40/40 and 18/18, builds and PHDK v2.51.2 coherence 56/56 pass.
+Versioned source commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` is on `fix/phdk-auto-delivery-5-1-72` in the refreshed main checkout. API/Cloud regressions 40/40 and 18/18, all five builds/lint checks, four typechecks, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3/build, Web/Landing SEO tests 1/1 each, PHDK coherence 56/56 and diff check pass. UAT-067 covers keyboard names/order, 44×44 targets, visible focus, live feedback, and selected WCAG AA contrast; six defects were corrected and retested.
 
-PR [#176](https://github.com/tuyoisaza/keledon/pull/176) is OPEN; GitHub reports clean mergeability but no hosted checks or review decision. Whole acceptance remains **PARTIALLY DELIVERED** (65 PASS, 0 BLOCKED, 1 MANUAL). Remaining gates include native audio/device, full resource operations, broad screen-reader/localization and route coverage, Session retention, deployed SEO/AEO, Qdrant concurrency and per-client call/CRM. No production/customer data or deployment was used.
+Intermediate PR [#176](https://github.com/tuyoisaza/keledon/pull/176) remains open but does not contain this final versioned commit. The final PR has not yet been created; no merge is claimed. Whole acceptance remains **PARTIALLY DELIVERED** (65 PASS, 0 BLOCKED, 1 MANUAL). Remaining gates include native audio/device, full resource operations, broad screen-reader/localization and route coverage, three Session decisions, deployed SEO/AEO, Qdrant concurrency and per-client call/CRM. No production/customer data or deployment was used.
 
-SIGUIENTE PASO: review and merge PR #176 under repository controls, verify the resulting main tree and version, then continue the open acceptance gates.
+SIGUIENTE PASO: create the final PR, inspect actual review/protection controls, merge normally, and verify the resulting `main` tree and version; retain the open portfolio gates.
 
 ---
 

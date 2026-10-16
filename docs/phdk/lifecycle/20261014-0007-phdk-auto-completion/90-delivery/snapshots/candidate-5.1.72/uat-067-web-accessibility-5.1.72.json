@@ -2,8 +2,8 @@
   "run_id": "20261014-0007-phdk-auto-completion",
   "case": "UAT-067",
   "candidate_version": "5.1.72",
-  "candidate_commit": "d4b001087e4b0076b29f31d9a0a3795dc9b1fd9e",
-  "candidate_source_fingerprint": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "candidate_commit": "9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c",
+  "candidate_source_fingerprint": "sha256:8e5d5eb0952f235bc54147785fb89782bc485b13e14630574251f7e8ac454f45",
   "environment": {
     "target": "local production-built Web SPA",
     "browser": "Playwright Chromium",
@@ -61,7 +61,7 @@
       "dashboard and devices: dark, light and corporate themes"
     ],
     "result": "No sampled contrast failures after fix",
-    "finding": "Five text contrast defects were corrected and retested: Providers sublabel 4.17:1; primary action label 2.38:1; dark muted text 4.06:1; completed badge 4.22:1; paired-device status label 2.12:1.",
+    "finding": "Six text contrast defects were corrected and retested: Providers sublabel 4.17:1; primary action label 2.38:1; dark muted text 4.06:1; completed badge 4.22:1; paired-device status label 2.12:1; dark-theme missing-provider-key copy 3.30:1. The scanner composites alpha and nested opacity groups and excludes disabled controls from this text threshold.",
     "limitation": "Selected automated production-browser route/locale/theme sample; not full-app or assistive-technology certification."
   }
 }

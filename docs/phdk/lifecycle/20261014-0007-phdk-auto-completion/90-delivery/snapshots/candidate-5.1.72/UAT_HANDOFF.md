@@ -1,3 +1,13 @@
+## Candidate 5.1.72 — UAT-067 PASS_SCOPED; whole acceptance incomplete
+
+Production-built Web UAT in `C:\KELEDON\keledon` passes 6/6 plus AI-admin; protected diagnostics passes 19/19; Browser widget source/layout checks pass 3/3 and Browser TypeScript build passes. The corrected contrast scan covers selected management, Knowledge, dashboard, sessions, profile and device routes across roles, locales and themes. It found a 3.30:1 dark-theme missing-provider-key message; OpenAI and Gemini copy now use the full semantic muted foreground. The scanner composites translucent colors/ancestor opacity and skips disabled controls. All sampled enabled text passes. Local UI fixtures are synthetic and external traffic is blocked. Evidence: `evidence/uat-067-web-accessibility-5.1.72.json` and `evidence/uat-web-widget-5.1.72/`.
+
+Tally remains **65 PASS, 0 BLOCKED, 1 MANUAL**. Screen-reader, full-route/localization and native device/audio acceptance remain open. FlowRunEvidence remains dormant in schema; it is not needed by current execution and has no writer, reader, route, UI or retention need.
+
+SIGUIENTE PASO: finish the exact-candidate Check and normal PR delivery; retain partial status for external/manual acceptance.
+
+---
+
 PR #174 is squash-merged at verified remote `main` `f97ad0469830e2cadfeb7379800c74e89dd1d67d`; tested tree matches. Candidate 5.1.71 classifies FlowRunEvidence as dormant/N/A across 14 rows while retaining schema. UAT-065 is source-only; portfolio is 63 PASS, 1 BLOCKED, 1 MANUAL. Full proof: `PHDK_DELIVERY_EVIDENCE-5.1.71-post-merge-174.json`.
 
 ## Candidate 5.1.71 — UAT-065 PASS; portfolio acceptance incomplete

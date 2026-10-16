@@ -12,12 +12,12 @@ Run `20261014-0007-phdk-auto-completion`; official PHDK updater and coherence ch
 | UAT / UAT Fix | COMPLETED / SCOPE PASS | Production-built Web UAT 6/6 plus AI-admin; opacity-aware WCAG sample passes on selected routes/roles/locales/themes. Native device/audio remains MANUAL. |
 | SEO | COMPLETED / SOURCE SCOPE | Web and Landing SEO tests 1/1 each; no public route/metadata edits. Deployed measurement remains unavailable. |
 | AEO/GEO | COMPLETED / SOURCE SCOPE | Public source inventory and answerability controls reviewed; external engine discovery remains unmeasured. |
-| Check / Remediation | RUNNING | Run required exact-candidate builds, regressions, lint, typechecks, matrix checks and PHDK delivery prerequisites; fix any local findings. |
-| Delivery | OPEN | Create the version-prefixed commit on the clean branch, recheck GitHub controls, open the final PR, merge only through normal controls and verify remote `main`. |
+| Check / Remediation | COMPLETED / SOURCE PASS | API 40/40, Cloud 18/18, five builds/lints, four typechecks, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser 3/3, SEO 1/1 each, PHDK 56/56; no new source remediation. |
+| Delivery | OPEN | Version-prefixed source commit `9fee7eaf` is on the clean branch; open the final PR, inspect actual controls, merge through normal review/protection and verify remote `main`. |
 
 Portfolio remains **PARTIALLY DELIVERED** (65 PASS, 0 BLOCKED, 1 MANUAL). Whole-Auto gates include native device/audio, full resource-operation matrix, remaining Session lifecycle policy, broad route/screen-reader/localization, deployed SEO/AEO, Qdrant concurrency and per-client live call/CRM acceptance.
 
-SIGUIENTE PASO: finish exact-candidate Check/remediation, then deliver and verify remote `main`; retain partial status for manual/customer/deployed acceptance that this environment cannot prove.
+SIGUIENTE PASO: finish PR and remote `main` verification; retain partial status for unresolved Session decisions and manual/customer/deployed acceptance.
 
 ---
 

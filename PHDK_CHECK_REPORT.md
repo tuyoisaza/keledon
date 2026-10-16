@@ -1,3 +1,13 @@
+## Current PHDK Auto Check — candidate 5.1.72; source PASS, delivery open
+
+Candidate `fix/phdk-auto-delivery-5-1-72` is source commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c`, based on remote `main` 5.1.71. API/Cloud regressions pass 40/40 and 18/18; all five builds, five lint checks, four app typechecks and Browser TypeScript build pass. Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget checks 3/3, both SEO tests 1/1, PHDK v2.51.2 coherence 56/56 and diff check pass.
+
+No new source remediation is proposed. Whole Auto remains **PARTIAL**: broad persisted CRUD, screen-reader/route coverage, three Session lifecycle decisions, native device/audio, deployed SEO/AEO, Qdrant concurrency and customer-specific voice/CRM acceptance remain open. See `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.1.72.md`.
+
+SIGUIENTE PASO: finish PR/review/merge controls and verify remote `main`; do not claim whole-portfolio completion or deployment.
+
+---
+
 ## Current PHDK Auto Check — 5.1.70 merged; whole portfolio partial
 
 PR #172 is merged at verified remote `main` `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`; tree matches the tested source. All six version reads are 5.1.70. API/Cloud regressions 39/39 and 18/18, CRUD inventory 39 models / 546 model-role-surface rows / 168 core rows, five builds, five lint checks, four package typechecks and Browser TypeScript build pass. PHDK coherence 56/56 and completion gate pass. Web and Landing retain the existing large-chunk advisory. UAT-064 closes the owner decision/source classification only; 62 PASS, 1 BLOCKED, 1 MANUAL. Whole Auto remains **PARTIAL**.
