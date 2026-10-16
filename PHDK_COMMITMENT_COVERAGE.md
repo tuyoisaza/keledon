@@ -1,17 +1,17 @@
 ## Current commitment coverage — 5.1.73 source merged; portfolio partial
 
-PR [#180](https://github.com/tuyoisaza/keledon/pull/180) delivered 5.1.73 source; docs PRs #181–#189 are merged. This candidate records UAT-079. All six version reads remain 5.1.73 and PHDK v2.51.2 coherence passes 56/56. Portfolio remains **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally is **77 PASS, 0 BLOCKED, 1 MANUAL**; the 547-row matrix has 399 BLOCKED, 133 N/A, 3 DECISION NEEDED and 12 PASS.
+PR [#180](https://github.com/tuyoisaza/keledon/pull/180) delivered 5.1.73 source; docs PRs #181–#190 are merged. This candidate records UAT-080. All six version reads remain 5.1.73 and PHDK v2.51.2 coherence passes 56/56. Portfolio remains **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally is **78 PASS, 0 BLOCKED, 1 MANUAL**; the 547-row matrix has 395 BLOCKED, 133 N/A, 3 DECISION NEEDED and 16 PASS.
 
 | Commitment | Current result | Remaining gate |
 |---|---|---|
 | CMT-001 baseline/version/PR | PR #180 delivered 5.1.73; six version reads and remote main/tree readback pass; PHDK coherence is 56/56. | Continue remaining delivery-process standards and keep the Auto portfolio partial until all gates close. |
 | CMT-002 widget/diagnostics | Web widget production UAT, protected diagnostics 19/19, Browser checks 3/3, and selected route/locale/theme contrast scan pass after five text-contrast fixes. | Native device/audio and exhaustive route, role, screen-reader, zoom and localization acceptance. |
-| CMT-003 voice→Cloud→Browser→CRM | Tenant-owned flow editor, persisted API/Cloud definitions/versions/permissions/mappings (UAT-079), and private destination allowlist are covered by provider-independent tests. UAT-073 confirms Web editing; UAT-074 confirms origin policy parity; UAT-078 confirms persisted private-origin vendor settings. No client stack is assumed and no customer host was contacted. | Live flow execution and customer sandbox acceptance per selected client. |
-| CMT-004 administration/permissions | UAT-068 validates authenticated orphan cleanup; UAT-069/070 add admin/coordinator tenant CRUD; UAT-071/075/076 verify persisted superadmin Company/Brand/Team/User API operations; UAT-077 verifies Workflow admin denial and superadmin CRUD; UAT-078 verifies Vendor boundaries; UAT-079 verifies four tenant-flow admin API rows. UAT-072 covers mocked Web Company. FlowRunEvidence remains dormant and unnecessary to current execution. | 399 blocked matrix rows; remaining resources/roles, Web/backend auth/persistence join, and Session lifecycle/retention decisions. |
+| CMT-003 voice→Cloud→Browser→CRM | Tenant-owned flow editor, persisted API/Cloud definitions/versions/permissions/mappings (UAT-079/080), and private destination allowlist are covered by provider-independent tests. UAT-073 confirms Web editing; UAT-074 confirms origin policy parity; UAT-078 confirms persisted private-origin Vendor settings. No client stack is assumed and no customer host was contacted. | Live flow execution and customer sandbox acceptance per selected client. |
+| CMT-004 administration/permissions | UAT-068 validates authenticated orphan cleanup; UAT-069/070 add admin/coordinator tenant CRUD; UAT-071/075/076 verify persisted superadmin Company/Brand/Team/User API operations; UAT-077 verifies Workflow admin denial and superadmin CRUD; UAT-078 verifies Vendor boundaries; UAT-079/080 verify admin/coordinator flow-config API rows. UAT-072 covers mocked Web Company. FlowRunEvidence remains dormant and unnecessary to current execution. | 395 blocked matrix rows; remaining resources/roles, Web/backend auth/persistence join, and Session lifecycle/retention decisions. |
 
 Whole Auto is **PARTIALLY DELIVERED**; no deployment or customer endpoint was used.
 
-SIGUIENTE PASO: continue remaining acceptance across the four active fronts; UAT-069/070/071/072/073/074/075/076/077/078/079 close only the exercised API/Cloud persistence, source-policy and mocked Web slices.
+SIGUIENTE PASO: continue remaining acceptance across the four active fronts; UAT-069/070/071/072/073/074/075/076/077/078/079/080 close only the exercised API/Cloud persistence, source-policy and mocked Web slices.
 
 ---
 

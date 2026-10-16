@@ -1,5 +1,11 @@
 # UAT journey map — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.73 — UAT-080 coordinator flow configuration
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| Tenant A/B coordinators in API and Cloud | US-012 / CMT-003/CMT-004 | UAT-080 / Coordinator flow configuration | Create tenant definitions with forged company IDs → list with opposite company filter → update/archive own definition → create/approve version → disable retained permission → replace intent mapping → reject foreign references → restart and verify scoped readback → clean fixtures | PASS against separate disposable PostgreSQL databases for API and Cloud. `50-uat/evidence/uat-080-coordinator-flow-config-persistence-5.1.73.json`. |
+
 ## Candidate 5.1.73 — UAT-079 persisted tenant flow configuration
 
 | Persona | Story | Case / journey | Steps exercised | Result / evidence |

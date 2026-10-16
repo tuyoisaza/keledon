@@ -1,6 +1,6 @@
-## Current ledger status — 5.1.73 / UAT-079
+## Current ledger status — 5.1.73 / UAT-080
 
-The four owner-confirmed commitments remain active: **0/4 DONE, 4/4 active/partial, 0 deferred, 0 cancelled**. PRs #184–#189 delivered UAT-075–078 and matrix reconciliation; this candidate documents UAT-079, passed in API and Cloud. UAT tally is 77 PASS, 0 BLOCKED, 1 MANUAL. UAT-071/075/076/077 verify selected persisted Company/Brand/Team/User/Workflow operations; UAT-078 verifies tenant Vendor isolation; UAT-079 verifies four admin/API flow-configuration rows across restart. CMT-003/004 and the full CRUD matrix remain open. Current matrix: 547 rows = 399 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 12 PASS. CMT-001 has verified source delivery at version 5.1.73; no deployment is claimed.
+The four owner-confirmed commitments remain active: **0/4 DONE, 4/4 active/partial, 0 deferred, 0 cancelled**. PRs #184–#190 delivered UAT-075–078 and matrix reconciliation; this candidate documents UAT-079/080, passed in API and Cloud. UAT tally is 78 PASS, 0 BLOCKED, 1 MANUAL. UAT-071/075/076/077 verify selected persisted Company/Brand/Team/User/Workflow operations; UAT-078 verifies tenant Vendor isolation; UAT-079/080 verify admin and coordinator flow-configuration API rows across restart. CMT-003/004 and the full CRUD matrix remain open. Current matrix: 547 rows = 395 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 16 PASS. CMT-001 has verified source delivery at version 5.1.73; no deployment is claimed.
 
 SIGUIENTE PASO: continue the confirmed four fronts; keep their remaining acceptance gates active.
 
