@@ -1,9 +1,9 @@
 {
-  "version": "5.1.65",
-  "date": "2026-10-15T22:42:54.950Z",
-  "candidateRevision": "fbeec0eafe72cc73e8a92c9105076d8174ce98dd",
-  "candidateSourceFingerprint": "sha256:e4e7b56fc2b619eb4037e998cb285f0d42be26d1bd345881c3300fd2fa4dceb9",
-  "dirtyUntrackedSourceFiles": 6,
+  "version": "5.1.72",
+  "date": "2026-10-16T01:01:30.275Z",
+  "candidateRevision": "d4b001087e4b0076b29f31d9a0a3795dc9b1fd9e",
+  "candidateSourceFingerprint": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "dirtyUntrackedSourceFiles": 0,
   "sourceRoots": [
     "browser",
     "cloud",
@@ -12,9 +12,10 @@
     "landing"
   ],
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:57663",
+  "origin": "http://127.0.0.1:62412",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
+    "UAT-067 diagnostics widget exposes named keyboard-operable actions, 44x44 hit targets, visible 2px focus and polite live status in production-built Web PASS",
     "UAT-THEME dark/light/corporate tokens reach descendant controls, persistence PASS; automated login text contrast sample has no failures (not a full-app accessibility certification)",
     "UAT-002 public homepage navigation controls avoid hero overlap at 1280px and remain reachable from the 390px mobile menu PASS",
     "UAT-002 anonymous home/login, compact sizes, awaited copy/check/revert, failure no false check, owned reset/foreign preservation, 390px layout and 200/400% zoom reflow PASS (viewport simulation)",
@@ -33,7 +34,8 @@
     "UAT-004 provider settings Spanish localization and write-only key: translated screen renders; no response prefill; replacement clears after success; untouched blank omitted PASS",
     "UAT-005 Brain provider indicators use selected-provider safe booleans only; an unused Deepgram key does not mark Vosk configured, and write-only secret placeholders remain blank PASS (synthetic UI/API fixture)",
     "UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)",
-    "UAT-002 5.1.65 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)"
+    "UAT-002 5.1.72 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)",
+    "UAT-067 selected WCAG AA text contrast scan passes on server status, brands, teams, vendors and create dialog, users (admin/superadmin), Knowledge (es/en/pt/admin), dashboard (es/en/pt), sessions (live/history/detail), profile (es/en/pt), devices, launcher, company details (three roles), providers, Brain and protected diagnostics (automated production-browser sample)"
   ],
   "themeTokens": {
     "light": {

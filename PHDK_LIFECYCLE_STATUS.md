@@ -7,8 +7,8 @@ Run `20261014-0007-phdk-auto-completion`; PHDK v2.51.2 is installed and static c
 | Preflight | COMPLETED / REUSED | Installed PHDK v2.51.2; vendored communication/Auto standards verified; coherence 56/56. |
 | Capture / Plan | REUSED | Four ordered owner-confirmed fronts, approved role policy, tenant-owned flow config and per-tenant private destination allowlist remain current. |
 | PMO / Workstreams | CONTINUED | Four fronts remain active; PostgreSQL core UAT-066 and Web accessibility UAT-067 advanced. |
-| Integration Review | COMPLETED FOR SLICE | Candidate source checks pass; provider sublabel contrast defect corrected and browser retest passes. |
-| UAT / UAT Fix | PASS FOR UAT-067 / PORTFOLIO INCOMPLETE | Web UAT 6/6 plus AI-admin; diagnostics 19/19; selected route contrast scan passes; native device/audio remains MANUAL. |
+| Integration Review | COMPLETED FOR SLICE | Candidate source checks pass; five text-contrast defects corrected and browser retest passes. |
+| UAT / UAT Fix | PASS FOR UAT-067 / PORTFOLIO INCOMPLETE | Web UAT 6/6 plus AI-admin; diagnostics 19/19; selected route/locale/theme contrast sample passes; native device/audio remains MANUAL. |
 | SEO / AEO-GEO | REUSED / NOT AFFECTED | No public copy, metadata or claims changed; deployed discovery measurements remain open. |
 | Check / Remediation | PASS FOR SCOPED SLICE | PHDK coherence 56/56 and `git diff --check`; broad screen-reader/route acceptance remains open. |
 | Delivery | OPEN | Finalize evidence/docs, push candidate and reconcile PR #176 review, merge and remote readback. |

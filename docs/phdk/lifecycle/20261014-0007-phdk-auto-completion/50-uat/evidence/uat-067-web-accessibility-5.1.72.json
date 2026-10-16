@@ -2,8 +2,8 @@
   "run_id": "20261014-0007-phdk-auto-completion",
   "case": "UAT-067",
   "candidate_version": "5.1.72",
-  "candidate_commit": "af888087eab3aa31cc65869ca763830381f475b8",
-  "candidate_source_fingerprint": "sha256:23f0298f74529848d257d51e4f389ed3b4ac4774a8bb4e4301fa58ac0a3001f8",
+  "candidate_commit": "d4b001087e4b0076b29f31d9a0a3795dc9b1fd9e",
+  "candidate_source_fingerprint": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "environment": {
     "target": "local production-built Web SPA",
     "browser": "Playwright Chromium",
@@ -27,7 +27,7 @@
     "other_journeys": [
       "Public navigation and mobile preference controls passed.",
       "Synthetic admin/coordinator/user role views, diagnostics-safe probes, tenant flow editor, Knowledge manager, devices and protected AI administration journeys passed.",
-      "Login text contrast sample passed for dark, light and corporate themes."
+      "WCAG 2.2 AA text contrast sample covers management, Knowledge, dashboard, sessions, profile and devices across selected roles, locales and themes; all sampled results pass."
     ],
     "evidence_directory": "uat-web-widget-5.1.72/"
   },
@@ -43,18 +43,25 @@
   ],
   "contrast_scan": {
     "status": "PASS_SCOPED",
-    "standard": "WCAG 2.1 AA text contrast thresholds",
+    "standard": "WCAG 2.2 AA text contrast thresholds",
     "threshold_normal_text": "4.5:1",
     "routes": [
-      "company details: superadmin",
-      "company details: admin",
-      "company details: coordinator",
+      "management statuses, brands, teams, vendors and vendor create dialog",
+      "users: admin and superadmin",
+      "Knowledge: Spanish, English, Portuguese and manager view",
+      "dashboard: Spanish, English and Portuguese",
+      "sessions: live, history and detail",
+      "profile: Spanish, English and Portuguese",
+      "devices",
+      "launcher",
+      "company details: superadmin, admin and coordinator",
       "provider settings",
       "Brain",
-      "protected diagnostics"
+      "protected diagnostics",
+      "dashboard and devices: dark, light and corporate themes"
     ],
     "result": "No sampled contrast failures after fix",
-    "finding": "Provider sublabel measured 4.17:1 before fix; changed to text-foreground/80 and passed retest.",
-    "limitation": "Selected automated production-browser route sample; not full-app or assistive-technology certification."
+    "finding": "Five text contrast defects were corrected and retested: Providers sublabel 4.17:1; primary action label 2.38:1; dark muted text 4.06:1; completed badge 4.22:1; paired-device status label 2.12:1.",
+    "limitation": "Selected automated production-browser route/locale/theme sample; not full-app or assistive-technology certification."
   }
 }

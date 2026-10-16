@@ -5,7 +5,7 @@ Candidate `fix/phdk-auto-next-front-5-1-72`, latest pushed PR [#176](https://git
 | Commitment | Current result | Remaining gate |
 |---|---|---|
 | CMT-001 baseline/version/PR | Candidate 5.1.72 aligns all six version reads, fixes missing local proof scripts, and verifies targets; PR #176 is pushed and open. | Legitimate PR review/merge and exact remote main/tree/version readback. |
-| CMT-002 widget/diagnostics | Web widget production UAT, protected diagnostics 19/19, Browser checks 3/3, and selected route contrast scan pass; one 4.17:1 provider sublabel was fixed. | Native device/audio and broad route, role, screen-reader, zoom and localization acceptance. |
+| CMT-002 widget/diagnostics | Web widget production UAT, protected diagnostics 19/19, Browser checks 3/3, and selected route/locale/theme contrast scan pass after five text-contrast fixes. | Native device/audio and exhaustive route, role, screen-reader, zoom and localization acceptance. |
 | CMT-003 voice→Cloud→Browser→CRM | Tenant-owned flow editor and private destination allowlist remain covered by provider-independent tests; no client stack is assumed. | Customer sandbox and acceptance per selected client. |
 | CMT-004 administration/permissions | Disposable PostgreSQL UAT-066 passes core migrations, actor/tenant scope, Session persistence, restart, API two-instance and schema constraints; FlowRunEvidence remains dormant/not needed currently. | Full resource-operation matrix and remaining Session lifecycle/retention decision. |
 
