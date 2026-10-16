@@ -1,3 +1,9 @@
+## Current PHDK Auto — 5.1.70 source delivered; portfolio partial
+
+PR [#172](https://github.com/tuyoisaza/keledon/pull/172) squash-merged source `d9a7d4cff075ff0d8d9a7f64646a5fdfd2a1e1b6` at remote `main` `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`; tested and merged trees match. All six version reads are 5.1.70; scoped source checks and delivery gate pass. UAT-064 records owner-approved FeatureFlag dormancy and source classification only. Tally: 62 PASS, 1 BLOCKED, 1 MANUAL. CMT-001..004 remain active; no deployment is claimed.
+
+---
+
 ## Current PHDK Auto — 5.1.69 source delivered; portfolio partial
 
 PR [#170](https://github.com/tuyoisaza/keledon/pull/170) squash-merged source `549e79235215394242be1068da2c9fd65a866763` at remote `main` `2c021fe30de453bb95212a442e9a8c93eabfbce1`; tested and merged trees match. All six version reads are 5.1.69; scoped source checks and delivery gate pass. UAT-063 adds nested CompanyCountry/TeamInterface classification and tenant guard evidence only. Tally: 61 PASS, 1 BLOCKED, 1 MANUAL. CMT-001..004 remain active; no deployment is claimed.

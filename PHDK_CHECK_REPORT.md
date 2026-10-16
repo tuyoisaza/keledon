@@ -1,3 +1,9 @@
+## Current PHDK Auto Check — 5.1.70 merged; whole portfolio partial
+
+PR #172 is merged at verified remote `main` `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`; tree matches the tested source. All six version reads are 5.1.70. API/Cloud regressions 39/39 and 18/18, CRUD inventory 39 models / 546 model-role-surface rows / 168 core rows, five builds, five lint checks, four package typechecks and Browser TypeScript build pass. PHDK coherence 56/56 and completion gate pass. Web and Landing retain the existing large-chunk advisory. UAT-064 closes the owner decision/source classification only; 62 PASS, 1 BLOCKED, 1 MANUAL. Whole Auto remains **PARTIAL**.
+
+---
+
 ## Current PHDK Auto Check — 5.1.69 merged; whole portfolio partial
 
 PR #170 is merged at verified remote `main` `2c021fe30de453bb95212a442e9a8c93eabfbce1`; tree matches the tested source. All six version reads are 5.1.69. API/Cloud regressions 39/39 and 18/18, CRUD inventory 39 models / 546 model-role-surface rows / 168 core rows, five builds, five lint checks, four package typechecks and Browser TypeScript build pass. PHDK coherence 56/56 and completion gate pass. Web and Landing retain the existing large-chunk advisory. UAT-063 is source-only; 61 PASS, 1 BLOCKED, 1 MANUAL. Whole Auto remains **PARTIAL**.

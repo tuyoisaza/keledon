@@ -1,0 +1,106 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto four-front portfolio continuation: owner-approved dormant FeatureFlag contract and complete model-role-surface classification; whole portfolio remains partial",
+  "target_branch": "main",
+  "expected_version": "5.1.70",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "tested_source_commit_sha": "d9a7d4cff075ff0d8d9a7f64646a5fdfd2a1e1b6",
+  "tested_candidate_tree": "8ea2aee2cbd9be5d10d3b2e0e9918e5a2182b782",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/172",
+  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/172",
+  "pr_head_sha": "d9a7d4cff075ff0d8d9a7f64646a5fdfd2a1e1b6",
+  "product_source_merge_sha": "f68ed5cb0d6b3f0d7c169695fa73b549fd067f28",
+  "merged_commit_sha": "f68ed5cb0d6b3f0d7c169695fa73b549fd067f28",
+  "remote_main_sha": "f68ed5cb0d6b3f0d7c169695fa73b549fd067f28",
+  "remote_main_tree": "8ea2aee2cbd9be5d10d3b2e0e9918e5a2182b782",
+  "remote_main_verified_at": "2026-10-15T23:59:11Z",
+  "git_ls_remote_matches": true,
+  "versions": {
+    "services_api": "5.1.70",
+    "cloud": "5.1.70",
+    "browser": "5.1.70",
+    "services_web": "5.1.70",
+    "landing": "5.1.70",
+    "browser_renderer": "5.1.70"
+  },
+  "github": {
+    "state": "MERGED",
+    "product_pr": "#172 squash-merged; no hosted checks or review decision reported",
+    "merge_method": "squash",
+    "merge_state": "CLEAN at merge",
+    "hosted_checks": [],
+    "review_decision": "none reported",
+    "main_protection": false
+  },
+  "checks": {
+    "api_regression": {
+      "status": "PASS",
+      "evidence": "API full regression 39/39; CRUD inventory regression asserts owner-approved dormant FeatureFlag classification across all 546 model-role-surface rows."
+    },
+    "cloud_regression": {
+      "status": "PASS",
+      "evidence": "Cloud full regression 18/18; FeatureFlag has no Cloud module/route consumer and remains intentionally dormant."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "Production builds passed for API, Cloud, Web, Landing and Browser; Web and Landing retain the existing large-chunk advisory."
+    },
+    "lint": {
+      "status": "PASS",
+      "evidence": "Lint passed for API, Cloud, Web, Landing and Browser; no autofix changes were included outside the reviewed candidate."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "API, Cloud, Web and Landing dedicated typechecks passed; Browser production build runs tsc and passed."
+    },
+    "phdk_coherence": {
+      "status": "PASS",
+      "evidence": "PHDK v2.51.2 static coherence check passed 56/56 manifest mappings."
+    },
+    "version_alignment": {
+      "status": "PASS",
+      "evidence": "Merged remote main tree 8ea2aee2cbd9be5d10d3b2e0e9918e5a2182b782 equals the tested candidate tree; five app package/lock roots and Browser renderer read 5.1.70."
+    },
+    "git_diff_check": {
+      "status": "PASS",
+      "evidence": "Scoped source candidate diff passed git diff --cached --check before commit; post-merge evidence diff also passed."
+    },
+    "source_delivery": {
+      "status": "PASS",
+      "evidence": "PR #172 squash-merged at f68ed5cb0d6b3f0d7c169695fa73b549fd067f28; independent git ls-remote SHA and main tree match the tested candidate; all six version reads match."
+    },
+    "scope_and_checks": {
+      "status": "PASS",
+      "evidence": "UAT-064 closes owner decision and active-surface classification only; FeatureFlag schema/service remain dormant without app exposure. Whole_auto_acceptance remains PARTIAL."
+    }
+  },
+  "scope_limitations": [
+    "Whole PHDK Auto remains PARTIALLY DELIVERED; all four owner-confirmed commitments remain active.",
+    "UAT-060 remains BLOCKED pending the owner-provided disposable PostgreSQL target; live migrations, restart persistence, tenant isolation and multi-instance behavior were not exercised.",
+    "Native device/audio remains MANUAL; broad accessibility/localization, deployed SEO/AEO and customer-selected live voice/CRM acceptance remain open.",
+    "No customer data, customer endpoint, live database or deployment was used; UAT-064 is owner-decision and source-inventory evidence only.",
+    "CompanyCountry/TeamInterface persistence and audit acceptance remain open; a Web TeamInterface assignment selector decision remains open.",
+    "FeatureFlag remains intentionally dormant with schema/service retained; no route, module, UI, consumer or role grant exists."
+  ],
+  "whole_auto_acceptance": {
+    "status": "PARTIAL",
+    "summary": "The 5.1.70 owner-approved dormant FeatureFlag source-classification slice is merged and verified; the four-front PHDK Auto portfolio is not complete.",
+    "uat_tally": {
+      "pass": 62,
+      "blocked": 1,
+      "manual": 1
+    },
+    "open_gates": [
+      "UAT-060 owner-provided disposable PostgreSQL migration, restart, tenant isolation and multi-instance acceptance",
+      "Native device/audio acceptance",
+      "Broad screen-reader and localization acceptance",
+      "Deployed SEO/AEO measurements",
+      "Customer-selected live voice/CRM acceptance per tenant",
+      "Owner-approved dormant FeatureFlag remains unexposed; future activation/retirement requires a new decision and migration review"
+    ]
+  },
+  "overall_status": "5.1.70 SOURCE MERGED AND REMOTE VERIFIED; OWNER DECISION RECONCILED; PHDK AUTO PARTIALLY DELIVERED",
+  "product_source_branch": "fix/phdk-crud-matrix-audit-5-1-70",
+  "candidate_branch": "docs/phdk-auto-postmerge-5-1-70"
+}

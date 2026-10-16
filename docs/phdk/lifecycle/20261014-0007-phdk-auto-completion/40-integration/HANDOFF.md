@@ -1,8 +1,8 @@
-# Integration handoff — candidate 5.1.70
+# Integration handoff — 5.1.70 merged and verified
 
-The owner approved keeping FeatureFlag dormant: retain the schema/service without module registration, route, UI, consumer or role grants. The 14 model-role-surface rows are NOT APPLICABLE to current product surfaces, asserted by the CRUD inventory regression. API/Cloud full regressions pass 39/39 and 18/18; all five builds, lint checks and version roots pass, as do four typechecks, Browser TypeScript build and PHDK coherence 56/56. UAT-064 closes the owner decision only; no migration or persistence acceptance is claimed. Portfolio tally is 62 PASS, 1 BLOCKED, 1 MANUAL. See `INTEGRATION_REPORT-5.1.70.md`.
+PR #172 squash-merged at verified remote main `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`, with tested tree equality. The owner approved keeping FeatureFlag dormant: retain the schema/service without module registration, route, UI, consumer or role grants. The 14 model-role-surface rows are NOT APPLICABLE to current product surfaces, asserted by the CRUD inventory regression. API/Cloud full regressions pass 39/39 and 18/18; all five builds, lint checks and version roots pass, as do four typechecks, Browser TypeScript build and PHDK coherence 56/56. UAT-064 closes the owner decision only; no migration or persistence acceptance is claimed. Portfolio tally is 62 PASS, 1 BLOCKED, 1 MANUAL. See `INTEGRATION_REPORT-5.1.70.md`.
 
-SIGUIENTE PASO: deliver through the versioned PR and verify remote `main`; retain partial portfolio status.
+SIGUIENTE PASO: continue the remaining source and external acceptance gates; retain partial portfolio status.
 
 ---
 

@@ -1,3 +1,16 @@
+## Current commitment coverage — 5.1.70 source slice merged
+
+PR [#172](https://github.com/tuyoisaza/keledon/pull/172) is verified at remote `main` `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`; tested tree and all six version reads match. PHDK coherence and completion gate pass. Portfolio remains **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally: **62 PASS, 1 BLOCKED, 1 MANUAL**.
+
+| Commitment | Current result | Remaining gate |
+|---|---|---|
+| CMT-001 baseline/version/PR | #172 merged; exact main SHA/tree, six version reads and coherence verified. | Continue evidence and PR reconciliation. |
+| CMT-002 widget/diagnostics | Existing source/synthetic route and widget checks remain green. | Native device/audio; broad assistive-technology and localization acceptance. |
+| CMT-003 voice→Cloud→Browser→CRM | Client-specific integration contracts remain tenant-selected; no live CRM/call scope was used. | Per-client acceptance after connectors/configuration are provided. |
+| CMT-004 administration/permissions | Company/tenant scope guards pass; owner-approved dormant FeatureFlag is not exposed. | PostgreSQL persistence/audit, TeamInterface selector and complete role/surface acceptance. |
+
+---
+
 ## Current commitment coverage — 5.1.69 source slice merged
 
 PR [#170](https://github.com/tuyoisaza/keledon/pull/170) is verified at remote `main` `2c021fe30de453bb95212a442e9a8c93eabfbce1`; tested tree and all six version reads match. PHDK coherence and the completion gate pass. Portfolio remains **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally: **61 PASS, 1 BLOCKED, 1 MANUAL**.

@@ -1,3 +1,7 @@
+## Reopened and refreshed — 2026-10-15, post-merge 5.1.70
+
+PR #172 records the owner decision to keep FeatureFlag dormant. The schema/service remain without app registration, route, caller, UI or role grant; future activation/retirement requires a new capability decision and migration review. UAT-064 advances owner decision/source classification only; tally is 62 PASS, 1 BLOCKED, 1 MANUAL. The ordered four-front plan remains active: baseline/version and PR backlog; widget/safe diagnostics; tenant-selected voice→Cloud→Browser→CRM lifecycle; administration/permissions. Continue source-verifiable gaps, then run persistence and isolation UAT against the owner-provided PostgreSQL target. Keep whole Auto partial.
+
 ## Reopened and refreshed — 2026-10-15, post-merge 5.1.69
 
 PR #170 reconciles the CompanyCountry and TeamInterface source contracts and is verified on remote `main`. The tested tree matches and UAT-063 advances source guard/classification only; UAT tally is 61 PASS, 1 BLOCKED, 1 MANUAL. The ordered four-front plan remains active: baseline/version and PR backlog; widget/safe diagnostics; tenant-selected voice→Cloud→Browser→CRM lifecycle; administration/permissions. Resolve remaining source-verifiable matrix gaps, then exercise PostgreSQL migration, restart and tenant isolation against the owner-provided disposable target. Keep whole Auto partial.

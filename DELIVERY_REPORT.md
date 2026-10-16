@@ -1,3 +1,13 @@
+## Current delivery — 5.1.70 source slice merged and verified; Auto partial
+
+PR [#172](https://github.com/tuyoisaza/keledon/pull/172) squash-merged tested source `d9a7d4cff075ff0d8d9a7f64646a5fdfd2a1e1b6` at verified remote `main` `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`, tree `8ea2aee2cbd9be5d10d3b2e0e9918e5a2182b782`, equal to the tested candidate tree. All five app package/lock roots and Browser renderer read 5.1.70. API/Cloud regressions pass 39/39 and 18/18; five production builds and lint checks pass; four dedicated typechecks and Browser's TypeScript build pass; PHDK v2.51.2 coherence is 56/56. The mechanical completion gate passes against the immutable post-merge record. GitHub reported no hosted checks or review decision; no deployment is claimed.
+
+UAT-064 records the owner's decision to keep FeatureFlag dormant with no route, module, UI, caller or role grant; its schema/service remain. The 14 active-surface rows are NOT APPLICABLE, closing that decision only. Portfolio: 62 PASS, 1 BLOCKED (UAT-060 PostgreSQL), 1 MANUAL (native device/audio). The four fronts remain active. Full evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/snapshots/post-merge-172/PHDK_DELIVERY_EVIDENCE-5.1.70-post-merge-172.json`.
+
+SIGUIENTE PASO: continue the four active acceptance fronts; run UAT-060 when the owner-provided disposable PostgreSQL target is available; retain PARTIAL portfolio status.
+
+---
+
 ## Current delivery — 5.1.69 source slice merged and verified; Auto partial
 
 PR [#170](https://github.com/tuyoisaza/keledon/pull/170) squash-merged tested source `549e79235215394242be1068da2c9fd65a866763` at verified remote `main` `2c021fe30de453bb95212a442e9a8c93eabfbce1`, tree `e00c32ddec107d05cdf102d4523c80fb6a6097ae`, equal to the tested candidate tree. All five app package/lock roots and Browser renderer read 5.1.69. API/Cloud regressions pass 39/39 and 18/18; five production builds and lint checks pass; four dedicated typechecks and Browser's TypeScript build pass; PHDK v2.51.2 coherence is 56/56. The completion gate passes against the immutable post-merge evidence. GitHub reported no hosted checks or review decision; no deployment is claimed.
