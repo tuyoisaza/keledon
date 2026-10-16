@@ -1,3 +1,9 @@
+## Candidate 5.1.71 — UAT-065 FlowRunEvidence dormancy
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-065 | Owner / CMT-004 | Inspect Prisma model and search API, Cloud, Web and Browser source for runtime references; compare with FlowRun/SubAgentRun execution; review the 39-model/546-row inventory. | FlowRunEvidence remains in Prisma for possible future use; no active reader, writer, route or UI is claimed. All 14 role/surface combinations are NOT APPLICABLE. No role grants, retention job, or schema migration is added. Revisit only with a defined contract and approved migration. | Owner decision, source inventory, API regression 33 | PASS for decision and source classification only. No database migration or persisted evidence lifecycle was tested. |
+
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
 ## Candidate 5.1.70 — UAT-064 owner-approved FeatureFlag dormancy
