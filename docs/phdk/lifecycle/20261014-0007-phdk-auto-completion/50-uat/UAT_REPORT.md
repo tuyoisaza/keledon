@@ -1,3 +1,9 @@
+## Candidate 5.1.73 — UAT-076 persisted superadmin cross-tenant access PASS
+
+API and Cloud passed global Company/Brand/Team/User list checks and direct-ID reads of Tenant B Brand, Team and User using a DB-authorized superadmin. Both backends created and deleted a Tenant B Brand and Team; they also created a Tenant B User with default role=user, assigned admin through superadmin, returned a safe detail projection, and deleted all synthetic fixtures. PostgreSQL verification found zero UAT-076 users, Brands or Teams remaining. No customer data or provider endpoints were used. This is a selected cross-tenant superadmin slice and does not close the full 39-model × role × surface × operation matrix. Evidence: `evidence/uat-076-superadmin-cross-tenant-5.1.73.json`.
+
+Portfolio: **74 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**.
+
 ## Candidate 5.1.73 — UAT-075 persisted superadmin resource breadth PASS
 
 API and Cloud each passed the superadmin lifecycle for Brand, Team and User against separate disposable PostgreSQL 16.15 databases. The user was created as `user`, assigned `admin` by the authenticated superadmin, and read back without password/hash/token/secret fields. The synthetic Brand, Team, User and superadmin fixtures were removed; database verification found zero remaining UAT accounts and no created Brand/Team rows. No customer data or provider endpoints were used. This is representative persisted evidence; the complete 39-model × role × surface × operation matrix and superadmin breadth outside the covered resource families remain open. Evidence: `evidence/uat-075-superadmin-resource-breadth-5.1.73.json`.
