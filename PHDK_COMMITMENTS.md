@@ -1,6 +1,6 @@
 ## Current ledger status — 5.1.73 / UAT-075
 
-The four owner-confirmed commitments remain active: **0/4 DONE, 4/4 active/partial, 0 deferred, 0 cancelled**. PR #184 merged at `fd6c18270c3cff8c95dfef5b143320d64d7bd745`. UAT tally is 73 PASS, 0 BLOCKED, 1 MANUAL. UAT-075 adds persisted superadmin Brand/Team/User evidence in API and Cloud; it does not close CMT-004 or the full CRUD matrix. CMT-001 has verified source delivery at version 5.1.73; no deployment is claimed.
+The four owner-confirmed commitments remain active: **0/4 DONE, 4/4 active/partial, 0 deferred, 0 cancelled**. PRs #184–#186 merged UAT-075/076 and ledger reconciliation. UAT tally is 74 PASS, 0 BLOCKED, 1 MANUAL. UAT-071/075/076 verify persisted superadmin Company/Brand/Team/User API operations in API and Cloud; CMT-004 and the full CRUD matrix remain open. CMT-001 has verified source delivery at version 5.1.73; no deployment is claimed.
 
 SIGUIENTE PASO: continue the confirmed four fronts; keep their remaining acceptance gates active.
 
@@ -19,7 +19,7 @@ This slice moves legacy flow definitions, versions, permissions and intent mappi
 | CMT-003 — voice → Cloud → Browser → CRM per client | Tenant-specific configuration/allowlist contract and source suites pass; partial | Live acceptance for each customer's selected provider/CRM and private endpoint. |
 | CMT-004 — administration and permissions | Approved role policy and tenant-owned flow source shipped; partial | Disposable-DB migration/restart/tenant proof and model-operation acceptance. |
 
-Portfolio state: **0/4 fully complete; 4/4 active/partial; 0 deferred; 0 cancelled.** UAT-060 cannot run until an owner-provided disposable PostgreSQL target is available. Current matrix has 546 rows: 410 BLOCKED, 104 NOT APPLICABLE, 31 DECISION NEEDED, 1 PASS; the Session API/web rows now reflect guarded CRUD routes and the absence of a separate Web management page.
+Portfolio state: **0/4 fully complete; 4/4 active/partial; 0 deferred; 0 cancelled.** The former UAT-060 PostgreSQL blocker was superseded by later isolated database runs, including UAT-071/075/076. The current 546-row matrix has 406 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED and 5 PASS. Session lifecycle decisions and the broader CRUD matrix remain open.
 
 SIGUIENTE PASO: continue the four ordered acceptance fronts; keep whole-Auto status partial until their remaining database, native, deployed and per-client gates pass.
 
