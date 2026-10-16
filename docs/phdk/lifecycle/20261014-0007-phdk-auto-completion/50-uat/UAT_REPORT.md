@@ -1,8 +1,12 @@
+## Candidate 5.1.73 — UAT-079 persisted tenant flow configuration PASS
+
+API and Cloud persisted two-tenant flow configuration in separate disposable PostgreSQL databases. Tenant admins created and updated/archived definitions, created draft versions and approved one, upserted enablement permissions and intent mappings, and attempted forged company IDs and foreign flow references. The DB-derived actor scope prevailed; foreign writes failed closed and approved versions rejected later edits. Restart readback preserved the archived definition, approved version, permission and mapping while tenant filters hid foreign rows. Cleanup verified zero UAT-079 users, definitions and mappings. This closes four admin/API matrix rows only; Web, other roles and live flow execution remain open. Evidence: `evidence/uat-079-tenant-flow-config-persistence-5.1.73.json`.
+
+Portfolio: **77 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Matrix: **547 rows = 399 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 12 PASS**.
+
 ## Candidate 5.1.73 — UAT-078 persisted tenant Vendor CRUD and private-origin configuration PASS
 
 In API and Cloud, tenant admins created, listed, read, updated and deleted an own-team CRM Vendor configured with an explicitly allowlisted private RFC1918 origin. Create/list/detail/update projections omitted raw credentials; updating with masked placeholders preserved credential presence. Tenant A received 403 for Tenant B list, direct detail, update, delete and forged create. Database queries verified zero UAT-078 users or Vendor rows in both disposable PostgreSQL databases. The configured private host was never contacted. This closes only the Vendor admin/API row and selected tenant boundary; other Vendor roles and Web behavior remain open. Evidence: `evidence/uat-078-tenant-vendor-private-origin-5.1.73.json`.
-
-Portfolio: **76 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Matrix: **547 rows = 403 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 8 PASS**.
 
 ## Candidate 5.1.73 — UAT-077 persisted superadmin Workflow CRUD PASS
 

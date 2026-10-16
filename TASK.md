@@ -1,6 +1,6 @@
-## Current PHDK Auto — 5.1.73; UAT-078 passed; portfolio partial
+## Current PHDK Auto — 5.1.73; UAT-079 passed; portfolio partial
 
-Run `20261014-0007-phdk-auto-completion`. PR #180 delivered 5.1.73 source; docs PRs #181–#188 record Web, private-origin and persisted administration UAT; this candidate documents UAT-078. The UAT-078 Vendor CRUD, private-origin, credential-masking and cross-tenant checks passed in API and Cloud. PHDK v2.51.2 coherence passes 56/56. UAT tally: **76 PASS, 0 BLOCKED, 1 MANUAL**. The 547-row matrix has 8 PASS, 403 BLOCKED, 133 NOT APPLICABLE and 3 DECISION NEEDED. All four commitments remain active; no deployment or whole-Auto completion is claimed.
+Run `20261014-0007-phdk-auto-completion`. PR #180 delivered 5.1.73 source; docs PRs #181–#189 record Web, private-origin and persisted administration UAT; this candidate documents UAT-079. The UAT-079 flow-definition/version/permission/mapping cycle and restart persistence passed in API and Cloud. PHDK v2.51.2 coherence passes 56/56. UAT tally: **77 PASS, 0 BLOCKED, 1 MANUAL**. The 547-row matrix has 12 PASS, 399 BLOCKED, 133 NOT APPLICABLE and 3 DECISION NEEDED. All four commitments remain active; no deployment or whole-Auto completion is claimed.
 
 Next: continue the confirmed fronts and remaining administration/permission coverage across the resource × role × surface × operation matrix.
 

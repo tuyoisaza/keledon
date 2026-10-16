@@ -1,5 +1,11 @@
 # UAT journey map — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.73 — UAT-079 persisted tenant flow configuration
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| Tenant A/B admins in API and Cloud | US-012 / CMT-003 | UAT-079 / Flow configuration persistence | Create two tenant-owned definitions → forge company IDs and verify DB scope → create draft versions and approve → persist enablement permission and intent mapping → reject foreign flow references → restart both services → verify tenant-filtered persisted readback → cleanup | PASS against separate disposable PostgreSQL databases for API and Cloud; no live call or CRM integration. `50-uat/evidence/uat-079-tenant-flow-config-persistence-5.1.73.json`. |
+
 ## Candidate 5.1.73 — UAT-078 tenant Vendor private-origin configuration
 
 | Persona | Story | Case / journey | Steps exercised | Result / evidence |

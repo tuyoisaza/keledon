@@ -1,10 +1,16 @@
+## Candidate 5.1.73 — UAT-079 persisted tenant flow configuration
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-079 | US-012/CMT-003 / synthetic admins in two companies | In separate disposable API and Cloud databases, create definitions for two tenants; submit forged company IDs; update/archive; create and approve versions; upsert availability and intent mapping; attempt cross-tenant definition/version/permission/mapping writes; restart services and read back; clean fixtures. | DB-derived company scope overrides caller IDs; tenant reads exclude foreign rows; foreign references fail closed; approved version is immutable; definitions, versions, permissions and mappings persist across restart; cleanup returns named test fixture counts to zero. | Local API/Cloud HTTP and disposable PostgreSQL 16.15 | PASS in both backends. Closes four admin/API matrix rows only; Web and other roles remain open. Evidence: `evidence/uat-079-tenant-flow-config-persistence-5.1.73.json`. |
+
+Portfolio tally: **77 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Matrix: **547 rows = 399 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 12 PASS**. Native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer live call/CRM remain open.
+
 ## Candidate 5.1.73 — UAT-078 persisted tenant Vendor CRUD and private-origin configuration
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
 |---|---|---|---|---|---|
 | UAT-078 | CMT-003/CMT-004 / synthetic tenant A and B admins | In separate disposable API and Cloud databases, create an own-team Vendor with an explicitly allowlisted private origin; list/detail/update with masked credential placeholders; create Tenant B Vendor; attempt cross-tenant list/detail/update/delete and forged create; delete fixtures. | Own Vendor CRUD persists; private-origin allowlist reads back; credential values never appear in projections and masked updates preserve configured credentials; all five foreign-tenant attempts receive 403; cleanup leaves no UAT users/Vendors. | Local API/Cloud HTTP and disposable PostgreSQL 16.15 | PASS in both backends. No external host contacted. Evidence: `evidence/uat-078-tenant-vendor-private-origin-5.1.73.json`. |
-
-Portfolio tally: **76 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 39-model role/surface/operation matrix (547 rows: 403 BLOCKED, 133 N/A, 3 DECISION NEEDED, 8 PASS), native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer live call/CRM remain open.
 
 ## Candidate 5.1.73 — UAT-077 persisted superadmin Workflow CRUD
 
