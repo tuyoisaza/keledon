@@ -1,3 +1,11 @@
+## Candidate 5.1.73 — UAT-076 persisted superadmin cross-tenant access
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-076 | CMT-004 / persisted synthetic superadmin | Authenticate in separate disposable API and Cloud databases; inspect global Company/Brand/Team/User lists; direct-read Tenant B Brand/Team/User; create/delete Tenant B Brand and Team; create a Tenant B User as user, assign admin, read safe projection, and clean fixtures. | Global lists and Tenant B direct reads succeed for superadmin; user role update returns admin; credential fields are absent; cleanup returns all UAT-076 fixture counts to zero. | Local API/Cloud HTTP and disposable PostgreSQL 16.15 | PASS in both backends. Representative authorization evidence only; full matrix remains open. Evidence: `evidence/uat-076-superadmin-cross-tenant-5.1.73.json`. |
+
+Portfolio tally: **74 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The full resource × role × surface × operation matrix, native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer live call/CRM remain open.
+
 ## Candidate 5.1.73 — UAT-075 persisted superadmin resource breadth
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

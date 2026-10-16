@@ -1,5 +1,9 @@
 # CRUD matrix — current source and authorization coverage
 
+## 5.1.73 — persisted superadmin cross-tenant access
+
+UAT-076 verifies global Company/Brand/Team/User lists and superadmin direct-ID reads of Tenant B Brand/Team/User in API and Cloud. It also verifies Tenant B Brand/Team create/delete, User create with default role=user, superadmin assignment to admin, safe User detail projection and SQL-confirmed fixture cleanup. This is selected cross-tenant evidence; the 39-model × role × surface × operation totals remain unchanged and partial. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-076-superadmin-cross-tenant-5.1.73.json`.
+
 ## 5.1.73 — persisted superadmin Brand/Team/User acceptance
 
 UAT-075 exercises create/update/delete for Brand and Team plus User creation, superadmin role assignment and safe detail readback in API and Cloud against separate disposable PostgreSQL 16.15 databases. Cleanup removed all synthetic accounts and created Brand/Team rows. This is a representative persisted slice; the 39-model × role × surface × operation inventory remains partial and its row totals are unchanged. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-075-superadmin-resource-breadth-5.1.73.json`.
