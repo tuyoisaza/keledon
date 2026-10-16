@@ -1,3 +1,13 @@
+## v5.1.73 — 2026-10-15 (restrict orphan session cleanup)
+
+- Limit API and Cloud orphan-session counts/deletes to ended records with no owner references, metadata, Events, FlowRuns, or SubAgents, preventing cleanup from matching active or otherwise meaningful sessions.
+- Preserve FlowRunEvidence as dormant schema-only capability; it has no active writer or reader and is not required by current flow execution.
+- Align all five app package/lock roots and the Browser renderer at 5.1.73.
+
+### Verification
+- API regressions 40/40; Cloud regressions 18/18; API and Cloud TypeScript builds pass.
+- The cleanup predicate has API/Cloud source regression coverage; no PostgreSQL UAT or production data cleanup was performed. Whole PHDK Auto remains partial.
+
 ## v5.1.72 — 2026-10-15 (close PHDK Auto integration and contrast findings)
 
 - Remove stale API/Cloud local proof-script entries and add a regression that verifies every remaining local proof script target exists.

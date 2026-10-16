@@ -55,6 +55,37 @@ function loadService(relativePath, prisma) {
 }
 
 for (const relativePath of services) {
+  test(`${relativePath} counts and deletes only empty ended orphan sessions`, async () => {
+    const calls = [];
+    const prisma = {
+      session: {
+        count: async (args) => {
+          calls.push(['count', args]);
+          return 1;
+        },
+        deleteMany: async (args) => {
+          calls.push(['deleteMany', args]);
+          return { count: 1 };
+        },
+      },
+    };
+    const service = loadService(relativePath, prisma);
+    assert.equal(await service.getOrphanedSessionCount(), 1);
+    assert.equal((await service.deleteOrphanedSessions()).deleted, 1);
+    const expected = {
+      userId: null,
+      teamId: null,
+      status: 'ended',
+      metadata: null,
+      events: { none: {} },
+      flowRuns: { none: {} },
+      subAgents: { none: {} },
+    };
+    assert.deepEqual(JSON.parse(JSON.stringify(calls[0][1].where)), expected);
+    assert.deepEqual(JSON.parse(JSON.stringify(calls[1][1].where)), expected);
+    assert.equal('OR' in calls[0][1].where, false);
+  });
+
   test(`${relativePath} scopes KnowledgeBase detail and updates by company`, async () => {
     const calls = [];
     const knowledgeBase = {
