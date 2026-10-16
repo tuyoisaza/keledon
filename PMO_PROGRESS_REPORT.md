@@ -1,3 +1,9 @@
+## Current PMO progress — PR #172 merged; whole portfolio partial
+
+PR #172 is squash-merged at remote `main` `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`; its tree equals the tested candidate. All six version reads are 5.1.70. API/Cloud regressions 39/39 and 18/18; all five builds and lint checks; API/Cloud/Web/Landing typechecks plus Browser TypeScript build; PHDK coherence 56/56; completion gate PASS. UAT-064 closes the owner-approved dormant FeatureFlag decision at source/classification scope only. Tally: 62 PASS, 1 BLOCKED (owner-provided PostgreSQL UAT-060), 1 MANUAL (native device/audio). All four commitments remain active; persistence/audit, TeamInterface selector, accessibility/localization, deployed SEO/AEO and per-client live call/CRM acceptance remain open.
+
+---
+
 ## Current PMO progress — PR #170 merged; whole portfolio partial
 
 PR #170 is squash-merged at remote `main` `2c021fe30de453bb95212a442e9a8c93eabfbce1`; its tree equals the tested candidate. All six version reads are 5.1.69. API/Cloud regressions 39/39 and 18/18; all five builds and lint checks; API/Cloud/Web/Landing typechecks plus Browser TypeScript build; PHDK coherence 56/56; completion gate PASS. UAT-063 is source-only. Tally: 61 PASS, 1 BLOCKED (owner-provided PostgreSQL UAT-060), 1 MANUAL (native device/audio). All four commitments remain active; persistence/audit, TeamInterface selector, accessibility/localization, deployed SEO/AEO and per-client live voice/CRM acceptance remain open.

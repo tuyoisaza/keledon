@@ -1,3 +1,9 @@
+## Active integrated continuation — PHDK Auto 5.1.70 merged; four fronts remain active
+
+PR #172 keeps FeatureFlag dormant per owner direction: retain schema/service, add no route/module/UI/consumer/role grant, and require a new decision plus migration review before activation or retirement. UAT-064 advances the owner decision and source classification only; tally is 62 PASS, 1 BLOCKED, 1 MANUAL. All four commitments remain active in order: baseline/version/PR backlog; widget and safe diagnostics; tenant-selected voice→Cloud→Browser→CRM lifecycle; administration and permissions. Complete source-verifiable gaps, then exercise persistence and isolation against the owner-provided disposable PostgreSQL target. Do not call whole Auto complete based on source-only checks.
+
+---
+
 ## Active integrated continuation — PHDK Auto 5.1.69 merged; four fronts remain active
 
 PR #170 reconciles nested CompanyCountry and TeamInterface source contracts and is merged at verified `main` `2c021fe30de453bb95212a442e9a8c93eabfbce1`; the tested tree matches. UAT-063 advances source guard/classification evidence only; tally is 61 PASS, 1 BLOCKED, 1 MANUAL. All four owner-approved commitments remain active. Next work stays ordered: baseline/version/PR backlog; widget and safe diagnostics; tenant-selected voice → Cloud → Browser → CRM lifecycle; administration and permissions. Complete source-verifiable CRUD and policy gaps first, then run PostgreSQL persistence/restart/tenant isolation on the owner-provided disposable target. Do not claim whole acceptance from a source-only slice.

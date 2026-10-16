@@ -1,3 +1,9 @@
+## Current PMO board — 5.1.70 merged; whole Auto remains partial
+
+Run `20261014-0007-phdk-auto-completion`; PR #172 is squash-merged and remote SHA/tree/version readback matches the tested source. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled. Current UAT tally is 62 PASS, 1 BLOCKED, 1 MANUAL. FeatureFlag stays dormant under the owner-approved contract; source delivery does not close portfolio acceptance.
+
+---
+
 ## Current PMO board — 5.1.69 merged; whole Auto remains partial
 
 Run `20261014-0007-phdk-auto-completion`; PR #170 is squash-merged and remote SHA/tree/version readback matches the tested source. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled. Current UAT tally is 61 PASS, 1 BLOCKED, 1 MANUAL. The 5.1.69 source slice does not close portfolio acceptance.

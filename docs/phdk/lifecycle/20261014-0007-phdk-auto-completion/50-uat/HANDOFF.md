@@ -2,7 +2,7 @@
 
 ## Candidate 5.1.70 — UAT-064 PASS; portfolio acceptance incomplete
 
-The owner approved keeping FeatureFlag dormant. Its schema/service remain; app-module, controller, API route, UI and caller exposure stay absent. The 14 model-role-surface rows are NOT APPLICABLE to current product surfaces, asserted by the API inventory regression. This closes the owner-decision row only; it does not claim persistence/migration acceptance. Tally: **62 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 still needs the owner-provided disposable PostgreSQL target; native device/audio remains MANUAL.
+PR #172 is merged at verified remote `main` `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`. The owner approved keeping FeatureFlag dormant. Its schema/service remain; app-module, controller, API route, UI and caller exposure stay absent. The 14 model-role-surface rows are NOT APPLICABLE to current product surfaces, asserted by the API inventory regression. This closes the owner-decision row only; it does not claim persistence/migration acceptance. Tally: **62 PASS, 1 BLOCKED, 1 MANUAL**. UAT-060 still needs the owner-provided disposable PostgreSQL target; native device/audio remains MANUAL.
 
 SIGUIENTE PASO: continue the remaining source and customer acceptance gates; do not wire or retire FeatureFlag without a new owner decision and migration plan.
 

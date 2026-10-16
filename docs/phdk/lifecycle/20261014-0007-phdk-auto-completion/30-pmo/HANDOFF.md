@@ -1,3 +1,7 @@
+## Current PMO — 5.1.70 source delivered; portfolio partial (2026-10-15)
+
+PR #172 squash-merged; `origin/main`, `git ls-remote` and tested tree agree at `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28` / `8ea2aee2cbd9be5d10d3b2e0e9918e5a2182b782`. All six version reads are 5.1.70. API/Cloud regressions, five builds/lint, typechecks, PHDK coherence and delivery gate pass. UAT-064 records owner-approved FeatureFlag dormancy without migration. UAT tally: 62 PASS, 1 BLOCKED, 1 MANUAL. All four commitments remain active and acceptance partial.
+
 ## Current PMO — 5.1.69 source delivered; portfolio partial (2026-10-15)
 
 PR #170 squash-merged; `origin/main`, `git ls-remote` and tested tree agree at `2c021fe30de453bb95212a442e9a8c93eabfbce1` / `e00c32ddec107d05cdf102d4523c80fb6a6097ae`. All six version reads are 5.1.69. API/Cloud regressions, five builds/lint, typechecks, PHDK coherence and delivery gate pass. UAT tally: 61 PASS, 1 BLOCKED, 1 MANUAL. All four commitments remain active and acceptance partial.

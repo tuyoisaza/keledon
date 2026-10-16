@@ -1,8 +1,8 @@
-# Check handoff — candidate 5.1.70
+# Check handoff — 5.1.70 merged and verified
 
-Owner-approved FeatureFlag dormancy is reconciled in the 39-model/546-row matrix and guarded by regression 33: retain schema/service with no registered module, route, UI, consumer or role grant. API/Cloud regressions pass 39/39 and 18/18; five builds/lint checks, four package typechecks, Browser TypeScript build, version alignment, PHDK coherence 56/56 and diff check pass. UAT-064 is decision/source evidence only. UAT tally: 62 PASS, 1 BLOCKED, 1 MANUAL; whole portfolio remains partial. Exact checks: `PHDK_CHECK_REPORT-5.1.70.md`.
+PR #172 squash-merged at verified remote `main` `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`; tested tree and version match. Owner-approved FeatureFlag dormancy is reconciled in the 39-model/546-row matrix and guarded by regression 33: retain schema/service with no registered module, route, UI, consumer or role grant. API/Cloud regressions pass 39/39 and 18/18; five builds/lint checks, four package typechecks, Browser TypeScript build, version alignment, PHDK coherence 56/56 and diff check pass. UAT-064 is decision/source evidence only. UAT tally: 62 PASS, 1 BLOCKED, 1 MANUAL; whole portfolio remains partial. Exact checks: `PHDK_CHECK_REPORT-5.1.70.md`.
 
-SIGUIENTE PASO: deliver the exact candidate through normal versioned PR controls and verify remote `main`.
+SIGUIENTE PASO: continue UAT-060 and remaining manual/customer acceptance gates; keep whole PHDK Auto partial.
 
 ---
 
