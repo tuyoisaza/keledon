@@ -6,7 +6,6 @@
   "expected_version": "5.1.72",
   "tested_source_commit_sha": "9f5139a4da8ff8695a6f68930d434a97128307ef",
   "tested_candidate_tree": "2f7c57bf9816af8428db5e3c06886be845ee15bd",
-  "pr_head_sha": "b7f723fe698c869fae7a6ea655fb95d7e9009a42",
   "pull_request_url": "https://github.com/tuyoisaza/keledon/pull/176",
   "versions": {
     "services_api": "5.1.72",
