@@ -1,3 +1,9 @@
+## Current PMO board — candidate 5.1.72; PR #176 open
+
+Run `20261014-0007-phdk-auto-completion`; PHDK v2.51.2 coherence passes 56/56. Latest pushed head `4bf225684b74bdba2b7aaa5f4a19684651a05b62`; PR #176 is OPEN and CLEAN for merge, with no hosted checks or review decision. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled. Current UAT tally is **65 PASS, 0 BLOCKED, 1 MANUAL**. UAT-066 passes core disposable PostgreSQL scope; UAT-067 passes selected production-built Web accessibility and contrast sample. No deployment is claimed.
+
+---
+
 ## Current PMO board — 5.1.70 merged; whole Auto remains partial
 
 Run `20261014-0007-phdk-auto-completion`; PR #172 is squash-merged and remote SHA/tree/version readback matches the tested source. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled. Current UAT tally is 62 PASS, 1 BLOCKED, 1 MANUAL. FeatureFlag stays dormant under the owner-approved contract; source delivery does not close portfolio acceptance.

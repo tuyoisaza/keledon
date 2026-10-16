@@ -1,3 +1,11 @@
+## Current PMO progress — candidate 5.1.72; PR #176 open
+
+Latest pushed candidate is `fix/phdk-auto-next-front-5-1-72` / `4bf225684b74bdba2b7aaa5f4a19684651a05b62`, PR #176. UAT-066 passes core PostgreSQL migration, actor/tenant scope and persistence acceptance; UAT-067 passes Web widget keyboard/accessibility and selected route contrast after the Providers 4.17:1 text defect was fixed. API/Cloud regressions 40/40 and 18/18, five builds, diagnostics 19/19, Browser widget 3/3/build and PHDK coherence 56/56 pass. Hosted checks and review are absent; merge and deployment are not claimed. Whole acceptance remains partial at **65 PASS, 0 BLOCKED, 1 MANUAL**.
+
+Next: review and deliver the candidate through PR controls, continue the 4 confirmed fronts, and keep native/manual/customer-specific gates open until evidenced.
+
+---
+
 ## Current PMO progress — PR #172 merged; whole portfolio partial
 
 PR #172 is squash-merged at remote `main` `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`; its tree equals the tested candidate. All six version reads are 5.1.70. API/Cloud regressions 39/39 and 18/18; all five builds and lint checks; API/Cloud/Web/Landing typechecks plus Browser TypeScript build; PHDK coherence 56/56; completion gate PASS. UAT-064 closes the owner-approved dormant FeatureFlag decision at source/classification scope only. Tally: 62 PASS, 1 BLOCKED (owner-provided PostgreSQL UAT-060), 1 MANUAL (native device/audio). All four commitments remain active; persistence/audit, TeamInterface selector, accessibility/localization, deployed SEO/AEO and per-client live call/CRM acceptance remain open.
