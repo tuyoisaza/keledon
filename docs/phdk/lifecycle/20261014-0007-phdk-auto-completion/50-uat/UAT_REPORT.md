@@ -1,8 +1,12 @@
+## Candidate 5.1.73 — UAT-078 persisted tenant Vendor CRUD and private-origin configuration PASS
+
+In API and Cloud, tenant admins created, listed, read, updated and deleted an own-team CRM Vendor configured with an explicitly allowlisted private RFC1918 origin. Create/list/detail/update projections omitted raw credentials; updating with masked placeholders preserved credential presence. Tenant A received 403 for Tenant B list, direct detail, update, delete and forged create. Database queries verified zero UAT-078 users or Vendor rows in both disposable PostgreSQL databases. The configured private host was never contacted. This closes only the Vendor admin/API row and selected tenant boundary; other Vendor roles and Web behavior remain open. Evidence: `evidence/uat-078-tenant-vendor-private-origin-5.1.73.json`.
+
+Portfolio: **76 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Matrix: **547 rows = 403 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 8 PASS**.
+
 ## Candidate 5.1.73 — UAT-077 persisted superadmin Workflow CRUD PASS
 
 In API and Cloud, the DB-derived tenant admin received 403 for Workflow list, direct detail, create, update and delete. The superadmin then completed global list/detail/create/update/delete against PostgreSQL; a follow-up detail read confirmed the updated name and enabled state, and the final list no longer contained the deleted Workflow. SQL verification found zero UAT-077 Workflow or user rows after cleanup. No workflow execution or external integration was triggered. This closes only the Workflow API role rows; the Web row and broader matrix remain open. Evidence: `evidence/uat-077-superadmin-workflow-5.1.73.json`.
-
-Portfolio: **75 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**.
 
 ## Candidate 5.1.73 — UAT-076 persisted superadmin cross-tenant access PASS
 

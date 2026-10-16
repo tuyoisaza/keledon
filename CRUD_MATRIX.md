@@ -1,10 +1,14 @@
 # CRUD matrix — current source and authorization coverage
 
+## 5.1.73 — UAT-078 persisted tenant Vendor CRUD and private-origin configuration
+
+In separate disposable API and Cloud databases, tenant admins created, listed, read, updated and deleted their own CRM Vendor. An explicitly allowlisted private RFC1918 origin was persisted and safely projected; masked credential placeholders preserved existing credential presence. Tenant A received 403 for five list/detail/update/delete/forged-create attempts against Tenant B. All synthetic rows and accounts were removed, and no configured host was contacted. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-078-tenant-vendor-private-origin-5.1.73.json`.
+
 ## 5.1.73 — persisted superadmin cross-tenant access
 
 UAT-076 verifies global Company/Brand/Team/User lists and superadmin direct-ID reads of Tenant B Brand/Team/User in API and Cloud. It also verifies Tenant B Brand/Team create/delete, User create with default role=user, superadmin assignment to admin, safe User detail projection and SQL-confirmed fixture cleanup. This is selected cross-tenant evidence; the 39-model × role × surface × operation totals remain unchanged and partial. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-076-superadmin-cross-tenant-5.1.73.json`.
 
-Together, UAT-071/075/076 verify Company, Brand, Team and User superadmin API rows; UAT-077 verifies the Workflow admin-denial and superadmin API rows against isolated PostgreSQL. These six model-role-surface rows are PASS; their corresponding Web rows and all other untested rows remain as recorded. Current inventory: **546 rows = 404 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 7 PASS**.
+UAT-071/075/076 verify Company, Brand, Team and User superadmin API rows; UAT-077 verifies the Workflow admin-denial and superadmin API rows; UAT-078 verifies the Vendor admin API row against isolated PostgreSQL. These eight model-role-surface rows are PASS, including ManagedInterface superadmin; their corresponding Web rows and all other untested rows remain as recorded. Current inventory: **547 rows = 403 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 8 PASS**.
 
 ## 5.1.73 — persisted superadmin Brand/Team/User acceptance
 

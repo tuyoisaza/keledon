@@ -1,0 +1,35 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-078",
+  "candidate_version": "5.1.73",
+  "tested_source_commit": "d511e7fe9d43efc86fc256ac43820efcf4404778",
+  "scope": "Persisted tenant-admin Vendor CRUD, explicit private-origin configuration, secret-safe projections, and cross-tenant access denial in API and Cloud.",
+  "environment": {
+    "database": "Separate disposable PostgreSQL 16.15 databases for API and Cloud on localhost.",
+    "fixtures": "Synthetic tenant A and B admin accounts and Vendor rows only; all UAT-078 accounts and Vendor rows were deleted and verified absent.",
+    "network": "Only local HTTP services and the isolated PostgreSQL cluster; private destination URLs were stored as configuration and never contacted."
+  },
+  "assertions_per_backend": [
+    "Tenant A admin created a CRM Vendor configured with an explicitly allowed private RFC1918 origin.",
+    "Create, list, detail and update projections omitted raw username, password and API key values; the projection reported masked username and credential-presence booleans.",
+    "Updating the Vendor with masked placeholders preserved existing credential presence and changed the configured private origin and allowlist.",
+    "Tenant B admin created a separate Vendor on Tenant B's team.",
+    "Tenant A received 403 for Tenant B Vendor list, direct detail, update and delete, and for a forged create targeting Tenant B's team.",
+    "Both synthetic Vendors were deleted; database verification found zero UAT-078 users and Vendor rows."
+  ],
+  "results": {
+    "api": "PASS",
+    "cloud": "PASS",
+    "tenant_a_private_origin_create_and_update": true,
+    "credential_values_absent_from_projections": true,
+    "masked_credential_update_preserved_secrets": true,
+    "cross_tenant_denials_per_backend": 5,
+    "synthetic_fixtures_after_cleanup": 0,
+    "external_hosts_contacted": false
+  },
+  "limitations": [
+    "This closes only the Vendor admin/API matrix row and tenant-isolation slice; other Vendor roles and Web behavior remain open.",
+    "No customer CRM or telephony provider was selected or contacted; each client's live integration acceptance remains separate."
+  ],
+  "result": "PASS"
+}
