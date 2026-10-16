@@ -1,10 +1,26 @@
+## Candidate 5.1.73 — UAT-072 Web superadmin Company CRUD
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-072 | CMT-004 / synthetic Web superadmin | Open the production-built SPA against an intercepted synthetic API; create, edit and delete a Company with country relations. | Exact create/update payloads are sent; company and country labels read back from the mock store; native delete confirmation precedes removal. | Local Web SPA / headless Edge; external traffic blocked | PASS: 6 contract assertions. UI and payload only; backend authorization and persistence are not claimed. Evidence: `evidence/uat-072-web-company-superadmin-5.1.73.json` and screenshot. |
+
+## Candidate 5.1.73 — UAT-073 tenant flow editor Web journey
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-073 | CMT-003 / synthetic Company Co tenant admin | On the production-built SPA, create a flow, save draft and approved versions, enable company availability, add intent mapping, and test 390px reflow. | Tenant scope is derived into flow create and permission/mapping writes; reads include the company filter; no company picker appears; 390px view has no horizontal overflow. | Local Web SPA / headless Edge with intercepted API; external network blocked | PASS: flow editor browser suite 1/1. UI/request contract only; no API/Cloud auth or database persistence claim. Evidence: `evidence/uat-073-flow-editor-5.1.73.json` and screenshots. |
+
+Portfolio tally: **71 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The full resource × role × surface × operation matrix, remaining resource families, native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer live call/CRM remain open.
+
+Portfolio tally before UAT-073: **70 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The full resource × role × surface × operation matrix, remaining resource families, native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer call/CRM remain open.
+
 ## Candidate 5.1.73 — UAT-071 persisted superadmin Company CRUD
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
 |---|---|---|---|---|---|
-| UAT-071 | CMT-004 / persisted synthetic superadmin | Register a synthetic account in each disposable database and verify default role=user; prepare an isolated superadmin fixture; exercise API and Cloud Company list/detail/create/update/delete, country relations, and role assignment to a user in the created company; verify deletion and cleanup. | Superadmin reads global Company list/detail; create/update/country relations persist; user role/company assignment persists with safe response projection; only the synthetic test user/company are deleted; fixture rows are removed. | Local API/Cloud HTTP and separate disposable PostgreSQL 16.15 databases | PASS: 12 assertions per backend (24 total); company and country relation were absent after deletion. Web Company journey remains untested and the overall CRUD matrix stays open. Evidence: `evidence/uat-071-superadmin-company-crud-5.1.73.json`. |
+| UAT-071 | CMT-004 / persisted synthetic superadmin | Register a synthetic account in each disposable database and verify default role=user; prepare an isolated superadmin fixture; exercise API and Cloud Company list/detail/create/update/delete, country relations, and role assignment to a user in the created company; verify deletion and cleanup. | Superadmin reads global Company list/detail; create/update/country relations persist; user role/company assignment persists with safe response projection; only the synthetic test user/company are deleted; fixture rows are removed. | Local API/Cloud HTTP and separate disposable PostgreSQL 16.15 databases | PASS: 12 assertions per backend (24 total); company and country relation were absent after deletion. The Web UI sample is tracked separately in UAT-072; the overall CRUD matrix stays open. Evidence: `evidence/uat-071-superadmin-company-crud-5.1.73.json`. |
 
-Portfolio tally: **69 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The full resource × role × surface × operation matrix, remaining resource families, native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer call/CRM remain open.
+Portfolio tally at that point: **69 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The full resource × role × surface × operation matrix, remaining resource families, native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer call/CRM remain open.
 
 ## Candidate 5.1.73 — UAT-070 persisted coordinator CRUD role boundaries
 

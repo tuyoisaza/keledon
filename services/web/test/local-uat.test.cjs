@@ -13,6 +13,8 @@ const evidence = process.env.KELEDON_UAT_EVIDENCE_DIR
  : path.join(root,'docs/phdk/evidence');
 const company={id:'company-co',name:'Company Co',industry:'Synthetic UAT',countries:[{countryCode:'MX'}]};
 const otherCompany={id:'other-company',name:'Other Co',industry:'Synthetic UAT',countries:[{countryCode:'MX'}]};
+let companyRows=[company,otherCompany];
+let companyWrites=[];
 const brand={id:'brand-co',name:'Company Co Brand',companyId:company.id,company};
 const brand2={id:'brand-co-2',name:'Company Co Brand 2',companyId:company.id,company};
 const otherBrand={id:'brand-other',name:'Other Co Brand',companyId:otherCompany.id,company:otherCompany};
@@ -133,7 +135,25 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
     else if(p==='/api/crud/sessions')body=dashboardSessions;
     else if(p==='/api/devices'&&devicesShouldFail)return route.fulfill({status:503,contentType:'application/json',body:'{"message":"synthetic device failure"}'});
     else if(p==='/api/devices')body=deviceList;
-    else if(p==='/api/crud/companies')body=[company,otherCompany];
+    else if(p==='/api/crud/companies'){
+      if(route.request().method()==='POST'){
+        const payload=route.request().postDataJSON();companyWrites.push({method:'POST',payload});
+        const created={id:'company-uat-created',...payload,countries:(payload.countries||[]).map(countryCode=>({countryCode})),createdAt:'2026-10-15T12:00:00.000Z'};
+        companyRows.push(created);body=created;
+      } else body=companyRows;
+    }
+    else if(/^\/api\/crud\/companies\/[^/]+$/.test(p)){
+      const id=decodeURIComponent(p.split('/').at(-1));
+      const index=companyRows.findIndex(item=>item.id===id);
+      if(index<0)return route.fulfill({status:404,contentType:'application/json',body:'{"message":"not found"}'});
+      if(route.request().method()==='PUT'){
+        const payload=route.request().postDataJSON();companyWrites.push({method:'PUT',id,payload});
+        companyRows[index]={...companyRows[index],...payload,...(payload.countries?{countries:payload.countries.map(countryCode=>({countryCode}))}:{})};body=companyRows[index];
+      } else if(route.request().method()==='DELETE'){
+        companyWrites.push({method:'DELETE',id});companyRows=companyRows.filter(item=>item.id!==id);
+        return route.fulfill({status:200,contentType:'application/json',body:'{"success":true}'});
+      }
+    }
     else if(p==='/api/crud/brands')body=[brand,brand2,otherBrand];
     else if(p==='/api/crud/knowledge'){
       if(route.request().method()==='POST'){
@@ -301,6 +321,35 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
    await context.close();
    checks.push('UAT-004 '+role+' frontend fixture details/keyboard/focus/collapsed diagnostic/privileged controls PASS; backend auth not claimed by mocked API');
   }
+  const companyAdmin=await pageFor('superadmin');await companyAdmin.page.goto(origin+'/management/companies');
+  await companyAdmin.page.getByRole('button',{name:'Agregar empresa',exact:true}).click();
+  let companyDialog=companyAdmin.page.getByRole('dialog');await companyDialog.waitFor();
+  await companyDialog.getByLabel('Nombre de la empresa').fill('Company Co UAT Created');
+  await companyDialog.getByLabel('Industria').fill('Synthetic UAT Industry');
+  await companyDialog.getByLabel('Países de operación').selectOption('BR');
+  await companyDialog.getByRole('button',{name:'Guardar',exact:true}).click();
+  let createdCompanyRow=companyAdmin.page.locator('tbody tr').filter({hasText:'Company Co UAT Created'});
+  await createdCompanyRow.waitFor();
+  assert.deepEqual(companyWrites.at(-1),{method:'POST',payload:{name:'Company Co UAT Created',industry:'Synthetic UAT Industry',countries:['BR']}});
+  assert.ok((await createdCompanyRow.innerText()).includes('Brasil'),'created country relation is visible after list readback');
+  await createdCompanyRow.getByTitle('Editar').click();
+  companyDialog=companyAdmin.page.getByRole('dialog');await companyDialog.waitFor();
+  await companyDialog.getByLabel('Nombre de la empresa').fill('Company Co UAT Edited');
+  await companyDialog.getByLabel('Industria').fill('Updated Synthetic UAT Industry');
+  await companyDialog.getByLabel('Países de operación').selectOption('MX');
+  await companyDialog.getByRole('button',{name:'Guardar',exact:true}).click();
+  const editedCompanyRow=companyAdmin.page.locator('tbody tr').filter({hasText:'Company Co UAT Edited'});
+  await editedCompanyRow.waitFor();
+  assert.deepEqual(companyWrites.at(-1),{method:'PUT',id:'company-uat-created',payload:{name:'Company Co UAT Edited',industry:'Updated Synthetic UAT Industry',countries:['BR','MX']}});
+  assert.ok((await editedCompanyRow.innerText()).includes('Brasil')&&(await editedCompanyRow.innerText()).includes('México'),'updated company and country relations are visible after list readback');
+  await companyAdmin.page.screenshot({path:path.join(evidence,'uat-superadmin-company-crud.png')});
+  companyAdmin.page.once('dialog',dialog=>dialog.accept());
+  await editedCompanyRow.getByRole('button',{name:'Eliminar',exact:true}).click();
+  await editedCompanyRow.waitFor({state:'detached'});
+  assert.deepEqual(companyWrites.at(-1),{method:'DELETE',id:'company-uat-created'});
+  assert.equal(companyRows.some(item=>item.id==='company-uat-created'),false,'company row is removed from mock persistence');
+  await companyAdmin.context.close();
+  checks.push('UAT-072 Web superadmin Company lifecycle: localized create/edit, country payloads and list readback, native delete confirmation, and removal from synthetic persistence PASS; API authorization is not claimed by mocked Web fixture');
   const testProfileOperator=await pageFor('superadmin');
   await testProfileOperator.page.goto(origin+'/management/companies');
   const profileSelect=testProfileOperator.page.getByRole('combobox',{name:'Perfiles UAT de prueba',exact:true});
