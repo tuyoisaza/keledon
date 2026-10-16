@@ -47,7 +47,8 @@ const safeEndpoints=[
 ];
 const config={sttProvider:'vosk',ttsProvider:'speaches',llmProvider:'openai',speachesApiUrl:'http://localhost/fixture-stt',ttsVoiceId:'fixture-voice',openaiApiKey:'',openaiApiKeySet:true,deepgramConfig:{apiKey:'',hasApiKey:true},ttsApiKey:'',ttsApiKeySet:true,googleAiApiKey:'',googleAiApiKeySet:false};
 async function inspectTextContrast(page){return page.evaluate(()=>{
- const parse=value=>{const match=value.match(/rgba?\(([^)]+)\)/);if(!match)return null;const parts=match[1].split(',').map(part=>Number.parseFloat(part));return parts.length>=3?{rgb:parts.slice(0,3),alpha:parts.length>3?parts[3]:1}:null;};
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=1;const context=canvas.getContext('2d',{willReadFrequently:true});
+ const parse=value=>{if(!context||!CSS.supports('color',value))return null;context.clearRect(0,0,1,1);context.fillStyle=value;context.fillRect(0,0,1,1);const [red,green,blue,alpha]=context.getImageData(0,0,1,1).data;return {rgb:[red,green,blue],alpha:alpha/255};};
  const luminance=color=>{const rgb=color.map(value=>value/255).map(value=>value<=0.04045?value/12.92:((value+0.055)/1.055)**2.4);return .2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2];};
  const contrast=(first,second)=>{const values=[luminance(first),luminance(second)].sort((a,b)=>b-a);return (values[0]+.05)/(values[1]+.05);};
  const failures=[];
@@ -57,8 +58,9 @@ async function inspectTextContrast(page){return page.evaluate(()=>{
   const rect=el.getBoundingClientRect(),style=getComputedStyle(el);
   if(!rect.width||!rect.height||style.visibility==='hidden'||style.display==='none'||Number.parseFloat(style.opacity)===0)continue;
   let fg=parse(style.color);if(!fg)continue;
-  let bg=[255,255,255];
-  for(let parent=el;parent;parent=parent.parentElement){const background=parse(getComputedStyle(parent).backgroundColor);if(background&&background.alpha>0){bg=background.rgb.map((value,index)=>value*background.alpha+bg[index]*(1-background.alpha));if(background.alpha>=.999)break;}}
+  let bg=[255,255,255];const layers=[];
+  for(let parent=el;parent;parent=parent.parentElement){const background=parse(getComputedStyle(parent).backgroundColor);if(background&&background.alpha>0){layers.push(background);if(background.alpha>=.999)break;}}
+  for(const background of layers.reverse())bg=background.rgb.map((value,index)=>value*background.alpha+bg[index]*(1-background.alpha));
   const size=Number.parseFloat(style.fontSize),weight=Number.parseInt(style.fontWeight,10)||400,large=size>=24||(size>=18.66&&weight>=600),ratio=contrast(fg.rgb,bg);
   if(ratio<(large?3:4.5))failures.push({text:text.slice(0,72),tag:el.tagName,className:typeof el.className==='string'?el.className:'',ratio:Number(ratio.toFixed(2)),fontPx:size,weight,foreground:fg.rgb.map(Math.round),background:bg.map(Math.round),computedBackground:style.backgroundColor,opacity:style.opacity,ancestorOpacity:getComputedStyle(el.parentElement).opacity});
  }
@@ -274,6 +276,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
    const detail=page.getByRole('button',{name:'Ver detalle: Company Co',exact:true});await detail.waitFor();
    if(role==='superadmin'){const trigger=page.getByRole('button',{name:'Agregar empresa',exact:true});await trigger.click();const form=page.getByRole('dialog');await form.waitFor();assert.equal(await form.getByLabel('Nombre de la empresa').count(),1);await page.keyboard.press('Escape');await form.waitFor({state:'hidden'});assert.equal(await trigger.evaluate(el=>el===document.activeElement),true);}
    await detail.click();const dialog=page.getByRole('dialog');await dialog.waitFor();assert.ok((await dialog.innerText()).includes('Synthetic UAT'));
+   const companyContrast=await inspectTextContrast(page);assert.deepEqual(companyContrast,[],`${role} company details contrast failures: ${JSON.stringify(companyContrast)}`);
    await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>!!document.activeElement.closest('dialog')),true);
    await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});assert.equal(await detail.evaluate(el=>el===document.activeElement),true);
    if(role!=='superadmin')assert.equal(await page.locator('tbody tr').first().locator('button').last().isDisabled(),true);
@@ -579,6 +582,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   checks.push('UAT-T-009 KELEDON admin create flow: localized labeled fields, scoped company/brand/team selectors, native accessible form and delete-confirmation dialog; payload contains no caller companyId and uses server input shape PASS (synthetic UI/API)');
   const provider=await pageFor('admin');await provider.page.goto(origin+'/management/providers');
   await provider.page.getByRole('heading',{name:'Administración — Proveedores'}).waitFor();
+  const providerContrast=await inspectTextContrast(provider.page);assert.deepEqual(providerContrast,[],`provider settings contrast failures: ${JSON.stringify(providerContrast)}`);
   const key=provider.page.getByPlaceholder('sk-… (introduce tu clave de API de OpenAI)');await key.waitFor();assert.equal(await key.inputValue(),'');
   await key.fill('SYNTHETIC-UAT-REPLACEMENT');const section=key.locator('xpath=ancestor::section');await section.getByRole('button',{name:'Guardar',exact:true}).click();
   await provider.page.waitForFunction(()=>document.querySelector('input[placeholder^="sk-"]')?.value==='');
@@ -589,6 +593,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   checks.push('UAT-004 provider settings Spanish localization and write-only key: translated screen renders; no response prefill; replacement clears after success; untouched blank omitted PASS');
   const brain=await pageFor('admin');await brain.page.goto(origin+'/brain');
   await brain.page.getByRole('heading',{name:'Brain',exact:true}).waitFor();
+  const brainContrast=await inspectTextContrast(brain.page);assert.deepEqual(brainContrast,[],`Brain contrast failures: ${JSON.stringify(brainContrast)}`);
   await brain.page.locator('[title="key configured"]').first().waitFor();
   assert.equal(await brain.page.locator('[title="key configured"]').count(),2,'safe provider-key flags show only the selected LLM and TTS credentials configured');
   assert.equal(await brain.page.locator('[title="key not configured"]').count(),1,'an unused Deepgram key does not mark the selected Vosk provider as credentialed');
@@ -601,6 +606,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await diagnostic.page.goto(origin+'/management/debug');
   const debugToggle=diagnostic.page.getByRole('checkbox');
   const debugToggleControl=diagnostic.page.locator('label').filter({has:debugToggle});
+  const diagnosticsContrast=await inspectTextContrast(diagnostic.page);assert.deepEqual(diagnosticsContrast,[],`diagnostics contrast failures: ${JSON.stringify(diagnosticsContrast)}`);
   assert.equal(await debugToggle.isChecked(),false);
   assert.equal(deepReads,0);
   await debugToggleControl.click();
@@ -625,6 +631,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.equal(deepReads,1);
   await diagnostic.context.close();
   checks.push(`UAT-002 ${appVersion} protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)`);
+  checks.push('UAT-067 text contrast scan passes on company details for superadmin/admin/coordinator, provider settings, Brain and protected diagnostics routes (automated source-built browser sample)');
   const candidate=await getCandidateFingerprint();
   await fs.writeFile(path.join(evidence,'uat-local-web.json'),JSON.stringify({version:appVersion,date:new Date().toISOString(),candidateRevision:candidate.baseCommit,candidateSourceFingerprint:candidate.sourceFingerprint,dirtyUntrackedSourceFiles:candidate.dirtyUntrackedSourceFiles,sourceRoots:candidate.sourceRoots,targetEnvironment:'local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked',origin,provenance:'UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance',checks,themeTokens,loginContrastSample:contrastByTheme,apiEvidence:'services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts',realVendorAudioCRM:'NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed'},null,2));
   console.log('PASS local web journeys:',checks.join('\n'));

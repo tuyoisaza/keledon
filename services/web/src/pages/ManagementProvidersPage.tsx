@@ -231,7 +231,7 @@ export default function ManagementProvidersPage() {
             )}
         >
             <div className="font-medium text-[15px]">{label}</div>
-            {sublabel && <div className="text-[11px] text-muted-foreground/70 mt-0.5">{sublabel}</div>}
+            {sublabel && <div className="text-[11px] text-foreground/80 mt-0.5">{sublabel}</div>}
         </button>
     );
 
