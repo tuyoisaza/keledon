@@ -1,4 +1,12 @@
-## Current PHDK Auto — 5.1.66 merged; whole portfolio partial
+## Current PHDK Auto — 5.1.73; UAT-075 delivered; portfolio partial
+
+Run `20261014-0007-phdk-auto-completion`. PR #180 delivered 5.1.73 source; docs PRs #181–#183 aligned UAT/private-origin evidence; PR [#184](https://github.com/tuyoisaza/keledon/pull/184) merged UAT-075 at `fd6c18270c3cff8c95dfef5b143320d64d7bd745`. Remote `main` and `git ls-remote` agree. PHDK v2.51.2 coherence passes 56/56. UAT tally: **73 PASS, 0 BLOCKED, 1 MANUAL**. API and Cloud persisted superadmin Brand/Team/User lifecycle passed in separate disposable PostgreSQL databases with fixture cleanup. All four commitments remain active; no deployment or whole-Auto completion is claimed.
+
+Next: continue the confirmed fronts, starting with remaining administration/permission coverage and the full resource × role × surface × operation matrix.
+
+---
+
+## Historical delivery snapshot — 5.1.66 merged; whole portfolio partial
 
 Run `20261014-0007-phdk-auto-completion` delivered from `fix/phdk-flow-db-persistence-5-1-66`, based on verified `origin/main` 5.1.65 at `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`. PR [#160](https://github.com/tuyoisaza/keledon/pull/160) squash-merged source commit `dc8bd6d24471e64b438e3ca7803c13a950b7a95b` at verified source merge SHA `bf00262649fb281f40979a867a2bdb09099f3074`; its tree `593b0f890f321fdfe7b4049aad2defc6dd5b6589` matched the tested source. Documentation reconciliation PR [#161](https://github.com/tuyoisaza/keledon/pull/161) then squash-merged at current `main` SHA `3364b3e43a1b10d550f253f1e2f8f3a1fe962fb6`, tree `685597b9f333d51c9e1254936074d9c6cbbcceb5`; product version remains 5.1.66. All five application package/lock roots and Browser renderer read 5.1.66. Installed PHDK v2.51.2 passes coherence 56/56. API regressions pass 39/39 and Cloud regressions 18/18; all five builds, applicable lint/typechecks, Web UAT 6/6 plus AI-admin, Browser offline suite 43/43, Web diagnostics 19/19, and Web/Landing source SEO tests pass. UAT uses synthetic fixtures and blocks outbound traffic. GitHub reported no hosted checks, review decision, or main branch protection.
 

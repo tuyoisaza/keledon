@@ -1,4 +1,19 @@
-## Current PMO board — 5.1.72 source merged; whole Auto partial
+## Current PMO board — 5.1.73 / UAT-075 merged; whole Auto partial
+
+Run `20261014-0007-phdk-auto-completion`; PR #184 merged at remote `main` `fd6c18270c3cff8c95dfef5b143320d64d7bd745`. PRs #180–#184 are merged; PHDK v2.51.2 coherence passes 56/56 and six version reads remain 5.1.73. Portfolio: **4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled; 73 PASS, 0 BLOCKED, 1 MANUAL**. No deployment is claimed.
+
+| Workstream | Status | Evidence / next milestone | Open acceptance |
+|---|---|---|---|
+| WS-001 baseline, versions, PRs | SOURCE DELIVERY PASS / PORTFOLIO ACTIVE | 5.1.73 and PR #184 verified on `main`; coherence 56/56. | Continue release/process and remote evidence reconciliation. |
+| WS-002 widget and safe diagnostics | PARTIAL | Widget and responsive Web journeys remain covered by synthetic UAT. | Native device/audio MANUAL; broad accessibility/localization. |
+| WS-003 tenant runtime and CRM | PARTIAL | Tenant flow editor and explicit private-origin allowlist are source/Web tested. | Persisted API/Cloud flow auth/runtime and customer-selected live voice/CRM acceptance. |
+| WS-004 administration/permissions | PARTIAL | UAT-068–075 cover selected orphan cleanup, admin/coordinator CRUD and superadmin Company/Brand/Team/User lifecycle. | Full matrix, other resource families, Web/backend join and Session lifecycle decisions. |
+
+Current activity: continue administration/permission coverage and keep all four commitments active until their acceptance gates close.
+
+---
+
+## Historical PMO board — 5.1.72 source merged; whole Auto partial
 
 Run `20261014-0007-phdk-auto-completion`; PHDK v2.51.2 coherence passes 56/56. PR [#177](https://github.com/tuyoisaza/keledon/pull/177) delivered source commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` by squash at verified remote `main` `ddc2b6030618a1f648ffc37fa296c64729ef503b`; tree `4a7cef0dff1683b1d666b83c8ae4cf0338096d45` matches the tested final candidate, and six version reads align at 5.1.72. PR #176 is closed as superseded. GitHub reported no hosted checks or review decision; `main` was unprotected. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled; **65 PASS, 0 BLOCKED, 1 MANUAL**. Exact 5.1.72 UAT-066 rerun against disposable PostgreSQL found 9 API and 7 Cloud migrations current, API 5/5 and Cloud 10/10 focused authorization assertions passing, and API multi-instance plus API/Cloud restart persistence passing. The original broader 26/10 run was on 5.1.71; full scope is documented in the UAT evidence. Three Session API ownership/retention decisions remain open; FlowRunEvidence is dormant and not needed by current runtime. No deployment is claimed. The mechanical delivery gate passed at the source-merge readback recorded in `PHDK_DELIVERY_EVIDENCE.json`.
 
