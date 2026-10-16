@@ -2,9 +2,9 @@
 
 Production-built Web UAT in `C:\KELEDON\keledon` passes 6/6 plus AI-admin; protected diagnostics passes 19/19; Browser widget source/layout checks pass 3/3 and Browser TypeScript build passes. The corrected contrast scan covers selected management, Knowledge, dashboard, sessions, profile and device routes across roles, locales and themes. It found a 3.30:1 dark-theme missing-provider-key message; OpenAI and Gemini copy now use the full semantic muted foreground. The scanner composites translucent colors/ancestor opacity and skips disabled controls. All sampled enabled text passes. Local UI fixtures are synthetic and external traffic is blocked. Evidence: `evidence/uat-067-web-accessibility-5.1.72.json` and `evidence/uat-web-widget-5.1.72/`.
 
-Tally remains **65 PASS, 0 BLOCKED, 1 MANUAL**. Screen-reader, full-route/localization and native device/audio acceptance remain open. FlowRunEvidence remains dormant in schema; it is not needed by current execution and has no writer, reader, route, UI or retention need.
+Tally is **66 PASS, 0 BLOCKED, 1 MANUAL** after UAT-068 passed authenticated orphan-session cleanup in API and Cloud on disposable PostgreSQL. Screen-reader, full-route/localization, native device/audio, exhaustive resource operations, remaining Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and customer-specific live integrations remain open. FlowRunEvidence remains dormant in schema; it is not needed by current execution and has no writer, reader, route, UI or retention need.
 
-SIGUIENTE PASO: finish the exact-candidate Check and normal PR delivery; retain partial status for external/manual acceptance.
+SIGUIENTE PASO: continue the four active fronts, starting with the remaining permission/resource operation matrix; keep the overall portfolio partial for unresolved manual and customer/deployed acceptance.
 
 ---
 
@@ -21,6 +21,24 @@ Disposable PostgreSQL 16.15 UAT passed for the API (9 migrations, 26 assertions)
 SIGUIENTE PASO: continuar el cierre de las cuatro líneas priorizadas; conservar como pendientes las decisiones operativas y UAT por cliente.
 
 # UAT handoff — `20261014-0007-phdk-auto-completion`
+
+## Candidate 5.1.73 — UAT-071 persisted superadmin Company lifecycle
+
+API and Cloud each pass 12 authenticated HTTP assertions against separate disposable PostgreSQL 16.15 databases for Company list/detail/create/update/delete, country relations, persisted admin/coordinator role assignment in the synthetic Company, safe projections and cleanup. The Web Company list/detail/form journey remains open. Evidence: `evidence/uat-071-superadmin-company-crud-5.1.73.json`. Portfolio tally: **69 PASS, 0 BLOCKED, 1 MANUAL**.
+
+SIGUIENTE PASO: continue the four confirmed commitments; finish the remaining resource-role-surface and external/manual acceptance gates before closing Auto.
+
+## Candidate 5.1.73 — UAT-070 persisted coordinator boundaries
+
+API and Cloud each pass 22 HTTP assertions against separate disposable PostgreSQL 16.15 databases for coordinator access to Company, User, Brand and Team. Registration defaults to user; the isolated coordinator fixture authenticates with DB-derived scope; foreign IDs, company create/delete and role escalation are denied; same-tenant CRUD persists and reads back; all fixtures are removed. Evidence: `evidence/uat-070-coordinator-crud-5.1.73.json`. Portfolio tally: **68 PASS, 0 BLOCKED, 1 MANUAL**.
+
+SIGUIENTE PASO: continue the four confirmed commitments; complete the remaining resource-role-surface map and other external/manual acceptance before closing Auto.
+
+## Candidate 5.1.73 — UAT-069 persisted tenant CRUD boundaries
+
+API and Cloud each pass 19 HTTP assertions against separate disposable PostgreSQL 16.15 databases for Company, User, Brand and Team: DB-derived tenant lists, own/foreign direct IDs, denied company create/delete and role escalation, default-role user creation, allowed same-tenant CRUD persistence/readback, and cleanup. UAT-069 is focused persisted evidence; the full model/role/surface/operation matrix and coordinator's persisted route journey remain open. Evidence: `evidence/uat-069-crud-roles-5.1.73.json`. Portfolio tally: **67 PASS, 0 BLOCKED, 1 MANUAL**.
+
+SIGUIENTE PASO: continue the four confirmed commitments; select the next source-resolvable permission gap and preserve whole-Auto partial status.
 
 ## Candidate 5.1.70 — UAT-064 PASS; portfolio acceptance incomplete
 

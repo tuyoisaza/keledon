@@ -1,0 +1,44 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-068",
+  "target_candidate_version": "5.1.73",
+  "tested_product_source_commit": "cee3cc10a5568766001fbdbeccfa9b77fa5b4181",
+  "environment": "API and Cloud 5.1.73 runtimes on loopback against disposable PostgreSQL 16.15 databases keledon_phdk_uat and keledon_phdk_cloud_uat; synthetic-only fixtures, no production/customer data.",
+  "method": "For each service, authenticated HTTP GET count and DELETE endpoints were called with anonymous, existing tenant-admin, and superadmin identities. Each DB started with zero cleanup candidates. A unique eligible ended empty orphan plus active, metadata-bearing, Event-bearing, FlowRun-bearing, and SubAgent-bearing sessions were created. The superadmin count and delete calls were checked; remaining fixtures were verified and removed. Cloud UAT used one temporary synthetic superadmin row, deleted after the run.",
+  "api": {
+    "anonymous_count_status": 401,
+    "superadmin_deleted": 1,
+    "tenant_admin_count_status": 403,
+    "superadmin_candidate_count": 1,
+    "superadmin_count_status": 200,
+    "final_candidate_count": 0,
+    "ineligible_fixtures_preserved": [
+      "active",
+      "metadata",
+      "Event",
+      "FlowRun",
+      "SubAgent"
+    ],
+    "status": "PASS",
+    "superadmin_delete_status": 200
+  },
+  "cloud": {
+    "anonymous_count_status": 401,
+    "superadmin_deleted": 1,
+    "tenant_admin_count_status": 403,
+    "superadmin_candidate_count": 1,
+    "superadmin_count_status": 200,
+    "final_candidate_count": 0,
+    "ineligible_fixtures_preserved": [
+      "active",
+      "metadata",
+      "Event",
+      "FlowRun",
+      "SubAgent"
+    ],
+    "status": "PASS",
+    "superadmin_delete_status": 200
+  },
+  "cleanup": "All synthetic session fixtures and the temporary Cloud superadmin were removed; candidate counts in both DBs returned to zero; API and Cloud runtimes stopped; disposable PostgreSQL stopped cleanly; listeners on ports 55438 and 3041-3043 absent.",
+  "result": "PASS"
+}

@@ -1,10 +1,28 @@
 # CRUD matrix — current source and authorization coverage
 
+## 5.1.73 — persisted superadmin Company operations
+
+UAT-071 exercised Company API operations in both API and Cloud against separate disposable PostgreSQL databases. Superadmin global list and direct detail passed; Company create/update persisted name, industry and country relations; a user received admin then coordinator role within the synthetic Company; safe projections omitted passwordHash; the test user and Company/country rows were deleted and read-only SQL confirmed absence. Each backend passed 12 assertions. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-071-superadmin-company-crud-5.1.73.json`.
+
+This does not verify the interactive Web Company route, other superadmin resource families, or the complete 39-model × role × surface × operation matrix. The matrix's overall status remains partial.
+
+## 5.1.73 — coordinator persisted tenant CRUD acceptance
+
+UAT-070 extends the disposable PostgreSQL acceptance to a persisted coordinator identity in both API and Cloud. Each service passed 22 assertions for Company, User, Brand and Team list/detail/create/update/delete, actor-derived tenant filters, foreign direct-ID denials, blocked company create/delete and role escalation, default role=user registration, and cleanup. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-070-coordinator-crud-5.1.73.json`.
+
+The coordinator account was provisioned only as a synthetic fixture in disposable databases; this does not relax the rule that production role assignments come from an existing superadmin. Superadmin's exhaustive resource detail/update/delete journey, Web affordances, remaining resource families, and the full 39-model × role × surface × operation matrix remain open; no matrix totals are promoted by this sample.
+
+## 5.1.73 — focused persisted tenant CRUD acceptance
+
+UAT-069 exercised API and Cloud over separate disposable PostgreSQL 16.15 databases. Each service passed 19 assertions for tenant-admin Company, User, Brand and Team operations: tenant lists ignore forged foreign company filters; foreign direct IDs are denied; tenant admins cannot create/delete companies or elevate roles; user creation defaults to role=user and the actor's company; allowed same-tenant User/Brand/Team create/update/read/delete operations persist; and all temporary fixtures are removed. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-069-crud-roles-5.1.73.json`.
+
+This closes only the exercised tenant-admin API/Cloud persistence slice. Coordinator's separately authenticated persisted journey, superadmin's broad per-resource detail/update/delete acceptance, Web affordances, remaining resource families, and the complete 39-model × role × surface × operation matrix remain open. Existing matrix row statuses and inventory counts are not promoted by this sampled UAT.
+
 ## 5.1.73 — orphan session cleanup safeguard
 
-API and Cloud now count/delete only ended sessions whose `userId`, `teamId`, and `metadata` are null and which have no Events, FlowRuns, or SubAgents. This narrows the earlier broad “either owner reference is null” match, which could include active or meaningful sessions. API regression test 47 checks identical count/delete filters for both services. This is source-level regression evidence; no PostgreSQL UAT was performed for 5.1.73.
+API and Cloud now count/delete only ended sessions whose `userId`, `teamId`, and `metadata` are null and which have no Events, FlowRuns, or SubAgents. This narrows the earlier broad “either owner reference is null” match, which could include active or meaningful sessions. API regression test 47 checks identical count/delete filters for both services. UAT-068 exercised the authenticated count/delete HTTP routes in both services against disposable PostgreSQL 16.15: anonymous received 401, tenant admin 403, and superadmin counted/deleted exactly one eligible fixture while active, metadata-bearing, Event-bearing, FlowRun-bearing, and SubAgent-bearing fixtures remained. Test fixtures were removed.
 
-FlowRunEvidence is a dormant, schema-only model for immutable execution evidence used for future audit/diagnostics. Current flow execution does not depend on it and no writer, reader, route, or UI exists. Preserve it without runtime retention or deletion until a concrete evidence contract is approved.
+FlowRunEvidence is a dormant, schema-only model for execution evidence that could support future audit or diagnostics. Current flow execution does not depend on it and no writer, reader, route, or UI exists. Preserve it without runtime retention or deletion until a concrete evidence contract is approved.
 
 ## 5.1.72 — PostgreSQL core UAT evidence
 

@@ -1,59 +1,92 @@
 {
   "version": "1",
-  "goal": "PHDK Auto four-front continuation; deliver the verified 5.1.72 source slice while retaining partial portfolio status",
+  "goal": "PHDK Auto four-front continuation; deliver the 5.1.73 orphan-session safeguard and persisted admin/coordinator/superadmin CRUD acceptance while retaining partial portfolio status",
   "target_branch": "main",
-  "expected_version": "5.1.72",
+  "expected_version": "5.1.73",
   "version_file": "services/web/package.json",
   "version_property": "version",
-  "tested_source_commit_sha": "9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c",
-  "tested_candidate_tree": "4a7cef0dff1683b1d666b83c8ae4cf0338096d45",
+  "tested_source_commit_sha": "cee3cc10a5568766001fbdbeccfa9b77fa5b4181",
+  "tested_candidate_tree": "f7466ff6b63a25b9d96a7c77b95fa40e7e3385e9",
   "uat_066_historical_runtime_source_commit": "4f1db4b19509a8ca8188a782cbe76ea2fb998683",
   "uat_066_exact_candidate_source_commit": "9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c",
   "uat_066_exact_candidate_rerun": "5.1.72 API/Cloud packages started against isolated PostgreSQL 16.15: 9 API and 7 Cloud migrations found with none pending; API authorization assertions 5/5; Cloud 10/10; API two-instance session persistence passed; API and Cloud session persistence survived service restart; all listeners stopped afterward.",
-  "pr_url": "https://github.com/tuyoisaza/keledon/pull/177",
-  "merged_commit_sha": "ddc2b6030618a1f648ffc37fa296c64729ef503b",
-  "remote_main_tree": "4a7cef0dff1683b1d666b83c8ae4cf0338096d45",
-  "remote_main_verified_at": "2026-10-16T01:43:28Z",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/180",
+  "merged_commit_sha": "2bb4a7dc84075d4b43be43e88aa19334c21d0f2c",
+  "remote_main_tree": "f7466ff6b63a25b9d96a7c77b95fa40e7e3385e9",
+  "remote_main_verified_at": "2026-10-16T02:07:50Z",
   "git_ls_remote_matches": true,
   "github": {
     "state": "MERGED",
+    "main_protection": "UNVERIFIED (protection endpoint denied by integration; rulesets endpoint returned none)",
+    "hosted_checks": [],
     "merge_method": "squash",
     "merge_state": "CLEAN",
-    "hosted_checks": [],
-    "review_decision": "none reported",
-    "main_protection": false,
-    "superseded_pr_176": "CLOSED"
+    "review_decision": "none reported"
   },
   "versions": {
-    "services_api": "5.1.72",
-    "cloud": "5.1.72",
-    "browser": "5.1.72",
-    "services_web": "5.1.72",
-    "landing": "5.1.72",
-    "browser_renderer": "5.1.72"
+    "browser_renderer": "5.1.73",
+    "landing": "5.1.73",
+    "services_api": "5.1.73",
+    "services_web": "5.1.73",
+    "cloud": "5.1.73",
+    "browser": "5.1.73"
   },
   "checks": {
-    "api_regression": {"status": "PASS", "evidence": "npm run test:regression; 40/40 suites including proof-script target validation."},
-    "cloud_regression": {"status": "PASS", "evidence": "npm run test:regression; 18/18 suites."},
-    "builds": {"status": "PASS", "evidence": "Production builds passed for API, Cloud, Browser TypeScript, Web and Landing."},
-    "lint": {"status": "PASS", "evidence": "All five app lint checks passed; Cloud was run without autofix."},
-    "typechecks": {"status": "PASS", "evidence": "API, Cloud, Web and Landing typechecks passed; Browser TypeScript build passed."},
-    "web_uat_and_accessibility": {"status": "PASS", "evidence": "Production-built Web UAT 6/6 plus AI-admin; selected opacity-aware WCAG contrast sample passed after six fixes; synthetic fixtures and outbound requests blocked."},
-    "web_diagnostics": {"status": "PASS", "evidence": "Focused diagnostics checks passed 19/19."},
-    "browser_widget": {"status": "PASS", "evidence": "Browser version-actions checks 3/3 and TypeScript build passed; packaged native audio remains manual."},
-    "seo_source": {"status": "PASS", "evidence": "Web and Landing SEO source regressions passed 1/1 each; no deployed metrics implied."},
-    "phdk_coherence": {"status": "PASS", "evidence": "Official PHDK v2.51.2 coherence check passed 56/56 manifest mappings."},
-    "postgres_uat_066": {"status": "PASS", "evidence": "Scoped exact 5.1.72 API/Cloud rerun against disposable PostgreSQL 16.15: migration deploy reports 9 API and 7 Cloud migrations with none pending; API authorization 5/5; Cloud authorization 10/10; API multi-instance persistence, and API/Cloud restart persistence pass. The original broader 26/10 assertion run was on 5.1.71 runtime; all evidence and scope are recorded in uat-postgres-core-5.1.72.json. Broad CRUD matrix remains open."},
-    "version_alignment": {"status": "PASS", "evidence": "Remote main tree matches final tested candidate tree; all five application package versions and Browser renderer read 5.1.72."},
-    "remote_delivery": {"status": "PASS", "evidence": "PR #177 squash-merged; git ls-remote origin/main and local origin/main both read ddc2b6030618a1f648ffc37fa296c64729ef503b; merged tree equals the tested candidate tree."},
-    "hosted_ci": {"status": "NOT_APPLICABLE", "evidence": "GitHub reported no hosted checks configured for PR #177; all listed local checks were run and recorded separately."}
+    "cloud_regression": {
+      "evidence": "npm run test:regression in cloud; 18/18 suites.",
+      "status": "PASS"
+    },
+    "api_regression": {
+      "evidence": "npm run test:regression in services/api; 40/40 suites on the 5.1.73 candidate, including the API/Cloud orphan cleanup predicate regression.",
+      "status": "PASS"
+    },
+    "phdk_coherence": {
+      "evidence": "PHDK v2.51.2 coherence check passed 56/56 manifest mappings.",
+      "status": "PASS"
+    },
+    "cleanup_postgres_uat": {
+      "evidence": "UAT-068: authenticated 5.1.73 API and Cloud count/delete routes against separate disposable PostgreSQL 16.15 databases returned 401 anonymous, 403 tenant admin, and superadmin count/delete 1 eligible row; active, metadata-bearing, Event-bearing, FlowRun-bearing and SubAgent-bearing fixtures remained. All synthetic rows and temporary Cloud superadmin removed; both databases returned to zero candidates; runtimes and cluster stopped.",
+      "status": "PASS"
+    },
+    "crud_admin_postgres_uat": {
+      "evidence": "UAT-069: API and Cloud each passed 19 authenticated HTTP assertions against separate disposable PostgreSQL 16.15 databases for Company/User/Brand/Team tenant-admin CRUD, forged-filter/direct-ID isolation, blocked company create/delete and role elevation, role=user provisioning, persistence/readback, safe response fields, and API cleanup. Both databases returned zero temporary rows; runtimes and cluster stopped.",
+      "status": "PASS"
+    },
+    "crud_coordinator_postgres_uat": {
+      "evidence": "UAT-070: API and Cloud each passed 22 authenticated HTTP assertions against separate disposable PostgreSQL 16.15 databases for coordinator Company/User/Brand/Team scope and CRUD, DB-derived tenant identity, blocked company create/delete and role escalation, default-role registration, persistence/readback, and cleanup. Both databases returned zero temporary rows; runtimes and cluster stopped.",
+      "status": "PASS"
+    },
+    "crud_superadmin_company_postgres_uat": {
+      "evidence": "UAT-071: API and Cloud each passed 12 authenticated HTTP assertions against separate disposable PostgreSQL 16.15 databases for superadmin Company list/detail/create/update/delete, persisted country relations, DB-authorized role assignment in a synthetic Company, safe projections, and cleanup. Company/user/country test rows and temporary superadmins were removed; pre-existing API fixture was left unchanged; runtimes and cluster stopped.",
+      "status": "PASS"
+    },
+    "remote_delivery": {
+      "evidence": "PR #180 squash-merged; origin/main and git ls-remote both read 2bb4a7dc84075d4b43be43e88aa19334c21d0f2c; remote tree matches tested source tree.",
+      "status": "PASS"
+    },
+    "hosted_ci": {
+      "evidence": "GitHub reported zero hosted checks for PR #180; local checks above were run.",
+      "status": "NOT_APPLICABLE"
+    },
+    "builds": {
+      "evidence": "npm run build passed in services/api and cloud on 5.1.73.",
+      "status": "PASS"
+    },
+    "version_alignment": {
+      "evidence": "All five package/lock roots and Browser renderer read 5.1.73 on remote main.",
+      "status": "PASS"
+    }
   },
   "whole_auto_acceptance": {
     "status": "PARTIAL",
-    "uat_tally": {"pass": 65, "blocked": 0, "manual": 1},
+    "uat_tally": {
+      "pass": 69,
+      "blocked": 0,
+      "manual": 1
+    },
     "open_gates": [
       "Native packaged device/audio acceptance",
-      "Full resource x role x surface x operation coverage",
+      "Full 39-model x role x surface x operation coverage and superadmin breadth",
       "Three Session lifecycle ownership/retention decisions",
       "Broad route, screen-reader, zoom and localization acceptance",
       "Deployed SEO/AEO measurements",
@@ -63,8 +96,8 @@
     "flow_run_evidence": "Dormant schema-only model; not required by current runtime, no writer/reader/UI/retention job, no migration."
   },
   "limitations": [
-    "No production database, customer data, provider destination or deployment was used.",
-    "Source delivery is merged and mechanically verified; whole PHDK Auto remains PARTIALLY DELIVERED.",
-    "GitHub reported no hosted CI checks or review decision; main was unprotected at merge."
+    "No production database, customer data, provider destination, persistent test fixture, or deployment was used.",
+    "This scoped source slice is merged and mechanically verifiable; the four-front PHDK Auto portfolio remains PARTIALLY DELIVERED.",
+    "GitHub reported no hosted CI checks or review decision; main branch protection could not be read through the connected integration."
   ]
 }
