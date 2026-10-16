@@ -1,9 +1,25 @@
 {
   "run_id": "20261014-0007-phdk-auto-completion",
   "case": "UAT-066",
-  "candidate_version": "5.1.72",
+  "target_candidate_version": "5.1.72",
+  "tested_runtime_version": "5.1.71",
   "tested_product_source_commit": "4f1db4b19509a8ca8188a782cbe76ea2fb998683",
   "tested_product_tree": "f798e2921c1a909df7c146412902447e551fc381",
+  "historical_run_scope": "The original 26/10 assertion run used 5.1.71 runtime, not the complete 5.1.72 package. A source comparison confirms services/api/src, cloud/src, services/api/prisma and cloud/prisma are unchanged in 5.1.72. Exact 5.1.72 package runtime follow-up results are recorded in exact_candidate_runtime_rerun below.",
+  "exact_candidate_runtime_rerun": {
+    "candidate_version": "5.1.72",
+    "candidate_source_commit": "9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c",
+    "candidate_source_tree": "edb37b4fbee07725e2908f9aecee5ffe43809083",
+    "database_environment": "Same isolated PostgreSQL 16.15 databases and synthetic-only fixtures; no production/customer data. Current 5.1.72 API and Cloud packages were started from the candidate build.",
+    "api_migrations": "PASS; 9 found, no pending migrations",
+    "cloud_migrations": "PASS; 7 found, no pending migrations",
+    "api_authorization_assertions": "PASS 5/5; two DB-bound tenant-admin identities, same-tenant session creation, tenant-isolated list/detail/update, persisted status/metadata, denied tenant reassignment, orphan deletion and role elevation.",
+    "cloud_authorization_assertions": "PASS 10/10; tenant company/session scope, foreign ID denial, cross-tenant session read/update denial, persisted allowed update and forbidden tenant/role changes. List checks required inclusion of own synthetic session and exclusion of the other tenant's session because the reused disposable DB already contained earlier synthetic rows.",
+    "api_two_instance_persistence": "PASS; session created on API instance 1, read/updated on instance 2, and read back on instance 1.",
+    "api_restart_persistence": "PASS; session status/metadata read back after restarting API 5.1.72.",
+    "cloud_restart_persistence": "PASS; session status/metadata read back after restarting Cloud 5.1.72.",
+    "cleanup": "API, Cloud and PostgreSQL stopped; listeners on ports 55438 and 3041-3043 absent."
+  },
   "environment": {
     "target": "disposable local UAT",
     "database": "PostgreSQL 16.15",
@@ -21,13 +37,15 @@
       "status": "PASS",
       "applied": 9,
       "second_deploy": "PASS; no pending migrations",
-      "schema_status": "up to date"
+      "schema_status": "up to date",
+      "5_1_72_rerun": "PASS; 9 migrations found, no pending migrations"
     },
     "cloud": {
       "status": "PASS",
       "applied": 7,
       "second_deploy": "PASS; no pending migrations",
-      "schema_status": "up to date"
+      "schema_status": "up to date",
+      "5_1_72_rerun": "PASS; 7 migrations found, no pending migrations"
     }
   },
   "api": {
@@ -60,7 +78,7 @@
   },
   "cleanup": "API instances, Cloud and PostgreSQL stopped; loopback listeners on ports 55438 and 3041-3043 were verified absent. A stopped isolated PostgreSQL binary/data bundle remains in the task-specific temporary directory for reproducibility.",
   "limitations": [
-    "This closes the local disposable PostgreSQL blocker for core migration, role, tenant, Session persistence, restart and two-instance checks only; it does not complete the exhaustive resource × role × operation × surface matrix.",
+    "The original 5.1.71 run is retained as historical evidence. The exact 5.1.72 rerun additionally confirms migrations are current, focused tenant/session authorization, restart persistence in API and Cloud, and API two-instance persistence. This still does not complete the exhaustive resource × role × operation × surface matrix.",
     "The synthetic initial superadmin fixture was provisioned directly in the empty disposable database; tenant actions and subsequent authentication were exercised through the API.",
     "Native Electron/device/audio, broad accessibility/localization, deployed SEO/AEO, live Qdrant concurrency and client-specific call/CRM acceptance remain open.",
     "Three Session API lifecycle/ownership inventory rows still require a retention/audit decision.",

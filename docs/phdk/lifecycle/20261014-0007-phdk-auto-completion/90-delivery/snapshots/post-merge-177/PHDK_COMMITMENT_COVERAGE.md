@@ -7,7 +7,7 @@ PR [#177](https://github.com/tuyoisaza/keledon/pull/177) delivered 5.1.72 by squ
 | CMT-001 baseline/version/PR | Candidate 5.1.72 aligns all six version reads, fixes missing local proof scripts and verifies targets; PR #177 is merged and remote main/tree/version readback passes. | Continue remaining delivery process standards and keep the Auto portfolio partial until all gates close. |
 | CMT-002 widget/diagnostics | Web widget production UAT, protected diagnostics 19/19, Browser checks 3/3, and selected route/locale/theme contrast scan pass after five text-contrast fixes. | Native device/audio and exhaustive route, role, screen-reader, zoom and localization acceptance. |
 | CMT-003 voice→Cloud→Browser→CRM | Tenant-owned flow editor and private destination allowlist remain covered by provider-independent tests; no client stack is assumed. | Customer sandbox and acceptance per selected client. |
-| CMT-004 administration/permissions | Disposable PostgreSQL UAT-066 passes core migrations, actor/tenant scope, Session persistence, restart, API two-instance and schema constraints; FlowRunEvidence remains dormant/not needed currently. | Full resource-operation matrix and remaining Session lifecycle/retention decision. |
+| CMT-004 administration/permissions | Exact 5.1.72 UAT-066 rerun passes current API/Cloud migrations, focused role/tenant checks, Session restart persistence and API two-instance persistence against disposable PostgreSQL. Original broader persistence assertions ran on 5.1.71 runtime. FlowRunEvidence remains dormant/not needed. | Full resource-operation matrix and remaining Session lifecycle/retention decision. |
 
 Whole Auto is **PARTIALLY DELIVERED**; no deployment or customer endpoint was used.
 
