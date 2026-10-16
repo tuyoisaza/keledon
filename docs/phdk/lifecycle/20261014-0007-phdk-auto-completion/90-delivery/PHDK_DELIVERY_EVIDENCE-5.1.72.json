@@ -31,6 +31,19 @@
       "status": "PASS",
       "evidence": "PHDK v2.51.2 static coherence: 56/56 manifest mappings."
     },
+    "web_diagnostics_uat": {
+      "status": "PASS_SCOPED",
+      "evidence": "Production-built Web UAT 6/6 plus AI-admin; focused diagnostics 19/19, including accessible names, keyboard sequence, 44x44 targets, visible focus and live status. Synthetic API fixture and external network blocked.",
+      "file": "../50-uat/evidence/uat-067-web-accessibility-5.1.72.json"
+    },
+    "browser_widget": {
+      "status": "PASS_SCOPED",
+      "evidence": "Browser version-actions source/layout tests 3/3; Browser TypeScript build passes. Native packaged Electron/audio remains MANUAL."
+    },
+    "landing_build_and_seo": {
+      "status": "PASS_SCOPED",
+      "evidence": "Landing production build passes and SEO source regression passes 1/1. This does not establish deployed search performance or external discovery."
+    },
     "version_alignment": {
       "status": "PASS",
       "evidence": "All five package/lock roots and Browser renderer are 5.1.72."
@@ -40,6 +53,11 @@
       "status": "PASS_SCOPED",
       "evidence": "Disposable PostgreSQL 16.15: 9 API migrations and 7 Cloud migrations; API 26 assertions, Cloud 10; restart persistence in both, API two-instance shared-DB behavior, tenant flow permission and version uniqueness constraints in both schemas. Full resource-operation matrix remains open.",
       "file": "../50-uat/evidence/uat-postgres-core-5.1.72.json"
+    },
+    "uat_067_web_widget_accessibility": {
+      "status": "PASS_SCOPED",
+      "evidence": "Production-built Web local UAT 6/6 plus AI-admin UI; focused diagnostics 19/19. 44x44 targets, accessible names, keyboard focus, live status, selected responsive/theme and tenant journeys passed with synthetic API and external network blocked. Browser widget checks 3/3 and TypeScript build pass.",
+      "file": "../50-uat/evidence/uat-067-web-accessibility-5.1.72.json"
     },
     "delivery": {
       "status": "OPEN",
@@ -51,9 +69,9 @@
   },
   "whole_auto_acceptance": {
     "status": "PARTIAL",
-    "summary": "Core PostgreSQL blocker closed for UAT-060; PHDK Auto remains partially delivered.",
+    "summary": "Core PostgreSQL blocker closed for UAT-060 and scoped diagnostics widget accessibility passed UAT-067; PHDK Auto remains partially delivered.",
     "uat_tally": {
-      "pass": 64,
+      "pass": 65,
       "blocked": 0,
       "manual": 1
     },
@@ -61,7 +79,7 @@
       "Native device/audio acceptance",
       "Full resource × role × surface × operation coverage",
       "Three Session lifecycle/ownership retention and audit decisions",
-      "Broad screen-reader, accessibility and localization acceptance",
+      "Broad active-route, screen-reader, accessibility and localization acceptance",
       "Deployed SEO/AEO measurements",
       "Live Qdrant concurrency acceptance",
       "Customer-selected live voice/CRM acceptance per tenant"

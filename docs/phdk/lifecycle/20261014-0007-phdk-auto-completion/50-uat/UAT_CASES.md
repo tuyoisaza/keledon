@@ -1,3 +1,11 @@
+## Candidate 5.1.72 — UAT-067 production-built Web widget accessibility and diagnostics
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-067 | CMT-002 / anonymous visitor and synthetic tenant roles | Build Web 5.1.72; block external traffic and intercept APIs; inspect the shared diagnostics widget on login, public and tenant routes; exercise keyboard navigation, copy feedback, clear behavior, responsive widths, theme contrast sample, protected diagnostics and synthetic admin flows. | Actions have accessible names, 44×44px targets, visible keyboard focus and polite live status; redaction/reset behavior and selected UI journeys work without external calls. | Local production-built Web SPA / Playwright Chromium | PASS for this local synthetic scope: production-built UAT 6/6 plus AI-admin UAT; focused diagnostics 19/19. Evidence: `evidence/uat-067-web-accessibility-5.1.72.json` and `evidence/uat-web-widget-5.1.72/`. Screen-reader and broad-route certification remain open. |
+
+Portfolio tally: **65 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Native Electron/device/audio remains MANUAL; broad route/role/screen-reader/localization acceptance, deployed SEO/AEO, Qdrant concurrency, complete resource operations, Session lifecycle policy and per-customer call/CRM acceptance remain open.
+
 ## Candidate 5.1.72 — UAT-066 disposable PostgreSQL roles, tenant scope and persistence
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

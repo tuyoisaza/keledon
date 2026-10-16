@@ -213,6 +213,13 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.equal((await row.innerText()).trim(),`v${appVersion}`);
   const dims=await row.evaluate(el=>({gap:getComputedStyle(el).gap,font:getComputedStyle(el.querySelector('span')).fontSize,buttons:[...el.querySelectorAll('button')].map(b=>({w:b.getBoundingClientRect().width,h:b.getBoundingClientRect().height,icon:b.querySelector('svg').getBoundingClientRect().width})),x:el.getBoundingClientRect().x}));
   assert.equal(dims.gap,'4px');assert.equal(dims.font,'12px');for(const b of dims.buttons){assert.equal(b.w,44);assert.equal(b.h,44);assert.equal(b.icon,14);}assert.ok(dims.x<30);
+   const copyButton=row.locator('[data-action="copy"]'),clearButton=row.locator('[data-action="clear"]');
+   assert.ok(await copyButton.getAttribute('aria-label'));assert.ok(await clearButton.getAttribute('aria-label'));
+   const status=row.locator('[data-action-status="copy"]');assert.equal(await status.getAttribute('role'),'status');assert.equal(await status.getAttribute('aria-live'),'polite');
+   await copyButton.focus();await page.keyboard.press('Tab');
+   const keyboardFocus=await clearButton.evaluate(button=>({focused:button===document.activeElement,outlineStyle:getComputedStyle(button).outlineStyle,outlineWidth:getComputedStyle(button).outlineWidth}));
+   assert.equal(keyboardFocus.focused,true,'keyboard focus advances from copy to clear action');assert.notEqual(keyboardFocus.outlineStyle,'none');assert.equal(keyboardFocus.outlineWidth,'2px');
+   checks.push('UAT-067 diagnostics widget exposes named keyboard-operable actions, 44x44 hit targets, visible 2px focus and polite live status in production-built Web PASS');
   await row.locator('[data-action="copy"]').click();
   await row.locator('[data-action="copy"] .keledon-action-success').waitFor();
   assert.match(await page.evaluate(()=>window.__copied),new RegExp(`Version:\\s*v${appVersion}`));

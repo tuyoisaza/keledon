@@ -185,3 +185,8 @@ UAT-048 passes as source acceptance: Browser policy/call/event tests 14/14 and T
 ## Candidate 5.1.58 — UAT-049 DebugMode classification
 
 UAT-049 passes source-only: API regression 49 confirms unbound DebugMode services and stale dist outputs are absent, the Web toggle remains local-only, and all 14 persisted-model role/surface rows are NOT APPLICABLE. The Prisma table was retained; no migration or persisted behavior was tested. API 37/37, Cloud 17/17, and backend builds pass. Tally: **49 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**.
+## Candidate 5.1.72 — UAT-067 diagnostics widget accessibility slice passed
+
+Production-built Web 5.1.72 passed local synthetic UI UAT 6/6 plus AI-admin UAT. The shared diagnostics widget now has direct browser evidence for accessible names, 44×44px hit targets, keyboard Tab order, visible 2px focus and polite live feedback; copy/redaction/reset and selected responsive/theme journeys also pass. Focused diagnostics pass 19/19. Evidence: `evidence/uat-067-web-accessibility-5.1.72.json` and its adjacent screenshots/JSON. Whole acceptance is **65 PASS, 0 BLOCKED, 1 MANUAL**; screen-reader and broad route/role/localization acceptance remain open.
+
+## Candidate 5.1.72 — UAT-066 PASS; PostgreSQL core blocker closed

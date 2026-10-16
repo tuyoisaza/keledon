@@ -1,8 +1,8 @@
-## Candidate 5.1.71 — UAT-065 PASS; portfolio acceptance incomplete
+## Candidate 5.1.72 — UAT-066/067 PASS; acceptance incomplete
 
-The owner asked whether FlowRunEvidence is needed. Repository source contains the Prisma model but no API/Cloud/Web/Browser runtime reader, writer, route or UI; current flow execution uses FlowRun/SubAgentRun. The schema remains dormant and preserved. All 14 model-role-surface rows are NOT APPLICABLE, with no new role grants, route, retention job or migration. The API inventory regression passes as source-level classification evidence. No persisted evidence behavior was tested.
+UAT-066 closes the core disposable-PostgreSQL blocker with 9 API and 7 Cloud migrations, repeat-deploy checks, 26 API and 10 Cloud assertions, restart persistence, two API instances and tenant/version constraints. UAT-067 verifies the production-built Web diagnostics widget has accessible names, 44×44px action targets, working keyboard order and visible focus, and polite success feedback. Web UAT passes 6/6 plus AI-admin; diagnostics pass 19/19. Evidence: `evidence/uat-postgres-core-5.1.72.json` and `evidence/uat-067-web-accessibility-5.1.72.json` with the adjacent screenshot bundle.
 
-The 39-model/546-row inventory now stands at 410 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED and 1 PASS. Three Session API lifecycle/ownership decisions remain open. Portfolio tally: **63 PASS, 1 BLOCKED, 1 MANUAL — PARTIALLY DELIVERED**. UAT-060 still requires the owner-provided disposable PostgreSQL target; native device/audio remains MANUAL.
+Portfolio: **65 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Native device/audio remains MANUAL; the full 39-model × role × surface × operation matrix, screen-reader and broad route/localization acceptance, three Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and customer-configured call/CRM acceptance remain open. `FlowRunEvidence` remains dormant in schema and is not needed by current execution.
 
 ## Candidate 5.1.61 — public navigation overlap fixed; UAT-052 PASS
 
@@ -29,6 +29,12 @@ Built Web UAT on exact commit `03ea78968103aa6bc6290ed0681b1c1ea345872a` passes 
 Built-SPA synthetic UAT passes 4/4 suites against package version 5.1.47. Evidence: `docs/phdk/evidence/uat-local-web.json`; it records source fingerprint `sha256:4e38486c48fde20990659479e80f6f76b5365f83f1052ed4d82cdb2728d3f5e3` on base revision `10c57ff44a9d3d09e55023c466d72adefd6d3e66`, with synthetic APIs and external traffic blocked. The current product slice is API-only; UAT confirms version alignment and existing mocked Web journeys, not API room/provider behavior or real authorization. API/Cloud regressions pass 36/36 and 16/16, Browser tests 40/40. Whole product UAT remains 37 PASS, 2 BLOCKED, 1 MANUAL. No DB, customer endpoint, device or deployment was used.
 
 ---
+
+## Candidate 5.1.72 — UAT-067 Web diagnostics accessibility checks
+
+On the production-built 5.1.72 Web bundle, the shared diagnostics widget passed focused browser assertions for accessible names, 44×44px hit targets, keyboard Tab order, a visible 2px focus outline and polite live status. The local UAT also passed copy success/failure, safe-report redaction, owned-state cleanup, 390px layout, simulated 200%/400% widths, selected dark/light/corporate contrast sampling, protected diagnostics behavior and synthetic tenant/admin journeys. The overall Web UAT passed 6/6 suites plus the AI-admin UI UAT; focused diagnostics passed 19/19. Evidence: `evidence/uat-067-web-accessibility-5.1.72.json` and `evidence/uat-web-widget-5.1.72/`.
+
+Browser widget source/unit checks pass 3/3 and Browser TypeScript build passes. The Browser source checks do not certify packaged native visuals or physical device/audio. No screen reader, live backend, production account, external endpoint or customer data was used. Whole acceptance advances to **65 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**; broad active-route/role/localization acceptance and native device/audio remain open.
 
 ## Candidate 5.1.72 — UAT-066 PostgreSQL migration and tenant persistence acceptance
 
