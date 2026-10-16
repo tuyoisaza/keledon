@@ -1,0 +1,7 @@
+# Delivery report — 5.1.72 candidate; PostgreSQL core acceptance passed
+
+UAT-066 resolves the local PostgreSQL blocker for core acceptance. Against separate disposable PostgreSQL 16.15 API and Cloud databases, 9 and 7 migrations respectively applied cleanly and repeat deploys found no pending migrations. The API passed 26 assertions and Cloud 10 for DB-derived identity, tenant isolation, denied privilege-changing writes and Session status/metadata persistence. Restart readback passed for both services, API two-instance shared-database behavior passed, and both schemas enforced tenant-matched flow permissions and unique flow versions. Evidence: `../50-uat/evidence/uat-postgres-core-5.1.72.json`.
+
+The baseline also exposed stale `proof:c07:local` and `proof:c09:local` commands in both backend package manifests. Their scripts did not exist. The broken entries are removed, and API's mandatory regression runner now checks that every remaining `proof:*:local` script target exists. API regression passes 40/40 suites, Cloud 18/18, and PHDK v2.51.2 coherence 56/56.
+
+Portfolio: **64 PASS, 0 BLOCKED, 1 MANUAL — PARTIALLY DELIVERED**. Native device/audio remains MANUAL. The full resource × role × surface × operation matrix, three Session lifecycle decisions, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and customer-selected live voice/CRM journeys remain open. The disposable binary/data bundle is stopped in a task-specific temporary folder for reproducibility. No production/customer database or deployment was used.

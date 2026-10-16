@@ -1,0 +1,71 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto continuation: resolve core PostgreSQL UAT blocker and repair backend local proof command manifests",
+  "target_branch": "main",
+  "candidate_branch": "fix/phdk-auto-next-front-5-1-72",
+  "expected_version": "5.1.72",
+  "tested_source_commit_sha": "9f5139a4da8ff8695a6f68930d434a97128307ef",
+  "tested_candidate_tree": "2f7c57bf9816af8428db5e3c06886be845ee15bd",
+  "versions": {
+    "services_api": "5.1.72",
+    "cloud": "5.1.72",
+    "browser": "5.1.72",
+    "services_web": "5.1.72",
+    "landing": "5.1.72",
+    "browser_renderer": "5.1.72"
+  },
+  "checks": {
+    "api_regression": {
+      "status": "PASS",
+      "evidence": "40/40 regression suites, including local proof manifest target validation."
+    },
+    "cloud_regression": {
+      "status": "PASS",
+      "evidence": "18/18 regression suites."
+    },
+    "api_build": "PASS",
+    "cloud_build": "PASS",
+    "phdk_coherence": {
+      "status": "PASS",
+      "evidence": "PHDK v2.51.2 static coherence: 56/56 manifest mappings."
+    },
+    "version_alignment": {
+      "status": "PASS",
+      "evidence": "All five package/lock roots and Browser renderer are 5.1.72."
+    },
+    "git_diff_check": "PASS",
+    "uat_066_postgresql": {
+      "status": "PASS_SCOPED",
+      "evidence": "Disposable PostgreSQL 16.15: 9 API migrations and 7 Cloud migrations; API 26 assertions, Cloud 10; restart persistence in both, API two-instance shared-DB behavior, tenant flow permission and version uniqueness constraints in both schemas. Full resource-operation matrix remains open.",
+      "file": "../50-uat/evidence/uat-postgres-core-5.1.72.json"
+    },
+    "delivery": {
+      "status": "CANDIDATE_READY",
+      "pull_request": null,
+      "notes": "Branch is one commit ahead of origin/main; PR not yet opened."
+    }
+  },
+  "whole_auto_acceptance": {
+    "status": "PARTIAL",
+    "summary": "Core PostgreSQL blocker closed for UAT-060; PHDK Auto remains partially delivered.",
+    "uat_tally": {
+      "pass": 64,
+      "blocked": 0,
+      "manual": 1
+    },
+    "open_gates": [
+      "Native device/audio acceptance",
+      "Full resource × role × surface × operation coverage",
+      "Three Session lifecycle/ownership retention and audit decisions",
+      "Broad screen-reader, accessibility and localization acceptance",
+      "Deployed SEO/AEO measurements",
+      "Live Qdrant concurrency acceptance",
+      "Customer-selected live voice/CRM acceptance per tenant"
+    ]
+  },
+  "limitations": [
+    "No production or customer database, identity, endpoint, provider request or deployment was used.",
+    "The initial synthetic superadmin was provisioned directly in each empty disposable database; service authentication and tenant actions were exercised through the API.",
+    "A stopped isolated PostgreSQL binary/data bundle remains in a task-specific temporary directory for reproducibility."
+  ]
+}
