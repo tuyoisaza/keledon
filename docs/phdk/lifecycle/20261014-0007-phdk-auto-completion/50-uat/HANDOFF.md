@@ -1,3 +1,5 @@
+PR #174 is squash-merged at verified remote `main` `f97ad0469830e2cadfeb7379800c74e89dd1d67d`; tested tree matches. Candidate 5.1.71 classifies FlowRunEvidence as dormant/N/A across 14 rows while retaining schema. UAT-065 is source-only; portfolio is 63 PASS, 1 BLOCKED, 1 MANUAL. Full proof: `PHDK_DELIVERY_EVIDENCE-5.1.71-post-merge-174.json`.
+
 ## Candidate 5.1.71 — UAT-065 PASS; portfolio acceptance incomplete
 
 The owner asked whether FlowRunEvidence is needed. It is not used by current flow execution: source inventory found only the dormant Prisma model, while current execution uses FlowRun/SubAgentRun. Preserve schema; classify all 14 role/surface rows N/A. No route, grant, runtime retention job or migration is added. This is owner/source evidence, not persisted acceptance. Portfolio tally: **63 PASS, 1 BLOCKED, 1 MANUAL**. PostgreSQL UAT-060 and native device/audio remain open.

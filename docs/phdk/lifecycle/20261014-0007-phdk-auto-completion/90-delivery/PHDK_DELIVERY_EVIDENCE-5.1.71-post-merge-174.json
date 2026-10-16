@@ -1,0 +1,107 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto four-front portfolio continuation: owner-confirmed dormant FlowRunEvidence classification; whole portfolio remains partial",
+  "target_branch": "main",
+  "expected_version": "5.1.71",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "tested_source_commit_sha": "6db8b0909e371d886e937e42c3379f8416dd717f",
+  "tested_candidate_tree": "5ca2ce68affdccf719bf923617dda2f91979694f",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/174",
+  "product_pr_url": "https://github.com/tuyoisaza/keledon/pull/174",
+  "pr_head_sha": "6db8b0909e371d886e937e42c3379f8416dd717f",
+  "product_source_merge_sha": "f97ad0469830e2cadfeb7379800c74e89dd1d67d",
+  "merged_commit_sha": "f97ad0469830e2cadfeb7379800c74e89dd1d67d",
+  "remote_main_sha": "f97ad0469830e2cadfeb7379800c74e89dd1d67d",
+  "remote_main_tree": "5ca2ce68affdccf719bf923617dda2f91979694f",
+  "remote_main_verified_at": "2026-10-16T00:07:15Z",
+  "git_ls_remote_matches": true,
+  "versions": {
+    "services_api": "5.1.71",
+    "cloud": "5.1.71",
+    "browser": "5.1.71",
+    "services_web": "5.1.71",
+    "landing": "5.1.71",
+    "browser_renderer": "5.1.71"
+  },
+  "github": {
+    "state": "MERGED",
+    "product_pr": "#174 squash-merged; no hosted checks or review decision reported",
+    "merge_method": "squash",
+    "merge_state": "CLEAN at merge",
+    "hosted_checks": [],
+    "review_decision": "none reported",
+    "main_protection": false
+  },
+  "checks": {
+    "api_regression": {
+      "status": "PASS",
+      "evidence": "API full regression 39/39; CRUD inventory regression preserves the Prisma model and asserts no runtime reference in API, Cloud, Web or Browser plus all 14 dormant rows N/A."
+    },
+    "cloud_regression": {
+      "status": "PASS",
+      "evidence": "Cloud full regression 18/18; no Cloud runtime reader/writer or route references FlowRunEvidence."
+    },
+    "build": {
+      "status": "PASS",
+      "evidence": "Production builds passed for API, Cloud, Web, Landing and Browser; Web and Landing retain the existing >500 kB chunk advisory."
+    },
+    "lint": {
+      "status": "PASS",
+      "evidence": "Lint passed for API, Cloud, Web, Landing and Browser; no unrelated lint autofix files entered the candidate."
+    },
+    "typecheck": {
+      "status": "PASS",
+      "evidence": "API, Cloud, Web and Landing dedicated typechecks passed; Browser production TypeScript build passed."
+    },
+    "phdk_coherence": {
+      "status": "PASS",
+      "evidence": "PHDK v2.51.2 static coherence check passed 56/56 manifest mappings."
+    },
+    "version_alignment": {
+      "status": "PASS",
+      "evidence": "Merged remote main tree equals the tested candidate tree; all five app package/lock roots and Browser renderer read 5.1.71."
+    },
+    "git_diff_check": {
+      "status": "PASS",
+      "evidence": "Candidate diff passed git diff --check before commit; post-merge evidence diff passed."
+    },
+    "source_delivery": {
+      "status": "PASS",
+      "evidence": "PR #174 squash-merged at f97ad0469830e2cadfeb7379800c74e89dd1d67d; remote main SHA and tree match the tested candidate."
+    },
+    "scope_and_checks": {
+      "status": "PASS",
+      "evidence": "UAT-065 closes the current-necessity question and source classification only. FlowRunEvidence remains dormant in schema; no migration, persistence, runtime lifecycle or retention behavior was exercised. Whole_auto_acceptance remains PARTIAL."
+    }
+  },
+  "scope_limitations": [
+    "Whole PHDK Auto remains PARTIALLY DELIVERED; all four owner-confirmed commitments remain active.",
+    "UAT-060 remains BLOCKED pending the owner-provided disposable PostgreSQL target; live migrations, restart persistence, tenant isolation and multi-instance behavior were not exercised.",
+    "Native device/audio remains MANUAL; broad accessibility/localization, deployed SEO/AEO and customer-selected live voice/CRM acceptance remain open.",
+    "No customer data, customer endpoint, live database or deployment was used; UAT-065 is owner-decision and source-inventory evidence only.",
+    "Three Session API lifecycle/ownership rows remain DECISION NEEDED; persisted retention/audit policy is open.",
+    "FlowRunEvidence schema remains dormant; no runtime reader/writer/route/UI or active retention job exists. Activation or retirement requires a defined contract and approved migration."
+  ],
+  "whole_auto_acceptance": {
+    "status": "PARTIAL",
+    "summary": "The 5.1.71 FlowRunEvidence dormancy/source-classification slice is merged and verified; the four-front PHDK Auto portfolio is not complete.",
+    "uat_tally": {
+      "pass": 63,
+      "blocked": 1,
+      "manual": 1
+    },
+    "open_gates": [
+      "UAT-060 owner-provided disposable PostgreSQL migration, restart, tenant isolation and multi-instance acceptance",
+      "Native device/audio acceptance",
+      "Broad screen-reader and localization acceptance",
+      "Deployed SEO/AEO measurements",
+      "Customer-selected live voice/CRM acceptance per tenant",
+      "Three Session API lifecycle/ownership decisions and operational retention/audit acceptance",
+      "FlowRunEvidence remains dormant; activation/retirement requires a defined contract and approved migration"
+    ]
+  },
+  "overall_status": "5.1.71 SOURCE MERGED AND REMOTE VERIFIED; FLOWRUNEVIDENCE CLASSIFIED DORMANT; PHDK AUTO PARTIALLY DELIVERED",
+  "product_source_branch": "fix/phdk-model-decisions-audit-5-1-71",
+  "candidate_branch": "docs/phdk-auto-evidence-5-1-71"
+}

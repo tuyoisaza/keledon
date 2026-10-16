@@ -1,3 +1,5 @@
+PR #174 is squash-merged at verified remote `main` `f97ad0469830e2cadfeb7379800c74e89dd1d67d`; tested tree matches. Candidate 5.1.71 classifies FlowRunEvidence as dormant/N/A across 14 rows while retaining schema. UAT-065 is source-only; portfolio is 63 PASS, 1 BLOCKED, 1 MANUAL. Full proof: `PHDK_DELIVERY_EVIDENCE-5.1.71-post-merge-174.json`.
+
 Candidate 5.1.71 source inventory classifies FlowRunEvidence as dormant and NOT APPLICABLE across 14 role/surface rows. Its Prisma schema remains; no app reader/writer/route/UI or active retention job exists. UAT-065 records source/owner decision evidence only. All validation passes: API/Cloud 39/39 and 18/18, five builds/lint checks, typechecks, versions and coherence 56/56. Inventory: 410 BLOCKED / 132 N/A / 3 DECISION NEEDED / 1 PASS. Portfolio: 63 PASS, 1 BLOCKED, 1 MANUAL; PostgreSQL and device acceptance remain open. See `INTEGRATION_REPORT-5.1.71.md`.
 
 # Integration handoff — 5.1.70 merged and verified
