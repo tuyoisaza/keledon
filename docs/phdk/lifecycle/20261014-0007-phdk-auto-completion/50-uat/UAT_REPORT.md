@@ -30,6 +30,14 @@ Built-SPA synthetic UAT passes 4/4 suites against package version 5.1.47. Eviden
 
 ---
 
+## Candidate 5.1.72 — UAT-066 PostgreSQL migration and tenant persistence acceptance
+
+UAT-060's disposable PostgreSQL blocker is resolved for the tested core scope. Against isolated PostgreSQL 16.15 databases on loopback, all 9 API and 7 Cloud migrations applied; a second deploy on each database found no pending migrations. The API passed 26 assertions and Cloud passed 10, covering synthetic DB-backed identity, tenant-scoped company and Session access, forbidden cross-tenant/role-changing writes, and persisted status/metadata. Restart readback passed for both services; API shared-database two-instance access passed; both schemas rejected cross-tenant flow permissions and duplicate flow versions. Evidence: `evidence/uat-postgres-core-5.1.72.json`.
+
+The initial synthetic superadmin fixture was inserted directly into each empty disposable environment; application actions and subsequent login were exercised through the services. All services were stopped and loopback listeners verified absent. A stopped binary/data bundle remains in the task-specific temporary directory. No customer data, provider calls, production database or deployment was used.
+
+Portfolio tally: **64 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. This closes the UAT-060 core database gate, not exhaustive CRUD operation/surface coverage. Native device/audio remains MANUAL; three Session lifecycle/ownership decisions, broad accessibility/localization, deployed SEO/AEO, live Qdrant concurrency and customer-specific voice/CRM acceptance remain open.
+
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
 ## Latest candidate 5.1.49 — Web API and administration type contracts (2026-10-14 local)

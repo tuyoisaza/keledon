@@ -1,3 +1,11 @@
+## Candidate 5.1.72 — UAT-066 disposable PostgreSQL roles, tenant scope and persistence
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-066 | UAT-060 / synthetic superadmin and tenant admins | Apply API and Cloud Prisma migrations to separate disposable PostgreSQL 16.15 databases; exercise registration, DB-derived identity, two-tenant company/session access, forbidden writes, restart persistence, shared-database API instances and flow permission/version constraints. | Migrations are current and repeatable; persisted actor scope isolates tenants; allowed Session status/metadata writes survive restart; forbidden cross-tenant/reassignment/elevation actions fail closed; schema constraints reject cross-tenant permission and duplicate versions. | Local loopback API and Cloud with synthetic identities | PASS for 26 API and 10 Cloud assertions, restart persistence for both, API two-instance shared-DB behavior, and constraints in both schemas. Evidence: `evidence/uat-postgres-core-5.1.72.json`. Full resource/operation matrix remains open. |
+
+UAT-060 is resolved for this core disposable-PostgreSQL scope. Portfolio tally: **64 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Native device/audio remains MANUAL; exhaustive CRUD coverage, the three Session lifecycle decisions, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and client-specific call/CRM journeys remain open.
+
 ## Candidate 5.1.71 — UAT-065 FlowRunEvidence dormancy
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

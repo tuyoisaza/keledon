@@ -4,6 +4,12 @@ PR #174 is squash-merged at verified remote `main` `f97ad0469830e2cadfeb7379800c
 
 The owner asked whether FlowRunEvidence is needed. It is not used by current flow execution: source inventory found only the dormant Prisma model, while current execution uses FlowRun/SubAgentRun. Preserve schema; classify all 14 role/surface rows N/A. No route, grant, runtime retention job or migration is added. This is owner/source evidence, not persisted acceptance. Portfolio tally: **63 PASS, 1 BLOCKED, 1 MANUAL**. PostgreSQL UAT-060 and native device/audio remain open.
 
+## Candidate 5.1.72 — UAT-066 PASS; PostgreSQL core blocker closed
+
+Disposable PostgreSQL 16.15 UAT passed for the API (9 migrations, 26 assertions) and Cloud (7 migrations, 10 assertions), including repeat deploy, DB-derived tenant isolation, Session metadata/status persistence, restart readback and API shared-database two-instance access. Flow permission tenant constraints and version uniqueness passed in both schemas. Evidence: `evidence/uat-postgres-core-5.1.72.json`. UAT-060 is closed for this core scope; whole portfolio is **64 PASS, 0 BLOCKED, 1 MANUAL**. Native device/audio remains MANUAL. Exhaustive CRUD, three Session lifecycle decisions, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and customer-selected call/CRM acceptance remain open.
+
+SIGUIENTE PASO: continuar el cierre de las cuatro líneas priorizadas; conservar como pendientes las decisiones operativas y UAT por cliente.
+
 # UAT handoff — `20261014-0007-phdk-auto-completion`
 
 ## Candidate 5.1.70 — UAT-064 PASS; portfolio acceptance incomplete
