@@ -71,11 +71,11 @@ export default function DevicesPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'paired': return 'bg-green-500';
-      case 'pending': return 'bg-yellow-500';
-      case 'disconnected': return 'bg-gray-500';
-      case 'revoked': return 'bg-red-500';
-      default: return 'bg-gray-500';
+      case 'paired': return 'bg-green-500/10 text-status-success-foreground';
+      case 'pending': return 'bg-yellow-500/10 text-status-warning-foreground';
+      case 'disconnected': return 'bg-muted text-muted-foreground';
+      case 'revoked': return 'bg-red-500/10 text-status-danger-foreground';
+      default: return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -128,7 +128,7 @@ export default function DevicesPage() {
             >
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-semibold text-lg">{device.name}</h3>
-                <span className={`px-2 py-1 rounded-full text-xs text-foreground ${getStatusColor(device.status || '')}`}>
+                <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(device.status || '')}`}>
                   {getStatusLabel(device.status)}
                 </span>
               </div>

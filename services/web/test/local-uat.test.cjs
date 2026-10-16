@@ -66,6 +66,7 @@ async function inspectTextContrast(page){return page.evaluate(()=>{
  }
  return failures.slice(0,40);
 });}
+async function assertNoTextContrastFailures(page,label){const failures=await inspectTextContrast(page);assert.deepEqual(failures,[],`${label} text contrast failures: ${JSON.stringify(failures)}`);}
 test('local production web UAT with explicitly mocked Company Co API (not real backend acceptance)',{timeout:240000},async()=>{
  await fs.mkdir(evidence,{recursive:true});
  const server=http.createServer(async(req,res)=>{
@@ -318,6 +319,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
    const statusPage=await pageFor(role);await statusPage.page.goto(origin+'/management/status');
    await statusPage.page.getByText('Cloud Server',{exact:true}).waitFor();
    await statusPage.page.getByText('online',{exact:true}).waitFor();
+   await assertNoTextContrastFailures(statusPage.page,`${role} server status`);
    if(role==='admin'){
     assert.equal(await statusPage.page.getByText('Tech Stack',{exact:true}).count(),0);
     assert.equal(await statusPage.page.getByText('Dependencies',{exact:true}).count(),0);
@@ -332,13 +334,15 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   checks.push('UAT admin status page renders safe server availability only; superadmin retains detailed diagnostics (synthetic API fixture)');
   for(const [route,placeholder] of [['brands','Buscar marcas...'],['teams','Buscar equipos...']]){
    const localizedPage=await pageFor('admin');await localizedPage.page.goto(origin+'/management/'+route);
-   await localizedPage.page.getByPlaceholder(placeholder).waitFor();await localizedPage.context.close();
+   await localizedPage.page.getByPlaceholder(placeholder).waitFor();await assertNoTextContrastFailures(localizedPage.page,`management ${route}`);await localizedPage.context.close();
   }
   const vendorPage=await pageFor('admin');await vendorPage.page.goto(origin+'/management/vendors');
   await vendorPage.page.getByPlaceholder('Buscar proveedores...').waitFor();
-  await vendorPage.page.getByRole('heading',{name:/proveedores/i}).waitFor();await vendorPage.context.close();
+  await vendorPage.page.getByRole('heading',{name:/proveedores/i}).waitFor();await assertNoTextContrastFailures(vendorPage.page,'management vendors');
+  await vendorPage.page.getByRole('button',{name:'Agregar proveedor',exact:true}).click();await vendorPage.page.getByRole('button',{name:'Crear',exact:true}).waitFor();await assertNoTextContrastFailures(vendorPage.page,'vendor create dialog');await vendorPage.context.close();
   const userAdmin=await pageFor('admin');await userAdmin.page.goto(origin+'/management/users');
   await userAdmin.page.getByPlaceholder('Buscar usuarios...').waitFor();
+  await assertNoTextContrastFailures(userAdmin.page,'management users admin');
   const addUser=userAdmin.page.getByRole('button',{name:'Agregar usuario',exact:true});await addUser.waitFor();await addUser.click();
   const userDialog=userAdmin.page.getByRole('dialog');
   const userForm=userDialog.locator('form');
@@ -364,6 +368,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await userAdmin.page.screenshot({path:path.join(evidence,'uat-admin-users-team-scope.png')});
   await userAdmin.context.close();
   const userSuper=await pageFor('superadmin');await userSuper.page.goto(origin+'/management/users');
+  await userSuper.page.getByPlaceholder('Buscar usuarios...').waitFor();await assertNoTextContrastFailures(userSuper.page,'management users superadmin');
   await userSuper.page.getByRole('button',{name:'Agregar usuario',exact:true}).click();
   const superDialog=userSuper.page.getByRole('dialog');await superDialog.waitFor();
   assert.equal(await superDialog.getByLabel('Empresa').count(),1);
@@ -374,6 +379,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   checks.push('UAT-004 company/brand/team/user/vendor administration Spanish copy and manager user restrictions: localized routes/search and modal controls; no role/company payload fields; foreign team absent PASS (synthetic UI; API guard tested separately)');
   const knowledgeUser=await pageFor('user');await knowledgeUser.page.goto(origin+'/knowledge');
   await knowledgeUser.page.getByRole('heading',{name:'Base de Conocimiento',exact:true}).waitFor();
+  await assertNoTextContrastFailures(knowledgeUser.page,'knowledge user Spanish');
   await knowledgeUser.page.getByText('Synthetic Company Co knowledge article',{exact:true}).waitFor();
   assert.equal(await knowledgeUser.page.getByRole('button',{name:'Agregar fuente',exact:true}).count(),0,'read-only user cannot add knowledge');
   assert.equal(await knowledgeUser.page.getByRole('button',{name:'Eliminar documento',exact:true}).count(),0,'read-only user cannot delete knowledge');
@@ -381,11 +387,14 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.ok(!/Live Agent Context|refund|92% match|session: active/i.test(knowledgeText),'knowledge page does not present fabricated live transcript or retrieval data');
   await knowledgeUser.page.evaluate(()=>localStorage.setItem('keledon-locale','en'));await knowledgeUser.page.reload();
   await knowledgeUser.page.getByRole('heading',{name:'Knowledge Base',exact:true}).waitFor();
+  await assertNoTextContrastFailures(knowledgeUser.page,'knowledge user English');
   await knowledgeUser.page.evaluate(()=>localStorage.setItem('keledon-locale','pt'));await knowledgeUser.page.reload();
   await knowledgeUser.page.getByPlaceholder('Pesquisar documentos de conhecimento...').waitFor();
+  await assertNoTextContrastFailures(knowledgeUser.page,'knowledge user Portuguese');
   await knowledgeUser.context.close();
   const knowledgeAdmin=await pageFor('admin');await knowledgeAdmin.page.goto(origin+'/knowledge');
   await knowledgeAdmin.page.getByRole('heading',{name:'Base de Conocimiento',exact:true}).waitFor();
+  await assertNoTextContrastFailures(knowledgeAdmin.page,'knowledge admin');
   await knowledgeAdmin.page.getByRole('button',{name:'Agregar fuente',exact:true}).click();
   const knowledgeDialog=knowledgeAdmin.page.getByRole('dialog',{name:'Agregar fuente de conocimiento'});await knowledgeDialog.waitFor();
   assert.equal(await knowledgeDialog.getByLabel('Empresa *').count(),1);
@@ -434,6 +443,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   checks.push('UAT-030 Knowledge UI keeps users read-only and gives managers synthetic detail/create/edit/delete flows; create is tenant-bound, update omits caller tenant, fake live transcript/RAG claims are absent, localization and accessible modals pass, and backend errors are sanitized (mocked API only)');
   const dashboard=await pageFor('user');await dashboard.page.goto(origin+'/dashboard');
   await dashboard.page.getByRole('heading',{name:'Hola, Company',exact:true}).waitFor();
+  await assertNoTextContrastFailures(dashboard.page,'dashboard Spanish');
   await dashboard.page.getByText('Esta es tu actividad de hoy',{exact:true}).waitFor();
   await dashboard.page.getByText('Estadísticas de hoy',{exact:true}).waitFor();
   await dashboard.page.getByRole('heading',{name:'Actividad reciente en vivo',exact:true}).waitFor();
@@ -447,11 +457,17 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await dashboard.page.evaluate(()=>localStorage.setItem('keledon-locale','en'));
   await dashboard.page.reload();
   await dashboard.page.getByRole('heading',{name:'Hello, Company',exact:true}).waitFor();
+  await assertNoTextContrastFailures(dashboard.page,'dashboard English');
   await dashboard.page.getByText("Today's Stats",{exact:true}).waitFor();
   await dashboard.page.evaluate(()=>localStorage.setItem('keledon-locale','pt'));
   await dashboard.page.reload();
   await dashboard.page.getByRole('heading',{name:'Olá, Company',exact:true}).waitFor();
+  await assertNoTextContrastFailures(dashboard.page,'dashboard Portuguese');
   await dashboard.page.getByText('Estatísticas de hoje',{exact:true}).waitFor();
+  for(const theme of ['light','corporate','dark']){
+   await dashboard.page.evaluate(value=>localStorage.setItem('keledon-theme',value),theme);await dashboard.page.reload();
+   await dashboard.page.getByRole('heading',{name:'Olá, Company',exact:true}).waitFor();await assertNoTextContrastFailures(dashboard.page,`dashboard ${theme} theme`);
+  }
   await dashboard.context.close();
   dashboardSessions=[];
   checks.push('UAT-T-005-DASHBOARD Spanish empty/session states, English and Portuguese greeting/stats, and accessible table caption/column headers PASS (synthetic API)');
@@ -461,6 +477,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   ];
   const sessionViews=await pageFor('superadmin');await sessionViews.page.goto(origin+'/sessions/live');
   await sessionViews.page.getByRole('heading',{name:'Sesiones en vivo',exact:true}).waitFor();
+  await assertNoTextContrastFailures(sessionViews.page,'live sessions');
   await sessionViews.page.getByRole('combobox',{name:'Filtrar por empresa'}).waitFor();
   await sessionViews.page.getByRole('combobox',{name:'Filtrar por usuario'}).waitFor();
   await sessionViews.page.getByRole('button',{name:'Actualizar',exact:true}).waitFor();
@@ -470,10 +487,12 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.equal(await sessionViews.page.getByRole('columnheader',{name:'ID DE SESIÓN',exact:true}).getAttribute('scope'),'col');
   await sessionViews.page.goto(origin+'/sessions/history');
   await sessionViews.page.getByRole('heading',{name:'Historial de sesiones',exact:true}).waitFor();
+  await assertNoTextContrastFailures(sessionViews.page,'session history');
   assert.equal(await sessionViews.page.getByRole('table').locator('caption').innerText(),'Historial de sesiones');
   await sessionViews.page.getByRole('cell',{name:'Completada',exact:true}).waitFor();
   await sessionViews.page.getByRole('link',{name:'Ver detalles',exact:true}).click();
   await sessionViews.page.getByRole('heading',{name:'Detalles de la sesión',exact:true}).waitFor();
+  await assertNoTextContrastFailures(sessionViews.page,'session detail');
   assert.equal(await sessionViews.page.getByText('ID de sesión: 22222222-2222-4222-8222-222222222222',{exact:true}).count(),1);
   assert.equal(await sessionViews.page.getByRole('region',{name:'La grabación y la transcripción de la sesión aparecerán aquí.'}).count(),1);
   assert.equal(await sessionViews.page.getByRole('link',{name:'Volver a las sesiones',exact:true}).getAttribute('href'),'/sessions');
@@ -483,19 +502,29 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   const profileDevices=await pageFor('user');
   await profileDevices.page.goto(origin+'/profile');
   await profileDevices.page.getByRole('heading',{name:'Mi perfil',exact:true}).waitFor();
+  await assertNoTextContrastFailures(profileDevices.page,'profile Spanish');
   await profileDevices.page.getByText('Usuario',{exact:true}).waitFor();
   await profileDevices.page.getByText('2 de enero de 2020',{exact:true}).waitFor();
   await profileDevices.page.evaluate(()=>localStorage.setItem('keledon-locale','en'));
   await profileDevices.page.reload();
   await profileDevices.page.getByRole('heading',{name:'My profile',exact:true}).waitFor();
+  await assertNoTextContrastFailures(profileDevices.page,'profile English');
   await profileDevices.page.getByText('January 2, 2020',{exact:true}).waitFor();
   await profileDevices.page.evaluate(()=>localStorage.setItem('keledon-locale','pt'));
   await profileDevices.page.reload();
   await profileDevices.page.getByRole('heading',{name:'Meu perfil',exact:true}).waitFor();
+  await assertNoTextContrastFailures(profileDevices.page,'profile Portuguese');
   await profileDevices.page.getByText('2 de janeiro de 2020',{exact:true}).waitFor();
   await profileDevices.page.evaluate(()=>localStorage.setItem('keledon-locale','es'));
   await profileDevices.page.reload();
   await profileDevices.page.goto(origin+'/devices');
+  await profileDevices.page.getByRole('heading',{name:'Dispositivos',exact:true}).waitFor();
+  await assertNoTextContrastFailures(profileDevices.page,'devices');
+  for(const theme of ['light','corporate','dark']){
+   await profileDevices.page.evaluate(value=>localStorage.setItem('keledon-theme',value),theme);await profileDevices.page.reload();
+   await profileDevices.page.getByRole('heading',{name:'Dispositivos',exact:true}).waitFor();await assertNoTextContrastFailures(profileDevices.page,`devices ${theme} theme`);
+  }
+  await profileDevices.page.evaluate(()=>localStorage.setItem('keledon-theme','dark'));await profileDevices.page.reload();
   await profileDevices.page.getByRole('heading',{name:'Dispositivos',exact:true}).waitFor();
   await profileDevices.page.getByText('Vinculado',{exact:true}).waitFor();
   await profileDevices.page.getByText('Última conexión: Nunca',{exact:true}).waitFor();
@@ -513,6 +542,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await profileDevices.page.getByText('Vinculado',{exact:true}).waitFor();
   await profileDevices.page.getByRole('link',{name:'Abrir el lanzador de Keledon',exact:true}).click();
   await profileDevices.page.getByRole('heading',{name:'Lanzar Keledon',exact:true}).waitFor();
+  await assertNoTextContrastFailures(profileDevices.page,'Keledon launcher');
   await profileDevices.page.getByText('No hay Keledons disponibles',{exact:true}).waitFor();
   await profileDevices.context.close();
   checks.push('UAT-T-007-PROFILE-DEVICES en/es/pt profile role/date formatting, Spanish device status/empty state, navigation to localized Keledon launcher and retry after visible API failure PASS (mocked API)');
@@ -631,7 +661,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.equal(deepReads,1);
   await diagnostic.context.close();
   checks.push(`UAT-002 ${appVersion} protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)`);
-  checks.push('UAT-067 text contrast scan passes on company details for superadmin/admin/coordinator, provider settings, Brain and protected diagnostics routes (automated source-built browser sample)');
+  checks.push('UAT-067 selected WCAG AA text contrast scan passes on server status, brands, teams, vendors and create dialog, users (admin/superadmin), Knowledge (es/en/pt/admin), dashboard (es/en/pt), sessions (live/history/detail), profile (es/en/pt), devices, launcher, company details (three roles), providers, Brain and protected diagnostics (automated production-browser sample)');
   const candidate=await getCandidateFingerprint();
   await fs.writeFile(path.join(evidence,'uat-local-web.json'),JSON.stringify({version:appVersion,date:new Date().toISOString(),candidateRevision:candidate.baseCommit,candidateSourceFingerprint:candidate.sourceFingerprint,dirtyUntrackedSourceFiles:candidate.dirtyUntrackedSourceFiles,sourceRoots:candidate.sourceRoots,targetEnvironment:'local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked',origin,provenance:'UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance',checks,themeTokens,loginContrastSample:contrastByTheme,apiEvidence:'services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts',realVendorAudioCRM:'NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed'},null,2));
   console.log('PASS local web journeys:',checks.join('\n'));
