@@ -1,3 +1,9 @@
+## Candidate 5.1.71 — UAT-065 PASS; portfolio acceptance incomplete
+
+The owner asked whether FlowRunEvidence is needed. Repository source contains the Prisma model but no API/Cloud/Web/Browser runtime reader, writer, route or UI; current flow execution uses FlowRun/SubAgentRun. The schema remains dormant and preserved. All 14 model-role-surface rows are NOT APPLICABLE, with no new role grants, route, retention job or migration. The API inventory regression passes as source-level classification evidence. No persisted evidence behavior was tested.
+
+The 39-model/546-row inventory now stands at 410 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED and 1 PASS. Three Session API lifecycle/ownership decisions remain open. Portfolio tally: **63 PASS, 1 BLOCKED, 1 MANUAL — PARTIALLY DELIVERED**. UAT-060 still requires the owner-provided disposable PostgreSQL target; native device/audio remains MANUAL.
+
 ## Candidate 5.1.61 — public navigation overlap fixed; UAT-052 PASS
 
 Both Web app navigation bars now keep theme/language preferences clear of the desktop hero content and reachable from the mobile menu. The exact production-built Landing journey passes at 1280×900 and 390×844 with external traffic blocked; focused Web UAT passes 5/5 and Landing-only UAT 1/1. UAT-052 evidence: `docs/phdk/evidence/uat-landing-navbar-5.1.61.json` and paired screenshots. Web diagnostics/version-actions is 19/19, Browser version-actions/security-policy 15/15, API and Cloud regressions 37/37 and 17/17. All five builds, applicable lint/typechecks, both SEO source tests, and PHDK coherence 52/52 pass.

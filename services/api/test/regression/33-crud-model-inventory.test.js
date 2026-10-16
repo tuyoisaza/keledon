@@ -25,6 +25,24 @@ const legacyInterfacesManager = path.join(
   'services/web/src/components/flows/InterfacesManager.tsx',
 );
 
+function sourceFiles(directory) {
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) return sourceFiles(fullPath);
+    return /\.(?:[cm]?js|jsx|ts|tsx)$/.test(entry.name) ? [fullPath] : [];
+  });
+}
+
+const activeRuntimeFiles = [
+  'services/api/src',
+  'cloud/src',
+  'services/web/src',
+  'browser/src',
+].flatMap((directory) => sourceFiles(path.join(repoRoot, directory)));
+const activeRuntimeReferences = activeRuntimeFiles.filter((file) =>
+  fs.readFileSync(file, 'utf8').includes('FlowRunEvidence'),
+);
+
 function tableRows(section) {
   return section
     .split(/\r?\n/)
@@ -218,6 +236,26 @@ assert.equal(
   modelRowFor('SubAgentRun', 'user', 'API')[7],
   'yes',
   'authorized flow execution may update its run outcome',
+);
+assert.equal(
+  modelRowFor('FlowRunEvidence', 'user', 'API')[14],
+  'NOT APPLICABLE',
+  'owner-approved dormant evidence storage has no active reader, writer or role surface',
+);
+assert.equal(
+  prismaModels.includes('FlowRunEvidence'),
+  true,
+  'dormant evidence schema is preserved pending a separately approved migration',
+);
+assert.deepEqual(
+  activeRuntimeReferences,
+  [],
+  'dormant evidence storage must remain unwired across API, Cloud, Web and Browser source',
+);
+assert.match(
+  matrix,
+  /FlowRunEvidence \|.*Dormant schema table retained for possible future use[\s\S]*No active retention job/i,
+  'dormant evidence storage must not imply an active retention lifecycle',
 );
 assert.equal(
   modelRowFor('FeatureFlag', 'superadmin', 'API')[14],

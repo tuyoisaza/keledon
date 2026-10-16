@@ -1,3 +1,7 @@
+## Current candidate 5.1.71 — FlowRunEvidence classified dormant
+
+The model is not required by current execution; no runtime reader/writer/route/UI exists. Schema retained; 14 active-surface rows N/A; no retention job or migration. UAT-065 records source classification only. Regressions, five builds/lint checks, typechecks, version alignment and PHDK coherence pass. Whole Auto remains partial at 63 PASS, 1 BLOCKED (PostgreSQL UAT-060), 1 MANUAL (device/audio); three Session lifecycle rows remain DECISION NEEDED.
+
 # Delivery handoff — 5.1.70 merged and verified; Auto remains partial
 
 Run ID: `20261014-0007-phdk-auto-completion`
