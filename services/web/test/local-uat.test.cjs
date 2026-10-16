@@ -62,7 +62,7 @@ async function inspectTextContrast(page){return page.evaluate(()=>{
   for(let parent=el;parent;parent=parent.parentElement){const background=parse(getComputedStyle(parent).backgroundColor);if(background&&background.alpha>0){layers.push(background);if(background.alpha>=.999)break;}}
   for(const background of layers.reverse())bg=background.rgb.map((value,index)=>value*background.alpha+bg[index]*(1-background.alpha));
   const size=Number.parseFloat(style.fontSize),weight=Number.parseInt(style.fontWeight,10)||400,large=size>=24||(size>=18.66&&weight>=600),ratio=contrast(fg.rgb,bg);
-  if(ratio<(large?3:4.5))failures.push({text:text.slice(0,72),tag:el.tagName,className:typeof el.className==='string'?el.className:'',ratio:Number(ratio.toFixed(2)),fontPx:size,weight,foreground:fg.rgb.map(Math.round),background:bg.map(Math.round),computedBackground:style.backgroundColor,opacity:style.opacity,ancestorOpacity:getComputedStyle(el.parentElement).opacity});
+  if(ratio<(large?3:4.5))failures.push({text:text.slice(0,72),tag:el.tagName,className:typeof el.className==='string'?el.className:'',ratio:Number(ratio.toFixed(2)),fontPx:size,weight,foreground:fg.rgb.map(Math.round),background:bg.map(Math.round),computedBackground:style.backgroundColor,opacity:style.opacity,ancestorOpacity:getComputedStyle(el.parentElement).opacity,theme:document.documentElement.dataset.keledonTheme});
  }
  return failures.slice(0,40);
 });}
@@ -466,7 +466,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await dashboard.page.getByText('Estatísticas de hoje',{exact:true}).waitFor();
   for(const theme of ['light','corporate','dark']){
    await dashboard.page.evaluate(value=>localStorage.setItem('keledon-theme',value),theme);await dashboard.page.reload();
-   await dashboard.page.getByRole('heading',{name:'Olá, Company',exact:true}).waitFor();await assertNoTextContrastFailures(dashboard.page,`dashboard ${theme} theme`);
+   await dashboard.page.getByRole('heading',{name:'Olá, Company',exact:true}).waitFor();await dashboard.page.waitForFunction(value=>document.documentElement.dataset.keledonTheme===value,theme);await dashboard.page.waitForTimeout(350);await assertNoTextContrastFailures(dashboard.page,`dashboard ${theme} theme`);
   }
   await dashboard.context.close();
   dashboardSessions=[];
@@ -522,7 +522,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await assertNoTextContrastFailures(profileDevices.page,'devices');
   for(const theme of ['light','corporate','dark']){
    await profileDevices.page.evaluate(value=>localStorage.setItem('keledon-theme',value),theme);await profileDevices.page.reload();
-   await profileDevices.page.getByRole('heading',{name:'Dispositivos',exact:true}).waitFor();await assertNoTextContrastFailures(profileDevices.page,`devices ${theme} theme`);
+   await profileDevices.page.getByRole('heading',{name:'Dispositivos',exact:true}).waitFor();await profileDevices.page.waitForFunction(value=>document.documentElement.dataset.keledonTheme===value,theme);await profileDevices.page.waitForTimeout(350);await assertNoTextContrastFailures(profileDevices.page,`devices ${theme} theme`);
   }
   await profileDevices.page.evaluate(()=>localStorage.setItem('keledon-theme','dark'));await profileDevices.page.reload();
   await profileDevices.page.getByRole('heading',{name:'Dispositivos',exact:true}).waitFor();
