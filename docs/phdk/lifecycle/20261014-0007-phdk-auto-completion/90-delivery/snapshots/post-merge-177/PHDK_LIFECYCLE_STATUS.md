@@ -9,7 +9,7 @@ Run `20261014-0007-phdk-auto-completion`; official PHDK updater and coherence ch
 | Plan | COMPLETED / REVALIDATED | Four dependency-ordered workstreams and remaining external/manual acceptance gates recorded against main 5.1.71. |
 | PMO / Workstreams | COMPLETED / REVALIDATED | All four owner-confirmed fronts reconciled; no PHDK work is assigned to agents. |
 | Integration Review | COMPLETED | API/Cloud contracts, proof-script manifest, PHDK sync, and Web findings reconciled in `40-integration/INTEGRATION_REPORT-5.1.72.md`. |
-| UAT / UAT Fix | COMPLETED / SCOPE PASS | Production-built Web UAT 6/6 plus AI-admin; opacity-aware WCAG sample passes on selected routes/roles/locales/themes. Native device/audio remains MANUAL. |
+| UAT / UAT Fix | COMPLETED / SCOPED | Web UAT 6/6 plus AI-admin and selected opacity-aware WCAG checks pass on production-built 5.1.72. Exact 5.1.72 API/Cloud PostgreSQL rerun passes focused permissions, migrations-current, restart and multi-instance checks; the original broader persistence assertions ran on 5.1.71 runtime. Native device/audio remains MANUAL. |
 | SEO | COMPLETED / SOURCE SCOPE | Web and Landing SEO tests 1/1 each; no public route/metadata edits. Deployed measurement remains unavailable. |
 | AEO/GEO | COMPLETED / SOURCE SCOPE | Public source inventory and answerability controls reviewed; external engine discovery remains unmeasured. |
 | Check / Remediation | COMPLETED / SOURCE PASS | API 40/40, Cloud 18/18, five builds/lints, four typechecks, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser 3/3, SEO 1/1 each, PHDK 56/56; no new source remediation. |
