@@ -22,6 +22,14 @@ SIGUIENTE PASO: continuar el cierre de las cuatro líneas priorizadas; conservar
 
 # UAT handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.73 — UAT-080 PASS; portfolio acceptance incomplete
+
+API and Cloud passed persisted tenant-flow configuration for DB-derived coordinator actors in two companies. Cross-tenant filters and foreign definition references failed closed. Definitions, approved versions, disabled-but-retained permissions and replaced mapping IDs survived service restart. Database verification found zero UAT-080 users and configuration rows; API, Cloud and PostgreSQL were stopped. Evidence: `evidence/uat-080-coordinator-flow-config-persistence-5.1.73.json`.
+
+Portfolio is **78 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 547-row matrix has 395 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED and 16 PASS. Web/other-role flow configuration, live flow execution, native device/audio, broad accessibility/localization, Session decisions, deployed SEO/AEO, Qdrant concurrency and client-selected call/CRM acceptance remain open.
+
+SIGUIENTE PASO: continue the remaining flow Web/superadmin matrix, then progress the other confirmed fronts; do not close Auto until all required acceptance gates pass.
+
 ## Candidate 5.1.73 — UAT-079 PASS; portfolio acceptance incomplete
 
 API and Cloud passed persisted tenant flow configuration with two synthetic companies and separate PostgreSQL databases. DB-derived scope overrode forged company IDs; foreign flow references were rejected; a draft became approved and then immutable. Definitions, versions, enablement permissions and intent mappings survived service restart and remained tenant-filtered. All UAT-079 rows were removed and verified absent; local services and PostgreSQL were stopped. Evidence: `evidence/uat-079-tenant-flow-config-persistence-5.1.73.json`.

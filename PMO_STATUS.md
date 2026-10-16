@@ -1,13 +1,13 @@
-## Current PMO board — 5.1.73 / UAT-079 passed; whole Auto partial
+## Current PMO board — 5.1.73 / UAT-080 passed; whole Auto partial
 
-Run `20261014-0007-phdk-auto-completion`; PRs #180–#189 are merged and this candidate documents UAT-079. PHDK v2.51.2 coherence passes 56/56 and six version reads remain 5.1.73. Portfolio: **4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled; 77 PASS, 0 BLOCKED, 1 MANUAL**. No deployment is claimed.
+Run `20261014-0007-phdk-auto-completion`; PRs #180–#190 are merged and this candidate documents UAT-080. PHDK v2.51.2 coherence passes 56/56 and six version reads remain 5.1.73. Portfolio: **4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled; 78 PASS, 0 BLOCKED, 1 MANUAL**. No deployment is claimed.
 
 | Workstream | Status | Evidence / next milestone | Open acceptance |
 |---|---|---|---|
 | WS-001 baseline, versions, PRs | SOURCE DELIVERY PASS / PORTFOLIO ACTIVE | 5.1.73 and PR #184 verified on `main`; coherence 56/56. | Continue release/process and remote evidence reconciliation. |
 | WS-002 widget and safe diagnostics | PARTIAL | Widget and responsive Web journeys remain covered by synthetic UAT. | Native device/audio MANUAL; broad accessibility/localization. |
-| WS-003 tenant runtime and CRM | PARTIAL | UAT-079 validates API/Cloud tenant flow definitions, versions, permissions, intent mappings and restart persistence; UAT-078 validates explicitly allowlisted private Vendor origins. | Integrated live flow execution and customer-selected voice/CRM acceptance. |
-| WS-004 administration/permissions | PARTIAL | UAT-068–079 cover selected orphan cleanup, admin/coordinator CRUD, superadmin core API CRUD, Workflow admin denials, Vendor CRUD and tenant flow configuration. | 399 blocked rows, other resources/roles/surfaces, Web/backend join and Session lifecycle decisions. |
+| WS-003 tenant runtime and CRM | PARTIAL | UAT-079/080 validate API/Cloud tenant flow configuration and persistence for admin/coordinator; UAT-078 validates explicitly allowlisted private Vendor origins. | Integrated live flow execution and customer-selected voice/CRM acceptance. |
+| WS-004 administration/permissions | PARTIAL | UAT-068–080 cover selected orphan cleanup, admin/coordinator CRUD, superadmin core API CRUD, Workflow admin denials, Vendor and tenant flow configuration. | 395 blocked rows, other resources/roles/surfaces, Web/backend join and Session lifecycle decisions. |
 
 Current activity: continue administration/permission coverage and keep all four commitments active until their acceptance gates close.
 

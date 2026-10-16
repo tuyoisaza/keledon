@@ -1,8 +1,12 @@
+## Candidate 5.1.73 — UAT-080 coordinator flow configuration PASS
+
+API and Cloud passed two-tenant persisted flow configuration using DB-derived coordinator actors. Forged company IDs were replaced by the current company, reads excluded foreign rows, and foreign definitions could not be updated or referenced by versions, permissions or mappings. Draft approval remained immutable; disabling retained its permission row, and mapping update replaced the prior allowed IDs. Restart readback preserved the archived definition, approved version and tenant configuration. Database verification found zero UAT-080 users or configuration rows. This closes four coordinator/API rows only; Web and other roles remain open. Evidence: `evidence/uat-080-coordinator-flow-config-persistence-5.1.73.json`.
+
+Portfolio: **78 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Matrix: **547 rows = 395 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 16 PASS**.
+
 ## Candidate 5.1.73 — UAT-079 persisted tenant flow configuration PASS
 
 API and Cloud persisted two-tenant flow configuration in separate disposable PostgreSQL databases. Tenant admins created and updated/archived definitions, created draft versions and approved one, upserted enablement permissions and intent mappings, and attempted forged company IDs and foreign flow references. The DB-derived actor scope prevailed; foreign writes failed closed and approved versions rejected later edits. Restart readback preserved the archived definition, approved version, permission and mapping while tenant filters hid foreign rows. Cleanup verified zero UAT-079 users, definitions and mappings. This closes four admin/API matrix rows only; Web, other roles and live flow execution remain open. Evidence: `evidence/uat-079-tenant-flow-config-persistence-5.1.73.json`.
-
-Portfolio: **77 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Matrix: **547 rows = 399 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 12 PASS**.
 
 ## Candidate 5.1.73 — UAT-078 persisted tenant Vendor CRUD and private-origin configuration PASS
 

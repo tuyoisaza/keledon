@@ -1,10 +1,16 @@
+## Candidate 5.1.73 — UAT-080 coordinator flow configuration persistence
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-080 | US-012/CMT-003/CMT-004 / synthetic coordinators in two companies | In separate disposable API and Cloud databases, create tenant definitions with forged IDs, read with foreign filters, update/archive own definitions, create/approve versions, disable an enablement permission, replace mapping flow IDs, attempt foreign writes, restart services and clean fixtures. | Current DB coordinator scope overrides caller IDs; foreign rows/references are hidden or rejected; approved versions remain immutable; disabling retains the permission and mapping update replaces prior IDs; all configuration survives restart and cleanup leaves no UAT-080 rows. | Local API/Cloud HTTP and disposable PostgreSQL 16.15 | PASS in both backends. Closes four coordinator/API rows only. Evidence: `evidence/uat-080-coordinator-flow-config-persistence-5.1.73.json`. |
+
+Portfolio tally: **78 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Matrix: **547 rows = 395 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 16 PASS**. Native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer live call/CRM remain open.
+
 ## Candidate 5.1.73 — UAT-079 persisted tenant flow configuration
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
 |---|---|---|---|---|---|
 | UAT-079 | US-012/CMT-003 / synthetic admins in two companies | In separate disposable API and Cloud databases, create definitions for two tenants; submit forged company IDs; update/archive; create and approve versions; upsert availability and intent mapping; attempt cross-tenant definition/version/permission/mapping writes; restart services and read back; clean fixtures. | DB-derived company scope overrides caller IDs; tenant reads exclude foreign rows; foreign references fail closed; approved version is immutable; definitions, versions, permissions and mappings persist across restart; cleanup returns named test fixture counts to zero. | Local API/Cloud HTTP and disposable PostgreSQL 16.15 | PASS in both backends. Closes four admin/API matrix rows only; Web and other roles remain open. Evidence: `evidence/uat-079-tenant-flow-config-persistence-5.1.73.json`. |
-
-Portfolio tally: **77 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Matrix: **547 rows = 399 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 12 PASS**. Native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer live call/CRM remain open.
 
 ## Candidate 5.1.73 — UAT-078 persisted tenant Vendor CRUD and private-origin configuration
 

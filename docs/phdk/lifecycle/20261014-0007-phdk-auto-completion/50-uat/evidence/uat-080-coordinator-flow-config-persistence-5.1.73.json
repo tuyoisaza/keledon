@@ -1,0 +1,46 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-080",
+  "candidate_version": "5.1.73",
+  "tested_source_commit": "f4e3c7a07b8b6629b8db39128628f4d7c2b695fd",
+  "scope": "Persisted tenant-flow configuration and same-company authorization for coordinator actors in API and Cloud.",
+  "environment": {
+    "database": "Separate disposable PostgreSQL 16.15 databases for API and Cloud on localhost.",
+    "fixtures": "Synthetic coordinator accounts for tenant A and B plus two owned definitions each; all UAT-080 rows and users were removed after verification.",
+    "restart": "Both local services restarted against the same isolated database before readback.",
+    "network": "Local API/Cloud HTTP and PostgreSQL only; no customer call or CRM endpoint was invoked."
+  },
+  "assertions_per_backend": [
+    "Registration produced ordinary user accounts before isolated database preparation assigned coordinator role and tenant scope.",
+    "Tenant A and B coordinators each created company-owned flow definitions while submitting forged company IDs; the current database company prevailed.",
+    "Definition reads ignored a forged foreign company query and returned only the coordinator's company definitions.",
+    "Tenant A updated and archived its own definition; a foreign-definition update returned no record.",
+    "Coordinators created draft versions under their own definitions; a foreign-parent version create returned 400; approval succeeded and later edits were rejected.",
+    "Tenant A upserted an enablement permission, disabled it while retaining the same row, and received 400 for a foreign-definition permission.",
+    "Tenant A upserted an intent mapping, replaced its allowed-flow IDs on update, and received 400 for a foreign-definition mapping.",
+    "After API/Cloud restart, coordinator-scoped reads returned the archived definition, approved version, disabled retained permission and replacement mapping while excluding Tenant B rows.",
+    "Database verification found zero UAT-080 accounts, definitions, versions, permissions or mappings after cleanup."
+  ],
+  "results": {
+    "api": "PASS",
+    "cloud": "PASS",
+    "coordinator_tenant_scope_and_archive": true,
+    "draft_approval_immutability": true,
+    "disabled_permission_retained": true,
+    "intent_mapping_replacement": true,
+    "foreign_flow_references_rejected": true,
+    "post_restart_readback": true,
+    "synthetic_fixtures_after_cleanup": 0,
+    "matrix_rows_promoted": [
+      "FlowDefinition | coordinator | API",
+      "TenantFlowConfigVersion | coordinator | API",
+      "TenantFlowConfigPermission | coordinator | API",
+      "TenantIntentFlowConfigMapping | coordinator | API"
+    ]
+  },
+  "limitations": [
+    "This closes the four coordinator/API matrix rows only; Web, other-role and superadmin rows remain open.",
+    "No live flow execution or customer-selected call/CRM integration was tested."
+  ],
+  "result": "PASS"
+}
