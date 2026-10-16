@@ -1,3 +1,7 @@
+## Latest delivery — 5.1.71 merged; four-front Auto remains partial
+
+PR #174 is squash-merged at verified remote `main` `f97ad0469830e2cadfeb7379800c74e89dd1d67d`; tested tree matches. Candidate 5.1.71 classifies FlowRunEvidence as dormant/N/A across 14 rows while retaining schema. UAT-065 is source-only; portfolio is 63 PASS, 1 BLOCKED, 1 MANUAL. Full proof: `PHDK_DELIVERY_EVIDENCE-5.1.71-post-merge-174.json`.
+
 ## Current candidate 5.1.71 — FlowRunEvidence classified dormant
 
 The model is not required by current execution; no runtime reader/writer/route/UI exists. Schema retained; 14 active-surface rows N/A; no retention job or migration. UAT-065 records source classification only. Regressions, five builds/lint checks, typechecks, version alignment and PHDK coherence pass. Whole Auto remains partial at 63 PASS, 1 BLOCKED (PostgreSQL UAT-060), 1 MANUAL (device/audio); three Session lifecycle rows remain DECISION NEEDED.

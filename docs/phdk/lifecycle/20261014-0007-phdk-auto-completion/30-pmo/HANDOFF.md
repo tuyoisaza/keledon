@@ -1,3 +1,7 @@
+## Current PMO — 5.1.71 source merged; portfolio partial
+
+PR #174, source/tree verification, tests and owner decision are summarized in `PMO_PROGRESS_REPORT-5.1.71.md`; mechanical proof is `../90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.71-post-merge-174.json`. Tally: 63 PASS, 1 BLOCKED, 1 MANUAL. All four commitments stay active.
+
 ## Current PMO — 5.1.70 source delivered; portfolio partial (2026-10-15)
 
 PR #172 squash-merged; `origin/main`, `git ls-remote` and tested tree agree at `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28` / `8ea2aee2cbd9be5d10d3b2e0e9918e5a2182b782`. All six version reads are 5.1.70. API/Cloud regressions, five builds/lint, typechecks, PHDK coherence and delivery gate pass. UAT-064 records owner-approved FeatureFlag dormancy without migration. UAT tally: 62 PASS, 1 BLOCKED, 1 MANUAL. All four commitments remain active and acceptance partial.

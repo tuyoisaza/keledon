@@ -1,3 +1,5 @@
+Latest verified source is 5.1.71, PR #174 merged at `f97ad0469830e2cadfeb7379800c74e89dd1d67d`; tested tree matches. Plan: `IMPLEMENTATION_PLAN-5.1.71.md`. All four fronts remain active; portfolio is partial.
+
 ## Reopened and refreshed — 2026-10-15, post-merge 5.1.70
 
 PR #172 records the owner decision to keep FeatureFlag dormant. The schema/service remain without app registration, route, caller, UI or role grant; future activation/retirement requires a new capability decision and migration review. UAT-064 advances owner decision/source classification only; tally is 62 PASS, 1 BLOCKED, 1 MANUAL. The ordered four-front plan remains active: baseline/version and PR backlog; widget/safe diagnostics; tenant-selected voice→Cloud→Browser→CRM lifecycle; administration/permissions. Continue source-verifiable gaps, then run persistence and isolation UAT against the owner-provided PostgreSQL target. Keep whole Auto partial.
