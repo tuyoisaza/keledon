@@ -31,9 +31,9 @@ function sessionDuration(metadata?: string): number {
 }
 
 const statusStyles: Record<string, string> = {
-    active: 'bg-green-500/10 text-green-500 border-green-500/20',
-    completed: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-    escalated: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
+    active: 'bg-green-500/10 text-status-success-foreground border-green-500/20',
+    completed: 'bg-blue-500/10 text-status-info-foreground border-blue-500/20',
+    escalated: 'bg-yellow-500/10 text-status-warning-foreground border-yellow-500/20',
 };
 
 export default function DashboardPage() {
@@ -244,7 +244,7 @@ export default function DashboardPage() {
                                         </td>
                                         <td className="px-5 py-3 text-center">
                                             {row.active > 0 ? (
-                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-500">
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-status-success-foreground">
                                                     {row.active}
                                                 </span>
                                             ) : '-'}

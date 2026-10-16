@@ -1,3 +1,13 @@
+## Current candidate 5.1.72 — PHDK Auto partial; PR #176 open
+
+The candidate includes verified disposable-PostgreSQL UAT-066, API/Cloud migration and proof-script corrections, and UAT-067 production-built Web evidence. UAT-067 covers diagnostics widget accessible names, keyboard order, visible 2px focus, 44×44px targets and polite live feedback. A selected WCAG AA contrast scan found a Providers label at 4.17:1; the UI was corrected and the same route sample passed across company details for three roles, Providers, Brain and protected Diagnostics. Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3, API/Cloud 40/40 and 18/18, builds and PHDK v2.51.2 coherence 56/56 pass.
+
+PR [#176](https://github.com/tuyoisaza/keledon/pull/176) is OPEN; GitHub reports clean mergeability but no hosted checks or review decision. Whole acceptance remains **PARTIALLY DELIVERED** (65 PASS, 0 BLOCKED, 1 MANUAL). Remaining gates include native audio/device, full resource operations, broad screen-reader/localization and route coverage, Session retention, deployed SEO/AEO, Qdrant concurrency and per-client call/CRM. No production/customer data or deployment was used.
+
+SIGUIENTE PASO: review and merge PR #176 under repository controls, verify the resulting main tree and version, then continue the open acceptance gates.
+
+---
+
 ## Current delivery — 5.1.70 source slice merged and verified; Auto partial
 
 PR [#172](https://github.com/tuyoisaza/keledon/pull/172) squash-merged tested source `d9a7d4cff075ff0d8d9a7f64646a5fdfd2a1e1b6` at verified remote `main` `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`, tree `8ea2aee2cbd9be5d10d3b2e0e9918e5a2182b782`, equal to the tested candidate tree. All five app package/lock roots and Browser renderer read 5.1.70. API/Cloud regressions pass 39/39 and 18/18; five production builds and lint checks pass; four dedicated typechecks and Browser's TypeScript build pass; PHDK v2.51.2 coherence is 56/56. The mechanical completion gate passes against the immutable post-merge record. GitHub reported no hosted checks or review decision; no deployment is claimed.

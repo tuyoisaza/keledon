@@ -1,3 +1,27 @@
+# Candidate 5.1.72 revalidation — current 15-control status
+
+Affected public route/template: `/` source only. Public source and claims are unchanged from the prior grounded audit. Two local SEO source tests pass; no external answer/crawler observation occurred.
+
+| ID | Status | Current candidate evidence / limitation |
+|---|---|---|
+| AG-01 Public answer intent | PASS (source) | Existing factual public questions remain grounded in Capture; no demand volume is asserted. |
+| AG-02 Crawlable/indexable canonical source | PASS (source) | SEO audit/test confirms root index policy; deployed crawl remains unmeasured. |
+| AG-03 Clear direct answers/context | PASS (source) | Existing static overview, noscript and public content explain product roles and tenant configuration. |
+| AG-04 Verifiable entity | PASS (source) | KELEDON identity and Cloud/Browser responsibilities remain explicit. |
+| AG-05 Provenance/authorship | PARTIAL | No verified author/contact/certification evidence supplied. |
+| AG-06 Factual accuracy/claims | PASS (source) | Public claims remain client-configured and qualified; no candidate copy changes. |
+| AG-07 Semantic hierarchy | PASS (source) | Existing HTML/React headings and labels are unchanged; rendered crawler DOM not tested. |
+| AG-08 Natural language/FAQs | PASS (source) | Existing direct prose remains; no fabricated FAQ or demand research. |
+| AG-09 Contextual links | PASS (source) | Existing login and architecture navigation remains unchanged. |
+| AG-10 Eligible structured data | NOT_APPLICABLE | No justified eligible rich-result type; none added. |
+| AG-11 Localization/market | BLOCKED / DECISION NEEDED | Public HTML is English; the owner has not selected a public market/language policy. UI locale catalogs are not assumed to define one. |
+| AG-12 Accessible answer availability | PARTIAL | Static overview/noscript remains; React content and assistive technology were not re-observed in this source-only stage. |
+| AG-13 Privacy/crawler policy | PASS (source) | Private application/tenant content remains excluded by source robots/route policy; deployed headers not probed. |
+| AG-14 Independent answer/citation observation | NOT_MEASURED | No authorized engine/crawler query or sourced citation data. |
+| AG-15 Revalidation/regression | PASS (source) | Candidate public source unchanged; Web and Landing SEO source tests pass 1/1 each; external visibility remains open. |
+
+---
+
 # AEO/GEO checklist — run `20261014-0007-phdk-auto-completion`
 
 ## Candidate 5.1.53 delta — 2026-10-14

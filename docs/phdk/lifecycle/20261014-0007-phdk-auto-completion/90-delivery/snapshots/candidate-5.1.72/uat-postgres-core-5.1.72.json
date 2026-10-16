@@ -1,0 +1,69 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-066",
+  "candidate_version": "5.1.72",
+  "tested_product_source_commit": "4f1db4b19509a8ca8188a782cbe76ea2fb998683",
+  "tested_product_tree": "f798e2921c1a909df7c146412902447e551fc381",
+  "environment": {
+    "target": "disposable local UAT",
+    "database": "PostgreSQL 16.15",
+    "database_host": "127.0.0.1",
+    "database_port": 55438,
+    "api_database": "keledon_phdk_uat",
+    "cloud_database": "keledon_phdk_cloud_uat",
+    "synthetic_identities_only": true,
+    "customer_data": false,
+    "external_provider_requests": false,
+    "postgresql_archive_sha256": "43BB45F173A6F08CF1D29A97A6D8DEB119E8E8093A24C00D2D1001A0CCAA8281"
+  },
+  "migrations": {
+    "api": {
+      "status": "PASS",
+      "applied": 9,
+      "second_deploy": "PASS; no pending migrations",
+      "schema_status": "up to date"
+    },
+    "cloud": {
+      "status": "PASS",
+      "applied": 7,
+      "second_deploy": "PASS; no pending migrations",
+      "schema_status": "up to date"
+    }
+  },
+  "api": {
+    "status": "PASS",
+    "assertions": 26,
+    "checks": [
+      "Public registration defaults to role=user.",
+      "Authenticated actor role, company and team are resolved from persisted database identity.",
+      "Superadmin creates synthetic companies, brands and teams; tenant administrators read only their own company and cannot create or delete companies or elevate roles.",
+      "Tenant administrators list and access own sessions; foreign tenant session detail and update are denied with HTTP 403.",
+      "Allowed own-tenant status and metadata updates persist and read back; legacy summary and tenant reassignment writes are denied.",
+      "Company reassignment, role elevation and orphan-session deletion are denied to tenant administrators."
+    ],
+    "restart_persistence": "PASS; database-backed login and session status/metadata readback survived API restart.",
+    "multi_instance": "PASS; a session created through API instance 1 was read and updated through instance 2 using the same database, then read back through instance 1."
+  },
+  "cloud": {
+    "status": "PASS",
+    "assertions": 10,
+    "checks": [
+      "Cloud derives the tenant from the persisted actor; own-company list/detail succeeds and foreign direct detail returns HTTP 403.",
+      "Cross-tenant session list/read/update is denied while each tenant can list and update its own session.",
+      "Own status/metadata changes persist; company reassignment, company creation and role elevation are denied."
+    ],
+    "restart_persistence": "PASS; database-backed actor authentication and session status/metadata readback survived Cloud restart."
+  },
+  "database_constraints": {
+    "api": "PASS; same-tenant flow permission/version insert accepted; cross-company composite foreign key rejected; duplicate flow version rejected.",
+    "cloud": "PASS; same-tenant flow permission/version insert accepted; cross-company composite foreign key rejected; duplicate flow version rejected."
+  },
+  "cleanup": "API instances, Cloud and PostgreSQL stopped; loopback listeners on ports 55438 and 3041-3043 were verified absent. A stopped isolated PostgreSQL binary/data bundle remains in the task-specific temporary directory for reproducibility.",
+  "limitations": [
+    "This closes the local disposable PostgreSQL blocker for core migration, role, tenant, Session persistence, restart and two-instance checks only; it does not complete the exhaustive resource × role × operation × surface matrix.",
+    "The synthetic initial superadmin fixture was provisioned directly in the empty disposable database; tenant actions and subsequent authentication were exercised through the API.",
+    "Native Electron/device/audio, broad accessibility/localization, deployed SEO/AEO, live Qdrant concurrency and client-specific call/CRM acceptance remain open.",
+    "Three Session API lifecycle/ownership inventory rows still require a retention/audit decision.",
+    "No production database, customer identity/data, customer endpoint or deployment was used."
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "stage": "65-seo",
+  "candidate_version": "5.1.72",
+  "candidate_revision": "f2d75362d16c3b3dc086c3b05ad0067c34d99d9d",
+  "product_source_revision": "87c1fddb8d965a7e01649330b7f74f6252628b40",
+  "target": "public homepage source at /; private SPA/customer routes excluded",
+  "validation": [
+    {
+      "command": "npm run test:seo --prefix services/web",
+      "status": "PASS",
+      "result": "1/1; NGINX public-root and private-route indexability policy"
+    },
+    {
+      "command": "npm run test:seo --prefix landing",
+      "status": "PASS",
+      "result": "1/1; public metadata, robots, sitemap, NGINX and noscript contract"
+    }
+  ],
+  "candidate_public_delta": "No public copy, route, metadata, robots, sitemap, canonical or indexability change; authenticated UI styling only.",
+  "external_measurements": "NOT RUN: no HTTP/TLS/crawler/Search Console/Core Web Vitals/backlink or deployed observation.",
+  "result": "PASS_SCOPED_SOURCE; external discovery remains unmeasured"
+}

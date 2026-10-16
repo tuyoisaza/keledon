@@ -1,8 +1,24 @@
+## Candidate 5.1.72 — UAT-067 PASS_SCOPED; whole acceptance incomplete
+
+Production-built Web UAT in `C:\KELEDON\keledon` passes 6/6 plus AI-admin; protected diagnostics passes 19/19; Browser widget source/layout checks pass 3/3 and Browser TypeScript build passes. The corrected contrast scan covers selected management, Knowledge, dashboard, sessions, profile and device routes across roles, locales and themes. It found a 3.30:1 dark-theme missing-provider-key message; OpenAI and Gemini copy now use the full semantic muted foreground. The scanner composites translucent colors/ancestor opacity and skips disabled controls. All sampled enabled text passes. Local UI fixtures are synthetic and external traffic is blocked. Evidence: `evidence/uat-067-web-accessibility-5.1.72.json` and `evidence/uat-web-widget-5.1.72/`.
+
+Tally remains **65 PASS, 0 BLOCKED, 1 MANUAL**. Screen-reader, full-route/localization and native device/audio acceptance remain open. FlowRunEvidence remains dormant in schema; it is not needed by current execution and has no writer, reader, route, UI or retention need.
+
+SIGUIENTE PASO: finish the exact-candidate Check and normal PR delivery; retain partial status for external/manual acceptance.
+
+---
+
 PR #174 is squash-merged at verified remote `main` `f97ad0469830e2cadfeb7379800c74e89dd1d67d`; tested tree matches. Candidate 5.1.71 classifies FlowRunEvidence as dormant/N/A across 14 rows while retaining schema. UAT-065 is source-only; portfolio is 63 PASS, 1 BLOCKED, 1 MANUAL. Full proof: `PHDK_DELIVERY_EVIDENCE-5.1.71-post-merge-174.json`.
 
 ## Candidate 5.1.71 — UAT-065 PASS; portfolio acceptance incomplete
 
 The owner asked whether FlowRunEvidence is needed. It is not used by current flow execution: source inventory found only the dormant Prisma model, while current execution uses FlowRun/SubAgentRun. Preserve schema; classify all 14 role/surface rows N/A. No route, grant, runtime retention job or migration is added. This is owner/source evidence, not persisted acceptance. Portfolio tally: **63 PASS, 1 BLOCKED, 1 MANUAL**. PostgreSQL UAT-060 and native device/audio remain open.
+
+## Candidate 5.1.72 — UAT-066 PASS; PostgreSQL core blocker closed
+
+Disposable PostgreSQL 16.15 UAT passed for the API (9 migrations, 26 assertions) and Cloud (7 migrations, 10 assertions), including repeat deploy, DB-derived tenant isolation, Session metadata/status persistence, restart readback and API shared-database two-instance access. Flow permission tenant constraints and version uniqueness passed in both schemas. Evidence: `evidence/uat-postgres-core-5.1.72.json`. UAT-060 is closed for this core scope; whole portfolio is **64 PASS, 0 BLOCKED, 1 MANUAL**. Native device/audio remains MANUAL. Exhaustive CRUD, three Session lifecycle decisions, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and customer-selected call/CRM acceptance remain open.
+
+SIGUIENTE PASO: continuar el cierre de las cuatro líneas priorizadas; conservar como pendientes las decisiones operativas y UAT por cliente.
 
 # UAT handoff — `20261014-0007-phdk-auto-completion`
 
@@ -179,3 +195,8 @@ UAT-048 passes as source acceptance: Browser policy/call/event tests 14/14 and T
 ## Candidate 5.1.58 — UAT-049 DebugMode classification
 
 UAT-049 passes source-only: API regression 49 confirms unbound DebugMode services and stale dist outputs are absent, the Web toggle remains local-only, and all 14 persisted-model role/surface rows are NOT APPLICABLE. The Prisma table was retained; no migration or persisted behavior was tested. API 37/37, Cloud 17/17, and backend builds pass. Tally: **49 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**.
+## Candidate 5.1.72 — UAT-067 diagnostics widget accessibility slice passed
+
+Production-built Web 5.1.72 passed local synthetic UI UAT 6/6 plus AI-admin UAT. The shared diagnostics widget now has direct browser evidence for accessible names, 44×44px hit targets, keyboard Tab order, visible 2px focus and polite live feedback; copy/redaction/reset and selected responsive/theme journeys also pass. Focused diagnostics pass 19/19. Evidence: `evidence/uat-067-web-accessibility-5.1.72.json` and its adjacent screenshots/JSON. Whole acceptance is **65 PASS, 0 BLOCKED, 1 MANUAL**; screen-reader and broad route/role/localization acceptance remain open.
+
+## Candidate 5.1.72 — UAT-066 PASS; PostgreSQL core blocker closed

@@ -1,3 +1,13 @@
+# Candidate 5.1.72 revalidation — public answers unchanged (2026-10-15)
+
+AEO/GEO is **APPLICABLE** to the intended public homepage `/`. The candidate's authenticated UI styling and UAT updates do not change public entity descriptions, product answers, links, language policy, metadata or visible claims. Existing source explanations remain limited to truthful KELEDON identity, Cloud/Browser roles and each client's configured call/CRM interfaces. The 15-control audit is carried forward on unchanged public source after verifying current SEO handoff and both SEO source tests.
+
+No crawler, answer engine, live page, paid query or customer endpoint was accessed. Citation visibility, authorship/contact provenance, public market/language decision and deployed discovery remain unverified or unresolved; no citation or ranking is claimed.
+
+SIGUIENTE PASO: complete integrated PHDK Check while preserving those external gates.
+
+---
+
 # AEO/GEO source audit — run `20261014-0007-phdk-auto-completion`
 
 ## Candidate 5.1.53 revalidation — answer content in initial HTML (2026-10-14)

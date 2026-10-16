@@ -47,23 +47,35 @@ const safeEndpoints=[
 ];
 const config={sttProvider:'vosk',ttsProvider:'speaches',llmProvider:'openai',speachesApiUrl:'http://localhost/fixture-stt',ttsVoiceId:'fixture-voice',openaiApiKey:'',openaiApiKeySet:true,deepgramConfig:{apiKey:'',hasApiKey:true},ttsApiKey:'',ttsApiKeySet:true,googleAiApiKey:'',googleAiApiKeySet:false};
 async function inspectTextContrast(page){return page.evaluate(()=>{
- const parse=value=>{const match=value.match(/rgba?\(([^)]+)\)/);if(!match)return null;const parts=match[1].split(',').map(part=>Number.parseFloat(part));return parts.length>=3?{rgb:parts.slice(0,3),alpha:parts.length>3?parts[3]:1}:null;};
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=1;const context=canvas.getContext('2d',{willReadFrequently:true});
+ const parse=value=>{if(!context||!CSS.supports('color',value))return null;context.clearRect(0,0,1,1);context.fillStyle=value;context.fillRect(0,0,1,1);const [red,green,blue,alpha]=context.getImageData(0,0,1,1).data;return {rgb:[red,green,blue],alpha:alpha/255};};
+ const over=(source,destination)=>{const alpha=source.alpha+destination.alpha*(1-source.alpha);if(alpha===0)return {rgb:[0,0,0],alpha:0};return {rgb:source.rgb.map((value,index)=>(value*source.alpha+destination.rgb[index]*destination.alpha*(1-source.alpha))/alpha),alpha};};
+ const withOpacity=(color,opacity)=>({rgb:color.rgb,alpha:color.alpha*opacity});
  const luminance=color=>{const rgb=color.map(value=>value/255).map(value=>value<=0.04045?value/12.92:((value+0.055)/1.055)**2.4);return .2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2];};
  const contrast=(first,second)=>{const values=[luminance(first),luminance(second)].sort((a,b)=>b-a);return (values[0]+.05)/(values[1]+.05);};
  const failures=[];
  for(const el of document.querySelectorAll('body *')){
+  if(el.matches(':disabled')||el.getAttribute('aria-disabled')==='true')continue;
   const text=[...el.childNodes].filter(node=>node.nodeType===Node.TEXT_NODE).map(node=>node.textContent).join(' ').replace(/\s+/g,' ').trim();
   if(!text||text.length<2)continue;
   const rect=el.getBoundingClientRect(),style=getComputedStyle(el);
   if(!rect.width||!rect.height||style.visibility==='hidden'||style.display==='none'||Number.parseFloat(style.opacity)===0)continue;
   let fg=parse(style.color);if(!fg)continue;
-  let bg=[255,255,255];
-  for(let parent=el;parent;parent=parent.parentElement){const background=parse(getComputedStyle(parent).backgroundColor);if(background&&background.alpha>0){bg=background.rgb.map((value,index)=>value*background.alpha+bg[index]*(1-background.alpha));if(background.alpha>=.999)break;}}
-  const size=Number.parseFloat(style.fontSize),weight=Number.parseInt(style.fontWeight,10)||400,large=size>=24||(size>=18.66&&weight>=600),ratio=contrast(fg.rgb,bg);
-  if(ratio<(large?3:4.5))failures.push({text:text.slice(0,72),tag:el.tagName,className:typeof el.className==='string'?el.className:'',ratio:Number(ratio.toFixed(2)),fontPx:size,weight,foreground:fg.rgb.map(Math.round),background:bg.map(Math.round),computedBackground:style.backgroundColor,opacity:style.opacity,ancestorOpacity:getComputedStyle(el.parentElement).opacity});
+  let renderedText=fg,renderedBackground={rgb:[0,0,0],alpha:0};const white={rgb:[255,255,255],alpha:1};
+  for(let parent=el;parent;parent=parent.parentElement){
+   const parentStyle=getComputedStyle(parent),background=parse(parentStyle.backgroundColor);
+   const layer=background||{rgb:[0,0,0],alpha:0};
+   renderedText=over(renderedText,layer);renderedBackground=over(renderedBackground,layer);
+   const opacity=Number.parseFloat(parentStyle.opacity);const groupOpacity=Number.isFinite(opacity)?opacity:1;
+   renderedText=withOpacity(renderedText,groupOpacity);renderedBackground=withOpacity(renderedBackground,groupOpacity);
+  }
+  const visibleFg=over(renderedText,white).rgb,visibleBg=over(renderedBackground,white).rgb;
+  const size=Number.parseFloat(style.fontSize),weight=Number.parseInt(style.fontWeight,10)||400,large=size>=24||(size>=18.66&&weight>=600),ratio=contrast(visibleFg,visibleBg);
+  if(ratio<(large?3:4.5))failures.push({text:text.slice(0,72),tag:el.tagName,className:typeof el.className==='string'?el.className:'',ratio:Number(ratio.toFixed(2)),fontPx:size,weight,foreground:visibleFg.map(Math.round),background:visibleBg.map(Math.round),computedBackground:style.backgroundColor,opacity:style.opacity,ancestorOpacity:getComputedStyle(el.parentElement).opacity,theme:document.documentElement.dataset.keledonTheme});
  }
  return failures.slice(0,40);
 });}
+async function assertNoTextContrastFailures(page,label){const failures=await inspectTextContrast(page);assert.deepEqual(failures,[],`${label} text contrast failures: ${JSON.stringify(failures)}`);}
 test('local production web UAT with explicitly mocked Company Co API (not real backend acceptance)',{timeout:240000},async()=>{
  await fs.mkdir(evidence,{recursive:true});
  const server=http.createServer(async(req,res)=>{
@@ -213,6 +225,13 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.equal((await row.innerText()).trim(),`v${appVersion}`);
   const dims=await row.evaluate(el=>({gap:getComputedStyle(el).gap,font:getComputedStyle(el.querySelector('span')).fontSize,buttons:[...el.querySelectorAll('button')].map(b=>({w:b.getBoundingClientRect().width,h:b.getBoundingClientRect().height,icon:b.querySelector('svg').getBoundingClientRect().width})),x:el.getBoundingClientRect().x}));
   assert.equal(dims.gap,'4px');assert.equal(dims.font,'12px');for(const b of dims.buttons){assert.equal(b.w,44);assert.equal(b.h,44);assert.equal(b.icon,14);}assert.ok(dims.x<30);
+   const copyButton=row.locator('[data-action="copy"]'),clearButton=row.locator('[data-action="clear"]');
+   assert.ok(await copyButton.getAttribute('aria-label'));assert.ok(await clearButton.getAttribute('aria-label'));
+   const status=row.locator('[data-action-status="copy"]');assert.equal(await status.getAttribute('role'),'status');assert.equal(await status.getAttribute('aria-live'),'polite');
+   await copyButton.focus();await page.keyboard.press('Tab');
+   const keyboardFocus=await clearButton.evaluate(button=>({focused:button===document.activeElement,outlineStyle:getComputedStyle(button).outlineStyle,outlineWidth:getComputedStyle(button).outlineWidth}));
+   assert.equal(keyboardFocus.focused,true,'keyboard focus advances from copy to clear action');assert.notEqual(keyboardFocus.outlineStyle,'none');assert.equal(keyboardFocus.outlineWidth,'2px');
+   checks.push('UAT-067 diagnostics widget exposes named keyboard-operable actions, 44x44 hit targets, visible 2px focus and polite live status in production-built Web PASS');
   await row.locator('[data-action="copy"]').click();
   await row.locator('[data-action="copy"] .keledon-action-success').waitFor();
   assert.match(await page.evaluate(()=>window.__copied),new RegExp(`Version:\\s*v${appVersion}`));
@@ -267,6 +286,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
    const detail=page.getByRole('button',{name:'Ver detalle: Company Co',exact:true});await detail.waitFor();
    if(role==='superadmin'){const trigger=page.getByRole('button',{name:'Agregar empresa',exact:true});await trigger.click();const form=page.getByRole('dialog');await form.waitFor();assert.equal(await form.getByLabel('Nombre de la empresa').count(),1);await page.keyboard.press('Escape');await form.waitFor({state:'hidden'});assert.equal(await trigger.evaluate(el=>el===document.activeElement),true);}
    await detail.click();const dialog=page.getByRole('dialog');await dialog.waitFor();assert.ok((await dialog.innerText()).includes('Synthetic UAT'));
+   const companyContrast=await inspectTextContrast(page);assert.deepEqual(companyContrast,[],`${role} company details contrast failures: ${JSON.stringify(companyContrast)}`);
    await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>!!document.activeElement.closest('dialog')),true);
    await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});assert.equal(await detail.evaluate(el=>el===document.activeElement),true);
    if(role!=='superadmin')assert.equal(await page.locator('tbody tr').first().locator('button').last().isDisabled(),true);
@@ -308,6 +328,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
    const statusPage=await pageFor(role);await statusPage.page.goto(origin+'/management/status');
    await statusPage.page.getByText('Cloud Server',{exact:true}).waitFor();
    await statusPage.page.getByText('online',{exact:true}).waitFor();
+   await assertNoTextContrastFailures(statusPage.page,`${role} server status`);
    if(role==='admin'){
     assert.equal(await statusPage.page.getByText('Tech Stack',{exact:true}).count(),0);
     assert.equal(await statusPage.page.getByText('Dependencies',{exact:true}).count(),0);
@@ -322,13 +343,15 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   checks.push('UAT admin status page renders safe server availability only; superadmin retains detailed diagnostics (synthetic API fixture)');
   for(const [route,placeholder] of [['brands','Buscar marcas...'],['teams','Buscar equipos...']]){
    const localizedPage=await pageFor('admin');await localizedPage.page.goto(origin+'/management/'+route);
-   await localizedPage.page.getByPlaceholder(placeholder).waitFor();await localizedPage.context.close();
+   await localizedPage.page.getByPlaceholder(placeholder).waitFor();await assertNoTextContrastFailures(localizedPage.page,`management ${route}`);await localizedPage.context.close();
   }
   const vendorPage=await pageFor('admin');await vendorPage.page.goto(origin+'/management/vendors');
   await vendorPage.page.getByPlaceholder('Buscar proveedores...').waitFor();
-  await vendorPage.page.getByRole('heading',{name:/proveedores/i}).waitFor();await vendorPage.context.close();
+  await vendorPage.page.getByRole('heading',{name:/proveedores/i}).waitFor();await assertNoTextContrastFailures(vendorPage.page,'management vendors');
+  await vendorPage.page.getByRole('button',{name:'Agregar proveedor',exact:true}).click();await vendorPage.page.getByRole('button',{name:'Crear',exact:true}).waitFor();await assertNoTextContrastFailures(vendorPage.page,'vendor create dialog');await vendorPage.context.close();
   const userAdmin=await pageFor('admin');await userAdmin.page.goto(origin+'/management/users');
   await userAdmin.page.getByPlaceholder('Buscar usuarios...').waitFor();
+  await assertNoTextContrastFailures(userAdmin.page,'management users admin');
   const addUser=userAdmin.page.getByRole('button',{name:'Agregar usuario',exact:true});await addUser.waitFor();await addUser.click();
   const userDialog=userAdmin.page.getByRole('dialog');
   const userForm=userDialog.locator('form');
@@ -354,6 +377,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await userAdmin.page.screenshot({path:path.join(evidence,'uat-admin-users-team-scope.png')});
   await userAdmin.context.close();
   const userSuper=await pageFor('superadmin');await userSuper.page.goto(origin+'/management/users');
+  await userSuper.page.getByPlaceholder('Buscar usuarios...').waitFor();await assertNoTextContrastFailures(userSuper.page,'management users superadmin');
   await userSuper.page.getByRole('button',{name:'Agregar usuario',exact:true}).click();
   const superDialog=userSuper.page.getByRole('dialog');await superDialog.waitFor();
   assert.equal(await superDialog.getByLabel('Empresa').count(),1);
@@ -364,6 +388,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   checks.push('UAT-004 company/brand/team/user/vendor administration Spanish copy and manager user restrictions: localized routes/search and modal controls; no role/company payload fields; foreign team absent PASS (synthetic UI; API guard tested separately)');
   const knowledgeUser=await pageFor('user');await knowledgeUser.page.goto(origin+'/knowledge');
   await knowledgeUser.page.getByRole('heading',{name:'Base de Conocimiento',exact:true}).waitFor();
+  await assertNoTextContrastFailures(knowledgeUser.page,'knowledge user Spanish');
   await knowledgeUser.page.getByText('Synthetic Company Co knowledge article',{exact:true}).waitFor();
   assert.equal(await knowledgeUser.page.getByRole('button',{name:'Agregar fuente',exact:true}).count(),0,'read-only user cannot add knowledge');
   assert.equal(await knowledgeUser.page.getByRole('button',{name:'Eliminar documento',exact:true}).count(),0,'read-only user cannot delete knowledge');
@@ -371,11 +396,14 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.ok(!/Live Agent Context|refund|92% match|session: active/i.test(knowledgeText),'knowledge page does not present fabricated live transcript or retrieval data');
   await knowledgeUser.page.evaluate(()=>localStorage.setItem('keledon-locale','en'));await knowledgeUser.page.reload();
   await knowledgeUser.page.getByRole('heading',{name:'Knowledge Base',exact:true}).waitFor();
+  await assertNoTextContrastFailures(knowledgeUser.page,'knowledge user English');
   await knowledgeUser.page.evaluate(()=>localStorage.setItem('keledon-locale','pt'));await knowledgeUser.page.reload();
   await knowledgeUser.page.getByPlaceholder('Pesquisar documentos de conhecimento...').waitFor();
+  await assertNoTextContrastFailures(knowledgeUser.page,'knowledge user Portuguese');
   await knowledgeUser.context.close();
   const knowledgeAdmin=await pageFor('admin');await knowledgeAdmin.page.goto(origin+'/knowledge');
   await knowledgeAdmin.page.getByRole('heading',{name:'Base de Conocimiento',exact:true}).waitFor();
+  await assertNoTextContrastFailures(knowledgeAdmin.page,'knowledge admin');
   await knowledgeAdmin.page.getByRole('button',{name:'Agregar fuente',exact:true}).click();
   const knowledgeDialog=knowledgeAdmin.page.getByRole('dialog',{name:'Agregar fuente de conocimiento'});await knowledgeDialog.waitFor();
   assert.equal(await knowledgeDialog.getByLabel('Empresa *').count(),1);
@@ -424,6 +452,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   checks.push('UAT-030 Knowledge UI keeps users read-only and gives managers synthetic detail/create/edit/delete flows; create is tenant-bound, update omits caller tenant, fake live transcript/RAG claims are absent, localization and accessible modals pass, and backend errors are sanitized (mocked API only)');
   const dashboard=await pageFor('user');await dashboard.page.goto(origin+'/dashboard');
   await dashboard.page.getByRole('heading',{name:'Hola, Company',exact:true}).waitFor();
+  await assertNoTextContrastFailures(dashboard.page,'dashboard Spanish');
   await dashboard.page.getByText('Esta es tu actividad de hoy',{exact:true}).waitFor();
   await dashboard.page.getByText('Estadísticas de hoy',{exact:true}).waitFor();
   await dashboard.page.getByRole('heading',{name:'Actividad reciente en vivo',exact:true}).waitFor();
@@ -437,11 +466,17 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await dashboard.page.evaluate(()=>localStorage.setItem('keledon-locale','en'));
   await dashboard.page.reload();
   await dashboard.page.getByRole('heading',{name:'Hello, Company',exact:true}).waitFor();
+  await assertNoTextContrastFailures(dashboard.page,'dashboard English');
   await dashboard.page.getByText("Today's Stats",{exact:true}).waitFor();
   await dashboard.page.evaluate(()=>localStorage.setItem('keledon-locale','pt'));
   await dashboard.page.reload();
   await dashboard.page.getByRole('heading',{name:'Olá, Company',exact:true}).waitFor();
+  await assertNoTextContrastFailures(dashboard.page,'dashboard Portuguese');
   await dashboard.page.getByText('Estatísticas de hoje',{exact:true}).waitFor();
+  for(const theme of ['light','corporate','dark']){
+   await dashboard.page.evaluate(value=>localStorage.setItem('keledon-theme',value),theme);await dashboard.page.reload();
+   await dashboard.page.getByRole('heading',{name:'Olá, Company',exact:true}).waitFor();await dashboard.page.waitForFunction(value=>document.documentElement.dataset.keledonTheme===value,theme);await dashboard.page.waitForTimeout(350);await assertNoTextContrastFailures(dashboard.page,`dashboard ${theme} theme`);
+  }
   await dashboard.context.close();
   dashboardSessions=[];
   checks.push('UAT-T-005-DASHBOARD Spanish empty/session states, English and Portuguese greeting/stats, and accessible table caption/column headers PASS (synthetic API)');
@@ -451,6 +486,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   ];
   const sessionViews=await pageFor('superadmin');await sessionViews.page.goto(origin+'/sessions/live');
   await sessionViews.page.getByRole('heading',{name:'Sesiones en vivo',exact:true}).waitFor();
+  await assertNoTextContrastFailures(sessionViews.page,'live sessions');
   await sessionViews.page.getByRole('combobox',{name:'Filtrar por empresa'}).waitFor();
   await sessionViews.page.getByRole('combobox',{name:'Filtrar por usuario'}).waitFor();
   await sessionViews.page.getByRole('button',{name:'Actualizar',exact:true}).waitFor();
@@ -460,10 +496,12 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.equal(await sessionViews.page.getByRole('columnheader',{name:'ID DE SESIÓN',exact:true}).getAttribute('scope'),'col');
   await sessionViews.page.goto(origin+'/sessions/history');
   await sessionViews.page.getByRole('heading',{name:'Historial de sesiones',exact:true}).waitFor();
+  await assertNoTextContrastFailures(sessionViews.page,'session history');
   assert.equal(await sessionViews.page.getByRole('table').locator('caption').innerText(),'Historial de sesiones');
   await sessionViews.page.getByRole('cell',{name:'Completada',exact:true}).waitFor();
   await sessionViews.page.getByRole('link',{name:'Ver detalles',exact:true}).click();
   await sessionViews.page.getByRole('heading',{name:'Detalles de la sesión',exact:true}).waitFor();
+  await assertNoTextContrastFailures(sessionViews.page,'session detail');
   assert.equal(await sessionViews.page.getByText('ID de sesión: 22222222-2222-4222-8222-222222222222',{exact:true}).count(),1);
   assert.equal(await sessionViews.page.getByRole('region',{name:'La grabación y la transcripción de la sesión aparecerán aquí.'}).count(),1);
   assert.equal(await sessionViews.page.getByRole('link',{name:'Volver a las sesiones',exact:true}).getAttribute('href'),'/sessions');
@@ -473,19 +511,29 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   const profileDevices=await pageFor('user');
   await profileDevices.page.goto(origin+'/profile');
   await profileDevices.page.getByRole('heading',{name:'Mi perfil',exact:true}).waitFor();
+  await assertNoTextContrastFailures(profileDevices.page,'profile Spanish');
   await profileDevices.page.getByText('Usuario',{exact:true}).waitFor();
   await profileDevices.page.getByText('2 de enero de 2020',{exact:true}).waitFor();
   await profileDevices.page.evaluate(()=>localStorage.setItem('keledon-locale','en'));
   await profileDevices.page.reload();
   await profileDevices.page.getByRole('heading',{name:'My profile',exact:true}).waitFor();
+  await assertNoTextContrastFailures(profileDevices.page,'profile English');
   await profileDevices.page.getByText('January 2, 2020',{exact:true}).waitFor();
   await profileDevices.page.evaluate(()=>localStorage.setItem('keledon-locale','pt'));
   await profileDevices.page.reload();
   await profileDevices.page.getByRole('heading',{name:'Meu perfil',exact:true}).waitFor();
+  await assertNoTextContrastFailures(profileDevices.page,'profile Portuguese');
   await profileDevices.page.getByText('2 de janeiro de 2020',{exact:true}).waitFor();
   await profileDevices.page.evaluate(()=>localStorage.setItem('keledon-locale','es'));
   await profileDevices.page.reload();
   await profileDevices.page.goto(origin+'/devices');
+  await profileDevices.page.getByRole('heading',{name:'Dispositivos',exact:true}).waitFor();
+  await assertNoTextContrastFailures(profileDevices.page,'devices');
+  for(const theme of ['light','corporate','dark']){
+   await profileDevices.page.evaluate(value=>localStorage.setItem('keledon-theme',value),theme);await profileDevices.page.reload();
+   await profileDevices.page.getByRole('heading',{name:'Dispositivos',exact:true}).waitFor();await profileDevices.page.waitForFunction(value=>document.documentElement.dataset.keledonTheme===value,theme);await profileDevices.page.waitForTimeout(350);await assertNoTextContrastFailures(profileDevices.page,`devices ${theme} theme`);
+  }
+  await profileDevices.page.evaluate(()=>localStorage.setItem('keledon-theme','dark'));await profileDevices.page.reload();
   await profileDevices.page.getByRole('heading',{name:'Dispositivos',exact:true}).waitFor();
   await profileDevices.page.getByText('Vinculado',{exact:true}).waitFor();
   await profileDevices.page.getByText('Última conexión: Nunca',{exact:true}).waitFor();
@@ -503,6 +551,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await profileDevices.page.getByText('Vinculado',{exact:true}).waitFor();
   await profileDevices.page.getByRole('link',{name:'Abrir el lanzador de Keledon',exact:true}).click();
   await profileDevices.page.getByRole('heading',{name:'Lanzar Keledon',exact:true}).waitFor();
+  await assertNoTextContrastFailures(profileDevices.page,'Keledon launcher');
   await profileDevices.page.getByText('No hay Keledons disponibles',{exact:true}).waitFor();
   await profileDevices.context.close();
   checks.push('UAT-T-007-PROFILE-DEVICES en/es/pt profile role/date formatting, Spanish device status/empty state, navigation to localized Keledon launcher and retry after visible API failure PASS (mocked API)');
@@ -572,6 +621,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   checks.push('UAT-T-009 KELEDON admin create flow: localized labeled fields, scoped company/brand/team selectors, native accessible form and delete-confirmation dialog; payload contains no caller companyId and uses server input shape PASS (synthetic UI/API)');
   const provider=await pageFor('admin');await provider.page.goto(origin+'/management/providers');
   await provider.page.getByRole('heading',{name:'Administración — Proveedores'}).waitFor();
+  const providerContrast=await inspectTextContrast(provider.page);assert.deepEqual(providerContrast,[],`provider settings contrast failures: ${JSON.stringify(providerContrast)}`);
   const key=provider.page.getByPlaceholder('sk-… (introduce tu clave de API de OpenAI)');await key.waitFor();assert.equal(await key.inputValue(),'');
   await key.fill('SYNTHETIC-UAT-REPLACEMENT');const section=key.locator('xpath=ancestor::section');await section.getByRole('button',{name:'Guardar',exact:true}).click();
   await provider.page.waitForFunction(()=>document.querySelector('input[placeholder^="sk-"]')?.value==='');
@@ -582,6 +632,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   checks.push('UAT-004 provider settings Spanish localization and write-only key: translated screen renders; no response prefill; replacement clears after success; untouched blank omitted PASS');
   const brain=await pageFor('admin');await brain.page.goto(origin+'/brain');
   await brain.page.getByRole('heading',{name:'Brain',exact:true}).waitFor();
+  const brainContrast=await inspectTextContrast(brain.page);assert.deepEqual(brainContrast,[],`Brain contrast failures: ${JSON.stringify(brainContrast)}`);
   await brain.page.locator('[title="key configured"]').first().waitFor();
   assert.equal(await brain.page.locator('[title="key configured"]').count(),2,'safe provider-key flags show only the selected LLM and TTS credentials configured');
   assert.equal(await brain.page.locator('[title="key not configured"]').count(),1,'an unused Deepgram key does not mark the selected Vosk provider as credentialed');
@@ -594,6 +645,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await diagnostic.page.goto(origin+'/management/debug');
   const debugToggle=diagnostic.page.getByRole('checkbox');
   const debugToggleControl=diagnostic.page.locator('label').filter({has:debugToggle});
+  const diagnosticsContrast=await inspectTextContrast(diagnostic.page);assert.deepEqual(diagnosticsContrast,[],`diagnostics contrast failures: ${JSON.stringify(diagnosticsContrast)}`);
   assert.equal(await debugToggle.isChecked(),false);
   assert.equal(deepReads,0);
   await debugToggleControl.click();
@@ -618,6 +670,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.equal(deepReads,1);
   await diagnostic.context.close();
   checks.push(`UAT-002 ${appVersion} protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)`);
+  checks.push('UAT-067 selected WCAG AA text contrast scan passes on server status, brands, teams, vendors and create dialog, users (admin/superadmin), Knowledge (es/en/pt/admin), dashboard (es/en/pt), sessions (live/history/detail), profile (es/en/pt), devices, launcher, company details (three roles), providers, Brain and protected diagnostics (automated production-browser sample)');
   const candidate=await getCandidateFingerprint();
   await fs.writeFile(path.join(evidence,'uat-local-web.json'),JSON.stringify({version:appVersion,date:new Date().toISOString(),candidateRevision:candidate.baseCommit,candidateSourceFingerprint:candidate.sourceFingerprint,dirtyUntrackedSourceFiles:candidate.dirtyUntrackedSourceFiles,sourceRoots:candidate.sourceRoots,targetEnvironment:'local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked',origin,provenance:'UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance',checks,themeTokens,loginContrastSample:contrastByTheme,apiEvidence:'services/api/src/health/health.service.spec.ts, roles.guard.spec.ts, and api-correlation.spec.ts',realVendorAudioCRM:'NOT_EXECUTED: client-specific integrations excluded by owner; provider-independent code reviewed'},null,2));
   console.log('PASS local web journeys:',checks.join('\n'));

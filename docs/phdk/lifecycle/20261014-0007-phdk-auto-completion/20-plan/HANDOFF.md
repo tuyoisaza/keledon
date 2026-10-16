@@ -1,3 +1,11 @@
+## Plan exit — candidate 5.1.72 (2026-10-15)
+
+The four ordered commitments and owner-approved boundaries are unchanged. The base is refreshed `origin/main` 5.1.71; current source candidate 5.1.72 includes proof-script manifest validation, semantic contrast fixes and synchronized PHDK v2.51.2. Integration, exact-source synthetic Web UAT, source SEO and AEO/GEO are revalidated. Remaining gates are Check/remediation and normal versioned PR delivery; external/manual portfolio work remains explicit.
+
+SIGUIENTE PASO: close exact-candidate Check, then verify merge/readback without claiming deployment or full external acceptance.
+
+---
+
 Latest verified source is 5.1.71, PR #174 merged at `f97ad0469830e2cadfeb7379800c74e89dd1d67d`; tested tree matches. Plan: `IMPLEMENTATION_PLAN-5.1.71.md`. All four fronts remain active; portfolio is partial.
 
 ## Reopened and refreshed — 2026-10-15, post-merge 5.1.70
@@ -7,6 +15,19 @@ PR #172 records the owner decision to keep FeatureFlag dormant. The schema/servi
 ## Reopened and refreshed — 2026-10-15, post-merge 5.1.69
 
 PR #170 reconciles the CompanyCountry and TeamInterface source contracts and is verified on remote `main`. The tested tree matches and UAT-063 advances source guard/classification only; UAT tally is 61 PASS, 1 BLOCKED, 1 MANUAL. The ordered four-front plan remains active: baseline/version and PR backlog; widget/safe diagnostics; tenant-selected voice→Cloud→Browser→CRM lifecycle; administration/permissions. Resolve remaining source-verifiable matrix gaps, then exercise PostgreSQL migration, restart and tenant isolation against the owner-provided disposable target. Keep whole Auto partial.
+
+# Plan revalidation — active candidate 5.1.72 (2026-10-15)
+
+The owner resumed the complete PHDK Auto goal in this conversation. The four ordered commitments and all explicit security/integration decisions remain current. Remote `main` is 5.1.71 (`4f1db4b19509a8ca8188a782cbe76ea2fb998683`); PR #176 carries candidate 5.1.72 (`f2d75362d16c3b3dc086c3b05ad0067c34d99d9`). The root plan and its candidate snapshot now capture the current four-front order, exact completed evidence and outstanding gates.
+
+Exit: requirements and approved boundaries remain coherent; no new material product decision is needed for the next source-verifiable work. Remaining DB model operations, Session policy, broad accessibility, native device/audio, deployed discovery, and per-client acceptance stay explicitly open.
+
+Historical snapshot: `snapshots/candidate-5.1.72/IMPLEMENTATION_PLAN-5.1.72.md`.
+Canonical: root `IMPLEMENTATION_PLAN.md`.
+
+Next: PMO/workstreams revalidation against this plan and the live PR/current code; then integration review of the complete candidate.
+
+---
 
 # Plan handoff — 20261014-0007-phdk-auto-completion
 

@@ -1,3 +1,20 @@
+## Current commitment coverage — 5.1.72 candidate; PR open
+
+Candidate `fix/phdk-auto-next-front-5-1-72`, latest pushed PR [#176](https://github.com/tuyoisaza/keledon/pull/176); merge state CLEAN, with no hosted checks or review decision reported. PHDK v2.51.2 coherence passes 56/56. Portfolio remains **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally: **65 PASS, 0 BLOCKED, 1 MANUAL**.
+
+| Commitment | Current result | Remaining gate |
+|---|---|---|
+| CMT-001 baseline/version/PR | Candidate 5.1.72 aligns all six version reads, fixes missing local proof scripts, and verifies targets; PR #176 is pushed and open. | Legitimate PR review/merge and exact remote main/tree/version readback. |
+| CMT-002 widget/diagnostics | Web widget production UAT, protected diagnostics 19/19, Browser checks 3/3, and selected route/locale/theme contrast scan pass after five text-contrast fixes. | Native device/audio and exhaustive route, role, screen-reader, zoom and localization acceptance. |
+| CMT-003 voice→Cloud→Browser→CRM | Tenant-owned flow editor and private destination allowlist remain covered by provider-independent tests; no client stack is assumed. | Customer sandbox and acceptance per selected client. |
+| CMT-004 administration/permissions | Disposable PostgreSQL UAT-066 passes core migrations, actor/tenant scope, Session persistence, restart, API two-instance and schema constraints; FlowRunEvidence remains dormant/not needed currently. | Full resource-operation matrix and remaining Session lifecycle/retention decision. |
+
+Whole Auto is **PARTIALLY DELIVERED**; no deployment or customer endpoint was used.
+
+SIGUIENTE PASO: resolve the current PR delivery gate, then continue remaining acceptance across the four active fronts.
+
+---
+
 ## Current commitment coverage — 5.1.70 source slice merged
 
 PR [#172](https://github.com/tuyoisaza/keledon/pull/172) is verified at remote `main` `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`; tested tree and all six version reads match. PHDK coherence and completion gate pass. Portfolio remains **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally: **62 PASS, 1 BLOCKED, 1 MANUAL**.

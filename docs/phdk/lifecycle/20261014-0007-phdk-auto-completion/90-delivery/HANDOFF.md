@@ -1,3 +1,13 @@
+## Current candidate 5.1.72 — UAT-066/067 passed for scoped acceptance; PR open
+
+The candidate closes the isolated PostgreSQL blocker for core migrations, actor/tenant scope, Session status/metadata restart persistence, two API instances and schema constraints. Web UAT-067 passes the widget keyboard/target/live-status checks and a selected contrast scan after correcting a 4.17:1 Providers sublabel. Production-built Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3, API/Cloud regressions 40/40 and 18/18, builds, and PHDK coherence 56/56 pass. Evidence is in `../50-uat/evidence/`.
+
+Branch `fix/phdk-auto-next-front-5-1-72`, PR #176 open against `main`; merge state is CLEAN; GitHub reports no hosted checks or review decision. Whole Auto remains PARTIALLY DELIVERED (65 PASS, 0 BLOCKED, 1 MANUAL). Native device/audio, full operation matrix, broad assistive technology/routes/localization, Session retention decisions, deployed SEO/AEO, Qdrant concurrency and per-client live call/CRM acceptance remain open. No deployment is claimed.
+
+SIGUIENTE PASO: push the latest candidate/evidence commit and verify the PR's final head, review and merge status.
+
+---
+
 ## Latest delivery — 5.1.71 merged; four-front Auto remains partial
 
 PR #174 is squash-merged at verified remote `main` `f97ad0469830e2cadfeb7379800c74e89dd1d67d`; tested tree matches. Candidate 5.1.71 classifies FlowRunEvidence as dormant/N/A across 14 rows while retaining schema. UAT-065 is source-only; portfolio is 63 PASS, 1 BLOCKED, 1 MANUAL. Full proof: `PHDK_DELIVERY_EVIDENCE-5.1.71-post-merge-174.json`.

@@ -82,7 +82,7 @@ export default function SessionsLivePage() {
             <div className="flex items-center gap-2">
                 <Radio className="w-5 h-5 text-green-500 animate-pulse" />
                 <h1 className="text-2xl font-bold text-foreground">{t('sessions.liveTitle')}</h1>
-                <span className="px-2 py-1 bg-green-500/10 text-green-500 text-xs rounded-full">
+                <span className="px-2 py-1 bg-green-500/10 text-status-success-foreground text-xs rounded-full">
                     {t('sessions.activeCount').replace('{count}', String(filteredSessions.length))}
                 </span>
             </div>
@@ -145,7 +145,7 @@ export default function SessionsLivePage() {
                                     <td className="px-4 py-3 font-mono text-sm">{session.id.slice(0, 8)}</td>
                                     <td className="px-4 py-3 text-sm">{userName}</td>
                                     <td className="px-4 py-3 text-sm">
-                                        <span className="px-2 py-0.5 bg-green-500/10 text-green-500 text-xs rounded-full">
+                                        <span className="px-2 py-0.5 bg-green-500/10 text-status-success-foreground text-xs rounded-full">
                                             {t(`sessions.status.${session.status || 'active'}`)}
                                         </span>
                                     </td>

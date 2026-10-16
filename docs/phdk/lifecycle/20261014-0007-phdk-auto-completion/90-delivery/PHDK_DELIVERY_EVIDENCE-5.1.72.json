@@ -1,0 +1,93 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto continuation: resolve core PostgreSQL UAT blocker and repair backend local proof command manifests",
+  "target_branch": "main",
+  "candidate_branch": "fix/phdk-auto-next-front-5-1-72",
+  "expected_version": "5.1.72",
+  "tested_source_commit_sha": "87c1fddb8d965a7e01649330b7f74f6252628b40",
+  "tested_candidate_tree": "074b9fdc6dd4d1b85e207f6b3b34402cbc1fad44",
+  "uat_test_commit_sha": "d4b001087e4b0076b29f31d9a0a3795dc9b1fd9e",
+  "pull_request_url": "https://github.com/tuyoisaza/keledon/pull/176",
+  "versions": {
+    "services_api": "5.1.72",
+    "cloud": "5.1.72",
+    "browser": "5.1.72",
+    "services_web": "5.1.72",
+    "landing": "5.1.72",
+    "browser_renderer": "5.1.72"
+  },
+  "checks": {
+    "api_regression": {
+      "status": "PASS",
+      "evidence": "40/40 regression suites, including local proof manifest target validation."
+    },
+    "cloud_regression": {
+      "status": "PASS",
+      "evidence": "18/18 regression suites."
+    },
+    "api_build": "PASS",
+    "cloud_build": "PASS",
+    "phdk_coherence": {
+      "status": "PASS",
+      "evidence": "PHDK v2.51.2 static coherence: 56/56 manifest mappings."
+    },
+    "web_diagnostics_uat": {
+      "status": "PASS_SCOPED",
+      "evidence": "Production-built Web UAT 6/6 plus AI-admin; focused diagnostics 19/19; UAT-067 selected WCAG 2.2 AA route/locale/theme contrast sample passes after five text-color fixes. Synthetic API fixture and external network blocked.",
+      "file": "../50-uat/evidence/uat-067-web-accessibility-5.1.72.json"
+    },
+    "browser_widget": {
+      "status": "PASS_SCOPED",
+      "evidence": "Browser version-actions source/layout tests 3/3; Browser TypeScript build passes. Native packaged Electron/audio remains MANUAL."
+    },
+    "landing_build_and_seo": {
+      "status": "PASS_SCOPED",
+      "evidence": "Landing production build passes and SEO source regression passes 1/1. This does not establish deployed search performance or external discovery."
+    },
+    "version_alignment": {
+      "status": "PASS",
+      "evidence": "All five package/lock roots and Browser renderer are 5.1.72."
+    },
+    "git_diff_check": "PASS",
+    "uat_066_postgresql": {
+      "status": "PASS_SCOPED",
+      "evidence": "Disposable PostgreSQL 16.15: 9 API migrations and 7 Cloud migrations; API 26 assertions, Cloud 10; restart persistence in both, API two-instance shared-DB behavior, tenant flow permission and version uniqueness constraints in both schemas. Full resource-operation matrix remains open.",
+      "file": "../50-uat/evidence/uat-postgres-core-5.1.72.json"
+    },
+    "uat_067_web_widget_accessibility": {
+      "status": "PASS_SCOPED",
+      "evidence": "Production-built Web UAT 6/6 plus AI-admin; focused diagnostics 19/19; Browser widget checks 3/3/build pass; keyboard names/order/44x44/focus/live status pass. Selected WCAG 2.2 AA route/locale/theme contrast scan passes after five fixes: 4.17:1 Providers sublabel, 2.38:1 primary action, 4.06:1 muted text, 4.22:1 completed badge, 2.12:1 paired-device label. Synthetic API, outbound traffic blocked.",
+      "file": "../50-uat/evidence/uat-067-web-accessibility-5.1.72.json"
+    },
+    "delivery": {
+      "status": "OPEN",
+      "pull_request": "https://github.com/tuyoisaza/keledon/pull/176",
+      "merge_state": "CLEAN",
+      "hosted_checks": [],
+      "notes": "PR #176 is open against main; no hosted checks are reported."
+    }
+  },
+  "whole_auto_acceptance": {
+    "status": "PARTIAL",
+    "summary": "Core PostgreSQL blocker closed for UAT-060 and scoped diagnostics widget accessibility passed UAT-067; PHDK Auto remains partially delivered.",
+    "uat_tally": {
+      "pass": 65,
+      "blocked": 0,
+      "manual": 1
+    },
+    "open_gates": [
+      "Native device/audio acceptance",
+      "Full resource × role × surface × operation coverage",
+      "Three Session lifecycle/ownership retention and audit decisions",
+      "Broad active-route, screen-reader, accessibility and localization acceptance",
+      "Deployed SEO/AEO measurements",
+      "Live Qdrant concurrency acceptance",
+      "Customer-selected live voice/CRM acceptance per tenant"
+    ]
+  },
+  "limitations": [
+    "No production or customer database, identity, endpoint, provider request or deployment was used.",
+    "The initial synthetic superadmin was provisioned directly in each empty disposable database; service authentication and tenant actions were exercised through the API.",
+    "A stopped isolated PostgreSQL binary/data bundle remains in a task-specific temporary directory for reproducibility."
+  ]
+}

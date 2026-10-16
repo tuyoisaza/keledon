@@ -1,3 +1,11 @@
+## Current PMO progress — candidate 5.1.72; PR #176 open
+
+Latest pushed product candidate is branch `fix/phdk-auto-next-front-5-1-72`, PR #176. UAT-066 passes core PostgreSQL migration, actor/tenant scope and persistence acceptance. UAT-067 passes Web widget keyboard/accessibility and the expanded WCAG 2.2 AA contrast sample across selected management, Knowledge, dashboard, session, profile and device routes/locales/themes after five measured contrast defects were fixed. API/Cloud regressions 40/40 and 18/18, five builds, diagnostics 19/19, Browser widget 3/3/build and PHDK coherence 56/56 pass. PR #176 is open/clean; hosted checks and review are absent; merge and deployment are not claimed. Whole acceptance remains partial at **65 PASS, 0 BLOCKED, 1 MANUAL**.
+
+Next: complete Plan/PMO/Integration Review, refresh UAT→SEO→AEO/GEO→Check for the integrated candidate, remediate scoped gaps, then reconcile and deliver through normal PR controls. Three Session API ownership/retention decisions remain open; the separate FlowRunEvidence question is settled as dormant/not needed.
+
+---
+
 ## Current PMO progress — PR #172 merged; whole portfolio partial
 
 PR #172 is squash-merged at remote `main` `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`; its tree equals the tested candidate. All six version reads are 5.1.70. API/Cloud regressions 39/39 and 18/18; all five builds and lint checks; API/Cloud/Web/Landing typechecks plus Browser TypeScript build; PHDK coherence 56/56; completion gate PASS. UAT-064 closes the owner-approved dormant FeatureFlag decision at source/classification scope only. Tally: 62 PASS, 1 BLOCKED (owner-provided PostgreSQL UAT-060), 1 MANUAL (native device/audio). All four commitments remain active; persistence/audit, TeamInterface selector, accessibility/localization, deployed SEO/AEO and per-client live call/CRM acceptance remain open.

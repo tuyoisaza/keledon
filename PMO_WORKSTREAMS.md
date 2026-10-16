@@ -3,13 +3,13 @@
 
 | WS | Commitment / outcome | Scope | Owner/status | Acceptance / dependency |
 |---|---|---|---|---|
-| WS-001 | CMT-001 baseline, versions and reviewed delivery | Manifests/locks, PHDK evidence, PR lineage and release gate | Root / CANDIDATE 5.1.60 IN PROGRESS | Current branch and exact base are verified; complete normal PR, merge and main readback. |
-| WS-002 | CMT-002 widget and safe diagnostics | Shared Web/Landing/Browser component, all mounts, redaction/reset/accessibility | Root / SOURCE TEST PASS; UAT-051 PASS | Both Web apps' public/login/shell/admin route mounts have explicit source assertions; native Browser and broad a11y remain. |
-| WS-003 | CMT-003 voice→Cloud→Browser→customer-selected CRM | API/Cloud contracts, per-tenant adapter and Browser origin enforcement | Root / SOURCE CONTRACTS PASS; CUSTOMER ACCEPTANCE OPEN | Tenant origin enforcement and UAT-050 source lifecycle pass; packaged/runtime and each customer's selected stack remain. |
-| WS-004 | CMT-004 administration and permissions | API/Cloud/Browser RBAC, secret projection, all Prisma resources, migrations | Root / SOURCE MATRIX PASS; DB ACCEPTANCE OPEN | API/Cloud regressions 37/37 and 17/17, 35-model/490-row crosswalk; full disposable-DB role/operation proof remains. |
-| WS-X | Cross-cutting PHDK conformance | Cloud lint, UX/UI, route coverage, SEO/AEO and lifecycle evidence | Root / CHECK IN PROGRESS | PHDK coherence 52/52; deployed/native evidence remains unverified; finish candidate diff/check. |
+| WS-001 | CMT-001 baseline, versions and reviewed delivery | Manifests/locks, PHDK evidence, PR lineage and release gate | Root / 5.1.72 PR #176 OPEN | Remote `main` 5.1.71 and six candidate version reads are verified; complete final review/checks, normal merge and exact remote readback. |
+| WS-002 | CMT-002 widget and safe diagnostics | Shared Web/Landing/Browser component, mounts, redaction/reset/accessibility | Root / SELECTED UAT PASS; PORTFOLIO PARTIAL | Web widget and protected diagnostics UAT pass; five contrast fixes pass selected route/role/locale/theme scan; native device/audio and exhaustive screen-reader/route acceptance remain. |
+| WS-003 | CMT-003 voice→Cloud→Browser→customer-selected CRM | API/Cloud flow configuration, per-tenant adapters and Browser origin enforcement | Root / PROVIDER-INDEPENDENT SOURCE PASS; CUSTOMER ACCEPTANCE OPEN | Tenant-owned flow editor and validated private-origin allowlist are present; run live call/CRM acceptance only after the tenant selects/configures its stack. |
+| WS-004 | CMT-004 administration and permissions | API/Cloud RBAC, secret projection, Prisma resources, migrations | Root / CORE PERSISTED UAT PASS; MATRIX PARTIAL | UAT-066 validates core migrations, actor/tenant scope, Session persistence/restart and multi-instance; full 39-model/role/surface/operation matrix and three Session lifecycle decisions remain. FlowRunEvidence is dormant/N/A. |
+| WS-X | Cross-cutting PHDK conformance | Plan/Integration, UAT, SEO/AEO, Check and lifecycle evidence | Root / IN PROGRESS | PHDK v2.51.2 sync/coherence 56/56 and UAT-067 pass; current-candidate SEO/AEO and full Check/remediation remain. |
 
-No workers are assigned in this run. Execution order follows the owner-confirmed sequence; cross-cutting Check and delivery gates apply to all four workstreams.
+No workers are assigned. Execution order follows the owner-confirmed sequence; cross-cutting Integration Review, UAT/Fix, SEO/AEO, Check and delivery gates apply to all four workstreams.
 
 ## Current continuation — 2026-10-13, candidate 5.1.16
 

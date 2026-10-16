@@ -18,7 +18,7 @@
 
   /* Muted */
   --color-muted: hsl(220 20% 12%);
-  --color-muted-foreground: hsl(215 20% 55%);
+  --color-muted-foreground: hsl(215 20% 65%);
 
   /* Accent */
   --color-accent: hsl(173 80% 40%);
@@ -32,6 +32,10 @@
   --color-success: hsl(142 76% 36%);
   --color-warning: hsl(38 92% 50%);
   --color-info: hsl(199 89% 48%);
+  --color-status-success-foreground: #86efac;
+  --color-status-info-foreground: #93c5fd;
+  --color-status-warning-foreground: #fde68a;
+  --color-status-danger-foreground: #fca5a5;
 
   /* Cards and surfaces */
   --color-card: hsl(220 20% 10%);
@@ -91,6 +95,10 @@
   --color-accent: #0f766e; --color-accent-foreground: #fff;
   --color-sidebar: #fff; --color-sidebar-foreground: #334155; --color-sidebar-active: #0f766e;
   --color-success: #15803d;
+  --color-status-success-foreground: #166534;
+  --color-status-info-foreground: #1d4ed8;
+  --color-status-warning-foreground: #92400e;
+  --color-status-danger-foreground: #b91c1c;
 }
 :root[data-keledon-theme="corporate"], :root[data-keledon-theme="corporate"] * {
   --color-background: #f3f6fc; --color-foreground: #102a43;
@@ -103,6 +111,10 @@
   --color-accent: #194185; --color-accent-foreground: #fff;
   --color-sidebar: #fff; --color-sidebar-foreground: #334e68; --color-sidebar-active: #194185;
   --color-success: #15803d;
+  --color-status-success-foreground: #166534;
+  --color-status-info-foreground: #194185;
+  --color-status-warning-foreground: #92400e;
+  --color-status-danger-foreground: #b91c1c;
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
