@@ -1,4 +1,12 @@
-## Current PMO progress — 5.1.72 merged; Auto remains partial
+## Current PMO progress — PR #184 merged; whole portfolio partial (2026-10-16)
+
+PR [#184](https://github.com/tuyoisaza/keledon/pull/184) merged UAT-075 at remote `main` `fd6c18270c3cff8c95dfef5b143320d64d7bd745`. API and Cloud persisted superadmin Brand/Team/User operations passed against separate disposable PostgreSQL databases; all synthetic fixtures and local services were cleaned up. PHDK v2.51.2 coherence passes 56/56 and six version reads remain 5.1.73. UAT tally: **73 PASS, 0 BLOCKED, 1 MANUAL**. All four confirmed commitments remain active; no deployment is claimed.
+
+SIGUIENTE PASO: continue the full administration/permission matrix and the other remaining confirmed workstream gates.
+
+---
+
+## Historical PMO progress — 5.1.72 merged; Auto remains partial
 
 PR [#177](https://github.com/tuyoisaza/keledon/pull/177) squash-merged tested source commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` at remote `main` `ddc2b6030618a1f648ffc37fa296c64729ef503b`; merged tree and all six 5.1.72 version reads match. API/Cloud regressions 40/40 and 18/18, all five builds/lint checks, four app typechecks, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3/build, SEO 1/1 each and PHDK coherence 56/56 pass. Six measured text-contrast defects are fixed. Check reports no new source remediation. PR #176 was closed as superseded. No deployment is claimed. Whole acceptance remains partial at **65 PASS, 0 BLOCKED, 1 MANUAL**.
 

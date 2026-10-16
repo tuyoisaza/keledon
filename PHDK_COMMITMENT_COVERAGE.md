@@ -1,17 +1,17 @@
 ## Current commitment coverage — 5.1.73 source merged; portfolio partial
 
-PR [#180](https://github.com/tuyoisaza/keledon/pull/180) delivered 5.1.73 source; docs PRs [#181](https://github.com/tuyoisaza/keledon/pull/181) and [#182](https://github.com/tuyoisaza/keledon/pull/182) are merged, with #182 at `4807eb582a22f7bd3c311cc69caf7c9ccecc711d`. All six version reads remain 5.1.73 and PHDK v2.51.2 coherence passes 56/56. Portfolio remains **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally is **72 PASS, 0 BLOCKED, 1 MANUAL** after UAT-072/073 Web journeys and UAT-074 source policy parity; full portfolio gates remain open.
+PR [#180](https://github.com/tuyoisaza/keledon/pull/180) delivered 5.1.73 source; docs PRs [#181](https://github.com/tuyoisaza/keledon/pull/181), [#182](https://github.com/tuyoisaza/keledon/pull/182), [#183](https://github.com/tuyoisaza/keledon/pull/183) and [#184](https://github.com/tuyoisaza/keledon/pull/184) are merged. Current remote `main` is `fd6c18270c3cff8c95dfef5b143320d64d7bd745`; all six version reads remain 5.1.73 and PHDK v2.51.2 coherence passes 56/56. Portfolio remains **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally is **73 PASS, 0 BLOCKED, 1 MANUAL** after UAT-075; full portfolio gates remain open.
 
 | Commitment | Current result | Remaining gate |
 |---|---|---|
 | CMT-001 baseline/version/PR | PR #180 delivered 5.1.73; six version reads and remote main/tree readback pass; PHDK coherence is 56/56. | Continue remaining delivery-process standards and keep the Auto portfolio partial until all gates close. |
 | CMT-002 widget/diagnostics | Web widget production UAT, protected diagnostics 19/19, Browser checks 3/3, and selected route/locale/theme contrast scan pass after five text-contrast fixes. | Native device/audio and exhaustive route, role, screen-reader, zoom and localization acceptance. |
 | CMT-003 voice→Cloud→Browser→CRM | Tenant-owned flow editor and private destination allowlist remain covered by provider-independent tests; UAT-073 confirms the Web editor journey and UAT-074 reconfirms private-origin security parity across API, Cloud and Browser. No client stack is assumed. | API/Cloud persisted flow authorization/runtime and customer sandbox acceptance per selected client. |
-| CMT-004 administration/permissions | UAT-068 validates authenticated orphan cleanup; UAT-069/070 add admin/coordinator tenant CRUD; UAT-071 adds 12 persisted superadmin Company assertions per backend; UAT-072 exercises Web Company create/edit/read/delete UI and payloads with a mocked API. FlowRunEvidence remains dormant and unnecessary to current execution. | Full resource-operation matrix, superadmin breadth beyond Company, backend-backed Web auth/persistence join, and remaining Session lifecycle/retention decisions. |
+| CMT-004 administration/permissions | UAT-068 validates authenticated orphan cleanup; UAT-069/070 add admin/coordinator tenant CRUD; UAT-071 adds persisted superadmin Company CRUD; UAT-075 adds representative persisted superadmin Brand/Team/User CRUD in API and Cloud. UAT-072 covers the mocked Web Company journey. FlowRunEvidence remains dormant and unnecessary to current execution. | Full resource-operation matrix, superadmin families beyond Company/Brand/Team/User, backend-backed Web auth/persistence join, and remaining Session lifecycle/retention decisions. |
 
 Whole Auto is **PARTIALLY DELIVERED**; no deployment or customer endpoint was used.
 
-SIGUIENTE PASO: continue remaining acceptance across the four active fronts; UAT-069/070/071/072/073/074 close only the exercised persisted API/Cloud, source-policy and mocked Web slices.
+SIGUIENTE PASO: continue remaining acceptance across the four active fronts; UAT-069/070/071/072/073/074/075 close only the exercised API/Cloud persistence, source-policy and mocked Web slices.
 
 ---
 

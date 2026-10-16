@@ -1,5 +1,9 @@
 # CRUD matrix — current source and authorization coverage
 
+## 5.1.73 — persisted superadmin Brand/Team/User acceptance
+
+UAT-075 exercises create/update/delete for Brand and Team plus User creation, superadmin role assignment and safe detail readback in API and Cloud against separate disposable PostgreSQL 16.15 databases. Cleanup removed all synthetic accounts and created Brand/Team rows. This is a representative persisted slice; the 39-model × role × surface × operation inventory remains partial and its row totals are unchanged. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-075-superadmin-resource-breadth-5.1.73.json`.
+
 ## 5.1.73 — tenant CRM origin allowlist security parity
 
 UAT-074 reconfirmed API/Cloud vendor URL regression 26 and Browser security-policy suite on the 5.1.73 source. Private and loopback destinations work only when explicitly listed for the tenant; malformed entries, unsafe schemes/credentials, off-list redirects/resources, metadata IP and ambiguous worker scope are denied. API/Cloud projections omit secrets and invalid legacy config fails closed. Builds and source suites pass; no live host was contacted. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-074-private-origin-policy-5.1.73.json`. Customer-specific integration acceptance remains open.
