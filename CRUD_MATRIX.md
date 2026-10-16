@@ -1,8 +1,14 @@
 # CRUD matrix — current source and authorization coverage
 
+## 5.1.73 — orphan session cleanup safeguard
+
+API and Cloud now count/delete only ended sessions whose `userId`, `teamId`, and `metadata` are null and which have no Events, FlowRuns, or SubAgents. This narrows the earlier broad “either owner reference is null” match, which could include active or meaningful sessions. API regression test 47 checks identical count/delete filters for both services. This is source-level regression evidence; no PostgreSQL UAT was performed for 5.1.73.
+
+FlowRunEvidence is a dormant, schema-only model for immutable execution evidence used for future audit/diagnostics. Current flow execution does not depend on it and no writer, reader, route, or UI exists. Preserve it without runtime retention or deletion until a concrete evidence contract is approved.
+
 ## 5.1.72 — PostgreSQL core UAT evidence
 
-UAT-066 applied all 9 API and 7 Cloud migrations to separate disposable PostgreSQL 16.15 databases. Repeat deploys found no pending migrations. Synthetic DB-derived identity and tenant/session permission checks passed (API 26 assertions, Cloud 10); Session metadata/status persisted across service restarts, API shared-database access passed across two instances, and both schemas enforced tenant-matched flow permissions and unique versions. Scope: the exercised runtime was 5.1.71 (`4f1db4b`); comparison confirms API/Cloud runtime source and Prisma schemas/migrations are unchanged in 5.1.72, whose backend changes are package version/lock metadata and a regression manifest test. This is applicable evidence for unchanged runtime behavior, not an exact-package 5.1.72 run. Details: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-postgres-core-5.1.72.json`. It does not complete the full 39-model × role × surface × operation matrix. Three Session lifecycle/ownership rows still need a retention/audit decision.
+UAT-066 applied all 9 API and 7 Cloud migrations to separate disposable PostgreSQL 16.15 databases. The original 26/10 assertion run used runtime 5.1.71; the exact 5.1.72 rerun confirmed 9/7 migrations current, API 5/5 and Cloud 10/10 authorization checks, API two-instance persistence, and restart persistence in API and Cloud. Synthetic-only evidence is in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-postgres-core-5.1.72.json`. It does not complete the full 39-model × role × surface × operation matrix. Broader session retention policy remains owner-defined.
 
 UAT-067 verifies the production-built 5.1.72 Web diagnostics widget with synthetic APIs: accessible action names, keyboard Tab order, visible focus, 44×44px hit areas, polite status announcement, reset/redaction and selected responsive/theme journeys pass. Web UAT passes 6/6 plus AI-admin; focused diagnostics pass 19/19. Exact evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-067-web-accessibility-5.1.72.json` and adjacent visual artifacts. This is scoped UI evidence; no screen-reader or full-route certification is claimed.
 

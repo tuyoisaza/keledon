@@ -6,6 +6,18 @@ import {
 import { QdrantClient } from '@qdrant/qdrant-js';
 import { PrismaService } from '../prisma/prisma.service';
 
+function emptyEndedOrphanSessionWhere() {
+  return {
+    userId: null,
+    teamId: null,
+    status: 'ended',
+    metadata: null,
+    events: { none: {} },
+    flowRuns: { none: {} },
+    subAgents: { none: {} },
+  };
+}
+
 @Injectable()
 export class CrudSessionDataService {
   private readonly qdrant: QdrantClient;
@@ -67,14 +79,14 @@ export class CrudSessionDataService {
 
   async deleteOrphanedSessions(): Promise<{ deleted: number }> {
     const result = await this.prisma.session.deleteMany({
-      where: { OR: [{ userId: null }, { teamId: null }] },
+      where: emptyEndedOrphanSessionWhere(),
     });
     return { deleted: result.count };
   }
 
   async getOrphanedSessionCount(): Promise<number> {
     return this.prisma.session.count({
-      where: { OR: [{ userId: null }, { teamId: null }] },
+      where: emptyEndedOrphanSessionWhere(),
     });
   }
 
