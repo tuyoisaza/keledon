@@ -6,7 +6,7 @@
 
 ### Verification
 - API regressions 40/40; Cloud regressions 18/18; API and Cloud TypeScript builds pass.
-- The cleanup predicate has API/Cloud source regression coverage; no PostgreSQL UAT or production data cleanup was performed. Whole PHDK Auto remains partial.
+- API/Cloud regression 47 verifies predicate parity; UAT-068 exercises authenticated API and Cloud count/delete routes against disposable PostgreSQL 16.15, preserving active, metadata-bearing, Event-, FlowRun- and SubAgent-bearing sessions. Synthetic fixtures were removed; no production cleanup was performed. Whole PHDK Auto remains partial.
 
 ## v5.1.72 — 2026-10-15 (close PHDK Auto integration and contrast findings)
 

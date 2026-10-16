@@ -1,0 +1,26 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-070",
+  "candidate_version": "5.1.73",
+  "tested_source_commit": "cee3cc10a5568766001fbdbeccfa9b77fa5b4181",
+  "environment": "API and Cloud 5.1.73 runtimes on loopback against separate disposable PostgreSQL 16.15 databases keledon_phdk_uat and keledon_phdk_cloud_uat; synthetic tenant fixtures only.",
+  "method": "In each disposable database, register a unique synthetic account through the service API and verify that registration gives role=user. Prepare the isolated UAT fixture as a tenant-A coordinator directly in the disposable database, then authenticate through the service and verify that the current database role/company are returned. Exercise the same Company/User/Brand/Team tenant CRUD and denial cases as UAT-069 through API and Cloud HTTP. Delete temporary user/brand/team records through the API and remove the synthetic coordinator fixture from the disposable database.",
+  "services": {
+    "api": { "assertions": 22, "passed": 22, "status": "PASS" },
+    "cloud": { "assertions": 22, "passed": 22, "status": "PASS" }
+  },
+  "verified_contracts": [
+    "Synthetic registration defaults to user; after the isolated fixture is assigned coordinator, login reflects coordinator and the persisted tenant.",
+    "Coordinator Company/User lists use the database actor tenant despite a foreign company query; own Company detail works and foreign Company/User/Brand details are denied.",
+    "Coordinator cannot create/delete a company, elevate a role, create a foreign-tenant user, or create a Team under a foreign-tenant Brand.",
+    "Coordinator-created User is role=user and bound to the actor company; credential hash is omitted; allowed same-tenant User/Brand/Team writes persist and read back.",
+    "Temporary user, team, brand and coordinator fixtures are removed after the tests."
+  ],
+  "cleanup": "Both databases contain zero temporary UAT users, coordinator accounts, brands, teams or forbidden companies. API and Cloud runtimes stopped. Disposable PostgreSQL cluster stopped. No listeners remain on ports 55438 or 3041-3043.",
+  "limitations": [
+    "This is focused coordinator persistence evidence for Company, User, Brand and Team API/Cloud routes; it does not close the full 39-model × role × surface × operation matrix.",
+    "The coordinator role was prepared only as a synthetic isolated-database UAT fixture; the test does not claim that tenant admins can grant coordinator privileges.",
+    "No deployed environment, customer CRM, native device/audio, or production data was used."
+  ],
+  "result": "PASS"
+}

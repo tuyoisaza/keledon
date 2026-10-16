@@ -1,3 +1,35 @@
+## Candidate 5.1.73 — UAT-071 persisted superadmin Company CRUD
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-071 | CMT-004 / persisted synthetic superadmin | Register a synthetic account in each disposable database and verify default role=user; prepare an isolated superadmin fixture; exercise API and Cloud Company list/detail/create/update/delete, country relations, and role assignment to a user in the created company; verify deletion and cleanup. | Superadmin reads global Company list/detail; create/update/country relations persist; user role/company assignment persists with safe response projection; only the synthetic test user/company are deleted; fixture rows are removed. | Local API/Cloud HTTP and separate disposable PostgreSQL 16.15 databases | PASS: 12 assertions per backend (24 total); company and country relation were absent after deletion. Web Company journey remains untested and the overall CRUD matrix stays open. Evidence: `evidence/uat-071-superadmin-company-crud-5.1.73.json`. |
+
+Portfolio tally: **69 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The full resource × role × surface × operation matrix, remaining resource families, native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer call/CRM remain open.
+
+## Candidate 5.1.73 — UAT-070 persisted coordinator CRUD role boundaries
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-070 | CMT-004 / persisted coordinator A plus tenant admin B | Register a synthetic user in each disposable database, prepare the coordinator only as an isolated UAT fixture, verify login role/company from the database, then exercise API and Cloud Company/User/Brand/Team list/detail/create/update/delete and forbidden cross-tenant/privilege operations. | Registration begins at role=user; coordinator lists and records stay in tenant A; company create/delete and role elevation fail; allowed same-tenant CRUD persists and reads back; all temporary records are removed. | Local API/Cloud HTTP and separate disposable PostgreSQL 16.15 databases | PASS: 22 assertions per service (44 total); both databases confirmed coordinator identity/scope; temporary fixtures removed with zero residual test rows. Evidence: `evidence/uat-070-coordinator-crud-5.1.73.json`. Full resource/surface coverage remains open. |
+
+Portfolio tally: **68 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The full resource × role × surface × operation matrix, native device/audio, broad accessibility/localization, remaining Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer call/CRM remain open.
+
+## Candidate 5.1.73 — UAT-069 persisted tenant CRUD role boundaries
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-069 | CMT-004 / persisted tenant admins A and B | Authenticate synthetic tenant admins against disposable PostgreSQL; exercise API and Cloud HTTP list/detail/create/update/delete for Company, User, Brand and Team, including forged tenant filters, foreign direct IDs, forbidden company create/delete, privilege escalation and cleanup. | Lists use the database actor's tenant; foreign IDs and forbidden privilege/company actions return 403; a newly created user is role=user in the actor's company; allowed same-tenant CRUD persists and reads back; all temporary rows are deleted. | Local API/Cloud HTTP and separate disposable PostgreSQL 16.15 databases | PASS: 19 assertions per service (38 total); API and Cloud resolved persisted actors and applied tenant boundaries; temporary fixtures removed and zero residual test rows. Evidence: `evidence/uat-069-crud-roles-5.1.73.json`. Coordinator's persisted route journey and the complete model/role/surface matrix remain open. |
+
+Portfolio tally: **67 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Coordinator persistence and exhaustive resource coverage remain open alongside the other portfolio gates.
+
+## Candidate 5.1.73 — UAT-068 authenticated orphan-session cleanup
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-068 | CMT-004 / anonymous, tenant admin and superadmin | Start 5.1.73 API and Cloud against separate disposable PostgreSQL 16.15 databases; issue authenticated GET count and DELETE requests with synthetic/current-DB actors; include active, metadata-bearing and related-record sessions. | Anonymous denied 401; tenant admin denied 403; superadmin sees/deletes only the ended empty orphan; sessions with activity or related Event, FlowRun or SubAgent remain. Test rows/account are removed after readback. | Local API/Cloud HTTP and PostgreSQL | PASS: both API and Cloud returned 401/403 for denials; each superadmin count/delete affected one eligible fixture; five ineligible variants remained; final candidate count zero. Evidence: `evidence/uat-068-orphan-cleanup-5.1.73.json`. |
+
+Portfolio tally at that point: **66 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The full resource × role × surface × operation matrix, native device/audio, broad accessibility/localization, remaining Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer call/CRM remained open.
+
 ## Candidate 5.1.72 — UAT-067 production-built Web widget accessibility and diagnostics
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

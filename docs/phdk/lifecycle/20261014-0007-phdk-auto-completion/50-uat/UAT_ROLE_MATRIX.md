@@ -2,6 +2,14 @@
 
 All browser personas are synthetic fixture data. UI role selection is not treated as authentication evidence. The 2026-10-14 continuation added DB-backed login and role/tenant checks on a disposable loopback PostgreSQL instance. This proves the exercised local API paths only; it is not a deployed development target or exhaustive model/operation acceptance.
 
+UAT-068 extends the Session cleanup role checks on 5.1.73: anonymous receives 401, a real persisted tenant admin receives 403, and a current-database superadmin can count/delete one qualifying ended orphan. API and Cloud fixtures verify that active or related records are preserved. The Cloud UAT superadmin was a temporary synthetic row that was removed afterward. This is a scoped endpoint journey; it does not close the 546-row resource-role-surface matrix.
+
+UAT-069 adds persisted admin evidence in API and Cloud: tenant A lists only its company/users despite a caller-supplied tenant B filter; company/user/brand foreign IDs are denied; company create/delete and role elevation are denied; new admin-created accounts persist as role=user in tenant A; allowed same-tenant User/Brand/Team CRUD reads back and cleans up. Each backend passed 19 assertions. This case did not separately authenticate a coordinator or close the full role/surface matrix.
+
+UAT-070 separately authenticated a coordinator fixture in both API and Cloud databases. Each service passed 22 persisted assertions for the same four resource families and tenant boundaries. Public registration first defaulted to user; only the disposable test fixture was then assigned coordinator for this journey. Tenant admins did not grant the elevated role. Superadmin breadth and the remaining model/surface combinations remain open.
+
+UAT-071 authenticated a synthetic superadmin against each disposable database and passed 12 Company API/Cloud assertions per backend: global list/detail, create/update/delete with persisted country relations, user role/company assignment, and verified deletion. The interactive Web Company operations were not exercised, so the Web surface remains unverified.
+
 | Persona | Source-backed intended access | Local UI fixture | Access verification |
 |---|---|---|---|
 | Anonymous/guest | Public/login and public-safe diagnostics; no management | Local production SPA, mocked endpoints | UI journey passes; live auth not verified. |

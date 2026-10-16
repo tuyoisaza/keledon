@@ -1,17 +1,17 @@
-## Current commitment coverage — 5.1.72 source merged; portfolio partial
+## Current commitment coverage — 5.1.73 source merged; portfolio partial
 
-PR [#177](https://github.com/tuyoisaza/keledon/pull/177) delivered 5.1.72 by squash merge at remote `main` `ddc2b6030618a1f648ffc37fa296c64729ef503b`; merged tree matches the tested candidate and all six version reads match 5.1.72. PR #176 is closed as superseded. PHDK v2.51.2 coherence passes 56/56. Portfolio remains **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally: **65 PASS, 0 BLOCKED, 1 MANUAL**.
+PR [#180](https://github.com/tuyoisaza/keledon/pull/180) delivered 5.1.73 by squash merge at remote `main` `2bb4a7dc84075d4b43be43e88aa19334c21d0f2c`; merged tree matches the tested candidate and all six version reads match 5.1.73. PHDK v2.51.2 coherence passes 56/56. Portfolio remains **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally is **69 PASS, 0 BLOCKED, 1 MANUAL** after UAT-069/070 tenant admin/coordinator and UAT-071 superadmin Company persistence checks; whole-portfolio gates remain open.
 
 | Commitment | Current result | Remaining gate |
 |---|---|---|
-| CMT-001 baseline/version/PR | Candidate 5.1.72 aligns all six version reads, fixes missing local proof scripts and verifies targets; PR #177 is merged and remote main/tree/version readback passes. | Continue remaining delivery process standards and keep the Auto portfolio partial until all gates close. |
+| CMT-001 baseline/version/PR | PR #180 delivered 5.1.73; six version reads and remote main/tree readback pass; PHDK coherence is 56/56. | Continue remaining delivery-process standards and keep the Auto portfolio partial until all gates close. |
 | CMT-002 widget/diagnostics | Web widget production UAT, protected diagnostics 19/19, Browser checks 3/3, and selected route/locale/theme contrast scan pass after five text-contrast fixes. | Native device/audio and exhaustive route, role, screen-reader, zoom and localization acceptance. |
 | CMT-003 voice→Cloud→Browser→CRM | Tenant-owned flow editor and private destination allowlist remain covered by provider-independent tests; no client stack is assumed. | Customer sandbox and acceptance per selected client. |
-| CMT-004 administration/permissions | Exact 5.1.72 UAT-066 rerun passes current API/Cloud migrations, focused role/tenant checks, Session restart persistence and API two-instance persistence against disposable PostgreSQL. Original broader persistence assertions ran on 5.1.71 runtime. FlowRunEvidence remains dormant/not needed. | Full resource-operation matrix and remaining Session lifecycle/retention decision. |
+| CMT-004 administration/permissions | UAT-068 validates authenticated orphan cleanup; UAT-069/070 add admin/coordinator tenant CRUD; UAT-071 adds 12 superadmin Company assertions per backend, including country relations and persisted role assignment. FlowRunEvidence remains dormant and unnecessary to current execution. | Full resource-operation matrix, superadmin breadth beyond Company, Web Company journey, and remaining Session lifecycle/retention decisions. |
 
 Whole Auto is **PARTIALLY DELIVERED**; no deployment or customer endpoint was used.
 
-SIGUIENTE PASO: resolve the current PR delivery gate, then continue remaining acceptance across the four active fronts.
+SIGUIENTE PASO: continue remaining acceptance across the four active fronts; UAT-069/070/071 close only the exercised API/Cloud resource slices.
 
 ---
 

@@ -1,0 +1,26 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-069",
+  "candidate_version": "5.1.73",
+  "tested_source_commit": "cee3cc10a5568766001fbdbeccfa9b77fa5b4181",
+  "environment": "API and Cloud 5.1.73 runtimes on loopback against separate disposable PostgreSQL 16.15 databases keledon_phdk_uat and keledon_phdk_cloud_uat; synthetic tenant fixtures; no production/customer data.",
+  "method": "Authenticated two synthetic tenant admins from tenant A and tenant B through the local API, then exercised each service over HTTP. Cloud independently resolved those token actors against its own PostgreSQL records. Tested tenant-list filters, company/user/brand direct IDs, prohibited company create/delete and role escalation, user default-role provisioning, brand/team writes and persisted updates/readback. Temporary user, brand, and team records were deleted through the API.",
+  "services": {
+    "api": { "assertions": 19, "passed": 19, "status": "PASS" },
+    "cloud": { "assertions": 19, "passed": 19, "status": "PASS" }
+  },
+  "verified_contracts": [
+    "Tenant company and user lists ignore a caller-supplied foreign company filter and return only the current database actor's tenant.",
+    "Tenant A can read its own company and cannot directly read tenant B's company or user; cross-tenant brand detail is denied.",
+    "Tenant admins cannot create or delete companies, elevate a user's role, create a foreign-tenant user, or create a team under a foreign-tenant brand.",
+    "A user created by a tenant admin is persisted with role=user and the actor's company; normal response omits passwordHash.",
+    "Same-tenant user, brand, and team create/read/update/delete journeys persist and read back expected values; synthetic records are removed after verification."
+  ],
+  "cleanup": "Both databases contain zero temporary UAT users, brands, teams, or forbidden companies. API and Cloud runtimes stopped. Disposable PostgreSQL cluster stopped. No listeners remain on ports 55438 or 3041-3043.",
+  "limitations": [
+    "Focused persistence acceptance for tenant-admin operations on Company, User, Brand, and Team; it does not close the full 39-model × role × surface × operation matrix.",
+    "Coordinator persistence was not separately exercised in this case; role parity remains covered by API and Cloud regression suites.",
+    "No deployed environment, native device/audio, customer CRM, or production data was used."
+  ],
+  "result": "PASS"
+}

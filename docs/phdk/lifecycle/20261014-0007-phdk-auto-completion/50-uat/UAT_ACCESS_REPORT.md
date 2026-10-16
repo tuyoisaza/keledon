@@ -1,5 +1,21 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## UAT-071 — 5.1.73 persisted superadmin Company access
+
+API and Cloud each authenticated a synthetic superadmin whose role was read from its disposable PostgreSQL database. Each service passed 12 assertions covering global Company list, direct detail, Company create/update/delete with country relations, user role/company assignment, normal response credential omission, and verification that test Company/country rows were deleted. Temporary test superadmin and assigned user were removed; a pre-existing API synthetic superadmin was unchanged. No hosted target or real identity was used. Evidence: `evidence/uat-071-superadmin-company-crud-5.1.73.json`.
+
+## UAT-070 — 5.1.73 persisted coordinator access
+
+API and Cloud each authenticated a synthetic coordinator whose role/company were read from their own disposable PostgreSQL database. Each backend passed 22 HTTP/persistence assertions for Company, User, Brand and Team tenant scope, forbidden company/role actions, same-tenant mutations and cleanup. Registration first returned role=user; coordinator assignment existed only as a synthetic local database fixture. All temporary rows were removed, candidate counts returned to zero and all runtimes stopped. Evidence: `evidence/uat-070-coordinator-crud-5.1.73.json`.
+
+## UAT-069 — 5.1.73 persisted tenant CRUD access
+
+Two synthetic tenant-admin actors from separate Company Co-style tenants authenticated through the local API and were resolved independently against the API and Cloud disposable PostgreSQL databases. API and Cloud each passed 19 HTTP/persistence assertions covering Company, User, Brand and Team list/detail/create/update/delete, tenant A/B isolation, blocked company create/delete, blocked privilege elevation, role=user provisioning and cleanup. Temporary users/brands/teams were removed; both databases reported zero temporary records; the services and database cluster were stopped. No hosted target or real identity was used. Evidence: `evidence/uat-069-crud-roles-5.1.73.json`.
+
+## UAT-068 — 5.1.73 orphan-session cleanup access
+
+On separate disposable PostgreSQL 16.15 databases, authenticated API and Cloud count/delete routes returned 401 for anonymous callers and 403 for persisted tenant admins. Current-database superadmins counted and removed exactly one synthetic ended/empty orphan; active, metadata-bearing, Event-bearing, FlowRun-bearing and SubAgent-bearing sessions remained. All synthetic rows and the temporary Cloud superadmin were removed, and both databases returned to zero eligible candidates. Runtime listeners and the PostgreSQL cluster were stopped. Evidence: `evidence/uat-068-orphan-cleanup-5.1.73.json`.
+
 ## Latest continuation — live Qdrant delete (2026-10-14 local)
 
 Isolated Qdrant 1.19.2 and PostgreSQL 16.15 ran on loopback with synthetic `.invalid` identity and tenant data. API document delete removed the persisted document and matching Qdrant points; API base delete removed the collection and database rows (verified with read-only SQL because individual base GET returns 403 for this role). Exact-source evidence: `evidence/uat-qdrant-delete-5.1.52.json`. No production/customer endpoint, data, device or deployment was used. Delete/reindex concurrency was not exercised.

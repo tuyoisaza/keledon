@@ -1,3 +1,29 @@
+## Current delivery — 5.1.73 orphan-session safeguard merged; Auto remains partial
+
+PR [#180](https://github.com/tuyoisaza/keledon/pull/180) squash-merged source commit `cee3cc10a5568766001fbdbeccfa9b77fa5b4181` to verified remote `main` `2bb4a7dc84075d4b43be43e88aa19334c21d0f2c`, tree `f7466ff6b63a25b9d96a7c77b95fa40e7e3385e9`, matching the tested candidate tree. All five application package/lock roots and Browser renderer read 5.1.73. API regressions pass 40/40, Cloud 18/18, both TypeScript builds pass, and PHDK v2.51.2 coherence passes 56/56. The completion evidence is in [PHDK_DELIVERY_EVIDENCE.json](PHDK_DELIVERY_EVIDENCE.json) and the dated copy `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.73-post-merge-180.json`.
+
+The cleanup endpoint now counts/deletes only ended sessions with no user, team, metadata, Event, FlowRun, or SubAgent records. API/Cloud regression test 47 checks count/delete predicate parity. UAT-068 exercised both authenticated HTTP routes against disposable PostgreSQL 16.15: anonymous received 401, tenant admin 403, and superadmin counted/deleted exactly one eligible fixture while active, metadata-bearing, Event-bearing, FlowRun-bearing, and SubAgent-bearing fixtures stayed. All synthetic rows and the temporary Cloud superadmin were removed; both DBs returned to zero candidates. FlowRunEvidence remains dormant schema-only capability and is not required by current flow execution. GitHub reported no hosted checks or review decision; branch protection was not readable through the connected integration. No deployment is claimed.
+
+UAT-069 adds focused persisted Company/User/Brand/Team administration evidence: API and Cloud each passed 19 HTTP assertions on separate disposable PostgreSQL databases, with tenant isolation, default-role user creation, safe credential projections, permitted same-tenant CRUD persistence, and denied company/role escalation actions. Temporary fixtures were removed. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-069-crud-roles-5.1.73.json`.
+
+UAT-070 adds persisted coordinator acceptance: API and Cloud each passed 22 HTTP assertions against disposable PostgreSQL for coordinator tenant scope and Company/User/Brand/Team CRUD, default-role registration, denied company/role escalation and fixture cleanup. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-070-coordinator-crud-5.1.73.json`.
+
+UAT-071 verifies the superadmin Company API lifecycle in both services: 12 assertions each for global list/detail, Company create/update/delete with country relations, persisted user role/company assignment, safe projection and deletion cleanup. The Web Company journey remains open. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-071-superadmin-company-crud-5.1.73.json`.
+
+The four-front portfolio remains **PARTIALLY DELIVERED** (69 PASS, 0 BLOCKED, 1 MANUAL). Native device/audio, the full resource-operation matrix and superadmin breadth beyond Company, Web Company UAT, remaining Session lifecycle/retention decisions, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency, and per-client live call/CRM acceptance remain open.
+
+| Delivery proof | Status | Evidence |
+|---|---|---|
+| VERSION_BUMP | PASS | Five package/lock roots and Browser renderer read 5.1.73 on remote main. |
+| COMMIT_PREFIX | PASS | Source commit `cee3cc10` begins `v5.1.73:`. |
+| PUSH_AND_PR | PASS | Branch `fix/phdk-auto-session-cleanup-5-1-73` pushed; PR #180 merged. |
+| REMOTE_MAIN | PASS | `git ls-remote origin main` and `origin/main` read `2bb4a7dc84075d4b43be43e88aa19334c21d0f2c`; main tree matches the tested source tree. |
+| SCOPE_AND_CHECKS | PASS FOR SOURCE SLICE / WHOLE AUTO PARTIAL | API 40/40, Cloud 18/18, API/Cloud builds, PostgreSQL UAT-068/069/070/071, PHDK coherence 56/56 pass. Full portfolio acceptance remains open. |
+
+SIGUIENTE PASO: continue the four active portfolio fronts; retain partial status until the external/manual gates close.
+
+---
+
 ## Current delivery — 5.1.72 merged and remotely verified; Auto remains partial
 
 PR [#177](https://github.com/tuyoisaza/keledon/pull/177) squash-merged tested source `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` at remote `main` `ddc2b6030618a1f648ffc37fa296c64729ef503b`, tree `4a7cef0dff1683b1d666b83c8ae4cf0338096d45`. `git ls-remote origin main` agrees; the merged tree equals the final tested candidate tree, and all six version reads are 5.1.72. PR #176 was closed as superseded. GitHub reported no hosted checks or review decision; `main` was unprotected. The mechanical source-delivery gate passes from [PHDK_DELIVERY_EVIDENCE.json](PHDK_DELIVERY_EVIDENCE.json). No deployment is claimed.

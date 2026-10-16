@@ -1,0 +1,26 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-071",
+  "candidate_version": "5.1.73",
+  "tested_source_commit": "cee3cc10a5568766001fbdbeccfa9b77fa5b4181",
+  "environment": "API and Cloud 5.1.73 runtimes on loopback against separate disposable PostgreSQL 16.15 databases keledon_phdk_uat and keledon_phdk_cloud_uat; synthetic-only records.",
+  "method": "Register a unique test account through each backend and verify role=user; prepare it as an isolated superadmin fixture in that disposable database and authenticate normally. Exercise company list/detail/create/update/delete over HTTP, including country relations, and superadmin role assignment to a user owned by the new synthetic company. Delete that user and company, verify the company row and relations are absent, and remove the temporary superadmin fixture.",
+  "services": {
+    "api": { "assertions": 12, "passed": 12, "status": "PASS" },
+    "cloud": { "assertions": 12, "passed": 12, "status": "PASS" }
+  },
+  "verified_contracts": [
+    "Registration defaults to role=user; after the isolated UAT fixture is assigned superadmin, login reflects current database authority with no tenant company.",
+    "Superadmin company list reads the global catalog and direct company detail opens the selected record.",
+    "Superadmin creates a synthetic company with country relation, updates name/industry/countries, and reads all changes back from PostgreSQL.",
+    "Superadmin creates a user as admin in the selected company, changes its role to coordinator, and reads role/company back; passwordHash is absent from normal response.",
+    "The synthetic user and company are deleted through the API; PostgreSQL confirms the company and country relations are absent."
+  ],
+  "cleanup": "Both databases contain zero test-created superadmin accounts, company-admin users, companies, or country relations. A pre-existing synthetic API superadmin fixture from earlier UAT was left unchanged. API and Cloud runtimes stopped; disposable PostgreSQL stopped; no listeners remain on ports 55438 or 3041-3043.",
+  "limitations": [
+    "This is persisted API/Cloud acceptance for the Company superadmin row; the Web interactive list/detail/form/delete journey was not run, so the Web matrix row remains BLOCKED.",
+    "The synthetic superadmin role was prepared only in the disposable database; this does not change production identities or role policy.",
+    "The full 39-model × role × surface × operation matrix remains open. No deployment or production data was used."
+  ],
+  "result": "PASS"
+}
