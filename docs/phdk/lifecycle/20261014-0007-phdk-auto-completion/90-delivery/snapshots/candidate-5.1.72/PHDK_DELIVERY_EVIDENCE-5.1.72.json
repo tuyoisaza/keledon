@@ -4,8 +4,9 @@
   "target_branch": "main",
   "candidate_branch": "fix/phdk-auto-next-front-5-1-72",
   "expected_version": "5.1.72",
-  "tested_source_commit_sha": "af888087eab3aa31cc65869ca763830381f475b8",
-  "tested_candidate_tree": "2233ba9485824d0870983c7329dafd39f549ae57",
+  "tested_source_commit_sha": "87c1fddb8d965a7e01649330b7f74f6252628b40",
+  "tested_candidate_tree": "074b9fdc6dd4d1b85e207f6b3b34402cbc1fad44",
+  "uat_test_commit_sha": "d4b001087e4b0076b29f31d9a0a3795dc9b1fd9e",
   "pull_request_url": "https://github.com/tuyoisaza/keledon/pull/176",
   "versions": {
     "services_api": "5.1.72",
@@ -32,7 +33,7 @@
     },
     "web_diagnostics_uat": {
       "status": "PASS_SCOPED",
-      "evidence": "Production-built Web UAT 6/6 plus AI-admin; focused diagnostics 19/19, including accessible names, keyboard sequence, 44x44 targets, visible focus and live status. Synthetic API fixture and external network blocked.",
+      "evidence": "Production-built Web UAT 6/6 plus AI-admin; focused diagnostics 19/19; UAT-067 selected WCAG 2.2 AA route/locale/theme contrast sample passes after five text-color fixes. Synthetic API fixture and external network blocked.",
       "file": "../50-uat/evidence/uat-067-web-accessibility-5.1.72.json"
     },
     "browser_widget": {
@@ -55,7 +56,7 @@
     },
     "uat_067_web_widget_accessibility": {
       "status": "PASS_SCOPED",
-      "evidence": "Production-built Web UAT 6/6 plus AI-admin; focused diagnostics 19/19; Browser widget checks 3/3/build pass; keyboard names/order/44x44/focus/live status pass. Selected WCAG AA route contrast scan passes for company details x3 roles, Providers, Brain and Diagnostics after correction of one 4.17:1 label. Synthetic API, outbound traffic blocked.",
+      "evidence": "Production-built Web UAT 6/6 plus AI-admin; focused diagnostics 19/19; Browser widget checks 3/3/build pass; keyboard names/order/44x44/focus/live status pass. Selected WCAG 2.2 AA route/locale/theme contrast scan passes after five fixes: 4.17:1 Providers sublabel, 2.38:1 primary action, 4.06:1 muted text, 4.22:1 completed badge, 2.12:1 paired-device label. Synthetic API, outbound traffic blocked.",
       "file": "../50-uat/evidence/uat-067-web-accessibility-5.1.72.json"
     },
     "delivery": {

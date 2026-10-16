@@ -11,7 +11,7 @@ Run `20261014-0007-phdk-auto-completion`; PHDK v2.51.2 is installed and static c
 | UAT / UAT Fix | PASS FOR UAT-067 / PORTFOLIO INCOMPLETE | Web UAT 6/6 plus AI-admin; diagnostics 19/19; selected route/locale/theme contrast sample passes; native device/audio remains MANUAL. |
 | SEO / AEO-GEO | REUSED / NOT AFFECTED | No public copy, metadata or claims changed; deployed discovery measurements remain open. |
 | Check / Remediation | PASS FOR SCOPED SLICE | PHDK coherence 56/56 and `git diff --check`; broad screen-reader/route acceptance remains open. |
-| Delivery | OPEN | Finalize evidence/docs, push candidate and reconcile PR #176 review, merge and remote readback. |
+| Delivery | OPEN — PR UPDATED | Source and evidence are pushed; PR #176 is ready for normal review. Merge decision and exact remote-main/tree/version readback remain. |
 
 Portfolio remains **PARTIALLY DELIVERED** (65 PASS, 0 BLOCKED, 1 MANUAL). Whole-Auto gates include native device/audio, full resource-operation matrix, remaining Session lifecycle policy, broad route/screen-reader/localization, deployed SEO/AEO, Qdrant concurrency and per-client live call/CRM acceptance.
 
