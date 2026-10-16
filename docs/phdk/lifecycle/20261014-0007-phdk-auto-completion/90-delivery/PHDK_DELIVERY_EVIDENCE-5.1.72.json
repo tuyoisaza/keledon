@@ -1,13 +1,26 @@
 {
   "version": "1",
-  "goal": "PHDK Auto continuation: resolve core PostgreSQL UAT blocker and repair backend local proof command manifests",
+  "goal": "PHDK Auto four-front continuation; deliver the verified 5.1.72 source slice while retaining partial portfolio status",
   "target_branch": "main",
-  "candidate_branch": "fix/phdk-auto-delivery-5-1-72",
   "expected_version": "5.1.72",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
   "tested_source_commit_sha": "9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c",
-  "tested_candidate_tree": "edb37b4fbee07725e2908f9aecee5ffe43809083",
-  "uat_test_commit_sha": "9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c",
-  "pull_request_url": null,
+  "tested_candidate_tree": "4a7cef0dff1683b1d666b83c8ae4cf0338096d45",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/177",
+  "merged_commit_sha": "ddc2b6030618a1f648ffc37fa296c64729ef503b",
+  "remote_main_tree": "4a7cef0dff1683b1d666b83c8ae4cf0338096d45",
+  "remote_main_verified_at": "2026-10-16T01:43:28Z",
+  "git_ls_remote_matches": true,
+  "github": {
+    "state": "MERGED",
+    "merge_method": "squash",
+    "merge_state": "CLEAN",
+    "hosted_checks": [],
+    "review_decision": "none reported",
+    "main_protection": false,
+    "superseded_pr_176": "CLOSED"
+  },
   "versions": {
     "services_api": "5.1.72",
     "cloud": "5.1.72",
@@ -17,78 +30,38 @@
     "browser_renderer": "5.1.72"
   },
   "checks": {
-    "api_regression": {
-      "status": "PASS",
-      "evidence": "40/40 regression suites, including local proof manifest target validation."
-    },
-    "cloud_regression": {
-      "status": "PASS",
-      "evidence": "18/18 regression suites."
-    },
-    "api_build": "PASS",
-    "cloud_build": "PASS",
-    "phdk_coherence": {
-      "status": "PASS",
-      "evidence": "PHDK v2.51.2 static coherence: 56/56 manifest mappings."
-    },
-    "web_diagnostics_uat": {
-      "status": "PASS_SCOPED",
-      "evidence": "Production-built Web UAT 6/6 plus AI-admin; focused diagnostics 19/19; UAT-067 selected WCAG 2.2 AA route/locale/theme contrast sample passes after six text-color fixes. Synthetic API fixture and external network blocked.",
-      "file": "../50-uat/evidence/uat-067-web-accessibility-5.1.72.json"
-    },
-    "browser_widget": {
-      "status": "PASS_SCOPED",
-      "evidence": "Browser version-actions source/layout tests 3/3; Browser TypeScript build passes. Native packaged Electron/audio remains MANUAL."
-    },
-    "landing_build_and_seo": {
-      "status": "PASS_SCOPED",
-      "evidence": "Landing production build passes and SEO source regression passes 1/1. This does not establish deployed search performance or external discovery."
-    },
-    "version_alignment": {
-      "status": "PASS",
-      "evidence": "All five package/lock roots and Browser renderer are 5.1.72."
-    },
-    "git_diff_check": "PASS",
-    "uat_066_postgresql": {
-      "status": "PASS_SCOPED",
-      "evidence": "Disposable PostgreSQL 16.15: 9 API migrations and 7 Cloud migrations; API 26 assertions, Cloud 10; restart persistence in both, API two-instance shared-DB behavior, tenant flow permission and version uniqueness constraints in both schemas. Full resource-operation matrix remains open.",
-      "file": "../50-uat/evidence/uat-postgres-core-5.1.72.json"
-    },
-    "uat_067_web_widget_accessibility": {
-      "status": "PASS_SCOPED",
-      "evidence": "Production-built Web UAT 6/6 plus AI-admin; focused diagnostics 19/19; Browser widget checks 3/3/build pass; keyboard names/order/44x44/focus/live status pass. Selected WCAG 2.2 AA route/locale/theme contrast scan passes after six fixes, including dark-theme missing-provider-key copy at 3.30:1. Synthetic API, outbound traffic blocked.",
-      "file": "../50-uat/evidence/uat-067-web-accessibility-5.1.72.json"
-    },
-    "delivery": {
-      "status": "OPEN",
-      "pull_request": null,
-      "superseded_intermediate_pull_request": "https://github.com/tuyoisaza/keledon/pull/176",
-      "merge_state": "PENDING_FINAL_PR",
-      "hosted_checks": [],
-      "notes": "The versioned candidate commit is prepared locally; final PR has not yet been created. Intermediate PR #176 remains open and must be closed once the final PR is safely created."
-    }
+    "api_regression": {"status": "PASS", "evidence": "npm run test:regression; 40/40 suites including proof-script target validation."},
+    "cloud_regression": {"status": "PASS", "evidence": "npm run test:regression; 18/18 suites."},
+    "builds": {"status": "PASS", "evidence": "Production builds passed for API, Cloud, Browser TypeScript, Web and Landing."},
+    "lint": {"status": "PASS", "evidence": "All five app lint checks passed; Cloud was run without autofix."},
+    "typechecks": {"status": "PASS", "evidence": "API, Cloud, Web and Landing typechecks passed; Browser TypeScript build passed."},
+    "web_uat_and_accessibility": {"status": "PASS", "evidence": "Production-built Web UAT 6/6 plus AI-admin; selected opacity-aware WCAG contrast sample passed after six fixes; synthetic fixtures and outbound requests blocked."},
+    "web_diagnostics": {"status": "PASS", "evidence": "Focused diagnostics checks passed 19/19."},
+    "browser_widget": {"status": "PASS", "evidence": "Browser version-actions checks 3/3 and TypeScript build passed; packaged native audio remains manual."},
+    "seo_source": {"status": "PASS", "evidence": "Web and Landing SEO source regressions passed 1/1 each; no deployed metrics implied."},
+    "phdk_coherence": {"status": "PASS", "evidence": "Official PHDK v2.51.2 coherence check passed 56/56 manifest mappings."},
+    "postgres_uat_066": {"status": "PASS", "evidence": "Scoped disposable PostgreSQL 16.15 UAT: 9 API and 7 Cloud migrations, tenant/core persistence assertions, restart and API two-instance checks; broad CRUD matrix remains open."},
+    "version_alignment": {"status": "PASS", "evidence": "Remote main tree matches final tested candidate tree; all five application package versions and Browser renderer read 5.1.72."},
+    "remote_delivery": {"status": "PASS", "evidence": "PR #177 squash-merged; git ls-remote origin/main and local origin/main both read ddc2b6030618a1f648ffc37fa296c64729ef503b; merged tree equals the tested candidate tree."},
+    "hosted_ci": {"status": "NOT_APPLICABLE", "evidence": "GitHub reported no hosted checks configured for PR #177; all listed local checks were run and recorded separately."}
   },
   "whole_auto_acceptance": {
     "status": "PARTIAL",
-    "summary": "Core PostgreSQL blocker closed for UAT-060 and scoped diagnostics widget accessibility passed UAT-067; PHDK Auto remains partially delivered.",
-    "uat_tally": {
-      "pass": 65,
-      "blocked": 0,
-      "manual": 1
-    },
+    "uat_tally": {"pass": 65, "blocked": 0, "manual": 1},
     "open_gates": [
-      "Native device/audio acceptance",
-      "Full resource × role × surface × operation coverage",
-      "Three Session lifecycle/ownership retention and audit decisions",
-      "Broad active-route, screen-reader, accessibility and localization acceptance",
+      "Native packaged device/audio acceptance",
+      "Full resource x role x surface x operation coverage",
+      "Three Session lifecycle ownership/retention decisions",
+      "Broad route, screen-reader, zoom and localization acceptance",
       "Deployed SEO/AEO measurements",
       "Live Qdrant concurrency acceptance",
-      "Customer-selected live voice/CRM acceptance per tenant"
-    ]
+      "Client-selected live voice/CRM acceptance per tenant"
+    ],
+    "flow_run_evidence": "Dormant schema-only model; not required by current runtime, no writer/reader/UI/retention job, no migration."
   },
   "limitations": [
-    "No production or customer database, identity, endpoint, provider request or deployment was used.",
-    "The initial synthetic superadmin was provisioned directly in each empty disposable database; service authentication and tenant actions were exercised through the API.",
-    "A stopped isolated PostgreSQL binary/data bundle remains in a task-specific temporary directory for reproducibility."
+    "No production database, customer data, provider destination or deployment was used.",
+    "Source delivery is merged and mechanically verified; whole PHDK Auto remains PARTIALLY DELIVERED.",
+    "GitHub reported no hosted CI checks or review decision; main was unprotected at merge."
   ]
 }

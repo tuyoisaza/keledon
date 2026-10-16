@@ -1,10 +1,10 @@
-## PMO revalidation — candidate 5.1.72 (2026-10-15)
+## PMO revalidation — 5.1.72 source merged; Auto partial (2026-10-15)
 
-**Status: COMPLETED FOR PORTFOLIO RECONCILIATION; goal remains active.** The four confirmed commitments remain active and ordered. Work is now in the main checkout, refreshed from origin `main` 5.1.71. PR #176 remains an intermediate OPEN/CLEAN candidate; final versioned delivery is being prepared. GitHub reported no hosted checks, requested reviewers or review decision for #176. PHDK v2.51.2 and coherence 56/56 are current after official synchronization.
+**Status: source delivery completed; whole goal remains active and partial.** PR [#177](https://github.com/tuyoisaza/keledon/pull/177) merged tested 5.1.72 at remote `main` `ddc2b6030618a1f648ffc37fa296c64729ef503b`; tree and all six version reads match. PR #176 was closed as superseded. GitHub reported no hosted checks or review decision; main was unprotected. PHDK v2.51.2 coherence is 56/56.
 
 | Workstream | Current state | Remaining proof |
 |---|---|---|
-| WS-001 / CMT-001 | Baseline and candidate identified; PR #176 open | Full outgoing-diff/version/history review, applicable checks, normal merge, exact `main` SHA/tree/version readback. |
+| WS-001 / CMT-001 | PR #177 merged; source checks and exact `main` SHA/tree/version readback pass | Keep this release record; continue other fronts and residual acceptance. |
 | WS-002 / CMT-002 | UAT-067 Web widget and selected WCAG 2.2 AA contrast sample pass after six fixes | Exhaustive route/role/locale and screen-reader acceptance; native device/audio on supported hardware. |
 | WS-003 / CMT-003 | Tenant-owned flow configuration and private-origin allowlist source/UAT covered | Per-client live voice/CRM only when a tenant selects and supplies a safe sandbox. |
 | WS-004 / CMT-004 | UAT-066 core PostgreSQL migration, tenant identity and Session persistence scope passes | Full model-operation matrix; three Session lifecycle/retention decisions. `FlowRunEvidence` is schema-only, dormant and not needed by the active runtime. |
@@ -15,7 +15,7 @@ Canonical PMO artifacts: root `PMO_WORKSTREAMS.md`, `PMO_DEPENDENCIES.md`, `PMO_
 
 Exit: four commitments and dependencies reconciled; unresolved gates are explicit and source work continues.
 
-Next: finish exact-candidate Check/remediation, then versioned PR delivery and remote `main` verification.
+Next: continue the open Session decisions and remaining external/manual/client-specific acceptance gates; preserve PARTIALLY DELIVERED.
 
 ---
 
