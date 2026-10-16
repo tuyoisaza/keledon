@@ -1,6 +1,6 @@
 ## Current PHDK Auto — 5.1.73; UAT-075 delivered; portfolio partial
 
-Run `20261014-0007-phdk-auto-completion`. PR [#184](https://github.com/tuyoisaza/keledon/pull/184) merged persisted superadmin Brand/Team/User UAT evidence at `fd6c18270c3cff8c95dfef5b143320d64d7bd745`; remote `main` matches. PHDK v2.51.2 coherence: 56/56. UAT: **73 PASS, 0 BLOCKED, 1 MANUAL**. Disposable API/Cloud PostgreSQL fixtures and services were cleaned up. Whole Auto remains **PARTIALLY DELIVERED**: 0/4 confirmed commitments fully done; native device/audio, full CRUD matrix, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and client-selected live call/CRM acceptance remain open. No deployment is claimed.
+Run `20261014-0007-phdk-auto-completion`. PRs #184–#186 merged UAT-075/076 plus status reconciliation. PHDK v2.51.2 coherence: 56/56. UAT: **74 PASS, 0 BLOCKED, 1 MANUAL**. Disposable API/Cloud PostgreSQL fixtures and services were cleaned up. Whole Auto remains **PARTIALLY DELIVERED**: 0/4 confirmed commitments fully done; native device/audio, 406 remaining blocked matrix rows, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and client-selected live call/CRM acceptance remain open. No deployment is claimed.
 
 SIGUIENTE PASO: continue administration/permission acceptance beyond Company, Brand, Team and User; keep the whole portfolio partial.
 

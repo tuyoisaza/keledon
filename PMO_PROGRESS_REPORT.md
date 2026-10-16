@@ -1,6 +1,6 @@
 ## Current PMO progress — PR #184 merged; whole portfolio partial (2026-10-16)
 
-PR [#184](https://github.com/tuyoisaza/keledon/pull/184) merged UAT-075 at remote `main` `fd6c18270c3cff8c95dfef5b143320d64d7bd745`. API and Cloud persisted superadmin Brand/Team/User operations passed against separate disposable PostgreSQL databases; all synthetic fixtures and local services were cleaned up. PHDK v2.51.2 coherence passes 56/56 and six version reads remain 5.1.73. UAT tally: **73 PASS, 0 BLOCKED, 1 MANUAL**. All four confirmed commitments remain active; no deployment is claimed.
+PRs [#184](https://github.com/tuyoisaza/keledon/pull/184)–[#186](https://github.com/tuyoisaza/keledon/pull/186) merged UAT-075/076 and the current ledger reconciliation. API and Cloud persisted superadmin Company/Brand/Team/User operations passed against separate disposable PostgreSQL databases; all synthetic fixtures and local services were cleaned up. PHDK v2.51.2 coherence passes 56/56 and six version reads remain 5.1.73. UAT tally: **74 PASS, 0 BLOCKED, 1 MANUAL**. All four confirmed commitments remain active; no deployment is claimed.
 
 SIGUIENTE PASO: continue the full administration/permission matrix and the other remaining confirmed workstream gates.
 

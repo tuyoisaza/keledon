@@ -1,13 +1,13 @@
 ## Current PMO board — 5.1.73 / UAT-075 merged; whole Auto partial
 
-Run `20261014-0007-phdk-auto-completion`; PR #184 merged at remote `main` `fd6c18270c3cff8c95dfef5b143320d64d7bd745`. PRs #180–#184 are merged; PHDK v2.51.2 coherence passes 56/56 and six version reads remain 5.1.73. Portfolio: **4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled; 73 PASS, 0 BLOCKED, 1 MANUAL**. No deployment is claimed.
+Run `20261014-0007-phdk-auto-completion`; PRs #180–#186 are merged, PHDK v2.51.2 coherence passes 56/56 and six version reads remain 5.1.73. Portfolio: **4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled; 74 PASS, 0 BLOCKED, 1 MANUAL**. No deployment is claimed.
 
 | Workstream | Status | Evidence / next milestone | Open acceptance |
 |---|---|---|---|
 | WS-001 baseline, versions, PRs | SOURCE DELIVERY PASS / PORTFOLIO ACTIVE | 5.1.73 and PR #184 verified on `main`; coherence 56/56. | Continue release/process and remote evidence reconciliation. |
 | WS-002 widget and safe diagnostics | PARTIAL | Widget and responsive Web journeys remain covered by synthetic UAT. | Native device/audio MANUAL; broad accessibility/localization. |
 | WS-003 tenant runtime and CRM | PARTIAL | Tenant flow editor and explicit private-origin allowlist are source/Web tested. | Persisted API/Cloud flow auth/runtime and customer-selected live voice/CRM acceptance. |
-| WS-004 administration/permissions | PARTIAL | UAT-068–075 cover selected orphan cleanup, admin/coordinator CRUD and superadmin Company/Brand/Team/User lifecycle. | Full matrix, other resource families, Web/backend join and Session lifecycle decisions. |
+| WS-004 administration/permissions | PARTIAL | UAT-068–076 cover selected orphan cleanup, admin/coordinator CRUD and persisted superadmin Company/Brand/Team/User API operations. | 406 blocked matrix rows, other resource families, Web/backend join and Session lifecycle decisions. |
 
 Current activity: continue administration/permission coverage and keep all four commitments active until their acceptance gates close.
 
