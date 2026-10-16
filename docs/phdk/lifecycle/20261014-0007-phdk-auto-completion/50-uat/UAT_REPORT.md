@@ -1,3 +1,9 @@
+## Candidate 5.1.73 — UAT-077 persisted superadmin Workflow CRUD PASS
+
+In API and Cloud, the DB-derived tenant admin received 403 for Workflow list, direct detail, create, update and delete. The superadmin then completed global list/detail/create/update/delete against PostgreSQL; a follow-up detail read confirmed the updated name and enabled state, and the final list no longer contained the deleted Workflow. SQL verification found zero UAT-077 Workflow or user rows after cleanup. No workflow execution or external integration was triggered. This closes only the Workflow API role rows; the Web row and broader matrix remain open. Evidence: `evidence/uat-077-superadmin-workflow-5.1.73.json`.
+
+Portfolio: **75 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**.
+
 ## Candidate 5.1.73 — UAT-076 persisted superadmin cross-tenant access PASS
 
 API and Cloud passed global Company/Brand/Team/User list checks and direct-ID reads of Tenant B Brand, Team and User using a DB-authorized superadmin. Both backends created and deleted a Tenant B Brand and Team; they also created a Tenant B User with default role=user, assigned admin through superadmin, returned a safe detail projection, and deleted all synthetic fixtures. PostgreSQL verification found zero UAT-076 users, Brands or Teams remaining. No customer data or provider endpoints were used. This is a selected cross-tenant superadmin slice and does not close the full 39-model × role × surface × operation matrix. Evidence: `evidence/uat-076-superadmin-cross-tenant-5.1.73.json`.

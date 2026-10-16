@@ -1,6 +1,6 @@
 ## Current PHDK Auto — 5.1.73; UAT-075 delivered; portfolio partial
 
-Run `20261014-0007-phdk-auto-completion`. PRs #184–#186 merged UAT-075/076 plus status reconciliation. PHDK v2.51.2 coherence: 56/56. UAT: **74 PASS, 0 BLOCKED, 1 MANUAL**. Disposable API/Cloud PostgreSQL fixtures and services were cleaned up. Whole Auto remains **PARTIALLY DELIVERED**: 0/4 confirmed commitments fully done; native device/audio, 406 remaining blocked matrix rows, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and client-selected live call/CRM acceptance remain open. No deployment is claimed.
+Run `20261014-0007-phdk-auto-completion`. PRs #184–#187 merged UAT-075/076 and matrix reconciliation; UAT-077 has now passed in API and Cloud and its evidence is being added. PHDK v2.51.2 coherence: 56/56. UAT: **75 PASS, 0 BLOCKED, 1 MANUAL**. Disposable API/Cloud PostgreSQL fixtures and services were cleaned up. Whole Auto remains **PARTIALLY DELIVERED**: 0/4 confirmed commitments fully done; 404 matrix rows remain blocked, alongside native device/audio, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and client-selected live call/CRM acceptance. No deployment is claimed.
 
 SIGUIENTE PASO: continue administration/permission acceptance beyond Company, Brand, Team and User; keep the whole portfolio partial.
 

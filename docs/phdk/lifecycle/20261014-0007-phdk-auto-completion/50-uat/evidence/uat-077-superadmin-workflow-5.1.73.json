@@ -1,0 +1,32 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-077",
+  "candidate_version": "5.1.73",
+  "tested_source_commit": "9a1a1bfdf4aafecd433611a9f1efe9435d9d4e6b",
+  "scope": "Persisted superadmin Workflow CRUD in API and Cloud, with tenant-admin denial for every generic CRUD operation.",
+  "environment": {
+    "database": "Separate disposable PostgreSQL 16.15 databases for API and Cloud on localhost.",
+    "fixtures": "Synthetic admin and superadmin accounts only; both registered with default role=user before isolated DB role preparation.",
+    "network": "Only local HTTP services and the isolated PostgreSQL cluster; no external integration or customer endpoint."
+  },
+  "assertions_per_backend": [
+    "Tenant admin received 403 for Workflow list, direct detail, create, update and delete routes.",
+    "Superadmin listed global Workflows and created a synthetic Workflow.",
+    "Superadmin read the new Workflow by ID and found it in the list.",
+    "Superadmin updated name and enabled state; a follow-up detail read returned both persisted values.",
+    "Superadmin deleted the Workflow; a follow-up global list no longer included it.",
+    "Authenticated API cleanup removed both temporary accounts; SQL verified zero UAT-077 accounts and Workflow rows."
+  ],
+  "results": {
+    "api": "PASS",
+    "cloud": "PASS",
+    "tenant_admin_denied_all_five_operations": true,
+    "superadmin_workflow_crud_readback": true,
+    "synthetic_fixtures_after_cleanup": 0
+  },
+  "limitations": [
+    "This closes only the Workflow API rows for admin denial and superadmin CRUD; Web Workflow persistence and other roles, resources and surfaces remain open.",
+    "No live workflow execution or external integration was triggered."
+  ],
+  "result": "PASS"
+}

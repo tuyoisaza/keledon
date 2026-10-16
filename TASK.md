@@ -1,6 +1,6 @@
 ## Current PHDK Auto — 5.1.73; UAT-075 delivered; portfolio partial
 
-Run `20261014-0007-phdk-auto-completion`. PR #180 delivered 5.1.73 source; docs PRs #181–#186 record Web, private-origin, persisted superadmin cross-tenant UAT and ledger updates. PR #186 added UAT-076; PHDK v2.51.2 coherence passes 56/56. UAT tally: **74 PASS, 0 BLOCKED, 1 MANUAL**. API and Cloud persisted superadmin Company/Brand/Team/User operations in separate disposable PostgreSQL databases with fixture cleanup. All four commitments remain active; no deployment or whole-Auto completion is claimed.
+Run `20261014-0007-phdk-auto-completion`. PR #180 delivered 5.1.73 source; docs PRs #181–#187 record Web, private-origin and persisted administration UAT. UAT-077 now verifies API/Cloud superadmin Workflow CRUD and tenant-admin denials for all five CRUD operations; its evidence is being added to the current candidate. PHDK v2.51.2 coherence passes 56/56. UAT tally: **75 PASS, 0 BLOCKED, 1 MANUAL**. The 546-row matrix now has 7 PASS, 404 BLOCKED, 132 NOT APPLICABLE and 3 DECISION NEEDED. All four commitments remain active; no deployment or whole-Auto completion is claimed.
 
 Next: continue the confirmed fronts, starting with remaining administration/permission coverage and the full resource × role × surface × operation matrix.
 
