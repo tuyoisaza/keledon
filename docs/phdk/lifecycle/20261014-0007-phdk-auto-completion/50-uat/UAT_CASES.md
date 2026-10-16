@@ -1,3 +1,11 @@
+## Candidate 5.1.73 — UAT-077 persisted superadmin Workflow CRUD
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-077 | CMT-004 / persisted synthetic admin and superadmin | In separate disposable API and Cloud databases, deny admin list/detail/create/update/delete; authenticate superadmin; create, list, detail, update/read back, delete and verify absence of a synthetic Workflow; clean fixtures. | DB-derived admin role is denied for all five methods; superadmin changes persist and read back; all fixture rows are removed. | Local API/Cloud HTTP and disposable PostgreSQL 16.15 | PASS in both backends. Closes only Workflow API role rows; Web and remaining matrix are open. Evidence: `evidence/uat-077-superadmin-workflow-5.1.73.json`. |
+
+Portfolio tally: **75 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 39-model role/surface/operation matrix, native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer live call/CRM remain open.
+
 ## Candidate 5.1.73 — UAT-076 persisted superadmin cross-tenant access
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
