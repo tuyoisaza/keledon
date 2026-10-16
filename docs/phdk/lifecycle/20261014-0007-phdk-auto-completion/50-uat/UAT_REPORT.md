@@ -1,3 +1,9 @@
+## Candidate 5.1.73 — UAT-075 persisted superadmin resource breadth PASS
+
+API and Cloud each passed the superadmin lifecycle for Brand, Team and User against separate disposable PostgreSQL 16.15 databases. The user was created as `user`, assigned `admin` by the authenticated superadmin, and read back without password/hash/token/secret fields. The synthetic Brand, Team, User and superadmin fixtures were removed; database verification found zero remaining UAT accounts and no created Brand/Team rows. No customer data or provider endpoints were used. This is representative persisted evidence; the complete 39-model × role × surface × operation matrix and superadmin breadth outside the covered resource families remain open. Evidence: `evidence/uat-075-superadmin-resource-breadth-5.1.73.json`.
+
+Portfolio: **73 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**.
+
 ## Candidate 5.1.73 — UAT-072 Web superadmin Company CRUD PASS
 
 The production-built Web SPA Company route now has an explicit superadmin lifecycle journey. In headless Edge, 6 assertions verify create/edit payloads, Brazil/Mexico country relation rendering after list readback, the native delete-confirmation step and removal from the synthetic store. The local production browser UAT passed 1/1; the full Web `test:uat` suite passed 6 suites plus AI-admin. APIs were intercepted and all external traffic was blocked, so this closes only the Web UI/request-contract slice; backend authorization and PostgreSQL persistence remain covered only by UAT-071 API/Cloud evidence. Evidence: `evidence/uat-072-web-company-superadmin-5.1.73.json` and `evidence/uat-072-web-company-superadmin/uat-superadmin-company-crud.png`.

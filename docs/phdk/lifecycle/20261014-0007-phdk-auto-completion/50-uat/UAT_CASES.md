@@ -1,3 +1,11 @@
+## Candidate 5.1.73 — UAT-075 persisted superadmin resource breadth
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-075 | CMT-004 / persisted synthetic superadmin | Authenticate to API and Cloud against separate disposable PostgreSQL databases; create/update/delete a Brand, a Team and a User under synthetic Tenant A; assign admin role to the created user; verify safe detail projection and remove all fixtures. | Superadmin administration persists across the three resource families; user role assignment is explicit; user detail omits credential fields; cleanup leaves no UAT accounts or created Brand/Team rows. | Local API/Cloud HTTP and disposable PostgreSQL 16.15 | PASS in both backends. This representative slice does not close the full 39-model × role × surface × operation matrix. Evidence: `evidence/uat-075-superadmin-resource-breadth-5.1.73.json`. |
+
+Portfolio tally: **73 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The full resource × role × surface × operation matrix, superadmin breadth outside Brand/Team/User/Company, native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and per-customer live call/CRM remain open.
+
 ## Candidate 5.1.73 — UAT-072 Web superadmin Company CRUD
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

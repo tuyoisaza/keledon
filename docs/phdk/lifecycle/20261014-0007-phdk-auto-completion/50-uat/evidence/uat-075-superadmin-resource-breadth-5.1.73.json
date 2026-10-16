@@ -1,0 +1,32 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-075",
+  "candidate_version": "5.1.73",
+  "tested_source_commit": "7ea0f14ad2c7429fb357881d7fd95fc63cf21b20",
+  "scope": "Persisted superadmin create, update, delete and safe user readback for Brand, Team and User resources in API and Cloud.",
+  "environment": {
+    "database": "Separate disposable PostgreSQL 16.15 databases for API and Cloud on localhost.",
+    "tenants": "Synthetic Tenant A and Tenant B only.",
+    "network": "Only local HTTP services and the isolated PostgreSQL cluster; no customer/provider endpoint."
+  },
+  "assertions_per_backend": [
+    "Authenticated as a database-authorized superadmin and listed both synthetic Companies.",
+    "Created, updated and deleted a Brand under Tenant A.",
+    "Created, updated and deleted a Team under the new Brand.",
+    "Created a User with role=user, assigned admin as superadmin, and read it back without password, hash, token or secret fields.",
+    "Deleted the synthetic superadmin fixture through the authenticated API after the CRUD checks.",
+    "Queried PostgreSQL to verify zero remaining UAT-5.1.73 test accounts; created Brand/Team rows were absent after API cleanup."
+  ],
+  "results": {
+    "api": "PASS",
+    "cloud": "PASS",
+    "synthetic_superadmin_fixtures_after_cleanup": 0,
+    "synthetic_user_brand_team_fixtures_after_cleanup": 0,
+    "secrets_in_user_projection": false
+  },
+  "limitations": [
+    "This verifies a representative persisted lifecycle for Brand, Team and User under superadmin in two local isolated backends; it does not close the full 39-model × role × surface × operation matrix.",
+    "Superadmin breadth outside these resource families and cross-tenant destructive boundaries remain to be measured separately."
+  ],
+  "result": "PASS"
+}
