@@ -1,5 +1,11 @@
 # UAT journey map — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.73 — UAT-078 tenant Vendor private-origin configuration
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| Tenant A admin in API and Cloud | CMT-003/CMT-004 | UAT-078 / Vendor setup and tenant boundary | Create Vendor on own team with an explicit private origin → list/detail → update URL and allowlist using masked secrets → create Tenant B fixture → deny cross-tenant list/detail/update/delete and forged create → delete fixtures | PASS in separate disposable PostgreSQL databases for API and Cloud; no external host contacted. `50-uat/evidence/uat-078-tenant-vendor-private-origin-5.1.73.json`. |
+
 ## Candidate 5.1.66 — tenant flow configuration
 
 | Persona | Story | Case / journey | Steps exercised | Result / evidence |

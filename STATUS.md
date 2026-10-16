@@ -1,8 +1,8 @@
-## Current PHDK Auto — 5.1.73; UAT-075 delivered; portfolio partial
+## Current PHDK Auto — 5.1.73; UAT-078 passed; portfolio partial
 
-Run `20261014-0007-phdk-auto-completion`. PRs #184–#187 merged UAT-075/076 and matrix reconciliation; UAT-077 has now passed in API and Cloud and its evidence is being added. PHDK v2.51.2 coherence: 56/56. UAT: **75 PASS, 0 BLOCKED, 1 MANUAL**. Disposable API/Cloud PostgreSQL fixtures and services were cleaned up. Whole Auto remains **PARTIALLY DELIVERED**: 0/4 confirmed commitments fully done; 404 matrix rows remain blocked, alongside native device/audio, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and client-selected live call/CRM acceptance. No deployment is claimed.
+Run `20261014-0007-phdk-auto-completion`. PRs #184–#188 reconcile UAT-075–078 and the matrix. UAT-078 passed in API and Cloud: tenant Vendor CRUD with an explicit private origin, credential masking and five cross-tenant denials. PHDK v2.51.2 coherence: 56/56. UAT: **76 PASS, 0 BLOCKED, 1 MANUAL**. Synthetic PostgreSQL fixtures and services were cleaned up. Whole Auto remains **PARTIALLY DELIVERED**: 0/4 confirmed commitments fully done; 403 matrix rows remain blocked, alongside native device/audio, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and client-selected live call/CRM acceptance. No deployment is claimed.
 
-SIGUIENTE PASO: continue administration/permission acceptance beyond Company, Brand, Team and User; keep the whole portfolio partial.
+SIGUIENTE PASO: continue administration/permission acceptance beyond the tested Company, Brand, Team, User, Workflow and Vendor API slices; keep the whole portfolio partial.
 
 ---
 

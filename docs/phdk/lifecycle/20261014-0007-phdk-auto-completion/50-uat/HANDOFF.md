@@ -22,6 +22,14 @@ SIGUIENTE PASO: continuar el cierre de las cuatro líneas priorizadas; conservar
 
 # UAT handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.73 — UAT-078 PASS; portfolio acceptance incomplete
+
+API and Cloud passed persisted tenant Vendor CRUD with a private RFC1918 origin explicitly added to that tenant's allowlist. Safe projections omitted raw credentials and masked updates preserved existing credentials. Tenant A received 403 for five cross-tenant operations. Database queries found no UAT-078 users or Vendor rows; local services and PostgreSQL were stopped, and no private host was contacted. Evidence: `evidence/uat-078-tenant-vendor-private-origin-5.1.73.json`.
+
+Portfolio is **76 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 547-row matrix has 403 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED and 8 PASS. Native device/audio, broad accessibility/localization, Session lifecycle decisions, deployed SEO/AEO, Qdrant concurrency and client-selected live voice/CRM acceptance remain open.
+
+SIGUIENTE PASO: continue the confirmed four fronts; close the remaining permission matrix and manual/client/deployed gates before whole-Auto completion.
+
 ## Candidate 5.1.73 — UAT-071 persisted superadmin Company lifecycle
 
 API and Cloud each pass 12 authenticated HTTP assertions against separate disposable PostgreSQL 16.15 databases for Company list/detail/create/update/delete, country relations, persisted admin/coordinator role assignment in the synthetic Company, safe projections and cleanup. The Web Company list/detail/form journey remains open. Evidence: `evidence/uat-071-superadmin-company-crud-5.1.73.json`. Portfolio tally: **69 PASS, 0 BLOCKED, 1 MANUAL**.
