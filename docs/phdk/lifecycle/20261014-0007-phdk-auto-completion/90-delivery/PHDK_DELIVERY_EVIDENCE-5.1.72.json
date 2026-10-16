@@ -4,8 +4,8 @@
   "target_branch": "main",
   "candidate_branch": "fix/phdk-auto-next-front-5-1-72",
   "expected_version": "5.1.72",
-  "tested_source_commit_sha": "9f5139a4da8ff8695a6f68930d434a97128307ef",
-  "tested_candidate_tree": "2f7c57bf9816af8428db5e3c06886be845ee15bd",
+  "tested_source_commit_sha": "af888087eab3aa31cc65869ca763830381f475b8",
+  "tested_candidate_tree": "2233ba9485824d0870983c7329dafd39f549ae57",
   "pull_request_url": "https://github.com/tuyoisaza/keledon/pull/176",
   "versions": {
     "services_api": "5.1.72",
@@ -55,7 +55,7 @@
     },
     "uat_067_web_widget_accessibility": {
       "status": "PASS_SCOPED",
-      "evidence": "Production-built Web local UAT 6/6 plus AI-admin UI; focused diagnostics 19/19. 44x44 targets, accessible names, keyboard focus, live status, selected responsive/theme and tenant journeys passed with synthetic API and external network blocked. Browser widget checks 3/3 and TypeScript build pass.",
+      "evidence": "Production-built Web UAT 6/6 plus AI-admin; focused diagnostics 19/19; Browser widget checks 3/3/build pass; keyboard names/order/44x44/focus/live status pass. Selected WCAG AA route contrast scan passes for company details x3 roles, Providers, Brain and Diagnostics after correction of one 4.17:1 label. Synthetic API, outbound traffic blocked.",
       "file": "../50-uat/evidence/uat-067-web-accessibility-5.1.72.json"
     },
     "delivery": {

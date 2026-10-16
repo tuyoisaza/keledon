@@ -1,6 +1,6 @@
 # PMO progress — PHDK Auto 5.1.72
 
-This continuation closes the isolated PostgreSQL blocker for core migrations, actor/tenant scope and restart persistence, and adds browser evidence for the diagnostics widget. The implementation stays on PR #176; current hosted checks are not reported. Full portfolio remains partial at 65 PASS, 0 BLOCKED, 1 MANUAL.
+This continuation closes the isolated PostgreSQL blocker for core migrations, actor/tenant scope and restart persistence, and adds browser evidence for the diagnostics widget. A selected production-browser contrast scan found one provider sublabel at 4.17:1; its color was corrected and the retest passed for company details in all three roles, Providers, Brain and protected Diagnostics. The implementation stays on PR #176; current hosted checks are not reported. Full portfolio remains partial at 65 PASS, 0 BLOCKED, 1 MANUAL.
 
 The next work remains in priority order: (1) finish baseline/release reconciliation and obtain normal PR review/remote merge verification; (2) extend route/role/screen-reader/localization acceptance around the diagnostics and management surfaces, while native device/audio remains manual; (3) continue provider-independent tenant integration review and reserve real call/CRM checks for each selected client; (4) resolve Session retention/ownership, then expand persistent CRUD coverage across the model/role/surface/operation matrix.
 

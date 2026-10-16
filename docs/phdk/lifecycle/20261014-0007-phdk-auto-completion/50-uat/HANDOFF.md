@@ -1,3 +1,13 @@
+## Candidate 5.1.72 — UAT-067 PASS_SCOPED; whole acceptance incomplete
+
+Production-built Web UAT passes 6/6 plus AI-admin; protected diagnostics passes 19/19; Browser widget source/layout checks pass 3/3 and Browser TypeScript build passes. UAT-067 verifies widget names, 44×44 hit areas, keyboard order, visible focus, live status and selected route contrast. A provider sublabel measured 4.17:1, was corrected and now passes the 4.5:1 text threshold; the retest covers company details for superadmin/admin/coordinator, Providers, Brain and Diagnostics. Local UI fixtures are synthetic and external traffic is blocked. Evidence: `evidence/uat-067-web-accessibility-5.1.72.json` and `evidence/uat-web-widget-5.1.72/`.
+
+Tally remains **65 PASS, 0 BLOCKED, 1 MANUAL**. Screen-reader, full-route/localization and native device/audio acceptance remain open. FlowRunEvidence remains dormant in schema, and the owner confirmed it is not needed by current execution; no retention job or migration is authorized or required now.
+
+SIGUIENTE PASO: integrate the scoped browser evidence into PR #176, then continue the still-open portfolio acceptance gates.
+
+---
+
 PR #174 is squash-merged at verified remote `main` `f97ad0469830e2cadfeb7379800c74e89dd1d67d`; tested tree matches. Candidate 5.1.71 classifies FlowRunEvidence as dormant/N/A across 14 rows while retaining schema. UAT-065 is source-only; portfolio is 63 PASS, 1 BLOCKED, 1 MANUAL. Full proof: `PHDK_DELIVERY_EVIDENCE-5.1.71-post-merge-174.json`.
 
 ## Candidate 5.1.71 — UAT-065 PASS; portfolio acceptance incomplete
