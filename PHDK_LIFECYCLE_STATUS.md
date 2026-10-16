@@ -1,6 +1,6 @@
-## Current PHDK Auto — candidate 5.1.72; whole goal active
+## Current PHDK Auto — 5.1.72 source merged; whole goal active and partial
 
-Run `20261014-0007-phdk-auto-completion`; official PHDK updater and coherence check confirm v2.51.2 / 56 mappings, canonical SHA `a2d2508b59c2546d939fb3843f232ea7bfea2cc1`. Work is now in the repository checkout `C:\KELEDON\keledon`, refreshed from remote `main` 5.1.71 at `4f1db4b19509a8ca8188a782cbe76ea2fb998683`. A clean versioned delivery branch is being prepared from this exact base; PR [#176](https://github.com/tuyoisaza/keledon/pull/176) remains an open intermediate candidate and is not the delivery result. No merge or deployment is claimed.
+Run `20261014-0007-phdk-auto-completion`; official PHDK updater and coherence check confirm v2.51.2 / 56 mappings, canonical SHA `a2d2508b59c2546d939fb3843f232ea7bfea2cc1`. PR [#177](https://github.com/tuyoisaza/keledon/pull/177) squash-merged the tested 5.1.72 source to remote `main` `ddc2b6030618a1f648ffc37fa296c64729ef503b`, tree `4a7cef0dff1683b1d666b83c8ae4cf0338096d45`, matching the final candidate tree. All six version reads are 5.1.72; PR #176 is closed as superseded. The source delivery gate is recorded in `PHDK_DELIVERY_EVIDENCE.json`; no deployment is claimed.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -13,11 +13,11 @@ Run `20261014-0007-phdk-auto-completion`; official PHDK updater and coherence ch
 | SEO | COMPLETED / SOURCE SCOPE | Web and Landing SEO tests 1/1 each; no public route/metadata edits. Deployed measurement remains unavailable. |
 | AEO/GEO | COMPLETED / SOURCE SCOPE | Public source inventory and answerability controls reviewed; external engine discovery remains unmeasured. |
 | Check / Remediation | COMPLETED / SOURCE PASS | API 40/40, Cloud 18/18, five builds/lints, four typechecks, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser 3/3, SEO 1/1 each, PHDK 56/56; no new source remediation. |
-| Delivery | OPEN | Version-prefixed source commit `9fee7eaf` is on the clean branch; open the final PR, inspect actual controls, merge through normal review/protection and verify remote `main`. |
+| Delivery | COMPLETED / SOURCE SLICE | PR #177 merged normally; remote SHA/tree and six version reads verified; completion gate recorded. GitHub reported no hosted checks/review decision and `main` was unprotected. |
 
 Portfolio remains **PARTIALLY DELIVERED** (65 PASS, 0 BLOCKED, 1 MANUAL). Whole-Auto gates include native device/audio, full resource-operation matrix, remaining Session lifecycle policy, broad route/screen-reader/localization, deployed SEO/AEO, Qdrant concurrency and per-client live call/CRM acceptance.
 
-SIGUIENTE PASO: finish PR and remote `main` verification; retain partial status for unresolved Session decisions and manual/customer/deployed acceptance.
+SIGUIENTE PASO: continue partial portfolio acceptance, starting with the remaining admin/Session decisions and feasible isolated coverage; retain partial status for manual/customer/deployed gates.
 
 ---
 

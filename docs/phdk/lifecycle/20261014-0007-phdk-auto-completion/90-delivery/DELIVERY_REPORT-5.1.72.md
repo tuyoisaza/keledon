@@ -1,4 +1,6 @@
-# Delivery report — 5.1.72 candidate; PostgreSQL core acceptance passed
+# Delivery report — 5.1.72 source merged and verified; PostgreSQL core acceptance passed
+
+PR [#177](https://github.com/tuyoisaza/keledon/pull/177) squash-merged tested source `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` at remote `main` `ddc2b6030618a1f648ffc37fa296c64729ef503b`. Remote main tree `4a7cef0dff1683b1d666b83c8ae4cf0338096d45` equals the final candidate tree, all six version reads are 5.1.72, and the deterministic completion gate passes. PR #176 was closed as superseded. GitHub reported no hosted checks or review decision; main was unprotected. Whole Auto remains PARTIALLY DELIVERED (65 PASS, 0 BLOCKED, 1 MANUAL). No deployment is claimed. Root machine evidence: `../../../../../../PHDK_DELIVERY_EVIDENCE.json`; lifecycle evidence snapshot: `PHDK_DELIVERY_EVIDENCE-5.1.72.json`.
 
 UAT-066 resolves the local PostgreSQL blocker for core acceptance. Against separate disposable PostgreSQL 16.15 API and Cloud databases, 9 and 7 migrations respectively applied cleanly and repeat deploys found no pending migrations. The API passed 26 assertions and Cloud 10 for DB-derived identity, tenant isolation, denied privilege-changing writes and Session status/metadata persistence. Restart readback passed for both services, API two-instance shared-database behavior passed, and both schemas enforced tenant-matched flow permissions and unique flow versions. Evidence: `../50-uat/evidence/uat-postgres-core-5.1.72.json`.
 

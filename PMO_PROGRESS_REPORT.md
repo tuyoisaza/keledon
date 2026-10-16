@@ -1,8 +1,8 @@
-## Current PMO progress — candidate 5.1.72; final PR pending
+## Current PMO progress — 5.1.72 merged; Auto remains partial
 
-Versioned candidate source commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` is prepared on `fix/phdk-auto-delivery-5-1-72` in `C:\KELEDON\keledon`, based on verified remote `main` 5.1.71. API/Cloud regressions 40/40 and 18/18, all five builds/lint checks, four app typechecks, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3/build, SEO 1/1 each and PHDK coherence 56/56 pass. Six measured text-contrast defects are fixed. Check reports no new source remediation. Intermediate PR #176 remains open and does not contain this final versioned commit; final PR creation, normal controls and merge/readback remain open. No deployment is claimed. Whole acceptance remains partial at **65 PASS, 0 BLOCKED, 1 MANUAL**.
+PR [#177](https://github.com/tuyoisaza/keledon/pull/177) squash-merged tested source commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` at remote `main` `ddc2b6030618a1f648ffc37fa296c64729ef503b`; merged tree and all six 5.1.72 version reads match. API/Cloud regressions 40/40 and 18/18, all five builds/lint checks, four app typechecks, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3/build, SEO 1/1 each and PHDK coherence 56/56 pass. Six measured text-contrast defects are fixed. Check reports no new source remediation. PR #176 was closed as superseded. No deployment is claimed. Whole acceptance remains partial at **65 PASS, 0 BLOCKED, 1 MANUAL**.
 
-Next: create the final PR, inspect actual review/protection controls, merge normally, and verify remote `main`. Three Session API ownership/retention decisions remain open; FlowRunEvidence is dormant and not needed by current runtime.
+Next: continue the three Session API ownership/retention decisions and other remaining customer, deployed, and manual acceptance. FlowRunEvidence is dormant and not needed by current runtime.
 
 ---
 

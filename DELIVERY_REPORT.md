@@ -1,10 +1,20 @@
-## Current candidate 5.1.72 — source ready; final PR pending
+## Current delivery — 5.1.72 merged and remotely verified; Auto remains partial
+
+PR [#177](https://github.com/tuyoisaza/keledon/pull/177) squash-merged tested source `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` at remote `main` `ddc2b6030618a1f648ffc37fa296c64729ef503b`, tree `4a7cef0dff1683b1d666b83c8ae4cf0338096d45`. `git ls-remote origin main` agrees; the merged tree equals the final tested candidate tree, and all six version reads are 5.1.72. PR #176 was closed as superseded. GitHub reported no hosted checks or review decision; `main` was unprotected. The mechanical source-delivery gate passes from [PHDK_DELIVERY_EVIDENCE.json](PHDK_DELIVERY_EVIDENCE.json). No deployment is claimed.
+
+API/Cloud regressions 40/40 and 18/18, five builds and lint checks, four typechecks, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3/build, both SEO source checks 1/1, PHDK coherence 56/56 and UAT-066 scoped disposable PostgreSQL evidence pass. Whole Auto remains **PARTIALLY DELIVERED** (65 PASS, 0 BLOCKED, 1 MANUAL). Native device/audio, full resource operations, three Session lifecycle decisions, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and client-selected live call/CRM acceptance remain open.
+
+Detailed post-merge record: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/90-delivery/PHDK_DELIVERY_EVIDENCE-5.1.72.json`.
+
+---
+
+## Previous candidate report — 5.1.72 before PR merge
 
 Versioned source commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` is on `fix/phdk-auto-delivery-5-1-72` in the refreshed main checkout. API/Cloud regressions 40/40 and 18/18, all five builds/lint checks, four typechecks, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3/build, Web/Landing SEO tests 1/1 each, PHDK coherence 56/56 and diff check pass. UAT-067 covers keyboard names/order, 44×44 targets, visible focus, live feedback, and selected WCAG AA contrast; six defects were corrected and retested.
 
-Intermediate PR [#176](https://github.com/tuyoisaza/keledon/pull/176) remains open but does not contain this final versioned commit. The final PR has not yet been created; no merge is claimed. Whole acceptance remains **PARTIALLY DELIVERED** (65 PASS, 0 BLOCKED, 1 MANUAL). Remaining gates include native audio/device, full resource operations, broad screen-reader/localization and route coverage, three Session decisions, deployed SEO/AEO, Qdrant concurrency and per-client call/CRM. No production/customer data or deployment was used.
+At that point PR #176 was the intermediate candidate and final PR/merge were pending. This historical snapshot is superseded by the verified delivery above. Whole acceptance remains **PARTIALLY DELIVERED** (65 PASS, 0 BLOCKED, 1 MANUAL).
 
-SIGUIENTE PASO: create the final PR, inspect actual review/protection controls, merge normally, and verify the resulting `main` tree and version; retain the open portfolio gates.
+SIGUIENTE PASO: continue the open portfolio acceptance gates; retain PARTIALLY DELIVERED until they pass.
 
 ---
 

@@ -1,4 +1,12 @@
-## Current candidate 5.1.72 — source Check passed; final PR pending
+## Current delivery 5.1.72 — source merged and remotely verified; Auto partial
+
+PR [#177](https://github.com/tuyoisaza/keledon/pull/177) squash-merged tested source `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` at remote `main` `ddc2b6030618a1f648ffc37fa296c64729ef503b`; remote tree equals the final candidate and all six version reads are 5.1.72. PR #176 is closed as superseded. GitHub reported no hosted checks or review decision; main was unprotected. The mechanical gate passes from root `PHDK_DELIVERY_EVIDENCE.json`. Whole Auto remains partial (65 PASS, 0 BLOCKED, 1 MANUAL). No deployment is claimed.
+
+Next: continue the remaining owner decisions and manual, external, and client-specific acceptance gates. Preserve PARTIALLY DELIVERED until all four commitments close.
+
+---
+
+## Historical pre-merge handoff — candidate 5.1.72
 
 Versioned commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` is prepared on `fix/phdk-auto-delivery-5-1-72` from the refreshed main checkout. It includes core PostgreSQL UAT-066, API/Cloud proof-manifest validation, six Web contrast fixes, refreshed PHDK v2.51.2 evidence and completed source Check. API/Cloud regressions 40/40 and 18/18, five builds/lints, four typechecks, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3/build, both SEO source tests 1/1 and PHDK coherence 56/56 pass.
 

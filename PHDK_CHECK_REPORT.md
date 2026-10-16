@@ -1,10 +1,10 @@
-## Current PHDK Auto Check — candidate 5.1.72; source PASS, delivery open
+## Current PHDK Auto Check — 5.1.72 source merged and verified; whole Auto partial
 
-Candidate `fix/phdk-auto-delivery-5-1-72` is source commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c`, based on remote `main` 5.1.71. API/Cloud regressions pass 40/40 and 18/18; all five builds, five lint checks, four app typechecks and Browser TypeScript build pass. Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget checks 3/3, both SEO tests 1/1, PHDK v2.51.2 coherence 56/56 and diff check pass.
+PR [#177](https://github.com/tuyoisaza/keledon/pull/177) squash-merged tested source `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` to verified remote `main` `ddc2b6030618a1f648ffc37fa296c64729ef503b`; remote tree `4a7cef0dff1683b1d666b83c8ae4cf0338096d45` matches the final candidate tree and all six version reads are 5.1.72. API/Cloud regressions pass 40/40 and 18/18; all five builds and lint checks, four app typechecks and Browser TypeScript build pass. Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget checks 3/3, both SEO tests 1/1, PHDK v2.51.2 coherence 56/56 and scoped PostgreSQL UAT pass. The mechanical source-delivery gate passes from `PHDK_DELIVERY_EVIDENCE.json`.
 
 No new source remediation is proposed. Whole Auto remains **PARTIAL**: broad persisted CRUD, screen-reader/route coverage, three Session lifecycle decisions, native device/audio, deployed SEO/AEO, Qdrant concurrency and customer-specific voice/CRM acceptance remain open. See `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.1.72.md`.
 
-SIGUIENTE PASO: finish PR/review/merge controls and verify remote `main`; do not claim whole-portfolio completion or deployment.
+SIGUIENTE PASO: continue open portfolio acceptance; do not claim whole-portfolio completion or deployment.
 
 ---
 
