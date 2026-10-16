@@ -104,21 +104,15 @@ def main():
             if len(ls) < 2 or ls[1] != "refs/heads/" + branch:
                 raise RuntimeError("remote ref not returned")
             remote_sha = ls[0]
-            # A later reviewed commit may advance the branch after the recorded
-            # delivery. Accept it only when the recorded merge remains an ancestor.
-            try:
-                git("cat-file", "-e", remote_sha + "^{commit}")
-            except RuntimeError:
-                git("fetch", "--no-tags", args.remote, branch)
             if remote_sha.lower() != sha.lower():
+                errors.append(f"remote {branch} is {remote_sha}, expected {sha}")
+            else:
+                # Fetch a specific SHA read-only into object database if necessary.
                 try:
-                    git("merge-base", "--is-ancestor", sha, remote_sha)
+                    git("cat-file", "-e", sha + "^{commit}")
                 except RuntimeError:
-                    errors.append(
-                        f"recorded merge {sha} is not an ancestor of remote {branch} {remote_sha}"
-                    )
-            if not errors:
-                source = git("show", remote_sha + ":" + version_file)
+                    git("fetch", "--no-tags", args.remote, branch)
+                source = git("show", sha + ":" + version_file)
                 observed_version = extract_version(source, version_property)
                 if observed_version.lstrip("v") != data.get("expected_version", "").lstrip("v"):
                     errors.append(f"remote version source {observed_version!r} != expected {data.get('expected_version')!r}")
@@ -129,17 +123,8 @@ def main():
         for error in errors:
             print(" - " + error)
         return 1
-    print(
-        f"PASS: recorded delivery {sha} is present on {args.remote}/{branch} "
-        f"(current SHA={remote_sha}, VERSION={data['expected_version']})"
-    )
-    acceptance = data.get("whole_auto_acceptance")
-    if isinstance(acceptance, dict) and acceptance.get("status") in ("PARTIAL", "BLOCKED"):
-        summary = acceptance.get("summary", "").strip()
-        suffix = f" - {summary}" if isinstance(summary, str) and summary else ""
-        print(f"WHOLE GOAL: {acceptance['status']}{suffix}")
-    else:
-        print("Note: PR merge/reviews and product acceptance must also be independently verified.")
+    print(f"PASS: remote {args.remote}/{branch} SHA={sha} VERSION={data['expected_version']}")
+    print("Note: PR merge/reviews and product acceptance must also be independently verified.")
     return 0
 
 if __name__ == "__main__":

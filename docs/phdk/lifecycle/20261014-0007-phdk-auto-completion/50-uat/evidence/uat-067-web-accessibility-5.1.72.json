@@ -1,0 +1,67 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-067",
+  "candidate_version": "5.1.72",
+  "candidate_commit": "9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c",
+  "candidate_source_fingerprint": "sha256:8e5d5eb0952f235bc54147785fb89782bc485b13e14630574251f7e8ac454f45",
+  "environment": {
+    "target": "local production-built Web SPA",
+    "browser": "Playwright Chromium",
+    "synthetic_api_fixtures": true,
+    "external_network": "blocked",
+    "customer_data": false,
+    "production_authentication": false
+  },
+  "status": "PASS_SCOPED",
+  "web_uat": {
+    "status": "PASS",
+    "suites": "6/6 plus AI administration UI UAT",
+    "widget_assertions": [
+      "Copy and clear controls expose accessible names.",
+      "Both action targets measure 44×44 CSS pixels.",
+      "Keyboard Tab moves from copy to clear, and the focused action renders a visible 2px outline.",
+      "Copy feedback uses a polite live status region.",
+      "Copy and clear success/failure states, safe report redaction, and owned-state reset behavior passed.",
+      "Widget remains visible at 390px and simulated 200%/400% viewport widths without horizontal overflow."
+    ],
+    "other_journeys": [
+      "Public navigation and mobile preference controls passed.",
+      "Synthetic admin/coordinator/user role views, diagnostics-safe probes, tenant flow editor, Knowledge manager, devices and protected AI administration journeys passed.",
+      "WCAG 2.2 AA text contrast sample covers management, Knowledge, dashboard, sessions, profile and devices across selected roles, locales and themes; all sampled results pass."
+    ],
+    "evidence_directory": "uat-web-widget-5.1.72/"
+  },
+  "focused_regressions": {
+    "web_diagnostics": "PASS 19/19",
+    "browser_widget": "PASS 3/3 source/unit cases",
+    "browser_typescript_build": "PASS"
+  },
+  "limitations": [
+    "This is local synthetic UI evidence and does not prove real backend authorization, production authentication, deployed behavior or every active route.",
+    "No assistive-technology screen-reader session was run; broad route, role, locale, zoom and contrast acceptance remains incomplete.",
+    "Browser widget unit checks inspect source/layout contracts only; native packaged Electron visuals, OS permission prompts and physical device/audio remain MANUAL."
+  ],
+  "contrast_scan": {
+    "status": "PASS_SCOPED",
+    "standard": "WCAG 2.2 AA text contrast thresholds",
+    "threshold_normal_text": "4.5:1",
+    "routes": [
+      "management statuses, brands, teams, vendors and vendor create dialog",
+      "users: admin and superadmin",
+      "Knowledge: Spanish, English, Portuguese and manager view",
+      "dashboard: Spanish, English and Portuguese",
+      "sessions: live, history and detail",
+      "profile: Spanish, English and Portuguese",
+      "devices",
+      "launcher",
+      "company details: superadmin, admin and coordinator",
+      "provider settings",
+      "Brain",
+      "protected diagnostics",
+      "dashboard and devices: dark, light and corporate themes"
+    ],
+    "result": "No sampled contrast failures after fix",
+    "finding": "Six text contrast defects were corrected and retested: Providers sublabel 4.17:1; primary action label 2.38:1; dark muted text 4.06:1; completed badge 4.22:1; paired-device status label 2.12:1; dark-theme missing-provider-key copy 3.30:1. The scanner composites alpha and nested opacity groups and excludes disabled controls from this text threshold.",
+    "limitation": "Selected automated production-browser route/locale/theme sample; not full-app or assistive-technology certification."
+  }
+}

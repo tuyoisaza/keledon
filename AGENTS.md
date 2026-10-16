@@ -43,3 +43,5 @@
 - Report verification and limitations accurately. Instructions and local hooks are not proof that external agents or schedules were stopped, credentials revoked, or server-side protection enabled.
 - Before canonical releases audit coherence using `phdk-standards/PHDK_COHERENCE_STANDARD.md` and its static checker; separately review semantic conflicts and execution evidence.
 <!-- PHDK-MANAGED:END -->
+
+\r\n

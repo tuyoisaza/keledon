@@ -1,3 +1,13 @@
+# Candidate 5.1.72 revalidation — public source unchanged (2026-10-15)
+
+SEO is **APPLICABLE** to the public homepage at `/`. Candidate source `87c1fddb8d965a7e01649330b7f74f6252628b40` and UAT runner `d4b001087e4b0076b29f31d9a0a3795dc9b1fd9e` alter authenticated administration/session/device styles and test coverage; they do not alter the public Landing/Web copy, public routes, HTML title/description/canonical, robots, sitemap, or route indexability. Public `/` stays indexable; authenticated SPA routes and tenant/customer destinations stay private/noindex.
+
+Current validation: `npm run test:seo --prefix services/web` PASS 1/1 and `npm run test:seo --prefix landing` PASS 1/1. Static source inspection reuses the current public route and metadata audit. No browser, live HTTP, crawler, Search Console, TLS, Lighthouse, field CWV or deployed measurement was performed. The scoped public-source result passes; external discovery evidence remains unmeasured or blocked.
+
+SIGUIENTE PASO: revalidate AEO/GEO on the unchanged public claims, then run integrated Check.
+
+---
+
 # SEO source audit — run `20261014-0007-phdk-auto-completion`
 
 ## Candidate 5.1.53 revalidation — public root initial HTML (2026-10-14)

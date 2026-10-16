@@ -141,8 +141,8 @@ export default function SessionsHistoryPage() {
                                     <td className="px-4 py-3 font-mono text-sm">{session.id.slice(0, 8)}</td>
                                     <td className="px-4 py-3">
                                         <span className={cn('px-2 py-1 rounded-full text-xs capitalize',
-                                            status === 'completed' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
-                                                'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20')}>
+                                            status === 'completed' ? 'bg-blue-500/10 text-status-info-foreground border border-blue-500/20' :
+                                                'bg-yellow-500/10 text-status-warning-foreground border border-yellow-500/20')}>
                                             {['completed', 'escalated', 'ended', 'orphaned'].includes(status)
                                                 ? t(`sessions.status.${status}`)
                                                 : status}

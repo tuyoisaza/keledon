@@ -202,7 +202,7 @@ export default function ManagementVendorsPage() {
                     <button
                         onClick={openCreateForm}
                         disabled={!selectedTeamId}
-                        className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-foreground px-4 py-2 rounded-lg disabled:opacity-50"
+                        className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg disabled:opacity-50"
                     >
                         <Plus className="w-4 h-4" />
                         {t('records.addVendor')}
@@ -446,7 +446,7 @@ export default function ManagementVendorsPage() {
                                 <button
                                     type="submit"
                                     disabled={saving}
-                                    className="flex-1 bg-primary hover:bg-primary/90 text-foreground px-4 py-2 rounded-lg disabled:opacity-50"
+                                    className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg disabled:opacity-50"
                                 >
                                     {saving ? (
                                         <Loader2 className="w-5 h-5 animate-spin mx-auto" />

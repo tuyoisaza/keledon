@@ -1,3 +1,19 @@
+## Candidate 5.1.72 — UAT-067 production-built Web widget accessibility and diagnostics
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-067 | CMT-002 / anonymous visitor and synthetic tenant roles | Build Web 5.1.72; block external traffic and intercept APIs; inspect the shared diagnostics widget; exercise keyboard navigation, copy feedback, reset, responsive widths, protected diagnostics and synthetic admin flows. Scan text contrast on management, Knowledge, dashboard, sessions, profile and devices; exercise English/Spanish/Portuguese and dark/light/corporate themes on sampled routes. | Actions have accessible names, 44×44px targets, visible keyboard focus and polite live status; redaction/reset behavior and selected UI journeys work without external calls; scanned text meets WCAG 2.2 AA contrast thresholds, and no sampled failures remain. | Local production-built Web SPA / Playwright Chromium | PASS for this local synthetic scope: production-built UAT 6/6 plus AI-admin UAT; focused diagnostics 19/19; selected multi-route/role/locale/theme contrast scan passes. Corrected the Providers sublabel (4.17:1), primary-action foreground (2.38:1), muted text token (4.06:1), completed badge (4.22:1) and paired-device label (2.12:1); retests pass. Evidence: `evidence/uat-067-web-accessibility-5.1.72.json` and `evidence/uat-web-widget-5.1.72/`. Screen-reader and exhaustive-route certification remain open. |
+
+Portfolio tally: **65 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Native Electron/device/audio remains MANUAL; broad route/role/screen-reader/localization acceptance, deployed SEO/AEO, Qdrant concurrency, complete resource operations, Session lifecycle policy and per-customer call/CRM acceptance remain open.
+
+## Candidate 5.1.72 — UAT-066 disposable PostgreSQL roles, tenant scope and persistence
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-066 | UAT-060 / synthetic superadmin and tenant admins | Apply API and Cloud Prisma migrations to separate disposable PostgreSQL 16.15 databases; exercise registration, DB-derived identity, two-tenant company/session access, forbidden writes, restart persistence, shared-database API instances and flow permission/version constraints. | Migrations are current and repeatable; persisted actor scope isolates tenants; allowed Session status/metadata writes survive restart; forbidden cross-tenant/reassignment/elevation actions fail closed; schema constraints reject cross-tenant permission and duplicate versions. | Local loopback API and Cloud with synthetic identities | PASS for 26 API and 10 Cloud assertions, restart persistence for both, API two-instance shared-DB behavior, and constraints in both schemas. Evidence: `evidence/uat-postgres-core-5.1.72.json`. Full resource/operation matrix remains open. |
+
+UAT-060 is resolved for this core disposable-PostgreSQL scope. Portfolio tally: **64 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Native device/audio remains MANUAL; exhaustive CRUD coverage, the three Session lifecycle decisions, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and client-specific call/CRM journeys remain open.
+
 ## Candidate 5.1.71 — UAT-065 FlowRunEvidence dormancy
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

@@ -1,3 +1,13 @@
+## Current candidate 5.1.72 — source ready; final PR pending
+
+Versioned source commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` is on `fix/phdk-auto-delivery-5-1-72` in the refreshed main checkout. API/Cloud regressions 40/40 and 18/18, all five builds/lint checks, four typechecks, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3/build, Web/Landing SEO tests 1/1 each, PHDK coherence 56/56 and diff check pass. UAT-067 covers keyboard names/order, 44×44 targets, visible focus, live feedback, and selected WCAG AA contrast; six defects were corrected and retested.
+
+Intermediate PR [#176](https://github.com/tuyoisaza/keledon/pull/176) remains open but does not contain this final versioned commit. The final PR has not yet been created; no merge is claimed. Whole acceptance remains **PARTIALLY DELIVERED** (65 PASS, 0 BLOCKED, 1 MANUAL). Remaining gates include native audio/device, full resource operations, broad screen-reader/localization and route coverage, three Session decisions, deployed SEO/AEO, Qdrant concurrency and per-client call/CRM. No production/customer data or deployment was used.
+
+SIGUIENTE PASO: create the final PR, inspect actual review/protection controls, merge normally, and verify the resulting `main` tree and version; retain the open portfolio gates.
+
+---
+
 ## Current delivery — 5.1.70 source slice merged and verified; Auto partial
 
 PR [#172](https://github.com/tuyoisaza/keledon/pull/172) squash-merged tested source `d9a7d4cff075ff0d8d9a7f64646a5fdfd2a1e1b6` at verified remote `main` `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`, tree `8ea2aee2cbd9be5d10d3b2e0e9918e5a2182b782`, equal to the tested candidate tree. All five app package/lock roots and Browser renderer read 5.1.70. API/Cloud regressions pass 39/39 and 18/18; five production builds and lint checks pass; four dedicated typechecks and Browser's TypeScript build pass; PHDK v2.51.2 coherence is 56/56. The mechanical completion gate passes against the immutable post-merge record. GitHub reported no hosted checks or review decision; no deployment is claimed.

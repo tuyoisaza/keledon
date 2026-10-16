@@ -1,0 +1,16 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "stage": "67-aeo-geo",
+  "candidate_version": "5.1.72",
+  "candidate_revision": "f2d75362d16c3b3dc086c3b05ad0067c34d99d9d",
+  "product_source_revision": "87c1fddb8d965a7e01649330b7f74f6252628b40",
+  "target": "public homepage source at /; private tenant/customer routes excluded",
+  "status": "PASS_SCOPED_SOURCE",
+  "validation": "Public source and supported claims are unchanged; current SEO handoff and Web/Landing source tests pass 1/1 each.",
+  "unresolved": [
+    "No verified public author/contact/provenance evidence supplied.",
+    "Public target market/language policy remains undecided.",
+    "Crawler/rendered content and independent answer citations were not measured."
+  ],
+  "external_queries": "NOT RUN: no answer engine, crawler, live page, paid query or customer endpoint was accessed."
+}

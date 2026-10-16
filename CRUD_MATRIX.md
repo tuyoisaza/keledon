@@ -1,5 +1,11 @@
 # CRUD matrix — current source and authorization coverage
 
+## 5.1.72 — PostgreSQL core UAT evidence
+
+UAT-066 applied all 9 API and 7 Cloud migrations to separate disposable PostgreSQL 16.15 databases. Repeat deploys found no pending migrations. Synthetic DB-derived identity and tenant/session permission checks passed (API 26 assertions, Cloud 10); Session metadata/status persisted across service restarts, API shared-database access passed across two instances, and both schemas enforced tenant-matched flow permissions and unique versions. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-postgres-core-5.1.72.json`. This closes the core UAT-060 database blocker; it does not complete the full 39-model × role × surface × operation matrix. Three Session lifecycle/ownership rows still need a retention/audit decision.
+
+UAT-067 verifies the production-built 5.1.72 Web diagnostics widget with synthetic APIs: accessible action names, keyboard Tab order, visible focus, 44×44px hit areas, polite status announcement, reset/redaction and selected responsive/theme journeys pass. Web UAT passes 6/6 plus AI-admin; focused diagnostics pass 19/19. Exact evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-067-web-accessibility-5.1.72.json` and adjacent visual artifacts. This is scoped UI evidence; no screen-reader or full-route certification is claimed.
+
 ## 5.1.71 — dormant FlowRunEvidence classification
 
 The owner asked whether FlowRunEvidence is necessary. Repository inspection finds the Prisma model but no API/Cloud writer, reader, route, UI, or runtime reference; current flow execution uses FlowRun/SubAgentRun. It is not required by the active execution path. Preserve the schema for possible future use, classify all 14 role/surface rows as NOT APPLICABLE, and add no route, role grant, runtime retention job, or migration. Reconsider activation or retirement only with a defined evidence contract and an approved migration. This is source inventory, not persisted acceptance. Inventory: 546 rows = 410 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 1 PASS.

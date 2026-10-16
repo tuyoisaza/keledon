@@ -1,3 +1,13 @@
+## v5.1.72 — 2026-10-15 (close PHDK Auto integration and contrast findings)
+
+- Remove stale API/Cloud local proof-script entries and add a regression that verifies every remaining local proof script target exists.
+- Fix selected Web text-contrast defects across management, session/device status, actions, and missing provider-key messages; make the browser contrast scanner composite alpha and opacity correctly and skip disabled controls.
+- Synchronize the vendored PHDK v2.51.2 standards and refresh the four owner-approved PHDK Auto workstreams and stage evidence.
+
+### Verification
+- API 40/40 suites; Cloud 18/18; production-built Web UAT 6/6 plus AI-admin; Web diagnostics 19/19; Browser widget checks 3/3; Web/Landing SEO 1/1 each.
+- PHDK v2.51.2 coherence 56/56; all checks use synthetic fixtures where applicable. Whole PHDK Auto remains partial for manual and external acceptance.
+
 ## v5.1.70 — 2026-10-15 (record owner-approved dormant feature flags)
 
 - Keep the FeatureFlag schema and unregistered service dormant by owner decision; grant no roles and expose no route, module, UI, or caller.

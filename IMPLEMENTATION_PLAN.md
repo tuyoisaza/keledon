@@ -1,3 +1,25 @@
+## Active integrated continuation — PHDK Auto current candidate 5.1.72
+
+Revalidated for the current owner request on 2026-10-15. The four confirmed fronts remain active and ordered. Candidate branch `fix/phdk-auto-next-front-5-1-72` is based on `main` 5.1.71 at `4f1db4b19509a8ca8188a782cbe76ea2fb998683`; PR [#176](https://github.com/tuyoisaza/keledon/pull/176) is open. Its tested Web changes improve WCAG contrast, and UAT-066 validates the core disposable-PostgreSQL scope. PHDK v2.51.2 is installed and static coherence passes 56/56.
+
+| Priority | Workstream / commitment | Current evidence | Remaining plan / exit proof |
+|---|---|---|---|
+| 1 | Baseline, version, PR delivery — CMT-001 | Candidate versions align at 5.1.72; stale API/Cloud proof scripts were removed; PR #176 is clean/open. | Reconcile the entire final diff, version-prefixed history, local checks, normal PR merge and exact `main` SHA/tree/version readback. |
+| 2 | Widget and diagnostics — CMT-002 | Production-built Web UAT verifies accessible widget actions, keyboard/focus/target sizing/live feedback; diagnostics 19/19; five contrast defects fixed in selected route/locale/theme scan. | Extend WCAG route/role/locale coverage and complete native Windows device/audio with a supported environment; keep screen-reader acceptance open until actually run. |
+| 3 | Voice → Cloud → Browser → CRM — CMT-003 | Tenant-owned flow definitions/editor and validated private-origin allowlist are implemented; provider-independent tests and UAT exist. | Review the full tenant-origin request lifecycle and adapter contracts. Run a live call/CRM journey only for an explicitly configured customer sandbox; record per-tenant proof. |
+| 4 | Administration and permissions — CMT-004 | Approved restrictive role policy and UAT-066 core database migration, identity/tenant, Session persistence/restart, API multi-instance and schema constraints passed. `FlowRunEvidence` is schema-only and not needed by current execution. | Reconcile all 39 models × roles × surfaces × operations, close source-fixable gaps, run additional permitted persisted tests, and isolate unresolved Session retention/audit policy from unrelated authorization checks. |
+
+## Dependency-ordered execution for this continuation
+
+1. Refresh PHDK preflight and confirm current branch/target/candidate; reconcile current Plan and PMO workstream records.
+2. Integrate the whole confirmed portfolio on the existing candidate, repairing clear in-scope source/test/documentation gaps without changing approved role, secret, tenant-allowlist or data-retention decisions.
+3. Complete PMO Integration Review, then UAT and all removable UAT fixes on the exact integrated candidate. Keep native device/audio and customer-selected live CRM acceptance MANUAL/external where the required environment is absent.
+4. Revalidate SEO for public indexable pages and AEO/GEO for public claims after UAT; record source and external-measurement status separately.
+5. Run final PHDK Check, remediate authorized fixable findings, rerun affected UAT and required builds/tests, then reconcile versions, changelog, commit history and delivery evidence.
+6. Update the scoped PR through normal controls, merge only after actual required checks/review are satisfied, and verify the resulting remote `main` SHA/tree/version. Do not call whole Auto complete while a confirmed item or gate lacks proof.
+
+---
+
 ## Active integrated continuation — PHDK Auto 5.1.70 merged; four fronts remain active
 
 PR #172 keeps FeatureFlag dormant per owner direction: retain schema/service, add no route/module/UI/consumer/role grant, and require a new decision plus migration review before activation or retirement. UAT-064 advances the owner decision and source classification only; tally is 62 PASS, 1 BLOCKED, 1 MANUAL. All four commitments remain active in order: baseline/version/PR backlog; widget and safe diagnostics; tenant-selected voice→Cloud→Browser→CRM lifecycle; administration and permissions. Complete source-verifiable gaps, then exercise persistence and isolation against the owner-provided disposable PostgreSQL target. Do not call whole Auto complete based on source-only checks.

@@ -1,3 +1,39 @@
+# Candidate 5.1.72 revalidation — current 25-control status
+
+Affected public route/template: `https://keledon.tuyoisaza.com/` source only. Public source and indexation configuration are unchanged from the prior grounded audit; the two local SEO tests both pass. Statuses below describe current-source evidence, not deployed measurements.
+
+| ID | Status | Current candidate evidence / limitation |
+|---|---|---|
+| SEO-01 robots.txt | PASS (source) | Existing Web/Landing robots sources and SEO tests confirm sitemap reference and private API exclusion; deployed HTTP status not observed. |
+| SEO-02 Indexability | PASS (source) | Public root is index/follow; private SPA fallback is noindex/nofollow in source; deployed headers not observed. |
+| SEO-03 XML sitemap | PASS (source) | Static sitemaps list the canonical homepage only; URL response/indexation unmeasured. |
+| SEO-04 Canonical | PASS (source) | Static canonical agrees with sitemap and public route; redirects not probed. |
+| SEO-05 HTTP/redirects | BLOCKED / NOT MEASURED | No authorized live HTTP status or redirect probe. |
+| SEO-06 Search intent | PASS (source) | Existing truthful public overview remains aligned with project intent and client-configured integrations. |
+| SEO-07 Query terminology | PASS (source) | Natural product language retained; no search volume or ranking claim made. |
+| SEO-08 Title | PASS (source) | Existing KELEDON contact-center runtime title is unchanged and source-tested. |
+| SEO-09 Description | PASS (source) | Existing client-configured description is unchanged and source-tested; snippet display unmeasured. |
+| SEO-10 Headings | PASS (source) | Existing semantic initial HTML/React heading source unchanged; crawler-rendered DOM unobserved. |
+| SEO-11 Original useful content | PASS (source) | Public overview and existing qualification are unchanged; no new claim added. |
+| SEO-12 Trust/authors/sources | PARTIAL | No verified author/contact/certification source supplied; none invented. |
+| SEO-13 LCP | BLOCKED / NOT MEASURED | No field p75 or authorized comparable lab metric. |
+| SEO-14 INP | BLOCKED / NOT MEASURED | No field p75 or authorized comparable lab metric. |
+| SEO-15 CLS | BLOCKED / NOT MEASURED | No field p75 or authorized comparable lab metric. |
+| SEO-16 Mobile | PARTIAL | UI UAT covers selected responsive routes; public physical-device/mobile performance is not measured in this stage. |
+| SEO-17 HTTPS | BLOCKED / NOT MEASURED | HTTPS canonical is source evidence; certificate, redirect and mixed-content state were not probed. |
+| SEO-18 Interstitials | PASS (source) | No public entry interstitial introduced; no deployed runtime observation. |
+| SEO-19 Internal links | PASS (source) | Existing public login/architecture links remain unchanged. |
+| SEO-20 Information architecture | PASS (source) | Public root is indexable; private routes remain excluded. |
+| SEO-21 Images | NOT_APPLICABLE | Existing public imagery is decorative/icon/CSS; no content image change. |
+| SEO-22 Structured data | NOT_APPLICABLE | No eligible rich-result content established; no unsupported JSON-LD introduced. |
+| SEO-23 Rendering | PARTIAL | Vite/React content is client-rendered with static overview/noscript; crawler rendering not observed. |
+| SEO-24 Search Console | BLOCKED / NOT MEASURED | No connected authorized Search Console evidence. |
+| SEO-25 Links/reputation | BLOCKED / NOT MEASURED | No sourced backlink/mention data available. |
+
+Retest: Web and Landing SEO tests PASS 1/1 each. No public code changed, so no additional build or browser pass is claimed here.
+
+---
+
 # SEO checklist — run `20261014-0007-phdk-auto-completion`
 
 ## Candidate 5.1.53 delta — 2026-10-14

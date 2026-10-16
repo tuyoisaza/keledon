@@ -231,7 +231,7 @@ export default function ManagementProvidersPage() {
             )}
         >
             <div className="font-medium text-[15px]">{label}</div>
-            {sublabel && <div className="text-[11px] text-muted-foreground/70 mt-0.5">{sublabel}</div>}
+            {sublabel && <div className="text-[11px] text-foreground/80 mt-0.5">{sublabel}</div>}
         </button>
     );
 
@@ -483,7 +483,7 @@ export default function ManagementProvidersPage() {
                         )}
                         {storedKeys.openai && !openaiApiKey
                             ? <p className="text-[11px] text-green-400/80">✓ {t('providers.keySaved')}</p>
-                            : <p className="text-[11px] text-muted-foreground/60">{t('providers.openaiKeyMissing')}</p>
+                            : <p className="text-[11px] text-muted-foreground">{t('providers.openaiKeyMissing')}</p>
                         }
                     </div>
                 )}
@@ -501,7 +501,7 @@ export default function ManagementProvidersPage() {
                         )}
                         {storedKeys.google && !googleApiKey
                             ? <p className="text-[11px] text-green-400/80">✓ {t('providers.keySaved')}</p>
-                            : <p className="text-[11px] text-muted-foreground/60">{t('providers.googleKeyMissing')}</p>
+                            : <p className="text-[11px] text-muted-foreground">{t('providers.googleKeyMissing')}</p>
                         }
                     </div>
                 )}

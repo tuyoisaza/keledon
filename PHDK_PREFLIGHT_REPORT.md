@@ -1,35 +1,42 @@
-# PHDK Preflight — active Auto run `20261014-0007-phdk-auto-completion`
+## Checkout revalidation — 2026-10-15
 
-Run revalidated: 2026-10-15, America/Mexico_City.
-Repository: `tuyoisaza/keledon`, checkout `C:\KELEDON\keledon`.
-Target: `main` at verified remote SHA `fbeec0eafe72cc73e8a92c9105076d8174ce98dd`, product version 5.1.65.
-Working branch: `fix/phdk-flow-db-persistence-5-1-66`, based on that target.
+The active repository checkout is `C:\KELEDON\keledon`, not the similarly named parent directory. Its local evidence was preserved in a reversible stash, `origin/main` was fetched and fast-forwarded from 5.1.69 to 5.1.71 (`4f1db4b19509a8ca8188a782cbe76ea2fb998683`), then the evidence was restored. The official updater ran in this checkout and returned `UPDATED`, PHDK v2.51.2, canonical SHA `a2d2508b59c2546d939fb3843f232ea7bfea2cc1`; coherence passes 56/56.
 
-## Installation and integrity
+The in-progress versioned candidate is now consolidated in the main checkout on `fix/phdk-auto-delivery-5-1-72`, based on `origin/main` 5.1.71. The linked evidence worktree is not the delivery checkout. A later updater invocation correctly stopped because the candidate now contains an intentional local edit to `phdk_completion_gate.py`; the earlier successful sync remains recorded and coherence still passes. Final PR and remote `main` readback remain open.
 
-- Installed PHDK: `phdk-standards/` v2.51.2.
-- Canonical PHDK `main`: `a2d2508b59c2546d939fb3843f232ea7bfea2cc1`, version 2.51.2.
-- Preflight detected installed 2.50.10 was behind canonical 2.51.2. The official conservative `scripts/phdk_update.py` ran once; it reported `UPDATED` for one manifest-owned file (line-ending normalization), with the upstream SHA above. The full 56-file manifest was then compared byte-for-byte.
-- All 56 installed manifest destinations match the fetched canonical files byte-for-byte; no destination is missing. The `AGENTS.md` managed block matches canonical `PHDK_NATIVE_RULES.md` exactly, and owner text outside the markers was preserved.
-- `py phdk-standards/scripts/phdk_coherence_check.py`: PASS, v2.51.2, 56 manifest mappings (static only).
-- `git diff --check`: PASS; Git reports expected CRLF-to-LF normalization warnings for vendored Markdown files.
+---
 
-## Relevant capabilities and limits
+# PHDK Preflight — Auto continuation, 2026-10-15 America/Mexico_City
 
-- Git/GitHub repository read and PR inspection: AVAILABLE through local Git/GitHub tools.
-- Local source, build and regression checks: AVAILABLE.
-- Accessibility skill `design:accessibility-review`: AVAILABLE and used for the scoped responsive/accessibility review; evidence covers keyboard, focus, mobile reflow and target sizing, not full assistive-technology certification.
-- Separate external security/code-review skill: NOT FOUND in the active skill inventory; use PHDK security standards, source review and applicable tests. This does not imply human or independent review.
-- Browser automation: AVAILABLE only during Auto's UAT/UAT Fix stages.
-- No user-disabled capabilities were identified. No workers/delegation were used.
-- Device/audio, a safe owner-managed disposable database and deployed SEO/AEO measurements are not available here. Execution scope prohibits provisioning/administering those resources or using production/customer data.
+Run: `20261014-0007-phdk-auto-completion`
+Repository: `tuyoisaza/keledon`
+Checkout: `C:\KELEDON\keledon-phdk-evidence-5-1-69`
+Target: `origin/main` `4f1db4b19509a8ca8188a782cbe76ea2fb998683`, product 5.1.71
+Candidate: `fix/phdk-auto-next-front-5-1-72`, local/remote PR head `f2d75362d16c3b3dc086c3b05ad0067c34d99d9d`, product 5.1.72
+PR: [#176](https://github.com/tuyoisaza/keledon/pull/176), open against `main`; no hosted checks, requested reviewers, or review decision reported.
 
-## Confirmed owner decisions retained
+## PHDK installation and integrity
 
-Four ordered commitments remain active: baseline/version/PRs; diagnostics/widget; client-specific voice/Cloud/Browser/CRM; administration/permissions. New accounts receive `user`; only an existing superadmin elevates roles or assigns companies; admin/coordinator remain within their company and cannot elevate roles or delete companies; API derives actor and tenant from the database; normal responses do not return stored secrets. Client-configured private CRM origins remain permitted only after URL validation and tenant-scoped allowlisting.
+- Installed PHDK: `phdk-standards/` v2.51.2; canonical `tuyoisaza/PHDK` `main` is v2.51.2 at `a2d2508b59c2546d939fb3843f232ea7bfea2cc1`.
+- The required official `py phdk-standards/scripts/phdk_update.py` ran at Auto entry and reported `UPDATED`, v2.51.2, 56 manifest destinations, upstream SHA `a2d2508b59c2546d939fb3843f232ea7bfea2cc1`.
+- `py phdk-standards/scripts/phdk_coherence_check.py`: PASS, 56/56 static manifest mappings.
+- The current `AGENTS.md` managed block and `PHDK_NATIVE_RULES.md` are identical after newline normalization; owner text outside the block is preserved.
+- Vendored canonical standards are present. The conservative sync is represented as pending branch changes; PHDK version did not change.
 
-## Exit and current stage
+## Active capabilities and limits
 
-The standards installation is current and coherent. The integrated 5.1.66 candidate now includes durable Prisma-backed tenant flow configuration and mirrored API/Cloud migrations; source/schema acceptance passes, while actual migration/restart acceptance remains blocked without a disposable PostgreSQL target. The four owner-confirmed fronts remain active. Native device/audio, broad accessibility/localization, deployed SEO/AEO and client-selected live integrations remain open.
+- Git/GitHub read/write for this authorized Auto delivery: available; PR head and remote branch were independently read.
+- Local source/build/test tooling: available. Accessibility review skill is available; the repository's scoped browser evidence was already collected during UAT.
+- Code review/check diagnostics tool is available; no independent human review, required check, or branch protection is reported by GitHub at this read.
+- No user-disabled capability was identified. No subagents were used; the active execution instruction prohibits delegation outside an explicit PMO worker run.
+- Native packaged device/audio acceptance, live client-configured voice/CRM testing, and deployed SEO/AEO observations remain environment/customer dependent. Production/customer data and endpoints remain excluded.
 
-SIGUIENTE PASO: continue the four ordered Auto fronts; preserve database, native, deployed and per-client gates as open until owner acceptance.
+## Confirmed scope and decisions
+
+The four ordered commitments remain: baseline/version/PR backlog; widget and safe diagnostics; per-client voice→Cloud→Browser→CRM; administration and permissions. Restrictive role policy, tenant-owned flow configuration, per-tenant validated private destination allowlists, and dormant `FlowRunEvidence` without a runtime writer/retention job remain in force.
+
+## Preflight exit and next stage
+
+Preflight is complete for this Auto continuation. The four Capture artifacts, brownfield plan, confirmed PMO portfolio, UAT-066/067 evidence, and candidate branch were inspected. Plan/PMO must be refreshed against current `main` 5.1.71 and candidate 5.1.72 before the next integrated acceptance stages.
+
+SIGUIENTE PASO: revalidate the Plan and PMO ledgers against the four ordered commitments, then run Integration Review and the current-candidate SEO/AEO/Check gates before final UAT and delivery.

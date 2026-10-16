@@ -1,3 +1,9 @@
+## Current PMO board — candidate 5.1.72; final PR pending
+
+Run `20261014-0007-phdk-auto-completion`; PHDK v2.51.2 coherence passes 56/56. Source commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` is versioned on `fix/phdk-auto-delivery-5-1-72`, based on remote `main` 5.1.71. Intermediate PR #176 remains OPEN/CLEAN and does not contain this final branch; no hosted checks/review requests/review decision exist on #176. Final PR is pending. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled; **65 PASS, 0 BLOCKED, 1 MANUAL**. UAT-066 passes core disposable PostgreSQL scope; UAT-067 passes the production-built Web widget and selected WCAG contrast sample after six fixes. Check finds no new source remediation. Three Session API ownership/retention decisions remain open; FlowRunEvidence is dormant and not needed by current runtime. No deployment is claimed.
+
+---
+
 ## Current PMO board — 5.1.70 merged; whole Auto remains partial
 
 Run `20261014-0007-phdk-auto-completion`; PR #172 is squash-merged and remote SHA/tree/version readback matches the tested source. Portfolio: 4 confirmed, 0 fully completed, 4 active/partial, 0 deferred, 0 cancelled. Current UAT tally is 62 PASS, 1 BLOCKED, 1 MANUAL. FeatureFlag stays dormant under the owner-approved contract; source delivery does not close portfolio acceptance.

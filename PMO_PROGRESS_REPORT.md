@@ -1,3 +1,11 @@
+## Current PMO progress — candidate 5.1.72; final PR pending
+
+Versioned candidate source commit `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` is prepared on `fix/phdk-auto-delivery-5-1-72` in `C:\KELEDON\keledon`, based on verified remote `main` 5.1.71. API/Cloud regressions 40/40 and 18/18, all five builds/lint checks, four app typechecks, Web UAT 6/6 plus AI-admin, diagnostics 19/19, Browser widget 3/3/build, SEO 1/1 each and PHDK coherence 56/56 pass. Six measured text-contrast defects are fixed. Check reports no new source remediation. Intermediate PR #176 remains open and does not contain this final versioned commit; final PR creation, normal controls and merge/readback remain open. No deployment is claimed. Whole acceptance remains partial at **65 PASS, 0 BLOCKED, 1 MANUAL**.
+
+Next: create the final PR, inspect actual review/protection controls, merge normally, and verify remote `main`. Three Session API ownership/retention decisions remain open; FlowRunEvidence is dormant and not needed by current runtime.
+
+---
+
 ## Current PMO progress — PR #172 merged; whole portfolio partial
 
 PR #172 is squash-merged at remote `main` `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`; its tree equals the tested candidate. All six version reads are 5.1.70. API/Cloud regressions 39/39 and 18/18; all five builds and lint checks; API/Cloud/Web/Landing typechecks plus Browser TypeScript build; PHDK coherence 56/56; completion gate PASS. UAT-064 closes the owner-approved dormant FeatureFlag decision at source/classification scope only. Tally: 62 PASS, 1 BLOCKED (owner-provided PostgreSQL UAT-060), 1 MANUAL (native device/audio). All four commitments remain active; persistence/audit, TeamInterface selector, accessibility/localization, deployed SEO/AEO and per-client live call/CRM acceptance remain open.
