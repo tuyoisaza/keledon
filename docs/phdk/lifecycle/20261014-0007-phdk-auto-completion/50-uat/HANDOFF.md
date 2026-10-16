@@ -22,6 +22,14 @@ SIGUIENTE PASO: continuar el cierre de las cuatro líneas priorizadas; conservar
 
 # UAT handoff — `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.73 — UAT-079 PASS; portfolio acceptance incomplete
+
+API and Cloud passed persisted tenant flow configuration with two synthetic companies and separate PostgreSQL databases. DB-derived scope overrode forged company IDs; foreign flow references were rejected; a draft became approved and then immutable. Definitions, versions, enablement permissions and intent mappings survived service restart and remained tenant-filtered. All UAT-079 rows were removed and verified absent; local services and PostgreSQL were stopped. Evidence: `evidence/uat-079-tenant-flow-config-persistence-5.1.73.json`.
+
+Portfolio is **77 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 547-row matrix has 399 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED and 12 PASS. Web/other-role flow configuration, live flow execution, native device/audio, broad accessibility/localization, Session decisions, deployed SEO/AEO, Qdrant concurrency and customer-selected call/CRM acceptance remain open.
+
+SIGUIENTE PASO: continue the remaining API/Web role matrix and integrated UAT across the four confirmed fronts; do not close Auto until manual, deployed and client acceptance gates are resolved.
+
 ## Candidate 5.1.73 — UAT-078 PASS; portfolio acceptance incomplete
 
 API and Cloud passed persisted tenant Vendor CRUD with a private RFC1918 origin explicitly added to that tenant's allowlist. Safe projections omitted raw credentials and masked updates preserved existing credentials. Tenant A received 403 for five cross-tenant operations. Database queries found no UAT-078 users or Vendor rows; local services and PostgreSQL were stopped, and no private host was contacted. Evidence: `evidence/uat-078-tenant-vendor-private-origin-5.1.73.json`.

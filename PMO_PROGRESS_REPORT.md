@@ -1,6 +1,6 @@
-## Current PMO progress — UAT-078 passed; whole portfolio partial (2026-10-16)
+## Current PMO progress — UAT-079 passed; whole portfolio partial (2026-10-16)
 
-PRs #184–#188 delivered UAT-075–077 and matrix/ledger reconciliation; this candidate records UAT-078. UAT-078 passes in API and Cloud: tenant Vendor CRUD persisted with an explicitly allowlisted private origin, credential values remained absent from responses, and five cross-tenant attempts returned 403. All synthetic fixtures and local services were cleaned up; no private destination was contacted. PHDK v2.51.2 coherence passes 56/56 and six version reads remain 5.1.73. UAT tally: **76 PASS, 0 BLOCKED, 1 MANUAL**. The matrix has 547 rows: 403 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 8 PASS. All four confirmed commitments remain active; no deployment is claimed.
+PRs #184–#189 delivered UAT-075–078 and matrix/ledger reconciliation; this candidate records UAT-079. API and Cloud passed tenant flow configuration persistence: definitions, versions, permissions and intent mappings retained DB-derived tenant scope and survived service restart. Foreign flow references were rejected; all fixture records and users were removed. PHDK v2.51.2 coherence passes 56/56 and six version reads remain 5.1.73. UAT tally: **77 PASS, 0 BLOCKED, 1 MANUAL**. The matrix has 547 rows: 399 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 12 PASS. All four confirmed commitments remain active; no deployment is claimed.
 
 SIGUIENTE PASO: continue the full administration/permission matrix and the other remaining confirmed workstream gates.
 

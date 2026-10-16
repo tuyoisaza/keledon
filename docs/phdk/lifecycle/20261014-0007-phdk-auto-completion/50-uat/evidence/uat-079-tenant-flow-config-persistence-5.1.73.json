@@ -1,0 +1,48 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-079",
+  "candidate_version": "5.1.73",
+  "tested_source_commit": "c4098bfb803847d87dd9d8e1710a4f5c040098b2",
+  "scope": "Persisted tenant-owned flow definitions, versions, enablement permissions and intent mappings with database-derived tenant authorization in API and Cloud.",
+  "environment": {
+    "database": "Separate disposable PostgreSQL 16.15 databases for API and Cloud on localhost.",
+    "fixtures": "Synthetic tenant A and B admin accounts, two tenant flow definitions and related configuration only; all UAT-079 rows and users were removed after verification.",
+    "restart": "Both local services restarted against their same isolated database before readback.",
+    "network": "Local API/Cloud HTTP and PostgreSQL only; no customer flow or provider endpoint was invoked."
+  },
+  "assertions_per_backend": [
+    "Registration produced ordinary user accounts before isolated database preparation assigned tenant-admin scope for the two synthetic companies.",
+    "Each admin created a flow definition while submitting a forged other-company ID; the API persisted the company from the current database actor.",
+    "Definition list reads ignored a caller-supplied foreign company filter and returned only the actor's company definitions.",
+    "Tenant A updated and archived its definition; a cross-tenant update returned null without authorizing the foreign record.",
+    "Admins created draft flow versions with DB-derived creator IDs; a foreign-definition version create returned 400.",
+    "Tenant A approved its draft version; editing the approved version returned 400.",
+    "Flow enablement permission upsert ignored a forged company ID, persisted under Tenant A, updated enabled=true to false without deleting/replacing the row, and rejected a reference to Tenant B's flow with 400.",
+    "Intent-flow mapping upsert ignored a forged company ID, persisted under Tenant A, replaced the prior allowed-flow ID set on update, and rejected Tenant B's flow reference with 400.",
+    "After API/Cloud restart, scoped reads returned the archived definition, approved version, disabled-but-retained permission and replacement intent mapping for Tenant A, and excluded Tenant B rows.",
+    "Database cleanup removed all UAT-079 accounts, definitions, versions, permissions and mappings; verification found zero named fixture rows."
+  ],
+  "results": {
+    "api": "PASS",
+    "cloud": "PASS",
+    "tenant_definition_scope_and_archive_persisted": true,
+    "version_approval_and_immutability_persisted": true,
+    "permission_upsert_disable_retained_row": true,
+    "intent_mapping_upsert_replaced_prior_flow_ids": true,
+    "permission_and_intent_mapping_updates_survived_restart": true,
+    "cross_tenant_references_rejected": true,
+    "post_restart_readback": true,
+    "synthetic_fixtures_after_cleanup": 0,
+    "matrix_rows_promoted": [
+      "FlowDefinition | admin | API",
+      "TenantFlowConfigVersion | admin | API",
+      "TenantFlowConfigPermission | admin | API",
+      "TenantIntentFlowConfigMapping | admin | API"
+    ]
+  },
+  "limitations": [
+    "This closes the four exercised admin/API matrix rows only; Web, coordinator, superadmin and other-role rows remain open.",
+    "No flow was executed against a live call platform, browser integration, CRM or customer endpoint."
+  ],
+  "result": "PASS"
+}
