@@ -1,10 +1,18 @@
 # CRUD matrix — current source and authorization coverage
 
+## 5.1.73 — tenant flow editor browser acceptance
+
+UAT-073 exercises the production-built tenant Flow Definitions editor with a synthetic tenant admin and intercepted API. The browser flow creates a company-scoped definition, persists draft and approved version payloads to the fixture, enables company availability, creates intent routing, verifies tenant-filtered reads and checks 390px reflow. This is Web/request-contract evidence; it does not close API/Cloud authorization or database persistence for the flow configuration. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-073-flow-editor-5.1.73.json`.
+
+## 5.1.73 — Web Company superadmin lifecycle
+
+UAT-072 exercises the production-built Web Company screen in headless Edge with a synthetic superadmin fixture and intercepted API. Six assertions cover exact create/update payloads, country selection, updated Company/country readback, native delete confirmation and removal from the mock store. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-072-web-company-superadmin-5.1.73.json` and its adjacent screenshot. This closes only the Web UI/request-contract sample; it does not establish backend authorization or PostgreSQL persistence. UAT-071 supplies those separate API/Cloud persistence checks for Company.
+
 ## 5.1.73 — persisted superadmin Company operations
 
 UAT-071 exercised Company API operations in both API and Cloud against separate disposable PostgreSQL databases. Superadmin global list and direct detail passed; Company create/update persisted name, industry and country relations; a user received admin then coordinator role within the synthetic Company; safe projections omitted passwordHash; the test user and Company/country rows were deleted and read-only SQL confirmed absence. Each backend passed 12 assertions. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-071-superadmin-company-crud-5.1.73.json`.
 
-This does not verify the interactive Web Company route, other superadmin resource families, or the complete 39-model × role × surface × operation matrix. The matrix's overall status remains partial.
+This does not verify other superadmin resource families or the complete 39-model × role × surface × operation matrix. The matrix's overall status remains partial.
 
 ## 5.1.73 — coordinator persisted tenant CRUD acceptance
 

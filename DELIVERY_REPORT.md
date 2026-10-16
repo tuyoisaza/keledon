@@ -10,7 +10,11 @@ UAT-070 adds persisted coordinator acceptance: API and Cloud each passed 22 HTTP
 
 UAT-071 verifies the superadmin Company API lifecycle in both services: 12 assertions each for global list/detail, Company create/update/delete with country relations, persisted user role/company assignment, safe projection and deletion cleanup. The Web Company journey remains open. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-071-superadmin-company-crud-5.1.73.json`.
 
-The four-front portfolio remains **PARTIALLY DELIVERED** (69 PASS, 0 BLOCKED, 1 MANUAL). Native device/audio, the full resource-operation matrix and superadmin breadth beyond Company, Web Company UAT, remaining Session lifecycle/retention decisions, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency, and per-client live call/CRM acceptance remain open.
+UAT-072 adds the production-built Web Company screen journey with synthetic fixtures and intercepted APIs: six assertions cover create/edit payloads, country selection and list readback, native delete confirmation and removal from mock persistence. The full Web `test:uat` suite passed (six browser suites plus AI-admin). This does not prove backend auth or PostgreSQL persistence; UAT-071 is the separate API/Cloud persistence evidence. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-072-web-company-superadmin-5.1.73.json` and its screenshot.
+
+UAT-073 repeats the tenant Flow Definitions browser journey on the 5.1.73 production build: company-scoped definition create, draft/approved versions, keyboard availability, intent routing, tenant-filtered reads and 390px reflow pass with intercepted synthetic APIs. It proves the Web contract only; persisted flow authorization and customer-selected integrations remain open. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-073-flow-editor-5.1.73.json` and desktop/mobile screenshots.
+
+The four-front portfolio remains **PARTIALLY DELIVERED** (71 PASS, 0 BLOCKED, 1 MANUAL). Native device/audio, the full resource-operation matrix and superadmin breadth beyond Company, backend-backed Web auth/persistence integration, persisted tenant flow runtime, remaining Session lifecycle/retention decisions, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency, and per-client live call/CRM acceptance remain open.
 
 | Delivery proof | Status | Evidence |
 |---|---|---|
@@ -18,7 +22,7 @@ The four-front portfolio remains **PARTIALLY DELIVERED** (69 PASS, 0 BLOCKED, 1 
 | COMMIT_PREFIX | PASS | Source commit `cee3cc10` begins `v5.1.73:`. |
 | PUSH_AND_PR | PASS | Branch `fix/phdk-auto-session-cleanup-5-1-73` pushed; PR #180 merged. |
 | REMOTE_MAIN | PASS | `git ls-remote origin main` and `origin/main` read `2bb4a7dc84075d4b43be43e88aa19334c21d0f2c`; main tree matches the tested source tree. |
-| SCOPE_AND_CHECKS | PASS FOR SOURCE SLICE / WHOLE AUTO PARTIAL | API 40/40, Cloud 18/18, API/Cloud builds, PostgreSQL UAT-068/069/070/071, PHDK coherence 56/56 pass. Full portfolio acceptance remains open. |
+| SCOPE_AND_CHECKS | PASS FOR SOURCE SLICE / WHOLE AUTO PARTIAL | API 40/40, Cloud 18/18, API/Cloud builds, PostgreSQL UAT-068/069/070/071, Web UAT-072/073 and PHDK coherence 56/56 pass. Full portfolio acceptance remains open. |
 
 SIGUIENTE PASO: continue the four active portfolio fronts; retain partial status until the external/manual gates close.
 

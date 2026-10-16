@@ -1,0 +1,27 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-073",
+  "candidate_version": "5.1.73",
+  "tested_product_source_commit": "cee3cc10a5568766001fbdbeccfa9b77fa5b4181",
+  "target": "Local production-built Web SPA on loopback in headless Edge.",
+  "persona": "Synthetic Company Co tenant admin",
+  "network": "External HTTP and WebSockets blocked; API requests intercepted by synthetic fixtures.",
+  "suite": "services/web/test/flow-definitions-uat.test.cjs",
+  "result": "PASS",
+  "assertions_and_observations": [
+    "Tenant admin creates a flow definition with keyboard operation; the create payload is scoped to the fixture company.",
+    "The editor saves a draft version, then updates its status to approved.",
+    "Company availability is enabled by keyboard and writes a tenant-scoped permission.",
+    "Intent mapping is created for the same company and flow definition.",
+    "Flow definition reads include the tenant company filter; tenant company picker is absent.",
+    "At 390px viewport width, document content remains 390px without horizontal overflow."
+  ],
+  "visual_evidence": [
+    "flow-editor-desktop.png",
+    "flow-editor-mobile.png"
+  ],
+  "limitations": [
+    "This verifies the built Web UI and intercepted request contracts only; no API/Cloud authentication, PostgreSQL persistence, private CRM destination, customer voice provider, or live call was exercised.",
+    "All external network access was blocked."
+  ]
+}

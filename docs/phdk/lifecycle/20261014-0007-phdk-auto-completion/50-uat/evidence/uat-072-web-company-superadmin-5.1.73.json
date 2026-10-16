@@ -1,0 +1,26 @@
+{
+  "run_id": "20261014-0007-phdk-auto-completion",
+  "case": "UAT-072",
+  "candidate_version": "5.1.73",
+  "tested_base_commit": "7dca7bf3369d20735dfe25150948ccf6612cd3fb",
+  "candidate_source_fingerprint": "sha256:d141f0edaeccd5b137651fa068069fdc10942b15ea35a8e958b10c5cc3b99b7a",
+  "environment": "Production-built Web SPA in headless Microsoft Edge; local loopback static server; synthetic Company Co fixtures and intercepted API; external network and WebSockets blocked.",
+  "method": "Authenticate as a synthetic superadmin frontend fixture. Exercise the Company list and create/edit/delete dialogs against an in-memory mock API. Verify exact create/update payloads, list readback of company fields and country labels, native delete confirmation, and fixture removal.",
+  "assertions": {
+    "passed": 6,
+    "status": "PASS",
+    "contracts": [
+      "Create form submits name, industry and BR country code in the expected API payload.",
+      "The created Brazil country relation appears in the refreshed company list.",
+      "Edit form submits updated name, industry and BR/MX country codes in the expected API payload.",
+      "Updated company fields and Brazil/Mexico relations appear in the refreshed list.",
+      "Delete action requires and accepts the native confirmation, then submits the expected company ID.",
+      "The synthetic company is absent from the mock persistence and rendered list after deletion."
+    ]
+  },
+  "suite": "services/web/test/local-uat.test.cjs",
+  "suite_result": "1 test passed, 0 failed; full services/web test:uat suite also passed (6 browser suites plus AI-admin).",
+  "visual_evidence": "uat-superadmin-company-crud.png",
+  "provenance": "Web UI and request-contract evidence only. API responses are mocked; this does not prove backend authentication, authorization, PostgreSQL persistence, or deployment.",
+  "result": "PASS"
+}

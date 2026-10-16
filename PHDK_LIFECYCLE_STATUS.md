@@ -1,6 +1,6 @@
 ## Current PHDK Auto continuation — 5.1.73 orphan-session safeguard merged; whole goal partial
 
-Run `20261014-0007-phdk-auto-completion`; PHDK v2.51.2 coherence is 56/56. PR [#180](https://github.com/tuyoisaza/keledon/pull/180) squash-merged candidate `cee3cc10a5568766001fbdbeccfa9b77fa5b4181` to remote `main` `2bb4a7dc84075d4b43be43e88aa19334c21d0f2c`; remote tree `f7466ff6b63a25b9d96a7c77b95fa40e7e3385e9` matches the tested source tree. All six version reads are 5.1.73. The 5.1.73 source protects meaningful sessions from the previous broad orphan cleanup query and keeps FlowRunEvidence dormant. UAT-068 verifies orphan cleanup; UAT-069/070 admin/coordinator CRUD; UAT-071 superadmin Company API CRUD in API and Cloud on disposable PostgreSQL. No production data or deployment is claimed.
+Run `20261014-0007-phdk-auto-completion`; PHDK v2.51.2 coherence is 56/56. PR [#180](https://github.com/tuyoisaza/keledon/pull/180) merged tested source `cee3cc10a5568766001fbdbeccfa9b77fa5b4181`; docs PR [#181](https://github.com/tuyoisaza/keledon/pull/181) advanced current `main` to `7dca7bf3369d20735dfe25150948ccf6612cd3fb`. All six version reads are 5.1.73. UAT-068 verifies orphan cleanup; UAT-069/070 admin/coordinator CRUD; UAT-071 superadmin Company API CRUD in both backends on disposable PostgreSQL; UAT-072 Web Company UI/request; UAT-073 tenant Flow Definitions UI/request with synthetic APIs. FlowRunEvidence remains dormant. No production data or deployment is claimed.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -8,12 +8,12 @@ Run `20261014-0007-phdk-auto-completion`; PHDK v2.51.2 coherence is 56/56. PR [#
 | Capture / Plan | REUSED | Four owner-confirmed fronts and approved role/tenant/private-origin policies remain active. |
 | PMO / Workstreams | CONTINUED | Admin/permissions source cleanup safeguard delivered; full resource-operation and lifecycle acceptance remain open. |
 | Integration Review | COMPLETED FOR SOURCE SLICE | API and Cloud count/delete filters match; no database schema changed. |
-| UAT / UAT Fix | SOURCE AND FOCUSED HTTP/PERSISTENCE PASS | API 40/40 and Cloud 18/18; UAT-068 orphan cleanup; UAT-069 admin 19/19, UAT-070 coordinator 22/22, and UAT-071 superadmin Company 12/12 assertions in each backend. Full matrix, Web Company journey and superadmin breadth beyond Company remain open. |
+| UAT / UAT Fix | SOURCE AND FOCUSED HTTP/PERSISTENCE PASS | API 40/40 and Cloud 18/18; UAT-068 orphan cleanup; UAT-069 admin 19, UAT-070 coordinator 22, UAT-071 superadmin Company 12 assertions per backend; UAT-072 Web Company UI/request 6 assertions using synthetic API. Full matrix, backend-backed Web auth/persistence join and superadmin breadth beyond Company remain open. |
 | SEO / AEO-GEO | REUSED / NOT AFFECTED | No public content or discovery metadata changed; deployed measurement remains open. |
 | Check / Remediation | PASS FOR SOURCE SLICE | API/Cloud builds, UAT-068/069/070/071 and PHDK coherence 56/56 pass; no further source fix identified for the exercised slice. |
 | Delivery | COMPLETED FOR 5.1.73 SOURCE SLICE | PR #180 merged; version, remote SHA/tree and content read back; mechanical gate recorded. |
 
-Whole Auto remains **PARTIALLY DELIVERED** (69 PASS, 0 BLOCKED, 1 MANUAL). Native device/audio, complete resource-operation coverage and superadmin breadth beyond Company, Web Company UAT, remaining Session lifecycle/retention decisions, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and per-client live call/CRM remain open.
+Whole Auto remains **PARTIALLY DELIVERED** (71 PASS, 0 BLOCKED, 1 MANUAL). Native device/audio, complete resource-operation coverage and superadmin breadth beyond Company, backend-backed Web authorization/persistence, persisted tenant flow runtime, remaining Session lifecycle/retention decisions, broad accessibility/localization, deployed SEO/AEO, Qdrant concurrency and per-client live call/CRM remain open.
 
 SIGUIENTE PASO: continue the four owner-confirmed fronts; keep the overall portfolio partial while manual, customer-specific and deployed acceptance remains open.
 
