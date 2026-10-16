@@ -1,6 +1,6 @@
 ## Current PMO progress — candidate 5.1.72; PR #176 open
 
-Latest pushed candidate is `fix/phdk-auto-next-front-5-1-72` / `4bf225684b74bdba2b7aaa5f4a19684651a05b62`, PR #176. UAT-066 passes core PostgreSQL migration, actor/tenant scope and persistence acceptance; UAT-067 passes Web widget keyboard/accessibility and selected route contrast after the Providers 4.17:1 text defect was fixed. API/Cloud regressions 40/40 and 18/18, five builds, diagnostics 19/19, Browser widget 3/3/build and PHDK coherence 56/56 pass. Hosted checks and review are absent; merge and deployment are not claimed. Whole acceptance remains partial at **65 PASS, 0 BLOCKED, 1 MANUAL**.
+Latest pushed candidate is branch `fix/phdk-auto-next-front-5-1-72`, PR #176. UAT-066 passes core PostgreSQL migration, actor/tenant scope and persistence acceptance; UAT-067 passes Web widget keyboard/accessibility and selected route contrast after the Providers 4.17:1 text defect was fixed. API/Cloud regressions 40/40 and 18/18, five builds, diagnostics 19/19, Browser widget 3/3/build and PHDK coherence 56/56 pass. Hosted checks and review are absent; merge and deployment are not claimed. Whole acceptance remains partial at **65 PASS, 0 BLOCKED, 1 MANUAL**.
 
 Next: review and deliver the candidate through PR controls, continue the 4 confirmed fronts, and keep native/manual/customer-specific gates open until evidenced.
 

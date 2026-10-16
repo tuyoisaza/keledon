@@ -15,7 +15,7 @@ Run `20261014-0007-phdk-auto-completion`; PHDK v2.51.2 is installed and static c
 
 Portfolio remains **PARTIALLY DELIVERED** (65 PASS, 0 BLOCKED, 1 MANUAL). Whole-Auto gates include native device/audio, full resource-operation matrix, remaining Session lifecycle policy, broad route/screen-reader/localization, deployed SEO/AEO, Qdrant concurrency and per-client live call/CRM acceptance.
 
-SIGUIENTE PASO: commit and push the latest UAT-067 contrast fix and evidence reconciliation, then verify the final PR head and delivery controls.
+SIGUIENTE PASO: obtain the normal PR review and merge decision for #176; then verify the exact remote main SHA, tree and all six version reads before closing this source slice.
 
 ---
 

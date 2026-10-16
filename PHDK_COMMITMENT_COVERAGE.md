@@ -1,6 +1,6 @@
 ## Current commitment coverage — 5.1.72 candidate; PR open
 
-Candidate `fix/phdk-auto-next-front-5-1-72`, latest pushed PR [#176](https://github.com/tuyoisaza/keledon/pull/176) head `4bf225684b74bdba2b7aaa5f4a19684651a05b62`; merge state CLEAN, with no hosted checks or review decision reported. PHDK v2.51.2 coherence passes 56/56. Portfolio remains **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally: **65 PASS, 0 BLOCKED, 1 MANUAL**.
+Candidate `fix/phdk-auto-next-front-5-1-72`, latest pushed PR [#176](https://github.com/tuyoisaza/keledon/pull/176); merge state CLEAN, with no hosted checks or review decision reported. PHDK v2.51.2 coherence passes 56/56. Portfolio remains **0/4 commitments fully DONE; 4/4 active/partial; 0 deferred; 0 cancelled**. UAT tally: **65 PASS, 0 BLOCKED, 1 MANUAL**.
 
 | Commitment | Current result | Remaining gate |
 |---|---|---|
