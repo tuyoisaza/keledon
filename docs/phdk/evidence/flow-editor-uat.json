@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-17T07:18:26.646Z",
-  "candidateVersion": "5.1.75",
+  "date": "2026-10-17T09:56:21.191Z",
+  "candidateVersion": "5.1.78",
   "target": "local production SPA on loopback",
   "persona": "synthetic Company Co admin",
   "actions": [

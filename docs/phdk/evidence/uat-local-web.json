@@ -1,8 +1,8 @@
 {
-  "version": "5.1.77",
-  "date": "2026-10-17T07:36:28.776Z",
-  "candidateRevision": "5811f1033ea6880ec582ab40dbe35dd8125284a6",
-  "candidateSourceFingerprint": "sha256:21480d1227f5e41977bb3a825d4a0de086cd38daea0acc2a57635cf79356e3fd",
+  "version": "5.1.78",
+  "date": "2026-10-17T09:57:01.104Z",
+  "candidateRevision": "ad127fe02525754b781dfc1d2a1df09ced571989",
+  "candidateSourceFingerprint": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "dirtyUntrackedSourceFiles": 0,
   "sourceRoots": [
     "browser",
@@ -12,7 +12,7 @@
     "landing"
   ],
   "targetEnvironment": "local built production SPA with isolated Company Co fixtures and intercepted API; external network blocked",
-  "origin": "http://127.0.0.1:59554",
+  "origin": "http://127.0.0.1:55460",
   "provenance": "UI behavior only; not real server/DB, role authorization, production authentication, or deployed acceptance",
   "checks": [
     "UAT-067 diagnostics widget exposes named keyboard-operable actions, 44x44 hit targets, visible 2px focus and polite live status in production-built Web PASS",
@@ -37,7 +37,7 @@
     "UAT-004 provider settings Spanish localization and write-only key: translated screen renders; no response prefill; replacement clears after success; untouched blank omitted PASS",
     "UAT-005 Brain provider indicators use selected-provider safe booleans only; an unused Deepgram key does not mark Vosk configured, and write-only secret placeholders remain blank PASS (synthetic UI/API fixture)",
     "UAT-004 authenticated guest blocked from management without redirect loop PASS (frontend fixture)",
-    "UAT-002 5.1.77 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)",
+    "UAT-002 5.1.78 protected diagnostics UI: debug-off makes no read, toggle-on reads once, only clicked safe probe POSTs, manual-only CRM route has no test button, toggle-off clears results PASS (mocked API; actual server authorization is covered by isolated API tests)",
     "UAT-067 selected WCAG AA text contrast scan passes on server status, brands, teams, vendors and create dialog, users (admin/superadmin), Knowledge (es/en/pt/admin), dashboard (es/en/pt), sessions (live/history/detail), profile (es/en/pt), devices, launcher, company details (three roles), providers, Brain and protected diagnostics (automated production-browser sample)"
   ],
   "themeTokens": {

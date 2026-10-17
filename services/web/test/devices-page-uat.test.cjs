@@ -109,7 +109,7 @@ test('device management UAT: read-only role cannot revoke; tenant manager confir
     await manager.page.screenshot({ path: path.join(evidenceDir, 'uat-device-revoked.png'), fullPage: true });
     const packageJson = JSON.parse(await fs.readFile(path.join(__dirname, '../package.json'), 'utf8'));
     const candidate = await getCandidateFingerprint();
-    await fs.writeFile(path.join(evidenceDir, 'uat-device-5.1.36.json'), JSON.stringify({
+    await fs.writeFile(path.join(evidenceDir, `uat-device-${packageJson.version}.json`), JSON.stringify({
       case: 'UAT-032',
       version: packageJson.version,
       date: new Date().toISOString(),
