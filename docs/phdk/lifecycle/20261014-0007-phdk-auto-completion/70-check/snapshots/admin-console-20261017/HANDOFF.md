@@ -1,10 +1,10 @@
 # PHDK Lifecycle Handoff — Check admin-console audit
 
-Run ID: `20261014-0007-phdk-auto-completion`  
-Stage: `70-check`  
-Status: `PARTIAL — REMEDIATION REQUIRED`  
-Candidate: KELEDON 5.2.1, PR #210  
-PHDK: 2.53.1  
+Run ID: `20261014-0007-phdk-auto-completion`
+Stage: `70-check`
+Status: `PARTIAL — REMEDIATION REQUIRED`
+Candidate: KELEDON 5.2.1, PR #210
+PHDK: 2.53.1
 Date: 2026-10-17
 
 ## Completed evidence

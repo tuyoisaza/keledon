@@ -1,10 +1,10 @@
 # PHDK Lifecycle Handoff — UAT read-only widget re-entry
 
-Run ID: `20261014-0007-phdk-auto-completion`  
-Stage: `50-uat`  
-Status: `PASS SCOPED / CANDIDATE ACCEPTANCE INCOMPLETE`  
-Candidate: KELEDON 5.2.1, PR #210  
-Target: Production v5.1.85  
+Run ID: `20261014-0007-phdk-auto-completion`
+Stage: `50-uat`
+Status: `PASS SCOPED / CANDIDATE ACCEPTANCE INCOMPLETE`
+Candidate: KELEDON 5.2.1, PR #210
+Target: Production v5.1.85
 Date: 2026-10-17
 
 ## Work completed
