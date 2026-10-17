@@ -4,6 +4,8 @@ Run 20261014-0007-phdk-auto-completion · PHDK **2.53.1** (94f583635d295ae0f2277
 
 El usuario confirmó los cuatro frentes en este orden: baseline/versiones/PR; widget/diagnóstico; voz→Cloud→Browser→CRM configurable por cliente; administración/permisos. Pruebas de aplicación solo en producción, sin suites/build/lint locales.
 
+La PIA [CMT-001A — gobierno GitHub/Railway](../20-plan/pias/PIA-CMT-001A-GOBIERNO-GITHUB-RAILWAY.md) convierte la brecha externa en controles verificables. Estado: OWNER DECISION REQUIRED; no se modificó configuración externa.
+
 | ID | Cobertura vigente | Estado | Siguiente gate |
 |---|---|---|---|
 | CMT-001 | Cinco raíces package/lock y Browser renderer en 5.2.10; PHDK 2.53.1; PR #255 y #257 integrados; producción Web/API SUCCESS en main. | **Completo para el corte** | Revisar/entregar #258 documental y #259 fix 5.2.11 con flujo normal; mantener readback de main/deploy por cada entrega. |

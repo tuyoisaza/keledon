@@ -24,6 +24,7 @@ Fecha: 2026-10-17. Revalidación del `main` remoto `edd18be5dd8fd2c49c866f9006ee
 - **Railway:** API y Web siguen conectados a `main`, sin staged changes; ambos desplegaron `edd18be5` con `SUCCESS` y una réplica. `checkSuites=false`, sleep habilitado y no se observan servicios cron. El auto-deploy desde GitHub está activo, demostrado por el deployment del nuevo commit. La política de espera por CI, historial de reinicios, coste facturado, presupuesto/límites de gasto no quedan expuestos por la lectura disponible.
 - **Riesgo/severidad:** MEDIUM para cambios sin branch protection/review/check obligatorio; MEDIUM y UNVERIFIED para gasto y restart, porque no hay lectura de facturación/historial. La ejecución fallida de Version Bump es histórica y no hay bot/workflow activo actualmente.
 - **Remediación/tipo:** action de owner/administrador de proveedores para decidir ruleset/review requerida, allowlist/SHA pinning de Actions, Wait-for-CI y límites de gasto/restart. El agente no cambia settings externos. No se propone crear pipelines nuevos sin acordar runtime/checks compatibles con la regla de pruebas productivas.
+- **PIA siguiente:** [CMT-001A — gobierno GitHub/Railway](../20-plan/pias/PIA-CMT-001A-GOBIERNO-GITHUB-RAILWAY.md) define GOV-01..05; está preparada, pero requiere decisión de owner y no cambia proveedor.
 
 ## Tema y editor de templates
 

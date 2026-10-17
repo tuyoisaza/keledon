@@ -53,6 +53,7 @@
     "production_deploy": {"status": "PASS", "evidence": "Railway Web/API deploy from current main reports SUCCESS, 1/1 each."},
     "uat_140_public_route": {"status": "PASS", "evidence": "Scoped production acceptance of localized unknown-route 404, noindex/no-canonical and same-origin script; does not establish full SEO/accessibility."},
     "uat_141_login_touch_targets": {"status": "PARTIAL", "evidence": "Production 320x720 found four targets below 44px: brand 40px, email 41px, password 41px, signup toggle 20px. 5.2.11 fix is pending in PR #259."},
+    "cmt_001a_provider_governance": {"status": "UNVERIFIED", "evidence": "PIA-CMT-001A defines owner decisions for branch protection, Actions restrictions and cost/restart sources; provider settings were not changed."},
     "cmt_003c_fixture_lifecycle": {"status": "PARTIAL", "evidence": "Owner-authorized synthetic scope is documented; audited production provisioning, expiry and cleanup path is not implemented/accepted."},
     "cmt_003a_queue_idempotency": {"status": "PARTIAL", "evidence": "Source audit records non-atomic permanent claims and no lease fencing/effect idempotency; production acceptance pending fixture and security gates."},
     "cmt_003b_private_egress": {"status": "PARTIAL", "evidence": "Tenant allowlist does not pin DNS validation to the effective socket or every redirect; private egress remains blocked pending enforcement and controlled sandbox."},
@@ -62,6 +63,7 @@
   "whole_auto_acceptance": {
     "status": "PARTIAL",
     "open_gates": [
+      "Resolve CMT-001A owner decisions for GitHub branch rules/Actions and identify Railway cost/restart metadata without disrupting autodeploy.",
       "Merge/review PR #258 documentation and PR #259 accessibility fix; deploy the latter and run UAT-142 in production.",
       "Complete CMT-003C1 first-party audited synthetic fixture lifecycle before provisioning the authorized minimal fixtures.",
       "Implement and production-accept queue lease/fencing/idempotency (CMT-003A).",
