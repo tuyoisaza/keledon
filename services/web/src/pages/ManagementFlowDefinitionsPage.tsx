@@ -1,7 +1,7 @@
 import { getCompanies, type Company } from '@/lib/crud-api';
 import { apiFetch } from '@/lib/api-fetch';
 import { useAuth } from '@/context/AuthContext';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 type FlowDefinition = {
@@ -85,6 +85,12 @@ export default function ManagementFlowDefinitionsPage() {
   const [intent, setIntent] = useState('');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const loadRequestId = useRef(0);
+  const selectedCompanyId = useRef(companyId);
+
+  useEffect(() => {
+    selectedCompanyId.current = companyId;
+  }, [companyId]);
 
   useEffect(() => {
     if (!isSuperadmin) return;
@@ -96,8 +102,10 @@ export default function ManagementFlowDefinitionsPage() {
       .catch(() => toast.error('Could not load companies'));
   }, [isSuperadmin]);
 
-  const load = useCallback(async (targetCompanyId = companyId) => {
-    if (!targetCompanyId) {
+  const load = useCallback(async (targetCompanyId?: string) => {
+    const companyToLoad = targetCompanyId ?? selectedCompanyId.current;
+    const requestId = ++loadRequestId.current;
+    if (!companyToLoad) {
       setFlows([]);
       setVersions([]);
       setPermissions([]);
@@ -106,8 +114,8 @@ export default function ManagementFlowDefinitionsPage() {
     }
     setLoading(true);
     try {
-      const legacyView = isSuperadmin && targetCompanyId === '__legacy__';
-      const scope = encodeURIComponent(targetCompanyId);
+      const legacyView = isSuperadmin && companyToLoad === '__legacy__';
+      const scope = encodeURIComponent(companyToLoad);
       const [allFlowRows, allVersionRows, permissionRows, mappingRows] = legacyView
         ? await Promise.all([
             requestJson<FlowDefinition[]>('/api/flow-definitions'),
@@ -128,6 +136,7 @@ export default function ManagementFlowDefinitionsPage() {
       const versionRows = legacyView
         ? allVersionRows.filter((version) => flowIds.has(version.flowDefinitionId))
         : allVersionRows;
+      if (requestId !== loadRequestId.current) return;
       setFlows(flowRows);
       setVersions(versionRows);
       setPermissions(permissionRows);
@@ -138,15 +147,16 @@ export default function ManagementFlowDefinitionsPage() {
           : flowRows[0]?.id || '',
       );
     } catch {
+      if (requestId !== loadRequestId.current) return;
       toast.error('Could not load company flow configuration');
     } finally {
-      setLoading(false);
+      if (requestId === loadRequestId.current) setLoading(false);
     }
-  }, [companyId, isSuperadmin]);
+  }, [isSuperadmin]);
 
   useEffect(() => {
     void load();
-  }, [load]);
+  }, [companyId, load]);
 
   const selectedFlow = flows.find((flow) => flow.id === selectedFlowId) || null;
   const selectedVersions = useMemo(
@@ -207,8 +217,11 @@ export default function ManagementFlowDefinitionsPage() {
       setShowDefinitionForm(false);
       setForm(emptyDefinition);
       setSelectedFlowId(saved.id);
-      if (assigningLegacyDefinition) setCompanyId(targetCompanyId);
-      await load(assigningLegacyDefinition ? targetCompanyId : companyId);
+      if (assigningLegacyDefinition) {
+        selectedCompanyId.current = targetCompanyId;
+        setCompanyId(targetCompanyId);
+      }
+      await load(assigningLegacyDefinition ? targetCompanyId : undefined);
     } catch {
       toast.error('Could not save flow definition');
     } finally {
@@ -335,7 +348,10 @@ export default function ManagementFlowDefinitionsPage() {
             <select
               aria-label="Company scope"
               value={companyId}
-              onChange={(event) => setCompanyId(event.target.value)}
+              onChange={(event) => {
+                selectedCompanyId.current = event.target.value;
+                setCompanyId(event.target.value);
+              }}
               className="min-h-11 min-w-56 rounded-lg border border-border bg-background px-3"
             >
               <option value="">Choose a company</option>

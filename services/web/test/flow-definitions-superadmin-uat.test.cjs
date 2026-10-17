@@ -25,6 +25,7 @@ test('superadmin flow configuration switches tenant scope and safely assigns leg
   let permissions = [];
   let mappings = [];
   const requests = [];
+  let delayCompanyBReads = false;
   const server = http.createServer(async (req, res) => {
     const pathname = new URL(req.url, 'http://localhost').pathname;
     let file = path.resolve(dist, `.${pathname}`);
@@ -59,6 +60,9 @@ test('superadmin flow configuration switches tenant scope and safely assigns leg
       const method = route.request().method();
       const payload = method === 'GET' ? undefined : route.request().postDataJSON();
       requests.push({ method, pathname: url.pathname, search: url.search, payload });
+      if (delayCompanyBReads && method === 'GET' && url.pathname === '/api/flow-definitions' && url.searchParams.get('companyId') === 'company-b') {
+        await new Promise((resolve) => setTimeout(resolve, 750));
+      }
       let body = [];
       let status = 200;
       if (url.pathname === '/api/auth/me') body = { success: true, user: { id: 'synthetic-superadmin', name: 'Synthetic Superadmin', email: 'superadmin@company-co.invalid', role: 'superadmin' } };
@@ -164,12 +168,16 @@ test('superadmin flow configuration switches tenant scope and safely assigns leg
     await page.getByRole('button', { name: 'Toggle mapping' }).click();
     const replacementMapping = requests.filter((request) => request.method === 'POST' && request.pathname === '/api/intent-flow-mappings').at(-1);
     assert.deepEqual(replacementMapping.payload.allowedFlowDefinitionIds, []);
+    delayCompanyBReads = true;
     await availability.uncheck();
     const disabledPermission = requests.filter((request) => request.method === 'POST' && request.pathname === '/api/tenant-flow-permissions').at(-1);
     assert.equal(disabledPermission.payload[0].isEnabled, false);
 
     await companyScope.selectOption('__legacy__');
-    await page.getByRole('button', { name: /Unassigned legacy flow/ }).waitFor();
+    await page.getByRole('button', { name: /Unassigned legacy flow/ }).waitFor({ timeout: 5000 });
+    await page.waitForTimeout(800);
+    assert.equal(await companyScope.inputValue(), '__legacy__', 'a delayed company response cannot replace the selected legacy scope');
+    assert.equal(await page.getByRole('button', { name: 'Company B flow updated' }).count(), 0, 'late Tenant B data cannot overwrite legacy definitions');
     await page.getByRole('button', { name: 'Edit' }).click();
     const owner = page.getByLabel('Assign to company');
     await owner.selectOption('company-a');

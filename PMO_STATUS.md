@@ -1,8 +1,19 @@
+## Current PMO board — 5.1.81 candidate checked; whole Auto partial
+
+| Workstream | State | Evidence / open gate |
+|---|---|---|
+| CMT-001 baseline, versions, PRs | ACTIVE | Five package/lock roots and Browser renderer at 5.1.81; PR/readback pending, Railway Web build context open. |
+| CMT-002 widget and safe diagnostics | ACTIVE | Full Web UAT 8/8; flow-editor stale-response regression now covered under delayed Tenant B response. Native and broad route/accessibility acceptance remain. |
+| CMT-003 voice→Cloud→Browser→CRM | ACTIVE | Tenant flow configuration is scoped; live runtime awaits PostgreSQL/native and each client's selected CRM/call stack. |
+| CMT-004 administration and permissions | ACTIVE | Role/tenant policies remain; broad persisted CRUD and retention evidence remain open. |
+
+Overall: 0/4 commitments DONE; 4 ACTIVE/PARTIAL. UAT tally: 89 PASS, 0 BLOCKED, 1 MANUAL. CRUD: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Next: deliver checked 5.1.81 through the standard PR path and verify remote `main`.
+
 ## Current PMO board — 5.1.79 source merged; whole Auto partial
 
-### 5.1.80 checked source candidate
+### 5.1.80 source delivered
 
-Candidate commit `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` advances five package/lock roots and Browser renderer to 5.1.80. UAT-091 passes API/Cloud contracts 2/2 each and shared health-model tests 2/2. API/Cloud regressions pass 42/42 and 19/19; builds, UI typechecks, targeted lint and PHDK 63/63 coherence pass. Latest full Web UAT is 7/8 because one flow-editor test timed out; isolated flow-editor cases pass. PR #199 is open and mergeable; hosted checks/reviews are absent and `main` is unprotected. All four commitments remain active/partial, and overall Auto remains PARTIALLY DELIVERED.
+PR #199 delivered candidate commit `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` at remote main `64026d229419459beb6c80c0bb0c5f3499bde742`; all five roots and Browser renderer are 5.1.80. UAT-091 API/Cloud contracts pass 2/2 each and shared model tests 2/2. API/Cloud regressions pass 42/42 and 19/19; builds, typechecks, targeted lint and PHDK 63/63 pass. Full Web UAT is 7/8; its isolated flow-editor test passes. Railway API deployed successfully; Web failed because the live root excludes `/shared`. All four commitments remain active/partial, and overall Auto remains PARTIALLY DELIVERED.
 
 PR #198 delivered version 5.1.79 to `main` at `8deb6d7ff71d42a628e966bcf64d340b4f10e337`. PHDK 2.52.2 coherence is 63/63. All five package roots and Browser renderer align at 5.1.79. API/Cloud monitoring contracts pass 2/2 each; API/Cloud builds, Web/Landing typechecks and builds, and Browser TypeScript build/version sync pass. Previous AI runtime/auth/audit evidence remains at 5.1.78; UAT-089 passes 12 browser checks. GitHub reported no hosted checks or independent review; `main` is unprotected. Railway auto-deploy on the merge reported API SUCCESS and Web FAILED at commit `8deb6d7`; live Web root `/services/web` omits the `/shared` Docker context required by the source. Database migration/restart and broader portfolio acceptance remain open. UAT tally is 87 PASS, 0 BLOCKED, 1 MANUAL; 4/4 commitments remain active/partial.
 

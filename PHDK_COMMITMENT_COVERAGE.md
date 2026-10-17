@@ -1,8 +1,14 @@
+## Current 5.1.81 candidate — UAT Fix complete; delivery pending
+
+The superadmin flow editor now uses the current tenant selection for refreshes resumed after an in-flight write and ignores stale responses. A delayed Tenant B response regression is included. Full production-built Web UAT passes 8/8 plus standalone admin-settings, theme-template and AI-admin UAT; Web typecheck/build and PHDK 63/63 pass. Five package roots and Browser renderer are 5.1.81. The slice advances CMT-001/002 and is pending PR review/merge/readback. All four commitments remain ACTIVE/PARTIAL (0/4 DONE); persisted DB/migration, broad CRUD, native accessibility, Web deployment configuration and customer-selected runtime acceptance remain open.
+
+SIGUIENTE PASO: complete Check and publish 5.1.81 through the standard PR flow, then verify remote `main` and version parity.
+
 ## Current commitment coverage — 5.1.79 source merged; whole portfolio partial
 
-## 5.1.80 checked candidate (2026-10-17)
+## 5.1.80 source slice delivered (2026-10-17)
 
-Source commit `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` removes fabricated Integration Hub telemetry before a provider check. UAT-091 API/Cloud contracts and the shared display model pass 2/2 each; API/Cloud regressions pass 42/42 and 19/19; builds, Web/Landing typechecks, targeted lint and PHDK coherence 63/63 pass. The latest full Web UAT is 7/8 after a flow-editor timeout; both flow-editor cases pass individually. PR delivery remains pending. Four commitments remain active/partial; no provider or customer service was contacted.
+Source commit `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` is delivered by PR #199 at remote main `64026d229419459beb6c80c0bb0c5f3499bde742`. UAT-091 API/Cloud contracts and shared display model pass 2/2 each; API/Cloud regressions pass 42/42 and 19/19; builds, Web/Landing typechecks, targeted lint and PHDK coherence 63/63 pass. Full Web UAT is 7/8; the isolated flow-editor test passes. Railway API deploy succeeded; Web deploy failed because the configured root excludes `/shared`. Four commitments remain active/partial; no provider or customer service was contacted.
 
 PR #198 delivered 5.1.79 at verified remote `main` SHA `8deb6d7ff71d42a628e966bcf64d340b4f10e337`. GitHub reported no hosted checks or review submissions; `main` is unprotected. Railway auto-deploy passed for API and failed for Web because root `/services/web` omits `/shared` from the build context. PHDK v2.52.2 coherence is 63/63. UAT tally is 87 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS.
 

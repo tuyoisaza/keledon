@@ -1,5 +1,11 @@
 # UAT report — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.81 — fix stale flow-editor scope responses (2026-10-17)
+
+The flow editor's refresh now resolves against the current selected tenant at execution time and ignores responses from older refresh requests. The superadmin Web UAT deliberately delays a company-B flow response while the user switches to unassigned legacy definitions; legacy scope remains visible after the delayed response completes. The exact-version production build passes, full Web UAT passes 8/8, and standalone admin-settings, theme-template and AI-admin UAT pass. Evidence: `docs/phdk/evidence/uat-flow-config-superadmin-web-5.1.81.json`, `docs/phdk/evidence/flow-editor-uat.json`, and `docs/phdk/evidence/uat-local-web.json`. All APIs are synthetic/intercepted and external traffic blocked; persisted backend acceptance is unchanged.
+
+Portfolio tally advances to **89 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. CRUD remains **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**. Whole Auto remains PARTIALLY DELIVERED while all four commitments have open gates.
+
 ## Candidate 5.1.80 — UAT-091 unmeasured integrations stay unknown (2026-10-17)
 
 The Integration Hub previously initialized every default provider at 100% uptime, 0% errors and 0ms response, and synthesized a current sync/check time despite having no configured customer adapter. API and Cloud now leave `lastCheck` and `lastSync` absent until a check runs and start telemetry counters at zero. The shared display model returns `unknown` until at least one request and a check timestamp exist; Web and Landing show “Not measured” and neutral unknown status instead of green health metrics. API/Cloud service contracts pass 2/2 each, shared health-model tests pass 2/2, targeted lint passes, API/Cloud regressions pass 42/42 and 19/19, all five builds and Web/Landing typechecks pass. The latest full local Web UAT run passed 7/8; its only failure was a flow-editor timeout, and both flow-editor tests passed when rerun individually. Exact-source evidence: `docs/phdk/workstreams/INTEGRATION-HEALTH-UAT-5.1.80.json`. No live customer adapter or provider probe was used.

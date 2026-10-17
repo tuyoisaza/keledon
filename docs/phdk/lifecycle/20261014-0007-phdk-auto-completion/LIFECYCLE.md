@@ -1,6 +1,26 @@
+## Current Auto continuation — candidate 5.1.81, PHDK 2.52.2 (2026-10-17)
+
+The 5.1.80 full Web suite exposed a real stale asynchronous request in the superadmin flow editor. Candidate 5.1.81 resolves implicit refreshes against the selected company at execution time and discards older responses. The production-built Web UAT forces a delayed Tenant B response across a switch to unassigned legacy definitions and passes; full Web UAT is 8/8 and standalone admin-settings/theme-template/AI-admin UAT pass. Web typecheck/build and PHDK coherence pass. All five package/lock roots and Browser renderer are 5.1.81. PR and remote-main verification are pending.
+
+This is a scoped CMT-002 improvement; all four commitments remain active/partial (0/4 closed). The project UAT tally is 89 PASS, 0 BLOCKED, 1 MANUAL; the 560-row CRUD matrix remains 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. PostgreSQL/restart, broad CRUD, native/device/audio, broad accessibility, Railway Web root configuration and each customer's configured call/CRM acceptance remain open. No real customer/provider requests were made.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | REUSED / REVALIDATED | Installed PHDK 2.52.2; coherence 63/63; all app roots and Browser renderer 5.1.81. |
+| Capture / Plan | REUSED | Four owner-confirmed fronts and approved policies remain current. |
+| PMO / Workstreams | ACTIVE / PARTIAL | CMT-002 advanced; CMT-001/003/004 remain open. |
+| Integration Review | COMPLETED FOR FLOW EDITOR | Delayed action refresh uses current selection; stale response cannot overwrite active view. |
+| UAT / UAT Fix | PASS FOR 5.1.81 WEB SLICE | Delayed-response flow UAT and full 8/8 Web suite pass; standalone admin/theme/AI UAT pass. |
+| SEO | NOT AFFECTED BY CANDIDATE | Authenticated management UI only; no public route or metadata changes. |
+| AEO/GEO | NOT AFFECTED BY CANDIDATE | No public content or answer claims changed. |
+| Check / Remediation | PASS FOR SCOPED SOURCE; PORTFOLIO GAPS FOUND | Web typecheck/build, targeted UAT and PHDK 63/63 pass; portfolio gates stay open. |
+| Delivery | PENDING | Normal PR, review/check readback, merge and remote-main version verification. |
+
+SIGUIENTE PASO: deliver the checked 5.1.81 candidate by normal PR and verify merged `main`; continue the remaining four-front acceptance.
+
 ## Current Auto continuation — candidate 5.1.80, PHDK 2.52.2 (2026-10-17)
 
-Source candidate `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` is on branch `fix/integration-health-unknown-5-1-80`, based on verified main `8deb6d7ff71d42a628e966bcf64d340b4f10e337`. All five package/lock roots and Browser renderer are 5.1.80; PHDK coherence is 63/63. API/Cloud integration-health contracts pass 2/2 each, shared health model 2/2; API/Cloud regressions 42/42 and 19/19; builds, Web/Landing typechecks, targeted lint and three standalone admin/theme/AI UATs pass. Latest full Web UAT is 7/8 because the superadmin flow editor test times out in the combined run; it passes 1/1 in isolation. SEO and AEO/GEO are not applicable to this private UI/backend diff and existing project reviews are preserved in candidate snapshots. Delivery remains pending. Whole Auto is PARTIALLY DELIVERED; all four commitments remain open/partial, UAT is 88 PASS, 0 BLOCKED, 1 MANUAL, and CRUD remains 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS.
+PR #199 delivered source candidate `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` at verified main `64026d229419459beb6c80c0bb0c5f3499bde742`; remote tree matches. All five package/lock roots and Browser renderer are 5.1.80; PHDK coherence is 63/63. API/Cloud integration-health contracts pass 2/2 each, shared health model 2/2; API/Cloud regressions 42/42 and 19/19; builds, Web/Landing typechecks, targeted lint and three standalone admin/theme/AI UATs pass. Latest full Web UAT is 7/8 because the superadmin flow editor test times out in the combined run; it passes 1/1 in isolation. API deployment succeeded; Web deployment failed because `/services/web` omits `/shared` from Docker context. SEO and AEO/GEO are not applicable to this private UI/backend diff; existing reviews are preserved in candidate snapshots. Whole Auto is PARTIALLY DELIVERED; all four commitments remain open/partial, UAT is 88 PASS, 0 BLOCKED, 1 MANUAL, and CRUD remains 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -12,9 +32,9 @@ Source candidate `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` is on branch `fix/in
 | SEO | NOT APPLICABLE TO CANDIDATE DIFF | Authenticated UI/backend only; existing project audit copied to `65-seo/snapshots/candidate-5.1.80/`. |
 | AEO/GEO | NOT APPLICABLE TO CANDIDATE DIFF | Public answer content unchanged; existing project review copied to `67-aeo-geo/snapshots/candidate-5.1.80/`. |
 | Check / Remediation | CHECKS PASS WITH UAT FLAKE RECORDED | PHDK 63/63, regressions, builds, targeted lint and diff check pass; exact Web UAT limitation remains. |
-| Delivery | PR #199 OPEN / MERGEABLE | Source and evidence are versioned and pushed; no hosted checks/reviews and `main` is unprotected. Merge readback and observed deployment remain. |
+| Delivery | SOURCE SLICE MERGED; PORTFOLIO PARTIAL | PR #199 merged, remote main/tree/version verified. Railway API success; Web failure due to root-directory mismatch. Full UAT limitation and completion-gate BLOCKED state are recorded in post-merge evidence. |
 
-SIGUIENTE PASO: merge through PR #199 after final review, verify remote `main` and observe the connected deployment; retain the full-suite UAT limitation and PARTIALLY DELIVERED status.
+SIGUIENTE PASO: obtain the Railway Web root/config correction and a stable complete Web UAT, then continue PostgreSQL, CRUD, native/accessibility and customer-specific gates. Keep PARTIALLY DELIVERED until all four commitments close.
 
 ---
 

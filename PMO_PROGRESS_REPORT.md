@@ -1,8 +1,23 @@
+## Current PMO progress — 5.1.81 flow-editor UAT fix; portfolio partial
+
+The flow editor's asynchronous refresh now reads the selected company when it runs and ignores out-of-order responses. A deterministic UAT delays Tenant B's response through a switch to unassigned legacy flows. All Web UAT passes 8/8 on production-built 5.1.81, standalone admin-settings/theme-template/AI-admin pass, typecheck/build pass, and PHDK coherence is 63/63. All five package/lock roots and Browser renderer align at 5.1.81. PR and remote readback are pending.
+
+| Workstream | Progress | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | Candidate 5.1.81 is version-aligned and checked. | Normal PR review/merge, fresh remote-main readback and Web Railway root/config resolution. |
+| CMT-002 widget/diagnostics | Superadmin flow editor tenant switching is race-safe under delayed responses; full Web UAT is green. | Native device/audio and broad route/theme/accessibility/localization acceptance. |
+| CMT-003 voice→Cloud→Browser→CRM | Tenant-owned flow configuration and per-tenant private-origin policy remain in place. | PostgreSQL runtime, native call path, each client's configured provider/CRM sandbox. |
+| CMT-004 administration/permissions | Scoped superadmin legacy ownership and tenant flow UI remains covered. | DB migration/restart, 396 blocked CRUD rows, audit/retention and remaining denial paths. |
+
+All four commitments remain ACTIVE/PARTIAL (0/4 DONE). Portfolio UAT is 89 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS.
+
+SIGUIENTE PASO: create and deliver the normal PR for 5.1.81, then verify merged `main` before advancing to the remaining acceptance.
+
 ## Current PMO progress — 5.1.79 source delivered; whole portfolio partial (2026-10-17)
 
-## Candidate 5.1.80 — integration telemetry truthfulness
+## Delivered 5.1.80 — integration telemetry truthfulness
 
-Source commit `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` removes fabricated green health and zero-valued telemetry until an actual provider check runs. UAT-091 API/Cloud contracts pass 2/2 each, shared model tests 2/2; API/Cloud regressions pass 42/42 and 19/19; builds, Web/Landing typechecks, targeted lint and PHDK coherence 63/63 pass. The latest full Web UAT is 7/8; its superadmin flow-editor timeout passes when rerun alone. PR #199 is open/mergeable with no hosted checks/reviews. UAT tally is 88 PASS, 0 BLOCKED, 1 MANUAL; four commitments remain active/partial. No customer adapter was configured or called.
+Source commit `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` removes fabricated green health and zero-valued telemetry until an actual provider check runs. PR #199 delivered it at main `64026d229419459beb6c80c0bb0c5f3499bde742`. UAT-091 API/Cloud contracts pass 2/2 each, shared tests 2/2; API/Cloud regressions pass 42/42 and 19/19; builds, Web/Landing typechecks, targeted lint and PHDK coherence 63/63 pass. Full Web UAT is 7/8; its superadmin flow-editor timeout passes in isolation. Railway API is SUCCESS; Web is FAILED because the live root excludes `/shared`. UAT tally is 88 PASS, 0 BLOCKED, 1 MANUAL; four commitments remain active/partial. No customer adapter was configured or called.
 
 PR #198 delivered version 5.1.79 to verified `origin/main` `8deb6d7ff71d42a628e966bcf64d340b4f10e337`. PHDK v2.52.2 is current and coherence passes 63/63. The 5.1.79 remediation removes fabricated TTS/STT/AI `ready` states and separates actual socket connectivity from unprobed aggregate health; paired service-contract tests pass, and Web/Landing typechecks/builds pass. UAT-089 remains exact-source evidence for 12 audit-console checks. Railway auto-deploy reported API SUCCESS and Web FAILED on this commit: root `/services/web` excludes the shared build input `/shared`. Portfolio is 87 PASS, 0 BLOCKED, 1 MANUAL; 560 CRUD rows remain 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. PostgreSQL, Railway, native and customer-selected acceptance remain open; deployed Web health is not claimed.
 
