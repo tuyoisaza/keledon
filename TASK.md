@@ -6,7 +6,7 @@ The CMT-003A/B review confirms non-atomic permanent command claims and tenant-or
 
 Current branch: `fix/phdk-cmt-003a-lease-fencing`, based on verified `origin/main`. Changes in progress are documentation and static source revalidation only; no application source has changed.
 
-SIGUIENTE PASO: finish the Integration/Check review for these artifacts, then publish their normal PR. Keep authenticated UAT blocked until CMT-003C/C1 provides the audited synthetic identity/device/cleanup path.
+SIGUIENTE PASO: obtener una revisión legítima del PR #258 y completar la entrega documental por el flujo normal. No hay review ni checks reportados todavía; CMT-003C/C1 sigue bloqueando el UAT autenticado.
 
 ---
 

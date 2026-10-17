@@ -862,10 +862,10 @@ Goal: continue the four approved commitments in order. PHDK 2.53.1 coherence 64/
 | SEO / AEO-GEO | REUSED / LIMITED | Existing route/metadata PIA acceptance remains scoped; external field/citation metrics remain open. |
 | Check | COMPLETED / DOCS ONLY | Changed-doc review, relative-link audit and `git diff --check` pass; no application test/build/lint. |
 | Remediation | COMPLETED / DOCS ONLY | Reconciled stale main/deployment readbacks in TASK, STATUS, PMO and PIA index. |
-| Delivery | PENDING | Normal PR/review/merge process; report product deployment separately from documentation deployment. |
+| Delivery | PR #258 OPEN / AWAITING REVIEW | GitHub reports mergeable; no review decision/check runs. No product deployment from this docs-only branch. |
 
 Whole Auto remains **PARTIALLY DELIVERED**. CMT-003A/B acceptance depends on fixture provisioning and the specified security controls; CMT-002 broad accessibility/audio and CMT-004 authenticated role/persistence cases remain open.
 
-SIGUIENTE PASO: complete the static doc check and deliver the reconciliation through a normal PR; preserve the production fixture block.
+SIGUIENTE PASO: obtain a legitimate review for PR #258, then verify merge/main readback; preserve the production fixture block.
 
 ---

@@ -4,7 +4,9 @@ Remote `main` is `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; current branch `fix
 
 CMT-001 complete for this cut; CMT-002 partial; CMT-003 partial with audited fixture provisioning blocked and lease/DNS socket enforcement open; CMT-004 partial with authenticated persistence/cross-tenant evidence blocked. Whole Auto remains PARTIALLY DELIVERED. No local app tests/builds/lint or production mutations were performed.
 
-Next action: finish docs Integration/Check, publish through the normal PR flow, and continue CMT-003C1 security review and source planning. Production authenticated acceptance remains blocked until an existing first-party audited fixture/login/cleanup path is available.
+PR #258 is open against `main` and GitHub reports it mergeable; no review decision or check runs are present. No product deploy is associated with this docs-only branch.
+
+Next action: obtain a legitimate review for PR #258 and complete the normal merge/readback; production authenticated acceptance remains blocked until the audited fixture/login/cleanup path is available.
 
 ---
 

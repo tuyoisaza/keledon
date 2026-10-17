@@ -6,6 +6,8 @@
 
 Revalidación de CMT-003C1: fuente confirma signup/login normal por email/Google con rol `user`, pero las nuevas cuentas no reciben tenant/run y las mutaciones de compañía, vinculación y recursos no tienen el ciclo durable/reversible requerido. Esto elimina el supuesto de que falte autenticación normal; no habilita provisioning ni UAT productivo.
 
+La actualización documental está en [PR #258](https://github.com/tuyoisaza/keledon/pull/258), abierto y sin review/checks reportados todavía. Su entrega no modifica el producto ni desbloquea aceptación runtime.
+
 ## Readback vigente — candidate 5.2.10 / CMT-003C1
 
 Repo `tuyoisaza/keledon`; producto 5.2.10 en source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; main documental vigente `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`. PR #255 producto y PR #256/#257 documentales integrados. Railway Web/API posteriores al PR #257 SUCCESS, 1/1 (`cb925cdb-413b-420d-95c2-2cdf6047ffc5` / `02ce9322-a9eb-4bb5-9935-e041b767c18a`). PHDK 2.53.1, canonical upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherencia estática 64/64; `AGENTS.md` managed block coincide byte por byte con `PHDK_NATIVE_RULES.md`. La revalidación de CMT-003A/B está en `40-integration/revalidations/20261017-cmt-003a-b-current-source-review.md`.
