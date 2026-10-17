@@ -10,9 +10,10 @@
 | Manifest coherence | PASS | `py -3 phdk-standards/scripts/phdk_coherence_check.py` → `PASS: v2.53.1, 64 manifest mappings (static only)`. |
 | Documentation diff hygiene | PASS | `git diff --check` passed after handoff normalization. |
 | Native PHDK instruction | PASS | Root `AGENTS.md` managed block SHA-256 exactly matches vendored `PHDK_NATIVE_RULES.md`; text outside markers was preserved. |
-| UAT evidence integrity | PASS, LIMITED | Production anonymous homepage load at `https://keledon.tuyoisaza.com/` displayed v5.1.85. This is not candidate 5.2.1 or authenticated feature acceptance. |
+| UAT evidence integrity | PASS, LIMITED | Production anonymous homepage load displayed v5.1.85 (UAT-098); anonymous `/management/teams` navigation redirected to `/login` (UAT-099). Both are read-only checks on 5.1.85, not candidate 5.2.1 or authenticated feature acceptance. |
 | Application test suites in this continuation | NOT RUN | User requested production-site testing; source test results cited in the prior candidate report were not rerun. |
 | Production tenant/database mutation | NOT RUN | No account, record, assignment, DB, migration, provider setting or secret was touched. |
+| Branch/PR synchronization | PASS | `git pull --ff-only` found the branch current; remote branch and PR #210 both report head `0a764385933872f59dfe2556b6054d742f897f2d`; PR remains OPEN with no check runs or review decision. |
 | Candidate source check reuse | PASS FOR PRIOR SOURCE SCOPE | Previous `PHDK_CHECK_REPORT-5.2.1.md` records exact candidate builds/typecheck/lint/focused regression and source check. This turn made no application source changes. |
 
 ## Remaining gates

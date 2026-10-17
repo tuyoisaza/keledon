@@ -2,10 +2,10 @@
 
 | Commitment | Verified progress | Remaining acceptance |
 |---|---|---|
-| CMT-001 baseline/version/PRs | PHDK 2.53.1 installed; PR #210 open at branch head `c0d33b355cbdaaff14203aeb49e9c5a4f400149d`; production homepage shows 5.1.85. | No checks/review decision reported; safe UAT and exact `main`/deployment readback remain. |
+| CMT-001 baseline/version/PRs | PHDK 2.53.1 installed; PR #210 open at branch head `0a764385933872f59dfe2556b6054d742f897f2d`; production shows 5.1.85. | No checks/review decision reported; safe UAT and exact `main`/deployment readback remain. |
 | CMT-002 widget/diagnostics | Prior source and local acceptance retained with original scope. No local app tests run in this continuation. | Native device/audio and broad assistive-tech/localization acceptance. |
 | CMT-003 voice→Cloud→Browser→CRM | Client-neutral contracts and allowlist evidence retained; no customer integration contacted. | Client must select and provide safe call/CRM sandbox for acceptance. |
-| CMT-004 administration/permissions | Tenant interface selector/stale-response source fixes on branch; production smoke UAT-098 is anonymous and not feature acceptance. | Synthetic role sessions, persisted assignment, cross-tenant denial and exact-candidate browser evidence. |
+| CMT-004 administration/permissions | Tenant interface selector/stale-response source fixes on branch; UAT-098 homepage and UAT-099 anonymous management redirect are on production v5.1.85, not feature acceptance. | Synthetic role sessions, persisted assignment, cross-tenant denial and exact-candidate browser evidence. |
 
 Portfolio remains 4 confirmed / 0 complete / 4 active-partial. CRUD inventory counts from the prior candidate remain historical and are not recalculated by this read-only smoke. PHDK static coherence: 64/64. See stage 30 PMO snapshot `snapshots/candidate-5.2.1/`.
 
