@@ -8,7 +8,7 @@ El widget público debe dejar claro cuándo muestra una demo y cuándo informaci
 
 ## Cobertura a cerrar
 
-1. Repetir en producción 5.2.1 los recorridos públicos de `/` y `/login`: versión desplegada, texto de demo, orden/etiquetas accesibles, foco/teclado y botones. Capturar los casos en ES/EN/PT y oscuro/claro/corporativo, desktop y móvil, mediante sesión de navegador de UAT.
+1. Ampliar en producción 5.2.2 los recorridos públicos de `/` y `/login`: texto de demo, orden/etiquetas accesibles, foco/teclado y botones. Capturar los casos restantes en ES/EN/PT y oscuro/claro/corporativo, desktop y móvil, mediante sesión de navegador de UAT.
 2. Verificar la acción “Copiar diagnóstico” solo hasta el estado visible de éxito/error; no exportar ni adjuntar portapapeles. Revisar el reporte por allowlist/redacción en source antes de autorizar un diagnóstico real.
 3. Verificar “Limpiar caché” únicamente en un perfil de navegador de UAT desechable; registrar recarga y estado final. No borrar almacenamiento del perfil personal/productivo compartido.
 4. En sesión sintética, probar visibilidad de diagnóstico: user/coordinator no obtienen diagnóstico profundo; admin/superadmin reciben solo los detalles permitidos por contrato y autorización servidor. Incluir denegación 401/403 y API no disponible. No fabricar resultados de health.
@@ -27,7 +27,7 @@ El widget público debe dejar claro cuándo muestra una demo y cuándo informaci
 
 | Caso | Criterio de aceptación | Evidencia requerida |
 |---|---|---|
-| WDG-PUB | Ruta y versión 5.2.1; la demo se identifica como ilustrativa; sin telemetría falsa | Captura/tree de accesibilidad, URL y SHA desplegado |
+| WDG-PUB | Ruta y versión 5.2.2; la demo se identifica como ilustrativa; sin telemetría falsa | Captura/tree de accesibilidad, URL y SHA desplegado; UAT-112 registra versión y SHA actuales |
 | WDG-A11Y | Foco visible, navegación teclado, nombres de acción, estado anunciado y targets/tamaño sin solapamiento en responsive | Resultado por locale/tema/viewports; hallazgos WCAG con severidad |
 | WDG-DIAG | Copia informa éxito/fallo; reporte no contiene tokens, secretos, cuerpos, query privada, PII ni hostname/URL privada | Inspección del contrato y evidencia redacted del estado, nunca clipboard completo |
 | WDG-CACHE | Solo perfil desechable; limpieza no rompe sesión de otros perfiles ni persiste datos sensibles | Registro antes/después del perfil UAT |
