@@ -40,6 +40,12 @@
 |---|---|---|---|---|---|
 | UAT-114 | CMT-002 / anonymous public visitor | Open production `/` anonymously and inspect the accessibility tree only. Do not activate navigation, diagnostic, cache, theme or locale controls. | Version and named public controls are present; the illustrative session preview is accompanied by a disclosure that there are no live sessions or service metrics. | Production UI / isolated anonymous IAB / read-only accessibility tree | **PASS FOR TREE PRESENCE AND DISCLOSURE ONLY:** v5.2.2, main landmark, named public controls and Portuguese disclosure “Interface ilustrativa; sem sessões ou métricas de serviço em tempo real.” are exposed in the tree; preview label says “Prévia ilustrativa de sessão”. Viewport and visual rendering were not measured; no screen reader was used and no control was activated. Evidence: `evidence/uat-114-production-landing-demo-disclosure-2026-10-17.json`. |
 
+## Candidate 5.2.2 — UAT-115 responsive public landing sample
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-115 | CMT-002 / anonymous public visitor | On production `/` in Portuguese/dark theme, inspect responsive geometry at 320×720, 375×812 and 768×1024 CSS px; visually inspect the 320px screenshot. Do not activate links or buttons. | No horizontal overflow; demo disclosure and hero heading stay within the document viewport; mobile menu target is at least 44×44px. | Production UI / isolated anonymous browser / read-only DOM geometry and screenshot | **PASS FOR SAMPLED RESPONSIVE LAYOUT:** document/body scroll widths equal client widths at all three sizes; disclosure and title remain in bounds; menu target measures 44×44px at 320/375/768. The 320px screenshot shows the disclosure below the navigation and readable hero copy. Other viewport content, themes/locales, zoom, screen reader and full WCAG conformance remain open. Evidence: `evidence/uat-115-production-responsive-layout-2026-10-17.json`. |
+
 ## Candidate 5.2.1 — UAT-109 sampled contrast in production themes
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
