@@ -1,0 +1,52 @@
+{
+  "case": "UAT-129",
+  "date": "2026-10-17",
+  "observedAtUtc": "2026-10-17T20:54:00Z",
+  "environment": "production",
+  "url": "https://keledon.tuyoisaza.com/?phdk-auto-cmt002-keyboard-20261017=01",
+  "productVersion": "5.2.6",
+  "productSourceCommit": "e7257a7d0c66c8b34e6bbb7028c30be092f33102",
+  "deploymentCommit": "9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12",
+  "webDeploymentId": "b3dd466a-5c1a-40a9-ac99-c032cfaa6d32",
+  "webDeploymentStatus": "SUCCESS",
+  "apiDeploymentId": "430a4bd6-4d9f-4b32-89c9-10501c617df1",
+  "apiDeploymentStatus": "SUCCESS",
+  "actor": "anonymous",
+  "locale": "pt",
+  "theme": "dark",
+  "browser": "Codex in-app browser via CUA",
+  "actions": {
+    "keyboard": "Tab only; 11 sequential presses",
+    "sequence": [
+      "KELEDON home link",
+      "Copy diagnostics",
+      "Clear app cache",
+      "Features",
+      "Architecture",
+      "Use cases",
+      "Theme selector",
+      "Language selector",
+      "Sign in",
+      "Create account",
+      "Open KELEDON CTA"
+    ],
+    "firstFocusWas": "KELEDON home link",
+    "focusAdvancedFromHeaderTo": "Open KELEDON CTA",
+    "controlsActivated": false,
+    "formsSubmitted": false
+  },
+  "observations": {
+    "focusedUseCasesLinkVisibleFocus": true,
+    "focusedPrimaryCtaVisibleFocus": true,
+    "headerFocusOrderReachedMainContent": true,
+    "headerKeyboardTrapObserved": false,
+    "treeNamedControls": true
+  },
+  "result": "PASS_FOR_SAMPLED_PUBLIC_KEYBOARD_ORDER_AND_VISIBLE_FOCUS_ONLY",
+  "limitations": [
+    "Only one public route, Portuguese/dark, current browser and session.",
+    "Visible focus was visually confirmed on the Use cases header link and Open KELEDON CTA; not every intermediate element was visually measured.",
+    "No controls or links activated, no form filled, no screen-reader voice, zoom, other themes/locales/routes, authentication, RBAC, persistence or audio was tested."
+  ],
+  "spendDisposition": "NO_NEW_SPEND"
+}

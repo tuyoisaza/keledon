@@ -1,12 +1,12 @@
-## Verified current readback — KELEDON 5.2.6 / UAT-128 (2026-10-17)
+## Verified current readback — KELEDON 5.2.6 / UAT-129 / CMT-003C (2026-10-17)
 
 Producto desplegado: KELEDON 5.2.6, source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. PR #243 actualizó documentación y PIAs; remote `main` es `870e6db73b5706d8469b2d9a49e575bf735a9a3f` tras PR #244 (solo documentación), sin cambio al source de producto. Railway Web `3688c933-9806-4546-aa2e-a1aa4515e4b7` y API `27dba245-5425-47d4-a1cf-cdc3aee2f480` reportan SUCCESS.
 
-UAT-127/128 **PASA únicamente presencia del árbol de accesibilidad público**: versión, título, landmark main, aviso demo, controles nombrados y navegación. Hubo un 502 de Cloudflare en la primera navegación; la segunda cargó correctamente. Causa desconocida. UAT-128, después del merge/deploy #244, cargó en la primera navegación. No hubo acciones, login ni datos de cliente.
+UAT-127/128 pasan únicamente presencia del árbol de accesibilidad público; UAT-129 pasa el muestreo de orden/foco por teclado: versión, título, landmark main, aviso demo, controles nombrados y navegación. Hubo un 502 de Cloudflare en la primera navegación; la segunda cargó correctamente. Causa desconocida. UAT-128 después de #244 cargó correctamente; UAT-129 recorrió 11 Tab, mostró foco en nav/CTA y pasó al CTA sin activar controles. El seeder existente solo admite DB loopback development/test y crea también un superadmin de prueba; PHDK prohíbe privilegiados en producción, por lo que auth/tenants/devices siguen bloqueados. No hubo login ni datos cliente.
 
-PHDK 2.53.1: coherencia estática 64/64. Auto global **PARCIALMENTE ENTREGADO**: CMT-001 completo para este corte; CMT-002 parcial; CMT-003/004 abiertos. UAT autenticada sigue bloqueada por falta de provisioning/cleanup auditado de fixtures sintéticos (PIA CMT-003C). No se ejecutaron suites ni builds locales de aplicación.
+PHDK 2.53.1: coherencia estática 64/64; remote main `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12` (PR #245); Web/API SUCCESS. Auto global **PARCIALMENTE ENTREGADO**: CMT-001 completo para este corte; CMT-002 parcial; CMT-003/004 abiertos. UAT autenticada sigue bloqueada por falta de provisioning/cleanup auditado de fixtures sintéticos (PIA CMT-003C). No se ejecutaron suites ni builds locales de aplicación.
 
-SIGUIENTE PASO: integrar este registro de UAT por PR y continuar CMT-003A/B; abrir UAT autenticada solo cuando exista el camino aprobado de fixtures y limpieza.
+SIGUIENTE PASO: integrar UAT-129 y la revalidación CMT-003C por PR y continuar CMT-003A/B; abrir UAT autenticada solo cuando exista el camino aprobado de fixtures y limpieza.
 
 This readback supersedes earlier summaries below; those remain historical.
 

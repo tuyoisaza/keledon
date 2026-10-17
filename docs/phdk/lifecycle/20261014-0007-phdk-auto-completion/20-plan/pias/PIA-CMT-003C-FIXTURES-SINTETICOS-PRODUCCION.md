@@ -38,3 +38,8 @@ Preparar una ruta de UAT que permita ejecutar Q-LEASE-01..Q-TENANT-06 y NET-DNS-
 ## Entregables y salida
 
 UAT auth plan de producción; matriz de roles/tenants; manifiesto y run ID idempotente; paso de provisión/desactivación auditado; DNS/CRM sandbox acordado si se acepta el gate privado; cleanup y verificación; evidencia para los casos referidos; actualización de UAT_ACCESS_REPORT.md, UAT_CASES.md, UAT_REPORT.md y HANDOFF.md. CMT-003C pasa a READY solo cuando la autorización de fixture y el mecanismo administrativo/cleanup están disponibles. Hasta entonces CMT-003A/B pueden recibir cambios de fuente revisables, pero sus gates de producción siguen BLOCKED y CMT-003 no se declara completado.
+
+
+## Revalidación del camino de provisión — 5.2.6 (2026-10-17)
+
+La inspección de `services/api/scripts/uat-prep-companyco.policy.cjs` confirma que el seeder solo acepta `keledon_phdk_uat` en loopback, con confirmación explícita y env `development`/`test`; rechaza Railway/production. `uat-prep-companyco.ts` define seis cuentas estables, incluido `superadmin`, pero no crea emparejamiento Browser ni CRM/DNS sandbox. Es un mecanismo de UAT local, no la vía productiva autorizada. Se mantiene intacto porque `PHDK_UAT_PREP.md` prohíbe privilegiados de prueba y auth bypass en producción. No se ejecutó ni hubo escrituras. Para avanzar autenticación se necesita ruta segura de sandbox/IdP aprobada no productiva, lo que no satisface la preferencia prod-only, o un cambio explícito y compatible con política; ninguna vía existe hoy.

@@ -1,3 +1,12 @@
+## Browser Readiness — UAT-129 producción: teclado público (2026-10-17)
+
+- Permiso: UAT público anónimo autorizado; CUA in-app browser verificado.
+- Producto candidato: KELEDON 5.2.6 source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; main `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12`, deploy documental #245. Web `b3dd466a-5c1a-40a9-ac99-c032cfaa6d32` y API `430a4bd6-4d9f-4b32-89c9-10501c617df1` SUCCESS.
+- Identidad/datos: anonymous; sin sesión, credenciales, formularios, API write o datos cliente.
+- Ejecución: 11 Tab; foco pasó del encabezado al CTA. Evidencia visual de foco en link de nav y CTA; no se activó elemento.
+- Resultado: PASS para orden/foco muestreados; lector de pantalla, WCAG integral, auth/RBAC, otros estados/rutas y device permanecen fuera.
+- Spend: `NO_NEW_SPEND`.
+
 ## Browser Readiness — UAT-128 post-merge production public AX (2026-10-17)
 
 - Stage/run: Auto UAT, `20261014-0007-phdk-auto-completion`; browser permission `ACTIVE_UAT_EXCEPTION`.

@@ -13,3 +13,6 @@ Whole PHDK Auto remains PARTIALLY DELIVERED.
 
 
 Post-merge UAT-128 revalidated the same public AX presence after PR #244 docs-only deployments reached SUCCESS (Web `3688c933-9806-4546-aa2e-a1aa4515e4b7`, API `27dba245-5425-47d4-a1cf-cdc3aee2f480`). Product version/source remained 5.2.6 / `e7257a7`. Evidence is in `50-uat/evidence/uat-128-production-postmerge-public-ax-2026-10-17.json`.
+
+
+UAT-129 adds a production-only public keyboard sequence (11 Tab) with visual focus confirmed on a navigation link and the main CTA; it passes this sampled order/focus scope only. Evidence: `50-uat/evidence/uat-129-production-public-keyboard-focus-2026-10-17.json`. The existing UAT Prep seeder is loopback dev/test only and remains production-rejecting under PHDK policy.

@@ -1,3 +1,26 @@
+## Current continuation — UAT-129 public keyboard / CMT-003C readiness recheck (2026-10-17)
+
+Remote `main` `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12`; PR #245 merged docs/evidence only. Product remains v5.2.6 source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Railway Web `b3dd466a-5c1a-40a9-ac99-c032cfaa6d32` and API `430a4bd6-4d9f-4b32-89c9-10501c617df1` are SUCCESS.
+
+UAT-129 PASSes sampled public keyboard order/focus only: 11 Tab moved through header and reached CTA; visible focus was confirmed on a header link and CTA; no control activated. Prep source audit confirms the only fixture seeder refuses production and provisions a local loopback dev/test DB including a `superadmin`; PHDK forbids privileged production test identities/auth bypass. The authenticated runtime gate remains BLOCKED for want of a permitted sandbox IdP/provisioning and cleanup path.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | REVALIDATED | PHDK 2.53.1 coherence 64/64 static. |
+| Capture / Plan | REUSED | Four ordered owner-confirmed fronts; PIAs CMT-003A/B/C current. |
+| PMO / Integration | ACTIVE / PARTIAL | CMT-003A/B source gaps confirmed; integration remains per-customer. |
+| UAT Prep | BLOCKED AUTH / PARTIAL PUBLIC | Existing seeder only local loopback; no privileged production identities or bypass. |
+| UAT / Fix | PASS SCOPED | UAT-127/128 AX presence; UAT-129 keyboard order/focus sample on production. |
+| SEO / AEO-GEO | REUSED | No public product content or metadata changed. |
+| Check | PASS FOR DOCS | PHDK 64/64, UAT-129 evidence JSON and `git diff --check`; no local app suite/build. |
+| Delivery | IN PROGRESS | UAT-129 and Prep constraint documentation pending PR. |
+
+Overall Auto remains **PARTIALLY DELIVERED**.
+
+SIGUIENTE PASO: deliver the UAT-129/CMT-003C revalidation through PR. Continue safe source work; keep auth, lease, tenant isolation and private egress UAT blocked until a compliant fixture/sandbox path exists.
+
+---
+
 ## Current continuation — UAT-128 post-merge / PHDK 2.53.1 (2026-10-17)
 
 PR #244 merged at remote `main` `870e6db73b5706d8469b2d9a49e575bf735a9a3f`. It changed documentation/evidence only; the production product remains KELEDON 5.2.6 source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`. Railway Web `3688c933-9806-4546-aa2e-a1aa4515e4b7` and API `27dba245-5425-47d4-a1cf-cdc3aee2f480` report SUCCESS.

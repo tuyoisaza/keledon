@@ -1,3 +1,9 @@
+## Production v5.2.6 — UAT-129 public keyboard order and visible-focus sample
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-129 | CMT-002 / anonymous public visitor | Fresh anonymous production `/` in pt/dark; press Tab 11 times from initial page focus; inspect accessibility focus and screenshot. Never activate links/buttons or submit. | Header focus progresses through brand, diagnostics, navigation, theme/language and sign-in controls into the main CTA; focus is visible and no header trap occurs. | Production browser keyboard + accessibility tree/screenshot | **PASS FOR SAMPLED ORDER/FOCUS ONLY:** sequence reached KELEDON brand → copy → cache → public nav → theme/language → sign-in/create-account → main CTA. Focus was visible on “Casos de uso” and “Abrir KELEDON”; focus advanced beyond header. No control activated. Evidence: `evidence/uat-129-production-public-keyboard-focus-2026-10-17.json`. |
+
 ## Production v5.2.6 — UAT-128 post-merge public accessibility-tree presence
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

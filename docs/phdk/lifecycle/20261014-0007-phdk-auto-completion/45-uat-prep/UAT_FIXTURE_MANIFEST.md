@@ -1,6 +1,6 @@
 ## Revalidación CMT-003C — 5.2.6 (2026-10-17)
 
-**Resultado: NOT PROVISIONED / BLOCKED.** Producto source: `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PR #242 solo actualizó documentación. Run propuesto: `20261014-0007-phdk-auto-completion-cmt003c-20261017`.
+**Resultado: NOT PROVISIONED / BLOCKED.** Producto source: `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PR #244/#245 actualizan solo documentación/evidencia; remote `main` `9d34bb82b67e62457fd9333d4ca5e3d5ba7d8c12`, producto source 5.2.6 sin cambio. Run propuesto: `20261014-0007-phdk-auto-completion-cmt003c-20261017`.
 
 | Fixture requerido | Alcance mínimo | Estado |
 |---|---|---|
@@ -12,7 +12,7 @@
 
 No se ejecutó el seeder local, no se modificó la protección que rechaza producción y no se escribió directamente a la BD. Cleanup exigirá desactivar/revocar exclusivamente IDs de este run y leer evidencia de acceso negado después; auditoría append-only se conserva. Ver detalle y dependencias en `20-plan/pias/PIA-CMT-003C-FIXTURES-SINTETICOS-PRODUCCION.md`.
 
-# Manifest de fixtures UAT — KELEDON 5.2.4
+## Historial de manifiesto — KELEDON 5.2.4
 
 Fecha: 2026-10-17 · run `20261014-0007-phdk-auto-completion` · entorno solicitado: producción para UAT funcional.
 
@@ -37,4 +37,4 @@ Fecha: 2026-10-17 · run `20261014-0007-phdk-auto-completion` · entorno solicit
 - Revocar sesiones y credenciales de prueba al final; retirar solo registros marcados del run. Retener auditoría append-only; no purgarla.
 - No configurar un destino privado; el CRM sandbox de cada tenant espera owner, allowlist y autorización del cliente.
 
-El seeder vigente `services/api/scripts/uat-prep-companyco.ts` rechaza producción y requiere target loopback aislado. No se modifica esa protección ni se fuerza el seeder a producción.
+El seeder `services/api/scripts/uat-prep-companyco.ts` rechaza production/staging y exige DB loopback `keledon_phdk_uat`; provisiona seis cuentas locales incluyendo superadmin y no configura devices o CRM. No se modifica esa protección ni se fuerza el seeder a producción. UAT-127/128/129 son pruebas anónimas públicas, no validan autenticación.
