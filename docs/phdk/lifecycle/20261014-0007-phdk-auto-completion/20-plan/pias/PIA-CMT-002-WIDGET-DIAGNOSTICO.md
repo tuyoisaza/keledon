@@ -49,3 +49,7 @@ La página pública de producción abierta en UAT reportó 5.2.1 en portugués, 
 ## Reglas de privacidad
 
 No guardar transcripción, grabación, IDs de clientes, token/cookie, campos de formulario, URL privada, cuerpo de request, portapapeles completo ni salida de diagnóstico profundo. Redactar screenshot/AX trace cuando aparezcan nombres/correos. La evidencia distingue observación pública, sintética, autenticada y manual.
+
+## Production readback — 2026-10-17
+
+UAT-122 confirms with fresh HTTPS requests that `/` and `/login` serve the same current 5.2.4 content-hashed bundle, matching Railway SUCCESS for current main. The older `v5.2.3` visible in an already-open browser page was stale page state, not the current served asset. This closes only a CMT-001/002 route-version reconciliation check. It does not add browser interaction, accessibility, diagnostic-RBAC, authenticated, or audio acceptance. See `50-uat/evidence/uat-122-production-served-asset-version-2026-10-17.json`.

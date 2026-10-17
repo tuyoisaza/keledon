@@ -1,0 +1,31 @@
+{
+  "case": "UAT-122",
+  "date": "2026-10-17",
+  "observedAtUtc": "2026-10-17T20:05:54Z",
+  "environment": "production",
+  "routes": [
+    {"url": "https://keledon.tuyoisaza.com/?phdk-uat-122=20261017", "status": 200, "javascriptBundle": "/assets/index-COWg4nKb.js"},
+    {"url": "https://keledon.tuyoisaza.com/login?phdk-uat-122=20261017", "status": 200, "javascriptBundle": "/assets/index-COWg4nKb.js"}
+  ],
+  "bundle": {
+    "url": "https://keledon.tuyoisaza.com/assets/index-COWg4nKb.js",
+    "status": 200,
+    "bytes": 871909,
+    "sha256": "c887bae8f955bc79c08ace8431ace643c855015fac08aec80c4d0797a6c6fae6",
+    "cacheControl": "max-age=14400",
+    "containsVersion524": true,
+    "containsVersion523": false
+  },
+  "railwayProductionDeploymentsForMainCommit": {
+    "commit": "46ac94e194f8f9827f3fe9b1d2df2f85ffb00192",
+    "web": {"id": "1c988e88-f175-4c39-b8e4-bb000f279eba", "status": "SUCCESS"},
+    "api": {"id": "f9fbb226-b91c-426a-8dd9-2695e34db576", "status": "SUCCESS"}
+  },
+  "result": "PASS_LIMITED_PRODUCTION_ROUTE_AND_ASSET_VERSION",
+  "limitations": [
+    "Only fresh HTTP GET responses and the referenced JavaScript bundle were inspected; no application interactions were executed in this case.",
+    "Does not establish complete browser accessibility, localization, authenticated role behavior, API security, or tenant persistence.",
+    "The open browser tab's displayed v5.2.3 came from its already-loaded old page state; the current production bundle fetched for both routes identifies v5.2.4. This is not recorded as a production regression.",
+    "No login, account creation, write, customer data, credential, paid call, external submission, local app test, or local app build was used."
+  ]
+}

@@ -453,3 +453,9 @@ Current evidence revision: `edce7eafbe13ac16ab93274a87e12571e7b04b2e`; verified 
 | UAT-121 | CMT-004 / anonymous visitor | Open production `/management/teams` directly without a session; inspect the resulting route, accessibility tree and version only. | The protected route redirects to login; team/catalog data is not exposed. No authentication or mutation. | Production UI / anonymous connected browser | **PASS FOR ANONYMOUS BOUNDARY ONLY:** route redirected to `/login`; login displayed v5.2.4 and no team/interface content. Does not accept authenticated roles, tenant filtering, persistence or cross-tenant denial. Evidence: `evidence/uat-121-production-anonymous-team-selector-2026-10-17.json`. |
 
 Authenticated ADM-IF-01..06 remain BLOCKED because no authorized synthetic production identities/dataset and cleanup plan are available. No customer data or normal owner account was used.
+
+## Current production — UAT-122 served route and asset version
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-122 | CMT-001/CMT-002 / anonymous release observer | Send fresh no-cache HTTPS GETs to `/` and `/login`; inspect each referenced app bundle and hash only its bytes/version marker. Do not execute UI actions or submit data. | Both routes serve the same current 5.2.4 app bundle; deployed Web/API are SUCCESS for the same current `main` source. | Production HTTPS GET and Railway deployment readback | **PASS (limited route/asset version):** both routes and the bundle returned 200; both referenced `/assets/index-COWg4nKb.js`, SHA-256 `c887bae8f955bc79c08ace8431ace643c855015fac08aec80c4d0797a6c6fae6`; bundle contains `5.2.4` and not `5.2.3`; Web/API deployments for `46ac94e194f8f9827f3fe9b1d2df2f85ffb00192` are SUCCESS. Does not establish UI, authenticated or security acceptance. Evidence: `evidence/uat-122-production-served-asset-version-2026-10-17.json`. |
