@@ -1,6 +1,6 @@
 # PIA CMT-002 — widget, UX y diagnóstico seguro
 
-Estado: ACTIVE / PARTIAL · Prioridad: 2 · Producción observada: KELEDON 5.2.3 (Web assets deployed from main `85d792321445da6ba6a744e79d7128fed8717d3d`; product fix source `3cccb4b2f88828fa5d273b682925d3a106dd3b9`). UAT-112 pasa muestras planas del CTA, UAT-117 pasa el estado visible de copia anónima más contrato de fuente sin hostname, UAT-118 pasa una muestra limitada de teclado/foco y UAT-119 pasa el orden público de teclado del login; la aceptación integral continúa abierta. UAT-119 detecta atributo `lang=en` con idioma visible pt y estilo de foco a revisar.
+Estado: ACTIVE / PARTIAL · Prioridad: 2 · Producción observada: KELEDON 5.2.3 (Web assets deployed from main `85d792321445da6ba6a744e79d7128fed8717d3d`; product fix source `3cccb4b2f88828fa5d273b682925d3a106dd3b9`). UAT-112 pasa muestras planas del CTA, UAT-117 pasa el estado visible de copia anónima más contrato de fuente sin hostname, UAT-118 pasa una muestra limitada de teclado/foco y UAT-119 pasa el orden público de teclado del login; la aceptación integral continúa abierta. UAT-119 detecta atributo `lang=en` con idioma visible pt y estilo de foco a revisar. Candidate fix 5.2.4 synchronizes the root HTML language with the selected locale in Web and Landing; UAT-120 production verification remains pending.
 
 ## Resultado esperado
 
@@ -29,6 +29,7 @@ El widget público debe dejar claro cuándo muestra una demo y cuándo informaci
 - UAT-117 observa en producción 5.2.3 el éxito accesible “Diagnóstico copiado” para visitante anónimo. La fuente fusionada omite los hostnames configurados de API y OAuth, reemplazándolos con texto fijo. No se leyó el portapapeles ni se probó el contenido íntegro; usuarios autenticados, fallo de portapapeles y diagnóstico profundo/RBAC continúan pendientes. Evidencia: `50-uat/evidence/uat-117-production-copy-status-2026-10-17.json`.
 - UAT-118 pasa un muestreo público de teclado en producción 5.2.3: orden marca→copiar→limpiar→Recursos; los botones copiar/limpiar miden 44×44 px y muestran outline teal sólido de 2px. No se activaron controles ni se usó lector; resto del teclado y screen reader siguen pendientes. Evidencia: `50-uat/evidence/uat-118-production-diagnostics-keyboard-2026-10-17.json`.
 - UAT-119 pasa el orden público de teclado en `/login` de producción 5.2.3, con Shift+Tab de Crear cuenta a Google; la página mantuvo `document.documentElement.lang=en` mientras mostraba portugués, y el estilo del foco en Crear cuenta calculó `outline:auto` 0.666667px. La sugerencia de autofill no se eligió ni se capturaron valores. Evidencia: `50-uat/evidence/uat-119-production-login-keyboard-2026-10-17.json`.
+- Candidate 5.2.4 synchronizes `document.documentElement.lang` to the selected `es`, `en` or `pt` locale in both Web and Landing providers. This is source remediation only until a successful production deploy is observed and UAT-120 confirms the DOM language for each supported locale.
 
 ## Casos y aceptación
 

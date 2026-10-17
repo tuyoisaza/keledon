@@ -4,6 +4,10 @@ This readback supersedes the earlier 5.2.1/5.2.2 candidate summaries below; thos
 
 SIGUIENTE PASO: fix the login document-language metadata in the next candidate and revalidate in production; continue CMT-002 public cases. Authenticated/audio UAT remains gated on synthetic identities and a test device.
 
+## Candidate remediation — KELEDON 5.2.4
+
+On `fix/phdk-5.2.4-login-lang`, both Web and Landing i18n providers now set the root document `lang` to the selected `es`/`en`/`pt` locale. Five product package roots and their lockfile root metadata are versioned to 5.2.4. UAT-120 is planned for production-only validation after merge/deploy; no local app tests/builds are run. Candidate has not yet been published or deployed.
+
 # Current PHDK Auto — continuation PIAs / KELEDON 5.2.1 / PHDK 2.53.1
 
 Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; latest product PR #213 is merged at `5884b80ba4318b2c4beed3e50d94945028b9a311`; documentation PRs #214–#218 are merged after PR #212 at `64cef2f36c5a0deb1561c3ab2e0e45b850c9a87e`. PHDK v2.53.1 coherence recheck passes 64/64. The four ordered PIAs include CMT-003A (queue lease/effect idempotency) and CMT-003B (tenant DNS/CIDR egress). Production UAT-108 passes responsive scope; UAT-109 passes only sampled pairs; UAT-110 passes a limited public keyboard/AX sample; expanded UAT-111 found CTA contrast failures in dark and corporate on 5.2.1. Fix is prepared on a source branch at candidate 5.2.2; production UAT-112 is the required acceptance gate. Full contrast, screen-reader acceptance, authenticated behavior and audio remain open.

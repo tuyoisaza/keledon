@@ -4,6 +4,10 @@ This readback supersedes earlier 5.2.1/5.2.2 candidate notes below; those remain
 
 SIGUIENTE PASO: correct and deploy the login `lang` metadata, then verify it in production. Keep privileged/audio cases pending synthetic fixtures. Successful API deploy is not API behavior acceptance.
 
+## Candidate remediation — 5.2.4
+
+Branch `fix/phdk-5.2.4-login-lang` synchronizes `document.documentElement.lang` with the selected locale in both Web and Landing. UAT-120 will verify ES/EN/PT only after production deployment. This source candidate is not yet published/deployed; no local application tests/builds were run.
+
 # PMO Status — 5.2.1 PIA continuation / PHDK 2.53.1; portfolio partial
 
 ## Current continuation — 2026-10-17
