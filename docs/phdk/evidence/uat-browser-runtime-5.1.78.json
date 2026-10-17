@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-BROWSER-RUNTIME-5.1.78",
+  "candidateVersion": "5.1.78",
+  "candidateRevision": "d868f5dc7b250c227192d9f43588b4bc518415d4",
+  "stage": "UAT / Integration Review",
+  "executedAt": "2026-10-17",
+  "environment": "Local Windows source checks; Browser TypeScript build and Node regression fixtures.",
+  "results": {
+    "browserBuild": "PASS; prebuild synchronized renderer to 5.1.78",
+    "browserSecurityRuntime": "22/22 passed",
+    "landingSeo": "1/1 passed"
+  },
+  "coverage": [
+    "Electron renderer isolation, sandbox and exact local-document boundary",
+    "Tenant private-origin allowlist, frame navigation, service worker and WebContents lifecycle scope",
+    "Browser media permission origin binding, consent lifetime and language copy",
+    "Synthetic Company Co call decision/finalization/standby lifecycle and failure boundaries",
+    "Bounded runtime contracts and call transcript listener cleanup"
+  ],
+  "result": "PASS (source/runtime fixtures)",
+  "limitations": [
+    "No packaged installer, native audio device, microphone permission dialog, live telephony provider, CRM host, customer data or production endpoint was used.",
+    "This evidence does not replace native device/audio acceptance or a customer-selected sandbox journey."
+  ]
+}

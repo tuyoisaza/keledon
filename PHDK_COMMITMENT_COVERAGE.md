@@ -1,13 +1,13 @@
 ## Current commitment coverage — 5.1.78 candidate; whole portfolio partial
 
-Base origin/main is 383fd84f2fd1c7218882dc840db7e5be1957246a; candidate branch fix/phdk-auto-continuation-5-1-78 has pushed head 309e4121cf0ed28682eb31b968adb9d6df971617 and PR #198 is open. PHDK v2.52.2 coherence 63/63. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Candidate is not merged or deployed.
+Base origin/main is 383fd84f2fd1c7218882dc840db7e5be1957246a; candidate branch `fix/phdk-auto-continuation-5-1-78` has pushed head `d868f5dc7b250c227192d9f43588b4bc518415d4` and PR #198 is open/mergeable, without reviews or hosted checks. PHDK v2.52.2 coherence is 63/63. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Candidate is not merged or deployed.
 
 | Commitment | Candidate evidence | Open acceptance |
 |---|---|---|
-| CMT-001 baseline, versions, PRs | PHDK synced and verified; five product roots and renderer 5.1.78; PR #198 open. | Resolve Railway Web root setting, review/merge and remote-main readback; deployed discovery remains open. |
-| CMT-002 widget and safe diagnostics | Prior 5.1.77 geometry and diagnostic evidence reused; this backend slice does not alter widget UI. | Packaged Browser, native audio/device, broad route/role/accessibility/localization. |
-| CMT-003 voice→Cloud→Browser→CRM | Cloud uses revisioned managed workflow contracts, database-derived actor/team and safe usage attribution; 19 parity regressions pass. | Migrations/runtime restart, native call path, each client's configured call/CRM sandbox. |
-| CMT-004 administration and permissions | API/Cloud managed-AI contracts and database-derived role guard checks pass. | Disposable PostgreSQL persistence, 396 blocked CRUD rows, audit/export/retention and remaining admin workflows. |
+| CMT-001 baseline, versions, PRs | PHDK synced and verified; five product roots and renderer 5.1.78; PR #198 head matches the remote and is mergeable. | Railway Web root/config correction, successful deployment, review/merge and main readback; deployed discovery remains open. |
+| CMT-002 widget and safe diagnostics | Prior 5.1.77 widget geometry/diagnostic evidence reused; current Web UAT 8/8 plus standalone admin/theme/AI UAT and Browser security/runtime 22/22 pass. | Packaged Browser, native audio/device, broad route/role/accessibility/localization. |
+| CMT-003 voice→Cloud→Browser→CRM | Cloud uses revisioned managed workflow contracts, DB-derived actor/team and safe usage attribution; 19 parity regressions pass; Browser synthetic call lifecycle tests pass. Client provider/CRM choice remains tenant-specific. | Migrations/runtime restart, native call path, each client's configured call/CRM sandbox. |
+| CMT-004 administration and permissions | API/Cloud managed-AI contracts pass; protected requests resolve current DB role/email; Google bearer token is no longer returned in a URL; OAuth replay/expiry tests pass. | Disposable PostgreSQL persistence, 396 blocked CRUD rows, audit/export/retention and remaining admin workflows. |
 
 Current portfolio: 0/4 DONE; 4/4 ACTIVE/PARTIAL; 0 deferred; 0 cancelled. Source slice is pending delivery; whole Auto is PARTIALLY DELIVERED.
 
