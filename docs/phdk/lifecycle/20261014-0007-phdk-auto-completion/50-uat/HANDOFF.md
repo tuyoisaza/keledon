@@ -327,3 +327,8 @@ UAT is **87 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**; CRUD is uncha
 SIGUIENTE PASO: Check the integrated 5.1.79 candidate; retain live dependency, database and external acceptance as unverified.
 
 ---
+## Candidate 5.1.84 — UAT-094 PASS_SCOPED
+
+Web and Landing dashboard controls now reflect implemented runtime capabilities. Unsupported Start/Stop Agent controls and the no-op realtime toggle are removed; the corresponding unhandled agent-control events are no longer emitted. Web/Landing production builds, typechecks and lint pass; Web diagnostics passes 19/19; Browser build/lint and focused tests pass 16/16; version roots align at 5.1.84; PHDK coherence is 63/63. Evidence: `evidence/uat-094-agent-dashboard-controls-5.1.84.json`.
+
+No packaged Electron behavior or live runtime was tested. This case does not claim remote agent start/stop functionality. Overall acceptance remains incomplete: 0/4 commitments DONE, UAT 92 PASS / 0 BLOCKED / 1 MANUAL. SIGUIENTE PASO: complete Check and normal PR delivery.

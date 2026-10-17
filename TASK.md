@@ -8,15 +8,13 @@ SIGUIENTE PASO: continue the remaining four-front acceptance from verified main;
 
 ---
 
-# Current PHDK Auto task — restore Web startup after 5.1.82 CORS delivery
+# Current PHDK Auto task — truthful dashboard controls, 5.1.84
 
-PR #203 merged source 5.1.82 to `main` (`4c2882029b35494e011318f6b87c6b429f5dd820`). API deployment reports SUCCESS. Railway also reports Web SUCCESS, but bounded startup logs show repeated Nginx restarts because the repository-root Docker build copied root `nginx.conf` into `conf.d`; runtime health is not verified.
+Candidate branch `fix/phdk-auto-5-1-84-agent-controls` is based on local main `73f8db9ab9bcf6d23687690dc8893407d313a87f`. Web and Landing no longer show Start/Stop Agent actions or a blank real-time toggle that the runtime does not support; dashboard hooks no longer emit unhandled agent-control events. Five package/lock roots and Browser renderer align at 5.1.84. Web and Landing builds, typechecks and lint pass; Web diagnostics passes 19/19; PHDK coherence passes 63/63. Browser checks and PR delivery are pending.
 
-Candidate `fix/web-nginx-config-5.1.83` selects `services/web/nginx.conf` explicitly, with all five app package/lock roots and Browser renderer at 5.1.83. Web build/typecheck, SEO/Nginx test 2/2, full Web UAT 8/8 plus admin-settings/theme/AI UAT, Browser 15/15, API regression 43/43, Cloud 20/20, API/Cloud builds, Web/Landing lint/typecheck/build, and PHDK coherence 63/63 pass. Docker engine is unavailable locally; final container proof will come from the existing Railway autodeploy readback after merge.
+Whole Auto remains PARTIALLY DELIVERED (0/4 commitments DONE); portfolio UAT remains 91 PASS / 0 BLOCKED / 1 MANUAL until the new candidate is added; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
 
-Whole Auto remains PARTIALLY DELIVERED (0/4 commitments DONE); UAT 91 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
-
-SIGUIENTE PASO: open the normal PR for source commit `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813`, then inspect the new Railway deployment and bounded startup logs.
+SIGUIENTE PASO: finish Browser validation, record UAT-094 and Check evidence, then open and deliver the normal PR for 5.1.84.
 
 ---
 

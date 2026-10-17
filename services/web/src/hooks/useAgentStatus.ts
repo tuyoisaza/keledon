@@ -124,21 +124,5 @@ export function useAgentStatus(socket?: Socket | null) {
     loading: Boolean(actualSocket) && resolvedSocket !== actualSocket,
     selectAgent,
     clearSelection,
-    // Control functions for backend communication
-    startAgent: (agentId: string) => {
-      if (actualSocket) {
-        actualSocket.emit('dashboard:agent-start', { agentId });
-      }
-    },
-    stopAgent: (agentId: string) => {
-      if (actualSocket) {
-        actualSocket.emit('dashboard:agent-stop', { agentId });
-      }
-    },
-    restartAgent: (agentId: string) => {
-      if (actualSocket) {
-        actualSocket.emit('dashboard:agent-restart', { agentId });
-      }
-    }
   };
 }

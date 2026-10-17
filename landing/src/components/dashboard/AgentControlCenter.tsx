@@ -54,7 +54,7 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">
-            Agent Control Center
+            Agent Monitoring Center
           </h1>
           <p className="text-muted-foreground mt-1">
             Real-time agent monitoring and performance tracking
@@ -259,18 +259,6 @@ export default function AgentControlCenter({ className }: AgentControlCenterProp
             </div>
           </div>
           <div className="mt-4 flex gap-2">
-            <button 
-              onClick={() => selectAgent(selectedAgent)}
-              className="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition-colors"
-            >
-              Start Agent
-            </button>
-            <button 
-              onClick={() => {/* TODO: Implement stopAgent */}}
-              className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors"
-            >
-              Stop Agent
-            </button>
             <button 
               onClick={clearSelection}
               className="px-3 py-1 bg-muted text-muted-foreground rounded text-sm hover:bg-muted/80 transition-colors"

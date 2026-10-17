@@ -1,0 +1,48 @@
+{
+  "caseId": "UAT-094",
+  "title": "Dashboard agent controls reflect implemented runtime",
+  "status": "PASS_SCOPED",
+  "date": "2026-10-17",
+  "baseSha": "73f8db9ab9bcf6d23687690dc8893407d313a87f",
+  "candidateBranch": "fix/phdk-auto-5-1-84-agent-controls",
+  "version": "5.1.84",
+  "assertions": [
+    {
+      "id": "UAT-094-01",
+      "result": "PASS",
+      "evidence": "Web and Landing dashboards no longer render Start/Stop Agent controls without server implementations."
+    },
+    {
+      "id": "UAT-094-02",
+      "result": "PASS",
+      "evidence": "Web and Landing hooks no longer emit dashboard:agent-start, dashboard:agent-stop, or dashboard:agent-restart."
+    },
+    {
+      "id": "UAT-094-03",
+      "result": "PASS",
+      "evidence": "Web no longer renders the empty no-op realtime toggle."
+    },
+    {
+      "id": "UAT-094-04",
+      "result": "PASS",
+      "evidence": "Web/Landing production builds, typechecks and lint; Web diagnostics 19/19; Browser build/lint and focused tests 16/16; PHDK coherence 63/63."
+    }
+  ],
+  "limitations": [
+    "This source acceptance does not implement or claim remote agent start/stop behavior.",
+    "No packaged Electron run, live deployment, customer runtime, or device/audio acceptance was performed."
+  ],
+  "portfolio": {
+    "confirmedCommitments": 4,
+    "done": 0,
+    "activePartial": 4,
+    "uatPass": 92,
+    "uatBlocked": 0,
+    "uatManual": 1,
+    "crudBlocked": 396,
+    "crudNotApplicable": 132,
+    "crudDecisionNeeded": 3,
+    "crudPass": 29,
+    "wholeAutoStatus": "PARTIALLY DELIVERED"
+  }
+}

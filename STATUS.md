@@ -1,10 +1,10 @@
-# Current PHDK Auto — 5.1.83 delivered; portfolio partial
+# Current PHDK Auto — 5.1.84 widget control repair candidate
 
-PR #204 merged the Web Nginx root-context fix at `e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba`; all app roots and Browser renderer are 5.1.83, and PHDK coherence is 63/63. Railway Web and API deployments report SUCCESS with 1/1 replicas. Web startup logs confirm configuration complete and workers started without the prior directive error. API logs show Nest and Prisma startup after a transient dependency reachability timeout. No live request/UI health check was performed.
+Candidate `fix/phdk-auto-5-1-84-agent-controls` is based on main `73f8db9ab9bcf6d23687690dc8893407d313a87f`. Unsupported Start/Stop Agent controls and an empty realtime toggle are removed from Web and Landing; unhandled hook events are removed. Five package/lock roots and Browser renderer align at 5.1.84. Web and Landing builds, typechecks and lint pass; diagnostics is 19/19; PHDK coherence is 63/63. Browser tests, Check handoff and PR/main readback remain.
 
-The scoped source delivery is complete; whole PHDK Auto remains PARTIALLY DELIVERED (0/4 commitments DONE). UAT is 91 PASS / 0 BLOCKED / 1 MANUAL; CRUD is 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+All four commitments remain active/partial (0/4 DONE). Whole Auto remains PARTIALLY DELIVERED; UAT portfolio is 91 PASS / 0 BLOCKED / 1 MANUAL before this candidate; CRUD is 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
 
-SIGUIENTE PASO: continue the remaining four-front acceptance from verified main; keep Auto partial.
+SIGUIENTE PASO: finish Browser checks and standard PR delivery for 5.1.84; preserve all broader acceptance gates.
 
 ---
 
