@@ -697,3 +697,16 @@
 - API and Cloud builds and regressions pass (API 36/36, Cloud 16/16); all five product builds pass.
 - API full lint, Web and Landing typecheck/lint, Browser lint, Browser offline tests 27/27, diagnostics 19/19, synthetic Web UAT 4/4, Web/Landing SEO 1/1 each, and PHDK coherence 52/52 pass.
 - Web/Landing production builds complete with the existing large-chunk warning. No customer endpoint, private CRM, database, native device, or deployment was used; whole Auto remains partially delivered.\n
+## v5.1.79 — report unmeasured dependency health truthfully
+
+- Replace unconditional `ready` responses for unprobed TTS, STT and AI health with `unknown` in API and Cloud monitoring, and keep overall health unknown until dependency probes exist.
+- Initialize Web and Landing monitoring state as unknown so the dashboard does not imply readiness before the first server report.
+- Align the five application package/lock roots and Browser renderer at 5.1.79.
+
+### Verification
+- API and Cloud monitoring unit tests pass 2/2 each; full regression runners pass API 42/42 and Cloud 19/19.
+- Targeted API/Cloud ESLint, API/Cloud production builds, Web/Landing typechecks and production builds, full Web UAT (8 suites plus admin-settings/theme-template/AI-admin), Browser build/version sync and Browser renderer tests 4/4 pass.
+- PHDK coherence passes 63/63; all five package/lock roots and Browser renderer align at 5.1.79.
+
+### Migration / limitations
+- TTS/STT/AI health probes remain unimplemented. Their status is intentionally `unknown` until measured; this change does not claim runtime health or persistence acceptance.
