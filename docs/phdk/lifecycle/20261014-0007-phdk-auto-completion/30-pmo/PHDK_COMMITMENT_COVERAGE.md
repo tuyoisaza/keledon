@@ -1,13 +1,13 @@
-# Cobertura de compromisos PHDK Auto — KELEDON 5.2.4
+# Cobertura de compromisos PHDK Auto — KELEDON 5.2.6
 
-Run `20261014-0007-phdk-auto-completion` · PHDK **2.53.1** · corte **2026-10-17** · remote `main` `26e1fe1452cffb97164d65917b3c9a4308bdbdc2`.
+Run `20261014-0007-phdk-auto-completion` · PHDK **2.53.1** · corte **2026-10-17** · remote `main` `e7257a7d0c66c8b34e6bbb7028c30be092f33102`.
 
 El alcance confirmado por el usuario tiene cuatro compromisos, en este orden: baseline/versiones/PR; widget/diagnóstico; voz→Cloud→Browser→CRM por cliente; administración/permisos.
 
 | ID | Cobertura alcanzada | Evidencia principal | Estado de salida |
 |---|---|---|---|
-| CMT-001 | Versión 5.2.4, cinco package/lock roots y renderer alineados; PHDK coherence 64/64; PR #233 fusionado y `main` verificado; PR #232 contiene el cambio de producto. Railway Web/API `SUCCESS` para `26e1fe1`. | PIA CMT-001; UAT-112/113/117/120; PR #229–#232. | **COMPLETADO para el corte**; mantenimiento continuo. |
-| CMT-002 | UAT-112–120 en producción; CTA/login, disclosure, responsive, copia pública y teclado muestreados. UAT-120 confirma metadatos `lang` ES/EN/PT en login. La fuente retira hostnames API/OAuth. | Evidencias JSON UAT-112 a UAT-120. | **ACTIVE / PARTIAL**; no equivale a auditoría WCAG ni cubre autenticación/RBAC o audio. Portapapeles no inspeccionado. |
+| CMT-001 | Versión 5.2.6, cinco package/lock roots y renderer alineados; PHDK coherence 64/64; PR #240/#241 fusionados y `main` verificado. Railway Web/API `SUCCESS` para `e7257a7`. | PIA CMT-001; UAT-112/113/117/120/125/126; PR #240/#241. | **COMPLETADO para el corte**; mantenimiento continuo. |
+| CMT-002 | UAT-112–126 en producción; CTA/login, disclosure, responsive, copia pública, teclado y targets de header/menu móvil a 44px muestreados. UAT-120 confirma `lang` ES/EN/PT en login. | Evidencias JSON UAT-112 a UAT-126. | **ACTIVE / PARTIAL**; no equivale a auditoría WCAG ni cubre autenticación/RBAC o audio. Portapapeles no inspeccionado. |
 | CMT-003 | Contrato por tenant y política de destinos privados aprobados registrados; dos PIAs convierten hallazgos source en trabajo ejecutable. | CMT-003A lease/idempotencia; CMT-003B DNS/CIDR; mapa de contrato runtime. | **ACTIVE / PARTIAL**; implementación A/B pendiente. CRM real bloqueado hasta sandbox elegido por cliente. |
 | CMT-004 | Política restrictiva aprobada y selector limitado al tenant; fuente revisada y UAT-121 confirma la redirección anónima en 5.2.4. ADM-IF documenta los casos autenticados pendientes. | PIA CMT-004/ADM-IF; PR #210 selector y cambios de cifrado/auditoría ya integrados; UAT-121 anónimo limitado. | **ACTIVE / PARTIAL**; fixture autenticado, persistencia, catálogo y cobertura de roles pendientes. |
 

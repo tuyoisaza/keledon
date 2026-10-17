@@ -1,5 +1,11 @@
 # UAT journey map — run 20261014-0007-phdk-auto-completion
 
+## Production v5.2.6 — anonymous mobile header/menu target size
+
+| Persona | Story | Case / journey | Steps exercised | Result / evidence |
+|---|---|---|---|---|
+| Anonymous visitor | CMT-002 / public navigation | UAT-125/126 / 44px mobile targets | Open public `/` → expand mobile navigation → measure home link, diagnostics/cache buttons, menu control, links, theme/language selectors and account links at 320×720 and 375×812 → close menu and reset viewport | PASS within measured scope: UAT-125 passes menu targets after PR #240; UAT-126 passes the logo/header plus menu after PR #241. All measured controls are at least 44px high and no horizontal overflow is present. Production v5.2.5/v5.2.6 evidence is in `evidence/uat-125-production-mobile-menu-targets-retest-2026-10-17.json` and `evidence/uat-126-production-mobile-brand-target-retest-2026-10-17.json`. No controls activated; screen reader, other routes/locales/themes, auth and audio remain open. |
+
 ## Candidate 5.1.73 — UAT-086/087 superadmin resource CRUD
 
 | Persona | Story | Case / journey | Steps exercised | Result / evidence |

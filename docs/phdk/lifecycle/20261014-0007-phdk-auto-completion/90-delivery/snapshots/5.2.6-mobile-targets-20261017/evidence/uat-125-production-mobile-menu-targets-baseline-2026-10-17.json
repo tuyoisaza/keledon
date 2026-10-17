@@ -1,0 +1,48 @@
+{
+  "case": "UAT-125",
+  "phase": "baseline-before-remediation",
+  "date": "2026-10-17",
+  "observedAtUtc": "2026-10-17T20:17:00Z",
+  "environment": "production",
+  "url": "https://keledon.tuyoisaza.com/?phdk-uat-125=20261017",
+  "deployedVersion": "5.2.4",
+  "sourceCommit": "0aaabaf3530cf9dba6316ae75ddc9cc8763dbd78",
+  "webDeploymentId": "c45e4603-5f0d-4052-8704-4370da4bffa7",
+  "deploymentStatus": "SUCCESS",
+  "actor": "anonymous",
+  "viewportCssPx": {"width": 320, "height": 720},
+  "locale": "pt",
+  "theme": "dark",
+  "actions": [
+    "Opened a fresh anonymous production homepage tab.",
+    "Opened the mobile navigation menu without activating navigation, selectors, diagnostics or cache actions.",
+    "Measured visible interactive target bounds from the rendered DOM and inspected the mobile screenshot.",
+    "Restored the temporary viewport override to the browser default."
+  ],
+  "measurements": {
+    "clientWidthCssPx": 305,
+    "documentScrollWidthCssPx": 305,
+    "bodyScrollWidthCssPx": 305,
+    "horizontalOverflow": false,
+    "targets": [
+      {"control": "Resources", "widthCssPx": 289, "heightCssPx": 40},
+      {"control": "Architecture", "widthCssPx": 289, "heightCssPx": 40},
+      {"control": "Use cases", "widthCssPx": 289, "heightCssPx": 40},
+      {"control": "Theme selector", "widthCssPx": 93, "heightCssPx": 23},
+      {"control": "Language selector", "widthCssPx": 109, "heightCssPx": 32},
+      {"control": "Sign in", "widthCssPx": 289, "heightCssPx": 44},
+      {"control": "Create account", "widthCssPx": 289, "heightCssPx": 44},
+      {"control": "Close menu", "widthCssPx": 44, "heightCssPx": 44}
+    ],
+    "allMeasuredTargetsWithinClientWidth": true,
+    "requiredMinimumTargetCssPx": 44
+  },
+  "result": "FAIL_INTERACTIVE_TARGETS_BELOW_44PX",
+  "finding": "Three mobile navigation links and both native preference selectors are below the PHDK 44 CSS px minimum target height.",
+  "limitations": [
+    "One anonymous public homepage, Portuguese locale, dark theme and 320x720 viewport only.",
+    "Screenshot was visually inspected but not archived; numeric target geometry is retained above.",
+    "This is a target-size finding only; it does not determine overall WCAG conformance or cover authenticated menu variants, other routes, themes, locales or browser engines.",
+    "No preference was changed, no cache/diagnostic action was activated, and no login, account creation, API mutation, customer data, local application test or build was used."
+  ]
+}

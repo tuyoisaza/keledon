@@ -1,0 +1,70 @@
+{
+  "case": "UAT-125",
+  "phase": "production-retest-after-PR-240",
+  "date": "2026-10-17",
+  "observedAtUtc": "2026-10-17T20:25:35Z",
+  "environment": "production",
+  "url": "https://keledon.tuyoisaza.com/?phdk-uat-125-retest=20261017",
+  "deployedVersion": "5.2.5",
+  "sourceCommit": "fb2e4b4c5c4c869ae2962c2eadb49a4673fffdbe",
+  "webDeploymentId": "fd191399-f4bf-4da5-ba4c-e4f3d9f65ac3",
+  "deploymentStatus": "SUCCESS",
+  "actor": "anonymous",
+  "locale": "pt",
+  "theme": "dark",
+  "viewportsCssPx": [
+    {
+      "width": 320,
+      "height": 720,
+      "clientWidth": 305,
+      "documentScrollWidth": 305,
+      "bodyScrollWidth": 305,
+      "horizontalOverflow": false,
+      "menuTargets": [
+        {"control": "Resources", "width": 289, "height": 44},
+        {"control": "Architecture", "width": 289, "height": 44},
+        {"control": "Use cases", "width": 289, "height": 44},
+        {"control": "Theme selector", "width": 93, "height": 44},
+        {"control": "Language selector", "width": 109, "height": 44},
+        {"control": "Sign in", "width": 289, "height": 44},
+        {"control": "Create account", "width": 289, "height": 44},
+        {"control": "Close menu", "width": 44, "height": 44}
+      ],
+      "allMenuTargetsWithinClientWidth": true,
+      "outsideMenuHeaderTarget": {"control": "KELEDON home link", "width": 113, "height": 32, "separateCase": "UAT-126"}
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "clientWidth": 360,
+      "documentScrollWidth": 360,
+      "bodyScrollWidth": 360,
+      "horizontalOverflow": false,
+      "menuTargets": [
+        {"control": "Resources", "width": 344, "height": 44},
+        {"control": "Architecture", "width": 344, "height": 44},
+        {"control": "Use cases", "width": 344, "height": 44},
+        {"control": "Theme selector", "width": 93, "height": 44},
+        {"control": "Language selector", "width": 109, "height": 44},
+        {"control": "Sign in", "width": 344, "height": 44},
+        {"control": "Create account", "width": 344, "height": 44},
+        {"control": "Close menu", "width": 44, "height": 44}
+      ],
+      "allMenuTargetsWithinClientWidth": true,
+      "outsideMenuHeaderTarget": {"control": "KELEDON home link", "width": 113, "height": 32, "separateCase": "UAT-126"}
+    }
+  ],
+  "result": "PASS_MENU_TARGETS_44PX_AT_320_AND_375",
+  "actions": [
+    "Opened the deployed production homepage in a fresh anonymous browser tab and confirmed visible version 5.2.5.",
+    "Expanded the mobile menu at 320x720 and 375x812, measured all menu controls, inspected screenshots, and confirmed no horizontal overflow.",
+    "Did not activate links, change locale/theme, use diagnostic/cache actions, or enter account flows.",
+    "Closed the menu and reset the temporary viewport override."
+  ],
+  "limitations": [
+    "This accepts only mobile menu target geometry at two widths in Portuguese/dark on the Web production service.",
+    "It does not cover authenticated menu actions, Web/Landing runtime parity, other routes, locales/themes, browser engines, zoom, screen reader, or full WCAG conformance.",
+    "The separate KELEDON home-link target is below 44px and tracked as UAT-126.",
+    "No customer data, login, account creation, local application test or build was used."
+  ]
+}

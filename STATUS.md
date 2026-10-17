@@ -1,10 +1,10 @@
 # Current PHDK Auto readback — 2026-10-17
 
-KELEDON 5.2.4 / PHDK 2.53.1; `main` at last verified readback `d3f27ef137939c1acbbb313dd7f95b525c735dc7`; production Railway Web/API SUCCESS. PHDK static coherence 64/64. PRs #234–#236 document ADM-IF and UAT-121/122. Current product bundle on `/` and `/login` is 5.2.4.
+KELEDON 5.2.6 / PHDK 2.53.1; remote `main` `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; Railway Web/API `SUCCESS`; PHDK static coherence 64/64. PRs #240/#241 deliver the PHDK 44px public mobile menu/header targets; production v5.2.6 UAT-125/126 passes at 320/375px with no overflow.
 
 CMT-001 baseline is complete for this cut. CMT-002 remains partial pending broader accessibility, diagnostic-role and device/audio evidence. CMT-003 remains partial; command lease/idempotency and tenant DNS/CIDR enforcement are not implemented. CMT-004 remains partial; authenticated tenant/persistence acceptance needs owner-authorized synthetic fixtures and cleanup. Overall Auto is PARTIALLY DELIVERED. No local application tests/builds or external customer actions were used.
 
-SIGUIENTE PASO: continue the open CMT-002 acceptance and CMT-003 implementation gates; keep authenticated production acceptance blocked without the approved fixtures.
+SIGUIENTE PASO: continue CMT-003A lease/idempotency and CMT-003B tenant DNS/CIDR implementation; keep authenticated/audio acceptance gated by approved synthetic fixtures.
 
 ---
 # Current PHDK Auto — 5.2.4 / PHDK 2.53.1 (2026-10-17)

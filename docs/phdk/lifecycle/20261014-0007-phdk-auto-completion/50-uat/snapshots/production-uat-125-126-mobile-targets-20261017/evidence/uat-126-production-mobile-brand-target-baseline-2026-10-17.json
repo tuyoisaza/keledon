@@ -1,0 +1,21 @@
+{
+  "case": "UAT-126",
+  "phase": "baseline-before-remediation",
+  "date": "2026-10-17",
+  "observedAtUtc": "2026-10-17T20:25:45Z",
+  "environment": "production",
+  "url": "https://keledon.tuyoisaza.com/?phdk-uat-125-retest=20261017",
+  "deployedVersion": "5.2.5",
+  "sourceCommit": "fb2e4b4c5c4c869ae2962c2eadb49a4673fffdbe",
+  "webDeploymentId": "fd191399-f4bf-4da5-ba4c-e4f3d9f65ac3",
+  "deploymentStatus": "SUCCESS",
+  "actor": "anonymous",
+  "locale": "pt",
+  "theme": "dark",
+  "viewportCssPx": {"width": 320, "height": 720},
+  "target": {"control": "KELEDON home link", "accessibleName": "KELEDON", "width": 113, "height": 32, "requiredMinimum": 44},
+  "result": "FAIL_HEADER_BRAND_TARGET_BELOW_44PX",
+  "actions": ["Measured the visible logo/home link in the anonymous production header; did not activate it."],
+  "limitations": ["One public route, locale, theme and viewport. This is a target-size finding only."],
+  "remediation": "Set a 44px minimum height on the shared Web and Landing logo/home link; production retest is pending."
+}

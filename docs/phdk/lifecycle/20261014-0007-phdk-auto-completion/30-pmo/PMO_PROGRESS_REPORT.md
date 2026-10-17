@@ -1,11 +1,11 @@
 # PHDK Auto — informe de progreso, 2026-10-17
 
-Baseline: PHDK **2.53.1**, KELEDON **5.2.4**, remote `main` `26e1fe1452cffb97164d65917b3c9a4308bdbdc2`. Coherencia estática PHDK: **64/64**. Estado: **PARCIALMENTE ENTREGADO** (CMT-001 completo para el corte, otros tres activos/parciales).
+Baseline vigente: PHDK **2.53.1**, KELEDON **5.2.6**, remote `main` `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PR #241 y #240 integrados. Coherencia estática PHDK: **64/64**; cinco package/lock roots y renderer alineados. Railway Web/API `SUCCESS` para el SHA actual. Estado: **PARCIALMENTE ENTREGADO** (CMT-001 completo para el corte, otros tres activos/parciales).
 
 | Frente | Hecho comprobado | Lo que falta |
 |---|---|---|
-| CMT-001 — baseline/versiones/PR | PR #232 actualiza cinco raíces package/lock y Browser renderer a 5.2.4; PR #233 registra la aceptación locale y está fusionado. Railway Web/API `SUCCESS` para main `26e1fe1`. | Repetir baseline y despliegue en cada cambio; deploy no acepta comportamiento API. |
-| CMT-002 — widget/diagnóstico | UAT-112–120 en producción. UAT-120 confirma `lang` ES/EN/PT en login; UAT-117 confirma estado de copia/omisión de hostname en fuente; UAT-118 mide targets 44×44. | Completar matriz locale/tema/viewport/rutas, foco/contraste, lector de pantalla, fallo de copia, diagnóstico protegido/RBAC y audio/dispositivo. |
+| CMT-001 — baseline/versiones/PR | PR #240/#241 sincronizan las cinco raíces package/lock y Browser renderer a 5.2.6; Railway Web/API reportan `SUCCESS` para main `e7257a7`. | Repetir baseline y despliegue en cada cambio; deploy no acepta comportamiento API. |
+| CMT-002 — widget/diagnóstico | UAT-112–126 en producción. UAT-125/126 retestan header/menu con 44px en 320/375 y sin overflow; UAT-120 confirma `lang` ES/EN/PT en login; UAT-117 confirma estado de copia/omisión de hostname. | Completar matriz locale/tema/viewport/rutas, lector de pantalla, fallo de copia, diagnóstico protegido/RBAC y audio/dispositivo. |
 | CMT-003 — runtime por tenant | Se documentaron claims sin lease/idempotencia y riesgo DNS/CIDR; PIAs CMT-003A/B listas. | Implementación no iniciada; probar luego en producción con tenant/dispositivo sintéticos. CRM real espera sandbox elegido por el cliente. |
 | CMT-004 — administración/permisos | Política de roles mínimos, actor/tenant desde BD, claves write-only y selector acotado al tenant; UAT-121 pasa solo la barrera anónima del selector. | UAT persistente autenticado, propiedad de catálogo, provisioning de owner, revocación y limpieza de fixtures sintéticos. |
 
