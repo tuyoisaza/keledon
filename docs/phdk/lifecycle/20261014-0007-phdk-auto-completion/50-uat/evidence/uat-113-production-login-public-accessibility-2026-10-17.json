@@ -17,10 +17,11 @@
     "viewportCssPixels": "1280x720",
     "identity": "anonymous"
   },
-  "result": "PASS_FOR_LIMITED_PUBLIC_LOGIN_PRESENCE_AND_FOCUS_SAMPLE",
+  "result": "PASS_FOR_LIMITED_PUBLIC_LOGIN_PRESENCE_CONTRAST_AND_FOCUS_SAMPLE",
   "observations": {
     "versionVisible": true,
-    "demoDisclaimerAndDiagnosticsControlsVisible": true,
+    "diagnosticControlsNamed": true,
+    "demoDisclaimerVisibleOnLogin": false,
     "themeAndLanguageSelectorsNamed": true,
     "namedFormControls": ["E-mail", "Senha", "Entrar", "Google", "Criar conta"],
     "keyboardReachedEmailThenPassword": true,
@@ -32,6 +33,45 @@
     "googleOAuthActivated": false,
     "accountCreationActivated": false
   },
+  "themeContrastSamples": [
+    {
+      "theme": "dark",
+      "samples": [
+        {"element": "login heading", "foreground": "#f8fafc", "background": "#080c16", "ratio": 18.6796, "required": 4.5},
+        {"element": "subtitle", "foreground": "#94a3b8", "background": "#080c16", "ratio": 7.6223, "required": 4.5},
+        {"element": "form labels", "foreground": "#f8fafc", "background": "#14181f", "ratio": 17.0068, "required": 4.5},
+        {"element": "Entrar button", "foreground": "#080c16", "background": "#14b8a5", "ratio": 7.8448, "required": 4.5},
+        {"element": "Google button", "foreground": "#f8fafc", "background": "#080c16", "ratio": 18.6796, "required": 4.5},
+        {"element": "signup prompt", "foreground": "#94a3b8", "background": "#14181f", "ratio": 6.9398, "required": 4.5},
+        {"element": "Criar conta link", "foreground": "#14b8a5", "background": "#14181f", "ratio": 7.1423, "required": 4.5}
+      ]
+    },
+    {
+      "theme": "light",
+      "samples": [
+        {"element": "login heading", "foreground": "#0f172a", "background": "#f8fafc", "ratio": 17.0629, "required": 4.5},
+        {"element": "subtitle", "foreground": "#475569", "background": "#f8fafc", "ratio": 7.2425, "required": 4.5},
+        {"element": "form labels", "foreground": "#0f172a", "background": "#ffffff", "ratio": 17.8525, "required": 4.5},
+        {"element": "Entrar button", "foreground": "#ffffff", "background": "#0f766e", "ratio": 5.4733, "required": 4.5},
+        {"element": "Google button", "foreground": "#0f172a", "background": "#f8fafc", "ratio": 17.0629, "required": 4.5},
+        {"element": "signup prompt", "foreground": "#475569", "background": "#ffffff", "ratio": 7.5777, "required": 4.5},
+        {"element": "Criar conta link", "foreground": "#0f766e", "background": "#ffffff", "ratio": 5.4733, "required": 4.5}
+      ]
+    },
+    {
+      "theme": "corporate",
+      "samples": [
+        {"element": "login heading", "foreground": "#102a43", "background": "#f3f6fc", "ratio": 13.5253, "required": 4.5},
+        {"element": "subtitle", "foreground": "#486581", "background": "#f3f6fc", "ratio": 5.6163, "required": 4.5},
+        {"element": "form labels", "foreground": "#102a43", "background": "#ffffff", "ratio": 14.6416, "required": 4.5},
+        {"element": "Entrar button", "foreground": "#ffffff", "background": "#194185", "ratio": 9.8308, "required": 4.5},
+        {"element": "Google button", "foreground": "#102a43", "background": "#f3f6fc", "ratio": 13.5253, "required": 4.5},
+        {"element": "signup prompt", "foreground": "#486581", "background": "#ffffff", "ratio": 6.0799, "required": 4.5},
+        {"element": "Criar conta link", "foreground": "#194185", "background": "#ffffff", "ratio": 9.8308, "required": 4.5}
+      ]
+    }
+  ],
+  "contrastScope": "Seven visible flat-color text/control pairs per theme (heading, subtitle, form labels, primary button, Google button, signup prompt, and signup link). Placeholder pseudo-elements, gradients, other routes/states, and full-page contrast conformance are excluded.",
   "privacy": "Anonymous public route only; no credentials, customer data, clipboard contents, private diagnostics, audio permission, or backend state was read or changed.",
   "notProven": [
     "successful or failed authentication and validation/error states",
