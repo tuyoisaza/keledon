@@ -58,4 +58,6 @@ En producción solo se realizaron comprobaciones anónimas de lectura: portada y
 - Plan y arquitectura: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/`.
 - Preparación/auth/fixtures: `UAT_AUTH_PLAN.md`, `UAT_ROLE_MATRIX.md`, `UAT_FIXTURE_MANIFEST.md`, `UAT_PREP_REPORT.md`.
 - Casos/evidencia: `UAT_STORIES.md`, `UAT_JOURNEY_MAP.md`, `UAT_CASES.md`, `UAT_ACCESS_REPORT.md`, `UAT_REPORT.md`, `UX_UI_AUDIT_REPORT.md`.
-- Check de candidato: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1.md`.
+- Check de candidato vigente: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1-PHDK-2.53.1.md` (ADM-001…006 y límites de evidencia).
+- Evidencia UAT-100 y reingreso de solo lectura: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-100-production-anonymous-widget-5.1.85.json` y `50-uat/snapshots/production-widget-20261017/HANDOFF.md`.
+- Estado de continuación: **PARTIAL**. Siguiente paso técnico: resolver ADM-004 con almacenamiento seguro y consumo write-only, tras mapear lectores/formatos; después continuar ADM-002/003 y ejecutar aceptación solo en el target permitido con el candidato exacto.
