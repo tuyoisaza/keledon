@@ -1,5 +1,39 @@
 # SEO checklist — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.2.8 — Web production audit delta (2026-10-17)
+
+| ID | Candidate status | Evidence / remaining limit |
+|---|---|---|
+| SEO-01 robots.txt | PASS (production response) | `/robots.txt` returned 200 and references sitemap; crawler fetch/indexing is unmeasured. |
+| SEO-02 Indexability | PARTIAL | `/` responds index/follow; `/login` response header is noindex/nofollow, but static meta still says index/follow until React route metadata runs. |
+| SEO-03 XML sitemap | PASS (production response) | `/sitemap.xml` returned 200 and lists only canonical `/`; search engine acceptance is unmeasured. |
+| SEO-04 Canonical | PARTIAL | Homepage canonical is correct; raw SPA shell exposes homepage canonical on `/login` until JS removes it. |
+| SEO-05 HTTP/redirects | PARTIAL | `/` 200 and private SPA routes 200 observed; an invented path also returns 200 (soft-404). Redirect chain and TLS remain unmeasured. |
+| SEO-06 Search intent | PASS (source) | Existing truthful product purpose and client-configured integrations retained. |
+| SEO-07 Query terminology | PASS (source) | Natural product vocabulary retained; keyword volume/rank not measured. |
+| SEO-08 Title | PASS (source/production response) | Current product title present on `/`; snippet presentation not measured. |
+| SEO-09 Description | PASS (source/production response) | Existing factual description present; snippet selection not measured. |
+| SEO-10 Headings | PASS (source); production pending | Initial Web HTML now has the existing semantic H1 and overview; verify after deployment. |
+| SEO-11 Original useful content | PASS (source) | Overview uses existing qualified product language; no performance claims added. |
+| SEO-12 Trust/authors/sources | PARTIAL | No verified author/contact/certification source supplied; none invented. |
+| SEO-13 LCP | NOT MEASURED | No production field p75 or comparable lab metric. |
+| SEO-14 INP | NOT MEASURED | No production field p75 or comparable lab metric. |
+| SEO-15 CLS | NOT MEASURED | No production field p75 or comparable lab metric. |
+| SEO-16 Mobile | PARTIAL | Prior production UI samples exist; this SEO stage has no physical-device or field performance measure. |
+| SEO-17 HTTPS | NOT MEASURED | HTTPS source URL only; certificate/redirect/mixed-content checks not done. |
+| SEO-18 Interstitials | PASS (source) | No public entry interstitial added. |
+| SEO-19 Internal links | PASS (source) | Existing public login/architecture links retained. |
+| SEO-20 Information architecture | PARTIAL | Root is the sole sitemap route; the server currently returns noindex 200 for unknown SPA paths. |
+| SEO-21 Images | NOT_APPLICABLE | No content image change. |
+| SEO-22 Structured data | NOT_APPLICABLE | No eligible rich-result content established. |
+| SEO-23 Rendering | PASS (source); production pending | Initial HTML includes the overview and the Web entrypoint removes fallback state before React mount; verify production handoff. |
+| SEO-24 Search Console | NOT MEASURED | No connected authorized Search Console evidence. |
+| SEO-25 Links/reputation | NOT MEASURED | No backlink/mention source data. |
+
+No local application tests/builds run. Production acceptance is pending deployment; detailed baseline GET evidence and the PIA are in `snapshots/candidate-5.2.8/`. Overall SEO remains PARTIAL pending post-deploy confirmation and external measures.
+
+---
+
 ## Candidate 5.1.39 revalidation
 
 Candidate `a8a89f928312db2fef5142a0e07ac18a197b6c19`; public source is unchanged. Reuse the 25 evidenced source controls below; Web/Landing SEO tests pass 1/1 each. No live HTTP, crawler, Search Console, TLS or Core Web Vitals measurement was made. External controls remain BLOCKED/NOT MEASURED as listed.

@@ -1,0 +1,51 @@
+{
+  "capturedAtUtc": "2026-10-17T21:44:37Z",
+  "method": "Anonymous production HTTP GET using PowerShell Invoke-WebRequest; no cookies, credentials, POSTs, or customer data.",
+  "baseUrl": "https://keledon.tuyoisaza.com",
+  "observations": [
+    {
+      "path": "/",
+      "status": 200,
+      "xRobotsTag": "index, follow",
+      "metaRobots": "index, follow",
+      "canonical": "https://keledon.tuyoisaza.com/",
+      "initialH1": false,
+      "rootHasContent": false,
+      "bodyBytes": 2426
+    },
+    {
+      "path": "/login",
+      "status": 200,
+      "xRobotsTag": "noindex, nofollow",
+      "metaRobots": "index, follow",
+      "canonical": "https://keledon.tuyoisaza.com/",
+      "initialH1": false,
+      "rootHasContent": false,
+      "bodyBytes": 2426
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": 200,
+      "containsOnlyCanonicalHomepage": true
+    },
+    {
+      "path": "/robots.txt",
+      "status": 200,
+      "containsSitemapReference": true
+    },
+    {
+      "path": "/phdk-seo-probe-not-a-route-20261017",
+      "status": 200,
+      "xRobotsTag": "noindex, nofollow",
+      "metaRobots": "index, follow",
+      "canonical": "https://keledon.tuyoisaza.com/",
+      "initialH1": false,
+      "rootHasContent": false,
+      "classification": "SPA soft-404; noindex response header"
+    }
+  ],
+  "limitations": [
+    "One anonymous response sample per path; no redirect-chain, TLS, crawler, search-engine, Search Console, ranking, or Core Web Vitals measurement.",
+    "Raw SPA metadata on private/unknown paths conflicts with the noindex response header until client route metadata runs."
+  ]
+}

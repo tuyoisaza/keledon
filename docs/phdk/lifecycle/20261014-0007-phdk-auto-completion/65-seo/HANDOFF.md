@@ -1,3 +1,11 @@
+## Candidate 5.2.8 — initial HTML repair / production acceptance pending
+
+The production GET audit found an empty `#root` in the deployed Web shell, although the separately maintained Landing shell already carried an accurate static overview. PIA-AUTO-SEO-001 ports that existing copy and no-JS fallback style to `services/web/index.html`; the Web entrypoint removes the fallback class before React mounts. Source review confirms existing route metadata and crawl policy are unchanged. Do not run local application tests or builds. After the versioned PR deploys, inspect anonymous production `/` response and browser handoff, then record redacted evidence in `snapshots/candidate-5.2.8/`. A fabricated route currently returns a noindex SPA `200` soft-404; keep SEO-05 partial until routing behavior is resolved. Crawler rendering, TLS, field metrics, Search Console and backlinks remain unmeasured.
+
+SIGUIENTE PASO: aceptar el fallback HTML y su reemplazo React en producción, luego continuar a AEO/GEO.
+
+---
+
 ## Candidate 5.2.7 — source revalidation, no public SEO delta (2026-10-17)
 
 PR #247 changes Landing diagnostics redaction/version only; public SEO metadata, routes, index policy, robots and sitemap remain unchanged. The existing source audit is reused. No app tests/builds or external crawler/Search Console/TLS/CWV probes were run. Standalone Landing deployment target remains unknown. SEO remains PARTIAL for deployed/external evidence and documented provenance gaps; see current audit and remediation report above.

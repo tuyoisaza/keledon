@@ -1,3 +1,13 @@
+## Candidate 5.2.8 — production response audit and source repair (2026-10-17)
+
+**Pre-fix production observation:** anonymous GET `/` returned 200 with the expected title, description, canonical and `X-Robots-Tag: index, follow`, but `#root` was empty and the response contained no H1 or substantive overview. `/robots.txt` and `/sitemap.xml` returned 200 and the sitemap contains only `/`. `/login` returned the SPA shell with `X-Robots-Tag: noindex, nofollow`, while its raw shell still carries the homepage's `index, follow` meta and canonical; JavaScript route metadata corrects this after startup. An invented path also returned 200 with the private-route noindex header, so the server currently exposes a soft-404. Detailed response observations are recorded in `snapshots/candidate-5.2.8/production-seo-before.json`.
+
+**Source repair:** the canonical Railway runtime is `services/web`, not standalone `landing/`. It now serves the existing accurate H1, product explanation, client-configured interface description and illustrative-only disclaimer in initial HTML. The Web entrypoint removes `no-js` before React replaces the fallback. No URL, product claim, route, metadata or NGINX index policy changed. Production post-deploy acceptance remains pending; no crawler, Search Console, field CWV or external search visibility is claimed.
+
+**Current result:** SEO-10/SEO-23 PASS at source; production acceptance pending. SEO-05 remains PARTIAL due the unknown-path 200 and unmeasured redirect/TLS chain. SEO-02/SEO-04 remain PARTIAL for the static private-route meta/canonical mismatch despite the deployed noindex response header. Reuse the remaining source findings in the 25-control checklist. Do not run app tests/builds locally; acceptance is production-only per owner instruction.
+
+---
+
 # SEO source audit — run `20261014-0007-phdk-auto-completion`
 
 ## Candidate 5.2.7 revalidation — public SEO sources unchanged (2026-10-17)
