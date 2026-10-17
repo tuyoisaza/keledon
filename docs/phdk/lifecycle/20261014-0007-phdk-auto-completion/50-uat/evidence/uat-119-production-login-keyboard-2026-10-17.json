@@ -1,0 +1,42 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-119",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T19:42:08Z",
+  "target": "https://keledon.tuyoisaza.com/login",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.3",
+  "deployedSourceCommit": "85d792321445da6ba6a744e79d7128fed8717d3d",
+  "deploymentId": "51d32a43-e3ea-4961-a4ea-b5ac8fd68621",
+  "assetsObserved": ["/assets/index-MRgeTPqB.js", "/assets/index-CV49ph3H.css"],
+  "channel": "production in-app browser; accessibility tree, keyboard sequence, read-only DOM and computed focus style",
+  "context": {
+    "route": "/login",
+    "locale": "pt",
+    "documentLangAttribute": "en",
+    "theme": "dark",
+    "identity": "anonymous"
+  },
+  "result": "PASS_FOR_PUBLIC_LOGIN_KEYBOARD_ORDER_SAMPLE",
+  "observations": {
+    "namedControls": ["E-mail field", "Senha field", "Entrar button", "Google button", "Criar conta button"],
+    "tabSequence": ["E-mail field", "Senha field", "Entrar button", "Google button", "Criar conta button"],
+    "reverseTabSequenceVerified": ["Criar conta button", "Google button"],
+    "focusedControlAfterReverseCheck": "Google button",
+    "focusedCreateAccountStyle": {"outlineStyle": "auto", "outlineWidth": "0.666667px", "outlineColor": "rgb(16, 16, 16)"},
+    "controlsActivated": false,
+    "formSubmitted": false,
+    "browserAutofillSuggestionAppeared": true,
+    "autofillSuggestionSelected": false,
+    "fieldContentsCaptured": false
+  },
+  "privacy": "Anonymous public page only; no form values entered or captured, no login/OAuth/account action, no customer data, no API probes. Browser autofill UI was not selected.",
+  "notProven": [
+    "focus indicator visibility/contrast across themes and all controls",
+    "screen-reader speech and announcement quality",
+    "HTML language metadata matching the selected visible locale",
+    "authentication, validation/error states, OAuth or account creation",
+    "other routes, locales, themes, viewport sizes or zoom levels",
+    "authenticated diagnostics/RBAC or audio/device behavior"
+  ]
+}

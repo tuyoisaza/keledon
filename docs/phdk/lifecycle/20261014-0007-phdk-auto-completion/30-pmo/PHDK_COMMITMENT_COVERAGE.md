@@ -1,13 +1,13 @@
 # Cobertura de compromisos PHDK Auto — KELEDON 5.2.3
 
-Run `20261014-0007-phdk-auto-completion` · PHDK **2.53.1** · corte **2026-10-17** · remote `main` `3cccb4b2f88828fa5d273b682925d3a106dd3b9`.
+Run `20261014-0007-phdk-auto-completion` · PHDK **2.53.1** · corte **2026-10-17** · remote `main` `85d792321445da6ba6a744e79d7128fed8717d3d`.
 
 El alcance confirmado por el usuario tiene cuatro compromisos, en este orden: baseline/versiones/PR; widget/diagnóstico; voz→Cloud→Browser→CRM por cliente; administración/permisos.
 
 | ID | Cobertura alcanzada | Evidencia principal | Estado de salida |
 |---|---|---|---|
-| CMT-001 | Versión 5.2.3, cinco package/lock roots y renderer alineados; PHDK coherence 64/64; PR #229 fusionado y `main` verificado. Railway Web `SUCCESS`; API `BUILDING` al último readback. | PIA CMT-001; UAT-112/113/117; PR #229. | **COMPLETADO para el corte**; mantenimiento continuo. |
-| CMT-002 | UAT-112–117 en producción; CTA/login, disclosure, responsive y estado de copia pública muestreados. La fuente ya retira los hostnames API/OAuth del reporte. | Evidencias JSON UAT-112 a UAT-117. | **ACTIVE / PARTIAL**; no equivale a auditoría WCAG ni cubre autenticación/RBAC o audio. El portapapeles no se inspeccionó. |
+| CMT-001 | Versión 5.2.3, cinco package/lock roots y renderer alineados; PHDK coherence 64/64; PR #229 fusionado y `main` verificado. Railway Web/API `SUCCESS` sobre `85d7923`. | PIA CMT-001; UAT-112/113/117; PR #229/230. | **COMPLETADO para el corte**; mantenimiento continuo. |
+| CMT-002 | UAT-112–119 en producción; CTA/login, disclosure, responsive, copia pública y teclado muestreados. UAT-119 halló `lang=en` en login mientras la interfaz está en pt. La fuente retira hostnames API/OAuth. | Evidencias JSON UAT-112 a UAT-119. | **ACTIVE / PARTIAL**; corregir metadatos de idioma; no equivale a auditoría WCAG ni cubre autenticación/RBAC o audio. Portapapeles no inspeccionado. |
 | CMT-003 | Contrato por tenant y política de destinos privados aprobados registrados; dos PIAs convierten hallazgos source en trabajo ejecutable. | CMT-003A lease/idempotencia; CMT-003B DNS/CIDR; mapa de contrato runtime. | **ACTIVE / PARTIAL**; implementación A/B pendiente. CRM real bloqueado hasta sandbox elegido por cliente. |
 | CMT-004 | Política restrictiva aprobada y selector limitado al tenant; manejo de secreto write-only documentado. | PIA CMT-004; PR de selector y cambios de cifrado/auditoría ya integrados. | **ACTIVE / PARTIAL**; fixture autenticado, persistencia, catálogo y cobertura de roles pendientes. |
 

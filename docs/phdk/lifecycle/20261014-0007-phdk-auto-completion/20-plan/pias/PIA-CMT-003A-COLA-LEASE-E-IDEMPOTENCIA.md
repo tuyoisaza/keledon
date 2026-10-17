@@ -1,10 +1,10 @@
 # Sub-PIA CMT-003A — lease de comandos y efectos idempotentes
 
-Estado: PLAN READY / IMPLEMENTATION NOT STARTED · Prioridad: CMT-003, gate 1 · Candidato observado: KELEDON 5.2.1.
+Estado: PLAN READY / IMPLEMENTATION NOT STARTED · Prioridad: CMT-003, gate 1 · Candidato observado: KELEDON Web 5.2.3 (`3cccb4b2f88828fa5d273b682925d3a106dd3b9`).
 
 ## Hallazgo y objetivo
 
-La revisión `40-integration/revalidations/20261017-runtime-contract/RUNTIME_CONTRACT_MAP.md` encontró que `getNextCommand()` registra `browser.command.claimed` sin expiración ni heartbeat. El comando queda excluido de polls posteriores aunque el Browser o la red caigan antes de guardar resultado. El endpoint de resultado reconoce `commandId` duplicado después de completarse, pero esa deduplicación no vuelve idempotente un efecto externo que ya ocurrió.
+La revisión `40-integration/revalidations/20261017-runtime-contract/RUNTIME_CONTRACT_MAP.md` y la relectura en 5.2.3 de `services/api/src/browser-commands/browser-commands.service.ts` confirman que `getNextCommand()` añade `browser.command.claimed` sin expiración ni heartbeat; `findNextPendingCommand()` excluye para siempre cualquier comando con ese claim. El comando no se vuelve a entregar aunque Browser/red caigan antes de guardar resultado. `recordCommandResult()` reconoce `commandId` duplicado después de completarse, pero esa deduplicación no vuelve idempotente un efecto externo que ya ocurrió. No hay migración ni modificación de fuente iniciada; autenticación/device/tenant y side-effect UAT siguen bloqueados sin fixtures.
 
 Definir y desplegar una entrega recuperable y trazable que no repita una mutación CRM al reconectar, reintentar o competir dos workers. La garantía aplica por step/efecto de negocio, además de la idempotencia del transporte.
 

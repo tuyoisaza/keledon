@@ -1,0 +1,35 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-118",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T18:50:07Z",
+  "target": "https://keledon.tuyoisaza.com/?uat=117-phdk-copy-status",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.3",
+  "deployedSourceCommit": "3cccb4b2f88828fa5d273b682925d3a106dd3b9",
+  "deploymentId": "3e168f0c-50b9-4ebb-b3c1-0cd5bd81b2a7",
+  "assetsObserved": ["/assets/index-MRgeTPqB.js", "/assets/index-CV49ph3H.css"],
+  "channel": "production in-app browser; accessibility tree, keyboard sequence and computed focus/target geometry",
+  "context": {
+    "route": "/",
+    "locale": "pt",
+    "theme": "dark",
+    "identity": "anonymous"
+  },
+  "result": "PASS_FOR_PUBLIC_DIAGNOSTICS_KEYBOARD_SAMPLE",
+  "observations": {
+    "tabSequence": ["KELEDON link", "Copiar diagnóstico completo button", "Limpar cache do aplicativo button", "Recursos link"],
+    "reverseTabSequenceVerified": ["Recursos link", "Limpar cache do aplicativo button", "Copiar diagnóstico completo button"],
+    "copyTarget": {"width": 44, "height": 44, "outlineStyle": "solid", "outlineWidth": "2px", "outlineColor": "rgb(20, 184, 165)"},
+    "clearTarget": {"width": 44, "height": 44, "outlineStyle": "solid", "outlineWidth": "2px", "outlineColor": "rgb(20, 184, 165)"},
+    "controlsActivated": false,
+    "clearCacheActivated": false
+  },
+  "privacy": "Anonymous public page only; no authentication, data mutation, cache clearing, clipboard read, customer data, API probes or audio permission.",
+  "notProven": [
+    "screen-reader speech and announcement quality",
+    "all routes, locales, themes, viewport sizes or zoom levels",
+    "the rest of page keyboard order or a complete WCAG audit",
+    "authenticated diagnostics/RBAC or audio/device behavior"
+  ]
+}

@@ -1,6 +1,6 @@
 # PIA CMT-002 — widget, UX y diagnóstico seguro
 
-Estado: ACTIVE / PARTIAL · Prioridad: 2 · Producción observada: KELEDON 5.2.3 (Web source `3cccb4b2f88828fa5d273b682925d3a106dd3b9`). UAT-112 pasa las muestras planas del CTA y UAT-117 pasa el estado visible de copia anónima más el contrato de fuente sin hostname; la aceptación integral continúa abierta.
+Estado: ACTIVE / PARTIAL · Prioridad: 2 · Producción observada: KELEDON 5.2.3 (Web assets deployed from main `85d792321445da6ba6a744e79d7128fed8717d3d`; product fix source `3cccb4b2f88828fa5d273b682925d3a106dd3b9`). UAT-112 pasa muestras planas del CTA, UAT-117 pasa el estado visible de copia anónima más contrato de fuente sin hostname, UAT-118 pasa una muestra limitada de teclado/foco y UAT-119 pasa el orden público de teclado del login; la aceptación integral continúa abierta. UAT-119 detecta atributo `lang=en` con idioma visible pt y estilo de foco a revisar.
 
 ## Resultado esperado
 
@@ -8,7 +8,7 @@ El widget público debe dejar claro cuándo muestra una demo y cuándo informaci
 
 ## Cobertura a cerrar
 
-1. Ampliar en producción 5.2.2 los recorridos públicos de `/` y `/login`: texto de demo, orden/etiquetas accesibles, foco/teclado y botones. Capturar los casos restantes en ES/EN/PT y oscuro/claro/corporativo, desktop y móvil, mediante sesión de navegador de UAT.
+1. Continuar en producción los recorridos públicos de `/` y `/login`: texto de demo, orden/etiquetas accesibles, foco/teclado y botones. Corregir el metadato `lang` observado en UAT-119 y validar idiomas ES/EN/PT, temas oscuro/claro/corporativo, desktop y móvil.
 2. Verificar la acción “Copiar diagnóstico” solo hasta el estado visible de éxito/error; no exportar ni adjuntar portapapeles. Revisar el reporte por allowlist/redacción en source antes de autorizar un diagnóstico real.
 3. Verificar “Limpiar caché” únicamente en un perfil de navegador de UAT desechable; registrar recarga y estado final. No borrar almacenamiento del perfil personal/productivo compartido.
 4. En sesión sintética, probar visibilidad de diagnóstico: user/coordinator no obtienen diagnóstico profundo; admin/superadmin reciben solo los detalles permitidos por contrato y autorización servidor. Incluir denegación 401/403 y API no disponible. No fabricar resultados de health.
@@ -27,6 +27,8 @@ El widget público debe dejar claro cuándo muestra una demo y cuándo informaci
 - UAT-115 pasa una muestra responsive de `/` en 320×720, 375×812 y 768×1024 en producción 5.2.2: sin overflow horizontal, disclosure/título dentro del viewport y menú de 44×44 px. Solo se inspeccionó visualmente 320 px; las otras dos medidas son DOM. No sustituye UAT desktop ni aceptación integral de accesibilidad. Evidencia: `50-uat/evidence/uat-115-production-responsive-layout-2026-10-17.json`.
 - UAT-116 pasa el caso móvil `/` de producción 5.2.2 en español/corporativo a 375×812: aviso, título, acciones y menú nombrado se mantienen dentro del viewport; sin overflow y con objetivo 44×44. Se inspeccionó la captura. No se midió contraste; preferencias/viewport se restauraron. Evidencia: `50-uat/evidence/uat-116-production-spanish-corporate-mobile-2026-10-17.json`.
 - UAT-117 observa en producción 5.2.3 el éxito accesible “Diagnóstico copiado” para visitante anónimo. La fuente fusionada omite los hostnames configurados de API y OAuth, reemplazándolos con texto fijo. No se leyó el portapapeles ni se probó el contenido íntegro; usuarios autenticados, fallo de portapapeles y diagnóstico profundo/RBAC continúan pendientes. Evidencia: `50-uat/evidence/uat-117-production-copy-status-2026-10-17.json`.
+- UAT-118 pasa un muestreo público de teclado en producción 5.2.3: orden marca→copiar→limpiar→Recursos; los botones copiar/limpiar miden 44×44 px y muestran outline teal sólido de 2px. No se activaron controles ni se usó lector; resto del teclado y screen reader siguen pendientes. Evidencia: `50-uat/evidence/uat-118-production-diagnostics-keyboard-2026-10-17.json`.
+- UAT-119 pasa el orden público de teclado en `/login` de producción 5.2.3, con Shift+Tab de Crear cuenta a Google; la página mantuvo `document.documentElement.lang=en` mientras mostraba portugués, y el estilo del foco en Crear cuenta calculó `outline:auto` 0.666667px. La sugerencia de autofill no se eligió ni se capturaron valores. Evidencia: `50-uat/evidence/uat-119-production-login-keyboard-2026-10-17.json`.
 
 ## Casos y aceptación
 
