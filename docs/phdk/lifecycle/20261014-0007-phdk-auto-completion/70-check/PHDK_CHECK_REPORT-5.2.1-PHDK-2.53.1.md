@@ -1,6 +1,6 @@
 # PHDK Check — candidate 5.2.1 with PHDK 2.53.1 (2026-10-17)
 
-**Result: PASS FOR DOCUMENTATION/PHDK ALIGNMENT; PRODUCT PORTFOLIO PARTIAL.** Candidate branch `feature/tenant-interface-selector-5.2.0`, HEAD `ef6fe6dbf7eca04708c7200615e7538812751f7e`; no PR.
+**Result: PASS FOR DOCUMENTATION/PHDK ALIGNMENT; PRODUCT PORTFOLIO PARTIAL.** Product source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PR #210 is open, not merged.
 
 ## Checks performed in this continuation
 
@@ -18,7 +18,7 @@
 ## Remaining gates
 
 - UAT-096/097: safe DB-backed role/tenant/persistence/browser acceptance remains BLOCKED; production serves 5.1.85 and the candidate is 5.2.1.
-- Delivery: no PR, review, merge or main readback exists for 5.2.1.
+- Delivery: PR #210 is open; GitHub reports no check runs or review decision. No merge or main readback exists for 5.2.1.
 - Four confirmed commitments remain ACTIVE/PARTIAL; do not report whole Auto complete.
 - Provider metadata/hygiene findings from the prior 5.2.1 report are reused; this continuation performed no new provider metadata read.
 

@@ -14,7 +14,7 @@ Continuar la estandarización de KELEDON con PHDK y avanzar, en este orden, los 
 - Base `main` registrada: `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`.
 - PHDK actualizado: 2.53.1 desde upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherencia estática 64/64.
 - Fuentes relevantes: `services/web/src/components/teams/TeamInterfaces*.tsx`, la capa API/Cloud de asignación tenant/equipo y regresión `services/web/test/team-interface-request-sequence.test.cjs`.
-- El selector y la protección contra respuestas asíncronas obsoletas están en la rama. La preparación de fixtures rechaza targets productivos. No existe PR ni publicación de 5.2.1.
+- El selector y la protección contra respuestas asíncronas obsoletas están en la rama. La preparación de fixtures rechaza targets productivos. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) está abierto, no fusionado; producción continúa en v5.1.85.
 
 ## Mapa de implementación a aceptación
 

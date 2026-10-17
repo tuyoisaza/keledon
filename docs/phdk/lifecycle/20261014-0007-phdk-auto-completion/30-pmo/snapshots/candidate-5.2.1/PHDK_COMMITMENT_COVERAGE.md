@@ -1,6 +1,6 @@
 ## Current continuation — 5.2.1; 4/4 commitments active-partial (2026-10-17)
 
-PHDK 2.53.1; candidate branch `feature/tenant-interface-selector-5.2.0` at `ef6fe6dbf7eca04708c7200615e7538812751f7e`; no PR exists. Production public smoke shows v5.1.85 and is not candidate acceptance.
+PHDK 2.53.1; candidate product source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; branch head `c0d33b355cbdaaff14203aeb49e9c5a4f400149d`; PR #210 is OPEN, not merged. Production public smoke shows v5.1.85 and is not candidate acceptance.
 
 | Commitment | Current continuation evidence | Open gate |
 |---|---|---|

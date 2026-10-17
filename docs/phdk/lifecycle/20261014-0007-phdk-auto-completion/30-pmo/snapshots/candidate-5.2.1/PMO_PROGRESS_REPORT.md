@@ -2,7 +2,7 @@
 
 | Commitment | Verified progress | Remaining acceptance |
 |---|---|---|
-| CMT-001 baseline/version/PRs | PHDK 2.53.1 installed; branch candidate 5.2.1 at `ef6fe6dbf7eca04708c7200615e7538812751f7e`; production homepage shows 5.1.85. | Normal PR/review/merge and exact `main`/deployment readback. |
+| CMT-001 baseline/version/PRs | PHDK 2.53.1 installed; PR #210 open at branch head `c0d33b355cbdaaff14203aeb49e9c5a4f400149d`; production homepage shows 5.1.85. | No checks/review decision reported; safe UAT and exact `main`/deployment readback remain. |
 | CMT-002 widget/diagnostics | Prior source and local acceptance retained with original scope. No local app tests run in this continuation. | Native device/audio and broad assistive-tech/localization acceptance. |
 | CMT-003 voice→Cloud→Browser→CRM | Client-neutral contracts and allowlist evidence retained; no customer integration contacted. | Client must select and provide safe call/CRM sandbox for acceptance. |
 | CMT-004 administration/permissions | Tenant interface selector/stale-response source fixes on branch; production smoke UAT-098 is anonymous and not feature acceptance. | Synthetic role sessions, persisted assignment, cross-tenant denial and exact-candidate browser evidence. |

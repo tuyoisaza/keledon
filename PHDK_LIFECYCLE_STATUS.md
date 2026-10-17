@@ -8,7 +8,7 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch
 | Capture | REUSED | Existing product intent and four-front confirmation remain current. |
 | Plan | REUSED / EXTENDED | Existing brownfield architectures plus `20-plan/PAQUETE_IMPLEMENTACION_ACEPTACION_5.2.1.md`. |
 | PMO / Workstreams | REUSED / REVALIDATED | 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL; no scope removed. |
-| Integration Review | REUSED / REVALIDATED | 5.2.1 selector and stale-response source fixes are present on branch; no candidate PR. |
+| Integration Review | REUSED / REVALIDATED | 5.2.1 selector and stale-response source fixes are present on branch; source diff reviewed. |
 | UAT Prep | PARTIAL / BLOCKED | Source seeder rejects production; no isolated DB or provisioned synthetic personas. See `UAT_PREP_REPORT.md`. |
 | UAT | ACCEPTANCE INCOMPLETE | Production anonymous smoke only, version 5.1.85; candidate cases UAT-096/097 blocked. No production writes. |
 | UAT Fix | NOT APPLICABLE FOR THIS RE-ENTRY | No candidate defect observed in the permitted smoke; blocked feature cases cannot be repaired from runtime evidence. |
@@ -16,11 +16,11 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch
 | AEO/GEO | REUSED / SOURCE REVALIDATED | Public answer source unchanged; citation/field evidence remains unmeasured. |
 | Check | COMPLETED FOR PHDK/DOC REVALIDATION; SOURCE SCOPE REUSED | Prior exact-source Check report plus latest static coherence 64/64; see current Check revalidation. |
 | Remediation | COMPLETED FOR STANDARDS ALIGNMENT | PHDK vendor and managed block updated; no new product source correction identified. |
-| Delivery | BRANCH PUSHED; PR NOT CREATED | Branch source already pushed; no PR/merge/main verification for 5.2.1. |
+| Delivery | PR #210 OPEN; NOT MERGED | GitHub reports no checks or review decision. No merge/main verification for 5.2.1. |
 
-Overall Auto remains **PARTIALLY DELIVERED**. Production public smoke does not accept branch-only code. Authenticated tenant/persistence acceptance and normal PR/review/merge/main verification remain open.
+Overall Auto remains **PARTIALLY DELIVERED**. Production public smoke does not accept branch-only code. Authenticated tenant/persistence acceptance, PR review/check evidence and merge/main verification remain open.
 
-SIGUIENTE PASO: get a dedicated non-production PostgreSQL UAT target, execute guarded Prep and candidate tenant journeys, then continue normal PR delivery; keep all production accounts/data untouched.
+SIGUIENTE PASO: obtain a dedicated non-production PostgreSQL UAT target for synthetic role/persistence checks; keep PR #210 open until required gates can be resolved safely.
 
 ---
 

@@ -349,11 +349,11 @@ Candidate `fix/phdk-navbar-overlap-5-1-61` fixes a verified public navigation ov
 ## Current PHDK Auto — 5.1.60 delivered; whole Auto partial
 # Current status — PHDK Auto 5.2.1 / 2.53.1 (2026-10-17)
 
-- Source candidate: `feature/tenant-interface-selector-5.2.0`, `ef6fe6dbf7eca04708c7200615e7538812751f7e`; remote feature branch matches. Product version 5.2.1; PR is not created, `main` remains 5.1.85.
+- Source candidate: `feature/tenant-interface-selector-5.2.0`, product source `ef6fe6dbf7eca04708c7200615e7538812751f7e`. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) is open, not merged; `main` is `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50` / product v5.1.85.
 - PHDK: v2.53.1 from canonical `main` commit `94f583635d295ae0f227726718904d952cadb8ab`; static coherence 64/64; managed block synchronized.
 - Production-only check this continuation: anonymous read-only homepage at `https://keledon.tuyoisaza.com/` loaded and showed v5.1.85. This does not test branch candidate behavior.
 - Candidate UAT: source checks reported previously remain valid for their source scope. Authenticated tenant/persistence UAT-096/097 are blocked; public smoke UAT-098 passed narrowly. No app test ran locally this continuation and no production account, DB, migration or data was changed.
 - Commitments: CMT-001 through CMT-004 remain ACTIVE/PARTIAL; whole Auto remains PARTIALLY DELIVERED.
-- Next: normal PR delivery plus a safe target matching 5.2.1 and isolated synthetic tenant acceptance.
+- GitHub reports no checks or review decision. Next: safe target matching 5.2.1 and isolated synthetic tenant acceptance; do not merge an unaccepted migration-backed candidate to the production-autodeploying main branch.
 
 ---
