@@ -1,3 +1,14 @@
+## v5.1.83 — 2026-10-17
+
+### Fixed
+- Load `services/web/nginx.conf` in the repository-root Railway Docker build so Nginx receives a server configuration in `conf.d` instead of the repository-level main configuration.
+
+### Verification
+- Web SEO/Nginx configuration regression verifies the Dockerfile selects the service-scoped config. Web production build and typecheck pass.
+
+### Deployment note
+- Railway Web deployment for 5.1.82 crashed because the root build context copied the main nginx config into `conf.d`; 5.1.83 corrects the source path.
+
 ## v5.1.82 — 2026-10-17
 
 ### Changed
