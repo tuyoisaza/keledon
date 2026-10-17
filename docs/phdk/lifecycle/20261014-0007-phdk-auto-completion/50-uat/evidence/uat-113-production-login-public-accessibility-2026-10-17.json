@@ -1,0 +1,44 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-113",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T18:13:20Z",
+  "target": "https://keledon.tuyoisaza.com/login?phdk-uat-20261017=113",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.2",
+  "deployedSourceCommit": "2a0719660edf57d092a4acc9dfa79e233deafaa0",
+  "deploymentId": "af21cae1-4cdb-47f7-83b9-b7556903f523",
+  "assetsObserved": ["/assets/index-i9Z2OoIq.js", "/assets/index-CV49ph3H.css"],
+  "channel": "isolated anonymous in-app browser; accessibility-tree inspection, keyboard traversal, and screenshot; no form submission",
+  "context": {
+    "route": "/login",
+    "locale": "pt",
+    "theme": "dark",
+    "viewportCssPixels": "1280x720",
+    "identity": "anonymous"
+  },
+  "result": "PASS_FOR_LIMITED_PUBLIC_LOGIN_PRESENCE_AND_FOCUS_SAMPLE",
+  "observations": {
+    "versionVisible": true,
+    "demoDisclaimerAndDiagnosticsControlsVisible": true,
+    "themeAndLanguageSelectorsNamed": true,
+    "namedFormControls": ["E-mail", "Senha", "Entrar", "Google", "Criar conta"],
+    "keyboardReachedEmailThenPassword": true,
+    "passwordFocusVisible": true,
+    "focusVisibleSelectorMatches": true,
+    "focusIndicator": "2px teal box-shadow ring",
+    "formSubmitted": false,
+    "credentialsEntered": false,
+    "googleOAuthActivated": false,
+    "accountCreationActivated": false
+  },
+  "privacy": "Anonymous public route only; no credentials, customer data, clipboard contents, private diagnostics, audio permission, or backend state was read or changed.",
+  "notProven": [
+    "successful or failed authentication and validation/error states",
+    "screen-reader speech or announcement quality",
+    "other themes, locales, or viewport sizes",
+    "authenticated diagnostics and server-side RBAC",
+    "audio/device behavior"
+  ],
+  "themeRestoredToDefault": "dark"
+}
