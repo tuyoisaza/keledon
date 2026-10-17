@@ -24,7 +24,7 @@
     "merge_method": "squash",
     "review_decision": "none reported",
     "open_follow_up_prs": [
-      {"number": 258, "head": "2f089a275eaef0dba25ed06c001a2d9cf5cd2fe2", "scope": "PHDK/PIA documentation"},
+      {"number": 258, "head": "c829671437340a6573cc865ee62548da1163ea7b", "scope": "PHDK/PIA documentation"},
       {"number": 259, "head": "293532e3404f84a08725a0662acd56bf42543184", "scope": "5.2.11 login touch targets"}
     ]
   },
