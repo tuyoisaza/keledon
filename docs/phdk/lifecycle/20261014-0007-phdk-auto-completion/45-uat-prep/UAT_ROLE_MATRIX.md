@@ -1,3 +1,16 @@
+## Revalidación CMT-003C — 5.2.6 (2026-10-17)
+
+Candidato de referencia: source de producto `e7257a7d0c66c8b34e6bbb7028c30be092f33102` (5.2.6). Las identidades mostradas abajo siguen siendo etiquetas propuestas, no cuentas reales; el estado no cambia a READY por documentación.
+
+| Persona / recurso | Uso CMT-003 | Límite/denegación | Estado actual |
+|---|---|---|---|
+| Tenant sintético A + Browser device A | Reclamar comando y aceptar solo recursos A | Ningún acceso a B; actor/tenant los resuelve el servidor | BLOCKED — aprovisionamiento/cleanup autorizado no disponible |
+| Tenant sintético B + Browser device B | Confirmar frontera tenant y rechazos | Ningún acceso a A ni reuso de lease/resultado | BLOCKED — aprovisionamiento/cleanup autorizado no disponible |
+| Flujo sintético inerte | Probar estados de cola sin side effect CRM | No ejecuta llamadas ni mutaciones de negocio | BLOCKED — aún no existe fixture desplegado |
+| DNS/CRM sandbox controlado | NET-DNS/REBIND/REDIR/PRIVATE | Solo hostname/puerto/CIDR exactos aprobados, aislado de clientes/metadata | BLOCKED — owner/sandbox no seleccionado |
+
+Los roles privilegiados permanecen fuera del conjunto sintético. No se crea ni eleva superadmin de prueba en producción. Una operación de provisioning futura debe usar el login/API admin existente con actor real autorizado y quedar auditada; no se simulan claims.
+
 # Matriz de roles UAT — KELEDON 5.2.4
 
 Los nombres/emails `.invalid` de abajo son IDs propuestos, no cuentas reales. Ninguna identidad se provisionó. Usuario, tenant y sesión se derivan del camino de auth normal y BD; una etiqueta de rol en navegador no prueba autorización.

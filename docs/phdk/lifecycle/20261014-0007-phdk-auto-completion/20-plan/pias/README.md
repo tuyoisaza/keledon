@@ -12,7 +12,7 @@ Este directorio convierte los cuatro compromisos confirmados en paquetes ejecuta
 |---|---|---|---|
 | 1 | [CMT-001 — baseline y entrega](PIA-CMT-001-BASELINE-ENTREGA.md) | Mantener versiones, PHDK, PR y readback de despliegue | Completo para el corte 5.2.4; continuar en cada cambio |
 | 2 | [CMT-002 — widget y diagnóstico](PIA-CMT-002-WIDGET-DIAGNOSTICO.md) | Aceptar widget/diagnóstico y cerrar accesibilidad segura | Activo; UAT público 112–121 con límites explícitos |
-| 3 | [CMT-003 — voz/Cloud/Browser/CRM](PIA-CMT-003-RUNTIME-POR-TENANT.md) | Contrato adaptable por cliente y destinos privados seguros | Activo; sin CRM de cliente seleccionado |
+| 3 | [CMT-003 — voz/Cloud/Browser/CRM](PIA-CMT-003-RUNTIME-POR-TENANT.md) | Contrato adaptable por cliente y destinos privados seguros | Activo; cola y DNS revisados; UAT Prep de fixtures sintéticos pendiente |
 | 4 | [CMT-004 — administración y permisos](PIA-CMT-004-ADMIN-PERMISOS.md) + [ADM-IF — asignación de interfaces por tenant](PIA-CMT-004A-ASIGNACION-INTERFACES-POR-TENANT.md) | Catálogo tenant, selector de equipo, ciclo de cuentas, roles y persistencia | Selector implementado; aceptación autenticada bloqueada por falta de sesión sintética autorizada |
 
 ## Reglas compartidas de ejecución

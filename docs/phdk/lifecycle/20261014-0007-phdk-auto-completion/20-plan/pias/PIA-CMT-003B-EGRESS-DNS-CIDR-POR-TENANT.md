@@ -1,10 +1,10 @@
 # Sub-PIA CMT-003B — egress DNS/CIDR y CRM privado por tenant
 
-Estado: PLAN READY / IMPLEMENTATION NOT STARTED · Prioridad: CMT-003, gate 2 · Candidato observado: KELEDON 5.2.1.
+Estado: PLAN READY / IMPLEMENTATION NOT STARTED · Prioridad: CMT-003, gate 2 · Candidato revalidado: KELEDON Web 5.2.6 (`e7257a7d0c66c8b34e6bbb7028c30be092f33102`), Railway Web deployment `874b29df-7c7d-4e3b-a41d-8ec7339bfde8` SUCCESS. Revisión estática de fuente: 2026-10-17.
 
 ## Hallazgo y objetivo
 
-La revisión `40-integration/revalidations/20261017-runtime-contract/RUNTIME_CONTRACT_MAP.md` encontró normalización HTTP(S) y allowlists de origen por tenant, pero no validación de IP resuelta ni defensa frente a DNS rebinding. La política aprobada permite CRM en redes privadas configurados por el cliente, con validación y allowlist por tenant. Por eso un bloqueo general de RFC1918 rompería integraciones aprobadas; una allowlist de hostname por sí sola deja abierta SSRF por DNS y redirects.
+La revisión actual de `browser/src/security-policy.ts` y `browser/src/tab-manager.ts` encontró allowlist de origen exacto aplicada a navegación y requests Electron, pero no validación de IP resuelta, pinning al socket ni defensa frente a DNS rebinding. Los handlers `will-redirect` y `onBeforeRequest` comparan orígenes; no son un broker de egress y no prueban a qué IP conecta Chromium. La política aprobada permite CRM en redes privadas configurados por el cliente, con validación y allowlist por tenant. Por eso un bloqueo general de RFC1918 rompería integraciones aprobadas; una allowlist de hostname por sí sola deja abierta SSRF por DNS y redirects. El componente seguro faltante es enforcement en el punto de conexión (broker/proxy con DNS validado y redirects revalidados), sujeto a confirmar compatibilidad de TLS/SNI y despliegue del Browser.
 
 Aplicar una sola política de egress para cada paso Browser/API/Cloud que contacta destino configurado. La política conserva destinos privados solo cuando ese tenant autorizó hostname/puerto/esquema y CIDR/host privado exactos; no convierte el hostname permitido en permiso global de red.
 
@@ -36,6 +36,7 @@ Aplicar una sola política de egress para cada paso Browser/API/Cloud que contac
 - Nunca retornar DNS/IP interna, query, credencial o URL privada en respuesta normal, diagnóstico, error al usuario ni logs accesibles al tenant. Evidencia solo identifica clase/rango redacted y resultado.
 - El proxy/pinning debe cubrir el punto real que abre el socket; una validación que solo observa el DOM/API no cierra SSRF.
 - Mantener el egress privado BLOCKED hasta que se despliegue el enforcement de conexión y pasen NET-DNS-01..06 en UAT productivo. La aceptación de un cliente real necesita su propia selección y autorización.
+- Para seguir con aceptación de producción, cerrar PIA CMT-003C y proveer un DNS/CRM sandbox sintético controlado, hostname/puerto/CIDR exactos y aprobación del owner. Ningún host de cliente existente se reutiliza como fixture.
 
 ## Entregables y salida
 

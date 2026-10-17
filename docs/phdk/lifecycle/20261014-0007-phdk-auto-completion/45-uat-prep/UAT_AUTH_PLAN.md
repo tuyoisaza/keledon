@@ -1,3 +1,13 @@
+## Revalidación CMT-003C — 5.2.6 (2026-10-17)
+
+Estado: **BLOCKED** para aceptación autenticada/cola/egress. Producto candidato: KELEDON 5.2.6, source `e7257a7d0c66c8b34e6bbb7028c30be092f33102`; PHDK 2.53.1. Remote `main` incluye después el PR documental #242 (`269b0717`), que no cambia el source desplegado.
+
+La ruta de identidad se conserva: login normal y actor/tenant derivados por servidor desde BD. No se preparará un bypass, endpoint público de fixture, token manual, secreto de seed persistente ni alta de identidad privilegiada productiva. El owner exige pruebas de aplicación en producción; por tanto, antes de aprovisionar recursos se requiere una vía existente, auditada y autorizada que permita crear/desactivar solo fixtures sintéticos bajo prefijo/run ID y verificar su cleanup sin tocar settings del IdP ni clientes activos.
+
+Para CMT-003A se necesitan dos tenants/devices sintéticos y un workflow inerte; para CMT-003B además un sandbox DNS/CRM aislado con hostname, puerto, esquema y CIDR exactos aprobados. No usar destinos privados encontrados en configuración o navegación de clientes. No contactar una plataforma de llamadas ni CRM real.
+
+Entrada actual: PIA CMT-003C en `20-plan/pias/PIA-CMT-003C-FIXTURES-SINTETICOS-PRODUCCION.md`. Ninguna cuenta, token, sesión, tenant, device, CRM, llamada o dato productivo se creó/consultó en esta revalidación estática. No se ejecutan pruebas/builds locales de aplicación.
+
 # Plan de autenticación UAT — KELEDON 5.2.4
 
 Estado: **PARTIAL / BLOCKED** · Fecha: 2026-10-17 · PHDK: 2.53.1.
