@@ -1,3 +1,11 @@
+## Candidate 5.2.1 revalidation — public source unchanged (2026-10-17)
+
+SEO remains APPLICABLE to the public `/` homepage. Candidate source commit `909d67205b7c1f0f51f4f80e4b00f56ab7fc8a39` changes tenant-scoped management and version metadata; it changes no public Landing source, Web public entry HTML, public route, title, description, canonical, robots, sitemap or indexability rule. Reuse the 25-control source classifications below. Web `npm run test:seo` passes 2/2 and Landing `npm run test:seo` passes 1/1. No live HTTP, crawler, Search Console, TLS, Lighthouse or field Core Web Vitals was checked. UAT Prep/browser acceptance remains blocked, so this is source revalidation only and whole SEO acceptance remains partial.
+
+SIGUIENTE PASO: retain unavailable deployment/field evidence and the UAT dependency in Check.
+
+---
+
 # Candidate 5.1.72 revalidation — public source unchanged (2026-10-15)
 
 SEO is **APPLICABLE** to the public homepage at `/`. Candidate source `87c1fddb8d965a7e01649330b7f74f6252628b40` and UAT runner `d4b001087e4b0076b29f31d9a0a3795dc9b1fd9e` alter authenticated administration/session/device styles and test coverage; they do not alter the public Landing/Web copy, public routes, HTML title/description/canonical, robots, sitemap, or route indexability. Public `/` stays indexable; authenticated SPA routes and tenant/customer destinations stay private/noindex.

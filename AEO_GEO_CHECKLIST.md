@@ -1,3 +1,9 @@
+## Candidate 5.2.1 revalidation — 15-control classifications reused
+
+Candidate source commit `909d67205b7c1f0f51f4f80e4b00f56ab7fc8a39` leaves public text, claims, routes, metadata and index policy unchanged from the prior grounded public-source review. Reuse its 15-control statuses below. Web SEO tests pass 2/2 and Landing passes 1/1. No citation/retrieval, answer-engine, crawler or deployed-visibility observation was made. UAT is incomplete; this is source revalidation only.
+
+---
+
 # Candidate 5.1.72 revalidation — current 15-control status
 
 Affected public route/template: `/` source only. Public source and claims are unchanged from the prior grounded audit. Two local SEO source tests pass; no external answer/crawler observation occurred.
