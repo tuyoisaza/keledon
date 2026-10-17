@@ -1,3 +1,12 @@
+## Browser Readiness — UAT-141 production mobile login (2026-10-17)
+
+- Stage/run: Auto `20261014-0007-phdk-auto-completion`, `50-uat`; permission `ACTIVE_UAT_EXCEPTION`; runtime capability `AVAILABLE_VERIFIED` via the connected Codex in-app browser/CUA.
+- Target: anonymous production `https://keledon.tuyoisaza.com/login`; product version v5.2.10 confirmed in the fresh page; source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; current documentary main `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`.
+- Operation/evidence: fresh tab navigation, AX snapshot and full-page screenshot at temporary 320×720 CSS viewport; visible form and touch-target bounds recorded in `evidence/uat-141-production-login-mobile-320-2026-10-17.json`. Screenshot was visually inspected in the UAT session but not exported to the repository.
+- Safety: anonymous only. No login, signup, OAuth, field entry, diagnostics/cache action, clipboard, customer data, private endpoint or write. Temporary viewport was reset and 1280×720 default confirmed.
+- Executed: UAT-141; no horizontal overflow. Four targets fail the PHDK 44px minimum. Screen reader, 200%/400% browser zoom and other locale/theme combinations remain open. No new spend.
+- Next action: retest UAT-142 against deployed v5.2.11; keep CMT-002 partial until the defect retest and broader accessibility gates complete.
+
 ## Browser Readiness — UAT-140 localized production 404 (2026-10-17)
 
 - Run/stage: Auto `20261014-0007-phdk-auto-completion`, `50-uat`; anonymous public production only; permission `ACTIVE_UAT_EXCEPTION` and CUA access `AVAILABLE_VERIFIED`.

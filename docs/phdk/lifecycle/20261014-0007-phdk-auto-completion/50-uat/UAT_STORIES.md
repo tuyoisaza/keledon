@@ -11,6 +11,7 @@
 | US-011 | As a public visitor, I want the homepage's theme and language selectors to preserve understandable labels and demo disclosure in each supported combination. | `PROJECT_INTENT.md`, INT-002; CMT-002 | UAT-131 |
 | US-012 | As a public visitor or crawler, I want the canonical Web homepage's product explanation present in initial HTML and not duplicated after app startup. | PHDK SEO/AEO; PIA-AUTO-SEO-001 | UAT-133 |
 | US-013 | As a visitor opening login, I want the login form and private-route metadata to replace the shared public shell after app startup, without exposing account data. | PIA-AUTO-SEO-001/002 | UAT-134 |
+| US-014 | As a visitor signing in on a phone, I want every login and navigation control to meet the PHDK touch-target minimum so I can use the form reliably. | `phdk-standards/DESIGN_RULES.md`, Responsive Rules; CMT-002 | UAT-141, UAT-142 |
 
 All cases remain inside the owner-approved intent: provider choice is per customer; no universal live CRM/call behavior is assumed.
 

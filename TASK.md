@@ -1,10 +1,10 @@
-# Current Auto continuation — KELEDON 5.2.9 candidate / 2026-10-17
+# Current Auto continuation — KELEDON 5.2.11 candidate / 2026-10-17
 
-PR #253 delivered `services/web` initial-HTML overview; remote `main` is `9aa0d452684d4bcf1b00bdb3321649ae4675877a`, and Railway Web/API reported SUCCESS for that version. PHDK 2.53.1 coherence 64/64. Candidate v5.2.9 implements PIA-AUTO-SEO-002: two Vite shells, 43/43 SPA route-map parity, localized React 404 and an HTTP 404 page. Source review is complete; its normal PR and production UAT-135–139 remain pending.
+Production remains KELEDON 5.2.10 on `main` `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; PR #258 is a separate documentation reconciliation. PHDK 2.53.1 coherence baseline is 64/64. Production UAT-141 found four login controls below the 44px target-size rule at 320px, while reflow passed. Candidate `fix/phdk-login-touch-targets-5-2-11` fixes these controls, aligns all five package/lock roots and Browser renderer, and records PIA-CMT-002 plus UAT-142 as the production-only retest. Candidate PR/review/deployment remain pending; no acceptance pass is claimed.
 
-Four fronts stay in order. CMT-001 is complete for 5.2.8; CMT-002 partial; CMT-003A/B source gaps open and authenticated acceptance blocked by fixture/sandbox; CMT-004 authenticated persistence/cross-tenant proof blocked by UAT Prep. Continue authorized source remediation under current PIAs. No local app tests/builds/lint, credentials, customer data, provider settings writes or private egress.
+The four owner-approved fronts remain in order: CMT-001 baseline/version/PR; CMT-002 widget/diagnostics; CMT-003 tenant-specific voice→Cloud→Browser→CRM; CMT-004 administration/permissions. CMT-003C fixture/provisioning is still gated by PIA-CMT-003C1. No local app tests/builds/lint, credentials, customer data, provider-settings writes or private egress.
 
-SIGUIENTE PASO: finalize the 5.2.9 Integration/Prep handoffs, commit and publish the scoped PR; after its existing GitHub-connected deployment, run only UAT-135–139 on production.
+SIGUIENTE PASO: open the scoped candidate PR; after review, merge and production deployment, run UAT-142 against the deployed 5.2.11 build.
 
 ---
 

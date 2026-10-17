@@ -1,3 +1,11 @@
+## v5.2.11 — 2026-10-17
+
+### Fixed
+- Meet the PHDK 44px touch-target minimum for the mobile login brand link, email/password fields, and signup toggle.
+
+### Verification
+- Accept UAT-142 on the deployed production site at a 320px viewport; do not run application tests, builds, or lint locally.
+
 ## v5.2.10 — 2026-10-17
 
 ### Fixed

@@ -1,3 +1,7 @@
+## UAT-141 — producción: login móvil 320px / targets PHDK (2026-10-17 22:36 UTC)
+
+En la página pública de producción `https://keledon.tuyoisaza.com/login`, v5.2.10 / source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`, a viewport CSS 320×720. La página cabe sin overflow horizontal (document/body 320px; el main termina en y=699). La revisión geométrica encontró cuatro controles bajo el mínimo táctil PHDK de 44×44: enlace de marca 40px de alto, email 41px, contraseña 41px y “Criar conta” 69×20px. Entrar, Google y selectores de idioma/tema cumplen 44px. **UAT-141 falla el target-size PHDK y pasa el reflow medido.** Captura visual mostrada y examinada en la sesión; medidas completas: `evidence/uat-141-production-login-mobile-320-2026-10-17.json`. No se introdujeron datos, ni se activaron login/signup/OAuth; viewport temporal restablecido a 1280×720. No hubo pruebas/build/lint local ni gasto nuevo.
+
 ## UAT-140 — static unknown-route localization, KELEDON 5.2.10 production (2026-10-17)
 
 PR #255 merged as main `fd429298a85bdcf3b5c20791f9b1598c132aabcb`. Railway Web `15f47990-5368-4462-aeba-0d508c388262` and API `1b391751-bfc4-4d88-8131-ae239a3c5a07` report SUCCESS, 1/1. The Web production build completed; its output includes an advisory for a JavaScript chunk larger than 500 kB.
