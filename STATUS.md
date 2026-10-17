@@ -1,14 +1,8 @@
-# Current Auto status — KELEDON 5.2.11 candidate / 2026-10-17
+# Current Auto status — KELEDON 5.2.9 candidate / 2026-10-17
 
-Production remains KELEDON 5.2.10 on `main` `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`. UAT-141 found undersized mobile login targets; the 5.2.11 candidate fixes the brand link, email/password fields and signup toggle and aligns five package/lock roots plus Browser renderer. PR #259 is open/mergeable with review pending. Static checks pass; application tests/build/lint were not run. UAT-142 and deployment are pending. PHDK 2.53.1 coherence baseline remains 64/64. Whole Auto remains PARTIAL across the four approved commitments.
+Remote `main` is `9aa0d452684d4bcf1b00bdb3321649ae4675877a`; candidate branch `fix/phdk-5-2-9-runtime-auto-remediation` is based on it. PHDK v2.53.1 coherence 64/64. Candidate v5.2.9 source implements the private SPA shell and 404 behavior in PIA-AUTO-SEO-002. Route parity and JSON metadata checks pass; application build/tests/lint and production UAT remain pending. Whole Auto remains PARTIAL; CMT-003C auth fixtures are blocked.
 
-SIGUIENTE PASO: publish the scoped PR for review, then perform UAT-142 only on deployed production.
-
-# Previous candidate status — KELEDON 5.2.9 / 2026-10-17
-
-Remote `main` was `9aa0d452684d4bcf1b00bdb3321649ae4675877a`; candidate branch `fix/phdk-5-2-9-runtime-auto-remediation` implemented the private SPA shell and 404 behavior in PIA-AUTO-SEO-002. This entry is retained as historical context; current baseline and gates are recorded above.
-
-Historical next action: verify UAT-135–139 on production; preserve the CMT-003C fixture gate, no customer endpoints/private egress, and no provider settings writes.
+Current action: publish this scoped versioned candidate by normal PR, then verify only UAT-135–139 on production; preserve the CMT-003C fixture gate, no customer endpoints/private egress, and no provider settings writes.
 
 ---
 

@@ -1,19 +1,4 @@
-## Current PHDK Auto candidate — KELEDON 5.2.11 / 2026-10-17
-
-Production baseline remains 5.2.10 on `main` `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`. Production UAT-141 found four controls below the 44px target-size minimum on `/login` at 320×720 and passed the measured reflow check. Candidate branch `fix/phdk-login-touch-targets-5-2-11` updates those four targets and aligns API, Cloud, Web, Landing and Browser package/lock metadata plus the Browser renderer. PHDK 2.53.1 coherence baseline is 64/64; static checks pass. UAT-142 remains pending deployment, so CMT-002 and whole Auto remain PARTIAL. No local application tests/builds/lint were run.
-
-| Stage | Status | Next gate |
-|---|---|---|
-| Preflight / Check | STATIC CANDIDATE PASS | Review package/lock alignment, focused source diff and PHDK artifacts; 64/64 standard baseline unchanged. |
-| Integration Review | COMPLETE FOR SOURCE CANDIDATE | `40-integration/INTEGRATION_REPORT-5.2.11.md`; no auth/provider/runtime integration behavior changed. |
-| UAT / UAT Fix | UAT-141 FAIL TARGET SIZE; UAT-142 PENDING | Review and deploy candidate, then measure corrected targets and reflow on production only. |
-| Delivery | PR #259 OPEN / MERGEABLE; REVIEW PENDING | Keep candidate separate from docs-only PR #258; no production acceptance before UAT-142. |
-
-The four ordered commitments remain active as previously approved. CMT-003 authenticated/runtime and CMT-004 tenant/role acceptance remain behind their existing synthetic-fixture and cleanup PIAs.
-
----
-
-## Previous checkpoint — KELEDON 5.2.10 production UAT / 2026-10-17
+## PHDK Auto checkpoint — KELEDON 5.2.10 production UAT / 2026-10-17
 
 Goal: continue the four owner-confirmed commitments in order: CMT-001 baseline/version/PR; CMT-002 widget/diagnostics; CMT-003 client-selected voice→Cloud→Browser→CRM; CMT-004 administration/permissions. Product repository `tuyoisaza/keledon`; PR #255 merged to verified remote `main` `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; KELEDON 5.2.10. PHDK 2.53.1 coherence 64/64. Owner requires application acceptance on production; no local application tests/builds/lint.
 

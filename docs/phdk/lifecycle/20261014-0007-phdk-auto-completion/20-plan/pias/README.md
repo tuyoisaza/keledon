@@ -1,9 +1,5 @@
 # PIAs de continuación — PHDK Auto / KELEDON 5.2.10+
 
-## Candidato en revisión — KELEDON 5.2.11 / UAT-141 (2026-10-17)
-
-La producción continúa en KELEDON 5.2.10. El candidato `fix/phdk-login-touch-targets-5-2-11`, PR #259 (abierto y mergeable, con revisión pendiente), corrige los cuatro objetivos táctiles del login detectados por UAT-141, alinea las cinco raíces package/lock y el renderer, y deja UAT-142 preparado como retest exclusivamente productivo. No se afirma aceptación antes de revisión, merge, despliegue y UAT-142. Evidencia y estado: [PIA-CMT-002](PIA-CMT-002-WIDGET-DIAGNOSTICO.md), [casos UAT-141/142](../../50-uat/UAT_CASES.md), [UAT Fix](../../60-uat-fix/UAT_RETEST_REPORT.md).
-
 ## Estado vigente — KELEDON 5.2.10, PHDK 2.53.1 (2026-10-17)
 
 Producto KELEDON 5.2.10 en `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; PR #255 integrado. El PR documental #256 está en `main` `357cc5074da94741b4717404f2b588a6daa8755d`; cinco package/lock roots y Browser renderer alineados a 5.2.10. PHDK 2.53.1, upstream `94f583635d295ae0f227726718904d952cadb8ab`, coherence 64/64. Railway Web/API posteriores al PR #256 `SUCCESS`, 1/1. PIA-AUTO-SEO-002 está aceptada para los contratos de rutas/metadata/localización probados anónimamente en producción por UAT-135/136/137/139 y UAT-140; UAT-138 queda como hallazgo parcial histórico, corregido/retestado por UAT-140. CMT-001 se cierra para este corte; CMT-002 permanece parcial; CMT-003/004 siguen activos y no aceptados de forma integral. Por instrucción vigente del owner, no se ejecutan pruebas/builds/lint locales de aplicación.
