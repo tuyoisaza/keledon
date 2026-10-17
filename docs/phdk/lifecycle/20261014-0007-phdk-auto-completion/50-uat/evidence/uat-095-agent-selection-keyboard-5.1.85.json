@@ -1,0 +1,53 @@
+{
+  "caseId": "UAT-095",
+  "title": "Agent dashboard selection is keyboard accessible",
+  "status": "PASS_SCOPED",
+  "date": "2026-10-17",
+  "baseSha": "29a1ba592d1244b7f00676677b642d8857318103",
+  "candidateBranch": "fix/phdk-auto-5-1-85-keyboard-agent-selection",
+  "version": "5.1.85",
+  "assertions": [
+    {
+      "id": "UAT-095-01",
+      "result": "PASS",
+      "evidence": "Web and Landing use a native button with the accessible name Select agent <name>; selection state is exposed through aria-pressed and the visible label changes to Selected."
+    },
+    {
+      "id": "UAT-095-02",
+      "result": "PASS",
+      "evidence": "The button has a 44px minimum block size (Tailwind min-h-11 at the project's 16px root size) and a visible focus-visible ring; card selection no longer depends on clicking a non-focusable div."
+    },
+    {
+      "id": "UAT-095-03",
+      "result": "PASS",
+      "evidence": "The scoped source contract test passed 2/2 across Web and Landing. Web/Landing production build, TypeScript and ESLint passed; Web diagnostics passed 19/19; API/Cloud regressions passed 43/43 and 20/20; Browser build/lint and focused tests passed 16/16."
+    },
+    {
+      "id": "UAT-095-04",
+      "result": "PASS",
+      "evidence": "Connected in-app browser performed a harmless navigation to the locally built candidate at http://127.0.0.1:4173/ and confirmed the KELEDON page/version 5.1.85."
+    },
+    {
+      "id": "UAT-095-05",
+      "result": "PASS",
+      "evidence": "Full local production Web UAT passed 8/8 and standalone admin-settings, theme-template, and AI-admin journeys passed; synthetic API fixtures and blocked external traffic were used. These regressions do not claim populated agent-card browser interaction."
+    }
+  ],
+  "limitations": [
+    "The local page navigation verified browser access and the production build, but the authenticated agent dashboard was not rendered because no safe synthetic socket fixture is available in this checkout; browser interaction with a populated agent card is not claimed.",
+    "Screen-reader certification, broad role/route accessibility, mobile layout across the full dashboard, and native Browser/Electron acceptance remain open."
+  ],
+  "portfolio": {
+    "confirmedCommitments": 4,
+    "done": 0,
+    "activePartial": 4,
+    "uatPass": 93,
+    "uatBlocked": 0,
+    "uatManual": 1,
+    "crudBlocked": 396,
+    "crudNotApplicable": 132,
+    "crudDecisionNeeded": 3,
+    "crudPass": 29,
+    "wholeAutoStatus": "PARTIALLY DELIVERED"
+  }
+}

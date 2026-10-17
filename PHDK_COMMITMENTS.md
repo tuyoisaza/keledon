@@ -1,3 +1,10 @@
+## Current ledger status — 5.1.85 keyboard selection candidate
+
+CMT-002 advances with CHK-AUTO-025/UAT-095: Web and Landing agent selection has native keyboard-accessible controls with visible focus and selection state. Version 5.1.85 validations pass, but source delivery is not yet published. The other three commitments remain active; all four are ACTIVE/PARTIAL (0/4 DONE). Portfolio tally is 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 NOT APPLICABLE / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: finish Check, publish by PR and verify main; continue remaining accepted work only after this slice is delivered.
+
+---
 ## Current ledger status — 5.1.84 delivered by PR #206 / UAT-094
 
 PR [#206](https://github.com/tuyoisaza/keledon/pull/206) squash-merged product source `631b12132570631e2ef1c20ff08029423b27fb6b` at remote `main` `eb5f5b47b7cd4a6de6354486603df4233341cab4`, tree `59d95ef1f4506f91e709c2fab495f41c1cacf982`; the tested candidate tree matches. Five app package/lock roots and the Browser renderer are 5.1.84. API/Cloud builds and regressions pass 43/43 and 20/20; Web/Landing builds, typechecks and lint pass; diagnostics 19/19; Browser build/lint and focused version/security tests pass 16/16; PHDK coherence 63/63. UAT-094 passes. Railway Web `65ffff07-d497-4ff1-b77f-1ba9d7631857` and API `89541838-9f48-40b2-b2d7-8db3e0489c5a` now report SUCCESS. Logs show Nginx workers started; API logs confirm PostgreSQL connection and successful Nest startup, with no LLM provider configured (degraded mode). No live HTTP/UI or customer integration probe was made.

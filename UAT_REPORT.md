@@ -576,3 +576,12 @@ Candidate tally: **48 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Liv
 Source audit found duplicate API/Cloud `DebugModeService` classes that performed global persisted toggles and audit writes but were not bound to any module. The active `/management/debug` toggle only controls browser-local diagnostic capture in localStorage. Removed the unreachable service classes and stale compiled JS outputs; retained the Prisma table pending an explicitly approved migration. Regression 49 locks this boundary and marks all 14 DebugMode role/surface rows NOT APPLICABLE. API regression is 37/37; Cloud regression remains 17/17; both builds pass. UAT-049 is source-only and does not claim server-wide debug mode or database migration.
 
 Tally: **49 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Persisted CRUD breadth, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open.
+## Candidate 5.1.85 — UAT-095 keyboard-accessible agent selection
+
+PASS_SCOPED on candidate 5.1.85. The clickable non-focusable agent-card containers in Web and Landing now contain a native named selection button with `aria-pressed`, visible selected text, 44px minimum block size and a visible keyboard focus ring. The focused source-contract test passes 2/2. Web and Landing builds, typechecks and lint pass; Web diagnostics 19/19; full local Web UAT passes 8/8 plus standalone admin-settings/theme-template/AI-admin journeys; API/Cloud regressions 43/43 and 20/20; Browser build/lint/focused tests 16/16; PHDK coherence 63/63. The connected in-app browser loaded the locally built Web candidate at `http://127.0.0.1:4173/`. The authenticated dashboard's populated agent card was not exercised because this checkout has no safe synthetic socket fixture; screen-reader and broad route/role coverage remain manual. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-095-agent-selection-keyboard-5.1.85.json`.
+
+Portfolio: **93 PASS / 0 BLOCKED / 1 MANUAL**; CRUD: **396 BLOCKED / 132 NOT APPLICABLE / 3 DECISION NEEDED / 29 PASS**. All four commitments remain active; whole Auto remains **PARTIALLY DELIVERED**.
+
+SIGUIENTE PASO: complete Check and normal PR delivery for 5.1.85; retain manual accessibility and overall Auto acceptance gates.
+
+---

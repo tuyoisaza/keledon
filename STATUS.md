@@ -1,3 +1,12 @@
+# Current task status — PHDK Auto candidate 5.1.85
+
+The keyboard-selection candidate is locally validated on branch fix/phdk-auto-5-1-85-keyboard-agent-selection, based on verified remote main 29a1ba592d1244b7f00676677b642d8857318103. Web/Landing builds, typechecks, lint and source contract tests pass; API/Cloud builds and regressions pass 43/43 and 20/20; Web diagnostics 19/19; Browser 16/16; PHDK coherence 63/63. The local built candidate loaded in the connected in-app browser. No populated authenticated dashboard interaction or screen-reader test is claimed.
+
+PR/merge/readback remain pending. Whole Auto remains PARTIALLY DELIVERED (0/4 commitments DONE; UAT 93 PASS / 0 BLOCKED / 1 MANUAL).
+
+SIGUIENTE PASO: perform final diff review and normal versioned PR delivery, then verify the exact remote-main SHA/content.
+
+---
 # Current PHDK Auto — 5.1.84 dashboard control repair delivered
 
 PR #206 merged product source `631b12132570631e2ef1c20ff08029423b27fb6b` at main `eb5f5b47b7cd4a6de6354486603df4233341cab4`; remote tree matches the candidate tree. Unsupported Start/Stop Agent controls and an empty realtime toggle are removed from Web and Landing; unhandled hook events are removed. Five package/lock roots and Browser renderer align at 5.1.84. API/Cloud builds and regressions 43/43 and 20/20, Web/Landing builds/typechecks/lint, diagnostics 19/19, Browser build/lint/focused tests 16/16 and PHDK coherence 63/63 pass. Railway Web/API report SUCCESS; API logs confirm DB connection and Nest startup. No public request was made; no LLM provider is configured.

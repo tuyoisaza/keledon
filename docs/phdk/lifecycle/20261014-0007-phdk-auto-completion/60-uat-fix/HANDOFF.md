@@ -87,3 +87,9 @@ The new health-contract case found no post-fix failure. Existing hard-coded depe
 SIGUIENTE PASO: complete whole-candidate Check, reconcile the current PR, and deliver through the normal main-target flow.
 
 ---
+
+## Candidate 5.1.85 UAT Fix — UX-A11Y-025 retested
+
+The pointer-only agent-card selection finding is fixed in Web and Landing. Native selection buttons expose their name and pressed state, provide a 44px minimum target and visible keyboard focus. Source contract tests pass 2/2; exact-candidate builds/typechecks/lint and relevant regressions pass. The populated authenticated dashboard and screen-reader cases remain MANUAL for lack of a safe socket fixture. See UAT_REMEDIATION.md, UAT_RETEST_REPORT.md and UAT-095 evidence.
+
+SIGUIENTE PASO: complete source Check and normal PR delivery, keeping manual accessibility open.

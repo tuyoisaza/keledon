@@ -308,3 +308,8 @@ Candidate total: **48 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT
 | UAT-049 | US-004 / diagnostics owner | Trace the DebugMode Prisma model, API/Cloud modules/services and `/management/debug` toggle; run regression 49. | No disconnected server-wide debug service remains. The Web switch is clearly client-local capture only, and all role/surface rows for the dormant persisted model are NOT APPLICABLE until an approved schema retirement or server feature is defined. | API source regression and CRUD matrix. | PASS, source-only: regression 49 confirms the API/Cloud services and built artifacts are absent, local UI behavior is explicit, and all 14 model-role-surface rows are NOT APPLICABLE. |
 
 Candidate total: **49 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The Prisma schema table is retained; no migration or database change is claimed.
+## Candidate 5.1.85 — UAT-095 agent selection keyboard access
+
+| ID | Commitment / story | Acceptance | Evidence | Result |
+|---|---|---|---|---|
+| UAT-095 | CMT-002 / agent monitoring; an operator can select an agent without a pointer | Web and Landing expose a native named button, pressed state, visible keyboard focus, and at least 44px target; selection is not attached only to a non-focusable card. | `services/web/test/agent-selection-accessibility.test.cjs` (2/2); Web/Landing builds, typechecks, lint; local candidate navigation. | PASS_SCOPED at source/control contract. Populated authenticated dashboard interaction and screen-reader behavior remain MANUAL. |

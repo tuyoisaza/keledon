@@ -1,3 +1,12 @@
+# Current PHDK Auto task — keyboard-accessible agent selection, 5.1.85
+
+Active run 20261014-0007-phdk-auto-completion continues the four user-confirmed fronts in order. This candidate repairs CMT-002: Web and Landing use native accessible agent-selection buttons with aria-pressed, visible selected label, keyboard focus ring and 44px minimum target. Scoped tests/builds pass and UAT-095 records the limits. Current branch: fix/phdk-auto-5-1-85-keyboard-agent-selection; base 29a1ba592d1244b7f00676677b642d8857318103. Delivery is still pending; do not mark the candidate integrated.
+
+All four commitments remain ACTIVE/PARTIAL (0/4 DONE). Whole Auto remains PARTIALLY DELIVERED: UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: complete final review, commit with the 5.1.85 version prefix, create the PR, then merge and verify remote main under existing controls.
+
+---
 # Current PHDK Auto — 5.1.83 delivered; portfolio partial
 
 PR #204 merged the Web Nginx root-context fix at `e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba`; all app roots and Browser renderer are 5.1.83, and PHDK coherence is 63/63. Railway Web and API deployments report SUCCESS with 1/1 replicas. Web startup logs confirm configuration complete and workers started without the prior directive error. API logs show Nest and Prisma startup after a transient dependency reachability timeout. No live request/UI health check was performed.
