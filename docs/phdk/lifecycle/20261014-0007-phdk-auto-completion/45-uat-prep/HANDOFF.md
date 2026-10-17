@@ -88,3 +88,15 @@ Required inputs: this blocked Prep handoff and the four canonical 5.2.4 artifact
 - No hubo cuenta/tenant/device/CRM ni escritura de producción, prueba de Browser, app test/build local o credencial utilizada.
 
 **Next:** esperar el mecanismo y autorización de fixture/cleanup; luego ejecutar CMT-003A/B únicamente sobre el candidato desplegado en producción. No pasar a UAT autenticada con recursos inventados o cuentas reales.
+
+## UAT Prep revalidation — production fixture authorization and gate (2026-10-17)
+
+Run `20261014-0007-phdk-auto-completion` · candidate KELEDON 5.2.7 source `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b` · PHDK 2.53.1.
+
+The owner authorized production-only acceptance and the bounded temporary synthetic fixture in PIA CMT-003C: two isolated tenants, one non-privileged user/device per tenant, one no-PII flow and immediate cleanup (24-hour maximum proposed). Elevated production test personas, invitations, customer data and provider/private-network calls are excluded. No fixture was created.
+
+The existing seeder refuses production and only accepts the named loopback development/test database. No first-party audited production provision/cleanup path or authenticated admin session was available in this run. CMT-003C remains **PARTIAL/BLOCKED**; no bypass or direct production DB write was added. UAT-132 is public anonymous evidence only. No local app tests/builds were run.
+
+Canonical plan, matrix, manifest and report are `UAT_AUTH_PLAN.md`, `UAT_ROLE_MATRIX.md`, `UAT_FIXTURE_MANIFEST.md` and `UAT_PREP_REPORT.md`. Authenticated cases remain BLOCKED until the compliant path is available.
+
+---

@@ -1,5 +1,14 @@
 # UAT Authentication Plan — KELEDON
 
+## Current production-only authorization scope — v5.2.7 / 2026-10-17
+
+- Candidate product source: `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`, KELEDON Web `5.2.7`; PHDK v2.53.1, static coherence 64/64. Documentation main entering this record: `7c9ad9accd74a11c6049949fa9f0d52927e6a34c`.
+- Owner instruction authorizes acceptance on the production site and preparation/provisioning/cleanup of the bounded synthetic scope recorded in `PIA-CMT-003C`: two temporary isolated tenants, one non-privileged user and synthetic device per tenant, one flow with no PII, cleanup immediately after acceptance (24-hour maximum proposed).
+- Excluded: `admin`, `coordinator` or `superadmin` test identities, elevation, invitations/email, real tenant/customer data, provider calls and private/metadata destinations.
+- Safe production identity/bootstrap path: **NOT AVAILABLE/VERIFIED**. The guarded seeder only permits isolated loopback `keledon_phdk_uat` in development/test. No authenticated administrative session or production provisioning/cleanup path was available in this run. Do not invoke the seeder against production, add a bypass, write directly to the production DB, or store credentials in artifacts.
+- Browser state: anonymous production public `/login` only. UAT-132 proves localized form labels and one keyboard sample; it does not authenticate a persona.
+- Readiness: **BLOCKED** for authenticated fixture provisioning until an existing first-party audited path can be used. Public anonymous UAT remains permitted. No local application tests/builds were run.
+
 ## Current candidate revalidation — 5.2.1 / 2026-10-17
 
 - Exact candidate branch/revision: `feature/tenant-interface-selector-5.2.0` / `ef6fe6dbf7eca04708c7200615e7538812751f7e`.

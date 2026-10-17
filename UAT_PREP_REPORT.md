@@ -1,5 +1,17 @@
 # UAT Prep Report — KELEDON
 
+## Current production-only Prep revalidation — v5.2.7 / 2026-10-17
+
+**Status: PARTIAL / BLOCKED.** Product source is `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b` (Web v5.2.7); documentation main entering this revalidation is `7c9ad9accd74a11c6049949fa9f0d52927e6a34c`; installed PHDK is v2.53.1 with static coherence 64/64. The owner authorizes production-only acceptance and the bounded temporary non-privileged fixtures listed in `PIA-CMT-003C`.
+
+The authorized plan is two isolated synthetic tenants with one ordinary user and one device per tenant, one no-PII flow and cleanup immediately after acceptance (24-hour maximum proposed). It does not authorize production `admin`, `coordinator` or `superadmin` test identities, role elevation, email/invitations, real customer data or provider/private-network calls. No fixture was created.
+
+Source review confirms the existing `uat-prep-companyco` seeder is hard-restricted to loopback database `keledon_phdk_uat` in development/test; it refuses production. No authenticated production admin session or first-party audited provision/cleanup operation was available in this run. Therefore FIXTURE-01 scope authorization is recorded, but FIXTURE-02..05 and authenticated UAT remain **BLOCKED**. Do not weaken the seeder, add a public bypass, use direct production database writes, or expose secrets in chat/evidence.
+
+No local application tests/builds were run per owner instruction. Production public UAT-132 remains narrowly PASS; it is not authentication evidence. No production mutation, email, API probe or customer-data access occurred.
+
+**Next action:** make an existing first-party audited provisioning and cleanup path available for the explicitly authorized non-privileged fixture. Until then continue only source work independent of authenticated fixtures and keep role-based acceptance BLOCKED.
+
 **Status: PARTIAL / BLOCKED.** Candidate 5.2.0 is based on remote `main` commit `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`; PHDK is v2.53.0. Prep did not run a browser, headless browser, screenshot or OAuth flow.
 
 The source audit confirmed local email/password HMAC authentication, database-derived roles, tenant-aware API guard, and a ten-minute audited superadmin Test as flow. The test profile policy is explicitly limited to development/staging and synthetic allowlisted identities. Existing regressions passed: `26-uat-test-profile.test.js` and `22-admin-http-wiring.test.js`. PHDK coherence passes v2.53.0 with 64/64 mappings.
