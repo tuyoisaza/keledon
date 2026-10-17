@@ -1,4 +1,17 @@
-## Current PMO progress — 5.1.81 flow-editor UAT fix; portfolio partial
+## 5.1.81 delivery readback — source merged; Web source build pending
+
+PR #200 merged at `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`; all roots and renderer are 5.1.81 and PHDK is 63/63. API deploy succeeded. Railway Web's old snapshot failed at `COPY shared/`; the service root and Dockerfile are corrected, but old-snapshot redeploys preserve the old context. A fresh source deployment must verify the fix. Full Web UAT passes 8/8 plus admin/theme/AI. Four commitments remain active/partial.
+
+| Workstream | Progress | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | 5.1.81 merged and verified; API deployment success. | Fresh Web source build from corrected context; confirm Web deployment. |
+| CMT-002 widget/diagnostics | Full Web UAT 8/8; delayed flow-editor response regression passes. | Native audio/device and broad accessibility/localization. |
+| CMT-003 voice→Cloud→Browser→CRM | Tenant flow configuration remains scoped. | PostgreSQL runtime, native call path, each client's configured provider/CRM sandbox. |
+| CMT-004 administration/permissions | Restrictive role/tenant policy remains covered. | DB migration/restart, CRUD matrix, audit retention and remaining denials. |
+
+SIGUIENTE PASO: verify a fresh Web deployment, then continue the open database and client acceptance.
+
+## Historical PMO progress — 5.1.81 flow-editor UAT fix; portfolio partial
 
 The flow editor's asynchronous refresh now reads the selected company when it runs and ignores out-of-order responses. A deterministic UAT delays Tenant B's response through a switch to unassigned legacy flows. All Web UAT passes 8/8 on production-built 5.1.81, standalone admin-settings/theme-template/AI-admin pass, typecheck/build pass, and PHDK coherence is 63/63. All five package/lock roots and Browser renderer align at 5.1.81. PR and remote readback are pending.
 
