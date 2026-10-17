@@ -1,3 +1,11 @@
+## v5.2.2 — 2026-10-17
+
+### Fixed
+- Use theme-aware foreground tokens for landing CTA copy and pair the primary action button's semantic background/foreground tokens so it retains contrast in dark, light and corporate themes.
+
+### Verification
+- Production UAT-111 on 5.2.1 found low-contrast CTA combinations in dark and corporate themes. Candidate 5.2.2 requires post-deploy production revalidation in all three themes; local application tests/builds are not used.
+
 ## v5.2.1 — 2026-10-17
 
 ### Fixed

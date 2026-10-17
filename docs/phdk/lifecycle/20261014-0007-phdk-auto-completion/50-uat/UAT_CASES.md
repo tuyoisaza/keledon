@@ -16,6 +16,18 @@
 |---|---|---|---|---|---|
 | UAT-110 | CMT-002 / anonymous public visitor | On production `/` in a disposable anonymous browser at pt/dark/1280×720, inspect the accessibility tree, traverse the header with Tab, observe visible focus and repeat Tab through the header cycle. Do not activate controls or use a screen reader. | Main landmark, headings and control names are exposed; keyboard sequence is stable, focus is visible, and no header keyboard trap occurs. | Production UI / isolated anonymous IAB | **PASS FOR LIMITED PUBLIC KEYBOARD/AX SAMPLE:** one main-content landmark, named headings and controls, stable header sequence, visible focus on “Criar conta”, and no trap in repeated Tab cycle. No screen-reader speech or other theme/locale/viewport is claimed. Evidence: `evidence/uat-110-production-public-keyboard-ax-2026-10-17.json`. |
 
+## Candidate 5.2.1 — UAT-111 landing CTA contrast baseline (production)
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-111 | CMT-002 / anonymous public visitor | On production `/`, 1280×720, inspect computed text and rendered container colors for all visible landing text in dark/light/corporate; calculate WCAG relative-luminance ratios for flat CSS backgrounds and visually inspect CTA. Do not activate links. | Text meets 4.5:1, or 3:1 for qualifying large text; identify and report unmeasured gradient/image surfaces separately. | Production UI / isolated anonymous IAB / read-only CSS and screenshot | **FAIL FOR CTA SAMPLES:** lower CTA title 2.38:1 dark and 1.49:1 corporate (3:1 required); white “Começar” label 2.49:1 dark (4.5:1 required). Light-theme flat-color samples had no failures. Ten text nodes over gradients/images and one unresolved background remain outside the calculation. Evidence: `evidence/uat-111-production-cta-theme-contrast-2026-10-17.json`. Candidate fix requires post-deploy UAT-112. |
+
+## Candidate 5.2.2 — UAT-112 production CTA contrast revalidation (pending deployment)
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-112 | CMT-002 / anonymous public visitor | After 5.2.2 is deployed, inspect the production landing CTA in dark/light/corporate at 1280×720; read computed foreground, flat background, font metrics and verify the visible rendered card. Do not activate CTA links. | CTA title and description use primary-foreground over primary; primary action uses foreground over background. All measured pairs meet WCAG text-size thresholds in all themes; gradient/image and other page states remain separately scoped. | Production UI / isolated anonymous IAB / read-only CSS and screenshot | **PENDING DEPLOYMENT.** Record bundle hash/deployed source SHA, ratios by theme, excluded gradient/image nodes and final theme restoration. Candidate source alone cannot pass this case. |
+
 ## Candidate 5.2.1 — UAT-109 sampled contrast in production themes
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

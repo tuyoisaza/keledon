@@ -1,0 +1,55 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-111",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T18:01:00Z",
+  "target": "https://keledon.tuyoisaza.com/?phdk-uat-20261017=2",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.1",
+  "deployedSourceCommit": "5884b80ba4318b2c4beed3e50d94945028b9a311",
+  "assetsObserved": ["/assets/index-CsInpJxF.js", "/assets/index-B8uXFblK.css"],
+  "channel": "isolated anonymous in-app browser; read-only computed CSS and visual inspection; no CTA links activated",
+  "context": {"route": "/", "locale": "pt", "viewportCssPixels": "1280x720", "themes": ["dark", "light", "corporate"]},
+  "result": "FAIL_FOR_SAMPLED_CTA_COMBINATIONS",
+  "method": "Computed rendered text colors, nearest flat CSS background colors and font metrics for visible page text nodes; relative-luminance contrast calculated using WCAG formula. Large-text threshold is 3:1; other text threshold is 4.5:1. Gradient/image surfaces are excluded rather than inferred.",
+  "themeResults": [
+    {
+      "theme": "dark",
+      "visibleTextNodes": 70,
+      "flatBackgroundSamples": 59,
+      "gradientOrImageBackgroundExcluded": 10,
+      "unresolvedBackground": 1,
+      "failures": [
+        {"element": "lower CTA heading", "text": "Pronto para transformar sua central de atendimento?", "fontSize": "36px", "weight": 700, "foreground": "#f8fafc", "background": "#14b8a5", "ratio": 2.38, "required": 3.0},
+        {"element": "lower CTA primary link label", "text": "Começar", "fontSize": "16px", "weight": 600, "foreground": "#14b8a5", "background": "#ffffff", "ratio": 2.49, "required": 4.5}
+      ]
+    },
+    {
+      "theme": "light",
+      "visibleTextNodes": 70,
+      "flatBackgroundSamples": 59,
+      "gradientOrImageBackgroundExcluded": 10,
+      "unresolvedBackground": 1,
+      "failures": []
+    },
+    {
+      "theme": "corporate",
+      "visibleTextNodes": 70,
+      "flatBackgroundSamples": 59,
+      "gradientOrImageBackgroundExcluded": 10,
+      "unresolvedBackground": 1,
+      "failures": [
+        {"element": "lower CTA heading", "text": "Pronto para transformar sua central de atendimento?", "fontSize": "36px", "weight": 700, "foreground": "#102a43", "background": "#194185", "ratio": 1.49, "required": 3.0}
+      ]
+    }
+  ],
+  "privacy": "Anonymous public route only; no authenticated route, form, clipboard, cache-clear action, customer data, audio permission or backend state was read or changed.",
+  "notProven": [
+    "gradient/image compositing for the ten excluded text nodes",
+    "the one text sample with unresolved flat background",
+    "hover/focus/disabled/error states",
+    "responsive viewports, additional locales, login/app/admin routes",
+    "screen-reader quality and authenticated diagnostic RBAC"
+  ],
+  "revalidation": {"themeRestoredToDefault": "dark", "candidateFix": "5.2.2 semantic foreground classes in services/web and landing CTASection", "status": "baseline failure documented; deployed-candidate revalidation pending"}
+}
