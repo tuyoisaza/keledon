@@ -847,3 +847,25 @@ Current status: **PARTIALLY DELIVERED** pending PR/remote evidence and broader o
 UAT-132 on Web v5.2.7 passes the nine anonymous `/login` ES/EN/PT × dark/light/corporate accessibility-tree states and one six-target keyboard order sample. No credentials were entered or auth actions activated; initial dark/PT preferences were restored. Evidence and current stage handoff are recorded in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/`. Documentation PR #250 merged on 2026-10-17 as `9b6488d42861fd9cab3f4bab6543c732e2e8f232`. No local app tests/builds were run. CMT-002 and whole Auto remain partial; CMT-003/004 authenticated acceptance is blocked pending a UAT Prep-compliant provisioning and cleanup path.
 
 SIGUIENTE PASO: identify a first-party audited provision/cleanup path for the owner-authorized non-privileged fixture; continue source work that does not change the persisted CMT-003A claim contract or require authenticated fixtures.
+## Auto continuation checkpoint — PR #257 reconciled / CMT-003A/B source review
+
+Goal: continue the four approved commitments in order. PHDK 2.53.1 coherence 64/64; product KELEDON 5.2.10 source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; current remote `main` `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; PR #257 is documentation-only; Railway Web/API SUCCESS. Current branch: `fix/phdk-cmt-003a-lease-fencing`.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | COMPLETED / REUSED | Official PHDK sync and coherence 64/64 are already verified for this run. |
+| Capture / Plan | REUSED / CURRENT | Four commitments and approved role, tenant, private-destination and selector policies retained. Current PIAs remain the scope. |
+| PMO / Workstreams | REUSED / RECONCILED | PMO/PIA baseline updated to PR #257 and current Railway readback; all four commitments remain partial/open as recorded. |
+| Integration Review | COMPLETED FOR STATIC CMT-003A/B REVIEW | `40-integration/revalidations/20261017-cmt-003a-b-current-source-review.md`; confirms permanent non-atomic claims and origin-only egress checks. No app source changed. |
+| UAT Prep | BLOCKED FOR AUTHENTICATED FIXTURES | CMT-003C1 requires audited provisioning, normal identity login and reversible cleanup; no permitted production path verified. |
+| UAT / UAT Fix | REUSED / SCOPED | UAT-140 accepts only the localized anonymous 404. No command, role, device, CRM or egress acceptance. |
+| SEO / AEO-GEO | REUSED / LIMITED | Existing route/metadata PIA acceptance remains scoped; external field/citation metrics remain open. |
+| Check | COMPLETED / DOCS ONLY | Changed-doc review, relative-link audit and `git diff --check` pass; no application test/build/lint. |
+| Remediation | COMPLETED / DOCS ONLY | Reconciled stale main/deployment readbacks in TASK, STATUS, PMO and PIA index. |
+| Delivery | PENDING | Normal PR/review/merge process; report product deployment separately from documentation deployment. |
+
+Whole Auto remains **PARTIALLY DELIVERED**. CMT-003A/B acceptance depends on fixture provisioning and the specified security controls; CMT-002 broad accessibility/audio and CMT-004 authenticated role/persistence cases remain open.
+
+SIGUIENTE PASO: complete the static doc check and deliver the reconciliation through a normal PR; preserve the production fixture block.
+
+---

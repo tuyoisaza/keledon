@@ -1,8 +1,14 @@
 # PHDK Auto — estado de cartera al 2026-10-17
 
+## Reconciliación post PR #257
+
+`origin/main` está en `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`. El source de KELEDON 5.2.10 permanece en `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; PR #257 solo actualizó documentación. Railway Web `cb925cdb-413b-420d-95c2-2cdf6047ffc5` y API `02ce9322-a9eb-4bb5-9935-e041b767c18a` están `SUCCESS`. La revisión estática CMT-003A/B está registrada en [`20261017-cmt-003a-b-current-source-review.md`](../40-integration/revalidations/20261017-cmt-003a-b-current-source-review.md). Ambos gates permanecen parciales y su aceptación productiva sigue bloqueada por CMT-003C/C1 y sus sandboxes sintéticos; ningún deploy documental cambia ese estado. Sin pruebas/build/lint locales de aplicación.
+
+Revalidación de CMT-003C1: fuente confirma signup/login normal por email/Google con rol `user`, pero las nuevas cuentas no reciben tenant/run y las mutaciones de compañía, vinculación y recursos no tienen el ciclo durable/reversible requerido. Esto elimina el supuesto de que falte autenticación normal; no habilita provisioning ni UAT productivo.
+
 ## Readback vigente — candidate 5.2.10 / CMT-003C1
 
-Repo `tuyoisaza/keledon`; producto 5.2.10 en source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; main documental antes de este cambio `357cc5074da94741b4717404f2b588a6daa8755d`. PR #255 producto y PR #256 documental integrados. Railway Web/API posteriores al PR #256 SUCCESS, 1/1 (`7724c95e-84e8-4923-8f76-6c0a0151ff49` / `abb17a83-2de2-470b-86da-3bf3397ca5f9`). PHDK 2.53.1, canonical upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherencia estática 64/64; `AGENTS.md` managed block coincide byte por byte con `PHDK_NATIVE_RULES.md`.
+Repo `tuyoisaza/keledon`; producto 5.2.10 en source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; main documental vigente `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`. PR #255 producto y PR #256/#257 documentales integrados. Railway Web/API posteriores al PR #257 SUCCESS, 1/1 (`cb925cdb-413b-420d-95c2-2cdf6047ffc5` / `02ce9322-a9eb-4bb5-9935-e041b767c18a`). PHDK 2.53.1, canonical upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherencia estática 64/64; `AGENTS.md` managed block coincide byte por byte con `PHDK_NATIVE_RULES.md`. La revalidación de CMT-003A/B está en `40-integration/revalidations/20261017-cmt-003a-b-current-source-review.md`.
 
 UAT-140 acepta en producción solo el 404 anónimo localizado, no auth ni runtime. La revisión de fuente encontró CRUD normal de empresa/usuarios con guards DB-derived, pero auditoría no bloqueante, borrado directo, ausencia de ciclo synthetic device/flow y test-as deshabilitado para producción. UAT Prep quedó actualizado y se creó PIA-CMT-003C1. No hubo escrituras productivas ni pruebas/builds/lint locales de aplicación. Meta total **PARTIALLY DELIVERED**.
 

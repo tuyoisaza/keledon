@@ -1,8 +1,12 @@
 # PIAs de continuación — PHDK Auto / KELEDON 5.2.10+
 
+## Reconciliación posterior a PR #257 — 2026-10-17
+
+El `origin/main` vigente es `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; el source de producto permanece en KELEDON 5.2.10 (`fd429298a85bdcf3b5c20791f9b1598c132aabcb`). El merge #257 es documental. Railway Web `cb925cdb-413b-420d-95c2-2cdf6047ffc5` y API `02ce9322-a9eb-4bb5-9935-e041b767c18a` reportaron `SUCCESS`. La revisión estática de [CMT-003A/B](../../40-integration/revalidations/20261017-cmt-003a-b-current-source-review.md) reconfirma sus riesgos y gates; no representa acceptance productiva. CMT-003C/C1 sigue siendo el prerequisito para cualquier UAT autenticado.
+
 ## Estado vigente — KELEDON 5.2.10, PHDK 2.53.1 (2026-10-17)
 
-Producto KELEDON 5.2.10 en `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; PR #255 integrado. El PR documental #256 está en `main` `357cc5074da94741b4717404f2b588a6daa8755d`; cinco package/lock roots y Browser renderer alineados a 5.2.10. PHDK 2.53.1, upstream `94f583635d295ae0f227726718904d952cadb8ab`, coherence 64/64. Railway Web/API posteriores al PR #256 `SUCCESS`, 1/1. PIA-AUTO-SEO-002 está aceptada para los contratos de rutas/metadata/localización probados anónimamente en producción por UAT-135/136/137/139 y UAT-140; UAT-138 queda como hallazgo parcial histórico, corregido/retestado por UAT-140. CMT-001 se cierra para este corte; CMT-002 permanece parcial; CMT-003/004 siguen activos y no aceptados de forma integral. Por instrucción vigente del owner, no se ejecutan pruebas/builds/lint locales de aplicación.
+Producto KELEDON 5.2.10 en `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; PR #255 integrado. PR #257 es la actualización documental vigente en `main` `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; cinco package/lock roots y Browser renderer permanecen alineados a 5.2.10. PHDK 2.53.1, upstream `94f583635d295ae0f227726718904d952cadb8ab`, coherence 64/64. Railway Web `cb925cdb-413b-420d-95c2-2cdf6047ffc5` y API `02ce9322-a9eb-4bb5-9935-e041b767c18a` están `SUCCESS` después del PR documental #257. PIA-AUTO-SEO-002 está aceptada para los contratos de rutas/metadata/localización probados anónimamente en producción por UAT-135/136/137/139 y UAT-140; UAT-138 queda como hallazgo parcial histórico, corregido/retestado por UAT-140. CMT-001 se cierra para este corte; CMT-002 permanece parcial; CMT-003/004 siguen activos y no aceptados de forma integral. Por instrucción vigente del owner, no se ejecutan pruebas/builds/lint locales de aplicación.
 
 ## Siguiente ruta de trabajo
 

@@ -61,3 +61,11 @@ Next gate: advance CMT-002 with non-destructive production browser UAT, then imp
 Current 5.2.6 source revalidation confirms a permanent, non-atomic command claim and origin-only Browser egress filtering. Updated CMT-003A/B to the current candidate and added CMT-003C for synthetic production fixture provisioning, authorization and cleanup. Integration evidence is `40-integration/revalidations/20261017-runtime-contract-5.2.6/`.
 
 Plan exit: source gaps and dependency are explicit. Production UAT Prep is blocked on an approved provisioning/cleanup path and, for private CRM acceptance, an exact controlled sandbox hostname/port/CIDR. No local application tests or production writes were performed.
+
+## Re-entry — PR #257 / CMT-003A/B current baseline (2026-10-17)
+
+`origin/main` is `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; the product remains KELEDON 5.2.10 source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`. Reconciled the PIA index and current baseline references. The current static review is `40-integration/revalidations/20261017-cmt-003a-b-current-source-review.md`; CMT-003A/B remain unimplemented and production acceptance remains gated by CMT-003C/C1 and the exact synthetic sandbox requirements.
+
+Plan exit: four commitments and approved policies remain current; no new CRM/provider assumption was added. Next stage: `40-integration` static review is complete; proceed to docs-only Check and normal PR delivery. No application tests/builds/lint or production writes were performed.
+
+Revalidated CMT-003C1 source: normal email/password and Google OAuth signup/login already exist and new identities receive only `user`; neither path attaches a company/run fixture or supplies durable mutation audit/reversible cleanup. No identity was created. Keep fixture provisioning blocked until the audited tenant/device/flow lifecycle and owner-controlled synthetic identity are ready.

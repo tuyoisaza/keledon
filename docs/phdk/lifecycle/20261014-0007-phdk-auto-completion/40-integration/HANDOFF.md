@@ -82,3 +82,29 @@ Candidate 5.2.1 is not deployed; production shows 5.1.85. No synthetic database 
 ## Next stage
 
 Stage: `45-uat-prep` (revalidated). Read its current blockers and exact snapshots before any browser acceptance. Browser phase permission starts only at stage 50.
+
+---
+
+# PHDK Lifecycle Handoff — Integration Review CMT-003A/B (2026-10-17)
+
+- Run ID: `20261014-0007-phdk-auto-completion`
+- Stage: `40-integration`
+- Status: **COMPLETED FOR STATIC REVIEW / PRODUCT ACCEPTANCE OPEN**
+- Product: KELEDON 5.2.10 source `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; `origin/main` `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`
+- PHDK: 2.53.1, coherence 64/64
+
+## Work and artifacts
+
+Re-read the command lease/result implementation and Browser navigation/request guards against PIA-CMT-003A/B. The review confirms the existing non-atomic, non-expiring claim and origin-only egress limitation. Recorded the evidence, sequence and fail-closed gates in `revalidations/20261017-cmt-003a-b-current-source-review.md`, refreshed both PIA baselines, and reconciled PMO, TASK, STATUS and lifecycle readback to PR #257. No application code changed.
+
+## Exit gate and limitations
+
+- [x] Current branch/source/main and documented Railway state are distinguished.
+- [x] Queue and egress source findings are linked to acceptance criteria and implementation gates.
+- [x] PHDK/documentation integrity and relative links pass; no local app tests/builds/lint ran.
+- [ ] CMT-003C1 security review, audited fixture/login/cleanup path and exact CRM/DNS sandbox prerequisites remain open.
+- [ ] No production command, tenant, role, device, CRM, private egress or persisted state was tested.
+
+## Next stage
+
+Stage: `60-check` for changed documentation and static source report, then normal PR delivery. Preserve the production fixture gate; do not treat this static review or a documentation deployment as runtime acceptance. CMT-003A/B remain partial.

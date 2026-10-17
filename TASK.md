@@ -1,10 +1,12 @@
-# Current Auto continuation — KELEDON 5.2.9 candidate / 2026-10-17
+# Current Auto continuation — KELEDON 5.2.10 / 2026-10-17
 
-PR #253 delivered `services/web` initial-HTML overview; remote `main` is `9aa0d452684d4bcf1b00bdb3321649ae4675877a`, and Railway Web/API reported SUCCESS for that version. PHDK 2.53.1 coherence 64/64. Candidate v5.2.9 implements PIA-AUTO-SEO-002: two Vite shells, 43/43 SPA route-map parity, localized React 404 and an HTTP 404 page. Source review is complete; its normal PR and production UAT-135–139 remain pending.
+The confirmed goal remains the four ordered commitments: CMT-001 baseline/version/PR; CMT-002 widget/diagnostics; CMT-003 per-client voice→Cloud→Browser→CRM; CMT-004 administration/permissions. PHDK 2.53.1 coherence is 64/64. PR #257 is integrated at `origin/main` `edd18be5dd8fd2c49c866f9006ee0f408642e9b4`; product source remains KELEDON 5.2.10 at `fd429298a85bdcf3b5c20791f9b1598c132aabcb`, with Railway Web/API SUCCESS. This continuation reconciles stale PMO/PIA baselines and revalidates CMT-003A/B against current source.
 
-Four fronts stay in order. CMT-001 is complete for 5.2.8; CMT-002 partial; CMT-003A/B source gaps open and authenticated acceptance blocked by fixture/sandbox; CMT-004 authenticated persistence/cross-tenant proof blocked by UAT Prep. Continue authorized source remediation under current PIAs. No local app tests/builds/lint, credentials, customer data, provider settings writes or private egress.
+The CMT-003A/B review confirms non-atomic permanent command claims and tenant-origin checks without socket IP pinning. Existing PIA gates prevent claiming safe retry or private egress until the audited fixture path and enforcement are implemented. CMT-001 is complete for this cut; CMT-002 remains partial; CMT-003/004 remain active and partial. No local application tests/builds/lint, production writes, customer data, provider settings writes, or private egress.
 
-SIGUIENTE PASO: finalize the 5.2.9 Integration/Prep handoffs, commit and publish the scoped PR; after its existing GitHub-connected deployment, run only UAT-135–139 on production.
+Current branch: `fix/phdk-cmt-003a-lease-fencing`, based on verified `origin/main`. Changes in progress are documentation and static source revalidation only; no application source has changed.
+
+SIGUIENTE PASO: finish the Integration/Check review for these artifacts, then publish their normal PR. Keep authenticated UAT blocked until CMT-003C/C1 provides the audited synthetic identity/device/cleanup path.
 
 ---
 
