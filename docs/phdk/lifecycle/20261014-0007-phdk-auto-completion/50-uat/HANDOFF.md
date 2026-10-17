@@ -1,5 +1,17 @@
 # PHDK Lifecycle Handoff — UAT
 
+## Production revalidation UAT-133/134 — KELEDON 5.2.8 (2026-10-17)
+
+PR #253 delivered main `9aa0d452684d4bcf1b00bdb3321649ae4675877a`; production Web deploy `4134bb32-8bbf-4401-b86f-c7bb72e26ea8` and API deploy `823151d4-e820-4077-a538-2b26670226d4` are SUCCESS, environment clear. UAT-133 passes anonymous root response and React handoff: initial HTML has the accurate overview, then the running app has one H1 and no fallback. UAT-134 passes login rendering after React starts: expected form, two fields, title Application and noindex/no-canonical. No credentials, OAuth/signup action, customer data or private destinations were touched. Evidence is in `evidence/uat-133-production-web-seo-html-2026-10-17.json` and `evidence/uat-134-production-login-shell-metadata-2026-10-17.json`. The raw private-route shell still contains public index/canonical metadata and a visible product fallback before React, while `X-Robots-Tag` is noindex; unknown URLs return 200 and redirect to `/`. Track through PIA-AUTO-SEO-002. No local application tests/builds were run.
+
+UAT-133/134 exit: **PASS_SCOPED** for anonymous HTTP and post-React UI handoff only. Whole UAT remains PARTIAL/BLOCKED by authenticated fixtures and runtime/provider acceptance. SEO now has production evidence for SEO-10/23; AEO/GEO revalidates the same factual copy. Next: final PHDK Check for candidate 5.2.8, then authorized in-scope remediation and normal delivery. Do not claim whole Auto complete.
+
+## UAT readiness — candidate 5.2.9 / PIA-AUTO-SEO-002
+
+Cases UAT-135–139 are defined in `UAT_CASES-5.2.9.md`. They cover the public root, initial `/login` metadata, one valid private deep link, a synthetic unknown path, and robots/sitemap continuity. All require the exact candidate deployment and anonymous, read-only production access. No credentials or customer data are used. Status: pending delivery and production readiness verification; no acceptance is inferred from source review. Authenticated CMT-003/004 remains blocked by UAT Prep.
+
+---
+
 ## Production UAT-131 — v5.2.7 public locale/theme matrix (2026-10-17)
 
 UAT-131 passes the nine public language/theme selections on the anonymous homepage: ES/EN/PT × dark/light/corporate. AX confirms localized navigation, demo disclosure and current theme/language selection; four screenshots were visually checked for the compact diagnostic row. The tab ended restored to dark/PT. No login, clipboard read, cache clear, endpoint probe or customer data. This does not establish WCAG/contrast, mobile or authenticated behavior. Evidence: `evidence/uat-131-production-theme-locale-matrix-2026-10-17.json`.

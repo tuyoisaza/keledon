@@ -572,6 +572,8 @@
   "errors": {
     "generic": "Ocurrió un error",
     "notFound": "No encontrado",
+    "routeNotFound": "La página que solicitaste no existe.",
+    "returnHome": "Volver al inicio",
     "unauthorized": "No autorizado",
     "forbidden": "Acceso denegado",
     "networkError": "Error de red",

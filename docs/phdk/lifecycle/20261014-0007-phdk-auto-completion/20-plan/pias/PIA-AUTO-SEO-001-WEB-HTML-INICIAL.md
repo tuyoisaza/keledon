@@ -1,6 +1,6 @@
 # PIA-AUTO-SEO-001 — contenido público en HTML inicial de Web
 
-Estado: IMPLEMENTADO EN FUENTE / ACEPTACIÓN PRODUCTIVA PENDIENTE · Prioridad: requisito SEO-10/SEO-23 · Run: `20261014-0007-phdk-auto-completion` · Baseline: KELEDON Web 5.2.7, PHDK 2.53.1.
+Estado: IMPLEMENTADO Y ACEPTADO EN PRODUCCIÓN · Prioridad: requisito SEO-10/SEO-23 · Run: `20261014-0007-phdk-auto-completion` · Corte: KELEDON 5.2.8, PHDK 2.53.1.
 
 ## Hallazgo
 
@@ -26,5 +26,7 @@ La aceptación no afirma indexación de buscadores, rendering de crawlers, ranki
 ## Evidencia actual y salida
 
 - Antes del cambio, GET anónimo de producción: `/` 200, index/follow, title/description/canonical presentes; `#root` vacío y ningún H1 en el cuerpo inicial.
-- Fuente propuesta en `services/web/index.html` y `services/web/src/main.tsx`; la observación de aceptación en producción se agrega después del despliegue y se registra bajo `65-seo/snapshots/candidate-5.2.8/`.
-- Salida: SEO-10 y SEO-23 aceptados en el documento desplegado; crawler/descubrimiento externo sigue parcial y el handoff permite continuar con AEO/GEO sin inventar métricas.
+- Fuente entregada en PR #253, merge `9aa0d452684d4bcf1b00bdb3321649ae4675877a`; Web deploy `4134bb32-8bbf-4401-b86f-c7bb72e26ea8` SUCCESS en producción.
+- GET anónimo posterior: `/` 200, index/follow, H1 y pilares de Cloud/Browser/interfaces por cliente presentes antes de JavaScript. Browser de producción: una H1, `v5.2.8`, `no-js=false`, fallback retirado y sin contenido duplicado después del arranque React.
+- Evidencia antes/después: `65-seo/snapshots/candidate-5.2.8/production-seo-before.json` y `production-seo-after.json`.
+- Salida: SEO-10 y SEO-23 aceptados en el documento y UI desplegados; crawler/descubrimiento externo sigue parcial y el handoff permite continuar con AEO/GEO sin inventar métricas.

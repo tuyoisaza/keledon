@@ -1,5 +1,11 @@
 # AEO/GEO source audit — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.2.8 revalidation — deployed Web answer surface
+
+PR #253 moves the already verified product explanation into the canonical Railway Web runtime's initial HTML. Production GET confirms the public `/` response contains KELEDON's H1, Cloud policy role, Browser execution role, client-configured call/CRM statement and illustrative-interface qualification before JavaScript; production browser confirms React replaces that content cleanly. No new product claims, vendors, authors, markets, FAQs, citations, structured data or AI crawler directives were introduced. Reuse the existing 15-control answer map. AG-02/AG-13 remain partial because the raw SPA shell for `/login` still includes homepage robots/canonical metadata alongside an authoritative deployed `noindex, nofollow` response header. AG-05 provenance and AG-11 market/language policy remain partial/open; AG-14 citations/answer-engine observations remain NOT MEASURED. No local app tests/builds or external answer-engine queries were run. Production evidence: `../65-seo/snapshots/candidate-5.2.8/production-seo-after.json`. Overall AEO/GEO remains PARTIAL.
+
+---
+
 ## Candidate 5.2.7 revalidation — public answers unchanged (2026-10-17)
 
 PR #247 changes only diagnostic hostname redaction and version metadata; public identity, answers, claims, routes, market/language policy, structured metadata and crawl directives do not change. Reuse the grounded 15-control review below. No answer engine, external crawler, paid query or live-page citation probe was used; no ranking or citation claim is made. The production page's Web build is separate from `landing/`, so the Landing runtime remains unverified. Authorship/contact provenance, market/language decisions and deployed visibility remain open/unmeasured. Whole stage remains PARTIAL.

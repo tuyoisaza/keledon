@@ -1,3 +1,11 @@
+## Current Check — 5.2.8 / PHDK 2.53.1 — 2026-10-17
+
+Remote `main`: `9aa0d452684d4bcf1b00bdb3321649ae4675877a`, PR #253 merged. **ALIGNMENT INCOMPLETE — WHOLE AUTO PARTIAL.** Full grouped findings, current GitHub/Railway state, production evidence and authorized Auto remediation scope: [PHDK_CHECK_REPORT-5.2.8-PHDK-2.53.1.md](docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.8-PHDK-2.53.1.md).
+
+PHDK coherence 64/64; theme scan has 0 static findings but runtime remains unverified. Railway Web/API are SUCCESS after PR #253; UAT-133/134 pass scoped anonymous production HTML/React handoff. No app test/build/lint was run locally. Remaining gaps: UAT Prep fixtures/cleanup, Flow CRUD, CMT-003A/B enforcement, admin CRUD, full UI/widget accessibility, SEO private-route/soft-404, AEO provenance/market/citations, Landing runtime target, unprotected main and provider billing/state limitations. Continue in-scope Auto source work; full portfolio remains PARTIAL.
+
+---
+
 ## Current Check — 5.2.7 / PHDK 2.53.1 — 2026-10-17
 
 Current main: `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`, PR #247 merged. **ALIGNMENT INCOMPLETE — WHOLE AUTO PARTIAL.** Full current audit, stable findings, mandatory PHDK gates, provider evidence and next execution order: [PHDK_CHECK_REPORT-5.2.7-PHDK-2.53.1.md](docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.7-PHDK-2.53.1.md).

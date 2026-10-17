@@ -1,3 +1,11 @@
+## v5.2.9 — 2026-10-17
+
+### Fixed
+- Serve private SPA routes from an initial noindex shell, keep the public homepage as the sole indexable document, and return a real 404 page for unknown paths.
+
+### Verification
+- Production-only acceptance under `PIA-AUTO-SEO-002`; do not run application tests, builds, or lint locally.
+
 ## v5.2.8 — 2026-10-17
 
 ### Fixed

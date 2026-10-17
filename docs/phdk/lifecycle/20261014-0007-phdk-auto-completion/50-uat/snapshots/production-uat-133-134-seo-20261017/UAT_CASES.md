@@ -1,0 +1,354 @@
+## Production v5.2.8 — public HTML and SPA login fallback
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-133 | Public discovery / anonymous visitor | GET production `/`; inspect initial HTML, then observe the page after React startup. | Response is 200/indexable and carries the approved semantic H1/product overview before JS; React replaces the fallback with one H1 and no duplicate fallback. | Anonymous production HTTP + browser. | PASS for the single sampled production response/render. Does not prove crawler rendering, indexing or accessibility conformance. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-133-production-web-seo-html-2026-10-17.json`. |
+| UAT-134 | Public login / anonymous visitor | GET production `/login`; inspect shell and after-React metadata/form. Do not enter credentials or activate auth controls. | Response header noindex; after React, title is Application, robots noindex, no homepage canonical, login form appears, and no public fallback remains. | Anonymous production HTTP + browser. | PASS after React; initial shell mismatch/fallback flash remains open under PIA-AUTO-SEO-002. No credential or auth behavior is accepted. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-134-production-login-shell-metadata-2026-10-17.json`. |
+
+## Production v5.2.7 — login locale/theme and keyboard sample
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-132 | CMT-002 / anonymous public visitor | Open production `/login`; select ES/EN/PT across dark/light/corporate; inspect localized form names; sample forward Tab order in Spanish/dark; restore initial preferences. Do not enter or submit data. | All 9 locale/theme selections are exposed as selected and form labels/actions localize. Keyboard reaches language, email, password, sign-in, Google and create-account targets in sequence. | Anonymous production browser accessibility tree and one keyboard sample. | PASS for the nine AX states, form labels and sampled forward order only. No credential submission, contrast, WCAG, screen-reader, mobile or auth acceptance. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-132-production-login-locale-keyboard-2026-10-17.json`. |
+
+## Production v5.2.7 — all public theme/locale combinations
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-131 | CMT-002 / anonymous public visitor | Open a fresh production homepage and select each available public language (es/en/pt) and theme (dark/light/corporate). Inspect the accessible tree; visually inspect representative combinations. Restore the ephemeral tab's initial preferences. | All 9 language/theme combinations are selectable; the public navigation, demo disclosure and widget retain localized names/content. The diagnostic row remains compact in sampled desktop screenshots. | Anonymous production browser, AX tree and four screenshots; no login or diagnostic/cache activation. | PASS for the selector/localization matrix and the four stated visual samples only. Contrast measurement, mobile, WCAG completeness and authenticated behavior remain open. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-131-production-theme-locale-matrix-2026-10-17.json`. |
+
+## Candidate v5.2.7 — Landing diagnostics privacy regression
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-130 | CMT-002 / anonymous public visitor | Review Landing and Web report builders on exact candidate source; after normal production deployment, activate only public Copy diagnostics and observe its accessible status. Never inspect clipboard contents. | Both report builders omit configured API and OAuth hostnames; deployed public Web copy gives truthful success/failure feedback. Production Web check does not claim Landing runtime because the deployed Web image excludes `landing/`. | Source privacy contract plus anonymous production browser; no login, endpoint probe or data mutation. | PASS for production Web copy status and source-level Landing redaction. Landing runtime is BLOCKED pending an authoritative production deployment target. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-130-production-copy-status-2026-10-17.json`. App tests/builds are not run locally per owner instruction. |
+
+## Production read-only re-entry — public widget on v5.1.85 (2026-10-17)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-100 | CMT-002 / anonymous public visitor | Open the production homepage and `/login` without authenticating, submitting forms, or activating either diagnostic action. | Both public and login surfaces display the deployed semantic version and the adjacent named clipboard/trash actions. This accepts only the currently deployed v5.1.85 mount, not candidate 5.2.1 or button behavior. | Connected in-app browser; accessibility-tree observation only. | PASS, scoped/read-only. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-100-production-anonymous-widget-5.1.85.json`. |
+
+## Candidate 5.1.83 — UAT-093 root-context Dockerfile selects the Web server config
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-093 | CMT-001 / Web deployment | On candidate 5.1.83, inspect the repository-root Dockerfile source and run the Web SEO/Nginx regression. Build the production Web assets and typecheck. | The image copies `services/web/nginx.conf` into Nginx `conf.d`; it does not copy the repository root's main `nginx.conf`. Existing root indexability and private SPA noindex headers remain valid. | Source regression `services/web/test/seo-headers.test.cjs`; Web build/typecheck. Container runtime confirmation is pending Railway autodeploy. | PASS for source/build only, not live runtime. Local Docker engine is unavailable. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-093-web-nginx-config-5.1.83.json`, bound to source commit `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813`. |
+
+## Candidate 5.1.82 — UAT-092 credentialed CORS uses the tenant-configured origin set
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-092 | CMT-001/003/004 / browser client | On source commit `3b060a1bcc58089c6405f254f530c68581883934`, run the API and Cloud isolated middleware regressions with an explicit web/extension origin list and the legacy allow-all flag set. Exercise approved and unrelated synthetic origins. | Only an explicitly configured origin receives the credentialed CORS grant. The legacy flag cannot widen HTTP or Socket.IO origins. | API and Cloud `50-cors-allowlist.test.js`; source inspection. No listening socket or external network. | PASS in API and Cloud. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-092-cors-allowlist-api-5.1.82.json` and `.../uat-092-cors-allowlist-cloud-5.1.82.json`. No provider, DB, or customer integration used. |
+
+# UAT cases — run 20261014-0007-phdk-auto-completion
+
+## Candidate 5.1.80 — UAT-091 integration telemetry is unknown until measured
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-091 | CMT-002 / authenticated integration dashboard observer | Read default API and Cloud provider health and connection metrics before any provider adapter check; attempt the generic provider check; evaluate the shared Web/Landing health presentation model. | Unchecked providers have no health-check or last-sync timestamp and no fabricated zero-valued request/data-transfer metrics, 100% uptime, 0% errors or 0ms response. The display remains unknown/not measured until a real check records a request; a recorded check then determines healthy/warning/error. | API/Cloud Jest contracts, shared Node health-model tests, Web/Landing typecheck/build | PASS scoped contracts: API 2/2; Cloud 2/2; shared health model 2/2; Web/Landing typechecks and builds. Latest full Web UAT run 7/8 with an unrelated flow-editor timeout; both implicated flow tests pass individually. No live provider/customer call. Exact-source evidence: `docs/phdk/workstreams/INTEGRATION-HEALTH-UAT-5.1.80.json`. |
+
+## Candidate 5.1.79 — UAT-090 truthful dependency health status
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-090 | CMT-002 / authenticated dashboard observer | On exact source `79be6f743ac8cc3fe69ed62a1b9a55c4fa2867c9`, request system health from API and Cloud monitoring services before dependency-specific health probes exist; repeat after registering a dashboard socket. | TTS, STT, AI and aggregate health remain `unknown`; measured WebSocket connectivity may report connected independently and never promotes aggregate or dependency health to healthy/ready. Web and Landing initialize the displayed values as unknown before a server event. | API/Cloud service contract tests; Web/Landing typecheck and production builds | PASS: 2 assertions per backend; full Web UAT 8/8 plus standalone admin/theme/AI UAT; typecheck/build pass. No live service probe, database, provider or customer data. |
+
+## Candidate 5.1.78 — UAT-089 audit console accessibility and export integrity
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-089 | CHK-005 / synthetic platform superadmin, then tenant admin | Open the exact production-built `/admin/audit` route; inspect sanitized synthetic audit data; measure every input/button/disclosure; tab from Refresh to Export; inspect at 390×844; keyboard through the mobile nav to Management; request visible-page export; force export-audit failure; open as tenant admin. | All 12 interactive targets are at least 44px; keyboard focus is visible; mobile page does not overflow; the horizontally scrollable nav brings its focused final link into view; successful export records only bounded metadata before download; audit failure prevents download; tenant admin is denied before data read. | Local production-built Web SPA, installed Edge via Playwright, intercepted synthetic API, non-loopback HTTP aborted | PASS, 12 scoped checks. Screenshots and exact revision/URL are in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-audit-uat-5.1.78-*.png` and `docs/phdk/workstreams/ADMIN-AUDIT-UAT.json`. Fixture only; no DB, provider or customer data. |
+
+## Candidate 5.1.73 — UAT-084 AI workflow catalog and editor retest
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-084 | CHK-004 / synthetic platform superadmin | Open production-built prompts UI; verify new metadata is loaded; submit invalid output schema; simulate a stale-revision response; reload explicitly; save a valid revision; inspect cost/token unknowns and permission denial. | Invalid schema does not write; 409 preserves edits; explicit reload updates revision; valid save succeeds; missing usage/cost remains unknown; tenant admin cannot administer prompts. | Local built Web SPA, Playwright Edge, intercepted synthetic AI-admin API; outbound requests blocked | PASS after fixture repair. Fixture now includes the required workflow metadata. Evidence: `docs/phdk/workstreams/AI-ADMIN-UAT.json` and prompt/consumption screenshots. No persisted AI definition database or provider call was used. |
+
+## Candidate 5.1.73 — UAT-085 shared theme template editor
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-085 | CHK-001/005 / synthetic platform superadmin and tenant admin | Open the production-built `/admin/settings/templates` route; inspect all three per-preset previews; change/cancel/save a color; disable Corporate; reload; try the route as tenant admin. | Each preview renders its own preset; cancel restores saved values; superadmin save advances revision; Corporate is hidden from ordinary selection with corporate selection falling back to light, but stays editable by superadmin; reload reads saved fixture values; tenant admin is denied before protected API access. | Local built Web SPA, Playwright Edge, intercepted synthetic theme/auth API; outbound requests blocked | PASS_SCOPED, 12 assertions. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-085-theme-templates-5.1.73.json`. This is not a DB migration/restart test or full contrast certification. |
+
+## Candidate 5.1.73 — UAT-083 superadmin flow configuration over HTTP
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-083 | US-012/CMT-003/CMT-004 / synthetic superadmin and coordinator | Apply API/Cloud migrations to two fresh disposable PostgreSQL databases; start the built Nest servers on loopback; exercise flow definition lifecycle and legacy assignment, versions, availability permissions and intent mappings with signed tokens whose role claims are forged; read persisted records through second DB clients. | Superadmin can configure both tenants; DB actor role/company overrides token and query/body claims; coordinator cannot see or change foreign flows; approved versions are immutable; all writes persist and test data is cleaned. | Real API and Cloud HTTP over loopback with PostgreSQL 16; external provider/customer traffic disabled | PASS: 24 assertions per backend; 9 API and 7 Cloud migrations. Closes four superadmin flow-configuration API rows. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-083-superadmin-flow-config-http-5.1.73.json`. |
+
+## Candidate 5.1.73 — UAT-082 superadmin flow configuration with PostgreSQL
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-082 | US-012/CMT-003/CMT-004 / synthetic superadmin and coordinator | Apply current API/Cloud migrations to fresh disposable PostgreSQL databases; invoke the built AuthGuard, ResourceScopeGuard, controller and service against real Prisma clients; create definitions across two tenants, issue signed tokens with forged roles/company filters, approve a version and read it through a second client. | Superadmin accesses both tenant definitions; a coordinator claiming superadmin is re-resolved from DB, sees only its company, and cannot write a foreign definition; approved version and actor persist. | API/Cloud classes in-process against disposable PostgreSQL 16; no HTTP listener or external integrations | PASS, 10 assertions per backend; API 9 migrations and Cloud 7 migrations applied. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-082-superadmin-flow-config-postgres-5.1.73.json`. |
+
+## Candidate 5.1.73 — UAT-081 superadmin flow configuration Web journey
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-081 | US-012/CMT-003/CMT-004 / synthetic superadmin | Open the production-built SPA with intercepted synthetic APIs; switch between two companies; read, create, update and deactivate definitions; create and approve a version; enable/disable company availability; add/remove an intent mapping; open an unassigned legacy definition, assign its owner and continue in the target company's view. | Every read/write follows the selected company; foreign-company definitions are absent; configuration writes contain the selected tenant and flow IDs; legacy assignment moves the screen to the destination company so the saved flow remains visible. | Local Web SPA / headless Edge; synthetic API; external HTTP/WebSockets blocked | PASS after UAT Fix. Initial run exposed a legacy-assignment view bug; the repaired journey and tenant-admin regression pass. This proves UI/request contracts only; superadmin API authorization/persistence remain open. Evidence: `50-uat/evidence/uat-flow-config-superadmin-web-5.1.73.json`. |
+
+## Candidate 5.1.66 — tenant flow persistence and UAT revalidation
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-058 | US-012 / API and Cloud tenant administrator | Run both tenant-flow persistence contract suites; inspect the API/Cloud Prisma schemas and migration SQL for company ownership, draft-version lifecycle, composite tenant-matched permission constraint and stale legacy company hints. | Both backends use the same persistent model; cross-company permission rows fail at the DB constraint; legacy import is idempotent and derives ownership from persisted records; UI/API caller company is not authoritative. | API/Cloud regressions and Prisma schema/migration contract assertions. | PASS for source/schema contracts: API 8/8 targeted assertions and full regression 39/39; Cloud 7/7 targeted assertions and full regression 18/18. Schema validation passes for API and Cloud. Database execution is a separate blocked case. |
+| UAT-059 | US-012 / Company Co tenant admin and superadmin fixture | Build the Web SPA and run full local UAT with Company Co synthetic fixtures; create a flow, save/approve a draft version, enable company availability and map an intent by keyboard; verify a tenant admin cannot choose a company; inspect at 390px. | The visible editor exposes the intended lifecycle, is keyboard-operable, fits a mobile viewport and sends tenant-scoped requests; browser requests outside the local harness are blocked. | Local production-built Web UAT with intercepted APIs; no live authentication or DB claim. | PASS: full `services/web npm run test:uat` 6/6 plus AI-admin journey; focused flow case verifies keyboard operations and 390px no-overflow. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-5.1.66/`. |
+| UAT-060 | US-012 / release owner | Apply both migration sets to a disposable loopback PostgreSQL DB; import legacy JSON, exercise create/read/update/version/permission/mapping under two tenants, restart API/Cloud and read back; verify denied cross-tenant direct IDs. | Migrations apply cleanly; writes persist across restart; DB rejects mismatched permission company; the importer does not overwrite newer DB edits. | Isolated PostgreSQL and exact-version API/Cloud. | BLOCKED: this workstation has no PostgreSQL service, `psql`, or Docker. No database was provisioned or contacted. Resume only with a disposable loopback database and run `services/api: npm run prisma:migrate:deploy`, `cloud: npm run prisma:migrate:deploy`, then exact-source persistence/restart tests. Evidence required: migration status, before/after DB reads and redacted test output. |
+
+Current candidate tally: **58 PASS, 1 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-060 requires isolated database access; native device/audio remains MANUAL. No code defect was found in permitted UAT; persisted behavior and whole-portfolio acceptance remain open.
+
+## Candidate 5.1.65 — UAT-057 tenant-owned legacy flow configuration
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-057 | Company admin/coordinator manages call-flow configuration; superadmin assigns legacy unowned definitions | Open Flow Definitions; create/edit/deactivate a definition; create and approve a version; enable company availability; map an intent; repeat with company-scoped admin and verify company selector is absent. API fixtures are synthetic and outbound requests blocked. | Flow configuration is company-scoped end-to-end; tenant roles cannot access another company; versions and mappings are linked to same-company definitions; legacy unowned assignment is superadmin-only. | API/Cloud source regressions and production-built Web browser UAT; persisted DB acceptance is a separate open gate. | PASS for API/Cloud source contracts and mocked browser UI. Full `npm run test:uat`: 6/6, AI-admin UAT passes; API regression 38/38; Cloud regression 17/17. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-5.1.65/`. |
+
+Current candidate tally: **56 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The manual device/audio gate and durable persistence, deployed discovery and customer-specific live integrations remain open.
+
+---
+
+## Candidate 5.1.64 — UAT-056 verify accessible diagnostics hit targets
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-056 | US-001 / visitor with touch or motor accessibility needs | Build both public Web surfaces; inspect both diagnostics button boxes and visual pseudo-elements; exercise production-built Landing desktop and mobile viewport. | Each icon-only action has a distinct, non-overlapping 44×44px hit target with a centered 28×28px visual tile, accessible name and no loss of mobile nav preferences. | Web/Landing source contract and local production Landing browser UAT, external requests blocked. | PASS on exact 5.1.64 candidate source. At 1280×900 both actions measure 44×44px with 28×28px visual tiles and 4px clear separation; names are present and hero remains clear. At 390×844 both targets remain 44×44px and theme/language stay available. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-056/`. |
+
+## Candidate 5.1.63 — public diagnostics placement under product name
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-055 | US-001 / anonymous visitor and operator | Build both Web applications; open public Landing at desktop/mobile sizes; inspect brand/widget bounding boxes and hero clearance; open the mobile preferences menu. | The compact version/copy/reset row is top-left directly below the KELEDON name, has exactly two named icon-only actions, stays visible without overlapping hero copy, and preserves mobile theme/language access. | Local production Landing browser UAT with outbound traffic blocked; mirrored Web component/source regression. | PASS on exact 5.1.63 candidate source. At 1280×900 brand (32,16–48), widget (32,52–80), two visible preferences, zero hero overlap; at 390×844 mobile theme/language controls remain visible. Browser evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-055/`; full Web diagnostics/debug-mode/version-actions 19/19. |
+
+## Candidate 5.1.62 — protected AI administration acceptance
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-053 | US-011 / provisioned superadmin and tenant admin | Build the Web app and run the isolated AI administration UI journey with synthetic API routes; run the managed AI API contract suite through the required API regression runner. | Only a superadmin reaches prompt/usage administration; invalid schemas and stale revisions do not write; successful edits create audited revisions; missing usage/cost stays Unknown; no provider request or model payload is fabricated. | Local production SPA UAT and API regression. | PASS for exact 5.1.62 source: API contract 6/6 is included in regression 38/38; synthetic AI administration UAT passes all 12 cases. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/AI-ADMIN-UAT-5.1.62.json` and adjacent screenshots. Persistence/migration remains open. |
+
+Candidate tally: **55 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. This includes UAT-055 public diagnostics placement and UAT-056 accessible hit targets. The synthetic AI-admin cases prove the built Web UI and fixture contract only; they do not close persisted AI prompt migrations, production authorization or the full administration matrix.
+
+## Candidate 5.1.60 addition — verify Landing diagnostics mounts (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-051 | CMT-002 / public visitor and app administrator | Run the shared version/actions route-contract test against both Web applications and the isolated widget tests. | Public Landing, login, authenticated shell and admin source routes mount the widget; the anonymous/debug-off widget behavior, safe copy/reset and native Browser contract remain green. | Web diagnostics source suite, Browser source suite, Landing SEO test. | PASS for source contract: Web diagnostics 19/19, Browser version-actions/security-policy 15/15, Landing SEO 1/1. No browser runtime or assistive technology was exercised. |
+
+Candidate total: **51 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-051 verifies source mounts and safe widget contracts only; broad visual, route, screen-reader and device/audio acceptance remains open.
+
+## Candidate 5.1.59 addition — retain CRM origin scope through tab destruction (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-050 | US-003 / tenant-configured CRM operator | Exercise the tenant scope helper with a synthetic WebContents and inspect the Browser tab-close policy. | Closing stops pending loads without clearing tenant scope; the `destroyed` event is the cleanup boundary, and the session request registry does not retain WebContents strongly. | Browser source-contract regression. | PASS for source contract: Browser regression verifies stopped views remain tenant-scoped until cleanup, close does not clear the scope early, and session entries contain no WebContents reference. No live BrowserView/network was run. |
+
+Candidate total: **50 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-050 is source-level only. Client CRM/device behavior, exhaustive persisted model operations, native device/audio, broad accessibility/localization and deployed SEO/AEO remain open.
+
+## Candidate 5.1.58 addition — Cloud device tenant binding (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-047 | US-002 / device owner and Cloud API | Exercise the paired-device service, public controller error projection and authenticated registration guard with isolated synthetic fixtures. | A machine registration is reusable only by its persisted actor/company; actor-less tenant registrations and unbound devices cannot pair; pairing consumes only the still-pending matching unexpired proof; public errors reveal no internal detail. | Cloud/API source regressions. | PASS, source scope: Cloud regression 21 and 42 verify binding, expiry/status/code predicates and redaction; API regression 21 retains the reference binding behavior. Live DB/device pairing remains BLOCKED. |
+
+Candidate total: **47 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-047 is source-level only; persisted pairing, live device behavior and native device/audio remain open, alongside broad accessibility/localization and deployed SEO/AEO.
+
+## Candidate 5.1.57 addition — link persisted evidence to CRUD rows (2026-10-14)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-046 | US-002 / release owner | Run regression 33 and reconcile Company/admin, Company/superadmin, User/admin and User/superadmin API evidence against UAT-045. | Each row cites the persisted evidence actually exercised, while every row stays BLOCKED until the full model-role-operation matrix is accepted. | API source regression and CRUD matrix. | PASS: regression 33 asserts all four UAT-045 citations and preserves BLOCKED status; no runtime behavior or new persistence acceptance is claimed. |
+
+Candidate total: **46 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-046 is a source/evidence mapping check; exhaustive model/operation persistence, native device/audio, broad accessibility/localization, deployed SEO/AEO and tenant-specific live call/CRM acceptance remain open.
+
+## Candidate 5.1.56 addition — exact-source PostgreSQL role and migration acceptance (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-044 | US-002 / release owner | Against exact 5.1.55 source, build API, run all API regressions, apply migrations twice to the retained disposable PostgreSQL database, and check migration status. | Build/regressions pass; the migration set is idempotent and schema is current. | API build/regression plus loopback PostgreSQL 16.15. | PASS: API build; 36/36 regression suites; eight migrations found, both deploy attempts report no pending migrations, and schema is up to date. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`. |
+| UAT-045 | US-002 / synthetic superadmin and tenant admin | Register synthetic `.invalid` identities; bootstrap only the disposable DB's initial test superadmin; assign tenant admin through the API; read same/foreign tenant records and attempt privilege/company deletion. | Registration defaults to user; only superadmin assigns admin/company; tenant and role checks use persisted DB state. | API 5.1.55 over loopback PostgreSQL 16.15. | PASS, scoped: registration/login and superadmin assignment persisted; same-company read 200, foreign-company read 403, self-elevation 403, company deletion 403. Fixtures deleted; evidence as UAT-044. Exhaustive 35-model coverage remains open. |
+
+Candidate total: **45 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-044/045 advance UAT-009/010 on exact 5.1.55 source; they do not close exhaustive model/operation persistence, native device/audio, broad accessibility/localization, deployed SEO/AEO or tenant-specific live call/CRM acceptance.
+
+## Candidate 5.1.55 addition — preserve both inventory table contracts (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-043 | CMT-004 / reviewer of persisted-model inventory | Run API regression 33 against the current Prisma schema and matrix; independently assert the 35-row narrative inventory retains its three-column header/rows and the capability table has 490 unique model/role/surface rows. | The expanded capability map remains complete without corrupting the separate model-source inventory or its schema. | API source regression 33 plus PHDK coherence. | PASS for documentation/test integrity; persistence is not inferred. Regression 33 asserts both table contracts and selected role boundaries. |
+
+Candidate total: **43 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-043 corrects the documentation integrity issue found after the 5.1.54 merge; existing database, native, accessibility and deployed measurement gates remain open.
+
+## Candidate 5.1.54 addition — model-level CRUD authorization map (2026-10-14)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-042 | CMT-004 / reviewer of administrative permissions | Reconcile every Prisma model against all seven roles and API/Web surfaces; assert one row per combination, complete operation/evidence columns, valid states, and explicit cases for the dormant global catalog, team flows, unwired feature flags, and superadmin AI prompts. | All 35 models have exactly 14 explicit role/surface rows (490 total); sensitive permissions follow current guard evidence; unresolved persistence, product decisions and absent surfaces remain visibly blocked/open. | API source regression 33 plus PHDK coherence. | PASS for source/documentation coverage: 490 unique rows, 168 core rows, policy boundary assertions; no persistent DB behavior inferred. `services/api/test/regression/33-crud-model-inventory.test.js`. |
+
+Candidate total: **42 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-042 closes source-matrix completeness only; it does not close CHK-AUTO-005 or the persisted CRUD, native device/audio, accessibility, or deployed SEO/AEO gates.
+
+## Candidate 5.1.53 addition — crawler-readable public landing overview (2026-10-14)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-041 | US-001 / public visitor or search crawler | Build Landing production output and inspect the initial `dist/index.html` without running JavaScript; verify a semantic H1, accurate overview, client-specific call/CRM statement, disclaimer, and accessible no-JS fallback. | The public root serves useful, truthful HTML immediately; React removes the fallback styling marker when the interactive app starts. | Landing HTML contract test and production build artifact inspection. | PASS. `npm run test:seo` 1/1, lint, typecheck, and build pass; built HTML retains the overview and H1. No browser/crawler/deployment or customer endpoint was contacted. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-landing-5.1.53.json`. |
+
+Candidate total: **41 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Existing broad CRUD/persistence, delete/reindex concurrency, native device/audio, accessibility/localization and deployed discovery measurements remain outside this focused regression; tenant-specific call/CRM remains configured and accepted per customer.
+
+## Current candidate 5.1.39 — exact-SHA revalidation
+
+Candidate: `fix/phdk-mvp-store-write-contracts-5-1-39`, source `a8a89f928312db2fef5142a0e07ac18a197b6c19`, base `b5efc9c0e1d0ab4ecc76c13ec92005aad68b9844`. Owner-approved intent is safe tenant administration with current DB-derived actor attribution; the candidate rejects caller-controlled metadata on MVP writes. All Web API traffic in local SPA UAT is intercepted with synthetic fixtures; external traffic is blocked.
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-033 | US-002 / US-004, API or Cloud management caller | Submit MVP create/update payloads containing server-owned identifiers, timestamps, relations or unsupported types; submit a FlowVersion create with spoofed `createdBy`; compare actor forwarded by the controller. | Unsupported/server-owned fields fail before persistence; creator attribution comes only from authenticated request context; API and Cloud behavior match. | API/Cloud isolated regression suites, plus exact-candidate built-SPA UAT for unaffected shared journeys. | PASS, 3 assertions each in API regression 48 and Cloud regression 41; Web UAT 2/2, diagnostics 19/19, exact SHA and synthetic-only limits recorded in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-local-web-5.1.39.json`. |
+
+Overall catalog: **30 PASS, 2 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Existing UAT-009/010 (real development identities and disposable PostgreSQL persistence/migration), UAT-006 (native device/audio), broad accessibility/localization and deployed SEO/AEO remain unresolved. Client-specific call/CRM remains per-tenant and is not a universal acceptance case.
+
+---
+
+## Candidate 5.1.36 additions
+
+UAT-032 covers Device manager revocation and registration safety. In an isolated local built-SPA session, a user cannot see the revoke control; an admin's confirmation cancel sends no DELETE; a failed request is visible and retryable; a successful request removes the device from the tenant list. API regression 21 separately verifies registration ignores caller-supplied identity, denies actors without a company, permits same-company manager revoke and denies cross-company/ordinary-user revoke. PASS within synthetic UI and guard-fixture scope only; no DB/device pairing persistence is claimed. Current catalog after this addition: 29 PASS, 2 BLOCKED, 1 MANUAL.
+
+## Candidate 5.1.33 additions
+
+UAT-031 verifies API and Cloud generic KnowledgeDocument deletion removes Qdrant points selected by the stored `documentId` before deleting the relational row, and KnowledgeBase deletion removes its collection before deleting the base. The isolated Prisma/Qdrant service harness verifies that Qdrant failures preserve relational records and absent collections skip vector deletion. PASS as a mocked service contract only; PostgreSQL persistence, Qdrant runtime behavior, and concurrent delete/reindex remain unverified. Current acceptance remains incomplete.
+
+## Candidate 5.1.32 additions
+
+UAT-030 covers the tenant-scoped Knowledge page: a regular user can read the synthetic company document but cannot add/delete; localized page copy works in es/en/pt; the page contains no fabricated live transcript/retrieval metrics; the manager source dialog exposes labeled controls and restores focus on Escape; backend error details remain hidden. PASS against source commit `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`, evidence `docs/phdk/evidence/uat-local-web.json` (empty source diff, no dirty untracked source). The local SPA intercepts all APIs; this does not establish DB persistence or live CRM/RAG acceptance. Current total: 27 PASS, 2 BLOCKED, 1 MANUAL; whole-product acceptance incomplete.
+
+## Candidate 5.1.31 additions
+
+Latest candidate is based on verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; version-aligned application roots and Browser renderer are 5.1.31. UAT-018 covers API/Cloud seed/migration retirement; UAT-019 covers credential/audit guard parity; UAT-020 revalidates same-company user reassignment and cross-company denial; UAT-021 covers atomic TeamInterface replacement and direct-ID tenant denial; UAT-022 covers the localized superadmin Workflow CRUD UI with mocked APIs; UAT-023 covers API/Cloud current-DB actor scope and minimal user-record selection; UAT-024 covers matching safe API/Cloud voice-profile projections; UAT-025 covers the strict API/Cloud vendor-config schema; UAT-026 covers fail-closed voice-profile config writes; UAT-027 covers API/Cloud paired vendor runtime payload parity; UAT-028 covers the diagnostics widget and built-Web UAT on the exact candidate; UAT-029 covers tenant-scoped voice-profile detail parity. UAT-004 covers validated tenant-allowlisted private CRM origins with no private network request. PR #102 remains open pending independent security review and merge. Current scoped UAT tally: 26 PASS, 2 BLOCKED, 1 MANUAL; no persistent DB acceptance is claimed.
+
+Latest merged source: KELEDON 5.1.30, PR #100 at verified `main` `7a48b419880abea818837e4cdfc3d4d4c3f77c12`. Current candidate 5.1.31 is based on verified main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`; delivery is pending. UAT-013–018 cover source-only security changes and do not alter persisted DB state. UAT-011/012 exercise the in-process Nest HTTP guard/controller harness. Browser API requests in the prior UI suite are intercepted and external requests blocked; no persistence is inferred. UAT-008 remains bound to its 5.1.26 synthetic UI/API evidence.
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-001 | US-001 / anonymous, user | Open public/login, copy report, test denied clipboard, reset owned state, inspect 390px/200%-400% reflow and themes. | Safe report, truthful feedback, owned-state reset, responsive layout. | Local built SPA / Playwright, intercepted APIs | PASS, `docs/phdk/evidence/uat-local-web.json`. |
+| UAT-002 | US-002 / admin, coordinator, superadmin | Exercise management, diagnostics and write-only provider replacement with synthetic tenants. | UI follows capability; secret fields remain blank and replacement-only. | Local built SPA; isolated API regressions | PASS in scoped UI/server tests; no real login. |
+| UAT-003 | US-002 / cross-tenant and non-superadmin | Attempt cross-company IDs, stale actor, role/company escalation and low-role mutations. | DB-derived actor/tenant policy denies unauthorized access and mutations. | API regression / in-process Nest HTTP | PASS, API regression 21/21 suites; fixtures are isolated, no persistent DB. |
+| UAT-004 | US-003 / integration administrator | Configure validated private HTTP(S) origin; attempt malformed, unlisted and cross-tenant targets. | Configured private origins are accepted only through tenant allowlist; unsafe inputs denied. | API/Cloud policy and Browser offline tests | PASS in source tests; no private destination contacted. |
+| UAT-005 | US-004 / operator | Run deterministic synthetic call-command lifecycle through registered handlers and injected CRM adapter. | Valid sequence completes; failures remain explicit and safe. | Browser offline runtime tests | PASS, 27/27; no live call/provider. |
+| UAT-006 | US-004 / desktop operator | Pair native Browser with test device; exercise OS media consent and audio lifecycle. | Permission and cleanup behavior works on supported device. | Native manual UAT | MANUAL/BLOCKED — device/audio environment unavailable. |
+| UAT-007 | US-005 / release owner | Compare five package/lock roots and renderer version. | Candidate versions agree; release only after PR and remote readback. | Source/Git | PASS, PR #100 delivered 5.1.30; exact remote readback at `7a48b419880abea818837e4cdfc3d4d4c3f77c12`. |
+| UAT-008 | US-002 / superadmin test operator | Select configured synthetic profile; test bounded session; return to original admin. | Server requires current DB superadmin; audited start/end; nonproduction-only, allowlisted, <=10 min, no persisted role change; return revokes token. | Local built SPA + isolated in-process Nest HTTP/regression tests | PASS, scoped. Browser UI uses mocked API; server audit/expiry/guard/revocation verified separately. |
+| UAT-009 | US-002 / superadmin and test users | Authenticate to a safe development target with actual synthetic identities and verify roles. | Actual DB-backed access matches role policy; no production identity/data. | Development deployment | BLOCKED — no verified target or test identities configured. |
+| UAT-010 | US-002 / data administrator | Run vendor-secret migration and persisted CRUD matrix on disposable DB. | Idempotent migration, safe projections and persisted role/tenant matrix. | Isolated disposable PostgreSQL DB | BLOCKED — no disposable DB configured; production DB excluded. |
+| UAT-011 | US-002 / paired-device runtime vs human roles | Request `/api/devices/:id/rpa-config` with no token, each human role, a paired token for another device, and the matching paired-device token. | Human and mismatched-device reads return 403; only current DB-derived runtime identity for the exact device receives raw configuration. | Isolated in-process Nest HTTP | PASS, `services/api/test/regression/22-admin-http-wiring.test.js`; synthetic fixtures, no persistent DB. |
+| UAT-012 | US-002 / human device-list readers | Fetch device list when a device has RPA credentials and a CDP URL. | Response omits raw `rpaProviderConfig`, `cdpUrl`, tokens and pairing proofs; only presence flags are returned. | Isolated in-process Nest HTTP | PASS, `services/api/test/regression/22-admin-http-wiring.test.js`; synthetic data, no persistent DB. |
+| UAT-013 | US-002 / release owner and DB administrator | Inspect API/Cloud setup, legacy SQL sources and the idempotent Supabase RLS migration; run the focused regression. | No broad authenticated/true-valued policy is created; app-owned public tables are set to RLS; legacy broad policies are removed; API/Cloud SQL mirrors match. | Static SQL regression | PASS, `services/api/test/regression/34-default-deny-rls-policy.test.js`; migration not executed and database behavior remains unverified. |
+| UAT-014 | US-002 / nonproduction fixture operator | Inspect and syntax-check the API/Cloud synthetic-user provisioning script. | Script is explicitly opt-in, refuses production, pins an exact allowed Supabase URL, accepts only `@example.test`, takes password from environment, and provisions only role `user`; mirrors match. | Static source regression / Node syntax check | PASS, `services/api/test/regression/34-default-deny-rls-policy.test.js`; script not executed and no account created. |
+| UAT-015 | US-002 / release owner | Inspect user-table and legacy RBAC setup SQL. | Schema installation creates no sample/elevated account; obsolete customer-data/RBAC seed scripts fail closed. | Static SQL regression | PASS, `services/api/test/regression/34-default-deny-rls-policy.test.js`; no SQL executed. |
+| UAT-016 | US-002 / release owner | Inspect Auth-to-user trigger SQL. | New Auth identities receive role `user`; existing role/tenant assignment is preserved; no email-based superadmin path exists. | Static SQL regression | PASS, `services/api/test/regression/34-default-deny-rls-policy.test.js`; SQL not executed. |
+| UAT-017 | US-002/US-003 / operations owner | Review legacy RBAC/session/CRM seeders and the provider-catalog seed. | Customer-like tenant/user/session/CRM seeds fail closed; global provider-catalog seeding requires nonproduction opt-in and an exact allowed URL. | Static documentation/source review / Node syntax check | PASS; API/Cloud scripts match; no seed script was executed. |
+| UAT-018 | US-002 / release owner | Run both API and Cloud in-process Nest HTTP wiring tests and `services/api/test/regression/35-retire-runtime-seed-webhook.test.js`. | Shared-secret webhook and guard bypass are absent; authenticated superadmin requests to legacy seed/migrate endpoints receive HTTP 410; no file provisioning or runtime DDL path remains. | In-process Nest HTTP, cross-backend static regression, builds and full regressions | PASS, both HTTP harnesses assert 410; API 24/24 and Cloud 11/11; no database or seed ran. |
+| UAT-019 | US-002 / security reviewer | Compare API/Cloud `CrudAccessGuard`, run Cloud management/HTTP tests, API policy regressions and `36-crud-guard-security-parity.test.js`. | Every role is denied caller-supplied `passwordHash`; superadmin cannot append forged audit records through generic CRUD; Cloud mirror matches API. | Direct guard and in-process Nest HTTP; cross-backend source regression | PASS, API 24/24 and Cloud 11/11 regressions; builds pass; no persistent DB used. |
+| UAT-020 | CMT-004 / company admin or coordinator | Reassign an ordinary user to another team in the same company; attempt a team in another company through API and Cloud guards/HTTP. | Same-company team change remains available; cross-company assignment and role/company changes remain denied. | API/Cloud direct guard and Cloud in-process Nest HTTP regressions | PASS, same-company team target accepted and foreign tenant denied; no persistent DB used. |
+| UAT-021 | CHK-AUTO-003 / team admin or superadmin | Replace a team's managed-interface assignments with valid IDs; submit malformed, duplicate, blank, or unknown IDs; submit an empty array to clear; try a foreign-company team ID. | Invalid requests leave existing assignments untouched; valid replacement and explicit clear run atomically; tenant guard accepts same-company and denies foreign-company direct IDs. | API/Cloud regression `37-team-interface-atomic-replacement.test.js`; cross-backend guard regression `38-team-interface-tenant-guard.test.js` | PASS at service/Prisma transaction and guard contract level; no persistent DB used. |
+| UAT-022 | CHK-AUTO-003 / superadmin | Open `/management/workflows`; inspect a workflow, create/edit valid JSON trigger/steps/variables, reject malformed JSON, and delete after confirmation. Attempt direct API detail as a non-superadmin. | Superadmin has complete list/detail/create/update/delete; invalid payloads are explained; other roles are denied; details show only workflow-owned fields. | Local Web UAT against mocked APIs; API/Cloud regression `39-workflow-detail-management.test.js`; Web build/typecheck and locale parity | PASS, scoped — real local browser journey covered superadmin list/detail/create/edit/delete, invalid-JSON rejection and tenant-admin redirect. APIs were intercepted; persisted CRUD and live auth remain unverified. |
+| UAT-023 | CHK-AUTO-003 / tenant admin and security reviewer | Request an in-company and foreign-company user detail while the token claims superadmin; inspect the user lookup projection in both API and Cloud guards. | Current DB role controls access; foreign-company detail is denied; scope lookup selects only authorization fields and never `passwordHash`. | API/Cloud regression `40-crud-guard-minimal-user-select.test.js` | PASS, isolated guard source harness in both backends; no persistent DB or user record accessed. |
+| UAT-024 | CHK-AUTO-003 / voice-profile administrator and security reviewer | Exercise API and Cloud tenant voice-profile list/create/update with synthetic profile config and provider metadata. | All three operations use the same six-field display projection; neither `config` nor `providerCatalog` is returned. | API regression `41-voice-profile-safe-projection-parity.test.js`, loading both service sources | PASS, synthetic secrets absent; no database or real credentials used. |
+| UAT-025 | CHK-AUTO-003 / vendor integration administrator | Attempt vendor create/update with arbitrary config fields, a non-object config, and update of an existing record whose config has an unsupported legacy key. | API and Cloud accept only the explicit `allowedOrigins` config field, validate its URL list, reject unsupported input before writes, and fail closed on unsupported legacy config; private tenant origins continue to work. | Mirrored API/Cloud vendor policy regression suites and production builds | PASS in source-level Prisma adapters; no database or real credentials used. |
+| UAT-026 | CHK-AUTO-003 / voice-profile administrator | Attempt to create/update a tenant voice profile with provider credentials in the JSON `config` column; exercise valid display-field create/update. | API and Cloud guards reject `config`, services reject direct calls before Prisma writes, and valid display fields retain safe projections. | API regression 41 loading both API/Cloud services and inspecting both CRUD guard allowlists | PASS in source harness; no DB or real provider credentials used. |
+| UAT-027 | CHK-AUTO-003 / tenant runtime administrator | Compare API and Cloud device-pair vendor payloads consumed by Browser for a client-configured CRM. | Both backends return the same base URL, validated tenant origins, encrypted credential fields, `startGoal`, and active state. | Cloud regression 38 source-parity check and Browser device-pair/runtime-contract regressions | PASS at source/contract level; no device, credential, customer data or CRM endpoint used. |
+| UAT-028 | CHK-AUTO-002 / Web operator and security reviewer | Run the diagnostics/widget regressions and local production-SPA journey against synthetic tenant fixtures, including privacy, error, reset, keyboard and responsive states. | The widget stays mounted on public/login/app/admin routes; reports redact secrets; only safe clicked probes run; debug-off performs no read; reset outcomes are truthful; mocked UI journeys pass without live API traffic. | Web diagnostics 19/19 and `services/web npm run test:uat`, with evidence `docs/phdk/evidence/uat-local-web.json` | PASS, exact candidate source revision `f700fe0f9cc57c0c8e3370698724ef5660e8d8d4`; APIs intercepted and external network blocked; accessibility checks are scoped, not full-app certification. |
+| UAT-029 | CHK-AUTO-003 / tenant voice-profile administrator | Request one voice-profile detail as an in-company admin and another by foreign-company ID; inspect Cloud handler and API/Cloud service projections. | Both backends return the same six safe fields; Cloud uses current actor company and its guard denies the foreign record; config/provider metadata are absent. | API regression 41 and Cloud regression 39 source/service/guard harnesses | PASS, source-level only; no persisted profile or customer identity accessed. |
+| UAT-030 | US-006 / tenant user and manager | Open `/knowledge` as a regular user and admin with a synthetic company document; verify role controls, locale copy in es/en/pt, absence of fabricated live call/RAG details, and manager-dialog labels, Escape dismissal and focus restoration. | Tenant user can read but cannot add/delete; managers can open an accessible, correctly labeled source dialog; only factual source data appears in all locales. | Local built Web SPA / Playwright with intercepted synthetic APIs | PASS after exact-candidate rerun; local UI only, no persisted DB or real RAG/call data. |
+| UAT-031 | CHK-AUTO / tenant content administrator | Delete a KnowledgeDocument and KnowledgeBase through the API/Cloud generic CRUD service harnesses; inject Qdrant cleanup failures and missing collections. | Document points are filtered by stored `documentId` and removed before the DB row; base collection is removed before the DB record; Qdrant failure preserves the relational record; missing collection does not block row deletion. | `services/api/test/regression/46-knowledge-vector-cleanup.test.js`, with mocked Prisma and Qdrant adapters; API/Cloud builds and regressions | PASS, mocked source/service contract in both implementations (12 assertions); not DB persistence or real-Qdrant acceptance. Concurrency remains open. |
+
+| UAT-032 | CMT-004 / tenant device user and manager | User and admin fixtures open `/devices` against a local production build and synthetic device; admin cancels, receives a mocked failure, then retries successfully. API guard regression uses an actor/company fixture and forged registration fields. | User/agent cannot revoke; admin/coordinator/superadmin receive an accessible confirmation; cancel has no side effect, failure stays visible, success removes the device. Registration uses the DB actor/company, rejects company-less actors, and manager revoke cannot cross company boundaries. | Local browser UAT `services/web/test/devices-page-uat.test.cjs`; API regression 21; API full regression/build | PASS, screenshots and source fingerprint in `docs/phdk/evidence/uat-device-5.1.36.json`; synthetic UI/isolated guard evidence only, no DB/live-device acceptance. |
+
+## Historical records from earlier candidates
+
+# UAT cases — latest local candidate 5.1.16
+
+## Candidate 5.1.17 — current Auto continuation
+
+Candidate: `fix/phdk-keledon-voice-profile-accessibility`, product source `4e874c14cde10fd5b1a0ce521ee097e67823e120`; all five app roots 5.1.17. Post-commit browser execution reran the exact suite and intercepted every API response; evidence is bound to that source SHA.
+
+| Case | Story / actor | Preconditions and synthetic data | Actions / expected observable result | Channel | Result / evidence |
+|---|---|---|---|---|---|
+| UAT-T-008 | US-008 / Company administrator | Local built SPA; Company Co tenant fixture; API routes intercepted. | Voice-profile list failure shows retry; create submits only name/provider/language/enabled/default; detail shows safe display fields; edit submits no caller `companyId` or credential/config fields; synthetic 403 create/update/delete leaves records unchanged and shows visible `role=alert`; successful update/delete refreshes the list. | Local Edge/Playwright UI with synthetic API. | PASS 1/1 post-commit on `4e874c14cde10fd5b1a0ce521ee097e67823e120`; `docs/phdk/evidence/uat-local-web.json`; persistence is not inferred. |
+| UAT-T-009 | US-007 / Company administrator | Local built SPA; synthetic Company Co brand/team/company records; API routes intercepted. | Labeled selectors create a KELEDON with exact service input shape, without caller `companyId` or stringified `uiInterfaces`; delete confirmation opens and cancel preserves the record. | Local Edge/Playwright UI with synthetic API. | PASS, `docs/phdk/evidence/uat-local-web.json`, `UAT_REPORT.md`; persistence is not inferred. |
+| UAT-T-010 | US-007/US-008 / administrators and all app users | Built web SPA. | Trigger a localized failed mutation; a global Sonner notification is mounted and actionable failure feedback is also in the form dialog. | Local Edge/Playwright UI with synthetic API. | PASS for in-dialog voice-profile 403; app-wide notification renderer is source/build verified. Broader toast journeys not exercised. |
+
+## Current continuation — 2026-10-13
+
+Candidate branch `fix/phdk-route-accessibility-i18n` at `7ce3509aeb4d53ce3a90d16153996abf35446024`, based on fetched `origin/main` `c8534e6f6568922d540eabfba4abe90cc93749c1`. Built-SPA UAT uses Company Co synthetic fixtures and intercepted API/WebSocket traffic. UAT-T-005 covers dashboard/session/detail routes; UAT-T-007 covers profile role/date formatting in en/es/pt, translated device status/empty state, valid launcher navigation and API failure recovery. Diagnostics tests, SEO source test and web typecheck/build are recorded in `UAT_REPORT.md`; locale parity is checked separately. This scoped evidence does not close broad route accessibility/localization, persisted CRUD/migration, native device/audio or deployed SEO/AEO acceptance.
+
+Prior UAT record: 2026-10-13; product PR #62 merged at `a806617f430d084831a079b92c821a694b925467`; local main was `0be102b8b7847bfed3441ff00e00ba4477c57a1e`. `npm run test:uat` passed 1/1 on the 5.1.10 bundle with synthetic fixtures and intercepted API/WebSocket traffic. API regression 14/14; Browser build/regression 24/24. Native Electron 44.7 launched and renderer loaded; see startup and media-permission cases below.
+
+| Case / story | Acceptance | Latest result |
+|---|---|---|
+| UAT-T-005-DASHBOARD / J-005 | Spanish dashboard empty/completed-session states, English/Portuguese greeting and metrics, and accessible table caption/headers | PASS in local production SPA with synthetic identity and intercepted APIs; not backend or screen-reader acceptance. |
+| UAT-T-005-SESSIONS / J-006 | Spanish live/history and call-monitor copy, superadmin filter labels, statuses, accessible tables and detail action | PASS in local production SPA with synthetic identity and intercepted APIs; no live call or backend authorization inferred. |
+| UAT-T-007-PROFILE-DEVICES / J-007 | Profile role/date formatting in en/es/pt; Spanish device status, empty state, localized launcher navigation and API errors/retry | PASS in local production SPA with synthetic identity and intercepted APIs; native pairing is not inferred. |
+| UAT-T-005-SESSIONS / J-008 | Session-detail copy, session ID and accessible return link | PASS in local production SPA with synthetic sessions; recordings/transcripts remain placeholders. |
+| UAT-001/UAT-002/UAT-004/UAT-006 | Current diagnostics widget and selected public/login/admin journeys, widget actions, themes, narrow viewport, role controls and safe diagnostics | PASS, local UI subset, synthetic fixtures; APIs intercepted. Evidence: `docs/phdk/evidence/uat-local-web.json` and screenshots. |
+| UAT-API / US-004 | Current DB-derived role/company/team/session checks, startup fail-closed behavior, and selected cross-tenant denials | PASS, API regression 14/14 with isolated doubles; not persisted acceptance. |
+| UAT-BROWSER-PERMISSION / US-002/US-003 | Per-origin HTTPS media consent; deny other permissions; remember grants only for session; reject stale navigation | PASS, unit/policy contract tests; native dialog itself not exercised. |
+| UAT-ROLE/UAT-CRUD | Full persisted resource × role × tenant × operation matrix and migration ledger | BLOCKED: no isolated PostgreSQL runtime; PHDK scope prohibits provisioning/administering it in this run. |
+| UAT-ELECTRON-STARTUP | Native app startup, renderer, widget and version | PASS: Electron 44.7.0 and renderer v5.1.10 launched; screenshots under `docs/phdk/evidence/`. |
+| UAT-ELECTRON-PERMISSION/UAT-DEVICE-AUDIO | Native media dialog, OS permission, device and call/audio lifecycle | BLOCKED/NOT TESTED: native UI controller unavailable; no permission was granted and no client call. Unit policy tests pass; physical audio not exercised. |
+| UAT-A11Y-I18N | Broad screen-reader, 200%/400% zoom, contrast and en/es/pt route review | ACCEPTANCE INCOMPLETE: selected keyboard/focus/theme/mobile flows passed only. |
+| UAT-SEO-AEO | Local source route/indexability/content controls | SOURCE PASS; deployed headers, crawler behavior, field metrics and answer-engine citations remain NOT MEASURED. |
+| UAT-CLIENT-CRM | Tenant-specific live telephony/CRM workflow | NOT APPLICABLE to universal flow; vendors are client-selected. |
+
+No in-scope source FAIL remains in the tests executed. Overall UAT is **ACCEPTANCE INCOMPLETE**; full action cards are in `UAT_REPORT.md`.
+
+---
+
+Latest source regression: PR #58, version 5.1.9, product merge SHA `6d0112dd940c142c20b5e4c56c766da64d000b3b`; PHDK handoff PRs #59 and #60 are also merged on `main`. API regression is 12/12, including operational tenant-boundary checks. This does not constitute a new browser journey; the local Edge journey below remains bound to its recorded 5.1.7 source revision. The exact current `main` SHA is in `PHDK_DELIVERY_EVIDENCE.json`.
+
+Current evidence revision: `edce7eafbe13ac16ab93274a87e12571e7b04b2e`; verified remote main `a854ca7634307538305cd9b5ad1f91f8a066b1a1`; identical Git tree. Environment: local built web SPA in headless Edge with Company Co/Other Co synthetic fixtures, blocked external network and intercepted APIs. Full details and actions: `UAT_REPORT.md`.
+
+| Case / story | Acceptance | Result |
+|---|---|---|
+| UAT-001 / US-001 | Candidate package/lock version and target PR/SHA reconciliation | PASS, scoped; PR #56 merged at `f44f76a8bfb46e4ef60bfbe99982a8d787bc00a6`, all five app roots 5.1.8. The local browser journey remains bound to verified 5.1.7 source tree. |
+| UAT-002 / US-002 | Anonymous public home/login widget, exact compact version→clipboard→trash row, successful and failed copy, app-owned reset, foreign state preserved, 390px layout | PASS in current local Edge UAT; home/login mounts observed; click paths exercised on login. |
+| UAT-003 / US-003 | Provider-independent voice→Cloud→Browser execution contracts and safe failure behavior | PASS in isolated API/Cloud/Browser regression contracts; no live vendor or audio call. |
+| UAT-004 / US-004 | Selected admin/coordinator/superadmin tenant controls; user creation/reassignment; secret replacement without response prefill | PASS in mocked UI journeys plus isolated Nest guards/regressions; persistence and complete operation matrix remain open. |
+| UAT-004-CREDENTIAL / US-004 | User CRUD cannot accept client-supplied password hashes on create/update, for any role | PASS in API guard regression integrated by PR #56 (admin/coordinator POST+PUT; superadmin POST). Source/API test only; persistence remains open. |
+| UAT-005 / US-003 | Startup migration/count failures stop before seeding/server, no automatic rollback | PASS, API regression suite 11/11. |
+| UAT-006 / US-002 | Diagnostics debug-off privacy, protected read, safe explicit probe and manual-only CRM control | PASS in mocked UI + isolated API contract tests; not deployed behavior. |
+| UAT-THEME / US-006 | Login shell dark/light/corporate selection and persistence | PASS for executed shell. |
+| UAT-ACCESS / US-006 | Company-detail dialog keyboard/focus and 390px login reflow | PASS for exercised subset only. |
+| UAT-CRUD / US-004 | Complete persisted CRUD × resource × role × tenant × surface, detail, negative direct-ID and migration ledger | BLOCKED: no isolated PostgreSQL runtime/DB-backed test identities. Exact action in `UAT_REPORT.md`. |
+| UAT-ROLE / US-004 | Real DB-derived role and tenant sessions across full matrix | BLOCKED: synthetic frontend role contexts and fake-Prisma tests are not end-to-end auth sessions. |
+| UAT-ELECTRON / US-002/US-006 | Native Electron render, device, microphone/audio and recovery | MANUAL: requires Windows device/runtime acceptance. |
+| UAT-A11Y-I18N / US-006 | Broad active-route locale/copy, WCAG keyboard/zoom/contrast/screen-reader acceptance | BLOCKED: only selected UI subset was exercised. |
+| UAT-SEO-AEO / US-001/US-006 | Deployed headers and public discovery evidence | BLOCKED: no deployed target/measurement. |
+| UAT-CLIENT-CRM / US-003 | Tenant-selected real call/CRM integration | NOT APPLICABLE to universal source gate; validate only when a client/provider is selected. |
+
+## Candidate 5.1.58 addition — Browser tenant-origin request enforcement (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-048 | US-003 / configured tenant CRM | Inspect the AutoBrowse goal execution path and exercise the Browser origin policy tests for navigation, redirects, frames, popups and resource requests. | The tenant allowlist remains active for the configured vendor view and throughout each goal, so planned clicks and CRM subresources cannot request an unconfigured origin; prior scope is restored after goal exit and cleared when the view closes. | Browser security-policy tests and build. | PASS, source scope: Browser security-policy/call/event tests 15/15 and TypeScript build. No live CRM, DNS or network request was used. |
+
+Candidate total: **48 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-048 does not claim runtime network observation; live client integrations remain tenant-specific.
+
+## Candidate 5.1.58 addition — dormant DebugMode classification (2026-10-15)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-049 | US-004 / diagnostics owner | Trace the DebugMode Prisma model, API/Cloud modules/services and `/management/debug` toggle; run regression 49. | No disconnected server-wide debug service remains. The Web switch is clearly client-local capture only, and all role/surface rows for the dormant persisted model are NOT APPLICABLE until an approved schema retirement or server feature is defined. | API source regression and CRUD matrix. | PASS, source-only: regression 49 confirms the API/Cloud services and built artifacts are absent, local UI behavior is explicit, and all 14 model-role-surface rows are NOT APPLICABLE. |
+
+Candidate total: **49 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The Prisma schema table is retained; no migration or database change is claimed.
+## Candidate 5.1.85 — UAT-095 agent selection keyboard access
+
+| ID | Commitment / story | Acceptance | Evidence | Result |
+|---|---|---|---|---|
+| UAT-095 | CMT-002 / agent monitoring; an operator can select an agent without a pointer | Web and Landing expose a native named button, pressed state, visible keyboard focus, and at least 44px target; selection is not attached only to a non-focusable card. | `services/web/test/agent-selection-accessibility.test.cjs` (2/2); Web/Landing builds, typechecks, lint; local candidate navigation. | PASS_SCOPED at source/control contract. Populated authenticated dashboard interaction and screen-reader behavior remain MANUAL. |
+# Candidate 5.2.1 continuation — tenant interface selector
+
+| ID | Story / actor | Acceptance case | Result | Evidence / limitation |
+|---|---|---|---|---|
+| UAT-096 | US-020 / Company Co admin or coordinator | On the exact 5.2.1 candidate, list only interfaces assigned to the actor's tenant/team; open an existing team and verify assignments; attempt a foreign-tenant ID directly; save a valid same-tenant assignment and read it back. | BLOCKED | No isolated DB-backed role session; production currently serves 5.1.85, not candidate 5.2.1. No production account/data was used. |
+| UAT-097 | US-020 / Company Co admin or coordinator | On exact candidate, switch teams and close the selector while requests are delayed; confirm stale responses/saves cannot replace or persist against the newly selected team. | BLOCKED | Focused source regression already passes, but the real role/browser journey is not deployed or authenticated in a safe target. |
+| UAT-098 | US-021 / public visitor | Open the production public homepage without signing in or changing state; record visible product version and public navigation. | PASS — PUBLIC SMOKE ONLY | Connected in-app browser opened `https://keledon.tuyoisaza.com/` at 2026-10-17 16:12 UTC. Page title “KELEDON | Cloud-governed contact center runtime”; visible version 5.1.85; public links and page content loaded. No login, API probe, form submit, storage action, or data mutation. This is not acceptance evidence for 5.2.1. |
+| UAT-099 | US-022 / anonymous visitor | Navigate directly to production `/management/teams` without a session; do not submit login or signup. | PASS — ANONYMOUS REDIRECT ONLY | Production redirected to `/login` and displayed the email/password form at 2026-10-17 16:22 UTC. No credentials entered, session created, protected content shown, or data changed. Deployed version is 5.1.85, so this is not candidate 5.2.1 or tenant-role acceptance. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-099-production-anonymous-management-redirect.json`. |

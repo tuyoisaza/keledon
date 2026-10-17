@@ -567,6 +567,8 @@
   "errors": {
     "generic": "An error occurred",
     "notFound": "Not found",
+    "routeNotFound": "The page you requested does not exist.",
+    "returnHome": "Return home",
     "unauthorized": "Unauthorized",
     "forbidden": "Forbidden",
     "networkError": "Network error",

@@ -1,4 +1,26 @@
-## Current scoped delivery — KELEDON 5.2.7 Landing diagnostics privacy fix (2026-10-17)
+## Current candidate delivery — KELEDON 5.2.9 PIA-AUTO-SEO-002 (2026-10-17)
+
+- Candidate: `fix/phdk-5-2-9-runtime-auto-remediation`, based on verified `origin/main` `9aa0d452684d4bcf1b00bdb3321649ae4675877a`; source is prepared but commit/PR/merge are pending.
+- Scope: private noindex Vite shell, complete 43-route NGINX fallback map, real HTTP 404 document and localized React not-found page. Five package/lock roots and Browser renderer are aligned at 5.2.9.
+- VERSION_BUMP: PASS — five package/lock roots, Browser renderer and changelog agree on fresh patch 5.2.9.
+- COMMIT_PREFIX: PENDING; PUSH_AND_PR: PENDING; REMOTE_MAIN: PENDING; SCOPE_AND_CHECKS: PENDING.
+- Static checks: PHDK 2.53.1 coherence 64/64; route map 43/43; JSON parse and `git diff --check` pass. No local app tests/builds/lint. Production UAT-135–139 is pending deployment.
+- Four-front Auto remains PARTIALLY DELIVERED; CMT-003C authenticated fixture/cleanup blocker remains.
+
+---
+
+## Previous scoped delivery — KELEDON 5.2.8 Web SEO HTML fallback (2026-10-17)
+
+- PR [#253](https://github.com/tuyoisaza/keledon/pull/253) merged by squash to `main` as `9aa0d452684d4bcf1b00bdb3321649ae4675877a`.
+- KELEDON v5.2.8 aligned across Web/API/Cloud/Landing/Browser package and lock roots plus Browser renderer.
+- Railway Web `4134bb32-8bbf-4401-b86f-c7bb72e26ea8` and API `823151d4-e820-4077-a538-2b26670226d4` SUCCESS, 1/1 replicas, no pending work/issues/recent failures.
+- PIA-AUTO-SEO-001 accepted by production UAT-133/134. Homepage raw HTML has H1 and truthful overview before JavaScript; React replaces it with one H1. Anonymous `/login` renders its expected form and private metadata after React; the raw SPA shell mismatch remains under PIA-AUTO-SEO-002.
+- Checks: PHDK coherence 64/64, static theme audit 0 findings/runtime unverified, package/lock version parse passed, `git diff --check` passed. No local application tests/builds/lint. No credentials/customer data/private destination/provider setting was used.
+- Overall four-front Auto remains PARTIALLY DELIVERED; this slice closes only initial public Web content and React handoff.
+
+---
+
+## Historical scoped delivery — KELEDON 5.2.7 Landing diagnostics privacy fix (2026-10-17)
 
 Goal: deliver the CMT-002 source correction under the active PHDK Auto portfolio; this does not complete the portfolio.
 

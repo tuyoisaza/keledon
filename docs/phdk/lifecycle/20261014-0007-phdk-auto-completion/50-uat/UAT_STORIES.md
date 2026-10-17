@@ -9,6 +9,8 @@
 | US-005 | As a release owner, I want a coherent version and verified delivery so operators can identify what runs. | `PROJECT_INTENT.md`, NFR-001; CMT-001 | UAT-007 |
 | US-010 | As a visitor, I want public navigation and display preferences to stay clear of the page content and remain reachable on mobile. | `PROJECT_INTENT.md`, INT-002; `PRD.md`, NFR-001; CMT-002 | UAT-052 |
 | US-011 | As a public visitor, I want the homepage's theme and language selectors to preserve understandable labels and demo disclosure in each supported combination. | `PROJECT_INTENT.md`, INT-002; CMT-002 | UAT-131 |
+| US-012 | As a public visitor or crawler, I want the canonical Web homepage's product explanation present in initial HTML and not duplicated after app startup. | PHDK SEO/AEO; PIA-AUTO-SEO-001 | UAT-133 |
+| US-013 | As a visitor opening login, I want the login form and private-route metadata to replace the shared public shell after app startup, without exposing account data. | PIA-AUTO-SEO-001/002 | UAT-134 |
 
 All cases remain inside the owner-approved intent: provider choice is per customer; no universal live CRM/call behavior is assumed.
 

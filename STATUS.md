@@ -1,4 +1,12 @@
-# Current PHDK Auto readback — v5.2.7 delivered / UAT-130 scoped, 2026-10-17
+# Current Auto status — KELEDON 5.2.9 candidate / 2026-10-17
+
+Remote `main` is `9aa0d452684d4bcf1b00bdb3321649ae4675877a`; candidate branch `fix/phdk-5-2-9-runtime-auto-remediation` is based on it. PHDK v2.53.1 coherence 64/64. Candidate v5.2.9 source implements the private SPA shell and 404 behavior in PIA-AUTO-SEO-002. Route parity and JSON metadata checks pass; application build/tests/lint and production UAT remain pending. Whole Auto remains PARTIAL; CMT-003C auth fixtures are blocked.
+
+Current action: publish this scoped versioned candidate by normal PR, then verify only UAT-135–139 on production; preserve the CMT-003C fixture gate, no customer endpoints/private egress, and no provider settings writes.
+
+---
+
+# Historical readback — v5.2.7 delivered / UAT-130 scoped, 2026-10-17
 
 Repo `tuyoisaza/keledon`; remote `main` `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; production Web v5.2.7. PR #247 fixed Landing diagnostic API/OAuth hostname disclosure in source and added a regression contract; PHDK coherence is 64/64. UAT-130 passes Web copy status and source redaction only; Landing runtime is blocked because Railway has no Landing service and the Web build excludes `landing/`.
 

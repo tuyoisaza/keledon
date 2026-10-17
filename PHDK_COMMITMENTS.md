@@ -1,3 +1,16 @@
+# Current commitment readback — KELEDON 5.2.8 / 2026-10-17
+
+Run `20261014-0007-phdk-auto-completion`; PHDK 2.53.1, static coherence 64/64. PR #253 is merged to `main` at `9aa0d452684d4bcf1b00bdb3321649ae4675877a`; Web/API production deploys for this SHA are SUCCESS. The four owner-confirmed fronts and their order remain unchanged.
+
+- **CMT-001 — complete for v5.2.8:** versions/locks/Browser renderer aligned, PR and remote main verified, production health read back.
+- **CMT-002 — active/partial:** UAT-130–134 cover scoped public widget, locale/theme, login metadata and static overview; full accessibility, protected diagnostics and Landing runtime remain open/blocked.
+- **CMT-003 — active/partial:** customer-selected call/CRM model and private tenant allowlist policy remain; queue lease/idempotency and socket-level egress enforcement are open source gaps. CMT-003C authenticated acceptance remains blocked by no authorized audited provisioning/cleanup mechanism and no client sandbox.
+- **CMT-004 — active/partial:** tenant-scoped TeamInterface selector is implemented; persisted roles/CRUD/cross-tenant production acceptance remains blocked by the same UAT Prep gate.
+
+Total: **4 confirmed / 1 complete / 3 active-partial / 0 deferred / 0 cancelled**. No commitment is removed. Product acceptance remains production-only; no local application tests/builds/lint.
+
+---
+
 # Active Auto ledger — KELEDON 5.2.7 production / PHDK 2.53.1 (2026-10-17)
 
 Run `20261014-0007-phdk-auto-completion`; repo `tuyoisaza/keledon`; current docs main `c9de2f2f7f7387bba9f6b68624db657dc58b0a4a`, product code `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b` (5.2.7); PR #247–#249 merged. Railway Web/API are SUCCESS. Landing hostname redaction is source-fixed; UAT-130 passes Web copy status/source contract, UAT-131 passes all 9 public homepage theme/locale selections plus 4 sampled desktop states, and UAT-132 passes all 9 anonymous login AX states plus one keyboard sample; Landing runtime remains BLOCKED for lack of a verified deployed target. PHDK 2.53.1 coherence 64/64.

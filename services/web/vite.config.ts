@@ -24,6 +24,10 @@ export default defineConfig(() => {
     },
     build: {
       rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+          app: path.resolve(__dirname, 'app.html'),
+        },
         output: {
           manualChunks: {
             react: ['react', 'react-dom', 'react-router-dom'],

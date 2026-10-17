@@ -1,5 +1,19 @@
 # PHDK Lifecycle Handoff — Check
 
+## Current Check — 5.2.8 / PHDK 2.53.1 (2026-10-17)
+
+Status: **ALIGNMENT INCOMPLETE — WHOLE AUTO PARTIAL**. Main `9aa0d452684d4bcf1b00bdb3321649ae4675877a`; PR #253 merged. Current audit: `PHDK_CHECK_REPORT-5.2.8-PHDK-2.53.1.md`.
+
+- PHDK coherence 64/64. Theme source scan zero findings; runtime editor/template behavior unverified. Automation source scan clear; live provider metadata was inspected read-only.
+- Railway Web/API deployments `4134bb32` / `823151d4` SUCCESS, 1/1 replicas and no issues/pending work. GitHub main has no branch protection/ruleset; Actions enabled broadly, no active workflow/run/check on this SHA; Railway `checkSuites=false` and billing not observable. No provider settings changed.
+- UAT-133/134 and SEO-10/23 pass within the anonymous initial HTML/post-React scope. Raw private-route meta/canonical and SPA soft-404 remain under PIA-AUTO-SEO-002; external SEO/AEO measures remain partial/unmeasured.
+- Five high GAPs remain: safe authenticated synthetic UAT prep, tenant Flow CRUD, CMT-003A leases/idempotency, CMT-003B socket-level egress, and admin CRUD/enforcement. CMT-003C production fixture setup remains blocked by the absence of an approved audited provisioning/cleanup mechanism.
+- No local application test/build/lint was run. Auto continues source remediation inside approved commitments; no privileged production bootstrap, provider setting write, private egress or customer endpoint is authorized.
+
+SIGUIENTE PASO: continue the in-scope CMT-003A/B and CMT-004 source work under their PIAs, preserving production-only acceptance and the CMT-003C gate.
+
+---
+
 ## Current Check — 5.2.7 / PHDK 2.53.1 (2026-10-17)
 
 Status: **ALIGNMENT INCOMPLETE — WHOLE AUTO PARTIAL**. Current main is `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; PR #247 merged. Canonical report: `PHDK_CHECK_REPORT-5.2.7-PHDK-2.53.1.md`.

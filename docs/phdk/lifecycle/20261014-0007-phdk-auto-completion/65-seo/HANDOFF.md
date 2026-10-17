@@ -1,8 +1,12 @@
-## Candidate 5.2.8 — initial HTML repair / production acceptance pending
+## Candidate 5.2.8 — initial HTML repair / production acceptance PASS
 
-The production GET audit found an empty `#root` in the deployed Web shell, although the separately maintained Landing shell already carried an accurate static overview. PIA-AUTO-SEO-001 ports that existing copy and no-JS fallback style to `services/web/index.html`; the Web entrypoint removes the fallback class before React mounts. Source review confirms existing route metadata and crawl policy are unchanged. Do not run local application tests or builds. After the versioned PR deploys, inspect anonymous production `/` response and browser handoff, then record redacted evidence in `snapshots/candidate-5.2.8/`. A fabricated route currently returns a noindex SPA `200` soft-404; keep SEO-05 partial until routing behavior is resolved. Crawler rendering, TLS, field metrics, Search Console and backlinks remain unmeasured.
+The production GET audit found an empty `#root` in the deployed Web shell, although the separately maintained Landing shell already carried an accurate static overview. PIA-AUTO-SEO-001 ports that existing copy and no-JS fallback style to `services/web/index.html`; the Web entrypoint removes the fallback class before React mounts. PR #253 merged as `9aa0d452` and Web deploy `4134bb32` succeeded. Anonymous production GET `/` returned 200 with the semantic H1 and full overview before JavaScript. The production browser confirms a single React H1, v5.2.8, removed fallback and no duplicate content. Evidence is in `snapshots/candidate-5.2.8/`. No local application tests/builds were run. An invented route currently returns a noindex SPA `200` soft-404; SEO-05 remains partial. Private raw-shell metadata, crawler rendering, TLS, field metrics, Search Console and backlinks remain unmeasured.
 
-SIGUIENTE PASO: aceptar el fallback HTML y su reemplazo React en producción, luego continuar a AEO/GEO.
+SIGUIENTE PASO: trasladar el resultado de producción y los límites externos a AEO/GEO y Check.
+
+## SEO re-entry — PIA-AUTO-SEO-002 / KELEDON 5.2.9
+
+The existing source audit is extended with a separate private-shell/soft-404 PIA. Candidate `INTEGRATION_REPORT-5.2.9.md` records 43/43 route-map parity and separates the public root from app and 404 shells. No source establishes production acceptance; UAT-135–139 are pending deployment. External crawler indexing, ranking and search-console evidence remain unmeasured.
 
 ---
 

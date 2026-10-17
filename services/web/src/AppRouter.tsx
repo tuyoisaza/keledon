@@ -2,8 +2,9 @@ import AdminPromptsPage from '@/pages/AdminPromptsPage';
 import AdminAiConsumptionPage from '@/pages/AdminAiConsumptionPage';
 import { RouteMetadata } from '@/components/common/RouteMetadata';
 import { DebugOverlay } from '@/components/common/DebugOverlay';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { useAuth, type UserRole } from '@/context/AuthContext';
+import { useTranslation } from '@/context/I18nContext';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { ManagementLayout } from '@/components/management/ManagementLayout';
 
@@ -83,6 +84,7 @@ function ProtectedRoute({
 }
 
 export function AppRouter() {
+    const { t } = useTranslation();
     return (
         <BrowserRouter>
             <RouteMetadata />
@@ -502,8 +504,16 @@ export function AppRouter() {
                 <Route path="/admin/prompts" element={<ProtectedRoute minRole="superadmin"><AppLayout><AdminPromptsPage /></AppLayout></ProtectedRoute>} />
                 <Route path="/admin/ai-consumption" element={<ProtectedRoute minRole="superadmin"><AppLayout><AdminAiConsumptionPage /></AppLayout></ProtectedRoute>} />
 
-                {/* Catch all */}
-                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route
+                    path="*"
+                    element={
+                        <main className="mx-auto grid min-h-screen max-w-2xl content-center gap-4 px-6 py-16 text-center">
+                            <h1 className="text-3xl font-semibold">{t('errors.notFound')}</h1>
+                            <p className="text-muted-foreground">{t('errors.routeNotFound')}</p>
+                            <Link className="text-primary underline underline-offset-4" to="/">{t('errors.returnHome')}</Link>
+                        </main>
+                    }
+                />
             </Routes>
             <DebugOverlay />
         </BrowserRouter>

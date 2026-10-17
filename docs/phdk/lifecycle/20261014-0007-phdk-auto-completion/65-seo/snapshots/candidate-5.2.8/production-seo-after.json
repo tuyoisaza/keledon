@@ -1,0 +1,65 @@
+{
+  "capturedAtUtc": "2026-10-17T21:50:43Z",
+  "mainCommit": "9aa0d452684d4bcf1b00bdb3321649ae4675877a",
+  "railwayWebDeployment": "4134bb32-8bbf-4401-b86f-c7bb72e26ea8",
+  "railwayWebStatus": "SUCCESS",
+  "method": "Anonymous production HTTP GET and production in-app-browser observation; no credentials or customer data.",
+  "http": {
+    "path": "/?phdk-auto-main-20261017=2",
+    "status": 200,
+    "xRobotsTag": "index, follow",
+    "title": "KELEDON | Cloud-governed contact center runtime",
+    "initialH1": "The Cloud Decides. The Agent Executes.",
+    "rootContainsMain": true,
+    "cloudPillarPresent": true,
+    "browserPillarPresent": true,
+    "clientConfiguredCallCrmStatementPresent": true,
+    "illustrativeMetricsDisclaimerPresent": true,
+    "bodyBytes": 4636
+  },
+  "privateAndUnknownRoutes": [
+    {
+      "path": "/login",
+      "status": 200,
+      "xRobotsTag": "noindex, nofollow",
+      "metaRobots": "index, follow",
+      "canonical": "https://keledon.tuyoisaza.com/",
+      "fallbackPresent": true
+    },
+    {
+      "path": "/phdk-seo-probe-not-a-route-20261017",
+      "status": 200,
+      "xRobotsTag": "noindex, nofollow",
+      "metaRobots": "index, follow",
+      "canonical": "https://keledon.tuyoisaza.com/",
+      "fallbackPresent": true,
+      "classification": "SPA soft-404; React wildcard redirects to /"
+    }
+  ],
+  "browserAfterReactStartup": {
+    "path": "/",
+    "title": "KELEDON | Cloud-governed contact center runtime",
+    "visibleVersion": "v5.2.8",
+    "h1Count": 1,
+    "fallbackNodeCount": 0,
+    "noJsClassPresent": false,
+    "h1UsesSavedPortuguesePreference": true
+  },
+  "loginAfterReactStartup": {
+    "path": "/login",
+    "title": "KELEDON | Application",
+    "visibleVersion": "v5.2.8",
+    "loginHeading": "Bem-vindo de volta",
+    "inputCount": 2,
+    "robots": "noindex, nofollow",
+    "canonicalPresent": false,
+    "fallbackNodeCount": 0,
+    "noJsClassPresent": false,
+    "credentialsEntered": false,
+    "authActionActivated": false
+  },
+  "limitations": [
+    "The browser renders the application using an existing saved Portuguese preference; no preference was changed.",
+    "This is one public production smoke observation, not crawler, indexation, ranking, TLS, Core Web Vitals, Search Console, or authenticated UAT evidence."
+  ]
+}

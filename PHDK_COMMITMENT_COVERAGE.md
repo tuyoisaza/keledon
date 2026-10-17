@@ -1,4 +1,19 @@
-## Current continuation — 5.2.1; 4/4 commitments active-partial (2026-10-17)
+## Current coverage readback — candidate 5.2.8 (2026-10-17)
+
+Baseline: PHDK 2.53.1 / 64 static mappings; remote `main` `9aa0d452684d4bcf1b00bdb3321649ae4675877a`, PR #253 merged. Product tests/builds remain production-only.
+
+| Commitment | Current delivered slice | Remaining coverage / gate |
+|---|---|---|
+| CMT-001 | 5.2.8 versions, PR/main, deployment and source integrity reconciled; Web/API SUCCESS. | Reconcile each later source slice; does not complete whole portfolio. |
+| CMT-002 | UAT-130–134 scoped public diagnostic, locale/theme, login and initial HTML cases. | Full accessibility/keyboard/mobile breadth; authenticated diagnostics; audio/device; Landing runtime target. |
+| CMT-003 | Provider-neutral tenant contracts and private destination policy recorded in PIAs. | CMT-003A expiring lease/fencing/idempotency and CMT-003B socket-bound DNS/CIDR/redirect enforcement; sandbox acceptance. CMT-003C fixture provisioning/cleanup gate remains blocked. |
+| CMT-004 | Tenant-scoped TeamInterface selector source and policy decision present. | Tenant Flow/FlowStep CRUD, roles/invitations/secrets/audit and persistence/cross-tenant UAT; synthetic identity gate remains blocked. |
+
+Aggregate: **PARTIALLY DELIVERED**; 1/4 commitments complete for the current cut, 3/4 active/partial. No confirmed commitment is deferred or cancelled.
+
+---
+
+## Historical continuation — 5.2.1; 4/4 commitments active-partial (2026-10-17)
 
 PHDK 2.53.1; PR #210 merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; remote `main` readback matches. UAT-104 confirms production version 5.2.1 and public API liveness only. UAT-103 found the required `KELEDON_VENDOR_KEY` variable name absent from production API metadata; no value was read. `ManagedInterface.companyId` is nullable with no backfill; the Web has no catalog-provisioning UI. PHDK admin-console baseline is recorded in four registries; full configuration, lifecycle, backup, graph and authenticated tenant acceptance remains open.
 

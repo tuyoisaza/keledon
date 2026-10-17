@@ -1,5 +1,9 @@
 # PHDK Lifecycle Handoff — Plan
 
+## Re-entry — SEO PIAs for production Web (2026-10-17)
+
+The approved four commitment IDs and order are unchanged. PIA-AUTO-SEO-001 covers the initial HTML overview; source is delivered at 5.2.8 and UAT-133/134 confirm the anonymous production handoff. PIA-AUTO-SEO-002 captures the static private-route metadata mismatch and SPA unknown-route soft-404 with an explicit route-inventory/acceptance contract. These PIAs supplement the four workstreams without creating a fifth portfolio commitment. Production-only app acceptance and no-local-app-test/build rule remain in force.
+
 Run ID: `20261014-0007-phdk-auto-completion`
 Stage: `20-plan`
 Status: `REUSED / EXTENDED FOR 5.2.1`

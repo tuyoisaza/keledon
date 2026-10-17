@@ -1,6 +1,6 @@
 ## Candidate 5.2.8 — public answer content in initial Web HTML
 
-PIA-AUTO-SEO-001 moves the existing product overview into the deployed Web's initial HTML. Its claims already match the prior source review: Cloud policy decisions, Browser execution and client-configured call/CRM interfaces. No provider, outcome, author, market, citation or visibility claim was added. Reuse the existing 15-control answer audit after production acceptance; HTML delivery does not prove citations, crawler selection or answer-engine visibility. Those remain unmeasured. Do not run app tests/builds locally.
+PIA-AUTO-SEO-001 moves the existing product overview into the deployed Web's initial HTML. PR #253 / `9aa0d452` and Railway Web deploy `4134bb32` are verified; production GET has the H1 and product answer before JavaScript, and the browser shows the React handoff cleanly. Its claims match the prior source review: Cloud policy decisions, Browser execution and client-configured call/CRM interfaces. No provider, outcome, author, market, citation or visibility claim was added. Reuse the existing 15-control answer audit; HTML delivery does not prove citations, crawler selection or answer-engine visibility. Those remain unmeasured. Do not run app tests/builds locally.
 
 SIGUIENTE PASO: after production verifies initial HTML and React replacement, reconcile this source answer review and external visibility limits in the AEO/GEO checklist.
 

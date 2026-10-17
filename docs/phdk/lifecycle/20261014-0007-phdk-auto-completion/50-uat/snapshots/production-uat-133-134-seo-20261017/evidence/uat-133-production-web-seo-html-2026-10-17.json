@@ -1,0 +1,39 @@
+{
+  "caseId": "UAT-133",
+  "runId": "20261014-0007-phdk-auto-completion",
+  "date": "2026-10-17",
+  "environment": "production",
+  "product": "KELEDON Web",
+  "version": "5.2.8",
+  "codeSha": "9aa0d452684d4bcf1b00bdb3321649ae4675877a",
+  "deploymentId": "4134bb32-8bbf-4401-b86f-c7bb72e26ea8",
+  "url": "https://keledon.tuyoisaza.com/",
+  "actor": "anonymous public visitor",
+  "actions": ["anonymous HTTP GET", "read-only production browser render inspection"],
+  "observations": {
+    "httpStatus": 200,
+    "xRobotsTag": "index, follow",
+    "title": "KELEDON | Cloud-governed contact center runtime",
+    "initialHtmlH1": "The Cloud Decides. The Agent Executes.",
+    "initialHtmlContainsOverview": true,
+    "initialHtmlContainsCloudBrowserAndClientConfiguredInterfaceRoles": true,
+    "browserAfterReact": {
+      "h1Count": 1,
+      "visibleVersion": "v5.2.8",
+      "fallbackCount": 0,
+      "noJsClassPresent": false
+    }
+  },
+  "result": "PASS_SCOPED",
+  "limitations": [
+    "This verifies one anonymous production GET and one browser handoff, not crawler rendering, indexing, ranking, accessibility conformance, or field performance.",
+    "No local application tests or builds were run."
+  ],
+  "safety": {
+    "loginOrFormSubmitted": false,
+    "credentialsEntered": false,
+    "oauthOrSignupActivated": false,
+    "customerDataAccessed": false,
+    "privateDestinationAccessed": false
+  }
+}

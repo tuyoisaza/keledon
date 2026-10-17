@@ -1,4 +1,14 @@
-# Current PHDK Auto continuation — KELEDON 5.2.7 / PHDK 2.53.1
+# Current Auto continuation — KELEDON 5.2.9 candidate / 2026-10-17
+
+PR #253 delivered `services/web` initial-HTML overview; remote `main` is `9aa0d452684d4bcf1b00bdb3321649ae4675877a`, and Railway Web/API reported SUCCESS for that version. PHDK 2.53.1 coherence 64/64. Candidate v5.2.9 implements PIA-AUTO-SEO-002: two Vite shells, 43/43 SPA route-map parity, localized React 404 and an HTTP 404 page. Source review is complete; its normal PR and production UAT-135–139 remain pending.
+
+Four fronts stay in order. CMT-001 is complete for 5.2.8; CMT-002 partial; CMT-003A/B source gaps open and authenticated acceptance blocked by fixture/sandbox; CMT-004 authenticated persistence/cross-tenant proof blocked by UAT Prep. Continue authorized source remediation under current PIAs. No local app tests/builds/lint, credentials, customer data, provider settings writes or private egress.
+
+SIGUIENTE PASO: finalize the 5.2.9 Integration/Prep handoffs, commit and publish the scoped PR; after its existing GitHub-connected deployment, run only UAT-135–139 on production.
+
+---
+
+# Historical status — KELEDON 5.2.7 / PHDK 2.53.1
 
 Continue the owner-confirmed fronts in order: CMT-001 baseline/version/PR, CMT-002 widget/diagnostics, CMT-003 tenant-specific voice→Cloud→Browser→CRM, and CMT-004 administration/permissions. The Admin/Coordinator TeamInterface selector is source-implemented and the owner approved tenant-scoped assignment.
 
