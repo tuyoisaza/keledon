@@ -1,22 +1,25 @@
-## Current PHDK Auto — 5.1.77 diagnostics candidate; portfolio partial (2026-10-17)
+## Current PHDK Auto — 5.1.78 managed Cloud AI parity; portfolio partial (2026-10-17)
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`. Candidate source commit `0da085bddbb7157453ddca3951960209a94c9e9b` is on `fix/diagnostics-widget-visual-spacing-5-1-77`, based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`. All five app roots and Browser renderer are 5.1.77; PHDK 2.51.5 coherence is 61/61. The widget spacing slice passes scoped Check and UAT; PR delivery is pending. CMT-001 through CMT-004 and whole acceptance remain partial. No deployment is claimed.
+Run 20261014-0007-phdk-auto-completion; repository tuyosaza/keledon; branch fix/phdk-auto-continuation-5-1-78, based on fetched and verified origin/main 383fd84f2fd1c7218882dc840db7e5be1957246a (5.1.77). PHDK v2.52.2 is installed and static coherence passes 63/63. All five package/lock roots and Browser renderer are 5.1.78. The candidate adds managed AI runtime parity to the legacy Cloud source, validates tenant-bound workflow inputs/outputs and records safe usage; API test expectation alignment also passes focused tests. No candidate commit/PR exists yet.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
-| Preflight | COMPLETED / REVALIDATED | Canonical PHDK main fetched at `d5ccc569eda1233c66f9274f23873a6934f2e3f8`; force sync verified 61 manifest destinations at 2.51.5, managed block matched, coherence PASS. |
-| Capture | REUSED | Four confirmed fronts and approved security/tenant/private-origin decisions unchanged. |
-| Plan | REUSED | Brownfield architecture, UX and four-front plan reused. |
-| PMO / Workstreams | IN PROGRESS | Four confirmed commitments remain active. 5.1.77 diagnostics correction is integrated locally; CRUD and client-selected runtime breadth remain open. |
-| Integration Review | PASS FOR 5.1.77 SLICE | Web/Landing/Browser widget tile spacing is corrected and version aligned; API/Cloud policy/runtime contracts are unchanged. Build and cross-source review pass. Legacy `cloud/` parity, audit migration persistence and client-specific execution remain open. |
-| UAT / UAT Fix | PASS FOR 5.1.77 SLICE / PORTFOLIO PARTIAL | Web UAT 7/7 plus standalone admin/theme/AI, Landing desktop/mobile geometry, Web diagnostics 19/19 and Browser widget/boundary 4/4 pass. Exact gap is measured 4px with 28×28 tiles and non-overlapping 44×44 hit targets. Overall UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD inventory 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Native device/audio, migration/restart and broader route/accessibility remain open. |
-| SEO | COMPLETED / SOURCE SCOPE | Candidate 5.1.77 Web/Landing SEO tests pass 1/1 each; routes, copy, metadata and indexability unchanged; deployment measurement remains open. |
-| AEO/GEO | REUSED / CURRENT | Candidate 5.1.77 changes no public answer/claim; 15-control source review remains applicable; external citations and visibility remain unmeasured. |
-| Check | PASS FOR 5.1.77 SLICE / PORTFOLIO PARTIAL | No new critical/high gap from widget-only diff; prior CHK-20261016-001–005 remain PARTIAL and CHK-20261016-006 remains decision-required. |
-| Remediation | COMPLETED FOR 5.1.77 SOURCE GAP | UAT found stale `dist` artifacts; rebuilt Web/Landing and reran full UAT successfully. No further in-scope source gap found. |
-| Delivery | PENDING PR / PORTFOLIO PARTIAL | 5.1.77 candidate is versioned and tested locally; normal PR delivery and remote-main readback remain. |
+| Preflight | COMPLETED / REVALIDATED | Fetched main; canonical PHDK force sync completed, 63/63 bytes and managed block verified; no unrelated edits discarded. |
+| Capture | REUSED | Four owner-confirmed commitments and approved least-privilege/private-origin policies remain active. |
+| Plan | REUSED | Existing brownfield plan and tenant architecture remain current. |
+| PMO / Workstreams | IN PROGRESS | Candidate advances CMT-003 Cloud parity and CMT-004 managed AI governance; all four commitments remain 0/4 done and active/partial. |
+| Integration Review | COMPLETED FOR 5.1.78 SOURCE SLICE | Shared AI catalog/schema and mirrored migrations match; actor/team resolve from database; provider settings are tenant-bound; source report records boundaries. |
+| UAT / UAT Fix | COMPLETED FOR MANAGED-AI CONTRACT; PORTFOLIO PARTIAL | Cloud 6/6, API managed AI 9/9, parity 19/19, API regression 42/42 and focused guard 3/3 pass. Browser NOT_NEEDED for backend-only scope. API database-dependent e2e remains blocked without disposable PostgreSQL. |
+| SEO | REUSED / NOT AFFECTED | No public route, copy, metadata or indexability changes. |
+| AEO/GEO | REUSED / NOT AFFECTED | No public claim or answer content changes. |
+| Check | ALIGNMENT INCOMPLETE / EXTERNAL-MANUAL | Source checks pass, but Railway Web auto-deploy is failing because its live root directory omits the shared theme tokens. Source repair is prepared; provider root/config path, successful Web deployment, restart policy and billing remain external/unverified. API full Jest also needs disposable PostgreSQL. |
+| Remediation | COMPLETED FOR OBSERVED SOURCE FINDINGS | Managed Cloud parity implemented; stale API guard expectation fixed. DB migration/restart and external acceptance remain open. |
+| Delivery | PENDING | Candidate is uncommitted. Complete Check, commit, push, open/review/merge normal PR, verify remote main SHA/tree. |
 
-Next: deliver 5.1.77 through a normal PR, verify remote `main`, then continue database/CRUD, native accessibility, customer integration and deployment acceptance without closing partial gates.
+Overall: PHDK AUTO PARTIALLY DELIVERED. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. No migrations, provider calls, private/customer endpoints or deployments were performed.
+
+SIGUIENTE PASO: owner sets Railway keledon-web root directory to / and config-as-code path to /services/web/railway.toml; then rerun Web deployment and Check. Continue with PR delivery and remote main readback. Keep Auto partial until PostgreSQL/CRUD, native/accessibility, deployed-discovery and customer-selected integration acceptance gates close.
+
 
 ---
 

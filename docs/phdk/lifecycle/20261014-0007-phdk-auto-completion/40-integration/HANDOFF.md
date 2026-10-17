@@ -126,3 +126,8 @@ The candidate reconciles CompanyCountry and TeamInterface as nested relations in
 SIGUIENTE PASO: complete exact-candidate Check, then deliver through the versioned PR and verify remote `main`.
 
 ---
+
+
+## Candidate 5.1.78 handoff — managed Cloud AI parity
+
+Integration Review completed for this source slice. API/Cloud defaults, workflow metadata and migration SQL parity pass; the Cloud runtime is tenant-bound to DB actor/team and validates schema-controlled outputs. Evidence: INTEGRATION_REPORT-5.1.78.md. Entry for UAT verified. Next: focused local contract UAT; browser journeys are not applicable to backend-only changes.

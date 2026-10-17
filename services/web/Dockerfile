@@ -1,12 +1,13 @@
-# KELEDON Web Service — Vite/React static site
-# Deploys from native Linux filesystem build context (no git clone source stage).
-# ENSURE FRESH BUILD — bust stale single-container cache.
+# KELEDON Web Service — Vite/React static site.
+# Railway must use the repository root as the build context because this app
+# consumes the canonical shared/theme-tokens.css from the monorepo root.
 
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY package*.json ./
+COPY services/web/package*.json ./
 RUN npm ci
-COPY . .
+COPY services/web/ ./
+COPY shared/ /shared/
 RUN rm -f tsconfig.json tsconfig.node.json tsconfig.app.json
 ARG VITE_API_URL=
 ENV VITE_API_URL=

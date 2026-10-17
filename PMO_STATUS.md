@@ -1,3 +1,20 @@
+## Current PMO board — 5.1.78 managed Cloud AI; whole Auto partial
+
+Candidate fix/phdk-auto-continuation-5-1-78 is based on fetched origin/main 5.1.77 SHA 383fd84f2fd1c7218882dc840db7e5be1957246a. PHDK 2.52.2 coherence is 63/63. The candidate adds managed AI workflow/schema/budget/usage parity to Cloud; all five package roots and Browser renderer align at 5.1.78. Cloud managed contract 6/6, Cloud regressions 19/19, API managed AI 9/9, API regressions 42/42, focused persisted-role test 3/3 and five builds pass. No PR is open for this candidate yet.
+
+| Commitment | Status | Progress and remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | ACTIVE / PARTIAL | PHDK force update and versions verified; candidate still needs normal PR and remote-main SHA/tree readback. |
+| CMT-002 widget/diagnostics | ACTIVE / PARTIAL | Prior responsive/diagnostic source UAT remains; native packaged rendering/audio and broad assistive technology/localization are open. |
+| CMT-003 voice→Cloud→Browser→CRM | ACTIVE / PARTIAL | Cloud managed-runtime source parity and tenant-bound allowlist policy; live acceptance depends on each customer's configured stack. |
+| CMT-004 administration/permissions | ACTIVE / PARTIAL | DB-derived tenant role/AI attribution source checks pass; PostgreSQL migration/restart and 396 CRUD rows remain open. |
+
+Portfolio: 0/4 fully done; 4/4 active/partial; 0 deferred; 0 cancelled. Overall acceptance remains partial.
+
+SIGUIENTE PASO: complete Check and deliver the 5.1.78 candidate by normal PR; continue the outstanding persisted, native and customer-specific acceptance.
+
+---
+
 ## Current PMO board — 5.1.77 widget candidate; whole Auto partial
 
 Candidate `fix/diagnostics-widget-visual-spacing-5-1-77` source commit `0da085bddbb7157453ddca3951960209a94c9e9b` is based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`; all five package/lock roots and Browser renderer are 5.1.77. Web UAT 7/7 plus admin/theme/AI, Landing desktop/mobile widget geometry, Browser 4/4 widget/boundary tests, Web diagnostics 19/19, typechecks/builds, SEO 1/1 each and PHDK coherence 61/61 pass. Check says scoped PASS; whole Auto remains partial (85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS). PR delivery and remote verification are pending; no deployment is claimed.

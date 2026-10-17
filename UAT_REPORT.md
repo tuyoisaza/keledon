@@ -1,3 +1,13 @@
+# UAT report — run 20261014-0007-phdk-auto-completion
+
+## Current candidate 5.1.78 — managed Cloud AI parity
+
+UAT-088 candidate scope is the Cloud managed-AI runtime and matching source contracts. Cloud managed runtime 6/6, Cloud cross-backend regression 19/19, API managed-AI contract 9/9, API regression 42/42 and focused RolesGuard 3/3 pass. Evidence: docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-cloud-managed-ai-5.1.78.md.
+
+Navegador UAT: permiso de fase ACTIVO; acceso real NO NECESARIO para esta superficie backend-only. No browser URL was selected or visited. Spend is NO_NEW_SPEND; no provider, database, customer call or CRM endpoint was used. The API full Jest test has one remaining database-dependent e2e case that needs a disposable PostgreSQL target; migrations/restart are not accepted. The existing portfolio tally remains 85 PASS, 0 BLOCKED, 1 MANUAL with 396 BLOCKED CRUD rows; candidate UAT does not close these global gates.
+
+---
+
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
 ## Candidate 5.1.75 - delivered by PR #194; functional UAT evidence (2026-10-17)

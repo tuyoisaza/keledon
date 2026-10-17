@@ -94,3 +94,8 @@ UAT-012 PASS: device list responses contain no raw RPA config or CDP URL, and re
 Remediated the sole new fixable finding in this source slice: the public Landing root lacked a semantic H1 and substantive overview in the initial document. Static responsive fallback content and a tested React startup handoff resolve it. Landing SEO contract 1/1, lint, TypeScript, production build and generated HTML inspection pass. No residual fixable issue for this finding remains. Broader acceptance and deployed measurements are not remediated by this slice; see candidate Check/SEO/AEO handoffs. Next: delivery through the normal PR path; whole Auto remains partial.
 
 ---
+
+
+## Candidate 5.1.78 remediation handoff
+
+Cloud managed AI parity and its contract tests are implemented; the stale API RolesGuard test projection was aligned to current DB-derived role/company attribution. Retests pass as recorded in PHDK_REMEDIATION_REPORT-5.1.78.md. No source P0/P1 remains in the tested slice. PostgreSQL, customer integration and native acceptance remain open.

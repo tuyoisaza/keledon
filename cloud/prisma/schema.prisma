@@ -16,22 +16,22 @@ model Company {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  countries CompanyCountry[]
-  brands    Brand[]
-  users     User[]
+  countries             CompanyCountry[]
+  brands                Brand[]
+  users                 User[]
   tenantProviderConfigs TenantProviderConfig[]
   tenantVoiceProfiles   TenantVoiceProfile[]
   tenantFlowDefinitions TenantFlowConfigDefinition[]
-  tenantIntentMappings TenantIntentFlowConfigMapping[]
+  tenantIntentMappings  TenantIntentFlowConfigMapping[]
 
   @@map("companies")
 }
 
 model CompanyCountry {
-  id           String   @id @default(uuid())
-  companyId    String
-  countryCode  String   // ISO 3166-1 alpha-2 code
-  createdAt    DateTime @default(now())
+  id          String   @id @default(uuid())
+  companyId   String
+  countryCode String // ISO 3166-1 alpha-2 code
+  createdAt   DateTime @default(now())
 
   company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
@@ -57,65 +57,65 @@ model Team {
   id        String   @id @default(uuid())
   brandId   String?
   name      String
-  country   String?  // ISO country code
+  country   String? // ISO country code
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Provider configuration per team
-  llmProvider String   @default("openai") // openai, google, anthropic, ollama
-  sttProvider String   @default("vosk")   // vosk, deepgram, webspeech
-  ttsProvider String   @default("elevenlabs") // elevenlabs, webspeech
-  
+  llmProvider String @default("openai") // openai, google, anthropic, ollama
+  sttProvider String @default("vosk") // vosk, deepgram, webspeech
+  ttsProvider String @default("elevenlabs") // elevenlabs, webspeech
+
   // VOSK configuration
   voskServerUrl String?
   voskModel     String?
-  
+
   // Deepgram configuration
   deepgramApiKey String?
 
   // Speaches configuration
   speachesApiUrl String?
   speachesApiKey String?
-  
+
   // ElevenLabs configuration
   elevenlabsApiKey String?
 
   // LLM API keys
-  openaiApiKey String?
-  googleAiApiKey String?
+  openaiApiKey    String?
+  googleAiApiKey  String?
   anthropicApiKey String?
 
   // TTS additional configuration
-  ttsApiKey String?
-  ttsVoiceId String?
+  ttsApiKey      String?
+  ttsVoiceId     String?
   ttsEndpointUrl String?
 
   // Escalation triggers - keywords that trigger human escalation
   escalationTriggers String[] @default(["sue", "lawsuit", "court", "lawyer", "attorney", "complain", "manager", "supervisor", "media", "news", "journalist", "social media"])
-  
-  brand    Brand?    @relation(fields: [brandId], references: [id], onDelete: Cascade)
-  users    User[]
-  keledons Keledon[]
-  sessions Session[]
+
+  brand          Brand?          @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  users          User[]
+  keledons       Keledon[]
+  sessions       Session[]
   teamInterfaces TeamInterface[]
-  flows    Flow[]
-  vendors Vendor[]
+  flows          Flow[]
+  vendors        Vendor[]
 
   @@map("teams")
 }
 
 model User {
-  id           String   @id @default(uuid())
-  companyId     String?
-  teamId        String?
-  email         String   @unique
-  name          String?
-  role          String   @default("user") // user, admin, superadmin
-  isOnline      Boolean  @default(false)
-  lastLogin     DateTime?
-  passwordHash  String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String    @id @default(uuid())
+  companyId    String?
+  teamId       String?
+  email        String    @unique
+  name         String?
+  role         String    @default("user") // user, admin, superadmin
+  isOnline     Boolean   @default(false)
+  lastLogin    DateTime?
+  passwordHash String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   company  Company?  @relation(fields: [companyId], references: [id])
   team     Team?     @relation(fields: [teamId], references: [id])
@@ -127,22 +127,22 @@ model User {
 }
 
 model Device {
-  id              String   @id @default(uuid())
-  userId          String?
-  organizationId  String?
-  keledonId       String?  // Links to Keledon agent
-  name            String
-  machineId       String   @unique
-  platform        String   // win32, darwin, linux
-  status          String   @default("pending") // pending, paired, disconnected, revoked
-  pairingCode     String?
+  id                   String    @id @default(uuid())
+  userId               String?
+  organizationId       String?
+  keledonId            String? // Links to Keledon agent
+  name                 String
+  machineId            String    @unique
+  platform             String // win32, darwin, linux
+  status               String    @default("pending") // pending, paired, disconnected, revoked
+  pairingCode          String?
   pairingCodeExpiresAt DateTime?
-  authToken       String?
-  cdpUrl          String?
-  lastSeen        DateTime?
-  version         String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  authToken            String?
+  cdpUrl               String?
+  lastSeen             DateTime?
+  version              String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
   user User? @relation(fields: [userId], references: [id])
 
@@ -150,26 +150,26 @@ model Device {
 }
 
 model Keledon {
-  id             String   @id @default(uuid())
-  teamId          String
-  brandId         String?
-  countryCode     String?
-  userId          String?
-  name            String
-  email           String?
-  role            String?
-  isActive        Boolean  @default(true)
-  callsHandled    Int      @default(0)
-  fcrRate         Float?
-  avgHandleTime   Float?
-  autonomyLevel   Int      @default(5)
-  policies        String?  // JSON string
-  uiInterfaces    String?  // JSON array of interface IDs
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id            String   @id @default(uuid())
+  teamId        String
+  brandId       String?
+  countryCode   String?
+  userId        String?
+  name          String
+  email         String?
+  role          String?
+  isActive      Boolean  @default(true)
+  callsHandled  Int      @default(0)
+  fcrRate       Float?
+  avgHandleTime Float?
+  autonomyLevel Int      @default(5)
+  policies      String? // JSON string
+  uiInterfaces  String? // JSON array of interface IDs
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  team  Team  @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  user  User? @relation(fields: [userId], references: [id])
+  team Team  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id])
 
   @@map("agents")
 }
@@ -177,17 +177,17 @@ model Keledon {
 // ========== MANAGED INTERFACES ==========
 
 model ManagedInterface {
-  id            String   @id @default(uuid())
-  name          String
-  baseUrl       String
-  category      String?   // 'talk' | 'case'
-  providerKey   String?
-  capabilities  String?   // JSON string
-  icon          String?
-  status        String    @default("disconnected") // connected, disconnected, error
-  credentials   String?   // JSON string
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String   @id @default(uuid())
+  name         String
+  baseUrl      String
+  category     String? // 'talk' | 'case'
+  providerKey  String?
+  capabilities String? // JSON string
+  icon         String?
+  status       String   @default("disconnected") // connected, disconnected, error
+  credentials  String? // JSON string
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   teamInterfaces TeamInterface[]
 
@@ -195,12 +195,12 @@ model ManagedInterface {
 }
 
 model TeamInterface {
-  id         String   @id @default(uuid())
-  teamId     String
+  id          String   @id @default(uuid())
+  teamId      String
   interfaceId String
-  createdAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
 
-  team     Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  team             Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
   managedInterface ManagedInterface @relation(fields: [interfaceId], references: [id], onDelete: Cascade)
 
   @@unique([teamId, interfaceId])
@@ -210,16 +210,16 @@ model TeamInterface {
 // ========== WORKFLOWS ==========
 
 model Workflow {
-  id           String   @id @default(uuid())
-  interfaceId  String?
-  name         String
-  description  String?
-  trigger      String   // JSON: { type, value, confidence? }
-  steps        String   // JSON array
-  variables    String   // JSON object
-  isEnabled    Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id          String   @id @default(uuid())
+  interfaceId String?
+  name        String
+  description String?
+  trigger     String // JSON: { type, value, confidence? }
+  steps       String // JSON array
+  variables   String // JSON object
+  isEnabled   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   flowRuns FlowRun[]
 
@@ -227,14 +227,14 @@ model Workflow {
 }
 
 model FlowDefinition {
-  id          String   @id @default(uuid())
-  workflowId  String
-  name        String
-  definition  String   // JSON
-  version     Int      @default(1)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  workflowId String
+  name       String
+  definition String // JSON
+  version    Int      @default(1)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   versions FlowDefinitionVersion[]
 
@@ -242,12 +242,12 @@ model FlowDefinition {
 }
 
 model FlowDefinitionVersion {
-  id              String   @id @default(uuid())
+  id               String   @id @default(uuid())
   flowDefinitionId String
-  version         Int
-  definition      String   // JSON
-  changelog       String?
-  createdAt       DateTime @default(now())
+  version          Int
+  definition       String // JSON
+  changelog        String?
+  createdAt        DateTime @default(now())
 
   flowDefinition FlowDefinition @relation(fields: [flowDefinitionId], references: [id], onDelete: Cascade)
 
@@ -256,13 +256,13 @@ model FlowDefinitionVersion {
 }
 
 model TenantFlowPermission {
-  id           String   @id @default(uuid())
-  tenantId     String
-  workflowId   String
-  canExecute   Boolean  @default(true)
-  canEdit      Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id         String   @id @default(uuid())
+  tenantId   String
+  workflowId String
+  canExecute Boolean  @default(true)
+  canEdit    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@unique([tenantId, workflowId])
   @@map("tenant_flow_permissions")
@@ -291,12 +291,12 @@ model TenantFlowConfigDefinition {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-    company     Company?                       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company     Company?                     @relation(fields: [companyId], references: [id], onDelete: Cascade)
   versions    TenantFlowConfigVersion[]
   permissions TenantFlowConfigPermission[]
 
+  @@unique([id, companyId])
   @@index([companyId])
-    @@unique([id, companyId])
   @@map("tenant_flow_config_definitions")
 }
 
@@ -325,7 +325,7 @@ model TenantFlowConfigPermission {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-    flowDefinition TenantFlowConfigDefinition @relation(fields: [flowDefinitionId, companyId], references: [id, companyId], onDelete: Cascade)
+  flowDefinition TenantFlowConfigDefinition @relation(fields: [flowDefinitionId, companyId], references: [id, companyId], onDelete: Cascade)
 
   @@unique([companyId, flowDefinitionId])
   @@map("tenant_flow_config_permissions")
@@ -346,19 +346,19 @@ model TenantIntentFlowConfigMapping {
 }
 
 model FlowRun {
-  id           String   @id @default(uuid())
-  workflowId   String?
-  flowId       String?
-  sessionId    String?
-  status       String   @default("pending") // pending, running, completed, failed
-  result       String?  // JSON
-  error        String?
-  startedAt    DateTime @default(now())
-  completedAt  DateTime?
+  id          String    @id @default(uuid())
+  workflowId  String?
+  flowId      String?
+  sessionId   String?
+  status      String    @default("pending") // pending, running, completed, failed
+  result      String? // JSON
+  error       String?
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
 
   workflow Workflow? @relation(fields: [workflowId], references: [id])
   flow     Flow?     @relation(fields: [flowId], references: [id])
-  session  Session? @relation(fields: [sessionId], references: [id])
+  session  Session?  @relation(fields: [sessionId], references: [id])
 
   subAgentRuns SubAgentRun[]
 
@@ -378,22 +378,22 @@ model FlowRunEvidence {
 // ========== FLOWS (Enhanced) ==========
 
 model Flow {
-  id               String   @id @default(uuid())
-  name             String
-  description      String?
-  triggerKeywords  String   // JSON array of keywords
-  category         String   @default("general") // crm, support, sales, etc.
-  tool             String   @default("browser") // browser, genesys, salesforce, etc.
-  teamId           String?
-  isActive         Boolean  @default(true)
-  version          Int      @default(1)
-  createdBy        String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id              String   @id @default(uuid())
+  name            String
+  description     String?
+  triggerKeywords String // JSON array of keywords
+  category        String   @default("general") // crm, support, sales, etc.
+  tool            String   @default("browser") // browser, genesys, salesforce, etc.
+  teamId          String?
+  isActive        Boolean  @default(true)
+  version         Int      @default(1)
+  createdBy       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  team      Team?     @relation(fields: [teamId], references: [id])
-  steps     FlowStep[]
-  runs      FlowRun[]
+  team  Team?      @relation(fields: [teamId], references: [id])
+  steps FlowStep[]
+  runs  FlowRun[]
 
   @@map("flows")
 }
@@ -402,16 +402,16 @@ model FlowStep {
   id           String   @id @default(uuid())
   flowId       String
   order        Int
-  type         String   // navigate, click, input, read, wait, submit, decision, speak
-  selector     String?  // CSS selector or XPath
+  type         String // navigate, click, input, read, wait, submit, decision, speak
+  selector     String? // CSS selector or XPath
   selectorType String   @default("css") // css, xpath, text, aria
-  value        String?  // For input steps
-  extract      String?  // Variable name to extract
-  waitFor      String?  // Selector to wait for
-  condition    String?  // For decision steps
+  value        String? // For input steps
+  extract      String? // Variable name to extract
+  waitFor      String? // Selector to wait for
+  condition    String? // For decision steps
   timeout      Int      @default(10000) // ms
   optional     Boolean  @default(false)
-  nextStepId   String?  // For branching
+  nextStepId   String? // For branching
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -426,31 +426,31 @@ model FlowStep {
 model SubAgent {
   id          String   @id @default(uuid())
   name        String
-  role        String   // listener, processor, tool-operator, flow-executor
+  role        String // listener, processor, tool-operator, flow-executor
   status      String   @default("idle") // idle, active, waiting, error
   sessionId   String?
-  currentTask String?  // JSON: current operation
+  currentTask String? // JSON: current operation
   maxParallel Int      @default(1)
   isEnabled   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  session Session?     @relation(fields: [sessionId], references: [id])
+  session Session?      @relation(fields: [sessionId], references: [id])
   runs    SubAgentRun[]
 
   @@map("sub_agents")
 }
 
 model SubAgentRun {
-  id           String   @id @default(uuid())
-  subAgentId   String
-  flowRunId    String?
-  flowId       String?
-  flowStepIds  String?  // JSON array of step IDs being executed
-  status       String   @default("pending") // pending, running, completed, failed
-  result       String?  // JSON: extracted data, execution log
-  startedAt    DateTime @default(now())
-  completedAt  DateTime?
+  id          String    @id @default(uuid())
+  subAgentId  String
+  flowRunId   String?
+  flowId      String?
+  flowStepIds String? // JSON array of step IDs being executed
+  status      String    @default("pending") // pending, running, completed, failed
+  result      String? // JSON: extracted data, execution log
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
 
   subAgent SubAgent @relation(fields: [subAgentId], references: [id])
   flowRun  FlowRun? @relation(fields: [flowRunId], references: [id])
@@ -464,12 +464,12 @@ model SubAgentRun {
 
 model ProviderCatalog {
   id          String   @id @default(uuid())
-  type        String   // 'stt' | 'tts' | 'rpa'
+  type        String // 'stt' | 'tts' | 'rpa'
   name        String
   description String?
   status      String   @default("production") // experimental, production, deprecated
   isEnabled   Boolean  @default(true)
-  metadata    String?  // JSON
+  metadata    String? // JSON
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -483,14 +483,14 @@ model TenantProviderConfig {
   id           String   @id @default(uuid())
   companyId    String
   providerId   String
-  providerType String   // 'stt' | 'tts' | 'rpa'
+  providerType String // 'stt' | 'tts' | 'rpa'
   isEnabled    Boolean  @default(true)
   isDefault    Boolean  @default(false)
-  limits       String?  // JSON
+  limits       String? // JSON
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  company        Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company         Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
   providerCatalog ProviderCatalog @relation(fields: [providerId], references: [id])
 
   @@unique([companyId, providerId])
@@ -498,18 +498,18 @@ model TenantProviderConfig {
 }
 
 model TenantVoiceProfile {
-  id           String   @id @default(uuid())
-  companyId    String
-  providerId   String
-  name         String
-  language     String   @default("en")
-  isEnabled    Boolean  @default(true)
-  isDefault    Boolean  @default(false)
-  config       String?  // JSON
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id         String   @id @default(uuid())
+  companyId  String
+  providerId String
+  name       String
+  language   String   @default("en")
+  isEnabled  Boolean  @default(true)
+  isDefault  Boolean  @default(false)
+  config     String? // JSON
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  company        Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company         Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
   providerCatalog ProviderCatalog @relation(fields: [providerId], references: [id])
 
   @@map("tenant_voice_profiles")
@@ -522,7 +522,7 @@ model Session {
   userId    String?
   teamId    String?
   status    String?
-  metadata  String?  // JSON
+  metadata  String? // JSON
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -539,7 +539,7 @@ model Event {
   id        String   @id @default(uuid())
   sessionId String
   type      String
-  payload   String?  // JSON
+  payload   String? // JSON
   createdAt DateTime @default(now())
 
   session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
@@ -564,14 +564,14 @@ model KnowledgeBase {
 }
 
 model KnowledgeDocument {
-  id           String   @id @default(uuid())
+  id              String   @id @default(uuid())
   knowledgeBaseId String
-  title        String
-  content      String
-  metadata     String?  // JSON
-  vectorIds    String?  // Comma-separated vector IDs
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  title           String
+  content         String
+  metadata        String? // JSON
+  vectorIds       String? // Comma-separated vector IDs
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   knowledgeBase KnowledgeBase @relation(fields: [knowledgeBaseId], references: [id], onDelete: Cascade)
 
@@ -583,11 +583,11 @@ model KnowledgeDocument {
 model AuditLog {
   id        String   @id @default(uuid())
   userId    String?
-  companyId String?  // Snapshot of the actor's tenant when the event was recorded; deliberately not a relation.
+  companyId String? // Snapshot of the actor's tenant when the event was recorded; deliberately not a relation.
   action    String
   entity    String
   entityId  String?
-  changes   String?  // JSON
+  changes   String? // JSON
   ipAddress String?
   userAgent String?
   createdAt DateTime @default(now())
@@ -605,8 +605,8 @@ model FeatureFlag {
   name      String    @unique
   enabled   Boolean   @default(false)
   scope     String    @default("global") // global, tenant, user
-  scopeId   String?   // tenant_id or user_id depending on scope
-  metadata  String?   // JSON for additional config
+  scopeId   String? // tenant_id or user_id depending on scope
+  metadata  String? // JSON for additional config
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   expiresAt DateTime?
@@ -618,20 +618,20 @@ model FeatureFlag {
 // ========== ESCALATION LOGS ==========
 
 model EscalationLog {
-  id            String   @id @default(uuid())
-  sessionId     String?
-  teamId        String?
-  deviceId      String?
-  trigger       String
-  triggerType   String   @default("keyword") // keyword, manual, system
-  transcript    String?
-  status        String   @default("triggered") // triggered, acknowledged, resolved, aborted
-  metadata      String?  // JSON
+  id             String    @id @default(uuid())
+  sessionId      String?
+  teamId         String?
+  deviceId       String?
+  trigger        String
+  triggerType    String    @default("keyword") // keyword, manual, system
+  transcript     String?
+  status         String    @default("triggered") // triggered, acknowledged, resolved, aborted
+  metadata       String? // JSON
   acknowledgedBy String?
   acknowledgedAt DateTime?
-  resolvedAt    DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  resolvedAt     DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@index([sessionId])
   @@index([teamId])
@@ -644,7 +644,7 @@ model EscalationLog {
 model DebugMode {
   id          String    @id @default(uuid())
   isActive    Boolean   @default(false)
-  activatedBy String?   // user_id who activated
+  activatedBy String? // user_id who activated
   activatedAt DateTime?
   expiresAt   DateTime?
   autoExpire  Boolean   @default(true)
@@ -657,22 +657,84 @@ model DebugMode {
 // ========== VENDORS ==========
 
 model Vendor {
-  id          String   @id @default(uuid())
-  teamId      String
-  name        String   // e.g., "Salesforce", "Genesys", "HubSpot"
-  type        String   // "crm", "telephony", "helpdesk", "other"
-  baseUrl     String?  // e.g., "https://login.salesforce.com"
-  username    String?  // encrypted at rest; masked in API projections
-  password    String?  // encrypted
-  apiKey      String?  // encrypted
-  config      Json?    // non-secret config, including tenant-validated allowed origins
-  startGoal   String?  // startup instructions for the vendor agent
-  isActive   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  teamId    String
+  name      String // e.g., "Salesforce", "Genesys", "HubSpot"
+  type      String // "crm", "telephony", "helpdesk", "other"
+  baseUrl   String? // e.g., "https://login.salesforce.com"
+  username  String? // encrypted at rest; masked in API projections
+  password  String? // encrypted
+  apiKey    String? // encrypted
+  config    Json? // non-secret config, including tenant-validated allowed origins
+  startGoal String? // startup instructions for the vendor agent
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@index([teamId])
   @@map("vendors")
+}
+
+// Managed AI definitions and measured usage shared with the API admin catalog.
+model AiPromptDefinition {
+  id                String             @id
+  name              String
+  personalityPrompt String
+  executionPrompt   String
+  outputSchemaJson  Json
+  enabled           Boolean            @default(true)
+  purpose           String             @default("")
+  owningFeature     String             @default("")
+  callsite          String             @default("")
+  inputSchemaJson   Json               @default("{}")
+  outputDestination String             @default("product")
+  nextHops          Json               @default("[]")
+  revision          Int                @default(1)
+  updatedBy         String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  revisions         AiPromptRevision[]
+  usage             AiCallUsage[]
+
+  @@map("ai_prompt_definitions")
+}
+
+model AiPromptRevision {
+  id                 String             @id @default(uuid())
+  promptId           String
+  fromRevision       Int
+  toRevision         Int
+  actorId            String
+  changedFields      Json
+  definitionSnapshot Json?
+  createdAt          DateTime           @default(now())
+  prompt             AiPromptDefinition @relation(fields: [promptId], references: [id], onDelete: Restrict)
+
+  @@unique([promptId, toRevision])
+  @@map("ai_prompt_revisions")
+}
+
+model AiCallUsage {
+  id              String             @id @default(uuid())
+  promptId        String
+  promptRevision  Int
+  feature         String
+  teamId          String?
+  provider        String
+  requestedModel  String
+  responseModel   String?
+  inputTokens     Int?
+  outputTokens    Int?
+  latencyMs       Int
+  costUsd         Float?
+  pricingMetadata Json?
+  errorCode       String?
+  createdAt       DateTime           @default(now())
+  prompt          AiPromptDefinition @relation(fields: [promptId], references: [id], onDelete: Restrict)
+
+  @@index([createdAt])
+  @@index([promptId, createdAt])
+  @@map("ai_call_usage")
 }

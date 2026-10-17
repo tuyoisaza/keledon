@@ -83,7 +83,8 @@ export class DecisionEngineService {
 
     try {
       // Validate session exists (canonical rule: if no session_id, it does not exist)
-      if (!(await this.sessionService.getSession(sessionId))) {
+      const session = await this.sessionService.getSession(sessionId);
+      if (!session) {
         throw new Error(
           `Session ${sessionId} does not exist - cannot process text input`,
         );
@@ -98,6 +99,11 @@ export class DecisionEngineService {
         sessionEvents,
         metadata,
       );
+      context.metadata = {
+        ...context.metadata,
+        teamId: session.teamId || undefined,
+        userId: session.userId || undefined,
+      };
 
       // Core decision logic (Cloud decides), including mandatory evidence checks.
       const decisionOutcome = await this.tracer.startActiveSpan(

@@ -1,3 +1,14 @@
+## Current remediation — 5.1.78 Cloud managed AI and Web build context
+
+Cloud Brain and decision-engine now use persisted revisioned managed workflow definitions, bounded validated inputs/outputs, DB-derived tenant provider configuration, safe usage attribution and request budgets. API/Cloud mirrored migrations and catalog contract pass. A stale API guard test now expects the DB-derived role/company projection.
+
+Final Check also found the current Railway Web production build failure: the live service root /services/web excludes the canonical shared theme tokens used by the app. The Dockerfile now supports repository-root context and copies services/web plus shared assets; railway.toml points to services/web/Dockerfile. Local Docker/Podman is unavailable, so container build is UNVERIFIED. Railway settings are an EXTERNAL / MANUAL gate. Owner action: set service root directory / and config-as-code path /services/web/railway.toml, then verify a successful main deployment. No provider setting was changed.
+
+Cloud tests 6/6, Cloud regressions 19/19, API AI contract 9/9, API regressions 42/42, API Jest excluding DB e2e 48/48, RolesGuard 3/3, scoped Cloud lint, five builds, Web typecheck, Prisma schema validate/generate, static theme audit and PHDK coherence 63/63 pass. Full API e2e is blocked without disposable PostgreSQL. Overall PHDK Auto remains PARTIALLY DELIVERED; source PR and remote-main delivery are pending.
+
+
+---
+
 # PHDK Check remediation — candidate 5.1.75 / PHDK 2.51.5
 
 Date: 2026-10-17

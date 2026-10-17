@@ -1,65 +1,10 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { LLMRequest, LLMResponse, CommandDecision, UIStep } from './llm.types';
+import { PrismaService } from '../prisma/prisma.service';
+import { ManagedAiRuntime } from './managed-ai-runtime';
+import { runtimeAiBudget } from './runtime-ai-budget';
 
 type LLMProvider = 'anthropic' | 'google' | 'openai' | 'ollama' | 'none';
-
-const DECIDE_ACTION_TOOL = {
-  type: 'function' as const,
-  function: {
-    name: 'decide_action',
-    description:
-      'Decide what KELEDON should do in response to the user voice command. ' +
-      'Use "say" for conversational responses. Use "ui_steps" for browser automation. ' +
-      'Use "mode" to change operating mode. Use "stop" to halt. Use "ask" to request clarification.',
-    parameters: {
-      type: 'object',
-      properties: {
-        type: {
-          type: 'string',
-          enum: ['say', 'ui_steps', 'mode', 'stop', 'ask'],
-        },
-        text: {
-          type: 'string',
-          description:
-            'Text to speak aloud (required for "say" and "ask" types)',
-        },
-        steps: {
-          type: 'array',
-          description:
-            'Browser automation steps (required for "ui_steps" type)',
-          items: {
-            type: 'object',
-            properties: {
-              action: {
-                type: 'string',
-                enum: [
-                  'navigate',
-                  'click',
-                  'type',
-                  'fill',
-                  'wait',
-                  'extract',
-                  'select',
-                  'hover',
-                  'scroll',
-                  'screenshot',
-                ],
-              },
-              selector: { type: 'string' },
-              value: { type: 'string' },
-              url: { type: 'string' },
-              description: { type: 'string' },
-            },
-            required: ['action'],
-          },
-        },
-        mode: { type: 'string', enum: ['normal', 'safe', 'silent'] },
-        reasoning: { type: 'string' },
-      },
-      required: ['type'],
-    },
-  },
-};
 
 const CONFIGURED_PROVIDERS: LLMProvider[] = [
   'anthropic',
@@ -148,31 +93,16 @@ function validateCommandDecision(value: unknown): CommandDecision | null {
   return decision;
 }
 
-function isOpenAIFunctionToolCall(toolCall: unknown): toolCall is {
-  type: 'function';
-  function: { name: string; arguments: string };
-} {
-  return (
-    typeof toolCall === 'object' &&
-    toolCall !== null &&
-    'type' in toolCall &&
-    (toolCall as { type?: unknown }).type === 'function' &&
-    'function' in toolCall &&
-    typeof (toolCall as { function?: unknown }).function === 'object' &&
-    (toolCall as { function?: { name?: unknown; arguments?: unknown } })
-      .function !== null &&
-    typeof (toolCall as { function?: { name?: unknown; arguments?: unknown } })
-      .function?.name === 'string' &&
-    typeof (toolCall as { function?: { name?: unknown; arguments?: unknown } })
-      .function?.arguments === 'string'
-  );
-}
-
 @Injectable()
 export class LLMService implements OnModuleInit {
   private readonly logger = new Logger(LLMService.name);
   private provider: LLMProvider;
   private model: string;
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly managedAi: ManagedAiRuntime,
+  ) {}
 
   onModuleInit() {
     this.provider = this.resolveProvider();
@@ -223,42 +153,208 @@ export class LLMService implements OnModuleInit {
   }
 
   async generate(request: LLMRequest): Promise<LLMResponse> {
-    if (this.provider === 'none') {
-      return {
-        text: this.generateFallback(request.prompt),
-        finishReason: 'stop',
-        usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
-      };
-    }
+    const context = request?.context ?? [];
+    if (
+      !request ||
+      typeof request.prompt !== 'string' ||
+      request.prompt.length > 20000 ||
+      !Array.isArray(context) ||
+      context.length > 64 ||
+      context.some((item) => typeof item !== 'string') ||
+      context.reduce((total, item) => total + item.length, 0) > 20000
+    )
+      throw new Error('Invalid AI input size');
 
-    const systemPrompt = this.buildSystemPrompt(request.context || []);
+    const feature = request.feature || 'brain-chat';
+    const actor = request.actorId || request.teamId || 'system';
+    return runtimeAiBudget.run(
+      actor,
+      request.requestId ? `${feature}:${request.requestId}` : undefined,
+      async () => {
+        const managedInput = {
+          context: JSON.stringify({
+            userInput: request.prompt,
+            untrustedContext: context,
+          }),
+        };
+        const { definition } = await this.managedAi.prepare(
+          feature,
+          managedInput,
+        );
+        const startedAt = Date.now();
+        const attempted: { provider?: string; requestedModel?: string } = {};
+        let response: LLMResponse | undefined;
+        let failure: string | undefined;
+        let providerSucceeded = false;
+        try {
+          const systemPrompt = [
+            definition.personalityPrompt,
+            definition.executionPrompt,
+            'Return ONLY JSON conforming exactly to this output schema:',
+            JSON.stringify(definition.outputSchemaJson),
+          ].join('\n\n');
+          response = await this.generateUnchecked(
+            {
+              ...request,
+              prompt: managedInput.context,
+              context: [],
+              maxTokens: Math.min(Math.max(request.maxTokens || 500, 1), 2000),
+            },
+            systemPrompt,
+            attempted,
+          );
+          providerSucceeded = true;
+          const output = this.managedAi.validateOutput(
+            definition,
+            JSON.parse(response.text),
+          ) as Record<string, unknown>;
+          if (feature === 'brain-chat') {
+            if (typeof output.reply !== 'string')
+              throw new Error('Managed reply contract mismatch');
+            response.text = output.reply;
+          } else {
+            response.text = JSON.stringify(output);
+          }
+          return response;
+        } catch {
+          failure = 'AI_EXECUTION_OR_SCHEMA_FAILURE';
+          throw new Error('Managed AI execution failed');
+        } finally {
+          if (attempted.provider) {
+            runtimeAiBudget.recordMeteredOutcome({
+              provider: attempted.provider,
+              success: providerSucceeded,
+              retryCount: 0,
+              ...(providerSucceeded
+                ? {}
+                : { failureCode: 'AI_PROVIDER_CALL_FAILED' }),
+              correlationId: request.correlationId,
+            });
+          }
+          await this.managedAi.recordUsage({
+            definition,
+            feature,
+            teamId: request.teamId,
+            provider: response?.provider || attempted.provider || 'unknown',
+            requestedModel:
+              response?.requestedModel ||
+              attempted.requestedModel ||
+              request.model ||
+              'unknown',
+            responseModel: response?.responseModel,
+            inputTokens: response?.usage?.promptTokens,
+            outputTokens: response?.usage?.completionTokens,
+            latencyMs: Date.now() - startedAt,
+            errorCode: failure,
+          });
+        }
+      },
+    );
+  }
+
+  private async resolveTeamProvider(
+    teamId: string,
+  ): Promise<{ provider: LLMProvider; apiKey: string } | null> {
     try {
-      switch (this.provider) {
+      const team = await this.prisma.team.findUnique({
+        where: { id: teamId },
+        select: {
+          llmProvider: true,
+          openaiApiKey: true,
+          googleAiApiKey: true,
+          anthropicApiKey: true,
+        },
+      });
+      if (
+        !team ||
+        !CONFIGURED_PROVIDERS.includes(team.llmProvider as LLMProvider)
+      )
+        return null;
+      const provider = team.llmProvider as LLMProvider;
+      const apiKey =
+        provider === 'openai'
+          ? team.openaiApiKey
+          : provider === 'google'
+            ? team.googleAiApiKey
+            : provider === 'anthropic'
+              ? team.anthropicApiKey
+              : null;
+      if (!apiKey && provider !== 'ollama') return null;
+      return { provider, apiKey: apiKey || '' };
+    } catch {
+      return null;
+    }
+  }
+
+  private async generateUnchecked(
+    request: LLMRequest,
+    systemPrompt: string,
+    attempted: { provider?: string; requestedModel?: string },
+  ): Promise<LLMResponse> {
+    let provider = this.provider;
+    let apiKey: string | undefined;
+    let model = this.model;
+    if (request.teamId) {
+      const teamProvider = await this.resolveTeamProvider(request.teamId);
+      if (!teamProvider)
+        throw new Error('Configured team AI provider unavailable');
+      provider = teamProvider.provider;
+      apiKey = teamProvider.apiKey;
+      model = this.resolveModel(provider);
+    }
+    if (provider === 'none')
+      throw new Error('Configured AI provider unavailable');
+    const providerRequest = { ...request, model: request.model || model };
+    attempted.provider = provider;
+    attempted.requestedModel = providerRequest.model;
+    try {
+      switch (provider) {
         case 'anthropic':
-          return await this.generateWithAnthropic(request, systemPrompt);
+          return await this.generateWithAnthropic(
+            providerRequest,
+            systemPrompt,
+            apiKey,
+          );
         case 'google':
-          return await this.generateWithGoogle(request, systemPrompt);
+          return await this.generateWithGoogle(
+            providerRequest,
+            systemPrompt,
+            apiKey,
+          );
         case 'openai':
-          return await this.generateWithOpenAI(request, systemPrompt);
+          return await this.generateWithOpenAI(
+            providerRequest,
+            systemPrompt,
+            apiKey,
+          );
         case 'ollama':
-          return await this.generateWithOllama(request, systemPrompt);
+          return await this.generateWithOllama(providerRequest, systemPrompt);
       }
     } catch (error) {
-      this.logger.error(`LLM [${this.provider}] error:`, error);
-      return {
-        text: this.generateFallback(request.prompt),
-        finishReason: 'content_filter',
-        usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
-      };
+      this.logger.error(
+        JSON.stringify({
+          event: 'ai.call.failed',
+          provider,
+          teamId: request.teamId,
+        }),
+      );
+      throw new Error('Configured AI provider request failed', {
+        cause: error,
+      });
     }
   }
 
   private async generateWithAnthropic(
     request: LLMRequest,
     systemPrompt: string,
+    apiKey?: string,
   ): Promise<LLMResponse> {
     const { Anthropic } = await import('@anthropic-ai/sdk');
-    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const client = new Anthropic({
+      apiKey: apiKey || process.env.ANTHROPIC_API_KEY,
+      timeout: 30000,
+      maxRetries: 0,
+    });
 
     const response = await client.messages.create({
       model: request.model || this.model,
@@ -272,6 +368,9 @@ export class LLMService implements OnModuleInit {
 
     return {
       text,
+      provider: 'anthropic',
+      requestedModel: request.model,
+      responseModel: response.model,
       finishReason: response.stop_reason === 'end_turn' ? 'stop' : 'length',
       usage: {
         promptTokens: response.usage.input_tokens,
@@ -284,9 +383,12 @@ export class LLMService implements OnModuleInit {
   private async generateWithGoogle(
     request: LLMRequest,
     systemPrompt: string,
+    apiKey?: string,
   ): Promise<LLMResponse> {
     const { GoogleGenerativeAI } = await import('@google/generative-ai');
-    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
+    const genAI = new GoogleGenerativeAI(
+      apiKey || process.env.GOOGLE_AI_API_KEY,
+    );
     const genModel = genAI.getGenerativeModel({
       model: request.model || this.model,
     });
@@ -303,6 +405,8 @@ export class LLMService implements OnModuleInit {
     const resp = result.response;
     return {
       text: resp.text(),
+      provider: 'google',
+      requestedModel: request.model,
       finishReason: 'stop',
       usage: {
         promptTokens: resp.usageMetadata?.promptTokenCount || 0,
@@ -315,9 +419,10 @@ export class LLMService implements OnModuleInit {
   private async generateWithOpenAI(
     request: LLMRequest,
     systemPrompt: string,
+    apiKey?: string,
   ): Promise<LLMResponse> {
     const { OpenAI } = await import('openai');
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const client = new OpenAI({ apiKey: apiKey || process.env.OPENAI_API_KEY });
 
     const response = await client.chat.completions.create({
       model: request.model || this.model,
@@ -334,6 +439,9 @@ export class LLMService implements OnModuleInit {
 
     return {
       text: choice.message.content || '',
+      provider: 'openai',
+      requestedModel: request.model,
+      responseModel: response.model,
       finishReason: choice.finish_reason === 'stop' ? 'stop' : 'length',
       usage: {
         promptTokens: usage?.prompt_tokens || 0,
@@ -382,6 +490,10 @@ export class LLMService implements OnModuleInit {
 
     return {
       text: typeof payload.response === 'string' ? payload.response : '',
+      provider: 'ollama',
+      requestedModel: request.model,
+      responseModel:
+        typeof payload.model === 'string' ? payload.model : undefined,
       finishReason: payload.done === true ? 'stop' : 'length',
       usage: {
         promptTokens,
@@ -391,139 +503,27 @@ export class LLMService implements OnModuleInit {
     };
   }
 
-  private buildSystemPrompt(context: string[]): string {
-    const contextSection =
-      context.length > 0
-        ? `Context from knowledge base:\n${context.map((c, i) => `${i + 1}. ${c}`).join('\n')}\n\n`
-        : '';
-
-    return `You are KELEDON, an AI voice agent for customer service.
-
-${contextSection}Your role:
-- Listen to customer inquiries
-- Provide helpful, accurate responses
-- Escalate to human when necessary
-- Execute UI automation when requested
-
-Guidelines:
-- Be conversational and friendly
-- Keep responses concise (2-3 sentences max)
-- If you don't know something, say so
-- Don't make up information
-
-Always respond in a way that can be spoken aloud.`;
-  }
-
-  private generateFallback(_prompt: string): string {
-    void _prompt;
-    return `I understand you're asking for help. Let me help you with that. Could you provide more details?`;
-  }
-
-  private fallbackCommand(transcript: string): CommandDecision {
-    const lower = transcript.toLowerCase();
-    if (lower.includes('stop') || lower.includes('cancel')) {
-      return { type: 'stop', reasoning: 'keyword fallback' };
-    }
-    return {
-      type: 'say',
-      text: `I heard: "${transcript}". I'm having trouble connecting to my decision engine right now.`,
-      reasoning: 'LLM unavailable fallback',
-    };
-  }
-
-  private buildCommandSystemPrompt(context: string[]): string {
-    const contextSection =
-      context.length > 0
-        ? `\nRelevant knowledge:\n${context.map((c, i) => `${i + 1}. ${c}`).join('\n')}\n`
-        : '';
-
-    return `You are KELEDON, an AI agent controlling a Windows desktop browser (Electron-based Chrome).
-You receive voice commands and decide what action to take.
-${contextSection}
-Command types:
-- "say": Speak a response to the user. Keep it concise (1-2 sentences), spoken-word friendly.
-- "ui_steps": Automate the browser. Use when the user asks you to navigate, click, fill forms, or interact with web pages.
-- "mode": Change operating mode (normal/safe/silent).
-- "stop": Stop current operation.
-- "ask": Ask the user a clarifying question when the intent is ambiguous.
-
-Always prefer "ui_steps" over "say" when the user is asking you to DO something in the browser.
-Always prefer "say" for questions, confirmations, and conversational responses.`;
-  }
-
   async generateCommand(
     transcript: string,
     context: string[] = [],
+    teamId?: string,
+    actorId?: string,
   ): Promise<CommandDecision> {
-    if (this.provider === 'none') {
-      return this.fallbackCommand(transcript);
-    }
-
-    // Structured tool_calls only supported for OpenAI; other providers fall back to generate()
-    if (this.provider === 'openai') {
-      try {
-        const { OpenAI } = await import('openai');
-        const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-        const response = await client.chat.completions.create({
-          model: this.model || 'gpt-4o',
-          messages: [
-            { role: 'system', content: this.buildCommandSystemPrompt(context) },
-            { role: 'user', content: transcript },
-          ],
-          tools: [DECIDE_ACTION_TOOL],
-          tool_choice: {
-            type: 'function',
-            function: { name: 'decide_action' },
-          },
-          max_tokens: 500,
-          temperature: 0.7,
-        });
-
-        const toolCall = response.choices[0]?.message?.tool_calls?.[0];
-        if (
-          !isOpenAIFunctionToolCall(toolCall) ||
-          toolCall.function.name !== 'decide_action'
-        ) {
-          this.logger.warn('LLM did not return a tool call, using fallback');
-          return this.fallbackCommand(transcript);
-        }
-
-        const decoded: unknown = JSON.parse(toolCall.function.arguments);
-        const decision = validateCommandDecision(decoded);
-        if (!decision) {
-          this.logger.warn('LLM returned an invalid command decision');
-          return this.fallbackCommand(transcript);
-        }
-        this.logger.log(
-          `[LLM] Decision: ${decision.type}${decision.reasoning ? ' — ' + decision.reasoning : ''}`,
-        );
-        return decision;
-      } catch (error) {
-        this.logger.error('OpenAI function calling error:', error);
-        return this.fallbackCommand(transcript);
-      }
-    }
-
-    // Non-OpenAI: generate a text response and wrap as a say command
-    try {
-      const response = await this.generate({
-        prompt: transcript,
-        context,
-        maxTokens: 300,
-        temperature: 0.7,
-      });
-      return {
-        type: 'say',
-        text: response.text,
-        reasoning: `${this.provider} text response`,
-      };
-    } catch (error) {
-      this.logger.error('generateCommand fallback error:', error);
-      return this.fallbackCommand(transcript);
-    }
+    const response = await this.generate({
+      prompt: transcript,
+      context,
+      teamId,
+      actorId,
+      feature: 'decision-engine',
+      maxTokens: 1000,
+    });
+    const decision = validateCommandDecision(JSON.parse(response.text));
+    if (!decision) throw new Error('Managed decision output is invalid');
+    return decision;
   }
 
   isEnabled(): boolean {
-    return this.provider !== 'none' && !!this.provider;
+    // Team-scoped provider credentials can enable this path without a global key.
+    return true;
   }
 }

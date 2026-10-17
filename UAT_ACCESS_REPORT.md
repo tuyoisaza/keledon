@@ -1,5 +1,17 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## Browser Readiness — candidate 5.1.78 UAT entry
+
+- Stage/run/revision: UAT and UAT Fix; run 20261014-0007-phdk-auto-completion; local working-tree candidate based on 383fd84f2fd1c7218882dc840db7e5be1957246a, version 5.1.78.
+- Target URL/environment: none; no browser-dependent journey is in scope for this backend-only Cloud managed-AI source change.
+- Timestamp: 2026-10-17 America/Mexico_City.
+- Permission: ACTIVE_UAT_EXCEPTION. Browser capability: NOT_NEEDED for the executed candidate cases.
+- Channel/operation: no browser channel used; harmless browser navigation was unnecessary because no browser story or UI changed.
+- Target/data/roles: in-process synthetic provider and persistence mocks only; no account, PostgreSQL, customer data, call or CRM.
+- Spend: NO_NEW_SPEND; billing is UNVERIFIED.
+- Cases: Cloud managed-runtime 6/6, API managed-AI contract 9/9, cross-backend regressions 19/19, focused persisted-role guard 3/3. Full API e2e database case remains BLOCKED pending disposable PostgreSQL; broader native/manual acceptance remains open.
+- Owner action/retest cue: provide an isolated disposable PostgreSQL service inside the local environment, then resume the blocked migration/restart case only.
+
 ## Candidate 5.1.73 — UAT-081 local synthetic superadmin
 
 Target: local production-built Web SPA served on ephemeral loopback by the Playwright harness; role response, two companies and all flow APIs are synthetic in-memory fixtures. A synthetic `superadmin@company-co.invalid` session drives the UI; the browser blocks non-local HTTP and all WebSockets. The test verifies company switching, scoped flow operations and legacy assignment. No real account, test-profile switch, database or external service is accessed; browser/server close in `finally`. This is not live authentication or backend superadmin authorization evidence.

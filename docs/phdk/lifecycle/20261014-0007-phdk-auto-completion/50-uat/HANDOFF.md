@@ -284,3 +284,8 @@ UAT-049 passes source-only: API regression 49 confirms unbound DebugMode service
 Production-built Web 5.1.72 passed local synthetic UI UAT 6/6 plus AI-admin UAT. The shared diagnostics widget now has direct browser evidence for accessible names, 44×44px hit targets, keyboard Tab order, visible 2px focus and polite live feedback; copy/redaction/reset and selected responsive/theme journeys also pass. Focused diagnostics pass 19/19. Evidence: `evidence/uat-067-web-accessibility-5.1.72.json` and its adjacent screenshots/JSON. Whole acceptance is **65 PASS, 0 BLOCKED, 1 MANUAL**; screen-reader and broad route/role/localization acceptance remain open.
 
 ## Candidate 5.1.72 — UAT-066 PASS; PostgreSQL core blocker closed
+
+
+## Candidate 5.1.78 handoff — managed Cloud AI UAT
+
+Managed Cloud AI 6/6, API contract 9/9, cross-backend regressions 19/19, API regressions 42/42 and focused guard 3/3 pass. Browser Readiness is recorded as NOT_NEEDED for this backend-only candidate. Full API Jest still needs disposable PostgreSQL for its e2e test; no migration/restart acceptance is claimed. Evidence: evidence/uat-cloud-managed-ai-5.1.78.md and root UAT_ACCESS_REPORT.md. Next: scoped Check and hygiene review.

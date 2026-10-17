@@ -1,3 +1,18 @@
+## Current commitment coverage — 5.1.78 candidate; whole portfolio partial
+
+Base origin/main is 383fd84f2fd1c7218882dc840db7e5be1957246a; candidate fix/phdk-auto-continuation-5-1-78 is uncommitted. PHDK v2.52.2 coherence 63/63. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. No deployment claimed.
+
+| Commitment | Candidate evidence | Open acceptance |
+|---|---|---|
+| CMT-001 baseline, versions, PRs | PHDK synced and verified; five product roots and renderer 5.1.78. | PR, remote-main readback and remaining baseline/deployed discovery gates. |
+| CMT-002 widget and safe diagnostics | Prior 5.1.77 geometry and diagnostic evidence reused; this backend slice does not alter widget UI. | Packaged Browser, native audio/device, broad route/role/accessibility/localization. |
+| CMT-003 voice→Cloud→Browser→CRM | Cloud uses revisioned managed workflow contracts, database-derived actor/team and safe usage attribution; 19 parity regressions pass. | Migrations/runtime restart, native call path, each client's configured call/CRM sandbox. |
+| CMT-004 administration and permissions | API/Cloud managed-AI contracts and database-derived role guard checks pass. | Disposable PostgreSQL persistence, 396 blocked CRUD rows, audit/export/retention and remaining admin workflows. |
+
+Current portfolio: 0/4 DONE; 4/4 ACTIVE/PARTIAL; 0 deferred; 0 cancelled. Source slice is pending delivery; whole Auto is PARTIALLY DELIVERED.
+
+---
+
 ## Current PHDK Auto — 5.1.77 candidate; portfolio partial (2026-10-17)
 
 PRs #194/#195 remain the latest main deliveries through 5.1.76. Candidate `fix/diagnostics-widget-visual-spacing-5-1-77` source commit `0da085bddbb7157453ddca3951960209a94c9e9b` is based on verified main `5811f1033ea6880ec582ab40dbe35dd8125284a6`; all five package/lock roots and Browser renderer are 5.1.77. Web UAT 7/7 plus standalone admin/theme/AI, Landing desktop/mobile widget geometry, Browser widget/boundary 4/4, Web diagnostics 19/19, typechecks/builds, SEO 1/1 each and PHDK coherence 61/61 pass. PR delivery is pending. UAT tally remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Overall Auto remains partial.

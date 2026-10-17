@@ -1,3 +1,16 @@
+## v5.1.78 — managed Cloud AI runtime parity
+
+- Route Cloud Brain and decision-engine calls through the persisted, revisioned AI workflow catalog; validate bounded inputs and JSON-schema outputs before using results.
+- Resolve the provider and credentials from the database-bound team, attribute usage to the prompt revision, and retain per-actor/runtime AI budget controls.
+- Add the shared managed-AI schema and migration history to Cloud, with cross-backend contract tests.
+- Synchronize the vendored PHDK standards to 2.52.2 and align all five product package/lock roots plus the Browser renderer at 5.1.78.
+- Repair the Web monorepo Docker build context so its canonical shared theme tokens are included; Railway's live root-directory setting still needs an owner change before redeploy can succeed.
+
+### Verification
+- Cloud managed AI contract 6/6, Cloud regression 19/19, typecheck/build, Prisma validation and scoped lint pass.
+- API managed-AI contract 9/9 and regression 42/42; focused persisted-role guard 3/3; Web typecheck and all five package builds pass. Prisma validate/generate used a placeholder URL and did not connect to a database.
+- Runtime migration/restart and provider/customer acceptance remain unverified; whole PHDK Auto remains partial.
+
 ## v5.1.77 — compact diagnostics controls with 4px spacing
 
 - Align the Web, Landing and Browser diagnostics tiles to a visible 4px gap while preserving independent 44×44px hit targets.
