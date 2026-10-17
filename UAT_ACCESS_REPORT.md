@@ -2,7 +2,7 @@
 
 ## Browser Readiness — candidate 5.1.78 UAT entry
 
-- Stage/run/revision: UAT and UAT Fix; run 20261014-0007-phdk-auto-completion; local working-tree candidate on version 5.1.78. The current API regression, Web and auth sources are newer than the original Cloud UAT evidence revision; Git commit is recorded after integration.
+- Stage/run/revision: UAT and UAT Fix; run 20261014-0007-phdk-auto-completion; exact source commit `93c83bc3789f5fe5269f5dabd2c9f4557404c3e8`, version 5.1.78.
 - Target URL/environment: local production-built Web SPA served on loopback by `services/web/test/google-oauth-uat.test.cjs`; no deployed URL or real login target was selected.
 - Timestamp: 2026-10-17 America/Mexico_City.
 - Permission: ACTIVE_UAT_EXCEPTION. Browser capability: USED for the local synthetic OAuth handoff only.
@@ -16,7 +16,7 @@
 
 | Case | Persona / tenant | Mechanism | Result | Cleanup / limit |
 | --- | --- | --- | --- | --- |
-| OAuth callback handoff | Synthetic Company Co user / fixture only | Built local SPA, fragment code removed before intercepted POST; API returns synthetic session token | PASS (browser contract) | No provider call; browser context closed; not real authentication |
+| OAuth callback handoff | Synthetic Company Co user / fixture only | Built local SPA, fragment code removed before intercepted POST; API returns synthetic session token | PASS (browser contract) | Evidence: `docs/phdk/evidence/uat-auth-oauth-5.1.78.json`; no provider call; browser context closed; not real authentication |
 | Exchange replay and expiry | Synthetic user `u-a` / fake audit persistence | In-process `LocalAuthService` fixtures; concurrent redemption | PASS (source regression) | No DB; only one concurrent request succeeds; not database-backed proof |
 | Current actor lookup | Synthetic user `u1`; signed claims carry stale email/forged role | Nest guard regression with isolated user fixture | PASS (source regression) | Deleted actor rejected before bearer expiry; not live account evidence |
 | Google provider login | No configured test tenant | Not run | BLOCKED | Requires authorized non-production provider account/configuration |
