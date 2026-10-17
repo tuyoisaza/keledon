@@ -1,12 +1,12 @@
-## Current continuation — 5.2.1 / PHDK 2.53.1 (2026-10-17)
+## Current continuation — 5.2.3 / PHDK 2.53.1 (2026-10-17)
 
-This run continues the four previously owner-confirmed workstreams in order. PHDK 2.53.1 is synchronized at canonical upstream `94f583635d295ae0f227726718904d952cadb8ab`; static coherence is 64/64 and the root managed instructions match canonical bytes. Product source is `ef6fe6dbf7eca04708c7200615e7538812751f7e`. PR #210 is open, not merged.
+PR #229 merged and remote `main` verified at `3cccb4b2f88828fa5d273b682925d3a106dd3b9`. PHDK coherence is 64/64 static. KELEDON 5.2.3 aligns five package/lock roots and Browser renderer. Railway Web deployment `3e168f0c-50b9-4ebb-b3c1-0cd5bd81b2a7` reports `SUCCESS`; Railway API `6467f5d6-d99b-41ed-9af8-2f3176d505b7` was still `BUILDING` at the latest readback. Production UAT-117 observed the anonymous copy-success status; no clipboard was read. The report source withholds configured API/OAuth hostnames.
 
-The current re-entry completed Preflight and reused Capture, Plan, PMO and Integration Review. UAT Prep is PARTIAL/BLOCKED because no isolated PostgreSQL target is available; production seeding is disallowed. UAT performed an anonymous read-only public-home smoke which displayed v5.1.85. UAT-098 passes narrowly; feature cases UAT-096/097 remain blocked because deployed code/identities do not match the candidate. Overall Auto remains PARTIALLY DELIVERED.
+The four owner-confirmed commitments remain in order. CMT-001 is complete for this cut; CMT-002 is active/partial, with UAT-112–117 scoped public samples but full accessibility, authenticated RBAC and audio gates open. CMT-003A/B are implementation-not-started PIAs for leases/idempotency and tenant DNS/CIDR. CMT-004 retains the approved least-privilege policy and needs persistent synthetic identity/tenant acceptance. No customer CRM or private destination was contacted.
 
-Current artifacts: `PHDK_PREFLIGHT_REPORT.md`, `TASK.md`, `STATUS.md`, `PMO_STATUS.md`, `PMO_PROGRESS_REPORT.md`, `PHDK_COMMITMENT_COVERAGE.md`, stage handoffs in `00-preflight`, `30-pmo`, `45-uat-prep`, and `50-uat`; implementation/acceptance pack is in `20-plan/PAQUETE_IMPLEMENTACION_ACEPTACION_5.2.1.md`.
+No local application tests or builds were run. Local checks were JSON parsing/version alignment, `git diff --check`, and PHDK static coherence. Acceptance follows the production-only instruction; authenticated/device cases require their synthetic fixtures and owner-approved cleanup.
 
-SIGUIENTE PASO: continue versioned PR delivery and safe synthetic tenant acceptance only after target/database readiness; do not use production accounts or data.
+SIGUIENTE PASO: reread Railway API deployment settlement, then continue the next anonymous read-only CMT-002 case; do not begin authenticated/audio UAT without the required fixtures.
 
 ---
 

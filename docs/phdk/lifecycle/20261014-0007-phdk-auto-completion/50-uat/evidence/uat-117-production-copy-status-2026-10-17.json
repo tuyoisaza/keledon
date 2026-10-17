@@ -1,0 +1,54 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-117",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T18:42:32Z",
+  "target": "https://keledon.tuyoisaza.com/?uat=117-phdk-copy-status",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.3",
+  "deployedSourceCommit": "3cccb4b2f88828fa5d273b682925d3a106dd3b9",
+  "deploymentId": "3e168f0c-50b9-4ebb-b3c1-0cd5bd81b2a7",
+  "deploymentStatus": "SUCCESS",
+  "assetsObserved": ["/assets/index-MRgeTPqB.js", "/assets/index-CV49ph3H.css"],
+  "channel": "production in-app browser; anonymous accessibility tree and visible action status; source contract reviewed at deployed SHA",
+  "context": {
+    "route": "/",
+    "locale": "pt",
+    "theme": "dark",
+    "identity": "anonymous",
+    "viewportCssPixels": "not recorded"
+  },
+  "result": "PASS_FOR_ANONYMOUS_COPY_STATUS_AND_SOURCE_HOSTNAME_WITHHOLDING",
+  "preFixFinding": {
+    "candidateVersion": "5.2.2",
+    "sourceCommit": "a8b4969418f8add68c549e7dc2e296234866b5eb",
+    "result": "FAIL_SOURCE_PRIVACY_CONTROL",
+    "finding": "Source interpolated the configured API hostname in API and OAuth host lines.",
+    "clipboardRead": false,
+    "remediationPr": 229
+  },
+  "observations": {
+    "versionVisible": "v5.2.3",
+    "copyControlAccessibleName": "Copiar diagnóstico completo",
+    "copyStatusVisible": "Diagnóstico copiado",
+    "apiHostnameOutput": "Withheld as static text in merged source",
+    "oauthHostnameOutput": "Withheld as static text in merged source",
+    "clipboardRead": false,
+    "clipboardContentsExported": false,
+    "cacheClearActivated": false,
+    "authenticatedDiagnosticsRequested": false
+  },
+  "privacy": "Anonymous public route only. The browser clipboard was written by the tested copy action but never read or exported. No credentials, forms, customer data, cache clear, API probes or authenticated diagnostics were accessed.",
+  "relatedServiceStatus": {
+    "apiDeploymentId": "6467f5d6-d99b-41ed-9af8-2f3176d505b7",
+    "apiStatusAtEvidenceTime": "BUILDING",
+    "scopeNote": "UAT-117 exercises only the deployed Web bundle; API deployment acceptance remains unverified."
+  },
+  "notProven": [
+    "the full clipboard report contents, which were intentionally not inspected",
+    "authenticated diagnostic contents, RBAC or protected probe behavior",
+    "copy failure behavior or browser clipboard permission-denied behavior",
+    "screen-reader speech quality, other locale/theme/viewport combinations or full WCAG conformance",
+    "the API Railway deployment status after this evidence timestamp"
+  ]
+}

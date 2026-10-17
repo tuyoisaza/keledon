@@ -3,7 +3,7 @@
 Run ID: `20261014-0007-phdk-auto-completion`
 Stage: `20-plan` (continuation)
 Status: **COMPLETED / EXTENDED**
-Started from revision: `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9` (`origin/main`)
+Current baseline after delivery: `main` `3cccb4b2f88828fa5d273b682925d3a106dd3b9` (KELEDON 5.2.3)
 PHDK: `2.53.1`; coherence `64/64`
 Date: `2026-10-17`
 
@@ -24,6 +24,7 @@ Turn the four owner-confirmed, ordered workstreams into current implementation/a
 - Reconciled stale candidate/PR/deployment statements in the current 5.2.1 Plan with exact merged PR and current public smoke evidence.
 - Added one index and four commitment-specific PIAs with implementation scope, dependencies, acceptance gates and privacy boundaries.
 - Preserved CMT order and all known blockers; no customer CRM/platform or legacy tenant ownership was invented.
+- Continued the current baseline/evidence after PR #229; UAT-117 found the public diagnostic report included the configured API hostname, and 5.2.3 now withholds API/OAuth hostnames. The updated CMT-001/002 PIAs and UAT evidence preserve that remediation and its limits.
 
 ## Deliverables
 

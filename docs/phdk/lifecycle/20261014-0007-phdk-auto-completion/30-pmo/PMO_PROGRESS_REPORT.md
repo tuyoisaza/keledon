@@ -1,13 +1,13 @@
 # PHDK Auto — informe de progreso, 2026-10-17
 
-Baseline: PHDK **2.53.1**, producto **5.2.2**, remote `main` `1c5bd8abc626d45d2e7c3a1b45d8ba5564359026`. Coherencia estática PHDK: **64/64**. El estado global sigue **PARCIALMENTE ENTREGADO**.
+Baseline: PHDK **2.53.1**, KELEDON **5.2.3**, remote `main` `3cccb4b2f88828fa5d273b682925d3a106dd3b9`. Coherencia estática PHDK: **64/64**. Estado: **PARCIALMENTE ENTREGADO** (CMT-001 completo para el corte, otros tres activos/parciales).
 
 | Frente | Hecho comprobado | Lo que falta |
 |---|---|---|
-| CMT-001 — baseline/versiones/PR | Versión de producto alineada; PR #219 entregó el ajuste de CTA; #220–#224 conciliaron evidencia y PIA. Remote `main` se leyó de nuevo. Railway Web y API finalizaron `SUCCESS` después del último PR y los servicios están en línea. | Continuidad del proceso en el siguiente cambio. CMT-001 queda cerrado para este corte, no para futuras entregas. |
-| CMT-002 — widget/diagnóstico | UAT-112–116 se hicieron en producción 5.2.2. El contraste cubre pares planos muestreados; login: árbol, Tab y foco visible; portada: disclosure accesible, 320/375/768 sin overflow y español/corporativo/375 sin overflow. | Muestras ampliadas por locale, viewport y temas; lector de pantalla; pruebas de dispositivo/audio autorizadas; diagnóstico protegido con roles sintéticos. |
-| CMT-003 — runtime por tenant | Se documentaron gaps de claim sin expiración/idempotencia y de DNS-rebinding/CIDR. Se añadieron PIAs CMT-003A y CMT-003B con criterios de diseño y aceptación. | La implementación de ambas está **NO INICIADA**. Hace falta fixture tenant/dispositivo sintético para aceptación; los CRM reales esperan selección y sandbox de cada cliente. |
-| CMT-004 — administración/permisos | Se conserva la política aprobada de roles mínimos, actor/tenant desde BD y secretos write-only; el selector se limita al tenant. | UAT persistente autenticado, catálogo con ownership conocido, backfill decidido por owner, credenciales de servicio provisionadas por su owner y limpieza de fixtures. |
+| CMT-001 — baseline/versiones/PR | PR #229 actualiza producto y cinco raíces package/lock más Browser renderer a 5.2.3; merge verificado. | Repetir baseline, versiones, PR y despliegue en cada cambio. |
+| CMT-002 — widget/diagnóstico | UAT-112–117 en producción. UAT-117 observó estado accesible de copia en Web 5.2.3; la fuente omitió hostnames de API/OAuth. UAT-112–116 aportan muestras específicas, no aceptación WCAG integral. | Mapa completo de locale/tema/viewport/rutas, contraste integral, lector de pantalla, fallo de copia, diagnóstico protegido/RBAC y audio/dispositivo autorizado. |
+| CMT-003 — runtime por tenant | Se documentaron claims sin lease/idempotencia y riesgo DNS/CIDR; PIAs CMT-003A/B listas. | Implementación no iniciada; probar luego en producción con tenant/dispositivo sintéticos. CRM real espera sandbox elegido por el cliente. |
+| CMT-004 — administración/permisos | Política de roles mínimos, actor/tenant desde BD, claves write-only y selector acotado al tenant. | UAT persistente autenticado, propiedad de catálogo, provisioning de owner, revocación y limpieza de fixtures sintéticos. |
 
 ## Verificación del corte
 
@@ -16,7 +16,9 @@ Baseline: PHDK **2.53.1**, producto **5.2.2**, remote `main` `1c5bd8abc626d45d2e
 - UAT-114: `50-uat/evidence/uat-114-production-landing-demo-disclosure-2026-10-17.json`.
 - UAT-115: `50-uat/evidence/uat-115-production-responsive-layout-2026-10-17.json`.
 - UAT-116: `50-uat/evidence/uat-116-production-spanish-corporate-mobile-2026-10-17.json`.
-- Detalle, límites y bloqueos: [PIA CMT-002](../20-plan/pias/PIA-CMT-002-WIDGET-DIAGNOSTICO.md), [PIA CMT-003](../20-plan/pias/PIA-CMT-003-RUNTIME-POR-TENANT.md), [PIA CMT-004](../20-plan/pias/PIA-CMT-004-ADMIN-PERMISOS.md).
-- Sin prueba/build local de la aplicación. El 64/64 es estático. No se usaron cuentas, secretos, datos de clientes, CRM real ni mutaciones productivas.
+- UAT-117: `50-uat/evidence/uat-117-production-copy-status-2026-10-17.json`.
+- PIAs: CMT-002, CMT-003/003A/003B y CMT-004 en `20-plan/pias/`.
+- Web Railway `3e168f0c-50b9-4ebb-b3c1-0cd5bd81b2a7` `SUCCESS` sobre `3cccb4b`. API Railway `6467f5d6-d99b-41ed-9af8-2f3176d505b7` seguía `BUILDING` al último readback; el siguiente paso verifica settlement.
+- Sin pruebas/builds locales de aplicación. Solo JSON parse/version alignment, `git diff --check` y PHDK static 64/64. Sin credenciales, clientes, CRM, llamadas o cambios de caché.
 
-SIGUIENTE PASO: identificar y preparar un caso CMT-002 de solo lectura en producción; mantener bloqueados audio y diagnóstico autenticado hasta tener el fixture autorizado y el dispositivo de prueba.
+SIGUIENTE PASO: volver a leer Railway API; continuar CMT-002 con el siguiente caso público de solo lectura, y mantener UAT autenticado/audio tras el gate de fixtures.

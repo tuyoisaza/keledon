@@ -1,6 +1,6 @@
 # PIA CMT-002 — widget, UX y diagnóstico seguro
 
-Estado: ACTIVE / PARTIAL · Prioridad: 2 · Producción observada: KELEDON 5.2.2 (source `818ac9c8f1043cfc04768c30770f505b48d5087c`). UAT-112 pasa las muestras planas del CTA; la aceptación integral continúa abierta.
+Estado: ACTIVE / PARTIAL · Prioridad: 2 · Producción observada: KELEDON 5.2.3 (Web source `3cccb4b2f88828fa5d273b682925d3a106dd3b9`). UAT-112 pasa las muestras planas del CTA y UAT-117 pasa el estado visible de copia anónima más el contrato de fuente sin hostname; la aceptación integral continúa abierta.
 
 ## Resultado esperado
 
@@ -26,6 +26,7 @@ El widget público debe dejar claro cuándo muestra una demo y cuándo informaci
 - UAT-114 pasa presencia/disclosure limitados en el árbol accesible de la portada 5.2.2: versión, landmark, controles públicos nombrados y aviso explícito de que la interfaz es ilustrativa y no tiene sesiones/métricas en vivo. No midió viewport, captura visual, contraste del aviso ni lector de pantalla; no se activaron controles. Evidencia: `50-uat/evidence/uat-114-production-landing-demo-disclosure-2026-10-17.json`.
 - UAT-115 pasa una muestra responsive de `/` en 320×720, 375×812 y 768×1024 en producción 5.2.2: sin overflow horizontal, disclosure/título dentro del viewport y menú de 44×44 px. Solo se inspeccionó visualmente 320 px; las otras dos medidas son DOM. No sustituye UAT desktop ni aceptación integral de accesibilidad. Evidencia: `50-uat/evidence/uat-115-production-responsive-layout-2026-10-17.json`.
 - UAT-116 pasa el caso móvil `/` de producción 5.2.2 en español/corporativo a 375×812: aviso, título, acciones y menú nombrado se mantienen dentro del viewport; sin overflow y con objetivo 44×44. Se inspeccionó la captura. No se midió contraste; preferencias/viewport se restauraron. Evidencia: `50-uat/evidence/uat-116-production-spanish-corporate-mobile-2026-10-17.json`.
+- UAT-117 observa en producción 5.2.3 el éxito accesible “Diagnóstico copiado” para visitante anónimo. La fuente fusionada omite los hostnames configurados de API y OAuth, reemplazándolos con texto fijo. No se leyó el portapapeles ni se probó el contenido íntegro; usuarios autenticados, fallo de portapapeles y diagnóstico profundo/RBAC continúan pendientes. Evidencia: `50-uat/evidence/uat-117-production-copy-status-2026-10-17.json`.
 
 ## Casos y aceptación
 
@@ -33,7 +34,7 @@ El widget público debe dejar claro cuándo muestra una demo y cuándo informaci
 |---|---|---|
 | WDG-PUB | Ruta y versión 5.2.2; la demo se identifica como ilustrativa; sin telemetría falsa | Captura/tree de accesibilidad, URL y SHA desplegado; UAT-112 registra versión y SHA actuales |
 | WDG-A11Y | Foco visible, navegación teclado, nombres de acción, estado anunciado y targets/tamaño sin solapamiento en responsive | Resultado por locale/tema/viewports; hallazgos WCAG con severidad |
-| WDG-DIAG | Copia informa éxito/fallo; reporte no contiene tokens, secretos, cuerpos, query privada, PII ni hostname/URL privada | Inspección del contrato y evidencia redacted del estado, nunca clipboard completo |
+| WDG-DIAG | Copia informa éxito/fallo; el reporte no expone hostnames API/OAuth; tokens, secretos, cuerpos, query privada y PII siguen excluidos por el contrato seguro | UAT-117 verifica el estado visible y el source SHA; no leer ni adjuntar el portapapeles. Inspección integral del contenido queda pendiente |
 | WDG-CACHE | Solo perfil desechable; limpieza no rompe sesión de otros perfiles ni persiste datos sensibles | Registro antes/después del perfil UAT |
 | WDG-RBAC | Datos profundos se solicitan y muestran solo con rol autorizado; API deniega a no autorizados | Rol sintético, status HTTP y comportamiento de UI |
 | WDG-AUDIO | Permiso y stream obedecen gesto explícito; error/stop liberan dispositivo; no hay grabación | Hardware/navegador de prueba, permiso y comprobación de stream detenido |

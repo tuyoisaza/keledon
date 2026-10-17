@@ -3,7 +3,7 @@
 Run ID: `20261014-0007-phdk-auto-completion`
 Stage: `50-uat`
 Status: `PARTIAL / ACCEPTANCE INCOMPLETE`
-Candidate: KELEDON 5.2.1, branch `feature/tenant-interface-selector-5.2.0`, source `ef6fe6dbf7eca04708c7200615e7538812751f7e`
+Candidate: KELEDON 5.2.3, production Web source `3cccb4b2f88828fa5d273b682925d3a106dd3b9`
 Date: 2026-10-17
 
 ## Goal / scope
@@ -22,13 +22,15 @@ Verify the production public entry safely and determine whether the tenant inter
 - Observed page title `KELEDON | Cloud-governed contact center runtime`, visible version 5.1.85, public links and content.
 - Opened `/management/teams` without a session; production redirected to `/login`. The email/password form rendered and no authentication was submitted.
 - Re-entered UAT read-only on 2026-10-17 and opened production `/` and `/login` anonymously. Both accessibility trees showed the version and the two named debug actions (UAT-100); neither action was activated.
+- UAT-117 on the deployed v5.2.3 Web observed the anonymous copy action's accessible success status “Diagnóstico copiado”. Source review confirms the copied report withholds configured API/OAuth hostnames. Clipboard contents were intentionally not read or exported; API service was still building at the Railway readback.
 - No sign-in, form submission, manual API call, data mutation, storage operation, external integration or DB access occurred.
 - Created current stories, journey map, acceptance cases and UX/UI audit; preserved evidence snapshots.
+- Updated CMT-002 PIA, UAT case/report, PMO coverage/progress, lifecycle state and evidence JSON for UAT-117.
 
 ## Deliverables
 
 - `UAT_STORIES.md`, `UAT_JOURNEY_MAP.md`, `UAT_CASES.md`, `UAT_ACCESS_REPORT.md`, `UAT_REPORT.md`, `UX_UI_AUDIT_REPORT.md`.
-- Historical snapshots: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/snapshots/candidate-5.2.1-production-readonly/`.
+- Evidence: `evidence/uat-117-production-copy-status-2026-10-17.json`; historical snapshots remain under `snapshots/`.
 - Browser readiness: capability `AVAILABLE_VERIFIED`; target content loaded, but target version does not match candidate.
 
 ## Exit gate
@@ -36,6 +38,7 @@ Verify the production public entry safely and determine whether the tenant inter
 - [x] Harmless production public-entry navigation, anonymous protected-route redirect, and public/login widget presence completed; UAT-098/099/100 PASS only for those narrow checks on v5.1.85.
 - [x] Target mismatch documented: production 5.1.85 vs branch candidate 5.2.1.
 - [x] UAT-096/097 remain BLOCKED; no synthetic identities or persisted role acceptance.
+- [x] UAT-117 passes anonymous copy-status/source-host-withholding scope only; clipboard was not inspected.
 - [ ] Exact-candidate role-based browser journeys, persistence and cross-tenant denials.
 
 ## Risks / blockers

@@ -1,3 +1,9 @@
+## Verified current readback — KELEDON 5.2.3 / 2026-10-17
+
+This readback supersedes earlier 5.2.1/5.2.2 candidate notes below; those remain historical. PR #229 merged at `3cccb4b2f88828fa5d273b682925d3a106dd3b9`. Five package/lock roots and Browser renderer align at 5.2.3; PHDK 2.53.1 coherence is 64/64 static. Web Railway `3e168f0c-50b9-4ebb-b3c1-0cd5bd81b2a7` reports `SUCCESS`; API `6467f5d6-d99b-41ed-9af8-2f3176d505b7` was `BUILDING` at 18:42:32Z. UAT-117 observed v5.2.3 and the accessible copy-success status; source withholds API/OAuth hostnames. Clipboard was not read. CMT-001 is complete for this cut; CMT-002/003/004 remain active/partial. Overall Auto remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: re-read Railway API status and continue the next public, read-only CMT-002 UAT; keep privileged/audio cases pending synthetic fixtures.
+
 # PMO Status — 5.2.1 PIA continuation / PHDK 2.53.1; portfolio partial
 
 ## Current continuation — 2026-10-17

@@ -1,3 +1,9 @@
+## Verified current readback — KELEDON 5.2.3 / 2026-10-17
+
+This readback supersedes the earlier 5.2.1/5.2.2 candidate summaries below; those remain historical. PR #229 merged at `3cccb4b2f88828fa5d273b682925d3a106dd3b9`. Five package/lock roots and Browser renderer align at 5.2.3; PHDK 2.53.1 coherence is 64/64 static. Railway Web deployment `3e168f0c-50b9-4ebb-b3c1-0cd5bd81b2a7` reports `SUCCESS`; API `6467f5d6-d99b-41ed-9af8-2f3176d505b7` was `BUILDING` at 18:42:32Z. UAT-117 observed v5.2.3 and the accessible copy success on anonymous production UI; deployed source withholds configured API/OAuth hostnames, and clipboard was not read. Overall Auto remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: re-read Railway API settlement, then continue the next anonymous, read-only CMT-002 case. Keep authenticated and audio UAT pending synthetic identities/device fixtures.
+
 # Current PHDK Auto — continuation PIAs / KELEDON 5.2.1 / PHDK 2.53.1
 
 Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; latest product PR #213 is merged at `5884b80ba4318b2c4beed3e50d94945028b9a311`; documentation PRs #214–#218 are merged after PR #212 at `64cef2f36c5a0deb1561c3ab2e0e45b850c9a87e`. PHDK v2.53.1 coherence recheck passes 64/64. The four ordered PIAs include CMT-003A (queue lease/effect idempotency) and CMT-003B (tenant DNS/CIDR egress). Production UAT-108 passes responsive scope; UAT-109 passes only sampled pairs; UAT-110 passes a limited public keyboard/AX sample; expanded UAT-111 found CTA contrast failures in dark and corporate on 5.2.1. Fix is prepared on a source branch at candidate 5.2.2; production UAT-112 is the required acceptance gate. Full contrast, screen-reader acceptance, authenticated behavior and audio remain open.
