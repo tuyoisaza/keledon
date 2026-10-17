@@ -2,16 +2,16 @@
 
 ## Current Auto continuation — 2026-10-17
 
-The user's ordered portfolio confirmation remains current: baseline/version/PR; widget/diagnostics; per-client voice→Cloud→Browser→CRM; administration/permissions. No new commitment or scope reduction was introduced. Candidate branch `feature/tenant-interface-selector-5.2.0` contains product source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; current branch head is `0a764385933872f59dfe2556b6054d742f897f2d`. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) is OPEN at that head, with no check runs or review decision. PHDK 2.53.1 coherence passes 64/64.
+The user's ordered portfolio confirmation remains current: baseline/version/PR; widget/diagnostics; per-client voice→Cloud→Browser→CRM; administration/permissions. No new commitment or scope reduction was introduced. Candidate branch `feature/tenant-interface-selector-5.2.0` contains the tenant interface selector plus the ManagedInterface encryption and audit-redaction repairs; product source through commit `fd7af3b963505fd7756c78ecfa7d8469096a9d84`, current branch/PR head `58ffb1a9c20dd593ae2fd9b5aaabbd3e9a951c01`. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) is OPEN at the current head, with no check runs or review decision. PHDK 2.53.1 coherence passes 64/64.
 
 | Commitment | Status | Current evidence | Remaining gate |
 |---|---|---|---|
-| CMT-001 baseline/version/PR | ACTIVE / PARTIAL | PR #210 open; standards upgraded; production public page reports 5.1.85. | Resolve safe acceptance, review/check gates, merge and verify main/deployment. |
+| CMT-001 baseline/version/PR | ACTIVE / PARTIAL | PR #210 open; standards upgraded; production public page reports 5.1.85; UAT-102 records candidate-release mismatch. | Resolve safe acceptance, review/check gates, merge and verify main/deployment. |
 | CMT-002 widget/diagnostics | ACTIVE / PARTIAL | Prior local/source acceptance remains scoped to its recorded candidate. | Native device/audio and broad accessibility/localization acceptance. |
 | CMT-003 voice→Cloud→Browser→CRM | ACTIVE / PARTIAL | Client-neutral source and tenant configuration evidence retained. | Per-client sandbox, call/CRM stack and customer acceptance; no endpoint selected/contacted. |
-| CMT-004 administration/permissions | ACTIVE / PARTIAL | Approved tenant/role policy; 5.2.1 tenant-scoped interface selector source; UAT-098 public homepage and UAT-099 anonymous management redirect, both on deployed v5.1.85. | Isolated synthetic role/persistence/cross-tenant acceptance; remaining CRUD matrix and other required gates. |
+| CMT-004 administration/permissions | ACTIVE / PARTIAL | Approved tenant/role policy; tenant-scoped interface selector; new interface-secret encryption and audit redaction are source changes in API/Cloud; UAT-098/099/100/102 are limited read-only observations on v5.1.85. | UAT-101 exact-candidate credential acceptance, synthetic role/persistence/cross-tenant acceptance; remaining CRUD matrix and other required gates. |
 
-**Portfolio:** 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL / 0 deferred / 0 cancelled. Production still displays v5.1.85 and cannot accept branch-only 5.2.1. UAT-099 confirms only an anonymous redirect to login, not authenticated tenant permissions or candidate behavior. No production accounts/data were touched.
+**Portfolio:** 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL / 0 deferred / 0 cancelled. Production still displays v5.1.85 and cannot accept branch-only 5.2.1. UAT-099 confirms only an anonymous redirect to login, not authenticated tenant permissions or candidate behavior. UAT-101 remains blocked pending exact candidate deployment and an approved synthetic fixture. No production accounts/data were touched.
 
 SIGUIENTE PASO: continue delivery and safe candidate acceptance; preserve all four commitments as open.
 

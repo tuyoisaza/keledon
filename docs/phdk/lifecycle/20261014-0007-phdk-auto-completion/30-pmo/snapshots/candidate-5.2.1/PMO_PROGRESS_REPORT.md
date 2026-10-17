@@ -2,14 +2,14 @@
 
 | Commitment | Verified progress | Remaining acceptance |
 |---|---|---|
-| CMT-001 baseline/version/PRs | PHDK 2.53.1 installed; PR #210 open at branch head `0a764385933872f59dfe2556b6054d742f897f2d`; production shows 5.1.85. | No checks/review decision reported; safe UAT and exact `main`/deployment readback remain. |
+| CMT-001 baseline/version/PRs | PHDK 2.53.1 installed; PR #210 open at `58ffb1a9c20dd593ae2fd9b5aaabbd3e9a951c01`; UAT-102 rechecked production at v5.1.85. | No checks/review decision reported; exact-candidate UAT, merge and deployment readback remain. |
 | CMT-002 widget/diagnostics | Prior source and local acceptance retained with original scope. No local app tests run in this continuation. | Native device/audio and broad assistive-tech/localization acceptance. |
 | CMT-003 voice→Cloud→Browser→CRM | Client-neutral contracts and allowlist evidence retained; no customer integration contacted. | Client must select and provide safe call/CRM sandbox for acceptance. |
-| CMT-004 administration/permissions | Tenant interface selector/stale-response source fixes on branch; UAT-098 homepage and UAT-099 anonymous management redirect are on production v5.1.85, not feature acceptance. | Synthetic role sessions, persisted assignment, cross-tenant denial and exact-candidate browser evidence. |
+| CMT-004 administration/permissions | Tenant interface selector/stale-response fixes plus ManagedInterface encryption/audit-redaction source repairs; UAT-098/099/100/102 are read-only on production v5.1.85. | UAT-101 on the exact candidate, synthetic role sessions, persisted assignment, cross-tenant denial and exact-candidate browser evidence. |
 
 Portfolio remains 4 confirmed / 0 complete / 4 active-partial. CRUD inventory counts from the prior candidate remain historical and are not recalculated by this read-only smoke. PHDK static coherence: 64/64. See stage 30 PMO snapshot `snapshots/candidate-5.2.1/`.
 
-SIGUIENTE PASO: continue normal versioned delivery and re-enter tenant UAT only with a safe target matching 5.2.1.
+SIGUIENTE PASO: continue normal versioned delivery and re-enter UAT-101 only after candidate 5.2.1 is deployed with an approved synthetic credential fixture and redacted persistence evidence path.
 
 ---
 

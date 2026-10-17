@@ -10,7 +10,7 @@ Continuar la estandarización de KELEDON con PHDK y avanzar, en este orden, los 
 
 - Repositorio: `tuyoisaza/keledon`.
 - Rama: `feature/tenant-interface-selector-5.2.0`.
-- Candidato de producto: 5.2.1; commit de código revisado: `ef6fe6dbf7eca04708c7200615e7538812751f7e`. Ver el handoff de entrega para el head actual del PR, que también incluye evidencia y documentación PHDK.
+- Candidato de producto: 5.2.1; selector base `ef6fe6dbf7eca04708c7200615e7538812751f7e`; cifrado de credenciales y redacción de auditoría añadidos hasta `fd7af3b963505fd7756c78ecfa7d8469096a9d84`; head actual del PR `58ffb1a9c20dd593ae2fd9b5aaabbd3e9a951c01` también incluye evidencia y documentación PHDK.
 - Base `main` registrada: `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`.
 - PHDK actualizado: 2.53.1 desde upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherencia estática 64/64.
 - Fuentes relevantes: `services/web/src/pages/ManagementTeamsPage.tsx`, `services/web/src/lib/request-sequence.ts`, guards y servicios API/Cloud de asignación tenant/equipo, y la regresión `services/web/test/team-interface-request-sequence.test.cjs`.

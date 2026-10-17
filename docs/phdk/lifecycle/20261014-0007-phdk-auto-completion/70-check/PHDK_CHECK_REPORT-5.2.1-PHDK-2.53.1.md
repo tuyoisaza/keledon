@@ -1,6 +1,6 @@
 # PHDK Check — candidate 5.2.1 with PHDK 2.53.1 (2026-10-17)
 
-**Result: PASS FOR DOCUMENTATION/PHDK ALIGNMENT; PRODUCT PORTFOLIO PARTIAL.** Product source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PR #210 is open, not merged.
+**Result: PASS FOR DOCUMENTATION/PHDK ALIGNMENT; PRODUCT PORTFOLIO PARTIAL.** Selector base source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; credential-encryption and audit-redaction source through `fd7af3b963505fd7756c78ecfa7d8469096a9d84`; PR #210 current head `58ffb1a9c20dd593ae2fd9b5aaabbd3e9a951c01` is open, not merged.
 
 ## Checks performed in this continuation
 

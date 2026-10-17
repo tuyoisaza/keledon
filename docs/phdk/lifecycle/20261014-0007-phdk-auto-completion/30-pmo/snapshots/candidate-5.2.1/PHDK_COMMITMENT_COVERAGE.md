@@ -1,6 +1,6 @@
 ## Current continuation — 5.2.1; 4/4 commitments active-partial (2026-10-17)
 
-PHDK 2.53.1; candidate product source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; current branch/PR #210 head `0a764385933872f59dfe2556b6054d742f897f2d`; PR is OPEN, not merged. Production is v5.1.85. UAT-098 (public homepage) and UAT-099 (anonymous `/management/teams` redirect to `/login`) are read-only checks on that older deployment and are not candidate acceptance.
+PHDK 2.53.1; initial selector implementation `ef6fe6dbf7eca04708c7200615e7538812751f7e`; credential encryption/audit-redaction source through `fd7af3b963505fd7756c78ecfa7d8469096a9d84`; current docs/evidence branch and PR #210 head `58ffb1a9c20dd593ae2fd9b5aaabbd3e9a951c01`. PR is OPEN, not merged. Production is v5.1.85. UAT-098/099/100/102 are read-only checks on that older deployment and are not candidate acceptance; UAT-101 remains NOT RUN.
 
 | Commitment | Current continuation evidence | Open gate |
 |---|---|---|
