@@ -16,7 +16,7 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; curren
 | AEO/GEO | REUSED / SOURCE REVALIDATED | Public answer source unchanged; citation/field evidence remains unmeasured. |
 | Check | PASS FOR DOC/PIA SCOPE; WHOLE PRODUCT PARTIAL | PHDK coherence 64/64; UAT evidence JSON parses; `git diff --check` passes. UAT-106 is narrow public-widget acceptance only. Current PR #212 is open with no hosted status checks. Admin and authenticated feature gates remain open. |
 | Remediation | PENDING | This continuation adds actionable PIA packages and current production evidence; source remediation remains tied to verified acceptance findings. |
-| Delivery | PIA PR OPEN / WHOLE GOAL PARTIAL | PR #212 targets `main`, base SHA `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`, head SHA `38141045c3beb3a0a543c0955ad727727fada54f`; it has no hosted checks. Product PR #210 and production version 5.2.1 remain separately verified. Whole-goal gate remains open. |
+| Delivery | PIA PR OPEN / WHOLE GOAL PARTIAL | PR #212 targets `main`; GitHub compare reports the branch ahead of its recorded base, with no hosted checks. Product PR #210 and production version 5.2.1 remain separately verified. Whole-goal gate remains open. |
 
 Overall Auto remains **PARTIALLY DELIVERED**. Authenticated tenant/persistence acceptance, safe catalog provisioning, required key configuration, broader product commitments and a passing completion gate remain open.
 
