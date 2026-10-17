@@ -1,0 +1,67 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto four-front continuation; deliver and verify the scoped 5.1.79 source update while retaining incomplete portfolio status",
+  "target_branch": "main",
+  "expected_version": "5.1.79",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "source_candidate_sha": "79be6f743ac8cc3fe69ed62a1b9a55c4fa2867c9",
+  "source_candidate_tree": "7d8cbd90f47e029a3c084af8c79c817410ec44a2",
+  "merged_commit_sha": "8deb6d7ff71d42a628e966bcf64d340b4f10e337",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/198",
+  "remote_main_verified_at": "2026-10-17T10:48:52Z",
+  "github": {
+    "state": "MERGED",
+    "merge_method": "squash",
+    "hosted_checks": [],
+    "review_submissions": [],
+    "main_branch_protection": false
+  },
+  "checks": {
+    "version_alignment": {
+      "status": "PASS",
+      "evidence": "Remote main 8deb6d7 reads 5.1.79 in services/web, services/api, cloud, landing and browser package/lock roots and Browser renderer. PHDK v2.52.2 coherence check passes 63/63."
+    },
+    "commit_prefix": {
+      "status": "PASS",
+      "evidence": "The source commit is v5.1.79 fix(monitoring): report unprobed health as unknown; the squash merge subject is 5.1.79: truthful agent health and platform hardening."
+    },
+    "push_and_pr": {
+      "status": "PASS",
+      "evidence": "Feature branch was pushed; PR #198 targeted main and GitHub reports it MERGED."
+    },
+    "remote_main": {
+      "status": "PASS",
+      "evidence": "Fresh git fetch and GitHub readback confirm origin/main SHA 8deb6d7ff71d42a628e966bcf64d340b4f10e337 and version 5.1.79."
+    },
+    "scoped_validation": {
+      "status": "PASS",
+      "evidence": "API/Cloud regressions 42/42 and 19/19 suites; monitoring contracts 2/2 each; API, Cloud, Web, Landing and Browser builds pass; Web/Landing typechecks pass; Web UAT 8/8 plus admin-settings, theme-template and AI-admin; Browser focused tests 4/4; exact-source UAT-090 recorded at source commit 79be6f743ac8cc3fe69ed62a1b9a55c4fa2867c9."
+    },
+    "scope_reconciliation": {
+      "status": "PASS",
+      "evidence": "All four owner-confirmed commitments remain explicitly tracked as ACTIVE/PARTIAL (0/4 DONE); no open PR remains. Full PHDK Auto is not declared complete. GitHub had no hosted checks/reviews and main was unprotected; no review event is claimed."
+    }
+  },
+  "portfolio_status": "PARTIALLY DELIVERED",
+  "portfolio_remaining": [
+    "Railway Web root/config and successful deployment; post-merge API auto-deploy succeeded, Web deployment failed because /services/web context cannot find /shared",
+    "PostgreSQL migration, restart and persistence acceptance",
+    "396 blocked CRUD rows and broad admin operation coverage",
+    "Native device/audio and broad accessibility/localization acceptance",
+    "Tenant-selected live voice and CRM acceptance"
+  ],
+  "deployment": {
+    "api": "SUCCESS",
+    "web": "FAILED",
+    "web_deployment_id": "ec501578-e123-422e-b1f4-2ecb6f7a4984",
+    "merged_sha": "8deb6d7ff71d42a628e966bcf64d340b4f10e337",
+    "root_directory": "/services/web",
+    "builder": "RAILPACK",
+    "failure": "Docker build cannot find /shared for COPY shared/ /shared/.",
+    "provider_settings_changed": false
+  },
+  "database_used": false,
+  "provider_calls": 0,
+  "customer_data_used": false
+}

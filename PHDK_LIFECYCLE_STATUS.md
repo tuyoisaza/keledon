@@ -1,6 +1,6 @@
-## Current PHDK Auto — 5.1.79 truthful dashboard health; portfolio partial (2026-10-17)
+## Current PHDK Auto — 5.1.80 candidate checked; delivery pending; portfolio partial (2026-10-17)
 
-Run 20261014-0007-phdk-auto-completion; repository tuyosaza/keledon; branch `fix/phdk-auto-continuation-5-1-78`, based on fetched and verified `origin/main` `383fd84f2fd1c7218882dc840db7e5be1957246a` (5.1.77). Versioned source commit `79be6f743ac8cc3fe69ed62a1b9a55c4fa2867c9` removes false TTS/STT/AI readiness, reports unprobed and aggregate health as unknown, and initializes Web/Landing dashboard state as unknown; UAT-090 passes paired API/Cloud contracts. UAT-089 remains bound to exact production-build source revision `9f4cf79a53f81a95e64f60d18aecf06e746dff04`. PHDK v2.52.2 updater is CURRENT at canonical SHA `1feaec98afbc9df10e25c566c993064359d7fa13`, coherence 63/63. All five package/lock roots and Browser renderer are 5.1.79. PR #198 remains open; no hosted checks or independent review are present. PostgreSQL migration/restart, Railway configuration and broader portfolio acceptance remain open.
+Run 20261014-0007-phdk-auto-completion; repository tuyosaza/keledon; PR #198 remains merged at `8deb6d7ff71d42a628e966bcf64d340b4f10e337` (5.1.79). New source candidate commit `4b7c9cd1c340739ab5404cf13c23f1f86156c3df` advances all five package/lock roots and Browser renderer to 5.1.80 and removes fabricated healthy Integration Hub metrics before a real provider check. UAT-091 passes API/Cloud contracts 2/2 each and shared health-model tests 2/2. Builds, Web/Landing typechecks, targeted lint, API/Cloud regressions, and PHDK v2.52.2 coherence (63/63) pass. Latest full Web UAT run is 7/8 due to one flow-editor timeout; both affected flow tests pass individually. Candidate PR delivery is pending. Railway API auto-deploy succeeded for 5.1.79 but Web failed because `/services/web` cannot provide the Dockerfile's root-level `/shared` context. PostgreSQL migration/restart and broader portfolio acceptance remain open.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -9,16 +9,16 @@ Run 20261014-0007-phdk-auto-completion; repository tuyosaza/keledon; branch `fix
 | Plan | REUSED | Existing brownfield plan and tenant architecture remain current. |
 | PMO / Workstreams | IN PROGRESS | CMT-002 dashboard/diagnostics truthfulness and CMT-004 least-privilege admin advance; all four commitments remain 0/4 done and active/partial. |
 | Integration Review | COMPLETED FOR 5.1.79 SOURCE SLICE | API/Cloud health contracts and Web/Landing initial state agree; dependency readiness is unknown without probes and socket connectivity remains separate. |
-| UAT / UAT Fix | COMPLETED FOR SCOPED SOURCE CONTRACTS; PORTFOLIO PARTIAL | UAT-090 paired service contracts pass 2/2 in API and Cloud; Web/Landing typechecks and builds pass. UAT-089 passes 12 browser checks for audit controls, mobile keyboard navigation, export failure and tenant denial. Exact-source JSON/screenshots are versioned. No live health probe or database persistence is claimed. |
+| UAT / UAT Fix | COMPLETED FOR UAT-091 SOURCE CONTRACTS; FULL WEB SUITE INTERMITTENT; PORTFOLIO PARTIAL | UAT-091 API/Cloud service contracts pass 2/2 each and shared health-model tests pass 2/2. Web/Landing typechecks and builds pass. Latest full Web UAT run is 7/8; the sole flow-editor timeout passes in isolation. No live health probe or database persistence is claimed. |
 | SEO | REUSED / NOT AFFECTED | No public route, copy, metadata or indexability changes. |
 | AEO/GEO | REUSED / NOT AFFECTED | No public claim or answer content changes. |
-| Check | RUNNING / ALIGNMENT INCOMPLETE | Rechecking the 5.1.79 full candidate, versions and current remote state; 5.1.78 GitHub/Railway observations remain bounded read-only evidence. External root/config, database, restart and billing gates remain unverified. |
-| Remediation | RUNNING | Removes hard-coded healthy values where no TTS/STT/AI probes exist; paired contract tests pass. Other source-checkable gaps remain under review. |
-| Delivery | PENDING FINAL CHECK | PR #198 remains open and mergeable (`CLEAN`) at the last read; hosted checks/review absent. Normal versioned PR delivery to `main` remains pending final Check and integration gate. |
+| Check | COMPLETED FOR 5.1.80 SOURCE SLICE; DELIVERY PENDING | PHDK coherence 63/63; API/Cloud regressions 42/42 and 19/19, exact service/shared contracts, builds, targeted lint, UI builds/typechecks and Browser version build pass. Latest whole Web UAT is intermittent at 7/8; source-slice contract is green. |
+| Remediation | COMPLETED FOR VERIFIED SOURCE FINDING | Removes hard-coded healthy values where no TTS/STT/AI probes exist; paired contract tests pass. Other source-checkable gaps remain under review. |
+| Delivery | PR #199 OPEN / MERGEABLE; WEB DEPLOY BLOCKED | Versioned source and evidence are pushed to `fix/integration-health-unknown-5-1-80`; no hosted checks/reviews, `main` unprotected. Merge readback remains. Railway Web root `/services/web` omits `/shared` from Docker build context. |
 
-Overall: PHDK AUTO PARTIALLY DELIVERED. UAT tally is 87 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. No migrations, provider calls, private/customer endpoints or deployments were performed.
+Overall: PHDK AUTO PARTIALLY DELIVERED. UAT tally is 88 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix remains 560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. No migrations, provider calls, private/customer endpoints or deployments were performed for 5.1.80.
 
-SIGUIENTE PASO: finish normal delivery of the verified 5.1.79 source candidate to `main`, then read back the merged SHA/version. Track the Railway root/config/deployment and PostgreSQL gates as separate owner/environment acceptance items; keep Auto partial until all confirmed gates close.
+SIGUIENTE PASO: deliver the checked 5.1.80 source through the normal PR path and read back `main`; keep Auto partial until all confirmed gates close. Railway's owner/provider configuration must expose the repository-root context and select the Dockerfile before Web can deploy; PostgreSQL-backed migration/restart and broad acceptance also remain open.
 
 
 ---

@@ -1,5 +1,11 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.80 — UAT-091 integration telemetry is unknown until measured
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-091 | CMT-002 / authenticated integration dashboard observer | Read default API and Cloud provider health and connection metrics before any provider adapter check; attempt the generic provider check; evaluate the shared Web/Landing health presentation model. | Unchecked providers have no health-check or last-sync timestamp and no fabricated zero-valued request/data-transfer metrics, 100% uptime, 0% errors or 0ms response. The display remains unknown/not measured until a real check records a request; a recorded check then determines healthy/warning/error. | API/Cloud Jest contracts, shared Node health-model tests, Web/Landing typecheck/build | PASS scoped contracts: API 2/2; Cloud 2/2; shared health model 2/2; Web/Landing typechecks and builds. Latest full Web UAT run 7/8 with an unrelated flow-editor timeout; both implicated flow tests pass individually. No live provider/customer call. Exact-source evidence: `docs/phdk/workstreams/INTEGRATION-HEALTH-UAT-5.1.80.json`. |
+
 ## Candidate 5.1.79 — UAT-090 truthful dependency health status
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

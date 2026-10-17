@@ -15,6 +15,8 @@ interface IntegrationProvider {
     responseTime: number;
     uptime: number;
     errorRate: number;
+    lastCheck?: Date | string;
+    totalRequests?: number;
   };
   features: string[];
   config: {
