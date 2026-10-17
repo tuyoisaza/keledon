@@ -72,7 +72,7 @@ test('Landing public navigation keeps preferences clear of hero and available on
       const buttons = [...row.querySelectorAll('button')].map(button => {
         const rect = button.getBoundingClientRect();
         const visual = getComputedStyle(button, '::before');
-        return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height, visualWidth: parseFloat(visual.width), visualHeight: parseFloat(visual.height), label: button.getAttribute('aria-label') };
+        return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height, visualLeft: rect.left + parseFloat(visual.left), visualRight: rect.right - parseFloat(visual.right), visualWidth: parseFloat(visual.width), visualHeight: parseFloat(visual.height), label: button.getAttribute('aria-label') };
       });
       return { brand: { left: brandRect.left, top: brandRect.top, bottom: brandRect.bottom }, widget: { left: rowRect.left, top: rowRect.top, bottom: rowRect.bottom }, buttons };
     });
@@ -83,6 +83,7 @@ test('Landing public navigation keeps preferences clear of hero and available on
     assert.ok(geometry.buttons.every(button => button.width === 44 && button.height === 44), `diagnostics actions must provide 44x44 hit targets: ${JSON.stringify(geometry.buttons)}`);
     assert.ok(geometry.buttons.every(button => button.visualWidth === 28 && button.visualHeight === 28), `visible action tiles must remain compact at 28x28: ${JSON.stringify(geometry.buttons)}`);
     assert.ok(geometry.buttons[1].left >= geometry.buttons[0].right, `diagnostics hit targets must not overlap: ${JSON.stringify(geometry.buttons)}`);
+    assert.equal(geometry.buttons[1].visualLeft - geometry.buttons[0].visualRight, 4, `visible action tiles must have exactly 4px separation: ${JSON.stringify(geometry.buttons)}`);
     assert.ok(geometry.buttons.every(button => button.label), 'both icon-only hit targets retain accessible names');
     await fs.mkdir(evidence, { recursive: true });
     await page.screenshot({ path: path.join(evidence, `${evidencePrefix}-home-desktop.png`) });

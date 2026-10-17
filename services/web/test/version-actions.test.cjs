@@ -96,7 +96,8 @@ test('anonymous and debug-off render the exact compact version → clipboard →
   assert.match(styles, /gap:\s*4px/);
   assert.match(styles, /font-size:\s*12px/);
   assert.match(styles, /width:\s*44px;\s*height:\s*44px;\s*min-width:\s*44px/);
-  assert.match(styles, /button::before[\s\S]*?inset:\s*8px/);
+  assert.match(styles, /\[data-action="copy"\]::before\s*\{\s*inset:\s*8px 0 8px 16px/);
+  assert.match(styles, /\[data-action="clear"\]::before\s*\{\s*inset:\s*8px 16px 8px 0/);
   assert.match(styles, /width:\s*14px;\s*height:\s*14px/);
   assert.match(styles, /clip:\s*rect\(0,\s*0,\s*0,\s*0\)/);
 });

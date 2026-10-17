@@ -1,3 +1,13 @@
+## Candidate 5.1.77 Check — scoped PASS; whole Auto remains partial
+
+The widget spacing correction passes source Check and exact-candidate UAT: visible 28×28 tiles are 4px apart while separate 44×44 targets remain non-overlapping. Web diagnostics 19/19; Browser widget/boundary 4/4; full Web UAT 7/7 plus admin/theme/AI journeys; Landing desktop/mobile UAT; Web/Landing builds, typechecks and SEO 1/1 each; PHDK coherence 61/61. The stale-dist first attempt is documented and resolved by rebuilding and rerunning. Full report: `PHDK_CHECK_REPORT-5.1.77.md`.
+
+Whole portfolio remains **PARTIALLY DELIVERED**: UAT 85 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. Database/audit migration, broad CRUD, native device/audio, broad accessibility/localization, customer-specific live integration, Cloud legacy parity and deployed SEO/AEO gates remain open.
+
+SIGUIENTE PASO: deliver candidate 5.1.77 through the normal PR flow and verify remote `main`; no unrelated gate is waived.
+
+---
+
 # Check handoff — candidate 5.1.75; scoped source checks pass, whole portfolio partial
 
 The 5.1.75 candidate adds accessible/localized Team Settings behavior. Full diff review found no new critical/high gap; Web typecheck/build, integrated UAT 7/7, focused Team Settings UAT 53 assertions, Web/Landing SEO 1/1 each, focused ESLint and PHDK coherence 61/61 pass. Current 65-seo and 67-aeo-geo handoffs were revalidated against unchanged public content. Detailed report: `PHDK_CHECK_REPORT-5.1.75.md`.

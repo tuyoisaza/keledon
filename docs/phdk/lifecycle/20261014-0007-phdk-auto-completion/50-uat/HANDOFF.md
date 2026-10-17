@@ -1,3 +1,13 @@
+## Candidate 5.1.77 — UAT-067 widget geometry PASS; portfolio partial
+
+Built Web UAT passes 7/7 suites plus standalone admin-settings, theme-template and AI-admin journeys. Landing desktop/mobile Playwright measured 44×44 non-overlapping targets and exactly 4px between 28×28 visible tiles; Web diagnostics remains 19/19 and Browser widget/boundary tests pass 4/4. An initial run used stale `dist` files; rebuilt Web/Landing 5.1.77 artifacts and the full retest passed. Evidence and limitations are in `UAT_REPORT.md` and `INTEGRATION_REPORT-5.1.77.md`.
+
+Portfolio remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD remains 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS. Packaged Electron visuals, broad accessibility/localization, database migrations, customer-specific live calls/CRM and Cloud parity remain open.
+
+SIGUIENTE PASO: run Check/remediation on the integrated 5.1.77 candidate; keep whole Auto partial.
+
+---
+
 ## Current UAT-086/087 — superadmin Web CRUD journeys PASS
 
 Built Web UAT now covers Company, Brand, Team and User create/update/detail/confirmed-delete journeys, with separate fields and payload checks. New User creation defaults to `user`; the superadmin-only flow assigns the elevated `admin` role and Tenant B company. Synthetic stores confirm list/detail readback and fixture removal. API/Cloud persisted authorization for the same resource families is separate evidence in UAT-071/075/076. Evidence: `docs/phdk/evidence/uat-local-web.json` and `docs/phdk/evidence/uat-superadmin-{company,brand,team,user}-detail.png`.

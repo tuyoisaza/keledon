@@ -1,3 +1,11 @@
+## Candidate 5.1.77 — diagnostics widget spacing integrated
+
+The shared Web/Landing/Browser widget now preserves separate non-overlapping 44×44 hit targets while placing the visible 28×28 tiles exactly 4px apart. All five package/lock roots and the Browser renderer read 5.1.77. Web/Browser diagnostics tests, both builds, Web/Landing typechecks, full Web UAT (7/7 plus standalone admin/theme/AI UAT), Landing desktop/mobile navigation UAT, both SEO contract tests and PHDK coherence 61/61 pass. The first UAT attempt used stale `dist` files; rebuilt 5.1.77 artifacts and the complete rerun pass. Packaged Browser visual runtime remains unverified. Full evidence: `INTEGRATION_REPORT-5.1.77.md`.
+
+SIGUIENTE PASO: reuse the unchanged-content SEO/AEO checks, run exact-candidate Check and safe remediation, then deliver through a normal PR. Whole Auto remains partial.
+
+---
+
 ## Candidate 5.1.72 integration exit — ready for exact-candidate Check
 
 The four confirmed workstreams now have a coherent candidate. API and Cloud contracts remain aligned; stale local proof scripts are removed and regression-checked. Browser UAT's corrected opacity-aware contrast scanner found one further issue in missing-provider-key copy (3.30:1), fixed for both OpenAI and Gemini with the full semantic muted foreground. Production-built Web UAT on the updated main checkout passes 6/6 plus AI-admin and all sampled contrast routes.

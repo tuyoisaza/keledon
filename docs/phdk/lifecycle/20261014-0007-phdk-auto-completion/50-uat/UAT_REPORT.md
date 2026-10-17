@@ -1,3 +1,17 @@
+## Candidate 5.1.77 — UAT-067 production-built widget geometry retest PASS
+
+Run date: 2026-10-17. Candidate source commit: `0da085bddbb7157453ddca3951960209a94c9e9b` on `fix/diagnostics-widget-visual-spacing-5-1-77`, based on `5811f1033ea6880ec582ab40dbe35dd8125284a6`; all five package/lock roots and Browser renderer are 5.1.77. Intent: reduce developer/customer debugging back-and-forth through a safe, visible, copyable and resettable diagnostics row (CMT-002). The affected UAT story remains aligned with the confirmed project intent.
+
+The first run used stale `landing/dist` and `services/web/dist` artifacts: Landing read v5.1.75 and both rendered the prior 20px visible gap. Rebuilding both projects from 5.1.77 corrected the served candidate. The full production-built Web UAT then passed 7/7 suites, followed by admin-settings, theme-template and AI-admin UAT. UAT-067 confirms anonymous/debug-off access, 44×44 buttons, 28×28 tiles, exactly 4px between tiles, keyboard focus, status announcements, truthful copy/reset and existing selected regression flows. Landing Playwright UAT passed at 1280×900 and 390×844; both hit targets remain separated and 44×44, and the visible controls remain 28×28 with a measured 4px gap. All external browser requests were blocked; APIs were synthetic/intercepted. No customer data or provider writes were used.
+
+Commands run: `npm run build` in `services/web` and `landing`; `npm run test:uat` in `services/web`; `npm run test:diagnostics`; Browser `npm run build` and `node --test tests/version-actions.test.cjs tests/renderer-module-boundaries.test.cjs`; Web/Landing `npm run typecheck`; targeted ESLint on the modified Web tests; Web/Landing `npm run test:seo`; PHDK coherence 61/61. All passed. The initial stale-dist failure was fixed and fully rerun.
+
+Evidence: `docs/phdk/evidence/uat-local-web.json`; `docs/phdk/evidence/uat-landing-5.1.77-navbar.json` and adjacent desktop/mobile screenshots. Browser packaged Electron visual rendering, OS/device/audio, broad screen-reader and full route/locale acceptance remain MANUAL/BLOCKED. The total portfolio remains **85 PASS, 0 BLOCKED, 1 MANUAL** and the CRUD matrix remains **560 rows: 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**; this scoped retest adds no new CRUD row or portfolio tally.
+
+Conclusion: **ACCEPTANCE INCOMPLETE** for whole Auto; the CMT-002 widget geometry case passes for the tested Web/Landing scope.
+
+---
+
 ## Candidate 5.1.73 — UAT-086/087 superadmin Web CRUD PASS
 
 Production-built Web UAT passes superadmin User, Brand and Team create/edit/detail/confirmed-delete journeys against intercepted synthetic APIs; UAT-072 Company coverage now also asserts detailed country/industry readback. New users begin as `user`; a superadmin explicitly assigns `admin` and a selected company. The tests verify payloads, list/detail readback and cleanup of synthetic records. API/Cloud PostgreSQL authorization and persistence for these resources is proven separately by UAT-071/075/076; the Web fixture is not database evidence. Evidence: `docs/phdk/evidence/uat-local-web.json` and `docs/phdk/evidence/uat-superadmin-{company,brand,team,user}-detail.png`.

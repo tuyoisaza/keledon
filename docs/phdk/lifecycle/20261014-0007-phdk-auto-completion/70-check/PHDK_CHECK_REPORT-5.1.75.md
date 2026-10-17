@@ -1,6 +1,6 @@
 # PHDK Check — candidate 5.1.75 scoped recheck
 
-Run 20261014-0007-phdk-auto-completion; PHDK 2.51.5, canonical SHA d5ccc569eda1233c66f9274f23873a6934f2e3f8; branch ix/web-team-settings-accessibility-5-1-75, base 85d83a130da506607972c868f3a4dd83d85b018b. Candidate source/diff fingerprint (staged scope before this report): $candidateHash. The 61/61 manifest coherence and exact upstream manifest verification pass.
+Run 20261014-0007-phdk-auto-completion; PHDK 2.51.5, canonical SHA d5ccc569eda1233c66f9274f23873a6934f2e3f8; reviewed candidate commit 7cca2707bd95cc55e37f1c8cc9f8746f829ec2e8, delivered in PR #194 (merge commit baf705dedb323fdcaa823a8b9747a0d1a78d9c7d; base 85d83a130da506607972c868f3a4dd83d85b018b). The 61/61 manifest coherence and exact upstream manifest verification pass.
 
 ## Audit scope and evidence
 

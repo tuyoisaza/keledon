@@ -1,3 +1,15 @@
+## v5.1.77 — compact diagnostics controls with 4px spacing
+
+- Align the Web, Landing and Browser diagnostics tiles to a visible 4px gap while preserving independent 44×44px hit targets.
+- Add production-built Web geometry assertions and keep Browser renderer geometry covered by its focused contract test.
+- Correct malformed metadata in the 5.1.75 Check report without removing its history.
+- Align all five app package/lock roots and the Browser renderer at 5.1.77.
+
+### Verification
+- Web diagnostics component: 19/19; Browser widget/renderer-boundary tests: 4/4.
+- Full production-built Web UAT 7/7 plus admin-settings, theme-template and AI-admin; Landing desktop/mobile geometry UAT passes.
+- Web/Landing builds and typechecks, changed Web test ESLint, Web/Landing SEO 1/1 each, PHDK 2.51.5 coherence 61/61, and `git diff --check` pass. Remote PR delivery is pending.
+
 ## v5.1.76 — preserve Check lifecycle history
 
 - Restore the complete historical Check handoff while retaining the 5.1.75 candidate recheck at the top.

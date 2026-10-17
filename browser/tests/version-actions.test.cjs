@@ -134,7 +134,8 @@ test('native Browser diagnostics actions keep 44x44 hit targets and compact visu
   assert.match(html, /class="diagnostic-actions"[\s\S]*id="diagnosticCopy"[\s\S]*id="diagnosticClear"/);
   assert.match(styles, /\.diagnostic-actions\s*\{[^}]*gap:\s*4px/);
   assert.match(styles, /\.diagnostic-actions button\s*\{[^}]*width:\s*44px;[^}]*height:\s*44px;[^}]*min-width:\s*44px/);
-  assert.match(styles, /\.diagnostic-actions button::before\s*\{[^}]*inset:\s*8px/);
+  assert.match(styles, /\.diagnostic-actions #diagnosticCopy::before\s*\{[^}]*inset:\s*8px 0 8px 16px/);
+  assert.match(styles, /\.diagnostic-actions #diagnosticClear::before\s*\{[^}]*inset:\s*8px 16px 8px 0/);
   assert.match(styles, /\.diagnostic-actions button:focus-visible\s*\{[^}]*outline:/);
   assert.match(styles, /\.diagnostic-actions svg\s*\{[^}]*width:\s*14px;[^}]*height:\s*14px/);
   assert.match(source, /button\.setAttribute\('aria-label', label\)/);
