@@ -1,0 +1,119 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto: deliver the scoped 5.1.85 keyboard-accessible agent selection source change; overall portfolio remains partial.",
+  "target_branch": "main",
+  "expected_version": "5.1.85",
+  "version_file": "services/web/package.json",
+  "version_property": "version",
+  "merged_commit_sha": "9f2eb28520d7ff040e9691dc9f7802d2210b73ae",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/208",
+  "source_commit_sha": "595a297c3576fe17bb1a10202eafae6c70198a96",
+  "target_tree": "ec04b42fc211b81e893a66e95ba9e5ebcffc7594",
+  "candidate_tree_matches_target": true,
+  "git_ls_remote_matches": true,
+  "phdk": {
+    "version": "2.52.2",
+    "coherence": "PASS",
+    "mappings": 63
+  },
+  "checks": {
+    "api_build_regressions": {
+      "status": "PASS",
+      "evidence": "API build and regression suite 43/43 pass on the source candidate."
+    },
+    "cloud_build_regressions": {
+      "status": "PASS",
+      "evidence": "Cloud build and regression suite 20/20 pass on the source candidate."
+    },
+    "web_build_typecheck_lint": {
+      "status": "PASS",
+      "evidence": "Web production build, TypeScript typecheck and lint pass."
+    },
+    "landing_build_typecheck_lint": {
+      "status": "PASS",
+      "evidence": "Landing production build, TypeScript typecheck and lint pass."
+    },
+    "browser_build_focused_tests": {
+      "status": "PASS",
+      "evidence": "Browser build/lint and focused version-security tests 16/16 pass."
+    },
+    "web_diagnostics": {
+      "status": "PASS",
+      "evidence": "Web diagnostics suite 19/19 pass."
+    },
+    "uat_scoped": {
+      "status": "PASS",
+      "evidence": "Full Web UAT 8/8 plus admin-settings, theme-template and AI-admin pass; UAT-095 static keyboard-selection contract 2/2 and local production-built navigation pass. Authenticated populated-agent interaction and screen-reader acceptance remain MANUAL."
+    },
+    "phdk_coherence": {
+      "status": "PASS",
+      "evidence": "PHDK v2.52.2 installed updater reports CURRENT; coherence 63/63."
+    },
+    "railway_web": {
+      "status": "PASS",
+      "evidence": "Exact deployment ce01555b-e503-4374-90b0-965591c4b590 SUCCESS; environment reports 1/1 replica online."
+    },
+    "railway_api": {
+      "status": "PASS",
+      "evidence": "Exact deployment 9f3d6043-2128-4153-ac12-3dc8cdfc601e SUCCESS; 1/1 replica online; bounded logs confirm Prisma database connection, successful database validation, Nest startup and healthcheck."
+    },
+    "hosted_github_checks_review": {
+      "status": "NOT_APPLICABLE",
+      "evidence": "GitHub PR readback reports no hosted checks and no review decision; main branch protection endpoint returns 404 (branch unprotected)."
+    }
+  },
+  "railway": {
+    "project": "KELEDON",
+    "environment": "production",
+    "web": {
+      "deployment_id": "ce01555b-e503-4374-90b0-965591c4b590",
+      "status": "SUCCESS",
+      "replicas": "1/1"
+    },
+    "api": {
+      "deployment_id": "9f3d6043-2128-4153-ac12-3dc8cdfc601e",
+      "status": "SUCCESS",
+      "replicas": "1/1",
+      "database_connected": true,
+      "application_started": true,
+      "healthcheck": "PASS",
+      "llm_provider_configured": false,
+      "runtime_mode": "degraded"
+    },
+    "web_recent_failures_24h": 11,
+    "web_current_deployment_healthy": true,
+    "http_probe": false
+  },
+  "pr_state": {
+    "number": 208,
+    "merged": true,
+    "merge_method": "squash",
+    "hosted_checks": [],
+    "review_decision": null,
+    "main_protected": false
+  },
+  "scoped_delivery": {
+    "status": "PASS"
+  },
+  "whole_auto_acceptance": {
+    "status": "PARTIAL",
+    "commitments_done": 0,
+    "commitments_total": 4,
+    "uat_pass": 93,
+    "uat_blocked": 0,
+    "uat_manual": 1,
+    "crud_pass": 29,
+    "crud_blocked": 396,
+    "crud_not_applicable": 132,
+    "crud_decision_needed": 3,
+    "open_gates": [
+      "authenticated populated-agent and screen-reader validation",
+      "PostgreSQL migration/restart acceptance",
+      "broad CRUD operations",
+      "native device/audio",
+      "broad accessibility and localization",
+      "deployed SEO/AEO/GEO",
+      "tenant-specific configured call/CRM acceptance"
+    ]
+  }
+}

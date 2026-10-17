@@ -1,3 +1,13 @@
+## 5.1.85 delivery handoff — source merged; whole Auto partial
+
+PR [#208](https://github.com/tuyoisaza/keledon/pull/208) is merged to verified remote `main` SHA `9f2eb28520d7ff040e9691dc9f7802d2210b73ae`; candidate tree matches. Scoped builds, types, lint, regressions, Web UAT and PHDK coherence pass. Web and API deployments are SUCCESS with 1/1 replicas. API logs confirm PostgreSQL connectivity, database validation, Nest startup and healthcheck success; AI mode is degraded because no LLM provider is configured. The Web service reports 11 earlier failures in the preceding 24 hours, while the exact current deployment is healthy. No live request was performed. Authenticated populated-agent and screen-reader validation remain MANUAL.
+
+Whole Auto is PARTIALLY DELIVERED, 0/4 commitments DONE. UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: confirm API rollout and commit the reconciled post-merge evidence; continue the open database, CRUD, native, accessibility, discovery and customer-specific integration gates.
+
+---
+
 ## Current delivery readback — 5.1.84 dashboard control repair merged
 
 PR [#206](https://github.com/tuyoisaza/keledon/pull/206) squash-merged source `631b12132570631e2ef1c20ff08029423b27fb6b` at remote `main` `eb5f5b47b7cd4a6de6354486603df4233341cab4`; remote tree `59d95ef1f4506f91e709c2fab495f41c1cacf982` matches the tested candidate tree. All five package/lock roots and Browser renderer read 5.1.84. PHDK v2.52.2 coherence passes 63/63. API/Cloud builds and regressions 43/43 and 20/20; Web/Landing builds, typechecks and lint; Web diagnostics 19/19; Browser build/lint and focused version/security tests 16/16 pass.

@@ -1,3 +1,11 @@
+## Current run readback — 5.1.85 source delivered; portfolio partial (2026-10-17)
+
+PR #208 merged and remote main verified at `9f2eb28520d7ff040e9691dc9f7802d2210b73ae`; source tree `ec04b42fc211b81e893a66e95ba9e5ebcffc7594` matches. Railway Web and API are live; API startup logs confirm PostgreSQL connectivity and healthcheck success. UAT-095 is scoped PASS with an authenticated populated-agent and screen-reader MANUAL gate outstanding. PHDK 63/63. Whole Auto: 0/4 commitments DONE, UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: read back Railway API settlement and record post-merge delivery evidence; continue the remaining acceptance gates.
+
+---
+
 ## Current candidate — 5.1.85 keyboard-accessible agent selection
 
 Run 20261014-0007-phdk-auto-completion; repository tuyoisaza/keledon; target main; branch fix/phdk-auto-5-1-85-keyboard-agent-selection based on 29a1ba592d1244b7f00676677b642d8857318103.

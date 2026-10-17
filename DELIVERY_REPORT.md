@@ -1,3 +1,15 @@
+## Current delivery — 5.1.85 keyboard-accessible agent selection merged (2026-10-17)
+
+PR [#208](https://github.com/tuyoisaza/keledon/pull/208) squash-merged source `595a297c3576fe17bb1a10202eafae6c70198a96` at remote `main` `9f2eb28520d7ff040e9691dc9f7802d2210b73ae`; candidate and target tree match `ec04b42fc211b81e893a66e95ba9e5ebcffc7594`. Five app package/lock roots and Browser renderer read 5.1.85. PHDK v2.52.2 coherence passes 63/63. Web/Landing builds, typechecks and lint pass; Web UAT passes 8/8 plus admin-settings, theme-template and AI-admin; API/Cloud regressions pass 43/43 and 20/20; Browser focused tests pass 16/16. UAT-095 verifies the keyboard selection source contract 2/2 and built dashboard navigation. A real authenticated populated agent card and screen-reader pass remain MANUAL.
+
+Railway Web deployment `ce01555b-e503-4374-90b0-965591c4b590` is SUCCESS with 1/1 replica and no active warnings. API deployment `9f3d6043-2128-4153-ac12-3dc8cdfc601e` is SUCCESS with 1/1 replica. Logs confirm Prisma/PostgreSQL connectivity, database validation, Nest startup and a successful healthcheck. No live HTTP probe was made. The API has no LLM provider configured and reports degraded AI mode. The Web service also reports 11 older failed deployments in the preceding 24-hour window; the current exact deployment is healthy. GitHub reports no hosted check or review decision and `main` is unprotected.
+
+Whole Auto remains **PARTIALLY DELIVERED**: 0/4 commitments DONE; UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. PostgreSQL migration/restart and broad CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO/GEO, and each tenant's configured call/CRM acceptance remain open.
+
+SIGUIENTE PASO: finish the manual authenticated-agent/screen-reader gate and continue the remaining four-front acceptance; do not close the overall Auto portfolio.
+
+---
+
 # Current PHDK Auto delivery — 5.1.83 Web Nginx fix merged
 
 PR [#204](https://github.com/tuyoisaza/keledon/pull/204) squash-merged source `6ebe1a818ea3ec79db83f23b7ee9dde0688d8813` at remote `main` `e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba` (tree `a7571475a608e7f72937ccd386112004e8f739ab`). All five app package/lock roots and Browser renderer are 5.1.83. PHDK v2.52.2 coherence passes 63/63.
