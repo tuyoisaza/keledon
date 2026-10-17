@@ -36,4 +36,4 @@ The only directly actionable test mismatch in scope was corrected: `RolesGuard` 
 
 ## Delivery
 
-PR #198 is open at remote branch head `309e4121cf0ed28682eb31b968adb9d6df971617`; GitHub reports CLEAN and no hosted checks or reviews. Merge and remote-main verification remain pending the Railway external root/config correction and successful Web build. Portfolio status remains **PARTIALLY DELIVERED**.
+PR #198 is open; GitHub reports UNKNOWN merge state and no hosted checks or reviews. Merge and remote-main verification remain pending the Railway external root/config correction and successful Web build. Portfolio status remains **PARTIALLY DELIVERED**.
