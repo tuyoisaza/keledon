@@ -70,3 +70,12 @@ Corrected current status text that said no disposable database existed. Exact-so
 SIGUIENTE PASO: continue only with mapped/implemented database operations; keep native and deployed gates explicit.
 
 ---
+## Current UAT-089 remediation — audit console controls and mobile navigation PASS (2026-10-17)
+
+The accessibility gap found during UAT was repaired in `services/web/src/pages/AdminAuditPage.tsx`: interactive inputs, buttons and disclosure targets now meet the 44px minimum and expose a visible keyboard focus outline. Exact-source UAT on revision `9f4cf79a53f81a95e64f60d18aecf06e746dff04` passes 12 checks, including keyboard scrolling to and focus visibility on the last mobile navigation link at 390×844, export audit success/failure, and tenant denial before data access. Targeted Web typecheck/build, ESLint, and Playwright UAT passed. Synthetic fixtures only; persistence remains unverified.
+
+Portfolio remains partial at **86 PASS, 0 BLOCKED, 1 MANUAL**. Voice-profile detail rows are now truthfully marked implemented at source/API scope, while persisted acceptance remains BLOCKED. No DB migration, provider/customer call, or deployment was performed.
+
+SIGUIENTE PASO: re-run Check on the exact candidate; proceed through normal PR review and delivery while retaining PostgreSQL and Railway gates.
+
+---

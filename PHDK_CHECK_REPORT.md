@@ -4,7 +4,7 @@ Run 20261014-0007-phdk-auto-completion; branch fix/phdk-auto-continuation-5-1-78
 
 ## Check/remediation re-entry — UAT-089 audit console accessibility (2026-10-17)
 
-Revalidated the admin-console detail contract: tenant voice-profile detail exists at `/api/tenant/voice-profiles/:id`, uses the current DB actor's company for tenant roles, denies foreign-company records in both mirrored guards, and returns six safe fields. The 40-model/560-row matrix now records the detail operation as implemented for admin/coordinator/superadmin; persisted acceptance remains BLOCKED and those rows are not promoted to PASS. UAT-089 also fixes and verifies the 5.1.78 audit page's 44px controls, keyboard focus and 390px reflow. Export audit retention and database persistence remain open. Whole Check remains ALIGNMENT INCOMPLETE; Auto remains PARTIALLY DELIVERED.
+Revalidated the admin-console detail contract: tenant voice-profile detail exists at `/api/tenant/voice-profiles/:id`, uses the current DB actor's company for tenant roles, denies foreign-company records in both mirrored guards, and returns six safe fields. The 40-model/560-row matrix now records the detail operation as implemented for admin/coordinator/superadmin; persisted acceptance remains BLOCKED and those rows are not promoted to PASS. UAT-089 also fixes and verifies the 5.1.78 audit page's 44px controls, keyboard focus, 390px page reflow and keyboard access to the final mobile navigation link. Export audit retention and database persistence remain open. Whole Check remains ALIGNMENT INCOMPLETE; Auto remains PARTIALLY DELIVERED.
 
 ## Result: ALIGNMENT INCOMPLETE — external deployment and portfolio gates
 

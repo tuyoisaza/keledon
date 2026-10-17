@@ -1,13 +1,20 @@
 {
   "candidate": {
     "version": "5.1.78",
-    "revision": "9839d521d7e0eae157e095c4f6fcdfbf7618d896"
+    "revision": "9f4cf79a53f81a95e64f60d18aecf06e746dff04"
   },
+  "runAt": "2026-10-17T10:19:08.656Z",
   "target": "isolated local built React SPA with synthetic audit rows",
+  "targetUrl": "http://127.0.0.1:52181/admin/audit",
+  "browser": "installed Microsoft Edge through Playwright (headless)",
   "result": "PASS",
   "cases": [
     "superadmin route loads sanitized audit data",
     "event metadata and success-only limitation shown",
+    "44px minimum interactive targets",
+    "keyboard tab focus is visible",
+    "390px mobile page reflows without horizontal overflow",
+    "mobile navigation scrolls to the final link and keeps keyboard focus visible",
     "redacted change details displayed",
     "filters sent as encoded query",
     "visible-page CSV export records bounded metadata before download",
@@ -15,6 +22,44 @@
     "pagination requests next page",
     "tenant admin route denied before audit data request"
   ],
+  "accessibility": {
+    "minimumTargetPx": 44,
+    "targetHeightsPx": [
+      44,
+      44,
+      44,
+      44,
+      44,
+      44,
+      44,
+      44,
+      44,
+      44,
+      44,
+      44
+    ],
+    "keyboardFocusVisible": true,
+    "mobileViewport": {
+      "width": 390,
+      "scrollWidth": 390
+    },
+    "mobileNavigation": {
+      "clientWidth": 390,
+      "scrollWidth": 1635,
+      "overflowX": "auto",
+      "visible": true,
+      "active": true,
+      "keyboardVisible": true,
+      "scrollLeft": 1245
+    },
+    "automatedOnly": true
+  },
+  "screenshots": [
+    "docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-audit-uat-5.1.78-desktop.png",
+    "docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/admin-audit-uat-5.1.78-mobile.png"
+  ],
+  "outboundHttp": "non-loopback requests are aborted by the test route",
+  "spend": "NO_NEW_SPEND",
   "exportRequests": [
     {
       "rowCount": 1,

@@ -289,3 +289,12 @@ Production-built Web 5.1.72 passed local synthetic UI UAT 6/6 plus AI-admin UAT.
 ## Candidate 5.1.78 handoff — managed Cloud AI UAT
 
 Managed Cloud AI 6/6, API contract 9/9, cross-backend regressions 19/19, API regressions 42/42 and focused guard 3/3 pass. Browser Readiness is recorded as NOT_NEEDED for this backend-only candidate. Full API Jest still needs disposable PostgreSQL for its e2e test; no migration/restart acceptance is claimed. Evidence: evidence/uat-cloud-managed-ai-5.1.78.md and root UAT_ACCESS_REPORT.md. Next: scoped Check and hygiene review.
+## Current UAT-089 — admin audit accessibility and export integrity PASS (2026-10-17)
+
+Exact production-built Web source revision `9f4cf79a53f81a95e64f60d18aecf06e746dff04` passes 12 scoped checks in installed Edge via Playwright. All 12 interactive targets measure at least 44px; keyboard focus is visible; the page fits a 390×844 viewport; keyboard navigation scrolls the horizontal navigation to its final link; export metadata is bounded and recorded before download; failed audit recording blocks the download; and tenant admin is denied before audit rows are requested. Synthetic API fixtures only; non-loopback HTTP is aborted, with zero provider calls and no database persistence claim. Exact report: `docs/phdk/workstreams/ADMIN-AUDIT-UAT.json`; desktop/mobile screenshots are in `evidence/admin-audit-uat-5.1.78-*.png`.
+
+Portfolio remains **86 PASS, 0 BLOCKED, 1 MANUAL**; the 560-row CRUD matrix remains **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**. This scoped UI acceptance does not close persisted audit retention, PostgreSQL migration/restart, screen-reader, native device/audio, Railway or customer integration gates.
+
+SIGUIENTE PASO: continue Check/remediation on source-verifiable gaps; retain database, native and external acceptance gates as open.
+
+---
