@@ -1,10 +1,10 @@
-## Current PHDK Auto - 5.1.75 delivered; 5.1.76 handoff correction pending (2026-10-17)
+## Current PHDK Auto - corrective record delivered; portfolio partial (2026-10-17)
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`. PR #194 delivered 5.1.75 at verified main `baf705dedb323fdcaa823a8b9747a0d1a78d9c7d`. Team Settings accessibility/localization passes Web build/typecheck, UAT 7/7 and 53 focused assertions. PHDK 2.51.5 remains coherent at 61/61. The 5.1.76 correction restores historical Check handoff and awaits normal PR/remote verification. CMT-002 through CMT-004 and overall acceptance remain partial. No deployment is claimed.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`. PR #194 delivered accessible, localized Team Settings at 5.1.75; PR #195 restored the prior Check handoff at verified main `e3706537a43af58bc97f2b58b0a80b0173342bef`, with all package roots and Browser renderer at 5.1.76. PHDK 2.51.5 coherence is 61/61. CMT-001 delivery is current; CMT-002 through CMT-004 and overall acceptance remain partial. No deployment is claimed.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
-| Preflight | COMPLETED / REVALIDATED | Forced sync 2.51.5, updater CURRENT, coherence checker PASS for 61 manifest mappings; relevant registry, Auto, Check and new automation-hygiene rules reread. |
+| Preflight | COMPLETED / REVALIDATED | Canonical PHDK main fetched at `d5ccc569eda1233c66f9274f23873a6934f2e3f8`; force sync verified 61 manifest destinations at 2.51.5, managed block matched, coherence PASS. |
 | Capture | REUSED | Four confirmed fronts and approved security/tenant/private-origin decisions unchanged. |
 | Plan | REUSED | Brownfield architecture, UX and four-front plan reused. |
 | PMO / Workstreams | IN PROGRESS | Admin/theme/AI source changes continue; CRUD and client-selected runtime breadth remain open. |
@@ -14,7 +14,7 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`. PR #19
 | AEO/GEO | REUSED / CURRENT | Public answers/claims unchanged; source review remains applicable; external citations and visibility remain unmeasured. |
 | Check | IN PROGRESS | Recheck records remaining source gaps plus static and live automation-hygiene evidence. |
 | Remediation | IN PROGRESS | CHK-001–005 advanced but remain partial; CHK-006 excluded pending owner pricing decision. |
-| Delivery | PENDING FOR 5.1.75 | Prior source slice 5.1.74 is delivered in PR #192; current accessibility/localization candidate still requires its versioned commit, normal PR, and remote readback. |
+| Delivery | CURRENT SLICE DELIVERED / PORTFOLIO PARTIAL | PR #194 delivered Team Settings at 5.1.75; PR #195 restored Check history at main `e3706537a43af58bc97f2b58b0a80b0173342bef`, version 5.1.76. | Continue the remaining four-front acceptance; no deployment is claimed. |
 
 Next: complete final source/automation review, rerun relevant checks, resolve any remaining authorized source findings, then update delivery evidence if the candidate meets its gates.
 

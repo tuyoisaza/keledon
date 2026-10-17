@@ -1,10 +1,10 @@
-## Current PMO board - 5.1.75 merged; 5.1.76 corrective record pending; whole Auto partial
+## Current PMO board - 5.1.76 verified; whole Auto partial
 
-Run `20261014-0007-phdk-auto-completion`. PR #194 delivered 5.1.75 at `baf705dedb323fdcaa823a8b9747a0d1a78d9c7d`. Candidate 5.1.76 restores Check handoff history; PR and remote readback are pending. PHDK 2.51.5 coherence is 61/61. Portfolio is 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD is 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. No deployment is claimed.
+PR #194 delivered 5.1.75 and PR #195 restored Check handoff history at verified remote main `e3706537a43af58bc97f2b58b0a80b0173342bef`. PHDK 2.51.5 coherence is 61/61; app roots and Browser renderer read 5.1.76. Portfolio remains 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD remains 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. No deployment is claimed.
 
 | Workstream | Status | Current progress | Open acceptance |
 |---|---|---|---|
-| WS-001 baseline, versions, PRs | ACTIVE / PARTIAL | PHDK 2.51.5 force-synchronized from canonical main SHA `d5ccc569eda1233c66f9274f23873a6934f2e3f8`; 61/61 mappings verified. PR #194 delivered 5.1.75; corrective version 5.1.76 restores lifecycle history. | Complete correction PR/remote readback. |
+| WS-001 baseline, versions, PRs | ACTIVE / PARTIAL | PHDK 2.51.5 force-synchronized from canonical main SHA `d5ccc569eda1233c66f9274f23873a6934f2e3f8`; 61/61 mappings verified. PR #194 delivered 5.1.75; PR #195 restored lifecycle history at main `e3706537a43af58bc97f2b58b0a80b0173342bef`, version 5.1.76. | Continue the remaining version, UAT, and portfolio acceptance. |
 | WS-002 widget and safe diagnostics | PARTIAL | Existing widget/diagnostics and selected Web/theme UAT remain valid. | Native device/audio; broad route, role, screen-reader, zoom and localization acceptance. |
 | WS-003 tenant runtime and CRM | PARTIAL | Tenant flow configuration, private-origin allowlists and API AI input contracts have source/synthetic coverage. Railway production currently deploys `services/api`; the separate `cloud/` LLM source is not deployed there. | Preserve Cloud source parity, complete voice runtime and customer-selected integration acceptance. |
 | WS-004 administration/permissions | PARTIAL | Audit viewer plus role-denial events and successful mutation/auth tenant snapshots in both API and Cloud; nine Web lifecycle/configuration rows now pair browser UAT with persisted API acceptance. | Apply migrations to an authorized disposable DB; 396 blocked CRUD rows, other authorization-denial paths, export/retention and other admin workflows. |

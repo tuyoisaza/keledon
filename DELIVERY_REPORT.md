@@ -1,14 +1,14 @@
-# Delivery report — PHDK Auto candidate 5.1.75 and corrective record 5.1.76
+# Delivery report - PHDK Auto 5.1.76 corrective handoff delivered
 
 PR [#194](https://github.com/tuyoisaza/keledon/pull/194) squash-merged at remote `main` `baf705dedb323fdcaa823a8b9747a0d1a78d9c7d`, with product version 5.1.75 and no hosted checks or required branch review (main was unprotected). It delivers Team Settings accessible names/help, keyboard focus, 44px controls, live save/loading feedback and en/es/pt copy, plus scoped UAT evidence. Web typecheck/build and UAT 7/7, focused settings/theme/AI-admin UAT, 53 Team Settings assertions, Web/Landing SEO 1/1 each, focused ESLint and PHDK coherence 61/61 passed. UAT used synthetic APIs; no screen reader, database, customer integration, or deployment was tested.
 
-During PR #194 integration, `70-check/HANDOFF.md` was mistakenly replaced instead of prepended. The present 5.1.76 corrective candidate restores all 32,810 bytes of its parent revision and prepends the 5.1.75 Check handoff, preserving the full older history. All five app package/lock roots and Browser renderer are aligned at 5.1.76. Corrective branch: `fix/restore-check-handoff-5-1-76`; remote delivery is pending.
+PR #195 squash-merged at remote main `e3706537a43af58bc97f2b58b0a80b0173342bef`. It restores the complete 32,810-byte historical Check handoff from PR #194's parent and retains the scoped 5.1.75 recheck at the head. Remote SHA, PR merge state and package/lock roots were read back; all five roots and Browser renderer read 5.1.76. PHDK 2.51.5 static coherence passes 61/61.
 
-Whole Auto remains **PARTIALLY DELIVERED**. Existing database/migration, CRUD, broad accessibility/localization, native device/audio, customer-specific call/CRM, legacy Cloud AI and deployed SEO/AEO gates remain open. No release tag or production deployment is claimed.
+The underlying Team Settings accessibility/localization change was delivered by PR #194 at `baf705dedb323fdcaa823a8b9747a0d1a78d9c7d`; Web typecheck/build, Web UAT 7/7, focused Team Settings 53 assertions, theme/AI-admin UAT, SEO tests 1/1 each and focused ESLint passed. Synthetic APIs only. No screen reader, database migration, customer integration or deployment was performed.
 
-SIGUIENTE PASO: merge the corrective 5.1.76 PR and verify remote main; then continue the remaining authorized Auto acceptance fronts.
+Whole PHDK Auto remains PARTIALLY DELIVERED: database/migration acceptance, CRUD breadth, broad accessibility/localization, native device/audio, customer-specific call/CRM, legacy Cloud AI and deployed SEO/AEO remain open. No release tag or production deployment is claimed.
 
----
+SIGUIENTE PASO: continue the remaining authorized Auto acceptance fronts; keep the portfolio partial until evidence closes them.
 
 ## Current delivery — 5.1.73 orphan-session safeguard merged; Auto remains partial
 
