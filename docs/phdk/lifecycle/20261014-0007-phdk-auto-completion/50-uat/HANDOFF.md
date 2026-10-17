@@ -3,7 +3,7 @@
 Run ID: `20261014-0007-phdk-auto-completion`
 Stage: `50-uat`
 Status: `PARTIAL / ACCEPTANCE INCOMPLETE`
-Candidate: KELEDON 5.2.4, production Web source `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`
+Candidate: KELEDON 5.2.4, production Web main source `26e1fe1452cffb97164d65917b3c9a4308bdbdc2` (product-code change introduced at `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`)
 Date: 2026-10-17
 
 ## Goal / scope
@@ -54,3 +54,11 @@ Production public smoke is not evidence for the branch candidate. Authenticated 
 ## Next stage
 
 Stage: `60-uat-fix` only if new in-scope source defects emerge; none were identified in this read-only smoke. Continue independent Check/Remediation and normal delivery while retaining UAT-096/097 as blockers. Re-enter UAT after safe Prep and candidate target are available.
+
+
+## Re-entry — UAT-121 (2026-10-17)
+
+- Production browser readiness was available; anonymous request to `/management/teams` redirected to `/login` on KELEDON v5.2.4.
+- UAT-121 passes only the anonymous access boundary. Evidence is `evidence/uat-121-production-anonymous-team-selector-2026-10-17.json`.
+- Authenticated ADM-IF-01..06 remain BLOCKED: no owner-authorized synthetic production identity, dataset or cleanup plan. No account, credential, customer record, API mutation or provider was used.
+- CMT-004 remains ACTIVE/PARTIAL; the tenant selector was confirmed by owner and is already source-implemented in merged PR #210.

@@ -1,12 +1,12 @@
-## Current delivery — 5.1.85 keyboard-accessible agent selection merged (2026-10-17)
+## Current PHDK Auto audit — KELEDON 5.2.4 / PHDK 2.53.1 (2026-10-17)
 
-PR [#208](https://github.com/tuyoisaza/keledon/pull/208) squash-merged source `595a297c3576fe17bb1a10202eafae6c70198a96` at remote `main` `9f2eb28520d7ff040e9691dc9f7802d2210b73ae`; candidate and target tree match `ec04b42fc211b81e893a66e95ba9e5ebcffc7594`. Five app package/lock roots and Browser renderer read 5.1.85. PHDK v2.52.2 coherence passes 63/63. Web/Landing builds, typechecks and lint pass; Web UAT passes 8/8 plus admin-settings, theme-template and AI-admin; API/Cloud regressions pass 43/43 and 20/20; Browser focused tests pass 16/16. UAT-095 verifies the keyboard selection source contract 2/2 and built dashboard navigation. A real authenticated populated agent card and screen-reader pass remain MANUAL.
+Remote `main` is verified at `26e1fe1452cffb97164d65917b3c9a4308bdbdc2` after PR #233. Five package/lock roots and the Browser renderer align at 5.2.4. PHDK coherence is 64/64 static. Railway Web `be95247a-bd0e-49d9-bcb6-4166a4222746` and API `0c31ee86-59f5-4943-82d6-902ec0d6b6dc` report SUCCESS for that SHA. Production browser displayed v5.2.4; UAT-121 passes only the anonymous `/management/teams` redirect to login.
 
-Railway Web deployment `ce01555b-e503-4374-90b0-965591c4b590` is SUCCESS with 1/1 replica and no active warnings. API deployment `9f3d6043-2128-4153-ac12-3dc8cdfc601e` is SUCCESS with 1/1 replica. Logs confirm Prisma/PostgreSQL connectivity, database validation, Nest startup and a successful healthcheck. No live HTTP probe was made. The API has no LLM provider configured and reports degraded AI mode. The Web service also reports 11 older failed deployments in the preceding 24-hour window; the current exact deployment is healthy. GitHub reports no hosted check or review decision and `main` is unprotected.
+The owner-confirmed portfolio remains ordered CMT-001..004. CMT-001 is complete for this version cut. CMT-002 has scoped public browser evidence but broad accessibility and authenticated diagnostics remain open. CMT-003A/B lease/idempotency and DNS/IP pinning are not implemented. CMT-004 has a merged tenant-scoped selector and new ADM-IF PIA; authenticated tenant filtering, persistence, cross-tenant deny and cleanup remain BLOCKED without an authorized synthetic production identity/dataset. No customer CRM, private host, account, or production write was used.
 
-Whole Auto remains **PARTIALLY DELIVERED**: 0/4 commitments DONE; UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. PostgreSQL migration/restart and broad CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO/GEO, and each tenant's configured call/CRM acceptance remain open.
+This re-entry made documentation/evidence changes only. No local application tests or builds were run. JSON evidence parsing, `git diff --check`, and the static PHDK checker passed. Full Auto remains **PARTIALLY DELIVERED**; no commitment is silently closed by documentation or UAT-121.
 
-SIGUIENTE PASO: finish the manual authenticated-agent/screen-reader gate and continue the remaining four-front acceptance; do not close the overall Auto portfolio.
+SIGUIENTE PASO: deliver the ADM-IF PIA/UAT evidence through the normal PR flow; continue CMT-002 public production coverage, then implement CMT-003A/B before any private CRM acceptance.
 
 ---
 

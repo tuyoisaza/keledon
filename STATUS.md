@@ -1,10 +1,16 @@
-# Current PHDK Auto — candidate 5.2.1 / PHDK 2.53.1; portfolio partial
+# Current PHDK Auto — 5.2.4 / PHDK 2.53.1 (2026-10-17)
 
-The four owner-confirmed fronts remain active in order. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) carries product source 5.2.1 on `feature/tenant-interface-selector-5.2.0`; it is open, unmerged, and GitHub reports no checks or review decision. Production still displays v5.1.85.
+- Base remoto: `main` `26e1fe1452cffb97164d65917b3c9a4308bdbdc2`; PR #233 merged. Product versions align at 5.2.4 across five package/lock roots and Browser renderer. Current docs continuation is on `docs/phdk-pia-tenant-interface-acceptance`.
+- PHDK: v2.53.1, upstream `94f583635d295ae0f227726718904d952cadb8ab`; static coherence PASS 64/64.
+- Production: Web and API deployment at source `26e1fe1` reported SUCCESS. The public login displayed v5.2.4. UAT-121 confirms only anonymous redirect of `/management/teams` to `/login`.
+- CMT-001: baseline/version and merged delivery records current for this cut. CMT-002: public widget, diagnostics, layout and locale samples passed within recorded scope; full accessibility/authenticated diagnostics remain open. CMT-003: provider-neutral architecture retained; lease/idempotency and DNS/IP pinning PIAs are not implemented. CMT-004: least-privilege policy and tenant-scoped selector are in source; authenticated cross-tenant and persistence acceptance remain blocked.
+- The owner requested production-site acceptance and no local application tests/builds. No production login, account creation, data mutation, customer CRM, private host, or external provider call was made. Authenticated cases need authorized synthetic production identities, a synthetic dataset and an owner-approved cleanup plan.
+- Overall: PARTIALLY DELIVERED; all four confirmed commitments remain ACTIVE/PARTIAL.
 
-PHDK coherence passes 64/64. Read-only production UAT-098/099 verifies the public homepage and anonymous redirect to login; UAT-100 confirms the anonymous homepage/login widget on deployed v5.1.85. None accepts candidate 5.2.1. The selector source has tenant guards and stale-response handling; the migration adds nullable interface ownership without backfilling old rows. A superadmin-only provision route exists, but persisted data/ownership is not verified. The PHDK 2.53.1 admin-console audit and source registries identify settings, permission, backup and AI-graph gaps. All four commitments remain active/partial.
+SIGUIENTE PASO: continue within the four confirmed fronts; keep role-based production UAT blocked pending authorized synthetic identities and fixture scope.
 
-SIGUIENTE PASO: continue source-auditing and safely remediating the newly documented admin-console gaps; keep PR #210 open pending candidate acceptance and required delivery controls.
+---
+
 ---
 # Current PHDK Auto — 5.1.84 dashboard control repair delivered
 

@@ -39,3 +39,10 @@ Reuse the approved brownfield plan and make this candidate's implementation-to-a
 ## Next stage
 
 Stage: `30-pmo` reused and revalidated. PMO consumes this PIA together with the unchanged commitment ledger and current blockers.
+
+
+## Re-entry — approved tenant interface assignment (2026-10-17)
+
+The owner approved Web TeamInterface assignment for Admin/Coordinator with tenant scope. Source in merged PR #210 / 5.2.1+ has Web selection, API/Cloud company filters, an atomic assignment path and cross-company ID checks. The new sub-PIA ADM-IF records source anchors and the production cases; UAT-121 verifies only anonymous redirect on the deployed 5.2.4 candidate. Authenticated acceptance remains blocked pending authorized synthetic production identities/data/cleanup.
+
+Updated artifact: `20-plan/pias/PIA-CMT-004A-ASIGNACION-INTERFACES-POR-TENANT.md`. Plan scope stays on the four ordered commitments; no app source changed during this re-entry.

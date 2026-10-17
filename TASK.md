@@ -1,14 +1,12 @@
-# Current PHDK Auto — candidate 5.2.1 / PHDK 2.53.1 on four approved fronts
+# Current PHDK Auto continuation — KELEDON 5.2.4 / PHDK 2.53.1
 
-This is the active continuation of the user-confirmed four-front portfolio, in order: CMT-001 baseline/version/PR, CMT-002 widget/diagnostics, CMT-003 customer-selected voice→Cloud→Browser→CRM, CMT-004 administration/permissions. The Admin/Coordinator tenant-scoped TeamInterface selector and stale-request fix are source-implemented on branch `feature/tenant-interface-selector-5.2.0`; product source commit is `ef6fe6dbf7eca04708c7200615e7538812751f7e`. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) is open against `main`, not merged. All four remain active/partial.
+Continue the owner-confirmed four-front portfolio in order: CMT-001 baseline/version/PR, CMT-002 widget/diagnostics, CMT-003 tenant-specific voice→Cloud→Browser→CRM, and CMT-004 administration/permissions. The selector for Admin/Coordinator interface assignment by tenant was explicitly approved on 2026-10-17 and is source-implemented in main.
 
-PHDK was synchronized to v2.53.1 from upstream `94f583635d295ae0f227726718904d952cadb8ab`. Static coherence passes 64/64 and the root managed block matches canonical. A PIA (Paquete de Implementación y Aceptación) now maps the code, requirements, test cases and gates in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/PAQUETE_IMPLEMENTACION_ACEPTACION_5.2.1.md`.
+Remote main is `26e1fe1452cffb97164d65917b3c9a4308bdbdc2`; product is 5.2.4. PHDK 2.53.1 updater readback is current at upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherence is 64/64. PR #210 is merged. Production serves 5.2.4; UAT-121 anonymously verified `/management/teams` redirects to login. Authenticated selector/persistence/cross-tenant UAT is blocked until a synthetic production identity and fixture are authorized. CMT-003A command leases/idempotency and CMT-003B DNS/IP pinning remain implementation-not-started PIAs; do not claim security closure without their deployed evidence.
 
-The user requested production-site testing. Read-only anonymous UAT-098/099 shows the public homepage and `/management/teams` redirect on deployed v5.1.85. UAT-100 now confirms the always-visible version/actions row on both production homepage and login, still only on v5.1.85. These observations do not accept candidate 5.2.1. No login or production writes were used. Candidate UAT-096/097 remain BLOCKED. Source review confirms a superadmin-only `POST /api/crud/interfaces` provision path with company ownership, but the migration has no backfill for existing rows; do not infer ownership. No application tests were run locally in this continuation.
+No local application tests or builds are run. Production acceptance uses only read-only anonymous flows unless the owner provides authorized synthetic identities/data and cleanup instructions. Keep all four commitments ACTIVE/PARTIAL.
 
-PHDK 2.53.1 Check found additional mandatory administration-console evidence absent from the project root. Current source has a settings link hub, role guards, audit/theme/AI pages and staging-only Test-as; full invitation/permission-editor/backup/general-settings coverage is not established. Current source architecture, capability and settings registries are documented in `ADMIN_ARCHITECTURE.md`, `ADMIN_CAPABILITY_MATRIX.md`, `ADMIN_SETTINGS_REGISTRY.md`, and `AI_WORKFLOW_CATALOG.md`; those records distinguish source presence from runtime acceptance and identify gaps without claiming them fixed.
-
-SIGUIENTE PASO: keep PR #210 open until safe synthetic role/persistence acceptance can run on a target matching 5.2.1; do not mutate production data.
+SIGUIENTE PASO: continue production-safe CMT-002 public coverage and source/integration work; do not perform authenticated or customer-side effects without authorized synthetic fixtures.
 
 ---
 
