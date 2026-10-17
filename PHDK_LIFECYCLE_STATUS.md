@@ -1,14 +1,14 @@
-# Current PHDK Auto — 5.1.83 delivered; portfolio partial
+# Current PHDK Auto — 5.1.84 widget control repair candidate; portfolio partial
 
-PR #204 merged the Web Nginx root-context fix at `e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba`; all app roots and Browser renderer are 5.1.83, and PHDK coherence is 63/63. Railway Web and API deployments report SUCCESS with 1/1 replicas. Web startup logs confirm configuration complete and workers started without the prior directive error. API logs show Nest and Prisma startup after a transient dependency reachability timeout. No live request/UI health check was performed.
+Current run: `20261014-0007-phdk-auto-completion`; candidate branch `fix/phdk-auto-5-1-84-agent-controls`, based on verified local main `73f8db9ab9bcf6d23687690dc8893407d313a87f`. Candidate 5.1.84 removes unsupported agent start/stop commands and an empty realtime toggle from Web and Landing dashboards. Five package/lock roots and Browser renderer align at 5.1.84. Web and Landing build/typecheck/lint pass; Web diagnostics 19/19 and PHDK coherence 63/63 pass. Browser exact checks and PR delivery are in progress.
 
-The scoped source delivery is complete; whole PHDK Auto remains PARTIALLY DELIVERED (0/4 commitments DONE). UAT is 91 PASS / 0 BLOCKED / 1 MANUAL; CRUD is 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+Whole Auto remains PARTIALLY DELIVERED: 0/4 confirmed commitments DONE; UAT portfolio 91 PASS / 0 BLOCKED / 1 MANUAL before this candidate is included; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS. Database/restart, CRUD, native device/audio, broad accessibility/localization, deployed SEO/AEO and customer-selected provider/CRM acceptance remain open.
 
-SIGUIENTE PASO: continue the remaining four-front acceptance from verified main; keep Auto partial.
+SIGUIENTE PASO: complete Browser checks, record UAT-094 and the Check handoff, then deliver the candidate through the normal PR flow and verify remote `main`.
 
 ---
 
-## Current PHDK Auto — 5.1.83 Web runtime fix candidate; portfolio partial
+## Historical candidate snapshot — 5.1.83 Web runtime fix; portfolio partial
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|

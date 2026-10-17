@@ -256,3 +256,10 @@ Scoped lint/build/typecheck/version/Prisma-schema/coherence checks pass. One dat
 The integrated candidate removes unsupported `ready` claims for TTS/STT/AI and disconnects aggregate health from dashboard socket count. API regression 42/42, Cloud regression 19/19, paired health contracts 2/2 each, API/Cloud builds and targeted lint, Web/Landing typecheck/build, full Web UAT 8/8 plus standalone admin/theme/AI, Browser build and focused tests 4/4, and PHDK coherence 63/63 pass. Full API database e2e, persisted health probes, migrations/restart, broad CRUD, native accessibility, Railway deployment and customer-selected live integration remain unverified. Detailed report: `PHDK_CHECK_REPORT-5.1.79.md`.
 
 SIGUIENTE PASO: deliver the versioned candidate through PR #198, then verify merge and remote `main`; retain deployment and database gates separately.
+## Candidate 5.1.84 Check — scoped PASS; whole Auto remains partial
+
+The exact candidate removes controls with no runtime handlers from the Web and Landing dashboards and removes the corresponding unsupported Socket.IO emitters. Web/Landing build, typecheck and lint pass; Web diagnostics 19/19; Browser build/lint and focused version/security tests 16/16; all five product package/lock roots and Browser renderer are 5.1.84; PHDK coherence 63/63. Details: `PHDK_CHECK_REPORT-5.1.84.md`; UAT evidence: `../50-uat/evidence/uat-094-agent-dashboard-controls-5.1.84.json`.
+
+No live agent control, packaged Electron run, customer runtime or deployment was exercised. Whole Auto remains PARTIALLY DELIVERED, 0/4 commitments DONE; UAT 92 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: deliver the checked candidate through a normal PR and verify remote `main`.

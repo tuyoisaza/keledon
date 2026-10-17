@@ -1,10 +1,10 @@
-# Current PHDK Auto — 5.1.83 delivered; portfolio partial
+# Current PHDK Auto — 5.1.84 dashboard control repair candidate; portfolio partial
 
-PR #204 merged the Web Nginx root-context fix at `e51f5880a68a1eeda1ff5ebfd82459800ab5f1ba`; all app roots and Browser renderer are 5.1.83, and PHDK coherence is 63/63. Railway Web and API deployments report SUCCESS with 1/1 replicas. Web startup logs confirm configuration complete and workers started without the prior directive error. API logs show Nest and Prisma startup after a transient dependency reachability timeout. No live request/UI health check was performed.
+PR #204 delivered 5.1.83 to main; documentation PR #205 is at 73f8db9ab9bcf6d23687690dc8893407d313a87f. Candidate fix/phdk-auto-5-1-84-agent-controls removes unsupported Start/Stop Agent actions, their unhandled Socket.IO events, and an empty realtime toggle from Web and Landing. All five package/lock roots and Browser renderer are 5.1.84. Web/Landing build, typecheck and lint pass; Web diagnostics 19/19; API/Cloud regressions 43/43 and 20/20; Browser build/lint and focused tests 16/16; PHDK coherence 63/63. UAT-094 passes.
 
-The scoped source delivery is complete; whole PHDK Auto remains PARTIALLY DELIVERED (0/4 commitments DONE). UAT is 91 PASS / 0 BLOCKED / 1 MANUAL; CRUD is 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+Whole Auto remains PARTIALLY DELIVERED: 0/4 confirmed commitments DONE; UAT 92 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
 
-SIGUIENTE PASO: continue the remaining four-front acceptance from verified main; keep Auto partial.
+SIGUIENTE PASO: deliver 5.1.84 through the normal PR path and verify remote main.
 
 ---
 
@@ -328,3 +328,17 @@ Four confirmed / zero DONE / four active / zero deferred or cancelled. Candidate
 UAT-081's first production-built Web run exposed that assigning a legacy flow changed ownership but left the superadmin in the legacy-only view. The editor now reloads under the selected destination company. Exact-source production build, UAT-081 and tenant-admin editor journey pass; the full Web UAT suite passed 7/7 plus AI-admin. Focused API regressions passed API 9/9 and Cloud 8/8, including resource-scope and tenant-flow contracts; Web typecheck and targeted ESLint pass; PHDK coherence is 56/56. Web APIs were synthetic/intercepted; no superadmin server authorization or persistence was claimed. UAT tally advances to 79 PASS, 0 BLOCKED, 1 MANUAL; the matrix remains 395 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED and 16 PASS. All four commitments stay active; source/doc changes remain local and undelivered.
 
 SIGUIENTE PASO: execute DB-backed superadmin flow configuration authorization/persistence, then continue the other acceptance gates.
+## Current PMO milestone — 5.1.84 dashboard control truthfulness — 2026-10-17
+
+Branch `fix/phdk-auto-5-1-84-agent-controls` is based on local main `73f8db9ab9bcf6d23687690dc8893407d313a87f`. Web/Landing dashboard actions with no backend implementation and their unhandled hook events were removed. Five package/lock roots and Browser renderer align at 5.1.84. Web/Landing build, typecheck and lint pass; Web diagnostics 19/19; Browser build/lint and focused tests 16/16; PHDK coherence 63/63. UAT-094 passes. Delivery PR/readback pending.
+
+| Workstream | Status | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | ACTIVE | 5.1.84 candidate checked; PR, merge and remote readback remain. |
+| CMT-002 widget and safe diagnostics | ACTIVE | UAT-094 and diagnostics pass; native device/audio and broad accessibility/localization remain. |
+| CMT-003 voice→Cloud→Browser→CRM | ACTIVE | No integration behavior changed; per-customer stack, native path and PostgreSQL gates remain. |
+| CMT-004 administration and permissions | ACTIVE | No policy change; database/restart, CRUD and audit/retention gates remain. |
+
+Overall: 0/4 DONE; 4/4 ACTIVE/PARTIAL. UAT 92 PASS / 0 BLOCKED / 1 MANUAL. CRUD 396 BLOCKED / 132 NOT APPLICABLE / 3 DECISION NEEDED / 29 PASS. Overall Auto remains PARTIALLY DELIVERED.
+
+SIGUIENTE PASO: deliver 5.1.84 through normal PR controls and verify remote `main`.

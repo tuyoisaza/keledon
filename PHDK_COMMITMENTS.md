@@ -1,8 +1,10 @@
-## Current ledger status — 5.1.74 candidate / UAT-087
+## Current ledger status — 5.1.84 candidate / UAT-094
 
-The four owner-confirmed commitments remain active: 0/4 DONE, 4/4 active/partial, 0 deferred, 0 cancelled. UAT-079/080/083 cover persisted tenant flow configuration; UAT-073/081 pair the tenant-admin and superadmin editors with that acceptance; UAT-086/087 pair superadmin Company/Brand/Team/User browser lifecycles with UAT-071/075/076 API/Cloud persistence. The reconciled CRUD matrix covers 40 models and 560 role-surface rows: 29 PASS, 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED. UAT tally: 85 PASS, 0 BLOCKED, 1 MANUAL. Candidate 5.1.74 adds verified role-aware admin settings and safe audit tenant attribution alongside theme administration; integrated local checks pass. No PR or deployment is claimed.
+Branch `fix/phdk-auto-5-1-84-agent-controls` is based on verified local main `73f8db9ab9bcf6d23687690dc8893407d313a87f`. Candidate 5.1.84 removes unsupported Start/Stop Agent controls and an empty real-time toggle from both Web dashboards; corresponding hooks no longer emit unhandled control events. Five package/lock roots and Browser renderer align at 5.1.84. Web and Landing production builds, typechecks and lint pass; Web diagnostics passes 19/19; Browser build, zero-warning lint and focused version/security tests are pending final readback. PHDK coherence passes 63/63. No PR or deployment is claimed.
 
-SIGUIENTE PASO: commit/push the verified 5.1.74 candidate by version-prefixed source commit and normal PR; preserve the external, database, native and customer-specific acceptance gates.
+The four owner-confirmed commitments remain active: 0/4 DONE, 4/4 active/partial, 0 deferred, 0 cancelled. UAT portfolio remains 91 PASS, 0 BLOCKED, 1 MANUAL until this candidate's source evidence is delivered; CRUD remains 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Database/restart, native device/audio, broad accessibility/localization, deployed SEO/AEO, remaining CRUD and customer-selected integration acceptance remain open.
+
+SIGUIENTE PASO: finish Browser and exact-candidate checks, then deliver 5.1.84 through the normal PR path and verify remote `main`.
 
 ---
 
