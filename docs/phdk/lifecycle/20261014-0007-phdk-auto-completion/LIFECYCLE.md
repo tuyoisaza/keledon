@@ -553,3 +553,20 @@ Whole Auto remains **PARTIALLY DELIVERED** for exhaustive persisted CRUD/migrati
 SIGUIENTE PASO: continue the remaining four-front acceptance gates against verified main 5.1.63; preserve partial whole-Auto status until persisted, native, accessibility, deployed-discovery and customer-specific evidence closes.
 
 ---
+
+## Candidate 5.2.1 — PR #210 merged; production smoke passed, Auto acceptance remains partial (2026-10-17)
+
+The tenant-scoped TeamInterface selector, stale-request protection, API/Cloud tenant guards, additive `ManagedInterface.companyId` migration, credential encryption/audit redaction, and PHDK 2.53.1 standardization are delivered through PR [#210](https://github.com/tuyoisaza/keledon/pull/210). The squash merge is `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; remote `main` matches and the merge tree equals the candidate tree. Five product package roots are 5.2.1. Existing Railway API/Web autodeploys report success.
+
+UAT-104 confirms HTTP 200 for the public page, its JavaScript bundle and API `/health`, with 5.2.1 observed; an unauthenticated `/api/crud/interfaces` request returned 401. This is availability/version and anonymous-denial smoke only. UAT-103 found `KELEDON_VENDOR_KEY` absent from production API variable-name metadata; no value was read. No production records or provider settings were changed and no local application tests were run.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight / Capture / Plan / PMO | REUSED / REVALIDATED | Four confirmed fronts and approved tenant/security policies retained; PHDK 2.53.1 coherence 64/64. |
+| Integration | COMPLETE FOR SOURCE DELIVERY | PR #210 merged; exact remote SHA/tree/version verified. |
+| UAT / UAT Fix | PARTIAL / BLOCKED | UAT-104 public smoke PASS; authenticated role/persistence, credential storage, cross-tenant and cleanup tests remain blocked by key and synthetic catalog fixture prerequisites. |
+| SEO / AEO-GEO | SOURCE REUSED; DEPLOYED ACCEPTANCE OPEN | Public source compliance is documented; 5.2.1 public availability is observed, deployed SEO/citation metrics remain unmeasured. |
+| Check / Remediation | PARTIAL | Static checks pass; completion verifier is blocked by focused tests and whole-Auto acceptance. |
+| Delivery | SOURCE MERGED / PRODUCTION SMOKE PASS / WHOLE GOAL PARTIAL | `90-delivery/DELIVERY_REPORT.md`, `PHDK_COMPLETION_AUDIT.md`, `PHDK_DELIVERY_EVIDENCE-5.2.1.json`, and `HANDOFF.md`. |
+
+All four commitments remain ACTIVE/PARTIAL (0/4 DONE). Next: owner-managed key setup and authorized synthetic tenant/catalog provisioning, then production-only UAT for the deployed candidate; continue remaining widget, per-client integration and administration gaps.

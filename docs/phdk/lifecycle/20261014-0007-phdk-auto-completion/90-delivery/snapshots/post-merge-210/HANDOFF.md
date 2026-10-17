@@ -1,0 +1,73 @@
+# PHDK Lifecycle Handoff — Delivery
+
+Run ID: `20261014-0007-phdk-auto-completion`
+Stage: `90-delivery`
+Status: **PARTIALLY DELIVERED / ACCEPTANCE BLOCKED**
+Started from revision: `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`
+Product source: PR #210 head `683f7b84b07af8b4edad38b6d7fe0ce42218c14a`
+Completed at remote target: `9c4c143abba911261f8c881cfc1b3c4e32c373a9`
+Date/time: 2026-10-17 UTC
+
+## Goal / scope
+
+Deliver the current PHDK Auto continuation on the normal PR path: standardize KELEDON to PHDK 2.53.1 and advance the four confirmed fronts while preserving the approved tenant, role, secret and client-specific integration policies.
+
+## Inputs verified
+
+- Product candidate 5.2.1 and PHDK 2.53.1 alignment (64/64 manifest mappings).
+- PR #210 targets `main` from base `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`.
+- GitHub reports PR merged; no hosted checks or formal review decision were present.
+- The existing Railway-connected autodeploy reports API and Web success.
+- UAT-103 reads variable names only and finds `KELEDON_VENDOR_KEY` absent from the production API service.
+- UAT-104 confirms anonymous HTTP 200 and version 5.2.1 for public Web, its bundle and API health; an unauthenticated catalog request returns 401.
+
+## Work performed
+
+- PR #210 was squash-merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; `origin/main` and `git ls-remote` agree, and the merge tree matches the candidate tree.
+- Updated the candidate PIA, Check, UAT report, commitment/PMO records and delivery evidence to distinguish source integration from production behavior acceptance.
+- Recorded UAT-103's missing key name and UAT-104's limited public smoke with redacted, reproducible evidence.
+- Did not run application tests locally, log into production, create fixtures, mutate the database, read secret values, or change provider settings.
+- The completion verifier returns BLOCKED for focused feature tests and whole-Auto acceptance.
+
+## Deliverables
+
+- Candidate implementation and acceptance package: `20-plan/snapshots/candidate-5.2.1/PAQUETE_IMPLEMENTACION_ACEPTACION_5.2.1.md`.
+- Current check: `70-check/PHDK_CHECK_REPORT-5.2.1-PHDK-2.53.1.md`.
+- Production evidence: `50-uat/evidence/uat-103-production-key-config-readiness-2026-10-17.json` and `50-uat/evidence/uat-104-production-candidate-smoke-2026-10-17.json`.
+- Delivery summary and machine evidence: `DELIVERY_REPORT.md`, `PHDK_DELIVERY_EVIDENCE-5.2.1.json`, `PHDK_COMPLETION_AUDIT.md`.
+- Prior pre-merge handoff preserved at `snapshots/pre-merge-210/HANDOFF-prior.md`; current handoff snapshot is under `snapshots/post-merge-210/`.
+
+## Exit gate
+
+- [x] Product versioned, branch pushed and PR created.
+- [x] PR merged and exact remote `main` SHA/tree/version independently verified.
+- [x] Existing API/Web autodeploys report success; limited production version/availability smoke is recorded.
+- [x] PHDK coherence and targeted source checks are recorded.
+- [ ] Authenticated role/tenant, migration, persistence, and cross-tenant production acceptance.
+- [ ] Production secret-storage acceptance and safe catalog/fixture provisioning.
+- [ ] All four confirmed commitments complete and mechanical completion gate passes.
+
+## Decisions / assumptions
+
+- User requires application tests on production; no local application tests were run.
+- Existing `KELEDON_VENDOR_KEY` must be provisioned through the authorized owner process. The value must never enter evidence or ordinary responses.
+- Tenant ownership is not inferred for legacy interface rows. A synthetic fixture must be authorized and must not use customer data.
+- Merge and deployment are recorded separately from application acceptance.
+
+## Risks / blockers
+
+`KELEDON_VENDOR_KEY` is absent from the production API variable-name metadata. The Web project has no catalog-provisioning UI, and existing interface rows are not assigned a tenant by the additive migration. Authenticated selector and credential persistence tests therefore remain blocked. The PHDK Auto portfolio remains 0/4 commitments DONE and PARTIALLY DELIVERED.
+
+## Evidence
+
+- PR: https://github.com/tuyoisaza/keledon/pull/210
+- Merge SHA: `9c4c143abba911261f8c881cfc1b3c4e32c373a9`
+- UAT-103: required variable name absent, value not read.
+- UAT-104: homepage, bundle and API `/health` returned HTTP 200; 5.2.1 observed; unauthenticated catalog GET returned 401.
+- Completion gate: `BLOCKED` for focused tests and whole-Auto acceptance.
+
+## Next stage
+
+Stage: continue UAT/Fix and the remaining approved CMT-002 through CMT-004 work.
+Required inputs: owner-managed key configuration, a tenant-owned catalog provisioning route, and an authorized synthetic production fixture.
+Before starting: verify the exact 5.2.1 production version, variable-name presence/length without displaying its value, fixture ownership and cleanup plan; then run UAT only against the production candidate and preserve redacted evidence.

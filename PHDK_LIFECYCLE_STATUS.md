@@ -1,6 +1,6 @@
 # Current PHDK Auto — PHDK 2.53.1 / 5.2.1 tenant interface selector continuation
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch `feature/tenant-interface-selector-5.2.0`; product source commit `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PR #210 is OPEN at the live branch head verified in GitHub. PHDK v2.53.1 is installed from upstream `94f583635d295ae0f227726718904d952cadb8ab`. Static PHDK coherence passes 64/64 and the root managed block matches canonical bytes. Production displays v5.1.85. Four confirmed fronts and approved tenant/role/private-origin/interface policy are unchanged.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; source branch `feature/tenant-interface-selector-5.2.0`; PR #210 squash-merged at remote `main` SHA `9c4c143abba911261f8c881cfc1b3c4e32c373a9`. PHDK v2.53.1 is installed from upstream `94f583635d295ae0f227726718904d952cadb8ab`; coherence passes 64/64 and root managed instructions match canonical bytes. Railway API/Web deployments report success; UAT-104 observes public 5.2.1 availability only. Four confirmed fronts and approved tenant/role/private-origin/interface policy remain unchanged.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -10,19 +10,19 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch
 | PMO / Workstreams | REUSED / REVALIDATED | 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL; no scope removed. |
 | Integration Review | COMPLETED FOR SOURCE REVIEW | API/Cloud role and tenant guards, secret projections, legacy route boundary and assignment service were reviewed. Migration has nullable `companyId` and no backfill; tenant interface provisioning/legacy ownership remain acceptance items. |
 | UAT Prep | PARTIAL / BLOCKED | Source seeder rejects production; no isolated DB or provisioned synthetic personas. See `UAT_PREP_REPORT.md`. |
-| UAT | ACCEPTANCE INCOMPLETE | UAT-098/099/100 pass narrowly on deployed v5.1.85 (anonymous public page, redirect, and homepage/login widget presence); candidate 5.2.1 cases UAT-096/097 remain blocked. No production writes. |
+| UAT | ACCEPTANCE INCOMPLETE | UAT-104 verifies public page/bundle/API health return 200 at v5.2.1. UAT-103 found `KELEDON_VENDOR_KEY` absent from the API service; UAT-096/097/101 authenticated and persistence cases remain blocked. No production writes. |
 | UAT Fix | NOT APPLICABLE FOR THIS RE-ENTRY | No candidate defect observed in the permitted smoke; blocked feature cases cannot be repaired from runtime evidence. |
 | SEO | REUSED / SOURCE REVALIDATED | Public source unchanged for 5.2.1; deployed measurements remain open. |
 | AEO/GEO | REUSED / SOURCE REVALIDATED | Public answer source unchanged; citation/field evidence remains unmeasured. |
-| Check | PARTIAL / ADMIN STANDARD GAPS RECORDED | PHDK 2.53.1 coherence 64/64; theme-token audit `STATIC_PASS`; root managed block pass. New admin architecture, capability/settings registry and AI catalog record ADM-001…006 gaps; documentation does not close them. GitHub has no workflows, branch protection or rulesets; PR #210 has no checks/review. Railway API/Web current deployments succeed, but Web has 12 recent failures (three sampled failures trace to missing `shared/` in an older build context; later root-context deployments succeed). `checkSuites:false`; wait-for-CI/restart/watch/cost fields remain unverified. No app tests or production writes in this continuation. |
+| Check | PARTIAL / ADMIN STANDARD GAPS RECORDED | PHDK 2.53.1 coherence 64/64; theme-token audit `STATIC_PASS`; root managed block pass. Admin architecture, capability/settings registry and AI catalog document ADM-001…006 gaps. GitHub has no workflows, branch protection or rulesets; PR #210 had no checks/review decision. Railway auto-deploy succeeded for API/Web; `checkSuites:false` and wait-for-CI/restart/watch/cost remain unverified. No app tests or production writes. |
 | Remediation | COMPLETED FOR CURRENT DOCUMENT GAPS | Corrected PIA source links, UAT scope, provisioning limitation, and current PMO/lifecycle state; no safe source change was justified without ownership data or candidate acceptance. |
-| Delivery | PR #210 OPEN; NOT MERGED | GitHub reports no checks or review decision. No merge/main verification for 5.2.1. |
+| Delivery | SOURCE MERGED / REMOTE VERIFIED; WHOLE GOAL PARTIAL | PR #210 merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; `origin/main` and `git ls-remote` match. UAT-104 confirms 5.2.1 production availability only. Completion gate is blocked by unauthenticated/unpersisted UAT and open portfolio commitments. |
 
-Overall Auto remains **PARTIALLY DELIVERED**. Production public smoke does not accept branch-only code. Authenticated tenant/persistence acceptance, PR review/check evidence and merge/main verification remain open.
+Overall Auto remains **PARTIALLY DELIVERED**. Authenticated tenant/persistence acceptance, safe catalog provisioning, required key configuration, broader product commitments and a passing completion gate remain open.
 
-SIGUIENTE PASO: continue source-mapping ADM-001…006 against the real admin/API routes and identify safely implementable gaps; keep PR #210 open until candidate acceptance and delivery controls pass.
+SIGUIENTE PASO: obtain owner-managed `KELEDON_VENDOR_KEY` configuration and an authorized synthetic tenant/catalog fixture; then execute the blocked candidate UAT on production and continue the remaining three fronts.
 
-Automation hygiene details: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1-PHDK-2.53.1.md` records the bounded GitHub/Railway metadata, sampled build failure and unverified provider fields. Current production service status is not acceptance of the unmerged candidate.
+Automation hygiene and acceptance details: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1-PHDK-2.53.1.md`; production smoke evidence is UAT-104 and key-configuration blocker is UAT-103. Deployment success does not accept authenticated behavior.
 
 ---
 

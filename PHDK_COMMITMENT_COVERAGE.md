@@ -1,13 +1,13 @@
 ## Current continuation — 5.2.1; 4/4 commitments active-partial (2026-10-17)
 
-PHDK 2.53.1; product source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PR #210 is OPEN, not merged. Production is v5.1.85. UAT-098/099/100 are narrow anonymous read-only checks; UAT-100 confirms the homepage/login widget only. The source review confirmed tenant filtering and credential redaction; `ManagedInterface.companyId` remains nullable with no backfill. Superadmin provisioning route exists, but production ownership/configuration was not inspected. PHDK admin-console source baseline is now recorded in four root registries; full configuration, lifecycle, backup and graph acceptance remains open.
+PHDK 2.53.1; PR #210 merged at `9c4c143abba911261f8c881cfc1b3c4e32c373a9`; remote `main` readback matches. UAT-104 confirms production version 5.2.1 and public API liveness only. UAT-103 found the required `KELEDON_VENDOR_KEY` variable name absent from production API metadata; no value was read. `ManagedInterface.companyId` is nullable with no backfill; the Web has no catalog-provisioning UI. PHDK admin-console baseline is recorded in four registries; full configuration, lifecycle, backup, graph and authenticated tenant acceptance remains open.
 
 | Commitment | Current continuation evidence | Open gate |
 |---|---|---|
-| CMT-001 | Standards updated; PHDK coherence 64/64; PR #210 open without checks/review. | Required acceptance, review, merge, exact `main` and deployment verification. |
-| CMT-002 | UAT-100 confirms anonymous homepage/login widget presence on deployed v5.1.85; prior source evidence retained at its original revisions. | Candidate/authenticated surfaces, action behavior, native hardware/audio and broad accessibility/localization. |
+| CMT-001 | Standards updated; PHDK coherence 64/64; PR #210 merged, remote main SHA verified, and production Web/API report 5.2.1. No hosted checks or review decision were reported. | Continue baseline/version reconciliation and complete the PHDK gate after product acceptance. |
+| CMT-002 | UAT-104 confirms anonymous production page and API availability at 5.2.1; prior widget source evidence retains its original scope. | Authenticated surfaces, action behavior, native hardware/audio and broad accessibility/localization. |
 | CMT-003 | Provider-neutral tenant contracts retained; no client stack selected. | Per-client configured call/CRM sandbox acceptance. |
-| CMT-004 | Selector, stale-response handling and API/Cloud tenant contracts reviewed; new PHDK console audit found direct Prisma writes for `ManagedInterface.credentials` and additional lifecycle/backup gaps. | Review and fix the interface-secret storage boundary, then verify ownership/migration persistence, role sessions, cross-tenant denials and remaining CRUD. |
+| CMT-004 | Selector, stale-response handling and API/Cloud tenant contracts merged; new credential writes are encrypted and responses/audits redact secrets. Production key metadata is absent, legacy ownership is unmapped, and catalog provisioning UI is not present. | Owner-managed key configuration, authorized synthetic fixture, provisioned tenant catalog, migration/persistence, role sessions, cross-tenant denial and remaining CRUD. |
 
 Totals remain **4 confirmed / 0 done / 4 active-partial / 0 deferred / 0 cancelled**. No confirmed commitment is removed or newly deferred.
 
