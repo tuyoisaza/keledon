@@ -6,6 +6,8 @@ Final Check also found the current Railway Web production build failure: the liv
 
 Current publish-gate verification adds API AI contract 10/10, Cloud managed-runtime tests 7/7, API/Cloud Prisma validation and generation, and built-Web save/publish UAT; API and Cloud production builds pass. The new additive migration has not been applied to a database. The broader 5.1.78 checks remain as listed below. GitHub PR #198 remains open; Railway root/config and successful deployment, full API e2e, and persistent auth remain external or database-dependent gates. Overall PHDK Auto remains PARTIALLY DELIVERED; source PR delivery and remote-main reconciliation remain pending.
 
+Current continuation adds `AUDIT_EXPORT_REQUESTED` recording for the superadmin CSV page export in API and Cloud. The dedicated endpoint accepts only a bounded row count, offset and allowlisted filter names, derives actor/tenant from the current DB actor, and stores no filter values or exported rows. General CRUD audit writes remain denied; audit failure blocks the browser download. API/Cloud HTTP and service tests, scoped lint, backend builds/regressions, Web typecheck/build and synthetic admin-audit UAT pass. Audit retention and PostgreSQL persistence/restart remain open.
+
 
 ---
 

@@ -56,6 +56,56 @@ function parseAuditDate(
 export class CrudAuditService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async recordPageExport(
+    actor: { id: string; companyId: string | null },
+    input: unknown,
+  ) {
+    const allowedFilters = new Set([
+      'action',
+      'entity',
+      'userId',
+      'startDate',
+      'endDate',
+    ]);
+    if (!input || typeof input !== 'object' || Array.isArray(input))
+      throw new BadRequestException('Invalid audit export request');
+    const value = input as Record<string, unknown>;
+    if (
+      Object.keys(value).some(
+        (key) => !['rowCount', 'offset', 'filterKeys'].includes(key),
+      ) ||
+      !Number.isInteger(value.rowCount) ||
+      Number(value.rowCount) < 1 ||
+      Number(value.rowCount) > 50 ||
+      !Number.isInteger(value.offset) ||
+      Number(value.offset) < 0 ||
+      Number(value.offset) > 1_000_000 ||
+      !Array.isArray(value.filterKeys) ||
+      value.filterKeys.length > allowedFilters.size ||
+      new Set(value.filterKeys).size !== value.filterKeys.length ||
+      value.filterKeys.some(
+        (key) => typeof key !== 'string' || !allowedFilters.has(key),
+      )
+    )
+      throw new BadRequestException('Invalid audit export request');
+
+    await this.prisma.auditLog.create({
+      data: {
+        userId: actor.id,
+        companyId: actor.companyId,
+        action: 'AUDIT_EXPORT_REQUESTED',
+        entity: 'audit-logs',
+        changes: JSON.stringify({
+          format: 'csv',
+          scope: 'visible-page',
+          rowCount: value.rowCount,
+          offset: value.offset,
+          filterKeys: value.filterKeys,
+        }),
+      },
+    });
+  }
+
   async getAuditLogs(params?: {
     companyId?: string;
     limit?: number;

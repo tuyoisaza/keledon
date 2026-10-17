@@ -508,6 +508,15 @@ export class CrudController {
     });
   }
 
+  @Post('audit-logs/export-page')
+  async recordAuditExport(
+    @Req() req: CrudRequestContext,
+    @Body() input: unknown,
+  ) {
+    await this.crud.recordAuditPageExport(req.actor, input);
+    return { recorded: true };
+  }
+
   // ========== SEED ==========
 
   @Post('seed')

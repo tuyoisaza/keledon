@@ -33,6 +33,8 @@ export default function AdminAuditPage() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [result, setResult] = useState<AuditResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -59,9 +61,9 @@ export default function AdminAuditPage() {
     setPageOffset(0);
     setAppliedQuery(params.toString());
   };
-  const exportVisiblePage = () => {
+  const exportVisiblePage = async () => {
     const rows = result?.data ?? [];
-    if (!rows.length) return;
+    if (!rows.length || exporting) return;
     const fields = ['timestamp', 'actor', 'action', 'entity', 'record', 'changes'];
     const lines = [fields, ...rows.map(row => [
       row.createdAt,
@@ -72,11 +74,28 @@ export default function AdminAuditPage() {
       row.changes ?? '',
     ])].map(row => row.map(csvCell).join(',')).join('\r\n');
     const url = URL.createObjectURL(new Blob([lines], { type: 'text/csv;charset=utf-8' }));
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = `keledon-audit-${new Date().toISOString().slice(0, 10)}.csv`;
-    anchor.click();
-    URL.revokeObjectURL(url);
+    setExporting(true);
+    setExportError(false);
+    try {
+      await apiJson('/api/crud/audit-logs/export-page', {
+        method: 'POST',
+        body: JSON.stringify({
+          rowCount: rows.length,
+          offset: pageOffset,
+          filterKeys: Array.from(new URLSearchParams(appliedQuery).keys()),
+        }),
+      });
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `keledon-audit-${new Date().toISOString().slice(0, 10)}.csv`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      URL.revokeObjectURL(url);
+      setExportError(true);
+    } finally {
+      setExporting(false);
+    }
   };
 
   return <main className="mx-auto max-w-7xl space-y-6 p-4 md:p-8">
@@ -84,9 +103,10 @@ export default function AdminAuditPage() {
       <div className="flex items-start gap-3"><Shield aria-hidden="true" className="mt-1 h-6 w-6 text-primary"/><div><h1 className="text-2xl font-bold">{t('audit.title')}</h1><p className="mt-1 text-muted-foreground">{t('audit.description')}</p></div></div>
       <div className="flex gap-2">
         <button type="button" onClick={() => setRefreshKey(current => current + 1)} disabled={loading} className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 disabled:opacity-50"><RefreshCw aria-hidden="true" className="h-4 w-4"/>{t('audit.refresh')}</button>
-        <button type="button" onClick={exportVisiblePage} disabled={!result?.data.length || loading} className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 disabled:opacity-50"><Download aria-hidden="true" className="h-4 w-4"/>{t('audit.exportPage')}</button>
+        <button type="button" onClick={() => void exportVisiblePage()} disabled={!result?.data.length || loading || exporting} className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 disabled:opacity-50"><Download aria-hidden="true" className="h-4 w-4"/>{t('audit.exportPage')}</button>
       </div>
     </header>
+    {exportError && <p role="alert" className="text-sm text-destructive">{t('audit.exportError')}</p>}
     <form onSubmit={search} className="grid gap-3 rounded-lg border border-border p-4 sm:grid-cols-2 lg:grid-cols-5">
       <label className="text-sm">{t('audit.action')}<input value={filters.action} maxLength={80} onChange={e => updateFilter('action', e.target.value)} className="mt-1 w-full rounded border border-border bg-background px-3 py-2"/></label>
       <label className="text-sm">{t('audit.entity')}<input value={filters.entity} maxLength={100} onChange={e => updateFilter('entity', e.target.value)} className="mt-1 w-full rounded border border-border bg-background px-3 py-2"/></label>

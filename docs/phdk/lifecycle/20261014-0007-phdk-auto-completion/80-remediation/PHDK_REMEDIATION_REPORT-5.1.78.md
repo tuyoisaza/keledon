@@ -1,5 +1,9 @@
 # Remediation — 5.1.78 managed Cloud AI candidate
 
+## Current continuation — bounded audit export event
+
+The admin CSV export now records `AUDIT_EXPORT_REQUESTED` through a dedicated API/Cloud route protected by the current DB-derived superadmin role. The append-only event stores only actor and tenant from the authenticated record, CSV/visible-page scope, row count, offset and allowed filter names; it excludes filter values and exported contents. The event write is required before the browser starts the download, so a failed audit write blocks export. General CRUD writes to audit logs remain denied, and global interceptors skip this route to avoid duplicate records. API/Cloud in-process HTTP and audit-service contract tests pass; built-Web admin-audit UAT confirms bounded request metadata and download ordering. Audit retention policy and isolated PostgreSQL persistence/restart acceptance remain open.
+
 The Cloud AI integration gap is repaired for source parity. Brain and decision-engine calls now resolve revisioned workflow definitions, schema, provider and key through persisted tenant configuration; enforce bounded server-built inputs and validated structured outputs; apply budget/kill-switch controls; and record safe usage attribution without payloads or guessed price.
 
 The focused Check also found a stale RolesGuard test expectation. It now includes the database-derived companyId projection already used for tenant-attributed denial auditing. The focused guard suite passes 3/3.

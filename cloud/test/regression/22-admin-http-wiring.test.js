@@ -54,6 +54,8 @@ const { MvpStoreService } = require('../../src/mvp/mvp-store.service.ts');
 const { TenantFlowConfigService } = require('../../src/mvp/tenant-flow-config.service.ts');
 const { CrudController } = require('../../src/crud/crud.controller.ts');
 const { CrudService } = require('../../src/crud/crud.service.ts');
+const { CrudAccessGuard } = require('../../src/guards/crud-access.guard.ts');
+const { CrudAuditService } = require('../../src/crud/crud-audit.service.ts');
 const { BrainController } = require('../../src/controllers/brain.controller.ts');
 const { LLMService } = require('../../src/llm/llm.service.ts');
 
@@ -103,6 +105,7 @@ async function main() {
     userListScope,
     updatedUser,
     launchedActor;
+  const auditExports = [];
   const module = await Test.createTestingModule({
     controllers: [
       DeviceController,
@@ -115,12 +118,16 @@ async function main() {
     providers: [
       { provide: PrismaService, useValue: prisma },
       { provide: TenantFlowConfigService, useValue: {} },
+      { provide: CrudAccessGuard, useFactory: () => new CrudAccessGuard(prisma) },
       { provide: ResourceScopeGuard, useFactory: () => new ResourceScopeGuard(prisma) },
       { provide: LLMService, useValue: { generate: async () => ({ text: 'hello', usage: {} }) } },
       { provide: ConfigService, useValue: { get: () => undefined } },
       {
         provide: CrudService,
         useValue: {
+          recordAuditPageExport: async (actor, input) => {
+            auditExports.push({ actor, input });
+          },
           getUsers: async (companyId) => {
             userListScope = companyId;
             return [];
@@ -272,6 +279,21 @@ async function main() {
       .set('Authorization', token('superadmin'))
       .send({ userId: 'member', action: 'FORGED', entity: 'company' })
       .expect(404);
+    const exportRequest = { rowCount: 2, offset: 0, filterKeys: ['action'] };
+    await request(http)
+      .post('/api/crud/audit-logs/export-page')
+      .set('Authorization', token('superadmin'))
+      .send(exportRequest)
+      .expect(201, { recorded: true });
+    assert.deepEqual(auditExports, [
+      { actor: actors.superadmin, input: exportRequest },
+    ]);
+    await request(http)
+      .post('/api/crud/audit-logs/export-page')
+      .set('Authorization', token('admin'))
+      .send(exportRequest)
+      .expect(403);
+    assert.equal(auditExports.length, 1);
     await request(http)
       .post('/api/crud/keledons/k-a/launch')
       .set('Authorization', token('member'))
@@ -347,6 +369,47 @@ async function main() {
       .expect(201);
     assert.equal(lastVectorScope.company_id, 'co-a');
     assert.equal(lastVectorScope.team_id, 'team-a');
+    const exportAuditWrites = [];
+    const exportAuditService = new CrudAuditService({
+      auditLog: {
+        create: async ({ data }) => {
+          exportAuditWrites.push(data);
+          return data;
+        },
+      },
+    });
+    await exportAuditService.recordPageExport(
+      { id: 'superadmin', companyId: 'co-a' },
+      { rowCount: 2, offset: 50, filterKeys: ['action', 'entity'] },
+    );
+    assert.equal(exportAuditWrites[0].userId, 'superadmin');
+    assert.equal(exportAuditWrites[0].companyId, 'co-a');
+    assert.equal(exportAuditWrites[0].action, 'AUDIT_EXPORT_REQUESTED');
+    assert.deepEqual(JSON.parse(exportAuditWrites[0].changes), {
+      format: 'csv',
+      scope: 'visible-page',
+      rowCount: 2,
+      offset: 50,
+      filterKeys: ['action', 'entity'],
+    });
+    await assert.rejects(
+      exportAuditService.recordPageExport(
+        { id: 'superadmin', companyId: 'co-a' },
+        { rowCount: 51, offset: 0, filterKeys: [], rawFilter: 'secret' },
+      ),
+      /Invalid audit export request/,
+    );
+    assert.equal(exportAuditWrites.length, 1);
+    const failingExportAuditService = new CrudAuditService({
+      auditLog: { create: async () => { throw new Error('isolated write failure'); } },
+    });
+    await assert.rejects(
+      failingExportAuditService.recordPageExport(
+        { id: 'superadmin', companyId: 'co-a' },
+        { rowCount: 1, offset: 0, filterKeys: [] },
+      ),
+      /isolated write failure/,
+    );
     console.log(
       'PASS real Nest HTTP guard wiring: anonymous/role/tenant/removed-actor denials, legitimate controls, trusted search filters, safe device/provider/public-config responses.',
     );

@@ -498,6 +498,7 @@
     "clear": "Clear filters",
     "refresh": "Refresh",
     "exportPage": "Export visible page",
+    "exportError": "Export could not be recorded, so the file was not downloaded. Try again.",
     "loading": "Loading audit events…",
     "loadError": "Audit events could not be loaded. Check your access and try again.",
     "successOnly": "Successful events only; denied requests are not recorded here.",

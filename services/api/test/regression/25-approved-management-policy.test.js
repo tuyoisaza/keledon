@@ -423,6 +423,11 @@ async function main() {
   }
   assert.equal(await run('companies', 'DELETE', { id: 'co-b' }).result, true);
   assert.equal(await run('audit-logs', 'GET').result, true);
+  assert.equal(
+    await run('audit-logs', 'POST', {}, {}, 'recordAuditExport').result,
+    true,
+    'only the dedicated superadmin audit export event may append audit metadata',
+  );
   await assert.rejects(
     run(
       'audit-logs',

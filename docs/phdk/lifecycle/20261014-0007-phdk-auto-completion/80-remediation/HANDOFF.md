@@ -1,4 +1,14 @@
-# Remediation continuation — candidate 5.1.74 / PHDK 2.51.5 (2026-10-17)
+# Remediation continuation — candidate 5.1.78 / PHDK 2.52.2 (2026-10-17)
+
+Continued CHK-20261016-002 with a bounded audit event for CSV export requests. API and Cloud expose only a dedicated POST route, authorize it from the current DB-derived superadmin actor, validate row count/offset/filter-key bounds, and write `AUDIT_EXPORT_REQUESTED` with actor tenant from the database. General CRUD audit writes remain denied; the interceptor suppresses duplicate logging. The Web now waits for this event before downloading and reports failure without creating the file if audit recording fails. API and Cloud HTTP/service tests, backend builds/regressions and scoped lint pass; Web typecheck/build and admin-audit UAT pass. UAT uses synthetic audit rows; no database persistence or retention policy is claimed.
+
+Current overall Auto remains **PARTIALLY DELIVERED**. Railway's configured Web root, PostgreSQL migrations/restart, audit retention decision, broad CRUD, native/accessibility and customer-selected integrations remain open.
+
+SIGUIENTE PASO: deliver this source slice on PR #198 and continue independent fixable findings while the owner resolves the Railway root/config gate.
+
+---
+
+## Historical remediation continuation — candidate 5.1.74 / PHDK 2.51.5 (2026-10-17)
 
 Closed source audit coverage for role denials and successful mutation/auth events: API and Cloud role guards record a minimal append-only `ACCESS_DENIED` event for known actors, snapshot the actor's tenant, and still reject access if event persistence fails. API and Cloud interceptors capture the actor tenant before mutation/auth handlers run. The new nullable, non-relational `AuditLog.companyId` is paired across both Prisma schemas and additive migrations; audit filtering prefers event-time tenant attribution while retaining a fallback for historical rows. No request body, IP or user-agent is copied into role-denial events.
 

@@ -521,6 +521,13 @@ export class CrudService {
     return this.auditService.getAuditLogs(params);
   }
 
+  async recordAuditPageExport(
+    actor: { id: string; companyId: string | null },
+    input: unknown,
+  ) {
+    return this.auditService.recordPageExport(actor, input);
+  }
+
   // ========== ========== VENDORS ========== ==========
   // Delegated to CrudVendorService (crud-vendor.service.ts)
 

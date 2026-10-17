@@ -503,6 +503,7 @@
     "clear": "Limpar filtros",
     "refresh": "Atualizar",
     "exportPage": "Exportar página visível",
+    "exportError": "Não foi possível registrar a exportação e o arquivo não foi baixado. Tente novamente.",
     "loading": "Carregando eventos de auditoria…",
     "loadError": "Não foi possível carregar os eventos. Verifique o acesso e tente novamente.",
     "successOnly": "Somente eventos concluídos; solicitações negadas não são registradas aqui.",
