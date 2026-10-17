@@ -130,3 +130,8 @@ La fuente NGINX ahora sirve `index,follow` en `/` y `noindex,nofollow` en shells
 Estado actual: SEO-02 y SEO-19 PASS en fuente/local. SEO-01/03/04/06–12/18/20 son PASS de fuente con límites previos. SEO-05/13–17/23–25 siguen BLOCKED o NOT MEASURED por falta de observación del despliegue, Search Console, métricas de campo y rastreo externo. SEO-16 no afirma aceptación completa de dispositivos/zoom.
 
 **Resultado: SOURCE PASS; FIELD ACCEPTANCE BLOCKED.** No se accedió a Search Console, no se sondeó un sitio en producción y no se afirmó despliegue. Evidencia ejecutada: `services/web npm run test:seo` (1/1) y `services/web npm run test:uat` (1/1, SPA local de 5.1.10).
+# Candidate 5.1.73 revalidation — public metadata and routes unchanged (2026-10-16)
+
+SEO remains **APPLICABLE** to public `/`. The current candidate changes admin/editor UI, shared theme tokens, API metadata, and two public CTA hover token references; it changes no public copy, route, title/description/canonical, robots, sitemap, or indexability policy. Web and Landing `npm run test:seo` both PASS 1/1. Existing source checklist is reused. No live hostname, crawler, Search Console, field Core Web Vitals, TLS or deployed indexing was tested; external discovery remains unmeasured.
+
+---

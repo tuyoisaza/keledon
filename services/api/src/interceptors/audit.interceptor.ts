@@ -26,7 +26,10 @@ export class AuditInterceptor implements NestInterceptor {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  async intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
     const method = request.method;
     const url = request.route?.path || request.url || '';
@@ -63,6 +66,19 @@ export class AuditInterceptor implements NestInterceptor {
       return next.handle();
     }
 
+    let eventCompanyId: string | undefined;
+    if (userId) {
+      try {
+        const actor = await this.prisma.user.findUnique({
+          where: { id: userId },
+          select: { companyId: true },
+        });
+        eventCompanyId = actor?.companyId || undefined;
+      } catch {
+        // Preserve the request; legacy audit events remain queryable by actor.
+      }
+    }
+
     return next.handle().pipe(
       tap((responseBody: any) => {
         void (async () => {
@@ -81,6 +97,19 @@ export class AuditInterceptor implements NestInterceptor {
           if (!resolvedUserId && responseBody?.id && !entityId) {
             // Register response has id at top level
             resolvedUserId = responseBody.id;
+          }
+
+          let companyId = eventCompanyId;
+          if (!companyId && resolvedUserId) {
+            try {
+              const actor = await this.prisma.user.findUnique({
+                where: { id: resolvedUserId },
+                select: { companyId: true },
+              });
+              companyId = actor?.companyId || undefined;
+            } catch {
+              // Keep successful auth writes even when tenant lookup is unavailable.
+            }
           }
 
           // For auth/google/callback, extract user from the redirect query params
@@ -104,6 +133,7 @@ export class AuditInterceptor implements NestInterceptor {
             await this.prisma.auditLog.create({
               data: {
                 userId: resolvedUserId,
+                companyId,
                 action: auditEntry.action,
                 entity: auditEntry.entity,
                 entityId: entityId || undefined,
@@ -130,12 +160,7 @@ export class AuditInterceptor implements NestInterceptor {
     if (request.user?.userId) return request.user.userId;
     // Also check for id key (some custom guards may use this)
     if (request.user?.id) return request.user.id;
-
-    // Check body for userId in some edge cases
-    if (request.body?.userId && typeof request.body.userId === 'string') {
-      return request.body.userId;
-    }
-
+    // Request bodies are caller-controlled; never trust them for actor attribution.
     return undefined;
   }
 

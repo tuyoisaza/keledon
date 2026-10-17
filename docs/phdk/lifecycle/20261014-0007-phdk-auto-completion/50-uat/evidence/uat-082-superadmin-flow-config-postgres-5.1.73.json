@@ -1,0 +1,39 @@
+{
+  "case": "UAT-082",
+  "candidate_version": "5.1.73",
+  "base_revision": "0dd405d930c518537ecea17ca363e95a5b99a9fd",
+  "target": "fresh disposable PostgreSQL 16 databases for API and Cloud",
+  "migrations": {
+    "api": "PASS; 9 migrations applied",
+    "cloud": "PASS; 7 migrations applied"
+  },
+  "execution_scope": "Built API and Cloud AuthGuard, ResourceScopeGuard, MvpDataController and TenantFlowConfigService classes invoked directly against real Prisma clients; no HTTP listener was started.",
+  "identities": "Synthetic superadmin and coordinator rows. Signed tokens deliberately carried role claims different from the persisted actor roles.",
+  "api": {
+    "result": "PASS",
+    "assertions": 10,
+    "checks": [
+      "A DB-backed superadmin can create definitions across two companies and read both through the global flow-definition endpoint contract.",
+      "A coordinator token claiming superadmin is resolved as coordinator from PostgreSQL; a forged foreign company filter is replaced with the actor's company.",
+      "The same coordinator's forged foreign-company create is scoped to the actor's company, and a foreign definition update returns no record.",
+      "A superadmin-created flow version records the authenticated actor, is approved, and is read through a second Prisma client."
+    ]
+  },
+  "cloud": {
+    "result": "PASS",
+    "assertions": 10,
+    "checks": [
+      "A DB-backed superadmin can create definitions across two companies and read both through the global flow-definition endpoint contract.",
+      "A coordinator token claiming superadmin is resolved as coordinator from PostgreSQL; a forged foreign company filter is replaced with the actor's company.",
+      "The same coordinator's forged foreign-company create is scoped to the actor's company, and a foreign definition update returns no record.",
+      "A superadmin-created flow version records the authenticated actor, is approved, and is read through a second Prisma client."
+    ]
+  },
+  "persistence": "PASS; definitions and approved versions persisted in the respective databases. Earlier direct service checks also verified company-filtered reads, permissions, intent mappings, and rejection of cross-company references.",
+  "cleanup": "Both UAT-082 databases were dedicated to this run and dropped after verification; the reused PostgreSQL cluster and its pre-existing databases were stopped/preserved.",
+  "external_traffic": "none; no provider, customer endpoint, or production data used",
+  "limitations": [
+    "Controller and guard classes were exercised in-process; HTTP middleware, serialization, and network transport were not part of this case.",
+    "This closes a selected superadmin/coordinator flow-configuration API slice only; it does not close the full CRUD matrix or live flow execution."
+  ]
+}

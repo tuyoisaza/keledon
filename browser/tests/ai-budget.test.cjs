@@ -32,9 +32,10 @@ const common={Injectable:decorator,Logger:class {log(value){logs.push(value)}war
   } },
  },{process:{env:{}}});
  const db={team:{findUnique:async()=>({llmProvider:'openai',openaiApiKey:'synthetic-team-key'})}};
- const usage=[];const managed={prepare:async feature=>({id:feature,revision:3,personalityPrompt:'Managed personality',executionPrompt:'JSON reply only',outputSchemaJson:{type:'object'}}),validateOutput:(prepared,output)=>{if(prepared.id==='decision-engine'? !['say','stop','ask','ui_steps','mode'].includes(output.type) : typeof output.reply!=='string')throw new Error('schema');return output;},recordUsage:async input=>usage.push(input)};
+ const usage=[];let validatedInputs=0;const managed={prepare:async feature=>({id:feature,revision:3,personalityPrompt:'Managed personality',executionPrompt:'JSON reply only',inputSchemaJson:{type:'object',required:['context'],properties:{context:{type:'string'}}},outputSchemaJson:{type:'object'}}),validateInput:(prepared,input)=>{validatedInputs++;if(!input||typeof input!=='object'||Array.isArray(input)||typeof input.context!=='string'||input.context.length>16000)throw new Error('input schema');return input;},validateOutput:(prepared,output)=>{if(prepared.id==='decision-engine'? !['say','stop','ask','ui_steps','mode'].includes(output.type) : typeof output.reply!=='string')throw new Error('schema');return output;},recordUsage:async input=>usage.push(input)};
  const llm=new LLMService(db,managed);llm.provider='none';llm.model='configured-model';
  await llm.generate({prompt:'synthetic-private-content',teamId:'team',actorId:'actor-2',maxTokens:99999});
+ assert.equal(validatedInputs,1);assert.equal(providerCalls,1);
  assert.equal(usage[0].prepared.revision,3);assert.equal(usage[0].inputTokens,4);assert.equal(usage[0].provider,'openai');assert.equal(providerRequest.messages[0].content.includes('Managed personality'),true);assert.equal(providerRequest.messages[0].content.includes('synthetic-private-content'),false);
  assert.equal(sdkOptions.apiKey,'synthetic-team-key');assert.equal(sdkOptions.timeout,30000);assert.equal(sdkOptions.maxRetries,0);assert.equal(providerRequest.max_tokens,2000);
  assert.equal(logs.some(log=>String(log).includes('synthetic-private-content')),false);

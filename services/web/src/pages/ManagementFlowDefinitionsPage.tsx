@@ -96,8 +96,8 @@ export default function ManagementFlowDefinitionsPage() {
       .catch(() => toast.error('Could not load companies'));
   }, [isSuperadmin]);
 
-  const load = useCallback(async () => {
-    if (!companyId) {
+  const load = useCallback(async (targetCompanyId = companyId) => {
+    if (!targetCompanyId) {
       setFlows([]);
       setVersions([]);
       setPermissions([]);
@@ -106,8 +106,8 @@ export default function ManagementFlowDefinitionsPage() {
     }
     setLoading(true);
     try {
-      const legacyView = isSuperadmin && companyId === '__legacy__';
-      const scope = encodeURIComponent(companyId);
+      const legacyView = isSuperadmin && targetCompanyId === '__legacy__';
+      const scope = encodeURIComponent(targetCompanyId);
       const [allFlowRows, allVersionRows, permissionRows, mappingRows] = legacyView
         ? await Promise.all([
             requestJson<FlowDefinition[]>('/api/flow-definitions'),
@@ -182,6 +182,7 @@ export default function ManagementFlowDefinitionsPage() {
 
   const saveDefinition = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const assigningLegacyDefinition = isSuperadmin && companyId === '__legacy__' && editing !== null && !editing.companyId;
     const targetCompanyId = isSuperadmin && companyId === '__legacy__'
       ? legacyOwnerCompanyId
       : companyId;
@@ -206,7 +207,8 @@ export default function ManagementFlowDefinitionsPage() {
       setShowDefinitionForm(false);
       setForm(emptyDefinition);
       setSelectedFlowId(saved.id);
-      await load();
+      if (assigningLegacyDefinition) setCompanyId(targetCompanyId);
+      await load(assigningLegacyDefinition ? targetCompanyId : companyId);
     } catch {
       toast.error('Could not save flow definition');
     } finally {

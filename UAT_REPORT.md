@@ -1,5 +1,43 @@
 # UAT report — run `20261014-0007-phdk-auto-completion`
 
+## Candidate 5.1.74 — current PHDK Auto UAT recheck (2026-10-17)
+
+The production-built Web suite passes 7/7 browser journeys; standalone admin-settings, theme-template and AI-admin UAT also pass with synthetic APIs and outbound traffic blocked. The admin-settings case verifies superadmin platform links in English, tenant admin links in Spanish with platform-only links hidden, and ordinary-user denial. Candidate-bound evidence includes `docs/phdk/evidence/uat-local-web.json`, `docs/phdk/evidence/uat-flow-config-superadmin-web-5.1.74.json`, and lifecycle evidence `50-uat/evidence/admin-settings-uat.json` and `50-uat/evidence/uat-085-theme-templates-5.1.74.json`. UAT-073 tenant-admin flow definition, draft-version, availability and routing controls pair with UAT-079 API/Cloud PostgreSQL persistence; UAT-081 superadmin flow-editor lifecycle/legacy assignment pairs with UAT-083. UAT-086/087 cover Company, Brand, Team and User browser lifecycles paired with UAT-071/075/076 persistence. AI-admin UI evidence is `docs/phdk/workstreams/AI-ADMIN-UAT.json`.
+
+Portfolio tally: **85 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 560-row CRUD matrix is **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**. Migration acceptance for audit-event tenant snapshots, wider role/resource coverage, and the existing native device/audio manual gate remain open.
+
+---
+
+## Candidate 5.1.73 — UAT-084–087 AI, theme and superadmin CRUD UAT PASS (scoped)
+
+The production-built Web UAT now includes UAT-085: 12 assertions pass for separate light/dark/corporate previews, color edit/cancel/save, revision readback after reload, Corporate option visibility/fallback, retained Superadmin editability and tenant-admin denial before protected API access. Persistence is a synthetic API fixture; no database migration or restart persistence is claimed. Evidence: `50-uat/evidence/uat-085-theme-templates-5.1.73.json`.
+
+UAT-084 reruns the AI-admin UI journey after the fixture was updated to provide the new workflow metadata. It passes validation rejection, 409 draft preservation, explicit reload, valid save, unknown pricing/token display, empty state and role denial. Evidence: `docs/phdk/workstreams/AI-ADMIN-UAT.json`, `ai-prompts-uat.png` and `ai-consumption-uat.png`. Full `services/web npm run test:uat` passes 7/7 browser journeys, then UAT-085 and UAT-084 pass; all endpoints are synthetic and outbound requests are blocked.
+
+UAT-086 and UAT-087 pass production-built Web superadmin CRUD for User and Brand/Team respectively. The journeys verify create, update, explicit detail readback, role default/elevation rules, tenant/company assignment, and confirmed deletion against synthetic API persistence. UAT-071/075/076 separately provide PostgreSQL API/Cloud authorization and persistence evidence for the same resource families; no mocked Web call is presented as database evidence. Screenshots and assertion evidence are in `docs/phdk/evidence/uat-local-web.json` and the adjacent `uat-superadmin-*-detail.png` files.
+
+Portfolio tally advances to **85 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The CRUD inventory reconciles all 40 Prisma models and 560 model-role-surface rows: **396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS**. The selected UATs do not establish audit migration persistence, full route/locale accessibility, screen-reader acceptance, customer integrations, or whole-goal completion.
+
+---
+
+## Candidate 5.1.73 — UAT-083 superadmin flow API HTTP acceptance PASS
+
+Built API and Cloud Nest servers passed 24 HTTP assertions each against separate fresh PostgreSQL 16 databases. Coverage includes anonymous denial; DB-derived superadmin/coordinator role and company scope despite forged token/filter values; cross-tenant definition create/read/update/deactivate and legacy assignment; version creation, approval and immutability; permission enable/disable; intent mapping create/remove; and persisted readback through second Prisma clients. All fixtures and databases were removed, both services exited, and the reused cluster was stopped with its previous databases preserved. API applied 9 migrations and Cloud 7. Evidence: `50-uat/evidence/uat-083-superadmin-flow-config-http-5.1.73.json` and repeatable runner `services/api/scripts/uat-083-http-flow-config.cjs`.
+
+UAT tally advances to **81 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The 547-row matrix advances to **391 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 20 PASS**; four superadmin flow-configuration API rows are now PASS. Their Web rows and the wider resource/role matrix remain open.
+
+## Candidate 5.1.73 — UAT-082 superadmin flow API persistence PASS
+
+Fresh disposable PostgreSQL databases applied 9 API and 7 Cloud migrations. In both packages, the built AuthGuard, ResourceScopeGuard, MvpDataController and TenantFlowConfigService were invoked against real Prisma clients. A synthetic superadmin created definitions across two companies and read them globally. A coordinator token carrying a forged superadmin role and foreign company filter was resolved to the coordinator's DB role/company; the foreign flow stayed hidden, the forged create was scoped to the coordinator's company, and foreign update returned no row. Approved version and actor read back through a second client. Ten assertions passed in each package. Fixtures were removed with the dedicated databases. This is in-process controller/guard evidence, not HTTP transport or full CRUD-matrix acceptance. Evidence: `50-uat/evidence/uat-082-superadmin-flow-config-postgres-5.1.73.json`.
+
+At UAT-082, portfolio was **80 PASS, 0 BLOCKED, 1 MANUAL** and the matrix was **395 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 16 PASS**. UAT-083 extends the acceptance over live local HTTP and closes four superadmin API rows.
+
+## Candidate 5.1.73 — UAT-081 superadmin flow configuration Web journey PASS after UAT Fix
+
+The first production-built Web run passed tenant switching, cross-tenant list filtering, definition CRUD, version approval, availability and intent mapping, but failed after assigning an unowned legacy definition: the API fixture showed the new owner while the page stayed on the legacy-only view and the saved definition disappeared. The page now switches to the selected company after successful reassignment and loads that company's definitions. The retest passes definition create/update/deactivate, draft approval, availability enable/disable, mapping add/remove, legacy assignment and destination-tenant readback; the existing tenant-admin flow journey also passes. Both runs used a synthetic superadmin and intercepted APIs with external HTTP/WebSockets blocked. This is UI/request-contract evidence only. Superadmin API authorization and PostgreSQL persistence remain open; API/Cloud persistence evidence UAT-079/080 applies to admin/coordinator actors. Evidence: `50-uat/evidence/uat-flow-config-superadmin-web-5.1.73.json`.
+
+UAT tally at UAT-081 was **79 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. UAT-082 adds selected persisted API coverage; all four confirmed commitments remain active and no deployment or client call/CRM was exercised.
+
 ## Candidate 5.1.66 — tenant flow persistence architecture and UAT revalidation
 
 UAT-058 passes for the API/Cloud source and schema contracts, including a composite PostgreSQL foreign key that prevents a permission row from referencing another company's flow and legacy import behavior that trusts persisted ownership. API regression passes 39/39 and Cloud 18/18; Prisma validation, API/Cloud builds and applicable lint pass. UAT-059 passes on the local production-built Web SPA with synthetic Company Co fixtures; keyboard-only editor actions create and approve a version, configure availability and route an intent. The 390px view now uses a compact top app navigation and a full-width form; browser requests outside the local harness are blocked. Full Web UAT passes 6/6 plus the AI-admin journey; diagnostics pass 19/19; Browser offline suite passes 43/43. Exact candidate evidence is under `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-web-5.1.66/`.
@@ -8,7 +46,7 @@ UAT-060 is BLOCKED because this workstation has no local PostgreSQL service, `ps
 
 Current candidate tally: **58 PASS, 1 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. Whole Auto remains partial.
 
-### Action plan for unresolved acceptance
+### Historical action plan for candidate 5.1.66 (superseded where later evidence applies)
 
 | Case | What prevents acceptance / why it matters | Owner action and location | Evidence to close / retest |
 |---|---|---|---|

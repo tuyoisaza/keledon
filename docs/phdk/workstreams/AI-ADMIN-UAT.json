@@ -1,9 +1,10 @@
 {
-  "date": "2026-10-16T01:35:26.139Z",
+  "date": "2026-10-17T06:38:08.451Z",
   "target": "isolated local built React SPA + synthetic Company Co API routes",
   "result": "PASS",
   "cases": [
     "superadmin routes/navigation",
+    "readable graph shows registered next-hop, condition and field mapping",
     "dirty/save disabled state",
     "invalid JSON/object schema prevents API write",
     "409 preserves draft",

@@ -9,6 +9,7 @@ require.extensions['.ts'] = (module, filename) => {
   module._compile(code, filename);
 };
 const { AiAdminService } = require('../src/ai-admin/ai-admin.service.ts');
+const { LLMService } = require('../src/llm/llm.service.ts');
 const { compileManagedSchema } = require('../src/ai-admin/ai-schema.ts');
 function fixture() {
   const prompts = new Map(), revisions = [], usage = [];
@@ -20,7 +21,10 @@ function fixture() {
       findMany: async () => [...prompts.values()].map(record => structuredClone(record)),
       updateMany: async ({where,data}) => { const record=prompts.get(where.id); if(!record||record.revision!==where.revision)return {count:0}; Object.assign(record,data,{revision:record.revision+1}); return {count:1}; },
     },
-    aiPromptRevision: { create: async ({data}) => { revisions.push(data); return data; } },
+    aiPromptRevision: {
+      create: async ({data}) => { revisions.push(structuredClone(data)); return data; },
+      findFirst: async ({where}) => structuredClone(revisions.find(row => row.promptId === where.promptId && row.toRevision === where.toRevision) ?? null),
+    },
     aiCallUsage: { create: async ({data}) => { usage.push(data); return data; }, findMany: async ({take}) => usage.slice(-take) },
     $transaction: async fn => fn(db),
   };
@@ -51,6 +55,85 @@ test('updates validate fields and schema, audit revisions and reject stale concu
   await assert.rejects(service.updatePrompt('owner','brain-chat',{expectedRevision:2,providerSecret:'forbidden'}),/allowed fields/);
   await assert.rejects(service.updatePrompt('owner','brain-chat',{expectedRevision:2,outputSchemaJson:{type:'object',properties:{x:{$ref:'https://example.invalid/schema'}}}}),/Unsupported/);
   assert.equal((await service.prepare('brain-chat')).revision,2);
+});
+test('workflow metadata validates registered hops, rejects cycles, and rollback creates a new revision', async () => {
+  const {service}=fixture(); await service.listPrompts('owner');
+  const first = await service.updatePrompt('owner','brain-chat',{
+    expectedRevision:1,
+    purpose:'Answer user questions',
+    inputSchemaJson:{type:'object',additionalProperties:false,required:['context'],properties:{context:{type:'string',maxLength:16000,source:'authenticated product request',sensitivity:'user-content'}}},
+    outputDestination:'Brain response UI',
+    nextHops:[{agentId:'browser-planner',inputMapping:{context:'$.reply'},condition:'User approved browser action',maxHops:2}],
+  });
+  assert.equal(first.revision,2); assert.equal(first.nextHops[0].agentId,'browser-planner');
+  await assert.rejects(service.updatePrompt('owner','browser-planner',{
+    expectedRevision:1,nextHops:[{agentId:'brain-chat'}],
+  }),/acyclic/);
+  await assert.rejects(service.updatePrompt('owner','brain-chat',{
+    expectedRevision:2,nextHops:[{agentId:'unregistered-agent'}],
+  }),/Invalid workflow graph edge/);
+  await assert.rejects(service.updatePrompt('owner','brain-chat',{
+    expectedRevision:2,inputSchemaJson:{type:'object',additionalProperties:true,properties:{context:{type:'string'}}},
+  }),/Invalid workflow input schema/);
+  await assert.rejects(service.updatePrompt('owner','brain-chat',{
+    expectedRevision:2,nextHops:[{agentId:'browser-planner',inputMapping:{unknown:'$.reply'}}],
+  }),/unknown target input/);
+  await assert.rejects(service.updatePrompt('owner','brain-chat',{
+    expectedRevision:2,nextHops:[{agentId:'browser-planner',inputMapping:{context:'$.missing'}}],
+  }),/field type mismatch/);
+  await service.updatePrompt('owner','brain-chat',{expectedRevision:2,purpose:'Updated answer purpose'});
+  const restored=await service.rollbackPrompt('owner','brain-chat',2,3);
+  assert.equal(restored.revision,4);
+  assert.equal(restored.purpose,'Answer user questions');
+  assert.equal(restored.nextHops[0].agentId,'browser-planner');
+});
+test('runtime AI inputs are validated against the active definition before provider use', async () => {
+  const {service}=fixture();
+  const prepared=await service.prepare('brain-chat');
+  assert.deepEqual(service.validateInput(prepared,{context:'bounded request context'}),{context:'bounded request context'});
+  assert.throws(()=>service.validateInput(prepared,{context:'safe',extra:'unmapped'}),/managed schema/);
+  assert.throws(()=>service.validateInput(prepared,{}),/managed schema/);
+  await service.updatePrompt('owner','brain-chat',{
+    expectedRevision:1,
+    inputSchemaJson:{type:'object',additionalProperties:false,required:['context'],properties:{context:{type:'string',maxLength:3,source:'authenticated product request',sensitivity:'user-content'}}},
+  });
+  const constrained=await service.prepare('brain-chat');
+  assert.throws(()=>service.validateInput(constrained,{context:'longer'}),/field limit/);
+  await assert.rejects(service.updatePrompt('owner','brain-chat',{
+    expectedRevision:2,
+    inputSchemaJson:{type:'object',additionalProperties:false,required:['context'],properties:{context:{type:'string',maxLength:20,source:'unapproved remote source',sensitivity:'internal'}}},
+  }),/Invalid workflow input field/);
+});
+test('LLMService validates and sends the same bounded server-assembled input', async () => {
+  const prepared={id:'brain-chat',revision:1,personalityPrompt:'safe',executionPrompt:'respond',inputSchemaJson:{},outputSchemaJson:{}};
+  let validatedInput, providerRequest, usageWrites=0;
+  const admin={
+    prepare:async()=>prepared,
+    validateInput:(_definition,input)=>{validatedInput=input;},
+    validateOutput:(_definition,value)=>value,
+    recordUsage:async()=>{usageWrites++;},
+  };
+  const llm=new LLMService({},admin);
+  llm.generateUnchecked=async request=>{
+    providerRequest=request;
+    return {text:'{"reply":"safe response"}',provider:'fixture',requestedModel:'fixture',finishReason:'stop',usage:{promptTokens:1,completionTokens:1,totalTokens:2}};
+  };
+  const response=await llm.generate({prompt:'hello',context:['retrieved, untrusted text'],actorId:'runtime-input-test'});
+  const serialized=JSON.stringify({userInput:'hello',untrustedContext:['retrieved, untrusted text']});
+  assert.deepEqual(validatedInput,{context:serialized});
+  assert.equal(providerRequest.prompt,serialized);
+  assert.deepEqual(providerRequest.context,[]);
+  assert.equal(response.text,'safe response');
+  assert.equal(usageWrites,1);
+
+  let providerCalled=false;
+  admin.validateInput=()=>{throw new Error('input contract rejected');};
+  llm.generateUnchecked=async()=>{providerCalled=true;throw new Error('provider must not run');};
+  await assert.rejects(llm.generate({prompt:'reject me',actorId:'runtime-input-rejected'}),/input contract rejected/);
+  assert.equal(providerCalled,false);
+  await assert.rejects(llm.generate({prompt:'context fanout',context:Array.from({length:65},()=>''),actorId:'runtime-input-bounds'}),/Invalid AI input size/);
+  await assert.rejects(llm.generate({prompt:'wrong context',context:['valid',{}],actorId:'runtime-input-type'}),/Invalid AI input size/);
+  assert.equal(providerCalled,false);
 });
 test('structured outputs fail closed: no text coercion or action-field omission', async () => {
   const {service}=fixture(); const prepared=await service.prepare('brain-chat');

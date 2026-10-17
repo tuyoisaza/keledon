@@ -15,6 +15,32 @@ export const Roles =
     return descriptor ?? target;
   };
 
+async function recordDeniedRoleAccess(
+  prisma: PrismaService,
+  request: any,
+  userId: string | undefined,
+  companyId: string | null | undefined,
+  requiredRoles: string[],
+  reason: string,
+): Promise<void> {
+  if (!prisma.auditLog?.create) return;
+  const route = request.route?.path || request.path || 'unknown';
+  try {
+    await prisma.auditLog.create({
+      data: {
+        userId,
+        companyId: companyId || undefined,
+        action: 'ACCESS_DENIED',
+        entity: 'Authorization',
+        entityId: `${request.method || 'UNKNOWN'} ${route}`.slice(0, 300),
+        changes: JSON.stringify({ reason, requiredRoles }),
+      },
+    });
+  } catch {
+    // Keep authorization fail-closed when the best-effort audit write fails.
+  }
+}
+
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
@@ -41,16 +67,32 @@ export class RolesGuard implements CanActivate {
 
     const dbUser = await this.prisma.user.findUnique({
       where: { id: user.userId },
-      select: { role: true },
+      select: { role: true, companyId: true },
     });
 
     if (!dbUser) {
+      await recordDeniedRoleAccess(
+        this.prisma,
+        request,
+        user.userId,
+        undefined,
+        requiredRoles,
+        'ACTOR_NOT_FOUND',
+      );
       throw new ForbiddenException('User not found');
     }
 
     const hasRole = requiredRoles.includes(dbUser.role);
 
     if (!hasRole) {
+      await recordDeniedRoleAccess(
+        this.prisma,
+        request,
+        user.userId,
+        dbUser.companyId,
+        requiredRoles,
+        'ROLE_REQUIRED',
+      );
       throw new ForbiddenException('Insufficient permissions');
     }
 
@@ -72,10 +114,18 @@ export class SuperAdminGuard implements CanActivate {
 
     const dbUser = await this.prisma.user.findUnique({
       where: { id: user.userId },
-      select: { role: true },
+      select: { role: true, companyId: true },
     });
 
     if (dbUser?.role !== 'superadmin') {
+      await recordDeniedRoleAccess(
+        this.prisma,
+        request,
+        user.userId,
+        dbUser?.companyId,
+        ['superadmin'],
+        dbUser ? 'ROLE_REQUIRED' : 'ACTOR_NOT_FOUND',
+      );
       throw new ForbiddenException('Super admin access required');
     }
 

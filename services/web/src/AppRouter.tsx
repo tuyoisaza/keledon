@@ -18,6 +18,9 @@ import KnowledgePage from '@/pages/KnowledgePage';
 import AdminPage from '@/pages/AdminPage';
 import AdminUsersPage from '@/pages/AdminUsersPage';
 import AdminSettingsPage from '@/pages/AdminSettingsPage';
+import AdminAuditPage from '@/pages/AdminAuditPage';
+import AdminTeamSettingsPage from '@/pages/AdminTeamSettingsPage';
+import AdminThemeTemplatesPage from '@/pages/AdminThemeTemplatesPage';
 import SuperAdminPage from '@/pages/SuperAdminPage';
 import ManagementCompaniesPage from '@/pages/ManagementCompaniesPage';
 import ManagementBrandsPage from '@/pages/ManagementBrandsPage';
@@ -178,13 +181,16 @@ export function AppRouter() {
                 <Route
                     path="/admin/settings"
                     element={
-                        <ProtectedRoute minRole="coordinator">
+                        <ProtectedRoute minRole="admin" allowedRoles={['admin', 'coordinator', 'superadmin']}>
                             <AppLayout>
                                 <AdminSettingsPage />
                             </AppLayout>
                         </ProtectedRoute>
                     }
                 />
+                <Route path="/admin/settings/templates" element={<ProtectedRoute minRole="superadmin"><AppLayout><AdminThemeTemplatesPage /></AppLayout></ProtectedRoute>} />
+                <Route path="/admin/audit" element={<ProtectedRoute minRole="superadmin"><AppLayout><AdminAuditPage /></AppLayout></ProtectedRoute>} />
+                <Route path="/admin/team-settings" element={<ProtectedRoute minRole="admin" allowedRoles={['admin', 'coordinator', 'superadmin']}><AppLayout><AdminTeamSettingsPage /></AppLayout></ProtectedRoute>} />
                 <Route
                     path="/flows"
                     element={

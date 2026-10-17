@@ -36,6 +36,7 @@ interface NavItem {
 const navItems: NavItem[] = [
     { icon: BookOpen, label: 'Prompts', i18nKey: 'aiAdmin.prompts', href: '/admin/prompts', minRole: 'superadmin' },
     { icon: Activity, label: 'AI consumption', i18nKey: 'aiAdmin.consumption', href: '/admin/ai-consumption', minRole: 'superadmin' },
+    { icon: Settings, label: 'Configuración', href: '/admin/settings', minRole: 'coordinator' },
     { icon: Play, label: 'Launch Keledon', href: '/launch-keledon', minRole: 'user' },
     { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard', minRole: 'user' },
     { icon: Brain, label: 'Brain', href: '/brain', minRole: 'user' },

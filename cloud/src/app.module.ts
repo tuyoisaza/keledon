@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { SessionService } from './services/session.service';
 import { DatabaseHealthService } from './services/database-health.service';
@@ -33,6 +34,7 @@ import { BrainController } from './controllers/brain.controller';
 import { VoiceModule } from './voice/voice.module';
 import { ResourceScopeGuard } from './guards/resource-scope.guard';
 import { EscalationAccessGuard } from './guards/escalation-access.guard';
+import { AuditInterceptor } from './interceptors/audit.interceptor';
 
 @Module({
   imports: [
@@ -77,6 +79,7 @@ import { EscalationAccessGuard } from './guards/escalation-access.guard';
     TenantFlowConfigService,
     ResourceScopeGuard,
     EscalationAccessGuard,
+    { provide: APP_INTERCEPTOR, useClass: AuditInterceptor },
   ],
   exports: [
     SessionService,

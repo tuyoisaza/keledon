@@ -3,7 +3,8 @@ module.exports = {
     name: 'KELEDON Browser',
     executableName: 'keledon-browser',
     asar: true,
-    icon: './assets/icon'
+    icon: './assets/icon',
+    extraResource: ['../shared']
   },
   rebuildConfig: {},
   makers: [

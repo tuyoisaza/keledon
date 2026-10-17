@@ -1,5 +1,11 @@
 # UAT access report — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.73 — UAT-081 local synthetic superadmin
+
+Target: local production-built Web SPA served on ephemeral loopback by the Playwright harness; role response, two companies and all flow APIs are synthetic in-memory fixtures. A synthetic `superadmin@company-co.invalid` session drives the UI; the browser blocks non-local HTTP and all WebSockets. The test verifies company switching, scoped flow operations and legacy assignment. No real account, test-profile switch, database or external service is accessed; browser/server close in `finally`. This is not live authentication or backend superadmin authorization evidence.
+
+UAT-083 exercised the built API and Cloud HTTP routes with synthetic PostgreSQL superadmin/coordinator identities and signed tokens. DB actor scope overrode forged claims and query/body filters, and approved versions, permissions, mappings and legacy ownership persisted across clients. Requests stayed on loopback; no customer/provider traffic was used. The four superadmin flow API rows are PASS; Web roles remain open. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-083-superadmin-flow-config-http-5.1.73.json`.
+
 ## Candidate 5.1.66 — local synthetic UAT target
 
 Target: local production-built `services/web` SPA served by its finite Playwright test harness on loopback. Company Co is the synthetic demo tenant; actors and API responses are in-memory fixtures, and all outbound HTTP/WebSocket requests are blocked. The tenant-flow case uses company ID `company-co`, role `admin`, and an `.invalid` email alias. No account, email, customer record, credential or database was created. Browser contexts and the ephemeral HTTP server close in the test's `finally` block. Full `services/web npm run test:uat` passes 6/6 plus the separate AI-admin journey; UAT-058 source contracts pass in API/Cloud.

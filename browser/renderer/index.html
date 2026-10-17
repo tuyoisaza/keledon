@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-keledon-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https: wss: ws:;">
   <title>KELEDON Browser</title>
+  <link rel="stylesheet" href="../../shared/theme-tokens.css">
+  <script type="module" src="../../shared/theme-browser-runtime.js"></script>
   <link rel="stylesheet" href="./renderer-base.css">
   <link rel="stylesheet" href="./renderer-controls.css">
 </head>
@@ -24,7 +26,7 @@
 
   <!-- Navigation Bar -->
   <div class="nav-bar">
-    <div class="diagnostic-actions"><span id="versionBtn">v5.1.73</span><button type="button" id="diagnosticCopy"></button><button type="button" id="diagnosticClear"></button><span class="diagnostic-status" id="diagnosticStatus" role="status" aria-live="polite"></span></div>
+    <div class="diagnostic-actions"><span id="versionBtn">v5.1.74</span><button type="button" id="diagnosticCopy"></button><button type="button" id="diagnosticClear"></button><span class="diagnostic-status" id="diagnosticStatus" role="status" aria-live="polite"></span></div>
     <div class="nav-actions">
       <button class="nav-btn" id="navBack" disabled title="Back">&#x2190;</button>
       <button class="nav-btn" id="navForward" disabled title="Forward">&#x2192;</button>
@@ -113,10 +115,10 @@
         <div class="panel-section-title">Execute Goal</div>
         <input type="text" id="goalInput" class="execute-input" placeholder="Enter automation goal...">
         <button id="executeBtn" class="btn-execute" disabled>&#x25B6; Execute</button>
-        <div id="execute-progress" style="display:none; margin-top:8px; padding:8px; background:#f1f3f4; border-radius:4px; font-size:12px;">
-          <div id="progress-text" style="color:#5f6368;">Ready</div>
-          <div style="margin-top:4px; height:4px; background:#e8eaed; border-radius:2px;">
-            <div id="progress-bar" style="height:4px; background:#1a73e8; border-radius:2px; width:0%; transition:width 0.2s;"></div>
+        <div id="execute-progress" style="display:none; margin-top:8px; padding:8px; background:var(--browser-urlbar); border-radius:4px; font-size:12px;">
+          <div id="progress-text" style="color:var(--browser-text-muted);">Ready</div>
+          <div style="margin-top:4px; height:4px; background:var(--browser-panel-border); border-radius:2px;">
+            <div id="progress-bar" style="height:4px; background:var(--browser-accent); border-radius:2px; width:0%; transition:width 0.2s;"></div>
           </div>
         </div>
       </div>
@@ -136,7 +138,7 @@
       <!-- cite: docs/specs/v1_keledon_webrtc_agent_participation.md -->
       <div class="panel-section" id="agentInjectionSection" style="display:none;">
         <div class="panel-section-title">Agent Voice Injection</div>
-        <div style="font-size:11px;color:#aaa;margin-bottom:6px;">
+        <div style="font-size:11px;color:var(--browser-text-muted);margin-bottom:6px;">
           Arms KELEDON agent audio into the active tab's WebRTC call.
           Other participants will hear the agent through the meeting's audio pipeline.
         </div>
@@ -150,7 +152,7 @@
           <button id="armInjectionBtn" class="call-btn start" disabled>&#x1F399; Arm Agent</button>
           <button id="disarmInjectionBtn" class="call-btn end" disabled>&#x26D4; Disarm</button>
         </div>
-        <div id="injectionStatus" style="font-size:11px;padding:4px 6px;border-radius:3px;background:#222;color:#888;">
+        <div id="injectionStatus" style="font-size:11px;padding:4px 6px;border-radius:3px;background:var(--browser-panel);color:var(--browser-text-muted);">
           DISARMED
         </div>
       </div>

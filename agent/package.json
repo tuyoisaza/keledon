@@ -5,6 +5,7 @@
   "scripts": {
     "build": "node scripts/build-extension.js",
     "build:clean": "npm run clean && npm run build",
+    "test:theme": "node --test test/theme-runtime.test.cjs",
     "clean": "node scripts/clean-build.js",
     "dev": "npm run build && echo 'Load extension from dist/ folder in Chrome'",
     "test": "jest",

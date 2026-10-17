@@ -1,8 +1,23 @@
-## Current PMO progress — UAT-080 passed; whole portfolio partial (2026-10-16)
+## Current PMO progress — superadmin CRUD UAT extends coverage; portfolio remains partial (2026-10-17)
 
-PRs #184–#190 delivered UAT-075–079 and matrix/ledger reconciliation; this candidate records UAT-080. API and Cloud passed persisted tenant flow configuration for DB-derived coordinators: tenant scope held across definition, version, permission and mapping operations, and state survived restart. Foreign references were rejected; all fixture rows and users were removed. PHDK v2.51.2 coherence passes 56/56 and six version reads remain 5.1.73. UAT tally: **78 PASS, 0 BLOCKED, 1 MANUAL**. The matrix has 547 rows: 395 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 16 PASS. All four confirmed commitments remain active; no deployment is claimed.
+After the audit attribution work, production-built Web UAT-073 now covers tenant-admin flow definition, draft-version update/approval, availability enable/disable and intent-map add/remove, paired with persisted UAT-079 API/Cloud acceptance; UAT-081 pairs superadmin flow-editor lifecycle/legacy assignment with UAT-083; UAT-086/087 covers Company, Brand, Team and User and pairs with UAT-071/075/076. The CRUD regression requires each promoted row to cite both kinds of evidence. API regression/build 42/42, Cloud build/regression 18/18, matrix evidence contract, audit query/redaction 4/4, denied-attribution/interceptor 10/10, Web UAT 7/7 plus standalone admin-settings/theme-template/AI-admin UAT, and PHDK 2.51.5 coherence 61/61 pass. UAT tally: 85 PASS, 0 BLOCKED, 1 MANUAL. Matrix: 560 rows, 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED, 29 PASS. Four commitments remain active; the current candidate is uncommitted, no PR/deployment is claimed, and audit migration/restart acceptance remains open.
 
-SIGUIENTE PASO: continue the full administration/permission matrix and the other remaining confirmed workstream gates.
+| Workstream | Progress | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PR | PHDK current; candidate 5.1.74 is on the local branch. | Whole-candidate review and normal PR merge/readback. |
+| CMT-002 widget/diagnostics | Existing selected browser/widget/theme checks remain green. | Native device/audio and broad accessibility/localization. |
+| CMT-003 voice→Cloud→Browser→CRM | Tenant flow configuration, URL allowlists and managed API AI input validation covered in source tests. | Cloud legacy AI path, integrated runtime, per-customer stack acceptance. |
+| CMT-004 administration/permissions | API/Cloud audit events preserve event-time tenant; nine Web rows now pair lifecycle/configuration UAT with persisted API evidence. | DB migration/restart acceptance, 396 remaining blocked CRUD rows, other denial paths and audit export/retention. |
+
+SIGUIENTE PASO: continue source review and CRUD coverage while preserving the UAT tally; run paired PostgreSQL migration/restart acceptance when an isolated target is available.
+
+---
+
+## Historical PMO progress — UAT-083 flow API HTTP acceptance passed
+
+PRs #184–#191 delivered UAT-075–080 and matrix/ledger reconciliation. The local candidate fixes UAT-081's superadmin Web legacy-assignment transition and adds UAT-083's HTTP flow-configuration acceptance. API and Cloud each passed 24 assertions against fresh PostgreSQL databases, including tenant boundaries, full configuration lifecycle and second-client persistence; four superadmin API rows now pass. PHDK v2.51.2 coherence passes 56/56; product versions remain 5.1.73. UAT tally: **81 PASS, 0 BLOCKED, 1 MANUAL**. Matrix: 547 rows = 391 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 20 PASS. All four commitments remain active; the local change is not yet delivered and no deployment is claimed.
+
+SIGUIENTE PASO: continue the remaining confirmed workstream gates.
 
 ---
 
@@ -216,3 +231,9 @@ Four confirmed / zero DONE / four active / zero deferred or cancelled. Candidate
 | WS-004 / CMT-004 administration/permissions | Source matrix + selected persisted acceptance | Complete remaining persisted operation coverage and delete/reindex concurrency. |
 
 ## Active Auto milestone — 5.1.60 diagnostics route coverage (2026-10-15)
+
+## Milestone — 2026-10-16 — UAT-081 superadmin flow editor fixed and retested
+
+UAT-081's first production-built Web run exposed that assigning a legacy flow changed ownership but left the superadmin in the legacy-only view. The editor now reloads under the selected destination company. Exact-source production build, UAT-081 and tenant-admin editor journey pass; the full Web UAT suite passed 7/7 plus AI-admin. Focused API regressions passed API 9/9 and Cloud 8/8, including resource-scope and tenant-flow contracts; Web typecheck and targeted ESLint pass; PHDK coherence is 56/56. Web APIs were synthetic/intercepted; no superadmin server authorization or persistence was claimed. UAT tally advances to 79 PASS, 0 BLOCKED, 1 MANUAL; the matrix remains 395 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED and 16 PASS. All four commitments stay active; source/doc changes remain local and undelivered.
+
+SIGUIENTE PASO: execute DB-backed superadmin flow configuration authorization/persistence, then continue the other acceptance gates.

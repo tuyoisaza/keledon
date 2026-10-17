@@ -1,3 +1,36 @@
+## v2.51.5 — 2026-10-16
+
+### Mandatory automation and cost hygiene in Check and Auto
+- Add `PHDK_AUTOMATION_HYGIENE.md` and a vendored read-only static scanner for residual GitHub Actions, recurring agents/bots, production watchers, Railway cron and restart-loop risks; add unit regressions.
+- Make Check and Auto verify **live** GitHub Actions state/runs/checks and Railway Wait for CI, deployment triggers, cron/restarts and usage when provider metadata is available. Unverified remote state blocks an unsupported ALIGNED claim.
+- Preserve justified security checks and GitHub-connected Railway autodeploy; automatic cleanup applies only to provably obsolete PHDK-owned source. No implicit provider setting changes.
+
+### Verification scope
+- PHDK policy/source/static checks only. This release does not inspect or modify downstream GitHub Actions or Railway accounts.
+
+## v2.51.4 — 2026-10-16
+
+### Universal tenancy-aware administration console
+- Introduce vendored `ADMIN_CONSOLE_STANDARD.md`: deliberate single/multi tenancy, appropriate elevated admin vs platform super_admin/tenant admins, tenant/role/user/invite administration, native language, safe system/integration/secret metadata, protected backups/security/audit/operations, semantic light/dark/corporate theme editing and scoped role testing.
+- Extend the conditional AI Admin Standard from prompt text editor to an auditable agent/workflow catalog: input-source mappings, typed JSON output schemas, next-hop graph, validation, publishing, costs and runtime/tenant scope.
+- Integrate administration requirements into Capture, Plan, Lifecycle, Auto, UAT, CRUD, Check, the vendored manifest and native/agent instructions; demand actual implementation and negative authorization evidence.
+- Add explicit `PHDK check --fix` / `PHDK check fix` as a single user-authorized audit-and-remediate invocation. Bare Check remains nonmutating; never auto-convert tenancy or perform unapproved live destructive/security/provider changes.
+
+### Verification limits
+- Standards-source and manifest integration verified through the GitHub connector; no downstream product code, application browser/UAT or production deployment is implied.
+
+## v2.51.3 — 2026-10-16
+
+### Three-theme governance and Superadmin template editing
+- Introduce PHDK_THEME_STANDARD.md: one authoritative CSS palette token source, identical light/dark/corporate token contracts, semantic component consumption and precisely documented exceptions.
+- Require a real Superadmin Configuración → Edición de templates editor with saved presets, preview/reset, role enforcement and a separate corporate show/hide setting with safe fallback.
+- Add vendorable static scanner scripts/phdk_theme_audit.py and local unit tests; Designer Mode must remediate hardcoded palettes and PHDK Check must audit source, behavior and test evidence.
+- Integrate the rule into Design System, Designer Mode, Check, UX/UI, agent/skill entrypoints, README and vendoring manifest.
+
+### Verification and limitations
+- Static scanner and repo consistency checks do not prove that any downstream app editor exists or works. Product permissions, persistence, theme propagation and UAT must be verified per candidate.
+- No downstream repository, live product, GitHub Actions, or hosting deployment is changed by this PHDK standards release.
+
 ## v2.51.2 — 2026-10-15
 
 ### Designer Mode: exhaustive internal-content review

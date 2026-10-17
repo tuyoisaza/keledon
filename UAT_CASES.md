@@ -1,5 +1,35 @@
 # UAT cases — run 20261014-0007-phdk-auto-completion
 
+## Candidate 5.1.73 — UAT-084 AI workflow catalog and editor retest
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-084 | CHK-004 / synthetic platform superadmin | Open production-built prompts UI; verify new metadata is loaded; submit invalid output schema; simulate a stale-revision response; reload explicitly; save a valid revision; inspect cost/token unknowns and permission denial. | Invalid schema does not write; 409 preserves edits; explicit reload updates revision; valid save succeeds; missing usage/cost remains unknown; tenant admin cannot administer prompts. | Local built Web SPA, Playwright Edge, intercepted synthetic AI-admin API; outbound requests blocked | PASS after fixture repair. Fixture now includes the required workflow metadata. Evidence: `docs/phdk/workstreams/AI-ADMIN-UAT.json` and prompt/consumption screenshots. No persisted AI definition database or provider call was used. |
+
+## Candidate 5.1.73 — UAT-085 shared theme template editor
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-085 | CHK-001/005 / synthetic platform superadmin and tenant admin | Open the production-built `/admin/settings/templates` route; inspect all three per-preset previews; change/cancel/save a color; disable Corporate; reload; try the route as tenant admin. | Each preview renders its own preset; cancel restores saved values; superadmin save advances revision; Corporate is hidden from ordinary selection with corporate selection falling back to light, but stays editable by superadmin; reload reads saved fixture values; tenant admin is denied before protected API access. | Local built Web SPA, Playwright Edge, intercepted synthetic theme/auth API; outbound requests blocked | PASS_SCOPED, 12 assertions. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-085-theme-templates-5.1.73.json`. This is not a DB migration/restart test or full contrast certification. |
+
+## Candidate 5.1.73 — UAT-083 superadmin flow configuration over HTTP
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-083 | US-012/CMT-003/CMT-004 / synthetic superadmin and coordinator | Apply API/Cloud migrations to two fresh disposable PostgreSQL databases; start the built Nest servers on loopback; exercise flow definition lifecycle and legacy assignment, versions, availability permissions and intent mappings with signed tokens whose role claims are forged; read persisted records through second DB clients. | Superadmin can configure both tenants; DB actor role/company overrides token and query/body claims; coordinator cannot see or change foreign flows; approved versions are immutable; all writes persist and test data is cleaned. | Real API and Cloud HTTP over loopback with PostgreSQL 16; external provider/customer traffic disabled | PASS: 24 assertions per backend; 9 API and 7 Cloud migrations. Closes four superadmin flow-configuration API rows. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-083-superadmin-flow-config-http-5.1.73.json`. |
+
+## Candidate 5.1.73 — UAT-082 superadmin flow configuration with PostgreSQL
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-082 | US-012/CMT-003/CMT-004 / synthetic superadmin and coordinator | Apply current API/Cloud migrations to fresh disposable PostgreSQL databases; invoke the built AuthGuard, ResourceScopeGuard, controller and service against real Prisma clients; create definitions across two tenants, issue signed tokens with forged roles/company filters, approve a version and read it through a second client. | Superadmin accesses both tenant definitions; a coordinator claiming superadmin is re-resolved from DB, sees only its company, and cannot write a foreign definition; approved version and actor persist. | API/Cloud classes in-process against disposable PostgreSQL 16; no HTTP listener or external integrations | PASS, 10 assertions per backend; API 9 migrations and Cloud 7 migrations applied. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-082-superadmin-flow-config-postgres-5.1.73.json`. |
+
+## Candidate 5.1.73 — UAT-081 superadmin flow configuration Web journey
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-081 | US-012/CMT-003/CMT-004 / synthetic superadmin | Open the production-built SPA with intercepted synthetic APIs; switch between two companies; read, create, update and deactivate definitions; create and approve a version; enable/disable company availability; add/remove an intent mapping; open an unassigned legacy definition, assign its owner and continue in the target company's view. | Every read/write follows the selected company; foreign-company definitions are absent; configuration writes contain the selected tenant and flow IDs; legacy assignment moves the screen to the destination company so the saved flow remains visible. | Local Web SPA / headless Edge; synthetic API; external HTTP/WebSockets blocked | PASS after UAT Fix. Initial run exposed a legacy-assignment view bug; the repaired journey and tenant-admin regression pass. This proves UI/request contracts only; superadmin API authorization/persistence remain open. Evidence: `50-uat/evidence/uat-flow-config-superadmin-web-5.1.73.json`. |
+
 ## Candidate 5.1.66 — tenant flow persistence and UAT revalidation
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |

@@ -1,5 +1,28 @@
 # UAT remediation — run `20261013-1900-phdk-auto`
 
+## Candidate 5.1.73 — AI workflow UAT fixture missing managed metadata (RESOLVED)
+
+- Finding: after the AI workflow editor added required input/output/hop metadata, UAT-084's synthetic prompt omitted those fields, so the browser correctly rejected its draft before testing the stale-revision case.
+- Repair: update the synthetic managed prompt with a typed input source/sensitivity, owning feature/callsite, output destination and empty next-hop list.
+- Retest: `services/web npm run test:uat` passes 7/7, then the theme-template UAT and AI-admin UAT both pass; no API/provider call or external request was used.
+- Status: RESOLVED for the synthetic UAT fixture; real database metadata and full workflow execution remain unverified.
+
+## Candidate 5.1.73 — independent template previews and corporate fallback (RESOLVED FOR SELECTED UAT)
+
+- Finding: each template card used global active-theme variables, so the three cards could display the same current theme instead of previewing their own preset. Cancel also restored form state without restoring the rendered preview.
+- Repair: bind each real component preview to its own editable semantic palette; Cancel reapplies the saved configuration.
+- Retest: production-built UAT-085 passes preview distinction, edit/cancel/save, stored fixture reload, corporate selection fallback, retained superadmin editing and tenant-admin denial (12 assertions).
+- Status: RESOLVED for selected synthetic UI states; DB persistence/restart, complete contrast matrix, mobile admin layout and broader assistive-technology acceptance remain open.
+
+## Candidate 5.1.73 — legacy flow assignment view lost the saved record (RESOLVED)
+
+- Finding: UAT-081's first production-built browser run assigned an unowned legacy flow to a selected company, but the editor remained in the legacy-only view; after the successful save response, the flow disappeared from the visible list.
+- Expected: after a superadmin assigns a legacy definition to a company, the editor should open that company's view and retain the saved definition as the selected item.
+- Root cause: the save handler reloaded with the old `__legacy__` scope after changing the record's company, so the newly assigned flow no longer matched the view filter.
+- Repair: let the loader accept an explicit company scope; after a successful legacy assignment, switch to the target company and read the saved definition there.
+- Retest: production Web build and UAT-081 superadmin tenant-switch/definition CRUD/version approval/availability/mapping/legacy reassignment journey PASS; existing tenant-admin flow-editor journey PASS. UAT-083 then passed 24 HTTP assertions in each backend against separate disposable PostgreSQL databases, including DB-derived superadmin scope and persisted cross-company definition, version, availability, mapping and legacy assignment operations.
+- Status: RESOLVED for the covered superadmin Web and API slice. Web authentication and the remaining roles/operations stay open in the CRUD matrix.
+
 ## Candidate 5.1.66 — mobile flow editor shell (RESOLVED)
 
 - Finding: UAT screenshot at 390×844 showed the desktop sidebar held a 224px column beside the content, leaving the management flow editor too narrow.

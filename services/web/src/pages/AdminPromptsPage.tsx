@@ -14,6 +14,12 @@ type Draft = {
   executionPrompt: string;
   schema: string;
   enabled: boolean;
+  purpose: string;
+  owningFeature: string;
+  callsite: string;
+  inputSchema: string;
+  outputDestination: string;
+  nextHops: string;
 };
 const fromPrompt = (prompt: ManagedPrompt): Draft => ({
   name: prompt.name,
@@ -21,6 +27,12 @@ const fromPrompt = (prompt: ManagedPrompt): Draft => ({
   executionPrompt: prompt.executionPrompt,
   schema: JSON.stringify(prompt.outputSchemaJson, null, 2),
   enabled: prompt.enabled,
+  purpose: prompt.purpose,
+  owningFeature: prompt.owningFeature,
+  callsite: prompt.callsite,
+  inputSchema: JSON.stringify(prompt.inputSchemaJson, null, 2),
+  outputDestination: prompt.outputDestination,
+  nextHops: JSON.stringify(prompt.nextHops, null, 2),
 });
 export default function AdminPromptsPage() {
   const { t } = useTranslation();
@@ -46,12 +58,13 @@ export default function AdminPromptsPage() {
     aiAdminRequest<ManagedPrompt[] | { items: ManagedPrompt[] }>("/prompts", {
       signal: controller.signal,
     })
-      .then((result) => {
+    .then(async (result) => {
         const list = Array.isArray(result) ? result : result.items;
         setItems(list);
         if (list[0]) {
-          setSelected(list[0]);
-          setDraft(fromPrompt(list[0]));
+          const first = await aiAdminRequest<ManagedPrompt>("/prompts/" + encodeURIComponent(list[0].id));
+          setSelected(first);
+          setDraft(fromPrompt(first));
         }
       })
       .catch((error) => {
@@ -94,10 +107,20 @@ export default function AdminPromptsPage() {
     event.preventDefault();
     if (!draft || !selected || saving) return;
     let outputSchemaJson: Record<string, unknown>;
+    let inputSchemaJson: Record<string, unknown>;
+    let nextHops: ManagedPrompt['nextHops'];
     try {
       outputSchemaJson = parseOutputSchema(draft.schema);
     } catch {
       setNotice("aiAdmin.schemaError");
+      return;
+    }
+    try {
+      inputSchemaJson = JSON.parse(draft.inputSchema);
+      nextHops = JSON.parse(draft.nextHops);
+      if (!inputSchemaJson || Array.isArray(inputSchemaJson) || typeof inputSchemaJson !== 'object' || !Array.isArray(nextHops)) throw new Error('Invalid workflow metadata');
+    } catch {
+      setNotice('aiAdmin.workflowSchemaError');
       return;
     }
     if (
@@ -121,6 +144,12 @@ export default function AdminPromptsPage() {
             executionPrompt: draft.executionPrompt,
             outputSchemaJson,
             enabled: draft.enabled,
+            purpose: draft.purpose,
+            owningFeature: draft.owningFeature,
+            callsite: draft.callsite,
+            inputSchemaJson,
+            outputDestination: draft.outputDestination,
+            nextHops,
             expectedRevision: selected.revision,
           }),
         },
@@ -141,6 +170,15 @@ export default function AdminPromptsPage() {
     setDraft((previous) =>
       previous ? { ...previous, [key]: value } : previous,
     );
+  const rollback = async (revision: number) => {
+    if (!selected || saving || !window.confirm(t('aiAdmin.rollbackConfirm'))) return;
+    setSaving(true); setNotice('');
+    try {
+      const item = await aiAdminRequest<ManagedPrompt>(`/prompts/${encodeURIComponent(selected.id)}/rollback`, { method: 'POST', body: JSON.stringify({ targetRevision: revision, expectedRevision: selected.revision }) });
+      setSelected(item); setDraft(fromPrompt(item)); setItems(previous => previous.map(row => row.id === item.id ? item : row)); setNotice('aiAdmin.saved');
+    } catch (error) { setNotice(errorKey(error)); }
+    finally { setSaving(false); }
+  };
   return (
     <section className="max-w-6xl mx-auto p-4 md:p-8 space-y-5">
       <header>
@@ -252,6 +290,13 @@ export default function AdminPromptsPage() {
                 className="mt-2 w-full rounded-md border border-border bg-background p-3 font-mono text-xs"
               />
             </label>
+            <label className="block text-sm font-medium">{t('aiAdmin.purpose')}<input disabled={saving || loading} maxLength={500} value={draft.purpose} onChange={e => edit('purpose', e.target.value)} className="mt-2 w-full rounded-md border border-border bg-background p-3" /></label>
+            <label className="block text-sm font-medium">{t('aiAdmin.owningFeature')}<input disabled={saving || loading} maxLength={500} value={draft.owningFeature} onChange={e => edit('owningFeature', e.target.value)} className="mt-2 w-full rounded-md border border-border bg-background p-3" /></label>
+            <label className="block text-sm font-medium">{t('aiAdmin.callsite')}<input disabled={saving || loading} maxLength={500} value={draft.callsite} onChange={e => edit('callsite', e.target.value)} className="mt-2 w-full rounded-md border border-border bg-background p-3" /></label>
+            <label className="block text-sm font-medium">{t('aiAdmin.inputSchema')}<textarea disabled={saving || loading} rows={6} value={draft.inputSchema} onChange={e => edit('inputSchema', e.target.value)} className="mt-2 w-full rounded-md border border-border bg-background p-3 font-mono text-sm" /></label>
+            <label className="block text-sm font-medium">{t('aiAdmin.outputDestination')}<input disabled={saving || loading} maxLength={500} value={draft.outputDestination} onChange={e => edit('outputDestination', e.target.value)} className="mt-2 w-full rounded-md border border-border bg-background p-3" /></label>
+            <label className="block text-sm font-medium">{t('aiAdmin.nextHops')}<textarea disabled={saving || loading} rows={4} value={draft.nextHops} onChange={e => edit('nextHops', e.target.value)} className="mt-2 w-full rounded-md border border-border bg-background p-3 font-mono text-sm" /></label>
+            {selected.revisions?.length ? <section className="rounded-lg border border-border p-3"><h2 className="font-medium">{t('aiAdmin.revision')} history</h2><ul className="mt-2 space-y-2">{selected.revisions.map(item => <li key={item.toRevision} className="flex items-center justify-between gap-3 text-sm"><span>v{item.toRevision}</span><button type="button" disabled={saving || item.toRevision === selected.revision} onClick={() => void rollback(item.toRevision)} className="rounded border border-border px-3 py-1">{t('aiAdmin.rollback')}</button></li>)}</ul></section> : null}
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
@@ -283,6 +328,27 @@ export default function AdminPromptsPage() {
           </form>
         )}
       </div>
+      <section aria-labelledby="ai-workflow-graph-title" className="rounded-xl border border-border p-4 md:p-6">
+        <h2 id="ai-workflow-graph-title" className="text-lg font-semibold">{t('aiAdmin.workflowGraph')}</h2>
+        <ol className="mt-4 grid gap-3 md:grid-cols-2">
+          {items.map((item) => {
+            const edges = Array.isArray(item.nextHops) ? item.nextHops : [];
+            return <li key={item.id} className="min-w-0 rounded-lg border border-border p-3">
+              <h3 className="break-words font-medium">{item.name}</h3>
+              <p className="break-all font-mono text-xs text-muted-foreground">{item.id}</p>
+              <p className="mt-2 text-sm">{item.outputDestination}</p>
+              {edges.length ? <ul className="mt-3 space-y-2 border-l-2 border-primary pl-3">
+                {edges.map((edge, index) => <li key={`${edge.agentId}-${index}`} className="break-words text-sm">
+                  <span aria-hidden="true">→ </span><strong>{items.find((candidate) => candidate.id === edge.agentId)?.name ?? edge.agentId}</strong>
+                  {edge.condition && <p className="text-muted-foreground">{t('aiAdmin.edgeCondition')}: {edge.condition}</p>}
+                  {edge.inputMapping && <p className="break-all font-mono text-xs text-muted-foreground">{t('aiAdmin.edgeMapping')}: {JSON.stringify(edge.inputMapping)}</p>}
+                  {edge.maxHops && <p className="text-muted-foreground">{t('aiAdmin.edgeGuard')}: {edge.maxHops}</p>}
+                </li>)}
+              </ul> : <p className="mt-3 text-sm text-muted-foreground">{t('aiAdmin.terminalNode')}</p>}
+            </li>;
+          })}
+        </ol>
+      </section>
     </section>
   );
 }

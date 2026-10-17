@@ -1,26 +1,26 @@
-    /* Chrome-like theme */
+    /* Browser UI aliases resolve through the shared light/dark/corporate palette. */
     :root {
-      --tab-bar-bg: #dee1e6;
-      --tab-active-bg: #ffffff;
-      --tab-inactive-bg: #c4c7cb;
-      --tab-hover-bg: #d3d6db;
-      --toolbar-bg: #ffffff;
-      --url-bar-bg: #f1f3f4;
-      --url-bar-focus-bg: #ffffff;
-      --text-primary: #202124;
-      --text-secondary: #5f6368;
-      --accent: #1a73e8;
-      --accent-hover: #1765cc;
-      --border: #dadce0;
-      --danger: #d93025;
-      --success: #1e8e3e;
-      --warning: #f9ab00;
-      --keledon: #00d4aa;
-      --keledon-dim: #00a88a;
-      --new-tab-bg: #ffffff;
-      --new-tab-shortcut-bg: #f1f3f4;
-      --panel-bg: #ffffff;
-      --panel-border: #e8eaed;
+      --tab-bar-bg: var(--browser-tab-bar);
+      --tab-active-bg: var(--browser-tab-active);
+      --tab-inactive-bg: var(--browser-tab-inactive);
+      --tab-hover-bg: var(--browser-urlbar);
+      --toolbar-bg: var(--browser-toolbar);
+      --url-bar-bg: var(--browser-urlbar);
+      --url-bar-focus-bg: var(--browser-urlbar-focus);
+      --text-primary: var(--browser-text);
+      --text-secondary: var(--browser-text-muted);
+      --accent: var(--browser-accent);
+      --accent-hover: var(--browser-accent-hover);
+      --border: var(--color-border);
+      --danger: var(--browser-danger);
+      --success: var(--browser-success);
+      --warning: var(--browser-warning);
+      --keledon: var(--browser-accent);
+      --keledon-dim: var(--browser-accent);
+      --new-tab-bg: var(--browser-toolbar);
+      --new-tab-shortcut-bg: var(--browser-urlbar);
+      --panel-bg: var(--browser-panel);
+      --panel-border: var(--browser-panel-border);
       --keledon-overlay-z: 2147483000;
       --keledon-modal-z: 2147483100;
       --keledon-topbar-z: 2147483200;
@@ -175,7 +175,7 @@
     .nav-url:focus {
       background: var(--url-bar-focus-bg);
       border-color: var(--accent);
-      box-shadow: 0 2px 8px rgba(26, 115, 232, 0.2);
+      box-shadow: 0 2px 8px var(--ui-primary-glow);
     }
     .nav-url[readonly] {
       background: var(--url-bar-bg);
@@ -215,7 +215,7 @@
       position: relative;
     }
     .nav-panel-btn:hover { background: var(--url-bar-bg); color: var(--text-primary); }
-    .nav-panel-btn.active { color: var(--keledon); background: #e0f7f3; }
+    .nav-panel-btn.active { color: var(--keledon); background: var(--browser-success-surface); }
     .nav-panel-btn .badge {
       position: absolute;
       top: 2px;
@@ -265,7 +265,7 @@
     }
     .rpa-stop-btn.visible { display: flex; }
     .rpa-stop-btn:hover {
-      background: rgba(217, 48, 37, 0.12);
+      background: var(--ui-danger-overlay);
       transform: scale(1.1);
     }
     .rpa-stop-btn:active {
@@ -294,9 +294,9 @@
       justify-content: center;
       font-size: 36px;
       font-weight: 700;
-      color: white;
+      color: var(--color-primary-foreground);
       margin-bottom: 24px;
-      box-shadow: 0 4px 20px rgba(0, 212, 170, 0.3);
+      box-shadow: 0 4px 20px var(--ui-primary-shadow);
     }
     .new-tab-title {
       font-size: 22px;
@@ -323,8 +323,8 @@
     }
     .new-tab-search input:focus {
       border-color: var(--accent);
-      box-shadow: 0 2px 12px rgba(26, 115, 232, 0.2);
-      background: #fff;
+      box-shadow: 0 2px 12px var(--ui-primary-glow);
+      background: var(--browser-panel);
     }
     .new-tab-search input::placeholder { color: var(--text-secondary); }
     .shortcuts {
@@ -351,12 +351,12 @@
       align-items: center;
       justify-content: center;
       font-size: 22px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 4px var(--ui-overlay-10);
     }
-    .shortcut-icon.google { background: #ffffff; border: 1px solid var(--border); }
-    .shortcut-icon.keledon { background: linear-gradient(135deg, var(--keledon), var(--keledon-dim)); color: white; }
-    .shortcut-icon.connect { background: #e8f0fe; }
-    .shortcut-icon.execute { background: #fce8e6; }
+    .shortcut-icon.google { background: var(--browser-panel); border: 1px solid var(--border); }
+    .shortcut-icon.keledon { background: linear-gradient(135deg, var(--keledon), var(--keledon-dim)); color: var(--color-primary-foreground); }
+    .shortcut-icon.connect { background: var(--browser-info-surface); }
+    .shortcut-icon.execute { background: var(--browser-danger-surface); }
     .shortcut-name {
       font-size: 11px;
       color: var(--text-secondary);
@@ -372,7 +372,7 @@
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.3);
+      background: var(--ui-overlay-30);
       z-index: var(--keledon-overlay-z);
     }
     .side-panel-overlay.show { display: block; }
@@ -381,7 +381,7 @@
       top: 0; right: -400px; bottom: 0;
       width: 380px;
       background: var(--panel-bg);
-      box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+      box-shadow: -4px 0 20px var(--ui-overlay-15);
       z-index: calc(var(--keledon-overlay-z) + 1);
       display: flex;
       flex-direction: column;
@@ -454,7 +454,7 @@
       background: var(--keledon);
       border: none;
       border-radius: 8px;
-      color: white;
+      color: var(--color-primary-foreground);
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
@@ -472,9 +472,9 @@
       font-weight: 500;
       margin-bottom: 10px;
     }
-    .conn-status.disconnected { background: #f1f3f4; color: var(--text-secondary); }
-    .conn-status.connecting { background: #fef7e0; color: var(--warning); }
-    .conn-status.connected { background: #e6f4ea; color: var(--success); }
+    .conn-status.disconnected { background: var(--browser-urlbar); color: var(--text-secondary); }
+    .conn-status.connecting { background: var(--browser-warning-surface); color: var(--warning); }
+    .conn-status.connected { background: var(--browser-success-surface); color: var(--success); }
     .conn-dot-lg {
       width: 10px;
       height: 10px;
@@ -499,7 +499,7 @@
     .btn-execute {
       width: 100%;
       padding: 10px;
-      background: #ffffff;
+      background: var(--browser-panel);
       border: 1px solid var(--keledon);
       border-radius: 8px;
       color: var(--keledon);
@@ -508,7 +508,7 @@
       cursor: pointer;
       transition: all 0.15s;
     }
-    .btn-execute:hover:not(:disabled) { background: var(--keledon); color: white; }
+    .btn-execute:hover:not(:disabled) { background: var(--keledon); color: var(--color-primary-foreground); }
     .btn-execute:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* Pending instructions */

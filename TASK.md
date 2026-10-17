@@ -1,8 +1,8 @@
-## Current PHDK Auto — 5.1.73; UAT-080 passed; portfolio partial
+## Current PHDK Auto — 5.1.73 candidate; UAT-083 HTTP flow acceptance; portfolio partial
 
-Run `20261014-0007-phdk-auto-completion`. PR #180 delivered 5.1.73 source; docs PRs #181–#190 record Web, private-origin and persisted administration UAT; this candidate documents UAT-080. Admin and coordinator flow-configuration definitions, versions, permissions and mappings passed persistence, tenant-isolation and restart checks in API and Cloud. PHDK v2.51.2 coherence passes 56/56. UAT tally: **78 PASS, 0 BLOCKED, 1 MANUAL**. The 547-row matrix has 16 PASS, 395 BLOCKED, 133 NOT APPLICABLE and 3 DECISION NEEDED. All four commitments remain active; no deployment or whole-Auto completion is claimed.
+Run `20261014-0007-phdk-auto-completion`. Remote main is verified at 0dd405d9; UAT-081 fixes the superadmin Web legacy-assignment transition and UAT-083 verifies persisted flow configuration over API/Cloud HTTP. Both backends passed 24 assertions; four superadmin API matrix rows are now PASS. PHDK v2.51.2 coherence is 56/56. Candidate tally: 81 PASS, 0 BLOCKED, 1 MANUAL. The 547-row matrix is 20 PASS, 391 BLOCKED, 133 NOT APPLICABLE and 3 DECISION NEEDED. All four commitments remain active; broader acceptance and delivery remain open.
 
-Next: continue the confirmed fronts and remaining administration/permission coverage across the resource × role × surface × operation matrix.
+Next: continue the remaining resource × role × surface × operation and other confirmed-front acceptance.
 
 ---
 

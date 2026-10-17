@@ -138,11 +138,22 @@ export class LLMService implements OnModuleInit {
   }
 
   async generate(request: LLMRequest): Promise<LLMResponse> {
+    const context = request?.context ?? [];
+    if (
+      !Array.isArray(context) ||
+      context.length > 64 ||
+      context.some((item) => typeof item !== 'string')
+    )
+      throw new Error('Invalid AI input size');
+    const contextLength = context.reduce(
+      (total, item) => total + item.length,
+      0,
+    );
     if (
       !request ||
       typeof request.prompt !== 'string' ||
       request.prompt.length > 20000 ||
-      (request.context || []).join('').length > 20000
+      contextLength > 20000
     )
       throw new Error('Invalid AI input size');
     const feature = request.feature || 'brain-chat';
@@ -154,6 +165,13 @@ export class LLMService implements OnModuleInit {
         const prepared = await this.aiAdmin.prepare(feature, {
           teamId: request.teamId,
         });
+        const managedInput = {
+          context: JSON.stringify({
+            userInput: request.prompt,
+            untrustedContext: context,
+          }),
+        };
+        this.aiAdmin.validateInput(prepared, managedInput);
         const startedAt = Date.now();
         let response: LLMResponse | undefined;
         const attempted: { provider?: string; requestedModel?: string } = {};
@@ -169,10 +187,8 @@ export class LLMService implements OnModuleInit {
           response = await this.generateUnchecked(
             {
               ...request,
-              prompt: JSON.stringify({
-                userInput: request.prompt,
-                untrustedContext: request.context || [],
-              }),
+              prompt: managedInput.context,
+              context: [],
               maxTokens: Math.min(Math.max(request.maxTokens || 500, 1), 2000),
             },
             system,

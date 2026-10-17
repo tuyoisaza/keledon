@@ -1,3 +1,13 @@
+## v5.1.74 — 2026-10-17 (tenant admin routing and audit attribution)
+
+- Align admin settings and team settings routes with the approved admin/coordinator/superadmin policy; ordinary users remain denied, and translate settings/theme editor copy in English, Spanish and Portuguese.
+- Attribute API and Cloud audit events only to the authenticated actor, capture tenant before handlers, and verify role-aware admin settings with synthetic Web UAT.
+- Fix the superadmin flow UAT selector to account for the button's accessible category/status text; align all five app package/lock roots and the Browser renderer at 5.1.74.
+
+### Verification
+- API build/regression 42/42; Cloud build/regression 18/18; API/Cloud audit query/redaction 4/4 and denied-attribution/interceptor 10/10.
+- Web production build, typecheck, 7/7 UAT suites and standalone admin-settings, theme-template and AI-admin UAT pass. PHDK v2.51.5 coherence 61/61. Whole PHDK Auto remains partial; no deployment is claimed.
+
 ## v5.1.73 — 2026-10-15 (restrict orphan session cleanup)
 
 - Limit API and Cloud orphan-session counts/deletes to ended records with no owner references, metadata, Events, FlowRuns, or SubAgents, preventing cleanup from matching active or otherwise meaningful sessions.

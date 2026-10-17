@@ -1,5 +1,6 @@
 import {
   Controller,
+  BadRequestException,
   Get,
   Post,
   Put,
@@ -17,6 +18,16 @@ import { CrudAccessGuard } from '../guards/crud-access.guard';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 import type { CrudRequestContext } from './crud-request.types';
+
+function parseAuditInteger(
+  name: string,
+  raw: string | undefined,
+): number | undefined {
+  if (raw === undefined) return undefined;
+  if (!/^\d{1,9}$/.test(raw))
+    throw new BadRequestException(`Invalid audit ${name}`);
+  return Number(raw);
+}
 
 @ApiTags('CRUD')
 @Controller('api/crud')
@@ -474,8 +485,8 @@ export class CrudController {
   @Get('audit-logs')
   getAuditLogs(
     @Query('companyId') companyId?: string,
-    @Query('limit') limit?: number,
-    @Query('offset') offset?: number,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
     @Query('action') action?: string,
     @Query('entity') entity?: string,
     @Query('userId') userId?: string,
@@ -484,8 +495,8 @@ export class CrudController {
   ) {
     return this.crud.getAuditLogs({
       companyId,
-      limit: limit ? parseInt(String(limit)) : undefined,
-      offset: offset ? parseInt(String(offset)) : undefined,
+      limit: parseAuditInteger('limit', limit),
+      offset: parseAuditInteger('offset', offset),
       action,
       entity,
       userId,

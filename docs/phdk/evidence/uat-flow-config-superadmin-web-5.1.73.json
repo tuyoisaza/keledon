@@ -1,0 +1,17 @@
+{
+  "case": "UAT-081",
+  "version": "5.1.74",
+  "candidateRevision": "0dd405d930c518537ecea17ca363e95a5b99a9fd",
+  "candidateSourceFingerprint": "sha256:363cde4b29147bcc9a2e603327ecbaf7936a52148ae4226fbc03ac0d277aaca6",
+  "workingTreeSourceIncluded": true,
+  "target": "local production-built Web SPA with synthetic intercepted APIs; external HTTP and WebSockets blocked",
+  "persona": "synthetic superadmin",
+  "result": "PASS",
+  "assertions": [
+    "Superadmin can switch company scope and reads only the selected company definitions.",
+    "Definition create/update/deactivate, draft creation and approval, availability enable/disable, and mapping add/remove carry the selected company and definition.",
+    "Superadmin can view an unassigned legacy definition, assign it to a chosen company, and see it under that company after saving."
+  ],
+  "persistence": "Synthetic in-memory API fixture only; API/Cloud persistence and authorization are recorded in UAT-079/080.",
+  "externalTraffic": "blocked"
+}

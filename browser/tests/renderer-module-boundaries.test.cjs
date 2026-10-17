@@ -7,8 +7,9 @@ const html = fs.readFileSync(path.join(rendererDir, 'index.html'), 'utf8');
 const stylesheets = [...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map((match) => match[1]);
 const scripts = [...html.matchAll(/<script src="([^"]+)"/g)].map((match) => match[1]);
 
-assert.deepEqual(stylesheets, ['./renderer-base.css', './renderer-controls.css']);
+assert.deepEqual(stylesheets, ['../../shared/theme-tokens.css', './renderer-base.css', './renderer-controls.css']);
 assert.deepEqual(scripts, ['./version-actions.js', './renderer-shell.js', './renderer-panels.js']);
+assert.match(html, /<script type="module" src="\.\.\/\.\.\/shared\/theme-browser-runtime\.js"><\/script>/);
 
 const packageVersion = require('../package.json').version;
 assert.match(packageVersion, /^\d+\.\d+\.\d+$/);
@@ -36,5 +37,11 @@ for (const file of ['index.html', 'renderer-base.css', 'renderer-controls.css', 
 }
 
 assert.doesNotMatch(html, /<style\b|<script\s*>/i, 'renderer HTML should load bounded external assets');
+assert.match(html, /data-keledon-theme="light"/, 'Browser renderer opts into the shared theme palette');
+const browserThemeAliases = fs.readFileSync(path.join(rendererDir, 'renderer-base.css'), 'utf8');
+assert.match(browserThemeAliases, /--toolbar-bg:\s*var\(--browser-toolbar\)/, 'Browser chrome uses shared semantic tokens');
+assert.match(browserThemeAliases, /--text-primary:\s*var\(--browser-text\)/, 'Browser text uses shared semantic tokens');
+const electronBuild = require('../package.json').build;
+assert.ok(electronBuild.extraResources.some((item) => item.from === '../shared' && item.to === 'shared'), 'packaged Browser includes canonical shared theme tokens');
 
 console.log('renderer module boundaries and PHDK file-size checks passed');

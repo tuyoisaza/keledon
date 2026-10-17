@@ -1,0 +1,98 @@
+{
+  "version": "5.1.72",
+  "candidateRevision": "4f1db4b19509a8ca8188a782cbe76ea2fb998683",
+  "candidateSourceFingerprint": "sha256:8e5d5eb0952f235bc54147785fb89782bc485b13e14630574251f7e8ac454f45",
+  "dirtyUntrackedSourceFiles": 0,
+  "sourceRoots": [
+    "browser",
+    "cloud",
+    "services/api",
+    "services/web",
+    "landing"
+  ],
+  "targetEnvironment": "local production-built Landing SPA with all external requests blocked",
+  "result": "PASS",
+  "desktop": {
+    "viewport": "1280x900",
+    "navLabel": "Navegación principal",
+    "visiblePreferenceControls": 2,
+    "widgetBelowBrand": true,
+    "widgetTopLeftAligned": true,
+    "widgetNoHeroOverlap": true,
+    "geometry": {
+      "brand": {
+        "left": 32,
+        "top": 8,
+        "bottom": 40
+      },
+      "widget": {
+        "left": 32,
+        "top": 44,
+        "bottom": 88
+      },
+      "buttons": [
+        {
+          "left": 72.828125,
+          "top": 44,
+          "right": 116.828125,
+          "bottom": 88,
+          "width": 44,
+          "height": 44,
+          "visualWidth": 28,
+          "visualHeight": 28,
+          "label": "Copiar diagnóstico completo"
+        },
+        {
+          "left": 120.828125,
+          "top": 44,
+          "right": 164.828125,
+          "bottom": 88,
+          "width": 44,
+          "height": 44,
+          "visualWidth": 28,
+          "visualHeight": 28,
+          "label": "Limpiar caché"
+        }
+      ]
+    },
+    "hitTargets44x44": true,
+    "visibleActionTiles28x28": true,
+    "hitTargetsDoNotOverlap": true,
+    "actionsNamed": true,
+    "noOverlap": true,
+    "controls": [
+      {
+        "top": 36,
+        "bottom": 60
+      },
+      {
+        "top": 31.5,
+        "bottom": 64.5
+      }
+    ],
+    "heroDisclaimer": {
+      "top": 186.5,
+      "bottom": 202.5
+    }
+  },
+  "mobile": {
+    "viewport": "390x844",
+    "menuExpanded": true,
+    "themeControlVisible": true,
+    "languageControlVisible": true,
+    "diagnosticsHitTargets": [
+      {
+        "width": 44,
+        "height": 44
+      },
+      {
+        "width": 44,
+        "height": 44
+      }
+    ]
+  },
+  "evidence": [
+    "uat-landing-5.1.72-home-desktop.png",
+    "uat-landing-5.1.72-home-mobile-menu.png"
+  ]
+}

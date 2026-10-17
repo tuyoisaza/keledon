@@ -13,6 +13,10 @@ Normative for React/Next.js user-facing PHDK apps, new interfaces and Designer M
 - `light`, `dark`, `corporate` palette contracts with identical component DOM, geometry and tokens except semantic COLOR values by default. User-facing theme choices remain configurable.
 - WCAG 2.2 AA applicable checks and accessible keyboard/focus behavior. Library provenance is not evidence of accessibility.
 
+## Administrable theme settings
+
+Where an administration console applies, `ADMIN_CONSOLE_STANDARD.md` requires **Configuración → Edición de templates / Visual templates** with preview, persist/rollback and selection of claro (light), oscuro (dark) and corporativo (corporate). Keep corporate visibility togglable. All shared components and screens must derive colors from the single centralized semantic token source; scan for hardcoded per-element/page hex/RGB/arbitrary color values that break switching and report/fix them in Designer readiness and `PHDK check`. A toggle that does not update actual rendered components is a GAP, not a functioning theme.
+
 ## Single source of truth
 Recommended arrangement, adaptable to existing equivalent structures:
 ```text
@@ -23,6 +27,10 @@ apps/web/app/globals.css  # import shared styles, no duplicate theme definitions
 apps/web/messages/{en,es,pt}.json
 ```
 Use semantic properties `--background`, `--foreground`, `--primary`, `--primary-foreground`, `--accent`, `--muted`, `--border`, `--ring`, `--popover`, and role-specific status colors. Base tokens define spacing, radius, typography, elevation, density, icon sizes, motion durations and easing. The same components consume tokens in every theme; no copy-pasted CSS by theme. Product-specific accent palettes can be rich and colorful while preserving usable contrast. Avoid inline hardcoded brand hex values and ad hoc arbitrary Tailwind values in screens.
+
+
+## Mandatory theme governance (all UI products)
+The detailed, vendor-shipped contract in PHDK_THEME_STANDARD.md is normative: one central CSS palette token stylesheet, parity across light/dark/corporate, no hardcoded component palette colors, and a persisted Superadmin Configuración → Edición de templates editor with a separate corporate visibility setting. Run scripts/phdk_theme_audit.py for static evidence, then test the actual editor, security, propagation and persistence. Static-pass is never runtime compliance; existing CSS frameworks may retain equivalent selectors by declaring them in phdk-theme.config.json. Designer Mode and PHDK Check must enforce this contract.
 
 ## Component contracts
 - Shared `Button`: primary/secondary/outline/ghost/destructive/link variants and sm/default/lg/icon sizes; loading, disabled, focus, pointer/keyboard states. All icon-only actions have accessible names. No page-local replacement when shared variants exist.

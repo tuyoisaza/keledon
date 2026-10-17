@@ -125,6 +125,16 @@ assert.ok(
   ),
   'each detailed row must have a recognized status',
 );
+const statusCounts = Object.fromEntries(
+  ['PASS', 'GAP', 'BLOCKED', 'NOT APPLICABLE', 'DECISION NEEDED'].map(
+    (status) => [status, detailedRows.filter((row) => row[14] === status).length],
+  ),
+);
+assert.deepEqual(
+  statusCounts,
+  { PASS: 29, GAP: 0, BLOCKED: 396, 'NOT APPLICABLE': 132, 'DECISION NEEDED': 3 },
+  'inventory totals must match individually evidenced model-role-surface rows',
+);
 const modelRowFor = (model, role, surface) =>
   detailedRows.find(
     (row) => row[0] === model && row[1] === role && row[2] === surface,
@@ -138,13 +148,70 @@ for (const [model, role] of [
   const row = modelRowFor(model, role, 'API');
   assert.match(
     row[13],
-    /UAT-045/,
-    `${model}/${role}/API evidence must reference persisted UAT-045`,
+    /UAT-0(?:45|71)/,
+    `${model}/${role}/API evidence must reference persisted UAT`,
   );
   assert.equal(
     row[14],
-    'BLOCKED',
-    `${model}/${role}/API must remain blocked until the complete operation matrix is tested`,
+    role === 'superadmin' ? 'PASS' : 'BLOCKED',
+    `${model}/${role}/API status must match the current persisted acceptance evidence`,
+  );
+}
+for (const [model, uat] of [
+  ['Company', 'UAT-072'],
+  ['Brand', 'UAT-087'],
+  ['Team', 'UAT-087'],
+  ['User', 'UAT-086'],
+]) {
+  const row = modelRowFor(model, 'superadmin', 'web');
+  assert.match(
+    row[13],
+    new RegExp(`${uat}.*API/Cloud PostgreSQL`),
+    `${model}/superadmin/web evidence must pair built-browser CRUD with persisted API acceptance`,
+  );
+  assert.equal(
+    row[14],
+    'PASS',
+    `${model}/superadmin/web closes only with detail, lifecycle and persisted API evidence`,
+  );
+}
+const flowEditorRow = modelRowFor('TenantFlowConfigDefinition', 'superadmin', 'web');
+assert.match(
+  flowEditorRow[13],
+  /UAT-081.*UAT-083.*PostgreSQL/,
+  'superadmin flow editor Web evidence must pair the production-built journey with persisted API/Cloud acceptance',
+);
+assert.equal(
+  flowEditorRow[14],
+  'PASS',
+  'superadmin flow editor Web closes only with tenant-scope lifecycle and persisted API/Cloud evidence',
+);
+const tenantAdminFlowEditorRow = modelRowFor('TenantFlowConfigDefinition', 'admin', 'web');
+assert.match(
+  tenantAdminFlowEditorRow[13],
+  /UAT-073.*UAT-079.*PostgreSQL/,
+  'tenant-admin flow editor Web evidence must pair create/edit/deactivate with persisted API/Cloud acceptance',
+);
+assert.equal(
+  tenantAdminFlowEditorRow[14],
+  'PASS',
+  'tenant-admin flow editor Web closes only with scoped lifecycle and persisted API/Cloud evidence',
+);
+for (const model of [
+  'TenantFlowConfigVersion',
+  'TenantFlowConfigPermission',
+  'TenantIntentFlowConfigMapping',
+]) {
+  const row = modelRowFor(model, 'admin', 'web');
+  assert.match(
+    row[13],
+    /UAT-073.*UAT-079.*PostgreSQL/,
+    `${model}/admin/web evidence must pair the production-built UI journey with persisted API/Cloud acceptance`,
+  );
+  assert.equal(
+    row[14],
+    'PASS',
+    `${model}/admin/web closes only with evidenced UI operations and persisted API/Cloud acceptance`,
   );
 }
 for (const role of [

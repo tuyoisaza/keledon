@@ -1,0 +1,27 @@
+{
+  "case": "UAT-032",
+  "version": "5.1.73",
+  "date": "2026-10-16T02:36:24.210Z",
+  "candidateRevision": "7dca7bf3369d20735dfe25150948ccf6612cd3fb",
+  "candidateSourceFingerprint": "sha256:9ad7273f78a3e8ea6dd1a27872b46d1ebc81fea05e5316d2cb4584f71f581ce3",
+  "dirtyUntrackedSourceFiles": 0,
+  "targetEnvironment": "local production SPA with intercepted synthetic APIs; external HTTP and WebSockets blocked",
+  "personas": [
+    "user",
+    "admin"
+  ],
+  "checks": [
+    "User sees safe device summary and no revoke action.",
+    "Admin cancel sends no DELETE.",
+    "Admin failure is visible and retryable.",
+    "Admin success removes the device from the list."
+  ],
+  "apiEvidence": "services/api/test/regression/21-resource-scope.test.js: DB-derived registration binding, company-less denial, same-company manager revoke, foreign-company denial, ordinary-user denial.",
+  "screenshots": [
+    "uat-device-read-only.png",
+    "uat-device-revoke-confirmation.png",
+    "uat-device-revoke-failure.png",
+    "uat-device-revoked.png"
+  ],
+  "provenance": "synthetic frontend and isolated guard source evidence only; no real authentication, database, device, pairing, customer data or deployment"
+}

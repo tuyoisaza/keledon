@@ -1,6 +1,6 @@
 {
   "name": "keledon-desktop-agent",
-  "version": "5.1.73",
+  "version": "5.1.74",
   "description": "KELEDON Desktop Agent - Electron runtime with AutoBrowse",
   "author": "Keledon Team <team@keledon.com>",
   "main": "dist/main.js",
@@ -59,6 +59,12 @@
       "!dist/packaged/**",
       "renderer/**/*",
       "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../shared",
+        "to": "shared"
+      }
     ],
     "win": {
       "executableName": "keledon-browser",

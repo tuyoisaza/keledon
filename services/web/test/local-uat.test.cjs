@@ -18,10 +18,16 @@ let companyWrites=[];
 const brand={id:'brand-co',name:'Company Co Brand',companyId:company.id,company};
 const brand2={id:'brand-co-2',name:'Company Co Brand 2',companyId:company.id,company};
 const otherBrand={id:'brand-other',name:'Other Co Brand',companyId:otherCompany.id,company:otherCompany};
+let brandRows=[brand,brand2,otherBrand];
+let brandWrites=[];
 const team={id:'team-co',name:'Company Co Service',brandId:brand.id,brand,country:'MX'};
 const team2={id:'team-co-2',name:'Company Co Service 2',brandId:brand2.id,brand:brand2,country:'MX'};
 const otherTeam={id:'team-other',name:'Other Co Service',brandId:otherBrand.id,brand:otherBrand,country:'MX'};
+let teamRows=[team,team2,otherTeam];
+let teamWrites=[];
 const person={id:'companyco-001',name:'Company Co Test User',email:'companyco.001@company-co.invalid',role:'user',companyId:company.id,teamId:team.id,brandId:brand.id,team,created_at:'2020-01-02T12:00:00Z',last_session:'2024-05-06T12:34:56Z'};
+let userRows=[person];
+function companyRowFor(teamRow, rows){return teamRow?.companyId||teamRow?.company?.id||teamRow?.brand?.companyId||teamRow?.brand?.company?.id||rows[0]?.id;}
 const device={id:'device-co-001',name:'Company Co Desktop',status:'paired',platform:'Windows',lastSeen:null,version:appVersion};
 let deviceList=[device];
 let writes=[];
@@ -131,7 +137,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
       if(route.request().method()==='PUT')writes.push(route.request().postDataJSON());
       body=config;
     }
-    else if(p==='/api/teams'||p==='/api/crud/teams')body=[team,team2,otherTeam];
+    else if((p==='/api/teams'||p==='/api/crud/teams')&&route.request().method()==='GET')body=teamRows;
     else if(p==='/api/crud/sessions')body=dashboardSessions;
     else if(p==='/api/devices'&&devicesShouldFail)return route.fulfill({status:503,contentType:'application/json',body:'{"message":"synthetic device failure"}'});
     else if(p==='/api/devices')body=deviceList;
@@ -154,7 +160,46 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
         return route.fulfill({status:200,contentType:'application/json',body:'{"success":true}'});
       }
     }
-    else if(p==='/api/crud/brands')body=[brand,brand2,otherBrand];
+    else if(p==='/api/crud/brands'){
+      const method=route.request().method();
+      if(method==='POST'){
+        const payload=route.request().postDataJSON();brandWrites.push({method:'POST',payload});
+        const companyRow=companyRows.find(item=>item.id===payload.companyId);
+        const created={id:'brand-uat-created',...payload,company:companyRow};brandRows.push(created);body=created;
+      } else body=brandRows;
+    }
+    else if(/^\/api\/crud\/brands\/[^/]+$/.test(p)){
+      const id=decodeURIComponent(p.split('/').at(-1));
+      const index=brandRows.findIndex(item=>item.id===id);
+      if(index<0)return route.fulfill({status:404,contentType:'application/json',body:'{"message":"not found"}'});
+      if(route.request().method()==='PUT'){
+        const payload=route.request().postDataJSON();brandWrites.push({method:'PUT',id,payload});
+        brandRows[index]={...brandRows[index],...payload};body=brandRows[index];
+      } else if(route.request().method()==='DELETE'){
+        brandWrites.push({method:'DELETE',id});brandRows=brandRows.filter(item=>item.id!==id);
+        return route.fulfill({status:200,contentType:'application/json',body:'{"success":true}'});
+      }
+    }
+    else if(p==='/api/crud/teams'&&route.request().method()!=='GET'){
+      const method=route.request().method();const payload=route.request().postDataJSON();
+      const brandRow=brandRows.find(item=>item.id===payload.brandId);const companyRow=companyRows.find(item=>item.id===brandRow?.companyId);
+      teamWrites.push({method,payload});
+      if(method==='POST'){
+        const created={id:'team-uat-created',...payload,brand:brandRow,company:companyRow};teamRows.push(created);body=created;
+      }
+    }
+    else if(/^\/api\/crud\/teams\/[^/]+$/.test(p)){
+      const id=decodeURIComponent(p.split('/').at(-1));const index=teamRows.findIndex(item=>item.id===id);
+      if(index<0)return route.fulfill({status:404,contentType:'application/json',body:'{"message":"not found"}'});
+      if(route.request().method()==='PUT'){
+        const payload=route.request().postDataJSON();const brandRow=brandRows.find(item=>item.id===(payload.brandId||teamRows[index].brandId));
+        const companyRow=companyRows.find(item=>item.id===brandRow?.companyId);teamWrites.push({method:'PUT',id,payload});
+        teamRows[index]={...teamRows[index],...payload,brand:brandRow,company:companyRow};body=teamRows[index];
+      } else if(route.request().method()==='DELETE'){
+        teamWrites.push({method:'DELETE',id});teamRows=teamRows.filter(item=>item.id!==id);
+        return route.fulfill({status:200,contentType:'application/json',body:'{"success":true}'});
+      }
+    }
     else if(p==='/api/crud/knowledge'){
       if(route.request().method()==='POST'){
         const payload=route.request().postDataJSON();knowledgeWrites.push({method:'POST',payload});
@@ -185,13 +230,26 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
       } else body=keledonRows;
     }
     else if(p==='/api/crud/users'){
-      if(route.request().method()!=='GET')userWrites.push({method:route.request().method(),path:p,body:route.request().postDataJSON()});
-      body=[person];
+      const method=route.request().method();
+      if(method==='POST'){
+        const payload=route.request().postDataJSON();userWrites.push({method,path:p,body:payload});
+        const teamRow=teamRows.find(item=>item.id===payload.teamId);const brandRow=brandRows.find(item=>item.id===teamRow?.brandId);
+        const created={id:`user-uat-${userRows.length}`,role:'user',...payload,brandId:brandRow?.id,team:teamRow,companyId:payload.companyId||companyRowFor(teamRow,companyRows)};
+        userRows.push(created);body=created;
+      } else body=userRows;
     }
     else if(/^\/api\/crud\/users\/[^/]+$/.test(p)){
-      const payload=route.request().method()==='PUT'?route.request().postDataJSON():{};
-      if(route.request().method()==='PUT')userWrites.push({method:'PUT',path:p,body:payload});
-      body={...person,...payload};
+      const id=decodeURIComponent(p.split('/').at(-1));const index=userRows.findIndex(item=>item.id===id);
+      if(index<0)return route.fulfill({status:404,contentType:'application/json',body:'{"message":"not found"}'});
+      if(route.request().method()==='PUT'){
+        const payload=route.request().postDataJSON();userWrites.push({method:'PUT',path:p,body:payload});
+        const teamRow=teamRows.find(item=>item.id===(payload.teamId||userRows[index].teamId));
+        const brandRow=brandRows.find(item=>item.id===teamRow?.brandId);
+        userRows[index]={...userRows[index],...payload,team:teamRow,brandId:brandRow?.id};body=userRows[index];
+      } else if(route.request().method()==='DELETE'){
+        userWrites.push({method:'DELETE',path:p});userRows=userRows.filter(item=>item.id!==id);
+        return route.fulfill({status:200,contentType:'application/json',body:'{"success":true}'});
+      } else body=userRows[index];
     }
     else if(p==='/api/tenant/voice-profiles'){
       if(route.request().method()==='GET'&&voiceListShouldFail)return route.fulfill({status:503,contentType:'application/json',body:'{"message":"synthetic voice list failure"}'});
@@ -342,6 +400,13 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   await editedCompanyRow.waitFor();
   assert.deepEqual(companyWrites.at(-1),{method:'PUT',id:'company-uat-created',payload:{name:'Company Co UAT Edited',industry:'Updated Synthetic UAT Industry',countries:['BR','MX']}});
   assert.ok((await editedCompanyRow.innerText()).includes('Brasil')&&(await editedCompanyRow.innerText()).includes('México'),'updated company and country relations are visible after list readback');
+  await editedCompanyRow.getByTitle('Ver detalle').click();
+  const companyDetails=companyAdmin.page.getByRole('dialog');await companyDetails.waitFor();
+  assert.equal(await companyDetails.getByText('Updated Synthetic UAT Industry',{exact:true}).count(),1);
+  assert.equal(await companyDetails.getByText('BR, MX',{exact:true}).count(),1,'company detail exposes the configured country codes');
+  await companyAdmin.page.screenshot({path:path.join(evidence,'uat-superadmin-company-detail.png')});
+  await companyDetails.getByRole('button',{name:'Cerrar detalle'}).click();
+  await companyDetails.waitFor({state:'hidden'});
   await companyAdmin.page.screenshot({path:path.join(evidence,'uat-superadmin-company-crud.png')});
   companyAdmin.page.once('dialog',dialog=>dialog.accept());
   await editedCompanyRow.getByRole('button',{name:'Eliminar',exact:true}).click();
@@ -349,7 +414,7 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.deepEqual(companyWrites.at(-1),{method:'DELETE',id:'company-uat-created'});
   assert.equal(companyRows.some(item=>item.id==='company-uat-created'),false,'company row is removed from mock persistence');
   await companyAdmin.context.close();
-  checks.push('UAT-072 Web superadmin Company lifecycle: localized create/edit, country payloads and list readback, native delete confirmation, and removal from synthetic persistence PASS; API authorization is not claimed by mocked Web fixture');
+  checks.push('UAT-072 Web superadmin Company lifecycle: localized create/edit, country payloads, explicit detail readback, native delete confirmation, and removal from synthetic persistence PASS; API authorization is not claimed by mocked Web fixture');
   const testProfileOperator=await pageFor('superadmin');
   await testProfileOperator.page.goto(origin+'/management/companies');
   const profileSelect=testProfileOperator.page.getByRole('combobox',{name:'Perfiles UAT de prueba',exact:true});
@@ -432,8 +497,98 @@ test('local production web UAT with explicitly mocked Company Co API (not real b
   assert.equal(await superDialog.getByLabel('Empresa').count(),1);
   assert.equal(await superDialog.getByLabel('Rol').count(),1);
   assert.equal(await superDialog.getByLabel('Empresa').locator('option[value="other-company"]').count(),1);
-  await superDialog.getByRole('button',{name:'Cancelar',exact:true}).click();await superDialog.waitFor({state:'hidden'});
+
+  const brandSuper=await pageFor('superadmin');await brandSuper.page.goto(origin+'/management/brands');
+  await brandSuper.page.getByPlaceholder('Buscar marcas...').waitFor();
+  await brandSuper.page.getByRole('button',{name:'Agregar marca',exact:true}).click();
+  let brandForm=brandSuper.page.locator('form');await brandForm.waitFor();
+  await brandForm.getByLabel('Nombre de la marca').fill('Synthetic Superadmin Brand');
+  await brandForm.getByLabel('Empresa').selectOption(company.id);
+  await brandForm.getByRole('button',{name:'Guardar',exact:true}).click();
+  await brandSuper.page.waitForFunction(()=>document.querySelector('form')===null);
+  let brandRow=brandSuper.page.locator('tbody tr').filter({hasText:'Synthetic Superadmin Brand'});await brandRow.waitFor();
+  assert.deepEqual(brandWrites.at(-1),{method:'POST',payload:{name:'Synthetic Superadmin Brand',companyId:company.id,color:'#6366f1'}});
+  await brandRow.getByTitle('Editar').click();brandForm=brandSuper.page.locator('form');await brandForm.waitFor();
+  await brandForm.getByLabel('Nombre de la marca').fill('Synthetic Superadmin Brand Edited');
+  await brandForm.getByRole('button',{name:'Guardar',exact:true}).click();
+  await brandSuper.page.waitForFunction(()=>document.querySelector('form')===null);
+  brandRow=brandSuper.page.locator('tbody tr').filter({hasText:'Synthetic Superadmin Brand Edited'});await brandRow.waitFor();
+  assert.deepEqual(brandWrites.at(-1),{method:'PUT',id:'brand-uat-created',payload:{name:'Synthetic Superadmin Brand Edited',companyId:company.id,color:'#6366f1'}});
+  await brandRow.getByTitle('Ver detalle').click();
+  let recordDetails=brandSuper.page.getByRole('dialog');await recordDetails.waitFor();
+  assert.equal(await recordDetails.getByText('Synthetic Superadmin Brand Edited',{exact:true}).count(),1);
+  await brandSuper.page.screenshot({path:path.join(evidence,'uat-superadmin-brand-detail.png')});
+  await recordDetails.getByRole('button',{name:'Cerrar detalle'}).click();await recordDetails.waitFor({state:'hidden'});
+  brandSuper.page.once('dialog',dialog=>dialog.accept());await brandRow.getByTitle('Eliminar').click();
+  await brandRow.waitFor({state:'detached'});
+  assert.deepEqual(brandWrites.at(-1),{method:'DELETE',id:'brand-uat-created'});
+  assert.equal(brandRows.some(item=>item.id==='brand-uat-created'),false);
+  await brandSuper.context.close();
+
+  const teamSuper=await pageFor('superadmin');await teamSuper.page.goto(origin+'/management/teams');
+  await teamSuper.page.getByPlaceholder('Buscar equipos...').waitFor();
+  await teamSuper.page.getByRole('button',{name:'Agregar equipo',exact:true}).click();
+  let teamForm=teamSuper.page.locator('form');await teamForm.waitFor();
+  await teamForm.getByLabel('Empresa').selectOption(company.id);
+  await teamForm.getByLabel('Marca').selectOption(brand2.id);
+  await teamForm.getByLabel('País').selectOption('MX');
+  await teamForm.getByLabel('Nombre del equipo').fill('Synthetic Superadmin Team');
+  await teamForm.getByRole('button',{name:'Guardar',exact:true}).click();
+  await teamSuper.page.waitForFunction(()=>document.querySelector('form')===null);
+  let teamRow=teamSuper.page.locator('tbody tr').filter({hasText:'Synthetic Superadmin Team'});await teamRow.waitFor();
+  assert.deepEqual(teamWrites.at(-1),{method:'POST',payload:{name:'Synthetic Superadmin Team',brandId:brand2.id,country:'MX'}});
+  await teamRow.getByTitle('Editar').click();teamForm=teamSuper.page.locator('form');await teamForm.waitFor();
+  await teamForm.getByLabel('Nombre del equipo').fill('Synthetic Superadmin Team Edited');
+  await teamForm.getByRole('button',{name:'Guardar',exact:true}).click();
+  await teamSuper.page.waitForFunction(()=>document.querySelector('form')===null);
+  teamRow=teamSuper.page.locator('tbody tr').filter({hasText:'Synthetic Superadmin Team Edited'});await teamRow.waitFor();
+  assert.deepEqual(teamWrites.at(-1),{method:'PUT',id:'team-uat-created',payload:{name:'Synthetic Superadmin Team Edited',brandId:brand2.id,country:'MX'}});
+  await teamRow.getByTitle('Ver detalle').click();
+  recordDetails=teamSuper.page.getByRole('dialog');await recordDetails.waitFor();
+  assert.equal(await recordDetails.getByText('México',{exact:true}).count(),1);
+  await teamSuper.page.screenshot({path:path.join(evidence,'uat-superadmin-team-detail.png')});
+  await recordDetails.getByRole('button',{name:'Cerrar detalle'}).click();await recordDetails.waitFor({state:'hidden'});
+  teamSuper.page.once('dialog',dialog=>dialog.accept());await teamRow.getByTitle('Eliminar').click();
+  await teamRow.waitFor({state:'detached'});
+  assert.deepEqual(teamWrites.at(-1),{method:'DELETE',id:'team-uat-created'});
+  assert.equal(teamRows.some(item=>item.id==='team-uat-created'),false);
+  await teamSuper.context.close();
+  checks.push('UAT-087 superadmin Brand/Team Web lifecycle: create, edit, relation/detail readback and confirmed delete pass against synthetic persistence; API/Cloud authorization and database persistence are covered separately by UAT-075/076');
+
+  await superDialog.locator('#management-users-field-1').fill('Synthetic Superadmin User');
+  await superDialog.locator('#management-users-field-2').fill('synthetic.superadmin@company-co.invalid');
+  await superDialog.getByLabel('Empresa').selectOption(otherCompany.id);
+  assert.equal(await superDialog.getByLabel('Rol').inputValue(),'user','new account defaults to least privilege');
+  await superDialog.getByRole('button',{name:'Guardar',exact:true}).click();
+  await superDialog.waitFor({state:'hidden'});
+  const superUserId=userRows.find(item=>item.email==='synthetic.superadmin@company-co.invalid')?.id;
+  assert.ok(superUserId,'synthetic superadmin user record was written');
+  let superUserRow=userSuper.page.locator('tbody tr').filter({hasText:'synthetic.superadmin@company-co.invalid'});
+  await superUserRow.waitFor();
+  assert.deepEqual(userWrites.at(-1),{method:'POST',path:'/api/crud/users',body:{name:'Synthetic Superadmin User',email:'synthetic.superadmin@company-co.invalid',role:'user',companyId:otherCompany.id}});
+  assert.ok((await superUserRow.innerText()).includes('Other Co'));
+  await superUserRow.getByTitle('Editar').click();
+  let superUserForm=userSuper.page.locator('form');await superUserForm.waitFor();
+  await superUserForm.locator('#management-users-field-6').selectOption('admin');
+  await superUserForm.getByRole('button',{name:'Guardar',exact:true}).click();
+  await userSuper.page.waitForFunction(()=>document.querySelector('form')===null);
+  assert.deepEqual(userWrites.at(-1),{method:'PUT',path:`/api/crud/users/${superUserId}`,body:{name:'Synthetic Superadmin User',email:'synthetic.superadmin@company-co.invalid',role:'admin',companyId:otherCompany.id}});
+  superUserRow=userSuper.page.locator('tbody tr').filter({hasText:'synthetic.superadmin@company-co.invalid'});
+  await superUserRow.waitFor();
+  await superUserRow.getByTitle('Ver detalle').click();
+  const superUserDetails=userSuper.page.getByRole('dialog');await superUserDetails.waitFor();
+  assert.equal(await superUserDetails.getByText('admin',{exact:true}).count(),1);
+  assert.equal(await superUserDetails.getByText('Other Co',{exact:true}).count(),1);
+  await userSuper.page.screenshot({path:path.join(evidence,'uat-superadmin-user-detail.png')});
+  await superUserDetails.getByRole('button',{name:'Cerrar detalle'}).click();
+  await superUserDetails.waitFor({state:'hidden'});
+  userSuper.page.once('dialog',dialog=>dialog.accept());
+  await superUserRow.getByTitle('Eliminar').click();
+  await superUserRow.waitFor({state:'detached'});
+  assert.deepEqual(userWrites.at(-1),{method:'DELETE',path:`/api/crud/users/${superUserId}`});
+  assert.equal(userRows.some(item=>item.email==='synthetic.superadmin@company-co.invalid'),false);
   await userSuper.context.close();
+  checks.push('UAT-086 superadmin User Web lifecycle: create defaults to user, explicit role/company assignment, detail readback and confirmed delete pass against synthetic persistence; API/Cloud persisted authorization is covered separately by UAT-071/075/076');
   checks.push('UAT-004 company/brand/team/user/vendor administration Spanish copy and manager user restrictions: localized routes/search and modal controls; no role/company payload fields; foreign team absent PASS (synthetic UI; API guard tested separately)');
   const knowledgeUser=await pageFor('user');await knowledgeUser.page.goto(origin+'/knowledge');
   await knowledgeUser.page.getByRole('heading',{name:'Base de Conocimiento',exact:true}).waitFor();

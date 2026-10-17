@@ -1,8 +1,8 @@
-## Current ledger status — 5.1.73 / UAT-080
+## Current ledger status — 5.1.74 candidate / UAT-087
 
-The four owner-confirmed commitments remain active: **0/4 DONE, 4/4 active/partial, 0 deferred, 0 cancelled**. PRs #184–#190 delivered UAT-075–078 and matrix reconciliation; this candidate documents UAT-079/080, passed in API and Cloud. UAT tally is 78 PASS, 0 BLOCKED, 1 MANUAL. UAT-071/075/076/077 verify selected persisted Company/Brand/Team/User/Workflow operations; UAT-078 verifies tenant Vendor isolation; UAT-079/080 verify admin and coordinator flow-configuration API rows across restart. CMT-003/004 and the full CRUD matrix remain open. Current matrix: 547 rows = 395 BLOCKED, 133 NOT APPLICABLE, 3 DECISION NEEDED, 16 PASS. CMT-001 has verified source delivery at version 5.1.73; no deployment is claimed.
+The four owner-confirmed commitments remain active: 0/4 DONE, 4/4 active/partial, 0 deferred, 0 cancelled. UAT-079/080/083 cover persisted tenant flow configuration; UAT-073/081 pair the tenant-admin and superadmin editors with that acceptance; UAT-086/087 pair superadmin Company/Brand/Team/User browser lifecycles with UAT-071/075/076 API/Cloud persistence. The reconciled CRUD matrix covers 40 models and 560 role-surface rows: 29 PASS, 396 BLOCKED, 132 NOT APPLICABLE, 3 DECISION NEEDED. UAT tally: 85 PASS, 0 BLOCKED, 1 MANUAL. Candidate 5.1.74 adds verified role-aware admin settings and safe audit tenant attribution alongside theme administration; integrated local checks pass. No PR or deployment is claimed.
 
-SIGUIENTE PASO: continue the confirmed four fronts; keep their remaining acceptance gates active.
+SIGUIENTE PASO: commit/push the verified 5.1.74 candidate by version-prefixed source commit and normal PR; preserve the external, database, native and customer-specific acceptance gates.
 
 ---
 

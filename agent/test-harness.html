@@ -1,22 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html data-keledon-theme="light">
 <head>
     <meta charset="UTF-8">
     <title>KELEDON Extension Test Harness</title>
+    <link rel="stylesheet" href="../shared/theme-tokens.css">
     <link rel="stylesheet" href="test-harness.css">
 </head>
 <body>
     <h1>🧪 KELEDON Extension Frontend Test Harness</h1>
     
-        <div class="test-section" style="background: #e3f2fd; border: 2px solid #2196f3;">
+        <div class="test-section" style="background: var(--browser-info-surface); border: 2px solid var(--agent-info);">
             <h2>🚀 Real Services Implementation Test</h2>
-            <button onclick="testRealServices()" style="background: #2196f3; font-weight: bold;">🔥 Test Real Services</button>
+            <button onclick="testRealServices()" style="background: var(--agent-info); font-weight: bold;">🔥 Test Real Services</button>
             <div id="real-services-result" class="test-result pending">Click to test real services implementation...</div>
         </div>
         
-        <div class="test-section" style="background: #e8f5e8; border: 2px solid #4caf50;">
+        <div class="test-section" style="background: var(--browser-success-surface); border: 2px solid var(--agent-success);">
             <h2>📊 System Monitoring Test</h2>
-            <button onclick="testSystemMonitoring()" style="background: #4caf50; font-weight: bold;">📈 Test System Monitoring</button>
+            <button onclick="testSystemMonitoring()" style="background: var(--agent-success); font-weight: bold;">📈 Test System Monitoring</button>
             <div id="system-monitoring-result" class="test-result pending">Click to test system monitoring...</div>
         </div>
     
@@ -51,10 +52,10 @@
     <div class="test-section">
         <h2>📋 Test Log</h2>
         <button onclick="copyLog()" class="copy-btn">📋 Copy Log</button>
-        <button onclick="exportLogToFile()" class="copy-btn" style="background: #28a745;">📄 Export to logs.md</button>
-        <button onclick="copyLogsFromMdFile()" class="copy-btn" style="background: #ff9800;">📋 Copy from logs.md</button>
+        <button onclick="exportLogToFile()" class="copy-btn" style="background: var(--agent-success);">📄 Export to logs.md</button>
+        <button onclick="copyLogsFromMdFile()" class="copy-btn" style="background: var(--agent-warning);">📋 Copy from logs.md</button>
         <div id="test-log" class="log-section">Test log will appear here...</div>
-        <div style="margin-top: 10px; padding: 10px; background: #e9ecef; border-radius: 4px;">
+        <div style="margin-top: 10px; padding: 10px; background: var(--agent-panel-soft); border-radius: 4px;">
             <strong>📝 Logs File:</strong> <code>agent/logs.md</code>
             <br><small>Exported test logs download as Markdown files.</small>
         </div>

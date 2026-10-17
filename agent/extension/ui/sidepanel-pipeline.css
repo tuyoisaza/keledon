@@ -1,16 +1,16 @@
         :root {
-            --bg: #0f131a;
-            --panel: #151c27;
-            --panel-soft: #1b2432;
-            --border: #2a374b;
-            --text: #e6eef9;
-            --muted: #94a3b8;
-            --accent: #3bd3c6;
-            --accent-strong: #1fb5aa;
-            --danger: #f25c6c;
-            --success: #38d39f;
-            --warning: #fbbf24;
-            --info: #60a5fa;
+            --bg: var(--agent-background);
+            --panel: var(--agent-panel);
+            --panel-soft: var(--agent-panel-soft);
+            --border: var(--color-border);
+            --text: var(--agent-text);
+            --muted: var(--agent-muted);
+            --accent: var(--agent-accent);
+            --accent-strong: var(--agent-accent-strong);
+            --danger: var(--agent-danger);
+            --success: var(--agent-success);
+            --warning: var(--agent-warning);
+            --info: var(--agent-info);
         }
 
         * {
@@ -59,7 +59,7 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            color: white;
+            color: var(--color-primary-foreground);
             font-size: 16px;
         }
 
@@ -175,7 +175,7 @@
         .command-input:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(59, 211, 198, 0.1);
+            box-shadow: 0 0 0 3px var(--browser-info-surface);
         }
 
         .input-btn {
@@ -183,7 +183,7 @@
             background: var(--accent);
             border: none;
             border-radius: 8px;
-            color: white;
+            color: var(--color-primary-foreground);
             cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
@@ -240,7 +240,7 @@
 
         .suggestion-chip:hover {
             background: var(--accent);
-            color: white;
+            color: var(--color-primary-foreground);
             border-color: var(--accent);
         }
 
@@ -266,7 +266,7 @@
 
         .message.user {
             background: var(--accent);
-            color: white;
+            color: var(--color-primary-foreground);
             align-self: flex-end;
         }
 

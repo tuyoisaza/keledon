@@ -1,4 +1,60 @@
-## Current Auto continuation — 5.1.67 source merged; whole portfolio partial (2026-10-15)
+## Current Auto continuation — candidate 5.1.74, PHDK 2.51.5 (2026-10-17)
+
+Run `20261014-0007-phdk-auto-completion`; branch `fix/phdk-auto-uat-082`, based on current remote `main` `0dd405d930c518537ecea17ca363e95a5b99a9fd`; candidate is locally uncommitted. PHDK 2.51.5 is current and coherent 61/61. All six candidate version reads are 5.1.74. API build/regression/lint pass 42/42, 0 errors/0 warnings; Cloud build/regression/lint pass 18/18, 0 errors; Browser 43/43/build/lint; Agent theme 2/2/build/validation; Web typecheck/build/UAT 7/7 plus standalone admin-settings/theme-template/AI-admin; Landing typecheck/build/SEO 1/1. Audit contracts pass 4/4 and 10/10; theme scanner STATIC_PASS. Whole Auto remains PARTIALLY DELIVERED: 85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS; all four commitments remain active. PostgreSQL audit migration/restart, client-specific live calls/CRM, native device/audio and broad accessibility remain open. No production writes or deployment are claimed.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | COMPLETED / REVALIDATED | Canonical PHDK 2.51.5, updater CURRENT, coherence 61/61. |
+| Capture / Plan | REUSED | Four confirmed fronts and approved restrictive role/private-origin policies remain active. |
+| PMO / Workstreams | IN PROGRESS | Candidate reconciled; all four fronts remain partial. |
+| Integration Review | PARTIAL | API/Cloud audit actor tenant snapshots align; managed API AI input validation and tenant flow contracts remain; Cloud legacy LLM parity remains open. |
+| UAT / UAT Fix | PASS FOR LOCAL CANDIDATE; PORTFOLIO PARTIAL | Full local API/Cloud/Web/Browser/Agent/Landing checks and selected synthetic/persisted acceptance pass; native and external acceptance remain open. |
+| SEO / AEO-GEO | COMPLETED / SOURCE SCOPE | Landing/Web SEO source tests pass; external ranking/discovery remains unmeasured. |
+| Check / Remediation | PASS FOR LOCAL SOURCE; GAPS FOUND | CHK-001–005 PARTIAL; CHK-006 price policy decision-required. |
+| Delivery | PENDING | Prepare source commit/PR and verify controls, reviews, merge and remote readback. |
+
+SIGUIENTE PASO: complete final review, commit candidate with version-prefixed subject, push and open PR; preserve PARTIALLY DELIVERED for unresolved database/native/customer gates.
+
+---
+
+## Current Auto continuation — candidate 5.1.73, PHDK 2.51.5 (2026-10-16)
+
+Run `20261014-0007-phdk-auto-completion`; local branch `fix/phdk-auto-uat-082` at base `0dd405d930c518537ecea17ca363e95a5b99a9fd`; no candidate commit or PR. The four confirmed fronts remain active. Recent source remediation adds the audit-history console, role-denial records and successful mutation/auth tenant snapshots in API/Cloud; additive migrations are paired but not applied. API 42/42, Cloud 18/18, audit contracts 4/4 and 8/8, and PHDK coherence 61/61 pass. Auto remains PARTIALLY DELIVERED, 0/4 commitments complete.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | COMPLETED / REVALIDATED | PHDK 2.51.5, updater CURRENT, coherence 61/61. |
+| Capture / Plan | REUSED | Four owner-confirmed fronts and approved tenant/security policy remain current. |
+| PMO / Workstreams | IN PROGRESS | Updated matrix and ledgers; all four fronts remain partial. |
+| Integration Review | PARTIAL | API/Cloud build and regression pass; successful mutation/auth and role-denial auditing is paired; snapshot migrations need PostgreSQL application/restart proof; Cloud legacy LLM bypass remains. |
+| UAT / UAT Fix | PARTIAL | Previous UAT evidence reused where source is unchanged; contract test coverage refreshed. Whole-route, DB, native/accessibility and external runtime remain open. |
+| SEO / AEO-GEO | REUSED / PENDING FINAL DIFF | Public surface must be checked against final candidate before reusing prior source audit. |
+| Check / Remediation | IN PROGRESS | Audit sub-gap improved; CRUD/runtime and candidate-wide checks remain. |
+| Delivery | PENDING | No candidate version reconciliation, commit, PR, merge or deployment. |
+
+SIGUIENTE PASO: complete candidate-wide source/security review and applicable UAT; then finalize SEO/AEO scope and ordinary PR delivery evidence while preserving PARTIALLY DELIVERED.
+
+---
+
+## Historical Auto continuation — UAT-083 superadmin flow HTTP acceptance (2026-10-16)
+
+Remote `main` remains at `0dd405d930c518537ecea17ca363e95a5b99a9fd` after merged UAT-080 PR #191. UAT-081 fixes the superadmin Web editor staying in the legacy-only scope after successful assignment. UAT-083 passes 24 persisted HTTP assertions per backend, closing four superadmin flow API rows; Web and remaining matrix operations remain open. PHDK v2.51.2 coherence remains 56/56. Whole Auto is **PARTIALLY DELIVERED** at 0/4 commitments DONE; UAT 81 PASS, 0 BLOCKED, 1 MANUAL; CRUD matrix 391 BLOCKED, 133 N/A, 3 DECISION NEEDED, 20 PASS. Remaining CRUD rows, runtime/customer integration, accessibility/manual, deployed SEO/AEO and other agreed gates remain open. Local source/doc changes have not been committed or delivered.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight / Capture / Plan | REUSED / REVALIDATED | Current repo, PHDK and four owner-confirmed fronts retained. |
+| PMO / Workstreams | IN PROGRESS | Current milestone adds UAT-081/083 to CMT-003/004; all four workstreams remain partial. |
+| Integration Review | PASS FOR UAT-081 FIX | Legacy assignment changes selected company and reloads the moved flow under its new owner. |
+| UAT / UAT Fix | PARTIAL | UAT-081 Web fix and UAT-083 selected persisted API/Cloud HTTP acceptance pass; broad matrix and live flow execution remain open. |
+| SEO / AEO-GEO | PENDING | Perform after remaining UAT/fixes; source is private, no public content changed here. |
+| Check / Remediation | PENDING | Whole-candidate audit and final checks have not run. |
+| Delivery | PENDING | No candidate commit, PR or deployment exists for this slice. |
+
+SIGUIENTE PASO: continue the remaining confirmed fronts and broad resource-operation acceptance.
+
+---
+
+## Historical Auto continuation — 5.1.67 source merged; whole portfolio partial (2026-10-15)
 
 Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; target `main`. PR [#163](https://github.com/tuyoisaza/keledon/pull/163) squash-merged at `dbdd64f16048ac01ff1ec34e39ec33e6c4255175`, tree `932a278c510cbdff8ace021dab2e364a9744b0d1`, matching tested source. All five application version roots and the Browser renderer read 5.1.67. PHDK v2.51.2 coherence passes 56/56. API FlowService tests 12/12; API regression 39/39; Cloud parity 10/10; final API build/typecheck/lint pass. The other candidate package builds, UAT and checks are recorded in post-merge evidence.
 

@@ -1,0 +1,35 @@
+{
+  "case": "UAT-083",
+  "candidate_version": "5.1.73",
+  "base_revision": "0dd405d930c518537ecea17ca363e95a5b99a9fd",
+  "runner": "services/api/scripts/uat-083-http-flow-config.cjs",
+  "command": "npm run test:uat:flow-config-http",
+  "target": "production-built API and Cloud Nest applications over loopback with separate disposable PostgreSQL 16 databases",
+  "migrations": {
+    "api": "PASS; 9 migrations applied",
+    "cloud": "PASS; 7 migrations applied"
+  },
+  "identities": "Synthetic superadmin and coordinator database rows; signed tokens intentionally carry mismatched role claims.",
+  "api": {
+    "result": "PASS",
+    "assertions": 24
+  },
+  "cloud": {
+    "result": "PASS",
+    "assertions": 24
+  },
+  "checks": [
+    "Unauthenticated flow reads receive HTTP 401.",
+    "A database superadmin can create definitions across two companies and list both, update a definition, and soft-deactivate it.",
+    "A coordinator token claiming superadmin is resolved as coordinator from PostgreSQL; a forged company filter cannot reveal another tenant's flow.",
+    "A coordinator's forged foreign-company create is scoped to its own company; a foreign definition update returns no record.",
+    "A superadmin creates and approves a version; later edits to the approved version receive HTTP 400.",
+    "Version list queries are global for the superadmin and limited to the coordinator's database company despite a forged filter.",
+    "Superadmin availability permission create/read/disable and intent mapping create/read/removal persist; coordinator cross-company permission and mapping writes receive HTTP 400.",
+    "A superadmin assigns an unowned legacy flow to a company and reads it under its new owner.",
+    "A second Prisma client confirms the approved version, authenticated creator, disabled permission and mapping removal persisted."
+  ],
+  "cleanup": "Both dedicated UAT databases were dropped; API and Cloud child processes exited; temporary data directory was removed; the reused PostgreSQL cluster was stopped with its pre-existing databases preserved.",
+  "external_traffic": "none; test requests used loopback services and PostgreSQL only, with no customer/provider credentials or data",
+  "scope": "This closes the four superadmin flow-configuration API matrix rows only. The corresponding Web role rows and broader CRUD matrix remain open."
+}

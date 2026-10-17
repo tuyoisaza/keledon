@@ -1,3 +1,11 @@
+## Candidate 5.1.74 — local verification pass; delivery pending (2026-10-17)
+
+Candidate `5.1.74` is on `fix/phdk-auto-uat-082` from verified main `0dd405d930c518537ecea17ca363e95a5b99a9fd`. All six version reads (five package/lock roots and Browser renderer) match. API build/regression/lint pass 42/42, 0 errors/0 warnings; Cloud build/regression/lint pass 18/18, 0 errors; Browser build/offline tests 43/43/lint; Agent theme 2/2/build/validation; Web typecheck/build/UAT 7/7 plus standalone admin-settings/theme-template/AI-admin; Landing typecheck/build/SEO 1/1; audit contracts 4/4 and 10/10; PHDK coherence 61/61; theme static audit PASS. API/Cloud audit migrations are additive but have not been applied to a database. No candidate commit, PR, merge or deployment exists yet. Whole Auto remains PARTIALLY DELIVERED (85 PASS, 0 BLOCKED, 1 MANUAL; CRUD 396 BLOCKED, 132 N/A, 3 DECISION NEEDED, 29 PASS).
+
+SIGUIENTE PASO: run the five-field delivery gate against the version-prefixed commit/PR, respect observed GitHub controls, merge only through the normal PR method if allowed, and independently verify exact remote `main` SHA/tree/version. Keep the whole portfolio partial.
+
+---
+
 ## Current delivery 5.1.72 — source merged and remotely verified; Auto partial
 
 PR [#177](https://github.com/tuyoisaza/keledon/pull/177) squash-merged tested source `9fee7eafd044c6e2f7af2e3c35ff1f3fd630a55c` at remote `main` `ddc2b6030618a1f648ffc37fa296c64729ef503b`; remote tree equals the final candidate and all six version reads are 5.1.72. PR #176 is closed as superseded. GitHub reported no hosted checks or review decision; main was unprotected. The mechanical gate passes from root `PHDK_DELIVERY_EVIDENCE.json`. Whole Auto remains partial (65 PASS, 0 BLOCKED, 1 MANUAL). No deployment is claimed.

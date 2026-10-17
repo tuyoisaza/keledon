@@ -352,8 +352,8 @@ async function main() {
     assert.equal(switched.body.user.id, 'profile-admin');
     assert.equal(switched.body.user.role, 'admin');
     assert.equal(switched.body.user.uatTestProfile, true);
-    assert.equal(auditEntries[0].userId, 'superadmin');
-    assert.equal(auditEntries[0].action, 'UAT_TEST_PROFILE_START');
+    const startAudit = auditEntries.find((entry) => entry.action === 'UAT_TEST_PROFILE_START');
+    assert.equal(startAudit.userId, 'superadmin');
     const profileMe = await request(http)
       .get('/api/auth/me')
       .set('Authorization', `Bearer ${switched.body.token}`)
@@ -365,8 +365,8 @@ async function main() {
       .set('Authorization', token('superadmin'))
       .send({ sessionId: switched.body.sessionId })
       .expect(201);
-    assert.equal(auditEntries[1].userId, 'superadmin');
-    assert.equal(auditEntries[1].action, 'UAT_TEST_PROFILE_END');
+    const endAudit = auditEntries.find((entry) => entry.action === 'UAT_TEST_PROFILE_END');
+    assert.equal(endAudit.userId, 'superadmin');
     await request(http)
       .get('/api/auth/me')
       .set('Authorization', `Bearer ${switched.body.token}`)
@@ -416,6 +416,11 @@ async function main() {
       .expect(200);
     assert.deepEqual(auditLogs.body.data, []);
     assert.equal(auditReads, 1);
+    await request(http)
+      .get('/api/crud/audit-logs?limit=20invalid')
+      .set('Authorization', token('superadmin'))
+      .expect(400);
+    assert.equal(auditReads, 1, 'malformed audit pagination is rejected before the service call');
     await request(http)
       .post('/api/crud/audit-logs')
       .set('Authorization', token('superadmin'))

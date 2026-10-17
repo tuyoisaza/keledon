@@ -1,15 +1,15 @@
-        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
-        .test-section { margin: 20px 0; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        body { font-family: Arial, sans-serif; margin: 20px; background: var(--agent-background); }
+        .test-section { margin: 20px 0; padding: 15px; background: var(--agent-panel); border-radius: 8px; box-shadow: 0 2px 4px var(--ui-overlay-10); }
         .test-result { margin: 10px 0; padding: 8px; border-radius: 4px; }
-        .pass { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .fail { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .pending { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-        button { margin: 5px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .config-display { background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0; font-family: monospace; }
+        .pass { background: var(--browser-success-surface); color: var(--agent-success); border: 1px solid var(--agent-success); }
+        .fail { background: var(--browser-danger-surface); color: var(--agent-danger); border: 1px solid var(--agent-danger); }
+        .pending { background: var(--browser-warning-surface); color: var(--agent-warning); border: 1px solid var(--agent-warning); }
+        button { margin: 5px; padding: 8px 16px; background: var(--agent-accent); color: var(--agent-panel); border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: var(--agent-accent-strong); }
+        .config-display { background: var(--agent-panel-soft); padding: 10px; border-radius: 4px; margin: 10px 0; font-family: monospace; }
         .log-section {
-            background: #1e1e1e;
-            color: #d4d4d4;
+            background: var(--agent-background);
+            color: var(--agent-text);
             padding: 15px;
             border-radius: 8px;
             margin: 20px 0;
@@ -20,13 +20,13 @@
             border: 1px solid #444;
         }
         .log-entry { margin: 2px 0; }
-        .log-timestamp { color: #888; }
-        .log-level-info { color: #4fc3f7; }
-        .log-level-success { color: #81c784; }
-        .log-level-error { color: #e57373; }
-        .log-level-warning { color: #ffb74d; }
+        .log-timestamp { color: var(--agent-muted); }
+        .log-level-info { color: var(--agent-info); }
+        .log-level-success { color: var(--agent-success); }
+        .log-level-error { color: var(--agent-danger); }
+        .log-level-warning { color: var(--agent-warning); }
         .copy-btn {
-            background: #4caf50;
+            background: var(--agent-success);
             position: absolute;
             top: 10px;
             right: 10px;
