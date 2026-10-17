@@ -14,9 +14,9 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; curren
 | UAT Fix | PENDING | Reopen after production UAT identifies a reproducible candidate defect; no live write or destructive action taken. |
 | SEO | REUSED / SOURCE REVALIDATED | Public source unchanged for 5.2.1; deployed measurements remain open. |
 | AEO/GEO | REUSED / SOURCE REVALIDATED | Public answer source unchanged; citation/field evidence remains unmeasured. |
-| Check | PARTIAL / ADMIN STANDARD GAPS RECORDED | PHDK 2.53.1 coherence 64/64; theme-token audit `STATIC_PASS`; root managed block pass. Admin architecture, capability/settings registry and AI catalog document ADM-001…006 gaps. GitHub has no workflows, branch protection or rulesets; PR #210 had no checks/review decision. Railway auto-deploy succeeded for API/Web; `checkSuites:false` and wait-for-CI/restart/watch/cost remain unverified. No app tests or production writes. |
+| Check | PASS FOR DOC/PIA SCOPE; WHOLE PRODUCT PARTIAL | PHDK coherence 64/64; UAT evidence JSON parses; `git diff --check` passes. Current PR #212 is open/mergeable with no hosted status checks. Admin and authenticated feature gates remain open. |
 | Remediation | PENDING | This continuation adds actionable PIA packages and current production evidence; source remediation remains tied to verified acceptance findings. |
-| Delivery | PENDING FOR PIA DOCS / WHOLE GOAL PARTIAL | Current branch is based on `origin/main`; documentation PR is being prepared. Product PR #210 and production version 5.2.1 remain separately verified. Whole-goal gate remains open. |
+| Delivery | PIA PR OPEN / WHOLE GOAL PARTIAL | PR #212 targets `main`, base SHA `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`, head SHA `a8eb9b1eb2510afde609a473879c2e3d596a1e57`; it has no hosted checks. Product PR #210 and production version 5.2.1 remain separately verified. Whole-goal gate remains open. |
 
 Overall Auto remains **PARTIALLY DELIVERED**. Authenticated tenant/persistence acceptance, safe catalog provisioning, required key configuration, broader product commitments and a passing completion gate remain open.
 
