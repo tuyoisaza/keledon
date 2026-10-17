@@ -1,3 +1,7 @@
+## v5.2.3 — 2026-10-17
+
+- Omit configured API and OAuth hostnames from copied diagnostics to avoid disclosing deployment-specific infrastructure details.
+
 ## v5.2.2 — 2026-10-17
 
 ### Fixed
