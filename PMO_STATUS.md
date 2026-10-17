@@ -1,12 +1,9 @@
-## Verified current readback — KELEDON 5.2.3 / 2026-10-17
+## Verified current readback — KELEDON 5.2.4 / 2026-10-17
 
-This readback supersedes earlier 5.2.1/5.2.2 candidate notes below; those remain historical. PR #229 merged at `3cccb4b2f88828fa5d273b682925d3a106dd3b9`; UAT docs PR #230 merged at `85d792321445da6ba6a744e79d7128fed8717d3d`. Five package/lock roots and Browser renderer align at 5.2.3; PHDK 2.53.1 coherence is 64/64 static. Web Railway `51d32a43-e3ea-4961-a4ea-b5ac8fd68621` and API `567027ff-9d5f-411f-b073-3b6eed4eeb2f` report `SUCCESS` for `85d7923`. UAT-117 observed copy success/source hostname withholding; UAT-118 observed public keyboard order and target/focus metrics; UAT-119 confirmed login keyboard order but found HTML `lang=en` while Portuguese was selected. Clipboard was not read and no autofill value was captured. CMT-001 is complete for this cut; CMT-002/003/004 remain active/partial. Overall Auto remains PARTIALLY DELIVERED.
+This readback supersedes earlier 5.2.1–5.2.3 candidate notes below; those remain historical. PR #232 merged at `6715ea986bf9058b8f7d50edae1efe2ed4f65b81`. Five package/lock roots and Browser renderer align at 5.2.4; PHDK 2.53.1 coherence is 64/64 static. Railway Web deployment `228369da-23e8-49e0-8345-2469f9fd4863` and API deployment `367eb4ae-a101-448a-ac0a-361e7efee620` both report `SUCCESS` on `6715ea9`; production `/login` serves asset `index-COWg4nKb.js`. UAT-120 confirms `<html lang>` matches visible ES/EN/PT; initial Portuguese preference was restored. UAT-117 confirmed copy status/source hostname withholding; UAT-118 sampled public keyboard/focus; UAT-119 sampled login keyboard order and detected the now-fixed language mismatch. Clipboard was not read; no autofill value was captured. Successful deployment does not accept API behavior. Overall Auto remains PARTIALLY DELIVERED.
 
-SIGUIENTE PASO: correct and deploy the login `lang` metadata, then verify it in production. Keep privileged/audio cases pending synthetic fixtures. Successful API deploy is not API behavior acceptance.
+SIGUIENTE PASO: continue CMT-002’s route/focus/a11y coverage and prepare production-only API behavior acceptance when synthetic fixtures are authorized. Keep privileged/audio cases pending synthetic fixtures. A successful API deployment does not accept API behavior.
 
-## Candidate remediation — 5.2.4
-
-Branch `fix/phdk-5.2.4-login-lang` synchronizes `document.documentElement.lang` with the selected locale in both Web and Landing. UAT-120 will verify ES/EN/PT only after production deployment. This source candidate is not yet published/deployed; no local application tests/builds were run.
 
 # PMO Status — 5.2.1 PIA continuation / PHDK 2.53.1; portfolio partial
 

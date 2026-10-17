@@ -1,10 +1,10 @@
-# Matriz de roles UAT — KELEDON 5.2.3
+# Matriz de roles UAT — KELEDON 5.2.4
 
 Los nombres/emails `.invalid` de abajo son IDs propuestos, no cuentas reales. Ninguna identidad se provisionó. Usuario, tenant y sesión se derivan del camino de auth normal y BD; una etiqueta de rol en navegador no prueba autorización.
 
 | Persona | Fixture propuesto | Acceso permitido | Denegación requerida | Preparación actual |
 |---|---|---|---|---|
-| Anónimo | Ninguno | `/`, `/login`, assets públicos | rutas/diagnósticos protegidos sin sesión | UAT público UAT-112–117 parcial; API actual pendiente |
+| Anónimo | Ninguno | `/`, `/login`, assets públicos | rutas/diagnósticos protegidos sin sesión | UAT público UAT-112–120 parcial; API funcional no aceptada |
 | Plataforma | `phdk-uat-superadmin` / `uat-superadmin@companyco.example.invalid` | asignar roles/tenants según server authority | suplantar identidad; revelar valores secretos; acción con tenant client-supplied | BLOCKED; no cuenta |
 | Admin tenant A | `phdk-uat-admin` / `uat-admin@companyco.example.invalid` | usuarios/equipos/interfaces de su empresa | elevar roles, crear/borrar empresa, acceso tenant B | BLOCKED; no cuenta |
 | Coordinator tenant A | `phdk-uat-coordinator` / `uat-coordinator@companyco.example.invalid` | operaciones autorizadas de su empresa | elevar roles, crear/borrar empresa, acceso tenant B | BLOCKED; no cuenta |

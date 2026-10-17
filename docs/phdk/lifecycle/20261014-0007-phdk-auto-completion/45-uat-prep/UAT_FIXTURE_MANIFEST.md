@@ -1,4 +1,4 @@
-# Manifest de fixtures UAT — KELEDON 5.2.3
+# Manifest de fixtures UAT — KELEDON 5.2.4
 
 Fecha: 2026-10-17 · run `20261014-0007-phdk-auto-completion` · entorno solicitado: producción para UAT funcional.
 
