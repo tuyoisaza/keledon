@@ -17,6 +17,7 @@ Deliver the current authorized four-front Auto portfolio through the normal PR p
 - PR #210 targets `main` at `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`.
 - GitHub reports no status checks and no review decision. `gh pr checks` reports no checks on this branch.
 - Anonymous production homepage displays v5.1.85; candidate 5.2.1 is not deployed or accepted.
+- A separate anonymous navigation to `/management/teams` redirected to `/login` on v5.1.85 (UAT-099). This proves only the unauthenticated redirect; it does not exercise candidate UI or authorization.
 - Four confirmed commitments remain active/partial.
 
 ## Work performed
@@ -24,6 +25,7 @@ Deliver the current authorized four-front Auto portfolio through the normal PR p
 - Created PR #210 through the normal `gh pr create` flow.
 - Reviewed the security-relevant candidate diff areas: tenant-derived interface list/assignment filters, cross-tenant guard, migration adding nullable Company ownership, and guarded UAT seed target policy.
 - Kept the PR unmerged because migration-backed tenant/persistence acceptance is unavailable on a safe candidate target.
+- Recorded UAT-099 as a read-only production check with evidence and preserved it in the candidate snapshot; no login, API mutation, account, database or tenant data was used.
 - Attempted to attach PR #210 to this Codex task; artifact attachment returned `thread attachment identity count exceeds 100`. No alternate attachment transport was used.
 
 ## Exit gate
