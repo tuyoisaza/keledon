@@ -1,21 +1,21 @@
-## PHDK Auto checkpoint — KELEDON 5.2.10 candidate / 2026-10-17
+## PHDK Auto checkpoint — KELEDON 5.2.10 production UAT / 2026-10-17
 
-Goal: continue the four owner-confirmed commitments in order: CMT-001 baseline/version/PR; CMT-002 widget/diagnostics; CMT-003 client-selected voice→Cloud→Browser→CRM; CMT-004 administration/permissions. Product repository `tuyoisaza/keledon`; candidate branch `fix/phdk-5-2-10-localized-404` is based on verified remote `main` `1a7216dfd5431c712b3968bce93099b2196da93e`; candidate KELEDON 5.2.10. PHDK 2.53.1 coherence 64/64. Owner requires application acceptance on production; no local application tests/builds/lint.
+Goal: continue the four owner-confirmed commitments in order: CMT-001 baseline/version/PR; CMT-002 widget/diagnostics; CMT-003 client-selected voice→Cloud→Browser→CRM; CMT-004 administration/permissions. Product repository `tuyoisaza/keledon`; PR #255 merged to verified remote `main` `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; KELEDON 5.2.10. PHDK 2.53.1 coherence 64/64. Owner requires application acceptance on production; no local application tests/builds/lint.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
 | Preflight | COMPLETED / REUSED | PHDK v2.53.1; static coherence 64/64. |
-| Capture / Plan / PMO | REUSED / CURRENT | Four commitments and all tenant, role, client CRM and interface-selector decisions remain the approved baseline. PIA-AUTO-SEO-002 is still open pending localized production 404 acceptance. |
-| Integration Review | COMPLETED FOR 5.2.10 CANDIDATE | `40-integration/INTEGRATION_REPORT-5.2.10.md`; static 404 localization uses saved `keledon-locale`, supported browser language fallback, then English; title, document language and visible copy match. |
+| Capture / Plan / PMO | REUSED / CURRENT | Four commitments and all tenant, role, client CRM and interface-selector decisions remain the approved baseline. PIA-AUTO-SEO-002 is accepted for its enumerated production route/metadata contract. |
+| Integration Review | COMPLETED FOR 5.2.10 | `40-integration/INTEGRATION_REPORT-5.2.10.md`; static 404 localization uses saved `keledon-locale`, supported browser language fallback, then English; title, document language and visible copy match. |
 | UAT Prep | PARTIAL / BLOCKED FOR AUTH | Synthetic identity/device fixture and cleanup gate remains; unrelated anonymous route UAT can proceed. |
-| UAT / UAT Fix | PARTIAL; UAT-140 PENDING | UAT-135/136/137/139 pass on 5.2.9 production. UAT-138 confirms HTTP 404/noindex/no-canonical/no-redirect but localization failed; publish 5.2.10 then verify Portuguese through anonymous production HTTP/browser. |
-| SEO / AEO-GEO | REVALIDATED WITH OPEN UAT-140 | Production route contracts are evidence-backed; crawler, ranking, provenance, market policy and citation behavior remain unmeasured. |
-| Check | PENDING 5.2.10 POST-MERGE | Static coherence/version/diff review only; production deploy and UAT-140 are required to close this slice. |
-| Delivery | SOURCE PR PENDING | Branch changes limited to 404 localization and PHDK evidence/status records. |
+| UAT / UAT Fix | PASS_SCOPED FOR ROUTE SLICE | UAT-135/136/137/139 pass on 5.2.9. UAT-138's locale gap is retested by UAT-140 on 5.2.10; visible title/copy are Portuguese on the anonymous production 404. |
+| SEO / AEO-GEO | ROUTE PIA ACCEPTED / FIELD METRICS OPEN | Route response contracts pass; crawler, ranking, provenance, market policy and citation behavior remain unmeasured. |
+| Check | DELTA PASS / WHOLE AUTO PARTIAL | PHDK coherence 64/64; five package/lock roots align to 5.2.10; PR #255/main/deployment readback verified; UAT-140 passes scoped production behavior. |
+| Delivery | PR #255 MERGED / PRODUCTION SUCCESS | Railway Web/API deploys `15f47990-5368-4462-aeba-0d508c388262` / `1b391751-bfc4-4d88-8131-ae239a3c5a07`, both SUCCESS 1/1. |
 
 Whole Auto remains **PARTIALLY DELIVERED**. CMT-003 lease/idempotency, tenant-bound private-destination enforcement, safe fixture lifecycle, CRM-specific acceptance, CMT-004 persisted tenant/role negative cases, broad CMT-002 accessibility/audio and Landing runtime target remain open.
 
-SIGUIENTE PASO: publish the reviewed 5.2.10 change, read back its production deployment and run UAT-140 only against the live site.
+SIGUIENTE PASO: continue the approved Auto PIAs in order; first prepare the permitted synthetic fixture/provisioning and cleanup gate for CMT-003C, while keeping CMT-003A lease/idempotency and CMT-003B socket-level tenant egress closed until that production UAT path exists.
 
 ---
 

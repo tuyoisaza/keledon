@@ -1,6 +1,6 @@
 # Sub-PIA CMT-003B — egress DNS/CIDR y CRM privado por tenant
 
-Estado: PLAN READY / IMPLEMENTATION NOT STARTED · Prioridad: CMT-003, gate 2 · Baseline actual KELEDON 5.2.7 en main `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`, Railway Web/API SUCCESS. PR #247 solo corrigió Landing diagnostics y alineó versión; Browser egress source no cambió desde la revalidación 5.2.6 (`e7257a7d0c66c8b34e6bbb7028c30be092f33102`). Revisión estática de fuente: 2026-10-17.
+Estado: PLAN READY / IMPLEMENTATION NOT STARTED · Prioridad: CMT-003, gate 2 · Baseline productivo KELEDON 5.2.10 en main `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; Railway Web/API SUCCESS. Los cortes 5.2.8–5.2.10 solo afectan el HTML/metadata público y localización 404; Browser egress source no cambia desde revalidación 5.2.6 (`e7257a7d0c66c8b34e6bbb7028c30be092f33102`). Revisión estática de fuente: 2026-10-17.
 
 ## Hallazgo y objetivo
 

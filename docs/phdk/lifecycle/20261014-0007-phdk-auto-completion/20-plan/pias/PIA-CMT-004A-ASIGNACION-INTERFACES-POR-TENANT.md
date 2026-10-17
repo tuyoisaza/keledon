@@ -2,6 +2,10 @@
 
 Estado: SOURCE IMPLEMENTED / PRODUCTION ACCEPTANCE PARTIAL · CMT-004 · Decisión del owner: 2026-10-17.
 
+Baseline actual de producto: KELEDON 5.2.10, main `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; Railway Web/API SUCCESS. Los cambios posteriores a la revisión de fuente no alteran el selector ni sus guards; la aceptación autenticada con tenant/roles persistidos continúa pendiente del fixture/cleanup CMT-003C.
+
+El owner confirmó: selector Web disponible para Admin/Coordinator y asignación limitada a sus equipos y tenant; no se exponen credenciales ni un catálogo global desde esos roles. No cambia el contrato de fuente ya definido abajo.
+
 ## Decisión y resultado esperado
 
 El owner confirma el selector Web de interfaces para Admin/Coordinator con asignación limitada a su tenant. El catálogo visible y cada asignación deben pertenecer a la empresa resuelta para el actor en servidor. El navegador nunca aporta autoridad de tenant. Superadmin puede administrar el catálogo global/por empresa; los roles de empresa no pueden provisionar interfaces ni elevar privilegios.

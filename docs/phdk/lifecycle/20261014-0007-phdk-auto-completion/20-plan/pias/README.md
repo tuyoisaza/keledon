@@ -1,4 +1,22 @@
-# PIAs de continuación — PHDK Auto / KELEDON 5.2.1+
+# PIAs de continuación — PHDK Auto / KELEDON 5.2.10+
+
+## Estado vigente — KELEDON 5.2.10, PHDK 2.53.1 (2026-10-17)
+
+Baseline remoto `main` `fd429298a85bdcf3b5c20791f9b1598c132aabcb`; PR #255 integrado; cinco package/lock roots y Browser renderer alineados a 5.2.10; PHDK coherence 64/64. Railway Web/API `SUCCESS`, 1/1. PIA-AUTO-SEO-002 está aceptada para los contratos de rutas/metadata/localización probados anónimamente en producción por UAT-135/136/137/139 y UAT-140; UAT-138 queda como hallazgo parcial histórico, corregido/retestado por UAT-140. CMT-001 se cierra para este corte; CMT-002 permanece parcial; CMT-003/004 siguen activos y no aceptados de forma integral. No se ejecutan suites, builds ni lint locales de aplicación.
+
+## Siguiente ruta de trabajo
+
+1. Completar CMT-003C: hacer operativo el provisioning, la expiración y el cleanup mínimos para identidad/device/tenant sintéticos mediante un canal permitido. La autorización existente cubre el fixture mínimo definido en esa PIA; hoy no se ha identificado un canal seguro listo y no se crea ningún usuario privilegiado ni dato productivo.
+2. Con CMT-003C aceptada, implementar y aceptar CMT-003A (lease/fencing/idempotencia o reconciliación) y después CMT-003B (enforcement de conexión, DNS/CIDR/redirect por tenant), manteniendo cerrados side effects CRM y egress privado hasta pasar los casos de producción.
+3. Continuar CMT-004 y aceptar selector por tenant, ciclo de cuentas, RBAC y persistencia con identidades sintéticas; después cerrar los gates amplios CMT-002 y las integraciones que cada cliente seleccione.
+
+La meta de cuatro frentes permanece **PARTIALLY DELIVERED**. La ausencia de un destino `Landing` de producción, audio/dispositivo nativo, aceptación CRM por cliente, ranking/citas externas y cambios de controles de proveedor sigue registrada como límite, no como un PASS.
+
+## Evidencia de ruta aceptada
+
+PR #255 se fusionó en `fd429298a85bdcf3b5c20791f9b1598c132aabcb`. UAT-140 verificó el 404 anónimo, noindex, ausencia de canonical, script same-origin y texto portugués seleccionado desde el control visible, en Railway Web `15f47990-5368-4462-aeba-0d508c388262` y API `1b391751-bfc4-4d88-8131-ae239a3c5a07`; ambos SUCCESS. Evidencia: `../50-uat/evidence/uat-140-production-localized-404-2026-10-17.json`.
+
+---
 
 ## Extensión 5.2.8 — producción y HTML SEO inicial (2026-10-17)
 
@@ -6,11 +24,11 @@ La lectura anónima del Web de producción encontró `#root` vacío en el HTML i
 
 La aceptación detectó dos hallazgos separados: metadata estática de home compartida temporalmente con `/login` y rutas SPA inexistentes que responden 200/redirigen al home. [PIA-AUTO-SEO-002](PIA-AUTO-SEO-002-METADATA-Y-RUTAS-SPA.md) define el inventario y la aceptación de ruta/header/meta para corregirlos sin romper deep links ni exponer rutas privadas.
 
-## Estado vigente — KELEDON 5.2.7 (2026-10-17)
+## Histórico — estado de PIAs en KELEDON 5.2.7 (2026-10-17)
 
 Baseline remoto `main` `a7ca8689265642e6fe1f2f69aa4fa2c90b81867b`; KELEDON 5.2.7; PR #247 integrado; PHDK 2.53.1 coherence 64/64; Railway Web/API `SUCCESS`. El usuario mantiene las pruebas de aplicación exclusivamente en producción y prohíbe suites/builds locales. CMT-001 completo para el corte 5.2.7; CMT-002 parcial: UAT-130 pasa estado de copia Web y fuente Landing, pero runtime Landing está bloqueado al no haber destino de producción verificado; CMT-003A/B siguen pendientes; CMT-003C y CMT-004 autenticado bloqueados por falta de provisioning/cleanup sintético compatible con PHDK.
 
-## Reconciliación vigente — 2026-10-17
+## Histórico — reconciliación de PIAs en KELEDON 5.2.4 — 2026-10-17
 
 Baseline remoto verificado: KELEDON 5.2.4, main 26e1fe1452cffb97164d65917b3c9a4308bdbdc2; PHDK 2.53.1. El selector de interfaces por tenant ya está implementado y fusionado. La nueva PIA [ADM-IF](PIA-CMT-004A-ASIGNACION-INTERFACES-POR-TENANT.md) documenta el alcance autorizado y separa la aceptación anónima productiva (UAT-121 PASS limitado) de las pruebas autenticadas, que siguen bloqueadas sin identidades sintéticas autorizadas.
 
@@ -20,14 +38,14 @@ Este directorio convierte los cuatro compromisos confirmados en paquetes ejecuta
 
 | Orden | PIA | Alcance inmediato | Estado |
 |---|---|---|---|
-| 1 | [CMT-001 — baseline y entrega](PIA-CMT-001-BASELINE-ENTREGA.md) | Mantener versiones, PHDK, PR y readback de despliegue | Completo para el corte 5.2.4; continuar en cada cambio |
-| 2 | [CMT-002 — widget y diagnóstico](PIA-CMT-002-WIDGET-DIAGNOSTICO.md) | Aceptar widget/diagnóstico y cerrar accesibilidad segura | Activo; UAT público 112–121 con límites explícitos |
-| 3 | [CMT-003 — voz/Cloud/Browser/CRM](PIA-CMT-003-RUNTIME-POR-TENANT.md) | Contrato adaptable por cliente y destinos privados seguros | Activo; cola y DNS revisados; UAT Prep de fixtures sintéticos pendiente |
+| 1 | [CMT-001 — baseline y entrega](PIA-CMT-001-BASELINE-ENTREGA.md) | Mantener versiones, PHDK, PR y readback de despliegue | Completo para el corte 5.2.10; continuar en cada cambio |
+| 2 | [CMT-002 — widget y diagnóstico](PIA-CMT-002-WIDGET-DIAGNOSTICO.md) | Aceptar widget/diagnóstico y cerrar accesibilidad segura | Activo/parcial; UAT público limitado hasta UAT-140; Landing y RBAC/audio pendientes |
+| 3 | [CMT-003 — voz/Cloud/Browser/CRM](PIA-CMT-003-RUNTIME-POR-TENANT.md) | Contrato adaptable por cliente y destinos privados seguros | Activo; CMT-003A/B listas; CMT-003C provisioning/cleanup es gate previo |
 | 4 | [CMT-004 — administración y permisos](PIA-CMT-004-ADMIN-PERMISOS.md) + [ADM-IF — asignación de interfaces por tenant](PIA-CMT-004A-ASIGNACION-INTERFACES-POR-TENANT.md) | Catálogo tenant, selector de equipo, ciclo de cuentas, roles y persistencia | Selector implementado; aceptación autenticada bloqueada por falta de sesión sintética autorizada |
 
 ## Reglas compartidas de ejecución
 
-- Candidato vigente: KELEDON 5.2.3, main `3cccb4b2f88828fa5d273b682925d3a106dd3b9`; cinco roots y renderer alineados; PHDK 2.53.1 y 64/64 mappings. El CI o pruebas locales no sustituyen la aceptación productiva solicitada.
+- Historical candidate: KELEDON 5.2.3, main `3cccb4b2f88828fa5d273b682925d3a106dd3b9`; retained only as historical context. Current baseline is listed at the top of this README. El CI o pruebas locales no sustituyen la aceptación productiva solicitada.
 - Cada PIA se entrega por PR contra `main`. Para aceptación, registrar SHA desplegado, URL/entorno, hora UTC, rol sintético, pasos y resultado redacted. La evidencia no incluye cookies, tokens, cuerpos con clientes, URLs con datos sensibles ni secretos.
 - No iniciar sesión con la identidad habitual del propietario, no modificar datos/configuración real de clientes y no provisionar ni borrar cuentas, catálogos o compañías productivas sin fixture/propietario autorizado.
 - UAT-103 informó que `KELEDON_VENDOR_KEY` no aparece en el inventario de nombres de variables de `keledon-api`; no se leyó su valor. Solo su propietario puede configurarla por el canal autorizado. UAT-104 es una lectura pública limitada (Web, bundle y health 200; catálogo anónimo 401).

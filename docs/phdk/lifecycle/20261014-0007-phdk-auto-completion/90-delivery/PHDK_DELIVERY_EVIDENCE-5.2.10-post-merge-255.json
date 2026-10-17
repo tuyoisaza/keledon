@@ -1,0 +1,57 @@
+{
+  "version": "1",
+  "goal": "PHDK Auto four-front continuation; close PIA-AUTO-SEO-002 localized route metadata acceptance while retaining overall partial status",
+  "target_branch": "main",
+  "expected_version": "5.2.10",
+  "version_files": [
+    "services/api/package.json",
+    "cloud/package.json",
+    "services/web/package.json",
+    "landing/package.json",
+    "browser/package.json",
+    "browser/renderer/index.html"
+  ],
+  "product_source_commit_sha": "ada48338ffbf878aeba0308cfa38951b58f9ef8f",
+  "pr_url": "https://github.com/tuyoisaza/keledon/pull/255",
+  "merged_commit_sha": "fd429298a85bdcf3b5c20791f9b1598c132aabcb",
+  "phdk_version": "2.53.1",
+  "checks": {
+    "phdk_coherence": "PASS 64/64 static manifest mappings",
+    "package_lock_alignment": "PASS all five package/lock root pairs and Browser renderer at 5.2.10",
+    "diff_check": "PASS git diff --check",
+    "local_application_tests_build_lint": "NOT RUN by owner instruction",
+    "production_web_deployment": "SUCCESS; Railway deployment 15f47990-5368-4462-aeba-0d508c388262; 1/1 replica",
+    "production_api_deployment": "SUCCESS; Railway deployment 1b391751-bfc4-4d88-8131-ae239a3c5a07; 1/1 replica; startup logs confirm PostgreSQL connection",
+    "production_uat_135_139": "PASS/SCOPED on 5.2.9; UAT-138 locale gap retained for retest",
+    "production_uat_140": "PASS_SCOPED; anonymous HTTP 404/noindex/no-canonical, script 200, Portuguese saved-locale browser output; evidence file recorded",
+    "hosted_ci": "NO CHECKS REPORTED ON PR #255; mergeability verified; no review decision returned"
+  },
+  "acceptance": {
+    "pia_auto_seo_002": "ACCEPTED for explicit production route/metadata/localization contract",
+    "whole_auto": "PARTIALLY_DELIVERED",
+    "commitments_done": 0,
+    "commitments_total": 4,
+    "remaining_high_gaps": [
+      "Safe synthetic production identity/device provisioning and cleanup",
+      "Tenant-owned Flow/FlowStep persistence, editor and role enforcement",
+      "Command lease expiry/fencing and external-effect idempotency/reconciliation",
+      "Socket-level tenant-bound private CRM egress and redirect enforcement",
+      "Tenant-admin CRUD and persisted cross-tenant authorization acceptance"
+    ]
+  },
+  "production_safety": {
+    "credentials_entered": false,
+    "customer_data_accessed": false,
+    "private_destinations_contacted": false,
+    "writes_performed": false,
+    "clipboard_read": false,
+    "provider_settings_changed": false,
+    "new_spend": false
+  },
+  "limits": [
+    "Production UAT is anonymous and covers the defined route metadata/localization slice only.",
+    "The document language assignment is present in the deployed localization code; the available browser AX interface does not expose the HTML lang property directly.",
+    "No crawler, ranking, external citation, field performance, client CRM or authenticated behavior is accepted.",
+    "No standalone Landing production service/target is verified."
+  ]
+}

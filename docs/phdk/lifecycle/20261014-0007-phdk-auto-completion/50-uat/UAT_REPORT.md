@@ -1,3 +1,11 @@
+## UAT-140 — static unknown-route localization, KELEDON 5.2.10 production (2026-10-17)
+
+PR #255 merged as main `fd429298a85bdcf3b5c20791f9b1598c132aabcb`. Railway Web `15f47990-5368-4462-aeba-0d508c388262` and API `1b391751-bfc4-4d88-8131-ae239a3c5a07` report SUCCESS, 1/1. The Web production build completed; its output includes an advisory for a JavaScript chunk larger than 500 kB.
+
+An anonymous production GET to `/phdk-uat-unknown-140` returned **404**, `X-Robots-Tag: noindex, nofollow`, a matching robots meta tag and no canonical. `/404.js` returned 200 under a same-origin script CSP. The visible locale selector was switched from English back to Portuguese; a subsequent direct load retained the synthetic URL and accessibility tree showed title “Página não encontrada | KELEDON”, heading “Página não encontrada”, description “A página solicitada não existe.” and link “Voltar ao início”. The localization script sets `<html lang="pt">` before replacing visible copy; direct DOM attribute inspection is not exposed in the available accessibility interface.
+
+**UAT-140 PASS_SCOPED.** Evidence: `evidence/uat-140-production-localized-404-2026-10-17.json`. No credentials, customer data, form submission, private endpoints, clipboard, writes or new spend. No local application tests/builds/lint were run. This accepts the enumerated public route contract, not crawler indexing, ranking, external citations or complete accessibility conformance.
+
 ## UAT-135–139 — KELEDON 5.2.9 production route acceptance (2026-10-17)
 
 Candidate main `1a7216dfd5431c712b3968bce93099b2196da93e`; Railway Web/API deploys `8c7ab848-a86c-4ba2-bb67-641512055856` / `554fa13f-65a6-44f8-a71c-8ed58691db75` both report SUCCESS and 1/1 replica. Browser permission was active and CUA access was verified against the anonymous production homepage.

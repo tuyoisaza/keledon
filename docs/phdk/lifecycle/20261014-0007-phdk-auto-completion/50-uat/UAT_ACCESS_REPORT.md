@@ -1,3 +1,12 @@
+## Browser Readiness — UAT-140 localized production 404 (2026-10-17)
+
+- Run/stage: Auto `20261014-0007-phdk-auto-completion`, `50-uat`; anonymous public production only; permission `ACTIVE_UAT_EXCEPTION` and CUA access `AVAILABLE_VERIFIED`.
+- Candidate: KELEDON 5.2.10, main `fd429298a85bdcf3b5c20791f9b1598c132aabcb`, PR #255. Railway Web `15f47990-5368-4462-aeba-0d508c388262` and API `1b391751-bfc4-4d88-8131-ae239a3c5a07` SUCCESS, 1/1 each.
+- Runtime: production homepage confirmed `v5.2.10`. Visible language selector was changed from English back to Portuguese, then a synthetic unknown path rendered in Portuguese.
+- Access: HTTP GET `/phdk-uat-unknown-140` and `/404.js`; no sign-in, credentials, form submit, customer data, private endpoint, write, clipboard read or cache clear. The synthetic path remained in the address bar.
+- Result: PASS_SCOPED: 404/noindex/no-canonical, localized title and visible copy. The script sets `document.documentElement.lang='pt'`; the available AX interface does not directly expose the attribute.
+- Spend: `NO_NEW_SPEND`. Evidence: `evidence/uat-140-production-localized-404-2026-10-17.json`.
+
 ## Browser Readiness — UAT-135–139, KELEDON 5.2.9 production routes (2026-10-17)
 
 - Run/stage: Auto `20261014-0007-phdk-auto-completion`, stage `50-uat`; permission `ACTIVE_UAT_EXCEPTION`; production target `https://keledon.tuyoisaza.com`.
