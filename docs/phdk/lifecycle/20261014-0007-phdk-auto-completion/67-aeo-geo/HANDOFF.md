@@ -1,3 +1,11 @@
+## Candidate 5.2.1 — source review reused; external visibility unmeasured
+
+The public homepage remains the applicable answer surface. The tenant-interface and stale-request candidate changes no public answers, entities, claims, routes or structured metadata. Reuse the 15-control source audit; Web SEO tests pass 2/2 and Landing passes 1/1. No public host, crawler, answer engine or paid query was accessed. Market/authorship decisions, citations and deployed visibility remain partial, decision-needed or unmeasured. UAT is incomplete, so this is source revalidation rather than whole-stage acceptance.
+
+SIGUIENTE PASO: carry this source-only result and its external/UAT limits into Check.
+
+---
+
 ## Candidate 5.1.77 — source AEO/GEO review reused; external visibility unmeasured
 
 The diagnostics spacing and version candidate changes no public answer text, product claims, routes or structured metadata. Existing 15-control source review remains applicable and is preserved under `snapshots/candidate-5.1.75/`. Web/Landing SEO source tests pass 1/1 each. No public host, crawler, answer engine or paid query was used; deployed citation and visibility remain unmeasured.

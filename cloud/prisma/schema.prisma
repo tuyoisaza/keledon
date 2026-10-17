@@ -19,6 +19,7 @@ model Company {
   countries             CompanyCountry[]
   brands                Brand[]
   users                 User[]
+  managedInterfaces     ManagedInterface[]
   tenantProviderConfigs TenantProviderConfig[]
   tenantVoiceProfiles   TenantVoiceProfile[]
   tenantFlowDefinitions TenantFlowConfigDefinition[]
@@ -178,6 +179,7 @@ model Keledon {
 
 model ManagedInterface {
   id           String   @id @default(uuid())
+  companyId    String?
   name         String
   baseUrl      String
   category     String? // 'talk' | 'case'
@@ -189,8 +191,10 @@ model ManagedInterface {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  company        Company?        @relation(fields: [companyId], references: [id], onDelete: Cascade)
   teamInterfaces TeamInterface[]
 
+  @@index([companyId])
   @@map("managed_interfaces")
 }
 

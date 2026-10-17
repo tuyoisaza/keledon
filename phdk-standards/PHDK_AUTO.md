@@ -61,6 +61,7 @@ Capture .............. REUSED
 Plan ................. RUNNING
 PMO / Workstreams .... PENDING
 Integration Review ... PENDING
+UAT Prep ............. PENDING
 UAT .................. PENDING
 UAT Fix .............. PENDING
 SEO .................. PENDING
@@ -79,7 +80,7 @@ Then run the applicable lifecycle end-to-end:
 
 ```text
 Capture → Plan → PMO/workstream execution → PMO Integration Review
-→ UAT → UAT Fix → SEO → AEO/GEO → Check → in-scope Check remediation → delivery
+→ UAT Prep → UAT → UAT Fix → SEO → AEO/GEO → Check → in-scope Check remediation → delivery
 ```
 
 Skip a stage only when its output is already current/coherent or it is genuinely not applicable. Do not rerun Capture or Plan merely for ceremony.
@@ -154,9 +155,28 @@ The mode lasts for this goal in the active conversation. Exit on `PHDK salir de 
 
 Auto's identified goal is the authorization boundary for the whole lifecycle.
 
+### Mandatory intent-to-implementation reconciliation
+
+On every explicit Auto invocation, reread the complete current intent and requirements baseline, including confirmed commitments, non-goals and acceptance criteria, and compare it with actual product source and current evidence. Review the whole baseline even when existing Capture/Plan artifacts look complete. Reuse them only after verifying freshness, coverage and consistency with the current request; record the reconciliation in `IMPLEMENTATION_PLAN.md` and `PHDK_COMMITMENT_COVERAGE.md`. Reviewing from the beginning does not mean recreating valid documents or rewriting working code. A narrower current goal still limits what may be implemented; record unrelated gaps without activating them.
+
+Classify implementation from inspected product behavior and source, not from the existence of a repository, README, package manifest, PHDK installation or old stage folders:
+
+| Observed state | Required action inside Auto |
+|---|---|
+| Readable repository with no meaningful product implementation, including requirements-only or scaffold-only projects | Treat required product development as greenfield: finish/reuse the architecture plan, then create and implement the complete authorized product. |
+| Partially implemented product | Preserve valid code and complete every missing or incomplete in-scope requirement and its integration. |
+| Implementation appears complete | Reconcile every in-scope requirement with current source and validation evidence; repair gaps and reuse verified work. |
+| Source cannot be read or the inventory is incomplete | Record UNVERIFIED/access evidence, diagnose the actual blocker and continue independent permitted work; never infer an empty or complete project. |
+
+For each confirmed in-scope requirement, record existing source/evidence, missing behavior, implementation task/owner, and acceptance evidence or its precise pending blocker. Missing code for an already confirmed requirement is authorized implementation work, not a new feature requiring another scope approval. Explicitly documentary or planning-only requests keep their stated deliverable.
+
+**Plan completion must immediately lead to implementation in the same active invocation.** Execute dependency-ordered workstreams, creating the required application structure, domain logic, data/persistence, APIs, UI, permissions, integration wiring and test source only where the intent calls for them. Keep developing until the entire authorized scope is implemented and integrated; then continue through UAT Prep, UAT/repair, Check/remediation and delivery as applicable. A foundation, first feature or MVP does not replace a requested complete product. Missing external access may block dependent operations, but does not excuse stopping all development at a plan.
+
+Do not mark required implementation, Integration or acceptance NOT APPLICABLE because the application has not been built yet. Plans, TODOs, placeholder tabs, disabled actions and fixture-only behavior do not establish implementation or acceptance. Update coverage with concrete source and executed validation evidence before marking commitments verified; unresolved required behavior remains unfinished.
+
 ### 1. Capture
 
-If the professional requirements baseline is missing/incoherent, run Capture semantics first. Ask only genuinely material missing requirements questions. If the baseline is already coherent and current, reuse it.
+After the full baseline reconciliation above, run Capture semantics if the professional requirements baseline is missing/incoherent. Ask only genuinely material missing requirements questions. If the baseline is already coherent and current, reuse it without restarting the interview merely because product code is absent.
 
 ### 2. Plan
 
@@ -164,11 +184,15 @@ Run `PHDK plan` semantics against the captured requirements. For greenfield, def
 
 Ask only for architecture decisions that materially change product/security/infrastructure scope and cannot be resolved from standards/current decisions.
 
+After Plan's exit gate passes, immediately start the next eligible implementation task through stage 3. Do not end with a plan, ask whether to start coding, or require a separate Developer Mode/PMO command for already-authorized development.
+
 ### 3. PMO and workstream execution
 
 Use PMO semantics to derive workstreams from the authorized goal, `IMPLEMENTATION_PLAN.md`, requirements, architecture ownership boundaries, and current repo state. When Auto was invoked without a narrower textual goal and the project evidence identifies several parallel fronts, treat the Auto command as authorization to discover and present the candidate portfolio, not as authorization to silently select only one front.
 
 When the workstreams are unambiguously contained inside an already explicit Auto goal, do not ask the owner to reconfirm the same portfolio.
+
+Actually execute those workstreams. For a single straightforward stream, the current assistant implements it directly; the absence of parallel workers or PMO overhead never makes implementation optional. A PMO coordination document or worker assignment is not a completed workstream.
 
 When Auto was invoked generically and no single delivery goal exists, but multiple credible active fronts can be reconstructed, present the detected portfolio and ask the PMO confirmation question once. That portfolio confirmation becomes the Auto goal for the current conversation.
 
@@ -186,21 +210,25 @@ After workstream execution, perform the PMO Integration Review and produce one c
 
 For every applicable app-style product, Auto must inspect `DEBUG_DIAGNOSTICS_STANDARD.md` as a separate required acceptance gate, alongside available skills and capability checks. Discover the *actual source implementation* and its usage sites: do not assume a version label or an old checklist establishes compliance. If absent, implement a single shared always-visible version → clipboard → trash icon-only component on public home, login, shell and admin, including unauthenticated visitors and debug OFF, compact fixed visual metrics (only `vX.Y.Z`, 12px text, 28×28px visible buttons, 14×14px icons, 4px gap; never SHA/date or oversized tiles), exact handlers, green checkmark success/revert, sanitized verbose report, cache reset and safe access gates. Add focused component/unit tests. Trace evidence to source files, test results and the final Check report; mark unresolved items BLOCKED/FAIL rather than silently skipping. For projects to which the standard does not apply, record an evidence-backed NOT APPLICABLE. Do not misrepresent code review as browser/runtime verification.
 
-### 5. UAT and repair
-**Auto UAT Browser Gate:** At the Integration Review → UAT boundary run `UAT_BROWSER_READINESS_STANDARD.md` as a required phase transition, confirm **Navegador UAT: permiso de fase ACTIVO; acceso real VERIFICADO / NO DISPONIBLE / REQUIERE CONEXIÓN**, and log actual evidence in UAT Access/Report. Recheck on UAT Fix or re-entry as needed. Do not ask for budget caps, paid testing/browser APIs or discretionary owner approval of already permitted browser use. Continue independent cases and isolate the actual host connection/target blocker without fabricating a PASS or broadening production/provider permissions.
+### 5. UAT Prep — mandatory implementation before acceptance
+
+After Integration Review, execute `PHDK uat prep` under `PHDK_UAT_PREP.md`. **Build, seed and verify** missing Company Co synthetic users, secure provider-backed/test-only non-production session bootstrap, real role/tenant policies and in-process checks; implement safe required Test as functionality where in scope. Write `UAT_AUTH_PLAN.md`, `UAT_ROLE_MATRIX.md`, `UAT_FIXTURE_MANIFEST.md`, `UAT_PREP_REPORT.md` plus `45-uat-prep/HANDOFF.md`. If Prep edits product code, reconcile the integration revision and rerun impacted non-browser checks before entering UAT. Do not defer routine account development to UAT Fix. Browser access is not granted during Prep. Treat external provider authorization/production/paid blockers individually, not as a reason to skip all Prep.
+
+### 6. UAT and repair
+**Auto UAT Browser Gate:** At the UAT Prep → UAT boundary run `UAT_BROWSER_READINESS_STANDARD.md` as a required phase transition, confirm **Navegador UAT: permiso de fase ACTIVO; acceso real VERIFICADO / NO DISPONIBLE / REQUIERE CONEXIÓN**, and log actual evidence in UAT Access/Report. Recheck on UAT Fix or re-entry as needed. Do not ask for budget caps, paid testing/browser APIs or discretionary owner approval of already permitted browser use. Continue independent cases and isolate the actual host connection/target blocker without fabricating a PASS or broadening production/provider permissions.
 
 
-Run `PHDK uat` on the integrated candidate. For authenticated products first apply `JWT_STANDARD.md`: provision isolated synthetic personas, bootstrap legitimate test-only sessions for elevated and ordinary roles without requesting human passwords/bearer tokens, and prove real login, server-enforced role/tenant boundaries and audited Test as using the scoped UAT browser/API exception. If a safe bootstrap is absent and in scope, implement/retest it under UAT Fix rather than declaring UAT blocked only because credentials were never handed to the agent. Never create a production test-auth backdoor or infer browser access when disconnected. Automatically execute `PHDK uat fix` semantics for all in-scope FAILs and removable BLOCKED cases. Continue until acceptance succeeds or only concrete external/manual/material-decision blockers remain.
+Run `PHDK uat` **after verifying the current Prep handoff** against the reconciled integrated candidate. Reuse legitimate synthetic sessions and test real authenticated browser/API roles and tenant isolation in UAT. Newly broken Prep items are repaired in UAT Fix, followed by impacted Prep-check reruns; routine account provisioning belongs to stage 45. Never create a production test-auth backdoor or infer browser access when disconnected. Automatically execute `PHDK uat fix` semantics for all in-scope FAILs and removable BLOCKED cases. Continue until acceptance succeeds or only concrete external/manual/material-decision blockers remain.
 
-### 6. SEO and AEO/GEO
+### 7. SEO and AEO/GEO
 
 After UAT and UAT Fix, run `PHDK_SEO.md` on public indexable pages and then `PHDK_AEO_GEO.md` on applicable public answer/discovery content. Show separate status-board rows and transitions, preserve `65-seo/` and `67-aeo-geo/` handoffs, execute safe in-scope source fixes and revalidate impacted UAT. Mark either NOT APPLICABLE only with evidence when a product has no relevant public discovery goal. Neither stage silently authorizes browser, live probes, paid calls, production changes or fabricated AI visibility. Do not proceed to Check without verifying both gates/explicit N/A records. Reconcile resulting tasks with the commitment ledger.
 
-### 7. Check and remediation
+### 8. Check and remediation
 
 Run `PHDK check` against the integrated candidate. Under Auto, AUTO-FIXABLE and FIXABLE WITH VALIDATION gaps that are within the authorized goal are automatically approved for remediation; repair them, rerun applicable validation, and rerun Check. DECISION REQUIRED / EXTERNAL-MANUAL / out-of-scope findings remain explicit.
 
-### 8. Delivery
+### 9. Delivery
 
 Complete final repository verification, version reconciliation, normal branch/PR delivery, merge, and remote verification under `MAIN_DELIVERY_STANDARD.md`.
 
@@ -232,7 +260,7 @@ Do the full development first. Write necessary test coverage with the implementa
 
 Use an intermediate local check only when it is necessary to diagnose an implementation blocker or an actual mandatory hook/control requires it. Do not run full install/build/test cycles after each stage. Preserve mandatory controls at the operation they govern: delaying final QA never permits skipping a hook, publishing unverified code, or postponing a required pre-push check until after `main` is updated. Avoid unnecessary checkpoint commits that would create early validation cycles; any necessary checkpoint still obeys repository rules and is not a release.
 
-After every in-scope part is implemented and integrated, run `PHDK uat` under `UAT_STANDARD.md` when the goal includes end-user behavior or acceptance criteria, then review the entire outgoing diff and run all applicable local verification for the whole goal: repository-required format/lint/typecheck/build gates, meaningful unit/in-process integration tests, and cross-feature regression checks justified by the changed behavior. Use existing isolated fixtures/doubles. Documentation-only goals use complete source/reference and policy-scenario review where relevant; do not invent an application build for a standards repository.
+After every in-scope part is implemented and integrated, run `PHDK uat prep` then `PHDK uat` under `UAT_STANDARD.md` when the goal includes end-user behavior or acceptance criteria, then review the entire outgoing diff and run all applicable local verification for the whole goal: repository-required format/lint/typecheck/build gates, meaningful unit/in-process integration tests, and cross-feature regression checks justified by the changed behavior. Use existing isolated fixtures/doubles. Documentation-only goals use complete source/reference and policy-scenario review where relevant; do not invent an application build for a standards repository.
 
 Fix in-scope failures, including UAT FAIL cases attributable to this goal, and rerun the affected UAT cases/checks until the candidate meets the completion criteria or a concrete unsatisfied control/access/decision blocks it. Expand verification only to address remaining risk or a required gate. Do not delete meaningful failing tests, weaken a check, label a failure passed, or declare all tests passed when any required check did not run. The assistant performs the permitted checks; do not hand routine local verification to the owner.
 
@@ -284,6 +312,7 @@ Capture .............. REUSED
 Plan ................. COMPLETED
 PMO / Workstreams .... COMPLETED
 Integration Review ... COMPLETED
+UAT Prep ............. COMPLETED / REUSED / BLOCKED
 UAT .................. COMPLETED — ACCEPTED
 UAT Fix .............. NOT APPLICABLE
 SEO .................. COMPLETED / NOT APPLICABLE
@@ -301,7 +330,7 @@ Report once the entire requested outcome and permitted delivery are complete: im
 **A lifecycle stage is a checkpoint, not an execution endpoint.** In a single active invocation, after every successfully closed stage, validate its exit handoff, persist status, and immediately begin the next eligible stage. Do not return a terminal assistant answer merely because Preflight, Capture, Plan, PMO, Integration, UAT, SEO, AEO/GEO, or Check produced its deliverables. Progress messages must be nonterminal. A required question is a stop only when the answer changes an actual material decision and there is no independent in-scope work left to execute.
 
 **Deterministic restart from repository evidence.** On each new explicit `PHDK auto` invocation:
-1. Read the current owner goal, `PHDK_LIFECYCLE_STATUS.md`, run-level historical `LIFECYCLE.md`, `PHDK_COMMITMENTS.md`, `PHDK_COMMITMENT_COVERAGE.md`, `IMPLEMENTATION_PLAN.md`, handoffs, and current git/PR facts.
+1. Reread the complete current intent/requirements baseline and actual source under the mandatory intent-to-implementation reconciliation above, then read the current owner goal, `PHDK_LIFECYCLE_STATUS.md`, run-level historical `LIFECYCLE.md`, `PHDK_COMMITMENTS.md`, `PHDK_COMMITMENT_COVERAGE.md`, `IMPLEMENTATION_PLAN.md`, handoffs, and current git/PR facts.
 2. Reconcile evidence with the authorized goal. Treat stored state as a checkpoint, never as authorization to launch unattended work. Do not assume a stage passed because its folder exists: verify its exit criteria, freshness, and missing commitments.
 3. Reuse verified stages, repair incomplete/stale handoffs, and resume at the earliest stage whose required exit gate is not satisfied. Never reset to Preflight/Capture/Plan for ceremony. Preflight still performs its short invocation-level safety/version check.
 4. Preserve the same goal/run history when appropriate; record an explicit continuation entry with timestamp, previous checkpoint, and recovered next stage. If an earlier prerequisite changes, reopen it and invalidate the affected downstream gates.

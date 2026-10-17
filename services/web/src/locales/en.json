@@ -299,6 +299,12 @@
     "autonomyLevel": "Autonomy Level",
     "autonomyDescription": "1 = Asks for approval, 10 = Fully autonomous",
     "uiInterfaces": "UI Interfaces",
+    "tenantInterfacesOnly": "Choose interfaces configured for this company. Credentials and other companies' catalogs are not shown.",
+    "interfacesLoading": "Loading company interfaces…",
+    "interfacesEmpty": "No interfaces are configured for this company.",
+    "interfacesLoadFailed": "Could not load company interfaces.",
+    "interfacesSaveFailed": "Could not save team interface assignments.",
+    "interfacesUpdated": "Team interfaces updated.",
     "status": {
       "active": "Active",
       "inactive": "Inactive"

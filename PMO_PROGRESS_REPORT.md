@@ -1,4 +1,21 @@
-# PMO Progress — 5.1.85 candidate
+# PMO Progress — 5.2.1 continuation / PHDK 2.53.1 (2026-10-17)
+
+Current Auto re-entry evidence: production UAT-100 confirms only anonymous homepage/login widget presence on deployed v5.1.85; UAT-098/099 remain narrow smoke results. PHDK 2.53.1 Check also established newly mandatory admin-console gaps: unified settings is currently a link hub; invitation/session lifecycle, permission editor and backup/recovery are not established; AI catalog has four managed IDs but no default graph edges. `ADMIN_ARCHITECTURE.md`, `ADMIN_CAPABILITY_MATRIX.md`, `ADMIN_SETTINGS_REGISTRY.md` and `AI_WORKFLOW_CATALOG.md` now provide the source-traceable baseline. The candidate is not accepted or deployed, and no production state changed.
+
+| Commitment | Verified progress | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PRs | PHDK 2.53.1 installed; PR #210 remains open at the live remote head; production shows v5.1.85. | No checks/review decision reported; UAT and exact `main`/deployment readback remain. |
+| CMT-002 widget/diagnostics | Production UAT-100 confirms anonymous homepage/login widget presence on v5.1.85; prior source evidence retains its candidate scope. | Candidate 5.2.1 and authenticated/admin surfaces; action behavior, native device/audio and broad assistive-tech/localization remain. No local app tests run in this continuation. |
+| CMT-003 voice→Cloud→Browser→CRM | Client-neutral contracts and allowlist evidence retained; no customer integration contacted. | Client must select and provide safe call/CRM sandbox for acceptance. |
+| CMT-004 administration/permissions | Selector/stale-response source fixes reviewed; UAT-098/099 are anonymous production smoke, not feature acceptance. Superadmin provision route exists; migration has no legacy-row backfill. | Verify tenant provisioning/ownership, then role sessions, persisted assignment, cross-tenant denial and exact-candidate browser evidence. |
+
+Portfolio remains 4 confirmed / 0 complete / 4 active-partial. CRUD inventory counts from the prior candidate remain historical and are not recalculated by this read-only smoke. PHDK static coherence: 64/64. See stage 30 PMO snapshot `snapshots/candidate-5.2.1/`.
+
+SIGUIENTE PASO: continue normal versioned delivery and re-enter tenant UAT only with a safe target matching 5.2.1.
+
+---
+
+## Prior PMO progress — 5.1.85
 
 | Commitment | Verified progress | Remaining acceptance |
 |---|---|---|

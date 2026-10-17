@@ -1,0 +1,95 @@
+# UAT Fix handoff — candidate 5.1.66
+
+The final Web UAT exposed two source issues and both are fixed: the mobile app shell no longer constrains the flow editor to desktop sidebar width, and only the active responsive navigation mounts the temporary UAT profile control. Full Web UAT passes 6/6 plus AI-admin UAT; keyboard editor and 390px reflow retest pass. Evidence: `../50-uat/evidence/uat-web-5.1.66/`.
+
+No observed P0/P1 remains in the tested flow-editor journey. Full screen-reader and all-route accessibility/localization acceptance remains open. The database migration gate is blocked on the missing disposable PostgreSQL service.
+
+---
+
+# UAT Fix handoff — 20261014-0007-phdk-auto-completion
+
+## Candidate 5.1.61 — close observed public-header overlap
+
+UAT-052 found theme/language controls overlapping the Landing hero disclaimer at desktop width. Both Web Navbar implementations now place preferences inline with desktop navigation and inside the mobile menu below the large breakpoint. The full focused Web UAT suite passes 5/5, including no-overlap and mobile-access checks. The Landing-only repeat passes 1/1 with screenshots. No P0/P1 remains in this specific journey. The change does not certify all-route responsive/accessibility behavior.
+
+## Candidate 5.1.55 — restore narrative inventory schema
+
+The post-merge artifact defect is fixed: `CRUD_MATRIX.md` again has a distinct three-column source inventory after the 490-row CRUD table. Regression 33 now checks the model inventory row width as well as matrix tuple coverage and selected policy boundaries. UAT-043 passes. No runtime or database behavior changed.
+
+SIGUIENTE PASO: deliver the integrity correction through the versioned PR; continue persisted CRUD and external/manual acceptance afterward.
+
+---
+
+## Candidate 5.1.54 — source matrix completeness
+
+UAT-042 found no test failure; the missing deliverable was a model-level expansion beyond the established 168 resource rows. The matrix now enumerates every one of 490 model-role-surface combinations, marks operation evidence and exceptions, and includes regression assertions for catalog, flow and AI role boundaries. UAT-042 passes source/documentation scope. No runtime or persistent behavior was changed; CHK-AUTO-005, exact database acceptance, native device/audio and external measurements remain open.
+
+SIGUIENTE PASO: preserve this UAT Fix record and finish the Check/delivery handoffs for candidate 5.1.54.
+
+---
+
+## Active remediation continuation — Knowledge vector cleanup, 5.1.52
+
+The earlier UAT-010 Qdrant dependency is resolved for sequential deletion: the exact 5.1.52 API deleted the synthetic document's persisted record and vectors, then deleted a synthetic base's Qdrant collection and cascading PostgreSQL rows. No source code repair was required after live verification. Evidence: `../50-uat/evidence/uat-qdrant-delete-5.1.52.json`; historical snapshot: `../50-uat/snapshots/qdrant-delete-uat-5.1.52/`. Delete/reindex concurrency remains outside this pass and stays open in Check. Native device/audio remains manual.
+
+SIGUIENTE PASO: continue Check on unresolved scope and preserve PARTIALLY DELIVERED.
+
+---
+
+## Candidate 5.1.51 — source findings repaired
+
+Removed false API SubAgent Browser/CRM/voice success, made unsupported tenant adapter steps fail closed and persisted flow-run status/results. Integration health no longer reports simulated connection or sync success; process monitoring returns only the actual Node process. API ESLint is 0 warnings/errors. API focused tests, full regressions and exact-source synthetic Web UAT pass. No customer endpoint/database/native device was exercised. Candidate report: `../90-delivery/snapshots/candidate-5.1.51/PHDK_CHECK_REPORT.md`.
+
+---
+
+## Candidate 5.1.46 — remove unmounted legacy catalog UI
+
+The owner confirmed the global ManagedInterface catalog must stay hidden. Its unmounted Web component was removed; active tenant integration journeys remain on Vendor configuration. Exact built-SPA UAT passes 4/4 suites with mocked API/external traffic blocked; Browser suite 40/40, API/Cloud regressions 36/36 and 16/16. No new active-path UAT defect was found. Persisted DB, native-device and broad accessibility gates remain open.
+
+## Candidate 5.1.45 — no new Web UAT defect
+
+Exact built-SPA UAT rerun passes 4/4 suites with external traffic blocked and synthetic APIs. The protected diagnostics controls and role-shaped UI behave as expected. No repairable Web UAT failure remains for this slice; database-backed identity/persistence and native media are still environment-bound acceptance gates. Browser runtime fixes are covered by its 40/40 offline suite. Proceed through SEO/AEO and Check.
+
+## Candidate 5.1.32 — Knowledge page UAT remediation (2026-10-14)
+
+UAT source defects fixed: the page had hardcoded English and presented a fabricated active-call transcript, intent/confidence, and example RAG matches as if live; it also exposed backend error text and used a hand-rolled nonmodal source dialog. `v5.1.32 fix(web): make knowledge page truthful and localized` removes the false panel and placeholder intake block from this page, localizes all visible copy/errors in es/en/pt, uses the shared native modal with labeled controls and focus restoration, and leaves regular users read-only. Exact-candidate synthetic UAT-030 passes at `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`; Web typecheck/build pass and the focused page lint has zero page warnings/errors (the shared i18n context has one pre-existing React Fast Refresh warning). No live backend, provider, or customer data was used.
+
+Exit: all in-scope code-repairable UAT defects for this page are closed. UAT-009 (safe development identities), UAT-010 (disposable DB and persistence/migration), and UAT-006 (native Windows media/audio) remain external/manual. Proceed to SEO, then AEO/GEO, then Check with the acceptance scope still partial.
+
+Status: **UAT-008 SOURCE DEFECT RESOLVED; ENVIRONMENT GATES REMAIN**.
+
+The owner approved a temporary audited profile switch restricted to development/staging. Candidate 5.1.26 on `fix/audited-uat-test-profiles` implements explicit feature/environment gates, a configured synthetic profile allowlist, reserved synthetic email domains, supported roles only, current-DB superadmin checks, audited session start/end, ten-minute maximum expiry and immediate revocation on return. The browser preserves the original superadmin session only in the current tab and exposes a temporary-mode banner/return control. Persisted roles are not modified.
+
+Validation: API full regression passes 20/20 suites, including focused fail-closed policy/service/AuthGuard tests and in-process Nest HTTP guard/controller coverage. Web built-SPA UAT passes 1/1 and covers selection/return against mocked APIs. This is isolated source/UI evidence, not live staging authentication or DB persistence. `UAT_RETEST_REPORT.md` records the scoped result.
+
+Remaining: UAT-009 safe development target and real synthetic identities; UAT-010 disposable database and migration/persistence matrix; UAT-006 native device/audio. Overall acceptance remains **NOT ACCEPTED** until applicable gates close.
+## Candidate 5.1.56 — UAT-009/010 reconciliation
+
+Corrected current status text that said no disposable database existed. Exact-source API/PostgreSQL evidence now passes UAT-044/045 for migration status, synthetic DB-backed identities, superadmin role assignment, tenant scope and privilege boundaries. This does not close the exhaustive 35-model operation matrix; it remains an open Auto action. No product code behavior changed.
+
+SIGUIENTE PASO: continue only with mapped/implemented database operations; keep native and deployed gates explicit.
+
+---
+## Current UAT-089 remediation — audit console controls and mobile navigation PASS (2026-10-17)
+
+The accessibility gap found during UAT was repaired in `services/web/src/pages/AdminAuditPage.tsx`: interactive inputs, buttons and disclosure targets now meet the 44px minimum and expose a visible keyboard focus outline. Exact-source UAT on revision `9f4cf79a53f81a95e64f60d18aecf06e746dff04` passes 12 checks, including keyboard scrolling to and focus visibility on the last mobile navigation link at 390×844, export audit success/failure, and tenant denial before data access. Targeted Web typecheck/build, ESLint, and Playwright UAT passed. Synthetic fixtures only; persistence remains unverified.
+
+Portfolio remains partial at **86 PASS, 0 BLOCKED, 1 MANUAL**. Voice-profile detail rows are now truthfully marked implemented at source/API scope, while persisted acceptance remains BLOCKED. No DB migration, provider/customer call, or deployment was performed.
+
+SIGUIENTE PASO: re-run Check on the exact candidate; proceed through normal PR review and delivery while retaining PostgreSQL and Railway gates.
+
+---
+
+## Current UAT-090 remediation — remove fabricated ready states (2026-10-17)
+
+The new health-contract case found no post-fix failure. Existing hard-coded dependency readiness has been removed in API and Cloud; Web and Landing now display unknown until real health evidence arrives. Paired service tests pass 2/2 per backend; Web/Landing typecheck and production build, API/Cloud lint and builds, and full Web regression UAT pass. The status remains unknown because a real provider health probe is outside this slice.
+
+SIGUIENTE PASO: complete whole-candidate Check, reconcile the current PR, and deliver through the normal main-target flow.
+
+---
+
+## Candidate 5.1.85 UAT Fix — UX-A11Y-025 retested
+
+The pointer-only agent-card selection finding is fixed in Web and Landing. Native selection buttons expose their name and pressed state, provide a 44px minimum target and visible keyboard focus. Source contract tests pass 2/2; exact-candidate builds/typechecks/lint and relevant regressions pass. The populated authenticated dashboard and screen-reader cases remain MANUAL for lack of a safe socket fixture. See UAT_REMEDIATION.md, UAT_RETEST_REPORT.md and UAT-095 evidence.
+
+SIGUIENTE PASO: complete source Check and normal PR delivery, keeping manual accessibility open.

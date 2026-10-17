@@ -1,0 +1,32 @@
+{
+  "caseId": "UAT-099",
+  "runId": "20261014-0007-phdk-auto-completion",
+  "stage": "50-uat",
+  "observedAtUtc": "2026-10-17T16:22Z",
+  "target": {
+    "url": "https://keledon.tuyoisaza.com/management/teams",
+    "environment": "production",
+    "observedFinalUrl": "https://keledon.tuyoisaza.com/login",
+    "observedProductVersion": "5.1.85"
+  },
+  "browserReadiness": {
+    "phasePermission": "ACTIVE_UAT_EXCEPTION",
+    "capability": "AVAILABLE_VERIFIED",
+    "channel": "connected Codex in-app browser",
+    "operation": "anonymous navigation to protected management route",
+    "spend": "NO_NEW_SPEND"
+  },
+  "observations": {
+    "loginPageRendered": true,
+    "emailAndPasswordFieldsVisible": true,
+    "authSubmissionAttempted": false,
+    "sessionCreated": false,
+    "protectedManagementContentShown": false
+  },
+  "result": "PASS_ANONYMOUS_REDIRECT_ONLY",
+  "limitations": [
+    "Observed deployed version is 5.1.85, not candidate 5.2.1.",
+    "No credentials were entered, no login/signup submitted, and no API/database call was manually made.",
+    "This does not verify tenant-role authorization or candidate selector behavior."
+  ]
+}

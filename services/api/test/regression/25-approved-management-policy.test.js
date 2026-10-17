@@ -71,6 +71,18 @@ async function main() {
         companyId: where.id === 'vp-a' ? 'co-a' : 'co-b',
       }),
     },
+    managedInterface: {
+      findMany: async ({ where }) =>
+        where.companyId === 'co-a'
+          ? where.id?.in
+            ?.filter((id) => id === 'interface-a')
+            .map((id) => ({ id })) || [{ id: 'interface-a' }]
+          : [],
+      findFirst: async ({ where }) =>
+        where.id === 'interface-a' && where.companyId === 'co-a'
+          ? { id: 'interface-a' }
+          : null,
+    },
     session: {
       findUnique: async ({ where }) => ({
         id: where.id,
@@ -122,13 +134,41 @@ async function main() {
   }
   for (const role of ['admin', 'coordinator']) {
     rows.user.role = role;
-    for (const method of ['GET', 'POST', 'PUT', 'DELETE']) {
+    assert.equal((await run('interfaces', 'GET').result), true);
+    assert.equal((await run('interfaces', 'GET', { id: 'interface-a' }).result), true);
+    await assert.rejects(
+      run('interfaces', 'GET', { id: 'interface-b' }).result,
+      Denied,
+      `${role} must not read another tenant's interface`,
+    );
+    for (const method of ['POST', 'PUT', 'DELETE']) {
       await assert.rejects(
         run('interfaces', method).result,
         Denied,
-        `${role} must not manage the global ManagedInterface catalog`,
+        `${role} must not manage the ManagedInterface catalog`,
       );
     }
+    assert.equal(
+      await run(
+        'teams',
+        'PUT',
+        { id: 'team-a' },
+        { interfaceIds: ['interface-a'] },
+        'setTeamInterfaces',
+      ).result,
+      true,
+    );
+    await assert.rejects(
+      run(
+        'teams',
+        'PUT',
+        { id: 'team-a' },
+        { interfaceIds: ['interface-b'] },
+        'setTeamInterfaces',
+      ).result,
+      Denied,
+      `${role} must not assign an interface from another tenant`,
+    );
     for (const [resource, params] of [
       ['companies', { id: 'co-b' }],
       ['brands', { id: 'brand-b' }],

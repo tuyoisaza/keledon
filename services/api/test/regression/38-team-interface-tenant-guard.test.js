@@ -55,6 +55,9 @@ async function main() {
             ? { id: where.id }
             : null,
       },
+      managedInterface: {
+        findMany: async () => [],
+      },
     });
     const run = (teamId) => {
       const req = {

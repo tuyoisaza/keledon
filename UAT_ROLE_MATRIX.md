@@ -1,5 +1,28 @@
 # UAT role matrix — run 20261014-0007-phdk-auto-completion
 
+## Current candidate 5.2.1 — role readiness revalidation (2026-10-17)
+
+Candidate branch: `feature/tenant-interface-selector-5.2.0`, source `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PHDK 2.53.1. The role expectations below remain source-backed, but no account is READY for this candidate: Production displays 5.1.85, and no isolated PostgreSQL seeding/login was available. Admin/coordinator selector, positive same-tenant assignment, negative foreign-tenant direct access, stale-response handling under real sessions, and persisted readback are BLOCKED pending an isolated current-candidate target. No role session was opened in production.
+
+## Candidate 5.2.0 — Stage 45 synthetic identity readiness
+
+Source roles are `superadmin`, `admin`, `coordinator`, `agent`, and `user`. Tenant scope is resolved from the current database user record. These are planned fixture rows only; no current-candidate identity is marked READY because Prep could not provision accounts.
+
+| Persona | Synthetic identity | Intended allowed scope | Required denial proof | Prep status |
+|---|---|---|---|---|
+| Platform administrator | `phdk-uat-superadmin` / `uat-superadmin@companyco.example.invalid` | Platform administration and tenant assignment; may start/return audited Test as | Cannot retain platform privilege while switched to a lower role; ended/expired switch denied | BLOCKED: no isolated DB seed/login run |
+| Company Co administrator | `phdk-uat-admin` / `uat-admin@companyco.example.invalid` | Company Co users, teams and tenant configuration | Other Co records, company creation/deletion, role elevation and secret disclosure denied | BLOCKED: no isolated DB seed/login run |
+| Company Co coordinator | `phdk-uat-coordinator` / `uat-coordinator@companyco.example.invalid` | Company Co operational records within permitted role scope | Other Co records, role elevation, company lifecycle and platform catalog denied | BLOCKED: no isolated DB seed/login run |
+| Company Co agent | `phdk-uat-agent` / `uat-agent@companyco.example.invalid` | Assigned team and permitted agent operations | Admin endpoints, foreign team and role changes denied | BLOCKED: no isolated DB seed/login run |
+| Company Co user | `phdk-uat-user` / `uat-user@companyco.example.invalid` | Ordinary user routes and own permitted records | Admin endpoints, other users' restricted records and foreign tenant denied | BLOCKED: no isolated DB seed/login run |
+| Other Co user | `phdk-uat-other-user` / `uat-user@otherco.example.invalid` | Its own tenant only | Company Co direct-ID/API access denied | BLOCKED: no isolated DB seed/login run |
+| Anonymous / invalid session | No account | Public routes only | Protected route without, expired, revoked or invalid token denied | Source regression PASS; current DB run BLOCKED |
+| Google OAuth persona | Customer-owned provider identity | Provider-authorized account only | Unprovisioned external identity cannot be treated as authenticated | EXTERNAL/BLOCKED: provider belongs to each customer |
+
+Evidence references: `services/api/test/regression/26-uat-test-profile.test.js` and `services/api/test/regression/22-admin-http-wiring.test.js` pass source-level fail-closed assertions. They are not database-backed UAT evidence.
+
+## Historical candidate role coverage
+
 ## Candidate 5.1.73 — UAT-081 superadmin flow configuration
 
 The production-built Web journey uses a synthetic `superadmin` response and intercepted APIs. It verifies company switching, tenant-filtered flow lists and writes, version lifecycle, availability/mapping updates and legacy ownership assignment. UAT-083 separately exercises API/Cloud HTTP with DB-backed superadmin/coordinator identities: all four superadmin flow-configuration API rows pass with persisted lifecycle readback, while their Web and other-role rows remain BLOCKED.

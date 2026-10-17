@@ -1,3 +1,11 @@
+## Candidate 5.2.1 — source revalidation PASS; SEO stage partial
+
+Public `/` remains indexable and applicable; this tenant-interface and stale-request candidate changes no public copy, metadata, route, canonical or crawler policy. The 25-control source review is reused, with Web SEO tests 2/2 and Landing tests 1/1 passing. Snapshot the candidate audit, checklist and zero-repair report under `snapshots/candidate-5.2.1/`. No live host, crawler, Search Console, TLS or field metric was accessed. UAT Prep/browser acceptance is blocked, so SEO source revalidation does not complete overall SEO acceptance.
+
+SIGUIENTE PASO: carry source-only evidence and UAT/deployment limits into AEO/GEO and Check.
+
+---
+
 ## Candidate 5.1.77 — source SEO PASS; deployed discovery unmeasured
 
 The candidate changes only diagnostics-widget spacing, package/renderer version metadata, tests and lifecycle documentation. Public routes, copy, metadata, canonical, robots, sitemap and indexation configuration are unchanged. Web and Landing SEO source tests each pass 1/1. Existing source review remains applicable; no public host, crawler, Search Console, TLS or field Core Web Vitals were accessed. Deployed SEO remains unmeasured.

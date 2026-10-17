@@ -132,7 +132,7 @@ const statusCounts = Object.fromEntries(
 );
 assert.deepEqual(
   statusCounts,
-  { PASS: 29, GAP: 0, BLOCKED: 396, 'NOT APPLICABLE': 132, 'DECISION NEEDED': 3 },
+  { PASS: 29, GAP: 0, BLOCKED: 406, 'NOT APPLICABLE': 122, 'DECISION NEEDED': 3 },
   'inventory totals must match individually evidenced model-role-surface rows',
 );
 const modelRowFor = (model, role, surface) =>
@@ -266,8 +266,13 @@ assert.equal(
 );
 assert.equal(
   modelRowFor('TeamInterface', 'admin', 'API')[14],
-  'NOT APPLICABLE',
-  'team interfaces are a nested Team relation, not independent CRUD',
+  'BLOCKED',
+  'tenant team assignments remain blocked until persisted UAT closes',
+);
+assert.equal(
+  modelRowFor('TeamInterface', 'coordinator', 'API')[14],
+  'BLOCKED',
+  'coordinator team assignments remain blocked until persisted UAT closes',
 );
 assert.equal(
   modelRowFor('CompanyCountry', 'superadmin', 'API')[14],

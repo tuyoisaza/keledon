@@ -71,3 +71,13 @@ The four ordered commitments remain: baseline/version/PR backlog; widget and saf
 Preflight is complete for this Auto continuation. The four Capture artifacts, brownfield plan, confirmed PMO portfolio, UAT-066/067 evidence, and candidate branch were inspected. Plan/PMO must be refreshed against current `main` 5.1.71 and candidate 5.1.72 before the next integrated acceptance stages.
 
 SIGUIENTE PASO: revalidate the Plan and PMO ledgers against the four ordered commitments, then run Integration Review and the current-candidate SEO/AEO/Check gates before final UAT and delivery.
+
+## Auto continuation preflight — 2026-10-17
+
+- Repository: `tuyoisaza/keledon`; branch `feature/tenant-interface-selector-5.2.0`; source head `ef6fe6dbf7eca04708c7200615e7538812751f7e`.
+- Installed PHDK before refresh: v2.53.0. Canonical `https://github.com/tuyoisaza/PHDK` `main`; upstream commit `94f583635d295ae0f227726718904d952cadb8ab`.
+- `py -3 phdk-standards/scripts/phdk_update.py .` → `UPDATED`, v2.53.1, 13 manifest-owned files.
+- Static coherence: `PASS: v2.53.1, 64 manifest mappings (static only)`.
+- Root `AGENTS.md` managed block exactly matches vendored `PHDK_NATIVE_RULES.md` (SHA-256 `98bc1835eea94af6ea3f72c66bc2210779374abfd800a7f33c94c3d227fb94bd`); text outside markers retained.
+- Existing browser capability verified in scoped UAT. Production public home loaded read-only and showed 5.1.85; no account, API, DB, customer data or mutation.
+- Result: Preflight complete. Capture/Plan/PMO reused; continue Prep/UAT with documented safe-target blockers.

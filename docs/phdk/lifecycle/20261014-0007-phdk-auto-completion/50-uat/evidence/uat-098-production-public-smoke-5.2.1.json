@@ -1,0 +1,35 @@
+{
+  "caseId": "UAT-098",
+  "runId": "20261014-0007-phdk-auto-completion",
+  "stage": "50-uat",
+  "observedAtUtc": "2026-10-17T16:12Z",
+  "candidate": {
+    "productVersion": "5.2.1",
+    "branch": "feature/tenant-interface-selector-5.2.0",
+    "revision": "ef6fe6dbf7eca04708c7200615e7538812751f7e"
+  },
+  "target": {
+    "url": "https://keledon.tuyoisaza.com/",
+    "environment": "production",
+    "observedProductVersion": "5.1.85",
+    "candidateMatch": false
+  },
+  "browserReadiness": {
+    "phasePermission": "ACTIVE_UAT_EXCEPTION",
+    "capability": "AVAILABLE_VERIFIED",
+    "channel": "connected Codex in-app browser",
+    "operation": "anonymous public homepage navigation",
+    "spend": "NO_NEW_SPEND"
+  },
+  "observations": {
+    "pageTitle": "KELEDON | Cloud-governed contact center runtime",
+    "visibleVersion": "5.1.85",
+    "publicNavigationLoaded": true
+  },
+  "result": "PASS_PUBLIC_SMOKE_ONLY",
+  "limitations": [
+    "Production target does not serve candidate 5.2.1.",
+    "No authentication, form submission, manual API call, database access, customer data access, provider call, or mutation was performed.",
+    "This evidence does not accept UAT-096 or UAT-097 and says nothing about the tenant interface selector."
+  ]
+}

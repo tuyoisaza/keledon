@@ -1,3 +1,9 @@
+## Production read-only re-entry — public widget on v5.1.85 (2026-10-17)
+
+| Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-100 | CMT-002 / anonymous public visitor | Open the production homepage and `/login` without authenticating, submitting forms, or activating either diagnostic action. | Both public and login surfaces display the deployed semantic version and the adjacent named clipboard/trash actions. This accepts only the currently deployed v5.1.85 mount, not candidate 5.2.1 or button behavior. | Connected in-app browser; accessibility-tree observation only. | PASS, scoped/read-only. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-100-production-anonymous-widget-5.1.85.json`. |
+
 ## Candidate 5.1.83 — UAT-093 root-context Dockerfile selects the Web server config
 
 | Case | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
@@ -313,3 +319,11 @@ Candidate total: **49 PASS, 0 BLOCKED, 1 MANUAL — ACCEPTANCE INCOMPLETE**. The
 | ID | Commitment / story | Acceptance | Evidence | Result |
 |---|---|---|---|---|
 | UAT-095 | CMT-002 / agent monitoring; an operator can select an agent without a pointer | Web and Landing expose a native named button, pressed state, visible keyboard focus, and at least 44px target; selection is not attached only to a non-focusable card. | `services/web/test/agent-selection-accessibility.test.cjs` (2/2); Web/Landing builds, typechecks, lint; local candidate navigation. | PASS_SCOPED at source/control contract. Populated authenticated dashboard interaction and screen-reader behavior remain MANUAL. |
+# Candidate 5.2.1 continuation — tenant interface selector
+
+| ID | Story / actor | Acceptance case | Result | Evidence / limitation |
+|---|---|---|---|---|
+| UAT-096 | US-020 / Company Co admin or coordinator | On the exact 5.2.1 candidate, list only interfaces assigned to the actor's tenant/team; open an existing team and verify assignments; attempt a foreign-tenant ID directly; save a valid same-tenant assignment and read it back. | BLOCKED | No isolated DB-backed role session; production currently serves 5.1.85, not candidate 5.2.1. No production account/data was used. |
+| UAT-097 | US-020 / Company Co admin or coordinator | On exact candidate, switch teams and close the selector while requests are delayed; confirm stale responses/saves cannot replace or persist against the newly selected team. | BLOCKED | Focused source regression already passes, but the real role/browser journey is not deployed or authenticated in a safe target. |
+| UAT-098 | US-021 / public visitor | Open the production public homepage without signing in or changing state; record visible product version and public navigation. | PASS — PUBLIC SMOKE ONLY | Connected in-app browser opened `https://keledon.tuyoisaza.com/` at 2026-10-17 16:12 UTC. Page title “KELEDON | Cloud-governed contact center runtime”; visible version 5.1.85; public links and page content loaded. No login, API probe, form submit, storage action, or data mutation. This is not acceptance evidence for 5.2.1. |
+| UAT-099 | US-022 / anonymous visitor | Navigate directly to production `/management/teams` without a session; do not submit login or signup. | PASS — ANONYMOUS REDIRECT ONLY | Production redirected to `/login` and displayed the email/password form at 2026-10-17 16:22 UTC. No credentials entered, session created, protected content shown, or data changed. Deployed version is 5.1.85, so this is not candidate 5.2.1 or tenant-role acceptance. Evidence: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-099-production-anonymous-management-redirect.json`. |

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { CrudTenantVoiceProfileService } from './crud-tenant-voice-profile.service';
 import { getCrudHealthReport } from './crud-health';
 import { PrismaService } from '../prisma/prisma.service';
@@ -7,6 +11,7 @@ import { CrudAuditService } from './crud-audit.service';
 import { CrudVendorService } from './crud-vendor.service';
 import { CrudCompanyService } from './crud-company.service';
 import { CrudSessionDataService } from './crud-session-data.service';
+import { encryptManagedInterfaceSecretAtRest } from '../security/vendor-secret-crypto';
 
 @Injectable()
 export class CrudService {
@@ -191,8 +196,9 @@ export class CrudService {
 
   // ========== MANAGED INTERFACES ==========
 
-  async getManagedInterfaces() {
+  async getManagedInterfaces(companyId?: string) {
     const rows = await this.prisma.managedInterface.findMany({
+      where: companyId ? { companyId } : undefined,
       orderBy: { name: 'asc' },
     });
     return rows.map(({ credentials, ...record }) => ({
@@ -224,6 +230,7 @@ export class CrudService {
   }
 
   async createManagedInterface(data: {
+    companyId?: string;
     name: string;
     baseUrl: string;
     category?: string;
@@ -233,9 +240,21 @@ export class CrudService {
     status?: string;
     credentials?: string;
   }) {
-    const { credentials, ...record } =
-      await this.prisma.managedInterface.create({ data });
-    return { ...record, hasCredentials: !!credentials };
+    const { credentials, ...record } = data;
+    const storedCredentials =
+      credentials === undefined
+        ? undefined
+        : encryptManagedInterfaceSecretAtRest(credentials);
+    const created = await this.prisma.managedInterface.create({
+      data: {
+        ...record,
+        ...(storedCredentials === undefined
+          ? {}
+          : { credentials: storedCredentials }),
+      },
+    });
+    const { credentials: storedValue, ...safeRecord } = created;
+    return { ...safeRecord, hasCredentials: !!storedValue };
   }
 
   async updateManagedInterface(
@@ -248,18 +267,39 @@ export class CrudService {
       credentials?: string;
     },
   ) {
-    const { credentials, ...record } =
-      await this.prisma.managedInterface.update({ where: { id }, data });
-    return { ...record, hasCredentials: !!credentials };
+    const { credentials, ...record } = data;
+    const storedCredentials =
+      credentials === undefined
+        ? undefined
+        : encryptManagedInterfaceSecretAtRest(credentials);
+    const updated = await this.prisma.managedInterface.update({
+      where: { id },
+      data: {
+        ...record,
+        ...(storedCredentials === undefined
+          ? {}
+          : { credentials: storedCredentials }),
+      },
+    });
+    const { credentials: storedValue, ...safeRecord } = updated;
+    return { ...safeRecord, hasCredentials: !!storedValue };
   }
 
   async deleteManagedInterface(id: string) {
     return this.prisma.managedInterface.delete({ where: { id } });
   }
 
-  async getTeamInterfaces(teamId: string) {
+  async getTeamInterfaces(teamId: string, companyId?: string) {
     const teamInterfaces = await this.prisma.teamInterface.findMany({
-      where: { teamId },
+      where: {
+        teamId,
+        ...(companyId
+          ? {
+              team: { brand: { companyId } },
+              managedInterface: { companyId },
+            }
+          : {}),
+      },
       include: { managedInterface: true },
     });
     return teamInterfaces.map(
@@ -270,7 +310,11 @@ export class CrudService {
     );
   }
 
-  async setTeamInterfaces(teamId: string, interfaceIds: string[]) {
+  async setTeamInterfaces(
+    teamId: string,
+    interfaceIds: string[],
+    companyId?: string,
+  ) {
     if (
       !Array.isArray(interfaceIds) ||
       interfaceIds.some(
@@ -285,14 +329,26 @@ export class CrudService {
       throw new BadRequestException('interfaceIds must not contain duplicates');
     }
     const existing = await this.prisma.managedInterface.findMany({
-      where: { id: { in: uniqueIds } },
+      where: { id: { in: uniqueIds }, ...(companyId ? { companyId } : {}) },
       select: { id: true },
     });
     if (existing.length !== uniqueIds.length) {
       throw new BadRequestException('One or more interfaces do not exist');
     }
     return this.prisma.$transaction(async (tx) => {
-      await tx.teamInterface.deleteMany({ where: { teamId } });
+      if (companyId) {
+        const team = await tx.team.findFirst({
+          where: { id: teamId, brand: { companyId } },
+          select: { id: true },
+        });
+        if (!team) throw new ForbiddenException('Resource access denied');
+      }
+      await tx.teamInterface.deleteMany({
+        where: {
+          teamId,
+          ...(companyId ? { managedInterface: { companyId } } : {}),
+        },
+      });
       if (uniqueIds.length === 0) return { count: 0 };
       return tx.teamInterface.createMany({
         data: uniqueIds.map((interfaceId) => ({ teamId, interfaceId })),

@@ -1,11 +1,66 @@
-# Current PHDK Auto — 5.1.85 keyboard selection candidate; portfolio partial
+# Current PHDK Auto — PHDK 2.53.1 / 5.2.1 tenant interface selector continuation
 
-Run 20261014-0007-phdk-auto-completion; repository tuyoisaza/keledon; branch fix/phdk-auto-5-1-85-keyboard-agent-selection, based on verified main 29a1ba592d1244b7f00676677b642d8857318103. Product package/lock roots and Browser renderer are 5.1.85. CHK-AUTO-025 makes Web/Landing agent cards keyboard-selectable through a native named button with selected state, visible focus, and 44px minimum target. UAT-095 passes scoped source acceptance, contract tests 2/2, Web diagnostics 19/19, API/Cloud regression 43/43 and 20/20, Browser 16/16, all relevant builds/typechecks/lint and PHDK coherence 63/63. The local built Web candidate loaded in the connected in-app browser. Authenticated card interaction and screen-reader acceptance remain MANUAL; no PR or merge yet.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch `feature/tenant-interface-selector-5.2.0`; product source commit `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PR #210 is OPEN at the live branch head verified in GitHub. PHDK v2.53.1 is installed from upstream `94f583635d295ae0f227726718904d952cadb8ab`. Static PHDK coherence passes 64/64 and the root managed block matches canonical bytes. Production displays v5.1.85. Four confirmed fronts and approved tenant/role/private-origin/interface policy are unchanged.
 
-Whole Auto remains PARTIALLY DELIVERED: 0/4 commitments DONE; UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | COMPLETED | `PHDK_PREFLIGHT_REPORT.md`; 13 standards synchronized; 64/64 static coherence; exact managed block. |
+| Capture | REUSED | Existing product intent and four-front confirmation remain current. |
+| Plan | REUSED / EXTENDED | Existing brownfield architectures plus `20-plan/PAQUETE_IMPLEMENTACION_ACEPTACION_5.2.1.md`. |
+| PMO / Workstreams | REUSED / REVALIDATED | 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL; no scope removed. |
+| Integration Review | COMPLETED FOR SOURCE REVIEW | API/Cloud role and tenant guards, secret projections, legacy route boundary and assignment service were reviewed. Migration has nullable `companyId` and no backfill; tenant interface provisioning/legacy ownership remain acceptance items. |
+| UAT Prep | PARTIAL / BLOCKED | Source seeder rejects production; no isolated DB or provisioned synthetic personas. See `UAT_PREP_REPORT.md`. |
+| UAT | ACCEPTANCE INCOMPLETE | UAT-098/099/100 pass narrowly on deployed v5.1.85 (anonymous public page, redirect, and homepage/login widget presence); candidate 5.2.1 cases UAT-096/097 remain blocked. No production writes. |
+| UAT Fix | NOT APPLICABLE FOR THIS RE-ENTRY | No candidate defect observed in the permitted smoke; blocked feature cases cannot be repaired from runtime evidence. |
+| SEO | REUSED / SOURCE REVALIDATED | Public source unchanged for 5.2.1; deployed measurements remain open. |
+| AEO/GEO | REUSED / SOURCE REVALIDATED | Public answer source unchanged; citation/field evidence remains unmeasured. |
+| Check | PARTIAL / ADMIN STANDARD GAPS RECORDED | PHDK 2.53.1 coherence 64/64; theme-token audit `STATIC_PASS`; root managed block pass. New admin architecture, capability/settings registry and AI catalog record ADM-001…006 gaps; documentation does not close them. GitHub has no workflows, branch protection or rulesets; PR #210 has no checks/review. Railway API/Web current deployments succeed, but Web has 12 recent failures (three sampled failures trace to missing `shared/` in an older build context; later root-context deployments succeed). `checkSuites:false`; wait-for-CI/restart/watch/cost fields remain unverified. No app tests or production writes in this continuation. |
+| Remediation | COMPLETED FOR CURRENT DOCUMENT GAPS | Corrected PIA source links, UAT scope, provisioning limitation, and current PMO/lifecycle state; no safe source change was justified without ownership data or candidate acceptance. |
+| Delivery | PR #210 OPEN; NOT MERGED | GitHub reports no checks or review decision. No merge/main verification for 5.2.1. |
 
-SIGUIENTE PASO: complete diff review and version-prefixed commit, then publish the scoped PR and verify remote main; retain the broader open acceptance gates.
+Overall Auto remains **PARTIALLY DELIVERED**. Production public smoke does not accept branch-only code. Authenticated tenant/persistence acceptance, PR review/check evidence and merge/main verification remain open.
 
+SIGUIENTE PASO: continue source-mapping ADM-001…006 against the real admin/API routes and identify safely implementable gaps; keep PR #210 open until candidate acceptance and delivery controls pass.
+
+Automation hygiene details: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1-PHDK-2.53.1.md` records the bounded GitHub/Railway metadata, sampled build failure and unverified provider fields. Current production service status is not acceptance of the unmerged candidate.
+
+---
+
+## Prior candidate checkpoint — PHDK 2.53.0
+
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; branch `feature/tenant-interface-selector-5.2.0`; PHDK v2.53.0. The tenant-owned team interface selector and guarded UAT Prep implementation are in commit `b8c481a16f2c015f3b4d1e9b0ff3dd2012c1d663`; this continuation fixes stale selector loads/saves in `909d67205b7c1f0f51f4f80e4b00f56ab7fc8a39`, verified on the remote feature branch. Product roots and Browser renderer align at 5.2.1.
+
+| Stage | Status | Evidence / next gate |
+|---|---|---|
+| Preflight | COMPLETED / REUSED | Installed PHDK v2.53.0; coherence checker passes 64/64. |
+| Capture / Plan / PMO | REUSED | Four owner-confirmed fronts and approved tenant, role, private-CRM and interface-assignment decisions remain current. |
+| Integration Review | COMPLETED FOR SELECTOR RACE | Monotonic request sequence invalidates stale team loads and saves when another team is opened or the modal closes. |
+| UAT / UAT Fix | SOURCE REGRESSION PASS; FULL ACCEPTANCE BLOCKED | Focused stale-request regression passes. Live migration, fixture provisioning, authenticated browser UAT and cleanup remain blocked because isolated PostgreSQL was unavailable under Windows Application Control. |
+| SEO / AEO-GEO | SOURCE REVALIDATED; ACCEPTANCE PARTIAL | Public `/` remains applicable; its 25 SEO and 15 AEO/GEO source controls were reused after confirming this candidate changes no public source. Web SEO tests pass 2/2 and Landing 1/1. Deployment, field and citation evidence remain unmeasured; UAT is still blocked. Candidate reports and snapshots are under lifecycle stages 65 and 67. |
+| Check / Remediation | PASS FOR 5.2.1 SOURCE SLICE; WHOLE CHECK INCOMPLETE | Web typecheck/lint/build, Browser build, focused request-sequence regression, `git diff --check`, and PHDK coherence 64/64 pass. Full scoped Check and GitHub/Railway automation evidence are recorded in [PHDK_CHECK_REPORT-5.2.1.md](docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1.md). Web build reports the existing large-chunk advisory. |
+| Delivery | FEATURE BRANCH PUSHED; PR NOT CREATED | Feature source commit `909d67205b7c1f0f51f4f80e4b00f56ab7fc8a39` is included on the remote branch. PR creation was rejected by the execution control; no alternate transport was used. |
+
+Overall PHDK Auto remains PARTIALLY DELIVERED. Browser acceptance, PostgreSQL-backed migration/seed verification, and the normal PR/review/merge/main verification remain open. Historical 5.1.85 and 5.2.0 snapshots below retain their original results.
+
+SIGUIENTE PASO: create the normal PR for `feature/tenant-interface-selector-5.2.0` after the execution control allows it, then complete isolated PostgreSQL UAT Prep and authenticated tenant-scoped browser acceptance before reporting the Auto goal complete.
+
+---
+
+# Historical PHDK Auto — 5.1.85 source and delivery verified
+
+Candidate continuation: KELEDON 5.2.0 on branch `feature/tenant-interface-selector-5.2.0`, based on current main `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`. Tenant interface selector and guarded UAT Prep source are implemented. API/Cloud regressions pass 45/45 and 21/21, builds/typechecks pass, Prisma schemas validate/generate, Web/Landing lint/build/typecheck and Browser lint/build/focused tests pass, and final PHDK coherence passes 64/64. Source delivery is pending. Live migration/seed/login/cleanup and browser UAT remain blocked by the unavailable isolated local PostgreSQL runtime; whole Auto remains partial.
+
+## Active continuation — candidate 5.2.0 / PHDK 2.53.0 / stage 45
+
+Installed PHDK v2.53.0 and passed static coherence 64/64. The new Company Co UAT seeder is implemented with target safeguards and in-memory credentials; source regressions pass. Live provisioning and authentication are BLOCKED because Windows Application Control rejected the local PostgreSQL process and there is no listening isolated database. Browser UAT has not been started for this candidate.
+
+Owner decision on 2026-10-17: implement the Admin/Coordinator Web TeamInterface selector with per-company catalog filtering, DB-derived same-company team assignment, masked credentials and no tenant access to the global catalog. API/Cloud/Web source, migrations, Prisma validation/generation, API/Cloud regression, Web lint/build and backend type/build checks now pass. Persisted migration and browser acceptance remain open. CRUD matrix is 406 BLOCKED / 122 N/A / 3 DECISION NEEDED / 29 PASS; source-only evidence does not close UAT rows.
+
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; current remote `main` `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50` with tree `096589d3716e76d05df9b64c196c06b92a88fd34`. Product source PR #208 delivered version 5.1.85; post-merge documentation PR #209 is also merged. All five package/lock roots and Browser renderer read 5.1.85; PHDK 2.52.2 coherence passes 63/63. The scoped delivery gate passed against PR #208's exact merge SHA before the documentation-only PR advanced `main`.
+
+Railway's post-#209 Web and API deployments both report SUCCESS with 1/1 replica; API startup confirms PostgreSQL and healthcheck. No public HTTP probe was made; no LLM provider is configured. Overall Auto remains PARTIALLY DELIVERED: 0/4 commitments done; UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+
+SIGUIENTE PASO: continue ordered CMT-003 and CMT-004 work and retain explicit manual/customer acceptance gates.
 ---
 # Current PHDK Auto — 5.1.84 dashboard control repair delivered; portfolio partial
 

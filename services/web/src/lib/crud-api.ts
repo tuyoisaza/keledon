@@ -205,6 +205,10 @@ export async function getTeamInterfaces(teamId: string): Promise<ManagedInterfac
     return fetchApi(`/teams/${teamId}/interfaces`);
 }
 
+export async function setTeamInterfaces(teamId: string, interfaceIds: string[]): Promise<{ count: number }> {
+    return fetchApi(`/teams/${teamId}/interfaces`, 'PUT', { interfaceIds });
+}
+
 // Sessions
 export async function getSessions(companyId?: string, limit = 100): Promise<Session[]> {
     const query = companyId ? `?companyId=${companyId}&limit=${limit}` : `?limit=${limit}`;

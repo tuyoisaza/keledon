@@ -1,3 +1,9 @@
+## Candidate 5.2.1 revalidation — no public-claim repair
+
+No public copy, claim, entity, route or structured-data source changed, so no AEO/GEO content repair applies. Existing source review is reused; no unsupported FAQ, authorship, market, customer proof, citation or ranking claim was added. External visibility remains unmeasured and UAT acceptance is incomplete.
+
+---
+
 # Candidate 5.1.72 revalidation — no public-claim remediation
 
 No AEO/GEO content change was necessary. The candidate leaves public copy, product claims, source provenance, language policy, routes and metadata unchanged; the authenticated contrast work affects no answer content. SEO-01 through SEO-04 source controls and both Web/Landing source regressions pass. No FAQ, structured data, public locale route, author, customer proof, citation or market assertion was invented.

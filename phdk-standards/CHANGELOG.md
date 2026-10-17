@@ -1,3 +1,23 @@
+## v2.53.1 — 2026-10-17
+
+### Auto executes missing implementation after planning
+- Require every explicit Auto invocation to reread the complete current intent/requirements baseline and reconcile actual source, coverage and acceptance evidence before reusing artifacts. Preserve valid code and the current authorized scope.
+- Classify requirements-only/scaffold-only repositories as unimplemented products when the intent requires software; plan and immediately execute complete greenfield development in the same invocation. Complete partial implementations without reducing the goal to an MVP or interpreting missing code as NOT APPLICABLE. Unavailable source remains UNVERIFIED.
+- Make Plan-to-implementation continuation mandatory; reconcile Capture, PMO, Check and commitment wording that could stop Auto or demand redundant approval for already-confirmed requirements. Keep standalone planning/audit scopes and material external decisions intact.
+- Align AGENTS, SKILL, native rules, lifecycle/closure contracts and README. Preserve UAT Prep and the subsequent UAT, repair, Check and normal delivery gates.
+
+### Verification scope
+- Review policy scenarios and run applicable existing local checks before publication. This standards change does not prove adoption or application-level execution in downstream projects.
+- Repair a pre-existing UAT policy test pinned to v2.51.6: retain the minimum supported version and verify current VERSION/README/newest-CHANGELOG agreement so subsequent compatible releases can pass.
+
+## v2.53.0 — 2026-10-17
+
+### PHDK uat prep: implement synthetic test identities before acceptance
+- Introduce standalone `PHDK uat prep` and mandatory Auto stage `45-uat-prep` after Integration Review, before browser UAT. Prep explicitly builds/reuses idempotent Company Co synthetic user seeders, supported isolated auth/session bootstrap and role/tenant test support; validates allowed non-browser cases and documents actual account provisioning and cleanup.
+- Add vendored `PHDK_UAT_PREP.md`, required `UAT_AUTH_PLAN.md`, `UAT_ROLE_MATRIX.md`, `UAT_FIXTURE_MANIFEST.md`, `UAT_PREP_REPORT.md`, stage snapshots, fresh-candidate reconciliation and Prep-ready/blocked role gates.
+- Integrate lifecycle, Auto, standalone UAT, Check, agent/native routing, JWT, Company Co, testing, execution scope and manifest. Preserve UAT-only browser permission and independent connection/no-new-spend verification at stage 50.
+- Standards-only release: this repository does not create accounts in downstream applications, deploy staging resources, run browsers or alter authentication providers.
+
 ## v2.52.2 — 2026-10-17
 
 ### Reconcile JWT authenticated UAT with UAT browser readiness

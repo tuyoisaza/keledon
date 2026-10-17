@@ -304,6 +304,12 @@
     "autonomyLevel": "Nível de Autonomia",
     "autonomyDescription": "1 = Pede aprovação, 10 = Totalmente autônomo",
     "uiInterfaces": "Interfaces UI",
+    "tenantInterfacesOnly": "Escolha interfaces configuradas para esta empresa. Credenciais e catálogos de outras empresas não são exibidos.",
+    "interfacesLoading": "Carregando interfaces da empresa…",
+    "interfacesEmpty": "Nenhuma interface está configurada para esta empresa.",
+    "interfacesLoadFailed": "Não foi possível carregar as interfaces da empresa.",
+    "interfacesSaveFailed": "Não foi possível salvar as interfaces da equipe.",
+    "interfacesUpdated": "Interfaces da equipe atualizadas.",
     "status": {
       "active": "Ativo",
       "inactive": "Inativo"

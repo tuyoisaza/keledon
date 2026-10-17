@@ -85,6 +85,7 @@ and one folder per executed/reused stage:
 20-plan/
 30-pmo/
 40-integration/
+45-uat-prep/
 50-uat/
 60-uat-fix/
 65-seo/
@@ -340,6 +341,8 @@ Snapshot all material Plan outputs plus `HANDOFF.md`.
 
 PMO verifies `IMPLEMENTATION_PLAN.md`, architecture boundaries, dependencies, and any relevant ADRs before creating/confirming workstreams.
 
+Inside Auto, a passing Plan handoff immediately starts the next eligible implementation task through stage 30. Missing product code activates required greenfield development; it never turns the Plan handoff into a terminal response or a request for another development command.
+
 ---
 
 ## 30 — PMO / Workstreams
@@ -381,6 +384,7 @@ When workers produce significant workstream-specific summaries, archive them und
 - dependencies explicit;
 - file/component ownership explicit;
 - workers completed or residual blockers/deferred state explicit;
+- each in-scope commitment has concrete implementation/source evidence or an explicit unfinished blocker; coordination artifacts, assignments and scaffolds alone never prove workstream completion;
 - integration queue ready.
 
 ### Next stage must verify
@@ -434,6 +438,7 @@ Snapshot additional architecture/API/schema evidence only when materially useful
 ### Exit gate
 
 - one coherent candidate identified;
+- all required product behavior in the authorized scope is implemented and integrated, or the candidate is explicitly NOT READY with the missing commitment IDs;
 - shared-file conflicts resolved or explicitly blocked;
 - cross-workstream contracts coherent;
 - candidate version/revision identifiable;
@@ -442,7 +447,31 @@ Snapshot additional architecture/API/schema evidence only when materially useful
 
 ### Next stage must verify
 
-UAT verifies `INTEGRATION_REPORT.md` says the candidate is ready for acceptance and uses the exact candidate revision/worktree described there.
+UAT Prep verifies `INTEGRATION_REPORT.md` and its candidate. If Prep modifies code/schema, it refreshes the current integration candidate and reruns affected integration checks, preserving prior historical evidence. UAT later verifies this revised candidate and the Prep handoff.
+
+---
+
+## 45 — UAT Prep
+
+### Purpose
+
+Build and verify synthetic test identities, secure role sessions and test-only provider/fixture readiness **before** browser UAT. Follow `PHDK_UAT_PREP.md`.
+
+### Inputs
+
+Current integration handoff/candidate, source-backed auth/RBAC/tenancy, Company Co fixture, `JWT_STANDARD.md`, safe isolated target.
+
+### Canonical outputs
+
+`UAT_AUTH_PLAN.md`, `UAT_ROLE_MATRIX.md`, `UAT_FIXTURE_MANIFEST.md`, `UAT_PREP_REPORT.md` and applicable source/test implementation.
+
+### Historical outputs
+
+`45-uat-prep/HANDOFF.md` plus sanitized snapshots of canonical outputs; never tokens, passwords or browser storage state.
+
+### Exit and next-stage gate
+
+Evidence of per-role provisioned test-only identities or exact blockers; valid test bootstrap, local/in-process allow/deny and tenant checks; isolation, expiry and cleanup controls; revision reconciled with Integration after Prep code changes. UAT checks the same candidate plus the Prep handoff and carries precise blockers forward. The browser readiness check begins **only at 50 — UAT**.
 
 ---
 
@@ -457,7 +486,8 @@ Validate intent-aligned user acceptance on the integrated candidate.
 ### Required inputs
 
 - completed Integration Review handoff;
-- exact candidate revision/worktree;
+- verified `45-uat-prep` handoff/role fixtures or documented source-backed N/A, with outstanding per-role blockers;
+- exact candidate revision/worktree reconciled after Prep changes;
 - Capture/Plan traceability;
 - UAT standard.
 
@@ -722,12 +752,15 @@ The run-level `LIFECYCLE.md` must then be finalized.
 
 # Reuse of existing stage artifacts
 
+At every explicit Auto invocation, reread the complete current intent/requirements baseline and reconcile it with actual product source under `PHDK_AUTO.md`. Reuse is the result of this review, not a reason to omit it. Preserve valid code/documents and honor the current authorized scope. Missing required product implementation is pending work, never grounds to mark implementation, Integration or UAT NOT APPLICABLE; only intent/scope-based irrelevance justifies N/A.
+
 A stage may be marked REUSED only when the next stage verifies:
 
 - required canonical artifacts exist;
 - they are coherent with current intent/goal;
 - no material upstream change invalidated them;
 - historical origin/revision is identifiable.
+- claimed implementation and validation have current evidence; a plan or old completion label alone cannot satisfy an implementation/acceptance gate.
 
 When reusing a stage in a new lifecycle run:
 

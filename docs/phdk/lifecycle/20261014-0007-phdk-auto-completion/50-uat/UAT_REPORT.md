@@ -10,6 +10,14 @@ Evidence: `docs/phdk/evidence/uat-local-web.json`; `docs/phdk/evidence/uat-landi
 
 Conclusion: **ACCEPTANCE INCOMPLETE** for whole Auto; the CMT-002 widget geometry case passes for the tested Web/Landing scope.
 
+## UAT-102 — production release-target readiness (2026-10-17 16:53 UTC)
+
+Read-only production landing-page inspection showed v5.1.85 and the existing version/diagnostic action row. GitHub PR #210 was OPEN at candidate head `fd7af3b963505fd7756c78ecfa7d8469096a9d84` with no hosted check runs. This PASS is only a release-target readiness observation; it confirms the credential candidate is not deployed and cannot establish UAT-101 behavior. Evidence: `evidence/uat-102-production-release-readiness-2026-10-17.json`.
+
+## Candidate 5.2.1 — ADM-004 ManagedInterface credential storage re-entry
+
+API and Cloud source now encrypt newly written `ManagedInterface.credentials` with AES-256-GCM, redact credential-like request keys in their audit interceptors, and return presence metadata only. The key is domain-derived from `KELEDON_VENDOR_KEY`; writes fail closed if it is missing or shorter than 32 characters. This is **source evidence only**; no local application tests were run, no production records or keys were accessed, and the deployed site remains 5.1.85. Legacy stored values are not migrated by this change. UAT-101 is **BLOCKED / NOT RUN** until exact candidate 5.2.1 is deployed and a dedicated synthetic production fixture plus redacted persistence evidence path is available. Do not interpret PHDK coherence as runtime or cryptographic acceptance.
+
 ---
 
 ## Candidate 5.1.73 — UAT-086/087 superadmin Web CRUD PASS

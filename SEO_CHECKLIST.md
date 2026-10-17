@@ -1,3 +1,9 @@
+## Candidate 5.2.1 revalidation — 25-control classifications reused
+
+Candidate source commit `909d67205b7c1f0f51f4f80e4b00f56ab7fc8a39` changes no public content, route or crawl policy. Reuse all 25 source classifications below from the grounded public-root review. Web SEO headers/Docker context tests pass 2/2; Landing metadata/route-policy test passes 1/1. No deployed HTTP, TLS, crawler, Search Console or field Core Web Vitals evidence was collected. UAT is incomplete; SEO remains source-revalidated / overall partial.
+
+---
+
 # Candidate 5.1.72 revalidation — current 25-control status
 
 Affected public route/template: `https://keledon.tuyoisaza.com/` source only. Public source and indexation configuration are unchanged from the prior grounded audit; the two local SEO tests both pass. Statuses below describe current-source evidence, not deployed measurements.

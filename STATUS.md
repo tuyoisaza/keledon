@@ -1,11 +1,10 @@
-# Current task status — PHDK Auto candidate 5.1.85
+# Current PHDK Auto — candidate 5.2.1 / PHDK 2.53.1; portfolio partial
 
-The keyboard-selection candidate is locally validated on branch fix/phdk-auto-5-1-85-keyboard-agent-selection, based on verified remote main 29a1ba592d1244b7f00676677b642d8857318103. Web/Landing builds, typechecks, lint and source contract tests pass; API/Cloud builds and regressions pass 43/43 and 20/20; Web diagnostics 19/19; Browser 16/16; PHDK coherence 63/63. The local built candidate loaded in the connected in-app browser. No populated authenticated dashboard interaction or screen-reader test is claimed.
+The four owner-confirmed fronts remain active in order. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) carries product source 5.2.1 on `feature/tenant-interface-selector-5.2.0`; it is open, unmerged, and GitHub reports no checks or review decision. Production still displays v5.1.85.
 
-PR/merge/readback remain pending. Whole Auto remains PARTIALLY DELIVERED (0/4 commitments DONE; UAT 93 PASS / 0 BLOCKED / 1 MANUAL).
+PHDK coherence passes 64/64. Read-only production UAT-098/099 verifies the public homepage and anonymous redirect to login; UAT-100 confirms the anonymous homepage/login widget on deployed v5.1.85. None accepts candidate 5.2.1. The selector source has tenant guards and stale-response handling; the migration adds nullable interface ownership without backfilling old rows. A superadmin-only provision route exists, but persisted data/ownership is not verified. The PHDK 2.53.1 admin-console audit and source registries identify settings, permission, backup and AI-graph gaps. All four commitments remain active/partial.
 
-SIGUIENTE PASO: perform final diff review and normal versioned PR delivery, then verify the exact remote-main SHA/content.
-
+SIGUIENTE PASO: continue source-auditing and safely remediating the newly documented admin-console gaps; keep PR #210 open pending candidate acceptance and required delivery controls.
 ---
 # Current PHDK Auto — 5.1.84 dashboard control repair delivered
 
@@ -348,3 +347,13 @@ PR #74 delivered 5.1.15 at `2e61f41926ab25b4d9ea9f9b73d11aba82988a63`; PR #75 re
 Candidate `fix/phdk-navbar-overlap-5-1-61` fixes a verified public navigation overlap in both Web apps. Exact local UAT passes 5/5 Web plus standalone Landing 1/1, with both desktop/mobile evidence and external requests blocked. API/Cloud regressions 37/37 and 17/17; Browser security/version 15/15; Web diagnostics 19/19; both SEO source tests 1/1; all five builds, applicable lint/typechecks and PHDK coherence 52/52 pass. All six version surfaces align at 5.1.61. The product PR is pending; whole Auto remains **PARTIALLY DELIVERED** (52 PASS, 0 BLOCKED, 1 MANUAL).
 
 ## Current PHDK Auto — 5.1.60 delivered; whole Auto partial
+# Current status — PHDK Auto 5.2.1 / 2.53.1 (2026-10-17)
+
+- Source candidate: `feature/tenant-interface-selector-5.2.0`, product source `ef6fe6dbf7eca04708c7200615e7538812751f7e`. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) is open, not merged; `main` is `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50` / product v5.1.85.
+- PHDK: v2.53.1 from canonical `main` commit `94f583635d295ae0f227726718904d952cadb8ab`; static coherence 64/64; managed block synchronized.
+- Production-only check this continuation: anonymous read-only homepage at `https://keledon.tuyoisaza.com/` loaded and showed v5.1.85. This does not test branch candidate behavior.
+- Candidate UAT: source checks reported previously remain valid for their source scope. Authenticated tenant/persistence UAT-096/097 are blocked; public smoke UAT-098 passed narrowly. No app test ran locally this continuation and no production account, DB, migration or data was changed.
+- Commitments: CMT-001 through CMT-004 remain ACTIVE/PARTIAL; whole Auto remains PARTIALLY DELIVERED.
+- GitHub reports no checks or review decision. Next: safe target matching 5.2.1 and isolated synthetic tenant acceptance; do not merge an unaccepted migration-backed candidate to the production-autodeploying main branch.
+
+---

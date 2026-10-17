@@ -1,11 +1,24 @@
-# Current PHDK Auto task — keyboard-accessible agent selection, 5.1.85
+# Current PHDK Auto — candidate 5.2.1 / PHDK 2.53.1 on four approved fronts
 
-Active run 20261014-0007-phdk-auto-completion continues the four user-confirmed fronts in order. This candidate repairs CMT-002: Web and Landing use native accessible agent-selection buttons with aria-pressed, visible selected label, keyboard focus ring and 44px minimum target. Scoped tests/builds pass and UAT-095 records the limits. Current branch: fix/phdk-auto-5-1-85-keyboard-agent-selection; base 29a1ba592d1244b7f00676677b642d8857318103. Delivery is still pending; do not mark the candidate integrated.
+This is the active continuation of the user-confirmed four-front portfolio, in order: CMT-001 baseline/version/PR, CMT-002 widget/diagnostics, CMT-003 customer-selected voice→Cloud→Browser→CRM, CMT-004 administration/permissions. The Admin/Coordinator tenant-scoped TeamInterface selector and stale-request fix are source-implemented on branch `feature/tenant-interface-selector-5.2.0`; product source commit is `ef6fe6dbf7eca04708c7200615e7538812751f7e`. PR [#210](https://github.com/tuyoisaza/keledon/pull/210) is open against `main`, not merged. All four remain active/partial.
 
-All four commitments remain ACTIVE/PARTIAL (0/4 DONE). Whole Auto remains PARTIALLY DELIVERED: UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
+PHDK was synchronized to v2.53.1 from upstream `94f583635d295ae0f227726718904d952cadb8ab`. Static coherence passes 64/64 and the root managed block matches canonical. A PIA (Paquete de Implementación y Aceptación) now maps the code, requirements, test cases and gates in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/PAQUETE_IMPLEMENTACION_ACEPTACION_5.2.1.md`.
 
-SIGUIENTE PASO: complete final review, commit with the 5.1.85 version prefix, create the PR, then merge and verify remote main under existing controls.
+The user requested production-site testing. Read-only anonymous UAT-098/099 shows the public homepage and `/management/teams` redirect on deployed v5.1.85. UAT-100 now confirms the always-visible version/actions row on both production homepage and login, still only on v5.1.85. These observations do not accept candidate 5.2.1. No login or production writes were used. Candidate UAT-096/097 remain BLOCKED. Source review confirms a superadmin-only `POST /api/crud/interfaces` provision path with company ownership, but the migration has no backfill for existing rows; do not infer ownership. No application tests were run locally in this continuation.
 
+PHDK 2.53.1 Check found additional mandatory administration-console evidence absent from the project root. Current source has a settings link hub, role guards, audit/theme/AI pages and staging-only Test-as; full invitation/permission-editor/backup/general-settings coverage is not established. Current source architecture, capability and settings registries are documented in `ADMIN_ARCHITECTURE.md`, `ADMIN_CAPABILITY_MATRIX.md`, `ADMIN_SETTINGS_REGISTRY.md`, and `AI_WORKFLOW_CATALOG.md`; those records distinguish source presence from runtime acceptance and identify gaps without claiming them fixed.
+
+SIGUIENTE PASO: keep PR #210 open until safe synthetic role/persistence acceptance can run on a target matching 5.2.1; do not mutate production data.
+
+---
+
+## Previous candidate snapshot — 5.2.0
+
+The candidate adds the owner-approved company-scoped interface selector for Admin/Coordinator, plus guarded synthetic UAT Prep provisioning and role checks. Five product package/lock roots and Browser renderer read 5.2.0. API/Cloud regressions pass 45/45 and 21/21; API/Cloud builds and typechecks, Prisma validation/generation, Web/Landing checks, Browser build/lint/focused tests and PHDK 64/64 coherence pass.
+
+The candidate is source-verified but not accepted end to end. The local isolated database is unavailable because Windows Application Control blocked PostgreSQL startup; UAT Prep is PARTIAL/BLOCKED and browser UAT has not started. The 560-row CRUD matrix is 29 PASS / 406 BLOCKED / 122 NOT APPLICABLE / 3 DECISION NEEDED. All four commitments remain active; no customer-specific call or CRM system was selected or contacted.
+
+SIGUIENTE PASO: deliver candidate 5.2.0 through normal versioned branch/PR workflow; resume database-backed Prep and browser acceptance when the isolated loopback database is available.
 ---
 # Current PHDK Auto — 5.1.83 delivered; portfolio partial
 

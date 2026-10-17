@@ -1,6 +1,6 @@
 {
   "name": "cloud",
-  "version": "5.1.85",
+  "version": "5.2.1",
   "description": "KELEDON Backend",
   "private": true,
   "license": "UNLICENSED",
@@ -12,6 +12,8 @@
     "test": "jest",
     "test:regression": "node test/regression/run.js",
     "test:uat:flow-config-http": "node scripts/uat-083-http-flow-config.cjs",
+    "uat:prep": "npx ts-node scripts/uat-prep-companyco.ts prepare",
+    "uat:prep:cleanup": "npx ts-node scripts/uat-prep-companyco.ts --cleanup",
     "build:typescript": "npx tsc --noEmit",
     "dev:vector-store": "npm run start:dev",
     "build:vector-store": "npm run build && npm run package:vector-store",

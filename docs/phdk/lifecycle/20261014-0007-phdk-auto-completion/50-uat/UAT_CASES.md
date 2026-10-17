@@ -1,3 +1,21 @@
+## Candidate 5.2.1 — UAT-103 production key-config readiness
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-103 | ADM-004 / release reviewer | Read the production `keledon-api` service description and inspect only the returned environment-variable names. Do not call the variable-value endpoint, reveal or copy any secret, or change provider configuration. | Determine whether the candidate's required `KELEDON_VENDOR_KEY` setting is present without reading its value. | Bounded read-only Railway `describe-service` metadata | **BLOCKER CONFIRMED:** variable name is absent from the production API service. No values or production data were read; no provider setting was changed. Evidence: `evidence/uat-103-production-key-config-readiness-2026-10-17.json`. Owner must configure the key through the authorized provider process before credential-storage UAT can pass. |
+
+## Candidate 5.2.1 — UAT-102 production release-target readiness
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-102 | CMT-001/ADM-004 / anonymous observer and release reviewer | Open the public production homepage read-only; compare the visible version to the exact open PR head and check-run state. Do not log in, activate diagnostics, or send application requests. | Confirm whether the credential-remediation candidate is actually deployed and whether hosted checks exist; do not treat an older deployment as acceptance. | Production browser accessibility tree plus read-only GitHub PR metadata | **PASS (scoped readiness check):** production shows v5.1.85; PR #210 is OPEN at `fd7af3b963505fd7756c78ecfa7d8469096a9d84` with no checks. Candidate 5.2.1 is not deployed, so UAT-101 cannot run. Evidence: `evidence/uat-102-production-release-readiness-2026-10-17.json`. |
+
+## Candidate 5.2.1 — UAT-101 ManagedInterface secret storage (production, pending)
+
+| UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
+|---|---|---|---|---|---|
+| UAT-101 | ADM-004 / synthetic superadmin and tenant fixture | First configure `KELEDON_VENDOR_KEY` through the authorized provider process and verify presence/length without displaying its value. Deploy and identify the exact 5.2.1 candidate. Use a dedicated synthetic Company/Team and synthetic credential that cannot authenticate to any customer/provider. Create an interface, replace its secret, clear it, and read/list/assign it. Verify the stored value is a versioned encrypted envelope without returning plaintext; inspect redacted API/UI responses and logs; clean up the fixture and verify removal. | New/replaced values persist as authenticated ciphertext; missing/short key fails closed; omitted secret preserves the value; clear removes it; ordinary responses expose only `hasCredentials`; no secret appears in UI, API response, diagnostics or logs; API and Cloud behave consistently. | Production candidate site only; bounded synthetic fixture and approved redacted persistence evidence; no local application tests | **BLOCKED / NOT RUN.** Production remains v5.1.85, candidate 5.2.1 is not deployed, and UAT-103 found the required key name absent from the production API service. No synthetic fixture or DB operation was performed. Required evidence: owner-managed key readiness (boolean only), exact candidate deployment SHA/version, encrypted-envelope check for the synthetic row, redacted response/log evidence and cleanup confirmation. |
+
 ## Candidate 5.1.77 — UAT-067 widget geometry revalidation
 
 | UAT | Story / actor | Preconditions and actions | Expected observable outcome | Channel | Status / evidence |
