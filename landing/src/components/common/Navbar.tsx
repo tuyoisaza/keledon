@@ -143,7 +143,7 @@ export const Navbar = () => {
                             <a
                                 key={link.name}
                                 href={link.href}
-                                className="block px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5"
+                                className="flex min-h-11 items-center px-3 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5"
                                 onClick={() => setIsOpen(false)}
                             >
                                 {link.name}
@@ -159,13 +159,13 @@ export const Navbar = () => {
                             <>
                                 <button
                                     onClick={() => { handleDashboardClick(); setIsOpen(false); }}
-                                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5"
+                                    className="flex min-h-11 w-full items-center text-left px-3 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5"
                                 >
                                     {t('landing.navDashboard')}
                                 </button>
                                 <button
                                     onClick={() => { logout(); setIsOpen(false); }}
-                                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5"
+                                    className="flex min-h-11 w-full items-center text-left px-3 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5"
                                 >
                                     {t('landing.navLogout')}
                                 </button>

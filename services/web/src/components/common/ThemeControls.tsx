@@ -36,7 +36,7 @@ export function ThemeControls() {
       <span className="sr-only">{t('theme.label')}</span>
       <select aria-label={t('theme.label')} value={theme}
         onChange={event => setTheme(event.target.value as Theme)}
-        className="max-w-36 rounded border border-border bg-background px-1 py-0.5 text-xs focus-visible:outline-2 focus-visible:outline-primary">
+        className="min-h-11 max-w-36 rounded border border-border bg-background px-1 py-0.5 text-xs focus-visible:outline-2 focus-visible:outline-primary">
         {themes.filter(value => value !== 'corporate' || corporateEnabled).map(value => <option key={value} value={value}>{t('theme.' + value)}</option>)}
       </select>
     </label>

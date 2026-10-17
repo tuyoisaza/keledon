@@ -1,3 +1,15 @@
+## v5.2.5 — 2026-10-17
+
+### Fixed
+- Meet PHDK's 44px minimum touch target for public mobile navigation links and shared theme/language selectors, and keep authenticated menu actions aligned in Web and Landing.
+
+### Verification
+- Production UAT-125 found the undersized controls at 320×720. Revalidate the deployed Web menu and Web/Landing version alignment in production; no local application tests or builds are used.
+
+## v5.2.4 — 2026-10-17
+
+- Synchronize the document language metadata with the selected locale in Web and Landing.
+
 ## v5.2.3 — 2026-10-17
 
 - Omit configured API and OAuth hostnames from copied diagnostics to avoid disclosing deployment-specific infrastructure details.
