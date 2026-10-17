@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import es from '../locales/es.json';
 import en from '../locales/en.json';
 import pt from '../locales/pt.json';
@@ -52,6 +52,10 @@ function detectLocale(): Locale {
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(detectLocale);
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   const setLocale = (newLocale: Locale) => {
     if (LOCALE_CONFIG.supported.includes(newLocale)) {
