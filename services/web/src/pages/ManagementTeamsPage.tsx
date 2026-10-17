@@ -1,11 +1,12 @@
 import ManagementModal from '@/components/common/ManagementModal';
 import RecordDetails from '@/components/common/RecordDetails';
 import { useTranslation } from '@/context/I18nContext';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { Users, Plus, RefreshCw, Loader2, Pencil, Trash2, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { getTeams, getCompanies, getBrands, createTeam, updateTeam, deleteTeam, getManagedInterfaces, getTeamInterfaces, setTeamInterfaces, type Team, type Company, type CompanyCountry, type Brand, type ManagedInterface } from '@/lib/crud-api';
+import { createRequestSequence } from '@/lib/request-sequence';
 
 const availableCountries = [
     { code: 'US', name: 'United States' },
@@ -36,6 +37,7 @@ export default function ManagementTeamsPage() {
     const [tenantInterfaces, setTenantInterfaces] = useState<ManagedInterface[]>([]);
     const [selectedInterfaceIds, setSelectedInterfaceIds] = useState<string[]>([]);
     const [assignedInterfaceIds, setAssignedInterfaceIds] = useState<string[]>([]);
+    const interfaceRequestSequence = useRef(createRequestSequence());
 
     const [formData, setFormData] = useState({
         name: '',
@@ -72,15 +74,26 @@ export default function ManagementTeamsPage() {
     };
 
     const openCreateForm = () => {
+        interfaceRequestSequence.current.invalidate();
         resetForm();
         setEditingTeam(null);
+        setLoadingInterfaces(false);
+        setSavingInterfaces(false);
         setTenantInterfaces([]);
         setSelectedInterfaceIds([]);
         setAssignedInterfaceIds([]);
         setShowForm(true);
     };
 
+    const closeForm = () => {
+        interfaceRequestSequence.current.invalidate();
+        setLoadingInterfaces(false);
+        setSavingInterfaces(false);
+        setShowForm(false);
+    };
+
     const openEditForm = async (team: Team) => {
+        const requestSequence = interfaceRequestSequence.current.begin();
         const brand = brands.find(b => b.id === team.brandId);
         setFormData({
             name: team.name || '',
@@ -90,39 +103,56 @@ export default function ManagementTeamsPage() {
         });
         setEditingTeam(team);
         setShowForm(true);
+        setSavingInterfaces(false);
+        setTenantInterfaces([]);
+        setSelectedInterfaceIds([]);
+        setAssignedInterfaceIds([]);
         setLoadingInterfaces(true);
         try {
             const [available, assigned] = await Promise.all([
                 getManagedInterfaces(),
                 getTeamInterfaces(team.id),
             ]);
+            if (!interfaceRequestSequence.current.isCurrent(requestSequence)) return;
             const assignedIds = assigned.map(item => item.id);
             setTenantInterfaces(available);
             setAssignedInterfaceIds(assignedIds);
             setSelectedInterfaceIds(assignedIds);
         } catch (error) {
+            if (!interfaceRequestSequence.current.isCurrent(requestSequence)) return;
             console.error('Failed to load tenant interfaces:', error);
             toast.error(t('keledons.interfacesLoadFailed'));
             setTenantInterfaces([]);
             setAssignedInterfaceIds([]);
             setSelectedInterfaceIds([]);
         } finally {
-            setLoadingInterfaces(false);
+            if (interfaceRequestSequence.current.isCurrent(requestSequence)) {
+                setLoadingInterfaces(false);
+            }
         }
     };
 
     const saveTeamInterfaces = async () => {
         if (!editingTeam) return;
+        const teamId = editingTeam.id;
+        const interfaceIds = [...selectedInterfaceIds];
+        const requestSequence = interfaceRequestSequence.current.begin();
         setSavingInterfaces(true);
         try {
-            await setTeamInterfaces(editingTeam.id, selectedInterfaceIds);
-            setAssignedInterfaceIds(selectedInterfaceIds);
-            toast.success(t('keledons.interfacesUpdated'));
+            await setTeamInterfaces(teamId, interfaceIds);
+            if (interfaceRequestSequence.current.isCurrent(requestSequence)) {
+                setAssignedInterfaceIds(interfaceIds);
+                toast.success(t('keledons.interfacesUpdated'));
+            }
         } catch (error) {
-            console.error('Failed to save tenant interfaces:', error);
-            toast.error(t('keledons.interfacesSaveFailed'));
+            if (interfaceRequestSequence.current.isCurrent(requestSequence)) {
+                console.error('Failed to save tenant interfaces:', error);
+                toast.error(t('keledons.interfacesSaveFailed'));
+            }
         } finally {
-            setSavingInterfaces(false);
+            if (interfaceRequestSequence.current.isCurrent(requestSequence)) {
+                setSavingInterfaces(false);
+            }
         }
     };
 
@@ -145,7 +175,7 @@ export default function ManagementTeamsPage() {
                 console.log('Create result:', result);
                 toast.success(t('records.createdEntity').replace('{entity}', t('records.team')));
             }
-            setShowForm(false);
+            closeForm();
             fetchData();
         } catch (error: unknown) {
             console.error('Failed to save team:', error);
@@ -292,13 +322,13 @@ export default function ManagementTeamsPage() {
             </div>
 
             {showForm && (
-                <ManagementModal title={t('records.team')} onClose={() => setShowForm(false)}>
+                <ManagementModal title={t('records.team')} onClose={closeForm}>
                     <div className="bg-card border border-border rounded-xl p-6 w-full max-w-md">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold">
                                 {editingTeam ? t('records.edit') : t('records.add')} {t('records.team')}
                             </h3>
-                            <button type="button" aria-label={t('records.close')} onClick={() => setShowForm(false)} className="p-1 hover:bg-muted rounded">
+                            <button type="button" aria-label={t('records.close')} onClick={closeForm} className="p-1 hover:bg-muted rounded">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
@@ -402,7 +432,7 @@ export default function ManagementTeamsPage() {
                             <div className="flex justify-end gap-3 mt-6">
                                 <button
                                     type="button"
-                                    onClick={() => setShowForm(false)}
+                                    onClick={closeForm}
                                     className="px-4 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors"
                                 >
                                     {t('records.cancel')}

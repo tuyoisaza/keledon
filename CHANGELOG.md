@@ -1,3 +1,12 @@
+## v5.2.1 — 2026-10-17
+
+### Fixed
+- Ignore stale managed-interface loads and saves when the team editor changes teams or closes, preventing late responses from replacing another team's selection.
+
+### Verification
+- Add a focused request-sequence regression for invalidating stale team loads and saves. Web typecheck, lint and production build are run for this release.
+- Align API, Cloud, Web, Landing and Browser package/lock roots and the Browser renderer at 5.2.1.
+
 ## v5.1.83 — 2026-10-17
 
 ### Fixed
