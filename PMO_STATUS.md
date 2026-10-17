@@ -2,13 +2,13 @@
 
 ## Current continuation — 2026-10-17
 
-The Plan was extended into four actionable commitment packages at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/pias/`. PHDK 2.53.1 static coherence recheck is 64/64. Production UAT-105/106 now cover public widget presence, ES/EN/PT localization, light/corporate/dark selection, named copy/reset outcomes and keyboard access to 44×44 controls with a visible focus outline. The copy clipboard was not read; reset used a fresh anonymous IAB and returned to the public page. These results do not prove screen-reader quality, RBAC, private diagnostics, mobile/contrast coverage or audio. The current branch `docs/phdk-auto-pias` starts from `origin/main` `4e19f97866d3fb98b595ecb0cdb4e37a0850dba9`; PR #212 is open with no hosted checks and awaits repository review.
+The Plan was extended into four actionable commitment packages at `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/pias/`. PHDK 2.53.1 static coherence recheck is 64/64. Production UAT-105/106 cover public widget presence, ES/EN/PT localization, light/corporate/dark selection, named copy/reset outcomes and keyboard access to 44×44 controls with a visible focus outline. UAT-107 then found reproducible mobile clipping at 320/375px, the demo warning under the fixed nav and a 24×24px menu button; a source fix candidate is prepared but not deployed. Clipboard was not read; reset used a fresh anonymous IAB. Screen-reader, RBAC, private diagnostics, contrast and audio remain open. PR #212 carries the PIAs and UAT evidence; the mobile correction is a separate candidate branch.
 
 | Commitment | Status | Next executable gate |
 |---|---|---|
 | CMT-001 baseline/version/PR | ACTIVE / PARTIAL | Deliver PIA docs through PR; preserve main/version/deployment readback per each source PR. |
-| CMT-002 widget/diagnostics | ACTIVE / PARTIAL — CURRENT | UAT-106 passes tested public control scope. Continue responsive/contrast and screen-reader acceptance; authenticated diagnostics and audio require authorized synthetic identity/hardware. |
-| CMT-003 voice→Cloud→Browser→CRM | ACTIVE / PARTIAL | Map actual source contract; end-to-end acceptance waits for a customer-chosen sandbox. |
+| CMT-002 widget/diagnostics | ACTIVE / PARTIAL — CURRENT | UAT-107 fails mobile responsive acceptance on production 5.2.1. Review/merge/deploy `fix/production-mobile-landing-overflow` and re-run production at 320/375/768px + desktop. Then complete contrast/screen-reader; authenticated diagnostics/audio require authorized synthetic identity/hardware. |
+| CMT-003 voice→Cloud→Browser→CRM | ACTIVE / PARTIAL | Source path is mapped. Design recovery/idempotency for permanent command claims and DNS/CIDR protection before accepting tenant-private CRM; end-to-end still waits for customer sandbox. |
 | CMT-004 administration/permissions | ACTIVE / PARTIAL | Keep `KELEDON_VENDOR_KEY` and synthetic tenant/catalog prerequisites; no inferred legacy ownership. |
 
 Overall: **4 confirmed / 0 complete / 4 active-partial**. Continue in the owner's established order; do not mark a PIA or public smoke as product acceptance.

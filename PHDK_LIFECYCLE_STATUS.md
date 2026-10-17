@@ -8,10 +8,10 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; curren
 | Capture | REUSED | Existing product intent and four-front confirmation remain current. |
 | Plan | COMPLETED / EXTENDED | Added four commitment PIAs and reconciled the candidate PIA with merged PR #210 and current production evidence. See `20-plan/pias/`. |
 | PMO / Workstreams | COMPLETED / REVALIDATED | 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL; four PIAs assign the ordered next gates. CMT-002 is the active workstream. |
-| Integration Review | COMPLETED FOR SOURCE REVIEW | API/Cloud role and tenant guards, secret projections, legacy route boundary and assignment service were reviewed. Migration has nullable `companyId` and no backfill; tenant interface provisioning/legacy ownership remain acceptance items. |
+| Integration Review | SOURCE REVIEW PARTIAL / UPDATED | API/Cloud role guards and the voice→Brain→TTS→Browser command path are mapped. Command claims have no lease/recovery; result dedupe is not external-effect idempotency. Tenant origin guard lacks resolved-IP/DNS-rebinding protection. See `40-integration/revalidations/20261017-runtime-contract/`; no client sandbox is selected. |
 | UAT Prep | PARTIAL / BLOCKED | Source seeder rejects production; no isolated DB or provisioned synthetic personas. See `UAT_PREP_REPORT.md`. |
-| UAT | PARTIAL / RUNNING | UAT-104 verifies public service/version; UAT-105/106 confirm public controls and a narrow set of actions on production 5.2.1. UAT-106 did not inspect clipboard and reset only a fresh anonymous browser context. Responsive, contrast, screen-reader, role, persistence and audio tests remain open. |
-| UAT Fix | PENDING | Reopen after production UAT identifies a reproducible candidate defect; no live write or destructive action taken. |
+| UAT | FAIL / RUNNING | UAT-105/106 confirm a narrow public-widget scope. UAT-107 reproduces hero clipping, fixed-nav/demo overlap and a 24×24px mobile menu on production 5.2.1 at 320/375px. Evidence and geometry are in `50-uat/evidence/uat-107-production-mobile-layout-2026-10-17.json`. |
+| UAT Fix | ACTIVE / SOURCE CANDIDATE PREPARED | Branch `fix/production-mobile-landing-overflow` updates active `services/web` and synchronized duplicate `landing`; it is not deployed. The fix must be merged/deployed then revalidated only on production at mobile/tablet/desktop sizes. |
 | SEO | REUSED / SOURCE REVALIDATED | Public source unchanged for 5.2.1; deployed measurements remain open. |
 | AEO/GEO | REUSED / SOURCE REVALIDATED | Public answer source unchanged; citation/field evidence remains unmeasured. |
 | Check | PASS FOR DOC/PIA SCOPE; WHOLE PRODUCT PARTIAL | PHDK coherence 64/64; UAT evidence JSON parses; `git diff --check` passes. UAT-106 is narrow public-widget acceptance only. Current PR #212 is open with no hosted status checks. Admin and authenticated feature gates remain open. |
@@ -20,7 +20,7 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; curren
 
 Overall Auto remains **PARTIALLY DELIVERED**. Authenticated tenant/persistence acceptance, safe catalog provisioning, required key configuration, broader product commitments and a passing completion gate remain open.
 
-SIGUIENTE PASO: continue CMT-002 production acceptance for responsive layouts, contrast pairs and screen readers. Keep authenticated, audio and tenant acceptance behind authorized synthetic identities/hardware; then continue the ordered CMT-003 source conformance review and record the tenant-origin DNS/rebinding gap before any CRM pilot.
+SIGUIENTE PASO: review the mobile correction, merge/deploy its candidate and rerun UAT-107 on production at 320/375/768px and desktop; then continue contrast and screen-reader acceptance. Keep authenticated/audio gates behind authorized synthetic identities/hardware. CMT-003 source mapping is ready for queue recovery/idempotency and tenant DNS/CIDR design; keep CRM writes disabled until these contracts have a deployed-candidate acceptance path.
 
 Automation hygiene and acceptance details: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/70-check/PHDK_CHECK_REPORT-5.2.1-PHDK-2.53.1.md`; production smoke evidence is UAT-104 and key-configuration blocker is UAT-103. Deployment success does not accept authenticated behavior.
 

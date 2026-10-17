@@ -1,4 +1,8 @@
-## Current re-entry — UAT-106, production widget actions (2026-10-17)
+## Current re-entry — UAT-107, production mobile responsive layout (2026-10-17)
+
+At 375×812 and 320×720 CSS px, production 5.2.1 visibly clips the hero copy/CTA; read-only geometry at 320px shows 439px hero content, a fixed 97px nav overlapping the disclaimer (y=64..80px), and a 24×24px mobile menu target. UAT-107 is **FAIL**. A source remediation candidate is prepared on `fix/production-mobile-landing-overflow`; it is not deployed and has no production acceptance. The retest gate is recorded in `revalidations/20261017-uat107/HANDOFF.md`. Evidence: `evidence/uat-107-production-mobile-layout-2026-10-17.json`.
+
+## Prior re-entry — UAT-106, production widget actions (2026-10-17)
 
 In a fresh anonymous in-app browser context on production 5.2.1, Spanish/English and light/corporate theme selections changed the rendered page. Keyboard navigation reached copy and reset buttons; each measured 44×44 CSS px and showed a solid teal focus outline. Copy announced “Diagnóstico copiado”; clipboard was not read. Reset announced its application-only scope, reloaded `/`, and restored pt/dark defaults. UAT-106 is **PASS FOR THIS PUBLIC WIDGET SCOPE**. It does not accept private diagnostics, role permissions, server sessions, screen-reader quality, mobile layouts, contrast pairs or audio/device behavior. Evidence: `evidence/uat-106-production-widget-actions-and-keyboard-2026-10-17.json`.
 

@@ -1,0 +1,57 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-107",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T17:35:53Z",
+  "target": "https://keledon.tuyoisaza.com/",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.1",
+  "channel": "isolated in-app browser viewport override; anonymous public session",
+  "result": "FAIL_REPRODUCIBLE_MOBILE_LAYOUT_AND_TARGET_SIZE",
+  "viewports": [
+    {
+      "requestedCssPixels": {"width": 375, "height": 812},
+      "observed": {
+        "documentWidth": 360,
+        "heroContentRight": 423,
+        "heroCopyAndCtaVisiblyClippedAtRight": true,
+        "navigationFixedAtTop": true,
+        "heroDisclaimerOverlapsNavigation": true
+      }
+    },
+    {
+      "requestedCssPixels": {"width": 320, "height": 720},
+      "observed": {
+        "windowInnerWidth": 320,
+        "documentWidth": 305,
+        "navigationHeight": 97,
+        "heroContentWidth": 439,
+        "heroContentRight": 439,
+        "heroDisclaimerTop": 64,
+        "heroDisclaimerBottom": 80,
+        "menuButton": {"width": 24, "height": 24},
+        "copyButton": {"width": 44, "height": 44},
+        "clearButton": {"width": 44, "height": 44}
+      }
+    }
+  ],
+  "defects": [
+    "At 375px and 320px, the hero retains a 439px minimum content width; copy and primary CTA are clipped because page-level overflow-x is hidden.",
+    "The fixed 97px navigation overlaps the demo disclaimer at y=64..80px.",
+    "The mobile navigation menu button is 24x24px, below the 44x44px target used by adjacent version actions."
+  ],
+  "privacy": "Anonymous read-only production route. No sign-in, form submission, clipboard read, app reset, device permission, customer data or backend state was accessed or changed.",
+  "notProven": [
+    "tablet viewport behavior",
+    "corrected behavior on a deployed candidate",
+    "all locales and themes",
+    "screen-reader quality and contrast",
+    "authenticated or customer-specific pages"
+  ],
+  "remediation": {
+    "branch": "fix/production-mobile-landing-overflow",
+    "status": "source candidate prepared; not deployed",
+    "scope": ["mobile hero min-width and stats layout", "mobile hero top inset", "44x44 menu-button target"],
+    "productionRevalidationRequired": true
+  }
+}
