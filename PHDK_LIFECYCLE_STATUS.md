@@ -1,6 +1,6 @@
 # Current PHDK Auto — continuation PIAs / KELEDON 5.2.1 / PHDK 2.53.1
 
-Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; latest product PR #213 is merged at `5884b80ba4318b2c4beed3e50d94945028b9a311` after documentation PR #212 merged at `64cef2f36c5a0deb1561c3ab2e0e45b850c9a87e`. PHDK v2.53.1 coherence recheck passes 64/64. The four ordered PIAs are in `20-plan/pias/`. Production UAT-108 passes the mobile/tablet/desktop responsive scope at 320/375/768/1440 CSS px; UAT-107 remains the historical pre-fix failure. Authenticated behavior, contrast/screen-reader acceptance and audio remain open.
+Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; latest product PR #213 is merged at `5884b80ba4318b2c4beed3e50d94945028b9a311` after documentation PR #212 merged at `64cef2f36c5a0deb1561c3ab2e0e45b850c9a87e`. PHDK v2.53.1 coherence recheck passes 64/64. The four ordered PIAs are in `20-plan/pias/`. Production UAT-108 passes the responsive scope at 320/375/768/1440 CSS px. UAT-109 sampled token/component contrast exceeds 4.5:1 in dark/light/corporate themes; complete WCAG and screen-reader acceptance remain open. Authenticated behavior and audio also remain open.
 
 | Stage | Status | Evidence / next gate |
 |---|---|---|
@@ -14,7 +14,7 @@ Run `20261014-0007-phdk-auto-completion`; repository `tuyoisaza/keledon`; latest
 | UAT Fix | DEPLOYED / RESPONSIVE ACCEPTANCE PASS | PR #213 updates active `services/web` and synchronized duplicate `landing`; Railway deployment `05e6bd08-4d52-4ea2-ac42-36d1a1c29ede` is `SUCCESS`. Production UAT-108 closes the specific responsive finding. |
 | SEO | REUSED / SOURCE REVALIDATED | Public source unchanged for 5.2.1; deployed measurements remain open. |
 | AEO/GEO | REUSED / SOURCE REVALIDATED | Public answer source unchanged; citation/field evidence remains unmeasured. |
-| Check | PASS FOR DOC/PIA + RESPONSIVE SCOPE; WHOLE PRODUCT PARTIAL | PHDK coherence 64/64; UAT-105/106/107/108 evidence parses; `git diff --check` passes. Both PRs #212/#213 are merged; no hosted checks were configured. Admin and authenticated feature gates remain open. |
+| Check | PASS FOR DOC/PIA + RESPONSIVE/SAMPLED-CONTRAST SCOPE; WHOLE PRODUCT PARTIAL | PHDK coherence 64/64; UAT-105/106/107/108/109 evidence parses; `git diff --check` passes. PRs #212/#213 are merged; no hosted checks were configured. Admin and authenticated feature gates remain open. |
 | Remediation | PENDING | This continuation adds actionable PIA packages and current production evidence; source remediation remains tied to verified acceptance findings. |
 | Delivery | PR #212/#213 MERGED / WHOLE GOAL PARTIAL | PR #212 docs merged at `64cef2f`; PR #213 source merged at `5884b80`. Railway Web deployment is `SUCCESS`; production responsive slice passes. The full Auto goal remains partial. |
 

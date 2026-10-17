@@ -1,0 +1,84 @@
+{
+  "runId": "20261014-0007-phdk-auto-completion",
+  "caseId": "UAT-109",
+  "stage": "50-uat",
+  "timestampUtc": "2026-10-17T17:51:10Z",
+  "target": "https://keledon.tuyoisaza.com/?phdk-uat-20261017=1",
+  "environment": "production",
+  "candidateVersionObserved": "5.2.1",
+  "deployedSourceCommit": "5884b80ba4318b2c4beed3e50d94945028b9a311",
+  "assetsObserved": [
+    "/assets/index-CsInpJxF.js",
+    "/assets/index-B8uXFblK.css"
+  ],
+  "channel": "isolated anonymous production browser; read-only computed CSS values; theme control changed local presentation only",
+  "result": "PASS_FOR_SAMPLED_TOKEN_AND_COMPONENT_PAIRS_ONLY",
+  "method": "Computed WCAG relative luminance contrast ratios for --foreground/--background, visible hero body copy and demo disclaimer against the page background, and CTA text against CTA background. Ratios were calculated from the rendered sRGB color values.",
+  "samples": [
+    {
+      "theme": "dark",
+      "background": "#080c16",
+      "foreground": "#f8fafc",
+      "primary": "#14b8a5",
+      "primaryForeground": "#080c16",
+      "bodyText": "rgb(148, 163, 184)",
+      "bodyBackground": "rgb(8, 12, 22)",
+      "ctaText": "rgb(8, 12, 22)",
+      "ctaBackground": "rgb(20, 184, 165)",
+      "contrastRatios": {
+        "foregroundOnBackground": 18.68,
+        "bodyCopyAndDisclaimerOnBodyBackground": 7.62,
+        "ctaTextOnCtaBackground": 7.84
+      },
+      "sampledPairsMeet4_5To1": true
+    },
+    {
+      "theme": "light",
+      "background": "#f8fafc",
+      "foreground": "#0f172a",
+      "primary": "#0f766e",
+      "primaryForeground": "#ffffff",
+      "bodyText": "rgb(71, 85, 105)",
+      "bodyBackground": "rgb(248, 250, 252)",
+      "ctaText": "rgb(255, 255, 255)",
+      "ctaBackground": "rgb(15, 118, 110)",
+      "contrastRatios": {
+        "foregroundOnBackground": 17.06,
+        "bodyCopyAndDisclaimerOnBodyBackground": 7.24,
+        "ctaTextOnCtaBackground": 5.47
+      },
+      "sampledPairsMeet4_5To1": true
+    },
+    {
+      "theme": "corporate",
+      "background": "#f3f6fc",
+      "foreground": "#102a43",
+      "primary": "#194185",
+      "primaryForeground": "#ffffff",
+      "bodyText": "rgb(72, 101, 129)",
+      "bodyBackground": "rgb(243, 246, 252)",
+      "ctaText": "rgb(255, 255, 255)",
+      "ctaBackground": "rgb(25, 65, 133)",
+      "contrastRatios": {
+        "foregroundOnBackground": 13.53,
+        "bodyCopyAndDisclaimerOnBodyBackground": 5.62,
+        "ctaTextOnCtaBackground": 9.83
+      },
+      "sampledPairsMeet4_5To1": true
+    }
+  ],
+  "privacy": "Anonymous public route. No sign-in, form, clipboard, customer data, audio permission or backend state was accessed or changed.",
+  "notProven": [
+    "full WCAG contrast conformance across every page element",
+    "worst-case colors composited over hero gradients, translucent panels or images",
+    "focus, hover, disabled and error states in all themes",
+    "screen-reader quality",
+    "authenticated routes and diagnostic RBAC",
+    "audio/device behavior"
+  ],
+  "revalidation": {
+    "viewportOverrideReset": true,
+    "themeRestoredToDefault": "dark",
+    "status": "sampled contrast pairs pass; complete contrast and assistive-technology acceptance remains open"
+  }
+}
