@@ -1,4 +1,19 @@
-## 5.1.81 source and deployment readback
+## Current continuation — 5.2.1; 4/4 commitments active-partial (2026-10-17)
+
+PHDK 2.53.1; candidate branch `feature/tenant-interface-selector-5.2.0` at `ef6fe6dbf7eca04708c7200615e7538812751f7e`; no PR exists. Production public smoke shows v5.1.85 and is not candidate acceptance.
+
+| Commitment | Current continuation evidence | Open gate |
+|---|---|---|
+| CMT-001 | Standards updated, branch/version facts recorded, public deployment observed at 5.1.85. | 5.2.1 PR/review/merge/main/deployment verification. |
+| CMT-002 | Prior scoped source and UAT records remain; not rerun here. | Native hardware/audio, broad accessibility/localization. |
+| CMT-003 | Prior provider-neutral source records remain; no client system selected for this generic change. | Per-client configured call/CRM sandbox acceptance. |
+| CMT-004 | 5.2.1 selector source and focused race regression; UAT-098 public smoke only. | Isolated roles/DB, persistence, foreign-tenant denials, remaining CRUD and full product acceptance. |
+
+Totals remain **4 confirmed / 0 done / 4 active-partial / 0 deferred / 0 cancelled**. No confirmed commitment is removed or newly deferred.
+
+---
+
+## Historical 5.1.81 source and deployment readback
 
 PR #200 merged at verified remote main `86b93a0bfe8393180d65c035d814f73e8f2dd9e2`; five roots and Browser renderer are 5.1.81; PHDK coherence passes 63/63. Railway API and Web deployments succeeded; Web built from root `/` with `services/web/Dockerfile` and included `shared/`. Full Web UAT passes 8/8 plus standalone admin/theme/AI. All four commitments remain ACTIVE/PARTIAL (0/4 DONE); broad persisted/external gates remain open.
 

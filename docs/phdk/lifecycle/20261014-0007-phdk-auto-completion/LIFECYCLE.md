@@ -1,4 +1,16 @@
-## Current run readback — 5.1.85 source delivered; portfolio partial (2026-10-17)
+## Current continuation — 5.2.1 / PHDK 2.53.1 (2026-10-17)
+
+This run continues the four previously owner-confirmed workstreams in order. PHDK 2.53.1 is synchronized at canonical upstream `94f583635d295ae0f227726718904d952cadb8ab`; static coherence is 64/64 and the root managed instructions match canonical bytes. Candidate branch `feature/tenant-interface-selector-5.2.0` is at `ef6fe6dbf7eca04708c7200615e7538812751f7e`. The candidate is not merged; there is no PR.
+
+The current re-entry completed Preflight and reused Capture, Plan, PMO and Integration Review. UAT Prep is PARTIAL/BLOCKED because no isolated PostgreSQL target is available; production seeding is disallowed. UAT performed an anonymous read-only public-home smoke which displayed v5.1.85. UAT-098 passes narrowly; feature cases UAT-096/097 remain blocked because deployed code/identities do not match the candidate. Overall Auto remains PARTIALLY DELIVERED.
+
+Current artifacts: `PHDK_PREFLIGHT_REPORT.md`, `TASK.md`, `STATUS.md`, `PMO_STATUS.md`, `PMO_PROGRESS_REPORT.md`, `PHDK_COMMITMENT_COVERAGE.md`, stage handoffs in `00-preflight`, `30-pmo`, `45-uat-prep`, and `50-uat`; implementation/acceptance pack is in `20-plan/PAQUETE_IMPLEMENTACION_ACEPTACION_5.2.1.md`.
+
+SIGUIENTE PASO: continue versioned PR delivery and safe synthetic tenant acceptance only after target/database readiness; do not use production accounts or data.
+
+---
+
+## Historical current run readback — 5.1.85 source delivered; portfolio partial (2026-10-17)
 
 PR #208 merged and remote main verified at `9f2eb28520d7ff040e9691dc9f7802d2210b73ae`; source tree `ec04b42fc211b81e893a66e95ba9e5ebcffc7594` matches. Railway Web and API are live; API startup logs confirm PostgreSQL connectivity and healthcheck success. UAT-095 is scoped PASS with an authenticated populated-agent and screen-reader MANUAL gate outstanding. PHDK 63/63. Whole Auto: 0/4 commitments DONE, UAT 93 PASS / 0 BLOCKED / 1 MANUAL; CRUD 396 BLOCKED / 132 N/A / 3 DECISION NEEDED / 29 PASS.
 

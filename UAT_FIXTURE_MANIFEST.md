@@ -1,5 +1,12 @@
 # UAT Fixture Manifest — KELEDON
 
+## Current candidate 5.2.1 revalidation (2026-10-17)
+
+- Candidate revision: `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PHDK 2.53.1.
+- Fixture status remains NOT PROVISIONED. No synthetic account, tenant, interface assignment, credential, or database row was created.
+- Production homepage reports v5.1.85, so it does not host this candidate. The production DB and real accounts remain excluded from the fixture manifest.
+- Required next target: isolated loopback PostgreSQL `keledon_phdk_uat` with normal migrations and the guarded seeder; run cleanup verification afterward.
+
 **Provisioning status:** seeder implemented but not executed. Target must be an isolated loopback PostgreSQL database named `keledon_phdk_uat`; no external database or live customer data is permitted. After applying API migrations, run `npm run uat:prep` with `KELEDON_UAT_PREP_CONFIRM=true`, `KELEDON_DEPLOYMENT_ENV=development`, `NODE_ENV=development`, and a loopback `DATABASE_URL`. Run `npm run uat:prep:cleanup` to remove only records that still match the PHDK-owned marker values. Append-only security audit events are retained. The script prints fixture IDs only; generated passwords/tokens remain in memory.
 
 | Fixture | Stable ID / email | Tenant | Intended role | Status |

@@ -347,3 +347,13 @@ PR #74 delivered 5.1.15 at `2e61f41926ab25b4d9ea9f9b73d11aba82988a63`; PR #75 re
 Candidate `fix/phdk-navbar-overlap-5-1-61` fixes a verified public navigation overlap in both Web apps. Exact local UAT passes 5/5 Web plus standalone Landing 1/1, with both desktop/mobile evidence and external requests blocked. API/Cloud regressions 37/37 and 17/17; Browser security/version 15/15; Web diagnostics 19/19; both SEO source tests 1/1; all five builds, applicable lint/typechecks and PHDK coherence 52/52 pass. All six version surfaces align at 5.1.61. The product PR is pending; whole Auto remains **PARTIALLY DELIVERED** (52 PASS, 0 BLOCKED, 1 MANUAL).
 
 ## Current PHDK Auto — 5.1.60 delivered; whole Auto partial
+# Current status — PHDK Auto 5.2.1 / 2.53.1 (2026-10-17)
+
+- Source candidate: `feature/tenant-interface-selector-5.2.0`, `ef6fe6dbf7eca04708c7200615e7538812751f7e`; remote feature branch matches. Product version 5.2.1; PR is not created, `main` remains 5.1.85.
+- PHDK: v2.53.1 from canonical `main` commit `94f583635d295ae0f227726718904d952cadb8ab`; static coherence 64/64; managed block synchronized.
+- Production-only check this continuation: anonymous read-only homepage at `https://keledon.tuyoisaza.com/` loaded and showed v5.1.85. This does not test branch candidate behavior.
+- Candidate UAT: source checks reported previously remain valid for their source scope. Authenticated tenant/persistence UAT-096/097 are blocked; public smoke UAT-098 passed narrowly. No app test ran locally this continuation and no production account, DB, migration or data was changed.
+- Commitments: CMT-001 through CMT-004 remain ACTIVE/PARTIAL; whole Auto remains PARTIALLY DELIVERED.
+- Next: normal PR delivery plus a safe target matching 5.2.1 and isolated synthetic tenant acceptance.
+
+---

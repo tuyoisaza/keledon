@@ -91,3 +91,13 @@ Actual Nest in-process HTTP test22 exercises real decorators/guards with isolate
 - Test revision `edce7eafbe13ac16ab93274a87e12571e7b04b2e` has the same Git tree as refreshed `origin/main` `a854ca7634307538305cd9b5ad1f91f8a066b1a1`. This is local UAT of the main source tree, not a deployment.
 - Fresh isolated verification: `services/web npm run test:diagnostics` 18/18; `services/api npm run test:regression` 11/11. No user accounts, MFA, credentials, email, live API, database, provider, customer data or paid call was used.
 - No Docker command or PostgreSQL service is available in this workstation session. DB-backed roles, full CRUD persistence, migration ledger, native Electron/device/audio, complete screen-reader/zoom/contrast and deployed SEO/AEO remain BLOCKED/MANUAL, as enumerated in `UAT_REPORT.md`.
+# Browser Readiness — Auto UAT re-entry, tenant selector candidate 5.2.1 (2026-10-17)
+
+- Run/stage: `20261014-0007-phdk-auto-completion`, stage 50 UAT; exact candidate branch revision `ef6fe6dbf7eca04708c7200615e7538812751f7e`.
+- Permission: `ACTIVE_UAT_EXCEPTION`. Browser capability: `AVAILABLE_VERIFIED` through the connected in-app browser.
+- Safe operation/target: opened `https://keledon.tuyoisaza.com/` at 2026-10-17 16:12 UTC. The public page loaded and reports KELEDON v5.1.85. No authentication or mutation was attempted.
+- Target match: FAIL for candidate acceptance; production is not serving 5.2.1. The public page is safe for smoke/read-only evidence only.
+- Data/roles: public anonymous page; no production account, tenant data, credentials, API calls, database access, or CRM/call provider.
+- Spend: `NO_NEW_SPEND`; billing remains UNVERIFIED.
+- Result: production public-entry smoke UAT-098 PASS (narrow scope); sanitized observation: `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/50-uat/evidence/uat-098-production-public-smoke-5.2.1.json`. UAT-096/097 BLOCKED because candidate 5.2.1 is not deployed and there is no isolated DB-backed synthetic role target.
+- Next action: obtain a dedicated non-production PostgreSQL test target and a candidate deployment through normal reviewed delivery; then seed only synthetic `.invalid` roles and rerun UAT-096/097.

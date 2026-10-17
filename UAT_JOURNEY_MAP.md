@@ -90,3 +90,21 @@ Runtime: authenticated configured client → answer → transcript → managed c
 ## 5.1.7 current execution evidence
 
 On current source revision `edce7eafbe13ac16ab93274a87e12571e7b04b2e` (Git tree matches `origin/main`), local Edge replay passed the public home/login version widget, clipboard success/failure and reset preservation paths; theme selection; 390px login; admin/coordinator/superadmin fixture views; user create and same-company reassignment payload; provider secret replacement behavior; guest redirect; protected diagnostic toggling and safe-only probe. All API routes were intercepted, so journey outcomes at this layer are UI-only. The API regression suite 11/11 supplies separate isolated guard/startup evidence. Persisted CRUD and live database actor derivation were not joined end-to-end.
+
+## Candidate 5.2.1 continuation — tenant interface selector
+
+### Journey A — tenant admin assigns team interfaces
+
+1. Authenticate as a synthetic Company Co admin/coordinator through normal login. BLOCKED: no isolated DB seed/login run.
+2. Open a team and load its tenant-filtered interface catalog. BLOCKED: production is 5.1.85; candidate 5.2.1 is not deployed.
+3. Save a same-tenant assignment and verify persisted readback. BLOCKED: no safe test database/session.
+4. Try a foreign-tenant ID directly and verify denial/no state change. BLOCKED: no safe test database/session.
+5. Switch teams/close the selector during delayed requests and verify stale responses cannot replace/persist. Focused source regression PASS; real role/browser journey BLOCKED.
+
+### Journey B — production public entry
+
+1. Open `https://keledon.tuyoisaza.com/` anonymously. PASS, connected in-app browser, 2026-10-17 16:12 UTC.
+2. Confirm title, version and public navigation. PASS, limited observation: title `KELEDON | Cloud-governed contact center runtime`, visible version 5.1.85, public links present.
+3. Do not sign in, submit forms, call APIs manually or mutate state. No such action was taken.
+
+Journey B does not exercise Journey A or accept candidate 5.2.1.

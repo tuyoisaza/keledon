@@ -1,5 +1,13 @@
 # UAT Authentication Plan — KELEDON
 
+## Current candidate revalidation — 5.2.1 / 2026-10-17
+
+- Exact candidate branch/revision: `feature/tenant-interface-selector-5.2.0` / `ef6fe6dbf7eca04708c7200615e7538812751f7e`.
+- Current PHDK: v2.53.1. The already-implemented normal local login and DB-derived authorization remain the only acceptable identity path.
+- Requested production target: `https://keledon.tuyoisaza.com/`. A harmless public-home navigation displayed product version 5.1.85. It is not the 5.2.1 candidate and cannot accept its TeamInterface selector.
+- Safe authenticated target: none verified. No real production accounts, passwords, tokens, tenant records or database will be used as test fixtures. The current seeder refuses production and needs an isolated loopback PostgreSQL target.
+- Result: authenticated current-candidate Prep remains BLOCKED; continue the permitted public, read-only production surface check only.
+
 ## Candidate and trust boundary
 
 - Product candidate: KELEDON 5.2.0, source base `6ae4e0a07fa6b0683ad3d32878a00feb6a88dc50`.

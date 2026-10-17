@@ -1,147 +1,42 @@
-## Candidate 5.1.77 — diagnostics widget spacing integrated
-
-The shared Web/Landing/Browser widget now preserves separate non-overlapping 44×44 hit targets while placing the visible 28×28 tiles exactly 4px apart. All five package/lock roots and the Browser renderer read 5.1.77. Web/Browser diagnostics tests, both builds, Web/Landing typechecks, full Web UAT (7/7 plus standalone admin/theme/AI UAT), Landing desktop/mobile navigation UAT, both SEO contract tests and PHDK coherence 61/61 pass. The first UAT attempt used stale `dist` files; rebuilt 5.1.77 artifacts and the complete rerun pass. Packaged Browser visual runtime remains unverified. Full evidence: `INTEGRATION_REPORT-5.1.77.md`.
-
-SIGUIENTE PASO: reuse the unchanged-content SEO/AEO checks, run exact-candidate Check and safe remediation, then deliver through a normal PR. Whole Auto remains partial.
-
----
-
-## Candidate 5.1.72 integration exit — ready for exact-candidate Check
-
-The four confirmed workstreams now have a coherent candidate. API and Cloud contracts remain aligned; stale local proof scripts are removed and regression-checked. Browser UAT's corrected opacity-aware contrast scanner found one further issue in missing-provider-key copy (3.30:1), fixed for both OpenAI and Gemini with the full semantic muted foreground. Production-built Web UAT on the updated main checkout passes 6/6 plus AI-admin and all sampled contrast routes.
-
-PHDK v2.51.2 is synchronized from canonical SHA `a2d2508b59c2546d939fb3843f232ea7bfea2cc1`; static coherence passes 56/56. FlowRunEvidence remains dormant and unnecessary for current execution. `INTEGRATION_REPORT-5.1.72.md` records source contracts and scoped validation. No external client integration, deployment, native audio/device, or production database is claimed.
-
-SIGUIENTE PASO: finish exact-candidate UAT, run the final Check/remediation, then deliver the versioned PR and independently verify remote `main`.
-
----
-
-PR #174 is squash-merged at verified remote `main` `f97ad0469830e2cadfeb7379800c74e89dd1d67d`; tested tree matches. Candidate 5.1.71 classifies FlowRunEvidence as dormant/N/A across 14 rows while retaining schema. UAT-065 is source-only; portfolio is 63 PASS, 1 BLOCKED, 1 MANUAL. Full proof: `PHDK_DELIVERY_EVIDENCE-5.1.71-post-merge-174.json`.
-
-Candidate 5.1.71 source inventory classifies FlowRunEvidence as dormant and NOT APPLICABLE across 14 role/surface rows. Its Prisma schema remains; no app reader/writer/route/UI or active retention job exists. UAT-065 records source/owner decision evidence only. All validation passes: API/Cloud 39/39 and 18/18, five builds/lint checks, typechecks, versions and coherence 56/56. Inventory: 410 BLOCKED / 132 N/A / 3 DECISION NEEDED / 1 PASS. Portfolio: 63 PASS, 1 BLOCKED, 1 MANUAL; PostgreSQL and device acceptance remain open. See `INTEGRATION_REPORT-5.1.71.md`.
-
-# Integration handoff — 5.1.70 merged and verified
-
-PR #172 squash-merged at verified remote main `f68ed5cb0d6b3f0d7c169695fa73b549fd067f28`, with tested tree equality. The owner approved keeping FeatureFlag dormant: retain the schema/service without module registration, route, UI, consumer or role grants. The 14 model-role-surface rows are NOT APPLICABLE to current product surfaces, asserted by the CRUD inventory regression. API/Cloud full regressions pass 39/39 and 18/18; all five builds, lint checks and version roots pass, as do four typechecks, Browser TypeScript build and PHDK coherence 56/56. UAT-064 closes the owner decision only; no migration or persistence acceptance is claimed. Portfolio tally is 62 PASS, 1 BLOCKED, 1 MANUAL. See `INTEGRATION_REPORT-5.1.70.md`.
-
-SIGUIENTE PASO: continue the remaining source and external acceptance gates; retain partial portfolio status.
-
----
-
-
-The candidate reconciles CompanyCountry and TeamInterface as nested relations in CRUD_MATRIX.md. API/Cloud guard tests cover own-company country updates, deny direct nested country writes for tenant managers, and reject foreign-company updates; existing TeamInterface regressions cover tenant guard and atomic replacement. Provider/profile checks from 5.1.68 remain in the full regressions. API/Cloud regressions pass 39/39 and 18/18, and all five package/lock roots plus Browser renderer align at 5.1.69. Five builds, five lint checks, four dedicated typechecks, Browser's TypeScript build, PHDK coherence 56/56, and `git diff --check` pass. See `INTEGRATION_REPORT-5.1.69.md` for the exact check inventory. Persistence and a Web TeamInterface selector decision remain open. No live database, customer CRM, call provider, or deployment was used. Whole PHDK Auto remains partial.
-
-SIGUIENTE PASO: finish exact-candidate Check, then deliver through the normal versioned PR and verify remote `main`.
-
----
-
-# Integration Review handoff — 5.1.64 diagnostics hit targets
+# PHDK Lifecycle Handoff — Integration Review
 
 Run ID: `20261014-0007-phdk-auto-completion`
-Stage: 40 Integration Review
-Status: COMPLETED FOR BOUNDED REVALIDATION
-Candidate source base / verified main SHA: `2c1c8e58f749746253f0ff76f9c691e7ffb15644`
-Candidate version: `5.1.64`
-Date: 2026-10-15
+Stage: `40-integration`
+Status: `REUSED / COMPLETED FOR SOURCE CANDIDATE; RUNTIME UAT OPEN`
+Candidate: 5.2.1, `ef6fe6dbf7eca04708c7200615e7538812751f7e`
+Date: 2026-10-17
 
-Scope: CHK-AUTO-024 gives the shared Web/Landing diagnostics action buttons 44×44px hit targets, with centered 28×28px visual tiles and separated target bounds. No API, Cloud, tenant URL, database or CRM contract changes.
+## Goal / scope
 
-Evidence inspected: mirrored `version-actions.css`, native `renderer-controls.css`, Web/Browser source regressions and `landing-navbar-uat.test.cjs`. UAT-056 passes on exact production-built Landing: each 44×44 button contains a 28×28 visual tile; hitboxes have 4px separation; names, hero clearance and mobile preferences pass. Web tests: 19/19; Browser offline suite: 28/28. Browser evidence: `../50-uat/evidence/uat-056/`; outbound requests were blocked.
+Confirm the tenant-scoped team interface selector and race fix form one coherent candidate for UAT Prep and acceptance.
 
-Exit: Web/Landing implementation and pointer target geometry reconciled; bounded browser replay passes. Packaged Electron visuals and real OS touch behavior remain unverified; no claim about screen readers, physical device/audio, database, CRM customer runtime or deployment.
+## Inputs verified
 
-SIGUIENTE PASO: proceed to 50 UAT result review, then 60 UAT Fix / 70 Check for exact candidate verification.
+- Prior source validation and version alignment for 5.2.1.
+- Prior focused request-sequence regression and API/Cloud/schema evidence recorded in stage 70.
+- Current tenant, role, secret-display and customer-configured origin decisions.
 
----
+## Work performed
 
-# Integration Review handoff — 20261014-0007-phdk-auto-completion
+- Reconciled candidate implementation commits `b8c481a16f2c015f3b4d1e9b0ff3dd2012c1d663` and `909d67205b7c1f0f51f4f80e4b00f56ab7fc8a39`.
+- Documented current source-level integration evidence and limitations in `INTEGRATION_REPORT-5.2.1.md`.
+- No source code changed and no application test ran in this continuation.
 
-## 5.1.61 — responsive public navigation integrated
+## Deliverables
 
-Integration Review confirms `landing/src/components/common/Navbar.tsx` and `services/web/src/components/common/Navbar.tsx` now share desktop-inline preferences and mobile-menu selectors; the UAT selectors and target route match both shipped implementations. All five app package/lock roots and Browser renderer are 5.1.61. No API, Cloud, Browser tenant policy, database schema, copy, route metadata or customer CRM behavior changes. Focused Web/Landing UAT, regressions, builds, lint/typechecks and PHDK coherence pass. Handoff to UAT is complete; UAT-052 then passes after a hydration wait was added to make the visual test deterministic.
+- `40-integration/INTEGRATION_REPORT-5.2.1.md`.
+- Historical prior handoff: `40-integration/snapshots/candidate-5.2.1/HANDOFF-prior.md`.
 
-## 5.1.60 — Landing diagnostics mount contract delivered
+## Exit gate
 
-UAT-051 asserts that Landing independently mounts the version/actions widget in its public page, login, app shell and admin route; Web coverage remains in place. No product runtime behavior, API, Cloud, Browser integration, tenant security policy, database schema or customer-specific connector changed. Web diagnostics 19/19, Browser selected tests 15/15, API/Cloud regressions 37/37 and 17/17, Landing SEO 1/1, builds, applicable lint/typechecks and PHDK coherence 52/52 pass. This is integrated source-contract evidence only; visual/native accessibility and customer runtime acceptance remain open. Whole Auto remains partial.
+- [x] Tenant/team ownership and stale-response source contracts have prior candidate evidence.
+- [x] PHDK, security and current customer-configured integration boundaries are reconciled.
+- [ ] Database migration/readback and exact candidate authenticated UI integration.
 
-## Candidate 5.1.55 — restore model inventory table contract
+## Risks / blockers
 
-Post-merge review found the 5.1.54 markdown edit had expanded the separate model-to-surface narrative table to the capability matrix width. It is restored to the original three-column schema. Regression 33 now validates both tables independently and keeps all role policy assertions. No runtime behavior changed; detailed review: `INTEGRATION_REPORT-5.1.55.md`.
+Candidate 5.2.1 is not deployed; production shows 5.1.85. No synthetic database or provisioned role identities are available. Production records remain excluded.
 
-PHDK 2.50.10 coherence is 52/52. UAT-043 passes source/documentation integrity. Persisted role/tenant authorization, migrations and the other external/manual acceptance gates remain open. Candidate 5.1.55 proceeds to Check and normal PR delivery; whole Auto stays PARTIALLY DELIVERED.
+## Next stage
 
----
-
-## Candidate 5.1.54 — CRUD model-role-surface crosswalk
-
-Review finds the candidate coherent: no product runtime or API contract changed; the 168 core rows stay separately scoped; the added 490 tuples match the Prisma schema and approved role list; direct, nested, global, operational and append-only models remain distinguished. Guard-source spot checks and regression assertions protect team Flow read/write boundaries, hidden superadmin-only ManagedInterface, nested TeamInterface, unwired FeatureFlag and superadmin-only AI prompt updates. Version roots align at 5.1.54. Detailed review: `INTEGRATION_REPORT-5.1.54.md`.
-
-UAT-042 passes the source-map contract. Persistent database proof, unresolved legacy lifecycle decisions, DebugMode persistence mismatch, native acceptance, and external SEO/AEO remain open. Candidate should proceed to scoped Check and normal delivery; full PHDK Auto remains PARTIALLY DELIVERED.
-
----
-
-## Candidate 5.1.51 — API runtime truthfulness and lint
-
-Reviewed source `09ef2497957c381a3af7428af393b65b811c2fe6` / tree `fdb14b554ad46b1908b2041bfa781bb15bd0a716`, based on verified main `1061a0a6541c7ffb41184c11f1e2f3c3b86c050b`. Tenant runtime no longer fabricates Browser/CRM/voice successes or integration health; unsupported adapter steps fail closed and subagent results persist. All five roots and Browser renderer are 5.1.51. API lint is 0 warnings/errors. Review details: `90-delivery/snapshots/candidate-5.1.51/INTEGRATION_REPORT.md`. No private endpoint was contacted.
-
----
-
-## Candidate 5.1.36 — Device source integration
-
-The source candidate is `fix/phdk-device-revoke-ui-5-1-36`, based on verified main `f0a9633e39bbdbca416f5e1c24c32acab7276902`. Five package/lock roots plus Browser renderer align at 5.1.36. Device registration binds the authenticated DB actor/company and rejects a missing company; manager revoke is tenant-scoped in API and confirmed in the localized Web page. The safe device list and paired-device-only RPA secret read remain intact. Validated customer-selected private CRM origins remain governed by tenant allowlists. API 35/35 plus build, Web typecheck/build/UAT 2/2, Browser build, Web/Landing SEO 1/1, 35-model/168-row drift assertions and PHDK coherence 52/52 pass. No shared API/Cloud contract conflict is introduced; there are no API/Cloud mirrored changes. UAT metadata and screenshots are recorded in `docs/phdk/evidence/uat-device-5.1.36.json` and `uat-device-*.png`. No live DB, device, provider, private target or deployment was used. Delivery remains pending; whole Auto remains partial.
-
-SIGUIENTE PASO: finish Check and normal product PR/merge/readback.
-
----
-
-## Candidate 5.1.32 integration exit (2026-10-14)
-
-Status: **CANDIDATE COHERENT; DELIVERY SYNC PENDING**. Source SHA `93f844bfe47f3b17e3c16f94adb76bab2c0d04b5`, base main `fdf47b252783d32e08200fc8bd7e19d2bbe01bf7`, all five roots/Browser renderer 5.1.32. API 33/33, Cloud 14/14, Browser 33/33, Web diagnostics 19/19, exact-source UAT 1/1, Web/Landing SEO 1/1 each, all builds and PHDK coherence 52/52 pass. `INTEGRATION_REPORT.md` records shared contracts and scoped validation.
-
-UAT-030 confirms the Knowledge user/admin UI now displays truthful tenant data, es/en/pt copy, safe generic errors and the shared keyboard-accessible modal; synthetic browser only. Source integration across API/Cloud/Browser tenant and vector contracts remains consistent. No external CRM request/database/deployment. PR #102 exists but needs the current commit pushed and actual controls rechecked. Next: finalize Check and delivery artifacts; product acceptance remains partial for disposable DB/identities, native device/audio and deployed SEO/AEO.
-
-Status: COMPLETED FOR UAT ENTRY; final release gate remains open. The current integrated candidate is the preserved working tree on `fix/cloud-eslint-prettier`, based on main `6413d8aed295c18af098ca6a58c6dfbb7503930b` / 5.1.24. `INTEGRATION_REPORT.md` is snapshotted alongside this handoff.
-
-The integrated source contracts were reviewed across API, Cloud, Browser, Web, Prisma and the four PMO workstreams. Five app package/lock roots and renderer remain 5.1.24. API regression/build pass (19 suites); Cloud regression/build pass (10 suites); API vendor/encryption tests pass 4/4; Cloud encryption/RAG/subagent suites pass 8/8; Browser offline suite passes 27/27; Web typecheck/build and focused diagnostics (9/9) plus debug-mode/mount tests (2/2) pass; PHDK coherence passes 52/52.
-
-The candidate carries owner-approved DB-derived roles, write-only encrypted vendor credentials and tenant-scoped validated origins, including explicitly configured private/local CRM destinations. Paired-device secrets are transferred in a distinct authenticated envelope. No production DB/provider/browser UI operation was used in this stage.
-
-Residual gaps are assigned: Cloud typed lint 333 errors/59 warnings → PLAN-AUTO-005/Check remediation; full 35-model persisted database matrix and migration → WS-004 external DB acceptance; native Browser/device/audio and broad route UX → WS-002 UAT; deployed SEO/AEO and client-specific provider acceptance → subsequent evidence stages/customer-specific environment. The 5.1.24 baseline is retained until one final patch version boundary in Delivery.
-
-Exit gate: a coherent candidate is ready for **scoped synthetic UAT**. This does not close Check or Delivery. Next stage: UAT against this exact integrated working tree, then repair and rebind evidence to the post-fix candidate.
-
-## Candidate 5.1.56 — exact-source persistence evidence integrated
-
-The 5.1.55 source was exercised against the retained synthetic disposable PostgreSQL 16.15 cluster. API build and regression pass; migration deploy is idempotent; real DB-backed registration, superadmin assignment and tenant denial paths pass. All test-created records were removed and the services stopped. Evidence: `../50-uat/evidence/uat-postgres-roles-5.1.55-8999dfd9.json`.
-
-This update advances UAT-009/010 only for the exercised scope; it does not claim full persisted CRUD across the 35-model map. Candidate delivery version is 5.1.56. Whole Auto remains partial.
-
-SIGUIENTE PASO: complete candidate-wide source/build/coherence checks and deliver through the normal PR path.
-
----
-# Integration handoff — candidate 5.1.69
-
-The candidate reconciles CompanyCountry and TeamInterface as nested relations in CRUD_MATRIX.md. API/Cloud guard tests now cover own-company country updates, deny direct nested country writes for tenant managers, and reject foreign-company updates; existing TeamInterface regressions cover tenant guard and atomic replacement. Provider/profile checks from 5.1.68 remain in the full regressions. API/Cloud pass 39/39 and 18/18; see `INTEGRATION_REPORT-5.1.69.md`. Persistence and a Web TeamInterface selector decision remain open. Whole PHDK Auto remains partial.
-
-SIGUIENTE PASO: complete exact-candidate Check, then deliver through the versioned PR and verify remote `main`.
-
----
-
-
-## Candidate 5.1.78 handoff — managed Cloud AI parity
-
-Integration Review completed for this source slice. API/Cloud defaults, workflow metadata and migration SQL parity pass; the Cloud runtime is tenant-bound to DB actor/team and validates schema-controlled outputs. Evidence: INTEGRATION_REPORT-5.1.78.md. Entry for UAT verified. Next: focused local contract UAT; browser journeys are not applicable to backend-only changes.
-## Candidate 5.1.79 — health contract parity reviewed
-
-API and Cloud `AgentMonitoringService` now share the same contract: unprobed TTS, STT, AI and aggregate health are `unknown`; only explicitly tracked socket connectivity reports connected. Web and Landing consume that expanded union and initialize all unmeasured states as unknown, with a muted visible treatment. The paired backend tests and both frontend typecheck/build paths validate the mirrored contract. No dependency health probe, database migration or provider integration was added.
-
-SIGUIENTE PASO: UAT-090 verifies the health contract; then continue Check and final delivery gates.
-
----
-## Candidate 5.1.85 — CHK-AUTO-025 integration review PASS
-
-Web and Landing now implement the same accessible native selection-button contract in AgentControlCenter. The fix is isolated to pointer-only dashboard card selection; no tenant, auth, API, persistence or customer integration behavior changed. Package/lock/renderer versions align at 5.1.85. Review details: `INTEGRATION_REPORT-5.1.85.md`.
-
-SIGUIENTE PASO: UAT/Fix and Check handoffs are complete for the scoped candidate; deliver by the normal PR flow and verify remote main.
-
----
+Stage: `45-uat-prep` (revalidated). Read its current blockers and exact snapshots before any browser acceptance. Browser phase permission starts only at stage 50.

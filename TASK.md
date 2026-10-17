@@ -1,4 +1,16 @@
-# Current PHDK Auto — candidate 5.2.0 on four approved fronts
+# Current PHDK Auto — candidate 5.2.1 / PHDK 2.53.1 on four approved fronts
+
+This is the active continuation of the user-confirmed four-front portfolio, in order: CMT-001 baseline/version/PR, CMT-002 widget/diagnostics, CMT-003 customer-selected voice→Cloud→Browser→CRM, CMT-004 administration/permissions. The Admin/Coordinator tenant-scoped TeamInterface selector and stale-request fix are source-implemented on branch `feature/tenant-interface-selector-5.2.0`; current head is `ef6fe6dbf7eca04708c7200615e7538812751f7e`. All four remain active/partial; no PR or main merge exists for 5.2.1.
+
+PHDK was synchronized to v2.53.1 from upstream `94f583635d295ae0f227726718904d952cadb8ab`. Static coherence passes 64/64 and the root managed block matches canonical. A PIA (Paquete de Implementación y Aceptación) now maps the code, requirements, test cases and gates in `docs/phdk/lifecycle/20261014-0007-phdk-auto-completion/20-plan/PAQUETE_IMPLEMENTACION_ACEPTACION_5.2.1.md`.
+
+The user requested production-only testing. The public production homepage was opened read-only and shows v5.1.85; it is not the 5.2.1 candidate. No real accounts/data or production writes were used. UAT-098 is PASS only for anonymous public-page smoke; authenticated tenant selector UAT-096/097 remain BLOCKED pending a safe matching candidate and isolated synthetic identity/database path. No application tests were run locally in this continuation.
+
+SIGUIENTE PASO: keep the selector acceptance blocked until a safe target matches 5.2.1, and continue normal versioned PR delivery without any production data mutation.
+
+---
+
+## Previous candidate snapshot — 5.2.0
 
 The candidate adds the owner-approved company-scoped interface selector for Admin/Coordinator, plus guarded synthetic UAT Prep provisioning and role checks. Five product package/lock roots and Browser renderer read 5.2.0. API/Cloud regressions pass 45/45 and 21/21; API/Cloud builds and typechecks, Prisma validation/generation, Web/Landing checks, Browser build/lint/focused tests and PHDK 64/64 coherence pass.
 

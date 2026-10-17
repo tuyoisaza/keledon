@@ -1,4 +1,23 @@
-# PMO Status — candidate 5.2.0 based on current main 5.1.85; portfolio partial
+# PMO Status — candidate 5.2.1 / PHDK 2.53.1; portfolio partial
+
+## Current Auto continuation — 2026-10-17
+
+The user's ordered portfolio confirmation remains current: baseline/version/PR; widget/diagnostics; per-client voice→Cloud→Browser→CRM; administration/permissions. No new commitment or scope reduction was introduced. Candidate branch `feature/tenant-interface-selector-5.2.0` is at `ef6fe6dbf7eca04708c7200615e7538812751f7e`; there is no PR. PHDK 2.53.1 coherence passes 64/64.
+
+| Commitment | Status | Current evidence | Remaining gate |
+|---|---|---|---|
+| CMT-001 baseline/version/PR | ACTIVE / PARTIAL | 5.2.1 branch source; standards upgraded; production public page reports 5.1.85. | Create/review/merge normal PR; verify main and deployment. |
+| CMT-002 widget/diagnostics | ACTIVE / PARTIAL | Prior local/source acceptance remains scoped to its recorded candidate. | Native device/audio and broad accessibility/localization acceptance. |
+| CMT-003 voice→Cloud→Browser→CRM | ACTIVE / PARTIAL | Client-neutral source and tenant configuration evidence retained. | Per-client sandbox, call/CRM stack and customer acceptance; no endpoint selected/contacted. |
+| CMT-004 administration/permissions | ACTIVE / PARTIAL | Approved tenant/role policy; 5.2.1 tenant-scoped interface selector source; UAT-098 public smoke only. | Isolated synthetic role/persistence/cross-tenant acceptance; remaining CRUD matrix and other required gates. |
+
+**Portfolio:** 4 confirmed / 0 DONE / 4 ACTIVE-PARTIAL / 0 deferred / 0 cancelled. The deployment at production is v5.1.85 and cannot accept branch-only 5.2.1. Authenticated UAT remains blocked; no real production accounts/data were touched.
+
+SIGUIENTE PASO: continue delivery and safe candidate acceptance; preserve all four commitments as open.
+
+---
+
+## Prior PMO status snapshot — candidate 5.2.0
 
 ## Current continuation — PHDK 2.53.0 and approved tenant interface selector
 

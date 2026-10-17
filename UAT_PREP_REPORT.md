@@ -17,3 +17,16 @@ The guarded fixture seeder is implemented at `services/api/scripts/uat-prep-comp
 | Cleanup of newly seeded records | N/A; nothing was created |
 
 **Next:** run API migrations and `npm run uat:prep` on the dedicated loopback database when Windows permits the local test runtime; verify seeding, login, role, tenant, Test as lifecycle and `npm run uat:prep:cleanup`. Then enter browser UAT only after the separate UAT browser-readiness gate passes.
+# UAT Prep revalidation — candidate 5.2.1 (2026-10-17)
+
+**Result: PARTIAL / BLOCKED.** Candidate: `feature/tenant-interface-selector-5.2.0` at `ef6fe6dbf7eca04708c7200615e7538812751f7e`; PHDK v2.53.1. The existing guarded Company Co fixture seeder and source policy are retained, but no safe isolated PostgreSQL target is available. Production is explicitly rejected by the seeder and is not used for synthetic users or assignments. The live public homepage was later visited read-only and showed v5.1.85, so it is not the candidate under test.
+
+| Prep gate | Result |
+|---|---|
+| Fixture infrastructure and production exclusion | PASS by existing source/policy regression only |
+| Isolated DB migrations, seed/idempotency, normal login, role/tenant readback and cleanup | BLOCKED; no permitted isolated DB |
+| Current candidate hosted target | BLOCKED; production serves 5.1.85 |
+| Provider-backed test identities / Google OAuth | BLOCKED / customer-specific |
+| Credentials or data created | None |
+
+The user's production-only testing preference is honored for harmless public-page inspection. It cannot safely substitute for the isolated tenant-authentication and persistence checks the candidate requires. Resume this Prep when a dedicated non-production database/target is available; do not run the seeder against production.

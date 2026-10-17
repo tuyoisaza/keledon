@@ -1,4 +1,19 @@
-# PMO Progress — 5.1.85 candidate
+# PMO Progress — 5.2.1 continuation / PHDK 2.53.1 (2026-10-17)
+
+| Commitment | Verified progress | Remaining acceptance |
+|---|---|---|
+| CMT-001 baseline/version/PRs | PHDK 2.53.1 installed; branch candidate 5.2.1 at `ef6fe6dbf7eca04708c7200615e7538812751f7e`; production homepage shows 5.1.85. | Normal PR/review/merge and exact `main`/deployment readback. |
+| CMT-002 widget/diagnostics | Prior source and local acceptance retained with original scope. No local app tests run in this continuation. | Native device/audio and broad assistive-tech/localization acceptance. |
+| CMT-003 voice→Cloud→Browser→CRM | Client-neutral contracts and allowlist evidence retained; no customer integration contacted. | Client must select and provide safe call/CRM sandbox for acceptance. |
+| CMT-004 administration/permissions | Tenant interface selector/stale-response source fixes on branch; production smoke UAT-098 is anonymous and not feature acceptance. | Synthetic role sessions, persisted assignment, cross-tenant denial and exact-candidate browser evidence. |
+
+Portfolio remains 4 confirmed / 0 complete / 4 active-partial. CRUD inventory counts from the prior candidate remain historical and are not recalculated by this read-only smoke. PHDK static coherence: 64/64. See stage 30 PMO snapshot `snapshots/candidate-5.2.1/`.
+
+SIGUIENTE PASO: continue normal versioned delivery and re-enter tenant UAT only with a safe target matching 5.2.1.
+
+---
+
+## Prior PMO progress — 5.1.85
 
 | Commitment | Verified progress | Remaining acceptance |
 |---|---|---|

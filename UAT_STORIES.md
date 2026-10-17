@@ -37,3 +37,12 @@ UAT-005: failures/cancellation/disabled AI/budget exhaustion remain failures and
 ## 5.1.7 execution boundary
 
 US-001..US-006 remain the stable intent-linked stories above. Current evidence revision `edce7eafbe13ac16ab93274a87e12571e7b04b2e` (same tree as remote main) closes scoped local UI checks for US-001, US-002, selected US-004, and US-006. US-003/US-005 remain isolated contract-test evidence only. Full persisted role/CRUD, native device/audio and deployed discovery acceptance remain open; no client vendor was selected.
+
+## Candidate continuation — 5.2.1
+
+| Story | Actor | User goal and intent-linked outcome | Intent / requirement source | Cases |
+|---|---|---|---|---|
+| US-020 | Company admin or coordinator | As an authorized tenant administrator, I want to assign only interfaces approved for my team, so that the call/CRM workflow matches my company's configuration without exposing another tenant or the global catalog. | Confirmed CMT-003/CMT-004 and owner-approved tenant assignment decision. | UAT-096, UAT-097 |
+| US-021 | Anonymous public visitor | As a visitor, I want the public entry page to load and identify the currently served product, so that I can find the public product overview. | Public entry intent and route contract. | UAT-098 |
+
+US-020 is not accepted by the anonymous production smoke: candidate 5.2.1 is not deployed and role/persistence journeys are blocked. US-021 covers only one observed public-page load.

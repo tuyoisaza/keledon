@@ -46,3 +46,9 @@ Limits: full-page contrast matrix,200%/400% zoom, screen-reader session, all loc
 Finding UX-A11Y-025: agent cards in Web and Landing were clickable non-focusable divs; keyboard users could not select a card, and selection state had no button role/value. Candidate 5.1.85 uses a named native button per card, aria-pressed, selected text, a 44px minimum block size and a visible focus-visible ring. Source contract tests pass 2/2. The local production-built Web app loaded in the connected browser, but its authenticated agent card was not rendered because no safe synthetic socket fixture is available. Screen-reader and populated-card keyboard use remain MANUAL; broader route/role accessibility remains open.
 
 SIGUIENTE PASO: use a safe synthetic socket fixture and test actor to verify populated-card keyboard selection and screen-reader announcement.
+
+## Candidate 5.2.1 UAT revalidation (2026-10-17)
+
+**Status: INCOMPLETE / BLOCKED for candidate UI.** Candidate `ef6fe6dbf7eca04708c7200615e7538812751f7e` is on a feature branch; production displays 5.1.85. The anonymous public page does not expose the authenticated Teams selector.
+
+Prior source evidence covers accessible team selection and request invalidation. This UAT entry did not verify rendered candidate behavior, keyboard/focus, responsive layout, screen reader output, empty/error states, role restrictions or persisted assignments. No P0/P1 result is inferred. Retest on a matching candidate target using synthetic admin/coordinator sessions after safe Prep is possible.
